@@ -34,10 +34,10 @@ class Ui_layout_main(object):
 
         self.layout_grid.addWidget(self.label_values, 4, 0, 1, 5)
 
-        self.button_delite = QPushButton(layout_main)
-        self.button_delite.setObjectName(u"button_delite")
+        self.button_delete = QPushButton(layout_main)
+        self.button_delete.setObjectName(u"button_delete")
 
-        self.layout_grid.addWidget(self.button_delite, 2, 3, 1, 1)
+        self.layout_grid.addWidget(self.button_delete, 2, 3, 1, 1)
 
         self.combo_data_type = QComboBox(layout_main)
         self.combo_data_type.addItem("")
@@ -92,7 +92,7 @@ class Ui_layout_main(object):
         self.lineEdit_input = QLineEdit(layout_main)
         self.lineEdit_input.setObjectName(u"lineEdit_input")
         sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy2.setHorizontalStretch(4)
+        sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.lineEdit_input.sizePolicy().hasHeightForWidth())
         self.lineEdit_input.setSizePolicy(sizePolicy2)
@@ -170,7 +170,7 @@ class Ui_layout_main(object):
     def retranslateUi(self, layout_main):
         layout_main.setWindowTitle(QCoreApplication.translate("layout_main", u"Form", None))
         self.label_values.setText(QCoreApplication.translate("layout_main", u"Values", None))
-        self.button_delite.setText(QCoreApplication.translate("layout_main", u"Delete", None))
+        self.button_delete.setText(QCoreApplication.translate("layout_main", u"Delete", None))
         self.combo_data_type.setItemText(0, QCoreApplication.translate("layout_main", u"xs:string", None))
         self.combo_data_type.setItemText(1, QCoreApplication.translate("layout_main", u"xs:double", None))
 

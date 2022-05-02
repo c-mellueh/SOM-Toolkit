@@ -24,7 +24,7 @@
       </widget>
      </item>
      <item row="2" column="3">
-      <widget class="QPushButton" name="button_delite">
+      <widget class="QPushButton" name="button_delete">
        <property name="text">
         <string>Delete</string>
        </property>
@@ -125,7 +125,7 @@
           <widget class="QLineEdit" name="lineEdit_input">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>4</horstretch>
+             <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>

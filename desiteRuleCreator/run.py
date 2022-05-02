@@ -2,10 +2,11 @@ from QtDesigns.ui_mainwindow import Ui_MainWindow
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow,QTreeWidgetItem,QMessageBox,QFileDialog,QListWidgetItem, QMenu,QInputDialog,QTreeWidget
 from PySide6 import QtCore,QtWidgets
-from classes import Object,PropertySet,Attribute,Group
+from classes import Object,PropertySet,Attribute,Group, attributes_to_psetdict
 import PySide6
 import constants
 from lxml import etree
+
 
 from propertyset_window import  PropertySetWindow
 
@@ -53,6 +54,7 @@ def missing_input_warning():
 class CustomTree(QTreeWidget):
     def __init__(self,layout):
         super(CustomTree, self).__init__(layout)
+
 
 
     def dropEvent(self, event:PySide6.QtGui.QDropEvent) -> None:
@@ -106,7 +108,6 @@ class MainWindow(QMainWindow):
         self.tree.setAlternatingRowColors(False)
         self.tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.tree.setSortingEnabled(True)
-        #self.tree.setDropIndicatorShown(False)
 
         self.ui.verticalLayout_objects.addWidget(self.tree)
         ___qtreewidgetitem = self.tree.headerItem()
@@ -114,7 +115,7 @@ class MainWindow(QMainWindow):
         ___qtreewidgetitem.setText(0, QtCore.QCoreApplication.translate("MainWindow", u"Objects", None));
 
         self.tree.itemClicked.connect(self.treeObjectClicked)
-        self.tree.itemDoubleClicked.connect(self.show_pset_info)
+        self.tree.itemDoubleClicked.connect(self.treeobject_double_clicked)
         self.tree.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.InternalMove)
         self.tree.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.tree.customContextMenuRequested.connect(self.openMenu)
@@ -134,11 +135,36 @@ class MainWindow(QMainWindow):
         self.openFile(path= "E:/Cloud/OneDrive/Arbeit/DB_Werkstudent/Projekte/Karlsruhe_Durmersheim/Modelchecking/Regeln/Datenstruktur/22_04_18.xml")
         self.tree.viewport().setAcceptDrops(True)
 
-        self.pset_buttons = [self.ui.button_Pset_add,self.ui.button_Pset_edit,self.ui.button_Pset_delete,self.ui.button_Pset_update]
+        self.pset_buttons = [self.ui.button_Pset_add,self.ui.button_Pset_rename,self.ui.button_Pset_delete]
         self.object_buttons =[self.ui.button_objects_update,self.ui.button_objects_delete,self.ui.button_objects_add]
+        self.set_pset_window_enable(False)
+        self.ui.lineEdit_pSet_name.textChanged.connect(self.text_changed)
+
+    def text_changed(self, text):
 
 
+        if self.ui.listWidget_pSet.findItems(text,QtCore.Qt.MatchFlag.MatchExactly):
+            button_text = "Update"
+        else:
+            button_text = "Add"
+        self.ui.button_Pset_add.setText(button_text)
+        # name_match = len([x for x in self.ui.listWidget_pSet.items().attributes if x.name == text]) > 0
+        # if name_match:
+        #     self.widget.button_add.setText("Update")
+        # else:
+        #     self.widget.button_add.setText("Add")
 
+
+    def set_pset_window_enable(self, value: bool):
+        for button in self.pset_buttons:
+            button.setEnabled(value)
+
+        self.ui.lineEdit_pSet_name.setEnabled(value)
+        self.ui.label_pSet_name.setEnabled(value)
+        self.ui.listWidget_pSet.setEnabled(value)
+        if not value:
+            self.ui.horizontalLayout_pSet.setTitle("PropertySet")
+            self.ui.listWidget_pSet.clear()
     def openMenu(self,position:QtCore.QPoint):
 
         menu = QMenu()
@@ -175,7 +201,6 @@ class MainWindow(QMainWindow):
         group = CustomTreeItem(parent_merker[1],Group(group_name))
         group.setText(0, group_name)
 
-        print("HIER")
 
         for item in self.tree.selectedItems():
             if item != group:
@@ -184,73 +209,128 @@ class MainWindow(QMainWindow):
                     (item.parent() or root).removeChild(item)
                     group.addChild(item)
 
-        print(parent_merker)
 
         parent_merker[1].addChild(group)
-        print(parent_merker[1])
         if isinstance(parent_merker[1],CustomTreeItem):
-            print("HIER")
             group.object.parent = parent_merker[1].object
 
-    def show_pset_info(self, item:QTreeWidgetItem, column):
+    def treeobject_double_clicked(self, item:QTreeWidgetItem, column):
         object:Object = item.object
-        print(object.parent)
-        if isinstance(object,Object):
+        self.set_pset_window_enable(True)
+        self.ui.horizontalLayout_pSet.setTitle(f"PropertySet {object.name}")
 
-            psets = object.attributes_to_psetdict()
-
-            self.ui.listWidget_pSet.clear()
-
-            for el in psets.keys():
-                item = QListWidgetItem(el.name,self.ui.listWidget_pSet)
-                item.setData(1,el)
+        self.ui.listWidget_pSet.clear()
 
 
-            pass
+
+        psets = attributes_to_psetdict(object.attributes)
+
+
+        for el in psets.keys():
+            item = QListWidgetItem(el.name,self.ui.listWidget_pSet)
+            item.setData(1,el)
+
+
+
+    def setIdentLineEnable(self,value:bool):
+        self.ui.lineEdit_ident_pSet.setEnabled(value)
+        self.ui.lineEdit_ident_attribute.setEnabled(value)
+        self.ui.lineEdit_ident_value.setEnabled(value)
+
+        self.ui.lineEdit_ident_pSet.setText(" ")
+        self.ui.lineEdit_ident_attribute.setText(" ")
+        self.ui.lineEdit_ident_value.setText(" ")
+        self.ui.label_Ident.setVisible(value)
+
 
     def treeObjectClicked(self,item:QTreeWidgetItem,column):
+        def all_equal(iterator):
+            iterator = iter(iterator)
+            try:
+                first = next(iterator)
+            except StopIteration:
+                return True
+            return all(first == x for x in iterator)
 
         items = self.tree.selectedItems()
+        self.set_pset_window_enable(False)
 
-        identicals = [True,True,True,True] #Name,PSet,Attrib,Value
-        lineEditList = [
-            self.ui.lineEdit_object_name,
-            self.ui.lineEdit_ident_pSet,
-            self.ui.lineEdit_ident_attribute,
-            self.ui.lineEdit_ident_value
-            ]
+        group_selected = [item.object.name for item in items if isinstance(item.object,Group)]
+        if group_selected:
+            if all_equal(group_selected):
+                self.ui.lineEdit_object_name.setText(group_selected[0])
+            self.setIdentLineEnable(False)
 
-        merk_list = ["","","",""]
-
-        is_first = True
-
-        for item in items:
-
-            object:Object = item.object
-            if isinstance(object,Object):
-                if is_first:
-                    merk_list = [object.name, object.identifier.propertySet.name, object.identifier.name,
-                                 object.identifier.value]
-                    is_first = False
-                else:
-                    compare_list = [object.name, object.identifier.propertySet.name, object.identifier.name,
-                                    object.identifier.value]
-
-                    for i, el in enumerate(compare_list):
-                        if el != merk_list[i]:
-                            identicals[i] = False
-
-        for i in range(len(identicals)):
-            if identicals[i]:
-                lineEditList[i].setText(merk_list[i])
-            else:
-                lineEditList[i].setText("*")
-
-        if len(items) ==1:
-            self.show_pset_info(items[0],column)
 
         else:
-            self.ui.listWidget_pSet.clear()
+            self.setIdentLineEnable(True)
+            object_names = [item.object.name for item in items]
+            ident_psets = [item.object.identifier.propertySet.name for item in items]
+            ident_attributes = [item.object.identifier.name for item in items]
+            ident_values = [item.object.identifier.value[0] for item in items]
+
+            line_assignment =  {
+                self.ui.lineEdit_object_name:object_names,
+                self.ui.lineEdit_ident_pSet: ident_psets,
+                self.ui.lineEdit_ident_attribute: ident_attributes,
+                self.ui.lineEdit_ident_value: ident_values,
+            }
+
+            for key,item in line_assignment.items():
+
+                if all_equal(item):
+                    key.setText(item[0])
+                else:
+                    key.setText("*")
+
+
+            # identicals = [True,True,True,True] #Name,PSet,Attrib,Value
+            # lineEditList = [
+            #     self.ui.lineEdit_object_name,
+            #     self.ui.lineEdit_ident_pSet,
+            #     self.ui.lineEdit_ident_attribute,
+            #     self.ui.lineEdit_ident_value
+            #     ]
+            #
+            # merk_list = ["","","",""]
+            #
+            # is_first = True
+            #
+            # for item in items:
+            #
+            #     object:Object = item.object
+            #     if isinstance(object,Object):
+            #         if is_first:
+            #             merk_list = [object.name, object.identifier.propertySet.name, object.identifier.name,
+            #                          object.identifier.value]
+            #             is_first = False
+            #         else:
+            #             compare_list = [object.name, object.identifier.propertySet.name, object.identifier.name,
+            #                             object.identifier.value]
+            #
+            #             for i, el in enumerate(compare_list):
+            #                 if el != merk_list[i]:
+            #                     identicals[i] = False
+            #
+            # for i in range(len(identicals)-1):
+            #     if identicals[i]:
+            #         lineEditList[i].setText(str(merk_list[i]))
+            #     else:
+            #         lineEditList[i].setText("*")
+            #
+            # i = 3
+            # if identicals[i]:
+            #     lineEditList[i].setText(merk_list[i][0])
+            # else:
+            #     lineEditList[i].setText("*")
+            #
+            #
+            #
+            # if len(items) ==1:
+            #     self.treeobject_double_clicked(items[0],column)
+            #
+            # else:
+            #     self.ui.listWidget_pSet.clear()
 
 
     def group_clicked(self):
@@ -270,12 +350,12 @@ class MainWindow(QMainWindow):
         name = self.ui.lineEdit_object_name.text()
         pSetName = self.ui.lineEdit_ident_pSet.text()
         identName = self.ui.lineEdit_ident_attribute.text()
-        identValue = self.ui.lineEdit_ident_value.text()
+        identValue = [self.ui.lineEdit_ident_value.text()]
 
         input_list=[name,pSetName,identName,identValue]
 
         pSet = PropertySet(pSetName)
-        ident = Attribute(pSet,identName,identValue,constants.VALUE)
+        ident = Attribute(pSet,identName,identValue,constants.LIST)
 
         if not missing_input(input_list):
             if not  "*" in input_list:
@@ -300,7 +380,7 @@ class MainWindow(QMainWindow):
         else:  item = CustomTreeItem(parent,obj)
 
         item.setText(0, obj.name)
-        item.setText(1, f"{obj.identifier.propertySet.name} : {obj.identifier.name} = {obj.identifier.value}")
+        item.setText(1, f"{obj.identifier.propertySet.name} : {obj.identifier.name} = {obj.identifier.value[0]}")
 
     def openFile(self,path = None):
 
@@ -347,7 +427,7 @@ class MainWindow(QMainWindow):
 
                 identifier_string: str = attributes.get("Identifier")
                 pSet = PropertySet(identifier_string.split(":")[0])
-                attribute = Attribute(pSet,identifier_string.split(":")[1], attributes.get("Name"),constants.VALUE )
+                attribute = Attribute(pSet,identifier_string.split(":")[1], [attributes.get("Name")],constants.LIST )
 
                 obj = Object(attributes.get("Name"), attribute)
                 self.addObjectToTree(obj)
@@ -381,12 +461,9 @@ class MainWindow(QMainWindow):
         #Open New Window
         self.pset_window = self.openPsetWindow(propertySet)
 
-
-
     def openPsetWindow(self,propertySet:PropertySet):
         window = PropertySetWindow(propertySet)
         return window
-
 
     def deleteObject(self):
 
@@ -402,7 +479,7 @@ class MainWindow(QMainWindow):
         name = self.ui.lineEdit_object_name.text()
         pSetName = self.ui.lineEdit_ident_pSet.text()
         identName = self.ui.lineEdit_ident_attribute.text()
-        identValue = self.ui.lineEdit_ident_value.text()
+        identValue = [self.ui.lineEdit_ident_value.text()]
 
         input_list = [name, pSetName, identName, identValue]
 
@@ -434,17 +511,19 @@ class MainWindow(QMainWindow):
                     ident.value = identValue
 
                 item.setText(0,object.name)
-                item.setText(1, f"{ident.propertySet.name} : {ident.name} = {ident.value}")
+                item.setText(1, f"{ident.propertySet.name} : {ident.name} = {ident.value[0]}")
 
     def addPset(self):
         name = self.ui.lineEdit_pSet_name.text()
-
         items = self.tree.selectedItems()
+
         if len(items)==1:
             object = items[0].object
             property_set = PropertySet(name)
             property_set.object = object
-            self.ui.listWidget_pSet.addItem(QListWidgetItem(name))
+            item = QListWidgetItem(name, self.ui.listWidget_pSet)
+            item.setData(1, property_set)
+
             self.pset_window = self.openPsetWindow(property_set)
 
 

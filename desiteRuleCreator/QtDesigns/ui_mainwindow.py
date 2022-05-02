@@ -147,15 +147,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_pSet_button = QHBoxLayout()
         self.horizontalLayout_pSet_button.setObjectName(u"horizontalLayout_pSet_button")
-        self.button_Pset_update = QPushButton(self.horizontalLayout_pSet)
-        self.button_Pset_update.setObjectName(u"button_Pset_update")
+        self.button_Pset_rename = QPushButton(self.horizontalLayout_pSet)
+        self.button_Pset_rename.setObjectName(u"button_Pset_rename")
 
-        self.horizontalLayout_pSet_button.addWidget(self.button_Pset_update)
-
-        self.button_Pset_edit = QPushButton(self.horizontalLayout_pSet)
-        self.button_Pset_edit.setObjectName(u"button_Pset_edit")
-
-        self.horizontalLayout_pSet_button.addWidget(self.button_Pset_edit)
+        self.horizontalLayout_pSet_button.addWidget(self.button_Pset_rename)
 
         self.button_Pset_delete = QPushButton(self.horizontalLayout_pSet)
         self.button_Pset_delete.setObjectName(u"button_Pset_delete")
@@ -227,8 +222,7 @@ class Ui_MainWindow(object):
         self.button_objects_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.horizontalLayout_pSet.setTitle(QCoreApplication.translate("MainWindow", u"PropertySet", None))
         self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))
-        self.button_Pset_update.setText(QCoreApplication.translate("MainWindow", u"Update", None))
-        self.button_Pset_edit.setText(QCoreApplication.translate("MainWindow", u"Rename", None))
+        self.button_Pset_rename.setText(QCoreApplication.translate("MainWindow", u"Rename", None))
         self.button_Pset_delete.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
         self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))

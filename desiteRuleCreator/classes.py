@@ -1,6 +1,19 @@
 import constants
 
 
+def attributes_to_psetdict(attributes):
+    pset_dict = {}
+    for el in attributes:
+        pset = el.propertySet
+        if pset in pset_dict.keys():
+            list = pset_dict[pset]
+            list.append(el)
+        else:
+            pset_dict[pset] = [el]
+
+    return pset_dict
+
+
 class PropertySet:
     def __init__(self, name:str):
         self._name = name
@@ -35,8 +48,6 @@ class PropertySet:
         self._attributes.append(value)
 
     def remove_attribute(self, value):
-
-
         self._attributes.pop(self._attributes.index(value))
 
 
@@ -49,6 +60,15 @@ class Attribute:
         self._data_type = data_type
         self._object = None
         propertySet.add_attribute(self)
+        self._is_shared = False
+
+    @property
+    def is_shared(self):
+        return self._is_shared
+
+    @is_shared.setter
+    def is_shared(self,value:bool):
+        self._is_shared = value
 
     @property
     def object(self):
@@ -101,6 +121,7 @@ class Attribute:
         self.propertySet.remove_attribute(self)
         value.add_attribute(self)
         self._propertySet = value
+
     def is_equal(self,attribute):
         equal = True
 
@@ -116,12 +137,17 @@ class Attribute:
         if equal:
             return True
 
+    def delete(self):
+        self.object.remove_attribute(self)
+        self.propertySet.remove_attribute(self)
 
 class Group:
     def __init__(self,name):
         self._name = name
         self._objects = []
         self._parent = None
+        self._attributes = list()
+        self.identifier = name
     @property
     def name(self):
         return self._name
@@ -145,6 +171,17 @@ class Group:
     @parent.setter
     def parent(self, value):
         self._parent = value
+
+    @property
+    def attributes(self) -> list[Attribute]:
+        return self._attributes
+
+    def add_attribute(self, attribute):
+        self._attributes.append(attribute)
+        attribute.object = self
+
+    def remove_attribute(self, attribute):
+        self._attributes.remove(attribute)
 
 class Object:
     iter = dict()
@@ -199,22 +236,13 @@ class Object:
         attribute.object = self
 
     def remove_attribute(self,attribute):
-        self._attributes.pop(attribute)
+        self._attributes.remove(attribute)
 
-    def attributes_to_psetdict(self):
-        pset_dict = {}
-        for el in self._attributes:
-            pset = el.propertySet
-            if pset in pset_dict.keys():
-                list = pset_dict[pset]
-                list.append(el)
-            else: pset_dict[pset]=[el]
 
-        return pset_dict
 
     @property
     def psetNameDict(self):
-        p_set_dict = self.attributes_to_psetdict()
+        p_set_dict = attributes_to_psetdict(self._attributes)
         new_dict = {}
         for key in p_set_dict.keys():
             new_dict[key.name]=key

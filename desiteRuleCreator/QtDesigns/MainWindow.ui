@@ -148,41 +148,6 @@
         </item>
        </layout>
       </item>
-      <item>
-       <widget class="QTreeWidget" name="treeWidget_objects">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="dragDropMode">
-         <enum>QAbstractItemView::InternalMove</enum>
-        </property>
-        <property name="defaultDropAction">
-         <enum>Qt::MoveAction</enum>
-        </property>
-        <property name="alternatingRowColors">
-         <bool>false</bool>
-        </property>
-        <property name="selectionMode">
-         <enum>QAbstractItemView::ExtendedSelection</enum>
-        </property>
-        <property name="sortingEnabled">
-         <bool>true</bool>
-        </property>
-        <attribute name="headerShowSortIndicator" stdset="0">
-         <bool>true</bool>
-        </attribute>
-        <column>
-         <property name="text">
-          <string>Objects</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Identifier</string>
-         </property>
-        </column>
-       </widget>
-      </item>
      </layout>
     </item>
     <item>
@@ -215,14 +180,7 @@
          <item row="1" column="0" colspan="2">
           <layout class="QHBoxLayout" name="horizontalLayout_pSet_button">
            <item>
-            <widget class="QPushButton" name="button_Pset_update">
-             <property name="text">
-              <string>Update</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="button_Pset_edit">
+            <widget class="QPushButton" name="button_Pset_rename">
              <property name="text">
               <string>Rename</string>
              </property>

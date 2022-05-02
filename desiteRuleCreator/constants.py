@@ -1,15 +1,19 @@
-VALUE = 1
-FORMAT = 2
-RANGE = 3
-LIST = 4
+VALUE = "Value"
+FORMAT = "Format"
+RANGE = "Range"
+LIST = "List"
+
+RANGE_STRINGS= ["Range","range","RANGE"]
 
 VALUE_TYPE_LOOKUP ={
-    1:"Value",
-    2:"Format",
-    3:"Range",
-    4:"List",
-
-
+    VALUE:"Value",
+    FORMAT:"Format",
+    RANGE:"Range",
+    LIST:"List",
 }
+
+DATATYPE_NUMBER = "xs:double"
+
+
 
 TREE_DATA_POS = 2
