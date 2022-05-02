@@ -379,7 +379,7 @@ class MainWindow(QMainWindow):
         propertySet:PropertySet = item.data(1)
 
         #Open New Window
-        self.pset_window = self.openPsetWindow(item)
+        self.pset_window = self.openPsetWindow(propertySet)
 
 
 

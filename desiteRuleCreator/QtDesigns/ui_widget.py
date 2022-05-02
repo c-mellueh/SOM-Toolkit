@@ -18,13 +18,13 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QGridLayout,
     QHBoxLayout, QHeaderView, QLabel, QLineEdit,
     QPushButton, QSizePolicy, QSpacerItem, QTableWidget,
-    QTableWidgetItem, QWidget)
+    QTableWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_layout_main(object):
     def setupUi(self, layout_main):
         if not layout_main.objectName():
             layout_main.setObjectName(u"layout_main")
-        layout_main.resize(864, 255)
+        layout_main.resize(864, 238)
         self.horizontalLayout = QHBoxLayout(layout_main)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.layout_grid = QGridLayout()
@@ -66,6 +66,7 @@ class Ui_layout_main(object):
         self.combo_type.addItem("")
         self.combo_type.addItem("")
         self.combo_type.addItem("")
+        self.combo_type.addItem("")
         self.combo_type.setObjectName(u"combo_type")
 
         self.layout_grid.addWidget(self.combo_type, 2, 2, 1, 1)
@@ -74,39 +75,44 @@ class Ui_layout_main(object):
 
         self.layout_grid.addItem(self.spacer, 7, 0, 1, 1)
 
+        self.label_name = QLabel(layout_main)
+        self.label_name.setObjectName(u"label_name")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.label_name.sizePolicy().hasHeightForWidth())
+        self.label_name.setSizePolicy(sizePolicy1)
+
+        self.layout_grid.addWidget(self.label_name, 2, 0, 1, 1)
+
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
         self.layout_input = QHBoxLayout()
         self.layout_input.setObjectName(u"layout_input")
         self.lineEdit_input = QLineEdit(layout_main)
         self.lineEdit_input.setObjectName(u"lineEdit_input")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy1.setHorizontalStretch(4)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.lineEdit_input.sizePolicy().hasHeightForWidth())
-        self.lineEdit_input.setSizePolicy(sizePolicy1)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy2.setHorizontalStretch(4)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.lineEdit_input.sizePolicy().hasHeightForWidth())
+        self.lineEdit_input.setSizePolicy(sizePolicy2)
 
         self.layout_input.addWidget(self.lineEdit_input)
 
         self.button_add_line = QPushButton(layout_main)
         self.button_add_line.setObjectName(u"button_add_line")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.button_add_line.sizePolicy().hasHeightForWidth())
-        self.button_add_line.setSizePolicy(sizePolicy2)
+        sizePolicy1.setHeightForWidth(self.button_add_line.sizePolicy().hasHeightForWidth())
+        self.button_add_line.setSizePolicy(sizePolicy1)
         self.button_add_line.setMinimumSize(QSize(15, 15))
         self.button_add_line.setMaximumSize(QSize(15, 15))
 
         self.layout_input.addWidget(self.button_add_line)
 
 
-        self.layout_grid.addLayout(self.layout_input, 5, 0, 1, 5)
+        self.verticalLayout.addLayout(self.layout_input)
 
-        self.label_name = QLabel(layout_main)
-        self.label_name.setObjectName(u"label_name")
-        sizePolicy2.setHeightForWidth(self.label_name.sizePolicy().hasHeightForWidth())
-        self.label_name.setSizePolicy(sizePolicy2)
 
-        self.layout_grid.addWidget(self.label_name, 2, 0, 1, 1)
+        self.layout_grid.addLayout(self.verticalLayout, 6, 0, 1, 5)
 
 
         self.horizontalLayout.addLayout(self.layout_grid)
@@ -170,11 +176,12 @@ class Ui_layout_main(object):
 
         self.button_add.setText(QCoreApplication.translate("layout_main", u"Add", None))
         self.combo_type.setItemText(0, QCoreApplication.translate("layout_main", u"Value", None))
-        self.combo_type.setItemText(1, QCoreApplication.translate("layout_main", u"Format", None))
-        self.combo_type.setItemText(2, QCoreApplication.translate("layout_main", u"Range", None))
+        self.combo_type.setItemText(1, QCoreApplication.translate("layout_main", u"List", None))
+        self.combo_type.setItemText(2, QCoreApplication.translate("layout_main", u"Format", None))
+        self.combo_type.setItemText(3, QCoreApplication.translate("layout_main", u"Range", None))
 
-        self.button_add_line.setText(QCoreApplication.translate("layout_main", u"+", None))
         self.label_name.setText(QCoreApplication.translate("layout_main", u"Name", None))
+        self.button_add_line.setText(QCoreApplication.translate("layout_main", u"+", None))
         ___qtablewidgetitem = self.table_widget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("layout_main", u"Name", None));
         ___qtablewidgetitem1 = self.table_widget.horizontalHeaderItem(1)
@@ -186,14 +193,6 @@ class Ui_layout_main(object):
 
         __sortingEnabled = self.table_widget.isSortingEnabled()
         self.table_widget.setSortingEnabled(False)
-        ___qtablewidgetitem4 = self.table_widget.item(0, 0)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("layout_main", u"Test", None));
-        ___qtablewidgetitem5 = self.table_widget.item(0, 1)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("layout_main", u"1", None));
-        ___qtablewidgetitem6 = self.table_widget.item(0, 2)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("layout_main", u"2", None));
-        ___qtablewidgetitem7 = self.table_widget.item(0, 3)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("layout_main", u"3", None));
         self.table_widget.setSortingEnabled(__sortingEnabled)
 
     # retranslateUi

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>864</width>
-    <height>255</height>
+    <height>238</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,6 +76,11 @@
        </item>
        <item>
         <property name="text">
+         <string>List</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Format</string>
         </property>
        </item>
@@ -99,45 +104,6 @@
        </property>
       </spacer>
      </item>
-     <item row="5" column="0" colspan="5">
-      <layout class="QHBoxLayout" name="layout_input">
-       <item>
-        <widget class="QLineEdit" name="lineEdit_input">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>4</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="button_add_line">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>15</width>
-           <height>15</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>15</width>
-           <height>15</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>+</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_name">
        <property name="sizePolicy">
@@ -150,6 +116,49 @@
         <string>Name</string>
        </property>
       </widget>
+     </item>
+     <item row="6" column="0" colspan="5">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QHBoxLayout" name="layout_input">
+         <item>
+          <widget class="QLineEdit" name="lineEdit_input">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>4</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="button_add_line">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>15</width>
+             <height>15</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>15</width>
+             <height>15</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>+</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -233,22 +242,22 @@
      </column>
      <item row="0" column="0">
       <property name="text">
-       <string>Test</string>
+       <string/>
       </property>
      </item>
      <item row="0" column="1">
       <property name="text">
-       <string>1</string>
+       <string/>
       </property>
      </item>
      <item row="0" column="2">
       <property name="text">
-       <string>2</string>
+       <string/>
       </property>
      </item>
      <item row="0" column="3">
       <property name="text">
-       <string>3</string>
+       <string/>
       </property>
      </item>
     </widget>
