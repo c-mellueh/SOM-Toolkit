@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMessageBox,QInputDialog,QLineEdit
+from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit
 
 
 def msg_already_exists(icon):
@@ -7,9 +7,9 @@ def msg_already_exists(icon):
     msgBox.setWindowTitle(" ")
     msgBox.setIcon(QMessageBox.Icon.Warning)
 
-
     msgBox.setWindowIcon(icon)
     msgBox.exec()
+
 
 def msg_missing_input(icon):
     msgBox = QMessageBox()
@@ -19,6 +19,7 @@ def msg_missing_input(icon):
 
     msgBox.setWindowIcon(icon)
     msgBox.exec()
+
 
 def msg_unsaved(icon):
     msgBox = QMessageBox()
@@ -32,6 +33,7 @@ def msg_unsaved(icon):
         return True
     else:
         return False
+
 
 def msg_delete_or_merge(icon):
     msgBox = QMessageBox()
@@ -51,6 +53,7 @@ def msg_delete_or_merge(icon):
     else:
         return None
 
+
 def msg_close(icon):
     text = "Do you want to save before exit?"
 
@@ -63,6 +66,7 @@ def msg_close(icon):
     reply = msgBox.exec()
     return reply
 
+
 def msg_del_ident_pset(icon):
     msgBox = QMessageBox()
     msgBox.setText("can't delete Pset of Identifier!")
@@ -71,7 +75,8 @@ def msg_del_ident_pset(icon):
     msgBox.setWindowIcon(icon)
     msgBox.exec()
 
+
 def req_group_name(mainWindow):
     title = "Group Name"
-    text =  "Input Name of new Group"
-    return QInputDialog.getText(mainWindow, title,text, echo=QLineEdit.EchoMode.Normal,text="")[0]
+    text = "Input Name of new Group"
+    return QInputDialog.getText(mainWindow, title, text, echo=QLineEdit.EchoMode.Normal, text="")[0]

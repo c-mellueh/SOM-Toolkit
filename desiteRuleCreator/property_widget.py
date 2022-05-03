@@ -1,11 +1,13 @@
-from . import constants
-from .classes import PropertySet,CustomTreeItem,attributes_to_psetdict,identifier_tree_text
-from PySide6.QtWidgets import QTableWidgetItem,QListWidgetItem,QAbstractScrollArea
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea
+
+from . import constants
+from .classes import PropertySet, CustomTreeItem, attributes_to_psetdict, identifier_tree_text
 from .io_messages import msg_del_ident_pset
 from .propertyset_window import PropertySetWindow
 
-def init (self):
+
+def init(self):
     self.pset_table = self.ui.tableWidget_inherited
     self.pset_table.itemClicked.connect(self.listObjectClicked)
     self.pset_table.itemDoubleClicked.connect(self.listObjectDoubleClicked)
@@ -21,18 +23,19 @@ def init (self):
 
 
 def clear_all(mainWindow):
-
     for row in range(mainWindow.pset_table.rowCount()):
         mainWindow.pset_table.removeRow(row)
     mainWindow.ui.lineEdit_pSet_name.clear()
     mainWindow.set_pset_window_enable(False)
+
 
 def delete(mainWindow):
     list_item = mainWindow.pset_table.selectedItems()
     object = mainWindow.tree.selectedItems()[0].object
 
     if not bool([el for el in list_item if
-                 el.data(constants.DATA_POS) == object.identifier.propertySet]):  # wenn sich der Identifier nicht im Pset befindet
+                 el.data(
+                     constants.DATA_POS) == object.identifier.propertySet]):  # wenn sich der Identifier nicht im Pset befindet
 
         for el in list_item:
             el: QTableWidgetItem = el
@@ -46,6 +49,7 @@ def delete(mainWindow):
 
     else:
         msg_del_ident_pset(mainWindow.icon)
+
 
 def rename(mainWindow):
     new_name = mainWindow.ui.lineEdit_pSet_name.text()
@@ -61,12 +65,14 @@ def rename(mainWindow):
         tree_item.setText(1, identifier_tree_text(object))
     mainWindow.pset_table.resizeColumnsToContents()
 
-def text_changed(mainWindow,text):
-    if mainWindow.pset_table.findItems(text,Qt.MatchFlag.MatchExactly):
+
+def text_changed(mainWindow, text):
+    if mainWindow.pset_table.findItems(text, Qt.MatchFlag.MatchExactly):
         button_text = "Update"
     else:
         button_text = "Add"
     mainWindow.ui.button_Pset_add.setText(button_text)
+
 
 def set_enable(mainWindow, value: bool):
     for button in mainWindow.pset_buttons:
@@ -81,13 +87,13 @@ def set_enable(mainWindow, value: bool):
         mainWindow.pset_table.setRowCount(0)
         mainWindow.ui.lineEdit_pSet_name.setText("")
 
-def fill_table(mainWindow, item:CustomTreeItem, obj):
+
+def fill_table(mainWindow, item: CustomTreeItem, obj):
     mainWindow.set_pset_window_enable(True)
     mainWindow.ui.horizontalLayout_pSet.setTitle(f"PropertySet {obj.name}")
     mainWindow.pset_table.setRowCount(0)
     own_psets = attributes_to_psetdict(obj.attributes)
     table_length = len(own_psets)
-
 
     # find inherited Psets
     if item.parent() is not None:
@@ -98,7 +104,7 @@ def fill_table(mainWindow, item:CustomTreeItem, obj):
             inherited_psets[obj] = attributes_to_psetdict(attributes)
             table_length += len(inherited_psets[obj])
 
-    mainWindow.pset_table.setRowCount(table_length) #Prepare Table
+    mainWindow.pset_table.setRowCount(table_length)  # Prepare Table
 
     for i, el in enumerate(own_psets.keys()):
         table_item = QTableWidgetItem(el.name)
@@ -128,6 +134,7 @@ def left_click(mainWindow, item: QListWidgetItem):
     propertySet: PropertySet = item.data(constants.DATA_POS)
     mainWindow.ui.lineEdit_pSet_name.setText(propertySet.name)
 
+
 def double_click(mainWindow, item: QTableWidgetItem):
     mainWindow.listObjectClicked(item)
     print(item.row())
@@ -137,9 +144,11 @@ def double_click(mainWindow, item: QTableWidgetItem):
     # Open New Window
     mainWindow.pset_window = mainWindow.openPsetWindow(propertySet)
 
+
 def openPsetWindow(propertySet: PropertySet):
     window = PropertySetWindow(propertySet)
     return window
+
 
 def addPset(mainWindow):
     name = mainWindow.ui.lineEdit_pSet_name.text()

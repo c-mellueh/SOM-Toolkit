@@ -1,13 +1,14 @@
-from .classes import Object,CustomTreeItem,Group,PropertySet,Attribute,identifier_tree_text,CustomTree
+from PySide6.QtCore import QPoint, Qt, QCoreApplication
+from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView
+
+from . import property_widget, constants, io_messages
+from .classes import Object, CustomTreeItem, Group, PropertySet, Attribute, identifier_tree_text, CustomTree
 from .io_messages import req_group_name
-from . import property_widget,constants,io_messages
-from PySide6.QtCore import QPoint,Qt,QCoreApplication
-from PySide6.QtWidgets import QMenu,QTreeWidget,QAbstractItemView
+
 
 def init(self):
-
-    def init_tree(tree:CustomTree):
-        #Design Tree
+    def init_tree(tree: CustomTree):
+        # Design Tree
         tree.setObjectName(u"treeWidget_objects")
         tree.setDragDropMode(QAbstractItemView.InternalMove)
         tree.setDefaultDropAction(Qt.MoveAction)
@@ -19,12 +20,11 @@ def init(self):
         tree.setContextMenuPolicy(Qt.CustomContextMenu)
         tree.viewport().setAcceptDrops(True)
 
-
         ___qtreewidgetitem = tree.headerItem()
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objects", None));
 
-    def connect_items (self):
+    def connect_items(self):
         self.tree.itemClicked.connect(self.treeObjectClicked)
         self.tree.itemDoubleClicked.connect(self.object_double_clicked)
         self.tree.customContextMenuRequested.connect(self.right_click)
@@ -42,24 +42,25 @@ def init(self):
                                self.ui.lineEdit_ident_attribute,
                                self.ui.lineEdit_ident_pSet, ]
 
+
 def clear_object_input(mainWindow):
     for el in mainWindow.obj_line_edit_list:
         el.clear()
 
-def clear_all(mainWindow):
 
-    #Clean Widget
+def clear_all(mainWindow):
+    # Clean Widget
     clear_object_input(mainWindow)
     mainWindow.tree.clear()
 
-    #Delete Attributes & Objects
+    # Delete Attributes & Objects
     for object in Object.iter.values():
         for attribute in object.attributes:
             attribute.delete()
     Object.iter = dict()
 
-def right_click(mainWindow, position:QPoint):
 
+def right_click(mainWindow, position: QPoint):
     menu = QMenu()
     mainWindow.action_group_objects = menu.addAction("Group")
     mainWindow.action_delete_objects = menu.addAction("Delete")
@@ -72,16 +73,18 @@ def right_click(mainWindow, position:QPoint):
     mainWindow.action_collapse_selection.triggered.connect(mainWindow.rc_collapse)
     menu.exec(mainWindow.tree.viewport().mapToGlobal(position))
 
-def rc_collapse(tree:QTreeWidget):
+
+def rc_collapse(tree: QTreeWidget):
     for item in tree.selectedItems():
         tree.collapseItem(item)
 
-def rc_expand(tree:QTreeWidget):
+
+def rc_expand(tree: QTreeWidget):
     for item in tree.selectedIndexes():
         tree.expandRecursively(item)
 
-def rc_group_items(mainWindow):
 
+def rc_group_items(mainWindow):
     def get_level(item):
         if item is not None:
             counter = 0
@@ -95,7 +98,7 @@ def rc_group_items(mainWindow):
 
     group_name = req_group_name(mainWindow)
 
-    if group_name:                                      #i guess there is a better solution TODO: find one
+    if group_name:  # i guess there is a better solution TODO: find one
         root = mainWindow.tree.invisibleRootItem()
         selected_items = mainWindow.tree.selectedItems()
 
@@ -134,11 +137,12 @@ def rc_group_items(mainWindow):
         if isinstance(parent, CustomTreeItem):
             group.object.parent = parent.object
 
-def double_click(mainWindow,item:CustomTreeItem):
 
+def double_click(mainWindow, item: CustomTreeItem):
     obj: Object = item.object
     mainWindow.active_object = obj
-    property_widget.fill_table(mainWindow,item,obj)
+    property_widget.fill_table(mainWindow, item, obj)
+
 
 def setIdentLineEnable(mainWindow, value: bool):
     mainWindow.ui.lineEdit_ident_pSet.setEnabled(value)
@@ -149,6 +153,7 @@ def setIdentLineEnable(mainWindow, value: bool):
     mainWindow.ui.lineEdit_ident_attribute.setText(" ")
     mainWindow.ui.lineEdit_ident_value.setText(" ")
     mainWindow.ui.label_Ident.setVisible(value)
+
 
 def single_click(mainWindow):
     def all_equal(iterator):
@@ -189,6 +194,7 @@ def single_click(mainWindow):
                 key.setText(item[0])
             else:
                 key.setText("*")
+
 
 def addObject(mainWindow):
     def missing_input(input_list):
@@ -232,8 +238,8 @@ def addObject(mainWindow):
     else:
         io_messages.msg_missing_input(mainWindow.icon)
 
-def addObjectToTree(mainWindow, obj: Object, parent=None):
 
+def addObjectToTree(mainWindow, obj: Object, parent=None):
     if parent is None:
         item = CustomTreeItem(mainWindow.tree, obj)
 
@@ -244,14 +250,15 @@ def addObjectToTree(mainWindow, obj: Object, parent=None):
     item.setText(1, identifier_tree_text(obj))
     return item
 
-def deleteObject(mainWindow):
 
+def deleteObject(mainWindow):
     root = mainWindow.tree.invisibleRootItem()
     for item in mainWindow.tree.selectedItems():
         obj = item.object
 
         obj.delete()
         (item.parent() or root).removeChild(item)
+
 
 def updateObject(mainWindow):
     name = mainWindow.ui.lineEdit_object_name.text()
@@ -263,10 +270,10 @@ def updateObject(mainWindow):
     selected_items = mainWindow.tree.selectedItems()
 
     for item in selected_items:
-        if isinstance(item.object,Group):
-            obj:Group = item.object
+        if isinstance(item.object, Group):
+            obj: Group = item.object
             obj.name = name
-            item.setText(0,name)
+            item.setText(0, name)
             return
         else:
             empty_input = False
@@ -295,15 +302,3 @@ def updateObject(mainWindow):
 
                     item.setText(0, object.name)
                     item.setText(1, f"{ident.propertySet.name} : {ident.name} = {ident.value[0]}")
-
-
-
-
-
-
-
-
-
-
-
-
