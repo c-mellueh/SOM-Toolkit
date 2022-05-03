@@ -1,6 +1,3 @@
-import constants
-
-
 def attributes_to_psetdict(attributes):
     pset_dict = {}
     for el in attributes:

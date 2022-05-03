@@ -1,19 +1,44 @@
 from lxml import etree
-import os
-from classes import Attribute,Object,PropertySet
+from . import __version__ as project_version
+from PySide6.QtWidgets import QFileDialog,QInputDialog,QLineEdit
+from .io_messages import msg_unsaved
 
-def openOldFile(path):
-    tree = etree.parse(path)
-    projekt_xml = tree.getroot()
-    attributes = projekt_xml.attrib
+def save_as_clicked(window):
+    if window.save_path is not None:
+        path = \
+            QFileDialog.getSaveFileName(window, "Save XML", window.save_path, "xml Files (*.xml *.DRCxml)")[0]
+    else:
+        path = QFileDialog.getSaveFileName(window, "Save XML", "", "xml Files (*.xml *.DRCxml)")[0]
 
-    for xml_objects in projekt_xml:
-        if (xml_objects.tag == "Objekt"):
-            attributes = xml_objects.attrib
+    if path:
+        window.save(path)
+    return path
 
-            identifier_string:str = attributes.get("Identifier")
-            pSet = PropertySet(identifier_string.split(":")[0])
-            attribute = Attribute(identifier_string.split(":")[1],attributes.get("Name"),pSet)
+def save(self, path):
+    project = etree.Element('Project')
+    project.set("name", self.project_name)
+    project.set("version", project_version)
 
-            obj = Object(attributes.get("Name"),attribute)
+    # TODO
+    self.save_path = path
+    print(f"Path: {path}")
+
+def save_clicked(window):
+    if window.save_path is None:
+        path = window.save_as_clicked()
+    else:
+        save(window.save_path)
+        path = window.save_path
+    return path
+
+def new_file(self):
+    new_file = msg_unsaved(self.icon)
+    if new_file:
+
+        project_name = QInputDialog.getText(self, "New Project", "new Project Name:",QLineEdit.Normal, "")
+
+        if project_name[1]:
+            self.setWindowTitle(project_name[0])
+            self.project_name = project_name[0]
+            self.clear_all()
 

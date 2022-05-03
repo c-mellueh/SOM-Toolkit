@@ -1,9 +1,9 @@
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import QSize,QModelIndex,Qt
 from PySide6.QtWidgets import QTableWidgetItem, QHBoxLayout, QLineEdit,QPushButton,QSizePolicy,QMessageBox, QMenu
-from QtDesigns.ui_widget import Ui_layout_main
-from classes import PropertySet,Attribute
-import constants
+from .QtDesigns.ui_widget import Ui_layout_main
+from .classes import PropertySet,Attribute
+from . import constants
 
 def make_string_printable(value):
     value = str(value).replace(".",",")
@@ -19,7 +19,6 @@ class PropertySetWindow(QtWidgets.QWidget):
         super(PropertySetWindow, self).__init__()
         self.widget = Ui_layout_main()
         self.widget.setupUi(self)
-        self.show()
         self.property_set = property_set
         self.widget.table_widget.data_dict = dict()
         self.fill_table()
@@ -40,6 +39,8 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.widget.table_widget.customContextMenuRequested.connect(self.openMenu)
         icon = QtGui.QIcon(constants.ICON_PATH)
         self.setWindowIcon(icon)
+        self.show()
+        self.resize(1000,400)
     def delete_selection(self):
         selected_items = self.widget.table_widget.selectedItems()
         selected_rows = []
@@ -108,8 +109,6 @@ class PropertySetWindow(QtWidgets.QWidget):
                 el.setValidator(validator)
 
     def text_changed(self,text):
-
-
         name_match = len([x for x in self.property_set.attributes if x.name == text])>0
         if name_match:
             self.widget.button_add.setText("Update")
@@ -174,8 +173,6 @@ class PropertySetWindow(QtWidgets.QWidget):
             row = item.row()
             fill_table_line(row,attribute)
 
-
-
         def add_attribute():
             name = self.widget.lineEdit_name.text()
             values = get_values()
@@ -195,7 +192,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                 update_attribute(attribute)
                 already_exists = True
 
-        if not already_exists:
+        if not already_exists and self.widget.lineEdit_name.text():
             add_attribute()
 
         self.clear_lines()

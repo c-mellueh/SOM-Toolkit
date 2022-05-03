@@ -16,16 +16,17 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QGridLayout, QGroupBox, QHBoxLayout,
-    QHeaderView, QLabel, QLineEdit, QMainWindow,
-    QMenu, QMenuBar, QPushButton, QSizePolicy,
-    QStatusBar, QTableWidget, QTableWidgetItem, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QGroupBox,
+    QHBoxLayout, QHeaderView, QLabel, QLineEdit,
+    QMainWindow, QMenu, QMenuBar, QPushButton,
+    QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
+        MainWindow.resize(1161, 525)
         MainWindow.setMinimumSize(QSize(0, 0))
         self.action_file_new = QAction(MainWindow)
         self.action_file_new.setObjectName(u"action_file_new")
@@ -192,6 +193,8 @@ class Ui_MainWindow(object):
         sizePolicy2.setHeightForWidth(self.tableWidget_inherited.sizePolicy().hasHeightForWidth())
         self.tableWidget_inherited.setSizePolicy(sizePolicy2)
         self.tableWidget_inherited.setFocusPolicy(Qt.StrongFocus)
+        self.tableWidget_inherited.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableWidget_inherited.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableWidget_inherited.setSortingEnabled(True)
         self.tableWidget_inherited.horizontalHeader().setProperty("showSortIndicator", True)
         self.tableWidget_inherited.verticalHeader().setVisible(False)
