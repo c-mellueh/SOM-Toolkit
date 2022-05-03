@@ -1,3 +1,10 @@
+from PySide6.QtWidgets import QTreeWidget,QTreeWidgetItem,QAbstractItemView
+from PySide6.QtGui import QDropEvent
+
+def identifier_tree_text(object):
+    text = f"{object.identifier.propertySet.name} : {object.identifier.name} = {object.identifier.value[0]}"
+    return text
+
 def attributes_to_psetdict(attributes):
     pset_dict = {}
     for el in attributes:
@@ -281,6 +288,46 @@ class Object:
     def delete(self):
         self.iter.pop(self.identifier)
 
+
+class CustomTree(QTreeWidget):
+    def __init__(self, layout):
+        super(CustomTree, self).__init__(layout)
+
+    def dropEvent(self, event:QDropEvent) -> None:
+
+        selected_items = self.selectedItems()
+
+        if self.dropIndicatorPosition() == QAbstractItemView.DropIndicatorPosition.OnItem:
+            droped_on_item = self.itemFromIndex(self.indexAt(event.pos()))
+            object = droped_on_item.object
+
+            if isinstance(object, Group):
+                super(CustomTree, self).dropEvent(event)
+
+        else:
+            super(CustomTree, self).dropEvent(event)
+
+        for el in selected_items:
+            object = el.object
+            parent = el.parent()
+            if parent is not None:
+                object.parent = parent.object
+            else:
+                object.parent = None
+
+
+class CustomTreeItem(QTreeWidgetItem):
+    def __init__(self, tree, object):
+        super(CustomTreeItem, self).__init__(tree)
+        self._object = object
+
+    def addChild(self, child: QTreeWidgetItem) -> None:
+        super(CustomTreeItem, self).addChild(child)
+        self._object.add_child(child.object)
+
+    @property
+    def object(self):
+        return self._object
 
 
 

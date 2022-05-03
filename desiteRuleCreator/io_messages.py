@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QMessageBox
+from PySide6.QtWidgets import QMessageBox,QInputDialog,QLineEdit
+
 
 def msg_already_exists(icon):
     msgBox = QMessageBox()
@@ -61,3 +62,16 @@ def msg_close(icon):
     msgBox.setWindowIcon(icon)
     reply = msgBox.exec()
     return reply
+
+def msg_del_ident_pset(icon):
+    msgBox = QMessageBox()
+    msgBox.setText("can't delete Pset of Identifier!")
+    msgBox.setWindowTitle(" ")
+    msgBox.setIcon(QMessageBox.Icon.Warning)
+    msgBox.setWindowIcon(icon)
+    msgBox.exec()
+
+def req_group_name(mainWindow):
+    title = "Group Name"
+    text =  "Input Name of new Group"
+    return QInputDialog.getText(mainWindow, title,text, echo=QLineEdit.EchoMode.Normal,text="")[0]
