@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QTreeWidget,QTreeWidgetItem,QAbstractItemView
 from PySide6.QtGui import QDropEvent
+from uuid import uuid4
 
 def identifier_tree_text(object):
     text = f"{object.identifier.propertySet.name} : {object.identifier.name} = {object.identifier.value[0]}"
@@ -162,13 +163,15 @@ class Attribute:
         self.propertySet.remove_attribute(self)
 
 class Group:
+    iter = dict()
     def __init__(self,name):
         self._name = name
         self._objects = []
         self._parent = None
         self._attributes = list()
-        self.identifier = name
+        self.identifier = uuid4()
         self._inherited_attributes = None
+        self.iter[self.identifier] = self
 
     @property
     def inherited_attributes(self) -> list:
@@ -210,6 +213,7 @@ class Group:
         self._attributes.remove(attribute)
 
     def delete(self):
+        self.iter.pop(self.identifier)
         pass
 
 class Object:

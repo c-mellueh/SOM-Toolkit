@@ -7,6 +7,7 @@ from .classes import Group, Object, PropertySet, Attribute, CustomTreeItem
 from .io_messages import msg_delete_or_merge
 from .io_messages import msg_unsaved, msg_close
 
+#from .run import MainWindow
 
 def importData(widget, path=False):
     def transform_values(xml_object, value_type):
@@ -106,20 +107,62 @@ def save_as_clicked(mainWindow):
 
 
 def save(mainWindow, path):
+
+    def add_attributes(object,xml_object):
+        for attribute in object.attributes:
+            xml_attribute = etree.SubElement(xml_object,"Attribute")
+            xml_attribute.set("name",attribute.name)
+            xml_attribute.set("propertySet",attribute.propertySet.name)
+            xml_attribute.set("data_typ",attribute.data_type)
+            xml_attribute.set("value_typ",attribute.value_type)
+            if attribute == object.identifier:
+                ident = "True"
+            else:
+                ident = "False"
+            xml_attribute.set("is_identifier", ident)
+
+            for value in attribute.value:
+                xml_value = etree.SubElement(xml_attribute,"Value")
+                if attribute.value_type == constants.RANGE:
+                    xml_from = etree.SubElement(xml_value,"From")
+                    xml_to = etree.SubElement(xml_value,"To")
+                    xml_from.text = str(value[0])
+                    if len (value)>1:
+                        xml_to.text = str(value[1])
+                else:
+                    xml_value.text = str(value)
     project = etree.Element('Project')
     project.set("name", mainWindow.project_name)
     project.set("version", project_version)
 
+
+
     # TODO
     mainWindow.save_path = path
-    print(f"Path: {path}")
+
+    for group in Group.iter.values():
+        xml_group = etree.SubElement(project,"Group")
+        xml_group.set("name",group.name)
+        xml_group.set("identifier",str(group.identifier))
+        add_attributes(group,xml_group)
+
+    for obj in Object.iter.values():
+        xml_object= etree.SubElement(project,"Object")
+        xml_object.set("name",obj.name)
+        add_attributes(obj,xml_object)
+
+
+    tree = etree.ElementTree(project)
+
+    with open(path,"wb") as f:
+        tree.write(f, pretty_print=True, encoding="utf-8", xml_declaration=True)
 
 
 def save_clicked(mainWindow):
     if mainWindow.save_path is None:
         path = mainWindow.save_as_clicked()
     else:
-        save(mainWindow.save_path)
+        save(mainWindow,mainWindow.save_path)
         path = mainWindow.save_path
     return path
 
