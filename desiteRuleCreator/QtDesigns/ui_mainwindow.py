@@ -17,17 +17,18 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QGridLayout, QGroupBox, QHBoxLayout,
-    QLabel, QLineEdit, QListWidget, QListWidgetItem,
-    QMainWindow, QMenu, QMenuBar, QPushButton,
-    QSizePolicy, QStatusBar, QVBoxLayout, QWidget)
+    QHeaderView, QLabel, QLineEdit, QMainWindow,
+    QMenu, QMenuBar, QPushButton, QSizePolicy,
+    QStatusBar, QTableWidget, QTableWidgetItem, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1020, 400)
-        self.action_file_Import_File = QAction(MainWindow)
-        self.action_file_Import_File.setObjectName(u"action_file_Import_File")
+        MainWindow.setMinimumSize(QSize(0, 0))
+        self.action_file_new = QAction(MainWindow)
+        self.action_file_new.setObjectName(u"action_file_new")
         self.action_file_Save = QAction(MainWindow)
         self.action_file_Save.setObjectName(u"action_file_Save")
         self.action_file_Save_As = QAction(MainWindow)
@@ -142,6 +143,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_pSet_name = QLineEdit(self.horizontalLayout_pSet)
         self.lineEdit_pSet_name.setObjectName(u"lineEdit_pSet_name")
+        self.lineEdit_pSet_name.setFrame(False)
 
         self.gridLayout_pSet.addWidget(self.lineEdit_pSet_name, 0, 1, 1, 1)
 
@@ -168,10 +170,34 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addLayout(self.gridLayout_pSet)
 
-        self.listWidget_pSet = QListWidget(self.horizontalLayout_pSet)
-        self.listWidget_pSet.setObjectName(u"listWidget_pSet")
+        self.tableWidget_inherited = QTableWidget(self.horizontalLayout_pSet)
+        if (self.tableWidget_inherited.columnCount() < 2):
+            self.tableWidget_inherited.setColumnCount(2)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.tableWidget_inherited.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        self.tableWidget_inherited.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        if (self.tableWidget_inherited.rowCount() < 1):
+            self.tableWidget_inherited.setRowCount(1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.tableWidget_inherited.setVerticalHeaderItem(0, __qtablewidgetitem2)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        self.tableWidget_inherited.setItem(0, 0, __qtablewidgetitem3)
+        __qtablewidgetitem4 = QTableWidgetItem()
+        self.tableWidget_inherited.setItem(0, 1, __qtablewidgetitem4)
+        self.tableWidget_inherited.setObjectName(u"tableWidget_inherited")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.tableWidget_inherited.sizePolicy().hasHeightForWidth())
+        self.tableWidget_inherited.setSizePolicy(sizePolicy2)
+        self.tableWidget_inherited.setFocusPolicy(Qt.StrongFocus)
+        self.tableWidget_inherited.setSortingEnabled(True)
+        self.tableWidget_inherited.horizontalHeader().setProperty("showSortIndicator", True)
+        self.tableWidget_inherited.verticalHeader().setVisible(False)
+        self.tableWidget_inherited.verticalHeader().setCascadingSectionResizes(False)
 
-        self.verticalLayout_2.addWidget(self.listWidget_pSet)
+        self.verticalLayout_2.addWidget(self.tableWidget_inherited)
 
 
         self.horizontalLayout_2.addWidget(self.horizontalLayout_pSet)
@@ -179,7 +205,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.verticalLayout_main)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1020, 18))
+        self.menubar.setGeometry(QRect(0, 0, 1161, 18))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuDesite = QMenu(self.menubar)
@@ -191,7 +217,7 @@ class Ui_MainWindow(object):
 
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuDesite.menuAction())
-        self.menuFile.addAction(self.action_file_Import_File)
+        self.menuFile.addAction(self.action_file_new)
         self.menuFile.addAction(self.action_file_Save)
         self.menuFile.addAction(self.action_file_Save_As)
         self.menuFile.addAction(self.action_file_Open)
@@ -205,7 +231,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.action_file_Import_File.setText(QCoreApplication.translate("MainWindow", u"New", None))
+        self.action_file_new.setText(QCoreApplication.translate("MainWindow", u"New", None))
         self.action_file_Save.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.action_file_Save_As.setText(QCoreApplication.translate("MainWindow", u"Save As ...", None))
         self.action_file_Open.setText(QCoreApplication.translate("MainWindow", u"Open", None))
@@ -225,6 +251,21 @@ class Ui_MainWindow(object):
         self.button_Pset_rename.setText(QCoreApplication.translate("MainWindow", u"Rename", None))
         self.button_Pset_delete.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
         self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
+        ___qtablewidgetitem = self.tableWidget_inherited.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"PropertySet", None));
+        ___qtablewidgetitem1 = self.tableWidget_inherited.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"InheritedBy", None));
+        ___qtablewidgetitem2 = self.tableWidget_inherited.verticalHeaderItem(0)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Test", None));
+
+        __sortingEnabled = self.tableWidget_inherited.isSortingEnabled()
+        self.tableWidget_inherited.setSortingEnabled(False)
+        ___qtablewidgetitem3 = self.tableWidget_inherited.item(0, 0)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"BestandsdatenqVerkehrsanlagen", None));
+        ___qtablewidgetitem4 = self.tableWidget_inherited.item(0, 1)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Verkehrsanlagen", None));
+        self.tableWidget_inherited.setSortingEnabled(__sortingEnabled)
+
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuDesite.setTitle(QCoreApplication.translate("MainWindow", u"Desite", None))
     # retranslateUi

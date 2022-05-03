@@ -38,6 +38,8 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         self.widget.table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.widget.table_widget.customContextMenuRequested.connect(self.openMenu)
+        icon = QtGui.QIcon(constants.ICON_PATH)
+        self.setWindowIcon(icon)
     def delete_selection(self):
         selected_items = self.widget.table_widget.selectedItems()
         selected_rows = []

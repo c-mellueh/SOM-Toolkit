@@ -1,7 +1,7 @@
 from QtDesigns.ui_mainwindow import Ui_MainWindow
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow,QTreeWidgetItem,QMessageBox,QFileDialog,QListWidgetItem, QMenu,QInputDialog,QTreeWidget
-from PySide6 import QtCore,QtWidgets
+from PySide6.QtWidgets import QApplication,QPushButton, QMainWindow,QTreeWidgetItem,QMessageBox,QFileDialog,QListWidgetItem, QMenu,QInputDialog,QTreeWidget,QTableWidgetItem,QTableWidget
+from PySide6 import QtCore,QtWidgets,QtGui
 from classes import Object,PropertySet,Attribute,Group, attributes_to_psetdict
 import PySide6
 import constants
@@ -9,6 +9,10 @@ from lxml import etree
 
 
 from propertyset_window import  PropertySetWindow
+
+def identifier_tree_text(object:Object):
+    text = f"{object.identifier.propertySet.name} : {object.identifier.name} = {object.identifier.value[0]}"
+    return text
 
 def get_level(item):
 
@@ -24,6 +28,7 @@ def get_level(item):
     return counter
 
 def already_exists(ident):
+
     for key in Object.iter.keys():
         if (key.is_equal(ident)):
             return True
@@ -34,6 +39,9 @@ def already_exists_warning():
     msgBox.setText("Object exists already!")
     msgBox.setWindowTitle(" ")
     msgBox.setIcon(QMessageBox.Icon.Warning)
+
+    icon = QtGui.QIcon(constants.ICON_PATH)
+    msgBox.setWindowIcon(icon)
     msgBox.exec()
 
 def missing_input(input_list):
@@ -47,15 +55,46 @@ def missing_input_warning():
     msgBox.setText("Object informations are missing!")
     msgBox.setWindowTitle(" ")
     msgBox.setIcon(QMessageBox.Icon.Warning)
+    icon = QtGui.QIcon(constants.ICON_PATH)
+    msgBox.setWindowIcon(icon)
     msgBox.exec()
 
+def loose_unsaved_warning():
+    msgBox = QMessageBox()
+    msgBox.setText("Warning, unsafed progress will be lost!")
+    msgBox.setWindowTitle(" ")
+    msgBox.setIcon(QMessageBox.Icon.Warning)
+    msgBox.setStandardButtons(QMessageBox.Ok|QMessageBox.Cancel)
+    msgBox.setDefaultButton(QMessageBox.Ok)
+    icon = QtGui.QIcon(constants.ICON_PATH)
+    msgBox.setWindowIcon(icon)
+    if msgBox.exec() == msgBox.Ok:
+        return True
+    else:
+        return False
 
+def delete_or_merge():
+    msgBox = QMessageBox()
+    msgBox.setText("Warning, there is allready exisiting data!\n do you want to delete or merge?")
+    msgBox.setWindowTitle(" ")
+    msgBox.setIcon(QMessageBox.Icon.Warning)
+
+    msgBox.setStandardButtons(QMessageBox.Cancel)
+    merge_button= msgBox.addButton("Merge",QMessageBox.NoRole)
+    delete_button:QPushButton = msgBox.addButton("Delete",QMessageBox.YesRole)
+    icon = QtGui.QIcon(constants.ICON_PATH)
+    msgBox.setWindowIcon(icon)
+    msgBox.exec()
+    if msgBox.clickedButton() == merge_button:
+        return False
+    elif msgBox.clickedButton() == delete_button:
+        return True
+    else:
+        return None
 
 class CustomTree(QTreeWidget):
     def __init__(self,layout):
         super(CustomTree, self).__init__(layout)
-
-
 
     def dropEvent(self, event:PySide6.QtGui.QDropEvent) -> None:
 
@@ -90,8 +129,6 @@ class CustomTreeItem(QTreeWidgetItem):
         super(CustomTreeItem, self).addChild(child)
         self._object.add_child(child.object)
 
-
-
     @property
     def object(self):
         return self._object
@@ -101,6 +138,10 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.icon = QtGui.QIcon(constants.ICON_PATH)
+
+        self.setWindowIcon(self.icon)
+
         self.tree = CustomTree(self.ui.verticalLayout_main)
         self.tree.setObjectName(u"treeWidget_objects")
         self.tree.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
@@ -108,6 +149,7 @@ class MainWindow(QMainWindow):
         self.tree.setAlternatingRowColors(False)
         self.tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.tree.setSortingEnabled(True)
+        self.tree.setExpandsOnDoubleClick(False)
 
         self.ui.verticalLayout_objects.addWidget(self.tree)
         ___qtreewidgetitem = self.tree.headerItem()
@@ -119,40 +161,121 @@ class MainWindow(QMainWindow):
         self.tree.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.InternalMove)
         self.tree.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.tree.customContextMenuRequested.connect(self.openMenu)
+        self.tree.viewport().setAcceptDrops(True)
 
 
-        self.list = self.ui.listWidget_pSet
-        self.list.itemClicked.connect(self.listObjectClicked)
-        self.list.itemDoubleClicked.connect(self.listObjectDoubleClicked)
+        self.pset_table = self.ui.tableWidget_inherited
+        self.pset_table.itemClicked.connect(self.listObjectClicked)
+        self.pset_table.itemDoubleClicked.connect(self.listObjectDoubleClicked)
+        self.pset_table.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
 
         self.ui.button_objects_add.clicked.connect(self.addObject)
         self.ui.button_objects_delete.clicked.connect(self.deleteObject)
         self.ui.button_objects_update.clicked.connect(self.updateObject)
-
         self.ui.button_Pset_add.clicked.connect(self.addPset)
+        self.ui.button_Pset_rename.clicked.connect(self.rename_pset)
+        self.ui.button_Pset_delete.clicked.connect(self.delete_pset)
 
-        self.ui.action_file_Open.triggered.connect(self.openFile)
-        self.openFile(path= "E:/Cloud/OneDrive/Arbeit/DB_Werkstudent/Projekte/Karlsruhe_Durmersheim/Modelchecking/Regeln/Datenstruktur/22_04_18.xml")
-        self.tree.viewport().setAcceptDrops(True)
+        self.ui.action_file_Open.triggered.connect(self.openFile_dialog)
+        self.ui.action_file_new.triggered.connect(self.new_file)
+        self.ui.action_file_Save.triggered.connect(self.save_clicked)
+        self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
 
         self.pset_buttons = [self.ui.button_Pset_add,self.ui.button_Pset_rename,self.ui.button_Pset_delete]
         self.object_buttons =[self.ui.button_objects_update,self.ui.button_objects_delete,self.ui.button_objects_add]
+        self.line_edit_list = [self.ui.lineEdit_object_name,self.ui.lineEdit_ident_value,self.ui.lineEdit_ident_attribute,self.ui.lineEdit_ident_pSet,self.ui.lineEdit_pSet_name]
         self.set_pset_window_enable(False)
         self.ui.lineEdit_pSet_name.textChanged.connect(self.text_changed)
+
+        self.openFile(path= "E:/Cloud/OneDrive/Arbeit/DB_Werkstudent/Projekte/Karlsruhe_Durmersheim/Modelchecking/Regeln/Datenstruktur/22_04_18.xml")
+
+        self.tree.resizeColumnToContents(0)
+        self.save_path = None
+
+    def save_clicked(self):
+        if self.save_path is None:
+            self.save_as_clicked()
+        else:
+            self.save(self.save_path)
+
+    def save(self,path):
+        print(f"Path: {path}")
+        pass
+
+    def save_as_clicked(self):
+        if self.save_path is not None:
+            self.save_path = QFileDialog.getSaveFileName(self,"Save XML", self.save_path, "xml Files (*.xml *.DRCxml)")[0]
+        else:
+            self.save_path = QFileDialog.getSaveFileName(self,"Save XML","", "xml Files (*.xml *.DRCxml)")[0]
+
+        self.save(self.save_path)
+
+
+    def new_file(self):
+        new_file = loose_unsaved_warning()
+        if new_file:
+            self.clear_all()
+
+    def clear_all(self):
+        self.tree.clear()
+
+        for row in range(self.pset_table.rowCount()):
+            self.pset_table.removeRow(row)
+        for el in self.line_edit_list:
+            el.clear()
+
+        for object in Object.iter.values():
+            for attribute in object.attributes:
+                attribute.delete()
+        Object.iter = dict()
+        self.set_pset_window_enable(False)
+
+    def delete_pset(self):
+        list_item = self.pset_table.selectedItems()
+        object = self.tree.selectedItems()[0].object
+
+        if not bool([el for el in list_item if el.data(constants.DATA_POS) == object.identifier.propertySet]):    #wenn sich der Identifier nicht im Pset befindet
+
+            for el in list_item:
+                el:QTableWidgetItem = el
+                property_set:PropertySet = el.data(constants.DATA_POS)
+                for attribute in property_set.attributes:
+                    object.remove_attribute(attribute)
+                self.pset_table.selectRow(el.row())
+                for i in sorted(self.pset_table.selectionModel().selectedRows()):
+                    self.pset_table.removeRow(i.row())
+
+        else:
+            msgBox = QMessageBox()
+            msgBox.setText("can't delete Pset of Identifier!")
+            msgBox.setWindowTitle(" ")
+            msgBox.setIcon(QMessageBox.Icon.Warning)
+            msgBox.exec()
+
+
+    def rename_pset(self):
+        new_name = self.ui.lineEdit_pSet_name.text()
+        list_item = self.pset_table.selectedItems()[0]
+        selected_pset: PropertySet= list_item.data(constants.DATA_POS)
+        list_item.setText(new_name)
+        self.pset_table.resizeColumnsToContents()
+        selected_pset.name = new_name
+
+        object = selected_pset.object
+        if object.identifier in selected_pset.attributes:
+            tree_item: CustomTreeItem = self.tree.selectedItems()[0]
+            tree_item.setText(1,identifier_tree_text(object))
+        self.pset_table.resizeColumnsToContents()
+
 
     def text_changed(self, text):
 
 
-        if self.ui.listWidget_pSet.findItems(text,QtCore.Qt.MatchFlag.MatchExactly):
+        if self.pset_table.findItems(text,QtCore.Qt.MatchFlag.MatchExactly):
             button_text = "Update"
         else:
             button_text = "Add"
         self.ui.button_Pset_add.setText(button_text)
-        # name_match = len([x for x in self.ui.listWidget_pSet.items().attributes if x.name == text]) > 0
-        # if name_match:
-        #     self.widget.button_add.setText("Update")
-        # else:
-        #     self.widget.button_add.setText("Add")
 
 
     def set_pset_window_enable(self, value: bool):
@@ -161,74 +284,126 @@ class MainWindow(QMainWindow):
 
         self.ui.lineEdit_pSet_name.setEnabled(value)
         self.ui.label_pSet_name.setEnabled(value)
-        self.ui.listWidget_pSet.setEnabled(value)
+        self.pset_table.setEnabled(value)
+        self.ui.tableWidget_inherited.setEnabled(value)
         if not value:
             self.ui.horizontalLayout_pSet.setTitle("PropertySet")
-            self.ui.listWidget_pSet.clear()
+            self.pset_table.setRowCount(0)
+            self.ui.lineEdit_pSet_name.setText("")
     def openMenu(self,position:QtCore.QPoint):
 
         menu = QMenu()
-        self.ui.action_group_objects = menu.addAction("Group")
-        self.ui.action_delete_objects =menu.addAction("Delete")
-        self.ui.action_delete_objects.triggered.connect(self.deleteObject)
-        self.ui.action_group_objects.triggered.connect(self.groupObject)
+        self.action_group_objects = menu.addAction("Group")
+        self.action_delete_objects =menu.addAction("Delete")
+        self.action_expand_selection = menu.addAction("Expand")
+        self.action_collapse_selection = menu.addAction("Collapse")
 
+        self.action_delete_objects.triggered.connect(self.deleteObject)
+        self.action_group_objects.triggered.connect(self.right_click_group)
+        self.action_expand_selection.triggered.connect(self.expand_selection)
+        self.action_collapse_selection.triggered.connect(self.collapse_selection)
         menu.exec(self.tree.viewport().mapToGlobal(position))
 
-    def groupObject(self):
+    def collapse_selection(self):
+        for item in self.tree.selectedItems():
 
+            self.tree.collapseItem(item)
 
+    def expand_selection(self):
+        for item in self.tree.selectedIndexes():
+            self.tree.expandRecursively(item)
 
+    def right_click_group(self):
         group_name = QInputDialog.getText(self,"Group Name","Input Name of new Group",echo=QtWidgets.QLineEdit.EchoMode.Normal,text= "")[0]
-        root = self.tree.invisibleRootItem()
 
-        first_parent = self.tree.selectedItems()[0].parent()
-        first_level = get_level(first_parent)
+        if group_name:
+            root = self.tree.invisibleRootItem()
+            selected_items = self.tree.selectedItems()
 
 
-        if first_level != -1:
-            parent_merker = [first_level,first_parent] #Level,Parent
+            first_parent = selected_items[0].parent()
+            first_level = get_level(first_parent)
+            if first_level != -1:
+                parent_merker = [first_level, first_parent]  # Level,Parent
+
+                for item in selected_items:
+                    parent = item.parent()
+                    level = get_level(parent)
+
+                    if level < parent_merker[0]:
+                        parent_merker = [level, parent]
+            else:
+                parent_merker = [-1,None]
+
+            if parent_merker[0] <0:
+                parent_merker = [0, self.tree.invisibleRootItem()]
+
+            parent = parent_merker[1]
+
+            child_list = list()
 
             for item in self.tree.selectedItems():
-                parent = item.parent()
-                level = get_level(parent)
-                if level < parent_merker[0]:
-                    parent_merker = [level,parent]
-
-        else:
-            parent_merker = [0,self.tree.invisibleRootItem()]
-
-        group = CustomTreeItem(parent_merker[1],Group(group_name))
-        group.setText(0, group_name)
-
-
-        for item in self.tree.selectedItems():
-            if item != group:
                 if not item.parent() in self.tree.selectedItems():
-
                     (item.parent() or root).removeChild(item)
-                    group.addChild(item)
+                    child_list.append(item)
+
+            group = CustomTreeItem(parent, Group(group_name))
+            group.setText(0, group_name)
+            parent.addChild(group)
+            self.groupObject(group,child_list)
+
+            if isinstance(parent,CustomTreeItem):
+                group.object.parent =parent.object
+
+    def groupObject(self,group:CustomTreeItem,items:list[CustomTreeItem]):
+
+        for item in items:
+            group.addChild(item)
 
 
-        parent_merker[1].addChild(group)
-        if isinstance(parent_merker[1],CustomTreeItem):
-            group.object.parent = parent_merker[1].object
 
     def treeobject_double_clicked(self, item:QTreeWidgetItem, column):
         object:Object = item.object
         self.set_pset_window_enable(True)
         self.ui.horizontalLayout_pSet.setTitle(f"PropertySet {object.name}")
+        self.pset_table.setRowCount(0)
+        own_psets = attributes_to_psetdict(object.attributes)
+        table_length = len(own_psets)
 
-        self.ui.listWidget_pSet.clear()
+        if item.parent() is not None:
+            inherited_attributes = object.inherited_attributes
+            inherited_psets = dict()
 
+            for object,attributes in inherited_attributes.items():
+                inherited_psets[object] = attributes_to_psetdict(attributes)
+                table_length +=len(inherited_psets[object])
 
+        self.pset_table.setRowCount(table_length)
 
-        psets = attributes_to_psetdict(object.attributes)
+        for i,el in enumerate(own_psets.keys()):
+            table_item = QTableWidgetItem(el.name)
+            table_item.setData(constants.DATA_POS,el)
+            self.pset_table.setItem(i,0,table_item)
 
+        current_row = len(own_psets)
 
-        for el in psets.keys():
-            item = QListWidgetItem(el.name,self.ui.listWidget_pSet)
-            item.setData(1,el)
+        if item.parent() is not None:
+            for group,pset_dict in inherited_psets.items():
+                group_name = group.name
+
+                for pset in pset_dict.keys():
+                    pset_name = pset.name
+                    pset_item = QTableWidgetItem(pset_name)
+                    pset_item.setData(constants.DATA_POS, pset)
+                    inherit_item = QTableWidgetItem(group_name)
+                    inherit_item.setData(constants.DATA_POS,group)
+
+                    self.pset_table.setItem(current_row,0,pset_item)
+                    self.pset_table.setItem(current_row,1,inherit_item)
+                    current_row+=1
+
+        self.active_object = object
+        self.pset_table.resizeColumnsToContents()
 
 
 
@@ -284,55 +459,6 @@ class MainWindow(QMainWindow):
                     key.setText("*")
 
 
-            # identicals = [True,True,True,True] #Name,PSet,Attrib,Value
-            # lineEditList = [
-            #     self.ui.lineEdit_object_name,
-            #     self.ui.lineEdit_ident_pSet,
-            #     self.ui.lineEdit_ident_attribute,
-            #     self.ui.lineEdit_ident_value
-            #     ]
-            #
-            # merk_list = ["","","",""]
-            #
-            # is_first = True
-            #
-            # for item in items:
-            #
-            #     object:Object = item.object
-            #     if isinstance(object,Object):
-            #         if is_first:
-            #             merk_list = [object.name, object.identifier.propertySet.name, object.identifier.name,
-            #                          object.identifier.value]
-            #             is_first = False
-            #         else:
-            #             compare_list = [object.name, object.identifier.propertySet.name, object.identifier.name,
-            #                             object.identifier.value]
-            #
-            #             for i, el in enumerate(compare_list):
-            #                 if el != merk_list[i]:
-            #                     identicals[i] = False
-            #
-            # for i in range(len(identicals)-1):
-            #     if identicals[i]:
-            #         lineEditList[i].setText(str(merk_list[i]))
-            #     else:
-            #         lineEditList[i].setText("*")
-            #
-            # i = 3
-            # if identicals[i]:
-            #     lineEditList[i].setText(merk_list[i][0])
-            # else:
-            #     lineEditList[i].setText("*")
-            #
-            #
-            #
-            # if len(items) ==1:
-            #     self.treeobject_double_clicked(items[0],column)
-            #
-            # else:
-            #     self.ui.listWidget_pSet.clear()
-
-
     def group_clicked(self):
         for el in self.pset_buttons:
             el.setDisabled(True)
@@ -380,9 +506,28 @@ class MainWindow(QMainWindow):
         else:  item = CustomTreeItem(parent,obj)
 
         item.setText(0, obj.name)
-        item.setText(1, f"{obj.identifier.propertySet.name} : {obj.identifier.name} = {obj.identifier.value[0]}")
+        item.setText(1,identifier_tree_text(obj))
+        return item
 
-    def openFile(self,path = None):
+    def openFile_dialog(self,path = False):
+        if Object.iter:
+            result = delete_or_merge()
+            if result is None:
+                return
+            elif result:
+                self.clear_all()
+                self.openFile(path)
+            else:
+                self.merge_new_file()
+                self.openFile(path)
+
+        else:
+            self.openFile(path)
+
+    def merge_new_file(self):
+        print("MERGE NEEDS TO BE PROGRAMMED")   #TODO: Write Merge
+
+    def openFile(self,path = False):
 
         def transform_values(xml_object,value_type):
             value_list = list()
@@ -411,52 +556,72 @@ class MainWindow(QMainWindow):
                 raise ImportWarning(f"Imported ValueType {value_type} not known")
             return value_type
 
-        if path is None:
+        if path is False:
             path = QFileDialog.getOpenFileName(self,"Open XML", "", "xml Files (*.xml *.DRCxml)")[0]
-        self.clearObjectInput()
+
+        if path:
+            self.clearObjectInput()
+
+            ### OlD FILE
+
+            tree:etree._ElementTree = etree.parse(path)
+
+            projekt_xml:etree._Element = tree.getroot()
+
+            groups_with_duplicates = [group.attrib.get("Fachdisziplin") for group in projekt_xml if group.tag == "Objekt"]
+            groups_without_duplicates = dict.fromkeys(groups_with_duplicates)
+
+            parent = self.tree.invisibleRootItem()
+            for group_name in groups_without_duplicates:
+                group = CustomTreeItem(parent, Group(group_name))
+                group.setText(0, group_name)
+                parent.addChild(group)
+                groups_without_duplicates[group_name] = group
 
 
-        ### OlD FILE
 
-        tree = etree.parse(path)
-        projekt_xml = tree.getroot()
+            for xml_objects in projekt_xml:
+                if (xml_objects.tag == "Objekt"):
+                    attributes = xml_objects.attrib
 
-        for xml_objects in projekt_xml:
-            if (xml_objects.tag == "Objekt"):
-                attributes = xml_objects.attrib
-
-                identifier_string: str = attributes.get("Identifier")
-                pSet = PropertySet(identifier_string.split(":")[0])
-                attribute = Attribute(pSet,identifier_string.split(":")[1], [attributes.get("Name")],constants.LIST )
-
-                obj = Object(attributes.get("Name"), attribute)
-                self.addObjectToTree(obj)
-
-                for xml_property_set in xml_objects:
-                    psetName = xml_property_set.attrib.get("Name")
-                    if psetName in obj.psetNameDict:
-                        pSet = obj.psetNameDict[psetName]
-                    else:
-                        pSet = PropertySet(psetName)
-                    for xml_attribute in xml_property_set:
-                        attrib = xml_attribute.attrib
-                        name = attrib.get("Name")
-                        value_type = transform_value_types(attrib.get("Art"))
-                        data_type = attrib.get("Datentyp")
-
-                        value = transform_values(xml_attribute, value_type)
+                    identifier_string: str = attributes.get("Identifier")
+                    pSet = PropertySet(identifier_string.split(":")[0])
+                    attribute = Attribute(pSet,identifier_string.split(":")[1], [attributes.get("Name")],constants.LIST )
 
 
-                        atrb = Attribute(pSet,name,value,value_type,data_type)
-                        obj.add_attribute(atrb)
+                    group_name = attributes.get("Fachdisziplin")
+
+                    obj = Object(attributes.get("Name"), attribute)
+                    self.addObjectToTree(obj,groups_without_duplicates[group_name])
+                    obj.parent= groups_without_duplicates[group_name]._object
+
+                    for xml_property_set in xml_objects:
+                        psetName = xml_property_set.attrib.get("Name")
+                        if psetName in obj.psetNameDict:
+                            pSet = obj.psetNameDict[psetName]
+                        else:
+                            pSet = PropertySet(psetName)
+                        for xml_attribute in xml_property_set:
+                            attrib = xml_attribute.attrib
+                            name = attrib.get("Name")
+                            value_type = transform_value_types(attrib.get("Art"))
+                            data_type = attrib.get("Datentyp")
+
+                            value = transform_values(xml_attribute, value_type)
+
+
+                            atrb = Attribute(pSet,name,value,value_type,data_type)
+                            obj.add_attribute(atrb)
+
+        self.tree.resizeColumnToContents(0)
 
     def listObjectClicked(self,item:QListWidgetItem):
-        propertySet:PropertySet = item.data(1)
+        propertySet:PropertySet = item.data(constants.DATA_POS)
         self.ui.lineEdit_pSet_name.setText(propertySet.name)
 
     def listObjectDoubleClicked(self,item:QListWidgetItem):
         self.listObjectClicked(item)
-        propertySet:PropertySet = item.data(1)
+        propertySet:PropertySet = item.data(constants.DATA_POS)
 
         #Open New Window
         self.pset_window = self.openPsetWindow(propertySet)
@@ -521,18 +686,25 @@ class MainWindow(QMainWindow):
             object = items[0].object
             property_set = PropertySet(name)
             property_set.object = object
-            item = QListWidgetItem(name, self.ui.listWidget_pSet)
-            item.setData(1, property_set)
+            item = QTableWidgetItem(name)
+            item.setData(constants.DATA_POS, property_set)
+            new_row_count = self.pset_table.rowCount()+1
+
+            self.pset_table.setRowCount(new_row_count)
+
+            self.pset_table.setItem(new_row_count-1,0,item)
 
             self.pset_window = self.openPsetWindow(property_set)
+            self.text_changed(self.ui.lineEdit_pSet_name.text())
 
-
+        self.pset_table.resizeColumnsToContents()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     window = MainWindow()
     window.show()
+    window.resize(1200, 550)
 
     sys.exit(app.exec())
 

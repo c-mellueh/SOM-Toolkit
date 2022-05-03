@@ -13,7 +13,8 @@ VALUE_TYPE_LOOKUP ={
 }
 
 DATATYPE_NUMBER = "xs:double"
+ICON_PATH = "icon.ico"
 
 
 
-TREE_DATA_POS = 2
+DATA_POS = 1

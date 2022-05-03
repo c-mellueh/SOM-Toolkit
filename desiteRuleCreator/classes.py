@@ -13,6 +13,22 @@ def attributes_to_psetdict(attributes):
 
     return pset_dict
 
+def inherited_attributes(obj):
+    def recursion(attribute_dict,obj):
+        attributes = obj.attributes
+
+        if attributes:
+            attribute_dict[obj] = attributes
+
+        parent = obj.parent
+        if parent is not None:
+            attribute_dict = recursion(attribute_dict, parent)
+        return attribute_dict
+
+    attribute_dict = dict()
+    if obj.parent is not None:
+        attribute_dict = recursion(attribute_dict,obj.parent)
+    return attribute_dict
 
 class PropertySet:
     def __init__(self, name:str):
@@ -148,6 +164,12 @@ class Group:
         self._parent = None
         self._attributes = list()
         self.identifier = name
+        self._inherited_attributes = None
+
+    @property
+    def inherited_attributes(self) -> list:
+        self._inherited_attributes = inherited_attributes(self)
+        return self._inherited_attributes
     @property
     def name(self):
         return self._name
@@ -183,6 +205,9 @@ class Group:
     def remove_attribute(self, attribute):
         self._attributes.remove(attribute)
 
+    def delete(self):
+        pass
+
 class Object:
     iter = dict()
 
@@ -195,6 +220,12 @@ class Object:
         self._attributes = list()
         self.add_attribute(self._identifier)
         self._parent = None
+        self._inherited_attributes = None
+
+    @property
+    def inherited_attributes(self) -> list:
+        self._inherited_attributes = inherited_attributes(self)
+        return self._inherited_attributes
 
     @property
     def parent(self) -> Group:
@@ -203,6 +234,7 @@ class Object:
     @parent.setter
     def parent(self,value:Group):
         self._parent = value
+        value.add_child(self)
     @property
     def name(self):
         return self._name
@@ -220,7 +252,7 @@ class Object:
         self._identifier = value
 
     @property
-    def parent(self):
+    def parent(self) ->Group:
         return self._parent
 
     @parent.setter
