@@ -1,10 +1,13 @@
+from PySide6.QtWidgets import QFileDialog, QInputDialog, QLineEdit, QMessageBox
 from lxml import etree
+
 from . import __version__ as project_version
-from PySide6.QtWidgets import QFileDialog,QInputDialog,QLineEdit
-from .io_messages import msg_unsaved
 from . import constants
-from .classes import Group,Object,PropertySet,Attribute,CustomTreeItem,CustomTree
+from .classes import Group, Object, PropertySet, Attribute, CustomTreeItem
 from .io_messages import msg_delete_or_merge
+from .io_messages import msg_unsaved, msg_close
+
+
 def importData(widget, path=False):
     def transform_values(xml_object, value_type):
         value_list = list()
@@ -101,6 +104,7 @@ def save_as_clicked(mainWindow):
         mainWindow.save(path)
     return path
 
+
 def save(mainWindow, path):
     project = etree.Element('Project')
     project.set("name", mainWindow.project_name)
@@ -110,6 +114,7 @@ def save(mainWindow, path):
     mainWindow.save_path = path
     print(f"Path: {path}")
 
+
 def save_clicked(mainWindow):
     if mainWindow.save_path is None:
         path = mainWindow.save_as_clicked()
@@ -117,6 +122,7 @@ def save_clicked(mainWindow):
         save(mainWindow.save_path)
         path = mainWindow.save_path
     return path
+
 
 def new_file(mainWindow):
     new_file = msg_unsaved(mainWindow.icon)
@@ -128,6 +134,7 @@ def new_file(mainWindow):
             mainWindow.setWindowTitle(project_name[0])
             mainWindow.project_name = project_name[0]
             mainWindow.clear_all()
+
 
 def openFile_dialog(mainWindow, path=False):
     if Object.iter:
@@ -143,6 +150,21 @@ def openFile_dialog(mainWindow, path=False):
 
     else:
         mainWindow.openFile(path)
+
+
 def merge_new_file(mainWindow):
     print("MERGE NEEDS TO BE PROGRAMMED")  # TODO: Write Merge
 
+
+def close_event(mainWindow, event):
+    reply = msg_close(mainWindow.icon)
+    if reply == QMessageBox.Save:
+        path = mainWindow.save_clicked()
+        if not path or path is None:
+            event.ignore()
+        else:
+            event.accept()
+    elif reply == QMessageBox.No:
+        event.accept()
+    else:
+        event.ignore()

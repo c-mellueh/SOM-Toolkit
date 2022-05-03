@@ -1,16 +1,16 @@
-from .QtDesigns.ui_mainwindow import Ui_MainWindow
-import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QMessageBox, QFileDialog, \
-    QListWidgetItem, QTableWidgetItem
-from PySide6 import QtCore, QtWidgets, QtGui
-from .classes import Object, PropertySet
-from . import constants
-from . import __version__ as package_version
 import os
+import sys
+
+from PySide6 import QtCore, QtGui
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+
+from . import constants
 from . import filehandling
 from . import object_widget
 from . import property_widget
-from .io_messages import  msg_close
+from .QtDesigns.ui_mainwindow import Ui_MainWindow
+from .classes import Object, PropertySet
+
 
 def get_icon():
     here = os.path.dirname(__file__)
@@ -18,45 +18,36 @@ def get_icon():
     icon_path = os.path.join(here, icon_name)
     return QtGui.QIcon(icon_path)
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        #variables
+        # variables
         self.icon = get_icon()
         self.setWindowIcon(self.icon)
         self.save_path = None
         self.project_name = ""
 
-        #init object and ProertyWidget
+        # init object and ProertyWidget
         object_widget.init(self)
         property_widget.init(self)
 
-        #connect Menubar signals
+        # connect Menubar signals
         self.ui.action_file_Open.triggered.connect(self.openFile_dialog)
         self.ui.action_file_new.triggered.connect(self.new_file)
         self.ui.action_file_Save.triggered.connect(self.save_clicked)
         self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
 
-        #debug: preload file
+        # debug: preload file
         self.openFile(
             path="E:/Cloud/OneDrive/Arbeit/DB_Werkstudent/Projekte/Karlsruhe_Durmersheim/Modelchecking/Regeln/Datenstruktur/22_04_18.xml")
         self.tree.resizeColumnToContents(0)
 
     def closeEvent(self, event):
-        reply = msg_close(self.icon)
-        if reply == QMessageBox.Save:
-            path = self.save_clicked()
-            if not path or path is None:
-                event.ignore()
-            else:
-                event.accept()
-        elif reply == QMessageBox.No:
-            event.accept()
-        else:
-            event.ignore()
+        filehandling.close_event(self, event)
 
     # Filehandling
     def save_clicked(self):
@@ -103,7 +94,7 @@ class MainWindow(QMainWindow):
     def rc_group(self):
         object_widget.rc_group_items(self)
 
-    def object_double_clicked(self, item: QTreeWidgetItem):
+    def object_double_clicked(self, item):
         object_widget.double_click(self, item)
 
     def setIdentLineEnable(self, value: bool):
@@ -140,10 +131,10 @@ class MainWindow(QMainWindow):
     def set_pset_window_enable(self, value: bool):
         property_widget.set_enable(self, value)
 
-    def listObjectClicked(self, item: QListWidgetItem):
+    def listObjectClicked(self, item):
         property_widget.left_click(self, item)
 
-    def listObjectDoubleClicked(self, item: QTableWidgetItem):
+    def listObjectDoubleClicked(self, item):
         property_widget.double_click(self, item)
 
     def openPsetWindow(self, propertySet: PropertySet):
