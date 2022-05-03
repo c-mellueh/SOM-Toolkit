@@ -1,0 +1,6 @@
+var id=desiteThis.ID()
+var pSet='{{property_set}}:';
+var ident = "{{ident}}";
+var status = desiteResult.getCheckState();
+
+ungeprueft(status,id,pSet,ident);
