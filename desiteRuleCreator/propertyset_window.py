@@ -228,22 +228,19 @@ class PropertySetWindow(QtWidgets.QWidget):
             table.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[value.value_type]))
             table.setItem(i, 3, QTableWidgetItem(str(value.value)))
             if value == self.property_set.object.identifier:
-                print(value.name)
                 brush = QtGui.QBrush()
                 brush.setColor(Qt.GlobalColor.lightGray)
                 brush.setStyle(Qt.BrushStyle.SolidPattern)
-                print(brush)
                 for k in range(4):
                     item = table.item(i, k)
                     item.setBackground(brush)
-                    print(item.text())
 
             table.resizeColumnsToContents()
             table.data_dict[value.name] = value
 
     def new_line(self):
         self.widget.layout_input.removeWidget(self.widget.button_add_line)
-        self.new_layout = QHBoxLayout(self)
+        self.new_layout = QHBoxLayout()
         self.lineEdit_input = QLineEdit(self)
         self.new_layout.addWidget(self.lineEdit_input)
 
@@ -293,7 +290,6 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.widget.layout_input.addWidget(self.widget.button_add_line)
 
     def list_clicked(self, event: QModelIndex):
-
         item: QTableWidgetItem = self.widget.table_widget.item(event.row(), 0)
         attribute: Attribute = self.widget.table_widget.data_dict[item.text()]
 

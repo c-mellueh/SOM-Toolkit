@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit
+from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit,QDialog,QDialogButtonBox,QGridLayout
 
 
 def msg_already_exists(icon):
@@ -10,6 +10,14 @@ def msg_already_exists(icon):
     msgBox.setWindowIcon(icon)
     msgBox.exec()
 
+def msg_identical_identifier(icon):
+    msgBox = QMessageBox()
+    msgBox.setText("You cant create Objects with identical identifiers!")
+    msgBox.setWindowTitle(" ")
+    msgBox.setIcon(QMessageBox.Icon.Warning)
+
+    msgBox.setWindowIcon(icon)
+    msgBox.exec()
 
 def msg_missing_input(icon):
     msgBox = QMessageBox()
@@ -75,8 +83,45 @@ def msg_del_ident_pset(icon):
     msgBox.setWindowIcon(icon)
     msgBox.exec()
 
+class GroupRequest(QDialog):
+    def __init__(self,icon,parent = None,):
+        super(GroupRequest, self).__init__(parent)
+        self.group_name = QLineEdit(self)
+        self.pset_name = QLineEdit(self)
+        self.attribute_name = QLineEdit(self)
+        self.attribute_value = QLineEdit(self)
+        self.setWindowIcon(icon)
+
+        self.input_fields = [self.group_name,self.pset_name,self.attribute_name,self.attribute_value]
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok|QDialogButtonBox.Cancel,self)
+
+        self.gridLayout = QGridLayout(self)
+        self.gridLayout.setObjectName("gridLayout")
+        self.gridLayout.addWidget(self.pset_name, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.attribute_name, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.attribute_value, 1, 2, 1, 1)
+        self.gridLayout.addWidget(self.buttonBox, 4, 1, 1, 2)
+        self.gridLayout.addWidget(self.group_name, 0, 0, 1, 3)
+
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
+
+    def accept(self) -> None:
+        is_empty = [True for text in self.input_fields if not bool(text.text())]
+        print(is_empty)
+        if is_empty:
+            msg_missing_input(self.windowIcon())
+        else:
+            super(GroupRequest, self).accept()
+
+    def get_text(self):
+        return [text.text() for text in self.input_fields]
 
 def req_group_name(mainWindow):
-    title = "Group Name"
-    text = "Input Name of new Group"
-    return QInputDialog.getText(mainWindow, title, text, echo=QLineEdit.EchoMode.Normal, text="")[0]
+    dialog = GroupRequest(mainWindow.icon,mainWindow)
+
+    if dialog.exec():
+        return dialog.get_text()
+
+    else:
+        return [False,False,False,False]

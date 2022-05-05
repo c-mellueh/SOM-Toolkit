@@ -1,0 +1,3820 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Project name="KaDu" version="1.0.0">
+  <Group name="Oberleitungsanlagen" identifier="b69a4ddb-cee9-4612-adae-cea38b8db2ec" parent="None"/>
+  <Group name="Kabeltiefbau" identifier="f8b88e1f-c439-4eb2-8731-286c7522b949" parent="None"/>
+  <Group name="Leit- &amp; Sicherungstechnik" identifier="ba28b735-bf3b-4d70-b2e9-6b5563869a19" parent="None"/>
+  <Group name="Bahnübergang" identifier="016fbb9a-b5a5-4e84-87f9-6d914ad2468e" parent="None"/>
+  <Group name="Lärmschutzanlagen" identifier="7c361551-2657-46de-9ac4-f80449bd0338" parent="None"/>
+  <Group name="Streckenoberbau" identifier="f2459012-1935-48c1-aba5-460b386262f6" parent="None"/>
+  <Group name="Umwelt" identifier="d25100c5-6536-4ab1-b78a-5ce04c2166b3" parent="None"/>
+  <Group name="Konstruktive Ingenieurbauwerke" identifier="c0f695c8-3940-48cb-a821-18ef8c13a9ab" parent="None"/>
+  <Group name="Straßenbau" identifier="4dfd0644-7caa-4aae-925e-04114894c475" parent="None"/>
+  <Group name="Technische Austattung Straße" identifier="1a454369-2c42-4255-9c86-7afde91802c2" parent="None"/>
+  <Group name="Entwässerung Straße" identifier="a2d03ea7-d0e6-47ef-8ddf-67113ef02aed" parent="None"/>
+  <Group name="Entwässerung Gleis" identifier="7f8dcef7-a4e4-4b95-b994-538c9e77646f" parent="None"/>
+  <Group name="CityGML" identifier="616b092e-aa92-4360-869b-eefc3f7fab91" parent="None"/>
+  <Group name="Verkehrsanlagen" identifier="5e46b270-a088-4a73-988f-0922a124af2e" parent="None"/>
+  <Group name="DGM" identifier="0a2aacd9-2358-4009-8ad2-06b8985c86cc" parent="None"/>
+  <Object name="OLA-Mast" parent="b69a4ddb-cee9-4612-adae-cea38b8db2ec">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>OLA-Mast</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Aluminium</Value>
+      <Value>Metall</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Mastnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Oberleitungsanlagen</Value>
+    </Attribute>
+    <Attribute name="Masttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Winkelmast</Value>
+      <Value>Flachmast</Value>
+      <Value>Schleuderbetonmast</Value>
+      <Value>IPB-Mast</Value>
+    </Attribute>
+  </Object>
+  <Object name="Kabelschacht" parent="f8b88e1f-c439-4eb2-8731-286c7522b949">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Kabelschacht</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+      <Value>Keine Zuordnung</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+      <Value>
+        <From>-</From>
+        <To/>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+      <Value>
+        <From>-</From>
+        <To/>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Kabeltiefbau</Value>
+    </Attribute>
+  </Object>
+  <Object name="Kabelkanal" parent="f8b88e1f-c439-4eb2-8731-286c7522b949">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Kabelkanal</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+      <Value>Keine Zuordnung</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+      <Value>
+        <From>-</From>
+        <To/>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+      <Value>
+        <From>-</From>
+        <To/>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Kabeltiefbau</Value>
+    </Attribute>
+  </Object>
+  <Object name="Signal" parent="ba28b735-bf3b-4d70-b2e9-6b5563869a19">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Signal</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.4</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.4</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Kunststoff</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Leit- &amp; Sicherungstechnik</Value>
+    </Attribute>
+    <Attribute name="Signalnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Signaltyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Vorsignal</Value>
+      <Value>Hauptsignal</Value>
+      <Value>Zusatzsignal</Value>
+      <Value>Geschwindigkeitssignal</Value>
+      <Value>Langsamfahrsignal</Value>
+      <Value>Rautentafel</Value>
+      <Value>Schutzsignal</Value>
+      <Value>Weichensignal</Value>
+      <Value>Fahrleitungssignal</Value>
+    </Attribute>
+  </Object>
+  <Object name="Magnet" parent="ba28b735-bf3b-4d70-b2e9-6b5563869a19">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Magnet</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Leit- &amp; Sicherungstechnik</Value>
+    </Attribute>
+  </Object>
+  <Object name="Kabeltopf" parent="ba28b735-bf3b-4d70-b2e9-6b5563869a19">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Kabeltopf</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Aluminium</Value>
+      <Value>Kunststoff</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Leit- &amp; Sicherungstechnik</Value>
+    </Attribute>
+  </Object>
+  <Object name="KM-Stein" parent="ba28b735-bf3b-4d70-b2e9-6b5563869a19">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>KM-Stein</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Aluminium</Value>
+      <Value>Kunststoff</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Leit- &amp; Sicherungstechnik</Value>
+    </Attribute>
+  </Object>
+  <Object name="Achszähler" parent="ba28b735-bf3b-4d70-b2e9-6b5563869a19">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Achszähler</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Aluminium</Value>
+      <Value>Kunststoff</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Leit- &amp; Sicherungstechnik</Value>
+    </Attribute>
+  </Object>
+  <Object name="Schachbretttafel" parent="ba28b735-bf3b-4d70-b2e9-6b5563869a19">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Schachbretttafel</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Leit- &amp; Sicherungstechnik</Value>
+    </Attribute>
+  </Object>
+  <Object name="Grenzzeichen" parent="ba28b735-bf3b-4d70-b2e9-6b5563869a19">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Grenzzeichen</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Aluminium</Value>
+      <Value>Kunststoff</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Leit- &amp; Sicherungstechnik</Value>
+    </Attribute>
+  </Object>
+  <Object name="Schaltschrank" parent="ba28b735-bf3b-4d70-b2e9-6b5563869a19">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Schaltschrank</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Aluminium</Value>
+      <Value>Kunststoff</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Leit- &amp; Sicherungstechnik</Value>
+    </Attribute>
+  </Object>
+  <Object name="Sprechstelle" parent="ba28b735-bf3b-4d70-b2e9-6b5563869a19">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Sprechstelle</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Aluminium</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Leit- &amp; Sicherungstechnik</Value>
+    </Attribute>
+  </Object>
+  <Object name="Vorsignalbake" parent="ba28b735-bf3b-4d70-b2e9-6b5563869a19">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Vorsignalbake</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Leit- &amp; Sicherungstechnik</Value>
+    </Attribute>
+    <Attribute name="Entfernungsangabe" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>100m</Value>
+      <Value>200m</Value>
+      <Value>300m</Value>
+      <Value>400m</Value>
+      <Value>500m</Value>
+    </Attribute>
+  </Object>
+  <Object name="BÜ-LST" parent="016fbb9a-b5a5-4e84-87f9-6d914ad2468e">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>BÜ-LST</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Bahnübergang</Value>
+    </Attribute>
+    <Attribute name="BÜ-LST-Typ" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>BÜ-Tafel</Value>
+      <Value>Lichtsignal mit Andreaskreuz</Value>
+      <Value>Bahnschranke</Value>
+    </Attribute>
+  </Object>
+  <Object name="BÜ-Objekte" parent="016fbb9a-b5a5-4e84-87f9-6d914ad2468e">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>BÜ-Objekte</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Bahnübergang</Value>
+    </Attribute>
+  </Object>
+  <Object name="Lärmschutzwand" parent="7c361551-2657-46de-9ac4-f80449bd0338">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Lärmschutzwand</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+      <Value>Keine Zuordnung</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+      <Value>
+        <From>-</From>
+        <To/>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+      <Value>
+        <From>-</From>
+        <To/>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Stahlbeton</Value>
+      <Value>Kunststoff</Value>
+      <Value>Aluminium</Value>
+      <Value>Metall</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Lärmschutzanlagen</Value>
+    </Attribute>
+  </Object>
+  <Object name="Schiene" parent="f2459012-1935-48c1-aba5-460b386262f6">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Schiene</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+      <Value>-</Value>
+      <Value>Abstellgleis</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:double" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.32</To>
+      </Value>
+      <Value>
+        <From>0.0</From>
+        <To>0.8</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:double" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.32</To>
+      </Value>
+      <Value>
+        <From>0.0</From>
+        <To>0.8</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahl</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Trassendaten in DB_REF 2016</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Streckenoberbau</Value>
+    </Attribute>
+    <Attribute name="Schienentyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Schwere Vignolschiene</Value>
+    </Attribute>
+    <Attribute name="Gleisnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Gl.1 (Richtungsgleis)</Value>
+      <Value>Gl.2 (Gegenrichtungsgleis)</Value>
+      <Value>Keine Angaben</Value>
+    </Attribute>
+  </Object>
+  <Object name="Schwelle" parent="f2459012-1935-48c1-aba5-460b386262f6">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Schwelle</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+      <Value>-</Value>
+      <Value>Abstellgleis</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:double" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.32</To>
+      </Value>
+      <Value>
+        <From>0.0</From>
+        <To>0.8</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:double" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.32</To>
+      </Value>
+      <Value>
+        <From>0.0</From>
+        <To>0.8</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Beton</Value>
+      <Value>Holz</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Trassendaten in DB_REF 2016</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Streckenoberbau</Value>
+    </Attribute>
+    <Attribute name="Schwellentyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Betonschwelle</Value>
+      <Value>Holzschwelle</Value>
+    </Attribute>
+    <Attribute name="Gleisnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Gl.1 (Richtungsgleis)</Value>
+      <Value>Gl.2 (Gegenrichtungsgleis)</Value>
+      <Value>Keine Angaben</Value>
+    </Attribute>
+  </Object>
+  <Object name="Gleisbettung" parent="f2459012-1935-48c1-aba5-460b386262f6">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Gleisbettung</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+      <Value>-</Value>
+      <Value>Abstellgleis</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:double" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.32</To>
+      </Value>
+      <Value>
+        <From>0.0</From>
+        <To>0.8</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:double" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.32</To>
+      </Value>
+      <Value>
+        <From>0.0</From>
+        <To>0.8</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Schotter</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>03/2021</Value>
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Querschnitt-Typ des Gleisbetts nach RiL 820.2010</Value>
+    </Attribute>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Trassendaten in DB_REF 2016</Value>
+      <Value>Drohnenbeflug</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+      <Value>06/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Streckenoberbau</Value>
+    </Attribute>
+    <Attribute name="Gleisnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Gl.1 (Richtungsgleis)</Value>
+      <Value>Gl.2 (Gegenrichtungsgleis)</Value>
+      <Value>Keine Angaben</Value>
+    </Attribute>
+    <Attribute name="Oberbautyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Schotteroberbau</Value>
+    </Attribute>
+    <Attribute name="Volumen" propertySet="Bestandsdaten" data_typ="xs:double" value_typ="List" is_identifier="False"/>
+  </Object>
+  <Object name="Baumbestand" parent="d25100c5-6536-4ab1-b78a-5ce04c2166b3">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Baumbestand</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>03/2021</Value>
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Symbolische Darstellung</Value>
+      <Value>Baum-Bemaßung Annahme</Value>
+    </Attribute>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Drohnenbeflug</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Umwelt</Value>
+    </Attribute>
+  </Object>
+  <Object name="Widerlager" parent="c0f695c8-3940-48cb-a821-18ef8c13a9ab">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Widerlager</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahl</Value>
+      <Value>Stahlbeton</Value>
+      <Value>Aluminium</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Mauerwerk</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Konstruktive Ingenieurbauwerke</Value>
+    </Attribute>
+    <Attribute name="Bauwerksbuch" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Bauwerksnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Technischer Platz" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="KIB-Typ" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>EÜ</Value>
+      <Value>SÜ</Value>
+      <Value>Durchlass</Value>
+    </Attribute>
+  </Object>
+  <Object name="Pfeiler" parent="c0f695c8-3940-48cb-a821-18ef8c13a9ab">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Pfeiler</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahl</Value>
+      <Value>Stahlbeton</Value>
+      <Value>Aluminium</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Stein</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Konstruktive Ingenieurbauwerke</Value>
+    </Attribute>
+    <Attribute name="Bauwerksbuch" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Bauwerksnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Technischer Platz" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="KIB-Typ" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>EÜ</Value>
+      <Value>SÜ</Value>
+      <Value>Durchlass</Value>
+    </Attribute>
+  </Object>
+  <Object name="Stütze" parent="c0f695c8-3940-48cb-a821-18ef8c13a9ab">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Stütze</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahl</Value>
+      <Value>Stahlbeton</Value>
+      <Value>Aluminium</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Stein</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Konstruktive Ingenieurbauwerke</Value>
+    </Attribute>
+    <Attribute name="Bauwerksbuch" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Bauwerksnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Technischer Platz" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="KIB-Typ" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>EÜ</Value>
+      <Value>SÜ</Value>
+      <Value>Durchlass</Value>
+    </Attribute>
+  </Object>
+  <Object name="Kappe" parent="c0f695c8-3940-48cb-a821-18ef8c13a9ab">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Kappe</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahl</Value>
+      <Value>Stahlbeton</Value>
+      <Value>Aluminium</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Stein</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Konstruktive Ingenieurbauwerke</Value>
+    </Attribute>
+    <Attribute name="Bauwerksbuch" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Bauwerksnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Technischer Platz" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="KIB-Typ" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>EÜ</Value>
+      <Value>SÜ</Value>
+      <Value>Durchlass</Value>
+    </Attribute>
+  </Object>
+  <Object name="Flügelmauer" parent="c0f695c8-3940-48cb-a821-18ef8c13a9ab">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Flügelmauer</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahl</Value>
+      <Value>Stahlbeton</Value>
+      <Value>Aluminium</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Stein</Value>
+      <Value>Mauerwerk</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Konstruktive Ingenieurbauwerke</Value>
+    </Attribute>
+    <Attribute name="Bauwerksbuch" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Bauwerksnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Technischer Platz" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="KIB-Typ" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>EÜ</Value>
+      <Value>SÜ</Value>
+      <Value>Durchlass</Value>
+    </Attribute>
+  </Object>
+  <Object name="Überbau" parent="c0f695c8-3940-48cb-a821-18ef8c13a9ab">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Überbau</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahl</Value>
+      <Value>Stahlbeton</Value>
+      <Value>Aluminium</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Mauerwerk</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Konstruktive Ingenieurbauwerke</Value>
+    </Attribute>
+    <Attribute name="Bauwerksbuch" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Bauwerksnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Technischer Platz" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="KIB-Typ" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>EÜ</Value>
+      <Value>SÜ</Value>
+      <Value>Durchlass</Value>
+    </Attribute>
+  </Object>
+  <Object name="Lager" parent="c0f695c8-3940-48cb-a821-18ef8c13a9ab">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Lager</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahl</Value>
+      <Value>Stahlbeton</Value>
+      <Value>Aluminium</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Stein</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Konstruktive Ingenieurbauwerke</Value>
+    </Attribute>
+    <Attribute name="Bauwerksbuch" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Bauwerksnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Technischer Platz" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="KIB-Typ" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>EÜ</Value>
+      <Value>SÜ</Value>
+      <Value>Durchlass</Value>
+    </Attribute>
+  </Object>
+  <Object name="Stützmauer" parent="c0f695c8-3940-48cb-a821-18ef8c13a9ab">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Stützmauer</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahl</Value>
+      <Value>Stahlbeton</Value>
+      <Value>Aluminium</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Stein</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Konstruktive Ingenieurbauwerke</Value>
+    </Attribute>
+    <Attribute name="Bauwerksbuch" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Bauwerksnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Technischer Platz" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="KIB-Typ" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>EÜ</Value>
+      <Value>SÜ</Value>
+      <Value>Durchlass</Value>
+    </Attribute>
+  </Object>
+  <Object name="Straße" parent="4dfd0644-7caa-4aae-925e-04114894c475">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Straße</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Asphalt</Value>
+      <Value>Pflaster</Value>
+      <Value>Bordstein</Value>
+      <Value>unbefestigt</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Straßenbau</Value>
+    </Attribute>
+    <Attribute name="Straßenname" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+  </Object>
+  <Object name="Verkehrszeichen" parent="1a454369-2c42-4255-9c86-7afde91802c2">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Verkehrszeichen</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Holz</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Technische Ausstattung Straße</Value>
+    </Attribute>
+  </Object>
+  <Object name="Schranke" parent="1a454369-2c42-4255-9c86-7afde91802c2">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Schranke</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Holz</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Technische Ausstattung Straße</Value>
+    </Attribute>
+  </Object>
+  <Object name="Zaun" parent="1a454369-2c42-4255-9c86-7afde91802c2">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Zaun</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Holz</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Technische Ausstattung Straße</Value>
+    </Attribute>
+  </Object>
+  <Object name="Beleuchtungsmast" parent="1a454369-2c42-4255-9c86-7afde91802c2">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Beleuchtungsmast</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Holz</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Technische Ausstattung Straße</Value>
+    </Attribute>
+  </Object>
+  <Object name="Leitplanke" parent="1a454369-2c42-4255-9c86-7afde91802c2">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Leitplanke</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Holz</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Technische Ausstattung Straße</Value>
+    </Attribute>
+  </Object>
+  <Object name="Fundament" parent="1a454369-2c42-4255-9c86-7afde91802c2">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Fundament</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Holz</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Technische Ausstattung Straße</Value>
+      <Value>Konstruktive Ingenieurbauwerke</Value>
+    </Attribute>
+  </Object>
+  <Object name="Mauer" parent="1a454369-2c42-4255-9c86-7afde91802c2">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Mauer</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Holz</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Technische Ausstattung Straße</Value>
+    </Attribute>
+  </Object>
+  <Object name="Pfosten" parent="1a454369-2c42-4255-9c86-7afde91802c2">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Pfosten</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Holz</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Technische Ausstattung Straße</Value>
+    </Attribute>
+  </Object>
+  <Object name="Tor" parent="1a454369-2c42-4255-9c86-7afde91802c2">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Tor</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Holz</Value>
+      <Value>Aluminium</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Technische Ausstattung Straße</Value>
+    </Attribute>
+  </Object>
+  <Object name="Straßenabläufe" parent="a2d03ea7-d0e6-47ef-8ddf-67113ef02aed">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Straßenabläufe</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Entwässerung Straße</Value>
+    </Attribute>
+  </Object>
+  <Object name="Entwässerungsschacht" parent="7f8dcef7-a4e4-4b95-b994-538c9e77646f">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Entwässerungsschacht</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Beton</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Entwässerung Gleis</Value>
+      <Value>Entwässerung Straße</Value>
+    </Attribute>
+  </Object>
+  <Object name="Straßenablauf" parent="a2d03ea7-d0e6-47ef-8ddf-67113ef02aed">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Straßenablauf</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Entwässerung Straße</Value>
+    </Attribute>
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Straßenablauf</Value>
+    </Attribute>
+  </Object>
+  <Object name="Gebäude" parent="616b092e-aa92-4360-869b-eefc3f7fab91">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Gebäude</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>CityGML</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>CityGML</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Von Vermessungsamt inkl. Erweiterung von GI-CONSULT</Value>
+      <Value>-</Value>
+    </Attribute>
+  </Object>
+  <Object name="Gehweg" parent="4dfd0644-7caa-4aae-925e-04114894c475">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Gehweg</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Asphalt</Value>
+      <Value>Pflaster</Value>
+      <Value>Bordstein</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Straßenbau</Value>
+    </Attribute>
+    <Attribute name="Straßenname" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+  </Object>
+  <Object name="Ankerfundament" parent="b69a4ddb-cee9-4612-adae-cea38b8db2ec">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Ankerfundament</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Aluminium</Value>
+      <Value>Metall</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Oberleitungsanlagen</Value>
+    </Attribute>
+  </Object>
+  <Object name="Kabelkanal-Stütze" parent="f8b88e1f-c439-4eb2-8731-286c7522b949">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Kabelkanal-Stütze</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+      <Value>Keine Zuordnung</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Kabeltiefbau</Value>
+    </Attribute>
+  </Object>
+  <Object name="Bahnsteigbelag" parent="5e46b270-a088-4a73-988f-0922a124af2e">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Bahnsteigbelag</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Aluminium</Value>
+      <Value>Holz</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Verkehrsanlagen</Value>
+    </Attribute>
+  </Object>
+  <Object name="Bahnsteig-Kantenstein" parent="5e46b270-a088-4a73-988f-0922a124af2e">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Bahnsteig-Kantenstein</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Aluminium</Value>
+      <Value>Holz</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Verkehrsanlagen</Value>
+    </Attribute>
+  </Object>
+  <Object name="Empfangsgebäude" parent="5e46b270-a088-4a73-988f-0922a124af2e">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Empfangsgebäude</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Aluminium</Value>
+      <Value>Holz</Value>
+      <Value>Glas</Value>
+      <Value>unbekannt</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Verkehrsanlagen</Value>
+    </Attribute>
+  </Object>
+  <Object name="VA-Ausrüstung" parent="5e46b270-a088-4a73-988f-0922a124af2e">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>VA-Ausrüstung</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Kunststoff</Value>
+      <Value>Glas</Value>
+      <Value>Aluminium</Value>
+      <Value>unbekannt</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Verkehrsanlagen</Value>
+    </Attribute>
+  </Object>
+  <Object name="Entwässerungsablauf" parent="7f8dcef7-a4e4-4b95-b994-538c9e77646f">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Entwässerungsablauf</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Beton</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Entwässerung Gleis</Value>
+      <Value>Entwässerung Straße</Value>
+    </Attribute>
+  </Object>
+  <Object name="Entwässerungsrinne" parent="7f8dcef7-a4e4-4b95-b994-538c9e77646f">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Entwässerungsrinne</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Beton</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Entwässerung Gleis</Value>
+      <Value>Entwässerung Straße</Value>
+    </Attribute>
+  </Object>
+  <Object name="Stützbauwerk" parent="c0f695c8-3940-48cb-a821-18ef8c13a9ab">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Stützbauwerk</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Konstruktive Ingenieurbauwerke</Value>
+    </Attribute>
+  </Object>
+  <Object name="Stützbauwerk-Ausrüstung" parent="c0f695c8-3940-48cb-a821-18ef8c13a9ab">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Stützbauwerk-Ausrüstung</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Beton</Value>
+      <Value>Stahl</Value>
+      <Value>Kunststoff</Value>
+      <Value>Metall</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Konstruktive Ingenieurbauwerke</Value>
+    </Attribute>
+    <Attribute name="Ausrüstungstyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Geländer</Value>
+      <Value>Treppe</Value>
+      <Value>Pflaster</Value>
+      <Value>Fundament</Value>
+      <Value>Zaun</Value>
+      <Value>Betonschicht</Value>
+    </Attribute>
+  </Object>
+  <Object name="Brücken-Ausrüstung" parent="c0f695c8-3940-48cb-a821-18ef8c13a9ab">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Brücken-Ausrüstung</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahl</Value>
+      <Value>Stahlbeton</Value>
+      <Value>Aluminium</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+      <Value>Stein</Value>
+      <Value>Pflaster</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Konstruktive Ingenieurbauwerke</Value>
+    </Attribute>
+    <Attribute name="Bauwerksnummer" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Technischer Platz" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="KIB-Typ" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>EÜ</Value>
+      <Value>SÜ</Value>
+      <Value>Durchlass</Value>
+    </Attribute>
+    <Attribute name="Bauwerksbuch" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Ausrüstungstyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Geländer</Value>
+      <Value>Abwasserrohr</Value>
+      <Value>Rohrstütze</Value>
+      <Value>Schild</Value>
+      <Value>Fahrleitungsschutz</Value>
+      <Value>Schacht</Value>
+      <Value>Beleuchtung</Value>
+      <Value>Treppe</Value>
+      <Value>Pflaster</Value>
+      <Value>Schotterfang</Value>
+      <Value>Lampe</Value>
+    </Attribute>
+  </Object>
+  <Object name="Gelände" parent="0a2aacd9-2358-4009-8ad2-06b8985c86cc">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Gelände</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>-</Value>
+    </Attribute>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>DGM</Value>
+    </Attribute>
+  </Object>
+  <Object name="Kabelmerkstein" parent="f8b88e1f-c439-4eb2-8731-286c7522b949">
+    <Attribute name="Objekttyp" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="True">
+      <Value>Kabelmerkstein</Value>
+    </Attribute>
+    <Attribute name="Strecke" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>4020</Value>
+      <Value>3443</Value>
+      <Value>4214</Value>
+      <Value>Keine Zuordnung</Value>
+    </Attribute>
+    <Attribute name="km (von)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+      <Value>
+        <From>-</From>
+        <To/>
+      </Value>
+    </Attribute>
+    <Attribute name="km (bis)" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="Range" is_identifier="False">
+      <Value>
+        <From>62.0</From>
+        <To>73.0</To>
+      </Value>
+      <Value>
+        <From>25.0</From>
+        <To>26.8</To>
+      </Value>
+      <Value>
+        <From>3.0</From>
+        <To>4.3</To>
+      </Value>
+      <Value>
+        <From>-</From>
+        <To/>
+      </Value>
+    </Attribute>
+    <Attribute name="Material" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Stahlbeton</Value>
+      <Value>Stahl</Value>
+      <Value>Beton</Value>
+      <Value>Metall</Value>
+    </Attribute>
+    <Attribute name="Ersteller" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>GI-CONSULT GmbH</Value>
+    </Attribute>
+    <Attribute name="Erstellungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>07-10/2020</Value>
+      <Value>11/2020</Value>
+      <Value>03/2021</Value>
+    </Attribute>
+    <Attribute name="Bemerkung" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False"/>
+    <Attribute name="Modellierungsgrundlage" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>tachymetrisches Aufmaß</Value>
+      <Value>Stationärer Laserscan</Value>
+      <Value>stationärer Laserscan</Value>
+      <Value>Drohnenbeflug</Value>
+      <Value>Plandokument</Value>
+    </Attribute>
+    <Attribute name="Vermessungsdatum" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>04-06/2020</Value>
+    </Attribute>
+    <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_typ="xs:string" value_typ="List" is_identifier="False">
+      <Value>Kabeltiefbau</Value>
+    </Attribute>
+  </Object>
+</Project>

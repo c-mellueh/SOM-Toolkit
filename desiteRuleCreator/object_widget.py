@@ -2,7 +2,7 @@ from PySide6.QtCore import QPoint, Qt, QCoreApplication
 from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView
 
 from . import property_widget, constants, io_messages
-from .classes import Object, CustomTreeItem, Group, PropertySet, Attribute, identifier_tree_text, CustomTree
+from .classes import Object, CustomTreeItem,  PropertySet, Attribute, CustomTree
 from .io_messages import req_group_name
 
 
@@ -42,6 +42,13 @@ def init(self):
                                self.ui.lineEdit_ident_attribute,
                                self.ui.lineEdit_ident_pSet, ]
 
+def all_equal(iterator):
+    iterator = iter(iterator)
+    try:
+        first = next(iterator)
+    except StopIteration:
+        return True
+    return all(first == x for x in iterator)
 
 def clear_object_input(mainWindow):
     for el in mainWindow.obj_line_edit_list:
@@ -96,7 +103,8 @@ def rc_group_items(mainWindow):
 
         return counter
 
-    group_name = req_group_name(mainWindow)
+    [group_name,ident_pset,ident_attrib,ident_value ]= req_group_name(mainWindow)
+
 
     if group_name:  # i guess there is a better solution TODO: find one
         root = mainWindow.tree.invisibleRootItem()
@@ -128,8 +136,13 @@ def rc_group_items(mainWindow):
                 (item.parent() or root).removeChild(item)
                 child_list.append(item)
 
-        group = CustomTreeItem(parent, Group(group_name))
+        pset = PropertySet(ident_pset)
+        identifier = Attribute(pset,ident_attrib,[ident_value],constants.LIST)
+
+        group_obj = Object(group_name,identifier)
+        group = CustomTreeItem(parent, group_obj)
         group.setText(0, group_name)
+        group.setText(1,str(group_obj.identifier))
         parent.addChild(group)
         for item in child_list:
             group.addChild(item)
@@ -156,36 +169,28 @@ def setIdentLineEnable(mainWindow, value: bool):
 
 
 def single_click(mainWindow):
-    def all_equal(iterator):
-        iterator = iter(iterator)
-        try:
-            first = next(iterator)
-        except StopIteration:
-            return True
-        return all(first == x for x in iterator)
 
     items = mainWindow.tree.selectedItems()
     mainWindow.set_pset_window_enable(False)
 
-    group_selected = [item.object.name for item in items if isinstance(item.object, Group)]
-    if group_selected:
-        if all_equal(group_selected):
-            mainWindow.ui.lineEdit_object_name.setText(group_selected[0])
-        mainWindow.setIdentLineEnable(False)
-
+    is_concept =[item.object for item in items if item.object.is_concept]
+    if is_concept:
+        mainWindow.clearObjectInput()
+        if all_equal(is_concept):
+            mainWindow.ui.lineEdit_object_name.setText(is_concept[0].name)
 
     else:
+
         mainWindow.setIdentLineEnable(True)
         object_names = [item.object.name for item in items]
         ident_psets = [item.object.identifier.propertySet.name for item in items]
         ident_attributes = [item.object.identifier.name for item in items]
-        ident_values = [item.object.identifier.value[0] for item in items]
+        ident_values = [item.object.identifier.value for item in items]
 
         line_assignment = {
             mainWindow.ui.lineEdit_object_name: object_names,
             mainWindow.ui.lineEdit_ident_pSet: ident_psets,
             mainWindow.ui.lineEdit_ident_attribute: ident_attributes,
-            mainWindow.ui.lineEdit_ident_value: ident_values,
         }
 
         for key, item in line_assignment.items():
@@ -195,6 +200,11 @@ def single_click(mainWindow):
             else:
                 key.setText("*")
 
+        if all_equal(ident_values):
+            value_list = [value for value in ident_values][0]
+
+            text = "|".join(value_list)
+            mainWindow.ui.lineEdit_ident_value.setText(text)
 
 def addObject(mainWindow):
     def missing_input(input_list):
@@ -247,7 +257,7 @@ def addObjectToTree(mainWindow, obj: Object, parent=None):
         item = CustomTreeItem(parent, obj)
 
     item.setText(0, obj.name)
-    item.setText(1, identifier_tree_text(obj))
+    item.setText(1, str(obj.identifier))
     return item
 
 
@@ -264,41 +274,45 @@ def updateObject(mainWindow):
     name = mainWindow.ui.lineEdit_object_name.text()
     pSetName = mainWindow.ui.lineEdit_ident_pSet.text()
     identName = mainWindow.ui.lineEdit_ident_attribute.text()
-    identValue = [mainWindow.ui.lineEdit_ident_value.text()]
+    identValue = mainWindow.ui.lineEdit_ident_value.text()
 
     input_list = [name, pSetName, identName, identValue]
+
     selected_items = mainWindow.tree.selectedItems()
 
-    for item in selected_items:
-        if isinstance(item.object, Group):
-            obj: Group = item.object
-            obj.name = name
-            item.setText(0, name)
-            return
-        else:
-            empty_input = False
+    if len(selected_items) >1 and not "*" in input_list:
+        io_messages.msg_identical_identifier(mainWindow.icon)
+        return
+    empty_input = False
+    for el in input_list:
+        if not bool(el):
+            empty_input = True
 
-            for el in input_list:
-                if not bool(el):
-                    empty_input = True
+    if empty_input:
+        io_messages.msg_missing_input(mainWindow.icon)
+        return
 
-            if empty_input:
-                io_messages.msg_missing_input(mainWindow.icon)
+    else:
+        for item in selected_items:
+            object: Object = item.object
+            ident = object.identifier
+            if not isinstance(ident,Attribute):
+                property_set = PropertySet(pSetName)
+                object.identifier = Attribute(property_set,identName,[identValue],value_type=constants.LIST)
+                object.add_attribute(object.identifier)
+                object.is_concept = False
+
             else:
-                for item in selected_items:
-                    object: Object = item.object
-                    ident = object.identifier
+                if name != "*":
+                    object.name = name
+                if pSetName != "*":
+                    ident.propertySet = PropertySet(pSetName)
 
-                    if name != "*":
-                        object.name = name
-                    if pSetName != ident.propertySet.name and pSetName != "*":
-                        ident.propertySet = PropertySet(pSetName)
+                if identName != "*":
+                    ident.name = identName
 
-                    if identName != "*":
-                        ident.name = identName
+                if identValue != "*":
+                    ident.value = [identValue]
 
-                    if identValue != "*":
-                        ident.value = identValue
-
-                    item.setText(0, object.name)
-                    item.setText(1, f"{ident.propertySet.name} : {ident.name} = {ident.value[0]}")
+            item.setText(0, object.name)
+            item.setText(1, str(object.identifier))

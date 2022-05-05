@@ -2,7 +2,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea
 
 from . import constants
-from .classes import PropertySet, CustomTreeItem, attributes_to_psetdict, identifier_tree_text
+from .classes import PropertySet, CustomTreeItem, attributes_to_psetdict
 from .io_messages import msg_del_ident_pset
 from .propertyset_window import PropertySetWindow
 
@@ -62,7 +62,7 @@ def rename(mainWindow):
     object = selected_pset.object
     if object.identifier in selected_pset.attributes:
         tree_item: CustomTreeItem = mainWindow.tree.selectedItems()[0]
-        tree_item.setText(1, identifier_tree_text(object))
+        tree_item.setText(1, str(object.identifier))
     mainWindow.pset_table.resizeColumnsToContents()
 
 

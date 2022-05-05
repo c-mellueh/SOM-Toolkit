@@ -2,9 +2,6 @@ from PySide6.QtWidgets import QTreeWidget,QTreeWidgetItem,QAbstractItemView
 from PySide6.QtGui import QDropEvent
 from uuid import uuid4
 
-def identifier_tree_text(object):
-    text = f"{object.identifier.propertySet.name} : {object.identifier.name} = {object.identifier.value[0]}"
-    return text
 
 def attributes_to_psetdict(attributes):
     pset_dict = {}
@@ -83,6 +80,10 @@ class Attribute:
         propertySet.add_attribute(self)
         self._is_shared = False
 
+    def __str__(self):
+        text = f"{self.propertySet.name} : {self.name} = {self.value}"
+        return text
+
     @property
     def is_shared(self):
         return self._is_shared
@@ -115,7 +116,17 @@ class Attribute:
 
     @value.setter
     def value(self, value):
-        self._value = value
+        new_value = []
+        for el in value:
+            el:str = el
+            if "|" in el:
+                el = el.split("|")
+                for item in el:
+                    new_value.append(item)
+            else:
+                new_value.append(el)
+        print(new_value)
+        self._value = new_value
 
     @property
     def value_type(self)-> int :
@@ -162,73 +173,81 @@ class Attribute:
         self.object.remove_attribute(self)
         self.propertySet.remove_attribute(self)
 
-class Group:
-    iter = dict()
-    def __init__(self,name):
-        self._name = name
-        self._objects = []
-        self._parent = None
-        self._attributes = list()
-        self.identifier = uuid4()
-        self._inherited_attributes = None
-        self.iter[self.identifier] = self
-
-    @property
-    def inherited_attributes(self) -> list:
-        self._inherited_attributes = inherited_attributes(self)
-        return self._inherited_attributes
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        self._name = value
-
-    def add_child(self,object):
-        self._objects.append(object)
-        object.parent = self
-
-    def remove_child(self,object):
-        self._objects.remove(object)
-        object.parent= None
-
-    @property
-    def parent(self):
-        return self._parent
-
-    @parent.setter
-    def parent(self, value):
-        self._parent = value
-
-    @property
-    def attributes(self) -> list[Attribute]:
-        return self._attributes
-
-    def add_attribute(self, attribute):
-        self._attributes.append(attribute)
-        attribute.object = self
-
-    def remove_attribute(self, attribute):
-        self._attributes.remove(attribute)
-
-    def delete(self):
-        self.iter.pop(self.identifier)
-        pass
+# class Group:
+#     iter = dict()
+#     def __init__(self,name):
+#         self._name = name
+#         self._objects = []
+#         self._parent = None
+#         self._attributes = list()
+#         self.identifier = uuid4()
+#         self._inherited_attributes = None
+#         self.iter[self.identifier] = self
+#
+#     @property
+#     def inherited_attributes(self) -> list:
+#         self._inherited_attributes = inherited_attributes(self)
+#         return self._inherited_attributes
+#     @property
+#     def name(self):
+#         return self._name
+#
+#     @name.setter
+#     def name(self, value):
+#         self._name = value
+#
+#     def add_child(self,object):
+#         self._objects.append(object)
+#         object.parent = self
+#
+#     def remove_child(self,object):
+#         self._objects.remove(object)
+#         object.parent= None
+#
+#     @property
+#     def parent(self):
+#         return self._parent
+#
+#     @parent.setter
+#     def parent(self, value):
+#         self._parent = value
+#
+#     @property
+#     def attributes(self) -> list[Attribute]:
+#         return self._attributes
+#
+#     def add_attribute(self, attribute):
+#         self._attributes.append(attribute)
+#         attribute.object = self
+#
+#     def remove_attribute(self, attribute):
+#         self._attributes.remove(attribute)
+#
+#     def delete(self):
+#         self.iter.pop(self.identifier)
+#         pass
 
 class Object:
     iter = dict()
 
-    def __init__(self, name, ident: Attribute,parent:Group = None):
+    def __init__(self, name, ident: Attribute,parent = None, is_concept = False):
 
         self._name = name
         self._identifier = ident
         self.iter[ident] = self
         self._parent = parent
         self._attributes = list()
-        self.add_attribute(self._identifier)
         self._parent = None
         self._inherited_attributes = None
+        self._is_concept = is_concept
+        self._children = list()
+    @property
+    def is_concept(self):
+        return  self._is_concept
+
+    @is_concept.setter
+    def is_concept(self,value:bool):
+        self._is_concept = value
 
     @property
     def inherited_attributes(self) -> list:
@@ -236,11 +255,11 @@ class Object:
         return self._inherited_attributes
 
     @property
-    def parent(self) -> Group:
+    def parent(self):
         return self._parent
 
     @parent.setter
-    def parent(self,value:Group):
+    def parent(self,value):
         self._parent = value
         value.add_child(self)
     @property
@@ -260,7 +279,7 @@ class Object:
         self._identifier = value
 
     @property
-    def parent(self) ->Group:
+    def parent(self):
         return self._parent
 
     @parent.setter
@@ -278,6 +297,15 @@ class Object:
     def remove_attribute(self,attribute):
         self._attributes.remove(attribute)
 
+    @property
+    def children(self):
+        return self._children
+
+    def add_child(self, object):
+        self._children.append(object)
+
+    def remove_child(self,object):
+        self._children.remove(object)
 
 
     @property
