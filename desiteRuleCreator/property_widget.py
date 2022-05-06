@@ -21,13 +21,19 @@ def init(self):
     self.set_pset_window_enable(False)
     self.ui.lineEdit_pSet_name.textChanged.connect(self.text_changed)
 
+def modify_title(layout,object= None):
+
+    if object is not None:
+        layout.setTitle(f"{object.name}: PropertySets" )
+    else:
+        layout.setTitle("PropertySet")
 
 def clear_all(mainWindow):
     for row in range(mainWindow.pset_table.rowCount()):
         mainWindow.pset_table.removeRow(row)
     mainWindow.ui.lineEdit_pSet_name.clear()
     mainWindow.set_pset_window_enable(False)
-
+    modify_title(mainWindow.ui.horizontalLayout_pSet)
 
 def delete(mainWindow):
     list_item = mainWindow.pset_table.selectedItems()
@@ -83,14 +89,14 @@ def set_enable(mainWindow, value: bool):
     mainWindow.pset_table.setEnabled(value)
     mainWindow.ui.tableWidget_inherited.setEnabled(value)
     if not value:
-        mainWindow.ui.horizontalLayout_pSet.setTitle("PropertySet")
+        modify_title(mainWindow.ui.horizontalLayout_pSet)
         mainWindow.pset_table.setRowCount(0)
         mainWindow.ui.lineEdit_pSet_name.setText("")
 
 
 def fill_table(mainWindow, item: CustomTreeItem, obj):
     mainWindow.set_pset_window_enable(True)
-    mainWindow.ui.horizontalLayout_pSet.setTitle(f"PropertySet {obj.name}")
+    modify_title(mainWindow.ui.horizontalLayout_pSet,obj)
     mainWindow.pset_table.setRowCount(0)
     own_psets = attributes_to_psetdict(obj.attributes)
     table_length = len(own_psets)
@@ -137,7 +143,6 @@ def left_click(mainWindow, item: QListWidgetItem):
 
 def double_click(mainWindow, item: QTableWidgetItem):
     mainWindow.listObjectClicked(item)
-    print(item.row())
     item = mainWindow.pset_table.item(item.row(), 0)
     propertySet: PropertySet = item.data(constants.DATA_POS)
 

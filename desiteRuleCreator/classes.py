@@ -2,6 +2,47 @@ from PySide6.QtWidgets import QTreeWidget,QTreeWidgetItem,QAbstractItemView
 from PySide6.QtGui import QDropEvent
 from uuid import uuid4
 
+global _changed
+_changed = False
+
+@property
+def changed():
+    global _changed
+
+    def check_data():
+        def check(obj):
+            if obj.changed is True:
+                return True
+            else:
+                return False
+
+        for obj in Object.iter.values():
+            if check(obj):
+                return True
+            for attribute in obj.attributes:
+                if check(attribute) or check(attribute.propertySet):
+                    return True
+
+    data = check_data()
+    if data or _changed:
+        _changed = True
+        return _changed
+    else:
+        return False
+
+    return _changed
+
+@changed.setter
+def changed(status):
+    global _changed
+    for obj in Object.iter.values():
+        obj.changed = status
+
+        for attribute in obj.attributes:
+            attribute.changed = status
+            attribute.propertySet.changed = status
+    _changed = status
+
 
 def attributes_to_psetdict(attributes):
     pset_dict = {}
@@ -32,11 +73,13 @@ def inherited_attributes(obj):
         attribute_dict = recursion(attribute_dict,obj.parent)
     return attribute_dict
 
-class PropertySet:
+
+class PropertySet(object):
     def __init__(self, name:str):
         self._name = name
         self._attributes = list()  # attribute_name:value
         self._object = None
+        self.changed = True
 
     @property
     def object(self):
@@ -45,6 +88,7 @@ class PropertySet:
     @object.setter
     def object(self, value):
         self._object = value
+        self.changed = True
 
     @property
     def name(self) -> str:
@@ -53,7 +97,7 @@ class PropertySet:
     @name.setter
     def name(self, value:str):
         self._name = value
-
+        self.changed = True
     @property
     def attributes(self) -> list:
         return self._attributes
@@ -61,15 +105,17 @@ class PropertySet:
     @attributes.setter
     def attributes(self, value: dict):
         self._attributes = value
+        self.changed = True
 
     def add_attribute(self, value):
         self._attributes.append(value)
+        self.changed = True
 
     def remove_attribute(self, value):
         self._attributes.pop(self._attributes.index(value))
+        self.changed = True
 
-
-class Attribute:
+class Attribute(object):
     def __init__(self,propertySet:PropertySet, name:str, value,value_type, data_type = "xs:string"):
         self._name = name
         self._value = value
@@ -78,19 +124,11 @@ class Attribute:
         self._data_type = data_type
         self._object = None
         propertySet.add_attribute(self)
-        self._is_shared = False
+        self.changed = True
 
     def __str__(self):
         text = f"{self.propertySet.name} : {self.name} = {self.value}"
         return text
-
-    @property
-    def is_shared(self):
-        return self._is_shared
-
-    @is_shared.setter
-    def is_shared(self,value:bool):
-        self._is_shared = value
 
     @property
     def object(self):
@@ -100,6 +138,7 @@ class Attribute:
     def object(self,value):
         self._object = value
         self.propertySet.object = self._object
+        self.changed = True
 
 
     @property
@@ -109,7 +148,7 @@ class Attribute:
     @name.setter
     def name(self, value:str):
         self._name = value
-
+        self.changed = True
     @property
     def value(self):
         return self._value
@@ -127,6 +166,7 @@ class Attribute:
                 new_value.append(el)
         print(new_value)
         self._value = new_value
+        self.changed = True
 
     @property
     def value_type(self)-> int :
@@ -135,6 +175,7 @@ class Attribute:
     @value_type.setter
     def value_type(self, value: int):
         self._value_type = value
+        self.changed = True
 
     @property
     def data_type(self) -> int:
@@ -143,6 +184,7 @@ class Attribute:
     @data_type.setter
     def data_type(self, value: int):
         self._data_type = value
+        self.changed = True
 
     @property
     def propertySet(self)->PropertySet:
@@ -153,6 +195,8 @@ class Attribute:
         self.propertySet.remove_attribute(self)
         value.add_attribute(self)
         self._propertySet = value
+        self.changed = True
+
 
     def is_equal(self,attribute):
         equal = True
@@ -173,63 +217,9 @@ class Attribute:
         self.object.remove_attribute(self)
         self.propertySet.remove_attribute(self)
 
-# class Group:
-#     iter = dict()
-#     def __init__(self,name):
-#         self._name = name
-#         self._objects = []
-#         self._parent = None
-#         self._attributes = list()
-#         self.identifier = uuid4()
-#         self._inherited_attributes = None
-#         self.iter[self.identifier] = self
-#
-#     @property
-#     def inherited_attributes(self) -> list:
-#         self._inherited_attributes = inherited_attributes(self)
-#         return self._inherited_attributes
-#     @property
-#     def name(self):
-#         return self._name
-#
-#     @name.setter
-#     def name(self, value):
-#         self._name = value
-#
-#     def add_child(self,object):
-#         self._objects.append(object)
-#         object.parent = self
-#
-#     def remove_child(self,object):
-#         self._objects.remove(object)
-#         object.parent= None
-#
-#     @property
-#     def parent(self):
-#         return self._parent
-#
-#     @parent.setter
-#     def parent(self, value):
-#         self._parent = value
-#
-#     @property
-#     def attributes(self) -> list[Attribute]:
-#         return self._attributes
-#
-#     def add_attribute(self, attribute):
-#         self._attributes.append(attribute)
-#         attribute.object = self
-#
-#     def remove_attribute(self, attribute):
-#         self._attributes.remove(attribute)
-#
-#     def delete(self):
-#         self.iter.pop(self.identifier)
-#         pass
 
-class Object:
+class Object(object):
     iter = dict()
-
     def __init__(self, name, ident: Attribute,parent = None, is_concept = False):
 
         self._name = name
@@ -241,6 +231,8 @@ class Object:
         self._inherited_attributes = None
         self._is_concept = is_concept
         self._children = list()
+        self.changed = True
+
     @property
     def is_concept(self):
         return  self._is_concept
@@ -248,6 +240,7 @@ class Object:
     @is_concept.setter
     def is_concept(self,value:bool):
         self._is_concept = value
+        self.changed = True
 
     @property
     def inherited_attributes(self) -> list:
@@ -262,6 +255,8 @@ class Object:
     def parent(self,value):
         self._parent = value
         value.add_child(self)
+        self.changed = True
+
     @property
     def name(self):
         return self._name
@@ -269,6 +264,8 @@ class Object:
     @name.setter
     def name(self, value):
         self._name = value
+        self.changed = True
+
 
     @property
     def identifier(self) -> Attribute:
@@ -277,6 +274,8 @@ class Object:
     @identifier.setter
     def identifier(self, value):
         self._identifier = value
+        self.changed = True
+
 
     @property
     def parent(self):
@@ -285,6 +284,8 @@ class Object:
     @parent.setter
     def parent(self, value):
         self._parent = value
+        self.changed = True
+
 
     @property
     def attributes(self)->list[Attribute]:
@@ -293,9 +294,18 @@ class Object:
     def add_attribute(self,attribute):
         self._attributes.append(attribute)
         attribute.object = self
+        self.changed = True
+
 
     def remove_attribute(self,attribute):
         self._attributes.remove(attribute)
+        self.changed = True
+
+
+    def add_attributes(self,attribute_list):
+        for attribute in attribute_list:
+            self.add_attribute(attribute)
+        self.changed = True
 
     @property
     def children(self):
@@ -303,9 +313,13 @@ class Object:
 
     def add_child(self, object):
         self._children.append(object)
+        self.changed = True
+
 
     def remove_child(self,object):
         self._children.remove(object)
+        self.changed = True
+
 
 
     @property
@@ -314,7 +328,6 @@ class Object:
         new_dict = {}
         for key in p_set_dict.keys():
             new_dict[key.name]=key
-
         return new_dict
 
     def delete(self):
@@ -328,22 +341,20 @@ class CustomTree(QTreeWidget):
     def dropEvent(self, event:QDropEvent) -> None:
 
         selected_items = self.selectedItems()
+        droped_on_item = self.itemFromIndex(self.indexAt(event.pos()))
 
         if self.dropIndicatorPosition() == QAbstractItemView.DropIndicatorPosition.OnItem:
-            droped_on_item = self.itemFromIndex(self.indexAt(event.pos()))
-            object = droped_on_item.object
-
-            if isinstance(object, Group):
-                super(CustomTree, self).dropEvent(event)
+            super(CustomTree, self).dropEvent(event)
+            parent = droped_on_item.object
 
         else:
             super(CustomTree, self).dropEvent(event)
+            parent = droped_on_item.object.parent
 
         for el in selected_items:
             object = el.object
-            parent = el.parent()
             if parent is not None:
-                object.parent = parent.object
+                object.parent = parent
             else:
                 object.parent = None
 

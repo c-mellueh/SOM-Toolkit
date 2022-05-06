@@ -92,6 +92,11 @@ class GroupRequest(QDialog):
         self.attribute_value = QLineEdit(self)
         self.setWindowIcon(icon)
 
+        self.group_name.setPlaceholderText("Name")
+        self.pset_name.setPlaceholderText("PropertySet")
+        self.attribute_value.setPlaceholderText("Value")
+        self.attribute_name.setPlaceholderText("Attribute")
+
         self.input_fields = [self.group_name,self.pset_name,self.attribute_name,self.attribute_value]
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok|QDialogButtonBox.Cancel,self)
 
@@ -105,6 +110,7 @@ class GroupRequest(QDialog):
 
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
+        self.setWindowTitle("New Group")
 
     def accept(self) -> None:
         is_empty = [True for text in self.input_fields if not bool(text.text())]

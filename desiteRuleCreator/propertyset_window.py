@@ -292,7 +292,6 @@ class PropertySetWindow(QtWidgets.QWidget):
     def list_clicked(self, event: QModelIndex):
         item: QTableWidgetItem = self.widget.table_widget.item(event.row(), 0)
         attribute: Attribute = self.widget.table_widget.data_dict[item.text()]
-
         if attribute != self.property_set.object.identifier:
 
             index = self.widget.combo_type.findText(attribute.value_type)

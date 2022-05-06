@@ -43,8 +43,9 @@ class MainWindow(QMainWindow):
 
         # debug: preload file
         #self.openFile(path="E:/Cloud/OneDrive/Arbeit/DB_Werkstudent/Projekte/Karlsruhe_Durmersheim/Modelchecking/Regeln/Datenstruktur/22_04_18.xml")
-        self.openFile("desiteRuleCreator/saves/22_04_18.xml")
+        self.openFile("desiteRuleCreator/saves/test.xml")
         self.tree.resizeColumnToContents(0)
+        self.changed = False
 
     def closeEvent(self, event):
         filehandling.close_event(self, event)
@@ -71,7 +72,9 @@ class MainWindow(QMainWindow):
     def openFile(self, path=False):
 
         if path is False:
-            path = QFileDialog.getOpenFileName(self, "Open XML", "", "xml Files (*.xml *.DRCxml)")[0]
+            cur_path =os.getcwd()+"/"
+            path = QFileDialog.getOpenFileName(self, "Open XML", str(cur_path), "xml Files (*.xml *.DRCxml)")[0]
+
 
         if path:
             filehandling.importData(self, path)
@@ -110,7 +113,7 @@ class MainWindow(QMainWindow):
         object_widget.addObject(self)
 
     def addObjectToTree(self, obj: Object, parent=None):
-        object_widget.addObjectToTree(self, obj, parent)
+        return object_widget.addObjectToTree(self, obj, parent)
 
     def deleteObject(self):
         object_widget.deleteObject(self)

@@ -1,12 +1,13 @@
 from PySide6.QtCore import QPoint, Qt, QCoreApplication
-from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView
+from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView,QTreeWidgetItem
+from PySide6.QtGui import QShortcut,QKeySequence
 
 from . import property_widget, constants, io_messages
 from .classes import Object, CustomTreeItem,  PropertySet, Attribute, CustomTree
 from .io_messages import req_group_name
 
 
-def init(self):
+def init(mainView):
     def init_tree(tree: CustomTree):
         # Design Tree
         tree.setObjectName(u"treeWidget_objects")
@@ -32,15 +33,21 @@ def init(self):
         self.ui.button_objects_delete.clicked.connect(self.deleteObject)
         self.ui.button_objects_update.clicked.connect(self.updateObject)
 
-    self.tree = CustomTree(self.ui.verticalLayout_main)
-    init_tree(self.tree)
-    connect_items(self)
-    self.ui.verticalLayout_objects.addWidget(self.tree)
-    self.object_buttons = [self.ui.button_objects_update, self.ui.button_objects_delete, self.ui.button_objects_add]
-    self.obj_line_edit_list = [self.ui.lineEdit_object_name,
-                               self.ui.lineEdit_ident_value,
-                               self.ui.lineEdit_ident_attribute,
-                               self.ui.lineEdit_ident_pSet, ]
+    mainView.tree = CustomTree(mainView.ui.verticalLayout_main)
+    init_tree(mainView.tree)
+    connect_items(mainView)
+    mainView.ui.verticalLayout_objects.addWidget(mainView.tree)
+    mainView.object_buttons = [mainView.ui.button_objects_update, mainView.ui.button_objects_delete, mainView.ui.button_objects_add]
+    mainView.obj_line_edit_list = [mainView.ui.lineEdit_object_name,
+                                   mainView.ui.lineEdit_ident_value,
+                                   mainView.ui.lineEdit_ident_attribute,
+                                   mainView.ui.lineEdit_ident_pSet, ]
+
+    mainView.delSc = QShortcut(QKeySequence('Ctrl+X'), mainView)
+    mainView.delSc.activated.connect(mainView.deleteObject)
+
+    mainView.delSc = QShortcut(QKeySequence('Ctrl+G'), mainView)
+    mainView.delSc.activated.connect(mainView.rc_group)
 
 def all_equal(iterator):
     iterator = iter(iterator)
@@ -92,63 +99,27 @@ def rc_expand(tree: QTreeWidget):
 
 
 def rc_group_items(mainWindow):
-    def get_level(item):
-        if item is not None:
-            counter = 0
-            while item.parent():
-                counter += 1
-                item = item.parent()
-        else:
-            return -1
 
-        return counter
 
     [group_name,ident_pset,ident_attrib,ident_value ]= req_group_name(mainWindow)
-
-
-    if group_name:  # i guess there is a better solution TODO: find one
-        root = mainWindow.tree.invisibleRootItem()
+    if group_name:
         selected_items = mainWindow.tree.selectedItems()
+        parent_classes = [item for item in selected_items if item.parent() not in selected_items]
+        parent = parent_classes[0].parent()
 
-        first_parent = selected_items[0].parent()
-        first_level = get_level(first_parent)
-        if first_level != -1:
-            parent_merker = [first_level, first_parent]  # Level,Parent
-
-            for item in selected_items:
-                parent = item.parent()
-                level = get_level(parent)
-
-                if level < parent_merker[0]:
-                    parent_merker = [level, parent]
-        else:
-            parent_merker = [-1, None]
-
-        if parent_merker[0] < 0:
-            parent_merker = [0, mainWindow.tree.invisibleRootItem()]
-
-        parent = parent_merker[1]
-
-        child_list = list()
-
-        for item in mainWindow.tree.selectedItems():
-            if not item.parent() in mainWindow.tree.selectedItems():
-                (item.parent() or root).removeChild(item)
-                child_list.append(item)
+        if parent is None:
+            parent = mainWindow.tree.invisibleRootItem()
 
         pset = PropertySet(ident_pset)
         identifier = Attribute(pset,ident_attrib,[ident_value],constants.LIST)
-
         group_obj = Object(group_name,identifier)
-        group = CustomTreeItem(parent, group_obj)
-        group.setText(0, group_name)
-        group.setText(1,str(group_obj.identifier))
-        parent.addChild(group)
-        for item in child_list:
-            group.addChild(item)
+        group_obj.add_attribute(identifier)
 
-        if isinstance(parent, CustomTreeItem):
-            group.object.parent = parent.object
+        group_item:CustomTreeItem = mainWindow.addObjectToTree(group_obj,parent)
+
+        for item in parent_classes:
+            parent.removeChild(item)
+            group_item.addChild(item)
 
 
 def double_click(mainWindow, item: CustomTreeItem):
@@ -204,7 +175,10 @@ def single_click(mainWindow):
             value_list = [value for value in ident_values][0]
 
             text = "|".join(value_list)
-            mainWindow.ui.lineEdit_ident_value.setText(text)
+
+        else:
+            text = "*"
+        mainWindow.ui.lineEdit_ident_value.setText(text)
 
 def addObject(mainWindow):
     def missing_input(input_list):
@@ -257,18 +231,21 @@ def addObjectToTree(mainWindow, obj: Object, parent=None):
         item = CustomTreeItem(parent, obj)
 
     item.setText(0, obj.name)
-    item.setText(1, str(obj.identifier))
+    if not obj.is_concept:
+        item.setText(1, str(obj.identifier))
     return item
 
 
 def deleteObject(mainWindow):
-    root = mainWindow.tree.invisibleRootItem()
+    root:QTreeWidgetItem = mainWindow.tree.invisibleRootItem()
     for item in mainWindow.tree.selectedItems():
         obj = item.object
-
         obj.delete()
-        (item.parent() or root).removeChild(item)
 
+        children = item.takeChildren()
+        root.addChildren(children)
+        (item.parent() or root).removeChild(item)
+    mainWindow.changed = True
 
 def updateObject(mainWindow):
     name = mainWindow.ui.lineEdit_object_name.text()

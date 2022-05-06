@@ -1,4 +1,4 @@
-from desiteRuleCreator.run import main as run_main
+from desiteRuleCreator.main_window import main as run_main
 
 def main():
     run_main()
