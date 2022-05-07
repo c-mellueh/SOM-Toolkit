@@ -2,7 +2,7 @@ from PySide6.QtCore import QPoint, Qt, QCoreApplication
 from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView,QTreeWidgetItem
 from PySide6.QtGui import QShortcut,QKeySequence
 
-from . import property_widget, constants, io_messages
+from . import property_widget, constants, io_messages,classes
 from .classes import Object, CustomTreeItem,  PropertySet, Attribute, CustomTree
 from .io_messages import req_group_name
 
@@ -241,11 +241,10 @@ def deleteObject(mainWindow):
     for item in mainWindow.tree.selectedItems():
         obj = item.object
         obj.delete()
-
         children = item.takeChildren()
         root.addChildren(children)
         (item.parent() or root).removeChild(item)
-    mainWindow.changed = True
+        mainWindow.project.changed = True
 
 def updateObject(mainWindow):
     name = mainWindow.ui.lineEdit_object_name.text()

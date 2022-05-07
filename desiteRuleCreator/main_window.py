@@ -4,10 +4,7 @@ import sys
 from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
 
-from . import constants
-from . import filehandling
-from . import object_widget
-from . import property_widget
+from . import constants,filehandling,object_widget,property_widget,desite_export,classes
 from .QtDesigns.ui_mainwindow import Ui_MainWindow
 from .classes import Object, PropertySet
 
@@ -28,8 +25,9 @@ class MainWindow(QMainWindow):
         # variables
         self.icon = get_icon()
         self.setWindowIcon(self.icon)
-        self.save_path = None
-        self.project_name = ""
+        self._save_path = None
+        self._export_path = None
+        self.project = classes.Project("")
 
         # init object and ProertyWidget
         object_widget.init(self)
@@ -40,12 +38,35 @@ class MainWindow(QMainWindow):
         self.ui.action_file_new.triggered.connect(self.new_file)
         self.ui.action_file_Save.triggered.connect(self.save_clicked)
         self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
+        self.ui.action_desite_Export.triggered.connect(self.export_desite_rules)
 
         # debug: preload file
         #self.openFile(path="E:/Cloud/OneDrive/Arbeit/DB_Werkstudent/Projekte/Karlsruhe_Durmersheim/Modelchecking/Regeln/Datenstruktur/22_04_18.xml")
-        self.openFile("desiteRuleCreator/saves/test.xml")
+        self.openFile("desiteRuleCreator/saves/22_04_18.xml")
         self.tree.resizeColumnToContents(0)
-        self.changed = False
+        self.save_path = None
+        print(self.save_path)
+    @property
+    def save_path(self):
+        return self._save_path
+
+    @save_path.setter
+    def save_path(self,value):
+        self._save_path = value
+        self._export_path = value
+
+    @property
+    def export_path(self):
+        return self._export_path
+
+    @export_path.setter
+    def export_path(self,value):
+        self._save_path = value
+        self._export_path = value
+
+
+    def export_desite_rules(self):
+        desite_export.save_rules(self)
 
     def closeEvent(self, event):
         filehandling.close_event(self, event)

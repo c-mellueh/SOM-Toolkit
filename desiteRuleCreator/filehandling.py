@@ -49,12 +49,15 @@ def importData(widget, path=False):
 
         if projekt_xml.attrib.get("version") is None:
             import_old(projekt_xml)
+            widget.project = classes.Project(projekt_xml.attrib.get("Name"))
+            print(widget.project.name)
         else:
             import_new(projekt_xml)
         fill_tree(widget)
         widget.tree.resizeColumnToContents(0)
         widget.save_path = path
 
+        widget.setWindowTitle(widget.project.name)
 
 def import_new(projekt_xml: etree._Element):
     def import_attributes(xml_object):
@@ -239,7 +242,7 @@ def save(mainWindow, path):
                     xml_value.text = str(value)
 
     project = etree.Element('Project')
-    project.set("name", mainWindow.project_name)
+    project.set("name", mainWindow.project.name)
     project.set("version", project_version)
 
     mainWindow.save_path = path
@@ -261,8 +264,7 @@ def save(mainWindow, path):
     with open(path, "wb") as f:
         tree.write(f, pretty_print=True, encoding="utf-8", xml_declaration=True)
 
-    classes.changed = False
-
+    mainWindow.project.reset_changed()
 
 def save_clicked(mainWindow):
     if mainWindow.save_path is None:
@@ -280,8 +282,9 @@ def new_file(mainWindow):
         project_name = QInputDialog.getText(mainWindow, "New Project", "new Project Name:", QLineEdit.Normal, "")
 
         if project_name[1]:
-            mainWindow.setWindowTitle(project_name[0])
-            mainWindow.project_name = project_name[0]
+            mainWindow.project = classes.Project(project_name[0])
+            mainWindow.setWindowTitle(mainWindow.project.name)
+            mainWindow.project.name = project_name[0]
             mainWindow.clear_all()
 
 
@@ -306,7 +309,7 @@ def merge_new_file(mainWindow):
 
 
 def close_event(mainWindow, event):
-    status = classes.changed
+    status = mainWindow.project.changed
     if status:
         reply = msg_close(mainWindow.icon)
         if reply == QMessageBox.Save:

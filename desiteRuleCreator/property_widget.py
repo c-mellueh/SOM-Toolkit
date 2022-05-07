@@ -21,6 +21,7 @@ def init(self):
     self.set_pset_window_enable(False)
     self.ui.lineEdit_pSet_name.textChanged.connect(self.text_changed)
 
+
 def modify_title(layout,object= None):
 
     if object is not None:

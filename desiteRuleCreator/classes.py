@@ -1,48 +1,8 @@
 from PySide6.QtWidgets import QTreeWidget,QTreeWidgetItem,QAbstractItemView
 from PySide6.QtGui import QDropEvent
 from uuid import uuid4
-
+from . import __version__ as project_version
 global _changed
-_changed = False
-
-@property
-def changed():
-    global _changed
-
-    def check_data():
-        def check(obj):
-            if obj.changed is True:
-                return True
-            else:
-                return False
-
-        for obj in Object.iter.values():
-            if check(obj):
-                return True
-            for attribute in obj.attributes:
-                if check(attribute) or check(attribute.propertySet):
-                    return True
-
-    data = check_data()
-    if data or _changed:
-        _changed = True
-        return _changed
-    else:
-        return False
-
-    return _changed
-
-@changed.setter
-def changed(status):
-    global _changed
-    for obj in Object.iter.values():
-        obj.changed = status
-
-        for attribute in obj.attributes:
-            attribute.changed = status
-            attribute.propertySet.changed = status
-    _changed = status
-
 
 def attributes_to_psetdict(attributes):
     pset_dict = {}
@@ -72,6 +32,68 @@ def inherited_attributes(obj):
     if obj.parent is not None:
         attribute_dict = recursion(attribute_dict,obj.parent)
     return attribute_dict
+
+
+class Project(object):
+    def __init__(self,name):
+        self._name = name
+        self._author = None
+        self._version = project_version
+        self._changed = True
+
+    @property
+    def changed(self):
+        def check_data():
+            def check(obj):
+                if obj.changed is True:
+                    return True
+                else:
+                    return False
+
+            for obj in Object.iter.values():
+                if check(obj):
+                    return True
+                for attribute in obj.attributes:
+                    if check(attribute) or check(attribute.propertySet):
+                        return True
+
+        data = check_data()
+        if data or self._changed:
+            self._changed = True
+        else:
+            self._changed = False
+
+        return self._changed
+
+    def reset_changed(self):
+        global _changed
+        for obj in Object.iter.values():
+            obj.changed = False
+
+            for attribute in obj.attributes:
+                attribute.changed = False
+                attribute.propertySet.changed = False
+        self._changed = False
+
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, value:str):
+        self._name = value
+        self._changed = True
+
+    @property
+    def author(self) -> str:
+        return self._author
+
+    @author.setter
+    def author(self, value: str):
+        self._author = value
+        self._changed = True
+
 
 
 class PropertySet(object):
