@@ -1,32 +1,27 @@
 from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit,QDialog,QDialogButtonBox,QGridLayout
 
+def default_message(icon,text):
+    msgBox = QMessageBox()
+    msgBox.setText(text)
+    msgBox.setWindowTitle(" ")
+    msgBox.setIcon(QMessageBox.Icon.Warning)
+
+    msgBox.setWindowIcon(icon)
+    msgBox.exec()
+
 
 def msg_already_exists(icon):
-    msgBox = QMessageBox()
-    msgBox.setText("Object exists already!")
-    msgBox.setWindowTitle(" ")
-    msgBox.setIcon(QMessageBox.Icon.Warning)
-
-    msgBox.setWindowIcon(icon)
-    msgBox.exec()
+    text = "Object exists already!"
+    default_message(icon,text)
 
 def msg_identical_identifier(icon):
-    msgBox = QMessageBox()
-    msgBox.setText("You cant create Objects with identical identifiers!")
-    msgBox.setWindowTitle(" ")
-    msgBox.setIcon(QMessageBox.Icon.Warning)
+    text = "You cant create Objects with identical identifiers!"
+    default_message(icon, text)
 
-    msgBox.setWindowIcon(icon)
-    msgBox.exec()
 
 def msg_missing_input(icon):
-    msgBox = QMessageBox()
-    msgBox.setText("Object informations are missing!")
-    msgBox.setWindowTitle(" ")
-    msgBox.setIcon(QMessageBox.Icon.Warning)
-
-    msgBox.setWindowIcon(icon)
-    msgBox.exec()
+    text = "Object informations are missing!"
+    default_message(icon,text)
 
 
 def msg_unsaved(icon):
@@ -76,12 +71,8 @@ def msg_close(icon):
 
 
 def msg_del_ident_pset(icon):
-    msgBox = QMessageBox()
-    msgBox.setText("can't delete Pset of Identifier!")
-    msgBox.setWindowTitle(" ")
-    msgBox.setIcon(QMessageBox.Icon.Warning)
-    msgBox.setWindowIcon(icon)
-    msgBox.exec()
+    text = "can't delete Pset of Identifier!"
+    default_message(icon, text)
 
 class GroupRequest(QDialog):
     def __init__(self,icon,parent = None,):
