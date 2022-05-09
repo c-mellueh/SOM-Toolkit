@@ -6,13 +6,13 @@ global _changed
 
 def attributes_to_psetdict(attributes):
     pset_dict = {}
-    for el in attributes:
-        pset = el.propertySet
+    for attribute in attributes:
+        pset = attribute.propertySet
         if pset in pset_dict.keys():
             list = pset_dict[pset]
-            list.append(el)
+            list.append(attribute)
         else:
-            pset_dict[pset] = [el]
+            pset_dict[pset] = [attribute]
 
     return pset_dict
 
@@ -250,7 +250,7 @@ class Object(object):
         self._parent = parent
         self._attributes = list()
         self._parent = None
-        self._inherited_attributes = None
+        self._inherited_attributes = list()
         self._is_concept = is_concept
         self._children = list()
         self.changed = True
@@ -266,7 +266,6 @@ class Object(object):
 
     @property
     def inherited_attributes(self) -> list:
-        self._inherited_attributes = inherited_attributes(self)
         return self._inherited_attributes
 
     @property
