@@ -35,9 +35,9 @@ def inherited_attributes(obj):
 
 
 class Project(object):
-    def __init__(self,name):
+    def __init__(self,name,author = None):
         self._name = name
-        self._author = None
+        self._author = author
         self._version = project_version
         self._changed = True
 

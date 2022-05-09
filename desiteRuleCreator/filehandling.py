@@ -42,17 +42,18 @@ def fill_tree(mainWindow):
 def importData(widget, path=False):
     if path:
         widget.clearObjectInput()
-        ### OlD FILE
 
         tree: etree._ElementTree = etree.parse(path)
         projekt_xml: etree._Element = tree.getroot()
 
-        if projekt_xml.attrib.get("version") is None:
+        if projekt_xml.attrib.get("version") is None:   #OLD FILES
             import_old(projekt_xml)
-            widget.project = classes.Project(projekt_xml.attrib.get("Name"))
+            widget.project = classes.Project(projekt_xml.attrib.get("Name"),author="CMellueh")
             print(widget.project.name)
         else:
             import_new(projekt_xml)
+            widget.project = classes.Project(projekt_xml.attrib.get("name"))
+            print(widget.project.name)
         fill_tree(widget)
         widget.tree.resizeColumnToContents(0)
         widget.save_path = path
