@@ -55,7 +55,7 @@ def importData(widget, path=False):
             widget.project = classes.Project(projekt_xml.attrib.get("name"))
             print(widget.project.name)
         fill_tree(widget)
-        widget.tree.resizeColumnToContents(0)
+        widget.ui.tree.resizeColumnToContents(0)
         widget.save_path = path
 
         widget.setWindowTitle(widget.project.name)
@@ -259,6 +259,12 @@ def save(mainWindow, path):
         else:
             parent_txt = "None"
         xml_object.set("parent", parent_txt)
+
+        for script in obj.scripts:
+            script:classes.Script = script
+            xml_script = etree.SubElement(xml_object,"Script")
+            xml_script.set("name",script.name)
+            xml_script.text = script.code
 
     tree = etree.ElementTree(project)
 

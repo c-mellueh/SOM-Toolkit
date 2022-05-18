@@ -1,3 +1,4 @@
+
 var id = desiteThis.ID()
 var isContainer = desiteAPI.getPropertyValue(id,'cpIsContainer','xs:boolean');
 var isComposite = desiteAPI.getPropertyValue(id,'cpIsComposite','xs:boolean');
@@ -9,65 +10,65 @@ var ident = '{{ident}}';
 var otyp_vorhanden = desiteAPI.getPropertyValue(id, ident_pset+ident, 'xs:string');
 
 if (isContainer == true && isComposite == false) {
-	desiteResult.setCheckState('ignored');
+    desiteResult.setCheckState('ignored');
     desiteResult.addMessage('Container was ignored.');
 }else if (otyp.indexOf(otyp_vorhanden)!=-1) {
     var checkfailed = 0;
     var attrib_count =0;
+    {%for pset in psets %}
 
-{%for pset in psets -%}
-
-        var pSet = '{{pset.name}}:' ;
+    var pSet = '{{pset.name}}:';
 
         {%-for attribute in pset.attributes%}
 
         attrib_count+=1;
         name= '{{attribute.name}}';
-	    return_format= "{{attribute.data_type}}";
-	    {%if attribute.art == constants.VALUE%}
-	    var list = [
-	    {%-for value in attribute.value%}
-	    {%-if not loop.index==1%} ,'{{value}}'
+        return_format= '{{attribute.data_type}}';
+        {%if attribute.value_type == constants.LIST%}
+        var list = [
+        {%-for value in attribute.value%}
+        {%-if not loop.index==1%} ,'{{value}}'
         {%-else-%}
         '{{value}}'
-	    {%-endif-%}
-	    {%-endfor%}]
-        {%if attribute.value ==[]-%}
+        {%-endif-%}
+        {%-endfor%}]
+        {%if attribute.value ==[]%}
         checkfailed +=check_exist(name,pSet,return_format);
         {%else%}
         checkfailed +=check_list(name,pSet,return_format,list);
+        {#TEST#}
         {%-endif-%}
-	    {%-elif attribute.art == constants.RANGE -%}
-	    range = {{attribute.value}};
-	    checkfailed+=check_range(name,pSet,return_format,range);
-	    {%-elif attribute.art == constants.FORMAT %}
-	    format = [
-	    {%-for value in attribute.value -%}
-	    {%-if not loop.index==1-%} ,'{{value.replace('\\','\\\\')}}'
+        {%-elif attribute.value_type == constants.RANGE %}
+        range = {{attribute.value}};
+        checkfailed+=check_range(name,pSet,return_format,range);
+        {%elif attribute.value_type == constants.FORMAT %}
+        format = [
+        {%-for value in attribute.value -%}
+        {%-if not loop.index==1-%} ,'{{value.replace('\\','\\\\')}}'
         {%-else-%}
         '{{value.replace('\\','\\\\')}}'
-	    {%-endif-%}
-	    {%-endfor-%}]
+        {%-endif-%}
+        {%-endfor-%}]
         checkfailed +=check_format(name,pSet,return_format,format);
         {%-endif-%}
-	    {%-endfor%}
+        {%-endfor%}
 
 
-        var check_status = "Undefined"
-        if (checkfailed == 0) {
-            desiteResult.setCheckState('passed'); check_status = "Passed"
-        }
+    var check_status = "Undefined"
+    if (checkfailed == 0) {
+    desiteResult.setCheckState('passed'); check_status = "Passed"
+    }
 
 
     if (attrib_count == checkfailed) {
-        desiteResult.setCheckState('failed');
-        check_status = "Failed"
-        desiteResult.addMessage('Keine der geforderten Eigenschaften vorhanden!');
+    desiteResult.setCheckState('failed');
+    check_status = "Failed"
+    desiteResult.addMessage('Keine der geforderten Eigenschaften vorhanden!');
     }
 
     if (checkfailed < attrib_count && checkfailed != 0) {
-        desiteResult.setCheckState('warning');
-        check_status = "Warning";
+    desiteResult.setCheckState('warning');
+    check_status = "Warning";
     }
 
     desiteAPI.setPropertyValue( id , "Check_State" , "xs:string", check_status);
@@ -75,7 +76,5 @@ if (isContainer == true && isComposite == false) {
     desiteAPI.setPropertyValue(id, "fehlerhafte_eigenschaften","xs:int",checkfailed);
 
 }
-else {
-    desiteResult.setCheckState('ignored');
-    }
+else {desiteResult.setCheckState('ignored');}
 {% endfor %}

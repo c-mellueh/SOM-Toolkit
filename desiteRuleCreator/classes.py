@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QTreeWidget,QTreeWidgetItem,QAbstractItemView
+from PySide6.QtWidgets import QTreeWidget,QTreeWidgetItem,QAbstractItemView,QListWidgetItem
 from PySide6.QtGui import QDropEvent
+from PySide6.QtCore import Qt
 from uuid import uuid4
 from . import __version__ as project_version
 global _changed
@@ -64,6 +65,10 @@ class Project(object):
             self._changed = False
 
         return self._changed
+
+    @changed.setter
+    def changed(self,value):
+        self._changed = value
 
     def reset_changed(self):
         global _changed
@@ -250,11 +255,11 @@ class Object(object):
         self._parent = parent
         self._attributes = list()
         self._parent = None
-        self._inherited_attributes = list()
+        self._inherited_attributes = dict()
         self._is_concept = is_concept
         self._children = list()
         self.changed = True
-
+        self._scripts = list()
     @property
     def is_concept(self):
         return  self._is_concept
@@ -265,7 +270,21 @@ class Object(object):
         self.changed = True
 
     @property
-    def inherited_attributes(self) -> list:
+    def inherited_attributes(self) -> dict:
+        def recursion(attribute_dict, obj):
+            attributes = obj.attributes
+
+            if attributes:
+                attribute_dict[obj] = attributes
+
+            parent = obj.parent
+            if parent is not None:
+                attribute_dict = recursion(attribute_dict, parent)
+            return attribute_dict
+
+        attribute_dict = dict()
+        if self.parent is not None:
+            self._inherited_attributes = recursion(attribute_dict, self.parent)
         return self._inherited_attributes
 
     @property
@@ -353,6 +372,48 @@ class Object(object):
 
     def delete(self):
         self.iter.pop(self.identifier)
+
+    @property
+    def scripts(self):
+        return self._scripts
+
+    def add_script(self,script):
+        self._scripts.append(script)
+
+    def delete_script(self,script):
+        self._scripts.remove(script)
+
+
+
+class Script(QListWidgetItem):
+    def __init__(self,title:str,obj):
+        super(Script, self).__init__(title)
+        self.code = str()
+        self.changed = True
+        self._object = obj
+        obj.add_script(self)
+        self._name = "NewScript"
+
+    @property
+    def object(self):
+        return self._object
+
+    @object.setter
+    def object(self,value):
+        self._object.delete_script(self)
+        self._object = value
+        value.add_script(self)
+        self.changed = True
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+        self.changed = True
+
 
 
 class CustomTree(QTreeWidget):

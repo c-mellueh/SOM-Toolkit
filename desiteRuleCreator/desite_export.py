@@ -164,8 +164,9 @@ def handle_object_rules(xml_container,mainWindow,template):
             xml_code = handle_code(xml_rule_script)
 
             attributes = object.attributes
-            inherited_attributes = object.inherited_attributes
-            attributes = attributes+inherited_attributes
+
+            for inh_attributes in object.inherited_attributes.values():
+                attributes+=attributes
             pset_dict = classes.attributes_to_psetdict(attributes)  # pset_dict[PropertySet] = Attribute
 
             psets = pset_dict.keys()

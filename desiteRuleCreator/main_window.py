@@ -4,7 +4,7 @@ import sys
 from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
 
-from . import constants,filehandling,object_widget,property_widget,desite_export,classes
+from . import constants,filehandling,object_widget,property_widget,desite_export,classes,script_widget
 from .QtDesigns.ui_mainwindow import Ui_MainWindow
 from .classes import Object, PropertySet
 
@@ -32,6 +32,7 @@ class MainWindow(QMainWindow):
         # init object and ProertyWidget
         object_widget.init(self)
         property_widget.init(self)
+        script_widget.init(self)
 
         # connect Menubar signals
         self.ui.action_file_Open.triggered.connect(self.openFile_dialog)
@@ -40,10 +41,12 @@ class MainWindow(QMainWindow):
         self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
         self.ui.action_desite_Export.triggered.connect(self.export_desite_rules)
 
+        self.ui.code_edit.textChanged.connect(self.update_script)
+
         # debug: preload file
         #self.openFile(path="E:/Cloud/OneDrive/Arbeit/DB_Werkstudent/Projekte/Karlsruhe_Durmersheim/Modelchecking/Regeln/Datenstruktur/22_04_18.xml")
         self.openFile("desiteRuleCreator/saves/22_04_18.xml")
-        self.tree.resizeColumnToContents(0)
+        self.ui.tree.resizeColumnToContents(0)
         self.save_path = None
         print(self.save_path)
     @property
@@ -64,6 +67,11 @@ class MainWindow(QMainWindow):
         self._save_path = value
         self._export_path = value
 
+    def double_click_script(self,item):
+        script_widget.double_click(self,item)
+
+    def update_script(self):
+        script_widget.update_script(self)
 
     def export_desite_rules(self):
         desite_export.save_rules(self)
@@ -118,14 +126,20 @@ class MainWindow(QMainWindow):
     def rc_group(self):
         object_widget.rc_group_items(self)
 
+    def object_clicked(self):
+        object_widget.single_click(self)
+
     def object_double_clicked(self, item):
         object_widget.double_click(self, item)
 
     def setIdentLineEnable(self, value: bool):
         object_widget.setIdentLineEnable(self, value)
 
-    def treeObjectClicked(self):
-        object_widget.single_click(self)
+    def delete_selected_scripts(self):
+        script_widget.delete_objects(self)
+
+    def script_list_clicked(self,item):
+        script_widget.clicked(self,item)
 
     def clearObjectInput(self):
         object_widget.clear_object_input(self)
@@ -152,8 +166,9 @@ class MainWindow(QMainWindow):
     def text_changed(self, text):
         property_widget.text_changed(self, text)
 
-    def set_pset_window_enable(self, value: bool):
+    def set_right_window_enable(self, value: bool):
         property_widget.set_enable(self, value)
+        script_widget.set_enable(self,value)
 
     def listObjectClicked(self, item):
         property_widget.left_click(self, item)
@@ -167,6 +182,14 @@ class MainWindow(QMainWindow):
     def addPset(self):
         property_widget.addPset(self)
 
+    def add_script(self):
+        script_widget.add_script(self)
+
+    def selected_object(self):
+        return object_widget.selected_object(self)
+
+    def change_script_list_visibility(self):
+        script_widget.change_script_list_visibility(self)
 
 def main():
     app = QApplication(sys.argv)
