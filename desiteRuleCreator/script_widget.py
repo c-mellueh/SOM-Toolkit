@@ -15,22 +15,16 @@ def init(mainWindow):
     ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
     set_enable(mainWindow,False)
 
-
     ui.verticalLayout_2.removeWidget(ui.code_edit)
     ui.code_edit = CodeEditor()
     ui.verticalLayout_2.addWidget(ui.code_edit)
     ui.code_edit.show()
-
     connect(ui)
 
 def item_changed(mainWindow,item:classes.Script):
     item.name = item.text()
     mainWindow.ui.label_script_name.setText(item.name)
 
-def double_click(mainWindow,item:classes.Script):
-    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
-    ui.listWidget_scripts.editItem(item)
-    print(ui.listWidget_scripts.editTriggers())
 
 def selection_changed(mainWindow):
     ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
@@ -127,11 +121,11 @@ def add_script(mainWindow):
     ui.listWidget_scripts.addItem(script)
     ui.listWidget_scripts.setCurrentItem(script)
     selection_changed(mainWindow)
-
+    item_changed(mainWindow,script)
 
 def update_script(mainWindow):
 
-    ui = mainWindow.ui
+    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
     text_edit = mainWindow.ui.code_edit
     list = mainWindow.ui.listWidget_scripts
     selected_items = list.selectedItems()
