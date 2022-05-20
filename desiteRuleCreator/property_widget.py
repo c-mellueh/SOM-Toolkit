@@ -24,8 +24,6 @@ def init(self):
     self.set_right_window_enable(False)
     self.ui.lineEdit_pSet_name.textChanged.connect(self.text_changed)
 
-
-
 def modify_title(self,tab,text= None):
     self.ui.tabWidget.setTabText(self.ui.tabWidget.indexOf(tab), text)
 
@@ -34,7 +32,8 @@ def clear_all(mainWindow):
         mainWindow.pset_table.removeRow(row)
     mainWindow.ui.lineEdit_pSet_name.clear()
     mainWindow.set_right_window_enable(False)
-    modify_title(mainWindow.ui.horizontalLayout_pSet)
+    modify_title(mainWindow, mainWindow.ui.tab_code, "Code")
+    modify_title(mainWindow, mainWindow.ui.tab_property_set, "PropertySet")
 
 def delete(mainWindow):
     list_item = mainWindow.pset_table.selectedItems()
