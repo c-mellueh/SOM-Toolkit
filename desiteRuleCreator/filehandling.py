@@ -104,6 +104,15 @@ def import_new(projekt_xml: etree._Element):
                     ident_attrib = attrib
         return ident_attrib, attribute_list
 
+    def import_scripts(xml_object,obj):
+        for xml_sub in xml_object:
+            if xml_sub.tag == "Script":
+                name = xml_sub.attrib.get("name")
+                code = xml_sub.text
+                script = classes.Script(name,obj)
+                script.code = code
+
+
     def get_obj_data(xml_object):
 
         name = xml_object.attrib.get("name")
@@ -117,6 +126,7 @@ def import_new(projekt_xml: etree._Element):
         is_concept = value
         return name, parent, identifier, is_concept
 
+
     ident_dict = dict()
     parent_dict = dict()
     for xml_object in projekt_xml:
@@ -128,6 +138,8 @@ def import_new(projekt_xml: etree._Element):
             ident_dict[identifer] = obj
             parent_dict[obj] = parent
             obj.add_attributes(attrib_list)
+
+            import_scripts(xml_object,obj)
 
     for obj, parent_txt in parent_dict.items():
         obj.parent = ident_dict.get(parent_txt)
