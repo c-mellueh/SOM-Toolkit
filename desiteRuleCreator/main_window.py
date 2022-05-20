@@ -67,9 +67,6 @@ class MainWindow(QMainWindow):
         self._save_path = value
         self._export_path = value
 
-    def double_click_script(self,item):
-        script_widget.double_click(self,item)
-
     def update_script(self):
         script_widget.update_script(self)
 
