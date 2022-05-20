@@ -23,6 +23,9 @@ def init(mainWindow):
 
     connect(ui)
 
+def item_changed(mainWindow,item:classes.Script):
+    item.name = item.text()
+    mainWindow.ui.label_script_name.setText(item.name)
 
 def double_click(mainWindow,item:classes.Script):
     ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
@@ -137,8 +140,8 @@ def update_script(mainWindow):
 
         item: classes.Script = selected_items[0]
         item.code = ui.code_edit.toPlainText()
-
-
+        ui.label_script_name.setText(item.name)
+        ui.label_script_name.setEnabled(True)
 
 class LineNumberArea(QWidget):
     def __init__(self, editor):

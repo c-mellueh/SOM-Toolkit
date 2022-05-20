@@ -188,6 +188,9 @@ class MainWindow(QMainWindow):
     def change_script_list_visibility(self):
         script_widget.change_script_list_visibility(self)
 
+    def code_item_changed(self,item):
+        script_widget.item_changed(self,item)
+
 def main():
     app = QApplication(sys.argv)
 
