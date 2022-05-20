@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'MainWindow2#.ui'
+## Form generated from reading UI file 'MainWindow.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.3.0
 ##
@@ -51,7 +51,7 @@ class Ui_MainWindow(object):
         self.gridLayout_objects.setObjectName(u"gridLayout_objects")
         self.lineEdit_ident_value = QLineEdit(self.verticalLayout_main)
         self.lineEdit_ident_value.setObjectName(u"lineEdit_ident_value")
-        self.lineEdit_ident_value.setFrame(False)
+        self.lineEdit_ident_value.setFrame(True)
         self.lineEdit_ident_value.setEchoMode(QLineEdit.Normal)
 
         self.gridLayout_objects.addWidget(self.lineEdit_ident_value, 1, 3, 1, 1)
@@ -75,7 +75,7 @@ class Ui_MainWindow(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.lineEdit_ident_attribute.sizePolicy().hasHeightForWidth())
         self.lineEdit_ident_attribute.setSizePolicy(sizePolicy1)
-        self.lineEdit_ident_attribute.setFrame(False)
+        self.lineEdit_ident_attribute.setFrame(True)
         self.lineEdit_ident_attribute.setEchoMode(QLineEdit.Normal)
         self.lineEdit_ident_attribute.setCursorMoveStyle(Qt.LogicalMoveStyle)
 
@@ -90,7 +90,7 @@ class Ui_MainWindow(object):
         self.lineEdit_ident_pSet.setObjectName(u"lineEdit_ident_pSet")
         sizePolicy1.setHeightForWidth(self.lineEdit_ident_pSet.sizePolicy().hasHeightForWidth())
         self.lineEdit_ident_pSet.setSizePolicy(sizePolicy1)
-        self.lineEdit_ident_pSet.setFrame(False)
+        self.lineEdit_ident_pSet.setFrame(True)
         self.lineEdit_ident_pSet.setEchoMode(QLineEdit.Normal)
 
         self.gridLayout_objects.addWidget(self.lineEdit_ident_pSet, 1, 1, 1, 1)
@@ -99,7 +99,7 @@ class Ui_MainWindow(object):
         self.lineEdit_object_name.setObjectName(u"lineEdit_object_name")
         sizePolicy1.setHeightForWidth(self.lineEdit_object_name.sizePolicy().hasHeightForWidth())
         self.lineEdit_object_name.setSizePolicy(sizePolicy1)
-        self.lineEdit_object_name.setFrame(False)
+        self.lineEdit_object_name.setFrame(True)
         self.lineEdit_object_name.setEchoMode(QLineEdit.Normal)
 
         self.gridLayout_objects.addWidget(self.lineEdit_object_name, 0, 1, 1, 1)
@@ -159,7 +159,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_pSet_name = QLineEdit(self.tab_property_set)
         self.lineEdit_pSet_name.setObjectName(u"lineEdit_pSet_name")
-        self.lineEdit_pSet_name.setFrame(False)
+        self.lineEdit_pSet_name.setFrame(True)
 
         self.gridLayout_pSet.addWidget(self.lineEdit_pSet_name, 0, 1, 1, 1)
 
@@ -364,7 +364,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.verticalLayout_main)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1109, 18))
+        self.menubar.setGeometry(QRect(0, 0, 1109, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuDesite = QMenu(self.menubar)
@@ -385,7 +385,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
