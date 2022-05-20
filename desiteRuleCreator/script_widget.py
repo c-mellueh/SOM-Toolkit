@@ -11,7 +11,7 @@ def init(mainWindow):
         ui.pushButton_delete_script.clicked.connect(mainWindow.delete_selected_scripts)
         ui.listWidget_scripts.itemClicked.connect(mainWindow.script_list_clicked)
         ui.pushButton_burger.clicked.connect(mainWindow.change_script_list_visibility)
-        ui.listWidget_scripts.itemDoubleClicked.connect(mainWindow.double_click_script)
+        ui.listWidget_scripts.itemChanged.connect(mainWindow.code_item_changed)
     ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
     set_enable(mainWindow,False)
 
