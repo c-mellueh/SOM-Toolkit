@@ -393,6 +393,7 @@ class Script(QListWidgetItem):
         self._object = obj
         obj.add_script(self)
         self._name = "NewScript"
+        self.setFlags(self.flags()|Qt.ItemIsEditable)
 
     @property
     def object(self):
