@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
 
         # debug: preload file
         #self.openFile(path="E:/Cloud/OneDrive/Arbeit/DB_Werkstudent/Projekte/Karlsruhe_Durmersheim/Modelchecking/Regeln/Datenstruktur/22_04_18.xml")
-        self.openFile("desiteRuleCreator/saves/22_04_18.xml")
+        #self.openFile("desiteRuleCreator/saves/22_04_18.xml")
         self.ui.tree.resizeColumnToContents(0)
         self.save_path = None
         print(self.save_path)
