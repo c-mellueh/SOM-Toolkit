@@ -225,7 +225,7 @@ def addObject(mainWindow):
                 obj = Object(name, ident)
                 mainWindow.addObjectToTree(obj)
                 mainWindow.clearObjectInput()
-
+                obj.add_attribute(ident)
 
             else:
                 io_messages.msg_already_exists(mainWindow.icon)

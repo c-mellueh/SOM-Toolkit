@@ -1,4 +1,4 @@
-
+var None = null
 var id = desiteThis.ID()
 var isContainer = desiteAPI.getPropertyValue(id,'cpIsContainer','xs:boolean');
 var isComposite = desiteAPI.getPropertyValue(id,'cpIsComposite','xs:boolean');

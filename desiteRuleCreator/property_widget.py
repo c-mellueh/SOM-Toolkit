@@ -156,8 +156,11 @@ def openPsetWindow(propertySet: PropertySet):
 
 
 def addPset(mainWindow):
+    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
+
+
     name = mainWindow.ui.lineEdit_pSet_name.text()
-    items = mainWindow.uitree.selectedItems()
+    items = ui.tree.selectedItems()
 
     if len(items) == 1:
         object = items[0].object
