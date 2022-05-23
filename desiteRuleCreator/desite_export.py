@@ -153,7 +153,10 @@ def handle_code(xml_rule_script):
 
 def handle_object_rules(xml_container,mainWindow,template):
     xml_object_list = dict()
-    for object in classes.Object.iter.values():
+
+    obj_sorted = list(classes.Object.iter.values())
+    obj_sorted.sort(key = lambda x: x.name)
+    for object in obj_sorted:
         if not object.is_concept:
             object:classes.Object = object
             xml_checkrun = handle_checkrun(xml_container,object.name,mainWindow.project.author)
@@ -166,7 +169,7 @@ def handle_object_rules(xml_container,mainWindow,template):
             attributes = object.attributes
 
             for inh_attributes in object.inherited_attributes.values():
-                attributes+=attributes
+                attributes+=inh_attributes
             pset_dict = classes.attributes_to_psetdict(attributes)  # pset_dict[PropertySet] = Attribute
 
             psets = pset_dict.keys()
