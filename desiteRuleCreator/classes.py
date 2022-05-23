@@ -51,7 +51,7 @@ class Project(object):
                 else:
                     return False
 
-            for obj in Object.iter.values():
+            for obj in Object.iter:
                 if check(obj):
                     return True
                 for attribute in obj.attributes:
@@ -72,7 +72,7 @@ class Project(object):
 
     def reset_changed(self):
         global _changed
-        for obj in Object.iter.values():
+        for obj in Object.iter:
             obj.changed = False
 
             for attribute in obj.attributes:
@@ -246,12 +246,12 @@ class Attribute(object):
 
 
 class Object(object):
-    iter = dict()
+    iter = list()
     def __init__(self, name, ident: Attribute,parent = None, is_concept = False):
 
         self._name = name
         self._identifier = ident
-        self.iter[ident] = self
+        self.iter.append(self)
         self._parent = parent
         self._attributes = list()
         self._parent = None
@@ -371,7 +371,7 @@ class Object(object):
         return new_dict
 
     def delete(self):
-        self.iter.pop(self.identifier)
+        self.iter.remove(self)
 
     @property
     def scripts(self):

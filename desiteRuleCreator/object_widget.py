@@ -79,10 +79,10 @@ def clear_all(mainWindow):
     mainWindow.ui.tree.clear()
 
     # Delete Attributes & Objects
-    for object in Object.iter.values():
+    for object in Object.iter:
         for attribute in object.attributes:
             attribute.delete()
-    Object.iter = dict()
+    Object.iter = list()
 
 
 def right_click(mainWindow, position: QPoint):

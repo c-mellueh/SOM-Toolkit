@@ -154,7 +154,7 @@ def handle_code(xml_rule_script):
 def handle_object_rules(xml_container,mainWindow,template):
     xml_object_list = dict()
 
-    obj_sorted = list(classes.Object.iter.values())
+    obj_sorted = list(classes.Object.iter)
     obj_sorted.sort(key = lambda x: x.name)
     for object in obj_sorted:
         if not object.is_concept:

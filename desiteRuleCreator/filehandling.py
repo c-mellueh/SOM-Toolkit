@@ -28,7 +28,7 @@ def fill_tree(mainWindow):
             fill_next_level(objects, new_item_dict)
 
     item_dict = dict()
-    objects = Object.iter.values()
+    objects = Object.iter
     for obj in objects:
         if obj.parent == None:
             tree_widget_item = mainWindow.addObjectToTree(obj)
@@ -260,7 +260,7 @@ def save(mainWindow, path):
 
     mainWindow.save_path = path
 
-    for obj in Object.iter.values():
+    for obj in Object.iter:
         xml_object = etree.SubElement(project, "Object")
         xml_object.set("name", obj.name)
         xml_object.set("identifier", str(obj.identifier))
