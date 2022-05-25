@@ -17,3 +17,5 @@ ICON_PATH = "icon.ico"
 
 DATA_POS = 1
 FILEPATH_JS = "js_templates"
+
+IGNORE_PSET = "IFC"

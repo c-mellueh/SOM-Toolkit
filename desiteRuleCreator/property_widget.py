@@ -37,7 +37,7 @@ def clear_all(mainWindow):
 
 def delete(mainWindow):
     list_item = mainWindow.pset_table.selectedItems()
-    object = mainWindow.uitree.selectedItems()[0].object
+    object = mainWindow.ui.tree.selectedItems()[0].object
 
     if not bool([el for el in list_item if
                  el.data(
@@ -67,7 +67,7 @@ def rename(mainWindow):
 
     object = selected_pset.object
     if object.identifier in selected_pset.attributes:
-        tree_item: CustomTreeItem = mainWindow.uitree.selectedItems()[0]
+        tree_item: CustomTreeItem = mainWindow.ui.tree.selectedItems()[0]
         tree_item.setText(1, str(object.identifier))
     mainWindow.pset_table.resizeColumnsToContents()
 

@@ -5,7 +5,7 @@ var isComposite = desiteAPI.getPropertyValue(id,'cpIsComposite','xs:boolean');
 var objectName = desiteAPI.getPropertyValue(id,"ifcTypeObjectName","xs:string")
 var otyp= ['{{object.name}}'];	{# Mehrfachnennungen zulassen #}
 var valueIfcType = desiteAPI.getPropertyValue(id,'ifcType','xs:string');
-var ident_pset = '{{ident_pset}}:'
+var ident_pset = '{{ident_pset}}'
 var ident = '{{ident}}';
 var otyp_vorhanden = desiteAPI.getPropertyValue(id, ident_pset+ident, 'xs:string');
 
@@ -17,7 +17,11 @@ if (isContainer == true && isComposite == false) {
     var attrib_count =0;
     {%for pset in psets %}
 
+    {%if pset.name ==constants.IGNORE_PSET%}
+    var pSet = '';
+    {%-else-%}
     var pSet = '{{pset.name}}:';
+    {%-endif-%}
 
         {%-for attribute in pset.attributes%}
 

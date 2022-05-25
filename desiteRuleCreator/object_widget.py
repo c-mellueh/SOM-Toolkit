@@ -202,9 +202,13 @@ def addObject(mainWindow):
         return False
 
     def already_exists(ident):
-        for key in Object.iter.keys():
-            if (key.is_equal(ident)):
-                return True
+        for obj in Object.iter:
+            if isinstance(obj.identifier,str):
+                if obj.identifier ==str(ident):
+                    return True
+            else:
+                if obj.identifier.is_equal(ident):
+                    return True
         return False
 
     name = mainWindow.ui.lineEdit_object_name.text()
@@ -216,10 +220,8 @@ def addObject(mainWindow):
 
     pSet = PropertySet(pSetName)
     ident = Attribute(pSet, identName, identValue, constants.LIST)
-
     if not missing_input(input_list):
         if not "*" in input_list:
-
             if not already_exists(ident):
 
                 obj = Object(name, ident)

@@ -175,6 +175,10 @@ def handle_object_rules(xml_container,mainWindow,template):
             psets = pset_dict.keys()
             ident_name = object.identifier.name
             ident_property_set = object.identifier.propertySet.name
+            if ident_property_set == constants.IGNORE_PSET:
+                ident_property_set = ""
+            else:
+                ident_property_set= f"{ident_property_set}:"
             cdata_code = template.render(psets=psets, object=object, ident=ident_name, ident_pset=ident_property_set,constants = constants)
             xml_code.text = cdata_code
             handle_rule(xml_checkrun,"UniquePattern")
@@ -210,6 +214,14 @@ def old_file_conversion(projekt):
             obj.name = obj.name[1:]
 
 def handle_data_section(xml_qa_export,xml_checkrun_first,xml_checkrun_obj,xml_checkrun_last):
+    def get_name(obj:classes.Object):
+        pset_name = obj.identifier.propertySet.name
+        if pset_name == "IFC":
+            return obj.identifier.name
+
+        else:
+            return f"{pset_name}:{obj.identifier.name}"
+
     xml_dataSection = etree.SubElement(xml_qa_export, "dataSection")
 
     checkRunData = etree.SubElement(xml_dataSection, "checkRunData")
@@ -221,7 +233,8 @@ def handle_data_section(xml_qa_export,xml_checkrun_first,xml_checkrun_obj,xml_ch
         checkRunData.set("refID", str(xml_checkrun.attrib.get("ID")))
         filterList = etree.SubElement(checkRunData, "filterList")
         filter = etree.SubElement(filterList, "filter")
-        filter.set("name", f"{obj.identifier.propertySet.name}:{obj.identifier.name}")
+
+        filter.set("name", get_name(obj))
         filter.set("dt", "xs:string")
         pattern = f'"{obj.identifier.value[0]}"'            #ToDO: ändern
         filter.set("pattern", pattern)
