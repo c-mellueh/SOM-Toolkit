@@ -174,6 +174,7 @@ class PropertySetWindow(QtWidgets.QWidget):
 
             attribute.value_type = self.widget.combo_type.currentText()
             attribute.data_type = self.widget.combo_data_type.currentText()
+            attribute.child_is_modifiable = self.widget.check_box_modifiable.isChecked()
             values = get_values()
             attribute.value = values
 
@@ -188,6 +189,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             data_type = self.widget.combo_data_type.currentText()
 
             attribute = Attribute(self.property_set, name, values, value_type, data_type)
+            attribute.child_is_modifiable = self.widget.check_box_modifiable.isChecked()
             rows = self.widget.table_widget.rowCount() + 1
             self.widget.table_widget.setRowCount(rows)
             add_table_line(rows - 1, attribute)
@@ -300,16 +302,18 @@ class PropertySetWindow(QtWidgets.QWidget):
 
     def list_clicked(self, event: QModelIndex):
         item: QTableWidgetItem = self.widget.table_widget.item(event.row(), 0)
-        attribute: Attribute = self.widget.table_widget.data_dict[item.text()]
+        attribute: Attribute = self.get_attribute_by_name(item.text())
 
         if self.attribute_is_identifier(attribute):
             return
+        #Set Combo Boxes
         index = self.widget.combo_type.findText(attribute.value_type)
         self.widget.combo_type.setCurrentIndex(index)
         index = self.widget.combo_data_type.findText(attribute.data_type)
         self.widget.combo_data_type.setCurrentIndex(index)
         self.clear_lines()
 
+        #Add Values
         for i, value in enumerate(attribute.value):
             if i == 0:
                 lines = self.input_lines[self.widget.layout_input]
@@ -320,5 +324,8 @@ class PropertySetWindow(QtWidgets.QWidget):
                     lines[i].setText(make_string_printable(val))
             else:
                 lines.setText(make_string_printable(value))
-
+        #input Name
         self.widget.lineEdit_name.setText(attribute.name)
+
+        #set Editable
+        self.widget.check_box_modifiable.setChecked(attribute.child_is_modifiable)

@@ -248,10 +248,19 @@ class Attribute(Hirarchy):
         self._object = None
         propertySet.add_attribute(self)
         self.changed = True
+        self._child_is_modifable = True
 
     def __str__(self):
         text = f"{self.propertySet.name} : {self.name} = {self.value}"
         return text
+
+    @property
+    def child_is_modifiable(self):
+        return self._child_is_modifable
+
+    @child_is_modifiable.setter
+    def child_is_modifiable(self,value:bool):
+        self._child_is_modifable = value
 
     @property
     def object(self):
