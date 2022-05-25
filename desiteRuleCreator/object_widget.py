@@ -36,10 +36,9 @@ def init(mainView):
         mainView.delSc.activated.connect(mainView.deleteObject)
 
     mainView.ui.verticalLayout_objects.removeWidget(mainView.ui.tree)
-    mainView.ui.tree.hide()
+    mainView.ui.tree.close()
     mainView.ui.tree = CustomTree(mainView.ui.verticalLayout_main)
     mainView.ui.verticalLayout_objects.addWidget(mainView.ui.tree)
-
     init_tree(mainView.ui.tree)
 
     mainView.ui.verticalLayout_objects.addWidget(mainView.ui.tree)
@@ -80,8 +79,8 @@ def clear_all(mainWindow):
 
     # Delete Attributes & Objects
     for object in Object.iter:
-        for attribute in object.attributes:
-            attribute.delete()
+        for property_set in object.property_sets:
+            property_set.delete()
     Object.iter = list()
 
 
@@ -124,7 +123,6 @@ def rc_group_items(mainWindow):
         pset = PropertySet(ident_pset)
         identifier = Attribute(pset,ident_attrib,[ident_value],constants.LIST)
         group_obj = Object(group_name,identifier)
-        group_obj.add_attribute(identifier)
 
         group_item:CustomTreeItem = mainWindow.addObjectToTree(group_obj,parent)
 
@@ -138,6 +136,7 @@ def double_click(mainWindow, item: CustomTreeItem):
     mainWindow.active_object = obj
     property_widget.fill_table(mainWindow, item, obj)
     script_widget.show(mainWindow)
+    mainWindow.update_completer()
 
 def setIdentLineEnable(mainWindow, value: bool):
     mainWindow.ui.lineEdit_ident_pSet.setEnabled(value)
@@ -148,7 +147,6 @@ def setIdentLineEnable(mainWindow, value: bool):
     mainWindow.ui.lineEdit_ident_attribute.setText(" ")
     mainWindow.ui.lineEdit_ident_value.setText(" ")
     mainWindow.ui.label_Ident.setVisible(value)
-
 
 
 def single_click(mainWindow):
@@ -227,7 +225,6 @@ def addObject(mainWindow):
                 obj = Object(name, ident)
                 mainWindow.addObjectToTree(obj)
                 mainWindow.clearObjectInput()
-                obj.add_attribute(ident)
 
             else:
                 io_messages.msg_already_exists(mainWindow.icon)
@@ -291,7 +288,6 @@ def updateObject(mainWindow):
             if not isinstance(ident,Attribute):
                 property_set = PropertySet(pSetName)
                 object.identifier = Attribute(property_set,identName,[identValue],value_type=constants.LIST)
-                object.add_attribute(object.identifier)
                 object.is_concept = False
 
             else:

@@ -114,7 +114,7 @@
       </Value>
       <Value>
         <From>-</From>
-        <To/>
+        <To>None</To>
       </Value>
     </Attribute>
     <Attribute name="km (bis)" propertySet="Bestandsdaten" data_type="xs:string" value_type="Range" is_identifier="False">
@@ -132,7 +132,7 @@
       </Value>
       <Value>
         <From>-</From>
-        <To/>
+        <To>None</To>
       </Value>
     </Attribute>
     <Attribute name="Material" propertySet="Bestandsdaten" data_type="xs:string" value_type="List" is_identifier="False">
@@ -189,7 +189,7 @@
       </Value>
       <Value>
         <From>-</From>
-        <To/>
+        <To>None</To>
       </Value>
     </Attribute>
     <Attribute name="km (bis)" propertySet="Bestandsdaten" data_type="xs:string" value_type="Range" is_identifier="False">
@@ -207,7 +207,7 @@
       </Value>
       <Value>
         <From>-</From>
-        <To/>
+        <To>None</To>
       </Value>
     </Attribute>
     <Attribute name="Material" propertySet="Bestandsdaten" data_type="xs:string" value_type="List" is_identifier="False">
@@ -1074,7 +1074,7 @@
       </Value>
       <Value>
         <From>-</From>
-        <To/>
+        <To>None</To>
       </Value>
     </Attribute>
     <Attribute name="km (bis)" propertySet="Bestandsdaten" data_type="xs:string" value_type="Range" is_identifier="False">
@@ -1092,7 +1092,7 @@
       </Value>
       <Value>
         <From>-</From>
-        <To/>
+        <To>None</To>
       </Value>
     </Attribute>
     <Attribute name="Material" propertySet="Bestandsdaten" data_type="xs:string" value_type="List" is_identifier="False">
@@ -3767,7 +3767,7 @@
       </Value>
       <Value>
         <From>-</From>
-        <To/>
+        <To>None</To>
       </Value>
     </Attribute>
     <Attribute name="km (bis)" propertySet="Bestandsdaten" data_type="xs:string" value_type="Range" is_identifier="False">
@@ -3785,7 +3785,7 @@
       </Value>
       <Value>
         <From>-</From>
-        <To/>
+        <To>None</To>
       </Value>
     </Attribute>
     <Attribute name="Material" propertySet="Bestandsdaten" data_type="xs:string" value_type="List" is_identifier="False">
@@ -3815,6 +3815,11 @@
     </Attribute>
     <Attribute name="Fachmodell" propertySet="Bestandsdaten" data_type="xs:string" value_type="List" is_identifier="False">
       <Value>Kabeltiefbau</Value>
+    </Attribute>
+  </Object>
+  <Object name="BIMR_Koordinationskoerper" identifier="IFC : ifcTypeObjectName = ['BIMR_Koordinationskoerper']" is_concept="False" parent="None">
+    <Attribute name="ifcTypeObjectName" propertySet="IFC" data_type="xs:string" value_type="List" is_identifier="True">
+      <Value>BIMR_Koordinationskoerper</Value>
     </Attribute>
   </Object>
 </Project>

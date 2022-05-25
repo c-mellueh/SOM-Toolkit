@@ -2,10 +2,9 @@ from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtWidgets import QTableWidgetItem, QHBoxLayout, QLineEdit, QMessageBox, QMenu
 
-from . import constants
+from . import constants, io_messages
 from .QtDesigns.ui_widget import Ui_layout_main
 from .classes import PropertySet, Attribute
-
 
 def make_string_printable(value):
     value = str(value).replace(".", ",")
@@ -19,14 +18,16 @@ def string_to_float(value: str):
 
 
 class PropertySetWindow(QtWidgets.QWidget):
-    def __init__(self, property_set: PropertySet):
+    def __init__(self,mainWindow, property_set: PropertySet,active_object,window_title):
         super(PropertySetWindow, self).__init__()
         self.widget = Ui_layout_main()
         self.widget.setupUi(self)
+        self.mainWindow= mainWindow
         self.property_set = property_set
+        self.active_object = active_object
         self.widget.table_widget.data_dict = dict()
         self.fill_table()
-        self.setWindowTitle(f"{property_set.object.name}:{property_set.name}")
+        self.setWindowTitle(window_title)
         self.widget.button_add_line.clicked.connect(self.new_line)
         self.input_lines = {self.widget.layout_input: self.widget.lineEdit_input}
         self.widget.table_widget.itemDoubleClicked.connect(self.list_clicked)
@@ -46,19 +47,23 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.show()
         self.resize(1000, 400)
 
-    def delete_selection(self):
+
+    def attribute_is_identifier(self,attribute):
+        if self.active_object is not None:
+            if self.active_object.identifier == attribute:
+                return True
+        return False
+
+
+    def  delete_selection(self):
         selected_items = self.widget.table_widget.selectedItems()
         selected_rows = []
         for items in selected_items:
             row = items.row()
             if row not in selected_rows:
-                name = attribute = self.widget.table_widget.item(row, 0).text()
-                if self.get_attribute_by_name(name) == self.property_set.object.identifier:
-                    msgBox = QMessageBox()
-                    msgBox.setText("Identifier can't be deleted!")
-                    msgBox.setWindowTitle(" ")
-                    msgBox.setIcon(QMessageBox.Icon.Warning)
-                    msgBox.exec()
+                name = self.widget.table_widget.item(row, 0).text()
+                if self.attribute_is_identifier(self.get_attribute_by_name(name)):
+                    io_messages.msg_del_ident(self.mainWindow.icon)
                     return
                 else:
                     selected_rows.append(items.row())
@@ -87,9 +92,8 @@ class PropertySetWindow(QtWidgets.QWidget):
         return False
 
     def delete_attribute(self):
-        already_exists = False
 
-        attribute = self.get_attribute_by_name(self.widget.lineEdit_name.text())
+        attribute:Attribute = self.get_attribute_by_name(self.widget.lineEdit_name.text())
         if attribute:
             attribute.delete()
             row = self.widget.table_widget.findItems(attribute.name, Qt.MatchFlag.MatchExactly)[0].row()
@@ -132,6 +136,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             table.setItem(row, 1, QTableWidgetItem(attribute.data_type))
             table.setItem(row, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
             table.setItem(row, 3, QTableWidgetItem(str(attribute.value)))
+            table.data_dict[attribute.name] = attribute
 
         def get_values():
             values = []
@@ -183,7 +188,6 @@ class PropertySetWindow(QtWidgets.QWidget):
             data_type = self.widget.combo_data_type.currentText()
 
             attribute = Attribute(self.property_set, name, values, value_type, data_type)
-            self.property_set.object.add_attribute(attribute)
             rows = self.widget.table_widget.rowCount() + 1
             self.widget.table_widget.setRowCount(rows)
             add_table_line(rows - 1, attribute)
@@ -217,6 +221,15 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.old_state = event
 
     def fill_table(self):
+        def reformat_identifier(row):
+            brush = QtGui.QBrush()
+            brush.setColor(Qt.GlobalColor.lightGray)
+            brush.setStyle(Qt.BrushStyle.SolidPattern)
+            for column in range(4):
+                item = table.item(row, column)
+                item.setBackground(brush)
+
+
         table = self.widget.table_widget
         table.setRowCount(len(self.property_set.attributes))
 
@@ -227,13 +240,9 @@ class PropertySetWindow(QtWidgets.QWidget):
             table.setItem(i, 1, QTableWidgetItem(value.data_type))
             table.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[value.value_type]))
             table.setItem(i, 3, QTableWidgetItem(str(value.value)))
-            if value == self.property_set.object.identifier:
-                brush = QtGui.QBrush()
-                brush.setColor(Qt.GlobalColor.lightGray)
-                brush.setStyle(Qt.BrushStyle.SolidPattern)
-                for k in range(4):
-                    item = table.item(i, k)
-                    item.setBackground(brush)
+
+            if self.attribute_is_identifier(value):
+               reformat_identifier(i)
 
             table.resizeColumnsToContents()
             table.data_dict[value.name] = value
@@ -292,23 +301,24 @@ class PropertySetWindow(QtWidgets.QWidget):
     def list_clicked(self, event: QModelIndex):
         item: QTableWidgetItem = self.widget.table_widget.item(event.row(), 0)
         attribute: Attribute = self.widget.table_widget.data_dict[item.text()]
-        if attribute != self.property_set.object.identifier:
 
-            index = self.widget.combo_type.findText(attribute.value_type)
-            self.widget.combo_type.setCurrentIndex(index)
-            index = self.widget.combo_data_type.findText(attribute.data_type)
-            self.widget.combo_data_type.setCurrentIndex(index)
-            self.clear_lines()
+        if self.attribute_is_identifier(attribute):
+            return
+        index = self.widget.combo_type.findText(attribute.value_type)
+        self.widget.combo_type.setCurrentIndex(index)
+        index = self.widget.combo_data_type.findText(attribute.data_type)
+        self.widget.combo_data_type.setCurrentIndex(index)
+        self.clear_lines()
 
-            for i, value in enumerate(attribute.value):
-                if i == 0:
-                    lines = self.input_lines[self.widget.layout_input]
-                else:
-                    lines = self.new_line()
-                if attribute.value_type == constants.RANGE:
-                    for i, val in enumerate(value):
-                        lines[i].setText(make_string_printable(val))
-                else:
-                    lines.setText(make_string_printable(value))
+        for i, value in enumerate(attribute.value):
+            if i == 0:
+                lines = self.input_lines[self.widget.layout_input]
+            else:
+                lines = self.new_line()
+            if attribute.value_type == constants.RANGE:
+                for i, val in enumerate(value):
+                    lines[i].setText(make_string_printable(val))
+            else:
+                lines.setText(make_string_printable(value))
 
-            self.widget.lineEdit_name.setText(attribute.name)
+        self.widget.lineEdit_name.setText(attribute.name)

@@ -74,6 +74,10 @@ def msg_del_ident_pset(icon):
     text = "can't delete Pset of Identifier!"
     default_message(icon, text)
 
+def msg_del_ident(icon):
+    text = "Identifier can't be deleted!"
+    default_message(icon,text)
+
 class GroupRequest(QDialog):
     def __init__(self,icon,parent = None,):
         super(GroupRequest, self).__init__(parent)

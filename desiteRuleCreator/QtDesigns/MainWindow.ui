@@ -663,8 +663,15 @@
     <addaction name="action_desite_Settings"/>
     <addaction name="action_desite_Export"/>
    </widget>
+   <widget class="QMenu" name="menuPredefined_Psets">
+    <property name="title">
+     <string>Predefined Psets</string>
+    </property>
+    <addaction name="action_show_list"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDesite"/>
+   <addaction name="menuPredefined_Psets"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_file_new">
@@ -695,6 +702,11 @@
   <action name="action_desite_Export">
    <property name="text">
     <string>Export</string>
+   </property>
+  </action>
+  <action name="action_show_list">
+   <property name="text">
+    <string>Show List</string>
    </property>
   </action>
  </widget>

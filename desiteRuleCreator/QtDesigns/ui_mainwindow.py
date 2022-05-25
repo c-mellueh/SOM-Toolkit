@@ -41,6 +41,8 @@ class Ui_MainWindow(object):
         self.action_desite_Settings.setObjectName(u"action_desite_Settings")
         self.action_desite_Export = QAction(MainWindow)
         self.action_desite_Export.setObjectName(u"action_desite_Export")
+        self.action_show_list = QAction(MainWindow)
+        self.action_show_list.setObjectName(u"action_show_list")
         self.verticalLayout_main = QWidget(MainWindow)
         self.verticalLayout_main.setObjectName(u"verticalLayout_main")
         self.horizontalLayout_2 = QHBoxLayout(self.verticalLayout_main)
@@ -375,6 +377,8 @@ class Ui_MainWindow(object):
         self.menuFile.setObjectName(u"menuFile")
         self.menuDesite = QMenu(self.menubar)
         self.menuDesite.setObjectName(u"menuDesite")
+        self.menuPredefined_Psets = QMenu(self.menubar)
+        self.menuPredefined_Psets.setObjectName(u"menuPredefined_Psets")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -403,12 +407,14 @@ class Ui_MainWindow(object):
 
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuDesite.menuAction())
+        self.menubar.addAction(self.menuPredefined_Psets.menuAction())
         self.menuFile.addAction(self.action_file_new)
         self.menuFile.addAction(self.action_file_Save)
         self.menuFile.addAction(self.action_file_Save_As)
         self.menuFile.addAction(self.action_file_Open)
         self.menuDesite.addAction(self.action_desite_Settings)
         self.menuDesite.addAction(self.action_desite_Export)
+        self.menuPredefined_Psets.addAction(self.action_show_list)
 
         self.retranslateUi(MainWindow)
 
@@ -426,6 +432,7 @@ class Ui_MainWindow(object):
         self.action_file_Open.setText(QCoreApplication.translate("MainWindow", u"Open", None))
         self.action_desite_Settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.action_desite_Export.setText(QCoreApplication.translate("MainWindow", u"Export", None))
+        self.action_show_list.setText(QCoreApplication.translate("MainWindow", u"Show List", None))
         self.lineEdit_ident_value.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Value", None))
         self.label_object_name.setText(QCoreApplication.translate("MainWindow", u"Object", None))
         self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
@@ -484,5 +491,6 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_code), QCoreApplication.translate("MainWindow", u"Code", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuDesite.setTitle(QCoreApplication.translate("MainWindow", u"Desite", None))
+        self.menuPredefined_Psets.setTitle(QCoreApplication.translate("MainWindow", u"Predefined Psets", None))
     # retranslateUi
 

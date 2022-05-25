@@ -4,7 +4,7 @@ import sys
 from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
 
-from . import constants,filehandling,object_widget,property_widget,desite_export,classes,script_widget
+from . import constants,filehandling,object_widget,property_widget,desite_export,classes,script_widget,property_list_widget
 from .QtDesigns.ui_mainwindow import Ui_MainWindow
 from .classes import Object, PropertySet
 
@@ -22,11 +22,16 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.property_list_widget = None
+        self.property_list_widget:property_list_widget.PropertySetInherWindow =self.open_pset_list()
+        self.property_list_widget.hide()
+
         # variables
         self.icon = get_icon()
         self.setWindowIcon(self.icon)
         self._save_path = None
         self._export_path = None
+        self.active_object = None
         self.project = classes.Project("")
 
         # init object and ProertyWidget
@@ -40,6 +45,7 @@ class MainWindow(QMainWindow):
         self.ui.action_file_Save.triggered.connect(self.save_clicked)
         self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
         self.ui.action_desite_Export.triggered.connect(self.export_desite_rules)
+        self.ui.action_show_list.triggered.connect(self.open_pset_list)
 
         self.ui.code_edit.textChanged.connect(self.update_script)
 
@@ -48,7 +54,9 @@ class MainWindow(QMainWindow):
         #self.openFile("desiteRuleCreator/saves/22_04_18.xml")
         self.ui.tree.resizeColumnToContents(0)
         self.save_path = None
-        print(self.save_path)
+
+
+
     @property
     def save_path(self):
         return self._save_path
@@ -79,6 +87,14 @@ class MainWindow(QMainWindow):
     # Filehandling
     def save_clicked(self):
         filehandling.save_clicked(self)
+
+    def open_pset_list(self):
+        if self.property_list_widget is not None:
+            self.property_list_widget.setHidden(False)
+        else:
+            self.property_list_widget = property_list_widget.open_pset_list(self)
+
+        return self.property_list_widget
 
     def save(self, path):
         filehandling.save(self, path)
@@ -125,6 +141,9 @@ class MainWindow(QMainWindow):
 
     def object_clicked(self):
         object_widget.single_click(self)
+
+    def update_completer(self):
+        property_widget.update_completer(self)
 
     def object_double_clicked(self, item):
         object_widget.double_click(self, item)
@@ -173,8 +192,8 @@ class MainWindow(QMainWindow):
     def listObjectDoubleClicked(self, item):
         property_widget.double_click(self, item)
 
-    def openPsetWindow(self, propertySet: PropertySet):
-        return property_widget.openPsetWindow(propertySet)
+    def openPsetWindow(self, propertySet: PropertySet,active_object,windowTitle = None):
+        return property_widget.openPsetWindow(self,propertySet,active_object,windowTitle)
 
     def addPset(self):
         property_widget.addPset(self)
