@@ -1,10 +1,12 @@
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtWidgets import QTableWidgetItem, QHBoxLayout, QLineEdit, QMessageBox, QMenu
+from PySide6.QtGui import QIcon
 
 from . import constants, io_messages
 from .QtDesigns.ui_widget import Ui_layout_main
 from .classes import PropertySet, Attribute
+import os
 
 def make_string_printable(value):
     value = str(value).replace(".", ",")
@@ -15,6 +17,12 @@ def string_to_float(value: str):
     value = float(value.replace(",", "."))
 
     return value
+
+def get_link_icon():
+    here = os.path.dirname(__file__)
+    icon_name = constants.LINK_ICON_PATH
+    icon_path = os.path.join(here, icon_name)
+    return QtGui.QIcon(icon_path)
 
 
 class PropertySetWindow(QtWidgets.QWidget):
@@ -63,7 +71,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
                 if self.attribute_is_identifier(self.get_attribute_by_name(name)):
-                    io_messages.msg_del_ident(self.mainWindow.icon)
+                    io_messages.msg_mod_ident(self.mainWindow.icon)
                     return
                 else:
                     selected_rows.append(items.row())
@@ -80,8 +88,13 @@ class PropertySetWindow(QtWidgets.QWidget):
 
     def openMenu(self, position):
         menu = QMenu()
-        self.action_delete_objects = menu.addAction("Delete")
-        self.action_delete_objects.triggered.connect(self.delete_selection)
+        self.action_delete_attribute = menu.addAction("Delete")
+        self.action_rename_attribute = menu.addAction("Rename")
+        self.action_test = menu.addAction("Test")
+        self.action_delete_attribute.triggered.connect(self.delete_selection)
+        self.action_rename_attribute.triggered.connect(self.rename_selection)
+        self.action_test.triggered.connect(self.test)
+
 
         menu.exec(self.widget.table_widget.viewport().mapToGlobal(position))
 
@@ -90,6 +103,49 @@ class PropertySetWindow(QtWidgets.QWidget):
             if attribute.name == name:
                 return attribute
         return False
+
+    def test(self):
+        selected_items = self.widget.table_widget.selectedItems()
+        selected_rows = []
+        for items in selected_items:
+            row = items.row()
+            if row not in selected_rows:
+                name = self.widget.table_widget.item(row, 0).text()
+                if self.attribute_is_identifier(self.get_attribute_by_name(name)):
+                    io_messages.msg_mod_ident(self.mainWindow.icon)
+                    return
+                else:
+                    selected_rows.append(items.row())
+
+        selected_rows.sort(reverse=True)
+
+        if len(selected_rows) == 1:
+            name = self.widget.table_widget.item(selected_rows[0], 0).text()
+            attribute: Attribute = self.get_attribute_by_name(name)
+
+
+    def rename_selection(self): #TODO: check for existing Name
+        selected_items = self.widget.table_widget.selectedItems()
+        selected_rows = []
+        for items in selected_items:
+            row = items.row()
+            if row not in selected_rows:
+                name = self.widget.table_widget.item(row, 0).text()
+                if self.attribute_is_identifier(self.get_attribute_by_name(name)):
+                    io_messages.msg_mod_ident(self.mainWindow.icon)
+                    return
+                else:
+                    selected_rows.append(items.row())
+
+        selected_rows.sort(reverse=True)
+
+        if len(selected_rows) == 1:
+            new_name,fulfilled = io_messages.req_attribute_name(self)
+            if fulfilled:
+                name = self.widget.table_widget.item(row, 0).text()
+                attribute:Attribute = self.get_attribute_by_name(name)
+                attribute.name = new_name
+                self.widget.table_widget.item(row,0).setText(new_name)
 
     def delete_attribute(self):
 
@@ -171,10 +227,10 @@ class PropertySetWindow(QtWidgets.QWidget):
             return values
 
         def update_attribute(attribute: Attribute):
-
-            attribute.value_type = self.widget.combo_type.currentText()
-            attribute.data_type = self.widget.combo_data_type.currentText()
-            attribute.child_is_modifiable = self.widget.check_box_modifiable.isChecked()
+            if attribute.is_child:
+                attribute.value_type = self.widget.combo_type.currentText()
+                attribute.data_type = self.widget.combo_data_type.currentText()
+                attribute.child_inherits_values = self.widget.check_box_inherit.isChecked()
             values = get_values()
             attribute.value = values
 
@@ -189,7 +245,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             data_type = self.widget.combo_data_type.currentText()
 
             attribute = Attribute(self.property_set, name, values, value_type, data_type)
-            attribute.child_is_modifiable = self.widget.check_box_modifiable.isChecked()
+            attribute.child_inherits_values = self.widget.check_box_inherit.isChecked()
             rows = self.widget.table_widget.rowCount() + 1
             self.widget.table_widget.setRowCount(rows)
             add_table_line(rows - 1, attribute)
@@ -235,19 +291,25 @@ class PropertySetWindow(QtWidgets.QWidget):
         table = self.widget.table_widget
         table.setRowCount(len(self.property_set.attributes))
 
-        for i, value in enumerate(self.property_set.attributes):
-            value: Attribute = value
+        link_item = get_link_icon()
+        print(link_item)
 
-            table.setItem(i, 0, QTableWidgetItem(value.name))
-            table.setItem(i, 1, QTableWidgetItem(value.data_type))
-            table.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[value.value_type]))
-            table.setItem(i, 3, QTableWidgetItem(str(value.value)))
+        for i, attribute in enumerate(self.property_set.attributes):
+            attribute: Attribute = attribute
+            value_item = QTableWidgetItem(attribute.name)
 
-            if self.attribute_is_identifier(value):
+            if attribute.is_child:
+                value_item.setIcon(link_item)
+            table.setItem(i, 0, value_item)
+            table.setItem(i, 1, QTableWidgetItem(attribute.data_type))
+            table.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
+            table.setItem(i, 3, QTableWidgetItem(str(attribute.value)))
+
+            if self.attribute_is_identifier(attribute):
                reformat_identifier(i)
 
             table.resizeColumnsToContents()
-            table.data_dict[value.name] = value
+            table.data_dict[attribute.name] = attribute
 
     def new_line(self):
         self.widget.layout_input.removeWidget(self.widget.button_add_line)
@@ -328,4 +390,4 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.widget.lineEdit_name.setText(attribute.name)
 
         #set Editable
-        self.widget.check_box_modifiable.setChecked(attribute.child_is_modifiable)
+        self.widget.check_box_inherit.setChecked(attribute.child_inherits_values)

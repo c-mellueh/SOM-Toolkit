@@ -24,7 +24,7 @@ def init(mainWindow):
     mainWindow.ui.lineEdit_pSet_name.textChanged.connect(mainWindow.text_changed)
 
 def word_list():
-    property_list = [x.name for x in PropertySet.parent_iter]
+    property_list = [x.name for x in PropertySet.iter if x.object is None ]
     return property_list
 
 def modify_title(self,tab,text= None):
@@ -40,7 +40,7 @@ def clear_all(mainWindow):
 
 def delete(mainWindow):
     list_item = mainWindow.pset_table.selectedItems()
-    object = mainWindow.ui.tree.selectedItems()[0].object
+    object = mainWindow.active_object
 
     if not bool([el for el in list_item if
                  el.data(
@@ -48,12 +48,13 @@ def delete(mainWindow):
 
         for el in list_item:
             el: QTableWidgetItem = el
-            property_set: PropertySet = el.data(constants.DATA_POS)
-            property_set.delete()
+            if el.column() == 0:
+                property_set: PropertySet = el.data(constants.DATA_POS)
+                property_set.delete()
+                mainWindow.pset_table.selectRow(el.row())
 
-            mainWindow.pset_table.selectRow(el.row())
-            for i in sorted(mainWindow.pset_table.selectionModel().selectedRows()):
-                mainWindow.pset_table.removeRow(i.row())
+        for i in sorted(mainWindow.pset_table.selectionModel().selectedRows()):
+            mainWindow.pset_table.removeRow(i.row())
 
     else:
         msg_del_ident_pset(mainWindow.icon)
@@ -94,7 +95,9 @@ def set_enable(mainWindow, value: bool):
         mainWindow.ui.lineEdit_pSet_name.setText("")
 
 
-def fill_table(mainWindow, item: CustomTreeItem, obj:classes.Object):
+def fill_table(mainWindow, obj:classes.Object):
+    print(obj.property_sets)
+
     mainWindow.set_right_window_enable(True)
     modify_title(mainWindow,mainWindow.ui.tab_code,f"{obj.name}: Code")
     modify_title(mainWindow,mainWindow.ui.tab_property_set,f"{obj.name}: PropertySets")
@@ -104,40 +107,49 @@ def fill_table(mainWindow, item: CustomTreeItem, obj:classes.Object):
     table_length = len(own_psets)
 
     # find inherited Psets
-    if item.parent() is not None:
-        inherited_property_sets = obj.inherited_property_sets
-        for obj,property_sets in inherited_property_sets.items():
-            table_length+= len (inherited_property_sets[obj])
+    inherited_property_sets = obj.inherited_property_sets
+
+    for inh_obj,property_sets in inherited_property_sets.items():
+        table_length+= len (inherited_property_sets[inh_obj])
 
     mainWindow.pset_table.setRowCount(table_length)  # Prepare Table
 
     for i, pset in enumerate(own_psets):
+        pset:classes.PropertySet = pset
         table_item = QTableWidgetItem(pset.name)
         table_item.setData(constants.DATA_POS, pset)
         mainWindow.pset_table.setItem(i, 0, table_item)
+        if pset.is_child:
+            table_item = QTableWidgetItem(constants.INHERITED_TEXT)
+            mainWindow.pset_table.setItem(i,1,table_item)
 
     current_row = len(own_psets)
+    print(f"Parent: {obj.parent}")
 
-    if item.parent() is not None:
-        for obj, pset_dict in inherited_property_sets.items():
-            group_name = obj.name
+    for obj, pset_list in inherited_property_sets.items():
+        group_name = obj.name
 
-            for pset in pset_dict.keys():
-                pset_name = pset.name
-                pset_item = QTableWidgetItem(pset_name)
-                pset_item.setData(constants.DATA_POS, pset)
-                inherit_item = QTableWidgetItem(group_name)
-                inherit_item.setData(constants.DATA_POS, obj)
-                mainWindow.pset_table.setItem(current_row, 0, pset_item)
-                mainWindow.pset_table.setItem(current_row, 1, inherit_item)
-                current_row += 1
+        for pset in pset_list:
+            pset_name = pset.name
+            pset_item = QTableWidgetItem(pset_name)
+            pset_item.setData(constants.DATA_POS, pset)
+            inherit_item = QTableWidgetItem(group_name)
+            inherit_item.setData(constants.DATA_POS, obj)
+            mainWindow.pset_table.setItem(current_row, 0, pset_item)
+            mainWindow.pset_table.setItem(current_row, 1, inherit_item)
+            current_row += 1
     mainWindow.pset_table.resizeColumnsToContents()
 
 
 def left_click(mainWindow, item: QListWidgetItem):
+    ui:ui_mainwindow.Ui_MainWindow = mainWindow.ui
+
+    table_widget = ui.tableWidget_inherited
+
+    item = table_widget.item(table_widget.row(item),0)
+
     propertySet: PropertySet = item.data(constants.DATA_POS)
     mainWindow.ui.lineEdit_pSet_name.setText(propertySet.name)
-
 
 def double_click(mainWindow, item: QTableWidgetItem):
     mainWindow.listObjectClicked(item)
@@ -171,12 +183,14 @@ def addPset(mainWindow):
     new_row_count = mainWindow.pset_table.rowCount() + 1
     mainWindow.pset_table.setRowCount(new_row_count)
     mainWindow.pset_table.setItem(new_row_count - 1, 0, item)
+    parent = None
+    for pset in classes.PropertySet.iter:
+        if pset.name == name:
+            parent = pset
 
     if inherited:
-        property_set = PropertySet(name,is_child=True)
-        for pset in classes.PropertySet.parent_iter:
-            if pset.name == name:
-                property_set.parent = pset
+        property_set = PropertySet(name,parent=parent)
+
 
         item2 = QTableWidgetItem(constants.INHERITED_TEXT)
         mainWindow.pset_table.setItem(new_row_count - 1, 1, item2)

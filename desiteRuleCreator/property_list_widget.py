@@ -7,13 +7,12 @@ class PsetItem(QListWidgetItem):
     def __init__(self):
         super(PsetItem, self).__init__()
 
-        self.property_set = classes.PropertySet("NewName",is_parent=True)
+        self.property_set = classes.PropertySet(name = "NewName")
         self.setText("NewPset")
         self.setFlags(self.flags()|Qt.ItemIsEditable)
 
     def setText(self, text:str) -> None:
         super(PsetItem, self).setText(text)
-        print(text)
         self.property_set.name = text
 
 
@@ -49,6 +48,7 @@ class PropertySetInherWindow(QWidget):
     def add_pset(self):
         item = PsetItem()
         self.widget.list_view_pset.addItem(item)
+        self.mainWindow.update_completer()
         pass
 
     def remove_pset(self):

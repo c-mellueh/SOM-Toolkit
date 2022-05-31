@@ -217,6 +217,7 @@ class Ui_MainWindow(object):
         self.tableWidget_inherited.setSizePolicy(sizePolicy2)
         self.tableWidget_inherited.setFocusPolicy(Qt.StrongFocus)
         self.tableWidget_inherited.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableWidget_inherited.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tableWidget_inherited.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableWidget_inherited.setSortingEnabled(True)
         self.tableWidget_inherited.horizontalHeader().setProperty("showSortIndicator", True)

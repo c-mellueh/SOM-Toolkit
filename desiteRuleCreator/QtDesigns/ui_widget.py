@@ -29,11 +29,6 @@ class Ui_layout_main(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.layout_grid = QGridLayout()
         self.layout_grid.setObjectName(u"layout_grid")
-        self.label_values = QLabel(layout_main)
-        self.label_values.setObjectName(u"label_values")
-
-        self.layout_grid.addWidget(self.label_values, 4, 0, 1, 6)
-
         self.button_delete = QPushButton(layout_main)
         self.button_delete.setObjectName(u"button_delete")
 
@@ -115,11 +110,15 @@ class Ui_layout_main(object):
 
         self.layout_grid.addWidget(self.lineEdit_name, 3, 0, 1, 6)
 
-        self.check_box_modifiable = QCheckBox(layout_main)
-        self.check_box_modifiable.setObjectName(u"check_box_modifiable")
-        self.check_box_modifiable.setChecked(True)
+        self.label_values = QLabel(layout_main)
+        self.label_values.setObjectName(u"label_values")
 
-        self.layout_grid.addWidget(self.check_box_modifiable, 2, 1, 1, 1)
+        self.layout_grid.addWidget(self.label_values, 4, 0, 1, 5)
+
+        self.check_box_inherit = QCheckBox(layout_main)
+        self.check_box_inherit.setObjectName(u"check_box_inherit")
+
+        self.layout_grid.addWidget(self.check_box_inherit, 4, 5, 1, 1)
 
 
         self.horizontalLayout.addLayout(self.layout_grid)
@@ -156,6 +155,7 @@ class Ui_layout_main(object):
         self.table_widget.setDragEnabled(True)
         self.table_widget.setDragDropMode(QAbstractItemView.DragDrop)
         self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table_widget.setIconSize(QSize(10, 10))
         self.table_widget.setShowGrid(True)
         self.table_widget.setCornerButtonEnabled(True)
         self.table_widget.setRowCount(5)
@@ -176,7 +176,6 @@ class Ui_layout_main(object):
 
     def retranslateUi(self, layout_main):
         layout_main.setWindowTitle(QCoreApplication.translate("layout_main", u"Form", None))
-        self.label_values.setText(QCoreApplication.translate("layout_main", u"Values", None))
         self.button_delete.setText(QCoreApplication.translate("layout_main", u"Delete", None))
         self.label_name.setText(QCoreApplication.translate("layout_main", u"Name", None))
         self.button_add.setText(QCoreApplication.translate("layout_main", u"Add", None))
@@ -189,7 +188,8 @@ class Ui_layout_main(object):
         self.combo_type.setItemText(3, QCoreApplication.translate("layout_main", u"Range", None))
 
         self.button_add_line.setText(QCoreApplication.translate("layout_main", u"+", None))
-        self.check_box_modifiable.setText(QCoreApplication.translate("layout_main", u"modifiable", None))
+        self.label_values.setText(QCoreApplication.translate("layout_main", u"Values", None))
+        self.check_box_inherit.setText(QCoreApplication.translate("layout_main", u"inherit", None))
         ___qtablewidgetitem = self.table_widget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("layout_main", u"Name", None));
         ___qtablewidgetitem1 = self.table_widget.horizontalHeaderItem(1)

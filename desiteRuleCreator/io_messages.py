@@ -74,8 +74,8 @@ def msg_del_ident_pset(icon):
     text = "can't delete Pset of Identifier!"
     default_message(icon, text)
 
-def msg_del_ident(icon):
-    text = "Identifier can't be deleted!"
+def msg_mod_ident(icon):
+    text = "Identifier can't be modified!"
     default_message(icon,text)
 
 class GroupRequest(QDialog):
@@ -109,7 +109,6 @@ class GroupRequest(QDialog):
 
     def accept(self) -> None:
         is_empty = [True for text in self.input_fields if not bool(text.text())]
-        print(is_empty)
         if is_empty:
             msg_missing_input(self.windowIcon())
         else:
@@ -126,3 +125,7 @@ def req_group_name(mainWindow):
 
     else:
         return [False,False,False,False]
+
+def req_attribute_name(propertyWindow):
+    text = QInputDialog.getText(propertyWindow,"New Attribute Name","New Attribute Name")
+    return text

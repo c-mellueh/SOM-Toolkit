@@ -87,11 +87,11 @@ def clear_all(mainWindow):
 def right_click(mainWindow, position: QPoint):
     menu = QMenu()
     mainWindow.action_group_objects = menu.addAction("Group")
-    mainWindow.action_delete_objects = menu.addAction("Delete")
+    mainWindow.action_delete_attribute = menu.addAction("Delete")
     mainWindow.action_expand_selection = menu.addAction("Expand")
     mainWindow.action_collapse_selection = menu.addAction("Collapse")
 
-    mainWindow.action_delete_objects.triggered.connect(mainWindow.deleteObject)
+    mainWindow.action_delete_attribute.triggered.connect(mainWindow.deleteObject)
     mainWindow.action_group_objects.triggered.connect(mainWindow.rc_group)
     mainWindow.action_expand_selection.triggered.connect(mainWindow.rc_expand)
     mainWindow.action_collapse_selection.triggered.connect(mainWindow.rc_collapse)
@@ -118,7 +118,7 @@ def rc_group_items(mainWindow):
         parent = parent_classes[0].parent()
 
         if parent is None:
-            parent = mainWindow.ui.tree.invisibleRootItem()
+            parent:QTreeWidgetItem = mainWindow.ui.tree.invisibleRootItem()
 
         pset = PropertySet(ident_pset)
         identifier = Attribute(pset,ident_attrib,[ident_value],constants.LIST)
@@ -127,14 +127,16 @@ def rc_group_items(mainWindow):
         group_item:CustomTreeItem = mainWindow.addObjectToTree(group_obj,parent)
 
         for item in parent_classes:
-            parent.removeChild(item)
-            group_item.addChild(item)
+            child:classes.CustomTreeItem = parent.takeChild(parent.indexOfChild(item))
+            group_obj.add_child(child.object)
+
+            group_item.addChild(child)
 
 
 def double_click(mainWindow, item: CustomTreeItem):
     obj: Object = item.object
     mainWindow.active_object = obj
-    property_widget.fill_table(mainWindow, item, obj)
+    property_widget.fill_table(mainWindow, obj)
     script_widget.show(mainWindow)
     mainWindow.update_completer()
 
@@ -150,7 +152,6 @@ def setIdentLineEnable(mainWindow, value: bool):
 
 
 def single_click(mainWindow):
-
     mainWindow.set_right_window_enable(False)
 
 
@@ -201,9 +202,8 @@ def addObject(mainWindow):
 
     def already_exists(ident):
         for obj in Object.iter:
-            if isinstance(obj.identifier,str):
-                if obj.identifier ==str(ident):
-                    return True
+            if obj.identifier ==str(ident):
+                return True
             else:
                 if obj.identifier.is_equal(ident):
                     return True
@@ -223,6 +223,7 @@ def addObject(mainWindow):
             if not already_exists(ident):
 
                 obj = Object(name, ident)
+                obj.add_property_set(ident.propertySet)
                 mainWindow.addObjectToTree(obj)
                 mainWindow.clearObjectInput()
 

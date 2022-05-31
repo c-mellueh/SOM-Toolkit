@@ -6,6 +6,9 @@ from . import __version__ as project_version
 global _changed
 import copy
 
+#Add child to Parent leads to reverse
+
+
 def attributes_to_psetdict(attributes):
     pset_dict = {}
     for attribute in attributes:
@@ -100,108 +103,97 @@ class Project(object):
         self._author = value
         self._changed = True
 
-
 class Hirarchy(object):
-    parent_iter = list()
-    def __init__(self,is_parent,is_child):
-        self._is_parent = is_parent
-        self._is_child = is_child
-        self._parent = None
-        self._children = list()
+    iter = list()
+    def __init__(self, name, parent=None, children=None):
+        if children is None:
+            children = list()
+        self._parent = parent
+        self._children = children
+        self.iter.append(self)
+        self._name = name
 
-        if is_parent:
-            self.parent_iter.append(self)
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, value: str):
+        self._name = value
+        self.changed = True
 
     @property
     def parent(self):
-        return self.parent
+        return self._parent
 
     @parent.setter
-    def parent(self, parent):
+    def parent(self, parent)-> None:
         self._parent = parent
 
     @property
-    def is_parent(self):
-        return self._is_parent
-
-    @is_parent.setter
-    def is_parent(self, value):
-        self._is_parent = value
+    def is_parent(self)->bool:
+        if self.children:
+            return True
 
     @property
-    def is_child(self):
-        return self._is_child
-
-    @is_child.setter
-    def is_child(self, value):
-        self._is_child = value
+    def is_child(self) -> bool:
+        if self.parent is not None:
+            return True
 
     @property
-    def children(self):
+    def children(self) -> list:
         return self._children
 
-    def add_child(self, value):
-        if self.is_parent:
-            self.children.append(value)
+    def add_child(self, child)-> None:
+        self.children.append(child)
+        child.parent = self
 
-    def remove_child(self, value):
-        if self.is_parent:
-            self.children.remove(value)
+    def remove_child(self, child)-> None:
+        self.children.remove(child)
+        child.parent = None
+
+    def delete(self)-> None:
+        self.iter.remove(self)
 
 
 class PropertySet(Hirarchy):
-    parent_iter = list()
+    iter= list()
 
-    def __init__(self, name:str,is_parent = False, is_child = False):
-        super(PropertySet, self).__init__(is_parent,is_child)
-        self._name = name
-        self._attributes = list()  # attribute_name:value
-        self._object = None
+    def __init__(self, name:str, object = None, parent = None, children=None):
+        super(PropertySet, self).__init__(name,parent,children)
+        self._attributes = list()
+        self._object = object
         self.changed = True
-
-    def delete(self):
-        self.parent_iter.remove(self)
+        if parent is not None:
+            self.parent = parent
 
     @property
     def parent(self):
-        super(PropertySet, self).parent()
+        parent = super(PropertySet, self).parent
+        return parent
 
     @parent.setter
-    def parent(self, parent):
-        self.is_child = True
+    def parent(self, parent)->None:
         self._parent = parent
         for par_attribute in parent.attributes:
-            attribute = Attribute(self,par_attribute.name,par_attribute.value,par_attribute.value_type,par_attribute.data_type,is_child=True)
-            attribute.parent = par_attribute
-        self._parent = parent
+            par_attribute: Attribute = par_attribute
+            attribute = Attribute(self,par_attribute.name,par_attribute.value,par_attribute.value_type,par_attribute.data_type)
+            par_attribute.add_child(attribute)
 
-    @property
-    def is_parent(self):
-        return self._is_parent
+    def change_parent(self,new_parent)->None:
+        for attribute in self.attributes:
+            if attribute.parent.propertySet == self._parent:
+                self.remove_attribute(attribute)
+        self.parent =new_parent
 
-    @is_parent.setter
-    def is_parent(self,value):
-        self._is_parent = value
-
-    @property
-    def is_child(self):
-        return self._is_child
-
-    @is_child.setter
-    def is_child(self, value):
-        self._is_child = value
-
-    @property
-    def children(self):
-        return self._children
-
-    def add_child(self,value):
+    def delete(self)->None:
+        if self.is_child:
+            parent:PropertySet = self.parent
+            parent.remove_child(self)
         if self.is_parent:
-            self.children.append(value)
-
-    def remove_child(self,value):
-        if self.is_parent:
-            self.children.remove(value)
+            for child in self.children:
+                self.remove_child(child)
+        self.object.remove_property_set(self)
 
     @property
     def object(self):
@@ -213,34 +205,35 @@ class PropertySet(Hirarchy):
         self.changed = True
 
     @property
-    def name(self) -> str:
-        return self._name
-
-    @name.setter
-    def name(self, value:str):
-        self._name = value
-        self.changed = True
-    @property
     def attributes(self) -> list:
         return self._attributes
 
     @attributes.setter
-    def attributes(self, value: dict):
+    def attributes(self, value: list)-> None:
         self._attributes = value
         self.changed = True
 
-    def add_attribute(self, value):
+    def add_attribute(self, value)->None:
         self._attributes.append(value)
         self.changed = True
+        for child in self.children:
+            attrib:Attribute = copy.copy(value)
+            value.add_child(attrib)
+            child.add_attribute(attrib)
 
-    def remove_attribute(self, value):
-        self._attributes.pop(self._attributes.index(value))
+    def remove_attribute(self, value)->None:
+        self._attributes.remove(value)
+        for child in self.children:
+            for attribute in child.attributes:
+                if attribute.parent == value:
+                    child.remove_attribute(attribute)
         self.changed = True
 
 class Attribute(Hirarchy):
-    def __init__(self,propertySet:PropertySet, name:str, value,value_type, data_type = "xs:string",is_parent = False,is_child = False):
-        super(Attribute, self).__init__(is_parent, is_child)
-        self._name = name
+    iter= list()
+
+    def __init__(self,propertySet:PropertySet, name:str, value,value_type, data_type = "xs:string",child_inherits_values = False):
+        super(Attribute, self).__init__(name=name)
         self._value = value
         self._propertySet = propertySet
         self._value_type = value_type
@@ -248,66 +241,64 @@ class Attribute(Hirarchy):
         self._object = None
         propertySet.add_attribute(self)
         self.changed = True
-        self._child_is_modifable = True
+        self._child_inherits_values = child_inherits_values
 
     def __str__(self):
         text = f"{self.propertySet.name} : {self.name} = {self.value}"
         return text
 
     @property
-    def child_is_modifiable(self):
-        return self._child_is_modifable
+    def child_inherits_values(self)-> bool:
+        return self._child_inherits_values
 
-    @child_is_modifiable.setter
-    def child_is_modifiable(self,value:bool):
-        self._child_is_modifable = value
-
-    @property
-    def object(self):
-        return self._object
-
-    @object.setter
-    def object(self,value):
-        self._object = value
-        self.propertySet.object = self._object
-        self.changed = True
+    @child_inherits_values.setter
+    def child_inherits_values(self, value:bool)->None:
+        self._child_inherits_values = value
 
     @property
     def name(self)->str:
-        return self._name
+        return super(Attribute, self).name
 
     @name.setter
-    def name(self, value:str):
+    def name(self, value:str)->None:
+        self.changed = True
 
         if not self.is_child:
             self._name = value
-            self.changed = True
 
         if self.is_parent:
             for child in self.children:
-                child._name = value
+                child.name = value
 
     @property
     def value(self):
         return self._value
 
     @value.setter
-    def value(self, value):
+    def value(self, value:list[str])->None:
+        def can_be_changed(self)->bool:
+            can_be_changed = True
+            if self.is_child:
+                parent: Attribute = self.parent
+                if parent.child_inherits_values:
+                    can_be_changed = False
+            return can_be_changed
+
         new_value = []
         for el in value:
-            el:str = el
             if "|" in el:
                 el = el.split("|")
                 for item in el:
                     new_value.append(item)
             else:
                 new_value.append(el)
-        print(new_value)
-        self._value = new_value
-        self.changed = True
+
+        if can_be_changed(self):
+            self._value = new_value
+            self.changed = True
 
     @property
-    def value_type(self)-> int :
+    def value_type(self):
         return self._value_type
 
     @value_type.setter
@@ -324,11 +315,11 @@ class Attribute(Hirarchy):
 
 
     @property
-    def data_type(self) -> int:
+    def data_type(self) -> str:
         return self._data_type
 
     @data_type.setter
-    def data_type(self, value: int):
+    def data_type(self, value: str):
         if not self.is_child:
             self._data_type = value
             self.changed = True
@@ -370,25 +361,18 @@ class Attribute(Hirarchy):
         for child in self.children:
             child.delete()
 
-class Object(object):
-    iter = list()
-    def __init__(self, name, ident: Attribute,parent = None, is_concept = False):
-        self.iter.append(self)
-        self._inherited_property_sets = dict()
-        self._children = list()
+class Object(Hirarchy):
+    iter= list()
+    def __init__(self, name, ident: [Attribute,str],parent = None, is_concept = False):
+        super(Object, self).__init__(name = name,parent = parent)
         self._scripts = list()
         self._property_sets = list()
-
-        self._name = name
         self._identifier = ident
-        self._parent = parent
         self._is_concept = is_concept
-        self.add_property_set(ident.propertySet)
-
         self.changed = True
 
     @property
-    def inherited_property_sets(self):
+    def inherited_property_sets(self)->dict:
         def recursion(property_sets, obj:Object):
             psets = obj.property_sets
 
@@ -402,136 +386,48 @@ class Object(object):
 
         property_sets = dict()
         if self.parent is not None:
-            self._inherited_property_sets = recursion(property_sets, self.parent)
+            inherited_property_sets = recursion(property_sets, self.parent)
         else:
-            self._inherited_property_sets = dict()
+            inherited_property_sets = dict()
 
-        return self._inherited_attributes
-
+        return inherited_property_sets
 
     @property
-    def is_concept(self):
+    def is_concept(self)->bool:
         return  self._is_concept
 
     @is_concept.setter
-    def is_concept(self,value:bool):
+    def is_concept(self,value:bool)->None:
         self._is_concept = value
         self.changed = True
-
-    @property
-    def inherited_attributes(self) -> dict:
-        def recursion(attribute_dict, obj):
-            attributes = obj.attributes
-
-            if attributes:
-                attribute_dict[obj] = attributes
-
-            parent = obj.parent
-            if parent is not None:
-                attribute_dict = recursion(attribute_dict, parent)
-            return attribute_dict
-
-        attribute_dict = dict()
-        if self.parent is not None:
-            self._inherited_attributes = recursion(attribute_dict, self.parent)
-        return self._inherited_attributes
-
-    @property
-    def parent(self):
-        return self._parent
-
-    @parent.setter
-    def parent(self,value):
-        self._parent = value
-        value.add_child(self)
-        self.changed = True
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        self._name = value
-        self.changed = True
-
 
     @property
     def identifier(self) -> Attribute:
         return self._identifier
 
     @identifier.setter
-    def identifier(self, value):
+    def identifier(self, value:Attribute)->None:
         self._identifier = value
-        self.changed = True
-
-
-    @property
-    def parent(self):
-        return self._parent
-
-    @parent.setter
-    def parent(self, value):
-        self._parent = value
         self.changed = True
 
     @property
     def property_sets(self)->list[PropertySet]:
         return self._property_sets
 
-    def add_property_set(self,property_set:PropertySet):
+    def add_property_set(self,property_set:PropertySet)->None:
         self._property_sets.append(property_set)
         property_set.object = self
-        print(f"PropertySet hat Objekt: {self}")
-    def remove_property_set(self,property_set:PropertySet):
+
+    def remove_property_set(self,property_set:PropertySet)->None:
         self._property_sets.remove(property_set)
 
-    #
     # @property
-    # def attributes(self)->list[Attribute]:
-    #     return self._attributes
-    #
-    # def add_attribute(self,attribute):
-    #     self._attributes.append(attribute)
-    #     attribute.object = self
-    #     self.changed = True
-    #
-    #
-    # def remove_attribute(self,attribute):
-    #     self._attributes.remove(attribute)
-    #     self.changed = True
-    #
-    #
-    # def add_attributes(self,attribute_list):
-    #     for attribute in attribute_list:
-    #         self.add_attribute(attribute)
-    #     self.changed = True
-
-    @property
-    def children(self):
-        return self._children
-
-    def add_child(self, object):
-        self._children.append(object)
-        self.changed = True
-
-
-    def remove_child(self,object):
-        self._children.remove(object)
-        self.changed = True
-
-
-
-    @property
-    def psetNameDict(self):
-        p_set_dict = attributes_to_psetdict(self._attributes)
-        new_dict = {}
-        for key in p_set_dict.keys():
-            new_dict[key.name]=key
-        return new_dict
-
-    def delete(self):
-        self.iter.remove(self)
+    # def psetNameDict(self):
+    #     p_set_dict = attributes_to_psetdict(self._attributes)
+    #     new_dict = {}
+    #     for key in p_set_dict.keys():
+    #         new_dict[key.name]=key
+    #     return new_dict
 
     @property
     def scripts(self):
@@ -542,8 +438,6 @@ class Object(object):
 
     def delete_script(self,script):
         self._scripts.remove(script)
-
-
 
 class Script(QListWidgetItem):
     def __init__(self,title:str,obj):
@@ -612,7 +506,7 @@ class CustomTreeItem(QTreeWidgetItem):
         self._object.add_child(child.object)
 
     @property
-    def object(self):
+    def object(self)->Object:
         return self._object
 
 

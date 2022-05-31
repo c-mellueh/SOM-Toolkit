@@ -139,7 +139,7 @@ class MainWindow(QMainWindow):
     def rc_group(self):
         object_widget.rc_group_items(self)
 
-    def object_clicked(self):
+    def object_clicked(self,item):
         object_widget.single_click(self)
 
     def update_completer(self):
