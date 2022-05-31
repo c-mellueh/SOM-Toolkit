@@ -209,6 +209,15 @@ def addObject(mainWindow):
                     return True
         return False
 
+    def create_ident(pSet,identName,identValue)-> Attribute:
+        ident: Attribute = pSet.get_attribute(identName)
+        if ident is None:
+            ident = Attribute(pSet, identName, identValue, constants.LIST)
+        else:
+            ident.value = identValue#
+
+        return ident
+
     name = mainWindow.ui.lineEdit_object_name.text()
     pSetName = mainWindow.ui.lineEdit_ident_pSet.text()
     identName = mainWindow.ui.lineEdit_ident_attribute.text()
@@ -216,20 +225,19 @@ def addObject(mainWindow):
 
     input_list = [name, pSetName, identName, identValue]
 
-    if pSetName in property_widget.predefined_pset_list():
-        result = io_messages.req_merge_pset(mainWindow.icon)
+    parent = None
+    if pSetName in property_widget.predefined_pset_list():      #if PropertySet allready predefined
+        result = io_messages.req_merge_pset(mainWindow.icon)    #ask if you want to merge
         if result == True:
             parent = property_widget.get_parent_by_name(pSetName)
-        elif result == False:
-            parent = None
-            pass
-        else:
+        elif result is None:
             return
 
     pSet = PropertySet(pSetName,parent= parent)
-    ident = Attribute(pSet, identName, identValue, constants.LIST)
+
     if not missing_input(input_list):
         if not "*" in input_list:
+            ident = create_ident(pSet, identName, identValue)
             if not already_exists(ident):
 
                 obj = Object(name, ident)
@@ -238,6 +246,7 @@ def addObject(mainWindow):
                 mainWindow.clearObjectInput()
 
             else:
+                ident.delete()
                 io_messages.msg_already_exists(mainWindow.icon)
 
         else:

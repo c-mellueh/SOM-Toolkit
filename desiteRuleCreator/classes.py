@@ -230,6 +230,12 @@ class PropertySet(Hirarchy):
                     child.remove_attribute(attribute)
         self.changed = True
 
+    def get_attribute(self,name):
+        for attribute in self.attributes:
+            if attribute.name == name:
+                return attribute
+        return None
+
 class Attribute(Hirarchy):
     iter= list()
 
