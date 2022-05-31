@@ -166,9 +166,7 @@ def double_click(mainWindow, item: QTableWidgetItem):
     # Open New Window
     mainWindow.pset_window = mainWindow.openPsetWindow(propertySet,mainWindow.active_object,None)
 
-def update_completer(mainWindow):
-    completer = QCompleter(predefined_pset_list(), mainWindow)
-    mainWindow.ui.lineEdit_pSet_name.setCompleter(completer)
+
 
 def openPsetWindow(mainWindow,propertySet: PropertySet,active_object:classes.Object, window_title = None,):
     if window_title is None:

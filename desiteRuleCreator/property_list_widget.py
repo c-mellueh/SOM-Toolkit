@@ -78,7 +78,7 @@ class PropertySetInherWindow(QWidget):
     def showEvent(self, event:QShowEvent) -> None:
         if self.widget.list_view_pset.count()>0:
             self.single_click(self.widget.list_view_pset.item(0))
-
+            self.widget.list_view_pset.setCurrentRow(0)
 def open_pset_list(mainWindow):
     pset_window = PropertySetInherWindow(mainWindow)
     return pset_window

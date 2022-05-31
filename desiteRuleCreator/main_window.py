@@ -2,7 +2,7 @@ import os
 import sys
 
 from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog,QCompleter
 
 from . import constants,filehandling,object_widget,property_widget,desite_export,classes,script_widget,property_list_widget
 from .QtDesigns.ui_mainwindow import Ui_MainWindow
@@ -143,7 +143,9 @@ class MainWindow(QMainWindow):
         object_widget.single_click(self)
 
     def update_completer(self):
-        property_widget.update_completer(self)
+        completer = QCompleter(property_widget.predefined_pset_list(), self)
+        self.ui.lineEdit_pSet_name.setCompleter(completer)
+        self.ui.lineEdit_ident_pSet.setCompleter(completer)
 
     def object_double_clicked(self, item):
         object_widget.double_click(self, item)

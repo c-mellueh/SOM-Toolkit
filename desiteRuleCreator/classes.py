@@ -133,11 +133,15 @@ class Hirarchy(object):
     def is_parent(self)->bool:
         if self.children:
             return True
+        else:
+            return False
 
     @property
     def is_child(self) -> bool:
         if self.parent is not None:
             return True
+        else:
+            return False
 
     @property
     def children(self) -> list:
@@ -149,7 +153,7 @@ class Hirarchy(object):
 
     def remove_child(self, child)-> None:
         self.children.remove(child)
-        child.parent = None
+        child.delete()
 
     def delete(self)-> None:
         self.iter.remove(self)
@@ -172,11 +176,14 @@ class PropertySet(Hirarchy):
 
     @parent.setter
     def parent(self, parent)->None:
-        self._parent = parent
-        for par_attribute in parent.attributes:
-            par_attribute: Attribute = par_attribute
-            attribute = Attribute(self,par_attribute.name,par_attribute.value,par_attribute.value_type,par_attribute.data_type)
-            par_attribute.add_child(attribute)
+        if parent is None:
+            self.remove_parent(self._parent)
+        else:
+            self._parent = parent
+            for par_attribute in parent.attributes:
+                par_attribute: Attribute = par_attribute
+                attribute = Attribute(self,par_attribute.name,par_attribute.value,par_attribute.value_type,par_attribute.data_type)
+                par_attribute.add_child(attribute)
 
     def change_parent(self,new_parent)->None:
         for attribute in self.attributes:
@@ -185,14 +192,22 @@ class PropertySet(Hirarchy):
         self.parent =new_parent
 
     def delete(self)->None:
-        if self.is_child:
-            parent:PropertySet = self.parent
-            parent.remove_child(self)
+        super(PropertySet, self).delete()
+        print(f"IsCHild {self.is_child}  IsParent {self.is_parent}")
         if self.is_parent:
             for child in self.children:
                 self.remove_child(child)
+
         if self.object is not None:
-            self.object.remove_property_set(self)
+            ident = self.object.identifier      # if identifier in Pset delete all attributes except identifier
+            if ident in self.attributes:
+                remove_list = [attribute for attribute in self.attributes if attribute != ident]
+                for attribute in remove_list:
+                    self.remove_attribute(attribute)
+            else:
+                self.object.remove_property_set(self)
+
+
 
     @property
     def object(self):
@@ -233,6 +248,16 @@ class PropertySet(Hirarchy):
             if attribute.name == name:
                 return attribute
         return None
+
+    def remove_parent(self,old_parent):
+        remove_list = list()
+        for attribute in self.attributes:
+            if attribute.parent.propertySet == old_parent:
+                remove_list.append(attribute)
+
+        for attribute in remove_list:
+            self.remove_attribute(attribute)
+        self._parent = None
 
 class Attribute(Hirarchy):
     iter= list()
