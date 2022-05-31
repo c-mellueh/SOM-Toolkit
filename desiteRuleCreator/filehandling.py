@@ -133,7 +133,7 @@ def import_new(projekt_xml: etree._Element):
         if xml_object.tag == "Object":
             ident_attrib, pset_list = import_attributes(xml_object)
             name, parent, identifer, is_concept = get_obj_data(xml_object)
-            obj = Object(name, ident_attrib, None, is_concept)
+            obj = Object(name, ident_attrib, is_concept)
             for pset in pset_list:
                 obj.add_property_set(pset)
 
@@ -143,7 +143,9 @@ def import_new(projekt_xml: etree._Element):
             import_scripts(xml_object,obj)
 
     for obj, parent_txt in parent_dict.items():
-        obj.parent = ident_dict.get(parent_txt)
+        parent = ident_dict.get(parent_txt)
+        if parent is not None:
+            parent.add_child(obj)
 
 
 def import_old(projekt_xml):
