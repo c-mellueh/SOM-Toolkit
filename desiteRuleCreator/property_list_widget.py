@@ -49,6 +49,7 @@ class PropertySetInherWindow(QWidget):
         item = PsetItem()
         self.widget.list_view_pset.addItem(item)
         self.mainWindow.update_completer()
+        self.widget.list_view_pset.setCurrentItem(item)
         pass
 
     def remove_pset(self):
@@ -64,7 +65,7 @@ class PropertySetInherWindow(QWidget):
 
     def single_click(self,item:PsetItem):
         children = item.property_set.children
-
+        self.widget.list_view_existance.clear()
         for child in children:
             item = QListWidgetItem(child.name)
             self.widget.list_view_existance.addItem(item)
