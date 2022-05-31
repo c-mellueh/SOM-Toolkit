@@ -193,7 +193,8 @@ class PropertySet(Hirarchy):
         if self.is_parent:
             for child in self.children:
                 self.remove_child(child)
-        self.object.remove_property_set(self)
+        if self.object is not None:
+            self.object.remove_property_set(self)
 
     @property
     def object(self):
