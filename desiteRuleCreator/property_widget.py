@@ -7,6 +7,15 @@ from .io_messages import msg_del_ident_pset
 from .propertyset_window import PropertySetWindow
 from .QtDesigns import ui_mainwindow, ui_PsetInheritance
 
+
+def get_parent_by_name(name):
+    parent = None
+    for pset in classes.PropertySet.iter:
+        if pset.name == name:
+            parent = pset
+    return parent
+
+
 def init(mainWindow):
     ui : ui_mainwindow.Ui_MainWindow = mainWindow.ui
 
@@ -23,7 +32,7 @@ def init(mainWindow):
     mainWindow.set_right_window_enable(False)
     mainWindow.ui.lineEdit_pSet_name.textChanged.connect(mainWindow.text_changed)
 
-def word_list():
+def predefined_pset_list():
     property_list = [x.name for x in PropertySet.iter if x.object is None ]
     return property_list
 
@@ -160,7 +169,7 @@ def double_click(mainWindow, item: QTableWidgetItem):
     mainWindow.pset_window = mainWindow.openPsetWindow(propertySet,mainWindow.active_object,None)
 
 def update_completer(mainWindow):
-    completer = QCompleter(word_list(), mainWindow)
+    completer = QCompleter(predefined_pset_list(), mainWindow)
     mainWindow.ui.lineEdit_pSet_name.setCompleter(completer)
 
 def openPsetWindow(mainWindow,propertySet: PropertySet,active_object:classes.Object, window_title = None,):
@@ -176,22 +185,17 @@ def addPset(mainWindow):
     object = mainWindow.active_object
 
     inherited = False
-    if name in word_list():
+    if name in predefined_pset_list():
         inherited = True
 
     item = QTableWidgetItem(name)
     new_row_count = mainWindow.pset_table.rowCount() + 1
     mainWindow.pset_table.setRowCount(new_row_count)
     mainWindow.pset_table.setItem(new_row_count - 1, 0, item)
-    parent = None
-    for pset in classes.PropertySet.iter:
-        if pset.name == name:
-            parent = pset
 
+    parent = get_parent_by_name(name)
     if inherited:
         property_set = PropertySet(name,parent=parent)
-
-
         item2 = QTableWidgetItem(constants.INHERITED_TEXT)
         mainWindow.pset_table.setItem(new_row_count - 1, 1, item2)
 

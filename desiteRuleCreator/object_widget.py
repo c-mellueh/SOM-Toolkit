@@ -216,7 +216,17 @@ def addObject(mainWindow):
 
     input_list = [name, pSetName, identName, identValue]
 
-    pSet = PropertySet(pSetName)
+    if pSetName in property_widget.predefined_pset_list():
+        result = io_messages.req_merge_pset(mainWindow.icon)
+        if result == True:
+            parent = property_widget.get_parent_by_name(pSetName)
+        elif result == False:
+            parent = None
+            pass
+        else:
+            return
+
+    pSet = PropertySet(pSetName,parent= parent)
     ident = Attribute(pSet, identName, identValue, constants.LIST)
     if not missing_input(input_list):
         if not "*" in input_list:

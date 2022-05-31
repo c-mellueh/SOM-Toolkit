@@ -129,3 +129,20 @@ def req_group_name(mainWindow):
 def req_attribute_name(propertyWindow):
     text = QInputDialog.getText(propertyWindow,"New Attribute Name","New Attribute Name")
     return text
+
+def req_merge_pset(icon):
+    msgBox = QMessageBox()
+    msgBox.setText("Pset exists in Predefined Psets, do you want to merge?")
+    msgBox.setWindowTitle(" ")
+    msgBox.setIcon(QMessageBox.Icon.Warning)
+    msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+    msgBox.setDefaultButton(QMessageBox.Yes)
+    msgBox.setWindowIcon(icon)
+
+    statement = msgBox.exec()
+    if statement == msgBox.Yes:
+        return True
+    elif statement == msgBox.No:
+        return False
+    else:
+        return None
