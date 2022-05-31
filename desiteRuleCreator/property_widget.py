@@ -105,7 +105,6 @@ def set_enable(mainWindow, value: bool):
 
 
 def fill_table(mainWindow, obj:classes.Object):
-    print(obj.property_sets)
 
     mainWindow.set_right_window_enable(True)
     modify_title(mainWindow,mainWindow.ui.tab_code,f"{obj.name}: Code")
@@ -133,7 +132,6 @@ def fill_table(mainWindow, obj:classes.Object):
             mainWindow.pset_table.setItem(i,1,table_item)
 
     current_row = len(own_psets)
-    print(f"Parent: {obj.parent}")
 
     for obj, pset_list in inherited_property_sets.items():
         group_name = obj.name
