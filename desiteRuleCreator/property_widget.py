@@ -193,7 +193,9 @@ def addPset(mainWindow):
 
     parent = get_parent_by_name(name)
     if inherited:
-        property_set = PropertySet(name,parent=parent)
+        property_set = PropertySet(name)
+        if parent is not None:
+            parent.add_child(property_set)
         item2 = QTableWidgetItem(constants.INHERITED_TEXT)
         mainWindow.pset_table.setItem(new_row_count - 1, 1, item2)
 

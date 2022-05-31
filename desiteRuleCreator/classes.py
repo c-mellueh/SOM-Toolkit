@@ -105,11 +105,10 @@ class Project(object):
 
 class Hirarchy(object):
     iter = list()
-    def __init__(self, name, parent=None, children=None):
-        if children is None:
-            children = list()
-        self._parent = parent
-        self._children = children
+    def __init__(self, name):
+
+        self._parent = None
+        self._children = list()
         self.iter.append(self)
         self._name = name
 
@@ -159,13 +158,12 @@ class Hirarchy(object):
 class PropertySet(Hirarchy):
     iter= list()
 
-    def __init__(self, name:str, object = None, parent = None, children=None):
-        super(PropertySet, self).__init__(name,parent,children)
+    def __init__(self, name:str, object = None):
+        super(PropertySet, self).__init__(name)
         self._attributes = list()
         self._object = object
         self.changed = True
-        if parent is not None:
-            self.parent = parent
+
 
     @property
     def parent(self):
@@ -370,8 +368,8 @@ class Attribute(Hirarchy):
 
 class Object(Hirarchy):
     iter= list()
-    def __init__(self, name, ident: [Attribute,str],parent = None, is_concept = False):
-        super(Object, self).__init__(name = name,parent = parent)
+    def __init__(self, name, ident: [Attribute,str], is_concept = False):
+        super(Object, self).__init__(name = name)
         self._scripts = list()
         self._property_sets = list()
         self._identifier = ident

@@ -233,7 +233,9 @@ def addObject(mainWindow):
         elif result is None:
             return
 
-    pSet = PropertySet(pSetName,parent= parent)
+    pSet = PropertySet(pSetName)
+    if parent is not None:
+        parent.add_child(pSet)
 
     if not missing_input(input_list):
         if not "*" in input_list:
