@@ -2,6 +2,7 @@ from . import classes
 from .QtDesigns import ui_PsetInheritance
 from PySide6.QtWidgets import QWidget,QListWidgetItem
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QShowEvent
 
 class PsetItem(QListWidgetItem):
     def __init__(self):
@@ -67,11 +68,16 @@ class PropertySetInherWindow(QWidget):
         children = item.property_set.children
         self.widget.list_view_existance.clear()
         for child in children:
-            item = QListWidgetItem(child.name)
+            text = f"{child.object.name} : {child.name}"
+            item = QListWidgetItem(text)
             self.widget.list_view_existance.addItem(item)
 
     def item_changed(self,item:PsetItem):
         item.property_set.name = item.text()
+
+    def showEvent(self, event:QShowEvent) -> None:
+        if self.widget.list_view_pset.count()>0:
+            self.single_click(self.widget.list_view_pset.item(0))
 
 def open_pset_list(mainWindow):
     pset_window = PropertySetInherWindow(mainWindow)
