@@ -71,9 +71,9 @@ class PropertySetInherWindow(QWidget):
         for item in items:
             self.widget.list_view_pset.removeItemWidget(item)
             item.property_set.delete()
-            item.setHidden(True)
+            item:PsetItem = self.widget.list_view_pset.takeItem(self.widget.list_view_pset.row(item))
             item.delete()
-        pass
+        self.select_first_item()
 
     def double_click(self,item):
         pass
@@ -86,13 +86,16 @@ class PropertySetInherWindow(QWidget):
             item = QListWidgetItem(text)
             self.widget.list_view_existance.addItem(item)
 
+    def select_first_item(self):
+        if self.widget.list_view_pset.count()>0:
+            self.single_click(self.widget.list_view_pset.item(0))
+            self.widget.list_view_pset.setCurrentRow(0)
+
     def item_changed(self,item:PsetItem):
         item.property_set.name = item.text()
 
     def showEvent(self, event:QShowEvent) -> None:
-        if self.widget.list_view_pset.count()>0:
-            self.single_click(self.widget.list_view_pset.item(0))
-            self.widget.list_view_pset.setCurrentRow(0)
+        self.select_first_item()
 def open_pset_list(mainWindow):
     pset_window = PropertySetInherWindow(mainWindow)
     return pset_window
