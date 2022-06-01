@@ -191,7 +191,6 @@ class PropertySet(Hirarchy):
 
     def delete(self)->None:
         super(PropertySet, self).delete()
-        print(f"IsCHild {self.is_child}  IsParent {self.is_parent}")
         if self.is_parent:
             for child in self.children:
                 self.remove_child(child)
@@ -304,7 +303,7 @@ class Attribute(Hirarchy):
         return self._value
 
     @value.setter
-    def value(self, value:list[str])->None:
+    def value(self, value:list)->None:
         def can_be_changed(self)->bool:
             can_be_changed = True
             if self.is_child:
@@ -314,11 +313,14 @@ class Attribute(Hirarchy):
             return can_be_changed
 
         new_value = []
+
         for el in value:
-            if "|" in el:
-                el = el.split("|")
-                for item in el:
-                    new_value.append(item)
+            if isinstance(el,str):
+                if "|" in el:
+                    el = el.split("|")
+                    for item in el:
+                        new_value.append(item)
+                else:new_value.append(el)
             else:
                 new_value.append(el)
 
