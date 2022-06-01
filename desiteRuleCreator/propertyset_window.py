@@ -227,7 +227,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             return values
 
         def update_attribute(attribute: Attribute):
-            if attribute.is_child:
+            if not attribute.is_child:
                 attribute.value_type = self.widget.combo_type.currentText()
                 attribute.data_type = self.widget.combo_data_type.currentText()
                 attribute.child_inherits_values = self.widget.check_box_inherit.isChecked()
