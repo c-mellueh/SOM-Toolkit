@@ -6,14 +6,19 @@ from PySide6.QtGui import QShowEvent
 import re
 class PsetItem(QListWidgetItem):
     iter = list()
-    def __init__(self):
+    def __init__(self,property_set = None):
         super(PsetItem, self).__init__()
 
-        self.property_set = classes.PropertySet(name = "NewPset")
-        self.setText(f"NewPset_{self.get_number()}")
+        if property_set is None:
+            self.property_set = classes.PropertySet(name = "NewPset")
+            self.setText(f"NewPset_{self.get_number()}")
+
+        else:
+            self.property_set = property_set
+            self.setText(property_set.name)
         self.iter.append(self)
         self.setFlags(self.flags()|Qt.ItemIsEditable)
-        self.get_number()
+
     def setText(self, text:str) -> None:
         super(PsetItem, self).setText(text)
         self.property_set.name = text
@@ -97,8 +102,16 @@ class PropertySetInherWindow(QWidget):
     def item_changed(self,item:PsetItem):
         item.property_set.name = item.text()
 
+
+
     def showEvent(self, event:QShowEvent) -> None:
-        self.select_first_item()
+        self.widget.list_view_pset.clear()
+        for property_set in classes.PropertySet.iter:
+            if property_set.object is None:
+                item = PsetItem(property_set)
+                self.widget.list_view_pset.addItem(item)
+                self.mainWindow.update_completer()
+                self.widget.list_view_pset.setCurrentItem(item)
 def open_pset_list(mainWindow):
     pset_window = PropertySetInherWindow(mainWindow)
     return pset_window

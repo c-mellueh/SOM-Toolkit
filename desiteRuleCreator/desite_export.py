@@ -2,13 +2,14 @@ from PySide6.QtWidgets import QFileDialog
 from . import constants,classes
 import os
 import codecs
-#import instanz
 import xml.etree.ElementTree as ET
 from lxml import etree
 import copy
 from jinja2 import Environment, FileSystemLoader
 import uuid
 import datetime
+
+#TODO add xs:bool
 
 def add_js_rule(parent: etree._Element, file):
     name = os.path.basename(file.name)

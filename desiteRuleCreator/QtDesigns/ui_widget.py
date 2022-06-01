@@ -56,12 +56,12 @@ class Ui_layout_main(object):
         self.combo_data_type = QComboBox(layout_main)
         self.combo_data_type.addItem("")
         self.combo_data_type.addItem("")
+        self.combo_data_type.addItem("")
         self.combo_data_type.setObjectName(u"combo_data_type")
 
         self.layout_grid.addWidget(self.combo_data_type, 2, 2, 1, 1)
 
         self.combo_type = QComboBox(layout_main)
-        self.combo_type.addItem("")
         self.combo_type.addItem("")
         self.combo_type.addItem("")
         self.combo_type.addItem("")
@@ -180,12 +180,12 @@ class Ui_layout_main(object):
         self.label_name.setText(QCoreApplication.translate("layout_main", u"Name", None))
         self.button_add.setText(QCoreApplication.translate("layout_main", u"Add", None))
         self.combo_data_type.setItemText(0, QCoreApplication.translate("layout_main", u"xs:string", None))
-        self.combo_data_type.setItemText(1, QCoreApplication.translate("layout_main", u"xs:double", None))
+        self.combo_data_type.setItemText(1, QCoreApplication.translate("layout_main", u"xs:bool", None))
+        self.combo_data_type.setItemText(2, QCoreApplication.translate("layout_main", u"xs:double", None))
 
-        self.combo_type.setItemText(0, QCoreApplication.translate("layout_main", u"Value", None))
-        self.combo_type.setItemText(1, QCoreApplication.translate("layout_main", u"List", None))
-        self.combo_type.setItemText(2, QCoreApplication.translate("layout_main", u"Format", None))
-        self.combo_type.setItemText(3, QCoreApplication.translate("layout_main", u"Range", None))
+        self.combo_type.setItemText(0, QCoreApplication.translate("layout_main", u"List", None))
+        self.combo_type.setItemText(1, QCoreApplication.translate("layout_main", u"Format", None))
+        self.combo_type.setItemText(2, QCoreApplication.translate("layout_main", u"Range", None))
 
         self.button_add_line.setText(QCoreApplication.translate("layout_main", u"+", None))
         self.label_values.setText(QCoreApplication.translate("layout_main", u"Values", None))

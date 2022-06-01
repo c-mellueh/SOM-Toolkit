@@ -11,6 +11,13 @@ from .io_messages import msg_unsaved, msg_close
 
 # from .run import MainWindow
 
+def string_to_bool(text):
+    if text == str(True):
+        return True
+    elif text == str(False):
+        return False
+    else:
+        return None
 
 def fill_tree(mainWindow):
     def fill_next_level(objects, item_dict):
@@ -61,7 +68,22 @@ def importData(widget, path=False):
         widget.setWindowTitle(widget.project.name)
 
 def import_new(projekt_xml: etree._Element):
-    def import_attributes(xml_object):
+    def import_property_sets(xml_property_sets)-> (list[PropertySet],Attribute):
+        property_sets = list()
+        ident_attrib = None
+
+        for xml_property_set in xml_property_sets:
+            attribs = xml_property_set.attrib
+            name = attribs.get(constants.NAME)
+            identifier = attribs.get(constants.IDENTIFIER)
+            property_set = PropertySet(name, object=None, identifier=identifier)
+            value = import_attributes(xml_property_set, property_set)
+            if value is not None:
+                ident_attrib = value
+            property_sets.append(property_set)
+        return property_sets,ident_attrib
+
+    def import_attributes(xml_object,property_set):
         def transform_new_values(xml_attribute):
             value_type = xml_attribute.attrib.get("value_type")
             value = list()
@@ -80,29 +102,21 @@ def import_new(projekt_xml: etree._Element):
                             from_to_list.append(xml_value.text)
                     value.append(from_to_list)
             return value
-
-        pset_dict = {}
-        attribute_list = list()
-        ident_attrib = xml_object.attrib.get("identifier")
+        ident_attrib = None
         for xml_attribute in xml_object:
             if xml_attribute.tag == "Attribute":
-                pset_name = xml_attribute.attrib.get("propertySet")
-                attribute_name = xml_attribute.attrib.get("name")
-                data_type = xml_attribute.attrib.get("data_type")
-                value_type = xml_attribute.attrib.get("value_type")
-                is_identifier = xml_attribute.attrib.get("is_identifier")
-
-                if not pset_name in pset_dict:
-                    pset_dict[pset_name] = PropertySet(pset_name)
-                pset = pset_dict[pset_name]
-
+                attribs = xml_attribute.attrib
+                name = attribs.get(constants.NAME)
+                identifier = attribs.get(constants.IDENTIFIER)
+                data_type = attribs.get(constants.DATA_TYPE)
+                value_type = attribs.get(constants.VALUE_TYPE)
+                is_identifier = attribs.get(constants.IS_IDENTIFIER)
+                child_inh = string_to_bool(attribs.get(constants.CHILD_INHERITS_VALUE))
                 value = transform_new_values(xml_attribute)
-                attrib = Attribute(pset, attribute_name, value, value_type, data_type)
-                attribute_list.append(attrib)
-
-                if is_identifier == "True":
+                attrib = Attribute(property_set, name, value, value_type, data_type,child_inh,identifier)
+                if is_identifier == str(True):
                     ident_attrib = attrib
-        return ident_attrib, pset_dict.values()
+        return ident_attrib
 
     def import_scripts(xml_object,obj):
         for xml_sub in xml_object:
@@ -126,27 +140,64 @@ def import_new(projekt_xml: etree._Element):
         is_concept = value
         return name, parent, identifier, is_concept
 
+    def create_ident_dict(item_list):
+        return {item.identifier:item for item in item_list}
 
-    ident_dict = dict()
-    parent_dict = dict()
-    for xml_object in projekt_xml:
-        if xml_object.tag == "Object":
-            ident_attrib, pset_list = import_attributes(xml_object)
-            name, parent, identifer, is_concept = get_obj_data(xml_object)
-            obj = Object(name, ident_attrib, is_concept)
-            for pset in pset_list:
-                obj.add_property_set(pset)
+    def link_parents(xml_predefined_psets,xml_objects):
+        def iterate(xml_property_set_dict,xml_object_dict,xml_attribute_dict):
+            for xml_predefined_pset in xml_predefined_psets:
+                fill_dict(xml_property_set_dict, xml_predefined_pset)
+                for xml_attribute in xml_predefined_pset:
+                    fill_dict(xml_attribute_dict, xml_attribute)
 
-            ident_dict[identifer] = obj
-            parent_dict[obj] = parent
+            for xml_object in xml_objects:
+                fill_dict(xml_object_dict, xml_object)
+                for xml_property_set in xml_object:
+                    fill_dict(xml_property_set_dict, xml_property_set)
+                    for xml_attribute in xml_property_set:
+                        fill_dict(xml_attribute_dict,xml_attribute)
+        def fill_dict(xml_dict,xml_obj):
+            xml_dict[xml_obj.attrib.get(constants.IDENTIFIER)] = xml_obj.attrib.get(constants.PARENT)
 
-            import_scripts(xml_object,obj)
+        def create_link(obj_dict,xml_dict):
+            for ident,obj in obj_dict.items():
+                parent = obj_dict.get(xml_dict[str(ident)])
+                if parent is not None:
+                    parent.add_child(obj,copy = False)
 
-    for obj, parent_txt in parent_dict.items():
-        parent = ident_dict.get(parent_txt)
-        if parent is not None:
-            parent.add_child(obj)
+        xml_property_set_dict = dict()
+        xml_object_dict = dict()
+        xml_attribute_dict = dict()
+        iterate(xml_property_set_dict, xml_object_dict, xml_attribute_dict)
 
+        obj_dict = create_ident_dict(Object.iter)
+        property_set_dict = create_ident_dict(PropertySet.iter)
+        attribute_dict = create_ident_dict(Attribute.iter)
+
+        create_link(obj_dict,xml_object_dict)
+        create_link(attribute_dict,xml_attribute_dict)
+        create_link(property_set_dict,xml_property_set_dict)
+
+    xml_predefined_psets =[x for x in projekt_xml if x.tag == constants.PREDEFINED_PSET]
+    print(xml_predefined_psets)
+    xml_objects = [x for x in projekt_xml if x.tag == constants.OBJECT]
+
+    import_property_sets(xml_predefined_psets)
+
+    for xml_object in xml_objects:
+        xml_property_sets = [x for x in xml_object if x.tag == constants.PROPERTY_SET]
+        property_sets,ident_attrib= import_property_sets(xml_property_sets)
+        name, parent, identifer, is_concept = get_obj_data(xml_object)
+        obj = Object(name, ident_attrib, is_concept)
+
+        for property_set in property_sets:
+            obj.add_property_set(property_set)
+
+    link_parents(xml_predefined_psets,xml_objects)
+
+
+    for property_set in PropertySet.iter:
+        print(f"{property_set.name}: {property_set.is_parent}")
 
 def import_old(projekt_xml):
     def handle_identifier(xml_object):
@@ -243,17 +294,16 @@ def save(mainWindow, path):
     def add_predefined_property_sets(xml_project):
         for predefined_pset in classes.PropertySet.iter:
             predefined_pset:classes.PropertySet = predefined_pset
-            if predefined_pset.is_parent:
-                xml_pset = etree.SubElement(xml_project,"PredefinedPropertySet")
-                xml_pset.set(constants.NAME,predefined_pset.name)
-                xml_pset.set(constants.IDENTIFIER,str(predefined_pset.identifier))
-                xml_pset.set(constants.PARENT,constants.NONE)
+            xml_pset = etree.SubElement(xml_project,constants.PREDEFINED_PSET)
+            xml_pset.set(constants.NAME,predefined_pset.name)
+            xml_pset.set(constants.IDENTIFIER,str(predefined_pset.identifier))
+            xml_pset.set(constants.PARENT,constants.NONE)
 
-                for attribute in predefined_pset.attributes:
-                    add_attribute(attribute,predefined_pset,xml_pset)
+            for attribute in predefined_pset.attributes:
+                add_attribute(attribute,predefined_pset,xml_pset)
 
     def add_property_set(property_set:PropertySet,xml_object):
-        xml_pset = etree.SubElement(xml_object, "PropertySet")
+        xml_pset = etree.SubElement(xml_object, constants.PROPERTY_SET)
         xml_pset.set(constants.NAME, property_set.name)
         xml_pset.set(constants.IDENTIFIER, str(property_set.identifier))
         add_parent(xml_pset,property_set)
@@ -261,9 +311,8 @@ def save(mainWindow, path):
         for attribute in property_set.attributes:
             add_attribute(attribute,property_set,xml_pset)
 
-
     def add_object(obj:Object,xml_project):
-        xml_object = etree.SubElement(xml_project, "Object")
+        xml_object = etree.SubElement(xml_project, constants.OBJECT)
         xml_object.set(constants.NAME, obj.name)
         xml_object.set(constants.IDENTIFIER, str(obj.identifier))
         xml_object.set("is_concept", str(obj.is_concept))
@@ -280,36 +329,35 @@ def save(mainWindow, path):
         pass
 
     def add_attribute(attribute,property_set, xml_pset):
-        xml_attribute = etree.SubElement(xml_pset, "Attribute")
+        xml_attribute = etree.SubElement(xml_pset, constants.ATTRIBUTE)
         xml_attribute.set(constants.NAME, attribute.name)
         xml_attribute.set(constants.DATA_TYPE, attribute.data_type)
         xml_attribute.set(constants.VALUE_TYPE, attribute.value_type)
         xml_attribute.set(constants.IDENTIFIER, str(attribute.identifier))
-
+        xml_attribute.set(constants.CHILD_INHERITS_VALUE,str(attribute.child_inherits_values))
         add_parent(xml_attribute,attribute)
 
         obj = property_set.object
         if obj is not None and attribute == obj.identifier:
-            ident = "True"
+            ident = True
         else:
-            ident = "False"
+            ident = False
 
-        xml_attribute.set("is_identifier", ident)
+        xml_attribute.set(constants.IS_IDENTIFIER, str(ident))
         add_value(attribute,xml_attribute)
 
     def add_value(attribute,xml_attribute):
-            value = attribute.value
-            xml_value = etree.SubElement(xml_attribute, "Value")
-            if attribute.value_type == constants.RANGE:
-                xml_from = etree.SubElement(xml_value, "From")
-                xml_to = etree.SubElement(xml_value, "To")
-                xml_from.text = str(value[0])
-                if len(value) > 1:
-                    xml_to.text = str(value[1])
-            else:
-                xml_value.text = str(value)
-
-
+            values = attribute.value
+            for value in values:
+                xml_value = etree.SubElement(xml_attribute, "Value")
+                if attribute.value_type == constants.RANGE:
+                    xml_from = etree.SubElement(xml_value, "From")
+                    xml_to = etree.SubElement(xml_value, "To")
+                    xml_from.text = str(value[0])
+                    if len(value) > 1:
+                        xml_to.text = str(value[1])
+                else:
+                    xml_value.text = str(value)
 
 
 

@@ -143,7 +143,7 @@ class Hirarchy(object):
     def children(self) -> list:
         return self._children
 
-    def add_child(self, child)-> None:
+    def add_child(self, child,copy = None)-> None:
         self.children.append(child)
         child.parent = self
 
@@ -158,13 +158,15 @@ class Hirarchy(object):
 class PropertySet(Hirarchy):
     iter= list()
 
-    def __init__(self, name:str, object = None):
+    def __init__(self, name:str, object = None, identifier = None):
         super(PropertySet, self).__init__(name)
         self._attributes = list()
         self._object = object
-        self.identifier = uuid4()
+        self.identifier = identifier
+        if self.identifier is None:
+            self.identifier = str(uuid4())
         self.changed = True
-
+        print(f"PropertySet {self.identifier}")
 
 
     @property
@@ -180,8 +182,9 @@ class PropertySet(Hirarchy):
             self._parent = parent
             for par_attribute in parent.attributes:
                 par_attribute: Attribute = par_attribute
-                attribute = Attribute(self,par_attribute.name,par_attribute.value,par_attribute.value_type,par_attribute.data_type)
-                par_attribute.add_child(attribute)
+                if par_attribute not in [attribute.parent for attribute in self.attributes]:
+                    attribute = Attribute(self,par_attribute.name,par_attribute.value,par_attribute.value_type,par_attribute.data_type)
+                    par_attribute.add_child(attribute)
 
     def change_parent(self,new_parent)->None:
         for attribute in self.attributes:
@@ -229,6 +232,7 @@ class PropertySet(Hirarchy):
         self.changed = True
         for child in self.children:
             attrib:Attribute = copy.copy(value)
+            attrib.identifier = str(uuid4())
             value.add_child(attrib)
             child.add_attribute(attrib)
 
@@ -259,7 +263,7 @@ class PropertySet(Hirarchy):
 class Attribute(Hirarchy):
     iter= list()
 
-    def __init__(self,propertySet:PropertySet, name:str, value,value_type, data_type = "xs:string",child_inherits_values = False):
+    def __init__(self,propertySet:PropertySet, name:str, value,value_type, data_type = "xs:string",child_inherits_values = False,identifier = None):
         super(Attribute, self).__init__(name=name)
         self._value = value
         self._propertySet = propertySet
@@ -269,8 +273,9 @@ class Attribute(Hirarchy):
         propertySet.add_attribute(self)
         self.changed = True
         self._child_inherits_values = child_inherits_values
-        self.identifier = uuid4()
-
+        self.identifier = identifier
+        if self.identifier is None:
+            self.identifier = str(uuid4())
     def __str__(self):
         text = f"{self.propertySet.name} : {self.name} = {self.value}"
         return text
