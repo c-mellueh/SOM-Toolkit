@@ -3,20 +3,33 @@ from .QtDesigns import ui_PsetInheritance
 from PySide6.QtWidgets import QWidget,QListWidgetItem
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QShowEvent
-
+import re
 class PsetItem(QListWidgetItem):
+    iter = list()
     def __init__(self):
         super(PsetItem, self).__init__()
 
-        self.property_set = classes.PropertySet(name = "NewName")
-        self.setText("NewPset")
+        self.property_set = classes.PropertySet(name = "NewPset")
+        self.setText(f"NewPset_{self.get_number()}")
+        self.iter.append(self)
         self.setFlags(self.flags()|Qt.ItemIsEditable)
-
+        self.get_number()
     def setText(self, text:str) -> None:
         super(PsetItem, self).setText(text)
         self.property_set.name = text
 
+    def delete(self):
+        self.iter.remove(self)
 
+    def get_number(self):
+        if len(self.iter) >0:
+            numbers = [int(re.search("(NewPset_)(\d+)",x.text()).group(2)) for x in self.iter if bool(re.search("NewPset_(\d+)",x.text()))] # find all texts matching the Format and return their numbers
+            numbers.sort()
+            highest_number = numbers[-1]
+            new_number = highest_number+1
+            return new_number
+        else:
+            return 1
 class PropertySetInherWindow(QWidget):
     def __init__(self,mainWindow):
         def connect():
@@ -59,6 +72,7 @@ class PropertySetInherWindow(QWidget):
             self.widget.list_view_pset.removeItemWidget(item)
             item.property_set.delete()
             item.setHidden(True)
+            item.delete()
         pass
 
     def double_click(self,item):
