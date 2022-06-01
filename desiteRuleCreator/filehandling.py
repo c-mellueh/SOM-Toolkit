@@ -233,55 +233,98 @@ def save_as_clicked(mainWindow):
 
 
 def save(mainWindow, path):
-    def add_attributes(object, xml_object):
-        for attribute in object.attributes:
-            xml_attribute = etree.SubElement(xml_object, "Attribute")
-            xml_attribute.set("name", attribute.name)
-            xml_attribute.set("propertySet", attribute.propertySet.name)
-            xml_attribute.set("data_type", attribute.data_type)
-            xml_attribute.set("value_type", attribute.value_type)
-            if attribute == object.identifier:
-                ident = "True"
-            else:
-                ident = "False"
-            xml_attribute.set("is_identifier", ident)
 
-            for value in attribute.value:
-                xml_value = etree.SubElement(xml_attribute, "Value")
-                if attribute.value_type == constants.RANGE:
-                    xml_from = etree.SubElement(xml_value, "From")
-                    xml_to = etree.SubElement(xml_value, "To")
-                    xml_from.text = str(value[0])
-                    if len(value) > 1:
-                        xml_to.text = str(value[1])
-                else:
-                    xml_value.text = str(value)
-
-    project = etree.Element('Project')
-    project.set("name", mainWindow.project.name)
-    project.set("version", project_version)
-
-    mainWindow.save_path = path
-
-    for obj in Object.iter:
-        xml_object = etree.SubElement(project, "Object")
-        xml_object.set("name", obj.name)
-        xml_object.set("identifier", str(obj.identifier))
-        xml_object.set("is_concept", str(obj.is_concept))
-        add_attributes(obj, xml_object)
+    def add_parent(xml_object,obj):
         if obj.parent is not None:
-            parent_txt = str(obj.parent.identifier)
+            xml_object.set(constants.PARENT, str(obj.parent.identifier))
         else:
-            parent_txt = "None"
-        xml_object.set("parent", parent_txt)
+            xml_object.set(constants.PARENT, constants.NONE)
+
+    def add_predefined_property_sets(xml_project):
+        for predefined_pset in classes.PropertySet.iter:
+            predefined_pset:classes.PropertySet = predefined_pset
+            if predefined_pset.is_parent:
+                xml_pset = etree.SubElement(xml_project,"PredefinedPropertySet")
+                xml_pset.set(constants.NAME,predefined_pset.name)
+                xml_pset.set(constants.IDENTIFIER,str(predefined_pset.identifier))
+                xml_pset.set(constants.PARENT,constants.NONE)
+
+                for attribute in predefined_pset.attributes:
+                    add_attribute(attribute,predefined_pset,xml_pset)
+
+    def add_property_set(property_set:PropertySet,xml_object):
+        xml_pset = etree.SubElement(xml_object, "PropertySet")
+        xml_pset.set(constants.NAME, property_set.name)
+        xml_pset.set(constants.IDENTIFIER, str(property_set.identifier))
+        add_parent(xml_pset,property_set)
+
+        for attribute in property_set.attributes:
+            add_attribute(attribute,property_set,xml_pset)
+
+
+    def add_object(obj:Object,xml_project):
+        xml_object = etree.SubElement(xml_project, "Object")
+        xml_object.set(constants.NAME, obj.name)
+        xml_object.set(constants.IDENTIFIER, str(obj.identifier))
+        xml_object.set("is_concept", str(obj.is_concept))
+        add_parent(xml_object,obj)
+
+        for property_set in obj.property_sets:
+            add_property_set(property_set,xml_object)
 
         for script in obj.scripts:
             script:classes.Script = script
             xml_script = etree.SubElement(xml_object,"Script")
-            xml_script.set("name",script.name)
+            xml_script.set(constants.NAME,script.name)
             xml_script.text = script.code
+        pass
 
-    tree = etree.ElementTree(project)
+    def add_attribute(attribute,property_set, xml_pset):
+        xml_attribute = etree.SubElement(xml_pset, "Attribute")
+        xml_attribute.set(constants.NAME, attribute.name)
+        xml_attribute.set(constants.DATA_TYPE, attribute.data_type)
+        xml_attribute.set(constants.VALUE_TYPE, attribute.value_type)
+        xml_attribute.set(constants.IDENTIFIER, str(attribute.identifier))
+
+        add_parent(xml_attribute,attribute)
+
+        obj = property_set.object
+        if obj is not None and attribute == obj.identifier:
+            ident = "True"
+        else:
+            ident = "False"
+
+        xml_attribute.set("is_identifier", ident)
+        add_value(attribute,xml_attribute)
+
+    def add_value(attribute,xml_attribute):
+            value = attribute.value
+            xml_value = etree.SubElement(xml_attribute, "Value")
+            if attribute.value_type == constants.RANGE:
+                xml_from = etree.SubElement(xml_value, "From")
+                xml_to = etree.SubElement(xml_value, "To")
+                xml_from.text = str(value[0])
+                if len(value) > 1:
+                    xml_to.text = str(value[1])
+            else:
+                xml_value.text = str(value)
+
+
+
+
+
+
+    mainWindow.save_path = path
+
+    xml_project = etree.Element('Project')
+    xml_project.set("name", mainWindow.project.name)
+    xml_project.set("version", project_version)
+
+    add_predefined_property_sets(xml_project)
+    for obj in Object.iter:
+        add_object(obj,xml_project)
+
+    tree = etree.ElementTree(xml_project)
 
     with open(path, "wb") as f:
         tree.write(f, pretty_print=True, encoding="utf-8", xml_declaration=True)

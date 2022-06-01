@@ -78,10 +78,6 @@ class Project(object):
         global _changed
         for obj in Object.iter:
             obj.changed = False
-
-            for attribute in obj.attributes:
-                attribute.changed = False
-                attribute.propertySet.changed = False
         self._changed = False
 
 
@@ -166,7 +162,9 @@ class PropertySet(Hirarchy):
         super(PropertySet, self).__init__(name)
         self._attributes = list()
         self._object = object
+        self.identifier = uuid4()
         self.changed = True
+
 
 
     @property
@@ -272,6 +270,7 @@ class Attribute(Hirarchy):
         propertySet.add_attribute(self)
         self.changed = True
         self._child_inherits_values = child_inherits_values
+        self.identifier = uuid4()
 
     def __str__(self):
         text = f"{self.propertySet.name} : {self.name} = {self.value}"

@@ -25,9 +25,12 @@ class PsetItem(QListWidgetItem):
         if len(self.iter) >0:
             numbers = [int(re.search("(NewPset_)(\d+)",x.text()).group(2)) for x in self.iter if bool(re.search("NewPset_(\d+)",x.text()))] # find all texts matching the Format and return their numbers
             numbers.sort()
-            highest_number = numbers[-1]
-            new_number = highest_number+1
-            return new_number
+            if len(numbers)>0:
+                highest_number = numbers[-1]
+                new_number = highest_number+1
+                return new_number
+            else:
+                return 1
         else:
             return 1
 class PropertySetInherWindow(QWidget):
