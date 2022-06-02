@@ -292,7 +292,6 @@ class PropertySetWindow(QtWidgets.QWidget):
         table.setRowCount(len(self.property_set.attributes))
 
         link_item = get_link_icon()
-        print(link_item)
 
         for i, attribute in enumerate(self.property_set.attributes):
             attribute: Attribute = attribute

@@ -36,7 +36,9 @@ def fill_tree(mainWindow):
 
     item_dict = dict()
     objects = Object.iter
+
     for obj in objects:
+        print(f"{obj.name} : {obj.parent}")
         if obj.parent == None:
             tree_widget_item = mainWindow.addObjectToTree(obj)
             item_dict[obj] = tree_widget_item
@@ -56,11 +58,9 @@ def importData(widget, path=False):
         if projekt_xml.attrib.get("version") is None:   #OLD FILES
             import_old(projekt_xml)
             widget.project = classes.Project(projekt_xml.attrib.get("Name"),author="CMellueh")
-            print(widget.project.name)
         else:
             import_new(projekt_xml)
             widget.project = classes.Project(projekt_xml.attrib.get("name"))
-            print(widget.project.name)
         fill_tree(widget)
         widget.ui.tree.resizeColumnToContents(0)
         widget.save_path = path
@@ -179,7 +179,6 @@ def import_new(projekt_xml: etree._Element):
         create_link(property_set_dict,xml_property_set_dict)
 
     xml_predefined_psets =[x for x in projekt_xml if x.tag == constants.PREDEFINED_PSET]
-    print(xml_predefined_psets)
     xml_objects = [x for x in projekt_xml if x.tag == constants.OBJECT]
 
     import_property_sets(xml_predefined_psets)
@@ -195,9 +194,6 @@ def import_new(projekt_xml: etree._Element):
 
     link_parents(xml_predefined_psets,xml_objects)
 
-
-    for property_set in PropertySet.iter:
-        print(f"{property_set.name}: {property_set.is_parent}")
 
 def import_old(projekt_xml):
     def handle_identifier(xml_object):

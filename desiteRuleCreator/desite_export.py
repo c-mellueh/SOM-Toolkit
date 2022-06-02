@@ -167,20 +167,17 @@ def handle_object_rules(xml_container,mainWindow,template):
             xml_rule_script = handle_rule_script(xml_attribute_rule_list,name = object.name)
             xml_code = handle_code(xml_rule_script)
 
-            attributes = object.attributes
+            attributes = object.get_attributes(inherit=False)
+            property_sets = object.property_sets
 
-            for inh_attributes in object.inherited_attributes.values():
-                attributes+=inh_attributes
-            pset_dict = classes.attributes_to_psetdict(attributes)  # pset_dict[PropertySet] = Attribute
-
-            psets = pset_dict.keys()
             ident_name = object.identifier.name
             ident_property_set = object.identifier.propertySet.name
             if ident_property_set == constants.IGNORE_PSET:
                 ident_property_set = ""
             else:
                 ident_property_set= f"{ident_property_set}:"
-            cdata_code = template.render(psets=psets, object=object, ident=ident_name, ident_pset=ident_property_set,constants = constants)
+
+            cdata_code = template.render(psets=property_sets, object=object, ident=ident_name, ident_pset=ident_property_set,constants = constants)
             xml_code.text = cdata_code
             handle_rule(xml_checkrun,"UniquePattern")
     return xml_object_list
@@ -193,8 +190,6 @@ def old_file_conversion(projekt):
     for obj in objekte:
         if obj.fachdisziplin not in fblist:
             fblist.append(obj.fachdisziplin)
-
-    print(";".join(fblist))
 
     for objekt in objekte:
         property_sets = objekt.get_all_property_sets()

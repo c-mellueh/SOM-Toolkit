@@ -152,7 +152,8 @@ class Hirarchy(object):
         child.delete()
 
     def delete(self)-> None:
-        self.iter.remove(self)
+        if self in self.iter:
+            self.iter.remove(self)
 
 
 class PropertySet(Hirarchy):
@@ -166,7 +167,6 @@ class PropertySet(Hirarchy):
         if self.identifier is None:
             self.identifier = str(uuid4())
         self.changed = True
-        print(f"PropertySet {self.identifier}")
 
 
     @property
@@ -457,13 +457,15 @@ class Object(Hirarchy):
     def remove_property_set(self,property_set:PropertySet)->None:
         self._property_sets.remove(property_set)
 
-    # @property
-    # def psetNameDict(self):
-    #     p_set_dict = attributes_to_psetdict(self._attributes)
-    #     new_dict = {}
-    #     for key in p_set_dict.keys():
-    #         new_dict[key.name]=key
-    #     return new_dict
+    def get_attributes(self,inherit = False):
+        attributes = list()
+        for property_set in self.property_sets:
+            attributes += property_set.attributes
+
+        if inherit:
+            attributes+= self.parent.get_attributes(inherit=True)
+
+        return attributes
 
     @property
     def scripts(self):
