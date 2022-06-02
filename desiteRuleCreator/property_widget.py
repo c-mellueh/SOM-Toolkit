@@ -119,10 +119,6 @@ def fill_table(mainWindow, obj:classes.Object):
     table_length = len(own_psets)
 
     # find inherited Psets
-    inherited_property_sets = obj.inherited_property_sets
-
-    for inh_obj,property_sets in inherited_property_sets.items():
-        table_length+= len (inherited_property_sets[inh_obj])
 
     mainWindow.pset_table.setRowCount(table_length)  # Prepare Table
 
@@ -137,18 +133,7 @@ def fill_table(mainWindow, obj:classes.Object):
 
     current_row = len(own_psets)
 
-    for obj, pset_list in inherited_property_sets.items():
-        group_name = obj.name
 
-        for pset in pset_list:
-            pset_name = pset.name
-            pset_item = QTableWidgetItem(pset_name)
-            pset_item.setData(constants.DATA_POS, pset)
-            inherit_item = QTableWidgetItem(group_name)
-            inherit_item.setData(constants.DATA_POS, obj)
-            mainWindow.pset_table.setItem(current_row, 0, pset_item)
-            mainWindow.pset_table.setItem(current_row, 1, inherit_item)
-            current_row += 1
     mainWindow.pset_table.resizeColumnsToContents()
 
 
