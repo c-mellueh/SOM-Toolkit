@@ -125,7 +125,7 @@ class MainWindow(QMainWindow):
     def clear_all(self):
         object_widget.clear_all(self)
         property_widget.clear_all(self)
-        self.property_list_widget.clear_all(self)
+        self.property_list_widget.clear_all()
 
     # ObjectWidget
     def right_click(self, position: QtCore.QPoint):

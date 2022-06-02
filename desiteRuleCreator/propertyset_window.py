@@ -58,7 +58,7 @@ class PropertySetWindow(QtWidgets.QWidget):
 
     def attribute_is_identifier(self,attribute):
         if self.active_object is not None:
-            if self.active_object.identifier == attribute:
+            if self.active_object.ident_attrib == attribute:
                 return True
         return False
 

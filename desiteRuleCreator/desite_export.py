@@ -170,8 +170,8 @@ def handle_object_rules(xml_container,mainWindow,template):
             attributes = object.get_attributes(inherit=False)
             property_sets = object.property_sets
 
-            ident_name = object.identifier.name
-            ident_property_set = object.identifier.propertySet.name
+            ident_name = object.ident_attrib.name
+            ident_property_set = object.ident_attrib.propertySet.name
             if ident_property_set == constants.IGNORE_PSET:
                 ident_property_set = ""
             else:
@@ -211,12 +211,12 @@ def old_file_conversion(projekt):
 
 def handle_data_section(xml_qa_export,xml_checkrun_first,xml_checkrun_obj,xml_checkrun_last):
     def get_name(obj:classes.Object):
-        pset_name = obj.identifier.propertySet.name
+        pset_name = obj.ident_attrib.propertySet.name
         if pset_name == "IFC":
-            return obj.identifier.name
+            return obj.ident_attrib.name
 
         else:
-            return f"{pset_name}:{obj.identifier.name}"
+            return f"{pset_name}:{obj.ident_attrib.name}"
 
     xml_dataSection = etree.SubElement(xml_qa_export, "dataSection")
 
@@ -232,7 +232,7 @@ def handle_data_section(xml_qa_export,xml_checkrun_first,xml_checkrun_obj,xml_ch
 
         filter.set("name", get_name(obj))
         filter.set("dt", "xs:string")
-        pattern = f'"{obj.identifier.value[0]}"'            #ToDO: ändern
+        pattern = f'"{obj.ident_attrib.value[0]}"'            #ToDO: ändern
         filter.set("pattern", pattern)
 
     checkRunData = etree.SubElement(xml_dataSection, "checkRunData")

@@ -38,7 +38,6 @@ def fill_tree(mainWindow):
     objects = Object.iter
 
     for obj in objects:
-        print(f"{obj.name} : {obj.parent}")
         if obj.parent == None:
             tree_widget_item = mainWindow.addObjectToTree(obj)
             item_dict[obj] = tree_widget_item
@@ -129,10 +128,10 @@ def import_new(projekt_xml: etree._Element):
 
     def get_obj_data(xml_object):
 
-        name = xml_object.attrib.get("name")
-        parent = xml_object.attrib.get("parent")
-        identifier = xml_object.attrib.get("identifier")
-        is_concept = xml_object.attrib.get("is_concept")
+        name = xml_object.attrib.get(constants.NAME)
+        parent = xml_object.attrib.get(constants.PARENT)
+        identifier = xml_object.attrib.get(constants.IDENTIFIER)
+        is_concept = xml_object.attrib.get(constants.IS_CONCEPT)
         if is_concept == "True":
             value = True
         else:
@@ -161,7 +160,9 @@ def import_new(projekt_xml: etree._Element):
 
         def create_link(obj_dict,xml_dict):
             for ident,obj in obj_dict.items():
-                parent = obj_dict.get(xml_dict[str(ident)])
+
+                parent_ident = xml_dict[str(ident)]
+                parent = obj_dict.get(parent_ident)
                 if parent is not None:
                     parent.add_child(obj,copy = False)
 
@@ -170,9 +171,13 @@ def import_new(projekt_xml: etree._Element):
         xml_attribute_dict = dict()
         iterate(xml_property_set_dict, xml_object_dict, xml_attribute_dict)
 
+
+
         obj_dict = create_ident_dict(Object.iter)
         property_set_dict = create_ident_dict(PropertySet.iter)
         attribute_dict = create_ident_dict(Attribute.iter)
+
+
 
         create_link(obj_dict,xml_object_dict)
         create_link(attribute_dict,xml_attribute_dict)
@@ -187,7 +192,7 @@ def import_new(projekt_xml: etree._Element):
         xml_property_sets = [x for x in xml_object if x.tag == constants.PROPERTY_SET]
         property_sets,ident_attrib= import_property_sets(xml_property_sets)
         name, parent, identifer, is_concept = get_obj_data(xml_object)
-        obj = Object(name, ident_attrib, is_concept)
+        obj = Object(name, ident_attrib, is_concept,identifier=identifer)
 
         for property_set in property_sets:
             obj.add_property_set(property_set)
@@ -311,7 +316,7 @@ def save(mainWindow, path):
     def add_object(obj:Object,xml_project):
         xml_object = etree.SubElement(xml_project, constants.OBJECT)
         xml_object.set(constants.NAME, obj.name)
-        xml_object.set(constants.IDENTIFIER, str(obj.identifier))
+        xml_object.set(constants.IDENTIFIER, obj.identifier)
         xml_object.set("is_concept", str(obj.is_concept))
         add_parent(xml_object,obj)
 
@@ -335,7 +340,7 @@ def save(mainWindow, path):
         add_parent(xml_attribute,attribute)
 
         obj = property_set.object
-        if obj is not None and attribute == obj.identifier:
+        if obj is not None and attribute == obj.ident_attrib:
             ident = True
         else:
             ident = False

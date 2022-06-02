@@ -53,7 +53,7 @@ def delete(mainWindow):
 
     if not bool([el for el in list_item if
                  el.data(
-                     constants.DATA_POS) == object.identifier.propertySet]):  # wenn sich der Identifier nicht im Pset befindet
+                     constants.DATA_POS) == object.ident_attrib.propertySet]):  # wenn sich der Identifier nicht im Pset befindet
 
         for el in list_item:
             el: QTableWidgetItem = el
@@ -82,9 +82,9 @@ def rename(mainWindow):
     selected_pset.name = new_name
 
     object = selected_pset.object
-    if object.identifier in selected_pset.attributes:   #rename lineinput in ObjectWidget
+    if object.ident_attrib in selected_pset.attributes:   #rename lineinput in ObjectWidget
         tree_item: CustomTreeItem = mainWindow.ui.tree.selectedItems()[0]
-        tree_item.setText(1, str(object.identifier))
+        tree_item.setText(1, str(object.ident_attrib))
     mainWindow.pset_table.resizeColumnsToContents()
 
 

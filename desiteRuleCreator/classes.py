@@ -198,7 +198,7 @@ class PropertySet(Hirarchy):
             for child in self.children:
                 self.remove_child(child)
         if self.object is not None:
-            ident = self.object.identifier      # if identifier in Pset delete all attributes except identifier
+            ident = self.object.ident_attrib      # if identifier in Pset delete all attributes except identifier
             if ident in self.attributes:
                 remove_list = [attribute for attribute in self.attributes if attribute != ident]
                 for attribute in remove_list:
@@ -399,13 +399,18 @@ class Attribute(Hirarchy):
 
 class Object(Hirarchy):
     iter= list()
-    def __init__(self, name, ident: [Attribute,str], is_concept = False):
+    def __init__(self, name, ident_attrib: [Attribute, str], is_concept = False,identifier = None):
         super(Object, self).__init__(name = name)
         self._scripts = list()
         self._property_sets = list()
-        self._identifier = ident
+        self._ident_attrib = ident_attrib
         self._is_concept = is_concept
         self.changed = True
+        if identifier is None:
+            print("CREATE_NEW")
+            self.identifier = str(uuid4())
+        else:
+            self.identifier = identifier
 
     @property
     def inherited_property_sets(self)->dict:
@@ -438,12 +443,12 @@ class Object(Hirarchy):
         self.changed = True
 
     @property
-    def identifier(self) -> Attribute:
-        return self._identifier
+    def ident_attrib(self) -> Attribute:
+        return self._ident_attrib
 
-    @identifier.setter
-    def identifier(self, value:Attribute)->None:
-        self._identifier = value
+    @ident_attrib.setter
+    def ident_attrib(self, value:Attribute)->None:
+        self._ident_attrib = value
         self.changed = True
 
     @property

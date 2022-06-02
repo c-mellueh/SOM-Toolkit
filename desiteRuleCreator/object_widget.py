@@ -167,9 +167,9 @@ def single_click(mainWindow):
 
         mainWindow.setIdentLineEnable(True)
         object_names = [item.object.name for item in items]
-        ident_psets = [item.object.identifier.propertySet.name for item in items]
-        ident_attributes = [item.object.identifier.name for item in items]
-        ident_values = [item.object.identifier.value for item in items]
+        ident_psets = [item.object.ident_attrib.propertySet.name for item in items]
+        ident_attributes = [item.object.ident_attrib.name for item in items]
+        ident_values = [item.object.ident_attrib.value for item in items]
 
         line_assignment = {
             mainWindow.ui.lineEdit_object_name: object_names,
@@ -202,10 +202,10 @@ def addObject(mainWindow):
 
     def already_exists(ident):
         for obj in Object.iter:
-            if obj.identifier ==str(ident):
+            if obj.ident_attrib ==str(ident):
                 return True
             else:
-                if obj.identifier.is_equal(ident):
+                if obj.ident_attrib.is_equal(ident):
                     return True
         return False
 
@@ -267,7 +267,7 @@ def addObjectToTree(mainWindow, obj: Object, parent=None):
 
     item.setText(0, obj.name)
     if not obj.is_concept:
-        item.setText(1, str(obj.identifier))
+        item.setText(1, str(obj.ident_attrib))
     return item
 
 
@@ -306,10 +306,10 @@ def updateObject(mainWindow):
     else:
         for item in selected_items:
             object: Object = item.object
-            ident = object.identifier
+            ident = object.ident_attrib
             if not isinstance(ident,Attribute):
                 property_set = PropertySet(pSetName)
-                object.identifier = Attribute(property_set,identName,[identValue],value_type=constants.LIST)
+                object.ident_attrib = Attribute(property_set, identName, [identValue], value_type=constants.LIST)
                 object.is_concept = False
 
             else:
@@ -325,4 +325,4 @@ def updateObject(mainWindow):
                     ident.value = [identValue]
 
             item.setText(0, object.name)
-            item.setText(1, str(object.identifier))
+            item.setText(1, str(object.ident_attrib))
