@@ -170,6 +170,13 @@ class PropertySet(Hirarchy):
 
 
     @property
+    def is_predefined(self):
+        if self.object is None:
+            return True
+        else:
+            return False
+
+    @property
     def parent(self):
         parent = super(PropertySet, self).parent
         return parent
@@ -481,6 +488,12 @@ class Object(Hirarchy):
 
     def delete_script(self,script):
         self._scripts.remove(script)
+
+    def delete(self) -> None:
+        super(Object, self).delete()
+        pset:PropertySet
+        for pset in self.property_sets:
+            pset.delete()
 
 class Script(QListWidgetItem):
     def __init__(self,title:str,obj):

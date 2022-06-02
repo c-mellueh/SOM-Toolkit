@@ -229,7 +229,7 @@ def addObject(mainWindow):
     if pSetName in property_widget.predefined_pset_list():      #if PropertySet allready predefined
         result = io_messages.req_merge_pset(mainWindow.icon)    #ask if you want to merge
         if result == True:
-            parent = property_widget.get_parent_by_name(pSetName)
+            parent = property_widget.get_parent_by_name(mainWindow.active_object,pSetName)
         elif result is None:
             return
 
@@ -274,7 +274,7 @@ def addObjectToTree(mainWindow, obj: Object, parent=None):
 def deleteObject(mainWindow):
     root:QTreeWidgetItem = mainWindow.ui.tree.invisibleRootItem()
     for item in mainWindow.ui.tree.selectedItems():
-        obj = item.object
+        obj:Object = item.object
         obj.delete()
         children = item.takeChildren()
         root.addChildren(children)

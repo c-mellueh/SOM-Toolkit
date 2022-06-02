@@ -8,12 +8,18 @@ from .propertyset_window import PropertySetWindow
 from .QtDesigns import ui_mainwindow, ui_PsetInheritance
 
 
-def get_parent_by_name(name):
-    parent = None
-    for pset in classes.PropertySet.iter:
-        if pset.name == name:
-            parent = pset
-    return parent
+def get_parent_by_name(active_object:classes.Object, name:str):
+    pset:PropertySet
+    for pset in PropertySet.iter:
+        is_master = pset.parent is None
+        correct_name = pset.name == name
+        if active_object is not None:
+            is_same_obj = pset.object == active_object
+        else:
+            is_same_obj = False
+
+        if is_master and correct_name and not is_same_obj:
+            return pset
 
 
 def init(mainWindow):
@@ -32,8 +38,8 @@ def init(mainWindow):
     mainWindow.set_right_window_enable(False)
     mainWindow.ui.lineEdit_pSet_name.textChanged.connect(mainWindow.text_changed)
 
-def predefined_pset_list():
-    property_list = [x.name for x in PropertySet.iter if x.object is None ]
+def predefined_pset_list()->list[PropertySet]:
+    property_list = [x.name for x in PropertySet.iter if x.parent is None ]
     return property_list
 
 def modify_title(self,tab,text= None):
@@ -128,7 +134,10 @@ def fill_table(mainWindow, obj:classes.Object):
         table_item.setData(constants.DATA_POS, pset)
         mainWindow.pset_table.setItem(i, 0, table_item)
         if pset.is_child:
-            table_item = QTableWidgetItem(constants.INHERITED_TEXT)
+            if pset.parent.object is not None:
+                table_item = QTableWidgetItem(pset.parent.object.name)
+            else:
+                table_item = QTableWidgetItem(constants.INHERITED_TEXT)
             mainWindow.pset_table.setItem(i,1,table_item)
 
     current_row = len(own_psets)
@@ -165,6 +174,7 @@ def openPsetWindow(mainWindow,propertySet: PropertySet,active_object:classes.Obj
 
 
 def addPset(mainWindow):
+
     ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
     name = mainWindow.ui.lineEdit_pSet_name.text()
     object = mainWindow.active_object
@@ -178,12 +188,16 @@ def addPset(mainWindow):
     mainWindow.pset_table.setRowCount(new_row_count)
     mainWindow.pset_table.setItem(new_row_count - 1, 0, item)
 
-    parent = get_parent_by_name(name)
+    parent = get_parent_by_name(mainWindow.active_object,name)
     if inherited:
         property_set = PropertySet(name)
         if parent is not None:
             parent.add_child(property_set)
-        item2 = QTableWidgetItem(constants.INHERITED_TEXT)
+
+        if parent.object is not None:
+            item2 = QTableWidgetItem(parent.object.name)
+        else:
+            item2 = QTableWidgetItem(constants.INHERITED_TEXT)
         mainWindow.pset_table.setItem(new_row_count - 1, 1, item2)
 
     else:
