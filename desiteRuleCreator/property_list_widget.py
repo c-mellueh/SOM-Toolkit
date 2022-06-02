@@ -1,5 +1,5 @@
 from . import classes
-from .QtDesigns import ui_PsetInheritance
+from .QtDesigns import ui_PsetInheritance, ui_mainwindow
 from PySide6.QtWidgets import QWidget,QListWidgetItem
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QShowEvent
@@ -71,8 +71,8 @@ class PropertySetInherWindow(QWidget):
     def add_pset(self):
         item = PsetItem()
         self.widget.list_view_pset.addItem(item)
-        self.mainWindow.update_completer()
         self.widget.list_view_pset.setCurrentItem(item)
+        self.mainWindow.update_completer()
         pass
 
     def remove_pset(self):
@@ -102,8 +102,8 @@ class PropertySetInherWindow(QWidget):
 
     def item_changed(self,item:PsetItem):
         item.property_set.name = item.text()
-
-
+        self.mainWindow.update_completer()
+        self.mainWindow.reload()
 
     def showEvent(self, event:QShowEvent) -> None:
         self.widget.list_view_pset.clear()
@@ -121,3 +121,8 @@ class PropertySetInherWindow(QWidget):
 def open_pset_list(mainWindow):
     pset_window = PropertySetInherWindow(mainWindow)
     return pset_window
+
+def reload(mainWindow):
+    window:PropertySetInherWindow = mainWindow.property_list_widget
+    widget = window.widget
+    window.single_click(widget.list_view_pset.selectedItems()[0])

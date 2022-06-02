@@ -115,6 +115,9 @@ class Hirarchy(object):
     @name.setter
     def name(self, value: str):
         self._name = value
+        for child in self.children:
+            child.name = value
+
         self.changed = True
 
     @property
@@ -564,6 +567,11 @@ class CustomTreeItem(QTreeWidgetItem):
     @property
     def object(self)->Object:
         return self._object
+
+    def update(self):
+        print("update")
+        self.setText(0,self.object.name)
+        self.setText(1,str(self.object.ident_attrib))
 
 
 

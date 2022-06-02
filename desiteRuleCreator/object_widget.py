@@ -326,3 +326,15 @@ def updateObject(mainWindow):
 
             item.setText(0, object.name)
             item.setText(1, str(object.ident_attrib))
+
+def reload_tree(mainWindow):
+
+    def loop(item:CustomTreeItem):
+        for i in range(item.childCount()):
+            child = item.child(i)
+            child.update()
+            loop(child)
+
+    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
+    root = ui.tree.invisibleRootItem()
+    loop(root)

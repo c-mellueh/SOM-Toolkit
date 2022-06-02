@@ -224,6 +224,11 @@ class MainWindow(QMainWindow):
     def code_item_changed(self,item):
         script_widget.item_changed(self,item)
 
+    def reload(self):
+        object_widget.reload_tree(self)
+        property_list_widget.reload(self)
+        property_widget.reload(self)
+
 def main():
     app = QApplication(sys.argv)
 

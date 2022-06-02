@@ -208,3 +208,7 @@ def addPset(mainWindow):
     mainWindow.pset_window = mainWindow.openPsetWindow(property_set,mainWindow.active_object,None)
     mainWindow.text_changed(mainWindow.ui.lineEdit_pSet_name.text())
     mainWindow.pset_table.resizeColumnsToContents()
+
+def reload(mainWindow):
+    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
+    fill_table(mainWindow,mainWindow.active_object)
