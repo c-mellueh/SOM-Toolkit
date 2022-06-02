@@ -1,5 +1,5 @@
-from . import classes
-from .QtDesigns import ui_PsetInheritance, ui_mainwindow
+from desiteRuleCreator.data import classes
+from desiteRuleCreator.QtDesigns import ui_PsetInheritance
 from PySide6.QtWidgets import QWidget,QListWidgetItem
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QShowEvent
@@ -10,7 +10,7 @@ class PsetItem(QListWidgetItem):
         super(PsetItem, self).__init__()
 
         if property_set is None:
-            self.property_set = classes.PropertySet(name = "NewPset")
+            self.property_set = classes.PropertySet(name ="NewPset")
             self.setText(f"NewPset_{self.get_number()}")
 
         else:
@@ -123,6 +123,6 @@ def open_pset_list(mainWindow):
     return pset_window
 
 def reload(mainWindow):
-    window:PropertySetInherWindow = mainWindow.property_list_widget
+    window:PropertySetInherWindow = mainWindow.parent_property_window
     widget = window.widget
     window.single_click(widget.list_view_pset.selectedItems()[0])

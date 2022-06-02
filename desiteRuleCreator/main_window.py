@@ -4,15 +4,19 @@ import sys
 from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog,QCompleter
 
-from . import constants,filehandling,object_widget,property_widget,desite_export,classes,script_widget,property_list_widget,propertyset_window
-from .QtDesigns.ui_mainwindow import Ui_MainWindow
-from .classes import Object, PropertySet
+from desiteRuleCreator.data import classes, constants
+from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
+from desiteRuleCreator.Windows import parent_property_window
+from desiteRuleCreator.Filehandling import filehandling, desite_export
+from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
+from desiteRuleCreator.data.classes import Object, PropertySet
 
 
 def get_icon():
     here = os.path.dirname(__file__)
     icon_name = constants.ICON_PATH
     icon_path = os.path.join(here, icon_name)
+    print(icon_path)
     return QtGui.QIcon(icon_path)
 
 
@@ -22,10 +26,10 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.property_list_widget = None
-        self.property_list_widget:property_list_widget.PropertySetInherWindow =self.open_pset_list()
-        self.property_list_widget.hide()
-        self.pset_window:propertyset_window.PropertySetWindow =None
+        self.parent_property_window = None
+        self.parent_property_window:parent_property_window.PropertySetInherWindow =self.open_pset_list()
+        self.parent_property_window.hide()
+        self.pset_window =None
 
         # variables
         self.icon = get_icon()
@@ -86,7 +90,7 @@ class MainWindow(QMainWindow):
         action = filehandling.close_event(self, event)
 
         if action:
-            self.property_list_widget.close()
+            self.parent_property_window.close()
             if self.pset_window is not None:
                 self.pset_window.close()
             event.accept()
@@ -100,12 +104,12 @@ class MainWindow(QMainWindow):
         filehandling.save_clicked(self)
 
     def open_pset_list(self):
-        if self.property_list_widget is not None:
-            self.property_list_widget.setHidden(False)
+        if self.parent_property_window is not None:
+            self.parent_property_window.setHidden(False)
         else:
-            self.property_list_widget = property_list_widget.open_pset_list(self)
+            self.parent_property_window = parent_property_window.open_pset_list(self)
 
-        return self.property_list_widget
+        return self.parent_property_window
 
     def save(self, path):
         filehandling.save(self, path)
@@ -136,17 +140,17 @@ class MainWindow(QMainWindow):
     def clear_all(self):
         object_widget.clear_all(self)
         property_widget.clear_all(self)
-        self.property_list_widget.clear_all()
+        self.parent_property_window.clear_all()
 
     # ObjectWidget
     def right_click(self, position: QtCore.QPoint):
         object_widget.right_click(self, position)
 
     def rc_collapse(self):
-        object_widget.rc_collapse(self.tree)
+        object_widget.rc_collapse(self.ui.tree)
 
     def rc_expand(self):
-        object_widget.rc_expand(self.tree)
+        object_widget.rc_expand(self.ui.tree)
 
     def rc_group(self):
         object_widget.rc_group_items(self)
@@ -169,7 +173,7 @@ class MainWindow(QMainWindow):
         script_widget.delete_objects(self)
 
     def script_list_clicked(self,item):
-        script_widget.clicked(self,item)
+        script_widget.clicked(self, item)
 
     def clearObjectInput(self):
         object_widget.clear_object_input(self)
@@ -198,7 +202,7 @@ class MainWindow(QMainWindow):
 
     def set_right_window_enable(self, value: bool):
         property_widget.set_enable(self, value)
-        script_widget.set_enable(self,value)
+        script_widget.set_enable(self, value)
 
     def listObjectClicked(self, item):
         property_widget.left_click(self, item)
@@ -207,7 +211,7 @@ class MainWindow(QMainWindow):
         property_widget.double_click(self, item)
 
     def openPsetWindow(self, propertySet: PropertySet,active_object,windowTitle = None):
-        return property_widget.openPsetWindow(self,propertySet,active_object,windowTitle)
+        return property_widget.openPsetWindow(self, propertySet, active_object, windowTitle)
 
     def addPset(self):
         property_widget.addPset(self)
@@ -222,11 +226,11 @@ class MainWindow(QMainWindow):
         script_widget.change_script_list_visibility(self)
 
     def code_item_changed(self,item):
-        script_widget.item_changed(self,item)
+        script_widget.item_changed(self, item)
 
     def reload(self):
         object_widget.reload_tree(self)
-        property_list_widget.reload(self)
+        parent_property_window.reload(self)
         property_widget.reload(self)
 
 def main():

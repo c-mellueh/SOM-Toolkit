@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QFileDialog
-from . import constants,classes
+from desiteRuleCreator.data import classes, constants
 import os
 import codecs
 import xml.etree.ElementTree as ET
@@ -159,7 +159,7 @@ def handle_object_rules(xml_container,mainWindow,template):
     obj_sorted.sort(key = lambda x: x.name)
     for object in obj_sorted:
         if not object.is_concept:
-            object:classes.Object = object
+            object: classes.Object = object
             xml_checkrun = handle_checkrun(xml_container,object.name,mainWindow.project.author)
             xml_object_list[xml_checkrun] = object
             xml_rule = handle_rule(xml_checkrun,"Attributes")
@@ -177,7 +177,7 @@ def handle_object_rules(xml_container,mainWindow,template):
             else:
                 ident_property_set= f"{ident_property_set}:"
 
-            cdata_code = template.render(psets=property_sets, object=object, ident=ident_name, ident_pset=ident_property_set,constants = constants)
+            cdata_code = template.render(psets=property_sets, object=object, ident=ident_name, ident_pset=ident_property_set, constants =constants)
             xml_code.text = cdata_code
             handle_rule(xml_checkrun,"UniquePattern")
     return xml_object_list
@@ -210,7 +210,7 @@ def old_file_conversion(projekt):
             obj.name = obj.name[1:]
 
 def handle_data_section(xml_qa_export,xml_checkrun_first,xml_checkrun_obj,xml_checkrun_last):
-    def get_name(obj:classes.Object):
+    def get_name(obj: classes.Object):
         pset_name = obj.ident_attrib.propertySet.name
         if pset_name == "IFC":
             return obj.ident_attrib.name

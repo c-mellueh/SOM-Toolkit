@@ -1,12 +1,12 @@
-from PySide6.QtWidgets import QFileDialog, QInputDialog, QLineEdit, QMessageBox, QTreeWidget, QTreeWidgetItem
+from PySide6.QtWidgets import QFileDialog, QInputDialog, QLineEdit, QMessageBox
 from lxml import etree
 from uuid import uuid4
 
-from . import __version__ as project_version
-from . import constants,classes
-from .classes import Object, PropertySet, Attribute, CustomTreeItem
-from .io_messages import msg_delete_or_merge
-from .io_messages import msg_unsaved, msg_close
+from desiteRuleCreator import __version__ as project_version
+from desiteRuleCreator.data import classes, constants
+from desiteRuleCreator.data.classes import Object, PropertySet, Attribute
+from desiteRuleCreator.Windows.popups import msg_delete_or_merge
+from desiteRuleCreator.Windows.popups import msg_unsaved, msg_close
 
 
 # from .run import MainWindow
@@ -56,7 +56,7 @@ def importData(widget, path=False):
 
         if projekt_xml.attrib.get("version") is None:   #OLD FILES
             import_old(projekt_xml)
-            widget.project = classes.Project(projekt_xml.attrib.get("Name"),author="CMellueh")
+            widget.project = classes.Project(projekt_xml.attrib.get("Name"), author="CMellueh")
         else:
             import_new(projekt_xml)
             widget.project = classes.Project(projekt_xml.attrib.get("name"))
@@ -122,7 +122,7 @@ def import_new(projekt_xml: etree._Element):
             if xml_sub.tag == "Script":
                 name = xml_sub.attrib.get("name")
                 code = xml_sub.text
-                script = classes.Script(name,obj)
+                script = classes.Script(name, obj)
                 script.code = code
 
 
@@ -295,11 +295,11 @@ def save(mainWindow, path):
     def add_predefined_property_sets(xml_project):
         for predefined_pset in classes.PropertySet.iter:
             if predefined_pset.object is None:
-                predefined_pset:classes.PropertySet = predefined_pset
-                xml_pset = etree.SubElement(xml_project,constants.PREDEFINED_PSET)
-                xml_pset.set(constants.NAME,predefined_pset.name)
-                xml_pset.set(constants.IDENTIFIER,str(predefined_pset.identifier))
-                xml_pset.set(constants.PARENT,constants.NONE)
+                predefined_pset: classes.PropertySet = predefined_pset
+                xml_pset = etree.SubElement(xml_project, constants.PREDEFINED_PSET)
+                xml_pset.set(constants.NAME, predefined_pset.name)
+                xml_pset.set(constants.IDENTIFIER, str(predefined_pset.identifier))
+                xml_pset.set(constants.PARENT, constants.NONE)
 
                 for attribute in predefined_pset.attributes:
                     add_attribute(attribute,predefined_pset,xml_pset)
@@ -324,9 +324,9 @@ def save(mainWindow, path):
             add_property_set(property_set,xml_object)
 
         for script in obj.scripts:
-            script:classes.Script = script
+            script: classes.Script = script
             xml_script = etree.SubElement(xml_object,"Script")
-            xml_script.set(constants.NAME,script.name)
+            xml_script.set(constants.NAME, script.name)
             xml_script.text = script.code
         pass
 
@@ -336,7 +336,7 @@ def save(mainWindow, path):
         xml_attribute.set(constants.DATA_TYPE, attribute.data_type)
         xml_attribute.set(constants.VALUE_TYPE, attribute.value_type)
         xml_attribute.set(constants.IDENTIFIER, str(attribute.identifier))
-        xml_attribute.set(constants.CHILD_INHERITS_VALUE,str(attribute.child_inherits_values))
+        xml_attribute.set(constants.CHILD_INHERITS_VALUE, str(attribute.child_inherits_values))
         add_parent(xml_attribute,attribute)
 
         obj = property_set.object

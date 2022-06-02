@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QTreeWidget,QTreeWidgetItem,QAbstractItemView,QLis
 from PySide6.QtGui import QDropEvent
 from PySide6.QtCore import Qt
 from uuid import uuid4
-from . import __version__ as project_version
+from desiteRuleCreator import __version__ as project_version
 global _changed
 import copy
 

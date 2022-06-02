@@ -1,12 +1,13 @@
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtWidgets import QTableWidgetItem, QHBoxLayout, QLineEdit, QMessageBox, QMenu
-from PySide6.QtGui import QIcon
 
-from . import constants, io_messages
-from .QtDesigns.ui_widget import Ui_layout_main
-from .classes import PropertySet, Attribute
+from desiteRuleCreator.data import constants
+from desiteRuleCreator.QtDesigns.ui_widget import Ui_layout_main
+from desiteRuleCreator.data.classes import PropertySet, Attribute
+from desiteRuleCreator.Windows import popups
 import os
+
 
 def make_string_printable(value):
     value = str(value).replace(".", ",")
@@ -71,7 +72,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
                 if self.attribute_is_identifier(self.get_attribute_by_name(name)):
-                    io_messages.msg_mod_ident(self.mainWindow.icon)
+                    popups.msg_mod_ident(self.mainWindow.icon)
                     return
                 else:
                     selected_rows.append(items.row())
@@ -112,7 +113,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
                 if self.attribute_is_identifier(self.get_attribute_by_name(name)):
-                    io_messages.msg_mod_ident(self.mainWindow.icon)
+                    popups.msg_mod_ident(self.mainWindow.icon)
                     return
                 else:
                     selected_rows.append(items.row())
@@ -132,7 +133,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
                 if self.attribute_is_identifier(self.get_attribute_by_name(name)):
-                    io_messages.msg_mod_ident(self.mainWindow.icon)
+                    popups.msg_mod_ident(self.mainWindow.icon)
                     return
                 else:
                     selected_rows.append(items.row())
@@ -140,7 +141,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         selected_rows.sort(reverse=True)
 
         if len(selected_rows) == 1:
-            new_name,fulfilled = io_messages.req_attribute_name(self)
+            new_name,fulfilled = popups.req_attribute_name(self)
             if fulfilled:
                 name = self.widget.table_widget.item(row, 0).text()
                 attribute:Attribute = self.get_attribute_by_name(name)

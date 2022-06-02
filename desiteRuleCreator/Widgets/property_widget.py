@@ -1,14 +1,14 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea,QCompleter
+from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea
 
-from . import constants, property_list_widget,classes
-from .classes import PropertySet, CustomTreeItem, attributes_to_psetdict
-from .io_messages import msg_del_ident_pset
-from .propertyset_window import PropertySetWindow
-from .QtDesigns import ui_mainwindow, ui_PsetInheritance
+from desiteRuleCreator.data import classes, constants
+from desiteRuleCreator.data.classes import PropertySet, CustomTreeItem
+from desiteRuleCreator.Windows.popups import msg_del_ident_pset
+from desiteRuleCreator.Windows.propertyset_window import PropertySetWindow
+from desiteRuleCreator.QtDesigns import ui_mainwindow
 
 
-def get_parent_by_name(active_object:classes.Object, name:str):
+def get_parent_by_name(active_object: classes.Object, name:str):
     pset:PropertySet
     for pset in PropertySet.iter:
         is_master = pset.parent is None
@@ -114,7 +114,7 @@ def set_enable(mainWindow, value: bool):
         mainWindow.ui.lineEdit_pSet_name.setText("")
 
 
-def fill_table(mainWindow, obj:classes.Object):
+def fill_table(mainWindow, obj: classes.Object):
 
     mainWindow.set_right_window_enable(True)
     modify_title(mainWindow,mainWindow.ui.tab_code,f"{obj.name}: Code")
@@ -129,7 +129,7 @@ def fill_table(mainWindow, obj:classes.Object):
     mainWindow.pset_table.setRowCount(table_length)  # Prepare Table
 
     for i, pset in enumerate(own_psets):
-        pset:classes.PropertySet = pset
+        pset: classes.PropertySet = pset
         table_item = QTableWidgetItem(pset.name)
         table_item.setData(constants.DATA_POS, pset)
         mainWindow.pset_table.setItem(i, 0, table_item)
@@ -166,7 +166,7 @@ def double_click(mainWindow, item: QTableWidgetItem):
 
 
 
-def openPsetWindow(mainWindow,propertySet: PropertySet,active_object:classes.Object, window_title = None,):
+def openPsetWindow(mainWindow, propertySet: PropertySet, active_object: classes.Object, window_title = None, ):
     if window_title is None:
         window_title = f"{propertySet.object.name}:{propertySet.name}"
     window = PropertySetWindow(mainWindow,propertySet,active_object,window_title)

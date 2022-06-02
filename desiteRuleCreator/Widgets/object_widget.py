@@ -2,10 +2,13 @@ from PySide6.QtCore import QPoint, Qt, QCoreApplication
 from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView,QTreeWidgetItem
 from PySide6.QtGui import QShortcut,QKeySequence
 
-from . import property_widget, constants, io_messages,classes,script_widget
-from .classes import Object, CustomTreeItem,  PropertySet, Attribute, CustomTree
-from .io_messages import req_group_name
-from .QtDesigns import ui_mainwindow
+from desiteRuleCreator.data import classes, constants
+from desiteRuleCreator.Widgets import script_widget, property_widget
+from desiteRuleCreator.data.classes import Object, CustomTreeItem,  PropertySet, Attribute, CustomTree
+from desiteRuleCreator.Windows import popups
+from desiteRuleCreator.QtDesigns import ui_mainwindow
+
+
 
 def init(mainView):
     def init_tree(tree: CustomTree):
@@ -22,8 +25,8 @@ def init(mainView):
         tree.viewport().setAcceptDrops(True)
 
         ___qtreewidgetitem = tree.headerItem()
-        ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None));
-        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objects", None));
+        ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None))
+        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objects", None))
 
     def connect_items(mainView):
         mainView.ui.tree.itemClicked.connect(mainView.object_clicked)
@@ -111,7 +114,7 @@ def rc_expand(tree: QTreeWidget):
 def rc_group_items(mainWindow):
 
 
-    [group_name,ident_pset,ident_attrib,ident_value ]= req_group_name(mainWindow)
+    [group_name,ident_pset,ident_attrib,ident_value ]= popups.req_group_name(mainWindow)
     if group_name:
         selected_items = mainWindow.ui.tree.selectedItems()
         parent_classes = [item for item in selected_items if item.parent() not in selected_items]
@@ -121,13 +124,13 @@ def rc_group_items(mainWindow):
             parent:QTreeWidgetItem = mainWindow.ui.tree.invisibleRootItem()
 
         pset = PropertySet(ident_pset)
-        identifier = Attribute(pset,ident_attrib,[ident_value],constants.LIST)
+        identifier = Attribute(pset, ident_attrib, [ident_value], constants.LIST)
         group_obj = Object(group_name,identifier)
 
         group_item:CustomTreeItem = mainWindow.addObjectToTree(group_obj,parent)
 
         for item in parent_classes:
-            child:classes.CustomTreeItem = parent.takeChild(parent.indexOfChild(item))
+            child: classes.CustomTreeItem = parent.takeChild(parent.indexOfChild(item))
             group_obj.add_child(child.object)
 
             group_item.addChild(child)
@@ -227,9 +230,9 @@ def addObject(mainWindow):
 
     parent = None
     if pSetName in property_widget.predefined_pset_list():      #if PropertySet allready predefined
-        result = io_messages.req_merge_pset(mainWindow.icon)    #ask if you want to merge
+        result = popups.req_merge_pset(mainWindow.icon)    #ask if you want to merge
         if result == True:
-            parent = property_widget.get_parent_by_name(mainWindow.active_object,pSetName)
+            parent = property_widget.get_parent_by_name(mainWindow.active_object, pSetName)
         elif result is None:
             return
 
@@ -249,13 +252,13 @@ def addObject(mainWindow):
 
             else:
                 ident.delete()
-                io_messages.msg_already_exists(mainWindow.icon)
+                popups.msg_already_exists(mainWindow.icon)
 
         else:
-            io_messages.msg_missing_input(mainWindow.icon)
+            popups.msg_missing_input(mainWindow.icon)
 
     else:
-        io_messages.msg_missing_input(mainWindow.icon)
+        popups.msg_missing_input(mainWindow.icon)
 
 
 def addObjectToTree(mainWindow, obj: Object, parent=None):
@@ -292,7 +295,7 @@ def updateObject(mainWindow):
     selected_items = mainWindow.ui.tree.selectedItems()
 
     if len(selected_items) >1 and not "*" in input_list:
-        io_messages.msg_identical_identifier(mainWindow.icon)
+        popups.msg_identical_identifier(mainWindow.icon)
         return
     empty_input = False
     for el in input_list:
@@ -300,7 +303,7 @@ def updateObject(mainWindow):
             empty_input = True
 
     if empty_input:
-        io_messages.msg_missing_input(mainWindow.icon)
+        popups.msg_missing_input(mainWindow.icon)
         return
 
     else:

@@ -1,8 +1,9 @@
-from . import classes
-from .QtDesigns import ui_mainwindow
+from desiteRuleCreator.data import classes
+from desiteRuleCreator.QtDesigns import ui_mainwindow
 from PySide6.QtCore import Slot, Qt, QRect, QSize
 from PySide6.QtGui import QColor, QPainter, QTextFormat
-from PySide6.QtWidgets import QPlainTextEdit, QWidget, QTextEdit,QLayout,QSpacerItem
+from PySide6.QtWidgets import QPlainTextEdit, QWidget, QTextEdit
+
 
 def init(mainWindow):
 
@@ -21,7 +22,7 @@ def init(mainWindow):
     ui.code_edit.show()
     connect(ui)
 
-def item_changed(mainWindow,item:classes.Script):
+def item_changed(mainWindow, item: classes.Script):
     item.name = item.text()
     mainWindow.ui.label_script_name.setText(item.name)
 
@@ -41,7 +42,7 @@ def selection_changed(mainWindow):
     ui.code_edit.setEnabled(value)
     pass
 
-def clicked(mainWindow,item:classes.Script):
+def clicked(mainWindow, item: classes.Script):
     ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
     ui.code_edit.setEnabled(True)
     edit:QPlainTextEdit = ui.code_edit
@@ -80,7 +81,7 @@ def code_buttons(mainWindow):
 
 def show(mainWindow):
     ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
-    tree_item:classes.CustomTreeItem= mainWindow.selected_object()
+    tree_item: classes.CustomTreeItem= mainWindow.selected_object()
     if tree_item is not None:
         obj = tree_item.object
         for script in obj.scripts:
@@ -89,7 +90,7 @@ def show(mainWindow):
 def delete_objects(mainWindow):
     ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
     for script in ui.listWidget_scripts.selectedItems():
-        item:classes.Script = ui.listWidget_scripts.takeItem(ui.listWidget_scripts.indexFromItem(script).row())
+        item: classes.Script = ui.listWidget_scripts.takeItem(ui.listWidget_scripts.indexFromItem(script).row())
         item.object.delete_script(item)
     ui.code_edit.clear()
     selection_changed(mainWindow)
@@ -116,8 +117,8 @@ def set_enable(mainWindow,value:bool):
 
 def add_script(mainWindow):
     ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
-    item:classes.CustomTreeItem = mainWindow.ui.tree.selectedItems()[0]
-    script = classes.Script("NewScript",item.object)
+    item: classes.CustomTreeItem = mainWindow.ui.tree.selectedItems()[0]
+    script = classes.Script("NewScript", item.object)
     ui.listWidget_scripts.addItem(script)
     ui.listWidget_scripts.setCurrentItem(script)
     selection_changed(mainWindow)

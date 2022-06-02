@@ -13,8 +13,8 @@ VALUE_TYPE_LOOKUP = {
 }
 
 DATATYPE_NUMBER = "xs:double"
-ICON_PATH = "icons/icon.ico"
-LINK_ICON_PATH = "icons/link.png"
+ICON_PATH = "icons\icon.ico"
+LINK_ICON_PATH = "icons\link.png"
 
 DATA_POS = 1
 FILEPATH_JS = "js_templates"
