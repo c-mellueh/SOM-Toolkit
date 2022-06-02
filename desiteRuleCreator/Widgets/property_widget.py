@@ -211,4 +211,5 @@ def addPset(mainWindow):
 
 def reload(mainWindow):
     ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
-    fill_table(mainWindow,mainWindow.active_object)
+    if mainWindow.active_object is not None:
+        fill_table(mainWindow,mainWindow.active_object)

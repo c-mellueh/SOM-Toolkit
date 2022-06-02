@@ -146,7 +146,7 @@ class Hirarchy(object):
     def children(self) -> list:
         return self._children
 
-    def add_child(self, child,copy = None)-> None:
+    def add_child(self, child)-> None:
         self.children.append(child)
         child.parent = self
 
@@ -255,7 +255,7 @@ class PropertySet(Hirarchy):
 
     def get_attribute(self,name):
         for attribute in self.attributes:
-            if attribute.name == name:
+            if attribute.name.lower() == name.lower():
                 return attribute
         return None
 
@@ -417,7 +417,6 @@ class Object(Hirarchy):
         self._is_concept = is_concept
         self.changed = True
         if identifier is None:
-            print("CREATE_NEW")
             self.identifier = str(uuid4())
         else:
             self.identifier = identifier
@@ -569,7 +568,6 @@ class CustomTreeItem(QTreeWidgetItem):
         return self._object
 
     def update(self):
-        print("update")
         self.setText(0,self.object.name)
         self.setText(1,str(self.object.ident_attrib))
 

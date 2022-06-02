@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog,QCompleter
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
 from desiteRuleCreator.Windows import parent_property_window
-from desiteRuleCreator.Filehandling import filehandling, desite_export
+from desiteRuleCreator.Filehandling import filehandling, desite_export,excel
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.data.classes import Object, PropertySet
 from  desiteRuleCreator import icons
@@ -56,7 +56,7 @@ class MainWindow(QMainWindow):
         #self.openFile("desiteRuleCreator/saves/22_04_18.xml")
         self.ui.tree.resizeColumnToContents(0)
         self.save_path = None
-
+        excel.start(self)
 
 
     @property

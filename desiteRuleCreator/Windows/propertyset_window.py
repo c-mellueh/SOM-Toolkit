@@ -6,6 +6,7 @@ from desiteRuleCreator.data import constants
 from desiteRuleCreator.QtDesigns.ui_widget import Ui_layout_main
 from desiteRuleCreator.data.classes import PropertySet, Attribute
 from desiteRuleCreator.Windows import popups
+from desiteRuleCreator import icons
 import os
 
 
@@ -19,10 +20,9 @@ def string_to_float(value: str):
 
     return value
 
+
 def get_link_icon():
-    here = os.path.dirname(__file__)
-    icon_name = constants.LINK_ICON_PATH
-    icon_path = os.path.join(here, icon_name)
+    icon_path = os.path.join(icons.ICON_PATH,icons.ICON_DICT["link"])
     return QtGui.QIcon(icon_path)
 
 

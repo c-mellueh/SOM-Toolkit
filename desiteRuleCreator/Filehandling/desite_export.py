@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QFileDialog
 from desiteRuleCreator.data import classes, constants
+from desiteRuleCreator import Template
 import os
 import codecs
 import xml.etree.ElementTree as ET
@@ -112,7 +113,7 @@ def handle_attribute_rule_list(xml_rule):
 
 
 def handle_template():
-    path = f"{os.path.dirname(os.path.abspath(__file__))}/Template/"
+    path = Template.HOME_DIR
     file_loader = FileSystemLoader(path)
     env = Environment(loader=file_loader)
     env.trim_blocks = True
@@ -134,7 +135,7 @@ def define_xml_elements(mainWindow,xml_container,name):
 
 
 def handle_js_rules(xml_attributeRuleList,starts_with):
-    folder =f"{os.path.dirname(os.path.abspath(__file__))}/Template/{constants.FILEPATH_JS}/"
+    folder =f"{Template.HOME_DIR}/{constants.FILEPATH_JS}/"
 
     for fn in os.listdir(folder):
         if fn.startswith(starts_with):

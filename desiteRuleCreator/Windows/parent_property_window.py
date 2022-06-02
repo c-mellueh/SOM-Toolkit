@@ -111,7 +111,7 @@ class PropertySetInherWindow(QWidget):
             if property_set.object is None:
                 item = PsetItem(property_set)
                 self.widget.list_view_pset.addItem(item)
-                self.mainWindow.update_completer()
+                #self.mainWindow.update_completer()
                 self.widget.list_view_pset.setCurrentItem(item)
 
     def clear_all(self):
