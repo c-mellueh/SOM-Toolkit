@@ -47,7 +47,7 @@ def fill_tree(mainWindow):
     fill_next_level(objects, item_dict)
 
 
-def importData(widget, path=False):
+def importData(widget, path:str=False):
     if path:
         widget.clearObjectInput()
 

@@ -56,7 +56,6 @@ class MainWindow(QMainWindow):
         #self.openFile("desiteRuleCreator/saves/22_04_18.xml")
         self.ui.tree.resizeColumnToContents(0)
         self.save_path = None
-        excel.start(self)
 
 
     @property
@@ -127,11 +126,14 @@ class MainWindow(QMainWindow):
 
         if path is False:
             cur_path =os.getcwd()+"/"
-            path = QFileDialog.getOpenFileName(self, "Open XML", str(cur_path), "xml Files (*.xml *.DRCxml)")[0]
+            path:str = QFileDialog.getOpenFileName(self, "Open File", str(cur_path), "all (*.*);; xml Files (*.xml *.DRCxml);; xlsx Files (*xlsx)")[0]
 
 
         if path:
-            filehandling.importData(self, path)
+            if path.endswith("xlsx"):
+                excel.start(self,path)
+            else:
+                filehandling.importData(self, path)
 
     # Main
     def clear_all(self):

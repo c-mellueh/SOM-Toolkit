@@ -49,13 +49,18 @@ def link_psets(pset,cell,pset_dict,sheet,object = None,debug = False):
 
     for elternklasse in elternklassen:
         if elternklasse != "AE" and elternklasse!= "-":
-            [eltern_pset,eltern_cell] = pset_dict[elternklasse.upper()]
+            value = pset_dict.get(elternklasse.upper())
+            if value is not None:
+                [eltern_pset,eltern_cell] = value
 
-            if object is not None:
-                new_pset = classes.PropertySet(eltern_pset.name)
-                eltern_pset.add_child(new_pset)
-                object.add_property_set(new_pset)
-            link_psets(eltern_pset,eltern_cell,pset_dict,sheet,object,debug = debug)
+
+                if object is not None:
+                    new_pset = classes.PropertySet(eltern_pset.name)
+                    eltern_pset.add_child(new_pset)
+                    object.add_property_set(new_pset)
+                link_psets(eltern_pset,eltern_cell,pset_dict,sheet,object,debug = debug)
+            else:
+                print(f"ACHTUNG {sheet.cell(cell.row,cell.column+1).value} hat einen Fehler in der Elternklasse")
 
 def iterate_entries(pset,sheet,entry,cell_list):
     special_values = list()
@@ -106,9 +111,8 @@ def create_object(sheet,cell,pset_dict,cell_list):
     return obj,special_values,pset,kuerzel
 
 
-def start(mainWindow):
+def start(mainWindow,path):
     #path = QFileDialog.getOpenFileName(mainWindow, "Open XML", "", "Excel Files (*.xlsx *.xls)")[0]
-    path = "C:/Users/ChristophMellueh/OneDrive - Deutsche Bahn/Projekte/Programmieren/SOM/python.xlsx"
     book = openpyxl.load_workbook(path)
     sheet = book.active
 
@@ -120,7 +124,10 @@ def start(mainWindow):
             if value is not None:
                 text = value.strip()
                 if text in ["name","name:"]:
-                    name_cells.append(cell)
+                    if sheet.cell(cell.row+1,cell.column).value == "Kürzel":
+                        name_cells.append(cell)
+                    else:
+                        print(f"{sheet.cell(cell.row+1,cell.column)} hat den Wert 'name'" )
 
 
         #name_cells+=[x for x in row if x.value.strip() == "name" or x.value.strip() =="name:"]
