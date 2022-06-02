@@ -430,10 +430,12 @@ def close_event(mainWindow, event):
         if reply == QMessageBox.Save:
             path = mainWindow.save_clicked()
             if not path or path is None:
-                event.ignore()
+                return False
             else:
-                event.accept()
+                return True
         elif reply == QMessageBox.No:
-            event.accept()
+            return True
         else:
-            event.ignore()
+            return False
+    else:
+        return True

@@ -4,7 +4,7 @@ import sys
 from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog,QCompleter
 
-from . import constants,filehandling,object_widget,property_widget,desite_export,classes,script_widget,property_list_widget
+from . import constants,filehandling,object_widget,property_widget,desite_export,classes,script_widget,property_list_widget,propertyset_window
 from .QtDesigns.ui_mainwindow import Ui_MainWindow
 from .classes import Object, PropertySet
 
@@ -25,6 +25,7 @@ class MainWindow(QMainWindow):
         self.property_list_widget = None
         self.property_list_widget:property_list_widget.PropertySetInherWindow =self.open_pset_list()
         self.property_list_widget.hide()
+        self.pset_window:propertyset_window.PropertySetWindow =None
 
         # variables
         self.icon = get_icon()
@@ -82,7 +83,17 @@ class MainWindow(QMainWindow):
         desite_export.save_rules(self)
 
     def closeEvent(self, event):
-        filehandling.close_event(self, event)
+        action = filehandling.close_event(self, event)
+
+        if action:
+            self.property_list_widget.close()
+            if self.pset_window is not None:
+                self.pset_window.close()
+            event.accept()
+        else:
+            event.ignore()
+
+
 
     # Filehandling
     def save_clicked(self):
