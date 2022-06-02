@@ -76,7 +76,7 @@ def delete(mainWindow):
             mainWindow.pset_table.removeRow(i.row())
 
     else:
-        msg_del_ident_pset(mainWindow.icon)
+        msg_del_ident_pset()
 
 
 def rename(mainWindow):

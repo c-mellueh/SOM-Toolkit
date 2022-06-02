@@ -230,7 +230,7 @@ def addObject(mainWindow):
 
     parent = None
     if pSetName in property_widget.predefined_pset_list():      #if PropertySet allready predefined
-        result = popups.req_merge_pset(mainWindow.icon)    #ask if you want to merge
+        result = popups.req_merge_pset()    #ask if you want to merge
         if result == True:
             parent = property_widget.get_parent_by_name(mainWindow.active_object, pSetName)
         elif result is None:
@@ -252,13 +252,13 @@ def addObject(mainWindow):
 
             else:
                 ident.delete()
-                popups.msg_already_exists(mainWindow.icon)
+                popups.msg_already_exists()
 
         else:
-            popups.msg_missing_input(mainWindow.icon)
+            popups.msg_missing_input()
 
     else:
-        popups.msg_missing_input(mainWindow.icon)
+        popups.msg_missing_input()
 
 
 def addObjectToTree(mainWindow, obj: Object, parent=None):
@@ -295,7 +295,7 @@ def updateObject(mainWindow):
     selected_items = mainWindow.ui.tree.selectedItems()
 
     if len(selected_items) >1 and not "*" in input_list:
-        popups.msg_identical_identifier(mainWindow.icon)
+        popups.msg_identical_identifier()
         return
     empty_input = False
     for el in input_list:
@@ -303,7 +303,7 @@ def updateObject(mainWindow):
             empty_input = True
 
     if empty_input:
-        popups.msg_missing_input(mainWindow.icon)
+        popups.msg_missing_input()
         return
 
     else:

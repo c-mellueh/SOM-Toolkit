@@ -391,7 +391,7 @@ def save_clicked(mainWindow):
 
 
 def new_file(mainWindow):
-    new_file = msg_unsaved(mainWindow.icon)
+    new_file = msg_unsaved()
     if new_file:
         mainWindow.save_path = None
         project_name = QInputDialog.getText(mainWindow, "New Project", "new Project Name:", QLineEdit.Normal, "")
@@ -405,7 +405,7 @@ def new_file(mainWindow):
 
 def openFile_dialog(mainWindow, path=False):
     if Object.iter:
-        result = msg_delete_or_merge(mainWindow.icon)
+        result = msg_delete_or_merge()
         if result is None:
             return
         elif result:
@@ -426,7 +426,7 @@ def merge_new_file(mainWindow):
 def close_event(mainWindow, event):
     status = mainWindow.project.changed
     if status:
-        reply = msg_close(mainWindow.icon)
+        reply = msg_close()
         if reply == QMessageBox.Save:
             path = mainWindow.save_clicked()
             if not path or path is None:

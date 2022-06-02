@@ -10,13 +10,10 @@ from desiteRuleCreator.Windows import parent_property_window
 from desiteRuleCreator.Filehandling import filehandling, desite_export
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.data.classes import Object, PropertySet
-
+from  desiteRuleCreator import icons
 
 def get_icon():
-    here = os.path.dirname(__file__)
-    icon_name = constants.ICON_PATH
-    icon_path = os.path.join(here, icon_name)
-    print(icon_path)
+    icon_path = os.path.join(icons.ICON_PATH,icons.ICON_DICT["icon"])
     return QtGui.QIcon(icon_path)
 
 

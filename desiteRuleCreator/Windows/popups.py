@@ -1,6 +1,15 @@
 from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit,QDialog,QDialogButtonBox,QGridLayout
+from PySide6.QtGui import QIcon
+import os
+from desiteRuleCreator.data import constants
+import desiteRuleCreator.icons as icons
 
-def default_message(icon,text):
+def get_icon():
+    icon_path = os.path.join(icons.ICON_PATH,icons.ICON_DICT["icon"])
+    return QIcon(icon_path)
+
+def default_message(text):
+    icon = get_icon()
     msgBox = QMessageBox()
     msgBox.setText(text)
     msgBox.setWindowTitle(" ")
@@ -10,21 +19,22 @@ def default_message(icon,text):
     msgBox.exec()
 
 
-def msg_already_exists(icon):
+def msg_already_exists():
     text = "Object exists already!"
-    default_message(icon,text)
+    default_message(text)
 
-def msg_identical_identifier(icon):
+def msg_identical_identifier():
     text = "You cant create Objects with identical identifiers!"
-    default_message(icon, text)
+    default_message(text)
 
 
-def msg_missing_input(icon):
+def msg_missing_input():
     text = "Object informations are missing!"
-    default_message(icon,text)
+    default_message(text)
 
 
-def msg_unsaved(icon):
+def msg_unsaved():
+    icon = get_icon()
     msgBox = QMessageBox()
     msgBox.setText("Warning, unsaved changes will be lost!")
     msgBox.setWindowTitle(" ")
@@ -38,7 +48,8 @@ def msg_unsaved(icon):
         return False
 
 
-def msg_delete_or_merge(icon):
+def msg_delete_or_merge():
+    icon = get_icon()
     msgBox = QMessageBox()
     msgBox.setText("Warning, there is allready exisiting data!\n do you want to delete or merge?")
     msgBox.setWindowTitle(" ")
@@ -57,7 +68,8 @@ def msg_delete_or_merge(icon):
         return None
 
 
-def msg_close(icon):
+def msg_close():
+    icon = get_icon()
     text = "Do you want to save before exit?"
 
     msgBox = QMessageBox(QMessageBox.Icon.Warning,
@@ -70,17 +82,18 @@ def msg_close(icon):
     return reply
 
 
-def msg_del_ident_pset(icon):
+def msg_del_ident_pset():
     text = "can't delete Pset of Identifier!"
-    default_message(icon, text)
+    default_message(text)
 
-def msg_mod_ident(icon):
+def msg_mod_ident():
     text = "Identifier can't be modified!"
-    default_message(icon,text)
+    default_message(text)
 
 class GroupRequest(QDialog):
-    def __init__(self,icon,parent = None,):
+    def __init__(self,parent = None,):
         super(GroupRequest, self).__init__(parent)
+        icon = get_icon()
         self.group_name = QLineEdit(self)
         self.pset_name = QLineEdit(self)
         self.attribute_name = QLineEdit(self)
@@ -110,7 +123,7 @@ class GroupRequest(QDialog):
     def accept(self) -> None:
         is_empty = [True for text in self.input_fields if not bool(text.text())]
         if is_empty:
-            msg_missing_input(self.windowIcon())
+            msg_missing_input()
         else:
             super(GroupRequest, self).accept()
 
@@ -118,7 +131,7 @@ class GroupRequest(QDialog):
         return [text.text() for text in self.input_fields]
 
 def req_group_name(mainWindow):
-    dialog = GroupRequest(mainWindow.icon,mainWindow)
+    dialog = GroupRequest(mainWindow)
 
     if dialog.exec():
         return dialog.get_text()
@@ -130,7 +143,8 @@ def req_attribute_name(propertyWindow):
     text = QInputDialog.getText(propertyWindow,"New Attribute Name","New Attribute Name")
     return text
 
-def req_merge_pset(icon):
+def req_merge_pset():
+    icon = get_icon()
     msgBox = QMessageBox()
     msgBox.setText("Pset exists in Predefined Psets, do you want to merge?")
     msgBox.setWindowTitle(" ")

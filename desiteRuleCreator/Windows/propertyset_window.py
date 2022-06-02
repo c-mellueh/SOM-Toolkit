@@ -72,7 +72,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
                 if self.attribute_is_identifier(self.get_attribute_by_name(name)):
-                    popups.msg_mod_ident(self.mainWindow.icon)
+                    popups.msg_mod_ident()
                     return
                 else:
                     selected_rows.append(items.row())
@@ -113,7 +113,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
                 if self.attribute_is_identifier(self.get_attribute_by_name(name)):
-                    popups.msg_mod_ident(self.mainWindow.icon)
+                    popups.msg_mod_ident()
                     return
                 else:
                     selected_rows.append(items.row())
@@ -133,7 +133,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
                 if self.attribute_is_identifier(self.get_attribute_by_name(name)):
-                    popups.msg_mod_ident(self.mainWindow.icon)
+                    popups.msg_mod_ident()
                     return
                 else:
                     selected_rows.append(items.row())
@@ -228,6 +228,10 @@ class PropertySetWindow(QtWidgets.QWidget):
             return values
 
         def update_attribute(attribute: Attribute):
+            if self.attribute_is_identifier(attribute):
+                popups.msg_del_ident_pset()
+                return
+
             if not attribute.is_child:
                 attribute.value_type = self.widget.combo_type.currentText()
                 attribute.data_type = self.widget.combo_data_type.currentText()
