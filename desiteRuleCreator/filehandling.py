@@ -293,14 +293,15 @@ def save(mainWindow, path):
 
     def add_predefined_property_sets(xml_project):
         for predefined_pset in classes.PropertySet.iter:
-            predefined_pset:classes.PropertySet = predefined_pset
-            xml_pset = etree.SubElement(xml_project,constants.PREDEFINED_PSET)
-            xml_pset.set(constants.NAME,predefined_pset.name)
-            xml_pset.set(constants.IDENTIFIER,str(predefined_pset.identifier))
-            xml_pset.set(constants.PARENT,constants.NONE)
+            if predefined_pset.object is None:
+                predefined_pset:classes.PropertySet = predefined_pset
+                xml_pset = etree.SubElement(xml_project,constants.PREDEFINED_PSET)
+                xml_pset.set(constants.NAME,predefined_pset.name)
+                xml_pset.set(constants.IDENTIFIER,str(predefined_pset.identifier))
+                xml_pset.set(constants.PARENT,constants.NONE)
 
-            for attribute in predefined_pset.attributes:
-                add_attribute(attribute,predefined_pset,xml_pset)
+                for attribute in predefined_pset.attributes:
+                    add_attribute(attribute,predefined_pset,xml_pset)
 
     def add_property_set(property_set:PropertySet,xml_object):
         xml_pset = etree.SubElement(xml_object, constants.PROPERTY_SET)

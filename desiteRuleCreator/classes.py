@@ -197,7 +197,6 @@ class PropertySet(Hirarchy):
         if self.is_parent:
             for child in self.children:
                 self.remove_child(child)
-
         if self.object is not None:
             ident = self.object.identifier      # if identifier in Pset delete all attributes except identifier
             if ident in self.attributes:
@@ -270,12 +269,13 @@ class Attribute(Hirarchy):
         self._value_type = value_type
         self._data_type = data_type
         self._object = None
-        propertySet.add_attribute(self)
         self.changed = True
         self._child_inherits_values = child_inherits_values
         self.identifier = identifier
         if self.identifier is None:
             self.identifier = str(uuid4())
+        propertySet.add_attribute(self)
+
     def __str__(self):
         text = f"{self.propertySet.name} : {self.name} = {self.value}"
         return text

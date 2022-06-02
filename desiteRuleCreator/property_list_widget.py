@@ -38,6 +38,7 @@ class PsetItem(QListWidgetItem):
                 return 1
         else:
             return 1
+
 class PropertySetInherWindow(QWidget):
     def __init__(self,mainWindow):
         def connect():
@@ -112,6 +113,11 @@ class PropertySetInherWindow(QWidget):
                 self.widget.list_view_pset.addItem(item)
                 self.mainWindow.update_completer()
                 self.widget.list_view_pset.setCurrentItem(item)
+
+    def clear_all(self):
+        self.widget.list_view_pset.clear()
+        self.widget.list_view_existance.clear()
+
 def open_pset_list(mainWindow):
     pset_window = PropertySetInherWindow(mainWindow)
     return pset_window

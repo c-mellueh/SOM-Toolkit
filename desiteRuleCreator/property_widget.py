@@ -59,7 +59,11 @@ def delete(mainWindow):
             el: QTableWidgetItem = el
             if el.column() == 0:
                 property_set: PropertySet = el.data(constants.DATA_POS)
-                property_set.delete()
+
+                if property_set.is_child:
+                    property_set.parent.remove_child(property_set)
+                else:
+                    property_set.delete()
                 mainWindow.pset_table.selectRow(el.row())
 
         for i in sorted(mainWindow.pset_table.selectionModel().selectedRows()):
