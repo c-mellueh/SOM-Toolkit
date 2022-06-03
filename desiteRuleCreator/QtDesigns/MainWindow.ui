@@ -134,6 +134,9 @@
             <property name="text">
              <string>Update</string>
             </property>
+            <property name="autoDefault">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -141,12 +144,18 @@
             <property name="text">
              <string>Delete</string>
             </property>
+            <property name="autoDefault">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="button_objects_add">
             <property name="text">
              <string>Add</string>
+            </property>
+            <property name="autoDefault">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -233,6 +242,9 @@
               <property name="text">
                <string>Rename</string>
               </property>
+              <property name="autoDefault">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item>
@@ -240,12 +252,18 @@
               <property name="text">
                <string>Delete</string>
               </property>
+              <property name="autoDefault">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="button_Pset_add">
               <property name="text">
                <string>Add</string>
+              </property>
+              <property name="autoDefault">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -266,6 +284,9 @@
           </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
           </property>
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
@@ -645,8 +666,15 @@
     <addaction name="action_desite_Settings"/>
     <addaction name="action_desite_Export"/>
    </widget>
+   <widget class="QMenu" name="menuPredefined_Psets">
+    <property name="title">
+     <string>Predefined Psets</string>
+    </property>
+    <addaction name="action_show_list"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDesite"/>
+   <addaction name="menuPredefined_Psets"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_file_new">
@@ -679,7 +707,36 @@
     <string>Export</string>
    </property>
   </action>
+  <action name="action_show_list">
+   <property name="text">
+    <string>Show List</string>
+   </property>
+  </action>
  </widget>
+ <tabstops>
+  <tabstop>lineEdit_object_name</tabstop>
+  <tabstop>lineEdit_ident_pSet</tabstop>
+  <tabstop>lineEdit_ident_attribute</tabstop>
+  <tabstop>lineEdit_ident_value</tabstop>
+  <tabstop>button_objects_add</tabstop>
+  <tabstop>button_objects_delete</tabstop>
+  <tabstop>button_objects_update</tabstop>
+  <tabstop>tree</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>lineEdit_pSet_name</tabstop>
+  <tabstop>button_Pset_add</tabstop>
+  <tabstop>button_Pset_delete</tabstop>
+  <tabstop>button_Pset_rename</tabstop>
+  <tabstop>tableWidget_inherited</tabstop>
+  <tabstop>pushButton_delete_script</tabstop>
+  <tabstop>pushButton_import_script</tabstop>
+  <tabstop>pushButton_burger</tabstop>
+  <tabstop>pushButton_left</tabstop>
+  <tabstop>listWidget_scripts</tabstop>
+  <tabstop>pushButton_add_script</tabstop>
+  <tabstop>pushButton_right</tabstop>
+  <tabstop>code_edit</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

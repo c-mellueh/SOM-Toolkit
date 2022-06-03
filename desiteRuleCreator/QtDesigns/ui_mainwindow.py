@@ -41,6 +41,8 @@ class Ui_MainWindow(object):
         self.action_desite_Settings.setObjectName(u"action_desite_Settings")
         self.action_desite_Export = QAction(MainWindow)
         self.action_desite_Export.setObjectName(u"action_desite_Export")
+        self.action_show_list = QAction(MainWindow)
+        self.action_show_list.setObjectName(u"action_show_list")
         self.verticalLayout_main = QWidget(MainWindow)
         self.verticalLayout_main.setObjectName(u"verticalLayout_main")
         self.horizontalLayout_2 = QHBoxLayout(self.verticalLayout_main)
@@ -108,16 +110,19 @@ class Ui_MainWindow(object):
         self.horizontalLayout_object_button.setObjectName(u"horizontalLayout_object_button")
         self.button_objects_update = QPushButton(self.verticalLayout_main)
         self.button_objects_update.setObjectName(u"button_objects_update")
+        self.button_objects_update.setAutoDefault(True)
 
         self.horizontalLayout_object_button.addWidget(self.button_objects_update)
 
         self.button_objects_delete = QPushButton(self.verticalLayout_main)
         self.button_objects_delete.setObjectName(u"button_objects_delete")
+        self.button_objects_delete.setAutoDefault(True)
 
         self.horizontalLayout_object_button.addWidget(self.button_objects_delete)
 
         self.button_objects_add = QPushButton(self.verticalLayout_main)
         self.button_objects_add.setObjectName(u"button_objects_add")
+        self.button_objects_add.setAutoDefault(True)
 
         self.horizontalLayout_object_button.addWidget(self.button_objects_add)
 
@@ -167,16 +172,19 @@ class Ui_MainWindow(object):
         self.horizontalLayout_pSet_button.setObjectName(u"horizontalLayout_pSet_button")
         self.button_Pset_rename = QPushButton(self.tab_property_set)
         self.button_Pset_rename.setObjectName(u"button_Pset_rename")
+        self.button_Pset_rename.setAutoDefault(True)
 
         self.horizontalLayout_pSet_button.addWidget(self.button_Pset_rename)
 
         self.button_Pset_delete = QPushButton(self.tab_property_set)
         self.button_Pset_delete.setObjectName(u"button_Pset_delete")
+        self.button_Pset_delete.setAutoDefault(True)
 
         self.horizontalLayout_pSet_button.addWidget(self.button_Pset_delete)
 
         self.button_Pset_add = QPushButton(self.tab_property_set)
         self.button_Pset_add.setObjectName(u"button_Pset_add")
+        self.button_Pset_add.setAutoDefault(True)
 
         self.horizontalLayout_pSet_button.addWidget(self.button_Pset_add)
 
@@ -209,6 +217,7 @@ class Ui_MainWindow(object):
         self.tableWidget_inherited.setSizePolicy(sizePolicy2)
         self.tableWidget_inherited.setFocusPolicy(Qt.StrongFocus)
         self.tableWidget_inherited.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableWidget_inherited.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tableWidget_inherited.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableWidget_inherited.setSortingEnabled(True)
         self.tableWidget_inherited.horizontalHeader().setProperty("showSortIndicator", True)
@@ -369,19 +378,44 @@ class Ui_MainWindow(object):
         self.menuFile.setObjectName(u"menuFile")
         self.menuDesite = QMenu(self.menubar)
         self.menuDesite.setObjectName(u"menuDesite")
+        self.menuPredefined_Psets = QMenu(self.menubar)
+        self.menuPredefined_Psets.setObjectName(u"menuPredefined_Psets")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        QWidget.setTabOrder(self.lineEdit_object_name, self.lineEdit_ident_pSet)
+        QWidget.setTabOrder(self.lineEdit_ident_pSet, self.lineEdit_ident_attribute)
+        QWidget.setTabOrder(self.lineEdit_ident_attribute, self.lineEdit_ident_value)
+        QWidget.setTabOrder(self.lineEdit_ident_value, self.button_objects_add)
+        QWidget.setTabOrder(self.button_objects_add, self.button_objects_delete)
+        QWidget.setTabOrder(self.button_objects_delete, self.button_objects_update)
+        QWidget.setTabOrder(self.button_objects_update, self.tree)
+        QWidget.setTabOrder(self.tree, self.tabWidget)
+        QWidget.setTabOrder(self.tabWidget, self.lineEdit_pSet_name)
+        QWidget.setTabOrder(self.lineEdit_pSet_name, self.button_Pset_add)
+        QWidget.setTabOrder(self.button_Pset_add, self.button_Pset_delete)
+        QWidget.setTabOrder(self.button_Pset_delete, self.button_Pset_rename)
+        QWidget.setTabOrder(self.button_Pset_rename, self.tableWidget_inherited)
+        QWidget.setTabOrder(self.tableWidget_inherited, self.pushButton_delete_script)
+        QWidget.setTabOrder(self.pushButton_delete_script, self.pushButton_import_script)
+        QWidget.setTabOrder(self.pushButton_import_script, self.pushButton_burger)
+        QWidget.setTabOrder(self.pushButton_burger, self.pushButton_left)
+        QWidget.setTabOrder(self.pushButton_left, self.listWidget_scripts)
+        QWidget.setTabOrder(self.listWidget_scripts, self.pushButton_add_script)
+        QWidget.setTabOrder(self.pushButton_add_script, self.pushButton_right)
+        QWidget.setTabOrder(self.pushButton_right, self.code_edit)
 
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuDesite.menuAction())
+        self.menubar.addAction(self.menuPredefined_Psets.menuAction())
         self.menuFile.addAction(self.action_file_new)
         self.menuFile.addAction(self.action_file_Save)
         self.menuFile.addAction(self.action_file_Save_As)
         self.menuFile.addAction(self.action_file_Open)
         self.menuDesite.addAction(self.action_desite_Settings)
         self.menuDesite.addAction(self.action_desite_Export)
+        self.menuPredefined_Psets.addAction(self.action_show_list)
 
         self.retranslateUi(MainWindow)
 
@@ -399,6 +433,7 @@ class Ui_MainWindow(object):
         self.action_file_Open.setText(QCoreApplication.translate("MainWindow", u"Open", None))
         self.action_desite_Settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.action_desite_Export.setText(QCoreApplication.translate("MainWindow", u"Export", None))
+        self.action_show_list.setText(QCoreApplication.translate("MainWindow", u"Show List", None))
         self.lineEdit_ident_value.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Value", None))
         self.label_object_name.setText(QCoreApplication.translate("MainWindow", u"Object", None))
         self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
@@ -457,5 +492,6 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_code), QCoreApplication.translate("MainWindow", u"Code", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuDesite.setTitle(QCoreApplication.translate("MainWindow", u"Desite", None))
+        self.menuPredefined_Psets.setTitle(QCoreApplication.translate("MainWindow", u"Predefined Psets", None))
     # retranslateUi
 

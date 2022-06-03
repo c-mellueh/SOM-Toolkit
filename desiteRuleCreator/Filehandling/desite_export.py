@@ -1,14 +1,16 @@
 from PySide6.QtWidgets import QFileDialog
-from . import constants,classes
+from desiteRuleCreator.data import classes, constants
+from desiteRuleCreator import Template
 import os
 import codecs
-#import instanz
 import xml.etree.ElementTree as ET
 from lxml import etree
 import copy
 from jinja2 import Environment, FileSystemLoader
 import uuid
 import datetime
+
+#TODO add xs:bool
 
 def add_js_rule(parent: etree._Element, file):
     name = os.path.basename(file.name)
@@ -111,7 +113,7 @@ def handle_attribute_rule_list(xml_rule):
 
 
 def handle_template():
-    path = f"{os.path.dirname(os.path.abspath(__file__))}/Template/"
+    path = Template.HOME_DIR
     file_loader = FileSystemLoader(path)
     env = Environment(loader=file_loader)
     env.trim_blocks = True
@@ -133,7 +135,7 @@ def define_xml_elements(mainWindow,xml_container,name):
 
 
 def handle_js_rules(xml_attributeRuleList,starts_with):
-    folder =f"{os.path.dirname(os.path.abspath(__file__))}/Template/{constants.FILEPATH_JS}/"
+    folder =f"{Template.HOME_DIR}/{constants.FILEPATH_JS}/"
 
     for fn in os.listdir(folder):
         if fn.startswith(starts_with):
@@ -153,9 +155,12 @@ def handle_code(xml_rule_script):
 
 def handle_object_rules(xml_container,mainWindow,template):
     xml_object_list = dict()
-    for object in classes.Object.iter.values():
+
+    obj_sorted = list(classes.Object.iter)
+    obj_sorted.sort(key = lambda x: x.name)
+    for object in obj_sorted:
         if not object.is_concept:
-            object:classes.Object = object
+            object: classes.Object = object
             xml_checkrun = handle_checkrun(xml_container,object.name,mainWindow.project.author)
             xml_object_list[xml_checkrun] = object
             xml_rule = handle_rule(xml_checkrun,"Attributes")
@@ -163,16 +168,17 @@ def handle_object_rules(xml_container,mainWindow,template):
             xml_rule_script = handle_rule_script(xml_attribute_rule_list,name = object.name)
             xml_code = handle_code(xml_rule_script)
 
-            attributes = object.attributes
+            attributes = object.get_attributes(inherit=False)
+            property_sets = object.property_sets
 
-            for inh_attributes in object.inherited_attributes.values():
-                attributes+=attributes
-            pset_dict = classes.attributes_to_psetdict(attributes)  # pset_dict[PropertySet] = Attribute
+            ident_name = object.ident_attrib.name
+            ident_property_set = object.ident_attrib.propertySet.name
+            if ident_property_set == constants.IGNORE_PSET:
+                ident_property_set = ""
+            else:
+                ident_property_set= f"{ident_property_set}:"
 
-            psets = pset_dict.keys()
-            ident_name = object.identifier.name
-            ident_property_set = object.identifier.propertySet.name
-            cdata_code = template.render(psets=psets, object=object, ident=ident_name, ident_pset=ident_property_set,constants = constants)
+            cdata_code = template.render(psets=property_sets, object=object, ident=ident_name, ident_pset=ident_property_set, constants =constants)
             xml_code.text = cdata_code
             handle_rule(xml_checkrun,"UniquePattern")
     return xml_object_list
@@ -185,8 +191,6 @@ def old_file_conversion(projekt):
     for obj in objekte:
         if obj.fachdisziplin not in fblist:
             fblist.append(obj.fachdisziplin)
-
-    print(";".join(fblist))
 
     for objekt in objekte:
         property_sets = objekt.get_all_property_sets()
@@ -207,6 +211,14 @@ def old_file_conversion(projekt):
             obj.name = obj.name[1:]
 
 def handle_data_section(xml_qa_export,xml_checkrun_first,xml_checkrun_obj,xml_checkrun_last):
+    def get_name(obj: classes.Object):
+        pset_name = obj.ident_attrib.propertySet.name
+        if pset_name == "IFC":
+            return obj.ident_attrib.name
+
+        else:
+            return f"{pset_name}:{obj.ident_attrib.name}"
+
     xml_dataSection = etree.SubElement(xml_qa_export, "dataSection")
 
     checkRunData = etree.SubElement(xml_dataSection, "checkRunData")
@@ -218,9 +230,10 @@ def handle_data_section(xml_qa_export,xml_checkrun_first,xml_checkrun_obj,xml_ch
         checkRunData.set("refID", str(xml_checkrun.attrib.get("ID")))
         filterList = etree.SubElement(checkRunData, "filterList")
         filter = etree.SubElement(filterList, "filter")
-        filter.set("name", f"{obj.identifier.propertySet.name}:{obj.identifier.name}")
+
+        filter.set("name", get_name(obj))
         filter.set("dt", "xs:string")
-        pattern = f'"{obj.identifier.value[0]}"'            #ToDO: ändern
+        pattern = f'"{obj.ident_attrib.value[0]}"'            #ToDO: ändern
         filter.set("pattern", pattern)
 
     checkRunData = etree.SubElement(xml_dataSection, "checkRunData")

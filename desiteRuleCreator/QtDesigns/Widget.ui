@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>864</width>
-    <height>213</height>
+    <width>988</width>
+    <height>324</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,25 +16,56 @@
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <layout class="QGridLayout" name="layout_grid">
-     <item row="4" column="0" colspan="5">
-      <widget class="QLabel" name="label_values">
-       <property name="text">
-        <string>Values</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="3">
+     <item row="2" column="4">
       <widget class="QPushButton" name="button_delete">
        <property name="text">
         <string>Delete</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_name">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <spacer name="spacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="2" column="5">
+      <widget class="QPushButton" name="button_add">
+       <property name="text">
+        <string>Add</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
       <widget class="QComboBox" name="combo_data_type">
        <item>
         <property name="text">
          <string>xs:string</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>xs:bool</string>
         </property>
        </item>
        <item>
@@ -44,36 +75,8 @@
        </item>
       </widget>
      </item>
-     <item row="2" column="4">
-      <widget class="QPushButton" name="button_add">
-       <property name="text">
-        <string>Add</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" colspan="5">
-      <widget class="QLineEdit" name="lineEdit_name">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>350</width>
-         <height>0</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
+     <item row="2" column="3">
       <widget class="QComboBox" name="combo_type">
-       <item>
-        <property name="text">
-         <string>Value</string>
-        </property>
-       </item>
        <item>
         <property name="text">
          <string>List</string>
@@ -91,33 +94,7 @@
        </item>
       </widget>
      </item>
-     <item row="7" column="0">
-      <spacer name="spacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_name">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0" colspan="5">
+     <item row="6" column="0" colspan="6">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QHBoxLayout" name="layout_input">
@@ -163,6 +140,36 @@
        </item>
       </layout>
      </item>
+     <item row="3" column="0" colspan="6">
+      <widget class="QLineEdit" name="lineEdit_name">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>350</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="5">
+      <widget class="QLabel" name="label_values">
+       <property name="text">
+        <string>Values</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="5">
+      <widget class="QCheckBox" name="check_box_inherit">
+       <property name="text">
+        <string>inherit</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -191,6 +198,12 @@
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectRows</enum>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>10</width>
+       <height>10</height>
+      </size>
+     </property>
      <property name="showGrid">
       <bool>true</bool>
      </property>
@@ -203,11 +216,11 @@
      <attribute name="horizontalHeaderCascadingSectionResizes">
       <bool>false</bool>
      </attribute>
-     <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>70</number>
-     </attribute>
      <attribute name="horizontalHeaderMinimumSectionSize">
       <number>50</number>
+     </attribute>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>70</number>
      </attribute>
      <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
       <bool>true</bool>
