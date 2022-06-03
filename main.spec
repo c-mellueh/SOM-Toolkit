@@ -8,7 +8,7 @@ a = Analysis(
     ['main.py',],
     pathex=[],
     binaries=[],
-    datas=[('desiteRuleCreator/scripts','desiteRuleCreator/scripts'),('desiteRuleCreator/Template','desiteRuleCreator/Template'),('desiteRuleCreator/saves','desiteRuleCreator/saves'),('desiteRuleCreator/icon.ico','desiteRuleCreator/icon.ico')],
+    datas=[('desiteRuleCreator/scripts','desiteRuleCreator/scripts'),('desiteRuleCreator/Template','desiteRuleCreator/Template'),('desiteRuleCreator/saves','desiteRuleCreator/saves')],
     hiddenimports=['jinja2','lxml',],
     hookspath=[],
     hooksconfig={},
