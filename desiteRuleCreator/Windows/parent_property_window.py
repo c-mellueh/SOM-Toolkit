@@ -1,11 +1,13 @@
 import re
+import os
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QShowEvent
+from PySide6.QtGui import QShowEvent,QIcon
 from PySide6.QtWidgets import QWidget, QListWidgetItem
 
 from desiteRuleCreator.QtDesigns import ui_PsetInheritance
-from desiteRuleCreator.data import classes
+from desiteRuleCreator.data import classes,constants
+from desiteRuleCreator import icons
 
 
 class PsetItem(QListWidgetItem):
@@ -59,8 +61,11 @@ class PropertySetInherWindow(QWidget):
             pass
 
         super().__init__()
+
         self.widget = ui_PsetInheritance.Ui_PsetInherWidget()
         self.widget.setupUi(self)
+        self.setWindowIcon(icons.get_icon())
+        self.setWindowTitle(constants.PREDEFINED_PROPERTY_WINDOW_NAME)
         self.widget.list_view_pset.clear()
         self.widget.list_view_existance.clear()
         self.show()
