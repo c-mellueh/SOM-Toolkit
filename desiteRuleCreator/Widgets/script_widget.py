@@ -15,13 +15,14 @@ def init(main_window):
         ui.listWidget_scripts.itemChanged.connect(main_window.code_item_changed)
 
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
-    set_enable(main_window, False)
 
     ui.verticalLayout_2.removeWidget(ui.code_edit)
+    ui.code_edit.deleteLater()
     ui.code_edit = CodeEditor()
     ui.verticalLayout_2.addWidget(ui.code_edit)
     ui.code_edit.show()
     connect()
+    set_enable(main_window, False)
 
 
 def item_changed(main_window, item: classes.Script):

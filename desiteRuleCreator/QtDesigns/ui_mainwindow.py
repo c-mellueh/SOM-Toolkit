@@ -195,13 +195,13 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.gridLayout_pSet)
 
         self.tableWidget_inherited = QTableWidget(self.tab_property_set)
-        if self.tableWidget_inherited.columnCount() < 2:
+        if (self.tableWidget_inherited.columnCount() < 2):
             self.tableWidget_inherited.setColumnCount(2)
         __qtablewidgetitem = QTableWidgetItem()
         self.tableWidget_inherited.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
         self.tableWidget_inherited.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        if self.tableWidget_inherited.rowCount() < 1:
+        if (self.tableWidget_inherited.rowCount() < 1):
             self.tableWidget_inherited.setRowCount(1)
         __qtablewidgetitem2 = QTableWidgetItem()
         self.tableWidget_inherited.setVerticalHeaderItem(0, __qtablewidgetitem2)
