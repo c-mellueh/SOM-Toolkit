@@ -10,6 +10,7 @@ XS_INT = "xs:int"
 RANGE_STRINGS = ["Range", "range", "RANGE"]
 
 VALUE_TYPE_LOOKUP = {VALUE: "Value", FORMAT: "Format", RANGE: "Range", LIST: "List", }
+PREDEFINED_PROPERTY_WINDOW_NAME = "Predefined Properties"
 
 DATATYPE_NUMBER = "xs:double"
 ICON_PATH = "icons/icon.ico"

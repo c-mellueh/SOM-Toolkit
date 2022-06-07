@@ -9,7 +9,7 @@ from desiteRuleCreator.QtDesigns.ui_widget import Ui_layout_main
 from desiteRuleCreator.Windows import popups
 from desiteRuleCreator.data import constants
 from desiteRuleCreator.data.classes import PropertySet, Attribute
-
+from desiteRuleCreator import icons
 
 def make_string_printable(value):
     value = str(value).replace(".", ",")
@@ -37,7 +37,6 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.active_object = active_object
         self.widget.table_widget.data_dict = dict()
         self.fill_table()
-        self.setWindowTitle(window_title)
         self.widget.button_add_line.clicked.connect(self.new_line)
         self.input_lines = {self.widget.layout_input: self.widget.lineEdit_input}
         self.widget.table_widget.itemDoubleClicked.connect(self.list_clicked)
@@ -52,8 +51,8 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         self.widget.table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.widget.table_widget.customContextMenuRequested.connect(self.open_menu)
-        icon = QtGui.QIcon(constants.ICON_PATH)
-        self.setWindowIcon(icon)
+        self.setWindowTitle(window_title)
+        self.setWindowIcon(icons.get_icon())
         self.show()
         self.resize(1000, 400)
 
