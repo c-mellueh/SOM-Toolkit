@@ -7,6 +7,9 @@
     <orderEntry type="jdk" jdkName="Python 3.9 (desiteRuleCreator) (venv)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="PackageRequirementsSettings">
+    <option name="versionSpecifier" value="Don't specify version" />
+  </component>
   <component name="TemplatesService">
     <option name="templateFileTypes">
       <list>

@@ -1,3 +1,5 @@
 PySide6
 lxml
 jinja2
+openpyxl
+setuptools

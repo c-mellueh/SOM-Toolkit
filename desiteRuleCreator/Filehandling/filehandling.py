@@ -1,12 +1,13 @@
-from PySide6.QtWidgets import QFileDialog, QInputDialog, QLineEdit, QMessageBox
-from lxml import etree
 from uuid import uuid4
 
+from PySide6.QtWidgets import QFileDialog, QInputDialog, QLineEdit, QMessageBox
+from lxml import etree
+
 from desiteRuleCreator import __version__ as project_version
-from desiteRuleCreator.data import classes, constants
-from desiteRuleCreator.data.classes import Object, PropertySet, Attribute
 from desiteRuleCreator.Windows.popups import msg_delete_or_merge
 from desiteRuleCreator.Windows.popups import msg_unsaved, msg_close
+from desiteRuleCreator.data import classes, constants
+from desiteRuleCreator.data.classes import Object, PropertySet, Attribute
 
 
 # from .run import MainWindow
@@ -19,14 +20,15 @@ def string_to_bool(text):
     else:
         return None
 
-def fill_tree(mainWindow):
+
+def fill_tree(main_window):
     def fill_next_level(objects, item_dict):
 
         new_item_dict = dict()
         for el in objects:
             parent_widget = item_dict.get(el.parent)
             if parent_widget is not None:
-                tree_widget_item = mainWindow.addObjectToTree(el, parent_widget)
+                tree_widget_item = main_window.add_object_to_tree(el, parent_widget)
                 new_item_dict[el] = tree_widget_item
 
         objects = [obj for obj in objects if obj not in new_item_dict.keys()]
@@ -38,8 +40,8 @@ def fill_tree(mainWindow):
     objects = Object.iter
 
     for obj in objects:
-        if obj.parent == None:
-            tree_widget_item = mainWindow.addObjectToTree(obj)
+        if obj.parent is None:
+            tree_widget_item = main_window.add_object_to_tree(obj)
             item_dict[obj] = tree_widget_item
 
     objects = [obj for obj in objects if obj not in item_dict.keys()]
@@ -47,14 +49,14 @@ def fill_tree(mainWindow):
     fill_next_level(objects, item_dict)
 
 
-def importData(widget, path:str=False):
+def import_data(widget, path: str = False):
     if path:
-        widget.clearObjectInput()
+        widget.clear_object_input()
 
-        tree: etree._ElementTree = etree.parse(path)
-        projekt_xml: etree._Element = tree.getroot()
+        tree = etree.parse(path)
+        projekt_xml = tree.getroot()
 
-        if projekt_xml.attrib.get("version") is None:   #OLD FILES
+        if projekt_xml.attrib.get("version") is None:  # OLD FILES
             import_old(projekt_xml)
             widget.project = classes.Project(projekt_xml.attrib.get("Name"), author="CMellueh")
         else:
@@ -66,8 +68,9 @@ def importData(widget, path:str=False):
 
         widget.setWindowTitle(widget.project.name)
 
-def import_new(projekt_xml: etree._Element):
-    def import_property_sets(xml_property_sets)-> (list[PropertySet],Attribute):
+
+def import_new(projekt_xml):
+    def import_property_sets(xml_property_sets) -> (list[PropertySet], Attribute):
         property_sets = list()
         ident_attrib = None
 
@@ -75,14 +78,14 @@ def import_new(projekt_xml: etree._Element):
             attribs = xml_property_set.attrib
             name = attribs.get(constants.NAME)
             identifier = attribs.get(constants.IDENTIFIER)
-            property_set = PropertySet(name, object=None, identifier=identifier)
+            property_set = PropertySet(name, obj=None, identifier=identifier)
             value = import_attributes(xml_property_set, property_set)
             if value is not None:
                 ident_attrib = value
             property_sets.append(property_set)
-        return property_sets,ident_attrib
+        return property_sets, ident_attrib
 
-    def import_attributes(xml_object,property_set):
+    def import_attributes(xml_object, property_set):
         def transform_new_values(xml_attribute):
             value_type = xml_attribute.attrib.get("value_type")
             value = list()
@@ -101,6 +104,7 @@ def import_new(projekt_xml: etree._Element):
                             from_to_list.append(xml_value.text)
                     value.append(from_to_list)
             return value
+
         ident_attrib = None
         for xml_attribute in xml_object:
             if xml_attribute.tag == "Attribute":
@@ -112,17 +116,16 @@ def import_new(projekt_xml: etree._Element):
                 is_identifier = attribs.get(constants.IS_IDENTIFIER)
                 child_inh = string_to_bool(attribs.get(constants.CHILD_INHERITS_VALUE))
                 value = transform_new_values(xml_attribute)
-                attrib = Attribute(property_set, name, value, value_type, data_type,child_inh,identifier)
+                attrib = Attribute(property_set, name, value, value_type, data_type, child_inh, identifier)
                 if is_identifier == str(True):
                     ident_attrib = attrib
         return ident_attrib
 
-    def import_scripts(xml_script,obj):
-            name = xml_script.attrib.get("name")
-            code = xml_script.text
-            script = classes.Script(name, obj)
-            script.code = code
-
+    def import_scripts(xml_script, obj):
+        name = xml_script.attrib.get("name")
+        code = xml_script.text
+        script = classes.Script(name, obj)
+        script.code = code
 
     def get_obj_data(xml_object):
 
@@ -138,10 +141,10 @@ def import_new(projekt_xml: etree._Element):
         return name, parent, identifier, is_concept
 
     def create_ident_dict(item_list):
-        return {item.identifier:item for item in item_list}
+        return {item.identifier: item for item in item_list}
 
-    def link_parents(xml_predefined_psets,xml_objects):
-        def iterate(xml_property_set_dict,xml_object_dict,xml_attribute_dict):
+    def link_parents(xml_predefined_psets, xml_objects):
+        def iterate(xml_property_set_dict, xml_object_dict, xml_attribute_dict):
             for xml_predefined_pset in xml_predefined_psets:
                 fill_dict(xml_property_set_dict, xml_predefined_pset)
                 for xml_attribute in xml_predefined_pset:
@@ -152,17 +155,18 @@ def import_new(projekt_xml: etree._Element):
                 for xml_property_set in xml_object:
                     fill_dict(xml_property_set_dict, xml_property_set)
                     for xml_attribute in xml_property_set:
-                        fill_dict(xml_attribute_dict,xml_attribute)
-        def fill_dict(xml_dict,xml_obj):
+                        fill_dict(xml_attribute_dict, xml_attribute)
+
+        def fill_dict(xml_dict, xml_obj):
             xml_dict[xml_obj.attrib.get(constants.IDENTIFIER)] = xml_obj.attrib.get(constants.PARENT)
 
-        def create_link(obj_dict,xml_dict):
-            for ident,obj in obj_dict.items():
+        def create_link(obj_dict, xml_dict):
+            for ident, obj in obj_dict.items():
 
                 parent_ident = xml_dict[str(ident)]
                 parent = obj_dict.get(parent_ident)
                 if parent is not None:
-                    parent.add_child(obj,copy = False)
+                    parent.add_child(obj, copy=False)
 
         xml_property_set_dict = dict()
         xml_object_dict = dict()
@@ -173,11 +177,11 @@ def import_new(projekt_xml: etree._Element):
         property_set_dict = create_ident_dict(PropertySet.iter)
         attribute_dict = create_ident_dict(Attribute.iter)
 
-        create_link(obj_dict,xml_object_dict)
-        create_link(attribute_dict,xml_attribute_dict)
-        create_link(property_set_dict,xml_property_set_dict)
+        create_link(obj_dict, xml_object_dict)
+        create_link(attribute_dict, xml_attribute_dict)
+        create_link(property_set_dict, xml_property_set_dict)
 
-    xml_predefined_psets =[x for x in projekt_xml if x.tag == constants.PREDEFINED_PSET]
+    xml_predefined_psets = [x for x in projekt_xml if x.tag == constants.PREDEFINED_PSET]
     xml_objects = [x for x in projekt_xml if x.tag == constants.OBJECT]
 
     import_property_sets(xml_predefined_psets)
@@ -185,26 +189,25 @@ def import_new(projekt_xml: etree._Element):
     for xml_object in xml_objects:
         xml_property_sets = [x for x in xml_object if x.tag == constants.PROPERTY_SET]
         xml_scripts = [x for x in xml_object if x.tag == constants.SCRIPT]
-        property_sets,ident_attrib= import_property_sets(xml_property_sets)
+        property_sets, ident_attrib = import_property_sets(xml_property_sets)
         name, parent, identifer, is_concept = get_obj_data(xml_object)
-        obj = Object(name, ident_attrib, is_concept,identifier=identifer)
+        obj = Object(name, ident_attrib, is_concept, identifier=identifer)
 
         for property_set in property_sets:
             obj.add_property_set(property_set)
 
         for xml_script in xml_scripts:
-            import_scripts(xml_script,obj)
+            import_scripts(xml_script, obj)
 
-
-    link_parents(xml_predefined_psets,xml_objects)
+    link_parents(xml_predefined_psets, xml_objects)
 
 
 def import_old(projekt_xml):
     def handle_identifier(xml_object):
         attributes = xml_object.attrib
         identifier_string: str = attributes.get("Identifier")
-        pSet = PropertySet(identifier_string.split(":")[0])
-        attribute = Attribute(pSet, identifier_string.split(":")[1], [attributes.get("Name")],
+        property_set = PropertySet(identifier_string.split(":")[0])
+        attribute = Attribute(property_set, identifier_string.split(":")[1], [attributes.get("Name")],
                               constants.LIST)
         return attribute
 
@@ -245,7 +248,7 @@ def import_old(projekt_xml):
 
     for xml_object in projekt_xml:
 
-        if (xml_object.tag == "Objekt"):
+        if xml_object.tag == "Objekt":
             ident_attrib = handle_identifier(xml_object)
 
             group_name = xml_object.attrib.get("Fachdisziplin")
@@ -254,11 +257,11 @@ def import_old(projekt_xml):
             obj.parent = fachdisziplinen_dict[group_name]
 
             for xml_property_set in xml_object:
-                psetName = xml_property_set.attrib.get("Name")
-                if psetName in obj.psetNameDict:
-                    pSet = obj.psetNameDict[psetName]
+                pset_name = xml_property_set.attrib.get("Name")
+                if pset_name in obj.psetNameDict:
+                    property_set = obj.psetNameDict[pset_name]
                 else:
-                    pSet = PropertySet(psetName)
+                    property_set = PropertySet(pset_name)
 
                 for xml_attribute in xml_property_set:
                     attrib = xml_attribute.attrib
@@ -267,25 +270,24 @@ def import_old(projekt_xml):
                     data_type = attrib.get("Datentyp")
 
                     value = transform_values(xml_attribute, value_type)
-                    atrb = Attribute(pSet, name, value, value_type, data_type)
+                    atrb = Attribute(property_set, name, value, value_type, data_type)
                     obj.add_attribute(atrb)
 
 
-def save_as_clicked(mainWindow):
-    if mainWindow.save_path is not None:
+def save_as_clicked(main_window):
+    if main_window.save_path is not None:
         path = \
-            QFileDialog.getSaveFileName(mainWindow, "Save XML", mainWindow.save_path, "xml Files (*.xml *.DRCxml)")[0]
+            QFileDialog.getSaveFileName(main_window, "Save XML", main_window.save_path, "xml Files (*.xml *.DRCxml)")[0]
     else:
-        path = QFileDialog.getSaveFileName(mainWindow, "Save XML", "", "xml Files (*.xml *.DRCxml)")[0]
+        path = QFileDialog.getSaveFileName(main_window, "Save XML", "", "xml Files (*.xml *.DRCxml)")[0]
 
     if path:
-        mainWindow.save(path)
+        main_window.save(path)
     return path
 
 
-def save(mainWindow, path):
-
-    def add_parent(xml_object,obj):
+def save(main_window, path):
+    def add_parent(xml_object, obj):
         if obj.parent is not None:
             xml_object.set(constants.PARENT, str(obj.parent.identifier))
         else:
@@ -301,42 +303,42 @@ def save(mainWindow, path):
                 xml_pset.set(constants.PARENT, constants.NONE)
 
                 for attribute in predefined_pset.attributes:
-                    add_attribute(attribute,predefined_pset,xml_pset)
+                    add_attribute(attribute, predefined_pset, xml_pset)
 
-    def add_property_set(property_set:PropertySet,xml_object):
+    def add_property_set(property_set: PropertySet, xml_object):
         xml_pset = etree.SubElement(xml_object, constants.PROPERTY_SET)
         xml_pset.set(constants.NAME, property_set.name)
         xml_pset.set(constants.IDENTIFIER, str(property_set.identifier))
-        add_parent(xml_pset,property_set)
+        add_parent(xml_pset, property_set)
 
         for attribute in property_set.attributes:
-            add_attribute(attribute,property_set,xml_pset)
+            add_attribute(attribute, property_set, xml_pset)
 
-    def add_object(obj:Object,xml_project):
+    def add_object(obj: Object, xml_project):
         xml_object = etree.SubElement(xml_project, constants.OBJECT)
         xml_object.set(constants.NAME, obj.name)
         xml_object.set(constants.IDENTIFIER, obj.identifier)
         xml_object.set("is_concept", str(obj.is_concept))
-        add_parent(xml_object,obj)
+        add_parent(xml_object, obj)
 
         for property_set in obj.property_sets:
-            add_property_set(property_set,xml_object)
+            add_property_set(property_set, xml_object)
 
         for script in obj.scripts:
             script: classes.Script = script
-            xml_script = etree.SubElement(xml_object,"Script")
+            xml_script = etree.SubElement(xml_object, "Script")
             xml_script.set(constants.NAME, script.name)
             xml_script.text = script.code
         pass
 
-    def add_attribute(attribute,property_set, xml_pset):
+    def add_attribute(attribute, property_set, xml_pset):
         xml_attribute = etree.SubElement(xml_pset, constants.ATTRIBUTE)
         xml_attribute.set(constants.NAME, attribute.name)
         xml_attribute.set(constants.DATA_TYPE, attribute.data_type)
         xml_attribute.set(constants.VALUE_TYPE, attribute.value_type)
         xml_attribute.set(constants.IDENTIFIER, str(attribute.identifier))
         xml_attribute.set(constants.CHILD_INHERITS_VALUE, str(attribute.child_inherits_values))
-        add_parent(xml_attribute,attribute)
+        add_parent(xml_attribute, attribute)
 
         obj = property_set.object
         if obj is not None and attribute == obj.ident_attrib:
@@ -345,89 +347,87 @@ def save(mainWindow, path):
             ident = False
 
         xml_attribute.set(constants.IS_IDENTIFIER, str(ident))
-        add_value(attribute,xml_attribute)
+        add_value(attribute, xml_attribute)
 
-    def add_value(attribute,xml_attribute):
-            values = attribute.value
-            for value in values:
-                xml_value = etree.SubElement(xml_attribute, "Value")
-                if attribute.value_type == constants.RANGE:
-                    xml_from = etree.SubElement(xml_value, "From")
-                    xml_to = etree.SubElement(xml_value, "To")
-                    xml_from.text = str(value[0])
-                    if len(value) > 1:
-                        xml_to.text = str(value[1])
-                else:
-                    xml_value.text = str(value)
+    def add_value(attribute, xml_attribute):
+        values = attribute.value
+        for value in values:
+            xml_value = etree.SubElement(xml_attribute, "Value")
+            if attribute.value_type == constants.RANGE:
+                xml_from = etree.SubElement(xml_value, "From")
+                xml_to = etree.SubElement(xml_value, "To")
+                xml_from.text = str(value[0])
+                if len(value) > 1:
+                    xml_to.text = str(value[1])
+            else:
+                xml_value.text = str(value)
 
-
-
-
-    mainWindow.save_path = path
+    main_window.save_path = path
 
     xml_project = etree.Element(constants.PROJECT)
-    xml_project.set(constants.NAME, mainWindow.project.name)
+    xml_project.set(constants.NAME, main_window.project.name)
     xml_project.set(constants.VERSION, project_version)
 
     add_predefined_property_sets(xml_project)
     for obj in Object.iter:
-        add_object(obj,xml_project)
+        add_object(obj, xml_project)
 
     tree = etree.ElementTree(xml_project)
 
     with open(path, "wb") as f:
         tree.write(f, pretty_print=True, encoding="utf-8", xml_declaration=True)
 
-    mainWindow.project.reset_changed()
+    main_window.project.reset_changed()
 
-def save_clicked(mainWindow):
-    if mainWindow.save_path is None:
-        path = mainWindow.save_as_clicked()
+
+def save_clicked(main_window):
+    if main_window.save_path is None:
+        path = main_window.save_as_clicked()
     else:
-        save(mainWindow, mainWindow.save_path)
-        path = mainWindow.save_path
+        save(main_window, main_window.save_path)
+        path = main_window.save_path
     return path
 
 
-def new_file(mainWindow):
+def new_file(main_window):
     new_file = msg_unsaved()
     if new_file:
-        mainWindow.save_path = None
-        project_name = QInputDialog.getText(mainWindow, "New Project", "new Project Name:", QLineEdit.Normal, "")
+        main_window.save_path = None
+        project_name = QInputDialog.getText(main_window, "New Project", "new Project Name:", QLineEdit.Normal, "")
 
         if project_name[1]:
-            mainWindow.project = classes.Project(project_name[0])
-            mainWindow.setWindowTitle(mainWindow.project.name)
-            mainWindow.project.name = project_name[0]
-            mainWindow.clear_all()
+            main_window.project = classes.Project(project_name[0])
+            main_window.setWindowTitle(main_window.project.name)
+            main_window.project.name = project_name[0]
+            main_window.clear_all()
 
 
-def openFile_dialog(mainWindow, path=False):
+def open_file_dialog(main_window, path=False):
     if Object.iter:
         result = msg_delete_or_merge()
         if result is None:
             return
         elif result:
-            mainWindow.clear_all()
-            mainWindow.openFile(path)
+            main_window.clear_all()
+            main_window.open_file(path)
         else:
-            mainWindow.merge_new_file()
-            mainWindow.openFile(path)
+            main_window.merge_new_file()
+            main_window.open_file(path)
 
     else:
-        mainWindow.openFile(path)
+        main_window.open_file(path)
 
 
-def merge_new_file(mainWindow):
+def merge_new_file(main_window):
     print("MERGE NEEDS TO BE PROGRAMMED")  # TODO: Write Merge
 
 
-def close_event(mainWindow, event):
-    status = mainWindow.project.changed
+def close_event(main_window, event):
+    status = main_window.project.changed
     if status:
         reply = msg_close()
         if reply == QMessageBox.Save:
-            path = mainWindow.save_clicked()
+            path = main_window.save_clicked()
             if not path or path is None:
                 return False
             else:
