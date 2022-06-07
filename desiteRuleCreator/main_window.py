@@ -2,17 +2,19 @@ import os
 import sys
 
 from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter
 
-from . import constants,filehandling,object_widget,property_widget,desite_export,classes,script_widget
-from .QtDesigns.ui_mainwindow import Ui_MainWindow
-from .classes import Object, PropertySet
+from desiteRuleCreator import icons
+from desiteRuleCreator.Filehandling import filehandling, desite_export, excel
+from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
+from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
+from desiteRuleCreator.Windows import parent_property_window
+from desiteRuleCreator.data import classes
+from desiteRuleCreator.data.classes import Object, PropertySet
 
 
 def get_icon():
-    here = os.path.dirname(__file__)
-    icon_name = constants.ICON_PATH
-    icon_path = os.path.join(here, icon_name)
+    icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
     return QtGui.QIcon(icon_path)
 
 
@@ -22,11 +24,17 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.parent_property_window = None
+        self.parent_property_window: parent_property_window.PropertySetInherWindow = self.open_pset_list()
+        self.parent_property_window.hide()
+        self.pset_window = None
+
         # variables
         self.icon = get_icon()
         self.setWindowIcon(self.icon)
         self._save_path = None
         self._export_path = None
+        self.active_object = None
         self.project = classes.Project("")
 
         # init object and ProertyWidget
@@ -35,26 +43,27 @@ class MainWindow(QMainWindow):
         script_widget.init(self)
 
         # connect Menubar signals
-        self.ui.action_file_Open.triggered.connect(self.openFile_dialog)
+        self.ui.action_file_Open.triggered.connect(self.open_file_dialog)
         self.ui.action_file_new.triggered.connect(self.new_file)
         self.ui.action_file_Save.triggered.connect(self.save_clicked)
         self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
         self.ui.action_desite_Export.triggered.connect(self.export_desite_rules)
+        self.ui.action_show_list.triggered.connect(self.open_pset_list)
 
         self.ui.code_edit.textChanged.connect(self.update_script)
 
         # debug: preload file
-        #self.openFile(path="E:/Cloud/OneDrive/Arbeit/DB_Werkstudent/Projekte/Karlsruhe_Durmersheim/Modelchecking/Regeln/Datenstruktur/22_04_18.xml")
-        #self.openFile("desiteRuleCreator/saves/22_04_18.xml")
+        # self.openFile(path="E:/Cloud/OneDrive/Arbeit/DB_Werkstudent/Projekte/Karlsruhe_Durmersheim/Modelchecking/Regeln/Datenstruktur/22_04_18.xml")
+        # self.openFile("desiteRuleCreator/saves/22_04_18.xml")
         self.ui.tree.resizeColumnToContents(0)
         self.save_path = None
-        print(self.save_path)
+
     @property
     def save_path(self):
         return self._save_path
 
     @save_path.setter
-    def save_path(self,value):
+    def save_path(self, value):
         self._save_path = value
         self._export_path = value
 
@@ -63,7 +72,7 @@ class MainWindow(QMainWindow):
         return self._export_path
 
     @export_path.setter
-    def export_path(self,value):
+    def export_path(self, value):
         self._save_path = value
         self._export_path = value
 
@@ -74,11 +83,27 @@ class MainWindow(QMainWindow):
         desite_export.save_rules(self)
 
     def closeEvent(self, event):
-        filehandling.close_event(self, event)
+        action = filehandling.close_event(self, event)
+
+        if action:
+            self.parent_property_window.close()
+            if self.pset_window is not None:
+                self.pset_window.close()
+            event.accept()
+        else:
+            event.ignore()
 
     # Filehandling
     def save_clicked(self):
         filehandling.save_clicked(self)
+
+    def open_pset_list(self):
+        if self.parent_property_window is not None:
+            self.parent_property_window.setHidden(False)
+        else:
+            self.parent_property_window = parent_property_window.open_pset_list(self)
+
+        return self.parent_property_window
 
     def save(self, path):
         filehandling.save(self, path)
@@ -89,36 +114,40 @@ class MainWindow(QMainWindow):
     def new_file(self):
         filehandling.new_file(self)
 
-    def openFile_dialog(self, path=False):
-        filehandling.openFile_dialog(self, path)
+    def open_file_dialog(self, path=False):
+        filehandling.open_file_dialog(self, path)
 
     def merge_new_file(self):
         filehandling.merge_new_file(self)
 
-    def openFile(self, path=False):
+    def open_file(self, path=False):
 
         if path is False:
-            cur_path =os.getcwd()+"/"
-            path = QFileDialog.getOpenFileName(self, "Open XML", str(cur_path), "xml Files (*.xml *.DRCxml)")[0]
-
+            cur_path = os.getcwd() + "/"
+            path: str = QFileDialog.getOpenFileName(self, "Open File", str(cur_path),
+                                                    "all (*.*);; xml Files (*.xml *.DRCxml);; xlsx Files (*xlsx)")[0]
 
         if path:
-            filehandling.importData(self, path)
+            if path.endswith("xlsx"):
+                excel.start(self, path)
+            else:
+                filehandling.import_data(self, path)
 
     # Main
     def clear_all(self):
         object_widget.clear_all(self)
         property_widget.clear_all(self)
+        self.parent_property_window.clear_all()
 
     # ObjectWidget
     def right_click(self, position: QtCore.QPoint):
         object_widget.right_click(self, position)
 
     def rc_collapse(self):
-        object_widget.rc_collapse(self.tree)
+        object_widget.rc_collapse(self.ui.tree)
 
     def rc_expand(self):
-        object_widget.rc_expand(self.tree)
+        object_widget.rc_expand(self.ui.tree)
 
     def rc_group(self):
         object_widget.rc_group_items(self)
@@ -126,32 +155,37 @@ class MainWindow(QMainWindow):
     def object_clicked(self):
         object_widget.single_click(self)
 
+    def update_completer(self):
+        completer = QCompleter(property_widget.predefined_pset_list(), self)
+        self.ui.lineEdit_pSet_name.setCompleter(completer)
+        self.ui.lineEdit_ident_pSet.setCompleter(completer)
+
     def object_double_clicked(self, item):
         object_widget.double_click(self, item)
 
-    def setIdentLineEnable(self, value: bool):
-        object_widget.setIdentLineEnable(self, value)
+    def set_ident_line_enable(self, value: bool):
+        object_widget.set_ident_line_enable(self, value)
 
     def delete_selected_scripts(self):
         script_widget.delete_objects(self)
 
-    def script_list_clicked(self,item):
-        script_widget.clicked(self,item)
+    def script_list_clicked(self, item):
+        script_widget.clicked(self, item)
 
-    def clearObjectInput(self):
+    def clear_object_input(self):
         object_widget.clear_object_input(self)
 
-    def addObject(self):
-        object_widget.addObject(self)
+    def add_object(self):
+        object_widget.add_object(self)
 
-    def addObjectToTree(self, obj: Object, parent=None):
-        return object_widget.addObjectToTree(self, obj, parent)
+    def add_object_to_tree(self, obj: Object, parent=None):
+        return object_widget.add_object_to_tree(self, obj, parent)
 
-    def deleteObject(self):
-        object_widget.deleteObject(self)
+    def delete_object(self):
+        object_widget.delete_object(self)
 
-    def updateObject(self):
-        object_widget.updateObject(self)
+    def update_object(self):
+        object_widget.update_object(self)
 
     # PropertyWidget
     def delete_pset(self):
@@ -165,19 +199,19 @@ class MainWindow(QMainWindow):
 
     def set_right_window_enable(self, value: bool):
         property_widget.set_enable(self, value)
-        script_widget.set_enable(self,value)
+        script_widget.set_enable(self, value)
 
-    def listObjectClicked(self, item):
+    def list_object_clicked(self, item):
         property_widget.left_click(self, item)
 
-    def listObjectDoubleClicked(self, item):
+    def list_object_double_clicked(self, item):
         property_widget.double_click(self, item)
 
-    def openPsetWindow(self, propertySet: PropertySet):
-        return property_widget.openPsetWindow(propertySet)
+    def open_pset_window(self, property_set: PropertySet, active_object, window_title=None):
+        return property_widget.open_pset_window(self, property_set, active_object, window_title)
 
-    def addPset(self):
-        property_widget.addPset(self)
+    def add_pset(self):
+        property_widget.add_pset(self)
 
     def add_script(self):
         script_widget.add_script(self)
@@ -188,8 +222,14 @@ class MainWindow(QMainWindow):
     def change_script_list_visibility(self):
         script_widget.change_script_list_visibility(self)
 
-    def code_item_changed(self,item):
-        script_widget.item_changed(self,item)
+    def code_item_changed(self, item):
+        script_widget.item_changed(self, item)
+
+    def reload(self):
+        object_widget.reload_tree(self)
+        parent_property_window.reload(self)
+        property_widget.reload(self)
+
 
 def main():
     app = QApplication(sys.argv)

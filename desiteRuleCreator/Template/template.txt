@@ -2,8 +2,7 @@ var None = null
 var id = desiteThis.ID()
 var isContainer = desiteAPI.getPropertyValue(id,'cpIsContainer','xs:boolean');
 var isComposite = desiteAPI.getPropertyValue(id,'cpIsComposite','xs:boolean');
-var objectName = desiteAPI.getPropertyValue(id,"ifcTypeObjectName","xs:string")
-var otyp= ['{{object.name}}'];	{# Mehrfachnennungen zulassen #}
+var objectName = desiteAPI.getPropertyValue(id,"ifcTypeObjectName","xs:string");
 var valueIfcType = desiteAPI.getPropertyValue(id,'ifcType','xs:string');
 var ident_pset = '{{ident_pset}}'
 var ident = '{{ident}}';
@@ -12,7 +11,7 @@ var otyp_vorhanden = desiteAPI.getPropertyValue(id, ident_pset+ident, 'xs:string
 if (isContainer == true && isComposite == false) {
     desiteResult.setCheckState('ignored');
     desiteResult.addMessage('Container was ignored.');
-}else if (otyp.indexOf(otyp_vorhanden)!=-1) {
+}else{
     var checkfailed = 0;
     var attrib_count =0;
     {%for pset in psets %}
@@ -57,7 +56,7 @@ if (isContainer == true && isComposite == false) {
         {%-endif-%}
         {%-endfor%}
 
-
+    {% endfor %}
     var check_status = "Undefined"
     if (checkfailed == 0) {
     desiteResult.setCheckState('passed'); check_status = "Passed"
@@ -80,5 +79,3 @@ if (isContainer == true && isComposite == false) {
     desiteAPI.setPropertyValue(id, "fehlerhafte_eigenschaften","xs:int",checkfailed);
 
 }
-else {desiteResult.setCheckState('ignored');}
-{% endfor %}

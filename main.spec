@@ -8,7 +8,7 @@ a = Analysis(
     ['main.py',],
     pathex=[],
     binaries=[],
-    datas=[('desiteRuleCreator/scripts','desiteRuleCreator/scripts'),('desiteRuleCreator/Template','desiteRuleCreator/Template'),('desiteRuleCreator/saves','desiteRuleCreator/saves'),('desiteRuleCreator/icon.ico','desiteRuleCreator/icon.ico')],
+    datas=[('desiteRuleCreator/Template','desiteRuleCreator/Template'),('desiteRuleCreator/icons','desiteRuleCreator/icons')],
     hiddenimports=['jinja2','lxml',],
     hookspath=[],
     hooksconfig={},
@@ -37,6 +37,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon = 'desiteRuleCreator\\icons\icon.ico'
 )
 coll = COLLECT(
     exe,
