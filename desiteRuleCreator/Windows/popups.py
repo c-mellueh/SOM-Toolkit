@@ -1,27 +1,31 @@
-from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit,QDialog,QDialogButtonBox,QGridLayout
-from PySide6.QtGui import QIcon
 import os
-from desiteRuleCreator.data import constants
+
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QDialogButtonBox, QGridLayout
+
 import desiteRuleCreator.icons as icons
 
+
 def get_icon():
-    icon_path = os.path.join(icons.ICON_PATH,icons.ICON_DICT["icon"])
+    icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
     return QIcon(icon_path)
+
 
 def default_message(text):
     icon = get_icon()
-    msgBox = QMessageBox()
-    msgBox.setText(text)
-    msgBox.setWindowTitle(" ")
-    msgBox.setIcon(QMessageBox.Icon.Warning)
+    msg_box = QMessageBox()
+    msg_box.setText(text)
+    msg_box.setWindowTitle(" ")
+    msg_box.setIcon(QMessageBox.Icon.Warning)
 
-    msgBox.setWindowIcon(icon)
-    msgBox.exec()
+    msg_box.setWindowIcon(icon)
+    msg_box.exec()
 
 
 def msg_already_exists():
     text = "Object exists already!"
     default_message(text)
+
 
 def msg_identical_identifier():
     text = "You cant create Objects with identical identifiers!"
@@ -35,14 +39,14 @@ def msg_missing_input():
 
 def msg_unsaved():
     icon = get_icon()
-    msgBox = QMessageBox()
-    msgBox.setText("Warning, unsaved changes will be lost!")
-    msgBox.setWindowTitle(" ")
-    msgBox.setIcon(QMessageBox.Icon.Warning)
-    msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-    msgBox.setDefaultButton(QMessageBox.Ok)
-    msgBox.setWindowIcon(icon)
-    if msgBox.exec() == msgBox.Ok:
+    msg_box = QMessageBox()
+    msg_box.setText("Warning, unsaved changes will be lost!")
+    msg_box.setWindowTitle(" ")
+    msg_box.setIcon(QMessageBox.Icon.Warning)
+    msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+    msg_box.setDefaultButton(QMessageBox.Ok)
+    msg_box.setWindowIcon(icon)
+    if msg_box.exec() == msg_box.Ok:
         return True
     else:
         return False
@@ -50,19 +54,19 @@ def msg_unsaved():
 
 def msg_delete_or_merge():
     icon = get_icon()
-    msgBox = QMessageBox()
-    msgBox.setText("Warning, there is allready exisiting data!\n do you want to delete or merge?")
-    msgBox.setWindowTitle(" ")
-    msgBox.setIcon(QMessageBox.Icon.Warning)
+    msg_box = QMessageBox()
+    msg_box.setText("Warning, there is allready exisiting data!\n do you want to delete or merge?")
+    msg_box.setWindowTitle(" ")
+    msg_box.setIcon(QMessageBox.Icon.Warning)
 
-    msgBox.setStandardButtons(QMessageBox.Cancel)
-    merge_button = msgBox.addButton("Merge", QMessageBox.NoRole)
-    delete_button = msgBox.addButton("Delete", QMessageBox.YesRole)
-    msgBox.setWindowIcon(icon)
-    msgBox.exec()
-    if msgBox.clickedButton() == merge_button:
+    msg_box.setStandardButtons(QMessageBox.Cancel)
+    merge_button = msg_box.addButton("Merge", QMessageBox.NoRole)
+    delete_button = msg_box.addButton("Delete", QMessageBox.YesRole)
+    msg_box.setWindowIcon(icon)
+    msg_box.exec()
+    if msg_box.clickedButton() == merge_button:
         return False
-    elif msgBox.clickedButton() == delete_button:
+    elif msg_box.clickedButton() == delete_button:
         return True
     else:
         return None
@@ -72,13 +76,13 @@ def msg_close():
     icon = get_icon()
     text = "Do you want to save before exit?"
 
-    msgBox = QMessageBox(QMessageBox.Icon.Warning,
+    msg_box = QMessageBox(QMessageBox.Icon.Warning,
                          "Message",
                          text,
                          QMessageBox.Cancel | QMessageBox.Save | QMessageBox.No)
 
-    msgBox.setWindowIcon(icon)
-    reply = msgBox.exec()
+    msg_box.setWindowIcon(icon)
+    reply = msg_box.exec()
     return reply
 
 
@@ -86,12 +90,14 @@ def msg_del_ident_pset():
     text = "can't delete Pset of Identifier!"
     default_message(text)
 
+
 def msg_mod_ident():
     text = "Identifier can't be modified!"
     default_message(text)
 
+
 class GroupRequest(QDialog):
-    def __init__(self,parent = None,):
+    def __init__(self, parent=None, ):
         super(GroupRequest, self).__init__(parent)
         icon = get_icon()
         self.group_name = QLineEdit(self)
@@ -105,8 +111,8 @@ class GroupRequest(QDialog):
         self.attribute_value.setPlaceholderText("Value")
         self.attribute_name.setPlaceholderText("Attribute")
 
-        self.input_fields = [self.group_name,self.pset_name,self.attribute_name,self.attribute_value]
-        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok|QDialogButtonBox.Cancel,self)
+        self.input_fields = [self.group_name, self.pset_name, self.attribute_name, self.attribute_value]
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
 
         self.gridLayout = QGridLayout(self)
         self.gridLayout.setObjectName("gridLayout")
@@ -130,33 +136,36 @@ class GroupRequest(QDialog):
     def get_text(self):
         return [text.text() for text in self.input_fields]
 
-def req_group_name(mainWindow):
-    dialog = GroupRequest(mainWindow)
+
+def req_group_name(main_window):
+    dialog = GroupRequest(main_window)
 
     if dialog.exec():
         return dialog.get_text()
 
     else:
-        return [False,False,False,False]
+        return [False, False, False, False]
 
-def req_attribute_name(propertyWindow):
-    text = QInputDialog.getText(propertyWindow,"New Attribute Name","New Attribute Name")
+
+def req_attribute_name(property_window):
+    text = QInputDialog.getText(property_window, "New Attribute Name", "New Attribute Name")
     return text
+
 
 def req_merge_pset():
     icon = get_icon()
-    msgBox = QMessageBox()
-    msgBox.setText("Pset exists in Predefined Psets, do you want to merge?")
-    msgBox.setWindowTitle(" ")
-    msgBox.setIcon(QMessageBox.Icon.Warning)
-    msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
-    msgBox.setDefaultButton(QMessageBox.Yes)
-    msgBox.setWindowIcon(icon)
+    msg_box= QMessageBox()
+    msg_box.setText("Pset exists in Predefined Psets, do you want to merge?")
+    msg_box.setWindowTitle(" ")
+    msg_box.setIcon(QMessageBox.Icon.Warning)
+    msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+    msg_box.setDefaultButton(QMessageBox.Yes)
+    msg_box.setWindowIcon(icon)
 
-    statement = msgBox.exec()
-    if statement == msgBox.Yes:
+    statement = msg_box.exec()
+    if statement == msg_box.Yes:
         return True
-    elif statement == msgBox.No:
+    elif statement == msg_box.No:
         return False
     else:
         return None

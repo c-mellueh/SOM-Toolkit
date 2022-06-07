@@ -1,68 +1,76 @@
-from desiteRuleCreator.data import classes
-from desiteRuleCreator.QtDesigns import ui_mainwindow
 from PySide6.QtCore import Slot, Qt, QRect, QSize
 from PySide6.QtGui import QColor, QPainter, QTextFormat
 from PySide6.QtWidgets import QPlainTextEdit, QWidget, QTextEdit
 
+from desiteRuleCreator.QtDesigns import ui_mainwindow
+from desiteRuleCreator.data import classes
 
-def init(mainWindow):
 
-    def connect(ui):
-        ui.pushButton_add_script.clicked.connect(mainWindow.add_script)
-        ui.pushButton_delete_script.clicked.connect(mainWindow.delete_selected_scripts)
-        ui.listWidget_scripts.itemClicked.connect(mainWindow.script_list_clicked)
-        ui.pushButton_burger.clicked.connect(mainWindow.change_script_list_visibility)
-        ui.listWidget_scripts.itemChanged.connect(mainWindow.code_item_changed)
-    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
-    set_enable(mainWindow,False)
+def init(main_window):
+    def connect():
+        ui.pushButton_add_script.clicked.connect(main_window.add_script)
+        ui.pushButton_delete_script.clicked.connect(main_window.delete_selected_scripts)
+        ui.listWidget_scripts.itemClicked.connect(main_window.script_list_clicked)
+        ui.pushButton_burger.clicked.connect(main_window.change_script_list_visibility)
+        ui.listWidget_scripts.itemChanged.connect(main_window.code_item_changed)
+
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
 
     ui.verticalLayout_2.removeWidget(ui.code_edit)
+    ui.code_edit.deleteLater()
     ui.code_edit = CodeEditor()
     ui.verticalLayout_2.addWidget(ui.code_edit)
     ui.code_edit.show()
-    connect(ui)
+    connect()
+    set_enable(main_window, False)
 
-def item_changed(mainWindow, item: classes.Script):
+
+def item_changed(main_window, item: classes.Script):
     item.name = item.text()
-    mainWindow.ui.label_script_name.setText(item.name)
+    main_window.ui.label_script_name.setText(item.name)
 
 
-def selection_changed(mainWindow):
-    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
+def selection_changed(main_window):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     sel_items = ui.listWidget_scripts.selectedItems()
 
-    if len(sel_items)!= 1:
+    if len(sel_items) != 1:
         value = False
     else:
         value = True
 
-    for button in code_buttons(mainWindow):
+    for button in code_buttons(main_window):
         button.setEnabled(value)
 
     ui.code_edit.setEnabled(value)
     pass
 
-def clicked(mainWindow, item: classes.Script):
-    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
-    ui.code_edit.setEnabled(True)
-    edit:QPlainTextEdit = ui.code_edit
-    edit.setPlainText(item.code)
-    #ui.code_edit.setText(item.code)
 
-    for button in code_buttons(mainWindow):
+def clicked(main_window, item: classes.Script):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
+    ui.code_edit.setEnabled(True)
+    edit: QPlainTextEdit = ui.code_edit
+    edit.setPlainText(item.code)
+    # ui.code_edit.setText(item.code)
+
+    for button in code_buttons(main_window):
         button.setEnabled(True)
 
-def change_script_list_visibility(mainWindow):
 
-    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
+def change_script_list_visibility(main_window):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
 
     if ui.widget_vertical_stack.isHidden():
         ui.widget_vertical_stack.show()
     else:
         ui.widget_vertical_stack.hide()
 
-def script_buttons(mainWindow):
-    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
+    for script in main_window.active_object.scripts:
+        print(script.name)
+
+
+def script_buttons(main_window):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     buttons = [
         ui.pushButton_add_script,
         ui.pushButton_delete_script,
@@ -70,8 +78,9 @@ def script_buttons(mainWindow):
     ]
     return buttons
 
-def code_buttons(mainWindow):
-    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
+
+def code_buttons(main_window):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     buttons = [
         ui.pushButton_burger,
         ui.pushButton_left,
@@ -79,24 +88,27 @@ def code_buttons(mainWindow):
     ]
     return buttons
 
-def show(mainWindow):
-    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
-    tree_item: classes.CustomTreeItem= mainWindow.selected_object()
+
+def show(main_window):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
+    tree_item: classes.CustomTreeItem = main_window.selected_object()
     if tree_item is not None:
         obj = tree_item.object
         for script in obj.scripts:
             ui.listWidget_scripts.addItem(script)
 
-def delete_objects(mainWindow):
-    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
+
+def delete_objects(main_window):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     for script in ui.listWidget_scripts.selectedItems():
         item: classes.Script = ui.listWidget_scripts.takeItem(ui.listWidget_scripts.indexFromItem(script).row())
         item.object.delete_script(item)
     ui.code_edit.clear()
-    selection_changed(mainWindow)
+    selection_changed(main_window)
 
-def set_enable(mainWindow,value:bool):
-    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
+
+def set_enable(main_window, value: bool):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     ui.tab_code.setEnabled(value)
     if not value:
         ui.tabWidget.setTabText(ui.tabWidget.indexOf(ui.tab_code), "Code")
@@ -104,39 +116,38 @@ def set_enable(mainWindow,value:bool):
             ui.listWidget_scripts.takeItem(i)
         ui.code_edit.clear()
 
-    if ui.listWidget_scripts.count() <1:
+    if ui.listWidget_scripts.count() < 1:
         code_value = False
     else:
         code_value = True
 
-    for el in code_buttons(mainWindow):
+    for el in code_buttons(main_window):
         el.setEnabled(code_value)
     ui.code_edit.setEnabled(code_value)
     ui.label_script_name.setEnabled(code_value)
     ui.label_script_name.setText(" ")
 
-def add_script(mainWindow):
-    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
-    item: classes.CustomTreeItem = mainWindow.ui.tree.selectedItems()[0]
-    script = classes.Script("NewScript", item.object)
+
+def add_script(main_window):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
+    script = classes.Script("NewScript", main_window.active_object)
     ui.listWidget_scripts.addItem(script)
     ui.listWidget_scripts.setCurrentItem(script)
-    selection_changed(mainWindow)
-    item_changed(mainWindow,script)
+    selection_changed(main_window)
+    item_changed(main_window, script)
 
-def update_script(mainWindow):
 
-    ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
-    text_edit = mainWindow.ui.code_edit
-    list = mainWindow.ui.listWidget_scripts
-    selected_items = list.selectedItems()
+def update_script(main_window):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
+    script_list = main_window.ui.listWidget_scripts
+    selected_items = script_list.selectedItems()
 
     if len(selected_items) == 1:
-
         item: classes.Script = selected_items[0]
         item.code = ui.code_edit.toPlainText()
         ui.label_script_name.setText(item.name)
         ui.label_script_name.setEnabled(True)
+
 
 class LineNumberArea(QWidget):
     def __init__(self, editor):
