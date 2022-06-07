@@ -58,9 +58,6 @@ class Project(object):
             for obj in Object.iter:
                 if check(obj):
                     return True
-                for attribute in obj.attributes:
-                    if check(attribute) or check(attribute.propertySet):
-                        return True
 
         data = check_data()
         if data or self._changed:
@@ -504,7 +501,7 @@ class Script(QListWidgetItem):
         self.changed = True
         self._object = obj
         obj.add_script(self)
-        self._name = "NewScript"
+        self._name =title
         self.setFlags(self.flags()|Qt.ItemIsEditable)
 
     @property

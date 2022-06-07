@@ -158,29 +158,35 @@ def handle_object_rules(xml_container,mainWindow,template):
 
     obj_sorted = list(classes.Object.iter)
     obj_sorted.sort(key = lambda x: x.name)
-    for object in obj_sorted:
-        if not object.is_concept:
-            object: classes.Object = object
-            xml_checkrun = handle_checkrun(xml_container,object.name,mainWindow.project.author)
-            xml_object_list[xml_checkrun] = object
+    for obj in obj_sorted:
+        if not obj.is_concept:
+            obj: classes.Object = obj
+            xml_checkrun = handle_checkrun(xml_container,obj.name,mainWindow.project.author)
+            xml_object_list[xml_checkrun] = obj
             xml_rule = handle_rule(xml_checkrun,"Attributes")
             xml_attribute_rule_list = handle_attribute_rule_list(xml_rule)
-            xml_rule_script = handle_rule_script(xml_attribute_rule_list,name = object.name)
+            xml_rule_script = handle_rule_script(xml_attribute_rule_list,name = obj.name)
             xml_code = handle_code(xml_rule_script)
 
-            attributes = object.get_attributes(inherit=False)
-            property_sets = object.property_sets
+            property_sets = obj.property_sets
 
-            ident_name = object.ident_attrib.name
-            ident_property_set = object.ident_attrib.propertySet.name
+            ident_name = obj.ident_attrib.name
+            ident_property_set = obj.ident_attrib.propertySet.name
             if ident_property_set == constants.IGNORE_PSET:
                 ident_property_set = ""
             else:
                 ident_property_set= f"{ident_property_set}:"
 
-            cdata_code = template.render(psets=property_sets, object=object, ident=ident_name, ident_pset=ident_property_set, constants =constants)
+            cdata_code = template.render(psets=property_sets, object=obj, ident=ident_name, ident_pset=ident_property_set, constants =constants)
             xml_code.text = cdata_code
             handle_rule(xml_checkrun,"UniquePattern")
+
+            for script in obj.scripts:
+                xml_rule_script = handle_rule_script(xml_attribute_rule_list,name = script.name)
+                xml_code = handle_code(xml_rule_script)
+                xml_code.text = script.code
+
+
     return xml_object_list
 def old_file_conversion(projekt):
     projekt = copy.deepcopy(projekt)

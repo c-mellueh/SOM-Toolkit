@@ -117,13 +117,11 @@ def import_new(projekt_xml: etree._Element):
                     ident_attrib = attrib
         return ident_attrib
 
-    def import_scripts(xml_object,obj):
-        for xml_sub in xml_object:
-            if xml_sub.tag == "Script":
-                name = xml_sub.attrib.get("name")
-                code = xml_sub.text
-                script = classes.Script(name, obj)
-                script.code = code
+    def import_scripts(xml_script,obj):
+            name = xml_script.attrib.get("name")
+            code = xml_script.text
+            script = classes.Script(name, obj)
+            script.code = code
 
 
     def get_obj_data(xml_object):
@@ -171,13 +169,9 @@ def import_new(projekt_xml: etree._Element):
         xml_attribute_dict = dict()
         iterate(xml_property_set_dict, xml_object_dict, xml_attribute_dict)
 
-
-
         obj_dict = create_ident_dict(Object.iter)
         property_set_dict = create_ident_dict(PropertySet.iter)
         attribute_dict = create_ident_dict(Attribute.iter)
-
-
 
         create_link(obj_dict,xml_object_dict)
         create_link(attribute_dict,xml_attribute_dict)
@@ -190,12 +184,17 @@ def import_new(projekt_xml: etree._Element):
 
     for xml_object in xml_objects:
         xml_property_sets = [x for x in xml_object if x.tag == constants.PROPERTY_SET]
+        xml_scripts = [x for x in xml_object if x.tag == constants.SCRIPT]
         property_sets,ident_attrib= import_property_sets(xml_property_sets)
         name, parent, identifer, is_concept = get_obj_data(xml_object)
         obj = Object(name, ident_attrib, is_concept,identifier=identifer)
 
         for property_set in property_sets:
             obj.add_property_set(property_set)
+
+        for xml_script in xml_scripts:
+            import_scripts(xml_script,obj)
+
 
     link_parents(xml_predefined_psets,xml_objects)
 
@@ -366,9 +365,9 @@ def save(mainWindow, path):
 
     mainWindow.save_path = path
 
-    xml_project = etree.Element('Project')
-    xml_project.set("name", mainWindow.project.name)
-    xml_project.set("version", project_version)
+    xml_project = etree.Element(constants.PROJECT)
+    xml_project.set(constants.NAME, mainWindow.project.name)
+    xml_project.set(constants.VERSION, project_version)
 
     add_predefined_property_sets(xml_project)
     for obj in Object.iter:

@@ -61,6 +61,9 @@ def change_script_list_visibility(mainWindow):
     else:
         ui.widget_vertical_stack.hide()
 
+    for script in mainWindow.active_object.scripts:
+        print(script.name)
+
 def script_buttons(mainWindow):
     ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
     buttons = [
@@ -117,8 +120,7 @@ def set_enable(mainWindow,value:bool):
 
 def add_script(mainWindow):
     ui: ui_mainwindow.Ui_MainWindow = mainWindow.ui
-    item: classes.CustomTreeItem = mainWindow.ui.tree.selectedItems()[0]
-    script = classes.Script("NewScript", item.object)
+    script = classes.Script("NewScript",mainWindow.active_object)
     ui.listWidget_scripts.addItem(script)
     ui.listWidget_scripts.setCurrentItem(script)
     selection_changed(mainWindow)
