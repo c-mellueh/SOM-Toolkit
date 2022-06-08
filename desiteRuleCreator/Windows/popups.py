@@ -1,10 +1,10 @@
 import os
 
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QDialogButtonBox, QGridLayout
+from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QDialogButtonBox, QGridLayout,QListWidgetItem
 
 import desiteRuleCreator.icons as icons
-
+from desiteRuleCreator.QtDesigns import ui_delete_request
 
 
 def default_message(text):
@@ -16,6 +16,7 @@ def default_message(text):
 
     msg_box.setWindowIcon(icon)
     msg_box.exec()
+
 
 
 def msg_already_exists():
@@ -91,6 +92,36 @@ def msg_mod_ident():
     text = "Identifier can't be modified!"
     default_message(text)
 
+class DeleteRequest(QDialog):
+    def __init__(self, parent=None, ):
+        super(DeleteRequest, self).__init__(parent)
+        icon = icons.get_icon()
+
+        self.group_name = QLineEdit(self)
+        self.pset_name = QLineEdit(self)
+        self.attribute_name = QLineEdit(self)
+        self.attribute_value = QLineEdit(self)
+        self.setWindowIcon(icon)
+
+        self.group_name.setPlaceholderText("Name")
+        self.pset_name.setPlaceholderText("PropertySet")
+        self.attribute_value.setPlaceholderText("Value")
+        self.attribute_name.setPlaceholderText("Attribute")
+
+        self.input_fields = [self.group_name, self.pset_name, self.attribute_name, self.attribute_value]
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
+
+        self.gridLayout = QGridLayout(self)
+        self.gridLayout.setObjectName("gridLayout")
+        self.gridLayout.addWidget(self.pset_name, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.attribute_name, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.attribute_value, 1, 2, 1, 1)
+        self.gridLayout.addWidget(self.buttonBox, 4, 1, 1, 2)
+        self.gridLayout.addWidget(self.group_name, 0, 0, 1, 3)
+
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
+        self.setWindowTitle("New Group")
 
 class GroupRequest(QDialog):
     def __init__(self, parent=None, ):
@@ -168,3 +199,20 @@ def req_merge_pset():
         return False
     else:
         return None
+
+def msg_del_items(string_list):
+    parent = QDialog()
+    widget = ui_delete_request.Ui_Dialog()
+    widget.setupUi(parent)
+    if len(string_list) <=1:
+        widget.label.setText("Delete this item?")
+    else:
+        widget.label.setText("Delete these items?")
+
+    for text in string_list:
+        widget.listWidget.addItem(QListWidgetItem(text))
+
+    if parent.exec():
+        return True
+    else:
+        return False

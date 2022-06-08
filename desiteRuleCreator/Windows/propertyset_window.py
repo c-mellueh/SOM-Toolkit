@@ -54,26 +54,37 @@ class PropertySetWindow(QtWidgets.QWidget):
 
     def delete_selection(self):
         selected_items = self.widget.table_widget.selectedItems()
+
+        string_list = list()
+
         selected_rows = []
         for items in selected_items:
             row = items.row()
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
+                string_list.append(name)
                 if attribute_is_identifier(self.active_object,self.get_attribute_by_name(name)):
                     popups.msg_mod_ident()
                     return
                 else:
                     selected_rows.append(items.row())
 
-        selected_rows.sort(reverse=True)
 
-        for row in selected_rows:
-            name = self.widget.table_widget.item(row, 0).text()
-            self.widget.table_widget.removeRow(row)
-            attribute = self.get_attribute_by_name(name)
-            attribute.delete()
+        delete_request = popups.msg_del_items(string_list)
 
-        pass
+        if delete_request:
+
+            selected_rows.sort(reverse=True)
+
+
+
+            for row in selected_rows:
+                name = self.widget.table_widget.item(row, 0).text()
+                self.widget.table_widget.removeRow(row)
+                attribute = self.get_attribute_by_name(name)
+                attribute.delete()
+
+            pass
 
     def open_menu(self, position):
         menu = QMenu()
