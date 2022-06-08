@@ -33,7 +33,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         fill_attribute_table(self.active_object,self.widget.table_widget,self.property_set)
         self.widget.button_add_line.clicked.connect(self.new_line)
         self.input_lines = {self.widget.layout_input: self.widget.lineEdit_input}
-        self.widget.table_widget.itemDoubleClicked.connect(self.list_clicked)
+        self.widget.table_widget.itemClicked.connect(self.list_clicked)
         self.widget.combo_type.currentTextChanged.connect(self.combo_change)
         self.old_state = self.widget.combo_type.currentText()
         self.widget.lineEdit_name.textChanged.connect(self.text_changed)
