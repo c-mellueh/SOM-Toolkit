@@ -89,10 +89,8 @@ class PropertySetWindow(QtWidgets.QWidget):
         menu = QMenu()
         self.action_delete_attribute = menu.addAction("Delete")
         self.action_rename_attribute = menu.addAction("Rename")
-        self.action_test = menu.addAction("Test")
         self.action_delete_attribute.triggered.connect(self.delete_selection)
         self.action_rename_attribute.triggered.connect(self.rename_selection)
-        self.action_test.triggered.connect(self.test)
 
         menu.exec(self.widget.table_widget.viewport().mapToGlobal(position))
 
@@ -101,25 +99,6 @@ class PropertySetWindow(QtWidgets.QWidget):
             if attribute.name == name:
                 return attribute
         return False
-
-    def test(self):
-        selected_items = self.widget.table_widget.selectedItems()
-        selected_rows = []
-        for items in selected_items:
-            row = items.row()
-            if row not in selected_rows:
-                name = self.widget.table_widget.item(row, 0).text()
-                if attribute_is_identifier(self.active_object,self.get_attribute_by_name(name)):
-                    popups.msg_mod_ident()
-                    return
-                else:
-                    selected_rows.append(items.row())
-
-        selected_rows.sort(reverse=True)
-
-        if len(selected_rows) == 1:
-            name = self.widget.table_widget.item(selected_rows[0], 0).text()
-            attribute: Attribute = self.get_attribute_by_name(name)
 
     def rename_selection(self):  # TODO: check for existing Name
         selected_items = self.widget.table_widget.selectedItems()
@@ -340,6 +319,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         attribute: Attribute = self.get_attribute_by_name(item.text())
 
         if attribute_is_identifier(self.active_object,attribute):
+            popups.msg_mod_ident()
             return
         # Set Combo Boxes
         index = self.widget.combo_type.findText(attribute.value_type)
