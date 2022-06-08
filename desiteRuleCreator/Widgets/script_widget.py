@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QPlainTextEdit, QWidget, QTextEdit
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
 from desiteRuleCreator.data import classes
+from desiteRuleCreator.Windows import popups
 
 
 def init(main_window):
@@ -100,11 +101,17 @@ def show(main_window):
 
 def delete_objects(main_window):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
-    for script in ui.listWidget_scripts.selectedItems():
-        item: classes.Script = ui.listWidget_scripts.takeItem(ui.listWidget_scripts.indexFromItem(script).row())
-        item.object.delete_script(item)
-    ui.code_edit.clear()
-    selection_changed(main_window)
+
+    string_list = [x.text() for x in ui.listWidget_scripts.selectedItems()]
+
+    delete_request = popups.msg_del_items(string_list)
+    if delete_request:
+
+        for script in ui.listWidget_scripts.selectedItems():
+            item: classes.Script = ui.listWidget_scripts.takeItem(ui.listWidget_scripts.indexFromItem(script).row())
+            item.object.delete_script(item)
+        ui.code_edit.clear()
+        selection_changed(main_window)
 
 
 def set_enable(main_window, value: bool):

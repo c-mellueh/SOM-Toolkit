@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QWidget, QListWidgetItem
 from desiteRuleCreator.QtDesigns import ui_PsetInheritance
 from desiteRuleCreator.data import classes,constants
 from desiteRuleCreator import icons
-
+from desiteRuleCreator.Windows import popups
 
 class PsetItem(QListWidgetItem):
     iter = list()
@@ -89,12 +89,17 @@ class PropertySetInherWindow(QWidget):
 
     def remove_pset(self):
         items = self.widget.list_view_pset.selectedItems()
-        for item in items:
-            self.widget.list_view_pset.removeItemWidget(item)
-            item.property_set.delete()
-            item: PsetItem = self.widget.list_view_pset.takeItem(self.widget.list_view_pset.row(item))
-            item.delete()
-        self.select_first_item()
+        string_list = [x.property_set.name for x in items]
+
+        delete_request = popups.msg_del_items(string_list)
+
+        if delete_request:
+            for item in items:
+                self.widget.list_view_pset.removeItemWidget(item)
+                item.property_set.delete()
+                item: PsetItem = self.widget.list_view_pset.takeItem(self.widget.list_view_pset.row(item))
+                item.delete()
+            self.select_first_item()
 
     def double_click(self, item):
         pass

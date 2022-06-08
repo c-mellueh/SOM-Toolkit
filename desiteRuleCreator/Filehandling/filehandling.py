@@ -166,7 +166,7 @@ def import_new(projekt_xml):
                 parent_ident = xml_dict[str(ident)]
                 parent = obj_dict.get(parent_ident)
                 if parent is not None:
-                    parent.add_child(obj, copy=False)
+                    parent.add_child(obj)
 
         xml_property_set_dict = dict()
         xml_object_dict = dict()

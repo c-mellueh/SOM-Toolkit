@@ -169,7 +169,7 @@ def single_click(main_window):
 
         main_window.set_ident_line_enable(True)
         object_names = [item.object.name for item in items]
-        ident_psets = [item.object.ident_attrib.property_set.name for item in items]
+        ident_psets = [item.object.ident_attrib.property_set.name for item in items if isinstance(item.object.ident_attrib,classes.Attribute)]
         ident_attributes = [item.object.ident_attrib.name for item in items]
         ident_values = [item.object.ident_attrib.value for item in items]
 
@@ -275,14 +275,21 @@ def add_object_to_tree(main_window, obj: classes.Object, parent=None):
 
 
 def delete_object(main_window):
-    root: QTreeWidgetItem = main_window.ui.tree.invisibleRootItem()
-    for item in main_window.ui.tree.selectedItems():
-        obj: classes.Object = item.object
-        obj.delete()
-        children = item.takeChildren()
-        root.addChildren(children)
-        (item.parent() or root).removeChild(item)
-        main_window.project.changed = True
+    string_list = [item.object.name for item in main_window.ui.tree.selectedItems()]
+
+
+    delete_request = popups.msg_del_items(string_list)
+
+    if delete_request:
+
+        root: QTreeWidgetItem = main_window.ui.tree.invisibleRootItem()
+        for item in main_window.ui.tree.selectedItems():
+            obj: classes.Object = item.object
+            obj.delete()
+            children = item.takeChildren()
+            root.addChildren(children)
+            (item.parent() or root).removeChild(item)
+            main_window.project.changed = True
 
 
 def update_object(main_window):

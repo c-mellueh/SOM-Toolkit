@@ -2,7 +2,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea,QMenu
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
-from desiteRuleCreator.Windows.popups import msg_del_ident_pset, req_pset_name
+from desiteRuleCreator.Windows.popups import msg_del_ident_pset, req_pset_name,msg_del_items
 from desiteRuleCreator.Windows.propertyset_window import PropertySetWindow,fill_attribute_table
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.data.classes import PropertySet, CustomTreeItem
@@ -76,27 +76,33 @@ def delete(main_window):
     list_item = main_window.pset_table.selectedItems()
     obj = main_window.active_object
 
-    if not bool([el for el in list_item if
-                 el.data(
-                     constants.DATA_POS) == obj.ident_attrib.property_set]):
-                        #wenn sich der Identifier nicht im Pset befindet
+    string_list = [x.data(constants.DATA_POS).name for x in list_item if x.column() ==0]
 
-        for el in list_item:
-            el: QTableWidgetItem = el
-            if el.column() == 0:
-                property_set: PropertySet = el.data(constants.DATA_POS)
+    delete_request = msg_del_items(string_list)
 
-                if property_set.is_child:
-                    property_set.parent.remove_child(property_set)
-                else:
-                    property_set.delete()
-                main_window.pset_table.selectRow(el.row())
+    if delete_request:
 
-        for i in sorted(main_window.pset_table.selectionModel().selectedRows()):
-            main_window.pset_table.removeRow(i.row())
+        if not bool([el for el in list_item if
+                     el.data(
+                         constants.DATA_POS) == obj.ident_attrib.property_set]):
+                            #wenn sich der Identifier nicht im Pset befindet
 
-    else:
-        msg_del_ident_pset()
+            el: QTableWidgetItem
+            for el in list_item:
+                if el.column() == 0:
+                    property_set: PropertySet = el.data(constants.DATA_POS)
+
+                    if property_set.is_child:
+                        property_set.parent.remove_child(property_set)
+                    else:
+                        property_set.delete()
+                    main_window.pset_table.selectRow(el.row())
+
+            for i in sorted(main_window.pset_table.selectionModel().selectedRows()):
+                main_window.pset_table.removeRow(i.row())
+
+        else:
+            msg_del_ident_pset()
 
 
 def rename(main_window):
