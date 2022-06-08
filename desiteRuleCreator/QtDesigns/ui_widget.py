@@ -80,7 +80,7 @@ class Ui_layout_main(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.lineEdit_input.sizePolicy().hasHeightForWidth())
         self.lineEdit_input.setSizePolicy(sizePolicy1)
-        self.lineEdit_input.setFrame(False)
+        self.lineEdit_input.setFrame(True)
 
         self.layout_input.addWidget(self.lineEdit_input)
 

@@ -107,7 +107,7 @@
             </sizepolicy>
            </property>
            <property name="frame">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
           </widget>
          </item>
