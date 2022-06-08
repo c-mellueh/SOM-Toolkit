@@ -3,9 +3,10 @@ from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScroll
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
 from desiteRuleCreator.Windows.popups import msg_del_ident_pset
-from desiteRuleCreator.Windows.propertyset_window import PropertySetWindow
+from desiteRuleCreator.Windows.propertyset_window import PropertySetWindow,fill_attribute_table
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.data.classes import PropertySet, CustomTreeItem
+from desiteRuleCreator import icons
 
 
 def get_parent_by_name(active_object: classes.Object, name: str):
@@ -50,8 +51,13 @@ def modify_title(self, tab, text=None):
 
 
 def clear_all(main_window):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     for row in range(main_window.pset_table.rowCount()):
         main_window.pset_table.removeRow(row)
+
+    for row in range(ui.attribute_widget.rowCount()):
+        print(row)
+        ui.attribute_widget.removeRow(row)
     main_window.ui.lineEdit_pSet_name.clear()
     main_window.set_right_window_enable(False)
     modify_title(main_window, main_window.ui.tab_code, "Code")
@@ -116,6 +122,7 @@ def set_enable(main_window, value: bool):
         modify_title(main_window, main_window.ui.tab_property_set, "PropertySet")
 
         main_window.pset_table.setRowCount(0)
+        main_window.ui.attribute_widget.setRowCount(0)
         main_window.ui.lineEdit_pSet_name.setText("")
 
 
@@ -157,6 +164,8 @@ def left_click(main_window, item: QListWidgetItem):
     item = table_widget.item(table_widget.row(item), 0)
 
     property_set: PropertySet = item.data(constants.DATA_POS)
+
+    fill_attribute_table(main_window.active_object,ui.attribute_widget,property_set)
     main_window.ui.lineEdit_pSet_name.setText(property_set.name)
 
 

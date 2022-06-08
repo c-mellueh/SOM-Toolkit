@@ -22,11 +22,6 @@ def string_to_float(value: str):
     return value
 
 
-def get_link_icon():
-    icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["link"])
-    return QtGui.QIcon(icon_path)
-
-
 class PropertySetWindow(QtWidgets.QWidget):
     def __init__(self, main_window, property_set: PropertySet, active_object, window_title):
         super(PropertySetWindow, self).__init__()
@@ -35,8 +30,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.mainWindow = main_window
         self.property_set = property_set
         self.active_object = active_object
-        self.widget.table_widget.data_dict = dict()
-        self.fill_table()
+        fill_attribute_table(self.active_object,self.widget.table_widget,self.property_set)
         self.widget.button_add_line.clicked.connect(self.new_line)
         self.input_lines = {self.widget.layout_input: self.widget.lineEdit_input}
         self.widget.table_widget.itemDoubleClicked.connect(self.list_clicked)
@@ -56,11 +50,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.show()
         self.resize(1000, 400)
 
-    def attribute_is_identifier(self, attribute):
-        if self.active_object is not None:
-            if self.active_object.ident_attrib == attribute:
-                return True
-        return False
+
 
     def delete_selection(self):
         selected_items = self.widget.table_widget.selectedItems()
@@ -69,7 +59,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             row = items.row()
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
-                if self.attribute_is_identifier(self.get_attribute_by_name(name)):
+                if attribute_is_identifier(self.active_object,self.get_attribute_by_name(name)):
                     popups.msg_mod_ident()
                     return
                 else:
@@ -109,7 +99,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             row = items.row()
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
-                if self.attribute_is_identifier(self.get_attribute_by_name(name)):
+                if attribute_is_identifier(self.active_object,self.get_attribute_by_name(name)):
                     popups.msg_mod_ident()
                     return
                 else:
@@ -128,7 +118,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             row = items.row()
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
-                if self.attribute_is_identifier(self.get_attribute_by_name(name)):
+                if attribute_is_identifier(self.active_object,self.get_attribute_by_name(name)):
                     popups.msg_mod_ident()
                     return
                 else:
@@ -189,7 +179,6 @@ class PropertySetWindow(QtWidgets.QWidget):
             table.setItem(row, 1, QTableWidgetItem(attribute.data_type))
             table.setItem(row, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
             table.setItem(row, 3, QTableWidgetItem(str(attribute.value)))
-            table.data_dict[attribute.name] = attribute
 
         def get_values():
             values = []
@@ -224,7 +213,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             return values
 
         def update_attribute(attribute: Attribute):
-            if self.attribute_is_identifier(attribute):
+            if attribute_is_identifier(self.active_object,attribute):
                 popups.msg_del_ident_pset()
                 return
 
@@ -279,36 +268,7 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         self.old_state = event
 
-    def fill_table(self):
-        def reformat_identifier(row):
-            brush = QtGui.QBrush()
-            brush.setColor(Qt.GlobalColor.lightGray)
-            brush.setStyle(Qt.BrushStyle.SolidPattern)
-            for column in range(4):
-                item = table.item(row, column)
-                item.setBackground(brush)
-
-        table = self.widget.table_widget
-        table.setRowCount(len(self.property_set.attributes))
-
-        link_item = get_link_icon()
-
-        for i, attribute in enumerate(self.property_set.attributes):
-            attribute: Attribute = attribute
-            value_item = QTableWidgetItem(attribute.name)
-
-            if attribute.is_child:
-                value_item.setIcon(link_item)
-            table.setItem(i, 0, value_item)
-            table.setItem(i, 1, QTableWidgetItem(attribute.data_type))
-            table.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
-            table.setItem(i, 3, QTableWidgetItem(str(attribute.value)))
-
-            if self.attribute_is_identifier(attribute):
-                reformat_identifier(i)
-
-            table.resizeColumnsToContents()
-            table.data_dict[attribute.name] = attribute
+    
 
     def new_line(self):
         self.widget.layout_input.removeWidget(self.widget.button_add_line)
@@ -365,7 +325,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         item: QTableWidgetItem = self.widget.table_widget.item(event.row(), 0)
         attribute: Attribute = self.get_attribute_by_name(item.text())
 
-        if self.attribute_is_identifier(attribute):
+        if attribute_is_identifier(self.active_object,attribute):
             return
         # Set Combo Boxes
         index = self.widget.combo_type.findText(attribute.value_type)
@@ -390,3 +350,38 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         # set Editable
         self.widget.check_box_inherit.setChecked(attribute.child_inherits_values)
+
+def fill_attribute_table(active_object,table_widget,property_set):
+    def reformat_identifier(row):
+        brush = QtGui.QBrush()
+        brush.setColor(Qt.GlobalColor.lightGray)
+        brush.setStyle(Qt.BrushStyle.SolidPattern)
+        for column in range(4):
+            item = table_widget.item(row, column)
+            item.setBackground(brush)
+
+    table_widget.setRowCount(len(property_set.attributes))
+
+    link_item = icons.get_link_icon()
+
+    for i, attribute in enumerate(property_set.attributes):
+        attribute: Attribute = attribute
+        value_item = QTableWidgetItem(attribute.name)
+
+        if attribute.is_child:
+            value_item.setIcon(link_item)
+        table_widget.setItem(i, 0, value_item)
+        table_widget.setItem(i, 1, QTableWidgetItem(attribute.data_type))
+        table_widget.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
+        table_widget.setItem(i, 3, QTableWidgetItem(str(attribute.value)))
+
+        if attribute_is_identifier(active_object,attribute):
+            reformat_identifier(i)
+
+        table_widget.resizeColumnsToContents()
+
+def attribute_is_identifier(active_object, attribute):
+    if active_object is not None:
+        if active_object.ident_attrib == attribute:
+            return True
+    return False

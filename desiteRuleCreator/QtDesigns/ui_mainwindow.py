@@ -225,7 +225,7 @@ class Ui_MainWindow(object):
         __qtablewidgetitem4 = QTableWidgetItem()
         self.tableWidget_inherited.setItem(0, 1, __qtablewidgetitem4)
         self.tableWidget_inherited.setObjectName(u"tableWidget_inherited")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Expanding)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.tableWidget_inherited.sizePolicy().hasHeightForWidth())
