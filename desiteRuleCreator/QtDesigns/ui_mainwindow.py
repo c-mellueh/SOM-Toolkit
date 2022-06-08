@@ -28,7 +28,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1157, 509)
+        MainWindow.resize(1157, 495)
         MainWindow.setMinimumSize(QSize(0, 0))
         self.action_file_new = QAction(MainWindow)
         self.action_file_new.setObjectName(u"action_file_new")
@@ -104,15 +104,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_objects.addWidget(self.lineEdit_ident_pSet, 1, 1, 1, 1)
 
-        self.lineEdit_object_name = QLineEdit(self.widget)
-        self.lineEdit_object_name.setObjectName(u"lineEdit_object_name")
-        sizePolicy1.setHeightForWidth(self.lineEdit_object_name.sizePolicy().hasHeightForWidth())
-        self.lineEdit_object_name.setSizePolicy(sizePolicy1)
-        self.lineEdit_object_name.setFrame(True)
-        self.lineEdit_object_name.setEchoMode(QLineEdit.Normal)
-
-        self.gridLayout_objects.addWidget(self.lineEdit_object_name, 0, 1, 1, 1)
-
         self.horizontalLayout_object_button = QHBoxLayout()
         self.horizontalLayout_object_button.setObjectName(u"horizontalLayout_object_button")
         self.button_objects_update = QPushButton(self.widget)
@@ -121,12 +112,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_object_button.addWidget(self.button_objects_update)
 
-        self.button_objects_delete = QPushButton(self.widget)
-        self.button_objects_delete.setObjectName(u"button_objects_delete")
-        self.button_objects_delete.setAutoDefault(True)
-
-        self.horizontalLayout_object_button.addWidget(self.button_objects_delete)
-
         self.button_objects_add = QPushButton(self.widget)
         self.button_objects_add.setObjectName(u"button_objects_add")
         self.button_objects_add.setAutoDefault(True)
@@ -134,7 +119,16 @@ class Ui_MainWindow(object):
         self.horizontalLayout_object_button.addWidget(self.button_objects_add)
 
 
-        self.gridLayout_objects.addLayout(self.horizontalLayout_object_button, 0, 2, 1, 2)
+        self.gridLayout_objects.addLayout(self.horizontalLayout_object_button, 0, 3, 1, 1)
+
+        self.lineEdit_object_name = QLineEdit(self.widget)
+        self.lineEdit_object_name.setObjectName(u"lineEdit_object_name")
+        sizePolicy1.setHeightForWidth(self.lineEdit_object_name.sizePolicy().hasHeightForWidth())
+        self.lineEdit_object_name.setSizePolicy(sizePolicy1)
+        self.lineEdit_object_name.setFrame(True)
+        self.lineEdit_object_name.setEchoMode(QLineEdit.Normal)
+
+        self.gridLayout_objects.addWidget(self.lineEdit_object_name, 0, 1, 1, 2)
 
 
         self.verticalLayout_objects.addLayout(self.gridLayout_objects)
@@ -160,47 +154,6 @@ class Ui_MainWindow(object):
         self.tab_property_set.setLayoutDirection(Qt.LeftToRight)
         self.gridLayout = QGridLayout(self.tab_property_set)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.label_pSet_name = QLabel(self.tab_property_set)
-        self.label_pSet_name.setObjectName(u"label_pSet_name")
-        self.label_pSet_name.setMinimumSize(QSize(30, 0))
-
-        self.gridLayout.addWidget(self.label_pSet_name, 0, 0, 1, 1)
-
-        self.lineEdit_pSet_name = QLineEdit(self.tab_property_set)
-        self.lineEdit_pSet_name.setObjectName(u"lineEdit_pSet_name")
-        self.lineEdit_pSet_name.setFrame(True)
-
-        self.gridLayout.addWidget(self.lineEdit_pSet_name, 0, 1, 1, 1)
-
-        self.horizontalLayout_pSet_button = QHBoxLayout()
-        self.horizontalLayout_pSet_button.setObjectName(u"horizontalLayout_pSet_button")
-        self.button_Pset_rename = QPushButton(self.tab_property_set)
-        self.button_Pset_rename.setObjectName(u"button_Pset_rename")
-        sizePolicy.setHeightForWidth(self.button_Pset_rename.sizePolicy().hasHeightForWidth())
-        self.button_Pset_rename.setSizePolicy(sizePolicy)
-        self.button_Pset_rename.setAutoDefault(True)
-
-        self.horizontalLayout_pSet_button.addWidget(self.button_Pset_rename)
-
-        self.button_Pset_delete = QPushButton(self.tab_property_set)
-        self.button_Pset_delete.setObjectName(u"button_Pset_delete")
-        sizePolicy.setHeightForWidth(self.button_Pset_delete.sizePolicy().hasHeightForWidth())
-        self.button_Pset_delete.setSizePolicy(sizePolicy)
-        self.button_Pset_delete.setAutoDefault(True)
-
-        self.horizontalLayout_pSet_button.addWidget(self.button_Pset_delete)
-
-        self.button_Pset_add = QPushButton(self.tab_property_set)
-        self.button_Pset_add.setObjectName(u"button_Pset_add")
-        sizePolicy.setHeightForWidth(self.button_Pset_add.sizePolicy().hasHeightForWidth())
-        self.button_Pset_add.setSizePolicy(sizePolicy)
-        self.button_Pset_add.setAutoDefault(True)
-
-        self.horizontalLayout_pSet_button.addWidget(self.button_Pset_add)
-
-
-        self.gridLayout.addLayout(self.horizontalLayout_pSet_button, 1, 0, 1, 2)
-
         self.splitter_2 = QSplitter(self.tab_property_set)
         self.splitter_2.setObjectName(u"splitter_2")
         sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -231,6 +184,7 @@ class Ui_MainWindow(object):
         sizePolicy3.setHeightForWidth(self.tableWidget_inherited.sizePolicy().hasHeightForWidth())
         self.tableWidget_inherited.setSizePolicy(sizePolicy3)
         self.tableWidget_inherited.setFocusPolicy(Qt.StrongFocus)
+        self.tableWidget_inherited.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tableWidget_inherited.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.tableWidget_inherited.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tableWidget_inherited.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -251,9 +205,35 @@ class Ui_MainWindow(object):
         __qtablewidgetitem8 = QTableWidgetItem()
         self.attribute_widget.setHorizontalHeaderItem(3, __qtablewidgetitem8)
         self.attribute_widget.setObjectName(u"attribute_widget")
+        self.attribute_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.splitter_2.addWidget(self.attribute_widget)
 
-        self.gridLayout.addWidget(self.splitter_2, 2, 0, 1, 2)
+        self.gridLayout.addWidget(self.splitter_2, 3, 0, 1, 2)
+
+        self.horizontalLayout_pSet_button = QHBoxLayout()
+        self.horizontalLayout_pSet_button.setObjectName(u"horizontalLayout_pSet_button")
+        self.label_pSet_name = QLabel(self.tab_property_set)
+        self.label_pSet_name.setObjectName(u"label_pSet_name")
+        self.label_pSet_name.setMinimumSize(QSize(30, 0))
+
+        self.horizontalLayout_pSet_button.addWidget(self.label_pSet_name)
+
+        self.lineEdit_pSet_name = QLineEdit(self.tab_property_set)
+        self.lineEdit_pSet_name.setObjectName(u"lineEdit_pSet_name")
+        self.lineEdit_pSet_name.setFrame(True)
+
+        self.horizontalLayout_pSet_button.addWidget(self.lineEdit_pSet_name)
+
+        self.button_Pset_add = QPushButton(self.tab_property_set)
+        self.button_Pset_add.setObjectName(u"button_Pset_add")
+        sizePolicy.setHeightForWidth(self.button_Pset_add.sizePolicy().hasHeightForWidth())
+        self.button_Pset_add.setSizePolicy(sizePolicy)
+        self.button_Pset_add.setAutoDefault(True)
+
+        self.horizontalLayout_pSet_button.addWidget(self.button_Pset_add)
+
+
+        self.gridLayout.addLayout(self.horizontalLayout_pSet_button, 2, 0, 1, 2)
 
         self.tabWidget.addTab(self.tab_property_set, "")
         self.tab_code = QWidget()
@@ -418,15 +398,10 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.lineEdit_ident_pSet, self.lineEdit_ident_attribute)
         QWidget.setTabOrder(self.lineEdit_ident_attribute, self.lineEdit_ident_value)
         QWidget.setTabOrder(self.lineEdit_ident_value, self.button_objects_add)
-        QWidget.setTabOrder(self.button_objects_add, self.button_objects_delete)
-        QWidget.setTabOrder(self.button_objects_delete, self.button_objects_update)
+        QWidget.setTabOrder(self.button_objects_add, self.button_objects_update)
         QWidget.setTabOrder(self.button_objects_update, self.tree)
         QWidget.setTabOrder(self.tree, self.tabWidget)
-        QWidget.setTabOrder(self.tabWidget, self.lineEdit_pSet_name)
-        QWidget.setTabOrder(self.lineEdit_pSet_name, self.button_Pset_add)
-        QWidget.setTabOrder(self.button_Pset_add, self.button_Pset_delete)
-        QWidget.setTabOrder(self.button_Pset_delete, self.button_Pset_rename)
-        QWidget.setTabOrder(self.button_Pset_rename, self.pushButton_delete_script)
+        QWidget.setTabOrder(self.tabWidget, self.pushButton_delete_script)
         QWidget.setTabOrder(self.pushButton_delete_script, self.pushButton_import_script)
         QWidget.setTabOrder(self.pushButton_import_script, self.pushButton_burger)
         QWidget.setTabOrder(self.pushButton_burger, self.pushButton_left)
@@ -468,17 +443,12 @@ class Ui_MainWindow(object):
         self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
         self.label_Ident.setText(QCoreApplication.translate("MainWindow", u"Ident", None))
         self.lineEdit_ident_pSet.setPlaceholderText(QCoreApplication.translate("MainWindow", u"PropertySet", None))
-        self.lineEdit_object_name.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Name", None))
         self.button_objects_update.setText(QCoreApplication.translate("MainWindow", u"Update", None))
-        self.button_objects_delete.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
         self.button_objects_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
+        self.lineEdit_object_name.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Name", None))
         ___qtreewidgetitem = self.tree.headerItem()
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objects", None));
-        self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))
-        self.button_Pset_rename.setText(QCoreApplication.translate("MainWindow", u"Rename", None))
-        self.button_Pset_delete.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
-        self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         ___qtablewidgetitem = self.tableWidget_inherited.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"PropertySet", None));
         ___qtablewidgetitem1 = self.tableWidget_inherited.horizontalHeaderItem(1)
@@ -502,6 +472,8 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"Format", None));
         ___qtablewidgetitem8 = self.attribute_widget.horizontalHeaderItem(3)
         ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"Value", None));
+        self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))
+        self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_property_set), QCoreApplication.translate("MainWindow", u"PropertySet", None))
         self.label_script_title.setText(QCoreApplication.translate("MainWindow", u"Scripts", None))
 

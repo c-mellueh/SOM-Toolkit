@@ -1,8 +1,8 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea
+from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea,QMenu
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
-from desiteRuleCreator.Windows.popups import msg_del_ident_pset
+from desiteRuleCreator.Windows.popups import msg_del_ident_pset, req_pset_name
 from desiteRuleCreator.Windows.propertyset_window import PropertySetWindow,fill_attribute_table
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.data.classes import PropertySet, CustomTreeItem
@@ -32,13 +32,21 @@ def init(main_window):
     main_window.pset_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
     ui.button_Pset_add.clicked.connect(main_window.add_pset)
-    ui.button_Pset_rename.clicked.connect(main_window.rename_pset)
-    ui.button_Pset_delete.clicked.connect(main_window.delete_pset)
-    main_window.pset_buttons = [main_window.ui.button_Pset_add, main_window.ui.button_Pset_rename,
-                                main_window.ui.button_Pset_delete]
+    main_window.pset_buttons = [main_window.ui.button_Pset_add,]
     ui.tab_property_set.setEnabled(False)
     main_window.set_right_window_enable(False)
     main_window.ui.lineEdit_pSet_name.textChanged.connect(main_window.text_changed)
+    main_window.pset_table.customContextMenuRequested.connect(main_window.open_pset_menu)
+
+
+def open_menu(main_window, position):
+    menu = QMenu()
+    main_window.action_pset_delete_attribute = menu.addAction("Delete")
+    main_window.action_pset_rename_attribute = menu.addAction("Rename")
+    main_window.action_pset_delete_attribute.triggered.connect(main_window.delete_pset)
+    main_window.action_pset_rename_attribute.triggered.connect(main_window.rename_pset)
+
+    menu.exec(main_window.pset_table.viewport().mapToGlobal(position))
 
 
 def predefined_pset_list() -> list[PropertySet]:
@@ -92,18 +100,20 @@ def delete(main_window):
 
 
 def rename(main_window):
-    new_name = main_window.ui.lineEdit_pSet_name.text()
-    list_item = main_window.pset_table.selectedItems()[0]
-    selected_pset: PropertySet = list_item.data(constants.DATA_POS)
-    list_item.setText(new_name)
-    main_window.pset_table.resizeColumnsToContents()
-    selected_pset.name = new_name
+    return_str = req_pset_name(main_window)
+    if return_str[1]:
+        new_name = return_str[0]
+        list_item = main_window.pset_table.selectedItems()[0]
+        selected_pset: PropertySet = list_item.data(constants.DATA_POS)
+        list_item.setText(new_name)
+        main_window.pset_table.resizeColumnsToContents()
+        selected_pset.name = new_name
 
-    obj = selected_pset.object
-    if obj.ident_attrib in selected_pset.attributes:  # rename lineinput in ObjectWidget
-        tree_item: CustomTreeItem = main_window.ui.tree.selectedItems()[0]
-        tree_item.setText(1, str(obj.ident_attrib))
-    main_window.pset_table.resizeColumnsToContents()
+        obj = selected_pset.object
+        if obj.ident_attrib in selected_pset.attributes:  # rename lineinput in ObjectWidget
+            tree_item: CustomTreeItem = main_window.ui.tree.selectedItems()[0]
+            tree_item.setText(1, str(obj.ident_attrib))
+        main_window.pset_table.resizeColumnsToContents()
 
 
 def text_changed(main_window, text):

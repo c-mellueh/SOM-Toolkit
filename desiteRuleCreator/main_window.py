@@ -120,6 +120,9 @@ class MainWindow(QMainWindow):
     def merge_new_file(self):
         filehandling.merge_new_file(self)
 
+    def open_pset_menu(self,position):
+        property_widget.open_menu(self,position)
+
     def open_file(self, path=False):
 
         if path is False:

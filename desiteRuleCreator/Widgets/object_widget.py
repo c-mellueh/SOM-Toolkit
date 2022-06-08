@@ -31,7 +31,6 @@ def init(main_window):
         main_window.ui.tree.itemDoubleClicked.connect(main_window.object_double_clicked)
         main_window.ui.tree.customContextMenuRequested.connect(main_window.right_click)
         main_window.ui.button_objects_add.clicked.connect(main_window.add_object)
-        main_window.ui.button_objects_delete.clicked.connect(main_window.delete_object)
         main_window.ui.button_objects_update.clicked.connect(main_window.update_object)
         main_window.grpSc.activated.connect(main_window.rc_group)
         main_window.delSc.activated.connect(main_window.delete_object)
@@ -43,7 +42,7 @@ def init(main_window):
     init_tree(main_window.ui.tree)
 
     main_window.ui.verticalLayout_objects.addWidget(main_window.ui.tree)
-    main_window.object_buttons = [main_window.ui.button_objects_update, main_window.ui.button_objects_delete,
+    main_window.object_buttons = [main_window.ui.button_objects_update,
                                   main_window.ui.button_objects_add]
     main_window.obj_line_edit_list = [main_window.ui.lineEdit_object_name,
                                       main_window.ui.lineEdit_ident_value,

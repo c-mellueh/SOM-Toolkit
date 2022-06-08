@@ -6,13 +6,9 @@ from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QDi
 import desiteRuleCreator.icons as icons
 
 
-def get_icon():
-    icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
-    return QIcon(icon_path)
-
 
 def default_message(text):
-    icon = get_icon()
+    icon = icons.get_icon()
     msg_box = QMessageBox()
     msg_box.setText(text)
     msg_box.setWindowTitle(" ")
@@ -38,7 +34,7 @@ def msg_missing_input():
 
 
 def msg_unsaved():
-    icon = get_icon()
+    icon = icons.get_icon()
     msg_box = QMessageBox()
     msg_box.setText("Warning, unsaved changes will be lost!")
     msg_box.setWindowTitle(" ")
@@ -53,7 +49,7 @@ def msg_unsaved():
 
 
 def msg_delete_or_merge():
-    icon = get_icon()
+    icon = icons.get_icon()
     msg_box = QMessageBox()
     msg_box.setText("Warning, there is allready exisiting data!\n do you want to delete or merge?")
     msg_box.setWindowTitle(" ")
@@ -73,7 +69,7 @@ def msg_delete_or_merge():
 
 
 def msg_close():
-    icon = get_icon()
+    icon = icons.get_icon()
     text = "Do you want to save before exit?"
 
     msg_box = QMessageBox(QMessageBox.Icon.Warning,
@@ -99,7 +95,7 @@ def msg_mod_ident():
 class GroupRequest(QDialog):
     def __init__(self, parent=None, ):
         super(GroupRequest, self).__init__(parent)
-        icon = get_icon()
+        icon = icons.get_icon()
         self.group_name = QLineEdit(self)
         self.pset_name = QLineEdit(self)
         self.attribute_name = QLineEdit(self)
@@ -151,9 +147,12 @@ def req_attribute_name(property_window):
     text = QInputDialog.getText(property_window, "New Attribute Name", "New Attribute Name")
     return text
 
+def req_pset_name(main_window):
+    text = QInputDialog.getText(main_window, "New PropertySet Name ", "New PropertySet Name")
+    return text
 
 def req_merge_pset():
-    icon = get_icon()
+    icon = icons.get_icon()
     msg_box= QMessageBox()
     msg_box.setText("Pset exists in Predefined Psets, do you want to merge?")
     msg_box.setWindowTitle(" ")
