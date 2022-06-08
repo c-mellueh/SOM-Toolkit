@@ -240,15 +240,19 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         def add_attribute():
             name = self.widget.lineEdit_name.text()
-            values = get_values()
-            value_type = self.widget.combo_type.currentText()
-            data_type = self.widget.combo_data_type.currentText()
 
-            attribute = Attribute(self.property_set, name, values, value_type, data_type)
-            attribute.child_inherits_values = self.widget.check_box_inherit.isChecked()
-            rows = self.widget.table_widget.rowCount() + 1
-            self.widget.table_widget.setRowCount(rows)
-            add_table_line(rows - 1, attribute)
+            if name:
+                values = get_values()
+                value_type = self.widget.combo_type.currentText()
+                data_type = self.widget.combo_data_type.currentText()
+
+                attribute = Attribute(self.property_set, name, values, value_type, data_type)
+                attribute.child_inherits_values = self.widget.check_box_inherit.isChecked()
+                rows = self.widget.table_widget.rowCount() + 1
+                self.widget.table_widget.setRowCount(rows)
+                add_table_line(rows - 1, attribute)
+            else:
+                popups.msg_missing_input()
 
         already_exists = False
         for attribute in self.property_set.attributes:
@@ -256,7 +260,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                 update_attribute(attribute)
                 already_exists = True
 
-        if not already_exists and self.widget.lineEdit_name.text():
+        if not already_exists:
             add_attribute()
 
         self.clear_lines()

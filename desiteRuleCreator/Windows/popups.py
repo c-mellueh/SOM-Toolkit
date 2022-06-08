@@ -11,7 +11,7 @@ def default_message(text):
     icon = icons.get_icon()
     msg_box = QMessageBox()
     msg_box.setText(text)
-    msg_box.setWindowTitle(" ")
+    msg_box.setWindowTitle("Warning")
     msg_box.setIcon(QMessageBox.Icon.Warning)
 
     msg_box.setWindowIcon(icon)
@@ -30,7 +30,7 @@ def msg_identical_identifier():
 
 
 def msg_missing_input():
-    text = "Object informations are missing!"
+    text = "Missing Input(s)!"
     default_message(text)
 
 
