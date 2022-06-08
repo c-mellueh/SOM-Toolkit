@@ -203,13 +203,24 @@ def import_new(projekt_xml):
 
 
 def import_old(projekt_xml):
-    def handle_identifier(xml_object):
-        attributes = xml_object.attrib
-        identifier_string: str = attributes.get("Identifier")
-        property_set = PropertySet(identifier_string.split(":")[0])
-        attribute = Attribute(property_set, identifier_string.split(":")[1], [attributes.get("Name")],
-                              constants.LIST)
-        return attribute
+    def handle_identifier(obj:Object):
+        ident_text:str = obj.ident_attrib
+        ident_list = ident_text.split(":")
+        pset_name = ident_list[0]
+        attribute_name = ident_list[1]
+
+        attribute_found = False
+
+        for property_set in obj.property_sets:
+            if property_set.name == pset_name:
+                for attribute in property_set.attributes:
+                    if attribute.name == attribute_name:
+                        obj.ident_attrib = attribute
+                        attribute_found = True
+                if not attribute_found:
+                    atrb = Attribute(property_set,attribute_name,[obj.name],constants.LIST)
+                    obj.ident_attrib = atrb
+
 
     def transform_values(xml_object, value_type):
         value_list = list()
@@ -249,19 +260,13 @@ def import_old(projekt_xml):
     for xml_object in projekt_xml:
 
         if xml_object.tag == "Objekt":
-            ident_attrib = handle_identifier(xml_object)
+            obj = Object(xml_object.attrib.get("Name"), xml_object.attrib["Identifier"])
 
-            group_name = xml_object.attrib.get("Fachdisziplin")
-            obj = Object(xml_object.attrib.get("Name"), ident_attrib)
-            obj.add_attribute(ident_attrib)
-            obj.parent = fachdisziplinen_dict[group_name]
+            xml_property_sets = [x for x in xml_object if x.tag == "PropertySet"]
 
-            for xml_property_set in xml_object:
+            for xml_property_set in xml_property_sets:
                 pset_name = xml_property_set.attrib.get("Name")
-                if pset_name in obj.psetNameDict:
-                    property_set = obj.psetNameDict[pset_name]
-                else:
-                    property_set = PropertySet(pset_name)
+                property_set = PropertySet(pset_name)
 
                 for xml_attribute in xml_property_set:
                     attrib = xml_attribute.attrib
@@ -271,7 +276,15 @@ def import_old(projekt_xml):
 
                     value = transform_values(xml_attribute, value_type)
                     atrb = Attribute(property_set, name, value, value_type, data_type)
-                    obj.add_attribute(atrb)
+
+                obj.add_property_set(property_set)
+
+
+                handle_identifier(obj)
+
+                group_name = xml_object.attrib.get("Fachdisziplin")
+                obj.parent = fachdisziplinen_dict[group_name]
+
 
 
 def save_as_clicked(main_window):
