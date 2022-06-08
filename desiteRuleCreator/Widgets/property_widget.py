@@ -226,7 +226,7 @@ def add_pset(main_window):
 
     obj.add_property_set(property_set)
     item.setData(constants.DATA_POS, property_set)
-    main_window.pset_window = main_window.open_pset_window(property_set, main_window.active_object, None)
+    #main_window.pset_window = main_window.open_pset_window(property_set, main_window.active_object, None)
     main_window.text_changed(main_window.ui.lineEdit_pSet_name.text())
     main_window.pset_table.resizeColumnsToContents()
 
