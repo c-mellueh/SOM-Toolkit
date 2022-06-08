@@ -19,15 +19,16 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHBoxLayout,
     QHeaderView, QLabel, QLineEdit, QListWidget,
     QListWidgetItem, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
-    QTabWidget, QTableWidget, QTableWidgetItem, QTextEdit,
-    QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
+    QPushButton, QSizePolicy, QSpacerItem, QSplitter,
+    QStatusBar, QTabWidget, QTableWidget, QTableWidgetItem,
+    QTextEdit, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1109, 509)
+        MainWindow.resize(1157, 509)
         MainWindow.setMinimumSize(QSize(0, 0))
         self.action_file_new = QAction(MainWindow)
         self.action_file_new.setObjectName(u"action_file_new")
@@ -45,20 +46,26 @@ class Ui_MainWindow(object):
         self.action_show_list.setObjectName(u"action_show_list")
         self.verticalLayout_main = QWidget(MainWindow)
         self.verticalLayout_main.setObjectName(u"verticalLayout_main")
-        self.horizontalLayout_2 = QHBoxLayout(self.verticalLayout_main)
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.verticalLayout_objects = QVBoxLayout()
+        self.verticalLayout = QVBoxLayout(self.verticalLayout_main)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.splitter = QSplitter(self.verticalLayout_main)
+        self.splitter.setObjectName(u"splitter")
+        self.splitter.setOrientation(Qt.Horizontal)
+        self.widget = QWidget(self.splitter)
+        self.widget.setObjectName(u"widget")
+        self.verticalLayout_objects = QVBoxLayout(self.widget)
         self.verticalLayout_objects.setObjectName(u"verticalLayout_objects")
+        self.verticalLayout_objects.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_objects = QGridLayout()
         self.gridLayout_objects.setObjectName(u"gridLayout_objects")
-        self.lineEdit_ident_value = QLineEdit(self.verticalLayout_main)
+        self.lineEdit_ident_value = QLineEdit(self.widget)
         self.lineEdit_ident_value.setObjectName(u"lineEdit_ident_value")
         self.lineEdit_ident_value.setFrame(True)
         self.lineEdit_ident_value.setEchoMode(QLineEdit.Normal)
 
         self.gridLayout_objects.addWidget(self.lineEdit_ident_value, 1, 3, 1, 1)
 
-        self.label_object_name = QLabel(self.verticalLayout_main)
+        self.label_object_name = QLabel(self.widget)
         self.label_object_name.setObjectName(u"label_object_name")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -70,7 +77,7 @@ class Ui_MainWindow(object):
 
         self.gridLayout_objects.addWidget(self.label_object_name, 0, 0, 1, 1)
 
-        self.lineEdit_ident_attribute = QLineEdit(self.verticalLayout_main)
+        self.lineEdit_ident_attribute = QLineEdit(self.widget)
         self.lineEdit_ident_attribute.setObjectName(u"lineEdit_ident_attribute")
         sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
@@ -83,12 +90,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_objects.addWidget(self.lineEdit_ident_attribute, 1, 2, 1, 1)
 
-        self.label_Ident = QLabel(self.verticalLayout_main)
+        self.label_Ident = QLabel(self.widget)
         self.label_Ident.setObjectName(u"label_Ident")
 
         self.gridLayout_objects.addWidget(self.label_Ident, 1, 0, 1, 1)
 
-        self.lineEdit_ident_pSet = QLineEdit(self.verticalLayout_main)
+        self.lineEdit_ident_pSet = QLineEdit(self.widget)
         self.lineEdit_ident_pSet.setObjectName(u"lineEdit_ident_pSet")
         sizePolicy1.setHeightForWidth(self.lineEdit_ident_pSet.sizePolicy().hasHeightForWidth())
         self.lineEdit_ident_pSet.setSizePolicy(sizePolicy1)
@@ -97,7 +104,7 @@ class Ui_MainWindow(object):
 
         self.gridLayout_objects.addWidget(self.lineEdit_ident_pSet, 1, 1, 1, 1)
 
-        self.lineEdit_object_name = QLineEdit(self.verticalLayout_main)
+        self.lineEdit_object_name = QLineEdit(self.widget)
         self.lineEdit_object_name.setObjectName(u"lineEdit_object_name")
         sizePolicy1.setHeightForWidth(self.lineEdit_object_name.sizePolicy().hasHeightForWidth())
         self.lineEdit_object_name.setSizePolicy(sizePolicy1)
@@ -108,19 +115,19 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_object_button = QHBoxLayout()
         self.horizontalLayout_object_button.setObjectName(u"horizontalLayout_object_button")
-        self.button_objects_update = QPushButton(self.verticalLayout_main)
+        self.button_objects_update = QPushButton(self.widget)
         self.button_objects_update.setObjectName(u"button_objects_update")
         self.button_objects_update.setAutoDefault(True)
 
         self.horizontalLayout_object_button.addWidget(self.button_objects_update)
 
-        self.button_objects_delete = QPushButton(self.verticalLayout_main)
+        self.button_objects_delete = QPushButton(self.widget)
         self.button_objects_delete.setObjectName(u"button_objects_delete")
         self.button_objects_delete.setAutoDefault(True)
 
         self.horizontalLayout_object_button.addWidget(self.button_objects_delete)
 
-        self.button_objects_add = QPushButton(self.verticalLayout_main)
+        self.button_objects_add = QPushButton(self.widget)
         self.button_objects_add.setObjectName(u"button_objects_add")
         self.button_objects_add.setAutoDefault(True)
 
@@ -132,7 +139,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_objects.addLayout(self.gridLayout_objects)
 
-        self.tree = QTreeWidget(self.verticalLayout_main)
+        self.tree = QTreeWidget(self.widget)
         self.tree.setObjectName(u"tree")
         self.tree.setEnabled(True)
         self.tree.setDragDropMode(QAbstractItemView.InternalMove)
@@ -145,56 +152,64 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_objects.addWidget(self.tree)
 
-
-        self.horizontalLayout_2.addLayout(self.verticalLayout_objects)
-
-        self.tabWidget = QTabWidget(self.verticalLayout_main)
+        self.splitter.addWidget(self.widget)
+        self.tabWidget = QTabWidget(self.splitter)
         self.tabWidget.setObjectName(u"tabWidget")
         self.tab_property_set = QWidget()
         self.tab_property_set.setObjectName(u"tab_property_set")
-        self.verticalLayout = QVBoxLayout(self.tab_property_set)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.gridLayout_pSet = QGridLayout()
-        self.gridLayout_pSet.setObjectName(u"gridLayout_pSet")
+        self.tab_property_set.setLayoutDirection(Qt.LeftToRight)
+        self.gridLayout = QGridLayout(self.tab_property_set)
+        self.gridLayout.setObjectName(u"gridLayout")
         self.label_pSet_name = QLabel(self.tab_property_set)
         self.label_pSet_name.setObjectName(u"label_pSet_name")
         self.label_pSet_name.setMinimumSize(QSize(30, 0))
 
-        self.gridLayout_pSet.addWidget(self.label_pSet_name, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.label_pSet_name, 0, 0, 1, 1)
 
         self.lineEdit_pSet_name = QLineEdit(self.tab_property_set)
         self.lineEdit_pSet_name.setObjectName(u"lineEdit_pSet_name")
         self.lineEdit_pSet_name.setFrame(True)
 
-        self.gridLayout_pSet.addWidget(self.lineEdit_pSet_name, 0, 1, 1, 1)
+        self.gridLayout.addWidget(self.lineEdit_pSet_name, 0, 1, 1, 1)
 
         self.horizontalLayout_pSet_button = QHBoxLayout()
         self.horizontalLayout_pSet_button.setObjectName(u"horizontalLayout_pSet_button")
         self.button_Pset_rename = QPushButton(self.tab_property_set)
         self.button_Pset_rename.setObjectName(u"button_Pset_rename")
+        sizePolicy.setHeightForWidth(self.button_Pset_rename.sizePolicy().hasHeightForWidth())
+        self.button_Pset_rename.setSizePolicy(sizePolicy)
         self.button_Pset_rename.setAutoDefault(True)
 
         self.horizontalLayout_pSet_button.addWidget(self.button_Pset_rename)
 
         self.button_Pset_delete = QPushButton(self.tab_property_set)
         self.button_Pset_delete.setObjectName(u"button_Pset_delete")
+        sizePolicy.setHeightForWidth(self.button_Pset_delete.sizePolicy().hasHeightForWidth())
+        self.button_Pset_delete.setSizePolicy(sizePolicy)
         self.button_Pset_delete.setAutoDefault(True)
 
         self.horizontalLayout_pSet_button.addWidget(self.button_Pset_delete)
 
         self.button_Pset_add = QPushButton(self.tab_property_set)
         self.button_Pset_add.setObjectName(u"button_Pset_add")
+        sizePolicy.setHeightForWidth(self.button_Pset_add.sizePolicy().hasHeightForWidth())
+        self.button_Pset_add.setSizePolicy(sizePolicy)
         self.button_Pset_add.setAutoDefault(True)
 
         self.horizontalLayout_pSet_button.addWidget(self.button_Pset_add)
 
 
-        self.gridLayout_pSet.addLayout(self.horizontalLayout_pSet_button, 1, 0, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout_pSet_button, 1, 0, 1, 2)
 
-
-        self.verticalLayout.addLayout(self.gridLayout_pSet)
-
-        self.tableWidget_inherited = QTableWidget(self.tab_property_set)
+        self.splitter_2 = QSplitter(self.tab_property_set)
+        self.splitter_2.setObjectName(u"splitter_2")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.splitter_2.sizePolicy().hasHeightForWidth())
+        self.splitter_2.setSizePolicy(sizePolicy2)
+        self.splitter_2.setOrientation(Qt.Horizontal)
+        self.tableWidget_inherited = QTableWidget(self.splitter_2)
         if (self.tableWidget_inherited.columnCount() < 2):
             self.tableWidget_inherited.setColumnCount(2)
         __qtablewidgetitem = QTableWidgetItem()
@@ -210,21 +225,35 @@ class Ui_MainWindow(object):
         __qtablewidgetitem4 = QTableWidgetItem()
         self.tableWidget_inherited.setItem(0, 1, __qtablewidgetitem4)
         self.tableWidget_inherited.setObjectName(u"tableWidget_inherited")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.tableWidget_inherited.sizePolicy().hasHeightForWidth())
-        self.tableWidget_inherited.setSizePolicy(sizePolicy2)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Expanding)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.tableWidget_inherited.sizePolicy().hasHeightForWidth())
+        self.tableWidget_inherited.setSizePolicy(sizePolicy3)
         self.tableWidget_inherited.setFocusPolicy(Qt.StrongFocus)
         self.tableWidget_inherited.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.tableWidget_inherited.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tableWidget_inherited.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableWidget_inherited.setSortingEnabled(True)
+        self.splitter_2.addWidget(self.tableWidget_inherited)
         self.tableWidget_inherited.horizontalHeader().setProperty("showSortIndicator", True)
         self.tableWidget_inherited.verticalHeader().setVisible(False)
         self.tableWidget_inherited.verticalHeader().setCascadingSectionResizes(False)
+        self.attribute_widget = QTableWidget(self.splitter_2)
+        if (self.attribute_widget.columnCount() < 4):
+            self.attribute_widget.setColumnCount(4)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        self.attribute_widget.setHorizontalHeaderItem(0, __qtablewidgetitem5)
+        __qtablewidgetitem6 = QTableWidgetItem()
+        self.attribute_widget.setHorizontalHeaderItem(1, __qtablewidgetitem6)
+        __qtablewidgetitem7 = QTableWidgetItem()
+        self.attribute_widget.setHorizontalHeaderItem(2, __qtablewidgetitem7)
+        __qtablewidgetitem8 = QTableWidgetItem()
+        self.attribute_widget.setHorizontalHeaderItem(3, __qtablewidgetitem8)
+        self.attribute_widget.setObjectName(u"attribute_widget")
+        self.splitter_2.addWidget(self.attribute_widget)
 
-        self.verticalLayout.addWidget(self.tableWidget_inherited)
+        self.gridLayout.addWidget(self.splitter_2, 2, 0, 1, 2)
 
         self.tabWidget.addTab(self.tab_property_set, "")
         self.tab_code = QWidget()
@@ -233,11 +262,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.widget_vertical_stack = QWidget(self.tab_code)
         self.widget_vertical_stack.setObjectName(u"widget_vertical_stack")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.widget_vertical_stack.sizePolicy().hasHeightForWidth())
-        self.widget_vertical_stack.setSizePolicy(sizePolicy3)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.widget_vertical_stack.sizePolicy().hasHeightForWidth())
+        self.widget_vertical_stack.setSizePolicy(sizePolicy4)
         self.verticalLayout_4 = QVBoxLayout(self.widget_vertical_stack)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -253,11 +282,11 @@ class Ui_MainWindow(object):
         QListWidgetItem(self.listWidget_scripts)
         QListWidgetItem(self.listWidget_scripts)
         self.listWidget_scripts.setObjectName(u"listWidget_scripts")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.listWidget_scripts.sizePolicy().hasHeightForWidth())
-        self.listWidget_scripts.setSizePolicy(sizePolicy4)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.listWidget_scripts.sizePolicy().hasHeightForWidth())
+        self.listWidget_scripts.setSizePolicy(sizePolicy5)
         self.listWidget_scripts.setMaximumSize(QSize(161, 16777215))
         self.listWidget_scripts.setEditTriggers(QAbstractItemView.DoubleClicked|QAbstractItemView.EditKeyPressed|QAbstractItemView.SelectedClicked)
 
@@ -267,11 +296,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.pushButton_add_script = QPushButton(self.widget_vertical_stack)
         self.pushButton_add_script.setObjectName(u"pushButton_add_script")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.pushButton_add_script.sizePolicy().hasHeightForWidth())
-        self.pushButton_add_script.setSizePolicy(sizePolicy5)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.pushButton_add_script.sizePolicy().hasHeightForWidth())
+        self.pushButton_add_script.setSizePolicy(sizePolicy6)
         self.pushButton_add_script.setMinimumSize(QSize(25, 25))
         self.pushButton_add_script.setMaximumSize(QSize(21, 16777215))
 
@@ -279,8 +308,8 @@ class Ui_MainWindow(object):
 
         self.pushButton_delete_script = QPushButton(self.widget_vertical_stack)
         self.pushButton_delete_script.setObjectName(u"pushButton_delete_script")
-        sizePolicy5.setHeightForWidth(self.pushButton_delete_script.sizePolicy().hasHeightForWidth())
-        self.pushButton_delete_script.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.pushButton_delete_script.sizePolicy().hasHeightForWidth())
+        self.pushButton_delete_script.setSizePolicy(sizePolicy6)
         self.pushButton_delete_script.setMinimumSize(QSize(25, 25))
         self.pushButton_delete_script.setMaximumSize(QSize(25, 25))
 
@@ -292,8 +321,8 @@ class Ui_MainWindow(object):
 
         self.pushButton_import_script = QPushButton(self.widget_vertical_stack)
         self.pushButton_import_script.setObjectName(u"pushButton_import_script")
-        sizePolicy5.setHeightForWidth(self.pushButton_import_script.sizePolicy().hasHeightForWidth())
-        self.pushButton_import_script.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.pushButton_import_script.sizePolicy().hasHeightForWidth())
+        self.pushButton_import_script.setSizePolicy(sizePolicy6)
         self.pushButton_import_script.setMinimumSize(QSize(25, 25))
         self.pushButton_import_script.setMaximumSize(QSize(25, 25))
 
@@ -342,11 +371,11 @@ class Ui_MainWindow(object):
 
         self.label_script_name = QLabel(self.tab_code)
         self.label_script_name.setObjectName(u"label_script_name")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        sizePolicy6.setHorizontalStretch(2)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.label_script_name.sizePolicy().hasHeightForWidth())
-        self.label_script_name.setSizePolicy(sizePolicy6)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        sizePolicy7.setHorizontalStretch(2)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.label_script_name.sizePolicy().hasHeightForWidth())
+        self.label_script_name.setSizePolicy(sizePolicy7)
 
         self.horizontalLayout.addWidget(self.label_script_name)
 
@@ -355,11 +384,11 @@ class Ui_MainWindow(object):
 
         self.code_edit = QTextEdit(self.tab_code)
         self.code_edit.setObjectName(u"code_edit")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy7.setHorizontalStretch(2)
-        sizePolicy7.setVerticalStretch(0)
-        sizePolicy7.setHeightForWidth(self.code_edit.sizePolicy().hasHeightForWidth())
-        self.code_edit.setSizePolicy(sizePolicy7)
+        sizePolicy8 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy8.setHorizontalStretch(2)
+        sizePolicy8.setVerticalStretch(0)
+        sizePolicy8.setHeightForWidth(self.code_edit.sizePolicy().hasHeightForWidth())
+        self.code_edit.setSizePolicy(sizePolicy8)
 
         self.verticalLayout_2.addWidget(self.code_edit)
 
@@ -367,13 +396,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addLayout(self.verticalLayout_2)
 
         self.tabWidget.addTab(self.tab_code, "")
+        self.splitter.addWidget(self.tabWidget)
 
-        self.horizontalLayout_2.addWidget(self.tabWidget)
+        self.verticalLayout.addWidget(self.splitter)
 
         MainWindow.setCentralWidget(self.verticalLayout_main)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1109, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1157, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuDesite = QMenu(self.menubar)
@@ -396,8 +426,7 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.lineEdit_pSet_name, self.button_Pset_add)
         QWidget.setTabOrder(self.button_Pset_add, self.button_Pset_delete)
         QWidget.setTabOrder(self.button_Pset_delete, self.button_Pset_rename)
-        QWidget.setTabOrder(self.button_Pset_rename, self.tableWidget_inherited)
-        QWidget.setTabOrder(self.tableWidget_inherited, self.pushButton_delete_script)
+        QWidget.setTabOrder(self.button_Pset_rename, self.pushButton_delete_script)
         QWidget.setTabOrder(self.pushButton_delete_script, self.pushButton_import_script)
         QWidget.setTabOrder(self.pushButton_import_script, self.pushButton_burger)
         QWidget.setTabOrder(self.pushButton_burger, self.pushButton_left)
@@ -465,6 +494,14 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Verkehrsanlagen", None));
         self.tableWidget_inherited.setSortingEnabled(__sortingEnabled)
 
+        ___qtablewidgetitem5 = self.attribute_widget.horizontalHeaderItem(0)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Name", None));
+        ___qtablewidgetitem6 = self.attribute_widget.horizontalHeaderItem(1)
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Data Format", None));
+        ___qtablewidgetitem7 = self.attribute_widget.horizontalHeaderItem(2)
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"Format", None));
+        ___qtablewidgetitem8 = self.attribute_widget.horizontalHeaderItem(3)
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"Value", None));
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_property_set), QCoreApplication.translate("MainWindow", u"PropertySet", None))
         self.label_script_title.setText(QCoreApplication.translate("MainWindow", u"Scripts", None))
 
