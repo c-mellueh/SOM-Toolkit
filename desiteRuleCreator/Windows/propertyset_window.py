@@ -41,7 +41,6 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         # Buttons
         self.widget.button_add.clicked.connect(self.add_button_pressed)
-        self.widget.button_delete.clicked.connect(self.delete_attribute)
 
         self.widget.table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.widget.table_widget.customContextMenuRequested.connect(self.open_menu)

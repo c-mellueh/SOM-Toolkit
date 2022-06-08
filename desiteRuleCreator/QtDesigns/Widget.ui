@@ -16,13 +16,6 @@
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <layout class="QGridLayout" name="layout_grid">
-     <item row="2" column="4">
-      <widget class="QPushButton" name="button_delete">
-       <property name="text">
-        <string>Delete</string>
-       </property>
-      </widget>
-     </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_name">
        <property name="sizePolicy">
@@ -54,44 +47,6 @@
        <property name="text">
         <string>Add</string>
        </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QComboBox" name="combo_data_type">
-       <item>
-        <property name="text">
-         <string>xs:string</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>xs:bool</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>xs:double</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="2" column="3">
-      <widget class="QComboBox" name="combo_type">
-       <item>
-        <property name="text">
-         <string>List</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Format</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Range</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="6" column="0" colspan="6">
@@ -168,6 +123,49 @@
        <property name="text">
         <string>inherit</string>
        </property>
+      </widget>
+     </item>
+     <item row="2" column="3" colspan="2">
+      <widget class="QComboBox" name="combo_type">
+       <item>
+        <property name="text">
+         <string>List</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Format</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Range</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="1" colspan="2">
+      <widget class="QComboBox" name="combo_data_type">
+       <item>
+        <property name="text">
+         <string>xs:string</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>xs:int</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>xs:bool</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>xs:double</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
