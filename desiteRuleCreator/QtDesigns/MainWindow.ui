@@ -26,7 +26,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_objects">
         <item>
          <layout class="QGridLayout" name="gridLayout_objects">
@@ -677,12 +677,12 @@
     <addaction name="action_file_Save"/>
     <addaction name="action_file_Save_As"/>
     <addaction name="action_file_Open"/>
+    <addaction name="action_settings"/>
    </widget>
    <widget class="QMenu" name="menuDesite">
     <property name="title">
      <string>Desite</string>
     </property>
-    <addaction name="action_desite_Settings"/>
     <addaction name="action_desite_Export"/>
    </widget>
    <widget class="QMenu" name="menuPredefined_Psets">
@@ -729,6 +729,11 @@
   <action name="action_show_list">
    <property name="text">
     <string>Show List</string>
+   </property>
+  </action>
+  <action name="action_settings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

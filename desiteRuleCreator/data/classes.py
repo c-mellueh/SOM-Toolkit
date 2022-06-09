@@ -6,8 +6,6 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QDropEvent
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QAbstractItemView, QListWidgetItem
 
-from desiteRuleCreator import __version__ as project_version
-
 global _changed
 
 
@@ -49,7 +47,7 @@ class Project(object):
     def __init__(self, name, author=None):
         self._name = name
         self._author = author
-        self._version = project_version
+        self._version = "1.0.0"
         self._changed = True
 
     @property
@@ -94,6 +92,15 @@ class Project(object):
     @author.setter
     def author(self, value: str):
         self._author = value
+        self._changed = True
+
+    @property
+    def version(self) -> str:
+        return self._version
+
+    @version.setter
+    def version(self, value: str):
+        self._version = value
         self._changed = True
 
 
@@ -447,12 +454,10 @@ class Object(Hirarchy):
 
     @property
     def is_concept(self) -> bool:
-        return self._is_concept
-
-    @is_concept.setter
-    def is_concept(self, value: bool) -> None:
-        self._is_concept = value
-        self.changed = True
+        if isinstance(self.ident_attrib,Attribute):
+            return False
+        else:
+            return True
 
     @property
     def ident_attrib(self) -> Attribute:

@@ -322,8 +322,6 @@ def update_object(main_window):
                 property_set = classes.PropertySet(p_set_name)
                 obj.ident_attrib = classes.Attribute(property_set, ident_name, [ident_value],
                                                         value_type=constants.LIST)
-                obj.is_concept = False
-
             else:
                 if name != "*":
                     obj.name = name
