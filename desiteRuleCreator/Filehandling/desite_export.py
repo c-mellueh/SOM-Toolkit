@@ -70,10 +70,10 @@ def handle_element_section(xml_qa_export):
     return xml_element_section
 
 
-def handle_container(xml_element_section):
+def handle_container(xml_element_section,project):
     container = etree.SubElement(xml_element_section, "container")
     container.set("ID", str(uuid.uuid4()))
-    container.set("name", "Konsistenzprüfung")
+    container.set("name",f"{project.name} : {project.version}")
     return container
 
 
@@ -99,7 +99,7 @@ def handle_checkrun(xml_container, name, author="CMellueh"):
 def init_xml(main_window):
     xml_qa_export = handle_qa_export(main_window)
     xml_element_section = handle_element_section(xml_qa_export)
-    xml_container = handle_container(xml_element_section)
+    xml_container = handle_container(xml_element_section,main_window.project)
     return xml_container, xml_qa_export
 
 

@@ -330,7 +330,7 @@ def save(main_window, path):
     def add_object(obj: Object, xml_project):
         xml_object = etree.SubElement(xml_project, constants.OBJECT)
         xml_object.set(constants.NAME, obj.name)
-        xml_object.set(constants.IDENTIFIER, obj.identifier)
+        xml_object.set(constants.IDENTIFIER, str(obj.identifier))
         xml_object.set("is_concept", str(obj.is_concept))
         add_parent(xml_object, obj)
 
