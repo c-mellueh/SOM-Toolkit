@@ -89,7 +89,6 @@ def create_object(sheet, cell, pset_dict, cell_list):
     elternklasse = sheet.cell(row=cell.row + 2, column=cell.column + 1).value
     ident = sheet.cell(row=cell.row, column=cell.column + 2).value
 
-    name = f"{ident} [{name}]"
 
     pset = classes.PropertySet(name)
 
@@ -109,7 +108,6 @@ def create_object(sheet, cell, pset_dict, cell_list):
 
 
 def start(main_window, path):
-    # path = QFileDialog.getOpenFileName(mainWindow, "Open XML", "", "Excel Files (*.xlsx *.xls)")[0]
     book = openpyxl.load_workbook(path)
     sheet = book.active
 
