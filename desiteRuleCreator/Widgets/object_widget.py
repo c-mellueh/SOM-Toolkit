@@ -135,15 +135,25 @@ def rc_group_items(main_window):
 
 
 def single_click(main_window, item: classes.CustomTreeItem):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
+
     if len(main_window.ui.tree.selectedItems())>1:
         main_window.multi_selection()
 
     else:
+
         obj: classes.Object = item.object
         main_window.active_object = obj
         property_widget.fill_table(main_window, obj)
         script_widget.show(main_window)
         main_window.update_completer()
+
+        ui.lineEdit_object_name.setText(obj.name)
+        if not obj.is_concept:
+            text = "|".join(obj.ident_attrib.value)
+            ui.lineEdit_ident_value.setText(text)
+            ui.lineEdit_ident_pSet.setText(obj.ident_attrib.property_set.name)
+            ui.lineEdit_ident_attribute.setText(obj.ident_attrib.name)
 
 
 def set_ident_line_enable(main_window, value: bool):
