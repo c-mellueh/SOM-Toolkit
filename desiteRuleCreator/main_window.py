@@ -157,16 +157,16 @@ class MainWindow(QMainWindow):
     def rc_group(self):
         object_widget.rc_group_items(self)
 
-    def object_clicked(self):
-        object_widget.single_click(self)
+    def multi_selection(self):
+        object_widget.multi_selection(self)
 
     def update_completer(self):
         completer = QCompleter(property_widget.predefined_pset_list(), self)
         self.ui.lineEdit_pSet_name.setCompleter(completer)
         self.ui.lineEdit_ident_pSet.setCompleter(completer)
 
-    def object_double_clicked(self, item):
-        object_widget.double_click(self, item)
+    def object_clicked(self, item):
+        object_widget.single_click(self, item)
 
     def set_ident_line_enable(self, value: bool):
         object_widget.set_ident_line_enable(self, value)
