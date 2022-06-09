@@ -2,7 +2,7 @@ import openpyxl
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
 from desiteRuleCreator.data import classes, constants
-
+from desiteRuleCreator.Widgets import object_widget
 
 def transform_value_types(value: str):
     special = False
@@ -151,9 +151,7 @@ def start(main_window, path):
 
     obj: classes.Object
     for obj in classes.Object.iter:
-        ui: ui_mainwindow.Ui_MainWindow = main_window.ui
-        item = classes.CustomTreeItem(ui.tree, obj)
-        item.update()
+        item = object_widget.add_object_to_tree(main_window,obj,None)
         tree_dict[obj.ident_attrib.value[0]] = item
 
     ident: str
