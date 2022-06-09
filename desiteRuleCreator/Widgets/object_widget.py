@@ -154,6 +154,10 @@ def single_click(main_window, item: classes.CustomTreeItem):
             ui.lineEdit_ident_value.setText(text)
             ui.lineEdit_ident_pSet.setText(obj.ident_attrib.property_set.name)
             ui.lineEdit_ident_attribute.setText(obj.ident_attrib.name)
+        else:
+            ui.lineEdit_ident_value.clear()
+            ui.lineEdit_ident_pSet.clear()
+            ui.lineEdit_ident_attribute.clear()
 
 
 def set_ident_line_enable(main_window, value: bool):
