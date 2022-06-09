@@ -44,6 +44,8 @@ class Ui_MainWindow(object):
         self.action_desite_Export.setObjectName(u"action_desite_Export")
         self.action_show_list = QAction(MainWindow)
         self.action_show_list.setObjectName(u"action_show_list")
+        self.action_settings = QAction(MainWindow)
+        self.action_settings.setObjectName(u"action_settings")
         self.verticalLayout_main = QWidget(MainWindow)
         self.verticalLayout_main.setObjectName(u"verticalLayout_main")
         self.verticalLayout = QVBoxLayout(self.verticalLayout_main)
@@ -51,21 +53,21 @@ class Ui_MainWindow(object):
         self.splitter = QSplitter(self.verticalLayout_main)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Horizontal)
-        self.widget = QWidget(self.splitter)
-        self.widget.setObjectName(u"widget")
-        self.verticalLayout_objects = QVBoxLayout(self.widget)
+        self.layoutWidget = QWidget(self.splitter)
+        self.layoutWidget.setObjectName(u"layoutWidget")
+        self.verticalLayout_objects = QVBoxLayout(self.layoutWidget)
         self.verticalLayout_objects.setObjectName(u"verticalLayout_objects")
         self.verticalLayout_objects.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_objects = QGridLayout()
         self.gridLayout_objects.setObjectName(u"gridLayout_objects")
-        self.lineEdit_ident_value = QLineEdit(self.widget)
+        self.lineEdit_ident_value = QLineEdit(self.layoutWidget)
         self.lineEdit_ident_value.setObjectName(u"lineEdit_ident_value")
         self.lineEdit_ident_value.setFrame(True)
         self.lineEdit_ident_value.setEchoMode(QLineEdit.Normal)
 
         self.gridLayout_objects.addWidget(self.lineEdit_ident_value, 1, 3, 1, 1)
 
-        self.label_object_name = QLabel(self.widget)
+        self.label_object_name = QLabel(self.layoutWidget)
         self.label_object_name.setObjectName(u"label_object_name")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -77,7 +79,7 @@ class Ui_MainWindow(object):
 
         self.gridLayout_objects.addWidget(self.label_object_name, 0, 0, 1, 1)
 
-        self.lineEdit_ident_attribute = QLineEdit(self.widget)
+        self.lineEdit_ident_attribute = QLineEdit(self.layoutWidget)
         self.lineEdit_ident_attribute.setObjectName(u"lineEdit_ident_attribute")
         sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
@@ -90,12 +92,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_objects.addWidget(self.lineEdit_ident_attribute, 1, 2, 1, 1)
 
-        self.label_Ident = QLabel(self.widget)
+        self.label_Ident = QLabel(self.layoutWidget)
         self.label_Ident.setObjectName(u"label_Ident")
 
         self.gridLayout_objects.addWidget(self.label_Ident, 1, 0, 1, 1)
 
-        self.lineEdit_ident_pSet = QLineEdit(self.widget)
+        self.lineEdit_ident_pSet = QLineEdit(self.layoutWidget)
         self.lineEdit_ident_pSet.setObjectName(u"lineEdit_ident_pSet")
         sizePolicy1.setHeightForWidth(self.lineEdit_ident_pSet.sizePolicy().hasHeightForWidth())
         self.lineEdit_ident_pSet.setSizePolicy(sizePolicy1)
@@ -106,13 +108,13 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_object_button = QHBoxLayout()
         self.horizontalLayout_object_button.setObjectName(u"horizontalLayout_object_button")
-        self.button_objects_update = QPushButton(self.widget)
+        self.button_objects_update = QPushButton(self.layoutWidget)
         self.button_objects_update.setObjectName(u"button_objects_update")
         self.button_objects_update.setAutoDefault(True)
 
         self.horizontalLayout_object_button.addWidget(self.button_objects_update)
 
-        self.button_objects_add = QPushButton(self.widget)
+        self.button_objects_add = QPushButton(self.layoutWidget)
         self.button_objects_add.setObjectName(u"button_objects_add")
         self.button_objects_add.setAutoDefault(True)
 
@@ -121,7 +123,7 @@ class Ui_MainWindow(object):
 
         self.gridLayout_objects.addLayout(self.horizontalLayout_object_button, 0, 3, 1, 1)
 
-        self.lineEdit_object_name = QLineEdit(self.widget)
+        self.lineEdit_object_name = QLineEdit(self.layoutWidget)
         self.lineEdit_object_name.setObjectName(u"lineEdit_object_name")
         sizePolicy1.setHeightForWidth(self.lineEdit_object_name.sizePolicy().hasHeightForWidth())
         self.lineEdit_object_name.setSizePolicy(sizePolicy1)
@@ -133,7 +135,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_objects.addLayout(self.gridLayout_objects)
 
-        self.tree = QTreeWidget(self.widget)
+        self.tree = QTreeWidget(self.layoutWidget)
         self.tree.setObjectName(u"tree")
         self.tree.setEnabled(True)
         self.tree.setDragDropMode(QAbstractItemView.InternalMove)
@@ -146,7 +148,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_objects.addWidget(self.tree)
 
-        self.splitter.addWidget(self.widget)
+        self.splitter.addWidget(self.layoutWidget)
         self.tabWidget = QTabWidget(self.splitter)
         self.tabWidget.setObjectName(u"tabWidget")
         self.tab_property_set = QWidget()
@@ -417,7 +419,7 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.action_file_Save)
         self.menuFile.addAction(self.action_file_Save_As)
         self.menuFile.addAction(self.action_file_Open)
-        self.menuDesite.addAction(self.action_desite_Settings)
+        self.menuFile.addAction(self.action_settings)
         self.menuDesite.addAction(self.action_desite_Export)
         self.menuPredefined_Psets.addAction(self.action_show_list)
 
@@ -438,6 +440,7 @@ class Ui_MainWindow(object):
         self.action_desite_Settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.action_desite_Export.setText(QCoreApplication.translate("MainWindow", u"Export", None))
         self.action_show_list.setText(QCoreApplication.translate("MainWindow", u"Show List", None))
+        self.action_settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.lineEdit_ident_value.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Value", None))
         self.label_object_name.setText(QCoreApplication.translate("MainWindow", u"Object", None))
         self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))

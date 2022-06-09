@@ -2,10 +2,11 @@ import os
 import sys
 
 from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog
 
 from desiteRuleCreator import icons
 from desiteRuleCreator.Filehandling import filehandling, desite_export, excel
+from desiteRuleCreator.QtDesigns import ui_project_settings
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
 from desiteRuleCreator.Windows import parent_property_window
@@ -49,6 +50,7 @@ class MainWindow(QMainWindow):
         self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
         self.ui.action_desite_Export.triggered.connect(self.export_desite_rules)
         self.ui.action_show_list.triggered.connect(self.open_pset_list)
+        self.ui.action_settings.triggered.connect(self.open_settings)
 
         self.ui.code_edit.textChanged.connect(self.update_script)
 
@@ -233,7 +235,21 @@ class MainWindow(QMainWindow):
         parent_property_window.reload(self)
         property_widget.reload(self)
 
+    def open_settings(self):
+        dialog = QDialog()
+        widget = ui_project_settings.Ui_Dialog()
+        widget.setupUi(dialog)
+        dialog.setWindowIcon(icons.get_icon())
+        dialog.setWindowTitle("Settings")
+        widget.lineEdit_project_name.setText(self.project.name)
+        widget.lineEdit_author.setText(self.project.author)
+        widget.lineEdit_version.setText(self.project.version)
 
+        if dialog.exec():
+            self.project.name = widget.lineEdit_project_name.text()
+            self.project.author = widget.lineEdit_author.text()
+            self.project.version = widget.lineEdit_version.text()
+            self.setWindowTitle(self.project.name)
 def main():
     app = QApplication(sys.argv)
 
