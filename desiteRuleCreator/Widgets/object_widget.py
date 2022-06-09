@@ -267,10 +267,6 @@ def add_object_to_tree(main_window, obj: classes.Object, parent=None):
 
     else:
         item = classes.CustomTreeItem(parent, obj)
-
-    item.setText(0, obj.name)
-    if not obj.is_concept:
-        item.setText(1, str(obj.ident_attrib))
     return item
 
 

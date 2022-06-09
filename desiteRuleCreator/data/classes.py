@@ -566,6 +566,7 @@ class CustomTreeItem(QTreeWidgetItem):
     def __init__(self, tree, obj):
         super(CustomTreeItem, self).__init__(tree)
         self._object = obj
+        self.update()
 
     def addChild(self, child: QTreeWidgetItem) -> None:
         super(CustomTreeItem, self).addChild(child)
@@ -577,4 +578,7 @@ class CustomTreeItem(QTreeWidgetItem):
 
     def update(self):
         self.setText(0, self.object.name)
-        self.setText(1, str(self.object.ident_attrib))
+        if self.object.is_concept:
+            self.setText(1,"")
+        else:
+            self.setText(1,str(self.object.ident_attrib.value))
