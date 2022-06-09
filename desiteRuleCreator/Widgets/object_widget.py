@@ -231,13 +231,15 @@ def add_object(main_window):
                 return True
         return False
 
-    def already_exists(ident):
+    def already_exists(new_list):
+        obj:classes.Object
         for obj in classes.Object.iter:
-            if obj.ident_attrib == str(ident):
-                return True
-            else:
-                if obj.ident_attrib.is_equal(ident):
+            ident:classes.Attribute = obj.ident_attrib
+            if not obj.is_concept:
+                ident_list = [ident.property_set.name,ident.name,ident.value]
+                if ident_list == new_list:
                     return True
+
         return False
 
     def create_ident(property_set, ident_name, ident_value) -> classes.Attribute:
@@ -256,30 +258,31 @@ def add_object(main_window):
 
     input_list = [name, p_set_name, ident_name, ident_value]
 
-    parent = None
-    if p_set_name in property_widget.predefined_pset_list():  # if PropertySet allready predefined
-        result = popups.req_merge_pset()  # ask if you want to merge
-        if result:
-            parent = property_widget.get_parent_by_name(main_window.active_object, p_set_name)
-        elif result is None:
-            return
 
-    property_set = classes.PropertySet(p_set_name)
-    if parent is not None:
-        parent.add_child(property_set)
 
     if not missing_input(input_list):
         if "*" not in input_list:
-            ident = create_ident(property_set, ident_name, ident_value)
-            if not already_exists(ident):
+            if not already_exists(input_list[1:]):
 
+                parent = None
+                if p_set_name in property_widget.predefined_pset_list():  # if PropertySet allready predefined
+                    result = popups.req_merge_pset()  # ask if you want to merge
+                    if result:
+                        parent = property_widget.get_parent_by_name(main_window.active_object, p_set_name)
+                    elif result is None:
+                        return
+
+                property_set = classes.PropertySet(p_set_name)
+                if parent is not None:
+                    parent.add_child(property_set)
+
+                ident = create_ident(property_set, ident_name, ident_value)
                 obj = classes.Object(name, ident)
                 obj.add_property_set(ident.property_set)
                 main_window.add_object_to_tree(obj)
                 main_window.clear_object_input()
 
             else:
-                ident.delete()
                 popups.msg_already_exists()
 
         else:
