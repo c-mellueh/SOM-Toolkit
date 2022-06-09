@@ -191,7 +191,7 @@ def import_new(projekt_xml):
         xml_scripts = [x for x in xml_object if x.tag == constants.SCRIPT]
         property_sets, ident_attrib = import_property_sets(xml_property_sets)
         name, parent, identifer, is_concept = get_obj_data(xml_object)
-        obj = Object(name, ident_attrib, is_concept, identifier=identifer)
+        obj = Object(name, ident_attrib, identifier=identifer)
 
         for property_set in property_sets:
             obj.add_property_set(property_set)
@@ -254,7 +254,7 @@ def import_old(projekt_xml):
 
     fachdisziplinen_dict = dict()
     for fd in fachdisziplinen:
-        obj = Object(fd, str(uuid4()), None, True)
+        obj = Object(fd, str(uuid4()), True)
         fachdisziplinen_dict[fd] = obj
 
     for xml_object in projekt_xml:

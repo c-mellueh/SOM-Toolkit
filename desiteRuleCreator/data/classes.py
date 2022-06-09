@@ -419,12 +419,11 @@ class Attribute(Hirarchy):
 class Object(Hirarchy):
     iter = list()
 
-    def __init__(self, name, ident_attrib: [Attribute, str], is_concept=False, identifier=None):
+    def __init__(self, name, ident_attrib: [Attribute, str], identifier=None):
         super(Object, self).__init__(name=name)
         self._scripts = list()
         self._property_sets = list()
         self._ident_attrib = ident_attrib
-        self._is_concept = is_concept
         self.changed = True
         if identifier is None:
             self.identifier = str(uuid4())

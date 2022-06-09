@@ -16,7 +16,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
-    QGridLayout, QLineEdit, QSizePolicy, QWidget)
+    QGridLayout, QLineEdit, QRadioButton, QSizePolicy,
+    QWidget)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -50,12 +51,17 @@ class Ui_Dialog(object):
         self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
 
-        self.gridLayout.addWidget(self.buttonBox, 4, 1, 1, 2)
+        self.gridLayout.addWidget(self.buttonBox, 5, 1, 1, 2)
 
         self.group_name = QLineEdit(Dialog)
         self.group_name.setObjectName(u"group_name")
 
-        self.gridLayout.addWidget(self.group_name, 0, 0, 1, 3)
+        self.gridLayout.addWidget(self.group_name, 0, 0, 1, 2)
+
+        self.radioButton = QRadioButton(Dialog)
+        self.radioButton.setObjectName(u"radioButton")
+
+        self.gridLayout.addWidget(self.radioButton, 0, 2, 1, 1)
 
 
         self.retranslateUi(Dialog)
@@ -71,5 +77,6 @@ class Ui_Dialog(object):
         self.attribute_name.setPlaceholderText(QCoreApplication.translate("Dialog", u"Attribute", None))
         self.attribute_value.setPlaceholderText(QCoreApplication.translate("Dialog", u"Value", None))
         self.group_name.setPlaceholderText(QCoreApplication.translate("Dialog", u"Name of object", None))
+        self.radioButton.setText(QCoreApplication.translate("Dialog", u"Group", None))
     # retranslateUi
 
