@@ -112,7 +112,9 @@ def rc_expand(tree: QTreeWidget):
 
 
 def rc_group_items(main_window):
-    [group_name, ident_pset, ident_attrib, ident_value] = popups.req_group_name(main_window)
+    input_fields ,is_concept = popups.req_group_name(main_window)
+    [group_name, ident_pset, ident_attrib, ident_value]= input_fields
+
     if group_name:
         selected_items = main_window.ui.tree.selectedItems()
         parent_classes = [item for item in selected_items if item.parent() not in selected_items]
@@ -121,16 +123,25 @@ def rc_group_items(main_window):
         if parent is None:
             parent: QTreeWidgetItem = main_window.ui.tree.invisibleRootItem()
 
-        pset = classes.PropertySet(ident_pset)
-        identifier = classes.Attribute(pset, ident_attrib, [ident_value], constants.LIST)
-        group_obj = classes.Object(group_name, identifier)
-        group_obj.add_property_set(pset)
+        if is_concept:
+            group_obj = classes.Object(group_name,"Group" )
+        else:
+            is_empty = [True for text in input_fields if not bool(text)]
+            if is_empty:
+                popups.msg_missing_input()
+                return
+            else:
+
+                pset = classes.PropertySet(ident_pset)
+                identifier = classes.Attribute(pset, ident_attrib, [ident_value], constants.LIST)
+                group_obj = classes.Object(group_name, identifier)
+                group_obj.add_property_set(pset)
+
         group_item: classes.CustomTreeItem = main_window.add_object_to_tree(group_obj, parent)
 
         for item in parent_classes:
             child: classes.CustomTreeItem = parent.takeChild(parent.indexOfChild(item))
             group_obj.add_child(child.object)
-
             group_item.addChild(child)
 
 
