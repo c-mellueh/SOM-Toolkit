@@ -28,7 +28,6 @@ def init(main_window):
 
     def connect_items(main_window):
         main_window.ui.tree.itemClicked.connect(main_window.object_clicked)
-        main_window.ui.tree.itemDoubleClicked.connect(main_window.object_double_clicked)
         main_window.ui.tree.customContextMenuRequested.connect(main_window.right_click)
         main_window.ui.button_objects_add.clicked.connect(main_window.add_object)
         main_window.ui.button_objects_update.clicked.connect(main_window.update_object)
@@ -135,12 +134,16 @@ def rc_group_items(main_window):
             group_item.addChild(child)
 
 
-def double_click(main_window, item: classes.CustomTreeItem):
-    obj: classes.Object = item.object
-    main_window.active_object = obj
-    property_widget.fill_table(main_window, obj)
-    script_widget.show(main_window)
-    main_window.update_completer()
+def single_click(main_window, item: classes.CustomTreeItem):
+    if len(main_window.ui.tree.selectedItems())>1:
+        main_window.multi_selection()
+
+    else:
+        obj: classes.Object = item.object
+        main_window.active_object = obj
+        property_widget.fill_table(main_window, obj)
+        script_widget.show(main_window)
+        main_window.update_completer()
 
 
 def set_ident_line_enable(main_window, value: bool):
@@ -154,7 +157,7 @@ def set_ident_line_enable(main_window, value: bool):
     main_window.ui.label_Ident.setVisible(value)
 
 
-def single_click(main_window):
+def multi_selection(main_window):
     main_window.set_right_window_enable(False)
 
     items = main_window.ui.tree.selectedItems()
@@ -289,6 +292,23 @@ def delete_object(main_window):
 
 
 def update_object(main_window):
+    def handle_identical_identifiers(selected_items):
+        if len(selected_items) > 1 and "*" not in input_list:  # identical identifiers
+            return True
+        else:
+            return False
+
+    def handle_empty_input(input_list):
+        empty_input = False
+        for el in input_list:
+            if not bool(el):
+                empty_input = True
+
+        if empty_input:
+            return True
+        else:
+            return False
+
     name = main_window.ui.lineEdit_object_name.text()
     p_set_name = main_window.ui.lineEdit_ident_pSet.text()
     ident_name = main_window.ui.lineEdit_ident_attribute.text()
@@ -298,15 +318,11 @@ def update_object(main_window):
 
     selected_items = main_window.ui.tree.selectedItems()
 
-    if len(selected_items) > 1 and  "*" not in input_list:
+    if handle_identical_identifiers(selected_items):
         popups.msg_identical_identifier()
         return
-    empty_input = False
-    for el in input_list:
-        if not bool(el):
-            empty_input = True
 
-    if empty_input:
+    elif handle_empty_input(input_list):
         popups.msg_missing_input()
         return
 
@@ -330,8 +346,7 @@ def update_object(main_window):
                 if ident_value != "*":
                     ident.value = [ident_value]
 
-            item.setText(0, obj.name)
-            item.setText(1, str(obj.ident_attrib))
+            item.update()
 
 
 def reload_tree(main_window):
