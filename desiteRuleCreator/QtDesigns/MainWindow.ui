@@ -674,9 +674,9 @@
      <string>File</string>
     </property>
     <addaction name="action_file_new"/>
+    <addaction name="action_file_Open"/>
     <addaction name="action_file_Save"/>
     <addaction name="action_file_Save_As"/>
-    <addaction name="action_file_Open"/>
     <addaction name="action_settings"/>
    </widget>
    <widget class="QMenu" name="menuDesite">
