@@ -47,5 +47,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='DRC',
+    name='DRC_v1.1.2',
 )
