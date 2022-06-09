@@ -337,6 +337,8 @@ def update_object(main_window):
         else:
             return False
 
+
+
     name = main_window.ui.lineEdit_object_name.text()
     p_set_name = main_window.ui.lineEdit_ident_pSet.text()
     ident_name = main_window.ui.lineEdit_ident_attribute.text()
@@ -345,6 +347,9 @@ def update_object(main_window):
     input_list = [name, p_set_name, ident_name, ident_value]
 
     selected_items = main_window.ui.tree.selectedItems()
+
+    if [True for x in selected_items if x.object.is_concept]:
+        return
 
     if handle_identical_identifiers(selected_items):
         popups.msg_identical_identifier()
@@ -373,7 +378,6 @@ def update_object(main_window):
 
                 if ident_value != "*":
                     ident.value = [ident_value]
-
             item.update()
 
 
