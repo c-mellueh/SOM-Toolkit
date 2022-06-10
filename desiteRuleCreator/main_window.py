@@ -51,6 +51,8 @@ class MainWindow(QMainWindow):
         self.ui.action_desite_Export.triggered.connect(self.export_desite_rules)
         self.ui.action_show_list.triggered.connect(self.open_pset_list)
         self.ui.action_settings.triggered.connect(self.open_settings)
+        self.ui.action_export_bs.triggered.connect(self.export_bs)
+        self.ui.action_export_bookmarks.triggered.connect(self.export_bookmarks)
 
         self.ui.code_edit.textChanged.connect(self.update_script)
 
@@ -82,7 +84,7 @@ class MainWindow(QMainWindow):
         script_widget.update_script(self)
 
     def export_desite_rules(self):
-        desite_export.save_rules(self)
+        desite_export.export_modelcheck(self)
 
     def closeEvent(self, event):
         action = filehandling.close_event(self, event)
@@ -143,6 +145,9 @@ class MainWindow(QMainWindow):
         object_widget.clear_all(self)
         property_widget.clear_all(self)
         self.parent_property_window.clear_all()
+        classes.Object.iter = list()
+        classes.PropertySet.iter = list()
+        classes.Attribute.iter= list()
 
     # ObjectWidget
     def right_click(self, position: QtCore.QPoint):
@@ -230,6 +235,9 @@ class MainWindow(QMainWindow):
     def code_item_changed(self, item):
         script_widget.item_changed(self, item)
 
+    def export_bs(self):
+        desite_export.export_bs(self)
+
     def reload(self):
         object_widget.reload_tree(self)
         parent_property_window.reload(self)
@@ -250,6 +258,10 @@ class MainWindow(QMainWindow):
             self.project.author = widget.lineEdit_author.text()
             self.project.version = widget.lineEdit_version.text()
             self.setWindowTitle(self.project.name)
+
+    def export_bookmarks(self):
+        desite_export.export_bookmarks(self)
+
 def main():
     app = QApplication(sys.argv)
 
