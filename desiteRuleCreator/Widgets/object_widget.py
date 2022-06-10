@@ -27,10 +27,11 @@ def init(main_window):
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objects", None))
 
     def connect_items(main_window):
-        main_window.ui.tree.itemClicked.connect(main_window.object_clicked)
-        main_window.ui.tree.customContextMenuRequested.connect(main_window.right_click)
-        main_window.ui.button_objects_add.clicked.connect(main_window.add_object)
-        main_window.ui.button_objects_update.clicked.connect(main_window.update_object)
+        ui: ui_mainwindow.Ui_MainWindow = main_window.ui
+        ui.tree.itemClicked.connect(main_window.object_clicked)
+        ui.tree.customContextMenuRequested.connect(main_window.right_click)
+        ui.button_objects_add.clicked.connect(main_window.add_object)
+        ui.button_objects_update.clicked.connect(main_window.update_object)
         main_window.grpSc.activated.connect(main_window.rc_group)
         main_window.delSc.activated.connect(main_window.delete_object)
 
@@ -337,6 +338,8 @@ def update_object(main_window):
         else:
             return False
 
+
+
     name = main_window.ui.lineEdit_object_name.text()
     p_set_name = main_window.ui.lineEdit_ident_pSet.text()
     ident_name = main_window.ui.lineEdit_ident_attribute.text()
@@ -345,6 +348,9 @@ def update_object(main_window):
     input_list = [name, p_set_name, ident_name, ident_value]
 
     selected_items = main_window.ui.tree.selectedItems()
+
+    if [True for x in selected_items if x.object.is_concept]:
+        return
 
     if handle_identical_identifiers(selected_items):
         popups.msg_identical_identifier()
@@ -373,7 +379,6 @@ def update_object(main_window):
 
                 if ident_value != "*":
                     ident.value = [ident_value]
-
             item.update()
 
 

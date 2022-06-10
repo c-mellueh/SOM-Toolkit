@@ -254,7 +254,7 @@ def import_old(projekt_xml):
 
     fachdisziplinen_dict = dict()
     for fd in fachdisziplinen:
-        obj = Object(fd, str(uuid4()), True)
+        obj = Object(fd, str(uuid4()))
         fachdisziplinen_dict[fd] = obj
 
     for xml_object in projekt_xml:

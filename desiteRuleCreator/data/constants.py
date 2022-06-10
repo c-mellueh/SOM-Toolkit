@@ -4,7 +4,7 @@ RANGE = "Range"
 LIST = "List"
 XS_STRING = "xs:string"
 XS_DOUBLE = "xs:double"
-XS_BOOL = "xs:bool"
+XS_BOOL = "xs:boolean"
 XS_INT = "xs:int"
 
 RANGE_STRINGS = ["Range", "range", "RANGE"]
