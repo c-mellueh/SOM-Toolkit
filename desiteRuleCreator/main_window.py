@@ -9,7 +9,7 @@ from desiteRuleCreator.Filehandling import filehandling, desite_export, excel
 from desiteRuleCreator.QtDesigns import ui_project_settings
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
-from desiteRuleCreator.Windows import parent_property_window
+from desiteRuleCreator.Windows import parent_property_window,graphs_window
 from desiteRuleCreator.data import classes
 from desiteRuleCreator.data.classes import Object, PropertySet
 
@@ -20,11 +20,11 @@ def get_icon():
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self,app):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
+        self.app = app
         self.parent_property_window = None
         self.parent_property_window: parent_property_window.PropertySetInherWindow = self.open_pset_list()
         self.parent_property_window.hide()
@@ -53,6 +53,7 @@ class MainWindow(QMainWindow):
         self.ui.action_settings.triggered.connect(self.open_settings)
         self.ui.action_export_bs.triggered.connect(self.export_bs)
         self.ui.action_export_bookmarks.triggered.connect(self.export_bookmarks)
+        self.ui.action_show_graphs.triggered.connect(self.show_graphs)
 
         self.ui.code_edit.textChanged.connect(self.update_script)
 
@@ -262,10 +263,14 @@ class MainWindow(QMainWindow):
     def export_bookmarks(self):
         desite_export.export_bookmarks(self)
 
+    def show_graphs(self):
+        self.graph_window = graphs_window.GraphWindow(self)
+        pass
+
 def main():
     app = QApplication(sys.argv)
 
-    window = MainWindow()
+    window = MainWindow(app)
     window.show()
     window.resize(1200, 550)
 

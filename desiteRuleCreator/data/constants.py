@@ -1,3 +1,5 @@
+SCALING_FACTOR =0.1
+
 VALUE = "Value"
 FORMAT = "Format"
 RANGE = "Range"
