@@ -35,13 +35,25 @@ def link_psets(pset, cell, pset_dict, sheet, obj=None, debug=False):
                 text[i] = item[0]
             text[i] = text[i].strip()
 
-        return text
+        new_list = list()
 
-    if debug:
-        print(pset.name)
+        for t in text:
+            t= t.split(";")
+            for i, item in enumerate(t):
+                if "(" in item:
+                    item = item.split("(")
+                    t[i] = item[0]
+                t[i] = t[i].strip()
+            new_list+=t
+
+        return new_list
+
 
     elternklasse = sheet.cell(cell.row + 2, cell.column + 1).value
     elternklassen: list = split_string(elternklasse)
+    if debug:
+        print(pset.name)
+        print(elternklassen)
 
     for elternklasse in elternklassen:
         if elternklasse != "AE" and elternklasse != "-":
@@ -89,7 +101,6 @@ def create_object(sheet, cell, pset_dict, cell_list):
     elternklasse = sheet.cell(row=cell.row + 2, column=cell.column + 1).value
     ident = sheet.cell(row=cell.row, column=cell.column + 2).value
 
-
     pset = classes.PropertySet(name)
 
     entry = sheet.cell(row=cell.row + 5, column=cell.column)
@@ -134,8 +145,12 @@ def start(main_window, path):
 
         if ident_value is None:
             pset, kuerzel, special = create_predefined_pset(sheet, cell, name_cells)
-            pset_dict[kuerzel] = [pset, cell]
-            special_values += special
+            if kuerzel in pset_dict:
+                print(f"Achtung Kürzel {kuerzel} kommt doppelt vor!")
+                pset.delete()
+            else:
+                pset_dict[kuerzel] = [pset, cell]
+                special_values += special
 
         else:
             obj, special, pset, kuerzel = create_object(sheet, cell, pset_dict, name_cells)
@@ -144,6 +159,7 @@ def start(main_window, path):
 
     for kuerzel, (pset, cell) in pset_dict.items():
         link_psets(pset, cell, pset_dict, sheet, pset.object, debug=False)
+
 
     tree_dict = dict()
 

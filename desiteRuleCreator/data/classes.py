@@ -213,9 +213,6 @@ class PropertySet(Hirarchy):
 
     def delete(self) -> None:
         super(PropertySet, self).delete()
-        if self.is_parent:
-            for child in self.children:
-                self.remove_child(child)
         if self.object is not None:
             ident = self.object.ident_attrib  # if identifier in Pset delete all attributes except identifier
             if ident in self.attributes:
