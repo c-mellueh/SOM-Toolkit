@@ -63,6 +63,7 @@ class MainWindow(QMainWindow):
         self.ui.tree.resizeColumnToContents(0)
         self.save_path = None
 
+
     @property
     def save_path(self):
         return self._save_path
@@ -91,9 +92,7 @@ class MainWindow(QMainWindow):
         action = filehandling.close_event(self, event)
 
         if action:
-            self.parent_property_window.close()
-            if self.pset_window is not None:
-                self.pset_window.close()
+            app.closeAllWindows()
             event.accept()
         else:
             event.ignore()
@@ -152,6 +151,8 @@ class MainWindow(QMainWindow):
 
     # ObjectWidget
     def right_click(self, position: QtCore.QPoint):
+        print(QApplication.setOverrideCursor(QtCore.Qt.ClosedHandCursor))
+
         object_widget.right_click(self, position)
 
     def rc_collapse(self):
@@ -268,6 +269,7 @@ class MainWindow(QMainWindow):
         pass
 
 def main():
+    global app
     app = QApplication(sys.argv)
 
     window = MainWindow(app)

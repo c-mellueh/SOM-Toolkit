@@ -476,7 +476,8 @@ class Object(Hirarchy):
         property_set.object = self
 
     def remove_property_set(self, property_set: PropertySet) -> None:
-        self._property_sets.remove(property_set)
+        if property_set in self._property_sets:
+            self._property_sets.remove(property_set)
 
     def get_attributes(self, inherit=False):
         attributes = list()
@@ -581,3 +582,16 @@ class CustomTreeItem(QTreeWidgetItem):
             self.setText(1,"")
         else:
             self.setText(1,str(self.object.ident_attrib.value))
+
+class CustomListItem(QListWidgetItem):
+    def __init__(self,property_set:PropertySet):
+        super(CustomListItem, self).__init__()
+        self._property_set = property_set
+        self.setText(property_set.name)
+
+    @property
+    def property_set(self) -> PropertySet:
+        return self._property_set
+
+    def update(self):
+        self.setText(self.property_set.name)

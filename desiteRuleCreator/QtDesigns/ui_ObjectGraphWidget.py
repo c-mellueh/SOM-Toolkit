@@ -22,17 +22,30 @@ class Ui_object_graph_widget(object):
     def setupUi(self, object_graph_widget):
         if not object_graph_widget.objectName():
             object_graph_widget.setObjectName(u"object_graph_widget")
-        object_graph_widget.resize(375, 432)
+        object_graph_widget.resize(300, 200)
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(object_graph_widget.sizePolicy().hasHeightForWidth())
+        object_graph_widget.setSizePolicy(sizePolicy)
+        object_graph_widget.setCursor(QCursor(Qt.ArrowCursor))
         self.verticalLayout = QVBoxLayout(object_graph_widget)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.label_object_name = QLabel(object_graph_widget)
         self.label_object_name.setObjectName(u"label_object_name")
+        sizePolicy.setHeightForWidth(self.label_object_name.sizePolicy().hasHeightForWidth())
+        self.label_object_name.setSizePolicy(sizePolicy)
+        self.label_object_name.setCursor(QCursor(Qt.OpenHandCursor))
         self.label_object_name.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout.addWidget(self.label_object_name)
 
         self.list_widget_property_sets = QListWidget(object_graph_widget)
         self.list_widget_property_sets.setObjectName(u"list_widget_property_sets")
+        sizePolicy.setHeightForWidth(self.list_widget_property_sets.sizePolicy().hasHeightForWidth())
+        self.list_widget_property_sets.setSizePolicy(sizePolicy)
+        self.list_widget_property_sets.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.list_widget_property_sets.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.verticalLayout.addWidget(self.list_widget_property_sets)
 
