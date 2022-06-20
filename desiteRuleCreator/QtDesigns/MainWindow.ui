@@ -683,9 +683,10 @@
     <property name="title">
      <string>Desite</string>
     </property>
-    <addaction name="action_desite_Export"/>
+    <addaction name="action_desite_export"/>
     <addaction name="action_export_bs"/>
     <addaction name="action_export_bookmarks"/>
+    <addaction name="action_export_boq"/>
    </widget>
    <widget class="QMenu" name="menuPredefined_Psets">
     <property name="title">
@@ -723,7 +724,7 @@
     <string>Settings</string>
    </property>
   </action>
-  <action name="action_desite_Export">
+  <action name="action_desite_export">
    <property name="text">
     <string>Export Modelcheck</string>
    </property>
@@ -746,6 +747,11 @@
   <action name="action_export_bookmarks">
    <property name="text">
     <string>Export Bookmarks</string>
+   </property>
+  </action>
+  <action name="action_export_boq">
+   <property name="text">
+    <string>Export .csv for BoQ</string>
    </property>
   </action>
  </widget>
