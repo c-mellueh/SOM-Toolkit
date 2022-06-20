@@ -244,7 +244,7 @@ def add_object(main_window):
         return False
 
     def create_ident(property_set, ident_name, ident_value) -> classes.Attribute:
-        ident: classes.Attribute = property_set.get_attribute(ident_name)
+        ident: classes.Attribute = property_set.get_attribute_by_name(ident_name)
         if ident is None:
             ident = classes.Attribute(property_set, ident_name, ident_value, constants.LIST)
         else:
