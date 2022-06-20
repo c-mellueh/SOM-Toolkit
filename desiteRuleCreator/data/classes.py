@@ -257,7 +257,7 @@ class PropertySet(Hirarchy):
                     child.remove_attribute(attribute)
         self.changed = True
 
-    def get_attribute(self, name):
+    def get_attribute_by_name(self, name):
         for attribute in self.attributes:
             if attribute.name.lower() == name.lower():
                 return attribute
@@ -501,6 +501,11 @@ class Object(Hirarchy):
         for pset in self.property_sets:
             pset.delete()
 
+    def get_property_set_by_name(self, property_set_name):
+        for property_set in self.property_sets:
+            if property_set.name == property_set_name:
+                return property_set
+        return None
 
 class Script(QListWidgetItem):
     def __init__(self, title: str, obj):
