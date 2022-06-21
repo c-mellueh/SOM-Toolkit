@@ -11,6 +11,11 @@ global _changed
 
 # Add child to Parent leads to reverse
 
+class IterRegistry(type):
+    def __iter__(self):
+        return iter(self._registry)
+    def __len__(self):
+        return len(self._registry)
 
 def attributes_to_psetdict(attributes):
     pset_dict = {}
@@ -53,7 +58,7 @@ class Project(object):
     @property
     def changed(self):
         def check_data():
-            for obj in Object.iter:
+            for obj in Object:
                 if obj.changed:
                     return True
             return False
@@ -72,7 +77,7 @@ class Project(object):
 
     def reset_changed(self):
         global _changed
-        for obj in Object.iter:
+        for obj in Object:
             obj.changed = False
         self._changed = False
 
@@ -104,14 +109,14 @@ class Project(object):
         self._changed = True
 
 
-class Hirarchy(object):
-    iter = list()
+class Hirarchy(object,metaclass=IterRegistry):
+    _registry = []
 
     def __init__(self, name):
 
         self._parent = None
         self._children = list()
-        self.iter.append(self)
+        self._registry.append(self)
         self._name = name
         self.changed = True
 
@@ -164,12 +169,12 @@ class Hirarchy(object):
         child.delete()
 
     def delete(self) -> None:
-        if self in self.iter:
-            self.iter.remove(self)
+        if self in self._registry:
+            self._registry.remove(self)
 
 
 class PropertySet(Hirarchy):
-    iter = list()
+    __metaclass__ = IterRegistry
 
     def __init__(self, name: str, obj=None, identifier=None):
         super(PropertySet, self).__init__(name)
@@ -278,7 +283,6 @@ class PropertySet(Hirarchy):
 
 
 class Attribute(Hirarchy):
-    iter = list()
 
     def __init__(self, property_set: PropertySet, name: str, value, value_type, data_type="xs:string",
                  child_inherits_values=False, identifier=None):
@@ -417,7 +421,6 @@ class Attribute(Hirarchy):
 
 
 class Object(Hirarchy):
-    iter = list()
 
     def __init__(self, name, ident_attrib: [Attribute, str], identifier=None):
         super(Object, self).__init__(name=name)

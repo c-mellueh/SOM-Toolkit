@@ -162,7 +162,7 @@ def export_modelcheck(main_window):
     def handle_object_rules(xml_container, main_window, template):
         xml_object_list = dict()
 
-        obj_sorted = list(classes.Object.iter)
+        obj_sorted = list(classes.Object)
         obj_sorted.sort(key=lambda x: x.name)
         for obj in obj_sorted:
             if not obj.is_concept:
@@ -211,7 +211,7 @@ def export_modelcheck(main_window):
         check_run_data.set("refID", str(xml_checkrun_first.attrib.get("ID")))
         check_set = etree.SubElement(check_run_data, "checkSet")
 
-        for xml_checkrun, obj in xml_checkrun_obj.items():
+        for xml_checkrun, obj in xml_checkrun_obj._registry():
             check_run_data = etree.SubElement(xml_data_section, "checkRunData")
             check_run_data.set("refID", str(xml_checkrun.attrib.get("ID")))
             filter_list = etree.SubElement(check_run_data, "filterList")
@@ -335,7 +335,7 @@ def export_bs(main_window):
             attribute_dict = dict()
 
             i=1
-            for attribute in classes.Attribute.iter:
+            for attribute in classes.Attribute:
 
                 attribute_text = f"{attribute.property_set.name}:{attribute.name}"
                 if attribute_text not in attribute_dict:
@@ -414,7 +414,7 @@ def export_bookmarks(main_window):
         xml_bookmark_list = etree.SubElement(xml_parent, "cBookmarkList")
 
         obj:classes.Object
-        for obj in classes.Object.iter:
+        for obj in classes.Object:
             xml_bookmark = etree.SubElement(xml_bookmark_list, "cBookmark")
             xml_bookmark.set("ID",str(obj.identifier))
 

@@ -148,7 +148,7 @@ def start(main_window, path):
     tree_dict = dict()
 
     obj: classes.Object
-    for obj in classes.Object.iter:
+    for obj in classes.Object:
         item = object_widget.add_object_to_tree(main_window,obj,None)
         tree_dict[obj.ident_attrib.value[0]] = item
 

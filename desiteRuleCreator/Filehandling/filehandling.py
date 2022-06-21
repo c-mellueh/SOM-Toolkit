@@ -37,14 +37,13 @@ def fill_tree(main_window):
             fill_next_level(objects, new_item_dict)
 
     item_dict = dict()
-    objects = Object.iter
 
-    for obj in objects:
+    for obj in Object:
         if obj.parent is None:
             tree_widget_item = main_window.add_object_to_tree(obj)
             item_dict[obj] = tree_widget_item
 
-    objects = [obj for obj in objects if obj not in item_dict.keys()]
+    objects = [obj for obj in Object if obj not in item_dict.keys()]
 
     fill_next_level(objects, item_dict)
 
@@ -173,9 +172,9 @@ def import_new(projekt_xml):
         xml_attribute_dict = dict()
         iterate(xml_property_set_dict, xml_object_dict, xml_attribute_dict)
 
-        obj_dict = create_ident_dict(Object.iter)
-        property_set_dict = create_ident_dict(PropertySet.iter)
-        attribute_dict = create_ident_dict(Attribute.iter)
+        obj_dict = create_ident_dict(Object)
+        property_set_dict = create_ident_dict(PropertySet)
+        attribute_dict = create_ident_dict(Attribute)
 
         create_link(obj_dict, xml_object_dict)
         create_link(attribute_dict, xml_attribute_dict)
@@ -307,7 +306,7 @@ def save(main_window, path):
             xml_object.set(constants.PARENT, constants.NONE)
 
     def add_predefined_property_sets(xml_project):
-        for predefined_pset in classes.PropertySet.iter:
+        for predefined_pset in classes.PropertySet:
             if predefined_pset.object is None:
                 predefined_pset: classes.PropertySet = predefined_pset
                 xml_pset = etree.SubElement(xml_project, constants.PREDEFINED_PSET)
@@ -382,7 +381,7 @@ def save(main_window, path):
     xml_project.set(constants.VERSION, project_version)
 
     add_predefined_property_sets(xml_project)
-    for obj in Object.iter:
+    for obj in Object:
         add_object(obj, xml_project)
 
     tree = etree.ElementTree(xml_project)
@@ -416,7 +415,7 @@ def new_file(main_window):
 
 
 def open_file_dialog(main_window, path=False):
-    if Object.iter:
+    if Object:
         result = msg_delete_or_merge()
         if result is None:
             return

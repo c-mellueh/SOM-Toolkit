@@ -11,7 +11,7 @@ from desiteRuleCreator import icons
 from desiteRuleCreator.Windows import popups
 
 class PsetItem(QListWidgetItem):
-    iter = list()
+    _registry = list()
 
     def __init__(self, property_set=None):
         super(PsetItem, self).__init__()
@@ -23,7 +23,7 @@ class PsetItem(QListWidgetItem):
         else:
             self.property_set = property_set
             self.setText(property_set.name)
-        self.iter.append(self)
+        self._registry.append(self)
         self.setFlags(self.flags() | Qt.ItemIsEditable)
 
     def setText(self, text: str) -> None:
@@ -31,11 +31,11 @@ class PsetItem(QListWidgetItem):
         self.property_set.name = text
 
     def delete(self):
-        self.iter.remove(self)
+        self._registry.remove(self)
 
     def get_number(self):
-        if len(self.iter) > 0:
-            numbers = [int(re.search("(NewPset_)(\d+)", x.text()).group(2)) for x in self.iter if bool(
+        if len(self._registry) > 0:
+            numbers = [int(re.search("(NewPset_)(\d+)", x.text()).group(2)) for x in self._registry if bool(
                 re.search("NewPset_(\d+)", x.text()))]  # find all texts matching the Format and return their numbers
             numbers.sort()
             if len(numbers) > 0:
@@ -124,7 +124,7 @@ class PropertySetInherWindow(QWidget):
 
     def showEvent(self, event: QShowEvent) -> None:
         self.widget.list_view_pset.clear()
-        for property_set in classes.PropertySet.iter:
+        for property_set in classes.PropertySet:
             if property_set.object is None:
                 item = PsetItem(property_set)
                 self.widget.list_view_pset.addItem(item)

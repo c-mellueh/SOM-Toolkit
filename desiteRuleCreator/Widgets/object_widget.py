@@ -82,10 +82,10 @@ def clear_all(main_window):
     main_window.ui.tree.clear()
 
     # Delete Attributes & Objects
-    for obj in classes.Object.iter:
-        for property_set in obj.property_sets:
-            property_set.delete()
-    classes.Object.iter = list()
+    for obj in classes.Object:
+        obj.delete()
+
+
 
 
 def right_click(main_window, position: QPoint):
@@ -234,7 +234,7 @@ def add_object(main_window):
 
     def already_exists(new_list):
         obj:classes.Object
-        for obj in classes.Object.iter:
+        for obj in classes.Object:
             ident:classes.Attribute = obj.ident_attrib
             if not obj.is_concept:
                 ident_list = [ident.property_set.name,ident.name,ident.value]

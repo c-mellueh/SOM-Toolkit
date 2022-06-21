@@ -145,9 +145,9 @@ class MainWindow(QMainWindow):
         object_widget.clear_all(self)
         property_widget.clear_all(self)
         self.parent_property_window.clear_all()
-        classes.Object.iter = list()
-        classes.PropertySet.iter = list()
-        classes.Attribute.iter= list()
+        classes.Object._registry = list()
+        classes.PropertySet._registry = list()
+        classes.Attribute._registry= list()
 
     # ObjectWidget
     def right_click(self, position: QtCore.QPoint):

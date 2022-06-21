@@ -11,7 +11,7 @@ from desiteRuleCreator import icons
 
 def get_parent_by_name(active_object: classes.Object, name: str):
     pset: PropertySet
-    for pset in PropertySet.iter:
+    for pset in PropertySet:
         is_master = pset.parent is None
         correct_name = pset.name == name
         if active_object is not None:
@@ -50,7 +50,7 @@ def open_menu(main_window, position):
 
 
 def predefined_pset_list() -> list[PropertySet]:
-    property_list = [x.name for x in PropertySet.iter if x.parent is None]
+    property_list = [x.name for x in PropertySet if x.parent is None]
     return property_list
 
 
