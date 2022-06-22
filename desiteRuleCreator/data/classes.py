@@ -589,7 +589,7 @@ class CustomTreeItem(QTreeWidgetItem):
 
     def addChild(self, child: QTreeWidgetItem) -> None:
         super(CustomTreeItem, self).addChild(child)
-        self._object.add_child(child.object)
+        self.object.add_child(child.object)
 
     @property
     def object(self) -> Object:

@@ -23,19 +23,22 @@ def transform_value_types(value: str):
 
     return data_type, special
 
+def split_string(text: str):
+    if text is None:
+        return None
+    text = text.split(";")
+    for i, item in enumerate(text):
+        if "(" in item:
+            item = item.split("(")
+            text[i] = item[0]
+        text[i] = text[i].strip()
+
+    return text
 
 def link_psets(pset, cell, pset_dict, sheet, obj=None, debug=False):
     # pset_dict[kuerzel] = [pset, cell]
 
-    def split_string(text: str):
-        text = text.split(",")
-        for i, item in enumerate(text):
-            if "(" in item:
-                item = item.split("(")
-                text[i] = item[0]
-            text[i] = text[i].strip()
 
-        return text
 
     if debug:
         print(pset.name)
@@ -47,7 +50,7 @@ def link_psets(pset, cell, pset_dict, sheet, obj=None, debug=False):
         if elternklasse != "AE" and elternklasse != "-":
             value = pset_dict.get(elternklasse.upper())
             if value is not None:
-                [eltern_pset, eltern_cell] = value
+                [eltern_pset, eltern_cell,dummy] = value
 
                 if obj is not None:
                     new_pset = classes.PropertySet(eltern_pset.name)
@@ -86,14 +89,14 @@ def create_predefined_pset(sheet, cell, cell_list):
 def create_object(sheet, cell, pset_dict, cell_list):
     name = sheet.cell(row=cell.row, column=cell.column + 1).value
     kuerzel = sheet.cell(row=cell.row + 1, column=cell.column + 1).value.upper()
-    elternklasse = sheet.cell(row=cell.row + 2, column=cell.column + 1).value
+    aggregate_children = sheet.cell(row=cell.row + 3, column=cell.column + 1).value
     ident = sheet.cell(row=cell.row, column=cell.column + 2).value
-
 
     pset = classes.PropertySet(name)
 
     entry = sheet.cell(row=cell.row + 5, column=cell.column)
     special_values = iterate_entries(pset, sheet, entry, cell_list)
+
     ident_pset = classes.PropertySet("Allgemeine Eigenschaften")
     parent: classes.PropertySet = pset_dict["AE"][0]
     parent.add_child(ident_pset)
@@ -104,7 +107,14 @@ def create_object(sheet, cell, pset_dict, cell_list):
     obj.add_property_set(ident_pset)
     obj.add_property_set(pset)
 
-    return obj, special_values, pset, kuerzel
+    aggregate_list = split_string(aggregate_children)
+    if aggregate_list is None:
+        print(f"Achtung! {name} besitzt keinen Wert bei 'Besteht aus'")
+    elif  aggregate_list != ["-"]:
+        print(f"{name}: {aggregate_list}")
+    else:
+        aggregate_list = None
+    return obj, special_values, pset, kuerzel,aggregate_list
 
 
 def start(main_window, path):
@@ -124,25 +134,27 @@ def start(main_window, path):
                     else:
                         print(f"{sheet.cell(cell.row + 1, cell.column)} hat den Wert 'name'")
 
-        # name_cells+=[x for x in row if x.value.strip() == "name" or x.value.strip() =="name:"]
 
     pset_dict = dict()
 
     special_values = list()
+    aggregate_dict = dict()
+
     for cell in name_cells:
         ident_value = sheet.cell(row=cell.row, column=cell.column + 2).value
 
         if ident_value is None:
             pset, kuerzel, special = create_predefined_pset(sheet, cell, name_cells)
-            pset_dict[kuerzel] = [pset, cell]
+            pset_dict[kuerzel] = [pset, cell,None]
             special_values += special
 
         else:
-            obj, special, pset, kuerzel = create_object(sheet, cell, pset_dict, name_cells)
-            pset_dict[kuerzel] = [pset, cell]
+            obj, special, pset, kuerzel,aggregate_list = create_object(sheet, cell, pset_dict, name_cells)
+            aggregate_dict[obj] = aggregate_list
+            pset_dict[kuerzel] = [pset, cell,obj]
             special_values += special
 
-    for kuerzel, (pset, cell) in pset_dict.items():
+    for kuerzel, (pset, cell,obj) in pset_dict.items():
         link_psets(pset, cell, pset_dict, sheet, pset.object, debug=False)
 
     tree_dict = dict()
@@ -150,15 +162,26 @@ def start(main_window, path):
     obj: classes.Object
     for obj in classes.Object:
         item = object_widget.add_object_to_tree(main_window,obj,None)
-        tree_dict[obj.ident_attrib.value[0]] = item
+        tree_dict[obj] = item
 
     ident: str
-    for ident, item in tree_dict.items():
-        ident_list = ident.split(".")
-        ident_list = ident_list[:-1]
-        ident = ".".join(ident_list)
-        parent_item: classes.CustomTreeItem = tree_dict.get(ident)
-        if parent_item is not None:
-            root = item.treeWidget().invisibleRootItem()
-            item = root.takeChild(root.indexOfChild(item))
-            parent_item.addChild(item)
+    root = item.treeWidget().invisibleRootItem()
+
+    for obj in classes.Object:
+        aggregate_list = aggregate_dict[obj]
+        tree_item = tree_dict[obj]
+        if aggregate_list is not None:
+            for kuerzel in aggregate_list:
+                dic = pset_dict.get(kuerzel)
+                if dic is None:
+                        print(f"Achtung! Kürzel {kuerzel} existiert nicht")
+                else:
+                    obj_child = dic[2]
+                    if obj_child is not None:
+                        tree_child = tree_dict[obj_child]
+                        if tree_child is not None:
+                            tree_child = root.takeChild(root.indexOfChild(tree_child))
+                            if tree_child is not None:
+                            #print(tree_child.object)
+
+                                tree_item.addChild(tree_child)
