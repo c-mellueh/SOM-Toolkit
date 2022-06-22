@@ -110,13 +110,11 @@ class Project(object):
 
 
 class Hirarchy(object,metaclass=IterRegistry):
-    _registry = []
 
     def __init__(self, name):
 
         self._parent = None
         self._children = list()
-        self._registry.append(self)
         self._name = name
         self.changed = True
 
@@ -175,11 +173,14 @@ class Hirarchy(object,metaclass=IterRegistry):
 
 class PropertySet(Hirarchy):
     __metaclass__ = IterRegistry
+    _registry = []
 
     def __init__(self, name: str, obj=None, identifier=None):
         super(PropertySet, self).__init__(name)
         self._attributes = list()
         self._object = obj
+        self._registry.append(self)
+
         self.identifier = identifier
         if self.identifier is None:
             self.identifier = str(uuid4())
@@ -283,6 +284,7 @@ class PropertySet(Hirarchy):
 
 
 class Attribute(Hirarchy):
+    _registry = []
 
     def __init__(self, property_set: PropertySet, name: str, value, value_type, data_type="xs:string",
                  child_inherits_values=False, identifier=None):
@@ -292,6 +294,8 @@ class Attribute(Hirarchy):
         self._value_type = value_type
         self._data_type = data_type
         self._object = None
+        self._registry.append(self)
+
         self.changed = True
         self._child_inherits_values = child_inherits_values
         self.identifier = identifier
@@ -421,17 +425,29 @@ class Attribute(Hirarchy):
 
 
 class Object(Hirarchy):
+    _registry = []
 
     def __init__(self, name, ident_attrib: [Attribute, str], identifier=None):
         super(Object, self).__init__(name=name)
         self._scripts = list()
         self._property_sets = list()
         self._ident_attrib = ident_attrib
+        self._node = None
+        self._registry.append(self)
+
         self.changed = True
         if identifier is None:
             self.identifier = str(uuid4())
         else:
             self.identifier = identifier
+
+    @property
+    def node(self):
+        return self._node
+
+    @node.setter
+    def node(self,value):
+        self._node = value
 
     @property
     def inherited_property_sets(self) -> dict:

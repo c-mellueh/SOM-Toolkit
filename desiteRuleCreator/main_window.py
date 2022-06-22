@@ -266,6 +266,7 @@ class MainWindow(QMainWindow):
 
     def show_graphs(self):
         self.graph_window = graphs_window.GraphWindow(self)
+        self.graph_window.combo_change()
         pass
 
 def main():
