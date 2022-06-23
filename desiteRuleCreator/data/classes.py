@@ -1,3 +1,4 @@
+from __future__ import annotations
 import copy
 
 from uuid import uuid4
@@ -434,7 +435,8 @@ class Object(Hirarchy):
         self._ident_attrib = ident_attrib
         self._node = None
         self._registry.append(self)
-
+        self.aggregates_to = list()
+        self.aggregates_from = list()
         self.changed = True
         if identifier is None:
             self.identifier = str(uuid4())
@@ -524,6 +526,13 @@ class Object(Hirarchy):
         for pset in self.property_sets:
             pset.delete()
 
+    def add_aggregation(self,value:Object):
+        self.aggregates_to.append(value)
+        value.aggregates_from.append(self)
+
+    def remove_aggregation(self,value:Object):
+        self.aggregates_to.remove(value)
+        value.aggregates_from.remove(self)
 
 class Script(QListWidgetItem):
     def __init__(self, title: str, obj):

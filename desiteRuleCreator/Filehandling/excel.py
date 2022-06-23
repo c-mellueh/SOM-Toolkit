@@ -1,8 +1,11 @@
-import openpyxl
+import os.path
 
+import openpyxl
+import logging
 from desiteRuleCreator.QtDesigns import ui_mainwindow
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.Widgets import object_widget
+from desiteRuleCreator import logs
 
 def transform_value_types(value: str):
     special = False
@@ -58,7 +61,7 @@ def link_psets(pset, cell, pset_dict, sheet, obj=None, debug=False):
                     obj.add_property_set(new_pset)
                 link_psets(eltern_pset, eltern_cell, pset_dict, sheet, obj, debug=debug)
             else:
-                print(f"ACHTUNG {sheet.cell(cell.row, cell.column + 1).value} hat einen Fehler in der Elternklasse")
+                logging.warning(f"ACHTUNG {sheet.cell(cell.row, cell.column + 1).value} hat einen Fehler in der Elternklasse ({elternklasse.upper()} existiert nicht!)")
 
 
 def iterate_entries(pset, sheet, entry, cell_list):
@@ -109,15 +112,20 @@ def create_object(sheet, cell, pset_dict, cell_list):
 
     aggregate_list = split_string(aggregate_children)
     if aggregate_list is None:
-        print(f"Achtung! {name} besitzt keinen Wert bei 'Besteht aus'")
-    elif  aggregate_list != ["-"]:
-        print(f"{name}: {aggregate_list}")
-    else:
-        aggregate_list = None
+        logging.warning(f"Achtung! {name} besitzt keinen Wert bei 'Besteht aus'")
+        aggregate_list=[]
+    elif  aggregate_list == ["-"]:
+        aggregate_list = []
+
     return obj, special_values, pset, kuerzel,aggregate_list
 
 
 def start(main_window, path):
+    base_path = os.path.dirname(logs.__file__)
+    base_path = os.path.join(base_path,"log.txt")
+    os.remove(base_path)
+    logging.basicConfig(filename=base_path,level=logging.WARNING)
+    logging.warning("----------------------------------------------")
     book = openpyxl.load_workbook(path)
     sheet = book.active
 
@@ -132,7 +140,7 @@ def start(main_window, path):
                     if sheet.cell(cell.row + 1, cell.column).value == "Kürzel":
                         name_cells.append(cell)
                     else:
-                        print(f"{sheet.cell(cell.row + 1, cell.column)} hat den Wert 'name'")
+                        logging.warning(f"{sheet.cell(cell.row + 1, cell.column)} hat den Wert 'name'")
 
 
     pset_dict = dict()
@@ -151,6 +159,8 @@ def start(main_window, path):
         else:
             obj, special, pset, kuerzel,aggregate_list = create_object(sheet, cell, pset_dict, name_cells)
             aggregate_dict[obj] = aggregate_list
+            if pset_dict.get(kuerzel) is not None:
+                logging.warning(f"Kuerzel {kuerzel} für {obj.name} und {pset_dict[kuerzel][0].name} identisch!")
             pset_dict[kuerzel] = [pset, cell,obj]
             special_values += special
 
@@ -162,26 +172,28 @@ def start(main_window, path):
     obj: classes.Object
     for obj in classes.Object:
         item = object_widget.add_object_to_tree(main_window,obj,None)
-        tree_dict[obj] = item
+        tree_dict[obj.ident_attrib.value[0]] = item
 
     ident: str
-    root = item.treeWidget().invisibleRootItem()
+    for ident, item in tree_dict.items():
+        ident_list = ident.split(".")
+        ident_list = ident_list[:-1]
+        ident = ".".join(ident_list)
+        parent_item: classes.CustomTreeItem = tree_dict.get(ident)
+        if parent_item is not None:
+            root = item.treeWidget().invisibleRootItem()
+            item = root.takeChild(root.indexOfChild(item))
+            parent_item.addChild(item)
 
     for obj in classes.Object:
         aggregate_list = aggregate_dict[obj]
-        tree_item = tree_dict[obj]
-        if aggregate_list is not None:
-            for kuerzel in aggregate_list:
-                dic = pset_dict.get(kuerzel)
-                if dic is None:
-                        print(f"Achtung! Kürzel {kuerzel} existiert nicht")
-                else:
-                    obj_child = dic[2]
-                    if obj_child is not None:
-                        tree_child = tree_dict[obj_child]
-                        if tree_child is not None:
-                            tree_child = root.takeChild(root.indexOfChild(tree_child))
-                            if tree_child is not None:
-                            #print(tree_child.object)
+        for kuerzel in aggregate_list:
+            dic = pset_dict.get(kuerzel)
+            if dic is not None:
+                obj_child = dic[2]
+                if obj_child is not None:
+                    obj.add_aggregation(obj_child)
 
-                                tree_item.addChild(tree_child)
+
+                else:logging.warning(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+            else:logging.warning(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")

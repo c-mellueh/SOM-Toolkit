@@ -25,11 +25,6 @@ class Ui_GraphView(object):
         GraphView.resize(825, 576)
         self.gridLayout = QGridLayout(GraphView)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.combo_box = QComboBox(GraphView)
-        self.combo_box.setObjectName(u"combo_box")
-
-        self.gridLayout.addWidget(self.combo_box, 0, 0, 1, 1)
-
         self.button_reload = QPushButton(GraphView)
         self.button_reload.setObjectName(u"button_reload")
         sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
@@ -37,13 +32,32 @@ class Ui_GraphView(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.button_reload.sizePolicy().hasHeightForWidth())
         self.button_reload.setSizePolicy(sizePolicy)
+        self.button_reload.setMaximumSize(QSize(24, 24))
 
-        self.gridLayout.addWidget(self.button_reload, 0, 1, 1, 1)
+        self.gridLayout.addWidget(self.button_reload, 0, 2, 1, 1)
 
         self.graphicsView = QGraphicsView(GraphView)
         self.graphicsView.setObjectName(u"graphicsView")
 
-        self.gridLayout.addWidget(self.graphicsView, 1, 0, 1, 2)
+        self.gridLayout.addWidget(self.graphicsView, 1, 0, 1, 3)
+
+        self.combo_box = QComboBox(GraphView)
+        self.combo_box.setObjectName(u"combo_box")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.combo_box.sizePolicy().hasHeightForWidth())
+        self.combo_box.setSizePolicy(sizePolicy1)
+
+        self.gridLayout.addWidget(self.combo_box, 0, 0, 1, 1)
+
+        self.button_add = QPushButton(GraphView)
+        self.button_add.setObjectName(u"button_add")
+        sizePolicy.setHeightForWidth(self.button_add.sizePolicy().hasHeightForWidth())
+        self.button_add.setSizePolicy(sizePolicy)
+        self.button_add.setMaximumSize(QSize(24, 24))
+
+        self.gridLayout.addWidget(self.button_add, 0, 1, 1, 1)
 
 
         self.retranslateUi(GraphView)
@@ -53,6 +67,7 @@ class Ui_GraphView(object):
 
     def retranslateUi(self, GraphView):
         GraphView.setWindowTitle(QCoreApplication.translate("GraphView", u"Form", None))
-        self.button_reload.setText(QCoreApplication.translate("GraphView", u"R", None))
+        self.button_reload.setText("")
+        self.button_add.setText(QCoreApplication.translate("GraphView", u"+", None))
     # retranslateUi
 

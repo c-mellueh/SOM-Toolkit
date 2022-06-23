@@ -1,0 +1,8 @@
+WARNING:root:----------------------------------------------
+WARNING:root:<Cell 'SOM-MaKa'.A12> hat den Wert 'name'
+WARNING:root:[Oberleitungsanlage] Aggregation: Kürzel KL existiert nicht
+WARNING:root:[Weichen und Gleissperren] Aggregation: Kürzel GA existiert nicht
+WARNING:root:[Gruendung] Aggregation: Kürzel FUN existiert nicht
+WARNING:root:[Gruendung] Aggregation: Kürzel BAUS existiert nicht
+WARNING:root:[Strassenbau] Aggregation: Kürzel MAR existiert nicht
+WARNING:root:[Erdbau] Aggregation: Kürzel PSG existiert nicht

@@ -23,6 +23,9 @@
    <string>OG</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="bottomMargin">
+    <number>1</number>
+   </property>
    <item>
     <widget class="QLabel" name="label_object_name">
      <property name="sizePolicy">
@@ -55,6 +58,13 @@
      </property>
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_add">
+     <property name="text">
+      <string>+</string>
      </property>
     </widget>
    </item>

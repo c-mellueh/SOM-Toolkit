@@ -200,6 +200,7 @@ class MainView(QGraphicsView):
         self.update()
         self.setDragMode(self.DragMode.ScrollHandDrag)
 
+
 class Connection:
     liste = []
 
@@ -281,10 +282,11 @@ class Node(QGraphicsProxyWidget):
     def __init__(self, obj:classes.Object,main_window):
         super(Node, self).__init__()
         self.object = obj
-        self.test = QWidget()
+        self.setWidget(QWidget())
         self.object_graph_rep =  ui_ObjectGraphWidget.Ui_object_graph_widget()
-        self.object_graph_rep.setupUi(self.test)
+        self.object_graph_rep.setupUi(self.widget())
         self.app = main_window.app
+
         if self.object is None:
             self.name = "Root"
         else:
@@ -292,8 +294,6 @@ class Node(QGraphicsProxyWidget):
             self.getText()
             self.fill_table()
 
-
-        self.setWidget(self.test)
         self.main_window = main_window
         self.children = list()
         self.parent_box = None
@@ -303,6 +303,9 @@ class Node(QGraphicsProxyWidget):
         self._registry.append(self)
         self.connections = list()
         self.base_y = 0.0
+        self.button_add = self.object_graph_rep.button_add
+        self.button_add.hide()
+        self.button_add.clicked.connect(self.test)
 
     @property
     def is_root(self):
@@ -310,7 +313,6 @@ class Node(QGraphicsProxyWidget):
             return True
         else:
             return False
-
 
     def __str__(self):
         return(f"{self.name}: {self.x()},{self.y()}")
@@ -322,6 +324,8 @@ class Node(QGraphicsProxyWidget):
         else:
             return None
 
+    def test(self):
+        print("HIER")
 
     def add_child(self,child,connect = True):
             self.children.append(child)
@@ -334,6 +338,7 @@ class Node(QGraphicsProxyWidget):
         pos = event.pos()
         item_pos = self.object_graph_rep.list_widget_property_sets.mapFrom(self.widget(),pos)
         selected_item = self.object_graph_rep.list_widget_property_sets.itemAt(item_pos.toPoint())
+        print(selected_item)
         if selected_item is not None:
             property_set = selected_item.property_set
             self.main_window.pset_window = property_widget.open_pset_window(self.main_window, property_set,
@@ -356,12 +361,19 @@ class Node(QGraphicsProxyWidget):
 
     def hoverEnterEvent(self, event):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-
+        self.button_add.show()
     def hoverLeaveEvent(self, event):
         self.app.instance().restoreOverrideCursor()
+        self.button_add.hide()
 
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        self.app.instance().setOverrideCursor(Qt.ClosedHandCursor)
+        pos = event.pos()
+        item_pos=self.button_add.mapFrom(self.widget(),pos)
+        if item_pos.x()>0 and item_pos.x()< self.button_add.rect().width():
+            if item_pos.y()>0:
+                self.button_add.click()
+        else:
+            self.app.instance().setOverrideCursor(Qt.ClosedHandCursor)
         pass
 
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
@@ -436,29 +448,55 @@ class Node(QGraphicsProxyWidget):
             connection.update()
 
 class GraphWindow(QWidget):
+
     def __init__(self, main_window):
         super(GraphWindow, self).__init__()
-        self.scene_dict=dict()
         self.widget = ui_GraphWindow.Ui_GraphView()
         self.widget.setupUi(self)
         self.main_window = main_window
-        self.show()
+
+        #replace view
         self.widget.gridLayout.removeWidget(self.widget.graphicsView)
         self.widget.graphicsView.deleteLater()
-        main_view = MainView()
-        self.widget.gridLayout.addWidget(main_view, 1, 0, 1, 2)
+        self.view = MainView()
+        self.widget.gridLayout.addWidget(self.view , 1, 0, 1, 3)
+
         self.active_scene = QGraphicsScene()
-        self.view = main_view
         self.view.setScene(self.active_scene)
+
+        self.nodes = list()
+        self.scenes =list()
         self.construct_all_nodes()
+
 
         self.widget.combo_box.currentIndexChanged.connect(self.combo_change)
         self.widget.button_reload.clicked.connect(self.redraw)
+        self.widget.button_reload.setIcon(icons.get_reload_icon())
+        self.redraw()
+        self.show()
+
+    @property
+    def root_objects(self) -> list[classes.Object]:
+        return [obj for obj in classes.Object if len(obj.aggregates_from)==0]
+
+    @property
+    def root_nodes(self)->list[Node]:
+        return [node for node in Node._registry if node.parent_box is None]
+
+    @property
+    def scene_dict(self)-> dict[Node,QGraphicsScene]:
+        return {node:node.scene() for node in Node._registry}
+
+    @property
+    def combo_list_names(self)-> list[str]:
+        names = [x.object.name for x in self.root_nodes if len(x.object.aggregates_to) > 0]
+        names.sort()
+        return names
 
     def find_node_by_name(self,name):
-        for item in self.top_level_nodes:
-            if item.object.name == name:
-                return item
+        for obj,node in self.node_dict.items():
+            if obj.name == name:
+                return node
     def change_root(self,node):
             self.active_scene = self.scene_dict[node]
             self.view.setScene(self.active_scene)
@@ -485,42 +523,48 @@ class GraphWindow(QWidget):
         self.draw_tree(node)
 
     def construct_all_nodes(self):
-        def iterate_nodes(children, parent:Node, level):
-            """ Recursivly Add ChildNodes to Node"""
-            obj:classes.Object
-            for obj in children:
+
+
+        def create_nodes():
+            """create Nodes and add them to Scenes"""
+            def iterate_nodes(children:list[classes.Object], parent: Node, level:int):
+                """ Recursivly Add ChildNodes to Node"""
+
+                for obj in children:
+                    node = Node(obj, self.main_window)
+                    self.nodes.append(node)
+                    node.setY(level * (constants.BOX_HEIGHT + constants.BOX_MARGIN))
+                    node.base_y = float(node.y())
+
+                    parent.scene().addItem(node)
+                    parent.add_child(node)
+                    iterate_nodes(obj.aggregates_to, node, level + 1)
+
+            for obj in self.root_objects:
+                scene = QGraphicsScene()
+                self.scenes.append(scene)
                 node = Node(obj, self.main_window)
-                node.setY(level*(constants.BOX_HEIGHT+constants.BOX_MARGIN))
-                node.base_y = float(node.y())
-                parent.scene().addItem(node)
-                parent.add_child(node)
-                obj.node = node
-                iterate_nodes(obj.children,node,level+1)
 
-        obj:classes.Object
-        top_level_objects = [obj for obj in classes.Object if not obj.is_child]    #find top_level_objects
-        self.top_level_nodes = list()
+                self.nodes.append(scene.addItem(node))
 
-        for obj in top_level_objects:
-            node = Node(obj, self.main_window)
-            scene = QGraphicsScene()
-            self.scene_dict[node] = scene
-            self.border_rect = scene.addRect(QRectF(0, 0, 1, 1))
-            self.border_rect.hide()
-            self.top_level_nodes.append(node)
-            scene.addItem(node)
-            iterate_nodes(obj.children,node,1)
+                self.border_rect = scene.addRect(QRectF(0, 0, 1, 1))
+                self.border_rect.hide()
+                iterate_nodes(obj.aggregates_to, node, 1)
 
-        first_level_names = [x.object.name for x in self.top_level_nodes]#+["All"]   #fill Combo Box
-        self.widget.combo_box.addItems(first_level_names)
+        create_nodes()
+
+        #+["All"]   #fill Combo Box
+        self.widget.combo_box.addItems(self.combo_list_names)
 
         self.root = Node(None,self.main_window)
         scene =  QGraphicsScene()
-        self.scene_dict[self.root] =scene
+        #self.scene_dict[self.root] =scene
         scene.addItem(self.root)
 
-        for item in self.top_level_nodes:
-            self.root.add_child(item,connect=False)
+        # for item in self.root_nodes:
+        #     self.root.add_child(item,connect=False)
+
+        #print(self.root_nodes)
 
         for node,scene in self.scene_dict.items():
             self.draw_tree(node)
@@ -569,6 +613,13 @@ class GraphWindow(QWidget):
                 bounding_rect.setBottom(item_br.bottom())
         margin = 20
         bounding_rect.setRect(bounding_rect.x()-margin,bounding_rect.y()-margin,bounding_rect.width()+2*margin,bounding_rect.height()+2*margin)
-        self.active_scene.removeItem(self.border_rect)
+        #self.active_scene.removeItem(self.border_rect)
         self.border_rect = self.active_scene.addRect(bounding_rect)
         self.border_rect.hide()
+
+    @property
+    def node_dict(self):
+        nd: dict[classes.Object,Node] = dict()
+        for node in Node._registry:
+            nd[node.object] = node
+        return nd
