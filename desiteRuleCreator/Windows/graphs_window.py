@@ -370,7 +370,7 @@ class Node(QGraphicsProxyWidget):
             self.object_graph_rep.list_widget_property_sets.addItem(item)
 
     def hoverEnterEvent(self, event):
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QApplication.setOverrideCursor(QCursor(Qt.OpenHandCursor))
         self.button_add.show()
     def hoverLeaveEvent(self, event):
         self.app.instance().restoreOverrideCursor()
