@@ -1,5 +1,4 @@
-import os
-import sys
+import sys,os
 
 from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog
@@ -266,7 +265,9 @@ class MainWindow(QMainWindow):
 
     def show_graphs(self):
         self.graph_window = graphs_window.GraphWindow(self)
-        pass
+        if self.graph_window.nodes:
+            self.graph_window.redraw()
+            #self.graph_window.redraw()
 
 def main():
     global app

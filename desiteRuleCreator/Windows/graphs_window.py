@@ -1,17 +1,123 @@
 from __future__ import annotations      #make own class referencable
-import re
-import os
-import copy
-from PySide6.QtCore import Qt,QRectF,QPointF
-from PySide6.QtGui import QShowEvent,QIcon,QWheelEvent,QCursor,QGuiApplication,QPainterPath,QHideEvent
-from PySide6.QtWidgets import QWidget, QListWidgetItem,QLabel,QGraphicsScene,QGraphicsView,QApplication,QGraphicsProxyWidget,QGraphicsSceneMouseEvent,QGraphicsPathItem,QComboBox,QGraphicsRectItem,QCompleter
-
+import time
+from PySide6.QtCore import Qt,QRectF,QPointF,QTimer
+from PySide6.QtGui import QShowEvent,QIcon,QWheelEvent,QCursor,QGuiApplication,QPainterPath,QHideEvent,QEnterEvent,QKeyEvent
+from PySide6.QtWidgets import QPushButton,QHBoxLayout,QWidget, QListWidgetItem,QLabel,QGraphicsScene,QGraphicsView,QApplication,QGraphicsProxyWidget,QGraphicsSceneMouseEvent,QGraphicsPathItem,QComboBox,QGraphicsRectItem,QCompleter
 from desiteRuleCreator.QtDesigns import ui_GraphWindow, ui_ObjectGraphWidget
 from desiteRuleCreator.data import classes,constants
 from desiteRuleCreator import icons
 from desiteRuleCreator.Windows import popups
 from desiteRuleCreator.Widgets import property_widget
 
+def buchheim(tree):
+    def third_walk(tree, n):
+        tree.x += n
+        for c in tree.children:
+            third_walk(c, n)
+
+    def firstwalk(v, distance=1.):
+        if len(v.children) == 0:
+            if v.lmost_sibling:
+                v.x = v.lbrother().x + distance
+            else:
+                v.x = 0.
+        else:
+            default_ancestor = v.children[0]
+            for w in v.children:
+                firstwalk(w)
+                default_ancestor = apportion(w, default_ancestor, distance)
+            execute_shifts(v)
+
+            midpoint = (v.children[0].x + v.children[-1].x) / 2
+
+            ell = v.children[0]
+            arr = v.children[-1]
+            w = v.lbrother()
+            if w:
+                v.x = w.x + distance
+                v.mod = v.x - midpoint
+            else:
+                v.x = midpoint
+        return v
+
+    def apportion(v, default_ancestor, distance):
+        w = v.lbrother()
+        if w is not None:
+            # in buchheim notation:
+            # i == inner; o == outer; r == right; l == left; r = +; l = -
+            vir = vor = v
+            vil = w
+            vol = v.lmost_sibling
+            sir = sor = v.mod
+            sil = vil.mod
+            sol = vol.mod
+            while vil.right() and vir.left():
+                vil = vil.right()
+                vir = vir.left()
+                vol = vol.left()
+                vor = vor.right()
+                vor.ancestor = v
+                shift = (vil.x + sil) - (vir.x + sir) + distance
+                if shift > 0:
+                    move_subtree(ancestor(vil, v, default_ancestor), v, shift)
+                    sir = sir + shift
+                    sor = sor + shift
+                sil += vil.mod
+                sir += vir.mod
+                sol += vol.mod
+                sor += vor.mod
+            if vil.right() and not vor.right():
+                vor.thread = vil.right()
+                vor.mod += sil - sor
+            else:
+                if vir.left() and not vol.left():
+                    vol.thread = vir.left()
+                    vol.mod += sir - sol
+                default_ancestor = v
+        return default_ancestor
+
+    def move_subtree(wl, wr, shift):
+        subtrees = wr.number - wl.number
+        wr.change -= shift / subtrees
+        wr.shift += shift
+        wl.change += shift / subtrees
+        wr.x += shift
+        wr.mod += shift
+
+    def execute_shifts(v):
+        shift = change = 0
+        for w in v.children[::-1]:
+            w.x += shift
+            w.mod += shift
+            change += w.change
+            shift += w.shift + change
+
+    def ancestor(vil, v, default_ancestor):
+        # the relevant text is at the bottom of page 7 of
+        # "Improving Walker's Algorithm to Run in Linear Time" by Buchheim et al, (2002)
+        # http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.16.8757&rep=rep1&type=pdf
+        if vil.ancestor in v.parent.children:
+            return vil.ancestor
+        else:
+            return default_ancestor
+
+    def second_walk(v, m=0, depth=0, min=None):
+        v.x += m
+        v.y = depth
+
+        if min is None or v.x < min:
+            min = v.x
+
+        for w in v.children:
+            min = second_walk(w, m + v.mod, depth + 1, min)
+
+        return min
+
+    dt = firstwalk(DrawTree(tree))
+    min = second_walk(dt)
+    if min < 0:
+        third_walk(dt, -min)
+    return dt
 class DrawTree(object):
     _registry = list()
     def __init__(self, tree, parent=None, depth=0, number=1):
@@ -52,117 +158,6 @@ class DrawTree(object):
 
     def __str__(self): return f"DrawTree x={self.x}, mod={self.mod}"
     def __repr__(self): return self.__str__()
-
-def buchheim(tree):
-    dt = firstwalk(DrawTree(tree))
-    min = second_walk(dt)
-    if min < 0:
-        third_walk(dt, -min)
-    return dt
-
-def third_walk(tree, n):
-    tree.x += n
-    for c in tree.children:
-        third_walk(c, n)
-
-def firstwalk(v, distance=1.):
-    if len(v.children) == 0:
-        if v.lmost_sibling:
-            v.x = v.lbrother().x + distance
-        else:
-            v.x = 0.
-    else:
-        default_ancestor = v.children[0]
-        for w in v.children:
-            firstwalk(w)
-            default_ancestor = apportion(w, default_ancestor, distance)
-        execute_shifts(v)
-
-        midpoint = (v.children[0].x + v.children[-1].x) / 2
-
-        ell = v.children[0]
-        arr = v.children[-1]
-        w = v.lbrother()
-        if w:
-            v.x = w.x + distance
-            v.mod = v.x - midpoint
-        else:
-            v.x = midpoint
-    return v
-
-def apportion(v, default_ancestor, distance):
-    w = v.lbrother()
-    if w is not None:
-        #in buchheim notation:
-        #i == inner; o == outer; r == right; l == left; r = +; l = -
-        vir = vor = v
-        vil = w
-        vol = v.lmost_sibling
-        sir = sor = v.mod
-        sil = vil.mod
-        sol = vol.mod
-        while vil.right() and vir.left():
-            vil = vil.right()
-            vir = vir.left()
-            vol = vol.left()
-            vor = vor.right()
-            vor.ancestor = v
-            shift = (vil.x + sil) - (vir.x + sir) + distance
-            if shift > 0:
-                move_subtree(ancestor(vil, v, default_ancestor), v, shift)
-                sir = sir + shift
-                sor = sor + shift
-            sil += vil.mod
-            sir += vir.mod
-            sol += vol.mod
-            sor += vor.mod
-        if vil.right() and not vor.right():
-            vor.thread = vil.right()
-            vor.mod += sil - sor
-        else:
-            if vir.left() and not vol.left():
-                vol.thread = vir.left()
-                vol.mod += sir - sol
-            default_ancestor = v
-    return default_ancestor
-
-def move_subtree(wl, wr, shift):
-    subtrees = wr.number - wl.number
-    wr.change -= shift / subtrees
-    wr.shift += shift
-    wl.change += shift / subtrees
-    wr.x += shift
-    wr.mod += shift
-
-def execute_shifts(v):
-    shift = change = 0
-    for w in v.children[::-1]:
-        w.x += shift
-        w.mod += shift
-        change += w.change
-        shift += w.shift + change
-
-def ancestor(vil, v, default_ancestor):
-    #the relevant text is at the bottom of page 7 of
-    #"Improving Walker's Algorithm to Run in Linear Time" by Buchheim et al, (2002)
-    #http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.16.8757&rep=rep1&type=pdf
-    if vil.ancestor in v.parent.children:
-        return vil.ancestor
-    else:
-        return default_ancestor
-
-def second_walk(v, m=0, depth=0, min=None):
-    v.x += m
-    v.y = depth
-
-    if min is None or v.x < min:
-        min = v.x
-
-    for w in v.children:
-        min = second_walk(w, m + v.mod, depth+1, min)
-
-    return min
-
 
 
 class MainView(QGraphicsView):
@@ -217,6 +212,13 @@ class Connection:
 
     def __str__(self):
         return "Connection [{0}->{1}]".format(self.bottom_node, self.top_node)
+
+    def add_to_scene(self,new_scene:QGraphicsScene):
+        old_scene = self.line.scene()
+        if old_scene is not None:
+            old_scene.removeItem(self.line)
+
+        new_scene.addItem(self.line)
 
     def create_line(self):
         self.points = self.get_pos()
@@ -276,25 +278,87 @@ class Connection:
     def show(self):
         self.line.show()
 
+class PopUp(QWidget):
+    def __init__(self,clicked_node:Node):
+        super(PopUp, self).__init__()
+        self.clicked_node = clicked_node
+        self.graph_window = self.clicked_node.graph_window
+        self.scene = self.clicked_node.scene()
+
+        layout = QHBoxLayout()
+        self.setLayout(layout)
+        self.combo_box = QComboBox()
+        self.button = QPushButton("Add")
+        layout.addWidget(self.combo_box)
+        layout.addWidget(self.button)
+        self.combo_box.setEditable(True)
+
+        scene_node_text = [node.getText() for node in clicked_node.scene().items() if isinstance(node,Node)]
+
+        name_list = [node.getText() for node in clicked_node.graph_window.nodes if node.getText() not in scene_node_text]
+        name_list = list(dict.fromkeys(name_list))
+        name_list.sort()
+
+
+        self.combo_box.addItems(name_list)
+        completer = QCompleter(name_list)
+        self.combo_box.setDuplicatesEnabled(False)
+        self.combo_box.setCompleter(completer)
+        self.combo_box.show()
+        self.setContentsMargins(0,0,0,0)
+        self.button.clicked.connect(self.button_pressed)
+        self.graph_window.add_popup = self
+
+    def button_pressed(self,e):
+        def add_children(parent:Node):
+            obj = parent.object
+            for child in obj.aggregates_to:
+                node = Node(child,self.graph_window)
+                parent.add_child(node)
+                self.scene.addItem(node)
+                node.setY(node.base_y)
+                node.setX(self.clicked_node.x())
+                add_children(node)
+
+        text = self.combo_box.currentText()
+        node_dict = {node.getText():node.object for node in self.clicked_node.graph_window.nodes}
+        obj = node_dict[text]
+        node = Node(obj,self.clicked_node.graph_window)
+
+        self.clicked_node.object.add_aggregation(node.object)
+
+        self.clicked_node.add_child(node)
+        self.clicked_node.scene().addItem(node)
+        node.setY(node.base_y)
+        node.setX(self.clicked_node.x())
+
+        add_children(node)
+
+        self.scene.removeItem(self.parent())
+        self.deleteLater()
+        self.clicked_node.graph_window.update_combo_list()
+        self.graph_window.add_popup = None
 
 class Node(QGraphicsProxyWidget):
     _registry=list()
-    def __init__(self, obj:classes.Object,main_window):
+    def __init__(self, obj:classes.Object,graph_window:GraphWindow):
         super(Node, self).__init__()
         self.object = obj
+        self.graph_window = graph_window
         self.setWidget(QWidget())
         self.object_graph_rep =  ui_ObjectGraphWidget.Ui_object_graph_widget()
         self.object_graph_rep.setupUi(self.widget())
-        self.app = main_window.app
+        self.app = graph_window.main_window.app
 
         if self.object is None:
             self.name = "Root"
         else:
             self.name = obj.name
-            self.getText()
+            text = self.getText()
+            self.object_graph_rep.label_object_name.setText(text)
             self.fill_table()
 
-        self.main_window = main_window
+        self.main_window = graph_window.main_window
         self.children = list()
         self.parent_box = None
         self._left_item = None
@@ -302,10 +366,13 @@ class Node(QGraphicsProxyWidget):
         self._index = None
         self._registry.append(self)
         self.connections = list()
-        self.base_y = 0.0
         self.button_add = self.object_graph_rep.button_add
         self.button_add.hide()
         self.button_add.clicked.connect(self.add_button_pressed)
+
+    @property
+    def base_y(self):
+        return self.level*(constants.BOX_HEIGHT + constants.BOX_MARGIN)
 
     @property
     def is_root(self):
@@ -313,6 +380,18 @@ class Node(QGraphicsProxyWidget):
             return True
         else:
             return False
+
+    @property
+    def level(self):
+        def count(item:Node,index):
+            if item.parent_box is not None:
+                index+=1
+                return count(item.parent_box,index)
+            else:
+                return index
+
+        return count(self,0)
+
 
     def __str__(self):
         return(f"{self.object.name}: {self.x()},{self.y()}")
@@ -325,30 +404,32 @@ class Node(QGraphicsProxyWidget):
         else:
             return None
 
-    def add_button_pressed(self):
+    def add_button_pressed(self,event:QGraphicsSceneMouseEvent):
+        old_popup:PopUp = self.graph_window.add_popup
+        if old_popup is not None:
+            self.scene().removeItem(old_popup.parent())
+            old_popup.deleteLater()
 
-        cursor_pos = QCursor.pos()
-        print(f"global: {cursor_pos}")
-        pos = self.scene().views()[0].mapToScene(cursor_pos)
-        print(f"scene {pos}")
-        combo_box = QComboBox()
-        proxy = self.scene().addWidget(combo_box)
-        proxy.setPos(pos)
-
-        print(QCursor.pos())
+        pop_up = PopUp(self)
+        proxy = QGraphicsProxyWidget()
+        proxy.setWidget(pop_up)
+        self.scene().addItem(proxy)
+        proxy.setPos(event.scenePos())
 
     def add_child(self,child,connect = True):
             self.children.append(child)
+            child.parent_box = self
             if connect:
                 self.connect_to_node(child)
+
             return child
 
 
     def mouseDoubleClickEvent(self, event:QGraphicsSceneMouseEvent) -> None:
+        print(self.object.aggregates_to)
         pos = event.pos()
         item_pos = self.object_graph_rep.list_widget_property_sets.mapFrom(self.widget(),pos)
         selected_item = self.object_graph_rep.list_widget_property_sets.itemAt(item_pos.toPoint())
-        print(selected_item)
         if selected_item is not None:
             property_set = selected_item.property_set
             self.main_window.pset_window = property_widget.open_pset_window(self.main_window, property_set,
@@ -362,7 +443,7 @@ class Node(QGraphicsProxyWidget):
             text = f"{self.object.name}"
         else:
             text = f"{self.object.name} ({self.object.ident_attrib.value[0]})"
-        self.object_graph_rep.label_object_name.setText(text)
+        return text
 
     def fill_table(self):
         for property_set in self.object.property_sets:
@@ -381,7 +462,7 @@ class Node(QGraphicsProxyWidget):
         item_pos=self.button_add.mapFrom(self.widget(),pos)
         if item_pos.x()>0 and item_pos.x()< self.button_add.rect().width():
             if item_pos.y()>0:
-                self.button_add.click()
+                self.add_button_pressed(event)
         else:
             self.app.instance().setOverrideCursor(Qt.ClosedHandCursor)
         pass
@@ -461,10 +542,12 @@ class GraphWindow(QWidget):
 
     def __init__(self, main_window):
         super(GraphWindow, self).__init__()
-        self.show()
         self.widget = ui_GraphWindow.Ui_GraphView()
         self.widget.setupUi(self)
+        self.show()
+
         self.main_window = main_window
+        self.add_popup = None
 
         #replace view
 
@@ -475,16 +558,17 @@ class GraphWindow(QWidget):
 
         self.active_scene = QGraphicsScene()
         self.view.setScene(self.active_scene)
-
+        self.view.show()
         self.nodes = list()
         self.scenes =list()
+        self.drawn_scenes= list()
         self.construct_all_nodes()
 
 
         self.widget.combo_box.currentIndexChanged.connect(self.combo_change)
         self.widget.button_reload.clicked.connect(self.redraw)
         self.widget.button_reload.setIcon(icons.get_reload_icon())
-        self.redraw()
+
 
     @property
     def node_dict(self) -> dict[classes.Object,Node]:
@@ -519,21 +603,42 @@ class GraphWindow(QWidget):
     def change_root(self,node):
             self.active_scene = self.scene_dict[node]
             self.view.setScene(self.active_scene)
+            if self.active_scene not in self.drawn_scenes:
+                self.redraw()
+                self.drawn_scenes.append(self.active_scene)
             self.visible_items_bounding()
 
     def get_node(self):
         combo_box = self.widget.combo_box
         text = combo_box.currentText()
         node = self.find_node_by_name(text)
-
         return node
+
     def combo_change(self):
         node = self.get_node()
-        self.change_root(node)
+        if node is not None:
+            self.change_root(node)
 
     def redraw(self):
+        print("REDRAW")
         node = self.get_node()
         self.draw_tree(node)
+
+    def update_combo_list(self):
+        combo = self.widget.combo_box
+
+        #remove old Items
+        for i in range(combo.count()):
+            text = combo.itemText(i)
+            if text not in self.combo_list_names:
+                combo.removeItem(i)
+
+        #add New Items
+        for item in self.combo_list_names:
+            find = self.widget.combo_box.findText(item)
+            if self.widget.combo_box.findText(item) ==-1:
+                self.widget.combo_box.addItem(item)
+
 
     def construct_all_nodes(self):
 
@@ -544,30 +649,25 @@ class GraphWindow(QWidget):
                 """ Recursivly Add ChildNodes to Node"""
 
                 for obj in children:
-                    node = Node(obj, self.main_window)
+                    node = Node(obj, self)
                     self.nodes.append(node)
-                    node.setY(level * (constants.BOX_HEIGHT + constants.BOX_MARGIN))
-                    node.base_y = float(node.y())
 
                     parent.scene().addItem(node)
                     parent.add_child(node)
+                    node.setY(node.base_y)
                     iterate_nodes(obj.aggregates_to, node, level + 1)
 
             for obj in self.root_objects:
                 scene = QGraphicsScene()
                 self.scenes.append(scene)
-                node = Node(obj, self.main_window)
+                node = Node(obj, self)
                 self.nodes.append(node)
                 scene.addItem(node)
                 iterate_nodes(obj.aggregates_to, node, 1)
 
         create_nodes()
+        self.update_combo_list()
 
-        self.widget.combo_box.addItems(self.combo_list_names)
-
-        for node in self.root_nodes:
-            print(f"loop_root: {node}")
-            self.draw_tree(node)
 
     def draw_tree(self,root:Node):
         def iter_x_pos(item:Node,drawtree): #give each element correct position
@@ -577,6 +677,10 @@ class GraphWindow(QWidget):
                 x = draw_child.x*(constants.BOX_WIDHT+constants.BOX_MARGIN)
                 child.setX(x)
                 child.setY(child.base_y)
+                if child  not in root.scene().items():
+                    root.scene().addItem(child)
+                    for connection in child.connections:
+                        connection.add_to_scene(root.scene())
                 child.show()
                 iter_x_pos(child,draw_child)
 
@@ -594,22 +698,12 @@ class GraphWindow(QWidget):
         root.show()
         iter_x_pos(root,draw_tree)
         self.visible_items_bounding()
-        # self.active_scene.setSceneRect(self.border_rect.rect())
-        # self.view.fitInView(self.border_rect, Qt.AspectRatioMode.KeepAspectRatio)
-        # self.view.centerOn(self.border_rect)
-
-
-        print("--------")
-        print(f"root {root}")
-        node:Node
-        for node in root.scene().items():
-            if isinstance(node,Node):
-                print(f"  {node}: {node.isVisible()}")
-            # node.show()
 
     def visible_items_bounding(self):
-        visible_items = [item for item in self.active_scene.items() if item.isVisible() and not isinstance(item, QGraphicsRectItem)]
+        pass
+        visible_items = [item for item in self.active_scene.items() if item.isVisible() and not isinstance(item, (QGraphicsRectItem,QGraphicsPathItem))]
         bounding_rect = visible_items[0].boundingRect()
+        visible_items.sort(key = lambda x: str(type(x)))
         for item in visible_items:
             item_br= item.sceneBoundingRect()
             if item_br.right()>bounding_rect.right():
@@ -625,4 +719,3 @@ class GraphWindow(QWidget):
         self.active_scene.setSceneRect(bounding_rect)
         self.view.fitInView(self.active_scene.sceneRect(),Qt.AspectRatioMode.KeepAspectRatio)
         self.view.centerOn(self.active_scene.sceneRect().center())
-

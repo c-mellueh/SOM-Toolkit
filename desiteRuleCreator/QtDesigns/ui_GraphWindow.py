@@ -22,7 +22,7 @@ class Ui_GraphView(object):
     def setupUi(self, GraphView):
         if not GraphView.objectName():
             GraphView.setObjectName(u"GraphView")
-        GraphView.resize(825, 576)
+        GraphView.resize(1920, 1080)
         self.gridLayout = QGridLayout(GraphView)
         self.gridLayout.setObjectName(u"gridLayout")
         self.button_reload = QPushButton(GraphView)
@@ -66,7 +66,7 @@ class Ui_GraphView(object):
     # setupUi
 
     def retranslateUi(self, GraphView):
-        GraphView.setWindowTitle(QCoreApplication.translate("GraphView", u"Form", None))
+        GraphView.setWindowTitle(QCoreApplication.translate("GraphView", u"Graphs", None))
         self.button_reload.setText("")
         self.button_add.setText(QCoreApplication.translate("GraphView", u"+", None))
     # retranslateUi
