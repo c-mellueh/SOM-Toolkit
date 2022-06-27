@@ -37,7 +37,7 @@ class Ui_object_graph_widget(object):
         self.label_object_name.setObjectName(u"label_object_name")
         sizePolicy.setHeightForWidth(self.label_object_name.sizePolicy().hasHeightForWidth())
         self.label_object_name.setSizePolicy(sizePolicy)
-        self.label_object_name.setCursor(QCursor(Qt.OpenHandCursor))
+        self.label_object_name.setCursor(QCursor(Qt.ArrowCursor))
         self.label_object_name.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout.addWidget(self.label_object_name)
