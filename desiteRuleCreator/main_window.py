@@ -35,6 +35,7 @@ class MainWindow(QMainWindow):
         self._save_path = None
         self._export_path = None
         self.active_object = None
+        self.graph_window = None
         self.project = classes.Project("")
 
         # init object and ProertyWidget
@@ -265,9 +266,12 @@ class MainWindow(QMainWindow):
         desite_export.export_bookmarks(self)
 
     def show_graphs(self):
-        self.graph_window = graphs_window.GraphWindow(self)
-        if self.graph_window.nodes:
-            self.graph_window.redraw()
+        if self.graph_window is None:
+            self.graph_window = graphs_window.GraphWindow(self)
+        else:
+            self.graph_window.show()
+        # if self.graph_window.nodes:
+        #     self.graph_window.redraw()
             #self.graph_window.redraw()
 
     def export_boq(self):
