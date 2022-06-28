@@ -16,14 +16,14 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QLabel, QListWidget,
-    QListWidgetItem, QPushButton, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+    QListWidgetItem, QPushButton, QSizePolicy, QVBoxLayout,
+    QWidget)
 
 class Ui_object_graph_widget(object):
     def setupUi(self, object_graph_widget):
         if not object_graph_widget.objectName():
             object_graph_widget.setObjectName(u"object_graph_widget")
-        object_graph_widget.resize(300, 200)
+        object_graph_widget.resize(299, 200)
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -32,7 +32,7 @@ class Ui_object_graph_widget(object):
         object_graph_widget.setCursor(QCursor(Qt.ArrowCursor))
         self.verticalLayout = QVBoxLayout(object_graph_widget)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(-1, -1, -1, 1)
+        self.verticalLayout.setContentsMargins(4, 4, 4, 4)
         self.label_object_name = QLabel(object_graph_widget)
         self.label_object_name.setObjectName(u"label_object_name")
         sizePolicy.setHeightForWidth(self.label_object_name.sizePolicy().hasHeightForWidth())
@@ -57,10 +57,6 @@ class Ui_object_graph_widget(object):
         self.button_add.setObjectName(u"button_add")
 
         self.verticalLayout.addWidget(self.button_add)
-
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout.addItem(self.verticalSpacer)
 
 
         self.retranslateUi(object_graph_widget)

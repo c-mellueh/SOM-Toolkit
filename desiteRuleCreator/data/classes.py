@@ -435,8 +435,8 @@ class Object(Hirarchy):
         self._ident_attrib = ident_attrib
         self._node = None
         self._registry.append(self)
-        self.aggregates_to = list()
-        self.aggregates_from = list()
+        self.aggregates_to = set()
+        self.aggregates_from = set()
         self.changed = True
         if identifier is None:
             self.identifier = str(uuid4())
@@ -527,8 +527,8 @@ class Object(Hirarchy):
             pset.delete()
 
     def add_aggregation(self,value:Object):
-        self.aggregates_to.append(value)
-        value.aggregates_from.append(self)
+        self.aggregates_to.add(value)
+        value.aggregates_from.add(self)
 
     def remove_aggregation(self,value:Object):
         self.aggregates_to.remove(value)
