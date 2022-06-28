@@ -1,11 +1,10 @@
 from uuid import uuid4
 
-from PySide6.QtWidgets import QFileDialog, QInputDialog, QLineEdit, QMessageBox
+from PySide6.QtWidgets import QInputDialog, QLineEdit
 from lxml import etree
 
-from desiteRuleCreator import __version__ as project_version
 from desiteRuleCreator.Windows.popups import msg_delete_or_merge
-from desiteRuleCreator.Windows.popups import msg_unsaved, msg_close
+from desiteRuleCreator.Windows.popups import msg_unsaved
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.data.classes import Object, PropertySet, Attribute
 
@@ -180,6 +179,18 @@ def import_new(projekt_xml):
         create_link(attribute_dict, xml_attribute_dict)
         create_link(property_set_dict, xml_property_set_dict)
 
+    def link_aggregation():
+        obj_dict = {obj.identifier: obj for obj in classes.Object}
+        for xml_object in xml_objects:
+            xml_aggregates = [x for x in xml_object if x.tag == constants.AGGREGATE]
+            ident = xml_object.get(constants.IDENTIFIER)
+            obj:classes.Object = obj_dict[ident]
+            for xml_aggregate in xml_aggregates:
+                child_ident = xml_aggregate.get(constants.AGGREGATES_TO)
+                child_obj = obj_dict[child_ident]
+                obj.add_aggregation(child_obj)
+
+
     xml_predefined_psets = [x for x in projekt_xml if x.tag == constants.PREDEFINED_PSET]
     xml_objects = [x for x in projekt_xml if x.tag == constants.OBJECT]
 
@@ -199,6 +210,7 @@ def import_new(projekt_xml):
             import_scripts(xml_script, obj)
 
     link_parents(xml_predefined_psets, xml_objects)
+    link_aggregation()
 
 
 def import_old(projekt_xml):
@@ -285,122 +297,6 @@ def import_old(projekt_xml):
                 obj.parent = fachdisziplinen_dict[group_name]
 
 
-
-def save_as_clicked(main_window):
-    if main_window.save_path is not None:
-        path = \
-            QFileDialog.getSaveFileName(main_window, "Save XML", main_window.save_path, "xml Files (*.xml *.DRCxml)")[0]
-    else:
-        path = QFileDialog.getSaveFileName(main_window, "Save XML", "", "xml Files (*.xml *.DRCxml)")[0]
-
-    if path:
-        main_window.save(path)
-    return path
-
-
-def save(main_window, path):
-    def add_parent(xml_object, obj):
-        if obj.parent is not None:
-            xml_object.set(constants.PARENT, str(obj.parent.identifier))
-        else:
-            xml_object.set(constants.PARENT, constants.NONE)
-
-    def add_predefined_property_sets(xml_project):
-        for predefined_pset in classes.PropertySet:
-            if predefined_pset.object is None:
-                predefined_pset: classes.PropertySet = predefined_pset
-                xml_pset = etree.SubElement(xml_project, constants.PREDEFINED_PSET)
-                xml_pset.set(constants.NAME, predefined_pset.name)
-                xml_pset.set(constants.IDENTIFIER, str(predefined_pset.identifier))
-                xml_pset.set(constants.PARENT, constants.NONE)
-
-                for attribute in predefined_pset.attributes:
-                    add_attribute(attribute, predefined_pset, xml_pset)
-
-    def add_property_set(property_set: PropertySet, xml_object):
-        xml_pset = etree.SubElement(xml_object, constants.PROPERTY_SET)
-        xml_pset.set(constants.NAME, property_set.name)
-        xml_pset.set(constants.IDENTIFIER, str(property_set.identifier))
-        add_parent(xml_pset, property_set)
-
-        for attribute in property_set.attributes:
-            add_attribute(attribute, property_set, xml_pset)
-
-    def add_object(obj: Object, xml_project):
-        xml_object = etree.SubElement(xml_project, constants.OBJECT)
-        xml_object.set(constants.NAME, obj.name)
-        xml_object.set(constants.IDENTIFIER, str(obj.identifier))
-        xml_object.set("is_concept", str(obj.is_concept))
-        add_parent(xml_object, obj)
-
-        for property_set in obj.property_sets:
-            add_property_set(property_set, xml_object)
-
-        for script in obj.scripts:
-            script: classes.Script = script
-            xml_script = etree.SubElement(xml_object, "Script")
-            xml_script.set(constants.NAME, script.name)
-            xml_script.text = script.code
-        pass
-
-    def add_attribute(attribute, property_set, xml_pset):
-        xml_attribute = etree.SubElement(xml_pset, constants.ATTRIBUTE)
-        xml_attribute.set(constants.NAME, attribute.name)
-        xml_attribute.set(constants.DATA_TYPE, attribute.data_type)
-        xml_attribute.set(constants.VALUE_TYPE, attribute.value_type)
-        xml_attribute.set(constants.IDENTIFIER, str(attribute.identifier))
-        xml_attribute.set(constants.CHILD_INHERITS_VALUE, str(attribute.child_inherits_values))
-        add_parent(xml_attribute, attribute)
-
-        obj = property_set.object
-        if obj is not None and attribute == obj.ident_attrib:
-            ident = True
-        else:
-            ident = False
-
-        xml_attribute.set(constants.IS_IDENTIFIER, str(ident))
-        add_value(attribute, xml_attribute)
-
-    def add_value(attribute, xml_attribute):
-        values = attribute.value
-        for value in values:
-            xml_value = etree.SubElement(xml_attribute, "Value")
-            if attribute.value_type == constants.RANGE:
-                xml_from = etree.SubElement(xml_value, "From")
-                xml_to = etree.SubElement(xml_value, "To")
-                xml_from.text = str(value[0])
-                if len(value) > 1:
-                    xml_to.text = str(value[1])
-            else:
-                xml_value.text = str(value)
-
-    main_window.save_path = path
-
-    xml_project = etree.Element(constants.PROJECT)
-    xml_project.set(constants.NAME, main_window.project.name)
-    xml_project.set(constants.VERSION, project_version)
-
-    add_predefined_property_sets(xml_project)
-    for obj in Object:
-        add_object(obj, xml_project)
-
-    tree = etree.ElementTree(xml_project)
-
-    with open(path, "wb") as f:
-        tree.write(f, pretty_print=True, encoding="utf-8", xml_declaration=True)
-
-    main_window.project.reset_changed()
-
-
-def save_clicked(main_window):
-    if main_window.save_path is None:
-        path = main_window.save_as_clicked()
-    else:
-        save(main_window, main_window.save_path)
-        path = main_window.save_path
-    return path
-
-
 def new_file(main_window):
     new_file = msg_unsaved()
     if new_file:
@@ -434,19 +330,3 @@ def merge_new_file(main_window):
     print("MERGE NEEDS TO BE PROGRAMMED")  # TODO: Write Merge
 
 
-def close_event(main_window, event):
-    status = main_window.project.changed
-    if status:
-        reply = msg_close()
-        if reply == QMessageBox.Save:
-            path = main_window.save_clicked()
-            if not path or path is None:
-                return False
-            else:
-                return True
-        elif reply == QMessageBox.No:
-            return True
-        else:
-            return False
-    else:
-        return True

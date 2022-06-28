@@ -435,8 +435,8 @@ class Object(Hirarchy):
         self._ident_attrib = ident_attrib
         self._node = None
         self._registry.append(self)
-        self.aggregates_to = set()
-        self.aggregates_from = set()
+        self.aggregates_to: set[Object] = set()
+        self.aggregates_from: set[Object] = set()
         self.changed = True
         if identifier is None:
             self.identifier = str(uuid4())

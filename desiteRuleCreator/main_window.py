@@ -4,7 +4,7 @@ from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog
 
 from desiteRuleCreator import icons
-from desiteRuleCreator.Filehandling import filehandling, desite_export, excel
+from desiteRuleCreator.Filehandling import open_file, desite_export, excel,save_file
 from desiteRuleCreator.QtDesigns import ui_project_settings
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
         desite_export.export_modelcheck(self)
 
     def closeEvent(self, event):
-        action = filehandling.close_event(self, event)
+        action = save_file.close_event(self, event)
 
         if action:
             app.closeAllWindows()
@@ -98,7 +98,7 @@ class MainWindow(QMainWindow):
 
     # Filehandling
     def save_clicked(self):
-        filehandling.save_clicked(self)
+        save_file.save_clicked(self)
 
     def open_pset_list(self):
         if self.parent_property_window is not None:
@@ -109,19 +109,19 @@ class MainWindow(QMainWindow):
         return self.parent_property_window
 
     def save(self, path):
-        filehandling.save(self, path)
+        save_file.save(self, path)
 
     def save_as_clicked(self):
-        filehandling.save_as_clicked(self)
+        save_file.save_as_clicked(self)
 
     def new_file(self):
-        filehandling.new_file(self)
+        open_file.new_file(self)
 
     def open_file_dialog(self, path=False):
-        filehandling.open_file_dialog(self, path)
+        open_file.open_file_dialog(self, path)
 
     def merge_new_file(self):
-        filehandling.merge_new_file(self)
+        open_file.merge_new_file(self)
 
     def open_pset_menu(self,position):
         property_widget.open_menu(self,position)
@@ -137,7 +137,7 @@ class MainWindow(QMainWindow):
             if path.endswith("xlsx"):
                 excel.start(self, path)
             else:
-                filehandling.import_data(self, path)
+                open_file.import_data(self, path)
 
     # Main
     def clear_all(self):
