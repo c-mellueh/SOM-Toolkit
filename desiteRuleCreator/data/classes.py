@@ -531,9 +531,12 @@ class Object(Hirarchy):
         self.aggregates_to.add(value)
         value.aggregates_from.add(self)
 
-    def remove_aggregation(self,value:Object):
+    def remove_aggregation(self,value:Object,recursion = False):
         self.aggregates_to.remove(value)
         value.aggregates_from.remove(self)
+        if recursion:
+            for item in value.aggregates_to:
+                value.remove_aggregation(item,recursion)
 
 class Script(QListWidgetItem):
     def __init__(self, title: str, obj):
