@@ -459,7 +459,7 @@ class Ui_MainWindow(object):
         self.action_export_bs.setText(QCoreApplication.translate("MainWindow", u"Export BS", None))
         self.action_export_bookmarks.setText(QCoreApplication.translate("MainWindow", u"Export Bookmarks", None))
         self.action_show_graphs.setText(QCoreApplication.translate("MainWindow", u"Show", None))
-        self.action_export_boq.setText(QCoreApplication.translate("MainWindow", u"Export .csv for BoQ", None))
+        self.action_export_boq.setText(QCoreApplication.translate("MainWindow", u"Export  for BoQ", None))
         self.lineEdit_ident_value.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Value", None))
         self.label_object_name.setText(QCoreApplication.translate("MainWindow", u"Object", None))
         self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
