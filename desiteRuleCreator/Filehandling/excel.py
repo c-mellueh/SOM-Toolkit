@@ -103,7 +103,7 @@ def create_object(sheet, cell, pset_dict, cell_list):
     ident_pset = classes.PropertySet("Allgemeine Eigenschaften")
     parent: classes.PropertySet = pset_dict["AE"][0]
     parent.add_child(ident_pset)
-    ident_attrib: classes.Attribute = ident_pset.get_attribute("bauteilKlassifikation")
+    ident_attrib: classes.Attribute = ident_pset.get_attribute_by_name("bauteilKlassifikation")
 
     ident_attrib.value = [ident]
     obj = classes.Object(name, ident_attrib)

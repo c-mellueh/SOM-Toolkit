@@ -47,11 +47,12 @@ class MainWindow(QMainWindow):
         self.ui.action_file_new.triggered.connect(self.new_file)
         self.ui.action_file_Save.triggered.connect(self.save_clicked)
         self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
-        self.ui.action_desite_Export.triggered.connect(self.export_desite_rules)
+        self.ui.action_desite_export.triggered.connect(self.export_desite_rules)
         self.ui.action_show_list.triggered.connect(self.open_pset_list)
         self.ui.action_settings.triggered.connect(self.open_settings)
         self.ui.action_export_bs.triggered.connect(self.export_bs)
         self.ui.action_export_bookmarks.triggered.connect(self.export_bookmarks)
+        self.ui.action_export_boq.triggered.connect(self.export_boq)
         self.ui.action_show_graphs.triggered.connect(self.show_graphs)
 
         self.ui.code_edit.textChanged.connect(self.update_script)
@@ -268,6 +269,9 @@ class MainWindow(QMainWindow):
         if self.graph_window.nodes:
             self.graph_window.redraw()
             #self.graph_window.redraw()
+
+    def export_boq(self):
+        desite_export.export_boq(self)
 
 def main():
     global app

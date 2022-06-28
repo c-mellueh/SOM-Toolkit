@@ -173,7 +173,6 @@ class Hirarchy(object,metaclass=IterRegistry):
 
 
 class PropertySet(Hirarchy):
-    __metaclass__ = IterRegistry
     _registry = []
 
     def __init__(self, name: str, obj=None, identifier=None):
@@ -181,7 +180,6 @@ class PropertySet(Hirarchy):
         self._attributes = list()
         self._object = obj
         self._registry.append(self)
-
         self.identifier = identifier
         if self.identifier is None:
             self.identifier = str(uuid4())
@@ -220,9 +218,6 @@ class PropertySet(Hirarchy):
 
     def delete(self) -> None:
         super(PropertySet, self).delete()
-        if self.is_parent:
-            for child in self.children:
-                self.remove_child(child)
         if self.object is not None:
             ident = self.object.ident_attrib  # if identifier in Pset delete all attributes except identifier
             if ident in self.attributes:
@@ -267,7 +262,7 @@ class PropertySet(Hirarchy):
                     child.remove_attribute(attribute)
         self.changed = True
 
-    def get_attribute(self, name):
+    def get_attribute_by_name(self, name):
         for attribute in self.attributes:
             if attribute.name.lower() == name.lower():
                 return attribute
@@ -525,6 +520,12 @@ class Object(Hirarchy):
         pset: PropertySet
         for pset in self.property_sets:
             pset.delete()
+
+    def get_property_set_by_name(self, property_set_name):
+        for property_set in self.property_sets:
+            if property_set.name == property_set_name:
+                return property_set
+        return None
 
     def add_aggregation(self,value:Object):
         self.aggregates_to.add(value)

@@ -3,6 +3,7 @@ import datetime
 import os
 import uuid
 import xml.etree.ElementTree as ET
+import csv
 
 from PySide6.QtWidgets import QFileDialog
 from jinja2 import Environment, FileSystemLoader
@@ -11,6 +12,7 @@ from lxml import etree
 from desiteRuleCreator import Template
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.QtDesigns import ui_mainwindow
+from desiteRuleCreator.Windows import popups
 output_date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 output_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -18,9 +20,9 @@ output_date = datetime.datetime.now().strftime("%Y-%m-%d")
 def get_path(main_window,file_format:str):
     if main_window.export_path is not None:
         path = \
-            QFileDialog.getSaveFileName(main_window, f"Save {file_format}", main_window.export_path, f"xml Files (*.{file_format})")[0]
+            QFileDialog.getSaveFileName(main_window, f"Save {file_format}", main_window.export_path, f"{file_format} Files (*.{file_format})")[0]
     else:
-        path = QFileDialog.getSaveFileName(main_window, f"Save {file_format}", "", f"xml Files (*.{file_format})")[0]
+        path = QFileDialog.getSaveFileName(main_window, f"Save {file_format}", "", f"{file_format} Files (*.{file_format})")[0]
 
     return path
 
@@ -453,3 +455,47 @@ def export_bookmarks(main_window):
     if path:
         export(main_window, path)
         pass
+
+def export_boq(main_window):
+    def get_distinct_attributes(property_sets):
+        attribute_names =list()
+        property_set:classes.PropertySet
+
+        for property_set in property_sets:
+            attribute:classes.Attribute
+            attribute_names+= [attribute.name for attribute in property_set.attributes]
+
+        distinct_attribute_names = list(dict.fromkeys(attribute_names))
+
+        return distinct_attribute_names
+
+
+    path = get_path(main_window,"csv")
+    words = [property_set.name for property_set in classes.PropertySet.iter]
+    words = list(dict.fromkeys(words))
+
+    ok,pset_name = popups.req_boq_pset(main_window,words)
+    if ok:
+        with open(path,"w",encoding='ISO 8859-1',) as file:
+            writer = csv.writer(file,delimiter = ";")
+            property_sets = [property_set for property_set in classes.PropertySet.iter if property_set.name == pset_name]
+            distinct_attribute_names = get_distinct_attributes(property_sets)
+            header =["Ident","Object"]+[f"{pset_name}:{name}" for name in distinct_attribute_names]
+            writer.writerow(header)
+            obj:classes.Object
+
+            objects = [obj for obj in classes.Object.iter if pset_name in [pset.name for pset in obj.property_sets]] #find objects with matching propertyset
+            for obj in objects:
+                property_set = obj.get_property_set_by_name(pset_name)
+                ident = obj.ident_attrib
+                line = [f"{ident.property_set.name}:{ident.name}",ident.value[0]]
+                for attribute_name in distinct_attribute_names:
+                    attribute:classes.Attribute = property_set.get_attribute_by_name(attribute_name)
+
+                    if attribute is not None:
+                        line.append("|".join(attribute.value))
+                    else:
+                        line.append("")
+                writer.writerow(line)
+
+    pass

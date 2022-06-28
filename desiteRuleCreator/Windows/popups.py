@@ -1,10 +1,9 @@
 import os
 
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QDialogButtonBox, QGridLayout,QListWidgetItem
+from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QDialogButtonBox, QGridLayout,QListWidgetItem,QCompleter
 import desiteRuleCreator.icons as icons
 from desiteRuleCreator.QtDesigns import ui_delete_request,ui_groupReq
-
 
 def default_message(text):
     icon = icons.get_icon()
@@ -155,3 +154,18 @@ def msg_del_items(string_list):
         return True
     else:
         return False
+
+def req_boq_pset(main_window,words):
+    input_dialog = QInputDialog(main_window)
+    input_dialog.setWindowTitle("Bill of Quantities")
+    input_dialog.setLabelText("BoQ PropertySet Name")
+    input_dialog.setTextValue("BoQ")
+    line_edit:QLineEdit = input_dialog.findChild(QLineEdit)
+
+    completer = QCompleter(words)
+    line_edit.setCompleter(completer)
+    ok = input_dialog.exec()
+    if ok ==1:
+        return True,input_dialog.textValue()
+    else:
+        return False,None

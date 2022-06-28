@@ -65,6 +65,7 @@ class Ui_PsetInherWidget(object):
         QListWidgetItem(self.list_view_pset)
         QListWidgetItem(self.list_view_pset)
         self.list_view_pset.setObjectName(u"list_view_pset")
+        self.list_view_pset.setSortingEnabled(True)
 
         self.gridLayout.addWidget(self.list_view_pset, 1, 0, 1, 1)
 
