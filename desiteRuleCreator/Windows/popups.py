@@ -16,7 +16,9 @@ def default_message(text):
     msg_box.setWindowIcon(icon)
     msg_box.exec()
 
-
+def msg_recursion():
+    text = "Object can't be added because of Recursion!"
+    default_message(text)
 
 def msg_already_exists():
     text = "Object exists already!"
