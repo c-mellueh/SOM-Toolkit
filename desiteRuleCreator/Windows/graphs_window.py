@@ -600,16 +600,21 @@ class GraphWindow(QWidget):
     ### Functions ###
 
     def delete_button_pressed(self) ->None:
-        root_node:Node = {scene:node for node,scene in self.scene_dict.items()}[self.active_scene]
-        scene = self.active_scene
-        self.clear_scene(self.active_scene)
+
+        string_list = [name_to_string(item.object) for item in self.active_scene.items() if isinstance(item,Node)]
+
+        delete_request = popups.msg_del_items(string_list)
+        if delete_request:
+            root_node:Node = {scene:node for node,scene in self.scene_dict.items()}[self.active_scene]
+            scene = self.active_scene
+            self.clear_scene(self.active_scene)
 
 
-        nodes = [item for item in scene.items() if isinstance(item,Node)]
+            nodes = [item for item in scene.items() if isinstance(item,Node)]
 
-        for node in nodes:
-            for child in node.children.copy():
-                node.remove_child(child)
+            for node in nodes:
+                for child in node.children.copy():
+                    node.remove_child(child)
 
 
 
