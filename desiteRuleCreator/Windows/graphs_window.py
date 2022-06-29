@@ -230,13 +230,17 @@ class MainView(QGraphicsView):
         self.update()
 
     def mousePressEvent(self, event:QMouseEvent) -> None:
-        popup = self.graph_window.node_popup
-        nodes = [item for item in self.graph_window.active_scene.items() if isinstance(item,Node)]
-        button = [node for node in nodes if node.isUnderMouse()]
-
         super(MainView, self).mousePressEvent(event)
+        popup = self.graph_window.node_popup
+        item = self.itemAt(event.pos())
+
         if popup is not None:
-            if not (popup.underMouse() or button):
+            if item is not None:
+                item_parent = item.parentWidget()
+                proxy = popup.graphicsProxyWidget()
+                if not (item == proxy or item_parent == proxy):
+                    self.graph_window.active_scene.removeItem(popup.proxy)
+            else:
                 self.graph_window.active_scene.removeItem(popup.proxy)
 
     def contextMenuEvent(self, event:QContextMenuEvent) -> None:
@@ -374,6 +378,7 @@ class PopUp(QWidget):
         self.proxy.setPos(scene_pos)
         self.proxy.setContentsMargins(0, 0, 0, 0)
 
+
     def button_pressed(self) -> None:
         def add_children(parent: Node) -> None:
             obj = parent.object
@@ -394,7 +399,10 @@ class PopUp(QWidget):
                 get_children(child)
 
         text = self.combo_box.currentText()
-        obj = self.graph_window.object_dict[text]
+        obj = self.graph_window.object_dict.get(text)
+
+        if obj is None:
+            return  #ToDo: Add Error Message
 
         child_names = list()
         get_children(obj)
