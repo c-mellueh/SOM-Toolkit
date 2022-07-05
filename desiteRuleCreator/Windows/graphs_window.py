@@ -3,7 +3,7 @@ from __future__ import annotations  # make own class referencable
 from typing import Iterator, List,Set
 
 from PySide6.QtCore import Qt, QRectF, QPointF,QEvent
-from PySide6.QtGui import QShowEvent, QWheelEvent, QPainterPath, QHideEvent,QMouseEvent,QContextMenuEvent
+from PySide6.QtGui import QShowEvent, QWheelEvent, QPainterPath, QHideEvent,QMouseEvent,QContextMenuEvent,QCursor
 from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QGraphicsScene, QGraphicsView, \
     QApplication, QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsPathItem, QComboBox, QGraphicsRectItem, \
     QCompleter,QInputDialog,QMenu,QGraphicsItem
@@ -427,8 +427,30 @@ class PopUp(QWidget):
         self.deleteLater()
         self.graph_window.node_popup = None
 
+class Proxy(QGraphicsProxyWidget):
+    def __init__(self,item:Node):
+        super(Proxy, self).__init__(item)
+        self.node = item
 
-class Node(QGraphicsProxyWidget):
+    def hoverEnterEvent(self,event) -> None:
+        self.node.hoverEnterEvent(event)
+
+    def hoverLeaveEvent(self, event) -> None:
+        self.node.hoverLeaveEvent(event)
+
+    def hideEvent(self, event: QHideEvent) -> None:
+        super(Proxy, self).hideEvent(event)
+        for connection in self.node.connections:
+            connection.hide()
+
+    def showEvent(self, event: QShowEvent) -> None:
+        super(Proxy, self).showEvent(event)
+        for connection in self.node.connections:
+            connection.show()
+            connection.update_line()
+
+
+class Node(QGraphicsRectItem):
     _registry = list()
 
     def __init__(self, obj: classes.Object, graph_window: GraphWindow) -> None:
@@ -442,10 +464,11 @@ class Node(QGraphicsProxyWidget):
         self.app = self.main_window.app
         self.children: Set[Node] = set()
         self.connections: List[Connection] = list()
+        self.proxy = Proxy(self)
 
-        self.setWidget(QWidget())
+        self.proxy.setWidget(QWidget())
         self.object_graph_rep = ui_ObjectGraphWidget.Ui_object_graph_widget()
-        self.object_graph_rep.setupUi(self.widget())
+        self.object_graph_rep.setupUi(self.proxy.widget())
         self.setZValue(1)
         self.button_add = self.object_graph_rep.button_add
         self.title = self.object_graph_rep.label_object_name
@@ -454,8 +477,15 @@ class Node(QGraphicsProxyWidget):
         self.title.setText(self.name)
         self.title.show()
         self.fill_table()
-
+        self.setFlag(self.ItemIsMovable,True)
+        fac = 0
+        rect = self.proxy.boundingRect()
+        width = rect.width()+fac
+        height = rect.height()+fac
+        self.setRect(QRectF(0,0,width,height))
+        self.proxy.setPos(fac/2,fac/2)
         self.button_add.clicked.connect(self.add_button_pressed)
+        self.list.itemClicked.connect(self.select_list_item)
 
     def __str__(self) -> str:
         return (f"{self.object.name}: {self.x()},{self.y()}")
@@ -467,13 +497,16 @@ class Node(QGraphicsProxyWidget):
         return len(self.children)
 
     ### Functions ###
-    def add_button_pressed(self, event: QGraphicsSceneMouseEvent) -> PopUp:
+    def add_button_pressed(self) -> PopUp:
         old_popup: PopUp = self.graph_window.node_popup
         if old_popup is not None:
             self.scene().removeItem(old_popup.parent())
             old_popup.deleteLater()
 
-        return PopUp(self, event.scenePos())
+        view = self.graph_window.view
+        origin = view.mapFromGlobal(QCursor.pos())
+        relative_origin = view.mapToScene(origin)
+        return PopUp(self, relative_origin)
 
     def add_child(self, child: Node, connect=True) -> Node:
         self.children.add(child)
@@ -539,6 +572,11 @@ class Node(QGraphicsProxyWidget):
         for child in self.children.copy():
                 self.remove_child(child)
 
+    def select_list_item(self,selected_item):
+        if selected_item is not None:
+            property_set = selected_item.property_set
+            self.main_window.pset_window = property_widget.open_pset_window(self.main_window, property_set,
+                                                                            self.main_window.active_object)
 
     ### Properties ###
     @property
@@ -588,59 +626,48 @@ class Node(QGraphicsProxyWidget):
     def hoverEnterEvent(self, event) -> None:
         self.button_add.show()
 
+
     def hoverLeaveEvent(self, event) -> None:
         self.button_add.hide()
-
-    def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-
-        if self.button_add.underMouse():
-            self.add_button_pressed(event)
-
-        if self.movable:
-            self.app.instance().setOverrideCursor(Qt.ClosedHandCursor)
-
+    #
+    # def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+    #
+    #     if self.button_add.underMouse():
+    #         self.add_button_pressed(event)
+    #
+    #     if self.movable:
+    #         self.app.instance().setOverrideCursor(Qt.ClosedHandCursor)
+    #
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
 
-        if self.movable:
+        # if self.movable:
+        # 
+        #     orig_cursor_position = event.lastScenePos()
+        #     updated_cursor_position = event.scenePos()
+        # 
+        #     x_dif = updated_cursor_position.x() - orig_cursor_position.x()
+        #     y_dif = updated_cursor_position.y() - orig_cursor_position.y()
+        # 
+        #     self.moveBy(x_dif, y_dif)
+        super(Node, self).mouseMoveEvent(event)
+        for el in self.connections:
+            el.update_line()
+    #
+    # def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+    #     self.app.instance().restoreOverrideCursor()
+    #
+    # def mouseDoubleClickEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+    #     pos = event.pos()
+    #     item_pos = self.object_graph_rep.list_widget_property_sets.mapFrom(self.widget(), pos)
+    #     selected_item = self.object_graph_rep.list_widget_property_sets.itemAt(item_pos.toPoint())
+    #     if selected_item is not None:
+    #         property_set = selected_item.property_set
+    #         self.main_window.pset_window = property_widget.open_pset_window(self.main_window, property_set,
+    #                                                                         self.main_window.active_object)
+    #
+    #     super(Node, self).mouseDoubleClickEvent(event)
 
-            orig_cursor_position = event.lastScenePos()
-            updated_cursor_position = event.scenePos()
 
-            x_dif = updated_cursor_position.x() - orig_cursor_position.x()
-            y_dif = updated_cursor_position.y() - orig_cursor_position.y()
-
-            self.moveBy(x_dif, y_dif)
-
-            for el in self.connections:
-                el.update_line()
-
-    def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        self.app.instance().restoreOverrideCursor()
-
-    def mouseDoubleClickEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        pos = event.pos()
-        item_pos = self.object_graph_rep.list_widget_property_sets.mapFrom(self.widget(), pos)
-        selected_item = self.object_graph_rep.list_widget_property_sets.itemAt(item_pos.toPoint())
-        if selected_item is not None:
-            property_set = selected_item.property_set
-            self.main_window.pset_window = property_widget.open_pset_window(self.main_window, property_set,
-                                                                            self.main_window.active_object)
-
-        super(Node, self).mouseDoubleClickEvent(event)
-
-    def hideEvent(self, event: QHideEvent) -> None:
-        super(Node, self).hideEvent(event)
-        for connection in self.connections:
-            connection.hide()
-
-    def showEvent(self, event: QShowEvent) -> None:
-        super(Node, self).showEvent(event)
-        for connection in self.connections:
-            connection.show()
-            connection.update_line()
-
-    def scene(self) -> GraphScene:
-        return super(Node, self).scene()
 
 class GraphWindow(QWidget):
 
@@ -812,8 +839,6 @@ class GraphWindow(QWidget):
                 child.show()
                 iter_x_pos(child, draw_child)
 
-        for node in root.scene().items():
-            node.hide()
 
         self.active_scene = root.scene()
 
@@ -825,10 +850,13 @@ class GraphWindow(QWidget):
         root.show()
         iter_x_pos(root, draw_tree)
         self.visible_items_bounding()
+        for node in root.scene().items():
+            if isinstance(node,Connection):
+                node.update_line()
 
     def visible_items_bounding(self) -> None:
         visible_items = [item for item in self.active_scene.items() if
-                         item.isVisible() and not isinstance(item, (QGraphicsRectItem, QGraphicsPathItem))]
+                         item.isVisible() and not isinstance(item, (QGraphicsPathItem))]
         bounding_rect = visible_items[0].boundingRect()
         visible_items.sort(key=lambda x: str(type(x)))
         for item in visible_items:
