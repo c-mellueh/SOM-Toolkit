@@ -3,10 +3,10 @@ from __future__ import annotations  # make own class referencable
 from typing import Iterator, List,Set
 
 from PySide6.QtCore import Qt, QRectF, QPointF,QEvent
-from PySide6.QtGui import QShowEvent, QWheelEvent, QPainterPath, QHideEvent,QMouseEvent,QContextMenuEvent,QCursor
+from PySide6.QtGui import QShowEvent, QWheelEvent, QPainterPath, QHideEvent,QMouseEvent,QContextMenuEvent,QCursor,QBrush,QColor,QPen
 from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QGraphicsScene, QGraphicsView, \
     QApplication, QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsPathItem, QComboBox, QGraphicsRectItem, \
-    QCompleter,QInputDialog,QMenu,QGraphicsItem
+    QCompleter,QInputDialog,QMenu,QGraphicsItem,QGraphicsSceneMoveEvent
 
 from desiteRuleCreator import icons
 from desiteRuleCreator.QtDesigns import ui_GraphWindow, ui_ObjectGraphWidget
@@ -253,8 +253,9 @@ class MainView(QGraphicsView):
         menu.exec(event.globalPos())
 
 class GraphScene(QGraphicsScene):
-    def __init__(self, root_node) -> None:
+    def __init__(self, obj,graph_window) -> None:
         super(GraphScene, self).__init__()
+        root_node = Node(obj,graph_window,self)
         self.title = item_to_name(root_node)
         self._root_node = root_node
 
@@ -383,9 +384,9 @@ class PopUp(QWidget):
         def add_children(parent: Node) -> None:
             obj = parent.object
             for child in obj.aggregates_to:
-                node = Node(child, self.graph_window)
+                node = Node(child, self.graph_window,scene = self.scene)
                 parent.add_child(node)
-                self.scene.addItem(node)
+                # self.scene.addItem(node)
                 move_factor = 30
                 pos.setY(pos.y() + move_factor)
                 pos.setX(pos.x() + move_factor)
@@ -411,10 +412,9 @@ class PopUp(QWidget):
             popups.msg_recursion()
         else:
 
-            node = Node(obj, self.graph_window)
+            node = Node(obj, self.graph_window,self.scene)
             self.clicked_node.object.add_aggregation(node.object)
             self.clicked_node.add_child(node)
-            self.scene.addItem(node)
             node.setX(self.clicked_node.x())
             node.setY(node.base_y)
             pos = QPointF()
@@ -427,36 +427,37 @@ class PopUp(QWidget):
         self.deleteLater()
         self.graph_window.node_popup = None
 
-class Proxy(QGraphicsProxyWidget):
-    def __init__(self,item:Node):
-        super(Proxy, self).__init__(item)
-        self.node = item
+class Rect(QGraphicsRectItem):
+    def __init__(self,proxy:Node):
+        super(Rect, self).__init__()
+        self.proxy = proxy
+        pen = QPen()
+        pen.setColor(QColor("white"))
+        self.setPen(pen)
 
-    def hoverEnterEvent(self,event) -> None:
-        self.node.hoverEnterEvent(event)
+    def mouseMoveEvent(self, event:QGraphicsSceneMouseEvent) -> None:
+        super(Rect, self).mouseMoveEvent(event)
+        orig_cursor_position = event.lastScenePos()
+        updated_cursor_position = event.scenePos()
 
-    def hoverLeaveEvent(self, event) -> None:
-        self.node.hoverLeaveEvent(event)
+        x_dif = updated_cursor_position.x() - orig_cursor_position.x()
+        y_dif = updated_cursor_position.y() - orig_cursor_position.y()
 
-    def hideEvent(self, event: QHideEvent) -> None:
-        super(Proxy, self).hideEvent(event)
-        for connection in self.node.connections:
-            connection.hide()
+        self.proxy.moveBy(x_dif, y_dif)
 
-    def showEvent(self, event: QShowEvent) -> None:
-        super(Proxy, self).showEvent(event)
-        for connection in self.node.connections:
-            connection.show()
-            connection.update_line()
+    def mousePressEvent(self, event) -> None:
+        super(Rect, self).mousePressEvent(event)
 
-
-class Node(QGraphicsRectItem):
+class Node(QGraphicsProxyWidget):
     _registry = list()
 
-    def __init__(self, obj: classes.Object, graph_window: GraphWindow) -> None:
-        super(Node, self).__init__()
-        self._registry.append(self)
+    def __init__(self, obj: classes.Object, graph_window: GraphWindow,scene:GraphScene) -> None:
 
+        self.rect = Rect(self)
+        super(Node, self).__init__(self.rect)
+        self._registry.append(self)
+        scene.addItem(self)
+        scene.addItem(self.rect)
         self.object = obj
         self.graph_window = graph_window
         self.parent_box = None
@@ -464,11 +465,13 @@ class Node(QGraphicsRectItem):
         self.app = self.main_window.app
         self.children: Set[Node] = set()
         self.connections: List[Connection] = list()
-        self.proxy = Proxy(self)
+        self.show()
+        self.rect.show()
+        # self.proxy = Proxy(self)
 
-        self.proxy.setWidget(QWidget())
+        self.setWidget(QWidget())
         self.object_graph_rep = ui_ObjectGraphWidget.Ui_object_graph_widget()
-        self.object_graph_rep.setupUi(self.proxy.widget())
+        self.object_graph_rep.setupUi(self.widget())
         self.setZValue(1)
         self.button_add = self.object_graph_rep.button_add
         self.title = self.object_graph_rep.label_object_name
@@ -477,13 +480,14 @@ class Node(QGraphicsRectItem):
         self.title.setText(self.name)
         self.title.show()
         self.fill_table()
+        self.rect.setFlag(self.rect.ItemIsMovable,True)
         self.setFlag(self.ItemIsMovable,True)
         fac = 0
-        rect = self.proxy.boundingRect()
-        width = rect.width()+fac
-        height = rect.height()+fac
-        self.setRect(QRectF(0,0,width,height))
-        self.proxy.setPos(fac/2,fac/2)
+        help_rect = self.boundingRect()
+        width = help_rect.width()+fac
+        height = help_rect.height()+fac
+        self.rect.setRect(QRectF(0,0,width,height))
+        self.setPos(fac/2,fac/2)
         self.button_add.clicked.connect(self.add_button_pressed)
         self.list.itemClicked.connect(self.select_list_item)
 
@@ -631,23 +635,30 @@ class Node(QGraphicsRectItem):
         self.button_add.hide()
     #
     # def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+    #     super(Node, self).mousePressEvent(event)
     #
-    #     if self.button_add.underMouse():
-    #         self.add_button_pressed(event)
-    #
-    #     if self.movable:
-    #         self.app.instance().setOverrideCursor(Qt.ClosedHandCursor)
-    #
+    #     print(self.rect.scene())
+    # #     if self.button_add.underMouse():
+    # #         self.add_button_pressed(event)
+    # #
+    # #     if self.movable:
+    # #         self.app.instance().setOverrideCursor(Qt.ClosedHandCursor)
+    # #
+
+    def moveEvent(self, event:QGraphicsSceneMoveEvent) -> None:
+        super(Node, self).moveEvent(event)
+        for connection in self.connections:
+            connection.update_line()
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
 
         # if self.movable:
         # 
         #     orig_cursor_position = event.lastScenePos()
         #     updated_cursor_position = event.scenePos()
-        # 
+        #
         #     x_dif = updated_cursor_position.x() - orig_cursor_position.x()
         #     y_dif = updated_cursor_position.y() - orig_cursor_position.y()
-        # 
+        #
         #     self.moveBy(x_dif, y_dif)
         super(Node, self).mouseMoveEvent(event)
         for el in self.connections:
@@ -667,7 +678,14 @@ class Node(QGraphicsRectItem):
     #
     #     super(Node, self).mouseDoubleClickEvent(event)
 
+    def setX(self, x:float) -> None:
+        super(Node, self).setX(x)
+        self.rect.setX(x)
 
+
+    def setY(self, y: float) -> None:
+        super(Node, self).setY(y)
+        self.rect.setY(y)
 
 class GraphWindow(QWidget):
 
@@ -805,17 +823,15 @@ class GraphWindow(QWidget):
                 """ Recursivly Add ChildNodes to Node"""
 
                 for obj in children:
-                    node = Node(obj, self)
+                    node = Node(obj, self,parent.scene())
                     self.nodes.append(node)
-
-                    parent.scene().addItem(node)
                     parent.add_child(node)
                     node.setY(node.base_y)
                     iterate_nodes(obj.aggregates_to, node, level + 1)
 
             for obj in self.root_objects:
-                node = Node(obj, self)
-                scene = GraphScene(node)
+                scene = GraphScene(obj,self)
+                node = scene.root_node
                 self.scenes.append(scene)
                 self.nodes.append(node)
                 scene.addItem(node)
