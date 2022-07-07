@@ -148,6 +148,8 @@ def rc_group_items(main_window):
 
 def single_click(main_window, item: classes.CustomTreeItem):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
+    property_widget.clear_attribute_table(main_window)
+
 
     if len(main_window.ui.tree.selectedItems())>1:
         main_window.multi_selection()

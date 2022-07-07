@@ -241,3 +241,8 @@ def reload(main_window):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     if main_window.active_object is not None:
         fill_table(main_window, main_window.active_object)
+
+def clear_attribute_table(main_window):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
+    table_widget = ui.attribute_widget
+    table_widget.setRowCount(0)

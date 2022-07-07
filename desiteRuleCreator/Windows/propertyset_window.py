@@ -2,10 +2,10 @@ import os
 
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import QModelIndex, Qt
-from PySide6.QtWidgets import QTableWidgetItem, QHBoxLayout, QLineEdit, QMessageBox, QMenu
+from PySide6.QtWidgets import QTableWidgetItem, QHBoxLayout, QLineEdit, QMessageBox, QMenu,QTableWidget
 
 from desiteRuleCreator import icons
-from desiteRuleCreator.QtDesigns.ui_widget import Ui_layout_main
+from desiteRuleCreator.QtDesigns import ui_widget,ui_mainwindow
 from desiteRuleCreator.Windows import popups
 from desiteRuleCreator.data import constants
 from desiteRuleCreator.data.classes import PropertySet, Attribute
@@ -25,7 +25,7 @@ def string_to_float(value: str):
 class PropertySetWindow(QtWidgets.QWidget):
     def __init__(self, main_window, property_set: PropertySet, active_object, window_title):
         super(PropertySetWindow, self).__init__()
-        self.widget = Ui_layout_main()
+        self.widget = ui_widget.Ui_layout_main()
         self.widget.setupUi(self)
         self.mainWindow = main_window
         self.property_set = property_set
