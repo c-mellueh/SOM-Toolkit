@@ -1,3 +1,4 @@
+from __future__ import annotations
 import os
 
 from PySide6 import QtWidgets, QtGui

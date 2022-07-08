@@ -536,13 +536,8 @@ class Node(QGraphicsProxyWidget):
 
     def remove_child(self,child:Node) -> None:
 
-        # for connection in self.connections:
-        #     if connection.bottom_node == child:
-        #         self.connections.remove(connection)
-        #         self.scene().removeItem(connection)
-
         self.children.remove(child)
-
+        self._registry.remove(child)
         for item in child.children.copy():
             child.remove_child(item)
 
@@ -689,7 +684,7 @@ class Node(QGraphicsProxyWidget):
 
 class GraphWindow(QWidget):
 
-    def __init__(self, main_window) -> None:
+    def __init__(self, main_window,show = True) -> None:
         super(GraphWindow, self).__init__()
         self.main_window = main_window
         self.widget = ui_GraphWindow.Ui_GraphView()
@@ -704,13 +699,15 @@ class GraphWindow(QWidget):
         self.nodes: list[Node] = list()
         self.scenes: list[GraphScene] = list()
         self.drawn_scenes: list[GraphScene] = list()
-        self.show()
+        if show:
+            self.show()
 
         # replace view
         self.widget.gridLayout.removeWidget(self.widget.graphicsView)
         self.widget.graphicsView.deleteLater()
         self.widget.gridLayout.addWidget(self.view, 1, 0, 1, 4)
-        self.view.show()
+        if show:
+            self.view.show()
 
         # connections
         self.combo_box.currentIndexChanged.connect(self.combo_change)

@@ -1,63 +1,39 @@
 from __future__ import annotations
-import copy
 
+import copy
+from typing import Iterator, Type,TYPE_CHECKING
 from uuid import uuid4
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QDropEvent
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QAbstractItemView, QListWidgetItem
 
-global _changed
+if TYPE_CHECKING:
+    from desiteRuleCreator.Windows import graphs_window
 
 
 # Add child to Parent leads to reverse
 
 class IterRegistry(type):
-    def __iter__(self):
+    _registry = list()
+    """ Helper for Iteration"""
+
+    def __iter__(self) -> Iterator:
         return iter(self._registry)
-    def __len__(self):
+
+    def __len__(self) -> int:
         return len(self._registry)
-
-def attributes_to_psetdict(attributes):
-    pset_dict = {}
-    for attribute in attributes:
-        pset = attribute.property_set
-        if pset in pset_dict.keys():
-            attribute_list = pset_dict[pset]
-            attribute_list.append(attribute)
-        else:
-            pset_dict[pset] = [attribute]
-
-    return pset_dict
-
-
-def inherited_attributes(obj):
-    def recursion(recursive_dict, recursive_obj):
-        attributes = recursive_obj.attributes
-
-        if attributes:
-            recursive_dict[recursive_obj] = attributes
-
-        parent = recursive_obj.parent
-        if parent is not None:
-            recursive_dict = recursion(recursive_dict, parent)
-        return recursive_dict
-
-    attribute_dict = dict()
-    if obj.parent is not None:
-        attribute_dict = recursion(attribute_dict, obj.parent)
-    return attribute_dict
 
 
 class Project(object):
-    def __init__(self, name, author=None):
+    def __init__(self, name: str, author: str = None) -> None:
         self._name = name
         self._author = author
         self._version = "1.0.0"
         self._changed = True
 
     @property
-    def changed(self):
+    def changed(self) -> bool:
         def check_data():
             for obj in Object:
                 if obj.changed:
@@ -73,11 +49,10 @@ class Project(object):
         return self._changed
 
     @changed.setter
-    def changed(self, value):
+    def changed(self, value: bool) -> None:
         self._changed = value
 
-    def reset_changed(self):
-        global _changed
+    def reset_changed(self) -> None:
         for obj in Object:
             obj.changed = False
         self._changed = False
@@ -110,9 +85,9 @@ class Project(object):
         self._changed = True
 
 
-class Hirarchy(object,metaclass=IterRegistry):
+class Hirarchy(object, metaclass=IterRegistry):
 
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
 
         self._parent = None
         self._children = list()
@@ -132,11 +107,11 @@ class Hirarchy(object,metaclass=IterRegistry):
         self.changed = True
 
     @property
-    def parent(self):
+    def parent(self) -> Type[Hirarchy]:
         return self._parent
 
     @parent.setter
-    def parent(self, parent) -> None:
+    def parent(self, parent: Type[Hirarchy]) -> None:
         self._parent = parent
         self.changed = True
 
@@ -155,15 +130,15 @@ class Hirarchy(object,metaclass=IterRegistry):
             return False
 
     @property
-    def children(self) -> list:
+    def children(self) -> list[Type[Hirarchy]]:
         return self._children
 
-    def add_child(self, child) -> None:
+    def add_child(self, child: Type[Hirarchy]) -> None:
         self.children.append(child)
         child.parent = self
         self.changed = True
 
-    def remove_child(self, child) -> None:
+    def remove_child(self, child: Type[Hirarchy]) -> None:
         self.children.remove(child)
         child.delete()
 
@@ -173,9 +148,9 @@ class Hirarchy(object,metaclass=IterRegistry):
 
 
 class PropertySet(Hirarchy):
-    _registry = []
+    _registry: list[PropertySet] = list()
 
-    def __init__(self, name: str, obj=None, identifier=None):
+    def __init__(self, name: str, obj: Object = None, identifier: str = None) -> None:
         super(PropertySet, self).__init__(name)
         self._attributes = list()
         self._object = obj
@@ -186,19 +161,19 @@ class PropertySet(Hirarchy):
         self.changed = True
 
     @property
-    def is_predefined(self):
+    def is_predefined(self) -> bool:
         if self.object is None:
             return True
         else:
             return False
 
     @property
-    def parent(self):
+    def parent(self) -> PropertySet:
         parent = super(PropertySet, self).parent
         return parent
 
     @parent.setter
-    def parent(self, parent) -> None:
+    def parent(self, parent: PropertySet) -> None:
         if parent is None:
             self.remove_parent(self._parent)
         else:
@@ -210,7 +185,7 @@ class PropertySet(Hirarchy):
                                           par_attribute.data_type)
                     par_attribute.add_child(attribute)
 
-    def change_parent(self, new_parent) -> None:
+    def change_parent(self, new_parent: PropertySet) -> None:
         for attribute in self.attributes:
             if attribute.parent.property_set == self._parent:
                 self.remove_attribute(attribute)
@@ -228,24 +203,24 @@ class PropertySet(Hirarchy):
                 self.object.remove_property_set(self)
 
     @property
-    def object(self):
+    def object(self) -> Object:
         return self._object
 
     @object.setter
-    def object(self, value):
+    def object(self, value: Object):
         self._object = value
         self.changed = True
 
     @property
-    def attributes(self) -> list:
+    def attributes(self) -> list[Attribute]:
         return self._attributes
 
     @attributes.setter
-    def attributes(self, value: list) -> None:
+    def attributes(self, value: list[Attribute]) -> None:
         self._attributes = value
         self.changed = True
 
-    def add_attribute(self, value) -> None:
+    def add_attribute(self, value: Attribute) -> None:
         self._attributes.append(value)
         self.changed = True
         for child in self.children:
@@ -254,7 +229,7 @@ class PropertySet(Hirarchy):
             value.add_child(attrib)
             child.add_attribute(attrib)
 
-    def remove_attribute(self, value) -> None:
+    def remove_attribute(self, value: Attribute) -> None:
         self._attributes.remove(value)
         for child in self.children:
             for attribute in child.attributes:
@@ -262,13 +237,13 @@ class PropertySet(Hirarchy):
                     child.remove_attribute(attribute)
         self.changed = True
 
-    def get_attribute_by_name(self, name):
+    def get_attribute_by_name(self, name: str):
         for attribute in self.attributes:
             if attribute.name.lower() == name.lower():
                 return attribute
         return None
 
-    def remove_parent(self, old_parent):
+    def remove_parent(self, old_parent: PropertySet):
         remove_list = list()
         for attribute in self.attributes:
             if attribute.parent.property_set == old_parent:
@@ -280,10 +255,11 @@ class PropertySet(Hirarchy):
 
 
 class Attribute(Hirarchy):
-    _registry = []
+    _registry: list[Attribute] = list()
 
-    def __init__(self, property_set: PropertySet, name: str, value, value_type, data_type="xs:string",
-                 child_inherits_values=False, identifier=None):
+    def __init__(self, property_set: PropertySet, name: str, value: list, value_type: int, data_type: str = "xs:string",
+                 child_inherits_values: bool = False, identifier: str = None):
+
         super(Attribute, self).__init__(name=name)
         self._value = value
         self._propertySet = property_set
@@ -299,7 +275,7 @@ class Attribute(Hirarchy):
             self.identifier = str(uuid4())
         property_set.add_attribute(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         text = f"{self.property_set.name} : {self.name} = {self.value}"
         return text
 
@@ -327,7 +303,7 @@ class Attribute(Hirarchy):
                 child.name = value
 
     @property
-    def value(self):
+    def value(self) -> list:
         return self._value
 
     @value.setter
@@ -358,7 +334,7 @@ class Attribute(Hirarchy):
             self.changed = True
 
     @property
-    def value_type(self):
+    def value_type(self) -> int:
         return self._value_type
 
     @value_type.setter
@@ -378,7 +354,7 @@ class Attribute(Hirarchy):
         return self._data_type
 
     @data_type.setter
-    def data_type(self, value: str):
+    def data_type(self, value: str) -> None:
         if not self.is_child:
             self._data_type = value
             self.changed = True
@@ -393,13 +369,13 @@ class Attribute(Hirarchy):
         return self._propertySet
 
     @property_set.setter
-    def property_set(self, value: PropertySet):
+    def property_set(self, value: PropertySet) -> None:
         self.property_set.remove_attribute(self)
         value.add_attribute(self)
         self._propertySet = value
         self.changed = True
 
-    def is_equal(self, attribute):
+    def is_equal(self, attribute: Attribute) -> bool:
         equal = True
 
         if self.name != attribute.name:
@@ -414,40 +390,44 @@ class Attribute(Hirarchy):
         if equal:
             return True
 
-    def delete(self):
+    def delete(self) -> None:
         self.property_set.remove_attribute(self)
         for child in self.children:
             child.delete()
 
 
 class Object(Hirarchy):
-    _registry = []
+    _registry: list[Object] = list()
 
-    def __init__(self, name, ident_attrib: [Attribute, str], identifier=None):
+    def __init__(self, name: str, ident_attrib: [Attribute, str], identifier: str = None) -> None:
         super(Object, self).__init__(name=name)
-        self._scripts = list()
-        self._property_sets = list()
-        self._ident_attrib = ident_attrib
-        self._node = None
         self._registry.append(self)
+
+        self._scripts: list[Script] = list()
+        self._property_sets: list[PropertySet] = list()
+        self._ident_attrib = ident_attrib
+        self._nodes: set[graphs_window.Node] = set()
         self.aggregates_to: set[Object] = set()
         self.aggregates_from: set[Object] = set()
         self.changed = True
+
         if identifier is None:
             self.identifier = str(uuid4())
         else:
             self.identifier = identifier
 
     @property
-    def node(self):
-        return self._node
+    def nodes(self) -> set[graphs_window.Node]:  # Todo: add nodes functionality to graphs_window
+        return self._nodes
 
-    @node.setter
-    def node(self,value):
-        self._node = value
+    def add_node(self, node: graphs_window.Node) -> None:
+        self._nodes.add(node)
+
+    def remove_node(self, node: graphs_window.Node) -> None:
+        self._nodes.remove(node)
 
     @property
-    def inherited_property_sets(self) -> dict:
+    def inherited_property_sets(self) -> dict[Object, list[PropertySet]]:
         def recursion(recursion_property_sets, recursion_obj: Object):
             psets = recursion_obj.property_sets
 
@@ -469,7 +449,7 @@ class Object(Hirarchy):
 
     @property
     def is_concept(self) -> bool:
-        if isinstance(self.ident_attrib,Attribute):
+        if isinstance(self.ident_attrib, Attribute):
             return False
         else:
             return True
@@ -495,7 +475,7 @@ class Object(Hirarchy):
         if property_set in self._property_sets:
             self._property_sets.remove(property_set)
 
-    def get_attributes(self, inherit=False):
+    def get_attributes(self, inherit: bool = False) -> list[Attribute]:
         attributes = list()
         for property_set in self.property_sets:
             attributes += property_set.attributes
@@ -506,13 +486,13 @@ class Object(Hirarchy):
         return attributes
 
     @property
-    def scripts(self):
+    def scripts(self) -> list[Script]:
         return self._scripts
 
-    def add_script(self, script):
+    def add_script(self, script: Script) -> None:
         self._scripts.append(script)
 
-    def delete_script(self, script):
+    def delete_script(self, script: Script) -> None:
         self._scripts.remove(script)
 
     def delete(self) -> None:
@@ -521,25 +501,26 @@ class Object(Hirarchy):
         for pset in self.property_sets:
             pset.delete()
 
-    def get_property_set_by_name(self, property_set_name):
+    def get_property_set_by_name(self, property_set_name: str) -> PropertySet | None:
         for property_set in self.property_sets:
             if property_set.name == property_set_name:
                 return property_set
         return None
 
-    def add_aggregation(self,value:Object):
+    def add_aggregation(self, value: Object) -> None:
         self.aggregates_to.add(value)
         value.aggregates_from.add(self)
 
-    def remove_aggregation(self,value:Object,recursion = False):
+    def remove_aggregation(self, value: Object, recursion: bool = False) -> None:
         self.aggregates_to.remove(value)
         value.aggregates_from.remove(self)
         if recursion:
             for item in value.aggregates_to:
-                value.remove_aggregation(item,recursion)
+                value.remove_aggregation(item, recursion)
+
 
 class Script(QListWidgetItem):
-    def __init__(self, title: str, obj):
+    def __init__(self, title: str, obj: Object) -> None:
         super(Script, self).__init__(title)
         self.code = str()
         self.changed = True
@@ -549,28 +530,28 @@ class Script(QListWidgetItem):
         self.setFlags(self.flags() | Qt.ItemIsEditable)
 
     @property
-    def object(self):
+    def object(self) -> Object:
         return self._object
 
     @object.setter
-    def object(self, value):
+    def object(self, value: Object) -> None:
         self._object.delete_script(self)
         self._object = value
         value.add_script(self)
         self.changed = True
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
     @name.setter
-    def name(self, value):
+    def name(self, value: str) -> None:
         self._name = value
         self.changed = True
 
 
 class CustomTree(QTreeWidget):
-    def __init__(self, layout):
+    def __init__(self, layout) -> None:
         super(CustomTree, self).__init__(layout)
 
     def dropEvent(self, event: QDropEvent) -> None:
@@ -595,7 +576,7 @@ class CustomTree(QTreeWidget):
 
 
 class CustomTreeItem(QTreeWidgetItem):
-    def __init__(self, tree, obj):
+    def __init__(self, tree: QTreeWidget, obj: Object) -> None:
         super(CustomTreeItem, self).__init__(tree)
         self._object = obj
         self.update()
@@ -608,15 +589,16 @@ class CustomTreeItem(QTreeWidgetItem):
     def object(self) -> Object:
         return self._object
 
-    def update(self):
+    def update(self) -> None:
         self.setText(0, self.object.name)
         if self.object.is_concept:
-            self.setText(1,"")
+            self.setText(1, "")
         else:
-            self.setText(1,str(self.object.ident_attrib.value))
+            self.setText(1, str(self.object.ident_attrib.value))
+
 
 class CustomListItem(QListWidgetItem):
-    def __init__(self,property_set:PropertySet):
+    def __init__(self, property_set: PropertySet) -> None:
         super(CustomListItem, self).__init__()
         self._property_set = property_set
         self.setText(property_set.name)
@@ -625,5 +607,5 @@ class CustomListItem(QListWidgetItem):
     def property_set(self) -> PropertySet:
         return self._property_set
 
-    def update(self):
+    def update(self) -> None:
         self.setText(self.property_set.name)

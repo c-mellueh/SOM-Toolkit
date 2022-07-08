@@ -26,7 +26,7 @@ DATA_POS = 1
 FILEPATH_JS = "js_templates"
 
 IGNORE_PSET = "IFC"
-INHERITED_TEXT = "Parent Property"
+INHERITED_TEXT = "Predefined Pset"
 
 # xml export
 PREDEFINED_PSET = "PredefinedPropertySet"

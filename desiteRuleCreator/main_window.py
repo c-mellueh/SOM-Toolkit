@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
         self.ui.action_export_bs.triggered.connect(self.export_bs)
         self.ui.action_export_bookmarks.triggered.connect(self.export_bookmarks)
         self.ui.action_export_boq.triggered.connect(self.export_boq)
-        self.ui.action_show_graphs.triggered.connect(self.show_graphs)
+        self.ui.action_show_graphs.triggered.connect(self.load_graph)
 
         self.ui.code_edit.textChanged.connect(self.update_script)
 
@@ -140,6 +140,8 @@ class MainWindow(QMainWindow):
                 excel.start(self, path)
             else:
                 open_file.import_data(self, path)
+
+        self.load_graph(show = False)
 
     # Main
     def clear_all(self):
@@ -265,11 +267,15 @@ class MainWindow(QMainWindow):
     def export_bookmarks(self):
         desite_export.export_bookmarks(self)
 
-    def show_graphs(self):
+    def load_graph(self,show = True):
+        show = True
         if self.graph_window is None:
-            self.graph_window = graphs_window.GraphWindow(self)
+            self.graph_window = graphs_window.GraphWindow(self,show = show)
         else:
-            self.graph_window.show()
+            if show:
+                print(show)
+                self.graph_window.show()
+                self.graph_window.view.show()
         # if self.graph_window.nodes:
         #     self.graph_window.redraw()
             #self.graph_window.redraw()
