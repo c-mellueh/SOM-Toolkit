@@ -7,6 +7,10 @@ from desiteRuleCreator.Windows.popups import msg_delete_or_merge
 from desiteRuleCreator.Windows.popups import msg_unsaved
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.data.classes import Object, PropertySet, Attribute
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from desiteRuleCreator.main_window import MainWindow
 
 
 # from .run import MainWindow
@@ -47,25 +51,27 @@ def fill_tree(main_window):
     fill_next_level(objects, item_dict)
 
 
-def import_data(widget, path: str = False):
+def import_data(main_window, path: str = False):
     if path:
-        widget.clear_object_input()
+        main_window.clear_object_input()
 
         tree = etree.parse(path)
         projekt_xml = tree.getroot()
 
         if projekt_xml.attrib.get("version") is None:  # OLD FILES
             import_old(projekt_xml)
-            widget.project = classes.Project(projekt_xml.attrib.get("Name"), author="CMellueh")
+            main_window.project = classes.Project(projekt_xml.attrib.get("Name"),
+                                                  author=projekt_xml.attrib.get("author"))
         else:
             import_new(projekt_xml)
-            widget.project = classes.Project(projekt_xml.attrib.get("name"))
-        fill_tree(widget)
-        widget.ui.tree.resizeColumnToContents(0)
-        widget.save_path = path
-
-        widget.setWindowTitle(widget.project.name)
-
+            main_window.project = classes.Project(projekt_xml.attrib.get("name"))
+        fill_tree(main_window)
+        # widget.ui.tree.resizeColumnToContents(0)
+        main_window.setWindowTitle(main_window.project.name)
+        print("IMPORT")
+        main_window.save_path = path
+        main_window.load_graph()
+        main_window.graph_window.hide()
 
 def import_new(projekt_xml):
     def import_property_sets(xml_property_sets) -> (list[PropertySet], Attribute):
@@ -184,12 +190,11 @@ def import_new(projekt_xml):
         for xml_object in xml_objects:
             xml_aggregates = [x for x in xml_object if x.tag == constants.AGGREGATE]
             ident = xml_object.get(constants.IDENTIFIER)
-            obj:classes.Object = obj_dict[ident]
+            obj: classes.Object = obj_dict[ident]
             for xml_aggregate in xml_aggregates:
                 child_ident = xml_aggregate.get(constants.AGGREGATES_TO)
                 child_obj = obj_dict[child_ident]
                 obj.add_aggregation(child_obj)
-
 
     xml_predefined_psets = [x for x in projekt_xml if x.tag == constants.PREDEFINED_PSET]
     xml_objects = [x for x in projekt_xml if x.tag == constants.OBJECT]
@@ -214,8 +219,8 @@ def import_new(projekt_xml):
 
 
 def import_old(projekt_xml):
-    def handle_identifier(obj:Object):
-        ident_text:str = obj.ident_attrib
+    def handle_identifier(obj: Object):
+        ident_text: str = obj.ident_attrib
         ident_list = ident_text.split(":")
         pset_name = ident_list[0]
         attribute_name = ident_list[1]
@@ -229,9 +234,8 @@ def import_old(projekt_xml):
                         obj.ident_attrib = attribute
                         attribute_found = True
                 if not attribute_found:
-                    atrb = Attribute(property_set,attribute_name,[obj.name],constants.LIST)
+                    atrb = Attribute(property_set, attribute_name, [obj.name], constants.LIST)
                     obj.ident_attrib = atrb
-
 
     def transform_values(xml_object, value_type):
         value_list = list()
@@ -290,7 +294,6 @@ def import_old(projekt_xml):
 
                 obj.add_property_set(property_set)
 
-
                 handle_identifier(obj)
 
                 group_name = xml_object.attrib.get("Fachdisziplin")
@@ -311,6 +314,7 @@ def new_file(main_window):
 
 
 def open_file_dialog(main_window, path=False):
+
     if Object:
         result = msg_delete_or_merge()
         if result is None:
@@ -328,5 +332,3 @@ def open_file_dialog(main_window, path=False):
 
 def merge_new_file(main_window):
     print("MERGE NEEDS TO BE PROGRAMMED")  # TODO: Write Merge
-
-
