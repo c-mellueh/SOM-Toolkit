@@ -1,47 +1,53 @@
-import codecs
-import datetime
-import os
-import uuid
+from __future__ import annotations
+import codecs, datetime, os, uuid, csv
 import xml.etree.ElementTree as ET
-import csv
 
+import jinja2
 from PySide6.QtWidgets import QFileDialog
 from jinja2 import Environment, FileSystemLoader
 from lxml import etree
-
+from typing import  TYPE_CHECKING
 from desiteRuleCreator import Template
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.QtDesigns import ui_mainwindow
 from desiteRuleCreator.Windows import popups
+
+if TYPE_CHECKING:
+    from desiteRuleCreator.main_window import MainWindow
+
 output_date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 output_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
 
-def get_path(main_window,file_format:str):
+def get_path(main_window: MainWindow, file_format: str) -> str:
+    """ File Open Dialog with modifiable file_format"""
     if main_window.export_path is not None:
         path = \
-            QFileDialog.getSaveFileName(main_window, f"Save {file_format}", main_window.export_path, f"{file_format} Files (*.{file_format})")[0]
+            QFileDialog.getSaveFileName(main_window, f"Save {file_format}", main_window.export_path,
+                                        f"{file_format} Files (*.{file_format})")[0]
     else:
-        path = QFileDialog.getSaveFileName(main_window, f"Save {file_format}", "", f"{file_format} Files (*.{file_format})")[0]
+        path = \
+        QFileDialog.getSaveFileName(main_window, f"Save {file_format}", "", f"{file_format} Files (*.{file_format})")[0]
 
     return path
 
-def handle_header(main_window, export_format:str):
+
+def handle_header(main_window: MainWindow, export_format: str) -> etree._Element:
     ET.register_namespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
     xml_header = etree.Element(f'{{http://www.w3.org/2001/XMLSchema-instance}}{export_format}')
     xml_header.set("user", str(main_window.project.author))
     xml_header.set("date", str(output_date_time))
-    xml_header.set("version", "3.0.1")       #TODO: Desite version hinzufügen
+    xml_header.set("version", "3.0.1")  # TODO: Desite version hinzufügen
     return xml_header
+
 
 ##TODO add xs:bool
 
-def export_modelcheck(main_window):
-
-    def add_js_rule(parent, file):
+def export_modelcheck(main_window: MainWindow) -> None:
+    def add_js_rule(parent: etree._Element, file: codecs.StreamReaderWriter) -> str | None:
         name = os.path.basename(file.name)
         if not name.endswith(".js"):
-            return
+            return None
         else:
             rule_script = etree.SubElement(parent, "ruleScript")
 
@@ -59,23 +65,17 @@ def export_modelcheck(main_window):
 
         return file
 
-
-
-
-
-    def handle_element_section(xml_qa_export):
+    def handle_element_section(xml_qa_export: etree._Element) -> etree._Element:
         xml_element_section = etree.SubElement(xml_qa_export, "elementSection")
         return xml_element_section
 
-
-    def handle_container(xml_element_section,project):
+    def handle_container(xml_element_section: etree._Element, project: classes.Project) -> etree._Element:
         container = etree.SubElement(xml_element_section, "container")
         container.set("ID", str(uuid.uuid4()))
-        container.set("name",f"{project.name} : {project.version}")
+        container.set("name", f"{project.name} : {project.version}")
         return container
 
-
-    def handle_checkrun(xml_container, name, author="CMellueh"):
+    def handle_checkrun(xml_container: etree._Element, name: str, author: str = "DesiteRuleCreator") -> etree._Element:
         checkrun = etree.SubElement(xml_container, "checkrun")
         _uuid = str(uuid.uuid4())
         checkrun.set("ID", _uuid)
@@ -93,15 +93,13 @@ def export_modelcheck(main_window):
         checkrun.set("createUndefined", "false")
         return checkrun
 
-
-    def init_xml(main_window):
+    def init_xml() -> (etree._Element, etree._Element):
         xml_qa_export = handle_header(main_window, "qaExport")
         xml_element_section = handle_element_section(xml_qa_export)
-        xml_container = handle_container(xml_element_section,main_window.project)
+        xml_container = handle_container(xml_element_section, main_window.project)
         return xml_container, xml_qa_export
 
-
-    def handle_rule(xml_checkrun, rule_type):
+    def handle_rule(xml_checkrun:etree._Element, rule_type:str) -> etree._Element:
         rule = etree.SubElement(xml_checkrun, "rule")
         rule.set("type", rule_type)
         if rule_type == "UniquePattern":
@@ -111,26 +109,21 @@ def export_modelcheck(main_window):
 
         return rule
 
-
-    def handle_attribute_rule_list(xml_rule):
+    def handle_attribute_rule_list(xml_rule:etree._Element) -> etree._Element:
         attribute_rule_list = etree.SubElement(xml_rule, "attributeRuleList")
         return attribute_rule_list
 
-
-    def handle_template():
+    def handle_template() -> jinja2.Template:
         path = Template.HOME_DIR
         file_loader = FileSystemLoader(path)
         env = Environment(loader=file_loader)
         env.trim_blocks = True
         env.lstrip_blocks = True
-        # env.rstrip_blocks=True
         template = env.get_template("template.txt")
-        # ungeprueft_template = env.get_template('ungeprueft.txt')
 
         return template
 
-
-    def define_xml_elements(main_window, xml_container, name):
+    def define_xml_elements(xml_container:etree._Element, name:str) -> (etree._Element, etree._Element):
         xml_checkrun = handle_checkrun(xml_container, name=name, author=main_window.project.author)
         xml_rule = handle_rule(xml_checkrun, "Attributes")
         xml_attribute_rule_list = handle_attribute_rule_list(xml_rule)
@@ -138,46 +131,39 @@ def export_modelcheck(main_window):
 
         return xml_checkrun, xml_attribute_rule_list
 
-
-    def handle_js_rules(xml_attribute_rule_list, starts_with):
-        folder = f"{Template.HOME_DIR}/{constants.FILEPATH_JS}/"
+    def handle_js_rules(xml_attribute_rule_list:etree._Element, starts_with:str) -> None:
+        folder =os.path.join(Template.HOME_DIR, constants.FILEPATH_JS)
 
         for fn in os.listdir(folder):
             if fn.startswith(starts_with):
                 file = codecs.open(f"{folder}/{fn}", encoding="utf-8")
                 add_js_rule(xml_attribute_rule_list, file)
 
-
-    def handle_rule_script(xml_attribute_rule_list, name):
+    def handle_rule_script(xml_attribute_rule_list:etree._Element, name:str) -> etree._Element:
         rule_script = etree.SubElement(xml_attribute_rule_list, "ruleScript")
         rule_script.set("name", name)
         rule_script.set("active", "true")
         rule_script.set("resume", "true")
         return rule_script
 
-
-    def handle_code(xml_rule_script):
+    def handle_code(xml_rule_script : etree._Element) -> etree._Element:
         code = etree.SubElement(xml_rule_script, "code")
         return code
 
+    def handle_object_rules(xml_container:etree._Element, template:jinja2.Template) -> dict[etree._Element,classes.Object]:
+        xml_object_dict:dict[etree._Element,classes.Object] = dict()
+        obj_sorted:list[classes.Object] = list(classes.Object)
 
-    def handle_object_rules(xml_container, main_window, template):
-        xml_object_list = dict()
-
-        obj_sorted = list(classes.Object)
         obj_sorted.sort(key=lambda x: x.name)
         for obj in obj_sorted:
             if not obj.is_concept:
-                obj: classes.Object = obj
                 xml_checkrun = handle_checkrun(xml_container, obj.name, main_window.project.author)
-                xml_object_list[xml_checkrun] = obj
                 xml_rule = handle_rule(xml_checkrun, "Attributes")
                 xml_attribute_rule_list = handle_attribute_rule_list(xml_rule)
                 xml_rule_script = handle_rule_script(xml_attribute_rule_list, name=obj.name)
                 xml_code = handle_code(xml_rule_script)
 
                 property_sets = obj.property_sets
-
                 ident_name = obj.ident_attrib.name
                 ident_property_set = obj.ident_attrib.property_set.name
                 if ident_property_set == constants.IGNORE_PSET:
@@ -195,11 +181,13 @@ def export_modelcheck(main_window):
                     xml_code = handle_code(xml_rule_script)
                     xml_code.text = script.code
 
-        return xml_object_list
+                xml_object_dict[xml_checkrun] = obj
+        return xml_object_dict
 
+    def handle_data_section(xml_qa_export:etree._Element, xml_checkrun_first:etree._Element, xml_checkrun_obj:dict[etree._Element,classes.Object], xml_checkrun_last:etree._Element):
+        def get_name() -> str:
+            """Transorms native IFC Attributes like IfcType into desite Attributes"""
 
-    def handle_data_section(xml_qa_export, xml_checkrun_first, xml_checkrun_obj, xml_checkrun_last):
-        def get_name():
             pset_name = obj.ident_attrib.property_set.name
             if pset_name == "IFC":
                 return obj.ident_attrib.name
@@ -213,7 +201,7 @@ def export_modelcheck(main_window):
         check_run_data.set("refID", str(xml_checkrun_first.attrib.get("ID")))
         check_set = etree.SubElement(check_run_data, "checkSet")
 
-        for xml_checkrun, obj in xml_checkrun_obj._registry():
+        for xml_checkrun, obj in xml_checkrun_obj.items():
             check_run_data = etree.SubElement(xml_data_section, "checkRunData")
             check_run_data.set("refID", str(xml_checkrun.attrib.get("ID")))
             filter_list = etree.SubElement(check_run_data, "filterList")
@@ -232,7 +220,6 @@ def export_modelcheck(main_window):
         xml_filter.set("dt", "xs:string")
         xml_filter.set("pattern", '"Ungeprüft"')
 
-
     def handle_property_section(xml_qa_export):
         repository = etree.SubElement(xml_qa_export, "repository")
         property_type_section = etree.SubElement(repository, "propertyTypeSection")
@@ -246,14 +233,13 @@ def export_modelcheck(main_window):
 
         property_section = etree.SubElement(repository, "propertySection")
 
-
     def export(main_window, path):
         template = handle_template()
-        xml_container, xml_qa_export = init_xml(main_window)
-        xml_checkrun_first, xml_attribute_rule_list = define_xml_elements(main_window, xml_container, "initial_tests")
+        xml_container, xml_qa_export = init_xml()
+        xml_checkrun_first, xml_attribute_rule_list = define_xml_elements( xml_container, "initial_tests")
         handle_js_rules(xml_attribute_rule_list, "start")
-        xml_checkrun_obj = handle_object_rules(xml_container, main_window, template)
-        xml_checkrun_last, xml_attribute_rule_list = define_xml_elements(main_window, xml_container, "untested")
+        xml_checkrun_obj = handle_object_rules(xml_container,  template)
+        xml_checkrun_last, xml_attribute_rule_list = define_xml_elements(xml_container, "untested")
         handle_js_rules(xml_attribute_rule_list, "end")
         handle_data_section(xml_qa_export, xml_checkrun_first, xml_checkrun_obj, xml_checkrun_last)
         handle_property_section(xml_qa_export)
@@ -262,20 +248,21 @@ def export_modelcheck(main_window):
         with open(path, "wb") as f:
             tree.write(f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml")
 
-    path = get_path(main_window,"qa.xml")
+    path = get_path(main_window, "qa.xml")
 
     if path:
         export(main_window, path)
         pass
 
+
 def export_bs(main_window):
     def handle_boq_info(xml_parent):
         xml_box_info = etree.SubElement(xml_parent, "BoQInfo")
-        name = etree.SubElement(xml_box_info,"name")
-        shortText = etree.SubElement(xml_box_info,"shortText")
-        date = etree.SubElement(xml_box_info,"date")
-        outlCompl = etree.SubElement(xml_box_info,"outlCompl")
-        fillchar = etree.SubElement(xml_box_info,"fillChar")
+        name = etree.SubElement(xml_box_info, "name")
+        shortText = etree.SubElement(xml_box_info, "shortText")
+        date = etree.SubElement(xml_box_info, "date")
+        outlCompl = etree.SubElement(xml_box_info, "outlCompl")
+        fillchar = etree.SubElement(xml_box_info, "fillChar")
 
         name.text = "DRC Export"
         shortText.text = "This BoQ was automatically created by DRC"
@@ -285,58 +272,57 @@ def export_bs(main_window):
 
         return xml_box_info
 
-    def handle_attr(xml_parent,obj):
+    def handle_attr(xml_parent, obj):
         xml_attr = etree.SubElement(xml_parent, "attr")
         xml_unit = etree.SubElement(xml_attr, "unit")
         xml_up = etree.SubElement(xml_attr, "up")
         xml_up.text = str(0)
 
-    def handle_section(item:classes.CustomTreeItem,xml_item):
-
+    def handle_section(item: classes.CustomTreeItem, xml_item):
 
         id_dict = dict()
         xml_child = etree.SubElement(xml_item, "section")
         id = str(uuid.uuid4())
 
         id_dict[item.object] = id
-        xml_child.set("ID",id)
+        xml_child.set("ID", id)
         xml_child.set("name", item.object.name)
-        xml_child.set("pre","")
+        xml_child.set("pre", "")
         xml_child.set("type", "typeBsGroup")
-        xml_child.set("takt","")
+        xml_child.set("takt", "")
 
         for k in range(item.childCount()):
             child = item.child(k)
-            child_id_dict = handle_section(child,xml_child)
-            id_dict = {**child_id_dict,**id_dict}
+            child_id_dict = handle_section(child, xml_child)
+            id_dict = {**child_id_dict, **id_dict}
         return id_dict
 
-    def handle_elementsection(main_window,xml_parent):
+    def handle_elementsection(main_window, xml_parent):
         ui: ui_mainwindow.Ui_MainWindow = main_window.ui
         xml_elementsection = etree.SubElement(xml_parent, "elementSection")
         root = ui.tree.invisibleRootItem()
-        xml_root = etree.SubElement(xml_elementsection,"section")
-        xml_root.set("ID",str(uuid.uuid4()))
-        xml_root.set("name","BS Autogenerated")
-        xml_root.set("pre","")
-        xml_root.set("type","typeBsContainer")
-        xml_root.set("takt","")
+        xml_root = etree.SubElement(xml_elementsection, "section")
+        xml_root.set("ID", str(uuid.uuid4()))
+        xml_root.set("name", "BS Autogenerated")
+        xml_root.set("pre", "")
+        xml_root.set("type", "typeBsContainer")
+        xml_root.set("takt", "")
 
         id_dict = dict()
         for k in range(root.childCount()):
             child = root.child(k)
-            child_id_dict = handle_section(child,xml_root)
+            child_id_dict = handle_section(child, xml_root)
             id_dict = {**child_id_dict, **id_dict}
 
-        return xml_elementsection,id_dict
+        return xml_elementsection, id_dict
 
-    def handle_repository(main_window,xml_parent,id_dict):
+    def handle_repository(main_window, xml_parent, id_dict):
         def handle_property_type_section():
             xml_property_type_section = etree.SubElement(xml_repo, "propertyTypeSection")
 
             attribute_dict = dict()
 
-            i=1
+            i = 1
             for attribute in classes.Attribute:
 
                 attribute_text = f"{attribute.property_set.name}:{attribute.name}"
@@ -344,19 +330,19 @@ def export_bs(main_window):
                     xml_ptype = etree.SubElement(xml_property_type_section, "ptype")
                     xml_ptype.set("key", str(i))
                     xml_ptype.set("name", attribute_text)
-                    xml_ptype.set("datatype",attribute.data_type)
+                    xml_ptype.set("datatype", attribute.data_type)
                     xml_ptype.set("unit", "")
                     xml_ptype.set("inh", "false")
                     attribute_dict[attribute_text] = i
-                    i+=1
+                    i += 1
 
             return attribute_dict
 
         def handle_property_section():
             xml_property_section = etree.SubElement(xml_repo, "propertySection")
 
-            obj:classes.Object
-            for i,obj in enumerate(id_dict):
+            obj: classes.Object
+            for i, obj in enumerate(id_dict):
 
                 for property_set in obj.property_sets:
                     for attribute in property_set.attributes:
@@ -364,21 +350,20 @@ def export_bs(main_window):
                         ref_type = attribute_dict[attribute_text]
                         ref_id = id_dict[obj]
                         xml_property = etree.SubElement(xml_property_section, "property")
-                        xml_property.set("refID",str(ref_id))
-                        xml_property.set("refType",str(ref_type))
+                        xml_property.set("refID", str(ref_id))
+                        xml_property.set("refType", str(ref_type))
                         if attribute == obj.ident_attrib:
                             xml_property.text = attribute.value[0]
                         else:
                             xml_property.text = "füllen!"
 
-
         xml_repo = etree.SubElement(xml_parent, "repository")
         xml_id_mapping = etree.SubElement(xml_repo, "IDMapping")
 
-        for i,id in enumerate(id_dict.values()):
-            xml_id = etree.SubElement(xml_id_mapping,"ID")
-            xml_id.set("k",str(i+1))
-            xml_id.set("v",str(id))
+        for i, id in enumerate(id_dict.values()):
+            xml_id = etree.SubElement(xml_id_mapping, "ID")
+            xml_id.set("k", str(i + 1))
+            xml_id.set("v", str(id))
 
         attribute_dict = handle_property_type_section()
         handle_property_section()
@@ -388,16 +373,15 @@ def export_bs(main_window):
 
         xml_id_mapping = etree.SubElement(xml_relation_section, "IDMapping")
         xml_relation = etree.SubElement(xml_relation_section, "relation")
-        xml_relation.set("name","default")
+        xml_relation.set("name", "default")
 
         pass
 
-
     def export(main_window, path):
-        xml_boq_export = handle_header(main_window,"bsExport")
-        xml_elementsection,id_dict = handle_elementsection(main_window,xml_boq_export)
+        xml_boq_export = handle_header(main_window, "bsExport")
+        xml_elementsection, id_dict = handle_elementsection(main_window, xml_boq_export)
         xml_link_section = etree.SubElement(xml_boq_export, "linkSection")
-        xml_repository = handle_repository(main_window,xml_boq_export,id_dict)
+        xml_repository = handle_repository(main_window, xml_boq_export, id_dict)
         handle_relation_section(xml_boq_export)
 
         tree = etree.ElementTree(xml_boq_export)
@@ -405,25 +389,26 @@ def export_bs(main_window):
         with open(path, "wb") as f:
             tree.write(f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml")
 
-    path = get_path(main_window,"bs.xml")
+    path = get_path(main_window, "bs.xml")
 
     if path:
         export(main_window, path)
         pass
 
+
 def export_bookmarks(main_window):
     def handle_bookmark_list(xml_parent):
         xml_bookmark_list = etree.SubElement(xml_parent, "cBookmarkList")
 
-        obj:classes.Object
+        obj: classes.Object
         for obj in classes.Object:
             xml_bookmark = etree.SubElement(xml_bookmark_list, "cBookmark")
-            xml_bookmark.set("ID",str(obj.identifier))
+            xml_bookmark.set("ID", str(obj.identifier))
 
-            if isinstance(obj.ident_attrib,classes.Attribute):
-                xml_bookmark.set("name",str(obj.ident_attrib.value[0]))
+            if isinstance(obj.ident_attrib, classes.Attribute):
+                xml_bookmark.set("name", str(obj.ident_attrib.value[0]))
 
-            xml_bookmark.set("bkmType","2")
+            xml_bookmark.set("bkmType", "2")
             xml_col = etree.SubElement(xml_bookmark, "col")
             xml_col.set("v", "Type##xs:string")
 
@@ -437,18 +422,17 @@ def export_bookmarks(main_window):
                     if attribute != obj.ident_attrib:
                         xml_col = etree.SubElement(xml_bookmark, "col")
                         text = f"{property_set.name}:{attribute.name}##{attribute.data_type}"
-                        xml_col.set("v",text)
+                        xml_col.set("v", text)
 
     def export(main_window, path):
 
         xml_bookmarks = etree.Element("bookmarks")
-        xml_bookmarks.set("xmlnsxsi","http://www.w3.org/2001/XMLSchema-instance")
+        xml_bookmarks.set("xmlnsxsi", "http://www.w3.org/2001/XMLSchema-instance")
         handle_bookmark_list(xml_bookmarks)
         tree = etree.ElementTree(xml_bookmarks)
 
         with open(path, "wb") as f:
             tree.write(f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml")
-
 
     path = get_path(main_window, "bkxml")
 
@@ -456,46 +440,49 @@ def export_bookmarks(main_window):
         export(main_window, path)
         pass
 
+
 def export_boq(main_window):
     def get_distinct_attributes(property_sets):
-        attribute_names =list()
-        property_set:classes.PropertySet
+        attribute_names = list()
+        property_set: classes.PropertySet
 
         for property_set in property_sets:
-            attribute:classes.Attribute
-            attribute_names+= [attribute.name for attribute in property_set.attributes]
+            attribute: classes.Attribute
+            attribute_names += [attribute.name for attribute in property_set.attributes]
 
         distinct_attribute_names = list(dict.fromkeys(attribute_names))
 
         return distinct_attribute_names
 
-
-    path = get_path(main_window,"csv")
-    words = [property_set.name for property_set in classes.PropertySet.iter]
+    path = get_path(main_window, "csv")
+    words = [property_set.name for property_set in classes.PropertySet]
     words = list(dict.fromkeys(words))
 
-    ok,pset_name = popups.req_boq_pset(main_window,words)
+    ok, pset_name = popups.req_boq_pset(main_window, words)
     if ok:
-        with open(path,"w",encoding='ISO 8859-1',) as file:
-            writer = csv.writer(file,delimiter = ";")
-            property_sets = [property_set for property_set in classes.PropertySet.iter if property_set.name == pset_name]
+        with open(path, "w",) as file:
+            writer = csv.writer(file, delimiter=";")
+            property_sets = [property_set for property_set in classes.PropertySet if
+                             property_set.name == pset_name]
             distinct_attribute_names = get_distinct_attributes(property_sets)
-            header =["Ident","Object"]+[f"{pset_name}:{name}" for name in distinct_attribute_names]
+            header = ["Ident", "Object"] + [f"{pset_name}:{name}" for name in distinct_attribute_names]
             writer.writerow(header)
-            obj:classes.Object
+            obj: classes.Object
 
-            objects = [obj for obj in classes.Object.iter if pset_name in [pset.name for pset in obj.property_sets]] #find objects with matching propertyset
+            objects = [obj for obj in classes.Object if
+                       pset_name in [pset.name for pset in obj.property_sets]]  # find objects with matching propertyset
             for obj in objects:
                 property_set = obj.get_property_set_by_name(pset_name)
                 ident = obj.ident_attrib
-                line = [f"{ident.property_set.name}:{ident.name}",ident.value[0]]
+                line = [f"{ident.property_set.name}:{ident.name}", ident.value[0]]
                 for attribute_name in distinct_attribute_names:
-                    attribute:classes.Attribute = property_set.get_attribute_by_name(attribute_name)
+                    attribute: classes.Attribute = property_set.get_attribute_by_name(attribute_name)
 
                     if attribute is not None:
                         line.append("|".join(attribute.value))
                     else:
                         line.append("")
                 writer.writerow(line)
+            print(writer)
 
     pass
