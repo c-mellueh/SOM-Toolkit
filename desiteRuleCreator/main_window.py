@@ -1,4 +1,4 @@
-import sys,os
+import sys,os,logging
 
 from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog
