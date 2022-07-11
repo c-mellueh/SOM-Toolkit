@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
 
 
     @property
-    def save_path(self):
+    def save_path(self) -> str:
         return self._save_path
 
     @save_path.setter
