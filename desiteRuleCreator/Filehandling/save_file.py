@@ -1,15 +1,19 @@
 from __future__ import annotations
-
+from typing import TYPE_CHECKING,Type
 from PySide6.QtWidgets import QFileDialog, QMessageBox
 from lxml import etree
+import os
 
 import desiteRuleCreator.Filehandling
 from desiteRuleCreator import __version__ as project_version
-from desiteRuleCreator.Windows.popups import msg_close
+from desiteRuleCreator.Windows import popups
 from desiteRuleCreator.data import constants, classes
-from desiteRuleCreator.data.classes import PropertySet, Object
 
-def save_clicked(main_window) -> str:
+if TYPE_CHECKING:
+    from desiteRuleCreator.main_window import MainWindow
+
+
+def save_clicked(main_window:MainWindow) -> str:
     if main_window.save_path is None:
         path = save_as_clicked(main_window)
     else:
@@ -18,26 +22,27 @@ def save_clicked(main_window) -> str:
     return path
 
 
-def save_as_clicked(main_window) -> str:
+def save_as_clicked(main_window:MainWindow) -> str:
     if main_window.save_path is not None:
+        base_path = os.path.dirname(main_window.save_path)
         path = \
-            QFileDialog.getSaveFileName(main_window, "Save XML", main_window.save_path, "xml Files (*.xml *.DRCxml)")[0]
+            QFileDialog.getSaveFileName(main_window, "Save XML",base_path, "xml Files (*.DRCxml *.xml )")[0]
     else:
-        path = QFileDialog.getSaveFileName(main_window, "Save XML", "", "xml Files (*.xml *.DRCxml)")[0]
+        path = QFileDialog.getSaveFileName(main_window, "Save XML", "", "xml Files ( *.DRCxml *.xml)")[0]
 
     if path:
         save(main_window,path)
     return path
 
 
-def save(main_window, path):
-    def add_parent(xml_item, item: classes.Object|classes.PropertySet):
+def save(main_window:MainWindow, path:str) -> None:
+    def add_parent(xml_item:etree._Element, item: classes.Object|classes.PropertySet|classes.Attribute) -> None:
         if item.parent is not None:
             xml_item.set(constants.PARENT, str(item.parent.identifier))
         else:
             xml_item.set(constants.PARENT, constants.NONE)
 
-    def add_predefined_property_sets(xml_project):
+    def add_predefined_property_sets() -> None:
         for predefined_pset in classes.PropertySet:
             if predefined_pset.object is None:
                 predefined_pset: classes.PropertySet = predefined_pset
@@ -49,7 +54,7 @@ def save(main_window, path):
                 for attribute in predefined_pset.attributes:
                     add_attribute(attribute, predefined_pset, xml_pset)
 
-    def add_property_set(property_set: PropertySet, xml_object):
+    def add_property_set(property_set: classes.PropertySet, xml_object:etree._Element) -> None:
         xml_pset = etree.SubElement(xml_object, constants.PROPERTY_SET)
         xml_pset.set(constants.NAME, property_set.name)
         xml_pset.set(constants.IDENTIFIER, str(property_set.identifier))
@@ -58,7 +63,7 @@ def save(main_window, path):
         for attribute in property_set.attributes:
             add_attribute(attribute, property_set, xml_pset)
 
-    def add_object(obj: Object, xml_project):
+    def add_object(obj: classes.Object) -> None:
         def add_aggregation():
             for child in obj.aggregates_to:
                 xml_aggregate = etree.SubElement(xml_object,constants.AGGREGATE)
@@ -79,9 +84,8 @@ def save(main_window, path):
             xml_script = etree.SubElement(xml_object, "Script")
             xml_script.set(constants.NAME, script.name)
             xml_script.text = script.code
-        pass
 
-    def add_attribute(attribute, property_set, xml_pset):
+    def add_attribute(attribute:classes.Attribute, property_set:classes.PropertySet, xml_pset:etree._Element) -> None:
         xml_attribute = etree.SubElement(xml_pset, constants.ATTRIBUTE)
         xml_attribute.set(constants.NAME, attribute.name)
         xml_attribute.set(constants.DATA_TYPE, attribute.data_type)
@@ -99,7 +103,7 @@ def save(main_window, path):
         xml_attribute.set(constants.IS_IDENTIFIER, str(ident))
         add_value(attribute, xml_attribute)
 
-    def add_value(attribute, xml_attribute):
+    def add_value(attribute:classes.Attribute, xml_attribute:etree._Element) -> None:
         values = attribute.value
         for value in values:
             xml_value = etree.SubElement(xml_attribute, "Value")
@@ -118,9 +122,9 @@ def save(main_window, path):
     xml_project.set(constants.NAME, main_window.project.name)
     xml_project.set(constants.VERSION, project_version)
 
-    add_predefined_property_sets(xml_project)
-    for obj in Object:
-        add_object(obj, xml_project)
+    add_predefined_property_sets()
+    for obj in classes.Object:
+        add_object(obj)
 
     tree = etree.ElementTree(xml_project)
 
@@ -130,12 +134,12 @@ def save(main_window, path):
     main_window.project.reset_changed()
 
 
-def close_event(main_window, event):
+def close_event(main_window:MainWindow, event):
     status = main_window.project.changed
     if status:
-        reply = msg_close()
+        reply = popups.msg_close()
         if reply == QMessageBox.Save:
-            path = desiteRuleCreator.Filehandling.save_file.save_clicked()
+            path = desiteRuleCreator.Filehandling.save_file.save_clicked(main_window)
             if not path or path is None:
                 return False
             else:

@@ -11,7 +11,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 from desiteRuleCreator import logs
 from desiteRuleCreator.Widgets import object_widget
 from desiteRuleCreator.data import classes, constants
-
+from desiteRuleCreator.Filehandling import open_file
 if TYPE_CHECKING:
     pass
 
@@ -80,7 +80,7 @@ def iterate_attributes(pset: classes.PropertySet, sheet: Worksheet, entry: Cell,
         data_type, special = transform_value_types(data_type_text)
         classes.Attribute(pset, attribute_name, [""], constants.VALUE_TYPE_LOOKUP[constants.LIST], data_type=data_type)
         if special:
-            logging.warning(f"{pset.name}:{attribute_name} datatype {data_type_text} not know")
+            logging.warning(f"{pset.name}:{attribute_name} datatype '{data_type_text}' not known")
 
         entry = sheet.cell(row=entry.row + 1, column=entry.column)
 
@@ -127,7 +127,7 @@ def create_object(sheet: Worksheet, cell: Cell, pset_dict: dict[str, (classes.Pr
     return obj, pset, abbreviation, aggregate_list
 
 
-def start_log():
+def start_log() -> None:
     base_path = os.path.dirname(logs.__file__)
     log_path = os.path.join(base_path, "log.txt")
     os.remove(log_path)
@@ -172,22 +172,17 @@ def create_items(sheet: Worksheet, base_cells: list[Cell]) ->(dict[str, (classes
     return pset_dict,aggregate_dict
 
 def build_tree(main_window) -> None:
-    tree_dict: dict[str, classes.CustomTreeItem] = dict()
-
-    obj: classes.Object
-    for obj in classes.Object:
-        item = object_widget.add_object_to_tree(main_window, obj, None)
-        tree_dict[obj.ident_attrib.value[0]] = item
+    tree_dict: dict[str, classes.Object] = {obj.ident_attrib.value[0]:obj for obj in classes.Object}
 
     for ident, item in tree_dict.items():
-        ident_list = ident.split(".")
-        ident_list = ident_list[:-1]
-        ident = ".".join(ident_list)
-        parent_item: classes.CustomTreeItem = tree_dict.get(ident)
-        if parent_item is not None:
-            root = item.treeWidget().invisibleRootItem()
-            item = root.takeChild(root.indexOfChild(item))
-            parent_item.addChild(item)
+        ident_list = ident.split(".")[:-1]
+        parent_obj = tree_dict.get(".".join(ident_list))
+
+        if parent_obj is not None:
+            parent_obj.add_child(item)
+
+    open_file.fill_tree(main_window)
+
 
 def create_aggregation( pset_dict: dict[str, (classes.PropertySet, Cell, classes.Object)],
                  aggregate_dict: dict[classes.Object, list[str]]) -> None:

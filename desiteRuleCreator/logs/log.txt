@@ -1,64 +1,64 @@
 WARNING:root:<Cell 'SOM-MaKa'.A12> hat den Wert 'name'
-WARNING:root:Allgemeine Eigenschaften:bemerkung datatype Description not know
-WARNING:root:Allgemeine Eigenschaften:eigentuemer datatype Bsp.: DB Netz AG_Netz-Karlsruhe, Autobahn GmbH not know
-WARNING:root:Allgemeine Eigenschaften:name datatype Name not know
-WARNING:root:Allgemeine Eigenschaften:bauteilKlassifikation datatype ObjectType not know
-WARNING:root:Allgemeine Eigenschaften:bauteilName datatype oder ObjectType not know
-WARNING:root:Bauteil:material datatype Material not know
-WARNING:root:Bettung:topKante datatype Referenz not know
-WARNING:root:Bettung:geoKante datatype Referenz not know
-WARNING:root:Gleis:topKante datatype Referenz not know
-WARNING:root:Gleis:geoKante datatype Referenz not know
-WARNING:root:Gleis:idStartpunkt datatype idGleisbegrenzungspunkt not know
-WARNING:root:Gleis:idEndpunkt datatype idGleisbegrenzungspunkt not know
-WARNING:root:Weiche:weichenanfang datatype Mehrfachnennung not know
-WARNING:root:Weiche:weichende datatype Mehrfachnennung not know
-WARNING:root:Feste Fahrbahn:plattenverlegungsart datatype Dilitationsfuge/Feste Einspannung not know
-WARNING:root:Gleisbegrenzungspunkt:koordinaten datatype Koordinaten not know
-WARNING:root:Trennschicht:trennschichtsart datatype Gleit/Hartschaum/Trennebene not know
-WARNING:root:Schiene:integrierteLaermschutzmassnahmen datatype schienenstegabschirmung (SSA) not know
-WARNING:root:Verbinder:leitungTyp datatype Sting not know
-WARNING:root:Mast:koordinaten datatype Koordinaten not know
-WARNING:root:QuerfeldTragseil:tiefsterPunkt datatype Punkt not know
-WARNING:root:Mastkonsole:abmessungen datatype  not know
-WARNING:root:Bruecke:bauHoehe datatype Double, OK-Gelaender, etc. not know
-WARNING:root:Bruecke:ueberfuehrungsart datatype EUE, SUE not know
-WARNING:root:Kabeltrog:groesse datatype Standardwerte not know
-WARNING:root:Lager:achse datatype  not know
-WARNING:root:LST Basis Objekt:konstruktionsmerkmal datatype Bsp.: Keramikkoerper auf Betonpfahl nach RZ XXX not know
-WARNING:root:Fahrstrasse:fahrstrassenart datatype Zug, Rangier, Umfahr not know
-WARNING:root:Bedienung und Steuerung:oertlichkeit  datatype Gesamtheit der angesteuerten/zu bedienenden Anlagen, meist Bahnhof oder Bahnhofsteil, z.B.: Hbf Pforzheim (Pbf); Pforzheim EOW-Bereich (Gbf) not know
-WARNING:root:Durchrutschweg:durchrutschwegEnde datatype String (N401, Gz W405) not know
-WARNING:root:PZBElement:gueAnordnung datatype String (Pfosten, Mast, sonstige oder Ein--> Wirk--> Ausmagnet) not know
-WARNING:root:PZBElement:idBezugspunkt datatype String (Gz W401) not know
-WARNING:root:FMAAnlage:fmaanlageart datatype String (Gleisstromkreis oder Achszaehlanlage) not know
-WARNING:root:FMAAnlage:isolierung datatype String (ein/zweischienig) not know
-WARNING:root:Zugeinwirkung:zugeinwirkungsart datatype String (Doppelschleife, Einfachsensor) not know
-WARNING:root:Zugeinwirkung:idBezugspunkt datatype String (BÜ 9,0) not know
-WARNING:root:Schloss:schlossart datatype String (Riegelhandschloss) not know
-WARNING:root:Schloss:bueLage datatype String (L,R) not know
-WARNING:root:Schloss:gspLage datatype String (L,R) not know
-WARNING:root:Schloss:weicheAnbaulage datatype String (L,R) not know
-WARNING:root:Schloss:weicheLage datatype String (L,R) not know
-WARNING:root:WKrAnlage:wkrart datatype String (Kreuzung, EW, EKW, DKW) not know
-WARNING:root:FMAKomponente:fmakomponentenart datatype String (Isostoss, elektr. Stoss, Achszaehler) not know
-WARNING:root:FMAKomponente:idBezugspunkt datatype String (W104, A55) not know
-WARNING:root:Strassenbau:strassentyp datatype Autobahn, Landstrasse, etc. not know
-WARNING:root:Sonstige Modellkomponente:beschreibung datatype Besonderheiten und Wichtiges not know
-WARNING:root:Verschubsystem:verschubsystem datatype DB_ Allgemeine-Daten not know
-WARNING:root:Verbau:ausrichtung datatype DB_ Allgemeine-Daten not know
-WARNING:root:Hilfsbauwerke:hilfsbauwerksart datatype Baubrueckem Hilfslaermschutz, Baubahnuebergang not know
-WARNING:root:TrasseKante:trassenkanteart datatype freies Kabel/ Trog/ Rohr not know
-WARNING:root:TrasseKnoten:trasseknotenart datatype Schacht/ Kabelverteilpunkt/Kabelschrank  not know
-WARNING:root:Markierung:markierungstyp datatype durchgehenderSchmalstrich, unterbrochenerSchmalstrich, durchgehenderBreitstrich, unterbrochenerBreitstrich, Doppelstrich not know
-WARNING:root:ZusaetzlicheStrassenelemente:strassenelementtyp datatype Gehweg, Trennstreifen, Bankett, Bordstein not know
-WARNING:root:Bedachungsbahnsteigfuss:umfang datatype ist abmessung? not know
-WARNING:root:Betonwanne:umfang datatype ist auch abmessung? not know
-WARNING:root:Spundwand:ausrichtung datatype DB_ Allgemeine-Daten not know
-WARNING:root:Wasserfuehrung:wasserfuehrungstyp datatype Duecker, Wasserleitung,… not know
-WARNING:root:Wasserleitsystem:wasserleitungstyp datatype abwasser, trinkwasser, etc. not know
-WARNING:root:Erdabtrag:abtragsart datatype Allgemein/ Einschnitt not know
-WARNING:root:Erdauftrag:auftragsart datatype Allgemein/Damm not know
+WARNING:root:Allgemeine Eigenschaften:bemerkung datatype 'Description' not known
+WARNING:root:Allgemeine Eigenschaften:eigentuemer datatype 'Bsp.: DB Netz AG_Netz-Karlsruhe, Autobahn GmbH' not known
+WARNING:root:Allgemeine Eigenschaften:name datatype 'Name' not known
+WARNING:root:Allgemeine Eigenschaften:bauteilKlassifikation datatype 'ObjectType' not known
+WARNING:root:Allgemeine Eigenschaften:bauteilName datatype 'oder ObjectType' not known
+WARNING:root:Bauteil:material datatype 'Material' not known
+WARNING:root:Bettung:topKante datatype 'Referenz' not known
+WARNING:root:Bettung:geoKante datatype 'Referenz' not known
+WARNING:root:Gleis:topKante datatype 'Referenz' not known
+WARNING:root:Gleis:geoKante datatype 'Referenz' not known
+WARNING:root:Gleis:idStartpunkt datatype 'idGleisbegrenzungspunkt' not known
+WARNING:root:Gleis:idEndpunkt datatype 'idGleisbegrenzungspunkt' not known
+WARNING:root:Weiche:weichenanfang datatype 'Mehrfachnennung' not known
+WARNING:root:Weiche:weichende datatype 'Mehrfachnennung' not known
+WARNING:root:Feste Fahrbahn:plattenverlegungsart datatype 'Dilitationsfuge/Feste Einspannung' not known
+WARNING:root:Gleisbegrenzungspunkt:koordinaten datatype 'Koordinaten' not known
+WARNING:root:Trennschicht:trennschichtsart datatype 'Gleit/Hartschaum/Trennebene' not known
+WARNING:root:Schiene:integrierteLaermschutzmassnahmen datatype 'schienenstegabschirmung (SSA)' not known
+WARNING:root:Verbinder:leitungTyp datatype 'Sting' not known
+WARNING:root:Mast:koordinaten datatype 'Koordinaten' not known
+WARNING:root:QuerfeldTragseil:tiefsterPunkt datatype 'Punkt' not known
+WARNING:root:Mastkonsole:abmessungen datatype '' not known
+WARNING:root:Bruecke:bauHoehe datatype 'Double, OK-Gelaender, etc.' not known
+WARNING:root:Bruecke:ueberfuehrungsart datatype 'EUE, SUE' not known
+WARNING:root:Kabeltrog:groesse datatype 'Standardwerte' not known
+WARNING:root:Lager:achse datatype '' not known
+WARNING:root:LST Basis Objekt:konstruktionsmerkmal datatype 'Bsp.: Keramikkoerper auf Betonpfahl nach RZ XXX' not known
+WARNING:root:Fahrstrasse:fahrstrassenart datatype 'Zug, Rangier, Umfahr' not known
+WARNING:root:Bedienung und Steuerung:oertlichkeit  datatype 'Gesamtheit der angesteuerten/zu bedienenden Anlagen, meist Bahnhof oder Bahnhofsteil, z.B.: Hbf Pforzheim (Pbf); Pforzheim EOW-Bereich (Gbf)' not known
+WARNING:root:Durchrutschweg:durchrutschwegEnde datatype 'String (N401, Gz W405)' not known
+WARNING:root:PZBElement:gueAnordnung datatype 'String (Pfosten, Mast, sonstige oder Ein--> Wirk--> Ausmagnet)' not known
+WARNING:root:PZBElement:idBezugspunkt datatype 'String (Gz W401)' not known
+WARNING:root:FMAAnlage:fmaanlageart datatype 'String (Gleisstromkreis oder Achszaehlanlage)' not known
+WARNING:root:FMAAnlage:isolierung datatype 'String (ein/zweischienig)' not known
+WARNING:root:Zugeinwirkung:zugeinwirkungsart datatype 'String (Doppelschleife, Einfachsensor)' not known
+WARNING:root:Zugeinwirkung:idBezugspunkt datatype 'String (BÜ 9,0)' not known
+WARNING:root:Schloss:schlossart datatype 'String (Riegelhandschloss)' not known
+WARNING:root:Schloss:bueLage datatype 'String (L,R)' not known
+WARNING:root:Schloss:gspLage datatype 'String (L,R)' not known
+WARNING:root:Schloss:weicheAnbaulage datatype 'String (L,R)' not known
+WARNING:root:Schloss:weicheLage datatype 'String (L,R)' not known
+WARNING:root:WKrAnlage:wkrart datatype 'String (Kreuzung, EW, EKW, DKW)' not known
+WARNING:root:FMAKomponente:fmakomponentenart datatype 'String (Isostoss, elektr. Stoss, Achszaehler)' not known
+WARNING:root:FMAKomponente:idBezugspunkt datatype 'String (W104, A55)' not known
+WARNING:root:Strassenbau:strassentyp datatype 'Autobahn, Landstrasse, etc.' not known
+WARNING:root:Sonstige Modellkomponente:beschreibung datatype 'Besonderheiten und Wichtiges' not known
+WARNING:root:Verschubsystem:verschubsystem datatype 'DB_ Allgemeine-Daten' not known
+WARNING:root:Verbau:ausrichtung datatype 'DB_ Allgemeine-Daten' not known
+WARNING:root:Hilfsbauwerke:hilfsbauwerksart datatype 'Baubrueckem Hilfslaermschutz, Baubahnuebergang' not known
+WARNING:root:TrasseKante:trassenkanteart datatype 'freies Kabel/ Trog/ Rohr' not known
+WARNING:root:TrasseKnoten:trasseknotenart datatype 'Schacht/ Kabelverteilpunkt/Kabelschrank ' not known
+WARNING:root:Markierung:markierungstyp datatype 'durchgehenderSchmalstrich, unterbrochenerSchmalstrich, durchgehenderBreitstrich, unterbrochenerBreitstrich, Doppelstrich' not known
+WARNING:root:ZusaetzlicheStrassenelemente:strassenelementtyp datatype 'Gehweg, Trennstreifen, Bankett, Bordstein' not known
+WARNING:root:Bedachungsbahnsteigfuss:umfang datatype 'ist abmessung?' not known
+WARNING:root:Betonwanne:umfang datatype 'ist auch abmessung?' not known
+WARNING:root:Spundwand:ausrichtung datatype 'DB_ Allgemeine-Daten' not known
+WARNING:root:Wasserfuehrung:wasserfuehrungstyp datatype 'Duecker, Wasserleitung,…' not known
+WARNING:root:Wasserleitsystem:wasserleitungstyp datatype 'abwasser, trinkwasser, etc.' not known
+WARNING:root:Erdabtrag:abtragsart datatype 'Allgemein/ Einschnitt' not known
+WARNING:root:Erdauftrag:auftragsart datatype 'Allgemein/Damm' not known
 WARNING:root:[Oberleitungsanlage] Aggregation: Kürzel KL existiert nicht
 WARNING:root:[Weichen und Gleissperren] Aggregation: Kürzel GA existiert nicht
 WARNING:root:[Gruendung] Aggregation: Kürzel FUN existiert nicht

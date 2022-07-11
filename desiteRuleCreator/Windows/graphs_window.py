@@ -779,7 +779,7 @@ class GraphWindow(QWidget):
         if self.active_scene not in self.drawn_scenes:
             self.redraw()
             self.drawn_scenes.append(self.active_scene)
-        self.visible_items_bounding()
+        self.fit_in()
 
     def get_node(self) -> Node:
         combo_box = self.widget.combo_box
@@ -864,12 +864,12 @@ class GraphWindow(QWidget):
         root.setY(root.base_y)
         root.show()
         iter_x_pos(root, draw_tree)
-        self.visible_items_bounding()
+        self.fit_in()
         for node in root.scene().items():
             if isinstance(node,Connection):
                 node.update_line()
 
-    def visible_items_bounding(self) -> None:
+    def fit_in(self) -> None:
         visible_items = [item for item in self.active_scene.items() if
                          item.isVisible() and not isinstance(item, (QGraphicsPathItem))]
         bounding_rect = visible_items[0].boundingRect()

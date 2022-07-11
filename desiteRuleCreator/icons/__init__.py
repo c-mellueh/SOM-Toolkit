@@ -1,15 +1,15 @@
 import os
 from PySide6.QtGui import QIcon
 
-def get_icon():
+def get_icon()-> QIcon:
     icon_path = os.path.join(ICON_PATH, ICON_DICT["icon"])
     return QIcon(icon_path)
 
-def get_link_icon():
+def get_link_icon()-> QIcon:
     icon_path = os.path.join(ICON_PATH, ICON_DICT["link"])
     return QIcon(icon_path)
 
-def get_reload_icon():
+def get_reload_icon()-> QIcon:
     icon_path = os.path.join(ICON_PATH, ICON_DICT["reload"])
     return QIcon(icon_path)
 

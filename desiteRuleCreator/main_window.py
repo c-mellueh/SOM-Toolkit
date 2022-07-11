@@ -124,9 +124,9 @@ class MainWindow(QMainWindow):
     def open_pset_menu(self,position):
         property_widget.open_menu(self,position)
 
-    def open_file(self, path=False):
+    def open_file(self, path=""):
 
-        if path is False:
+        if not path:
             cur_path = os.getcwd() + "/"
             path: str = QFileDialog.getOpenFileName(self, "Open File", str(cur_path),
                                                     "all (*.*);; xml Files (*.xml *.DRCxml);; xlsx Files (*xlsx)")[0]
@@ -265,12 +265,16 @@ class MainWindow(QMainWindow):
         self.load_graph(True)
 
     def load_graph(self, show=True):
+        if show:
+            print("HIER")
+
         if self.graph_window is None:
             self.graph_window = graphs_window.GraphWindow(self,show = show)
         else:
             if show:
                 self.graph_window.show()
                 self.graph_window.view.show()
+                self.graph_window.fit_in()
 
     def export_boq(self):
         desite_export.export_boq(self)
