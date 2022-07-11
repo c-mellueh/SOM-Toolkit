@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QAbstractItemView, Q
 
 if TYPE_CHECKING:
     from desiteRuleCreator.Windows import graphs_window
+    from desiteRuleCreator.main_window import MainWindow
 
 
 # Add child to Parent leads to reverse
@@ -26,11 +27,13 @@ class IterRegistry(type):
 
 
 class Project(object):
-    def __init__(self, name: str, author: str = None) -> None:
-        self._name = name
+    def __init__(self, main_window:MainWindow, name: str, author: str = None) -> None:
+        self._name = ""
         self._author = author
         self._version = "1.0.0"
         self._changed = True
+        self.main_window = main_window
+        self.name = name
 
     @property
     def changed(self) -> bool:
@@ -64,6 +67,7 @@ class Project(object):
     @name.setter
     def name(self, value: str):
         self._name = value
+        self.main_window.setWindowTitle(value)
         self._changed = True
 
     @property

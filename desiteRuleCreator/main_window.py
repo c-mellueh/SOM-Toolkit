@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
         self._export_path = None
         self.active_object = None
         self.graph_window = None
-        self.project = classes.Project("")
+        self.project = classes.Project(self, "")
 
         # init object and ProertyWidget
         object_widget.init(self)
@@ -140,7 +140,9 @@ class MainWindow(QMainWindow):
             else:
                 open_file.import_data(self, path)
 
+        self.ui.tree.resizeColumnToContents(0)
         self.load_graph(show=False)
+        self.save_path = path
 
     # Main
     def clear_all(self):
@@ -259,7 +261,6 @@ class MainWindow(QMainWindow):
             self.project.name = widget.lineEdit_project_name.text()
             self.project.author = widget.lineEdit_author.text()
             self.project.version = widget.lineEdit_version.text()
-            self.setWindowTitle(self.project.name)
 
     def export_bookmarks(self):
         desite_export.export_bookmarks(self)
