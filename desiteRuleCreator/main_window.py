@@ -177,9 +177,9 @@ class MainWindow(QMainWindow):
         object_widget.multi_selection(self)
 
     def update_completer(self):
-        completer = QCompleter(property_widget.predefined_pset_list(), self)
-        self.ui.lineEdit_pSet_name.setCompleter(completer)
+        completer = QCompleter(property_widget.predefined_pset_list(self), self)
         self.ui.lineEdit_ident_pSet.setCompleter(completer)
+        self.ui.lineEdit_pSet_name.setCompleter(completer)
 
     def object_clicked(self, item):
         object_widget.single_click(self, item)

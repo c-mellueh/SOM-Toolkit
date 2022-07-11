@@ -266,7 +266,7 @@ def add_object(main_window):
             if not already_exists(input_list[1:]):
 
                 parent = None
-                if p_set_name in property_widget.predefined_pset_list():  # if PropertySet allready predefined
+                if p_set_name in property_widget.predefined_pset_list(main_window):  # if PropertySet allready predefined
                     result = popups.req_merge_pset()  # ask if you want to merge
                     if result:
                         parent = property_widget.get_parent_by_name(main_window.active_object, p_set_name)

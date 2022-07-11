@@ -1,6 +1,6 @@
 from __future__ import annotations
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea,QMenu
+from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea,QMenu,QCompleter
 from typing import TYPE_CHECKING
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
@@ -53,8 +53,18 @@ def open_menu(main_window, position):
     menu.exec(main_window.pset_table.viewport().mapToGlobal(position))
 
 
-def predefined_pset_list() -> list[PropertySet]:
-    property_list = [x.name for x in PropertySet if x.parent is None]
+def predefined_pset_list(main_window) -> set[str]:
+    property_list = {x.name for x in PropertySet if x.object is None}
+
+    def iterate_parents(parent:classes.Object):
+        if parent is not None:
+            for property_set in parent.property_sets:
+                property_list.add(property_set.name)
+            iterate_parents(parent.parent)
+
+    iterate_parents(main_window.active_object.parent)
+    completer = QCompleter(property_list)
+    main_window.ui.lineEdit_pSet_name.setCompleter(completer)
     return property_list
 
 
@@ -224,7 +234,7 @@ def add_pset(main_window):
     obj = main_window.active_object
 
     inherited = False
-    if name in predefined_pset_list():
+    if name in predefined_pset_list(main_window):
         inherited = True
 
     item = QTableWidgetItem(name)
