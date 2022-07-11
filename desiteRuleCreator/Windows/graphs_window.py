@@ -870,6 +870,8 @@ class GraphWindow(QWidget):
                 node.update_line()
 
     def fit_in(self) -> None:
+        if self.active_scene is None:
+            return
         visible_items = [item for item in self.active_scene.items() if
                          item.isVisible() and not isinstance(item, (QGraphicsPathItem))]
         bounding_rect = visible_items[0].boundingRect()
