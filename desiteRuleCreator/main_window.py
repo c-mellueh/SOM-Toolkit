@@ -283,6 +283,7 @@ class MainWindow(QMainWindow):
         desite_export.export_boq(self)
 
 def main():
+    start_log()
     global app
     app = QApplication(sys.argv)
 
