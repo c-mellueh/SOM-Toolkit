@@ -11,12 +11,15 @@ from desiteRuleCreator.Widgets import script_widget, property_widget, object_wid
 from desiteRuleCreator.Windows import parent_property_window,graphs_window
 from desiteRuleCreator.data import classes
 from desiteRuleCreator.data.classes import Object, PropertySet
-
+from desiteRuleCreator import logs
 
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
     return QtGui.QIcon(icon_path)
 
+def start_log() -> None:
+    os.remove(logs.LOG_PATH)
+    logging.basicConfig(filename=logs.LOG_PATH, level=logging.WARNING)
 
 class MainWindow(QMainWindow):
     def __init__(self,app):
