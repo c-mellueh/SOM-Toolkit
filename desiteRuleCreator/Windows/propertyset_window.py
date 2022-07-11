@@ -3,12 +3,12 @@ import os
 
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import QModelIndex, Qt
-from PySide6.QtWidgets import QTableWidgetItem, QHBoxLayout, QLineEdit, QMessageBox, QMenu,QTableWidget
+from PySide6.QtWidgets import QTableWidgetItem, QHBoxLayout, QLineEdit, QMessageBox, QMenu,QTableWidgetItem
 
 from desiteRuleCreator import icons
 from desiteRuleCreator.QtDesigns import ui_widget,ui_mainwindow
 from desiteRuleCreator.Windows import popups
-from desiteRuleCreator.data import constants
+from desiteRuleCreator.data import constants,classes
 from desiteRuleCreator.data.classes import PropertySet, Attribute
 from desiteRuleCreator import icons
 
@@ -315,14 +315,14 @@ class PropertySetWindow(QtWidgets.QWidget):
                 items.setText("")
         self.widget.layout_input.addWidget(self.widget.button_add_line)
 
-    def list_clicked(self, event: QModelIndex):
-        item: QTableWidgetItem = self.widget.table_widget.item(event.row(), 0)
+    def list_clicked(self, tree_item:QTableWidgetItem|classes.CustomTableItem ):
+
+        item: QTableWidgetItem = self.widget.table_widget.item(tree_item.row(), 0)
         attribute: Attribute = self.get_attribute_by_name(item.text())
 
         if attribute_is_identifier(self.active_object,attribute):
             popups.msg_mod_ident()
             return
-        # Set Combo Boxes
         index = self.widget.combo_type.findText(attribute.value_type)
         self.widget.combo_type.setCurrentIndex(index)
         index = self.widget.combo_data_type.findText(attribute.data_type)
@@ -361,7 +361,8 @@ def fill_attribute_table(active_object,table_widget,property_set):
 
     for i, attribute in enumerate(property_set.attributes):
         attribute: Attribute = attribute
-        value_item = QTableWidgetItem(attribute.name)
+        value_item = classes.CustomTableItem(attribute)
+        value_item.setText(attribute.name)
 
         if attribute.is_child:
             value_item.setIcon(link_item)

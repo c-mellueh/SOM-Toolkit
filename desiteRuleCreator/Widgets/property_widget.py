@@ -32,6 +32,7 @@ def init(main_window:MainWindow):
 
     main_window.pset_table.itemClicked.connect(main_window.list_object_clicked)
     main_window.pset_table.itemDoubleClicked.connect(main_window.list_object_double_clicked)
+    main_window.ui.attribute_widget.itemDoubleClicked.connect(main_window.attribute_double_clicked)
     main_window.pset_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
     ui.button_Pset_add.clicked.connect(main_window.add_pset)
@@ -191,6 +192,15 @@ def left_click(main_window, item: QListWidgetItem):
     fill_attribute_table(main_window.active_object,ui.attribute_widget,property_set)
     main_window.ui.lineEdit_pSet_name.setText(property_set.name)
 
+def attribute_double_click(main_window,item:classes.CustomTableItem):
+
+    item: QTableWidgetItem = item.tableWidget().item(item.row(), 0)
+    attribute:classes.Attribute = item.item
+    property_set = attribute.property_set
+    main_window.pset_window:PropertySetWindow = main_window.open_pset_window(property_set, main_window.active_object, None)
+    main_window.pset_window.list_clicked(item)
+    pass
+
 
 def double_click(main_window, item: QTableWidgetItem):
     main_window.list_object_clicked(item)
@@ -201,7 +211,7 @@ def double_click(main_window, item: QTableWidgetItem):
     main_window.pset_window = main_window.open_pset_window(property_set, main_window.active_object, None)
 
 
-def open_pset_window(main_window, property_set: PropertySet, active_object: classes.Object, window_title=None, ):
+def open_pset_window(main_window, property_set: PropertySet, active_object: classes.Object, window_title=None,) -> PropertySetWindow:
     if window_title is None:
         window_title = f"{property_set.object.name}:{property_set.name}"
     window = PropertySetWindow(main_window, property_set, active_object, window_title)

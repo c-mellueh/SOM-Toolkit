@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QDropEvent
-from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QAbstractItemView, QListWidgetItem
+from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QAbstractItemView, QListWidgetItem,QTableWidgetItem
 
 if TYPE_CHECKING:
     from desiteRuleCreator.Windows import graphs_window
@@ -613,3 +613,8 @@ class CustomListItem(QListWidgetItem):
 
     def update(self) -> None:
         self.setText(self.property_set.name)
+
+class CustomTableItem(QTableWidgetItem):
+    def __init__(self,item:Object|PropertySet|Attribute):
+        super(CustomTableItem, self).__init__()
+        self.item = item
