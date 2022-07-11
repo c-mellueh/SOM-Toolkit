@@ -205,9 +205,6 @@ class MainWindow(QMainWindow):
     def delete_object(self):
         object_widget.delete_object(self)
 
-    def update_object(self):
-        object_widget.update_object(self)
-
     # PropertyWidget
     def attribute_double_clicked(self,item):
         property_widget.attribute_double_click(self,item)
