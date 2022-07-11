@@ -56,21 +56,26 @@ def import_new(projekt_xml: etree._Element) -> None:
     def import_attributes(xml_object: etree._Element, property_set: classes.PropertySet) -> classes.Attribute | None:
 
         def transform_new_values(xml_attribute: etree._Element) -> list[str]:
+            def empty_text(xml_value):
+                if xml_value.text is None:
+                    return ""
+                else:
+                    return xml_value.text
             value_type = xml_attribute.attrib.get("value_type")
             value = list()
 
             if value_type != constants.RANGE:
                 for xml_value in xml_attribute:
-                    value.append(xml_value.text)
+                    value.append(empty_text(xml_value))
 
             else:
                 for xml_range in xml_attribute:
                     from_to_list = list()
                     for xml_value in xml_range:
                         if xml_value.tag == "From":
-                            from_to_list.append(xml_value.text)
+                            from_to_list.append(empty_text(xml_value))
                         if xml_value.tag == "To":
-                            from_to_list.append(xml_value.text)
+                            from_to_list.append(empty_text(xml_value))
                     value.append(from_to_list)
             return value
 
