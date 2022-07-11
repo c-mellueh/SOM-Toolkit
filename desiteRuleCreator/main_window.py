@@ -18,7 +18,8 @@ def get_icon():
     return QtGui.QIcon(icon_path)
 
 def start_log() -> None:
-    os.remove(logs.LOG_PATH)
+    if os.path.exists(logs.LOG_PATH):
+        os.remove(logs.LOG_PATH)
     logging.basicConfig(filename=logs.LOG_PATH, level=logging.WARNING)
 
 class MainWindow(QMainWindow):
