@@ -139,7 +139,7 @@ def rename(main_window:MainWindow):
         main_window.pset_table.resizeColumnsToContents()
 
 
-def text_changed(main_window:MainWindow, text):
+def text_changed(main_window:MainWindow,text):
     if main_window.pset_table.findItems(text, Qt.MatchFlag.MatchExactly):
         main_window.ui.button_Pset_add.setEnabled(False)
     else:
@@ -228,7 +228,7 @@ def open_pset_window(main_window, property_set: PropertySet, active_object: clas
     return window
 
 
-def add_pset(main_window):
+def add_pset(main_window:MainWindow):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     name = main_window.ui.lineEdit_pSet_name.text()
     obj = main_window.active_object

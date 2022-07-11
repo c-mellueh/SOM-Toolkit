@@ -170,6 +170,8 @@ def single_click(main_window, item: classes.CustomTreeItem):
             ui.lineEdit_ident_value.clear()
             ui.lineEdit_ident_pSet.clear()
             ui.lineEdit_ident_attribute.clear()
+        main_window.text_changed(main_window.ui.lineEdit_pSet_name.text())
+
 
 
 def set_ident_line_enable(main_window, value: bool):
