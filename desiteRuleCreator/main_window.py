@@ -54,13 +54,9 @@ class MainWindow(QMainWindow):
         self.ui.action_export_bs.triggered.connect(self.export_bs)
         self.ui.action_export_bookmarks.triggered.connect(self.export_bookmarks)
         self.ui.action_export_boq.triggered.connect(self.export_boq)
-        self.ui.action_show_graphs.triggered.connect(self.load_graph)
+        self.ui.action_show_graphs.triggered.connect(self.open_graph)
 
         self.ui.code_edit.textChanged.connect(self.update_script)
-
-        # debug: preload file
-        # self.openFile(path="E:/Cloud/OneDrive/Arbeit/DB_Werkstudent/Projekte/Karlsruhe_Durmersheim/Modelchecking/Regeln/Datenstruktur/22_04_18.xml")
-        # self.openFile("desiteRuleCreator/saves/22_04_18.xml")
         self.ui.tree.resizeColumnToContents(0)
         self.save_path = None
 
@@ -141,7 +137,7 @@ class MainWindow(QMainWindow):
             else:
                 open_file.import_data(self, path)
 
-        self.load_graph(show = False)
+        self.load_graph(show=False)
 
     # Main
     def clear_all(self):
@@ -154,8 +150,6 @@ class MainWindow(QMainWindow):
 
     # ObjectWidget
     def right_click(self, position: QtCore.QPoint):
-        print(QApplication.setOverrideCursor(QtCore.Qt.ClosedHandCursor))
-
         object_widget.right_click(self, position)
 
     def rc_collapse(self):
@@ -267,18 +261,16 @@ class MainWindow(QMainWindow):
     def export_bookmarks(self):
         desite_export.export_bookmarks(self)
 
-    def load_graph(self,show = True):
-        show = True
+    def open_graph(self):
+        self.load_graph(True)
+
+    def load_graph(self, show=True):
         if self.graph_window is None:
             self.graph_window = graphs_window.GraphWindow(self,show = show)
         else:
             if show:
-                print(show)
                 self.graph_window.show()
                 self.graph_window.view.show()
-        # if self.graph_window.nodes:
-        #     self.graph_window.redraw()
-            #self.graph_window.redraw()
 
     def export_boq(self):
         desite_export.export_boq(self)

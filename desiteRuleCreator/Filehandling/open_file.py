@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from uuid import uuid4
 
 from PySide6.QtWidgets import QInputDialog, QLineEdit
@@ -12,10 +14,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
 
-
-# from .run import MainWindow
-
-def string_to_bool(text):
+def string_to_bool(text:str) -> bool|None:
     if text == str(True):
         return True
     elif text == str(False):
@@ -24,7 +23,7 @@ def string_to_bool(text):
         return None
 
 
-def fill_tree(main_window):
+def fill_tree(main_window:MainWindow):
     def fill_next_level(objects, item_dict):
 
         new_item_dict = dict()
@@ -70,7 +69,7 @@ def import_data(main_window, path: str = False):
         main_window.setWindowTitle(main_window.project.name)
         print("IMPORT")
         main_window.save_path = path
-        main_window.load_graph()
+        main_window.load_graph(True)
         main_window.graph_window.hide()
 
 def import_new(projekt_xml):

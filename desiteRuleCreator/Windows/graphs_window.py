@@ -246,11 +246,13 @@ class MainView(QGraphicsView):
     def contextMenuEvent(self, event:QContextMenuEvent) -> None:
 
         node = self.item_under_mouse()
-        menu = QMenu()
-        action_delete = menu.addAction("delete")
-        action_delete.triggered.connect(node.delete_clicked)
 
-        menu.exec(event.globalPos())
+        if isinstance(node,Node):
+            menu = QMenu()
+            action_delete = menu.addAction("delete")
+            action_delete.triggered.connect(node.delete_clicked)
+
+            menu.exec(event.globalPos())
 
 class GraphScene(QGraphicsScene):
     def __init__(self, obj,graph_window) -> None:

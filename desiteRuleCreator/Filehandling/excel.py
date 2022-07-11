@@ -1,16 +1,25 @@
+from __future__ import annotations
+
+import logging
 import os.path
+from typing import TYPE_CHECKING
 
 import openpyxl
-import logging
-from desiteRuleCreator.QtDesigns import ui_mainwindow
-from desiteRuleCreator.data import classes, constants
-from desiteRuleCreator.Widgets import object_widget
-from desiteRuleCreator import logs
+from openpyxl.cell.cell import Cell
+from openpyxl.worksheet.worksheet import Worksheet
 
-def transform_value_types(value: str):
+from desiteRuleCreator import logs
+from desiteRuleCreator.Widgets import object_widget
+from desiteRuleCreator.data import classes, constants
+
+if TYPE_CHECKING:
+    pass
+
+
+def transform_value_types(value: str) -> (str, bool):
     special = False
     if value is not None:
-        if value.lower() in ["string", ]:
+        if value.lower() in ["string", "str"]:
             data_type = constants.XS_STRING
         elif value.lower() in ["double"]:
             data_type = constants.XS_DOUBLE
@@ -26,7 +35,8 @@ def transform_value_types(value: str):
 
     return data_type, special
 
-def split_string(text: str):
+
+def split_string(text: str) -> list[str] | None:
     if text is None:
         return None
     text = text.split(";")
@@ -38,67 +48,64 @@ def split_string(text: str):
 
     return text
 
-def link_psets(pset, cell, pset_dict, sheet, obj=None, debug=False):
-    # pset_dict[kuerzel] = [pset, cell]
 
+def link_psets(cell: Cell, pset_dict: dict[str, [classes.PropertySet, Cell, classes.Object]],
+               sheet: Worksheet, obj: classes.Object = None) -> None:
+    parent_text = sheet.cell(cell.row + 2, cell.column + 1).value
+    parent_list = split_string(parent_text)
 
-
-    if debug:
-        print(pset.name)
-
-    elternklasse = sheet.cell(cell.row + 2, cell.column + 1).value
-    elternklassen: list = split_string(elternklasse)
-
-    for elternklasse in elternklassen:
-        if elternklasse != "AE" and elternklasse != "-":
-            value = pset_dict.get(elternklasse.upper())
+    for text in parent_list:
+        if text != "AE" and text != "-":
+            value = pset_dict.get(text.upper())
             if value is not None:
-                [eltern_pset, eltern_cell,dummy] = value
-
+                [eltern_pset, eltern_cell, dummy] = value
                 if obj is not None:
                     new_pset = classes.PropertySet(eltern_pset.name)
                     eltern_pset.add_child(new_pset)
                     obj.add_property_set(new_pset)
-                link_psets(eltern_pset, eltern_cell, pset_dict, sheet, obj, debug=debug)
+                link_psets(eltern_cell, pset_dict, sheet, obj)
             else:
-                logging.warning(f"ACHTUNG {sheet.cell(cell.row, cell.column + 1).value} hat einen Fehler in der Elternklasse ({elternklasse.upper()} existiert nicht!)")
+                logging.warning(
+                    f"ACHTUNG {sheet.cell(cell.row, cell.column + 1).value} hat einen Fehler in der Elternklasse ({text.upper()} existiert nicht!)")
 
 
-def iterate_entries(pset, sheet, entry, cell_list):
-    special_values = list()
+def iterate_attributes(pset: classes.PropertySet, sheet: Worksheet, entry: Cell, cell_list: list[Cell]) -> None:
+    """ 
+    Iterate over Attributes
+    Create Them and find special Datatypes
+    """
     while entry.value is not None and entry not in cell_list:
-        data_type, special = transform_value_types(sheet.cell(row=entry.row, column=entry.column + 2).value)
-        classes.Attribute(pset, entry.value, "", constants.VALUE_TYPE_LOOKUP[constants.LIST], data_type=data_type)
+        data_type_text = sheet.cell(row=entry.row, column=entry.column + 2).value
+        attribute_name = entry.value
+        data_type, special = transform_value_types(data_type_text)
+        classes.Attribute(pset, attribute_name, [""], constants.VALUE_TYPE_LOOKUP[constants.LIST], data_type=data_type)
         if special:
-            special_values.append(entry)
+            logging.warning(f"{pset.name}:{attribute_name} datatype {data_type_text} not know")
 
         entry = sheet.cell(row=entry.row + 1, column=entry.column)
-    return special_values
 
 
-def create_predefined_pset(sheet, cell, cell_list):
+def create_predefined_pset(sheet: Worksheet, cell: Cell, cell_list: list[Cell]) -> (classes.PropertySet, str):
     name = sheet.cell(row=cell.row, column=cell.column + 1).value
-    kuerzel = sheet.cell(row=cell.row + 1, column=cell.column + 1).value.upper()
-    elternklasse = sheet.cell(row=cell.row + 2, column=cell.column + 1).value
+    abbreviation = sheet.cell(row=cell.row + 1, column=cell.column + 1).value.upper()
 
     pset = classes.PropertySet(name)
-
     entry = sheet.cell(row=cell.row + 4, column=cell.column)
-    special_values = iterate_entries(pset, sheet, entry, cell_list)
+    iterate_attributes(pset, sheet, entry, cell_list)
+    return pset, abbreviation
 
-    return pset, kuerzel, special_values
 
-
-def create_object(sheet, cell, pset_dict, cell_list):
+def create_object(sheet: Worksheet, cell: Cell, pset_dict: dict[str, (classes.PropertySet, Cell, classes.Object)],
+                  cell_list: list[Cell]) -> (classes.Object, classes.PropertySet, str, list[str]):
     name = sheet.cell(row=cell.row, column=cell.column + 1).value
-    kuerzel = sheet.cell(row=cell.row + 1, column=cell.column + 1).value.upper()
+    abbreviation = sheet.cell(row=cell.row + 1, column=cell.column + 1).value.upper()
     aggregate_children = sheet.cell(row=cell.row + 3, column=cell.column + 1).value
     ident = sheet.cell(row=cell.row, column=cell.column + 2).value
 
     pset = classes.PropertySet(name)
 
     entry = sheet.cell(row=cell.row + 5, column=cell.column)
-    special_values = iterate_entries(pset, sheet, entry, cell_list)
+    iterate_attributes(pset, sheet, entry, cell_list)
 
     ident_pset = classes.PropertySet("Allgemeine Eigenschaften")
     parent: classes.PropertySet = pset_dict["AE"][0]
@@ -113,68 +120,65 @@ def create_object(sheet, cell, pset_dict, cell_list):
     aggregate_list = split_string(aggregate_children)
     if aggregate_list is None:
         logging.warning(f"Achtung! {name} besitzt keinen Wert bei 'Besteht aus'")
-        aggregate_list=[]
-    elif  aggregate_list == ["-"]:
+        aggregate_list = []
+    elif aggregate_list == ["-"]:
         aggregate_list = []
 
-    return obj, special_values, pset, kuerzel,aggregate_list
+    return obj, pset, abbreviation, aggregate_list
 
 
-def start(main_window, path):
+def start_log():
     base_path = os.path.dirname(logs.__file__)
-    base_path = os.path.join(base_path,"log.txt")
-    os.remove(base_path)
-    logging.basicConfig(filename=base_path,level=logging.WARNING)
-    logging.warning("----------------------------------------------")
-    book = openpyxl.load_workbook(path)
-    sheet = book.active
+    log_path = os.path.join(base_path, "log.txt")
+    os.remove(log_path)
+    logging.basicConfig(filename=log_path, level=logging.WARNING)
 
-    row: (sheet.cell())
+
+def find_base_cells(sheet: Worksheet) -> list[Cell]:
     name_cells = list()
+
+    row: tuple[Cell]
     for row in sheet:
         for cell in row:
-            value = cell.value
-            if value is not None:
-                text = value.strip()
+            if cell.value is not None:
+                text = cell.value.strip()
                 if text in ["name", "name:"]:
                     if sheet.cell(cell.row + 1, cell.column).value == "Kürzel":
                         name_cells.append(cell)
                     else:
                         logging.warning(f"{sheet.cell(cell.row + 1, cell.column)} hat den Wert 'name'")
+    return name_cells
 
 
-    pset_dict = dict()
+def create_items(sheet: Worksheet, base_cells: list[Cell]) ->(dict[str, (classes.PropertySet, Cell, classes.Object)],dict[classes.Object, list[str]]):
+    pset_dict: dict[str, (classes.PropertySet, Cell, classes.Object)] =dict()
+    aggregate_dict: dict[classes.Object, list[str]] =dict()
 
-    special_values = list()
-    aggregate_dict = dict()
-
-    for cell in name_cells:
+    for cell in base_cells:
         ident_value = sheet.cell(row=cell.row, column=cell.column + 2).value
 
         if ident_value is None:
-            pset, kuerzel, special = create_predefined_pset(sheet, cell, name_cells)
-            pset_dict[kuerzel] = [pset, cell,None]
-            special_values += special
+            pset, kuerzel = create_predefined_pset(sheet, cell, base_cells)
+            pset_dict[kuerzel] = (pset, cell, None)
+
 
         else:
-            obj, special, pset, kuerzel,aggregate_list = create_object(sheet, cell, pset_dict, name_cells)
+            obj, pset, kuerzel, aggregate_list = create_object(sheet, cell, pset_dict, base_cells)
             aggregate_dict[obj] = aggregate_list
             if pset_dict.get(kuerzel) is not None:
                 logging.warning(f"Kuerzel {kuerzel} für {obj.name} und {pset_dict[kuerzel][0].name} identisch!")
-            pset_dict[kuerzel] = [pset, cell,obj]
-            special_values += special
+            pset_dict[kuerzel] = (pset, cell, obj)
 
-    for kuerzel, (pset, cell,obj) in pset_dict.items():
-        link_psets(pset, cell, pset_dict, sheet, pset.object, debug=False)
+    return pset_dict,aggregate_dict
 
-    tree_dict = dict()
+def build_tree(main_window) -> None:
+    tree_dict: dict[str, classes.CustomTreeItem] = dict()
 
     obj: classes.Object
     for obj in classes.Object:
-        item = object_widget.add_object_to_tree(main_window,obj,None)
+        item = object_widget.add_object_to_tree(main_window, obj, None)
         tree_dict[obj.ident_attrib.value[0]] = item
 
-    ident: str
     for ident, item in tree_dict.items():
         ident_list = ident.split(".")
         ident_list = ident_list[:-1]
@@ -185,6 +189,8 @@ def start(main_window, path):
             item = root.takeChild(root.indexOfChild(item))
             parent_item.addChild(item)
 
+def create_aggregation( pset_dict: dict[str, (classes.PropertySet, Cell, classes.Object)],
+                 aggregate_dict: dict[classes.Object, list[str]]) -> None:
     for obj in classes.Object:
         aggregate_list = aggregate_dict[obj]
         for kuerzel in aggregate_list:
@@ -195,5 +201,24 @@ def start(main_window, path):
                     obj.add_aggregation(obj_child)
 
 
-                else:logging.warning(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
-            else:logging.warning(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+                else:
+                    logging.warning(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+            else:
+                logging.warning(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+
+def start(main_window, path: str) -> None:
+    # TODO: add request for Identification Attribute
+
+    start_log()
+    book = openpyxl.load_workbook(path)
+    sheet = book.active
+
+    base_cells = find_base_cells(sheet)
+    pset_dict,aggregate_dict = create_items(sheet,base_cells)
+
+    for kuerzel, (pset, cell, obj) in pset_dict.items():
+        link_psets(cell, pset_dict, sheet, pset.object)
+
+    build_tree(main_window)
+    create_aggregation(pset_dict,aggregate_dict)
+
