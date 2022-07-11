@@ -127,13 +127,6 @@ def create_object(sheet: Worksheet, cell: Cell, pset_dict: dict[str, (classes.Pr
     return obj, pset, abbreviation, aggregate_list
 
 
-def start_log() -> None:
-    base_path = os.path.dirname(logs.__file__)
-    log_path = os.path.join(base_path, "log.txt")
-    os.remove(log_path)
-    logging.basicConfig(filename=log_path, level=logging.WARNING)
-
-
 def find_base_cells(sheet: Worksheet) -> list[Cell]:
     name_cells = list()
 
@@ -204,7 +197,6 @@ def create_aggregation( pset_dict: dict[str, (classes.PropertySet, Cell, classes
 def start(main_window, path: str) -> None:
     # TODO: add request for Identification Attribute
 
-    start_log()
     book = openpyxl.load_workbook(path)
     sheet = book.active
 

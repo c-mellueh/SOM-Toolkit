@@ -1,4 +1,4 @@
-import sys,os
+import sys,os,logging
 
 from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog
@@ -11,12 +11,15 @@ from desiteRuleCreator.Widgets import script_widget, property_widget, object_wid
 from desiteRuleCreator.Windows import parent_property_window,graphs_window
 from desiteRuleCreator.data import classes
 from desiteRuleCreator.data.classes import Object, PropertySet
-
+from desiteRuleCreator import logs
 
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
     return QtGui.QIcon(icon_path)
 
+def start_log() -> None:
+    os.remove(logs.LOG_PATH)
+    logging.basicConfig(filename=logs.LOG_PATH, level=logging.WARNING)
 
 class MainWindow(QMainWindow):
     def __init__(self,app):
@@ -36,7 +39,7 @@ class MainWindow(QMainWindow):
         self._export_path = None
         self.active_object = None
         self.graph_window = None
-        self.project = classes.Project("")
+        self.project = classes.Project(self, "")
 
         # init object and ProertyWidget
         object_widget.init(self)
@@ -137,7 +140,9 @@ class MainWindow(QMainWindow):
             else:
                 open_file.import_data(self, path)
 
+        self.ui.tree.resizeColumnToContents(0)
         self.load_graph(show=False)
+        self.save_path = path
 
     # Main
     def clear_all(self):
@@ -256,7 +261,6 @@ class MainWindow(QMainWindow):
             self.project.name = widget.lineEdit_project_name.text()
             self.project.author = widget.lineEdit_author.text()
             self.project.version = widget.lineEdit_version.text()
-            self.setWindowTitle(self.project.name)
 
     def export_bookmarks(self):
         desite_export.export_bookmarks(self)
@@ -280,6 +284,7 @@ class MainWindow(QMainWindow):
         desite_export.export_boq(self)
 
 def main():
+    start_log()
     global app
     app = QApplication(sys.argv)
 
