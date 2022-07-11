@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sys,os,logging
 
 from PySide6 import QtCore, QtGui
@@ -32,13 +34,14 @@ class MainWindow(QMainWindow):
         self.parent_property_window: parent_property_window.PropertySetInherWindow = self.open_pset_list()
         self.parent_property_window.hide()
         self.pset_window = None
+        self.pset_table = self.ui.tableWidget_inherited
 
         # variables
         self.icon = get_icon()
         self.setWindowIcon(self.icon)
         self._save_path = None
         self._export_path = None
-        self.active_object = None
+        self.active_object:classes.Object|None = None
         self.graph_window = None
         self.project = classes.Project(self, "")
 

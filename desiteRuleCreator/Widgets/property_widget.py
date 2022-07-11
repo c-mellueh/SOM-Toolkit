@@ -1,14 +1,17 @@
 from __future__ import annotations
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea,QMenu
+from typing import TYPE_CHECKING
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
+from desiteRuleCreator.Windows import popups
 from desiteRuleCreator.Windows.popups import msg_del_ident_pset, req_pset_name,msg_del_items
 from desiteRuleCreator.Windows.propertyset_window import PropertySetWindow,fill_attribute_table
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.data.classes import PropertySet, CustomTreeItem
 from desiteRuleCreator import icons
-
+if TYPE_CHECKING:
+    from desiteRuleCreator.main_window import MainWindow
 
 def get_parent_by_name(active_object: classes.Object, name: str):
     pset: PropertySet
@@ -24,10 +27,9 @@ def get_parent_by_name(active_object: classes.Object, name: str):
             return pset
 
 
-def init(main_window):
+def init(main_window:MainWindow):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
 
-    main_window.pset_table = main_window.ui.tableWidget_inherited
     main_window.pset_table.itemClicked.connect(main_window.list_object_clicked)
     main_window.pset_table.itemDoubleClicked.connect(main_window.list_object_double_clicked)
     main_window.pset_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -106,10 +108,13 @@ def delete(main_window):
             msg_del_ident_pset()
 
 
-def rename(main_window):
+def rename(main_window:MainWindow):
     return_str = req_pset_name(main_window)
     if return_str[1]:
         new_name = return_str[0]
+        if new_name in [pset.name for pset in main_window.active_object.property_sets]:
+            popups.msg_already_exists()
+            return
         list_item = main_window.pset_table.selectedItems()[0]
         selected_pset: PropertySet = list_item.data(constants.DATA_POS)
         list_item.setText(new_name)
@@ -123,12 +128,13 @@ def rename(main_window):
         main_window.pset_table.resizeColumnsToContents()
 
 
-def text_changed(main_window, text):
+def text_changed(main_window:MainWindow, text):
     if main_window.pset_table.findItems(text, Qt.MatchFlag.MatchExactly):
-        button_text = "Update"
+        main_window.ui.button_Pset_add.setEnabled(False)
     else:
+        main_window.ui.button_Pset_add.setEnabled(True)
+
         button_text = "Add"
-    main_window.ui.button_Pset_add.setText(button_text)
 
 
 def set_enable(main_window, value: bool):
