@@ -1,15 +1,11 @@
 from __future__ import annotations
 
 import logging
-import os.path
 from typing import TYPE_CHECKING
 
 import openpyxl
 from openpyxl.cell.cell import Cell
 from openpyxl.worksheet.worksheet import Worksheet
-
-from desiteRuleCreator import logs
-from desiteRuleCreator.Widgets import object_widget
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.Filehandling import open_file
 if TYPE_CHECKING:
@@ -66,7 +62,7 @@ def link_psets(cell: Cell, pset_dict: dict[str, [classes.PropertySet, Cell, clas
                 link_psets(eltern_cell, pset_dict, sheet, obj)
             else:
                 logging.warning(
-                    f"ACHTUNG {sheet.cell(cell.row, cell.column + 1).value} hat einen Fehler in der Elternklasse ({text.upper()} existiert nicht!)")
+                    f"[{sheet.cell(cell.row, cell.column + 1).value}] Elternklasse: Kürzel {text.upper()} existiert nicht!")
 
 
 def iterate_attributes(pset: classes.PropertySet, sheet: Worksheet, entry: Cell, cell_list: list[Cell]) -> None:
@@ -80,7 +76,8 @@ def iterate_attributes(pset: classes.PropertySet, sheet: Worksheet, entry: Cell,
         data_type, special = transform_value_types(data_type_text)
         classes.Attribute(pset, attribute_name, [""], constants.VALUE_TYPE_LOOKUP[constants.LIST], data_type=data_type)
         if special:
-            logging.warning(f"{pset.name}:{attribute_name} datatype '{data_type_text}' not known")
+            logging.warning(f"[{entry.value}] Property: {pset.name}:{attribute_name} datatype '{data_type_text}' unbekannt")
+            pass
 
         entry = sheet.cell(row=entry.row + 1, column=entry.column)
 
@@ -119,7 +116,7 @@ def create_object(sheet: Worksheet, cell: Cell, pset_dict: dict[str, (classes.Pr
 
     aggregate_list = split_string(aggregate_children)
     if aggregate_list is None:
-        logging.warning(f"Achtung! {name} besitzt keinen Wert bei 'Besteht aus'")
+        logging.error(f"Achtung! {name} besitzt keinen Wert bei 'Besteht aus'")
         aggregate_list = []
     elif aggregate_list == ["-"]:
         aggregate_list = []
@@ -139,7 +136,7 @@ def find_base_cells(sheet: Worksheet) -> list[Cell]:
                     if sheet.cell(cell.row + 1, cell.column).value == "Kürzel":
                         name_cells.append(cell)
                     else:
-                        logging.warning(f"{sheet.cell(cell.row + 1, cell.column)} hat den Wert 'name'")
+                        logging.error(f"{sheet.cell(cell.row + 1, cell.column)} hat den Wert 'name'")
     return name_cells
 
 
@@ -159,7 +156,7 @@ def create_items(sheet: Worksheet, base_cells: list[Cell]) ->(dict[str, (classes
             obj, pset, kuerzel, aggregate_list = create_object(sheet, cell, pset_dict, base_cells)
             aggregate_dict[obj] = aggregate_list
             if pset_dict.get(kuerzel) is not None:
-                logging.warning(f"Kuerzel {kuerzel} für {obj.name} und {pset_dict[kuerzel][0].name} identisch!")
+                logging.error(f"[{obj.name} | {pset_dict[kuerzel][0].name}] Kuerzel: {kuerzel} identisch!")
             pset_dict[kuerzel] = (pset, cell, obj)
 
     return pset_dict,aggregate_dict
@@ -190,9 +187,9 @@ def create_aggregation( pset_dict: dict[str, (classes.PropertySet, Cell, classes
 
 
                 else:
-                    logging.warning(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+                    logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
             else:
-                logging.warning(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+                logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
 
 def start(main_window, path: str) -> None:
     # TODO: add request for Identification Attribute
@@ -208,4 +205,3 @@ def start(main_window, path: str) -> None:
 
     build_tree(main_window)
     create_aggregation(pset_dict,aggregate_dict)
-

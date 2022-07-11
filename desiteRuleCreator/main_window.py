@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-import sys,os,logging
+import copy
+import sys,os,logging,logging.config
 
 from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog
@@ -22,7 +23,9 @@ def get_icon():
 def start_log() -> None:
     if os.path.exists(logs.LOG_PATH):
         os.remove(logs.LOG_PATH)
-    logging.basicConfig(filename=logs.LOG_PATH, level=logging.WARNING)
+
+    logging.config.fileConfig(logs.CONF_PATH, defaults={'logfilename': logs.LOG_PATH.replace("\\","/")})
+    logger = logging.getLogger("simple_example")
 
 class MainWindow(QMainWindow):
     def __init__(self,app):
