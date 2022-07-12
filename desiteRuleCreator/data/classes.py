@@ -107,7 +107,6 @@ class Hirarchy(object, metaclass=IterRegistry):
         self._name = value
         for child in self.children:
             child.name = value
-
         self.changed = True
 
     @property
@@ -297,14 +296,10 @@ class Attribute(Hirarchy):
 
     @name.setter
     def name(self, value: str) -> None:
-        self.changed = True
-
-        if not self.is_child:
-            self._name = value
-
-        if self.is_parent:
-            for child in self.children:
-                child.name = value
+        self.changed = True #ToDo: add request for unlink
+        self._name = value
+        for child in self.children:
+            child.name = value
 
     @property
     def value(self) -> list:

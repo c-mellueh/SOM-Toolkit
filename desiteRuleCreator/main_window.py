@@ -11,7 +11,7 @@ from desiteRuleCreator.Filehandling import open_file, desite_export, excel,save_
 from desiteRuleCreator.QtDesigns import ui_project_settings
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
-from desiteRuleCreator.Windows import parent_property_window,graphs_window
+from desiteRuleCreator.Windows import predefined_psets_window,graphs_window
 from desiteRuleCreator.data import classes
 from desiteRuleCreator.data.classes import Object, PropertySet
 from desiteRuleCreator import logs
@@ -34,7 +34,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.app = app
         self.parent_property_window = None
-        self.parent_property_window: parent_property_window.PropertySetInherWindow = self.open_pset_list()
+        self.parent_property_window: predefined_psets_window.PropertySetInherWindow = self.open_pset_list()
         self.parent_property_window.hide()
         self.pset_window = None
         self.pset_table = self.ui.tableWidget_inherited
@@ -110,9 +110,9 @@ class MainWindow(QMainWindow):
 
     def open_pset_list(self):
         if self.parent_property_window is not None:
-            self.parent_property_window.setHidden(False)
+            self.parent_property_window.show()
         else:
-            self.parent_property_window = parent_property_window.open_pset_list(self)
+            self.parent_property_window = predefined_psets_window.open_pset_list(self)
 
         return self.parent_property_window
 
@@ -251,7 +251,7 @@ class MainWindow(QMainWindow):
 
     def reload(self):
         object_widget.reload_tree(self)
-        parent_property_window.reload(self)
+        predefined_psets_window.reload(self)
         property_widget.reload(self)
 
     def open_settings(self):

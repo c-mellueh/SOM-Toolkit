@@ -319,7 +319,6 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         item: QTableWidgetItem = self.widget.table_widget.item(tree_item.row(), 0)
         attribute: Attribute = self.get_attribute_by_name(item.text())
-
         if attribute_is_identifier(self.active_object,attribute):
             popups.msg_mod_ident()
             return
