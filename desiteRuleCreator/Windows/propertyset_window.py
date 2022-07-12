@@ -117,7 +117,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         selected_rows.sort(reverse=True)
 
         if len(selected_rows) == 1:
-            new_name, fulfilled = popups.req_attribute_name(self)
+            new_name, fulfilled = popups.req_new_name(self)
             if fulfilled:
                 name = self.widget.table_widget.item(row, 0).text()
                 attribute: Attribute = self.get_attribute_by_name(name)

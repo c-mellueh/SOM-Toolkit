@@ -1,7 +1,6 @@
 from __future__ import annotations
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea,QMenu,QCompleter
-from typing import TYPE_CHECKING
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
 from desiteRuleCreator.Windows import popups
@@ -10,6 +9,8 @@ from desiteRuleCreator.Windows.propertyset_window import PropertySetWindow,fill_
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.data.classes import PropertySet, CustomTreeItem
 from desiteRuleCreator import icons
+from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
 

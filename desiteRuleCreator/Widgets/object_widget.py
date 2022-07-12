@@ -6,6 +6,10 @@ from desiteRuleCreator.QtDesigns import ui_mainwindow
 from desiteRuleCreator.Widgets import script_widget, property_widget
 from desiteRuleCreator.Windows import popups
 from desiteRuleCreator.data import classes, constants
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from desiteRuleCreator.main_window import MainWindow
 
 
 def init(main_window):
@@ -92,13 +96,28 @@ def right_click(main_window, position: QPoint):
     main_window.action_delete_attribute = menu.addAction("Delete")
     main_window.action_expand_selection = menu.addAction("Expand")
     main_window.action_collapse_selection = menu.addAction("Collapse")
+    main_window.action_rename_option = menu.addAction("Rename")
 
     main_window.action_delete_attribute.triggered.connect(main_window.delete_object)
     main_window.action_group_objects.triggered.connect(main_window.rc_group)
     main_window.action_expand_selection.triggered.connect(main_window.rc_expand)
     main_window.action_collapse_selection.triggered.connect(main_window.rc_collapse)
+    main_window.action_rename_option.triggered.connect(main_window.rc_rename)
     menu.exec(main_window.ui.tree.viewport().mapToGlobal(position))
 
+def rc_rename(main_window):
+    item_list = [item for item in main_window.ui.tree.selectedItems()]
+    if len(item_list)==1:
+        item: classes.CustomTreeItem = item_list[0]
+        obj: classes.Object = item.object
+        name, fulfilled = popups.req_new_name(main_window, item.text(0))
+
+        if fulfilled:
+            obj.name = name
+            item.setText(0, name)
+    else:
+        popups.msg_select_only_one()
+        return
 
 def rc_collapse(tree: QTreeWidget):
     for item in tree.selectedItems():
