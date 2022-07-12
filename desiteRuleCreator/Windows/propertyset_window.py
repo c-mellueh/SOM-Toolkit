@@ -203,10 +203,6 @@ class PropertySetWindow(QtWidgets.QWidget):
             return values
 
         def update_attribute(attribute: Attribute):
-            if attribute_is_identifier(self.active_object,attribute):
-                popups.msg_del_ident_pset()
-                return
-
             if not attribute.is_child:
                 attribute.value_type = self.widget.combo_type.currentText()
                 attribute.data_type = self.widget.combo_data_type.currentText()
@@ -217,7 +213,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             item: QTableWidgetItem = self.widget.table_widget.findItems(attribute.name, Qt.MatchFlag.MatchExactly)[0]
             row = item.row()
             fill_table_line(row, attribute)
-
+            return attribute
         def add_attribute():
             name = self.widget.lineEdit_name.text()
 
@@ -231,18 +227,26 @@ class PropertySetWindow(QtWidgets.QWidget):
                 rows = self.widget.table_widget.rowCount() + 1
                 self.widget.table_widget.setRowCount(rows)
                 add_table_line(rows - 1, attribute)
+                return attribute
             else:
                 popups.msg_missing_input()
+                return None
 
         already_exists = False
-        for attribute in self.property_set.attributes:
-            if attribute.name == self.widget.lineEdit_name.text():
-                update_attribute(attribute)
+        attribute = None
+        for attrib in self.property_set.attributes:
+            if attrib.name == self.widget.lineEdit_name.text():
+                print(attrib.name)
+                attribute = update_attribute(attrib)
                 already_exists = True
+        print(f"attribute: {attribute}")
 
         if not already_exists:
-            add_attribute()
-
+            attribute = add_attribute()
+        if attribute is not None:
+            if attribute_is_identifier(self.mainWindow.active_object,attribute):
+                print("REDRAW")
+                self.mainWindow.reload_objects()
         self.clear_lines()
 
     def combo_change(self, event):
@@ -319,9 +323,9 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         item: QTableWidgetItem = self.widget.table_widget.item(tree_item.row(), 0)
         attribute: Attribute = self.get_attribute_by_name(item.text())
-        if attribute_is_identifier(self.active_object,attribute):
-            popups.msg_mod_ident()
-            return
+        # if attribute_is_identifier(self.active_object,attribute):
+        #     popups.msg_mod_ident()
+        #     return
         index = self.widget.combo_type.findText(attribute.value_type)
         self.widget.combo_type.setCurrentIndex(index)
         index = self.widget.combo_data_type.findText(attribute.data_type)

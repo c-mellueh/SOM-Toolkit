@@ -180,17 +180,21 @@ def single_click(main_window, item: classes.CustomTreeItem):
         main_window.update_completer()
 
         ui.lineEdit_object_name.setText(obj.name)
-        if not obj.is_concept:
-            text = "|".join(obj.ident_attrib.value)
-            ui.lineEdit_ident_value.setText(text)
-            ui.lineEdit_ident_pSet.setText(obj.ident_attrib.property_set.name)
-            ui.lineEdit_ident_attribute.setText(obj.ident_attrib.name)
-        else:
-            ui.lineEdit_ident_value.clear()
-            ui.lineEdit_ident_pSet.clear()
-            ui.lineEdit_ident_attribute.clear()
-        main_window.text_changed(main_window.ui.lineEdit_pSet_name.text())
+        fill_line_inputs(main_window,obj)
 
+def fill_line_inputs(main_window, obj:classes.Object):
+    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
+    ui.lineEdit_object_name.setText(obj.name)
+    if not obj.is_concept:
+        text = "|".join(obj.ident_attrib.value)
+        ui.lineEdit_ident_value.setText(text)
+        ui.lineEdit_ident_pSet.setText(obj.ident_attrib.property_set.name)
+        ui.lineEdit_ident_attribute.setText(obj.ident_attrib.name)
+    else:
+        ui.lineEdit_ident_value.clear()
+        ui.lineEdit_ident_pSet.clear()
+        ui.lineEdit_ident_attribute.clear()
+    main_window.text_changed(main_window.ui.lineEdit_pSet_name.text())
 
 
 def set_ident_line_enable(main_window, value: bool):
@@ -351,3 +355,8 @@ def reload_tree(main_window):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     root = ui.tree.invisibleRootItem()
     loop(root)
+
+def reload(main_window):
+    reload_tree(main_window)
+    obj = main_window.active_object
+    fill_line_inputs(main_window,obj)
