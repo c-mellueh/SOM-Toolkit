@@ -11,7 +11,7 @@ from desiteRuleCreator.Filehandling import open_file, desite_export, excel,save_
 from desiteRuleCreator.QtDesigns import ui_project_settings
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
-from desiteRuleCreator.Windows import parent_property_window,graphs_window
+from desiteRuleCreator.Windows import predefined_psets_window,graphs_window
 from desiteRuleCreator.data import classes
 from desiteRuleCreator.data.classes import Object, PropertySet
 from desiteRuleCreator import logs
@@ -34,7 +34,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.app = app
         self.parent_property_window = None
-        self.parent_property_window: parent_property_window.PropertySetInherWindow = self.open_pset_list()
+        self.parent_property_window: predefined_psets_window.PropertySetInherWindow = self.open_pset_list()
         self.parent_property_window.hide()
         self.pset_window = None
         self.pset_table = self.ui.tableWidget_inherited
@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
 
 
     @property
-    def save_path(self):
+    def save_path(self) -> str:
         return self._save_path
 
     @save_path.setter
@@ -110,9 +110,9 @@ class MainWindow(QMainWindow):
 
     def open_pset_list(self):
         if self.parent_property_window is not None:
-            self.parent_property_window.setHidden(False)
+            self.parent_property_window.show()
         else:
-            self.parent_property_window = parent_property_window.open_pset_list(self)
+            self.parent_property_window = predefined_psets_window.open_pset_list(self)
 
         return self.parent_property_window
 
@@ -177,9 +177,9 @@ class MainWindow(QMainWindow):
         object_widget.multi_selection(self)
 
     def update_completer(self):
-        completer = QCompleter(property_widget.predefined_pset_list(), self)
-        self.ui.lineEdit_pSet_name.setCompleter(completer)
+        completer = QCompleter(property_widget.predefined_pset_list(self), self)
         self.ui.lineEdit_ident_pSet.setCompleter(completer)
+        self.ui.lineEdit_pSet_name.setCompleter(completer)
 
     def object_clicked(self, item):
         object_widget.single_click(self, item)
@@ -205,10 +205,10 @@ class MainWindow(QMainWindow):
     def delete_object(self):
         object_widget.delete_object(self)
 
-    def update_object(self):
-        object_widget.update_object(self)
-
     # PropertyWidget
+    def attribute_double_clicked(self,item):
+        property_widget.attribute_double_click(self,item)
+
     def delete_pset(self):
         property_widget.delete(self)
 
@@ -228,7 +228,7 @@ class MainWindow(QMainWindow):
     def list_object_double_clicked(self, item):
         property_widget.double_click(self, item)
 
-    def open_pset_window(self, property_set: PropertySet, active_object, window_title=None):
+    def open_pset_window(self, property_set: PropertySet, active_object, window_title=None) -> property_widget.PropertySetWindow:
         return property_widget.open_pset_window(self, property_set, active_object, window_title)
 
     def add_pset(self):
@@ -251,7 +251,7 @@ class MainWindow(QMainWindow):
 
     def reload(self):
         object_widget.reload_tree(self)
-        parent_property_window.reload(self)
+        predefined_psets_window.reload(self)
         property_widget.reload(self)
 
     def open_settings(self):

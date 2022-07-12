@@ -22,13 +22,14 @@ class PsetItem(QListWidgetItem):
 
         else:
             self.property_set = property_set
-            self.setText(property_set.name)
+            self.setText(property_set.name,False)
         self._registry.append(self)
         self.setFlags(self.flags() | Qt.ItemIsEditable)
 
-    def setText(self, text: str) -> None:
+    def setText(self, text: str,overwrite = True) -> None:
         super(PsetItem, self).setText(text)
-        self.property_set.name = text
+        if overwrite:
+            self.property_set.name = text
 
     def delete(self):
         self._registry.remove(self)
@@ -128,7 +129,6 @@ class PropertySetInherWindow(QWidget):
             if property_set.object is None:
                 item = PsetItem(property_set)
                 self.widget.list_view_pset.addItem(item)
-                # self.mainWindow.update_completer()
                 self.widget.list_view_pset.setCurrentItem(item)
 
     def clear_all(self):

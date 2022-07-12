@@ -31,7 +31,6 @@ def init(main_window):
         ui.tree.itemClicked.connect(main_window.object_clicked)
         ui.tree.customContextMenuRequested.connect(main_window.right_click)
         ui.button_objects_add.clicked.connect(main_window.add_object)
-        ui.button_objects_update.clicked.connect(main_window.update_object)
         main_window.grpSc.activated.connect(main_window.rc_group)
         main_window.delSc.activated.connect(main_window.delete_object)
 
@@ -42,8 +41,7 @@ def init(main_window):
     init_tree(main_window.ui.tree)
 
     main_window.ui.verticalLayout_objects.addWidget(main_window.ui.tree)
-    main_window.object_buttons = [main_window.ui.button_objects_update,
-                                  main_window.ui.button_objects_add]
+    main_window.object_buttons = [main_window.ui.button_objects_add]
     main_window.obj_line_edit_list = [main_window.ui.lineEdit_object_name,
                                       main_window.ui.lineEdit_ident_value,
                                       main_window.ui.lineEdit_ident_attribute,
@@ -172,6 +170,8 @@ def single_click(main_window, item: classes.CustomTreeItem):
             ui.lineEdit_ident_value.clear()
             ui.lineEdit_ident_pSet.clear()
             ui.lineEdit_ident_attribute.clear()
+        main_window.text_changed(main_window.ui.lineEdit_pSet_name.text())
+
 
 
 def set_ident_line_enable(main_window, value: bool):
@@ -268,7 +268,7 @@ def add_object(main_window):
             if not already_exists(input_list[1:]):
 
                 parent = None
-                if p_set_name in property_widget.predefined_pset_list():  # if PropertySet allready predefined
+                if p_set_name in property_widget.predefined_pset_list(main_window):  # if PropertySet allready predefined
                     result = popups.req_merge_pset()  # ask if you want to merge
                     if result:
                         parent = property_widget.get_parent_by_name(main_window.active_object, p_set_name)
@@ -320,68 +320,6 @@ def delete_object(main_window):
             root.addChildren(children)
             (item.parent() or root).removeChild(item)
             main_window.project.changed = True
-
-
-def update_object(main_window):
-    def handle_identical_identifiers(selected_items):
-        if len(selected_items) > 1 and "*" not in input_list:  # identical identifiers
-            return True
-        else:
-            return False
-
-    def handle_empty_input(input_list):
-        empty_input = False
-        for el in input_list:
-            if not bool(el):
-                empty_input = True
-
-        if empty_input:
-            return True
-        else:
-            return False
-
-
-
-    name = main_window.ui.lineEdit_object_name.text()
-    p_set_name = main_window.ui.lineEdit_ident_pSet.text()
-    ident_name = main_window.ui.lineEdit_ident_attribute.text()
-    ident_value = main_window.ui.lineEdit_ident_value.text()
-
-    input_list = [name, p_set_name, ident_name, ident_value]
-
-    selected_items = main_window.ui.tree.selectedItems()
-
-    if [True for x in selected_items if x.object.is_concept]:
-        return
-
-    if handle_identical_identifiers(selected_items):
-        popups.msg_identical_identifier()
-        return
-
-    elif handle_empty_input(input_list):
-        popups.msg_missing_input()
-        return
-
-    else:
-        for item in selected_items:
-            obj: classes.Object = item.object
-            ident = obj.ident_attrib
-            if not isinstance(ident, classes.Attribute):
-                property_set = classes.PropertySet(p_set_name)
-                obj.ident_attrib = classes.Attribute(property_set, ident_name, [ident_value],
-                                                        value_type=constants.LIST)
-            else:
-                if name != "*":
-                    obj.name = name
-                if p_set_name != "*":
-                    ident.property_set = classes.PropertySet(p_set_name)
-
-                if ident_name != "*":
-                    ident.name = ident_name
-
-                if ident_value != "*":
-                    ident.value = [ident_value]
-            item.update()
 
 
 def reload_tree(main_window):

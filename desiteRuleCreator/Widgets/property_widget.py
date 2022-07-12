@@ -1,6 +1,6 @@
 from __future__ import annotations
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea,QMenu
+from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea,QMenu,QCompleter
 from typing import TYPE_CHECKING
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
@@ -32,6 +32,7 @@ def init(main_window:MainWindow):
 
     main_window.pset_table.itemClicked.connect(main_window.list_object_clicked)
     main_window.pset_table.itemDoubleClicked.connect(main_window.list_object_double_clicked)
+    main_window.ui.attribute_widget.itemDoubleClicked.connect(main_window.attribute_double_clicked)
     main_window.pset_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
     ui.button_Pset_add.clicked.connect(main_window.add_pset)
@@ -52,8 +53,18 @@ def open_menu(main_window, position):
     menu.exec(main_window.pset_table.viewport().mapToGlobal(position))
 
 
-def predefined_pset_list() -> list[PropertySet]:
-    property_list = [x.name for x in PropertySet if x.parent is None]
+def predefined_pset_list(main_window) -> set[str]:
+    property_list = {x.name for x in PropertySet if x.object is None}
+
+    def iterate_parents(parent:classes.Object):
+        if parent is not None:
+            for property_set in parent.property_sets:
+                property_list.add(property_set.name)
+            iterate_parents(parent.parent)
+
+    iterate_parents(main_window.active_object.parent)
+    completer = QCompleter(property_list)
+    main_window.ui.lineEdit_pSet_name.setCompleter(completer)
     return property_list
 
 
@@ -128,7 +139,7 @@ def rename(main_window:MainWindow):
         main_window.pset_table.resizeColumnsToContents()
 
 
-def text_changed(main_window:MainWindow, text):
+def text_changed(main_window:MainWindow,text):
     if main_window.pset_table.findItems(text, Qt.MatchFlag.MatchExactly):
         main_window.ui.button_Pset_add.setEnabled(False)
     else:
@@ -191,6 +202,15 @@ def left_click(main_window, item: QListWidgetItem):
     fill_attribute_table(main_window.active_object,ui.attribute_widget,property_set)
     main_window.ui.lineEdit_pSet_name.setText(property_set.name)
 
+def attribute_double_click(main_window,item:classes.CustomTableItem):
+
+    item: QTableWidgetItem = item.tableWidget().item(item.row(), 0)
+    attribute:classes.Attribute = item.item
+    property_set = attribute.property_set
+    main_window.pset_window:PropertySetWindow = main_window.open_pset_window(property_set, main_window.active_object, None)
+    main_window.pset_window.list_clicked(item)
+    pass
+
 
 def double_click(main_window, item: QTableWidgetItem):
     main_window.list_object_clicked(item)
@@ -201,20 +221,20 @@ def double_click(main_window, item: QTableWidgetItem):
     main_window.pset_window = main_window.open_pset_window(property_set, main_window.active_object, None)
 
 
-def open_pset_window(main_window, property_set: PropertySet, active_object: classes.Object, window_title=None, ):
+def open_pset_window(main_window, property_set: PropertySet, active_object: classes.Object, window_title=None,) -> PropertySetWindow:
     if window_title is None:
         window_title = f"{property_set.object.name}:{property_set.name}"
     window = PropertySetWindow(main_window, property_set, active_object, window_title)
     return window
 
 
-def add_pset(main_window):
+def add_pset(main_window:MainWindow):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     name = main_window.ui.lineEdit_pSet_name.text()
     obj = main_window.active_object
 
     inherited = False
-    if name in predefined_pset_list():
+    if name in predefined_pset_list(main_window):
         inherited = True
 
     item = QTableWidgetItem(name)

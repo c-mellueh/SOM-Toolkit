@@ -68,6 +68,18 @@ class Ui_MainWindow(object):
         self.verticalLayout_objects.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_objects = QGridLayout()
         self.gridLayout_objects.setObjectName(u"gridLayout_objects")
+        self.lineEdit_ident_pSet = QLineEdit(self.layoutWidget)
+        self.lineEdit_ident_pSet.setObjectName(u"lineEdit_ident_pSet")
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lineEdit_ident_pSet.sizePolicy().hasHeightForWidth())
+        self.lineEdit_ident_pSet.setSizePolicy(sizePolicy)
+        self.lineEdit_ident_pSet.setFrame(True)
+        self.lineEdit_ident_pSet.setEchoMode(QLineEdit.Normal)
+
+        self.gridLayout_objects.addWidget(self.lineEdit_ident_pSet, 1, 1, 1, 1)
+
         self.lineEdit_ident_value = QLineEdit(self.layoutWidget)
         self.lineEdit_ident_value.setObjectName(u"lineEdit_ident_value")
         self.lineEdit_ident_value.setFrame(True)
@@ -75,52 +87,43 @@ class Ui_MainWindow(object):
 
         self.gridLayout_objects.addWidget(self.lineEdit_ident_value, 1, 3, 1, 1)
 
-        self.label_object_name = QLabel(self.layoutWidget)
-        self.label_object_name.setObjectName(u"label_object_name")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_object_name.sizePolicy().hasHeightForWidth())
-        self.label_object_name.setSizePolicy(sizePolicy)
-        self.label_object_name.setMinimumSize(QSize(30, 0))
-        self.label_object_name.setLineWidth(1)
-
-        self.gridLayout_objects.addWidget(self.label_object_name, 0, 0, 1, 1)
-
         self.lineEdit_ident_attribute = QLineEdit(self.layoutWidget)
         self.lineEdit_ident_attribute.setObjectName(u"lineEdit_ident_attribute")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.lineEdit_ident_attribute.sizePolicy().hasHeightForWidth())
-        self.lineEdit_ident_attribute.setSizePolicy(sizePolicy1)
+        sizePolicy.setHeightForWidth(self.lineEdit_ident_attribute.sizePolicy().hasHeightForWidth())
+        self.lineEdit_ident_attribute.setSizePolicy(sizePolicy)
         self.lineEdit_ident_attribute.setFrame(True)
         self.lineEdit_ident_attribute.setEchoMode(QLineEdit.Normal)
         self.lineEdit_ident_attribute.setCursorMoveStyle(Qt.LogicalMoveStyle)
 
         self.gridLayout_objects.addWidget(self.lineEdit_ident_attribute, 1, 2, 1, 1)
 
+        self.label_object_name = QLabel(self.layoutWidget)
+        self.label_object_name.setObjectName(u"label_object_name")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.label_object_name.sizePolicy().hasHeightForWidth())
+        self.label_object_name.setSizePolicy(sizePolicy1)
+        self.label_object_name.setMinimumSize(QSize(30, 0))
+        self.label_object_name.setLineWidth(1)
+
+        self.gridLayout_objects.addWidget(self.label_object_name, 0, 0, 1, 1)
+
         self.label_Ident = QLabel(self.layoutWidget)
         self.label_Ident.setObjectName(u"label_Ident")
 
         self.gridLayout_objects.addWidget(self.label_Ident, 1, 0, 1, 1)
 
-        self.lineEdit_ident_pSet = QLineEdit(self.layoutWidget)
-        self.lineEdit_ident_pSet.setObjectName(u"lineEdit_ident_pSet")
-        sizePolicy1.setHeightForWidth(self.lineEdit_ident_pSet.sizePolicy().hasHeightForWidth())
-        self.lineEdit_ident_pSet.setSizePolicy(sizePolicy1)
-        self.lineEdit_ident_pSet.setFrame(True)
-        self.lineEdit_ident_pSet.setEchoMode(QLineEdit.Normal)
-
-        self.gridLayout_objects.addWidget(self.lineEdit_ident_pSet, 1, 1, 1, 1)
-
         self.horizontalLayout_object_button = QHBoxLayout()
         self.horizontalLayout_object_button.setObjectName(u"horizontalLayout_object_button")
-        self.button_objects_update = QPushButton(self.layoutWidget)
-        self.button_objects_update.setObjectName(u"button_objects_update")
-        self.button_objects_update.setAutoDefault(True)
+        self.lineEdit_object_name = QLineEdit(self.layoutWidget)
+        self.lineEdit_object_name.setObjectName(u"lineEdit_object_name")
+        sizePolicy.setHeightForWidth(self.lineEdit_object_name.sizePolicy().hasHeightForWidth())
+        self.lineEdit_object_name.setSizePolicy(sizePolicy)
+        self.lineEdit_object_name.setFrame(True)
+        self.lineEdit_object_name.setEchoMode(QLineEdit.Normal)
 
-        self.horizontalLayout_object_button.addWidget(self.button_objects_update)
+        self.horizontalLayout_object_button.addWidget(self.lineEdit_object_name)
 
         self.button_objects_add = QPushButton(self.layoutWidget)
         self.button_objects_add.setObjectName(u"button_objects_add")
@@ -129,16 +132,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_object_button.addWidget(self.button_objects_add)
 
 
-        self.gridLayout_objects.addLayout(self.horizontalLayout_object_button, 0, 3, 1, 1)
-
-        self.lineEdit_object_name = QLineEdit(self.layoutWidget)
-        self.lineEdit_object_name.setObjectName(u"lineEdit_object_name")
-        sizePolicy1.setHeightForWidth(self.lineEdit_object_name.sizePolicy().hasHeightForWidth())
-        self.lineEdit_object_name.setSizePolicy(sizePolicy1)
-        self.lineEdit_object_name.setFrame(True)
-        self.lineEdit_object_name.setEchoMode(QLineEdit.Normal)
-
-        self.gridLayout_objects.addWidget(self.lineEdit_object_name, 0, 1, 1, 2)
+        self.gridLayout_objects.addLayout(self.horizontalLayout_object_button, 0, 1, 1, 3)
 
 
         self.verticalLayout_objects.addLayout(self.gridLayout_objects)
@@ -236,8 +230,8 @@ class Ui_MainWindow(object):
 
         self.button_Pset_add = QPushButton(self.tab_property_set)
         self.button_Pset_add.setObjectName(u"button_Pset_add")
-        sizePolicy.setHeightForWidth(self.button_Pset_add.sizePolicy().hasHeightForWidth())
-        self.button_Pset_add.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.button_Pset_add.sizePolicy().hasHeightForWidth())
+        self.button_Pset_add.setSizePolicy(sizePolicy1)
         self.button_Pset_add.setAutoDefault(True)
 
         self.horizontalLayout_pSet_button.addWidget(self.button_Pset_add)
@@ -330,8 +324,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.pushButton_burger = QPushButton(self.tab_code)
         self.pushButton_burger.setObjectName(u"pushButton_burger")
-        sizePolicy1.setHeightForWidth(self.pushButton_burger.sizePolicy().hasHeightForWidth())
-        self.pushButton_burger.setSizePolicy(sizePolicy1)
+        sizePolicy.setHeightForWidth(self.pushButton_burger.sizePolicy().hasHeightForWidth())
+        self.pushButton_burger.setSizePolicy(sizePolicy)
         self.pushButton_burger.setMinimumSize(QSize(25, 25))
         self.pushButton_burger.setMaximumSize(QSize(25, 25))
 
@@ -339,8 +333,8 @@ class Ui_MainWindow(object):
 
         self.pushButton_left = QPushButton(self.tab_code)
         self.pushButton_left.setObjectName(u"pushButton_left")
-        sizePolicy1.setHeightForWidth(self.pushButton_left.sizePolicy().hasHeightForWidth())
-        self.pushButton_left.setSizePolicy(sizePolicy1)
+        sizePolicy.setHeightForWidth(self.pushButton_left.sizePolicy().hasHeightForWidth())
+        self.pushButton_left.setSizePolicy(sizePolicy)
         self.pushButton_left.setMinimumSize(QSize(25, 25))
         self.pushButton_left.setMaximumSize(QSize(25, 25))
 
@@ -348,8 +342,8 @@ class Ui_MainWindow(object):
 
         self.pushButton_right = QPushButton(self.tab_code)
         self.pushButton_right.setObjectName(u"pushButton_right")
-        sizePolicy1.setHeightForWidth(self.pushButton_right.sizePolicy().hasHeightForWidth())
-        self.pushButton_right.setSizePolicy(sizePolicy1)
+        sizePolicy.setHeightForWidth(self.pushButton_right.sizePolicy().hasHeightForWidth())
+        self.pushButton_right.setSizePolicy(sizePolicy)
         self.pushButton_right.setMinimumSize(QSize(25, 25))
         self.pushButton_right.setMaximumSize(QSize(25, 25))
 
@@ -406,12 +400,10 @@ class Ui_MainWindow(object):
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
-        QWidget.setTabOrder(self.lineEdit_object_name, self.lineEdit_ident_pSet)
         QWidget.setTabOrder(self.lineEdit_ident_pSet, self.lineEdit_ident_attribute)
         QWidget.setTabOrder(self.lineEdit_ident_attribute, self.lineEdit_ident_value)
         QWidget.setTabOrder(self.lineEdit_ident_value, self.button_objects_add)
-        QWidget.setTabOrder(self.button_objects_add, self.button_objects_update)
-        QWidget.setTabOrder(self.button_objects_update, self.tree)
+        QWidget.setTabOrder(self.button_objects_add, self.tree)
         QWidget.setTabOrder(self.tree, self.tabWidget)
         QWidget.setTabOrder(self.tabWidget, self.pushButton_delete_script)
         QWidget.setTabOrder(self.pushButton_delete_script, self.pushButton_import_script)
@@ -460,14 +452,13 @@ class Ui_MainWindow(object):
         self.action_export_bookmarks.setText(QCoreApplication.translate("MainWindow", u"Export Bookmarks", None))
         self.action_show_graphs.setText(QCoreApplication.translate("MainWindow", u"Show", None))
         self.action_export_boq.setText(QCoreApplication.translate("MainWindow", u"Export  for BoQ", None))
-        self.lineEdit_ident_value.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Value", None))
-        self.label_object_name.setText(QCoreApplication.translate("MainWindow", u"Object", None))
-        self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
-        self.label_Ident.setText(QCoreApplication.translate("MainWindow", u"Ident", None))
         self.lineEdit_ident_pSet.setPlaceholderText(QCoreApplication.translate("MainWindow", u"PropertySet", None))
-        self.button_objects_update.setText(QCoreApplication.translate("MainWindow", u"Update", None))
-        self.button_objects_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
+        self.lineEdit_ident_value.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Value", None))
+        self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
+        self.label_object_name.setText(QCoreApplication.translate("MainWindow", u"Object", None))
+        self.label_Ident.setText(QCoreApplication.translate("MainWindow", u"Ident", None))
         self.lineEdit_object_name.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Name", None))
+        self.button_objects_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         ___qtreewidgetitem = self.tree.headerItem()
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objects", None));
