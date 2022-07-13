@@ -15,6 +15,10 @@ def default_message(text):
     msg_box.setWindowIcon(icon)
     msg_box.exec()
 
+def msg_select_only_one():
+    text = "Select only one item!"
+    default_message(text)
+
 def msg_recursion():
     text = "Object can't be added because of Recursion!"
     default_message(text)
@@ -112,8 +116,8 @@ def req_group_name(main_window):
         return [False, False, False, False], widget.radioButton.isChecked()
 
 
-def req_attribute_name(property_window):
-    text = QInputDialog.getText(property_window, "New Attribute Name", "New Attribute Name")
+def req_new_name(property_window,base_text = ""):
+    text = QInputDialog.getText(property_window, "New Name", "New Name",text = base_text)
     return text
 
 def req_pset_name(main_window):
