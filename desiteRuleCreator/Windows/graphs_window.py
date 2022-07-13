@@ -723,12 +723,14 @@ class GraphWindow(QWidget):
     ### Functions ###
 
     def delete_button_pressed(self) ->None:
-        root_node = self.active_scene.root_node
-        string_list = [item_to_name(item) for item in self.active_scene.items() if isinstance(item, Node)]
-        delete_request = popups.msg_del_items(string_list)
-        if delete_request:
-            root_node.remove_all_children()
-            self.clear_scene(self.active_scene)
+        if not self.combo_box.currentText() == "":
+            root_node = self.active_scene.root_node
+            string_list = [item_to_name(item) for item in self.active_scene.items() if isinstance(item, Node)]
+            delete_request = popups.msg_del_items(string_list)
+            if delete_request:
+                root_node.remove_all_children()
+                print(self.active_scene)
+                self.clear_scene(self.active_scene)
 
 
 
@@ -741,16 +743,19 @@ class GraphWindow(QWidget):
         self.combo_box.removeItem(index)
         self.drawn_scenes.remove(scene)
         for item in scene.items():
-            if item != root_node:
+            if item not in  [root_node,root_node.rect]:
                 scene.removeItem(item)
+
 
     def add_button_pressed(self):
         dialog = QInputDialog()
         dialog.setWindowTitle("New Aggregation")
         dialog.setLabelText("Choose Root Object")
         dialog.setTextValue("")
-        root_objects = set(item_to_name(obj) for obj in self.root_objects)
-        combo_names = set(item_to_name(obj) for obj in self.objects_with_children)
+
+        root_objects = set(item_to_name(obj) for obj in self.root_objects)  #objects that don't aggregate from someone
+        combo_names = set(self.combo_box.itemText(index) for index in range(self.combo_box.count()))
+
 
         words = sorted(list(root_objects-combo_names))
         dialog.setComboBoxItems(words)
@@ -766,13 +771,18 @@ class GraphWindow(QWidget):
                 self.combo_box.model().sort(0, Qt.AscendingOrder)
                 self.combo_box.setCurrentIndex(self.combo_box.findText(text))
 
-                node = self.node_dict[obj]
+                node = self.node_dict.get(obj)
+                if node is None:
+                    scene = GraphScene(obj,self)
+                    self.scenes.append(scene)
+                    node = scene.root_node
+                    self.drawn_scenes.append(scene)
                 self.draw_tree(node)
 
     def find_node_by_name(self, name) -> Node:
         for obj in self.root_objects:
             if item_to_name(obj) == name:
-                return self.node_dict[obj]
+                return self.node_dict.get(obj)
 
     def change_scene(self, node: Node) -> None:
         self.active_scene = self.scene_dict[node]
@@ -791,6 +801,8 @@ class GraphWindow(QWidget):
         node = self.get_node()
         if node is not None:
             self.change_scene(node)
+        if self.combo_box.count() == 1 and self.combo_box.currentText() =="":
+            self.view.setScene(QGraphicsScene())
 
     def redraw(self) -> None:
         node = self.get_node()
@@ -856,6 +868,8 @@ class GraphWindow(QWidget):
 
 
         self.active_scene = root.scene()
+
+
 
         draw_tree = DrawTree(root)
         draw_tree = buchheim(draw_tree)
