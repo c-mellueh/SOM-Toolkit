@@ -161,6 +161,9 @@ class MainWindow(QMainWindow):
         classes.Attribute._registry= list()
 
     # ObjectWidget
+    def reload_objects(self):
+        object_widget.reload(self)
+
     def right_click(self, position: QtCore.QPoint):
         object_widget.right_click(self, position)
 
@@ -172,6 +175,9 @@ class MainWindow(QMainWindow):
 
     def rc_group(self):
         object_widget.rc_group_items(self)
+
+    def rc_rename(self):
+        object_widget.rc_rename(self)
 
     def multi_selection(self):
         object_widget.multi_selection(self)

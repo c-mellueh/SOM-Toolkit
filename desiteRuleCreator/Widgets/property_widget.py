@@ -1,7 +1,6 @@
 from __future__ import annotations
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea,QMenu,QCompleter
-from typing import TYPE_CHECKING
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
 from desiteRuleCreator.Windows import popups
@@ -10,6 +9,8 @@ from desiteRuleCreator.Windows.propertyset_window import PropertySetWindow,fill_
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.data.classes import PropertySet, CustomTreeItem
 from desiteRuleCreator import icons
+from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
 
@@ -61,10 +62,10 @@ def predefined_pset_list(main_window) -> set[str]:
             for property_set in parent.property_sets:
                 property_list.add(property_set.name)
             iterate_parents(parent.parent)
-
-    iterate_parents(main_window.active_object.parent)
-    completer = QCompleter(property_list)
-    main_window.ui.lineEdit_pSet_name.setCompleter(completer)
+    if main_window.active_object is not None:
+        iterate_parents(main_window.active_object.parent)
+        completer = QCompleter(property_list)
+        main_window.ui.lineEdit_pSet_name.setCompleter(completer)
     return property_list
 
 
@@ -120,23 +121,18 @@ def delete(main_window):
 
 
 def rename(main_window:MainWindow):
-    return_str = req_pset_name(main_window)
+    list_item = main_window.pset_table.selectedItems()[0]
+    selected_pset: PropertySet = list_item.data(constants.DATA_POS)
+    return_str = popups.req_new_name(main_window,selected_pset.name)
     if return_str[1]:
         new_name = return_str[0]
         if new_name in [pset.name for pset in main_window.active_object.property_sets]:
             popups.msg_already_exists()
             return
-        list_item = main_window.pset_table.selectedItems()[0]
-        selected_pset: PropertySet = list_item.data(constants.DATA_POS)
         list_item.setText(new_name)
         main_window.pset_table.resizeColumnsToContents()
         selected_pset.name = new_name
-
-        obj = selected_pset.object
-        if obj.ident_attrib in selected_pset.attributes:  # rename lineinput in ObjectWidget
-            tree_item: CustomTreeItem = main_window.ui.tree.selectedItems()[0]
-            tree_item.setText(1, str(obj.ident_attrib))
-        main_window.pset_table.resizeColumnsToContents()
+        main_window.reload_objects()
 
 
 def text_changed(main_window:MainWindow,text):
@@ -144,9 +140,6 @@ def text_changed(main_window:MainWindow,text):
         main_window.ui.button_Pset_add.setEnabled(False)
     else:
         main_window.ui.button_Pset_add.setEnabled(True)
-
-        button_text = "Add"
-
 
 def set_enable(main_window, value: bool):
     main_window.ui.tab_property_set.setEnabled(value)
@@ -233,9 +226,11 @@ def add_pset(main_window:MainWindow):
     name = main_window.ui.lineEdit_pSet_name.text()
     obj = main_window.active_object
 
+
+
     inherited = False
     if name in predefined_pset_list(main_window):
-        inherited = True
+        inherited = popups.req_merge_pset()
 
     item = QTableWidgetItem(name)
     new_row_count = main_window.pset_table.rowCount() + 1
