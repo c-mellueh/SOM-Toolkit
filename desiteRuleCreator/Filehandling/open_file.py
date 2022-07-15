@@ -43,12 +43,14 @@ def import_data(main_window: MainWindow, path: str = False) -> None:
         projekt_xml = tree.getroot()
         author = projekt_xml.attrib.get(constants.AUTHOR)
         name = projekt_xml.attrib.get("name")
+
         if projekt_xml.attrib.get("version") is None:  # OLD FILES
             import_old(projekt_xml)
             main_window.project = classes.Project(main_window, name,author)
         else:
             import_new(projekt_xml)
             main_window.project = classes.Project(main_window, name,author)
+            main_window.project.version = projekt_xml.attrib.get("version")
         fill_tree(main_window)
 
 

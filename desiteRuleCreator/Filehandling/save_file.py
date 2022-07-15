@@ -120,7 +120,7 @@ def save(main_window:MainWindow, path:str) -> None:
 
     xml_project = etree.Element(constants.PROJECT)
     xml_project.set(constants.NAME, str(main_window.project.name))
-    xml_project.set(constants.VERSION, str(project_version))
+    xml_project.set(constants.VERSION, str(main_window.project.version))
     xml_project.set(constants.AUTHOR,str(main_window.project.author))
 
     add_predefined_property_sets()
