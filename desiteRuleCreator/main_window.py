@@ -282,8 +282,6 @@ class MainWindow(QMainWindow):
         self.load_graph(True)
 
     def load_graph(self, show=True):
-        if show:
-            print("HIER")
 
         if self.graph_window is None:
             self.graph_window = graphs_window.GraphWindow(self,show = show)
