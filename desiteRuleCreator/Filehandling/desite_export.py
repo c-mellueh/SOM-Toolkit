@@ -280,7 +280,7 @@ def export_bs(main_window: MainWindow):
             xml_child.set("type", "typeBsGroup")
             xml_child.set("takt", "")
 
-            for child in node.children:
+            for child in sorted(node.children,key= lambda  x: x.name):
                 handle_section(child, xml_child)
 
         ui: ui_mainwindow.Ui_MainWindow = main_window.ui
@@ -295,6 +295,9 @@ def export_bs(main_window: MainWindow):
 
         root_objects: list[graphs_window.Node] = [node for node in graphs_window.Node._registry if
                                                   node.parent_box is None]
+
+
+        root_objects.sort(key= lambda x:x.name)
 
         id_dict = dict()
         for node in root_objects:
@@ -384,7 +387,7 @@ def export_bookmarks(main_window: MainWindow) -> None:
         xml_bookmark_list = etree.SubElement(xml_parent, "cBookmarkList")
 
         obj: classes.Object
-        for obj in classes.Object:
+        for obj in sorted(classes.Object,key = lambda x:x.ident_attrib.value[0]):
             xml_bookmark = etree.SubElement(xml_bookmark_list, "cBookmark")
             xml_bookmark.set("ID", str(obj.identifier))
 
