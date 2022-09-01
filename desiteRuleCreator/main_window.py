@@ -69,7 +69,7 @@ class MainWindow(QMainWindow):
         self.ui.code_edit.textChanged.connect(self.update_script)
         self.ui.tree.resizeColumnToContents(0)
         self.save_path = None
-        self.open_file("C:/Users/ChristophMellueh/OneDrive - Deutsche Bahn/Projekte/Programmieren/SOM/python_test/SOM MAKA_20.06.2022_bereinigt.xlsx")
+        #self.open_file("C:/Users/ChristophMellueh/OneDrive - Deutsche Bahn/Projekte/Programmieren/SOM/python_test/SOM MAKA_20.06.2022_bereinigt.xlsx")
 
     @property
     def save_path(self) -> str:

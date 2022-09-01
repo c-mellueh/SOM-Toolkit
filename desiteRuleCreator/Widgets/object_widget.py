@@ -105,14 +105,17 @@ def right_click(main_window, position: QPoint):
         main_window.action_copy.triggered.connect(main_window.copy_object)
 
     if len(selected_items)!=0:
-        main_window.action_group_objects = menu.addAction("Group")
         main_window.action_delete_attribute = menu.addAction("Delete")
         main_window.action_expand_selection = menu.addAction("Expand")
         main_window.action_collapse_selection = menu.addAction("Collapse")
         main_window.action_delete_attribute.triggered.connect(main_window.delete_object)
-        main_window.action_group_objects.triggered.connect(main_window.rc_group)
         main_window.action_expand_selection.triggered.connect(main_window.rc_expand)
         main_window.action_collapse_selection.triggered.connect(main_window.rc_collapse)
+
+    main_window.action_group_objects = menu.addAction("Group")
+    main_window.action_group_objects.triggered.connect(main_window.rc_group)
+
+
     if logging.root.level <= logging.DEBUG:
         main_window.action_info = menu.addAction("Info")
         main_window.action_info.triggered.connect(main_window.info)
@@ -165,7 +168,16 @@ def rc_expand(tree: QTreeWidget):
 def copy(main_window):
     selected_items = main_window.ui.tree.selectedItems()
     item:classes.CustomTreeItem = selected_items[0]
-    input_fields, is_concept = popups.req_group_name(main_window)
+    old_obj = item.object
+    if old_obj.is_concept:
+        prefil = None
+    else:
+        prefil = [old_obj.name,
+                  old_obj.ident_attrib.property_set.name,
+                  old_obj.ident_attrib.name,
+                  old_obj.ident_attrib.value[0]]
+
+    input_fields, is_concept = popups.req_group_name(main_window,prefil)
     [obj_name, ident_pset_name, ident_attrib_name, ident_value]= input_fields
 
     if obj_name:
@@ -211,8 +223,11 @@ def rc_group_items(main_window):
 
     if group_name:
         selected_items = main_window.ui.tree.selectedItems()
-        parent_classes = [item for item in selected_items if item.parent() not in selected_items]
-        parent = parent_classes[0].parent()
+        if len(selected_items)==0:
+            parent = None
+        else:
+            parent_classes = [item for item in selected_items if item.parent() not in selected_items]
+            parent = parent_classes[0].parent()
 
         if parent is None:
             parent: QTreeWidgetItem = main_window.ui.tree.invisibleRootItem()
@@ -232,6 +247,9 @@ def rc_group_items(main_window):
                 group_obj.add_property_set(pset)
 
         group_item: classes.CustomTreeItem = main_window.add_object_to_tree(group_obj, parent)
+
+        if len(selected_items) == 0:
+            return
 
         for item in parent_classes:
             child: classes.CustomTreeItem = parent.takeChild(parent.indexOfChild(item))
