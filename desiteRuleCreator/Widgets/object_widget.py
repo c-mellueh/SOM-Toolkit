@@ -5,6 +5,7 @@ from PySide6.QtGui import QShortcut, QKeySequence
 from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem
 from typing import TYPE_CHECKING
 import logging
+import copy as cp
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
 from desiteRuleCreator.Widgets import script_widget, property_widget
@@ -95,21 +96,26 @@ def clear_all(main_window):
 
 def right_click(main_window, position: QPoint):
     menu = QMenu()
-    main_window.action_group_objects = menu.addAction("Group")
-    main_window.action_delete_attribute = menu.addAction("Delete")
-    main_window.action_expand_selection = menu.addAction("Expand")
-    main_window.action_collapse_selection = menu.addAction("Collapse")
-    main_window.action_rename_option = menu.addAction("Rename")
 
+    selected_items = main_window.ui.tree.selectedItems()
+    if len(selected_items)==1:
+        main_window.action_copy = menu.addAction("Copy")
+        main_window.action_rename_option = menu.addAction("Rename")
+        main_window.action_rename_option.triggered.connect(main_window.rc_rename)
+        main_window.action_copy.triggered.connect(main_window.copy_object)
+
+    if len(selected_items)!=0:
+        main_window.action_group_objects = menu.addAction("Group")
+        main_window.action_delete_attribute = menu.addAction("Delete")
+        main_window.action_expand_selection = menu.addAction("Expand")
+        main_window.action_collapse_selection = menu.addAction("Collapse")
+        main_window.action_delete_attribute.triggered.connect(main_window.delete_object)
+        main_window.action_group_objects.triggered.connect(main_window.rc_group)
+        main_window.action_expand_selection.triggered.connect(main_window.rc_expand)
+        main_window.action_collapse_selection.triggered.connect(main_window.rc_collapse)
     if logging.root.level <= logging.DEBUG:
         main_window.action_info = menu.addAction("Info")
         main_window.action_info.triggered.connect(main_window.info)
-
-    main_window.action_delete_attribute.triggered.connect(main_window.delete_object)
-    main_window.action_group_objects.triggered.connect(main_window.rc_group)
-    main_window.action_expand_selection.triggered.connect(main_window.rc_expand)
-    main_window.action_collapse_selection.triggered.connect(main_window.rc_collapse)
-    main_window.action_rename_option.triggered.connect(main_window.rc_rename)
     menu.exec(main_window.ui.tree.viewport().mapToGlobal(position))
 
 def info(main_window:MainWindow):
@@ -154,6 +160,49 @@ def rc_collapse(tree: QTreeWidget):
 def rc_expand(tree: QTreeWidget):
     for item in tree.selectedIndexes():
         tree.expandRecursively(item)
+
+
+def copy(main_window):
+    selected_items = main_window.ui.tree.selectedItems()
+    item:classes.CustomTreeItem = selected_items[0]
+    input_fields, is_concept = popups.req_group_name(main_window)
+    [obj_name, ident_pset_name, ident_attrib_name, ident_value]= input_fields
+
+    if obj_name:
+        psets = [cp.copy(pset) for pset in item.object.property_sets]
+        if is_concept:
+            new_object = classes.Object(obj_name, "Group")
+        else:
+            is_empty = [True for text in input_fields if not bool(text)]
+            if is_empty:
+                popups.msg_missing_input()
+                return
+            else:
+                ident_attribute = None
+
+                for pset in psets:
+                    if pset.name == ident_pset_name:
+                        for attribute in pset.attributes:
+                            if attribute.name == ident_attrib_name:
+                                attribute.value = [ident_value]
+                                ident_attribute = attribute
+                        if ident_attribute is None:
+                            ident_attribute = classes.Attribute(pset,ident_attrib_name,[ident_value],constants.LIST)
+                if ident_attribute is None:
+                    ident_pset = classes.PropertySet(ident_pset_name)
+                    ident_attribute = classes.Attribute(ident_pset,ident_attrib_name,[ident_value],constants.LIST)
+                    psets.append(ident_pset)
+                new_object = classes.Object(obj_name,ident_attribute)
+
+        for pset in psets:
+            new_object.add_property_set(pset)
+        if item.parent() is None:
+            parent = item.treeWidget().invisibleRootItem()
+        else:
+            parent = item.parent()
+        group_item: classes.CustomTreeItem = main_window.add_object_to_tree(new_object,parent)
+
+
 
 
 def rc_group_items(main_window):

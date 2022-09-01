@@ -179,6 +179,8 @@ class MainWindow(QMainWindow):
     def rc_group(self):
         object_widget.rc_group_items(self)
 
+    def copy_object(self):
+        object_widget.copy(self)
     def rc_rename(self):
         object_widget.rc_rename(self)
 
