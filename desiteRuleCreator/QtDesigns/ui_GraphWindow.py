@@ -32,6 +32,7 @@ class Ui_GraphView(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.combo_box.sizePolicy().hasHeightForWidth())
         self.combo_box.setSizePolicy(sizePolicy)
+        self.combo_box.setInsertPolicy(QComboBox.InsertAlphabetically)
 
         self.gridLayout.addWidget(self.combo_box, 0, 0, 1, 1)
 
