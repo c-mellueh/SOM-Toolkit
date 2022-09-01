@@ -406,14 +406,15 @@ class Object(Hirarchy):
         self._property_sets: list[PropertySet] = list()
         self._ident_attrib = ident_attrib
         self._nodes: set[graphs_window.Node] = set()
-        self.aggregates_to: set[Object] = set()
-        self.aggregates_from: set[Object] = set()
         self.changed = True
 
         if identifier is None:
             self.identifier = str(uuid4())
         else:
             self.identifier = identifier
+
+    def __str__(self):
+        return f"Object {self.name}"
 
     @property
     def nodes(self) -> set[graphs_window.Node]:  # Todo: add nodes functionality to graphs_window
@@ -423,7 +424,7 @@ class Object(Hirarchy):
         self._nodes.add(node)
 
     def remove_node(self, node: graphs_window.Node) -> None:
-        self._nodes.remove(node)
+        self.nodes.remove(node)
 
     @property
     def inherited_property_sets(self) -> dict[Object, list[PropertySet]]:
@@ -500,22 +501,16 @@ class Object(Hirarchy):
         for pset in self.property_sets:
             pset.delete()
 
+        for node in self.nodes.copy():
+            if node.scene() is not None:
+                node.delete_clicked()
+
+
     def get_property_set_by_name(self, property_set_name: str) -> PropertySet | None:
         for property_set in self.property_sets:
             if property_set.name == property_set_name:
                 return property_set
         return None
-
-    def add_aggregation(self, value: Object) -> None:
-        self.aggregates_to.add(value)
-        value.aggregates_from.add(self)
-
-    def remove_aggregation(self, value: Object, recursion: bool = False) -> None:
-        self.aggregates_to.remove(value)
-        value.aggregates_from.remove(self)
-        if recursion:
-            for item in value.aggregates_to:
-                value.remove_aggregation(item, recursion)
 
 
 class Script(QListWidgetItem):
@@ -554,10 +549,8 @@ class CustomTree(QTreeWidget):
         super(CustomTree, self).__init__(layout)
 
     def dropEvent(self, event: QDropEvent) -> None:
-
         selected_items = self.selectedItems()
         droped_on_item = self.itemFromIndex(self.indexAt(event.pos()))
-
         if self.dropIndicatorPosition() == QAbstractItemView.DropIndicatorPosition.OnItem:
             super(CustomTree, self).dropEvent(event)
             parent = droped_on_item.object
@@ -580,9 +573,10 @@ class CustomTreeItem(QTreeWidgetItem):
         self._object = obj
         self.update()
 
-    def addChild(self, child: QTreeWidgetItem) -> None:
+    def addChild(self, child: CustomTreeItem) -> None:
         super(CustomTreeItem, self).addChild(child)
-        self.object.add_child(child.object)
+        if child.object not in self.object.children:
+            self.object.add_child(child.object)
 
     @property
     def object(self) -> Object:

@@ -1,12 +1,15 @@
+from __future__ import annotations
+
 from PySide6.QtCore import QPoint, Qt, QCoreApplication
 from PySide6.QtGui import QShortcut, QKeySequence
 from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem
+from typing import TYPE_CHECKING
+import logging
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
 from desiteRuleCreator.Widgets import script_widget, property_widget
 from desiteRuleCreator.Windows import popups
 from desiteRuleCreator.data import classes, constants
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
@@ -55,7 +58,7 @@ def init(main_window):
     connect_items(main_window)
 
 
-def selected_object(main_window):
+def selected_object(main_window) -> classes.CustomTreeItem|None:
     tree: classes.CustomTree = main_window.ui.tree
     sel_items = tree.selectedItems()
     if len(sel_items) == 1:
@@ -98,12 +101,36 @@ def right_click(main_window, position: QPoint):
     main_window.action_collapse_selection = menu.addAction("Collapse")
     main_window.action_rename_option = menu.addAction("Rename")
 
+    if logging.root.level <= logging.DEBUG:
+        main_window.action_info = menu.addAction("Info")
+        main_window.action_info.triggered.connect(main_window.info)
+
     main_window.action_delete_attribute.triggered.connect(main_window.delete_object)
     main_window.action_group_objects.triggered.connect(main_window.rc_group)
     main_window.action_expand_selection.triggered.connect(main_window.rc_expand)
     main_window.action_collapse_selection.triggered.connect(main_window.rc_collapse)
     main_window.action_rename_option.triggered.connect(main_window.rc_rename)
     menu.exec(main_window.ui.tree.viewport().mapToGlobal(position))
+
+def info(main_window:MainWindow):
+    item = selected_object(main_window).object
+    print(item.name)
+    print(f"parent: {item.parent}")
+
+    if item.children:
+        print("children:")
+        for child in item.children:
+            print(f"  {child}")
+    else:
+        print("no children")
+
+    if item.nodes:
+        print("nodes:")
+        for node in item.nodes:
+            print(f"   {node}")
+    else:
+        print("no nodes")
+
 
 def rc_rename(main_window):
     item_list = [item for item in main_window.ui.tree.selectedItems()]
@@ -327,22 +354,41 @@ def add_object_to_tree(main_window, obj: classes.Object, parent=None):
     return item
 
 
-def delete_object(main_window):
-    string_list = [item.object.name for item in main_window.ui.tree.selectedItems()]
+def rc_delete(main_window):
+    def delete_item(item:classes.CustomTreeItem) -> None:
+        parent = item.parent()
+        root = main_window.ui.tree.invisibleRootItem()
+        item.object.delete()
+        for index in reversed(range(item.childCount())):
+            child = item.child(index)
+            delete_item(child)
+        (parent or root).removeChild(item)
+
+    def append_string_list(obj:classes.Object) -> None:
+        nonlocal string_list
+        string_list.append(str(obj.name))
+        print(f"{obj.name} : {len(obj.children)}")
+        for child in obj.children:
+            print(f"{obj.name} -> {child.name}")
+            append_string_list(child)
+        pass
+
+
+    string_list = list()
+
+    item:classes.CustomTreeItem
+    for item in main_window.ui.tree.selectedItems():
+        print(f"selected_item: {item.object.name}")
+        append_string_list(item.object)
 
 
     delete_request = popups.msg_del_items(string_list)
 
     if delete_request:
-
         root: QTreeWidgetItem = main_window.ui.tree.invisibleRootItem()
         for item in main_window.ui.tree.selectedItems():
-            obj: classes.Object = item.object
-            obj.delete()
-            children = item.takeChildren()
-            root.addChildren(children)
-            (item.parent() or root).removeChild(item)
-            main_window.project.changed = True
+            delete_item(item)
+        main_window.project.changed = True
 
 
 def reload_tree(main_window):

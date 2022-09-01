@@ -2,14 +2,15 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING
-
+if TYPE_CHECKING:
+    from desiteRuleCreator.main_window import MainWindow
 import openpyxl
 from openpyxl.cell.cell import Cell
 from openpyxl.worksheet.worksheet import Worksheet
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.Filehandling import open_file
-if TYPE_CHECKING:
-    pass
+from desiteRuleCreator.Windows import graphs_window
+
 
 
 def transform_value_types(value: str) -> (str, bool):
@@ -175,21 +176,28 @@ def build_tree(main_window) -> None:
 
 
 def create_aggregation( pset_dict: dict[str, (classes.PropertySet, Cell, classes.Object)],
-                 aggregate_dict: dict[classes.Object, list[str]]) -> None:
-    for obj in classes.Object:
-        aggregate_list = aggregate_dict[obj]
-        for kuerzel in aggregate_list:
-            dic = pset_dict.get(kuerzel)
-            if dic is not None:
-                obj_child = dic[2]
-                if obj_child is not None:
-                    obj.add_aggregation(obj_child)
+                 aggregate_dict: dict[classes.Object, list[str]],main_window:MainWindow) -> None:
 
+    main_window.graph_window =graphs_window.GraphWindow(main_window,False)
+    main_window.graph_window.import_excel(pset_dict,aggregate_dict)
 
-                else:
-                    logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
-            else:
-                logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+    # node_dict = {obj:graphs_window.Node(obj) for obj in classes.Object}
+    # print(node_dict)
+    # for obj in classes.Object:
+    #     node = node_dict[obj]
+    #     aggregate_list = aggregate_dict[obj]
+    #     if aggregate_list:
+    #         scene = graphs_window.AggregationScene(node)
+    #     for kuerzel in aggregate_list:
+    #         dic = pset_dict.get(kuerzel)
+    #         if dic is not None:
+    #             obj_child = dic[2]
+    #             if obj_child is not None:
+    #                 node.add_child(node_dict[obj_child])
+    #             else:
+    #                 logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+    #         else:
+    #             logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
 
 def start(main_window, path: str) -> None:
     # TODO: add request for Identification Attribute
@@ -204,4 +212,4 @@ def start(main_window, path: str) -> None:
         link_psets(cell, pset_dict, sheet, pset.object)
 
     build_tree(main_window)
-    create_aggregation(pset_dict,aggregate_dict)
+    create_aggregation(pset_dict,aggregate_dict,main_window)
