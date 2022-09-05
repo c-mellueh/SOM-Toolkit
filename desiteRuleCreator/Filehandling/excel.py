@@ -105,9 +105,9 @@ def create_object(sheet: Worksheet, cell: Cell, pset_dict: dict[str, (classes.Pr
     entry = sheet.cell(row=cell.row + 5, column=cell.column)
     iterate_attributes(pset, sheet, entry, cell_list)
 
-    ident_pset = classes.PropertySet("Allgemeine Eigenschaften")
+    #ident_pset = classes.PropertySet()
     parent: classes.PropertySet = pset_dict["AE"][0]
-    parent.add_child(ident_pset)
+    ident_pset= parent.create_child("Allgemeine Eigenschaften")
     ident_attrib: classes.Attribute = ident_pset.get_attribute_by_name("bauteilKlassifikation")
 
     ident_attrib.value = [ident]
