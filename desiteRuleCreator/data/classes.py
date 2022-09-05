@@ -157,7 +157,7 @@ class PropertySet(Hirarchy):
 
     def __init__(self, name: str, obj: Object = None, identifier: str = None) -> None:
         super(PropertySet, self).__init__(name)
-        self._attributes = list()
+        self._attributes = set()
         self._object = obj
         self._registry.append(self)
         self.identifier = identifier
@@ -211,17 +211,21 @@ class PropertySet(Hirarchy):
         self.changed = True
 
     @property
-    def attributes(self) -> list[Attribute]:
+    def attributes(self) -> set[Attribute]:
         return self._attributes
 
     @attributes.setter
-    def attributes(self, value: list[Attribute]) -> None:
+    def attributes(self, value: set[Attribute]) -> None:
         self._attributes = value
         self.changed = True
 
     def add_attribute(self, value: Attribute) -> None:
-        self._attributes.append(value)
+        self._attributes.add(value)
         self.changed = True
+
+        # if value.property_set is not None:
+        #     value.property_set.remove_attribute(value)
+        value._property_set = self
         for child in self.children:
             attrib: Attribute = copy.copy(value)
             value.add_child(attrib)
@@ -253,9 +257,11 @@ class PropertySet(Hirarchy):
 
     def __copy__(self):
         new_pset = PropertySet(self.name)
+
         for attribute in self.attributes:
             new_attrib = copy.copy(attribute)
-            new_attrib.property_set = new_pset
+            new_pset.add_attribute(new_attrib)
+
         if self.parent is not None:
             self.parent.add_child(new_pset)
 
@@ -267,7 +273,7 @@ class PropertySet(Hirarchy):
         child.parent = self
         for attribute in self.attributes:
             new_attrib =attribute.create_child()
-            new_attrib.property_set = child
+            child.add_attribute(new_attrib)
         return child
 
 class Attribute(Hirarchy):
@@ -278,7 +284,7 @@ class Attribute(Hirarchy):
 
         super(Attribute, self).__init__(name=name)
         self._value = value
-        self._propertySet = property_set
+        self._property_set = property_set
         self._value_type = value_type
         self._data_type = data_type
         self._object = None
@@ -379,15 +385,7 @@ class Attribute(Hirarchy):
 
     @property
     def property_set(self) -> PropertySet:
-        return self._propertySet
-
-    @property_set.setter
-    def property_set(self, value: PropertySet) -> None:
-        if self.property_set is not None:
-            self.property_set.remove_attribute(self)
-        value.add_attribute(self)
-        self._propertySet = value
-        self.changed = True
+        return self._property_set
 
     def is_equal(self, attribute: Attribute) -> bool:
         equal = True
@@ -417,6 +415,8 @@ class Attribute(Hirarchy):
     def __copy__(self) -> Attribute:
         new_attrib:Attribute = Attribute(None,self.name,self.value,
                                          self.value_type,self.data_type,self.child_inherits_values)
+        if self.parent is not None:
+            self.parent.add_child(new_attrib)
         return new_attrib
 
 class Object(Hirarchy):
