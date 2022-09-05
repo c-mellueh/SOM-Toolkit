@@ -169,6 +169,8 @@ def copy(main_window):
     selected_items = main_window.ui.tree.selectedItems()
     item:classes.CustomTreeItem = selected_items[0]
     old_obj = item.object
+    new_object = None
+
     if old_obj.is_concept:
         prefil = None
     else:
@@ -181,7 +183,12 @@ def copy(main_window):
     [obj_name, ident_pset_name, ident_attrib_name, ident_value]= input_fields
 
     if obj_name:
-        psets = [cp.copy(pset) for pset in item.object.property_sets]
+        psets = list()
+
+        for pset in old_obj.property_sets:
+            new_pset = cp.copy(pset)
+            psets.append(new_pset)
+
         if is_concept:
             new_object = classes.Object(obj_name, "Group")
         else:
@@ -193,13 +200,22 @@ def copy(main_window):
                 ident_attribute = None
 
                 for pset in psets:
+
+                    #ident pset finden
                     if pset.name == ident_pset_name:
+                        merk_attrib = None
                         for attribute in pset.attributes:
+
+                            #ident Attrib finden
                             if attribute.name == ident_attrib_name:
-                                attribute.value = [ident_value]
-                                ident_attribute = attribute
-                        if ident_attribute is None:
-                            ident_attribute = classes.Attribute(pset,ident_attrib_name,[ident_value],constants.LIST)
+                                merk_attrib = attribute
+                        if merk_attrib is not None:
+                            ident_attribute = merk_attrib
+                            ident_attribute.value = [ident_value]
+                        else:
+                            ident_name = ident_attrib_name
+                            ident_attribute = classes.Attribute(pset,ident_name,[ident_value],constants.LIST)
+
                 if ident_attribute is None:
                     ident_pset = classes.PropertySet(ident_pset_name)
                     ident_attribute = classes.Attribute(ident_pset,ident_attrib_name,[ident_value],constants.LIST)
@@ -213,9 +229,8 @@ def copy(main_window):
         else:
             parent = item.parent()
         group_item: classes.CustomTreeItem = main_window.add_object_to_tree(new_object,parent)
-
-
-
+        if old_obj.parent is not None:
+            new_object.parent = old_obj.parent
 
 def rc_group_items(main_window):
     input_fields ,is_concept = popups.req_group_name(main_window)
@@ -275,6 +290,13 @@ def single_click(main_window, item: classes.CustomTreeItem):
 
         ui.lineEdit_object_name.setText(obj.name)
         fill_line_inputs(main_window,obj)
+
+        if not obj.is_concept:
+
+            ui: ui_mainwindow.Ui_MainWindow = main_window.ui
+
+            table_widget = ui.tableWidget_inherited
+            property_widget.left_click(main_window,table_widget.item(0,0))
 
 def fill_line_inputs(main_window, obj:classes.Object):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
@@ -392,9 +414,10 @@ def add_object(main_window):
                     elif result is None:
                         return
 
-                property_set = classes.PropertySet(p_set_name)
                 if parent is not None:
-                    parent.add_child(property_set)
+                    property_set = parent.create_child(p_set_name)
+                else:
+                    property_set = classes.PropertySet(p_set_name)
 
                 ident = create_ident(property_set, ident_name, ident_value)
                 obj = classes.Object(name, ident)

@@ -179,14 +179,8 @@ class PropertySet(Hirarchy):
     def parent(self, parent: PropertySet) -> None:
         if parent is None:
             self.remove_parent(self._parent)
-        else:
-            self._parent = parent
-            for par_attribute in parent.attributes:
-                par_attribute: Attribute = par_attribute
-                if par_attribute not in [attribute.parent for attribute in self.attributes]:
-                    attribute = Attribute(self, par_attribute.name, par_attribute.value, par_attribute.value_type,
-                                          par_attribute.data_type)
-                    par_attribute.add_child(attribute)
+            return
+        self._parent = parent
 
     def change_parent(self, new_parent: PropertySet) -> None:
         for attribute in self.attributes:
@@ -256,6 +250,24 @@ class PropertySet(Hirarchy):
             self.remove_attribute(attribute)
         self._parent = None
 
+    def __copy__(self):
+        new_pset = PropertySet(self.name)
+        for attribute in self.attributes:
+            new_attrib = copy.copy(attribute)
+            new_attrib.property_set = new_pset
+        if self.parent is not None:
+            self.parent.add_child(new_pset)
+
+        return new_pset
+
+    def create_child(self,name) -> PropertySet:
+        child  = PropertySet(name)
+        self.children.append(child)
+        child.parent = self
+        for attribute in self.attributes:
+            new_attrib =attribute.create_child()
+            new_attrib.property_set = child
+        return child
 
 class Attribute(Hirarchy):
     _registry: list[Attribute] = list()
@@ -394,6 +406,15 @@ class Attribute(Hirarchy):
         for child in self.children:
             child.delete()
 
+    def create_child(self) -> Attribute:
+        child = copy.copy(self)
+        self.add_child(child)
+        return child
+
+    def __copy__(self) -> Attribute:
+        new_attrib:Attribute = copy.deepcopy(self)
+        new_attrib.identifier = uuid4()
+        return new_attrib
 
 class Object(Hirarchy):
     _registry: list[Object] = list()
