@@ -181,24 +181,6 @@ def create_aggregation( pset_dict: dict[str, (classes.PropertySet, Cell, classes
     main_window.graph_window =graphs_window.GraphWindow(main_window,False)
     main_window.graph_window.import_excel(pset_dict,aggregate_dict)
 
-    # node_dict = {obj:graphs_window.Node(obj) for obj in classes.Object}
-    # print(node_dict)
-    # for obj in classes.Object:
-    #     node = node_dict[obj]
-    #     aggregate_list = aggregate_dict[obj]
-    #     if aggregate_list:
-    #         scene = graphs_window.AggregationScene(node)
-    #     for kuerzel in aggregate_list:
-    #         dic = pset_dict.get(kuerzel)
-    #         if dic is not None:
-    #             obj_child = dic[2]
-    #             if obj_child is not None:
-    #                 node.add_child(node_dict[obj_child])
-    #             else:
-    #                 logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
-    #         else:
-    #             logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
-
 def start(main_window, path: str) -> None:
     # TODO: add request for Identification Attribute
 

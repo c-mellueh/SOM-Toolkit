@@ -686,21 +686,47 @@ class GraphWindow(QWidget):
 
     ### Functions ###
 
-    def import_excel(self,pset_dict: dict[str, (classes.PropertySet, object, classes.Object)],
-                           aggregate_dict: dict[classes.Object, list[str]]) -> None:
+    def import_excel(self,
+                        pset_dict: dict[str, (classes.PropertySet, object, classes.Object)],
+                        aggregate_dict: dict[classes.Object, list[str]]) -> None:
 
-        kuerzel_dict = {obj:kuerzel for (kuerzel,(a,b,obj)) in pset_dict.items()}
-        all_children = [element for sublist in aggregate_dict.values() for element in sublist]
+
 
         def is_root(obj):
             kuerzel = kuerzel_dict[obj]
-            if kuerzel  in all_children:
+            if kuerzel in all_children:
                 return False
-            else:
+
+            if is_child(obj):
+                return False
+
+            return True
+
+        def is_child(obj:classes.Object) -> bool:
+            value:str = obj.ident_attrib.value[0]
+            last_num = value.split(".")[-1]
+
+            if not last_num.isdigit():
+                return False
+            last_num = int(last_num)
+            if last_num>= 100 and last_num%100 ==0:
                 return True
+            else:
+                return False
+
+        def link_inherits():
+            all_objects = aggregate_dict.keys()
+            ident_dict = {obj.ident_attrib.value[0]: obj for obj in all_objects}
+
+            for obj in all_objects:
+                if is_child(obj):
+                    value: str = obj.ident_attrib.value[0]
+                    parent_txt = value.split(".")[:-1]
+                    parent_txt = ".".join(parent_txt)
+                    parent_obj: classes.Object = ident_dict[parent_txt]
+                    parent_obj.add_inherit(obj)
 
         def recursion(node:Node)-> None:
-            scene = node.scene()
             aggregate_list = aggregate_dict[node.object]
             for kuerzel in aggregate_list:
                 dic = pset_dict.get(kuerzel)
@@ -714,11 +740,24 @@ class GraphWindow(QWidget):
                         logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
                 else:
                     logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+            for inherit_obj in node.object.inherits:
+                child_node = Node(inherit_obj,self)
+
+                if node.parent_box is not None:
+                    node.parent_box.add_child(child_node,True)
+                    recursion(child_node)
+
+
+        link_inherits()
+
         self.test_dict = {obj: Node(obj,self) for obj in classes.Object}
         self.scene_list = list()
 
-        root_objects = [obj for obj in classes.Object if is_root(obj)]
+        kuerzel_dict = {obj: kuerzel for (kuerzel, (a, b, obj)) in pset_dict.items()}
 
+        # list with all Child Abbreviations
+        all_children = [element for sublist in aggregate_dict.values() for element in sublist]
+        root_objects = [obj for obj in classes.Object if is_root(obj)]
 
         scene = None
         for obj in root_objects:
@@ -729,6 +768,8 @@ class GraphWindow(QWidget):
 
         self.update_combo_list()
         self.combo_box.setCurrentIndex(0)
+
+
     def delete_button_pressed(self) ->None:
         if not self.combo_box.currentText() == "":
             root_node = self.active_scene.root_node
