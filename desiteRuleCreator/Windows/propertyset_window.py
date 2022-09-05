@@ -12,7 +12,7 @@ from desiteRuleCreator.data import constants,classes
 from desiteRuleCreator.data.classes import PropertySet, Attribute
 from desiteRuleCreator import icons
 
-def make_string_printable(value):
+def float_to_string(value):
     value = str(value).replace(".", ",")
     return value
 
@@ -372,9 +372,6 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         item: QTableWidgetItem = self.widget.table_widget.item(tree_item.row(), 0)
         attribute: Attribute = self.get_attribute_by_name(item.text())
-        # if attribute_is_identifier(self.active_object,attribute):
-        #     popups.msg_mod_ident()
-        #     return
         index = self.widget.combo_type.findText(attribute.value_type)
         self.widget.combo_type.setCurrentIndex(index)
         index = self.widget.combo_data_type.findText(attribute.data_type)
@@ -383,15 +380,18 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         # Add Values
         for k, value in enumerate(attribute.value):
-            # if k == 0:
-            #     lines = self.input_lines[self.widget.layout_input]
-            # else:
             lines = self.new_line()
             if attribute.value_type == constants.RANGE:
                 for k, val in enumerate(value):
-                    lines[k].setText(make_string_printable(val))
+                    if attribute.data_type == constants.XS_DOUBLE:
+                        lines[k].setText(float_to_string(val))
+                    else:
+                        lines[k].setText(val)
             else:
-                lines.setText(make_string_printable(value))
+                if attribute.data_type == constants.XS_DOUBLE:
+                    lines.setText(float_to_string(value))
+                else:
+                    lines.setText(value)
         # input Name
         self.widget.lineEdit_name.setText(attribute.name)
 
