@@ -224,7 +224,6 @@ class PropertySet(Hirarchy):
         self.changed = True
         for child in self.children:
             attrib: Attribute = copy.copy(value)
-            attrib.identifier = str(uuid4())
             value.add_child(attrib)
             child.add_attribute(attrib)
 
@@ -274,7 +273,7 @@ class PropertySet(Hirarchy):
 class Attribute(Hirarchy):
     _registry: list[Attribute] = list()
 
-    def __init__(self, property_set: PropertySet, name: str, value: list, value_type: int, data_type: str = "xs:string",
+    def __init__(self, property_set: PropertySet | None, name: str, value: list, value_type: int, data_type: str = "xs:string",
                  child_inherits_values: bool = False, identifier: str = None):
 
         super(Attribute, self).__init__(name=name)
@@ -290,7 +289,8 @@ class Attribute(Hirarchy):
         self.identifier = identifier
         if self.identifier is None:
             self.identifier = str(uuid4())
-        property_set.add_attribute(self)
+        if property_set is not None:
+            property_set.add_attribute(self)
 
     def __str__(self) -> str:
         text = f"{self.property_set.name} : {self.name} = {self.value}"
@@ -383,7 +383,8 @@ class Attribute(Hirarchy):
 
     @property_set.setter
     def property_set(self, value: PropertySet) -> None:
-        self.property_set.remove_attribute(self)
+        if self.property_set is not None:
+            self.property_set.remove_attribute(self)
         value.add_attribute(self)
         self._propertySet = value
         self.changed = True
@@ -414,8 +415,8 @@ class Attribute(Hirarchy):
         return child
 
     def __copy__(self) -> Attribute:
-        new_attrib:Attribute = copy.deepcopy(self)
-        new_attrib.identifier = uuid4()
+        new_attrib:Attribute = Attribute(None,self.name,self.value,
+                                         self.value_type,self.data_type,self.child_inherits_values)
         return new_attrib
 
 class Object(Hirarchy):
