@@ -29,6 +29,29 @@ class Ui_layout_main(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.layout_grid = QGridLayout()
         self.layout_grid.setObjectName(u"layout_grid")
+        self.check_box_inherit = QCheckBox(layout_main)
+        self.check_box_inherit.setObjectName(u"check_box_inherit")
+
+        self.layout_grid.addWidget(self.check_box_inherit, 4, 5, 1, 1)
+
+        self.spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.layout_grid.addItem(self.spacer, 7, 0, 1, 1)
+
+        self.combo_data_type = QComboBox(layout_main)
+        self.combo_data_type.addItem("")
+        self.combo_data_type.addItem("")
+        self.combo_data_type.addItem("")
+        self.combo_data_type.addItem("")
+        self.combo_data_type.setObjectName(u"combo_data_type")
+
+        self.layout_grid.addWidget(self.combo_data_type, 2, 1, 1, 2)
+
+        self.button_add = QPushButton(layout_main)
+        self.button_add.setObjectName(u"button_add")
+
+        self.layout_grid.addWidget(self.button_add, 2, 5, 1, 1)
+
         self.label_name = QLabel(layout_main)
         self.label_name.setObjectName(u"label_name")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -39,30 +62,34 @@ class Ui_layout_main(object):
 
         self.layout_grid.addWidget(self.label_name, 2, 0, 1, 1)
 
-        self.spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.lineEdit_name = QLineEdit(layout_main)
+        self.lineEdit_name.setObjectName(u"lineEdit_name")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.lineEdit_name.sizePolicy().hasHeightForWidth())
+        self.lineEdit_name.setSizePolicy(sizePolicy1)
+        self.lineEdit_name.setMinimumSize(QSize(350, 0))
 
-        self.layout_grid.addItem(self.spacer, 7, 0, 1, 1)
+        self.layout_grid.addWidget(self.lineEdit_name, 3, 0, 1, 6)
 
-        self.button_add = QPushButton(layout_main)
-        self.button_add.setObjectName(u"button_add")
+        self.label_values = QLabel(layout_main)
+        self.label_values.setObjectName(u"label_values")
 
-        self.layout_grid.addWidget(self.button_add, 2, 5, 1, 1)
+        self.layout_grid.addWidget(self.label_values, 4, 0, 1, 5)
+
+        self.combo_type = QComboBox(layout_main)
+        self.combo_type.addItem("")
+        self.combo_type.addItem("")
+        self.combo_type.addItem("")
+        self.combo_type.setObjectName(u"combo_type")
+
+        self.layout_grid.addWidget(self.combo_type, 2, 3, 1, 2)
 
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.layout_input = QHBoxLayout()
         self.layout_input.setObjectName(u"layout_input")
-        self.lineEdit_input = QLineEdit(layout_main)
-        self.lineEdit_input.setObjectName(u"lineEdit_input")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.lineEdit_input.sizePolicy().hasHeightForWidth())
-        self.lineEdit_input.setSizePolicy(sizePolicy1)
-        self.lineEdit_input.setFrame(True)
-
-        self.layout_input.addWidget(self.lineEdit_input)
-
         self.button_add_line = QPushButton(layout_main)
         self.button_add_line.setObjectName(u"button_add_line")
         sizePolicy.setHeightForWidth(self.button_add_line.sizePolicy().hasHeightForWidth())
@@ -77,44 +104,6 @@ class Ui_layout_main(object):
 
 
         self.layout_grid.addLayout(self.verticalLayout, 6, 0, 1, 6)
-
-        self.lineEdit_name = QLineEdit(layout_main)
-        self.lineEdit_name.setObjectName(u"lineEdit_name")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.lineEdit_name.sizePolicy().hasHeightForWidth())
-        self.lineEdit_name.setSizePolicy(sizePolicy2)
-        self.lineEdit_name.setMinimumSize(QSize(350, 0))
-
-        self.layout_grid.addWidget(self.lineEdit_name, 3, 0, 1, 6)
-
-        self.label_values = QLabel(layout_main)
-        self.label_values.setObjectName(u"label_values")
-
-        self.layout_grid.addWidget(self.label_values, 4, 0, 1, 5)
-
-        self.check_box_inherit = QCheckBox(layout_main)
-        self.check_box_inherit.setObjectName(u"check_box_inherit")
-
-        self.layout_grid.addWidget(self.check_box_inherit, 4, 5, 1, 1)
-
-        self.combo_type = QComboBox(layout_main)
-        self.combo_type.addItem("")
-        self.combo_type.addItem("")
-        self.combo_type.addItem("")
-        self.combo_type.setObjectName(u"combo_type")
-
-        self.layout_grid.addWidget(self.combo_type, 2, 3, 1, 2)
-
-        self.combo_data_type = QComboBox(layout_main)
-        self.combo_data_type.addItem("")
-        self.combo_data_type.addItem("")
-        self.combo_data_type.addItem("")
-        self.combo_data_type.addItem("")
-        self.combo_data_type.setObjectName(u"combo_data_type")
-
-        self.layout_grid.addWidget(self.combo_data_type, 2, 1, 1, 2)
 
 
         self.horizontalLayout.addLayout(self.layout_grid)
@@ -141,11 +130,11 @@ class Ui_layout_main(object):
         __qtablewidgetitem7 = QTableWidgetItem()
         self.table_widget.setItem(0, 3, __qtablewidgetitem7)
         self.table_widget.setObjectName(u"table_widget")
-        sizePolicy3 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.table_widget.sizePolicy().hasHeightForWidth())
-        self.table_widget.setSizePolicy(sizePolicy3)
+        sizePolicy2 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.table_widget.sizePolicy().hasHeightForWidth())
+        self.table_widget.setSizePolicy(sizePolicy2)
         self.table_widget.setMinimumSize(QSize(480, 0))
         self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_widget.setDragEnabled(True)
@@ -172,20 +161,20 @@ class Ui_layout_main(object):
 
     def retranslateUi(self, layout_main):
         layout_main.setWindowTitle(QCoreApplication.translate("layout_main", u"Form", None))
-        self.label_name.setText(QCoreApplication.translate("layout_main", u"Name", None))
-        self.button_add.setText(QCoreApplication.translate("layout_main", u"Add", None))
-        self.button_add_line.setText(QCoreApplication.translate("layout_main", u"+", None))
-        self.label_values.setText(QCoreApplication.translate("layout_main", u"Values", None))
         self.check_box_inherit.setText(QCoreApplication.translate("layout_main", u"inherit", None))
-        self.combo_type.setItemText(0, QCoreApplication.translate("layout_main", u"List", None))
-        self.combo_type.setItemText(1, QCoreApplication.translate("layout_main", u"Format", None))
-        self.combo_type.setItemText(2, QCoreApplication.translate("layout_main", u"Range", None))
-
         self.combo_data_type.setItemText(0, QCoreApplication.translate("layout_main", u"xs:string", None))
         self.combo_data_type.setItemText(1, QCoreApplication.translate("layout_main", u"xs:int", None))
         self.combo_data_type.setItemText(2, QCoreApplication.translate("layout_main", u"xs:bool", None))
         self.combo_data_type.setItemText(3, QCoreApplication.translate("layout_main", u"xs:double", None))
 
+        self.button_add.setText(QCoreApplication.translate("layout_main", u"Add", None))
+        self.label_name.setText(QCoreApplication.translate("layout_main", u"Name", None))
+        self.label_values.setText(QCoreApplication.translate("layout_main", u"Values", None))
+        self.combo_type.setItemText(0, QCoreApplication.translate("layout_main", u"List", None))
+        self.combo_type.setItemText(1, QCoreApplication.translate("layout_main", u"Format", None))
+        self.combo_type.setItemText(2, QCoreApplication.translate("layout_main", u"Range", None))
+
+        self.button_add_line.setText(QCoreApplication.translate("layout_main", u"+", None))
         ___qtablewidgetitem = self.table_widget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("layout_main", u"Name", None));
         ___qtablewidgetitem1 = self.table_widget.horizontalHeaderItem(1)

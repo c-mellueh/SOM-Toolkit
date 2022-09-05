@@ -1,6 +1,6 @@
 from __future__ import annotations
 import os
-
+import logging
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtWidgets import QTableWidgetItem, QHBoxLayout, QLineEdit, QMessageBox, QMenu,QTableWidgetItem
@@ -22,6 +22,33 @@ def string_to_float(value: str):
 
     return value
 
+class LineInput(QLineEdit):
+    def __init__(self,parent):
+        super(LineInput, self).__init__(parent)
+        self.pset_window = parent
+
+    def keyPressEvent(self, event:QtGui.QKeyEvent) -> None:
+
+        if event.matches(QtGui.QKeySequence.Paste):
+            text = QtGui.QGuiApplication.clipboard().text()
+            text_list = text.split(constants.DIVIDER)
+            if len(text_list)<2:
+                super(LineInput, self).keyPressEvent(event)
+                return
+
+            dif =len(text_list)- len (self.pset_window.input_lines)
+            if dif >=0:
+                for i in range(dif+1):
+                    self.pset_window.new_line()
+
+            lines = [line for line in self.pset_window.input_lines.values()]
+            for i,text in enumerate(text_list):
+                text = text.strip()
+                line:LineInput = lines[i]
+                line.setText(text)
+
+        else:
+            super(LineInput, self).keyPressEvent(event)
 
 class PropertySetWindow(QtWidgets.QWidget):
     def __init__(self, main_window, property_set: PropertySet, active_object, window_title):
@@ -32,16 +59,15 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.property_set = property_set
         self.active_object = active_object
         fill_attribute_table(self.active_object,self.widget.table_widget,self.property_set)
-        self.widget.button_add_line.clicked.connect(self.new_line)
-        self.input_lines = {self.widget.layout_input: self.widget.lineEdit_input}
+        self.input_lines = {}
         self.widget.table_widget.itemClicked.connect(self.list_clicked)
         self.widget.combo_type.currentTextChanged.connect(self.combo_change)
         self.old_state = self.widget.combo_type.currentText()
         self.widget.lineEdit_name.textChanged.connect(self.text_changed)
         self.widget.combo_data_type.currentTextChanged.connect(self.data_combo_change)
 
-        # Buttons
         self.widget.button_add.clicked.connect(self.add_button_pressed)
+        self.widget.button_add_line.clicked.connect(self.new_line)
 
         self.widget.table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.widget.table_widget.customContextMenuRequested.connect(self.open_menu)
@@ -49,11 +75,14 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.setWindowIcon(icons.get_icon())
         self.show()
         self.resize(1000, 400)
+        self.new_line()
 
-
+    def selected_items(self) -> list[classes.CustomTableItem]:
+        selected_items = self.widget.table_widget.selectedItems()
+        return selected_items
 
     def delete_selection(self):
-        selected_items = self.widget.table_widget.selectedItems()
+        selected_items = self.selected_items()
 
         string_list = list()
 
@@ -76,8 +105,6 @@ class PropertySetWindow(QtWidgets.QWidget):
 
             selected_rows.sort(reverse=True)
 
-
-
             for row in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
                 self.widget.table_widget.removeRow(row)
@@ -93,7 +120,28 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.action_delete_attribute.triggered.connect(self.delete_selection)
         self.action_rename_attribute.triggered.connect(self.rename_selection)
 
+        columns = self.widget.table_widget.columnCount()
+        selected_rows = len(self.selected_items())/columns
+        if logging.root.level <= logging.DEBUG and selected_rows ==1:
+            self.action_info = menu.addAction("Info")
+            self.action_info.triggered.connect(self.info)
+
         menu.exec(self.widget.table_widget.viewport().mapToGlobal(position))
+
+
+    def info(self, main_window):
+        table_item = self.selected_items()[0]
+        item = table_item.item
+        print(item.name)
+        print(f"parent: {item.parent}")
+
+        if item.children:
+            print("children:")
+            for child in item.children:
+                print(f"  {child}")
+        else:
+            print("no children")
+
 
     def get_attribute_by_name(self, name):
         for attribute in self.property_set.attributes:
@@ -236,16 +284,13 @@ class PropertySetWindow(QtWidgets.QWidget):
         attribute = None
         for attrib in self.property_set.attributes:
             if attrib.name == self.widget.lineEdit_name.text():
-                print(attrib.name)
                 attribute = update_attribute(attrib)
                 already_exists = True
-        print(f"attribute: {attribute}")
 
         if not already_exists:
             attribute = add_attribute()
         if attribute is not None:
             if attribute_is_identifier(self.mainWindow.active_object,attribute):
-                print("REDRAW")
                 self.mainWindow.reload_objects()
         self.clear_lines()
 
@@ -269,16 +314,22 @@ class PropertySetWindow(QtWidgets.QWidget):
     
 
     def new_line(self):
+        def range_mode(self):
+
+            self.lineEdit_input2 = QLineEdit(self)
+            self.new_layout.addWidget(self.lineEdit_input2)
+            self.input_lines[self.new_layout] = [self.lineEdit_input, self.lineEdit_input2]
+        # if len(self.input_lines)>0:
         self.widget.layout_input.removeWidget(self.widget.button_add_line)
         self.new_layout = QHBoxLayout()
-        self.lineEdit_input = QLineEdit(self)
+        self.lineEdit_input = LineInput(self)
         self.new_layout.addWidget(self.lineEdit_input)
 
         self.widget.verticalLayout.insertLayout(0, self.new_layout)
 
         status = self.widget.combo_type.currentText()
         if status in constants.RANGE_STRINGS:
-            self.range_mode()
+            range_mode()
             line_edit = [self.lineEdit_input, self.lineEdit_input2]
 
         else:
@@ -287,29 +338,26 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.new_layout.addWidget(self.widget.button_add_line)
         return line_edit
 
-    def range_mode(self):
 
-        self.lineEdit_input2 = QLineEdit(self)
-        self.new_layout.addWidget(self.lineEdit_input2)
-        self.input_lines[self.new_layout] = [self.lineEdit_input, self.lineEdit_input2]
 
     def clear_lines(self):
 
         for key, item in tuple(self.input_lines.items()):
-
-            if key != self.widget.layout_input:
-                v_layout: QHBoxLayout = key.parent()
-                v_layout.removeItem(key)
-                key.setParent(None)
-                if isinstance(item, list):
-                    for i in item:
-                        v_layout.removeWidget(i)
-                        i.setParent(None)
-                else:
-                    v_layout.removeWidget(item)
-                    item.setParent(None)
-                del self.input_lines[key]
-
+            if len(self.input_lines)>1:
+                if key != self.widget.layout_input:
+                    v_layout: QHBoxLayout = key.parent()
+                    v_layout.removeItem(key)
+                    key.setParent(None)
+                    if isinstance(item, list):
+                        for i in item:
+                            v_layout.removeWidget(i)
+                            i.setParent(None)
+                    else:
+                        v_layout.removeWidget(item)
+                        item.setParent(None)
+                    del self.input_lines[key]
+            else:
+                key.addWidget(self.widget.button_add_line)
         self.widget.lineEdit_name.setText("")
         for items in self.input_lines.values():
             if isinstance(items, list):
@@ -317,7 +365,8 @@ class PropertySetWindow(QtWidgets.QWidget):
                     item.setText("")
             else:
                 items.setText("")
-        self.widget.layout_input.addWidget(self.widget.button_add_line)
+        #self.widget.layout_input
+
 
     def list_clicked(self, tree_item:QTableWidgetItem|classes.CustomTableItem ):
 
@@ -334,10 +383,10 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         # Add Values
         for k, value in enumerate(attribute.value):
-            if k == 0:
-                lines = self.input_lines[self.widget.layout_input]
-            else:
-                lines = self.new_line()
+            # if k == 0:
+            #     lines = self.input_lines[self.widget.layout_input]
+            # else:
+            lines = self.new_line()
             if attribute.value_type == constants.RANGE:
                 for k, val in enumerate(value):
                     lines[k].setText(make_string_printable(val))
