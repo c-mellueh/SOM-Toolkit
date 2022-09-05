@@ -496,6 +496,7 @@ class Node(QGraphicsProxyWidget):
         print(f"children:")
         for child in self.children:
             print(f"   {child}")
+
     def scene(self) -> AggregationScene:
         return super(Node, self).scene()
 
@@ -583,6 +584,8 @@ class Node(QGraphicsProxyWidget):
 
     @property
     def is_root(self) -> bool:
+        if self.scene() is None:
+            return False
         if self == self.scene().root_node:
             return True
         else:

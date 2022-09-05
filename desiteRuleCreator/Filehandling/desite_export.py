@@ -294,7 +294,7 @@ def export_bs(main_window: MainWindow):
         xml_root.set("takt", "")
 
         root_objects: list[graphs_window.Node] = [node for node in graphs_window.Node._registry if
-                                                  node.parent_box is None]
+                                                  node.is_root]
 
 
         root_objects.sort(key= lambda x:x.name)
