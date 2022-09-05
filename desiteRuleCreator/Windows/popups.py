@@ -110,11 +110,9 @@ def req_group_name(main_window,prefil:list[str]= None):
     widget.setupUi(dialog)
     widget.radioButton.toggled.connect(change_visibility)
     input_fields = [widget.group_name, widget.pset_name, widget.attribute_name, widget.attribute_value]
-    print(prefil)
     if prefil is not None:
         for i,field in enumerate(input_fields[:-1]):
             pl_text = prefil[i]
-            print(pl_text)
             field.setText(pl_text)
 
     if dialog.exec():
