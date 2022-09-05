@@ -25,13 +25,14 @@ def string_to_float(value: str):
 class LineInput(QLineEdit):
     def __init__(self,parent):
         super(LineInput, self).__init__(parent)
-        self.pset_window = parent
+        self.pset_window:PropertySetWindow = parent
 
     def keyPressEvent(self, event:QtGui.QKeyEvent) -> None:
-
-        if event.matches(QtGui.QKeySequence.Paste):
+        seperator = self.pset_window.mainWindow.project.seperator
+        sep_bool = self.pset_window.mainWindow.project.seperator_status
+        if event.matches(QtGui.QKeySequence.Paste) and sep_bool:
             text = QtGui.QGuiApplication.clipboard().text()
-            text_list = text.split(constants.DIVIDER)
+            text_list = text.split(seperator)
             if len(text_list)<2:
                 super(LineInput, self).keyPressEvent(event)
                 return
@@ -66,6 +67,12 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.widget.lineEdit_name.textChanged.connect(self.text_changed)
         self.widget.combo_data_type.currentTextChanged.connect(self.data_combo_change)
 
+        self.widget.check_box_seperator.setChecked(self.mainWindow.project.seperator_status)
+        self.widget.line_edit_seperator.setText(self.mainWindow.project.seperator)
+
+        self.widget.check_box_seperator.stateChanged.connect(self.seperator_changed)
+        self.widget.line_edit_seperator.textChanged.connect(self.seperator_text_changed)
+
         self.widget.button_add.clicked.connect(self.add_button_pressed)
         self.widget.button_add_line.clicked.connect(self.new_line)
 
@@ -76,6 +83,17 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.show()
         self.resize(1000, 400)
         self.new_line()
+
+    def seperator_text_changed(self, status) -> None:
+        self.mainWindow.project.seperator = status
+
+    def seperator_changed(self,status:int) -> None:
+        if status == 2:
+            b = True
+        else:
+            b = False
+        self.mainWindow.project.seperator_status =b
+        self.widget.line_edit_seperator.setEnabled(b)
 
     def selected_items(self) -> list[classes.CustomTableItem]:
         selected_items = self.widget.table_widget.selectedItems()

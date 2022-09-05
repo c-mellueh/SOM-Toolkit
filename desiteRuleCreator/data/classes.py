@@ -34,6 +34,8 @@ class Project(object):
         self._changed = True
         self.main_window = main_window
         self.name = name
+        self.seperator_status = True
+        self.seperator = ","
 
     @property
     def changed(self) -> bool:
