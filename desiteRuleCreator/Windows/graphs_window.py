@@ -252,7 +252,7 @@ class MainView(QGraphicsView):
         if isinstance(node,Node):
             menu = QMenu()
             action_delete = menu.addAction("delete")
-            action_delete.triggered.connect(node.delete_clicked)
+            action_delete.triggered.connect(node.delete)
 
             if logging.DEBUG >= logging.root.level:
                 action_delete = menu.addAction("Info")
@@ -534,42 +534,39 @@ class Node(QGraphicsProxyWidget):
             self.object_graph_rep.list_widget_property_sets.addItem(item)
 
     def remove_child(self,child:Node) -> None:
+        for c in child.children.copy():
+            child.remove_child(c)
 
         self.children.remove(child)
-        self._registry.remove(child)
-        for item in child.children.copy():
-            child.remove_child(item)
-
         child.object.remove_node(child)
         self.scene().remove_node(child)
+        Node._registry.remove(child)
 
+    def delete(self):
+        def request_delete()->bool:
+            def get_all_children(node:Node) -> None:
+                nodes.append(node)
+                for child in node.children:
+                    get_all_children(child)
 
-
-    def delete_clicked(self):
-        def recursion(node:Node) -> None:
-            nodes.append(node)
-            for child in node.children:
-                recursion(child)
-        nodes = list()
-        if self.is_root:
-            for child in self.children:
-                recursion(child)
-        else:
-            recursion(self)
-
-
-        delete_bool = popups.msg_del_items([item_to_name(node) for node in nodes])
-        if delete_bool:
+            nodes = list()
             if self.is_root:
-                self.object.remove_node(self)
-                self.remove_all_children()
+                for child in self.children:
+                    get_all_children(child)
+            else:
+                get_all_children(self)
+            return popups.msg_del_items([item_to_name(node) for node in nodes])
+
+        if request_delete():
+            if self.is_root:
+                for child in self.children.copy():
+                    self.remove_child(child)
                 self.graph_window.remove_scene(self.scene())
+                Node._registry.remove(self)
+                self.object.remove_node(self)
+
             else:
                 self.parent_box.remove_child(self)
-
-    def remove_all_children(self) -> None:
-        for child in self.children.copy():
-                self.remove_child(child)
 
     def select_list_item(self,selected_item):
         if selected_item is not None:
@@ -757,10 +754,18 @@ class GraphWindow(QWidget):
 
         # list with all Child Abbreviations
         all_children = [element for sublist in aggregate_dict.values() for element in sublist]
-        root_objects = [obj for obj in classes.Object if is_root(obj)]
+        root_objects = list()
+
+        for obj in classes.Object:
+            if is_root(obj):
+                root_objects.append(obj)
+       # root_objects = [obj for obj in classes.Object if is_root(obj)]
 
         scene = None
         for obj in root_objects:
+            if obj.name == "Ausbau":
+                print(obj)
+
             node = Node(obj,self)
             scene = AggregationScene(node)
             self.scenes.append(scene)
@@ -776,7 +781,8 @@ class GraphWindow(QWidget):
             string_list = [item_to_name(item) for item in self.active_scene.items() if isinstance(item, Node)]
             delete_request = popups.msg_del_items(string_list)
             if delete_request:
-                root_node.remove_all_children()
+                for child in root_node.children.copy():
+                    root_node.remove_child(child)
                 self.remove_scene(self.active_scene)
 
     def remove_scene(self,scene:AggregationScene) -> None:
