@@ -16,16 +16,34 @@
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <layout class="QGridLayout" name="layout_grid">
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_name">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+     <item row="2" column="1" colspan="2">
+      <widget class="QComboBox" name="combo_data_type">
+       <item>
+        <property name="text">
+         <string>xs:string</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>xs:int</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>xs:bool</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>xs:double</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="4" column="4">
+      <widget class="QCheckBox" name="check_box_inherit">
        <property name="text">
-        <string>Name</string>
+        <string>inherit</string>
        </property>
       </widget>
      </item>
@@ -42,30 +60,49 @@
        </property>
       </spacer>
      </item>
-     <item row="2" column="5">
-      <widget class="QPushButton" name="button_add">
+     <item row="4" column="5">
+      <widget class="QCheckBox" name="check_box_seperator">
        <property name="text">
-        <string>Add</string>
+        <string>Seperate:</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="6" column="0" colspan="6">
+     <item row="4" column="6">
+      <widget class="QLineEdit" name="line_edit_seperator">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="4">
+      <widget class="QLabel" name="label_values">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Values</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0" colspan="7">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QHBoxLayout" name="layout_input">
-         <item>
-          <widget class="QLineEdit" name="lineEdit_input">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frame">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item>
           <widget class="QPushButton" name="button_add_line">
            <property name="sizePolicy">
@@ -95,7 +132,7 @@
        </item>
       </layout>
      </item>
-     <item row="3" column="0" colspan="6">
+     <item row="3" column="0" colspan="7">
       <widget class="QLineEdit" name="lineEdit_name">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -111,21 +148,27 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="5">
-      <widget class="QLabel" name="label_values">
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_name">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
-        <string>Values</string>
+        <string>Name</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="5">
-      <widget class="QCheckBox" name="check_box_inherit">
+     <item row="2" column="6">
+      <widget class="QPushButton" name="button_add">
        <property name="text">
-        <string>inherit</string>
+        <string>Add</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="3" colspan="2">
+     <item row="2" column="3" colspan="3">
       <widget class="QComboBox" name="combo_type">
        <item>
         <property name="text">
@@ -140,30 +183,6 @@
        <item>
         <property name="text">
          <string>Range</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="2" column="1" colspan="2">
-      <widget class="QComboBox" name="combo_data_type">
-       <item>
-        <property name="text">
-         <string>xs:string</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>xs:int</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>xs:bool</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>xs:double</string>
         </property>
        </item>
       </widget>

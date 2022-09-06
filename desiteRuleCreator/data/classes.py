@@ -34,6 +34,8 @@ class Project(object):
         self._changed = True
         self.main_window = main_window
         self.name = name
+        self.seperator_status = True
+        self.seperator = ","
 
     @property
     def changed(self) -> bool:
@@ -155,7 +157,7 @@ class PropertySet(Hirarchy):
 
     def __init__(self, name: str, obj: Object = None, identifier: str = None) -> None:
         super(PropertySet, self).__init__(name)
-        self._attributes = list()
+        self._attributes = set()
         self._object = obj
         self._registry.append(self)
         self.identifier = identifier
@@ -179,14 +181,8 @@ class PropertySet(Hirarchy):
     def parent(self, parent: PropertySet) -> None:
         if parent is None:
             self.remove_parent(self._parent)
-        else:
-            self._parent = parent
-            for par_attribute in parent.attributes:
-                par_attribute: Attribute = par_attribute
-                if par_attribute not in [attribute.parent for attribute in self.attributes]:
-                    attribute = Attribute(self, par_attribute.name, par_attribute.value, par_attribute.value_type,
-                                          par_attribute.data_type)
-                    par_attribute.add_child(attribute)
+            return
+        self._parent = parent
 
     def change_parent(self, new_parent: PropertySet) -> None:
         for attribute in self.attributes:
@@ -215,20 +211,23 @@ class PropertySet(Hirarchy):
         self.changed = True
 
     @property
-    def attributes(self) -> list[Attribute]:
+    def attributes(self) -> set[Attribute]:
         return self._attributes
 
     @attributes.setter
-    def attributes(self, value: list[Attribute]) -> None:
+    def attributes(self, value: set[Attribute]) -> None:
         self._attributes = value
         self.changed = True
 
     def add_attribute(self, value: Attribute) -> None:
-        self._attributes.append(value)
+        self._attributes.add(value)
         self.changed = True
+
+        # if value.property_set is not None:
+        #     value.property_set.remove_attribute(value)
+        value._property_set = self
         for child in self.children:
             attrib: Attribute = copy.copy(value)
-            attrib.identifier = str(uuid4())
             value.add_child(attrib)
             child.add_attribute(attrib)
 
@@ -256,16 +255,36 @@ class PropertySet(Hirarchy):
             self.remove_attribute(attribute)
         self._parent = None
 
+    def __copy__(self):
+        new_pset = PropertySet(self.name)
+
+        for attribute in self.attributes:
+            new_attrib = copy.copy(attribute)
+            new_pset.add_attribute(new_attrib)
+
+        if self.parent is not None:
+            self.parent.add_child(new_pset)
+
+        return new_pset
+
+    def create_child(self,name) -> PropertySet:
+        child  = PropertySet(name)
+        self.children.append(child)
+        child.parent = self
+        for attribute in self.attributes:
+            new_attrib =attribute.create_child()
+            child.add_attribute(new_attrib)
+        return child
 
 class Attribute(Hirarchy):
     _registry: list[Attribute] = list()
 
-    def __init__(self, property_set: PropertySet, name: str, value: list, value_type: int, data_type: str = "xs:string",
+    def __init__(self, property_set: PropertySet | None, name: str, value: list, value_type: int, data_type: str = "xs:string",
                  child_inherits_values: bool = False, identifier: str = None):
 
         super(Attribute, self).__init__(name=name)
         self._value = value
-        self._propertySet = property_set
+        self._property_set = property_set
         self._value_type = value_type
         self._data_type = data_type
         self._object = None
@@ -276,7 +295,8 @@ class Attribute(Hirarchy):
         self.identifier = identifier
         if self.identifier is None:
             self.identifier = str(uuid4())
-        property_set.add_attribute(self)
+        if property_set is not None:
+            property_set.add_attribute(self)
 
     def __str__(self) -> str:
         text = f"{self.property_set.name} : {self.name} = {self.value}"
@@ -365,14 +385,7 @@ class Attribute(Hirarchy):
 
     @property
     def property_set(self) -> PropertySet:
-        return self._propertySet
-
-    @property_set.setter
-    def property_set(self, value: PropertySet) -> None:
-        self.property_set.remove_attribute(self)
-        value.add_attribute(self)
-        self._propertySet = value
-        self.changed = True
+        return self._property_set
 
     def is_equal(self, attribute: Attribute) -> bool:
         equal = True
@@ -394,6 +407,17 @@ class Attribute(Hirarchy):
         for child in self.children:
             child.delete()
 
+    def create_child(self) -> Attribute:
+        child = copy.copy(self)
+        self.add_child(child)
+        return child
+
+    def __copy__(self) -> Attribute:
+        new_attrib:Attribute = Attribute(None,self.name,self.value,
+                                         self.value_type,self.data_type,self.child_inherits_values)
+        if self.parent is not None:
+            self.parent.add_child(new_attrib)
+        return new_attrib
 
 class Object(Hirarchy):
     _registry: list[Object] = list()
@@ -406,14 +430,17 @@ class Object(Hirarchy):
         self._property_sets: list[PropertySet] = list()
         self._ident_attrib = ident_attrib
         self._nodes: set[graphs_window.Node] = set()
-        self.aggregates_to: set[Object] = set()
-        self.aggregates_from: set[Object] = set()
         self.changed = True
+        self._inherits:set[Object] = set()
+        self._inherits_from: Object|None = None
 
         if identifier is None:
             self.identifier = str(uuid4())
         else:
             self.identifier = identifier
+
+    def __str__(self):
+        return f"Object {self.name}"
 
     @property
     def nodes(self) -> set[graphs_window.Node]:  # Todo: add nodes functionality to graphs_window
@@ -423,7 +450,20 @@ class Object(Hirarchy):
         self._nodes.add(node)
 
     def remove_node(self, node: graphs_window.Node) -> None:
-        self._nodes.remove(node)
+        self.nodes.remove(node)
+
+    @property
+    def inherits(self) -> set[Object]:
+        return self._inherits
+
+    def add_inherit(self,value:Object) -> None:
+        self._inherits.add(value)
+        value._inherits_from = self
+
+
+    def remove_inherit(self,value:Object) -> None:
+        self._inherits.remove(value)
+        value._inherits_from = None
 
     @property
     def inherited_property_sets(self) -> dict[Object, list[PropertySet]]:
@@ -500,22 +540,16 @@ class Object(Hirarchy):
         for pset in self.property_sets:
             pset.delete()
 
+        for node in self.nodes.copy():
+            if node.scene() is not None:
+                node.delete_clicked()
+
+
     def get_property_set_by_name(self, property_set_name: str) -> PropertySet | None:
         for property_set in self.property_sets:
             if property_set.name == property_set_name:
                 return property_set
         return None
-
-    def add_aggregation(self, value: Object) -> None:
-        self.aggregates_to.add(value)
-        value.aggregates_from.add(self)
-
-    def remove_aggregation(self, value: Object, recursion: bool = False) -> None:
-        self.aggregates_to.remove(value)
-        value.aggregates_from.remove(self)
-        if recursion:
-            for item in value.aggregates_to:
-                value.remove_aggregation(item, recursion)
 
 
 class Script(QListWidgetItem):
@@ -554,10 +588,8 @@ class CustomTree(QTreeWidget):
         super(CustomTree, self).__init__(layout)
 
     def dropEvent(self, event: QDropEvent) -> None:
-
         selected_items = self.selectedItems()
         droped_on_item = self.itemFromIndex(self.indexAt(event.pos()))
-
         if self.dropIndicatorPosition() == QAbstractItemView.DropIndicatorPosition.OnItem:
             super(CustomTree, self).dropEvent(event)
             parent = droped_on_item.object
@@ -580,9 +612,10 @@ class CustomTreeItem(QTreeWidgetItem):
         self._object = obj
         self.update()
 
-    def addChild(self, child: QTreeWidgetItem) -> None:
+    def addChild(self, child: CustomTreeItem) -> None:
         super(CustomTreeItem, self).addChild(child)
-        self.object.add_child(child.object)
+        if child.object not in self.object.children:
+            self.object.add_child(child.object)
 
     @property
     def object(self) -> Object:

@@ -69,7 +69,7 @@ class MainWindow(QMainWindow):
         self.ui.code_edit.textChanged.connect(self.update_script)
         self.ui.tree.resizeColumnToContents(0)
         self.save_path = None
-
+        #self.open_file("C:/Users/ChristophMellueh/OneDrive - Deutsche Bahn/Projekte/Programmieren/SOM/python_test/SOM MAKA_20.06.2022_bereinigt.xlsx")
 
     @property
     def save_path(self) -> str:
@@ -161,6 +161,9 @@ class MainWindow(QMainWindow):
         classes.Attribute._registry= list()
 
     # ObjectWidget
+    def info(self):
+        object_widget.info(self)
+
     def reload_objects(self):
         object_widget.reload(self)
 
@@ -176,6 +179,8 @@ class MainWindow(QMainWindow):
     def rc_group(self):
         object_widget.rc_group_items(self)
 
+    def copy_object(self):
+        object_widget.copy(self)
     def rc_rename(self):
         object_widget.rc_rename(self)
 
@@ -209,7 +214,7 @@ class MainWindow(QMainWindow):
         return object_widget.add_object_to_tree(self, obj, parent)
 
     def delete_object(self):
-        object_widget.delete_object(self)
+        object_widget.rc_delete(self)
 
     # PropertyWidget
     def attribute_double_clicked(self,item):

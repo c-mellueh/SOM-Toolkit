@@ -146,11 +146,13 @@ def import_new(projekt_xml: etree._Element) -> None:
                 for xml_property_set in xml_object:
                     fill_dict(xml_property_set_dict, xml_property_set)
                     for xml_attribute in xml_property_set:
+                        uuid = xml_attribute.attrib["identifer"]
+                        if xml_attribute_dict.get(uuid) is not None:
+                            print(f"ERROR DUPLICATED UUID {uuid}")
                         fill_dict(xml_attribute_dict, xml_attribute)
 
         def create_link(item_dict: dict[str, Type[classes.Hirarchy]], xml_dict: dict[str, str]):
             for ident, item in item_dict.items():
-
                 parent_ident = xml_dict[str(ident)]
                 parent_item = item_dict.get(parent_ident)
                 if parent_item is not None:
@@ -166,8 +168,9 @@ def import_new(projekt_xml: etree._Element) -> None:
         attribute_dict = create_ident_dict(classes.Attribute)
 
         create_link(obj_dict, xml_object_dict)
-        create_link(attribute_dict, xml_attribute_dict)
         create_link(property_set_dict, xml_property_set_dict)
+        create_link(attribute_dict, xml_attribute_dict)
+
 
     def link_aggregation() -> None:
         obj_dict = {obj.identifier: obj for obj in classes.Object}

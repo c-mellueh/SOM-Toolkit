@@ -97,18 +97,23 @@ def msg_mod_ident():
     default_message(text)
 
 
-def req_group_name(main_window):
+def req_group_name(main_window,prefil:list[str]= None):
     def change_visibility(checked):
         enable = not checked
         widget.pset_name.setEnabled(enable)
         widget.attribute_name.setEnabled(enable)
         widget.attribute_value.setEnabled(enable)
 
+
     dialog = QDialog(main_window)
     widget = ui_groupReq.Ui_Dialog()
     widget.setupUi(dialog)
     widget.radioButton.toggled.connect(change_visibility)
     input_fields = [widget.group_name, widget.pset_name, widget.attribute_name, widget.attribute_value]
+    if prefil is not None:
+        for i,field in enumerate(input_fields[:-1]):
+            pl_text = prefil[i]
+            field.setText(pl_text)
 
     if dialog.exec():
         return [input_field.text() for input_field in input_fields],widget.radioButton.isChecked()

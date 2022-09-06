@@ -64,17 +64,17 @@ def save(main_window:MainWindow, path:str) -> None:
             add_attribute(attribute, property_set, xml_pset)
 
     def add_object(obj: classes.Object) -> None:
-        def add_aggregation():
-            for child in obj.aggregates_to:
-                xml_aggregate = etree.SubElement(xml_object,constants.AGGREGATE)
-                xml_aggregate.set(constants.AGGREGATES_TO,str(child.identifier))
+        # def add_aggregation():
+        #     for child in obj.aggregates_to:
+        #         xml_aggregate = etree.SubElement(xml_object,constants.AGGREGATE)
+        #         xml_aggregate.set(constants.AGGREGATES_TO,str(child.identifier))
 
         xml_object = etree.SubElement(xml_project, constants.OBJECT)
         xml_object.set(constants.NAME, obj.name)
         xml_object.set(constants.IDENTIFIER, str(obj.identifier))
         xml_object.set("is_concept", str(obj.is_concept))
         add_parent(xml_object, obj)
-        add_aggregation()
+        # add_aggregation()
 
         for property_set in obj.property_sets:
             add_property_set(property_set, xml_object)

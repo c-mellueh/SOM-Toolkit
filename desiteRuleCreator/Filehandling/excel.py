@@ -2,14 +2,15 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING
-
+if TYPE_CHECKING:
+    from desiteRuleCreator.main_window import MainWindow
 import openpyxl
 from openpyxl.cell.cell import Cell
 from openpyxl.worksheet.worksheet import Worksheet
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.Filehandling import open_file
-if TYPE_CHECKING:
-    pass
+from desiteRuleCreator.Windows import graphs_window
+
 
 
 def transform_value_types(value: str) -> (str, bool):
@@ -104,9 +105,9 @@ def create_object(sheet: Worksheet, cell: Cell, pset_dict: dict[str, (classes.Pr
     entry = sheet.cell(row=cell.row + 5, column=cell.column)
     iterate_attributes(pset, sheet, entry, cell_list)
 
-    ident_pset = classes.PropertySet("Allgemeine Eigenschaften")
+    #ident_pset = classes.PropertySet()
     parent: classes.PropertySet = pset_dict["AE"][0]
-    parent.add_child(ident_pset)
+    ident_pset= parent.create_child("Allgemeine Eigenschaften")
     ident_attrib: classes.Attribute = ident_pset.get_attribute_by_name("bauteilKlassifikation")
 
     ident_attrib.value = [ident]
@@ -175,21 +176,10 @@ def build_tree(main_window) -> None:
 
 
 def create_aggregation( pset_dict: dict[str, (classes.PropertySet, Cell, classes.Object)],
-                 aggregate_dict: dict[classes.Object, list[str]]) -> None:
-    for obj in classes.Object:
-        aggregate_list = aggregate_dict[obj]
-        for kuerzel in aggregate_list:
-            dic = pset_dict.get(kuerzel)
-            if dic is not None:
-                obj_child = dic[2]
-                if obj_child is not None:
-                    obj.add_aggregation(obj_child)
+                 aggregate_dict: dict[classes.Object, list[str]],main_window:MainWindow) -> None:
 
-
-                else:
-                    logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
-            else:
-                logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+    main_window.graph_window =graphs_window.GraphWindow(main_window,False)
+    main_window.graph_window.import_excel(pset_dict,aggregate_dict)
 
 def start(main_window, path: str) -> None:
     # TODO: add request for Identification Attribute
@@ -204,4 +194,4 @@ def start(main_window, path: str) -> None:
         link_psets(cell, pset_dict, sheet, pset.object)
 
     build_tree(main_window)
-    create_aggregation(pset_dict,aggregate_dict)
+    create_aggregation(pset_dict,aggregate_dict,main_window)
