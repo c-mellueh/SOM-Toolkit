@@ -542,7 +542,7 @@ class Object(Hirarchy):
 
         for node in self.nodes.copy():
             if node.scene() is not None:
-                node.delete_clicked()
+                node.delete()
 
 
     def get_property_set_by_name(self, property_set_name: str) -> PropertySet | None:
