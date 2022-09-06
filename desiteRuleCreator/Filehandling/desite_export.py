@@ -76,10 +76,10 @@ def export_modelcheck(main_window: MainWindow) -> None:
         xml_element_section = etree.SubElement(xml_qa_export, "elementSection")
         return xml_element_section
 
-    def handle_container(xml_element_section: etree._Element, project: classes.Project) -> etree._Element:
+    def handle_container(xml_element_section: etree._Element,text) -> etree._Element:
         container = etree.SubElement(xml_element_section, "container")
         container.set("ID", str(uuid.uuid4()))
-        container.set("name", f"{project.name} : {project.version}")
+        container.set("name", text)
         return container
 
     def handle_checkrun(xml_container: etree._Element, name: str, author: str = "DesiteRuleCreator") -> etree._Element:
@@ -103,7 +103,8 @@ def export_modelcheck(main_window: MainWindow) -> None:
     def init_xml() -> (etree._Element, etree._Element):
         xml_qa_export = handle_header(main_window, "qaExport")
         xml_element_section = handle_element_section(xml_qa_export)
-        xml_container = handle_container(xml_element_section, main_window.project)
+        text = f"{main_window.project.name} : {main_window.project.version}"
+        xml_container = handle_container(xml_element_section, text)
         return xml_container, xml_qa_export
 
     def handle_rule(xml_checkrun: etree._Element, rule_type: str) -> etree._Element:
@@ -159,12 +160,16 @@ def export_modelcheck(main_window: MainWindow) -> None:
 
     def handle_object_rules(xml_container: etree._Element, template: jinja2.Template) -> dict[
         etree._Element, classes.Object]:
-        xml_object_dict: dict[etree._Element, classes.Object] = dict()
-        obj_sorted: list[classes.Object] = list(classes.Object)
 
-        obj_sorted.sort(key=lambda x: x.name)
-        for obj in obj_sorted:
-            if not obj.is_concept:
+        def handle_tree_item(xml_container,tree_item:classes.CustomTreeItem) -> None:
+            def create_container(xml_container,item):
+                xml_container = handle_container(xml_container,item.object.name)
+                for k in range(item.childCount()):
+                    child = item.child(k)
+                    handle_tree_item(xml_container,child)
+
+            def create_object(xml_container,item:classes.CustomTreeItem):
+                obj = item.object
                 xml_checkrun = handle_checkrun(xml_container, obj.name, main_window.project.author)
                 xml_rule = handle_rule(xml_checkrun, "Attributes")
                 xml_attribute_rule_list = handle_attribute_rule_list(xml_rule)
@@ -190,6 +195,26 @@ def export_modelcheck(main_window: MainWindow) -> None:
                     xml_code.text = script.code
 
                 xml_object_dict[xml_checkrun] = obj
+                for k in range(item.childCount()):
+                    handle_tree_item(xml_container, item.child(k))
+
+            obj = tree_item.object
+            if obj.is_concept:
+                create_container(xml_container,tree_item)
+            else:
+                create_object(xml_container,tree_item)
+
+
+        tree = main_window.ui.tree
+        root_items:list[classes.CustomTreeItem] = list()
+        for i in range(tree.invisibleRootItem().childCount()):
+            root_items.append(tree.invisibleRootItem().child(i))
+
+        root_items.sort(key = lambda x: x.object.name)
+        xml_object_dict: dict[etree._Element, classes.Object] = dict()
+
+        for item in root_items:
+            handle_tree_item(xml_container,item)
         return xml_object_dict
 
     def handle_data_section(xml_qa_export: etree._Element, xml_checkrun_first: etree._Element,
