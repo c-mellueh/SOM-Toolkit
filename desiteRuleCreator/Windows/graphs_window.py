@@ -1,33 +1,35 @@
 from __future__ import annotations  # make own class referencable
 
-from typing import Iterator, List,Set
+import logging
+from typing import Iterator, List, Set
 
 from PySide6.QtCore import Qt, QRectF, QPointF
-from PySide6.QtGui import  QWheelEvent, QPainterPath, QMouseEvent,QContextMenuEvent,QCursor,QColor,QPen
+from PySide6.QtGui import QWheelEvent, QPainterPath, QMouseEvent, QContextMenuEvent, QCursor, QColor, QPen
 from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QGraphicsScene, QGraphicsView, \
     QApplication, QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsPathItem, QComboBox, QGraphicsRectItem, \
-    QInputDialog,QMenu,QGraphicsSceneMoveEvent
+    QInputDialog, QMenu, QGraphicsSceneMoveEvent
 
 from desiteRuleCreator import icons
 from desiteRuleCreator.QtDesigns import ui_GraphWindow, ui_ObjectGraphWidget
 from desiteRuleCreator.Widgets import property_widget
-from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.Windows import popups
-import logging
+from desiteRuleCreator.data import classes, constants
 
-def item_to_name(item : Node | classes.Object) -> str:
+
+def item_to_name(item: Node | classes.Object) -> str:
     obj = None
     if item is None:
         return "Root"
-    elif isinstance(item,classes.Object):
+    elif isinstance(item, classes.Object):
         obj = item
-    elif isinstance(item,Node):
+    elif isinstance(item, Node):
         obj = item.object
     if obj.is_concept:
         text = f"{obj.name}"
     else:
         text = f"{obj.name} ({obj.ident_attrib.value[0]})"
     return text
+
 
 ## Create Tree Positions
 def buchheim(tree):
@@ -190,7 +192,7 @@ class DrawTree(object):
 
 
 class MainView(QGraphicsView):
-    def __init__(self,graph_window:GraphWindow) -> None:
+    def __init__(self, graph_window: GraphWindow) -> None:
         super(MainView, self).__init__()
         self.setDragMode(self.DragMode.ScrollHandDrag)
         self.graph_window = graph_window
@@ -231,7 +233,7 @@ class MainView(QGraphicsView):
             ver.setValue(ver.value() - val)
         self.update()
 
-    def mousePressEvent(self, event:QMouseEvent) -> None:
+    def mousePressEvent(self, event: QMouseEvent) -> None:
         super(MainView, self).mousePressEvent(event)
         popup = self.graph_window.node_popup
         item = self.itemAt(event.pos())
@@ -245,11 +247,11 @@ class MainView(QGraphicsView):
             else:
                 self.graph_window.active_scene.removeItem(popup.proxy)
 
-    def contextMenuEvent(self, event:QContextMenuEvent) -> None:
+    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
 
         node = self.item_under_mouse()
 
-        if isinstance(node,Node):
+        if isinstance(node, Node):
             menu = QMenu()
             action_delete = menu.addAction("delete")
             action_delete.triggered.connect(node.delete)
@@ -258,8 +260,8 @@ class MainView(QGraphicsView):
                 action_delete = menu.addAction("Info")
                 action_delete.triggered.connect(node.print_info)
 
-
             menu.exec(event.globalPos())
+
 
 class AggregationScene(QGraphicsScene):
     def __init__(self, root_node) -> None:
@@ -268,11 +270,11 @@ class AggregationScene(QGraphicsScene):
         self._root_node = root_node
         self.add_node(root_node)
 
-    def add_node(self,node:Node)-> None:
+    def add_node(self, node: Node) -> None:
         self.addItem(node)
         self.addItem(node.rect)
 
-    def remove_node(self,node:Node)->None:
+    def remove_node(self, node: Node) -> None:
         self.removeItem(node)
         for connection in node.top_connections:
             self.removeItem(connection)
@@ -287,7 +289,8 @@ class AggregationScene(QGraphicsScene):
 
     @property
     def nodes(self) -> list[Node]:
-        return [item for item in self.items() if isinstance(item,Node)]
+        return [item for item in self.items() if isinstance(item, Node)]
+
 
 class Connection(QGraphicsPathItem):
 
@@ -378,7 +381,7 @@ class PopUp(QWidget):
         super(PopUp, self).__init__()
         self.clicked_node = clicked_node
         self.graph_window = self.clicked_node.graph_window
-        self.scene:AggregationScene = self.clicked_node.scene()
+        self.scene: AggregationScene = self.clicked_node.scene()
         self.button = QPushButton("Add")
 
         self.setLayout(QHBoxLayout())
@@ -394,9 +397,7 @@ class PopUp(QWidget):
         self.proxy.setPos(scene_pos)
         self.proxy.setContentsMargins(0, 0, 0, 0)
 
-
     def button_pressed(self) -> None:
-
         text = self.combo_box.currentText()
         obj = self.graph_window.object_dict.get(text)
 
@@ -413,15 +414,16 @@ class PopUp(QWidget):
         self.deleteLater()
         self.graph_window.node_popup = None
 
+
 class Rect(QGraphicsRectItem):
-    def __init__(self,proxy:Node):
+    def __init__(self, proxy: Node):
         super(Rect, self).__init__()
         self.proxy = proxy
         pen = QPen()
         pen.setColor(QColor("white"))
         self.setPen(pen)
 
-    def mouseMoveEvent(self, event:QGraphicsSceneMouseEvent) -> None:
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         super(Rect, self).mouseMoveEvent(event)
         orig_cursor_position = event.lastScenePos()
         updated_cursor_position = event.scenePos()
@@ -434,10 +436,11 @@ class Rect(QGraphicsRectItem):
     def mousePressEvent(self, event) -> None:
         super(Rect, self).mousePressEvent(event)
 
+
 class Node(QGraphicsProxyWidget):
     _registry = list()
 
-    def __init__(self, obj: classes.Object,graph_window:GraphWindow) -> None:
+    def __init__(self, obj: classes.Object, graph_window: GraphWindow) -> None:
 
         self.rect = Rect(self)
         super(Node, self).__init__(self.rect)
@@ -463,14 +466,14 @@ class Node(QGraphicsProxyWidget):
         self.title.setText(self.name)
         self.title.show()
         self.fill_table()
-        self.rect.setFlag(self.rect.ItemIsMovable,True)
-        self.setFlag(self.ItemIsMovable,True)
+        self.rect.setFlag(self.rect.ItemIsMovable, True)
+        self.setFlag(self.ItemIsMovable, True)
         fac = 0
         help_rect = self.boundingRect()
-        width = help_rect.width()+fac
-        height = help_rect.height()+fac
-        self.rect.setRect(QRectF(0,0,width,height))
-        self.setPos(fac/2,fac/2)
+        width = help_rect.width() + fac
+        height = help_rect.height() + fac
+        self.rect.setRect(QRectF(0, 0, width, height))
+        self.setPos(fac / 2, fac / 2)
         self.button_add.clicked.connect(self.add_button_pressed)
         self.list.itemClicked.connect(self.select_list_item)
 
@@ -482,7 +485,6 @@ class Node(QGraphicsProxyWidget):
 
     def __len__(self) -> int:
         return len(self.children)
-
 
     def print_info(self):
         print("-------------------------")
@@ -533,7 +535,7 @@ class Node(QGraphicsProxyWidget):
             item = classes.CustomListItem(property_set)
             self.object_graph_rep.list_widget_property_sets.addItem(item)
 
-    def remove_child(self,child:Node) -> None:
+    def remove_child(self, child: Node) -> None:
         for c in child.children.copy():
             child.remove_child(c)
 
@@ -543,8 +545,8 @@ class Node(QGraphicsProxyWidget):
         Node._registry.remove(child)
 
     def delete(self):
-        def request_delete()->bool:
-            def get_all_children(node:Node) -> None:
+        def request_delete() -> bool:
+            def get_all_children(node: Node) -> None:
                 nodes.append(node)
                 for child in node.children:
                     get_all_children(child)
@@ -568,7 +570,7 @@ class Node(QGraphicsProxyWidget):
             else:
                 self.parent_box.remove_child(self)
 
-    def select_list_item(self,selected_item):
+    def select_list_item(self, selected_item):
         if selected_item is not None:
             property_set = selected_item.property_set
             self.main_window.pset_window = property_widget.open_pset_window(self.main_window, property_set,
@@ -611,7 +613,6 @@ class Node(QGraphicsProxyWidget):
     def bottom_connections(self) -> list[Connection]:
         return [connection for connection in self.connections if self == connection.top_node]
 
-
     @property
     def movable(self):
         if self.button_add.underMouse() or self.list.underMouse():
@@ -624,39 +625,39 @@ class Node(QGraphicsProxyWidget):
     def hoverEnterEvent(self, event) -> None:
         self.button_add.show()
 
-
     def hoverLeaveEvent(self, event) -> None:
         self.button_add.hide()
         super(Node, self).hoverLeaveEvent(event)
 
-    def moveEvent(self, event:QGraphicsSceneMoveEvent) -> None:
+    def moveEvent(self, event: QGraphicsSceneMoveEvent) -> None:
         super(Node, self).moveEvent(event)
         for connection in self.connections:
             connection.update_line()
+
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         super(Node, self).mouseMoveEvent(event)
         for el in self.connections:
             el.update_line()
 
-    def setX(self, x:float) -> None:
+    def setX(self, x: float) -> None:
         super(Node, self).setX(x)
         self.rect.setX(x)
-
 
     def setY(self, y: float) -> None:
         super(Node, self).setY(y)
         self.rect.setY(y)
 
+
 class GraphWindow(QWidget):
 
-    def __init__(self, main_window,show = True) -> None:
+    def __init__(self, main_window, show=True) -> None:
         super(GraphWindow, self).__init__()
         self.main_window = main_window
         self.widget = ui_GraphWindow.Ui_GraphView()
         self.widget.setupUi(self)
         self.view = MainView(self)
         self.active_scene = None
-        self.node_popup:PopUp|None = None
+        self.node_popup: PopUp | None = None
         self.combo_box = self.widget.combo_box
         self.reload_button = self.widget.button_reload
         self.add_button = self.widget.button_add
@@ -684,10 +685,8 @@ class GraphWindow(QWidget):
     ### Functions ###
 
     def import_excel(self,
-                        pset_dict: dict[str, (classes.PropertySet, object, classes.Object)],
-                        aggregate_dict: dict[classes.Object, list[str]]) -> None:
-
-
+                     pset_dict: dict[str, (classes.PropertySet, object, classes.Object)],
+                     aggregate_dict: dict[classes.Object, list[str]]) -> None:
 
         def is_root(obj):
             kuerzel = kuerzel_dict[obj]
@@ -699,14 +698,14 @@ class GraphWindow(QWidget):
 
             return True
 
-        def is_child(obj:classes.Object) -> bool:
-            value:str = obj.ident_attrib.value[0]
+        def is_child(obj: classes.Object) -> bool:
+            value: str = obj.ident_attrib.value[0]
             last_num = value.split(".")[-1]
 
             if not last_num.isdigit():
                 return False
             last_num = int(last_num)
-            if last_num>= 100 and last_num%100 ==0:
+            if last_num >= 100 and last_num % 100 == 0:
                 return True
             else:
                 return False
@@ -723,31 +722,30 @@ class GraphWindow(QWidget):
                     parent_obj: classes.Object = ident_dict[parent_txt]
                     parent_obj.add_inherit(obj)
 
-        def recursion(node:Node)-> None:
+        def recursion(node: Node) -> None:
             aggregate_list = aggregate_dict[node.object]
             for kuerzel in aggregate_list:
                 dic = pset_dict.get(kuerzel)
                 if dic is not None:
                     obj_child = dic[2]
                     if obj is not None:
-                        child_node = Node(obj_child,self)
-                        node.add_child(child_node,True)
+                        child_node = Node(obj_child, self)
+                        node.add_child(child_node, True)
                         recursion(child_node)
                     else:
                         logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
                 else:
                     logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
             for inherit_obj in node.object.inherits:
-                child_node = Node(inherit_obj,self)
+                child_node = Node(inherit_obj, self)
 
                 if node.parent_box is not None:
-                    node.parent_box.add_child(child_node,True)
+                    node.parent_box.add_child(child_node, True)
                     recursion(child_node)
-
 
         link_inherits()
 
-        self.test_dict = {obj: Node(obj,self) for obj in classes.Object}
+        self.test_dict = {obj: Node(obj, self) for obj in classes.Object}
         self.scene_list = list()
 
         kuerzel_dict = {obj: kuerzel for (kuerzel, (a, b, obj)) in pset_dict.items()}
@@ -759,14 +757,14 @@ class GraphWindow(QWidget):
         for obj in classes.Object:
             if is_root(obj):
                 root_objects.append(obj)
-       # root_objects = [obj for obj in classes.Object if is_root(obj)]
+        # root_objects = [obj for obj in classes.Object if is_root(obj)]
 
         scene = None
         for obj in root_objects:
             if obj.name == "Ausbau":
                 print(obj)
 
-            node = Node(obj,self)
+            node = Node(obj, self)
             scene = AggregationScene(node)
             self.scenes.append(scene)
             recursion(node)
@@ -774,8 +772,7 @@ class GraphWindow(QWidget):
         self.update_combo_list()
         self.combo_box.setCurrentIndex(0)
 
-
-    def delete_button_pressed(self) ->None:
+    def delete_button_pressed(self) -> None:
         if not self.combo_box.currentText() == "":
             root_node = self.active_scene.root_node
             string_list = [item_to_name(item) for item in self.active_scene.items() if isinstance(item, Node)]
@@ -785,36 +782,34 @@ class GraphWindow(QWidget):
                     root_node.remove_child(child)
                 self.remove_scene(self.active_scene)
 
-    def remove_scene(self,scene:AggregationScene) -> None:
+    def remove_scene(self, scene: AggregationScene) -> None:
         self.scenes.remove(scene)
         root_node = scene.root_node
         text = item_to_name(root_node)
         index = self.combo_box.findText(text)
 
-        if index >0:
+        if index > 0:
             self.combo_box.setCurrentIndex(index + 1)
         else:
             self.combo_box.setCurrentIndex(0)
         self.combo_box.removeItem(index)
 
-    def clear_scene(self, scene:AggregationScene)->None:
+    def clear_scene(self, scene: AggregationScene) -> None:
         root_node = scene.root_node
         text = item_to_name(root_node)
         index = self.combo_box.findText(text)
-        self.combo_box.setCurrentIndex(index+1)
+        self.combo_box.setCurrentIndex(index + 1)
 
         self.combo_box.removeItem(index)
         self.drawn_scenes.remove(scene)
         for item in scene.items():
-            if item not in  [root_node,root_node.rect]:
-                if isinstance(item,Node):
+            if item not in [root_node, root_node.rect]:
+                if isinstance(item, Node):
                     scene.remove_node(item)
                 else:
                     scene.removeItem(item)
 
-
-
-    def create_scene_by_node(self,node:Node) -> AggregationScene:
+    def create_scene_by_node(self, node: Node) -> AggregationScene:
         scene = AggregationScene(node)
         self.scenes.append(scene)
         return scene
@@ -824,7 +819,7 @@ class GraphWindow(QWidget):
         dialog.setWindowTitle("New Aggregation")
         dialog.setLabelText("Choose Root Object")
         dialog.setTextValue("")
-        obj:classes.Object
+        obj: classes.Object
 
         root_objects = set()
         for obj in classes.Object:
@@ -835,24 +830,24 @@ class GraphWindow(QWidget):
                     if node.parent_box is None:
                         root_objects.add(obj)
 
+        root_objects = set(item_to_name(obj) for obj in root_objects)  # objects that don't aggregate from someone
+        combo_names = set(self.combo_box.itemText(index) for index in
+                          range(self.combo_box.count()))  # items that are listed in combobox
 
-        root_objects = set(item_to_name(obj) for obj in root_objects)  #objects that don't aggregate from someone
-        combo_names = set(self.combo_box.itemText(index) for index in range(self.combo_box.count()))    # items that are listed in combobox
-
-        words = sorted(list(root_objects-combo_names))
+        words = sorted(list(root_objects - combo_names))
         dialog.setComboBoxItems(words)
-        combo_box:QComboBox = dialog.findChild(QComboBox)
+        combo_box: QComboBox = dialog.findChild(QComboBox)
         dialog.setComboBoxEditable(True)
 
         ok = (dialog.exec() == QInputDialog.Accepted)
         if ok:
             text = dialog.textValue()
-            obj = {item_to_name(obj):obj for obj in classes.Object}.get(text)
+            obj = {item_to_name(obj): obj for obj in classes.Object}.get(text)
             if obj is not None:
                 text_pos = self.combo_box.findText(text)
 
                 self.combo_box.addItem(str(text))
-                node = Node(obj,self)
+                node = Node(obj, self)
                 self.create_scene_by_node(node)
                 self.draw_tree(node)
 
@@ -861,7 +856,7 @@ class GraphWindow(QWidget):
                 self.combo_box.model().sort(0, Qt.AscendingOrder)
 
     def find_node_by_name(self, name) -> Node:
-        return {node.name:node for node in Node._registry}.get(name)
+        return {node.name: node for node in Node._registry}.get(name)
 
     def change_scene(self, node: Node) -> None:
         self.active_scene = self.scene_dict[node]
@@ -870,6 +865,7 @@ class GraphWindow(QWidget):
             self.redraw()
             self.drawn_scenes.append(self.active_scene)
         self.fit_in()
+
     def get_node(self) -> Node:
         combo_box = self.widget.combo_box
         text = combo_box.currentText()
@@ -883,9 +879,8 @@ class GraphWindow(QWidget):
         else:
             print("NODE IS NONE")
 
-        if self.combo_box.count() == 1 and self.combo_box.currentText() =="":
+        if self.combo_box.count() == 1 and self.combo_box.currentText() == "":
             self.view.setScene(QGraphicsScene())
-
 
     def redraw(self) -> None:
         node = self.get_node()
@@ -896,7 +891,7 @@ class GraphWindow(QWidget):
     def update_combo_list(self) -> None:
         combo = self.combo_box
 
-        rn_with_children = set(item_to_name(node) for node in self.root_nodes if len(node.children)>0)
+        rn_with_children = set(item_to_name(node) for node in self.root_nodes if len(node.children) > 0)
 
         # remove old Items
         for i in range(combo.count()):
@@ -909,7 +904,7 @@ class GraphWindow(QWidget):
             if combo.findText(item) == -1:
                 combo.addItem(item)
 
-        combo.model().sort(0,Qt.AscendingOrder)
+        combo.model().sort(0, Qt.AscendingOrder)
 
     def draw_tree(self, root: Node) -> None:
         """give correct tree position and fit in View"""
@@ -928,7 +923,6 @@ class GraphWindow(QWidget):
                 child.show()
                 iter_x_pos(child, draw_child)
 
-
         self.active_scene = root.scene()
         draw_tree = DrawTree(root)
         draw_tree = buchheim(draw_tree)
@@ -940,7 +934,7 @@ class GraphWindow(QWidget):
         self.fit_in()
 
         for item in root.scene().items():
-            if isinstance(item,Connection):
+            if isinstance(item, Connection):
                 item.update_line()
 
     def fit_in(self) -> None:
@@ -963,8 +957,7 @@ class GraphWindow(QWidget):
 
         y_base_margin = 20
         x_base_margin = 20
-        if len(visible_items) >1:
-
+        if len(visible_items) > 1:
 
             bounding_rect.setRect(bounding_rect.x() - x_base_margin, bounding_rect.y() - y_base_margin,
                                   bounding_rect.width() + 2 * x_base_margin, bounding_rect.height() + 2 * y_base_margin)
@@ -973,7 +966,6 @@ class GraphWindow(QWidget):
 
             bounding_rect.setRect(bounding_rect.x() - x_base_margin, bounding_rect.y() - y_base_margin,
                                   bounding_rect.width() + 2 * x_base_margin, bounding_rect.height() + y_margin)
-
 
         self.active_scene.setSceneRect(bounding_rect)
         self.view.fitInView(self.active_scene.sceneRect(), Qt.AspectRatioMode.KeepAspectRatio)
@@ -996,13 +988,13 @@ class GraphWindow(QWidget):
         return {scene.root_node: scene for scene in self.scenes}
 
     @property
-    def object_dict(self)-> dict[str,classes.Object]:
-        return {item_to_name(obj):obj for obj in classes.Object}
+    def object_dict(self) -> dict[str, classes.Object]:
+        return {item_to_name(obj): obj for obj in classes.Object}
 
     @property
     def active_scene(self) -> AggregationScene:
         return self.view.scene()
 
     @active_scene.setter
-    def active_scene(self, scene:AggregationScene) -> None:
+    def active_scene(self, scene: AggregationScene) -> None:
         self.view.setScene(scene)
