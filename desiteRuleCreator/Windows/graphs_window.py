@@ -32,13 +32,13 @@ def item_to_name(item: Node | classes.Object) -> str:
 
 
 ## Create Tree Positions
-def buchheim(tree):
-    def third_walk(tree, n):
+def buchheim(tree:DrawTree):
+    def third_walk(tree:DrawTree, n):
         tree.x += n
         for c in tree.children:
             third_walk(c, n)
 
-    def firstwalk(v, distance=1.):
+    def firstwalk(v:DrawTree, distance=1.):
         if len(v.children) == 0:
             if v.lmost_sibling:
                 v.x = v.lbrother().x + distance
@@ -107,7 +107,7 @@ def buchheim(tree):
         wr.x += shift
         wr.mod += shift
 
-    def execute_shifts(v):
+    def execute_shifts(v:DrawTree):
         shift = change = 0
         for w in v.children[::-1]:
             w.x += shift
@@ -115,16 +115,17 @@ def buchheim(tree):
             change += w.change
             shift += w.shift + change
 
-    def ancestor(vil, v, default_ancestor):
+    def ancestor(vil:DrawTree, v:DrawTree, default_ancestor):
         # the relevant text is at the bottom of page 7 of
         # "Improving Walker's Algorithm to Run in Linear Time" by Buchheim et al, (2002)
         # http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.16.8757&rep=rep1&type=pdf
-        if vil.ancestor in v.parent.children:
+        par:DrawTree = v.parent
+        if vil.ancestor in par.children:
             return vil.ancestor
         else:
             return default_ancestor
 
-    def second_walk(v, m=0, depth=0, min=None):
+    def second_walk(v:DrawTree, m=0, depth=0, min=None):
         v.x += m
         v.y = depth
 
@@ -146,12 +147,12 @@ def buchheim(tree):
 class DrawTree(object):
     _registry = list()
 
-    def __init__(self, tree, parent=None, depth=0, number=1):
+    def __init__(self, tree:Node, parent=None, depth=0, number=1):
         self.x = -1.
         self.y = depth
         self.tree = tree
         self.children = [DrawTree(c, self, depth + 1, i + 1) for i, c in enumerate(tree.children)]
-        self.parent = parent
+        self.parent:None|DrawTree = parent
         self.thread = None
         self.mod = 0
         self.ancestor = self
@@ -169,8 +170,9 @@ class DrawTree(object):
 
     def lbrother(self):
         n = None
-        if self.parent:
-            for node in self.parent.children:
+        par:DrawTree = self.parent
+        if par:
+            for node in par.children:
                 if node == self:
                     return n
                 else:
@@ -294,13 +296,16 @@ class AggregationScene(QGraphicsScene):
 
 class Connection(QGraphicsPathItem):
 
-    def __init__(self, bottom_node, top_node) -> None:
+    def __init__(self, bottom_node:Node, top_node:Node,connection_type:int) -> None:
         super(Connection, self).__init__()
         self.bottom_node: Node = bottom_node
         self.top_node: Node = top_node
+        self.connection_type = connection_type
 
         self.setZValue(0)
         self.top_node.scene().addItem(self)
+        bottom_node.connections.append(self)
+        top_node.connections.append(self)
         self.create_line()
 
     def __str__(self) -> str:
@@ -339,26 +344,60 @@ class Connection(QGraphicsPathItem):
             point = QPointF(x, y)
             return point
 
-        def bottom_center(rect: QRectF) -> QPointF:
-            x = rect.x() + rect.width() / 2
-            y = rect.y() + rect.height()
-            point = QPointF(x, y)
-            return point
 
-        p0 = top_center(self.bottom_node.sceneBoundingRect())  # top center of Bottom Node
-        p3 = bottom_center(self.top_node.sceneBoundingRect())  # bottom center of Top Node
+        def aggregation_points():
+            points[0] = pb
 
-        p1 = QPointF()
-        p2 = QPointF()
+            points[1].setX(pb.x())
+            points[2].setX(pt.x())
+            points[3].setX(pt.x())
+            points[4].setX(pt.x() - constants.ARROW_WIDTH / 2)
+            points[5].setX(pt.x())
+            points[6].setX(pt.x() + constants.ARROW_WIDTH / 2)
+            points[7].setX(pt.x())
 
-        p1.setX(p0.x())
-        p2.setX(p3.x())
+            mid_y = (pt.y() + constants.BOX_BOTTOM_DISTANCE)
+            points[1].setY(mid_y)
+            points[2].setY(mid_y)
+            points[3].setY(pt.y() + constants.ARROW_HEIGHT)
+            points[4].setY(pt.y() + constants.ARROW_HEIGHT / 2)
+            points[5].setY(pt.y())
+            points[6].setY(pt.y() + constants.ARROW_HEIGHT / 2)
+            points[7].setY(pt.y() + constants.ARROW_HEIGHT)
 
-        mid_y = (p3.y() + constants.BOX_BOTTOM_DISTANCE)
-        p1.setY(mid_y)
-        p2.setY(mid_y)
+        def inheritance_points():
+            points[0] = pb
 
-        return [p0, p1, p2, p3]
+            points[1].setX(pb.x())
+            points[2].setX(pt.x())
+            points[3].setX(pt.x())
+            points[4].setX(pt.x() - constants.ARROW_WIDTH / 2)
+            points[5].setX(pt.x())
+            points[6].setX(pt.x() + constants.ARROW_WIDTH / 2)
+            points[7].setX(pt.x())
+
+            mid_y = (pt.y() + constants.BOX_BOTTOM_DISTANCE)
+            points[1].setY(mid_y+constants.ARROW_HEIGHT/2)
+            points[2].setY(mid_y+constants.ARROW_HEIGHT/2)
+            points[3].setY(pt.y() + constants.ARROW_HEIGHT/2)
+            points[4].setY(pt.y() + constants.ARROW_HEIGHT / 2)
+            points[5].setY(pt.y())
+            points[6].setY(pt.y() + constants.ARROW_HEIGHT / 2)
+            points[7].setY(pt.y() + constants.ARROW_HEIGHT/2)
+
+        points = [QPointF() for point in range(8)]
+
+
+        pb = top_center(self.bottom_node.sceneBoundingRect())  # top center of Bottom Node
+        pt = self.top_node.anchor_dict()[self.bottom_node]
+
+        if self.connection_type == constants.AGGREGATION:
+            aggregation_points()
+        else:
+            inheritance_points()
+
+
+        return points
 
 
 class PopUp(QWidget):
@@ -402,7 +441,7 @@ class PopUp(QWidget):
         obj = self.graph_window.object_dict.get(text)
 
         node = Node(obj, self.graph_window)
-        self.clicked_node.add_child(node)
+        self.clicked_node.add_child(node,constants.AGGREGATION)
         node.setX(self.clicked_node.x())
         node.setY(node.base_y)
         pos = QPointF()
@@ -448,7 +487,7 @@ class Node(QGraphicsProxyWidget):
         self.object = obj
         self.object.add_node(self)
         self.parent_box = None
-        self.children: Set[Node] = set()
+        self._children: Set[Node] = set()
         self.connections: List[Connection] = list()
         self.show()
         self.rect.show()
@@ -502,7 +541,60 @@ class Node(QGraphicsProxyWidget):
     def scene(self) -> AggregationScene:
         return super(Node, self).scene()
 
+    @property
+    def children(self) -> List[Node]:
+        con_dict = {connection.bottom_node: connection for connection in self.connections}
+        def get_connection_type(bottom_node: Node) -> int:
+            connection = con_dict[bottom_node]
+            return connection.connection_type
+
+        aggregations = [child for child in self._children
+                        if get_connection_type(child) == constants.AGGREGATION]
+        inheritances = [child for child in self._children
+                        if get_connection_type(child) == constants.INHERITANCE]
+
+        return aggregations + inheritances
+
     ### Functions ###
+    def anchor_dict(self) -> dict[Node:QPointF]:
+        def bottom_center() -> QPointF:
+            rect = self.sceneBoundingRect()
+            x = rect.x() + rect.width() / 2
+            y = rect.y() + rect.height()
+            point = QPointF(x, y)
+            return point
+
+        con_dict= {connection.bottom_node:connection for connection in self.connections}
+        def get_connection_type(bottom_node:Node)-> int:
+            connection = con_dict[bottom_node]
+            return connection.connection_type
+
+
+        center = bottom_center()
+        y_pos = center.y()
+        x1 = center.x()
+        x2 = x1-constants.ARROW_WIDTH*2
+        x3 = x1+constants.ARROW_WIDTH*2
+
+        aggregations = [child for child in self.children
+                        if get_connection_type(child)== constants.AGGREGATION]
+        inheritances = [child for child in self.children
+                        if get_connection_type(child)== constants.INHERITANCE]
+        child_dict = dict()
+
+        if len(aggregations) == 0 or len (inheritances)==0:
+            for child in self.sorted_children():
+                child_dict[child] = QPointF(x1,y_pos)
+        else:
+            for child in aggregations:
+                child_dict[child] = QPointF(x2,y_pos)
+
+            for child in inheritances:
+                child_dict[child] = QPointF(x3,y_pos)
+
+        return child_dict
+
+
     def add_button_pressed(self) -> PopUp:
         old_popup: PopUp = self.graph_window.node_popup
         if old_popup is not None:
@@ -514,21 +606,21 @@ class Node(QGraphicsProxyWidget):
         relative_origin = view.mapToScene(origin)
         return PopUp(self, relative_origin)
 
-    def add_child(self, child: Node, connect=True) -> Node:
-        self.children.add(child)
-        child.parent_box = self
+    def add_child(self, child: Node, connection_type:int=constants.AGGREGATION) -> Node:
+        def connect_to_node(node: Node, connection_type: int):
+            if node is not None:
+                con = Connection(node, self, connection_type)
 
-        if connect:
-            self.connect_to_node(child)
-            self.scene().add_node(child)
+
+
+        self._children.add(child)
+        child.parent_box = self
+        connect_to_node(child,connection_type)
+        self.scene().add_node(child)
 
         return child
 
-    def connect_to_node(self, node: Node):
-        if node is not None:
-            con = Connection(node, self)
-            self.connections.append(con)
-            node.connections.append(con)
+
 
     def fill_table(self) -> None:
         for property_set in self.object.property_sets:
@@ -539,7 +631,7 @@ class Node(QGraphicsProxyWidget):
         for c in child.children.copy():
             child.remove_child(c)
 
-        self.children.remove(child)
+        self._children.remove(child)
         child.object.remove_node(child)
         self.scene().remove_node(child)
         Node._registry.remove(child)
@@ -575,6 +667,10 @@ class Node(QGraphicsProxyWidget):
             property_set = selected_item.property_set
             self.main_window.pset_window = property_widget.open_pset_window(self.main_window, property_set,
                                                                             self.main_window.active_object)
+
+    def sorted_children(self):
+        children:list[Node] = list(self.children)
+        return sorted(children,key = lambda child: child.x())
 
     ### Properties ###
     @property
@@ -619,6 +715,10 @@ class Node(QGraphicsProxyWidget):
             return False
         else:
             return True
+
+    @property
+    def x_pos(self) -> float:
+        return self.x()
 
     ### Events ###
 
@@ -730,17 +830,18 @@ class GraphWindow(QWidget):
                     obj_child = dic[2]
                     if obj is not None:
                         child_node = Node(obj_child, self)
-                        node.add_child(child_node, True)
+                        node.add_child(child_node, constants.AGGREGATION)
                         recursion(child_node)
                     else:
                         logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
                 else:
                     logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+
             for inherit_obj in node.object.inherits:
                 child_node = Node(inherit_obj, self)
 
                 if node.parent_box is not None:
-                    node.parent_box.add_child(child_node, True)
+                    node.add_child(child_node, constants.INHERITANCE)
                     recursion(child_node)
 
         link_inherits()

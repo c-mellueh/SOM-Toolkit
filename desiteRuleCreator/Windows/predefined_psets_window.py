@@ -21,7 +21,7 @@ class PsetItem(QListWidgetItem):
             self.setText(f"NewPset_{self.get_number()}")
 
         else:
-            self.property_set = property_set
+            self.property_set:classes.PropertySet = property_set
             self.setText(property_set.name,False)
         self._registry.append(self)
         self.setFlags(self.flags() | Qt.ItemIsEditable)
