@@ -136,10 +136,13 @@ class MainWindow(QMainWindow):
 
     def open_file(self, path=""):
 
+        file_text = "DRC Files (*.xml *.DRCxml *.xlsx);;" \
+                    " xml Files (*.xml *.DRCxml);;" \
+                    " Excel Files (*xlsx);;all (*.*)"
+
         if not path:
             cur_path = os.getcwd() + "/"
-            path: str = QFileDialog.getOpenFileName(self, "Open File", str(cur_path),
-                                                    "xml Files (*.xml *.DRCxml);; xlsx Files (*xlsx);;all (*.*)")[0]
+            path: str = QFileDialog.getOpenFileName(self, "Open File", str(cur_path),file_text)[0]
 
         if path:
             if path.endswith("xlsx"):
