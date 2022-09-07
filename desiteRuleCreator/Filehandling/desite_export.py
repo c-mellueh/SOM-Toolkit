@@ -24,12 +24,16 @@ if TYPE_CHECKING:
 output_date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 output_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-
 def get_path(main_window: MainWindow, file_format: str) -> str:
     """ File Open Dialog with modifiable file_format"""
     if main_window.export_path is not None:
+        basename = os.path.basename(main_window.export_path)
+        split =os.path.splitext(basename)[0]
+        filename_without_extension = os.path.splitext(split)[0]
+        dirname = os.path.dirname(main_window.export_path)
+        proposal = os.path.join(dirname,filename_without_extension)
         path = \
-            QFileDialog.getSaveFileName(main_window, f"Save {file_format}", main_window.export_path,
+            QFileDialog.getSaveFileName(main_window, f"Save {file_format}", proposal,
                                         f"{file_format} Files (*.{file_format})")[0]
     else:
         path = \
@@ -284,8 +288,8 @@ def export_modelcheck(main_window: MainWindow) -> None:
             tree.write(f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml")
 
     path = get_path(main_window, "qa.xml")
-
     if path:
+        main_window.export_path = path
         export(path)
         pass
 
