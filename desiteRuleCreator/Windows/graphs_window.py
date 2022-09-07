@@ -541,17 +541,18 @@ class Node(QGraphicsProxyWidget):
     def scene(self) -> AggregationScene:
         return super(Node, self).scene()
 
+    def get_connection_type(self,bottom_node: Node) -> int:
+        con_dict = {connection.bottom_node: connection for connection in self.connections}
+        connection = con_dict[bottom_node]
+        return connection.connection_type
+
     @property
     def children(self) -> List[Node]:
-        con_dict = {connection.bottom_node: connection for connection in self.connections}
-        def get_connection_type(bottom_node: Node) -> int:
-            connection = con_dict[bottom_node]
-            return connection.connection_type
 
         aggregations = [child for child in self._children
-                        if get_connection_type(child) == constants.AGGREGATION]
+                        if self.get_connection_type(child) == constants.AGGREGATION]
         inheritances = [child for child in self._children
-                        if get_connection_type(child) == constants.INHERITANCE]
+                        if self.get_connection_type(child) == constants.INHERITANCE]
 
         return aggregations + inheritances
 
