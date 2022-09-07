@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 def save_clicked(main_window:MainWindow) -> str:
-    if main_window.save_path is None or not main_window.save_path.endswith(".xml"):
+    if main_window.save_path is None or not main_window.save_path.endswith("xml"):
         path = save_as_clicked(main_window)
     else:
         save(main_window, main_window.save_path)
