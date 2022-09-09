@@ -25,8 +25,8 @@ def string_to_bool(text: str) -> bool | None:
 
 
 def fill_tree(main_window: MainWindow) -> None:
-    item_dict: dict[classes.Object, classes.CustomTreeItem] = {obj: main_window.add_object_to_tree(obj)
-                                                               for obj in classes.Object}
+    item_dict: dict[classes.Object, classes.CustomObjectTreeItem] = {obj: main_window.add_object_to_tree(obj)
+                                                                     for obj in classes.Object}
     for obj in classes.Object:
         tree_item = item_dict[obj]
         if obj.parent is not None:

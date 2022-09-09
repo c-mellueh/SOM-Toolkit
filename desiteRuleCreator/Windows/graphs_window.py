@@ -31,6 +31,7 @@ def item_to_name(item: Node | classes.Object) -> str:
         text = f"{obj.name} ({obj.ident_attrib.value[0]})"
     return text
 
+
 ## Create Tree Positions
 def buchheim(tree: DrawTree):
     def third_walk(tree: DrawTree, n):
@@ -513,11 +514,13 @@ class Node(QGraphicsProxyWidget):
         self.setZValue(1)
         self.button_add = self.object_graph_rep.button_add
         self.title = self.object_graph_rep.label_object_name
-        self.list = self.object_graph_rep.list_widget_property_sets
+        self.tree_widget: classes.QTreeWidget = classes.CustomPsetTree()
+        self.object_graph_rep.verticalLayout.insertWidget(1, self.tree_widget)
+        # self.list = self.object_graph_rep.list_widget_property_sets
         self.button_add.hide()
         self.title.setText(self.name)
         self.title.show()
-        self.fill_table()
+        self.fill_tree()
         self.rect.setFlag(self.rect.ItemIsMovable, True)
         self.setFlag(self.ItemIsMovable, True)
         fac = 0
@@ -527,7 +530,7 @@ class Node(QGraphicsProxyWidget):
         self.rect.setRect(QRectF(0, 0, width, height))
         self.setPos(fac / 2, fac / 2)
         self.button_add.clicked.connect(self.add_button_pressed)
-        self.list.itemClicked.connect(self.select_list_item)
+        self.tree_widget.itemDoubleClicked.connect(self.item_clicked)
 
     def __str__(self) -> str:
         return (f"{self.object.name}: {self.x()},{self.y()}")
@@ -548,6 +551,18 @@ class Node(QGraphicsProxyWidget):
         else:
             connection.connection_type = constants.AGGREGATION
         connection.update_line()
+
+    def item_clicked(self, item: classes.CustomAttribTreeItem | classes.CustomPSetTreeItem):
+        main_window = self.main_window
+
+        if isinstance(item, classes.CustomPSetTreeItem):
+            property_set = item.property_set
+            main_window.pset_window = main_window.open_pset_window(property_set, self.object, None)
+
+        if isinstance(item, classes.CustomAttribTreeItem):
+            property_set = item.attribute.property_set
+            main_window.pset_window = main_window.open_pset_window(property_set, self.object, None)
+            main_window.pset_window.fill_with_attribute(item.attribute)
 
     def print_info(self):
         print("-------------------------")
@@ -652,10 +667,11 @@ class Node(QGraphicsProxyWidget):
 
         return child
 
-    def fill_table(self) -> None:
+    def fill_tree(self) -> None:
         for property_set in self.object.property_sets:
-            item = classes.CustomListItem(property_set)
-            self.object_graph_rep.list_widget_property_sets.addItem(item)
+            item = classes.CustomPSetTreeItem(self.tree_widget, property_set)
+            for attribute in property_set.attributes:
+                attrib = classes.CustomAttribTreeItem(item, attribute)
 
     def remove_child(self, child: Node) -> None:
         for c in child.children.copy():
