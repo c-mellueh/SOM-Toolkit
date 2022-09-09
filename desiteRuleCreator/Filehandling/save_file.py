@@ -6,7 +6,7 @@ import os
 
 import desiteRuleCreator.Filehandling
 from desiteRuleCreator import __version__ as project_version
-from desiteRuleCreator.Windows import popups
+from desiteRuleCreator.Windows import popups,graphs_window
 from desiteRuleCreator.data import constants, classes
 
 if TYPE_CHECKING:
@@ -64,17 +64,12 @@ def save(main_window:MainWindow, path:str) -> None:
             add_attribute(attribute, property_set, xml_pset)
 
     def add_object(obj: classes.Object) -> None:
-        # def add_aggregation():
-        #     for child in obj.aggregates_to:
-        #         xml_aggregate = etree.SubElement(xml_object,constants.AGGREGATE)
-        #         xml_aggregate.set(constants.AGGREGATES_TO,str(child.identifier))
 
         xml_object = etree.SubElement(xml_project, constants.OBJECT)
         xml_object.set(constants.NAME, obj.name)
         xml_object.set(constants.IDENTIFIER, str(obj.identifier))
         xml_object.set("is_concept", str(obj.is_concept))
         add_parent(xml_object, obj)
-        # add_aggregation()
 
         for property_set in obj.property_sets:
             add_property_set(property_set, xml_object)
@@ -116,6 +111,19 @@ def save(main_window:MainWindow, path:str) -> None:
             else:
                 xml_value.text = str(value)
 
+    def add_node(node: graphs_window.Node,xml_nodes:etree._Element) -> None:
+        xml_node = etree.SubElement(xml_nodes, "Node")
+        xml_node.set("uuid",str(node.uuid))
+        xml_node.set("object", str(node.object.identifier))
+        if node.parent_box is not None:
+            xml_node.set("parent", str(node.parent_box.uuid))
+        else:
+            xml_node.set("parent","None")
+        xml_node.set("x_pos",str(node.x()))
+        xml_node.set("y_pos",str(node.y()))
+        xml_node.set("is_root",str(node.is_root))
+        xml_node.set("connection",str(node.top_connections[0].connection_type))
+
     main_window.save_path = path
 
     xml_project = etree.Element(constants.PROJECT)
@@ -126,6 +134,15 @@ def save(main_window:MainWindow, path:str) -> None:
     add_predefined_property_sets()
     for obj in classes.Object:
         add_object(obj)
+
+    xml_nodes = etree.SubElement(xml_project, "Nodes")
+
+
+    for node in graphs_window.Node._registry:
+        add_node(node,xml_nodes)
+
+
+
 
     tree = etree.ElementTree(xml_project)
 
