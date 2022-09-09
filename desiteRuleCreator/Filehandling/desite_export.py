@@ -165,14 +165,14 @@ def export_modelcheck(main_window: MainWindow) -> None:
     def handle_object_rules(xml_container: etree._Element, template: jinja2.Template) -> dict[
         etree._Element, classes.Object]:
 
-        def handle_tree_item(xml_container,tree_item:classes.CustomTreeItem) -> None:
+        def handle_tree_item(xml_container, tree_item:classes.CustomObjectTreeItem) -> None:
             def create_container(xml_container,item):
                 xml_container = handle_container(xml_container,item.object.name)
                 for k in range(item.childCount()):
                     child = item.child(k)
                     handle_tree_item(xml_container,child)
 
-            def create_object(xml_container,item:classes.CustomTreeItem):
+            def create_object(xml_container, item:classes.CustomObjectTreeItem):
                 obj = item.object
                 xml_checkrun = handle_checkrun(xml_container, obj.name, main_window.project.author)
                 xml_rule = handle_rule(xml_checkrun, "Attributes")
@@ -210,7 +210,7 @@ def export_modelcheck(main_window: MainWindow) -> None:
 
 
         tree = main_window.ui.tree
-        root_items:list[classes.CustomTreeItem] = list()
+        root_items:list[classes.CustomObjectTreeItem] = list()
         for i in range(tree.invisibleRootItem().childCount()):
             root_items.append(tree.invisibleRootItem().child(i))
 

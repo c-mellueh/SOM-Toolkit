@@ -7,7 +7,7 @@ from desiteRuleCreator.Windows import popups
 from desiteRuleCreator.Windows.popups import msg_del_ident_pset, req_pset_name,msg_del_items
 from desiteRuleCreator.Windows.propertyset_window import PropertySetWindow,fill_attribute_table
 from desiteRuleCreator.data import classes, constants
-from desiteRuleCreator.data.classes import PropertySet, CustomTreeItem
+from desiteRuleCreator.data.classes import PropertySet
 from desiteRuleCreator import icons
 from typing import TYPE_CHECKING
 

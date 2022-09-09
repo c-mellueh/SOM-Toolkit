@@ -92,7 +92,7 @@ def code_buttons(main_window):
 
 def show(main_window):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
-    tree_item: classes.CustomTreeItem = main_window.selected_object()
+    tree_item: classes.CustomObjectTreeItem = main_window.selected_object()
     if tree_item is not None:
         obj = tree_item.object
         for script in obj.scripts:

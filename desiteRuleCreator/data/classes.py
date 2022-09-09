@@ -570,7 +570,11 @@ class Script(QListWidgetItem):
 
 class CustomTree(QTreeWidget):
     def __init__(self, layout) -> None:
-        super(CustomTree, self).__init__(layout)
+        if layout is not None:
+            super(CustomTree, self).__init__(layout)
+        else:
+            super(CustomTree, self).__init__()
+
 
     def dropEvent(self, event: QDropEvent) -> None:
         selected_items = self.selectedItems()
@@ -591,14 +595,14 @@ class CustomTree(QTreeWidget):
                 obj.parent = None
 
 
-class CustomTreeItem(QTreeWidgetItem):
+class CustomObjectTreeItem(QTreeWidgetItem):
     def __init__(self, tree: QTreeWidget, obj: Object) -> None:
-        super(CustomTreeItem, self).__init__(tree)
+        super(CustomObjectTreeItem, self).__init__(tree)
         self._object = obj
         self.update()
 
-    def addChild(self, child: CustomTreeItem) -> None:
-        super(CustomTreeItem, self).addChild(child)
+    def addChild(self, child: CustomObjectTreeItem) -> None:
+        super(CustomObjectTreeItem, self).addChild(child)
         if child.object not in self.object.children:
             self.object.add_child(child.object)
 
