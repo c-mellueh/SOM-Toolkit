@@ -309,8 +309,11 @@ def export_bs(main_window: MainWindow):
             xml_child.set("type", "typeBsGroup")
             xml_child.set("takt", "")
 
-            for child in sorted(node.children,key= lambda  x: x.name):
-                handle_section(child, xml_child)
+            for child in sorted(node.children,key= lambda x: x.name):
+                if node.connection_type(child) == constants.AGGREGATION:
+                    handle_section(child, xml_child)
+                else:
+                    handle_section(child,xml_item)
 
         ui: ui_mainwindow.Ui_MainWindow = main_window.ui
         xml_elementsection = etree.SubElement(xml_parent, "elementSection")

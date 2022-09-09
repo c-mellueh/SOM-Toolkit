@@ -55,7 +55,8 @@ def link_psets(cell: Cell, pset_dict: dict[str, [classes.PropertySet, Cell, clas
         if text != "AE" and text != "-":
             value = pset_dict.get(text.upper())
             if value is not None:
-                [eltern_pset, eltern_cell, dummy] = value
+                eltern_pset:classes.PropertySet
+                [eltern_pset, eltern_cell, dummy]= value
                 if obj is not None:
                     new_pset = classes.PropertySet(eltern_pset.name)
                     eltern_pset.add_child(new_pset)

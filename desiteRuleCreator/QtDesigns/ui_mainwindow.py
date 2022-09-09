@@ -515,6 +515,6 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuDesite.setTitle(QCoreApplication.translate("MainWindow", u"Desite", None))
         self.menuPredefined_Psets.setTitle(QCoreApplication.translate("MainWindow", u"Predefined Psets", None))
-        self.menuShow_Graphs.setTitle(QCoreApplication.translate("MainWindow", u"Graphs", None))
+        self.menuShow_Graphs.setTitle(QCoreApplication.translate("MainWindow", u"Aggregation", None))
     # retranslateUi
 

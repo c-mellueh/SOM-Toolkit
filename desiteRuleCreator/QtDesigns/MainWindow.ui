@@ -686,7 +686,7 @@
    </widget>
    <widget class="QMenu" name="menuShow_Graphs">
     <property name="title">
-     <string>Graphs</string>
+     <string>Aggregation</string>
     </property>
     <addaction name="action_show_graphs"/>
    </widget>

@@ -1,8 +1,14 @@
+# Aggregation Window
 SCALING_FACTOR =0.1
 BOX_WIDHT = 300
 BOX_HEIGHT = 200
 BOX_MARGIN = 50
 BOX_BOTTOM_DISTANCE = 30
+ARROW_HEIGHT = 20
+ARROW_WIDTH = ARROW_HEIGHT/2
+AGGREGATION = 1
+INHERITANCE = 2
+
 
 VALUE = "Value"
 FORMAT = "Format"
@@ -48,3 +54,8 @@ PROJECT = "Project"
 VERSION = "version"
 AGGREGATES_TO = "aggregates_to"
 AUTHOR = "author"
+X_POS = "x_pos"
+Y_POS = "y_pos"
+IS_ROOT = "root"
+CONNECTION = "connection"
+NODE = "Node"
