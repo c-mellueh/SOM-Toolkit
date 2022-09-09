@@ -257,10 +257,12 @@ class MainView(QGraphicsView):
             menu = QMenu()
             action_delete = menu.addAction("delete")
             action_delete.triggered.connect(node.delete)
+            action_toggle_con = menu.addAction("toggle Connection")
+            action_toggle_con.triggered.connect(node.toggle_connection_to_parent)
 
             if logging.DEBUG >= logging.root.level:
-                action_delete = menu.addAction("Info")
-                action_delete.triggered.connect(node.print_info)
+                action_info = menu.addAction("Info")
+                action_info.triggered.connect(node.print_info)
 
             menu.exec(event.globalPos())
 
@@ -300,7 +302,7 @@ class Connection(QGraphicsPathItem):
         super(Connection, self).__init__()
         self.bottom_node: Node = bottom_node
         self.top_node: Node = top_node
-        self.connection_type = connection_type
+        self._connection_type = connection_type
 
         self.setZValue(0)
         self.top_node.scene().addItem(self)
@@ -335,6 +337,22 @@ class Connection(QGraphicsPathItem):
         self.setPath(self.path)
 
         self.setPos(0.0, 0.0)
+
+    @property
+    def connection_type(self) -> int:
+        return self._connection_type
+
+    @connection_type.setter
+    def connection_type(self,value:int):
+        #switch from inherit to aggregation
+        if self._connection_type == constants.INHERITANCE and value == constants.AGGREGATION:
+            self.top_node.object.remove_inherit(self.bottom_node.object)
+
+        #switch from aggregation to inheritance
+        if self._connection_type == constants.AGGREGATION and value == constants.INHERITANCE:
+            self.top_node.object.add_inherit(self.bottom_node.object)
+
+        self._connection_type = value
 
     @property
     def points(self) -> list[QPointF]:
@@ -486,7 +504,7 @@ class Node(QGraphicsProxyWidget):
         self._registry.append(self)
         self.object = obj
         self.object.add_node(self)
-        self.parent_box = None
+        self.parent_box:None|Node = None
         self._children: Set[Node] = set()
         self.connections: List[Connection] = list()
         self.show()
@@ -525,6 +543,19 @@ class Node(QGraphicsProxyWidget):
     def __len__(self) -> int:
         return len(self.children)
 
+    def toggle_connection_to_parent(self) -> None:
+        parent = self.parent_box
+        connection =parent.con_dict[self]
+        con_type = connection.connection_type
+
+        if con_type == constants.AGGREGATION:
+            connection.connection_type = constants.INHERITANCE
+        else:
+            connection.connection_type = constants.AGGREGATION
+        connection.update_line()
+
+
+
     def print_info(self):
         print("-------------------------")
         print(f"Node: {self}")
@@ -541,9 +572,13 @@ class Node(QGraphicsProxyWidget):
     def scene(self) -> AggregationScene:
         return super(Node, self).scene()
 
-    def get_connection_type(self,bottom_node: Node) -> int:
+    @property
+    def con_dict(self) -> dict[Node,Connection]:
         con_dict = {connection.bottom_node: connection for connection in self.connections}
-        connection = con_dict[bottom_node]
+        return con_dict
+
+    def get_connection_type(self,bottom_node: Node) -> int:
+        connection = self.con_dict[bottom_node]
         return connection.connection_type
 
     @property
