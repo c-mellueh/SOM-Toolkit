@@ -924,14 +924,11 @@ class GraphWindow(QWidget):
             link_child_nodes(node)
 
         self.update_combo_list()
-        self.combo_box.setCurrentIndex(0)
 
         for node in self.root_nodes:
             self.change_scene(node)
 
-
-        first_node = [node for node in sorted(self.root_nodes,key = lambda n:n.object.name)][0]
-        self.change_scene(first_node)
+        self.combo_box.setCurrentIndex(0)
 
     def delete_button_pressed(self) -> None:
         if not self.combo_box.currentText() == "":

@@ -9,6 +9,7 @@ from lxml import etree
 from desiteRuleCreator.Windows.popups import msg_delete_or_merge
 from desiteRuleCreator.Windows.popups import msg_unsaved
 from desiteRuleCreator.data import classes, constants
+from desiteRuleCreator.Windows import graphs_window
 
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
@@ -48,13 +49,13 @@ def import_data(main_window: MainWindow, path: str = False) -> None:
             import_old(projekt_xml)
             main_window.project = classes.Project(main_window, name,author)
         else:
-            import_new(projekt_xml)
+            import_new(projekt_xml,main_window)
             main_window.project = classes.Project(main_window, name,author)
             main_window.project.version = projekt_xml.attrib.get("version")
         fill_tree(main_window)
 
 
-def import_new(projekt_xml: etree._Element) -> None:
+def import_new(projekt_xml: etree._Element,main_window:MainWindow) -> None:
     def import_attributes(xml_object: etree._Element, property_set: classes.PropertySet) -> classes.Attribute | None:
 
         def transform_new_values(xml_attribute: etree._Element) -> list[str]:
@@ -173,20 +174,52 @@ def import_new(projekt_xml: etree._Element) -> None:
 
 
     def link_aggregation() -> None:
-        obj_dict = {obj.identifier: obj for obj in classes.Object}
-        for xml_object in xml_objects:
-            xml_aggregates = [x for x in xml_object if x.tag == constants.AGGREGATE]
-            ident = xml_object.get(constants.IDENTIFIER)
-            obj: classes.Object = obj_dict[ident]
-            for xml_aggregate in xml_aggregates:
-                child_ident = xml_aggregate.get(constants.AGGREGATES_TO)
-                child_obj = obj_dict[child_ident]
-                obj.add_aggregation(child_obj)
+        def create_node_dict() -> dict[str,[object,graphs_window.Node]]:
+
+            id_node_dict = dict()
+            for xml_node in xml_root_node:
+                identifier = xml_node.attrib.get(constants.IDENTIFIER)
+                obj = ident_dict[xml_node.attrib.get(constants.OBJECT.lower())]
+                node = graphs_window.Node(obj,graph_window)
+                id_node_dict[identifier] = (node,xml_node)
+            return id_node_dict
+
+        main_window.graph_window = graphs_window.GraphWindow(main_window, False)
+        graph_window:graphs_window.GraphWindow = main_window.graph_window
+        print(f" graph_window = {graph_window}")
+        id_node_dict =create_node_dict()
+
+        for identifier, (node,xml_node) in id_node_dict.items():
+            parent_id = xml_node.attrib.get(constants.PARENT)
+            is_root = xml_node.attrib.get(constants.IS_ROOT)
+            connection_type = xml_node.attrib.get(constants.CONNECTION)
+            if parent_id != constants.NONE:
+                parent_node:graphs_window.Node = id_node_dict[parent_id][0]
+                parent_node.add_child(node,int(connection_type))
+            if is_root == "True":
+                scene = graphs_window.AggregationScene(node)
+                graph_window.scenes.append(scene)
+
+        graph_window.update_combo_list()
+        for node in graph_window.root_nodes:
+            graph_window.change_scene(node)
+
+        for identifier,(node,xml_node) in id_node_dict.items():
+            x_pos = xml_node.attrib.get(constants.X_POS)
+            y_pos = xml_node.attrib.get(constants.Y_POS)
+            node.setX(float(x_pos))
+            node.setY(float(y_pos))
+
+        graph_window.combo_box.setCurrentIndex(0)
+
+
+
 
     xml_predefined_psets = [x for x in projekt_xml if x.tag == constants.PREDEFINED_PSET]
     xml_objects = [x for x in projekt_xml if x.tag == constants.OBJECT]
-
+    xml_root_node = [x for x in projekt_xml if x.tag == "Nodes"][0]
     import_property_sets(xml_predefined_psets)
+    ident_dict:dict[str,classes.Object] = dict()
 
     for xml_object in xml_objects:
         xml_property_sets = [x for x in xml_object if x.tag == constants.PROPERTY_SET]
@@ -194,7 +227,7 @@ def import_new(projekt_xml: etree._Element) -> None:
         property_sets, ident_attrib = import_property_sets(xml_property_sets)
         name, parent, identifer, is_concept = get_obj_data(xml_object)
         obj = classes.Object(name, ident_attrib, identifier=identifer)
-
+        ident_dict[identifer] = obj
         for property_set in property_sets:
             obj.add_property_set(property_set)
 
