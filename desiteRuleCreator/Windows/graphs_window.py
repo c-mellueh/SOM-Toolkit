@@ -926,6 +926,13 @@ class GraphWindow(QWidget):
         self.update_combo_list()
         self.combo_box.setCurrentIndex(0)
 
+        for node in self.root_nodes:
+            self.change_scene(node)
+
+
+        first_node = [node for node in sorted(self.root_nodes,key = lambda n:n.object.name)][0]
+        self.change_scene(first_node)
+
     def delete_button_pressed(self) -> None:
         if not self.combo_box.currentText() == "":
             root_node = self.active_scene.root_node
@@ -1014,7 +1021,6 @@ class GraphWindow(QWidget):
 
     def change_scene(self, node: Node) -> None:
         self.active_scene = self.scene_dict[node]
-
         if self.active_scene not in self.drawn_scenes:
             self.redraw()
             self.drawn_scenes.append(self.active_scene)
@@ -1027,7 +1033,9 @@ class GraphWindow(QWidget):
         return node
 
     def combo_change(self) -> None:
-        node = self.get_node()
+        combo_box = self.widget.combo_box
+        text = combo_box.currentText()
+        node = self.find_node_by_name(text)
         if node is not None:
             self.change_scene(node)
         else:
@@ -1037,7 +1045,7 @@ class GraphWindow(QWidget):
             self.view.setScene(QGraphicsScene())
 
     def redraw(self) -> None:
-        node = self.get_node()
+        node = self.active_scene.root_node
 
         if node is not None:
             self.draw_tree(node)
@@ -1045,7 +1053,7 @@ class GraphWindow(QWidget):
     def update_combo_list(self) -> None:
         combo = self.combo_box
 
-        rn_with_children = set(item_to_name(node) for node in self.root_nodes if len(node.children) > 0)
+        rn_with_children = set(item_to_name(node) for node in self.root_nodes)
 
         # remove old Items
         for i in range(combo.count()):
@@ -1054,7 +1062,7 @@ class GraphWindow(QWidget):
                 combo.removeItem(i)
 
         # add New Items
-        for item in rn_with_children:
+        for item in sorted(rn_with_children):
             if combo.findText(item) == -1:
                 combo.addItem(item)
 
