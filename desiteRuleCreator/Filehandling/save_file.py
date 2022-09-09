@@ -113,16 +113,20 @@ def save(main_window:MainWindow, path:str) -> None:
 
     def add_node(node: graphs_window.Node,xml_nodes:etree._Element) -> None:
         xml_node = etree.SubElement(xml_nodes, "Node")
-        xml_node.set("uuid",str(node.uuid))
-        xml_node.set("object", str(node.object.identifier))
+        xml_node.set(constants.IDENTIFIER,str(node.uuid))
+        xml_node.set(constants.OBJECT.lower(), str(node.object.identifier))
         if node.parent_box is not None:
-            xml_node.set("parent", str(node.parent_box.uuid))
+            xml_node.set(constants.PARENT, str(node.parent_box.uuid))
         else:
-            xml_node.set("parent","None")
-        xml_node.set("x_pos",str(node.x()))
-        xml_node.set("y_pos",str(node.y()))
-        xml_node.set("is_root",str(node.is_root))
-        xml_node.set("connection",str(node.top_connections[0].connection_type))
+            xml_node.set(constants.PARENT,"None")
+        xml_node.set(constants.X_POS,str(node.x()))
+        xml_node.set(constants.Y_POS,str(node.y()))
+        xml_node.set(constants.IS_ROOT,str(node.is_root))
+        connection = node.con_dict.get(node.parent_box)
+        if connection is not None:
+            xml_node.set(constants.CONNECTION,str(connection.connection_type))
+        else:
+            xml_node.set(constants.CONNECTION, "None")
 
     main_window.save_path = path
 
