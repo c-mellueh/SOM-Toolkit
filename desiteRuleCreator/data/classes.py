@@ -431,8 +431,6 @@ class Object(Hirarchy):
         self._ident_attrib = ident_attrib
         self._nodes: set[graphs_window.Node] = set()
         self.changed = True
-        self._inherits:set[Object] = set()
-        self._inherits_from: Object|None = None
 
         if identifier is None:
             self.identifier = str(uuid4())
@@ -451,19 +449,6 @@ class Object(Hirarchy):
 
     def remove_node(self, node: graphs_window.Node) -> None:
         self.nodes.remove(node)
-
-    @property
-    def inherits(self) -> set[Object]:
-        return self._inherits
-
-    def add_inherit(self,value:Object) -> None:
-        self._inherits.add(value)
-        value._inherits_from = self
-
-
-    def remove_inherit(self,value:Object) -> None:
-        self._inherits.remove(value)
-        value._inherits_from = None
 
     @property
     def inherited_property_sets(self) -> dict[Object, list[PropertySet]]:

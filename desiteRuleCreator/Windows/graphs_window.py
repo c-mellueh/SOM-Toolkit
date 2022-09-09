@@ -1,6 +1,6 @@
 from __future__ import annotations  # make own class referencable
 
-import logging
+import logging,uuid
 from typing import Iterator, List, Set
 
 from PySide6.QtCore import Qt, QRectF, QPointF
@@ -343,15 +343,7 @@ class Connection(QGraphicsPathItem):
         return self._connection_type
 
     @connection_type.setter
-    def connection_type(self,value:int):
-        #switch from inherit to aggregation
-        if self._connection_type == constants.INHERITANCE and value == constants.AGGREGATION:
-            self.top_node.object.remove_inherit(self.bottom_node.object)
-
-        #switch from aggregation to inheritance
-        if self._connection_type == constants.AGGREGATION and value == constants.INHERITANCE:
-            self.top_node.object.add_inherit(self.bottom_node.object)
-
+    def connection_type(self,value:int) -> None:
         self._connection_type = value
 
     @property
@@ -497,13 +489,19 @@ class Rect(QGraphicsRectItem):
 class Node(QGraphicsProxyWidget):
     _registry = list()
 
-    def __init__(self, obj: classes.Object, graph_window: GraphWindow) -> None:
+    def __init__(self, obj: classes.Object, graph_window: GraphWindow,node_uuid:str|None = None) -> None:
 
         self.rect = Rect(self)
         super(Node, self).__init__(self.rect)
         self._registry.append(self)
         self.object = obj
         self.object.add_node(self)
+
+        if node_uuid is None:
+            self.uuid:str = str(uuid.uuid4())
+        else:
+            self.uuid:str = node_uuid
+
         self.parent_box:None|Node = None
         self._children: Set[Node] = set()
         self.connections: List[Connection] = list()
@@ -544,9 +542,9 @@ class Node(QGraphicsProxyWidget):
         return len(self.children)
 
     def toggle_connection_to_parent(self) -> None:
-        parent = self.parent_box
-        connection =parent.con_dict[self]
-        con_type = connection.connection_type
+
+        connection = self.con_dict[self.parent_box]
+        con_type = self.connection_type(self.parent_box)
 
         if con_type == constants.AGGREGATION:
             connection.connection_type = constants.INHERITANCE
@@ -574,20 +572,26 @@ class Node(QGraphicsProxyWidget):
 
     @property
     def con_dict(self) -> dict[Node,Connection]:
-        con_dict = {connection.bottom_node: connection for connection in self.connections}
+        con_dict = dict()
+
+        for con in self.bottom_connections:
+            con_dict[con.bottom_node] = con
+        for con in self.top_connections:
+            con_dict[con.top_node] = con
+
         return con_dict
 
-    def get_connection_type(self,bottom_node: Node) -> int:
-        connection = self.con_dict[bottom_node]
+    def connection_type(self, node: Node) -> int:
+        connection = self.con_dict[node]
         return connection.connection_type
 
     @property
     def children(self) -> List[Node]:
 
         aggregations = [child for child in self._children
-                        if self.get_connection_type(child) == constants.AGGREGATION]
+                        if self.connection_type(child) == constants.AGGREGATION]
         inheritances = [child for child in self._children
-                        if self.get_connection_type(child) == constants.INHERITANCE]
+                        if self.connection_type(child) == constants.INHERITANCE]
 
         return aggregations + inheritances
 
@@ -630,7 +634,6 @@ class Node(QGraphicsProxyWidget):
 
         return child_dict
 
-
     def add_button_pressed(self) -> PopUp:
         old_popup: PopUp = self.graph_window.node_popup
         if old_popup is not None:
@@ -645,9 +648,7 @@ class Node(QGraphicsProxyWidget):
     def add_child(self, child: Node, connection_type:int=constants.AGGREGATION) -> Node:
         def connect_to_node(node: Node, connection_type: int):
             if node is not None:
-                con = Connection(node, self, connection_type)
-
-
+                Connection(node, self, connection_type)
 
         self._children.add(child)
         child.parent_box = self
@@ -824,12 +825,39 @@ class GraphWindow(QWidget):
                      pset_dict: dict[str, (classes.PropertySet, object, classes.Object)],
                      aggregate_dict: dict[classes.Object, list[str]]) -> None:
 
+        def get_root_objects() -> list[classes.Object]:
+            root_objects = list()
+            for obj in classes.Object:
+                if is_root(obj):
+                    root_objects.append(obj)
+            return root_objects
+
+        def transform_aggregate_dict(aggregate_dict:dict[classes.Object, list[str]]) -> dict[classes.Object,list[classes.Object]]:
+            new_dict = dict()
+            for obj,kuerzel_list in aggregate_dict.items():
+                l = list()
+                for kuerzel in kuerzel_list:
+                    informations = pset_dict.get(kuerzel)
+                    if informations is not None:
+                        child = informations[2]
+                        if child is not None:
+                            l.append(child)
+                        else:
+                            logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+                    else:
+                        logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+                new_dict[obj]= l
+            return new_dict
+
         def is_root(obj):
             kuerzel = kuerzel_dict[obj]
             if kuerzel in all_children:
                 return False
 
             if is_child(obj):
+                return False
+
+            if not aggregate_dict[obj]:
                 return False
 
             return True
@@ -846,65 +874,49 @@ class GraphWindow(QWidget):
             else:
                 return False
 
-        def link_inherits():
+        def get_inherit_dict() -> dict[classes.Object,list[classes.Object]]:
             all_objects = aggregate_dict.keys()
             ident_dict = {obj.ident_attrib.value[0]: obj for obj in all_objects}
-
+            inherit_dict = {obj:list() for obj in all_objects}
             for obj in all_objects:
                 if is_child(obj):
                     value: str = obj.ident_attrib.value[0]
                     parent_txt = value.split(".")[:-1]
                     parent_txt = ".".join(parent_txt)
                     parent_obj: classes.Object = ident_dict[parent_txt]
-                    parent_obj.add_inherit(obj)
+                    inherit_dict[parent_obj].append(obj)
+            return inherit_dict
 
-        def recursion(node: Node) -> None:
+        def link_child_nodes(node: Node) -> None:
             aggregate_list = aggregate_dict[node.object]
-            for kuerzel in aggregate_list:
-                dic = pset_dict.get(kuerzel)
-                if dic is not None:
-                    obj_child = dic[2]
-                    if obj is not None:
-                        child_node = Node(obj_child, self)
-                        node.add_child(child_node, constants.AGGREGATION)
-                        recursion(child_node)
-                    else:
-                        logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
-                else:
-                    logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
+            for obj_child in aggregate_list:
+                child_node = Node(obj_child, self)
+                node.add_child(child_node, constants.AGGREGATION)
+                link_child_nodes(child_node)
 
-            for inherit_obj in node.object.inherits:
+            inherit_list = inherit_dict[node.object]
+            for inherit_obj in inherit_list:
                 child_node = Node(inherit_obj, self)
-
                 if node.parent_box is not None:
                     node.add_child(child_node, constants.INHERITANCE)
-                    recursion(child_node)
+                    link_child_nodes(child_node)
 
-        link_inherits()
-
-        self.test_dict = {obj: Node(obj, self) for obj in classes.Object}
         self.scene_list = list()
 
         kuerzel_dict = {obj: kuerzel for (kuerzel, (a, b, obj)) in pset_dict.items()}
+        inherit_dict = get_inherit_dict()
 
         # list with all Child Abbreviations
         all_children = [element for sublist in aggregate_dict.values() for element in sublist]
-        root_objects = list()
+        aggregate_dict = transform_aggregate_dict(aggregate_dict)
+        root_objects = get_root_objects()
 
-        for obj in classes.Object:
-            if is_root(obj):
-                root_objects.append(obj)
-        # root_objects = [obj for obj in classes.Object if is_root(obj)]
-
-        scene = None
         for obj in root_objects:
-            if obj.name == "Ausbau":
-                print(obj)
 
             node = Node(obj, self)
             scene = AggregationScene(node)
             self.scenes.append(scene)
-            recursion(node)
+            link_child_nodes(node)
 
         self.update_combo_list()
         self.combo_box.setCurrentIndex(0)

@@ -309,12 +309,8 @@ def export_bs(main_window: MainWindow):
             xml_child.set("type", "typeBsGroup")
             xml_child.set("takt", "")
 
-            for child in sorted(node.children,key= lambda  x: x.name):
-                con_type = node.get_connection_type(child)
-                if node.object.name == "Tiefgruendung":
-                    print("HIER")
-
-                if node.get_connection_type(child) == constants.AGGREGATION:
+            for child in sorted(node.children,key= lambda x: x.name):
+                if node.connection_type(child) == constants.AGGREGATION:
                     handle_section(child, xml_child)
                 else:
                     handle_section(child,xml_item)
