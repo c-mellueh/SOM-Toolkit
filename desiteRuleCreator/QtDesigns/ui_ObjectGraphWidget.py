@@ -15,9 +15,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QLabel, QListWidget,
-    QListWidgetItem, QPushButton, QSizePolicy, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QApplication, QLabel, QPushButton, QSizePolicy,
+    QVBoxLayout, QWidget)
 
 class Ui_object_graph_widget(object):
     def setupUi(self, object_graph_widget):
@@ -41,17 +40,6 @@ class Ui_object_graph_widget(object):
         self.label_object_name.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout.addWidget(self.label_object_name)
-
-        self.list_widget_property_sets = QListWidget(object_graph_widget)
-        self.list_widget_property_sets.setObjectName(u"list_widget_property_sets")
-        sizePolicy.setHeightForWidth(self.list_widget_property_sets.sizePolicy().hasHeightForWidth())
-        self.list_widget_property_sets.setSizePolicy(sizePolicy)
-        self.list_widget_property_sets.setFrameShape(QFrame.NoFrame)
-        self.list_widget_property_sets.setFrameShadow(QFrame.Plain)
-        self.list_widget_property_sets.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.list_widget_property_sets.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-        self.verticalLayout.addWidget(self.list_widget_property_sets)
 
         self.button_add = QPushButton(object_graph_widget)
         self.button_add.setObjectName(u"button_add")

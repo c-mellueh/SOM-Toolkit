@@ -5,7 +5,7 @@ from typing import Iterator, Type,TYPE_CHECKING
 from uuid import uuid4
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QDropEvent
+from PySide6.QtGui import QDropEvent,QMouseEvent
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QAbstractItemView, QListWidgetItem,QTableWidgetItem
 
 if TYPE_CHECKING:
@@ -594,6 +594,13 @@ class CustomTree(QTreeWidget):
             else:
                 obj.parent = None
 
+class CustomPsetTree(QTreeWidget):
+    def __init__(self) -> None:
+        super(CustomPsetTree, self).__init__()
+        self.setExpandsOnDoubleClick(False)
+        self.setColumnCount(1)
+        self.setHeaderLabels(["Name"])
+
 
 class CustomObjectTreeItem(QTreeWidgetItem):
     def __init__(self, tree: QTreeWidget, obj: Object) -> None:
@@ -616,6 +623,34 @@ class CustomObjectTreeItem(QTreeWidgetItem):
             self.setText(1, "")
         else:
             self.setText(1, str(self.object.ident_attrib.value))
+
+
+class CustomPSetTreeItem(QTreeWidgetItem):
+    def __init__(self, tree: QTreeWidget, pset:PropertySet) -> None:
+        super(CustomPSetTreeItem, self).__init__(tree)
+        self._property_set = pset
+        self.update()
+
+    @property
+    def property_set(self) -> PropertySet:
+        return self._property_set
+
+    def update(self) -> None:
+        self.setText(0,self.property_set.name)
+
+
+class CustomAttribTreeItem(QTreeWidgetItem):
+    def __init__(self, tree: QTreeWidget, attribute:Attribute) -> None:
+        super(CustomAttribTreeItem, self).__init__(tree)
+        self._attribute = attribute
+        self.update()
+
+    @property
+    def attribute(self) -> Attribute:
+        return self._attribute
+
+    def update(self) -> None:
+        self.setText(0,self.attribute.name)
 
 
 class CustomListItem(QListWidgetItem):

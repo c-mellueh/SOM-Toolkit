@@ -329,8 +329,6 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         self.old_state = event
 
-    
-
     def new_line(self):
         def range_mode(self):
 
@@ -355,8 +353,6 @@ class PropertySetWindow(QtWidgets.QWidget):
             line_edit = self.lineEdit_input
         self.new_layout.addWidget(self.widget.button_add_line)
         return line_edit
-
-
 
     def clear_lines(self):
 
@@ -385,11 +381,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                 items.setText("")
         #self.widget.layout_input
 
-
-    def list_clicked(self, tree_item:QTableWidgetItem|classes.CustomTableItem ):
-
-        item: QTableWidgetItem = self.widget.table_widget.item(tree_item.row(), 0)
-        attribute: Attribute = self.get_attribute_by_name(item.text())
+    def fill_with_attribute(self,attribute:classes.Attribute):
         index = self.widget.combo_type.findText(attribute.value_type)
         self.widget.combo_type.setCurrentIndex(index)
         index = self.widget.combo_data_type.findText(attribute.data_type)
@@ -415,6 +407,11 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         # set Editable
         self.widget.check_box_inherit.setChecked(attribute.child_inherits_values)
+
+    def list_clicked(self, tree_item:QTableWidgetItem|classes.CustomTableItem ):
+        item: QTableWidgetItem = self.widget.table_widget.item(tree_item.row(), 0)
+        attribute: Attribute = self.get_attribute_by_name(item.text())
+        self.fill_with_attribute(attribute)
 
 def fill_attribute_table(active_object,table_widget,property_set):
     def reformat_identifier(row):
