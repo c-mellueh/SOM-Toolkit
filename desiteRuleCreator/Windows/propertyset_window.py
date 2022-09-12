@@ -1,16 +1,18 @@
 from __future__ import annotations
-import os
+
+import copy
 import logging
+
 from PySide6 import QtWidgets, QtGui
-from PySide6.QtCore import QModelIndex, Qt
-from PySide6.QtWidgets import QTableWidgetItem, QHBoxLayout, QLineEdit, QMessageBox, QMenu,QTableWidgetItem
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget
 
 from desiteRuleCreator import icons
-from desiteRuleCreator.QtDesigns import ui_widget,ui_mainwindow
+from desiteRuleCreator.QtDesigns import ui_widget
 from desiteRuleCreator.Windows import popups
-from desiteRuleCreator.data import constants,classes
+from desiteRuleCreator.data import constants, classes
 from desiteRuleCreator.data.classes import PropertySet, Attribute
-from desiteRuleCreator import icons
+
 
 def float_to_string(value):
     value = str(value).replace(".", ",")
@@ -22,34 +24,45 @@ def string_to_float(value: str):
 
     return value
 
-class LineInput(QLineEdit):
-    def __init__(self,parent):
-        super(LineInput, self).__init__(parent)
-        self.pset_window:PropertySetWindow = parent
 
-    def keyPressEvent(self, event:QtGui.QKeyEvent) -> None:
+def get_selected_rows(table_widget: QTableWidget) -> list[int]:
+    selectedRows = []
+    for item in table_widget.selectedItems():
+        if item.row() not in selectedRows:
+            selectedRows.append(item.row())
+    selectedRows.sort()
+    return selectedRows
+
+
+class LineInput(QLineEdit):
+    def __init__(self, parent):
+        super(LineInput, self).__init__(parent)
+        self.pset_window: PropertySetWindow = parent
+
+    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
         seperator = self.pset_window.mainWindow.project.seperator
         sep_bool = self.pset_window.mainWindow.project.seperator_status
         if event.matches(QtGui.QKeySequence.Paste) and sep_bool:
             text = QtGui.QGuiApplication.clipboard().text()
             text_list = text.split(seperator)
-            if len(text_list)<2:
+            if len(text_list) < 2:
                 super(LineInput, self).keyPressEvent(event)
                 return
 
-            dif =len(text_list)- len (self.pset_window.input_lines)
-            if dif >=0:
-                for i in range(dif+1):
+            dif = len(text_list) - len(self.pset_window.input_lines)
+            if dif >= 0:
+                for i in range(dif + 1):
                     self.pset_window.new_line()
 
             lines = [line for line in self.pset_window.input_lines.values()]
-            for i,text in enumerate(text_list):
+            for i, text in enumerate(text_list):
                 text = text.strip()
-                line:LineInput = lines[i]
+                line: LineInput = lines[i]
                 line.setText(text)
 
         else:
             super(LineInput, self).keyPressEvent(event)
+
 
 class PropertySetWindow(QtWidgets.QWidget):
     def __init__(self, main_window, property_set: PropertySet, active_object, window_title):
@@ -59,7 +72,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.mainWindow = main_window
         self.property_set = property_set
         self.active_object = active_object
-        fill_attribute_table(self.active_object,self.widget.table_widget,self.property_set)
+        fill_attribute_table(self.active_object, self.widget.table_widget, self.property_set)
         self.input_lines = {}
         self.widget.table_widget.itemClicked.connect(self.list_clicked)
         self.widget.combo_type.currentTextChanged.connect(self.combo_change)
@@ -83,16 +96,64 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.show()
         self.resize(1000, 400)
         self.new_line()
+        self.widget.table_widget.orig_drop_event = self.widget.table_widget.dropEvent
+        self.widget.table_widget.dropEvent = self.tableDropEvent
+        self.widget.table_widget.dropMimeData = self.dropMimeData
+
+    def tableDropEvent(self, event: QtGui.QDropEvent):
+
+        table = self.widget.table_widget
+        sender: QTableWidget = event.source()
+        if sender == table:
+            return
+
+        self.widget.table_widget.orig_drop_event(event)
+        drop_row = self.last_drop_row
+        selected_rows = get_selected_rows(sender)
+
+        sender_attribute_names = {sender.item(row, 0).item.name: row for row in selected_rows}
+        receiver_attribute_names = [table.item(row, 0).item.name for row in range(table.rowCount())]
+
+        for name, row in sender_attribute_names.items():  # remove Rows with existing names
+            if name in receiver_attribute_names:
+                selected_rows.remove(row)
+
+        for r in selected_rows:
+            table.insertRow(drop_row)
+
+        for offset, row_index in enumerate(selected_rows):  # iterate rows
+            for col_index in range(table.columnCount()):  # iterate columns
+                old_item: classes.CustomTableItem
+                old_item = sender.item(row_index, col_index)
+
+                if col_index == 0:  # get attribute
+                    old_attribute: classes.Attribute = old_item.item
+                    new_attribute = copy.copy(old_attribute)
+                    self.property_set.add_attribute(new_attribute)
+                if old_item:
+                    if col_index == 0:
+                        new_item = classes.CustomTableItem(new_attribute)
+                        new_item.setText(new_attribute.name)
+                        if new_attribute.is_child:
+                            new_item.setIcon(icons.get_link_icon())
+                    else:
+                        new_item = QTableWidgetItem(old_item.text())
+                    table.setItem(offset + drop_row, col_index, new_item)
+
+    def dropMimeData(self, row, col, mimeData, action):
+        self.last_drop_row = row
+        print(f"drop_row: {row}")
+        return True
 
     def seperator_text_changed(self, status) -> None:
         self.mainWindow.project.seperator = status
 
-    def seperator_changed(self,status:int) -> None:
+    def seperator_changed(self, status: int) -> None:
         if status == 2:
             b = True
         else:
             b = False
-        self.mainWindow.project.seperator_status =b
+        self.mainWindow.project.seperator_status = b
         self.widget.line_edit_seperator.setEnabled(b)
 
     def selected_items(self) -> list[classes.CustomTableItem]:
@@ -110,12 +171,11 @@ class PropertySetWindow(QtWidgets.QWidget):
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
                 string_list.append(name)
-                if attribute_is_identifier(self.active_object,self.get_attribute_by_name(name)):
+                if attribute_is_identifier(self.active_object, self.get_attribute_by_name(name)):
                     popups.msg_mod_ident()
                     return
                 else:
                     selected_rows.append(items.row())
-
 
         delete_request = popups.msg_del_items(string_list)
 
@@ -139,13 +199,12 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.action_rename_attribute.triggered.connect(self.rename_selection)
 
         columns = self.widget.table_widget.columnCount()
-        selected_rows = len(self.selected_items())/columns
-        if logging.root.level <= logging.DEBUG and selected_rows ==1:
+        selected_rows = len(self.selected_items()) / columns
+        if logging.root.level <= logging.DEBUG and selected_rows == 1:
             self.action_info = menu.addAction("Info")
             self.action_info.triggered.connect(self.info)
 
         menu.exec(self.widget.table_widget.viewport().mapToGlobal(position))
-
 
     def info(self, main_window):
         table_item = self.selected_items()[0]
@@ -160,7 +219,6 @@ class PropertySetWindow(QtWidgets.QWidget):
         else:
             print("no children")
 
-
     def get_attribute_by_name(self, name):
         for attribute in self.property_set.attributes:
             if attribute.name == name:
@@ -174,7 +232,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             row = items.row()
             if row not in selected_rows:
                 name = self.widget.table_widget.item(row, 0).text()
-                if attribute_is_identifier(self.active_object,self.get_attribute_by_name(name)):
+                if attribute_is_identifier(self.active_object, self.get_attribute_by_name(name)):
                     popups.msg_mod_ident()
                     return
                 else:
@@ -260,8 +318,8 @@ class PropertySetWindow(QtWidgets.QWidget):
                             values[i] = [string_to_float(value[0]), string_to_float(value[1])]
                         else:
                             values[i] = string_to_float(value)
-                    except ValueError:  #move to popup
-                        msg_box= QMessageBox()
+                    except ValueError:  # move to popup
+                        msg_box = QMessageBox()
                         msg_box.setText("Value can't be converted to Double!")
                         msg_box.setWindowTitle(" ")
                         msg_box.setIcon(QMessageBox.Icon.Warning)
@@ -280,6 +338,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             row = item.row()
             fill_table_line(row, attribute)
             return attribute
+
         def add_attribute():
             name = self.widget.lineEdit_name.text()
 
@@ -308,7 +367,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         if not already_exists:
             attribute = add_attribute()
         if attribute is not None:
-            if attribute_is_identifier(self.mainWindow.active_object,attribute):
+            if attribute_is_identifier(self.mainWindow.active_object, attribute):
                 self.mainWindow.reload_objects()
         self.clear_lines()
 
@@ -335,6 +394,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             self.lineEdit_input2 = QLineEdit(self)
             self.new_layout.addWidget(self.lineEdit_input2)
             self.input_lines[self.new_layout] = [self.lineEdit_input, self.lineEdit_input2]
+
         # if len(self.input_lines)>0:
         self.widget.layout_input.removeWidget(self.widget.button_add_line)
         self.new_layout = QHBoxLayout()
@@ -357,7 +417,7 @@ class PropertySetWindow(QtWidgets.QWidget):
     def clear_lines(self):
 
         for key, item in tuple(self.input_lines.items()):
-            if len(self.input_lines)>1:
+            if len(self.input_lines) > 1:
                 if key != self.widget.layout_input:
                     v_layout: QHBoxLayout = key.parent()
                     v_layout.removeItem(key)
@@ -379,9 +439,9 @@ class PropertySetWindow(QtWidgets.QWidget):
                     item.setText("")
             else:
                 items.setText("")
-        #self.widget.layout_input
+        # self.widget.layout_input
 
-    def fill_with_attribute(self,attribute:classes.Attribute):
+    def fill_with_attribute(self, attribute: classes.Attribute):
         index = self.widget.combo_type.findText(attribute.value_type)
         self.widget.combo_type.setCurrentIndex(index)
         index = self.widget.combo_data_type.findText(attribute.data_type)
@@ -408,12 +468,13 @@ class PropertySetWindow(QtWidgets.QWidget):
         # set Editable
         self.widget.check_box_inherit.setChecked(attribute.child_inherits_values)
 
-    def list_clicked(self, tree_item:QTableWidgetItem|classes.CustomTableItem ):
+    def list_clicked(self, tree_item: QTableWidgetItem | classes.CustomTableItem):
         item: QTableWidgetItem = self.widget.table_widget.item(tree_item.row(), 0)
         attribute: Attribute = self.get_attribute_by_name(item.text())
         self.fill_with_attribute(attribute)
 
-def fill_attribute_table(active_object,table_widget,property_set):
+
+def fill_attribute_table(active_object, table_widget, property_set):
     def reformat_identifier(row):
         brush = QtGui.QBrush()
         brush.setColor(Qt.GlobalColor.lightGray)
@@ -438,10 +499,11 @@ def fill_attribute_table(active_object,table_widget,property_set):
         table_widget.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
         table_widget.setItem(i, 3, QTableWidgetItem(str(attribute.value)))
 
-        if attribute_is_identifier(active_object,attribute):
+        if attribute_is_identifier(active_object, attribute):
             reformat_identifier(i)
 
         table_widget.resizeColumnsToContents()
+
 
 def attribute_is_identifier(active_object, attribute):
     if active_object is not None:
