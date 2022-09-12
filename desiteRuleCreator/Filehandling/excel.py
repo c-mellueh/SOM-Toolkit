@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
 import openpyxl
@@ -10,7 +11,6 @@ from openpyxl.worksheet.worksheet import Worksheet
 from desiteRuleCreator.data import classes, constants
 from desiteRuleCreator.Filehandling import open_file
 from desiteRuleCreator.Windows import graphs_window
-
 
 
 def transform_value_types(value: str) -> (str, bool):
@@ -50,16 +50,17 @@ def link_psets(cell: Cell, pset_dict: dict[str, [classes.PropertySet, Cell, clas
                sheet: Worksheet, obj: classes.Object = None) -> None:
     parent_text = sheet.cell(cell.row + 2, cell.column + 1).value
     parent_list = split_string(parent_text)
-
     for text in parent_list:
         if text != "AE" and text != "-":
             value = pset_dict.get(text.upper())
             if value is not None:
-                eltern_pset:classes.PropertySet
-                [eltern_pset, eltern_cell, dummy]= value
+                eltern_pset: classes.PropertySet
+                [eltern_pset, eltern_cell, dummy] = value
                 if obj is not None:
-                    new_pset = classes.PropertySet(eltern_pset.name)
-                    eltern_pset.add_child(new_pset)
+                    pset_names = [pset.name for pset in obj.property_sets]
+                    if eltern_pset.name in pset_names:
+                        logging.error(f"[{obj.name}] Propertyset {eltern_pset.name} kommt doppelt vor!")
+                    new_pset = eltern_pset.create_child(eltern_pset.name)
                     obj.add_property_set(new_pset)
                 link_psets(eltern_cell, pset_dict, sheet, obj)
             else:
@@ -78,7 +79,8 @@ def iterate_attributes(pset: classes.PropertySet, sheet: Worksheet, entry: Cell,
         data_type, special = transform_value_types(data_type_text)
         classes.Attribute(pset, attribute_name, [""], constants.VALUE_TYPE_LOOKUP[constants.LIST], data_type=data_type)
         if special:
-            logging.warning(f"[{entry.value}] Property: {pset.name}:{attribute_name} datatype '{data_type_text}' unbekannt")
+            logging.info(
+                f"[{entry.value}] Property: {pset.name}:{attribute_name} datatype '{data_type_text}' unbekannt")
             pass
 
         entry = sheet.cell(row=entry.row + 1, column=entry.column)
@@ -106,9 +108,9 @@ def create_object(sheet: Worksheet, cell: Cell, pset_dict: dict[str, (classes.Pr
     entry = sheet.cell(row=cell.row + 5, column=cell.column)
     iterate_attributes(pset, sheet, entry, cell_list)
 
-    #ident_pset = classes.PropertySet()
+    # ident_pset = classes.PropertySet()
     parent: classes.PropertySet = pset_dict["AE"][0]
-    ident_pset= parent.create_child("Allgemeine Eigenschaften")
+    ident_pset = parent.create_child("Allgemeine Eigenschaften")
     ident_attrib: classes.Attribute = ident_pset.get_attribute_by_name("bauteilKlassifikation")
 
     ident_attrib.value = [ident]
@@ -142,9 +144,10 @@ def find_base_cells(sheet: Worksheet) -> list[Cell]:
     return name_cells
 
 
-def create_items(sheet: Worksheet, base_cells: list[Cell]) ->(dict[str, (classes.PropertySet, Cell, classes.Object)],dict[classes.Object, list[str]]):
-    pset_dict: dict[str, (classes.PropertySet, Cell, classes.Object)] =dict()
-    aggregate_dict: dict[classes.Object, list[str]] =dict()
+def create_items(sheet: Worksheet, base_cells: list[Cell]) -> (
+dict[str, (classes.PropertySet, Cell, classes.Object)], dict[classes.Object, list[str]]):
+    pset_dict: dict[str, (classes.PropertySet, Cell, classes.Object)] = dict()
+    aggregate_dict: dict[classes.Object, list[str]] = dict()
 
     for cell in base_cells:
         ident_value = sheet.cell(row=cell.row, column=cell.column + 2).value
@@ -161,10 +164,11 @@ def create_items(sheet: Worksheet, base_cells: list[Cell]) ->(dict[str, (classes
                 logging.error(f"[{obj.name} | {pset_dict[kuerzel][0].name}] Kuerzel: {kuerzel} identisch!")
             pset_dict[kuerzel] = (pset, cell, obj)
 
-    return pset_dict,aggregate_dict
+    return pset_dict, aggregate_dict
+
 
 def build_tree(main_window) -> None:
-    tree_dict: dict[str, classes.Object] = {obj.ident_attrib.value[0]:obj for obj in classes.Object}
+    tree_dict: dict[str, classes.Object] = {obj.ident_attrib.value[0]: obj for obj in classes.Object}
 
     for ident, item in tree_dict.items():
         ident_list = ident.split(".")[:-1]
@@ -176,11 +180,11 @@ def build_tree(main_window) -> None:
     open_file.fill_tree(main_window)
 
 
-def create_aggregation( pset_dict: dict[str, (classes.PropertySet, Cell, classes.Object)],
-                 aggregate_dict: dict[classes.Object, list[str]],main_window:MainWindow) -> None:
+def create_aggregation(pset_dict: dict[str, (classes.PropertySet, Cell, classes.Object)],
+                       aggregate_dict: dict[classes.Object, list[str]], main_window: MainWindow) -> None:
+    main_window.graph_window = graphs_window.GraphWindow(main_window, False)
+    main_window.graph_window.import_excel(pset_dict, aggregate_dict)
 
-    main_window.graph_window =graphs_window.GraphWindow(main_window,False)
-    main_window.graph_window.import_excel(pset_dict,aggregate_dict)
 
 def start(main_window, path: str) -> None:
     # TODO: add request for Identification Attribute
@@ -189,10 +193,10 @@ def start(main_window, path: str) -> None:
     sheet = book.active
 
     base_cells = find_base_cells(sheet)
-    pset_dict,aggregate_dict = create_items(sheet,base_cells)
+    pset_dict, aggregate_dict = create_items(sheet, base_cells)
 
     for kuerzel, (pset, cell, obj) in pset_dict.items():
         link_psets(cell, pset_dict, sheet, pset.object)
 
     build_tree(main_window)
-    create_aggregation(pset_dict,aggregate_dict,main_window)
+    create_aggregation(pset_dict, aggregate_dict, main_window)
