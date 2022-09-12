@@ -249,15 +249,6 @@ class PropertySetWindow(QtWidgets.QWidget):
                 attribute.name = new_name
                 self.widget.table_widget.item(row, 0).setText(new_name)
                 self.mainWindow.reload()
-    def delete_attribute(self):
-
-        attribute: Attribute = self.get_attribute_by_name(self.widget.lineEdit_name.text())
-        if attribute:
-            attribute.delete()
-            row = self.widget.table_widget.findItems(attribute.name, Qt.MatchFlag.MatchExactly)[0].row()
-            self.widget.table_widget.removeRow(row)
-
-        self.clear_lines()
 
     def data_combo_change(self, text):
 
