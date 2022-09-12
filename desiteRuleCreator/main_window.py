@@ -11,7 +11,7 @@ from desiteRuleCreator.Filehandling import open_file, desite_export, excel,save_
 from desiteRuleCreator.QtDesigns import ui_project_settings
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
-from desiteRuleCreator.Windows import predefined_psets_window,graphs_window
+from desiteRuleCreator.Windows import predefined_psets_window,graphs_window,propertyset_window
 from desiteRuleCreator.data import classes
 from desiteRuleCreator.data.classes import Object, PropertySet
 from desiteRuleCreator import logs
@@ -36,7 +36,7 @@ class MainWindow(QMainWindow):
         self.parent_property_window = None
         self.parent_property_window: predefined_psets_window.PropertySetInherWindow = self.open_pset_list()
         self.parent_property_window.hide()
-        self.pset_window = None
+        self.pset_window:None|propertyset_window.PropertySetWindow = None
         self.pset_table = self.ui.tableWidget_inherited
 
         # variables
@@ -264,8 +264,11 @@ class MainWindow(QMainWindow):
         desite_export.export_bs(self)
 
     def reload(self):
-        object_widget.reload_tree(self)
+        self.reload_objects()
         predefined_psets_window.reload(self)
+        self.reload_pset_widget()
+
+    def reload_pset_widget(self):
         property_widget.reload(self)
 
     def open_settings(self):

@@ -254,15 +254,16 @@ def add_pset(main_window:MainWindow):
 
     obj.add_property_set(property_set)
     item.setData(constants.DATA_POS, property_set)
-    #main_window.pset_window = main_window.open_pset_window(property_set, main_window.active_object, None)
     main_window.text_changed(main_window.ui.lineEdit_pSet_name.text())
     main_window.pset_table.resizeColumnsToContents()
 
 
-def reload(main_window):
+def reload(main_window:MainWindow):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     if main_window.active_object is not None:
         fill_table(main_window, main_window.active_object)
+        fill_attribute_table(main_window.active_object, main_window.ui.attribute_widget, main_window.pset_window.property_set)
+
 
 def clear_attribute_table(main_window):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui

@@ -144,4 +144,5 @@ def open_pset_list(main_window):
 def reload(main_window):
     window: PropertySetInherWindow = main_window.parent_property_window
     widget = window.widget
-    window.single_click(widget.list_view_pset.selectedItems()[0])
+    if widget.list_view_pset.selectedItems():
+        window.single_click(widget.list_view_pset.selectedItems()[0])

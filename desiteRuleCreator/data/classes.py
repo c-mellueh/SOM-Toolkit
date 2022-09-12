@@ -670,3 +670,4 @@ class CustomTableItem(QTableWidgetItem):
     def __init__(self,item:Object|PropertySet|Attribute):
         super(CustomTableItem, self).__init__()
         self.item = item
+        self.setText(item.name)
