@@ -230,12 +230,6 @@ class PropertySetWindow(QtWidgets.QWidget):
         else:
             print("no children")
 
-    def get_attribute_by_name(self, name):
-        for attribute in self.property_set.attributes:
-            if attribute.name == name:
-                return attribute
-        return False
-
     def rename_selection(self):  # TODO: check for existing Name
         selected_rows = get_selected_rows(self.table)
 
@@ -466,8 +460,8 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.widget.check_box_inherit.setChecked(attribute.child_inherits_values)
 
     def list_clicked(self, tree_item: QTableWidgetItem | classes.CustomTableItem):
-        item: QTableWidgetItem = self.widget.table_widget.item(tree_item.row(), 0)
-        attribute: Attribute = self.get_attribute_by_name(item.text())
+        item:classes.CustomTableItem= self.widget.table_widget.item(tree_item.row(), 0)
+        attribute: Attribute = item.item
         self.fill_with_attribute(attribute)
 
 
