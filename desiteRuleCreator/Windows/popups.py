@@ -28,7 +28,7 @@ def msg_already_exists():
     default_message(text)
 
 def msg_attribute_already_exists():
-    text = "Object exists already!"
+    text = "Attribute exists already!"
     default_message(text)
 
 def msg_identical_identifier():
