@@ -242,8 +242,8 @@ class MainWindow(QMainWindow):
     def list_object_double_clicked(self, item):
         property_widget.double_click(self, item)
 
-    def open_pset_window(self, property_set: PropertySet, active_object, window_title=None) -> property_widget.PropertySetWindow:
-        return property_widget.open_pset_window(self, property_set, active_object, window_title)
+    def open_pset_window(self, property_set: PropertySet, active_object, window_title=None) -> None:
+        property_widget.open_pset_window(self, property_set, active_object, window_title)
 
     def add_pset(self):
         property_widget.add_pset(self)

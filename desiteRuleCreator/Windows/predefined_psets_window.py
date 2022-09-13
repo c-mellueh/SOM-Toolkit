@@ -85,8 +85,7 @@ class PropertySetInherWindow(QWidget):
         sel_items = self.widget.list_view_pset.selectedItems()
         if len(sel_items) == 1:
             item = self.widget.list_view_pset.selectedItems()[0]
-            self.main_window.pset_window = self.main_window.open_pset_window(item.property_set, None,
-                                                                             item.property_set.name)
+            self.main_window.open_pset_window(item.property_set, None,item.property_set.name)
 
     def add_pset(self):
         item = PsetItem()

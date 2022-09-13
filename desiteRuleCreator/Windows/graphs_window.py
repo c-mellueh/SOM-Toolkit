@@ -557,11 +557,11 @@ class Node(QGraphicsProxyWidget):
 
         if isinstance(item, classes.CustomPSetTreeItem):
             property_set = item.property_set
-            main_window.pset_window = main_window.open_pset_window(property_set, self.object, None)
+            main_window.open_pset_window(property_set, self.object, None)
 
         if isinstance(item, classes.CustomAttribTreeItem):
             property_set = item.attribute.property_set
-            main_window.pset_window = main_window.open_pset_window(property_set, self.object, None)
+            main_window.open_pset_window(property_set, self.object, None)
             main_window.pset_window.fill_with_attribute(item.attribute)
 
     def print_info(self):
