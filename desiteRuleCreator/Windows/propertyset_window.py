@@ -33,6 +33,42 @@ def get_selected_rows(table_widget: QTableWidget) -> list[int]:
     selectedRows.sort()
     return selectedRows
 
+def fill_attribute_table(active_object:classes.Object,
+                         table_widget:QTableWidget,
+                         property_set:classes.PropertySet) -> None:
+
+    def reformat_identifier(row:int) -> None:
+        brush = QtGui.QBrush()
+        brush.setColor(Qt.GlobalColor.lightGray)
+        brush.setStyle(Qt.BrushStyle.SolidPattern)
+        for column in range(4):
+            item = table_widget.item(row, column)
+            item.setBackground(brush)
+    link_item = icons.get_link_icon()
+
+
+    table_widget.setRowCount(len(property_set.attributes))
+
+    for i, attribute in enumerate(property_set.attributes):
+        attribute: Attribute = attribute
+        value_item = classes.CustomTableItem(attribute)
+
+        if attribute.is_child:
+            value_item.setIcon(link_item)
+        table_widget.setItem(i, 0, value_item)
+        table_widget.setItem(i, 1, QTableWidgetItem(attribute.data_type))
+        table_widget.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
+        table_widget.setItem(i, 3, QTableWidgetItem(str(attribute.value)))
+
+        table_widget.resizeColumnsToContents()
+
+        if active_object is None:
+            return
+
+        if attribute == active_object.ident_attrib:
+            reformat_identifier(i)
+
+
 
 class LineInput(QLineEdit):
     def __init__(self, parent: PropertySetWindow) -> None:
@@ -197,7 +233,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         for row in sorted(selected_rows, reverse=True):
             attribute = self.table.item(row, 0).item
             self.widget.table_widget.removeRow(row)
-            attribute.delete()
+            attribute.delete_selection()
 
         self.mainWindow.reload()
 
@@ -473,34 +509,4 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.fill_with_attribute(attribute)
 
 
-def fill_attribute_table(active_object:classes.Object,
-                         table_widget:QTableWidget,
-                         property_set:classes.PropertySet) -> None:
 
-    def reformat_identifier(row:int) -> None:
-        brush = QtGui.QBrush()
-        brush.setColor(Qt.GlobalColor.lightGray)
-        brush.setStyle(Qt.BrushStyle.SolidPattern)
-        for column in range(4):
-            item = table_widget.item(row, column)
-            item.setBackground(brush)
-    link_item = icons.get_link_icon()
-
-
-    table_widget.setRowCount(len(property_set.attributes))
-
-    for i, attribute in enumerate(property_set.attributes):
-        attribute: Attribute = attribute
-        value_item = classes.CustomTableItem(attribute)
-
-        if attribute.is_child:
-            value_item.setIcon(link_item)
-        table_widget.setItem(i, 0, value_item)
-        table_widget.setItem(i, 1, QTableWidgetItem(attribute.data_type))
-        table_widget.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
-        table_widget.setItem(i, 3, QTableWidgetItem(str(attribute.value)))
-
-        if attribute == active_object.ident_attrib:
-            reformat_identifier(i)
-
-        table_widget.resizeColumnsToContents()

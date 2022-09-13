@@ -224,7 +224,7 @@ class MainWindow(QMainWindow):
         property_widget.attribute_double_click(self,item)
 
     def delete_pset(self):
-        property_widget.delete(self)
+        property_widget.delete_selection(self)
 
     def rename_pset(self):
         property_widget.rename(self)

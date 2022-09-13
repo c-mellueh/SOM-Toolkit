@@ -299,6 +299,8 @@ def single_click(main_window, item: classes.CustomObjectTreeItem):
             property_widget.left_click(main_window,table_widget.item(0,0))
 
 def fill_line_inputs(main_window, obj:classes.Object):
+    if obj is None:
+        return
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     ui.lineEdit_object_name.setText(obj.name)
     if not obj.is_concept:
