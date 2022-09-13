@@ -10,10 +10,14 @@ from desiteRuleCreator.data import classes,constants
 from desiteRuleCreator import icons
 from desiteRuleCreator.Windows import popups
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from desiteRuleCreator.main_window import MainWindow
+
 class PsetItem(QListWidgetItem):
     _registry = list()
 
-    def __init__(self, property_set=None):
+    def __init__(self, property_set:classes.PropertySet=None) -> None:
         super(PsetItem, self).__init__()
 
         if property_set is None:
@@ -23,18 +27,20 @@ class PsetItem(QListWidgetItem):
         else:
             self.property_set:classes.PropertySet = property_set
             self.setText(property_set.name,False)
+
         self._registry.append(self)
         self.setFlags(self.flags() | Qt.ItemIsEditable)
 
-    def setText(self, text: str,overwrite = True) -> None:
+    def setText(self, text: str,overwrite:bool = True) -> None:
         super(PsetItem, self).setText(text)
         if overwrite:
             self.property_set.name = text
 
-    def delete(self):
+    def delete(self) -> None:
         self._registry.remove(self)
+        self.property_set.delete()
 
-    def get_number(self):
+    def get_number(self) -> int:
         if len(self._registry) > 0:
             numbers = [int(re.search("(NewPset_)(\d+)", x.text()).group(2)) for x in self._registry if bool(
                 re.search("NewPset_(\d+)", x.text()))]  # find all texts matching the Format and return their numbers
@@ -50,8 +56,8 @@ class PsetItem(QListWidgetItem):
 
 
 class PropertySetInherWindow(QWidget):
-    def __init__(self, main_window):
-        def connect():
+    def __init__(self, main_window:MainWindow) -> None:
+        def connect() -> None:
             self.widget.push_button_add_pset.clicked.connect(self.add_pset)
             self.widget.push_button_remove_pset.clicked.connect(self.remove_pset)
             self.widget.push_button_edit.clicked.connect(self.edit_pset)
@@ -71,21 +77,21 @@ class PropertySetInherWindow(QWidget):
         self.widget.list_view_existance.clear()
         self.show()
         self.resize(1000, 400)
-        self.mainWindow = main_window
+        self.main_window = main_window
         connect()
 
-    def edit_pset(self):
+    def edit_pset(self) -> None:
         sel_items = self.widget.list_view_pset.selectedItems()
         if len(sel_items) == 1:
             item = self.widget.list_view_pset.selectedItems()[0]
-            self.mainWindow.pset_window = self.mainWindow.open_pset_window(item.property_set, None,
-                                                                           item.property_set.name)
+            self.main_window.pset_window = self.main_window.open_pset_window(item.property_set, None,
+                                                                             item.property_set.name)
 
     def add_pset(self):
         item = PsetItem()
         self.widget.list_view_pset.addItem(item)
         self.widget.list_view_pset.setCurrentItem(item)
-        self.mainWindow.update_completer()
+        self.main_window.update_completer()
         pass
 
     def remove_pset(self):
@@ -120,8 +126,8 @@ class PropertySetInherWindow(QWidget):
 
     def item_changed(self, item: PsetItem):
         item.property_set.name = item.text()
-        self.mainWindow.update_completer()
-        self.mainWindow.reload()
+        self.main_window.update_completer()
+        self.main_window.reload()
 
     def showEvent(self, event: QShowEvent) -> None:
         self.widget.list_view_pset.clear()
