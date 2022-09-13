@@ -4,7 +4,7 @@ import copy
 import logging
 
 from PySide6 import QtWidgets, QtGui
-from PySide6.QtCore import Qt,QPointF
+from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget
 
 from desiteRuleCreator import icons
@@ -14,7 +14,7 @@ from desiteRuleCreator.data import constants, classes
 from desiteRuleCreator.data.classes import PropertySet, Attribute
 
 
-def float_to_string(value:float) -> str:
+def float_to_string(value: float) -> str:
     value = str(value).replace(".", ",")
     return value
 
@@ -35,7 +35,7 @@ def get_selected_rows(table_widget: QTableWidget) -> list[int]:
 
 
 class LineInput(QLineEdit):
-    def __init__(self, parent:PropertySetWindow) -> None:
+    def __init__(self, parent: PropertySetWindow) -> None:
         super(LineInput, self).__init__(parent)
         self.pset_window = parent
         self.setValidator(self.pset_window.line_validator)
@@ -66,15 +66,15 @@ class LineInput(QLineEdit):
 
 
 class PropertySetWindow(QtWidgets.QWidget):
-    def __init__(self, main_window, property_set: PropertySet, active_object:classes.Object, window_title):
+    def __init__(self, main_window, property_set: PropertySet, active_object: classes.Object, window_title):
         def connect_items():
             self.widget.table_widget.itemClicked.connect(self.list_clicked)
-            self.widget.combo_type.currentTextChanged.connect(self.combo_change)
+            self.widget.combo_type.currentTextChanged.connect(self.combo_valuetype_change)
             self.widget.lineEdit_name.textChanged.connect(self.text_changed)
             self.widget.combo_data_type.currentTextChanged.connect(self.data_combo_change)
             self.widget.check_box_seperator.stateChanged.connect(self.seperator_status_changed)
             self.widget.line_edit_seperator.textChanged.connect(self.seperator_text_changed)
-            self.widget.button_add.clicked.connect(self.add_button_pressed)
+            self.widget.button_add.clicked.connect(self.add_attribute_button_pressed)
             self.widget.button_add_line.clicked.connect(self.new_line)
             self.widget.table_widget.customContextMenuRequested.connect(self.open_menu)
 
@@ -85,11 +85,11 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         self.mainWindow = main_window
         self.property_set = property_set
-        self.active_object= active_object
+        self.active_object = active_object
         self.input_lines = {}
         self.old_state = self.widget.combo_type.currentText()
         self._line_validator = QtGui.QRegularExpressionValidator()
-        self.table:QTableWidget = self.widget.table_widget
+        self.table: QTableWidget = self.widget.table_widget
 
         self.setWindowTitle(window_title)
         self.setWindowIcon(icons.get_icon())
@@ -117,7 +117,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         return self._line_validator
 
     @line_validator.setter
-    def line_validator(self,value:QtGui.QValidator) -> None:
+    def line_validator(self, value: QtGui.QValidator) -> None:
         self._line_validator = value
         for el in self.input_lines.values():
             if self.attribute_type == constants.RANGE:  # if range -> two inputs per line
@@ -169,7 +169,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.last_drop_row = row
         return True
 
-    def seperator_text_changed(self, status:str) -> None:
+    def seperator_text_changed(self, status: str) -> None:
         self.mainWindow.project.seperator = status
 
     def seperator_status_changed(self, status: int) -> None:
@@ -184,7 +184,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         """delete selected Table items"""
 
         selected_rows = get_selected_rows(self.table)
-        attributes = [self.table.item(row,0).item for row in selected_rows]
+        attributes = [self.table.item(row, 0).item for row in selected_rows]
 
         if self.active_object.ident_attrib in attributes:
             popups.msg_mod_ident()
@@ -194,14 +194,14 @@ class PropertySetWindow(QtWidgets.QWidget):
         if not delete_request:
             return
 
-        for row in sorted(selected_rows,reverse=True):
+        for row in sorted(selected_rows, reverse=True):
             attribute = self.table.item(row, 0).item
             self.widget.table_widget.removeRow(row)
             attribute.delete()
 
         self.mainWindow.reload()
 
-    def open_menu(self, position:QPointF) -> None:
+    def open_menu(self, position: QPointF) -> None:
         menu = QMenu()
         self.action_delete_attribute = menu.addAction("Delete")
         self.action_rename_attribute = menu.addAction("Rename")
@@ -209,7 +209,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.action_rename_attribute.triggered.connect(self.rename_selection)
 
         selected_rows = get_selected_rows(self.widget.table_widget)
-        #add info if logging= debug
+        # add info if logging= debug
         if logging.root.level <= logging.DEBUG and len(selected_rows) == 1:
             self.action_info = menu.addAction("Info")
             self.action_info.triggered.connect(self.info)
@@ -219,7 +219,7 @@ class PropertySetWindow(QtWidgets.QWidget):
     def info(self) -> None:
         """print infos of attribute to console (debug only)"""
         row = get_selected_rows(self.widget.table_widget)[0]
-        item = self.widget.table_widget.item(row,0).item
+        item = self.widget.table_widget.item(row, 0).item
         print(item.name)
         print(f"parent: {item.parent}")
 
@@ -230,21 +230,30 @@ class PropertySetWindow(QtWidgets.QWidget):
         else:
             print("no children")
 
-    def rename_selection(self):  # TODO: check for existing Name
+    def rename_selection(self) -> None:
         selected_rows = get_selected_rows(self.table)
+        if len(selected_rows) != 1:
+            return
 
-        if len(selected_rows) == 1:
-            row = selected_rows[0]
-            new_name, fulfilled = popups.req_new_name(self)
-            if fulfilled:
-                item = self.table.item(row, 0)
-                name = item.text()
-                attribute: Attribute = item.item
-                attribute.name = new_name
-                self.widget.table_widget.item(row, 0).setText(new_name)
-                self.mainWindow.reload()
+        row = selected_rows[0]
+        existing_names = [attrib.name for attrib in self.property_set.attributes]
+        new_name, fulfilled = popups.req_new_name(self)
 
-    def data_combo_change(self, text):
+        if not fulfilled:
+            return
+
+        if new_name in existing_names:
+            popups.msg_attribute_already_exists()
+            return
+
+        item = self.table.item(row, 0)
+        attribute: Attribute = item.item
+        attribute.name = new_name
+        self.widget.table_widget.item(row, 0).setText(new_name)
+        self.mainWindow.reload()
+
+    def data_combo_change(self, text: str) -> None:
+        """if datatype changes to xs:double -> only digits are allowed to be entered into line edits"""
 
         if text == constants.DATATYPE_NUMBER:
             validator = QtGui.QDoubleValidator()
@@ -254,46 +263,39 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         self.line_validator = validator
 
-    def text_changed(self, text):
-        name_match = len([x for x in self.property_set.attributes if x.name == text]) > 0
-        if name_match:
+    def text_changed(self, text: str) -> None:
+        """change text of button if name of attribute allready exists"""
+        if self.find_attribute_by_name(text) is not None:
             self.widget.button_add.setText("Update")
         else:
             self.widget.button_add.setText("Add")
 
-    def add_button_pressed(self):
-        def fill_table_line(row, attribute: Attribute):
-            table = self.widget.table_widget
-            table.setItem(row, 0, classes.CustomTableItem(attribute))
-            table.item(row, 1).setText(attribute.data_type)
-            table.item(row, 2).setText(constants.VALUE_TYPE_LOOKUP[attribute.value_type])
-            table.item(row, 3).setText(str(attribute.value))
+    def find_attribute_by_name(self, text: str) -> classes.Attribute | None:
+        attrib_dict: dict[str, classes.Attribute] = {attrib.name: attrib for attrib in self.property_set.attributes}
+        value = attrib_dict.get(text)
+        return value
 
-        def add_table_line(row, attribute: Attribute):
-            table = self.widget.table_widget
-            table.setItem(row, 0, classes.CustomTableItem(attribute))
-            table.setItem(row, 1, QTableWidgetItem(attribute.data_type))
-            table.setItem(row, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
-            table.setItem(row, 3, QTableWidgetItem(str(attribute.value)))
+    def add_attribute_button_pressed(self) -> None:
 
-        def get_values():
-            values = []
-
+        def get_values() -> list[str] | list[float] | None:
+            """return line input values as list"""
+            values = list()
             value_type = self.widget.combo_type.currentText()
             data_type = self.widget.combo_data_type.currentText()
-            if value_type != constants.RANGE:
-                for line in self.input_lines.values():
-                    value = line.text()
-                    if len(value.strip()) > 0:
-                        values.append(value)
-            else:
+
+            if value_type == constants.RANGE:
                 for line in self.input_lines.values():
                     value1 = line[0].text()
                     value2 = line[1].text()
                     if len(value1.strip()) > 0 or len(value2.strip()) > 0:
                         values.append([value1, value2])
+            else:
+                for line in self.input_lines.values():
+                    value = line.text()
+                    if len(value.strip()) > 0:
+                        values.append(value)
 
-            if data_type == constants.DATATYPE_NUMBER:
+            if data_type == constants.DATATYPE_NUMBER:  # transform text to number
                 for i, value in enumerate(values):
                     try:
                         if self.widget.combo_type.currentText() == constants.RANGE:
@@ -309,7 +311,15 @@ class PropertySetWindow(QtWidgets.QWidget):
                         return None
             return values
 
-        def update_attribute(attribute: Attribute):
+        def set_table_line(row: int, attrib: classes.Attribute) -> None:
+            table = self.widget.table_widget
+            table.setItem(row, 0, classes.CustomTableItem(attrib))
+            table.setItem(row, 1, QTableWidgetItem(attrib.data_type))
+            table.setItem(row, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attrib.value_type]))
+            table.setItem(row, 3, QTableWidgetItem(str(attrib.value)))
+
+        def update_attribute() -> classes.Attribute | None:
+
             values = get_values()
             if values is None:
                 return None
@@ -322,49 +332,48 @@ class PropertySetWindow(QtWidgets.QWidget):
             attribute.value = values
 
             item: QTableWidgetItem = self.widget.table_widget.findItems(attribute.name, Qt.MatchFlag.MatchExactly)[0]
-            row = item.row()
-            fill_table_line(row, attribute)
+            set_table_line(item.row(), attribute)
             return attribute
 
-        def add_attribute():
+        def add_attribute() -> classes.Attribute | None:
             name = self.widget.lineEdit_name.text()
 
-            if name:
-                values = get_values()
-                if values is None:
-                    return None
-                value_type = self.widget.combo_type.currentText()
-                data_type = self.widget.combo_data_type.currentText()
-
-                attribute = Attribute(self.property_set, name, values, value_type, data_type)
-                attribute.child_inherits_values = self.widget.check_box_inherit.isChecked()
-                rows = self.widget.table_widget.rowCount() + 1
-                self.widget.table_widget.setRowCount(rows)
-                add_table_line(rows - 1, attribute)
-                return attribute
-            else:
+            if not name:
                 popups.msg_missing_input()
                 return None
 
-        already_exists = False
-        attribute = None
-        for attrib in self.property_set.attributes:
-            if attrib.name == self.widget.lineEdit_name.text():
-                attribute = update_attribute(attrib)
-                if attribute is None:
-                    return
-                already_exists = True
+            values = get_values()
+            if values is None:
+                return None
 
-        if not already_exists:
-            attribute = add_attribute()
+            value_type = self.widget.combo_type.currentText()
+            data_type = self.widget.combo_data_type.currentText()
+
+            attrib = Attribute(self.property_set, name, values, value_type, data_type)
+            attrib.child_inherits_values = self.widget.check_box_inherit.isChecked()
+
+            rows = self.widget.table_widget.rowCount()
+            self.widget.table_widget.setRowCount(rows + 1)
+            set_table_line(rows, attrib)
+
+            return attrib
+
+        new_name = self.widget.lineEdit_name.text()
+        attribute = self.find_attribute_by_name(new_name)
         if attribute is not None:
-            if attribute_is_identifier(self.mainWindow.active_object, attribute):
-                self.mainWindow.reload_objects()
-            self.clear_lines()
-            self.mainWindow.reload_pset_widget()
+            attribute = update_attribute()
+        else:
+            attribute = add_attribute()
 
-    def combo_change(self, event):
-        if event in constants.RANGE_STRINGS:
+        if attribute is None:
+            return
+
+        self.mainWindow.reload()
+        self.clear_lines()
+
+    def combo_valuetype_change(self, event:str) -> None:
+
+        if event in constants.RANGE_STRINGS:#create second column
             for el in self.input_lines:
                 self.lineEdit_input2 = LineInput(self)
                 el.addWidget(self.lineEdit_input2)
@@ -372,7 +381,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                 el.addWidget(self.widget.button_add_line)
                 self.input_lines[el] = [self.input_lines[el], self.lineEdit_input2]
 
-        elif self.old_state in constants.RANGE_STRINGS:
+        elif self.old_state in constants.RANGE_STRINGS: #remove second column
             for layout, items in self.input_lines.items():
                 layout.removeWidget(items[1])
                 items[1].setParent(None)
@@ -380,23 +389,21 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         self.old_state = event
 
-    def new_line(self):
-        def range_mode():
+    def new_line(self) -> list[LineInput]:
+        def add_column() -> None:
             self.lineEdit_input2 = LineInput(self)
             self.new_layout.addWidget(self.lineEdit_input2)
             self.input_lines[self.new_layout] = [self.lineEdit_input, self.lineEdit_input2]
 
-        # if len(self.input_lines)>0:
         self.widget.layout_input.removeWidget(self.widget.button_add_line)
         self.new_layout = QHBoxLayout()
         self.lineEdit_input = LineInput(self)
         self.new_layout.addWidget(self.lineEdit_input)
-
         self.widget.verticalLayout.insertLayout(0, self.new_layout)
 
         status = self.widget.combo_type.currentText()
         if status in constants.RANGE_STRINGS:
-            range_mode()
+            add_column()
             line_edit = [self.lineEdit_input, self.lineEdit_input2]
 
         else:
@@ -405,7 +412,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.new_layout.addWidget(self.widget.button_add_line)
         return line_edit
 
-    def clear_lines(self):
+    def clear_lines(self) -> None:
 
         for key, item in tuple(self.input_lines.items()):
             if len(self.input_lines) > 1:
@@ -430,13 +437,14 @@ class PropertySetWindow(QtWidgets.QWidget):
                     item.setText("")
             else:
                 items.setText("")
-        # self.widget.layout_input
 
-    def fill_with_attribute(self, attribute: classes.Attribute):
+    def fill_with_attribute(self, attribute: classes.Attribute) -> None:
         index = self.widget.combo_type.findText(attribute.value_type)
         self.widget.combo_type.setCurrentIndex(index)
+
         index = self.widget.combo_data_type.findText(attribute.data_type)
         self.widget.combo_data_type.setCurrentIndex(index)
+
         self.clear_lines()
 
         # Add Values
@@ -459,29 +467,31 @@ class PropertySetWindow(QtWidgets.QWidget):
         # set Editable
         self.widget.check_box_inherit.setChecked(attribute.child_inherits_values)
 
-    def list_clicked(self, tree_item: QTableWidgetItem | classes.CustomTableItem):
-        item:classes.CustomTableItem= self.widget.table_widget.item(tree_item.row(), 0)
-        attribute: Attribute = item.item
+    def list_clicked(self, tree_item: QTableWidgetItem | classes.CustomTableItem) -> None:
+        item: classes.CustomTableItem = self.table.item(tree_item.row(), 0)
+        attribute = item.item
         self.fill_with_attribute(attribute)
 
 
-def fill_attribute_table(active_object, table_widget, property_set):
-    def reformat_identifier(row):
+def fill_attribute_table(active_object:classes.Object,
+                         table_widget:QTableWidget,
+                         property_set:classes.PropertySet) -> None:
+
+    def reformat_identifier(row:int) -> None:
         brush = QtGui.QBrush()
         brush.setColor(Qt.GlobalColor.lightGray)
         brush.setStyle(Qt.BrushStyle.SolidPattern)
         for column in range(4):
             item = table_widget.item(row, column)
             item.setBackground(brush)
+    link_item = icons.get_link_icon()
+
 
     table_widget.setRowCount(len(property_set.attributes))
-
-    link_item = icons.get_link_icon()
 
     for i, attribute in enumerate(property_set.attributes):
         attribute: Attribute = attribute
         value_item = classes.CustomTableItem(attribute)
-        value_item.setText(attribute.name)
 
         if attribute.is_child:
             value_item.setIcon(link_item)
@@ -490,14 +500,7 @@ def fill_attribute_table(active_object, table_widget, property_set):
         table_widget.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
         table_widget.setItem(i, 3, QTableWidgetItem(str(attribute.value)))
 
-        if attribute_is_identifier(active_object, attribute):
+        if attribute == active_object.ident_attrib:
             reformat_identifier(i)
 
         table_widget.resizeColumnsToContents()
-
-
-def attribute_is_identifier(active_object, attribute):
-    if active_object is not None:
-        if active_object.ident_attrib == attribute:
-            return True
-    return False
