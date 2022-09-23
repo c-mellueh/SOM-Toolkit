@@ -370,6 +370,11 @@ class Attribute(Hirarchy):
 
     @property
     def data_type(self) -> str:
+        """
+        "xs:string"; "xs:double"; "xs:boolean"; XS_INT = "xs:int"
+        :return:
+        """
+
         return self._data_type
 
     @data_type.setter
