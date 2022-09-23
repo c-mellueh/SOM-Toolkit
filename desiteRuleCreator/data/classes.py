@@ -435,6 +435,7 @@ class Object(Hirarchy):
         self._property_sets: list[PropertySet] = list()
         self._ident_attrib = ident_attrib
         self._nodes: set[graphs_window.Node] = set()
+        self._ifc_mapping = set()
         self.changed = True
 
         if identifier is None:
@@ -444,6 +445,16 @@ class Object(Hirarchy):
 
     def __str__(self):
         return f"Object {self.name}"
+
+    @property
+    def ifc_mapping(self) -> set[str]:
+        return self._ifc_mapping
+
+    def add_ifc_map(self,value:str) -> None:
+        self._ifc_mapping.add(value)
+
+    def remove_ifc_map(self,value:str) -> None:
+        self._ifc_mapping.remove(value)
 
     @property
     def nodes(self) -> set[graphs_window.Node]:  # Todo: add nodes functionality to graphs_window
