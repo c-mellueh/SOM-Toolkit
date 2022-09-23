@@ -299,6 +299,8 @@ def single_click(main_window, item: classes.CustomObjectTreeItem):
             property_widget.left_click(main_window,table_widget.item(0,0))
 
 def fill_line_inputs(main_window, obj:classes.Object):
+    if obj is None:
+        return
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     ui.lineEdit_object_name.setText(obj.name)
     if not obj.is_concept:
@@ -384,7 +386,7 @@ def add_object(main_window):
 
         return False
 
-    def create_ident(property_set, ident_name, ident_value) -> classes.Attribute:
+    def create_ident(property_set:classes.PropertySet, ident_name:str, ident_value:[str]) -> classes.Attribute:
         ident: classes.Attribute = property_set.get_attribute_by_name(ident_name)
         if ident is None:
             ident = classes.Attribute(property_set, ident_name, ident_value, constants.LIST)

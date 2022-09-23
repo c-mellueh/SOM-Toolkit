@@ -11,7 +11,7 @@ from desiteRuleCreator.Filehandling import open_file, desite_export, excel,save_
 from desiteRuleCreator.QtDesigns import ui_project_settings
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
-from desiteRuleCreator.Windows import predefined_psets_window,graphs_window
+from desiteRuleCreator.Windows import predefined_psets_window,graphs_window,propertyset_window
 from desiteRuleCreator.data import classes
 from desiteRuleCreator.data.classes import Object, PropertySet
 from desiteRuleCreator import logs
@@ -29,6 +29,21 @@ def start_log() -> None:
 
 class MainWindow(QMainWindow):
     def __init__(self,app):
+        def connect():
+            # connect Menubar signals
+            self.ui.action_file_Open.triggered.connect(self.open_file_dialog)
+            self.ui.action_file_new.triggered.connect(self.new_file)
+            self.ui.action_file_Save.triggered.connect(self.save_clicked)
+            self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
+            self.ui.action_desite_export.triggered.connect(self.export_desite_rules)
+            self.ui.action_show_list.triggered.connect(self.open_pset_list)
+            self.ui.action_settings.triggered.connect(self.open_settings)
+            self.ui.action_export_bs.triggered.connect(self.export_bs)
+            self.ui.action_export_bookmarks.triggered.connect(self.export_bookmarks)
+            self.ui.action_export_boq.triggered.connect(self.export_boq)
+            self.ui.action_show_graphs.triggered.connect(self.open_graph)
+            self.ui.code_edit.textChanged.connect(self.update_script)
+
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -36,7 +51,7 @@ class MainWindow(QMainWindow):
         self.parent_property_window = None
         self.parent_property_window: predefined_psets_window.PropertySetInherWindow = self.open_pset_list()
         self.parent_property_window.hide()
-        self.pset_window = None
+        self.pset_window:None|propertyset_window.PropertySetWindow = None
         self.pset_table = self.ui.tableWidget_inherited
 
         # variables
@@ -53,30 +68,16 @@ class MainWindow(QMainWindow):
         property_widget.init(self)
         script_widget.init(self)
 
-        # connect Menubar signals
-        self.ui.action_file_Open.triggered.connect(self.open_file_dialog)
-        self.ui.action_file_new.triggered.connect(self.new_file)
-        self.ui.action_file_Save.triggered.connect(self.save_clicked)
-        self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
-        self.ui.action_desite_export.triggered.connect(self.export_desite_rules)
-        self.ui.action_show_list.triggered.connect(self.open_pset_list)
-        self.ui.action_settings.triggered.connect(self.open_settings)
-        self.ui.action_export_bs.triggered.connect(self.export_bs)
-        self.ui.action_export_bookmarks.triggered.connect(self.export_bookmarks)
-        self.ui.action_export_boq.triggered.connect(self.export_boq)
-        self.ui.action_show_graphs.triggered.connect(self.open_graph)
-
-        self.ui.code_edit.textChanged.connect(self.update_script)
         self.ui.tree.resizeColumnToContents(0)
         self.save_path = None
-        #self.open_file("C:/Users/ChristophMellueh/OneDrive - Deutsche Bahn/Projekte/Programmieren/SOM/python_test/SOM MAKA_20.06.2022_bereinigt.xlsx")
+        connect()
 
     @property
     def save_path(self) -> str:
         return self._save_path
 
     @save_path.setter
-    def save_path(self, value):
+    def save_path(self, value:str) -> None:
         self._save_path = value
         self._export_path = value
 
@@ -224,7 +225,7 @@ class MainWindow(QMainWindow):
         property_widget.attribute_double_click(self,item)
 
     def delete_pset(self):
-        property_widget.delete(self)
+        property_widget.delete_selection(self)
 
     def rename_pset(self):
         property_widget.rename(self)
@@ -242,8 +243,8 @@ class MainWindow(QMainWindow):
     def list_object_double_clicked(self, item):
         property_widget.double_click(self, item)
 
-    def open_pset_window(self, property_set: PropertySet, active_object, window_title=None) -> property_widget.PropertySetWindow:
-        return property_widget.open_pset_window(self, property_set, active_object, window_title)
+    def open_pset_window(self, property_set: PropertySet, active_object, window_title=None) -> None:
+        property_widget.open_pset_window(self, property_set, active_object, window_title)
 
     def add_pset(self):
         property_widget.add_pset(self)
@@ -264,8 +265,11 @@ class MainWindow(QMainWindow):
         desite_export.export_bs(self)
 
     def reload(self):
-        object_widget.reload_tree(self)
+        self.reload_objects()
         predefined_psets_window.reload(self)
+        self.reload_pset_widget()
+
+    def reload_pset_widget(self):
         property_widget.reload(self)
 
     def open_settings(self):

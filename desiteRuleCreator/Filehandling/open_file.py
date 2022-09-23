@@ -212,12 +212,11 @@ def import_new(projekt_xml: etree._Element,main_window:MainWindow) -> None:
 
         graph_window.combo_box.setCurrentIndex(0)
 
-
-
-
     xml_predefined_psets = [x for x in projekt_xml if x.tag == constants.PREDEFINED_PSET]
     xml_objects = [x for x in projekt_xml if x.tag == constants.OBJECT]
-    xml_root_node = [x for x in projekt_xml if x.tag == "Nodes"][0]
+    xml_root_node = list()
+    if [x for x in projekt_xml if x.tag == "Nodes"]:
+        xml_root_node = [x for x in projekt_xml if x.tag == "Nodes"][0]
     import_property_sets(xml_predefined_psets)
     ident_dict:dict[str,classes.Object] = dict()
 
