@@ -29,6 +29,21 @@ def start_log() -> None:
 
 class MainWindow(QMainWindow):
     def __init__(self,app):
+        def connect():
+            # connect Menubar signals
+            self.ui.action_file_Open.triggered.connect(self.open_file_dialog)
+            self.ui.action_file_new.triggered.connect(self.new_file)
+            self.ui.action_file_Save.triggered.connect(self.save_clicked)
+            self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
+            self.ui.action_desite_export.triggered.connect(self.export_desite_rules)
+            self.ui.action_show_list.triggered.connect(self.open_pset_list)
+            self.ui.action_settings.triggered.connect(self.open_settings)
+            self.ui.action_export_bs.triggered.connect(self.export_bs)
+            self.ui.action_export_bookmarks.triggered.connect(self.export_bookmarks)
+            self.ui.action_export_boq.triggered.connect(self.export_boq)
+            self.ui.action_show_graphs.triggered.connect(self.open_graph)
+            self.ui.code_edit.textChanged.connect(self.update_script)
+
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -53,30 +68,16 @@ class MainWindow(QMainWindow):
         property_widget.init(self)
         script_widget.init(self)
 
-        # connect Menubar signals
-        self.ui.action_file_Open.triggered.connect(self.open_file_dialog)
-        self.ui.action_file_new.triggered.connect(self.new_file)
-        self.ui.action_file_Save.triggered.connect(self.save_clicked)
-        self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
-        self.ui.action_desite_export.triggered.connect(self.export_desite_rules)
-        self.ui.action_show_list.triggered.connect(self.open_pset_list)
-        self.ui.action_settings.triggered.connect(self.open_settings)
-        self.ui.action_export_bs.triggered.connect(self.export_bs)
-        self.ui.action_export_bookmarks.triggered.connect(self.export_bookmarks)
-        self.ui.action_export_boq.triggered.connect(self.export_boq)
-        self.ui.action_show_graphs.triggered.connect(self.open_graph)
-
-        self.ui.code_edit.textChanged.connect(self.update_script)
         self.ui.tree.resizeColumnToContents(0)
         self.save_path = None
-        #self.open_file("C:/Users/ChristophMellueh/OneDrive - Deutsche Bahn/Projekte/Programmieren/SOM/python_test/SOM MAKA_20.06.2022_bereinigt.xlsx")
+        connect()
 
     @property
     def save_path(self) -> str:
         return self._save_path
 
     @save_path.setter
-    def save_path(self, value):
+    def save_path(self, value:str) -> None:
         self._save_path = value
         self._export_path = value
 
