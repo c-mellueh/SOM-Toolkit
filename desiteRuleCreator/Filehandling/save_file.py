@@ -64,6 +64,12 @@ def save(main_window:MainWindow, path:str) -> None:
             add_attribute(attribute, property_set, xml_pset)
 
     def add_object(obj: classes.Object) -> None:
+        def add_ifc_mapping():
+            xml_ifc_mappings = etree.SubElement(xml_object,constants.IFC_MAPPINGS)
+            for mapping in obj.ifc_mapping:
+                xml_ifc_mapping = etree.SubElement(xml_ifc_mappings,constants.IFC_MAPPING)
+                xml_ifc_mapping.text = mapping
+            pass
 
         xml_object = etree.SubElement(xml_project, constants.OBJECT)
         xml_object.set(constants.NAME, obj.name)
@@ -79,6 +85,8 @@ def save(main_window:MainWindow, path:str) -> None:
             xml_script = etree.SubElement(xml_object, "Script")
             xml_script.set(constants.NAME, script.name)
             xml_script.text = script.code
+
+        add_ifc_mapping()
 
     def add_attribute(attribute:classes.Attribute, property_set:classes.PropertySet, xml_pset:etree._Element) -> None:
         xml_attribute = etree.SubElement(xml_pset, constants.ATTRIBUTE)
