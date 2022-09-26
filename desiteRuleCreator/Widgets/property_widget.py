@@ -88,7 +88,7 @@ def clear_all(main_window:MainWindow) -> None:
 
 def delete_selection(main_window:MainWindow) -> None:
     list_item:list[classes.CustomTableItem] = main_window.pset_table.selectedItems()
-    property_sets:list[classes.PropertySet] = [item.item for item in list_item if item.column() == 0]
+    property_sets:list[classes.PropertySet] = [item.linked_data for item in list_item if item.column() == 0]
     row_list = [item.row() for item in list_item if item.column() ==0]
 
 
@@ -114,7 +114,7 @@ def delete_selection(main_window:MainWindow) -> None:
 
 def rename(main_window:MainWindow) -> None:
     list_item:classes.CustomTableItem = main_window.pset_table.selectedItems()[0]
-    selected_pset: classes.PropertySet = list_item.item
+    selected_pset: classes.PropertySet = list_item.linked_data
     return_str = popups.req_new_name(main_window,selected_pset.name)
 
     if return_str[1]:
@@ -177,7 +177,7 @@ def left_click(main_window:MainWindow, item: QListWidgetItem) -> None:
     item:classes.CustomTableItem = main_window.pset_table.item(
                                     main_window.pset_table.row(item), 0)
 
-    property_set: classes.PropertySet = item.item
+    property_set: classes.PropertySet = item.linked_data
     fill_attribute_table(main_window.active_object,main_window.ui.attribute_widget,property_set)
     main_window.ui.lineEdit_pSet_name.setText(property_set.name)
 
@@ -191,8 +191,8 @@ def attribute_double_click(main_window:MainWindow,item:classes.CustomTableItem) 
 
 def double_click(main_window:MainWindow, item: QTableWidgetItem) -> None:
     main_window.list_object_clicked(item)
-    item = main_window.pset_table.item(item.row(), 0)
-    property_set: classes.PropertySet = item.item
+    item:classes.CustomTableItem = main_window.pset_table.item(item.row(), 0)
+    property_set: classes.PropertySet = item.linked_data
 
     # Open New Window
     main_window.open_pset_window(property_set, main_window.active_object, None)

@@ -7,11 +7,11 @@ from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog
 
 from desiteRuleCreator import icons
-from desiteRuleCreator.Filehandling import open_file, desite_export, excel,save_file
+from desiteRuleCreator.Filehandling import open_file, desite_export, excel,save_file,revit
 from desiteRuleCreator.QtDesigns import ui_project_settings
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
-from desiteRuleCreator.Windows import predefined_psets_window,graphs_window,propertyset_window
+from desiteRuleCreator.Windows import predefined_psets_window,graphs_window,propertyset_window,mapping_window
 from desiteRuleCreator.data import classes
 from desiteRuleCreator.data.classes import Object, PropertySet
 from desiteRuleCreator import logs
@@ -43,6 +43,7 @@ class MainWindow(QMainWindow):
             self.ui.action_export_boq.triggered.connect(self.export_boq)
             self.ui.action_show_graphs.triggered.connect(self.open_graph)
             self.ui.code_edit.textChanged.connect(self.update_script)
+            self.ui.action_mapping_options.triggered.connect(self.open_mapping_window)
 
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -61,6 +62,7 @@ class MainWindow(QMainWindow):
         self._export_path = None
         self.active_object:classes.Object|None = None
         self.graph_window = None
+        self.mapping_window = None
         self.project = classes.Project(self, "")
 
         # init object and ProertyWidget
@@ -104,6 +106,10 @@ class MainWindow(QMainWindow):
             event.accept()
         else:
             event.ignore()
+
+    def open_mapping_window(self):
+        self.mapping_window = mapping_window.MappingWindow(self)
+        self.mapping_window.show()
 
     # Filehandling
     def save_clicked(self):

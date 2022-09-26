@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import copy
-from typing import Iterator, Type,TYPE_CHECKING
+from typing import Iterator, Type, TYPE_CHECKING
 from uuid import uuid4
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QDropEvent,QMouseEvent
-from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QAbstractItemView, QListWidgetItem,QTableWidgetItem
+from PySide6.QtGui import QDropEvent, QMouseEvent
+from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QAbstractItemView, QListWidgetItem, QTableWidgetItem
 
 if TYPE_CHECKING:
     from desiteRuleCreator.Windows import graphs_window
@@ -27,7 +27,7 @@ class IterRegistry(type):
 
 
 class Project(object):
-    def __init__(self, main_window:MainWindow, name: str, author: str = None) -> None:
+    def __init__(self, main_window: MainWindow, name: str, author: str = None) -> None:
         self._name = ""
         self._author = author
         self._version = "1.0.0"
@@ -267,19 +267,21 @@ class PropertySet(Hirarchy):
 
         return new_pset
 
-    def create_child(self,name) -> PropertySet:
-        child  = PropertySet(name)
+    def create_child(self, name) -> PropertySet:
+        child = PropertySet(name)
         self.children.append(child)
         child.parent = self
         for attribute in self.attributes:
-            new_attrib =attribute.create_child()
+            new_attrib = attribute.create_child()
             child.add_attribute(new_attrib)
         return child
+
 
 class Attribute(Hirarchy):
     _registry: list[Attribute] = list()
 
-    def __init__(self, property_set: PropertySet | None, name: str, value: list, value_type: int, data_type: str = "xs:string",
+    def __init__(self, property_set: PropertySet | None, name: str, value: list, value_type: int,
+                 data_type: str = "xs:string",
                  child_inherits_values: bool = False, identifier: str = None):
 
         super(Attribute, self).__init__(name=name)
@@ -289,6 +291,7 @@ class Attribute(Hirarchy):
         self._data_type = data_type
         self._object = None
         self._registry.append(self)
+        self._revit_name = self.name
 
         self.changed = True
         self._child_inherits_values = child_inherits_values
@@ -301,6 +304,14 @@ class Attribute(Hirarchy):
     def __str__(self) -> str:
         text = f"{self.property_set.name} : {self.name} = {self.value}"
         return text
+
+    @property
+    def revit_name(self) -> str:
+        return self._revit_name
+
+    @revit_name.setter
+    def revit_name(self,value:str) -> None:
+        self._revit_name = value
 
     @property
     def child_inherits_values(self) -> bool:
@@ -316,7 +327,7 @@ class Attribute(Hirarchy):
 
     @name.setter
     def name(self, value: str) -> None:
-        self.changed = True #ToDo: add request for unlink
+        self.changed = True  # ToDo: add request for unlink
         self._name = value
         for child in self.children:
             child.name = value
@@ -418,11 +429,12 @@ class Attribute(Hirarchy):
         return child
 
     def __copy__(self) -> Attribute:
-        new_attrib:Attribute = Attribute(None,self.name,self.value,
-                                         self.value_type,self.data_type,self.child_inherits_values)
+        new_attrib: Attribute = Attribute(None, self.name, self.value,
+                                          self.value_type, self.data_type, self.child_inherits_values)
         if self.parent is not None:
             self.parent.add_child(new_attrib)
         return new_attrib
+
 
 class Object(Hirarchy):
     _registry: list[Object] = list()
@@ -450,11 +462,15 @@ class Object(Hirarchy):
     def ifc_mapping(self) -> set[str]:
         return self._ifc_mapping
 
-    def add_ifc_map(self,value:str) -> None:
+    def add_ifc_map(self, value: str) -> None:
         self._ifc_mapping.add(value)
 
-    def remove_ifc_map(self,value:str) -> None:
+    def remove_ifc_map(self, value: str) -> None:
         self._ifc_mapping.remove(value)
+
+    @ifc_mapping.setter
+    def ifc_mapping(self,value:set[str]):
+        self._ifc_mapping = value
 
     @property
     def nodes(self) -> set[graphs_window.Node]:  # Todo: add nodes functionality to graphs_window
@@ -545,7 +561,6 @@ class Object(Hirarchy):
             if node.scene() is not None:
                 node.delete()
 
-
     def get_property_set_by_name(self, property_set_name: str) -> PropertySet | None:
         for property_set in self.property_sets:
             if property_set.name == property_set_name:
@@ -591,7 +606,6 @@ class CustomTree(QTreeWidget):
         else:
             super(CustomTree, self).__init__()
 
-
     def dropEvent(self, event: QDropEvent) -> None:
         selected_items = self.selectedItems()
         droped_on_item = self.itemFromIndex(self.indexAt(event.pos()))
@@ -609,6 +623,7 @@ class CustomTree(QTreeWidget):
                 obj.parent = parent
             else:
                 obj.parent = None
+
 
 class CustomPsetTree(QTreeWidget):
     def __init__(self) -> None:
@@ -641,8 +656,23 @@ class CustomObjectTreeItem(QTreeWidgetItem):
             self.setText(1, str(self.object.ident_attrib.value))
 
 
+class CustomObjectMappingTreeItem(QTreeWidgetItem):
+    def __init__(self, obj: Object) -> None:
+        super(CustomObjectMappingTreeItem, self).__init__()
+        self._object = obj
+        self.update()
+
+    @property
+    def object(self) -> Object:
+        return self._object
+
+    def update(self) -> None:
+        self.setText(0, self.object.name)
+        self.setText(1, "; ".join(self.object.ifc_mapping))
+
+
 class CustomPSetTreeItem(QTreeWidgetItem):
-    def __init__(self, tree: QTreeWidget, pset:PropertySet) -> None:
+    def __init__(self, tree: QTreeWidget, pset: PropertySet) -> None:
         super(CustomPSetTreeItem, self).__init__(tree)
         self._property_set = pset
         self.update()
@@ -652,11 +682,11 @@ class CustomPSetTreeItem(QTreeWidgetItem):
         return self._property_set
 
     def update(self) -> None:
-        self.setText(0,self.property_set.name)
+        self.setText(0, self.property_set.name)
 
 
 class CustomAttribTreeItem(QTreeWidgetItem):
-    def __init__(self, tree: QTreeWidget, attribute:Attribute) -> None:
+    def __init__(self, tree: QTreeWidget, attribute: Attribute) -> None:
         super(CustomAttribTreeItem, self).__init__(tree)
         self._attribute = attribute
         self.update()
@@ -666,24 +696,25 @@ class CustomAttribTreeItem(QTreeWidgetItem):
         return self._attribute
 
     def update(self) -> None:
-        self.setText(0,self.attribute.name)
+        self.setText(0, self.attribute.name)
 
 
 class CustomListItem(QListWidgetItem):
-    def __init__(self, property_set: PropertySet) -> None:
+    def __init__(self, data: PropertySet | Object | Attribute) -> None:
         super(CustomListItem, self).__init__()
-        self._property_set = property_set
-        self.setText(property_set.name)
+        self._linked_data = data
+        self.setText(data.name)
 
     @property
-    def property_set(self) -> PropertySet:
-        return self._property_set
+    def linked_data(self) -> PropertySet | Object | Attribute:
+        return self._linked_data
 
     def update(self) -> None:
-        self.setText(self.property_set.name)
+        self.setText(self.linked_data.name)
+
 
 class CustomTableItem(QTableWidgetItem):
-    def __init__(self,item:Object|PropertySet|Attribute):
+    def __init__(self, item: Object | PropertySet | Attribute):
         super(CustomTableItem, self).__init__()
-        self.item = item
+        self.linked_data = item
         self.setText(item.name)

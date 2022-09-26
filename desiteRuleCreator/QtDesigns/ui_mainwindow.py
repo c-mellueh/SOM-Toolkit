@@ -54,6 +54,8 @@ class Ui_MainWindow(object):
         self.action_show_graphs.setObjectName(u"action_show_graphs")
         self.action_export_boq = QAction(MainWindow)
         self.action_export_boq.setObjectName(u"action_export_boq")
+        self.action_mapping_options = QAction(MainWindow)
+        self.action_mapping_options.setObjectName(u"action_mapping_options")
         self.verticalLayout_main = QWidget(MainWindow)
         self.verticalLayout_main.setObjectName(u"verticalLayout_main")
         self.verticalLayout = QVBoxLayout(self.verticalLayout_main)
@@ -396,6 +398,8 @@ class Ui_MainWindow(object):
         self.menuPredefined_Psets.setObjectName(u"menuPredefined_Psets")
         self.menuShow_Graphs = QMenu(self.menubar)
         self.menuShow_Graphs.setObjectName(u"menuShow_Graphs")
+        self.menuRevit = QMenu(self.menubar)
+        self.menuRevit.setObjectName(u"menuRevit")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -418,6 +422,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuDesite.menuAction())
         self.menubar.addAction(self.menuPredefined_Psets.menuAction())
         self.menubar.addAction(self.menuShow_Graphs.menuAction())
+        self.menubar.addAction(self.menuRevit.menuAction())
         self.menuFile.addAction(self.action_file_new)
         self.menuFile.addAction(self.action_file_Open)
         self.menuFile.addAction(self.action_file_Save)
@@ -429,6 +434,7 @@ class Ui_MainWindow(object):
         self.menuDesite.addAction(self.action_export_boq)
         self.menuPredefined_Psets.addAction(self.action_show_list)
         self.menuShow_Graphs.addAction(self.action_show_graphs)
+        self.menuRevit.addAction(self.action_mapping_options)
 
         self.retranslateUi(MainWindow)
 
@@ -452,6 +458,7 @@ class Ui_MainWindow(object):
         self.action_export_bookmarks.setText(QCoreApplication.translate("MainWindow", u"Export Bookmarks", None))
         self.action_show_graphs.setText(QCoreApplication.translate("MainWindow", u"Show", None))
         self.action_export_boq.setText(QCoreApplication.translate("MainWindow", u"Export  for BoQ", None))
+        self.action_mapping_options.setText(QCoreApplication.translate("MainWindow", u"Options", None))
         self.lineEdit_ident_pSet.setPlaceholderText(QCoreApplication.translate("MainWindow", u"PropertySet", None))
         self.lineEdit_ident_value.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Value", None))
         self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
@@ -516,5 +523,6 @@ class Ui_MainWindow(object):
         self.menuDesite.setTitle(QCoreApplication.translate("MainWindow", u"Desite", None))
         self.menuPredefined_Psets.setTitle(QCoreApplication.translate("MainWindow", u"Predefined Psets", None))
         self.menuShow_Graphs.setTitle(QCoreApplication.translate("MainWindow", u"Aggregation", None))
+        self.menuRevit.setTitle(QCoreApplication.translate("MainWindow", u"Mapping", None))
     # retranslateUi
 

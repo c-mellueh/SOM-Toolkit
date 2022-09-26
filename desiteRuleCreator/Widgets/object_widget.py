@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
 
 
-def init(main_window):
+def init(main_window:MainWindow):
     def init_tree(tree: classes.CustomTree):
         # Design Tree
         tree.setObjectName(u"treeWidget_objects")
@@ -34,7 +34,7 @@ def init(main_window):
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None))
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objects", None))
 
-    def connect_items(main_window):
+    def connect_items():
         ui: ui_mainwindow.Ui_MainWindow = main_window.ui
         ui.tree.itemClicked.connect(main_window.object_clicked)
         ui.tree.customContextMenuRequested.connect(main_window.right_click)
@@ -56,7 +56,7 @@ def init(main_window):
                                       main_window.ui.lineEdit_ident_pSet, ]
     main_window.delSc = QShortcut(QKeySequence('Ctrl+X'), main_window)
     main_window.grpSc = QShortcut(QKeySequence('Ctrl+G'), main_window)
-    connect_items(main_window)
+    connect_items()
 
 
 def selected_object(main_window) -> classes.CustomObjectTreeItem | None:

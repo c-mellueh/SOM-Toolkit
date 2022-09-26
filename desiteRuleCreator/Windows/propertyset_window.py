@@ -188,7 +188,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                 old_item = sender.item(row_index, col_index)
 
                 if col_index == 0:  # get attribute
-                    old_attribute: classes.Attribute = old_item.item
+                    old_attribute: classes.Attribute = old_item.linked_data
                     new_attribute = copy.copy(old_attribute)
                     self.property_set.add_attribute(new_attribute)
                 if old_item:
@@ -255,7 +255,8 @@ class PropertySetWindow(QtWidgets.QWidget):
     def info(self) -> None:
         """print infos of attribute to console (debug only)"""
         row = get_selected_rows(self.widget.table_widget)[0]
-        item = self.widget.table_widget.item(row, 0).item
+        table_item: classes.CustomTableItem = self.widget.table_widget.item(row, 0)
+        item = table_item.linked_data
         print(item.name)
         print(f"parent: {item.parent}")
 
@@ -505,7 +506,7 @@ class PropertySetWindow(QtWidgets.QWidget):
 
     def list_clicked(self, tree_item: QTableWidgetItem | classes.CustomTableItem) -> None:
         item: classes.CustomTableItem = self.table.item(tree_item.row(), 0)
-        attribute = item.item
+        attribute = item.linked_data
         self.fill_with_attribute(attribute)
 
 
