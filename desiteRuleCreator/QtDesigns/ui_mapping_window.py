@@ -17,7 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHeaderView,
     QLabel, QLayout, QLineEdit, QPushButton,
-    QSizePolicy, QSplitter, QTreeWidget, QTreeWidgetItem,
+    QSizePolicy, QSplitter, QTableWidget, QTableWidgetItem,
     QVBoxLayout, QWidget)
 
 class Ui_Form(object):
@@ -31,9 +31,15 @@ class Ui_Form(object):
         self.splitter.setObjectName(u"splitter")
         self.splitter.setFrameShape(QFrame.Box)
         self.splitter.setOrientation(Qt.Horizontal)
-        self.object_tree = QTreeWidget(self.splitter)
-        self.object_tree.setObjectName(u"object_tree")
-        self.splitter.addWidget(self.object_tree)
+        self.pset_table = QTableWidget(self.splitter)
+        if (self.pset_table.columnCount() < 2):
+            self.pset_table.setColumnCount(2)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.pset_table.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        self.pset_table.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        self.pset_table.setObjectName(u"pset_table")
+        self.splitter.addWidget(self.pset_table)
         self.gridLayoutWidget = QWidget(self.splitter)
         self.gridLayoutWidget.setObjectName(u"gridLayoutWidget")
         self.right_layout = QGridLayout(self.gridLayoutWidget)
@@ -105,10 +111,16 @@ class Ui_Form(object):
 
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.pset_treewidget = QTreeWidget(self.gridLayoutWidget)
-        self.pset_treewidget.setObjectName(u"pset_treewidget")
+        self.attribute_table = QTableWidget(self.gridLayoutWidget)
+        if (self.attribute_table.columnCount() < 2):
+            self.attribute_table.setColumnCount(2)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.attribute_table.setHorizontalHeaderItem(0, __qtablewidgetitem2)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        self.attribute_table.setHorizontalHeaderItem(1, __qtablewidgetitem3)
+        self.attribute_table.setObjectName(u"attribute_table")
 
-        self.verticalLayout.addWidget(self.pset_treewidget)
+        self.verticalLayout.addWidget(self.attribute_table)
 
         self.attribute_widget = QWidget(self.gridLayoutWidget)
         self.attribute_widget.setObjectName(u"attribute_widget")
@@ -162,7 +174,7 @@ class Ui_Form(object):
 
         self.gridLayout_3.addWidget(self.splitter, 0, 0, 1, 1)
 
-        QWidget.setTabOrder(self.object_tree, self.line_edit_ifcmapping)
+        QWidget.setTabOrder(self.pset_table, self.line_edit_ifcmapping)
 
         self.retranslateUi(Form)
 
@@ -171,17 +183,19 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-        ___qtreewidgetitem = self.object_tree.headerItem()
-        ___qtreewidgetitem.setText(1, QCoreApplication.translate("Form", u"Ifc Mapping", None));
-        ___qtreewidgetitem.setText(0, QCoreApplication.translate("Form", u"Object", None));
-        self.label_name.setText(QCoreApplication.translate("Form", u"Objekt", None))
+        ___qtablewidgetitem = self.pset_table.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("Form", u"PropertySet", None));
+        ___qtablewidgetitem1 = self.pset_table.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("Form", u"Ifc Mapping", None));
+        self.label_name.setText(QCoreApplication.translate("Form", u"PropertySet", None))
         self.button_add.setText(QCoreApplication.translate("Form", u"+", None))
         self.label_ifcmapping.setText(QCoreApplication.translate("Form", u"Ifc Mapping", None))
         self.label_name_modifiable.setText("")
         self.button_update.setText(QCoreApplication.translate("Form", u"Update", None))
-        ___qtreewidgetitem1 = self.pset_treewidget.headerItem()
-        ___qtreewidgetitem1.setText(1, QCoreApplication.translate("Form", u"Revit name", None));
-        ___qtreewidgetitem1.setText(0, QCoreApplication.translate("Form", u"Attribut", None));
+        ___qtablewidgetitem2 = self.attribute_table.horizontalHeaderItem(0)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("Form", u"Attribut", None));
+        ___qtablewidgetitem3 = self.attribute_table.horizontalHeaderItem(1)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("Form", u"Revit Mapping", None));
         self.label_attribute.setText(QCoreApplication.translate("Form", u"Attribute", None))
         self.button_update_attribute.setText(QCoreApplication.translate("Form", u"Update", None))
         self.label_attribute_name.setText("")
