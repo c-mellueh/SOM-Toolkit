@@ -12,6 +12,15 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
 
+class MappingTableItem(QTableWidgetItem):
+    def __init__(self,property_set:classes.PropertySet) -> None:
+        super(MappingTableItem, self).__init__()
+        self.property_set = property_set
+        self.update()
+    def update(self) -> None:
+        self.setText(";".join(self.property_set.ifc_mapping))
+
+
 def get_parent_by_name(active_object: classes.Object, name: str) -> classes.PropertySet|None:
     """find Propertyset which has the same name and is not from the same object"""
 
@@ -148,6 +157,7 @@ def set_enable(main_window:MainWindow, value: bool) -> None:
 
 
 def fill_table(main_window:MainWindow, obj: classes.Object) -> None:
+
     main_window.set_right_window_enable(True)
     modify_title(main_window, main_window.ui.tab_code, f"{obj.name}: Code")
     modify_title(main_window, main_window.ui.tab_property_set, f"{obj.name}: PropertySets")
@@ -168,6 +178,7 @@ def fill_table(main_window:MainWindow, obj: classes.Object) -> None:
             else:
                 table_item = QTableWidgetItem(constants.INHERITED_TEXT)
             main_window.pset_table.setItem(i, 1, table_item)
+        main_window.pset_table.setItem(i,2,MappingTableItem(pset))
 
     main_window.pset_table.resizeColumnsToContents()
 
@@ -191,6 +202,10 @@ def attribute_double_click(main_window:MainWindow,item:classes.CustomTableItem) 
 
 def double_click(main_window:MainWindow, item: QTableWidgetItem) -> None:
     main_window.list_object_clicked(item)
+    if isinstance(item,MappingTableItem):
+        popups.pset_mapping_popup(item.property_set)
+        item.update()
+        return
     item:classes.CustomTableItem = main_window.pset_table.item(item.row(), 0)
     property_set: classes.PropertySet = item.linked_data
 

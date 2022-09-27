@@ -169,20 +169,22 @@ class Ui_MainWindow(object):
         self.splitter_2.setSizePolicy(sizePolicy2)
         self.splitter_2.setOrientation(Qt.Horizontal)
         self.tableWidget_inherited = QTableWidget(self.splitter_2)
-        if (self.tableWidget_inherited.columnCount() < 2):
-            self.tableWidget_inherited.setColumnCount(2)
+        if (self.tableWidget_inherited.columnCount() < 3):
+            self.tableWidget_inherited.setColumnCount(3)
         __qtablewidgetitem = QTableWidgetItem()
         self.tableWidget_inherited.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
         self.tableWidget_inherited.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.tableWidget_inherited.setHorizontalHeaderItem(2, __qtablewidgetitem2)
         if (self.tableWidget_inherited.rowCount() < 1):
             self.tableWidget_inherited.setRowCount(1)
-        __qtablewidgetitem2 = QTableWidgetItem()
-        self.tableWidget_inherited.setVerticalHeaderItem(0, __qtablewidgetitem2)
         __qtablewidgetitem3 = QTableWidgetItem()
-        self.tableWidget_inherited.setItem(0, 0, __qtablewidgetitem3)
+        self.tableWidget_inherited.setVerticalHeaderItem(0, __qtablewidgetitem3)
         __qtablewidgetitem4 = QTableWidgetItem()
-        self.tableWidget_inherited.setItem(0, 1, __qtablewidgetitem4)
+        self.tableWidget_inherited.setItem(0, 0, __qtablewidgetitem4)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        self.tableWidget_inherited.setItem(0, 1, __qtablewidgetitem5)
         self.tableWidget_inherited.setObjectName(u"tableWidget_inherited")
         sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         sizePolicy3.setHorizontalStretch(0)
@@ -202,14 +204,14 @@ class Ui_MainWindow(object):
         self.attribute_widget = QTableWidget(self.splitter_2)
         if (self.attribute_widget.columnCount() < 4):
             self.attribute_widget.setColumnCount(4)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        self.attribute_widget.setHorizontalHeaderItem(0, __qtablewidgetitem5)
         __qtablewidgetitem6 = QTableWidgetItem()
-        self.attribute_widget.setHorizontalHeaderItem(1, __qtablewidgetitem6)
+        self.attribute_widget.setHorizontalHeaderItem(0, __qtablewidgetitem6)
         __qtablewidgetitem7 = QTableWidgetItem()
-        self.attribute_widget.setHorizontalHeaderItem(2, __qtablewidgetitem7)
+        self.attribute_widget.setHorizontalHeaderItem(1, __qtablewidgetitem7)
         __qtablewidgetitem8 = QTableWidgetItem()
-        self.attribute_widget.setHorizontalHeaderItem(3, __qtablewidgetitem8)
+        self.attribute_widget.setHorizontalHeaderItem(2, __qtablewidgetitem8)
+        __qtablewidgetitem9 = QTableWidgetItem()
+        self.attribute_widget.setHorizontalHeaderItem(3, __qtablewidgetitem9)
         self.attribute_widget.setObjectName(u"attribute_widget")
         self.attribute_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.splitter_2.addWidget(self.attribute_widget)
@@ -473,25 +475,27 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"PropertySet", None));
         ___qtablewidgetitem1 = self.tableWidget_inherited.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"InheritedBy", None));
-        ___qtablewidgetitem2 = self.tableWidget_inherited.verticalHeaderItem(0)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Test", None));
+        ___qtablewidgetitem2 = self.tableWidget_inherited.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"IfcMapping", None));
+        ___qtablewidgetitem3 = self.tableWidget_inherited.verticalHeaderItem(0)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Test", None));
 
         __sortingEnabled = self.tableWidget_inherited.isSortingEnabled()
         self.tableWidget_inherited.setSortingEnabled(False)
-        ___qtablewidgetitem3 = self.tableWidget_inherited.item(0, 0)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"BestandsdatenqVerkehrsanlagen", None));
-        ___qtablewidgetitem4 = self.tableWidget_inherited.item(0, 1)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Verkehrsanlagen", None));
+        ___qtablewidgetitem4 = self.tableWidget_inherited.item(0, 0)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"BestandsdatenqVerkehrsanlagen", None));
+        ___qtablewidgetitem5 = self.tableWidget_inherited.item(0, 1)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Verkehrsanlagen", None));
         self.tableWidget_inherited.setSortingEnabled(__sortingEnabled)
 
-        ___qtablewidgetitem5 = self.attribute_widget.horizontalHeaderItem(0)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Name", None));
-        ___qtablewidgetitem6 = self.attribute_widget.horizontalHeaderItem(1)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Data Format", None));
-        ___qtablewidgetitem7 = self.attribute_widget.horizontalHeaderItem(2)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"Format", None));
-        ___qtablewidgetitem8 = self.attribute_widget.horizontalHeaderItem(3)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"Value", None));
+        ___qtablewidgetitem6 = self.attribute_widget.horizontalHeaderItem(0)
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Name", None));
+        ___qtablewidgetitem7 = self.attribute_widget.horizontalHeaderItem(1)
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"Data Format", None));
+        ___qtablewidgetitem8 = self.attribute_widget.horizontalHeaderItem(2)
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"Format", None));
+        ___qtablewidgetitem9 = self.attribute_widget.horizontalHeaderItem(3)
+        ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"Value", None));
         self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))
         self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_property_set), QCoreApplication.translate("MainWindow", u"PropertySet", None))

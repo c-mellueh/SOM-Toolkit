@@ -260,6 +260,11 @@
               <string>InheritedBy</string>
              </property>
             </column>
+            <column>
+             <property name="text">
+              <string>IfcMapping</string>
+             </property>
+            </column>
             <item row="0" column="0">
              <property name="text">
               <string>BestandsdatenqVerkehrsanlagen</string>

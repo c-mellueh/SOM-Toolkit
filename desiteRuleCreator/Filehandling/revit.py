@@ -20,9 +20,13 @@ def export_ifc_template(path:str) -> None:
     with open(path,"w") as file:
         property_set: classes.PropertySet
         for property_set in classes.PropertySet:
-            file.write(f"PropertySet:   {property_set.name} I   IfcBuildingElementProxy\n")
-            for attribute in property_set.attributes:
-                revit_datatype= transform_datatype(attribute.data_type)
-                file.write(f"   {attribute.name}    {revit_datatype}\n")
-            file.write("\n")
+
+            obj = property_set.object
+            if obj is not None:
+
+                file.write(f"PropertySet:   {property_set.name} I  {','.join(property_set.ifc_mapping)} \n")
+                for attribute in property_set.attributes:
+                    revit_datatype= transform_datatype(attribute.data_type)
+                    file.write(f"   {attribute.name}    {revit_datatype}\n")
+                file.write("\n")
 

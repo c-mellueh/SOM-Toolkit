@@ -3,8 +3,8 @@ import os
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QDialogButtonBox, QGridLayout,QListWidgetItem,QCompleter
 import desiteRuleCreator.icons as icons
-from desiteRuleCreator.QtDesigns import ui_delete_request,ui_groupReq
-
+from desiteRuleCreator.QtDesigns import ui_delete_request,ui_groupReq,ui_propertyset_mapping
+from desiteRuleCreator.data import classes
 def default_message(text):
     icon = icons.get_icon()
     msg_box = QMessageBox()
@@ -181,3 +181,27 @@ def req_boq_pset(main_window,words):
         return True,input_dialog.textValue()
     else:
         return False,None
+
+def pset_mapping_popup(property_set:classes.PropertySet):
+    def add_line():
+        layout:QGridLayout = widget.widget_input_lines.layout()
+        new_line_edit = QLineEdit()
+        widget.line_edits.append(new_line_edit)
+        layout.addWidget(new_line_edit,len(widget.line_edits)-1,0)
+
+    parent = QDialog()
+    widget = ui_propertyset_mapping.Ui_Dialog()
+    widget.setupUi(parent)
+    widget.label_name.setText(f"IfcMapping {property_set.name}")
+    widget.button_add.clicked.connect(add_line)
+    widget.line_edits =[widget.line_edit]
+    for _ in range(len(property_set.ifc_mapping)-1):
+        add_line()
+    for i, mapping in enumerate(property_set.ifc_mapping):
+        line_edit = widget.line_edits[i]
+        line_edit.setText(mapping)
+    if parent.exec():
+        mappings = {line_edit.text() for line_edit in widget.line_edits}
+        property_set.ifc_mapping = mappings
+
+

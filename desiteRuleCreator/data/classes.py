@@ -155,7 +155,7 @@ class Hirarchy(object, metaclass=IterRegistry):
 class PropertySet(Hirarchy):
     _registry: list[PropertySet] = list()
 
-    def __init__(self, name: str, obj: Object = None, identifier: str = None) -> None:
+    def __init__(self, name: str, obj: Object = None, identifier: str = None,ifc_mapping = None) -> None:
         super(PropertySet, self).__init__(name)
         self._attributes = set()
         self._object = obj
@@ -164,6 +164,29 @@ class PropertySet(Hirarchy):
         if self.identifier is None:
             self.identifier = str(uuid4())
         self.changed = True
+        if ifc_mapping is None:
+            self._ifc_mapping = {"IfcBuildingElementProxy"}
+        else:
+            self._ifc_mapping = ifc_mapping
+        self.changed = True
+
+    @property
+    def ifc_mapping(self) -> set[str]:
+        return self._ifc_mapping
+
+    def add_ifc_map(self, value: str) -> None:
+        self._ifc_mapping.add(value)
+
+    def remove_ifc_map(self, value: str) -> None:
+        self._ifc_mapping.remove(value)
+
+    @ifc_mapping.setter
+    def ifc_mapping(self, value: set[str]):
+        value_set = set()
+        for item in value:  #filter empty Inputs
+            if not (item == "" or item is None):
+                value_set.add(item)
+        self._ifc_mapping = value_set
 
     @property
     def is_predefined(self) -> bool:
@@ -439,8 +462,7 @@ class Attribute(Hirarchy):
 class Object(Hirarchy):
     _registry: list[Object] = list()
 
-    def __init__(self, name: str, ident_attrib: [Attribute, str], identifier: str = None,
-                 ifc_mapping: None | set[str] = None) -> None:
+    def __init__(self, name: str, ident_attrib: [Attribute, str], identifier: str = None                 ) -> None:
         super(Object, self).__init__(name=name)
         self._registry.append(self)
 
@@ -448,11 +470,6 @@ class Object(Hirarchy):
         self._property_sets: list[PropertySet] = list()
         self._ident_attrib = ident_attrib
         self._nodes: set[graphs_window.Node] = set()
-        if ifc_mapping is None:
-            self._ifc_mapping = {"BuildingElementProxy"}
-        else:
-            self._ifc_mapping = ifc_mapping
-        self.changed = True
 
         if identifier is None:
             self.identifier = str(uuid4())
@@ -461,20 +478,6 @@ class Object(Hirarchy):
 
     def __str__(self):
         return f"Object {self.name}"
-
-    @property
-    def ifc_mapping(self) -> set[str]:
-        return self._ifc_mapping
-
-    def add_ifc_map(self, value: str) -> None:
-        self._ifc_mapping.add(value)
-
-    def remove_ifc_map(self, value: str) -> None:
-        self._ifc_mapping.remove(value)
-
-    @ifc_mapping.setter
-    def ifc_mapping(self, value: set[str]):
-        self._ifc_mapping = value
 
     @property
     def nodes(self) -> set[graphs_window.Node]:  # Todo: add nodes functionality to graphs_window
@@ -722,3 +725,36 @@ class CustomTableItem(QTableWidgetItem):
         super(CustomTableItem, self).__init__()
         self.linked_data = item
         self.setText(item.name)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

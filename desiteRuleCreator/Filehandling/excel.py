@@ -125,9 +125,6 @@ def create_object(sheet: Worksheet, cell: Cell, pset_dict: dict[str, (classes.Pr
     elif aggregate_list == ["-"]:
         aggregate_list = []
 
-    #ToDo: IfcMapping hinzufügen Bisher wird IfcBuildingElementProxy angenommen
-    obj.add_ifc_map("IfcBuildingElementProxy")
-
     return obj, pset, abbreviation, aggregate_list
 
 
