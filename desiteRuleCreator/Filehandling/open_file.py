@@ -6,10 +6,10 @@ from uuid import uuid4
 from PySide6.QtWidgets import QInputDialog, QLineEdit
 from lxml import etree
 
+from desiteRuleCreator.Windows import graphs_window
 from desiteRuleCreator.Windows.popups import msg_delete_or_merge
 from desiteRuleCreator.Windows.popups import msg_unsaved
 from desiteRuleCreator.data import classes, constants
-from desiteRuleCreator.Windows import graphs_window
 
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
@@ -47,44 +47,49 @@ def import_data(main_window: MainWindow, path: str = False) -> None:
 
         if projekt_xml.attrib.get("version") is None:  # OLD FILES
             import_old(projekt_xml)
-            main_window.project = classes.Project(main_window, name,author)
+            main_window.project = classes.Project(main_window, name, author)
         else:
-            import_new(projekt_xml,main_window)
-            main_window.project = classes.Project(main_window, name,author)
+            import_new(projekt_xml, main_window)
+            main_window.project = classes.Project(main_window, name, author)
             main_window.project.version = projekt_xml.attrib.get("version")
         fill_tree(main_window)
 
 
-def import_new(projekt_xml: etree._Element,main_window:MainWindow) -> None:
-    def import_attributes(xml_object: etree._Element, property_set: classes.PropertySet) -> classes.Attribute | None:
+def import_new(projekt_xml: etree._Element, main_window: MainWindow) -> None:
 
-        def transform_new_values(xml_attribute: etree._Element) -> list[str]:
-            def empty_text(xml_value):
-                if xml_value.text is None:
-                    return ""
+    def import_property_sets(xml_property_sets: list[etree._Element]) -> (list[classes.PropertySet], classes.Attribute):
+
+        def import_attributes(xml_attributes: etree._Element,
+                              property_set: classes.PropertySet) -> classes.Attribute | None:
+
+            def transform_new_values(xml_attribute: etree._Element) -> list[str]:
+                def empty_text(xml_value):
+                    if xml_value.text is None:
+                        return ""
+                    else:
+                        return xml_value.text
+
+                value_type = xml_attribute.attrib.get("value_type")
+                value = list()
+
+                if value_type != constants.RANGE:
+                    for xml_value in xml_attribute:
+                        value.append(empty_text(xml_value))
+
                 else:
-                    return xml_value.text
-            value_type = xml_attribute.attrib.get("value_type")
-            value = list()
+                    for xml_range in xml_attribute:
+                        from_to_list = list()
+                        for xml_value in xml_range:
+                            if xml_value.tag == "From":
+                                from_to_list.append(empty_text(xml_value))
+                            if xml_value.tag == "To":
+                                from_to_list.append(empty_text(xml_value))
+                        value.append(from_to_list)
+                return value
 
-            if value_type != constants.RANGE:
-                for xml_value in xml_attribute:
-                    value.append(empty_text(xml_value))
+            ident_attrib = None
 
-            else:
-                for xml_range in xml_attribute:
-                    from_to_list = list()
-                    for xml_value in xml_range:
-                        if xml_value.tag == "From":
-                            from_to_list.append(empty_text(xml_value))
-                        if xml_value.tag == "To":
-                            from_to_list.append(empty_text(xml_value))
-                    value.append(from_to_list)
-            return value
-
-        ident_attrib = None
-        for xml_attribute in xml_object:
-            if xml_attribute.tag == "Attribute":
+            for xml_attribute in xml_attributes:
                 attribs = xml_attribute.attrib
                 name = attribs.get(constants.NAME)
                 identifier = attribs.get(constants.IDENTIFIER)
@@ -96,9 +101,8 @@ def import_new(projekt_xml: etree._Element,main_window:MainWindow) -> None:
                 attrib = classes.Attribute(property_set, name, value, value_type, data_type, child_inh, identifier)
                 if is_identifier == str(True):
                     ident_attrib = attrib
-        return ident_attrib
+            return ident_attrib
 
-    def import_property_sets(xml_property_sets: list[etree._Element]) -> (list[classes.PropertySet], classes.Attribute):
         property_sets: list[classes.PropertySet] = list()
         ident_attrib = None
 
@@ -107,26 +111,48 @@ def import_new(projekt_xml: etree._Element,main_window:MainWindow) -> None:
             name = attribs.get(constants.NAME)
             identifier = attribs.get(constants.IDENTIFIER)
             property_set = classes.PropertySet(name, obj=None, identifier=identifier)
-            indet_value = import_attributes(xml_property_set, property_set)
-            if indet_value is not None:
-                ident_attrib = indet_value
+
+            xml_attrib_group = xml_property_set.find(constants.ATTRIBUTES)
+            ident_value = import_attributes(xml_attrib_group, property_set)
+            if ident_value is not None:
+                ident_attrib = ident_value
             property_sets.append(property_set)
+
         return property_sets, ident_attrib
 
-    def import_scripts(xml_script: etree._Element, obj: classes.Object) -> None:
-        name = xml_script.attrib.get("name")
-        code = xml_script.text
-        script = classes.Script(name, obj)
-        script.code = code
+    def import_objects(xml_objects:list[etree._Element]):
 
-    def get_obj_data(xml_object: etree._Element) -> (str, str, str, bool):
+        def get_obj_data(xml_object: etree._Element) -> (str, str, str, bool):
 
-        name: str = xml_object.attrib.get(constants.NAME)
-        parent: str = xml_object.attrib.get(constants.PARENT)
-        identifier: str = xml_object.attrib.get(constants.IDENTIFIER)
-        is_concept: str = xml_object.attrib.get(constants.IS_CONCEPT)
+            name: str = xml_object.attrib.get(constants.NAME)
+            parent: str = xml_object.attrib.get(constants.PARENT)
+            identifier: str = xml_object.attrib.get(constants.IDENTIFIER)
+            is_concept: str = xml_object.attrib.get(constants.IS_CONCEPT)
 
-        return name, parent, identifier, string_to_bool(is_concept)
+            return name, parent, identifier, string_to_bool(is_concept)
+
+        for xml_object in xml_objects:
+            xml_property_group = xml_object.find(constants.PROPERTY_SETS)
+            xml_script_group = xml_object.find(constants.SCRIPTS)
+
+            property_sets, ident_attrib = import_property_sets(xml_property_group)
+            name, parent, identifer, is_concept = get_obj_data(xml_object)
+            obj = classes.Object(name, ident_attrib, identifier=identifer)
+            ident_dict[identifer] = obj
+
+            for property_set in property_sets:
+                obj.add_property_set(property_set)
+
+            import_scripts(xml_script_group, obj)
+
+    def import_scripts(xml_scripts: etree._Element|None, obj: classes.Object) -> None:
+        if xml_scripts is None:
+            return
+        for xml_script in xml_scripts:
+            name = xml_script.attrib.get("name")
+            code = xml_script.text
+            script = classes.Script(name, obj)
+            script.code = code
 
     def create_ident_dict(item_list: list[Type[classes.Hirarchy]]) -> dict[str, Type[classes.Hirarchy]]:
         return {item.identifier: item for item in item_list}
@@ -135,18 +161,20 @@ def import_new(projekt_xml: etree._Element,main_window:MainWindow) -> None:
         def fill_dict(xml_dict: dict[str, str], xml_obj: etree._Element) -> None:
             xml_dict[xml_obj.attrib.get(constants.IDENTIFIER)] = xml_obj.attrib.get(constants.PARENT)
 
-        def iterate(xml_property_set_dict: dict[str, str], xml_object_dict: dict[str, str],
-                    xml_attribute_dict: dict[str, str]) -> None:
+        def iterate() -> None:
             for xml_predefined_pset in xml_predefined_psets:
                 fill_dict(xml_property_set_dict, xml_predefined_pset)
-                for xml_attribute in xml_predefined_pset:
+                xml_attributes = xml_predefined_pset.find(constants.ATTRIBUTES)
+                for xml_attribute in xml_attributes:
                     fill_dict(xml_attribute_dict, xml_attribute)
 
             for xml_object in xml_objects:
                 fill_dict(xml_object_dict, xml_object)
-                for xml_property_set in xml_object:
+                xml_property_sets = xml_object.find(constants.PROPERTY_SETS)
+                for xml_property_set in xml_property_sets:
                     fill_dict(xml_property_set_dict, xml_property_set)
-                    for xml_attribute in xml_property_set:
+                    xml_attributes = xml_property_set.find(constants.ATTRIBUTES)
+                    for xml_attribute in xml_attributes:
                         uuid = xml_attribute.attrib["identifer"]
                         if xml_attribute_dict.get(uuid) is not None:
                             print(f"ERROR DUPLICATED UUID {uuid}")
@@ -162,7 +190,7 @@ def import_new(projekt_xml: etree._Element,main_window:MainWindow) -> None:
         xml_property_set_dict = dict()
         xml_object_dict = dict()
         xml_attribute_dict = dict()
-        iterate(xml_property_set_dict, xml_object_dict, xml_attribute_dict)
+        iterate()
 
         obj_dict = create_ident_dict(classes.Object)
         property_set_dict = create_ident_dict(classes.PropertySet)
@@ -172,30 +200,29 @@ def import_new(projekt_xml: etree._Element,main_window:MainWindow) -> None:
         create_link(property_set_dict, xml_property_set_dict)
         create_link(attribute_dict, xml_attribute_dict)
 
-
     def link_aggregation() -> None:
-        def create_node_dict() -> dict[str,[object,graphs_window.Node]]:
+        def create_node_dict() -> dict[str, [object, graphs_window.Node]]:
 
             id_node_dict = dict()
-            for xml_node in xml_root_node:
+            for xml_node in xml_group_nodes:
                 identifier = xml_node.attrib.get(constants.IDENTIFIER)
                 obj = ident_dict[xml_node.attrib.get(constants.OBJECT.lower())]
-                node = graphs_window.Node(obj,graph_window)
-                id_node_dict[identifier] = (node,xml_node)
+                node = graphs_window.Node(obj, graph_window)
+                id_node_dict[identifier] = (node, xml_node)
             return id_node_dict
 
         main_window.graph_window = graphs_window.GraphWindow(main_window, False)
-        graph_window:graphs_window.GraphWindow = main_window.graph_window
+        graph_window: graphs_window.GraphWindow = main_window.graph_window
         print(f" graph_window = {graph_window}")
-        id_node_dict =create_node_dict()
+        id_node_dict = create_node_dict()
 
-        for identifier, (node,xml_node) in id_node_dict.items():
+        for identifier, (node, xml_node) in id_node_dict.items():
             parent_id = xml_node.attrib.get(constants.PARENT)
             is_root = xml_node.attrib.get(constants.IS_ROOT)
             connection_type = xml_node.attrib.get(constants.CONNECTION)
             if parent_id != constants.NONE:
-                parent_node:graphs_window.Node = id_node_dict[parent_id][0]
-                parent_node.add_child(node,int(connection_type))
+                parent_node: graphs_window.Node = id_node_dict[parent_id][0]
+                parent_node.add_child(node, int(connection_type))
             if is_root == "True":
                 scene = graphs_window.AggregationScene(node)
                 graph_window.scenes.append(scene)
@@ -204,7 +231,7 @@ def import_new(projekt_xml: etree._Element,main_window:MainWindow) -> None:
         for node in graph_window.root_nodes:
             graph_window.change_scene(node)
 
-        for identifier,(node,xml_node) in id_node_dict.items():
+        for identifier, (node, xml_node) in id_node_dict.items():
             x_pos = xml_node.attrib.get(constants.X_POS)
             y_pos = xml_node.attrib.get(constants.Y_POS)
             node.setX(float(x_pos))
@@ -212,28 +239,15 @@ def import_new(projekt_xml: etree._Element,main_window:MainWindow) -> None:
 
         graph_window.combo_box.setCurrentIndex(0)
 
-    xml_predefined_psets = [x for x in projekt_xml if x.tag == constants.PREDEFINED_PSET]
-    xml_objects = [x for x in projekt_xml if x.tag == constants.OBJECT]
-    xml_root_node = list()
-    if [x for x in projekt_xml if x.tag == "Nodes"]:
-        xml_root_node = [x for x in projekt_xml if x.tag == "Nodes"][0]
-    import_property_sets(xml_predefined_psets)
-    ident_dict:dict[str,classes.Object] = dict()
+    xml_group_predef_psets = projekt_xml.find(constants.PREDEFINED_PSETS)
+    xml_group_objects = projekt_xml.find(constants.OBJECTS)
+    xml_group_nodes = projekt_xml.find(constants.NODES)
 
-    for xml_object in xml_objects:
-        xml_property_sets = [x for x in xml_object if x.tag == constants.PROPERTY_SET]
-        xml_scripts = [x for x in xml_object if x.tag == constants.SCRIPT]
-        property_sets, ident_attrib = import_property_sets(xml_property_sets)
-        name, parent, identifer, is_concept = get_obj_data(xml_object)
-        obj = classes.Object(name, ident_attrib, identifier=identifer)
-        ident_dict[identifer] = obj
-        for property_set in property_sets:
-            obj.add_property_set(property_set)
+    import_property_sets(xml_group_predef_psets)
+    ident_dict: dict[str, classes.Object] = dict()
+    import_objects(xml_group_objects)
 
-        for xml_script in xml_scripts:
-            import_scripts(xml_script, obj)
-
-    link_parents(xml_predefined_psets, xml_objects)
+    link_parents(xml_group_predef_psets, xml_group_objects)
     link_aggregation()
 
 

@@ -43,81 +43,83 @@ def save(main_window:MainWindow, path:str) -> None:
             xml_item.set(constants.PARENT, constants.NONE)
 
     def add_predefined_property_sets() -> None:
-        for predefined_pset in classes.PropertySet:
-            if predefined_pset.object is None:
-                predefined_pset: classes.PropertySet = predefined_pset
-                xml_pset = etree.SubElement(xml_project, constants.PREDEFINED_PSET)
-                xml_pset.set(constants.NAME, predefined_pset.name)
-                xml_pset.set(constants.IDENTIFIER, str(predefined_pset.identifier))
-                xml_pset.set(constants.PARENT, constants.NONE)
+        xml_grouping = etree.SubElement(xml_project, constants.PREDEFINED_PSETS)
+        predefined_psets = [pset for pset in classes.PropertySet if pset.object == None]
+        for predefined_pset in predefined_psets:
+            add_property_set(predefined_pset,xml_grouping)
 
-                for attribute in predefined_pset.attributes:
-                    add_attribute(attribute, predefined_pset, xml_pset)
+    def add_objects() -> None:
 
-    def add_property_set(property_set: classes.PropertySet, xml_object:etree._Element) -> None:
-        xml_pset = etree.SubElement(xml_object, constants.PROPERTY_SET)
+        def add_object(obj: classes.Object, xml_parent) -> None:
+            def add_ifc_mapping():
+                xml_ifc_mappings = etree.SubElement(xml_object, constants.IFC_MAPPINGS)
+                for mapping in obj.ifc_mapping:
+                    xml_ifc_mapping = etree.SubElement(xml_ifc_mappings, constants.IFC_MAPPING)
+                    xml_ifc_mapping.text = mapping
+                pass
+
+            xml_object = etree.SubElement(xml_parent, constants.OBJECT)
+            xml_object.set(constants.NAME, obj.name)
+            xml_object.set(constants.IDENTIFIER, str(obj.identifier))
+            xml_object.set("is_concept", str(obj.is_concept))
+            add_parent(xml_object, obj)
+
+            add_ifc_mapping()
+            xml_property_sets = etree.SubElement(xml_object, constants.PROPERTY_SETS)
+            for property_set in obj.property_sets:
+                add_property_set(property_set, xml_property_sets)
+
+            xml_scripts = etree.SubElement(xml_object, constants.SCRIPTS)
+            for script in obj.scripts:
+                script: classes.Script = script
+                xml_script = etree.SubElement(xml_scripts, constants.SCRIPT)
+                xml_script.set(constants.NAME, script.name)
+                xml_script.text = script.code
+
+        xml_grouping = etree.SubElement(xml_project,constants.OBJECTS)
+        for obj in sorted(classes.Object,key=lambda x:x.name):
+            add_object(obj,xml_grouping)
+
+    def add_property_set(property_set: classes.PropertySet, xml_parent:etree._Element) -> None:
+        def add_attribute(attribute: classes.Attribute, xml_pset: etree._Element) -> None:
+            def add_value(attribute: classes.Attribute, xml_attribute: etree._Element) -> None:
+                values = attribute.value
+                for value in values:
+                    xml_value = etree.SubElement(xml_attribute, "Value")
+                    if attribute.value_type == constants.RANGE:
+                        xml_from = etree.SubElement(xml_value, "From")
+                        xml_to = etree.SubElement(xml_value, "To")
+                        xml_from.text = str(value[0])
+                        if len(value) > 1:
+                            xml_to.text = str(value[1])
+                    else:
+                        xml_value.text = str(value)
+
+            xml_attribute = etree.SubElement(xml_pset, constants.ATTRIBUTE)
+            xml_attribute.set(constants.NAME, attribute.name)
+            xml_attribute.set(constants.DATA_TYPE, attribute.data_type)
+            xml_attribute.set(constants.VALUE_TYPE, attribute.value_type)
+            xml_attribute.set(constants.IDENTIFIER, str(attribute.identifier))
+            xml_attribute.set(constants.CHILD_INHERITS_VALUE, str(attribute.child_inherits_values))
+            add_parent(xml_attribute, attribute)
+
+            obj = attribute.property_set.object
+            if obj is not None and attribute == obj.ident_attrib:
+                ident = True
+            else:
+                ident = False
+
+            xml_attribute.set(constants.IS_IDENTIFIER, str(ident))
+            add_value(attribute, xml_attribute)
+
+        xml_pset = etree.SubElement(xml_parent, constants.PROPERTY_SET)
         xml_pset.set(constants.NAME, property_set.name)
         xml_pset.set(constants.IDENTIFIER, str(property_set.identifier))
         add_parent(xml_pset, property_set)
 
+        xml_attributes = etree.SubElement(xml_pset,constants.ATTRIBUTES)
         for attribute in property_set.attributes:
-            add_attribute(attribute, property_set, xml_pset)
-
-    def add_object(obj: classes.Object) -> None:
-        def add_ifc_mapping():
-            xml_ifc_mappings = etree.SubElement(xml_object,constants.IFC_MAPPINGS)
-            for mapping in obj.ifc_mapping:
-                xml_ifc_mapping = etree.SubElement(xml_ifc_mappings,constants.IFC_MAPPING)
-                xml_ifc_mapping.text = mapping
-            pass
-
-        xml_object = etree.SubElement(xml_project, constants.OBJECT)
-        xml_object.set(constants.NAME, obj.name)
-        xml_object.set(constants.IDENTIFIER, str(obj.identifier))
-        xml_object.set("is_concept", str(obj.is_concept))
-        add_parent(xml_object, obj)
-
-        for property_set in obj.property_sets:
-            add_property_set(property_set, xml_object)
-
-        for script in obj.scripts:
-            script: classes.Script = script
-            xml_script = etree.SubElement(xml_object, "Script")
-            xml_script.set(constants.NAME, script.name)
-            xml_script.text = script.code
-
-        add_ifc_mapping()
-
-    def add_attribute(attribute:classes.Attribute, property_set:classes.PropertySet, xml_pset:etree._Element) -> None:
-        xml_attribute = etree.SubElement(xml_pset, constants.ATTRIBUTE)
-        xml_attribute.set(constants.NAME, attribute.name)
-        xml_attribute.set(constants.DATA_TYPE, attribute.data_type)
-        xml_attribute.set(constants.VALUE_TYPE, attribute.value_type)
-        xml_attribute.set(constants.IDENTIFIER, str(attribute.identifier))
-        xml_attribute.set(constants.CHILD_INHERITS_VALUE, str(attribute.child_inherits_values))
-        add_parent(xml_attribute, attribute)
-
-        obj = property_set.object
-        if obj is not None and attribute == obj.ident_attrib:
-            ident = True
-        else:
-            ident = False
-
-        xml_attribute.set(constants.IS_IDENTIFIER, str(ident))
-        add_value(attribute, xml_attribute)
-
-    def add_value(attribute:classes.Attribute, xml_attribute:etree._Element) -> None:
-        values = attribute.value
-        for value in values:
-            xml_value = etree.SubElement(xml_attribute, "Value")
-            if attribute.value_type == constants.RANGE:
-                xml_from = etree.SubElement(xml_value, "From")
-                xml_to = etree.SubElement(xml_value, "To")
-                xml_from.text = str(value[0])
-                if len(value) > 1:
-                    xml_to.text = str(value[1])
-            else:
-                xml_value.text = str(value)
+            add_attribute(attribute, xml_attributes)
 
     def add_node(node: graphs_window.Node,xml_nodes:etree._Element) -> None:
         xml_node = etree.SubElement(xml_nodes, constants.NODE)
@@ -144,17 +146,12 @@ def save(main_window:MainWindow, path:str) -> None:
     xml_project.set(constants.AUTHOR,str(main_window.project.author))
 
     add_predefined_property_sets()
-    for obj in classes.Object:
-        add_object(obj)
+    add_objects()
 
-    xml_nodes = etree.SubElement(xml_project, "Nodes")
-
+    xml_nodes = etree.SubElement(xml_project, constants.NODES)
 
     for node in graphs_window.Node._registry:
         add_node(node,xml_nodes)
-
-
-
 
     tree = etree.ElementTree(xml_project)
 

@@ -5,7 +5,7 @@ from typing import Iterator, Type, TYPE_CHECKING
 from uuid import uuid4
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QDropEvent, QMouseEvent
+from PySide6.QtGui import QDropEvent
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QAbstractItemView, QListWidgetItem, QTableWidgetItem
 
 if TYPE_CHECKING:
@@ -310,7 +310,7 @@ class Attribute(Hirarchy):
         return self._revit_name
 
     @revit_name.setter
-    def revit_name(self,value:str) -> None:
+    def revit_name(self, value: str) -> None:
         self._revit_name = value
 
     @property
@@ -439,7 +439,8 @@ class Attribute(Hirarchy):
 class Object(Hirarchy):
     _registry: list[Object] = list()
 
-    def __init__(self, name: str, ident_attrib: [Attribute, str], identifier: str = None) -> None:
+    def __init__(self, name: str, ident_attrib: [Attribute, str], identifier: str = None,
+                 ifc_mapping: None | set[str] = None) -> None:
         super(Object, self).__init__(name=name)
         self._registry.append(self)
 
@@ -447,7 +448,10 @@ class Object(Hirarchy):
         self._property_sets: list[PropertySet] = list()
         self._ident_attrib = ident_attrib
         self._nodes: set[graphs_window.Node] = set()
-        self._ifc_mapping = set()
+        if ifc_mapping is None:
+            self._ifc_mapping = {"BuildingElementProxy"}
+        else:
+            self._ifc_mapping = ifc_mapping
         self.changed = True
 
         if identifier is None:
@@ -469,7 +473,7 @@ class Object(Hirarchy):
         self._ifc_mapping.remove(value)
 
     @ifc_mapping.setter
-    def ifc_mapping(self,value:set[str]):
+    def ifc_mapping(self, value: set[str]):
         self._ifc_mapping = value
 
     @property
