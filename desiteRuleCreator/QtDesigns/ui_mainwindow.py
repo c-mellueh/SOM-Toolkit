@@ -70,27 +70,16 @@ class Ui_MainWindow(object):
         self.verticalLayout_objects.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_objects = QGridLayout()
         self.gridLayout_objects.setObjectName(u"gridLayout_objects")
-        self.lineEdit_ident_pSet = QLineEdit(self.layoutWidget)
-        self.lineEdit_ident_pSet.setObjectName(u"lineEdit_ident_pSet")
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEdit_ident_pSet.sizePolicy().hasHeightForWidth())
-        self.lineEdit_ident_pSet.setSizePolicy(sizePolicy)
-        self.lineEdit_ident_pSet.setFrame(True)
-        self.lineEdit_ident_pSet.setEchoMode(QLineEdit.Normal)
+        self.label_Ident = QLabel(self.layoutWidget)
+        self.label_Ident.setObjectName(u"label_Ident")
 
-        self.gridLayout_objects.addWidget(self.lineEdit_ident_pSet, 1, 1, 1, 1)
-
-        self.lineEdit_ident_value = QLineEdit(self.layoutWidget)
-        self.lineEdit_ident_value.setObjectName(u"lineEdit_ident_value")
-        self.lineEdit_ident_value.setFrame(True)
-        self.lineEdit_ident_value.setEchoMode(QLineEdit.Normal)
-
-        self.gridLayout_objects.addWidget(self.lineEdit_ident_value, 1, 3, 1, 1)
+        self.gridLayout_objects.addWidget(self.label_Ident, 1, 0, 1, 1)
 
         self.lineEdit_ident_attribute = QLineEdit(self.layoutWidget)
         self.lineEdit_ident_attribute.setObjectName(u"lineEdit_ident_attribute")
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEdit_ident_attribute.sizePolicy().hasHeightForWidth())
         self.lineEdit_ident_attribute.setSizePolicy(sizePolicy)
         self.lineEdit_ident_attribute.setFrame(True)
@@ -98,6 +87,15 @@ class Ui_MainWindow(object):
         self.lineEdit_ident_attribute.setCursorMoveStyle(Qt.LogicalMoveStyle)
 
         self.gridLayout_objects.addWidget(self.lineEdit_ident_attribute, 1, 2, 1, 1)
+
+        self.lineEdit_ident_pSet = QLineEdit(self.layoutWidget)
+        self.lineEdit_ident_pSet.setObjectName(u"lineEdit_ident_pSet")
+        sizePolicy.setHeightForWidth(self.lineEdit_ident_pSet.sizePolicy().hasHeightForWidth())
+        self.lineEdit_ident_pSet.setSizePolicy(sizePolicy)
+        self.lineEdit_ident_pSet.setFrame(True)
+        self.lineEdit_ident_pSet.setEchoMode(QLineEdit.Normal)
+
+        self.gridLayout_objects.addWidget(self.lineEdit_ident_pSet, 1, 1, 1, 1)
 
         self.label_object_name = QLabel(self.layoutWidget)
         self.label_object_name.setObjectName(u"label_object_name")
@@ -111,10 +109,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_objects.addWidget(self.label_object_name, 0, 0, 1, 1)
 
-        self.label_Ident = QLabel(self.layoutWidget)
-        self.label_Ident.setObjectName(u"label_Ident")
+        self.lineEdit_ident_value = QLineEdit(self.layoutWidget)
+        self.lineEdit_ident_value.setObjectName(u"lineEdit_ident_value")
+        self.lineEdit_ident_value.setFrame(True)
+        self.lineEdit_ident_value.setEchoMode(QLineEdit.Normal)
 
-        self.gridLayout_objects.addWidget(self.label_Ident, 1, 0, 1, 1)
+        self.gridLayout_objects.addWidget(self.lineEdit_ident_value, 1, 3, 1, 1)
 
         self.horizontalLayout_object_button = QHBoxLayout()
         self.horizontalLayout_object_button.setObjectName(u"horizontalLayout_object_button")
@@ -139,18 +139,18 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_objects.addLayout(self.gridLayout_objects)
 
-        self.tree = QTreeWidget(self.layoutWidget)
-        self.tree.setObjectName(u"tree")
-        self.tree.setEnabled(True)
-        self.tree.setDragDropMode(QAbstractItemView.InternalMove)
-        self.tree.setDefaultDropAction(Qt.MoveAction)
-        self.tree.setAlternatingRowColors(False)
-        self.tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.tree.setSortingEnabled(True)
-        self.tree.setExpandsOnDoubleClick(False)
-        self.tree.header().setProperty("showSortIndicator", True)
+        self.tree_object = QTreeWidget(self.layoutWidget)
+        self.tree_object.setObjectName(u"tree_object")
+        self.tree_object.setEnabled(True)
+        self.tree_object.setDragDropMode(QAbstractItemView.InternalMove)
+        self.tree_object.setDefaultDropAction(Qt.MoveAction)
+        self.tree_object.setAlternatingRowColors(False)
+        self.tree_object.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.tree_object.setSortingEnabled(True)
+        self.tree_object.setExpandsOnDoubleClick(False)
+        self.tree_object.header().setProperty("showSortIndicator", True)
 
-        self.verticalLayout_objects.addWidget(self.tree)
+        self.verticalLayout_objects.addWidget(self.tree_object)
 
         self.splitter.addWidget(self.layoutWidget)
         self.tabWidget = QTabWidget(self.splitter)
@@ -168,53 +168,51 @@ class Ui_MainWindow(object):
         sizePolicy2.setHeightForWidth(self.splitter_2.sizePolicy().hasHeightForWidth())
         self.splitter_2.setSizePolicy(sizePolicy2)
         self.splitter_2.setOrientation(Qt.Horizontal)
-        self.tableWidget_inherited = QTableWidget(self.splitter_2)
-        if (self.tableWidget_inherited.columnCount() < 3):
-            self.tableWidget_inherited.setColumnCount(3)
+        self.table_pset = QTableWidget(self.splitter_2)
+        if (self.table_pset.columnCount() < 2):
+            self.table_pset.setColumnCount(2)
         __qtablewidgetitem = QTableWidgetItem()
-        self.tableWidget_inherited.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        self.table_pset.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
-        self.tableWidget_inherited.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        self.table_pset.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        if (self.table_pset.rowCount() < 1):
+            self.table_pset.setRowCount(1)
         __qtablewidgetitem2 = QTableWidgetItem()
-        self.tableWidget_inherited.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        if (self.tableWidget_inherited.rowCount() < 1):
-            self.tableWidget_inherited.setRowCount(1)
+        self.table_pset.setVerticalHeaderItem(0, __qtablewidgetitem2)
         __qtablewidgetitem3 = QTableWidgetItem()
-        self.tableWidget_inherited.setVerticalHeaderItem(0, __qtablewidgetitem3)
+        self.table_pset.setItem(0, 0, __qtablewidgetitem3)
         __qtablewidgetitem4 = QTableWidgetItem()
-        self.tableWidget_inherited.setItem(0, 0, __qtablewidgetitem4)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        self.tableWidget_inherited.setItem(0, 1, __qtablewidgetitem5)
-        self.tableWidget_inherited.setObjectName(u"tableWidget_inherited")
+        self.table_pset.setItem(0, 1, __qtablewidgetitem4)
+        self.table_pset.setObjectName(u"table_pset")
         sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.tableWidget_inherited.sizePolicy().hasHeightForWidth())
-        self.tableWidget_inherited.setSizePolicy(sizePolicy3)
-        self.tableWidget_inherited.setFocusPolicy(Qt.StrongFocus)
-        self.tableWidget_inherited.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.tableWidget_inherited.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.tableWidget_inherited.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.tableWidget_inherited.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.tableWidget_inherited.setSortingEnabled(True)
-        self.splitter_2.addWidget(self.tableWidget_inherited)
-        self.tableWidget_inherited.horizontalHeader().setProperty("showSortIndicator", True)
-        self.tableWidget_inherited.verticalHeader().setVisible(False)
-        self.tableWidget_inherited.verticalHeader().setCascadingSectionResizes(False)
-        self.attribute_widget = QTableWidget(self.splitter_2)
-        if (self.attribute_widget.columnCount() < 4):
-            self.attribute_widget.setColumnCount(4)
+        sizePolicy3.setHeightForWidth(self.table_pset.sizePolicy().hasHeightForWidth())
+        self.table_pset.setSizePolicy(sizePolicy3)
+        self.table_pset.setFocusPolicy(Qt.StrongFocus)
+        self.table_pset.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.table_pset.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_pset.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.table_pset.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table_pset.setSortingEnabled(True)
+        self.splitter_2.addWidget(self.table_pset)
+        self.table_pset.horizontalHeader().setProperty("showSortIndicator", True)
+        self.table_pset.verticalHeader().setVisible(False)
+        self.table_pset.verticalHeader().setCascadingSectionResizes(False)
+        self.table_attribute = QTableWidget(self.splitter_2)
+        if (self.table_attribute.columnCount() < 4):
+            self.table_attribute.setColumnCount(4)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        self.table_attribute.setHorizontalHeaderItem(0, __qtablewidgetitem5)
         __qtablewidgetitem6 = QTableWidgetItem()
-        self.attribute_widget.setHorizontalHeaderItem(0, __qtablewidgetitem6)
+        self.table_attribute.setHorizontalHeaderItem(1, __qtablewidgetitem6)
         __qtablewidgetitem7 = QTableWidgetItem()
-        self.attribute_widget.setHorizontalHeaderItem(1, __qtablewidgetitem7)
+        self.table_attribute.setHorizontalHeaderItem(2, __qtablewidgetitem7)
         __qtablewidgetitem8 = QTableWidgetItem()
-        self.attribute_widget.setHorizontalHeaderItem(2, __qtablewidgetitem8)
-        __qtablewidgetitem9 = QTableWidgetItem()
-        self.attribute_widget.setHorizontalHeaderItem(3, __qtablewidgetitem9)
-        self.attribute_widget.setObjectName(u"attribute_widget")
-        self.attribute_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.splitter_2.addWidget(self.attribute_widget)
+        self.table_attribute.setHorizontalHeaderItem(3, __qtablewidgetitem8)
+        self.table_attribute.setObjectName(u"table_attribute")
+        self.table_attribute.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.splitter_2.addWidget(self.table_attribute)
 
         self.gridLayout.addWidget(self.splitter_2, 3, 0, 1, 2)
 
@@ -409,8 +407,8 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.lineEdit_ident_pSet, self.lineEdit_ident_attribute)
         QWidget.setTabOrder(self.lineEdit_ident_attribute, self.lineEdit_ident_value)
         QWidget.setTabOrder(self.lineEdit_ident_value, self.button_objects_add)
-        QWidget.setTabOrder(self.button_objects_add, self.tree)
-        QWidget.setTabOrder(self.tree, self.tabWidget)
+        QWidget.setTabOrder(self.button_objects_add, self.tree_object)
+        QWidget.setTabOrder(self.tree_object, self.tabWidget)
         QWidget.setTabOrder(self.tabWidget, self.pushButton_delete_script)
         QWidget.setTabOrder(self.pushButton_delete_script, self.pushButton_import_script)
         QWidget.setTabOrder(self.pushButton_import_script, self.pushButton_burger)
@@ -461,41 +459,39 @@ class Ui_MainWindow(object):
         self.action_show_graphs.setText(QCoreApplication.translate("MainWindow", u"Show", None))
         self.action_export_boq.setText(QCoreApplication.translate("MainWindow", u"Export  for BoQ", None))
         self.action_mapping_options.setText(QCoreApplication.translate("MainWindow", u"Options", None))
-        self.lineEdit_ident_pSet.setPlaceholderText(QCoreApplication.translate("MainWindow", u"PropertySet", None))
-        self.lineEdit_ident_value.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Value", None))
-        self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
-        self.label_object_name.setText(QCoreApplication.translate("MainWindow", u"Object", None))
         self.label_Ident.setText(QCoreApplication.translate("MainWindow", u"Ident", None))
+        self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
+        self.lineEdit_ident_pSet.setPlaceholderText(QCoreApplication.translate("MainWindow", u"PropertySet", None))
+        self.label_object_name.setText(QCoreApplication.translate("MainWindow", u"Object", None))
+        self.lineEdit_ident_value.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Value", None))
         self.lineEdit_object_name.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Name", None))
         self.button_objects_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
-        ___qtreewidgetitem = self.tree.headerItem()
+        ___qtreewidgetitem = self.tree_object.headerItem()
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objects", None));
-        ___qtablewidgetitem = self.tableWidget_inherited.horizontalHeaderItem(0)
+        ___qtablewidgetitem = self.table_pset.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"PropertySet", None));
-        ___qtablewidgetitem1 = self.tableWidget_inherited.horizontalHeaderItem(1)
+        ___qtablewidgetitem1 = self.table_pset.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"InheritedBy", None));
-        ___qtablewidgetitem2 = self.tableWidget_inherited.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"IfcMapping", None));
-        ___qtablewidgetitem3 = self.tableWidget_inherited.verticalHeaderItem(0)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Test", None));
+        ___qtablewidgetitem2 = self.table_pset.verticalHeaderItem(0)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Test", None));
 
-        __sortingEnabled = self.tableWidget_inherited.isSortingEnabled()
-        self.tableWidget_inherited.setSortingEnabled(False)
-        ___qtablewidgetitem4 = self.tableWidget_inherited.item(0, 0)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"BestandsdatenqVerkehrsanlagen", None));
-        ___qtablewidgetitem5 = self.tableWidget_inherited.item(0, 1)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Verkehrsanlagen", None));
-        self.tableWidget_inherited.setSortingEnabled(__sortingEnabled)
+        __sortingEnabled = self.table_pset.isSortingEnabled()
+        self.table_pset.setSortingEnabled(False)
+        ___qtablewidgetitem3 = self.table_pset.item(0, 0)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"BestandsdatenqVerkehrsanlagen", None));
+        ___qtablewidgetitem4 = self.table_pset.item(0, 1)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Verkehrsanlagen", None));
+        self.table_pset.setSortingEnabled(__sortingEnabled)
 
-        ___qtablewidgetitem6 = self.attribute_widget.horizontalHeaderItem(0)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Name", None));
-        ___qtablewidgetitem7 = self.attribute_widget.horizontalHeaderItem(1)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"Data Format", None));
-        ___qtablewidgetitem8 = self.attribute_widget.horizontalHeaderItem(2)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"Format", None));
-        ___qtablewidgetitem9 = self.attribute_widget.horizontalHeaderItem(3)
-        ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"Value", None));
+        ___qtablewidgetitem5 = self.table_attribute.horizontalHeaderItem(0)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Name", None));
+        ___qtablewidgetitem6 = self.table_attribute.horizontalHeaderItem(1)
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Data Format", None));
+        ___qtablewidgetitem7 = self.table_attribute.horizontalHeaderItem(2)
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"Format", None));
+        ___qtablewidgetitem8 = self.table_attribute.horizontalHeaderItem(3)
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"Value", None));
         self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))
         self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_property_set), QCoreApplication.translate("MainWindow", u"PropertySet", None))

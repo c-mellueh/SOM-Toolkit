@@ -73,7 +73,7 @@ def iterate_attributes(pset: classes.PropertySet, sheet: Worksheet, entry: Cell,
     Iterate over Attributes
     Create Them and find special Datatypes
     """
-    while entry.value is not None and entry not in cell_list:
+    while entry.value is not None and entry not in cell_list and entry.value != "-":
         data_type_text = sheet.cell(row=entry.row, column=entry.column + 2).value
         attribute_name = entry.value
         data_type, special = transform_value_types(data_type_text)

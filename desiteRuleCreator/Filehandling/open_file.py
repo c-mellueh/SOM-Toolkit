@@ -25,8 +25,10 @@ def string_to_bool(text: str) -> bool | None:
 
 
 def fill_tree(main_window: MainWindow) -> None:
-    item_dict: dict[classes.Object, classes.CustomObjectTreeItem] = {obj: main_window.add_object_to_tree(obj)
+    root_item = main_window.object_tree.invisibleRootItem()
+    item_dict: dict[classes.Object, classes.CustomObjectTreeItem] = {obj: main_window.add_object_to_tree(obj,root_item)
                                                                      for obj in classes.Object}
+
     for obj in classes.Object:
         tree_item = item_dict[obj]
         if obj.parent is not None:
@@ -131,6 +133,15 @@ def import_new(projekt_xml: etree._Element, main_window: MainWindow) -> None:
 
             return name, parent, identifier, string_to_bool(is_concept)
 
+        def import_scripts(xml_scripts: etree._Element | None, obj: classes.Object) -> None:
+            if xml_scripts is None:
+                return
+            for xml_script in xml_scripts:
+                name = xml_script.attrib.get("name")
+                code = xml_script.text
+                script = classes.Script(name, obj)
+                script.code = code
+
         for xml_object in xml_objects:
             xml_property_group = xml_object.find(constants.PROPERTY_SETS)
             xml_script_group = xml_object.find(constants.SCRIPTS)
@@ -145,14 +156,6 @@ def import_new(projekt_xml: etree._Element, main_window: MainWindow) -> None:
 
             import_scripts(xml_script_group, obj)
 
-    def import_scripts(xml_scripts: etree._Element|None, obj: classes.Object) -> None:
-        if xml_scripts is None:
-            return
-        for xml_script in xml_scripts:
-            name = xml_script.attrib.get("name")
-            code = xml_script.text
-            script = classes.Script(name, obj)
-            script.code = code
 
     def create_ident_dict(item_list: list[Type[classes.Hirarchy]]) -> dict[str, Type[classes.Hirarchy]]:
         return {item.identifier: item for item in item_list}

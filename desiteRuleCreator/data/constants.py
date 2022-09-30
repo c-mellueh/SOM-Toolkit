@@ -68,3 +68,6 @@ NODE = "Node"
 NODES = "Nodes"
 IFC_MAPPINGS = "IfcMappings"
 IFC_MAPPING = "IfcMapping"
+
+#Mapping
+SHARED_PARAMETERS = "SharedParameters"

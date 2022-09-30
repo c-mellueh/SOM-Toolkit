@@ -4,7 +4,7 @@ import copy
 import sys,os,logging,logging.config
 
 from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog,QTableWidget
 
 from desiteRuleCreator import icons
 from desiteRuleCreator.Filehandling import open_file, desite_export, excel,save_file,revit
@@ -53,7 +53,7 @@ class MainWindow(QMainWindow):
         self.parent_property_window: predefined_psets_window.PropertySetInherWindow = self.open_pset_list()
         self.parent_property_window.hide()
         self.pset_window:None|propertyset_window.PropertySetWindow = None
-        self.pset_table = self.ui.tableWidget_inherited
+
 
         # variables
         self.icon = get_icon()
@@ -70,9 +70,21 @@ class MainWindow(QMainWindow):
         property_widget.init(self)
         script_widget.init(self)
 
-        self.ui.tree.resizeColumnToContents(0)
+        self.ui.tree_object.resizeColumnToContents(0)
         self.save_path = None
         connect()
+
+    @property
+    def object_tree(self) -> classes.CustomTree:
+        return self.ui.tree_object
+
+    @property
+    def pset_table(self) ->QTableWidget:
+        return self.ui.table_pset
+
+    @property
+    def attribute_table(self) -> QTableWidget:
+        return self.ui.table_attribute
 
     @property
     def save_path(self) -> str:
@@ -108,6 +120,7 @@ class MainWindow(QMainWindow):
             event.ignore()
 
     def open_mapping_window(self):
+        #if self.mapping_window is None:
         self.mapping_window = mapping_window.MappingWindow(self)
         self.mapping_window.show()
 
@@ -157,7 +170,7 @@ class MainWindow(QMainWindow):
             else:
                 open_file.import_data(self, path)
 
-        self.ui.tree.resizeColumnToContents(0)
+        self.ui.tree_object.resizeColumnToContents(0)
         self.load_graph(show=False)
         self.save_path = path
 
@@ -181,10 +194,10 @@ class MainWindow(QMainWindow):
         object_widget.right_click(self, position)
 
     def rc_collapse(self):
-        object_widget.rc_collapse(self.ui.tree)
+        object_widget.rc_collapse(self.ui.tree_object)
 
     def rc_expand(self):
-        object_widget.rc_expand(self.ui.tree)
+        object_widget.rc_expand(self.ui.tree_object)
 
     def rc_group(self):
         object_widget.rc_group_items(self)
@@ -225,6 +238,9 @@ class MainWindow(QMainWindow):
 
     def delete_object(self):
         object_widget.rc_delete(self)
+
+    def rc_ifc_mapping(self,item):
+        object_widget.rc_ifc_mapping(self)
 
     # PropertyWidget
     def attribute_double_clicked(self,item):

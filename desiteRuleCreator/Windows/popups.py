@@ -3,7 +3,7 @@ import os
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QDialogButtonBox, QGridLayout,QListWidgetItem,QCompleter
 import desiteRuleCreator.icons as icons
-from desiteRuleCreator.QtDesigns import ui_delete_request,ui_groupReq,ui_propertyset_mapping
+from desiteRuleCreator.QtDesigns import ui_delete_request,ui_groupReq,ui_propertyset_mapping,ui_attribute_mapping
 from desiteRuleCreator.data import classes
 def default_message(text):
     icon = icons.get_icon()
@@ -182,7 +182,7 @@ def req_boq_pset(main_window,words):
     else:
         return False,None
 
-def pset_mapping_popup(property_set:classes.PropertySet):
+def object_mapping(object:classes.Object) -> None:
     def add_line():
         layout:QGridLayout = widget.widget_input_lines.layout()
         new_line_edit = QLineEdit()
@@ -192,16 +192,25 @@ def pset_mapping_popup(property_set:classes.PropertySet):
     parent = QDialog()
     widget = ui_propertyset_mapping.Ui_Dialog()
     widget.setupUi(parent)
-    widget.label_name.setText(f"IfcMapping {property_set.name}")
+    widget.label_name.setText(f"IfcMapping {object.name}")
     widget.button_add.clicked.connect(add_line)
     widget.line_edits =[widget.line_edit]
-    for _ in range(len(property_set.ifc_mapping)-1):
+    for _ in range(len(object.ifc_mapping)-1):
         add_line()
-    for i, mapping in enumerate(property_set.ifc_mapping):
+    for i, mapping in enumerate(object.ifc_mapping):
         line_edit = widget.line_edits[i]
         line_edit.setText(mapping)
     if parent.exec():
         mappings = {line_edit.text() for line_edit in widget.line_edits}
-        property_set.ifc_mapping = mappings
+        object.ifc_mapping = mappings
 
+def attribute_mapping(attribute:classes.Attribute):
+    parent = QDialog()
+    widget = ui_attribute_mapping.Ui_Dialog()
+    widget.setupUi(parent)
+    widget.label_name.setText(f"RevitMapping {attribute.name}")
+    widget.line_edit_revit_mapping.setText(attribute.revit_name)
+
+    if parent.exec():
+        attribute.revit_name = widget.line_edit_revit_mapping.text()
 

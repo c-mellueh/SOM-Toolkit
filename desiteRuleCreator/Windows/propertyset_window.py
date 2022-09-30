@@ -13,6 +13,13 @@ from desiteRuleCreator.Windows import popups
 from desiteRuleCreator.data import constants, classes
 from desiteRuleCreator.data.classes import PropertySet, Attribute
 
+class MappingTableItem(QTableWidgetItem):
+    def __init__(self,attribute:classes.Attribute) -> None:
+        super(MappingTableItem, self).__init__()
+        self.attribute = attribute
+        self.update()
+    def update(self) -> None:
+        self.setText(self.attribute.revit_name)
 
 def float_to_string(value: float) -> str:
     value = str(value).replace(".", ",")
@@ -59,7 +66,7 @@ def fill_attribute_table(active_object:classes.Object,
         table_widget.setItem(i, 1, QTableWidgetItem(attribute.data_type))
         table_widget.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
         table_widget.setItem(i, 3, QTableWidgetItem(str(attribute.value)))
-
+        table_widget.setItem(i,4,MappingTableItem(attribute))
         table_widget.resizeColumnsToContents()
 
         if active_object is None:
@@ -104,7 +111,8 @@ class LineInput(QLineEdit):
 class PropertySetWindow(QtWidgets.QWidget):
     def __init__(self, main_window, property_set: PropertySet, active_object: classes.Object, window_title):
         def connect_items():
-            self.widget.table_widget.itemClicked.connect(self.list_clicked)
+            self.widget.table_widget.itemClicked.connect(self.table_clicked)
+            self.widget.table_widget.itemDoubleClicked.connect(self.table_double_clicked)
             self.widget.combo_type.currentTextChanged.connect(self.combo_valuetype_change)
             self.widget.lineEdit_name.textChanged.connect(self.text_changed)
             self.widget.combo_data_type.currentTextChanged.connect(self.data_combo_change)
@@ -504,10 +512,42 @@ class PropertySetWindow(QtWidgets.QWidget):
         # set Editable
         self.widget.check_box_inherit.setChecked(attribute.child_inherits_values)
 
-    def list_clicked(self, tree_item: QTableWidgetItem | classes.CustomTableItem) -> None:
-        item: classes.CustomTableItem = self.table.item(tree_item.row(), 0)
+    def table_clicked(self, table_item: QTableWidgetItem | classes.CustomTableItem) -> None:
+        item: classes.CustomTableItem = self.table.item(table_item.row(), 0)
         attribute = item.linked_data
         self.fill_with_attribute(attribute)
+
+    def table_double_clicked(self,table_item:QTableWidgetItem|classes.CustomTableItem|MappingTableItem):
+        if not isinstance(table_item,MappingTableItem):
+            return
+        popups.attribute_mapping(table_item.attribute)
+        table_item.update()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

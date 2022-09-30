@@ -8,6 +8,8 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QDropEvent
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QAbstractItemView, QListWidgetItem, QTableWidgetItem
 
+from desiteRuleCreator.data import constants
+
 if TYPE_CHECKING:
     from desiteRuleCreator.Windows import graphs_window
     from desiteRuleCreator.main_window import MainWindow
@@ -16,10 +18,10 @@ if TYPE_CHECKING:
 # Add child to Parent leads to reverse
 
 class IterRegistry(type):
-    _registry = list()
+    _registry= list()
     """ Helper for Iteration"""
 
-    def __iter__(self) -> Iterator:
+    def __iter__(self) -> Iterator[PropertySet|Object|Attribute]:
         return iter(self._registry)
 
     def __len__(self) -> int:
@@ -99,6 +101,17 @@ class Hirarchy(object, metaclass=IterRegistry):
         self._children = list()
         self._name = name
         self.changed = True
+        self._mapping_dict = {
+            constants.SHARED_PARAMETERS:True,
+            constants.IFC_MAPPING:True
+        }
+    @property
+    def mapping_dict(self) -> dict[str,bool]:
+        return self._mapping_dict
+
+    @mapping_dict.setter
+    def mapping_dict(self,value:dict[str,bool]) -> None:
+        self._mapping_dict = value
 
     @property
     def name(self) -> str:
@@ -155,7 +168,7 @@ class Hirarchy(object, metaclass=IterRegistry):
 class PropertySet(Hirarchy):
     _registry: list[PropertySet] = list()
 
-    def __init__(self, name: str, obj: Object = None, identifier: str = None,ifc_mapping = None) -> None:
+    def __init__(self, name: str, obj: Object = None, identifier: str = None) -> None:
         super(PropertySet, self).__init__(name)
         self._attributes = set()
         self._object = obj
@@ -164,29 +177,7 @@ class PropertySet(Hirarchy):
         if self.identifier is None:
             self.identifier = str(uuid4())
         self.changed = True
-        if ifc_mapping is None:
-            self._ifc_mapping = {"IfcBuildingElementProxy"}
-        else:
-            self._ifc_mapping = ifc_mapping
-        self.changed = True
 
-    @property
-    def ifc_mapping(self) -> set[str]:
-        return self._ifc_mapping
-
-    def add_ifc_map(self, value: str) -> None:
-        self._ifc_mapping.add(value)
-
-    def remove_ifc_map(self, value: str) -> None:
-        self._ifc_mapping.remove(value)
-
-    @ifc_mapping.setter
-    def ifc_mapping(self, value: set[str]):
-        value_set = set()
-        for item in value:  #filter empty Inputs
-            if not (item == "" or item is None):
-                value_set.add(item)
-        self._ifc_mapping = value_set
 
     @property
     def is_predefined(self) -> bool:
@@ -312,7 +303,6 @@ class Attribute(Hirarchy):
         self._property_set = property_set
         self._value_type = value_type
         self._data_type = data_type
-        self._object = None
         self._registry.append(self)
         self._revit_name = self.name
 
@@ -462,7 +452,7 @@ class Attribute(Hirarchy):
 class Object(Hirarchy):
     _registry: list[Object] = list()
 
-    def __init__(self, name: str, ident_attrib: [Attribute, str], identifier: str = None                 ) -> None:
+    def __init__(self, name: str, ident_attrib: [Attribute, str], identifier: str = None, ifc_mapping:set[str]|None = None ) -> None:
         super(Object, self).__init__(name=name)
         self._registry.append(self)
 
@@ -471,6 +461,13 @@ class Object(Hirarchy):
         self._ident_attrib = ident_attrib
         self._nodes: set[graphs_window.Node] = set()
 
+        if ifc_mapping is None:
+            self._ifc_mapping = {"IfcBuildingElementProxy"}
+        else:
+            self._ifc_mapping = ifc_mapping
+
+        self.changed = True
+
         if identifier is None:
             self.identifier = str(uuid4())
         else:
@@ -478,6 +475,24 @@ class Object(Hirarchy):
 
     def __str__(self):
         return f"Object {self.name}"
+
+    @property
+    def ifc_mapping(self) -> set[str]:
+        return self._ifc_mapping
+
+    @ifc_mapping.setter
+    def ifc_mapping(self, value: set[str]):
+        value_set = set()
+        for item in value:  #filter empty Inputs
+            if not (item == "" or item is None):
+                value_set.add(item)
+        self._ifc_mapping = value_set
+
+    def add_ifc_map(self, value: str) -> None:
+        self._ifc_mapping.add(value)
+
+    def remove_ifc_map(self, value: str) -> None:
+        self._ifc_mapping.remove(value)
 
     @property
     def nodes(self) -> set[graphs_window.Node]:  # Todo: add nodes functionality to graphs_window
@@ -641,10 +656,12 @@ class CustomPsetTree(QTreeWidget):
 
 
 class CustomObjectTreeItem(QTreeWidgetItem):
-    def __init__(self, tree: QTreeWidget, obj: Object) -> None:
-        super(CustomObjectTreeItem, self).__init__(tree)
+    def __init__(self,obj: Object,func = None) -> None:
+        super(CustomObjectTreeItem, self).__init__()
         self._object = obj
+        self._func = func
         self.update()
+
 
     def addChild(self, child: CustomObjectTreeItem) -> None:
         super(CustomObjectTreeItem, self).addChild(child)
@@ -657,25 +674,14 @@ class CustomObjectTreeItem(QTreeWidgetItem):
 
     def update(self) -> None:
         self.setText(0, self.object.name)
+        if self._func is not None:
+            self._func(self.object)
+            return
         if self.object.is_concept:
             self.setText(1, "")
         else:
             self.setText(1, str(self.object.ident_attrib.value))
 
-
-class CustomObjectMappingTreeItem(QTreeWidgetItem):
-    def __init__(self, obj: Object) -> None:
-        super(CustomObjectMappingTreeItem, self).__init__()
-        self._object = obj
-        self.update()
-
-    @property
-    def object(self) -> Object:
-        return self._object
-
-    def update(self) -> None:
-        self.setText(0, self.object.name)
-        self.setText(1, "; ".join(self.object.ifc_mapping))
 
 
 class CustomPSetTreeItem(QTreeWidgetItem):
