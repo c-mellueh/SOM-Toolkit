@@ -30,35 +30,10 @@
        <layout class="QVBoxLayout" name="verticalLayout_objects">
         <item>
          <layout class="QGridLayout" name="gridLayout_objects">
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEdit_ident_pSet">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="frame">
-             <bool>true</bool>
-            </property>
-            <property name="echoMode">
-             <enum>QLineEdit::Normal</enum>
-            </property>
-            <property name="placeholderText">
-             <string>PropertySet</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QLineEdit" name="lineEdit_ident_value">
-            <property name="frame">
-             <bool>true</bool>
-            </property>
-            <property name="echoMode">
-             <enum>QLineEdit::Normal</enum>
-            </property>
-            <property name="placeholderText">
-             <string>Value</string>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_Ident">
+            <property name="text">
+             <string>Ident</string>
             </property>
            </widget>
           </item>
@@ -84,6 +59,25 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEdit_ident_pSet">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="frame">
+             <bool>true</bool>
+            </property>
+            <property name="echoMode">
+             <enum>QLineEdit::Normal</enum>
+            </property>
+            <property name="placeholderText">
+             <string>PropertySet</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_object_name">
             <property name="sizePolicy">
@@ -106,10 +100,16 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_Ident">
-            <property name="text">
-             <string>Ident</string>
+          <item row="1" column="3">
+           <widget class="QLineEdit" name="lineEdit_ident_value">
+            <property name="frame">
+             <bool>true</bool>
+            </property>
+            <property name="echoMode">
+             <enum>QLineEdit::Normal</enum>
+            </property>
+            <property name="placeholderText">
+             <string>Value</string>
             </property>
            </widget>
           </item>
@@ -149,7 +149,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QTreeWidget" name="tree">
+         <widget class="QTreeWidget" name="tree_object">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -211,7 +211,7 @@
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <widget class="QTableWidget" name="tableWidget_inherited">
+           <widget class="QTableWidget" name="table_pset">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -271,7 +271,7 @@
              </property>
             </item>
            </widget>
-           <widget class="QTableWidget" name="attribute_widget">
+           <widget class="QTableWidget" name="table_attribute">
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
             </property>
@@ -690,10 +690,17 @@
     </property>
     <addaction name="action_show_graphs"/>
    </widget>
+   <widget class="QMenu" name="menuRevit">
+    <property name="title">
+     <string>Mapping</string>
+    </property>
+    <addaction name="action_mapping_options"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDesite"/>
    <addaction name="menuPredefined_Psets"/>
    <addaction name="menuShow_Graphs"/>
+   <addaction name="menuRevit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_file_new">
@@ -756,13 +763,18 @@
     <string>Export  for BoQ</string>
    </property>
   </action>
+  <action name="action_mapping_options">
+   <property name="text">
+    <string>Options</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>lineEdit_ident_pSet</tabstop>
   <tabstop>lineEdit_ident_attribute</tabstop>
   <tabstop>lineEdit_ident_value</tabstop>
   <tabstop>button_objects_add</tabstop>
-  <tabstop>tree</tabstop>
+  <tabstop>tree_object</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>pushButton_delete_script</tabstop>
   <tabstop>pushButton_import_script</tabstop>

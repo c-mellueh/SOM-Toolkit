@@ -4,14 +4,14 @@ import copy
 import sys,os,logging,logging.config
 
 from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog,QTableWidget
 
 from desiteRuleCreator import icons
-from desiteRuleCreator.Filehandling import open_file, desite_export, excel,save_file
+from desiteRuleCreator.Filehandling import open_file, desite_export, excel,save_file,revit
 from desiteRuleCreator.QtDesigns import ui_project_settings
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
-from desiteRuleCreator.Windows import predefined_psets_window,graphs_window,propertyset_window
+from desiteRuleCreator.Windows import predefined_psets_window,graphs_window,propertyset_window,mapping_window
 from desiteRuleCreator.data import classes
 from desiteRuleCreator.data.classes import Object, PropertySet
 from desiteRuleCreator import logs
@@ -43,6 +43,7 @@ class MainWindow(QMainWindow):
             self.ui.action_export_boq.triggered.connect(self.export_boq)
             self.ui.action_show_graphs.triggered.connect(self.open_graph)
             self.ui.code_edit.textChanged.connect(self.update_script)
+            self.ui.action_mapping_options.triggered.connect(self.open_mapping_window)
 
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -52,7 +53,7 @@ class MainWindow(QMainWindow):
         self.parent_property_window: predefined_psets_window.PropertySetInherWindow = self.open_pset_list()
         self.parent_property_window.hide()
         self.pset_window:None|propertyset_window.PropertySetWindow = None
-        self.pset_table = self.ui.tableWidget_inherited
+
 
         # variables
         self.icon = get_icon()
@@ -61,6 +62,7 @@ class MainWindow(QMainWindow):
         self._export_path = None
         self.active_object:classes.Object|None = None
         self.graph_window = None
+        self.mapping_window = None
         self.project = classes.Project(self, "")
 
         # init object and ProertyWidget
@@ -68,9 +70,21 @@ class MainWindow(QMainWindow):
         property_widget.init(self)
         script_widget.init(self)
 
-        self.ui.tree.resizeColumnToContents(0)
+        self.ui.tree_object.resizeColumnToContents(0)
         self.save_path = None
         connect()
+
+    @property
+    def object_tree(self) -> classes.CustomTree:
+        return self.ui.tree_object
+
+    @property
+    def pset_table(self) ->QTableWidget:
+        return self.ui.table_pset
+
+    @property
+    def attribute_table(self) -> QTableWidget:
+        return self.ui.table_attribute
 
     @property
     def save_path(self) -> str:
@@ -104,6 +118,11 @@ class MainWindow(QMainWindow):
             event.accept()
         else:
             event.ignore()
+
+    def open_mapping_window(self):
+        #if self.mapping_window is None:
+        self.mapping_window = mapping_window.MappingWindow(self)
+        self.mapping_window.show()
 
     # Filehandling
     def save_clicked(self):
@@ -151,7 +170,7 @@ class MainWindow(QMainWindow):
             else:
                 open_file.import_data(self, path)
 
-        self.ui.tree.resizeColumnToContents(0)
+        self.ui.tree_object.resizeColumnToContents(0)
         self.load_graph(show=False)
         self.save_path = path
 
@@ -175,10 +194,10 @@ class MainWindow(QMainWindow):
         object_widget.right_click(self, position)
 
     def rc_collapse(self):
-        object_widget.rc_collapse(self.ui.tree)
+        object_widget.rc_collapse(self.ui.tree_object)
 
     def rc_expand(self):
-        object_widget.rc_expand(self.ui.tree)
+        object_widget.rc_expand(self.ui.tree_object)
 
     def rc_group(self):
         object_widget.rc_group_items(self)
@@ -219,6 +238,9 @@ class MainWindow(QMainWindow):
 
     def delete_object(self):
         object_widget.rc_delete(self)
+
+    def rc_ifc_mapping(self,item):
+        object_widget.rc_ifc_mapping(self)
 
     # PropertyWidget
     def attribute_double_clicked(self,item):

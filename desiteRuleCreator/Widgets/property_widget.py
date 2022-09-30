@@ -3,14 +3,23 @@ from PySide6.QtCore import Qt,QPointF
 from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea,QMenu,QCompleter,QWidget
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
-from desiteRuleCreator.Windows import popups
+from desiteRuleCreator.Windows import popups,propertyset_window
 from desiteRuleCreator.Windows.popups import msg_del_ident_pset, msg_del_items
-from desiteRuleCreator.Windows.propertyset_window import PropertySetWindow,fill_attribute_table
+from desiteRuleCreator.Windows.propertyset_window import PropertySetWindow
 from desiteRuleCreator.data import classes, constants
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
+
+class MappingTableItem(QTableWidgetItem):
+    def __init__(self,property_set:classes.PropertySet) -> None:
+        super(MappingTableItem, self).__init__()
+        self.property_set = property_set
+        self.update()
+    def update(self) -> None:
+        self.setText(";".join(self.property_set.ifc_mapping))
+
 
 def get_parent_by_name(active_object: classes.Object, name: str) -> classes.PropertySet|None:
     """find Propertyset which has the same name and is not from the same object"""
@@ -32,7 +41,7 @@ def init(main_window:MainWindow) -> None:
     def connect() -> None:
         main_window.pset_table.itemClicked.connect(main_window.list_object_clicked)
         main_window.pset_table.itemDoubleClicked.connect(main_window.list_object_double_clicked)
-        main_window.ui.attribute_widget.itemDoubleClicked.connect(main_window.attribute_double_clicked)
+        main_window.ui.table_attribute.itemDoubleClicked.connect(main_window.attribute_double_clicked)
         main_window.ui.lineEdit_pSet_name.textChanged.connect(main_window.text_changed)
         main_window.pset_table.customContextMenuRequested.connect(main_window.open_pset_menu)
         main_window.ui.button_Pset_add.clicked.connect(main_window.add_pset)
@@ -77,8 +86,8 @@ def clear_all(main_window:MainWindow) -> None:
     for row in range(main_window.pset_table.rowCount()):
         main_window.pset_table.removeRow(row)
 
-    for row in range(ui.attribute_widget.rowCount()):
-        ui.attribute_widget.removeRow(row)
+    for row in range(ui.table_attribute.rowCount()):
+        ui.table_attribute.removeRow(row)
 
     main_window.ui.lineEdit_pSet_name.clear()
     main_window.set_right_window_enable(False)
@@ -88,7 +97,7 @@ def clear_all(main_window:MainWindow) -> None:
 
 def delete_selection(main_window:MainWindow) -> None:
     list_item:list[classes.CustomTableItem] = main_window.pset_table.selectedItems()
-    property_sets:list[classes.PropertySet] = [item.item for item in list_item if item.column() == 0]
+    property_sets:list[classes.PropertySet] = [item.linked_data for item in list_item if item.column() == 0]
     row_list = [item.row() for item in list_item if item.column() ==0]
 
 
@@ -114,7 +123,7 @@ def delete_selection(main_window:MainWindow) -> None:
 
 def rename(main_window:MainWindow) -> None:
     list_item:classes.CustomTableItem = main_window.pset_table.selectedItems()[0]
-    selected_pset: classes.PropertySet = list_item.item
+    selected_pset: classes.PropertySet = list_item.linked_data
     return_str = popups.req_new_name(main_window,selected_pset.name)
 
     if return_str[1]:
@@ -143,11 +152,12 @@ def set_enable(main_window:MainWindow, value: bool) -> None:
         modify_title(main_window, main_window.ui.tab_property_set, "PropertySet")
 
         main_window.pset_table.setRowCount(0)
-        main_window.ui.attribute_widget.setRowCount(0)
+        main_window.ui.table_attribute.setRowCount(0)
         main_window.ui.lineEdit_pSet_name.setText("")
 
 
 def fill_table(main_window:MainWindow, obj: classes.Object) -> None:
+
     main_window.set_right_window_enable(True)
     modify_title(main_window, main_window.ui.tab_code, f"{obj.name}: Code")
     modify_title(main_window, main_window.ui.tab_property_set, f"{obj.name}: PropertySets")
@@ -177,22 +187,22 @@ def left_click(main_window:MainWindow, item: QListWidgetItem) -> None:
     item:classes.CustomTableItem = main_window.pset_table.item(
                                     main_window.pset_table.row(item), 0)
 
-    property_set: classes.PropertySet = item.item
-    fill_attribute_table(main_window.active_object,main_window.ui.attribute_widget,property_set)
+    property_set: classes.PropertySet = item.linked_data
+    propertyset_window.fill_attribute_table(main_window.active_object, main_window.ui.table_attribute, property_set)
     main_window.ui.lineEdit_pSet_name.setText(property_set.name)
 
 def attribute_double_click(main_window:MainWindow,item:classes.CustomTableItem) -> None:
-    item: QTableWidgetItem = item.tableWidget().item(item.row(), 0)
-    attribute:classes.Attribute = item.item
+    item: classes.CustomTableItem = item.tableWidget().item(item.row(), 0)
+    attribute:classes.Attribute = item.linked_data
     property_set = attribute.property_set
     main_window.open_pset_window(property_set, main_window.active_object, None)
-    main_window.pset_window.list_clicked(item)
+    main_window.pset_window.table_clicked(item)
 
 
 def double_click(main_window:MainWindow, item: QTableWidgetItem) -> None:
     main_window.list_object_clicked(item)
-    item = main_window.pset_table.item(item.row(), 0)
-    property_set: classes.PropertySet = item.item
+    item:classes.CustomTableItem = main_window.pset_table.item(item.row(), 0)
+    property_set: classes.PropertySet = item.linked_data
 
     # Open New Window
     main_window.open_pset_window(property_set, main_window.active_object, None)
@@ -243,10 +253,10 @@ def add_pset(main_window:MainWindow) -> None:
 def reload(main_window:MainWindow) -> None:
     if main_window.active_object is not None:
         fill_table(main_window, main_window.active_object)
-        fill_attribute_table(main_window.active_object, main_window.ui.attribute_widget, main_window.pset_window.property_set)
+        propertyset_window.fill_attribute_table(main_window.active_object, main_window.ui.table_attribute, main_window.pset_window.property_set)
 
 
 def clear_attribute_table(main_window:MainWindow) -> None:
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
-    table_widget = ui.attribute_widget
+    table_widget = ui.table_attribute
     table_widget.setRowCount(0)
