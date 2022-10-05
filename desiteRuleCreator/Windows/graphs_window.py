@@ -988,29 +988,15 @@ class GraphWindow(QWidget):
         self.scenes.append(scene)
         return scene
 
-    def add_button_pressed(self):
+    def add_button_pressed(self) -> None:
         dialog = QInputDialog()
         dialog.setWindowTitle("New Aggregation")
         dialog.setLabelText("Choose Root Object")
         dialog.setTextValue("")
         obj: classes.Object
 
-        root_objects = set()
-        for obj in classes.Object:
-            if obj.nodes is None:
-                root_objects.add(obj)
-            else:
-                for node in obj.nodes:
-                    if node.parent_box is None:
-                        root_objects.add(obj)
-
-        root_objects = set(item_to_name(obj) for obj in root_objects)  # objects that don't aggregate from someone
-        combo_names = set(self.combo_box.itemText(index) for index in
-                          range(self.combo_box.count()))  # items that are listed in combobox
-
-        words = sorted(list(root_objects - combo_names))
+        words = sorted(list(item_to_name(obj) for obj in classes.Object))
         dialog.setComboBoxItems(words)
-        combo_box: QComboBox = dialog.findChild(QComboBox)
         dialog.setComboBoxEditable(True)
 
         ok = (dialog.exec() == QInputDialog.Accepted)
@@ -1018,13 +1004,10 @@ class GraphWindow(QWidget):
             text = dialog.textValue()
             obj = {item_to_name(obj): obj for obj in classes.Object}.get(text)
             if obj is not None:
-                text_pos = self.combo_box.findText(text)
-
                 self.combo_box.addItem(str(text))
                 node = Node(obj, self)
                 self.create_scene_by_node(node)
                 self.draw_tree(node)
-
                 text_pos = self.combo_box.findText(text)
                 self.combo_box.setCurrentIndex(text_pos)
                 self.combo_box.model().sort(0, Qt.AscendingOrder)
