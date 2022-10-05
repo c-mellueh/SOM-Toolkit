@@ -304,7 +304,7 @@ class Attribute(Hirarchy):
         self._value_type = value_type
         self._data_type = data_type
         self._registry.append(self)
-        self._revit_name = self.name
+        self._revit_name = name
 
         self.changed = True
         self._child_inherits_values = child_inherits_values

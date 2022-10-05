@@ -362,7 +362,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             table.setItem(row, 1, QTableWidgetItem(attrib.data_type))
             table.setItem(row, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attrib.value_type]))
             table.setItem(row, 3, QTableWidgetItem(str(attrib.value)))
-
+            table.setItem(row,4,QTableWidgetItem(str(attrib.revit_name)))
         def update_attribute() -> classes.Attribute | None:
 
             values = get_values()
