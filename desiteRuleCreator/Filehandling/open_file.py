@@ -210,13 +210,12 @@ def import_new(projekt_xml: etree._Element, main_window: MainWindow) -> None:
             for xml_node in xml_group_nodes:
                 identifier = xml_node.attrib.get(constants.IDENTIFIER)
                 obj = ident_dict[xml_node.attrib.get(constants.OBJECT.lower())]
-                node = graphs_window.Node(obj, graph_window)
+                node = graphs_window.Node(obj, graph_win)
                 id_node_dict[identifier] = (node, xml_node)
             return id_node_dict
 
-        main_window.graph_window = graphs_window.GraphWindow(main_window, False)
-        graph_window: graphs_window.GraphWindow = main_window.graph_window
-        print(f" graph_window = {graph_window}")
+        graph_win: graphs_window.GraphWindow = graphs_window.GraphWindow(main_window, False)
+        main_window.graph_window = graph_win
         id_node_dict = create_node_dict()
 
         for identifier, (node, xml_node) in id_node_dict.items():
@@ -228,11 +227,11 @@ def import_new(projekt_xml: etree._Element, main_window: MainWindow) -> None:
                 parent_node.add_child(node, int(connection_type))
             if is_root == "True":
                 scene = graphs_window.AggregationScene(node)
-                graph_window.scenes.append(scene)
+                graph_win.scenes.append(scene)
 
-        graph_window.update_combo_list()
-        for node in graph_window.root_nodes:
-            graph_window.change_scene(node)
+        graph_win.update_combo_list()
+        for node in graph_win.root_nodes:
+            graph_win.change_scene(node)
 
         for identifier, (node, xml_node) in id_node_dict.items():
             x_pos = xml_node.attrib.get(constants.X_POS)
@@ -240,7 +239,8 @@ def import_new(projekt_xml: etree._Element, main_window: MainWindow) -> None:
             node.setX(float(x_pos))
             node.setY(float(y_pos))
 
-        graph_window.combo_box.setCurrentIndex(0)
+        graph_win.combo_box.setCurrentIndex(0)
+        graph_win.combo_change()
 
     xml_group_predef_psets = projekt_xml.find(constants.PREDEFINED_PSETS)
     xml_group_objects = projekt_xml.find(constants.OBJECTS)
