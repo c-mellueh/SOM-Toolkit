@@ -826,8 +826,6 @@ class GraphWindow(QWidget):
         self.reload_button.setIcon(icons.get_reload_icon())
         self.add_button.clicked.connect(self.add_button_pressed)
         self.delete_button.clicked.connect(self.delete_button_pressed)
-        self.combo_box.setCurrentIndex(0)
-
     ### Functions ###
 
     def import_excel(self,
@@ -943,8 +941,8 @@ class GraphWindow(QWidget):
 
         for node in self.root_nodes:
             self.change_scene(node)
-
         self.combo_box.setCurrentIndex(0)
+        self.combo_change()
 
     def delete_button_pressed(self) -> None:
         if not self.combo_box.currentText() == "":
@@ -1029,8 +1027,7 @@ class GraphWindow(QWidget):
         return node
 
     def combo_change(self) -> None:
-        combo_box = self.widget.combo_box
-        text = combo_box.currentText()
+        text = self.combo_box.currentText()
         node = self.find_node_by_name(text)
         if node is not None:
             self.change_scene(node)
