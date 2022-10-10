@@ -101,6 +101,7 @@ def save(main_window:MainWindow, path:str) -> None:
             xml_attribute.set(constants.VALUE_TYPE, attribute.value_type)
             xml_attribute.set(constants.IDENTIFIER, str(attribute.identifier))
             xml_attribute.set(constants.CHILD_INHERITS_VALUE, str(attribute.child_inherits_values))
+            xml_attribute.set(constants.REVIT_MAPPING,str(attribute.revit_name))
             add_parent(xml_attribute, attribute)
 
             obj = attribute.property_set.object

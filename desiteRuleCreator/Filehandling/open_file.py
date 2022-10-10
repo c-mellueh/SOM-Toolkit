@@ -101,6 +101,8 @@ def import_new(projekt_xml: etree._Element, main_window: MainWindow) -> None:
                 child_inh = string_to_bool(attribs.get(constants.CHILD_INHERITS_VALUE))
                 value = transform_new_values(xml_attribute)
                 attrib = classes.Attribute(property_set, name, value, value_type, data_type, child_inh, identifier)
+                revit_mapping = attribs.get(constants.REVIT_MAPPING)
+                attrib.revit_name = revit_mapping
                 if is_identifier == str(True):
                     ident_attrib = attrib
             return ident_attrib
@@ -145,11 +147,14 @@ def import_new(projekt_xml: etree._Element, main_window: MainWindow) -> None:
         for xml_object in xml_objects:
             xml_property_group = xml_object.find(constants.PROPERTY_SETS)
             xml_script_group = xml_object.find(constants.SCRIPTS)
+            xml_mapping_group = xml_object.find(constants.IFC_MAPPINGS)
 
             property_sets, ident_attrib = import_property_sets(xml_property_group)
             name, parent, identifer, is_concept = get_obj_data(xml_object)
             obj = classes.Object(name, ident_attrib, identifier=identifer)
             ident_dict[identifer] = obj
+
+            obj.ifc_mapping = [mapping.text for mapping in xml_mapping_group]
 
             for property_set in property_sets:
                 obj.add_property_set(property_set)
