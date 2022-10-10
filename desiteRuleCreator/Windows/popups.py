@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QDi
 import desiteRuleCreator.icons as icons
 from desiteRuleCreator.QtDesigns import ui_delete_request,ui_groupReq,ui_propertyset_mapping,ui_attribute_mapping
 from desiteRuleCreator.data import classes
+from desiteRuleCreator.Template import IFC_4_1
 def default_message(text):
     icon = icons.get_icon()
     msg_box = QMessageBox()
@@ -188,18 +189,24 @@ def object_mapping(object:classes.Object) -> None:
         new_line_edit = QLineEdit()
         widget.line_edits.append(new_line_edit)
         layout.addWidget(new_line_edit,len(widget.line_edits)-1,0)
+        new_line_edit.setCompleter(compl)
 
+    compl = QCompleter(IFC_4_1)
     parent = QDialog()
     widget = ui_propertyset_mapping.Ui_Dialog()
     widget.setupUi(parent)
     widget.label_name.setText(f"IfcMapping {object.name}")
     widget.button_add.clicked.connect(add_line)
     widget.line_edits =[widget.line_edit]
+    widget.line_edit.setCompleter(compl)
+
     for _ in range(len(object.ifc_mapping)-1):
         add_line()
+
     for i, mapping in enumerate(object.ifc_mapping):
         line_edit = widget.line_edits[i]
         line_edit.setText(mapping)
+
     if parent.exec():
         mappings = {line_edit.text() for line_edit in widget.line_edits}
         object.ifc_mapping = mappings

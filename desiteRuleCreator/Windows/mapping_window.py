@@ -66,6 +66,7 @@ class MappingWindow(QMainWindow):
     def __init__(self, main_window: MainWindow) -> None:
         def connect() -> None:
             self.pset_tree.itemDoubleClicked.connect(self.pset_double_clicked)
+            self.object_tree.itemDoubleClicked.connect(self.object_double_clicked)
             self.object_tree.itemClicked.connect(self.object_clicked)
             self.object_tree.itemChanged.connect(self.item_checked)
             self.pset_tree.itemChanged.connect(self.item_checked)
@@ -191,10 +192,12 @@ class MappingWindow(QMainWindow):
             root.addChild(pset_item)
 
     def pset_double_clicked(self, item: PsetTreeItem | AttributeTreeItem):
-        if isinstance(item, PsetTreeItem):
-            popups.object_mapping(item.property_set)
-        else:
+        if not isinstance(item, PsetTreeItem):
             popups.attribute_mapping(item.attribute)
+        item.update()
+
+    def object_double_clicked(self,item:ObjectTreeItem) -> None:
+        popups.object_mapping(item.object)
         item.update()
 
     def object_context_menu(self, position: QPoint) -> None:
