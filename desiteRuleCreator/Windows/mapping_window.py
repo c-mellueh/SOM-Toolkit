@@ -224,6 +224,10 @@ class MappingWindow(QMainWindow):
             for item in selected_items:
                 item.setCheckState(0, Qt.Unchecked)
 
+        def modify_ifc_mapping():
+            item = selected_items[0]
+            self.object_double_clicked(item)
+
         menu = QMenu()
 
         selected_items = self.object_tree.selectedItems()
@@ -231,6 +235,9 @@ class MappingWindow(QMainWindow):
         action_collapse = menu.addAction("Collapse")
         action_check = menu.addAction("Check")
         action_uncheck = menu.addAction("Uncheck")
+        if len(selected_items) ==1:
+            action_modify_ifc = menu.addAction("Modify IFC Mapping")
+            action_modify_ifc.triggered.connect(modify_ifc_mapping)
 
         action_expand.triggered.connect(expand_objects)
         action_collapse.triggered.connect(collaps_objects)
