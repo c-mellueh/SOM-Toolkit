@@ -997,12 +997,11 @@ class GraphWindow(QWidget):
 
         root_objects = set()
         for obj in classes.Object:
-            if obj.nodes is None:
+            if not obj.nodes:
                 root_objects.add(obj)
             else:
-                for node in obj.nodes:
-                    if node.parent_box is None:
-                        root_objects.add(obj)
+                if not [node for node in obj.nodes if node.parent_box is None]: #if there is no Node as ParentBox
+                    root_objects.add(obj)
 
         root_objects = set(item_to_name(obj) for obj in root_objects)  # objects that don't aggregate from someone
         combo_names = set(self.combo_box.itemText(index) for index in
