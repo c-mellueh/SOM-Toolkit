@@ -349,6 +349,7 @@ class Connection(QGraphicsPathItem):
 
     @property
     def points(self) -> list[QPointF]:
+
         def top_center(rect: QRectF) -> QPointF:
             x = rect.x() + rect.width() / 2
             y = rect.y()
@@ -366,9 +367,8 @@ class Connection(QGraphicsPathItem):
             points[6].setX(pt.x() + constants.ARROW_WIDTH / 2)
             points[7].setX(pt.x())
 
-            mid_y = (pt.y() + constants.BOX_BOTTOM_DISTANCE)
-            points[1].setY(mid_y)
-            points[2].setY(mid_y)
+            points[1].setY(mid_y-constants.ARROW_WIDTH/2)
+            points[2].setY(points[1].y())
             points[3].setY(pt.y() + constants.ARROW_HEIGHT)
             points[4].setY(pt.y() + constants.ARROW_HEIGHT / 2)
             points[5].setY(pt.y())
@@ -386,25 +386,60 @@ class Connection(QGraphicsPathItem):
             points[6].setX(pt.x() + constants.ARROW_WIDTH / 2)
             points[7].setX(pt.x())
 
-            mid_y = (pt.y() + constants.BOX_BOTTOM_DISTANCE)
-            points[1].setY(mid_y + constants.ARROW_HEIGHT / 2)
-            points[2].setY(mid_y + constants.ARROW_HEIGHT / 2)
+            points[1].setY(mid_y - constants.ARROW_HEIGHT / 2)
+            points[2].setY(points[1].y())
             points[3].setY(pt.y() + constants.ARROW_HEIGHT / 2)
             points[4].setY(pt.y() + constants.ARROW_HEIGHT / 2)
             points[5].setY(pt.y())
             points[6].setY(pt.y() + constants.ARROW_HEIGHT / 2)
             points[7].setY(pt.y() + constants.ARROW_HEIGHT / 2)
 
+        def combo_points():
+            points[0] = pb
+
+            points[1].setX(pb.x())
+            points[2].setX(pt.x())
+            points[3].setX(pt.x())
+            points[4].setX(pt.x()-constants.ARROW_WIDTH/2)
+            points[5].setX(points[3].x())
+            points[6].setX(points[5].x())
+            points[7].setX(points[4].x())
+            points[8].setX(points[5].x())
+            points[9].setX(pt.x()+constants.ARROW_WIDTH/2)
+            points[10].setX(points[5].x())
+            points[11].setX(points[5].x())
+            points[12].setX(points[9].x())
+            points[13].setX(points[5].x())
+
+            points[1].setY(mid_y+constants.ARROW_HEIGHT/2)
+            points[2].setY(points[1].y())
+            points[3].setY(pt.y() + constants.ARROW_HEIGHT*2)
+            points[4].setY(points[3].y()-constants.ARROW_HEIGHT/2)
+            points[5].setY(points[4].y()-constants.ARROW_HEIGHT/2)
+            points[6].setY(points[5].y()-constants.ARROW_HEIGHT/2)
+            points[7].setY(points[6].y())
+            points[8].setY(points[6].y()-constants.ARROW_HEIGHT/2)
+            points[9].setY(points[6].y())
+            points[10].setY(points[6].y())
+            points[11].setY(points[5].y())
+            points[12].setY(points[4].y())
+            points[13].setY(points[3].y())
+
         points = [QPointF() for point in range(8)]
 
         pb = top_center(self.bottom_node.sceneBoundingRect())  # top center of Bottom Node
         pt = self.top_node.anchor_dict()[self.bottom_node]
+        mid_y = (pt.y() + constants.BOX_BOTTOM_DISTANCE)
 
         if self.connection_type == constants.AGGREGATION:
             aggregation_points()
-        else:
-            inheritance_points()
 
+
+        elif self.connection_type == constants.INHERITANCE:
+            inheritance_points()
+        else:
+            points = [QPointF() for _ in range(14)]
+            combo_points()
         return points
 
 
@@ -548,6 +583,8 @@ class Node(QGraphicsProxyWidget):
 
         if con_type == constants.AGGREGATION:
             connection.connection_type = constants.INHERITANCE
+        elif con_type == constants.INHERITANCE:
+            connection.connection_type = constants.AGGREGATION+constants.INHERITANCE
         else:
             connection.connection_type = constants.AGGREGATION
         connection.update_line()
@@ -602,8 +639,10 @@ class Node(QGraphicsProxyWidget):
                         if self.connection_type(child) == constants.AGGREGATION]
         inheritances = [child for child in self._children
                         if self.connection_type(child) == constants.INHERITANCE]
+        both = [child for child in self._children
+                        if self.connection_type(child) == constants.INHERITANCE+constants.AGGREGATION]
 
-        return aggregations + inheritances
+        return inheritances+both+ aggregations
 
     ### Functions ###
     def anchor_dict(self) -> dict[Node:QPointF]:
@@ -622,24 +661,61 @@ class Node(QGraphicsProxyWidget):
 
         center = bottom_center()
         y_pos = center.y()
-        x1 = center.x()
-        x2 = x1 - constants.ARROW_WIDTH * 2
-        x3 = x1 + constants.ARROW_WIDTH * 2
+        x2 = center.x()
+        x1 = x2 - constants.ARROW_WIDTH * 2
+        x3 = x2 + constants.ARROW_WIDTH * 2
 
         aggregations = [child for child in self.children
                         if get_connection_type(child) == constants.AGGREGATION]
         inheritances = [child for child in self.children
                         if get_connection_type(child) == constants.INHERITANCE]
+
+        both = [child for child in self.children
+                        if get_connection_type(child) == constants.INHERITANCE+constants.AGGREGATION]
+
         child_dict = dict()
 
-        if len(aggregations) == 0 or len(inheritances) == 0:
+        empty_lists = 0
+        if not aggregations:
+            empty_lists+=1
+        if not inheritances:
+            empty_lists+=1
+        if not both:
+            empty_lists+=1
+
+        if empty_lists == 2:
             for child in self.sorted_children():
-                child_dict[child] = QPointF(x1, y_pos)
-        else:
-            for child in aggregations:
                 child_dict[child] = QPointF(x2, y_pos)
 
+        elif empty_lists ==0:
             for child in inheritances:
+                child_dict[child] = QPointF(x1, y_pos)
+
+            for child in both:
+                child_dict[child] = QPointF(x2,y_pos)
+
+            for child in aggregations:
+                child_dict[child] = QPointF(x3, y_pos)
+
+        elif aggregations and inheritances:
+            for child in inheritances:
+                child_dict[child] = QPointF(x1, y_pos)
+
+            for child in aggregations:
+                child_dict[child] = QPointF(x3, y_pos)
+
+        elif aggregations and both:
+            for child in both:
+                child_dict[child] = QPointF(x1, y_pos)
+
+            for child in aggregations:
+                child_dict[child] = QPointF(x3, y_pos)
+
+        elif inheritances and both:
+            for child in inheritances:
+                child_dict[child] = QPointF(x1, y_pos)
+
+            for child in both:
                 child_dict[child] = QPointF(x3, y_pos)
 
         return child_dict
@@ -827,122 +903,6 @@ class GraphWindow(QWidget):
         self.add_button.clicked.connect(self.add_button_pressed)
         self.delete_button.clicked.connect(self.delete_button_pressed)
     ### Functions ###
-
-    def import_excel(self,
-                     pset_dict: dict[str, (classes.PropertySet, object, classes.Object)],
-                     aggregate_dict: dict[classes.Object, list[str]]) -> None:
-
-        def get_root_objects() -> list[classes.Object]:
-            root_objects = list()
-            for obj in classes.Object:
-                if is_root(obj):
-                    root_objects.append(obj)
-            return root_objects
-
-        def transform_aggregate_dict(aggregate_dict: dict[classes.Object, list[str]]) -> dict[
-            classes.Object, list[classes.Object]]:
-            new_dict = dict()
-            for obj, kuerzel_list in aggregate_dict.items():
-                l = list()
-                for kuerzel in kuerzel_list:
-                    informations = pset_dict.get(kuerzel)
-                    if informations is not None:
-                        child = informations[2]
-                        if child is not None:
-                            l.append(child)
-                        else:
-                            logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
-                    else:
-                        logging.error(f"[{obj.name}] Aggregation: Kürzel {kuerzel} existiert nicht")
-                new_dict[obj] = l
-            return new_dict
-
-        def is_root(obj):
-            kuerzel = kuerzel_dict[obj]
-            if kuerzel in all_children:
-                return False
-
-            if is_child(obj):
-                return False
-
-            if not aggregate_dict[obj]:
-                return False
-
-            return True
-
-        def is_child(obj: classes.Object) -> bool:
-            value: str = obj.ident_attrib.value[0]
-            last_num = value.split(".")[-1]
-
-            if not last_num.isdigit():
-                return False
-            last_num = int(last_num)
-            if last_num >= 100 and last_num % 100 == 0:
-                return True
-            else:
-                return False
-
-        def get_inherit_dict() -> dict[classes.Object, list[classes.Object]]:
-            all_objects = aggregate_dict.keys()
-            ident_dict = {obj.ident_attrib.value[0]: obj for obj in all_objects}
-            inherit_dict = {obj: list() for obj in all_objects}
-            for obj in all_objects:
-                if is_child(obj):
-                    value: str = obj.ident_attrib.value[0]
-                    parent_txt = value.split(".")[:-1]
-                    parent_txt = ".".join(parent_txt)
-                    parent_obj: classes.Object = ident_dict[parent_txt]
-                    inherit_dict[parent_obj].append(obj)
-            return inherit_dict
-
-        def check_for_errors() -> None:
-            for obj in aggregate_dict.keys():
-                aggregate_set = set(aggregate_dict[obj])
-                inherit_set = set(inherit_dict[obj])
-                identical = aggregate_set.intersection(inherit_set)
-                if len(identical) > 0:
-                    for item in identical:
-                        logging.error(
-                            f"[{obj.name}] Aggregation: {item} ist sowohl teil der Aggregation, als auch Teil der Vererbung")
-
-        def link_child_nodes(node: Node) -> None:
-
-            aggregate_list = aggregate_dict[node.object]
-            for obj_child in aggregate_list:
-                child_node = Node(obj_child, self)
-                node.add_child(child_node, constants.AGGREGATION)
-                link_child_nodes(child_node)
-
-            inherit_list = inherit_dict[node.object]
-            for inherit_obj in inherit_list:
-                child_node = Node(inherit_obj, self)
-                node.add_child(child_node, constants.INHERITANCE)
-                link_child_nodes(child_node)
-
-        self.scene_list = list()
-
-        kuerzel_dict = {obj: kuerzel for (kuerzel, (a, b, obj)) in pset_dict.items()}
-        inherit_dict = get_inherit_dict()
-
-        # list with all Child Abbreviations
-        all_children = [element for sublist in aggregate_dict.values() for element in sublist]
-        aggregate_dict = transform_aggregate_dict(aggregate_dict)
-        root_objects = get_root_objects()
-
-        check_for_errors()
-
-        for obj in root_objects:
-            node = Node(obj, self)
-            scene = AggregationScene(node)
-            self.scenes.append(scene)
-            link_child_nodes(node)
-
-        self.update_combo_list()
-
-        for node in self.root_nodes:
-            self.change_scene(node)
-        self.combo_box.setCurrentIndex(0)
-        self.combo_change()
 
     def delete_button_pressed(self) -> None:
         if not self.combo_box.currentText() == "":
