@@ -228,7 +228,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         """delete selected Table items"""
 
         selected_rows = get_selected_rows(self.table)
-        attributes = [self.table.item(row, 0).item for row in selected_rows]
+        attributes = [self.table.item(row, 0).linked_data for row in selected_rows]
 
         if self.active_object.ident_attrib in attributes:
             popups.msg_mod_ident()
@@ -239,9 +239,9 @@ class PropertySetWindow(QtWidgets.QWidget):
             return
 
         for row in sorted(selected_rows, reverse=True):
-            attribute = self.table.item(row, 0).item
+            attribute = self.table.item(row, 0).linked_data
             self.widget.table_widget.removeRow(row)
-            attribute.delete_selection()
+            attribute.delete()
 
         self.mainWindow.reload()
 
