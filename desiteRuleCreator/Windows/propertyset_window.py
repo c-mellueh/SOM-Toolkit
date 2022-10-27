@@ -121,7 +121,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             self.widget.button_add.clicked.connect(self.add_attribute_button_pressed)
             self.widget.button_add_line.clicked.connect(self.new_line)
             self.widget.table_widget.customContextMenuRequested.connect(self.open_menu)
-
+            self.widget.lineEdit_name.returnPressed.connect(self.add_attribute_button_pressed)
         super(PropertySetWindow, self).__init__()
 
         self.widget = ui_widget.Ui_layout_main()
@@ -179,9 +179,8 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.widget.table_widget.orig_drop_event(event)
         drop_row = self.last_drop_row
         selected_rows = get_selected_rows(sender)
-
-        sender_attribute_names = {sender.item(row, 0).item.name: row for row in selected_rows}
-        receiver_attribute_names = [self.table.item(row, 0).item.name for row in range(self.table.rowCount())]
+        sender_attribute_names = {sender.item(row, 0).linked_data.name: row for row in selected_rows}
+        receiver_attribute_names = [self.table.item(row, 0).linked_data.name for row in range(self.table.rowCount())]
 
         for name, row in sender_attribute_names.items():  # remove Rows with existing names
             if name in receiver_attribute_names:
