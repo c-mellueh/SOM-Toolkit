@@ -8,7 +8,7 @@ from PySide6.QtCore import Qt, QRectF, QPointF
 from PySide6.QtGui import QWheelEvent, QPainterPath, QMouseEvent, QContextMenuEvent, QCursor, QColor, QPen
 from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QGraphicsScene, QGraphicsView, \
     QApplication, QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsPathItem, QComboBox, QGraphicsRectItem, \
-    QInputDialog, QMenu, QGraphicsSceneMoveEvent
+    QInputDialog, QMenu, QGraphicsSceneMoveEvent,QGraphicsSceneHoverEvent
 
 from desiteRuleCreator import icons
 from desiteRuleCreator.QtDesigns import ui_GraphWindow, ui_ObjectGraphWidget
@@ -310,6 +310,7 @@ class Connection(QGraphicsPathItem):
         bottom_node.connections.append(self)
         top_node.connections.append(self)
         self.create_line()
+        self.setAcceptHoverEvents(True)
 
     def __str__(self) -> str:
         return f"Connection [{self.bottom_node}->{self.top_node}]"
@@ -442,6 +443,8 @@ class Connection(QGraphicsPathItem):
             combo_points()
         return points
 
+    def hoverEnterEvent(self, event:QGraphicsSceneHoverEvent) -> None:
+        super(Connection, self).hoverEnterEvent(event)
 
 class PopUp(QWidget):
     def __init__(self, clicked_node: Node, scene_pos) -> None:
@@ -846,6 +849,7 @@ class Node(QGraphicsProxyWidget):
 
     def hoverEnterEvent(self, event) -> None:
         self.button_add.show()
+        super(Node, self).hoverEnterEvent(event)
 
     def hoverLeaveEvent(self, event) -> None:
         self.button_add.hide()
