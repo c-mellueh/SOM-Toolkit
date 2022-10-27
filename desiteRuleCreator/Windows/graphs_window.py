@@ -525,7 +525,7 @@ class Rect(QGraphicsRectItem):
 class Node(QGraphicsProxyWidget):
     _registry = list()
 
-    def __init__(self, obj: classes.Object, graph_window: GraphWindow, node_uuid: str | None = None) -> None:
+    def __init__(self,aggregation, graph_window: GraphWindow) -> None:
 
         self.rect = Rect(self)
         super(Node, self).__init__(self.rect)

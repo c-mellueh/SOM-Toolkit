@@ -288,7 +288,7 @@ def start(main_window, path: str) -> None:
             if parent_obj is not None:
                 parent_obj.add_child(item)
 
-        open_file.fill_tree(main_window)
+        main_window.fill_tree()
 
     def build_aggregations(gw: graphs_window.GraphWindow) -> None:
         def get_root_blocks() -> set[ExcelBlock]:

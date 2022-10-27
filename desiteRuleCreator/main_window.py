@@ -4,14 +4,14 @@ import copy
 import sys,os,logging,logging.config
 
 from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog,QTableWidget
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QCompleter,QDialog,QTableWidget,QInputDialog,QLineEdit
 
 from desiteRuleCreator import icons
 from desiteRuleCreator.Filehandling import open_file, desite_export, excel,save_file,revit
 from desiteRuleCreator.QtDesigns import ui_project_settings
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
-from desiteRuleCreator.Windows import predefined_psets_window,graphs_window,propertyset_window,mapping_window
+from desiteRuleCreator.Windows import predefined_psets_window,graphs_window,propertyset_window,mapping_window,popups
 from desiteRuleCreator.data import classes
 from desiteRuleCreator.data.classes import Object, PropertySet
 from desiteRuleCreator import logs
@@ -31,8 +31,8 @@ class MainWindow(QMainWindow):
     def __init__(self,app):
         def connect():
             # connect Menubar signals
-            self.ui.action_file_Open.triggered.connect(self.open_file_dialog)
-            self.ui.action_file_new.triggered.connect(self.new_file)
+            self.ui.action_file_Open.triggered.connect(self.open_file_clicked)
+            self.ui.action_file_new.triggered.connect(self.new_file_clicked)
             self.ui.action_file_Save.triggered.connect(self.save_clicked)
             self.ui.action_file_Save_As.triggered.connect(self.save_as_clicked)
             self.ui.action_desite_export.triggered.connect(self.export_desite_rules)
@@ -49,8 +49,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.app = app
-        self.parent_property_window = None
-        self.parent_property_window: predefined_psets_window.PropertySetInherWindow = self.open_pset_list()
+        self.parent_property_window=predefined_psets_window.open_pset_list(self)
         self.parent_property_window.hide()
         self.pset_window:None|propertyset_window.PropertySetWindow = None
 
@@ -61,7 +60,7 @@ class MainWindow(QMainWindow):
         self._save_path = None
         self._export_path = None
         self.active_object:classes.Object|None = None
-        self.graph_window = None
+        self.graph_window = graphs_window.GraphWindow(self,show = False)
         self.mapping_window = None
         self.project = classes.Project(self, "")
 
@@ -73,7 +72,8 @@ class MainWindow(QMainWindow):
         self.ui.tree_object.resizeColumnToContents(0)
         self.save_path = None
         connect()
-
+        open_file.open_file(self.project,"C:/Users/ChristophMellueh/OneDrive - Deutsche Bahn/Projekte/Studernheimer Kurve/Modelchecking/Regeln/Datenstruktur/22_10_24_StuKu.DRCxml")
+        self.fill_tree()
     @property
     def object_tree(self) -> classes.CustomTree:
         return self.ui.tree_object
@@ -104,15 +104,7 @@ class MainWindow(QMainWindow):
         self._save_path = value
         self._export_path = value
 
-    def update_script(self):
-        script_widget.update_script(self)
-
-    def export_desite_rules(self):
-        path = desite_export.get_path(self, "qa.xml")
-        if path:
-            self.export_path = path
-            desite_export.export_modelcheck(self.project,path)
-
+    # Open / Close Windows
     def closeEvent(self, event):
         action = save_file.close_event(self, event)
 
@@ -123,33 +115,76 @@ class MainWindow(QMainWindow):
             event.ignore()
 
     def open_mapping_window(self):
-        #if self.mapping_window is None:
+        # if self.mapping_window is None:
         self.mapping_window = mapping_window.MappingWindow(self)
         self.mapping_window.show()
-
-    # Filehandling
-    def save_clicked(self):
-        save_file.save_clicked(self)
 
     def open_pset_list(self):
         if self.parent_property_window is not None:
             self.parent_property_window.show()
-        else:
-            self.parent_property_window = predefined_psets_window.open_pset_list(self)
 
-        return self.parent_property_window
+    # Desite
+    def export_desite_rules(self):
+        path = desite_export.get_path(self, "qa.xml")
+        if path:
+            self.export_path = path
+            desite_export.export_modelcheck(self.project,path)
 
-    def save(self, path):
-        save_file.save(self, path)
+    # Update
+    def update_script(self):
+        script_widget.update_script(self)
+
+    # Filehandling
+
+    # Click Events
+    def save_clicked(self):
+        save_file.save_clicked(self)
 
     def save_as_clicked(self):
         save_file.save_as_clicked(self)
 
-    def new_file(self):
-        open_file.new_file(self)
+    def new_file_clicked(self):
+        new_file = popups.msg_unsaved()
+        if new_file:
+            self.save_path = None
+            project_name = QInputDialog.getText(self, "New Project", "new Project Name:", QLineEdit.Normal, "")
+            if project_name[1]:
+                self.clear_all()
+                self.setWindowTitle(self.project.name)
+                self.project.name = project_name[0]
 
-    def open_file_dialog(self, path=False):
-        open_file.open_file_dialog(self, path)
+    def open_file_clicked(self):
+        def handle_old_data():
+            if classes.Object:
+                result = popups.msg_delete_or_merge()
+                if result is None:
+                    return
+                if result:
+                    self.clear_all()
+
+        def get_path():
+            file_text = "DRC Files (*.xml *.DRCxml *.xlsx);;" \
+                        " xml Files (*.xml *.DRCxml);;" \
+                        " Excel Files (*xlsx);;all (*.*)"
+
+            cur_path = os.getcwd() + "/"
+            path: str = QFileDialog.getOpenFileName(self, "Open File", str(cur_path), file_text)[0]
+            return path
+
+        handle_old_data()
+        path =get_path()
+        if path:
+            if path.endswith("xlsx"):
+                excel.start(self, path)
+            else:
+                open_file.open_file(self.project, path)
+                open_file.import_node_pos(self.graph_window,path)
+
+            self.ui.tree_object.resizeColumnToContents(0)
+            self.load_graph(show=False)
+            self.save_path = path
+            self.clear_object_input()
+            self.fill_tree()
 
     def merge_new_file(self):
         open_file.merge_new_file(self)
@@ -157,36 +192,29 @@ class MainWindow(QMainWindow):
     def open_pset_menu(self,position):
         property_widget.open_menu(self,position)
 
-    def open_file(self, path=""):
-
-        file_text = "DRC Files (*.xml *.DRCxml *.xlsx);;" \
-                    " xml Files (*.xml *.DRCxml);;" \
-                    " Excel Files (*xlsx);;all (*.*)"
-
-        if not path:
-            cur_path = os.getcwd() + "/"
-            path: str = QFileDialog.getOpenFileName(self, "Open File", str(cur_path),file_text)[0]
-
-        if path:
-            if path.endswith("xlsx"):
-                excel.start(self, path)
-            else:
-                open_file.import_data(self, path)
-
-        self.ui.tree_object.resizeColumnToContents(0)
-        self.load_graph(show=False)
-        self.save_path = path
-
     # Main
     def clear_all(self):
         object_widget.clear_all(self)
         property_widget.clear_all(self)
         self.parent_property_window.clear_all()
-        classes.Object._registry = list()
-        classes.PropertySet._registry = list()
-        classes.Attribute._registry= list()
+        self.project.clear()
 
     # ObjectWidget
+    def fill_tree(self) -> None:
+        root_item = self.object_tree.invisibleRootItem()
+        item_dict: dict[classes.Object, classes.CustomObjectTreeItem] = {
+            obj: self.add_object_to_tree(obj, root_item)
+            for obj in classes.Object}
+
+        for obj in classes.Object:
+            tree_item = item_dict[obj]
+            if obj.parent is not None:
+                parent_item = item_dict[obj.parent]
+                root = tree_item.treeWidget().invisibleRootItem()
+                item = root.takeChild(root.indexOfChild(tree_item))
+                parent_item.addChild(item)
+
+
     def info(self):
         object_widget.info(self)
 

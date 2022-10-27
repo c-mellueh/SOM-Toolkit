@@ -32,6 +32,7 @@ def save_as_clicked(main_window:MainWindow) -> str:
 
     if path:
         save(main_window.project,path)
+        main_window.save_path = path
     return path
 
 

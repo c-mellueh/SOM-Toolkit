@@ -22,7 +22,7 @@ class IterRegistry(type):
     _registry= set()
     """ Helper for Iteration"""
 
-    def __iter__(self) -> Iterator[PropertySet|Object|Attribute]:
+    def __iter__(self) -> Iterator[PropertySet|Object|Attribute|Aggregation]:
         return iter(sorted(list(self._registry),key= lambda x:x.name))
 
     def __len__(self) -> int:
@@ -123,7 +123,7 @@ class Hirarchy(object, metaclass=IterRegistry):
     def __init__(self, name: str) -> None:
 
         self._parent = None
-        self._children = list()
+        self._children = set()
         self._name = name
         self.changed = True
         self._mapping_dict = {
@@ -173,11 +173,11 @@ class Hirarchy(object, metaclass=IterRegistry):
             return False
 
     @property
-    def children(self) -> list[Type[Hirarchy]]:
+    def children(self) -> set[Type[Hirarchy]]:
         return self._children
 
     def add_child(self, child: Type[Hirarchy]) -> None:
-        self.children.append(child)
+        self.children.add(child)
         child.parent = self
         self.changed = True
 
@@ -188,6 +188,7 @@ class Hirarchy(object, metaclass=IterRegistry):
     def delete(self) -> None:
         if self in self._registry:
             self._registry.remove(self)
+
 
 class PropertySet(Hirarchy):
     _registry: set[PropertySet] = set()
@@ -613,6 +614,31 @@ class Object(Hirarchy):
             if property_set.name == property_set_name:
                 return property_set
         return None
+
+
+class Aggregation(Hirarchy):
+    _registry: set[Aggregation] = set()
+
+    def __init__(self,obj:Object,uuid:str|None = None):
+        super(Aggregation, self).__init__(name = obj.name)
+        self._registry.add(self)
+        if uuid is None:
+            self.uuid = str(uuid4())
+        else:
+            self.uuid = str(uuid)
+        self.object = obj
+        self.parent:Aggregation|None = None
+        self.connection_dict:dict[Aggregation,int] = dict()
+
+    def add_child(self,child:Aggregation,connection_type: int = constants.AGGREGATION) -> Aggregation:
+        self.children.add(child)
+        child.parent = self
+        self.connection_dict[child]= connection_type
+        return child
+
+    @property
+    def is_root(self):
+        return not self.children
 
 
 class Script(QListWidgetItem):

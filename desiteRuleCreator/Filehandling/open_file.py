@@ -23,41 +23,37 @@ def string_to_bool(text: str) -> bool | None:
     else:
         return None
 
+def import_node_pos(graph_window,path:str):
+    tree = etree.parse(path)
+    projekt_xml = tree.getroot()
+    xml_group_nodes = projekt_xml.find(constants.NODES)
+    aggregation_dict = {aggregation.uuid:aggregation for aggregation in classes.Aggregation}
+    for xml_node in xml_group_nodes:
+        x_pos = xml_node.attrib.get(constants.X_POS)
+        y_pos = xml_node.attrib.get(constants.Y_POS)
+        uuid = xml_node.attrib.get(constants.IDENTIFIER)
+        aggregation:classes.Aggregation = aggregation_dict.get(uuid)
+        node = graphs_window.Node(aggregation,graph_window)
+        if aggregation.is_root:
+            scene = graphs_window.AggregationScene(node)
+            graph_window.scenes.append(scene)
+        node.setX(x_pos)
+        node.setY(y_pos)
+    graph_window.combo_box.setCurrentIndex(0)
+    graph_window.combo_change()
 
-def fill_tree(main_window: MainWindow) -> None:
-    root_item = main_window.object_tree.invisibleRootItem()
-    item_dict: dict[classes.Object, classes.CustomObjectTreeItem] = {obj: main_window.add_object_to_tree(obj,root_item)
-                                                                     for obj in classes.Object}
+def open_file(project: classes.Project, path: str = False) -> None:
+    if not path:
+        return
+    tree = etree.parse(path)
+    projekt_xml = tree.getroot()
+    project.author = projekt_xml.attrib.get(constants.AUTHOR)
+    project.name = projekt_xml.attrib.get("name")
+    project.version = projekt_xml.attrib.get("version")
 
-    for obj in classes.Object:
-        tree_item = item_dict[obj]
-        if obj.parent is not None:
-            parent_item = item_dict[obj.parent]
-            root = tree_item.treeWidget().invisibleRootItem()
-            item = root.takeChild(root.indexOfChild(tree_item))
-            parent_item.addChild(item)
-
-
-def import_data(main_window: MainWindow, path: str = False) -> None:
-    if path:
-        main_window.clear_object_input()
-
-        tree = etree.parse(path)
-        projekt_xml = tree.getroot()
-        author = projekt_xml.attrib.get(constants.AUTHOR)
-        name = projekt_xml.attrib.get("name")
-
-        if projekt_xml.attrib.get("version") is None:  # OLD FILES
-            import_old(projekt_xml)
-            main_window.project = classes.Project(main_window, name, author)
-        else:
-            import_new(projekt_xml, main_window)
-            main_window.project = classes.Project(main_window, name, author)
-            main_window.project.version = projekt_xml.attrib.get("version")
-        fill_tree(main_window)
-
-
-def import_new(projekt_xml: etree._Element, main_window: MainWindow) -> None:
+    if projekt_xml.attrib.get("version") is None:  # OLD FILES (Deprecated)
+        import_old(projekt_xml)
+        return
 
     def import_property_sets(xml_property_sets: list[etree._Element]) -> (list[classes.PropertySet], classes.Attribute):
 
@@ -215,37 +211,19 @@ def import_new(projekt_xml: etree._Element, main_window: MainWindow) -> None:
             for xml_node in xml_group_nodes:
                 identifier = xml_node.attrib.get(constants.IDENTIFIER)
                 obj = ident_dict[xml_node.attrib.get(constants.OBJECT.lower())]
-                node = graphs_window.Node(obj, graph_win)
-                id_node_dict[identifier] = (node, xml_node)
+                aggregation = classes.Aggregation(obj,identifier)
+                id_node_dict[identifier] = (aggregation, xml_node)
             return id_node_dict
 
-        graph_win: graphs_window.GraphWindow = graphs_window.GraphWindow(main_window, False)
-        main_window.graph_window = graph_win
         id_node_dict = create_node_dict()
 
-        for identifier, (node, xml_node) in id_node_dict.items():
+        for identifier, (aggregation, xml_node) in id_node_dict.items():
             parent_id = xml_node.attrib.get(constants.PARENT)
             is_root = xml_node.attrib.get(constants.IS_ROOT)
             connection_type = xml_node.attrib.get(constants.CONNECTION)
             if parent_id != constants.NONE:
-                parent_node: graphs_window.Node = id_node_dict[parent_id][0]
-                parent_node.add_child(node, int(connection_type))
-            if is_root == "True":
-                scene = graphs_window.AggregationScene(node)
-                graph_win.scenes.append(scene)
-
-        graph_win.update_combo_list()
-        for node in graph_win.root_nodes:
-            graph_win.change_scene(node)
-
-        for identifier, (node, xml_node) in id_node_dict.items():
-            x_pos = xml_node.attrib.get(constants.X_POS)
-            y_pos = xml_node.attrib.get(constants.Y_POS)
-            node.setX(float(x_pos))
-            node.setY(float(y_pos))
-
-        graph_win.combo_box.setCurrentIndex(0)
-        graph_win.combo_change()
+                parent_node: classes.Aggregation = id_node_dict[parent_id][0]
+                parent_node.add_child(aggregation, int(connection_type))
 
     xml_group_predef_psets = projekt_xml.find(constants.PREDEFINED_PSETS)
     xml_group_objects = projekt_xml.find(constants.OBJECTS)
@@ -272,21 +250,13 @@ def new_file(main_window: MainWindow) -> None:
             main_window.clear_all()
 
 
-def open_file_dialog(main_window: MainWindow, path: str = ""):
+def open_file_clicked(main_window: MainWindow):
     if classes.Object:
         result = msg_delete_or_merge()
         if result is None:
             return
-        elif result:
+        if result:
             main_window.clear_all()
-            main_window.open_file(path)
-        else:
-            main_window.merge_new_file()
-            main_window.open_file(path)
-
-    else:
-        main_window.open_file(path)
-
 
 def merge_new_file(main_window):
     print("MERGE NEEDS TO BE PROGRAMMED")  # TODO: Write Merge
