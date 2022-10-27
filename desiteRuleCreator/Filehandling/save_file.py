@@ -126,16 +126,16 @@ def save(project:classes.Project, path:str) -> None:
         xml_node = etree.SubElement(xml_nodes, constants.NODE)
         xml_node.set(constants.IDENTIFIER,str(node.uuid))
         xml_node.set(constants.OBJECT.lower(), str(node.object.identifier))
-        if node.parent_box is not None:
-            xml_node.set(constants.PARENT, str(node.parent_box.uuid))
+        if node.parent_node is not None:
+            xml_node.set(constants.PARENT, str(node.parent_node.uuid))
         else:
             xml_node.set(constants.PARENT,constants.NONE)
         xml_node.set(constants.X_POS,str(node.x()))
         xml_node.set(constants.Y_POS,str(node.y()))
         xml_node.set(constants.IS_ROOT,str(node.is_root))
-        connection = node.con_dict.get(node.parent_box)
-        if connection is not None:
-            xml_node.set(constants.CONNECTION,str(connection.connection_type))
+        connection_type = node.aggregation.connection_dict.get(node.aggregation.parent)
+        if connection_type is not None:
+            xml_node.set(constants.CONNECTION,str(connection_type))
         else:
             xml_node.set(constants.CONNECTION, constants.NONE)
 

@@ -16,6 +16,9 @@ from desiteRuleCreator.Widgets import property_widget
 from desiteRuleCreator.Windows import popups
 from desiteRuleCreator.data import classes, constants
 
+def aggregation_to_node(aggregation:classes.Aggregation) -> Node:
+    d = {node.aggregation:node for node in Node._registry}
+    return d.get(aggregation)
 
 def item_to_name(item: Node | classes.Object) -> str:
     obj = None
@@ -281,9 +284,9 @@ class AggregationScene(QGraphicsScene):
 
     def remove_node(self, node: Node) -> None:
         self.removeItem(node)
-        for connection in node.top_connections:
-            self.removeItem(connection)
-            connection.top_node.connections.remove(connection)
+        if node.top_connection is not None and node.top_connection:
+            self.removeItem(node.top_connection)
+            node.top_connection.top_node.connections.remove(node.top_connection)
 
     def __str__(self) -> str:
         return str(self.root_node)
@@ -342,11 +345,11 @@ class Connection(QGraphicsPathItem):
 
     @property
     def connection_type(self) -> int:
-        return self._connection_type
+        return self.bottom_node.aggregation.connection_dict[self.top_node.aggregation]
 
     @connection_type.setter
     def connection_type(self, value: int) -> None:
-        self._connection_type = value
+        self.bottom_node.aggregation.connection_dict[self.top_node.aggregation] = value
 
     @property
     def points(self) -> list[QPointF]:
@@ -485,8 +488,8 @@ class PopUp(QWidget):
     def button_pressed(self) -> None:
         text = self.combo_box.currentText()
         obj = self.graph_window.object_dict.get(text)
-
-        node = Node(obj, self.graph_window)
+        aggregation = classes.Aggregation(obj)
+        node = Node(aggregation, self.graph_window)
         self.clicked_node.add_child(node, constants.AGGREGATION)
         node.setX(self.clicked_node.x())
         node.setY(node.base_y)
@@ -526,23 +529,16 @@ class Node(QGraphicsProxyWidget):
     _registry = list()
 
     def __init__(self,aggregation, graph_window: GraphWindow) -> None:
-
+        self.aggregation:classes.Aggregation = aggregation
+        #graphics
         self.rect = Rect(self)
         super(Node, self).__init__(self.rect)
-        self._registry.append(self)
-        self.object = obj
-        self.object.add_node(self)
-
-        if node_uuid is None:
-            self.uuid: str = str(uuid.uuid4())
-        else:
-            self.uuid: str = node_uuid
-
-        self.parent_box: None | Node = None
-        self._children: Set[Node] = set()
-        self.connections: List[Connection] = list()
         self.show()
         self.rect.show()
+
+        self._registry.append(self)
+        self.connections: List[Connection] = list()
+
         self.graph_window = graph_window
         self.main_window = graph_window.main_window
 
@@ -554,7 +550,7 @@ class Node(QGraphicsProxyWidget):
         self.title = self.object_graph_rep.label_object_name
         self.tree_widget: classes.QTreeWidget = classes.CustomPsetTree()
         self.object_graph_rep.verticalLayout.insertWidget(1, self.tree_widget)
-        # self.list = self.object_graph_rep.list_widget_property_sets
+
         self.button_add.hide()
         self.title.setText(self.name)
         self.title.show()
@@ -570,8 +566,35 @@ class Node(QGraphicsProxyWidget):
         self.button_add.clicked.connect(self.add_button_pressed)
         self.tree_widget.itemDoubleClicked.connect(self.item_clicked)
 
+    @property
+    def uuid(self) -> str:
+        return self.aggregation.uuid
+    @property
+    def object(self) -> classes.Object:
+        return self.aggregation.object
+
+    @property
+    def parent_node(self) -> Node:
+        return aggregation_to_node(self.aggregation.parent)
+
+    @property
+    def children(self) -> List[Node]:
+        all = [aggregation_to_node(child) for child in self.aggregation.children]
+        aggregations = [child for child in all
+                        if self.connection_type(child) == constants.AGGREGATION]
+        inheritances = [child for child in all
+                        if self.connection_type(child) == constants.INHERITANCE]
+        both = [child for child in all
+                if self.connection_type(child) == constants.INHERITANCE + constants.AGGREGATION]
+
+        return inheritances + both + aggregations   #better for drawing
+
+    @property
+    def name(self) -> str:
+        return self.aggregation.object.name
+
     def __str__(self) -> str:
-        return (f"{self.object.name}: {self.x()},{self.y()}")
+        return f"{self.object.name}: {self.x()},{self.y()}"
 
     def __iter__(self) -> Iterator[Node]:
         return self.children.__iter__()
@@ -581,15 +604,16 @@ class Node(QGraphicsProxyWidget):
 
     def toggle_connection_to_parent(self) -> None:
 
-        connection = self.con_dict[self.parent_box]
-        con_type = self.connection_type(self.parent_box)
+        connection = self.top_connection
+        con_type = self.connection_type(self.parent_node)
 
         if con_type == constants.AGGREGATION:
-            connection.connection_type = constants.INHERITANCE
+            new_con = constants.INHERITANCE
         elif con_type == constants.INHERITANCE:
-            connection.connection_type = constants.AGGREGATION+constants.INHERITANCE
+            new_con = constants.AGGREGATION+constants.INHERITANCE
         else:
-            connection.connection_type = constants.AGGREGATION
+            new_con = constants.AGGREGATION
+        self.aggregation.connection_dict[self.aggregation.parent] = new_con
         connection.update_line()
 
     def item_clicked(self, item: classes.CustomAttribTreeItem | classes.CustomPSetTreeItem):
@@ -617,35 +641,11 @@ class Node(QGraphicsProxyWidget):
         for child in self.children:
             print(f"   {child}")
 
-    def scene(self) -> AggregationScene:
+    def scene(self) -> AggregationScene|QGraphicsScene:
         return super(Node, self).scene()
 
-    @property
-    def con_dict(self) -> dict[Node, Connection]:
-        con_dict = dict()
-
-        for con in self.bottom_connections:
-            con_dict[con.bottom_node] = con
-        for con in self.top_connections:
-            con_dict[con.top_node] = con
-
-        return con_dict
-
     def connection_type(self, node: Node) -> int:
-        connection = self.con_dict[node]
-        return connection.connection_type
-
-    @property
-    def children(self) -> List[Node]:
-
-        aggregations = [child for child in self._children
-                        if self.connection_type(child) == constants.AGGREGATION]
-        inheritances = [child for child in self._children
-                        if self.connection_type(child) == constants.INHERITANCE]
-        both = [child for child in self._children
-                        if self.connection_type(child) == constants.INHERITANCE+constants.AGGREGATION]
-
-        return inheritances+both+ aggregations
+        return self.aggregation.connection_dict[node.aggregation]
 
     ### Functions ###
     def anchor_dict(self) -> dict[Node:QPointF]:
@@ -659,7 +659,7 @@ class Node(QGraphicsProxyWidget):
         con_dict = {connection.bottom_node: connection for connection in self.connections}
 
         def get_connection_type(bottom_node: Node) -> int:
-            connection = con_dict[bottom_node]
+            connection:Connection = con_dict[bottom_node]
             return connection.connection_type
 
         center = bottom_center()
@@ -670,6 +670,7 @@ class Node(QGraphicsProxyWidget):
 
         aggregations = [child for child in self.children
                         if get_connection_type(child) == constants.AGGREGATION]
+
         inheritances = [child for child in self.children
                         if get_connection_type(child) == constants.INHERITANCE]
 
@@ -739,11 +740,10 @@ class Node(QGraphicsProxyWidget):
             if node is not None:
                 Connection(node, self, connection_type)
 
-        self._children.add(child)
-        child.parent_box = self
+        self.aggregation.add_child(child.aggregation,connection_type)
+        child.aggregation.set_parent(self.aggregation,connection_type)
         connect_to_node(child, connection_type)
         self.scene().add_node(child)
-
         return child
 
     def fill_tree(self) -> None:
@@ -755,9 +755,7 @@ class Node(QGraphicsProxyWidget):
     def remove_child(self, child: Node) -> None:
         for c in child.children.copy():
             child.remove_child(c)
-
-        self._children.remove(child)
-        child.object.remove_node(child)
+        self.aggregation.remove_child(child.aggregation)
         self.scene().remove_node(child)
         Node._registry.remove(child)
 
@@ -785,7 +783,7 @@ class Node(QGraphicsProxyWidget):
                 self.object.remove_node(self)
 
             else:
-                self.parent_box.remove_child(self)
+                self.parent_node.remove_child(self)
 
     def select_list_item(self, selected_item):
         if selected_item is not None:
@@ -804,31 +802,26 @@ class Node(QGraphicsProxyWidget):
 
     @property
     def is_root(self) -> bool:
-        if self.scene() is None:
-            return False
-        if self == self.scene().root_node:
-            return True
-        else:
-            return False
+        return self.aggregation.is_root
 
     @property
     def level(self) -> int:
         def count(item: Node, index):
-            if item.parent_box is not None:
+            if item.parent_node is not None:
                 index += 1
-                return count(item.parent_box, index)
+                return count(item.parent_node, index)
             else:
                 return index
 
         return count(self, 0)
 
-    @property
-    def name(self) -> str:
-        return item_to_name(self)
+
 
     @property
-    def top_connections(self) -> list[Connection]:
-        return [connection for connection in self.connections if self == connection.bottom_node]
+    def top_connection(self) -> Connection:
+        for con in self.connections:
+            if con.bottom_node == self:
+                return con
 
     @property
     def bottom_connections(self) -> list[Connection]:
@@ -961,18 +954,20 @@ class GraphWindow(QWidget):
         dialog.setComboBoxItems(words)
         dialog.setComboBoxEditable(True)
 
-        ok = (dialog.exec() == QInputDialog.Accepted)
-        if ok:
-            text = dialog.textValue()
-            obj = {item_to_name(obj): obj for obj in classes.Object}.get(text)
-            if obj is not None:
-                self.combo_box.addItem(str(text))
-                node = Node(obj, self)
-                self.create_scene_by_node(node)
-                self.draw_tree(node)
-                text_pos = self.combo_box.findText(text)
-                self.combo_box.setCurrentIndex(text_pos)
-                self.combo_box.model().sort(0, Qt.AscendingOrder)
+        if not (dialog.exec() == QInputDialog.Accepted):
+            return
+
+        text = dialog.textValue()
+        obj = {item_to_name(obj): obj for obj in classes.Object}.get(text)
+        if obj is not None:
+            self.combo_box.addItem(str(text))
+            aggregation = classes.Aggregation(obj)
+            node = Node(aggregation, self)
+            self.create_scene_by_node(node)
+            self.draw_tree(node)
+            text_pos = self.combo_box.findText(text)
+            self.combo_box.setCurrentIndex(text_pos)
+            self.combo_box.model().sort(0, Qt.AscendingOrder)
 
     def find_node_by_name(self, name) -> Node:
         return {node.name: node for node in Node._registry}.get(name)
@@ -1100,7 +1095,7 @@ class GraphWindow(QWidget):
 
     @property
     def root_nodes(self) -> list[Node]:
-        return [node for node in Node._registry if node.parent_box is None]
+        return [node for node in Node._registry if node.parent_node is None]
 
     @property
     def scene_dict(self) -> dict[Node, AggregationScene]:

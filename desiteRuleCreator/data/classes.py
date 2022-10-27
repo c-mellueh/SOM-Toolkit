@@ -485,7 +485,7 @@ class Object(Hirarchy):
         self._scripts: list[Script] = list()
         self._property_sets: list[PropertySet] = list()
         self._ident_attrib = ident_attrib
-        self._nodes: set[graphs_window.Node] = set()
+        self._aggregations: set[Aggregation] = set()
 
         if ifc_mapping is None:
             self._ifc_mapping = {"IfcBuildingElementProxy"}
@@ -521,14 +521,14 @@ class Object(Hirarchy):
         self._ifc_mapping.remove(value)
 
     @property
-    def nodes(self) -> set[graphs_window.Node]:  # Todo: add nodes functionality to graphs_window
-        return self._nodes
+    def aggregation_representations(self) -> set[Aggregation]:  # Todo: add nodes functionality to graphs_window
+        return self._aggregations
 
-    def add_node(self, node: graphs_window.Node) -> None:
-        self._nodes.add(node)
+    def add_aggregation_representation(self, node: Aggregation) -> None:
+        self._aggregations.add(node)
 
-    def remove_node(self, node: graphs_window.Node) -> None:
-        self.nodes.remove(node)
+    def remove_node(self, node: Aggregation) -> None:
+        self.aggregation_representations.remove(node)
 
     @property
     def inherited_property_sets(self) -> dict[Object, list[PropertySet]]:
@@ -605,9 +605,8 @@ class Object(Hirarchy):
         for pset in self.property_sets:
             pset.delete()
 
-        for node in self.nodes.copy():
-            if node.scene() is not None:
-                node.delete()
+        for aggregation in self.aggregation_representations.copy():
+            aggregation.delete()
 
     def get_property_set_by_name(self, property_set_name: str) -> PropertySet | None:
         for property_set in self.property_sets:
@@ -627,14 +626,27 @@ class Aggregation(Hirarchy):
         else:
             self.uuid = str(uuid)
         self.object = obj
-        self.parent:Aggregation|None = None
+        self._parent:Aggregation|None = None
         self.connection_dict:dict[Aggregation,int] = dict()
+
+        self.object.add_aggregation_representation(self)
+
 
     def add_child(self,child:Aggregation,connection_type: int = constants.AGGREGATION) -> Aggregation:
         self.children.add(child)
-        child.parent = self
+        child.set_parent(self,connection_type)
         self.connection_dict[child]= connection_type
         return child
+
+    @property
+    def parent(self) -> Aggregation:
+        return self._parent
+
+    def set_parent(self,value:Aggregation,connection_type:int) -> None:
+        if self.parent is not None:
+            self.connection_dict.pop(self.parent)
+        self._parent = value
+        self.connection_dict[value] = connection_type
 
     @property
     def is_root(self):
