@@ -9,6 +9,7 @@ from PySide6.QtGui import QDropEvent
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem, QAbstractItemView, QListWidgetItem, QTableWidgetItem
 
 from desiteRuleCreator.data import constants
+from desiteRuleCreator.Filehandling import save_file,open_file
 
 if TYPE_CHECKING:
     from desiteRuleCreator.Windows import graphs_window
@@ -18,11 +19,11 @@ if TYPE_CHECKING:
 # Add child to Parent leads to reverse
 
 class IterRegistry(type):
-    _registry= list()
+    _registry= set()
     """ Helper for Iteration"""
 
     def __iter__(self) -> Iterator[PropertySet|Object|Attribute]:
-        return iter(self._registry)
+        return iter(sorted(list(self._registry),key= lambda x:x.name))
 
     def __len__(self) -> int:
         return len(self._registry)
@@ -92,6 +93,30 @@ class Project(object):
         self._version = value
         self._changed = True
 
+    def save(self,path:str):
+        save_file.save(self,path)
+
+    def clear(self):
+        for obj in Object:
+            obj.delete()
+            print(len(Object))
+        for pset in PropertySet:
+            pset.delete()
+
+        for attribute in Attribute:
+            attribute.delete()
+        self.name = ""
+        self.author = ""
+        self.version = "1.0.0"
+        self.changed = True
+        self.name = ""
+        self.seperator_status = True
+        self.seperator = ","
+
+
+    #
+    # def open(self,path):
+    #     open_file.o
 
 class Hirarchy(object, metaclass=IterRegistry):
 
@@ -164,15 +189,14 @@ class Hirarchy(object, metaclass=IterRegistry):
         if self in self._registry:
             self._registry.remove(self)
 
-
 class PropertySet(Hirarchy):
-    _registry: list[PropertySet] = list()
+    _registry: set[PropertySet] = set()
 
     def __init__(self, name: str, obj: Object = None, identifier: str = None) -> None:
         super(PropertySet, self).__init__(name)
         self._attributes = set()
         self._object = obj
-        self._registry.append(self)
+        self._registry.add(self)
         self.identifier = identifier
         if self.identifier is None:
             self.identifier = str(uuid4())
@@ -246,12 +270,13 @@ class PropertySet(Hirarchy):
             child.add_attribute(attrib)
 
     def remove_attribute(self, value: Attribute) -> None:
-        self._attributes.remove(value)
-        for child in self.children:
-            for attribute in child.attributes:
-                if attribute.parent == value:
-                    child.remove_attribute(attribute)
-        self.changed = True
+        if value in self.attributes:
+            self.attributes.remove(value)
+            for child in self.children:
+                for attribute in list(child.attributes):
+                    if attribute.parent == value:
+                        child.remove_attribute(attribute)
+            self.changed = True
 
     def get_attribute_by_name(self, name: str):
         for attribute in self.attributes:
@@ -292,7 +317,7 @@ class PropertySet(Hirarchy):
 
 
 class Attribute(Hirarchy):
-    _registry: list[Attribute] = list()
+    _registry: set[Attribute] = set()
 
     def __init__(self, property_set: PropertySet | None, name: str, value: list, value_type: int,
                  data_type: str = "xs:string",
@@ -303,7 +328,7 @@ class Attribute(Hirarchy):
         self._property_set = property_set
         self._value_type = value_type
         self._data_type = data_type
-        self._registry.append(self)
+        self._registry.add(self)
         self._revit_name = name
 
         self.changed = True
@@ -450,11 +475,11 @@ class Attribute(Hirarchy):
 
 
 class Object(Hirarchy):
-    _registry: list[Object] = list()
+    _registry: set[Object] = set()
 
     def __init__(self, name: str, ident_attrib: [Attribute, str], identifier: str = None, ifc_mapping:set[str]|None = None ) -> None:
         super(Object, self).__init__(name=name)
-        self._registry.append(self)
+        self._registry.add(self)
 
         self._scripts: list[Script] = list()
         self._property_sets: list[PropertySet] = list()
@@ -574,7 +599,7 @@ class Object(Hirarchy):
         self._scripts.remove(script)
 
     def delete(self) -> None:
-        super(Object, self).delete()
+        Object._registry.remove(self)
         pset: PropertySet
         for pset in self.property_sets:
             pset.delete()
