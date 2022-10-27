@@ -24,14 +24,15 @@ if TYPE_CHECKING:
 output_date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 output_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
+
 def get_path(main_window: MainWindow, file_format: str) -> str:
     """ File Open Dialog with modifiable file_format"""
     if main_window.export_path is not None:
         basename = os.path.basename(main_window.export_path)
-        split =os.path.splitext(basename)[0]
+        split = os.path.splitext(basename)[0]
         filename_without_extension = os.path.splitext(split)[0]
         dirname = os.path.dirname(main_window.export_path)
-        proposal = os.path.join(dirname,filename_without_extension)
+        proposal = os.path.join(dirname, filename_without_extension)
         path = \
             QFileDialog.getSaveFileName(main_window, f"Save {file_format}", proposal,
                                         f"{file_format} Files (*.{file_format})")[0]
@@ -43,10 +44,10 @@ def get_path(main_window: MainWindow, file_format: str) -> str:
     return path
 
 
-def handle_header(main_window: MainWindow, export_format: str) -> etree._Element:
+def handle_header(project: classes.Project, export_format: str) -> etree._Element:
     ET.register_namespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
     xml_header = etree.Element(f'{{http://www.w3.org/2001/XMLSchema-instance}}{export_format}')
-    xml_header.set("user", str(main_window.project.author))
+    xml_header.set("user", str(project.author))
     xml_header.set("date", str(output_date_time))
     xml_header.set("version", "3.0.1")  # TODO: Desite version hinzufügen
     return xml_header
@@ -54,7 +55,7 @@ def handle_header(main_window: MainWindow, export_format: str) -> etree._Element
 
 ##TODO add xs:bool
 
-def export_modelcheck(main_window: MainWindow) -> None:
+def export_modelcheck(project: classes.Project, path) -> None:
     def add_js_rule(parent: etree._Element, file: codecs.StreamReaderWriter) -> str | None:
         name = os.path.basename(file.name)
         if not name.endswith(".js"):
@@ -80,7 +81,7 @@ def export_modelcheck(main_window: MainWindow) -> None:
         xml_element_section = etree.SubElement(xml_qa_export, "elementSection")
         return xml_element_section
 
-    def handle_container(xml_element_section: etree._Element,text) -> etree._Element:
+    def handle_container(xml_element_section: etree._Element, text) -> etree._Element:
         container = etree.SubElement(xml_element_section, "container")
         container.set("ID", str(uuid.uuid4()))
         container.set("name", text)
@@ -105,9 +106,9 @@ def export_modelcheck(main_window: MainWindow) -> None:
         return checkrun
 
     def init_xml() -> (etree._Element, etree._Element):
-        xml_qa_export = handle_header(main_window, "qaExport")
+        xml_qa_export = handle_header(project, "qaExport")
         xml_element_section = handle_element_section(xml_qa_export)
-        text = f"{main_window.project.name} : {main_window.project.version}"
+        text = f"{project.name} : {project.version}"
         xml_container = handle_container(xml_element_section, text)
         return xml_container, xml_qa_export
 
@@ -136,7 +137,7 @@ def export_modelcheck(main_window: MainWindow) -> None:
         return template
 
     def define_xml_elements(xml_container: etree._Element, name: str) -> (etree._Element, etree._Element):
-        xml_checkrun = handle_checkrun(xml_container, name=name, author=main_window.project.author)
+        xml_checkrun = handle_checkrun(xml_container, name=name, author=project.author)
         xml_rule = handle_rule(xml_checkrun, "Attributes")
         xml_attribute_rule_list = handle_attribute_rule_list(xml_rule)
         handle_rule(xml_checkrun, "UniquePattern")
@@ -165,16 +166,14 @@ def export_modelcheck(main_window: MainWindow) -> None:
     def handle_object_rules(xml_container: etree._Element, template: jinja2.Template) -> dict[
         etree._Element, classes.Object]:
 
-        def handle_tree_item(xml_container, tree_item:classes.CustomObjectTreeItem) -> None:
-            def create_container(xml_container,item):
-                xml_container = handle_container(xml_container,item.object.name)
-                for k in range(item.childCount()):
-                    child = item.child(k)
-                    handle_tree_item(xml_container,child)
+        def handle_tree_structure(xml_container, obj: classes.Object) -> None:
+            def create_container(xml_container):
+                xml_container = handle_container(xml_container, obj.name)
+                for child in sorted(obj.children, key=lambda x: x.name):
+                    handle_tree_structure(xml_container, child)
 
-            def create_object(xml_container, item:classes.CustomObjectTreeItem):
-                obj = item.object
-                xml_checkrun = handle_checkrun(xml_container, obj.name, main_window.project.author)
+            def create_object(xml_container):
+                xml_checkrun = handle_checkrun(xml_container, obj.name, project.author)
                 xml_rule = handle_rule(xml_checkrun, "Attributes")
                 xml_attribute_rule_list = handle_attribute_rule_list(xml_rule)
                 xml_rule_script = handle_rule_script(xml_attribute_rule_list, name=obj.name)
@@ -199,26 +198,19 @@ def export_modelcheck(main_window: MainWindow) -> None:
                     xml_code.text = script.code
 
                 xml_object_dict[xml_checkrun] = obj
-                for k in range(item.childCount()):
-                    handle_tree_item(xml_container, item.child(k))
+                for child in sorted(obj.children, key=lambda x: x.name):
+                    handle_tree_structure(xml_container, child)
 
-            obj = tree_item.object
             if obj.is_concept:
-                create_container(xml_container,tree_item)
+                create_container(xml_container)
             else:
-                create_object(xml_container,tree_item)
+                create_object(xml_container)
 
-
-        tree = main_window.ui.tree_object
-        root_items:list[classes.CustomObjectTreeItem] = list()
-        for i in range(tree.invisibleRootItem().childCount()):
-            root_items.append(tree.invisibleRootItem().child(i))
-
-        root_items.sort(key = lambda x: x.object.name)
         xml_object_dict: dict[etree._Element, classes.Object] = dict()
+        root_objects = [obj for obj in classes.Object if obj.parent is None]
 
-        for item in root_items:
-            handle_tree_item(xml_container,item)
+        for root_object in sorted(root_objects, key=lambda x: x.name):
+            handle_tree_structure(xml_container, root_object)
         return xml_object_dict
 
     def handle_data_section(xml_qa_export: etree._Element, xml_checkrun_first: etree._Element,
@@ -287,11 +279,7 @@ def export_modelcheck(main_window: MainWindow) -> None:
         with open(path, "wb") as f:
             tree.write(f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml")
 
-    path = get_path(main_window, "qa.xml")
-    if path:
-        main_window.export_path = path
-        export(path)
-        pass
+    export(path)
 
 
 def export_bs(main_window: MainWindow):
@@ -309,11 +297,11 @@ def export_bs(main_window: MainWindow):
             xml_child.set("type", "typeBsGroup")
             xml_child.set("takt", "")
 
-            for child in sorted(node.children,key= lambda x: x.name):
+            for child in sorted(node.children, key=lambda x: x.name):
                 if node.connection_type(child) == constants.AGGREGATION:
                     handle_section(child, xml_child)
                 else:
-                    handle_section(child,xml_item)
+                    handle_section(child, xml_item)
 
         ui: ui_mainwindow.Ui_MainWindow = main_window.ui
         xml_elementsection = etree.SubElement(xml_parent, "elementSection")
@@ -328,8 +316,7 @@ def export_bs(main_window: MainWindow):
         root_objects: list[graphs_window.Node] = [node for node in graphs_window.Node._registry if
                                                   node.is_root]
 
-
-        root_objects.sort(key= lambda x:x.name)
+        root_objects.sort(key=lambda x: x.name)
 
         id_dict = dict()
         for node in root_objects:
@@ -419,7 +406,7 @@ def export_bookmarks(main_window: MainWindow) -> None:
         xml_bookmark_list = etree.SubElement(xml_parent, "cBookmarkList")
 
         obj: classes.Object
-        for obj in sorted(classes.Object,key = lambda x:x.ident_attrib.value[0]):
+        for obj in sorted(classes.Object, key=lambda x: x.ident_attrib.value[0]):
             xml_bookmark = etree.SubElement(xml_bookmark_list, "cBookmark")
             xml_bookmark.set("ID", str(obj.identifier))
 

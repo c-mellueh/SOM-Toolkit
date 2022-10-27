@@ -108,7 +108,10 @@ class MainWindow(QMainWindow):
         script_widget.update_script(self)
 
     def export_desite_rules(self):
-        desite_export.export_modelcheck(self)
+        path = desite_export.get_path(self, "qa.xml")
+        if path:
+            self.export_path = path
+            desite_export.export_modelcheck(self.project,path)
 
     def closeEvent(self, event):
         action = save_file.close_event(self, event)
