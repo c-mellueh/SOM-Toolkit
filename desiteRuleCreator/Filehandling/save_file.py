@@ -17,7 +17,7 @@ def save_clicked(main_window:MainWindow) -> str:
     if main_window.save_path is None or not main_window.save_path.endswith("xml"):
         path = save_as_clicked(main_window)
     else:
-        save(main_window, main_window.save_path)
+        save(main_window.project, main_window.save_path)
         path = main_window.save_path
     return path
 
@@ -31,11 +31,11 @@ def save_as_clicked(main_window:MainWindow) -> str:
         path = QFileDialog.getSaveFileName(main_window, "Save XML", "", "xml Files ( *.DRCxml *.xml)")[0]
 
     if path:
-        save(main_window,path)
+        save(main_window.project,path)
     return path
 
 
-def save(main_window:MainWindow, path:str) -> None:
+def save(project:classes.Project, path:str) -> None:
     def add_parent(xml_item:etree._Element, item: classes.Object|classes.PropertySet|classes.Attribute) -> None:
         if item.parent is not None:
             xml_item.set(constants.PARENT, str(item.parent.identifier))
@@ -138,12 +138,10 @@ def save(main_window:MainWindow, path:str) -> None:
         else:
             xml_node.set(constants.CONNECTION, constants.NONE)
 
-    main_window.save_path = path
-
     xml_project = etree.Element(constants.PROJECT)
-    xml_project.set(constants.NAME, str(main_window.project.name))
-    xml_project.set(constants.VERSION, str(main_window.project.version))
-    xml_project.set(constants.AUTHOR,str(main_window.project.author))
+    xml_project.set(constants.NAME, str(project.name))
+    xml_project.set(constants.VERSION, str(project.version))
+    xml_project.set(constants.AUTHOR,str(project.author))
 
     add_predefined_property_sets()
     add_objects()
@@ -158,7 +156,7 @@ def save(main_window:MainWindow, path:str) -> None:
     with open(path, "wb") as f:
         tree.write(f, pretty_print=True, encoding="utf-8", xml_declaration=True)
 
-    main_window.project.reset_changed()
+    project.reset_changed()
 
 
 def close_event(main_window:MainWindow, event):
