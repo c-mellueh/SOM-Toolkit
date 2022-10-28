@@ -791,7 +791,7 @@ class Node(QGraphicsProxyWidget):
                     self.remove_child(child)
                 self.graph_window.remove_scene(self.scene())
                 Node._registry.remove(self)
-                self.object.remove_node(self)
+                self.object.remove_node(self.aggregation)
 
             else:
                 self.parent_node.remove_child(self)
