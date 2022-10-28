@@ -30,12 +30,11 @@ class IterRegistry(type):
 
 
 class Project(object):
-    def __init__(self, main_window: MainWindow, name: str, author: str = None) -> None:
+    def __init__(self, name: str, author: str = None) -> None:
         self._name = ""
         self._author = author
         self._version = "1.0.0"
         self._changed = True
-        self.main_window = main_window
         self.name = name
         self.seperator_status = True
         self.seperator = ","
@@ -72,7 +71,6 @@ class Project(object):
     @name.setter
     def name(self, value: str):
         self._name = value
-        self.main_window.setWindowTitle(value)
         self._changed = True
 
     @property
