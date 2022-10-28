@@ -23,24 +23,56 @@ def string_to_bool(text: str) -> bool | None:
     else:
         return None
 
-def import_node_pos(graph_window,path:str):
+def import_node_pos(graph_window:graphs_window.GraphWindow,path:str):
+    def text(obj:classes.Object) -> str:
+        if obj.is_concept:
+            text = f"{obj.name}"
+        else:
+            text = f"{obj.name} ({obj.ident_attrib.value[0]})"
+        return text
+
+    def iter_child(parent_node:graphs_window.Node):
+
+        for child in parent_node.aggregation.children:
+            child_node = graphs_window.aggregation_to_node(child)
+            con_type = parent_node.aggregation.connection_dict[child_node.aggregation]
+            parent_node.add_child(child_node,con_type)
+            iter_child(child_node)
+        pass
+
     tree = etree.parse(path)
     projekt_xml = tree.getroot()
     xml_group_nodes = projekt_xml.find(constants.NODES)
     aggregation_dict = {aggregation.uuid:aggregation for aggregation in classes.Aggregation}
+    node_dict = {}
     for xml_node in xml_group_nodes:
-        x_pos = xml_node.attrib.get(constants.X_POS)
-        y_pos = xml_node.attrib.get(constants.Y_POS)
         uuid = xml_node.attrib.get(constants.IDENTIFIER)
+        x_pos = float(xml_node.attrib.get(constants.X_POS))
+        y_pos = float(xml_node.attrib.get(constants.Y_POS))
         aggregation:classes.Aggregation = aggregation_dict.get(uuid)
         node = graphs_window.Node(aggregation,graph_window)
-        if aggregation.is_root:
-            scene = graphs_window.AggregationScene(node)
-            graph_window.scenes.append(scene)
-        node.setX(x_pos)
-        node.setY(y_pos)
+        root = xml_node.attrib.get("root")
+        if root == "True":
+            root = True
+        else:
+            root = False
+        node_dict[uuid] = (node,x_pos,y_pos,root)
+
+    for node,x_pos,y_pos,root in node_dict.values():
+        if root:
+            graph_window.create_scene_by_node(node)
+            graph_window.draw_tree(node)
+            graph_window.combo_box.addItem(text(node.object))
+            iter_child(node)
+            graph_window.drawn_scenes.append(node.scene())
+
+    for node,x_pos,y_pos,root in node_dict.values():
+        node.setY(float(y_pos))
+        node.setX(float(x_pos))
+
     graph_window.combo_box.setCurrentIndex(0)
     graph_window.combo_change()
+
 
 def open_file(project: classes.Project, path: str = False) -> None:
     if not path:

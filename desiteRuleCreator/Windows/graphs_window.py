@@ -524,7 +524,6 @@ class Rect(QGraphicsRectItem):
     def mousePressEvent(self, event) -> None:
         super(Rect, self).mousePressEvent(event)
 
-
 class Node(QGraphicsProxyWidget):
     _registry = list()
 
@@ -537,7 +536,7 @@ class Node(QGraphicsProxyWidget):
         self.rect.show()
 
         self._registry.append(self)
-        self.connections: List[Connection] = list()
+        self._connections: List[Connection] = list()
 
         self.graph_window = graph_window
         self.main_window = graph_window.main_window
@@ -591,7 +590,20 @@ class Node(QGraphicsProxyWidget):
 
     @property
     def name(self) -> str:
-        return self.aggregation.object.name
+        obj = self.object
+        if obj.is_concept:
+            text = f"{obj.name}"
+        else:
+            text = f"{obj.name} ({obj.ident_attrib.value[0]})"
+        return text
+
+    @property
+    def connections(self):
+        return self._connections
+
+    @connections.setter
+    def connections(self,value):
+        self._connections = value
 
     def __str__(self) -> str:
         return f"{self.object.name}: {self.x()},{self.y()}"
@@ -645,7 +657,7 @@ class Node(QGraphicsProxyWidget):
         return super(Node, self).scene()
 
     def connection_type(self, node: Node) -> int:
-        return self.aggregation.connection_dict[node.aggregation]
+        return self.aggregation.connection_dict.get(node.aggregation)
 
     ### Functions ###
     def anchor_dict(self) -> dict[Node:QPointF]:
@@ -656,11 +668,10 @@ class Node(QGraphicsProxyWidget):
             point = QPointF(x, y)
             return point
 
-        con_dict = {connection.bottom_node: connection for connection in self.connections}
+        def sorted_children():
+            children: list[Node] = list(self.children)
+            return sorted(children, key=lambda child: child.x())
 
-        def get_connection_type(bottom_node: Node) -> int:
-            connection:Connection = con_dict[bottom_node]
-            return connection.connection_type
 
         center = bottom_center()
         y_pos = center.y()
@@ -668,14 +679,14 @@ class Node(QGraphicsProxyWidget):
         x1 = x2 - constants.ARROW_WIDTH * 2
         x3 = x2 + constants.ARROW_WIDTH * 2
 
-        aggregations = [child for child in self.children
-                        if get_connection_type(child) == constants.AGGREGATION]
+        aggregations = [con.bottom_node for con in self.connections
+                        if con.connection_type == constants.AGGREGATION and con.top_node == self]
 
-        inheritances = [child for child in self.children
-                        if get_connection_type(child) == constants.INHERITANCE]
+        inheritances = [con.bottom_node for con in self.connections
+                        if con.connection_type == constants.INHERITANCE and con.top_node == self]
 
-        both = [child for child in self.children
-                        if get_connection_type(child) == constants.INHERITANCE+constants.AGGREGATION]
+        both = [con.bottom_node for con in self.connections
+                        if con.connection_type == constants.INHERITANCE+constants.AGGREGATION and con.top_node == self]
 
         child_dict = dict()
 
@@ -688,7 +699,7 @@ class Node(QGraphicsProxyWidget):
             empty_lists+=1
 
         if empty_lists == 2:
-            for child in self.sorted_children():
+            for child in sorted_children():
                 child_dict[child] = QPointF(x2, y_pos)
 
         elif empty_lists ==0:
@@ -791,9 +802,7 @@ class Node(QGraphicsProxyWidget):
             self.main_window.pset_window = property_widget.open_pset_window(self.main_window, property_set,
                                                                             self.main_window.active_object)
 
-    def sorted_children(self):
-        children: list[Node] = list(self.children)
-        return sorted(children, key=lambda child: child.x())
+
 
     ### Properties ###
     @property
@@ -970,6 +979,7 @@ class GraphWindow(QWidget):
             self.combo_box.model().sort(0, Qt.AscendingOrder)
 
     def find_node_by_name(self, name) -> Node:
+
         return {node.name: node for node in Node._registry}.get(name)
 
     def change_scene(self, node: Node) -> None:
@@ -1022,7 +1032,6 @@ class GraphWindow(QWidget):
 
     def draw_tree(self, root: Node) -> None:
         """give correct tree position and fit in View"""
-
         def iter_x_pos(item: Node, drawtree: DrawTree) -> None:  # give each element correct position
             child: Node
             for i, child in enumerate(item):

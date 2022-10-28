@@ -617,7 +617,8 @@ class Object(Hirarchy):
 
 class Aggregation(Hirarchy):
     _registry: set[Aggregation] = set()
-
+    def __str__(self):
+        return self.name
     def __init__(self,obj:Object,uuid:str|None = None):
         super(Aggregation, self).__init__(name = obj.name)
         self._registry.add(self)
@@ -650,7 +651,7 @@ class Aggregation(Hirarchy):
 
     @property
     def is_root(self):
-        return not self.children
+        return not self.parent
 
 
 class Script(QListWidgetItem):
