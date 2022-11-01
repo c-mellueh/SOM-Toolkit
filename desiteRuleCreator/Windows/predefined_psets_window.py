@@ -1,13 +1,12 @@
 from __future__ import annotations
 import re
-import os
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QShowEvent,QIcon
+from PySide6.QtGui import QShowEvent
 from PySide6.QtWidgets import QWidget, QListWidgetItem
 
 from desiteRuleCreator.QtDesigns import ui_PsetInheritance
-from desiteRuleCreator.data import classes,constants
+from SOMcreator import classes,constants
 from desiteRuleCreator import icons
 from desiteRuleCreator.Windows import popups
 

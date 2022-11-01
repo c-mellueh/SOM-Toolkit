@@ -1,24 +1,26 @@
 from __future__ import annotations  # make own class referencable
 
 import logging
-import uuid
-from typing import Iterator, List, Set
+from typing import Iterator, List
 
 from PySide6.QtCore import Qt, QRectF, QPointF
 from PySide6.QtGui import QWheelEvent, QPainterPath, QMouseEvent, QContextMenuEvent, QCursor, QColor, QPen
 from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QGraphicsScene, QGraphicsView, \
     QApplication, QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsPathItem, QComboBox, QGraphicsRectItem, \
-    QInputDialog, QMenu, QGraphicsSceneMoveEvent,QGraphicsSceneHoverEvent
+    QInputDialog, QMenu, QGraphicsSceneMoveEvent, QGraphicsSceneHoverEvent, QTreeWidget
+from SOMcreator import classes, constants
 
 from desiteRuleCreator import icons
 from desiteRuleCreator.QtDesigns import ui_GraphWindow, ui_ObjectGraphWidget
 from desiteRuleCreator.Widgets import property_widget
 from desiteRuleCreator.Windows import popups
-from desiteRuleCreator.data import classes, constants
+from desiteRuleCreator.data import custom_qt
 
-def aggregation_to_node(aggregation:classes.Aggregation) -> Node:
-    d = {node.aggregation:node for node in Node._registry}
+
+def aggregation_to_node(aggregation: classes.Aggregation) -> Node:
+    d = {node.aggregation: node for node in Node._registry}
     return d.get(aggregation)
+
 
 def item_to_name(item: Node | classes.Object) -> str:
     obj = None
@@ -371,7 +373,7 @@ class Connection(QGraphicsPathItem):
             points[6].setX(pt.x() + constants.ARROW_WIDTH / 2)
             points[7].setX(pt.x())
 
-            points[1].setY(mid_y-constants.ARROW_WIDTH/2)
+            points[1].setY(mid_y - constants.ARROW_WIDTH / 2)
             points[2].setY(points[1].y())
             points[3].setY(pt.y() + constants.ARROW_HEIGHT)
             points[4].setY(pt.y() + constants.ARROW_HEIGHT / 2)
@@ -404,25 +406,25 @@ class Connection(QGraphicsPathItem):
             points[1].setX(pb.x())
             points[2].setX(pt.x())
             points[3].setX(pt.x())
-            points[4].setX(pt.x()-constants.ARROW_WIDTH/2)
+            points[4].setX(pt.x() - constants.ARROW_WIDTH / 2)
             points[5].setX(points[3].x())
             points[6].setX(points[5].x())
             points[7].setX(points[4].x())
             points[8].setX(points[5].x())
-            points[9].setX(pt.x()+constants.ARROW_WIDTH/2)
+            points[9].setX(pt.x() + constants.ARROW_WIDTH / 2)
             points[10].setX(points[5].x())
             points[11].setX(points[5].x())
             points[12].setX(points[9].x())
             points[13].setX(points[5].x())
 
-            points[1].setY(mid_y+constants.ARROW_HEIGHT/2)
+            points[1].setY(mid_y + constants.ARROW_HEIGHT / 2)
             points[2].setY(points[1].y())
-            points[3].setY(pt.y() + constants.ARROW_HEIGHT*2)
-            points[4].setY(points[3].y()-constants.ARROW_HEIGHT/2)
-            points[5].setY(points[4].y()-constants.ARROW_HEIGHT/2)
-            points[6].setY(points[5].y()-constants.ARROW_HEIGHT/2)
+            points[3].setY(pt.y() + constants.ARROW_HEIGHT * 2)
+            points[4].setY(points[3].y() - constants.ARROW_HEIGHT / 2)
+            points[5].setY(points[4].y() - constants.ARROW_HEIGHT / 2)
+            points[6].setY(points[5].y() - constants.ARROW_HEIGHT / 2)
             points[7].setY(points[6].y())
-            points[8].setY(points[6].y()-constants.ARROW_HEIGHT/2)
+            points[8].setY(points[6].y() - constants.ARROW_HEIGHT / 2)
             points[9].setY(points[6].y())
             points[10].setY(points[6].y())
             points[11].setY(points[5].y())
@@ -446,8 +448,9 @@ class Connection(QGraphicsPathItem):
             combo_points()
         return points
 
-    def hoverEnterEvent(self, event:QGraphicsSceneHoverEvent) -> None:
+    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
         super(Connection, self).hoverEnterEvent(event)
+
 
 class PopUp(QWidget):
     def __init__(self, clicked_node: Node, scene_pos) -> None:
@@ -524,12 +527,13 @@ class Rect(QGraphicsRectItem):
     def mousePressEvent(self, event) -> None:
         super(Rect, self).mousePressEvent(event)
 
+
 class Node(QGraphicsProxyWidget):
     _registry = list()
 
-    def __init__(self,aggregation, graph_window: GraphWindow) -> None:
-        self.aggregation:classes.Aggregation = aggregation
-        #graphics
+    def __init__(self, aggregation, graph_window: GraphWindow) -> None:
+        self.aggregation: classes.Aggregation = aggregation
+        # graphics
         self.rect = Rect(self)
         super(Node, self).__init__(self.rect)
         self.show()
@@ -547,7 +551,7 @@ class Node(QGraphicsProxyWidget):
         self.setZValue(1)
         self.button_add = self.object_graph_rep.button_add
         self.title = self.object_graph_rep.label_object_name
-        self.tree_widget: classes.QTreeWidget = classes.CustomPsetTree()
+        self.tree_widget: QTreeWidget = custom_qt.CustomPsetTree()
         self.object_graph_rep.verticalLayout.insertWidget(1, self.tree_widget)
 
         self.button_add.hide()
@@ -568,6 +572,7 @@ class Node(QGraphicsProxyWidget):
     @property
     def uuid(self) -> str:
         return self.aggregation.uuid
+
     @property
     def object(self) -> classes.Object:
         return self.aggregation.object
@@ -586,7 +591,7 @@ class Node(QGraphicsProxyWidget):
         both = [child for child in all
                 if self.connection_type(child) == constants.INHERITANCE + constants.AGGREGATION]
 
-        return inheritances + both + aggregations   #better for drawing
+        return inheritances + both + aggregations  # better for drawing
 
     @property
     def name(self) -> str:
@@ -602,7 +607,7 @@ class Node(QGraphicsProxyWidget):
         return self._connections
 
     @connections.setter
-    def connections(self,value):
+    def connections(self, value):
         self._connections = value
 
     def __str__(self) -> str:
@@ -622,20 +627,20 @@ class Node(QGraphicsProxyWidget):
         if con_type == constants.AGGREGATION:
             new_con = constants.INHERITANCE
         elif con_type == constants.INHERITANCE:
-            new_con = constants.AGGREGATION+constants.INHERITANCE
+            new_con = constants.AGGREGATION + constants.INHERITANCE
         else:
             new_con = constants.AGGREGATION
         self.aggregation.connection_dict[self.aggregation.parent] = new_con
         connection.update_line()
 
-    def item_clicked(self, item: classes.CustomAttribTreeItem | classes.CustomPSetTreeItem):
+    def item_clicked(self, item: custom_qt.CustomAttribTreeItem | custom_qt.CustomPSetTreeItem):
         main_window = self.main_window
 
-        if isinstance(item, classes.CustomPSetTreeItem):
+        if isinstance(item, custom_qt.CustomPSetTreeItem):
             property_set = item.property_set
             main_window.open_pset_window(property_set, self.object, None)
 
-        if isinstance(item, classes.CustomAttribTreeItem):
+        if isinstance(item, custom_qt.CustomAttribTreeItem):
             property_set = item.attribute.property_set
             main_window.open_pset_window(property_set, self.object, None)
             main_window.pset_window.fill_with_attribute(item.attribute)
@@ -653,7 +658,7 @@ class Node(QGraphicsProxyWidget):
         for child in self.children:
             print(f"   {child}")
 
-    def scene(self) -> AggregationScene|QGraphicsScene:
+    def scene(self) -> AggregationScene | QGraphicsScene:
         return super(Node, self).scene()
 
     def connection_type(self, node: Node) -> int:
@@ -672,7 +677,6 @@ class Node(QGraphicsProxyWidget):
             children: list[Node] = list(self.children)
             return sorted(children, key=lambda child: child.x())
 
-
         center = bottom_center()
         y_pos = center.y()
         x2 = center.x()
@@ -686,28 +690,28 @@ class Node(QGraphicsProxyWidget):
                         if con.connection_type == constants.INHERITANCE and con.top_node == self]
 
         both = [con.bottom_node for con in self.connections
-                        if con.connection_type == constants.INHERITANCE+constants.AGGREGATION and con.top_node == self]
+                if con.connection_type == constants.INHERITANCE + constants.AGGREGATION and con.top_node == self]
 
         child_dict = dict()
 
         empty_lists = 0
         if not aggregations:
-            empty_lists+=1
+            empty_lists += 1
         if not inheritances:
-            empty_lists+=1
+            empty_lists += 1
         if not both:
-            empty_lists+=1
+            empty_lists += 1
 
         if empty_lists == 2:
             for child in sorted_children():
                 child_dict[child] = QPointF(x2, y_pos)
 
-        elif empty_lists ==0:
+        elif empty_lists == 0:
             for child in inheritances:
                 child_dict[child] = QPointF(x1, y_pos)
 
             for child in both:
-                child_dict[child] = QPointF(x2,y_pos)
+                child_dict[child] = QPointF(x2, y_pos)
 
             for child in aggregations:
                 child_dict[child] = QPointF(x3, y_pos)
@@ -751,17 +755,17 @@ class Node(QGraphicsProxyWidget):
             if node is not None:
                 Connection(node, self, connection_type)
 
-        self.aggregation.add_child(child.aggregation,connection_type)
-        child.aggregation.set_parent(self.aggregation,connection_type)
+        self.aggregation.add_child(child.aggregation, connection_type)
+        child.aggregation.set_parent(self.aggregation, connection_type)
         connect_to_node(child, connection_type)
         self.scene().add_node(child)
         return child
 
     def fill_tree(self) -> None:
         for property_set in self.object.property_sets:
-            item = classes.CustomPSetTreeItem(self.tree_widget, property_set)
+            item = custom_qt.CustomPSetTreeItem(self.tree_widget, property_set)
             for attribute in property_set.attributes:
-                attrib = classes.CustomAttribTreeItem(item, attribute)
+                attrib = custom_qt.CustomAttribTreeItem(item, attribute)
 
     def remove_child(self, child: Node) -> None:
         for c in child.children.copy():
@@ -802,8 +806,6 @@ class Node(QGraphicsProxyWidget):
             self.main_window.pset_window = property_widget.open_pset_window(self.main_window, property_set,
                                                                             self.main_window.active_object)
 
-
-
     ### Properties ###
     @property
     def base_y(self) -> float:
@@ -823,8 +825,6 @@ class Node(QGraphicsProxyWidget):
                 return index
 
         return count(self, 0)
-
-
 
     @property
     def top_connection(self) -> Connection:
@@ -908,6 +908,7 @@ class GraphWindow(QWidget):
         self.reload_button.setIcon(icons.get_reload_icon())
         self.add_button.clicked.connect(self.add_button_pressed)
         self.delete_button.clicked.connect(self.delete_button_pressed)
+
     ### Functions ###
 
     def delete_button_pressed(self) -> None:
@@ -1032,6 +1033,7 @@ class GraphWindow(QWidget):
 
     def draw_tree(self, root: Node) -> None:
         """give correct tree position and fit in View"""
+
         def iter_x_pos(item: Node, drawtree: DrawTree) -> None:  # give each element correct position
             child: Node
             for i, child in enumerate(item):

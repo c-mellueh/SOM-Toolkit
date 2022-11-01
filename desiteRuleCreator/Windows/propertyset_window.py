@@ -6,20 +6,23 @@ import logging
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget
+from SOMcreator import constants, classes
 
 from desiteRuleCreator import icons
 from desiteRuleCreator.QtDesigns import ui_widget
 from desiteRuleCreator.Windows import popups
-from desiteRuleCreator.data import constants, classes
-from desiteRuleCreator.data.classes import PropertySet, Attribute
+from desiteRuleCreator.data import custom_qt
+
 
 class MappingTableItem(QTableWidgetItem):
-    def __init__(self,attribute:classes.Attribute) -> None:
+    def __init__(self, attribute: classes.Attribute) -> None:
         super(MappingTableItem, self).__init__()
         self.attribute = attribute
         self.update()
+
     def update(self) -> None:
         self.setText(self.attribute.revit_name)
+
 
 def float_to_string(value: float) -> str:
     value = str(value).replace(".", ",")
@@ -40,25 +43,24 @@ def get_selected_rows(table_widget: QTableWidget) -> list[int]:
     selectedRows.sort()
     return selectedRows
 
-def fill_attribute_table(active_object:classes.Object,
-                         table_widget:QTableWidget,
-                         property_set:classes.PropertySet) -> None:
 
-    def reformat_identifier(row:int) -> None:
+def fill_attribute_table(active_object: classes.Object,
+                         table_widget: QTableWidget,
+                         property_set: classes.PropertySet) -> None:
+    def reformat_identifier(row: int) -> None:
         brush = QtGui.QBrush()
         brush.setColor(Qt.GlobalColor.lightGray)
         brush.setStyle(Qt.BrushStyle.SolidPattern)
         for column in range(4):
             item = table_widget.item(row, column)
             item.setBackground(brush)
-    link_item = icons.get_link_icon()
 
+    link_item = icons.get_link_icon()
 
     table_widget.setRowCount(len(property_set.attributes))
 
     for i, attribute in enumerate(property_set.attributes):
-        attribute: Attribute = attribute
-        value_item = classes.CustomTableItem(attribute)
+        value_item = custom_qt.CustomTableItem(attribute)
 
         if attribute.is_child:
             value_item.setIcon(link_item)
@@ -66,7 +68,7 @@ def fill_attribute_table(active_object:classes.Object,
         table_widget.setItem(i, 1, QTableWidgetItem(attribute.data_type))
         table_widget.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
         table_widget.setItem(i, 3, QTableWidgetItem(str(attribute.value)))
-        table_widget.setItem(i,4,MappingTableItem(attribute))
+        table_widget.setItem(i, 4, MappingTableItem(attribute))
         table_widget.resizeColumnsToContents()
 
         if active_object is None:
@@ -74,7 +76,6 @@ def fill_attribute_table(active_object:classes.Object,
 
         if attribute == active_object.ident_attrib:
             reformat_identifier(i)
-
 
 
 class LineInput(QLineEdit):
@@ -109,7 +110,7 @@ class LineInput(QLineEdit):
 
 
 class PropertySetWindow(QtWidgets.QWidget):
-    def __init__(self, main_window, property_set: PropertySet, active_object: classes.Object, window_title):
+    def __init__(self, main_window, property_set: classes.PropertySet, active_object: classes.Object, window_title):
         def connect_items():
             self.widget.table_widget.itemClicked.connect(self.table_clicked)
             self.widget.table_widget.itemDoubleClicked.connect(self.table_double_clicked)
@@ -122,6 +123,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             self.widget.button_add_line.clicked.connect(self.new_line)
             self.widget.table_widget.customContextMenuRequested.connect(self.open_menu)
             self.widget.lineEdit_name.returnPressed.connect(self.add_attribute_button_pressed)
+
         super(PropertySetWindow, self).__init__()
 
         self.widget = ui_widget.Ui_layout_main()
@@ -191,7 +193,7 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         for offset, row_index in enumerate(selected_rows):  # iterate rows
             for col_index in range(self.table.columnCount()):  # iterate columns
-                old_item: classes.CustomTableItem
+                old_item: custom_qt.CustomTableItem
                 old_item = sender.item(row_index, col_index)
 
                 if col_index == 0:  # get attribute
@@ -200,7 +202,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                     self.property_set.add_attribute(new_attribute)
                 if old_item:
                     if col_index == 0:
-                        new_item = classes.CustomTableItem(new_attribute)
+                        new_item = custom_qt.CustomTableItem(new_attribute)
                         new_item.setText(new_attribute.name)
                         if new_attribute.is_child:
                             new_item.setIcon(icons.get_link_icon())
@@ -262,7 +264,7 @@ class PropertySetWindow(QtWidgets.QWidget):
     def info(self) -> None:
         """print infos of attribute to console (debug only)"""
         row = get_selected_rows(self.widget.table_widget)[0]
-        table_item: classes.CustomTableItem = self.widget.table_widget.item(row, 0)
+        table_item: custom_qt.CustomTableItem = self.widget.table_widget.item(row, 0)
         item = table_item.linked_data
         print(item.name)
         print(f"parent: {item.parent}")
@@ -291,7 +293,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             return
 
         item = self.table.item(row, 0)
-        attribute: Attribute = item.item
+        attribute: classes.Attribute = item.item
         attribute.name = new_name
         self.widget.table_widget.item(row, 0).setText(new_name)
         self.mainWindow.reload()
@@ -357,11 +359,12 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         def set_table_line(row: int, attrib: classes.Attribute) -> None:
             table = self.widget.table_widget
-            table.setItem(row, 0, classes.CustomTableItem(attrib))
+            table.setItem(row, 0, custom_qt.CustomTableItem(attrib))
             table.setItem(row, 1, QTableWidgetItem(attrib.data_type))
             table.setItem(row, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attrib.value_type]))
             table.setItem(row, 3, QTableWidgetItem(str(attrib.value)))
-            table.setItem(row,4,QTableWidgetItem(str(attrib.revit_name)))
+            table.setItem(row, 4, QTableWidgetItem(str(attrib.revit_name)))
+
         def update_attribute() -> classes.Attribute | None:
 
             values = get_values()
@@ -393,7 +396,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             value_type = self.widget.combo_type.currentText()
             data_type = self.widget.combo_data_type.currentText()
 
-            attrib = Attribute(self.property_set, name, values, value_type, data_type)
+            attrib = classes.Attribute(self.property_set, name, values, value_type, data_type)
             attrib.child_inherits_values = self.widget.check_box_inherit.isChecked()
 
             rows = self.widget.table_widget.rowCount()
@@ -415,9 +418,9 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.mainWindow.reload()
         self.clear_lines()
 
-    def combo_valuetype_change(self, event:str) -> None:
+    def combo_valuetype_change(self, event: str) -> None:
 
-        if event in constants.RANGE_STRINGS:#create second column
+        if event in constants.RANGE_STRINGS:  # create second column
             for el in self.input_lines:
                 self.lineEdit_input2 = LineInput(self)
                 el.addWidget(self.lineEdit_input2)
@@ -425,7 +428,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                 el.addWidget(self.widget.button_add_line)
                 self.input_lines[el] = [self.input_lines[el], self.lineEdit_input2]
 
-        elif self.old_state in constants.RANGE_STRINGS: #remove second column
+        elif self.old_state in constants.RANGE_STRINGS:  # remove second column
             for layout, items in self.input_lines.items():
                 layout.removeWidget(items[1])
                 items[1].setParent(None)
@@ -511,42 +514,13 @@ class PropertySetWindow(QtWidgets.QWidget):
         # set Editable
         self.widget.check_box_inherit.setChecked(attribute.child_inherits_values)
 
-    def table_clicked(self, table_item: QTableWidgetItem | classes.CustomTableItem) -> None:
-        item: classes.CustomTableItem = self.table.item(table_item.row(), 0)
+    def table_clicked(self, table_item: QTableWidgetItem | custom_qt.CustomTableItem) -> None:
+        item: custom_qt.CustomTableItem = self.table.item(table_item.row(), 0)
         attribute = item.linked_data
         self.fill_with_attribute(attribute)
 
-    def table_double_clicked(self,table_item:QTableWidgetItem|classes.CustomTableItem|MappingTableItem):
-        if not isinstance(table_item,MappingTableItem):
+    def table_double_clicked(self, table_item: QTableWidgetItem | custom_qt.CustomTableItem | MappingTableItem):
+        if not isinstance(table_item, MappingTableItem):
             return
         popups.attribute_mapping(table_item.attribute)
         table_item.update()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -7,10 +7,10 @@ from PySide6.QtCore import Qt, QPoint
 from PySide6.QtWidgets import QTreeWidgetItem, QMenu, QMainWindow, QFileDialog
 
 from desiteRuleCreator import icons
-from desiteRuleCreator.Filehandling import revit
 from desiteRuleCreator.QtDesigns import ui_mapping_window
 from desiteRuleCreator.Windows import popups
-from desiteRuleCreator.data import classes, constants
+from desiteRuleCreator.data import custom_qt
+from SOMcreator import classes, constants,revit
 
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
@@ -87,8 +87,8 @@ class MappingWindow(QMainWindow):
         self.object_name_label = self.widget.label_object_name
         self.export_folder = None
 
-        self._active_object_item: None | classes.CustomObjectTreeItem = None
-        self._active_attribute_item: None | classes.CustomAttribTreeItem = None
+        self._active_object_item: None | custom_qt.CustomObjectTreeItem = None
+        self._active_attribute_item: None | custom_qt.CustomAttribTreeItem = None
         self.active_object: None | classes.Object = None
         self.pset_trees: dict[classes.Object:list[PsetTreeItem]] = dict()
 
@@ -119,21 +119,21 @@ class MappingWindow(QMainWindow):
             child.setDisabled(disable)
 
     @property
-    def active_object_item(self) -> classes.CustomObjectTreeItem:
+    def active_object_item(self) -> custom_qt.CustomObjectTreeItem:
         return self._active_object_item
 
     @active_object_item.setter
-    def active_object_item(self, value: classes.CustomObjectTreeItem):
+    def active_object_item(self, value: custom_qt.CustomObjectTreeItem):
         self._active_object_item = value
         self.active_object = value.object
         self.object_name_label.setText(self.active_object.name)
 
     @property
-    def active_attribute_item(self) -> classes.CustomAttribTreeItem | None:
+    def active_attribute_item(self) -> custom_qt.CustomAttribTreeItem | None:
         return self._active_attribute_item
 
     @active_attribute_item.setter
-    def active_attribute_item(self, value: classes.CustomAttribTreeItem | None) -> None:
+    def active_attribute_item(self, value: custom_qt.CustomAttribTreeItem | None) -> None:
         if value is None:
             self.pset_tree.setEnabled(False)
         else:
@@ -141,7 +141,7 @@ class MappingWindow(QMainWindow):
             self._active_attribute_item = value
 
     def fill_object_table(self) -> None:
-        def copy_children(orig_item: classes.CustomObjectTreeItem, new_item: ObjectTreeItem):
+        def copy_children(orig_item: custom_qt.CustomObjectTreeItem, new_item: ObjectTreeItem):
             for index in range(orig_item.childCount()):
                 child = orig_item.child(index)
                 new_child = ObjectTreeItem(child.object)
@@ -157,7 +157,7 @@ class MappingWindow(QMainWindow):
         new_root = self.object_tree.invisibleRootItem()
         copy_children(orig_root, new_root)
 
-    def object_clicked(self, item: classes.CustomObjectTreeItem):
+    def object_clicked(self, item: custom_qt.CustomObjectTreeItem):
         self.active_object_item = item
         if self.pset_trees.get(self.active_object) is None:
             self.new_pset_table(item.object)
@@ -202,7 +202,7 @@ class MappingWindow(QMainWindow):
 
     def object_context_menu(self, position: QPoint) -> None:
 
-        def recursive_expand(item: classes.CustomObjectTreeItem, expand: bool):
+        def recursive_expand(item: custom_qt.CustomObjectTreeItem, expand: bool):
             item.setExpanded(expand)
             for i in range(item.childCount()):
                 child = item.child(i)
@@ -246,7 +246,7 @@ class MappingWindow(QMainWindow):
         menu.exec(self.object_tree.viewport().mapToGlobal(position))
 
     def get_export_data(self) -> (str, dict[str, (list[classes.Attribute], set[str])]):
-        def iterate(item: classes.CustomObjectTreeItem):
+        def iterate(item: custom_qt.CustomObjectTreeItem):
             nonlocal pset_dict
 
             def compare_property_sets():

@@ -3,9 +3,9 @@ from PySide6.QtGui import QColor, QPainter, QTextFormat
 from PySide6.QtWidgets import QPlainTextEdit, QWidget, QTextEdit
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
-from desiteRuleCreator.data import classes
+from SOMcreator import classes
 from desiteRuleCreator.Windows import popups
-
+from desiteRuleCreator.data import custom_qt
 
 def init(main_window):
     def connect():
@@ -92,7 +92,7 @@ def code_buttons(main_window):
 
 def show(main_window):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
-    tree_item: classes.CustomObjectTreeItem = main_window.selected_object()
+    tree_item: custom_qt.CustomObjectTreeItem = main_window.selected_object()
     if tree_item is not None:
         obj = tree_item.object
         for script in obj.scripts:

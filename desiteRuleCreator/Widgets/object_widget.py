@@ -10,14 +10,15 @@ import copy as cp
 from desiteRuleCreator.QtDesigns import ui_mainwindow
 from desiteRuleCreator.Widgets import script_widget, property_widget
 from desiteRuleCreator.Windows import popups
-from desiteRuleCreator.data import classes, constants
+from desiteRuleCreator.data import custom_qt
+from SOMcreator import classes, constants
 
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
 
 
 def init(main_window:MainWindow):
-    def init_tree(tree: classes.CustomTree):
+    def init_tree(tree: custom_qt.CustomTree):
         # Design Tree
         tree.setObjectName(u"treeWidget_objects")
         tree.setDragDropMode(QAbstractItemView.InternalMove)
@@ -44,7 +45,7 @@ def init(main_window:MainWindow):
 
     main_window.ui.verticalLayout_objects.removeWidget(main_window.ui.tree_object)
     main_window.ui.tree_object.close()
-    main_window.ui.tree_object = classes.CustomTree(main_window.ui.verticalLayout_main)
+    main_window.ui.tree_object = custom_qt.CustomTree(main_window.ui.verticalLayout_main)
     main_window.ui.verticalLayout_objects.addWidget(main_window.ui.tree_object)
     init_tree(main_window.ui.tree_object)
 
@@ -59,8 +60,8 @@ def init(main_window:MainWindow):
     connect_items()
 
 
-def selected_object(main_window:MainWindow) -> classes.CustomObjectTreeItem | None:
-    tree: classes.CustomTree = main_window.ui.tree_object
+def selected_object(main_window:MainWindow) -> custom_qt.CustomObjectTreeItem | None:
+    tree: custom_qt.CustomTree = main_window.ui.tree_object
     sel_items = tree.selectedItems()
     if len(sel_items) == 1:
         return sel_items[0]
@@ -77,7 +78,7 @@ def all_equal(iterator):
     return all(first == x for x in iterator)
 
 
-def clear_object_input(main_window):
+def clear_object_input(main_window:MainWindow):
     for el in main_window.obj_line_edit_list:
         el.clear()
 
@@ -146,7 +147,7 @@ def info(main_window:MainWindow):
 def rc_rename(main_window:MainWindow):
     item_list = [item for item in main_window.ui.tree_object.selectedItems()]
     if len(item_list)==1:
-        item: classes.CustomObjectTreeItem = item_list[0]
+        item: custom_qt.CustomObjectTreeItem = item_list[0]
         obj: classes.Object = item.object
         name, fulfilled = popups.req_new_name(main_window, item.text(0))
 
@@ -169,7 +170,7 @@ def rc_expand(tree: QTreeWidget):
 
 def copy(main_window:MainWindow):
     selected_items = main_window.ui.tree_object.selectedItems()
-    item:classes.CustomObjectTreeItem = selected_items[0]
+    item:custom_qt.CustomObjectTreeItem = selected_items[0]
     old_obj = item.object
     new_object = None
 
@@ -230,7 +231,7 @@ def copy(main_window:MainWindow):
             parent = item.treeWidget().invisibleRootItem()
         else:
             parent = item.parent()
-        group_item: classes.CustomObjectTreeItem = main_window.add_object_to_tree(new_object, parent)
+        group_item: custom_qt.CustomObjectTreeItem = main_window.add_object_to_tree(new_object, parent)
         if old_obj.parent is not None:
             new_object.parent = old_obj.parent
 
@@ -263,18 +264,18 @@ def rc_group_items(main_window:MainWindow):
                 group_obj = classes.Object(group_name, identifier)
                 group_obj.add_property_set(pset)
 
-        group_item: classes.CustomObjectTreeItem = main_window.add_object_to_tree(group_obj, parent)
+        group_item: custom_qt.CustomObjectTreeItem = main_window.add_object_to_tree(group_obj, parent)
 
         if len(selected_items) == 0:
             return
 
         for item in parent_classes:
-            child: classes.CustomObjectTreeItem = parent.takeChild(parent.indexOfChild(item))
+            child: custom_qt.CustomObjectTreeItem = parent.takeChild(parent.indexOfChild(item))
             group_obj.add_child(child.object)
             group_item.addChild(child)
 
 
-def single_click(main_window:MainWindow, item: classes.CustomObjectTreeItem):
+def single_click(main_window:MainWindow, item: custom_qt.CustomObjectTreeItem):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     property_widget.clear_attribute_table(main_window)
 
@@ -440,7 +441,7 @@ def add_object(main_window):
 
 
 def add_object_to_tree(main_window:MainWindow, obj: classes.Object, parent:QTreeWidgetItem=None):
-    item = classes.CustomObjectTreeItem(obj)
+    item = custom_qt.CustomObjectTreeItem(obj)
     if parent is None:
         main_window.object_tree.invisibleRootItem().addChild(item)
     else:
@@ -449,7 +450,7 @@ def add_object_to_tree(main_window:MainWindow, obj: classes.Object, parent:QTree
 
 
 def rc_delete(main_window:MainWindow):
-    def delete_item(item:classes.CustomObjectTreeItem) -> None:
+    def delete_item(item:custom_qt.CustomObjectTreeItem) -> None:
         parent = item.parent()
         root = main_window.ui.tree_object.invisibleRootItem()
         item.object.delete()
@@ -470,7 +471,7 @@ def rc_delete(main_window:MainWindow):
 
     string_list = list()
 
-    item:classes.CustomObjectTreeItem
+    item:custom_qt.CustomObjectTreeItem
     for item in main_window.ui.tree_object.selectedItems():
         print(f"selected_item: {item.object.name}")
         append_string_list(item.object)
@@ -486,7 +487,7 @@ def rc_delete(main_window:MainWindow):
 
 
 def reload_tree(main_window):
-    def loop(item: classes.CustomObjectTreeItem):
+    def loop(item: custom_qt.CustomObjectTreeItem):
         for i in range(item.childCount()):
             child = item.child(i)
             child.update()
