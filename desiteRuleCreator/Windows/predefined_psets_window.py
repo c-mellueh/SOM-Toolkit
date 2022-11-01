@@ -1,23 +1,25 @@
 from __future__ import annotations
+
 import re
+from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QShowEvent
 from PySide6.QtWidgets import QWidget, QListWidgetItem
+from SOMcreator import classes, constants
 
-from desiteRuleCreator.QtDesigns import ui_PsetInheritance
-from SOMcreator import classes,constants
 from desiteRuleCreator import icons
+from desiteRuleCreator.QtDesigns import ui_PsetInheritance
 from desiteRuleCreator.Windows import popups
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
+
 
 class PsetItem(QListWidgetItem):
     _registry = list()
 
-    def __init__(self, property_set:classes.PropertySet=None) -> None:
+    def __init__(self, property_set: classes.PropertySet = None) -> None:
         super(PsetItem, self).__init__()
 
         if property_set is None:
@@ -25,13 +27,13 @@ class PsetItem(QListWidgetItem):
             self.setText(f"NewPset_{self.get_number()}")
 
         else:
-            self.property_set:classes.PropertySet = property_set
-            self.setText(property_set.name,False)
+            self.property_set: classes.PropertySet = property_set
+            self.setText(property_set.name, False)
 
         self._registry.append(self)
         self.setFlags(self.flags() | Qt.ItemIsEditable)
 
-    def setText(self, text: str,overwrite:bool = True) -> None:
+    def setText(self, text: str, overwrite: bool = True) -> None:
         super(PsetItem, self).setText(text)
         if overwrite:
             self.property_set.name = text
@@ -56,7 +58,7 @@ class PsetItem(QListWidgetItem):
 
 
 class PropertySetInherWindow(QWidget):
-    def __init__(self, main_window:MainWindow) -> None:
+    def __init__(self, main_window: MainWindow) -> None:
         def connect() -> None:
             self.widget.push_button_add_pset.clicked.connect(self.add_pset)
             self.widget.push_button_remove_pset.clicked.connect(self.remove_pset)
@@ -84,7 +86,7 @@ class PropertySetInherWindow(QWidget):
         sel_items = self.widget.list_view_pset.selectedItems()
         if len(sel_items) == 1:
             item = self.widget.list_view_pset.selectedItems()[0]
-            self.main_window.open_pset_window(item.property_set, None,item.property_set.name)
+            self.main_window.open_pset_window(item.property_set, None, item.property_set.name)
 
     def add_pset(self):
         item = PsetItem()

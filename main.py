@@ -6,13 +6,16 @@ def test():
     path = "C:/Users/ChristophMellueh/Desktop/excel_test.xlsx"
     proj.import_excel(path)
 
-    for obj in classes.Object:
-        print(obj)
+    for aggreg in classes.Aggregation:
+        if not aggreg.is_root:
+            print(f"{aggreg.name} -> {aggreg.parent.name}: {aggreg.parent_connection}")
+        else:
+            print(f"{aggreg.name} -> root")
 
 
 def main():
     print("PYTHON CODE STARTING")
     run_main()
-
+    # test()
 if __name__ == '__main__':
     main()

@@ -1,26 +1,30 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from PySide6.QtWidgets import QFileDialog, QMessageBox
-from lxml import etree
+
 import os
+from typing import TYPE_CHECKING
+
+from PySide6.QtWidgets import QFileDialog, QMessageBox
+from SOMcreator import constants, filehandling
+from lxml import etree
 
 import desiteRuleCreator.Filehandling
-from desiteRuleCreator.Windows import popups,graphs_window
-from SOMcreator import constants, filehandling
+from desiteRuleCreator.Windows import popups, graphs_window
 
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
 
-def add_node_pos(tree:etree.ElementTree):
+
+def add_node_pos(tree: etree.ElementTree):
     xml_group_nodes = tree.find(constants.NODES)
-    node_dict = {node.aggregation.uuid:node for node in graphs_window.Node._registry}
+    node_dict = {node.aggregation.uuid: node for node in graphs_window.Node.registry}
     for xml_node in xml_group_nodes:
         uuid = xml_node.attrib.get(constants.IDENTIFIER)
         node = node_dict[uuid]
-        xml_node.set(constants.X_POS,str(node.x()))
-        xml_node.set(constants.Y_POS,str(node.y()))
+        xml_node.set(constants.X_POS, str(node.x()))
+        xml_node.set(constants.Y_POS, str(node.y()))
 
-def save_clicked(main_window:MainWindow) -> str:
+
+def save_clicked(main_window: MainWindow) -> str:
     if main_window.save_path is None or not main_window.save_path.endswith("xml"):
         path = save_as_clicked(main_window)
     else:
@@ -32,23 +36,24 @@ def save_clicked(main_window:MainWindow) -> str:
     return path
 
 
-def save_as_clicked(main_window:MainWindow) -> str:
+def save_as_clicked(main_window: MainWindow) -> str:
     if main_window.save_path is not None:
         base_path = os.path.dirname(main_window.save_path)
         path = \
-            QFileDialog.getSaveFileName(main_window, "Save XML",base_path, "xml Files (*.DRCxml *.xml )")[0]
+            QFileDialog.getSaveFileName(main_window, "Save XML", base_path, "xml Files (*.DRCxml *.xml )")[0]
     else:
         path = QFileDialog.getSaveFileName(main_window, "Save XML", "", "xml Files ( *.DRCxml *.xml)")[0]
 
     if path:
-        xml_tree = filehandling.build_xml(main_window.project,)
+        xml_tree = filehandling.build_xml(main_window.project, )
         add_node_pos(xml_tree)
         with open(path, "wb") as f:
             xml_tree.write(f, pretty_print=True, encoding="utf-8", xml_declaration=True)
         main_window.save_path = path
     return path
 
-def close_event(main_window:MainWindow, event):
+
+def close_event(main_window: MainWindow):
     status = main_window.project.changed
     if status:
         reply = popups.msg_close()

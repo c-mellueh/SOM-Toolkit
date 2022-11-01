@@ -192,7 +192,7 @@ def req_boq_pset(main_window, words):
         return False, None
 
 
-def object_mapping(object: classes.Object) -> None:
+def object_mapping(obj: classes.Object) -> None:
     def add_line():
         layout: QGridLayout = widget.widget_input_lines.layout()
         new_line_edit = QLineEdit()
@@ -204,21 +204,21 @@ def object_mapping(object: classes.Object) -> None:
     parent = QDialog()
     widget = ui_propertyset_mapping.Ui_Dialog()
     widget.setupUi(parent)
-    widget.label_name.setText(f"IfcMapping {object.name}")
+    widget.label_name.setText(f"IfcMapping {obj.name}")
     widget.button_add.clicked.connect(add_line)
     widget.line_edits = [widget.line_edit]
     widget.line_edit.setCompleter(compl)
 
-    for _ in range(len(object.ifc_mapping) - 1):
+    for _ in range(len(obj.ifc_mapping) - 1):
         add_line()
 
-    for i, mapping in enumerate(object.ifc_mapping):
+    for i, mapping in enumerate(obj.ifc_mapping):
         line_edit = widget.line_edits[i]
         line_edit.setText(mapping)
 
     if parent.exec():
         mappings = {line_edit.text() for line_edit in widget.line_edits}
-        object.ifc_mapping = mappings
+        obj.ifc_mapping = mappings
 
 
 def attribute_mapping(attribute: classes.Attribute):

@@ -7,18 +7,53 @@ from PySide6.QtCore import Qt, QRectF, QPointF
 from PySide6.QtGui import QWheelEvent, QPainterPath, QMouseEvent, QContextMenuEvent, QCursor, QColor, QPen
 from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QGraphicsScene, QGraphicsView, \
     QApplication, QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsPathItem, QComboBox, QGraphicsRectItem, \
-    QInputDialog, QMenu, QGraphicsSceneMoveEvent, QGraphicsSceneHoverEvent, QTreeWidget
+    QInputDialog, QMenu, QGraphicsSceneMoveEvent, QGraphicsSceneHoverEvent, QTreeWidget, QTreeWidgetItem
 from SOMcreator import classes, constants
 
 from desiteRuleCreator import icons
 from desiteRuleCreator.QtDesigns import ui_GraphWindow, ui_ObjectGraphWidget
 from desiteRuleCreator.Widgets import property_widget
 from desiteRuleCreator.Windows import popups
-from desiteRuleCreator.data import custom_qt
+
+
+class CustomAttribTreeItem(QTreeWidgetItem):
+    def __init__(self, tree: CustomPSetTreeItem, attribute: classes.Attribute) -> None:
+        super(CustomAttribTreeItem, self).__init__(tree)
+        self._attribute = attribute
+        self.update()
+
+    @property
+    def attribute(self) -> classes.Attribute:
+        return self._attribute
+
+    def update(self) -> None:
+        self.setText(0, self.attribute.name)
+
+
+class CustomPSetTreeItem(QTreeWidgetItem):
+    def __init__(self, tree: QTreeWidget, pset: classes.PropertySet) -> None:
+        super(CustomPSetTreeItem, self).__init__(tree)
+        self._property_set = pset
+        self.update()
+
+    @property
+    def property_set(self) -> classes.PropertySet:
+        return self._property_set
+
+    def update(self) -> None:
+        self.setText(0, self.property_set.name)
+
+
+class CustomPsetTree(QTreeWidget):
+    def __init__(self) -> None:
+        super(CustomPsetTree, self).__init__()
+        self.setExpandsOnDoubleClick(False)
+        self.setColumnCount(1)
+        self.setHeaderLabels(["Name"])
 
 
 def aggregation_to_node(aggregation: classes.Aggregation) -> Node:
-    d = {node.aggregation: node for node in Node._registry}
+    d = {node.aggregation: node for node in Node.registry}
     return d.get(aggregation)
 
 
@@ -37,7 +72,7 @@ def item_to_name(item: Node | classes.Object) -> str:
     return text
 
 
-## Create Tree Positions
+# Create Tree Positions
 def buchheim(tree: DrawTree):
     def third_walk(tree: DrawTree, n):
         tree.x += n
@@ -131,29 +166,29 @@ def buchheim(tree: DrawTree):
         else:
             return default_ancestor
 
-    def second_walk(v: DrawTree, m=0, depth=0, min=None):
+    def second_walk(v: DrawTree, m=0, depth=0, _min=None):
         v.x += m
         v.y = depth
 
-        if min is None or v.x < min:
-            min = v.x
+        if _min is None or v.x < _min:
+            _min = v.x
 
         for w in v.children:
-            min = second_walk(w, m + v.mod, depth + 1, min)
+            _min = second_walk(w, m + v.mod, depth + 1, _min)
 
-        return min
+        return _min
 
     dt = firstwalk(DrawTree(tree))
-    min = second_walk(dt)
-    if min < 0:
-        third_walk(dt, -min)
+    _min = second_walk(dt)
+    if _min < 0:
+        third_walk(dt, -_min)
     return dt
 
 
 class DrawTree(object):
     _registry = list()
 
-    def __init__(self, tree: Node, parent=None, depth=0, number=1):
+    def __init__(self, tree: Node | DrawTree, parent=None, depth=0, number=1):
         self.x = -1.
         self.y = depth
         self.tree = tree
@@ -165,7 +200,7 @@ class DrawTree(object):
         self.change = self.shift = 0
         self._lmost_sibling = None
         self._registry.append(self)
-        # this is the number of the node in its group of siblings 1..n
+        # this is the number of the node in its group of siblings 1.n
         self.number = number
 
     def left(self):
@@ -272,6 +307,9 @@ class MainView(QGraphicsView):
 
             menu.exec(event.globalPos())
 
+    def scene(self) -> AggregationScene | QGraphicsScene:
+        return super(MainView, self).scene()
+
 
 class AggregationScene(QGraphicsScene):
     def __init__(self, root_node) -> None:
@@ -314,6 +352,7 @@ class Connection(QGraphicsPathItem):
         self.top_node.scene().addItem(self)
         bottom_node.connections.append(self)
         top_node.connections.append(self)
+        self.path = QPainterPath()
         self.create_line()
         self.setAcceptHoverEvents(True)
 
@@ -327,7 +366,6 @@ class Connection(QGraphicsPathItem):
         new_scene.addItem(self)
 
     def create_line(self) -> None:
-        self.path = QPainterPath()
         self.path.moveTo(self.points[0])
 
         for point in self.points[1:]:
@@ -431,7 +469,7 @@ class Connection(QGraphicsPathItem):
             points[12].setY(points[4].y())
             points[13].setY(points[3].y())
 
-        points = [QPointF() for point in range(8)]
+        points = [QPointF() for _ in range(8)]
 
         pb = top_center(self.bottom_node.sceneBoundingRect())  # top center of Bottom Node
         pt = self.top_node.anchor_dict()[self.bottom_node]
@@ -439,7 +477,6 @@ class Connection(QGraphicsPathItem):
 
         if self.connection_type == constants.AGGREGATION:
             aggregation_points()
-
 
         elif self.connection_type == constants.INHERITANCE:
             inheritance_points()
@@ -529,7 +566,7 @@ class Rect(QGraphicsRectItem):
 
 
 class Node(QGraphicsProxyWidget):
-    _registry = list()
+    registry = list()
 
     def __init__(self, aggregation, graph_window: GraphWindow) -> None:
         self.aggregation: classes.Aggregation = aggregation
@@ -539,7 +576,7 @@ class Node(QGraphicsProxyWidget):
         self.show()
         self.rect.show()
 
-        self._registry.append(self)
+        self.registry.append(self)
         self._connections: List[Connection] = list()
 
         self.graph_window = graph_window
@@ -551,7 +588,7 @@ class Node(QGraphicsProxyWidget):
         self.setZValue(1)
         self.button_add = self.object_graph_rep.button_add
         self.title = self.object_graph_rep.label_object_name
-        self.tree_widget: QTreeWidget = custom_qt.CustomPsetTree()
+        self.tree_widget: QTreeWidget = CustomPsetTree()
         self.object_graph_rep.verticalLayout.insertWidget(1, self.tree_widget)
 
         self.button_add.hide()
@@ -583,12 +620,12 @@ class Node(QGraphicsProxyWidget):
 
     @property
     def children(self) -> List[Node]:
-        all = [aggregation_to_node(child) for child in self.aggregation.children]
-        aggregations = [child for child in all
+        all_children = [aggregation_to_node(child) for child in self.aggregation.children]
+        aggregations = [child for child in all_children
                         if self.connection_type(child) == constants.AGGREGATION]
-        inheritances = [child for child in all
+        inheritances = [child for child in all_children
                         if self.connection_type(child) == constants.INHERITANCE]
-        both = [child for child in all
+        both = [child for child in all_children
                 if self.connection_type(child) == constants.INHERITANCE + constants.AGGREGATION]
 
         return inheritances + both + aggregations  # better for drawing
@@ -633,14 +670,14 @@ class Node(QGraphicsProxyWidget):
         self.aggregation.connection_dict[self.aggregation.parent] = new_con
         connection.update_line()
 
-    def item_clicked(self, item: custom_qt.CustomAttribTreeItem | custom_qt.CustomPSetTreeItem):
+    def item_clicked(self, item: CustomAttribTreeItem | CustomPSetTreeItem):
         main_window = self.main_window
 
-        if isinstance(item, custom_qt.CustomPSetTreeItem):
+        if isinstance(item, CustomPSetTreeItem):
             property_set = item.property_set
             main_window.open_pset_window(property_set, self.object, None)
 
-        if isinstance(item, custom_qt.CustomAttribTreeItem):
+        if isinstance(item, CustomAttribTreeItem):
             property_set = item.attribute.property_set
             main_window.open_pset_window(property_set, self.object, None)
             main_window.pset_window.fill_with_attribute(item.attribute)
@@ -664,7 +701,7 @@ class Node(QGraphicsProxyWidget):
     def connection_type(self, node: Node) -> int:
         return self.aggregation.connection_dict.get(node.aggregation)
 
-    ### Functions ###
+    # Functions
     def anchor_dict(self) -> dict[Node:QPointF]:
         def bottom_center() -> QPointF:
             rect = self.sceneBoundingRect()
@@ -675,7 +712,7 @@ class Node(QGraphicsProxyWidget):
 
         def sorted_children():
             children: list[Node] = list(self.children)
-            return sorted(children, key=lambda child: child.x())
+            return sorted(children, key=lambda _child: _child.x())
 
         center = bottom_center()
         y_pos = center.y()
@@ -751,9 +788,9 @@ class Node(QGraphicsProxyWidget):
         return PopUp(self, relative_origin)
 
     def add_child(self, child: Node, connection_type: int = constants.AGGREGATION) -> Node:
-        def connect_to_node(node: Node, connection_type: int):
+        def connect_to_node(node: Node, _connection_type: int):
             if node is not None:
-                Connection(node, self, connection_type)
+                Connection(node, self, _connection_type)
 
         self.aggregation.add_child(child.aggregation, connection_type)
         child.aggregation.set_parent(self.aggregation, connection_type)
@@ -763,28 +800,28 @@ class Node(QGraphicsProxyWidget):
 
     def fill_tree(self) -> None:
         for property_set in self.object.property_sets:
-            item = custom_qt.CustomPSetTreeItem(self.tree_widget, property_set)
+            item = CustomPSetTreeItem(self.tree_widget, property_set)
             for attribute in property_set.attributes:
-                attrib = custom_qt.CustomAttribTreeItem(item, attribute)
+                CustomAttribTreeItem(item, attribute)
 
     def remove_child(self, child: Node) -> None:
         for c in child.children.copy():
             child.remove_child(c)
         self.aggregation.remove_child(child.aggregation)
         self.scene().remove_node(child)
-        Node._registry.remove(child)
+        Node.registry.remove(child)
 
     def delete(self):
         def request_delete() -> bool:
             def get_all_children(node: Node) -> None:
                 nodes.append(node)
-                for child in node.children:
-                    get_all_children(child)
+                for _child in node.children:
+                    get_all_children(_child)
 
             nodes = list()
             if self.is_root:
-                for child in self.children:
-                    get_all_children(child)
+                for child_node in self.children:
+                    get_all_children(child_node)
             else:
                 get_all_children(self)
             return popups.msg_del_items([item_to_name(node) for node in nodes])
@@ -794,7 +831,7 @@ class Node(QGraphicsProxyWidget):
                 for child in self.children.copy():
                     self.remove_child(child)
                 self.graph_window.remove_scene(self.scene())
-                Node._registry.remove(self)
+                Node.registry.remove(self)
                 self.object.remove_node(self.aggregation)
 
             else:
@@ -803,10 +840,10 @@ class Node(QGraphicsProxyWidget):
     def select_list_item(self, selected_item):
         if selected_item is not None:
             property_set = selected_item.property_set
-            self.main_window.pset_window = property_widget.open_pset_window(self.main_window, property_set,
-                                                                            self.main_window.active_object)
+            property_widget.open_pset_window(self.main_window, property_set,
+                                             self.main_window.active_object)
 
-    ### Properties ###
+    # Properties
     @property
     def base_y(self) -> float:
         return self.level * (constants.BOX_HEIGHT + constants.BOX_MARGIN)
@@ -837,17 +874,10 @@ class Node(QGraphicsProxyWidget):
         return [connection for connection in self.connections if self == connection.top_node]
 
     @property
-    def movable(self):
-        if self.button_add.underMouse() or self.list.underMouse():
-            return False
-        else:
-            return True
-
-    @property
     def x_pos(self) -> float:
         return self.x()
 
-    ### Events ###
+    # Events
 
     def hoverEnterEvent(self, event) -> None:
         self.button_add.show()
@@ -909,7 +939,7 @@ class GraphWindow(QWidget):
         self.add_button.clicked.connect(self.add_button_pressed)
         self.delete_button.clicked.connect(self.delete_button_pressed)
 
-    ### Functions ###
+    # Functions
 
     def delete_button_pressed(self) -> None:
         if not self.combo_box.currentText() == "":
@@ -951,6 +981,8 @@ class GraphWindow(QWidget):
     def create_scene_by_node(self, node: Node) -> AggregationScene:
         scene = AggregationScene(node)
         self.scenes.append(scene)
+        scene.addItem(node)
+        self.combo_box.addItem(item_to_name(node))
         return scene
 
     def add_button_pressed(self) -> None:
@@ -970,7 +1002,6 @@ class GraphWindow(QWidget):
         text = dialog.textValue()
         obj = {item_to_name(obj): obj for obj in classes.Object}.get(text)
         if obj is not None:
-            self.combo_box.addItem(str(text))
             aggregation = classes.Aggregation(obj)
             node = Node(aggregation, self)
             self.create_scene_by_node(node)
@@ -979,9 +1010,9 @@ class GraphWindow(QWidget):
             self.combo_box.setCurrentIndex(text_pos)
             self.combo_box.model().sort(0, Qt.AscendingOrder)
 
-    def find_node_by_name(self, name) -> Node:
-
-        return {node.name: node for node in Node._registry}.get(name)
+    @staticmethod
+    def find_node_by_name(name) -> Node:
+        return {node.name: node for node in Node.registry}.get(name)
 
     def change_scene(self, node: Node) -> None:
         self.active_scene = self.scene_dict[node]
@@ -1034,9 +1065,9 @@ class GraphWindow(QWidget):
     def draw_tree(self, root: Node) -> None:
         """give correct tree position and fit in View"""
 
-        def iter_x_pos(item: Node, drawtree: DrawTree) -> None:  # give each element correct position
+        def iter_x_pos(_node: Node, drawtree: DrawTree) -> None:  # give each element correct position
             child: Node
-            for i, child in enumerate(item):
+            for i, child in enumerate(_node):
                 draw_child = drawtree.children[i]
                 x = draw_child.x * (constants.BOX_WIDHT + constants.BOX_MARGIN)
                 child.setX(x)
@@ -1066,7 +1097,7 @@ class GraphWindow(QWidget):
         if self.active_scene is None:
             return
         visible_items = [item for item in self.active_scene.items() if
-                         item.isVisible() and not isinstance(item, (QGraphicsPathItem))]
+                         item.isVisible() and not isinstance(item, QGraphicsPathItem)]
         bounding_rect = visible_items[0].boundingRect()
         visible_items.sort(key=lambda x: str(type(x)))
         for item in visible_items:
@@ -1096,17 +1127,17 @@ class GraphWindow(QWidget):
         self.view.fitInView(self.active_scene.sceneRect(), Qt.AspectRatioMode.KeepAspectRatio)
         self.view.centerOn(self.active_scene.sceneRect().center())
 
-    ### Properties ###
+    # Properties
     @property
     def node_dict(self) -> dict[classes.Object, Node]:
         nd: dict[classes.Object, Node] = dict()
-        for node in Node._registry:
+        for node in Node.registry:
             nd[node.object] = node
         return nd
 
     @property
     def root_nodes(self) -> list[Node]:
-        return [node for node in Node._registry if node.parent_node is None]
+        return [node for node in Node.registry if node.parent_node is None]
 
     @property
     def scene_dict(self) -> dict[Node, AggregationScene]:

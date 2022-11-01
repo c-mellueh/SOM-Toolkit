@@ -1,13 +1,13 @@
 from __future__ import annotations
+
 import os
 from typing import TYPE_CHECKING
 
-from PySide6.QtWidgets import QInputDialog, QLineEdit,QFileDialog
+from PySide6.QtWidgets import QInputDialog, QLineEdit, QFileDialog
+from SOMcreator import classes, constants
 from lxml import etree
 
-from desiteRuleCreator.Windows import graphs_window,popups
-
-from SOMcreator import classes, constants
+from desiteRuleCreator.Windows import graphs_window, popups
 
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
@@ -21,59 +21,53 @@ def string_to_bool(text: str) -> bool | None:
     else:
         return None
 
-def import_node_pos(graph_window:graphs_window.GraphWindow,path:str):
-    def text(obj:classes.Object) -> str:
-        if obj.is_concept:
-            text = f"{obj.name}"
-        else:
-            text = f"{obj.name} ({obj.ident_attrib.value[0]})"
-        return text
 
-    def iter_child(parent_node:graphs_window.Node):
+def iter_child(parent_node: graphs_window.Node):
+    child: classes.Aggregation
+    for child in parent_node.aggregation.children:
+        child_node = graphs_window.aggregation_to_node(child)
+        con_type = parent_node.aggregation.connection_dict[child_node.aggregation]
+        parent_node.add_child(child_node, con_type)
+        iter_child(child_node)
 
-        for child in parent_node.aggregation.children:
-            child_node = graphs_window.aggregation_to_node(child)
-            con_type = parent_node.aggregation.connection_dict[child_node.aggregation]
-            parent_node.add_child(child_node,con_type)
-            iter_child(child_node)
-        pass
 
+def import_node_pos(graph_window: graphs_window.GraphWindow, path: str):
     tree = etree.parse(path)
     projekt_xml = tree.getroot()
     xml_group_nodes = projekt_xml.find(constants.NODES)
-    aggregation_dict = {aggregation.uuid:aggregation for aggregation in classes.Aggregation}
+    aggregation_dict = {aggregation.uuid: aggregation for aggregation in classes.Aggregation}
     node_dict = {}
     for xml_node in xml_group_nodes:
         uuid = xml_node.attrib.get(constants.IDENTIFIER)
         x_pos = float(xml_node.attrib.get(constants.X_POS))
         y_pos = float(xml_node.attrib.get(constants.Y_POS))
-        aggregation:classes.Aggregation = aggregation_dict.get(uuid)
-        node = graphs_window.Node(aggregation,graph_window)
+        aggregation: classes.Aggregation = aggregation_dict.get(uuid)
+        node = graphs_window.Node(aggregation, graph_window)
         root = xml_node.attrib.get("root")
         if root == "True":
             root = True
         else:
             root = False
-        node_dict[uuid] = (node,x_pos,y_pos,root)
+        node_dict[uuid] = (node, x_pos, y_pos, root)
 
-    for node,x_pos,y_pos,root in node_dict.values():
+    for node, x_pos, y_pos, root in node_dict.values():
         if root:
             graph_window.create_scene_by_node(node)
             graph_window.draw_tree(node)
-            graph_window.combo_box.addItem(text(node.object))
             iter_child(node)
             graph_window.drawn_scenes.append(node.scene())
 
-    for node,x_pos,y_pos,root in node_dict.values():
+    for node, x_pos, y_pos, root in node_dict.values():
         node.setY(float(y_pos))
         node.setX(float(x_pos))
 
     graph_window.combo_box.setCurrentIndex(0)
     graph_window.combo_change()
 
+
 def new_file(main_window: MainWindow) -> None:
-    new_file = popups.msg_unsaved()
-    if new_file:
+    ok = popups.msg_unsaved()
+    if ok:
         main_window.save_path = None
         project_name = QInputDialog.getText(main_window, "New Project", "new Project Name:", QLineEdit.Normal, "")
 
@@ -83,39 +77,58 @@ def new_file(main_window: MainWindow) -> None:
             main_window.project.name = project_name[0]
             main_window.clear_all()
 
+
 def merge_new_file(main_window):
+    print(main_window)
     print("MERGE NEEDS TO BE PROGRAMMED")  # TODO: Write Merge
 
-def open_file_clicked(main_window:MainWindow):
-        def handle_old_data():
-            if classes.Object:
-                result = popups.msg_delete_or_merge()
-                if result is None:
-                    return
-                if result:
-                    main_window.clear_all()
 
-        def get_path():
-            file_text = "DRC Files (*.xml *.DRCxml *.xlsx);;" \
-                        " xml Files (*.xml *.DRCxml);;" \
-                        " Excel Files (*xlsx);;all (*.*)"
+def open_file_clicked(main_window: MainWindow):
+    def handle_old_data():
+        if classes.Object:
+            result = popups.msg_delete_or_merge()
+            if result is None:
+                return
+            if result:
+                main_window.clear_all()
 
-            cur_path = os.getcwd() + "/"
-            path: str = QFileDialog.getOpenFileName(main_window, "Open File", str(cur_path), file_text)[0]
-            return path
+    def get_path():
+        file_text = "DRC Files (*.xml *.DRCxml *.xlsx);;" \
+                    " xml Files (*.xml *.DRCxml);;" \
+                    " Excel Files (*xlsx);;all (*.*)"
 
-        handle_old_data()
-        path =get_path()
-        if path:
-            project = main_window.project
-            if path.endswith("xlsx"):
-                project.import_excel(path)
-            else:
-                project.open(path)
-                import_node_pos(main_window.graph_window, path)
+        cur_path = os.getcwd() + "/"
+        return QFileDialog.getOpenFileName(main_window, "Open File", str(cur_path), file_text)[0]
 
-            main_window.ui.tree_object.resizeColumnToContents(0)
-            main_window.load_graph(show=False)
-            main_window.save_path = path
-            main_window.clear_object_input()
-            main_window.fill_tree()
+    def build_aggregations():
+        gw = main_window.graph_window
+        root_nodes = list()
+        for aggreg in sorted(classes.Aggregation, key=lambda x: x.name):
+            node = graphs_window.Node(aggreg, gw)
+            if aggreg.is_root:
+                root_nodes.append(node)
+
+        for node in root_nodes:
+            gw.create_scene_by_node(node)
+            iter_child(node)
+            gw.draw_tree(node)
+
+        gw.combo_box.setCurrentIndex(0)
+        gw.combo_change()
+
+    handle_old_data()
+    path = get_path()
+    if path:
+        project = main_window.project
+        if path.endswith("xlsx"):
+            project.import_excel(path)
+            build_aggregations()
+        else:
+            project.open(path)
+            import_node_pos(main_window.graph_window, path)
+
+        main_window.ui.tree_object.resizeColumnToContents(0)
+        main_window.load_graph(show=False)
+        main_window.save_path = path
+        main_window.clear_object_input()
+        main_window.fill_tree()

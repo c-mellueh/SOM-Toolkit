@@ -11,7 +11,13 @@ from SOMcreator import constants, classes
 from desiteRuleCreator import icons
 from desiteRuleCreator.QtDesigns import ui_widget
 from desiteRuleCreator.Windows import popups
-from desiteRuleCreator.data import custom_qt
+
+
+class CustomTableItem(QTableWidgetItem):
+    def __init__(self, item: classes.Object | classes.PropertySet | classes.Attribute):
+        super(CustomTableItem, self).__init__()
+        self.linked_data = item
+        self.setText(item.name)
 
 
 class MappingTableItem(QTableWidgetItem):
@@ -60,7 +66,7 @@ def fill_attribute_table(active_object: classes.Object,
     table_widget.setRowCount(len(property_set.attributes))
 
     for i, attribute in enumerate(property_set.attributes):
-        value_item = custom_qt.CustomTableItem(attribute)
+        value_item = CustomTableItem(attribute)
 
         if attribute.is_child:
             value_item.setIcon(link_item)
@@ -193,7 +199,7 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         for offset, row_index in enumerate(selected_rows):  # iterate rows
             for col_index in range(self.table.columnCount()):  # iterate columns
-                old_item: custom_qt.CustomTableItem
+                old_item: CustomTableItem
                 old_item = sender.item(row_index, col_index)
 
                 if col_index == 0:  # get attribute
@@ -202,7 +208,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                     self.property_set.add_attribute(new_attribute)
                 if old_item:
                     if col_index == 0:
-                        new_item = custom_qt.CustomTableItem(new_attribute)
+                        new_item = CustomTableItem(new_attribute)
                         new_item.setText(new_attribute.name)
                         if new_attribute.is_child:
                             new_item.setIcon(icons.get_link_icon())
@@ -264,7 +270,7 @@ class PropertySetWindow(QtWidgets.QWidget):
     def info(self) -> None:
         """print infos of attribute to console (debug only)"""
         row = get_selected_rows(self.widget.table_widget)[0]
-        table_item: custom_qt.CustomTableItem = self.widget.table_widget.item(row, 0)
+        table_item: CustomTableItem = self.widget.table_widget.item(row, 0)
         item = table_item.linked_data
         print(item.name)
         print(f"parent: {item.parent}")
@@ -359,7 +365,7 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         def set_table_line(row: int, attrib: classes.Attribute) -> None:
             table = self.widget.table_widget
-            table.setItem(row, 0, custom_qt.CustomTableItem(attrib))
+            table.setItem(row, 0, CustomTableItem(attrib))
             table.setItem(row, 1, QTableWidgetItem(attrib.data_type))
             table.setItem(row, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attrib.value_type]))
             table.setItem(row, 3, QTableWidgetItem(str(attrib.value)))
@@ -514,12 +520,12 @@ class PropertySetWindow(QtWidgets.QWidget):
         # set Editable
         self.widget.check_box_inherit.setChecked(attribute.child_inherits_values)
 
-    def table_clicked(self, table_item: QTableWidgetItem | custom_qt.CustomTableItem) -> None:
-        item: custom_qt.CustomTableItem = self.table.item(table_item.row(), 0)
+    def table_clicked(self, table_item: QTableWidgetItem | CustomTableItem) -> None:
+        item: CustomTableItem = self.table.item(table_item.row(), 0)
         attribute = item.linked_data
         self.fill_with_attribute(attribute)
 
-    def table_double_clicked(self, table_item: QTableWidgetItem | custom_qt.CustomTableItem | MappingTableItem):
+    def table_double_clicked(self, table_item: QTableWidgetItem | CustomTableItem | MappingTableItem):
         if not isinstance(table_item, MappingTableItem):
             return
         popups.attribute_mapping(table_item.attribute)

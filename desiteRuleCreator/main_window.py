@@ -16,7 +16,6 @@ from desiteRuleCreator.QtDesigns import ui_project_settings
 from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
 from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
 from desiteRuleCreator.Windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups
-from desiteRuleCreator.data import custom_qt
 
 
 def get_icon():
@@ -57,6 +56,10 @@ class MainWindow(QMainWindow):
         self.parent_property_window = predefined_psets_window.open_pset_list(self)
         self.parent_property_window.hide()
         self.pset_window: None | propertyset_window.PropertySetWindow = None
+        self.obj_line_edit_list = [self.ui.lineEdit_object_name,
+                                   self.ui.lineEdit_ident_value,
+                                   self.ui.lineEdit_ident_attribute,
+                                   self.ui.lineEdit_ident_pSet, ]
 
         # variables
         self.icon = get_icon()
@@ -78,7 +81,7 @@ class MainWindow(QMainWindow):
         connect()
 
     @property
-    def object_tree(self) -> custom_qt.CustomTree:
+    def object_tree(self) -> object_widget.CustomTree:
         return self.ui.tree_object
 
     @property
@@ -109,7 +112,7 @@ class MainWindow(QMainWindow):
 
     # Open / Close Windows
     def closeEvent(self, event):
-        action = save_file.close_event(self, event)
+        action = save_file.close_event(self)
 
         if action:
             app.closeAllWindows()
@@ -175,7 +178,7 @@ class MainWindow(QMainWindow):
     # ObjectWidget
     def fill_tree(self) -> None:
         root_item = self.object_tree.invisibleRootItem()
-        item_dict: dict[classes.Object, custom_qt.CustomObjectTreeItem] = {
+        item_dict: dict[classes.Object, object_widget.CustomObjectTreeItem] = {
             obj: self.add_object_to_tree(obj, root_item)
             for obj in classes.Object}
 

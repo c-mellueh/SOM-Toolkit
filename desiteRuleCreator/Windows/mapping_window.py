@@ -5,24 +5,24 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtWidgets import QTreeWidgetItem, QMenu, QMainWindow, QFileDialog
+from SOMcreator import classes, constants, revit
 
 from desiteRuleCreator import icons
 from desiteRuleCreator.QtDesigns import ui_mapping_window
-from desiteRuleCreator.Windows import popups
-from desiteRuleCreator.data import custom_qt
-from SOMcreator import classes, constants,revit
+from desiteRuleCreator.Widgets import object_widget
+from desiteRuleCreator.Windows import popups, graphs_window
 
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
 
 
 class ObjectTreeItem(QTreeWidgetItem):
-    def __init__(self, object: classes.Object, parent: QTreeWidgetItem | ObjectTreeItem = None) -> None:
+    def __init__(self, obj: classes.Object, parent: QTreeWidgetItem | ObjectTreeItem = None) -> None:
         if parent is None:
             super(ObjectTreeItem, self).__init__()
         else:
             super(ObjectTreeItem, self).__init__(parent)
-        self.object = object
+        self.object = obj
         self.update()
 
     def update(self) -> None:
@@ -61,15 +61,48 @@ class AttributeTreeItem(QTreeWidgetItem):
         self.setText(1, self.attribute.revit_name)
 
 
+def item_checked(item: ObjectTreeItem | PsetTreeItem | AttributeTreeItem) -> None:
+    check = bool(item.checkState(0))
+
+    linked_data = None
+    if isinstance(item, ObjectTreeItem):
+        linked_data = item.object
+
+    if isinstance(item, PsetTreeItem):
+        linked_data = item.property_set
+
+    if isinstance(item, AttributeTreeItem):
+        linked_data = item.attribute
+
+    linked_data.mapping_dict[constants.IFC_MAPPING] = check
+    linked_data.mapping_dict[constants.SHARED_PARAMETERS] = check
+
+    disable = not check
+    for index in range(item.childCount()):
+        child = item.child(index)
+        child.setDisabled(disable)
+
+
+def pset_double_clicked(item: PsetTreeItem | AttributeTreeItem):
+    if not isinstance(item, PsetTreeItem):
+        popups.attribute_mapping(item.attribute)
+    item.update()
+
+
+def object_double_clicked(item: ObjectTreeItem) -> None:
+    popups.object_mapping(item.object)
+    item.update()
+
+
 class MappingWindow(QMainWindow):
 
     def __init__(self, main_window: MainWindow) -> None:
         def connect() -> None:
-            self.pset_tree.itemDoubleClicked.connect(self.pset_double_clicked)
-            self.object_tree.itemDoubleClicked.connect(self.object_double_clicked)
+            self.pset_tree.itemDoubleClicked.connect(pset_double_clicked)
+            self.object_tree.itemDoubleClicked.connect(object_double_clicked)
             self.object_tree.itemClicked.connect(self.object_clicked)
-            self.object_tree.itemChanged.connect(self.item_checked)
-            self.pset_tree.itemChanged.connect(self.item_checked)
+            self.object_tree.itemChanged.connect(item_checked)
+            self.pset_tree.itemChanged.connect(item_checked)
             self.object_tree.customContextMenuRequested.connect(self.object_context_menu)
             self.widget.action_ifc.triggered.connect(self.export_if_mapping)
             self.widget.action_shared_parameters.triggered.connect(self.export_shared_parameters)
@@ -87,8 +120,8 @@ class MappingWindow(QMainWindow):
         self.object_name_label = self.widget.label_object_name
         self.export_folder = None
 
-        self._active_object_item: None | custom_qt.CustomObjectTreeItem = None
-        self._active_attribute_item: None | custom_qt.CustomAttribTreeItem = None
+        self._active_object_item: None | object_widget.CustomObjectTreeItem = None
+        self._active_attribute_item: None | graphs_window.CustomAttribTreeItem = None
         self.active_object: None | classes.Object = None
         self.pset_trees: dict[classes.Object:list[PsetTreeItem]] = dict()
 
@@ -97,43 +130,22 @@ class MappingWindow(QMainWindow):
         self.fill_object_table()
         attrib: classes.Attribute
 
-    def item_checked(self, item: ObjectTreeItem | PsetTreeItem | AttributeTreeItem) -> None:
-        check = bool(item.checkState(0))
-
-        linked_data = None
-        if isinstance(item, ObjectTreeItem):
-            linked_data = item.object
-
-        if isinstance(item, PsetTreeItem):
-            linked_data = item.property_set
-
-        if isinstance(item, AttributeTreeItem):
-            linked_data = item.attribute
-
-        linked_data.mapping_dict[constants.IFC_MAPPING] = check
-        linked_data.mapping_dict[constants.SHARED_PARAMETERS] = check
-
-        disable = not check
-        for index in range(item.childCount()):
-            child = item.child(index)
-            child.setDisabled(disable)
-
     @property
-    def active_object_item(self) -> custom_qt.CustomObjectTreeItem:
+    def active_object_item(self) -> object_widget.CustomObjectTreeItem:
         return self._active_object_item
 
     @active_object_item.setter
-    def active_object_item(self, value: custom_qt.CustomObjectTreeItem):
+    def active_object_item(self, value: object_widget.CustomObjectTreeItem):
         self._active_object_item = value
         self.active_object = value.object
         self.object_name_label.setText(self.active_object.name)
 
     @property
-    def active_attribute_item(self) -> custom_qt.CustomAttribTreeItem | None:
+    def active_attribute_item(self) -> graphs_window.CustomAttribTreeItem | None:
         return self._active_attribute_item
 
     @active_attribute_item.setter
-    def active_attribute_item(self, value: custom_qt.CustomAttribTreeItem | None) -> None:
+    def active_attribute_item(self, value: graphs_window.CustomAttribTreeItem | None) -> None:
         if value is None:
             self.pset_tree.setEnabled(False)
         else:
@@ -141,7 +153,7 @@ class MappingWindow(QMainWindow):
             self._active_attribute_item = value
 
     def fill_object_table(self) -> None:
-        def copy_children(orig_item: custom_qt.CustomObjectTreeItem, new_item: ObjectTreeItem):
+        def copy_children(orig_item: object_widget.CustomObjectTreeItem, new_item: ObjectTreeItem):
             for index in range(orig_item.childCount()):
                 child = orig_item.child(index)
                 new_child = ObjectTreeItem(child.object)
@@ -157,7 +169,7 @@ class MappingWindow(QMainWindow):
         new_root = self.object_tree.invisibleRootItem()
         copy_children(orig_root, new_root)
 
-    def object_clicked(self, item: custom_qt.CustomObjectTreeItem):
+    def object_clicked(self, item: object_widget.CustomObjectTreeItem):
         self.active_object_item = item
         if self.pset_trees.get(self.active_object) is None:
             self.new_pset_table(item.object)
@@ -169,15 +181,15 @@ class MappingWindow(QMainWindow):
         for i in reversed(range(root.childCount())):
             root.removeChild(root.child(i))
 
-    def new_pset_table(self, object: classes.Object) -> None:
+    def new_pset_table(self, _object: classes.Object) -> None:
         self.clear_pset_tree()
         root = self.pset_tree.invisibleRootItem()
 
-        self.pset_trees[object] = list()
-        for pset in object.property_sets:
+        self.pset_trees[_object] = list()
+        for pset in _object.property_sets:
             pset_item = PsetTreeItem(pset)
             root.addChild(pset_item)
-            self.pset_trees[object].append(pset_item)
+            self.pset_trees[_object].append(pset_item)
             for attribute in pset.attributes:
                 AttributeTreeItem(pset_item, attribute)
             if pset.mapping_dict[constants.IFC_MAPPING]:
@@ -191,18 +203,9 @@ class MappingWindow(QMainWindow):
         for pset_item in pset_list:
             root.addChild(pset_item)
 
-    def pset_double_clicked(self, item: PsetTreeItem | AttributeTreeItem):
-        if not isinstance(item, PsetTreeItem):
-            popups.attribute_mapping(item.attribute)
-        item.update()
-
-    def object_double_clicked(self,item:ObjectTreeItem) -> None:
-        popups.object_mapping(item.object)
-        item.update()
-
     def object_context_menu(self, position: QPoint) -> None:
 
-        def recursive_expand(item: custom_qt.CustomObjectTreeItem, expand: bool):
+        def recursive_expand(item: object_widget.CustomObjectTreeItem, expand: bool):
             item.setExpanded(expand)
             for i in range(item.childCount()):
                 child = item.child(i)
@@ -226,7 +229,7 @@ class MappingWindow(QMainWindow):
 
         def modify_ifc_mapping():
             item = selected_items[0]
-            self.object_double_clicked(item)
+            object_double_clicked(item)
 
         menu = QMenu()
 
@@ -235,7 +238,7 @@ class MappingWindow(QMainWindow):
         action_collapse = menu.addAction("Collapse")
         action_check = menu.addAction("Check")
         action_uncheck = menu.addAction("Uncheck")
-        if len(selected_items) ==1:
+        if len(selected_items) == 1:
             action_modify_ifc = menu.addAction("Modify IFC Mapping")
             action_modify_ifc.triggered.connect(modify_ifc_mapping)
 
@@ -246,7 +249,7 @@ class MappingWindow(QMainWindow):
         menu.exec(self.object_tree.viewport().mapToGlobal(position))
 
     def get_export_data(self) -> (str, dict[str, (list[classes.Attribute], set[str])]):
-        def iterate(item: custom_qt.CustomObjectTreeItem):
+        def iterate(item: object_widget.CustomObjectTreeItem):
             nonlocal pset_dict
 
             def compare_property_sets():
