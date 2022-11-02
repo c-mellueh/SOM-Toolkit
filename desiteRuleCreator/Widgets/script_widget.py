@@ -1,13 +1,27 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from PySide6.QtCore import Slot, Qt, QRect, QSize
 from PySide6.QtGui import QColor, QPainter, QTextFormat
-from PySide6.QtWidgets import QPlainTextEdit, QWidget, QTextEdit
+from PySide6.QtWidgets import QPlainTextEdit, QWidget, QTextEdit, QListWidgetItem
+from SOMcreator import classes
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
-from desiteRuleCreator.data import classes
+from desiteRuleCreator.Widgets import object_widget
 from desiteRuleCreator.Windows import popups
 
+if TYPE_CHECKING:
+    from desiteRuleCreator.main_window import MainWindow
 
-def init(main_window):
+
+class ScriptWidget(QListWidgetItem):
+    def __init__(self, title: str, obj: classes.Object):
+        super(ScriptWidget, self).__init__(title)
+        self.script = classes.Script(title, obj)
+
+
+def init(main_window: MainWindow):
     def connect():
         ui.pushButton_add_script.clicked.connect(main_window.add_script)
         ui.pushButton_delete_script.clicked.connect(main_window.delete_selected_scripts)
@@ -26,12 +40,12 @@ def init(main_window):
     set_enable(main_window, False)
 
 
-def item_changed(main_window, item: classes.Script):
+def item_changed(main_window: MainWindow, item: ScriptWidget):
     item.name = item.text()
     main_window.ui.label_script_name.setText(item.name)
 
 
-def selection_changed(main_window):
+def selection_changed(main_window: MainWindow):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     sel_items = ui.listWidget_scripts.selectedItems()
 
@@ -47,18 +61,17 @@ def selection_changed(main_window):
     pass
 
 
-def clicked(main_window, item: classes.Script):
+def clicked(main_window: MainWindow, item: ScriptWidget):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     ui.code_edit.setEnabled(True)
     edit: QPlainTextEdit = ui.code_edit
-    edit.setPlainText(item.code)
-    # ui.code_edit.setText(item.code)
+    edit.setPlainText(item.script.code)
 
     for button in code_buttons(main_window):
         button.setEnabled(True)
 
 
-def change_script_list_visibility(main_window):
+def change_script_list_visibility(main_window: MainWindow):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
 
     if ui.widget_vertical_stack.isHidden():
@@ -70,7 +83,7 @@ def change_script_list_visibility(main_window):
         print(script.name)
 
 
-def script_buttons(main_window):
+def script_buttons(main_window: MainWindow):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     buttons = [
         ui.pushButton_add_script,
@@ -80,7 +93,7 @@ def script_buttons(main_window):
     return buttons
 
 
-def code_buttons(main_window):
+def code_buttons(main_window: MainWindow):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     buttons = [
         ui.pushButton_burger,
@@ -90,16 +103,16 @@ def code_buttons(main_window):
     return buttons
 
 
-def show(main_window):
+def show(main_window: MainWindow):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
-    tree_item: classes.CustomObjectTreeItem = main_window.selected_object()
+    tree_item: object_widget.CustomObjectTreeItem = main_window.selected_object()
     if tree_item is not None:
         obj = tree_item.object
         for script in obj.scripts:
             ui.listWidget_scripts.addItem(script)
 
 
-def delete_objects(main_window):
+def delete_objects(main_window: MainWindow):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
 
     string_list = [x.text() for x in ui.listWidget_scripts.selectedItems()]
@@ -108,13 +121,13 @@ def delete_objects(main_window):
     if delete_request:
 
         for script in ui.listWidget_scripts.selectedItems():
-            item: classes.Script = ui.listWidget_scripts.takeItem(ui.listWidget_scripts.indexFromItem(script).row())
-            item.object.delete_script(item)
+            item: ScriptWidget = ui.listWidget_scripts.takeItem(ui.listWidget_scripts.indexFromItem(script).row())
+            item.script.object.delete_script(item.script)
         ui.code_edit.clear()
         selection_changed(main_window)
 
 
-def set_enable(main_window, value: bool):
+def set_enable(main_window: MainWindow, value: bool):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     ui.tab_code.setEnabled(value)
     if not value:
@@ -135,24 +148,24 @@ def set_enable(main_window, value: bool):
     ui.label_script_name.setText(" ")
 
 
-def add_script(main_window):
+def add_script(main_window: MainWindow):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
-    script = classes.Script("NewScript", main_window.active_object)
+    script = ScriptWidget("NewScript", main_window.active_object)
     ui.listWidget_scripts.addItem(script)
     ui.listWidget_scripts.setCurrentItem(script)
     selection_changed(main_window)
     item_changed(main_window, script)
 
 
-def update_script(main_window):
+def update_script(main_window: MainWindow):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     script_list = main_window.ui.listWidget_scripts
     selected_items = script_list.selectedItems()
 
     if len(selected_items) == 1:
-        item: classes.Script = selected_items[0]
+        item: ScriptWidget = selected_items[0]
         item.code = ui.code_edit.toPlainText()
-        ui.label_script_name.setText(item.name)
+        ui.label_script_name.setText(item.script.name)
         ui.label_script_name.setEnabled(True)
 
 
@@ -165,7 +178,7 @@ class LineNumberArea(QWidget):
         return QSize(self._code_editor.line_number_area_width(), 0)
 
     def paintEvent(self, event):
-        self._code_editor.lineNumberAreaPaintEvent(event)
+        self._code_editor.line_number_area_paint_event(event)
 
 
 class CodeEditor(QPlainTextEdit):
@@ -197,7 +210,7 @@ class CodeEditor(QPlainTextEdit):
         rect = QRect(cr.left(), cr.top(), width, cr.height())
         self.line_number_area.setGeometry(rect)
 
-    def lineNumberAreaPaintEvent(self, event):
+    def line_number_area_paint_event(self, event):
         with QPainter(self.line_number_area) as painter:
             painter.fillRect(event.rect(), Qt.lightGray)
             block = self.firstVisibleBlock()
@@ -220,7 +233,7 @@ class CodeEditor(QPlainTextEdit):
                 block_number += 1
 
     @Slot()
-    def update_line_number_area_width(self, newBlockCount):
+    def update_line_number_area_width(self, new_block_count):
         self.setViewportMargins(self.line_number_area_width(), 0, 0, 0)
 
     @Slot()

@@ -1,23 +1,77 @@
 from __future__ import annotations
 
-from PySide6.QtCore import QPoint, Qt, QCoreApplication
-from PySide6.QtGui import QShortcut, QKeySequence
-from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem
-from typing import TYPE_CHECKING
-import logging
 import copy as cp
+import logging
+from typing import TYPE_CHECKING
+
+from PySide6.QtCore import QPoint, Qt
+from PySide6.QtGui import QShortcut, QKeySequence, QDropEvent
+from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem
+from SOMcreator import classes, constants
 
 from desiteRuleCreator.QtDesigns import ui_mainwindow
 from desiteRuleCreator.Widgets import script_widget, property_widget
 from desiteRuleCreator.Windows import popups
-from desiteRuleCreator.data import classes, constants
 
 if TYPE_CHECKING:
     from desiteRuleCreator.main_window import MainWindow
 
 
-def init(main_window:MainWindow):
-    def init_tree(tree: classes.CustomTree):
+class CustomTree(QTreeWidget):
+    def __init__(self, layout) -> None:
+        if layout is not None:
+            super(CustomTree, self).__init__(layout)
+        else:
+            super(CustomTree, self).__init__()
+
+    def dropEvent(self, event: QDropEvent) -> None:
+        selected_items = self.selectedItems()
+        droped_on_item = self.itemFromIndex(self.indexAt(event.pos()))
+        if self.dropIndicatorPosition() == QAbstractItemView.DropIndicatorPosition.OnItem:
+            super(CustomTree, self).dropEvent(event)
+            parent: classes.Object = droped_on_item.object
+
+        else:
+            super(CustomTree, self).dropEvent(event)
+            parent: classes.Object = droped_on_item.object.parent
+
+        for el in selected_items:
+            obj: classes.Object = el.object
+            if parent is not None:
+                obj.parent = parent
+            else:
+                obj.parent = None
+
+
+class CustomObjectTreeItem(QTreeWidgetItem):
+    def __init__(self, obj: classes.Object, func=None) -> None:
+        super(CustomObjectTreeItem, self).__init__()
+        self._object = obj
+        self._func = func
+        self.update()
+
+    def addChild(self, child: CustomObjectTreeItem) -> None:
+        super(CustomObjectTreeItem, self).addChild(child)
+        if child.object not in self.object.children:
+            self.object.add_child(child.object)
+
+    @property
+    def object(self) -> classes.Object:
+        return self._object
+
+    def update(self) -> None:
+        self.setText(0, self.object.name)
+        if self._func is not None:
+            self._func(self.object)
+            return
+        if self.object.is_concept:
+            self.setText(1, "")
+        else:
+            self.setText(1, str(self.object.ident_attrib.value))
+
+
+def init(main_window: MainWindow):
+    def init_tree(tree: CustomTree):
         # Design Tree
         tree.setObjectName(u"treeWidget_objects")
         tree.setDragDropMode(QAbstractItemView.InternalMove)
@@ -31,8 +85,8 @@ def init(main_window:MainWindow):
         tree.viewport().setAcceptDrops(True)
 
         ___qtreewidgetitem = tree.headerItem()
-        ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None))
-        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objects", None))
+        ___qtreewidgetitem.setText(1, "Identifier")
+        ___qtreewidgetitem.setText(0, "Objects")
 
     def connect_items():
         ui: ui_mainwindow.Ui_MainWindow = main_window.ui
@@ -44,23 +98,20 @@ def init(main_window:MainWindow):
 
     main_window.ui.verticalLayout_objects.removeWidget(main_window.ui.tree_object)
     main_window.ui.tree_object.close()
-    main_window.ui.tree_object = classes.CustomTree(main_window.ui.verticalLayout_main)
+    main_window.ui.tree_object = CustomTree(main_window.ui.verticalLayout_main)
     main_window.ui.verticalLayout_objects.addWidget(main_window.ui.tree_object)
     init_tree(main_window.ui.tree_object)
 
     main_window.ui.verticalLayout_objects.addWidget(main_window.ui.tree_object)
     main_window.object_buttons = [main_window.ui.button_objects_add]
-    main_window.obj_line_edit_list = [main_window.ui.lineEdit_object_name,
-                                      main_window.ui.lineEdit_ident_value,
-                                      main_window.ui.lineEdit_ident_attribute,
-                                      main_window.ui.lineEdit_ident_pSet, ]
+
     main_window.delSc = QShortcut(QKeySequence('Ctrl+X'), main_window)
     main_window.grpSc = QShortcut(QKeySequence('Ctrl+G'), main_window)
     connect_items()
 
 
-def selected_object(main_window:MainWindow) -> classes.CustomObjectTreeItem | None:
-    tree: classes.CustomTree = main_window.ui.tree_object
+def selected_object(main_window: MainWindow) -> CustomObjectTreeItem | None:
+    tree: CustomTree = main_window.ui.tree_object
     sel_items = tree.selectedItems()
     if len(sel_items) == 1:
         return sel_items[0]
@@ -77,12 +128,12 @@ def all_equal(iterator):
     return all(first == x for x in iterator)
 
 
-def clear_object_input(main_window):
+def clear_object_input(main_window: MainWindow):
     for el in main_window.obj_line_edit_list:
         el.clear()
 
 
-def clear_all(main_window:MainWindow):
+def clear_all(main_window: MainWindow):
     # Clean Widget
     clear_object_input(main_window)
     main_window.ui.tree_object.clear()
@@ -92,13 +143,11 @@ def clear_all(main_window:MainWindow):
         obj.delete()
 
 
-
-
-def right_click(main_window:MainWindow, position: QPoint):
+def right_click(main_window: MainWindow, position: QPoint):
     menu = QMenu()
 
     selected_items = main_window.ui.tree_object.selectedItems()
-    if len(selected_items)==1:
+    if len(selected_items) == 1:
         main_window.action_copy = menu.addAction("Copy")
         main_window.action_rename_option = menu.addAction("Rename")
         main_window.action_ifc_mapping = menu.addAction("modify IFC Mapping")
@@ -106,7 +155,7 @@ def right_click(main_window:MainWindow, position: QPoint):
         main_window.action_copy.triggered.connect(main_window.copy_object)
         main_window.action_ifc_mapping.triggered.connect(main_window.rc_ifc_mapping)
 
-    if len(selected_items)!=0:
+    if len(selected_items) != 0:
         main_window.action_delete_attribute = menu.addAction("Delete")
         main_window.action_expand_selection = menu.addAction("Expand")
         main_window.action_collapse_selection = menu.addAction("Collapse")
@@ -117,13 +166,13 @@ def right_click(main_window:MainWindow, position: QPoint):
     main_window.action_group_objects = menu.addAction("Group")
     main_window.action_group_objects.triggered.connect(main_window.rc_group)
 
-
     if logging.root.level <= logging.DEBUG:
         main_window.action_info = menu.addAction("Info")
         main_window.action_info.triggered.connect(main_window.info)
     menu.exec(main_window.ui.tree_object.viewport().mapToGlobal(position))
 
-def info(main_window:MainWindow):
+
+def info(main_window: MainWindow):
     item = selected_object(main_window).object
     print(item.name)
     print(f"parent: {item.parent}")
@@ -135,18 +184,18 @@ def info(main_window:MainWindow):
     else:
         print("no children")
 
-    if item.nodes:
+    if item.aggregation_representations:
         print("nodes:")
-        for node in item.nodes:
+        for node in item.aggregation_representations:
             print(f"   {node}")
     else:
         print("no nodes")
 
 
-def rc_rename(main_window:MainWindow):
+def rc_rename(main_window: MainWindow):
     item_list = [item for item in main_window.ui.tree_object.selectedItems()]
-    if len(item_list)==1:
-        item: classes.CustomObjectTreeItem = item_list[0]
+    if len(item_list) == 1:
+        item: CustomObjectTreeItem = item_list[0]
         obj: classes.Object = item.object
         name, fulfilled = popups.req_new_name(main_window, item.text(0))
 
@@ -156,6 +205,7 @@ def rc_rename(main_window:MainWindow):
     else:
         popups.msg_select_only_one()
         return
+
 
 def rc_collapse(tree: QTreeWidget):
     for item in tree.selectedItems():
@@ -167,11 +217,10 @@ def rc_expand(tree: QTreeWidget):
         tree.expandRecursively(item)
 
 
-def copy(main_window:MainWindow):
+def copy(main_window: MainWindow):
     selected_items = main_window.ui.tree_object.selectedItems()
-    item:classes.CustomObjectTreeItem = selected_items[0]
+    item: CustomObjectTreeItem = selected_items[0]
     old_obj = item.object
-    new_object = None
 
     if old_obj.is_concept:
         prefil = None
@@ -181,8 +230,8 @@ def copy(main_window:MainWindow):
                   old_obj.ident_attrib.name,
                   old_obj.ident_attrib.value[0]]
 
-    input_fields, is_concept = popups.req_group_name(main_window,prefil)
-    [obj_name, ident_pset_name, ident_attrib_name, ident_value]= input_fields
+    input_fields, is_concept = popups.req_group_name(main_window, prefil)
+    [obj_name, ident_pset_name, ident_attrib_name, ident_value] = input_fields
 
     if obj_name:
         psets = list()
@@ -203,12 +252,12 @@ def copy(main_window:MainWindow):
 
                 for pset in psets:
 
-                    #ident pset finden
+                    # ident pset finden
                     if pset.name == ident_pset_name:
                         merk_attrib = None
                         for attribute in pset.attributes:
 
-                            #ident Attrib finden
+                            # ident Attrib finden
                             if attribute.name == ident_attrib_name:
                                 merk_attrib = attribute
                         if merk_attrib is not None:
@@ -216,13 +265,13 @@ def copy(main_window:MainWindow):
                             ident_attribute.value = [ident_value]
                         else:
                             ident_name = ident_attrib_name
-                            ident_attribute = classes.Attribute(pset,ident_name,[ident_value],constants.LIST)
+                            ident_attribute = classes.Attribute(pset, ident_name, [ident_value], constants.LIST)
 
                 if ident_attribute is None:
                     ident_pset = classes.PropertySet(ident_pset_name)
-                    ident_attribute = classes.Attribute(ident_pset,ident_attrib_name,[ident_value],constants.LIST)
+                    ident_attribute = classes.Attribute(ident_pset, ident_attrib_name, [ident_value], constants.LIST)
                     psets.append(ident_pset)
-                new_object = classes.Object(obj_name,ident_attribute)
+                new_object = classes.Object(obj_name, ident_attribute)
 
         for pset in psets:
             new_object.add_property_set(pset)
@@ -230,60 +279,58 @@ def copy(main_window:MainWindow):
             parent = item.treeWidget().invisibleRootItem()
         else:
             parent = item.parent()
-        group_item: classes.CustomObjectTreeItem = main_window.add_object_to_tree(new_object, parent)
+        main_window.add_object_to_tree(new_object, parent)
         if old_obj.parent is not None:
             new_object.parent = old_obj.parent
 
-def rc_group_items(main_window:MainWindow):
-    input_fields ,is_concept = popups.req_group_name(main_window)
-    [group_name, ident_pset, ident_attrib, ident_value]= input_fields
 
-    if group_name:
-        selected_items = main_window.ui.tree_object.selectedItems()
-        if len(selected_items)==0:
-            parent = None
-        else:
-            parent_classes = [item for item in selected_items if item.parent() not in selected_items]
-            parent = parent_classes[0].parent()
+def rc_group_items(main_window: MainWindow):
+    input_fields, is_concept = popups.req_group_name(main_window)
+    [group_name, ident_pset, ident_attrib, ident_value] = input_fields
 
+    if not group_name:
+        popups.msg_missing_input()
+        return
+
+    if not is_concept:
+        is_empty = [True for text in input_fields if not bool(text)]
+        if is_empty:
+            popups.msg_missing_input()
+            return
+
+    selected_items = main_window.ui.tree_object.selectedItems()
+    if len(selected_items) == 0:
+        parent_classes = list()
+        parent: QTreeWidgetItem = main_window.ui.tree_object.invisibleRootItem()
+    else:
+        parent_classes = [item for item in selected_items if item.parent() not in selected_items]
+        parent = parent_classes[0].parent()
         if parent is None:
             parent: QTreeWidgetItem = main_window.ui.tree_object.invisibleRootItem()
 
-        if is_concept:
-            group_obj = classes.Object(group_name,"Group" )
-        else:
-            is_empty = [True for text in input_fields if not bool(text)]
-            if is_empty:
-                popups.msg_missing_input()
-                return
-            else:
+    if is_concept:
+        group_obj = classes.Object(group_name, "Group")
+    else:
+        pset = classes.PropertySet(ident_pset)
+        identifier = classes.Attribute(pset, ident_attrib, [ident_value], constants.LIST)
+        group_obj = classes.Object(group_name, identifier)
+        group_obj.add_property_set(pset)
 
-                pset = classes.PropertySet(ident_pset)
-                identifier = classes.Attribute(pset, ident_attrib, [ident_value], constants.LIST)
-                group_obj = classes.Object(group_name, identifier)
-                group_obj.add_property_set(pset)
+    group_item: CustomObjectTreeItem = main_window.add_object_to_tree(group_obj, parent)
 
-        group_item: classes.CustomObjectTreeItem = main_window.add_object_to_tree(group_obj, parent)
-
-        if len(selected_items) == 0:
-            return
-
-        for item in parent_classes:
-            child: classes.CustomObjectTreeItem = parent.takeChild(parent.indexOfChild(item))
-            group_obj.add_child(child.object)
-            group_item.addChild(child)
+    for item in parent_classes:
+        child: CustomObjectTreeItem = parent.takeChild(parent.indexOfChild(item))
+        group_obj.add_child(child.object)
+        group_item.addChild(child)
 
 
-def single_click(main_window:MainWindow, item: classes.CustomObjectTreeItem):
+def single_click(main_window: MainWindow, item: CustomObjectTreeItem):
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     property_widget.clear_attribute_table(main_window)
 
-
-    if len(main_window.ui.tree_object.selectedItems())>1:
+    if len(main_window.ui.tree_object.selectedItems()) > 1:
         main_window.multi_selection()
-
     else:
-
         obj: classes.Object = item.object
         main_window.active_object = obj
         property_widget.fill_table(main_window, obj)
@@ -291,16 +338,16 @@ def single_click(main_window:MainWindow, item: classes.CustomObjectTreeItem):
         main_window.update_completer()
 
         ui.lineEdit_object_name.setText(obj.name)
-        fill_line_inputs(main_window,obj)
+        fill_line_inputs(main_window, obj)
 
         if not obj.is_concept:
-
             ui: ui_mainwindow.Ui_MainWindow = main_window.ui
 
             table_widget = ui.table_pset
-            property_widget.left_click(main_window,table_widget.item(0,0))
+            property_widget.left_click(main_window, table_widget.item(0, 0))
 
-def fill_line_inputs(main_window, obj:classes.Object):
+
+def fill_line_inputs(main_window, obj: classes.Object):
     if obj is None:
         return
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
@@ -328,7 +375,7 @@ def set_ident_line_enable(main_window, value: bool):
     main_window.ui.label_Ident.setVisible(value)
 
 
-def multi_selection(main_window:MainWindow):
+def multi_selection(main_window: MainWindow):
     main_window.set_right_window_enable(False)
 
     items = main_window.ui.tree_object.selectedItems()
@@ -343,7 +390,8 @@ def multi_selection(main_window:MainWindow):
 
         main_window.set_ident_line_enable(True)
         object_names = [item.object.name for item in items]
-        ident_psets = [item.object.ident_attrib.property_set.name for item in items if isinstance(item.object.ident_attrib,classes.Attribute)]
+        ident_psets = [item.object.ident_attrib.property_set.name for item in items if
+                       isinstance(item.object.ident_attrib, classes.Attribute)]
         ident_attributes = [item.object.ident_attrib.name for item in items]
         ident_values = [item.object.ident_attrib.value for item in items]
 
@@ -371,47 +419,45 @@ def multi_selection(main_window:MainWindow):
 
 
 def add_object(main_window):
-    def missing_input(input_list):
+    def missing_input():
         for el in input_list:
             if el == "" or el is None:
                 return True
         return False
 
     def already_exists(new_list):
-        obj:classes.Object
-        for obj in classes.Object:
-            ident:classes.Attribute = obj.ident_attrib
-            if not obj.is_concept:
-                ident_list = [ident.property_set.name,ident.name,ident.value]
+        for iter_obj in classes.Object:
+            ident_attrib: classes.Attribute = iter_obj.ident_attrib
+            if not iter_obj.is_concept:
+                ident_list = [ident_attrib.property_set.name, ident_attrib.name, ident_attrib.value]
                 if ident_list == new_list:
                     return True
 
         return False
 
-    def create_ident(property_set:classes.PropertySet, ident_name:str, ident_value:[str]) -> classes.Attribute:
-        ident: classes.Attribute = property_set.get_attribute_by_name(ident_name)
-        if ident is None:
-            ident = classes.Attribute(property_set, ident_name, ident_value, constants.LIST)
+    def create_ident(pset: classes.PropertySet, ident_name: str, ident_value: [str]) -> classes.Attribute:
+        ident_attrib: classes.Attribute = pset.get_attribute_by_name(ident_name)
+        if ident_attrib is None:
+            ident_attrib = classes.Attribute(pset, ident_name, ident_value, constants.LIST)
         else:
-            ident.value = ident_value  #
+            ident_attrib.value = ident_value  #
 
-        return ident
+        return ident_attrib
 
     name = main_window.ui.lineEdit_object_name.text()
     p_set_name = main_window.ui.lineEdit_ident_pSet.text()
-    ident_name = main_window.ui.lineEdit_ident_attribute.text()
-    ident_value = [main_window.ui.lineEdit_ident_value.text()]
+    ident_attrib_name = main_window.ui.lineEdit_ident_attribute.text()
+    ident_attrib_value = [main_window.ui.lineEdit_ident_value.text()]
 
-    input_list = [name, p_set_name, ident_name, ident_value]
+    input_list = [name, p_set_name, ident_attrib_name, ident_attrib_value]
 
-
-
-    if not missing_input(input_list):
+    if not missing_input():
         if "*" not in input_list:
             if not already_exists(input_list[1:]):
 
                 parent = None
-                if p_set_name in property_widget.predefined_pset_list(main_window):  # if PropertySet allready predefined
+                if p_set_name in property_widget.predefined_pset_list(
+                        main_window):  # if PropertySet allready predefined
                     result = popups.req_merge_pset()  # ask if you want to merge
                     if result:
                         parent = property_widget.get_parent_by_name(main_window.active_object, p_set_name)
@@ -423,7 +469,7 @@ def add_object(main_window):
                 else:
                     property_set = classes.PropertySet(p_set_name)
 
-                ident = create_ident(property_set, ident_name, ident_value)
+                ident = create_ident(property_set, ident_attrib_name, ident_attrib_value)
                 obj = classes.Object(name, ident)
                 obj.add_property_set(ident.property_set)
                 main_window.add_object_to_tree(obj)
@@ -439,8 +485,8 @@ def add_object(main_window):
         popups.msg_missing_input()
 
 
-def add_object_to_tree(main_window:MainWindow, obj: classes.Object, parent:QTreeWidgetItem=None):
-    item = classes.CustomObjectTreeItem(obj)
+def add_object_to_tree(main_window: MainWindow, obj: classes.Object, parent: QTreeWidgetItem = None):
+    item = CustomObjectTreeItem(obj)
     if parent is None:
         main_window.object_tree.invisibleRootItem().addChild(item)
     else:
@@ -448,45 +494,43 @@ def add_object_to_tree(main_window:MainWindow, obj: classes.Object, parent:QTree
     return item
 
 
-def rc_delete(main_window:MainWindow):
-    def delete_item(item:classes.CustomObjectTreeItem) -> None:
+def rc_delete(main_window: MainWindow):
+    def delete_item(item: CustomObjectTreeItem) -> None:
         parent = item.parent()
-        root = main_window.ui.tree_object.invisibleRootItem()
+        invisible_root = main_window.ui.tree_object.invisibleRootItem()
         item.object.delete()
         for index in reversed(range(item.childCount())):
             child = item.child(index)
             delete_item(child)
-        (parent or root).removeChild(item)
+        (parent or invisible_root).removeChild(item)
 
-    def append_string_list(obj:classes.Object) -> None:
+    def append_string_list(obj: classes.Object) -> None:
         nonlocal string_list
         string_list.append(str(obj.name))
         print(f"{obj.name} : {len(obj.children)}")
         for child in obj.children:
+            child: classes.Object
             print(f"{obj.name} -> {child.name}")
             append_string_list(child)
         pass
 
-
     string_list = list()
 
-    item:classes.CustomObjectTreeItem
-    for item in main_window.ui.tree_object.selectedItems():
-        print(f"selected_item: {item.object.name}")
-        append_string_list(item.object)
-
+    loop_item: CustomObjectTreeItem
+    for loop_item in main_window.ui.tree_object.selectedItems():
+        print(f"selected_item: {loop_item.object.name}")
+        append_string_list(loop_item.object)
 
     delete_request = popups.msg_del_items(string_list)
 
     if delete_request:
-        root: QTreeWidgetItem = main_window.ui.tree_object.invisibleRootItem()
-        for item in main_window.ui.tree_object.selectedItems():
-            delete_item(item)
+        for loop_item in main_window.ui.tree_object.selectedItems():
+            delete_item(loop_item)
         main_window.project.changed = True
 
 
 def reload_tree(main_window):
-    def loop(item: classes.CustomObjectTreeItem):
+    def loop(item: CustomObjectTreeItem):
         for i in range(item.childCount()):
             child = item.child(i)
             child.update()
@@ -496,11 +540,13 @@ def reload_tree(main_window):
     root = ui.tree_object.invisibleRootItem()
     loop(root)
 
+
 def reload(main_window):
     reload_tree(main_window)
     obj = main_window.active_object
-    fill_line_inputs(main_window,obj)
+    fill_line_inputs(main_window, obj)
 
-def rc_ifc_mapping(main_window:MainWindow):
+
+def rc_ifc_mapping(main_window: MainWindow):
     item = main_window.object_tree.selectedItems()[0]
     popups.object_mapping(item.object)

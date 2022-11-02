@@ -1,11 +1,11 @@
-import os
+from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QGridLayout, QListWidgetItem, QCompleter
+from SOMcreator import classes
+from SOMcreator.Template import IFC_4_1
 
-from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QDialogButtonBox, QGridLayout,QListWidgetItem,QCompleter
 import desiteRuleCreator.icons as icons
-from desiteRuleCreator.QtDesigns import ui_delete_request,ui_groupReq,ui_propertyset_mapping,ui_attribute_mapping
-from desiteRuleCreator.data import classes
-from desiteRuleCreator.Template import IFC_4_1
+from desiteRuleCreator.QtDesigns import ui_delete_request, ui_groupReq, ui_propertyset_mapping, ui_attribute_mapping
+
+
 def default_message(text):
     icon = icons.get_icon()
     msg_box = QMessageBox()
@@ -16,21 +16,26 @@ def default_message(text):
     msg_box.setWindowIcon(icon)
     msg_box.exec()
 
+
 def msg_select_only_one():
     text = "Select only one item!"
     default_message(text)
+
 
 def msg_recursion():
     text = "Object can't be added because of Recursion!"
     default_message(text)
 
+
 def msg_already_exists():
     text = "Object exists already!"
     default_message(text)
 
+
 def msg_attribute_already_exists():
     text = "Attribute exists already!"
     default_message(text)
+
 
 def msg_identical_identifier():
     text = "You cant create Objects with identical identifiers!"
@@ -82,9 +87,9 @@ def msg_close():
     text = "Do you want to save before exit?"
 
     msg_box = QMessageBox(QMessageBox.Icon.Warning,
-                         "Message",
-                         text,
-                         QMessageBox.Cancel | QMessageBox.Save | QMessageBox.No)
+                          "Message",
+                          text,
+                          QMessageBox.Cancel | QMessageBox.Save | QMessageBox.No)
 
     msg_box.setWindowIcon(icon)
     reply = msg_box.exec()
@@ -101,13 +106,12 @@ def msg_mod_ident():
     default_message(text)
 
 
-def req_group_name(main_window,prefil:list[str]= None):
+def req_group_name(main_window, prefil: list[str] = None):
     def change_visibility(checked):
         enable = not checked
         widget.pset_name.setEnabled(enable)
         widget.attribute_name.setEnabled(enable)
         widget.attribute_value.setEnabled(enable)
-
 
     dialog = QDialog(main_window)
     widget = ui_groupReq.Ui_Dialog()
@@ -115,27 +119,29 @@ def req_group_name(main_window,prefil:list[str]= None):
     widget.radioButton.toggled.connect(change_visibility)
     input_fields = [widget.group_name, widget.pset_name, widget.attribute_name, widget.attribute_value]
     if prefil is not None:
-        for i,field in enumerate(input_fields[:-1]):
+        for i, field in enumerate(input_fields[:-1]):
             pl_text = prefil[i]
             field.setText(pl_text)
 
     if dialog.exec():
-        return [input_field.text() for input_field in input_fields],widget.radioButton.isChecked()
+        return [input_field.text() for input_field in input_fields], widget.radioButton.isChecked()
     else:
         return [False, False, False, False], widget.radioButton.isChecked()
 
 
-def req_new_name(property_window,base_text = ""):
-    text = QInputDialog.getText(property_window, "New Name", "New Name",text = base_text)
+def req_new_name(property_window, base_text=""):
+    text = QInputDialog.getText(property_window, "New Name", "New Name", text=base_text)
     return text
+
 
 def req_pset_name(main_window):
     text = QInputDialog.getText(main_window, "New PropertySet Name ", "New PropertySet Name")
     return text
 
+
 def req_merge_pset():
     icon = icons.get_icon()
-    msg_box= QMessageBox()
+    msg_box = QMessageBox()
     msg_box.setText("Pset exists in Predefined Psets, do you want to merge?")
     msg_box.setWindowTitle(" ")
     msg_box.setIcon(QMessageBox.Icon.Warning)
@@ -151,11 +157,12 @@ def req_merge_pset():
     else:
         return None
 
+
 def msg_del_items(string_list):
     parent = QDialog()
     widget = ui_delete_request.Ui_Dialog()
     widget.setupUi(parent)
-    if len(string_list) <=1:
+    if len(string_list) <= 1:
         widget.label.setText("Delete this item?")
     else:
         widget.label.setText("Delete these items?")
@@ -168,50 +175,53 @@ def msg_del_items(string_list):
     else:
         return False
 
-def req_boq_pset(main_window,words):
+
+def req_boq_pset(main_window, words):
     input_dialog = QInputDialog(main_window)
     input_dialog.setWindowTitle("Bill of Quantities")
     input_dialog.setLabelText("BoQ PropertySet Name")
     input_dialog.setTextValue("BoQ")
-    line_edit:QLineEdit = input_dialog.findChild(QLineEdit)
+    line_edit: QLineEdit = input_dialog.findChild(QLineEdit)
 
     completer = QCompleter(words)
     line_edit.setCompleter(completer)
     ok = input_dialog.exec()
-    if ok ==1:
-        return True,input_dialog.textValue()
+    if ok == 1:
+        return True, input_dialog.textValue()
     else:
-        return False,None
+        return False, None
 
-def object_mapping(object:classes.Object) -> None:
+
+def object_mapping(obj: classes.Object) -> None:
     def add_line():
-        layout:QGridLayout = widget.widget_input_lines.layout()
+        layout: QGridLayout = widget.widget_input_lines.layout()
         new_line_edit = QLineEdit()
         widget.line_edits.append(new_line_edit)
-        layout.addWidget(new_line_edit,len(widget.line_edits)-1,0)
+        layout.addWidget(new_line_edit, len(widget.line_edits) - 1, 0)
         new_line_edit.setCompleter(compl)
 
     compl = QCompleter(IFC_4_1)
     parent = QDialog()
     widget = ui_propertyset_mapping.Ui_Dialog()
     widget.setupUi(parent)
-    widget.label_name.setText(f"IfcMapping {object.name}")
+    widget.label_name.setText(f"IfcMapping {obj.name}")
     widget.button_add.clicked.connect(add_line)
-    widget.line_edits =[widget.line_edit]
+    widget.line_edits = [widget.line_edit]
     widget.line_edit.setCompleter(compl)
 
-    for _ in range(len(object.ifc_mapping)-1):
+    for _ in range(len(obj.ifc_mapping) - 1):
         add_line()
 
-    for i, mapping in enumerate(object.ifc_mapping):
+    for i, mapping in enumerate(obj.ifc_mapping):
         line_edit = widget.line_edits[i]
         line_edit.setText(mapping)
 
     if parent.exec():
         mappings = {line_edit.text() for line_edit in widget.line_edits}
-        object.ifc_mapping = mappings
+        obj.ifc_mapping = mappings
 
-def attribute_mapping(attribute:classes.Attribute):
+
+def attribute_mapping(attribute: classes.Attribute):
     parent = QDialog()
     widget = ui_attribute_mapping.Ui_Dialog()
     widget.setupUi(parent)
@@ -220,4 +230,3 @@ def attribute_mapping(attribute:classes.Attribute):
 
     if parent.exec():
         attribute.revit_name = widget.line_edit_revit_mapping.text()
-
