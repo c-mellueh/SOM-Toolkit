@@ -594,8 +594,8 @@ class Node(QGraphicsProxyWidget):
         self.title.setText(self.name)
         self.title.show()
         self.fill_tree()
-        self.rect.setFlag(self.rect.ItemIsMovable, True)
-        self.setFlag(self.ItemIsMovable, True)
+        self.rect.setFlag(self.rect.GraphicsItemFlag.ItemIsMovable, True)
+        self.setFlag(self.GraphicsItemFlag.ItemIsMovable, True)
         fac = 0
         help_rect = self.boundingRect()
         width = help_rect.width() + fac
