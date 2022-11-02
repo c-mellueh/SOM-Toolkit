@@ -1,5 +1,4 @@
 from __future__ import annotations  # make own class referencable
-
 import logging
 from typing import Iterator, List
 
@@ -620,15 +619,26 @@ class Node(QGraphicsProxyWidget):
 
     @property
     def children(self) -> List[Node]:
+        """children are sorted for Buchheim operation"""
+
+        def sort_cat(_node: Node) -> str:
+            return _node.object.ident_attrib.value[0]
+
         all_children = [aggregation_to_node(child) for child in self.aggregation.children]
         aggregations = [child for child in all_children
                         if self.connection_type(child) == constants.AGGREGATION]
+        aggregations.sort(key=lambda x: sort_cat(x))
+
         inheritances = [child for child in all_children
                         if self.connection_type(child) == constants.INHERITANCE]
+        inheritances.sort(key=lambda x: sort_cat(x))
+
         both = [child for child in all_children
                 if self.connection_type(child) == constants.INHERITANCE + constants.AGGREGATION]
+        both.sort(key=lambda x: sort_cat(x))
 
-        return inheritances + both + aggregations  # better for drawing
+        all_children_sorted = inheritances + both + aggregations  # better for drawing
+        return all_children_sorted
 
     @property
     def name(self) -> str:
@@ -981,7 +991,6 @@ class GraphWindow(QWidget):
     def create_scene_by_node(self, node: Node) -> AggregationScene:
         scene = AggregationScene(node)
         self.scenes.append(scene)
-        scene.addItem(node)
         self.combo_box.addItem(item_to_name(node))
         return scene
 
@@ -1072,10 +1081,6 @@ class GraphWindow(QWidget):
                 x = draw_child.x * (constants.BOX_WIDHT + constants.BOX_MARGIN)
                 child.setX(x)
                 child.setY(child.base_y)
-                if child not in root.scene().items():
-                    root.scene().addItem(child)
-                    for connection in child.connections:
-                        connection.add_to_scene(root.scene())
                 child.show()
                 iter_x_pos(child, draw_child)
 
