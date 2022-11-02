@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtWidgets import QFileDialog
 
 if TYPE_CHECKING:
-    from desiteRuleCreator.main_window import MainWindow
+    from ..main_window import MainWindow
 
 
 def get_path(main_window: MainWindow, file_format: str) -> str:

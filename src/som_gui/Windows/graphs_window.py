@@ -9,10 +9,10 @@ from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QGraphicsScene,
     QInputDialog, QMenu, QGraphicsSceneMoveEvent, QGraphicsSceneHoverEvent, QTreeWidget, QTreeWidgetItem
 from SOMcreator import classes, constants
 
-from desiteRuleCreator import icons
-from desiteRuleCreator.QtDesigns import ui_GraphWindow, ui_ObjectGraphWidget
-from desiteRuleCreator.Widgets import property_widget
-from desiteRuleCreator.Windows import popups
+from .. import icons
+from ..QtDesigns import ui_GraphWindow, ui_ObjectGraphWidget
+from ..Widgets import property_widget
+from ..Windows import popups
 
 
 class CustomAttribTreeItem(QTreeWidgetItem):

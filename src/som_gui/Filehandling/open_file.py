@@ -7,10 +7,10 @@ from PySide6.QtWidgets import QInputDialog, QLineEdit, QFileDialog
 from SOMcreator import classes, constants
 from lxml import etree
 
-from desiteRuleCreator.Windows import graphs_window, popups
+from ..Windows import graphs_window, popups
 
 if TYPE_CHECKING:
-    from desiteRuleCreator.main_window import MainWindow
+    from ..main_window import MainWindow
 
 
 def string_to_bool(text: str) -> bool | None:

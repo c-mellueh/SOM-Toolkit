@@ -1,12 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
-added_files = [('desiteRuleCreator/icons','desiteRuleCreator/icons'),
-               ('desiteRuleCreator/logs','desiteRuleCreator/logs'),
+added_files = [('src/som_gui/icons','som_gui/icons'),
+               ('src/som_gui/logs','som_gui/logs'),
                ]
 
 a = Analysis(
-    ['main.py',],
+    ['src\cli.py',],
     pathex=[],
     binaries=[],
     datas=added_files,
@@ -38,7 +38,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon = 'desiteRuleCreator\\icons\icon.ico'
+    icon = 'src\\som_gui\\icons\icon.ico'
 )
 coll = COLLECT(
     exe,

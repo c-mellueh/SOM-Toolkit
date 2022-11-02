@@ -9,13 +9,13 @@ from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QCompleter, QDialog, QTableWidget, QInputDialog, QLineEdit
 from SOMcreator import classes, desite
 
-from desiteRuleCreator import icons
-from desiteRuleCreator import logs
-from desiteRuleCreator.Filehandling import open_file, save_file, export
-from desiteRuleCreator.QtDesigns import ui_project_settings
-from desiteRuleCreator.QtDesigns.ui_mainwindow import Ui_MainWindow
-from desiteRuleCreator.Widgets import script_widget, property_widget, object_widget
-from desiteRuleCreator.Windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups
+from . import icons
+from . import logs
+from .Filehandling import open_file, save_file, export
+from .QtDesigns import ui_project_settings
+from .QtDesigns.ui_mainwindow import Ui_MainWindow
+from .Widgets import script_widget, property_widget, object_widget
+from .Windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups
 
 
 def get_icon():

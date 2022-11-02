@@ -8,12 +8,12 @@ from PySide6.QtGui import QShowEvent
 from PySide6.QtWidgets import QWidget, QListWidgetItem
 from SOMcreator import classes, constants
 
-from desiteRuleCreator import icons
-from desiteRuleCreator.QtDesigns import ui_PsetInheritance
-from desiteRuleCreator.Windows import popups
+from .. import icons
+from ..QtDesigns import ui_PsetInheritance
+from ..Windows import popups
 
 if TYPE_CHECKING:
-    from desiteRuleCreator.main_window import MainWindow
+    from ..main_window import MainWindow
 
 
 class PsetItem(QListWidgetItem):

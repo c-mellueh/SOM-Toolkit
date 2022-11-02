@@ -2,8 +2,8 @@ from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QGr
 from SOMcreator import classes
 from SOMcreator.Template import IFC_4_1
 
-import desiteRuleCreator.icons as icons
-from desiteRuleCreator.QtDesigns import ui_delete_request, ui_groupReq, ui_propertyset_mapping, ui_attribute_mapping
+from .. import icons
+from .. QtDesigns import ui_delete_request, ui_groupReq, ui_propertyset_mapping, ui_attribute_mapping
 
 
 def default_message(text):

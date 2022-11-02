@@ -21,11 +21,11 @@ def get_version(rel_path: str) -> str:
 
 
 setup(
-    name='desiteRuleCreator',
-    version=get_version("desiteRuleCreator/__init__.py"),
+    name='som_gui',
+    version=get_version("src/som_gui/__init__.py"),
     description='Create Modelcheckingrules for Desite',
     author='Christoph Mellüh',
     author_email='christoph.mellueh@deutschebahn.com',
-    packages=['desiteRuleCreator'],  # would be the same as name
+    packages=['som_gui'],  # would be the same as name
     install_requires=['PySide6', 'openpyxl', 'lxml', 'jinja2','SOMcreator'],  # external packages acting as dependencies
 )

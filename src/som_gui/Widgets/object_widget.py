@@ -9,12 +9,12 @@ from PySide6.QtGui import QShortcut, QKeySequence, QDropEvent
 from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem
 from SOMcreator import classes, constants
 
-from desiteRuleCreator.QtDesigns import ui_mainwindow
-from desiteRuleCreator.Widgets import script_widget, property_widget
-from desiteRuleCreator.Windows import popups
+from ..QtDesigns import ui_mainwindow
+from ..Widgets import script_widget, property_widget
+from ..Windows import popups
 
 if TYPE_CHECKING:
-    from desiteRuleCreator.main_window import MainWindow
+    from ..main_window import MainWindow
 
 
 class CustomTree(QTreeWidget):

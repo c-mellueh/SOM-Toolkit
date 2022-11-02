@@ -6,13 +6,13 @@ from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea, QMenu, QCompleter, QWidget
 from SOMcreator import classes, constants
 
-from desiteRuleCreator.QtDesigns import ui_mainwindow
-from desiteRuleCreator.Windows import popups, propertyset_window
-from desiteRuleCreator.Windows.popups import msg_del_ident_pset, msg_del_items
-from desiteRuleCreator.Windows.propertyset_window import PropertySetWindow
+from ..QtDesigns import ui_mainwindow
+from ..Windows import popups, propertyset_window
+from ..Windows.popups import msg_del_ident_pset, msg_del_items
+from ..Windows.propertyset_window import PropertySetWindow
 
 if TYPE_CHECKING:
-    from desiteRuleCreator.main_window import MainWindow
+    from ..main_window import MainWindow
 
 
 def get_parent_by_name(active_object: classes.Object, name: str) -> classes.PropertySet | None:

@@ -8,9 +8,9 @@ from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget
 from SOMcreator import constants, classes
 
-from desiteRuleCreator import icons
-from desiteRuleCreator.QtDesigns import ui_widget
-from desiteRuleCreator.Windows import popups
+from .. import icons
+from ..QtDesigns import ui_widget
+from ..Windows import popups
 
 
 class CustomTableItem(QTableWidgetItem):

@@ -7,13 +7,13 @@ from PySide6.QtCore import Qt, QPoint
 from PySide6.QtWidgets import QTreeWidgetItem, QMenu, QMainWindow, QFileDialog
 from SOMcreator import classes, constants, revit
 
-from desiteRuleCreator import icons
-from desiteRuleCreator.QtDesigns import ui_mapping_window
-from desiteRuleCreator.Widgets import object_widget
-from desiteRuleCreator.Windows import popups, graphs_window
+from .. import icons
+from ..QtDesigns import ui_mapping_window
+from ..Widgets import object_widget
+from ..Windows import popups, graphs_window
 
 if TYPE_CHECKING:
-    from desiteRuleCreator.main_window import MainWindow
+    from ..main_window import MainWindow
 
 
 class ObjectTreeItem(QTreeWidgetItem):

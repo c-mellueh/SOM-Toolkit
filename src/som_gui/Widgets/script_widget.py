@@ -7,12 +7,12 @@ from PySide6.QtGui import QColor, QPainter, QTextFormat
 from PySide6.QtWidgets import QPlainTextEdit, QWidget, QTextEdit, QListWidgetItem
 from SOMcreator import classes
 
-from desiteRuleCreator.QtDesigns import ui_mainwindow
-from desiteRuleCreator.Widgets import object_widget
-from desiteRuleCreator.Windows import popups
+from ..QtDesigns import ui_mainwindow
+from ..Widgets import object_widget
+from ..Windows import popups
 
 if TYPE_CHECKING:
-    from desiteRuleCreator.main_window import MainWindow
+    from ..main_window import MainWindow
 
 
 class ScriptWidget(QListWidgetItem):

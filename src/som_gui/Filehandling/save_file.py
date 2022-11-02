@@ -7,11 +7,10 @@ from PySide6.QtWidgets import QFileDialog, QMessageBox
 from SOMcreator import constants, filehandling
 from lxml import etree
 
-import desiteRuleCreator.Filehandling
-from desiteRuleCreator.Windows import popups, graphs_window
+from ..Windows import popups, graphs_window
 
 if TYPE_CHECKING:
-    from desiteRuleCreator.main_window import MainWindow
+    from ..main_window import MainWindow
 
 
 def add_node_pos(tree: etree.ElementTree):
@@ -58,7 +57,7 @@ def close_event(main_window: MainWindow):
     if status:
         reply = popups.msg_close()
         if reply == QMessageBox.Save:
-            path = desiteRuleCreator.Filehandling.save_file.save_clicked(main_window)
+            path = src.desiteRuleCreator.Filehandling.save_file.save_clicked(main_window)
             if not path or path is None:
                 return False
             else:
