@@ -1,15 +1,16 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 block_cipher = None
-
+added_files = [('desiteRuleCreator/icons','desiteRuleCreator/icons'),
+               ('desiteRuleCreator/logs','desiteRuleCreator/logs'),
+               ]
 
 a = Analysis(
     ['main.py',],
     pathex=[],
     binaries=[],
-    datas=[('desiteRuleCreator/Template','desiteRuleCreator/Template'),('desiteRuleCreator/icons','desiteRuleCreator/icons'),('desiteRuleCreator/logs','desiteRuleCreator/logs')],
-    hiddenimports=['jinja2','lxml',],
+    datas=added_files,
+    hiddenimports=['jinja2','lxml','SOMcreator'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -26,7 +27,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='DesiteRuleCreator',
+    name='SOM GUI',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -47,5 +48,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='DRC_v1.2.1',
+    name='SOMGUI_v2.0.0',
 )

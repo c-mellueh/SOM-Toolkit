@@ -27,5 +27,5 @@ setup(
     author='Christoph Mellüh',
     author_email='christoph.mellueh@deutschebahn.com',
     packages=['desiteRuleCreator'],  # would be the same as name
-    install_requires=['PySide6', 'openpyxl', 'lxml', 'jinja2'],  # external packages acting as dependencies
+    install_requires=['PySide6', 'openpyxl', 'lxml', 'jinja2','SOMcreator'],  # external packages acting as dependencies
 )
