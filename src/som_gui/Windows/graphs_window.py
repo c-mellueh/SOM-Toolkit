@@ -654,7 +654,7 @@ class Node(QGraphicsProxyWidget):
         return text
 
     @property
-    def connections(self):
+    def connections(self) -> list[Connection]:
         return self._connections
 
     @connections.setter
@@ -914,10 +914,14 @@ class Node(QGraphicsProxyWidget):
     def setX(self, x: float) -> None:
         super(Node, self).setX(x)
         self.rect.setX(x)
+        for con in self.connections:
+            con.update_line()
 
     def setY(self, y: float) -> None:
         super(Node, self).setY(y)
         self.rect.setY(y)
+        for con in self.connections:
+            con.update_line()
 
 
 class GraphWindow(QWidget):

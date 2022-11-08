@@ -36,7 +36,7 @@ def import_node_pos(graph_window: graphs_window.GraphWindow, path: str):
     projekt_xml = tree.getroot()
     xml_group_nodes = projekt_xml.find(constants.NODES)
     aggregation_dict = {aggregation.uuid: aggregation for aggregation in classes.Aggregation}
-    node_dict = {}
+    node_dict:dict[str,(graphs_window.Node,float,float,bool)] = {}
     for xml_node in xml_group_nodes:
         uuid = xml_node.attrib.get(constants.IDENTIFIER)
         x_pos = float(xml_node.attrib.get(constants.X_POS))
