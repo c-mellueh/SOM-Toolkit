@@ -622,7 +622,11 @@ class Node(QGraphicsProxyWidget):
         """children are sorted for Buchheim operation"""
 
         def sort_cat(_node: Node) -> str:
-            return _node.object.ident_attrib.value[0]
+            if _node.object.is_concept:
+                text = f"_{_node.object.name}"
+            else:
+                text = _node.object.ident_attrib.value[0]
+            return text
 
         all_children = [aggregation_to_node(child) for child in self.aggregation.children]
         aggregations = [child for child in all_children
