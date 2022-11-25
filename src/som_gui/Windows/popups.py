@@ -53,10 +53,10 @@ def msg_unsaved():
     msg_box.setText("Warning, unsaved changes will be lost!")
     msg_box.setWindowTitle(" ")
     msg_box.setIcon(QMessageBox.Icon.Warning)
-    msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-    msg_box.setDefaultButton(QMessageBox.Ok)
+    msg_box.setStandardButtons(QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+    msg_box.setDefaultButton(QMessageBox.StandardButton.Ok)
     msg_box.setWindowIcon(icon)
-    if msg_box.exec() == msg_box.Ok:
+    if msg_box.exec() == msg_box.StandardButton.Ok:
         return True
     else:
         return False
@@ -69,9 +69,9 @@ def msg_delete_or_merge():
     msg_box.setWindowTitle(" ")
     msg_box.setIcon(QMessageBox.Icon.Warning)
 
-    msg_box.setStandardButtons(QMessageBox.Cancel)
-    merge_button = msg_box.addButton("Merge", QMessageBox.NoRole)
-    delete_button = msg_box.addButton("Delete", QMessageBox.YesRole)
+    msg_box.setStandardButtons(QMessageBox.StandardButton.Cancel)
+    merge_button = msg_box.addButton("Merge", QMessageBox.StandardButton.NoRole)
+    delete_button = msg_box.addButton("Delete", QMessageBox.StandardButton.YesRole)
     msg_box.setWindowIcon(icon)
     msg_box.exec()
     if msg_box.clickedButton() == merge_button:
@@ -89,7 +89,7 @@ def msg_close():
     msg_box = QMessageBox(QMessageBox.Icon.Warning,
                           "Message",
                           text,
-                          QMessageBox.Cancel | QMessageBox.Save | QMessageBox.No)
+                          QMessageBox.StandardButton.Cancel | QMessageBox.StandardButton.Save | QMessageBox.StandardButton.No)
 
     msg_box.setWindowIcon(icon)
     reply = msg_box.exec()
@@ -145,14 +145,14 @@ def req_merge_pset():
     msg_box.setText("Pset exists in Predefined Psets, do you want to merge?")
     msg_box.setWindowTitle(" ")
     msg_box.setIcon(QMessageBox.Icon.Warning)
-    msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
-    msg_box.setDefaultButton(QMessageBox.Yes)
+    msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
+    msg_box.setDefaultButton(QMessageBox.StandardButton.Yes)
     msg_box.setWindowIcon(icon)
 
     statement = msg_box.exec()
-    if statement == msg_box.Yes:
+    if statement == msg_box.StandardButton.Yes:
         return True
-    elif statement == msg_box.No:
+    elif statement == msg_box.StandardButton.No:
         return False
     else:
         return None
