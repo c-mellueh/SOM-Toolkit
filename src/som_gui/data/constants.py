@@ -15,8 +15,12 @@ RANGE = "Range"
 LIST = "List"
 XS_STRING = "xs:string"
 XS_DOUBLE = "xs:double"
-XS_BOOL = "xs:boolean"
+XS_BOOL = "xs:bool"
+XS_BOOLEAN = "xs:boolean"
 XS_INT = "xs:int"
+XS_LONG = "xs:long"
+
+DATA_TYPES = {XS_LONG,XS_BOOL,XS_STRING,XS_INT,XS_DOUBLE,XS_BOOLEAN}
 
 RANGE_STRINGS = ["Range", "range", "RANGE"]
 

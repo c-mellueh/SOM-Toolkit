@@ -7,7 +7,7 @@ from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget
 from SOMcreator import constants, classes
-
+from ..data import constants as con
 from .. import icons
 from ..QtDesigns import ui_widget
 from ..Windows import popups
@@ -153,7 +153,10 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.widget.table_widget.orig_drop_event = self.widget.table_widget.dropEvent
         self.widget.table_widget.dropEvent = self.tableDropEvent
         self.widget.table_widget.dropMimeData = self.tableDropMimeData
+        for i in reversed(range(self.widget.combo_data_type.count())):
+            self.widget.combo_data_type.removeItem(i)
 
+        self.widget.combo_data_type.addItems(sorted(list(con.DATA_TYPES)))
         self.show()
         self.resize(1000, 400)
         self.new_line()
