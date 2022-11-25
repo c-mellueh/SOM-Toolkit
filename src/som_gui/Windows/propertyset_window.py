@@ -298,8 +298,8 @@ class PropertySetWindow(QtWidgets.QWidget):
             popups.msg_attribute_already_exists()
             return
 
-        item = self.table.item(row, 0)
-        attribute: classes.Attribute = item.item
+        item:CustomTableItem = self.table.item(row, 0)
+        attribute: classes.Attribute = item.linked_data
         attribute.name = new_name
         self.widget.table_widget.item(row, 0).setText(new_name)
         self.mainWindow.reload()
