@@ -100,6 +100,14 @@ def open_file_clicked(main_window: MainWindow):
         cur_path = os.getcwd() + "/"
         return QFileDialog.getOpenFileName(main_window, "Open File", str(cur_path), file_text)[0]
 
+
+
+    handle_old_data()
+    path = get_path()
+    _open_file_by_path(main_window,path)
+
+
+def _open_file_by_path(main_window:MainWindow,path):
     def build_aggregations():
         gw = main_window.graph_window
         root_nodes = list()
@@ -116,19 +124,19 @@ def open_file_clicked(main_window: MainWindow):
         gw.combo_box.setCurrentIndex(0)
         gw.combo_change()
 
-    handle_old_data()
-    path = get_path()
-    if path:
-        project = main_window.project
-        if path.endswith("xlsx"):
-            project.import_excel(path)
-            build_aggregations()
-        else:
-            project.open(path)
-            import_node_pos(main_window.graph_window, path)
+    if not path:
+        return
 
-        main_window.ui.tree_object.resizeColumnToContents(0)
-        main_window.load_graph(show=False)
-        main_window.save_path = path
-        main_window.clear_object_input()
-        main_window.fill_tree()
+    project = main_window.project
+    if path.endswith("xlsx"):
+        project.import_excel(path)
+        build_aggregations()
+    else:
+        project.open(path)
+        import_node_pos(main_window.graph_window, path)
+
+    main_window.ui.tree_object.resizeColumnToContents(0)
+    main_window.load_graph(show=False)
+    main_window.save_path = path
+    main_window.clear_object_input()
+    main_window.fill_tree()
