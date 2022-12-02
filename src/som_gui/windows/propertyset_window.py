@@ -9,8 +9,8 @@ from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTable
 from SOMcreator import constants, classes
 from ..data import constants as con
 from .. import icons
-from ..QtDesigns import ui_widget
-from ..Windows import popups
+from ..qt_designs import ui_widget
+from ..windows import popups
 
 
 class CustomTableItem(QTableWidgetItem):

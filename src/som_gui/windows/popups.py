@@ -3,7 +3,7 @@ from SOMcreator import classes
 from SOMcreator.Template import IFC_4_1
 
 from .. import icons
-from .. QtDesigns import ui_delete_request, ui_groupReq, ui_propertyset_mapping, ui_attribute_mapping
+from .. qt_designs import ui_delete_request, ui_groupReq, ui_propertyset_mapping, ui_attribute_mapping
 
 
 def default_message(text):
@@ -70,8 +70,8 @@ def msg_delete_or_merge():
     msg_box.setIcon(QMessageBox.Icon.Warning)
 
     msg_box.setStandardButtons(QMessageBox.StandardButton.Cancel)
-    merge_button = msg_box.addButton("Merge", QMessageBox.StandardButton.NoRole)
-    delete_button = msg_box.addButton("Delete", QMessageBox.StandardButton.YesRole)
+    merge_button = msg_box.addButton("Merge", QMessageBox.ButtonRole.NoRole)
+    delete_button = msg_box.addButton("Delete", QMessageBox.ButtonRole.YesRole)
     msg_box.setWindowIcon(icon)
     msg_box.exec()
     if msg_box.clickedButton() == merge_button:
@@ -230,3 +230,9 @@ def attribute_mapping(attribute: classes.Attribute):
 
     if parent.exec():
         attribute.revit_name = widget.line_edit_revit_mapping.text()
+
+def req_attribute(attributes:dict[classes.PropertySet,classes.Attribute]):{
+
+
+
+}

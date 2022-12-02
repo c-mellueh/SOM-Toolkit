@@ -9,8 +9,8 @@ from PySide6.QtWidgets import QWidget, QListWidgetItem
 from SOMcreator import classes, constants
 
 from .. import icons
-from ..QtDesigns import ui_PsetInheritance
-from ..Windows import popups
+from ..qt_designs import ui_PsetInheritance
+from ..windows import popups
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow

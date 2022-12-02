@@ -6,10 +6,10 @@ from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea, QMenu, QCompleter, QWidget
 from SOMcreator import classes, constants
 
-from ..QtDesigns import ui_mainwindow
-from ..Windows import popups, propertyset_window
-from ..Windows.popups import msg_del_ident_pset, msg_del_items
-from ..Windows.propertyset_window import PropertySetWindow
+from ..qt_designs import ui_mainwindow
+from ..windows import popups, propertyset_window
+from ..windows.popups import msg_del_ident_pset, msg_del_items
+from ..windows.propertyset_window import PropertySetWindow
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
@@ -245,7 +245,8 @@ def add_pset(main_window: MainWindow) -> None:
 def reload(main_window: MainWindow) -> None:
     if main_window.active_object is not None:
         fill_table(main_window, main_window.active_object)
-        propertyset_window.fill_attribute_table(main_window.active_object, main_window.ui.table_attribute,
+        if main_window.pset_window is not None:
+            propertyset_window.fill_attribute_table(main_window.active_object, main_window.ui.table_attribute,
                                                 main_window.pset_window.property_set)
 
 

@@ -6,8 +6,10 @@ from typing import TYPE_CHECKING
 from PySide6.QtWidgets import QInputDialog, QLineEdit, QFileDialog
 from SOMcreator import classes, constants
 from lxml import etree
+from configparser import ConfigParser
 
-from ..Windows import graphs_window, popups
+from ..windows import graphs_window, popups
+from .. import settings
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
@@ -68,8 +70,7 @@ def import_node_pos(graph_window: graphs_window.GraphWindow, path: str):
 def new_file(main_window: MainWindow) -> None:
     ok = popups.msg_unsaved()
     if ok:
-        main_window.save_path = None
-        project_name = QInputDialog.getText(main_window, "New Project", "new Project Name:", QLineEdit.Normal, "")
+        project_name = QInputDialog.getText(main_window, "New Project", "new Project Name:", QLineEdit.EchoMode.Normal, "")
 
         if project_name[1]:
             main_window.project = classes.Project(main_window.project, project_name[0])
@@ -97,13 +98,16 @@ def open_file_clicked(main_window: MainWindow):
                     " xml Files (*.xml *.DRCxml);;" \
                     " Excel Files (*xlsx);;all (*.*)"
 
-        cur_path = os.getcwd() + "/"
+        cur_path = settings.get_file_path()
+        if not os.path.exists(cur_path):
+            cur_path = os.getcwd() + "/"
         return QFileDialog.getOpenFileName(main_window, "Open File", str(cur_path), file_text)[0]
 
 
 
     handle_old_data()
     path = get_path()
+    print(path)
     _open_file_by_path(main_window,path)
 
 
@@ -127,6 +131,7 @@ def _open_file_by_path(main_window:MainWindow,path):
     if not path:
         return
 
+    settings.set_file_path(path)
     project = main_window.project
     if path.endswith("xlsx"):
         project.import_excel(path)
@@ -137,6 +142,5 @@ def _open_file_by_path(main_window:MainWindow,path):
 
     main_window.ui.tree_object.resizeColumnToContents(0)
     main_window.load_graph(show=False)
-    main_window.save_path = path
     main_window.clear_object_input()
     main_window.fill_tree()

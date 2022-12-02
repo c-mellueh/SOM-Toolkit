@@ -10,9 +10,9 @@ from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QGraphicsScene,
 from SOMcreator import classes, constants
 
 from .. import icons
-from ..QtDesigns import ui_GraphWindow, ui_ObjectGraphWidget
-from ..Widgets import property_widget
-from ..Windows import popups
+from ..qt_designs import ui_GraphWindow, ui_ObjectGraphWidget
+from ..widgets import property_widget
+from ..windows import popups
 
 
 class CustomAttribTreeItem(QTreeWidgetItem):
@@ -291,7 +291,7 @@ class MainView(QGraphicsView):
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
 
-        node = self.item_under_mouse()
+        node:Node = self.item_under_mouse()
 
         if isinstance(node, Node):
             menu = QMenu()
@@ -299,6 +299,8 @@ class MainView(QGraphicsView):
             action_delete.triggered.connect(node.delete)
             action_toggle_con = menu.addAction("toggle Connection")
             action_toggle_con.triggered.connect(node.toggle_connection_to_parent)
+            action_add_attribute = menu.addAction("add Attribute")
+            action_add_attribute.triggered.connect(node.add_attribute)
 
             if logging.DEBUG >= logging.root.level:
                 action_info = menu.addAction("Info")
@@ -922,6 +924,10 @@ class Node(QGraphicsProxyWidget):
         self.rect.setY(y)
         for con in self.connections:
             con.update_line()
+
+    def add_attribute(self):
+        psets = self.object.property_sets
+        data = {pset:pset.attributes for pset in psets}
 
 
 class GraphWindow(QWidget):
