@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import os
+import jinja2
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtWidgets import QTreeWidgetItem, QMenu, QMainWindow, QFileDialog
-from SOMcreator import classes, constants, revit
+from SOMcreator import classes, constants, revit,allplan,filehandling
 
 from .. import icons
 from ..qt_designs import ui_mapping_window
@@ -106,6 +107,8 @@ class MappingWindow(QMainWindow):
             self.object_tree.customContextMenuRequested.connect(self.object_context_menu)
             self.widget.action_ifc.triggered.connect(self.export_if_mapping)
             self.widget.action_shared_parameters.triggered.connect(self.export_shared_parameters)
+            self.widget.action_create_mapping_script.triggered.connect(self.create_mapping_script)
+            self.widget.action_export_attribute_excel.triggered.connect(self.export_allplan_excel)
             pass
 
         super().__init__()
@@ -297,3 +300,32 @@ class MappingWindow(QMainWindow):
         path, pset_dict = self.get_export_data()
         if path:
             revit.export_shared_parameters(path, pset_dict)
+
+
+    def create_mapping_script(self):
+        name,answer = popups.req_export_pset_name(self.main_window)
+
+        if not answer:
+            return
+
+        file_text = "JavaScript (*.js);;"
+        if self.export_folder is None:
+            self.export_folder = str(os.getcwd() + "/")
+
+        path = QFileDialog.getSaveFileName(self, "Safe Mapping Script", self.export_folder, file_text)[0]
+        if not path: return
+
+        project = self.main_window.project
+        filehandling.create_mapping_script(project,name,path)
+
+    def export_allplan_excel(self):
+        file_text = "Excel Files (*.xlsx);;"
+        if self.export_folder is None:
+            self.export_folder = str(os.getcwd() + "/")
+        path = QFileDialog.getSaveFileName(self, "Safe Attribute Excel", self.export_folder, file_text)[0]
+
+        if path:
+            allplan.create_allplan_mapping(self.main_window.project,path)
+
+
+        pass

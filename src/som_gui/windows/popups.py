@@ -231,8 +231,6 @@ def attribute_mapping(attribute: classes.Attribute):
     if parent.exec():
         attribute.revit_name = widget.line_edit_revit_mapping.text()
 
-def req_attribute(attributes:dict[classes.PropertySet,classes.Attribute]):{
+def req_export_pset_name(main_window):
+    return QInputDialog.getText(main_window, "PropertySet name", "What's the name of the Export Property?")
 
-
-
-}

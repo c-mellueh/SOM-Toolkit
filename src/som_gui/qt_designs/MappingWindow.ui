@@ -96,7 +96,21 @@
     <addaction name="action_ifc"/>
     <addaction name="action_shared_parameters"/>
    </widget>
+   <widget class="QMenu" name="menu_allplan">
+    <property name="title">
+     <string>Allplan</string>
+    </property>
+    <addaction name="action_export_attribute_excel"/>
+   </widget>
+   <widget class="QMenu" name="menu_desite">
+    <property name="title">
+     <string>Desite</string>
+    </property>
+    <addaction name="action_create_mapping_script"/>
+   </widget>
    <addaction name="menu_revit"/>
+   <addaction name="menu_allplan"/>
+   <addaction name="menu_desite"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_ifc">
@@ -107,6 +121,16 @@
   <action name="action_shared_parameters">
    <property name="text">
     <string>Export Shared Parameters</string>
+   </property>
+  </action>
+  <action name="action_export_attribute_excel">
+   <property name="text">
+    <string>Export Attribute Excel</string>
+   </property>
+  </action>
+  <action name="action_create_mapping_script">
+   <property name="text">
+    <string>create mapping Script</string>
    </property>
   </action>
  </widget>
