@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MappingWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.4.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -30,6 +30,10 @@ class Ui_Form(object):
         self.action_ifc.setObjectName(u"action_ifc")
         self.action_shared_parameters = QAction(Form)
         self.action_shared_parameters.setObjectName(u"action_shared_parameters")
+        self.action_export_attribute_excel = QAction(Form)
+        self.action_export_attribute_excel.setObjectName(u"action_export_attribute_excel")
+        self.action_create_mapping_script = QAction(Form)
+        self.action_create_mapping_script.setObjectName(u"action_create_mapping_script")
         self.centralwidget = QWidget(Form)
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout = QGridLayout(self.centralwidget)
@@ -75,14 +79,22 @@ class Ui_Form(object):
         self.menubar.setGeometry(QRect(0, 0, 1159, 22))
         self.menu_revit = QMenu(self.menubar)
         self.menu_revit.setObjectName(u"menu_revit")
+        self.menu_allplan = QMenu(self.menubar)
+        self.menu_allplan.setObjectName(u"menu_allplan")
+        self.menu_desite = QMenu(self.menubar)
+        self.menu_desite.setObjectName(u"menu_desite")
         Form.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(Form)
         self.statusbar.setObjectName(u"statusbar")
         Form.setStatusBar(self.statusbar)
 
         self.menubar.addAction(self.menu_revit.menuAction())
+        self.menubar.addAction(self.menu_allplan.menuAction())
+        self.menubar.addAction(self.menu_desite.menuAction())
         self.menu_revit.addAction(self.action_ifc)
         self.menu_revit.addAction(self.action_shared_parameters)
+        self.menu_allplan.addAction(self.action_export_attribute_excel)
+        self.menu_desite.addAction(self.action_create_mapping_script)
 
         self.retranslateUi(Form)
 
@@ -93,6 +105,8 @@ class Ui_Form(object):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"MainWindow", None))
         self.action_ifc.setText(QCoreApplication.translate("Form", u"Export IFC", None))
         self.action_shared_parameters.setText(QCoreApplication.translate("Form", u"Export Shared Parameters", None))
+        self.action_export_attribute_excel.setText(QCoreApplication.translate("Form", u"Export Attribute Excel", None))
+        self.action_create_mapping_script.setText(QCoreApplication.translate("Form", u"create mapping Script", None))
         ___qtreewidgetitem = self.object_tree.headerItem()
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("Form", u"IfcMapping", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("Form", u"Objekt", None));
@@ -101,5 +115,7 @@ class Ui_Form(object):
         ___qtreewidgetitem1.setText(1, QCoreApplication.translate("Form", u"Mapping", None));
         ___qtreewidgetitem1.setText(0, QCoreApplication.translate("Form", u"PropertySet/Attribute", None));
         self.menu_revit.setTitle(QCoreApplication.translate("Form", u"Revit", None))
+        self.menu_allplan.setTitle(QCoreApplication.translate("Form", u"Allplan", None))
+        self.menu_desite.setTitle(QCoreApplication.translate("Form", u"Desite", None))
     # retranslateUi
 
