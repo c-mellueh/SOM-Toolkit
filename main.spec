@@ -3,6 +3,7 @@
 block_cipher = None
 added_files = [('src/som_gui/icons','som_gui/icons'),
                ('src/som_gui/logs','som_gui/logs'),
+               ('src/som_gui/settings','som_gui/settings'),
                ]
 
 a = Analysis(
@@ -48,5 +49,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='SOMGUI_v2.0.0',
+    name='SOMGUI_v2.0.1',
 )
