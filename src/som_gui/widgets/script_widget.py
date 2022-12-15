@@ -7,9 +7,9 @@ from PySide6.QtGui import QColor, QPainter, QTextFormat
 from PySide6.QtWidgets import QPlainTextEdit, QWidget, QTextEdit, QListWidgetItem
 from SOMcreator import classes
 
-from ..QtDesigns import ui_mainwindow
-from ..Widgets import object_widget
-from ..Windows import popups
+from ..qt_designs import ui_mainwindow
+from ..widgets import object_widget
+from ..windows import popups
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow

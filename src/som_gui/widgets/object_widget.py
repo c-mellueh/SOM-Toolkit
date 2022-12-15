@@ -9,9 +9,9 @@ from PySide6.QtGui import QShortcut, QKeySequence, QDropEvent
 from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem
 from SOMcreator import classes, constants
 
-from ..QtDesigns import ui_mainwindow
-from ..Widgets import script_widget, property_widget
-from ..Windows import popups
+from ..qt_designs import ui_mainwindow
+from ..widgets import script_widget, property_widget
+from ..windows import popups
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow

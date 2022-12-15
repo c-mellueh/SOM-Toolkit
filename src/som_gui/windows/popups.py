@@ -3,7 +3,7 @@ from SOMcreator import classes
 from SOMcreator.Template import IFC_4_1
 
 from .. import icons
-from .. QtDesigns import ui_delete_request, ui_groupReq, ui_propertyset_mapping, ui_attribute_mapping
+from .. qt_designs import ui_delete_request, ui_groupReq, ui_propertyset_mapping, ui_attribute_mapping
 
 
 def default_message(text):
@@ -53,10 +53,10 @@ def msg_unsaved():
     msg_box.setText("Warning, unsaved changes will be lost!")
     msg_box.setWindowTitle(" ")
     msg_box.setIcon(QMessageBox.Icon.Warning)
-    msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-    msg_box.setDefaultButton(QMessageBox.Ok)
+    msg_box.setStandardButtons(QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+    msg_box.setDefaultButton(QMessageBox.StandardButton.Ok)
     msg_box.setWindowIcon(icon)
-    if msg_box.exec() == msg_box.Ok:
+    if msg_box.exec() == msg_box.StandardButton.Ok:
         return True
     else:
         return False
@@ -69,9 +69,9 @@ def msg_delete_or_merge():
     msg_box.setWindowTitle(" ")
     msg_box.setIcon(QMessageBox.Icon.Warning)
 
-    msg_box.setStandardButtons(QMessageBox.Cancel)
-    merge_button = msg_box.addButton("Merge", QMessageBox.NoRole)
-    delete_button = msg_box.addButton("Delete", QMessageBox.YesRole)
+    msg_box.setStandardButtons(QMessageBox.StandardButton.Cancel)
+    merge_button = msg_box.addButton("Merge", QMessageBox.ButtonRole.NoRole)
+    delete_button = msg_box.addButton("Delete", QMessageBox.ButtonRole.YesRole)
     msg_box.setWindowIcon(icon)
     msg_box.exec()
     if msg_box.clickedButton() == merge_button:
@@ -89,7 +89,7 @@ def msg_close():
     msg_box = QMessageBox(QMessageBox.Icon.Warning,
                           "Message",
                           text,
-                          QMessageBox.Cancel | QMessageBox.Save | QMessageBox.No)
+                          QMessageBox.StandardButton.Cancel | QMessageBox.StandardButton.Save | QMessageBox.StandardButton.No)
 
     msg_box.setWindowIcon(icon)
     reply = msg_box.exec()
@@ -145,14 +145,14 @@ def req_merge_pset():
     msg_box.setText("Pset exists in Predefined Psets, do you want to merge?")
     msg_box.setWindowTitle(" ")
     msg_box.setIcon(QMessageBox.Icon.Warning)
-    msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
-    msg_box.setDefaultButton(QMessageBox.Yes)
+    msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
+    msg_box.setDefaultButton(QMessageBox.StandardButton.Yes)
     msg_box.setWindowIcon(icon)
 
     statement = msg_box.exec()
-    if statement == msg_box.Yes:
+    if statement == msg_box.StandardButton.Yes:
         return True
-    elif statement == msg_box.No:
+    elif statement == msg_box.StandardButton.No:
         return False
     else:
         return None
@@ -230,3 +230,9 @@ def attribute_mapping(attribute: classes.Attribute):
 
     if parent.exec():
         attribute.revit_name = widget.line_edit_revit_mapping.text()
+
+def req_attribute(attributes:dict[classes.PropertySet,classes.Attribute]):{
+
+
+
+}

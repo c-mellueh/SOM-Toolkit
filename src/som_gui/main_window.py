@@ -11,11 +11,11 @@ from SOMcreator import classes, desite
 
 from . import icons
 from . import logs
-from .Filehandling import open_file, save_file, export
-from .QtDesigns import ui_project_settings
-from .QtDesigns.ui_mainwindow import Ui_MainWindow
-from .Widgets import script_widget, property_widget, object_widget
-from .Windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups
+from .filehandling import open_file, save_file, export
+from .qt_designs import ui_project_settings
+from .qt_designs.ui_mainwindow import Ui_MainWindow
+from .widgets import script_widget, property_widget, object_widget
+from .windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups
 
 
 def get_icon():
@@ -64,7 +64,6 @@ class MainWindow(QMainWindow):
         # variables
         self.icon = get_icon()
         self.setWindowIcon(self.icon)
-        self._save_path = None
         self._export_path = None
         self.active_object: classes.Object | None = None
         self.graph_window = graphs_window.GraphWindow(self, show=False)
@@ -77,8 +76,8 @@ class MainWindow(QMainWindow):
         script_widget.init(self)
 
         self.ui.tree_object.resizeColumnToContents(0)
-        self.save_path = None
         connect()
+        #open_file._open_file_by_path(self,"C:/Users/ChristophMellueh/OneDrive - Deutsche Bahn/Projekte/Pforzheim/Datenmodell/BeispielBauwerksstruktur.DRCxml")
 
     @property
     def object_tree(self) -> object_widget.CustomTree:
@@ -110,7 +109,7 @@ class MainWindow(QMainWindow):
         self._save_path = value
         self._export_path = value
 
-    # Open / Close Windows
+    # Open / Close windows
     def closeEvent(self, event):
         action = save_file.close_event(self)
 
@@ -140,7 +139,7 @@ class MainWindow(QMainWindow):
     def update_script(self):
         script_widget.update_script(self)
 
-    # Filehandling
+    # filehandling
 
     # Click Events
     def save_clicked(self):
@@ -152,7 +151,6 @@ class MainWindow(QMainWindow):
     def new_file_clicked(self):
         new_file = popups.msg_unsaved()
         if new_file:
-            self.save_path = None
             project_name = QInputDialog.getText(self, "New Project", "new Project Name:", QLineEdit.Normal, "")
             if project_name[1]:
                 self.clear_all()
