@@ -322,10 +322,13 @@ class MappingWindow(QMainWindow):
         file_text = "Excel Files (*.xlsx);;"
         if self.export_folder is None:
             self.export_folder = str(os.getcwd() + "/")
+        name,answer = popups.req_export_pset_name(self.main_window)
+        if not answer:
+            return
         path = QFileDialog.getSaveFileName(self, "Safe Attribute Excel", self.export_folder, file_text)[0]
 
         if path:
-            allplan.create_allplan_mapping(self.main_window.project,path)
+            allplan.create_allplan_mapping(self.main_window.project,path,name)
 
 
         pass
