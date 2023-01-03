@@ -1,6 +1,6 @@
 # SOM GUI
-Der DesiteRuleCreator ist ein Werkzeug, welches dem/der Benutzer:in ermöglichen soll schnell Datenstrukturen für BIM Modelle zu beschreiben<br> und daraus verschiedene Vorlagen für Softwaretools zu entwerfen. <br>
-Hauptfokus liegt hierbei vor allem auf der semantischen Modellprüfung für Desite MD Pro. <br>
+Das SOM GUI ist ein Werkzeug, welches dem/der Benutzer:in ermöglichen soll, schnell Datenstrukturen für BIM Modelle zu beschreiben<br> und daraus verschiedene Vorlagen für Softwaretools zu generieren. <br>
+Hauptfokus liegt hierbei vor allem auf der semantischen Modellprüfung in Desite MD Pro. <br>
 <br>
 
 Nach Start des Programms gelangt man in den [MainView](https://github.com/c-mellueh/desiteRuleCreator/wiki/Windows#mainview):
