@@ -78,7 +78,7 @@ def fill_attribute_table(active_object: classes.Object,
         table_widget.resizeColumnsToContents()
 
         if active_object is None:
-            return
+            continue
 
         if attribute == active_object.ident_attrib:
             reformat_identifier(i)

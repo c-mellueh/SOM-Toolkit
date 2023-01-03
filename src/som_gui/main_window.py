@@ -77,7 +77,6 @@ class MainWindow(QMainWindow):
 
         self.ui.tree_object.resizeColumnToContents(0)
         connect()
-        #open_file._open_file_by_path(self,"C:/Users/ChristophMellueh/OneDrive - Deutsche Bahn/Projekte/Pforzheim/Datenmodell/BeispielBauwerksstruktur.DRCxml")
 
     @property
     def object_tree(self) -> object_widget.CustomTree:
