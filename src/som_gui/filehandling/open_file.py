@@ -1,5 +1,7 @@
 from __future__ import annotations
-
+import tempfile
+import shutil
+import openpyxl
 import os
 from typing import TYPE_CHECKING
 
@@ -103,8 +105,6 @@ def open_file_clicked(main_window: MainWindow):
             cur_path = os.getcwd() + "/"
         return QFileDialog.getOpenFileName(main_window, "Open File", str(cur_path), file_text)[0]
 
-
-
     handle_old_data()
     path = get_path()
     print(path)
@@ -134,7 +134,14 @@ def _open_file_by_path(main_window:MainWindow,path):
     settings.set_file_path(path)
     project = main_window.project
     if path.endswith("xlsx"):
-        project.import_excel(path)
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            new_path = os.path.join(tmpdirname, "excel.xlsx")
+            shutil.copy2(path, new_path)
+            book = openpyxl.load_workbook(new_path)
+            sheet_name,ok = popups.req_worksheet_name(main_window,book.sheetnames)
+        if not ok:
+            return
+        project.import_excel(path,sheet_name)
         build_aggregations()
     else:
         project.open(path)

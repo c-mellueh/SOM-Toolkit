@@ -34,6 +34,8 @@ class Ui_Form(object):
         self.action_export_attribute_excel.setObjectName(u"action_export_attribute_excel")
         self.action_create_mapping_script = QAction(Form)
         self.action_create_mapping_script.setObjectName(u"action_create_mapping_script")
+        self.action_create_vestra_mapping = QAction(Form)
+        self.action_create_vestra_mapping.setObjectName(u"action_create_vestra_mapping")
         self.centralwidget = QWidget(Form)
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout = QGridLayout(self.centralwidget)
@@ -83,6 +85,8 @@ class Ui_Form(object):
         self.menu_allplan.setObjectName(u"menu_allplan")
         self.menu_desite = QMenu(self.menubar)
         self.menu_desite.setObjectName(u"menu_desite")
+        self.menuVestra = QMenu(self.menubar)
+        self.menuVestra.setObjectName(u"menuVestra")
         Form.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(Form)
         self.statusbar.setObjectName(u"statusbar")
@@ -91,10 +95,12 @@ class Ui_Form(object):
         self.menubar.addAction(self.menu_revit.menuAction())
         self.menubar.addAction(self.menu_allplan.menuAction())
         self.menubar.addAction(self.menu_desite.menuAction())
+        self.menubar.addAction(self.menuVestra.menuAction())
         self.menu_revit.addAction(self.action_ifc)
         self.menu_revit.addAction(self.action_shared_parameters)
         self.menu_allplan.addAction(self.action_export_attribute_excel)
         self.menu_desite.addAction(self.action_create_mapping_script)
+        self.menuVestra.addAction(self.action_create_vestra_mapping)
 
         self.retranslateUi(Form)
 
@@ -107,6 +113,7 @@ class Ui_Form(object):
         self.action_shared_parameters.setText(QCoreApplication.translate("Form", u"Export Shared Parameters", None))
         self.action_export_attribute_excel.setText(QCoreApplication.translate("Form", u"Export Attribute Excel", None))
         self.action_create_mapping_script.setText(QCoreApplication.translate("Form", u"create mapping Script", None))
+        self.action_create_vestra_mapping.setText(QCoreApplication.translate("Form", u"create .amrx", None))
         ___qtreewidgetitem = self.object_tree.headerItem()
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("Form", u"IfcMapping", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("Form", u"Objekt", None));
@@ -117,5 +124,6 @@ class Ui_Form(object):
         self.menu_revit.setTitle(QCoreApplication.translate("Form", u"Revit", None))
         self.menu_allplan.setTitle(QCoreApplication.translate("Form", u"Allplan", None))
         self.menu_desite.setTitle(QCoreApplication.translate("Form", u"Desite", None))
+        self.menuVestra.setTitle(QCoreApplication.translate("Form", u"Vestra", None))
     # retranslateUi
 

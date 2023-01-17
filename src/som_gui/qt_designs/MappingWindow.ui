@@ -108,9 +108,16 @@
     </property>
     <addaction name="action_create_mapping_script"/>
    </widget>
+   <widget class="QMenu" name="menuVestra">
+    <property name="title">
+     <string>Vestra</string>
+    </property>
+    <addaction name="action_create_vestra_mapping"/>
+   </widget>
    <addaction name="menu_revit"/>
    <addaction name="menu_allplan"/>
    <addaction name="menu_desite"/>
+   <addaction name="menuVestra"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_ifc">
@@ -131,6 +138,11 @@
   <action name="action_create_mapping_script">
    <property name="text">
     <string>create mapping Script</string>
+   </property>
+  </action>
+  <action name="action_create_vestra_mapping">
+   <property name="text">
+    <string>create .amrx</string>
    </property>
   </action>
  </widget>

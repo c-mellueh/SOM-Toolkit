@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import os
-import jinja2
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtWidgets import QTreeWidgetItem, QMenu, QMainWindow, QFileDialog
-from SOMcreator import classes, constants, revit,allplan,filehandling
+from SOMcreator import classes, constants, revit, allplan, filehandling, vestra
 
 from .. import icons
 from ..qt_designs import ui_mapping_window
@@ -109,6 +108,7 @@ class MappingWindow(QMainWindow):
             self.widget.action_shared_parameters.triggered.connect(self.export_shared_parameters)
             self.widget.action_create_mapping_script.triggered.connect(self.create_mapping_script)
             self.widget.action_export_attribute_excel.triggered.connect(self.export_allplan_excel)
+            self.widget.action_create_vestra_mapping.triggered.connect(self.export_vestra_mapping)
             pass
 
         super().__init__()
@@ -301,9 +301,8 @@ class MappingWindow(QMainWindow):
         if path:
             revit.export_shared_parameters(path, pset_dict)
 
-
     def create_mapping_script(self):
-        name,answer = popups.req_export_pset_name(self.main_window)
+        name, answer = popups.req_export_pset_name(self.main_window)
 
         if not answer:
             return
@@ -313,22 +312,30 @@ class MappingWindow(QMainWindow):
             self.export_folder = str(os.getcwd() + "/")
 
         path = QFileDialog.getSaveFileName(self, "Safe Mapping Script", self.export_folder, file_text)[0]
-        if not path: return
+        if not path:
+            return
 
         project = self.main_window.project
-        filehandling.create_mapping_script(project,name,path)
+        filehandling.create_mapping_script(project, name, path)
 
-    def export_allplan_excel(self):
+    def export_allplan_excel(self) -> None:
         file_text = "Excel Files (*.xlsx);;"
         if self.export_folder is None:
             self.export_folder = str(os.getcwd() + "/")
-        name,answer = popups.req_export_pset_name(self.main_window)
+        name, answer = popups.req_export_pset_name(self.main_window)
         if not answer:
             return
         path = QFileDialog.getSaveFileName(self, "Safe Attribute Excel", self.export_folder, file_text)[0]
 
         if path:
-            allplan.create_allplan_mapping(self.main_window.project,path,name)
+            allplan.create_mapping(self.main_window.project, path, name)
 
-
-        pass
+    def export_vestra_mapping(self) -> None:
+        file_text = "Excel Files (*.xlsx);;"
+        if self.export_folder is None:
+            self.export_folder = str(os.getcwd() + "/")
+        excel_path, answer = QFileDialog.getOpenFileName(self, "Vestra Excel", self.export_folder, file_text)
+        if answer:
+            export_folder = QFileDialog.getExistingDirectory(self, "Export Folder", self.export_folder)
+            if export_folder:
+                vestra.create_mapping(excel_path, export_folder, self.main_window.project)

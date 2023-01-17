@@ -234,3 +234,10 @@ def attribute_mapping(attribute: classes.Attribute):
 def req_export_pset_name(main_window):
     return QInputDialog.getText(main_window, "PropertySet name", "What's the name of the Export PropertySet?")
 
+def req_worksheet_name(main_window,worksheet_names:list[str]):
+    index = 0
+    test = "SOM-MaKa"
+    if test in worksheet_names:
+        index = worksheet_names.index(test)
+    text, ok = QInputDialog.getItem(main_window,"Worksheet Name","Name of Mapping Worksheet",worksheet_names,index)
+    return text,ok
