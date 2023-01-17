@@ -49,5 +49,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='SOMGUI_v2.0.1bugfix',
+    name='SOMGUI_v2.0.2',
 )
