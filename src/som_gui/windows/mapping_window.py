@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import json
 import os
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtWidgets import QTreeWidgetItem, QMenu, QMainWindow, QFileDialog
-from SOMcreator import classes, constants, revit, allplan, filehandling, vestra
+from SOMcreator import classes, constants, revit, allplan, filehandling, vestra,card1
 
 from .. import icons
 from ..qt_designs import ui_mapping_window
@@ -14,85 +15,6 @@ from ..windows import popups, graphs_window
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
-
-
-class ObjectTreeItem(QTreeWidgetItem):
-    def __init__(self, obj: classes.Object, parent: QTreeWidgetItem | ObjectTreeItem = None) -> None:
-        if parent is None:
-            super(ObjectTreeItem, self).__init__()
-        else:
-            super(ObjectTreeItem, self).__init__(parent)
-        self.object = obj
-        self.update()
-
-    def update(self) -> None:
-        self.setText(0, self.object.name)
-        self.setText(1, ";".join(self.object.ifc_mapping))
-
-
-class PsetTreeItem(QTreeWidgetItem):
-    def __init__(self, property_set: classes.PropertySet, parent: QTreeWidgetItem | PsetTreeItem = None) -> None:
-
-        if parent is None:
-            super(PsetTreeItem, self).__init__()
-        else:
-            super(PsetTreeItem, self).__init__(parent)
-
-        self.property_set = property_set
-        self.update()
-
-    def update(self) -> None:
-        self.setText(0, self.property_set.name)
-        self.setText(1, "")
-
-
-class AttributeTreeItem(QTreeWidgetItem):
-    def __init__(self, parent: QTreeWidgetItem | AttributeTreeItem, attribute: classes.Attribute) -> None:
-        super(AttributeTreeItem, self).__init__(parent)
-        self.attribute = attribute
-        if self.attribute.mapping_dict[constants.IFC_MAPPING]:
-            self.setCheckState(0, Qt.Checked)
-        else:
-            self.setCheckState(0, Qt.Unchecked)
-        self.update()
-
-    def update(self) -> None:
-        self.setText(0, self.attribute.name)
-        self.setText(1, self.attribute.revit_name)
-
-
-def item_checked(item: ObjectTreeItem | PsetTreeItem | AttributeTreeItem) -> None:
-    check = bool(item.checkState(0))
-
-    linked_data = None
-    if isinstance(item, ObjectTreeItem):
-        linked_data = item.object
-
-    if isinstance(item, PsetTreeItem):
-        linked_data = item.property_set
-
-    if isinstance(item, AttributeTreeItem):
-        linked_data = item.attribute
-
-    linked_data.mapping_dict[constants.IFC_MAPPING] = check
-    linked_data.mapping_dict[constants.SHARED_PARAMETERS] = check
-
-    disable = not check
-    for index in range(item.childCount()):
-        child = item.child(index)
-        child.setDisabled(disable)
-
-
-def pset_double_clicked(item: PsetTreeItem | AttributeTreeItem):
-    if not isinstance(item, PsetTreeItem):
-        popups.attribute_mapping(item.attribute)
-    item.update()
-
-
-def object_double_clicked(item: ObjectTreeItem) -> None:
-    popups.object_mapping(item.object)
-    item.update()
-
 
 class MappingWindow(QMainWindow):
 
@@ -106,9 +28,11 @@ class MappingWindow(QMainWindow):
             self.object_tree.customContextMenuRequested.connect(self.object_context_menu)
             self.widget.action_ifc.triggered.connect(self.export_if_mapping)
             self.widget.action_shared_parameters.triggered.connect(self.export_shared_parameters)
-            self.widget.action_create_mapping_script.triggered.connect(self.create_mapping_script)
-            self.widget.action_export_attribute_excel.triggered.connect(self.export_allplan_excel)
-            self.widget.action_create_vestra_mapping.triggered.connect(self.export_vestra_mapping)
+            self.widget.action_desite_mapping.triggered.connect(self.create_mapping_script)
+            self.widget.action_allplan.triggered.connect(self.export_allplan_excel)
+            self.widget.action_vestra.triggered.connect(self.export_vestra_mapping)
+            self.widget.action_desite_abbreviation.triggered.connect(self.desite_abbreviation)
+            self.widget.action_card1.triggered.connect(self.card_1)
             pass
 
         super().__init__()
@@ -334,8 +258,110 @@ class MappingWindow(QMainWindow):
         file_text = "Excel Files (*.xlsx);;"
         if self.export_folder is None:
             self.export_folder = str(os.getcwd() + "/")
-        excel_path, answer = QFileDialog.getOpenFileName(self, "Vestra Excel", self.export_folder, file_text)
+        excel_path, answer = QFileDialog.getOpenFileName(self, "Template Excel", self.export_folder, file_text)
         if answer:
             export_folder = QFileDialog.getExistingDirectory(self, "Export Folder", self.export_folder)
             if export_folder:
                 vestra.create_mapping(excel_path, export_folder, self.main_window.project)
+
+    def desite_abbreviation(self):
+        abbrev = self.main_window.abbreviations
+        file_text = "JSON (*.json);;"
+        path = QFileDialog.getSaveFileName(self, "Abbreviations File", self.export_folder, file_text)[0]
+        if path is not None:
+            with open(path,"w") as file:
+                json.dump(abbrev,file,indent=2)
+
+    def card_1(self):
+        file_text = "Excel Files (*.xlsx);;"
+        if self.export_folder is None:
+            self.export_folder = str(os.getcwd() + "/")
+
+        src, answer = QFileDialog.getOpenFileName(self, "Template Excel", self.export_folder, file_text)
+        if not answer:
+            return
+        dest = QFileDialog.getSaveFileName(self, "CARD1 Excel", self.export_folder, file_text)[0]
+
+        if dest:
+            card1.create_mapping(src,dest,self.main_window.project)
+
+
+class ObjectTreeItem(QTreeWidgetItem):
+    def __init__(self, obj: classes.Object, parent: QTreeWidgetItem | ObjectTreeItem = None) -> None:
+        if parent is None:
+            super(ObjectTreeItem, self).__init__()
+        else:
+            super(ObjectTreeItem, self).__init__(parent)
+        self.object = obj
+        self.update()
+
+    def update(self) -> None:
+        self.setText(0, self.object.name)
+        self.setText(1, ";".join(self.object.ifc_mapping))
+
+
+class PsetTreeItem(QTreeWidgetItem):
+    def __init__(self, property_set: classes.PropertySet, parent: QTreeWidgetItem | PsetTreeItem = None) -> None:
+
+        if parent is None:
+            super(PsetTreeItem, self).__init__()
+        else:
+            super(PsetTreeItem, self).__init__(parent)
+
+        self.property_set = property_set
+        self.update()
+
+    def update(self) -> None:
+        self.setText(0, self.property_set.name)
+        self.setText(1, "")
+
+
+class AttributeTreeItem(QTreeWidgetItem):
+    def __init__(self, parent: QTreeWidgetItem | AttributeTreeItem, attribute: classes.Attribute) -> None:
+        super(AttributeTreeItem, self).__init__(parent)
+        self.attribute = attribute
+        if self.attribute.mapping_dict[constants.IFC_MAPPING]:
+            self.setCheckState(0, Qt.Checked)
+        else:
+            self.setCheckState(0, Qt.Unchecked)
+        self.update()
+
+    def update(self) -> None:
+        self.setText(0, self.attribute.name)
+        self.setText(1, self.attribute.revit_name)
+
+
+def item_checked(item: ObjectTreeItem | PsetTreeItem | AttributeTreeItem) -> None:
+    check = bool(item.checkState(0))
+
+    linked_data = None
+    if isinstance(item, ObjectTreeItem):
+        linked_data = item.object
+
+    if isinstance(item, PsetTreeItem):
+        linked_data = item.property_set
+
+    if isinstance(item, AttributeTreeItem):
+        linked_data = item.attribute
+
+    linked_data.mapping_dict[constants.IFC_MAPPING] = check
+    linked_data.mapping_dict[constants.SHARED_PARAMETERS] = check
+
+    disable = not check
+    for index in range(item.childCount()):
+        child = item.child(index)
+        child.setDisabled(disable)
+
+
+def pset_double_clicked(item: PsetTreeItem | AttributeTreeItem):
+    if not isinstance(item, PsetTreeItem):
+        popups.attribute_mapping(item.attribute)
+    item.update()
+
+
+def object_double_clicked(item: ObjectTreeItem) -> None:
+    popups.object_mapping(item.object)
+    item.update()
+
+
+

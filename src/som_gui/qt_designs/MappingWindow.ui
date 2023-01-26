@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1159</width>
-    <height>520</height>
+    <height>517</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -86,7 +86,7 @@
      <x>0</x>
      <y>0</y>
      <width>1159</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_revit">
@@ -96,28 +96,24 @@
     <addaction name="action_ifc"/>
     <addaction name="action_shared_parameters"/>
    </widget>
-   <widget class="QMenu" name="menu_allplan">
-    <property name="title">
-     <string>Allplan</string>
-    </property>
-    <addaction name="action_export_attribute_excel"/>
-   </widget>
    <widget class="QMenu" name="menu_desite">
     <property name="title">
      <string>Desite</string>
     </property>
-    <addaction name="action_create_mapping_script"/>
+    <addaction name="action_desite_mapping"/>
+    <addaction name="action_desite_abbreviation"/>
    </widget>
-   <widget class="QMenu" name="menuVestra">
+   <widget class="QMenu" name="menu_other">
     <property name="title">
-     <string>Vestra</string>
+     <string>Other</string>
     </property>
-    <addaction name="action_create_vestra_mapping"/>
+    <addaction name="action_allplan"/>
+    <addaction name="action_vestra"/>
+    <addaction name="action_card1"/>
    </widget>
    <addaction name="menu_revit"/>
-   <addaction name="menu_allplan"/>
    <addaction name="menu_desite"/>
-   <addaction name="menuVestra"/>
+   <addaction name="menu_other"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_ifc">
@@ -135,7 +131,7 @@
     <string>Export Attribute Excel</string>
    </property>
   </action>
-  <action name="action_create_mapping_script">
+  <action name="action_desite_mapping">
    <property name="text">
     <string>create mapping Script</string>
    </property>
@@ -143,6 +139,26 @@
   <action name="action_create_vestra_mapping">
    <property name="text">
     <string>create .amrx</string>
+   </property>
+  </action>
+  <action name="action_desite_abbreviation">
+   <property name="text">
+    <string>create abbreviation JSON</string>
+   </property>
+  </action>
+  <action name="action_allplan">
+   <property name="text">
+    <string>Allplan</string>
+   </property>
+  </action>
+  <action name="action_vestra">
+   <property name="text">
+    <string>Vestra</string>
+   </property>
+  </action>
+  <action name="action_card1">
+   <property name="text">
+    <string>CARD1</string>
    </property>
   </action>
  </widget>

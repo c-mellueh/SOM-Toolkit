@@ -77,6 +77,7 @@ class MainWindow(QMainWindow):
 
         self.ui.tree_object.resizeColumnToContents(0)
         connect()
+        self.abbreviations = dict() #TODO: Turn into full GUI Feature
 
     @property
     def object_tree(self) -> object_widget.CustomTree:

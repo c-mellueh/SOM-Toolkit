@@ -6,7 +6,7 @@ import os
 from typing import TYPE_CHECKING
 
 from PySide6.QtWidgets import QInputDialog, QLineEdit, QFileDialog
-from SOMcreator import classes, constants
+from SOMcreator import classes, constants,excel
 from lxml import etree
 from configparser import ConfigParser
 
@@ -143,6 +143,7 @@ def _open_file_by_path(main_window:MainWindow,path):
             return
         project.import_excel(path,sheet_name)
         build_aggregations()
+        main_window.abbreviations = excel.create_abbreviation_json(path,sheet_name)
     else:
         project.open(path)
         import_node_pos(main_window.graph_window, path)
