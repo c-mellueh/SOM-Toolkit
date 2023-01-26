@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtWidgets import QTreeWidgetItem, QMenu, QMainWindow, QFileDialog
-from SOMcreator import classes, constants, revit, allplan, filehandling, vestra,card1
+from SOMcreator import classes, constants, revit, allplan, filehandling, vestra, card1
 
 from .. import icons
 from ..qt_designs import ui_mapping_window
@@ -15,6 +15,7 @@ from ..windows import popups, graphs_window
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
+
 
 class MappingWindow(QMainWindow):
 
@@ -264,15 +265,15 @@ class MappingWindow(QMainWindow):
             if export_folder:
                 vestra.create_mapping(excel_path, export_folder, self.main_window.project)
 
-    def desite_abbreviation(self):
+    def desite_abbreviation(self) -> None:
         abbrev = self.main_window.abbreviations
         file_text = "JSON (*.json);;"
         path = QFileDialog.getSaveFileName(self, "Abbreviations File", self.export_folder, file_text)[0]
         if path is not None:
-            with open(path,"w") as file:
-                json.dump(abbrev,file,indent=2)
+            with open(path, "w") as file:
+                json.dump(abbrev, file, indent=2)
 
-    def card_1(self):
+    def card_1(self) -> None:
         file_text = "Excel Files (*.xlsx);;"
         if self.export_folder is None:
             self.export_folder = str(os.getcwd() + "/")
@@ -283,7 +284,7 @@ class MappingWindow(QMainWindow):
         dest = QFileDialog.getSaveFileName(self, "CARD1 Excel", self.export_folder, file_text)[0]
 
         if dest:
-            card1.create_mapping(src,dest,self.main_window.project)
+            card1.create_mapping(src, dest, self.main_window.project)
 
 
 class ObjectTreeItem(QTreeWidgetItem):
@@ -362,6 +363,3 @@ def pset_double_clicked(item: PsetTreeItem | AttributeTreeItem):
 def object_double_clicked(item: ObjectTreeItem) -> None:
     popups.object_mapping(item.object)
     item.update()
-
-
-
