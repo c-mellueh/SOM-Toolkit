@@ -44,6 +44,8 @@ class Ui_Form(object):
         self.action_vestra.setObjectName(u"action_vestra")
         self.action_card1 = QAction(Form)
         self.action_card1.setObjectName(u"action_card1")
+        self.action_excel = QAction(Form)
+        self.action_excel.setObjectName(u"action_excel")
         self.centralwidget = QWidget(Form)
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout = QGridLayout(self.centralwidget)
@@ -86,7 +88,7 @@ class Ui_Form(object):
         Form.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(Form)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1159, 21))
+        self.menubar.setGeometry(QRect(0, 0, 1159, 22))
         self.menu_revit = QMenu(self.menubar)
         self.menu_revit.setObjectName(u"menu_revit")
         self.menu_desite = QMenu(self.menubar)
@@ -108,6 +110,7 @@ class Ui_Form(object):
         self.menu_other.addAction(self.action_allplan)
         self.menu_other.addAction(self.action_vestra)
         self.menu_other.addAction(self.action_card1)
+        self.menu_other.addAction(self.action_excel)
 
         self.retranslateUi(Form)
 
@@ -125,6 +128,7 @@ class Ui_Form(object):
         self.action_allplan.setText(QCoreApplication.translate("Form", u"Allplan", None))
         self.action_vestra.setText(QCoreApplication.translate("Form", u"Vestra", None))
         self.action_card1.setText(QCoreApplication.translate("Form", u"CARD1", None))
+        self.action_excel.setText(QCoreApplication.translate("Form", u"Excel", None))
         ___qtreewidgetitem = self.object_tree.headerItem()
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("Form", u"IfcMapping", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("Form", u"Objekt", None));

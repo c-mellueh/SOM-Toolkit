@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtWidgets import QTreeWidgetItem, QMenu, QMainWindow, QFileDialog
-from SOMcreator import classes, constants, revit, allplan, filehandling, vestra, card1
+from SOMcreator import classes, constants, revit, allplan, filehandling, vestra, card1, excel
 
 from .. import icons
 from ..qt_designs import ui_mapping_window
@@ -34,7 +34,7 @@ class MappingWindow(QMainWindow):
             self.widget.action_vestra.triggered.connect(self.export_vestra_mapping)
             self.widget.action_desite_abbreviation.triggered.connect(self.desite_abbreviation)
             self.widget.action_card1.triggered.connect(self.card_1)
-            pass
+            self.widget.action_excel.triggered.connect(self.excel_export)
 
         super().__init__()
 
@@ -266,7 +266,8 @@ class MappingWindow(QMainWindow):
                 vestra.create_mapping(excel_path, export_folder, self.main_window.project)
 
     def desite_abbreviation(self) -> None:
-        abbrev = self.main_window.abbreviations
+        abbrev = {obj.custom_attribues[constants.ABBREVIATION]: [obj.ident_value, obj.name] for obj in
+                  self.main_window.project.objects}
         file_text = "JSON (*.json);;"
         path = QFileDialog.getSaveFileName(self, "Abbreviations File", self.export_folder, file_text)[0]
         if path is not None:
@@ -285,6 +286,16 @@ class MappingWindow(QMainWindow):
 
         if dest:
             card1.create_mapping(src, dest, self.main_window.project)
+
+    def excel_export(self):
+        if self.export_folder is None:
+            self.export_folder = str(os.getcwd() + "/")
+        dest = QFileDialog.getSaveFileName(self, "SOM Excel", self.export_folder, "Excel Files (*.xlsx);;")[0]
+        if not dest:
+            return
+        mapping_dict = {"aus": "Ausbau", "lst": "LST"}  # TODO: implement GUI method to create extra mapping dict
+
+        excel.export(self.main_window.project, dest, mapping_dict)
 
 
 class ObjectTreeItem(QTreeWidgetItem):

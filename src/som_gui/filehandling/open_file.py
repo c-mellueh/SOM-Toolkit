@@ -143,12 +143,14 @@ def _open_file_by_path(main_window:MainWindow,path):
             return
         project.import_excel(path,sheet_name)
         build_aggregations()
-        main_window.abbreviations = excel.create_abbreviation_json(path,sheet_name)
+        main_window.abbreviations = {block.abbreviation: [block.ident_value, block.name] for block in excel.ExcelBlock if
+             block.ident_value is not None}
+        #main_window.abbreviations = excel.create_abbreviation_json(path,sheet_name)
     else:
         project.open(path)
         import_node_pos(main_window.graph_window, path)
 
-    main_window.ui.tree_object.resizeColumnToContents(0)
+    #main_window.ui.tree_object.resizeColumnToContents(0)
     main_window.load_graph(show=False)
     main_window.clear_object_input()
     main_window.fill_tree()
