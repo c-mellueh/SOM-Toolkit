@@ -1,18 +1,22 @@
 from __future__ import annotations  # make own class referencable
 import logging
-from typing import Iterator, List
+from typing import Iterator, List,TYPE_CHECKING
 
 from PySide6.QtCore import Qt, QRectF, QPointF
-from PySide6.QtGui import QWheelEvent, QPainterPath, QMouseEvent, QContextMenuEvent, QCursor, QColor, QPen
+from PySide6.QtGui import QWheelEvent, QPainterPath, QMouseEvent, QContextMenuEvent, QCursor, QColor,QPen,QImage,QPainter
+from PySide6.QtPrintSupport import QPrinter
 from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QGraphicsScene, QGraphicsView, \
     QApplication, QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsPathItem, QComboBox, QGraphicsRectItem, \
-    QInputDialog, QMenu, QGraphicsSceneMoveEvent, QGraphicsSceneHoverEvent, QTreeWidget, QTreeWidgetItem
+    QInputDialog, QMenu, QGraphicsSceneMoveEvent, QGraphicsSceneHoverEvent, QTreeWidget, QTreeWidgetItem,QFileDialog
+from PySide6.QtPrintSupport import  QPrintDialog
 from SOMcreator import classes, constants
-
 from .. import icons
 from ..qt_designs import ui_GraphWindow, ui_ObjectGraphWidget
 from ..widgets import property_widget
 from ..windows import popups
+
+if TYPE_CHECKING:
+    from ..main_window import MainWindow
 
 
 class CustomAttribTreeItem(QTreeWidgetItem):
@@ -238,6 +242,7 @@ class MainView(QGraphicsView):
         super(MainView, self).__init__()
         self.setDragMode(self.DragMode.ScrollHandDrag)
         self.graph_window = graph_window
+        self.main_window = graph_window.main_window
 
     def item_under_mouse(self) -> Node:
         for item in self.scene().items():
@@ -308,9 +313,27 @@ class MainView(QGraphicsView):
 
             menu.exec(event.globalPos())
 
+        else:
+            menu = QMenu()
+            action_print = menu.addAction("Print")
+            action_print.triggered.connect(self.print)
+            menu.exec(event.globalPos())
+
     def scene(self) -> AggregationScene | QGraphicsScene:
         return super(MainView, self).scene()
 
+    def print(self):
+        rect = self.viewport().rect()
+        image = QImage(rect.size()*5,QImage.Format.Format_RGB32)
+        image.fill(Qt.white)
+        painter = QPainter(image)
+        painter.setRenderHint(QPainter.Antialiasing)
+        self.render(painter)
+        file_text = "png Files (*.png);;"
+        imagePath = QFileDialog.getSaveFileName(self, "Safe Aggregation", self.main_window.export_path, file_text)[0]
+        image.save(imagePath)
+        painter.end()
+        print("Done")
 
 class AggregationScene(QGraphicsScene):
     def __init__(self, root_node) -> None:
@@ -932,7 +955,7 @@ class Node(QGraphicsProxyWidget):
 
 class GraphWindow(QWidget):
 
-    def __init__(self, main_window, show=True) -> None:
+    def __init__(self, main_window:MainWindow, show=True) -> None:
         super(GraphWindow, self).__init__()
         self.main_window = main_window
         self.widget = ui_GraphWindow.Ui_GraphView()
