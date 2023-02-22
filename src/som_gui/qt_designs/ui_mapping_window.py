@@ -91,26 +91,14 @@ class Ui_Form(object):
         self.menubar.setGeometry(QRect(0, 0, 1159, 22))
         self.menu_revit = QMenu(self.menubar)
         self.menu_revit.setObjectName(u"menu_revit")
-        self.menu_desite = QMenu(self.menubar)
-        self.menu_desite.setObjectName(u"menu_desite")
-        self.menu_other = QMenu(self.menubar)
-        self.menu_other.setObjectName(u"menu_other")
         Form.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(Form)
         self.statusbar.setObjectName(u"statusbar")
         Form.setStatusBar(self.statusbar)
 
         self.menubar.addAction(self.menu_revit.menuAction())
-        self.menubar.addAction(self.menu_desite.menuAction())
-        self.menubar.addAction(self.menu_other.menuAction())
         self.menu_revit.addAction(self.action_ifc)
         self.menu_revit.addAction(self.action_shared_parameters)
-        self.menu_desite.addAction(self.action_desite_mapping)
-        self.menu_desite.addAction(self.action_desite_abbreviation)
-        self.menu_other.addAction(self.action_allplan)
-        self.menu_other.addAction(self.action_vestra)
-        self.menu_other.addAction(self.action_card1)
-        self.menu_other.addAction(self.action_excel)
 
         self.retranslateUi(Form)
 
@@ -137,7 +125,5 @@ class Ui_Form(object):
         ___qtreewidgetitem1.setText(1, QCoreApplication.translate("Form", u"Mapping", None));
         ___qtreewidgetitem1.setText(0, QCoreApplication.translate("Form", u"PropertySet/Attribute", None));
         self.menu_revit.setTitle(QCoreApplication.translate("Form", u"Revit", None))
-        self.menu_desite.setTitle(QCoreApplication.translate("Form", u"Desite", None))
-        self.menu_other.setTitle(QCoreApplication.translate("Form", u"Other", None))
     # retranslateUi
 

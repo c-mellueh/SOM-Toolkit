@@ -96,25 +96,7 @@
     <addaction name="action_ifc"/>
     <addaction name="action_shared_parameters"/>
    </widget>
-   <widget class="QMenu" name="menu_desite">
-    <property name="title">
-     <string>Desite</string>
-    </property>
-    <addaction name="action_desite_mapping"/>
-    <addaction name="action_desite_abbreviation"/>
-   </widget>
-   <widget class="QMenu" name="menu_other">
-    <property name="title">
-     <string>Other</string>
-    </property>
-    <addaction name="action_allplan"/>
-    <addaction name="action_vestra"/>
-    <addaction name="action_card1"/>
-    <addaction name="action_excel"/>
-   </widget>
    <addaction name="menu_revit"/>
-   <addaction name="menu_desite"/>
-   <addaction name="menu_other"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_ifc">

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>984</width>
-    <height>384</height>
+    <width>1138</width>
+    <height>563</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <layout class="QGridLayout" name="layout_grid" rowstretch="0,0,0,0,0,0,0,0">
+    <layout class="QGridLayout" name="layout_grid" rowstretch="0,0,0,0,0,0,0,0,0,0">
      <item row="4" column="1">
       <widget class="QCheckBox" name="check_box_inherit">
        <property name="text">
@@ -23,88 +23,29 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QComboBox" name="combo_data_type">
-       <item>
-        <property name="text">
-         <string>xs:string</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>xs:int</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>xs:bool</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>xs:double</string>
-        </property>
-       </item>
+     <item row="4" column="2">
+      <widget class="QCheckBox" name="check_box_seperator">
+       <property name="text">
+        <string>Seperate:</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
-     <item row="4" column="3">
-      <widget class="QLineEdit" name="line_edit_seperator">
+     <item row="9" column="0" colspan="4">
+      <widget class="QTextEdit" name="description">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <spacer name="spacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="3" column="0" colspan="4">
-      <widget class="QLineEdit" name="lineEdit_name">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>350</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="placeholderText">
-        <string>Name</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_values">
        <property name="minimumSize">
         <size>
          <width>0</width>
-         <height>0</height>
+         <height>28</height>
         </size>
-       </property>
-       <property name="text">
-        <string>Values</string>
        </property>
       </widget>
      </item>
@@ -120,6 +61,22 @@
         <string>Name</string>
        </property>
       </widget>
+     </item>
+     <item row="7" column="0">
+      <spacer name="spacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item row="6" column="0" colspan="4">
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -154,10 +111,35 @@
        </item>
       </layout>
      </item>
-     <item row="2" column="3">
-      <widget class="QPushButton" name="button_add">
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_values">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="text">
-        <string>Add</string>
+        <string>Values</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="4">
+      <widget class="QLineEdit" name="lineEdit_name">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>350</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="placeholderText">
+        <string>Name</string>
        </property>
       </widget>
      </item>
@@ -180,13 +162,57 @@
        </item>
       </widget>
      </item>
-     <item row="4" column="2">
-      <widget class="QCheckBox" name="check_box_seperator">
+     <item row="2" column="1">
+      <widget class="QComboBox" name="combo_data_type">
+       <item>
+        <property name="text">
+         <string>xs:string</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>xs:int</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>xs:bool</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>xs:double</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QPushButton" name="button_add">
        <property name="text">
-        <string>Seperate:</string>
+        <string>Add</string>
        </property>
-       <property name="checked">
-        <bool>true</bool>
+      </widget>
+     </item>
+     <item row="4" column="3">
+      <widget class="QLineEdit" name="line_edit_seperator">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Beschreibung</string>
        </property>
       </widget>
      </item>
