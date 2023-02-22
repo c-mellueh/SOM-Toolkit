@@ -29,12 +29,8 @@ class MappingWindow(QMainWindow):
             self.object_tree.customContextMenuRequested.connect(self.object_context_menu)
             self.widget.action_ifc.triggered.connect(self.export_if_mapping)
             self.widget.action_shared_parameters.triggered.connect(self.export_shared_parameters)
-            self.widget.action_desite_mapping.triggered.connect(self.create_mapping_script)
-            self.widget.action_allplan.triggered.connect(self.export_allplan_excel)
-            self.widget.action_vestra.triggered.connect(self.export_vestra_mapping)
-            self.widget.action_desite_abbreviation.triggered.connect(self.desite_abbreviation)
-            self.widget.action_card1.triggered.connect(self.card_1)
-            self.widget.action_excel.triggered.connect(self.excel_export)
+
+
 
         super().__init__()
 
@@ -226,76 +222,8 @@ class MappingWindow(QMainWindow):
         if path:
             revit.export_shared_parameters(path, pset_dict)
 
-    def create_mapping_script(self):
-        name, answer = popups.req_export_pset_name(self.main_window)
 
-        if not answer:
-            return
 
-        file_text = "JavaScript (*.js);;"
-        if self.export_folder is None:
-            self.export_folder = str(os.getcwd() + "/")
-
-        path = QFileDialog.getSaveFileName(self, "Safe Mapping Script", self.export_folder, file_text)[0]
-        if not path:
-            return
-
-        project = self.main_window.project
-        filehandling.create_mapping_script(project, name, path)
-
-    def export_allplan_excel(self) -> None:
-        file_text = "Excel Files (*.xlsx);;"
-        if self.export_folder is None:
-            self.export_folder = str(os.getcwd() + "/")
-        name, answer = popups.req_export_pset_name(self.main_window)
-        if not answer:
-            return
-        path = QFileDialog.getSaveFileName(self, "Safe Attribute Excel", self.export_folder, file_text)[0]
-
-        if path:
-            allplan.create_mapping(self.main_window.project, path, name)
-
-    def export_vestra_mapping(self) -> None:
-        file_text = "Excel Files (*.xlsx);;"
-        if self.export_folder is None:
-            self.export_folder = str(os.getcwd() + "/")
-        excel_path, answer = QFileDialog.getOpenFileName(self, "Template Excel", self.export_folder, file_text)
-        if answer:
-            export_folder = QFileDialog.getExistingDirectory(self, "Export Folder", self.export_folder)
-            if export_folder:
-                vestra.create_mapping(excel_path, export_folder, self.main_window.project)
-
-    def desite_abbreviation(self) -> None:
-        abbrev = {obj.custom_attribues[constants.ABBREVIATION]: [obj.ident_value, obj.name] for obj in
-                  self.main_window.project.objects}
-        file_text = "JSON (*.json);;"
-        path = QFileDialog.getSaveFileName(self, "Abbreviations File", self.export_folder, file_text)[0]
-        if path is not None:
-            with open(path, "w") as file:
-                json.dump(abbrev, file, indent=2)
-
-    def card_1(self) -> None:
-        file_text = "Excel Files (*.xlsx);;"
-        if self.export_folder is None:
-            self.export_folder = str(os.getcwd() + "/")
-
-        src, answer = QFileDialog.getOpenFileName(self, "Template Excel", self.export_folder, file_text)
-        if not answer:
-            return
-        dest = QFileDialog.getSaveFileName(self, "CARD1 Excel", self.export_folder, file_text)[0]
-
-        if dest:
-            card1.create_mapping(src, dest, self.main_window.project)
-
-    def excel_export(self):
-        if self.export_folder is None:
-            self.export_folder = str(os.getcwd() + "/")
-        dest = QFileDialog.getSaveFileName(self, "SOM Excel", self.export_folder, "Excel Files (*.xlsx);;")[0]
-        if not dest:
-            return
-        mapping_dict = {"aus": "Ausbau", "lst": "LST"}  # TODO: implement GUI method to create extra mapping dict
-
-        excel.export(self.main_window.project, dest, mapping_dict)
 
 
 class ObjectTreeItem(QTreeWidgetItem):

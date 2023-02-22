@@ -689,7 +689,7 @@
     <addaction name="action_export_bs"/>
     <addaction name="action_export_bookmarks"/>
     <addaction name="action_export_boq"/>
-    <addaction name="action_mapping_Script"/>
+    <addaction name="action_mapping_script"/>
    </widget>
    <widget class="QMenu" name="menuPredefined_Psets">
     <property name="title">
@@ -789,7 +789,7 @@
     <string>IFC Mapping</string>
    </property>
   </action>
-  <action name="action_mapping_Script">
+  <action name="action_mapping_script">
    <property name="text">
     <string>Mapping Script</string>
    </property>
