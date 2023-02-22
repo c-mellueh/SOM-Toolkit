@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTable
 from SOMcreator import constants, classes
 from ..data import constants as con
 from .. import icons
-from ..qt_designs import ui_widget
+from ..qt_designs import ui_property_set_window
 from ..windows import popups
 
 
@@ -132,7 +132,7 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         super(PropertySetWindow, self).__init__()
 
-        self.widget = ui_widget.Ui_layout_main()
+        self.widget = ui_property_set_window.Ui_layout_main()
         self.widget.setupUi(self)
 
         self.mainWindow = main_window
@@ -364,6 +364,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                         msg_box.setIcon(QMessageBox.Icon.Warning)
                         msg_box.exec()
                         return None
+
             return values
 
         def set_table_line(row: int, attrib: classes.Attribute) -> None:
@@ -385,6 +386,8 @@ class PropertySetWindow(QtWidgets.QWidget):
                 attribute.data_type = self.widget.combo_data_type.currentText()
                 attribute.child_inherits_values = self.widget.check_box_inherit.isChecked()
 
+            description = self.widget.description.toPlainText()
+            attribute.description = description
             attribute.value = values
 
             item: QTableWidgetItem = self.widget.table_widget.findItems(attribute.name, Qt.MatchFlag.MatchExactly)[0]
@@ -405,7 +408,8 @@ class PropertySetWindow(QtWidgets.QWidget):
             value_type = self.widget.combo_type.currentText()
             data_type = self.widget.combo_data_type.currentText()
 
-            attrib = classes.Attribute(self.property_set, name, values, value_type, data_type)
+            description = self.widget.description.toPlainText()
+            attrib = classes.Attribute(self.property_set, name, values, value_type, data_type,description=description)
             attrib.child_inherits_values = self.widget.check_box_inherit.isChecked()
 
             rows = self.widget.table_widget.rowCount()
@@ -494,6 +498,8 @@ class PropertySetWindow(QtWidgets.QWidget):
             else:
                 items.setText("")
 
+        self.widget.description.clear()
+
     def fill_with_attribute(self, attribute: classes.Attribute) -> None:
         index = self.widget.combo_type.findText(attribute.value_type)
         self.widget.combo_type.setCurrentIndex(index)
@@ -522,6 +528,8 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         # set Editable
         self.widget.check_box_inherit.setChecked(attribute.child_inherits_values)
+
+        self.widget.description.setText(attribute.description)
 
     def table_clicked(self, table_item: QTableWidgetItem | CustomTableItem) -> None:
         item: CustomTableItem = self.table.item(table_item.row(), 0)
