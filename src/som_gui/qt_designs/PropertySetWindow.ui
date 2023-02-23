@@ -316,7 +316,7 @@
      </column>
      <column>
       <property name="text">
-       <string>RevitMapping</string>
+       <string>Optional</string>
       </property>
      </column>
      <item row="0" column="0">

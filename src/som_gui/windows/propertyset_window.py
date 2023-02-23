@@ -14,11 +14,34 @@ from ..windows import popups
 
 
 class CustomTableItem(QTableWidgetItem):
-    def __init__(self, item: classes.Object | classes.PropertySet | classes.Attribute):
+    def __init__(self, item: classes.Object | classes.PropertySet | classes.Attribute,text:str):
         super(CustomTableItem, self).__init__()
         self.linked_data = item
-        self.setText(item.name)
+        self.setText(text)
+    def update(self):
+        pass
 
+class CustomCheckItem(QTableWidgetItem):
+    def __init__(self, linked_item: classes.PropertySet|classes.Attribute):
+        super(CustomCheckItem, self).__init__()
+        if linked_item.optional:
+            self.setCheckState(Qt.CheckState.Checked)
+        else:
+            self.setCheckState(Qt.CheckState.Unchecked)
+        self.linked_item = linked_item
+
+    def update(self):
+        check_state = self.checkState()
+        if check_state == Qt.CheckState.Checked:
+            check_bool = True
+        elif check_state == Qt.CheckState.Unchecked:
+            check_bool = False
+        elif check_state == Qt.CheckState.PartiallyChecked:
+            logging.error("Partially Checking not Allowed")
+            check_bool = True
+        else:
+            check_bool = True
+        self.linked_item.optional = check_bool
 
 class MappingTableItem(QTableWidgetItem):
     def __init__(self, attribute: classes.Attribute) -> None:
@@ -66,15 +89,15 @@ def fill_attribute_table(active_object: classes.Object,
     table_widget.setRowCount(len(property_set.attributes))
 
     for i, attribute in enumerate(property_set.attributes):
-        value_item = CustomTableItem(attribute)
+        value_item = CustomTableItem(attribute,attribute.name)
 
         if attribute.is_child:
             value_item.setIcon(link_item)
         table_widget.setItem(i, 0, value_item)
-        table_widget.setItem(i, 1, QTableWidgetItem(attribute.data_type))
-        table_widget.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
-        table_widget.setItem(i, 3, QTableWidgetItem(str(attribute.value)))
-        table_widget.setItem(i, 4, MappingTableItem(attribute))
+        table_widget.setItem(i, 1, CustomTableItem(attribute,attribute.data_type))
+        table_widget.setItem(i, 2, CustomTableItem(attribute,constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
+        table_widget.setItem(i, 3, CustomTableItem(attribute,str(attribute.value)))
+        table_widget.setItem(i, 4, CustomCheckItem(attribute))
         table_widget.resizeColumnsToContents()
 
         if active_object is None:
@@ -129,7 +152,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             self.widget.button_add_line.clicked.connect(self.new_line)
             self.widget.table_widget.customContextMenuRequested.connect(self.open_menu)
             self.widget.lineEdit_name.returnPressed.connect(self.add_attribute_button_pressed)
-
+            self.widget.table_widget.itemClicked.connect(self.item_changed)
         super(PropertySetWindow, self).__init__()
 
         self.widget = ui_property_set_window.Ui_layout_main()
@@ -162,6 +185,9 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.new_line()
 
         connect_items()
+
+    def item_changed(self,item:CustomCheckItem):
+        item.update()
 
     @property
     def attribute_type(self) -> str:
@@ -369,11 +395,11 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         def set_table_line(row: int, attrib: classes.Attribute) -> None:
             table = self.widget.table_widget
-            table.setItem(row, 0, CustomTableItem(attrib))
-            table.setItem(row, 1, QTableWidgetItem(attrib.data_type))
-            table.setItem(row, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attrib.value_type]))
-            table.setItem(row, 3, QTableWidgetItem(str(attrib.value)))
-            table.setItem(row, 4, QTableWidgetItem(str(attrib.revit_name)))
+            table.setItem(row, 0, CustomTableItem(attrib,attrib.name))
+            table.setItem(row, 1, CustomTableItem(attrib,attrib.data_type))
+            table.setItem(row, 2, CustomTableItem(attrib,constants.VALUE_TYPE_LOOKUP[attrib.value_type]))
+            table.setItem(row, 3, CustomTableItem(attrib,str(attrib.value)))
+            table.setItem(row, 4, CustomCheckItem(attrib))
 
         def update_attribute() -> classes.Attribute | None:
 

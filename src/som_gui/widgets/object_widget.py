@@ -42,13 +42,13 @@ class CustomTree(QTreeWidget):
             else:
                 obj.parent = None
 
-
+    
 class CustomObjectTreeItem(QTreeWidgetItem):
     def __init__(self, obj: classes.Object, func=None) -> None:
         super(CustomObjectTreeItem, self).__init__()
         self._object = obj
         self._func = func
-        self.update()
+        self.refresh()
 
     def addChild(self, child: CustomObjectTreeItem) -> None:
         super(CustomObjectTreeItem, self).addChild(child)
@@ -59,7 +59,7 @@ class CustomObjectTreeItem(QTreeWidgetItem):
     def object(self) -> classes.Object:
         return self._object
 
-    def update(self) -> None:
+    def refresh(self) -> None:
         self.setText(0, self.object.name)
         if self._func is not None:
             self._func(self.object)
@@ -68,7 +68,24 @@ class CustomObjectTreeItem(QTreeWidgetItem):
             self.setText(1, "")
         else:
             self.setText(1, str(self.object.ident_attrib.value))
+        if self.object.optional:
+            self.setCheckState(2,Qt.CheckState.Checked)
+        else:
+            self.setCheckState(2,Qt.CheckState.Unchecked)
 
+    def update(self) -> None:
+        logging.debug(f"Item toggled if item is not Toggled contact me")
+        check_state = self.checkState(2)
+        if check_state == Qt.CheckState.Checked:
+            check_bool = True
+        elif check_state == Qt.CheckState.Unchecked:
+            check_bool = False
+        elif check_state == Qt.CheckState.PartiallyChecked:
+            logging.error("Partially Checking not Allowed")
+            check_bool = True
+        else:
+            check_bool = True
+        self.object.optional = check_bool
 
 def init(main_window: MainWindow):
     def init_tree(tree: CustomTree):
@@ -85,12 +102,14 @@ def init(main_window: MainWindow):
         tree.viewport().setAcceptDrops(True)
 
         ___qtreewidgetitem = tree.headerItem()
-        ___qtreewidgetitem.setText(1, "Identifier")
         ___qtreewidgetitem.setText(0, "Objects")
+        ___qtreewidgetitem.setText(1, "Identifier")
+        ___qtreewidgetitem.setText(2, "Optional")
 
     def connect_items():
         ui: ui_mainwindow.Ui_MainWindow = main_window.ui
         ui.tree_object.itemClicked.connect(main_window.object_clicked)
+        ui.tree_object.itemChanged.connect(main_window.item_changed)
         ui.tree_object.customContextMenuRequested.connect(main_window.right_click)
         ui.button_objects_add.clicked.connect(main_window.add_object)
         main_window.grpSc.activated.connect(main_window.rc_group)
@@ -533,7 +552,7 @@ def reload_tree(main_window):
     def loop(item: CustomObjectTreeItem):
         for i in range(item.childCount()):
             child = item.child(i)
-            child.update()
+            child.refresh()
             loop(child)
 
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui

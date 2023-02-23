@@ -56,7 +56,7 @@ class MainWindow(QMainWindow):
             self.ui.action_mapping_script.triggered.connect(self.create_mapping_script)
             self.ui.action_allplan.triggered.connect(self.export_allplan_excel)
             self.ui.action_abbreviation_json.triggered.connect(self.desite_abbreviation)
-
+            self.ui.table_pset.itemChanged.connect(self.item_changed)
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -150,6 +150,9 @@ class MainWindow(QMainWindow):
     # filehandling
 
     # Click Events
+    def item_changed(self, item:object_widget.CustomObjectTreeItem|propertyset_window.CustomCheckItem|propertyset_window.CustomTableItem):
+        item.update()
+
     def save_clicked(self):
         save_file.save_clicked(self)
 
