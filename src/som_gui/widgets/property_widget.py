@@ -14,7 +14,6 @@ from ..windows.propertyset_window import PropertySetWindow
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
-
 def get_parent_by_name(active_object: classes.Object, name: str) -> classes.PropertySet | None:
     """find Propertyset which has the same name and is not from the same object"""
 
@@ -151,6 +150,7 @@ def set_enable(main_window: MainWindow, value: bool) -> None:
 
 
 def fill_table(main_window: MainWindow, obj: classes.Object) -> None:
+
     main_window.set_right_window_enable(True)
     modify_title(main_window, main_window.ui.tab_code, f"{obj.name}: Code")
     modify_title(main_window, main_window.ui.tab_property_set, f"{obj.name}: PropertySets")
@@ -163,15 +163,22 @@ def fill_table(main_window: MainWindow, obj: classes.Object) -> None:
     main_window.pset_table.setRowCount(len(property_sets))  # Prepare Table
 
     for i, pset in enumerate(property_sets):
-        table_item = propertyset_window.CustomTableItem(pset)
+        table_item = propertyset_window.CustomTableItem(pset,pset.name)
         main_window.pset_table.setItem(i, 0, table_item)
         if pset.is_child:
             if pset.parent.object is not None:
-                table_item = QTableWidgetItem(pset.parent.object.name)
+                table_item=propertyset_window.CustomTableItem(pset,pset.parent.object.name)
+                # table_item = QTableWidgetItem(pset.parent.object.name)
             else:
-                table_item = QTableWidgetItem(constants.INHERITED_TEXT)
+                table_item=propertyset_window.CustomTableItem(pset,constants.INHERITED_TEXT)
+                # table_item = QTableWidgetItem(constants.INHERITED_TEXT)
             main_window.pset_table.setItem(i, 1, table_item)
-
+        check_item = propertyset_window.CustomCheckItem(pset)
+        if pset.optional:
+            check_item.setCheckState(Qt.CheckState.Checked)
+        else:
+            check_item.setCheckState(Qt.CheckState.Unchecked)
+        main_window.pset_table.setItem(i,2,check_item)
     main_window.pset_table.resizeColumnsToContents()
 
 

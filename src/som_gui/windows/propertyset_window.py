@@ -14,11 +14,34 @@ from ..windows import popups
 
 
 class CustomTableItem(QTableWidgetItem):
-    def __init__(self, item: classes.Object | classes.PropertySet | classes.Attribute):
+    def __init__(self, item: classes.Object | classes.PropertySet | classes.Attribute,text:str):
         super(CustomTableItem, self).__init__()
         self.linked_data = item
-        self.setText(item.name)
+        self.setText(text)
+    def update(self):
+        pass
 
+class CustomCheckItem(QTableWidgetItem):
+    def __init__(self, linked_item: classes.PropertySet|classes.Attribute):
+        super(CustomCheckItem, self).__init__()
+        if linked_item.optional:
+            self.setCheckState(Qt.CheckState.Checked)
+        else:
+            self.setCheckState(Qt.CheckState.Unchecked)
+        self.linked_item = linked_item
+
+    def update(self):
+        check_state = self.checkState()
+        if check_state == Qt.CheckState.Checked:
+            check_bool = True
+        elif check_state == Qt.CheckState.Unchecked:
+            check_bool = False
+        elif check_state == Qt.CheckState.PartiallyChecked:
+            logging.error("Partially Checking not Allowed")
+            check_bool = True
+        else:
+            check_bool = True
+        self.linked_item.optional = check_bool
 
 class MappingTableItem(QTableWidgetItem):
     def __init__(self, attribute: classes.Attribute) -> None:
@@ -66,14 +89,14 @@ def fill_attribute_table(active_object: classes.Object,
     table_widget.setRowCount(len(property_set.attributes))
 
     for i, attribute in enumerate(property_set.attributes):
-        value_item = CustomTableItem(attribute)
+        value_item = CustomTableItem(attribute,attribute.name)
 
         if attribute.is_child:
             value_item.setIcon(link_item)
         table_widget.setItem(i, 0, value_item)
-        table_widget.setItem(i, 1, QTableWidgetItem(attribute.data_type))
-        table_widget.setItem(i, 2, QTableWidgetItem(constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
-        table_widget.setItem(i, 3, QTableWidgetItem(str(attribute.value)))
+        table_widget.setItem(i, 1, CustomTableItem(attribute,attribute.data_type))
+        table_widget.setItem(i, 2, CustomTableItem(attribute,constants.VALUE_TYPE_LOOKUP[attribute.value_type]))
+        table_widget.setItem(i, 3, CustomTableItem(attribute,str(attribute.value)))
         table_widget.setItem(i, 4, MappingTableItem(attribute))
         table_widget.resizeColumnsToContents()
 
