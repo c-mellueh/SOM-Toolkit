@@ -75,7 +75,6 @@ class CustomObjectTreeItem(QTreeWidgetItem):
 
     def update(self) -> None:
         logging.debug(f"Item toggled if item is not Toggled contact me")
-        print("TEST")
         check_state = self.checkState(2)
         if check_state == Qt.CheckState.Checked:
             check_bool = True

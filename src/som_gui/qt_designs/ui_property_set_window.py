@@ -228,7 +228,7 @@ class Ui_layout_main(object):
         ___qtablewidgetitem3 = self.table_widget.horizontalHeaderItem(3)
         ___qtablewidgetitem3.setText(QCoreApplication.translate("layout_main", u"Values", None));
         ___qtablewidgetitem4 = self.table_widget.horizontalHeaderItem(4)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("layout_main", u"RevitMapping", None));
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("layout_main", u"Optional", None));
 
         __sortingEnabled = self.table_widget.isSortingEnabled()
         self.table_widget.setSortingEnabled(False)

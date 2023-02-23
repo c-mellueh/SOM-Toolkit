@@ -242,7 +242,7 @@ def add_pset(main_window: MainWindow) -> None:
         property_set = classes.PropertySet(name)
 
     obj.add_property_set(property_set)
-    item = propertyset_window.CustomTableItem(property_set)
+    item = propertyset_window.CustomTableItem(property_set,property_set.name)
 
     main_window.pset_table.setItem(new_row_count - 1, 0, item)
     main_window.text_changed(main_window.ui.lineEdit_pSet_name.text())
