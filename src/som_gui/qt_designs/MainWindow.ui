@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1157</width>
+    <width>1261</width>
     <height>495</height>
    </rect>
   </property>
@@ -655,7 +655,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1157</width>
+     <width>1261</width>
      <height>22</height>
     </rect>
    </property>
@@ -663,11 +663,23 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="action_abbreviation_json"/>
+     <addaction name="action_allplan"/>
+     <addaction name="action_card1"/>
+     <addaction name="action_vestra"/>
+     <addaction name="action_excel"/>
+    </widget>
     <addaction name="action_file_new"/>
     <addaction name="action_file_Open"/>
     <addaction name="action_file_Save"/>
     <addaction name="action_file_Save_As"/>
     <addaction name="action_settings"/>
+    <addaction name="menuExport"/>
+    <addaction name="action_mapping"/>
    </widget>
    <widget class="QMenu" name="menuDesite">
     <property name="title">
@@ -677,6 +689,7 @@
     <addaction name="action_export_bs"/>
     <addaction name="action_export_bookmarks"/>
     <addaction name="action_export_boq"/>
+    <addaction name="action_mapping_script"/>
    </widget>
    <widget class="QMenu" name="menuPredefined_Psets">
     <property name="title">
@@ -690,17 +703,10 @@
     </property>
     <addaction name="action_show_graphs"/>
    </widget>
-   <widget class="QMenu" name="menuRevit">
-    <property name="title">
-     <string>Mapping</string>
-    </property>
-    <addaction name="action_mapping_options"/>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDesite"/>
    <addaction name="menuPredefined_Psets"/>
    <addaction name="menuShow_Graphs"/>
-   <addaction name="menuRevit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_file_new">
@@ -766,6 +772,51 @@
   <action name="action_mapping_options">
    <property name="text">
     <string>Options</string>
+   </property>
+  </action>
+  <action name="action_mapping">
+   <property name="text">
+    <string>Mapping</string>
+   </property>
+  </action>
+  <action name="action_shared_parameter">
+   <property name="text">
+    <string>Shared Parameters</string>
+   </property>
+  </action>
+  <action name="action_ifc_mapping">
+   <property name="text">
+    <string>IFC Mapping</string>
+   </property>
+  </action>
+  <action name="action_mapping_script">
+   <property name="text">
+    <string>Mapping Script</string>
+   </property>
+  </action>
+  <action name="action_abbreviation_json">
+   <property name="text">
+    <string>Abbreviation JSON</string>
+   </property>
+  </action>
+  <action name="action_allplan">
+   <property name="text">
+    <string>Allplan</string>
+   </property>
+  </action>
+  <action name="action_card1">
+   <property name="text">
+    <string>CARD1</string>
+   </property>
+  </action>
+  <action name="action_vestra">
+   <property name="text">
+    <string>Verstra</string>
+   </property>
+  </action>
+  <action name="action_excel">
+   <property name="text">
+    <string>Excel</string>
    </property>
   </action>
  </widget>

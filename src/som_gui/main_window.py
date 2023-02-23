@@ -4,10 +4,12 @@ import logging
 import logging.config
 import os
 import sys
+import json
 
 from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QCompleter, QDialog, QTableWidget, QInputDialog, QLineEdit
-from SOMcreator import classes, desite
+from PySide6.QtWidgets import QApplication, QMainWindow, QCompleter, QDialog, QTableWidget, QInputDialog, QLineEdit,QFileDialog
+from SOMcreator import classes, desite,vestra,card1,filehandling,allplan,constants
+from SOMcreator import excel as som_excel
 
 from . import icons
 from . import logs
@@ -47,7 +49,13 @@ class MainWindow(QMainWindow):
             self.ui.action_export_boq.triggered.connect(self.export_boq)
             self.ui.action_show_graphs.triggered.connect(self.open_graph)
             self.ui.code_edit.textChanged.connect(self.update_script)
-            self.ui.action_mapping_options.triggered.connect(self.open_mapping_window)
+            self.ui.action_mapping.triggered.connect(self.open_mapping_window)
+            self.ui.action_vestra.triggered.connect(self.export_vestra_mapping)
+            self.ui.action_card1.triggered.connect(self.card_1)
+            self.ui.action_excel.triggered.connect(self.excel_export)
+            self.ui.action_mapping_script.triggered.connect(self.create_mapping_script)
+            self.ui.action_allplan.triggered.connect(self.export_allplan_excel)
+            self.ui.action_abbreviation_json.triggered.connect(self.desite_abbreviation)
 
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -334,6 +342,9 @@ class MainWindow(QMainWindow):
                 self.graph_window.view.show()
                 self.graph_window.fit_in()
 
+
+    ## EXPORT
+
     def export_boq(self):
         path = export.get_path(self, "csv")
         words = list({pset.name for pset in classes.PropertySet})  # every Pset name only once
@@ -342,6 +353,78 @@ class MainWindow(QMainWindow):
         if path and ok:
             desite.export_boq(path, pset_name)
 
+    def export_vestra_mapping(self) -> None:
+        file_text = "Excel Files (*.xlsx);;"
+        if self._export_path is None:
+            self._export_path = str(os.getcwd() + "/")
+        excel_path, answer = QFileDialog.getOpenFileName(self, "Template Excel", self._export_path, file_text)
+        if answer:
+            export_folder = QFileDialog.getExistingDirectory(self, "Export Folder", self._export_path)
+            if export_folder:
+                vestra.create_mapping(excel_path, export_folder, self.project)
+
+    def card_1(self) -> None:
+        file_text = "Excel Files (*.xlsx);;"
+        if self._export_path is None:
+            self._export_path = str(os.getcwd() + "/")
+
+        src, answer = QFileDialog.getOpenFileName(self, "Template Excel", self._export_path, file_text)
+        if not answer:
+            return
+        dest = QFileDialog.getSaveFileName(self, "CARD1 Excel", self._export_path, file_text)[0]
+
+        if dest:
+            card1.create_mapping(src, dest, self.project)
+
+    def excel_export(self):
+        if self._export_path is None:
+            self._export_path = str(os.getcwd() + "/")
+        dest = QFileDialog.getSaveFileName(self, "SOM Excel", self._export_path, "Excel Files (*.xlsx);;")[0]
+        if not dest:
+            return
+        mapping_dict = {"aus": "Ausbau", "lst": "LST"}  # TODO: implement GUI method to create extra mapping dict
+
+        som_excel.export(self.project, dest, mapping_dict)
+
+    def create_mapping_script(self):
+        name, answer = popups.req_export_pset_name(self)
+
+        if not answer:
+            return
+
+        file_text = "JavaScript (*.js);;"
+        if self._export_path is None:
+            self._export_path = str(os.getcwd() + "/")
+
+        path = QFileDialog.getSaveFileName(self, "Safe Mapping Script", self._export_path, file_text)[0]
+        if not path:
+            return
+
+        project = self.project
+        filehandling.create_mapping_script(project, name, path)
+
+    def export_allplan_excel(self) -> None:
+        file_text = "Excel Files (*.xlsx);;"
+        if self._export_path is None:
+            self._export_path = str(os.getcwd() + "/")
+        name, answer = popups.req_export_pset_name(self)
+        if not answer:
+            return
+        path = QFileDialog.getSaveFileName(self, "Safe Attribute Excel", self._export_path, file_text)[0]
+
+        if path:
+            allplan.create_mapping(self.project, path, name)
+
+
+
+    def desite_abbreviation(self) -> None:
+        abbrev = {obj.custom_attribues[constants.ABBREVIATION]: [obj.ident_value, obj.name] for obj in
+                  self.project.objects}
+        file_text = "JSON (*.json);;"
+        path = QFileDialog.getSaveFileName(self, "Abbreviations File", self._export_path, file_text)[0]
+        if path is not None:
+            with open(path, "w") as file:
+                json.dump(abbrev, file, indent=2)
 
 def main():
     start_log()
