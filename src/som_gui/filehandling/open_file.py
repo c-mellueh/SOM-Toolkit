@@ -107,7 +107,6 @@ def open_file_clicked(main_window: MainWindow):
 
     handle_old_data()
     path = get_path()
-    print(path)
     _open_file_by_path(main_window,path)
 
 

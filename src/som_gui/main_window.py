@@ -83,7 +83,6 @@ class MainWindow(QMainWindow):
         property_widget.init(self)
         script_widget.init(self)
 
-        self.ui.tree_object.resizeColumnToContents(0)
         connect()
         self.abbreviations = dict() #TODO: Turn into full GUI Feature
 
@@ -198,6 +197,7 @@ class MainWindow(QMainWindow):
                 root = tree_item.treeWidget().invisibleRootItem()
                 item = root.takeChild(root.indexOfChild(tree_item))
                 parent_item.addChild(item)
+        self.ui.tree_object.resizeColumnToContents(0)
 
     def info(self):
         object_widget.info(self)
@@ -250,8 +250,9 @@ class MainWindow(QMainWindow):
         object_widget.add_object(self)
 
     def add_object_to_tree(self, obj: classes.Object, parent=None):
-        return object_widget.add_object_to_tree(self, obj, parent)
-
+        val =  object_widget.add_object_to_tree(self, obj, parent)
+        self.ui.tree_object.resizeColumnToContents(0)
+        return val
     def delete_object(self):
         object_widget.rc_delete(self)
 
