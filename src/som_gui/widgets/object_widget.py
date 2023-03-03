@@ -3,16 +3,15 @@ from __future__ import annotations
 import copy as cp
 import logging
 from typing import TYPE_CHECKING
-
 from PySide6.QtCore import QPoint, Qt
 from PySide6.QtGui import QShortcut, QKeySequence, QDropEvent
-from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem
+from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem,QWidget,QTableWidgetItem
 from SOMcreator import classes, constants
 
-from ..qt_designs import ui_mainwindow
+from ..qt_designs import ui_mainwindow,ui_search
 from ..widgets import script_widget, property_widget
 from ..windows import popups
-
+from ..icons import get_icon
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
@@ -42,7 +41,17 @@ class CustomTree(QTreeWidget):
             else:
                 obj.parent = None
 
-    
+    def object_dict(self) -> dict[classes.Object,CustomObjectTreeItem]:
+        obj_dict = dict()
+        def add_to_dict(item:CustomObjectTreeItem):
+            obj_dict[item.object]=item
+            for k in range(item.childCount()):
+                add_to_dict(item.child(k))
+
+        for i in range(self.topLevelItemCount()):
+            add_to_dict(self.topLevelItem(i))
+        return obj_dict
+
 class CustomObjectTreeItem(QTreeWidgetItem):
     def __init__(self, obj: classes.Object, func=None) -> None:
         super(CustomObjectTreeItem, self).__init__()
@@ -87,6 +96,11 @@ class CustomObjectTreeItem(QTreeWidgetItem):
             check_bool = True
         self.object.optional = check_bool
 
+    def expand_to_me(self) -> None:
+        self.setExpanded(True)
+        if self.parent() is not None:
+            self.parent().expand_to_me()
+
 def init(main_window: MainWindow):
     def init_tree(tree: CustomTree):
         # Design Tree
@@ -110,10 +124,12 @@ def init(main_window: MainWindow):
         ui: ui_mainwindow.Ui_MainWindow = main_window.ui
         ui.tree_object.itemClicked.connect(main_window.object_clicked)
         ui.tree_object.itemChanged.connect(main_window.item_changed)
+        ui.tree_object.itemExpanded.connect(main_window.resize_tree)
         ui.tree_object.customContextMenuRequested.connect(main_window.right_click)
         ui.button_objects_add.clicked.connect(main_window.add_object)
         main_window.grpSc.activated.connect(main_window.rc_group)
         main_window.delSc.activated.connect(main_window.delete_object)
+        main_window.srchSc.activated.connect(main_window.search_object)
 
     main_window.ui.verticalLayout_objects.removeWidget(main_window.ui.tree_object)
     main_window.ui.tree_object.close()
@@ -126,6 +142,7 @@ def init(main_window: MainWindow):
 
     main_window.delSc = QShortcut(QKeySequence('Ctrl+X'), main_window)
     main_window.grpSc = QShortcut(QKeySequence('Ctrl+G'), main_window)
+    main_window.srchSc = QShortcut(QKeySequence('Ctrl+F'),main_window)
     connect_items()
 
 
@@ -161,6 +178,83 @@ def clear_all(main_window: MainWindow):
     for obj in classes.Object:
         obj.delete()
 
+class SearchItem(QTableWidgetItem):
+    def __init__(self,object:classes.Object,text:str|None):
+        super(SearchItem, self).__init__()
+        self.object = object
+        if text is None:
+            text = ""
+        self.setFlags(self.flags().ItemIsSelectable|self.flags().ItemIsEnabled)
+        self.setText(text)
+
+class SearchWindow(QWidget):
+    def __init__(self, main_window:MainWindow,):
+        super(SearchWindow, self).__init__()
+
+        def connect_items():
+            self.widget.lineEdit.textChanged.connect(self.update_table)
+            self.widget.tableWidget.itemDoubleClicked.connect(self.item_clicked)
+
+        self.widget = ui_search.Ui_Search()
+        self.widget.setupUi(self)
+        self.setWindowTitle("Search")
+        self.setWindowIcon(get_icon())
+        self.main_window = main_window
+        self.main_window.search_ui = self
+        self.project:classes.Project = self.main_window.project
+        self.show()
+        self.widget.tableWidget.verticalHeader().setVisible(False)
+        self.row_dict = dict()
+        self.item_dict: dict[classes.Object,SearchItem] = {obj:(SearchItem(obj,obj.name),SearchItem(obj,obj.ident_value)) for obj in self.project.objects}
+        self.fill_table()
+        table_header = self.widget.tableWidget.horizontalHeader()
+        table_header.setStretchLastSection(True)
+        table_header.setSectionResizeMode(0,table_header.ResizeMode.ResizeToContents)
+
+        self.objects = set(obj for obj in self.project.objects)
+        connect_items()
+
+    def fill_table(self):
+
+        table = self.widget.tableWidget
+        table.setRowCount(len(self.item_dict))
+        for row,(obj,items) in enumerate(self.item_dict.items()):
+            for column,item in enumerate(items):
+                table.setItem(row,column,item)
+            self.row_dict[obj] = row
+
+
+
+    def item_clicked(self,table_item:SearchItem):
+        obj = table_item.object
+        tree:CustomTree = self.main_window.object_tree
+
+        for selected_item in tree.selectedItems():
+            selected_item.setSelected(False)
+
+        tree_item = tree.object_dict()[obj]
+        tree_item.setSelected(True)
+        tree_item.expand_to_me()
+        self.main_window.object_clicked(tree_item)
+        tree.scrollToItem(tree_item)
+        self.hide()
+
+    def update_table(self):
+        table = self.widget.tableWidget
+        text = self.widget.lineEdit.text().lower()
+        possible_objects = set(obj for obj in self.objects if text in str(obj.name).lower() or text in str(obj.ident_value).lower())
+        forbidden_objects = self.objects.difference(possible_objects)
+        for obj in possible_objects:
+            table.showRow(self.row_dict[obj])
+        for obj in forbidden_objects:
+            table.hideRow(self.row_dict[obj])
+
+
+    def test(self):
+        print("HIER")
+
+def search_object(main_window:MainWindow):
+    sw = SearchWindow(main_window)
 
 def right_click(main_window: MainWindow, position: QPoint):
     menu = QMenu()
