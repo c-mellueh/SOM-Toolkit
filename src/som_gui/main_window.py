@@ -57,6 +57,7 @@ class MainWindow(QMainWindow):
             self.ui.action_allplan.triggered.connect(self.export_allplan_excel)
             self.ui.action_abbreviation_json.triggered.connect(self.desite_abbreviation)
             self.ui.table_pset.itemChanged.connect(self.item_changed)
+
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -185,6 +186,13 @@ class MainWindow(QMainWindow):
         self.project.clear()
 
     # ObjectWidget
+    def search_object(self):
+        object_widget.search_object(self)
+
+    def resize_tree(self):
+        for column in range(self.object_tree.columnCount()):
+            self.object_tree.resizeColumnToContents(column)
+
     def fill_tree(self) -> None:
         root_item = self.object_tree.invisibleRootItem()
         item_dict: dict[classes.Object, object_widget.CustomObjectTreeItem] = {
@@ -199,6 +207,7 @@ class MainWindow(QMainWindow):
                 item = root.takeChild(root.indexOfChild(tree_item))
                 parent_item.addChild(item)
 
+        self.resize_tree()
     def info(self):
         object_widget.info(self)
 
