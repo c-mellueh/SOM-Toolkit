@@ -11,18 +11,24 @@ if TYPE_CHECKING:
 
 def get_path(main_window: MainWindow, file_format: str) -> str:
     """ File Open Dialog with modifiable file_format"""
+    proposal = ""
     if main_window.export_path is not None:
         basename = os.path.basename(main_window.export_path)
         split = os.path.splitext(basename)[0]
         filename_without_extension = os.path.splitext(split)[0]
         dirname = os.path.dirname(main_window.export_path)
         proposal = os.path.join(dirname, filename_without_extension)
-        path = \
-            QFileDialog.getSaveFileName(main_window, f"Save {file_format}", proposal,
-                                        f"{file_format} Files (*.{file_format})")[0]
-    else:
-        path = \
-            QFileDialog.getSaveFileName(main_window, f"Save {file_format}", "",
-                                        f"{file_format} Files (*.{file_format})")[0]
 
+    path = \
+        QFileDialog.getSaveFileName(main_window, f"Save {file_format}", proposal,
+                                    f"{file_format} Files (*.{file_format})")[0]
+
+    return path
+
+def get_folder(main_window:MainWindow) -> str:
+    proposal = ""
+    if main_window.export_path is not None:
+        proposal = os.path.basename(main_window.export_path)
+    path = \
+        QFileDialog.getExistingDirectory(parent = main_window,dir=proposal)
     return path

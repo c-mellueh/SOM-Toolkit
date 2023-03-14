@@ -83,7 +83,7 @@ class MainWindow(QMainWindow):
         object_widget.init(self)
         property_widget.init(self)
         script_widget.init(self)
-
+        self.setWindowTitle("SOM-Toolkit")
         connect()
         self.abbreviations = dict() #TODO: Turn into full GUI Feature
 
@@ -338,9 +338,9 @@ class MainWindow(QMainWindow):
             self.project.version = widget.lineEdit_version.text()
 
     def export_bookmarks(self):
-        path = export.get_path(self, "bkxml")
+        path = export.get_folder(self)
         if path:
-            desite.export_bookmarks(path)
+            desite.export_bookmarks(self.project,path)
 
     def open_graph(self):
         self.load_graph(True)
