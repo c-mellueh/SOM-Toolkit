@@ -32,28 +32,24 @@ var GRUPPENKONTROLLE = true //  true/false
 const STRNG = "xs:string";
 const t1 = '<section name="';
 const t2 = '" type="typeBsGroup"/>';
-const groupErrors = []
+var timestamp = getDate()
+var modelId = desiteAPI.createModel(timestamp + " GroupIssues", true, domain = "issues")
 
+main()
 
-var bauwerksstruktur = getBS(); // gewollte Bauwerksstruktur als JSON einlesen
-if (groupErrors.length != 0 && GRUPPENKONTROLLE) {
-    console.log("Abbruch wegen Fehlerhafter Gruppenbezeichnung(en)");
-    console.log("")
-    for (var i in groupErrors) {
-        console.log("Bitte Wert '" + groupErrors[i] + "' kontrollieren.")
-
-    }
-}
-else {
+function main() {
+    bauwerksstruktur = getBS(); // gewollte Bauwerksstruktur als JSON einlesen
     var model = getModel(BSNAME); // BS Model mit BSNAME finden
-    build_layer(model, bauwerksstruktur); //BS erstellen und verlinken
+    buildLayer(model, bauwerksstruktur); //BS erstellen und verlinken
+
 }
-function build_layer(parent_id, bsLayerDict) { // Ebene erstellen
+
+function buildLayer(parent_id, bsLayerDict) { // Ebene erstellen
 
     for (var layerKuerzel in bsLayerDict) {
-        var desiteBSID = create_if_not_exist(parent_id, layerKuerzel);
+        var desiteBSID = createIfNotExist(parent_id, layerKuerzel);
         for (var layerChild in bsLayerDict[layerKuerzel].children) {
-            build_instances(desiteBSID, bsLayerDict, layerChild, layerKuerzel);
+            buildInstances(desiteBSID, bsLayerDict, layerChild, layerKuerzel);
 
 
         }
@@ -66,12 +62,12 @@ function build_layer(parent_id, bsLayerDict) { // Ebene erstellen
     }
 }
 
-function build_instances(parent_id, bs_dictIn, levelName, instanceKuerzel) { //individuen verknüpfen
-    var desiteBSID = create_if_not_exist(parent_id, instanceKuerzel, "_" + levelName);
-    build_layer(desiteBSID, bs_dictIn[instanceKuerzel].children[levelName]);
+function buildInstances(parent_id, bs_dictIn, levelName, instanceKuerzel) { //individuen verknüpfen
+    var desiteBSID = createIfNotExist(parent_id, instanceKuerzel, "_" + levelName);
+    buildLayer(desiteBSID, bs_dictIn[instanceKuerzel].children[levelName]);
 }
 
-function create_if_not_exist(par_id, kuerzel, suffix) { // wenn layer noch nicht existiert, wird es erstellt
+function createIfNotExist(par_id, kuerzel, suffix) { // wenn layer noch nicht existiert, wird es erstellt
     if (suffix == undefined) { suffix = "" }
     var vgKlass = getBauteilKlassifikation(kuerzel);
     var vgName = getName(kuerzel) + suffix;
@@ -112,9 +108,9 @@ function getModel(bsName) { //BS MODEL finden oder erstellen
 
 function getBauteilKlassifikation(abkuerzung) { //bauteilKlassifikation anhand von Abkuerzung erhalten
     abkuerzung = abkuerzung.toUpperCase()
-    if (abkuerzung in get_abkz()) {
+    if (abkuerzung in getAbkuerzung()) {
 
-        return get_abkz()[abkuerzung][0]
+        return getAbkuerzung()[abkuerzung][0]
 
     }
     else {
@@ -127,9 +123,9 @@ function getBauteilKlassifikation(abkuerzung) { //bauteilKlassifikation anhand v
 function getName(abkuerzung) { //BauteilName als Abkuerzungsverzeichnis lesen
     abkuerzung = abkuerzung.toUpperCase()
 
-    if (abkuerzung in get_abkz()) {
+    if (abkuerzung in getAbkuerzung()) {
 
-        return get_abkz()[abkuerzung][1]
+        return getAbkuerzung()[abkuerzung][1]
 
     }
     else {
@@ -142,8 +138,8 @@ function getName(abkuerzung) { //BauteilName als Abkuerzungsverzeichnis lesen
 function getBS() { // gewollte Bauwerksstruktur als JSON erstellen
     var all_elements = desiteAPI.getAllElements();
     var element_liste = [];
-    var bauwerksstruktur = {}
-
+    var bauwerksstruktur = {};
+    var elementeOhneGruppenAttribut = [];
     for (var i in all_elements) { //Erstellt Liste aus allen Elementen und deren Gruppenzugehörigkeiten
         var id = all_elements[i];
         var gruppe = desiteAPI.getPropertyValue(id, GRUPPIERUNGSATTRIB, STRNG)
@@ -154,15 +150,22 @@ function getBS() { // gewollte Bauwerksstruktur als JSON erstellen
                 element_liste.push([id, groups[g], bauteilKlassifikation])
             }
         }
+        else {
+            elementeOhneGruppenAttribut.push(id);
+        }
+
 
     }
 
+    var groupErrorList = []
     for (var i in element_liste) { // Erstellt BS als JSON
         id = element_liste[i][0];
-        identitaet = element_liste[i][1];
+        identitaet = element_liste[i][1];   //Wert von idGruppe nach split(";")
         bauteilKlassifikation = element_liste[i][2]
-        check_for_group_error(identitaet)
-        eigene_abkuerzung = get_reverse_abkz(bauteilKlassifikation)
+        if (checkForGroupError(identitaet)) {
+            groupErrorList.push(id)
+        }
+        eigene_abkuerzung = getReverseAbkuerzung(bauteilKlassifikation)
 
         split_ident = identitaet.split("_")
         fokus_struktur = bauwerksstruktur
@@ -199,20 +202,28 @@ function getBS() { // gewollte Bauwerksstruktur als JSON erstellen
         }
     }
 
-
+    if (groupErrorList.length > 0) {
+        text = "Fehler in Aufbau von idGruppe"
+        console.log("Einige Elemente haben einem Fehler im Attribut '" + GRUPPIERUNGSATTRIB + "' -> Viewpoint wurde erstellt")
+        createIssue("Fehler Aufbau", text, modelId, groupErrorList)
+    }
+    if (elementeOhneGruppenAttribut.length > 0) {
+        console.log("Einige Elemente haben nicht das Attribut '" + GRUPPIERUNGSATTRIB + "' -> Viewpoint wurde erstellt")
+        text = "Attribut " + GRUPPIERUNGSATTRIB + "Fehlt"
+        createIssue("Fehler Attribut", text, modelId, elementeOhneGruppenAttribut)
+    }
 
     return bauwerksstruktur
-
 }
 
-function get_abkz() { // abkuerzungsverzeichnis einlesen
+function getAbkuerzung() { // abkuerzungsverzeichnis einlesen
     txt = desiteAPI.readTextFileAsString(ABKUERZUNGSDATEI)
     return JSON.parse(txt)
 }
 
-function get_reverse_abkz(bk) { // abkuerzungsverzeichnis umwandlen -> bauteilKlassifikation als Key
+function getReverseAbkuerzung(bk) { // abkuerzungsverzeichnis umwandlen -> bauteilKlassifikation als Key
     var reverse_abkz = {};
-    abkz = get_abkz()
+    abkz = getAbkuerzung()
     for (i in abkz) {
         bauteilKlass = abkz[i][0];
         reverse_abkz[bauteilKlass] = i;
@@ -224,18 +235,61 @@ function get_reverse_abkz(bk) { // abkuerzungsverzeichnis umwandlen -> bauteilKl
     }
     return ret
 }
-function check_for_group_error(identitaet) { // Fehlermeldung wenn gruppenid komisch ist
+function checkForGroupError(identitaet) { // Fehlermeldung wenn gruppenid komisch ist
     check_bool = false
 
     sp = identitaet.split("_")
     last_entry = sp[sp.length - 1]
-    if (last_entry in get_abkz()) {
+    if (last_entry in getAbkuerzung()) {
         check_bool = true
     }
     if (sp.length % 2 != 0) {
         check_bool = true
     }
-    if (check_bool && groupErrors.indexOf(identitaet) == -1) {
-        groupErrors.push(identitaet)
+    return check_bool
+}
+function createIssue(issueName, description, modelId, idList) {
+    function getOptions(IssueName) {
+
+
+        return {
+            "name": IssueName,
+            "saveVisible": true,
+            "linkVisible": false,
+            "saveSelected": true,
+            "linkSelected": true,
+            "saveLocked": false,
+            "saveClipping": false,
+            "saveRedlining": false,
+            "saveMeasuring": false
+        }
+
     }
+
+    desiteAPI.selectElements(idList.join(";"), true);
+    desiteAPI.zoomToSelected();
+    map = {
+        "issue": {
+            "name": description,
+            "description": description,
+            "status": "Open",
+            "priority": "Normal",
+        }
+    }
+
+    issueId = desiteAPI.createObject(modelId, map)
+    options = getOptions(issueName)
+
+    vp_id = desiteAPI.createViewpointFromCurrentView(issueId, options)
+    return issueId
+
+}
+
+function getDate() {
+    date = new Date()
+    return [
+        date.getDate(),
+        date.getMonth() + 1,
+        date.getFullYear(),
+    ].join('.') + " " + date.toLocaleTimeString();
 }
