@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.1
+## Created by: Qt User Interface Compiler version 6.4.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -455,9 +455,7 @@ class Ui_MainWindow(object):
         self.menuExport.addAction(self.action_vestra)
         self.menuExport.addAction(self.action_excel)
         self.menuDesite.addAction(self.action_desite_export)
-        self.menuDesite.addAction(self.action_export_bs)
         self.menuDesite.addAction(self.action_export_bookmarks)
-        self.menuDesite.addAction(self.action_export_boq)
         self.menuDesite.addAction(self.action_mapping_script)
         self.menuPredefined_Psets.addAction(self.action_show_list)
         self.menuShow_Graphs.addAction(self.action_show_graphs)
@@ -488,7 +486,7 @@ class Ui_MainWindow(object):
         self.action_mapping.setText(QCoreApplication.translate("MainWindow", u"Mapping", None))
         self.action_shared_parameter.setText(QCoreApplication.translate("MainWindow", u"Shared Parameters", None))
         self.action_ifc_mapping.setText(QCoreApplication.translate("MainWindow", u"IFC Mapping", None))
-        self.action_mapping_script.setText(QCoreApplication.translate("MainWindow", u"Mapping Script", None))
+        self.action_mapping_script.setText(QCoreApplication.translate("MainWindow", u"Create Mapping Script", None))
         self.action_abbreviation_json.setText(QCoreApplication.translate("MainWindow", u"Abbreviation JSON", None))
         self.action_allplan.setText(QCoreApplication.translate("MainWindow", u"Allplan", None))
         self.action_card1.setText(QCoreApplication.translate("MainWindow", u"CARD1", None))
