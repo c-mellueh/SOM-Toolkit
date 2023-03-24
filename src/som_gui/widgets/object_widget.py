@@ -15,6 +15,7 @@ from ..icons import get_icon
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
+from fuzzywuzzy import fuzz
 
 class CustomTree(QTreeWidget):
     def __init__(self, layout) -> None:
@@ -187,6 +188,7 @@ class SearchItem(QTableWidgetItem):
         self.setFlags(self.flags().ItemIsSelectable|self.flags().ItemIsEnabled)
         self.setText(text)
 
+
 class SearchWindow(QWidget):
     def __init__(self, main_window:MainWindow,):
         super(SearchWindow, self).__init__()
@@ -205,14 +207,20 @@ class SearchWindow(QWidget):
         self.show()
         self.widget.tableWidget.verticalHeader().setVisible(False)
         self.row_dict = dict()
-        self.item_dict: dict[classes.Object,SearchItem] = {obj:(SearchItem(obj,obj.name),SearchItem(obj,obj.ident_value)) for obj in self.project.objects}
+        self.item_dict: dict[classes.Object,list[SearchItem]] = {obj:[SearchItem(obj,obj.name),SearchItem(obj,obj.ident_value),SearchItem(obj,"100")] for obj in self.project.objects}
+
         self.fill_table()
         table_header = self.widget.tableWidget.horizontalHeader()
         table_header.setStretchLastSection(True)
         table_header.setSectionResizeMode(0,table_header.ResizeMode.ResizeToContents)
-
+        self.widget.tableWidget.setColumnHidden(2,True)
+        self.widget.tableWidget.sortByColumn(2,Qt.SortOrder.AscendingOrder)
+        self.widget.tableWidget.setSortingEnabled(True)
         self.objects = set(obj for obj in self.project.objects)
         connect_items()
+
+    def get_row(self,obj):
+        return self.item_dict[obj][0].row()
 
     def fill_table(self):
 
@@ -242,16 +250,21 @@ class SearchWindow(QWidget):
     def update_table(self):
         table = self.widget.tableWidget
         text = self.widget.lineEdit.text().lower()
-        possible_objects = set(obj for obj in self.objects if text in str(obj.name).lower() or text in str(obj.ident_value).lower())
+        possible_objects = set()
+        for obj in self.objects:
+            value1 = fuzz.partial_ratio(text.lower(),obj.name.lower())
+            value2 = fuzz.partial_ratio(text.lower(),str(obj.ident_value))
+            value = max(value2,value1)
+            row = self.get_row(obj)
+            table.item(row,2).setText(str(value))
+            if value>75:
+                possible_objects.add(obj)
+
         forbidden_objects = self.objects.difference(possible_objects)
         for obj in possible_objects:
-            table.showRow(self.row_dict[obj])
+            table.showRow(self.get_row(obj))
         for obj in forbidden_objects:
-            table.hideRow(self.row_dict[obj])
-
-
-    def test(self):
-        print("HIER")
+            table.hideRow(self.get_row(obj))
 
 def search_object(main_window:MainWindow):
     sw = SearchWindow(main_window)

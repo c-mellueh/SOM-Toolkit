@@ -28,6 +28,9 @@
      <property name="selectionMode">
       <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
      <attribute name="horizontalHeaderStretchLastSection">
       <bool>false</bool>
      </attribute>
@@ -39,6 +42,11 @@
      <column>
       <property name="text">
        <string>Identifier</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Match</string>
       </property>
      </column>
     </widget>
