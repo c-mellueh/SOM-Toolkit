@@ -28,7 +28,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1265, 503)
+        MainWindow.resize(1315, 503)
         MainWindow.setMinimumSize(QSize(0, 0))
         self.action_file_new = QAction(MainWindow)
         self.action_file_new.setObjectName(u"action_file_new")
@@ -178,6 +178,31 @@ class Ui_MainWindow(object):
         self.tab_property_set.setLayoutDirection(Qt.LeftToRight)
         self.gridLayout = QGridLayout(self.tab_property_set)
         self.gridLayout.setObjectName(u"gridLayout")
+        self.horizontalLayout_pSet_button = QHBoxLayout()
+        self.horizontalLayout_pSet_button.setObjectName(u"horizontalLayout_pSet_button")
+        self.label_pSet_name = QLabel(self.tab_property_set)
+        self.label_pSet_name.setObjectName(u"label_pSet_name")
+        self.label_pSet_name.setMinimumSize(QSize(30, 0))
+
+        self.horizontalLayout_pSet_button.addWidget(self.label_pSet_name)
+
+        self.lineEdit_pSet_name = QLineEdit(self.tab_property_set)
+        self.lineEdit_pSet_name.setObjectName(u"lineEdit_pSet_name")
+        self.lineEdit_pSet_name.setFrame(True)
+
+        self.horizontalLayout_pSet_button.addWidget(self.lineEdit_pSet_name)
+
+        self.button_Pset_add = QPushButton(self.tab_property_set)
+        self.button_Pset_add.setObjectName(u"button_Pset_add")
+        sizePolicy1.setHeightForWidth(self.button_Pset_add.sizePolicy().hasHeightForWidth())
+        self.button_Pset_add.setSizePolicy(sizePolicy1)
+        self.button_Pset_add.setAutoDefault(True)
+
+        self.horizontalLayout_pSet_button.addWidget(self.button_Pset_add)
+
+
+        self.gridLayout.addLayout(self.horizontalLayout_pSet_button, 2, 0, 1, 2)
+
         self.splitter_2 = QSplitter(self.tab_property_set)
         self.splitter_2.setObjectName(u"splitter_2")
         sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -217,6 +242,7 @@ class Ui_MainWindow(object):
         self.table_pset.setSortingEnabled(True)
         self.splitter_2.addWidget(self.table_pset)
         self.table_pset.horizontalHeader().setProperty("showSortIndicator", True)
+        self.table_pset.horizontalHeader().setStretchLastSection(True)
         self.table_pset.verticalHeader().setVisible(False)
         self.table_pset.verticalHeader().setCascadingSectionResizes(False)
         self.table_attribute = QTableWidget(self.splitter_2)
@@ -233,33 +259,9 @@ class Ui_MainWindow(object):
         self.table_attribute.setObjectName(u"table_attribute")
         self.table_attribute.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.splitter_2.addWidget(self.table_attribute)
+        self.table_attribute.horizontalHeader().setStretchLastSection(True)
 
         self.gridLayout.addWidget(self.splitter_2, 3, 0, 1, 2)
-
-        self.horizontalLayout_pSet_button = QHBoxLayout()
-        self.horizontalLayout_pSet_button.setObjectName(u"horizontalLayout_pSet_button")
-        self.label_pSet_name = QLabel(self.tab_property_set)
-        self.label_pSet_name.setObjectName(u"label_pSet_name")
-        self.label_pSet_name.setMinimumSize(QSize(30, 0))
-
-        self.horizontalLayout_pSet_button.addWidget(self.label_pSet_name)
-
-        self.lineEdit_pSet_name = QLineEdit(self.tab_property_set)
-        self.lineEdit_pSet_name.setObjectName(u"lineEdit_pSet_name")
-        self.lineEdit_pSet_name.setFrame(True)
-
-        self.horizontalLayout_pSet_button.addWidget(self.lineEdit_pSet_name)
-
-        self.button_Pset_add = QPushButton(self.tab_property_set)
-        self.button_Pset_add.setObjectName(u"button_Pset_add")
-        sizePolicy1.setHeightForWidth(self.button_Pset_add.sizePolicy().hasHeightForWidth())
-        self.button_Pset_add.setSizePolicy(sizePolicy1)
-        self.button_Pset_add.setAutoDefault(True)
-
-        self.horizontalLayout_pSet_button.addWidget(self.button_Pset_add)
-
-
-        self.gridLayout.addLayout(self.horizontalLayout_pSet_button, 2, 0, 1, 2)
 
         self.tabWidget.addTab(self.tab_property_set, "")
         self.tab_code = QWidget()
@@ -409,7 +411,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.verticalLayout_main)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1265, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1315, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuExport = QMenu(self.menuFile)
@@ -503,6 +505,8 @@ class Ui_MainWindow(object):
         ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Optional", None));
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objects", None));
+        self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))
+        self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         ___qtablewidgetitem = self.table_pset.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"PropertySet", None));
         ___qtablewidgetitem1 = self.table_pset.horizontalHeaderItem(1)
@@ -528,8 +532,6 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"Format", None));
         ___qtablewidgetitem9 = self.table_attribute.horizontalHeaderItem(3)
         ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"Value", None));
-        self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))
-        self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_property_set), QCoreApplication.translate("MainWindow", u"PropertySet", None))
         self.label_script_title.setText(QCoreApplication.translate("MainWindow", u"Scripts", None))
 

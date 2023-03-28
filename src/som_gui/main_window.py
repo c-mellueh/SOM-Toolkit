@@ -28,9 +28,7 @@ def get_icon():
 def start_log() -> None:
     if os.path.exists(logs.LOG_PATH):
         os.remove(logs.LOG_PATH)
-
     logging.config.fileConfig(logs.CONF_PATH, defaults={'logfilename': logs.LOG_PATH.replace("\\", "/")})
-    logging.getLogger("simple_example")
 
 
 class MainWindow(QMainWindow):
