@@ -161,6 +161,84 @@ class ObjectInfoWidget(QDialog):
         line_edit.show()
 
 
+class SearchWindow(QWidget):
+    def __init__(self, main_window: MainWindow, ):
+        super(SearchWindow, self).__init__()
+
+        def connect_items():
+            self.widget.lineEdit.textChanged.connect(self.update_table)
+            self.widget.tableWidget.itemDoubleClicked.connect(self.item_clicked)
+
+        self.widget = ui_search.Ui_Search()
+        self.widget.setupUi(self)
+        self.setWindowTitle("Search")
+        self.setWindowIcon(get_icon())
+        self.main_window = main_window
+        self.main_window.search_ui = self
+        self.project: classes.Project = self.main_window.project
+        self.show()
+        self.widget.tableWidget.verticalHeader().setVisible(False)
+        self.row_dict = dict()
+        self.item_dict: dict[classes.Object, list[SearchItem]] = {
+            obj: [SearchItem(obj, obj.name), SearchItem(obj, obj.ident_value), SearchItem(obj, "100")] for obj in
+            self.project.objects}
+
+        self.fill_table()
+        table_header = self.widget.tableWidget.horizontalHeader()
+        table_header.setStretchLastSection(True)
+        table_header.setSectionResizeMode(0, table_header.ResizeMode.ResizeToContents)
+        self.widget.tableWidget.setColumnHidden(2, True)
+        self.widget.tableWidget.sortByColumn(2, Qt.SortOrder.AscendingOrder)
+        self.widget.tableWidget.setSortingEnabled(True)
+        self.objects = set(obj for obj in self.project.objects)
+        connect_items()
+
+    def get_row(self, obj):
+        return self.item_dict[obj][0].row()
+
+    def fill_table(self):
+
+        table = self.widget.tableWidget
+        table.setRowCount(len(self.item_dict))
+        for row, (obj, items) in enumerate(self.item_dict.items()):
+            for column, item in enumerate(items):
+                table.setItem(row, column, item)
+            self.row_dict[obj] = row
+
+    def item_clicked(self, table_item: SearchItem):
+        obj = table_item.object
+        tree: CustomTree = self.main_window.object_tree
+
+        for selected_item in tree.selectedItems():
+            selected_item.setSelected(False)
+
+        tree_item = tree.object_dict()[obj]
+        tree_item.setSelected(True)
+        tree_item.expand_to_me()
+        self.main_window.object_clicked(tree_item)
+        tree.scrollToItem(tree_item)
+        self.hide()
+
+    def update_table(self):
+        table = self.widget.tableWidget
+        text = self.widget.lineEdit.text().lower()
+        possible_objects = set()
+        for obj in self.objects:
+            value1 = fuzz.partial_ratio(text.lower(), obj.name.lower())
+            value2 = fuzz.partial_ratio(text.lower(), str(obj.ident_value))
+            value = max(value2, value1)
+            row = self.get_row(obj)
+            table.item(row, 2).setText(str(value))
+            if value > 75:
+                possible_objects.add(obj)
+
+        forbidden_objects = self.objects.difference(possible_objects)
+        for obj in possible_objects:
+            table.showRow(self.get_row(obj))
+        for obj in forbidden_objects:
+            table.hideRow(self.get_row(obj))
+
+
 def object_double_clicked(main_window: MainWindow, item):
     obj: classes.Object = item.object
     object_widget = ObjectInfoWidget(main_window, obj)
@@ -264,82 +342,6 @@ class SearchItem(QTableWidgetItem):
         self.setText(text)
 
 
-class SearchWindow(QWidget):
-    def __init__(self, main_window: MainWindow, ):
-        super(SearchWindow, self).__init__()
-
-        def connect_items():
-            self.widget.lineEdit.textChanged.connect(self.update_table)
-            self.widget.tableWidget.itemDoubleClicked.connect(self.item_clicked)
-
-        self.widget = ui_search.Ui_Search()
-        self.widget.setupUi(self)
-        self.setWindowTitle("Search")
-        self.setWindowIcon(get_icon())
-        self.main_window = main_window
-        self.main_window.search_ui = self
-        self.project: classes.Project = self.main_window.project
-        self.show()
-        self.widget.tableWidget.verticalHeader().setVisible(False)
-        self.row_dict = dict()
-        self.item_dict: dict[classes.Object, list[SearchItem]] = {
-            obj: [SearchItem(obj, obj.name), SearchItem(obj, obj.ident_value), SearchItem(obj, "100")] for obj in
-            self.project.objects}
-
-        self.fill_table()
-        table_header = self.widget.tableWidget.horizontalHeader()
-        table_header.setStretchLastSection(True)
-        table_header.setSectionResizeMode(0, table_header.ResizeMode.ResizeToContents)
-        self.widget.tableWidget.setColumnHidden(2, True)
-        self.widget.tableWidget.sortByColumn(2, Qt.SortOrder.AscendingOrder)
-        self.widget.tableWidget.setSortingEnabled(True)
-        self.objects = set(obj for obj in self.project.objects)
-        connect_items()
-
-    def get_row(self, obj):
-        return self.item_dict[obj][0].row()
-
-    def fill_table(self):
-
-        table = self.widget.tableWidget
-        table.setRowCount(len(self.item_dict))
-        for row, (obj, items) in enumerate(self.item_dict.items()):
-            for column, item in enumerate(items):
-                table.setItem(row, column, item)
-            self.row_dict[obj] = row
-
-    def item_clicked(self, table_item: SearchItem):
-        obj = table_item.object
-        tree: CustomTree = self.main_window.object_tree
-
-        for selected_item in tree.selectedItems():
-            selected_item.setSelected(False)
-
-        tree_item = tree.object_dict()[obj]
-        tree_item.setSelected(True)
-        tree_item.expand_to_me()
-        self.main_window.object_clicked(tree_item)
-        tree.scrollToItem(tree_item)
-        self.hide()
-
-    def update_table(self):
-        table = self.widget.tableWidget
-        text = self.widget.lineEdit.text().lower()
-        possible_objects = set()
-        for obj in self.objects:
-            value1 = fuzz.partial_ratio(text.lower(), obj.name.lower())
-            value2 = fuzz.partial_ratio(text.lower(), str(obj.ident_value))
-            value = max(value2, value1)
-            row = self.get_row(obj)
-            table.item(row, 2).setText(str(value))
-            if value > 75:
-                possible_objects.add(obj)
-
-        forbidden_objects = self.objects.difference(possible_objects)
-        for obj in possible_objects:
-            table.showRow(self.get_row(obj))
-        for obj in forbidden_objects:
-            table.hideRow(self.get_row(obj))
 
 
 def search_object(main_window: MainWindow):
