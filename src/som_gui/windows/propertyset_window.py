@@ -78,7 +78,7 @@ def set_table_line(table,row: int, attrib: classes.Attribute) -> None:
     if attrib.value_type == constants.RANGE:
         value_text = ";".join("-".join((str(x) for x in ran)) for ran in attrib.value)
     else:
-        value_text = ";".join(attrib.value)
+        value_text = ";".join(str(x) for x in attrib.value)
 
     table.setItem(row, 0, name_item)
     table.setItem(row, 1, CustomTableItem(attrib, attrib.data_type))

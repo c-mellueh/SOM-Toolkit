@@ -144,9 +144,10 @@ def _open_file_by_path(main_window:MainWindow,path):
         build_aggregations()
         main_window.abbreviations = {block.abbreviation: [block.ident_value, block.name] for block in excel.ExcelBlock if
              block.ident_value is not None}
+        #main_window.abbreviations = excel.create_abbreviation_json(path,sheet_name)
     else:
-        project.open_json(path)
-        #import_node_pos(main_window.graph_window, path)
+        project.open(path)
+        import_node_pos(main_window.graph_window, path)
 
     #main_window.ui.tree_object.resizeColumnToContents(0)
     main_window.load_graph(show=False)
