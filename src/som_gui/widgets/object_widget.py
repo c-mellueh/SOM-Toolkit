@@ -180,15 +180,16 @@ class SearchWindow(QWidget):
         self.widget.tableWidget.verticalHeader().setVisible(False)
         self.row_dict = dict()
         self.item_dict: dict[classes.Object, list[SearchItem]] = {
-            obj: [SearchItem(obj, obj.name), SearchItem(obj, obj.ident_value), SearchItem(obj, "100")] for obj in
+            obj: [SearchItem(obj, obj.name), SearchItem(obj, obj.ident_value),SearchItem(obj,obj.abbreviation), SearchItem(obj, "100")] for obj in
             self.project.objects}
 
+        self.MATCH_INDEX = 3
         self.fill_table()
         table_header = self.widget.tableWidget.horizontalHeader()
         table_header.setStretchLastSection(True)
         table_header.setSectionResizeMode(0, table_header.ResizeMode.ResizeToContents)
-        self.widget.tableWidget.setColumnHidden(2, True)
-        self.widget.tableWidget.sortByColumn(2, Qt.SortOrder.AscendingOrder)
+        self.widget.tableWidget.setColumnHidden(self.MATCH_INDEX, True)
+        self.widget.tableWidget.sortByColumn(self.MATCH_INDEX, Qt.SortOrder.AscendingOrder)
         self.widget.tableWidget.setSortingEnabled(True)
         self.objects = set(obj for obj in self.project.objects)
         connect_items()
@@ -226,9 +227,10 @@ class SearchWindow(QWidget):
         for obj in self.objects:
             value1 = fuzz.partial_ratio(text.lower(), obj.name.lower())
             value2 = fuzz.partial_ratio(text.lower(), str(obj.ident_value))
-            value = max(value2, value1)
+            value3 = fuzz.partial_ratio(text.lower(),obj.abbreviation.lower())
+            value = max([value1,value2,value3])
             row = self.get_row(obj)
-            table.item(row, 2).setText(str(value))
+            table.item(row, self.MATCH_INDEX).setText(str(value))
             if value > 75:
                 possible_objects.add(obj)
 
