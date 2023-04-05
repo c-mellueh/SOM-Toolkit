@@ -129,11 +129,6 @@ def req_group_name(main_window, prefil: list[str] = None):
         return [False, False, False, False], widget.radioButton.isChecked()
 
 
-def req_new_name(property_window, base_text=""):
-    text = QInputDialog.getText(property_window, "New Name", "New Name", text=base_text)
-    return text
-
-
 def req_pset_name(main_window):
     text = QInputDialog.getText(main_window, "New PropertySet Name ", "New PropertySet Name")
     return text
@@ -190,36 +185,6 @@ def req_boq_pset(main_window, words):
         return True, input_dialog.textValue()
     else:
         return False, None
-
-
-def object_mapping(obj: classes.Object) -> None:
-    def add_line():
-        layout: QGridLayout = widget.widget_input_lines.layout()
-        new_line_edit = QLineEdit()
-        widget.line_edits.append(new_line_edit)
-        layout.addWidget(new_line_edit, len(widget.line_edits) - 1, 0)
-        new_line_edit.setCompleter(compl)
-
-    compl = QCompleter(IFC_4_1)
-    parent = QDialog()
-    widget = ui_propertyset_mapping.Ui_Dialog()
-    widget.setupUi(parent)
-    widget.label_name.setText(f"IfcMapping {obj.name}")
-    widget.button_add.clicked.connect(add_line)
-    widget.line_edits = [widget.line_edit]
-    widget.line_edit.setCompleter(compl)
-
-    for _ in range(len(obj.ifc_mapping) - 1):
-        add_line()
-
-    for i, mapping in enumerate(obj.ifc_mapping):
-        line_edit = widget.line_edits[i]
-        line_edit.setText(mapping)
-
-    if parent.exec():
-        mappings = {line_edit.text() for line_edit in widget.line_edits}
-        obj.ifc_mapping = mappings
-
 
 def attribute_mapping(attribute: classes.Attribute):
     parent = QDialog()
