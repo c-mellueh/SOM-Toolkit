@@ -227,9 +227,6 @@ class MainWindow(QMainWindow):
     def copy_object(self):
         object_widget.copy(self)
 
-    def rc_rename(self):
-        object_widget.rc_rename(self)
-
     def multi_selection(self):
         object_widget.multi_selection(self)
 
@@ -262,9 +259,6 @@ class MainWindow(QMainWindow):
         return val
     def delete_object(self):
         object_widget.rc_delete(self)
-
-    def rc_ifc_mapping(self, item):
-        object_widget.rc_ifc_mapping(self)
 
     # PropertyWidget
     def attribute_double_clicked(self, item):

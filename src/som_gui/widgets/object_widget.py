@@ -275,11 +275,7 @@ def right_click(main_window: MainWindow, position: QPoint):
     selected_items = main_window.ui.tree_object.selectedItems()
     if len(selected_items) == 1:
         main_window.action_copy = menu.addAction("Copy")
-        main_window.action_rename_option = menu.addAction("Rename")
-        main_window.action_ifc_mapping = menu.addAction("modify IFC Mapping")
-        main_window.action_rename_option.triggered.connect(main_window.rc_rename)
         main_window.action_copy.triggered.connect(main_window.copy_object)
-        main_window.action_ifc_mapping.triggered.connect(main_window.rc_ifc_mapping)
 
     if len(selected_items) != 0:
         main_window.action_delete_attribute = menu.addAction("Delete")
@@ -316,21 +312,6 @@ def info(main_window: MainWindow):
             print(f"   {node}")
     else:
         print("no nodes")
-
-
-def rc_rename(main_window: MainWindow):
-    item_list = [item for item in main_window.ui.tree_object.selectedItems()]
-    if len(item_list) == 1:
-        item: CustomObjectTreeItem = item_list[0]
-        obj: classes.Object = item.object
-        name, fulfilled = popups.req_new_name(main_window, item.text(0))
-
-        if fulfilled:
-            obj.name = name
-            item.setText(0, name)
-    else:
-        popups.msg_select_only_one()
-        return
 
 
 def rc_collapse(tree: QTreeWidget):
@@ -671,8 +652,3 @@ def reload(main_window):
     reload_tree(main_window)
     obj = main_window.active_object
     fill_line_inputs(main_window, obj)
-
-
-def rc_ifc_mapping(main_window: MainWindow):
-    item = main_window.object_tree.selectedItems()[0]
-    popups.object_mapping(item.object)
