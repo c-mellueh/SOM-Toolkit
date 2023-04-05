@@ -143,12 +143,10 @@ def import_excel_clicked(main_window:MainWindow):
 
 def open_file_clicked(main_window:MainWindow):
     def get_path():
-        file_text = "JSON Files (*json);;all (*.*)"
-
         cur_path = settings.get_file_path()
         if not os.path.exists(cur_path):
             cur_path = os.getcwd() + "/"
-        return QFileDialog.getOpenFileName(main_window, "Import File", str(cur_path), file_text)[0]
+        return QFileDialog.getOpenFileName(main_window, "Open Project", str(cur_path), constants.FILETYPE)[0]
 
     path = get_path()
     if not path:

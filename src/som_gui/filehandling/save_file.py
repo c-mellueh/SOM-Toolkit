@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 from typing import TYPE_CHECKING
 
@@ -26,13 +27,11 @@ def add_node_pos(tree: etree.ElementTree):
 
 def save_clicked(main_window: MainWindow) -> str:
     path = settings.get_file_path()
-    if not os.path.exists(path) or not path.endswith("xml"):
+    if not os.path.exists(path) or not path.endswith("json"):
         path = save_as_clicked(main_window)
     else:
-        xml_tree = filehandling.build_xml(main_window.project)
-        add_node_pos(xml_tree)
-        with open(path, "wb") as f:
-            xml_tree.write(f, pretty_print=True, encoding="utf-8", xml_declaration=True)
+        logging.info(f"Saved project to {path}")
+        main_window.project.save_json(path)
     return path
 
 
@@ -40,16 +39,13 @@ def save_as_clicked(main_window: MainWindow) -> str:
     path = settings.get_file_path()
     if not os.path.exists(path):
         path = \
-            QFileDialog.getSaveFileName(main_window, "Save XML", "", "xml Files (*.DRCxml *.xml )")[0]
+            QFileDialog.getSaveFileName(main_window, "Save Project", "", constants.FILETYPE)[0]
     else:
         path = os.path.splitext(path)[0]
-        path = QFileDialog.getSaveFileName(main_window, "Save XML", path, "xml Files ( *.DRCxml *.xml)")[0]
+        path = QFileDialog.getSaveFileName(main_window, "Save Project", path, constants.FILETYPE)[0]
 
     if path:
-        xml_tree = filehandling.build_xml(main_window.project, )
-        add_node_pos(xml_tree)
-        with open(path, "wb") as f:
-            xml_tree.write(f, pretty_print=True, encoding="utf-8", xml_declaration=True)
+        main_window.project.save_json(path)
         settings.set_file_path(path)
     return path
 
