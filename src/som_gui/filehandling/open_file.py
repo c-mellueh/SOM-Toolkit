@@ -86,31 +86,29 @@ def merge_new_file(main_window):
     print("MERGE NEEDS TO BE PROGRAMMED")  # TODO: Write Merge
 
 
-def open_file_clicked(main_window: MainWindow):
-    def handle_old_data():
-        if classes.Object:
-            result = popups.msg_delete_or_merge()
-            if result is None:
-                return
-            if result:
-                main_window.clear_all()
+def handle_old_data(main_window:MainWindow):
+    if classes.Object:
+        result = popups.msg_delete_or_merge()
+        if result is None:
+            return
+        if result:
+            main_window.clear_all()
 
+def fill_ui(main_window:MainWindow):
+    #main_window.abbreviations = excel.create_abbreviation_json(path,sheet_name)
+    main_window.load_graph(show=False)
+    main_window.clear_object_input()
+    main_window.fill_tree()
+
+def import_excel_clicked(main_window:MainWindow):
     def get_path():
-        file_text = "DRC Files (*.xml *.DRCxml *.xlsx);;" \
-                    " xml Files (*.xml *.DRCxml);;" \
-                    " Excel Files (*xlsx);;all (*.*)"
+        file_text = "Excel Files (*xlsx);;all (*.*)"
 
         cur_path = settings.get_file_path()
         if not os.path.exists(cur_path):
             cur_path = os.getcwd() + "/"
-        return QFileDialog.getOpenFileName(main_window, "Open File", str(cur_path), file_text)[0]
+        return QFileDialog.getOpenFileName(main_window, "Import File", str(cur_path), file_text)[0]
 
-    handle_old_data()
-    path = get_path()
-    _open_file_by_path(main_window,path)
-
-
-def _open_file_by_path(main_window:MainWindow,path):
     def build_aggregations():
         gw = main_window.graph_window
         root_nodes = list()
@@ -127,29 +125,36 @@ def _open_file_by_path(main_window:MainWindow,path):
         gw.combo_box.setCurrentIndex(0)
         gw.combo_change()
 
+    handle_old_data(main_window)
+    path = get_path()
+    if not path:
+        return
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        new_path = os.path.join(tmpdirname, "som_excel.xlsx")
+        shutil.copy2(path, new_path)
+        book = openpyxl.load_workbook(new_path)
+        sheet_name,ok = popups.req_worksheet_name(main_window,book.sheetnames)
+    if not ok:
+        return
+    main_window.project.import_excel(path,sheet_name)
+    build_aggregations()
+    fill_ui(main_window)
+
+def open_file_clicked(main_window:MainWindow):
+    def get_path():
+        file_text = "JSON Files (*json);;all (*.*)"
+
+        cur_path = settings.get_file_path()
+        if not os.path.exists(cur_path):
+            cur_path = os.getcwd() + "/"
+        return QFileDialog.getOpenFileName(main_window, "Import File", str(cur_path), file_text)[0]
+
+    path = get_path()
     if not path:
         return
 
     settings.set_file_path(path)
-    project = main_window.project
-    if path.endswith("xlsx"):
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            new_path = os.path.join(tmpdirname, "excel.xlsx")
-            shutil.copy2(path, new_path)
-            book = openpyxl.load_workbook(new_path)
-            sheet_name,ok = popups.req_worksheet_name(main_window,book.sheetnames)
-        if not ok:
-            return
-        project.import_excel(path,sheet_name)
-        build_aggregations()
-        main_window.abbreviations = {block.abbreviation: [block.ident_value, block.name] for block in excel.ExcelBlock if
-             block.ident_value is not None}
-        #main_window.abbreviations = excel.create_abbreviation_json(path,sheet_name)
-    else:
-        project.open(path)
-        import_node_pos(main_window.graph_window, path)
-
-    #main_window.ui.tree_object.resizeColumnToContents(0)
-    main_window.load_graph(show=False)
-    main_window.clear_object_input()
-    main_window.fill_tree()
+    main_window.project.open_json(path)
+    #import_node_pos(main_window.graph_window, path)
+    fill_ui(main_window)
