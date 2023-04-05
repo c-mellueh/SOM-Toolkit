@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy as cp
 import logging
 from typing import TYPE_CHECKING
+
 from PySide6.QtCore import QPoint, Qt
 from PySide6.QtGui import QShortcut, QKeySequence, QDropEvent
 from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem, QWidget, QTableWidgetItem, \
@@ -14,11 +15,12 @@ from ..icons import get_icon
 from ..qt_designs import ui_mainwindow, ui_search, ui_object_info_widget
 from ..widgets import script_widget, property_widget
 from ..windows import popups
-from ..icons import get_icon
+
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
 from fuzzywuzzy import fuzz
+
 
 class CustomTree(QTreeWidget):
     def __init__(self, layout) -> None:
@@ -45,16 +47,18 @@ class CustomTree(QTreeWidget):
             else:
                 obj.parent = None
 
-    def object_dict(self) -> dict[classes.Object,CustomObjectTreeItem]:
+    def object_dict(self) -> dict[classes.Object, CustomObjectTreeItem]:
         obj_dict = dict()
-        def add_to_dict(item:CustomObjectTreeItem):
-            obj_dict[item.object]=item
+
+        def add_to_dict(item: CustomObjectTreeItem):
+            obj_dict[item.object] = item
             for k in range(item.childCount()):
                 add_to_dict(item.child(k))
 
         for i in range(self.topLevelItemCount()):
             add_to_dict(self.topLevelItem(i))
         return obj_dict
+
 
 class CustomObjectTreeItem(QTreeWidgetItem):
     def __init__(self, obj: classes.Object) -> None:
@@ -213,7 +217,7 @@ def init(main_window: MainWindow):
 
     main_window.delSc = QShortcut(QKeySequence('Ctrl+X'), main_window)
     main_window.grpSc = QShortcut(QKeySequence('Ctrl+G'), main_window)
-    main_window.srchSc = QShortcut(QKeySequence('Ctrl+F'),main_window)
+    main_window.srchSc = QShortcut(QKeySequence('Ctrl+F'), main_window)
     connect_items()
 
 
@@ -249,18 +253,19 @@ def clear_all(main_window: MainWindow):
     for obj in classes.Object:
         obj.delete()
 
+
 class SearchItem(QTableWidgetItem):
-    def __init__(self,object:classes.Object,text:str|None):
+    def __init__(self, object: classes.Object, text: str | None):
         super(SearchItem, self).__init__()
         self.object = object
         if text is None:
             text = ""
-        self.setFlags(self.flags().ItemIsSelectable|self.flags().ItemIsEnabled)
+        self.setFlags(self.flags().ItemIsSelectable | self.flags().ItemIsEnabled)
         self.setText(text)
 
 
 class SearchWindow(QWidget):
-    def __init__(self, main_window:MainWindow,):
+    def __init__(self, main_window: MainWindow, ):
         super(SearchWindow, self).__init__()
 
         def connect_items():
@@ -273,39 +278,39 @@ class SearchWindow(QWidget):
         self.setWindowIcon(get_icon())
         self.main_window = main_window
         self.main_window.search_ui = self
-        self.project:classes.Project = self.main_window.project
+        self.project: classes.Project = self.main_window.project
         self.show()
         self.widget.tableWidget.verticalHeader().setVisible(False)
         self.row_dict = dict()
-        self.item_dict: dict[classes.Object,list[SearchItem]] = {obj:[SearchItem(obj,obj.name),SearchItem(obj,obj.ident_value),SearchItem(obj,"100")] for obj in self.project.objects}
+        self.item_dict: dict[classes.Object, list[SearchItem]] = {
+            obj: [SearchItem(obj, obj.name), SearchItem(obj, obj.ident_value), SearchItem(obj, "100")] for obj in
+            self.project.objects}
 
         self.fill_table()
         table_header = self.widget.tableWidget.horizontalHeader()
         table_header.setStretchLastSection(True)
-        table_header.setSectionResizeMode(0,table_header.ResizeMode.ResizeToContents)
-        self.widget.tableWidget.setColumnHidden(2,True)
-        self.widget.tableWidget.sortByColumn(2,Qt.SortOrder.AscendingOrder)
+        table_header.setSectionResizeMode(0, table_header.ResizeMode.ResizeToContents)
+        self.widget.tableWidget.setColumnHidden(2, True)
+        self.widget.tableWidget.sortByColumn(2, Qt.SortOrder.AscendingOrder)
         self.widget.tableWidget.setSortingEnabled(True)
         self.objects = set(obj for obj in self.project.objects)
         connect_items()
 
-    def get_row(self,obj):
+    def get_row(self, obj):
         return self.item_dict[obj][0].row()
 
     def fill_table(self):
 
         table = self.widget.tableWidget
         table.setRowCount(len(self.item_dict))
-        for row,(obj,items) in enumerate(self.item_dict.items()):
-            for column,item in enumerate(items):
-                table.setItem(row,column,item)
+        for row, (obj, items) in enumerate(self.item_dict.items()):
+            for column, item in enumerate(items):
+                table.setItem(row, column, item)
             self.row_dict[obj] = row
 
-
-
-    def item_clicked(self,table_item:SearchItem):
+    def item_clicked(self, table_item: SearchItem):
         obj = table_item.object
-        tree:CustomTree = self.main_window.object_tree
+        tree: CustomTree = self.main_window.object_tree
 
         for selected_item in tree.selectedItems():
             selected_item.setSelected(False)
@@ -322,12 +327,12 @@ class SearchWindow(QWidget):
         text = self.widget.lineEdit.text().lower()
         possible_objects = set()
         for obj in self.objects:
-            value1 = fuzz.partial_ratio(text.lower(),obj.name.lower())
-            value2 = fuzz.partial_ratio(text.lower(),str(obj.ident_value))
-            value = max(value2,value1)
+            value1 = fuzz.partial_ratio(text.lower(), obj.name.lower())
+            value2 = fuzz.partial_ratio(text.lower(), str(obj.ident_value))
+            value = max(value2, value1)
             row = self.get_row(obj)
-            table.item(row,2).setText(str(value))
-            if value>75:
+            table.item(row, 2).setText(str(value))
+            if value > 75:
                 possible_objects.add(obj)
 
         forbidden_objects = self.objects.difference(possible_objects)
@@ -336,8 +341,10 @@ class SearchWindow(QWidget):
         for obj in forbidden_objects:
             table.hideRow(self.get_row(obj))
 
-def search_object(main_window:MainWindow):
+
+def search_object(main_window: MainWindow):
     sw = SearchWindow(main_window)
+
 
 def right_click(main_window: MainWindow, position: QPoint):
     menu = QMenu()
@@ -623,8 +630,7 @@ def add_object(main_window: MainWindow):
         if ident_attrib is None:
             ident_attrib = classes.Attribute(pset, ident_name, ident_value, constants.LIST)
         else:
-            ident_attrib.value = ident_value  #
-
+            ident_attrib.value = ident_value
         return ident_attrib
 
     name = main_window.ui.line_edit_object_name.text()
@@ -710,7 +716,7 @@ def rc_delete(main_window: MainWindow):
         main_window.project.changed = True
 
 
-def reload_tree(main_window):
+def reload_tree(main_window: MainWindow):
     def loop(item: CustomObjectTreeItem):
         for i in range(item.childCount()):
             child = item.child(i)
