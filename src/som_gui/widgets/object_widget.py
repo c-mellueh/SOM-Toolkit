@@ -57,7 +57,6 @@ class CustomObjectTreeItem(QTreeWidgetItem):
     def __init__(self, obj: classes.Object) -> None:
         super(CustomObjectTreeItem, self).__init__()
         self._object = obj
-        self._func = func
         self.refresh()
 
     def addChild(self, child: CustomObjectTreeItem) -> None:
