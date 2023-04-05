@@ -46,6 +46,11 @@
      </column>
      <column>
       <property name="text">
+       <string>Abbreviation</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Match</string>
       </property>
      </column>

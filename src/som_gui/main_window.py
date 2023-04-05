@@ -63,10 +63,11 @@ class MainWindow(QMainWindow):
         self.parent_property_window = predefined_psets_window.open_pset_list(self)
         self.parent_property_window.hide()
         self.pset_window: None | propertyset_window.PropertySetWindow = None
-        self.obj_line_edit_list = [self.ui.lineEdit_object_name,
+        self.obj_line_edit_list = [self.ui.line_edit_object_name,
                                    self.ui.lineEdit_ident_value,
                                    self.ui.lineEdit_ident_attribute,
-                                   self.ui.lineEdit_ident_pSet, ]
+                                   self.ui.lineEdit_ident_pSet,
+                                   self.ui.line_edit_abbreviation]
 
         # variables
         self.icon = get_icon()
@@ -192,9 +193,8 @@ class MainWindow(QMainWindow):
 
     def fill_tree(self) -> None:
         root_item = self.object_tree.invisibleRootItem()
-        item_dict: dict[classes.Object, object_widget.CustomObjectTreeItem] = {
-            obj: self.add_object_to_tree(obj, root_item)
-            for obj in classes.Object}
+        item_dict: dict[classes.Object, object_widget.CustomObjectTreeItem] = \
+            { obj: self.add_object_to_tree(obj, root_item) for obj in classes.Object} #add all Objects to Tree without Order
 
         for obj in classes.Object:
             tree_item = item_dict[obj]
@@ -206,6 +206,7 @@ class MainWindow(QMainWindow):
         self.ui.tree_object.resizeColumnToContents(0)
 
         self.resize_tree()
+
     def info(self):
         object_widget.info(self)
 
