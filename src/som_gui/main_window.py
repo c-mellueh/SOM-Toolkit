@@ -84,7 +84,9 @@ class MainWindow(QMainWindow):
         script_widget.init(self)
         self.setWindowTitle("SOM-Toolkit")
         connect()
-        self.abbreviations = dict() #TODO: Turn into full GUI Feature
+
+    def object_double_clicked(self,item):
+        object_widget.object_double_clicked(self,item)
 
     @property
     def object_tree(self) -> object_widget.CustomTree:

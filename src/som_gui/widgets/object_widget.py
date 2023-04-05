@@ -5,10 +5,13 @@ import logging
 from typing import TYPE_CHECKING
 from PySide6.QtCore import QPoint, Qt
 from PySide6.QtGui import QShortcut, QKeySequence, QDropEvent
-from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem,QWidget,QTableWidgetItem
+from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem, QWidget, QTableWidgetItem, \
+    QDialog, QLineEdit, QCompleter
 from SOMcreator import classes, constants
+from SOMcreator.Template import IFC_4_1
 
-from ..qt_designs import ui_mainwindow,ui_search
+from ..icons import get_icon
+from ..qt_designs import ui_mainwindow, ui_search, ui_object_info_widget
 from ..widgets import script_widget, property_widget
 from ..windows import popups
 from ..icons import get_icon
@@ -106,6 +109,67 @@ class CustomObjectTreeItem(QTreeWidgetItem):
         if self.parent() is not None:
             self.parent().expand_to_me()
 
+
+class ObjectInfoWidget(QDialog):
+    def __init__(self, main_window: MainWindow, obj: classes.Object):
+        super(ObjectInfoWidget, self).__init__()
+
+        self.object = obj
+        self.main_window = main_window
+        self.main_window.object_info_widget = self
+
+        self.widget = ui_object_info_widget.Ui_ObjectInfo()
+        self.widget.setupUi(self)
+
+        self.setWindowTitle(f"Modify Object '{self.object.name}'")
+        self.setWindowIcon(get_icon())
+
+        self.widget.button_add_ifc.clicked.connect(self.add_line)
+
+        self.ifc_lines: list[QLineEdit] = [self.widget.line_edit_ifc]
+        self.completer = QCompleter(IFC_4_1)
+        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.widget.line_edit_ifc.setCompleter(self.completer)
+
+        self.fill_with_values()
+
+    def fill_with_values(self):
+        self.widget.line_edit_abbreviation.setText(self.object.abbreviation)
+        self.widget.line_edit_name.setText(self.object.name)
+
+        ifc_mappings = len(self.object.ifc_mapping)
+
+        for _ in range(ifc_mappings - 1):
+            self.add_line()
+
+        for index, ifc_mapping in enumerate(self.object.ifc_mapping):
+            self.ifc_lines[index].setText(ifc_mapping)
+
+    @property
+    def ifc_values(self) -> set[str]:
+        return {line.text() for line in self.ifc_lines if line and line is not None}
+
+    def add_line(self):
+        line_edit = QLineEdit()
+        line_edit.setCompleter(self.completer)
+        self.ifc_lines.append(line_edit)
+        self.widget.vertical_layout_ifc.addWidget(line_edit)
+        line_edit.show()
+
+
+def object_double_clicked(main_window: MainWindow, item):
+    obj: classes.Object = item.object
+    object_widget = ObjectInfoWidget(main_window, obj)
+    is_ok = object_widget.exec()
+    if not is_ok:
+        return
+
+    obj.ifc_mapping = object_widget.ifc_values
+    obj.name = object_widget.widget.line_edit_name.text()
+    obj.abbreviation = object_widget.widget.line_edit_abbreviation.text()
+    main_window.reload()
+
+
 def init(main_window: MainWindow):
     def init_tree(tree: CustomTree):
         # Design Tree
@@ -132,6 +196,7 @@ def init(main_window: MainWindow):
         ui.tree_object.itemChanged.connect(main_window.item_changed)
         ui.tree_object.itemExpanded.connect(main_window.resize_tree)
         ui.tree_object.customContextMenuRequested.connect(main_window.right_click)
+        ui.tree_object.itemDoubleClicked.connect(main_window.object_double_clicked)
         ui.button_objects_add.clicked.connect(main_window.add_object)
         main_window.grpSc.activated.connect(main_window.rc_group)
         main_window.delSc.activated.connect(main_window.delete_object)
