@@ -75,3 +75,4 @@ IFC_MAPPING = "IfcMapping"
 # Mapping
 SHARED_PARAMETERS = "SharedParameters"
 REVIT_MAPPING = "revit_mapping"
+FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"

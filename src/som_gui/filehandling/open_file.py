@@ -1,69 +1,55 @@
 from __future__ import annotations
-import tempfile
-import shutil
-import openpyxl
+
 import os
+import shutil
+import tempfile
 from typing import TYPE_CHECKING
 
+import SOMcreator.constants
+import openpyxl
 from PySide6.QtWidgets import QInputDialog, QLineEdit, QFileDialog
-from SOMcreator import classes, constants,excel
-from lxml import etree
-from configparser import ConfigParser
+from SOMcreator import classes, constants
 
-from ..windows import graphs_window, popups
 from .. import settings
+from ..data.constants import FILETYPE
+from ..windows import graphs_window, popups
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
 
-def string_to_bool(text: str) -> bool | None:
-    if text == str(True):
-        return True
-    elif text == str(False):
-        return False
-    else:
-        return None
-
-
-def iter_child(parent_node: graphs_window.Node):
+def iter_child(parent_node: graphs_window.Node) -> None:
     child: classes.Aggregation
     for child in parent_node.aggregation.children:
         child_node = graphs_window.aggregation_to_node(child)
+        print(child_node)
         con_type = parent_node.aggregation.connection_dict[child_node.aggregation]
         parent_node.add_child(child_node, con_type)
         iter_child(child_node)
 
 
-def import_node_pos(graph_window: graphs_window.GraphWindow, path: str):
-    tree = etree.parse(path)
-    projekt_xml = tree.getroot()
-    xml_group_nodes = projekt_xml.find(constants.NODES)
-    aggregation_dict = {aggregation.uuid: aggregation for aggregation in classes.Aggregation}
-    node_dict:dict[str,(graphs_window.Node,float,float,bool)] = {}
-    for xml_node in xml_group_nodes:
-        uuid = xml_node.attrib.get(constants.IDENTIFIER)
-        x_pos = float(xml_node.attrib.get(constants.X_POS))
-        y_pos = float(xml_node.attrib.get(constants.Y_POS))
-        aggregation: classes.Aggregation = aggregation_dict.get(uuid)
-        node = graphs_window.Node(aggregation, graph_window)
-        root = xml_node.attrib.get("root")
-        if root == "True":
-            root = True
-        else:
-            root = False
-        node_dict[uuid] = (node, x_pos, y_pos, root)
+def import_node_pos(main_dict: dict, graph_window: graphs_window.GraphWindow) -> None:
+    json_aggregation_dict: dict = main_dict[SOMcreator.constants.AGGREGATIONS]
+    aggregation_ref = {aggregation.uuid: aggregation for aggregation in classes.Aggregation}
+    nodes = dict()
+    for uuid, aggregation_dict in json_aggregation_dict.items():
+        aggregation = aggregation_ref[uuid]
+        x_pos = aggregation_dict.get(constants.X_POS)
+        y_pos = aggregation_dict.get(constants.Y_POS)
+        nodes[graphs_window.Node(aggregation, graph_window)] = (x_pos, y_pos)
 
-    for node, x_pos, y_pos, root in node_dict.values():
-        if root:
-            graph_window.create_scene_by_node(node)
-            graph_window.draw_tree(node)
-            iter_child(node)
-            graph_window.drawn_scenes.append(node.scene())
+    root_nodes: set[graphs_window.Node] = {node for node in nodes.keys() if node.aggregation.is_root}
+    for node in root_nodes:
+        graph_window.create_scene_by_node(node)
+        graph_window.draw_tree(node)
+        iter_child(node)
+        graph_window.drawn_scenes.append(node.scene())
 
-    for node, x_pos, y_pos, root in node_dict.values():
-        node.setY(float(y_pos))
-        node.setX(float(x_pos))
+    for node, (x_pos, y_pos) in nodes.items():
+        if y_pos is not None:
+            node.setY(float(y_pos))
+        if x_pos is not None:
+            node.setX(float(x_pos))
 
     graph_window.combo_box.setCurrentIndex(0)
     graph_window.combo_change()
@@ -72,21 +58,21 @@ def import_node_pos(graph_window: graphs_window.GraphWindow, path: str):
 def new_file(main_window: MainWindow) -> None:
     ok = popups.msg_unsaved()
     if ok:
-        project_name = QInputDialog.getText(main_window, "New Project", "new Project Name:", QLineEdit.EchoMode.Normal, "")
+        proj_name = QInputDialog.getText(main_window, "New Project", "new Project Name:", QLineEdit.EchoMode.Normal, "")
 
-        if project_name[1]:
-            main_window.project = classes.Project(main_window.project, project_name[0])
+        if proj_name[1]:
+            main_window.project = classes.Project(main_window.project, proj_name[0])
             main_window.setWindowTitle(main_window.project.name)
-            main_window.project.name = project_name[0]
+            main_window.project.name = proj_name[0]
             main_window.clear_all()
 
 
-def merge_new_file(main_window):
+def merge_new_file(main_window: MainWindow) -> None:
     print(main_window)
     print("MERGE NEEDS TO BE PROGRAMMED")  # TODO: Write Merge
 
 
-def handle_old_data(main_window:MainWindow):
+def request_delete_or_merge(main_window: MainWindow) -> None:
     if classes.Object:
         result = popups.msg_delete_or_merge()
         if result is None:
@@ -94,21 +80,21 @@ def handle_old_data(main_window:MainWindow):
         if result:
             main_window.clear_all()
 
-def fill_ui(main_window:MainWindow):
-    #main_window.abbreviations = excel.create_abbreviation_json(path,sheet_name)
+
+def fill_ui(main_window: MainWindow) -> None:
     main_window.load_graph(show=False)
     main_window.clear_object_input()
     main_window.fill_tree()
 
-def import_excel_clicked(main_window:MainWindow):
-    def get_path():
-        file_text = "Excel Files (*xlsx);;all (*.*)"
 
-        cur_path = settings.get_file_path()
-        if not os.path.exists(cur_path):
-            cur_path = os.getcwd() + "/"
-        return QFileDialog.getOpenFileName(main_window, "Import File", str(cur_path), file_text)[0]
+def get_path(main_window: MainWindow, title: str, file_text: str) -> str:
+    cur_path = settings.get_open_path()
+    if not os.path.exists(cur_path):
+        cur_path = os.getcwd() + "/"
+    return QFileDialog.getOpenFileName(main_window, title, str(cur_path), file_text)[0]
 
+
+def import_excel_clicked(main_window: MainWindow) -> None:
     def build_aggregations():
         gw = main_window.graph_window
         root_nodes = list()
@@ -125,8 +111,8 @@ def import_excel_clicked(main_window:MainWindow):
         gw.combo_box.setCurrentIndex(0)
         gw.combo_change()
 
-    handle_old_data(main_window)
-    path = get_path()
+    request_delete_or_merge(main_window)
+    path = get_path(main_window, "Import File", "Excel Files (*xlsx);;all (*.*)")
     if not path:
         return
 
@@ -134,25 +120,20 @@ def import_excel_clicked(main_window:MainWindow):
         new_path = os.path.join(tmpdirname, "som_excel.xlsx")
         shutil.copy2(path, new_path)
         book = openpyxl.load_workbook(new_path)
-        sheet_name,ok = popups.req_worksheet_name(main_window,book.sheetnames)
+        sheet_name, ok = popups.req_worksheet_name(main_window, book.sheetnames)
     if not ok:
         return
-    main_window.project.import_excel(path,sheet_name)
+    main_window.project.import_excel(path, sheet_name)
     build_aggregations()
     fill_ui(main_window)
 
-def open_file_clicked(main_window:MainWindow):
-    def get_path():
-        cur_path = settings.get_file_path()
-        if not os.path.exists(cur_path):
-            cur_path = os.getcwd() + "/"
-        return QFileDialog.getOpenFileName(main_window, "Open Project", str(cur_path), constants.FILETYPE)[0]
 
-    path = get_path()
+def open_file_clicked(main_window: MainWindow) -> None:
+    path = get_path(main_window, "Open Project", FILETYPE)
     if not path:
         return
 
-    settings.set_file_path(path)
-    main_window.project.open_json(path)
-    #import_node_pos(main_window.graph_window, path)
+    settings.set_open_path(path)
+    main_dict = main_window.project.open_json(path)
+    import_node_pos(main_dict, main_window.graph_window)
     fill_ui(main_window)
