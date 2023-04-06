@@ -7,8 +7,7 @@ from typing import TYPE_CHECKING
 import SOMcreator.constants
 from ..data.constants import FILETYPE
 from PySide6.QtWidgets import QFileDialog, QMessageBox
-from SOMcreator import constants, filehandling
-from lxml import etree
+from SOMcreator import constants
 import json
 
 from ..windows import popups, graphs_window
@@ -36,7 +35,7 @@ def save_clicked(main_window: MainWindow) -> str:
         path = save_as_clicked(main_window)
     else:
         logging.info(f"Saved project to {path}")
-        main_dict = main_window.project.save_json(path)
+        main_dict = main_window.project.save(path)
         add_node_pos(main_dict,path)
     return path
 
@@ -51,7 +50,8 @@ def save_as_clicked(main_window: MainWindow) -> str:
         path = QFileDialog.getSaveFileName(main_window, "Save Project", path, FILETYPE)[0]
 
     if path:
-        main_window.project.save_json(path)
+        main_window.project.save(path)
+        settings.set_open_path(path)
         settings.set_save_path(path)
     return path
 

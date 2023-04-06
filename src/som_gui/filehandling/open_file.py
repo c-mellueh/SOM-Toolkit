@@ -22,7 +22,6 @@ def iter_child(parent_node: graphs_window.Node) -> None:
     child: classes.Aggregation
     for child in parent_node.aggregation.children:
         child_node = graphs_window.aggregation_to_node(child)
-        print(child_node)
         con_type = parent_node.aggregation.connection_dict[child_node.aggregation]
         parent_node.add_child(child_node, con_type)
         iter_child(child_node)
@@ -39,7 +38,7 @@ def import_node_pos(main_dict: dict, graph_window: graphs_window.GraphWindow) ->
         nodes[graphs_window.Node(aggregation, graph_window)] = (x_pos, y_pos)
 
     root_nodes: set[graphs_window.Node] = {node for node in nodes.keys() if node.aggregation.is_root}
-    for node in root_nodes:
+    for node in sorted(root_nodes,key= lambda x:x.name):
         graph_window.create_scene_by_node(node)
         graph_window.draw_tree(node)
         iter_child(node)
@@ -134,6 +133,7 @@ def open_file_clicked(main_window: MainWindow) -> None:
         return
 
     settings.set_open_path(path)
-    main_dict = main_window.project.open_json(path)
+    settings.set_save_path(path)
+    main_dict = main_window.project.open(path)
     import_node_pos(main_dict, main_window.graph_window)
     fill_ui(main_window)
