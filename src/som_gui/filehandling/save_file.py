@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import logging
 import os
 from typing import TYPE_CHECKING
 
+import SOMcreator.constants
+from ..data.constants import FILETYPE
 from PySide6.QtWidgets import QFileDialog, QMessageBox
-from SOMcreator import constants, filehandling
-from lxml import etree
+from SOMcreator import constants
+import json
 
 from ..windows import popups, graphs_window
 from .. import settings
@@ -14,43 +17,42 @@ if TYPE_CHECKING:
     from ..main_window import MainWindow
 
 
-def add_node_pos(tree: etree.ElementTree):
-    xml_group_nodes = tree.find(constants.NODES)
-    node_dict = {node.aggregation.uuid: node for node in graphs_window.Node.registry}
-    for xml_node in xml_group_nodes:
-        uuid = xml_node.attrib.get(constants.IDENTIFIER)
-        node = node_dict[uuid]
-        xml_node.set(constants.X_POS, str(node.x()))
-        xml_node.set(constants.Y_POS, str(node.y()))
+def add_node_pos(main_dict:dict,path:str):
 
+    aggregation_dict = main_dict[SOMcreator.constants.AGGREGATIONS]
+    for node in graphs_window.Node.registry:
+        uuid = node.aggregation.uuid
+        aggregation_entry = aggregation_dict[uuid]
+        aggregation_entry[constants.X_POS] = node.x()
+        aggregation_entry[constants.Y_POS] = node.y()
+
+    with open(path,"w") as file:
+        json.dump(main_dict,file,indent=2)
 
 def save_clicked(main_window: MainWindow) -> str:
-    path = settings.get_file_path()
-    if not os.path.exists(path) or not path.endswith("xml"):
+    path = settings.get_save_path()
+    if not os.path.exists(path) or not path.endswith("json"):
         path = save_as_clicked(main_window)
     else:
-        xml_tree = filehandling.build_xml(main_window.project)
-        add_node_pos(xml_tree)
-        with open(path, "wb") as f:
-            xml_tree.write(f, pretty_print=True, encoding="utf-8", xml_declaration=True)
+        logging.info(f"Saved project to {path}")
+        main_dict = main_window.project.save(path)
+        add_node_pos(main_dict,path)
     return path
 
 
 def save_as_clicked(main_window: MainWindow) -> str:
-    path = settings.get_file_path()
+    path = settings.get_save_path()
     if not os.path.exists(path):
         path = \
-            QFileDialog.getSaveFileName(main_window, "Save XML", "", "xml Files (*.DRCxml *.xml )")[0]
+            QFileDialog.getSaveFileName(main_window, "Save Project", "",FILETYPE)[0]
     else:
         path = os.path.splitext(path)[0]
-        path = QFileDialog.getSaveFileName(main_window, "Save XML", path, "xml Files ( *.DRCxml *.xml)")[0]
+        path = QFileDialog.getSaveFileName(main_window, "Save Project", path, FILETYPE)[0]
 
     if path:
-        xml_tree = filehandling.build_xml(main_window.project, )
-        add_node_pos(xml_tree)
-        with open(path, "wb") as f:
-            xml_tree.write(f, pretty_print=True, encoding="utf-8", xml_declaration=True)
-        settings.set_file_path(path)
+        main_window.project.save(path)
+        settings.set_open_path(path)
+        settings.set_save_path(path)
     return path
 
 

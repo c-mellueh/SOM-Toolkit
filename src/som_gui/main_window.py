@@ -18,7 +18,7 @@ from .qt_designs import ui_project_settings
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import script_widget, property_widget, object_widget
 from .windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups
-
+from . import settings
 
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
@@ -55,6 +55,7 @@ class MainWindow(QMainWindow):
             self.ui.action_allplan.triggered.connect(self.export_allplan_excel)
             self.ui.action_abbreviation_json.triggered.connect(self.desite_abbreviation)
             self.ui.table_pset.itemChanged.connect(self.item_changed)
+            self.ui.action_import_excel.triggered.connect(self.import_excel)
 
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -84,6 +85,10 @@ class MainWindow(QMainWindow):
         script_widget.init(self)
         self.setWindowTitle("SOM-Toolkit")
         connect()
+        settings.set_save_path("")
+
+    def import_excel(self):
+        open_file.import_excel_clicked(self)
 
     def object_double_clicked(self,item):
         object_widget.object_double_clicked(self,item)
