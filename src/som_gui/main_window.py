@@ -431,7 +431,7 @@ class MainWindow(QMainWindow):
 
 
     def desite_abbreviation(self) -> None:
-        abbrev = {obj.custom_attribues[constants.ABBREVIATION]: [obj.ident_value, obj.name] for obj in
+        abbrev = {obj.abbreviation: [obj.ident_value, obj.name] for obj in
                   self.project.objects}
         file_text = "JSON (*.json);;"
         path = QFileDialog.getSaveFileName(self, "Abbreviations File", self._export_path, file_text)[0]
