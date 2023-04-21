@@ -1,4 +1,4 @@
-# SOM GUI
+# SOM Toolkit
 Das SOM GUI ist ein Werkzeug, welches dem/der Benutzer:in ermöglichen soll, schnell Datenstrukturen für BIM Modelle zu beschreiben<br> und daraus verschiedene Vorlagen für Softwaretools zu generieren. <br>
 Hauptfokus liegt hierbei vor allem auf der semantischen Modellprüfung in Desite MD Pro. <br>
 <br>
