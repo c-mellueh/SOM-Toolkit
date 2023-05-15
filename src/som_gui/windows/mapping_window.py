@@ -11,7 +11,7 @@ from SOMcreator import classes, constants, revit, allplan, filehandling, vestra,
 from .. import icons
 from ..qt_designs import ui_mapping_window
 from ..widgets import object_widget
-from ..windows import popups, graphs_window
+from ..windows import popups, aggregation_window
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow

@@ -12,22 +12,22 @@ from SOMcreator import classes, constants
 
 from .. import settings
 from ..data.constants import FILETYPE
-from ..windows import graphs_window, popups
+from ..windows import aggregation_window, popups
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
 
-def iter_child(parent_node: graphs_window.Node) -> None:
+def iter_child(parent_node: aggregation_window.Node) -> None:
     child: classes.Aggregation
     for child in parent_node.aggregation.children:
-        child_node = graphs_window.aggregation_to_node(child)
+        child_node = aggregation_window.aggregation_to_node(child)
         con_type = parent_node.aggregation.connection_dict[child_node.aggregation]
         parent_node.add_child(child_node, con_type)
         iter_child(child_node)
 
 
-def import_node_pos(main_dict: dict, graph_window: graphs_window.GraphWindow) -> None:
+def import_node_pos(main_dict: dict, graph_window: aggregation_window.GraphWindow) -> None:
     json_aggregation_dict: dict = main_dict[SOMcreator.constants.AGGREGATIONS]
     aggregation_ref = {aggregation.uuid: aggregation for aggregation in classes.Aggregation}
     nodes = dict()
@@ -35,9 +35,9 @@ def import_node_pos(main_dict: dict, graph_window: graphs_window.GraphWindow) ->
         aggregation = aggregation_ref[uuid]
         x_pos = aggregation_dict.get(constants.X_POS)
         y_pos = aggregation_dict.get(constants.Y_POS)
-        nodes[graphs_window.Node(aggregation, graph_window)] = (x_pos, y_pos)
+        nodes[aggregation_window.Node(aggregation, graph_window)] = (x_pos, y_pos)
 
-    root_nodes: set[graphs_window.Node] = {node for node in nodes.keys() if node.aggregation.is_root}
+    root_nodes: set[aggregation_window.Node] = {node for node in nodes.keys() if node.aggregation.is_root}
     for node in sorted(root_nodes,key= lambda x:x.name):
         graph_window.create_scene_by_node(node)
         graph_window.draw_tree(node)
@@ -98,7 +98,7 @@ def import_excel_clicked(main_window: MainWindow) -> None:
         gw = main_window.graph_window
         root_nodes = list()
         for aggreg in sorted(classes.Aggregation, key=lambda x: x.name):
-            node = graphs_window.Node(aggreg, gw)
+            node = aggregation_window.Node(aggreg, gw)
             if aggreg.is_root:
                 root_nodes.append(node)
 

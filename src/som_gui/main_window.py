@@ -17,7 +17,7 @@ from .filehandling import open_file, save_file, export
 from .qt_designs import ui_project_settings
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import script_widget, property_widget, object_widget
-from .windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups
+from .windows import predefined_psets_window, aggregation_window, propertyset_window, mapping_window, popups
 from . import settings
 
 def get_icon():
@@ -75,7 +75,7 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(self.icon)
         self._export_path = None
         self.active_object: classes.Object | None = None
-        self.graph_window = graphs_window.GraphWindow(self, show=False)
+        self.graph_window = aggregation_window.GraphWindow(self, show=False)
         self.mapping_window = None
         self.project = classes.Project("Project", "")
 

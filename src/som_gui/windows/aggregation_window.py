@@ -1,5 +1,6 @@
 from __future__ import annotations  # make own class referencable
 import logging
+import random
 from typing import Iterator, List,TYPE_CHECKING
 
 from PySide6.QtCore import Qt, QRectF, QPointF
@@ -7,7 +8,7 @@ from PySide6.QtGui import QWheelEvent, QPainterPath, QMouseEvent, QContextMenuEv
 from PySide6.QtPrintSupport import QPrinter
 from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QGraphicsScene, QGraphicsView, \
     QApplication, QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsPathItem, QComboBox, QGraphicsRectItem, \
-    QInputDialog, QMenu, QGraphicsSceneMoveEvent, QGraphicsSceneHoverEvent, QTreeWidget, QTreeWidgetItem,QFileDialog
+    QInputDialog, QMenu, QGraphicsSceneMoveEvent, QGraphicsSceneHoverEvent, QTreeWidget, QTreeWidgetItem,QFileDialog,QFrame
 from PySide6.QtPrintSupport import  QPrintDialog
 from SOMcreator import classes, constants
 from .. import icons
@@ -235,6 +236,13 @@ class DrawTree(object):
 
     def __repr__(self):
         return self.__str__()
+
+
+class TestView(QGraphicsView):
+    def __init__(self):
+        super(TestView, self).__init__()
+        self.setScene(QGraphicsScene())
+        self.setFrameStyle(QFrame.Box)
 
 
 class MainView(QGraphicsView):
@@ -589,11 +597,25 @@ class Rect(QGraphicsRectItem):
         super(Rect, self).mousePressEvent(event)
 
 
+class InheritanceNodes(QGraphicsView):
+    def __init__(self,element:classes.Aggregation,scene:QGraphicsScene,parent:None|Node = None):
+        super(InheritanceNodes, self).__init__()
+        self.element = element
+        self.nodes:set[Node] = set()
+        self.setScene(QGraphicsScene())
+        self.turn_off_scrollbar()
+        self.setFrameStyle(QFrame.Box)
+
+    def turn_off_scrollbar(self):
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+
 class Node(QGraphicsProxyWidget):
     registry = list()
 
-    def __init__(self, aggregation, graph_window: GraphWindow) -> None:
-        self.aggregation: classes.Aggregation = aggregation
+    def __init__(self, aggregation:classes.Aggregation, graph_window: GraphWindow) -> None:
+        self.aggregation= aggregation
         # graphics
         self.rect = Rect(self)
         super(Node, self).__init__(self.rect)
@@ -961,7 +983,8 @@ class GraphWindow(QWidget):
         self.widget = ui_GraphWindow.Ui_GraphView()
         self.widget.setupUi(self)
         self.view = MainView(self)
-        self.active_scene = None
+        self.active_scene =  QGraphicsScene()
+
         self.node_popup: PopUp | None = None
         self.combo_box = self.widget.combo_box
         self.reload_button = self.widget.button_reload
@@ -985,7 +1008,8 @@ class GraphWindow(QWidget):
         self.reload_button.setIcon(icons.get_reload_icon())
         self.add_button.clicked.connect(self.add_button_pressed)
         self.delete_button.clicked.connect(self.delete_button_pressed)
-
+        self.setWindowIcon(icons.get_icon())
+        self.setWindowTitle("Aggregations")
     # Functions
 
     def delete_button_pressed(self) -> None:
@@ -1032,6 +1056,16 @@ class GraphWindow(QWidget):
         return scene
 
     def add_button_pressed(self) -> None:
+        # t = TestView()
+        # self.active_scene.addWidget(t)
+        # proxy = t.graphicsProxyWidget()
+        # proxy.moveBy(random.randint(0,1000)*1.0,random.randint(0,100)*1.0)
+        # size = proxy.size()
+        # size.setWidth(size.width() + random.randint(-100,100)*1.0)
+        # size.setHeight(size.height() + random.randint(-100, 100) * 1.0)
+        # proxy.resize(size)
+        #
+        # return
         dialog = QInputDialog()
         dialog.setWindowTitle("New Aggregation")
         dialog.setLabelText("Choose Root Object")
@@ -1140,6 +1174,8 @@ class GraphWindow(QWidget):
             return
         visible_items = [item for item in self.active_scene.items() if
                          item.isVisible() and not isinstance(item, QGraphicsPathItem)]
+        if not visible_items:
+            return
         bounding_rect = visible_items[0].boundingRect()
         visible_items.sort(key=lambda x: str(type(x)))
         for item in visible_items:
