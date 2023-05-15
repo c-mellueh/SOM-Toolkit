@@ -133,6 +133,10 @@ def req_pset_name(main_window):
     text = QInputDialog.getText(main_window, "New PropertySet Name ", "New PropertySet Name")
     return text
 
+def req_attribute_name(main_window,old):
+    text = QInputDialog.getText(main_window, "New Attribute Name ", "New Attribute Name",text=old)
+    return text
+
 
 def req_merge_pset():
     icon = icons.get_icon()

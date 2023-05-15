@@ -274,11 +274,12 @@ class PropertySetWindow(QtWidgets.QWidget):
         """delete selected Table items"""
 
         selected_rows = get_selected_rows(self.table)
-        attributes = [self.table.item(row, 0).linked_data for row in selected_rows]
+        attributes:list[classes.Attribute] = [self.table.item(row, 0).linked_data for row in selected_rows]
+        if self.active_object is not None:
 
-        if self.active_object.ident_attrib in attributes:
-            popups.msg_mod_ident()
-            return
+            if self.active_object.ident_attrib in attributes:
+                popups.msg_mod_ident()
+                return
 
         delete_request = popups.msg_del_items([attrib.name for attrib in attributes])
         if not delete_request:
@@ -328,18 +329,22 @@ class PropertySetWindow(QtWidgets.QWidget):
             return
 
         row = selected_rows[0]
+        item:CustomTableItem = self.table.item(row,0)
+        attribute: classes.Attribute = item.linked_data
+        old_name = attribute.name
         existing_names = [attrib.name for attrib in self.property_set.attributes]
-        new_name, fulfilled = popups.req_new_name(self)
+        new_name, fulfilled = popups.req_attribute_name(self,old_name)
 
         if not fulfilled:
+            return
+
+        if new_name == old_name:
             return
 
         if new_name in existing_names:
             popups.msg_attribute_already_exists()
             return
 
-        item:CustomTableItem = self.table.item(row, 0)
-        attribute: classes.Attribute = item.linked_data
         attribute.name = new_name
         self.widget.table_widget.item(row, 0).setText(new_name)
         self.mainWindow.reload()
