@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
-from typing import TYPE_CHECKING
 
 import SOMcreator.constants
 import openpyxl
@@ -12,7 +11,9 @@ from SOMcreator import classes, constants
 
 from .. import settings
 from ..data.constants import FILETYPE
-from ..windows import aggregation_window, popups
+from ..windows import popups
+from ..windows.aggregation_view import aggregation_window
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow

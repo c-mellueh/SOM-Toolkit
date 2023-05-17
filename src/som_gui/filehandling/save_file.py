@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QFileDialog, QMessageBox
 from SOMcreator import constants
 import json
 
-from ..windows import popups, aggregation_window
+from ..windows import popups
 from .. import settings
 
 if TYPE_CHECKING:
