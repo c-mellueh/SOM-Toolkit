@@ -17,11 +17,14 @@ from src.som_gui.widgets import property_widget
 from src.som_gui.windows import popups
 from src.som_gui.data.constants import HEADER_HEIGHT
 class Header(QGraphicsRectItem):
-    def __init__(self, node,text):
+    def __init__(self, node,text,pos:QPointF):
         super(Header, self).__init__()
         self.node = node
         self.title = text
         self.setPen(QPen(Qt.GlobalColor.black))
+        self.setPos(pos)
+        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable,True)
+        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable,False)
         self.setAcceptHoverEvents(True)
 
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
@@ -40,9 +43,6 @@ class Header(QGraphicsRectItem):
         self.scene().views()[0].viewport().unsetCursor()
         super(Header, self).hoverLeaveEvent(event)
 
-    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        print(event)
-
     def paint(self, painter: QPainter,option: QStyleOptionGraphicsItem, widget) -> None:
         painter.save()
         painter.restore()
@@ -52,35 +52,42 @@ class Header(QGraphicsRectItem):
 class Frame(QGraphicsRectItem):
     def __init__(self,node:NodeProxy):
         super(Frame, self).__init__()
-        self.setPen(QPen(Qt.GlobalColor.red))
+        self.setParentItem(node.header_rect)
+        self.node = node
+        self.setRect(self.get_required_rect())
 
-        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, True)
-        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
+    def get_required_rect(self) -> QRectF:
+        rect = self.node.rect()
+        rect.setWidth(rect.width() - self.pen().width() / 2)
+        rect.setY(rect.y() - HEADER_HEIGHT)
+        rect.setX(self.x() + self.pen().width() / 2)
+        return rect
+
+    def cursor_on_side(self, e_pos) -> int:
+        print(e_pos)
+
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        print(self.cursor_on_side(event.pos()))
+        print("HIER")
 
 class NodeProxy(QGraphicsProxyWidget):
     def __init__(self,pos:QPointF,scene:QGraphicsScene) -> None:
         def create_box():
-            self.setParentItem(self.frame)
-            self.header_rect.setParentItem(self.frame)
-            scene.addItem(self.frame)
-            self.frame.show()
+            self.setParentItem(self.header_rect)
+            scene.addItem(self.header_rect)
             self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
-            self.header_rect.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
-
-            line_width = self.frame.pen().width() #if ignore Linewidth: box of Node and Header wont match
+            line_width = self.header_rect.pen().width() #if ignore Linewidth: box of Node and Header wont match
             x = line_width/2
             y = -HEADER_HEIGHT
             width =  self.widget().width()-line_width
-            height = HEADER_HEIGHT+self.widget().height()
-            self.frame.setRect(QRectF(x,y,width,height))
-            self.header_rect.setRect(QRectF(x,y,width,height-self.widget().height()))
+            height = HEADER_HEIGHT
+            self.header_rect.setRect(QRectF(x,y,width,height))
 
         super(NodeProxy, self).__init__()
         self.setWidget(NodeWidget())
-        self.header_rect = Header(self, "TESTBOX")
-        self.frame = Frame(self)
-
+        self.header_rect = Header(self, "TESTBOX", pos)
         create_box()
+        self.frame = Frame(self)
         #style
         self.setAcceptHoverEvents(False)
         #self.widget().setStyleSheet("background: white;border: 1px solid black")
