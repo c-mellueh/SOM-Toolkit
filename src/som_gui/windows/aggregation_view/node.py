@@ -1,41 +1,35 @@
 from __future__ import annotations  # make own class referencable
-import logging
-import random
-from typing import Iterator, List,TYPE_CHECKING
 
-from PySide6.QtCore import Qt, QRectF, QPointF,QPoint,QRect
-from PySide6.QtGui import QWheelEvent, QPainterPath, QMouseEvent, QContextMenuEvent, QCursor, QColor,QPen,QImage,QPainter,QBrush
-from PySide6.QtPrintSupport import QPrinter
-from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QGraphicsScene, QGraphicsView, QVBoxLayout,\
-    QApplication, QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsPathItem, QComboBox, QGraphicsRectItem, \
-    QInputDialog, QMenu,QGraphicsItem, QGraphicsSceneMoveEvent,QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QTreeWidgetItem,QFileDialog,QFrame,QGraphicsTextItem
-from PySide6.QtPrintSupport import  QPrintDialog
-from SOMcreator import classes, constants
-from src.som_gui import icons
-from src.som_gui.qt_designs import ui_GraphWindow, ui_ObjectGraphWidget
-from src.som_gui.widgets import property_widget
-from src.som_gui.windows import popups
+from PySide6.QtCore import Qt, QRectF, QPointF, QPoint, QRect
+from PySide6.QtGui import QColor, QPen, QPainter, QBrush
+from PySide6.QtWidgets import QPushButton, QWidget, QGraphicsScene, QVBoxLayout, \
+    QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsRectItem, \
+    QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsTextItem
+
 from src.som_gui.data.constants import HEADER_HEIGHT
+
+MIN_SIZE = (200, 200)
+
+
 class Header(QGraphicsRectItem):
-    def __init__(self, node,text,pos:QPointF):
+    def __init__(self, node, text, pos: QPointF):
         super(Header, self).__init__()
         self.node = node
         self.title = text
-        self.setPen(QPen(Qt.GlobalColor.black))
         self.setPos(pos)
-        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable,True)
-        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable,False)
+        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, True)
+        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
         self.setAcceptHoverEvents(True)
 
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
         self.scene().views()[0].viewport().setCursor(Qt.CursorShape.OpenHandCursor)
         super(Header, self).hoverEnterEvent(event)
 
-    def mousePressEvent(self, event:QGraphicsSceneMouseEvent) -> None:
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         self.scene().views()[0].viewport().setCursor(Qt.CursorShape.ClosedHandCursor)
         super(Header, self).mousePressEvent(event)
 
-    def mouseReleaseEvent(self, event:QGraphicsSceneMouseEvent) -> None:
+    def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         self.scene().views()[0].viewport().setCursor(Qt.CursorShape.OpenHandCursor)
         super(Header, self).mouseReleaseEvent(event)
 
@@ -43,58 +37,131 @@ class Header(QGraphicsRectItem):
         self.scene().views()[0].viewport().unsetCursor()
         super(Header, self).hoverLeaveEvent(event)
 
-    def paint(self, painter: QPainter,option: QStyleOptionGraphicsItem, widget) -> None:
+    def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget) -> None:
         painter.save()
         painter.restore()
-        painter.drawText(self.boundingRect(),Qt.AlignmentFlag.AlignCenter,self.title)
+        painter.setPen(Qt.GlobalColor.black)
+        painter.setBrush(Qt.GlobalColor.white)
+        painter.drawRect(self.rect())
+        painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, self.title)
         super().paint(painter, option, widget)
 
+
 class Frame(QGraphicsRectItem):
-    def __init__(self,node:NodeProxy):
+    def __init__(self, node: NodeProxy):
         super(Frame, self).__init__()
         self.setParentItem(node.header_rect)
         self.node = node
         self.setRect(self.get_required_rect())
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
 
     def get_required_rect(self) -> QRectF:
         rect = self.node.rect()
         rect.setWidth(rect.width() - self.pen().width() / 2)
-        rect.setY(rect.y() - HEADER_HEIGHT)
+        rect.setY(rect.y())
+        rect.setHeight(rect.height() + HEADER_HEIGHT)
         rect.setX(self.x() + self.pen().width() / 2)
         return rect
 
-    def cursor_on_side(self, e_pos) -> int:
-        print(e_pos)
+    def is_on_frame(self, pos):
+        LEFT = 1
+        RIGHT = 2
+        TOP = 3
+        BOTTOM = 6
+        TOLERANCE = 5
+        mouse_x = pos.x()
+        mouse_y = pos.y()
+        frame_x = self.scenePos().x()
+        frame_y = self.scenePos().y()
+        frame_height = self.rect().height()
+        frame_width = self.rect().width()
+        min_y = frame_y - TOLERANCE
+        max_y = frame_y + TOLERANCE
+        min_x = frame_x - TOLERANCE
+        max_x = frame_x + TOLERANCE
 
-    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        print(self.cursor_on_side(event.pos()))
-        print("HIER")
+        def check_vert():
+
+            if min_y <= mouse_y <= max_y + frame_height:
+                if min_x <= mouse_x <= max_x:
+                    return LEFT
+                elif min_x + frame_width <= mouse_x <= max_x + frame_width:
+                    return RIGHT
+            return 0
+
+        def check_hor():
+            if min_x <= mouse_x <= max_x + frame_width:
+                if min_y <= mouse_y <= max_y:
+                    return TOP
+                elif min_y + frame_height <= mouse_y <= max_y + frame_height:
+                    return BOTTOM
+            return 0
+
+        frame_pos = check_vert() + check_hor()
+        return frame_pos
+
+
+class Title(QGraphicsTextItem):
+    def __init__(self, header: Header):
+        super(Title, self).__init__()
+        self.setTextWidth(header.rect().width())
+        self.setPlainText("Test123")
+        self.setParentItem(header)
+
 
 class NodeProxy(QGraphicsProxyWidget):
-    def __init__(self,pos:QPointF,scene:QGraphicsScene) -> None:
-        def create_box():
+    def __init__(self, pos: QPointF, scene: QGraphicsScene) -> None:
+        def create_header():
             self.setParentItem(self.header_rect)
             scene.addItem(self.header_rect)
             self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
-            line_width = self.header_rect.pen().width() #if ignore Linewidth: box of Node and Header wont match
-            x = line_width/2
-            y = -HEADER_HEIGHT
-            width =  self.widget().width()-line_width
+            line_width = self.header_rect.pen().width()  # if ignore Linewidth: box of Node and Header wont match
+            x = line_width / 2
+            width = self.widget().width() - line_width
             height = HEADER_HEIGHT
-            self.header_rect.setRect(QRectF(x,y,width,height))
+            self.header_rect.setRect(QRectF(x, 0, width, height))
+            self.setPos(0, HEADER_HEIGHT)  # put under Header
+            # self.title = Title(self.header_rect)
 
         super(NodeProxy, self).__init__()
         self.setWidget(NodeWidget())
         self.header_rect = Header(self, "TESTBOX", pos)
-        create_box()
+        create_header()
         self.frame = Frame(self)
-        #style
+        # style
         self.setAcceptHoverEvents(False)
-        #self.widget().setStyleSheet("background: white;border: 1px solid black")
-        print(self.getContentsMargins())
+        # self.widget().setStyleSheet("background: white;border: 1px solid black")
 
-    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        print("HIER")
+    def resize_frame(self, dx, dy):
+        self.frame.setRect(self.frame.get_required_rect())
+        header = self.header_rect.rect()
+        header.setWidth(self.frame.rect().width() + dx)
+        self.header_rect.setRect(header)
+
+    def resize_geometry(self, dx, dy):
+        geometry = self.geometry()
+        old_gemetry = geometry.toRect()
+        geometry.setWidth(geometry.width() + dx)
+        geometry.setHeight(geometry.height() + dy)
+        self.setGeometry(geometry)
+
+        if geometry == self.geometry():  # catch Minimum Size
+            self.resize_frame(dx, dy)
+
+    def resize_top(self, delta: float):
+        self.header_rect.moveBy(0, -delta)
+        self.resize_geometry(0, delta)
+
+    def resize_left(self, delta: float):
+        self.header_rect.moveBy(-delta, 0)
+        self.resize_geometry(delta, 0)
+
+    def resize_right(self, delta: float):
+        self.resize_geometry(-delta, 0)
+
+    def resize_bottom(self, delta: float):
+        self.resize_geometry(0, -delta)
+
 
 class NodeWidget(QWidget):
     def __init__(self):
@@ -102,15 +169,13 @@ class NodeWidget(QWidget):
         self.setLayout(QVBoxLayout())
         self.layout().addWidget(QTreeWidget())
         self.layout().addWidget(QPushButton("PressMe"))
-        print(self.style())
-        #self.setStyleSheet("border: 1px solid black")
+        # self.setStyleSheet("border: 1px solid black")
 
 
 FREE_STATE = 1
 BUILDING_SQUARE = 2
 BEGIN_SIDE_EDIT = 3
 END_SIDE_EDIT = 4
-
 
 CURSOR_ON_BEGIN_SIDE = 1
 CURSOR_ON_END_SIDE = 2
@@ -186,10 +251,6 @@ class MyWidget(QWidget):
     def mouseMoveEvent(self, event):
         if self.state == FREE_STATE:
             self.free_cursor_on_side = self.cursor_on_side(event.pos())
-            if self.free_cursor_on_side:
-                print(self.graphicsProxyWidget().scene().views()[0].viewport().setCursor(Qt.CursorShape.OpenHandCursor))
-            else:
-                self.unsetCursor()
             self.update()
         else:
             self.applye_event(event)

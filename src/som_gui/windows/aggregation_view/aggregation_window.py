@@ -1,27 +1,20 @@
 from __future__ import annotations  # make own class referencable
-import logging
-import random
-from typing import Iterator, List,TYPE_CHECKING
 
-from PySide6.QtCore import Qt, QRectF, QPointF,QPoint,QRect
-from PySide6.QtGui import QWheelEvent, QPainterPath, QMouseEvent, QContextMenuEvent, QCursor, QColor,QPen,QImage,QPainter,QBrush
-from PySide6.QtPrintSupport import QPrinter
-from PySide6.QtWidgets import QPushButton, QHBoxLayout, QWidget, QGraphicsScene, QGraphicsView, \
-    QApplication, QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsPathItem, QComboBox, QGraphicsRectItem, \
-    QInputDialog, QMenu, QGraphicsSceneMoveEvent, QGraphicsSceneHoverEvent, QTreeWidget, QTreeWidgetItem,QFileDialog,QFrame
-from PySide6.QtPrintSupport import  QPrintDialog
-from SOMcreator import classes, constants
-from src.som_gui import icons
-from src.som_gui.qt_designs import ui_GraphWindow, ui_ObjectGraphWidget
-from src.som_gui.widgets import property_widget
-from src.som_gui.windows import popups
-from .node import NodeProxy,MyWidget,Frame
+from typing import TYPE_CHECKING
+
+from PySide6.QtCore import Qt, QPointF
+from PySide6.QtGui import QWheelEvent, QMouseEvent, QImage, QPainter
+from PySide6.QtWidgets import QWidget, QGraphicsScene, QGraphicsView, \
+    QApplication, QFileDialog
+from SOMcreator import constants
+
+from src.som_gui.qt_designs import ui_GraphWindow
+from .node import NodeProxy, Frame, Header
 
 FREE_STATE = 1
 BUILDING_SQUARE = 2
 BEGIN_SIDE_EDIT = 3
 END_SIDE_EDIT = 4
-
 
 CURSOR_ON_BEGIN_SIDE = 1
 CURSOR_ON_END_SIDE = 2
@@ -30,13 +23,13 @@ if TYPE_CHECKING:
     from src.som_gui.main_window import MainWindow
 
 
-
 class AggregationScene(QGraphicsScene):
     def __init__(self):
         super(AggregationScene, self).__init__()
 
-    def get_frames(self):
-        return set(frame for frame in self.items() if isinstance(frame,Frame))
+    def get_frames(self) -> set[Frame]:
+        return set(frame for frame in self.items() if isinstance(frame, Frame))
+
 
 class MainView(QGraphicsView):
     def __init__(self, graph_window: GraphWindow) -> None:
@@ -44,10 +37,18 @@ class MainView(QGraphicsView):
         self.graph_window = graph_window
         self.main_window = graph_window.main_window
 
+        self.resize_node:NodeProxy|None = None    #which Node is being resized
+        self.resize_orientation:int|None = None   #which edge of Node is being resized
+        self.mouse_mode = 0                       # 0=move, 1=resize, 2 = drag
+        self.last_pos:QPointF|None = None         #last mouse pos to calculate difference
+
     def item_under_mouse(self):
         for item in self.scene().items():
             if item.isUnderMouse():
                 return item
+
+    def scene(self) -> AggregationScene:
+        return super(MainView, self).scene()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
 
@@ -81,47 +82,70 @@ class MainView(QGraphicsView):
         self.update()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        super(MainView, self).mousePressEvent(event)
-        item = self.itemAt(event.pos())
+        self.last_pos = self.mapToScene(event.pos())
+        if self.resize_node is None:
+            super(MainView, self).mousePressEvent(event)
+        else:
+            self.mouse_mode = 1
+            print("resize")
 
-    def mouseMoveEvent(self, event) -> None:
+    def mouseReleaseEvent(self, event:QMouseEvent) -> None:
+        self.mouse_mode = 0
+        super(MainView, self).mouseReleaseEvent(event)
+        
+    def mouseMoveEvent(self, event:QMouseEvent) -> None:
         super(MainView, self).mouseMoveEvent(event)
-        self.find_border(event.pos())
-    def find_border(self,pos):
-        pass
+        if self.mouse_mode != 1:
+            self.resize_node,self.resize_orientation = self.find_border(event)
+        else:
 
+            old_pos = self.last_pos
+            new_pos = self.mapToScene(event.pos())
+            self.last_pos = new_pos
+            delta = old_pos-new_pos
 
-    # def contextMenuEvent(self, event: QContextMenuEvent) -> None:
-    #
-    #     node:Node = self.item_under_mouse()
-    #
-    #     if isinstance(node, Node):
-    #         menu = QMenu()
-    #         action_delete = menu.addAction("delete")
-    #         action_delete.triggered.connect(node.delete)
-    #         action_toggle_con = menu.addAction("toggle Connection")
-    #         action_toggle_con.triggered.connect(node.toggle_connection_to_parent)
-    #         action_add_attribute = menu.addAction("add Attribute")
-    #         action_add_attribute.triggered.connect(node.add_attribute)
-    #
-    #         if logging.DEBUG >= logging.root.level:
-    #             action_info = menu.addAction("Info")
-    #             action_info.triggered.connect(node.print_info)
-    #
-    #         menu.exec(event.globalPos())
-    #
-    #     else:
-    #         menu = QMenu()
-    #         action_print = menu.addAction("Print")
-    #         action_print.triggered.connect(self.print)
-    #         menu.exec(event.globalPos())
-    #
-    # def scene(self) -> AggregationScene | QGraphicsScene:
-    #     return super(MainView, self).scene()
+            if self.resize_orientation in (3,4,5):
+                self.resize_node.resize_top(delta.y())
+
+            if self.resize_orientation in (1,4,7):
+                self.resize_node.resize_left(delta.x())
+
+            if self.resize_orientation in (2,5,8):
+                self.resize_node.resize_right(delta.x())
+
+            if self.resize_orientation in (6,7,8):
+                self.resize_node.resize_bottom(delta.y())
+
+    def find_border(self, event:QMouseEvent) ->(NodeProxy|None,int|None) :
+        pos = self.mapToScene(event.pos())
+        old_cursor = self.viewport().cursor()
+        pos_dict = {
+            1: Qt.CursorShape.SizeHorCursor,    #Left
+            2: Qt.CursorShape.SizeHorCursor,    #right
+            3: Qt.CursorShape.SizeVerCursor,    #Top
+            6: Qt.CursorShape.SizeVerCursor,    #Bottom
+            4: Qt.CursorShape.SizeFDiagCursor,  #TOP Left
+            7: Qt.CursorShape.SizeBDiagCursor,  #Bottom Left
+            5: Qt.CursorShape.SizeBDiagCursor,  #Top Right
+            8: Qt.CursorShape.SizeFDiagCursor}  #Bottom Right
+
+        for frame in self.scene().get_frames():
+            frame_value = frame.is_on_frame(pos)
+            if frame_value != 0:
+                self.viewport().setCursor(pos_dict[frame_value])
+                return frame.node, frame_value
+        if isinstance(self.item_under_mouse(),Header):
+            if event.buttons() == Qt.MouseButton.LeftButton:
+                self.viewport().setCursor(Qt.CursorShape.ClosedHandCursor)
+            else:
+                self.viewport().setCursor(Qt.CursorShape.OpenHandCursor)
+            return None,None
+        self.viewport().unsetCursor()
+        return None,None
 
     def print(self):
         rect = self.viewport().rect()
-        image = QImage(rect.size()*5,QImage.Format.Format_RGB32)
+        image = QImage(rect.size() * 5, QImage.Format.Format_RGB32)
         image.fill(Qt.white)
         painter = QPainter(image)
         painter.setRenderHint(QPainter.Antialiasing)
@@ -135,7 +159,7 @@ class MainView(QGraphicsView):
 
 class GraphWindow(QWidget):
 
-    def __init__(self, main_window:MainWindow, show=True) -> None:
+    def __init__(self, main_window: MainWindow, show=True) -> None:
         super(GraphWindow, self).__init__()
         self.main_window = main_window
         self.widget = ui_GraphWindow.Ui_GraphView()
@@ -150,14 +174,16 @@ class GraphWindow(QWidget):
         self.active_scene = AggregationScene()
         self.scenes.add(self.active_scene)
         self.view.setScene(self.active_scene)
+        self.active_scene.setSceneRect(self.rect())
         self.widget.button_add.clicked.connect(self.test)
+        self.nodes = set()
 
     def fit_in(self):
         pass
 
     def test(self):
-        pos = QPointF(100.0,100.0)
-        self.node = NodeProxy(pos,self.active_scene)
+        pos = QPointF(100.0, 100.0)
+        self.nodes.add(NodeProxy(pos, self.active_scene))
         self.view.setMouseTracking(True)
         print(self.active_scene.get_frames())
         # self.node = Node()
