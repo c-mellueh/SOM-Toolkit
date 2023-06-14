@@ -3,7 +3,7 @@ from __future__ import annotations  # make own class referencable
 from PySide6.QtCore import Qt, QRectF, QPointF, QPoint, QRect
 from PySide6.QtGui import QColor, QPen, QPainter, QBrush
 from PySide6.QtWidgets import QPushButton, QWidget, QGraphicsScene, QVBoxLayout, \
-    QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsRectItem, \
+    QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsRectItem,QGraphicsSceneResizeEvent, \
     QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsTextItem
 
 from src.som_gui.data.constants import HEADER_HEIGHT
@@ -12,7 +12,7 @@ MIN_SIZE = (200, 200)
 
 
 class Header(QGraphicsRectItem):
-    def __init__(self, node, text, pos: QPointF):
+    def __init__(self, node:NodeProxy, text, pos: QPointF):
         super(Header, self).__init__()
         self.node = node
         self.title = text
@@ -20,6 +20,13 @@ class Header(QGraphicsRectItem):
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, True)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
         self.setAcceptHoverEvents(True)
+
+    def resize(self):
+        line_width = self.pen().width()  # if ignore Linewidth: box of Node and Header wont match
+        x = line_width / 2
+        width = self.node.widget().width() - line_width
+        height = HEADER_HEIGHT
+        self.setRect(QRectF(x, 0, width, height))
 
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
         self.scene().views()[0].viewport().setCursor(Qt.CursorShape.OpenHandCursor)
@@ -52,8 +59,11 @@ class Frame(QGraphicsRectItem):
         super(Frame, self).__init__()
         self.setParentItem(node.header_rect)
         self.node = node
-        self.setRect(self.get_required_rect())
+        self.resize()
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
+
+    def resize(self):
+        self.setRect(self.get_required_rect())
 
     def get_required_rect(self) -> QRectF:
         rect = self.node.rect()
@@ -115,11 +125,7 @@ class NodeProxy(QGraphicsProxyWidget):
             self.setParentItem(self.header_rect)
             scene.addItem(self.header_rect)
             self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
-            line_width = self.header_rect.pen().width()  # if ignore Linewidth: box of Node and Header wont match
-            x = line_width / 2
-            width = self.widget().width() - line_width
-            height = HEADER_HEIGHT
-            self.header_rect.setRect(QRectF(x, 0, width, height))
+            self.header_rect.resize()
             self.setPos(0, HEADER_HEIGHT)  # put under Header
             # self.title = Title(self.header_rect)
 
@@ -132,21 +138,24 @@ class NodeProxy(QGraphicsProxyWidget):
         self.setAcceptHoverEvents(False)
         # self.widget().setStyleSheet("background: white;border: 1px solid black")
 
-    def resize_frame(self, dx, dy):
-        self.frame.setRect(self.frame.get_required_rect())
-        header = self.header_rect.rect()
-        header.setWidth(self.frame.rect().width() + dx)
-        self.header_rect.setRect(header)
+
+    def resizeEvent(self, event: QGraphicsSceneResizeEvent) -> None:
+        super(NodeProxy, self).resizeEvent(event)
+        try:
+            self.frame.resize()
+        except AttributeError:
+            pass
+
+        try:
+            self.header_rect.resize()
+        except AttributeError:
+            pass
 
     def resize_geometry(self, dx, dy):
         geometry = self.geometry()
-        old_gemetry = geometry.toRect()
         geometry.setWidth(geometry.width() + dx)
         geometry.setHeight(geometry.height() + dy)
         self.setGeometry(geometry)
-
-        if geometry == self.geometry():  # catch Minimum Size
-            self.resize_frame(dx, dy)
 
     def resize_top(self, delta: float):
         self.header_rect.moveBy(0, -delta)
@@ -161,7 +170,6 @@ class NodeProxy(QGraphicsProxyWidget):
 
     def resize_bottom(self, delta: float):
         self.resize_geometry(0, -delta)
-
 
 class NodeWidget(QWidget):
     def __init__(self):
