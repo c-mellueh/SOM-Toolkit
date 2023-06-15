@@ -3,7 +3,7 @@ from __future__ import annotations  # make own class referencable
 from PySide6.QtCore import Qt, QRectF, QPointF, QPoint, QRect
 from PySide6.QtGui import QColor, QPen, QPainter, QBrush
 from PySide6.QtWidgets import QPushButton, QWidget, QGraphicsScene, QVBoxLayout, \
-    QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsRectItem,QGraphicsSceneResizeEvent, \
+    QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
     QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsTextItem
 
 from src.som_gui.data.constants import HEADER_HEIGHT
@@ -12,7 +12,7 @@ MIN_SIZE = (200, 200)
 
 
 class Header(QGraphicsRectItem):
-    def __init__(self, node:NodeProxy, text, pos: QPointF):
+    def __init__(self, node: NodeProxy, text, pos: QPointF):
         super(Header, self).__init__()
         self.node = node
         self.title = text
@@ -79,6 +79,7 @@ class Frame(QGraphicsRectItem):
         TOP = 3
         BOTTOM = 6
         TOLERANCE = 5
+
         mouse_x = pos.x()
         mouse_y = pos.y()
         frame_x = self.scenePos().x()
@@ -127,17 +128,13 @@ class NodeProxy(QGraphicsProxyWidget):
             self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
             self.header_rect.resize()
             self.setPos(0, HEADER_HEIGHT)  # put under Header
-            # self.title = Title(self.header_rect)
 
         super(NodeProxy, self).__init__()
         self.setWidget(NodeWidget())
         self.header_rect = Header(self, "TESTBOX", pos)
         create_header()
         self.frame = Frame(self)
-        # style
-        self.setAcceptHoverEvents(False)
-        # self.widget().setStyleSheet("background: white;border: 1px solid black")
-
+        self.setAcceptHoverEvents(True)
 
     def resizeEvent(self, event: QGraphicsSceneResizeEvent) -> None:
         super(NodeProxy, self).resizeEvent(event)
@@ -171,13 +168,26 @@ class NodeProxy(QGraphicsProxyWidget):
     def resize_bottom(self, delta: float):
         self.resize_geometry(0, -delta)
 
+
+    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
+        super(NodeProxy, self).hoverEnterEvent(event)
+        widget:NodeWidget = self.widget()
+        widget.button.show()
+
+    def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
+        super(NodeProxy, self).hoverLeaveEvent(event)
+        widget:NodeWidget = self.widget()
+        widget.button.hide()
+
 class NodeWidget(QWidget):
     def __init__(self):
         super(NodeWidget, self).__init__()
         self.setLayout(QVBoxLayout())
         self.layout().addWidget(QTreeWidget())
-        self.layout().addWidget(QPushButton("PressMe"))
-        # self.setStyleSheet("border: 1px solid black")
+        self.button = QPushButton("PressMe")
+        self.layout().addWidget(self.button)
+        self.button.hide()
+
 
 
 FREE_STATE = 1
