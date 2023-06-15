@@ -96,6 +96,7 @@ def get_path(main_window: MainWindow, title: str, file_text: str) -> str:
 
 def import_excel_clicked(main_window: MainWindow) -> None:
     def build_aggregations():
+        return #TODO: fix
         gw = main_window.graph_window
         root_nodes = list()
         for aggreg in sorted(classes.Aggregation, key=lambda x: x.name):
