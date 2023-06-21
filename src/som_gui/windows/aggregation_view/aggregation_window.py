@@ -1,17 +1,16 @@
 from __future__ import annotations  # make own class referencable
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Type
 
-from PySide6.QtCore import Qt, QPointF
-from PySide6.QtGui import QWheelEvent, QMouseEvent, QImage, QPainter
-from PySide6.QtWidgets import QWidget, QGraphicsScene, QGraphicsView, \
-    QApplication, QFileDialog
-from SOMcreator import constants
-from PySide6.QtCore import Qt, QRectF, QPointF, QPoint, QRect
-from PySide6.QtGui import QColor, QPen, QPainter, QBrush
+from PySide6 import QtGui, QtCore
+from PySide6.QtCore import Qt, QRectF, QPointF
+from PySide6.QtGui import QPainter
+from PySide6.QtGui import QWheelEvent, QMouseEvent
+from PySide6.QtWidgets import QApplication
 from PySide6.QtWidgets import QPushButton, QWidget, QGraphicsScene, QVBoxLayout, \
-    QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
-    QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsTextItem,QGraphicsView
+    QGraphicsProxyWidget, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
+    QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsView
+from SOMcreator import constants
 
 from src.som_gui.data.constants import HEADER_HEIGHT
 from src.som_gui.qt_designs import ui_GraphWindow
@@ -32,25 +31,51 @@ class AggregationScene(QGraphicsScene):
     def __init__(self):
         super(AggregationScene, self).__init__()
 
-    def get_frames(self) -> set[Frame]:
-        return set(frame for frame in self.items() if isinstance(frame, Frame))
+    def get_nodes(self):
+        return set(node for node in self.items() if isinstance(node, NodeProxy))
+
 
 class AggregationView(QGraphicsView):
-    def __init__(self,parent) -> None:
+    def __init__(self, parent: NodeProxy | GraphWindow) -> None:
         super(AggregationView, self).__init__()
         self.parent = parent
-        self.resize_node: NodeProxy | None = None  # which Node is being resized
+        self.selected_node: NodeProxy | None = None  # which Node is being resized
         self.resize_orientation: int | None = None  # which edge of Node is being resized
-        self.mouse_mode = 0  # 0=move, 1=resize, 2 = drag
         self.last_pos: QPointF | None = None  # last mouse pos to calculate difference
 
-    def item_under_mouse(self):
+    def item_under_mouse(self) -> set[QGraphicsItem]:
+        items = set()
         for item in self.scene().items():
             if item.isUnderMouse():
-                return item
+                items.add(item)
+        return items
 
-    def scene(self) -> AggregationScene:
+    def scene(self) -> AggregationScene:  # for typing
         return super(AggregationView, self).scene()
+
+    @property
+    def mouse_mode(self) -> int:
+        """ 0=move,
+            1=resize
+            2 = drag
+            """
+        return self.main_view().mouse_mode
+
+    @mouse_mode.setter
+    def mouse_mode(self, value: int) -> None:
+        self.main_view().mouse_mode = value
+
+    def main_view(self) -> MainView | None:
+        """views can be nested. This return the top View"""
+
+        if isinstance(self, MainView):
+            return self
+
+        views = self.parent.scene().views()
+        if len(views) <= 0:
+            return None
+        else:
+            return views[0].main_view()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
 
@@ -83,44 +108,73 @@ class AggregationView(QGraphicsView):
             ver.setValue(ver.value() - val)
         self.update()
 
+    def viewport(self) -> QWidget:
+        """views can be nested. This return the top Viewport"""
+        if not isinstance(self, MainView):
+            return self.main_view().viewport()
+
+        return super(AggregationView, self).viewport()
+
+    def cursor_over_header(self) -> bool:
+        """checks if Cursor is over Header"""
+        items = self.item_under_mouse()
+        return bool([item for item in items if isinstance(item, Header)])
+
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        print("PRESS")
+        if self.cursor_over_header():
+            self.setCursor(Qt.CursorShape.ClosedHandCursor)
+            self.mouse_mode = 2
+
         self.last_pos = self.mapToScene(event.pos())
-        if self.resize_node is None:
+        if self.selected_node is None:
             super(AggregationView, self).mousePressEvent(event)
         else:
             self.mouse_mode = 1
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self.mouse_mode = 0
+        if self.cursor_over_header():
+            self.setCursor(Qt.CursorShape.OpenHandCursor)
         super(AggregationView, self).mouseReleaseEvent(event)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        super(AggregationView, self).mouseMoveEvent(event)
-        if self.mouse_mode != 1:
-            self.resize_node, self.resize_orientation = self.find_border(event)
-        else:
 
+        if self.mouse_mode == 1 and self.selected_node is not None:  # resize selected Node
             old_pos = self.last_pos
             new_pos = self.mapToScene(event.pos())
             self.last_pos = new_pos
-            delta = old_pos - new_pos
+            self.selected_node: NodeProxy
+            self.selected_node.resize_by_cursor(old_pos, new_pos, self.resize_orientation)
+            return super(AggregationView, self).mouseMoveEvent(event)
 
-            if self.resize_orientation in (3, 4, 5):
-                self.resize_node.resize_top(delta.y())
+        self.selected_node, self.resize_orientation = self.get_resize_node(event)
+        self.set_cursor_by_border(self.resize_orientation)
+        if not self.cursor_over_header():
+            return super(AggregationView, self).mouseMoveEvent(event)
+        if self.mouse_mode != 2:
+            self.setCursor(Qt.CursorShape.OpenHandCursor)
+        else:
+            self.setCursor(Qt.CursorShape.ClosedHandCursor)
+        return super(AggregationView, self).mouseMoveEvent(event)
 
-            if self.resize_orientation in (1, 4, 7):
-                self.resize_node.resize_left(delta.x())
-
-            if self.resize_orientation in (2, 5, 8):
-                self.resize_node.resize_right(delta.x())
-
-            if self.resize_orientation in (6, 7, 8):
-                self.resize_node.resize_bottom(delta.y())
-
-    def find_border(self, event: QMouseEvent) -> (NodeProxy | None, int | None):
+    def get_resize_node(self, event) -> (NodeProxy | None, int | None):
         pos = self.mapToScene(event.pos())
-        old_cursor = self.viewport().cursor()
+        for proxy_node in self.scene().get_nodes():
+            frame_value = self.cursor_on_border(pos, proxy_node)
+            if frame_value != 0:
+                return proxy_node, frame_value
+        return None, None
+
+    def setCursor(self, arg__1: QtGui.QCursor | QtCore.Qt.CursorShape | QtGui.QPixmap) -> None:
+        if isinstance(arg__1, Qt.CursorShape):
+            self.viewport().setCursor(arg__1)
+        else:
+            super(AggregationView, self).setCursor(arg__1)
+
+    def unsetCursor(self) -> None:
+        self.viewport().unsetCursor()
+
+    def set_cursor_by_border(self, border: int):
         pos_dict = {
             1: Qt.CursorShape.SizeHorCursor,  # Left
             2: Qt.CursorShape.SizeHorCursor,  # right
@@ -130,39 +184,67 @@ class AggregationView(QGraphicsView):
             7: Qt.CursorShape.SizeBDiagCursor,  # Bottom Left
             5: Qt.CursorShape.SizeBDiagCursor,  # Top Right
             8: Qt.CursorShape.SizeFDiagCursor}  # Bottom Right
+        if border == 0 or border is None:
+            self.unsetCursor()
+        else:
+            self.setCursor(pos_dict[border])
 
-        for frame in self.scene().get_frames():
-            frame_value = frame.is_on_frame(pos)
-            if frame_value != 0:
-                self.viewport().setCursor(pos_dict[frame_value])
-                return frame.node, frame_value
-        if isinstance(self.item_under_mouse(), Header):
-            if event.buttons() == Qt.MouseButton.LeftButton:
-                self.viewport().setCursor(Qt.CursorShape.ClosedHandCursor)
-            else:
-                self.viewport().setCursor(Qt.CursorShape.OpenHandCursor)
-            return None, None
-        self.viewport().unsetCursor()
-        return None, None
+    def cursor_on_border(self, pos, proxy: NodeProxy):
+        """checks if Cursor is on border of Node and returns the Border orientation"""
+        LEFT = 1
+        RIGHT = 2
+        TOP = 3
+        BOTTOM = 6
+        TOLERANCE = 5
+        border = proxy.sceneBoundingRect()
 
-    def print(self):
-        rect = self.viewport().rect()
-        image = QImage(rect.size() * 5, QImage.Format.Format_RGB32)
-        image.fill(Qt.white)
-        painter = QPainter(image)
-        painter.setRenderHint(QPainter.Antialiasing)
-        self.render(painter)
-        file_text = "png Files (*.png);;"
-        imagePath = QFileDialog.getSaveFileName(self, "Safe Aggregation", self.main_window.export_path, file_text)[0]
-        image.save(imagePath)
-        painter.end()
-        print("Done")
+        mouse_x = pos.x()
+        mouse_y = pos.y()
+        frame_x = border.x()
+        frame_y = border.y()
+        frame_height = border.height()
+        frame_width = border.width()
+        min_y = frame_y - TOLERANCE
+        max_y = frame_y + TOLERANCE
+        min_x = frame_x - TOLERANCE
+        max_x = frame_x + TOLERANCE
+
+        def check_vert():
+
+            if min_y <= mouse_y <= max_y + frame_height:
+                if min_x <= mouse_x <= max_x:
+                    return LEFT
+                elif min_x + frame_width <= mouse_x <= max_x + frame_width:
+                    return RIGHT
+            return 0
+
+        def check_hor():
+            if min_x <= mouse_x <= max_x + frame_width:
+                if min_y <= mouse_y <= max_y:
+                    return TOP
+                elif min_y + frame_height <= mouse_y <= max_y + frame_height:
+                    return BOTTOM
+            return 0
+
+        frame_pos = check_vert() + check_hor()
+        return frame_pos
+
 
 class MainView(AggregationView):
     def __init__(self, graph_window: GraphWindow) -> None:
         super(MainView, self).__init__(graph_window)
         self.graph_window = graph_window
         self.main_window = graph_window.main_window
+        self._mouse_mode = 0  # 0=move, 1=resize, 2 = drag
+
+    @property
+    def mouse_mode(self) -> int:
+        return self._mouse_mode
+
+    @mouse_mode.setter
+    def mouse_mode(self, value: int) -> None:
+        self._mouse_mode = value
+
 
 class GraphWindow(QWidget):
 
@@ -190,20 +272,8 @@ class GraphWindow(QWidget):
 
     def test(self):
         pos = QPointF(100.0, 100.0)
-        self.nodes.add(NodeProxy(pos, self.active_scene,CollectorWidget))
+        self.nodes.add(NodeProxy(pos, self.active_scene, CollectorWidget))
         self.view.setMouseTracking(True)
-        print(self.active_scene.get_frames())
-        # self.node = Node()
-        # self.node.setPos(pos)
-        # self.re = self.scene.addRect(pos.x(),pos.y(),self.node.widget().width()-2,20,QPen(Qt.black),QBrush(Qt.darkGreen))
-        #
-        # self.re.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable,True)
-        # self.re.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable,True)
-        # self.node.setParentItem(self.re)
-        # self.re.setZValue(1)
-        # self.node.setZValue(-1)
-
-MIN_SIZE = (200, 200)
 
 
 class Header(QGraphicsRectItem):
@@ -222,22 +292,6 @@ class Header(QGraphicsRectItem):
         width = self.node.widget().width() - line_width
         height = HEADER_HEIGHT
         self.setRect(QRectF(x, 0, width, height))
-
-    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
-        self.scene().views()[0].viewport().setCursor(Qt.CursorShape.OpenHandCursor)
-        super(Header, self).hoverEnterEvent(event)
-
-    def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        self.scene().views()[0].viewport().setCursor(Qt.CursorShape.ClosedHandCursor)
-        super(Header, self).mousePressEvent(event)
-
-    def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        self.scene().views()[0].viewport().setCursor(Qt.CursorShape.OpenHandCursor)
-        super(Header, self).mouseReleaseEvent(event)
-
-    def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
-        self.scene().views()[0].viewport().unsetCursor()
-        super(Header, self).hoverLeaveEvent(event)
 
     def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget) -> None:
         painter.save()
@@ -268,55 +322,9 @@ class Frame(QGraphicsRectItem):
         rect.setX(self.x() + self.pen().width() / 2)
         return rect
 
-    def is_on_frame(self, pos):
-        LEFT = 1
-        RIGHT = 2
-        TOP = 3
-        BOTTOM = 6
-        TOLERANCE = 5
-
-        mouse_x = pos.x()
-        mouse_y = pos.y()
-        frame_x = self.scenePos().x()
-        frame_y = self.scenePos().y()
-        frame_height = self.rect().height()
-        frame_width = self.rect().width()
-        min_y = frame_y - TOLERANCE
-        max_y = frame_y + TOLERANCE
-        min_x = frame_x - TOLERANCE
-        max_x = frame_x + TOLERANCE
-
-        def check_vert():
-
-            if min_y <= mouse_y <= max_y + frame_height:
-                if min_x <= mouse_x <= max_x:
-                    return LEFT
-                elif min_x + frame_width <= mouse_x <= max_x + frame_width:
-                    return RIGHT
-            return 0
-
-        def check_hor():
-            if min_x <= mouse_x <= max_x + frame_width:
-                if min_y <= mouse_y <= max_y:
-                    return TOP
-                elif min_y + frame_height <= mouse_y <= max_y + frame_height:
-                    return BOTTOM
-            return 0
-
-        frame_pos = check_vert() + check_hor()
-        return frame_pos
-
-
-class Title(QGraphicsTextItem):
-    def __init__(self, header: Header):
-        super(Title, self).__init__()
-        self.setTextWidth(header.rect().width())
-        self.setPlainText("Test123")
-        self.setParentItem(header)
-
 
 class NodeProxy(QGraphicsProxyWidget):
-    def __init__(self, pos: QPointF, scene: QGraphicsScene,widget:ObjectWidget|CollectorWidget) -> None:
+    def __init__(self, pos: QPointF, scene: QGraphicsScene, widget: Type[ObjectWidget] | Type[CollectorWidget]) -> None:
         def create_header():
             self.setParentItem(self.header_rect)
             scene.addItem(self.header_rect)
@@ -329,7 +337,14 @@ class NodeProxy(QGraphicsProxyWidget):
         self.header_rect = Header(self, "TESTBOX", pos)
         create_header()
         self.frame = Frame(self)
-        self.setAcceptHoverEvents(True)
+
+    def setCursor(self, cursor) -> None:
+        super(NodeProxy, self).setCursor(cursor)
+
+    def sceneBoundingRect(self) -> QtCore.QRectF:
+        rect = super(NodeProxy, self).sceneBoundingRect()
+        rect.setY(rect.y() - HEADER_HEIGHT)
+        return rect
 
     def resizeEvent(self, event: QGraphicsSceneResizeEvent) -> None:
         super(NodeProxy, self).resizeEvent(event)
@@ -343,36 +358,55 @@ class NodeProxy(QGraphicsProxyWidget):
         except AttributeError:
             pass
 
-    def resize_geometry(self, dx, dy):
-        geometry = self.geometry()
-        geometry.setWidth(geometry.width() + dx)
-        geometry.setHeight(geometry.height() + dy)
-        self.setGeometry(geometry)
+        if isinstance(self.widget(), CollectorWidget):
+            self.widget().resize_scene()
 
-    def resize_top(self, delta: float):
-        self.header_rect.moveBy(0, -delta)
-        self.resize_geometry(0, delta)
+    def resize_by_cursor(self, old_pos, new_pos, orientation):
 
-    def resize_left(self, delta: float):
-        self.header_rect.moveBy(-delta, 0)
-        self.resize_geometry(delta, 0)
+        def resize_geometry(dx, dy):
+            geometry = self.geometry()
+            geometry.setWidth(geometry.width() + dx)
+            geometry.setHeight(geometry.height() + dy)
+            self.setGeometry(geometry)
 
-    def resize_right(self, delta: float):
-        self.resize_geometry(-delta, 0)
+        def resize_top(delta: float):
+            self.header_rect.moveBy(0, -delta)
+            resize_geometry(0, delta)
 
-    def resize_bottom(self, delta: float):
-        self.resize_geometry(0, -delta)
+        def resize_left(delta: float):
+            self.header_rect.moveBy(-delta, 0)
+            resize_geometry(delta, 0)
 
+        def resize_right(delta: float):
+            resize_geometry(-delta, 0)
+
+        def resize_bottom(delta: float):
+            resize_geometry(0, -delta)
+
+        delta = old_pos - new_pos
+
+        if orientation in (3, 4, 5):
+            resize_top(delta.y())
+
+        if orientation in (1, 4, 7):
+            resize_left(delta.x())
+
+        if orientation in (2, 5, 8):
+            resize_right(delta.x())
+
+        if orientation in (6, 7, 8):
+            resize_bottom(delta.y())
 
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
-        super(NodeProxy, self).hoverEnterEvent(event)
-        widget:NodeWidget = self.widget()
+        widget: NodeWidget = self.widget()
         widget.button.show()
+        return super(NodeProxy, self).hoverEnterEvent(event)
 
     def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
-        super(NodeProxy, self).hoverLeaveEvent(event)
-        widget:NodeWidget = self.widget()
+        widget: NodeWidget = self.widget()
         widget.button.hide()
+        super(NodeProxy, self).hoverLeaveEvent(event)
+
 
 class NodeWidget(QWidget):
     def __init__(self):
@@ -382,19 +416,32 @@ class NodeWidget(QWidget):
         self.layout().addWidget(self.button)
         self.button.hide()
 
+
 class CollectorWidget(NodeWidget):
-    def __init__(self,parent):
+    def __init__(self, parent):
         super(CollectorWidget, self).__init__()
         self.view = AggregationView(parent)
-        self.layout().insertWidget(0,self.view)
-        self.view.setScene(AggregationScene())
+        self.layout().insertWidget(0, self.view)
+        self.scene = AggregationScene()
+        self.view.setScene(self.scene)
+        self.nodes = set()
+        self.button.clicked.connect(self.test)
+
+    def test(self):
+        self.nodes.add(NodeProxy(QPointF(100.0, 100.0), self.scene, ObjectWidget))
+
+    def resize_scene(self):
+        """Scene of collector widget got fitted to Canvas"""  # TODO
+    pass
 
 
 class ObjectWidget(NodeWidget):
-    def __init__(self):
+    def __init__(self, parent):
         super(ObjectWidget, self).__init__()
-        self.layout().insertWidget(0,QTreeWidget())
+        self.layout().insertWidget(0, QTreeWidget())
+        self.parent = parent
         pass
+
 
 FREE_STATE = 1
 BUILDING_SQUARE = 2
