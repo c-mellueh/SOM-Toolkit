@@ -20,7 +20,7 @@ class ModelcheckWindow(QDialog):
 
         self.widget.button_ifc.clicked.connect(self.ifc_file_dialog)
         self.widget.button_export.clicked.connect(self.export_file_dialog)
-        attribute ,pset = self.get_main_attribute()
+        pset,attribute = self.get_main_attribute()
         self.widget.line_edit_ident_pset.setText(pset)
         self.widget.line_edit_ident_attribute.setText(attribute)
         self.data_base_path = None
@@ -97,9 +97,9 @@ class ModelcheckWindow(QDialog):
             ident_psets[ident_pset] +=1
             ident_attributes[ident_attribute]+=1
 
-        ident_attribute = (sorted(ident_psets.items(), key=lambda x: x[1]))
-        ident_pset = (sorted(ident_attributes.items(), key=lambda x: x[1]))
+        ident_attribute = (sorted(ident_attributes.items(), key=lambda x: x[1]))
+        ident_pset = (sorted(ident_psets.items(), key=lambda x: x[1]))
         if ident_attribute and ident_pset:
-            return ident_attribute[0][0],ident_pset[0][0]
+            return ident_pset[0][0],ident_attribute[0][0]
         else:
             return "",""
