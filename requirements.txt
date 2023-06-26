@@ -4,3 +4,5 @@ jinja2
 openpyxl
 setuptools
 SOMcreator
+ifcopenshell
+tqdm

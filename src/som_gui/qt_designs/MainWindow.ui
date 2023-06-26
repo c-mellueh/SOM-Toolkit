@@ -736,10 +736,17 @@
     </property>
     <addaction name="action_show_graphs"/>
    </widget>
+   <widget class="QMenu" name="menu_ifc">
+    <property name="title">
+     <string>IFC</string>
+    </property>
+    <addaction name="action_modelcheck"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDesite"/>
    <addaction name="menuPredefined_Psets"/>
    <addaction name="menuShow_Graphs"/>
+   <addaction name="menu_ifc"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_file_new">
@@ -855,6 +862,11 @@
   <action name="action_import_excel">
    <property name="text">
     <string>Import Excel</string>
+   </property>
+  </action>
+  <action name="action_modelcheck">
+   <property name="text">
+    <string>Modelcheck</string>
    </property>
   </action>
  </widget>
