@@ -128,7 +128,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.label_ifc.setText(QCoreApplication.translate("Dialog", u"IFC Files", None))
+        self.label_ifc.setText(QCoreApplication.translate("Dialog", u"IFC Path", None))
         self.button_ifc.setText(QCoreApplication.translate("Dialog", u"...", None))
         self.label_export.setText(QCoreApplication.translate("Dialog", u"Issue Export Path", None))
         self.line_edit_ident_pset.setPlaceholderText(QCoreApplication.translate("Dialog", u"Main Pset", None))
