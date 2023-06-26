@@ -17,9 +17,9 @@ from .filehandling import open_file, save_file, export
 from .qt_designs import ui_project_settings
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import script_widget, property_widget, object_widget
-from .windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups
+from .windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups, modelcheck_window
 from . import settings
-
+from .modelcheck.modelcheck import run_modelcheck
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
     return QtGui.QIcon(icon_path)
@@ -56,6 +56,7 @@ class MainWindow(QMainWindow):
             self.ui.action_abbreviation_json.triggered.connect(self.desite_abbreviation)
             self.ui.table_pset.itemChanged.connect(self.item_changed)
             self.ui.action_import_excel.triggered.connect(self.import_excel)
+            self.ui.action_modelcheck.triggered.connect(self.modelcheck)
 
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -355,6 +356,8 @@ class MainWindow(QMainWindow):
                 self.graph_window.view.show()
                 self.graph_window.fit_in()
 
+    def modelcheck(self):
+        run_modelcheck(self)
 
     ## EXPORT
 

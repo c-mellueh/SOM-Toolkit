@@ -10,7 +10,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=added_files,
-    hiddenimports=['jinja2','lxml','SOMcreator'],
+    hiddenimports=['jinja2','lxml','SOMcreator','ifcopenshell','tqdm','openpyxl'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -48,5 +48,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='SOMGUI_v2.2.2',
+    name='SOMGUI_v2.3.0',
 )
