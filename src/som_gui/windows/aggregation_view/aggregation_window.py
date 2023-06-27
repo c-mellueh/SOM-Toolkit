@@ -53,6 +53,10 @@ class AggregationView(QGraphicsView):
     def scene(self) -> AggregationScene:  # for typing
         return super(AggregationView, self).scene()
 
+    def resizeEvent(self, event: QtGui.QResizeEvent) -> None:
+        super(AggregationView, self).resizeEvent(event)
+        if self.scene() is not None:
+            self.scene().setSceneRect(self.contentsRect())
     @property
     def mouse_mode(self) -> int:
         """ 0=move,
@@ -422,10 +426,6 @@ class CollectorWidget(NodeWidget):
         self.scene = AggregationScene()
         self.view.setScene(self.scene)
         self.nodes = set()
-        self.button.clicked.connect(self.test)
-
-    def test(self):
-        self.nodes.add(NodeProxy(QPointF(100.0, 100.0), self.scene, ObjectWidget))
 
     def resizeEvent(self, event) -> None:
         super(CollectorWidget, self).resizeEvent(event)
@@ -434,7 +434,6 @@ class CollectorWidget(NodeWidget):
     def enterEvent(self, event: QtGui.QEnterEvent) -> None:
         super(CollectorWidget, self).enterEvent(event)
         self.view.scene().setSceneRect(self.view.contentsRect())
-
 
 
 class ObjectWidget(NodeWidget):
