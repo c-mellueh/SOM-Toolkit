@@ -5,3 +5,5 @@ openpyxl
 setuptools
 SOMcreator
 fuzzywuzzy
+ifcopenshell
+tqdm
