@@ -7,3 +7,4 @@ SOMcreator
 fuzzywuzzy
 ifcopenshell
 tqdm
+python-Levenshtein
