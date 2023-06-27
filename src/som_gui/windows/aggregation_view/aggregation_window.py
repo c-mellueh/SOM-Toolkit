@@ -326,16 +326,17 @@ class Frame(QGraphicsRectItem):
 class NodeProxy(QGraphicsProxyWidget):
     def __init__(self, pos: QPointF, scene: QGraphicsScene, widget: Type[ObjectWidget] | Type[CollectorWidget]) -> None:
         def create_header():
-            self.setParentItem(self.header_rect)
-            scene.addItem(self.header_rect)
+            header = Header(self, "TESTBOX", pos)
+            self.setParentItem(header)
+            scene.addItem(header)
             self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
-            self.header_rect.resize()
-            self.setPos(0, HEADER_HEIGHT)  # put under Header
+            header.resize()
+            self.setPos(0, HEADER_HEIGHT)  # put below Header
+            return header
 
         super(NodeProxy, self).__init__()
         self.setWidget(widget(self))
-        self.header_rect = Header(self, "TESTBOX", pos)
-        create_header()
+        self.header_rect = create_header()
         self.frame = Frame(self)
 
     def setCursor(self, cursor) -> None:
@@ -357,9 +358,6 @@ class NodeProxy(QGraphicsProxyWidget):
             self.header_rect.resize()
         except AttributeError:
             pass
-
-        if isinstance(self.widget(), CollectorWidget):
-            self.widget().resize_scene()
 
     def resize_by_cursor(self, old_pos, new_pos, orientation):
 
@@ -416,7 +414,6 @@ class NodeWidget(QWidget):
         self.layout().addWidget(self.button)
         self.button.hide()
 
-
 class CollectorWidget(NodeWidget):
     def __init__(self, parent):
         super(CollectorWidget, self).__init__()
@@ -430,9 +427,14 @@ class CollectorWidget(NodeWidget):
     def test(self):
         self.nodes.add(NodeProxy(QPointF(100.0, 100.0), self.scene, ObjectWidget))
 
-    def resize_scene(self):
-        """Scene of collector widget got fitted to Canvas"""  # TODO
-    pass
+    def resizeEvent(self, event) -> None:
+        super(CollectorWidget, self).resizeEvent(event)
+        self.view.scene().setSceneRect(self.view.contentsRect())
+
+    def enterEvent(self, event: QtGui.QEnterEvent) -> None:
+        super(CollectorWidget, self).enterEvent(event)
+        self.view.scene().setSceneRect(self.view.contentsRect())
+
 
 
 class ObjectWidget(NodeWidget):
