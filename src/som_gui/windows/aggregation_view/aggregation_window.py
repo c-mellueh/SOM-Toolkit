@@ -427,10 +427,6 @@ class CollectorWidget(NodeWidget):
         self.view.setScene(self.scene)
         self.nodes = set()
 
-    def resizeEvent(self, event) -> None:
-        super(CollectorWidget, self).resizeEvent(event)
-        self.view.scene().setSceneRect(self.view.contentsRect())
-
     def enterEvent(self, event: QtGui.QEnterEvent) -> None:
         super(CollectorWidget, self).enterEvent(event)
         self.view.scene().setSceneRect(self.view.contentsRect())
