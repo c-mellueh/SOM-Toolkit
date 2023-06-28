@@ -48,7 +48,7 @@ class ModelcheckWindow(QDialog):
             self.widget.label_export_missing.show()
             allow = False
 
-        elif not os.path.exists(export_path):
+        elif not os.path.exists(os.path.dirname(export_path)):
             self.widget.label_export_missing.setText("Path doesn't exist!")
             self.widget.label_export_missing.show()
             allow = False
