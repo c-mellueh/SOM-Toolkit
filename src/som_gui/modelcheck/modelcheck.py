@@ -15,6 +15,8 @@ from . import issues
 from .sql import db_create_entity, remove_existing_issues,create_tables
 from .output import create_issues
 from ..windows.modelcheck_window import ModelcheckWindow
+from ifcopenshell import express
+
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 from datetime import datetime

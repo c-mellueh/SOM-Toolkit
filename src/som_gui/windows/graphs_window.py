@@ -71,7 +71,7 @@ def item_to_name(item: Node | classes.Object) -> str:
     if obj.is_concept:
         text = f"{obj.name}"
     else:
-        text = f"{obj.name} ({obj.ident_attrib.value[0]})"
+        text = f"{obj.name} ({obj.abbreviation})"
     return text
 
 
@@ -675,7 +675,7 @@ class Node(QGraphicsProxyWidget):
         if obj.is_concept:
             text = f"{obj.name}"
         else:
-            text = f"{obj.name} ({obj.ident_attrib.value[0]})"
+            text = f"{obj.name} ({obj.abbreviation})"
         return text
 
     @property
