@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtWidgets import QPushButton, QWidget, QGraphicsScene, QVBoxLayout, \
     QGraphicsProxyWidget, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
     QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsView
-from SOMcreator import constants
+from SOMcreator import constants,classes
 
 from src.som_gui.data.constants import HEADER_HEIGHT
 from src.som_gui.qt_designs import ui_GraphWindow
@@ -35,6 +35,21 @@ class AggregationScene(QGraphicsScene):
         return set(node for node in self.items() if isinstance(node, NodeProxy))
 
 
+    def add_aggregation(self,aggregation:classes.Aggregation,point:QPointF):
+        connections = aggregation.connection_dict.values()
+        if filter(lambda x:x>1,connections):
+            node_type = CollectorWidget
+        else:
+            node_type = ObjectWidget
+
+        node_proxy = NodeProxy(aggregation,point,self,node_type)
+
+        for child in aggregation.children:
+            connection_type = aggregation.connection_dict.get(child)
+            if connection_type == 1:
+                self.add_aggregation(child,point+QPointF(10,10))
+
+
 class AggregationView(QGraphicsView):
     def __init__(self, parent: NodeProxy | GraphWindow) -> None:
         super(AggregationView, self).__init__()
@@ -57,6 +72,7 @@ class AggregationView(QGraphicsView):
         super(AggregationView, self).resizeEvent(event)
         if self.scene() is not None:
             self.scene().setSceneRect(self.contentsRect())
+
     @property
     def mouse_mode(self) -> int:
         """ 0=move,
@@ -275,9 +291,20 @@ class GraphWindow(QWidget):
         pass
 
     def test(self):
-        pos = QPointF(100.0, 100.0)
-        self.nodes.add(NodeProxy(pos, self.active_scene, CollectorWidget))
-        self.view.setMouseTracking(True)
+        self.build_nodes()
+
+    def build_nodes(self):
+        project = self.main_window.project
+        aggregations = set()
+        for obj in project.objects:
+            aggregations = aggregations.union(obj.aggregation_representations)
+
+        root_aggregations = list(filter(lambda x:x.is_root,aggregations))
+        root_aggregations.sort(key =lambda x:x.name)
+        root_aggregation = root_aggregations[13]
+        self.active_scene.add_aggregation(root_aggregation,QPointF(0,0))
+
+
 
 
 class Header(QGraphicsRectItem):
@@ -307,6 +334,7 @@ class Header(QGraphicsRectItem):
         super().paint(painter, option, widget)
 
 
+
 class Frame(QGraphicsRectItem):
     def __init__(self, node: NodeProxy):
         super(Frame, self).__init__()
@@ -328,9 +356,13 @@ class Frame(QGraphicsRectItem):
 
 
 class NodeProxy(QGraphicsProxyWidget):
-    def __init__(self, pos: QPointF, scene: QGraphicsScene, widget: Type[ObjectWidget] | Type[CollectorWidget]) -> None:
+
+    def __init__(self,aggregation:classes.Aggregation, pos: QPointF, scene: QGraphicsScene, widget: Type[ObjectWidget] | Type[CollectorWidget]) -> None:
+
         def create_header():
-            header = Header(self, "TESTBOX", pos)
+            name = f"{aggregation.name} ({aggregation.object.ident_value})"
+            header = Header(self, name, pos)
+            self.aggregation = aggregation
             self.setParentItem(header)
             scene.addItem(header)
             self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
@@ -417,6 +449,7 @@ class NodeWidget(QWidget):
         self.button = QPushButton("PressMe")
         self.layout().addWidget(self.button)
         self.button.hide()
+
 
 class CollectorWidget(NodeWidget):
     def __init__(self, parent):

@@ -36,23 +36,6 @@ def import_node_pos(main_dict: dict, graph_window: aggregation_window.GraphWindo
         aggregation = aggregation_ref[uuid]
         x_pos = aggregation_dict.get(constants.X_POS)
         y_pos = aggregation_dict.get(constants.Y_POS)
-        nodes[aggregation_window.Node(aggregation, graph_window)] = (x_pos, y_pos)
-
-    root_nodes: set[aggregation_window.Node] = {node for node in nodes.keys() if node.aggregation.is_root}
-    for node in sorted(root_nodes,key= lambda x:x.name):
-        graph_window.create_scene_by_node(node)
-        graph_window.draw_tree(node)
-        iter_child(node)
-        graph_window.drawn_scenes.append(node.scene())
-
-    for node, (x_pos, y_pos) in nodes.items():
-        if y_pos is not None:
-            node.setY(float(y_pos))
-        if x_pos is not None:
-            node.setX(float(x_pos))
-
-    graph_window.combo_box.setCurrentIndex(0)
-    graph_window.combo_change()
 
 
 def new_file(main_window: MainWindow) -> None:
