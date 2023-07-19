@@ -35,7 +35,7 @@
      <item>
       <widget class="QLabel" name="label_abbreviation">
        <property name="text">
-        <string>Abbreviation:</string>
+        <string>Abkürzung:</string>
        </property>
       </widget>
      </item>

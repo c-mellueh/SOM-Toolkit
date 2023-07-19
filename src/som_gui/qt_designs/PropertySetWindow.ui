@@ -19,14 +19,14 @@
      <item row="4" column="1">
       <widget class="QCheckBox" name="check_box_inherit">
        <property name="text">
-        <string>inherit</string>
+        <string>Vererbt</string>
        </property>
       </widget>
      </item>
      <item row="4" column="2">
       <widget class="QCheckBox" name="check_box_seperator">
        <property name="text">
-        <string>Seperate:</string>
+        <string>Trennzeichen:</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -120,7 +120,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Values</string>
+        <string>Werte</string>
        </property>
       </widget>
      </item>
@@ -147,17 +147,17 @@
       <widget class="QComboBox" name="combo_type">
        <item>
         <property name="text">
-         <string>List</string>
+         <string>Liste</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Format</string>
+         <string>Formatvorgabe</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Range</string>
+         <string>Wertebereich</string>
         </property>
        </item>
       </widget>
@@ -189,7 +189,7 @@
      <item row="2" column="3">
       <widget class="QPushButton" name="button_add">
        <property name="text">
-        <string>Add</string>
+        <string>Hinzufügen</string>
        </property>
       </widget>
      </item>
@@ -301,7 +301,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Data Format</string>
+       <string>Datentyp</string>
       </property>
      </column>
      <column>
@@ -311,7 +311,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Values</string>
+       <string>Wert</string>
       </property>
      </column>
      <column>

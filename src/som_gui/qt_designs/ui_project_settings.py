@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ProjectSettings.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.5.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -78,7 +78,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"Project Name", None))
+        self.label.setText(QCoreApplication.translate("Dialog", u"Projektname", None))
         self.label_2.setText(QCoreApplication.translate("Dialog", u"Author", None))
         self.label_3.setText(QCoreApplication.translate("Dialog", u"Version", None))
     # retranslateUi

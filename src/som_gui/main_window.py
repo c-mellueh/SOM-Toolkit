@@ -7,10 +7,9 @@ import sys
 import json
 
 from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QCompleter, QDialog, QTableWidget, QInputDialog, QLineEdit,QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QCompleter, QDialog, QTableWidget, QInputDialog, QLineEdit,QFileDialog,QTreeWidgetItem
 from SOMcreator import classes, desite,vestra,card1,filehandling,allplan,constants
 from SOMcreator import excel as som_excel
-
 from . import icons
 from . import logs
 from .filehandling import open_file, save_file, export
@@ -20,6 +19,7 @@ from .widgets import script_widget, property_widget, object_widget
 from .windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups, modelcheck_window
 from . import settings
 from .modelcheck.modelcheck import run_modelcheck
+
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
     return QtGui.QIcon(icon_path)
@@ -91,8 +91,8 @@ class MainWindow(QMainWindow):
     def import_excel(self):
         open_file.import_excel_clicked(self)
 
-    def object_double_clicked(self,item):
-        object_widget.object_double_clicked(self,item)
+    def object_double_clicked(self,item:object_widget.CustomObjectTreeItem):
+        object_widget.object_double_clicked(self,item.object)
 
     @property
     def object_tree(self) -> object_widget.CustomTree:

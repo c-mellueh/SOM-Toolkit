@@ -20,24 +20,10 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <widget class="QLineEdit" name="pset_name">
-     <property name="placeholderText">
-      <string>PropertySet</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="1">
     <widget class="QLineEdit" name="attribute_name">
      <property name="placeholderText">
-      <string>Attribute</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QLineEdit" name="attribute_value">
-     <property name="placeholderText">
-      <string>Value</string>
+      <string>Attribut</string>
      </property>
     </widget>
    </item>
@@ -51,17 +37,31 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="attribute_value">
+     <property name="placeholderText">
+      <string>Wert</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0" colspan="2">
     <widget class="QLineEdit" name="group_name">
      <property name="placeholderText">
-      <string>Name of object</string>
+      <string>Name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLineEdit" name="pset_name">
+     <property name="placeholderText">
+      <string>PropertySet</string>
      </property>
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QRadioButton" name="radioButton">
+    <widget class="QCheckBox" name="checkBox">
      <property name="text">
-      <string>Group</string>
+      <string>Gruppe</string>
      </property>
     </widget>
    </item>

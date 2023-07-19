@@ -116,7 +116,7 @@ def req_group_name(main_window, prefil: list[str] = None):
     dialog = QDialog(main_window)
     widget = ui_groupReq.Ui_Dialog()
     widget.setupUi(dialog)
-    widget.radioButton.toggled.connect(change_visibility)
+    widget.checkBox.toggled.connect(change_visibility)
     input_fields = [widget.group_name, widget.pset_name, widget.attribute_name, widget.attribute_value]
     if prefil is not None:
         for i, field in enumerate(input_fields[:-1]):
@@ -124,9 +124,9 @@ def req_group_name(main_window, prefil: list[str] = None):
             field.setText(pl_text)
 
     if dialog.exec():
-        return [input_field.text() for input_field in input_fields], widget.radioButton.isChecked()
+        return [input_field.text() for input_field in input_fields], widget.checkBox.isChecked()
     else:
-        return [False, False, False, False], widget.radioButton.isChecked()
+        return [False, False, False, False], widget.checkBox.isChecked()
 
 
 def req_pset_name(main_window):

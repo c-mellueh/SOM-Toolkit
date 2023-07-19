@@ -128,13 +128,14 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.label_ifc.setText(QCoreApplication.translate("Dialog", u"IFC Path", None))
+        self.label_ifc.setText(QCoreApplication.translate("Dialog", u"IFC Pfad", None))
         self.button_ifc.setText(QCoreApplication.translate("Dialog", u"...", None))
-        self.label_export.setText(QCoreApplication.translate("Dialog", u"Issue Export Path", None))
-        self.line_edit_ident_pset.setPlaceholderText(QCoreApplication.translate("Dialog", u"Main Pset", None))
-        self.label_ifc_missing.setText(QCoreApplication.translate("Dialog", u"IFC File Path is missing!", None))
-        self.line_edit_ident_attribute.setPlaceholderText(QCoreApplication.translate("Dialog", u"Main Attribute", None))
-        self.label_export_missing.setText(QCoreApplication.translate("Dialog", u"Export Path is missing!", None))
+        self.label_export.setText(QCoreApplication.translate("Dialog", u"Excel Export Pfad", None))
+        self.line_edit_ident_pset.setText("")
+        self.line_edit_ident_pset.setPlaceholderText(QCoreApplication.translate("Dialog", u"Ident PropertySet", None))
+        self.label_ifc_missing.setText(QCoreApplication.translate("Dialog", u"IFC Pfad fehlt!", None))
+        self.line_edit_ident_attribute.setPlaceholderText(QCoreApplication.translate("Dialog", u"Ident Attribut", None))
+        self.label_export_missing.setText(QCoreApplication.translate("Dialog", u"Export Pfad fehlt!", None))
         self.button_export.setText(QCoreApplication.translate("Dialog", u"...", None))
     # retranslateUi
 
