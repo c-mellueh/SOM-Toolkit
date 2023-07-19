@@ -857,7 +857,7 @@ class Node(QGraphicsProxyWidget):
                 for _child in node.children:
                     get_all_children(_child)
 
-            nodes = list()
+            nodes = [self]
             if self.is_root:
                 for child_node in self.children:
                     get_all_children(child_node)
@@ -870,8 +870,8 @@ class Node(QGraphicsProxyWidget):
                 for child in self.children.copy():
                     self.remove_child(child)
                 self.graph_window.remove_scene(self.scene())
-                Node.registry.remove(self)
                 self.object.remove_node(self.aggregation)
+                self.registry.remove(self)
 
             else:
                 self.parent_node.remove_child(self)
@@ -990,13 +990,8 @@ class GraphWindow(QWidget):
 
     def delete_button_pressed(self) -> None:
         if not self.combo_box.currentText() == "":
-            root_node = self.active_scene.root_node
-            string_list = [item_to_name(item) for item in self.active_scene.items() if isinstance(item, Node)]
-            delete_request = popups.msg_del_items(string_list)
-            if delete_request:
-                for child in root_node.children.copy():
-                    root_node.remove_child(child)
-                self.remove_scene(self.active_scene)
+            self.active_scene.root_node.delete()
+
 
     def remove_scene(self, scene: AggregationScene) -> None:
         self.scenes.remove(scene)
