@@ -14,6 +14,7 @@ from ..windows.propertyset_window import PropertySetWindow
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
+
 def get_parent_by_name(active_object: classes.Object, name: str) -> classes.PropertySet | None:
     """find Propertyset which has the same name and is not from the same object"""
 
@@ -149,39 +150,6 @@ def set_enable(main_window: MainWindow, value: bool) -> None:
         main_window.ui.lineEdit_pSet_name.setText("")
 
 
-def fill_table(main_window: MainWindow, obj: classes.Object) -> None:
-
-    main_window.set_right_window_enable(True)
-    modify_title(main_window, main_window.ui.tab_code, f"{obj.name}: Code")
-    modify_title(main_window, main_window.ui.tab_property_set, f"{obj.name}: PropertySets")
-
-    main_window.pset_table.setRowCount(0)
-    property_sets = main_window.active_object.property_sets
-
-    # find inherited Psets
-
-    main_window.pset_table.setRowCount(len(property_sets))  # Prepare Table
-
-    for i, pset in enumerate(property_sets):
-        table_item = propertyset_window.CustomTableItem(pset,pset.name)
-        main_window.pset_table.setItem(i, 0, table_item)
-        if pset.is_child:
-            if pset.parent.object is not None:
-                table_item=propertyset_window.CustomTableItem(pset,pset.parent.object.name)
-                # table_item = QTableWidgetItem(pset.parent.object.name)
-            else:
-                table_item=propertyset_window.CustomTableItem(pset,constants.INHERITED_TEXT)
-                # table_item = QTableWidgetItem(constants.INHERITED_TEXT)
-            main_window.pset_table.setItem(i, 1, table_item)
-        check_item = propertyset_window.CustomCheckItem(pset)
-        if pset.optional:
-            check_item.setCheckState(Qt.CheckState.Checked)
-        else:
-            check_item.setCheckState(Qt.CheckState.Unchecked)
-        main_window.pset_table.setItem(i,2,check_item)
-    main_window.pset_table.resizeColumnsToContents()
-
-
 def left_click(main_window: MainWindow, item: QListWidgetItem) -> None:
     item: propertyset_window.CustomTableItem = main_window.pset_table.item(
         main_window.pset_table.row(item), 0)
@@ -217,36 +185,66 @@ def open_pset_window(main_window: MainWindow, property_set: classes.PropertySet,
     main_window.pset_window = window
 
 
-def add_pset(main_window: MainWindow) -> None:
+def fill_table(main_window: MainWindow, obj: classes.Object) -> None:
+    main_window.set_right_window_enable(True)
+    modify_title(main_window, main_window.ui.tab_code, f"{obj.name}: Code")
+    modify_title(main_window, main_window.ui.tab_property_set, f"{obj.name}: PropertySets")
+
+    main_window.pset_table.setRowCount(0)
+    property_sets = main_window.active_object.property_sets
+
+    # find inherited Psets
+
+    for pset in property_sets:
+        add_pset_to_table(main_window, pset)
+
+
+def add_pset_to_table(main_window: MainWindow, pset: str | classes.PropertySet, parent=None) -> None:
+    row_index = main_window.pset_table.rowCount()
+    main_window.pset_table.setRowCount(row_index + 1)
+    if isinstance(pset, str):
+        name = pset
+        if parent is not None:
+            property_set = parent.create_child(name)
+        else:
+            property_set = classes.PropertySet(name)
+        main_window.active_object.add_property_set(property_set)
+
+    else:
+        property_set = pset
+
+    if property_set.is_child:
+        if property_set.parent.object is not None:
+            inherit_table_item = propertyset_window.CustomTableItem(pset, pset.parent.object.name)
+        else:
+            inherit_table_item = propertyset_window.CustomTableItem(pset, constants.INHERITED_TEXT)
+        main_window.pset_table.setItem(row_index, 1, inherit_table_item)
+
+    pset_table_item = propertyset_window.CustomTableItem(property_set, property_set.name)
+    main_window.pset_table.setItem(row_index, 0, pset_table_item)
+    check_item = propertyset_window.CustomCheckItem(property_set)
+
+    if property_set.optional:
+        check_item.setCheckState(Qt.CheckState.Checked)
+    else:
+        check_item.setCheckState(Qt.CheckState.Unchecked)
+    main_window.pset_table.setItem(row_index, 2, check_item)
+
+    main_window.pset_table.resizeColumnsToContents()
+
+
+def create_new_pset(main_window: MainWindow) -> None:
     name = main_window.ui.lineEdit_pSet_name.text()
-    obj = main_window.active_object
-
-    new_row_count = main_window.pset_table.rowCount() + 1
-    main_window.pset_table.setRowCount(new_row_count)
-
     inherited = False
     if name in predefined_pset_list(main_window):
         inherited = popups.req_merge_pset()
 
+    parent = None
     if inherited:
         parent = get_parent_by_name(main_window.active_object, name)
-        property_set = parent.create_child(name)
 
-        if parent.object is not None:
-            item2 = QTableWidgetItem(parent.object.name)
-        else:
-            item2 = QTableWidgetItem(constants.INHERITED_TEXT)
-        main_window.pset_table.setItem(new_row_count - 1, 1, item2)
-
-    else:
-        property_set = classes.PropertySet(name)
-
-    obj.add_property_set(property_set)
-    item = propertyset_window.CustomTableItem(property_set,property_set.name)
-
-    main_window.pset_table.setItem(new_row_count - 1, 0, item)
+    add_pset_to_table(main_window, name, parent)
     main_window.text_changed(main_window.ui.lineEdit_pSet_name.text())
-    main_window.pset_table.resizeColumnsToContents()
 
 
 def reload(main_window: MainWindow) -> None:
@@ -254,7 +252,7 @@ def reload(main_window: MainWindow) -> None:
         fill_table(main_window, main_window.active_object)
         if main_window.pset_window is not None:
             propertyset_window.fill_attribute_table(main_window.active_object, main_window.ui.table_attribute,
-                                                main_window.pset_window.property_set)
+                                                    main_window.pset_window.property_set)
 
 
 def clear_attribute_table(main_window: MainWindow) -> None:
