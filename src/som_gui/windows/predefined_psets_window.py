@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QWidget, QListWidgetItem
 from SOMcreator import classes, constants
 
 from .. import icons
-from ..qt_designs import ui_PsetInheritance
+from ..qt_designs import ui_predefined_property_sets
 from ..windows import popups
 
 if TYPE_CHECKING:
@@ -71,7 +71,7 @@ class PropertySetInherWindow(QWidget):
 
         super().__init__()
 
-        self.widget = ui_PsetInheritance.Ui_PsetInherWidget()
+        self.widget = ui_predefined_property_sets.Ui_PsetInherWidget()
         self.widget.setupUi(self)
         self.setWindowIcon(icons.get_icon())
         self.setWindowTitle(constants.PREDEFINED_PROPERTY_WINDOW_NAME)

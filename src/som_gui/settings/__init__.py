@@ -55,7 +55,7 @@ def get_open_path():
 
 
 def set_open_path(path):
-    set_path( SAVE_PATH, path)
+    set_path( OPEN_PATH, path)
 
 
 def get_save_path():
