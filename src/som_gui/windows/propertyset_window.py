@@ -8,7 +8,7 @@ from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget
 from SOMcreator import constants, classes
 from ..data import constants as con
-from .. import icons
+from .. import icons,settings
 from ..qt_designs import ui_property_set_window
 from ..windows import popups
 
@@ -178,9 +178,10 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.setWindowTitle(window_title)
         self.setWindowIcon(icons.get_icon())
         fill_attribute_table(self.active_object, self.widget.table_widget, self.property_set)
-
-        self.widget.check_box_seperator.setChecked(self.mainWindow.project.seperator_status)
-        self.widget.line_edit_seperator.setText(self.mainWindow.project.seperator)
+        seperator_status = settings.get_seperator_status()
+        seperator = settings.get_seperator()
+        self.widget.check_box_seperator.setChecked(seperator_status)
+        self.widget.line_edit_seperator.setText(seperator)
         self.widget.table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.widget.table_widget.orig_drop_event = self.widget.table_widget.dropEvent
         self.widget.table_widget.dropEvent = self.tableDropEvent
@@ -260,14 +261,14 @@ class PropertySetWindow(QtWidgets.QWidget):
         return True
 
     def seperator_text_changed(self, status: str) -> None:
-        self.mainWindow.project.seperator = status
+        settings.set_seperator(status)
 
     def seperator_status_changed(self, status: int) -> None:
         if status == 2:
             b = True
         else:
             b = False
-        self.mainWindow.project.seperator_status = b
+        settings.set_seperator_status(b)
         self.widget.line_edit_seperator.setEnabled(b)
 
     def delete_selection(self) -> None:
