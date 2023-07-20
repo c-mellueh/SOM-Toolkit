@@ -296,7 +296,7 @@ class MainWindow(QMainWindow):
         property_widget.open_pset_window(self, property_set, active_object, window_title)
 
     def add_pset(self):
-        property_widget.add_pset(self)
+        property_widget.create_new_pset(self)
 
     def add_script(self):
         script_widget.add_script(self)
