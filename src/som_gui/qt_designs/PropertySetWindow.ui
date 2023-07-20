@@ -176,11 +176,6 @@
        </item>
        <item>
         <property name="text">
-         <string>xs:bool</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>xs:double</string>
         </property>
        </item>

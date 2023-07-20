@@ -6,8 +6,9 @@ import logging
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget
-from SOMcreator import constants, classes
-from ..data import constants as con
+from SOMcreator import constants as som_cr_constants
+from SOMcreator import classes
+from ..data import constants as constants
 from .. import icons,settings
 from ..qt_designs import ui_property_set_window
 from ..windows import popups
@@ -75,7 +76,7 @@ def get_selected_rows(table_widget: QTableWidget) -> list[int]:
 
 def set_table_line(table,row: int, attrib: classes.Attribute) -> None:
     name_item = CustomTableItem(attrib, attrib.name)
-    if attrib.value_type == constants.RANGE:
+    if attrib.value_type == som_cr_constants.RANGE:
         value_text = ";".join("-".join((str(x) for x in ran)) for ran in attrib.value)
     else:
         value_text = ";".join(str(x) for x in attrib.value)
@@ -122,8 +123,8 @@ class LineInput(QLineEdit):
         self.setValidator(self.pset_window.line_validator)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
-        seperator = self.pset_window.mainWindow.project.seperator
-        sep_bool = self.pset_window.mainWindow.project.seperator_status
+        seperator = settings.get_seperator()
+        sep_bool = settings.get_seperator_status()
         if event.matches(QtGui.QKeySequence.Paste) and sep_bool:
             text = QtGui.QGuiApplication.clipboard().text()
             text_list = text.split(seperator)
@@ -160,7 +161,6 @@ class PropertySetWindow(QtWidgets.QWidget):
             self.widget.button_add_line.clicked.connect(self.new_line)
             self.widget.table_widget.customContextMenuRequested.connect(self.open_menu)
             self.widget.lineEdit_name.returnPressed.connect(self.add_attribute_button_pressed)
-            self.widget.table_widget.itemClicked.connect(self.item_changed)
             self.widget.description.textChanged.connect(self.decription_changed)
         super(PropertySetWindow, self).__init__()
 
@@ -189,7 +189,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         for i in reversed(range(self.widget.combo_data_type.count())):
             self.widget.combo_data_type.removeItem(i)
 
-        self.widget.combo_data_type.addItems(sorted(list(con.DATA_TYPES)))
+        self.widget.combo_data_type.addItems(list(constants.DATA_TYPES))
         self.show()
         self.resize(1000, 400)
         self.new_line()
@@ -212,7 +212,7 @@ class PropertySetWindow(QtWidgets.QWidget):
     def line_validator(self, value: QtGui.QValidator) -> None:
         self._line_validator = value
         for el in self.input_lines.values():
-            if self.attribute_type == constants.RANGE:  # if range -> two inputs per line
+            if self.attribute_type == som_cr_constants.RANGE:  # if range -> two inputs per line
                 for item in el:
                     item.setValidator(value)
             else:
@@ -353,7 +353,7 @@ class PropertySetWindow(QtWidgets.QWidget):
     def data_combo_change(self, text: str) -> None:
         """if datatype changes to xs:double -> only digits are allowed to be entered into line edits"""
 
-        if text == constants.DATATYPE_NUMBER:
+        if text == som_cr_constants.DATATYPE_NUMBER:
             validator = QtGui.QDoubleValidator()
             validator.setNotation(QtGui.QDoubleValidator.Notation.StandardNotation)
         else:
@@ -389,10 +389,10 @@ class PropertySetWindow(QtWidgets.QWidget):
         def get_values() -> list[str] | list[float] | None:
             """return line input values as list"""
             values = list()
-            value_type = self.widget.combo_type.currentText()
+            value_type = constants.VALUE_TYPE_LOOKUP[self.widget.combo_type.currentText()]
             data_type = self.widget.combo_data_type.currentText()
 
-            if value_type == constants.RANGE:
+            if value_type == som_cr_constants.RANGE:
                 for line in self.input_lines.values():
                     value1 = line[0].text()
                     value2 = line[1].text()
@@ -404,10 +404,10 @@ class PropertySetWindow(QtWidgets.QWidget):
                     if len(value.strip()) > 0:
                         values.append(value)
 
-            if data_type == constants.DATATYPE_NUMBER:  # transform text to number
+            if data_type == som_cr_constants.DATATYPE_NUMBER:  # transform text to number
                 for i, value in enumerate(values):
                     try:
-                        if self.widget.combo_type.currentText() == constants.RANGE:
+                        if self.widget.combo_type.currentText() == som_cr_constants.RANGE:
                             values[i] = [string_to_float(value[0]), string_to_float(value[1])]
                         else:
                             values[i] = string_to_float(value)
@@ -510,7 +510,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.widget.verticalLayout.insertLayout(0, self.new_layout)
 
         status = self.widget.combo_type.currentText()
-        if status in constants.RANGE_STRINGS:
+        if status in som_cr_constants.RANGE_STRINGS:
             add_column()
             line_edit = [self.lineEdit_input, self.lineEdit_input2]
 
@@ -550,8 +550,8 @@ class PropertySetWindow(QtWidgets.QWidget):
         self._description_changed = False
 
     def fill_with_attribute(self, attribute: classes.Attribute) -> None:
-
-        index = self.widget.combo_type.findText(attribute.value_type)
+        eng_type = constants.VALUE_TYPE_LOOKUP[attribute.value_type]
+        index = self.widget.combo_type.findText(constants.GER_TYPES_LOOKUP[eng_type])
         self.widget.combo_type.setCurrentIndex(index)
 
         index = self.widget.combo_data_type.findText(attribute.data_type)
@@ -562,14 +562,14 @@ class PropertySetWindow(QtWidgets.QWidget):
         # Add Values
         for k, value in enumerate(attribute.value):
             lines = self.new_line()
-            if attribute.value_type == constants.RANGE:
+            if attribute.value_type == som_cr_constants.RANGE:
                 for k, val in enumerate(value):
-                    if attribute.data_type == constants.XS_DOUBLE:
+                    if attribute.data_type == som_cr_constants.XS_DOUBLE:
                         lines[k].setText(float_to_string(val))
                     else:
                         lines[k].setText(val)
             else:
-                if attribute.data_type == constants.XS_DOUBLE:
+                if attribute.data_type == som_cr_constants.XS_DOUBLE:
                     lines.setText(float_to_string(value))
                 else:
                     lines.setText(value)
@@ -583,6 +583,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         self._description_changed = False
 
     def table_clicked(self, table_item: QTableWidgetItem | CustomTableItem) -> None:
+        self.item_changed(table_item)
         item: CustomTableItem = self.table.item(table_item.row(), 0)
         attribute = item.linked_data
         if attribute.is_child:
