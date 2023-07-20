@@ -9,7 +9,7 @@ from PySide6.QtGui import QWheelEvent, QMouseEvent
 from PySide6.QtWidgets import QApplication
 from PySide6.QtWidgets import QPushButton, QWidget, QGraphicsScene, QVBoxLayout, \
     QGraphicsProxyWidget, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
-    QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsView
+    QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsView,QGraphicsSceneMouseEvent
 from SOMcreator import constants,classes
 
 from src.som_gui.data.constants import HEADER_HEIGHT
@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 class AggregationScene(QGraphicsScene):
     def __init__(self):
         super(AggregationScene, self).__init__()
+        self.max_z = 1
 
     def get_nodes(self):
         return set(node for node in self.items() if isinstance(node, NodeProxy))
@@ -42,8 +43,10 @@ class AggregationScene(QGraphicsScene):
         else:
             node_type = ObjectWidget
 
+        self.max_z+=1
         node_proxy = NodeProxy(aggregation,point,self,node_type)
 
+        node_proxy.setZValue(self.max_z)
         for child in aggregation.children:
             connection_type = aggregation.connection_dict.get(child)
             if connection_type == 1:
@@ -138,14 +141,28 @@ class AggregationView(QGraphicsView):
     def cursor_over_header(self) -> bool:
         """checks if Cursor is over Header"""
         items = self.item_under_mouse()
-        return bool([item for item in items if isinstance(item, Header)])
+        frames = [item.node.zValue() for item in items if isinstance(item, Frame)]
+        header = [item.node.zValue() for item in items if isinstance(item, Header)]
+        return max(header,default=0)==max(frames,default=1)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+
+
         if self.cursor_over_header():
             self.setCursor(Qt.CursorShape.ClosedHandCursor)
             self.mouse_mode = 2
 
-        self.last_pos = self.mapToScene(event.pos())
+        nodes = sorted([item.node for item in self.item_under_mouse() if isinstance(item, Frame)],key=lambda x:x.zValue())
+        print([f"{node.aggregation}:{node.zValue()}" for node in nodes ])
+        if nodes:
+
+            top_level_node = nodes[-1]
+            print(top_level_node.aggregation)
+            max_z =  self.scene().max_z
+            print(max_z)
+            self.scene().max_z=max_z+1
+            top_level_node.setZValue(max_z+1)
+
         if self.selected_node is None:
             super(AggregationView, self).mousePressEvent(event)
         else:
@@ -171,18 +188,22 @@ class AggregationView(QGraphicsView):
         self.set_cursor_by_border(self.resize_orientation)
         if not self.cursor_over_header():
             return super(AggregationView, self).mouseMoveEvent(event)
+
         if self.mouse_mode != 2:
             self.setCursor(Qt.CursorShape.OpenHandCursor)
         else:
             self.setCursor(Qt.CursorShape.ClosedHandCursor)
+
         return super(AggregationView, self).mouseMoveEvent(event)
 
     def get_resize_node(self, event) -> (NodeProxy | None, int | None):
         pos = self.mapToScene(event.pos())
+        under_mouse_nodes = set()
         for proxy_node in self.scene().get_nodes():
             frame_value = self.cursor_on_border(pos, proxy_node)
             if frame_value != 0:
-                return proxy_node, frame_value
+                under_mouse_nodes.add((proxy_node,frame_value))
+
         return None, None
 
     def setCursor(self, arg__1: QtGui.QCursor | QtCore.Qt.CursorShape | QtGui.QPixmap) -> None:
@@ -317,6 +338,15 @@ class Header(QGraphicsRectItem):
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
         self.setAcceptHoverEvents(True)
 
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        view:AggregationView = self.scene().views()[0]
+        if view.mouse_mode == 2:
+            super(Header, self).mouseMoveEvent(event)
+            return
+
+        if view.cursor_over_header():
+            super(Header, self).mouseMoveEvent(event)
+
     def resize(self):
         line_width = self.pen().width()  # if ignore Linewidth: box of Node and Header wont match
         x = line_width / 2
@@ -362,7 +392,7 @@ class NodeProxy(QGraphicsProxyWidget):
         def create_header():
             name = f"{aggregation.name} ({aggregation.object.ident_value})"
             header = Header(self, name, pos)
-            self.aggregation = aggregation
+
             self.setParentItem(header)
             scene.addItem(header)
             self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
@@ -371,6 +401,7 @@ class NodeProxy(QGraphicsProxyWidget):
             return header
 
         super(NodeProxy, self).__init__()
+        self.aggregation = aggregation
         self.setWidget(widget(self))
         self.header_rect = create_header()
         self.frame = Frame(self)
