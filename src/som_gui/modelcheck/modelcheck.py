@@ -127,20 +127,31 @@ def check_for_attributes(cursor, element, pset_dict, obj: SOMcreator.Object, ele
             check_values(cursor, value, attribute, guid, element_type)
 
 
-def gruppe_zu_pruefen(cursor, el, ag, bk):
-    bauteilklass = ifc_el.get_pset(el, ag, bk)
+def gruppe_zu_pruefen(cursor, el, ag, bk,create_issue = True):
+    """create Issue: Wenn überprüft wird ob die Struktur "Element-Subelement-Element" mit 3x identischen Typ ist soll keine Fehlermeldung ausgegeben werden, weil die Gruppen Rekursiv geprüft werden"""
+
+    bauteilklass = ifc_el.get_pset(el, ag, bk)  #ob.w
     if bauteilklass is None:
-        issues.ident_issue(cursor, el.GlobalId, bk, ag, GROUP)
+        if create_issue:
+            issues.ident_issue(cursor, el.GlobalId, bk, ag, GROUP)
         return False
+
     sub_bks = set()
     for relationship in getattr(el, "HasAssignments", []):
         if not relationship.is_a('IfcRelAssignsToGroup'):
             continue
 
-        parent = relationship.RelatingGroup
-        parent_bk = ifc_el.get_pset(parent, ag, bk)
-        if parent_bk == bauteilklass:
-            return True
+        parent = relationship.RelatingGroup #is assigned to Group
+        parent_bk = ifc_el.get_pset(parent, ag, bk) #ob.w
+        if parent_bk != bauteilklass:
+            continue
+
+        if gruppe_zu_pruefen(cursor,parent,ag,bk,False):
+            return False
+        return True
+
+    if not create_issue:
+        return False
 
     for relationship in getattr(el, "IsGroupedBy", []):
         for sub in relationship.RelatedObjects:
@@ -154,13 +165,17 @@ def gruppe_zu_pruefen(cursor, el, ag, bk):
 
 
 def check_group(group, sub_group, ag, bk, ident_dict):
-    bauteilk = ifc_el.get_pset(group, ag, bk)
-    subbauteilk = ifc_el.get_pset(sub_group, ag, bk)
-    parent_obj = ident_dict.get(bauteilk)
-    child_obj = ident_dict.get(subbauteilk)
+    bauteilklasse_gruppe = ifc_el.get_pset(group, ag, bk)
+    bauteilklasse_sub_gruppe = ifc_el.get_pset(sub_group, ag, bk)
+
+    parent_obj = ident_dict.get(bauteilklasse_gruppe)
+    child_obj = ident_dict.get(bauteilklasse_sub_gruppe)
+
     if child_obj is None:
         return False
+
     child_aggregations = child_obj.aggregation_representations
+
     for parent_aggregation in parent_obj.aggregation_representations:
         if parent_aggregation.children.intersection(child_aggregations):
             return True
@@ -215,7 +230,7 @@ def check_all_elements(proj: Project, ifc, file_name, db_name, ag, bk, project_n
                 for sub_element in relationship.RelatedObjects:
                     allowed = check_group(element, sub_element, ag, bk, ident_dict)
                     if not allowed:
-                        issues.parent_issue(cursor, element)
+                        issues.child_issue(cursor, element, sub_element,ag,bk)
 
     time.sleep(0.1)
     conn.commit()

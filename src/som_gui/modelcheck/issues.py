@@ -1,4 +1,6 @@
 from . import sql
+from ifcopenshell import entity_instance
+from ifcopenshell.util import element as ifc_el
 
 IDENT_PROPERTY_SET_ISSUE = 1
 IDENT_ATTRIBUTE_ISSUE = 2
@@ -86,8 +88,9 @@ def empty_group_issue(cursor, element):
     sql.add_issues(cursor, element.GlobalId, description, issue_nr, None)
 
 
-def parent_issue(cursor, element):
-    description = f"Gruppe besitzt die falsche Kindklasse"
+def child_issue(cursor, element:entity_instance,sub_element:entity_instance,ag,bk):
+    ident_value = ifc_el.get_pset(sub_element, ag, bk)
+    description = f"Gruppe besitzt die falsche Kindklasse ({ident_value} nicht erlaubt)"
     issue_nr = PARENT_ISSUE
     sql.add_issues(cursor, element.GlobalId, description, issue_nr, None)
 
