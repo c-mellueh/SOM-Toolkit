@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 
 from fuzzywuzzy import fuzz
 
+CHECK_POS = 3
 
 class CustomTree(QTreeWidget):
     def __init__(self, layout) -> None:
@@ -89,14 +90,17 @@ class CustomObjectTreeItem(QTreeWidgetItem):
         for index, value in enumerate(values):
             self.setText(index, value)
 
+        print(self.object.optional)
         if self.object.optional:
-            self.setCheckState(3, Qt.CheckState.Checked)
+
+            self.setCheckState(CHECK_POS, Qt.CheckState.Checked)
         else:
-            self.setCheckState(3, Qt.CheckState.Unchecked)
+            self.setCheckState(CHECK_POS, Qt.CheckState.Unchecked)
 
     def update(self) -> None:
         logging.debug(f"Item toggled if item is not Toggled contact me")
-        check_state = self.checkState(2)
+        check_state = self.checkState(CHECK_POS)
+
         if check_state == Qt.CheckState.Checked:
             check_bool = True
         elif check_state == Qt.CheckState.Unchecked:
