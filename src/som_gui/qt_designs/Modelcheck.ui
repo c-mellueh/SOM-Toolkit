@@ -153,6 +153,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::NoSelection</enum>
+     </property>
      <attribute name="horizontalHeaderStretchLastSection">
       <bool>true</bool>
      </attribute>

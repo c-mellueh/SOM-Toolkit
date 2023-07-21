@@ -15,10 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
-    QGridLayout, QHeaderView, QLabel, QLayout,
-    QLineEdit, QPushButton, QSizePolicy, QTableWidget,
-    QTableWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QDialog,
+    QDialogButtonBox, QGridLayout, QHeaderView, QLabel,
+    QLayout, QLineEdit, QPushButton, QSizePolicy,
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -122,6 +122,7 @@ class Ui_Dialog(object):
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.table_widget.sizePolicy().hasHeightForWidth())
         self.table_widget.setSizePolicy(sizePolicy3)
+        self.table_widget.setSelectionMode(QAbstractItemView.NoSelection)
         self.table_widget.horizontalHeader().setStretchLastSection(True)
         self.table_widget.verticalHeader().setVisible(False)
 

@@ -7,6 +7,7 @@ import sqlite3
 import time
 import SOMcreator
 import tqdm
+from PySide6.QtCore import QRunnable,QThreadPool
 from SOMcreator import Project
 from SOMcreator import constants as som_constants
 from ifcopenshell.util import element as ifc_el
@@ -39,9 +40,8 @@ def run_modelcheck(main_window:MainWindow):
 
     property_set = dialog.widget.line_edit_ident_pset.text()
     attribute = dialog.widget.line_edit_ident_attribute.text()
-
-    main(ifc_paths,main_window.project,db_path,property_set,attribute,export_path,project.name)
-
+    main_window.running_modelcheck = MainRunnable(ifc_paths,main_window.project,db_path,property_set,attribute,export_path,project.name)
+    main_window.running_modelcheck.start()
 
 
 def check_file(file_path, proj, ag, bk, db_name, p_name):
@@ -54,6 +54,18 @@ def check_file(file_path, proj, ag, bk, db_name, p_name):
     ifc = ifcopenshell.open(file_path)
     check_all_elements(proj, ifc, file, db_name, ag, bk, p_name)
 
+
+class MainRunnable(QRunnable):
+    def __init__(self, *args):
+        super(MainRunnable, self).__init__()
+        self.target = main
+        self.args = args
+
+    def run(self) -> None:
+        self.target(*self.args)
+
+    def start(self):
+        QThreadPool.globalInstance().start(self)
 
 def main(file_paths, proj:Project, db_path, ag, bk, issue_path, p_name):
     create_tables(db_path)

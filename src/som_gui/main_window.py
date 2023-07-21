@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
         self.graph_window = graphs_window.GraphWindow(self, show=False)
         self.mapping_window = None
         self.project = classes.Project("Project", "")
-
+        self.running_modelcheck:None|QtCore.QRunnable = None
         # init object and ProertyWidget
         object_widget.init(self)
         property_widget.init(self)
