@@ -588,8 +588,12 @@ class PropertySetWindow(QtWidgets.QWidget):
         attribute = item.linked_data
         if attribute.is_child:
             status = False
+            self.widget.combo_type.setToolTip("Attribut wurde geerbt -> Keine Änderung des Types möglich")
+            self.widget.combo_data_type.setToolTip("Attribut wurde geerbt -> Keine Änderung des Datentyps möglich")
         else:
             status = True
+            self.widget.combo_type.setToolTip("")
+            self.widget.combo_data_type.setToolTip("")
         self.enable_menus(status)
         self.fill_with_attribute(attribute)
 
