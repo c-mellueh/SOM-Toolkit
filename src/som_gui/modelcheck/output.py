@@ -8,7 +8,7 @@ from openpyxl.utils import get_column_letter
 
 from . import sql
 
-HEADER = ["Datum","GUID", "Beschreibung", "Typ", "PropertySet", "Attribut", "Datei", "Bauteilklassifikation"]
+HEADER = ["Datum","GUID", "Beschreibung", "Typ","Name", "PropertySet", "Attribut", "Datei", "Bauteilklassifikation"]
 
 
 def save_workbook(workbook, path):
@@ -46,8 +46,6 @@ def create_issues(db_name, path):
     last_cell = worksheet.cell(1,8)
     for row_index, column in enumerate(issues, start=2):
         for column_index, value in enumerate(column, start=1):
-            if column_index == 1:
-                value = value.encode('ascii', 'ignore').decode("utf-8")
             last_cell = worksheet.cell(row_index, column_index, value)  # remove Whitespace
 
 
