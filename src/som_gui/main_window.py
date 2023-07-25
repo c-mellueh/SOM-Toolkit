@@ -352,16 +352,7 @@ class MainWindow(QMainWindow):
             desite.export_bookmarks(self.project,path)
 
     def open_graph(self):
-        self.load_graph(True)
-
-    def load_graph(self, show=True):
-
-        if self.graph_window is None:
-            self.graph_window = graphs_window.GraphWindow(self, show=show)
-        else:
-            if show:
-                self.graph_window.show()
-                self.graph_window.view.show()
+        self.graph_window.show()
 
     ## EXPORT
 

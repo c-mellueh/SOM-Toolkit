@@ -4,13 +4,14 @@ import os
 import shutil
 import tempfile
 
-import SOMcreator.constants
 import openpyxl
 from PySide6.QtWidgets import QInputDialog, QLineEdit, QFileDialog
-from SOMcreator import classes, constants
-
+from PySide6.QtCore import QPointF
+from SOMcreator import classes
+from SOMcreator import constants as som_constants
 from .. import settings
 from ..data.constants import FILETYPE
+from ..data import constants
 from ..windows import popups
 from ..windows.aggregation_view import aggregation_window
 from typing import TYPE_CHECKING
@@ -29,13 +30,16 @@ def iter_child(parent_node: aggregation_window.Node) -> None:
 
 
 def import_node_pos(main_dict: dict, graph_window: aggregation_window.GraphWindow) -> None:
-    json_aggregation_dict: dict = main_dict[SOMcreator.constants.AGGREGATIONS]
+    json_aggregation_dict: dict = main_dict[som_constants.AGGREGATIONS]
     aggregation_ref = {aggregation.uuid: aggregation for aggregation in classes.Aggregation}
-    nodes = dict()
     for uuid, aggregation_dict in json_aggregation_dict.items():
         aggregation = aggregation_ref[uuid]
-        x_pos = aggregation_dict.get(constants.X_POS)
-        y_pos = aggregation_dict.get(constants.Y_POS)
+        x_pos = aggregation_dict.get(som_constants.X_POS) or 0.0
+        y_pos = aggregation_dict.get(som_constants.Y_POS) or 0.0
+        graph_window.create_node(aggregation,QPointF(x_pos,y_pos))
+
+    scene_dict = main_dict.get(constants.AGGREGATION_SCENES) or dict()
+    graph_window.scene_dict.update(scene_dict)
 
 
 def new_file(main_window: MainWindow) -> None:
@@ -65,7 +69,6 @@ def request_delete_or_merge(main_window: MainWindow) -> None:
 
 
 def fill_ui(main_window: MainWindow) -> None:
-    main_window.load_graph(show=False)
     main_window.clear_object_input()
     main_window.fill_tree()
 

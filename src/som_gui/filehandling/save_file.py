@@ -7,24 +7,29 @@ from typing import TYPE_CHECKING
 import SOMcreator.constants
 from ..data.constants import FILETYPE
 from PySide6.QtWidgets import QFileDialog, QMessageBox
-from SOMcreator import constants
+from SOMcreator import constants as som_constants
+from ..data import constants
+
 import json
 
 from ..windows import popups
+from ..windows.aggregation_view import aggregation_window
 from .. import settings
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
 
-def add_node_pos(main_dict:dict,path:str):
-
+def add_node_pos(main_window:MainWindow,main_dict:dict,path:str):
     aggregation_dict = main_dict[SOMcreator.constants.AGGREGATIONS]
-    for node in graphs_window.Node.registry:
+    for node in main_window.graph_window.nodes:
+
         uuid = node.aggregation.uuid
         aggregation_entry = aggregation_dict[uuid]
-        aggregation_entry[constants.X_POS] = node.x()
-        aggregation_entry[constants.Y_POS] = node.y()
+        aggregation_entry[som_constants.X_POS] = node.x()
+        aggregation_entry[som_constants.Y_POS] = node.y()
+
+    main_dict[constants.AGGREGATION_SCENES] = main_window.graph_window.scene_dict
 
     with open(path,"w") as file:
         json.dump(main_dict,file,indent=2)
@@ -36,7 +41,7 @@ def save_clicked(main_window: MainWindow) -> str:
     else:
         logging.info(f"Saved project to {path}")
         main_dict = main_window.project.save(path)
-        add_node_pos(main_dict,path)
+        add_node_pos(main_window,main_dict,path)
     return path
 
 

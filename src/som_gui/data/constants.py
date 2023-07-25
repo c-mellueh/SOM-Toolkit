@@ -10,6 +10,7 @@ AGGREGATION = 1
 INHERITANCE = 2
 HEADER_HEIGHT = 25
 
+AGGREGATION_SCENES = "AggregationScenes"
 
 VALUE = "Value"
 FORMAT = "Format"
