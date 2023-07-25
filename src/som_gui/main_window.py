@@ -86,7 +86,7 @@ class MainWindow(QMainWindow):
         script_widget.init(self)
         self.setWindowTitle("SOM-Toolkit")
         connect()
-        settings.set_save_path("")
+        settings.reset_save_path()
 
     def import_excel(self):
         open_file.import_excel_clicked(self)

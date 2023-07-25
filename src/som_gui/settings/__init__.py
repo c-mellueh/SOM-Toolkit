@@ -12,6 +12,13 @@ SEPERATOR_STATUS = "seperator_status"
 SEPERATOR = "seperator"
 
 
+def reset_save_path():
+    path = get_save_path()
+    if os.path.isfile(path):
+        path = os.path.dirname(path)
+    set_save_path(path)
+
+
 def get_seperator_status() -> bool:
     config_parser = get_config()
     if config_parser.has_option(SEPERATOR_SECTION, SEPERATOR_STATUS):
@@ -73,8 +80,6 @@ def set_path(path, value: str) -> None:
     section = PATHS_SECTION
     if isinstance(value, (list, set)):
         value = value[0]
-    if os.path.isfile(value):
-        value = os.path.dirname(value)
     config_parser = get_config()
     if not config_parser.has_section(section):
         config_parser.add_section(section)
