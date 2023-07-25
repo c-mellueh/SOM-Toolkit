@@ -11,6 +11,7 @@ from PySide6.QtCore import QRunnable,QThreadPool
 from SOMcreator import Project
 from SOMcreator import constants as som_constants
 from ifcopenshell.util import element as ifc_el
+from ifcopenshell import entity_instance
 import ifcopenshell
 from . import issues
 from .sql import db_create_entity, remove_existing_issues,create_tables
@@ -138,6 +139,12 @@ def check_for_attributes(cursor, element, pset_dict, obj: SOMcreator.Object, ele
             value = pset_dict[pset_name][attribute_name]
             check_values(cursor, value, attribute, guid, element_type)
 
+def get_identifier(el:entity_instance,main_pset:str,main_attribute:str) -> str|None:
+    return ifc_el.get_pset(el,main_pset,main_attribute)
+
+def get_object(el:entity_instance,main_pset:str,main_attribute:str,identifier_dict:dict[str,SOMcreator.Object])-> SOMcreator.Object:
+    identifier = get_identifier(el,main_pset,main_attribute)
+    return identifier_dict.get(identifier)
 
 def gruppe_zu_pruefen(cursor, el, ag, bk,create_issue = True):
     """create Issue: Wenn überprüft wird ob die Struktur "Element-Subelement-Element" mit 3x identischen Typ ist soll keine Fehlermeldung ausgegeben werden, weil die Gruppen Rekursiv geprüft werden"""
@@ -176,7 +183,22 @@ def gruppe_zu_pruefen(cursor, el, ag, bk,create_issue = True):
     return False
 
 
-def check_group(group, sub_group, ag, bk, ident_dict):
+def check_group(cursor,file_name,project_name,group, ag, bk, ident_dict):
+    def check_if_subelement_is_allowed(group:entity_instance,sub_element:entity_instance):
+        obj_group = get_object(group,bk,ag,ident_dict)
+        obj_sub_element = get_object(sub_element,bk,ag,ident_dict)
+
+
+    relationships = getattr(group, "IsGroupedBy", [])
+    check_element(group, ag, bk, cursor, file_name, ident_dict, GROUP, project_name)
+    if not relationships:
+        issues.empty_group_issue(cursor, group)
+
+    for relationship in relationships:
+        for sub_element in relationship.RelatedObjects: #IfcGroup or IfcElement
+            allowed = check_if_subelement_is_allowed(group,sub_element)
+            if not allowed:
+                issues.child_issue(cursor, element, sub_element, ag, bk)
     bauteilklasse_gruppe = ifc_el.get_pset(group, ag, bk)
     bauteilklasse_sub_gruppe = ifc_el.get_pset(sub_group, ag, bk)
 
@@ -192,6 +214,9 @@ def check_group(group, sub_group, ag, bk, ident_dict):
         if parent_aggregation.children.intersection(child_aggregations):
             return True
     return False
+
+def check_sub_group():
+    pass
 
 
 def check_element(element, ag, bk, cursor, file_name, ident_dict, element_type, project_name):
@@ -222,6 +247,13 @@ def check_element(element, ag, bk, cursor, file_name, ident_dict, element_type, 
     check_for_attributes(cursor, element, psets, obj_rep, element_type)
 
 
+def get_parent_group(group: entity_instance) -> list[entity_instance]:
+    parent_assignment:list[entity_instance] = [assignment for assignment in getattr(group, "HasAssignments", []) if
+                        assignment.is_a("IfcRelAssignsToGroup")]
+    if not parent_assignment:
+        return []
+    return [assignment.RelatingGroup for assignment in parent_assignment]
+
 def check_all_elements(proj: Project, ifc, file_name, db_name, ag, bk, project_name):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
@@ -231,18 +263,12 @@ def check_all_elements(proj: Project, ifc, file_name, db_name, ag, bk, project_n
     for element in tqdm.tqdm(ifc.by_type("IfcElement"), desc=f"[{ELEMENT}] {file_name}"):
         check_element(element, ag, bk, cursor, file_name, ident_dict, ELEMENT, project_name)
 
-    for element in tqdm.tqdm(ifc.by_type("IfcGroup"), desc=f"[{GROUP}] {file_name}"):
-        relationships = getattr(element, "IsGroupedBy", [])
-        if gruppe_zu_pruefen(cursor, element, ag, bk):
-            check_element(element, ag, bk, cursor, file_name, ident_dict, GROUP, project_name)
-            if not relationships:
-                issues.empty_group_issue(cursor, element)
 
-            for relationship in relationships:
-                for sub_element in relationship.RelatedObjects:
-                    allowed = check_group(element, sub_element, ag, bk, ident_dict)
-                    if not allowed:
-                        issues.child_issue(cursor, element, sub_element,ag,bk)
+    root_groups = [group for group in ifc.by_type("IfcGroup") if not get_parent_group(group)]
+
+
+    for element in tqdm.tqdm(root_groups, desc=f"[{GROUP}] {file_name}"):
+        check_group(cursor,file_name,project_name,element,ag,bk,ident_dict)
 
     time.sleep(0.1)
     conn.commit()

@@ -36,14 +36,19 @@ def create_issues(db_name, path):
     if not os.path.exists(directory):
         os.mkdir(directory)
 
+    issues = sql.query_issues(cursor)
+    if len(list(issues)):
+        print(f"Modell(e) sind fehlerfrei!")
+        return
+
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
 
-    issues = sql.query_issues(cursor)
     for col_index, value in enumerate(HEADER, start=1):
         worksheet.cell(1, col_index, value)
 
     last_cell = worksheet.cell(1,8)
+
     for row_index, column in enumerate(issues, start=2):
         for column_index, value in enumerate(column, start=1):
             last_cell = worksheet.cell(row_index, column_index, value)  # remove Whitespace
