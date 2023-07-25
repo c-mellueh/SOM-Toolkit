@@ -76,7 +76,7 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(self.icon)
         self._export_path = None
         self.active_object: classes.Object | None = None
-        self.graph_window = aggregation_window.GraphWindow(self, show=False)
+        self.graph_window = aggregation_window.GraphWindow(self)
         self.mapping_window = None
         self.project = classes.Project("Project", "")
 
@@ -91,7 +91,7 @@ class MainWindow(QMainWindow):
         connect()
         settings.set_save_path("")
 
-        main_dict = self.project.open("C:/Users/ChristophMellueh/Deutsche Bahn/INI-SW-M - SOM/SOM MaKa.SOMjson")
+        main_dict = self.project.open("C:/Users/ChristophMellueh/Desktop/SOM MaKa_test.SOMjson")
         from .filehandling.open_file import import_node_pos,fill_ui
         import_node_pos(main_dict, self.graph_window)
         fill_ui(self)
@@ -362,8 +362,6 @@ class MainWindow(QMainWindow):
             if show:
                 self.graph_window.show()
                 self.graph_window.view.show()
-                self.graph_window.fit_in()
-
 
     ## EXPORT
 
