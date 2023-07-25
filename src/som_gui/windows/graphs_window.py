@@ -61,18 +61,7 @@ def aggregation_to_node(aggregation: classes.Aggregation) -> Node:
 
 
 def item_to_name(item: Node | classes.Object) -> str:
-    obj = None
-    if item is None:
-        return "Root"
-    elif isinstance(item, classes.Object):
-        obj = item
-    elif isinstance(item, Node):
-        obj = item.object
-    if obj.is_concept:
-        text = f"{obj.name}"
-    else:
-        text = f"{obj.name} ({obj.abbreviation})"
-    return text
+    return item.name
 
 
 # Create Tree Positions
@@ -675,8 +664,9 @@ class Node(QGraphicsProxyWidget):
         if obj.is_concept:
             text = f"{obj.name}"
         else:
-            text = f"{obj.name} ({obj.abbreviation})"
+            text = f"{obj.name} \nidentitaet: {self.aggregation.id_group()}"
         return text
+
 
     @property
     def connections(self) -> list[Connection]:
@@ -1053,7 +1043,8 @@ class GraphWindow(QWidget):
 
     @staticmethod
     def find_node_by_name(name) -> Node:
-        return {node.name: node for node in Node.registry}.get(name)
+        node_dict = {node.name: node for node in Node.registry}
+        return node_dict.get(name)
 
     def change_scene(self, node: Node) -> None:
         self.active_scene = self.scene_dict[node]

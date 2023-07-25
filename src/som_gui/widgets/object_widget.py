@@ -90,7 +90,6 @@ class CustomObjectTreeItem(QTreeWidgetItem):
         for index, value in enumerate(values):
             self.setText(index, value)
 
-        print(self.object.optional)
         if self.object.optional:
 
             self.setCheckState(CHECK_POS, Qt.CheckState.Checked)
