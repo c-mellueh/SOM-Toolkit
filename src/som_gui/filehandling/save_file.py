@@ -18,14 +18,13 @@ if TYPE_CHECKING:
 
 
 def add_node_pos(main_dict:dict,path:str):
-
+    print("add_pos")
     aggregation_dict = main_dict[SOMcreator.constants.AGGREGATIONS]
     for node in graphs_window.Node.registry:
         uuid = node.aggregation.uuid
         aggregation_entry = aggregation_dict[uuid]
         aggregation_entry[constants.X_POS] = node.x()
         aggregation_entry[constants.Y_POS] = node.y()
-
     with open(path,"w") as file:
         json.dump(main_dict,file,indent=2)
 
@@ -35,8 +34,8 @@ def save_clicked(main_window: MainWindow) -> str:
         path = save_as_clicked(main_window)
     else:
         logging.info(f"Saved project to {path}")
-        main_dict = main_window.project.save(path)
-        add_node_pos(main_dict,path)
+        _save(main_window,path)
+
     return path
 
 
@@ -50,11 +49,14 @@ def save_as_clicked(main_window: MainWindow) -> str:
         path = QFileDialog.getSaveFileName(main_window, "Save Project", path, FILETYPE)[0]
 
     if path:
-        main_window.project.save(path)
-        settings.set_open_path(path)
-        settings.set_save_path(path)
+        _save(main_window,path)
     return path
 
+def _save(main_window:MainWindow,path):
+    main_dict = main_window.project.save(path)
+    add_node_pos(main_dict, path)
+    settings.set_open_path(path)
+    settings.set_save_path(path)
 
 def close_event(main_window: MainWindow):
     status = main_window.project.changed
