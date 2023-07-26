@@ -5,8 +5,7 @@ from typing import TYPE_CHECKING
 from PySide6 import QtGui, QtCore
 from PySide6.QtCore import Qt, QRectF, QPointF
 from PySide6.QtGui import QWheelEvent, QMouseEvent
-from PySide6.QtWidgets import QApplication
-from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView
+from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView,QApplication,QMenu
 from SOMcreator import classes
 
 from src.som_gui.qt_designs import ui_GraphWindow
@@ -150,7 +149,9 @@ class AggregationView(QGraphicsView):
         self.mouse_mode = 0  # 0=moveCursor 1=resize 2 = drag
         self.mouse_is_pressed = False
         self.setDragMode(self.DragMode.ScrollHandDrag)
-
+        self.right_click_menu:QMenu|None = None
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.right_click)
     def window(self) -> AggregationWindow:
         return super(AggregationView, self).window()
 
@@ -225,7 +226,13 @@ class AggregationView(QGraphicsView):
         return cursor_style, node
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+
         self.mouse_is_pressed = True
+
+        if event.button() == Qt.MouseButton.RightButton:
+            super(AggregationView, self).mousePressEvent(event)
+            return
+
         self.resize_orientation, self.focus_node = self.get_focus_and_cursor(self.mapToScene(event.pos()))
 
         if self.resize_orientation == 0:
@@ -240,6 +247,34 @@ class AggregationView(QGraphicsView):
             self.mouse_mode = 1
 
         super(AggregationView, self).mousePressEvent(event)
+
+    def right_click(self,pos:QPointF):
+        def rc_add_node():
+            search = popups.SearchWindow(self.window().main_window)
+            if not search.exec():
+                return
+            obj = search.selected_object
+            aggregation = classes.Aggregation(obj)
+            print(aggregation.uuid)
+            node = self.window().create_node(aggregation,node_pos,self.scene())
+
+
+        def rc_delete_node():
+            self.scene().remove_node(focus_node)
+
+        if self.right_click_menu is not None:
+            pass
+        self.right_click_menu = QMenu()
+        node_pos = self.mapToScene(pos)
+        style,focus_node = self.get_focus_and_cursor(pos)
+        if style ==9:
+            self.action_add_node = self.right_click_menu.addAction("Node löschen")
+            self.action_add_node.triggered.connect(rc_delete_node)
+
+        self.action_add_node = self.right_click_menu .addAction("Node hinzufügen")
+        self.action_add_node.triggered.connect(rc_add_node)
+        global_pos = self.viewport().mapToGlobal(pos)
+        print(f"output: {self.right_click_menu.exec(global_pos)}")
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self.mouse_is_pressed = False
@@ -449,6 +484,7 @@ class AggregationWindow(QWidget):
         node = NodeProxy(aggregation, pos)
         if scene is not None:
             scene.add_node(node)
+        return node
 
     def combo_box_changed(self):
         scene = {scene.name: scene for scene in self.scenes}.get(self.widget.combo_box.currentText())

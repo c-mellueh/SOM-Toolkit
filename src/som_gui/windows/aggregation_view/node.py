@@ -112,6 +112,7 @@ class NodeProxy(QGraphicsProxyWidget):
         self.aggregation.delete()
         self.deleteLater()
         self._registry.remove(self)
+
     def bottom_anchor_point(self) -> QPointF:
         """Point where Connection will end"""
         scene_bounding_rect = self.sceneBoundingRect()
@@ -305,16 +306,18 @@ class NodeWidget(QWidget):
         main_window = self.graphicsProxyWidget().scene().views()[0].window().main_window
         search = popups.SearchWindow(main_window)
 
-        if search.exec():
-            obj = search.selected_object
-            aggregation = classes.Aggregation(obj,None,obj.description,False)
-            rect = self.graphicsProxyWidget().sceneBoundingRect()
-            input_point = rect.bottomLeft()
-            input_point.setY(input_point.y()+constants.BOX_MARGIN)
-            input_point.setX(input_point.x()+constants.BOX_MARGIN)
-            proxy_node = NodeProxy(aggregation,input_point)
-            self.scene().add_node(proxy_node,False)
-            self.scene().add_connection(self.graphicsProxyWidget(),proxy_node)
+        if not search.exec():
+            return
+        obj = search.selected_object
+        aggregation = classes.Aggregation(obj,None,obj.description,False)
+        rect = self.graphicsProxyWidget().sceneBoundingRect()
+        input_point = rect.bottomLeft()
+        input_point.setY(input_point.y()+constants.BOX_MARGIN)
+        input_point.setX(input_point.x()+constants.BOX_MARGIN)
+        proxy_node = NodeProxy(aggregation,input_point)
+        self.scene().add_node(proxy_node,False)
+        self.scene().add_connection(self.graphicsProxyWidget(),proxy_node)
+        self.aggregation.add_child(proxy_node.aggregation)
 
     def scene(self) -> AggregationScene:
         return self.graphicsProxyWidget().scene()
