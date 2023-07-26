@@ -6,10 +6,13 @@ from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout
     QGraphicsProxyWidget, QGraphicsSceneMouseEvent,QGraphicsPathItem, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
     QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsTextItem,QGraphicsView
 from ...data import constants
+from ...windows import popups
+
 from SOMcreator import classes
 
 if TYPE_CHECKING:
     from src.som_gui.main_window import MainWindow
+    from .aggregation_window import AggregationScene
 
 class Header(QGraphicsRectItem):
     def __init__(self, node: NodeProxy, text):
@@ -63,7 +66,7 @@ class NodeProxy(QGraphicsProxyWidget):
 
         super(NodeProxy, self).__init__()
         self.aggregation = aggregation
-        self._title = self.aggregation.id_group()
+        self._title = f"{self.aggregation.name}\nidentitaet: {self.aggregation.id_group()}"
 
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
 
@@ -79,6 +82,8 @@ class NodeProxy(QGraphicsProxyWidget):
         geometry.setHeight(150)
         self.setGeometry(geometry)
 
+    def scene(self) -> AggregationScene:
+        return super(NodeProxy, self).scene()
 
     def moveBy(self, dx: float, dy: float) -> None:
         super(NodeProxy, self).moveBy(dx,dy)
@@ -286,7 +291,22 @@ class NodeWidget(QWidget):
         self.button.clicked.connect(self.button_clicked)
 
     def button_clicked(self):
-        pass
+        main_window = self.graphicsProxyWidget().scene().views()[0].window().main_window
+        search = popups.SearchWindow(main_window)
+
+        if search.exec():
+            obj = search.selected_object
+            aggregation = classes.Aggregation(obj,None,obj.description,False)
+            rect = self.graphicsProxyWidget().sceneBoundingRect()
+            input_point = rect.bottomLeft()
+            input_point.setY(input_point.y()+constants.BOX_MARGIN)
+            input_point.setX(input_point.x()+constants.BOX_MARGIN)
+            proxy_node = NodeProxy(aggregation,input_point)
+            self.scene().add_node(proxy_node,False)
+            self.scene().add_connection(self.graphicsProxyWidget(),proxy_node)
+
+    def scene(self) -> AggregationScene:
+        return self.graphicsProxyWidget().scene()
 
     @property
     def aggregation(self):

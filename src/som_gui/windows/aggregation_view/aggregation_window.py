@@ -12,6 +12,7 @@ from SOMcreator import classes
 from src.som_gui.qt_designs import ui_GraphWindow
 from .node import NodeProxy, Header, Frame, Connection
 from ...data import constants
+from ...windows import popups
 if TYPE_CHECKING:
     from src.som_gui.main_window import MainWindow
 
@@ -337,18 +338,39 @@ class GraphWindow(QWidget):
         self.scene_dict = {}  # used for import and export
 
         self._active_scene = None
-        self.widget.button_add.clicked.connect(self.test)
         self.widget.combo_box.currentTextChanged.connect(self.combo_box_changed)
+        self.widget.button_filter.clicked.connect(self.filter_object)
+        self.widget.button_reload.clicked.connect(self.reset_filter)
+
+    def reset_filter(self):
+        for scene in self.scenes:
+            index = self.widget.combo_box.findText(scene.name)
+            if index == -1:
+                self.add_scene_to_combobox(scene)
+
+    def filter_object(self):
+        search = popups.SearchWindow(self.main_window)
+        if not search.exec():
+            return
+
+        obj = search.selected_object
+        for scene in self.scenes:
+            nodes = scene.nodes
+            objects = [node.aggregation.object for node in nodes]
+            if not obj in objects:
+                self.remove_scene_from_combobox(scene)
+
+    def remove_scene_from_combobox(self, scene:AggregationScene):
+        index = self.widget.combo_box.findText(scene.name)
+        self.widget.combo_box.removeItem(index)
+
+    def add_scene_to_combobox(self, scene):
+        self.widget.combo_box.addItem(scene.name)
+        self.widget.combo_box.model().sort(0)
 
     @property
     def nodes(self) -> set[NodeProxy]:
         return self._proxy_nodes
-
-    def test(self):
-        scene = self.active_scene
-        scene.setSceneRect(1, 1, 10_000, 10_000)
-        bbox = self.view.scene().get_items_bounding_rect()
-        self.view.fitInView(bbox, aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
 
     def create_missing_scenes(self):
         scene_dict = self.scene_dict
@@ -377,8 +399,7 @@ class GraphWindow(QWidget):
         scene = AggregationScene(self, name)
         self.scenes.add(scene)
         self.scene_dict[scene.name] = {constants.NODES: set()}
-        self.widget.combo_box.addItem(scene.name)
-        self.widget.combo_box.model().sort(0)
+        self.add_scene_to_combobox(scene)
         return scene
 
     def create_node(self, aggregation: classes.Aggregation, pos: QPointF, scene: AggregationScene = None) -> NodeProxy:
