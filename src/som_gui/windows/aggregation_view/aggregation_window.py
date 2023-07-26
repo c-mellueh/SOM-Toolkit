@@ -221,8 +221,10 @@ class AggregationView(QGraphicsView):
         if self.mouse_mode == 0:
             cursor_style, focus_node = self.get_focus_and_cursor(self.mapToScene(event.pos()))
             if cursor_style == 0:
+                self.setDragMode(self.DragMode.ScrollHandDrag)
                 self.unsetCursor()
             else:
+                self.setDragMode(self.DragMode.NoDrag)
                 self.setCursor(CURSOR_DICT[cursor_style])
 
         elif self.mouse_mode == 1:

@@ -2,7 +2,7 @@ from __future__ import annotations  # make own class referencable
 
 from PySide6.QtCore import Qt, QRectF, QPointF, QPoint, QRect
 from PySide6.QtGui import QColor, QPen, QPainter, QCursor
-from PySide6.QtWidgets import QPushButton, QWidget, QGraphicsScene, QVBoxLayout, \
+from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout, \
     QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
     QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsTextItem,QGraphicsView
 from ...data import constants
@@ -13,10 +13,10 @@ class Header(QGraphicsRectItem):
         super(Header, self).__init__()
         self.node = node
         self.title = text
-
+        self.setParentItem(self.node)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, False)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
-        #self.setAcceptHoverEvents(True)
+        self.resize()
 
     def resize(self):
         line_width = self.pen().width()  # if ignore Linewidth: box of Node and Header won't match
@@ -57,23 +57,19 @@ class NodeProxy(QGraphicsProxyWidget):
     all Movement is controlled by the Header
     """
     def __init__(self, aggregation: classes.Aggregation, pos: QPointF) -> None:
-        def create_header():
-
-            header = Header(self, self.title)
-            header.setParentItem(self)
-            self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
-            header.resize()
-            return header
 
         super(NodeProxy, self).__init__()
         self.aggregation = aggregation
         self._title = f"{self.aggregation.name} ({self.aggregation.object.ident_value})"
 
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
+
         self.setWidget(NodeWidget())
-        self.header_rect = create_header()
+        self.widget().tree_widget.fill_tree()
+
+        self.header = Header(self, self.title)
         self.frame = Frame(self)
         self.setPos(pos)
-
 
     @property
     def name(self) -> str:
@@ -86,7 +82,7 @@ class NodeProxy(QGraphicsProxyWidget):
     @title.setter
     def title(self,value):
         self._title = value
-        self.header_rect.title = value
+        self.header.title = value
 
     @property
     def uuid(self) -> str:
@@ -98,7 +94,7 @@ class NodeProxy(QGraphicsProxyWidget):
     def setZValue(self, z: float) -> None:
         super(NodeProxy, self).setZValue(z)
         self.frame.setZValue(z)
-        self.header_rect.setZValue(z)
+        self.header.setZValue(z)
 
     def setCursor(self, cursor) -> None:
         self.scene().views()[0].viewport().setCursor(cursor)
@@ -116,7 +112,7 @@ class NodeProxy(QGraphicsProxyWidget):
             pass
 
         try:
-            self.header_rect.resize()
+            self.header.resize()
         except AttributeError:
             pass
 
@@ -166,20 +162,53 @@ class NodeProxy(QGraphicsProxyWidget):
         self.widget().button.hide()
         super(NodeProxy, self).hoverEnterEvent(event)
 
-    # def hoverMoveEvent(self, event) -> None:
-    #     pass  # hoverMove fucks with CursorStyle
+    def widget(self) -> NodeWidget:
+        return super(NodeProxy, self).widget()
+
+class CustomPsetTree(QTreeWidget):
+    def __init__(self,node_widget:NodeWidget) -> None:
+        super(CustomPsetTree, self).__init__()
+        self.setExpandsOnDoubleClick(False)
+        self.setColumnCount(1)
+        self.setHeaderLabels(["Name"])
+        self.node_widget = node_widget
+
+    @property
+    def object(self):
+        return self.node_widget.object
+
+    def fill_tree(self) -> None:
+        for property_set in self.object.property_sets:
+            item = CustomPSetTreeItem(self, property_set)
+            for attribute in property_set.attributes:
+                CustomAttribTreeItem(item, attribute)
+
+class CustomPSetTreeItem(QTreeWidgetItem):
+    def __init__(self, tree: QTreeWidget, pset: classes.PropertySet) -> None:
+        super(CustomPSetTreeItem, self).__init__(tree)
+        self._property_set = pset
+        self.update()
+
+    @property
+    def property_set(self) -> classes.PropertySet:
+        return self._property_set
+
+    def update(self) -> None:
+        self.setText(0, self.property_set.name)
 
 
-class TestWidget(QTreeWidget):
-    def __init__(self):
-        super(TestWidget, self).__init__()
+class CustomAttribTreeItem(QTreeWidgetItem):
+    def __init__(self, tree: CustomPSetTreeItem, attribute: classes.Attribute) -> None:
+        super(CustomAttribTreeItem, self).__init__(tree)
+        self._attribute = attribute
+        self.update()
 
-    def setCursor(self, arg__1) -> None:
-        return
+    @property
+    def attribute(self) -> classes.Attribute:
+        return self._attribute
 
-    def unsetCursor(self) -> None:
-        return
-
+    def update(self) -> None:
+        self.setText(0, self.attribute.name)
 
 class NodeWidget(QWidget):
     def __init__(self):
@@ -188,5 +217,16 @@ class NodeWidget(QWidget):
         self.button = QPushButton("PressMe")
         self.layout().addWidget(self.button)
         self.button.hide()
-        self.tree_widget = TestWidget()
+        self.tree_widget = CustomPsetTree(self)
         self.layout().insertWidget(0, self.tree_widget)
+
+    @property
+    def aggregation(self):
+        return self.graphicsProxyWidget().aggregation
+
+    @property
+    def object(self):
+        return self.aggregation.object
+
+    def graphicsProxyWidget(self) -> NodeProxy:
+        return super(NodeWidget, self).graphicsProxyWidget()
