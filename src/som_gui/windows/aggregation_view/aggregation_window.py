@@ -41,9 +41,41 @@ if TYPE_CHECKING:
 class AggregationScene(QGraphicsScene):
     def __init__(self,aggregation_window:GraphWindow,name = "UNDEF"):
         super(AggregationScene, self).__init__()
-        self.node_pos = QPointF(0, 0)
+        self.node_pos = QPointF(50, 50)
         self._name = name
         self.aggregation_window = aggregation_window
+        self.setSceneRect(1, 1, 10_000, 10_000)
+
+    def get_items_bounding_rect(self)-> QRectF:
+        b_min = [None,None]
+        b_max = [None,None]
+        for item in self.items():
+            if not item.isVisible():
+                continue
+            rect = item.sceneBoundingRect()
+            x_min = rect.x()
+            x_max = x_min+rect.width()
+            y_min = rect.y()
+            y_max = y_min+rect.height()
+            r_min = [x_min,y_min]
+            r_max = [x_max,y_max]
+
+            for index,(extreme,value) in enumerate(zip(b_min,r_min)):
+                if extreme is None or value<extreme:
+                    b_min[index] = value
+
+            for index,(extreme,value) in enumerate(zip(b_max,r_max)):
+                if extreme is None or value>extreme:
+                    b_max[index] = value
+
+        if None in b_max or None in b_min:
+            return QRectF(0,0,0,0)
+
+        b1 = QPointF(b_min[0]-constants.SCENE_MARGIN,b_min[1]-constants.SCENE_MARGIN)
+        b2 = QPointF(b_max[0]
+                     +constants.SCENE_MARGIN,b_max[1]+constants.SCENE_MARGIN)
+
+        return QRectF(b1,b2)
 
     @property
     def name(self) -> str:
@@ -59,14 +91,6 @@ class AggregationScene(QGraphicsScene):
 
     def get_nodes(self) -> set[NodeProxy]:
         return set(node for node in self.items() if isinstance(node, NodeProxy))
-
-    def add_aggregation(self, aggregation: classes.Aggregation, point: QPointF):
-        node_proxy = NodeProxy(aggregation, point, self)
-        node_proxy.setZValue(self.max_z_value() + 1)
-
-        for child in aggregation.children:
-            self.node_pos = self.node_pos + QPointF(30, 30)
-            self.add_aggregation(child, self.node_pos)
 
     def add_node(self,node_proxy:NodeProxy,recursive = False):
         node_proxy.setZValue(self.max_z_value() + 1)
@@ -97,6 +121,7 @@ class AggregationView(QGraphicsView):
         self.last_pos: QPointF | None = None  # last mouse pos to calculate difference
         self.mouse_mode = 0  # 0=moveCursor 1=resize 2 = drag
         self.mouse_is_pressed = False
+        self.setDragMode(self.DragMode.ScrollHandDrag)
 
     def items_under_mouse(self) -> set[QGraphicsItem]:
         return set(item for item in self.scene().items() if item.isUnderMouse())
@@ -106,8 +131,6 @@ class AggregationView(QGraphicsView):
 
     def resizeEvent(self, event: QtGui.QResizeEvent) -> None:
         super(AggregationView, self).resizeEvent(event)
-        if self.scene() is not None:
-            self.scene().setSceneRect(self.contentsRect())
 
     def wheelEvent(self, event: QWheelEvent) -> None:
 
@@ -170,12 +193,6 @@ class AggregationView(QGraphicsView):
 
         return cursor_style, node
 
-    def cursor_over_header(self) -> bool:
-        """checks if Cursor is over Header"""
-        items = self.items_under_mouse()
-        frames = [item.node.zValue() for item in items if isinstance(item, Frame)]
-        header = [item.node.zValue() for item in items if isinstance(item, Header)]
-        return max(header, default=0) == max(frames, default=1)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         self.mouse_is_pressed = True
@@ -197,8 +214,6 @@ class AggregationView(QGraphicsView):
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self.mouse_is_pressed = False
         self.mouse_mode = 0
-        if self.cursor_over_header():
-            self.setCursor(Qt.CursorShape.OpenHandCursor)
         self.last_pos = None
         super(AggregationView, self).mouseReleaseEvent(event)
 
@@ -303,10 +318,6 @@ class GraphWindow(QWidget):
         self.scene_dict = {} #used for import and export
 
         self._active_scene = None
-
-
-
-
         self.widget.button_add.clicked.connect(self.test)
         self.widget.combo_box.currentTextChanged.connect(self.combo_box_changed)
 
@@ -315,38 +326,41 @@ class GraphWindow(QWidget):
         return self._proxy_nodes
 
     def test(self):
-        pass
+        scene = self.active_scene
+        scene.setSceneRect(1, 1, 10_000, 10_000)
+        bbox = self.view.scene().get_items_bounding_rect()
+        self.view.fitInView(bbox, aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
 
     def create_missing_scenes(self):
         scene_dict = self.scene_dict
         node_dict = {node.uuid:node for node in self.nodes}
-        print(node_dict)
         for name, uuid_dict in scene_dict.items():
             uuid_nodes = uuid_dict.get(constants.NODES)
             for uuid in uuid_nodes:
                 node_dict.pop(uuid)
 
         remaining_nodes:set[NodeProxy] = node_dict.values()
-        print(remaining_nodes)
         root_nodes = set(node for node in remaining_nodes if node.aggregation.is_root)
-        for node in root_nodes:
-            print(node)
+        for node in sorted(root_nodes,key=lambda x:x.name):
             scene = self.create_new_scene(node.aggregation.name)
             scene.add_node(node,recursive =True)
+
 
     def show(self) -> None:
         if not (self.widget.combo_box.count() == 0 and len(self.nodes) >0):
             return super(GraphWindow, self).show()
 
         self.create_missing_scenes()
-        print(self.scenes)
         super(GraphWindow, self).show()
+        self.fit_view()
+
 
     def create_new_scene(self,name= "UNDEF") -> AggregationScene:
         scene = AggregationScene(self,name)
         self.scenes.add(scene)
         self.scene_dict[scene.name] ={constants.NODES:set()}
         self.widget.combo_box.addItem(scene.name)
+        self.widget.combo_box.model().sort(0)
         return scene
 
     def create_node(self,aggregation:classes.Aggregation,pos:QPointF,scene:AggregationScene = None) -> NodeProxy:
@@ -358,8 +372,19 @@ class GraphWindow(QWidget):
     def combo_box_changed(self):
         scene = {scene.name:scene for scene in self.scenes}.get(self.widget.combo_box.currentText())
         self.active_scene = scene
-        for node in self.active_scene.get_nodes():
-            print(f"title: {node.header_rect.title}")
+        self.fit_view()
+
+    def fit_view(self):
+        bounding_rect = self.active_scene.get_items_bounding_rect()
+        sr_center = self.active_scene.sceneRect().center()
+        br_center = bounding_rect.center()
+        dif = sr_center - br_center
+        for item in self.active_scene.items():
+            if isinstance(item, (Frame, Header)):
+                continue
+            item.moveBy(dif.x(), dif.y())
+        self.view.fitInView(self.active_scene.get_items_bounding_rect(), aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
+
     @property
     def active_scene(self) -> AggregationScene:
         return self._active_scene
@@ -368,9 +393,6 @@ class GraphWindow(QWidget):
     def active_scene(self,value:AggregationScene) -> None:
         self._active_scene = value
         self.view.setScene(self.active_scene)
-        self.active_scene.setSceneRect(self.view.contentsRect())
-    #def build_scene(self):
-
 
 class Header(QGraphicsRectItem):
     def __init__(self, node: NodeProxy, text):
@@ -422,8 +444,8 @@ class NodeProxy(QGraphicsProxyWidget):
     """
     def __init__(self, aggregation: classes.Aggregation, pos: QPointF) -> None:
         def create_header():
-            name = f"{aggregation.name} ({aggregation.object.ident_value})"
-            header = Header(self, name)
+
+            header = Header(self, self.title)
             header.setParentItem(self)
             self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
             header.resize()
@@ -431,10 +453,27 @@ class NodeProxy(QGraphicsProxyWidget):
 
         super(NodeProxy, self).__init__()
         self.aggregation = aggregation
+        self._title = f"{self.aggregation.name} ({self.aggregation.object.ident_value})"
+
         self.setWidget(NodeWidget())
         self.header_rect = create_header()
         self.frame = Frame(self)
         self.setPos(pos)
+
+
+    @property
+    def name(self) -> str:
+        return self.aggregation.name
+
+    @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self,value):
+        self._title = value
+        self.header_rect.title = value
+
     @property
     def uuid(self) -> str:
         return self.aggregation.uuid
