@@ -25,9 +25,13 @@ def add_node_pos(main_window:MainWindow,main_dict:dict,path:str):
     for node in main_window.graph_window.nodes:
 
         uuid = node.aggregation.uuid
-        aggregation_entry = aggregation_dict[uuid]
-        aggregation_entry[som_constants.X_POS] = node.x()
-        aggregation_entry[som_constants.Y_POS] = node.y()
+        try:
+            aggregation_entry = aggregation_dict[uuid]
+            aggregation_entry[som_constants.X_POS] = node.x()
+            aggregation_entry[som_constants.Y_POS] = node.y()
+        except KeyError:
+            print(node)
+
 
     main_dict[constants.AGGREGATION_SCENES] = main_window.graph_window.scene_dict
 
@@ -60,9 +64,10 @@ def save_as_clicked(main_window: MainWindow) -> str:
 
 def _save(main_window:MainWindow,path):
     main_dict = main_window.project.save(path)
-    add_node_pos(main_dict, path)
+    add_node_pos(main_window,main_dict, path)
     settings.set_open_path(path)
     settings.set_save_path(path)
+    print(f"Speichern abgeschlossen")
 
 def close_event(main_window: MainWindow):
     status = main_window.project.changed

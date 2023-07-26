@@ -62,10 +62,12 @@ class NodeProxy(QGraphicsProxyWidget):
     """
     all Movement is controlled by the Header
     """
+    _registry = set()
     def __init__(self, aggregation: classes.Aggregation, pos: QPointF) -> None:
 
         super(NodeProxy, self).__init__()
-        self.aggregation = aggregation
+        self._registry.add(self)
+        self.aggregation:classes.Aggregation = aggregation
         self._title = f"{self.aggregation.name}\nidentitaet: {self.aggregation.id_group()}"
 
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
@@ -100,8 +102,9 @@ class NodeProxy(QGraphicsProxyWidget):
             connection.delete()
         for connection in list(self.top_connections):
             connection.delete()
+        self.aggregation.delete()
         self.deleteLater()
-
+        self._registry.remove(self)
     def bottom_anchor_point(self) -> QPointF:
         """Point where Connection will end"""
         scene_bounding_rect = self.sceneBoundingRect()
@@ -110,6 +113,7 @@ class NodeProxy(QGraphicsProxyWidget):
         return QPointF(x,y)
 
     def top_anchor_point(self) -> QPointF:
+        """Point where Connection will start"""
         scene_bounding_rect = self.sceneBoundingRect()
         x = scene_bounding_rect.center().x()
         y = scene_bounding_rect.y()

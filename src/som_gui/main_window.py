@@ -77,7 +77,7 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(self.icon)
         self._export_path = None
         self.active_object: classes.Object | None = None
-        self.graph_window = aggregation_window.GraphWindow(self)
+        self.graph_window = aggregation_window.AggregationWindow(self)
         self.mapping_window = None
         self.project = classes.Project("Project", "")
         self.running_modelcheck:None|QtCore.QRunnable = None

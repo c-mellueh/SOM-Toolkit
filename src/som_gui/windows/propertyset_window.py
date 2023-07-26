@@ -291,7 +291,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             return
 
         for row in sorted(selected_rows, reverse=True):
-            attribute = self.table.item(row, 0).linked_data
+            attribute:classes.Attribute = self.table.item(row, 0).linked_data
             self.widget.table_widget.removeRow(row)
             attribute.delete()
 

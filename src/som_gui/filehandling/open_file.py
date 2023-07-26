@@ -29,7 +29,7 @@ def iter_child(parent_node: aggregation_window.Node) -> None:
         iter_child(child_node)
 
 
-def import_node_pos(main_dict: dict, graph_window: aggregation_window.GraphWindow) -> None:
+def import_node_pos(main_dict: dict, graph_window: aggregation_window.AggregationWindow) -> None:
     json_aggregation_dict: dict = main_dict[som_constants.AGGREGATIONS]
     aggregation_ref = {aggregation.uuid: aggregation for aggregation in classes.Aggregation}
     for uuid, aggregation_dict in json_aggregation_dict.items():

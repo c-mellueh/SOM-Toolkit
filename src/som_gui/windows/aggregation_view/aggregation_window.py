@@ -39,7 +39,7 @@ CURSOR_DICT = {
 
 
 class AggregationScene(QGraphicsScene):
-    def __init__(self, aggregation_window: GraphWindow, name="UNDEF"):
+    def __init__(self, aggregation_window: AggregationWindow, name="UNDEF"):
         super(AggregationScene, self).__init__()
         self.node_pos = QPointF(50, 50)
         self._name = name
@@ -98,7 +98,7 @@ class AggregationScene(QGraphicsScene):
         self.addItem(node_proxy)
 
         node_proxy.show()
-        self.aggregation_window.scene_dict[self.name][constants.NODES].add(node_proxy.aggregation.uuid)
+        self.aggregation_window.scene_dict[self.name][constants.NODES].append(node_proxy.aggregation.uuid)
         if recursive:
             uuid_dict = {node.aggregation.uuid: node for node in self.aggregation_window.nodes}
             child: classes.Aggregation
@@ -108,7 +108,7 @@ class AggregationScene(QGraphicsScene):
 
     def remove_node(self, node_proxy: NodeProxy):
         self.removeItem(node_proxy)
-        self.aggregation_window.scene_dict[self.name][constants.NODES].pop(node_proxy.aggregation.uuid)
+        self.aggregation_window.scene_dict[self.name][constants.NODES].append(node_proxy.aggregation.uuid)
         node_proxy.delete()
 
     def max_z_value(self):
@@ -131,6 +131,12 @@ class AggregationScene(QGraphicsScene):
 
     def add_connection(self,top_node:NodeProxy,bottom_node:NodeProxy):
         con = Connection(bottom_node,top_node)
+
+    def delete(self):
+        for node in self.nodes:
+            node.delete()
+        self.aggregation_window.scenes.remove(self)
+        self.aggregation_window.scene_dict.pop(self.name)
 
 class AggregationView(QGraphicsView):
     def __init__(self) -> None:
@@ -321,10 +327,10 @@ class AggregationView(QGraphicsView):
             self.setCursor(CURSOR_DICT[border])
 
 
-class GraphWindow(QWidget):
+class AggregationWindow(QWidget):
 
     def __init__(self, main_window: MainWindow) -> None:
-        super(GraphWindow, self).__init__()
+        super(AggregationWindow, self).__init__()
         self.main_window = main_window
         self.widget = ui_GraphWindow.Ui_GraphView()
         self.widget.setupUi(self)
@@ -334,13 +340,22 @@ class GraphWindow(QWidget):
         self.widget.gridLayout.addWidget(self.view, 1, 0, 1, 4)
         self.widget.graphicsView.deleteLater()
         self.scenes: set[AggregationScene] = set()
-        self._proxy_nodes = set()
-        self.scene_dict = {}  # used for import and export
+        self.scene_dict:dict[str,dict[str,list]] = {}  # used for import and export
 
         self._active_scene = None
         self.widget.combo_box.currentTextChanged.connect(self.combo_box_changed)
         self.widget.button_filter.clicked.connect(self.filter_object)
         self.widget.button_reload.clicked.connect(self.reset_filter)
+        self.widget.button_delete.clicked.connect(self.delete_active_scene)
+
+    def delete_active_scene(self):
+        scene = self.active_scene
+        name = scene.name
+        if len(self.scenes) <=1:
+            self.create_new_scene("UNDEF")
+        self.active_scene.delete()
+        index = self.widget.combo_box.findText(name)
+        self.widget.combo_box.removeItem(index)
 
     def reset_filter(self):
         for scene in self.scenes:
@@ -370,17 +385,17 @@ class GraphWindow(QWidget):
 
     @property
     def nodes(self) -> set[NodeProxy]:
-        return self._proxy_nodes
+        return NodeProxy._registry
 
     def create_missing_scenes(self):
         scene_dict = self.scene_dict
-        node_dict = {node.uuid: node for node in self.nodes}
+        node_dict:dict[str,NodeProxy] = {node.uuid: node for node in self.nodes}
         for name, uuid_dict in scene_dict.items():
             uuid_nodes = uuid_dict.get(constants.NODES)
             for uuid in uuid_nodes:
                 node_dict.pop(uuid)
 
-        remaining_nodes: set[NodeProxy] = node_dict.values()
+        remaining_nodes: list[NodeProxy] = node_dict.values()
         root_nodes = set(node for node in remaining_nodes if node.aggregation.is_root)
         for node in sorted(root_nodes, key=lambda x: x.name):
             scene = self.create_new_scene(node.aggregation.name)
@@ -389,22 +404,21 @@ class GraphWindow(QWidget):
 
     def show(self) -> None:
         if not (self.widget.combo_box.count() == 0 and len(self.nodes) > 0):
-            return super(GraphWindow, self).show()
+            return super(AggregationWindow, self).show()
 
         self.create_missing_scenes()
-        super(GraphWindow, self).show()
+        super(AggregationWindow, self).show()
         self.fit_view()
 
     def create_new_scene(self, name="UNDEF") -> AggregationScene:
         scene = AggregationScene(self, name)
         self.scenes.add(scene)
-        self.scene_dict[scene.name] = {constants.NODES: set()}
+        self.scene_dict[scene.name] = {constants.NODES: list()}
         self.add_scene_to_combobox(scene)
         return scene
 
     def create_node(self, aggregation: classes.Aggregation, pos: QPointF, scene: AggregationScene = None) -> NodeProxy:
         node = NodeProxy(aggregation, pos)
-        self._proxy_nodes.add(node)
         if scene is not None:
             scene.add_node(node)
 
