@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'PropertySetInheritance.ui'
+## Form generated from reading UI file 'PredefinedPropertySets.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.5.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,7 +23,7 @@ class Ui_PsetInherWidget(object):
     def setupUi(self, PsetInherWidget):
         if not PsetInherWidget.objectName():
             PsetInherWidget.setObjectName(u"PsetInherWidget")
-        PsetInherWidget.resize(907, 465)
+        PsetInherWidget.resize(907, 367)
         self.gridLayout = QGridLayout(PsetInherWidget)
         self.gridLayout.setObjectName(u"gridLayout")
         self.horizontalLayout = QHBoxLayout()
@@ -86,20 +86,20 @@ class Ui_PsetInherWidget(object):
 
     def retranslateUi(self, PsetInherWidget):
         PsetInherWidget.setWindowTitle(QCoreApplication.translate("PsetInherWidget", u"Form", None))
-        self.push_button_edit.setText(QCoreApplication.translate("PsetInherWidget", u"Edit", None))
+        self.push_button_edit.setText(QCoreApplication.translate("PsetInherWidget", u"bearbeiten", None))
         self.push_button_add_pset.setText(QCoreApplication.translate("PsetInherWidget", u"+", None))
         self.push_button_remove_pset.setText(QCoreApplication.translate("PsetInherWidget", u"-", None))
         self.label.setText(QCoreApplication.translate("PsetInherWidget", u"PropertySet", None))
-        self.label_2.setText(QCoreApplication.translate("PsetInherWidget", u"Inherits to:", None))
+        self.label_2.setText(QCoreApplication.translate("PsetInherWidget", u"Erbt an:", None))
 
         __sortingEnabled = self.list_view_pset.isSortingEnabled()
         self.list_view_pset.setSortingEnabled(False)
         ___qlistwidgetitem = self.list_view_pset.item(0)
         ___qlistwidgetitem.setText(QCoreApplication.translate("PsetInherWidget", u"ADSD", None));
         ___qlistwidgetitem1 = self.list_view_pset.item(1)
-        ___qlistwidgetitem1.setText(QCoreApplication.translate("PsetInherWidget", u"ASFASF", None));
+        ___qlistwidgetitem1.setText(QCoreApplication.translate("PsetInherWidget", u"ASF", None));
         ___qlistwidgetitem2 = self.list_view_pset.item(2)
-        ___qlistwidgetitem2.setText(QCoreApplication.translate("PsetInherWidget", u"ASF", None));
+        ___qlistwidgetitem2.setText(QCoreApplication.translate("PsetInherWidget", u"ASFASF", None));
         self.list_view_pset.setSortingEnabled(__sortingEnabled)
 
 

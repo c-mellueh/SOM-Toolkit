@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>907</width>
-    <height>465</height>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
      <item>
       <widget class="QPushButton" name="push_button_edit">
        <property name="text">
-        <string>Edit</string>
+        <string>bearbeiten</string>
        </property>
       </widget>
      </item>
@@ -62,7 +62,7 @@
    <item row="0" column="1">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Inherits to:</string>
+      <string>Erbt an:</string>
      </property>
     </widget>
    </item>
@@ -78,12 +78,12 @@
      </item>
      <item>
       <property name="text">
-       <string>ASFASF</string>
+       <string>ASF</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>ASF</string>
+       <string>ASFASF</string>
       </property>
      </item>
     </widget>

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'Search.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.5.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -67,7 +67,7 @@ class Ui_Search(object):
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("Search", u"Identifier", None));
         ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("Search", u"Abbreviation", None));
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("Search", u"Abk\u00fcrzung", None));
         ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
         ___qtablewidgetitem3.setText(QCoreApplication.translate("Search", u"Match", None));
     # retranslateUi

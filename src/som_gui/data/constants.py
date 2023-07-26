@@ -17,18 +17,26 @@ VALUE = "Value"
 FORMAT = "Format"
 RANGE = "Range"
 LIST = "List"
+
+GER_VALUE = "Wert"
+GER_FORMAT = "Formatvorgabe"
+GER_RANGE = "Wertebereich"
+GER_LIST = "Liste"
+
 XS_STRING = "xs:string"
 XS_DOUBLE = "xs:double"
-XS_BOOL = "xs:bool"
 XS_BOOLEAN = "xs:boolean"
 XS_INT = "xs:int"
 XS_LONG = "xs:long"
 
-DATA_TYPES = {XS_LONG,XS_BOOL,XS_STRING,XS_INT,XS_DOUBLE,XS_BOOLEAN}
+DATA_TYPES = [XS_STRING,XS_LONG,XS_INT,XS_DOUBLE,XS_BOOLEAN]
 
-RANGE_STRINGS = ["Range", "range", "RANGE"]
+RANGE_STRINGS = ["Range", "range", "RANGE",GER_RANGE]
+VALUE_TYPE_LOOKUP = {GER_VALUE: "Value", GER_FORMAT: "Format", GER_RANGE: "Range", GER_LIST: "List",
+                     VALUE: "Value", FORMAT: "Format", RANGE: "Range", LIST: "List", }
 
-VALUE_TYPE_LOOKUP = {VALUE: "Value", FORMAT: "Format", RANGE: "Range", LIST: "List", }
+GER_TYPES_LOOKUP = {VALUE: GER_VALUE, FORMAT: GER_FORMAT, RANGE: GER_RANGE, LIST: GER_LIST,}
+
 PREDEFINED_PROPERTY_WINDOW_NAME = "Predefined Properties"
 
 DATATYPE_NUMBER = "xs:double"

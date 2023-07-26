@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 
 from fuzzywuzzy import fuzz
 
+CHECK_POS = 3
 
 class CustomTree(QTreeWidget):
     def __init__(self, layout) -> None:
@@ -90,13 +91,15 @@ class CustomObjectTreeItem(QTreeWidgetItem):
             self.setText(index, value)
 
         if self.object.optional:
-            self.setCheckState(3, Qt.CheckState.Checked)
+
+            self.setCheckState(CHECK_POS, Qt.CheckState.Checked)
         else:
-            self.setCheckState(3, Qt.CheckState.Unchecked)
+            self.setCheckState(CHECK_POS, Qt.CheckState.Unchecked)
 
     def update(self) -> None:
         logging.debug(f"Item toggled if item is not Toggled contact me")
-        check_state = self.checkState(2)
+        check_state = self.checkState(CHECK_POS)
+
         if check_state == Qt.CheckState.Checked:
             check_bool = True
         elif check_state == Qt.CheckState.Unchecked:
@@ -125,7 +128,7 @@ class ObjectInfoWidget(QDialog):
         self.widget = ui_object_info_widget.Ui_ObjectInfo()
         self.widget.setupUi(self)
 
-        self.setWindowTitle(f"Modify Object '{self.object.name}'")
+        self.setWindowTitle(f"bearbeite Objektvorgabe '{self.object.name}'")
         self.setWindowIcon(get_icon())
 
         self.widget.button_add_ifc.clicked.connect(self.add_line)
@@ -241,8 +244,7 @@ class SearchWindow(QWidget):
             table.hideRow(self.get_row(obj))
 
 
-def object_double_clicked(main_window: MainWindow, item):
-    obj: classes.Object = item.object
+def object_double_clicked(main_window: MainWindow, obj:classes.Object):
     object_widget = ObjectInfoWidget(main_window, obj)
     is_ok = object_widget.exec()
     if not is_ok:
@@ -269,9 +271,9 @@ def init(main_window: MainWindow):
         tree.viewport().setAcceptDrops(True)
 
         ___qtreewidgetitem = tree.headerItem()
-        ___qtreewidgetitem.setText(0, "Objects")
+        ___qtreewidgetitem.setText(0, "Objektvorgaben")
         ___qtreewidgetitem.setText(1, "Identifier")
-        ___qtreewidgetitem.setText(2, "Abbreviation")
+        ___qtreewidgetitem.setText(2, "Abkürzung")
         ___qtreewidgetitem.setText(3, "Optional")
 
     def connect_items():

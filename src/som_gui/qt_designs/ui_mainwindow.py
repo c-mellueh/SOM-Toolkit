@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.5.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -76,6 +76,8 @@ class Ui_MainWindow(object):
         self.action_excel.setObjectName(u"action_excel")
         self.action_import_excel = QAction(MainWindow)
         self.action_import_excel.setObjectName(u"action_import_excel")
+        self.action_modelcheck = QAction(MainWindow)
+        self.action_modelcheck.setObjectName(u"action_modelcheck")
         self.verticalLayout_main = QWidget(MainWindow)
         self.verticalLayout_main.setObjectName(u"verticalLayout_main")
         self.verticalLayout = QVBoxLayout(self.verticalLayout_main)
@@ -144,6 +146,7 @@ class Ui_MainWindow(object):
         self.line_edit_object_name.setSizePolicy(sizePolicy)
         self.line_edit_object_name.setFrame(True)
         self.line_edit_object_name.setEchoMode(QLineEdit.Normal)
+        self.line_edit_object_name.setClearButtonEnabled(False)
 
         self.horizontalLayout_object_button.addWidget(self.line_edit_object_name)
 
@@ -232,14 +235,6 @@ class Ui_MainWindow(object):
         self.table_pset.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         __qtablewidgetitem2 = QTableWidgetItem()
         self.table_pset.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        if (self.table_pset.rowCount() < 1):
-            self.table_pset.setRowCount(1)
-        __qtablewidgetitem3 = QTableWidgetItem()
-        self.table_pset.setVerticalHeaderItem(0, __qtablewidgetitem3)
-        __qtablewidgetitem4 = QTableWidgetItem()
-        self.table_pset.setItem(0, 0, __qtablewidgetitem4)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        self.table_pset.setItem(0, 1, __qtablewidgetitem5)
         self.table_pset.setObjectName(u"table_pset")
         sizePolicy4 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         sizePolicy4.setHorizontalStretch(0)
@@ -260,14 +255,14 @@ class Ui_MainWindow(object):
         self.table_attribute = QTableWidget(self.splitter_2)
         if (self.table_attribute.columnCount() < 4):
             self.table_attribute.setColumnCount(4)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        self.table_attribute.setHorizontalHeaderItem(0, __qtablewidgetitem3)
+        __qtablewidgetitem4 = QTableWidgetItem()
+        self.table_attribute.setHorizontalHeaderItem(1, __qtablewidgetitem4)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        self.table_attribute.setHorizontalHeaderItem(2, __qtablewidgetitem5)
         __qtablewidgetitem6 = QTableWidgetItem()
-        self.table_attribute.setHorizontalHeaderItem(0, __qtablewidgetitem6)
-        __qtablewidgetitem7 = QTableWidgetItem()
-        self.table_attribute.setHorizontalHeaderItem(1, __qtablewidgetitem7)
-        __qtablewidgetitem8 = QTableWidgetItem()
-        self.table_attribute.setHorizontalHeaderItem(2, __qtablewidgetitem8)
-        __qtablewidgetitem9 = QTableWidgetItem()
-        self.table_attribute.setHorizontalHeaderItem(3, __qtablewidgetitem9)
+        self.table_attribute.setHorizontalHeaderItem(3, __qtablewidgetitem6)
         self.table_attribute.setObjectName(u"table_attribute")
         self.table_attribute.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.splitter_2.addWidget(self.table_attribute)
@@ -431,6 +426,8 @@ class Ui_MainWindow(object):
         self.menuPredefined_Psets.setObjectName(u"menuPredefined_Psets")
         self.menuShow_Graphs = QMenu(self.menubar)
         self.menuShow_Graphs.setObjectName(u"menuShow_Graphs")
+        self.menu_ifc = QMenu(self.menubar)
+        self.menu_ifc.setObjectName(u"menu_ifc")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -453,6 +450,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuDesite.menuAction())
         self.menubar.addAction(self.menuPredefined_Psets.menuAction())
         self.menubar.addAction(self.menuShow_Graphs.menuAction())
+        self.menubar.addAction(self.menu_ifc.menuAction())
         self.menuFile.addAction(self.action_file_new)
         self.menuFile.addAction(self.action_file_Open)
         self.menuFile.addAction(self.action_import_excel)
@@ -471,6 +469,7 @@ class Ui_MainWindow(object):
         self.menuDesite.addAction(self.action_mapping_script)
         self.menuPredefined_Psets.addAction(self.action_show_list)
         self.menuShow_Graphs.addAction(self.action_show_graphs)
+        self.menu_ifc.addAction(self.action_modelcheck)
 
         self.retranslateUi(MainWindow)
 
@@ -482,73 +481,102 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.action_file_new.setText(QCoreApplication.translate("MainWindow", u"New", None))
-        self.action_file_Save.setText(QCoreApplication.translate("MainWindow", u"Save", None))
-        self.action_file_Save_As.setText(QCoreApplication.translate("MainWindow", u"Save As ...", None))
-        self.action_file_Open.setText(QCoreApplication.translate("MainWindow", u"Open", None))
+        self.action_file_new.setText(QCoreApplication.translate("MainWindow", u"Neu", None))
+        self.action_file_Save.setText(QCoreApplication.translate("MainWindow", u"Speichern", None))
+        self.action_file_Save_As.setText(QCoreApplication.translate("MainWindow", u"Speichern unter ...", None))
+        self.action_file_Open.setText(QCoreApplication.translate("MainWindow", u"\u00d6ffnen", None))
+#if QT_CONFIG(tooltip)
+        self.action_file_Open.setToolTip(QCoreApplication.translate("MainWindow", u"\u00d6ffnet eine SOMjson Datei", None))
+#endif // QT_CONFIG(tooltip)
         self.action_desite_Settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
-        self.action_desite_export.setText(QCoreApplication.translate("MainWindow", u"Export Modelcheck", None))
-        self.action_show_list.setText(QCoreApplication.translate("MainWindow", u"Show List", None))
-        self.action_settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
+        self.action_desite_export.setText(QCoreApplication.translate("MainWindow", u"Modellpr\u00fcfung", None))
+#if QT_CONFIG(tooltip)
+        self.action_desite_export.setToolTip(QCoreApplication.translate("MainWindow", u"Erstellt eine qa.xml-Datei die in Desite als Pr\u00fcfdurchlauf eingelesen werden kann. Es wird dabei die Attribuierung von Entit\u00e4ten gepr\u00fcft", None))
+#endif // QT_CONFIG(tooltip)
+        self.action_show_list.setText(QCoreApplication.translate("MainWindow", u"Anzeigen", None))
+        self.action_settings.setText(QCoreApplication.translate("MainWindow", u"Einstellungen", None))
         self.action_export_bs.setText(QCoreApplication.translate("MainWindow", u"Export BS", None))
-        self.action_export_bookmarks.setText(QCoreApplication.translate("MainWindow", u"Export Bookmarks", None))
-        self.action_show_graphs.setText(QCoreApplication.translate("MainWindow", u"Show", None))
+        self.action_export_bookmarks.setText(QCoreApplication.translate("MainWindow", u"Lesezeichen", None))
+#if QT_CONFIG(tooltip)
+        self.action_export_bookmarks.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Erstellt ein Script und eine bk.xml-Datei.</p><p>Es muss zuerst das Script ausgef\u00fchrt  werden bevor die bk.xml-Datei importiert wird!</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.action_show_graphs.setText(QCoreApplication.translate("MainWindow", u"Anzeigen", None))
+#if QT_CONFIG(tooltip)
+        self.action_show_graphs.setToolTip(QCoreApplication.translate("MainWindow", u"die Aggregationsstruktur in welcher die einzelnen Objekte gespeichert werden k\u00f6nnen", None))
+#endif // QT_CONFIG(tooltip)
         self.action_export_boq.setText(QCoreApplication.translate("MainWindow", u"Export  for BoQ", None))
         self.action_mapping_options.setText(QCoreApplication.translate("MainWindow", u"Options", None))
         self.action_mapping.setText(QCoreApplication.translate("MainWindow", u"Mapping", None))
+#if QT_CONFIG(tooltip)
+        self.action_mapping.setToolTip(QCoreApplication.translate("MainWindow", u"Revit- & IFC-Mapping", None))
+#endif // QT_CONFIG(tooltip)
         self.action_shared_parameter.setText(QCoreApplication.translate("MainWindow", u"Shared Parameters", None))
         self.action_ifc_mapping.setText(QCoreApplication.translate("MainWindow", u"IFC Mapping", None))
-        self.action_mapping_script.setText(QCoreApplication.translate("MainWindow", u"Create Mapping Script", None))
+        self.action_mapping_script.setText(QCoreApplication.translate("MainWindow", u"Mapping Script", None))
+#if QT_CONFIG(tooltip)
+        self.action_mapping_script.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Das Mappingscript verschiebt Attribute aus einem ausgew\u00e4hlten PropertySet in die nach SOM richtigen PropertySets</p><p><br/></p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
         self.action_abbreviation_json.setText(QCoreApplication.translate("MainWindow", u"Abbreviation JSON", None))
         self.action_allplan.setText(QCoreApplication.translate("MainWindow", u"Allplan", None))
         self.action_card1.setText(QCoreApplication.translate("MainWindow", u"CARD1", None))
         self.action_vestra.setText(QCoreApplication.translate("MainWindow", u"Verstra", None))
         self.action_excel.setText(QCoreApplication.translate("MainWindow", u"Excel", None))
-        self.action_import_excel.setText(QCoreApplication.translate("MainWindow", u"Import Excel", None))
-        self.label_Ident.setText(QCoreApplication.translate("MainWindow", u"Ident", None))
-        self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
+        self.action_import_excel.setText(QCoreApplication.translate("MainWindow", u"Excel Importieren", None))
+#if QT_CONFIG(tooltip)
+        self.action_import_excel.setToolTip(QCoreApplication.translate("MainWindow", u"Importiert eine SOM-MaKa Excel", None))
+#endif // QT_CONFIG(tooltip)
+        self.action_modelcheck.setText(QCoreApplication.translate("MainWindow", u"Modellpr\u00fcfung", None))
+#if QT_CONFIG(tooltip)
+        self.label_Ident.setToolTip(QCoreApplication.translate("MainWindow", u"Anhand des Identifiers wird bestimmt, welche Objektvorgabe auf eine Entit\u00e4t angewendet werden muss", None))
+#endif // QT_CONFIG(tooltip)
+        self.label_Ident.setText(QCoreApplication.translate("MainWindow", u"Identifier", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_ident_attribute.setToolTip(QCoreApplication.translate("MainWindow", u"Name des Identifier Attributes", None))
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribut", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_ident_pSet.setToolTip(QCoreApplication.translate("MainWindow", u"Name des PropertySets in dem das Identifier Attribut sich befindet", None))
+#endif // QT_CONFIG(tooltip)
         self.lineEdit_ident_pSet.setPlaceholderText(QCoreApplication.translate("MainWindow", u"PropertySet", None))
-        self.label_object_name.setText(QCoreApplication.translate("MainWindow", u"Object", None))
-        self.lineEdit_ident_value.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Value", None))
+        self.label_object_name.setText(QCoreApplication.translate("MainWindow", u"Objektvorgabe", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_ident_value.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Wert des Identifier Attributes</p><p>Dieser Wert darf nur einmal vorkommen.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_ident_value.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Wert", None))
+#if QT_CONFIG(tooltip)
+        self.line_edit_object_name.setToolTip(QCoreApplication.translate("MainWindow", u"Name der Objektvorgabe", None))
+#endif // QT_CONFIG(tooltip)
         self.line_edit_object_name.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Name", None))
-        self.line_edit_abbreviation.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Abbreviation", None))
-        self.button_objects_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
+#if QT_CONFIG(tooltip)
+        self.line_edit_abbreviation.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>die Abk\u00fcrzung ist relevant f\u00fcr die Bauwerksstruktur.<br/>Sie sollte zwischen 1-10 Zeichen Lang sein und darf nur einmal vorkommen.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.line_edit_abbreviation.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Abk\u00fcrzung", None))
+        self.button_objects_add.setText(QCoreApplication.translate("MainWindow", u"Erstellen", None))
         ___qtreewidgetitem = self.tree_object.headerItem()
         ___qtreewidgetitem.setText(3, QCoreApplication.translate("MainWindow", u"Optional", None));
-        ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Abbbreviation", None));
+        ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Abk\u00fcrzung", None));
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None));
-        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objects", None));
+        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objektvorgaben", None));
         self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))
-        self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Add", None))
+        self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Erstellen", None))
         ___qtablewidgetitem = self.table_pset.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"PropertySet", None));
         ___qtablewidgetitem1 = self.table_pset.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"InheritedBy", None));
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Geerbt von", None));
         ___qtablewidgetitem2 = self.table_pset.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Optional", None));
-        ___qtablewidgetitem3 = self.table_pset.verticalHeaderItem(0)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Test", None));
-
-        __sortingEnabled = self.table_pset.isSortingEnabled()
-        self.table_pset.setSortingEnabled(False)
-        ___qtablewidgetitem4 = self.table_pset.item(0, 0)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"BestandsdatenqVerkehrsanlagen", None));
-        ___qtablewidgetitem5 = self.table_pset.item(0, 1)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Verkehrsanlagen", None));
-        self.table_pset.setSortingEnabled(__sortingEnabled)
-
-        ___qtablewidgetitem6 = self.table_attribute.horizontalHeaderItem(0)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Name", None));
-        ___qtablewidgetitem7 = self.table_attribute.horizontalHeaderItem(1)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"Data Format", None));
-        ___qtablewidgetitem8 = self.table_attribute.horizontalHeaderItem(2)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"Format", None));
-        ___qtablewidgetitem9 = self.table_attribute.horizontalHeaderItem(3)
-        ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"Value", None));
+        ___qtablewidgetitem3 = self.table_attribute.horizontalHeaderItem(0)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Name", None));
+        ___qtablewidgetitem4 = self.table_attribute.horizontalHeaderItem(1)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Datentyp", None));
+        ___qtablewidgetitem5 = self.table_attribute.horizontalHeaderItem(2)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Format", None));
+        ___qtablewidgetitem6 = self.table_attribute.horizontalHeaderItem(3)
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Wert", None));
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_property_set), QCoreApplication.translate("MainWindow", u"PropertySet", None))
         self.label_script_title.setText(QCoreApplication.translate("MainWindow", u"Scripts", None))
 
-        __sortingEnabled1 = self.listWidget_scripts.isSortingEnabled()
+        __sortingEnabled = self.listWidget_scripts.isSortingEnabled()
         self.listWidget_scripts.setSortingEnabled(False)
         ___qlistwidgetitem = self.listWidget_scripts.item(0)
         ___qlistwidgetitem.setText(QCoreApplication.translate("MainWindow", u"New Item", None));
@@ -560,7 +588,7 @@ class Ui_MainWindow(object):
         ___qlistwidgetitem3.setText(QCoreApplication.translate("MainWindow", u"New Item", None));
         ___qlistwidgetitem4 = self.listWidget_scripts.item(4)
         ___qlistwidgetitem4.setText(QCoreApplication.translate("MainWindow", u"New Item", None));
-        self.listWidget_scripts.setSortingEnabled(__sortingEnabled1)
+        self.listWidget_scripts.setSortingEnabled(__sortingEnabled)
 
         self.pushButton_add_script.setText(QCoreApplication.translate("MainWindow", u"+", None))
         self.pushButton_delete_script.setText(QCoreApplication.translate("MainWindow", u"-", None))
@@ -570,10 +598,14 @@ class Ui_MainWindow(object):
         self.pushButton_right.setText(QCoreApplication.translate("MainWindow", u"->", None))
         self.label_script_name.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_code), QCoreApplication.translate("MainWindow", u"Code", None))
-        self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
+        self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"Datei", None))
         self.menuExport.setTitle(QCoreApplication.translate("MainWindow", u"Export", None))
+#if QT_CONFIG(tooltip)
+        self.menuDesite.setToolTip("")
+#endif // QT_CONFIG(tooltip)
         self.menuDesite.setTitle(QCoreApplication.translate("MainWindow", u"Desite", None))
-        self.menuPredefined_Psets.setTitle(QCoreApplication.translate("MainWindow", u"Predefined Psets", None))
-        self.menuShow_Graphs.setTitle(QCoreApplication.translate("MainWindow", u"Aggregation", None))
+        self.menuPredefined_Psets.setTitle(QCoreApplication.translate("MainWindow", u"Vordefinierte Psets", None))
+        self.menuShow_Graphs.setTitle(QCoreApplication.translate("MainWindow", u"Bauwerksstruktur", None))
+        self.menu_ifc.setTitle(QCoreApplication.translate("MainWindow", u"IFC", None))
     # retranslateUi
 

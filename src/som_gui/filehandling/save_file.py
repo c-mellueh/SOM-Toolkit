@@ -55,11 +55,14 @@ def save_as_clicked(main_window: MainWindow) -> str:
         path = QFileDialog.getSaveFileName(main_window, "Save Project", path, FILETYPE)[0]
 
     if path:
-        main_window.project.save(path)
-        settings.set_open_path(path)
-        settings.set_save_path(path)
+        _save(main_window,path)
     return path
 
+def _save(main_window:MainWindow,path):
+    main_dict = main_window.project.save(path)
+    add_node_pos(main_dict, path)
+    settings.set_open_path(path)
+    settings.set_save_path(path)
 
 def close_event(main_window: MainWindow):
     status = main_window.project.changed

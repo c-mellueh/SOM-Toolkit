@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ObjectInfoWidget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.5.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -120,7 +120,7 @@ class Ui_ObjectInfo(object):
     def retranslateUi(self, ObjectInfo):
         ObjectInfo.setWindowTitle(QCoreApplication.translate("ObjectInfo", u"Dialog", None))
         self.label_name.setText(QCoreApplication.translate("ObjectInfo", u"Name", None))
-        self.label_abbreviation.setText(QCoreApplication.translate("ObjectInfo", u"Abbreviation:", None))
+        self.label_abbreviation.setText(QCoreApplication.translate("ObjectInfo", u"Abk\u00fcrzung:", None))
         self.label_ifc_mapping.setText(QCoreApplication.translate("ObjectInfo", u"IFC Mapping", None))
         self.button_add_ifc.setText(QCoreApplication.translate("ObjectInfo", u"+", None))
     # retranslateUi

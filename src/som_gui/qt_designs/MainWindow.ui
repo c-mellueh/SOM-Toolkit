@@ -32,8 +32,11 @@
          <layout class="QGridLayout" name="gridLayout_objects">
           <item row="1" column="0">
            <widget class="QLabel" name="label_Ident">
+            <property name="toolTip">
+             <string>Anhand des Identifiers wird bestimmt, welche Objektvorgabe auf eine Entität angewendet werden muss</string>
+            </property>
             <property name="text">
-             <string>Ident</string>
+             <string>Identifier</string>
             </property>
            </widget>
           </item>
@@ -45,6 +48,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>Name des Identifier Attributes</string>
+            </property>
             <property name="frame">
              <bool>true</bool>
             </property>
@@ -52,7 +58,7 @@
              <enum>QLineEdit::Normal</enum>
             </property>
             <property name="placeholderText">
-             <string>Attribute</string>
+             <string>Attribut</string>
             </property>
             <property name="cursorMoveStyle">
              <enum>Qt::LogicalMoveStyle</enum>
@@ -66,6 +72,9 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Name des PropertySets in dem das Identifier Attribut sich befindet</string>
             </property>
             <property name="frame">
              <bool>true</bool>
@@ -96,12 +105,15 @@
              <number>1</number>
             </property>
             <property name="text">
-             <string>Object</string>
+             <string>Objektvorgabe</string>
             </property>
            </widget>
           </item>
           <item row="1" column="3">
            <widget class="QLineEdit" name="lineEdit_ident_value">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wert des Identifier Attributes&lt;/p&gt;&lt;p&gt;Dieser Wert darf nur einmal vorkommen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="frame">
              <bool>true</bool>
             </property>
@@ -109,7 +121,7 @@
              <enum>QLineEdit::Normal</enum>
             </property>
             <property name="placeholderText">
-             <string>Value</string>
+             <string>Wert</string>
             </property>
            </widget>
           </item>
@@ -123,6 +135,9 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="toolTip">
+               <string>Name der Objektvorgabe</string>
+              </property>
               <property name="frame">
                <bool>true</bool>
               </property>
@@ -131,6 +146,9 @@
               </property>
               <property name="placeholderText">
                <string>Name</string>
+              </property>
+              <property name="clearButtonEnabled">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -142,15 +160,18 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;die Abkürzung ist relevant für die Bauwerksstruktur.&lt;br/&gt;Sie sollte zwischen 1-10 Zeichen Lang sein und darf nur einmal vorkommen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="placeholderText">
-               <string>Abbreviation</string>
+               <string>Abkürzung</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="button_objects_add">
               <property name="text">
-               <string>Add</string>
+               <string>Erstellen</string>
               </property>
               <property name="autoDefault">
                <bool>true</bool>
@@ -189,7 +210,7 @@
           </attribute>
           <column>
            <property name="text">
-            <string>Objects</string>
+            <string>Objektvorgaben</string>
            </property>
           </column>
           <column>
@@ -199,7 +220,7 @@
           </column>
           <column>
            <property name="text">
-            <string>Abbbreviation</string>
+            <string>Abkürzung</string>
            </property>
           </column>
           <column>
@@ -254,7 +275,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Add</string>
+              <string>Erstellen</string>
              </property>
              <property name="autoDefault">
               <bool>true</bool>
@@ -311,11 +332,6 @@
             <attribute name="verticalHeaderCascadingSectionResizes">
              <bool>false</bool>
             </attribute>
-            <row>
-             <property name="text">
-              <string>Test</string>
-             </property>
-            </row>
             <column>
              <property name="text">
               <string>PropertySet</string>
@@ -323,7 +339,7 @@
             </column>
             <column>
              <property name="text">
-              <string>InheritedBy</string>
+              <string>Geerbt von</string>
              </property>
             </column>
             <column>
@@ -331,16 +347,6 @@
               <string>Optional</string>
              </property>
             </column>
-            <item row="0" column="0">
-             <property name="text">
-              <string>BestandsdatenqVerkehrsanlagen</string>
-             </property>
-            </item>
-            <item row="0" column="1">
-             <property name="text">
-              <string>Verkehrsanlagen</string>
-             </property>
-            </item>
            </widget>
            <widget class="QTableWidget" name="table_attribute">
             <property name="editTriggers">
@@ -356,7 +362,7 @@
             </column>
             <column>
              <property name="text">
-              <string>Data Format</string>
+              <string>Datentyp</string>
              </property>
             </column>
             <column>
@@ -366,7 +372,7 @@
             </column>
             <column>
              <property name="text">
-              <string>Value</string>
+              <string>Wert</string>
              </property>
             </column>
            </widget>
@@ -695,7 +701,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Datei</string>
     </property>
     <widget class="QMenu" name="menuExport">
      <property name="title">
@@ -717,6 +723,9 @@
     <addaction name="action_mapping"/>
    </widget>
    <widget class="QMenu" name="menuDesite">
+    <property name="toolTip">
+     <string/>
+    </property>
     <property name="title">
      <string>Desite</string>
     </property>
@@ -726,40 +735,50 @@
    </widget>
    <widget class="QMenu" name="menuPredefined_Psets">
     <property name="title">
-     <string>Predefined Psets</string>
+     <string>Vordefinierte Psets</string>
     </property>
     <addaction name="action_show_list"/>
    </widget>
    <widget class="QMenu" name="menuShow_Graphs">
     <property name="title">
-     <string>Aggregation</string>
+     <string>Bauwerksstruktur</string>
     </property>
     <addaction name="action_show_graphs"/>
+   </widget>
+   <widget class="QMenu" name="menu_ifc">
+    <property name="title">
+     <string>IFC</string>
+    </property>
+    <addaction name="action_modelcheck"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDesite"/>
    <addaction name="menuPredefined_Psets"/>
    <addaction name="menuShow_Graphs"/>
+   <addaction name="menu_ifc"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_file_new">
    <property name="text">
-    <string>New</string>
+    <string>Neu</string>
    </property>
   </action>
   <action name="action_file_Save">
    <property name="text">
-    <string>Save</string>
+    <string>Speichern</string>
    </property>
   </action>
   <action name="action_file_Save_As">
    <property name="text">
-    <string>Save As ...</string>
+    <string>Speichern unter ...</string>
    </property>
   </action>
   <action name="action_file_Open">
    <property name="text">
-    <string>Open</string>
+    <string>Öffnen</string>
+   </property>
+   <property name="toolTip">
+    <string>Öffnet eine SOMjson Datei</string>
    </property>
   </action>
   <action name="action_desite_Settings">
@@ -769,17 +788,20 @@
   </action>
   <action name="action_desite_export">
    <property name="text">
-    <string>Export Modelcheck</string>
+    <string>Modellprüfung</string>
+   </property>
+   <property name="toolTip">
+    <string>Erstellt eine qa.xml-Datei die in Desite als Prüfdurchlauf eingelesen werden kann. Es wird dabei die Attribuierung von Entitäten geprüft</string>
    </property>
   </action>
   <action name="action_show_list">
    <property name="text">
-    <string>Show List</string>
+    <string>Anzeigen</string>
    </property>
   </action>
   <action name="action_settings">
    <property name="text">
-    <string>Settings</string>
+    <string>Einstellungen</string>
    </property>
   </action>
   <action name="action_export_bs">
@@ -789,12 +811,18 @@
   </action>
   <action name="action_export_bookmarks">
    <property name="text">
-    <string>Export Bookmarks</string>
+    <string>Lesezeichen</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Erstellt ein Script und eine bk.xml-Datei.&lt;/p&gt;&lt;p&gt;Es muss zuerst das Script ausgeführt  werden bevor die bk.xml-Datei importiert wird!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
   <action name="action_show_graphs">
    <property name="text">
-    <string>Show</string>
+    <string>Anzeigen</string>
+   </property>
+   <property name="toolTip">
+    <string>die Aggregationsstruktur in welcher die einzelnen Objekte gespeichert werden können</string>
    </property>
   </action>
   <action name="action_export_boq">
@@ -811,6 +839,9 @@
    <property name="text">
     <string>Mapping</string>
    </property>
+   <property name="toolTip">
+    <string>Revit- &amp; IFC-Mapping</string>
+   </property>
   </action>
   <action name="action_shared_parameter">
    <property name="text">
@@ -824,7 +855,10 @@
   </action>
   <action name="action_mapping_script">
    <property name="text">
-    <string>Create Mapping Script</string>
+    <string>Mapping Script</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Das Mappingscript verschiebt Attribute aus einem ausgewählten PropertySet in die nach SOM richtigen PropertySets&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
   <action name="action_abbreviation_json">
@@ -854,7 +888,15 @@
   </action>
   <action name="action_import_excel">
    <property name="text">
-    <string>Import Excel</string>
+    <string>Excel Importieren</string>
+   </property>
+   <property name="toolTip">
+    <string>Importiert eine SOM-MaKa Excel</string>
+   </property>
+  </action>
+  <action name="action_modelcheck">
+   <property name="text">
+    <string>Modellprüfung</string>
    </property>
   </action>
  </widget>

@@ -4,3 +4,7 @@ jinja2
 openpyxl
 setuptools
 SOMcreator
+fuzzywuzzy
+ifcopenshell
+tqdm
+python-Levenshtein

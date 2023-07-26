@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'PropertySetWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.1
+## Created by: Qt User Interface Compiler version 6.5.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -202,31 +202,31 @@ class Ui_layout_main(object):
 
     def retranslateUi(self, layout_main):
         layout_main.setWindowTitle(QCoreApplication.translate("layout_main", u"Form", None))
-        self.check_box_inherit.setText(QCoreApplication.translate("layout_main", u"inherit", None))
-        self.check_box_seperator.setText(QCoreApplication.translate("layout_main", u"Seperate:", None))
+        self.check_box_inherit.setText(QCoreApplication.translate("layout_main", u"Vererbt", None))
+        self.check_box_seperator.setText(QCoreApplication.translate("layout_main", u"Trennzeichen:", None))
         self.label_name.setText(QCoreApplication.translate("layout_main", u"Name", None))
         self.button_add_line.setText(QCoreApplication.translate("layout_main", u"+", None))
-        self.label_values.setText(QCoreApplication.translate("layout_main", u"Values", None))
+        self.label_values.setText(QCoreApplication.translate("layout_main", u"Werte", None))
         self.lineEdit_name.setPlaceholderText(QCoreApplication.translate("layout_main", u"Name", None))
-        self.combo_type.setItemText(0, QCoreApplication.translate("layout_main", u"List", None))
-        self.combo_type.setItemText(1, QCoreApplication.translate("layout_main", u"Format", None))
-        self.combo_type.setItemText(2, QCoreApplication.translate("layout_main", u"Range", None))
+        self.combo_type.setItemText(0, QCoreApplication.translate("layout_main", u"Liste", None))
+        self.combo_type.setItemText(1, QCoreApplication.translate("layout_main", u"Formatvorgabe", None))
+        self.combo_type.setItemText(2, QCoreApplication.translate("layout_main", u"Wertebereich", None))
 
         self.combo_data_type.setItemText(0, QCoreApplication.translate("layout_main", u"xs:string", None))
         self.combo_data_type.setItemText(1, QCoreApplication.translate("layout_main", u"xs:int", None))
         self.combo_data_type.setItemText(2, QCoreApplication.translate("layout_main", u"xs:bool", None))
         self.combo_data_type.setItemText(3, QCoreApplication.translate("layout_main", u"xs:double", None))
 
-        self.button_add.setText(QCoreApplication.translate("layout_main", u"Add", None))
+        self.button_add.setText(QCoreApplication.translate("layout_main", u"Hinzuf\u00fcgen", None))
         self.label.setText(QCoreApplication.translate("layout_main", u"Beschreibung", None))
         ___qtablewidgetitem = self.table_widget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("layout_main", u"Name", None));
         ___qtablewidgetitem1 = self.table_widget.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("layout_main", u"Data Format", None));
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("layout_main", u"Datentyp", None));
         ___qtablewidgetitem2 = self.table_widget.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("layout_main", u"Format", None));
         ___qtablewidgetitem3 = self.table_widget.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("layout_main", u"Values", None));
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("layout_main", u"Wert", None));
         ___qtablewidgetitem4 = self.table_widget.horizontalHeaderItem(4)
         ___qtablewidgetitem4.setText(QCoreApplication.translate("layout_main", u"Optional", None));
 

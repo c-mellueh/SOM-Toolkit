@@ -21,7 +21,7 @@ class MappingWindow(QMainWindow):
     def __init__(self, main_window: MainWindow) -> None:
         def connect() -> None:
             self.pset_tree.itemDoubleClicked.connect(pset_double_clicked)
-            self.object_tree.itemDoubleClicked.connect(object_double_clicked)
+            self.object_tree.itemDoubleClicked.connect(self.object_double_clicked)
             self.object_tree.itemClicked.connect(self.object_clicked)
             self.object_tree.itemChanged.connect(item_checked)
             self.pset_tree.itemChanged.connect(item_checked)
@@ -152,7 +152,7 @@ class MappingWindow(QMainWindow):
 
         def modify_ifc_mapping():
             item = selected_items[0]
-            object_double_clicked(item)
+            self.object_double_clicked(item)
 
         menu = QMenu()
 
@@ -221,9 +221,8 @@ class MappingWindow(QMainWindow):
         if path:
             revit.export_shared_parameters(path, pset_dict)
 
-
-
-
+    def object_double_clicked(self,item: ObjectTreeItem) -> None:
+        object_widget.object_double_clicked(self.main_window,item.object)
 
 class ObjectTreeItem(QTreeWidgetItem):
     def __init__(self, obj: classes.Object, parent: QTreeWidgetItem | ObjectTreeItem = None) -> None:
@@ -298,6 +297,3 @@ def pset_double_clicked(item: PsetTreeItem | AttributeTreeItem):
     item.update()
 
 
-def object_double_clicked(item: ObjectTreeItem) -> None:
-    popups.object_mapping(item.object)
-    item.update()

@@ -7,10 +7,9 @@ import sys
 import json
 
 from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QCompleter, QDialog, QTableWidget, QInputDialog, QLineEdit,QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QCompleter, QDialog, QTableWidget, QInputDialog, QLineEdit,QFileDialog,QTreeWidgetItem
 from SOMcreator import classes, desite,vestra,card1,filehandling,allplan,constants
 from SOMcreator import excel as som_excel
-
 from . import icons
 from . import logs
 from .filehandling import open_file, save_file, export
@@ -19,7 +18,9 @@ from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import script_widget, property_widget, object_widget
 from .windows import predefined_psets_window, propertyset_window, mapping_window, popups
 from src.som_gui.windows.aggregation_view import aggregation_window
+from .windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups, modelcheck_window
 from . import settings
+from .modelcheck.modelcheck import run_modelcheck
 
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
@@ -79,17 +80,14 @@ class MainWindow(QMainWindow):
         self.graph_window = aggregation_window.GraphWindow(self)
         self.mapping_window = None
         self.project = classes.Project("Project", "")
-
-        self.seperator_status = True
-        self.seperator = ","
-
+        self.running_modelcheck:None|QtCore.QRunnable = None
         # init object and ProertyWidget
         object_widget.init(self)
         property_widget.init(self)
         script_widget.init(self)
         self.setWindowTitle("SOM-Toolkit")
         connect()
-        settings.set_save_path("")
+        settings.reset_save_path()
 
         main_dict = self.project.open("C:/Users/ChristophMellueh/Desktop/SOM MaKa_test.SOMjson")
         from .filehandling.open_file import import_node_pos,fill_ui
@@ -99,8 +97,8 @@ class MainWindow(QMainWindow):
     def import_excel(self):
         open_file.import_excel_clicked(self)
 
-    def object_double_clicked(self,item):
-        object_widget.object_double_clicked(self,item)
+    def object_double_clicked(self,item:object_widget.CustomObjectTreeItem):
+        object_widget.object_double_clicked(self,item.object)
 
     @property
     def object_tree(self) -> object_widget.CustomTree:
@@ -304,7 +302,7 @@ class MainWindow(QMainWindow):
         property_widget.open_pset_window(self, property_set, active_object, window_title)
 
     def add_pset(self):
-        property_widget.add_pset(self)
+        property_widget.create_new_pset(self)
 
     def add_script(self):
         script_widget.add_script(self)
@@ -429,7 +427,7 @@ class MainWindow(QMainWindow):
 
 
     def desite_abbreviation(self) -> None:
-        abbrev = {obj.custom_attribues[constants.ABBREVIATION]: [obj.ident_value, obj.name] for obj in
+        abbrev = {obj.abbreviation: [obj.ident_value, obj.name] for obj in
                   self.project.objects}
         file_text = "JSON (*.json);;"
         path = QFileDialog.getSaveFileName(self, "Abbreviations File", self._export_path, file_text)[0]
