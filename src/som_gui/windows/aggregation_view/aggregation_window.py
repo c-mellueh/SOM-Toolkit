@@ -77,6 +77,9 @@ class AggregationScene(QGraphicsScene):
 
         return QRectF(b1, b2)
 
+    def views(self) -> list[AggregationView]:
+        return super(AggregationScene, self).views()
+
     @property
     def name(self) -> str:
         return self._name
@@ -147,6 +150,9 @@ class AggregationView(QGraphicsView):
         self.mouse_mode = 0  # 0=moveCursor 1=resize 2 = drag
         self.mouse_is_pressed = False
         self.setDragMode(self.DragMode.ScrollHandDrag)
+
+    def window(self) -> AggregationWindow:
+        return super(AggregationView, self).window()
 
     def items_under_mouse(self) -> set[QGraphicsItem]:
         return set(item for item in self.scene().items() if item.isUnderMouse())
@@ -348,6 +354,9 @@ class AggregationWindow(QWidget):
         self.widget.button_reload.clicked.connect(self.reset_filter)
         self.widget.button_delete.clicked.connect(self.delete_active_scene)
 
+    def aggregation_dict(self) -> dict[classes.Aggregation,NodeProxy]:
+        return {node.aggregation:node for node in self.nodes}
+
     def delete_active_scene(self):
         scene = self.active_scene
         name = scene.name
@@ -388,12 +397,22 @@ class AggregationWindow(QWidget):
         return NodeProxy._registry
 
     def create_missing_scenes(self):
+        """the scene_dict is in the best case written in the SOMjson and allows to save which Nodes are in a Scene
+        This allows for saving multiple rootnodes in one scene.
+        If no scenes are defined there will be created a scene for each rootnode"""
+
         scene_dict = self.scene_dict
         node_dict:dict[str,NodeProxy] = {node.uuid: node for node in self.nodes}
         for name, uuid_dict in scene_dict.items():
+            scene_nodes = set()
+
+            scene = self.create_new_scene(name)
             uuid_nodes = uuid_dict.get(constants.NODES)
             for uuid in uuid_nodes:
-                node_dict.pop(uuid)
+                node = node_dict.pop(uuid)
+                scene_nodes.add(node)
+                scene.add_node(node)
+            scene.fill_connections()
 
         remaining_nodes: list[NodeProxy] = node_dict.values()
         root_nodes = set(node for node in remaining_nodes if node.aggregation.is_root)
@@ -402,12 +421,21 @@ class AggregationWindow(QWidget):
             scene.add_node(node, recursive=True)
             scene.fill_connections()
 
+    def create_connections_by_top_node(self,node:NodeProxy,scene:AggregationScene):
+        aggregation = node.aggregation
+        for child_aggregation in aggregation.children:
+            child_node = self.aggregation_dict().get(child_aggregation)
+            scene.add_connection(node,child_node)
+            self.create_connections_by_top_node(child_node,scene)
+
     def show(self) -> None:
         if not (self.widget.combo_box.count() == 0 and len(self.nodes) > 0):
             return super(AggregationWindow, self).show()
 
         self.create_missing_scenes()
         super(AggregationWindow, self).show()
+        if self.active_scene is None:
+            self.create_new_scene("UNDEF")
         self.fit_view()
 
     def create_new_scene(self, name="UNDEF") -> AggregationScene:

@@ -12,7 +12,7 @@ from SOMcreator import classes
 
 if TYPE_CHECKING:
     from src.som_gui.main_window import MainWindow
-    from .aggregation_window import AggregationScene
+    from .aggregation_window import AggregationScene,AggregationWindow
 
 class Header(QGraphicsRectItem):
     def __init__(self, node: NodeProxy, text):
@@ -83,6 +83,13 @@ class NodeProxy(QGraphicsProxyWidget):
         geometry = self.geometry()
         geometry.setHeight(150)
         self.setGeometry(geometry)
+
+    def aggregation_dict(self) -> dict[classes.Aggregation,NodeProxy]:
+        return self.aggregation_window().aggregation_dict()
+
+    def aggregation_window(self) -> AggregationWindow:
+        view =  self.scene().views()[0]
+        return view.window()
 
     def scene(self) -> AggregationScene:
         return super(NodeProxy, self).scene()
