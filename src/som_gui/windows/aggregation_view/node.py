@@ -1,12 +1,15 @@
 from __future__ import annotations  # make own class referencable
-
+from typing import TYPE_CHECKING
 from PySide6.QtCore import Qt, QRectF, QPointF, QPoint, QRect
-from PySide6.QtGui import QColor, QPen, QPainter, QCursor
+from PySide6.QtGui import QColor, QPen, QPainter, QCursor,QPainterPath
 from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout, \
-    QGraphicsProxyWidget, QGraphicsSceneMouseEvent, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
+    QGraphicsProxyWidget, QGraphicsSceneMouseEvent,QGraphicsPathItem, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
     QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsTextItem,QGraphicsView
 from ...data import constants
 from SOMcreator import classes
+
+if TYPE_CHECKING:
+    from src.som_gui.main_window import MainWindow
 
 class Header(QGraphicsRectItem):
     def __init__(self, node: NodeProxy, text):
@@ -60,16 +63,52 @@ class NodeProxy(QGraphicsProxyWidget):
 
         super(NodeProxy, self).__init__()
         self.aggregation = aggregation
-        self._title = f"{self.aggregation.name} ({self.aggregation.object.ident_value})"
+        self._title = self.aggregation.id_group()
 
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
 
         self.setWidget(NodeWidget())
         self.widget().tree_widget.fill_tree()
 
+        self.top_connections :set[Connection] = set()
+        self.bottom_connections :set[Connection] = set()
         self.header = Header(self, self.title)
         self.frame = Frame(self)
         self.setPos(pos)
+        geometry = self.geometry()
+        geometry.setHeight(150)
+        self.setGeometry(geometry)
+
+
+    def moveBy(self, dx: float, dy: float) -> None:
+        super(NodeProxy, self).moveBy(dx,dy)
+        self.update_connections()
+
+    def update_connections(self):
+        for connection in self.bottom_connections:
+            connection.update_line()
+        for connection in self.top_connections:
+            connection.update_line()
+
+    def delete(self):
+        for connection in list(self.bottom_connections):
+            connection.delete()
+        for connection in list(self.top_connections):
+            connection.delete()
+        self.deleteLater()
+
+    def bottom_anchor_point(self) -> QPointF:
+        """Point where Connection will end"""
+        scene_bounding_rect = self.sceneBoundingRect()
+        x = scene_bounding_rect.center().x()
+        y = scene_bounding_rect.y()+scene_bounding_rect.height()
+        return QPointF(x,y)
+
+    def top_anchor_point(self) -> QPointF:
+        scene_bounding_rect = self.sceneBoundingRect()
+        x = scene_bounding_rect.center().x()
+        y = scene_bounding_rect.y()
+        return QPointF(x, y)
 
     @property
     def name(self) -> str:
@@ -115,6 +154,12 @@ class NodeProxy(QGraphicsProxyWidget):
             self.header.resize()
         except AttributeError:
             pass
+
+        try:
+            self.update_connections()
+        except AttributeError:
+            pass
+
 
     def resize_by_cursor(self, old_pos, new_pos, orientation):
         def resize_geometry(dx, dy):
@@ -172,16 +217,33 @@ class CustomPsetTree(QTreeWidget):
         self.setColumnCount(1)
         self.setHeaderLabels(["Name"])
         self.node_widget = node_widget
+        self.itemDoubleClicked.connect(self.item_clicked)
 
     @property
     def object(self):
         return self.node_widget.object
+
+    @property
+    def main_window(self) -> MainWindow:
+        return self.node_widget.graphicsProxyWidget().scene().views()[0].window().main_window
 
     def fill_tree(self) -> None:
         for property_set in self.object.property_sets:
             item = CustomPSetTreeItem(self, property_set)
             for attribute in property_set.attributes:
                 CustomAttribTreeItem(item, attribute)
+
+    def item_clicked(self,item:CustomPSetTreeItem|CustomAttribTreeItem):
+        main_window = self.main_window
+
+        if isinstance(item, CustomPSetTreeItem):
+            property_set = item.property_set
+            main_window.open_pset_window(property_set, self.object, None)
+
+        if isinstance(item, CustomAttribTreeItem):
+            property_set = item.attribute.property_set
+            main_window.open_pset_window(property_set, self.object, None)
+            main_window.pset_window.fill_with_attribute(item.attribute)
 
 class CustomPSetTreeItem(QTreeWidgetItem):
     def __init__(self, tree: QTreeWidget, pset: classes.PropertySet) -> None:
@@ -230,3 +292,69 @@ class NodeWidget(QWidget):
 
     def graphicsProxyWidget(self) -> NodeProxy:
         return super(NodeWidget, self).graphicsProxyWidget()
+
+class Connection(QGraphicsPathItem):
+
+    def __init__(self, bottom_node: NodeProxy, top_node: NodeProxy) -> None:
+        super(Connection, self).__init__()
+        self.bottom_node: NodeProxy = bottom_node
+        self.top_node: NodeProxy = top_node
+
+        self.setZValue(0)
+        self.top_node.scene().addItem(self)
+        bottom_node.top_connections.add(self)
+        top_node.bottom_connections.add(self)
+        self.path = QPainterPath()
+        self.update_line()
+        self.setPos(0.0,0.0)
+        self.setAcceptHoverEvents(True)
+
+    def __str__(self) -> str:
+        return f"Connection [{self.bottom_node.name}->{self.top_node.name}]"
+
+    def delete(self):
+        self.top_node.bottom_connections.remove(self)
+        self.bottom_node.top_connections.remove(self)
+        self.scene().removeItem(self)
+
+    def update_line(self) -> None:
+        self.path = QPainterPath()
+        self.path.moveTo(self.points[0])
+        for point in self.points[1:]:
+            self.path.lineTo(point)
+        self.setPath(self.path)
+        self.setPos(0.0, 0.0)
+
+    @property
+    def points(self) -> list[QPointF]:
+        def aggregation_points():
+            points[0] = pb
+
+            points[1].setX(pb.x())
+            points[2].setX(pt.x())
+            points[3].setX(pt.x())
+            points[4].setX(pt.x() - constants.ARROW_WIDTH / 2)
+            points[5].setX(pt.x())
+            points[6].setX(pt.x() + constants.ARROW_WIDTH / 2)
+            points[7].setX(pt.x())
+
+            points[1].setY(mid_y - constants.ARROW_WIDTH / 2)
+            points[2].setY(points[1].y())
+            points[3].setY(pt.y() + constants.ARROW_HEIGHT)
+            points[4].setY(pt.y() + constants.ARROW_HEIGHT / 2)
+            points[5].setY(pt.y())
+            points[6].setY(pt.y() + constants.ARROW_HEIGHT / 2)
+            points[7].setY(pt.y() + constants.ARROW_HEIGHT)
+
+        points = [QPointF() for _ in range(8)]
+
+        pb = self.bottom_node.top_anchor_point()  # top center of Bottom Node
+        pt = self.top_node.bottom_anchor_point()
+        mid_y = (pt.y() + constants.BOX_BOTTOM_DISTANCE)
+
+        aggregation_points()
+        return points
+
+    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
+        super(Connection, self).hoverEnterEvent(event)
+

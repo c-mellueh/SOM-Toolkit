@@ -10,8 +10,10 @@ from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsV
 from SOMcreator import classes
 
 from src.som_gui.qt_designs import ui_GraphWindow
-from .node import NodeProxy, Header, Frame
+from .node import NodeProxy, Header, Frame, Connection
 from ...data import constants
+if TYPE_CHECKING:
+    from src.som_gui.main_window import MainWindow
 
 LEFT = 1
 RIGHT = 2
@@ -32,8 +34,7 @@ CURSOR_DICT = {
     10: Qt.CursorShape.ClosedHandCursor
 }
 
-if TYPE_CHECKING:
-    from src.som_gui.main_window import MainWindow
+
 
 
 class AggregationScene(QGraphicsScene):
@@ -87,7 +88,8 @@ class AggregationScene(QGraphicsScene):
         self.aggregation_window.scene_dict.pop(old_name)
         self._name = new_name
 
-    def get_nodes(self) -> set[NodeProxy]:
+    @property
+    def nodes(self) -> set[NodeProxy]:
         return set(node for node in self.items() if isinstance(node, NodeProxy))
 
     def add_node(self, node_proxy: NodeProxy, recursive=False):
@@ -106,10 +108,28 @@ class AggregationScene(QGraphicsScene):
     def remove_node(self, node_proxy: NodeProxy):
         self.removeItem(node_proxy)
         self.aggregation_window.scene_dict[self.name][constants.NODES].pop(node_proxy.aggregation.uuid)
+        node_proxy.delete()
 
     def max_z_value(self):
         return max((item.zValue() for item in self.items()), default=0)
 
+    def fill_connections(self):
+        node_dict = {node.aggregation:node for node in self.nodes}
+        for node in self.nodes:
+            aggregation = node.aggregation
+            sub_elements = aggregation.children
+            top_aggregation = aggregation.parent or None
+
+            for sub_aggregation in sub_elements:
+                sub_node = node_dict[sub_aggregation]
+                self.add_connection(node,sub_node)
+
+            if top_aggregation is not None:
+                top_node = node_dict[top_aggregation]
+                self.add_connection(top_node,node)
+
+    def add_connection(self,top_node:NodeProxy,bottom_node:NodeProxy):
+        con = Connection(bottom_node,top_node)
 
 class AggregationView(QGraphicsView):
     def __init__(self) -> None:
@@ -163,7 +183,7 @@ class AggregationView(QGraphicsView):
 
     def get_focus_and_cursor(self, pos: QPointF):
         """return cursor style and Node that will be in focus"""
-        frames = [node.frame for node in self.scene().get_nodes() if self.cursor_on_border(pos, node) != 0]
+        frames = [node.frame for node in self.scene().nodes if self.cursor_on_border(pos, node) != 0]
         headers = [item for item in self.items_under_mouse() if isinstance(item, Header)]
 
         frames.sort(key=lambda x: x.zValue())
@@ -343,6 +363,7 @@ class GraphWindow(QWidget):
         for node in sorted(root_nodes, key=lambda x: x.name):
             scene = self.create_new_scene(node.aggregation.name)
             scene.add_node(node, recursive=True)
+            scene.fill_connections()
 
     def show(self) -> None:
         if not (self.widget.combo_box.count() == 0 and len(self.nodes) > 0):
