@@ -275,12 +275,18 @@ class CustomAttribTreeItem(QTreeWidgetItem):
 class NodeWidget(QWidget):
     def __init__(self):
         super(NodeWidget, self).__init__()
+
         self.setLayout(QVBoxLayout())
-        self.button = QPushButton("PressMe")
+        self.button = QPushButton("add Subelement")
         self.layout().addWidget(self.button)
         self.button.hide()
         self.tree_widget = CustomPsetTree(self)
         self.layout().insertWidget(0, self.tree_widget)
+
+        self.button.clicked.connect(self.button_clicked)
+
+    def button_clicked(self):
+        pass
 
     @property
     def aggregation(self):
