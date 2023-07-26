@@ -1,10 +1,15 @@
-from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QGridLayout, QListWidgetItem, QCompleter
+from __future__ import annotations
+from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QGridLayout, QListWidgetItem, QCompleter,QTableWidgetItem
+from PySide6.QtCore import Qt
+from typing import TYPE_CHECKING
 from SOMcreator import classes
-from SOMcreator.Template import IFC_4_1
-
 from .. import icons
-from .. qt_designs import ui_delete_request, ui_groupReq, ui_propertyset_mapping, ui_attribute_mapping
+from .. qt_designs import ui_delete_request, ui_groupReq, ui_search, ui_attribute_mapping
+from ..icons import get_icon
+from fuzzywuzzy import fuzz
 
+if TYPE_CHECKING:
+    from ..main_window import MainWindow
 
 def default_message(text):
     icon = icons.get_icon()
@@ -210,3 +215,83 @@ def req_worksheet_name(main_window,worksheet_names:list[str]):
         index = worksheet_names.index(test)
     text, ok = QInputDialog.getItem(main_window,"Worksheet Name","Name of Mapping Worksheet",worksheet_names,index)
     return text,ok
+
+class SearchItem(QTableWidgetItem):
+    def __init__(self, object: classes.Object, text: str | None):
+        super(SearchItem, self).__init__()
+        self.object = object
+        if text is None:
+            text = ""
+        self.setFlags(self.flags().ItemIsSelectable | self.flags().ItemIsEnabled)
+        self.setText(text)
+
+class SearchWindow(QDialog):
+    def __init__(self, main_window: MainWindow, ):
+        super(SearchWindow, self).__init__()
+        #
+        def connect_items():
+            self.widget.lineEdit.textChanged.connect(self.update_table)
+            self.widget.tableWidget.itemDoubleClicked.connect(self.item_clicked)
+        #
+        self.widget = ui_search.Ui_Dialog()
+        self.widget.setupUi(self)
+        self.setWindowTitle("Search")
+        self.setWindowIcon(get_icon())
+        self.main_window = main_window
+        self.main_window.search_ui = self
+        self.project: classes.Project = self.main_window.project
+        self.widget.tableWidget.verticalHeader().setVisible(False)
+        self.row_dict = dict()
+        self.item_dict: dict[classes.Object, list[SearchItem]] = {
+            obj: [SearchItem(obj, obj.name), SearchItem(obj, obj.ident_value),SearchItem(obj,obj.abbreviation), SearchItem(obj, "100")] for obj in
+            self.project.objects}
+
+        self.MATCH_INDEX = 3
+        self.fill_table()
+        table_header = self.widget.tableWidget.horizontalHeader()
+        table_header.setStretchLastSection(True)
+        table_header.setSectionResizeMode(0, table_header.ResizeMode.ResizeToContents)
+        self.widget.tableWidget.setColumnHidden(self.MATCH_INDEX, True)
+        self.widget.tableWidget.sortByColumn(self.MATCH_INDEX, Qt.SortOrder.AscendingOrder)
+        self.widget.tableWidget.setSortingEnabled(True)
+        self.objects = set(obj for obj in self.project.objects)
+        connect_items()
+        self.selected_object:classes.Object|None = None
+
+    def get_row(self, obj):
+        return self.item_dict[obj][0].row()
+
+    def fill_table(self):
+
+        table = self.widget.tableWidget
+        table.setRowCount(len(self.item_dict))
+        for row, (obj, items) in enumerate(self.item_dict.items()):
+            for column, item in enumerate(items):
+                table.setItem(row, column, item)
+            self.row_dict[obj] = row
+
+    def item_clicked(self, table_item: SearchItem):
+        obj = table_item.object
+        self.selected_object = obj
+        self.accept()
+
+    def update_table(self):
+        table = self.widget.tableWidget
+        text = self.widget.lineEdit.text().lower()
+        possible_objects = set()
+        for obj in self.objects:
+            value1 = fuzz.partial_ratio(text.lower(), obj.name.lower())
+            value2 = fuzz.partial_ratio(text.lower(), str(obj.ident_value))
+            value3 = fuzz.partial_ratio(text.lower(),obj.abbreviation.lower())
+            value = max([value1,value2,value3])
+            row = self.get_row(obj)
+            table.item(row, self.MATCH_INDEX).setText(str(value))
+            if value > 75:
+                possible_objects.add(obj)
+
+        forbidden_objects = self.objects.difference(possible_objects)
+        for obj in possible_objects:
+            table.showRow(self.get_row(obj))
+        for obj in forbidden_objects:
+            table.hideRow(self.get_row(obj))
+
