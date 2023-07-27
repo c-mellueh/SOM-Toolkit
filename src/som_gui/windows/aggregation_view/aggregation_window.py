@@ -12,6 +12,7 @@ from src.som_gui.qt_designs import ui_GraphWindow
 from .node import NodeProxy, Header, Frame, Connection
 from ...data import constants
 from ...windows import popups
+from ...icons import get_icon
 if TYPE_CHECKING:
     from src.som_gui.main_window import MainWindow
 
@@ -384,6 +385,8 @@ class AggregationWindow(QWidget):
         self.widget.graphicsView.deleteLater()
         self.scenes: set[AggregationScene] = set()
         self.scene_dict:dict[str,dict[str,list]] = {}  # used for import and export
+
+        self.setWindowIcon(get_icon())
 
         self._active_scene = None
         self.widget.combo_box.currentTextChanged.connect(self.combo_box_changed)
