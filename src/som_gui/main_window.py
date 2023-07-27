@@ -89,11 +89,6 @@ class MainWindow(QMainWindow):
         connect()
         settings.reset_save_path()
 
-        main_dict = self.project.open("C:/Users/ChristophMellueh/Desktop/test.SOMjson")
-        from .filehandling.open_file import import_node_pos,fill_ui
-        import_node_pos(main_dict, self.graph_window)
-        fill_ui(self)
-
     def import_excel(self):
         open_file.import_excel_clicked(self)
 

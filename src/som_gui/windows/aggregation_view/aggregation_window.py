@@ -446,9 +446,10 @@ class AggregationWindow(QWidget):
             scene = self.create_new_scene(name)
             uuid_nodes = uuid_dict.get(constants.NODES)
             for uuid in uuid_nodes:
-                node = node_dict.pop(uuid)
-                scene_nodes.add(node)
-                scene.add_node(node)
+                if uuid in node_dict:
+                    node = node_dict.pop(uuid)
+                    scene_nodes.add(node)
+                    scene.add_node(node)
             scene.fill_connections()
 
         remaining_nodes: list[NodeProxy] = node_dict.values()
