@@ -352,9 +352,6 @@ class Connection(QGraphicsPathItem):
         self.path = QPainterPath()
         self.update_line()
         self.setAcceptHoverEvents(False)
-        pen = self.pen()
-        pen.setColor("red")
-        self.setPen(pen)
 
     def __str__(self) -> str:
         return f"Connection [{self.bottom_node.name}->{self.top_node.name}]"
@@ -372,7 +369,6 @@ class Connection(QGraphicsPathItem):
         self.setPath(self.path)
         self.setPos(0.0, 0.0)
         self.setZValue(-100)
-        print(self.flags())
 
     @property
     def points(self) -> list[QPointF]:

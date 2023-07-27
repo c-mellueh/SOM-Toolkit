@@ -258,7 +258,6 @@ class AggregationView(QGraphicsView):
                 return
             obj = search.selected_object
             aggregation = classes.Aggregation(obj)
-            print(aggregation.uuid)
             node = self.window().create_node(aggregation,node_pos,self.scene())
 
 
@@ -277,7 +276,7 @@ class AggregationView(QGraphicsView):
         self.action_add_node = self.right_click_menu .addAction("Node hinzufügen")
         self.action_add_node.triggered.connect(rc_add_node)
         global_pos = self.viewport().mapToGlobal(pos)
-        print(f"output: {self.right_click_menu.exec(global_pos)}")
+        self.right_click_menu.exec(global_pos)
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self.mouse_is_pressed = False
@@ -389,10 +388,14 @@ class AggregationWindow(QWidget):
         self.setWindowIcon(get_icon())
 
         self._active_scene = None
-        self.widget.combo_box.currentTextChanged.connect(self.combo_box_changed)
+        self.widget.combo_box.currentIndexChanged.connect(self.combo_box_index_changed)
         self.widget.button_filter.clicked.connect(self.filter_object)
         self.widget.button_reload.clicked.connect(self.reset_filter)
         self.widget.button_delete.clicked.connect(self.delete_active_scene)
+        self.widget.combo_box.setEditable(True)
+        self.widget.combo_box.lineEdit().textEdited.connect(self.combo_box_edited)
+
+
 
     def aggregation_dict(self) -> dict[classes.Aggregation,NodeProxy]:
         return {node.aggregation:node for node in self.nodes}
@@ -492,10 +495,18 @@ class AggregationWindow(QWidget):
             scene.add_node(node)
         return node
 
-    def combo_box_changed(self):
-        scene = {scene.name: scene for scene in self.scenes}.get(self.widget.combo_box.currentText())
+    def combo_box_index_changed(self):
+        text = self.widget.combo_box.currentText()
+        scene = {scene.name: scene for scene in self.scenes}.get(text)
         self.active_scene = scene
         self.fit_view()
+        self.widget.combo_box.model().sort(0)
+
+    def combo_box_edited(self, val):
+        if self.active_scene is not None:
+            self.active_scene.name = val
+            index = self.widget.combo_box.currentIndex()
+            self.widget.combo_box.setItemText(index,val)
 
     def fit_view(self):
         bounding_rect = self.active_scene.get_items_bounding_rect()
