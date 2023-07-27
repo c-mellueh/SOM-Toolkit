@@ -152,6 +152,7 @@ class AggregationView(QGraphicsView):
         self.right_click_menu:QMenu|None = None
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.right_click)
+
     def window(self) -> AggregationWindow:
         return super(AggregationView, self).window()
 
@@ -241,10 +242,11 @@ class AggregationView(QGraphicsView):
         elif self.resize_orientation == 10:
             self.mouse_mode = 2
             self.setCursor(Qt.CursorShape.ClosedHandCursor)
-
+            self.focus_node.setZValue(self.scene().max_z_value()+1)
         else:
             self.setCursor(CURSOR_DICT[self.resize_orientation])
             self.mouse_mode = 1
+            self.focus_node.setZValue(self.scene().max_z_value() + 1)
 
         super(AggregationView, self).mousePressEvent(event)
 

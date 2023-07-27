@@ -103,6 +103,10 @@ class NodeProxy(QGraphicsProxyWidget):
             connection.update_line()
         for connection in self.top_connections:
             connection.update_line()
+        self.update(
+        )
+    def child_nodes(self) -> set[NodeProxy]:
+        return set(self.aggregation_dict().get(aggreg) for aggreg in self.aggregation.children)
 
     def delete(self):
         for connection in list(self.bottom_connections):
@@ -337,6 +341,7 @@ class Connection(QGraphicsPathItem):
 
     def __init__(self, bottom_node: NodeProxy, top_node: NodeProxy) -> None:
         super(Connection, self).__init__()
+
         self.bottom_node: NodeProxy = bottom_node
         self.top_node: NodeProxy = top_node
 
@@ -346,8 +351,10 @@ class Connection(QGraphicsPathItem):
         top_node.bottom_connections.add(self)
         self.path = QPainterPath()
         self.update_line()
-        self.setPos(0.0,0.0)
-        self.setAcceptHoverEvents(True)
+        self.setAcceptHoverEvents(False)
+        pen = self.pen()
+        pen.setColor("red")
+        self.setPen(pen)
 
     def __str__(self) -> str:
         return f"Connection [{self.bottom_node.name}->{self.top_node.name}]"
@@ -364,6 +371,8 @@ class Connection(QGraphicsPathItem):
             self.path.lineTo(point)
         self.setPath(self.path)
         self.setPos(0.0, 0.0)
+        self.setZValue(-100)
+        print(self.flags())
 
     @property
     def points(self) -> list[QPointF]:
@@ -394,7 +403,4 @@ class Connection(QGraphicsPathItem):
 
         aggregation_points()
         return points
-
-    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
-        super(Connection, self).hoverEnterEvent(event)
 
