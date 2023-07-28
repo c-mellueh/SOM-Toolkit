@@ -253,13 +253,19 @@ class AggregationView(QGraphicsView):
 
     def right_click(self,pos:QPointF):
         def rc_add_node():
-            search = popups.SearchWindow(self.window().main_window)
+            search = popups.ObjectSearchWindow(self.window().main_window)
             if not search.exec():
                 return
             obj = search.selected_object
             aggregation = classes.Aggregation(obj)
             node = self.window().create_node(aggregation,node_pos,self.scene())
 
+        def rc_set_info():
+            search = popups.AttributeSearchWindow(self.window().main_window)
+            if search.exec():
+                pset_name = search.selected_pset_name
+                attribute_name = search.selected_attribute_name
+                self.window().set_info(pset_name,attribute_name)
 
         def rc_delete_node():
             self.scene().remove_node(focus_node)
@@ -273,8 +279,17 @@ class AggregationView(QGraphicsView):
             self.action_add_node = self.right_click_menu.addAction("Node löschen")
             self.action_add_node.triggered.connect(rc_delete_node)
 
+        def rc_reset_info():
+            self.window().reset_info()
+
         self.action_add_node = self.right_click_menu .addAction("Node hinzufügen")
         self.action_add_node.triggered.connect(rc_add_node)
+
+        self.action_modify_info = self.right_click_menu.addAction("Info Anpassen")
+        self.action_modify_info.triggered.connect(rc_set_info)
+
+        self.action_reset_info = self.right_click_menu.addAction("Info Zurücksetzen")
+        self.action_reset_info.triggered.connect(rc_reset_info)
         global_pos = self.viewport().mapToGlobal(pos)
         self.right_click_menu.exec(global_pos)
 
@@ -399,6 +414,14 @@ class AggregationWindow(QWidget):
         self.widget.button_filter.setIcon(get_search_icon())
         self.is_in_filter_mode = False
 
+    def set_info(self,pset_name,attribute_name):
+        for node in self.nodes:
+            node.set_title_by_attribute(pset_name,attribute_name)
+
+    def reset_info(self):
+        for node in self.nodes:
+            node.reset_title()
+
     def aggregation_dict(self) -> dict[classes.Aggregation,NodeProxy]:
         return {node.aggregation:node for node in self.nodes}
 
@@ -426,7 +449,7 @@ class AggregationWindow(QWidget):
             return
 
 
-        search = popups.SearchWindow(self.main_window)
+        search = popups.ObjectSearchWindow(self.main_window)
         if not search.exec():
             return
 
@@ -460,7 +483,7 @@ class AggregationWindow(QWidget):
 
         scene_dict = self.scene_dict
         node_dict:dict[str,NodeProxy] = {node.uuid: node for node in self.nodes}
-        for name, uuid_dict in scene_dict.items():
+        for name, uuid_dict in tuple(scene_dict.items()):
             scene_nodes = set()
 
             scene = self.create_new_scene(name)

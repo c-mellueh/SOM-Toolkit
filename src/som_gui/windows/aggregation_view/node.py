@@ -18,11 +18,20 @@ class Header(QGraphicsRectItem):
     def __init__(self, node: NodeProxy, text):
         super(Header, self).__init__()
         self.node = node
-        self.title = text
+        self._title = text
         self.setParentItem(self.node)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, False)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
         self.resize()
+
+    @property
+    def title(self) -> str:
+        return self._title
+
+    @title.setter
+    def title(self,value) -> None:
+        self._title = value
+        self.update()
 
     def resize(self):
         line_width = self.pen().width()  # if ignore Linewidth: box of Node and Header won't match
@@ -68,7 +77,8 @@ class NodeProxy(QGraphicsProxyWidget):
         super(NodeProxy, self).__init__()
         self._registry.add(self)
         self.aggregation:classes.Aggregation = aggregation
-        self._title = f"{self.aggregation.name}\nidentitaet: {self.aggregation.id_group()}"
+        self._title = str()
+        self.reset_title()
 
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
 
@@ -83,6 +93,27 @@ class NodeProxy(QGraphicsProxyWidget):
         geometry = self.geometry()
         geometry.setHeight(150)
         self.setGeometry(geometry)
+
+    def reset_title(self):
+        self.title = f"{self.aggregation.name}\nidentitaet: {self.aggregation.id_group()}"
+
+    def set_title_by_attribute(self,pset_name:str,attribute_name:str):
+        undef = f"{self.aggregation.name}\n{attribute_name}: undefined"
+        obj = self.aggregation.object
+        pset = obj.get_property_set_by_name(pset_name)
+        if pset is None:
+            self.title = undef
+            return
+        attribute = pset.get_attribute_by_name(attribute_name)
+        if attribute is None:
+            self.title = undef
+            return
+
+        if len(attribute.value) == 0:
+            self.title = undef
+            return
+
+        self.title =  f"{self.aggregation.name}\n{attribute_name}: {attribute.value[0]}"
 
     def aggregation_dict(self) -> dict[classes.Aggregation,NodeProxy]:
         return self.aggregation_window().aggregation_dict()
@@ -142,7 +173,10 @@ class NodeProxy(QGraphicsProxyWidget):
     @title.setter
     def title(self,value):
         self._title = value
-        self.header.title = value
+        try:
+            self.header.title = value
+        except AttributeError:
+            pass
 
     @property
     def uuid(self) -> str:
@@ -308,7 +342,7 @@ class NodeWidget(QWidget):
 
     def button_clicked(self):
         main_window = self.graphicsProxyWidget().scene().views()[0].window().main_window
-        search = popups.SearchWindow(main_window)
+        search = popups.ObjectSearchWindow(main_window)
 
         if not search.exec():
             return
