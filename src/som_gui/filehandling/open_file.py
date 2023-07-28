@@ -71,7 +71,8 @@ def request_delete_or_merge(main_window: MainWindow) -> None:
 def fill_ui(main_window: MainWindow) -> None:
     main_window.clear_object_input()
     main_window.fill_tree()
-
+    main_window.graph_window.is_initial_opening = True
+    main_window.graph_window.hide()
 
 def get_path(main_window: MainWindow, title: str, file_text: str) -> str:
     cur_path = settings.get_open_path()

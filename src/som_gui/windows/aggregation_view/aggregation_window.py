@@ -12,7 +12,7 @@ from src.som_gui.qt_designs import ui_GraphWindow
 from .node import NodeProxy, Header, Frame, Connection
 from ...data import constants
 from ...windows import popups
-from ...icons import get_icon
+from ...icons import get_icon,get_reload_icon,get_search_icon
 if TYPE_CHECKING:
     from src.som_gui.main_window import MainWindow
 
@@ -380,7 +380,7 @@ class AggregationWindow(QWidget):
 
         self.view = AggregationView()
         self.widget.gridLayout.removeWidget(self.widget.graphicsView)
-        self.widget.gridLayout.addWidget(self.view, 1, 0, 1, 4)
+        self.widget.gridLayout.addWidget(self.view, 1, 0, 1, 2)
         self.widget.graphicsView.deleteLater()
         self.scenes: set[AggregationScene] = set()
         self.scene_dict:dict[str,dict[str,list]] = {}  # used for import and export
@@ -388,14 +388,16 @@ class AggregationWindow(QWidget):
         self.setWindowIcon(get_icon())
 
         self._active_scene = None
+        self.is_initial_opening = True
+
         self.widget.combo_box.currentIndexChanged.connect(self.combo_box_index_changed)
         self.widget.button_filter.clicked.connect(self.filter_object)
-        self.widget.button_reload.clicked.connect(self.reset_filter)
         self.widget.button_delete.clicked.connect(self.delete_active_scene)
+        self.widget.button_add.clicked.connect(self.add_scene_button_pressed)
         self.widget.combo_box.setEditable(True)
         self.widget.combo_box.lineEdit().textEdited.connect(self.combo_box_edited)
-
-
+        self.widget.button_filter.setIcon(get_search_icon())
+        self.is_in_filter_mode = False
 
     def aggregation_dict(self) -> dict[classes.Aggregation,NodeProxy]:
         return {node.aggregation:node for node in self.nodes}
@@ -410,12 +412,20 @@ class AggregationWindow(QWidget):
         self.widget.combo_box.removeItem(index)
 
     def reset_filter(self):
+        self.widget.button_filter.setIcon(get_search_icon())
+        self.is_in_filter_mode = False
+        self.widget.button_filter.setToolTip("Diagramme Filtern")
         for scene in self.scenes:
             index = self.widget.combo_box.findText(scene.name)
             if index == -1:
                 self.add_scene_to_combobox(scene)
 
     def filter_object(self):
+        if self.is_in_filter_mode:
+            self.reset_filter()
+            return
+
+
         search = popups.SearchWindow(self.main_window)
         if not search.exec():
             return
@@ -427,11 +437,15 @@ class AggregationWindow(QWidget):
             if not obj in objects:
                 self.remove_scene_from_combobox(scene)
 
+        self.is_in_filter_mode = True
+        self.widget.button_filter.setIcon(get_reload_icon())
+        self.widget.button_filter.setToolTip("Filter zurücksetzen")
+
     def remove_scene_from_combobox(self, scene:AggregationScene):
         index = self.widget.combo_box.findText(scene.name)
         self.widget.combo_box.removeItem(index)
 
-    def add_scene_to_combobox(self, scene):
+    def add_scene_to_combobox(self, scene:AggregationScene):
         self.widget.combo_box.addItem(scene.name)
         self.widget.combo_box.model().sort(0)
 
@@ -473,16 +487,39 @@ class AggregationWindow(QWidget):
             self.create_connections_by_top_node(child_node,scene)
 
     def show(self) -> None:
-        if not (self.widget.combo_box.count() == 0 and len(self.nodes) > 0):
-            return super(AggregationWindow, self).show()
+        if not self.is_initial_opening:
+            super(AggregationWindow, self).show()
+            return
 
-        self.create_missing_scenes()
+        if len(self.nodes) == 0:
+            self.active_scene = self.create_new_scene("UNDEF")
+        else:
+            self.create_missing_scenes()
+
         super(AggregationWindow, self).show()
-        if self.active_scene is None:
-            self.create_new_scene("UNDEF")
         self.fit_view()
+        self.is_initial_opening = False
+
+    def add_scene_button_pressed(self):
+        scene = self.create_new_scene("UNDEF")
+        self.select_scene(scene)
+
+    def select_scene(self,scene:AggregationScene):
+        index = self.widget.combo_box.findText(scene.name)
+        self.widget.combo_box.setCurrentIndex(index)
 
     def create_new_scene(self, name="UNDEF") -> AggregationScene:
+        def loop_name(index:int):
+            new_name = f"{name}_{str(index).zfill(2)}"
+            if new_name in names:
+                index+=1
+                return loop_name(index)
+            return new_name
+
+        names = [scene.name for scene in self.scenes]
+        if name in names:
+            name = loop_name(1)
+
         scene = AggregationScene(self, name)
         self.scenes.add(scene)
         self.scene_dict[scene.name] = {constants.NODES: list()}
@@ -522,6 +559,9 @@ class AggregationWindow(QWidget):
 
     @property
     def active_scene(self) -> AggregationScene:
+        if self._active_scene is None:
+            if self.is_in_filter_mode:
+                self.reset_filter()
         return self._active_scene
 
     @active_scene.setter
