@@ -36,15 +36,13 @@ CURSOR_DICT = {
 }
 
 
-
-
 class AggregationScene(QGraphicsScene):
-    def __init__(self, aggregation_window: AggregationWindow, name="UNDEF"):
+    def __init__(self, aggregation_window: AggregationWindow, name:str):
         super(AggregationScene, self).__init__()
         self.node_pos = QPointF(50, 50)
         self._name = name
         self.aggregation_window = aggregation_window
-        self.setSceneRect(1, 1, 10_000, 10_000)
+        self.setSceneRect(1, 1, 100_000, 100_000)
 
     def get_items_bounding_rect(self) -> QRectF:
         b_min = [None, None]
@@ -153,6 +151,9 @@ class AggregationView(QGraphicsView):
         self.right_click_menu:QMenu|None = None
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.right_click)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+
 
     def window(self) -> AggregationWindow:
         return super(AggregationView, self).window()
@@ -414,6 +415,14 @@ class AggregationWindow(QWidget):
         self.widget.button_filter.setIcon(get_search_icon())
         self.is_in_filter_mode = False
 
+    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        super(AggregationWindow, self).closeEvent(event)
+        self.close()
+
+        for scene in list(self.scenes):
+            if not scene.nodes:
+                self.delete_scene(scene)
+
     def set_info(self,pset_name,attribute_name):
         for node in self.nodes:
             node.set_title_by_attribute(pset_name,attribute_name)
@@ -427,10 +436,13 @@ class AggregationWindow(QWidget):
 
     def delete_active_scene(self):
         scene = self.active_scene
-        name = scene.name
         if len(self.scenes) <=1:
             self.create_new_scene("UNDEF")
-        self.active_scene.delete()
+        self.delete_scene(scene)
+
+    def delete_scene(self,scene:AggregationScene):
+        name = scene.name
+        scene.delete()
         index = self.widget.combo_box.findText(name)
         self.widget.combo_box.removeItem(index)
 
@@ -462,6 +474,7 @@ class AggregationWindow(QWidget):
 
         self.is_in_filter_mode = True
         self.widget.button_filter.setIcon(get_reload_icon())
+        self.widget.button_filter.setToolTip("Filter zurücksetzen")
         self.widget.button_filter.setToolTip("Filter zurücksetzen")
 
     def remove_scene_from_combobox(self, scene:AggregationScene):
@@ -502,6 +515,9 @@ class AggregationWindow(QWidget):
             scene.add_node(node, recursive=True)
             scene.fill_connections()
 
+        first_scene = sorted([scene for scene in self.scenes],key=lambda x:x.name)[0]
+        self.active_scene = first_scene
+
     def create_connections_by_top_node(self,node:NodeProxy,scene:AggregationScene):
         aggregation = node.aggregation
         for child_aggregation in aggregation.children:
@@ -510,21 +526,20 @@ class AggregationWindow(QWidget):
             self.create_connections_by_top_node(child_node,scene)
 
     def show(self) -> None:
-        if not self.is_initial_opening:
+        if not self.is_initial_opening and len(self.scenes) >0 :
             super(AggregationWindow, self).show()
             return
 
-        if len(self.nodes) == 0:
-            self.active_scene = self.create_new_scene("UNDEF")
+        if len(self.scene_dict) == 0:
+            self.active_scene = self.create_new_scene()
         else:
             self.create_missing_scenes()
-
         super(AggregationWindow, self).show()
         self.fit_view()
         self.is_initial_opening = False
 
     def add_scene_button_pressed(self):
-        scene = self.create_new_scene("UNDEF")
+        scene = self.create_new_scene()
         self.select_scene(scene)
 
     def select_scene(self,scene:AggregationScene):
@@ -556,6 +571,9 @@ class AggregationWindow(QWidget):
         return node
 
     def combo_box_index_changed(self):
+        if not self.nodes:
+            return
+
         text = self.widget.combo_box.currentText()
         scene = {scene.name: scene for scene in self.scenes}.get(text)
         self.active_scene = scene
