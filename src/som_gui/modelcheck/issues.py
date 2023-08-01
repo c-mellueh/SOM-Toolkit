@@ -1,6 +1,7 @@
-from . import sql
 from ifcopenshell import entity_instance
 from ifcopenshell.util import element as ifc_el
+
+from . import sql
 
 IDENT_PROPERTY_SET_ISSUE = 1
 IDENT_ATTRIBUTE_ISSUE = 2
@@ -13,6 +14,7 @@ PARENT_ISSUE = 8
 SUBGROUP_ISSUE = 9  # Gruppe besitzt verschiedene Untergruppen
 EMPTY_GROUP_ISSUE = 10
 NO_GROUP_ISSUE = 11
+REPETETIVE_GROUP_ISSUE = 12
 
 
 def format_issue(cursor, guid, attribute, element_type):
@@ -76,8 +78,8 @@ def guid_issue(cursor, guid, file1, file2):
 
 # GROUP ISSUES
 
-def subgroup_issue(cursor, guid):
-    description = f"Gruppensammler besitzt verschiedene Untergruppen"
+def subgroup_issue(cursor, guid,child_ident):
+    description = f"Gruppensammler besitzt falsche Untergruppe ({child_ident} nicht erlaubt)"
     issue_nr = IDENT_ATTRIBUTE_ISSUE
     sql.add_issues(cursor, guid, description, issue_nr, None)
 
@@ -98,4 +100,10 @@ def child_issue(cursor, element:entity_instance,sub_element:entity_instance,ag,b
 def no_group_issue(cursor, element):
     description = f"Element hat keine Gruppenzuweisung"
     issue_nr = NO_GROUP_ISSUE
+    sql.add_issues(cursor, element.GlobalId, description, issue_nr, None)
+
+
+def repetetive_group_issue(cursor,element):
+    description = f"Gruppe besitzt mehrere Subelemente mit der selben Bauteilklassifikation"
+    issue_nr = REPETETIVE_GROUP_ISSUE
     sql.add_issues(cursor, element.GlobalId, description, issue_nr, None)

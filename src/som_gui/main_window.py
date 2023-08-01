@@ -19,6 +19,7 @@ from .widgets import script_widget, property_widget, object_widget
 from src.som_gui.windows.aggregation_view import aggregation_window
 from .windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups, modelcheck_window
 from . import settings
+from .modelcheck import modelcheck
 
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
@@ -57,6 +58,8 @@ class MainWindow(QMainWindow):
             self.ui.table_pset.itemChanged.connect(self.item_changed)
             self.ui.action_import_excel.triggered.connect(self.import_excel)
             self.ui.button_search.clicked.connect(self.search_object)
+            self.ui.action_modelcheck.triggered.connect(self.run_modelcheck)
+
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -88,6 +91,9 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("SOM-Toolkit")
         connect()
         settings.reset_save_path()
+
+    def run_modelcheck(self):
+        modelcheck.run_modelcheck(self)
 
     def import_excel(self):
         open_file.import_excel_clicked(self)
