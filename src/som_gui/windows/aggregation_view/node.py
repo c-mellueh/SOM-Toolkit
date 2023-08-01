@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt, QRectF, QPointF, QPoint, QRect
 from PySide6.QtGui import QColor, QPen, QPainter, QCursor,QPainterPath
 from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout, \
     QGraphicsProxyWidget, QGraphicsSceneMouseEvent,QGraphicsPathItem, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
-    QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsTextItem,QGraphicsView
+    QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsTextItem,QGraphicsView,QGraphicsEllipseItem
 from ...data import constants
 from ...windows import popups
 
@@ -17,9 +17,9 @@ if TYPE_CHECKING:
 class Header(QGraphicsRectItem):
     def __init__(self, node: NodeProxy, text):
         super(Header, self).__init__()
-        self.node = node
+        self.node_proxy = node
         self._title = text
-        self.setParentItem(self.node)
+        self.setParentItem(self.node_proxy)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, False)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
         self.resize()
@@ -36,7 +36,7 @@ class Header(QGraphicsRectItem):
     def resize(self):
         line_width = self.pen().width()  # if ignore Linewidth: box of Node and Header won't match
         x = line_width / 2
-        width = self.node.widget().width() - line_width
+        width = self.node_proxy.widget().width() - line_width
         height = constants.HEADER_HEIGHT
         self.setRect(QRectF(x, -height, width, height))
 
@@ -54,12 +54,12 @@ class Frame(QGraphicsRectItem):
     def __init__(self, node: NodeProxy):
         super(Frame, self).__init__()
         self.setParentItem(node)
-        self.node = node
+        self.node_proxy = node
         self.resize()
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, False)
 
     def resize(self):
-        rect = self.node.rect()
+        rect = self.node_proxy.rect()
         rect.setWidth(rect.width() - self.pen().width() / 2)
         rect.setY(rect.y()-constants.HEADER_HEIGHT)
         rect.setHeight(rect.height())
@@ -67,10 +67,40 @@ class Frame(QGraphicsRectItem):
         self.setRect(rect)
 
 
+
+
+class Circle(QGraphicsEllipseItem):
+    DIAMETER = 25
+    def __init__(self,node_proxy:NodeProxy):
+        super(Circle, self).__init__(0,0,self.DIAMETER,self.DIAMETER)
+        self.node_proxy = node_proxy
+        self.setParentItem(node_proxy)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent,False)
+        self.resize()
+        self.setZValue(2)
+        self.hide()
+        self.setAcceptHoverEvents(True)
+
+    def resize(self):
+        x = self.node_proxy.rect().center().x()-self.DIAMETER/2
+        y = self.node_proxy.rect().bottom()-self.DIAMETER/2
+        self.setPos(x,y)
+
+    def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget) -> None:
+        painter.save()
+        painter.restore()
+        painter.setPen(Qt.GlobalColor.black)
+        painter.setBrush(Qt.GlobalColor.white)
+        painter.drawEllipse(0,0,self.DIAMETER,self.DIAMETER)
+        painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "+")
+        super().paint(painter, option, widget)
+
+    def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
+        if not self.node_proxy.isUnderMouse():
+            self.hide()
+        super(Circle, self).hoverLeaveEvent(event)
+
 class NodeProxy(QGraphicsProxyWidget):
-    """
-    all Movement is controlled by the Header
-    """
     _registry = set()
     def __init__(self, aggregation: classes.Aggregation, pos: QPointF) -> None:
 
@@ -80,19 +110,18 @@ class NodeProxy(QGraphicsProxyWidget):
         self._title = str()
         self.reset_title()
 
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, True)
-
         self.setWidget(NodeWidget())
         self.widget().tree_widget.fill_tree()
-
         self.top_connection:Connection|None = None
         self.bottom_connections :set[Connection] = set()
         self.header = Header(self, self.title)
         self.frame = Frame(self)
         self.setPos(pos)
+
         geometry = self.geometry()
         geometry.setHeight(150)
         self.setGeometry(geometry)
+        self.circle = Circle(self)
 
     def reset_title(self):
         self.title = f"{self.aggregation.name}\nidentitaet: {self.aggregation.id_group()}"
@@ -186,8 +215,8 @@ class NodeProxy(QGraphicsProxyWidget):
 
     def setZValue(self, z: float) -> None:
         super(NodeProxy, self).setZValue(z)
-        self.frame.setZValue(z)
-        self.header.setZValue(z)
+        self.frame.setZValue(1)
+        self.header.setZValue(1)
 
     def setCursor(self, cursor) -> None:
         self.scene().views()[0].viewport().setCursor(cursor)
@@ -214,6 +243,10 @@ class NodeProxy(QGraphicsProxyWidget):
         except AttributeError:
             pass
 
+        try:
+            self.circle.resize()
+        except AttributeError:
+            pass
 
     def resize_by_cursor(self, old_pos, new_pos, orientation):
         def resize_geometry(dx, dy):
@@ -254,11 +287,13 @@ class NodeProxy(QGraphicsProxyWidget):
         return self.scene().views()[0].viewport().cursor()
 
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
-        self.widget().button.show()
+        #self.widget().button.show()
+        self.circle.show()
         super(NodeProxy, self).hoverEnterEvent(event)
 
     def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
-        self.widget().button.hide()
+        if not self.circle.isUnderMouse():
+            self.circle.hide()
         super(NodeProxy, self).hoverEnterEvent(event)
 
     def widget(self) -> NodeWidget:
