@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING
 
 from PySide6 import QtGui, QtCore
 from PySide6.QtCore import Qt, QRectF, QPointF
-from PySide6.QtGui import QWheelEvent, QMouseEvent
+from PySide6.QtGui import QWheelEvent, QMouseEvent,QTransform
 from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView,QApplication,QMenu
 from SOMcreator import classes
 
 from src.som_gui.qt_designs import ui_GraphWindow
-from .node import NodeProxy, Header, Frame, Connection
+from .node import NodeProxy, Header, Frame, Connection,Circle
 from ...data import constants
 from ...windows import popups
 from ...icons import get_icon,get_reload_icon,get_search_icon
@@ -32,7 +32,8 @@ CURSOR_DICT = {
     5: Qt.CursorShape.SizeBDiagCursor,  # Top Right
     8: Qt.CursorShape.SizeFDiagCursor,  # Bottom Right
     9: Qt.CursorShape.OpenHandCursor,
-    10: Qt.CursorShape.ClosedHandCursor
+    10: Qt.CursorShape.ClosedHandCursor,
+    11: Qt.CursorShape.ArrowCursor,
 }
 
 
@@ -141,7 +142,7 @@ class AggregationView(QGraphicsView):
         self.focus_node: NodeProxy | None = None  # which Node is being resized
         self.resize_orientation: int | None = None  # which edge of Node is being resized
         self.last_pos: QPointF | None = None  # last mouse pos to calculate difference
-        self.mouse_mode = 0  # 0=moveCursor 1=resize 2 = drag
+        self.mouse_mode = 0  # 0=moveCursor 1=resize 2 = drag 3 = plus click 4 = draw connection
         self.mouse_is_pressed = False
         self.setDragMode(self.DragMode.ScrollHandDrag)
         self.right_click_menu:QMenu|None = None
@@ -149,6 +150,7 @@ class AggregationView(QGraphicsView):
         self.customContextMenuRequested.connect(self.right_click)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.drawn_connection:Connection|None = None
 
 
     def window(self) -> AggregationWindow:
@@ -196,30 +198,34 @@ class AggregationView(QGraphicsView):
 
     def get_focus_and_cursor(self, pos: QPointF):
         """return cursor style and Node that will be in focus"""
+        for node in self.scene().nodes:
+            if node.circle.isUnderMouse():
+                return 11,node
+
         frames = [node.frame for node in self.scene().nodes if self.cursor_on_border(pos, node) != 0]
         headers = [item for item in self.items_under_mouse() if isinstance(item, Header)]
 
-        frames.sort(key=lambda x: x.zValue())
-        headers.sort(key=lambda x: x.zValue())
+        frames.sort(key=lambda x: x.node_proxy.zValue())
+        headers.sort(key=lambda x: x.node_proxy.zValue())
 
-        max_frame = max({frame.zValue() for frame in frames}, default=0)
-        max_header = max({header.zValue() for header in headers}, default=0)
+        max_frame = max({frame.node_proxy.zValue() for frame in frames}, default=0)
+        max_header = max({header.node_proxy.zValue() for header in headers}, default=0)
 
         if not (frames or headers):
             cursor_style = 0
             node = None
 
         elif max_header >= max_frame:
-            header = sorted(headers, key=lambda x: x.zValue())[-1]
-            node = header.node
+            header = sorted(headers, key=lambda x: x.node_proxy.zValue())[-1]
+            node = header.node_proxy
             if self.mouse_is_pressed:
                 cursor_style = 10
             else:
                 cursor_style = 9
 
         else:
-            frame: Frame = sorted(frames, key=lambda x: x.zValue())[-1]
-            node = frame.node
+            frame: Frame = sorted(frames, key=lambda x: x.node_proxy.zValue())[-1]
+            node = frame.node_proxy
             cursor_style = self.cursor_on_border(pos, node)
 
         return cursor_style, node
@@ -237,14 +243,19 @@ class AggregationView(QGraphicsView):
         if self.resize_orientation == 0:
             self.unsetCursor()
 
-        elif self.resize_orientation == 10:
+        elif self.resize_orientation == 10: #Drag
             self.mouse_mode = 2
             self.setCursor(Qt.CursorShape.ClosedHandCursor)
             self.focus_node.setZValue(self.scene().max_z_value()+1)
-        else:
-            self.setCursor(CURSOR_DICT[self.resize_orientation])
+        elif 1<= self.resize_orientation <=9:
+            self.setCursor(CURSOR_DICT[self.resize_orientation])    #resize
             self.mouse_mode = 1
             self.focus_node.setZValue(self.scene().max_z_value() + 1)
+
+        else:
+            self.setCursor(CURSOR_DICT[self.resize_orientation])
+            self.mouse_mode = 3
+            self.focus_node.setZValue(self.scene().max_z_value()+1)
 
         super(AggregationView, self).mousePressEvent(event)
 
@@ -302,15 +313,54 @@ class AggregationView(QGraphicsView):
         self.right_click_menu.exec(global_pos)
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        old_mouse_mode = self.mouse_mode
         self.mouse_is_pressed = False
         self.mouse_mode = 0
         self.last_pos = None
-        super(AggregationView, self).mouseReleaseEvent(event)
+
+        if old_mouse_mode in (1,2):
+            pass
+        elif old_mouse_mode ==3:
+            self.focus_node.widget().button_clicked()
+
+        elif old_mouse_mode == 4:
+            self.draw_connection_mouse_release(event)
+
+        return super(AggregationView, self).mouseReleaseEvent(event)
+
+    def draw_connection_mouse_release(self,event:QMouseEvent):
+        """if the user draws a line and the mouse was released this event should be called to determine if a new Connection gets established"""
+        item_under_mouse = self.scene().itemAt(self.mapToScene(event.pos()), QTransform())
+
+        if isinstance(item_under_mouse, Connection):
+            self.drawn_connection.delete()
+            self.drawn_connection = None
+            return super(AggregationView, self).mouseReleaseEvent(event)
+
+        if isinstance(item_under_mouse, (Header, Frame, Circle)):
+            node_proxy = item_under_mouse.node_proxy
+        elif isinstance(item_under_mouse, NodeProxy):
+            node_proxy = item_under_mouse
+        else:
+            return super(AggregationView, self).mouseReleaseEvent(event)
+
+        allowed = self.drawn_connection.top_node.aggregation.add_child(node_proxy.aggregation)
+
+        if not allowed:
+            self.drawn_connection.delete()
+            self.drawn_connection = None
+        else:
+            self.drawn_connection.add_bottom_node(node_proxy)
+            self.drawn_connection.update_line()
+            self.drawn_connection = None
+        node_proxy.refresh_title()
+        return super(AggregationView, self).mouseReleaseEvent(event)
 
     def cursor(self) -> QtGui.QCursor:
         return self.viewport().cursor()
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
+
         if self.mouse_mode == 0:
             cursor_style, focus_node = self.get_focus_and_cursor(self.mapToScene(event.pos()))
             if cursor_style == 0:
@@ -320,7 +370,7 @@ class AggregationView(QGraphicsView):
                 self.setDragMode(self.DragMode.NoDrag)
                 self.setCursor(CURSOR_DICT[cursor_style])
 
-        elif self.mouse_mode == 1:
+        if self.mouse_mode == 1:
             old_pos = self.last_pos
             new_pos = self.mapToScene(event.pos())
             if old_pos is None:
@@ -328,15 +378,20 @@ class AggregationView(QGraphicsView):
             self.last_pos = new_pos
             self.focus_node.resize_by_cursor(old_pos, new_pos, self.resize_orientation)
 
-        elif self.mouse_mode == 2:
+        if self.mouse_mode == 2:
             new_pos = self.mapToScene(event.pos())
 
             old_pos = self.last_pos or new_pos
             self.last_pos = new_pos
             delta = new_pos - old_pos
-            dx = delta.x()
-            dy = delta.y()
             self.focus_node.moveBy(delta.x(), delta.y())
+
+        if self.mouse_mode == 3:
+            self.drawn_connection = Connection(None, self.focus_node, Connection.DRAW_MODE)
+            self.mouse_mode = 4
+
+        if self.mouse_mode ==4 :
+            self.drawn_connection.update_line(self.mapToScene(event.pos()))
 
         return super(AggregationView, self).mouseMoveEvent(event)
 
@@ -592,9 +647,9 @@ class AggregationWindow(QWidget):
         br_center = bounding_rect.center()
         dif = sr_center - br_center
         for item in self.active_scene.items():
-            if isinstance(item, (Frame, Header)):
-                continue
-            item.moveBy(dif.x(), dif.y())
+            if isinstance(item, (NodeProxy)):
+                item.moveBy(dif.x(), dif.y())
+
         self.view.fitInView(self.active_scene.get_items_bounding_rect(),
                             aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
 

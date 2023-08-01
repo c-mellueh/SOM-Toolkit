@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtCore import Qt, QRectF, QPointF, QPoint, QRect
 from PySide6.QtGui import QColor, QPen, QPainter, QCursor,QPainterPath
 from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout, \
-    QGraphicsProxyWidget, QGraphicsSceneMouseEvent,QGraphicsPathItem, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
+    QGraphicsProxyWidget, QGraphicsSceneMoveEvent,QGraphicsPathItem, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
     QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsTextItem,QGraphicsView,QGraphicsEllipseItem
 from ...data import constants
 from ...windows import popups
@@ -13,92 +13,6 @@ from SOMcreator import classes
 if TYPE_CHECKING:
     from src.som_gui.main_window import MainWindow
     from .aggregation_window import AggregationScene,AggregationWindow
-
-class Header(QGraphicsRectItem):
-    def __init__(self, node: NodeProxy, text):
-        super(Header, self).__init__()
-        self.node_proxy = node
-        self._title = text
-        self.setParentItem(self.node_proxy)
-        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, False)
-        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
-        self.resize()
-
-    @property
-    def title(self) -> str:
-        return self._title
-
-    @title.setter
-    def title(self,value) -> None:
-        self._title = value
-        self.update()
-
-    def resize(self):
-        line_width = self.pen().width()  # if ignore Linewidth: box of Node and Header won't match
-        x = line_width / 2
-        width = self.node_proxy.widget().width() - line_width
-        height = constants.HEADER_HEIGHT
-        self.setRect(QRectF(x, -height, width, height))
-
-    def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget) -> None:
-        painter.save()
-        painter.restore()
-        painter.setPen(Qt.GlobalColor.black)
-        painter.setBrush(Qt.GlobalColor.white)
-        painter.drawRect(self.rect())
-        painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, self.title)
-        super().paint(painter, option, widget)
-
-
-class Frame(QGraphicsRectItem):
-    def __init__(self, node: NodeProxy):
-        super(Frame, self).__init__()
-        self.setParentItem(node)
-        self.node_proxy = node
-        self.resize()
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, False)
-
-    def resize(self):
-        rect = self.node_proxy.rect()
-        rect.setWidth(rect.width() - self.pen().width() / 2)
-        rect.setY(rect.y()-constants.HEADER_HEIGHT)
-        rect.setHeight(rect.height())
-        rect.setX(self.x() + self.pen().width() / 2)
-        self.setRect(rect)
-
-
-
-
-class Circle(QGraphicsEllipseItem):
-    DIAMETER = 25
-    def __init__(self,node_proxy:NodeProxy):
-        super(Circle, self).__init__(0,0,self.DIAMETER,self.DIAMETER)
-        self.node_proxy = node_proxy
-        self.setParentItem(node_proxy)
-        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent,False)
-        self.resize()
-        self.setZValue(2)
-        self.hide()
-        self.setAcceptHoverEvents(True)
-
-    def resize(self):
-        x = self.node_proxy.rect().center().x()-self.DIAMETER/2
-        y = self.node_proxy.rect().bottom()-self.DIAMETER/2
-        self.setPos(x,y)
-
-    def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget) -> None:
-        painter.save()
-        painter.restore()
-        painter.setPen(Qt.GlobalColor.black)
-        painter.setBrush(Qt.GlobalColor.white)
-        painter.drawEllipse(0,0,self.DIAMETER,self.DIAMETER)
-        painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "+")
-        super().paint(painter, option, widget)
-
-    def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
-        if not self.node_proxy.isUnderMouse():
-            self.hide()
-        super(Circle, self).hoverLeaveEvent(event)
 
 class NodeProxy(QGraphicsProxyWidget):
     _registry = set()
@@ -122,11 +36,21 @@ class NodeProxy(QGraphicsProxyWidget):
         geometry.setHeight(150)
         self.setGeometry(geometry)
         self.circle = Circle(self)
+        self.title_settings:list[None]|list[str] = [None,None]
+
+    def refresh_title(self):
+        if self.title_settings == [None,None]:
+            self.reset_title()
+        else:
+            self.set_title_by_attribute(self.title_settings[0],self.title_settings[1])
 
     def reset_title(self):
         self.title = f"{self.aggregation.name}\nidentitaet: {self.aggregation.id_group()}"
+        self.title_settings = [None,None]
 
     def set_title_by_attribute(self,pset_name:str,attribute_name:str):
+        self.title_settings = [pset_name,attribute_name]
+
         undef = f"{self.aggregation.name}\n{attribute_name}: undefined"
         obj = self.aggregation.object
         pset = obj.get_property_set_by_name(pset_name)
@@ -154,10 +78,6 @@ class NodeProxy(QGraphicsProxyWidget):
     def scene(self) -> AggregationScene:
         return super(NodeProxy, self).scene()
 
-    def moveBy(self, dx: float, dy: float) -> None:
-        super(NodeProxy, self).moveBy(dx,dy)
-        self.update_connections()
-
     def update_connections(self):
         for connection in self.bottom_connections:
             connection.update_line()
@@ -170,8 +90,13 @@ class NodeProxy(QGraphicsProxyWidget):
 
     def delete(self):
         for connection in list(self.bottom_connections):
+            child_proxy = connection.bottom_node
             connection.delete()
-        self.top_connection.delete()
+            child_proxy.refresh_title()
+
+        if self.top_connection is not None:
+            self.top_connection.delete()
+
         self.aggregation.delete()
         self.deleteLater()
         self._registry.remove(self)
@@ -226,8 +151,7 @@ class NodeProxy(QGraphicsProxyWidget):
         rect.setY(rect.y() - constants.HEADER_HEIGHT)
         return rect
 
-    def resizeEvent(self, event: QGraphicsSceneResizeEvent) -> None:
-        super(NodeProxy, self).resizeEvent(event)
+    def update_children(self):
         try:
             self.frame.resize()
         except AttributeError:
@@ -247,6 +171,16 @@ class NodeProxy(QGraphicsProxyWidget):
             self.circle.resize()
         except AttributeError:
             pass
+
+    def moveEvent(self, event: QGraphicsSceneMoveEvent) -> None:
+        super(NodeProxy, self).moveEvent(event)
+        self.update_children()
+        self.update_connections()
+
+    def resizeEvent(self, event: QGraphicsSceneResizeEvent) -> None:
+        super(NodeProxy, self).resizeEvent(event)
+        self.update_children()
+
 
     def resize_by_cursor(self, old_pos, new_pos, orientation):
         def resize_geometry(dx, dy):
@@ -287,7 +221,6 @@ class NodeProxy(QGraphicsProxyWidget):
         return self.scene().views()[0].viewport().cursor()
 
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
-        #self.widget().button.show()
         self.circle.show()
         super(NodeProxy, self).hoverEnterEvent(event)
 
@@ -299,67 +232,92 @@ class NodeProxy(QGraphicsProxyWidget):
     def widget(self) -> NodeWidget:
         return super(NodeProxy, self).widget()
 
-class CustomPsetTree(QTreeWidget):
-    def __init__(self,node_widget:NodeWidget) -> None:
-        super(CustomPsetTree, self).__init__()
-        self.setExpandsOnDoubleClick(False)
-        self.setColumnCount(1)
-        self.setHeaderLabels(["Name"])
-        self.node_widget = node_widget
-        self.itemDoubleClicked.connect(self.item_clicked)
+class Header(QGraphicsRectItem):
+    def __init__(self, node: NodeProxy, text):
+        super(Header, self).__init__()
+        self.node_proxy = node
+        self._title = text
+        self.setParentItem(self.node_proxy)
+        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, False)
+        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
+        self.resize()
 
     @property
-    def object(self):
-        return self.node_widget.object
+    def title(self) -> str:
+        return self._title
 
-    @property
-    def main_window(self) -> MainWindow:
-        return self.node_widget.graphicsProxyWidget().scene().views()[0].window().main_window
-
-    def fill_tree(self) -> None:
-        for property_set in self.object.property_sets:
-            item = CustomPSetTreeItem(self, property_set)
-            for attribute in property_set.attributes:
-                CustomAttribTreeItem(item, attribute)
-
-    def item_clicked(self,item:CustomPSetTreeItem|CustomAttribTreeItem):
-        main_window = self.main_window
-
-        if isinstance(item, CustomPSetTreeItem):
-            property_set = item.property_set
-            main_window.open_pset_window(property_set, self.object, None)
-
-        if isinstance(item, CustomAttribTreeItem):
-            property_set = item.attribute.property_set
-            main_window.open_pset_window(property_set, self.object, None)
-            main_window.pset_window.fill_with_attribute(item.attribute)
-
-class CustomPSetTreeItem(QTreeWidgetItem):
-    def __init__(self, tree: QTreeWidget, pset: classes.PropertySet) -> None:
-        super(CustomPSetTreeItem, self).__init__(tree)
-        self._property_set = pset
+    @title.setter
+    def title(self,value) -> None:
+        self._title = value
         self.update()
 
-    @property
-    def property_set(self) -> classes.PropertySet:
-        return self._property_set
+    def resize(self):
+        line_width = self.pen().width()  # if ignore Linewidth: box of Node and Header won't match
+        x = line_width / 2
+        width = self.node_proxy.widget().width() - line_width
+        height = constants.HEADER_HEIGHT
+        self.setRect(QRectF(x, -height, width, height))
 
-    def update(self) -> None:
-        self.setText(0, self.property_set.name)
+    def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget) -> None:
+        painter.save()
+        painter.restore()
+        painter.setPen(Qt.GlobalColor.black)
+        painter.setBrush(Qt.GlobalColor.white)
+        painter.drawRect(self.rect())
+        painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, self.title)
+        super().paint(painter, option, widget)
 
 
-class CustomAttribTreeItem(QTreeWidgetItem):
-    def __init__(self, tree: CustomPSetTreeItem, attribute: classes.Attribute) -> None:
-        super(CustomAttribTreeItem, self).__init__(tree)
-        self._attribute = attribute
-        self.update()
+class Frame(QGraphicsRectItem):
+    def __init__(self, node: NodeProxy):
+        super(Frame, self).__init__()
+        self.setParentItem(node)
+        self.node_proxy = node
+        self.resize()
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, False)
 
-    @property
-    def attribute(self) -> classes.Attribute:
-        return self._attribute
+    def resize(self):
+        rect = self.node_proxy.rect()
+        rect.setWidth(rect.width() - self.pen().width() / 2)
+        rect.setY(rect.y()-constants.HEADER_HEIGHT)
+        rect.setHeight(rect.height())
+        rect.setX(self.x() + self.pen().width() / 2)
+        self.setRect(rect)
 
-    def update(self) -> None:
-        self.setText(0, self.attribute.name)
+
+class Circle(QGraphicsEllipseItem):
+    DIAMETER = 25
+    def __init__(self,node_proxy:NodeProxy):
+        super(Circle, self).__init__(0,0,self.DIAMETER,self.DIAMETER)
+        self.node_proxy = node_proxy
+        self.setParentItem(node_proxy)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent,False)
+        self.setZValue(2)
+        self.hide()
+        self.setAcceptHoverEvents(True)
+        self.resize()
+
+
+    def resize(self):
+        x = self.node_proxy.rect().center().x()-self.DIAMETER/2
+        y = self.node_proxy.rect().bottom()-self.DIAMETER/2
+        self.setPos(x,y)
+
+    def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget) -> None:
+        self.resize()
+        painter.save()
+        painter.restore()
+        painter.setPen(Qt.GlobalColor.black)
+        painter.setBrush(Qt.GlobalColor.white)
+        painter.drawEllipse(0,0,self.DIAMETER,self.DIAMETER)
+        painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "+")
+        super().paint(painter, option, widget)
+
+    def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
+        if not self.node_proxy.isUnderMouse():
+            self.hide()
+        super(Circle, self).hoverLeaveEvent(event)
+
 
 class NodeWidget(QWidget):
     def __init__(self):
@@ -390,6 +348,7 @@ class NodeWidget(QWidget):
         self.aggregation.add_child(proxy_node.aggregation)
         self.scene().add_node(proxy_node,False)
         self.scene().add_connection(self.graphicsProxyWidget(),proxy_node)
+        proxy_node.refresh_title()
 
     def scene(self) -> AggregationScene:
         return self.graphicsProxyWidget().scene()
@@ -406,32 +365,50 @@ class NodeWidget(QWidget):
         return super(NodeWidget, self).graphicsProxyWidget()
 
 class Connection(QGraphicsPathItem):
-
-    def __init__(self, bottom_node: NodeProxy, top_node: NodeProxy) -> None:
+    NORMAL_MODE = 0
+    DRAW_MODE = 1
+    def __init__(self, bottom_node: NodeProxy, top_node: NodeProxy,mode = 0) -> None:
         super(Connection, self).__init__()
+        self.mode = mode
 
-        self.bottom_node: NodeProxy = bottom_node
+        self.bottom_node: NodeProxy|None = None
         self.top_node: NodeProxy = top_node
+        if self.mode != self.DRAW_MODE:
+            self.add_bottom_node(bottom_node)
+            self.update_line()
+
         self.setZValue(0)
         self.top_node.scene().addItem(self)
-        bottom_node.top_connection = self
-        top_node.bottom_connections.add(self)
         self.path = QPainterPath()
-        self.update_line()
         self.setAcceptHoverEvents(False)
 
+
+    def add_bottom_node(self,bottom_node):
+        self.bottom_node = bottom_node
+        self.bottom_node.top_connection = self
+        self.top_node.bottom_connections.add(self)
+        self.mode = self.NORMAL_MODE
+
     def __str__(self) -> str:
-        return f"Connection [{self.bottom_node.name}->{self.top_node.name}]"
+        if self.mode != self.DRAW_MODE:
+            return f"Connection [{self.bottom_node.name}->{self.top_node.name}]"
+        else:
+            return f"Connection [??? ->{self.top_node.name}]"
 
     def delete(self):
-        self.top_node.bottom_connections.remove(self)
-        self.bottom_node.top_connection = None
+        if self in self.top_node.bottom_connections:
+            self.top_node.bottom_connections.remove(self)
+        if self.bottom_node is not None:
+            self.bottom_node.aggregation.remove_parent()
+            self.bottom_node.top_connection = None
         self.scene().removeItem(self)
 
-    def update_line(self) -> None:
+
+    def update_line(self,mouse_pos = None) -> None:
         self.path = QPainterPath()
-        self.path.moveTo(self.points[0])
-        for point in self.points[1:]:
+        points = self.get_points(mouse_pos)
+        self.path.moveTo(points[0])
+        for point in points[1:]:
             self.path.lineTo(point)
         self.setPath(self.path)
         self.setPos(0.0, 0.0)
@@ -476,57 +453,56 @@ class Connection(QGraphicsPathItem):
 
         return displacement_dict.get(self.connection_type)
 
-    @property
-    def points(self) -> list[QPointF]:
+    def get_points(self,mouse_pos:QPointF|None) -> list[QPointF]:
         def aggregation_points():
-            points[0] = pb
+            points[0] = point_bottom
 
-            points[1].setX(pb.x())
-            points[2].setX(pt.x())
-            points[3].setX(pt.x())
-            points[4].setX(pt.x() - constants.ARROW_WIDTH / 2)
-            points[5].setX(pt.x())
-            points[6].setX(pt.x() + constants.ARROW_WIDTH / 2)
-            points[7].setX(pt.x())
+            points[1].setX(point_bottom.x())
+            points[2].setX(point_top.x())
+            points[3].setX(point_top.x())
+            points[4].setX(point_top.x() - constants.ARROW_WIDTH / 2)
+            points[5].setX(point_top.x())
+            points[6].setX(point_top.x() + constants.ARROW_WIDTH / 2)
+            points[7].setX(point_top.x())
 
             points[1].setY(mid_y - constants.ARROW_WIDTH / 2)
             points[2].setY(points[1].y())
-            points[3].setY(pt.y() + constants.ARROW_HEIGHT)
-            points[4].setY(pt.y() + constants.ARROW_HEIGHT / 2)
-            points[5].setY(pt.y())
-            points[6].setY(pt.y() + constants.ARROW_HEIGHT / 2)
-            points[7].setY(pt.y() + constants.ARROW_HEIGHT)
+            points[3].setY(point_top.y() + constants.ARROW_HEIGHT)
+            points[4].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
+            points[5].setY(point_top.y())
+            points[6].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
+            points[7].setY(point_top.y() + constants.ARROW_HEIGHT)
 
         def inheritance_points():
-            points[0] = pb
-            points[1].setX(pb.x())
-            points[2].setX(pt.x())
-            points[3].setX(pt.x())
-            points[4].setX(pt.x() - constants.ARROW_WIDTH / 2)
-            points[5].setX(pt.x())
-            points[6].setX(pt.x() + constants.ARROW_WIDTH / 2)
-            points[7].setX(pt.x())
+            points[0] = point_bottom
+            points[1].setX(point_bottom.x())
+            points[2].setX(point_top.x())
+            points[3].setX(point_top.x())
+            points[4].setX(point_top.x() - constants.ARROW_WIDTH / 2)
+            points[5].setX(point_top.x())
+            points[6].setX(point_top.x() + constants.ARROW_WIDTH / 2)
+            points[7].setX(point_top.x())
 
             points[1].setY(mid_y - constants.ARROW_HEIGHT / 2)
             points[2].setY(points[1].y())
-            points[3].setY(pt.y() + constants.ARROW_HEIGHT / 2)
-            points[4].setY(pt.y() + constants.ARROW_HEIGHT / 2)
-            points[5].setY(pt.y())
-            points[6].setY(pt.y() + constants.ARROW_HEIGHT / 2)
-            points[7].setY(pt.y() + constants.ARROW_HEIGHT / 2)
+            points[3].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
+            points[4].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
+            points[5].setY(point_top.y())
+            points[6].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
+            points[7].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
 
         def combo_points():
-            points[0] = pb
+            points[0] = point_bottom
 
-            points[1].setX(pb.x())
-            points[2].setX(pt.x())
-            points[3].setX(pt.x())
-            points[4].setX(pt.x() - constants.ARROW_WIDTH / 2)
+            points[1].setX(point_bottom.x())
+            points[2].setX(point_top.x())
+            points[3].setX(point_top.x())
+            points[4].setX(point_top.x() - constants.ARROW_WIDTH / 2)
             points[5].setX(points[3].x())
             points[6].setX(points[5].x())
             points[7].setX(points[4].x())
             points[8].setX(points[5].x())
-            points[9].setX(pt.x() + constants.ARROW_WIDTH / 2)
+            points[9].setX(point_top.x() + constants.ARROW_WIDTH / 2)
             points[10].setX(points[5].x())
             points[11].setX(points[5].x())
             points[12].setX(points[9].x())
@@ -534,7 +510,7 @@ class Connection(QGraphicsPathItem):
 
             points[1].setY(mid_y + constants.ARROW_HEIGHT / 2)
             points[2].setY(points[1].y())
-            points[3].setY(pt.y() + constants.ARROW_HEIGHT * 2)
+            points[3].setY(point_top.y() + constants.ARROW_HEIGHT * 2)
             points[4].setY(points[3].y() - constants.ARROW_HEIGHT / 2)
             points[5].setY(points[4].y() - constants.ARROW_HEIGHT / 2)
             points[6].setY(points[5].y() - constants.ARROW_HEIGHT / 2)
@@ -546,12 +522,36 @@ class Connection(QGraphicsPathItem):
             points[12].setY(points[4].y())
             points[13].setY(points[3].y())
 
-        points = [QPointF() for _ in range(8)]
+        def draw_points():
+            points[0] = point_bottom
 
-        pb = self.bottom_node.top_anchor_point()  # top center of Bottom Node
-        pt = self.top_node.bottom_anchor_point()
-        pt.setX(pt.x()+self.get_connection_displacement())
-        mid_y = (pt.y() + constants.BOX_BOTTOM_DISTANCE)
+            points[1].setX(point_bottom.x())
+            points[1].setY(mid_y)
+
+            points[2].setX(point_top.x())
+            points[2].setY(points[1].y())
+
+            points[3].setX(point_top.x())
+            points[3].setY(point_top.y())
+            pass
+
+        point_top = self.top_node.bottom_anchor_point()
+        mid_y = (point_top.y() + constants.BOX_BOTTOM_DISTANCE)
+
+
+        if self.mode == self.DRAW_MODE:
+            points = [QPointF() for _ in range(4)]
+            point_bottom = mouse_pos
+            draw_points()
+            return points
+
+        point_bottom = self.bottom_node.top_anchor_point()  # top center of Bottom Node
+        point_top.setX(point_top.x() + self.get_connection_displacement())
+
+        if self.connection_type in (constants.AGGREGATION, constants.INHERITANCE):
+            points = [QPointF() for _ in range(8)]
+        else:
+            points = [QPointF() for _ in range(14)]
 
         if self.connection_type == constants.AGGREGATION:
             aggregation_points()
@@ -559,7 +559,69 @@ class Connection(QGraphicsPathItem):
         elif self.connection_type == constants.INHERITANCE:
             inheritance_points()
         else:
-            points = [QPointF() for _ in range(14)]
             combo_points()
         return points
 
+
+class CustomPsetTree(QTreeWidget):
+    def __init__(self,node_widget:NodeWidget) -> None:
+        super(CustomPsetTree, self).__init__()
+        self.setExpandsOnDoubleClick(False)
+        self.setColumnCount(1)
+        self.setHeaderLabels(["Name"])
+        self.node_widget = node_widget
+        self.itemDoubleClicked.connect(self.item_clicked)
+
+    @property
+    def object(self):
+        return self.node_widget.object
+
+    @property
+    def main_window(self) -> MainWindow:
+        return self.node_widget.graphicsProxyWidget().scene().views()[0].window().main_window
+
+    def fill_tree(self) -> None:
+        for property_set in self.object.property_sets:
+            item = CustomPSetTreeItem(self, property_set)
+            for attribute in property_set.attributes:
+                CustomAttribTreeItem(item, attribute)
+
+    def item_clicked(self,item:CustomPSetTreeItem|CustomAttribTreeItem):
+        main_window = self.main_window
+
+        if isinstance(item, CustomPSetTreeItem):
+            property_set = item.property_set
+            main_window.open_pset_window(property_set, self.object, None)
+
+        if isinstance(item, CustomAttribTreeItem):
+            property_set = item.attribute.property_set
+            main_window.open_pset_window(property_set, self.object, None)
+            main_window.pset_window.fill_with_attribute(item.attribute)
+
+
+class CustomPSetTreeItem(QTreeWidgetItem):
+    def __init__(self, tree: QTreeWidget, pset: classes.PropertySet) -> None:
+        super(CustomPSetTreeItem, self).__init__(tree)
+        self._property_set = pset
+        self.update()
+
+    @property
+    def property_set(self) -> classes.PropertySet:
+        return self._property_set
+
+    def update(self) -> None:
+        self.setText(0, self.property_set.name)
+
+
+class CustomAttribTreeItem(QTreeWidgetItem):
+    def __init__(self, tree: CustomPSetTreeItem, attribute: classes.Attribute) -> None:
+        super(CustomAttribTreeItem, self).__init__(tree)
+        self._attribute = attribute
+        self.update()
+
+    @property
+    def attribute(self) -> classes.Attribute:
+        return self._attribute
+
+    def update(self) -> None:
+        self.setText(0, self.attribute.name)
