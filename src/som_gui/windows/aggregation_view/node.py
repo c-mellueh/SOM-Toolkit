@@ -85,7 +85,7 @@ class NodeProxy(QGraphicsProxyWidget):
         self.setWidget(NodeWidget())
         self.widget().tree_widget.fill_tree()
 
-        self.top_connections :set[Connection] = set()
+        self.top_connection:Connection|None = None
         self.bottom_connections :set[Connection] = set()
         self.header = Header(self, self.title)
         self.frame = Frame(self)
@@ -132,18 +132,17 @@ class NodeProxy(QGraphicsProxyWidget):
     def update_connections(self):
         for connection in self.bottom_connections:
             connection.update_line()
-        for connection in self.top_connections:
-            connection.update_line()
-        self.update(
-        )
+        if self.top_connection is not None:
+            self.top_connection.update_line()
+        self.update()
+
     def child_nodes(self) -> set[NodeProxy]:
         return set(self.aggregation_dict().get(aggreg) for aggreg in self.aggregation.children)
 
     def delete(self):
         for connection in list(self.bottom_connections):
             connection.delete()
-        for connection in list(self.top_connections):
-            connection.delete()
+        self.top_connection.delete()
         self.aggregation.delete()
         self.deleteLater()
         self._registry.remove(self)
@@ -378,10 +377,9 @@ class Connection(QGraphicsPathItem):
 
         self.bottom_node: NodeProxy = bottom_node
         self.top_node: NodeProxy = top_node
-
         self.setZValue(0)
         self.top_node.scene().addItem(self)
-        bottom_node.top_connections.add(self)
+        bottom_node.top_connection = self
         top_node.bottom_connections.add(self)
         self.path = QPainterPath()
         self.update_line()
@@ -392,7 +390,7 @@ class Connection(QGraphicsPathItem):
 
     def delete(self):
         self.top_node.bottom_connections.remove(self)
-        self.bottom_node.top_connections.remove(self)
+        self.bottom_node.top_connection = None
         self.scene().removeItem(self)
 
     def update_line(self) -> None:
@@ -402,7 +400,46 @@ class Connection(QGraphicsPathItem):
             self.path.lineTo(point)
         self.setPath(self.path)
         self.setPos(0.0, 0.0)
-        self.setZValue(-100)
+        self.setZValue(0)
+
+    @property
+    def connection_type(self) -> int:
+        return self.bottom_node.aggregation.connection_dict[self.top_node.aggregation]
+
+    def get_connection_displacement(self):
+        aggreg:classes.Aggregation
+        connections = {aggreg.parent_connection for aggreg in self.top_node.aggregation.children}
+        displacement_dict = dict()
+
+        FACTOR = 3
+
+        if len(connections) == 1:
+            displacement_dict= {constants.AGGREGATION:0,
+                    constants.INHERITANCE:0,
+                    constants.AGGREGATION+constants.INHERITANCE:0}
+
+        if len(connections) == 2:
+            if {constants.AGGREGATION,constants.INHERITANCE} == connections:
+                displacement_dict=  {constants.INHERITANCE:-constants.ARROW_WIDTH*FACTOR,
+                constants.AGGREGATION:+constants.ARROW_WIDTH*FACTOR,
+                constants.AGGREGATION+constants.INHERITANCE:0}
+
+            if {constants.AGGREGATION,constants.INHERITANCE+constants.AGGREGATION} == connections:
+                displacement_dict=  {constants.AGGREGATION:-constants.ARROW_WIDTH*FACTOR,
+                constants.INHERITANCE:0,
+                constants.AGGREGATION+constants.INHERITANCE:+constants.ARROW_WIDTH*FACTOR}
+
+            if {constants.INHERITANCE,constants.INHERITANCE+constants.AGGREGATION} == connections:
+                displacement_dict=  {constants.AGGREGATION: 0,
+                constants.INHERITANCE: +constants.ARROW_WIDTH * FACTOR,
+                constants.AGGREGATION + constants.INHERITANCE:-constants.ARROW_WIDTH * FACTOR }
+
+        if len(connections) == 3:
+            displacement_dict = {constants.INHERITANCE: -constants.ARROW_WIDTH * FACTOR,
+             constants.AGGREGATION: 0,
+             constants.AGGREGATION + constants.INHERITANCE:+constants.ARROW_WIDTH * FACTOR }
+
+        return displacement_dict.get(self.connection_type)
 
     @property
     def points(self) -> list[QPointF]:
@@ -425,12 +462,69 @@ class Connection(QGraphicsPathItem):
             points[6].setY(pt.y() + constants.ARROW_HEIGHT / 2)
             points[7].setY(pt.y() + constants.ARROW_HEIGHT)
 
+        def inheritance_points():
+            points[0] = pb
+            points[1].setX(pb.x())
+            points[2].setX(pt.x())
+            points[3].setX(pt.x())
+            points[4].setX(pt.x() - constants.ARROW_WIDTH / 2)
+            points[5].setX(pt.x())
+            points[6].setX(pt.x() + constants.ARROW_WIDTH / 2)
+            points[7].setX(pt.x())
+
+            points[1].setY(mid_y - constants.ARROW_HEIGHT / 2)
+            points[2].setY(points[1].y())
+            points[3].setY(pt.y() + constants.ARROW_HEIGHT / 2)
+            points[4].setY(pt.y() + constants.ARROW_HEIGHT / 2)
+            points[5].setY(pt.y())
+            points[6].setY(pt.y() + constants.ARROW_HEIGHT / 2)
+            points[7].setY(pt.y() + constants.ARROW_HEIGHT / 2)
+
+        def combo_points():
+            points[0] = pb
+
+            points[1].setX(pb.x())
+            points[2].setX(pt.x())
+            points[3].setX(pt.x())
+            points[4].setX(pt.x() - constants.ARROW_WIDTH / 2)
+            points[5].setX(points[3].x())
+            points[6].setX(points[5].x())
+            points[7].setX(points[4].x())
+            points[8].setX(points[5].x())
+            points[9].setX(pt.x() + constants.ARROW_WIDTH / 2)
+            points[10].setX(points[5].x())
+            points[11].setX(points[5].x())
+            points[12].setX(points[9].x())
+            points[13].setX(points[5].x())
+
+            points[1].setY(mid_y + constants.ARROW_HEIGHT / 2)
+            points[2].setY(points[1].y())
+            points[3].setY(pt.y() + constants.ARROW_HEIGHT * 2)
+            points[4].setY(points[3].y() - constants.ARROW_HEIGHT / 2)
+            points[5].setY(points[4].y() - constants.ARROW_HEIGHT / 2)
+            points[6].setY(points[5].y() - constants.ARROW_HEIGHT / 2)
+            points[7].setY(points[6].y())
+            points[8].setY(points[6].y() - constants.ARROW_HEIGHT / 2)
+            points[9].setY(points[6].y())
+            points[10].setY(points[6].y())
+            points[11].setY(points[5].y())
+            points[12].setY(points[4].y())
+            points[13].setY(points[3].y())
+
         points = [QPointF() for _ in range(8)]
 
         pb = self.bottom_node.top_anchor_point()  # top center of Bottom Node
         pt = self.top_node.bottom_anchor_point()
+        pt.setX(pt.x()+self.get_connection_displacement())
         mid_y = (pt.y() + constants.BOX_BOTTOM_DISTANCE)
 
-        aggregation_points()
+        if self.connection_type == constants.AGGREGATION:
+            aggregation_points()
+
+        elif self.connection_type == constants.INHERITANCE:
+            inheritance_points()
+        else:
+            points = [QPointF() for _ in range(14)]
+            combo_points()
         return points
 

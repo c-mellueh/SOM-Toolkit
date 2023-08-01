@@ -126,10 +126,6 @@ class AggregationScene(QGraphicsScene):
                 sub_node = node_dict[sub_aggregation]
                 self.add_connection(node,sub_node)
 
-            if top_aggregation is not None:
-                top_node = node_dict[top_aggregation]
-                self.add_connection(top_node,node)
-
     def add_connection(self,top_node:NodeProxy,bottom_node:NodeProxy):
         con = Connection(bottom_node,top_node)
 
@@ -271,6 +267,10 @@ class AggregationView(QGraphicsView):
         def rc_delete_node():
             self.scene().remove_node(focus_node)
 
+        def set_connection(connection_type:int):
+            focus_node.aggregation.set_parent(focus_node.aggregation.parent,connection_type)
+            focus_node.top_connection.update_line()
+
         if self.right_click_menu is not None:
             pass
         self.right_click_menu = QMenu()
@@ -279,6 +279,13 @@ class AggregationView(QGraphicsView):
         if style ==9:
             self.action_add_node = self.right_click_menu.addAction("Node löschen")
             self.action_add_node.triggered.connect(rc_delete_node)
+            self.menu_connection = self.right_click_menu.addMenu("Verbindungsart")
+            self.action_set_aggregation = self.menu_connection.addAction("Aggregation")
+            self.action_set_aggregation.triggered.connect(lambda : set_connection(constants.AGGREGATION))
+            self.action_set_aggregation = self.menu_connection.addAction("Vererbung")
+            self.action_set_aggregation.triggered.connect(lambda : set_connection(constants.INHERITANCE))
+            self.action_set_aggregation = self.menu_connection.addAction("Aggregation+Vererbung")
+            self.action_set_aggregation.triggered.connect(lambda : set_connection(constants.INHERITANCE+constants.AGGREGATION))
 
         def rc_reset_info():
             self.window().reset_info()
@@ -518,19 +525,12 @@ class AggregationWindow(QWidget):
         first_scene = sorted([scene for scene in self.scenes],key=lambda x:x.name)[0]
         self.active_scene = first_scene
 
-    def create_connections_by_top_node(self,node:NodeProxy,scene:AggregationScene):
-        aggregation = node.aggregation
-        for child_aggregation in aggregation.children:
-            child_node = self.aggregation_dict().get(child_aggregation)
-            scene.add_connection(node,child_node)
-            self.create_connections_by_top_node(child_node,scene)
-
     def show(self) -> None:
         if not self.is_initial_opening and len(self.scenes) >0 :
             super(AggregationWindow, self).show()
             return
 
-        if len(self.scene_dict) == 0:
+        if len(self.scene_dict) == 0 and len(self.nodes) == 0:
             self.active_scene = self.create_new_scene()
         else:
             self.create_missing_scenes()
@@ -603,6 +603,8 @@ class AggregationWindow(QWidget):
         if self._active_scene is None:
             if self.is_in_filter_mode:
                 self.reset_filter()
+        if self._active_scene is None:
+            self.active_scene = self.create_new_scene()
         return self._active_scene
 
     @active_scene.setter
