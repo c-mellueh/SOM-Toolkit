@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
         # init object and ProertyWidget
         object_widget.init(self)
         property_widget.init(self)
-        self.setWindowTitle("SOM-Toolkit")
+        self.setWindowTitle(f"SOM-Toolkit v{__version__}")
         connect()
         settings.reset_save_path()
 
