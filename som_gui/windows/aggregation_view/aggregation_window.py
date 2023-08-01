@@ -290,14 +290,15 @@ class AggregationView(QGraphicsView):
         if style ==9:
             self.action_add_node = self.right_click_menu.addAction("Node löschen")
             self.action_add_node.triggered.connect(rc_delete_node)
-            self.menu_connection = self.right_click_menu.addMenu("Verbindungsart")
-            self.action_set_aggregation = self.menu_connection.addAction("Aggregation")
-            self.action_set_aggregation.triggered.connect(lambda : set_connection(constants.AGGREGATION))
-            self.action_set_aggregation = self.menu_connection.addAction("Vererbung")
-            self.action_set_aggregation.triggered.connect(lambda : set_connection(constants.INHERITANCE))
-            self.action_set_aggregation = self.menu_connection.addAction("Aggregation+Vererbung")
-            self.action_set_aggregation.triggered.connect(lambda : set_connection(
-                constants.INHERITANCE + constants.AGGREGATION))
+            if focus_node.aggregation.parent is not None:
+                self.menu_connection = self.right_click_menu.addMenu("Verbindungsart")
+                self.action_set_aggregation = self.menu_connection.addAction("Aggregation")
+                self.action_set_aggregation.triggered.connect(lambda : set_connection(constants.AGGREGATION))
+                self.action_set_aggregation = self.menu_connection.addAction("Vererbung")
+                self.action_set_aggregation.triggered.connect(lambda : set_connection(constants.INHERITANCE))
+                self.action_set_aggregation = self.menu_connection.addAction("Aggregation+Vererbung")
+                self.action_set_aggregation.triggered.connect(lambda : set_connection(
+                    constants.INHERITANCE + constants.AGGREGATION))
 
         def rc_reset_info():
             self.window().reset_info()
