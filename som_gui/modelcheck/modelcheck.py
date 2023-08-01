@@ -196,7 +196,7 @@ def check_group_structure(group, group_dict: dict, layer_index, ag, bk, cursor, 
         db_create_entity(group, cursor, project_name, file_name, identifier)
         for sub_ident in sub_idents:
             if sub_ident != identifier:
-                issues.subgroup_issue(cursor, group.GlobalId,sub_ident)
+                issues.subgroup_issue(cursor, group.GlobalId, sub_ident)
 
     def check_real_group():
         object_rep: SOMcreator.classes.Object = ident_dict.get(identifier)

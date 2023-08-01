@@ -338,7 +338,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         attribute: classes.Attribute = item.linked_data
         old_name = attribute.name
         existing_names = [attrib.name for attrib in self.property_set.attributes]
-        new_name, fulfilled = popups.req_attribute_name(self,old_name)
+        new_name, fulfilled = popups.req_attribute_name(self, old_name)
 
         if not fulfilled:
             return

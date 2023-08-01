@@ -13,7 +13,6 @@ from ..data import constants
 import json
 
 from ..windows import popups
-from ..windows.aggregation_view import aggregation_window
 from .. import settings
 
 if TYPE_CHECKING:

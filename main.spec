@@ -1,12 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
-added_files = [('src/som_gui/icons','som_gui/icons'),
-               ('src/som_gui/logs','som_gui/logs'),
+added_files = [('som_gui/icons','som_gui/icons'),
+               ('som_gui/logs','som_gui/logs'),
                ]
 
 a = Analysis(
-    ['src\cli.py',],
+    ['cli.py',],
     pathex=[],
     binaries=[],
     datas=added_files,
@@ -38,7 +38,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon = 'src\\som_gui\\icons\icon.ico'
+    icon = 'som_gui\\icons\icon.ico'
 )
 coll = COLLECT(
     exe,
@@ -48,5 +48,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='SOM-Toolkit_v2.3.2.1',
+    name='SOM-Toolkit_v2.4.0',
 )

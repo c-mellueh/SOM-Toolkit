@@ -222,7 +222,7 @@ class MappingWindow(QMainWindow):
             revit.export_shared_parameters(path, pset_dict)
 
     def object_double_clicked(self,item: ObjectTreeItem) -> None:
-        object_widget.object_double_clicked(self.main_window,item.object)
+        object_widget.object_double_clicked(self.main_window, item.object)
 
 class ObjectTreeItem(QTreeWidgetItem):
     def __init__(self, obj: classes.Object, parent: QTreeWidgetItem | ObjectTreeItem = None) -> None:

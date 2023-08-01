@@ -22,7 +22,7 @@ def get_version(rel_path: str) -> str:
 
 setup(
     name='som_gui',
-    version=get_version("src/som_gui/__init__.py"),
+    version=get_version("som_gui/__init__.py"),
     description='Create Modelcheckingrules for Desite',
     author='Christoph Mellüh',
     author_email='christoph.mellueh@deutschebahn.com',

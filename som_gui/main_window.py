@@ -7,8 +7,8 @@ import sys
 import json
 
 from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QCompleter, QDialog, QTableWidget, QInputDialog, QLineEdit,QFileDialog,QTreeWidgetItem
-from SOMcreator import classes, desite,vestra,card1,filehandling,allplan,constants
+from PySide6.QtWidgets import QApplication, QMainWindow, QCompleter, QDialog, QTableWidget, QInputDialog, QLineEdit,QFileDialog
+from SOMcreator import classes, desite,vestra,card1,filehandling,allplan
 from SOMcreator import excel as som_excel
 from . import icons
 from . import logs
@@ -16,8 +16,8 @@ from .filehandling import open_file, save_file, export
 from .qt_designs import ui_project_settings
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import script_widget, property_widget, object_widget
-from src.som_gui.windows.aggregation_view import aggregation_window
-from .windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups, modelcheck_window
+from som_gui.windows.aggregation_view import aggregation_window
+from .windows import predefined_psets_window, propertyset_window, mapping_window, popups
 from . import settings
 from .modelcheck import modelcheck
 
@@ -98,8 +98,8 @@ class MainWindow(QMainWindow):
     def import_excel(self):
         open_file.import_excel_clicked(self)
 
-    def object_double_clicked(self,item:object_widget.CustomObjectTreeItem):
-        object_widget.object_double_clicked(self,item.object)
+    def object_double_clicked(self, item: object_widget.CustomObjectTreeItem):
+        object_widget.object_double_clicked(self, item.object)
 
     @property
     def object_tree(self) -> object_widget.CustomTree:
@@ -164,7 +164,7 @@ class MainWindow(QMainWindow):
     # filehandling
 
     # Click Events
-    def item_changed(self, item:object_widget.CustomObjectTreeItem|propertyset_window.CustomCheckItem|propertyset_window.CustomTableItem):
+    def item_changed(self, item: object_widget.CustomObjectTreeItem | propertyset_window.CustomCheckItem | propertyset_window.CustomTableItem):
         item.update()
 
     def save_clicked(self):

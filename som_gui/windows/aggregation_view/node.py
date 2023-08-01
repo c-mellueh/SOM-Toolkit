@@ -1,17 +1,17 @@
 from __future__ import annotations  # make own class referencable
 from typing import TYPE_CHECKING
-from PySide6.QtCore import Qt, QRectF, QPointF, QPoint, QRect
-from PySide6.QtGui import QColor, QPen, QPainter, QCursor,QPainterPath
+from PySide6.QtCore import Qt, QRectF, QPointF
+from PySide6.QtGui import QPainter, QCursor,QPainterPath
 from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout, \
     QGraphicsProxyWidget, QGraphicsSceneMoveEvent,QGraphicsPathItem, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
-    QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsTextItem,QGraphicsView,QGraphicsEllipseItem
+    QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsEllipseItem
 from ...data import constants
 from ...windows import popups
 
 from SOMcreator import classes
 
 if TYPE_CHECKING:
-    from src.som_gui.main_window import MainWindow
+    from som_gui.main_window import MainWindow
     from .aggregation_window import AggregationScene,AggregationWindow
 
 class NodeProxy(QGraphicsProxyWidget):
@@ -279,7 +279,7 @@ class Frame(QGraphicsRectItem):
     def resize(self):
         rect = self.node_proxy.rect()
         rect.setWidth(rect.width() - self.pen().width() / 2)
-        rect.setY(rect.y()-constants.HEADER_HEIGHT)
+        rect.setY(rect.y() - constants.HEADER_HEIGHT)
         rect.setHeight(rect.height())
         rect.setX(self.x() + self.pen().width() / 2)
         self.setRect(rect)
@@ -342,8 +342,8 @@ class NodeWidget(QWidget):
         aggregation = classes.Aggregation(obj,None,obj.description,False)
         rect = self.graphicsProxyWidget().sceneBoundingRect()
         input_point = rect.bottomLeft()
-        input_point.setY(input_point.y()+constants.BOX_MARGIN)
-        input_point.setX(input_point.x()+constants.BOX_MARGIN)
+        input_point.setY(input_point.y() + constants.BOX_MARGIN)
+        input_point.setX(input_point.x() + constants.BOX_MARGIN)
         proxy_node = NodeProxy(aggregation,input_point)
         self.aggregation.add_child(proxy_node.aggregation)
         self.scene().add_node(proxy_node,False)
@@ -427,29 +427,29 @@ class Connection(QGraphicsPathItem):
 
         if len(connections) == 1:
             displacement_dict= {constants.AGGREGATION:0,
-                    constants.INHERITANCE:0,
-                    constants.AGGREGATION+constants.INHERITANCE:0}
+                                constants.INHERITANCE:0,
+                                constants.AGGREGATION + constants.INHERITANCE:0}
 
         if len(connections) == 2:
-            if {constants.AGGREGATION,constants.INHERITANCE} == connections:
-                displacement_dict=  {constants.INHERITANCE:-constants.ARROW_WIDTH*FACTOR,
-                constants.AGGREGATION:+constants.ARROW_WIDTH*FACTOR,
-                constants.AGGREGATION+constants.INHERITANCE:0}
+            if {constants.AGGREGATION, constants.INHERITANCE} == connections:
+                displacement_dict=  {constants.INHERITANCE: -constants.ARROW_WIDTH * FACTOR,
+                                     constants.AGGREGATION: +constants.ARROW_WIDTH * FACTOR,
+                                     constants.AGGREGATION + constants.INHERITANCE:0}
 
-            if {constants.AGGREGATION,constants.INHERITANCE+constants.AGGREGATION} == connections:
-                displacement_dict=  {constants.AGGREGATION:-constants.ARROW_WIDTH*FACTOR,
-                constants.INHERITANCE:0,
-                constants.AGGREGATION+constants.INHERITANCE:+constants.ARROW_WIDTH*FACTOR}
+            if {constants.AGGREGATION, constants.INHERITANCE + constants.AGGREGATION} == connections:
+                displacement_dict=  {constants.AGGREGATION: -constants.ARROW_WIDTH * FACTOR,
+                                     constants.INHERITANCE:0,
+                                     constants.AGGREGATION + constants.INHERITANCE: +constants.ARROW_WIDTH * FACTOR}
 
-            if {constants.INHERITANCE,constants.INHERITANCE+constants.AGGREGATION} == connections:
+            if {constants.INHERITANCE, constants.INHERITANCE + constants.AGGREGATION} == connections:
                 displacement_dict=  {constants.AGGREGATION: 0,
-                constants.INHERITANCE: +constants.ARROW_WIDTH * FACTOR,
-                constants.AGGREGATION + constants.INHERITANCE:-constants.ARROW_WIDTH * FACTOR }
+                                     constants.INHERITANCE: +constants.ARROW_WIDTH * FACTOR,
+                                     constants.AGGREGATION + constants.INHERITANCE: -constants.ARROW_WIDTH * FACTOR}
 
         if len(connections) == 3:
             displacement_dict = {constants.INHERITANCE: -constants.ARROW_WIDTH * FACTOR,
-             constants.AGGREGATION: 0,
-             constants.AGGREGATION + constants.INHERITANCE:+constants.ARROW_WIDTH * FACTOR }
+                                 constants.AGGREGATION: 0,
+                                 constants.AGGREGATION + constants.INHERITANCE: +constants.ARROW_WIDTH * FACTOR}
 
         return displacement_dict.get(self.connection_type)
 

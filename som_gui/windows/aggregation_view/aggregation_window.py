@@ -8,13 +8,13 @@ from PySide6.QtGui import QWheelEvent, QMouseEvent,QTransform
 from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView,QApplication,QMenu
 from SOMcreator import classes
 
-from src.som_gui.qt_designs import ui_GraphWindow
+from som_gui.qt_designs import ui_GraphWindow
 from .node import NodeProxy, Header, Frame, Connection,Circle
 from ...data import constants
 from ...windows import popups
 from ...icons import get_icon,get_reload_icon,get_search_icon
 if TYPE_CHECKING:
-    from src.som_gui.main_window import MainWindow
+    from som_gui.main_window import MainWindow
 
 LEFT = 1
 RIGHT = 2
@@ -296,7 +296,8 @@ class AggregationView(QGraphicsView):
             self.action_set_aggregation = self.menu_connection.addAction("Vererbung")
             self.action_set_aggregation.triggered.connect(lambda : set_connection(constants.INHERITANCE))
             self.action_set_aggregation = self.menu_connection.addAction("Aggregation+Vererbung")
-            self.action_set_aggregation.triggered.connect(lambda : set_connection(constants.INHERITANCE+constants.AGGREGATION))
+            self.action_set_aggregation.triggered.connect(lambda : set_connection(
+                constants.INHERITANCE + constants.AGGREGATION))
 
         def rc_reset_info():
             self.window().reset_info()

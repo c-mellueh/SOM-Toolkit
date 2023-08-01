@@ -1,5 +1,5 @@
 from __future__ import annotations
-from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QGridLayout, QListWidgetItem, QCompleter,QTableWidgetItem
+from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QListWidgetItem, QCompleter,QTableWidgetItem
 from PySide6.QtCore import Qt
 from typing import TYPE_CHECKING
 from SOMcreator import classes
