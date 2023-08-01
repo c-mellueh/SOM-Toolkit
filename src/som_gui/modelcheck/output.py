@@ -37,10 +37,12 @@ def create_issues(db_name, path):
         os.mkdir(directory)
 
     issues = sql.query_issues(cursor)
-    if len(list(issues)):
-        print(f"Modell(e) sind fehlerfrei!")
-        return
 
+    if len(issues) == 0:
+        print("Modelle fehlerfrei!")
+        return
+    else:
+        print(f"{len(issues)} Fehler gefunden!")
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
 

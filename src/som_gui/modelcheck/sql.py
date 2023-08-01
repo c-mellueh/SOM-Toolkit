@@ -84,9 +84,14 @@ def db_create_entity(element: entity_instance, cursor, project, file_name, baute
                         ('{guid_zwc}','{guid}','{name}','{project}','{ifc_type}',{center[0]},{center[1]},{center[2]},'{file_name}','{bauteil_klasse}')
                   ''')
     except sqlite3.IntegrityError:
+        print("Integrity Error")
         pass
 
 
-def query_issues(cursor) -> sqlite3.Cursor:
-    return cursor.execute(
+def query_issues(cursor:sqlite3.Cursor) -> list:
+    cursor.execute(
         "SELECT i.creation_date, e.GUID,i.short_description,i.issue_type,e.Name,i.PropertySet,i.Attribut, e.datei, e.bauteilKlassifikation  FROM issues AS i JOIN entities e on i.GUID = e.GUID_ZWC")
+
+    query = cursor.fetchall()
+    cursor.execute("select count(issues.GUID) from issues")
+    return query

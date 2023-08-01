@@ -1,30 +1,34 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-import tempfile
+
 import os
 import re
 import sqlite3
-import time
+import tempfile
+from typing import TYPE_CHECKING
+
 import SOMcreator
+import ifcopenshell
 import tqdm
-from PySide6.QtCore import QRunnable,QThreadPool
+from PySide6.QtCore import QRunnable, QThreadPool
 from SOMcreator import Project
 from SOMcreator import constants as som_constants
-from ifcopenshell.util import element as ifc_el
 from ifcopenshell import entity_instance
-import ifcopenshell
+from ifcopenshell.util import element as ifc_el
+
 from . import issues
-from .sql import db_create_entity, remove_existing_issues,create_tables
 from .output import create_issues
+from .sql import db_create_entity, remove_existing_issues, create_tables
 from ..windows.modelcheck_window import ModelcheckWindow
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 from datetime import datetime
+
 GROUP = "Gruppe"
 ELEMENT = "Element"
 
-def run_modelcheck(main_window:MainWindow):
+
+def run_modelcheck(main_window: MainWindow):
     project = main_window.project
     dialog = ModelcheckWindow(main_window)
     answer = dialog.exec()
@@ -33,7 +37,6 @@ def run_modelcheck(main_window:MainWindow):
     ifc_paths = dialog.get_ifc_path()
     export_path = dialog.widget.line_edit_export.text()
 
-
     if dialog.data_base_path is None:
         db_path = tempfile.NamedTemporaryFile().name
     else:
@@ -41,7 +44,8 @@ def run_modelcheck(main_window:MainWindow):
 
     property_set = dialog.widget.line_edit_ident_pset.text()
     attribute = dialog.widget.line_edit_ident_attribute.text()
-    main_window.running_modelcheck = MainRunnable(ifc_paths,main_window.project,db_path,property_set,attribute,export_path,project.name)
+    main_window.running_modelcheck = MainRunnable(ifc_paths, main_window.project, db_path, property_set, attribute,
+                                                  export_path, project.name)
     main_window.running_modelcheck.start()
 
 
@@ -68,7 +72,8 @@ class MainRunnable(QRunnable):
     def start(self):
         QThreadPool.globalInstance().start(self)
 
-def main(file_paths, proj:Project, db_path, ag, bk, issue_path, p_name):
+
+def main(file_paths, proj: Project, db_path, ag, bk, issue_path, p_name):
     create_tables(db_path)
 
     if not isinstance(file_paths, list):
@@ -90,136 +95,56 @@ def main(file_paths, proj:Project, db_path, ag, bk, issue_path, p_name):
     create_issues(db_path, issue_path)
 
 
-def check_format(cursor, value, attribute, guid, element_type):
-    is_ok = False
-    for form in attribute.value:
-        if re.match(form, value) is not None:
-            is_ok = True
-    if not is_ok:
-        issues.format_issue(cursor, guid, attribute, element_type)
-
-
-def check_list(cursor, value, attribute, guid, element_type):
-    if not attribute.value:
-        return
-    if value not in attribute.value:
-        issues.list_issue(cursor, guid, attribute, element_type)
-
-
-def check_range(cursor, value, attribute, guid, element_type):
-    is_ok = False
-    for possible_range in attribute:
-        if min(possible_range) <= value <= max(possible_range):
-            is_ok = True
-    if not is_ok:
-        issues.range_issue(cursor, guid, attribute, element_type)
-
-
-def check_values(cursor, value, attribute: SOMcreator.Attribute, guid, element_type):
-    check_dict = {som_constants.LIST: check_list, som_constants.RANGE: check_range,
-                  som_constants.FORMAT: check_format}
-    func = check_dict[attribute.value_type]
-    func(cursor, value, attribute, guid, element_type)
-
-
-def check_for_attributes(cursor, element, pset_dict, obj: SOMcreator.Object, element_type):
-    guid = element.GlobalId
-    for property_set in obj.property_sets:
-        pset_name = property_set.name
-        if pset_name not in pset_dict:
-            issues.property_set_issue(cursor, guid, pset_name, element_type)
-            continue
-
-        for attribute in property_set.attributes:
-            attribute_name = attribute.name
-            if attribute.name not in pset_dict[pset_name]:
-                issues.attribute_issue(cursor, guid, pset_name, attribute_name, element_type)
-                continue
-
-            value = pset_dict[pset_name][attribute_name]
-            check_values(cursor, value, attribute, guid, element_type)
-
-def get_identifier(el:entity_instance,main_pset:str,main_attribute:str) -> str|None:
-    return ifc_el.get_pset(el,main_pset,main_attribute)
-
-def get_object(el:entity_instance,main_pset:str,main_attribute:str,identifier_dict:dict[str,SOMcreator.Object])-> SOMcreator.Object:
-    identifier = get_identifier(el,main_pset,main_attribute)
-    return identifier_dict.get(identifier)
-
-def gruppe_zu_pruefen(cursor, el, ag, bk,create_issue = True):
-    """create Issue: Wenn überprüft wird ob die Struktur "Element-Subelement-Element" mit 3x identischen Typ ist soll keine Fehlermeldung ausgegeben werden, weil die Gruppen Rekursiv geprüft werden"""
-
-    bauteilklass = ifc_el.get_pset(el, ag, bk)  #ob.w
-    if bauteilklass is None:
-        if create_issue:
-            issues.ident_issue(cursor, el.GlobalId, bk, ag, GROUP)
-        return False
-
-    sub_bks = set()
-    for relationship in getattr(el, "HasAssignments", []):
-        if not relationship.is_a('IfcRelAssignsToGroup'):
-            continue
-
-        parent = relationship.RelatingGroup #is assigned to Group
-        parent_bk = ifc_el.get_pset(parent, ag, bk) #ob.w
-        if parent_bk != bauteilklass:
-            continue
-
-        if gruppe_zu_pruefen(cursor,parent,ag,bk,False):
-            return False
-        return True
-
-    if not create_issue:
-        return False
-
-    for relationship in getattr(el, "IsGroupedBy", []):
-        for sub in relationship.RelatedObjects:
-            sub_bk = ifc_el.get_pset(sub, ag, bk)
-            sub_bks.add(sub_bk)
-
-    if {bauteilklass} != sub_bks:
-        issues.subgroup_issue(cursor, el.GlobalId)
-
-    return False
-
-
-def check_group(cursor,file_name,project_name,group, ag, bk, ident_dict):
-    def check_if_subelement_is_allowed(group:entity_instance,sub_element:entity_instance):
-        obj_group = get_object(group,bk,ag,ident_dict)
-        obj_sub_element = get_object(sub_element,bk,ag,ident_dict)
-
-
-    relationships = getattr(group, "IsGroupedBy", [])
-    check_element(group, ag, bk, cursor, file_name, ident_dict, GROUP, project_name)
-    if not relationships:
-        issues.empty_group_issue(cursor, group)
-
-    for relationship in relationships:
-        for sub_element in relationship.RelatedObjects: #IfcGroup or IfcElement
-            allowed = check_if_subelement_is_allowed(group,sub_element)
-            if not allowed:
-                issues.child_issue(cursor, element, sub_element, ag, bk)
-    bauteilklasse_gruppe = ifc_el.get_pset(group, ag, bk)
-    bauteilklasse_sub_gruppe = ifc_el.get_pset(sub_group, ag, bk)
-
-    parent_obj = ident_dict.get(bauteilklasse_gruppe)
-    child_obj = ident_dict.get(bauteilklasse_sub_gruppe)
-
-    if child_obj is None:
-        return False
-
-    child_aggregations = child_obj.aggregation_representations
-
-    for parent_aggregation in parent_obj.aggregation_representations:
-        if parent_aggregation.children.intersection(child_aggregations):
-            return True
-    return False
-
-def check_sub_group():
-    pass
+def get_identifier(el: entity_instance, main_pset: str, main_attribute: str) -> str | None:
+    return ifc_el.get_pset(el, main_pset, main_attribute)
 
 
 def check_element(element, ag, bk, cursor, file_name, ident_dict, element_type, project_name):
+    def check_values(cursor, value, attribute: SOMcreator.Attribute, guid, element_type):
+        check_dict = {som_constants.LIST: check_list, som_constants.RANGE: check_range,
+                      som_constants.FORMAT: check_format}
+        func = check_dict[attribute.value_type]
+        func(cursor, value, attribute, guid, element_type)
+
+    def check_format(cursor, value, attribute, guid, element_type):
+        is_ok = False
+        for form in attribute.value:
+            if re.match(form, value) is not None:
+                is_ok = True
+        if not is_ok:
+            issues.format_issue(cursor, guid, attribute, element_type)
+
+    def check_list(cursor, value, attribute, guid, element_type):
+        if not attribute.value:
+            return
+        if value not in attribute.value:
+            issues.list_issue(cursor, guid, attribute, element_type)
+
+    def check_range(cursor, value, attribute, guid, element_type):
+        is_ok = False
+        for possible_range in attribute:
+            if min(possible_range) <= value <= max(possible_range):
+                is_ok = True
+        if not is_ok:
+            issues.range_issue(cursor, guid, attribute, element_type)
+
+    def check_for_attributes(cursor, element, pset_dict, obj: SOMcreator.Object, element_type):
+        guid = element.GlobalId
+        for property_set in obj.property_sets:
+            pset_name = property_set.name
+            if pset_name not in pset_dict:
+                issues.property_set_issue(cursor, guid, pset_name, element_type)
+                continue
+
+            for attribute in property_set.attributes:
+                attribute_name = attribute.name
+                if attribute.name not in pset_dict[pset_name]:
+                    issues.attribute_issue(cursor, guid, pset_name, attribute_name, element_type)
+                    continue
+
+                value = pset_dict[pset_name][attribute_name]
+                check_values(cursor, value, attribute, guid, element_type)
+
     guid = element.GlobalId
     psets = ifc_el.get_psets(element)
     ag_pset = psets.get(ag)
@@ -247,14 +172,77 @@ def check_element(element, ag, bk, cursor, file_name, ident_dict, element_type, 
     check_for_attributes(cursor, element, psets, obj_rep, element_type)
 
 
+SUBGROUPS = "subgroups"
+SUBELEMENT = "subelement"
+
+
+def build_group_structure(focus_group: ifcopenshell.entity_instance, group_dict: dict, ag: str, bk: str, ):
+    group_dict[SUBGROUPS] = dict()
+    group_dict[SUBELEMENT] = set()
+
+    relationships = getattr(focus_group, "IsGroupedBy", [])
+    for relationship in relationships:
+        for sub_element in relationship.RelatedObjects:  # IfcGroup or IfcElement
+            sub_element: ifcopenshell.entity_instance
+            if sub_element.is_a("IfcElement"):
+                group_dict[SUBELEMENT].add(sub_element)
+            else:
+                group_dict[SUBGROUPS][sub_element] = dict()
+                build_group_structure(sub_element, group_dict[SUBGROUPS][sub_element], ag, bk)
+
+
+def check_group_structure(group, group_dict: dict, layer_index, ag, bk, cursor, file_name, project_name, ident_dict):
+    def check_collector_group():
+        db_create_entity(group, cursor, project_name, file_name, identifier)
+        for sub_ident in sub_idents:
+            if sub_ident != identifier:
+                issues.subgroup_issue(cursor, group.GlobalId,sub_ident)
+
+    def check_real_group():
+        object_rep: SOMcreator.classes.Object = ident_dict.get(identifier)
+        check_element(group, ag, bk, cursor, file_name, ident_dict, GROUP, project_name)
+        if len(sub_idents) != len([get_identifier(sub_group, ag, bk) for sub_group in group_dict[group][SUBGROUPS]]):
+            issues.repetetive_group_issue(cursor, group)
+
+        allowed_identifiers = set()
+        for aggreg in object_rep.aggregation_representations:
+            for child in aggreg.children:
+                allowed_identifiers.add(child.object.ident_value)
+
+        for sub_element in sub_entities:
+            ident = get_identifier(sub_element, ag, bk)
+            if ident not in allowed_identifiers:
+                issues.child_issue(cursor, group, sub_element, ag, bk)
+
+    identifier = get_identifier(group, ag, bk)
+    sub_entities = set(group_dict[group][SUBGROUPS].keys()).union(group_dict[group][SUBELEMENT])
+
+    sub_idents = {get_identifier(sub_group, ag, bk) for sub_group in group_dict[group][SUBGROUPS]}
+    own_sub_groups = sub_idents == identifier
+    even_layer = layer_index % 2 == 0
+    if even_layer:
+        check_collector_group()
+    else:
+        check_real_group()
+
+    if len(sub_entities) == 0:
+        issues.empty_group_issue(cursor, group.GlobalId)
+
+    for sub_group in group_dict[group][SUBGROUPS]:
+        check_group_structure(sub_group, group_dict[group][SUBGROUPS], layer_index + 1, ag, bk, cursor, file_name,
+                              project_name, ident_dict)
+
+
 def get_parent_group(group: entity_instance) -> list[entity_instance]:
-    parent_assignment:list[entity_instance] = [assignment for assignment in getattr(group, "HasAssignments", []) if
-                        assignment.is_a("IfcRelAssignsToGroup")]
+    parent_assignment: list[entity_instance] = [assignment for assignment in getattr(group, "HasAssignments", []) if
+                                                assignment.is_a("IfcRelAssignsToGroup")]
     if not parent_assignment:
         return []
     return [assignment.RelatingGroup for assignment in parent_assignment]
 
-def check_all_elements(proj: Project, ifc, file_name, db_name, ag, bk, project_name):
+
+def check_all_elements(proj: Project, ifc: ifcopenshell.file, file_name: str, db_name: str, ag: str, bk: str,
+                       project_name: str):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     remove_existing_issues(cursor, project_name, datetime.today(), file_name)
@@ -263,14 +251,15 @@ def check_all_elements(proj: Project, ifc, file_name, db_name, ag, bk, project_n
     for element in tqdm.tqdm(ifc.by_type("IfcElement"), desc=f"[{ELEMENT}] {file_name}"):
         check_element(element, ag, bk, cursor, file_name, ident_dict, ELEMENT, project_name)
 
-
     root_groups = [group for group in ifc.by_type("IfcGroup") if not get_parent_group(group)]
 
+    group_dict = dict()
+    for element in root_groups:
+        group_dict[element] = dict()
+        build_group_structure(element, group_dict[element], ag, bk)
 
-    for element in tqdm.tqdm(root_groups, desc=f"[{GROUP}] {file_name}"):
-        check_group(cursor,file_name,project_name,element,ag,bk,ident_dict)
+    for group in tqdm.tqdm(group_dict.keys(), desc=f"[{GROUP}] {file_name}"):
+        check_group_structure(group, group_dict, 0, ag, bk, cursor, file_name, project_name, ident_dict)
 
-    time.sleep(0.1)
     conn.commit()
     conn.close()
-

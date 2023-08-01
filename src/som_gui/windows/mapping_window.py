@@ -1,17 +1,16 @@
 from __future__ import annotations
 
-import json
 import os
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtWidgets import QTreeWidgetItem, QMenu, QMainWindow, QFileDialog
-from SOMcreator import classes, constants, revit, allplan, filehandling, vestra, card1, excel
+from SOMcreator import classes, constants, revit
 
 from .. import icons
 from ..qt_designs import ui_mapping_window
 from ..widgets import object_widget
-from ..windows import popups, graphs_window
+from ..windows import popups
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow

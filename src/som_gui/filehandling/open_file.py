@@ -3,55 +3,43 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
-from typing import TYPE_CHECKING
 
-import SOMcreator.constants
 import openpyxl
 from PySide6.QtWidgets import QInputDialog, QLineEdit, QFileDialog
-from SOMcreator import classes, constants
-
+from PySide6.QtCore import QPointF
+from SOMcreator import classes
+from SOMcreator import constants as som_constants
 from .. import settings
 from ..data.constants import FILETYPE
-from ..windows import graphs_window, popups
+from ..data import constants
+from ..windows import popups
+from ..windows.aggregation_view import aggregation_window
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
 
-def iter_child(parent_node: graphs_window.Node) -> None:
+def iter_child(parent_node: aggregation_window.Node) -> None:
     child: classes.Aggregation
     for child in parent_node.aggregation.children:
-        child_node = graphs_window.aggregation_to_node(child)
+        child_node = aggregation_window.aggregation_to_node(child)
         con_type = parent_node.aggregation.connection_dict[child_node.aggregation]
         parent_node.add_child(child_node, con_type)
         iter_child(child_node)
 
 
-def import_node_pos(main_dict: dict, graph_window: graphs_window.GraphWindow) -> None:
-    json_aggregation_dict: dict = main_dict[SOMcreator.constants.AGGREGATIONS]
+def import_node_pos(main_dict: dict, graph_window: aggregation_window.AggregationWindow) -> None:
+    json_aggregation_dict: dict = main_dict[som_constants.AGGREGATIONS]
     aggregation_ref = {aggregation.uuid: aggregation for aggregation in classes.Aggregation}
-    nodes = dict()
     for uuid, aggregation_dict in json_aggregation_dict.items():
         aggregation = aggregation_ref[uuid]
-        x_pos = aggregation_dict.get(constants.X_POS)
-        y_pos = aggregation_dict.get(constants.Y_POS)
-        nodes[graphs_window.Node(aggregation, graph_window)] = (x_pos, y_pos)
+        x_pos = aggregation_dict.get(som_constants.X_POS) or 0.0
+        y_pos = aggregation_dict.get(som_constants.Y_POS) or 0.0
+        graph_window.create_node(aggregation,QPointF(x_pos,y_pos))
 
-    root_nodes: set[graphs_window.Node] = {node for node in nodes.keys() if node.aggregation.is_root}
-    for node in sorted(root_nodes,key= lambda x:x.name):
-        graph_window.create_scene_by_node(node)
-        graph_window.draw_tree(node)
-        iter_child(node)
-        graph_window.drawn_scenes.append(node.scene())
-
-    for node, (x_pos, y_pos) in nodes.items():
-        if y_pos is not None:
-            node.setY(float(y_pos))
-        if x_pos is not None:
-            node.setX(float(x_pos))
-
-    graph_window.combo_box.setCurrentIndex(0)
-    graph_window.combo_change()
+    scene_dict = main_dict.get(constants.AGGREGATION_SCENES) or dict()
+    graph_window.scene_dict.update(scene_dict)
 
 
 def new_file(main_window: MainWindow) -> None:
@@ -81,10 +69,10 @@ def request_delete_or_merge(main_window: MainWindow) -> None:
 
 
 def fill_ui(main_window: MainWindow) -> None:
-    main_window.load_graph(show=False)
     main_window.clear_object_input()
     main_window.fill_tree()
-
+    main_window.graph_window.is_initial_opening = True
+    main_window.graph_window.hide()
 
 def get_path(main_window: MainWindow, title: str, file_text: str) -> str:
     cur_path = settings.get_open_path()
@@ -95,10 +83,11 @@ def get_path(main_window: MainWindow, title: str, file_text: str) -> str:
 
 def import_excel_clicked(main_window: MainWindow) -> None:
     def build_aggregations():
+        return #TODO: fix
         gw = main_window.graph_window
         root_nodes = list()
         for aggreg in sorted(classes.Aggregation, key=lambda x: x.name):
-            node = graphs_window.Node(aggreg, gw)
+            node = aggregation_window.Node(aggreg, gw)
             if aggreg.is_root:
                 root_nodes.append(node)
 

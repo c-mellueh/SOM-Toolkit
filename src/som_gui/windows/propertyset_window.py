@@ -13,6 +13,10 @@ from .. import icons,settings
 from ..qt_designs import ui_property_set_window
 from ..windows import popups
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..main_window import MainWindow
 
 class CustomTableItem(QTableWidgetItem):
     def __init__(self, item: classes.Object | classes.PropertySet | classes.Attribute,text:str):
@@ -148,7 +152,7 @@ class LineInput(QLineEdit):
 
 
 class PropertySetWindow(QtWidgets.QWidget):
-    def __init__(self, main_window, property_set: classes.PropertySet, active_object: classes.Object, window_title):
+    def __init__(self, main_window:MainWindow, property_set: classes.PropertySet, active_object: classes.Object, window_title:str):
         def connect_items():
             self.widget.table_widget.itemClicked.connect(self.table_clicked)
             self.widget.table_widget.itemDoubleClicked.connect(self.table_double_clicked)
@@ -287,7 +291,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             return
 
         for row in sorted(selected_rows, reverse=True):
-            attribute = self.table.item(row, 0).linked_data
+            attribute:classes.Attribute = self.table.item(row, 0).linked_data
             self.widget.table_widget.removeRow(row)
             attribute.delete()
 

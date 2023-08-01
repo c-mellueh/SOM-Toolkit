@@ -16,9 +16,10 @@ from .filehandling import open_file, save_file, export
 from .qt_designs import ui_project_settings
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import script_widget, property_widget, object_widget
+from src.som_gui.windows.aggregation_view import aggregation_window
 from .windows import predefined_psets_window, graphs_window, propertyset_window, mapping_window, popups, modelcheck_window
 from . import settings
-from .modelcheck.modelcheck import run_modelcheck
+from .modelcheck import modelcheck
 
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
@@ -56,12 +57,15 @@ class MainWindow(QMainWindow):
             self.ui.action_abbreviation_json.triggered.connect(self.desite_abbreviation)
             self.ui.table_pset.itemChanged.connect(self.item_changed)
             self.ui.action_import_excel.triggered.connect(self.import_excel)
-            self.ui.action_modelcheck.triggered.connect(self.modelcheck)
+            self.ui.button_search.clicked.connect(self.search_object)
+            self.ui.action_modelcheck.triggered.connect(self.run_modelcheck)
 
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.app = app
+        self.ui.button_search.setIcon(icons.get_search_icon())
+
         self.parent_property_window = predefined_psets_window.open_pset_list(self)
         self.parent_property_window.hide()
         self.pset_window: None | propertyset_window.PropertySetWindow = None
@@ -76,7 +80,7 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(self.icon)
         self._export_path = None
         self.active_object: classes.Object | None = None
-        self.graph_window = graphs_window.GraphWindow(self, show=False)
+        self.graph_window = aggregation_window.AggregationWindow(self)
         self.mapping_window = None
         self.project = classes.Project("Project", "")
         self.running_modelcheck:None|QtCore.QRunnable = None
@@ -87,6 +91,9 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("SOM-Toolkit")
         connect()
         settings.reset_save_path()
+
+    def run_modelcheck(self):
+        modelcheck.run_modelcheck(self)
 
     def import_excel(self):
         open_file.import_excel_clicked(self)
@@ -344,20 +351,7 @@ class MainWindow(QMainWindow):
             desite.export_bookmarks(self.project,path)
 
     def open_graph(self):
-        self.load_graph(True)
-
-    def load_graph(self, show=True):
-
-        if self.graph_window is None:
-            self.graph_window = graphs_window.GraphWindow(self, show=show)
-        else:
-            if show:
-                self.graph_window.show()
-                self.graph_window.view.show()
-                self.graph_window.fit_in()
-
-    def modelcheck(self):
-        run_modelcheck(self)
+        self.graph_window.show()
 
     ## EXPORT
 

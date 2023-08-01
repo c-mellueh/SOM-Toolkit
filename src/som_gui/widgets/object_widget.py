@@ -255,7 +255,7 @@ def clear_all(main_window: MainWindow):
 
 
 def search_object(main_window: MainWindow):
-    sw = popups.SearchWindow(main_window)
+    sw = popups.ObjectSearchWindow(main_window)
     if not sw.exec():
         return
     obj = sw.selected_object
