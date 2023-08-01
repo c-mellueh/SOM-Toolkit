@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.0
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -465,7 +465,6 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_ifc.menuAction())
         self.menuFile.addAction(self.action_file_new)
         self.menuFile.addAction(self.action_file_Open)
-        self.menuFile.addAction(self.action_import_excel)
         self.menuFile.addAction(self.action_file_Save)
         self.menuFile.addAction(self.action_file_Save_As)
         self.menuFile.addAction(self.action_settings)

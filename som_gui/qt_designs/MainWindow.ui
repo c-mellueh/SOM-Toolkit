@@ -746,7 +746,6 @@
     </widget>
     <addaction name="action_file_new"/>
     <addaction name="action_file_Open"/>
-    <addaction name="action_import_excel"/>
     <addaction name="action_file_Save"/>
     <addaction name="action_file_Save_As"/>
     <addaction name="action_settings"/>

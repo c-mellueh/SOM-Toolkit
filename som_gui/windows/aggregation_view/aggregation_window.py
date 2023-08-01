@@ -348,6 +348,9 @@ class AggregationView(QGraphicsView):
 
         allowed = self.drawn_connection.top_node.aggregation.add_child(node_proxy.aggregation)
 
+        if node_proxy in self.drawn_connection.top_node.child_nodes():
+            allowed = False
+
         if not allowed:
             self.drawn_connection.delete()
             self.drawn_connection = None

@@ -18,9 +18,8 @@ from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import script_widget, property_widget, object_widget
 from som_gui.windows.aggregation_view import aggregation_window
 from .windows import predefined_psets_window, propertyset_window, mapping_window, popups
-from . import settings
+from . import settings, __version__
 from .modelcheck import modelcheck
-
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
     return QtGui.QIcon(icon_path)
@@ -56,7 +55,6 @@ class MainWindow(QMainWindow):
             self.ui.action_allplan.triggered.connect(self.export_allplan_excel)
             self.ui.action_abbreviation_json.triggered.connect(self.desite_abbreviation)
             self.ui.table_pset.itemChanged.connect(self.item_changed)
-            self.ui.action_import_excel.triggered.connect(self.import_excel)
             self.ui.button_search.clicked.connect(self.search_object)
             self.ui.action_modelcheck.triggered.connect(self.run_modelcheck)
 
@@ -335,7 +333,7 @@ class MainWindow(QMainWindow):
         widget = ui_project_settings.Ui_Dialog()
         widget.setupUi(dialog)
         dialog.setWindowIcon(icons.get_icon())
-        dialog.setWindowTitle("Settings")
+        dialog.setWindowTitle(f"SOM-Toolkit Version {__version__}")
         widget.lineEdit_project_name.setText(self.project.name)
         widget.lineEdit_author.setText(self.project.author)
         widget.lineEdit_version.setText(self.project.version)
