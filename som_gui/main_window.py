@@ -15,7 +15,7 @@ from . import logs
 from .filehandling import open_file, save_file, export
 from .qt_designs import ui_project_settings
 from .qt_designs.ui_mainwindow import Ui_MainWindow
-from .widgets import script_widget, property_widget, object_widget
+from .widgets import  property_widget, object_widget
 from som_gui.windows.aggregation_view import aggregation_window
 from .windows import predefined_psets_window, propertyset_window, mapping_window, popups
 from . import settings, __version__
@@ -46,7 +46,6 @@ class MainWindow(QMainWindow):
             self.ui.action_export_bookmarks.triggered.connect(self.export_bookmarks)
             self.ui.action_export_boq.triggered.connect(self.export_boq)
             self.ui.action_show_graphs.triggered.connect(self.open_graph)
-            self.ui.code_edit.textChanged.connect(self.update_script)
             self.ui.action_mapping.triggered.connect(self.open_mapping_window)
             self.ui.action_vestra.triggered.connect(self.export_vestra_mapping)
             self.ui.action_card1.triggered.connect(self.card_1)
@@ -85,7 +84,6 @@ class MainWindow(QMainWindow):
         # init object and ProertyWidget
         object_widget.init(self)
         property_widget.init(self)
-        script_widget.init(self)
         self.setWindowTitle("SOM-Toolkit")
         connect()
         settings.reset_save_path()
@@ -155,9 +153,7 @@ class MainWindow(QMainWindow):
             self.export_path = path
             desite.export_modelcheck(self.project, path)
 
-    # Update
-    def update_script(self):
-        script_widget.update_script(self)
+
 
     # filehandling
 
@@ -255,11 +251,6 @@ class MainWindow(QMainWindow):
     def set_ident_line_enable(self, value: bool):
         object_widget.set_ident_line_enable(self, value)
 
-    def delete_selected_scripts(self):
-        script_widget.delete_objects(self)
-
-    def script_list_clicked(self, item):
-        script_widget.clicked(self, item)
 
     def clear_object_input(self):
         object_widget.clear_object_input(self)
@@ -289,7 +280,6 @@ class MainWindow(QMainWindow):
 
     def set_right_window_enable(self, value: bool):
         property_widget.set_enable(self, value)
-        script_widget.set_enable(self, value)
 
     def list_object_clicked(self, item):
         property_widget.left_click(self, item)
@@ -303,17 +293,8 @@ class MainWindow(QMainWindow):
     def add_pset(self):
         property_widget.create_new_pset(self)
 
-    def add_script(self):
-        script_widget.add_script(self)
-
     def selected_object(self):
         return object_widget.selected_object(self)
-
-    def change_script_list_visibility(self):
-        script_widget.change_script_list_visibility(self)
-
-    def code_item_changed(self, item):
-        script_widget.item_changed(self, item)
 
     def export_bs(self):
         path = export.get_path(self, "bs.xml")

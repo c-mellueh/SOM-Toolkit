@@ -196,7 +196,7 @@ class AggregationView(QGraphicsView):
             ver.setValue(ver.value() - val)
         self.update()
 
-    def get_focus_and_cursor(self, pos: QPointF):
+    def get_focus_and_cursor(self, pos: QPointF) -> (int,NodeProxy):
         """return cursor style and Node that will be in focus"""
         for node in self.scene().nodes:
             if node.circle.isUnderMouse():
@@ -280,13 +280,17 @@ class AggregationView(QGraphicsView):
 
         def set_connection(connection_type:int):
             focus_node.aggregation.set_parent(focus_node.aggregation.parent,connection_type)
-            focus_node.top_connection.update_line()
+            for con in focus_node.top_connection.top_node.bottom_connections:
+                con.update_line()
 
         if self.right_click_menu is not None:
             pass
         self.right_click_menu = QMenu()
         node_pos = self.mapToScene(pos)
+        style:int
+        focus_node:NodeProxy
         style,focus_node = self.get_focus_and_cursor(pos)
+
         if style ==9:
             self.action_add_node = self.right_click_menu.addAction("Node löschen")
             self.action_add_node.triggered.connect(rc_delete_node)
@@ -346,10 +350,12 @@ class AggregationView(QGraphicsView):
         else:
             return super(AggregationView, self).mouseReleaseEvent(event)
 
-        allowed = self.drawn_connection.top_node.aggregation.add_child(node_proxy.aggregation)
-
+        allowed = True
         if node_proxy in self.drawn_connection.top_node.child_nodes():
             allowed = False
+
+        if allowed:
+            allowed = self.drawn_connection.top_node.aggregation.add_child(node_proxy.aggregation)
 
         if not allowed:
             self.drawn_connection.delete()

@@ -12,7 +12,7 @@ from SOMcreator.Template import IFC_4_1
 
 from ..icons import get_icon
 from ..qt_designs import ui_mainwindow, ui_object_info_widget
-from ..widgets import script_widget, property_widget
+from ..widgets import  property_widget
 from ..windows import popups
 
 if TYPE_CHECKING:

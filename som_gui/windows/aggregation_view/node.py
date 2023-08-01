@@ -416,7 +416,7 @@ class Connection(QGraphicsPathItem):
 
     @property
     def connection_type(self) -> int:
-        return self.bottom_node.aggregation.connection_dict[self.top_node.aggregation]
+        return self.bottom_node.aggregation.parent_connection
 
     def get_connection_displacement(self):
         aggreg:classes.Aggregation

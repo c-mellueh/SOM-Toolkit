@@ -41,7 +41,7 @@ def init(main_window: MainWindow) -> None:
 
     main_window.pset_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
     main_window.pset_buttons = [main_window.ui.button_Pset_add, ]
-    main_window.ui.tab_property_set.setEnabled(False)
+    main_window.ui.box_layout_pset.setEnabled(False)
     main_window.set_right_window_enable(False)
     connect()
 
@@ -139,12 +139,9 @@ def text_changed(main_window: MainWindow, text: str) -> None:
 
 
 def set_enable(main_window: MainWindow, value: bool) -> None:
-    main_window.ui.tab_property_set.setEnabled(value)
+    main_window.ui.box_layout_pset.setEnabled(value)
 
     if not value:
-        modify_title(main_window, main_window.ui.tab_code, "Code")
-        modify_title(main_window, main_window.ui.tab_property_set, "PropertySet")
-
         main_window.pset_table.setRowCount(0)
         main_window.ui.table_attribute.setRowCount(0)
         main_window.ui.lineEdit_pSet_name.setText("")
