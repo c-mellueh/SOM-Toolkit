@@ -352,9 +352,9 @@ class NodeWidget(QWidget):
         input_point.setY(input_point.y()+constants.BOX_MARGIN)
         input_point.setX(input_point.x()+constants.BOX_MARGIN)
         proxy_node = NodeProxy(aggregation,input_point)
+        self.aggregation.add_child(proxy_node.aggregation)
         self.scene().add_node(proxy_node,False)
         self.scene().add_connection(self.graphicsProxyWidget(),proxy_node)
-        self.aggregation.add_child(proxy_node.aggregation)
 
     def scene(self) -> AggregationScene:
         return self.graphicsProxyWidget().scene()
