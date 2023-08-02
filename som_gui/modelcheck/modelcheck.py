@@ -205,7 +205,7 @@ def check_group_structure(group, group_dict: dict, layer_index, ag, bk, cursor, 
             issues.repetetive_group_issue(cursor, group)
 
         allowed_identifiers = set()
-        for aggreg in object_rep.aggregation_representations:
+        for aggreg in object_rep.aggregations:
             for child in aggreg.children:
                 allowed_identifiers.add(child.object.ident_value)
 
