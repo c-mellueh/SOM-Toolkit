@@ -1,4 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
+import importlib.util
+import sys
+import os
+
+path = os.path.join(os.path.join(os.path.abspath(os.curdir),"som_gui"),"__init__.py")
+spec = importlib.util.spec_from_file_location("som_gui",path)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
 
 block_cipher = None
 added_files = [('som_gui/icons','som_gui/icons'),
@@ -48,5 +56,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='SOM-Toolkit_v2.4.1.3',
+    name=f"SOM-Toolkit_v{module.__version__}",
 )
