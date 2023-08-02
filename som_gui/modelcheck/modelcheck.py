@@ -227,7 +227,7 @@ def check_group_structure(group, group_dict: dict, layer_index, ag, bk, cursor, 
         check_real_group()
 
     if len(sub_entities) == 0:
-        issues.empty_group_issue(cursor, group.GlobalId)
+        issues.empty_group_issue(cursor, group)
 
     for sub_group in group_dict[group][SUBGROUPS]:
         check_group_structure(sub_group, group_dict[group][SUBGROUPS], layer_index + 1, ag, bk, cursor, file_name,
