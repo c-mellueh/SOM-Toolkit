@@ -36,7 +36,13 @@ class ModelcheckWindow(QDialog):
         self.widget.line_edit_export.textEdited.connect(self.widget.label_export_missing.hide)
         self.widget.line_edit_ident_pset.textEdited.connect(self.fill_table)
         self.widget.line_edit_ident_attribute.textEdited.connect(self.fill_table)
+
         self.fill_table()
+
+        if get_ifc_path():
+            self.widget.line_edit_ifc.setText(get_ifc_path())
+        if get_issue_path():
+            self.widget.line_edit_export.setText(get_issue_path())
 
     def fill_table(self):
         issues = self.get_issue_description()
@@ -130,4 +136,5 @@ class ModelcheckWindow(QDialog):
                 8: "Gruppe hat falsches Subelement",
                 9: "Zwischenebene besitzt verschiedene Klassen als Subelement",
                 10: "Gruppe besitzt keine Subelemente",
-                11: "Element hat keine Gruppenzuweisen", }
+                11: "Element hat keine Gruppenzuweisen",
+                12: "Zu Viele Subelemente"}
