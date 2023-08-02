@@ -196,15 +196,15 @@ def init(main_window: MainWindow):
 
     def connect_items():
         ui: ui_mainwindow.Ui_MainWindow = main_window.ui
-        ui.tree_object.itemClicked.connect(main_window.object_clicked)
-        ui.tree_object.itemChanged.connect(main_window.item_changed)
-        ui.tree_object.itemExpanded.connect(main_window.resize_tree)
-        ui.tree_object.customContextMenuRequested.connect(main_window.right_click)
-        ui.tree_object.itemDoubleClicked.connect(main_window.object_double_clicked)
-        ui.button_objects_add.clicked.connect(main_window.add_object)
-        main_window.grpSc.activated.connect(main_window.rc_group)
-        main_window.delSc.activated.connect(main_window.delete_object)
-        main_window.srchSc.activated.connect(main_window.search_object)
+        ui.tree_object.itemClicked.connect(lambda item:single_click(main_window,item))
+        ui.tree_object.itemChanged.connect(lambda item:item.update())
+        ui.tree_object.itemExpanded.connect(lambda :resize_tree(main_window))
+        ui.tree_object.customContextMenuRequested.connect(lambda pos:right_click(main_window,pos))
+        ui.tree_object.itemDoubleClicked.connect(lambda item: object_double_clicked(main_window, item.object))
+        ui.button_objects_add.clicked.connect(lambda :add_object(main_window))
+        main_window.group_shortcut.activated.connect(lambda :rc_group_items(main_window))
+        main_window.delete_shortcut.activated.connect(lambda :rc_delete(main_window))
+        main_window.search_shortcut.activated.connect(lambda :search_object(main_window))
 
     main_window.ui.verticalLayout_objects.removeWidget(main_window.ui.tree_object)
     main_window.ui.tree_object.close()
@@ -215,11 +215,14 @@ def init(main_window: MainWindow):
     main_window.ui.verticalLayout_objects.addWidget(main_window.ui.tree_object)
     main_window.object_buttons = [main_window.ui.button_objects_add]
 
-    main_window.delSc = QShortcut(QKeySequence('Ctrl+X'), main_window)
-    main_window.grpSc = QShortcut(QKeySequence('Ctrl+G'), main_window)
-    main_window.srchSc = QShortcut(QKeySequence('Ctrl+F'), main_window)
+    main_window.delete_shortcut = QShortcut(QKeySequence('Ctrl+X'), main_window)
+    main_window.group_shortcut = QShortcut(QKeySequence('Ctrl+G'), main_window)
+    main_window.search_shortcut = QShortcut(QKeySequence('Ctrl+F'), main_window)
     connect_items()
 
+def resize_tree(main_window:MainWindow):
+    for column in range(main_window.object_tree.columnCount()):
+        main_window.object_tree.resizeColumnToContents(column)
 
 def selected_object(main_window: MainWindow) -> CustomObjectTreeItem | None:
     tree: CustomTree = main_window.ui.tree_object
@@ -278,22 +281,22 @@ def right_click(main_window: MainWindow, position: QPoint):
     selected_items = main_window.ui.tree_object.selectedItems()
     if len(selected_items) == 1:
         main_window.action_copy = menu.addAction("Copy")
-        main_window.action_copy.triggered.connect(main_window.copy_object)
+        main_window.action_copy.triggered.connect(lambda :copy(main_window))
 
     if len(selected_items) != 0:
         main_window.action_delete_attribute = menu.addAction("Delete")
         main_window.action_expand_selection = menu.addAction("Expand")
         main_window.action_collapse_selection = menu.addAction("Collapse")
-        main_window.action_delete_attribute.triggered.connect(main_window.delete_object)
-        main_window.action_expand_selection.triggered.connect(main_window.rc_expand)
-        main_window.action_collapse_selection.triggered.connect(main_window.rc_collapse)
+        main_window.action_delete_attribute.triggered.connect(lambda :rc_delete(main_window))
+        main_window.action_expand_selection.triggered.connect(lambda :rc_expand(main_window.ui.tree_object))
+        main_window.action_collapse_selection.triggered.connect(lambda : rc_collapse(main_window.ui.tree_object))
 
     main_window.action_group_objects = menu.addAction("Group")
-    main_window.action_group_objects.triggered.connect(main_window.rc_group)
+    main_window.action_group_objects.triggered.connect(lambda :rc_group_items(main_window))
 
     if logging.root.level <= logging.DEBUG:
         main_window.action_info = menu.addAction("Info")
-        main_window.action_info.triggered.connect(main_window.info)
+        main_window.action_info.triggered.connect(lambda : info(main_window))
     menu.exec(main_window.ui.tree_object.viewport().mapToGlobal(position))
 
 
@@ -448,7 +451,7 @@ def single_click(main_window: MainWindow, item: CustomObjectTreeItem):
     property_widget.clear_attribute_table(main_window)
 
     if len(main_window.ui.tree_object.selectedItems()) > 1:
-        main_window.multi_selection()
+        multi_selection(main_window)
         return
 
     obj: classes.Object = item.object
