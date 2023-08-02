@@ -74,6 +74,9 @@ class MainWindow(QMainWindow):
 
         # variables
         self.icon = get_icon()
+        self.search_ui:popups.ObjectSearchWindow|popups.AttributeSearchWindow|None = None
+        self.object_info_widget:object_widget.ObjectInfoWidget|None = None
+
         self.setWindowIcon(self.icon)
         self._export_path = None
         self.active_object: classes.Object | None = None
@@ -101,10 +104,6 @@ class MainWindow(QMainWindow):
     @property
     def pset_table(self) -> QTableWidget:
         return self.ui.table_pset
-
-    @property
-    def attribute_table(self) -> QTableWidget:
-        return self.ui.table_attribute
 
     @property
     def save_path(self) -> str:
@@ -223,11 +222,6 @@ class MainWindow(QMainWindow):
     def rc_expand(self):
         object_widget.rc_expand(self.ui.tree_object)
 
-    def copy_object(self):
-        object_widget.copy(self)
-
-    def multi_selection(self):
-        object_widget.multi_selection(self)
 
     def update_completer(self):
         completer = QCompleter(property_widget.predefined_pset_list(self), self)
@@ -251,8 +245,6 @@ class MainWindow(QMainWindow):
         val =  object_widget.add_object_to_tree(self, obj, parent)
         self.ui.tree_object.resizeColumnToContents(0)
         return val
-    def delete_object(self):
-        object_widget.rc_delete(self)
 
     # PropertyWidget
     def attribute_double_clicked(self, item):

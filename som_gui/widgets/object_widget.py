@@ -213,7 +213,6 @@ def init(main_window: MainWindow):
     init_tree(main_window.ui.tree_object)
 
     main_window.ui.verticalLayout_objects.addWidget(main_window.ui.tree_object)
-    main_window.object_buttons = [main_window.ui.button_objects_add]
 
     main_window.delete_shortcut = QShortcut(QKeySequence('Ctrl+X'), main_window)
     main_window.group_shortcut = QShortcut(QKeySequence('Ctrl+G'), main_window)

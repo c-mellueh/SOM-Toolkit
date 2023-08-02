@@ -121,7 +121,6 @@ class AggregationScene(QGraphicsScene):
         for node in self.nodes:
             aggregation = node.aggregation
             sub_elements = aggregation.children
-            top_aggregation = aggregation.parent or None
 
             for sub_aggregation in sub_elements:
                 sub_node = node_dict[sub_aggregation]
@@ -451,12 +450,6 @@ class AggregationView(QGraphicsView):
 
     def unsetCursor(self) -> None:
         self.viewport().unsetCursor()
-
-    def set_cursor_by_int(self, border: int):
-        if border == 0 or border is None:
-            self.unsetCursor()
-        else:
-            self.setCursor(CURSOR_DICT[border])
 
 
 class AggregationWindow(QWidget):

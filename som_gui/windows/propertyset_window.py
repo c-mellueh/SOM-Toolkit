@@ -105,12 +105,12 @@ def fill_attribute_table(active_object: classes.Object,
             item = table_widget.item(row, column)
             item.setBackground(brush)
 
-    link_item = icons.get_link_icon()
+    icons.get_link_icon()
 
     table_widget.setRowCount(len(property_set.attributes))
 
     for i, attribute in enumerate(property_set.attributes):
-        value_item = CustomTableItem(attribute,attribute.name)
+        CustomTableItem(attribute,attribute.name)
 
         set_table_line(table_widget,i,attribute)
         if active_object is None:
@@ -216,10 +216,6 @@ class PropertySetWindow(QtWidgets.QWidget):
 
     def item_changed(self,item:CustomCheckItem):
         item.update()
-
-    @property
-    def attribute_type(self) -> str:
-        return self.widget.combo_type.currentText()
 
     @property
     def line_validator(self) -> QtGui.QValidator:

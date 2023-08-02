@@ -40,7 +40,6 @@ def init(main_window: MainWindow) -> None:
         main_window.ui.button_Pset_add.clicked.connect(main_window.add_pset)
 
     main_window.pset_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
-    main_window.pset_buttons = [main_window.ui.button_Pset_add, ]
     main_window.ui.box_layout_pset.setEnabled(False)
     main_window.set_right_window_enable(False)
     connect()
@@ -117,7 +116,7 @@ def delete_selection(main_window: MainWindow) -> None:
 def rename(main_window: MainWindow) -> None:
     list_item: propertyset_window.CustomTableItem = main_window.pset_table.selectedItems()[0]
     selected_pset: classes.PropertySet = list_item.linked_data
-    return_str = popups.req_new_name(main_window, selected_pset.name)
+    return_str = popups.req_pset_name(main_window, selected_pset.name)
 
     if return_str[1]:
         new_name = return_str[0]

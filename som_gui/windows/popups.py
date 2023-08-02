@@ -22,23 +22,13 @@ def default_message(text):
     msg_box.exec()
 
 
-def msg_select_only_one():
-    text = "Select only one item!"
-    default_message(text)
-
-
-def msg_recursion():
-    text = "Object can't be added because of Recursion!"
-    default_message(text)
-
-
 def msg_already_exists():
-    text = "Object exists already!"
+    text = "Objekt existiert bereits!"
     default_message(text)
 
 
 def msg_attribute_already_exists():
-    text = "Attribute exists already!"
+    text = "Attribut existiert bereits!"
     default_message(text)
 
 
@@ -134,11 +124,11 @@ def req_group_name(main_window, prefil: list[str] = None):
         return [False, False, False, False,False], widget.checkBox.isChecked()
 
 
-def req_pset_name(main_window):
-    text = QInputDialog.getText(main_window, "New PropertySet Name ", "New PropertySet Name")
+def req_pset_name(main_window:MainWindow,old):
+    text = QInputDialog.getText(main_window, "New PropertySet Name ", "New PropertySet Name",text=old)
     return text
 
-def req_attribute_name(main_window,old):
+def req_attribute_name(main_window:MainWindow,old):
     text = QInputDialog.getText(main_window, "New Attribute Name ", "New Attribute Name",text=old)
     return text
 

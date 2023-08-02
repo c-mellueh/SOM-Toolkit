@@ -80,7 +80,7 @@ def guid_issue(cursor, guid, file1, file2):
 
 def subgroup_issue(cursor, guid,child_ident):
     description = f"Gruppensammler besitzt falsche Untergruppe ({child_ident} nicht erlaubt)"
-    issue_nr = IDENT_ATTRIBUTE_ISSUE
+    issue_nr = SUBGROUP_ISSUE
     sql.add_issues(cursor, guid, description, issue_nr, None)
 
 

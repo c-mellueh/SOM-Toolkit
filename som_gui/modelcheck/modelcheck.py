@@ -204,6 +204,8 @@ def check_group_structure(group, group_dict: dict, layer_index, ag, bk, cursor, 
         if len(sub_idents) != len([get_identifier(sub_group, ag, bk) for sub_group in group_dict[group][SUBGROUPS]]):
             issues.repetetive_group_issue(cursor, group)
 
+        if object_rep is None:
+            return
         allowed_identifiers = set()
         for aggreg in object_rep.aggregations:
             for child in aggreg.children:
@@ -218,7 +220,6 @@ def check_group_structure(group, group_dict: dict, layer_index, ag, bk, cursor, 
     sub_entities = set(group_dict[group][SUBGROUPS].keys()).union(group_dict[group][SUBELEMENT])
 
     sub_idents = {get_identifier(sub_group, ag, bk) for sub_group in group_dict[group][SUBGROUPS]}
-    own_sub_groups = sub_idents == identifier
     even_layer = layer_index % 2 == 0
     if even_layer:
         check_collector_group()
