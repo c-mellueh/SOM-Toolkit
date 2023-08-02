@@ -184,9 +184,6 @@ def open_pset_window(main_window: MainWindow, property_set: classes.PropertySet,
 
 def fill_table(main_window: MainWindow, obj: classes.Object) -> None:
     main_window.set_right_window_enable(True)
-    modify_title(main_window, main_window.ui.tab_code, f"{obj.name}: Code")
-    modify_title(main_window, main_window.ui.tab_property_set, f"{obj.name}: PropertySets")
-
     main_window.pset_table.setRowCount(0)
     property_sets = main_window.active_object.property_sets
 

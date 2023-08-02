@@ -444,7 +444,6 @@ def single_click(main_window: MainWindow, item: CustomObjectTreeItem):
     obj: classes.Object = item.object
     main_window.active_object = obj
     property_widget.fill_table(main_window, obj)
-    script_widget.show(main_window)
     main_window.update_completer()
     fill_line_inputs(main_window, obj)
 
