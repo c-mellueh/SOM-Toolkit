@@ -44,13 +44,6 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="QLineEdit" name="group_name">
-     <property name="placeholderText">
-      <string>Name</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QLineEdit" name="pset_name">
      <property name="placeholderText">
@@ -65,8 +58,30 @@
      </property>
     </widget>
    </item>
+   <item row="0" column="0">
+    <widget class="QLineEdit" name="group_name">
+     <property name="placeholderText">
+      <string>Name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="abbreviation">
+     <property name="placeholderText">
+      <string>Abkürzung</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>group_name</tabstop>
+  <tabstop>abbreviation</tabstop>
+  <tabstop>checkBox</tabstop>
+  <tabstop>pset_name</tabstop>
+  <tabstop>attribute_name</tabstop>
+  <tabstop>attribute_value</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -76,8 +91,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>405</x>
+     <y>91</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -92,8 +107,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>446</x>
+     <y>91</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

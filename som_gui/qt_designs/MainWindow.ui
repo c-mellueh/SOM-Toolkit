@@ -615,11 +615,18 @@
   </action>
  </widget>
  <tabstops>
+  <tabstop>line_edit_object_name</tabstop>
+  <tabstop>line_edit_abbreviation</tabstop>
   <tabstop>lineEdit_ident_pSet</tabstop>
   <tabstop>lineEdit_ident_attribute</tabstop>
   <tabstop>lineEdit_ident_value</tabstop>
+  <tabstop>button_objects_add</tabstop>
   <tabstop>tree_object</tabstop>
-  <tabstop>box_layout_pset</tabstop>
+  <tabstop>button_search</tabstop>
+  <tabstop>lineEdit_pSet_name</tabstop>
+  <tabstop>button_Pset_add</tabstop>
+  <tabstop>table_pset</tabstop>
+  <tabstop>table_attribute</tabstop>
  </tabstops>
  <resources/>
  <connections/>

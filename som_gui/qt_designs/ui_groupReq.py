@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'group_name_request.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.0
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -48,11 +48,6 @@ class Ui_Dialog(object):
 
         self.gridLayout.addWidget(self.attribute_value, 1, 2, 1, 1)
 
-        self.group_name = QLineEdit(Dialog)
-        self.group_name.setObjectName(u"group_name")
-
-        self.gridLayout.addWidget(self.group_name, 0, 0, 1, 2)
-
         self.pset_name = QLineEdit(Dialog)
         self.pset_name.setObjectName(u"pset_name")
 
@@ -63,6 +58,21 @@ class Ui_Dialog(object):
 
         self.gridLayout.addWidget(self.checkBox, 0, 2, 1, 1)
 
+        self.group_name = QLineEdit(Dialog)
+        self.group_name.setObjectName(u"group_name")
+
+        self.gridLayout.addWidget(self.group_name, 0, 0, 1, 1)
+
+        self.abbreviation = QLineEdit(Dialog)
+        self.abbreviation.setObjectName(u"abbreviation")
+
+        self.gridLayout.addWidget(self.abbreviation, 0, 1, 1, 1)
+
+        QWidget.setTabOrder(self.group_name, self.abbreviation)
+        QWidget.setTabOrder(self.abbreviation, self.checkBox)
+        QWidget.setTabOrder(self.checkBox, self.pset_name)
+        QWidget.setTabOrder(self.pset_name, self.attribute_name)
+        QWidget.setTabOrder(self.attribute_name, self.attribute_value)
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
@@ -75,8 +85,9 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
         self.attribute_name.setPlaceholderText(QCoreApplication.translate("Dialog", u"Attribut", None))
         self.attribute_value.setPlaceholderText(QCoreApplication.translate("Dialog", u"Wert", None))
-        self.group_name.setPlaceholderText(QCoreApplication.translate("Dialog", u"Name", None))
         self.pset_name.setPlaceholderText(QCoreApplication.translate("Dialog", u"PropertySet", None))
         self.checkBox.setText(QCoreApplication.translate("Dialog", u"Gruppe", None))
+        self.group_name.setPlaceholderText(QCoreApplication.translate("Dialog", u"Name", None))
+        self.abbreviation.setPlaceholderText(QCoreApplication.translate("Dialog", u"Abk\u00fcrzung", None))
     # retranslateUi
 

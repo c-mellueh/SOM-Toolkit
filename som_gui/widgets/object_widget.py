@@ -396,8 +396,7 @@ def copy(main_window: MainWindow):
 
 def rc_group_items(main_window: MainWindow):
     input_fields, is_concept = popups.req_group_name(main_window)
-    [group_name, ident_pset, ident_attrib, ident_value] = input_fields
-
+    [group_name, ident_pset, ident_attrib, ident_value,abbreviation] = input_fields
     if not group_name:
         popups.msg_missing_input()
         return
@@ -421,9 +420,20 @@ def rc_group_items(main_window: MainWindow):
     if is_concept:
         group_obj = classes.Object(group_name, "Group")
     else:
-        pset = classes.PropertySet(ident_pset)
-        identifier = classes.Attribute(pset, ident_attrib, [ident_value], constants.LIST)
-        group_obj = classes.Object(group_name, identifier)
+
+        pset_parent:classes.PropertySet|None = None
+        if check_for_predefined_psets(ident_pset, main_window):
+            result = popups.req_merge_pset()  # ask if you want to merge
+            if result is True:
+                pset_parent = property_widget.get_parent_by_name(main_window.active_object, ident_pset)
+            elif result is None:
+                return
+        if pset_parent is not None:
+            pset = pset_parent.create_child(ident_pset)
+        else:
+            pset = classes.PropertySet(ident_pset)
+        identifier = create_ident(pset,ident_attrib,[ident_value])
+        group_obj = classes.Object(group_name, identifier,abbreviation=abbreviation)
         group_obj.add_property_set(pset)
 
     group_item: CustomObjectTreeItem = main_window.add_object_to_tree(group_obj, parent)
@@ -525,6 +535,20 @@ def multi_selection(main_window: MainWindow):
         main_window.ui.lineEdit_ident_value.setText(text)
 
 
+def check_for_predefined_psets(property_set_name,main_window):
+    if property_set_name in property_widget.predefined_pset_list(
+            main_window):  # if PropertySet allready predefined
+        return True
+    return False
+
+def create_ident(pset: classes.PropertySet, ident_name: str, ident_value: [str]) -> classes.Attribute:
+    ident_attrib: classes.Attribute = pset.get_attribute_by_name(ident_name)
+    if ident_attrib is None:
+        ident_attrib = classes.Attribute(pset, ident_name, ident_value, constants.LIST)
+    else:
+        ident_attrib.value = ident_value
+    return ident_attrib
+
 def add_object(main_window: MainWindow):
     def missing_input():
         for el in input_list:
@@ -550,13 +574,7 @@ def add_object(main_window: MainWindow):
                 return True
         return False  #
 
-    def create_ident(pset: classes.PropertySet, ident_name: str, ident_value: [str]) -> classes.Attribute:
-        ident_attrib: classes.Attribute = pset.get_attribute_by_name(ident_name)
-        if ident_attrib is None:
-            ident_attrib = classes.Attribute(pset, ident_name, ident_value, constants.LIST)
-        else:
-            ident_attrib.value = ident_value
-        return ident_attrib
+
 
     name = main_window.ui.line_edit_object_name.text()
     p_set_name = main_window.ui.lineEdit_ident_pSet.text()
@@ -577,10 +595,9 @@ def add_object(main_window: MainWindow):
         return
 
     parent = None
-    if p_set_name in property_widget.predefined_pset_list(
-            main_window):  # if PropertySet allready predefined
+    if check_for_predefined_psets(p_set_name,main_window):
         result = popups.req_merge_pset()  # ask if you want to merge
-        if result:
+        if result is True:
             parent = property_widget.get_parent_by_name(main_window.active_object, p_set_name)
         elif result is None:
             return
@@ -619,10 +636,8 @@ def rc_delete(main_window: MainWindow):
     def append_string_list(obj: classes.Object) -> None:
         nonlocal string_list
         string_list.append(str(obj.name))
-        print(f"{obj.name} : {len(obj.children)}")
         for child in obj.children:
             child: classes.Object
-            print(f"{obj.name} -> {child.name}")
             append_string_list(child)
         pass
 
@@ -630,7 +645,6 @@ def rc_delete(main_window: MainWindow):
 
     loop_item: CustomObjectTreeItem
     for loop_item in main_window.ui.tree_object.selectedItems():
-        print(f"selected_item: {loop_item.object.name}")
         append_string_list(loop_item.object)
 
     delete_request = popups.msg_del_items(string_list)
