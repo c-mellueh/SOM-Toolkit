@@ -47,19 +47,17 @@ class AggregationScene(QGraphicsScene):
         self.selected_nodes:set[NodeProxy] = set()
 
 
-    def get_items_bounding_rect(self) -> QRectF:
+    def get_items_bounding_rect(self,items) -> QRectF:
         b_min = [None, None]
         b_max = [None, None]
-        for item in self.items():
-            if not item.isVisible():
+        for item in items:
+            if not item.isVisible() and isinstance(item,NodeProxy):
                 continue
             rect = item.sceneBoundingRect()
-            x_min = rect.x()
-            x_max = x_min + rect.width()
-            y_min = rect.y()
-            y_max = y_min + rect.height()
-            r_min = [x_min, y_min]
-            r_max = [x_max, y_max]
+            tl = rect.topLeft()
+            br = rect.bottomRight()
+            r_min = [tl.x(), tl.y()]
+            r_max = [br.x(), br.y()]
 
             for index, (extreme, value) in enumerate(zip(b_min, r_min)):
                 if extreme is None or value < extreme:
@@ -72,9 +70,8 @@ class AggregationScene(QGraphicsScene):
         if None in b_max or None in b_min:
             return QRectF(0, 0, 0, 0)
 
-        b1 = QPointF(b_min[0] - constants.SCENE_MARGIN, b_min[1] - constants.SCENE_MARGIN)
-        b2 = QPointF(b_max[0]
-                     + constants.SCENE_MARGIN, b_max[1] + constants.SCENE_MARGIN)
+        b1 = QPointF(b_min[0], b_min[1])
+        b2 = QPointF(b_max[0], b_max[1])
 
         return QRectF(b1, b2)
 
@@ -673,7 +670,7 @@ class AggregationWindow(QWidget):
             self.widget.combo_box.setItemText(index,val)
 
     def fit_view(self):
-        bounding_rect = self.active_scene.get_items_bounding_rect()
+        bounding_rect = self.active_scene.get_items_bounding_rect(self.active_scene.items())
         sr_center = self.active_scene.sceneRect().center()
         br_center = bounding_rect.center()
         dif = sr_center - br_center
@@ -681,7 +678,9 @@ class AggregationWindow(QWidget):
             if isinstance(item, (NodeProxy)):
                 item.moveBy(dif.x(), dif.y())
 
-        self.view.fitInView(self.active_scene.get_items_bounding_rect(),
+        bounding_rect = self.active_scene.get_items_bounding_rect(self.active_scene.items())
+        marg = constants.SCENE_MARGIN
+        self.view.fitInView(bounding_rect.adjusted(-marg,-marg,marg,marg),
                             aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
 
     @property
