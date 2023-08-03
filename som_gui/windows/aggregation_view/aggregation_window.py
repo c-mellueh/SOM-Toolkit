@@ -123,7 +123,11 @@ class AggregationScene(QGraphicsScene):
             sub_elements = aggregation.children
 
             for sub_aggregation in sub_elements:
-                sub_node = node_dict[sub_aggregation]
+
+                sub_node = node_dict.get(sub_aggregation)
+                if sub_node is None:
+                    print(f"{aggregation} -> {sub_aggregation} missing")
+                    continue
                 self.add_connection(node,sub_node)
 
     def add_connection(self,top_node:NodeProxy,bottom_node:NodeProxy):

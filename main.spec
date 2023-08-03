@@ -1,24 +1,24 @@
 # -*- mode: python ; coding: utf-8 -*-
 import importlib.util
-import sys
 import os
 
-path = os.path.join(os.path.join(os.path.abspath(os.curdir),"som_gui"),"__init__.py")
-spec = importlib.util.spec_from_file_location("som_gui",path)
+path = os.path.join(os.path.join(os.path.abspath(os.curdir), "som_gui"), "__init__.py")
+spec = importlib.util.spec_from_file_location("som_gui", path)
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
 block_cipher = None
-added_files = [('som_gui/icons','som_gui/icons'),
-               ('som_gui/logs','som_gui/logs'),
+added_files = [('som_gui/icons', 'som_gui/icons'),
+               ('som_gui/logs', 'som_gui/logs'),
                ]
 
 a = Analysis(
-    ['cli.py',],
+    ['cli.py', ],
     pathex=[],
     binaries=[],
     datas=added_files,
-    hiddenimports=['jinja2','lxml','SOMcreator','ifcopenshell','tqdm','openpyxl','ifcopenshell.express.rules','ifcopenshell.express','ifcopenshell.express.express_parser','ifcopenshell.express.rules.IFC2X3'],
+    hiddenimports=['jinja2', 'lxml', 'SOMcreator', 'ifcopenshell', 'tqdm', 'openpyxl', 'ifcopenshell.express.rules',
+                   'ifcopenshell.express', 'ifcopenshell.express.express_parser', 'ifcopenshell.express.rules.IFC2X3'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -46,7 +46,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon = 'som_gui\\icons\icon.ico'
+    icon='som_gui/icons/icon.ico'
 )
 coll = COLLECT(
     exe,
