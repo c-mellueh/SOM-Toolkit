@@ -274,6 +274,69 @@ class AggregationView(QGraphicsView):
 
         super(AggregationView, self).mousePressEvent(event)
 
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        if self.mouse_mode == 0:
+            cursor_style, focus_node = self.get_focus_and_cursor(self.mapToScene(event.pos()))
+            if cursor_style == 0:
+                self.setDragMode(self.DragMode.ScrollHandDrag)
+                self.unsetCursor()
+            else:
+                self.setDragMode(self.DragMode.NoDrag)
+                self.setCursor(CURSOR_DICT[cursor_style])
+
+        if self.mouse_mode == 1:
+            old_pos = self.last_pos
+            new_pos = self.mapToScene(event.pos())
+            if old_pos is None:
+                old_pos = new_pos
+            self.last_pos = new_pos
+            self.focus_node.resize_by_cursor(old_pos, new_pos, self.resize_orientation)
+
+        if self.mouse_mode == 2:
+            new_pos = self.mapToScene(event.pos())
+
+            old_pos = self.last_pos or new_pos
+            self.last_pos = new_pos
+            delta = new_pos - old_pos
+
+            if self.focus_node in self.scene().selected_nodes:
+                for node in self.scene().selected_nodes:
+                    node.moveBy(delta.x(), delta.y())
+            else:
+                self.focus_node.moveBy(delta.x(), delta.y())
+
+        if self.mouse_mode == 3:
+            self.drawn_connection = Connection(None, self.focus_node, Connection.DRAW_MODE)
+            self.mouse_mode = 4
+
+        if self.mouse_mode ==4 :
+            self.drawn_connection.update_line(self.mapToScene(event.pos()))
+
+        for node in self.scene().nodes: #change Style if selected
+            node.update()
+
+        return super(AggregationView, self).mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        old_mouse_mode = self.mouse_mode
+        self.mouse_is_pressed = False
+        self.mouse_mode = 0
+        self.last_pos = None
+        self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
+        if old_mouse_mode in (1,2):
+            pass
+        elif old_mouse_mode ==3:
+            self.focus_node.widget().button_clicked()
+
+        elif old_mouse_mode == 4:
+            self.draw_connection_mouse_release(event)
+
+
+        for node in self.scene().nodes:
+            node.update()
+        self.scene().selected_nodes = set(item for item in self.scene().selectedItems() if isinstance(item, NodeProxy))
+        return super(AggregationView, self).mouseReleaseEvent(event)
+
     def right_click(self,pos:QPointF):
         def rc_add_node():
             search = popups.ObjectSearchWindow(self.window().main_window)
@@ -333,26 +396,6 @@ class AggregationView(QGraphicsView):
         global_pos = self.viewport().mapToGlobal(pos)
         self.right_click_menu.exec(global_pos)
 
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
-        old_mouse_mode = self.mouse_mode
-        self.mouse_is_pressed = False
-        self.mouse_mode = 0
-        self.last_pos = None
-        self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
-        if old_mouse_mode in (1,2):
-            pass
-        elif old_mouse_mode ==3:
-            self.focus_node.widget().button_clicked()
-
-        elif old_mouse_mode == 4:
-            self.draw_connection_mouse_release(event)
-
-
-        for node in self.scene().nodes:
-            node.update()
-        self.scene().selected_nodes = set(item for item in self.scene().selectedItems() if isinstance(item, NodeProxy))
-        return super(AggregationView, self).mouseReleaseEvent(event)
-
     def draw_connection_mouse_release(self,event:QMouseEvent):
         """if the user draws a line and the mouse was released this event should be called to determine if a new Connection gets established"""
         item_under_mouse = self.scene().itemAt(self.mapToScene(event.pos()), QTransform())
@@ -388,49 +431,6 @@ class AggregationView(QGraphicsView):
 
     def cursor(self) -> QtGui.QCursor:
         return self.viewport().cursor()
-
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        if self.mouse_mode == 0:
-            cursor_style, focus_node = self.get_focus_and_cursor(self.mapToScene(event.pos()))
-            if cursor_style == 0:
-                self.setDragMode(self.DragMode.ScrollHandDrag)
-                self.unsetCursor()
-            else:
-                self.setDragMode(self.DragMode.NoDrag)
-                self.setCursor(CURSOR_DICT[cursor_style])
-
-        if self.mouse_mode == 1:
-            old_pos = self.last_pos
-            new_pos = self.mapToScene(event.pos())
-            if old_pos is None:
-                old_pos = new_pos
-            self.last_pos = new_pos
-            self.focus_node.resize_by_cursor(old_pos, new_pos, self.resize_orientation)
-
-        if self.mouse_mode == 2:
-            new_pos = self.mapToScene(event.pos())
-
-            old_pos = self.last_pos or new_pos
-            self.last_pos = new_pos
-            delta = new_pos - old_pos
-
-            if self.focus_node in self.scene().selected_nodes:
-                for node in self.scene().selected_nodes:
-                    node.moveBy(delta.x(), delta.y())
-            else:
-                self.focus_node.moveBy(delta.x(), delta.y())
-
-        if self.mouse_mode == 3:
-            self.drawn_connection = Connection(None, self.focus_node, Connection.DRAW_MODE)
-            self.mouse_mode = 4
-
-        if self.mouse_mode ==4 :
-            self.drawn_connection.update_line(self.mapToScene(event.pos()))
-
-        for node in self.scene().nodes: #change Style if selected
-            node.update()
-
-        return super(AggregationView, self).mouseMoveEvent(event)
 
     def cursor_on_border(self, pos, proxy: NodeProxy):
         """checks if Cursor is on border of Node and returns the Border orientation"""
