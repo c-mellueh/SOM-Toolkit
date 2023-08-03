@@ -320,6 +320,7 @@ class AggregationView(QGraphicsView):
         self.mouse_mode = 0
         self.last_pos = None
         self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
+
         if old_mouse_mode in (1,2):
             pass
         elif old_mouse_mode ==3:
@@ -331,7 +332,10 @@ class AggregationView(QGraphicsView):
 
         for node in self.scene().nodes:
             node.update()
-        self.scene().selected_nodes = set(item for item in self.scene().selectedItems() if isinstance(item, NodeProxy))
+
+        if event.button() != Qt.MouseButton.RightButton:
+            self.scene().selected_nodes = set(item for item in self.scene().selectedItems() if isinstance(item, NodeProxy))
+
         return super(AggregationView, self).mouseReleaseEvent(event)
 
     def right_click(self,pos:QPointF):
@@ -351,7 +355,12 @@ class AggregationView(QGraphicsView):
                 self.window().set_info(pset_name,attribute_name)
 
         def rc_delete_node():
-            self.scene().remove_node(focus_node)
+            print(self.scene().selected_nodes)
+            if focus_node in self.scene().selected_nodes:
+                for node in list(self.scene().selected_nodes):
+                    self.scene().remove_node(node)
+            else:
+                self.scene().remove_node(focus_node)
 
         def set_connection(connection_type:int):
             focus_node.aggregation.set_parent(focus_node.aggregation.parent,connection_type)
