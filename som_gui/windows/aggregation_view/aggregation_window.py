@@ -44,6 +44,8 @@ class AggregationScene(QGraphicsScene):
         self._name = name
         self.aggregation_window = aggregation_window
         self.setSceneRect(1, 1, 100_000, 100_000)
+        self.selected_nodes:set[NodeProxy] = set()
+
 
     def get_items_bounding_rect(self) -> QRectF:
         b_min = [None, None]
@@ -156,7 +158,7 @@ class AggregationView(QGraphicsView):
         self.drawn_connection:Connection|None = None
         self.rubber_band:QRubberBand|None = None
         self.setInteractive(True)
-        self.setRubberBandSelectionMode(Qt.ItemSelectionMode.IntersectsItemShape)
+        self.setRubberBandSelectionMode(Qt.ItemSelectionMode.ContainsItemBoundingRect)
 
 
     def window(self) -> AggregationWindow:
@@ -244,17 +246,9 @@ class AggregationView(QGraphicsView):
         if bool(modifier == Qt.KeyboardModifier.ShiftModifier):
             self.mouse_mode = 5
             self.setDragMode(self.DragMode.RubberBandDrag)
+
             return super(AggregationView, self).mousePressEvent(event)
-        else:
-            self.setDragMode(self.DragMode.ScrollHandDrag)
-        #     self.setDragMode(QGraphicsView.DragMode.NoDrag)
-        #     if self.rubber_band is None:
-        #         self.rubber_band = QRubberBand(QRubberBand.Shape.Rectangle, parent=self)
-        #
-        #     self.rubber_band.origin = event.pos()
-        #     self.rubber_band.setGeometry(QRect(event.pos(),QSize()))
-        #     self.rubber_band.show()
-        #     return super(AggregationView, self).mousePressEvent(event)
+
         if event.button() == Qt.MouseButton.RightButton:
             super(AggregationView, self).mousePressEvent(event)
             return
@@ -339,7 +333,7 @@ class AggregationView(QGraphicsView):
         global_pos = self.viewport().mapToGlobal(pos)
         self.right_click_menu.exec(global_pos)
 
-    def _mouseReleaseEvent(self, event: QMouseEvent) -> None:
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         old_mouse_mode = self.mouse_mode
         self.mouse_is_pressed = False
         self.mouse_mode = 0
@@ -353,15 +347,10 @@ class AggregationView(QGraphicsView):
         elif old_mouse_mode == 4:
             self.draw_connection_mouse_release(event)
 
-        elif old_mouse_mode == 5:
-            self.rubber_band.hide()
-            search_rect = self.rubber_band.geometry()
-            search_rect = self.mapToScene(search_rect).boundingRect()
 
-            selected_nodes:set[NodeProxy] = {node for node in self.scene().nodes if search_rect.intersects(node.geometry().toRect())}
-            for node in selected_nodes:
-                node.setSelected(True)
-                print(node.isSelected())
+        for node in self.scene().nodes:
+            node.update()
+        self.scene().selected_nodes = set(item for item in self.scene().selectedItems() if isinstance(item, NodeProxy))
         return super(AggregationView, self).mouseReleaseEvent(event)
 
     def draw_connection_mouse_release(self,event:QMouseEvent):
@@ -400,8 +389,7 @@ class AggregationView(QGraphicsView):
     def cursor(self) -> QtGui.QCursor:
         return self.viewport().cursor()
 
-    def _mouseMoveEvent(self, event: QMouseEvent) -> None:
-
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self.mouse_mode == 0:
             cursor_style, focus_node = self.get_focus_and_cursor(self.mapToScene(event.pos()))
             if cursor_style == 0:
@@ -425,7 +413,12 @@ class AggregationView(QGraphicsView):
             old_pos = self.last_pos or new_pos
             self.last_pos = new_pos
             delta = new_pos - old_pos
-            self.focus_node.moveBy(delta.x(), delta.y())
+
+            if self.focus_node in self.scene().selected_nodes:
+                for node in self.scene().selected_nodes:
+                    node.moveBy(delta.x(), delta.y())
+            else:
+                self.focus_node.moveBy(delta.x(), delta.y())
 
         if self.mouse_mode == 3:
             self.drawn_connection = Connection(None, self.focus_node, Connection.DRAW_MODE)
@@ -434,8 +427,8 @@ class AggregationView(QGraphicsView):
         if self.mouse_mode ==4 :
             self.drawn_connection.update_line(self.mapToScene(event.pos()))
 
-        if self.mouse_mode == 5:
-            self.rubber_band.setGeometry(QRect( self.rubber_band.origin, event.pos()).normalized())
+        for node in self.scene().nodes: #change Style if selected
+            node.update()
 
         return super(AggregationView, self).mouseMoveEvent(event)
 

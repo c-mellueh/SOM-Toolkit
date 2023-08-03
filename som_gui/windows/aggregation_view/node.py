@@ -1,7 +1,7 @@
 from __future__ import annotations  # make own class referencable
 from typing import TYPE_CHECKING
 from PySide6.QtCore import Qt, QRectF, QPointF
-from PySide6.QtGui import QPainter, QCursor,QPainterPath
+from PySide6.QtGui import QPainter, QCursor,QPainterPath,QColor,QPen
 from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout, \
     QGraphicsProxyWidget, QGraphicsSceneMoveEvent,QGraphicsPathItem, QGraphicsRectItem, QGraphicsSceneResizeEvent, \
     QGraphicsItem, QStyleOptionGraphicsItem, QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsEllipseItem
@@ -31,12 +31,18 @@ class NodeProxy(QGraphicsProxyWidget):
         self.header = Header(self, self.title)
         self.frame = Frame(self)
         self.setPos(pos)
+        self.setFlag(self.GraphicsItemFlag.ItemIsSelectable)
 
         geometry = self.geometry()
         geometry.setHeight(150)
         self.setGeometry(geometry)
         self.circle = Circle(self)
         self.title_settings:list[None]|list[str] = [None,None]
+
+    def update(self,*args) -> None:
+        super(NodeProxy, self).update(*args)
+        self.frame.update(        )
+        self.header.update()
 
     def refresh_title(self):
         if self.title_settings == [None,None]:
@@ -261,6 +267,7 @@ class Header(QGraphicsRectItem):
     def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget) -> None:
         painter.save()
         painter.restore()
+
         painter.setPen(Qt.GlobalColor.black)
         painter.setBrush(Qt.GlobalColor.white)
         painter.drawRect(self.rect())
@@ -284,6 +291,15 @@ class Frame(QGraphicsRectItem):
         rect.setX(self.x() + self.pen().width() / 2)
         self.setRect(rect)
 
+    def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget) -> None:
+        if self.node_proxy.isSelected():
+            width = self.pen().widthF()*2
+            color = QColor("blue")
+            painter.setPen(QPen(color,width,Qt.PenStyle.SolidLine))
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            painter.drawRect(self.boundingRect())
+        else:
+            super(Frame, self).paint(painter,option,widget)
 
 class Circle(QGraphicsEllipseItem):
     DIAMETER = 25
@@ -329,7 +345,6 @@ class NodeWidget(QWidget):
         self.button.hide()
         self.tree_widget = CustomPsetTree(self)
         self.layout().insertWidget(0, self.tree_widget)
-
         self.button.clicked.connect(self.button_clicked)
 
     def button_clicked(self):
