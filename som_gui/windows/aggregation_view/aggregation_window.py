@@ -3,8 +3,8 @@ from __future__ import annotations  # make own class referencable
 from typing import TYPE_CHECKING
 
 from PySide6 import QtGui, QtCore
-from PySide6.QtCore import Qt, QRectF, QPointF,QRect,QSize
-from PySide6.QtGui import QWheelEvent, QMouseEvent,QTransform
+from PySide6.QtCore import Qt, QRectF, QPointF
+from PySide6.QtGui import QWheelEvent, QMouseEvent,QTransform,QShortcut,QKeySequence
 from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView,QApplication,QMenu,QRubberBand
 from SOMcreator import classes
 
@@ -46,13 +46,13 @@ class AggregationScene(QGraphicsScene):
         self.setSceneRect(1, 1, 100_000, 100_000)
         self.selected_nodes:set[NodeProxy] = set()
 
-
     def get_items_bounding_rect(self,items) -> QRectF:
         b_min = [None, None]
         b_max = [None, None]
         for item in items:
             if not item.isVisible() and isinstance(item,NodeProxy):
                 continue
+
             rect = item.sceneBoundingRect()
             tl = rect.topLeft()
             br = rect.bottomRight()
@@ -123,14 +123,14 @@ class AggregationScene(QGraphicsScene):
 
             for sub_aggregation in sub_elements:
 
-                sub_node = node_dict.get(sub_aggregation)
+                sub_node:NodeProxy = node_dict.get(sub_aggregation)
                 if sub_node is None:
                     print(f"{aggregation} -> {sub_aggregation} missing")
                     continue
-                self.add_connection(node,sub_node)
+                self.add_connection(node,sub_node,sub_node.aggregation.parent_connection)
 
-    def add_connection(self,top_node:NodeProxy,bottom_node:NodeProxy):
-        con = Connection(bottom_node,top_node)
+    def add_connection(self,top_node:NodeProxy,bottom_node:NodeProxy,connection_type = constants.AGGREGATION):
+        con = Connection(bottom_node,top_node,Connection.NORMAL_MODE,connection_type)
 
     def delete(self):
         for node in self.nodes:
@@ -420,7 +420,7 @@ class AggregationView(QGraphicsView):
             self.drawn_connection.delete()
             self.drawn_connection = None
         else:
-            self.drawn_connection.add_bottom_node(node_proxy)
+            self.drawn_connection.add_bottom_node(node_proxy,constants.AGGREGATION)
             self.drawn_connection.update_line()
             self.drawn_connection = None
         node_proxy.refresh_title()
@@ -504,6 +504,40 @@ class AggregationWindow(QWidget):
         self.widget.combo_box.lineEdit().textEdited.connect(self.combo_box_edited)
         self.widget.button_filter.setIcon(get_search_icon())
         self.is_in_filter_mode = False
+        self.copy_shortcut = QShortcut(QKeySequence('Ctrl+C'), self)
+        self.copy_shortcut.activated.connect(self.copy_selected_nodes)
+        self.copied_nodes:set[NodeProxy] = set()
+
+        self.paste_shortcut = QShortcut(QKeySequence('Ctrl+V'), self)
+        self.paste_shortcut.activated.connect(self.paste_nodes)
+
+    def copy_selected_nodes(self):
+        self.copied_nodes = self.view.scene().selected_nodes
+
+    def paste_nodes(self):
+        scene = self.view.scene()
+        if len(self.copied_nodes) == 0:
+            return
+
+        old_scene = list(self.copied_nodes)[0].scene()
+        bounding_rect = old_scene.get_items_bounding_rect(self.copied_nodes)
+        base_pos  = bounding_rect.topLeft()
+        cursor_pos = self.view.mapToScene(self.mapFromGlobal(self.cursor().pos()))
+
+        node_dict = dict()
+        for node in self.copied_nodes:
+            dif = node.sceneBoundingRect().topLeft()-base_pos
+            old_aggregation = node.aggregation
+            aggregation = classes.Aggregation(node.aggregation.object,description=old_aggregation.description,optional=old_aggregation.optional)
+            new_node = NodeProxy(aggregation, cursor_pos+dif)
+            node_dict[node] = new_node
+            scene.add_node(new_node)
+
+            for child_node in node.child_nodes():
+                if child_node in node_dict:
+                    self.view.scene().add_connection(new_node,node_dict[child_node])
+            if node.parent_node() in node_dict:
+                self.view.scene().add_connection(node_dict[node.parent_node()],new_node)
 
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
         super(AggregationWindow, self).closeEvent(event)

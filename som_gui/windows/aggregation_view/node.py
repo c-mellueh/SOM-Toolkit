@@ -78,8 +78,7 @@ class NodeProxy(QGraphicsProxyWidget):
         return self.aggregation_window().aggregation_dict()
 
     def aggregation_window(self) -> AggregationWindow:
-        view =  self.scene().views()[0]
-        return view.window()
+        return self.scene().aggregation_window
 
     def scene(self) -> AggregationScene:
         return super(NodeProxy, self).scene()
@@ -93,6 +92,10 @@ class NodeProxy(QGraphicsProxyWidget):
 
     def child_nodes(self) -> set[NodeProxy]:
         return set(self.aggregation_dict().get(aggreg) for aggreg in self.aggregation.children)
+
+    def parent_node(self):
+        aggreg = self.aggregation.parent
+        return self.aggregation_dict().get(aggreg)
 
     def delete(self):
         for connection in list(self.bottom_connections):
@@ -345,7 +348,6 @@ class NodeWidget(QWidget):
         self.button.hide()
         self.tree_widget = CustomPsetTree(self)
         self.layout().insertWidget(0, self.tree_widget)
-        self.button.clicked.connect(self.button_clicked)
 
     def button_clicked(self):
         main_window = self.graphicsProxyWidget().scene().views()[0].window().main_window
@@ -362,7 +364,6 @@ class NodeWidget(QWidget):
         input_point.setX(input_point.x() + constants.BOX_MARGIN)
         proxy_node = NodeProxy(aggregation,input_point)
 
-        self.aggregation.add_child(proxy_node.aggregation)
         self.scene().add_node(proxy_node,False)
         self.scene().add_connection(self.graphicsProxyWidget(),proxy_node)
         proxy_node.refresh_title()
@@ -384,14 +385,14 @@ class NodeWidget(QWidget):
 class Connection(QGraphicsPathItem):
     NORMAL_MODE = 0
     DRAW_MODE = 1
-    def __init__(self, bottom_node: NodeProxy, top_node: NodeProxy,mode = 0) -> None:
+    def __init__(self, bottom_node: NodeProxy, top_node: NodeProxy,mode = 0,connection_type = constants.AGGREGATION) -> None:
         super(Connection, self).__init__()
         self.mode = mode
 
         self.bottom_node: NodeProxy|None = None
         self.top_node: NodeProxy = top_node
         if self.mode != self.DRAW_MODE:
-            self.add_bottom_node(bottom_node)
+            self.add_bottom_node(bottom_node,connection_type)
             self.update_line()
 
         self.setZValue(0)
@@ -400,10 +401,11 @@ class Connection(QGraphicsPathItem):
         self.setAcceptHoverEvents(False)
 
 
-    def add_bottom_node(self,bottom_node):
+    def add_bottom_node(self,bottom_node:NodeProxy,connection_type):
         self.bottom_node = bottom_node
         self.bottom_node.top_connection = self
         self.top_node.bottom_connections.add(self)
+        self.top_node.aggregation.add_child(bottom_node.aggregation,connection_type)
         self.mode = self.NORMAL_MODE
 
     def __str__(self) -> str:
@@ -441,7 +443,6 @@ class Connection(QGraphicsPathItem):
         displacement_dict = dict()
 
         FACTOR = 3
-
         if len(connections) == 1:
             displacement_dict= {constants.AGGREGATION:0,
                                 constants.INHERITANCE:0,
