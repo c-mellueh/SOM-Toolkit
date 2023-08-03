@@ -3,9 +3,9 @@ from __future__ import annotations  # make own class referencable
 from typing import TYPE_CHECKING
 
 from PySide6 import QtGui, QtCore
-from PySide6.QtCore import Qt, QRectF, QPointF
+from PySide6.QtCore import Qt, QRectF, QPointF,QRect,QSize
 from PySide6.QtGui import QWheelEvent, QMouseEvent,QTransform
-from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView,QApplication,QMenu
+from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView,QApplication,QMenu,QRubberBand
 from SOMcreator import classes
 
 from som_gui.qt_designs import ui_GraphWindow
@@ -145,7 +145,7 @@ class AggregationView(QGraphicsView):
         self.focus_node: NodeProxy | None = None  # which Node is being resized
         self.resize_orientation: int | None = None  # which edge of Node is being resized
         self.last_pos: QPointF | None = None  # last mouse pos to calculate difference
-        self.mouse_mode = 0  # 0=moveCursor 1=resize 2 = drag 3 = plus click 4 = draw connection
+        self.mouse_mode = 0  # 0=moveCursor 1=resize 2 = drag 3 = plus click 4 = draw connection 5 = rubber_band
         self.mouse_is_pressed = False
         self.setDragMode(self.DragMode.ScrollHandDrag)
         self.right_click_menu:QMenu|None = None
@@ -154,6 +154,9 @@ class AggregationView(QGraphicsView):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.drawn_connection:Connection|None = None
+        self.rubber_band:QRubberBand|None = None
+        self.setInteractive(True)
+        self.setRubberBandSelectionMode(Qt.ItemSelectionMode.IntersectsItemShape)
 
 
     def window(self) -> AggregationWindow:
@@ -237,6 +240,21 @@ class AggregationView(QGraphicsView):
 
         self.mouse_is_pressed = True
 
+        modifier = QApplication.keyboardModifiers()
+        if bool(modifier == Qt.KeyboardModifier.ShiftModifier):
+            self.mouse_mode = 5
+            self.setDragMode(self.DragMode.RubberBandDrag)
+            return super(AggregationView, self).mousePressEvent(event)
+        else:
+            self.setDragMode(self.DragMode.ScrollHandDrag)
+        #     self.setDragMode(QGraphicsView.DragMode.NoDrag)
+        #     if self.rubber_band is None:
+        #         self.rubber_band = QRubberBand(QRubberBand.Shape.Rectangle, parent=self)
+        #
+        #     self.rubber_band.origin = event.pos()
+        #     self.rubber_band.setGeometry(QRect(event.pos(),QSize()))
+        #     self.rubber_band.show()
+        #     return super(AggregationView, self).mousePressEvent(event)
         if event.button() == Qt.MouseButton.RightButton:
             super(AggregationView, self).mousePressEvent(event)
             return
@@ -321,12 +339,12 @@ class AggregationView(QGraphicsView):
         global_pos = self.viewport().mapToGlobal(pos)
         self.right_click_menu.exec(global_pos)
 
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+    def _mouseReleaseEvent(self, event: QMouseEvent) -> None:
         old_mouse_mode = self.mouse_mode
         self.mouse_is_pressed = False
         self.mouse_mode = 0
         self.last_pos = None
-
+        self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
         if old_mouse_mode in (1,2):
             pass
         elif old_mouse_mode ==3:
@@ -335,6 +353,15 @@ class AggregationView(QGraphicsView):
         elif old_mouse_mode == 4:
             self.draw_connection_mouse_release(event)
 
+        elif old_mouse_mode == 5:
+            self.rubber_band.hide()
+            search_rect = self.rubber_band.geometry()
+            search_rect = self.mapToScene(search_rect).boundingRect()
+
+            selected_nodes:set[NodeProxy] = {node for node in self.scene().nodes if search_rect.intersects(node.geometry().toRect())}
+            for node in selected_nodes:
+                node.setSelected(True)
+                print(node.isSelected())
         return super(AggregationView, self).mouseReleaseEvent(event)
 
     def draw_connection_mouse_release(self,event:QMouseEvent):
@@ -373,7 +400,7 @@ class AggregationView(QGraphicsView):
     def cursor(self) -> QtGui.QCursor:
         return self.viewport().cursor()
 
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+    def _mouseMoveEvent(self, event: QMouseEvent) -> None:
 
         if self.mouse_mode == 0:
             cursor_style, focus_node = self.get_focus_and_cursor(self.mapToScene(event.pos()))
@@ -406,6 +433,9 @@ class AggregationView(QGraphicsView):
 
         if self.mouse_mode ==4 :
             self.drawn_connection.update_line(self.mapToScene(event.pos()))
+
+        if self.mouse_mode == 5:
+            self.rubber_band.setGeometry(QRect( self.rubber_band.origin, event.pos()).normalized())
 
         return super(AggregationView, self).mouseMoveEvent(event)
 
