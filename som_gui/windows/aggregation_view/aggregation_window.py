@@ -37,6 +37,50 @@ CURSOR_DICT = {
 }
 
 
+def center_nodes(nodes: set[NodeProxy], orientation: int):
+    if orientation == 0:
+        func_name = "x"
+    else:
+        func_name = "y"
+    pos_list = [getattr(node.geometry(), func_name)() for node in nodes]
+    center = min(pos_list) + (max(pos_list) - min(pos_list)) / 2
+
+    for node in nodes:
+        node_pos = getattr(node.geometry(), func_name)()
+        dif = center - node_pos
+        if orientation == 0:
+            node.moveBy(dif, 0.0)
+        if orientation == 1:
+            node.moveBy(0.0, dif)
+
+def distribute_nodes(nodes:set[NodeProxy],orientation:int):
+
+    if len(nodes)<2:
+        return
+
+    if orientation == 0:
+        func_name = "x"
+    else:
+        func_name = "y"
+
+    pos_list = [getattr(node.geometry().center(),func_name)() for node in nodes]
+    border_1 = min(pos_list)
+    border_2 = max(pos_list)
+    full_length = border_2-border_1
+
+    distance_between_nodes = full_length/(len(nodes)-1)
+
+    for index,node in enumerate(sorted(nodes,key= lambda node:getattr(node.geometry().center(),func_name)())):
+        new_pos = border_1+index*distance_between_nodes
+        old_pos = getattr(node.geometry().center(),func_name)()
+        dif = new_pos-old_pos
+
+        if orientation == 0:
+            node.moveBy(dif,0.0)
+        else:
+            node.moveBy(0.0,dif)
+
+
 class AggregationScene(QGraphicsScene):
     def __init__(self, aggregation_window: AggregationWindow, name:str):
         super(AggregationScene, self).__init__()
@@ -366,25 +410,6 @@ class AggregationView(QGraphicsView):
             for con in focus_node.top_connection.top_node.bottom_connections:
                 con.update_line()
 
-        def horizontal_center():
-            nodes = self.scene().selected_nodes
-            x_list =[node.geometry().x() for node in nodes]
-            x_center = min(x_list)+(max(x_list)-min(x_list))/2
-
-            for node in nodes:
-                node_x = node.geometry().x()
-                node.moveBy(x_center-node_x,0.0)
-
-        def vertical_center():
-            nodes = self.scene().selected_nodes
-            y_list = [node.geometry().y() for node in nodes]
-            y_center = min(y_list) + (max(y_list) - min(y_list)) / 2
-
-            for node in nodes:
-                node_y = node.geometry().y()
-                node.moveBy(0.0,y_center - node_y)
-
-
         if self.right_click_menu is not None:
             pass
         self.right_click_menu = QMenu()
@@ -407,13 +432,14 @@ class AggregationView(QGraphicsView):
                     constants.INHERITANCE + constants.AGGREGATION))
 
             if focus_node in self.scene().selected_nodes:
-                self.layout_menu = self.right_click_menu.addMenu("Layout")
                 self.action_horizontal_center  = self.layout_menu.addAction("Horizontal zentrieren")
-                self.action_horizontal_center.triggered.connect(horizontal_center)
+                self.action_horizontal_center.triggered.connect(lambda :center_nodes(self.scene().selected_nodes,0))
                 self.action_vertical_center  = self.layout_menu.addAction("Vertikal zentrieren")
-                self.action_vertical_center.triggered.connect(vertical_center)
-
-
+                self.action_vertical_center.triggered.connect(lambda :center_nodes(self.scene().selected_nodes,1))
+                self.action_horizontal_distribute  = self.layout_menu.addAction("Horizontal verteilen")
+                self.action_horizontal_distribute.triggered.connect(lambda :distribute_nodes(self.scene().selected_nodes,0))
+                self.action_vertical_distribute  = self.layout_menu.addAction("Vertikal verteilen")
+                self.action_vertical_distribute.triggered.connect(lambda :distribute_nodes(self.scene().selected_nodes,1))
 
         def rc_reset_info():
             self.window().reset_info()
@@ -459,7 +485,6 @@ class AggregationView(QGraphicsView):
             self.drawn_connection.add_bottom_node(node_proxy,constants.AGGREGATION)
             self.drawn_connection.update_line()
             self.drawn_connection = None
-        node_proxy.refresh_title()
         return super(AggregationView, self).mouseReleaseEvent(event)
 
     def cursor(self) -> QtGui.QCursor:
