@@ -152,14 +152,32 @@ def req_merge_pset():
         return None
 
 
-def msg_del_items(string_list):
+def msg_del_items(string_list,item_type = 1):
+    """
+    item_type 1= Object,2= Node, 3 = PropertySet, 4 = Attribute
+    """
     parent = QDialog()
     widget = ui_delete_request.Ui_Dialog()
     widget.setupUi(parent)
+    parent.setWindowIcon(get_icon())
     if len(string_list) <= 1:
-        widget.label.setText("Delete this item?")
+        if item_type == 1:
+         widget.label.setText("Dieses Objekt löschen?")
+        if item_type == 2:
+            widget.label.setText("Diese Node löschen?")
+        if item_type == 3:
+            widget.label.setText("Dieses PropertySet löschen?")
+        if item_type == 4:
+            widget.label.setText("Dieses Attribut löschen?")
     else:
-        widget.label.setText("Delete these items?")
+        if item_type == 1:
+            widget.label.setText("Diese Objekte löschen?")
+        if item_type == 2:
+            widget.label.setText("Diese Nodes öschen?")
+        if item_type == 3:
+            widget.label.setText("Diese PropertySets löschen?")
+        if item_type == 4:
+            widget.label.setText("Diese Attribute löschen?")
 
     for text in string_list:
         widget.listWidget.addItem(QListWidgetItem(text))

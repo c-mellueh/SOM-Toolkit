@@ -94,7 +94,7 @@ def delete_selection(main_window: MainWindow) -> None:
     row_list = [item.row() for item in list_item if item.column() == 0]
 
     obj = main_window.active_object
-    delete_request = msg_del_items([pset.name for pset in property_sets])
+    delete_request = msg_del_items([pset.name for pset in property_sets],item_type=3)
 
     if not delete_request:
         return

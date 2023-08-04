@@ -99,7 +99,7 @@ class PropertySetInherWindow(QWidget):
         items = self.widget.list_view_pset.selectedItems()
         string_list = [x.property_set.name for x in items]
 
-        delete_request = popups.msg_del_items(string_list)
+        delete_request = popups.msg_del_items(string_list,item_type=3)
 
         if delete_request:
             for item in items:

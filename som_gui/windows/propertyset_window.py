@@ -291,7 +291,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                 popups.msg_mod_ident()
                 return
 
-        delete_request = popups.msg_del_items([attrib.name for attrib in attributes])
+        delete_request = popups.msg_del_items([attrib.name for attrib in attributes],item_type=4)
         if not delete_request:
             return
 

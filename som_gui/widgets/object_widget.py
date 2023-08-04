@@ -629,7 +629,11 @@ def rc_delete(main_window: MainWindow):
     def delete_item(item: CustomObjectTreeItem) -> None:
         parent = item.parent()
         invisible_root = main_window.ui.tree_object.invisibleRootItem()
+        for aggregation in list(item.object.aggregations):
+            node = main_window.graph_window.aggregation_dict().get(aggregation)
+            node.delete()
         item.object.delete()
+
         for index in reversed(range(item.childCount())):
             child = item.child(index)
             delete_item(child)
@@ -649,7 +653,7 @@ def rc_delete(main_window: MainWindow):
     for loop_item in main_window.ui.tree_object.selectedItems():
         append_string_list(loop_item.object)
 
-    delete_request = popups.msg_del_items(string_list)
+    delete_request = popups.msg_del_items(string_list,item_type=1)
 
     if delete_request:
         for loop_item in main_window.ui.tree_object.selectedItems():
