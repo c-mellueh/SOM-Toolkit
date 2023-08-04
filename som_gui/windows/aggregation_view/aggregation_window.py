@@ -366,6 +366,25 @@ class AggregationView(QGraphicsView):
             for con in focus_node.top_connection.top_node.bottom_connections:
                 con.update_line()
 
+        def horizontal_center():
+            nodes = self.scene().selected_nodes
+            x_list =[node.geometry().x() for node in nodes]
+            x_center = min(x_list)+(max(x_list)-min(x_list))/2
+
+            for node in nodes:
+                node_x = node.geometry().x()
+                node.moveBy(x_center-node_x,0.0)
+
+        def vertical_center():
+            nodes = self.scene().selected_nodes
+            y_list = [node.geometry().y() for node in nodes]
+            y_center = min(y_list) + (max(y_list) - min(y_list)) / 2
+
+            for node in nodes:
+                node_y = node.geometry().y()
+                node.moveBy(0.0,y_center - node_y)
+
+
         if self.right_click_menu is not None:
             pass
         self.right_click_menu = QMenu()
@@ -386,6 +405,15 @@ class AggregationView(QGraphicsView):
                 self.action_set_aggregation = self.menu_connection.addAction("Aggregation+Vererbung")
                 self.action_set_aggregation.triggered.connect(lambda : set_connection(
                     constants.INHERITANCE + constants.AGGREGATION))
+
+            if focus_node in self.scene().selected_nodes:
+                self.layout_menu = self.right_click_menu.addMenu("Layout")
+                self.action_horizontal_center  = self.layout_menu.addAction("Horizontal zentrieren")
+                self.action_horizontal_center.triggered.connect(horizontal_center)
+                self.action_vertical_center  = self.layout_menu.addAction("Vertikal zentrieren")
+                self.action_vertical_center.triggered.connect(vertical_center)
+
+
 
         def rc_reset_info():
             self.window().reset_info()

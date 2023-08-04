@@ -17,7 +17,8 @@ from ifcopenshell.util import element as ifc_el
 
 from . import issues
 from .output import create_issues
-from .sql import db_create_entity, remove_existing_issues, create_tables
+from .sql import db_create_entity, remove_existing_issues, create_tables,guids
+from . import sql
 from ..windows.modelcheck_window import ModelcheckWindow
 
 if TYPE_CHECKING:
@@ -29,6 +30,7 @@ ELEMENT = "Element"
 
 
 def run_modelcheck(main_window: MainWindow):
+    sql.guids = dict()
     project = main_window.project
     dialog = ModelcheckWindow(main_window)
     answer = dialog.exec()
@@ -176,9 +178,10 @@ SUBGROUPS = "subgroups"
 SUBELEMENT = "subelement"
 
 
-def build_group_structure(focus_group: ifcopenshell.entity_instance, group_dict: dict, ag: str, bk: str, ):
+def build_group_structure(focus_group: ifcopenshell.entity_instance, group_dict: dict, ag: str, bk: str, group_parent_dict:dict):
     group_dict[SUBGROUPS] = dict()
     group_dict[SUBELEMENT] = set()
+
 
     relationships = getattr(focus_group, "IsGroupedBy", [])
     for relationship in relationships:
@@ -187,11 +190,11 @@ def build_group_structure(focus_group: ifcopenshell.entity_instance, group_dict:
             if sub_element.is_a("IfcElement"):
                 group_dict[SUBELEMENT].add(sub_element)
             else:
+                group_parent_dict[sub_element] = focus_group
                 group_dict[SUBGROUPS][sub_element] = dict()
-                build_group_structure(sub_element, group_dict[SUBGROUPS][sub_element], ag, bk)
+                build_group_structure(sub_element, group_dict[SUBGROUPS][sub_element], ag, bk,group_parent_dict)
 
-
-def check_group_structure(group, group_dict: dict, layer_index, ag, bk, cursor, file_name, project_name, ident_dict):
+def check_group_structure(group, group_dict: dict, layer_index, ag, bk, cursor, file_name, project_name, ident_dict,group_parent_dict:dict[ifcopenshell.entity_instance,ifcopenshell.entity_instance]):
     def check_collector_group():
         db_create_entity(group, cursor, project_name, file_name, identifier)
         for sub_ident in sub_idents:
@@ -199,6 +202,12 @@ def check_group_structure(group, group_dict: dict, layer_index, ag, bk, cursor, 
                 issues.subgroup_issue(cursor, group.GlobalId, sub_ident)
 
     def check_real_group():
+        def loop_parent(element:SOMcreator.classes.Aggregation) -> SOMcreator.classes.Aggregation:
+            if element.parent_connection != som_constants.INHERITANCE:
+                return element.parent
+            else:
+                return loop_parent(element.parent)
+
         object_rep: SOMcreator.classes.Object = ident_dict.get(identifier)
         check_element(group, ag, bk, cursor, file_name, ident_dict, GROUP, project_name)
         if len(sub_idents) != len([get_identifier(sub_group, ag, bk) for sub_group in group_dict[group][SUBGROUPS]]):
@@ -206,15 +215,24 @@ def check_group_structure(group, group_dict: dict, layer_index, ag, bk, cursor, 
 
         if object_rep is None:
             return
-        allowed_identifiers = set()
-        for aggreg in object_rep.aggregations:
-            for child in aggreg.children:
-                allowed_identifiers.add(child.object.ident_value)
 
-        for sub_element in sub_entities:
-            ident = get_identifier(sub_element, ag, bk)
-            if ident not in allowed_identifiers:
-                issues.child_issue(cursor, group, sub_element, ag, bk)
+        parent_group = group_parent_dict.get(group_parent_dict.get(group))
+        if parent_group is None:
+            return
+        parent_object = ident_dict.get(get_identifier(parent_group,ag,bk))
+        if parent_object is None:
+            return
+
+        parent_is_allowed = False
+
+        for aggreg in object_rep.aggregations:
+            allowed_parent = loop_parent(aggreg)
+
+            if parent_object == allowed_parent.object:
+                parent_is_allowed = True
+
+        if not parent_is_allowed:
+            issues.parent_issue(cursor, group, parent_group, ag, bk)
 
     identifier = get_identifier(group, ag, bk)
     sub_entities = set(group_dict[group][SUBGROUPS].keys()).union(group_dict[group][SUBELEMENT])
@@ -231,7 +249,7 @@ def check_group_structure(group, group_dict: dict, layer_index, ag, bk, cursor, 
 
     for sub_group in group_dict[group][SUBGROUPS]:
         check_group_structure(sub_group, group_dict[group][SUBGROUPS], layer_index + 1, ag, bk, cursor, file_name,
-                              project_name, ident_dict)
+                              project_name, ident_dict,group_parent_dict)
 
 
 def get_parent_group(group: entity_instance) -> list[entity_instance]:
@@ -255,12 +273,13 @@ def check_all_elements(proj: Project, ifc: ifcopenshell.file, file_name: str, db
     root_groups = [group for group in ifc.by_type("IfcGroup") if not get_parent_group(group)]
 
     group_dict = dict()
+    group_parent_dict = dict()
     for element in root_groups:
         group_dict[element] = dict()
-        build_group_structure(element, group_dict[element], ag, bk)
+        build_group_structure(element, group_dict[element], ag, bk,group_parent_dict)
 
     for group in tqdm.tqdm(group_dict.keys(), desc=f"[{GROUP}] {file_name}"):
-        check_group_structure(group, group_dict, 0, ag, bk, cursor, file_name, project_name, ident_dict)
+        check_group_structure(group, group_dict, 0, ag, bk, cursor, file_name, project_name, ident_dict,group_parent_dict)
 
     conn.commit()
     conn.close()
