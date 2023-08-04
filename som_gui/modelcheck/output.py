@@ -30,6 +30,8 @@ def create_issues(db_name, path):
                     col_widths[col_index] = length
         return col_widths
 
+
+    print(db_name)
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     directory = os.path.dirname(path)
@@ -38,11 +40,15 @@ def create_issues(db_name, path):
 
     issues = sql.query_issues(cursor)
 
+    conn.commit()
+    conn.close()
+
+    print(f"{len(issues)} Fehler gefunden!")
+
     if len(issues) == 0:
         print("Modelle fehlerfrei!")
         return
-    else:
-        print(f"{len(issues)} Fehler gefunden!")
+
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
 

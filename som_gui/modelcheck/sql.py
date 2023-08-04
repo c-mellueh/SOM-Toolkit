@@ -93,5 +93,4 @@ def query_issues(cursor:sqlite3.Cursor) -> list:
         "SELECT i.creation_date, e.GUID,i.short_description,i.issue_type,e.Name,i.PropertySet,i.Attribut, e.datei, e.bauteilKlassifikation  FROM issues AS i JOIN entities e on i.GUID = e.GUID_ZWC")
 
     query = cursor.fetchall()
-    cursor.execute("select count(issues.GUID) from issues")
     return query

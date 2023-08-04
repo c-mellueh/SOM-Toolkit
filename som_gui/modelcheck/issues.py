@@ -90,9 +90,9 @@ def empty_group_issue(cursor, element):
     sql.add_issues(cursor, element.GlobalId, description, issue_nr, None)
 
 
-def child_issue(cursor, element:entity_instance,sub_element:entity_instance,ag,bk):
-    ident_value = ifc_el.get_pset(sub_element, ag, bk)
-    description = f"Gruppe besitzt die falsche Kindklasse ({ident_value} nicht erlaubt)"
+def parent_issue(cursor, element:entity_instance, parent_element:entity_instance, ag, bk):
+    ident_value = ifc_el.get_pset(parent_element, ag, bk)
+    description = f"Gruppe besitzt die falsche Elternklasse ({ident_value} nicht erlaubt)"
     issue_nr = PARENT_ISSUE
     sql.add_issues(cursor, element.GlobalId, description, issue_nr, None)
 

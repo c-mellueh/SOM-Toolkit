@@ -51,7 +51,10 @@ class NodeProxy(QGraphicsProxyWidget):
             self.set_title_by_attribute(self.title_settings[0],self.title_settings[1])
 
     def reset_title(self):
-        self.title = f"{self.aggregation.name}\nidentitaet: {self.aggregation.id_group()}"
+        if self.aggregation.is_root:
+            self.title = f"{self.aggregation.name} ({self.aggregation.object.abbreviation})"
+        else:
+            self.title = f"{self.aggregation.name} ({self.aggregation.object.abbreviation})\nidGruppe: {self.aggregation.id_group()}"
         self.title_settings = [None,None]
 
     def set_title_by_attribute(self,pset_name:str,attribute_name:str):
