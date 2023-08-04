@@ -43,8 +43,7 @@ def save_clicked(main_window: MainWindow) -> str:
         path = save_as_clicked(main_window)
     else:
         logging.info(f"Saved project to {path}")
-        main_dict = main_window.project.save(path)
-        add_node_pos(main_window,main_dict,path)
+        _save(main_window,path)
     return path
 
 
@@ -66,7 +65,7 @@ def _save(main_window:MainWindow,path):
     add_node_pos(main_window,main_dict, path)
     settings.set_open_path(path)
     settings.set_save_path(path)
-    print(f"Speichern abgeschlossen")
+    logging.info(f"Speichern abgeschlossen")
 
 def close_event(main_window: MainWindow):
     status = main_window.project.changed

@@ -5,6 +5,7 @@ import shutil
 import tempfile
 
 import openpyxl
+import logging
 from PySide6.QtWidgets import QInputDialog, QLineEdit, QFileDialog
 from PySide6.QtCore import QPointF
 from SOMcreator import classes
@@ -18,6 +19,11 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
+
+def check_for_objects_without_aggregation(proj:classes.Project):
+    for obj in proj.objects:
+        if not obj.aggregations:
+            logging.warning(f"Objekt {obj.name} ({obj.ident_value} kommt in keiner Aggregation vor)")
 
 
 def iter_child(parent_node: aggregation_window.Node) -> None:
@@ -126,3 +132,4 @@ def open_file_clicked(main_window: MainWindow) -> None:
     main_dict = main_window.project.open(path)
     import_node_pos(main_dict, main_window.graph_window)
     fill_ui(main_window)
+    check_for_objects_without_aggregation(main_window.project)

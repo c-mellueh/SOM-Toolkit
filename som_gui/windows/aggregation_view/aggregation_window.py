@@ -355,7 +355,6 @@ class AggregationView(QGraphicsView):
                 self.window().set_info(pset_name,attribute_name)
 
         def rc_delete_node():
-            print(self.scene().selected_nodes)
             if focus_node in self.scene().selected_nodes:
                 for node in list(self.scene().selected_nodes):
                     self.scene().remove_node(node)
@@ -662,6 +661,7 @@ class AggregationWindow(QWidget):
             self.create_missing_scenes()
         super(AggregationWindow, self).show()
         self.fit_view()
+        self.widget.combo_box.setCurrentIndex(0)
         self.is_initial_opening = False
 
     def add_scene_button_pressed(self):
