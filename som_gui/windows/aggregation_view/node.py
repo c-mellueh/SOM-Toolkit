@@ -39,22 +39,33 @@ class NodeProxy(QGraphicsProxyWidget):
         self.circle = Circle(self)
         self.title_settings:list[None]|list[str] = [None,None]
 
+    def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget) -> None:
+        def refresh_title():
+            if self.title_settings == [None, None]:
+                self.reset_title()
+            else:
+                self.set_title_by_attribute(self.title_settings[0], self.title_settings[1])
+
+        super().paint(painter, option, widget)
+        refresh_title()
+
+    def level(self):
+        if self.parent_node() is not None:
+            return self.parent_node().level()+1
+        return 0
+
     def update(self,*args) -> None:
         super(NodeProxy, self).update(*args)
-        self.frame.update(        )
+        self.frame.update()
         self.header.update()
 
-    def refresh_title(self):
-        if self.title_settings == [None,None]:
-            self.reset_title()
-        else:
-            self.set_title_by_attribute(self.title_settings[0],self.title_settings[1])
-
     def reset_title(self):
+        base_text = f"{self.aggregation.name} ({self.aggregation.object.abbreviation}) ->{self.level()}"
+
         if self.aggregation.is_root:
-            self.title = f"{self.aggregation.name} ({self.aggregation.object.abbreviation})"
+            self.title = base_text
         else:
-            self.title = f"{self.aggregation.name} ({self.aggregation.object.abbreviation})\nidGruppe: {self.aggregation.id_group()}"
+            self.title = f"{base_text}\nidGruppe: {self.aggregation.id_group()}"
         self.title_settings = [None,None]
 
     def set_title_by_attribute(self,pset_name:str,attribute_name:str):
@@ -78,9 +89,14 @@ class NodeProxy(QGraphicsProxyWidget):
         self.title =  f"{self.aggregation.name}\n{attribute_name}: {attribute.value[0]}"
 
     def aggregation_dict(self) -> dict[classes.Aggregation,NodeProxy]:
-        return self.aggregation_window().aggregation_dict()
+        aggreg_window = self.aggregation_window()
+        if aggreg_window is None:
+            return dict()
+        return aggreg_window.aggregation_dict()
 
     def aggregation_window(self) -> AggregationWindow:
+        if self.scene() is None:
+            return None
         return self.scene().aggregation_window
 
     def scene(self) -> AggregationScene:
@@ -102,9 +118,7 @@ class NodeProxy(QGraphicsProxyWidget):
 
     def delete(self):
         for connection in list(self.bottom_connections):
-            child_proxy = connection.bottom_node
             connection.delete()
-            child_proxy.refresh_title()
 
         if self.top_connection is not None:
             self.top_connection.delete()
@@ -273,13 +287,11 @@ class Header(QGraphicsRectItem):
     def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget) -> None:
         painter.save()
         painter.restore()
-
         painter.setPen(Qt.GlobalColor.black)
         painter.setBrush(Qt.GlobalColor.white)
         painter.drawRect(self.rect())
         painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, self.title)
         super().paint(painter, option, widget)
-
 
 class Frame(QGraphicsRectItem):
     def __init__(self, node: NodeProxy):
@@ -369,7 +381,6 @@ class NodeWidget(QWidget):
 
         self.scene().add_node(proxy_node,False)
         self.scene().add_connection(self.graphicsProxyWidget(),proxy_node)
-        proxy_node.refresh_title()
 
     def scene(self) -> AggregationScene:
         return self.graphicsProxyWidget().scene()
