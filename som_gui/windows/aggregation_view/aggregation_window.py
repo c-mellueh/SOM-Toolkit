@@ -201,7 +201,6 @@ class AggregationView(QGraphicsView):
         self.setInteractive(True)
         self.setRubberBandSelectionMode(Qt.ItemSelectionMode.ContainsItemBoundingRect)
 
-
     def window(self) -> AggregationWindow:
         return super(AggregationView, self).window()
 
@@ -432,6 +431,7 @@ class AggregationView(QGraphicsView):
                     constants.INHERITANCE + constants.AGGREGATION))
 
             if focus_node in self.scene().selected_nodes:
+                self.layout_menu = self.right_click_menu.addMenu("Layout")
                 self.action_horizontal_center  = self.layout_menu.addAction("Horizontal zentrieren")
                 self.action_horizontal_center.triggered.connect(lambda :center_nodes(self.scene().selected_nodes,0))
                 self.action_vertical_center  = self.layout_menu.addAction("Vertikal zentrieren")

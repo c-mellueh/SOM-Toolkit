@@ -49,7 +49,7 @@ class NodeProxy(QGraphicsProxyWidget):
         super().paint(painter, option, widget)
         refresh_title()
 
-    def level(self):
+    def level(self) -> int:
         if self.parent_node() is not None:
             return self.parent_node().level()+1
         return 0
