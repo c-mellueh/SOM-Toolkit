@@ -4,15 +4,16 @@ from typing import TYPE_CHECKING
 
 from PySide6 import QtGui, QtCore
 from PySide6.QtCore import Qt, QRectF, QPointF
-from PySide6.QtGui import QWheelEvent, QMouseEvent,QTransform,QShortcut,QKeySequence
-from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView,QApplication,QMenu,QRubberBand
+from PySide6.QtGui import QWheelEvent, QMouseEvent, QTransform, QShortcut, QKeySequence
+from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView, QApplication, QMenu, QRubberBand
 from SOMcreator import classes
 
 from som_gui.qt_designs import ui_GraphWindow
-from .node import NodeProxy, Header, Frame, Connection,Circle
+from .node import NodeProxy, Header, Frame, Connection, Circle
 from ...data import constants
+from ...icons import get_icon, get_reload_icon, get_search_icon
 from ...windows import popups
-from ...icons import get_icon,get_reload_icon,get_search_icon
+
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
 
@@ -53,9 +54,9 @@ def center_nodes(nodes: set[NodeProxy], orientation: int):
         if orientation == 1:
             node.moveBy(0.0, dif)
 
-def distribute_nodes(nodes:set[NodeProxy],orientation:int):
 
-    if len(nodes)<2:
+def distribute_nodes(nodes: set[NodeProxy], orientation: int):
+    if len(nodes) < 2:
         return
 
     if orientation == 0:
@@ -63,38 +64,38 @@ def distribute_nodes(nodes:set[NodeProxy],orientation:int):
     else:
         func_name = "y"
 
-    pos_list = [getattr(node.geometry().center(),func_name)() for node in nodes]
+    pos_list = [getattr(node.geometry().center(), func_name)() for node in nodes]
     border_1 = min(pos_list)
     border_2 = max(pos_list)
-    full_length = border_2-border_1
+    full_length = border_2 - border_1
 
-    distance_between_nodes = full_length/(len(nodes)-1)
+    distance_between_nodes = full_length / (len(nodes) - 1)
 
-    for index,node in enumerate(sorted(nodes,key= lambda node:getattr(node.geometry().center(),func_name)())):
-        new_pos = border_1+index*distance_between_nodes
-        old_pos = getattr(node.geometry().center(),func_name)()
-        dif = new_pos-old_pos
+    for index, node in enumerate(sorted(nodes, key=lambda node: getattr(node.geometry().center(), func_name)())):
+        new_pos = border_1 + index * distance_between_nodes
+        old_pos = getattr(node.geometry().center(), func_name)()
+        dif = new_pos - old_pos
 
         if orientation == 0:
-            node.moveBy(dif,0.0)
+            node.moveBy(dif, 0.0)
         else:
-            node.moveBy(0.0,dif)
+            node.moveBy(0.0, dif)
 
 
 class AggregationScene(QGraphicsScene):
-    def __init__(self, aggregation_window: AggregationWindow, name:str):
+    def __init__(self, aggregation_window: AggregationWindow, name: str):
         super(AggregationScene, self).__init__()
         self.node_pos = QPointF(50, 50)
         self._name = name
         self.aggregation_window = aggregation_window
         self.setSceneRect(1, 1, 100_000, 100_000)
-        self.selected_nodes:set[NodeProxy] = set()
+        self.selected_nodes: set[NodeProxy] = set()
 
-    def get_items_bounding_rect(self,items) -> QRectF:
+    def get_items_bounding_rect(self, items) -> QRectF:
         b_min = [None, None]
         b_max = [None, None]
         for item in items:
-            if not item.isVisible() and isinstance(item,NodeProxy):
+            if not item.isVisible() and isinstance(item, NodeProxy):
                 continue
 
             rect = item.sceneBoundingRect()
@@ -160,27 +161,25 @@ class AggregationScene(QGraphicsScene):
         return max((item.zValue() for item in self.items()), default=0)
 
     def fill_connections(self):
-        node_dict = {node.aggregation:node for node in self.nodes}
+        node_dict = {node.aggregation: node for node in self.nodes}
         for node in self.nodes:
             aggregation = node.aggregation
             sub_elements = aggregation.children
 
             for sub_aggregation in sub_elements:
 
-                sub_node:NodeProxy = node_dict.get(sub_aggregation)
+                sub_node: NodeProxy = node_dict.get(sub_aggregation)
                 if sub_node is None:
                     print(f"{aggregation} -> {sub_aggregation} missing")
                     continue
-                self.add_connection(node,sub_node,sub_node.aggregation.parent_connection)
-
-    def add_connection(self,top_node:NodeProxy,bottom_node:NodeProxy,connection_type = constants.AGGREGATION):
-        con = Connection(bottom_node,top_node,Connection.NORMAL_MODE,connection_type)
+                Connection(node, sub_node, Connection.NORMAL_MODE, constants.AGGREGATION)
 
     def delete(self):
         for node in self.nodes:
             node.delete()
         self.aggregation_window.scenes.remove(self)
         self.aggregation_window.scene_dict.pop(self.name)
+
 
 class AggregationView(QGraphicsView):
     def __init__(self) -> None:
@@ -191,13 +190,13 @@ class AggregationView(QGraphicsView):
         self.mouse_mode = 0  # 0=moveCursor 1=resize 2 = drag 3 = plus click 4 = draw connection 5 = rubber_band
         self.mouse_is_pressed = False
         self.setDragMode(self.DragMode.ScrollHandDrag)
-        self.right_click_menu:QMenu|None = None
+        self.right_click_menu: QMenu | None = None
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.right_click)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.drawn_connection:Connection|None = None
-        self.rubber_band:QRubberBand|None = None
+        self.drawn_connection: Connection | None = None
+        self.rubber_band: QRubberBand | None = None
         self.setInteractive(True)
         self.setRubberBandSelectionMode(Qt.ItemSelectionMode.ContainsItemBoundingRect)
 
@@ -244,11 +243,11 @@ class AggregationView(QGraphicsView):
             ver.setValue(ver.value() - val)
         self.update()
 
-    def get_focus_and_cursor(self, pos: QPointF) -> (int,NodeProxy):
+    def get_focus_and_cursor(self, pos: QPointF) -> (int, NodeProxy):
         """return cursor style and Node that will be in focus"""
         for node in self.scene().nodes:
             if node.circle.isUnderMouse():
-                return 11,node
+                return 11, node
 
         frames = [node.frame for node in self.scene().nodes if self.cursor_on_border(pos, node) != 0]
         headers = [item for item in self.items_under_mouse() if isinstance(item, Header)]
@@ -298,19 +297,19 @@ class AggregationView(QGraphicsView):
         if self.resize_orientation == 0:
             self.unsetCursor()
 
-        elif self.resize_orientation == 10: #Drag
+        elif self.resize_orientation == 10:  # Drag
             self.mouse_mode = 2
             self.setCursor(Qt.CursorShape.ClosedHandCursor)
-            self.focus_node.setZValue(self.scene().max_z_value()+1)
-        elif 1<= self.resize_orientation <=9:
-            self.setCursor(CURSOR_DICT[self.resize_orientation])    #resize
+            self.focus_node.setZValue(self.scene().max_z_value() + 1)
+        elif 1 <= self.resize_orientation <= 9:
+            self.setCursor(CURSOR_DICT[self.resize_orientation])  # resize
             self.mouse_mode = 1
             self.focus_node.setZValue(self.scene().max_z_value() + 1)
 
         else:
             self.setCursor(CURSOR_DICT[self.resize_orientation])
             self.mouse_mode = 3
-            self.focus_node.setZValue(self.scene().max_z_value()+1)
+            self.focus_node.setZValue(self.scene().max_z_value() + 1)
 
         super(AggregationView, self).mousePressEvent(event)
 
@@ -349,10 +348,10 @@ class AggregationView(QGraphicsView):
             self.drawn_connection = Connection(None, self.focus_node, Connection.DRAW_MODE)
             self.mouse_mode = 4
 
-        if self.mouse_mode ==4 :
+        if self.mouse_mode == 4:
             self.drawn_connection.update_line(self.mapToScene(event.pos()))
 
-        for node in self.scene().nodes: #change Style if selected
+        for node in self.scene().nodes:  # change Style if selected
             node.update()
 
         return super(AggregationView, self).mouseMoveEvent(event)
@@ -364,38 +363,38 @@ class AggregationView(QGraphicsView):
         self.last_pos = None
         self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
 
-        if old_mouse_mode in (1,2):
+        if old_mouse_mode in (1, 2):
             pass
-        elif old_mouse_mode ==3:
+        elif old_mouse_mode == 3:
             self.focus_node.widget().button_clicked()
 
         elif old_mouse_mode == 4:
             self.draw_connection_mouse_release(event)
 
-
         for node in self.scene().nodes:
             node.update()
 
         if event.button() != Qt.MouseButton.RightButton:
-            self.scene().selected_nodes = set(item for item in self.scene().selectedItems() if isinstance(item, NodeProxy))
+            self.scene().selected_nodes = set(
+                item for item in self.scene().selectedItems() if isinstance(item, NodeProxy))
 
         return super(AggregationView, self).mouseReleaseEvent(event)
 
-    def right_click(self,pos:QPointF):
+    def right_click(self, pos: QPointF):
         def rc_add_node():
             search = popups.ObjectSearchWindow(self.window().main_window)
             if not search.exec():
                 return
             obj = search.selected_object
             aggregation = classes.Aggregation(obj)
-            node = self.window().create_node(aggregation,node_pos,self.scene())
+            node = self.window().create_node(aggregation, node_pos, self.scene())
 
         def rc_set_info():
             search = popups.AttributeSearchWindow(self.window().main_window)
             if search.exec():
                 pset_name = search.selected_pset_name
                 attribute_name = search.selected_attribute_name
-                self.window().set_info(pset_name,attribute_name)
+                self.window().set_info(pset_name, attribute_name)
 
         def rc_delete_node():
             if focus_node in self.scene().selected_nodes:
@@ -404,8 +403,8 @@ class AggregationView(QGraphicsView):
             else:
                 self.scene().remove_node(focus_node)
 
-        def set_connection(connection_type:int):
-            focus_node.aggregation.set_parent(focus_node.aggregation.parent,connection_type)
+        def set_connection(connection_type: int):
+            focus_node.aggregation.set_parent(focus_node.aggregation.parent, connection_type)
             for con in focus_node.top_connection.top_node.bottom_connections:
                 con.update_line()
 
@@ -413,38 +412,40 @@ class AggregationView(QGraphicsView):
             pass
         self.right_click_menu = QMenu()
         node_pos = self.mapToScene(pos)
-        style:int
-        focus_node:NodeProxy
-        style,focus_node = self.get_focus_and_cursor(pos)
+        style: int
+        focus_node: NodeProxy
+        style, focus_node = self.get_focus_and_cursor(pos)
 
-        if style ==9:
+        if style == 9:
             self.action_add_node = self.right_click_menu.addAction("Node löschen")
             self.action_add_node.triggered.connect(rc_delete_node)
             if focus_node.aggregation.parent is not None:
                 self.menu_connection = self.right_click_menu.addMenu("Verbindungsart")
                 self.action_set_aggregation = self.menu_connection.addAction("Aggregation")
-                self.action_set_aggregation.triggered.connect(lambda : set_connection(constants.AGGREGATION))
+                self.action_set_aggregation.triggered.connect(lambda: set_connection(constants.AGGREGATION))
                 self.action_set_aggregation = self.menu_connection.addAction("Vererbung")
-                self.action_set_aggregation.triggered.connect(lambda : set_connection(constants.INHERITANCE))
+                self.action_set_aggregation.triggered.connect(lambda: set_connection(constants.INHERITANCE))
                 self.action_set_aggregation = self.menu_connection.addAction("Aggregation+Vererbung")
-                self.action_set_aggregation.triggered.connect(lambda : set_connection(
+                self.action_set_aggregation.triggered.connect(lambda: set_connection(
                     constants.INHERITANCE + constants.AGGREGATION))
 
             if focus_node in self.scene().selected_nodes:
                 self.layout_menu = self.right_click_menu.addMenu("Layout")
-                self.action_horizontal_center  = self.layout_menu.addAction("Horizontal zentrieren")
-                self.action_horizontal_center.triggered.connect(lambda :center_nodes(self.scene().selected_nodes,0))
-                self.action_vertical_center  = self.layout_menu.addAction("Vertikal zentrieren")
-                self.action_vertical_center.triggered.connect(lambda :center_nodes(self.scene().selected_nodes,1))
-                self.action_horizontal_distribute  = self.layout_menu.addAction("Horizontal verteilen")
-                self.action_horizontal_distribute.triggered.connect(lambda :distribute_nodes(self.scene().selected_nodes,0))
-                self.action_vertical_distribute  = self.layout_menu.addAction("Vertikal verteilen")
-                self.action_vertical_distribute.triggered.connect(lambda :distribute_nodes(self.scene().selected_nodes,1))
+                self.action_horizontal_center = self.layout_menu.addAction("Horizontal zentrieren")
+                self.action_horizontal_center.triggered.connect(lambda: center_nodes(self.scene().selected_nodes, 0))
+                self.action_vertical_center = self.layout_menu.addAction("Vertikal zentrieren")
+                self.action_vertical_center.triggered.connect(lambda: center_nodes(self.scene().selected_nodes, 1))
+                self.action_horizontal_distribute = self.layout_menu.addAction("Horizontal verteilen")
+                self.action_horizontal_distribute.triggered.connect(
+                    lambda: distribute_nodes(self.scene().selected_nodes, 0))
+                self.action_vertical_distribute = self.layout_menu.addAction("Vertikal verteilen")
+                self.action_vertical_distribute.triggered.connect(
+                    lambda: distribute_nodes(self.scene().selected_nodes, 1))
 
         def rc_reset_info():
             self.window().reset_info()
 
-        self.action_add_node = self.right_click_menu .addAction("Node hinzufügen")
+        self.action_add_node = self.right_click_menu.addAction("Node hinzufügen")
         self.action_add_node.triggered.connect(rc_add_node)
 
         self.action_modify_info = self.right_click_menu.addAction("Info Anpassen")
@@ -455,7 +456,7 @@ class AggregationView(QGraphicsView):
         global_pos = self.viewport().mapToGlobal(pos)
         self.right_click_menu.exec(global_pos)
 
-    def draw_connection_mouse_release(self,event:QMouseEvent):
+    def draw_connection_mouse_release(self, event: QMouseEvent):
         """if the user draws a line and the mouse was released this event should be called to determine if a new Connection gets established"""
         item_under_mouse = self.scene().itemAt(self.mapToScene(event.pos()), QTransform())
 
@@ -482,7 +483,7 @@ class AggregationView(QGraphicsView):
             self.drawn_connection.delete()
             self.drawn_connection = None
         else:
-            self.drawn_connection.add_bottom_node(node_proxy,constants.AGGREGATION)
+            self.drawn_connection.add_bottom_node(node_proxy, constants.AGGREGATION)
             self.drawn_connection.update_line()
             self.drawn_connection = None
         return super(AggregationView, self).mouseReleaseEvent(event)
@@ -550,7 +551,7 @@ class AggregationWindow(QWidget):
         self.widget.gridLayout.addWidget(self.view, 1, 0, 1, 2)
         self.widget.graphicsView.deleteLater()
         self.scenes: set[AggregationScene] = set()
-        self.scene_dict:dict[str,dict[str,list]] = {}  # used for import and export
+        self.scene_dict: dict[str, dict[str, list]] = {}  # used for import and export
 
         self.setWindowIcon(get_icon())
 
@@ -567,7 +568,7 @@ class AggregationWindow(QWidget):
         self.is_in_filter_mode = False
         self.copy_shortcut = QShortcut(QKeySequence('Ctrl+C'), self)
         self.copy_shortcut.activated.connect(self.copy_selected_nodes)
-        self.copied_nodes:set[NodeProxy] = set()
+        self.copied_nodes: set[NodeProxy] = set()
 
         self.paste_shortcut = QShortcut(QKeySequence('Ctrl+V'), self)
         self.paste_shortcut.activated.connect(self.paste_nodes)
@@ -582,23 +583,24 @@ class AggregationWindow(QWidget):
 
         old_scene = list(self.copied_nodes)[0].scene()
         bounding_rect = old_scene.get_items_bounding_rect(self.copied_nodes)
-        base_pos  = bounding_rect.topLeft()
+        base_pos = bounding_rect.topLeft()
         cursor_pos = self.view.mapToScene(self.mapFromGlobal(self.cursor().pos()))
 
         node_dict = dict()
         for node in self.copied_nodes:
-            dif = node.sceneBoundingRect().topLeft()-base_pos
+            dif = node.sceneBoundingRect().topLeft() - base_pos
             old_aggregation = node.aggregation
-            aggregation = classes.Aggregation(node.aggregation.object,description=old_aggregation.description,optional=old_aggregation.optional)
-            new_node = NodeProxy(aggregation, cursor_pos+dif)
+            aggregation = classes.Aggregation(node.aggregation.object, description=old_aggregation.description,
+                                              optional=old_aggregation.optional)
+            new_node = NodeProxy(aggregation, cursor_pos + dif)
             node_dict[node] = new_node
             scene.add_node(new_node)
 
             for child_node in node.child_nodes():
                 if child_node in node_dict:
-                    self.view.scene().add_connection(new_node,node_dict[child_node])
+                    Connection(new_node, node_dict[child_node], Connection.NORMAL_MODE, constants.AGGREGATION)
             if node.parent_node() in node_dict:
-                self.view.scene().add_connection(node_dict[node.parent_node()],new_node)
+                Connection(node_dict[node.parent_node()], new_node)
 
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
         super(AggregationWindow, self).closeEvent(event)
@@ -608,24 +610,24 @@ class AggregationWindow(QWidget):
             if not scene.nodes:
                 self.delete_scene(scene)
 
-    def set_info(self,pset_name,attribute_name):
+    def set_info(self, pset_name, attribute_name):
         for node in self.nodes:
-            node.set_title_by_attribute(pset_name,attribute_name)
+            node.set_title_by_attribute(pset_name, attribute_name)
 
     def reset_info(self):
         for node in self.nodes:
             node.reset_title()
 
-    def aggregation_dict(self) -> dict[classes.Aggregation,NodeProxy]:
-        return {node.aggregation:node for node in self.nodes}
+    def aggregation_dict(self) -> dict[classes.Aggregation, NodeProxy]:
+        return {node.aggregation: node for node in self.nodes}
 
     def delete_active_scene(self):
         scene = self.active_scene
-        if len(self.scenes) <=1:
+        if len(self.scenes) <= 1:
             self.create_new_scene("UNDEF")
         self.delete_scene(scene)
 
-    def delete_scene(self,scene:AggregationScene):
+    def delete_scene(self, scene: AggregationScene):
         name = scene.name
         scene.delete()
         index = self.widget.combo_box.findText(name)
@@ -645,7 +647,6 @@ class AggregationWindow(QWidget):
             self.reset_filter()
             return
 
-
         search = popups.ObjectSearchWindow(self.main_window)
         if not search.exec():
             return
@@ -662,11 +663,11 @@ class AggregationWindow(QWidget):
         self.widget.button_filter.setToolTip("Filter zurücksetzen")
         self.widget.button_filter.setToolTip("Filter zurücksetzen")
 
-    def remove_scene_from_combobox(self, scene:AggregationScene):
+    def remove_scene_from_combobox(self, scene: AggregationScene):
         index = self.widget.combo_box.findText(scene.name)
         self.widget.combo_box.removeItem(index)
 
-    def add_scene_to_combobox(self, scene:AggregationScene):
+    def add_scene_to_combobox(self, scene: AggregationScene):
         self.widget.combo_box.addItem(scene.name)
         self.widget.combo_box.model().sort(0)
 
@@ -680,7 +681,7 @@ class AggregationWindow(QWidget):
         If no scenes are defined there will be created a scene for each rootnode"""
 
         scene_dict = self.scene_dict
-        node_dict:dict[str,NodeProxy] = {node.uuid: node for node in self.nodes}
+        node_dict: dict[str, NodeProxy] = {node.uuid: node for node in self.nodes}
         for name, uuid_dict in tuple(scene_dict.items()):
             scene_nodes = set()
 
@@ -700,11 +701,11 @@ class AggregationWindow(QWidget):
             scene.add_node(node, recursive=True)
             scene.fill_connections()
 
-        first_scene = sorted([scene for scene in self.scenes],key=lambda x:x.name)[0]
+        first_scene = sorted([scene for scene in self.scenes], key=lambda x: x.name)[0]
         self.active_scene = first_scene
 
     def show(self) -> None:
-        if not self.is_initial_opening and len(self.scenes) >0 :
+        if not self.is_initial_opening and len(self.scenes) > 0:
             super(AggregationWindow, self).show()
             return
 
@@ -721,15 +722,15 @@ class AggregationWindow(QWidget):
         scene = self.create_new_scene()
         self.select_scene(scene)
 
-    def select_scene(self,scene:AggregationScene):
+    def select_scene(self, scene: AggregationScene):
         index = self.widget.combo_box.findText(scene.name)
         self.widget.combo_box.setCurrentIndex(index)
 
     def create_new_scene(self, name="UNDEF") -> AggregationScene:
-        def loop_name(index:int):
+        def loop_name(index: int):
             new_name = f"{name}_{str(index).zfill(2)}"
             if new_name in names:
-                index+=1
+                index += 1
                 return loop_name(index)
             return new_name
 
@@ -763,7 +764,7 @@ class AggregationWindow(QWidget):
         if self.active_scene is not None:
             self.active_scene.name = val
             index = self.widget.combo_box.currentIndex()
-            self.widget.combo_box.setItemText(index,val)
+            self.widget.combo_box.setItemText(index, val)
 
     def fit_view(self):
         bounding_rect = self.active_scene.get_items_bounding_rect(self.active_scene.items())
@@ -776,7 +777,7 @@ class AggregationWindow(QWidget):
 
         bounding_rect = self.active_scene.get_items_bounding_rect(self.active_scene.items())
         marg = constants.SCENE_MARGIN
-        self.view.fitInView(bounding_rect.adjusted(-marg,-marg,marg,marg),
+        self.view.fitInView(bounding_rect.adjusted(-marg, -marg, marg, marg),
                             aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
 
     @property
