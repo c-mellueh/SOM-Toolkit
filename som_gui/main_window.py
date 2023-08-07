@@ -94,9 +94,6 @@ class MainWindow(QMainWindow):
     def run_modelcheck(self):
         modelcheck.run_modelcheck(self)
 
-    def import_excel(self):
-        open_file.import_excel_clicked(self)
-
     @property
     def object_tree(self) -> object_widget.CustomTree:
         return self.ui.tree_object

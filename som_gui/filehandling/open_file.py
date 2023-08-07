@@ -25,16 +25,6 @@ def check_for_objects_without_aggregation(proj:classes.Project):
         if not obj.aggregations:
             logging.warning(f"Objekt {obj.name} ({obj.ident_value} kommt in keiner Aggregation vor)")
 
-
-def iter_child(parent_node: aggregation_window.Node) -> None:
-    child: classes.Aggregation
-    for child in parent_node.aggregation.children:
-        child_node = aggregation_window.aggregation_to_node(child)
-        con_type = parent_node.aggregation.connection_dict[child_node.aggregation]
-        parent_node.add_child(child_node, con_type)
-        iter_child(child_node)
-
-
 def import_node_pos(main_dict: dict, graph_window: aggregation_window.AggregationWindow) -> None:
     json_aggregation_dict: dict = main_dict[som_constants.AGGREGATIONS]
     aggregation_ref = {aggregation.uuid: aggregation for aggregation in classes.Aggregation}
@@ -85,42 +75,6 @@ def get_path(main_window: MainWindow, title: str, file_text: str) -> str:
     if not os.path.exists(cur_path):
         cur_path = os.getcwd() + "/"
     return QFileDialog.getOpenFileName(main_window, title, str(cur_path), file_text)[0]
-
-
-def import_excel_clicked(main_window: MainWindow) -> None:
-    def build_aggregations():
-        return #TODO: fix
-        gw = main_window.graph_window
-        root_nodes = list()
-        for aggreg in sorted(classes.Aggregation, key=lambda x: x.name):
-            node = aggregation_window.Node(aggreg, gw)
-            if aggreg.is_root:
-                root_nodes.append(node)
-
-        for node in root_nodes:
-            gw.create_scene_by_node(node)
-            iter_child(node)
-            gw.draw_tree(node)
-
-        gw.combo_box.setCurrentIndex(0)
-        gw.combo_change()
-
-    request_delete_or_merge(main_window)
-    path = get_path(main_window, "Import File", "Excel Files (*xlsx);;all (*.*)")
-    if not path:
-        return
-
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        new_path = os.path.join(tmpdirname, "som_excel.xlsx")
-        shutil.copy2(path, new_path)
-        book = openpyxl.load_workbook(new_path)
-        sheet_name, ok = popups.req_worksheet_name(main_window, book.sheetnames)
-    if not ok:
-        return
-    main_window.project.import_excel(path, sheet_name)
-    build_aggregations()
-    fill_ui(main_window)
-
 
 def open_file_clicked(main_window: MainWindow) -> None:
     path = get_path(main_window, "Open Project", FILETYPE)
