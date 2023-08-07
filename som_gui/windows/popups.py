@@ -11,6 +11,8 @@ from fuzzywuzzy import fuzz
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
+UMLAUT_DICT = {ord('ä'):'ae', ord('ü'):'ue', ord('ö'):'oe', ord('ß'):'ss'}
+
 def default_message(text):
     icon = icons.get_icon()
     msg_box = QMessageBox()
@@ -297,12 +299,13 @@ class ObjectSearchWindow(QDialog):
     def update_table(self):
         table = self.widget.tableWidget
         text = self.widget.lineEdit.text().lower()
+        text_umlaut = text.translate(UMLAUT_DICT)
         possible_objects = set()
         for obj in self.objects:
-            value1 = fuzz.partial_ratio(text.lower(), obj.name.lower())
-            value2 = fuzz.partial_ratio(text.lower(), str(obj.ident_value))
-            value3 = fuzz.partial_ratio(text.lower(),obj.abbreviation.lower())
-            value = max([value1,value2,value3])
+            check_values = [obj.name.lower(),str(obj.ident_value.lower()),str(obj.abbreviation.lower())]
+            value_with_umlaut = max([fuzz.partial_ratio(text,val) for val in check_values])
+            value_without_umlaut = max([fuzz.partial_ratio(text_umlaut,val) for val in check_values])
+            value = max([value_with_umlaut,value_without_umlaut])
             row = self.get_row(obj)
             table.item(row, self.MATCH_INDEX).setText(str(value))
             if value > 75:
@@ -388,13 +391,13 @@ class AttributeSearchWindow(QDialog):
     def update_table(self):
         table = self.widget.tableWidget
         text = self.widget.lineEdit.text().lower()
+        text_umlaut = text.translate(UMLAUT_DICT)
         possible_attributes = set()
         for attribute in self.attributes:
-            [pset_name,attribute_name] = attribute.split(":")
-            value1 = fuzz.partial_ratio(text.lower(), pset_name.lower())
-            value2 = fuzz.partial_ratio(text.lower(), attribute_name.lower())
-            value = max([value1,value2])
-
+            check_values = attribute.split(":")
+            value_with_umlaut = max([fuzz.partial_ratio(text,val) for val in check_values])
+            value_without_umlaut = max([fuzz.partial_ratio(text_umlaut,val) for val in check_values])
+            value = max([value_with_umlaut,value_without_umlaut])
             row = self.get_row(attribute)
             table.item(row, self.MATCH_INDEX).setText(str(value))
             if value > 75:

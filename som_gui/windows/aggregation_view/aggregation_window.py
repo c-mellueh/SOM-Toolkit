@@ -326,7 +326,7 @@ class AggregationView(QGraphicsView):
                     lambda: distribute_by_layer(self.scene().selected_nodes, 0))
                 action_vertical_distribute = layout_menu.addAction("Vertikal verteilen")
                 action_vertical_distribute.triggered.connect(
-                    lambda: distribute_by_layer(self.scene().selected_nodes, 1))
+                    lambda: distribute_nodes(self.scene().selected_nodes, 1))
 
         def rc_reset_info():
             self.window().reset_info()
