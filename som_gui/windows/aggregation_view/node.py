@@ -60,7 +60,7 @@ class NodeProxy(QGraphicsProxyWidget):
         self.header.update()
 
     def reset_title(self):
-        base_text = f"{self.aggregation.name} ({self.aggregation.object.abbreviation}) ->{self.level()}"
+        base_text = f"{self.aggregation.name} ({self.aggregation.object.abbreviation})"
 
         if self.aggregation.is_root:
             self.title = base_text
@@ -380,7 +380,7 @@ class NodeWidget(QWidget):
         proxy_node = NodeProxy(aggregation,input_point)
 
         self.scene().add_node(proxy_node,False)
-        Connection(self.graphicsProxyWidget(),proxy_node)
+        Connection(proxy_node,self.graphicsProxyWidget())
 
     def scene(self) -> AggregationScene:
         return self.graphicsProxyWidget().scene()
@@ -449,7 +449,8 @@ class Connection(QGraphicsPathItem):
 
     @property
     def connection_type(self) -> int:
-        return self.bottom_node.aggregation.parent_connection
+        con = self.bottom_node.aggregation.parent_connection
+        return con
 
     def get_connection_displacement(self):
         aggreg:classes.Aggregation

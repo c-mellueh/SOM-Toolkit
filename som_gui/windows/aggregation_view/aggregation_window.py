@@ -172,7 +172,7 @@ class AggregationScene(QGraphicsScene):
                 if sub_node is None:
                     print(f"{aggregation} -> {sub_aggregation} missing")
                     continue
-                Connection(node, sub_node, Connection.NORMAL_MODE, constants.AGGREGATION)
+                Connection(sub_node,node, Connection.NORMAL_MODE, constants.AGGREGATION)
 
     def delete(self):
         for node in self.nodes:
@@ -598,9 +598,9 @@ class AggregationWindow(QWidget):
 
             for child_node in node.child_nodes():
                 if child_node in node_dict:
-                    Connection(new_node, node_dict[child_node], Connection.NORMAL_MODE, constants.AGGREGATION)
+                    Connection(node_dict[child_node],new_node , Connection.NORMAL_MODE, constants.AGGREGATION)
             if node.parent_node() in node_dict:
-                Connection(node_dict[node.parent_node()], new_node)
+                Connection(new_node,node_dict[node.parent_node()])
 
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
         super(AggregationWindow, self).closeEvent(event)
