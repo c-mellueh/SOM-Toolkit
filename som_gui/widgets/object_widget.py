@@ -497,7 +497,7 @@ def set_ident_line_enable(main_window, value: bool):
 def multi_selection(main_window: MainWindow):
     main_window.set_right_window_enable(False)
 
-    items = main_window.ui.tree_object.selectedItems()
+    items:list[CustomObjectTreeItem] = main_window.ui.tree_object.selectedItems()
 
     is_concept = [item.object for item in items if item.object.is_concept]
     if is_concept:

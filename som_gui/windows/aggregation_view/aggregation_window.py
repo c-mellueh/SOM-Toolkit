@@ -366,7 +366,7 @@ class AggregationView(QGraphicsView):
         if old_mouse_mode in (1, 2):
             pass
         elif old_mouse_mode == 3:
-            self.focus_node.widget().button_clicked()
+            self.focus_node.button_clicked()
 
         elif old_mouse_mode == 4:
             self.draw_connection_mouse_release(event)
