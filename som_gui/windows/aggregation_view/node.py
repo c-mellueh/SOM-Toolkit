@@ -46,13 +46,24 @@ class NodeProxy(QGraphicsProxyWidget):
         self.title_settings: list[None] | list[str] = [None, None]
 
     def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget) -> None:
+        super().paint(painter, option, widget)
+        self.update()
+
+    def level(self) -> int:
+        if self.parent_node() is not None:
+            return self.parent_node().level() + 1
+        return 0
+
+    def update(self, *args) -> None:
+        super(NodeProxy, self).update(*args)
+        self.frame.update()
+        self.header.update()
         def refresh_title():
             if self.title_settings == [None, None]:
                 self.reset_title()
             else:
                 self.set_title_by_attribute(self.title_settings[0], self.title_settings[1])
 
-        super().paint(painter, option, widget)
         refresh_title()
         self.update_connections()
         try:
@@ -74,16 +85,6 @@ class NodeProxy(QGraphicsProxyWidget):
             self.circle.resize()
         except AttributeError:
             pass
-
-    def level(self) -> int:
-        if self.parent_node() is not None:
-            return self.parent_node().level() + 1
-        return 0
-
-    def update(self, *args) -> None:
-        super(NodeProxy, self).update(*args)
-        self.frame.update()
-        self.header.update()
 
     def reset_title(self) -> None:
         """title is set to BaseText"""
@@ -138,7 +139,7 @@ class NodeProxy(QGraphicsProxyWidget):
             connection.update_line()
         if self.top_connection is not None:
             self.top_connection.update_line()
-        self.update()
+        #self.update()
 
     def child_nodes(self) -> set[NodeProxy]:
         return set(self.aggregation_dict().get(aggreg) for aggreg in self.aggregation.children)

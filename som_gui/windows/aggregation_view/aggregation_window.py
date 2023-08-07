@@ -1,11 +1,12 @@
 from __future__ import annotations  # make own class referencable
 
+import os.path
 from typing import TYPE_CHECKING
 
 from PySide6 import QtGui, QtCore
 from PySide6.QtCore import Qt, QRectF, QPointF
-from PySide6.QtGui import QWheelEvent, QMouseEvent, QTransform, QShortcut, QKeySequence
-from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView, QApplication, QMenu, QRubberBand
+from PySide6.QtGui import QWheelEvent, QMouseEvent, QTransform, QShortcut, QKeySequence,QPainter,QImage
+from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView, QApplication, QMenu, QRubberBand,QFileDialog
 from SOMcreator import classes
 
 from som_gui.qt_designs import ui_GraphWindow
@@ -261,6 +262,12 @@ class AggregationView(QGraphicsView):
             else:
                 self.scene().remove_node(focus_node)
 
+        def rc_print():
+            file_text = "png Files (*.png);;"
+            path = QFileDialog.getSaveFileName(self, "Aggregationsansicht speichern", "", file_text)[0]
+            if path:
+                self.print_view(path)
+
         def set_connection(connection_type: int):
             focus_node.aggregation.set_parent(focus_node.aggregation.parent, connection_type)
             for con in focus_node.top_connection.top_node.bottom_connections:
@@ -275,44 +282,80 @@ class AggregationView(QGraphicsView):
         style, focus_node = self.get_focus_and_cursor(pos)
 
         if style == 9:
-            self.action_add_node = self.right_click_menu.addAction("Node löschen")
-            self.action_add_node.triggered.connect(rc_delete_node)
+            action_add_node = self.right_click_menu.addAction("Node löschen")
+            action_add_node.triggered.connect(rc_delete_node)
             if focus_node.aggregation.parent is not None:
-                self.menu_connection = self.right_click_menu.addMenu("Verbindungsart")
-                self.action_set_aggregation = self.menu_connection.addAction("Aggregation")
-                self.action_set_aggregation.triggered.connect(lambda: set_connection(constants.AGGREGATION))
-                self.action_set_aggregation = self.menu_connection.addAction("Vererbung")
-                self.action_set_aggregation.triggered.connect(lambda: set_connection(constants.INHERITANCE))
-                self.action_set_aggregation = self.menu_connection.addAction("Aggregation+Vererbung")
-                self.action_set_aggregation.triggered.connect(lambda: set_connection(
+                menu_connection = self.right_click_menu.addMenu("Verbindungsart")
+                action_set_aggregation = menu_connection.addAction("Aggregation")
+                action_set_aggregation.triggered.connect(lambda: set_connection(constants.AGGREGATION))
+                action_set_aggregation = menu_connection.addAction("Vererbung")
+                action_set_aggregation.triggered.connect(lambda: set_connection(constants.INHERITANCE))
+                action_set_aggregation = menu_connection.addAction("Aggregation+Vererbung")
+                action_set_aggregation.triggered.connect(lambda: set_connection(
                     constants.INHERITANCE + constants.AGGREGATION))
 
             if focus_node in self.scene().selected_nodes:
-                self.layout_menu = self.right_click_menu.addMenu("Layout")
-                self.action_horizontal_center = self.layout_menu.addAction("Horizontal zentrieren")
-                self.action_horizontal_center.triggered.connect(lambda: center_nodes(self.scene().selected_nodes, 0))
-                self.action_vertical_center = self.layout_menu.addAction("Vertikal zentrieren")
-                self.action_vertical_center.triggered.connect(lambda: center_nodes(self.scene().selected_nodes, 1))
-                self.action_horizontal_distribute = self.layout_menu.addAction("Horizontal verteilen")
-                self.action_horizontal_distribute.triggered.connect(
+                layout_menu = self.right_click_menu.addMenu("Layout")
+                action_horizontal_center = layout_menu.addAction("Horizontal zentrieren")
+                action_horizontal_center.triggered.connect(lambda: center_nodes(self.scene().selected_nodes, 0))
+                action_vertical_center = layout_menu.addAction("Vertikal zentrieren")
+                action_vertical_center.triggered.connect(lambda: center_nodes(self.scene().selected_nodes, 1))
+                action_horizontal_distribute = layout_menu.addAction("Horizontal verteilen")
+                action_horizontal_distribute.triggered.connect(
                     lambda: distribute_nodes(self.scene().selected_nodes, 0))
-                self.action_vertical_distribute = self.layout_menu.addAction("Vertikal verteilen")
-                self.action_vertical_distribute.triggered.connect(
+                action_vertical_distribute = layout_menu.addAction("Vertikal verteilen")
+                action_vertical_distribute.triggered.connect(
                     lambda: distribute_nodes(self.scene().selected_nodes, 1))
 
         def rc_reset_info():
             self.window().reset_info()
 
-        self.action_add_node = self.right_click_menu.addAction("Node hinzufügen")
-        self.action_add_node.triggered.connect(rc_add_node)
+        action_add_node = self.right_click_menu.addAction("Node hinzufügen")
+        action_add_node.triggered.connect(rc_add_node)
 
-        self.action_modify_info = self.right_click_menu.addAction("Info Anpassen")
-        self.action_modify_info.triggered.connect(rc_set_info)
+        action_modify_info = self.right_click_menu.addAction("Info Anpassen")
+        action_modify_info.triggered.connect(rc_set_info)
+        menu_print = self.right_click_menu.addMenu("Drucken")
+        action_reset_info = menu_print.addAction("Info Zurücksetzen")
+        action_reset_info.triggered.connect(rc_reset_info)
+        action_print = menu_print.addAction("Ansicht Drucken")
+        action_print.triggered.connect(rc_print)
+        action_print_all = menu_print.addAction("Alles Drucken")
+        action_print_all.triggered.connect(self.print)
 
-        self.action_reset_info = self.right_click_menu.addAction("Info Zurücksetzen")
-        self.action_reset_info.triggered.connect(rc_reset_info)
         global_pos = self.viewport().mapToGlobal(pos)
         self.right_click_menu.exec(global_pos)
+
+    def print_view(self,path):
+
+        rect = self.viewport().rect()
+        image = QImage(rect.size() * 8, QImage.Format.Format_RGB32)
+        image.fill(Qt.white)
+        painter = QPainter(image)
+        painter.setRenderHint(QPainter.Antialiasing)
+        self.render(painter)
+        image.save(path)
+        painter.end()
+
+    def print(self):
+        # self._test_printer = Printer()
+        # if (QPrintDialog(self._test_printer).exec()):
+        #     self.painter = QPainter()
+        #     self.painter.setRenderHint(QPainter.Antialiasing)
+        #     self.painter.begin(self._test_printer)
+        #     self.render(self.painter)
+        #     self.painter.end()
+
+        folder_path = QFileDialog.getExistingDirectory(self, "Safe Aggregation", "")
+        for node in self.window().nodes:
+            node.update()
+
+        for scene in self.window().scenes:
+            self.window().active_scene=scene
+            path = os.path.join(folder_path, f"{scene.name}.png")
+            self.print_view(path)
+        print("Done")
+
 
     def draw_connection_mouse_release(self, event: QMouseEvent):
         """if the user draws a line and the mouse was released this event should be called to determine if a new Connection gets established"""
