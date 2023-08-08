@@ -111,7 +111,7 @@ class ModelcheckWindow(QWidget):
         result = list()
         for path in paths:
             if not os.path.exists(path):
-                print(f"IFC-File does not exist: '{path}'")
+                logging.error(f"IFC-File does not exist: '{path}'")
             else:
                 result.append(path)
         return result
@@ -155,13 +155,13 @@ class ModelcheckWindow(QWidget):
                 12: "Zu Viele Subelemente"}
 
     def on_started(self,path):
-        print(f"Start {path}")
+        logging.info(f"Start {path}")
         self.active_threads += 1
 
     def on_finished(self,path):
         self.active_threads -= 1
-        print(f"Finish {path}")
-        print(f"active Threads: {self.active_threads}")
+        logging.info(f"Finish {path}")
+        logging.info(f"active Threads: {self.active_threads}")
         if self.active_threads == 0:
             self.end_modelcheck()
 
@@ -214,7 +214,7 @@ class ModelcheckWindow(QWidget):
         self.widget.buttonBox.setEnabled(True)
         output.create_issues(self.data_base_path, self.widget.line_edit_export.text())
         self.end_time = time()
-        print(f"Elapsed Time: {self.end_time}-{self.start_time}")
+        print(f"Elapsed Time: {self.end_time-self.start_time}")
 
 
 
