@@ -7,7 +7,7 @@ import sys
 import json
 
 from PySide6 import QtCore, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QCompleter, QDialog, QTableWidget, QInputDialog, QLineEdit,QFileDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QCompleter, QDialog, QTableWidget, QInputDialog, QLineEdit,QFileDialog,QLabel
 from SOMcreator import classes, desite,vestra,card1,filehandling,allplan
 from SOMcreator import excel as som_excel
 from . import icons
@@ -87,9 +87,19 @@ class MainWindow(QMainWindow):
         # init object and ProertyWidget
         object_widget.init(self)
         property_widget.init(self)
-        self.setWindowTitle(f"SOM-Toolkit v{__version__}")
         connect()
         settings.reset_save_path()
+
+        self.permanent_status_text = QLabel()
+        self.ui.statusbar.addWidget(self.permanent_status_text)
+        self.generate_window_title()
+
+
+    def generate_window_title(self) -> str:
+        text = f"SOM-Toolkit v{__version__}"
+        self.setWindowTitle(text)
+        self.permanent_status_text.setText(f"{self.project.name} v{self.project.version}")
+
 
     def run_modelcheck(self):
         modelcheck.run_modelcheck(self)
@@ -171,6 +181,7 @@ class MainWindow(QMainWindow):
 
     def open_file_clicked(self):
         open_file.open_file_clicked(self)
+        self.generate_window_title()
 
     def merge_new_file(self):
         open_file.merge_new_file(self)
@@ -301,6 +312,7 @@ class MainWindow(QMainWindow):
             self.project.name = widget.lineEdit_project_name.text()
             self.project.author = widget.lineEdit_author.text()
             self.project.version = widget.lineEdit_version.text()
+            self.generate_window_title()
 
     def export_bookmarks(self):
         path = export.get_folder(self)
