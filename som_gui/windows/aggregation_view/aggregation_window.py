@@ -9,6 +9,7 @@ from PySide6.QtGui import QWheelEvent, QMouseEvent, QTransform, QShortcut, QKeyS
 from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView, QApplication, QMenu, QRubberBand,QFileDialog
 from SOMcreator import classes
 
+import tqdm
 from som_gui.qt_designs import ui_GraphWindow
 from .node import NodeProxy, Header, Frame, Connection, Circle
 from ...data import constants
@@ -326,7 +327,7 @@ class AggregationView(QGraphicsView):
                     lambda: distribute_by_layer(self.scene().selected_nodes, 0))
                 action_vertical_distribute = layout_menu.addAction("Vertikal verteilen")
                 action_vertical_distribute.triggered.connect(
-                    lambda: distribute_by_layer(self.scene().selected_nodes, 1))
+                    lambda: distribute_nodes(self.scene().selected_nodes, 1))
 
         def rc_reset_info():
             self.window().reset_info()
@@ -343,7 +344,7 @@ class AggregationView(QGraphicsView):
         action_print = menu_print.addAction("Ansicht Drucken")
         action_print.triggered.connect(rc_print)
         action_print_all = menu_print.addAction("Alles Drucken")
-        action_print_all.triggered.connect(self.print)
+        action_print_all.triggered.connect(self.print_all)
 
         global_pos = self.viewport().mapToGlobal(pos)
         self.right_click_menu.exec(global_pos)
@@ -359,13 +360,14 @@ class AggregationView(QGraphicsView):
         image.save(path)
         painter.end()
 
-    def print(self):
+    def print_all(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Safe Aggregation", "")
         for node in self.window().nodes:
             node.update()
 
-        for scene in self.window().scenes:
+        for scene in tqdm.tqdm(self.window().scenes,"Ansicht "):
             self.window().active_scene=scene
+            self.auto_fit()
             path = os.path.join(folder_path, f"{scene.name}.png")
             self.print_view(path)
         print("Done")
