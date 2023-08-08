@@ -227,8 +227,9 @@ def check_group_structure(group, group_dict: dict, layer_index, ag, bk, cursor, 
 
         for aggreg in object_rep.aggregations:
             allowed_parent = loop_parent(aggreg)
-
-            if parent_object == allowed_parent.object:
+            if allowed_parent is None:
+                pass
+            elif parent_object == allowed_parent.object:
                 parent_is_allowed = True
 
         if not parent_is_allowed:
