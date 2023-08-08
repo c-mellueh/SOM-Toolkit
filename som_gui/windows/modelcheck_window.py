@@ -1,24 +1,30 @@
 from __future__ import annotations
 
+import logging
 import os
+from time import time
+import tempfile
 from typing import TYPE_CHECKING
 
-from PySide6.QtWidgets import QDialog, QFileDialog,QTableWidgetItem
+from PySide6.QtCore import QObject, Signal, QRunnable, QThreadPool
+from PySide6.QtWidgets import QFileDialog, QTableWidgetItem, QWidget
 
+from ..icons import get_icon
+from ..modelcheck import modelcheck, sql,output
 from ..qt_designs import ui_modelcheck
 from ..settings import get_ifc_path, get_issue_path, set_ifc_path, set_issue_path
-from ..icons import get_icon
+
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
 FILE_SPLIT = "; "
 
 
-class ModelcheckWindow(QDialog):
+class ModelcheckWindow(QWidget):
     def __init__(self, main_window: MainWindow):
         super(ModelcheckWindow, self).__init__()
         self.main_window = main_window
-        self.widget = ui_modelcheck.Ui_Dialog()
+        self.widget = ui_modelcheck.Ui_Form()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
         self.setWindowTitle("Modelcheck")
