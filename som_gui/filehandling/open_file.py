@@ -50,20 +50,6 @@ def new_file(main_window: MainWindow) -> None:
             main_window.clear_all()
 
 
-def merge_new_file(main_window: MainWindow) -> None:
-    print(main_window)
-    print("MERGE NEEDS TO BE PROGRAMMED")  # TODO: Write Merge
-
-
-def request_delete_or_merge(main_window: MainWindow) -> None:
-    if classes.Object:
-        result = popups.msg_delete_or_merge()
-        if result is None:
-            return
-        if result:
-            main_window.clear_all()
-
-
 def fill_ui(main_window: MainWindow) -> None:
     main_window.clear_object_input()
     main_window.fill_tree()
@@ -87,3 +73,4 @@ def open_file_clicked(main_window: MainWindow) -> None:
     import_node_pos(main_dict, main_window.graph_window)
     fill_ui(main_window)
     check_for_objects_without_aggregation(main_window.project)
+    logging.info(f"Import Done!")
