@@ -50,13 +50,22 @@ class ModelcheckWindow(QWidget):
         if get_issue_path():
             self.widget.line_edit_export.setText(get_issue_path())
 
+        self.active_threads = 0
+        self.thread_pool = QThreadPool()
+        self.widget.buttonBox.accepted.connect(self.accept)
+        self.widget.buttonBox.rejected.connect(self.hide)
+        self.show()
+        self.start_time = None
+        self.end_time = None
+        self.threads = set()
+
     def fill_table(self):
         issues = self.get_issue_description()
         self.widget.table_widget.setRowCount(0)
         self.widget.table_widget.setRowCount(len(issues))
-        for index,(key,description) in enumerate(sorted(issues.items())):
-            self.widget.table_widget.setItem(index,0,QTableWidgetItem(f"Fehler {key}"))
-            self.widget.table_widget.setItem(index,1,QTableWidgetItem(description))
+        for index, (key, description) in enumerate(sorted(issues.items())):
+            self.widget.table_widget.setItem(index, 0, QTableWidgetItem(f"Fehler {key}"))
+            self.widget.table_widget.setItem(index, 1, QTableWidgetItem(description))
 
     def accept(self) -> None:
         allow = True
@@ -79,7 +88,7 @@ class ModelcheckWindow(QWidget):
             allow = False
 
         if allow:
-            super(ModelcheckWindow, self).accept()
+            self.start_modelcheck()
 
     def ifc_file_dialog(self):
         file_text = "IFC Files (*.ifc *.IFC);;"
@@ -144,3 +153,90 @@ class ModelcheckWindow(QWidget):
                 10: "Gruppe besitzt keine Subelemente",
                 11: "Element hat keine Gruppenzuweisen",
                 12: "Zu Viele Subelemente"}
+
+    def on_started(self,path):
+        print(f"Start {path}")
+        self.active_threads += 1
+
+    def on_finished(self,path):
+        self.active_threads -= 1
+        print(f"Finish {path}")
+        print(f"active Threads: {self.active_threads}")
+        if self.active_threads == 0:
+            self.end_modelcheck()
+
+    def start_modelcheck(self):
+        def add_runnable(path) -> MainRunnable:
+            runnable = MainRunnable(modelcheck.check_file, path, self.main_window.project, property_set, attribute,
+                                    self.data_base_path)
+            runnable.signaller.started.connect(self.on_started)
+            runnable.signaller.finished.connect(self.on_finished)
+            self.threads.add(runnable)
+            return runnable
+
+        self.start_time = time()
+        sql.guids = dict()
+        ifc_paths = self.get_ifc_path()
+        self.thread_pool = QThreadPool()
+        self.threads = set()
+
+
+        self.data_base_path = tempfile.NamedTemporaryFile().name
+
+        sql.create_tables(self.data_base_path)
+
+        property_set = self.widget.line_edit_ident_pset.text()
+        attribute = self.widget.line_edit_ident_attribute.text()
+
+        if not isinstance(ifc_paths, list):
+            if not isinstance(ifc_paths, str):
+                return
+            if not os.path.isfile(ifc_paths):
+                return
+            add_runnable(ifc_paths)
+
+        else:
+            for path in ifc_paths:
+                if os.path.isdir(path):
+                    for file in os.listdir(path):
+                        file_path = os.path.join(path, file)
+                        add_runnable(file_path)
+                else:
+                    add_runnable(path)
+
+        self.widget.buttonBox.setEnabled(False)
+
+        for thread in self.threads:
+            self.thread_pool.start(thread)
+
+    def end_modelcheck(self):
+        logging.info("Modelcheck Done")
+        self.widget.buttonBox.setEnabled(True)
+        output.create_issues(self.data_base_path, self.widget.line_edit_export.text())
+        self.end_time = time()
+        print(f"Elapsed Time: {self.end_time}-{self.start_time}")
+
+
+
+class MainRunnable(QRunnable):
+    def __init__(self, target, path, project, property_set, attribute, db_path):
+        super(MainRunnable, self).__init__()
+        self.target = target
+        self.path = path
+        self.project = project
+        self.property_set = property_set
+        self.attribute = attribute
+        self.db_path = db_path
+        self.signaller = Signaller()
+
+
+    def run(self) -> None:
+        self.signaller.started.emit(self.path)
+
+        self.target(self.path, self.project, self.property_set, self.attribute, self.db_path)
+
+        self.signaller.finished.emit(self.path)
+
+class Signaller(QObject):
+    started = Signal(str)
+    finished = Signal(str)

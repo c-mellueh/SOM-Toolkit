@@ -30,18 +30,11 @@ def create_issues(db_name, path):
                     col_widths[col_index] = length
         return col_widths
 
-
-    print(db_name)
-    conn = sqlite3.connect(db_name)
-    cursor = conn.cursor()
     directory = os.path.dirname(path)
     if not os.path.exists(directory):
         os.mkdir(directory)
 
-    issues = sql.query_issues(cursor)
-
-    conn.commit()
-    conn.close()
+    issues = sql.query_issues(db_name)
 
     print(f"{len(issues)} Fehler gefunden!")
 
