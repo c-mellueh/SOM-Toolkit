@@ -166,48 +166,16 @@ class ModelcheckWindow(QWidget):
             self.end_modelcheck()
 
     def start_modelcheck(self):
-        def add_runnable(path) -> MainRunnable:
-            runnable = MainRunnable(modelcheck.check_file, path, self.main_window.project, property_set, attribute,
-                                    self.data_base_path)
-            runnable.signaller.started.connect(self.on_started)
-            runnable.signaller.finished.connect(self.on_finished)
-            self.threads.add(runnable)
-            return runnable
-
         self.start_time = time()
-        sql.guids = dict()
-        ifc_paths = self.get_ifc_path()
-        self.thread_pool = QThreadPool()
-        self.threads = set()
-
-
+        self.widget.buttonBox.setEnabled(False)
+        proj = self.main_window.project
+        ifc = self.get_ifc_path()
+        pset = self.widget.line_edit_ident_pset.text()
+        attribute = self.widget.line_edit_ident_attribute.text()
         self.data_base_path = tempfile.NamedTemporaryFile().name
 
-        sql.create_tables(self.data_base_path)
-
-        property_set = self.widget.line_edit_ident_pset.text()
-        attribute = self.widget.line_edit_ident_attribute.text()
-
-        if not isinstance(ifc_paths, list):
-            if not isinstance(ifc_paths, str):
-                return
-            if not os.path.isfile(ifc_paths):
-                return
-            add_runnable(ifc_paths)
-
-        else:
-            for path in ifc_paths:
-                if os.path.isdir(path):
-                    for file in os.listdir(path):
-                        file_path = os.path.join(path, file)
-                        add_runnable(file_path)
-                else:
-                    add_runnable(path)
-
-        self.widget.buttonBox.setEnabled(False)
-
-        for thread in self.threads:
-            self.thread_pool.start(thread)
+        self.runner = MainRunnable(modelcheck.check_file,ifc,proj,pset,attribute,self.data_base_path)
+        self.runner.run()
 
     def end_modelcheck(self):
         logging.info("Modelcheck Done")
@@ -229,12 +197,35 @@ class MainRunnable(QRunnable):
         self.db_path = db_path
         self.signaller = Signaller()
 
+    def get_check_file_list(self,ifc_paths:str) -> list[str]:
+        check_list = list()
+        if not isinstance(ifc_paths, list):
+            if not isinstance(ifc_paths, str):
+                return check_list
+            if not os.path.isfile(ifc_paths):
+                return check_list
+            check_list.append(ifc_paths)
+
+        else:
+            for path in ifc_paths:
+                if os.path.isdir(path):
+                    for file in os.listdir(path):
+                        file_path = os.path.join(path, file)
+                        check_list.append(file_path)
+                else:
+                    check_list.append(path)
+        return check_list
 
     def run(self) -> None:
         self.signaller.started.emit(self.path)
+        sql.guids = dict()
+        sql.create_tables(self.db_path)
 
-        self.target(self.path, self.project, self.property_set, self.attribute, self.db_path)
-
+        files = self.get_check_file_list(self.path)
+        print(files)
+        for file in files:
+            print(f"check {file}")
+            self.target(file, self.project, self.property_set, self.attribute, self.db_path)
         self.signaller.finished.emit(self.path)
 
 class Signaller(QObject):
