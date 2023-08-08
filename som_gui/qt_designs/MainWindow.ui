@@ -28,6 +28,9 @@
       </property>
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_objects">
+        <property name="rightMargin">
+         <number>5</number>
+        </property>
         <item>
          <layout class="QGridLayout" name="gridLayout_objects">
           <item row="0" column="5">
@@ -265,6 +268,18 @@
       </widget>
       <widget class="QWidget" name="box_layout_pset" native="true">
        <layout class="QGridLayout" name="gridLayout">
+        <property name="leftMargin">
+         <number>5</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item row="2" column="0" colspan="2">
          <layout class="QHBoxLayout" name="horizontalLayout_pSet_button">
           <item>
