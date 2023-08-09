@@ -14,7 +14,6 @@ from ifcopenshell import entity_instance
 from ifcopenshell.util import element as ifc_el
 
 from . import issues
-from .output import create_issues
 from .sql import db_create_entity, remove_existing_issues, create_tables,guids
 
 if TYPE_CHECKING:
@@ -35,30 +34,6 @@ def check_file(file_path, proj, ag, bk, db_name):
 
     ifc = ifcopenshell.open(file_path)
     check_all_elements(proj, ifc, file, db_name, ag, bk, proj.name)
-
-
-def main(file_paths, proj: Project, db_path, ag, bk, issue_path):
-    """deprecated -> no Threading"""
-
-    create_tables(db_path)
-
-    if not isinstance(file_paths, list):
-        if not isinstance(file_paths, str):
-            return
-        if not os.path.isfile(file_paths):
-            return
-        check_file(file_paths, proj, ag, bk, db_path)
-        return
-
-    for path in file_paths:
-        if os.path.isdir(path):
-            for file in os.listdir(path):
-                file_path = os.path.join(path, file)
-                check_file(file_path, proj, ag, bk, db_path)
-        else:
-            check_file(path, proj, ag, bk, db_path)
-
-    create_issues(db_path, issue_path)
 
 
 def get_identifier(el: entity_instance, main_pset: str, main_attribute: str) -> str | None:
@@ -231,19 +206,20 @@ def check_all_elements(proj: Project, ifc: ifcopenshell.file, file_name: str, db
 
     remove_existing_issues(db_name,project_name, datetime.today(), file_name)
 
-    ident_dict = {obj.ident_value: obj for obj in proj.objects}
-    for element in ifc.by_type("IfcElement"):
-        check_element(element, ag, bk, db_name, file_name, ident_dict, ELEMENT, project_name)
     root_groups = [group for group in ifc.by_type("IfcGroup") if not get_parent_group(group)]
-
+    ident_dict = {obj.ident_value: obj for obj in proj.objects}
     group_dict = dict()
     group_parent_dict = dict()
     for element in root_groups:
         group_dict[element] = dict()
         build_group_structure(element, group_dict[element], ag, bk,group_parent_dict)
 
+    element:ifcopenshell.entity_instance
 
-    for group in group_dict.keys():
-        check_group_structure(group, group_dict, 0, ag, bk, db_name, file_name, project_name, ident_dict,group_parent_dict)
-
-
+    for element in ifc.by_type("IfcObject"):
+        if element.is_a("IfcElement"):
+            check_element(element, ag, bk, db_name, file_name, ident_dict, ELEMENT, project_name)
+        elif element.is_a("IfcGroup"):
+            if element in group_dict:
+                check_group_structure(element, group_dict, 0, ag, bk, db_name, file_name, project_name, ident_dict,
+                                      group_parent_dict)

@@ -17,14 +17,14 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QDialogButtonBox,
     QGridLayout, QHeaderView, QLabel, QLayout,
-    QLineEdit, QPushButton, QSizePolicy, QTableWidget,
-    QTableWidgetItem, QVBoxLayout, QWidget)
+    QLineEdit, QProgressBar, QPushButton, QSizePolicy,
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(530, 553)
+        Form.resize(667, 472)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.gridLayout = QGridLayout()
@@ -128,6 +128,17 @@ class Ui_Form(object):
 
         self.verticalLayout.addWidget(self.table_widget)
 
+        self.label_status = QLabel(Form)
+        self.label_status.setObjectName(u"label_status")
+
+        self.verticalLayout.addWidget(self.label_status)
+
+        self.progress_bar = QProgressBar(Form)
+        self.progress_bar.setObjectName(u"progress_bar")
+        self.progress_bar.setValue(24)
+
+        self.verticalLayout.addWidget(self.progress_bar)
+
         self.buttonBox = QDialogButtonBox(Form)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setOrientation(Qt.Horizontal)
@@ -156,5 +167,6 @@ class Ui_Form(object):
         ___qtablewidgetitem.setText(QCoreApplication.translate("Form", u"Fehlertyp", None));
         ___qtablewidgetitem1 = self.table_widget.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("Form", u"Beschreibung", None));
+        self.label_status.setText(QCoreApplication.translate("Form", u"TextLabel", None))
     # retranslateUi
 
