@@ -88,7 +88,8 @@ def db_create_entity(cursor, element: entity_instance, project, file_name, baute
     ifc_type = element.is_a()
     center = [0, 0, 0]
     if guid in guids:
-        issues.guid_issue(cursor, guid, file_name, guids[guid])
+        if file_name != guids[guid]:
+            issues.guid_issue(cursor, guid, file_name, guids[guid])
         return
     else:
         guids[guid] = file_name
@@ -99,7 +100,7 @@ def db_create_entity(cursor, element: entity_instance, project, file_name, baute
                         ('{guid_zwc}','{guid}','{name}','{project}','{ifc_type}',{center[0]},{center[1]},{center[2]},'{file_name}','{bauteil_klasse}')
                   ''')
     except sqlite3.IntegrityError:
-        print("Integrity Error")
+        print("Integrity Error -> Element allready exists")
         pass
 
 
