@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QDialogButtonBox,
-    QGridLayout, QHeaderView, QLabel, QLayout,
-    QLineEdit, QProgressBar, QPushButton, QSizePolicy,
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHBoxLayout,
+    QHeaderView, QLabel, QLayout, QLineEdit,
+    QProgressBar, QPushButton, QSizePolicy, QSpacerItem,
     QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_Form(object):
@@ -136,15 +136,28 @@ class Ui_Form(object):
         self.progress_bar = QProgressBar(Form)
         self.progress_bar.setObjectName(u"progress_bar")
         self.progress_bar.setValue(24)
+        self.progress_bar.setTextVisible(True)
 
         self.verticalLayout.addWidget(self.progress_bar)
 
-        self.buttonBox = QDialogButtonBox(Form)
-        self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.verticalLayout.addWidget(self.buttonBox)
+        self.horizontalLayout.addItem(self.horizontalSpacer)
+
+        self.button_run = QPushButton(Form)
+        self.button_run.setObjectName(u"button_run")
+
+        self.horizontalLayout.addWidget(self.button_run)
+
+        self.button_close = QPushButton(Form)
+        self.button_close.setObjectName(u"button_close")
+
+        self.horizontalLayout.addWidget(self.button_close)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout)
 
 
         self.retranslateUi(Form)
@@ -168,5 +181,7 @@ class Ui_Form(object):
         ___qtablewidgetitem1 = self.table_widget.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("Form", u"Beschreibung", None));
         self.label_status.setText(QCoreApplication.translate("Form", u"TextLabel", None))
+        self.button_run.setText(QCoreApplication.translate("Form", u"Run", None))
+        self.button_close.setText(QCoreApplication.translate("Form", u"Close", None))
     # retranslateUi
 

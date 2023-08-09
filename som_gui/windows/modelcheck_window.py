@@ -61,12 +61,12 @@ class ModelcheckWindow(QWidget):
 
         self.active_threads = 0
         self.thread_pool = QThreadPool()
-        self.widget.buttonBox.accepted.connect(self.accept)
-        self.widget.buttonBox.rejected.connect(self.hide)
+        self.widget.button_run.clicked.connect(self.accept)
+        self.widget.button_close.clicked.connect(self.close_button_clicked)
         self.show()
         self.start_time = None
         self.end_time = None
-        self.threads = set()
+        self.modelcheck_is_running = False
 
     def fill_table(self):
         issues = self.get_issue_description()
@@ -75,6 +75,10 @@ class ModelcheckWindow(QWidget):
         for index, (key, description) in enumerate(sorted(issues.items())):
             self.widget.table_widget.setItem(index, 0, QTableWidgetItem(f"Fehler {key}"))
             self.widget.table_widget.setItem(index, 1, QTableWidgetItem(description))
+
+    def close_button_clicked(self):
+        if not self.modelcheck_is_running:
+            self.hide()
 
     def accept(self) -> None:
         allow = True
@@ -175,8 +179,10 @@ class ModelcheckWindow(QWidget):
             self.end_modelcheck()
 
     def start_modelcheck(self):
+        self.modelcheck_is_running = True
         self.start_time = time()
-        self.widget.buttonBox.setEnabled(False)
+        self.widget.button_run.setEnabled(False)
+        self.widget.button_close.setText("Abort")
         proj = self.main_window.project
         ifc = self.get_ifc_path()
         pset = self.widget.line_edit_ident_pset.text()
@@ -188,7 +194,7 @@ class ModelcheckWindow(QWidget):
         self.runner.signaller.finished.connect(self.on_finished)
         self.runner.signaller.progress.connect(self.update_progress_bar)
         self.runner.signaller.status.connect(self.update_status)
-
+        self.widget.button_close.clicked.connect(self.runner.abort)
         self.widget.label_status.show()
         self.widget.progress_bar.show()
         self.widget.progress_bar.reset()
@@ -197,10 +203,12 @@ class ModelcheckWindow(QWidget):
 
     def end_modelcheck(self):
         logging.info("Modelcheck Done")
-        self.widget.label_status.setText("Create")
-        self.widget.buttonBox.setEnabled(True)
         self.end_time = time()
         print(f"Elapsed Time: {self.end_time - self.start_time}")
+
+        self.widget.button_run.setEnabled(True)
+        self.widget.button_close.setText("Close")
+        self.modelcheck_is_running = False
 
     def update_progress_bar(self, value):
         self.widget.progress_bar.setValue(value)
@@ -219,6 +227,7 @@ class MainRunnable(QRunnable):
         self.db_path = db_path
         self.signaller = Signaller()
         self.export_path = export_path
+        self.is_aborted = False
 
     def get_check_file_list(self, ifc_paths: str) -> list[str]:
         check_list = list()
@@ -239,6 +248,11 @@ class MainRunnable(QRunnable):
                     check_list.append(path)
         return check_list
 
+    def abort(self):
+        self.is_aborted = True
+        self.signaller.status.emit("Modelcheck abgebrochen")
+        self.signaller.progress.emit(0)
+
     def run(self) -> None:
         self.signaller.started.emit(self.path)
         sql.guids = dict()
@@ -246,7 +260,13 @@ class MainRunnable(QRunnable):
 
         files = self.get_check_file_list(self.path)
         for file in files:
+            if self.is_aborted:
+                continue
             self.check_file(file)
+
+        if self.is_aborted:
+            self.signaller.finished.emit("ABORT")
+            return
         self.signaller.finished.emit(self.path)
         self.signaller.status.emit("Modelcheck Done!")
         self.create_issues(self.db_path, self.export_path)
@@ -283,7 +303,8 @@ class MainRunnable(QRunnable):
         last_prog = 0
         self.signaller.status.emit(f"Check '{file_name}'")
         for index, element in enumerate(ifc.by_type("IfcObject"), start=1):
-
+            if self.is_aborted:
+                return
             progress = int(index / object_count * 100)
             self.signaller.progress.emit(progress)
             self.signaller.status.emit(f"Check '{file_name}' [{index}/{object_count}]")
