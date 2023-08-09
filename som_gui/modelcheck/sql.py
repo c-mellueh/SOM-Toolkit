@@ -9,6 +9,25 @@ from . import issues
 guids = dict()
 
 
+def sql_command(func):
+    def inner(data_base, *args, **kwargs):
+        if isinstance(data_base, str):
+            conn = sqlite3.connect(data_base)
+            cursor = conn.cursor()
+            value = func(cursor, *args, **kwargs)
+            conn.commit()
+            conn.close()
+        elif isinstance(data_base, sqlite3.Cursor):
+            cursor = data_base
+            value = func(cursor, *args, **kwargs)
+        else:
+            raise AttributeError(f"Wrong input type: {type(data_base)}")
+        return value
+
+    return inner
+
+
+@sql_command
 def remove_existing_issues(cursor, project_name, creation_date, file_name):
     query = f"""
     DELETE FROM issues
@@ -22,29 +41,24 @@ def remove_existing_issues(cursor, project_name, creation_date, file_name):
     cursor.execute(query)
 
 
-def create_tables(db_path):
-    print(db_path)
-    conn = sqlite3.connect(db_path)
-    c = conn.cursor()
-
+@sql_command
+def create_tables(cursor):
     # entities
-    c.execute('''
+    cursor.execute('''
               CREATE TABLE IF NOT EXISTS entities
               ([GUID_ZWC] CHAR(64) PRIMARY KEY,[GUID] CHAR(64),[Name] CHAR(64),[Project] TEXT, [ifc_type] TEXT,[x_pos] DOUBLE,
               [y_pos] DOUBLE,[z_pos] DOUBLE,[datei] TEXT,[bauteilKlassifikation] TEXT)
               ''')
 
     # issues
-    c.execute('''
+    cursor.execute('''
               CREATE TABLE IF NOT EXISTS issues
               ([creation_date] TEXT,[GUID] CHAR(64), [short_description] TEXT,[issue_type] INT,
               [PropertySet] TEXT, [Attribut] TEXT)
               ''')
 
-    conn.commit()
-    conn.close()
 
-
+@sql_command
 def add_issues(cursor, guid, description, issue_type, attribute, pset_name="", attribute_name=""):
     guid = transform_guid(guid, True)
     date = datetime.date.today()
@@ -66,7 +80,8 @@ def transform_guid(guid: str, add_zero_width: bool):
         return guid
 
 
-def db_create_entity(element: entity_instance, cursor, project, file_name, bauteil_klasse):
+@sql_command
+def db_create_entity(cursor, element: entity_instance, project, file_name, bauteil_klasse):
     guid_zwc = transform_guid(element.GlobalId, True)
     guid = transform_guid(element.GlobalId, False)
     name = element.Name
@@ -88,7 +103,8 @@ def db_create_entity(element: entity_instance, cursor, project, file_name, baute
         pass
 
 
-def query_issues(cursor:sqlite3.Cursor) -> list:
+@sql_command
+def query_issues(cursor: sqlite3.Cursor) -> list:
     cursor.execute(
         "SELECT i.creation_date, e.GUID,i.short_description,i.issue_type,e.Name,i.PropertySet,i.Attribut, e.datei, e.bauteilKlassifikation  FROM issues AS i JOIN entities e on i.GUID = e.GUID_ZWC")
 

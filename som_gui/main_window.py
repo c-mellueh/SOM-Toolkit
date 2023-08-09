@@ -17,9 +17,8 @@ from .qt_designs import ui_project_settings
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import  property_widget, object_widget
 from som_gui.windows.aggregation_view import aggregation_window
-from .windows import predefined_psets_window, propertyset_window, mapping_window, popups
+from .windows import predefined_psets_window, propertyset_window, mapping_window, popups,modelcheck_window
 from . import settings, __version__
-from .modelcheck import modelcheck
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
     return QtGui.QIcon(icon_path)
@@ -82,8 +81,9 @@ class MainWindow(QMainWindow):
         self.active_object: classes.Object | None = None
         self.graph_window = aggregation_window.AggregationWindow(self)
         self.mapping_window = None
+        self.modelcheck_window:modelcheck_window.ModelcheckWindow|None = None
         self.project = classes.Project("Project", "")
-        self.running_modelcheck:None|QtCore.QRunnable = None
+
         # init object and ProertyWidget
         object_widget.init(self)
         property_widget.init(self)
@@ -94,15 +94,16 @@ class MainWindow(QMainWindow):
         self.ui.statusbar.addWidget(self.permanent_status_text)
         self.generate_window_title()
 
-
     def generate_window_title(self) -> str:
         text = f"SOM-Toolkit v{__version__}"
         self.setWindowTitle(text)
         self.permanent_status_text.setText(f"{self.project.name} v{self.project.version}")
 
-
     def run_modelcheck(self):
-        modelcheck.run_modelcheck(self)
+        if self.modelcheck_window is None:
+            self.modelcheck_window = modelcheck_window.ModelcheckWindow(self)
+        else:
+            self.modelcheck_window.show()
 
     @property
     def object_tree(self) -> object_widget.CustomTree:
