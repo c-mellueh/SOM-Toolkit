@@ -2,23 +2,21 @@ from __future__ import annotations
 
 import logging
 import os
-from time import time,sleep
-from datetime import datetime
 import tempfile
-import ifcopenshell
-
+from datetime import datetime
+from time import time, sleep
 from typing import TYPE_CHECKING
 
+import ifcopenshell
+import openpyxl
 from PySide6.QtCore import QObject, Signal, QRunnable, QThreadPool
 from PySide6.QtWidgets import QFileDialog, QTableWidgetItem, QWidget
-
-import openpyxl
-from openpyxl.worksheet.table import Table,TableStyleInfo
-from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
+from openpyxl.worksheet.table import Table, TableStyleInfo
 
 from ..icons import get_icon
-from ..modelcheck import modelcheck, sql,output
+from ..modelcheck import modelcheck, sql
 from ..qt_designs import ui_modelcheck
 from ..settings import get_ifc_path, get_issue_path, set_ifc_path, set_issue_path
 
@@ -27,7 +25,8 @@ if TYPE_CHECKING:
 
 FILE_SPLIT = "; "
 HEADER = ["Datum", "GUID", "Beschreibung", "Typ", "Name", "PropertySet", "Attribut", "Datei",
-              "Bauteilklassifikation"]
+          "Bauteilklassifikation"]
+
 
 class ModelcheckWindow(QWidget):
     def __init__(self, main_window: MainWindow):
@@ -164,11 +163,11 @@ class ModelcheckWindow(QWidget):
                 11: "Element hat keine Gruppenzuweisen",
                 12: "Zu Viele Subelemente"}
 
-    def on_started(self,path):
+    def on_started(self, path):
         logging.info(f"Start {path}")
         self.active_threads += 1
 
-    def on_finished(self,path):
+    def on_finished(self, path):
         self.active_threads -= 1
         logging.info(f"Finish {path}")
         logging.info(f"active Threads: {self.active_threads}")
@@ -184,7 +183,7 @@ class ModelcheckWindow(QWidget):
         attribute = self.widget.line_edit_ident_attribute.text()
         self.data_base_path = tempfile.NamedTemporaryFile().name
         export_path = self.widget.line_edit_export.text()
-        self.runner = MainRunnable(modelcheck.check_file,ifc,proj,pset,attribute,self.data_base_path,export_path)
+        self.runner = MainRunnable(modelcheck.check_file, ifc, proj, pset, attribute, self.data_base_path, export_path)
         self.runner.signaller.started.connect(self.on_started)
         self.runner.signaller.finished.connect(self.on_finished)
         self.runner.signaller.progress.connect(self.update_progress_bar)
@@ -201,16 +200,17 @@ class ModelcheckWindow(QWidget):
         self.widget.label_status.setText("Create")
         self.widget.buttonBox.setEnabled(True)
         self.end_time = time()
-        print(f"Elapsed Time: {self.end_time-self.start_time}")
+        print(f"Elapsed Time: {self.end_time - self.start_time}")
 
-    def update_progress_bar(self,value):
+    def update_progress_bar(self, value):
         self.widget.progress_bar.setValue(value)
 
-    def update_status(self,value):
+    def update_status(self, value):
         self.widget.label_status.setText(value)
 
+
 class MainRunnable(QRunnable):
-    def __init__(self, target, path, project, property_set, attribute, db_path,export_path):
+    def __init__(self, target, path, project, property_set, attribute, db_path, export_path):
         super(MainRunnable, self).__init__()
         self.target = target
         self.path = path
@@ -221,7 +221,7 @@ class MainRunnable(QRunnable):
         self.signaller = Signaller()
         self.export_path = export_path
 
-    def get_check_file_list(self,ifc_paths:str) -> list[str]:
+    def get_check_file_list(self, ifc_paths: str) -> list[str]:
         check_list = list()
         if not isinstance(ifc_paths, list):
             if not isinstance(ifc_paths, str):
@@ -250,8 +250,9 @@ class MainRunnable(QRunnable):
             self.check_file(file)
         self.signaller.finished.emit(self.path)
         self.signaller.status.emit("Modelcheck Done!")
-        self.create_issues(self.db_path,self.export_path)
-    def check_file(self,file):
+        self.create_issues(self.db_path, self.export_path)
+
+    def check_file(self, file):
         file_name, extension = os.path.splitext(file)
         base_name = os.path.basename(file)
         self.signaller.status.emit(f"Import {base_name}")
@@ -264,7 +265,7 @@ class MainRunnable(QRunnable):
         sleep(0.1)
         self.check_all_elements(ifc, base_name)
 
-    def check_all_elements(self,ifc: ifcopenshell.file, file_name: str):
+    def check_all_elements(self, ifc: ifcopenshell.file, file_name: str):
         db_name = self.db_path
         project_name = self.project.name
         modelcheck.remove_existing_issues(db_name, project_name, datetime.today(), file_name)
@@ -274,31 +275,33 @@ class MainRunnable(QRunnable):
         group_parent_dict = dict()
         for element in root_groups:
             group_dict[element] = dict()
-            modelcheck.build_group_structure(element, group_dict[element], self.property_set, self.attribute, group_parent_dict)
+            modelcheck.build_group_structure(element, group_dict[element], self.property_set, self.attribute,
+                                             group_parent_dict)
 
         element: ifcopenshell.entity_instance
         object_count = len(list(ifc.by_type("IfcObject")))
 
         last_prog = 0
         self.signaller.status.emit(f"Check '{file_name}'")
-        for index,element in enumerate(ifc.by_type("IfcObject"),start=1):
+        for index, element in enumerate(ifc.by_type("IfcObject"), start=1):
 
-            progress = int(index/object_count*100)
+            progress = int(index / object_count * 100)
             self.signaller.progress.emit(progress)
             self.signaller.status.emit(f"Check '{file_name}' [{index}/{object_count}]")
             if element.is_a("IfcElement"):
-                modelcheck.check_element(element, self.property_set, self.attribute, db_name, file_name, ident_dict, modelcheck.ELEMENT, project_name)
+                modelcheck.check_element(element, self.property_set, self.attribute, db_name, file_name, ident_dict,
+                                         modelcheck.ELEMENT, project_name)
             elif element.is_a("IfcGroup"):
                 if element in group_dict:
-                    modelcheck.check_group_structure(element, group_dict, 0, self.property_set, self.attribute, db_name, file_name, project_name, ident_dict,
-                                          group_parent_dict)
+                    modelcheck.check_group_structure(element, group_dict, 0, self.property_set, self.attribute, db_name,
+                                                     file_name, project_name, ident_dict,
+                                                     group_parent_dict)
 
-
-    def create_issues(self,db_name, path):
+    def create_issues(self, db_name, path):
         def get_max_width():
             col_widths = [0 for _ in range(worksheet.max_column)]
-            for row_index, row in enumerate(worksheet,start = 1):
-                for col_index,cell in enumerate(row):
+            for row_index, row in enumerate(worksheet, start=1):
+                for col_index, cell in enumerate(row):
                     length = len(str(cell.value))
                     if length > col_widths[col_index]:
                         col_widths[col_index] = length
@@ -310,10 +313,10 @@ class MainRunnable(QRunnable):
 
         issues = sql.query_issues(db_name)
 
-        print(f"{len(issues)} Fehler gefunden!")
+        self.signaller.status.emit(f"{len(issues)} Fehler gefunden!")
 
         if len(issues) == 0:
-            print("Modelle fehlerfrei!")
+            self.signaller.status.emit("Modelle fehlerfrei!")
             return
 
         workbook = openpyxl.Workbook()
@@ -322,31 +325,31 @@ class MainRunnable(QRunnable):
         for col_index, value in enumerate(HEADER, start=1):
             worksheet.cell(1, col_index, value)
 
-        last_cell = worksheet.cell(1,8)
+        last_cell = worksheet.cell(1, 8)
 
         for row_index, column in enumerate(issues, start=2):
             for column_index, value in enumerate(column, start=1):
                 last_cell = worksheet.cell(row_index, column_index, value)  # remove Whitespace
 
-
         table_zone = f"A1:{last_cell.coordinate}"
-        tab = Table(displayName="Issues",ref=table_zone)
-        style = TableStyleInfo(name= "TableStyleMedium9",showFirstColumn=False,showLastColumn=False,showRowStripes=True,showColumnStripes=True)
+        tab = Table(displayName="Issues", ref=table_zone)
+        style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False,
+                               showRowStripes=True, showColumnStripes=True)
         tab.tableStyleInfo = style
         worksheet.add_table(tab)
 
         max_widths = get_max_width()
 
-
-        #autoFit Column
+        # autoFit Column
         dim_holder = DimensionHolder(worksheet=worksheet)
         for col in range(worksheet.min_column, worksheet.max_column + 1):
-            dim_holder[get_column_letter(col)] = ColumnDimension(worksheet, min=col, max=col, width=max_widths[col-1]*1.1)
+            dim_holder[get_column_letter(col)] = ColumnDimension(worksheet, min=col, max=col,
+                                                                 width=max_widths[col - 1] * 1.1)
         worksheet.column_dimensions = dim_holder
 
         self.save_workbook(workbook, path)
 
-    def save_workbook(self,workbook, path):
+    def save_workbook(self, workbook, path):
         try:
             workbook.save(path)
         except PermissionError:
