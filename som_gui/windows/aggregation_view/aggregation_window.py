@@ -9,6 +9,7 @@ from PySide6.QtGui import QWheelEvent, QMouseEvent, QTransform, QShortcut, QKeyS
 from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView, QApplication, QMenu, QRubberBand,QFileDialog
 from SOMcreator import classes
 
+import logging
 import tqdm
 from som_gui.qt_designs import ui_GraphWindow
 from .node import NodeProxy, Header, Frame, Connection, Circle
@@ -246,15 +247,20 @@ class AggregationView(QGraphicsView):
         return cursor_style, node
 
     def auto_fit(self):
-        bounding_rect = self.scene().get_items_bounding_rect(self.scene().items())
+        logging.debug("Autofit Start")
+        bounding_rect = self.scene().get_items_bounding_rect(self.scene().nodes)
+        logging.debug(f"Bounding_rect: {bounding_rect}")
         sr_center = self.scene().sceneRect().center()
         br_center = bounding_rect.center()
         dif = sr_center - br_center
-        for item in self.scene().items():
-            if isinstance(item, (NodeProxy)):
-                item.moveBy(dif.x(), dif.y())
+        logging.debug(f"SceneRectCenter: {sr_center}")
+        logging.debug(f"BoundingRectCenter: {br_center}")
+        logging.debug(f"Difference: {dif}")
+        for item in self.scene().nodes:
+            item.moveBy(dif.x(), dif.y())
 
-        bounding_rect = self.scene().get_items_bounding_rect(self.scene().items())
+        bounding_rect = self.scene().get_items_bounding_rect(self.scene().nodes)
+        logging.debug(f"New Bounding_rect: {bounding_rect}")
         marg = constants.SCENE_MARGIN
         self.fitInView(bounding_rect.adjusted(-marg, -marg, marg, marg),
                             aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
@@ -824,6 +830,7 @@ class AggregationWindow(QWidget):
 
     def combo_box_index_changed(self)-> None:
         if not self.nodes:
+            logging.info("No Nodes")
             return
 
         text = self.widget.combo_box.currentText()
