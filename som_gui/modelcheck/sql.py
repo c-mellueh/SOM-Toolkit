@@ -5,8 +5,9 @@ import sqlite3
 from ifcopenshell import entity_instance
 
 from . import issues
-from ..data import constants
+
 guids = dict()
+
 
 def sql_command(func):
     def inner(data_base, *args, **kwargs):
@@ -23,8 +24,8 @@ def sql_command(func):
             raise AttributeError(f"Wrong input type: {type(data_base)}")
         return value
 
-
     return inner
+
 
 @sql_command
 def remove_existing_issues(cursor, project_name, creation_date, file_name):
@@ -39,10 +40,9 @@ def remove_existing_issues(cursor, project_name, creation_date, file_name):
     """
     cursor.execute(query)
 
+
 @sql_command
 def create_tables(cursor):
-
-
     # entities
     cursor.execute('''
               CREATE TABLE IF NOT EXISTS entities
@@ -71,12 +71,14 @@ def add_issues(cursor, guid, description, issue_type, attribute, pset_name="", a
                 ('{date}','{guid}','{description}',{issue_type},'{pset_name}','{attribute_name}')
           ''')
 
+
 def transform_guid(guid: str, add_zero_width: bool):
     """Fügt Zero Width Character ein weil PowerBI (WARUM AUCH IMMER FÜR EIN BI PROGRAMM?????) Case Insensitive ist"""
     if add_zero_width:
         return re.sub(r"([A-Z])", lambda m: m.group(0) + u"\u200B", guid)
     else:
         return guid
+
 
 @sql_command
 def db_create_entity(cursor, element: entity_instance, project, file_name, bauteil_klasse):
@@ -100,8 +102,9 @@ def db_create_entity(cursor, element: entity_instance, project, file_name, baute
         print("Integrity Error")
         pass
 
+
 @sql_command
-def query_issues(cursor:sqlite3.Cursor) -> list:
+def query_issues(cursor: sqlite3.Cursor) -> list:
     cursor.execute(
         "SELECT i.creation_date, e.GUID,i.short_description,i.issue_type,e.Name,i.PropertySet,i.Attribut, e.datei, e.bauteilKlassifikation  FROM issues AS i JOIN entities e on i.GUID = e.GUID_ZWC")
 

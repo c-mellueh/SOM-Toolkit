@@ -14,7 +14,7 @@ from ifcopenshell import entity_instance
 from ifcopenshell.util import element as ifc_el
 
 from . import issues
-from .sql import db_create_entity, remove_existing_issues, create_tables,guids
+from .sql import db_create_entity, remove_existing_issues
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
@@ -24,17 +24,8 @@ from datetime import datetime
 GROUP = "Gruppe"
 ELEMENT = "Element"
 
-
-def check_file(file_path, proj, ag, bk, db_name):
-    file_name, extension = os.path.splitext(file_path)
-    if extension.lower() != ".ifc":
-        return
-
-    file = os.path.split(file_path)[1]
-
-    ifc = ifcopenshell.open(file_path)
-    check_all_elements(proj, ifc, file, db_name, ag, bk, proj.name)
-
+SUBGROUPS = "subgroups"
+SUBELEMENT = "subelement"
 
 def get_identifier(el: entity_instance, main_pset: str, main_attribute: str) -> str | None:
     return ifc_el.get_pset(el, main_pset, main_attribute)
@@ -111,10 +102,6 @@ def check_element(element, ag, bk, db_name, file_name, ident_dict, element_type,
         return
 
     check_for_attributes(db_name, element, psets, obj_rep, element_type)
-
-
-SUBGROUPS = "subgroups"
-SUBELEMENT = "subelement"
 
 
 def build_group_structure(focus_group: ifcopenshell.entity_instance, group_dict: dict, ag: str, bk: str, group_parent_dict:dict):
@@ -199,27 +186,3 @@ def get_parent_group(group: entity_instance) -> list[entity_instance]:
     if not parent_assignment:
         return []
     return [assignment.RelatingGroup for assignment in parent_assignment]
-
-
-def check_all_elements(proj: Project, ifc: ifcopenshell.file, file_name: str, db_name: str, ag: str, bk: str,
-                       project_name: str):
-
-    remove_existing_issues(db_name,project_name, datetime.today(), file_name)
-
-    root_groups = [group for group in ifc.by_type("IfcGroup") if not get_parent_group(group)]
-    ident_dict = {obj.ident_value: obj for obj in proj.objects}
-    group_dict = dict()
-    group_parent_dict = dict()
-    for element in root_groups:
-        group_dict[element] = dict()
-        build_group_structure(element, group_dict[element], ag, bk,group_parent_dict)
-
-    element:ifcopenshell.entity_instance
-
-    for element in ifc.by_type("IfcObject"):
-        if element.is_a("IfcElement"):
-            check_element(element, ag, bk, db_name, file_name, ident_dict, ELEMENT, project_name)
-        elif element.is_a("IfcGroup"):
-            if element in group_dict:
-                check_group_structure(element, group_dict, 0, ag, bk, db_name, file_name, project_name, ident_dict,
-                                      group_parent_dict)

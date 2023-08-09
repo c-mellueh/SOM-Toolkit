@@ -183,7 +183,7 @@ class ModelcheckWindow(QWidget):
         attribute = self.widget.line_edit_ident_attribute.text()
         self.data_base_path = tempfile.NamedTemporaryFile().name
         export_path = self.widget.line_edit_export.text()
-        self.runner = MainRunnable(modelcheck.check_file, ifc, proj, pset, attribute, self.data_base_path, export_path)
+        self.runner = MainRunnable(ifc, proj, pset, attribute, self.data_base_path, export_path)
         self.runner.signaller.started.connect(self.on_started)
         self.runner.signaller.finished.connect(self.on_finished)
         self.runner.signaller.progress.connect(self.update_progress_bar)
@@ -210,9 +210,8 @@ class ModelcheckWindow(QWidget):
 
 
 class MainRunnable(QRunnable):
-    def __init__(self, target, path, project, property_set, attribute, db_path, export_path):
+    def __init__(self,  path, project, property_set, attribute, db_path, export_path):
         super(MainRunnable, self).__init__()
-        self.target = target
         self.path = path
         self.project = project
         self.property_set = property_set
