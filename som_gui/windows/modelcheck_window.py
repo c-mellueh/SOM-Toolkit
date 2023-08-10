@@ -127,6 +127,8 @@ class Modelcheck(IfcRunner):
         sql.guids = dict()
         sql.create_tables(self.data_base_path)
         super(Modelcheck, self).run()
+        if self.is_aborted:
+            return
         self.create_issues()
 
     def run_file_function(self, file_path) -> ifcopenshell.file:
@@ -299,10 +301,12 @@ class Modelcheck(IfcRunner):
             if element_type == modelcheck.GROUP:
                 check_repetetive_group()
 
-        self.increment_progress("Prüfe Elemente ohne Gruppenzuordnung")
-
         if self.is_aborted:
             return
+
+        self.increment_progress("Prüfe Elemente mit Gruppenzuordnung")
+
+
 
         logging.info(f"Check Element {element.GlobalId}")
 
@@ -332,4 +336,6 @@ class Modelcheck(IfcRunner):
             issues.empty_group_issue(self.data_base_path, element)
 
         for sub_group in group_dict[element]:
+            if self.is_aborted:
+                return
             self.check_group_structure(sub_group, group_dict[element], layer_index + 1)

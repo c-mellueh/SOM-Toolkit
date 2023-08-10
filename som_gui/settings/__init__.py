@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 from configparser import ConfigParser
 
@@ -11,6 +13,7 @@ SEPERATOR_SECTION = "seperator"
 SEPERATOR_STATUS = "seperator_status"
 SEPERATOR = "seperator"
 GROUP_FOLDER = "group_folder_path"
+PATH_SEPERATOR = " ;"
 
 def reset_save_path():
     path = get_save_path()
@@ -66,20 +69,23 @@ def get_config() -> ConfigParser:
     return config
 
 
-def get_path(path: str) -> str:
+def get_path(path: str) -> str|list|set:
     section = PATHS_SECTION
     config_parser = get_config()
     if config_parser.has_option(section, path):
         path = config_parser.get(section, path)
+
         if path is not None:
+            if PATH_SEPERATOR in path:
+                return path.split(PATH_SEPERATOR)
             return path
     return ""
 
 
-def set_path(path, value: str) -> None:
+def set_path(path, value: str|list|set) -> None:
     section = PATHS_SECTION
     if isinstance(value, (list, set)):
-        value = value[0]
+        value = PATH_SEPERATOR.join(value)
     config_parser = get_config()
     if not config_parser.has_section(section):
         config_parser.add_section(section)
@@ -109,7 +115,7 @@ def set_save_path(path) -> None:
 
 
 def get_ifc_path() -> str:
-    return get_path(IFC_PATH)
+    return  get_path(IFC_PATH)
 
 
 def set_ifc_path(path) -> None:
