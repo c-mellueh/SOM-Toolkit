@@ -76,6 +76,8 @@ class Ui_MainWindow(object):
         self.action_import_excel.setObjectName(u"action_import_excel")
         self.action_modelcheck = QAction(MainWindow)
         self.action_modelcheck.setObjectName(u"action_modelcheck")
+        self.action_create_groups = QAction(MainWindow)
+        self.action_create_groups.setObjectName(u"action_create_groups")
         self.verticalLayout_main = QWidget(MainWindow)
         self.verticalLayout_main.setObjectName(u"verticalLayout_main")
         self.verticalLayout = QVBoxLayout(self.verticalLayout_main)
@@ -338,6 +340,7 @@ class Ui_MainWindow(object):
         self.menuPredefined_Psets.addAction(self.action_show_list)
         self.menuShow_Graphs.addAction(self.action_show_graphs)
         self.menu_ifc.addAction(self.action_modelcheck)
+        self.menu_ifc.addAction(self.action_create_groups)
 
         self.retranslateUi(MainWindow)
 
@@ -391,6 +394,7 @@ class Ui_MainWindow(object):
         self.action_import_excel.setToolTip(QCoreApplication.translate("MainWindow", u"Importiert eine SOM-MaKa Excel", None))
 #endif // QT_CONFIG(tooltip)
         self.action_modelcheck.setText(QCoreApplication.translate("MainWindow", u"Modellpr\u00fcfung", None))
+        self.action_create_groups.setText(QCoreApplication.translate("MainWindow", u"Gruppen Generieren", None))
         self.button_objects_add.setText(QCoreApplication.translate("MainWindow", u"Erstellen", None))
 #if QT_CONFIG(tooltip)
         self.line_edit_object_name.setToolTip(QCoreApplication.translate("MainWindow", u"Name der Objektvorgabe", None))
