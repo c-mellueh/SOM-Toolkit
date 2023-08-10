@@ -4,13 +4,12 @@ import logging
 import os
 import tempfile
 from datetime import datetime
-from time import time, sleep
+from time import sleep
 from typing import TYPE_CHECKING
 
 import ifcopenshell
 import openpyxl
-from PySide6.QtCore import QObject, Signal, QRunnable, QThreadPool,QSize
-from PySide6.QtGui import QResizeEvent
+from PySide6.QtCore import QObject, Signal, QRunnable,QSize
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QLineEdit
 from SOMcreator import classes
 from SOMcreator import constants as som_constants
@@ -18,10 +17,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
-from ..icons import get_icon
 from ..ifc_modification import modelcheck, sql, issues
-from ..qt_designs import ui_modelcheck
-from ..settings import get_ifc_path, get_issue_path, set_ifc_path, set_issue_path
 from .ifc_mod_window import IfcWindow
 
 if TYPE_CHECKING:
