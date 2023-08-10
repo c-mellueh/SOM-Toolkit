@@ -174,7 +174,7 @@ class IfcWindow(QWidget):
     def end_task(self):
         logging.info("Task Done")
         self.end_time = time()
-        print(f"Elapsed Time: {self.end_time - self.start_time}")
+        logging.info(f"{self.end_time - self.start_time}")
 
         self.widget.button_run.setEnabled(True)
         self.widget.button_close.setText("Close")
@@ -188,25 +188,29 @@ class IfcWindow(QWidget):
 
 class IfcRunner(QRunnable):
 
-    def __init__(self, ifc_paths:str, project:classes.Project, main_pset:str, main_attribute:str,issue_path:str,function_name:str):
+    def __init__(self, ifc_paths:str, project:classes.Project, main_pset:str, main_attribute:str,export_path:str,function_name:str):
         self.signaller = Signaller()
         super(IfcRunner, self).__init__()
         self.ifc_paths = ifc_paths
         self.project = project
         self.main_pset = main_pset
         self.main_attribute = main_attribute
-        self.issue_path = issue_path
+        self.export_path = export_path
 
         self.is_aborted = False
         self.object_count: int = 0
         self.checked_objects: int = 0
         self.function_name = function_name
 
-    def increment_progress(self):
-        self.checked_objects += 1
+    def increment_progress(self,text= "",increment_value = 1):
+        if self.is_aborted:
+            print(f"Is Aborted")
+            self.set_abort_status()
+            return
+        self.checked_objects += increment_value
         progress = int(self.checked_objects / self.object_count * 100)
         self.signaller.progress.emit(progress)
-        self.signaller.status.emit(f"Check '{self.base_name}' [{self.checked_objects}/{self.object_count}]")
+        self.signaller.status.emit(f"{text} [{self.checked_objects}/{self.object_count}]")
 
     def get_check_file_list(self) -> set[str]:
         check_list = set()
@@ -228,10 +232,14 @@ class IfcRunner(QRunnable):
 
         return set(file for file in check_list if file.lower().endswith(".ifc"))
 
-    def abort(self):
-        self.is_aborted = True
+    def set_abort_status(self):
         self.signaller.status.emit(f"{self.function_name} abgebrochen")
         self.signaller.progress.emit(0)
+
+    def abort(self):
+        self.is_aborted = True
+        self.set_abort_status()
+
 
     def run(self) -> None:
         self.signaller.started.emit(self.ifc_paths)
@@ -245,7 +253,7 @@ class IfcRunner(QRunnable):
             self.signaller.finished.emit("ABORT")
             return
         self.signaller.finished.emit(self.ifc_paths)
-        self.signaller.status.emit("Modelcheck Done!")
+        self.signaller.status.emit(f"{self.function_name} Abgeschlossen!")
 
     def run_file_function(self, file_path) -> ifcopenshell.file:
         self.base_name = os.path.basename(file_path)
