@@ -4,12 +4,11 @@ import logging
 import os
 import tempfile
 from datetime import datetime
-from time import sleep
 from typing import TYPE_CHECKING
 
 import ifcopenshell
 import openpyxl
-from PySide6.QtCore import QObject, Signal, QRunnable,QSize
+from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QLineEdit
 from SOMcreator import classes
 from SOMcreator import constants as som_constants
@@ -17,8 +16,8 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
+from .ifc_mod_window import IfcWindow, IfcRunner
 from ..ifc_modification import modelcheck, sql, issues
-from .ifc_mod_window import IfcWindow,IfcRunner
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
@@ -41,25 +40,25 @@ class ModelcheckWindow(IfcWindow):
         self.adjustSize()
 
     def set_min_size(self):
-        def set_line_edit_size(le:QLineEdit):
+        def set_line_edit_size(le: QLineEdit):
             text = le.text()
             fm = le.fontMetrics()
             width = fm.boundingRect(text).width()
-            le.setMinimumSize(max(width,le.width()),le.height())
+            le.setMinimumSize(max(width, le.width()), le.height())
 
-        def set_table_height(table:QTableWidget):
-            height = table.horizontalHeader().height()+4
-            height+=sum(table.rowHeight(row) for row in range(table.rowCount()))
+        def set_table_height(table: QTableWidget):
+            height = table.horizontalHeader().height() + 4
+            height += sum(table.rowHeight(row) for row in range(table.rowCount()))
             for col in range(table.columnCount()):
                 print(table.rowHeight(col))
 
             print(height)
-            size = QSize(table.width(),height)
+            size = QSize(table.width(), height)
             table.setMinimumSize(size)
 
         set_line_edit_size(self.widget.line_edit_ident_pset)
         set_line_edit_size(self.widget.line_edit_ident_attribute)
-        #set_table_height(self.table_widget)
+        # set_table_height(self.table_widget)
 
     def create_table(self):
         self.table_widget = QTableWidget()
@@ -107,16 +106,17 @@ class ModelcheckWindow(IfcWindow):
         self.data_base_path = tempfile.NamedTemporaryFile().name
         print(f"Database: {self.data_base_path}")
 
-        self.runner = Modelcheck(ifc, proj, pset, attribute, export_path,self.data_base_path)
+        self.runner = Modelcheck(ifc, proj, pset, attribute, export_path, self.data_base_path)
         self.connect_runner(self.runner)
         self.thread_pool.start(self.runner)
-        return proj,ifc,pset,attribute,export_path
+        return proj, ifc, pset, attribute, export_path
 
 
 class Modelcheck(IfcRunner):
 
-    def __init__(self, ifc_paths: str, project: classes.Project, main_pset: str, main_attribute: str, issue_path: str,data_base_path:str):
-        super(Modelcheck, self).__init__(ifc_paths, project, main_pset, main_attribute, issue_path,"Modelcheck")
+    def __init__(self, ifc_paths: str, project: classes.Project, main_pset: str, main_attribute: str, issue_path: str,
+                 data_base_path: str):
+        super(Modelcheck, self).__init__(ifc_paths, project, main_pset, main_attribute, issue_path, "Modelcheck")
         self.data_base_path = data_base_path
         self.base_name: str = ""
         self.ident_dict = dict()
@@ -141,7 +141,8 @@ class Modelcheck(IfcRunner):
                 self.object_count += 1
                 count_dict(value)
 
-        self.signaller.status.emit(f"Check '{self.base_name}'")
+        test_text = "Prüfe Elemente mit Gruppenzuordnung"
+        self.signaller.status.emit(test_text)
         sql.remove_existing_issues(self.data_base_path, self.project.name, datetime.today(), self.base_name)
 
         root_groups: list[ifcopenshell.entity_instance] = [group for group in ifc.by_type("IfcGroup") if
@@ -150,25 +151,35 @@ class Modelcheck(IfcRunner):
         self.group_dict = dict()
         self.group_parent_dict = dict()
 
-        for element in root_groups:
-            self.group_dict[element] = dict()
-            modelcheck.build_group_structure(element, self.group_dict[element], self.main_pset, self.main_attribute,
+        for entity in root_groups:
+            self.group_dict[entity] = dict()
+            modelcheck.build_group_structure(entity, self.group_dict[entity], self.main_pset, self.main_attribute,
                                              self.group_parent_dict)
 
         self.checked_objects = 0
         self.object_count = 0
         count_dict(self.group_dict)
 
-        for element in self.group_dict:
+        for entity in self.group_dict:
             if self.is_aborted:
                 return
-            self.check_group_structure(element, self.group_dict, 0)
+            self.check_group_structure(entity, self.group_dict, 0)
 
-        for element in ifc.by_type("IfcElement"):
-            group_assignment = [assignment for assignment in getattr(element, "HasAssignments", []) if
-                                assignment.is_a("IfcRelAssignsToGroup")]
-            if not group_assignment:
-                issues.no_group_issue(self.data_base_path, element)
+
+        test_text = "Prüfe Elemente ohne Gruppenzuordnung"
+        self.signaller.status.emit(test_text)
+        entites_without_group = [entity for entity in ifc.by_type("IfcElement") if
+                                 not [assignment for assignment in getattr(entity, "HasAssignments", []) if
+                                      assignment.is_a("IfcRelAssignsToGroup")]]
+        self.checked_objects = 0
+        self.object_count = len(entites_without_group)
+        for entity in entites_without_group:
+            if self.is_aborted:
+                return
+            self.increment_progress(test_text,1)
+            issues.no_group_issue(self.data_base_path, entity)
+            modelcheck.check_element(entity, self.main_pset, self.main_attribute, self.data_base_path, self.base_name,
+                                     self.ident_dict, modelcheck.ELEMENT, self.project.name)
 
     def create_issues(self):
         def get_max_width():
@@ -180,7 +191,7 @@ class Modelcheck(IfcRunner):
                         col_widths[col_index] = length
             return col_widths
 
-        directory = os.path.dirname(self.issue_path)
+        directory = os.path.dirname(self.export_path)
         if not os.path.exists(directory):
             os.mkdir(directory)
 
@@ -220,7 +231,7 @@ class Modelcheck(IfcRunner):
                                                                  width=max_widths[col - 1] * 1.1)
         worksheet.column_dimensions = dim_holder
 
-        self.save_workbook(workbook, self.issue_path)
+        self.save_workbook(workbook, self.export_path)
 
     def save_workbook(self, workbook, path):
         try:
@@ -288,7 +299,7 @@ class Modelcheck(IfcRunner):
             if element_type == modelcheck.GROUP:
                 check_repetetive_group()
 
-        self.increment_progress()
+        self.increment_progress("Prüfe Elemente ohne Gruppenzuordnung")
 
         if self.is_aborted:
             return
