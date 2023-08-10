@@ -2,29 +2,19 @@ from __future__ import annotations
 
 import logging
 import os
-import tempfile
-from datetime import datetime
 from time import time, sleep
-from typing import TYPE_CHECKING,Type
+from typing import TYPE_CHECKING
 
 import ifcopenshell
-import openpyxl
 from PySide6.QtCore import QObject, Signal, QRunnable, QThreadPool
-from PySide6.QtWidgets import QFileDialog, QTableWidgetItem, QWidget
+from PySide6.QtWidgets import QFileDialog, QWidget
 from SOMcreator import classes
-from SOMcreator import constants as som_constants
-from openpyxl.utils import get_column_letter
-from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
-from openpyxl.worksheet.table import Table, TableStyleInfo
 
 from ..icons import get_icon
-from ..ifc_modification import modelcheck, sql, issues
 from ..qt_designs import ui_modelcheck
-from ..settings import get_ifc_path, get_issue_path, set_ifc_path, set_issue_path
+from .. import settings
 if TYPE_CHECKING:
     from ..main_window import MainWindow
-
-FILE_SPLIT = "; "
 
 
 class IfcWindow(QWidget):
@@ -48,10 +38,13 @@ class IfcWindow(QWidget):
         self.widget.progress_bar.hide()
         self.widget.label_status.hide()
 
-        if get_ifc_path():
-            self.widget.line_edit_ifc.setText(get_ifc_path())
-        if get_issue_path():
-            self.widget.line_edit_export.setText(get_issue_path())
+        ifc_path = settings.get_ifc_path()
+        if ifc_path:
+            if isinstance(ifc_path,list):
+                ifc_path = settings.PATH_SEPERATOR.join(ifc_path)
+            self.widget.line_edit_ifc.setText(ifc_path)
+        if settings.get_issue_path():
+            self.widget.line_edit_export.setText(settings.get_issue_path())
 
         self.active_threads = 0
         self.thread_pool = QThreadPool()
@@ -99,22 +92,25 @@ class IfcWindow(QWidget):
 
     def ifc_file_dialog(self):
         file_text = "IFC Files (*.ifc *.IFC);;"
-        path = QFileDialog.getOpenFileNames(self, "IFC-Files", get_ifc_path(), file_text)[0]
+        ifc_paths = settings.get_ifc_path()
+        if isinstance(ifc_paths,list):
+            ifc_paths = ifc_paths[0]
+        path = QFileDialog.getOpenFileNames(self, "IFC-Files",ifc_paths , file_text)[0]
         if not path:
             return
-        set_ifc_path(path)
-        self.widget.line_edit_ifc.setText(FILE_SPLIT.join(path))
+        settings.set_ifc_path(path)
+        self.widget.line_edit_ifc.setText(settings.PATH_SEPERATOR.join(path))
 
     def export_file_dialog(self):
         file_text = "Excel File (*.xlsx);;"
-        path = QFileDialog.getSaveFileName(self, "Issue-Excel", get_issue_path(), file_text)[0]
+        path = QFileDialog.getSaveFileName(self, "Issue-Excel", settings.get_issue_path(), file_text)[0]
         if not path:
             return
-        set_issue_path(path)
+        settings.set_issue_path(path)
         self.widget.line_edit_export.setText(path)
 
     def get_ifc_path(self) -> list[str]:
-        paths = self.widget.line_edit_ifc.text().split(FILE_SPLIT)
+        paths = self.widget.line_edit_ifc.text().split(settings.PATH_SEPERATOR)
         result = list()
         for path in paths:
             if not os.path.exists(path):
@@ -204,7 +200,6 @@ class IfcRunner(QRunnable):
 
     def increment_progress(self,text= "",increment_value = 1):
         if self.is_aborted:
-            print(f"Is Aborted")
             self.set_abort_status()
             return
         self.checked_objects += increment_value
@@ -240,11 +235,11 @@ class IfcRunner(QRunnable):
         self.is_aborted = True
         self.set_abort_status()
 
-
     def run(self) -> None:
         self.signaller.started.emit(self.ifc_paths)
         files = self.get_check_file_list()
         for file in files:
+            logging.info(f"run {file}")
             if self.is_aborted:
                 continue
             self.run_file_function(file)

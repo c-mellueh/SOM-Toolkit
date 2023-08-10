@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import time
 from typing import TYPE_CHECKING
@@ -168,7 +169,7 @@ class Grouping(IfcRunner):
             self.entity_object_dict[el] = self.bk_dict.get(attrib)
             if attrib is None or gruppe is None:
                 continue
-            parts = gruppe.split("_")
+            parts = gruppe.lower().split("_")
             focus_dict = self.structure_dict
             for part in parts:
                 if part not in focus_dict[GROUP]:
@@ -189,7 +190,7 @@ class Grouping(IfcRunner):
             attrib, gruppe, identity = self.get_ifc_el_info(group)
             if identity is None:
                 continue
-            parts = identity.split("_")
+            parts = identity.lower().split("_")
             focus_dict = self.structure_dict
             skip = False
             for part in parts:
@@ -225,7 +226,7 @@ class Grouping(IfcRunner):
 
         def create_ifc_group(group_obj: SOMcreator.Object, group_name: str, identity: list[str],
                              parent: ifcopenshell.entity_instance = None) -> ifcopenshell.entity_instance:
-            print(f"create_new_group: {group_name}")
+            logging.info(f"create_new_group: {group_name}")
             ifc_group = ifc_file.create_entity("IfcGroup", ifcopenshell.guid.new(), self.owner_history, group_name,
                                                DESCRIPTION)
             ifc_file.create_entity("IfcRelAssignsToGroup", ifcopenshell.guid.new(), self.owner_history, group_obj.name,
