@@ -5,7 +5,7 @@ import os
 import tempfile
 from datetime import datetime
 from time import time, sleep
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING,Type
 
 import ifcopenshell
 import openpyxl
@@ -61,6 +61,14 @@ class IfcWindow(QWidget):
         self.start_time = None
         self.end_time = None
         self.task_is_running = False
+
+    def connect_runner(self,runner: IfcRunner):
+        runner.signaller.started.connect(self.on_started)
+        runner.signaller.finished.connect(self.on_finished)
+        runner.signaller.progress.connect(self.update_progress_bar)
+        runner.signaller.status.connect(self.update_status)
+        self.widget.button_close.clicked.connect(runner.abort)
+
 
     def close_button_clicked(self):
         if not self.task_is_running:
@@ -177,3 +185,81 @@ class IfcWindow(QWidget):
 
     def update_status(self, value):
         self.widget.label_status.setText(value)
+
+class IfcRunner(QRunnable):
+
+    def __init__(self, ifc_paths:str, project:classes.Project, main_pset:str, main_attribute:str,issue_path:str,function_name:str):
+        self.signaller = Signaller()
+        super(IfcRunner, self).__init__()
+        self.ifc_paths = ifc_paths
+        self.project = project
+        self.main_pset = main_pset
+        self.main_attribute = main_attribute
+        self.issue_path = issue_path
+
+        self.is_aborted = False
+        self.object_count: int = 0
+        self.checked_objects: int = 0
+        self.function_name = function_name
+
+    def increment_progress(self):
+        self.checked_objects += 1
+        progress = int(self.checked_objects / self.object_count * 100)
+        self.signaller.progress.emit(progress)
+        self.signaller.status.emit(f"Check '{self.base_name}' [{self.checked_objects}/{self.object_count}]")
+
+    def get_check_file_list(self) -> set[str]:
+        check_list = set()
+        if not isinstance(self.ifc_paths, list):
+            if not isinstance(self.ifc_paths, str):
+                return check_list
+            if not os.path.isfile(self.ifc_paths):
+                return check_list
+            check_list.add(self.ifc_paths)
+
+        else:
+            for path in self.ifc_paths:
+                if os.path.isdir(path):
+                    for file in os.listdir(path):
+                        file_path = os.path.join(path, file)
+                        check_list.add(file_path)
+                else:
+                    check_list.add(path)
+
+        return set(file for file in check_list if file.lower().endswith(".ifc"))
+
+    def abort(self):
+        self.is_aborted = True
+        self.signaller.status.emit(f"{self.function_name} abgebrochen")
+        self.signaller.progress.emit(0)
+
+    def run(self) -> None:
+        self.signaller.started.emit(self.ifc_paths)
+        files = self.get_check_file_list()
+        for file in files:
+            if self.is_aborted:
+                continue
+            self.run_file_function(file)
+
+        if self.is_aborted:
+            self.signaller.finished.emit("ABORT")
+            return
+        self.signaller.finished.emit(self.ifc_paths)
+        self.signaller.status.emit("Modelcheck Done!")
+
+    def run_file_function(self, file_path) -> ifcopenshell.file:
+        self.base_name = os.path.basename(file_path)
+        self.signaller.status.emit(f"Import {self.base_name}")
+        self.signaller.progress.emit(0)
+        sleep(0.1)
+
+        ifc = ifcopenshell.open(file_path)
+        self.signaller.status.emit(f"Import Done!")
+        sleep(0.1)
+        return ifc
+
+class Signaller(QObject):
+    started = Signal(str)
+    finished = Signal(str)
+    progress = Signal(int)
+    status = Signal(str)

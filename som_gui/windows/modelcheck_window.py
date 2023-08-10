@@ -18,7 +18,7 @@ from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
 from ..ifc_modification import modelcheck, sql, issues
-from .ifc_mod_window import IfcWindow
+from .ifc_mod_window import IfcWindow,IfcRunner
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
@@ -37,10 +37,10 @@ class ModelcheckWindow(IfcWindow):
         self.widget.line_edit_ident_attribute.textEdited.connect(self.fill_table)
         self.create_table()
         self.fill_table()
-        self.set_fixed_sizes()
+        self.set_min_size()
         self.adjustSize()
 
-    def set_fixed_sizes(self):
+    def set_min_size(self):
         def set_line_edit_size(le:QLineEdit):
             text = le.text()
             fm = le.fontMetrics()
@@ -107,95 +107,32 @@ class ModelcheckWindow(IfcWindow):
         self.data_base_path = tempfile.NamedTemporaryFile().name
         print(f"Database: {self.data_base_path}")
 
-        self.runner = Modelcheck(ifc, proj, pset, attribute, self.data_base_path, export_path)
-
-        self.runner.signaller.started.connect(self.on_started)
-        self.runner.signaller.finished.connect(self.on_finished)
-        self.runner.signaller.progress.connect(self.update_progress_bar)
-        self.runner.signaller.status.connect(self.update_status)
-        self.widget.button_close.clicked.connect(self.runner.abort)
+        self.runner = Modelcheck(ifc, proj, pset, attribute, export_path,self.data_base_path)
+        self.connect_runner(self.runner)
         self.thread_pool.start(self.runner)
         return proj,ifc,pset,attribute,export_path
 
-class Modelcheck(QRunnable):
-    def __init__(self, path, project, property_set, attribute, db_path, export_path):
-        super(Modelcheck, self).__init__()
-        self.path = path
-        self.project = project
-        self.property_set = property_set
-        self.attribute = attribute
-        self.db_path = db_path
-        self.signaller = Signaller()
-        self.export_path = export_path
-        self.is_aborted = False
-        self.object_count: int = 0
-        self.checked_objects: int = 0
+
+class Modelcheck(IfcRunner):
+
+    def __init__(self, ifc_paths: str, project: classes.Project, main_pset: str, main_attribute: str, issue_path: str,data_base_path:str):
+        super(Modelcheck, self).__init__(ifc_paths, project, main_pset, main_attribute, issue_path,"Modelcheck")
+        self.data_base_path = data_base_path
         self.base_name: str = ""
         self.ident_dict = dict()
         self.group_dict: dict[ifcopenshell.entity_instance] = dict()
         self.group_parent_dict = dict()
 
-    def update_progress(self):
-        self.checked_objects += 1
-        progress = int(self.checked_objects / self.object_count * 100)
-        self.signaller.progress.emit(progress)
-        self.signaller.status.emit(f"Check '{self.base_name}' [{self.checked_objects}/{self.object_count}]")
-
-    def get_check_file_list(self) -> set[str]:
-        ifc_paths = self.path
-        check_list = set()
-        if not isinstance(ifc_paths, list):
-            if not isinstance(ifc_paths, str):
-                return check_list
-            if not os.path.isfile(ifc_paths):
-                return check_list
-            check_list.add(ifc_paths)
-
-        else:
-            for path in ifc_paths:
-                if os.path.isdir(path):
-                    for file in os.listdir(path):
-                        file_path = os.path.join(path, file)
-                        check_list.add(file_path)
-                else:
-                    check_list.add(path)
-
-        return set(file for file in check_list if file.lower().endswith(".ifc"))
-
-    def abort(self):
-        self.is_aborted = True
-        self.signaller.status.emit("Modelcheck abgebrochen")
-        self.signaller.progress.emit(0)
-
     def run(self) -> None:
-        self.signaller.started.emit(self.path)
         sql.guids = dict()
-        sql.create_tables(self.db_path)
-
-        files = self.get_check_file_list()
-        for file in files:
-            if self.is_aborted:
-                continue
-            self.check_file(file)
-
-        if self.is_aborted:
-            self.signaller.finished.emit("ABORT")
-            return
-        self.signaller.finished.emit(self.path)
-        self.signaller.status.emit("Modelcheck Done!")
+        sql.create_tables(self.data_base_path)
+        super(Modelcheck, self).run()
         self.create_issues()
 
-    def check_file(self, file):
-
-        self.base_name = os.path.basename(file)
-        self.signaller.status.emit(f"Import {self.base_name}")
-        self.signaller.progress.emit(0)
-        sleep(0.1)
-
-        ifc = ifcopenshell.open(file)
-        self.signaller.status.emit(f"Import Done!")
-        sleep(0.1)
-        self.check_all_elements(ifc)
+    def run_file_function(self, file_path) -> ifcopenshell.file:
+        ifc_file = super(Modelcheck, self).run_file_function(file_path)
+        self.check_all_elements(ifc_file)
+        return ifc_file
 
     def check_all_elements(self, ifc: ifcopenshell.file):
         def count_dict(d):
@@ -205,7 +142,7 @@ class Modelcheck(QRunnable):
                 count_dict(value)
 
         self.signaller.status.emit(f"Check '{self.base_name}'")
-        sql.remove_existing_issues(self.db_path, self.project.name, datetime.today(), self.base_name)
+        sql.remove_existing_issues(self.data_base_path, self.project.name, datetime.today(), self.base_name)
 
         root_groups: list[ifcopenshell.entity_instance] = [group for group in ifc.by_type("IfcGroup") if
                                                            not modelcheck.get_parent_group(group)]
@@ -215,7 +152,7 @@ class Modelcheck(QRunnable):
 
         for element in root_groups:
             self.group_dict[element] = dict()
-            modelcheck.build_group_structure(element, self.group_dict[element], self.property_set, self.attribute,
+            modelcheck.build_group_structure(element, self.group_dict[element], self.main_pset, self.main_attribute,
                                              self.group_parent_dict)
 
         self.checked_objects = 0
@@ -231,7 +168,7 @@ class Modelcheck(QRunnable):
             group_assignment = [assignment for assignment in getattr(element, "HasAssignments", []) if
                                 assignment.is_a("IfcRelAssignsToGroup")]
             if not group_assignment:
-                issues.no_group_issue(self.db_path, element)
+                issues.no_group_issue(self.data_base_path, element)
 
     def create_issues(self):
         def get_max_width():
@@ -243,11 +180,11 @@ class Modelcheck(QRunnable):
                         col_widths[col_index] = length
             return col_widths
 
-        directory = os.path.dirname(self.export_path)
+        directory = os.path.dirname(self.issue_path)
         if not os.path.exists(directory):
             os.mkdir(directory)
 
-        issues = sql.query_issues(self.db_path)
+        issues = sql.query_issues(self.data_base_path)
 
         self.signaller.status.emit(f"{len(issues)} Fehler gefunden!")
 
@@ -283,7 +220,7 @@ class Modelcheck(QRunnable):
                                                                  width=max_widths[col - 1] * 1.1)
         worksheet.column_dimensions = dim_holder
 
-        self.save_workbook(workbook, self.export_path)
+        self.save_workbook(workbook, self.issue_path)
 
     def save_workbook(self, workbook, path):
         try:
@@ -297,10 +234,10 @@ class Modelcheck(QRunnable):
     def check_group_structure(self, element: ifcopenshell.entity_instance, group_dict, layer_index: int):
 
         def check_collector_group():
-            sql.db_create_entity(self.db_path, element, self.project.name, self.base_name, identifier)
+            sql.db_create_entity(self.data_base_path, element, self.project.name, self.base_name, identifier)
             for sub_ident in sub_idents:
                 if sub_ident != identifier:
-                    issues.subgroup_issue(self.db_path, element.GlobalId, sub_ident)
+                    issues.subgroup_issue(self.data_base_path, element.GlobalId, sub_ident)
 
         def check_real_element():
             """checks group or element that is not a collector"""
@@ -321,26 +258,26 @@ class Modelcheck(QRunnable):
                         logging.warning(f"Group {element.GlobalId} -> no parent group")
                     return
                 parent_object = self.ident_dict.get(
-                    modelcheck.get_identifier(parent_group, self.property_set, self.attribute))
+                    modelcheck.get_identifier(parent_group, self.main_pset, self.main_attribute))
                 if parent_object is None:
                     logging.warning(f"Group {element.GlobalId} -> no parent obj")
                     return
 
                 parent_in_allowed_parents = bool(parent_object.aggregations.union().intersection(allowed_parents))
                 if not (parent_in_allowed_parents or None in allowed_parents):
-                    issues.parent_issue(self.db_path, element, parent_group, self.property_set, self.attribute,
+                    issues.parent_issue(self.data_base_path, element, parent_group, self.main_pset, self.main_attribute,
                                         element_type)
 
             def check_repetetive_group():
                 """Gruppe besitzt mehrere Subelemente mit der selben Bauteilklassifikation"""
                 if len(sub_idents) != len(
-                        [modelcheck.get_identifier(sub_group, self.property_set, self.attribute) for sub_group in
+                        [modelcheck.get_identifier(sub_group, self.main_pset, self.main_attribute) for sub_group in
                          group_dict[element]]):
                     logging.warning(
                         f"Gruppe {element.GlobalId} -> besitzt mehrere Subelemente mit der selben Bauteilklassifikation")
-                    issues.repetetive_group_issue(self.db_path, element)
+                    issues.repetetive_group_issue(self.data_base_path, element)
 
-            modelcheck.check_element(element, self.property_set, self.attribute, self.db_path, self.base_name,
+            modelcheck.check_element(element, self.main_pset, self.main_attribute, self.data_base_path, self.base_name,
                                      self.ident_dict, element_type, self.project.name)
 
             object_rep = self.ident_dict.get(identifier)
@@ -351,14 +288,14 @@ class Modelcheck(QRunnable):
             if element_type == modelcheck.GROUP:
                 check_repetetive_group()
 
-        self.update_progress()
+        self.increment_progress()
 
         if self.is_aborted:
             return
 
         logging.info(f"Check Element {element.GlobalId}")
 
-        identifier = modelcheck.get_identifier(element, self.property_set, self.attribute)
+        identifier = modelcheck.get_identifier(element, self.main_pset, self.main_attribute)
         logging.info(f"Identifier {identifier}")
 
         even_layer = layer_index % 2 == 0
@@ -371,7 +308,7 @@ class Modelcheck(QRunnable):
         else:
             element_type = modelcheck.GROUP
 
-        sub_idents = {modelcheck.get_identifier(sub_group, self.property_set, self.attribute) for sub_group in
+        sub_idents = {modelcheck.get_identifier(sub_group, self.main_pset, self.main_attribute) for sub_group in
                       group_dict[element]}
         sub_entities = group_dict[element].keys()
 
@@ -381,14 +318,7 @@ class Modelcheck(QRunnable):
             check_real_element()
 
         if len(sub_entities) == 0:
-            issues.empty_group_issue(self.db_path, element)
+            issues.empty_group_issue(self.data_base_path, element)
 
         for sub_group in group_dict[element]:
             self.check_group_structure(sub_group, group_dict[element], layer_index + 1)
-
-
-class Signaller(QObject):
-    started = Signal(str)
-    finished = Signal(str)
-    progress = Signal(int)
-    status = Signal(str)

@@ -23,7 +23,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(667, 276)
+        Form.resize(667, 304)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.gridLayout = QGridLayout()
@@ -68,15 +68,15 @@ class Ui_Form(object):
 
         self.layout_attribute = QGridLayout()
         self.layout_attribute.setObjectName(u"layout_attribute")
-        self.line_edit_ident_attribute = QLineEdit(Form)
-        self.line_edit_ident_attribute.setObjectName(u"line_edit_ident_attribute")
-
-        self.layout_attribute.addWidget(self.line_edit_ident_attribute, 0, 1, 1, 1)
-
         self.line_edit_ident_pset = QLineEdit(Form)
         self.line_edit_ident_pset.setObjectName(u"line_edit_ident_pset")
 
         self.layout_attribute.addWidget(self.line_edit_ident_pset, 0, 0, 1, 1)
+
+        self.line_edit_ident_attribute = QLineEdit(Form)
+        self.line_edit_ident_attribute.setObjectName(u"line_edit_ident_attribute")
+
+        self.layout_attribute.addWidget(self.line_edit_ident_attribute, 0, 1, 1, 1)
 
 
         self.gridLayout.addLayout(self.layout_attribute, 0, 0, 1, 3)
@@ -154,9 +154,9 @@ class Ui_Form(object):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.button_ifc.setText(QCoreApplication.translate("Form", u"...", None))
         self.button_export.setText(QCoreApplication.translate("Form", u"...", None))
-        self.line_edit_ident_attribute.setPlaceholderText(QCoreApplication.translate("Form", u"Ident Attribut", None))
         self.line_edit_ident_pset.setText("")
         self.line_edit_ident_pset.setPlaceholderText(QCoreApplication.translate("Form", u"Ident PropertySet", None))
+        self.line_edit_ident_attribute.setPlaceholderText(QCoreApplication.translate("Form", u"Ident Attribut", None))
         self.label_ifc.setText(QCoreApplication.translate("Form", u"IFC Pfad", None))
         self.label_ifc_missing.setText(QCoreApplication.translate("Form", u"IFC Pfad fehlt!", None))
         self.label_export.setText(QCoreApplication.translate("Form", u"Fehler Export Pfad", None))

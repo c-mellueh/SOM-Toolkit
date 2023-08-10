@@ -479,6 +479,7 @@
      <string>IFC</string>
     </property>
     <addaction name="action_modelcheck"/>
+    <addaction name="action_create_groups"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDesite"/>
@@ -626,6 +627,11 @@
   <action name="action_modelcheck">
    <property name="text">
     <string>Modellprüfung</string>
+   </property>
+  </action>
+  <action name="action_create_groups">
+   <property name="text">
+    <string>Gruppen Generieren</string>
    </property>
   </action>
  </widget>
