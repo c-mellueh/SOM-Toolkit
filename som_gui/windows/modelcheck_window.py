@@ -9,8 +9,9 @@ from typing import TYPE_CHECKING
 
 import ifcopenshell
 import openpyxl
-from PySide6.QtCore import QObject, Signal, QRunnable, QThreadPool
-from PySide6.QtWidgets import QFileDialog, QTableWidgetItem, QWidget
+from PySide6.QtCore import QObject, Signal, QRunnable, QThreadPool,QSize
+from PySide6.QtGui import QResizeEvent
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QLineEdit
 from SOMcreator import classes
 from SOMcreator import constants as som_constants
 from openpyxl.utils import get_column_letter
@@ -18,9 +19,10 @@ from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
 from ..icons import get_icon
-from ..modelcheck import modelcheck, sql, issues
+from ..ifc_modification import modelcheck, sql, issues
 from ..qt_designs import ui_modelcheck
 from ..settings import get_ifc_path, get_issue_path, set_ifc_path, set_issue_path
+from .ifc_mod_window import IfcWindow
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
@@ -30,127 +32,62 @@ HEADER = ["Datum", "GUID", "Beschreibung", "Typ", "Name", "PropertySet", "Attrib
           "Bauteilklassifikation"]
 
 
-class ModelcheckWindow(QWidget):
+class ModelcheckWindow(IfcWindow):
     def __init__(self, main_window: MainWindow):
-        super(ModelcheckWindow, self).__init__()
-        self.main_window = main_window
-        self.widget = ui_modelcheck.Ui_Form()
-        self.widget.setupUi(self)
-        self.setWindowIcon(get_icon())
+        super(ModelcheckWindow, self).__init__(main_window)
         self.setWindowTitle("Modelcheck")
-        self.widget.button_ifc.clicked.connect(self.ifc_file_dialog)
-        self.widget.button_export.clicked.connect(self.export_file_dialog)
-        pset, attribute = self.get_main_attribute()
-        self.widget.line_edit_ident_pset.setText(pset)
-        self.widget.line_edit_ident_attribute.setText(attribute)
         self.data_base_path = None
-        self.widget.label_ifc_missing.hide()
-        self.widget.label_export_missing.hide()
-        self.widget.label_export_missing.setStyleSheet("QLabel { color : red; }")
-        self.widget.label_ifc_missing.setStyleSheet("QLabel { color : red; }")
-        self.widget.line_edit_ifc.textEdited.connect(self.widget.label_ifc_missing.hide)
-        self.widget.line_edit_export.textEdited.connect(self.widget.label_export_missing.hide)
         self.widget.line_edit_ident_pset.textEdited.connect(self.fill_table)
         self.widget.line_edit_ident_attribute.textEdited.connect(self.fill_table)
-        self.widget.progress_bar.hide()
-        self.widget.label_status.hide()
+        self.create_table()
         self.fill_table()
+        self.set_fixed_sizes()
+        self.adjustSize()
 
-        if get_ifc_path():
-            self.widget.line_edit_ifc.setText(get_ifc_path())
-        if get_issue_path():
-            self.widget.line_edit_export.setText(get_issue_path())
+    def set_fixed_sizes(self):
+        def set_line_edit_size(le:QLineEdit):
+            text = le.text()
+            fm = le.fontMetrics()
+            width = fm.boundingRect(text).width()
+            le.setMinimumSize(max(width,le.width()),le.height())
 
-        self.active_threads = 0
-        self.thread_pool = QThreadPool()
-        self.widget.button_run.clicked.connect(self.accept)
-        self.widget.button_close.clicked.connect(self.close_button_clicked)
-        self.show()
-        self.start_time = None
-        self.end_time = None
-        self.modelcheck_is_running = False
+        def set_table_height(table:QTableWidget):
+            height = table.horizontalHeader().height()+4
+            height+=sum(table.rowHeight(row) for row in range(table.rowCount()))
+            for col in range(table.columnCount()):
+                print(table.rowHeight(col))
+
+            print(height)
+            size = QSize(table.width(),height)
+            table.setMinimumSize(size)
+
+        set_line_edit_size(self.widget.line_edit_ident_pset)
+        set_line_edit_size(self.widget.line_edit_ident_attribute)
+        #set_table_height(self.table_widget)
+
+    def create_table(self):
+        self.table_widget = QTableWidget()
+        self.widget.verticalLayout.addWidget(self.table_widget)
+        if (self.table_widget.columnCount() < 2):
+            self.table_widget.setColumnCount(2)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.table_widget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem.setText("Fehlertyp")
+        __qtablewidgetitem1 = QTableWidgetItem()
+        self.table_widget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem1.setText("Beschreibung")
+        self.table_widget.setObjectName(u"table_widget")
+        self.table_widget.horizontalHeader().setStretchLastSection(True)
+        self.table_widget.verticalHeader().setVisible(False)
+        self.table_widget.show()
 
     def fill_table(self):
         issues = self.get_issue_description()
-        self.widget.table_widget.setRowCount(0)
-        self.widget.table_widget.setRowCount(len(issues))
+        self.table_widget.setRowCount(0)
+        self.table_widget.setRowCount(len(issues))
         for index, (key, description) in enumerate(sorted(issues.items())):
-            self.widget.table_widget.setItem(index, 0, QTableWidgetItem(f"Fehler {key}"))
-            self.widget.table_widget.setItem(index, 1, QTableWidgetItem(description))
-
-    def close_button_clicked(self):
-        if not self.modelcheck_is_running:
-            self.hide()
-
-    def accept(self) -> None:
-        allow = True
-        if not self.get_ifc_path():
-            if self.widget.line_edit_ifc.text():
-                self.widget.label_ifc_missing.setText("Path doesn't exist!")
-            else:
-                self.widget.label_ifc_missing.setText("IFC File Path is missing!")
-            self.widget.label_ifc_missing.show()
-            allow = False
-        export_path = self.widget.line_edit_export.text()
-        if not export_path:
-            self.widget.label_export_missing.setText("Export Path is missing!")
-            self.widget.label_export_missing.show()
-            allow = False
-
-        elif not os.path.exists(os.path.dirname(export_path)):
-            self.widget.label_export_missing.setText("Path doesn't exist!")
-            self.widget.label_export_missing.show()
-            allow = False
-
-        if allow:
-            self.start_modelcheck()
-
-    def ifc_file_dialog(self):
-        file_text = "IFC Files (*.ifc *.IFC);;"
-        path = QFileDialog.getOpenFileNames(self, "IFC-Files", get_ifc_path(), file_text)[0]
-        if not path:
-            return
-        set_ifc_path(path)
-        self.widget.line_edit_ifc.setText(FILE_SPLIT.join(path))
-
-    def export_file_dialog(self):
-        file_text = "Excel File (*.xlsx);;"
-        path = QFileDialog.getSaveFileName(self, "Issue-Excel", get_issue_path(), file_text)[0]
-        if not path:
-            return
-        set_issue_path(path)
-        self.widget.line_edit_export.setText(path)
-
-    def get_ifc_path(self) -> list[str]:
-        paths = self.widget.line_edit_ifc.text().split(FILE_SPLIT)
-        result = list()
-        for path in paths:
-            if not os.path.exists(path):
-                logging.error(f"IFC-File does not exist: '{path}'")
-            else:
-                result.append(path)
-        return result
-
-    def get_main_attribute(self) -> (str, str):
-        proj = self.main_window.project
-        ident_attributes = dict()
-        ident_psets = dict()
-        for obj in proj.objects:
-            ident_pset = obj.ident_attrib.property_set.name
-            ident_attribute = obj.ident_attrib.name
-            if not ident_pset in ident_psets:
-                ident_psets[ident_pset] = 0
-            if not ident_attribute in ident_attributes:
-                ident_attributes[ident_attribute] = 0
-            ident_psets[ident_pset] += 1
-            ident_attributes[ident_attribute] += 1
-
-        ident_attribute = (sorted(ident_attributes.items(), key=lambda x: x[1]))
-        ident_pset = (sorted(ident_psets.items(), key=lambda x: x[1]))
-        if ident_attribute and ident_pset:
-            return ident_pset[0][0], ident_attribute[0][0]
-        else:
-            return "", ""
+            self.table_widget.setItem(index, 0, QTableWidgetItem(f"Fehler {key}"))
+            self.table_widget.setItem(index, 1, QTableWidgetItem(description))
 
     def get_issue_description(self):
         main_pset = self.widget.line_edit_ident_pset.text()
@@ -169,57 +106,20 @@ class ModelcheckWindow(QWidget):
                 11: "Element hat keine Gruppenzuweisen",
                 12: "Zu Viele Subelemente"}
 
-    def on_started(self, path):
-        logging.info(f"Start {path}")
-        self.active_threads += 1
-
-    def on_finished(self, path):
-        self.active_threads -= 1
-        logging.info(f"Finish {path}")
-        logging.info(f"active Threads: {self.active_threads}")
-        if self.active_threads == 0:
-            self.end_modelcheck()
-
-    def start_modelcheck(self):
-        self.modelcheck_is_running = True
-        self.start_time = time()
-        self.widget.button_run.setEnabled(False)
-        self.widget.button_close.setText("Abort")
-        proj = self.main_window.project
-        ifc = self.get_ifc_path()
-        pset = self.widget.line_edit_ident_pset.text()
-        attribute = self.widget.line_edit_ident_attribute.text()
-
+    def start_task(self) -> tuple:
+        proj, ifc, pset, attribute, export_path = super(ModelcheckWindow, self).start_task()
         self.data_base_path = tempfile.NamedTemporaryFile().name
         print(f"Database: {self.data_base_path}")
-        export_path = self.widget.line_edit_export.text()
+
         self.runner = MainRunnable(ifc, proj, pset, attribute, self.data_base_path, export_path)
+
         self.runner.signaller.started.connect(self.on_started)
         self.runner.signaller.finished.connect(self.on_finished)
         self.runner.signaller.progress.connect(self.update_progress_bar)
         self.runner.signaller.status.connect(self.update_status)
         self.widget.button_close.clicked.connect(self.runner.abort)
-        self.widget.label_status.show()
-        self.widget.progress_bar.show()
-        self.widget.progress_bar.reset()
-        self.thread_pool = QThreadPool()
         self.thread_pool.start(self.runner)
-
-    def end_modelcheck(self):
-        logging.info("Modelcheck Done")
-        self.end_time = time()
-        print(f"Elapsed Time: {self.end_time - self.start_time}")
-
-        self.widget.button_run.setEnabled(True)
-        self.widget.button_close.setText("Close")
-        self.modelcheck_is_running = False
-
-    def update_progress_bar(self, value):
-        self.widget.progress_bar.setValue(value)
-
-    def update_status(self, value):
-        self.widget.label_status.setText(value)
-
+        return proj,ifc,pset,attribute,export_path
 
 class MainRunnable(QRunnable):
     def __init__(self, path, project, property_set, attribute, db_path, export_path):
