@@ -111,7 +111,7 @@ class ModelcheckWindow(IfcWindow):
         self.data_base_path = tempfile.NamedTemporaryFile().name
         print(f"Database: {self.data_base_path}")
 
-        self.runner = MainRunnable(ifc, proj, pset, attribute, self.data_base_path, export_path)
+        self.runner = Modelcheck(ifc, proj, pset, attribute, self.data_base_path, export_path)
 
         self.runner.signaller.started.connect(self.on_started)
         self.runner.signaller.finished.connect(self.on_finished)
@@ -121,9 +121,9 @@ class ModelcheckWindow(IfcWindow):
         self.thread_pool.start(self.runner)
         return proj,ifc,pset,attribute,export_path
 
-class MainRunnable(QRunnable):
+class Modelcheck(QRunnable):
     def __init__(self, path, project, property_set, attribute, db_path, export_path):
-        super(MainRunnable, self).__init__()
+        super(Modelcheck, self).__init__()
         self.path = path
         self.project = project
         self.property_set = property_set
