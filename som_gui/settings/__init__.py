@@ -10,7 +10,7 @@ ISSUE_PATH = "issue_path"
 SEPERATOR_SECTION = "seperator"
 SEPERATOR_STATUS = "seperator_status"
 SEPERATOR = "seperator"
-
+GROUP_FOLDER = "group_folder_path"
 
 def reset_save_path():
     path = get_save_path()
@@ -122,3 +122,9 @@ def get_issue_path() -> str:
 
 def set_issue_path(path) -> None:
     set_path(ISSUE_PATH, path)
+
+def get_group_folder() -> str:
+    return get_path(GROUP_FOLDER)
+
+def set_group_folder(value) -> None:
+    set_path(GROUP_FOLDER,value)
