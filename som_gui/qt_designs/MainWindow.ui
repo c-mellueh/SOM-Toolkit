@@ -480,6 +480,7 @@
     </property>
     <addaction name="action_modelcheck"/>
     <addaction name="action_create_groups"/>
+    <addaction name="action_model_control"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDesite"/>
@@ -632,6 +633,11 @@
   <action name="action_create_groups">
    <property name="text">
     <string>Gruppen Generieren</string>
+   </property>
+  </action>
+  <action name="action_model_control">
+   <property name="text">
+    <string>Modellinformationen einlesen</string>
    </property>
   </action>
  </widget>

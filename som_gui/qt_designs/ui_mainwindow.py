@@ -78,6 +78,8 @@ class Ui_MainWindow(object):
         self.action_modelcheck.setObjectName(u"action_modelcheck")
         self.action_create_groups = QAction(MainWindow)
         self.action_create_groups.setObjectName(u"action_create_groups")
+        self.action_model_control = QAction(MainWindow)
+        self.action_model_control.setObjectName(u"action_model_control")
         self.verticalLayout_main = QWidget(MainWindow)
         self.verticalLayout_main.setObjectName(u"verticalLayout_main")
         self.verticalLayout = QVBoxLayout(self.verticalLayout_main)
@@ -341,6 +343,7 @@ class Ui_MainWindow(object):
         self.menuShow_Graphs.addAction(self.action_show_graphs)
         self.menu_ifc.addAction(self.action_modelcheck)
         self.menu_ifc.addAction(self.action_create_groups)
+        self.menu_ifc.addAction(self.action_model_control)
 
         self.retranslateUi(MainWindow)
 
@@ -395,6 +398,7 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.action_modelcheck.setText(QCoreApplication.translate("MainWindow", u"Modellpr\u00fcfung", None))
         self.action_create_groups.setText(QCoreApplication.translate("MainWindow", u"Gruppen Generieren", None))
+        self.action_model_control.setText(QCoreApplication.translate("MainWindow", u"Modellinformationen einlesen", None))
         self.button_objects_add.setText(QCoreApplication.translate("MainWindow", u"Erstellen", None))
 #if QT_CONFIG(tooltip)
         self.line_edit_object_name.setToolTip(QCoreApplication.translate("MainWindow", u"Name der Objektvorgabe", None))

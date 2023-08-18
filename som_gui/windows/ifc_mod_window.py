@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import ifcopenshell
 from PySide6.QtCore import QObject, Signal, QRunnable, QThreadPool
-from PySide6.QtWidgets import QFileDialog, QWidget
+from PySide6.QtWidgets import QFileDialog, QWidget,QLineEdit
 from SOMcreator import classes
 
 from ..icons import get_icon
@@ -17,6 +17,18 @@ if TYPE_CHECKING:
     from ..main_window import MainWindow
 
 
+def ifc_file_dialog(window:QWidget,line_edit:QLineEdit):
+    file_text = "IFC Files (*.ifc *.IFC);;"
+    ifc_paths = settings.get_ifc_path()
+    if isinstance(ifc_paths,list):
+        ifc_paths = ifc_paths[0]
+    path = QFileDialog.getOpenFileNames(window, "IFC-Files",ifc_paths , file_text)[0]
+    if not path:
+        return
+    settings.set_ifc_path(path)
+    line_edit.setText(settings.PATH_SEPERATOR.join(path))
+
+
 class IfcWindow(QWidget):
     def __init__(self, main_window: MainWindow):
         super(IfcWindow, self).__init__()
@@ -24,7 +36,7 @@ class IfcWindow(QWidget):
         self.widget = ui_modelcheck.Ui_Form()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.widget.button_ifc.clicked.connect(self.ifc_file_dialog)
+        self.widget.button_ifc.clicked.connect(lambda :ifc_file_dialog(self,self.widget.line_edit_ifc))
         self.widget.button_export.clicked.connect(self.export_file_dialog)
         pset, attribute = self.get_main_attribute()
         self.widget.line_edit_ident_pset.setText(pset)
@@ -89,17 +101,6 @@ class IfcWindow(QWidget):
 
         if allow:
             self.start_task()
-
-    def ifc_file_dialog(self):
-        file_text = "IFC Files (*.ifc *.IFC);;"
-        ifc_paths = settings.get_ifc_path()
-        if isinstance(ifc_paths,list):
-            ifc_paths = ifc_paths[0]
-        path = QFileDialog.getOpenFileNames(self, "IFC-Files",ifc_paths , file_text)[0]
-        if not path:
-            return
-        settings.set_ifc_path(path)
-        self.widget.line_edit_ifc.setText(settings.PATH_SEPERATOR.join(path))
 
     def export_file_dialog(self):
         file_text = "Excel File (*.xlsx);;"

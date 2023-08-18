@@ -17,7 +17,7 @@ from .qt_designs import ui_project_settings
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import  property_widget, object_widget
 from som_gui.windows.aggregation_view import aggregation_window
-from .windows import predefined_psets_window, propertyset_window, mapping_window, popups,modelcheck_window,grouping_window
+from .windows import predefined_psets_window, propertyset_window, mapping_window, popups, modelcheck_window, grouping_window, model_control_window
 from . import settings, __version__
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
@@ -56,7 +56,7 @@ class MainWindow(QMainWindow):
             self.ui.button_search.clicked.connect(self.search_object)
             self.ui.action_modelcheck.triggered.connect(self.run_modelcheck)
             self.ui.action_create_groups.triggered.connect(self.run_groups)
-
+            self.ui.action_model_control.triggered.connect(self.run_model_control)
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -82,8 +82,9 @@ class MainWindow(QMainWindow):
         self.active_object: classes.Object | None = None
         self.graph_window = aggregation_window.AggregationWindow(self)
         self.mapping_window = None
-        self.modelcheck_window:modelcheck_window.ModelcheckWindow|None = None
-        self.group_window:grouping_window.GroupingWindow|None = None
+        self.modelcheck_window: modelcheck_window.ModelcheckWindow|None = None
+        self.group_window: grouping_window.GroupingWindow|None = None
+        self.model_control_window: model_control_window.ModelControlWindow|None = None
         self.project = classes.Project("Project", "")
 
         # init object and ProertyWidget
@@ -100,6 +101,7 @@ class MainWindow(QMainWindow):
         text = f"SOM-Toolkit v{__version__}"
         self.setWindowTitle(text)
         self.permanent_status_text.setText(f"{self.project.name} v{self.project.version}")
+        return text
 
     def run_groups(self):
         if self.group_window is None:
@@ -112,6 +114,10 @@ class MainWindow(QMainWindow):
             self.modelcheck_window = modelcheck_window.ModelcheckWindow(self)
         else:
             self.modelcheck_window.show()
+
+    def run_model_control(self):
+        if self.model_control_window is None:
+            self.model_control_window = model_control_window.ModelControlWindow(self)
 
     @property
     def object_tree(self) -> object_widget.CustomTree:
