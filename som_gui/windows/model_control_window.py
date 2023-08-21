@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
 
 from ..qt_designs import ui_model_control
-
+STANDARD_CHECK_STATE = False
 
 class ObjectCollection(object):
     def __init__(self, obj: classes.Object,window:ModelControlWindow,property_set_dict:dict,count_dict:dict):
@@ -30,55 +30,61 @@ class ObjectCollection(object):
 
     @property
     def name(self):
-        return f"{self.object.name}\t[{self.count}]"
+        return f"{self.object.name}   ({self.object.ident_value})   [{self.count}]"
 
     def activate(self,property_set_table_widget:QTableWidget):
         self.window.reset_table(property_set_table_widget)
+        self.window.reset_table(self.window.widget.table_widget_attribute)
+        self.window.reset_table(self.window.widget.table_widget_value)
         property_set_table_widget.setRowCount(len(self.property_set_dict))
         for index,(property_set,attribute_dict) in enumerate(self.property_set_dict.items()):
-            property_set_table_widget.setItem(index,0,PropertySetItem(self,property_set,attribute_dict))
-            property_set_table_widget.setItem(index, 1,QTableWidgetItem(str(self.count)))
+            property_set_table_widget.setItem(index, 0,PropertySetItem(self,property_set,attribute_dict,property_set.name))
+            property_set_table_widget.setItem(index, 1,PropertySetItem(self,property_set,attribute_dict,self.count))
 
 class PropertySetItem(QTableWidgetItem):
-    def __init__(self,parent_item:ObjectCollection, property_set: classes.PropertySet,attribute_dict):
+    def __init__(self,parent_item:ObjectCollection, property_set: classes.PropertySet,attribute_dict,text):
         super(PropertySetItem, self).__init__()
         self.property_set = property_set
         self.parent_item = parent_item
         self.count = self.parent_item.count_dict[self.property_set]
         self.attribute_dict = attribute_dict
-        self.setText(self.name)
+        self.setText(str(text))
         self.window:ModelControlWindow = self.parent_item.window
 
     @property
     def name(self):
-        return f"{self.property_set.name}\t[{self.count}]"
+        return f"{self.property_set.name}"
 
     def activate(self,attribute_table_widget:QTableWidget):
         self.window.reset_table(attribute_table_widget)
+        self.window.reset_table(self.window.widget.table_widget_value)
+        self.window.widget.label_attributes.setText(f"Attribute [{self.property_set.name}]")
+
         attribute_table_widget.setRowCount(len(self.attribute_dict))
         for row,(attribute,value_dict) in enumerate(self.attribute_dict.items()):
-            attribute_table_widget.setItem(row,0,AttributeItem(self,attribute,value_dict))
-            attribute_table_widget.setItem(row, 1, QTableWidgetItem(str(self.parent_item.count_dict[attribute])))
-            attribute_table_widget.setItem(row, 2, QTableWidgetItem(str(len(value_dict))))
+            attribute_table_widget.setItem(row, 0, AttributeItem(self,attribute,value_dict,attribute.name))
+            attribute_table_widget.setItem(row, 1, AttributeItem(self,attribute,value_dict,self.parent_item.count_dict[attribute]))
+            attribute_table_widget.setItem(row, 2, AttributeItem(self,attribute,value_dict,str(len(value_dict))))
 
 class AttributeItem(QTableWidgetItem):
-    def __init__(self,parent_item:PropertySetItem, attribute: classes.Attribute,value_dict):
+    def __init__(self,parent_item:PropertySetItem, attribute: classes.Attribute,value_dict,text):
         super(AttributeItem, self).__init__()
         self.attribute = attribute
         self.parent_item = parent_item
         self.value_dict = value_dict
-        self.setText(self.name)
+        self.setText(str(text))
         self.window = self.parent_item.window
-    @property
-    def name(self):
-        return f"{self.attribute.name}"
 
     def activate(self, value_table_widget: QTableWidget):
         self.window.reset_table(value_table_widget)
+        self.window.widget.label_value.setText(f"Werte [{self.attribute.name}]")
         value_table_widget.setRowCount(len(self.value_dict))
+
         for index,(value,[accept_bool,count]) in enumerate(self.value_dict.items()):
-            value_table_widget.setItem(index,0,ValueItem(self,value,accept_bool))
+            value_table_widget.setItem(index, 0 ,ValueItem(self,value,accept_bool))
             value_table_widget.setItem(index, 1, QTableWidgetItem(str(count)))
+
+        self.window.update_value_checkbox()
 
 class ValueItem(QTableWidgetItem):
     def __init__(self,parent_item:AttributeItem, value,accept_bool,):
@@ -87,6 +93,7 @@ class ValueItem(QTableWidgetItem):
         self.setText(f"{value}" )
         self.parent_item = parent_item
         self.window = self.parent_item.window
+
         if accept_bool:
             self.setCheckState(Qt.CheckState.Checked)
         else:
@@ -99,13 +106,15 @@ class ModelControlWindow(QWidget):
     def __init__(self, main_window: MainWindow):
         def create_connections():
             self.widget.button_ifc.clicked.connect(self.ifc_clicked)
-            self.widget.button_run.clicked.connect(self.run_clicked)
             self.widget.line_edit_ifc.returnPressed.connect(lambda: self.import_ifc(self.widget.line_edit_ifc.text()))
             self.widget.button_last.clicked.connect(self.last_object_clicked)
             self.widget.button_next.clicked.connect(self.next_object_clicked)
             self.widget.table_widget_property_set.itemClicked.connect(lambda item:item.activate(self.widget.table_widget_attribute))
             self.widget.table_widget_attribute.itemClicked.connect(lambda item: item.activate(self.widget.table_widget_value))
-            self.widget.table_widget_value.itemChanged.connect(self.value_item_changed)
+            self.widget.table_widget_attribute.itemDoubleClicked.connect(self.attribute_double_clicked)
+            self.widget.table_widget_value.itemClicked.connect(self.value_item_changed)
+            self.widget.check_box_values.clicked.connect(self.toggle_value_checkbox)
+            self.widget.button_run.clicked.connect(self.take_over_values)
 
         self.main_window = main_window
         super(ModelControlWindow, self).__init__()
@@ -116,7 +125,6 @@ class ModelControlWindow(QWidget):
         self.setWindowIcon(get_icon())
         self.thread_pool = QThreadPool()
         self.task_is_running = False
-        self.show_items(False)
         self.runner: None | ModelControlRunner = None
         self.widget.label_status.hide()
         self.objects:set[ObjectCollection] = set()
@@ -134,6 +142,16 @@ class ModelControlWindow(QWidget):
                           self.widget.table_widget_attribute:["Attribut","Anzahl","Eindeutig"],
                           self.widget.table_widget_value:["Wert","Anzahl"]}
 
+        self.show_items(False)
+
+    def attribute_double_clicked(self,item:AttributeItem):
+        attribute = item.attribute
+        property_set = attribute.property_set
+        obj = property_set.object
+        self.main_window.active_object = obj
+        self.main_window.open_pset_window(property_set,self. main_window.active_object, None)
+        self.main_window.pset_window.table_clicked(None,attribute)
+
     @property
     def current_index(self) -> int:
         return self._current_index
@@ -148,7 +166,7 @@ class ModelControlWindow(QWidget):
             self.widget.button_next.setEnabled(True)
             next_index = self._current_index+1
             next_object_name = self.object_list[next_index].object.name
-            self.widget.button_next.setText(f"{next_object_name} ({next_index}/{self.max_objects})")
+            self.widget.button_next.setText(f"{next_object_name} ({next_index+1}/{self.max_objects})")
 
         if value == 0:
             self.widget.button_last.setEnabled(False)
@@ -157,7 +175,47 @@ class ModelControlWindow(QWidget):
             last_index = self._current_index - 1
             last_object_name = self.object_list[last_index].object.name
             self.widget.button_last.setEnabled(True)
-            self.widget.button_last.setText(f"{last_object_name} ({last_index}/{self.max_objects})")
+            self.widget.button_last.setText(f"{last_object_name} ({last_index+1}/{self.max_objects})")
+
+    def take_over_values(self):
+        for obj,property_set_dict in self.data_dict.items():
+            for property_set, attribute_dict in property_set_dict.items():
+                for attribute,value_dict in attribute_dict.items():
+                    attribute:classes.Attribute
+                    values = attribute.value
+                    for value,[accept_bool,count] in value_dict.items():
+                        if value not in values and accept_bool:
+                            values.append(value)
+                    attribute.value = values
+
+        self.hide()
+
+
+    def toggle_value_checkbox(self):
+        check_box = self.widget.check_box_values
+        check_box.setTristate(False)
+        for row in range(self.widget.table_widget_value.rowCount()):
+            self.widget.table_widget_value.item(row,0).setCheckState(check_box.checkState())
+
+    def update_value_checkbox(self):
+        accept_bool = list()
+        for index in range(self.widget.table_widget_value.rowCount()):
+            item = self.widget.table_widget_value.item(index,0)
+            if item is None:
+                continue
+            if item.checkState() == Qt.CheckState.Checked:
+                accept_bool.append(True)
+            else:
+                accept_bool.append(False)
+
+        if all(accept_bool):
+            check_state = Qt.CheckState.Checked
+        elif any(accept_bool):
+            check_state= Qt.CheckState.PartiallyChecked
+        else:
+            check_state = Qt.CheckState.Unchecked
+
+        self.widget.check_box_values.setCheckState(check_state)
 
     @property
     def max_objects(self) -> int:
@@ -174,30 +232,33 @@ class ModelControlWindow(QWidget):
         else:
             self.data_dict[obj][property_set][attribute][item.value][0] = False
 
+        self.update_value_checkbox()
+
     def next_object_clicked(self):
         self.display_object_by_index(self.current_index+1)
 
     def last_object_clicked(self):
         self.display_object_by_index(self.current_index - 1)
 
-    def show_items(self, show_bool: bool):
+    def show_items(self, show_bool: bool) -> None:
         """func_name either 'hide or 'show'"""
         if show_bool:
             func_name = "show"
         else:
             func_name = "hide"
 
-        getattr(self.widget.splitter_lists, func_name)()
+        getattr(self.widget.splitter_tables, func_name)()
         getattr(self.widget.button_next, func_name)()
         getattr(self.widget.button_last, func_name)()
         getattr(self.widget.label_object_name,func_name)()
-
         geometry = self.geometry()
         if show_bool:
             geometry.setHeight(450)
         else:
-            geometry.setHeight(150)
+            geometry.setHeight(100)
+            self.resize(geometry.width(), 100)
         self.setGeometry(geometry)
+
 
     def ifc_clicked(self):
         path = ifc_mod_window.ifc_file_dialog(self, self.widget.line_edit_ifc)
@@ -205,10 +266,11 @@ class ModelControlWindow(QWidget):
             return
         self.import_ifc(path)
 
-    def run_clicked(self):
-        pass
+    def import_ifc(self, ifc_path: list[str]|str):
 
-    def import_ifc(self, ifc_path: list[str]):
+        if isinstance(ifc_path,str):
+            ifc_path = ifc_path.split(";")
+
         proj = self.main_window.project
         pset = self.widget.line_edit_ident_pset.text()
         attribute = self.widget.line_edit_ident_attribute.text()
@@ -235,6 +297,8 @@ class ModelControlWindow(QWidget):
         objects = [ObjectCollection(obj,self,pset_dict,self.count_dict) for obj,pset_dict in self.data_dict.items()]
         self.object_list = sorted(list(objects),key = lambda obj:obj.name)
         self.display_object_by_index(0)
+        self.widget.progress_bar.hide()
+        self.widget.label_status.hide()
 
     def display_object_by_index(self,index:int):
         self.current_index= index
@@ -245,14 +309,18 @@ class ModelControlWindow(QWidget):
         self.reset_table(self.widget.table_widget_value)
         obj.activate(self.widget.table_widget_property_set)
 
-
     def reset_table(self,table:QTableWidget):
         table.clear()
         table.setRowCount(0)
         headers = self.header_dict[table]
         table.setHorizontalHeaderLabels(headers)
+        table.setColumnWidth(0,200)
 
+        if table == self.widget.table_widget_attribute:
+            self.widget.label_attributes.setText("Attribute")
 
+        if table == self.widget.table_widget_value:
+            self.widget.label_value.setText("Werte")
 
     def update_status(self, value):
         self.widget.label_status.show()
@@ -279,6 +347,37 @@ class ModelControlRunner(ifc_mod_window.IfcRunner):
                                                  function_name)
 
     def run_file_function(self, file_path):
+
+        def get_parent_groups(entity:ifcopenshell.entity_instance):
+            parents = set()
+            for rel in getattr(entity, "HasAssignments", []):
+                if rel.is_a("IfcRelAssignsToGroup"):
+                    parents.add(rel[6])
+            return parents
+
+        def get_layers(entity:ifcopenshell.entity_instance) -> set[int]:
+            parent_groups = get_parent_groups(entity)
+            layers = set()
+
+            if not parent_groups:
+                layers.add(0)
+                return layers
+
+            for parent in parent_groups:
+                for layer in get_layers(parent):
+                    layers.add(layer+1)
+
+            return layers
+
+        def is_real_layer(entity:ifcopenshell.entity_instance) -> bool:
+            layers = get_layers(entity)
+            values = [layer%2==0 for layer in layers]
+            if all(values):
+                return False
+            if any(values):
+                logging.warning(f"Gruppenlayer von {entity} kontrollieren!")
+            else:
+                return True
 
         def create_data_dict(elements):
             def check_entity(d_dict, entity: ifcopenshell.entity_instance):
@@ -316,17 +415,20 @@ class ModelControlRunner(ifc_mod_window.IfcRunner):
                 value = ifc_pset_dict.get(attribute_name)
                 if value is None:
                     return
+                if value in attribute.value:
+                    return
                 if attribute not in sub_dict:
                     sub_dict[attribute] = dict()
-
                 if attribute not in count_dict:
                     count_dict[attribute] = 0
                 count_dict[attribute] += 1
 
+
                 if value not in sub_dict[attribute]:
-                    sub_dict[attribute][value] = [True,1]
+                    sub_dict[attribute][value] = [STANDARD_CHECK_STATE,1]
                 else:
                     sub_dict[attribute][value][1]+=1
+
             dd = dict()
             count_dict = dict()
             element_count = len(elements)
@@ -343,7 +445,7 @@ class ModelControlRunner(ifc_mod_window.IfcRunner):
         ifc = super(ModelControlRunner, self).run_file_function(file_path)
         entities = ifc.by_type("IfcElement")
         groups = ifc.by_type("IfcGroup")
-
+        groups = list(filter(is_real_layer,groups))
         bk_dict: dict[str, classes.Object] = {obj.ident_value: obj for obj in self.project.objects}
         data_dict,count_dict = create_data_dict(entities + groups)
         self.data_dict.update(data_dict)
