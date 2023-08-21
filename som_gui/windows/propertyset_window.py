@@ -585,10 +585,11 @@ class PropertySetWindow(QtWidgets.QWidget):
         self._description_changed = False
         self.update_tab_order()
 
-    def table_clicked(self, table_item: QTableWidgetItem | CustomTableItem) -> None:
-        self.item_changed(table_item)
-        item: CustomTableItem = self.table.item(table_item.row(), 0)
-        attribute = item.linked_data
+    def table_clicked(self, table_item: QTableWidgetItem | CustomTableItem|None,attribute = None) -> None:
+        if attribute is None:
+            self.item_changed(table_item)
+            item: CustomTableItem = self.table.item(table_item.row(), 0)
+            attribute = item.linked_data
         if attribute.is_child:
             status = False
             self.widget.combo_type.setToolTip("Attribut wurde geerbt -> Keine Änderung des Types möglich")

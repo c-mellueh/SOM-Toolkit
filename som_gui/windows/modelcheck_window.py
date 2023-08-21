@@ -116,12 +116,13 @@ class Modelcheck(IfcRunner):
 
     def __init__(self, ifc_paths: str, project: classes.Project, main_pset: str, main_attribute: str, issue_path: str,
                  data_base_path: str):
-        super(Modelcheck, self).__init__(ifc_paths, project, main_pset, main_attribute, issue_path, "Modelcheck")
+        super(Modelcheck, self).__init__(ifc_paths, project, main_pset, main_attribute, "Modelcheck")
         self.data_base_path = data_base_path
         self.base_name: str = ""
         self.ident_dict = dict()
         self.group_dict: dict[ifcopenshell.entity_instance] = dict()
         self.group_parent_dict = dict()
+        self.export_path = issue_path
 
     def run(self) -> None:
         sql.guids = dict()
