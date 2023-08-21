@@ -118,6 +118,8 @@ class MainWindow(QMainWindow):
     def run_model_control(self):
         if self.model_control_window is None:
             self.model_control_window = model_control_window.ModelControlWindow(self)
+        else:
+            self.model_control_window.show()
 
     @property
     def object_tree(self) -> object_widget.CustomTree:

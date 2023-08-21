@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1104</width>
-    <height>678</height>
+    <height>680</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -93,17 +93,10 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="button_run">
-       <property name="text">
-        <string>IFC Einlesen</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label_ifc_missing">
+    <widget class="QLabel" name="label_status">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -121,7 +114,7 @@
       <bool>true</bool>
      </property>
      <property name="value">
-      <number>24</number>
+      <number>0</number>
      </property>
     </widget>
    </item>
@@ -132,8 +125,24 @@
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>24</height>
+        </size>
+       </property>
        <property name="text">
-        <string>PushButton</string>
+        <string>Zurück</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_object_name">
+       <property name="text">
+        <string>ObjectName</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -142,8 +151,14 @@
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>24</height>
+        </size>
+       </property>
        <property name="text">
-        <string>PushButton</string>
+        <string>Nächstes Objekt</string>
        </property>
       </widget>
      </item>
@@ -163,9 +178,81 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QListWidget" name="list_widget_property_set"/>
-     <widget class="QListWidget" name="list_widget_attribute"/>
-     <widget class="QTableWidget" name="list_widget_value">
+     <widget class="QTableWidget" name="table_widget_property_set">
+      <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>PropertySet</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Anzahl</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="table_widget_attribute">
+      <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Attribut</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Anzahl</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Eindeutig</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="table_widget_value">
+      <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
       <column>
        <property name="text">
         <string>Wert</string>
@@ -173,7 +260,7 @@
       </column>
       <column>
        <property name="text">
-        <string>Akzeptiert</string>
+        <string>Anzahl</string>
        </property>
       </column>
      </widget>
@@ -195,16 +282,16 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="button_abbort">
+      <widget class="QPushButton" name="button_abort">
        <property name="text">
         <string>Abbrechen</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="button_import_values">
+      <widget class="QPushButton" name="button_run">
        <property name="text">
-        <string>Werte Importieren</string>
+        <string>IFC Einlesen</string>
        </property>
       </widget>
      </item>

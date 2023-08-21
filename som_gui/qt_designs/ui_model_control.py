@@ -16,16 +16,15 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QHeaderView, QLabel,
-    QLayout, QLineEdit, QListWidget, QListWidgetItem,
-    QProgressBar, QPushButton, QSizePolicy, QSpacerItem,
-    QSplitter, QTableWidget, QTableWidgetItem, QVBoxLayout,
-    QWidget)
+    QLayout, QLineEdit, QProgressBar, QPushButton,
+    QSizePolicy, QSpacerItem, QSplitter, QTableWidget,
+    QTableWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(1104, 678)
+        Form.resize(1104, 680)
         Form.setMinimumSize(QSize(30, 100))
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -80,25 +79,20 @@ class Ui_Form(object):
 
         self.horizontal_layout_ifc.addWidget(self.button_ifc)
 
-        self.button_run = QPushButton(Form)
-        self.button_run.setObjectName(u"button_run")
-
-        self.horizontal_layout_ifc.addWidget(self.button_run)
-
 
         self.verticalLayout.addLayout(self.horizontal_layout_ifc)
 
-        self.label_ifc_missing = QLabel(Form)
-        self.label_ifc_missing.setObjectName(u"label_ifc_missing")
-        self.label_ifc_missing.setEnabled(True)
-        self.label_ifc_missing.setTextFormat(Qt.PlainText)
+        self.label_status = QLabel(Form)
+        self.label_status.setObjectName(u"label_status")
+        self.label_status.setEnabled(True)
+        self.label_status.setTextFormat(Qt.PlainText)
 
-        self.verticalLayout.addWidget(self.label_ifc_missing)
+        self.verticalLayout.addWidget(self.label_status)
 
         self.progress_bar = QProgressBar(Form)
         self.progress_bar.setObjectName(u"progress_bar")
         self.progress_bar.setEnabled(True)
-        self.progress_bar.setValue(24)
+        self.progress_bar.setValue(0)
 
         self.verticalLayout.addWidget(self.progress_bar)
 
@@ -107,12 +101,20 @@ class Ui_Form(object):
         self.button_last = QPushButton(Form)
         self.button_last.setObjectName(u"button_last")
         self.button_last.setEnabled(True)
+        self.button_last.setMaximumSize(QSize(200, 24))
 
         self.horizontal_layout_buttons.addWidget(self.button_last)
+
+        self.label_object_name = QLabel(Form)
+        self.label_object_name.setObjectName(u"label_object_name")
+        self.label_object_name.setAlignment(Qt.AlignCenter)
+
+        self.horizontal_layout_buttons.addWidget(self.label_object_name)
 
         self.button_next = QPushButton(Form)
         self.button_next.setObjectName(u"button_next")
         self.button_next.setEnabled(True)
+        self.button_next.setMaximumSize(QSize(200, 24))
 
         self.horizontal_layout_buttons.addWidget(self.button_next)
 
@@ -128,21 +130,50 @@ class Ui_Form(object):
         sizePolicy4.setHeightForWidth(self.splitter_lists.sizePolicy().hasHeightForWidth())
         self.splitter_lists.setSizePolicy(sizePolicy4)
         self.splitter_lists.setOrientation(Qt.Horizontal)
-        self.list_widget_property_set = QListWidget(self.splitter_lists)
-        self.list_widget_property_set.setObjectName(u"list_widget_property_set")
-        self.splitter_lists.addWidget(self.list_widget_property_set)
-        self.list_widget_attribute = QListWidget(self.splitter_lists)
-        self.list_widget_attribute.setObjectName(u"list_widget_attribute")
-        self.splitter_lists.addWidget(self.list_widget_attribute)
-        self.list_widget_value = QTableWidget(self.splitter_lists)
-        if (self.list_widget_value.columnCount() < 2):
-            self.list_widget_value.setColumnCount(2)
+        self.table_widget_property_set = QTableWidget(self.splitter_lists)
+        if (self.table_widget_property_set.columnCount() < 2):
+            self.table_widget_property_set.setColumnCount(2)
         __qtablewidgetitem = QTableWidgetItem()
-        self.list_widget_value.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        self.table_widget_property_set.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
-        self.list_widget_value.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        self.list_widget_value.setObjectName(u"list_widget_value")
-        self.splitter_lists.addWidget(self.list_widget_value)
+        self.table_widget_property_set.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        self.table_widget_property_set.setObjectName(u"table_widget_property_set")
+        self.splitter_lists.addWidget(self.table_widget_property_set)
+        self.table_widget_property_set.horizontalHeader().setProperty("showSortIndicator", True)
+        self.table_widget_property_set.horizontalHeader().setStretchLastSection(True)
+        self.table_widget_property_set.verticalHeader().setVisible(False)
+        self.table_widget_property_set.verticalHeader().setProperty("showSortIndicator", False)
+        self.table_widget_property_set.verticalHeader().setStretchLastSection(False)
+        self.table_widget_attribute = QTableWidget(self.splitter_lists)
+        if (self.table_widget_attribute.columnCount() < 3):
+            self.table_widget_attribute.setColumnCount(3)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.table_widget_attribute.setHorizontalHeaderItem(0, __qtablewidgetitem2)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        self.table_widget_attribute.setHorizontalHeaderItem(1, __qtablewidgetitem3)
+        __qtablewidgetitem4 = QTableWidgetItem()
+        self.table_widget_attribute.setHorizontalHeaderItem(2, __qtablewidgetitem4)
+        self.table_widget_attribute.setObjectName(u"table_widget_attribute")
+        self.splitter_lists.addWidget(self.table_widget_attribute)
+        self.table_widget_attribute.horizontalHeader().setProperty("showSortIndicator", True)
+        self.table_widget_attribute.horizontalHeader().setStretchLastSection(True)
+        self.table_widget_attribute.verticalHeader().setVisible(False)
+        self.table_widget_attribute.verticalHeader().setProperty("showSortIndicator", False)
+        self.table_widget_attribute.verticalHeader().setStretchLastSection(False)
+        self.table_widget_value = QTableWidget(self.splitter_lists)
+        if (self.table_widget_value.columnCount() < 2):
+            self.table_widget_value.setColumnCount(2)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        self.table_widget_value.setHorizontalHeaderItem(0, __qtablewidgetitem5)
+        __qtablewidgetitem6 = QTableWidgetItem()
+        self.table_widget_value.setHorizontalHeaderItem(1, __qtablewidgetitem6)
+        self.table_widget_value.setObjectName(u"table_widget_value")
+        self.splitter_lists.addWidget(self.table_widget_value)
+        self.table_widget_value.horizontalHeader().setProperty("showSortIndicator", True)
+        self.table_widget_value.horizontalHeader().setStretchLastSection(True)
+        self.table_widget_value.verticalHeader().setVisible(False)
+        self.table_widget_value.verticalHeader().setProperty("showSortIndicator", False)
+        self.table_widget_value.verticalHeader().setStretchLastSection(False)
 
         self.verticalLayout.addWidget(self.splitter_lists)
 
@@ -152,15 +183,15 @@ class Ui_Form(object):
 
         self.horzontal_layout_action_buttons.addItem(self.horizontal_spacer_action_buttons)
 
-        self.button_abbort = QPushButton(Form)
-        self.button_abbort.setObjectName(u"button_abbort")
+        self.button_abort = QPushButton(Form)
+        self.button_abort.setObjectName(u"button_abort")
 
-        self.horzontal_layout_action_buttons.addWidget(self.button_abbort)
+        self.horzontal_layout_action_buttons.addWidget(self.button_abort)
 
-        self.button_import_values = QPushButton(Form)
-        self.button_import_values.setObjectName(u"button_import_values")
+        self.button_run = QPushButton(Form)
+        self.button_run.setObjectName(u"button_run")
 
-        self.horzontal_layout_action_buttons.addWidget(self.button_import_values)
+        self.horzontal_layout_action_buttons.addWidget(self.button_run)
 
 
         self.verticalLayout.addLayout(self.horzontal_layout_action_buttons)
@@ -178,15 +209,25 @@ class Ui_Form(object):
         self.line_edit_ident_attribute.setPlaceholderText(QCoreApplication.translate("Form", u"Ident Attribut", None))
         self.label_ifc.setText(QCoreApplication.translate("Form", u"IFC Pfad", None))
         self.button_ifc.setText(QCoreApplication.translate("Form", u"...", None))
+        self.label_status.setText(QCoreApplication.translate("Form", u"IFC Pfad fehlt!", None))
+        self.button_last.setText(QCoreApplication.translate("Form", u"Zur\u00fcck", None))
+        self.label_object_name.setText(QCoreApplication.translate("Form", u"ObjectName", None))
+        self.button_next.setText(QCoreApplication.translate("Form", u"N\u00e4chstes Objekt", None))
+        ___qtablewidgetitem = self.table_widget_property_set.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("Form", u"PropertySet", None));
+        ___qtablewidgetitem1 = self.table_widget_property_set.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("Form", u"Anzahl", None));
+        ___qtablewidgetitem2 = self.table_widget_attribute.horizontalHeaderItem(0)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("Form", u"Attribut", None));
+        ___qtablewidgetitem3 = self.table_widget_attribute.horizontalHeaderItem(1)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("Form", u"Anzahl", None));
+        ___qtablewidgetitem4 = self.table_widget_attribute.horizontalHeaderItem(2)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("Form", u"Eindeutig", None));
+        ___qtablewidgetitem5 = self.table_widget_value.horizontalHeaderItem(0)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("Form", u"Wert", None));
+        ___qtablewidgetitem6 = self.table_widget_value.horizontalHeaderItem(1)
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("Form", u"Anzahl", None));
+        self.button_abort.setText(QCoreApplication.translate("Form", u"Abbrechen", None))
         self.button_run.setText(QCoreApplication.translate("Form", u"IFC Einlesen", None))
-        self.label_ifc_missing.setText(QCoreApplication.translate("Form", u"IFC Pfad fehlt!", None))
-        self.button_last.setText(QCoreApplication.translate("Form", u"PushButton", None))
-        self.button_next.setText(QCoreApplication.translate("Form", u"PushButton", None))
-        ___qtablewidgetitem = self.list_widget_value.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("Form", u"Wert", None));
-        ___qtablewidgetitem1 = self.list_widget_value.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("Form", u"Akzeptiert", None));
-        self.button_abbort.setText(QCoreApplication.translate("Form", u"Abbrechen", None))
-        self.button_import_values.setText(QCoreApplication.translate("Form", u"Werte Importieren", None))
     # retranslateUi
 

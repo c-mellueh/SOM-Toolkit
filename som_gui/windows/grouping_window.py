@@ -90,7 +90,7 @@ class Grouping(IfcRunner):
 
     def __init__(self, ifc_paths: str, project: classes.Project, main_pset: str, main_attribute: str,
                  export_folder: str, group_pset: str, group_attrib: str, identity_attrib: str):
-        super(Grouping, self).__init__(ifc_paths, project, main_pset, main_attribute, export_folder, "Gruppierung")
+        super(Grouping, self).__init__(ifc_paths, project, main_pset, main_attribute, "Gruppierung", export_folder)
 
         self.group_pset = group_pset
         self.group_attribute = group_attrib
@@ -100,6 +100,7 @@ class Grouping(IfcRunner):
         self.structure_dict = {GROUP: {}, ELEMENT: {}, IFC_REP: None}
         self.entity_object_dict: [ifcopenshell.entity_instance, SOMcreator.Object] = dict()
         self.owner_history = None
+        self.export_path = export_folder
 
     def run(self) -> None:
         super(Grouping, self).run()
