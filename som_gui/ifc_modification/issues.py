@@ -15,7 +15,12 @@ SUBGROUP_ISSUE = 9  # Gruppe besitzt verschiedene Untergruppen
 EMPTY_GROUP_ISSUE = 10
 NO_GROUP_ISSUE = 11
 REPETETIVE_GROUP_ISSUE = 12
+DATATYPE_ISSUE = 13
 
+def datatype_issue(cursor,guid,attribute,element_type,datatype:str):
+    description = f"{element_type} besitzt den falschen Datentype ({datatype} nicht erlaubt) {attribute.property_set.name}:{attribute.name}"
+    issue_nr = DATATYPE_ISSUE
+    sql.add_issues(cursor, guid, description, issue_nr, attribute)
 
 def format_issue(cursor, guid, attribute, element_type):
     description = f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"

@@ -3,6 +3,7 @@ from __future__ import annotations  # make own class referencable
 import logging
 from typing import TYPE_CHECKING
 
+import SOMcreator.constants
 import ifcopenshell
 from PySide6.QtCore import QThreadPool,Qt
 from PySide6.QtWidgets import QWidget, QTableWidgetItem,QTableWidget
@@ -417,6 +418,11 @@ class ModelControlRunner(ifc_mod_window.IfcRunner):
                     return
                 if value in attribute.value:
                     return
+
+                if attribute.value_type != SOMcreator.constants.LIST:
+                    print(attribute.value_type)
+                    return
+
                 if attribute not in sub_dict:
                     sub_dict[attribute] = dict()
                 if attribute not in count_dict:

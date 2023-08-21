@@ -11,12 +11,26 @@ from ifcopenshell.util import element as ifc_el
 from . import issues
 from .sql import db_create_entity
 
-
 GROUP = "Gruppe"
 ELEMENT = "Element"
 
 SUBGROUPS = "subgroups"
 SUBELEMENT = "subelement"
+
+datatype_dict = {
+    som_constants.XS_STRING: str,
+    som_constants.XS_BOOL: bool,
+    som_constants.XS_INT: int,
+    som_constants.XS_DOUBLE: float
+}
+
+rev_datatype_dict = {
+    str: "IfcText/IfcLabel",
+    bool: "IfcBoolean",
+    int: "IfcInteger",
+    float: "IfcReal"
+}
+
 
 def get_identifier(el: entity_instance, main_pset: str, main_attribute: str) -> str | None:
     return ifc_el.get_pset(el, main_pset, main_attribute)
@@ -28,6 +42,12 @@ def check_element(element, ag, bk, db_name, file_name, ident_dict, element_type,
                       som_constants.FORMAT: check_format}
         func = check_dict[attribute.value_type]
         func(value, attribute)
+        check_datatype(value, attribute)
+
+    def check_datatype(value, attribute):
+        data_type = datatype_dict[attribute.data_type]
+        if not isinstance(value, data_type):
+            issues.datatype_issue(db_name, guid, attribute, element_type, rev_datatype_dict[type(value)])
 
     def check_format(value, attribute):
         is_ok = False
@@ -90,8 +110,8 @@ def check_element(element, ag, bk, db_name, file_name, ident_dict, element_type,
     check_for_attributes(psets, obj_rep)
 
 
-def build_group_structure(focus_group: ifcopenshell.entity_instance, group_dict: dict, ag: str, bk: str, group_parent_dict:dict):
-
+def build_group_structure(focus_group: ifcopenshell.entity_instance, group_dict: dict, ag: str, bk: str,
+                          group_parent_dict: dict):
     relationships = getattr(focus_group, "IsGroupedBy", [])
     for relationship in relationships:
         for sub_element in relationship.RelatedObjects:  # IfcGroup or IfcElement
@@ -99,7 +119,7 @@ def build_group_structure(focus_group: ifcopenshell.entity_instance, group_dict:
             group_parent_dict[sub_element] = focus_group
             group_dict[sub_element] = dict()
             if sub_element.is_a("IfcGroup"):
-                build_group_structure(sub_element, group_dict[sub_element], ag, bk,group_parent_dict)
+                build_group_structure(sub_element, group_dict[sub_element], ag, bk, group_parent_dict)
 
 
 def get_parent_group(group: entity_instance) -> list[entity_instance]:
