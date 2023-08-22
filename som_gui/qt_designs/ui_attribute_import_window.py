@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'ModelControl.ui'
+## Form generated from reading UI file 'AttributeImport.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##

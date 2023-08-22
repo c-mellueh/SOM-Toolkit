@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt
 from typing import TYPE_CHECKING
 from SOMcreator import classes
 from .. import icons
-from .. qt_designs import ui_delete_request, ui_groupReq, ui_search, ui_attribute_mapping
+from .. qt_designs import ui_delete_request, ui_group_name_request, ui_search, ui_attribute_mapping
 from ..icons import get_icon
 from fuzzywuzzy import fuzz
 
@@ -111,7 +111,7 @@ def req_group_name(main_window, prefil: list[str] = None):
         widget.attribute_value.setEnabled(enable)
 
     dialog = QDialog(main_window)
-    widget = ui_groupReq.Ui_Dialog()
+    widget = ui_group_name_request.Ui_Dialog()
     widget.setupUi(dialog)
     widget.checkBox.toggled.connect(change_visibility)
     input_fields = [widget.group_name, widget.pset_name, widget.attribute_name, widget.attribute_value,widget.abbreviation]

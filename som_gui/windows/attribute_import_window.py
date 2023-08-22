@@ -20,11 +20,11 @@ from ..ifc_modification.modelcheck import get_identifier
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
 
-from ..qt_designs import ui_model_control,ui_model_control_settings
+from ..qt_designs import ui_attribute_import_window,ui_attribute_import_settings_window
 STANDARD_CHECK_STATE = False
 
 
-class ModelControlWindow(QWidget):
+class AttributeImport(QWidget):
 
     def __init__(self, main_window: MainWindow):
         def create_connections():
@@ -42,8 +42,8 @@ class ModelControlWindow(QWidget):
             self.widget.button_settings.setIcon(get_settings_icon())
             self.widget.button_abort.clicked.connect(self.abort_clicked)
         self.main_window = main_window
-        super(ModelControlWindow, self).__init__()
-        self.widget = ui_model_control.Ui_Form()
+        super(AttributeImport, self).__init__()
+        self.widget = ui_attribute_import_window.Ui_Form()
         self.widget.setupUi(self)
         self.show()
         self.setWindowTitle("Modellinformationen Einlesen")
@@ -448,7 +448,7 @@ class ModelControlRunner(ifc_mod_window.IfcRunner):
 
 
 class ObjectCollection(object):
-    def __init__(self, obj: classes.Object,window:ModelControlWindow,property_set_dict:dict,count_dict:dict):
+    def __init__(self, obj: classes.Object, window:AttributeImport, property_set_dict:dict, count_dict:dict):
         self.object = obj
         self.count = count_dict[self.object]
         self.property_set_dict = property_set_dict
@@ -478,7 +478,7 @@ class PropertySetItem(QTableWidgetItem):
         self.count = self.parent_item.count_dict[self.property_set]
         self.attribute_dict:dict[classes.Attribute,dict] = attribute_dict
         self.setText(str(text))
-        self.window:ModelControlWindow = self.parent_item.window
+        self.window:AttributeImport = self.parent_item.window
 
     @property
     def name(self):
@@ -560,7 +560,7 @@ class SettingsDialog(QDialog):
 
     def __init__(self,settings_dict:dict[str,bool]):
         super(SettingsDialog, self).__init__()
-        self.widget = ui_model_control_settings.Ui_Dialog()
+        self.widget = ui_attribute_import_settings_window.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
         self.setWindowTitle("Einstellungen")
