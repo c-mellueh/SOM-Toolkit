@@ -115,7 +115,7 @@ class ModelControlWindow(QWidget):
             self.widget.table_widget_attribute.itemDoubleClicked.connect(self.attribute_double_clicked)
             self.widget.table_widget_value.itemClicked.connect(self.value_item_changed)
             self.widget.check_box_values.clicked.connect(self.toggle_value_checkbox)
-            self.widget.button_run.clicked.connect(self.take_over_values)
+            self.widget.button_run.clicked.connect(self.button_run_clicked)
 
         self.main_window = main_window
         super(ModelControlWindow, self).__init__()
@@ -125,7 +125,7 @@ class ModelControlWindow(QWidget):
         self.setWindowTitle("Modellinformationen Einlesen")
         self.setWindowIcon(get_icon())
         self.thread_pool = QThreadPool()
-        self.task_is_running = False
+        self.task_status = 0    #0= not started, 1 = running 2= finished
         self.runner: None | ModelControlRunner = None
         self.widget.label_status.hide()
         self.objects:set[ObjectCollection] = set()
@@ -178,7 +178,14 @@ class ModelControlWindow(QWidget):
             self.widget.button_last.setEnabled(True)
             self.widget.button_last.setText(f"{last_object_name} ({last_index+1}/{self.max_objects})")
 
-    def take_over_values(self):
+    def button_run_clicked(self):
+        if self.task_status == 0:
+            path = self.widget.line_edit_ifc.text()
+            self.import_ifc(path)
+            return
+        if self.task_status == 1:
+            return
+
         for obj,property_set_dict in self.data_dict.items():
             for property_set, attribute_dict in property_set_dict.items():
                 for attribute,value_dict in attribute_dict.items():
@@ -189,8 +196,12 @@ class ModelControlWindow(QWidget):
                             values.append(value)
                     attribute.value = values
 
-        self.hide()
+        self.reset()
 
+    def reset(self):
+        self.show_items(False)
+        self.widget.button_run.setText("IFC Einlesen")
+        self.task_status = 0
 
     def toggle_value_checkbox(self):
         check_box = self.widget.check_box_values
@@ -252,6 +263,7 @@ class ModelControlWindow(QWidget):
         getattr(self.widget.button_next, func_name)()
         getattr(self.widget.button_last, func_name)()
         getattr(self.widget.label_object_name,func_name)()
+        getattr(self.widget.label_status, func_name)()
         geometry = self.geometry()
         if show_bool:
             geometry.setHeight(450)
@@ -281,13 +293,13 @@ class ModelControlWindow(QWidget):
         self.thread_pool.start(self.runner)
 
     def on_started(self):
+        self.task_status = 1
         self.widget.button_run.setEnabled(False)
-        self.task_is_running = True
         self.show_items(False)
         self.widget.progress_bar.show()
 
     def on_finished(self):
-        self.task_is_running = False
+        self.task_status = 2
         self.show_items(True)
         self.widget.button_run.setEnabled(True)
         self.widget.button_run.setText("Werte übernehmen")
