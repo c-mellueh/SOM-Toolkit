@@ -90,7 +90,7 @@ class Grouping(IfcRunner):
 
     def __init__(self, ifc_paths: str, project: classes.Project, main_pset: str, main_attribute: str,
                  export_folder: str, group_pset: str, group_attrib: str, identity_attrib: str):
-        super(Grouping, self).__init__(ifc_paths, project, main_pset, main_attribute, "Gruppierung", export_folder)
+        super(Grouping, self).__init__(ifc_paths, project, main_pset, main_attribute, "Gruppierung")
 
         self.group_pset = group_pset
         self.group_attribute = group_attrib
