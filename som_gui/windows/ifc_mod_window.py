@@ -15,9 +15,9 @@ from ..qt_designs import ui_modelcheck
 from .. import settings
 if TYPE_CHECKING:
     from ..main_window import MainWindow
+ABORT = "ABORT"
 
-
-def ifc_file_dialog(window:QWidget,line_edit:QLineEdit) -> None|List:
+def ifc_file_dialog(window:QWidget,line_edit:QLineEdit) -> None|list:
     file_text = "IFC Files (*.ifc *.IFC);;"
     ifc_paths = settings.get_ifc_path()
     if isinstance(ifc_paths,list):
@@ -170,7 +170,7 @@ class IfcWindow(QWidget):
         self.task_is_running = True
         self.start_time = time()
         self.widget.button_run.setEnabled(False)
-        self.widget.button_close.setText("Abort")
+        self.widget.button_close.setText(ABORT)
         proj = self.main_window.project
         ifc = get_ifc_path(self.widget.line_edit_ifc)
         pset = self.widget.line_edit_ident_pset.text()
@@ -262,7 +262,7 @@ class IfcRunner(QRunnable):
             self.run_file_function(file)
 
         if self.is_aborted:
-            self.signaller.finished.emit("ABORT")
+            self.signaller.finished.emit(ABORT)
             return
 
         if is_done:
