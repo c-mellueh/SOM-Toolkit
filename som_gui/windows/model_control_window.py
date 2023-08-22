@@ -6,100 +6,21 @@ from typing import TYPE_CHECKING
 import SOMcreator.constants
 import ifcopenshell
 from PySide6.QtCore import QThreadPool,Qt
-from PySide6.QtWidgets import QWidget, QTableWidgetItem,QTableWidget
+from PySide6.QtWidgets import QWidget, QTableWidgetItem,QTableWidget,QDialog
 from SOMcreator import classes
 from ifcopenshell.util.element import get_pset
 
+from ..settings import EXISTING_ATTRIBUTE_IMPORT,RANGE_ATTRIBUTE_IMPORT,REGEX_ATTRIBUTE_IMPORT,COLOR_ATTTRIBUTE_IMPORT
+from .. import settings
 from . import ifc_mod_window
-from ..icons import get_icon
+from ..icons import get_icon,get_settings_icon
 from ..ifc_modification.modelcheck import get_identifier
 
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
 
-from ..qt_designs import ui_model_control
+from ..qt_designs import ui_model_control,ui_model_control_settings
 STANDARD_CHECK_STATE = False
-
-class ObjectCollection(object):
-    def __init__(self, obj: classes.Object,window:ModelControlWindow,property_set_dict:dict,count_dict:dict):
-        self.object = obj
-        self.count = count_dict[self.object]
-        self.property_set_dict = property_set_dict
-        self.count_dict = count_dict
-        self.window = window
-        super(ObjectCollection, self).__init__()
-
-    @property
-    def name(self):
-        return f"{self.object.name}   ({self.object.ident_value})   [{self.count}]"
-
-    def activate(self,property_set_table_widget:QTableWidget):
-        self.window.reset_table(property_set_table_widget)
-        self.window.reset_table(self.window.widget.table_widget_attribute)
-        self.window.reset_table(self.window.widget.table_widget_value)
-        property_set_table_widget.setRowCount(len(self.property_set_dict))
-        for index,(property_set,attribute_dict) in enumerate(self.property_set_dict.items()):
-            property_set_table_widget.setItem(index, 0,PropertySetItem(self,property_set,attribute_dict,property_set.name))
-            property_set_table_widget.setItem(index, 1,PropertySetItem(self,property_set,attribute_dict,self.count))
-
-class PropertySetItem(QTableWidgetItem):
-    def __init__(self,parent_item:ObjectCollection, property_set: classes.PropertySet,attribute_dict,text):
-        super(PropertySetItem, self).__init__()
-        self.property_set = property_set
-        self.parent_item = parent_item
-        self.count = self.parent_item.count_dict[self.property_set]
-        self.attribute_dict = attribute_dict
-        self.setText(str(text))
-        self.window:ModelControlWindow = self.parent_item.window
-
-    @property
-    def name(self):
-        return f"{self.property_set.name}"
-
-    def activate(self,attribute_table_widget:QTableWidget):
-        self.window.reset_table(attribute_table_widget)
-        self.window.reset_table(self.window.widget.table_widget_value)
-        self.window.widget.label_attributes.setText(f"Attribute [{self.property_set.name}]")
-
-        attribute_table_widget.setRowCount(len(self.attribute_dict))
-        for row,(attribute,value_dict) in enumerate(self.attribute_dict.items()):
-            attribute_table_widget.setItem(row, 0, AttributeItem(self,attribute,value_dict,attribute.name))
-            attribute_table_widget.setItem(row, 1, AttributeItem(self,attribute,value_dict,self.parent_item.count_dict[attribute]))
-            attribute_table_widget.setItem(row, 2, AttributeItem(self,attribute,value_dict,str(len(value_dict))))
-
-class AttributeItem(QTableWidgetItem):
-    def __init__(self,parent_item:PropertySetItem, attribute: classes.Attribute,value_dict,text):
-        super(AttributeItem, self).__init__()
-        self.attribute = attribute
-        self.parent_item = parent_item
-        self.value_dict = value_dict
-        self.setText(str(text))
-        self.window = self.parent_item.window
-
-    def activate(self, value_table_widget: QTableWidget):
-        self.window.reset_table(value_table_widget)
-        self.window.widget.label_value.setText(f"Werte [{self.attribute.name}]")
-        value_table_widget.setRowCount(len(self.value_dict))
-
-        for index,(value,[accept_bool,count]) in enumerate(self.value_dict.items()):
-            value_table_widget.setItem(index, 0 ,ValueItem(self,value,accept_bool))
-            value_table_widget.setItem(index, 1, QTableWidgetItem(str(count)))
-
-        self.window.update_value_checkbox()
-
-class ValueItem(QTableWidgetItem):
-    def __init__(self,parent_item:AttributeItem, value,accept_bool,):
-        super(ValueItem, self).__init__()
-        self.value = value
-        self.setText(f"{value}" )
-        self.parent_item = parent_item
-        self.window = self.parent_item.window
-
-        if accept_bool:
-            self.setCheckState(Qt.CheckState.Checked)
-        else:
-            self.setCheckState(Qt.CheckState.Unchecked)
-
 
 
 class ModelControlWindow(QWidget):
@@ -116,6 +37,8 @@ class ModelControlWindow(QWidget):
             self.widget.table_widget_value.itemClicked.connect(self.value_item_changed)
             self.widget.check_box_values.clicked.connect(self.toggle_value_checkbox)
             self.widget.button_run.clicked.connect(self.button_run_clicked)
+            self.widget.button_settings.clicked.connect(self.settings_clicked)
+            self.widget.button_settings.setIcon(get_settings_icon())
 
         self.main_window = main_window
         super(ModelControlWindow, self).__init__()
@@ -139,11 +62,28 @@ class ModelControlWindow(QWidget):
         self.data_dict = dict()
         self.count_dict = dict()
 
+
         self.header_dict={self.widget.table_widget_property_set:["PropertySet","Anzahl"],
                           self.widget.table_widget_attribute:["Attribut","Anzahl","Eindeutig"],
                           self.widget.table_widget_value:["Wert","Anzahl"]}
 
         self.show_items(False)
+
+    def settings_clicked(self):
+        settings_dict = {
+            RANGE_ATTRIBUTE_IMPORT:settings.get_setting_attribute_import_range(),
+            EXISTING_ATTRIBUTE_IMPORT:settings.get_setting_attribute_import_existing(),
+            REGEX_ATTRIBUTE_IMPORT:settings.get_setting_attribute_import_regex(),
+            COLOR_ATTTRIBUTE_IMPORT:settings.get_setting_attribute_color()
+        }
+        self.settings_popup =SettingsDialog(settings_dict)
+        val = self.settings_popup.exec()
+        if not val:
+            return
+
+        for key,value in val.items():
+            settings.set_setting(settings.ATTRIBUTE_IMPORT_SECTION, key, value)
+
 
     def attribute_double_clicked(self,item:AttributeItem):
         attribute = item.attribute
@@ -349,6 +289,90 @@ class ModelControlWindow(QWidget):
         self.widget.button_abort.clicked.connect(runner.abort)
 
 
+class ObjectCollection(object):
+    def __init__(self, obj: classes.Object,window:ModelControlWindow,property_set_dict:dict,count_dict:dict):
+        self.object = obj
+        self.count = count_dict[self.object]
+        self.property_set_dict = property_set_dict
+        self.count_dict = count_dict
+        self.window = window
+        super(ObjectCollection, self).__init__()
+
+    @property
+    def name(self):
+        return f"{self.object.name}   ({self.object.ident_value})   [{self.count}]"
+
+    def activate(self,property_set_table_widget:QTableWidget):
+        self.window.reset_table(property_set_table_widget)
+        self.window.reset_table(self.window.widget.table_widget_attribute)
+        self.window.reset_table(self.window.widget.table_widget_value)
+        property_set_table_widget.setRowCount(len(self.property_set_dict))
+        for index,(property_set,attribute_dict) in enumerate(self.property_set_dict.items()):
+            property_set_table_widget.setItem(index, 0,PropertySetItem(self,property_set,attribute_dict,property_set.name))
+            property_set_table_widget.setItem(index, 1,PropertySetItem(self,property_set,attribute_dict,self.count))
+
+
+class PropertySetItem(QTableWidgetItem):
+    def __init__(self,parent_item:ObjectCollection, property_set: classes.PropertySet,attribute_dict,text):
+        super(PropertySetItem, self).__init__()
+        self.property_set = property_set
+        self.parent_item = parent_item
+        self.count = self.parent_item.count_dict[self.property_set]
+        self.attribute_dict = attribute_dict
+        self.setText(str(text))
+        self.window:ModelControlWindow = self.parent_item.window
+
+    @property
+    def name(self):
+        return f"{self.property_set.name}"
+
+    def activate(self,attribute_table_widget:QTableWidget):
+        self.window.reset_table(attribute_table_widget)
+        self.window.reset_table(self.window.widget.table_widget_value)
+        self.window.widget.label_attributes.setText(f"Attribute [{self.property_set.name}]")
+
+        attribute_table_widget.setRowCount(len(self.attribute_dict))
+        for row,(attribute,value_dict) in enumerate(self.attribute_dict.items()):
+            attribute_table_widget.setItem(row, 0, AttributeItem(self,attribute,value_dict,attribute.name))
+            attribute_table_widget.setItem(row, 1, AttributeItem(self,attribute,value_dict,self.parent_item.count_dict[attribute]))
+            attribute_table_widget.setItem(row, 2, AttributeItem(self,attribute,value_dict,str(len(value_dict))))
+
+
+class AttributeItem(QTableWidgetItem):
+    def __init__(self,parent_item:PropertySetItem, attribute: classes.Attribute,value_dict,text):
+        super(AttributeItem, self).__init__()
+        self.attribute = attribute
+        self.parent_item = parent_item
+        self.value_dict = value_dict
+        self.setText(str(text))
+        self.window = self.parent_item.window
+
+    def activate(self, value_table_widget: QTableWidget):
+        self.window.reset_table(value_table_widget)
+        self.window.widget.label_value.setText(f"Werte [{self.attribute.name}]")
+        value_table_widget.setRowCount(len(self.value_dict))
+
+        for index,(value,[accept_bool,count]) in enumerate(self.value_dict.items()):
+            value_table_widget.setItem(index, 0 ,ValueItem(self,value,accept_bool))
+            value_table_widget.setItem(index, 1, QTableWidgetItem(str(count)))
+
+        self.window.update_value_checkbox()
+
+
+class ValueItem(QTableWidgetItem):
+    def __init__(self,parent_item:AttributeItem, value,accept_bool,):
+        super(ValueItem, self).__init__()
+        self.value = value
+        self.setText(f"{value}" )
+        self.parent_item = parent_item
+        self.window = self.parent_item.window
+
+        if accept_bool:
+            self.setCheckState(Qt.CheckState.Checked)
+        else:
+            self.setCheckState(Qt.CheckState.Unchecked)
+
+
 class ModelControlRunner(ifc_mod_window.IfcRunner):
     def __init__(self, ifc_paths: list[str] | str, project: classes.Project, main_pset: str, main_attribute: str,
                  function_name: str):
@@ -468,3 +492,45 @@ class ModelControlRunner(ifc_mod_window.IfcRunner):
         data_dict,count_dict = create_data_dict(entities + groups)
         self.data_dict.update(data_dict)
         self.count_dict.update(count_dict)
+
+class SettingsDialog(QDialog):
+
+    EXISTING = EXISTING_ATTRIBUTE_IMPORT
+    REGEX = REGEX_ATTRIBUTE_IMPORT
+    RANGE = RANGE_ATTRIBUTE_IMPORT
+    COLOR = COLOR_ATTTRIBUTE_IMPORT
+
+    def __init__(self,settings_dict:dict[str,bool]):
+        super(SettingsDialog, self).__init__()
+        self.widget = ui_model_control_settings.Ui_Dialog()
+        self.widget.setupUi(self)
+        self.setWindowIcon(get_icon())
+        self.setWindowTitle("Einstellungen")
+        self.check_box_dict = {
+            self.EXISTING : self.widget.check_box_existing_attributes,
+            self.REGEX: self.widget.check_box_regex,
+            self.RANGE: self.widget.check_box_range,
+            self.COLOR: self.widget.check_box_color
+        }
+
+        for key,check_box in self.check_box_dict.items():
+            if settings_dict[key]:
+                check_box.setCheckState(Qt.CheckState.Checked)
+            else:
+                check_box.setCheckState(Qt.CheckState.Unchecked)
+
+
+
+    def exec(self) -> dict[str,bool]|int:
+        val = super(SettingsDialog, self).exec()
+        if not val:
+            return val
+        settings_dict = dict()
+        for key,check_box in self.check_box_dict.items():
+            if check_box.checkState() == Qt.CheckState.Checked:
+                settings_dict[key] = True
+            else:
+                settings_dict[key] = False
+        return settings_dict
+
+
