@@ -285,6 +285,13 @@ class Ui_Form(object):
 
         self.horzontal_layout_action_buttons = QHBoxLayout()
         self.horzontal_layout_action_buttons.setObjectName(u"horzontal_layout_action_buttons")
+        self.button_settings = QPushButton(Form)
+        self.button_settings.setObjectName(u"button_settings")
+        self.button_settings.setMinimumSize(QSize(24, 24))
+        self.button_settings.setMaximumSize(QSize(24, 24))
+
+        self.horzontal_layout_action_buttons.addWidget(self.button_settings)
+
         self.horizontal_spacer_action_buttons = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horzontal_layout_action_buttons.addItem(self.horizontal_spacer_action_buttons)
@@ -341,6 +348,7 @@ class Ui_Form(object):
         ___qtablewidgetitem5.setText(QCoreApplication.translate("Form", u"Wert", None));
         ___qtablewidgetitem6 = self.table_widget_value.horizontalHeaderItem(1)
         ___qtablewidgetitem6.setText(QCoreApplication.translate("Form", u"Anzahl", None));
+        self.button_settings.setText("")
         self.button_abort.setText(QCoreApplication.translate("Form", u"Abbrechen", None))
         self.button_run.setText(QCoreApplication.translate("Form", u"IFC Einlesen", None))
     # retranslateUi

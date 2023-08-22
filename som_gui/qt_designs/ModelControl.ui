@@ -478,6 +478,25 @@
    <item>
     <layout class="QHBoxLayout" name="horzontal_layout_action_buttons">
      <item>
+      <widget class="QPushButton" name="button_settings">
+       <property name="minimumSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontal_spacer_action_buttons">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
