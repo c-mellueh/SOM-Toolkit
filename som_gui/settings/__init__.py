@@ -13,50 +13,15 @@ SEPERATOR_SECTION = "seperator"
 SEPERATOR_STATUS = "seperator_status"
 SEPERATOR = "seperator"
 GROUP_FOLDER = "group_folder_path"
+ATTRIBUTE_IMPORT_SECTION = "attribute_import"
+EXISTING_ATTRIBUTE_IMPORT = "existing"
+REGEX_ATTRIBUTE_IMPORT = "regex"
+RANGE_ATTRIBUTE_IMPORT = "range"
+COLOR_ATTTRIBUTE_IMPORT = "color"
 PATH_SEPERATOR = " ;"
 
-def reset_save_path():
-    path = get_save_path()
-    if os.path.isfile(path):
-        path = os.path.dirname(path)
-    set_save_path(path)
 
-
-def get_seperator_status() -> bool:
-    config_parser = get_config()
-    if config_parser.has_option(SEPERATOR_SECTION, SEPERATOR_STATUS):
-        value = config_parser.get(SEPERATOR_SECTION, SEPERATOR_STATUS)
-        if value is not None:
-            return eval(value)
-    return True
-
-
-def set_seperator_status(value: bool) -> None:
-    config_parser = get_config()
-    if not config_parser.has_section(SEPERATOR_SECTION):
-        config_parser.add_section(SEPERATOR_SECTION)
-    config_parser.set(SEPERATOR_SECTION, SEPERATOR_STATUS, str(value))
-    write_config(config_parser)
-
-
-def get_seperator() -> str:
-    config_parser = get_config()
-    if config_parser.has_option(SEPERATOR_SECTION, SEPERATOR):
-        value = config_parser.get(SEPERATOR_SECTION, SEPERATOR)
-        if value is not None:
-            return value
-    return ","
-
-
-def set_seperator(value: str) -> None:
-    config_parser = get_config()
-    if not config_parser.has_section(SEPERATOR_SECTION):
-        config_parser.add_section(SEPERATOR_SECTION)
-    config_parser.set(SEPERATOR_SECTION, SEPERATOR, str(value))
-    write_config(config_parser)
-
-
-def get_config() -> ConfigParser:
+def _get_config() -> ConfigParser:
     config = ConfigParser()
     parent_folder = os.path.dirname(CONFIG_PATH)
     if not os.path.exists(parent_folder):
@@ -69,68 +34,140 @@ def get_config() -> ConfigParser:
     return config
 
 
-def get_path(path: str) -> str|list|set:
-    section = PATHS_SECTION
-    config_parser = get_config()
-    if config_parser.has_option(section, path):
-        path = config_parser.get(section, path)
-
-        if path is not None:
-            if PATH_SEPERATOR in path:
-                return path.split(PATH_SEPERATOR)
-            return path
-    return ""
+def _get_path(value: str) -> str | list | set:
+    path = _get_string_setting(PATHS_SECTION,value)
+    if not path:
+        return ""
+    if PATH_SEPERATOR in path:
+        return path.split(PATH_SEPERATOR)
+    return path
 
 
-def set_path(path, value: str|list|set) -> None:
-    section = PATHS_SECTION
+def _set_path(path, value: str | list | set) -> None:
     if isinstance(value, (list, set)):
         value = PATH_SEPERATOR.join(value)
-    config_parser = get_config()
-    if not config_parser.has_section(section):
-        config_parser.add_section(section)
-    config_parser.set(section, path, value)
-    write_config(config_parser)
+    set_setting(PATHS_SECTION, path, value)
 
 
-def write_config(config_parser) -> None:
+def _write_config(config_parser) -> None:
     with open(CONFIG_PATH, "w") as f:
         config_parser.write(f)
 
 
+def _get_bool_setting(section:str, path:str) -> bool:
+    config_parser = _get_config()
+    if config_parser.has_option(section, path):
+        path = config_parser.get(section, path)
+        if path is not None:
+            return eval(path)
+    return False
+
+
+def set_setting(section:str, path:str, value) -> None:
+    config_parser = _get_config()
+    if not config_parser.has_section(section):
+        config_parser.add_section(section)
+    config_parser.set(section, path, str(value))
+    _write_config(config_parser)
+
+
+def _get_string_setting(section:str, path:str,default = "") -> str:
+    config_parser = _get_config()
+    if config_parser.has_option(section, path):
+        path = config_parser.get(section, path)
+        if path is not None:
+            return path
+    return ""
+
+
+def get_setting_attribute_import_existing() -> bool:
+    return _get_bool_setting(ATTRIBUTE_IMPORT_SECTION, EXISTING_ATTRIBUTE_IMPORT)
+
+
+def set_setting_attribute_import_existing(value: bool) -> None:
+    set_setting(ATTRIBUTE_IMPORT_SECTION, EXISTING_ATTRIBUTE_IMPORT, value)
+
+
+def get_setting_attribute_import_regex() -> bool:
+    return _get_bool_setting(ATTRIBUTE_IMPORT_SECTION, REGEX_ATTRIBUTE_IMPORT)
+
+
+def set_setting_attribute_import_regex(value: bool) -> None:
+    set_setting(ATTRIBUTE_IMPORT_SECTION, REGEX_ATTRIBUTE_IMPORT, value)
+
+
+def get_setting_attribute_import_range() -> bool:
+    return _get_bool_setting(ATTRIBUTE_IMPORT_SECTION, RANGE_ATTRIBUTE_IMPORT)
+
+
+def set_setting_attribute_import_range(value: bool) -> None:
+    set_setting(ATTRIBUTE_IMPORT_SECTION, RANGE_ATTRIBUTE_IMPORT, value)
+
+
+def get_setting_attribute_color() -> bool:
+    return _get_bool_setting(ATTRIBUTE_IMPORT_SECTION, COLOR_ATTTRIBUTE_IMPORT)
+
+
+def set_setting_attribute_color(value: bool) -> None:
+    set_setting(ATTRIBUTE_IMPORT_SECTION, COLOR_ATTTRIBUTE_IMPORT, value)
+
+
+def reset_save_path():
+    path = get_save_path()
+    if os.path.isfile(path):
+        path = os.path.dirname(path)
+    set_save_path(path)
+
+
+def get_seperator_status() -> bool:
+    return _get_bool_setting(SEPERATOR_SECTION, SEPERATOR_STATUS)
+
+
+def set_seperator_status(value: bool) -> None:
+    set_setting(SEPERATOR_SECTION, SEPERATOR_STATUS, value)
+
+
+def get_seperator() -> str:
+    return _get_string_setting(SEPERATOR_SECTION,SEPERATOR,",")
+
+
+def set_seperator(value: str) -> None:
+    set_setting(SEPERATOR_SECTION, SEPERATOR, value)
+
+
 def get_open_path() -> str:
-    return get_path(OPEN_PATH)
+    return _get_path(OPEN_PATH)
 
 
 def set_open_path(path) -> None:
-    set_path(OPEN_PATH, path)
+    _set_path(OPEN_PATH, path)
 
 
 def get_save_path() -> str:
-    return get_path(SAVE_PATH)
+    return _get_path(SAVE_PATH)
 
 
 def set_save_path(path) -> None:
-    set_path(SAVE_PATH, path)
+    _set_path(SAVE_PATH, path)
 
 
 def get_ifc_path() -> str:
-    return  get_path(IFC_PATH)
+    return  _get_path(IFC_PATH)
 
 
 def set_ifc_path(path) -> None:
-    set_path(IFC_PATH, path)
+    _set_path(IFC_PATH, path)
 
 
 def get_issue_path() -> str:
-    return get_path(ISSUE_PATH)
+    return _get_path(ISSUE_PATH)
 
 
 def set_issue_path(path) -> None:
-    set_path(ISSUE_PATH, path)
+    _set_path(ISSUE_PATH, path)
 
 def get_group_folder() -> str:
-    return get_path(GROUP_FOLDER)
+    return _get_path(GROUP_FOLDER)
 
 def set_group_folder(value) -> None:
-    set_path(GROUP_FOLDER,value)
+    _set_path(GROUP_FOLDER, value)

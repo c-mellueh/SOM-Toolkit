@@ -11,7 +11,7 @@ from SOMcreator import classes
 
 import logging
 import tqdm
-from som_gui.qt_designs import ui_GraphWindow
+from som_gui.qt_designs import ui_aggregation_window
 from .node import NodeProxy, Header, Frame, Connection, Circle
 from ...data import constants
 from ...icons import get_icon, get_reload_icon, get_search_icon
@@ -622,7 +622,7 @@ class AggregationWindow(QWidget):
 
         super(AggregationWindow, self).__init__()
         self.main_window:MainWindow = main_window
-        self.widget = ui_GraphWindow.Ui_GraphView()
+        self.widget = ui_aggregation_window.Ui_GraphView()
         self.widget.setupUi(self)
 
         self.view = AggregationView()

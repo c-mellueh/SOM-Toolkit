@@ -7,11 +7,13 @@ def get_icon() -> QIcon:
     icon_path = os.path.join(ICON_PATH, ICON_DICT["icon"])
     return QIcon(icon_path)
 
+def get_settings_icon() -> QIcon:
+    icon_path = os.path.join(ICON_PATH,ICON_DICT["settings"])
+    return QIcon(icon_path)
 
 def get_link_icon() -> QIcon:
     icon_path = os.path.join(ICON_PATH, ICON_DICT["link"])
     return QIcon(icon_path)
-
 
 def get_reload_icon() -> QIcon:
     icon_path = os.path.join(ICON_PATH, ICON_DICT["reload"])
@@ -25,4 +27,5 @@ ICON_PATH = os.path.dirname(__file__)
 ICON_DICT = {"icon": "icon.ico",
              "link": "link.png",
              "reload": "reload.svg",
-             "search": "search.png"}
+             "search": "search.png",
+             "settings": "setting.png"}

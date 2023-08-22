@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'ModelControl.ui'
+## Form generated from reading UI file 'AttributeImport.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -181,6 +181,7 @@ class Ui_Form(object):
         sizePolicy8.setHeightForWidth(self.table_widget_property_set.sizePolicy().hasHeightForWidth())
         self.table_widget_property_set.setSizePolicy(sizePolicy8)
         self.table_widget_property_set.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_widget_property_set.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table_widget_property_set.horizontalHeader().setMinimumSectionSize(30)
         self.table_widget_property_set.horizontalHeader().setDefaultSectionSize(100)
         self.table_widget_property_set.horizontalHeader().setProperty("showSortIndicator", True)
@@ -220,6 +221,7 @@ class Ui_Form(object):
         self.table_widget_attribute.setSizePolicy(sizePolicy8)
         self.table_widget_attribute.setAutoScroll(False)
         self.table_widget_attribute.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_widget_attribute.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table_widget_attribute.horizontalHeader().setCascadingSectionResizes(True)
         self.table_widget_attribute.horizontalHeader().setMinimumSectionSize(20)
         self.table_widget_attribute.horizontalHeader().setDefaultSectionSize(50)
@@ -272,6 +274,7 @@ class Ui_Form(object):
         sizePolicy7.setHeightForWidth(self.table_widget_value.sizePolicy().hasHeightForWidth())
         self.table_widget_value.setSizePolicy(sizePolicy7)
         self.table_widget_value.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_widget_value.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table_widget_value.horizontalHeader().setMinimumSectionSize(30)
         self.table_widget_value.horizontalHeader().setProperty("showSortIndicator", True)
         self.table_widget_value.horizontalHeader().setStretchLastSection(True)
@@ -285,6 +288,13 @@ class Ui_Form(object):
 
         self.horzontal_layout_action_buttons = QHBoxLayout()
         self.horzontal_layout_action_buttons.setObjectName(u"horzontal_layout_action_buttons")
+        self.button_settings = QPushButton(Form)
+        self.button_settings.setObjectName(u"button_settings")
+        self.button_settings.setMinimumSize(QSize(24, 24))
+        self.button_settings.setMaximumSize(QSize(24, 24))
+
+        self.horzontal_layout_action_buttons.addWidget(self.button_settings)
+
         self.horizontal_spacer_action_buttons = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horzontal_layout_action_buttons.addItem(self.horizontal_spacer_action_buttons)
@@ -341,6 +351,7 @@ class Ui_Form(object):
         ___qtablewidgetitem5.setText(QCoreApplication.translate("Form", u"Wert", None));
         ___qtablewidgetitem6 = self.table_widget_value.horizontalHeaderItem(1)
         ___qtablewidgetitem6.setText(QCoreApplication.translate("Form", u"Anzahl", None));
+        self.button_settings.setText("")
         self.button_abort.setText(QCoreApplication.translate("Form", u"Abbrechen", None))
         self.button_run.setText(QCoreApplication.translate("Form", u"IFC Einlesen", None))
     # retranslateUi
