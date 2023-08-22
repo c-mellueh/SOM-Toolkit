@@ -7,6 +7,7 @@ import SOMcreator.constants
 import ifcopenshell
 from PySide6.QtCore import QThreadPool,Qt
 from PySide6.QtWidgets import QWidget, QTableWidgetItem,QTableWidget,QDialog
+from PySide6.QtGui import QBrush
 from SOMcreator import classes
 from ifcopenshell.util.element import get_pset
 
@@ -39,7 +40,7 @@ class ModelControlWindow(QWidget):
             self.widget.button_run.clicked.connect(self.button_run_clicked)
             self.widget.button_settings.clicked.connect(self.settings_clicked)
             self.widget.button_settings.setIcon(get_settings_icon())
-
+            self.widget.button_abort.clicked.connect(self.abort_clicked)
         self.main_window = main_window
         super(ModelControlWindow, self).__init__()
         self.widget = ui_model_control.Ui_Form()
@@ -134,9 +135,11 @@ class ModelControlWindow(QWidget):
                     for value,[accept_bool,count] in value_dict.items():
                         if value not in values and accept_bool:
                             values.append(value)
+                            logging.info(f"Wert {value} wurde fuer {obj.name} -> {property_set.name}:{attribute.name} ergaenzt")
                     attribute.value = values
 
         self.reset()
+        self.hide()
 
     def reset(self):
         self.show_items(False)
@@ -147,7 +150,9 @@ class ModelControlWindow(QWidget):
         check_box = self.widget.check_box_values
         check_box.setTristate(False)
         for row in range(self.widget.table_widget_value.rowCount()):
-            self.widget.table_widget_value.item(row,0).setCheckState(check_box.checkState())
+            item  = self.widget.table_widget_value.item(row,0)
+            item.setCheckState(check_box.checkState())
+            self.value_item_changed(item,update_value_checkbox=False)
 
     def update_value_checkbox(self):
         accept_bool = list()
@@ -173,7 +178,7 @@ class ModelControlWindow(QWidget):
     def max_objects(self) -> int:
         return len(self.object_list)
 
-    def value_item_changed(self,item:ValueItem):
+    def value_item_changed(self,item:ValueItem,update_value_checkbox = True):
         if not isinstance(item,ValueItem):
             return
         attribute = item.parent_item.attribute
@@ -183,8 +188,8 @@ class ModelControlWindow(QWidget):
             self.data_dict[obj][property_set][attribute][item.value][0] = True
         else:
             self.data_dict[obj][property_set][attribute][item.value][0] = False
-
-        self.update_value_checkbox()
+        if update_value_checkbox:
+            self.update_value_checkbox()
 
     def next_object_clicked(self):
         self.display_object_by_index(self.current_index+1)
@@ -212,7 +217,6 @@ class ModelControlWindow(QWidget):
             self.resize(geometry.width(), 100)
         self.setGeometry(geometry)
 
-
     def ifc_clicked(self):
         path = ifc_mod_window.ifc_file_dialog(self, self.widget.line_edit_ifc)
         if path is None:
@@ -238,11 +242,17 @@ class ModelControlWindow(QWidget):
         self.show_items(False)
         self.widget.progress_bar.show()
 
-    def on_finished(self):
+    def on_finished(self,value):
         self.task_status = 2
         self.show_items(True)
         self.widget.button_run.setEnabled(True)
         self.widget.button_run.setText("Werte übernehmen")
+        self.widget.progress_bar.hide()
+        self.widget.label_status.hide()
+
+        if value == ifc_mod_window.ABORT:
+            self.abort_clicked()
+            return
 
         self.data_dict = self.runner.data_dict
         self.count_dict = self.runner.count_dict
@@ -250,8 +260,7 @@ class ModelControlWindow(QWidget):
         objects = [ObjectCollection(obj,self,pset_dict,self.count_dict) for obj,pset_dict in self.data_dict.items()]
         self.object_list = sorted(list(objects),key = lambda obj:obj.name)
         self.display_object_by_index(0)
-        self.widget.progress_bar.hide()
-        self.widget.label_status.hide()
+
 
     def display_object_by_index(self,index:int):
         self.current_index= index
@@ -286,7 +295,16 @@ class ModelControlWindow(QWidget):
         runner.signaller.finished.connect(self.on_finished)
         runner.signaller.progress.connect(self.widget.progress_bar.setValue)
         runner.signaller.status.connect(self.update_status)
-        self.widget.button_abort.clicked.connect(runner.abort)
+
+
+    def abort_clicked(self):
+
+        if self.task_status == 1:
+            self.runner.abort()
+            self.reset()
+        else:
+            self.reset()
+            self.hide()
 
 
 class ModelControlRunner(ifc_mod_window.IfcRunner):
@@ -300,29 +318,30 @@ class ModelControlRunner(ifc_mod_window.IfcRunner):
                                                  function_name)
 
     def run_file_function(self, file_path):
+        def is_real_layer(entity:ifcopenshell.entity_instance) -> bool:
+            """filter that checks if layer is just grouping layer"""
+            def get_parent_groups(internal_entity: ifcopenshell.entity_instance):
+                parents = set()
+                for rel in getattr(internal_entity, "HasAssignments", []):
+                    if rel.is_a("IfcRelAssignsToGroup"):
+                        parents.add(rel[6])
+                return parents
 
-        def get_parent_groups(entity:ifcopenshell.entity_instance):
-            parents = set()
-            for rel in getattr(entity, "HasAssignments", []):
-                if rel.is_a("IfcRelAssignsToGroup"):
-                    parents.add(rel[6])
-            return parents
+            def get_layers(internal_entity: ifcopenshell.entity_instance) -> set[int]:
+                parent_groups = get_parent_groups(internal_entity)
+                layers = set()
 
-        def get_layers(entity:ifcopenshell.entity_instance) -> set[int]:
-            parent_groups = get_parent_groups(entity)
-            layers = set()
+                if not parent_groups:
+                    layers.add(0)
+                    return layers
 
-            if not parent_groups:
-                layers.add(0)
+                for parent in parent_groups:
+                    for layer in get_layers(parent):
+                        layers.add(layer + 1)
+
                 return layers
 
-            for parent in parent_groups:
-                for layer in get_layers(parent):
-                    layers.add(layer+1)
 
-            return layers
-
-        def is_real_layer(entity:ifcopenshell.entity_instance) -> bool:
             layers = get_layers(entity)
             values = [layer%2==0 for layer in layers]
             if all(values):
@@ -333,7 +352,10 @@ class ModelControlRunner(ifc_mod_window.IfcRunner):
                 return True
 
         def create_data_dict(elements):
+
             def check_entity(d_dict, entity: ifcopenshell.entity_instance):
+                if self.is_aborted:
+                    return
                 ident = get_identifier(entity, self.main_pset, self.main_attribute)
                 obj = bk_dict.get(ident)
                 if obj is None:
@@ -368,11 +390,19 @@ class ModelControlRunner(ifc_mod_window.IfcRunner):
                 value = ifc_pset_dict.get(attribute_name)
                 if value is None:
                     return
+
+                check_state = STANDARD_CHECK_STATE
                 if value in attribute.value:
+                    if add_existing:
+                        check_state = True
+                    else:
+                        return
+
+
+                if attribute.value_type == SOMcreator.constants.RANGE and not add_range:
                     return
 
-                if attribute.value_type != SOMcreator.constants.LIST:
-                    print(attribute.value_type)
+                if attribute.value_type == SOMcreator.constants.FORMAT and not add_regex:
                     return
 
                 if attribute not in sub_dict:
@@ -383,19 +413,24 @@ class ModelControlRunner(ifc_mod_window.IfcRunner):
 
 
                 if value not in sub_dict[attribute]:
-                    sub_dict[attribute][value] = [STANDARD_CHECK_STATE,1]
+                    sub_dict[attribute][value] = [check_state,1]
                 else:
                     sub_dict[attribute][value][1]+=1
 
+            add_existing = settings.get_setting_attribute_import_existing()
+            add_range = settings.get_setting_attribute_import_range()
+            add_regex = settings.get_setting_attribute_import_regex()
             dd = dict()
             count_dict = dict()
             element_count = len(elements)
 
             for index, element in enumerate(elements, start=1):
+                if self.is_aborted:
+                    return None,None
                 if index % 10 == 0:
                     self.signaller.status.emit(f"Check {index}/{element_count}")
-                progress = index / element_count * 100
-                self.signaller.progress.emit(progress)
+                    progress = index / element_count * 100
+                    self.signaller.progress.emit(progress)
                 check_entity(dd, element)
 
             return dd,count_dict
@@ -406,6 +441,8 @@ class ModelControlRunner(ifc_mod_window.IfcRunner):
         groups = list(filter(is_real_layer,groups))
         bk_dict: dict[str, classes.Object] = {obj.ident_value: obj for obj in self.project.objects}
         data_dict,count_dict = create_data_dict(entities + groups)
+        if self.is_aborted:
+            return
         self.data_dict.update(data_dict)
         self.count_dict.update(count_dict)
 
@@ -439,7 +476,7 @@ class PropertySetItem(QTableWidgetItem):
         self.property_set = property_set
         self.parent_item = parent_item
         self.count = self.parent_item.count_dict[self.property_set]
-        self.attribute_dict = attribute_dict
+        self.attribute_dict:dict[classes.Attribute,dict] = attribute_dict
         self.setText(str(text))
         self.window:ModelControlWindow = self.parent_item.window
 
@@ -452,11 +489,31 @@ class PropertySetItem(QTableWidgetItem):
         self.window.reset_table(self.window.widget.table_widget_value)
         self.window.widget.label_attributes.setText(f"Attribute [{self.property_set.name}]")
 
+
+        color_cells = settings.get_setting_attribute_color()
         attribute_table_widget.setRowCount(len(self.attribute_dict))
-        for row,(attribute,value_dict) in enumerate(self.attribute_dict.items()):
-            attribute_table_widget.setItem(row, 0, AttributeItem(self,attribute,value_dict,attribute.name))
-            attribute_table_widget.setItem(row, 1, AttributeItem(self,attribute,value_dict,self.parent_item.count_dict[attribute]))
-            attribute_table_widget.setItem(row, 2, AttributeItem(self,attribute,value_dict,str(len(value_dict))))
+        only_single_attribute_color = QBrush("#f5a9b8")
+        all_different_color = QBrush("#5bcffa")
+
+        for row,(attribute,value_dict) in enumerate(sorted(self.attribute_dict.items(),key=lambda x:x[0].name)):
+            count = self.parent_item.count_dict[attribute]
+            distinct_count = len(value_dict)
+            items = list()
+            items.append(AttributeItem(self,attribute,value_dict,attribute.name))
+            items.append(AttributeItem(self,attribute,value_dict,str(count)))
+            items.append(AttributeItem(self,attribute,value_dict,str(distinct_count)))
+            for index,item in enumerate(items):
+                attribute_table_widget.setItem(row,index,item)
+
+            if count == 1:
+                continue
+            if distinct_count == 1 and color_cells:
+                for item in items:
+                    item.setBackground(only_single_attribute_color)
+
+            if distinct_count == count and color_cells:
+                for item in items:
+                    item.setBackground(all_different_color)
 
 
 class AttributeItem(QTableWidgetItem):
@@ -492,8 +549,6 @@ class ValueItem(QTableWidgetItem):
             self.setCheckState(Qt.CheckState.Checked)
         else:
             self.setCheckState(Qt.CheckState.Unchecked)
-
-
 
 
 class SettingsDialog(QDialog):

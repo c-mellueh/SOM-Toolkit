@@ -261,6 +261,9 @@
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
          <attribute name="horizontalHeaderMinimumSectionSize">
           <number>30</number>
          </attribute>
@@ -333,6 +336,9 @@
          </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
          </property>
          <attribute name="horizontalHeaderCascadingSectionResizes">
           <bool>true</bool>
@@ -446,6 +452,9 @@
          </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
          </property>
          <attribute name="horizontalHeaderMinimumSectionSize">
           <number>30</number>
