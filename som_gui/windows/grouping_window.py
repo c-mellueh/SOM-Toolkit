@@ -237,7 +237,10 @@ class Grouping(IfcRunner):
                           self.identity_attribute: "_".join(identity)}
             create_ifc_pset(self.main_pset, attributes, ifc_group)
 
-            attributes = {self.group_attribute: "_".join(identity[:-1])}
+            if is_sammler:
+                attributes = {self.group_attribute: "_".join(identity[:-1])}
+            else:
+                attributes = {self.group_attribute: "_".join(identity[:-2])}
             create_ifc_pset(self.group_pset, attributes, ifc_group)
 
             if parent is not None:
@@ -247,7 +250,7 @@ class Grouping(IfcRunner):
             return ifc_group
 
         for abbreviation in structure[GROUP]:
-            if self.is_aborted:
+            if self.is_aborted: #on Abort press
                 return
             ifc_rep = structure[GROUP][abbreviation][IFC_REP]
             new_id_gruppe = id_gruppe + [abbreviation]
