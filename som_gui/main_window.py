@@ -17,7 +17,7 @@ from .qt_designs import ui_project_settings
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import  property_widget, object_widget
 from som_gui.windows.aggregation_view import aggregation_window
-from .windows import predefined_psets_window, propertyset_window, mapping_window, popups, modelcheck_window, grouping_window, attribute_import_window
+from .windows import predefined_psets_window, propertyset_window, mapping_window, popups, modelcheck_window, grouping_window, attribute_import_window,project_phase_window
 from . import settings, __version__
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
@@ -57,6 +57,8 @@ class MainWindow(QMainWindow):
             self.ui.action_modelcheck.triggered.connect(self.run_modelcheck)
             self.ui.action_create_groups.triggered.connect(self.run_groups)
             self.ui.action_model_control.triggered.connect(self.run_model_control)
+            self.ui.action_project_phase.triggered.connect(self.run_project_phase_window)
+
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -84,7 +86,8 @@ class MainWindow(QMainWindow):
         self.mapping_window = None
         self.modelcheck_window: modelcheck_window.ModelcheckWindow|None = None
         self.group_window: grouping_window.GroupingWindow|None = None
-        self.model_control_window: model_control_window.AttributeImport | None = None
+        self.model_control_window: attribute_import_window.AttributeImport | None = None
+        self.project_phase_window: project_phase_window.ProjectPhaseWindow|None = None
         self.project = classes.Project("Project", "")
 
         # init object and ProertyWidget
@@ -102,6 +105,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(text)
         self.permanent_status_text.setText(f"{self.project.name} v{self.project.version}")
         return text
+
+    def run_project_phase_window(self):
+        if self.project_phase_window is None:
+            self.project_phase_window = project_phase_window.ProjectPhaseWindow(self)
+        self.project_phase_window.show()
 
     def run_groups(self):
         if self.group_window is None:

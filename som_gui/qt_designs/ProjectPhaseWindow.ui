@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1022</width>
+    <height>510</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Leistungsphase</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTreeWidget" name="treeWidget">
+     <column>
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>LP1</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>LP2</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>LP3</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>LP4</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>LP5</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>LP6</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>LP7</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>LP8</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>LP9</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

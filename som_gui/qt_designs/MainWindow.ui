@@ -450,6 +450,7 @@
     <addaction name="action_settings"/>
     <addaction name="menuExport"/>
     <addaction name="action_mapping"/>
+    <addaction name="action_project_phase"/>
    </widget>
    <widget class="QMenu" name="menuDesite">
     <property name="toolTip">
@@ -638,6 +639,11 @@
   <action name="action_model_control">
    <property name="text">
     <string>Modellinformationen einlesen</string>
+   </property>
+  </action>
+  <action name="action_project_phase">
+   <property name="text">
+    <string>Leistungsphase</string>
    </property>
   </action>
  </widget>
