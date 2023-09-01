@@ -108,7 +108,9 @@ def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_at
     if obj_rep is None:
         issues.ident_unknown(database_path, guid, main_pset, main_attribute, element_type, bauteil_klassifikation)
         return
-
+    if not is_in_group:
+        if obj_rep.aggregations:
+            issues.no_group_issue(database_path, element)
     check_for_attributes(psets, obj_rep)
 
 

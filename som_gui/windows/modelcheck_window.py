@@ -180,9 +180,9 @@ class Modelcheck(IfcRunner):
             if self.is_aborted:
                 return
             self.increment_progress(test_text,1)
-            issues.no_group_issue(self.data_base_path, entity)
+
             modelcheck.check_element(entity, self.main_pset, self.main_attribute, self.data_base_path, self.base_name,
-                                     self.ident_dict, modelcheck.ELEMENT, self.project.name)
+                                     self.ident_dict, modelcheck.ELEMENT, self.project.name,False)
 
     def create_issues(self):
         def get_max_width():
@@ -306,9 +306,6 @@ class Modelcheck(IfcRunner):
             return
 
         self.increment_progress("Prüfe Elemente mit Gruppenzuordnung")
-
-
-
         logging.info(f"Check Element {element.GlobalId}")
 
         identifier = modelcheck.get_identifier(element, self.main_pset, self.main_attribute)
