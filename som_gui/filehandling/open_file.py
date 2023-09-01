@@ -62,11 +62,7 @@ def get_path(main_window: MainWindow, title: str, file_text: str) -> str:
         cur_path = os.getcwd() + "/"
     return QFileDialog.getOpenFileName(main_window, title, str(cur_path), file_text)[0]
 
-def open_file_clicked(main_window: MainWindow) -> None:
-    path = get_path(main_window, "Open Project", FILETYPE)
-    if not path:
-        return
-
+def import_data(main_window:MainWindow,path:str):
     settings.set_open_path(path)
     settings.set_save_path(path)
     main_dict = main_window.project.open(path)
@@ -74,3 +70,10 @@ def open_file_clicked(main_window: MainWindow) -> None:
     fill_ui(main_window)
     check_for_objects_without_aggregation(main_window.project)
     logging.info(f"Import Done!")
+
+def open_file_clicked(main_window: MainWindow) -> None:
+    path = get_path(main_window, "Open Project", FILETYPE)
+    if not path:
+        return
+
+    import_data(main_window,path)

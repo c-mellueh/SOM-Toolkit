@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1022</width>
-    <height>510</height>
+    <width>1341</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,57 +15,119 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTreeWidget" name="treeWidget">
-     <column>
-      <property name="text">
-       <string>Name</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>LP1</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>LP2</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>LP3</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>LP4</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>LP5</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>LP6</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>LP7</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>LP8</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>LP9</string>
-      </property>
-     </column>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QTreeWidget" name="object_tree">
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Identifier</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP1</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP5</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP6</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP7</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP8</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP9</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTreeWidget" name="property_set_tree">
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP1</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP2</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP3</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP4</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP5</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP6</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP7</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP8</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>LP9</string>
+       </property>
+      </column>
+     </widget>
     </widget>
    </item>
    <item>

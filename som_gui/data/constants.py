@@ -28,7 +28,7 @@ XS_INT = "xs:int"
 XS_LONG = "xs:long"
 
 DATA_TYPES = [XS_STRING,XS_LONG,XS_INT,XS_DOUBLE,XS_BOOLEAN]
-
+PROJECT_PHASE_COUNT = 9
 RANGE_STRINGS = ["Range", "range", "RANGE",GER_RANGE]
 VALUE_TYPE_LOOKUP = {GER_VALUE: "Value", GER_FORMAT: "Format", GER_RANGE: "Range", GER_LIST: "List",
                      VALUE: "Value", FORMAT: "Format", RANGE: "Range", LIST: "List", }

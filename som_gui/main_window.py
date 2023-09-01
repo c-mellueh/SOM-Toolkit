@@ -8,7 +8,7 @@ import json
 
 from PySide6 import QtCore, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QCompleter, QDialog, QTableWidget, QInputDialog, QLineEdit,QFileDialog,QLabel
-from SOMcreator import classes, desite,vestra,card1,filehandling,allplan
+from SOMcreator import classes, desite,vestra,card1,allplan
 from SOMcreator import excel as som_excel
 from . import icons
 from . import logs
@@ -31,7 +31,7 @@ def start_log() -> None:
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, app):
+    def __init__(self, app,open_file_path:str|None):
         def connect():
             # connect Menubar signals
             self.ui.action_file_Open.triggered.connect(self.open_file_clicked)
@@ -99,6 +99,8 @@ class MainWindow(QMainWindow):
         self.permanent_status_text = QLabel()
         self.ui.statusbar.addWidget(self.permanent_status_text)
         self.generate_window_title()
+        if open_file_path is not None:
+            open_file.import_data(self,open_file_path)
 
     def generate_window_title(self) -> str:
         text = f"SOM-Toolkit v{__version__}"
@@ -405,7 +407,7 @@ class MainWindow(QMainWindow):
             return
 
         project = self.project
-        filehandling.create_mapping_script(project, name, path)
+        project.create_mapping_script(name, path)
 
     def export_allplan_excel(self) -> None:
         file_text = "Excel Files (*.xlsx);;"
@@ -430,12 +432,12 @@ class MainWindow(QMainWindow):
             with open(path, "w") as file:
                 json.dump(abbrev, file, indent=2)
 
-def main():
+def main(initial_file:str|None = None):
     start_log()
     global app
     app = QApplication(sys.argv)
 
-    window = MainWindow(app)
+    window = MainWindow(app,initial_file)
     window.show()
     window.resize(1200, 550)
 
