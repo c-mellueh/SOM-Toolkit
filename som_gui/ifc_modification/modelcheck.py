@@ -36,7 +36,9 @@ def get_identifier(el: entity_instance, main_pset: str, main_attribute: str) -> 
     return ifc_el.get_pset(el, main_pset, main_attribute)
 
 
-def check_element(element, ag, bk, db_name, file_name, ident_dict, element_type, project_name):
+def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_attribute: str, database_path: str,
+                  ifc_name: str, ident_dict: dict[str, SOMcreator.Object], element_type: str, project_name: str,
+                  is_in_group=True):
     def check_values(value, attribute: SOMcreator.Attribute):
         check_dict = {som_constants.LIST: check_list, som_constants.RANGE: check_range,
                       som_constants.FORMAT: check_format}
@@ -47,7 +49,7 @@ def check_element(element, ag, bk, db_name, file_name, ident_dict, element_type,
     def check_datatype(value, attribute):
         data_type = datatype_dict[attribute.data_type]
         if not isinstance(value, data_type):
-            issues.datatype_issue(db_name, guid, attribute, element_type, rev_datatype_dict[type(value)])
+            issues.datatype_issue(database_path, guid, attribute, element_type, rev_datatype_dict[type(value)])
 
     def check_format(value, attribute):
         is_ok = False
@@ -55,13 +57,13 @@ def check_element(element, ag, bk, db_name, file_name, ident_dict, element_type,
             if re.match(form, value) is not None:
                 is_ok = True
         if not is_ok:
-            issues.format_issue(db_name, guid, attribute, element_type)
+            issues.format_issue(database_path, guid, attribute, element_type)
 
     def check_list(value, attribute):
         if not attribute.value:
             return
         if value not in attribute.value:
-            issues.list_issue(db_name, guid, attribute, element_type)
+            issues.list_issue(database_path, guid, attribute, element_type)
 
     def check_range(value, attribute):
         is_ok = False
@@ -69,20 +71,20 @@ def check_element(element, ag, bk, db_name, file_name, ident_dict, element_type,
             if min(possible_range) <= value <= max(possible_range):
                 is_ok = True
         if not is_ok:
-            issues.range_issue(db_name, guid, attribute, element_type)
+            issues.range_issue(database_path, guid, attribute, element_type)
 
     def check_for_attributes(pset_dict, obj: SOMcreator.Object):
         guid = element.GlobalId
         for property_set in obj.property_sets:
             pset_name = property_set.name
             if pset_name not in pset_dict:
-                issues.property_set_issue(db_name, guid, pset_name, element_type)
+                issues.property_set_issue(database_path, guid, pset_name, element_type)
                 continue
 
             for attribute in property_set.attributes:
                 attribute_name = attribute.name
                 if attribute.name not in pset_dict[pset_name]:
-                    issues.attribute_issue(db_name, guid, pset_name, attribute_name, element_type)
+                    issues.attribute_issue(database_path, guid, pset_name, attribute_name, element_type)
                     continue
 
                 value = pset_dict[pset_name][attribute_name]
@@ -90,23 +92,25 @@ def check_element(element, ag, bk, db_name, file_name, ident_dict, element_type,
 
     guid = element.GlobalId
     psets = ifc_el.get_psets(element)
-    ag_pset = psets.get(ag)
+    ag_pset = psets.get(main_pset)
     if ag_pset is None:
-        issues.ident_pset_issue(db_name, guid, ag, element_type)
-        db_create_entity(db_name, element, project_name, file_name, "")
+        issues.ident_pset_issue(database_path, guid, main_pset, element_type)
+        db_create_entity(database_path, element, project_name, ifc_name, "")
         return
 
-    bauteil_klassifikation = ag_pset.get(bk)
+    bauteil_klassifikation = ag_pset.get(main_attribute)
     if bauteil_klassifikation is None:
-        issues.ident_issue(db_name, guid, ag, bk, element_type)
-        db_create_entity(db_name, element, project_name, file_name, "")
+        issues.ident_issue(database_path, guid, main_pset, main_attribute, element_type)
+        db_create_entity(database_path, element, project_name, ifc_name, "")
         return
-    obj_rep = ident_dict.get(bauteil_klassifikation)
-    db_create_entity(db_name, element, project_name, file_name, bauteil_klassifikation)
+    obj_rep: SOMcreator.Object = ident_dict.get(bauteil_klassifikation)
+    db_create_entity(database_path, element, project_name, ifc_name, bauteil_klassifikation)
     if obj_rep is None:
-        issues.ident_unknown(db_name, guid, ag, bk, element_type, bauteil_klassifikation)
+        issues.ident_unknown(database_path, guid, main_pset, main_attribute, element_type, bauteil_klassifikation)
         return
-
+    if not is_in_group:
+        if obj_rep.aggregations:
+            issues.no_group_issue(database_path, element)
     check_for_attributes(psets, obj_rep)
 
 
