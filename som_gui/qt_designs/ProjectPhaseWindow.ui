@@ -76,57 +76,19 @@
        </property>
       </column>
      </widget>
-     <widget class="QTreeWidget" name="property_set_tree">
-      <column>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>LP1</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>LP2</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>LP3</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>LP4</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>LP5</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>LP6</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>LP7</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>LP8</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>LP9</string>
-       </property>
-      </column>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_object">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTreeView" name="property_set_tree"/>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
