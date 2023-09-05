@@ -219,10 +219,12 @@ def init(main_window: MainWindow):
     main_window.search_shortcut = QShortcut(QKeySequence('Ctrl+F'), main_window)
     connect_items()
 
-def update_completer(main_window:MainWindow):
+
+def update_completer(main_window: MainWindow):
     completer = QCompleter(property_widget.predefined_pset_list(main_window), main_window)
     main_window.ui.lineEdit_ident_pSet.setCompleter(completer)
     main_window.ui.lineEdit_pSet_name.setCompleter(completer)
+
 
 def fill_tree(main_window: MainWindow) -> None:
     root_item = main_window.object_tree.invisibleRootItem()
@@ -264,7 +266,12 @@ def all_equal(iterator):
 
 
 def clear_object_input(main_window: MainWindow):
-    for el in main_window.obj_line_edit_list:
+    obj_line_edit_list = [main_window.ui.line_edit_object_name,
+                          main_window.ui.lineEdit_ident_value,
+                          main_window.ui.lineEdit_ident_attribute,
+                          main_window.ui.lineEdit_ident_pSet,
+                          main_window.ui.line_edit_abbreviation]
+    for el in obj_line_edit_list:
         el.clear()
 
 

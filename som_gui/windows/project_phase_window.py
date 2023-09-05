@@ -158,7 +158,6 @@ class ProjectPhaseWindow(QWidget):
         resize_tree(self.widget.object_tree)
         resize_tree_view(self.widget.property_set_tree)
 
-
     def fill_object_tree(self) -> None:
         project = self.main_window.project
         tree = self.widget.object_tree

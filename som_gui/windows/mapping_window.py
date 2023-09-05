@@ -11,6 +11,7 @@ from .. import icons
 from ..qt_designs import ui_mapping_window
 from ..widgets import object_widget
 from ..windows import popups
+from ..windows.aggregation_view.aggregation_window import AggregationWindow
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
@@ -29,8 +30,6 @@ class MappingWindow(QMainWindow):
             self.widget.action_ifc.triggered.connect(self.export_if_mapping)
             self.widget.action_shared_parameters.triggered.connect(self.export_shared_parameters)
 
-
-
         super().__init__()
 
         self.widget = ui_mapping_window.Ui_Form()
@@ -44,7 +43,6 @@ class MappingWindow(QMainWindow):
         self.export_folder = None
 
         self._active_object_item: None | object_widget.CustomObjectTreeItem = None
-        self._active_attribute_item: None | graphs_window.CustomAttribTreeItem = None
         self.active_object: None | classes.Object = None
         self.pset_trees: dict[classes.Object:list[PsetTreeItem]] = dict()
 
@@ -58,22 +56,10 @@ class MappingWindow(QMainWindow):
         return self._active_object_item
 
     @active_object_item.setter
-    def active_object_item(self, value: object_widget.CustomObjectTreeItem):
+    def active_object_item(self, value: object_widget.CustomObjectTreeItem) -> None:
         self._active_object_item = value
         self.active_object = value.object
         self.object_name_label.setText(self.active_object.name)
-
-    @property
-    def active_attribute_item(self) -> graphs_window.CustomAttribTreeItem | None:
-        return self._active_attribute_item
-
-    @active_attribute_item.setter
-    def active_attribute_item(self, value: graphs_window.CustomAttribTreeItem | None) -> None:
-        if value is None:
-            self.pset_tree.setEnabled(False)
-        else:
-            self.pset_tree.setEnabled(True)
-            self._active_attribute_item = value
 
     def fill_object_table(self) -> None:
         def copy_children(orig_item: object_widget.CustomObjectTreeItem, new_item: ObjectTreeItem):

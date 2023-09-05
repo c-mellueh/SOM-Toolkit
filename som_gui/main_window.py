@@ -43,55 +43,46 @@ class MainWindow(QMainWindow):
             self.ui.action_project_phase.triggered.connect(self.open_project_phase_window)
 
         super(MainWindow, self).__init__()
+
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.app = application
-        self.ui.button_search.setIcon(icons.get_search_icon())
-
-        self.parent_property_window = predefined_psets_window.open_pset_list(self)
-        self.parent_property_window.hide()
-        self.pset_window: None | propertyset_window.PropertySetWindow = None
-        self.obj_line_edit_list = [self.ui.line_edit_object_name,
-                                   self.ui.lineEdit_ident_value,
-                                   self.ui.lineEdit_ident_attribute,
-                                   self.ui.lineEdit_ident_pSet,
-                                   self.ui.line_edit_abbreviation]
 
         # variables
-        self.icon = icons.get_icon()
-        self.search_ui: popups.ObjectSearchWindow | popups.AttributeSearchWindow | None = None
-        self.object_info_widget: object_widget.ObjectInfoWidget | None = None
-
-        self.setWindowIcon(self.icon)
         self.active_object: classes.Object | None = None
-        self.graph_window = aggregation_window.AggregationWindow(self)
-        self.mapping_window = None
-        self.modelcheck_window: modelcheck_window.ModelcheckWindow | None = None
+        self.project = classes.Project("Project", "")
+        self.permanent_status_text = QLabel()
+
+        # Windows
         self.group_window: grouping_window.GroupingWindow | None = None
         self.model_control_window: attribute_import_window.AttributeImport | None = None
         self.project_phase_window: project_phase_window.ProjectPhaseWindow | None = None
-        self.project = classes.Project("Project", "")
+        self.graph_window = aggregation_window.AggregationWindow(self)
+        self.mapping_window = None
+        self.modelcheck_window: modelcheck_window.ModelcheckWindow | None = None
+        self.search_ui: popups.ObjectSearchWindow | popups.AttributeSearchWindow | None = None
+        self.object_info_widget: object_widget.ObjectInfoWidget | None = None
+        self.parent_property_window:predefined_psets_window.PropertySetInherWindow|None = None
+        self.pset_window: None | propertyset_window.PropertySetWindow = None
 
-        # init object and ProertyWidget
+        # init Object- and PropertyWidget
         object_widget.init(self)
         property_widget.init(self)
         connect()
         settings.reset_save_path()
-
-        self.permanent_status_text = QLabel()
         self.ui.statusbar.addWidget(self.permanent_status_text)
         self.generate_window_title()
-        if open_file_path is not None:
-            open_file.import_data(self,open_file_path)
 
-    def generate_window_title(self) -> str:
-        text = f"SOM-Toolkit v{__version__}"
-        self.setWindowTitle(text)
-        self.permanent_status_text.setText(f"{self.project.name} v{self.project.version}")
-        return text
+        #Icons
+        self.setWindowIcon(icons.get_icon())
+        self.ui.button_search.setIcon(icons.get_search_icon())
+
+        if open_file_path is not None:
+            open_file.import_data(self, open_file_path)
+
+# Windows
 
     def open_mapping_window(self):
-        # if self.mapping_window is None:
         self.mapping_window = mapping_window.MappingWindow(self)
         self.mapping_window.show()
 
@@ -113,14 +104,15 @@ class MainWindow(QMainWindow):
         else:
             self.model_control_window.show()
 
-    def open_run_project_phase_window(self):
+    def open_project_phase_window(self):
         if self.project_phase_window is None:
             self.project_phase_window = project_phase_window.ProjectPhaseWindow(self)
         self.project_phase_window.show()
 
     def open_predefined_pset_window(self):
-        if self.parent_property_window is not None:
-            self.parent_property_window.show()
+        if self.parent_property_window is None:
+            self.parent_property_window = predefined_psets_window.PropertySetInherWindow(self)
+        self.parent_property_window.show()
 
     def open_settings_window(self):
         settings_window.SettingsDialog(self)
@@ -157,3 +149,9 @@ class MainWindow(QMainWindow):
         object_widget.reload(self)
         predefined_psets_window.reload(self)
         property_widget.reload(self)
+
+    def generate_window_title(self) -> str:
+        text = f"SOM-Toolkit v{__version__}"
+        self.setWindowTitle(text)
+        self.permanent_status_text.setText(f"{self.project.name} v{self.project.version}")
+        return text
