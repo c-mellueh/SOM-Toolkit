@@ -7,6 +7,7 @@ CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.ini")
 PATHS_SECTION = "paths"
 OPEN_PATH = "open_path"
 SAVE_PATH = "save_path"
+EXPORT_PATH = "export_path"
 IFC_PATH = "ifc_path"
 ISSUE_PATH = "issue_path"
 SEPERATOR_SECTION = "seperator"
@@ -133,6 +134,14 @@ def get_seperator() -> str:
 
 def set_seperator(value: str) -> None:
     set_setting(SEPERATOR_SECTION, SEPERATOR, value)
+
+
+def get_export_path() -> str:
+    return _get_path(EXPORT_PATH)
+
+
+def set_export_path(path) -> None:
+    _set_path(EXPORT_PATH, path)
 
 
 def get_open_path() -> str:

@@ -129,15 +129,6 @@ class MainWindow(QMainWindow):
     def pset_table(self) -> QTableWidget:
         return self.ui.table_pset
 
-    @property
-    def export_path(self):
-        return self._export_path
-
-    @export_path.setter
-    def export_path(self, value):
-        self._save_path = value
-        self._export_path = value
-
     # Open / Close windows
     def closeEvent(self, event):
         action = save_file.close_event(self)
@@ -161,7 +152,6 @@ class MainWindow(QMainWindow):
     def export_desite_rules(self):
         path = export.get_path(self, "qa.xml")
         if path:
-            self.export_path = path
             desite.export_modelcheck(self.project, path)
 
 
