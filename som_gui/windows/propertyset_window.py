@@ -418,7 +418,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             if data_type == som_cr_constants.DATATYPE_NUMBER:  # transform text to number
                 for i, value in enumerate(values):
                     try:
-                        if self.widget.combo_type.currentText() == som_cr_constants.RANGE:
+                        if self.widget.combo_type.currentText() in constants.RANGE_STRINGS:
                             values[i] = [string_to_float(value[0]), string_to_float(value[1])]
                         else:
                             values[i] = string_to_float(value)
