@@ -11,6 +11,7 @@ from SOMcreator import classes, constants
 from .. import icons
 from ..qt_designs import ui_predefined_property_sets
 from ..windows import popups
+from ..widgets import object_widget,property_widget
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
@@ -86,13 +87,13 @@ class PropertySetInherWindow(QWidget):
         sel_items = self.widget.list_view_pset.selectedItems()
         if len(sel_items) == 1:
             item = self.widget.list_view_pset.selectedItems()[0]
-            self.main_window.open_pset_window(item.property_set, None, item.property_set.name)
+            property_widget.open_pset_window(self.main_window, item.property_set,None, item.property_set.name)
 
     def add_pset(self):
         item = PsetItem()
         self.widget.list_view_pset.addItem(item)
         self.widget.list_view_pset.setCurrentItem(item)
-        self.main_window.update_completer()
+        object_widget.update_completer(self.main_window)
         pass
 
     def remove_pset(self):
@@ -127,7 +128,7 @@ class PropertySetInherWindow(QWidget):
 
     def item_changed(self, item: PsetItem):
         item.property_set.name = item.text()
-        self.main_window.update_completer()
+        object_widget.update_completer(self.main_window)
         self.main_window.reload()
 
     def showEvent(self, event: QShowEvent) -> None:

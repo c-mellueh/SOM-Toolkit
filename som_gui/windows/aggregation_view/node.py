@@ -11,7 +11,7 @@ from SOMcreator import classes
 
 from ...data import constants
 from ...windows import popups
-
+from ...widgets import property_widget
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
     from .aggregation_window import AggregationScene, AggregationWindow
@@ -606,11 +606,11 @@ class CustomPsetTree(QTreeWidget):
 
         if isinstance(item, CustomPSetTreeItem):
             property_set = item.property_set
-            main_window.open_pset_window(property_set, self.object, None)
+            property_widget.open_pset_window(main_window, property_set, self.object, None)
 
         if isinstance(item, CustomAttribTreeItem):
             property_set = item.attribute.property_set
-            main_window.open_pset_window(property_set, self.object, None)
+            property_widget.open_pset_window(main_window, property_set, self.object, None)
             main_window.pset_window.fill_with_attribute(item.attribute)
 
 

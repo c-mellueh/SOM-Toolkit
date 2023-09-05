@@ -16,7 +16,7 @@ from .. import settings
 from . import ifc_mod_window
 from ..icons import get_icon,get_settings_icon
 from ..ifc_modification.modelcheck import get_identifier
-
+from ..widgets import property_widget
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
 
@@ -91,7 +91,7 @@ class AttributeImport(QWidget):
         property_set = attribute.property_set
         obj = property_set.object
         self.main_window.active_object = obj
-        self.main_window.open_pset_window(property_set,self. main_window.active_object, None)
+        property_widget.open_pset_window( self.main_window, property_set, self.main_window.active_object, None)
         self.main_window.pset_window.table_clicked(None,attribute)
 
     @property

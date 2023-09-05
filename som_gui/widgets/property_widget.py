@@ -10,7 +10,7 @@ from ..qt_designs import ui_mainwindow
 from ..windows import popups, propertyset_window
 from ..windows.popups import msg_del_ident_pset, msg_del_items
 from ..windows.propertyset_window import PropertySetWindow
-
+from . import object_widget
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
@@ -32,16 +32,16 @@ def get_parent_by_name(active_object: classes.Object, name: str) -> classes.Prop
 
 def init(main_window: MainWindow) -> None:
     def connect() -> None:
-        main_window.pset_table.itemClicked.connect(main_window.list_object_clicked)
-        main_window.pset_table.itemDoubleClicked.connect(main_window.list_object_double_clicked)
-        main_window.ui.table_attribute.itemDoubleClicked.connect(main_window.attribute_double_clicked)
-        main_window.ui.lineEdit_pSet_name.textChanged.connect(main_window.text_changed)
-        main_window.pset_table.customContextMenuRequested.connect(main_window.open_pset_menu)
-        main_window.ui.button_Pset_add.clicked.connect(main_window.add_pset)
+        main_window.pset_table.itemClicked.connect(lambda item: left_click(main_window, item))
+        main_window.pset_table.itemDoubleClicked.connect(lambda item: double_click(main_window,item))
+        main_window.ui.table_attribute.itemDoubleClicked.connect(lambda item: attribute_double_click(main_window, item))
+        main_window.ui.lineEdit_pSet_name.textChanged.connect(lambda text: text_changed(main_window,text))
+        main_window.pset_table.customContextMenuRequested.connect(lambda position: open_menu(main_window, position))
+        main_window.ui.button_Pset_add.clicked.connect(lambda: create_new_pset(main_window))
 
-    main_window.pset_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+    main_window.pset_table.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustToContents)
     main_window.ui.box_layout_pset.setEnabled(False)
-    main_window.set_right_window_enable(False)
+    set_enable(main_window,False)
     connect()
 
 
@@ -49,8 +49,8 @@ def open_menu(main_window: MainWindow, position: QPointF) -> None:
     menu = QMenu()
     main_window.action_pset_delete_attribute = menu.addAction("Delete")
     main_window.action_pset_rename_attribute = menu.addAction("Rename")
-    main_window.action_pset_delete_attribute.triggered.connect(main_window.delete_pset)
-    main_window.action_pset_rename_attribute.triggered.connect(main_window.rename_pset)
+    main_window.action_pset_delete_attribute.triggered.connect(lambda: delete_selection(main_window))
+    main_window.action_pset_rename_attribute.triggered.connect(lambda: rename(main_window))
     menu.exec(main_window.pset_table.viewport().mapToGlobal(position))
 
 
@@ -83,7 +83,7 @@ def clear_all(main_window: MainWindow) -> None:
         ui.table_attribute.removeRow(row)
 
     main_window.ui.lineEdit_pSet_name.clear()
-    main_window.set_right_window_enable(False)
+    set_enable(main_window,False)
     modify_title(main_window, main_window.ui.tab_code, "Code")
     modify_title(main_window, main_window.ui.tab_property_set, "PropertySet")
 
@@ -126,7 +126,7 @@ def rename(main_window: MainWindow) -> None:
         list_item.setText(new_name)
         main_window.pset_table.resizeColumnsToContents()
         selected_pset.name = new_name
-        main_window.reload_objects()
+        object_widget.reload(main_window)
 
 
 def text_changed(main_window: MainWindow, text: str) -> None:
@@ -159,18 +159,17 @@ def attribute_double_click(main_window: MainWindow, item: propertyset_window.Cus
     item: propertyset_window.CustomTableItem = item.tableWidget().item(item.row(), 0)
     attribute: classes.Attribute = item.linked_data
     property_set = attribute.property_set
-    main_window.open_pset_window(property_set, main_window.active_object, None)
+    open_pset_window(main_window, property_set, main_window.active_object, None)
     main_window.pset_window.table_clicked(item)
 
 
 def double_click(main_window: MainWindow, item: QTableWidgetItem) -> None:
-    main_window.list_object_clicked(item)
+    left_click(main_window, item)
     item: propertyset_window.CustomTableItem = main_window.pset_table.item(item.row(), 0)
     property_set: classes.PropertySet = item.linked_data
 
     # Open New Window
-    main_window.open_pset_window(property_set, main_window.active_object, None)
-
+    open_pset_window(main_window, property_set, main_window.active_object, None)
 
 def open_pset_window(main_window: MainWindow, property_set: classes.PropertySet,
                      active_object: classes.Object, window_title=None, ) -> None:
@@ -182,12 +181,10 @@ def open_pset_window(main_window: MainWindow, property_set: classes.PropertySet,
 
 
 def fill_table(main_window: MainWindow, obj: classes.Object) -> None:
-    main_window.set_right_window_enable(True)
+    set_enable(main_window,True)
     main_window.pset_table.setRowCount(0)
     property_sets = main_window.active_object.property_sets
-
     # find inherited Psets
-
     for pset in property_sets:
         add_pset_to_table(main_window, pset)
 
@@ -237,7 +234,7 @@ def create_new_pset(main_window: MainWindow) -> None:
         parent = get_parent_by_name(main_window.active_object, name)
 
     add_pset_to_table(main_window, name, parent)
-    main_window.text_changed(main_window.ui.lineEdit_pSet_name.text())
+    text_changed(main_window,main_window.ui.lineEdit_pSet_name.text())
 
 
 def reload(main_window: MainWindow) -> None:
