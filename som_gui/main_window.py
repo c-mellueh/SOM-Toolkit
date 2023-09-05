@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
         self.mapping_window = None
         self.modelcheck_window: modelcheck_window.ModelcheckWindow|None = None
         self.group_window: grouping_window.GroupingWindow|None = None
-        self.model_control_window: model_control_window.AttributeImport | None = None
+        self.model_control_window: attribute_import_window.AttributeImport | None = None
         self.project = classes.Project("Project", "")
 
         # init object and ProertyWidget
@@ -128,15 +128,6 @@ class MainWindow(QMainWindow):
     @property
     def pset_table(self) -> QTableWidget:
         return self.ui.table_pset
-
-    @property
-    def save_path(self) -> str:
-        return self._save_path
-
-    @save_path.setter
-    def save_path(self, value: str) -> None:
-        self._save_path = value
-        self._export_path = value
 
     @property
     def export_path(self):
@@ -217,35 +208,8 @@ class MainWindow(QMainWindow):
     def search_object(self):
         object_widget.search_object(self)
 
-
-
-    def fill_tree(self) -> None:
-        root_item = self.object_tree.invisibleRootItem()
-        item_dict: dict[classes.Object, object_widget.CustomObjectTreeItem] = \
-            { obj: self.add_object_to_tree(obj, root_item) for obj in classes.Object} #add all Objects to Tree without Order
-
-        for obj in classes.Object:
-            tree_item = item_dict[obj]
-            if obj.parent is not None:
-                parent_item = item_dict[obj.parent]
-                root = tree_item.treeWidget().invisibleRootItem()
-                item = root.takeChild(root.indexOfChild(tree_item))
-                parent_item.addChild(item)
-        self.ui.tree_object.resizeColumnToContents(0)
-
-        object_widget.resize_tree(self)
-
-    def info(self):
-        object_widget.info(self)
-
     def reload_objects(self):
         object_widget.reload(self)
-
-    def rc_collapse(self):
-        object_widget.rc_collapse(self.ui.tree_object)
-
-    def rc_expand(self):
-        object_widget.rc_expand(self.ui.tree_object)
 
 
     def update_completer(self):
@@ -265,11 +229,6 @@ class MainWindow(QMainWindow):
 
     def add_object(self):
         object_widget.add_object(self)
-
-    def add_object_to_tree(self, obj: classes.Object, parent=None):
-        val =  object_widget.add_object_to_tree(self, obj, parent)
-        self.ui.tree_object.resizeColumnToContents(0)
-        return val
 
     # PropertyWidget
     def attribute_double_clicked(self, item):

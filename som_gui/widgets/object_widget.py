@@ -12,7 +12,7 @@ from SOMcreator.Template import IFC_4_1
 
 from ..icons import get_icon
 from ..qt_designs import ui_mainwindow, ui_object_info_widget
-from ..widgets import  property_widget
+from ..widgets import property_widget
 from ..windows import popups
 
 if TYPE_CHECKING:
@@ -178,10 +178,10 @@ def init(main_window: MainWindow):
     def init_tree(tree: CustomTree):
         # Design Tree
         tree.setObjectName(u"treeWidget_objects")
-        tree.setDragDropMode(QAbstractItemView.InternalMove)
+        tree.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
         tree.setDefaultDropAction(Qt.MoveAction)
         tree.setAlternatingRowColors(False)
-        tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         tree.setSortingEnabled(True)
         tree.setExpandsOnDoubleClick(False)
         tree.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
@@ -196,15 +196,15 @@ def init(main_window: MainWindow):
 
     def connect_items():
         ui: ui_mainwindow.Ui_MainWindow = main_window.ui
-        ui.tree_object.itemClicked.connect(lambda item:single_click(main_window,item))
-        ui.tree_object.itemChanged.connect(lambda item:item.update())
-        ui.tree_object.itemExpanded.connect(lambda :resize_tree(main_window))
-        ui.tree_object.customContextMenuRequested.connect(lambda pos:right_click(main_window,pos))
+        ui.tree_object.itemClicked.connect(lambda item: single_click(main_window, item))
+        ui.tree_object.itemChanged.connect(lambda item: item.update())
+        ui.tree_object.itemExpanded.connect(lambda: resize_tree(main_window))
+        ui.tree_object.customContextMenuRequested.connect(lambda pos: right_click(main_window, pos))
         ui.tree_object.itemDoubleClicked.connect(lambda item: object_double_clicked(main_window, item.object))
-        ui.button_objects_add.clicked.connect(lambda :add_object(main_window))
-        main_window.group_shortcut.activated.connect(lambda :rc_group_items(main_window))
-        main_window.delete_shortcut.activated.connect(lambda :rc_delete(main_window))
-        main_window.search_shortcut.activated.connect(lambda :search_object(main_window))
+        ui.button_objects_add.clicked.connect(lambda: add_object(main_window))
+        main_window.group_shortcut.activated.connect(lambda: rc_group_items(main_window))
+        main_window.delete_shortcut.activated.connect(lambda: rc_delete(main_window))
+        main_window.search_shortcut.activated.connect(lambda: search_object(main_window))
 
     main_window.ui.verticalLayout_objects.removeWidget(main_window.ui.tree_object)
     main_window.ui.tree_object.close()
@@ -219,9 +219,27 @@ def init(main_window: MainWindow):
     main_window.search_shortcut = QShortcut(QKeySequence('Ctrl+F'), main_window)
     connect_items()
 
-def resize_tree(main_window:MainWindow):
+
+def fill_tree(main_window: MainWindow) -> None:
+    root_item = main_window.object_tree.invisibleRootItem()
+    item_dict: dict[classes.Object, CustomObjectTreeItem] = \
+        {obj: add_object_to_tree(main_window, obj, root_item) for obj in
+         classes.Object}  # add all Objects to Tree without Order
+
+    for obj in main_window.project.objects:
+        tree_item = item_dict[obj]
+        if obj.parent is not None:
+            parent_item = item_dict[obj.parent]
+            root = tree_item.treeWidget().invisibleRootItem()
+            item = root.takeChild(root.indexOfChild(tree_item))
+            parent_item.addChild(item)
+    resize_tree(main_window)
+
+
+def resize_tree(main_window: MainWindow):
     for column in range(main_window.object_tree.columnCount()):
         main_window.object_tree.resizeColumnToContents(column)
+
 
 def selected_object(main_window: MainWindow) -> CustomObjectTreeItem | None:
     tree: CustomTree = main_window.ui.tree_object
@@ -280,22 +298,22 @@ def right_click(main_window: MainWindow, position: QPoint):
     selected_items = main_window.ui.tree_object.selectedItems()
     if len(selected_items) == 1:
         main_window.action_copy = menu.addAction("Copy")
-        main_window.action_copy.triggered.connect(lambda :copy(main_window))
+        main_window.action_copy.triggered.connect(lambda: copy(main_window))
 
     if len(selected_items) != 0:
         main_window.action_delete_attribute = menu.addAction("Delete")
         main_window.action_expand_selection = menu.addAction("Expand")
         main_window.action_collapse_selection = menu.addAction("Collapse")
-        main_window.action_delete_attribute.triggered.connect(lambda :rc_delete(main_window))
-        main_window.action_expand_selection.triggered.connect(lambda :rc_expand(main_window.ui.tree_object))
-        main_window.action_collapse_selection.triggered.connect(lambda : rc_collapse(main_window.ui.tree_object))
+        main_window.action_delete_attribute.triggered.connect(lambda: rc_delete(main_window))
+        main_window.action_expand_selection.triggered.connect(lambda: rc_expand(main_window.ui.tree_object))
+        main_window.action_collapse_selection.triggered.connect(lambda: rc_collapse(main_window.ui.tree_object))
 
     main_window.action_group_objects = menu.addAction("Group")
-    main_window.action_group_objects.triggered.connect(lambda :rc_group_items(main_window))
+    main_window.action_group_objects.triggered.connect(lambda: rc_group_items(main_window))
 
     if logging.root.level <= logging.DEBUG:
         main_window.action_info = menu.addAction("Info")
-        main_window.action_info.triggered.connect(lambda : info(main_window))
+        main_window.action_info.triggered.connect(lambda: info(main_window))
     menu.exec(main_window.ui.tree_object.viewport().mapToGlobal(position))
 
 
@@ -311,9 +329,9 @@ def info(main_window: MainWindow):
     else:
         print("no children")
 
-    if item.aggregation_representations:
+    if item.aggregations:
         print("nodes:")
-        for node in item.aggregation_representations:
+        for node in item.aggregations:
             print(f"   {node}")
     else:
         print("no nodes")
@@ -391,14 +409,14 @@ def copy(main_window: MainWindow):
             parent = item.treeWidget().invisibleRootItem()
         else:
             parent = item.parent()
-        main_window.add_object_to_tree(new_object, parent)
+        add_object_to_tree(main_window, new_object, parent)
         if old_obj.parent is not None:
             new_object.parent = old_obj.parent
 
 
 def rc_group_items(main_window: MainWindow):
     input_fields, is_concept = popups.req_group_name(main_window)
-    [group_name, ident_pset, ident_attrib, ident_value,abbreviation] = input_fields
+    [group_name, ident_pset, ident_attrib, ident_value, abbreviation] = input_fields
     if not group_name:
         popups.msg_missing_input()
         return
@@ -423,7 +441,7 @@ def rc_group_items(main_window: MainWindow):
         group_obj = classes.Object(group_name, "Group")
     else:
 
-        pset_parent:classes.PropertySet|None = None
+        pset_parent: classes.PropertySet | None = None
         if check_for_predefined_psets(ident_pset, main_window):
             result = popups.req_merge_pset()  # ask if you want to merge
             if result is True:
@@ -434,11 +452,11 @@ def rc_group_items(main_window: MainWindow):
             pset = pset_parent.create_child(ident_pset)
         else:
             pset = classes.PropertySet(ident_pset)
-        identifier = create_ident(pset,ident_attrib,[ident_value])
-        group_obj = classes.Object(group_name, identifier,abbreviation=abbreviation)
+        identifier = create_ident(pset, ident_attrib, [ident_value])
+        group_obj = classes.Object(group_name, identifier, abbreviation=abbreviation)
         group_obj.add_property_set(pset)
 
-    group_item: CustomObjectTreeItem = main_window.add_object_to_tree(group_obj, parent)
+    group_item: CustomObjectTreeItem = add_object_to_tree(main_window, group_obj, parent)
 
     for item in parent_classes:
         child: CustomObjectTreeItem = parent.takeChild(parent.indexOfChild(item))
@@ -497,7 +515,7 @@ def set_ident_line_enable(main_window, value: bool):
 def multi_selection(main_window: MainWindow):
     main_window.set_right_window_enable(False)
 
-    items:list[CustomObjectTreeItem] = main_window.ui.tree_object.selectedItems()
+    items: list[CustomObjectTreeItem] = main_window.ui.tree_object.selectedItems()
 
     is_concept = [item.object for item in items if item.object.is_concept]
     if is_concept:
@@ -537,11 +555,12 @@ def multi_selection(main_window: MainWindow):
         main_window.ui.lineEdit_ident_value.setText(text)
 
 
-def check_for_predefined_psets(property_set_name,main_window):
+def check_for_predefined_psets(property_set_name, main_window):
     if property_set_name in property_widget.predefined_pset_list(
             main_window):  # if PropertySet allready predefined
         return True
     return False
+
 
 def create_ident(pset: classes.PropertySet, ident_name: str, ident_value: [str]) -> classes.Attribute:
     ident_attrib: classes.Attribute = pset.get_attribute_by_name(ident_name)
@@ -550,6 +569,7 @@ def create_ident(pset: classes.PropertySet, ident_name: str, ident_value: [str])
     else:
         ident_attrib.value = ident_value
     return ident_attrib
+
 
 def add_object(main_window: MainWindow):
     def missing_input():
@@ -576,8 +596,6 @@ def add_object(main_window: MainWindow):
                 return True
         return False  #
 
-
-
     name = main_window.ui.line_edit_object_name.text()
     p_set_name = main_window.ui.lineEdit_ident_pSet.text()
     ident_attrib_name = main_window.ui.lineEdit_ident_attribute.text()
@@ -597,7 +615,7 @@ def add_object(main_window: MainWindow):
         return
 
     parent = None
-    if check_for_predefined_psets(p_set_name,main_window):
+    if check_for_predefined_psets(p_set_name, main_window):
         result = popups.req_merge_pset()  # ask if you want to merge
         if result is True:
             parent = property_widget.get_parent_by_name(main_window.active_object, p_set_name)
@@ -612,7 +630,7 @@ def add_object(main_window: MainWindow):
     ident = create_ident(property_set, ident_attrib_name, ident_attrib_value)
     obj = classes.Object(name, ident, abbreviation=abbreviation)
     obj.add_property_set(ident.property_set)
-    main_window.add_object_to_tree(obj)
+    add_object_to_tree(main_window, obj)
     main_window.clear_object_input()
 
 
@@ -653,7 +671,7 @@ def rc_delete(main_window: MainWindow):
     for loop_item in main_window.ui.tree_object.selectedItems():
         append_string_list(loop_item.object)
 
-    delete_request = popups.msg_del_items(string_list,item_type=1)
+    delete_request = popups.msg_del_items(string_list, item_type=1)
 
     if delete_request:
         for loop_item in main_window.ui.tree_object.selectedItems():

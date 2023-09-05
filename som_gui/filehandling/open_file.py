@@ -1,29 +1,30 @@
 from __future__ import annotations
 
-import os
-import shutil
-import tempfile
-
-import openpyxl
 import logging
-from PySide6.QtWidgets import QInputDialog, QLineEdit, QFileDialog
+import os
+from typing import TYPE_CHECKING
+
 from PySide6.QtCore import QPointF
+from PySide6.QtWidgets import QInputDialog, QLineEdit, QFileDialog
 from SOMcreator import classes
 from SOMcreator import constants as som_constants
+
 from .. import settings
-from ..data.constants import FILETYPE
 from ..data import constants
+from ..data.constants import FILETYPE
+from ..widgets import object_widget
 from ..windows import popups
 from ..windows.aggregation_view import aggregation_window
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
-def check_for_objects_without_aggregation(proj:classes.Project):
+
+def check_for_objects_without_aggregation(proj: classes.Project):
     for obj in proj.objects:
         if not obj.aggregations:
             logging.warning(f"Objekt {obj.name} ({obj.ident_value} kommt in keiner Aggregation vor)")
+
 
 def import_node_pos(main_dict: dict, graph_window: aggregation_window.AggregationWindow) -> None:
     json_aggregation_dict: dict = main_dict[som_constants.AGGREGATIONS]
@@ -32,7 +33,7 @@ def import_node_pos(main_dict: dict, graph_window: aggregation_window.Aggregatio
         aggregation = aggregation_ref[uuid]
         x_pos = aggregation_dict.get(som_constants.X_POS) or 0.0
         y_pos = aggregation_dict.get(som_constants.Y_POS) or 0.0
-        graph_window.create_node(aggregation,QPointF(x_pos,y_pos))
+        graph_window.create_node(aggregation, QPointF(x_pos, y_pos))
 
     scene_dict = main_dict.get(constants.AGGREGATION_SCENES) or dict()
     graph_window.scene_dict.update(scene_dict)
@@ -52,15 +53,17 @@ def new_file(main_window: MainWindow) -> None:
 
 def fill_ui(main_window: MainWindow) -> None:
     main_window.clear_object_input()
-    main_window.fill_tree()
+    object_widget.fill_tree(main_window)
     main_window.graph_window.is_initial_opening = True
     main_window.graph_window.hide()
+
 
 def get_path(main_window: MainWindow, title: str, file_text: str) -> str:
     cur_path = settings.get_open_path()
     if not os.path.exists(cur_path):
         cur_path = os.getcwd() + "/"
     return QFileDialog.getOpenFileName(main_window, title, str(cur_path), file_text)[0]
+
 
 def open_file_clicked(main_window: MainWindow) -> None:
     path = get_path(main_window, "Open Project", FILETYPE)
