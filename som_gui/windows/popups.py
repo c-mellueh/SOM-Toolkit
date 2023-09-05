@@ -1,17 +1,22 @@
 from __future__ import annotations
-from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QListWidgetItem, QCompleter,QTableWidgetItem
-from PySide6.QtCore import Qt
+
 from typing import TYPE_CHECKING
+
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QListWidgetItem, QCompleter, \
+    QTableWidgetItem
 from SOMcreator import classes
-from .. import icons
-from .. qt_designs import ui_delete_request, ui_group_name_request, ui_search, ui_attribute_mapping
-from ..icons import get_icon
 from fuzzywuzzy import fuzz
+
+from .. import icons
+from ..icons import get_icon
+from ..qt_designs import ui_delete_request, ui_group_name_request, ui_search, ui_attribute_mapping
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
-UMLAUT_DICT = {ord('ä'):'ae', ord('ü'):'ue', ord('ö'):'oe', ord('ß'):'ss'}
+UMLAUT_DICT = {ord('ä'): 'ae', ord('ü'): 'ue', ord('ö'): 'oe', ord('ß'): 'ss'}
+
 
 def default_message(text):
     icon = icons.get_icon()
@@ -114,7 +119,8 @@ def req_group_name(main_window, prefil: list[str] = None):
     widget = ui_group_name_request.Ui_Dialog()
     widget.setupUi(dialog)
     widget.checkBox.toggled.connect(change_visibility)
-    input_fields = [widget.group_name, widget.pset_name, widget.attribute_name, widget.attribute_value,widget.abbreviation]
+    input_fields = [widget.group_name, widget.pset_name, widget.attribute_name, widget.attribute_value,
+                    widget.abbreviation]
     if prefil is not None:
         for i, field in enumerate(input_fields[:-1]):
             pl_text = prefil[i]
@@ -123,15 +129,16 @@ def req_group_name(main_window, prefil: list[str] = None):
     if dialog.exec():
         return [input_field.text() for input_field in input_fields], widget.checkBox.isChecked()
     else:
-        return [False, False, False, False,False], widget.checkBox.isChecked()
+        return [False, False, False, False, False], widget.checkBox.isChecked()
 
 
-def req_pset_name(main_window:MainWindow,old):
-    text = QInputDialog.getText(main_window, "New PropertySet Name ", "New PropertySet Name",text=old)
+def req_pset_name(main_window: MainWindow, old):
+    text = QInputDialog.getText(main_window, "New PropertySet Name ", "New PropertySet Name", text=old)
     return text
 
-def req_attribute_name(main_window:MainWindow,old):
-    text = QInputDialog.getText(main_window, "New Attribute Name ", "New Attribute Name",text=old)
+
+def req_attribute_name(main_window: MainWindow, old):
+    text = QInputDialog.getText(main_window, "New Attribute Name ", "New Attribute Name", text=old)
     return text
 
 
@@ -141,7 +148,8 @@ def req_merge_pset():
     msg_box.setText("Pset exists in Predefined Psets, do you want to merge?")
     msg_box.setWindowTitle(" ")
     msg_box.setIcon(QMessageBox.Icon.Warning)
-    msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
+    msg_box.setStandardButtons(
+        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
     msg_box.setDefaultButton(QMessageBox.StandardButton.Yes)
     msg_box.setWindowIcon(icon)
 
@@ -154,7 +162,7 @@ def req_merge_pset():
         return None
 
 
-def msg_del_items(string_list,item_type = 1):
+def msg_del_items(string_list, item_type=1):
     """
     item_type 1= Object,2= Node, 3 = PropertySet, 4 = Attribute
     """
@@ -164,7 +172,7 @@ def msg_del_items(string_list,item_type = 1):
     parent.setWindowIcon(get_icon())
     if len(string_list) <= 1:
         if item_type == 1:
-         widget.label.setText("Dieses Objekt löschen?")
+            widget.label.setText("Dieses Objekt löschen?")
         if item_type == 2:
             widget.label.setText("Diese Node löschen?")
         if item_type == 3:
@@ -205,6 +213,7 @@ def req_boq_pset(main_window, words):
     else:
         return False, None
 
+
 def attribute_mapping(attribute: classes.Attribute):
     parent = QDialog()
     widget = ui_attribute_mapping.Ui_Dialog()
@@ -215,16 +224,19 @@ def attribute_mapping(attribute: classes.Attribute):
     if parent.exec():
         attribute.revit_name = widget.line_edit_revit_mapping.text()
 
+
 def req_export_pset_name(main_window):
     return QInputDialog.getText(main_window, "PropertySet name", "What's the name of the Export PropertySet?")
 
-def req_worksheet_name(main_window,worksheet_names:list[str]):
+
+def req_worksheet_name(main_window, worksheet_names: list[str]):
     index = 0
     test = "SOM-MaKa"
     if test in worksheet_names:
         index = worksheet_names.index(test)
-    text, ok = QInputDialog.getItem(main_window,"Worksheet Name","Name of Mapping Worksheet",worksheet_names,index)
-    return text,ok
+    text, ok = QInputDialog.getItem(main_window, "Worksheet Name", "Name of Mapping Worksheet", worksheet_names, index)
+    return text, ok
+
 
 class ObjectSearchItem(QTableWidgetItem):
     def __init__(self, object: classes.Object, text: str | None):
@@ -235,8 +247,9 @@ class ObjectSearchItem(QTableWidgetItem):
         self.setFlags(self.flags().ItemIsSelectable | self.flags().ItemIsEnabled)
         self.setText(text)
 
+
 class AttributeSearchItem(QTableWidgetItem):
-    def __init__(self, pset_name,attribute_name, text: str | None):
+    def __init__(self, pset_name, attribute_name, text: str | None):
         super(AttributeSearchItem, self).__init__()
         self.attribute_name = attribute_name
         self.pset_name = pset_name
@@ -249,10 +262,12 @@ class AttributeSearchItem(QTableWidgetItem):
 class ObjectSearchWindow(QDialog):
     def __init__(self, main_window: MainWindow, ):
         super(ObjectSearchWindow, self).__init__()
+
         #
         def connect_items():
             self.widget.lineEdit.textChanged.connect(self.update_table)
             self.widget.tableWidget.itemDoubleClicked.connect(self.item_clicked)
+
         #
         self.widget = ui_search.Ui_Dialog()
         self.widget.setupUi(self)
@@ -264,7 +279,8 @@ class ObjectSearchWindow(QDialog):
         self.widget.tableWidget.verticalHeader().setVisible(False)
         self.row_dict = dict()
         self.item_dict: dict[classes.Object, list[ObjectSearchItem]] = {
-            obj: [ObjectSearchItem(obj, obj.name), ObjectSearchItem(obj, obj.ident_value), ObjectSearchItem(obj, obj.abbreviation), ObjectSearchItem(obj, "100")] for obj in
+            obj: [ObjectSearchItem(obj, obj.name), ObjectSearchItem(obj, obj.ident_value),
+                  ObjectSearchItem(obj, obj.abbreviation), ObjectSearchItem(obj, "100")] for obj in
             self.project.objects}
 
         self.MATCH_INDEX = 3
@@ -277,7 +293,7 @@ class ObjectSearchWindow(QDialog):
         self.widget.tableWidget.setSortingEnabled(True)
         self.objects = set(obj for obj in self.project.objects)
         connect_items()
-        self.selected_object:classes.Object|None = None
+        self.selected_object: classes.Object | None = None
 
     def get_row(self, obj):
         return self.item_dict[obj][0].row()
@@ -302,10 +318,10 @@ class ObjectSearchWindow(QDialog):
         text_umlaut = text.translate(UMLAUT_DICT)
         possible_objects = set()
         for obj in self.objects:
-            check_values = [obj.name.lower(),str(obj.ident_value.lower()),str(obj.abbreviation.lower())]
-            value_with_umlaut = max([fuzz.partial_ratio(text,val) for val in check_values])
-            value_without_umlaut = max([fuzz.partial_ratio(text_umlaut,val) for val in check_values])
-            value = max([value_with_umlaut,value_without_umlaut])
+            check_values = [obj.name.lower(), str(obj.ident_value.lower()), str(obj.abbreviation.lower())]
+            value_with_umlaut = max([fuzz.partial_ratio(text, val) for val in check_values])
+            value_without_umlaut = max([fuzz.partial_ratio(text_umlaut, val) for val in check_values])
+            value = max([value_with_umlaut, value_without_umlaut])
             row = self.get_row(obj)
             table.item(row, self.MATCH_INDEX).setText(str(value))
             if value > 75:
@@ -321,10 +337,12 @@ class ObjectSearchWindow(QDialog):
 class AttributeSearchWindow(QDialog):
     def __init__(self, main_window: MainWindow):
         super(AttributeSearchWindow, self).__init__()
+
         #
         def connect_items():
             self.widget.lineEdit.textChanged.connect(self.update_table)
             self.widget.tableWidget.itemDoubleClicked.connect(self.item_clicked)
+
         #
         self.widget = ui_search.Ui_Dialog()
         self.widget.setupUi(self)
@@ -336,7 +354,7 @@ class AttributeSearchWindow(QDialog):
         self.widget.tableWidget.verticalHeader().setVisible(False)
         self.row_dict = dict()
 
-        self.main_dict:dict[str,set[str]] = dict()
+        self.main_dict: dict[str, set[str]] = dict()
 
         self.item_dict = self.create_item_dict()
 
@@ -350,14 +368,14 @@ class AttributeSearchWindow(QDialog):
         self.widget.tableWidget.sortByColumn(self.MATCH_INDEX, Qt.SortOrder.AscendingOrder)
         self.widget.tableWidget.setSortingEnabled(True)
         connect_items()
-        self.selected_attribute_name:str|None = None
-        self.selected_pset_name:str|None = None
+        self.selected_attribute_name: str | None = None
+        self.selected_pset_name: str | None = None
         self.attributes = set(self.item_dict.keys())
 
     def get_row(self, value):
         return self.item_dict[value][0].row()
 
-    def create_item_dict(self) -> dict[str,list[AttributeSearchItem,AttributeSearchItem,AttributeSearchItem]]:
+    def create_item_dict(self) -> dict[str, list[AttributeSearchItem, AttributeSearchItem, AttributeSearchItem]]:
         item_dict = dict()
         for obj in self.project.objects:
             for pset in obj.property_sets:
@@ -367,10 +385,10 @@ class AttributeSearchWindow(QDialog):
                 for attribute in pset.attributes:
                     if attribute.name not in attribute_list:
                         attribute_list.add(attribute.name)
-                        row_1 = AttributeSearchItem(pset.name,attribute.name,pset.name)
-                        row_2 = AttributeSearchItem(pset.name,attribute.name,attribute.name)
-                        row_3 = AttributeSearchItem(pset.name,attribute.name,"100")
-                        item_dict[f"{pset.name}:{attribute.name}"] = [row_1,row_2,row_3]
+                        row_1 = AttributeSearchItem(pset.name, attribute.name, pset.name)
+                        row_2 = AttributeSearchItem(pset.name, attribute.name, attribute.name)
+                        row_3 = AttributeSearchItem(pset.name, attribute.name, "100")
+                        item_dict[f"{pset.name}:{attribute.name}"] = [row_1, row_2, row_3]
         return item_dict
 
     def fill_table(self):
@@ -395,9 +413,9 @@ class AttributeSearchWindow(QDialog):
         possible_attributes = set()
         for attribute in self.attributes:
             check_values = attribute.split(":")
-            value_with_umlaut = max([fuzz.partial_ratio(text,val) for val in check_values])
-            value_without_umlaut = max([fuzz.partial_ratio(text_umlaut,val) for val in check_values])
-            value = max([value_with_umlaut,value_without_umlaut])
+            value_with_umlaut = max([fuzz.partial_ratio(text, val) for val in check_values])
+            value_without_umlaut = max([fuzz.partial_ratio(text_umlaut, val) for val in check_values])
+            value = max([value_with_umlaut, value_without_umlaut])
             row = self.get_row(attribute)
             table.item(row, self.MATCH_INDEX).setText(str(value))
             if value > 75:
@@ -409,3 +427,14 @@ class AttributeSearchWindow(QDialog):
 
         for attribute in forbidden_objects:
             table.hideRow(self.get_row(attribute))
+
+
+def new_file_clicked(main_window: MainWindow):
+    new_file = msg_unsaved()
+    if new_file:
+        project_name = QInputDialog.getText(main_window, "New Project", "new Project Name:", QLineEdit.EchoMode.Normal,
+                                            "")
+        if project_name[1]:
+            main_window.clear_all()
+            main_window.setWindowTitle(main_window.project.name)
+            main_window.project.name = project_name[0]

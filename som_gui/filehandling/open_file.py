@@ -15,7 +15,6 @@ from ..data.constants import FILETYPE
 from ..widgets import object_widget
 from ..windows import popups
 from ..windows.aggregation_view import aggregation_window
-
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
@@ -52,7 +51,7 @@ def new_file(main_window: MainWindow) -> None:
 
 
 def fill_ui(main_window: MainWindow) -> None:
-    main_window.clear_object_input()
+    object_widget.clear_object_input(main_window)
     object_widget.fill_tree(main_window)
     main_window.graph_window.is_initial_opening = True
     main_window.graph_window.hide()
@@ -77,3 +76,4 @@ def open_file_clicked(main_window: MainWindow) -> None:
     fill_ui(main_window)
     check_for_objects_without_aggregation(main_window.project)
     logging.info(f"Import Done!")
+    main_window.generate_window_title()

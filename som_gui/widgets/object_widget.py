@@ -219,6 +219,10 @@ def init(main_window: MainWindow):
     main_window.search_shortcut = QShortcut(QKeySequence('Ctrl+F'), main_window)
     connect_items()
 
+def update_completer(main_window:MainWindow):
+    completer = QCompleter(property_widget.predefined_pset_list(main_window), main_window)
+    main_window.ui.lineEdit_ident_pSet.setCompleter(completer)
+    main_window.ui.lineEdit_pSet_name.setCompleter(completer)
 
 def fill_tree(main_window: MainWindow) -> None:
     root_item = main_window.object_tree.invisibleRootItem()
@@ -288,7 +292,7 @@ def search_object(main_window: MainWindow):
     tree_item.setSelected(True)
     tree_item.expand_to_me()
 
-    main_window.object_clicked(tree_item)
+    single_click(main_window, tree_item)
     tree.scrollToItem(tree_item)
 
 
@@ -474,7 +478,7 @@ def single_click(main_window: MainWindow, item: CustomObjectTreeItem):
     obj: classes.Object = item.object
     main_window.active_object = obj
     property_widget.fill_table(main_window, obj)
-    main_window.update_completer()
+    update_completer(main_window)
     fill_line_inputs(main_window, obj)
 
     if obj.is_concept:
@@ -498,7 +502,8 @@ def fill_line_inputs(main_window: MainWindow, obj: classes.Object):
         ui.lineEdit_ident_pSet.clear()
         ui.lineEdit_ident_attribute.clear()
     ui.line_edit_abbreviation.setText(obj.abbreviation)
-    main_window.text_changed(main_window.ui.lineEdit_pSet_name.text())
+    text = main_window.ui.lineEdit_pSet_name.text()
+    property_widget.text_changed(main_window, text)
 
 
 def set_ident_line_enable(main_window, value: bool):
@@ -513,19 +518,18 @@ def set_ident_line_enable(main_window, value: bool):
 
 
 def multi_selection(main_window: MainWindow):
-    main_window.set_right_window_enable(False)
+    property_widget.set_enable(main_window, False)
 
     items: list[CustomObjectTreeItem] = main_window.ui.tree_object.selectedItems()
 
     is_concept = [item.object for item in items if item.object.is_concept]
     if is_concept:
-        main_window.clear_object_input()
+        clear_object_input(main_window)
         if all_equal(is_concept):
             main_window.ui.line_edit_object_name.setText(is_concept[0].name)
 
     else:
-
-        main_window.set_ident_line_enable(True)
+        set_ident_line_enable(main_window, True)
         object_names = [item.object.name for item in items]
         ident_psets = [item.object.ident_attrib.property_set.name for item in items if
                        isinstance(item.object.ident_attrib, classes.Attribute)]
@@ -631,7 +635,7 @@ def add_object(main_window: MainWindow):
     obj = classes.Object(name, ident, abbreviation=abbreviation)
     obj.add_property_set(ident.property_set)
     add_object_to_tree(main_window, obj)
-    main_window.clear_object_input()
+    clear_object_input(main_window)
 
 
 def add_object_to_tree(main_window: MainWindow, obj: classes.Object, parent: QTreeWidgetItem = None):
