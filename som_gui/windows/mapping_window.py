@@ -11,7 +11,6 @@ from .. import icons
 from ..qt_designs import ui_mapping_window
 from ..widgets import object_widget
 from ..windows import popups
-from ..windows.aggregation_view.aggregation_window import AggregationWindow
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
