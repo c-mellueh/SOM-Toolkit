@@ -3,21 +3,27 @@
 ################################################################################
 ## Form generated from reading UI file 'ProjectSettings.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.0
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QMetaObject, Qt)
-
-from PySide6.QtWidgets import (QDialogButtonBox,
-    QFormLayout, QLabel, QLineEdit, QSizePolicy,)
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QAbstractButton, QApplication, QComboBox, QDialog,
+    QDialogButtonBox, QFormLayout, QLabel, QLineEdit,
+    QSizePolicy, QWidget)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(640, 132)
+        Dialog.resize(640, 154)
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -62,6 +68,16 @@ class Ui_Dialog(object):
 
         self.formLayout.setWidget(2, QFormLayout.FieldRole, self.lineEdit_version)
 
+        self.label_4 = QLabel(Dialog)
+        self.label_4.setObjectName(u"label_4")
+
+        self.formLayout.setWidget(3, QFormLayout.LabelRole, self.label_4)
+
+        self.combo_box_project_phase = QComboBox(Dialog)
+        self.combo_box_project_phase.setObjectName(u"combo_box_project_phase")
+
+        self.formLayout.setWidget(3, QFormLayout.FieldRole, self.combo_box_project_phase)
+
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
@@ -75,5 +91,6 @@ class Ui_Dialog(object):
         self.label.setText(QCoreApplication.translate("Dialog", u"Projektname", None))
         self.label_2.setText(QCoreApplication.translate("Dialog", u"Author", None))
         self.label_3.setText(QCoreApplication.translate("Dialog", u"Version", None))
+        self.label_4.setText(QCoreApplication.translate("Dialog", u"Leistungsphase", None))
     # retranslateUi
 

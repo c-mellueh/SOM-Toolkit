@@ -12,6 +12,7 @@ from SOMcreator import classes, desite,vestra,card1,allplan
 from SOMcreator import excel as som_excel
 from . import icons
 from . import logs
+from .data.constants import PROJECT_PHASE_COUNT
 from .filehandling import open_file, save_file, export
 from .qt_designs import ui_project_settings
 from .qt_designs.ui_mainwindow import Ui_MainWindow
@@ -19,6 +20,8 @@ from .widgets import  property_widget, object_widget
 from som_gui.windows.aggregation_view import aggregation_window
 from .windows import predefined_psets_window, propertyset_window, mapping_window, popups, modelcheck_window, grouping_window, attribute_import_window,project_phase_window
 from . import settings, __version__
+import re
+
 def get_icon():
     icon_path = os.path.join(icons.ICON_PATH, icons.ICON_DICT["icon"])
     return QtGui.QIcon(icon_path)
@@ -335,10 +338,22 @@ class MainWindow(QMainWindow):
         widget.lineEdit_author.setText(self.project.author)
         widget.lineEdit_version.setText(self.project.version)
 
+        prefix = "Leistungsphase "
+
+        widget.combo_box_project_phase.addItems([f"{prefix}{x+1}" for x in range(PROJECT_PHASE_COUNT)])
+        widget.combo_box_project_phase.setCurrentText(f"{prefix}{self.project.current_project_phase}")
         if dialog.exec():
             self.project.name = widget.lineEdit_project_name.text()
             self.project.author = widget.lineEdit_author.text()
             self.project.version = widget.lineEdit_version.text()
+            project_phase_text  = widget.combo_box_project_phase.currentText()
+            match = re.match(f"{prefix}(\d+)",project_phase_text)
+
+            project_phase = match.group(1)
+            if project_phase is None:
+                logging.error(f"Projectphase could not be found from '{project_phase_text}'")
+            else:
+                self.project.current_project_phase = int(project_phase)
             self.generate_window_title()
 
     def export_bookmarks(self):
