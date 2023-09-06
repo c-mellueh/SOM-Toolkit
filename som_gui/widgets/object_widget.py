@@ -491,7 +491,9 @@ def single_click(main_window: MainWindow, item: CustomObjectTreeItem):
     if obj.is_concept:
         return
     table_widget = main_window.ui.table_pset
-    property_widget.left_click(main_window, table_widget.item(0, 0))
+
+    if obj.property_sets:
+        property_widget.left_click(main_window, table_widget.item(0, 0))
 
 
 def fill_line_inputs(main_window: MainWindow, obj: classes.Object):

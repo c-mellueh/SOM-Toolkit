@@ -50,6 +50,7 @@ class MainWindow(QMainWindow):
 
         # variables
         self.active_object: classes.Object | None = None
+        self.active_property_set: classes.PropertySet | None = None
         self.project = classes.Project("Project", "")
         self.permanent_status_text = QLabel()
 
