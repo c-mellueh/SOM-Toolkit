@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import re
 from typing import TYPE_CHECKING
 
@@ -140,17 +141,23 @@ class ProjectPhaseWindow(QWidget):
         super(ProjectPhaseWindow, self).show()
 
     def accepted(self):
+
         for item,project_phase_list in self.data_model.items():
+            if item.project_phases != project_phase_list:
+                logging.info(f"{item}: Projektphasen geändert")
             item.project_phases = project_phase_list
         self.hide()
+        self.main_window.reload()
+
+
 
     def fill_data_model(self):
         self.data_model = dict()
-        for obj in self.main_window.project.objects:
+        for obj in self.main_window.project.get_all_objects():
             self.data_model[obj] = obj.project_phases
-            for pset in obj.property_sets:
+            for pset in obj.get_all_property_sets():
                 self.data_model[pset] = pset.project_phases
-                for attribute in pset.attributes:
+                for attribute in pset.get_all_attributes():
                     self.data_model[attribute] = attribute.project_phases
 
     def resize_to_content(self) -> None:
@@ -164,7 +171,7 @@ class ProjectPhaseWindow(QWidget):
         root = tree.invisibleRootItem()
         obj_item_dict: dict[classes.Object, ObjectItem] = dict()
 
-        for obj in project.objects:
+        for obj in project.get_all_objects():
             obj_item = ObjectItem(obj)
             obj_item_dict[obj] = obj_item
             root.addChild(obj_item)
@@ -181,6 +188,8 @@ class ProjectPhaseWindow(QWidget):
 
     def object_selection_changed(self):
         object_items = self.widget.object_tree.selectedItems()
+        if not len(object_items):
+            return
         item:ObjectItem = object_items[0]
         self.fill_property_set_tree(item.object)
         self.widget.label_object.show()
@@ -191,17 +200,18 @@ class ProjectPhaseWindow(QWidget):
         self.tree_model.clear()
         root = self.tree_model.invisibleRootItem()
         tree.setModel(self.tree_model)
-        for property_set in selected_object.property_sets:
+        for property_set in selected_object.get_all_property_sets():
             pset_item = PropertySetItem(property_set)
             pset_row = [pset_item]
-            for index,obj_is_checked in enumerate(self.data_model[selected_object]):
-                pset_row.append(CheckBoxItem(self.data_model[property_set][index],obj_is_checked))
+            for index,pset_is_enabled in enumerate(self.data_model[selected_object]):
+                pset_row.append(CheckBoxItem(self.data_model[property_set][index],pset_is_enabled))
             root.appendRow(pset_row)
-            for attribute in property_set.attributes:
+            for attribute in property_set.get_all_attributes():
                 attribute_row  = [AttributeItem(attribute)]
                 for index,is_checked in enumerate(self.data_model[attribute]):
-                    is_enabled = self.data_model[property_set][index]
-                    attribute_row.append(CheckBoxItem(is_checked,is_enabled))
+                    pset_is_enabled = self.data_model[selected_object][index]
+                    attribute_is_enabled = self.data_model[property_set][index]
+                    attribute_row.append(CheckBoxItem(is_checked,all((attribute_is_enabled,pset_is_enabled))))
                 pset_item.appendRow(attribute_row)
 
         resize_tree_view(tree)

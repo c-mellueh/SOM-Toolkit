@@ -20,11 +20,11 @@ if TYPE_CHECKING:
 class PsetItem(QListWidgetItem):
     _registry = list()
 
-    def __init__(self, property_set: classes.PropertySet = None) -> None:
+    def __init__(self, property_set: classes.PropertySet = None,project:classes.Project|None = None) -> None:
         super(PsetItem, self).__init__()
 
         if property_set is None:
-            self.property_set = classes.PropertySet(name="NewPset")
+            self.property_set = classes.PropertySet(name="NewPset",project = project)
             self.setText(f"NewPset_{self.get_number()}")
 
         else:
@@ -90,7 +90,7 @@ class PropertySetInherWindow(QWidget):
             property_widget.open_pset_window(self.main_window, item.property_set,None, item.property_set.name)
 
     def add_pset(self):
-        item = PsetItem()
+        item = PsetItem(project=self.main_window.project)
         self.widget.list_view_pset.addItem(item)
         self.widget.list_view_pset.setCurrentItem(item)
         object_widget.update_completer(self.main_window)

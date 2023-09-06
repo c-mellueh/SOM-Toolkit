@@ -230,11 +230,11 @@ def fill_tree(main_window: MainWindow) -> None:
     root_item = main_window.object_tree.invisibleRootItem()
     item_dict: dict[classes.Object, CustomObjectTreeItem] = \
         {obj: add_object_to_tree(main_window, obj, root_item) for obj in
-         classes.Object}  # add all Objects to Tree without Order
+         main_window.project.objects}  # add all Objects to Tree without Order
 
     for obj in main_window.project.objects:
         tree_item = item_dict[obj]
-        if obj.parent is not None:
+        if obj.parent is not None and obj.parent in item_dict:
             parent_item = item_dict[obj.parent]
             root = tree_item.treeWidget().invisibleRootItem()
             item = root.takeChild(root.indexOfChild(tree_item))
@@ -382,7 +382,7 @@ def copy(main_window: MainWindow):
             psets.append(new_pset)
 
         if is_concept:
-            new_object = classes.Object(obj_name, "Group")
+            new_object = classes.Object(name=obj_name, ident_attrib="Group",project = main_window.project)
         else:
             is_empty = [True for text in input_fields if not bool(text)]
             if is_empty:
@@ -412,7 +412,7 @@ def copy(main_window: MainWindow):
                     ident_pset = classes.PropertySet(ident_pset_name)
                     ident_attribute = classes.Attribute(ident_pset, ident_attrib_name, [ident_value], constants.LIST)
                     psets.append(ident_pset)
-                new_object = classes.Object(obj_name, ident_attribute)
+                new_object = classes.Object(name=obj_name,ident_attrib= ident_attribute,project = main_window.project)
 
         for pset in psets:
             new_object.add_property_set(pset)
@@ -449,7 +449,7 @@ def rc_group_items(main_window: MainWindow):
             parent: QTreeWidgetItem = main_window.ui.tree_object.invisibleRootItem()
 
     if is_concept:
-        group_obj = classes.Object(group_name, "Group")
+        group_obj = classes.Object(name = group_name,ident_attrib= "Group",project = main_window.project)
     else:
 
         pset_parent: classes.PropertySet | None = None
@@ -464,7 +464,7 @@ def rc_group_items(main_window: MainWindow):
         else:
             pset = classes.PropertySet(ident_pset)
         identifier = create_ident(pset, ident_attrib, [ident_value])
-        group_obj = classes.Object(group_name, identifier, abbreviation=abbreviation)
+        group_obj = classes.Object(name=group_name, ident_attrib=identifier, abbreviation=abbreviation,project = main_window.project)
         group_obj.add_property_set(pset)
 
     group_item: CustomObjectTreeItem = add_object_to_tree(main_window, group_obj, parent)
@@ -639,7 +639,7 @@ def add_object(main_window: MainWindow):
         property_set = classes.PropertySet(p_set_name)
 
     ident = create_ident(property_set, ident_attrib_name, ident_attrib_value)
-    obj = classes.Object(name, ident, abbreviation=abbreviation)
+    obj = classes.Object(name = name, ident_attrib=ident, abbreviation=abbreviation, project = main_window.project)
     obj.add_property_set(ident.property_set)
     add_object_to_tree(main_window, obj)
     clear_object_input(main_window)
@@ -690,19 +690,10 @@ def rc_delete(main_window: MainWindow):
         main_window.project.changed = True
 
 
-def reload_tree(main_window: MainWindow):
-    def loop(item: CustomObjectTreeItem):
-        for i in range(item.childCount()):
-            child = item.child(i)
-            child.refresh()
-            loop(child)
-
-    ui: ui_mainwindow.Ui_MainWindow = main_window.ui
-    root = ui.tree_object.invisibleRootItem()
-    loop(root)
-
-
-def reload(main_window):
-    reload_tree(main_window)
+def reload(main_window:MainWindow) -> None:
+    main_window.object_tree.clear()
+    fill_tree(main_window)
     obj = main_window.active_object
+    if obj is None:
+        return
     fill_line_inputs(main_window, obj)
