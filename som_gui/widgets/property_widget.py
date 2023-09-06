@@ -160,7 +160,7 @@ def attribute_double_click(main_window: MainWindow, item: propertyset_window.Cus
     attribute: classes.Attribute = item.linked_data
     property_set = attribute.property_set
     open_pset_window(main_window, property_set, main_window.active_object, None)
-    main_window.pset_window.table_clicked(item)
+    main_window.property_set_window.table_clicked(item)
 
 
 def double_click(main_window: MainWindow, item: QTableWidgetItem) -> None:
@@ -177,7 +177,7 @@ def open_pset_window(main_window: MainWindow, property_set: classes.PropertySet,
         window_title = f"{property_set.object.name}:{property_set.name}"
 
     window = PropertySetWindow(main_window, property_set, active_object, window_title)
-    main_window.pset_window = window
+    main_window.property_set_window = window
 
 
 def fill_table(main_window: MainWindow, obj: classes.Object) -> None:
@@ -240,9 +240,9 @@ def create_new_pset(main_window: MainWindow) -> None:
 def reload(main_window: MainWindow) -> None:
     if main_window.active_object is not None:
         fill_table(main_window, main_window.active_object)
-        if main_window.pset_window is not None:
+        if main_window.property_set_window is not None:
             propertyset_window.fill_attribute_table(main_window.active_object, main_window.ui.table_attribute,
-                                                    main_window.pset_window.property_set)
+                                                    main_window.property_set_window.property_set)
 
 
 def clear_attribute_table(main_window: MainWindow) -> None:

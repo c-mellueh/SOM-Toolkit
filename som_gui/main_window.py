@@ -62,8 +62,8 @@ class MainWindow(QMainWindow):
         self.modelcheck_window: modelcheck_window.ModelcheckWindow | None = None
         self.search_ui: popups.ObjectSearchWindow | popups.AttributeSearchWindow | None = None
         self.object_info_widget: object_widget.ObjectInfoWidget | None = None
-        self.parent_property_window:predefined_psets_window.PropertySetInherWindow|None = None
-        self.pset_window: None | propertyset_window.PropertySetWindow = None
+        self.predefined_pset_window: predefined_psets_window.PropertySetInherWindow | None = None
+        self.property_set_window: None | propertyset_window.PropertySetWindow = None
 
         # init Object- and PropertyWidget
         object_widget.init(self)
@@ -110,9 +110,9 @@ class MainWindow(QMainWindow):
         self.project_phase_window.show()
 
     def open_predefined_pset_window(self):
-        if self.parent_property_window is None:
-            self.parent_property_window = predefined_psets_window.PropertySetInherWindow(self)
-        self.parent_property_window.show()
+        if self.predefined_pset_window is None:
+            self.predefined_pset_window = predefined_psets_window.PropertySetInherWindow(self)
+        self.predefined_pset_window.show()
 
     def open_settings_window(self):
         settings_window.SettingsDialog(self)
@@ -142,7 +142,7 @@ class MainWindow(QMainWindow):
     def clear_all(self):
         object_widget.clear_all(self)
         property_widget.clear_all(self)
-        self.parent_property_window.clear_all()
+        self.predefined_pset_window.clear_all()
         self.project.clear()
 
     def reload(self):

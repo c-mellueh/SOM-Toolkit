@@ -611,7 +611,7 @@ class CustomPsetTree(QTreeWidget):
         if isinstance(item, CustomAttribTreeItem):
             property_set = item.attribute.property_set
             property_widget.open_pset_window(main_window, property_set, self.object, None)
-            main_window.pset_window.fill_with_attribute(item.attribute)
+            main_window.property_set_window.fill_with_attribute(item.attribute)
 
 
 class CustomPSetTreeItem(QTreeWidgetItem):
