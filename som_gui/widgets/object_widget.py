@@ -201,6 +201,7 @@ def init(main_window: MainWindow):
         ui.tree_object.itemExpanded.connect(lambda: resize_tree(main_window))
         ui.tree_object.customContextMenuRequested.connect(lambda pos: right_click(main_window, pos))
         ui.tree_object.itemDoubleClicked.connect(lambda item: object_double_clicked(main_window, item.object))
+        ui.button_search.clicked.connect(lambda: search_object(main_window))
         ui.button_objects_add.clicked.connect(lambda: add_object(main_window))
         main_window.group_shortcut.activated.connect(lambda: rc_group_items(main_window))
         main_window.delete_shortcut.activated.connect(lambda: rc_delete(main_window))

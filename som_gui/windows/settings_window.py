@@ -32,7 +32,6 @@ class SettingsDialog(QDialog):
             main_window.project.name = widget.lineEdit_project_name.text()
             main_window.project.author = widget.lineEdit_author.text()
             main_window.project.version = widget.lineEdit_version.text()
-            main_window.generate_window_title()
             project_phase_text = widget.combo_box_project_phase.currentText()
             match = re.match(f"{prefix}(\d+)", project_phase_text)
 
@@ -41,4 +40,4 @@ class SettingsDialog(QDialog):
                 logging.error(f"Projectphase could not be found from '{project_phase_text}'")
             else:
                 main_window.project.current_project_phase = int(project_phase)
-            main_window.generate_window_title()
+            main_window.reload()

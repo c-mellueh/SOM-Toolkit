@@ -15,32 +15,35 @@ from .windows import predefined_psets_window, propertyset_window, mapping_window
 
 class MainWindow(QMainWindow):
     def __init__(self, application, open_file_path: str | None):
-        def connect():
+        def connect_actions():
             # connect Menubar signals
+
             self.ui.action_file_Open.triggered.connect(lambda: open_file.open_file_clicked(self))
             self.ui.action_file_new.triggered.connect(lambda: popups.new_file_clicked(self))
             self.ui.action_file_Save.triggered.connect(lambda: save_file.save_clicked(self))
             self.ui.action_file_Save_As.triggered.connect(lambda: save_file.save_as_clicked(self))
-            self.ui.action_desite_export.triggered.connect(lambda: export.export_desite_rules(self))
-            self.ui.action_show_list.triggered.connect(self.open_predefined_pset_window)
-            self.ui.action_settings.triggered.connect(self.open_settings_window)
+            #Export
+
             self.ui.action_export_bs.triggered.connect(lambda: export.export_building_structure(self))
             self.ui.action_export_bookmarks.triggered.connect(lambda: export.export_bookmarks(self))
             self.ui.action_export_boq.triggered.connect(lambda: export.export_bill_of_quantities(self))
-            self.ui.action_show_graphs.triggered.connect(self.open_aggregation_window)
-            self.ui.action_mapping.triggered.connect(self.open_mapping_window)
             self.ui.action_vestra.triggered.connect(lambda: export.export_vestra_mapping(self))
             self.ui.action_card1.triggered.connect(lambda: export.export_card_1(self))
             self.ui.action_excel.triggered.connect(lambda: export.export_excel(self))
             self.ui.action_mapping_script.triggered.connect(lambda: export.export_mapping_script(self))
             self.ui.action_allplan.triggered.connect(lambda: export.export_allplan_excel(self))
             self.ui.action_abbreviation_json.triggered.connect(lambda: export.export_desite_abbreviation(self))
-            self.ui.table_pset.itemChanged.connect(lambda item: item.update())
-            self.ui.button_search.clicked.connect(lambda: object_widget.search_object(self))
+            self.ui.action_desite_export.triggered.connect(lambda: export.export_desite_rules(self))
+            #Windows
+
+            self.ui.action_show_list.triggered.connect(self.open_predefined_pset_window)
+            self.ui.action_settings.triggered.connect(self.open_settings_window)
             self.ui.action_modelcheck.triggered.connect(self.open_modelcheck_window)
             self.ui.action_create_groups.triggered.connect(self.open_grouping_window)
             self.ui.action_model_control.triggered.connect(self.open_attribute_import_window)
             self.ui.action_project_phase.triggered.connect(self.open_project_phase_window)
+            self.ui.action_show_graphs.triggered.connect(self.open_aggregation_window)
+            self.ui.action_mapping.triggered.connect(self.open_mapping_window)
 
         super(MainWindow, self).__init__()
 
@@ -69,7 +72,7 @@ class MainWindow(QMainWindow):
         # init Object- and PropertyWidget
         object_widget.init(self)
         property_widget.init(self)
-        connect()
+        connect_actions()
         settings.reset_save_path()
         self.ui.statusbar.addWidget(self.permanent_status_text)
         self.generate_window_title()
@@ -150,6 +153,7 @@ class MainWindow(QMainWindow):
         object_widget.reload(self)
         predefined_psets_window.reload(self)
         property_widget.reload(self)
+        self.generate_window_title()
 
     def generate_window_title(self) -> str:
         text = f"SOM-Toolkit v{__version__}"

@@ -39,6 +39,7 @@ def init(main_window: MainWindow) -> None:
         main_window.ui.lineEdit_pSet_name.textChanged.connect(lambda text: text_changed(main_window, text))
         main_window.pset_table.customContextMenuRequested.connect(lambda position: open_menu(main_window, position))
         main_window.ui.button_Pset_add.clicked.connect(lambda: create_new_pset(main_window))
+        main_window.pset_table.itemChanged.connect(lambda item: item.update())
 
     main_window.pset_table.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustToContents)
     main_window.ui.box_layout_pset.setEnabled(False)
