@@ -92,7 +92,7 @@ class AttributeImport(QWidget):
         obj = property_set.object
         self.main_window.active_object = obj
         property_widget.open_pset_window( self.main_window, property_set, self.main_window.active_object, None)
-        self.main_window.pset_window.table_clicked(None,attribute)
+        self.main_window.property_set_window.table_clicked(None, attribute)
 
     @property
     def current_index(self) -> int:

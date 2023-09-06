@@ -6,11 +6,12 @@ from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QTableWidgetItem, QListWidgetItem, QAbstractScrollArea, QMenu, QCompleter, QWidget
 from SOMcreator import classes, constants
 
+from . import object_widget
 from ..qt_designs import ui_mainwindow
 from ..windows import popups, propertyset_window
 from ..windows.popups import msg_del_ident_pset, msg_del_items
 from ..windows.propertyset_window import PropertySetWindow
-from . import object_widget
+
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
@@ -33,15 +34,16 @@ def get_parent_by_name(active_object: classes.Object, name: str) -> classes.Prop
 def init(main_window: MainWindow) -> None:
     def connect() -> None:
         main_window.pset_table.itemClicked.connect(lambda item: left_click(main_window, item))
-        main_window.pset_table.itemDoubleClicked.connect(lambda item: double_click(main_window,item))
+        main_window.pset_table.itemDoubleClicked.connect(lambda item: double_click(main_window, item))
         main_window.ui.table_attribute.itemDoubleClicked.connect(lambda item: attribute_double_click(main_window, item))
-        main_window.ui.lineEdit_pSet_name.textChanged.connect(lambda text: text_changed(main_window,text))
+        main_window.ui.lineEdit_pSet_name.textChanged.connect(lambda text: text_changed(main_window, text))
         main_window.pset_table.customContextMenuRequested.connect(lambda position: open_menu(main_window, position))
         main_window.ui.button_Pset_add.clicked.connect(lambda: create_new_pset(main_window))
+        main_window.pset_table.itemChanged.connect(lambda item: item.update())
 
     main_window.pset_table.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustToContents)
     main_window.ui.box_layout_pset.setEnabled(False)
-    set_enable(main_window,False)
+    set_enable(main_window, False)
     connect()
 
 
@@ -70,10 +72,6 @@ def predefined_pset_list(main_window: MainWindow) -> set[str]:
     return property_list
 
 
-def modify_title(main_window: MainWindow, tab: QWidget, text: str = None) -> None:
-    main_window.ui.tabWidget.setTabText(main_window.ui.tabWidget.indexOf(tab), text)
-
-
 def clear_all(main_window: MainWindow) -> None:
     ui: ui_mainwindow.Ui_MainWindow = main_window.ui
     for row in range(main_window.pset_table.rowCount()):
@@ -83,9 +81,7 @@ def clear_all(main_window: MainWindow) -> None:
         ui.table_attribute.removeRow(row)
 
     main_window.ui.lineEdit_pSet_name.clear()
-    set_enable(main_window,False)
-    modify_title(main_window, main_window.ui.tab_code, "Code")
-    modify_title(main_window, main_window.ui.tab_property_set, "PropertySet")
+    set_enable(main_window, False)
 
 
 def delete_selection(main_window: MainWindow) -> None:
@@ -94,7 +90,7 @@ def delete_selection(main_window: MainWindow) -> None:
     row_list = [item.row() for item in list_item if item.column() == 0]
 
     obj = main_window.active_object
-    delete_request = msg_del_items([pset.name for pset in property_sets],item_type=3)
+    delete_request = msg_del_items([pset.name for pset in property_sets], item_type=3)
 
     if not delete_request:
         return
@@ -151,8 +147,13 @@ def left_click(main_window: MainWindow, item: QListWidgetItem) -> None:
         main_window.pset_table.row(item), 0)
 
     property_set: classes.PropertySet = item.linked_data
+    select_property_set(main_window, property_set)
+
+
+def select_property_set(main_window: MainWindow, property_set: classes.PropertySet) -> None:
     propertyset_window.fill_attribute_table(main_window.active_object, main_window.ui.table_attribute, property_set)
     main_window.ui.lineEdit_pSet_name.setText(property_set.name)
+    main_window.active_property_set = property_set
 
 
 def attribute_double_click(main_window: MainWindow, item: propertyset_window.CustomTableItem) -> None:
@@ -160,7 +161,7 @@ def attribute_double_click(main_window: MainWindow, item: propertyset_window.Cus
     attribute: classes.Attribute = item.linked_data
     property_set = attribute.property_set
     open_pset_window(main_window, property_set, main_window.active_object, None)
-    main_window.pset_window.table_clicked(item)
+    main_window.property_set_window.table_clicked(item)
 
 
 def double_click(main_window: MainWindow, item: QTableWidgetItem) -> None:
@@ -171,19 +172,20 @@ def double_click(main_window: MainWindow, item: QTableWidgetItem) -> None:
     # Open New Window
     open_pset_window(main_window, property_set, main_window.active_object, None)
 
+
 def open_pset_window(main_window: MainWindow, property_set: classes.PropertySet,
                      active_object: classes.Object, window_title=None, ) -> None:
     if window_title is None:
         window_title = f"{property_set.object.name}:{property_set.name}"
 
     window = PropertySetWindow(main_window, property_set, active_object, window_title)
-    main_window.pset_window = window
+    main_window.property_set_window = window
 
 
 def fill_table(main_window: MainWindow, obj: classes.Object) -> None:
-    set_enable(main_window,True)
+    set_enable(main_window, True)
     main_window.pset_table.setRowCount(0)
-    property_sets = main_window.active_object.property_sets
+    property_sets = obj.property_sets
     # find inherited Psets
     for pset in property_sets:
         add_pset_to_table(main_window, pset)
@@ -234,15 +236,22 @@ def create_new_pset(main_window: MainWindow) -> None:
         parent = get_parent_by_name(main_window.active_object, name)
 
     add_pset_to_table(main_window, name, parent)
-    text_changed(main_window,main_window.ui.lineEdit_pSet_name.text())
+    text_changed(main_window, main_window.ui.lineEdit_pSet_name.text())
 
 
 def reload(main_window: MainWindow) -> None:
-    if main_window.active_object is not None:
-        fill_table(main_window, main_window.active_object)
-        if main_window.pset_window is not None:
-            propertyset_window.fill_attribute_table(main_window.active_object, main_window.ui.table_attribute,
-                                                    main_window.pset_window.property_set)
+    active_object = main_window.active_object
+    if active_object is None:
+        return
+    fill_table(main_window, active_object)
+    pset_window = main_window.property_set_window
+    if pset_window is not None:
+        propertyset_window.fill_attribute_table(active_object, main_window.ui.table_attribute,
+                                                pset_window.property_set)
+
+    active_pset = main_window.active_property_set
+    if active_pset is not None and active_pset in active_object.property_sets:
+        select_property_set(main_window, active_pset)
 
 
 def clear_attribute_table(main_window: MainWindow) -> None:

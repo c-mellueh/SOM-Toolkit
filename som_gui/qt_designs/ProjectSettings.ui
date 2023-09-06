@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>132</height>
+    <height>154</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -59,6 +59,16 @@
    </item>
    <item row="2" column="1">
     <widget class="QLineEdit" name="lineEdit_version"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Leistungsphase</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QComboBox" name="combo_box_project_phase"/>
    </item>
   </layout>
  </widget>
