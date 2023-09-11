@@ -24,9 +24,10 @@ class SettingsDialog(QDialog):
         widget.lineEdit_author.setText(main_window.project.author)
         widget.lineEdit_version.setText(main_window.project.version)
 
+        project_phase_list = main_window.project.get_project_phase_list()
+        widget.combo_box_project_phase.addItems(project_phase_list)
 
-        widget.combo_box_project_phase.addItems([text for text in main_window.project.project_phases])
-        widget.combo_box_project_phase.setCurrentText(main_window.project.project_phases[0])
+        widget.combo_box_project_phase.setCurrentText(main_window.project.current_project_phase)
 
         if self.exec():
             main_window.project.name = widget.lineEdit_project_name.text()
