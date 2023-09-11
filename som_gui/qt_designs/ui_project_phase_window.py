@@ -23,7 +23,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(1341, 550)
+        Form.resize(1341, 650)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.splitter = QSplitter(Form)
@@ -66,15 +66,6 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Leistungsphase", None))
         ___qtreewidgetitem = self.object_tree.headerItem()
-        ___qtreewidgetitem.setText(10, QCoreApplication.translate("Form", u"LP9", None));
-        ___qtreewidgetitem.setText(9, QCoreApplication.translate("Form", u"LP8", None));
-        ___qtreewidgetitem.setText(8, QCoreApplication.translate("Form", u"LP7", None));
-        ___qtreewidgetitem.setText(7, QCoreApplication.translate("Form", u"LP6", None));
-        ___qtreewidgetitem.setText(6, QCoreApplication.translate("Form", u"LP5", None));
-        ___qtreewidgetitem.setText(5, QCoreApplication.translate("Form", u"LP4", None));
-        ___qtreewidgetitem.setText(4, QCoreApplication.translate("Form", u"LP3", None));
-        ___qtreewidgetitem.setText(3, QCoreApplication.translate("Form", u"LP2", None));
-        ___qtreewidgetitem.setText(2, QCoreApplication.translate("Form", u"LP1", None));
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("Form", u"Identifier", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("Form", u"Name", None));
         self.label_object.setText(QCoreApplication.translate("Form", u"TextLabel", None))

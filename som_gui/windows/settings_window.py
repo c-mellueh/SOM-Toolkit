@@ -24,20 +24,15 @@ class SettingsDialog(QDialog):
         widget.lineEdit_author.setText(main_window.project.author)
         widget.lineEdit_version.setText(main_window.project.version)
 
-        prefix = "Leistungsphase "
-        widget.combo_box_project_phase.addItems([f"{prefix}{x+1}" for x in range(PROJECT_PHASE_COUNT)])
-        widget.combo_box_project_phase.setCurrentText(f"{prefix}{main_window.project.current_project_phase}")
+        project_phase_list = main_window.project.get_project_phase_list()
+        widget.combo_box_project_phase.addItems(project_phase_list)
+
+        widget.combo_box_project_phase.setCurrentText(main_window.project.current_project_phase)
 
         if self.exec():
             main_window.project.name = widget.lineEdit_project_name.text()
             main_window.project.author = widget.lineEdit_author.text()
             main_window.project.version = widget.lineEdit_version.text()
             project_phase_text = widget.combo_box_project_phase.currentText()
-            match = re.match(f"{prefix}(\d+)", project_phase_text)
-
-            project_phase = match.group(1)
-            if project_phase is None:
-                logging.error(f"Projectphase could not be found from '{project_phase_text}'")
-            else:
-                main_window.project.current_project_phase = int(project_phase)
+            main_window.project.current_project_phase = project_phase_text
             main_window.reload()
