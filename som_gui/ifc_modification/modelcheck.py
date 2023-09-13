@@ -10,6 +10,7 @@ from ifcopenshell.util import element as ifc_el
 
 from . import issues
 from .sql import db_create_entity
+from ..data import constants
 
 GROUP = "Gruppe"
 ELEMENT = "Element"
@@ -41,7 +42,9 @@ def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_at
                   is_in_group=True):
     def check_values(value, attribute: SOMcreator.Attribute):
         check_dict = {som_constants.LIST: check_list, som_constants.RANGE: check_range,
-                      som_constants.FORMAT: check_format}
+                      som_constants.FORMAT: check_format, constants.GER_LIST: check_list,
+                      constants.GER_VALUE: check_values, constants.GER_FORMAT: check_format,
+                      constants.GER_RANGE: check_range}
         func = check_dict[attribute.value_type]
         func(value, attribute)
         check_datatype(value, attribute)
