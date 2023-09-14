@@ -8,7 +8,7 @@ from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget
 from SOMcreator import classes
-from SOMcreator import constants as som_cr_constants
+from SOMcreator.constants import json_constants,value_constants
 
 from .. import icons, settings
 from ..data import constants as constants
@@ -85,7 +85,7 @@ def get_selected_rows(table_widget: QTableWidget) -> list[int]:
 
 def set_table_line(table, row: int, attrib: classes.Attribute) -> None:
     name_item = CustomTableItem(attrib, attrib.name)
-    if attrib.value_type == som_cr_constants.RANGE:
+    if attrib.value_type == value_constants.RANGE:
         value_text = ";".join("-".join((str(x) for x in ran)) for ran in attrib.value)
     else:
         value_text = ";".join(str(x) for x in attrib.value)
@@ -200,7 +200,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         for i in reversed(range(self.widget.combo_data_type.count())):
             self.widget.combo_data_type.removeItem(i)
 
-        self.widget.combo_data_type.addItems(list(constants.DATA_TYPES))
+        self.widget.combo_data_type.addItems(list(value_constants.DATA_TYPES))
         self.show()
         self.resize(1000, 400)
 
@@ -369,7 +369,7 @@ class PropertySetWindow(QtWidgets.QWidget):
     def data_combo_change(self, text: str) -> None:
         """if datatype changes to xs:double -> only digits are allowed to be entered into line edits"""
 
-        if text == som_cr_constants.DATATYPE_NUMBER:
+        if text == value_constants.DATATYPE_NUMBER:
             validator = QtGui.QDoubleValidator()
             validator.setNotation(QtGui.QDoubleValidator.Notation.StandardNotation)
         else:
@@ -419,7 +419,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                         if len(value.strip()) > 0:
                             values.append(value)
 
-            if data_type == som_cr_constants.DATATYPE_NUMBER:  # transform text to number
+            if data_type == value_constants.DATATYPE_NUMBER:  # transform text to number
                 for i, value in enumerate(values):
                     try:
                         if self.widget.combo_type.currentText() in constants.RANGE_STRINGS:
@@ -568,13 +568,13 @@ class PropertySetWindow(QtWidgets.QWidget):
         for attribute_value, lines in zip(attribute.value, self.input_lines2.values()):
             if len(lines) > 1:
                 for k, val in enumerate(attribute_value):
-                    if attribute.data_type == som_cr_constants.XS_DOUBLE:
+                    if attribute.data_type == value_constants.XS_DOUBLE:
                         lines[k].setText(float_to_string(val))
                     else:
                         lines[k].setText(val)
             else:
                 line = lines[0]
-                if attribute.data_type == som_cr_constants.XS_DOUBLE:
+                if attribute.data_type == value_constants.XS_DOUBLE:
                     line.setText(float_to_string(attribute_value))
                 else:
                     line.setText(attribute_value)

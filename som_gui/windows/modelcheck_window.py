@@ -11,7 +11,7 @@ import openpyxl
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QLineEdit
 from SOMcreator import classes
-from SOMcreator import constants as som_constants
+from SOMcreator.constants import value_constants
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 from openpyxl.worksheet.table import Table, TableStyleInfo
@@ -168,7 +168,6 @@ class Modelcheck(IfcRunner):
                 return
             self.check_group_structure(entity, self.group_dict, 0)
 
-
         test_text = "Prüfe Elemente ohne Gruppenzuordnung"
         self.signaller.status.emit(test_text)
         entites_without_group = [entity for entity in ifc.by_type("IfcElement") if
@@ -179,10 +178,10 @@ class Modelcheck(IfcRunner):
         for entity in entites_without_group:
             if self.is_aborted:
                 return
-            self.increment_progress(test_text,1)
+            self.increment_progress(test_text, 1)
 
             modelcheck.check_element(entity, self.main_pset, self.main_attribute, self.data_base_path, self.base_name,
-                                     self.ident_dict, modelcheck.ELEMENT, self.project.name,False)
+                                     self.ident_dict, modelcheck.ELEMENT, self.project.name, False)
 
     def create_issues(self):
         def get_max_width():
@@ -257,7 +256,7 @@ class Modelcheck(IfcRunner):
             """checks group or element that is not a collector"""
 
             def loop_parent(el: classes.Aggregation) -> classes.Aggregation:
-                if el.parent_connection != som_constants.INHERITANCE:
+                if el.parent_connection != value_constants.INHERITANCE:
                     return el.parent
                 else:
                     return loop_parent(el.parent)

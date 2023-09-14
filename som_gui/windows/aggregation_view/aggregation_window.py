@@ -1,16 +1,17 @@
 from __future__ import annotations  # make own class referencable
 
+import logging
 import os.path
 from typing import TYPE_CHECKING
 
+import tqdm
 from PySide6 import QtGui, QtCore
 from PySide6.QtCore import Qt, QRectF, QPointF
-from PySide6.QtGui import QWheelEvent, QMouseEvent, QTransform, QShortcut, QKeySequence,QPainter,QImage
-from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView, QApplication, QMenu, QRubberBand,QFileDialog
-from SOMcreator import classes
+from PySide6.QtGui import QWheelEvent, QMouseEvent, QTransform, QShortcut, QKeySequence, QPainter, QImage
+from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsView, QApplication, QMenu, QRubberBand, \
+    QFileDialog
+from SOMcreator import classes, value_constants
 
-import logging
-import tqdm
 from som_gui.qt_designs import ui_aggregation_window
 from .node import NodeProxy, Header, Frame, Connection, Circle
 from ...data import constants
@@ -57,11 +58,13 @@ def center_nodes(nodes: set[NodeProxy], orientation: int) -> None:
         if orientation == 1:
             node.moveBy(0.0, dif)
 
-def distribute_by_layer(nodes:set[NodeProxy],orientation:int) -> None:
-    node_dict = {node.level():set() for node in nodes}
+
+def distribute_by_layer(nodes: set[NodeProxy], orientation: int) -> None:
+    node_dict = {node.level(): set() for node in nodes}
     [node_dict[node.level()].add(node) for node in nodes]
-    for level,node_set in node_dict.items():
-        distribute_nodes(node_set,orientation)
+    for level, node_set in node_dict.items():
+        distribute_nodes(node_set, orientation)
+
 
 def distribute_nodes(nodes: set[NodeProxy], orientation: int) -> None:
     if len(nodes) < 2:
@@ -263,7 +266,7 @@ class AggregationView(QGraphicsView):
         logging.debug(f"New Bounding_rect: {bounding_rect}")
         marg = constants.SCENE_MARGIN
         self.fitInView(bounding_rect.adjusted(-marg, -marg, marg, marg),
-                            aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
+                       aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
 
     def right_click(self, pos: QPointF):
         def rc_add_node():
@@ -315,15 +318,14 @@ class AggregationView(QGraphicsView):
             if focus_node.aggregation.parent is not None:
                 menu_connection = self.right_click_menu.addMenu("Verbindungsart")
                 action_set_aggregation = menu_connection.addAction("Aggregation")
-                action_set_aggregation.triggered.connect(lambda: set_connection(constants.AGGREGATION))
+                action_set_aggregation.triggered.connect(lambda: set_connection(value_constants.AGGREGATION))
                 action_set_aggregation = menu_connection.addAction("Vererbung")
-                action_set_aggregation.triggered.connect(lambda: set_connection(constants.INHERITANCE))
+                action_set_aggregation.triggered.connect(lambda: set_connection(value_constants.INHERITANCE))
                 action_set_aggregation = menu_connection.addAction("Aggregation+Vererbung")
                 action_set_aggregation.triggered.connect(lambda: set_connection(
-                    constants.INHERITANCE + constants.AGGREGATION))
+                    value_constants.INHERITANCE + value_constants.AGGREGATION))
 
             if focus_node in self.scene().selected_nodes:
-
                 action_horizontal_center = layout_menu.addAction("Horizontal zentrieren")
                 action_horizontal_center.triggered.connect(lambda: center_nodes(self.scene().selected_nodes, 0))
                 action_vertical_center = layout_menu.addAction("Vertikal zentrieren")
@@ -355,7 +357,7 @@ class AggregationView(QGraphicsView):
         global_pos = self.viewport().mapToGlobal(pos)
         self.right_click_menu.exec(global_pos)
 
-    def print_view(self,path):
+    def print_view(self, path):
 
         rect = self.viewport().rect()
         image = QImage(rect.size() * 8, QImage.Format.Format_RGB32)
@@ -371,13 +373,12 @@ class AggregationView(QGraphicsView):
         for node in self.window().nodes:
             node.update()
 
-        for scene in tqdm.tqdm(self.window().scenes,"Ansicht "):
-            self.window().active_scene=scene
+        for scene in tqdm.tqdm(self.window().scenes, "Ansicht "):
+            self.window().active_scene = scene
             self.auto_fit()
             path = os.path.join(folder_path, f"{scene.name}.png")
             self.print_view(path)
         print("Done")
-
 
     def draw_connection_mouse_release(self, event: QMouseEvent):
         """if the user draws a line and the mouse was released this event should be called to determine if a new Connection gets established"""
@@ -406,7 +407,7 @@ class AggregationView(QGraphicsView):
             self.drawn_connection.delete()
             self.drawn_connection = None
         else:
-            self.drawn_connection.add_bottom_node(node_proxy, constants.AGGREGATION)
+            self.drawn_connection.add_bottom_node(node_proxy, value_constants.AGGREGATION)
             self.drawn_connection.update_line()
             self.drawn_connection = None
         return super(AggregationView, self).mouseReleaseEvent(event)
@@ -479,7 +480,7 @@ class AggregationView(QGraphicsView):
             return super(AggregationView, self).mousePressEvent(event)
 
         if bool(modifier == Qt.KeyboardModifier.ControlModifier):
-            self.focus_node:NodeProxy
+            self.focus_node: NodeProxy
             (self.resize_orientation, self.focus_node) = self.get_focus_and_cursor(self.mapToScene(event.pos()))
             if self.focus_node is not None:
                 self.focus_node.setSelected(True)
@@ -621,7 +622,7 @@ class AggregationWindow(QWidget):
             self.widget.combo_box.lineEdit().textEdited.connect(self.combo_box_edited)
 
         super(AggregationWindow, self).__init__()
-        self.main_window:MainWindow = main_window
+        self.main_window: MainWindow = main_window
         self.widget = ui_aggregation_window.Ui_GraphView()
         self.widget.setupUi(self)
 
@@ -644,7 +645,6 @@ class AggregationWindow(QWidget):
         self.paste_shortcut = QShortcut(QKeySequence('Ctrl+V'), self)
         self.copied_nodes: set[NodeProxy] = set()
         create_connection()
-
 
     def changeEvent(self, event: QtCore.QEvent) -> None:
         super(AggregationWindow, self).changeEvent(event)
@@ -676,9 +676,11 @@ class AggregationWindow(QWidget):
 
             for child_node in node.child_nodes():
                 if child_node in node_dict:
-                    Connection(node_dict[child_node], new_node, Connection.NORMAL_MODE, child_node.aggregation.parent_connection)
+                    Connection(node_dict[child_node], new_node, Connection.NORMAL_MODE,
+                               child_node.aggregation.parent_connection)
             if node.parent_node() in node_dict:
-                Connection(new_node, node_dict[node.parent_node()],Connection.NORMAL_MODE,node.aggregation.parent_connection)
+                Connection(new_node, node_dict[node.parent_node()], Connection.NORMAL_MODE,
+                           node.aggregation.parent_connection)
 
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
         super(AggregationWindow, self).closeEvent(event)
@@ -688,7 +690,7 @@ class AggregationWindow(QWidget):
             if not scene.nodes:
                 self.delete_scene(scene)
 
-    def set_info(self, pset_name:str, attribute_name:str):
+    def set_info(self, pset_name: str, attribute_name: str):
         for node in self.nodes:
             node.set_title_by_attribute(pset_name, attribute_name)
 
@@ -803,7 +805,7 @@ class AggregationWindow(QWidget):
         index = self.widget.combo_box.findText(scene.name)
         self.widget.combo_box.setCurrentIndex(index)
 
-    def create_new_scene(self, name:str="UNDEF") -> AggregationScene:
+    def create_new_scene(self, name: str = "UNDEF") -> AggregationScene:
         def loop_name(index: int):
             new_name = f"{name}_{str(index).zfill(2)}"
             if new_name in names:
@@ -828,7 +830,7 @@ class AggregationWindow(QWidget):
             scene.add_node(node)
         return node
 
-    def combo_box_index_changed(self)-> None:
+    def combo_box_index_changed(self) -> None:
         if not self.nodes:
             logging.info("No Nodes")
             return
@@ -839,7 +841,7 @@ class AggregationWindow(QWidget):
         self.view.auto_fit()
         self.widget.combo_box.model().sort(0)
 
-    def combo_box_edited(self, val:str) -> None:
+    def combo_box_edited(self, val: str) -> None:
         if self.active_scene is not None:
             self.active_scene.name = val
             index = self.widget.combo_box.currentIndex()

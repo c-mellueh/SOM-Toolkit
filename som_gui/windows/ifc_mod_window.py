@@ -7,29 +7,33 @@ from typing import TYPE_CHECKING
 
 import ifcopenshell
 from PySide6.QtCore import QObject, Signal, QRunnable, QThreadPool
-from PySide6.QtWidgets import QFileDialog, QWidget,QLineEdit,QLabel
+from PySide6.QtWidgets import QFileDialog, QWidget, QLineEdit, QLabel
 from SOMcreator import classes
 
+from .. import settings
 from ..icons import get_icon
 from ..qt_designs import ui_modelcheck
-from .. import settings
+
 if TYPE_CHECKING:
     from ..main_window import MainWindow
+
 ABORT = "ABORT"
 
-def ifc_file_dialog(window:QWidget,line_edit:QLineEdit) -> None|list:
+
+def ifc_file_dialog(window: QWidget, line_edit: QLineEdit) -> None | list:
     file_text = "IFC Files (*.ifc *.IFC);;"
     ifc_paths = settings.get_ifc_path()
-    if isinstance(ifc_paths,list):
+    if isinstance(ifc_paths, list):
         ifc_paths = ifc_paths[0]
-    path = QFileDialog.getOpenFileNames(window, "IFC-Files",ifc_paths , file_text)[0]
+    path = QFileDialog.getOpenFileNames(window, "IFC-Files", ifc_paths, file_text)[0]
     if not path:
         return
     settings.set_ifc_path(path)
     line_edit.setText(settings.PATH_SEPERATOR.join(path))
     return path
 
-def get_ifc_path(line_edit_ifc:QLineEdit) -> list[str]:
+
+def get_ifc_path(line_edit_ifc: QLineEdit) -> list[str]:
     paths = line_edit_ifc.text().split(settings.PATH_SEPERATOR)
     result = list()
     for path in paths:
@@ -40,7 +44,7 @@ def get_ifc_path(line_edit_ifc:QLineEdit) -> list[str]:
     return result
 
 
-def get_main_attribute(proj:classes.Project) -> (str, str):
+def get_main_attribute(proj: classes.Project) -> (str, str):
     ident_attributes = dict()
     ident_psets = dict()
     for obj in proj.objects:
@@ -61,19 +65,21 @@ def get_main_attribute(proj:classes.Project) -> (str, str):
         return "", ""
 
 
-def set_main_attribute(proj:classes.Project,line_edit_pset:QLineEdit,line_edit_attribute:QLineEdit) -> None:
-    pset,attribute = get_main_attribute(proj)
+def set_main_attribute(proj: classes.Project, line_edit_pset: QLineEdit, line_edit_attribute: QLineEdit) -> None:
+    pset, attribute = get_main_attribute(proj)
     line_edit_pset.setText(pset)
     line_edit_attribute.setText(attribute)
 
-def auto_set_ifc_path(line_edit_ifc:QLineEdit):
+
+def auto_set_ifc_path(line_edit_ifc: QLineEdit):
     ifc_path = settings.get_ifc_path()
     if ifc_path:
         if isinstance(ifc_path, list):
             ifc_path = settings.PATH_SEPERATOR.join(ifc_path)
         line_edit_ifc.setText(ifc_path)
 
-def check_for_ifc(line_edit_ifc:QLineEdit,label_ifc_missing:QLabel):
+
+def check_for_ifc(line_edit_ifc: QLineEdit, label_ifc_missing: QLabel):
     if not get_ifc_path(line_edit_ifc):
         if line_edit_ifc.text():
             label_ifc_missing.setText("Path doesn't exist!")
@@ -83,7 +89,8 @@ def check_for_ifc(line_edit_ifc:QLineEdit,label_ifc_missing:QLabel):
         return False
     return True
 
-def check_for_export_path(export_path:str,label_export_missing:QLabel):
+
+def check_for_export_path(export_path: str, label_export_missing: QLabel):
     allow = True
     if not export_path:
         label_export_missing.setText("Export Path is missing!")
@@ -96,6 +103,7 @@ def check_for_export_path(export_path:str,label_export_missing:QLabel):
         allow = False
     return allow
 
+
 class IfcWindow(QWidget):
     def __init__(self, main_window: MainWindow):
         super(IfcWindow, self).__init__()
@@ -103,9 +111,10 @@ class IfcWindow(QWidget):
         self.widget = ui_modelcheck.Ui_Form()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.widget.button_ifc.clicked.connect(lambda :ifc_file_dialog(self,self.widget.line_edit_ifc))
+        self.widget.button_ifc.clicked.connect(lambda: ifc_file_dialog(self, self.widget.line_edit_ifc))
         self.widget.button_export.clicked.connect(self.export_file_dialog)
-        set_main_attribute(self.main_window.project,self.widget.line_edit_ident_pset,self.widget.line_edit_ident_attribute)
+        set_main_attribute(self.main_window.project, self.widget.line_edit_ident_pset,
+                           self.widget.line_edit_ident_attribute)
         self.widget.label_ifc_missing.hide()
         self.widget.label_export_missing.hide()
         self.widget.label_export_missing.setStyleSheet("QLabel { color : red; }")
@@ -129,7 +138,7 @@ class IfcWindow(QWidget):
         self.end_time = None
         self.task_is_running = False
 
-    def connect_runner(self,runner: IfcRunner):
+    def connect_runner(self, runner: IfcRunner):
         runner.signaller.started.connect(self.on_started)
         runner.signaller.finished.connect(self.on_finished)
         runner.signaller.progress.connect(self.update_progress_bar)
@@ -141,9 +150,9 @@ class IfcWindow(QWidget):
             self.hide()
 
     def accept(self) -> None:
-        checks= set()
-        checks.add(check_for_ifc(self.widget.line_edit_ifc,self.widget.label_ifc_missing))
-        checks.add(check_for_export_path( self.widget.line_edit_export.text(),self.widget.label_export_missing))
+        checks = set()
+        checks.add(check_for_ifc(self.widget.line_edit_ifc, self.widget.label_ifc_missing))
+        checks.add(check_for_export_path(self.widget.line_edit_export.text(), self.widget.label_export_missing))
         if all(checks):
             self.start_task()
 
@@ -180,7 +189,7 @@ class IfcWindow(QWidget):
         self.widget.progress_bar.show()
         self.widget.progress_bar.reset()
         self.thread_pool.clear()
-        return proj,ifc,pset,attribute,export_path
+        return proj, ifc, pset, attribute, export_path
 
     def end_task(self):
         logging.info("Task Done")
@@ -197,9 +206,10 @@ class IfcWindow(QWidget):
     def update_status(self, value):
         self.widget.label_status.setText(value)
 
+
 class IfcRunner(QRunnable):
 
-    def __init__(self, ifc_paths: list[str]|str, project: classes.Project, main_pset: str, main_attribute: str,
+    def __init__(self, ifc_paths: list[str] | str, project: classes.Project, main_pset: str, main_attribute: str,
                  function_name: str):
         self.signaller = Signaller()
         super(IfcRunner, self).__init__()
@@ -213,7 +223,7 @@ class IfcRunner(QRunnable):
         self.checked_objects: int = 0
         self.function_name = function_name
 
-    def increment_progress(self,text= "",increment_value = 1):
+    def increment_progress(self, text="", increment_value=1):
         if self.is_aborted:
             self.set_abort_status()
             return
@@ -250,8 +260,9 @@ class IfcRunner(QRunnable):
         self.is_aborted = True
         self.set_abort_status()
 
-    def run(self,is_done = True) -> None:
-        """if this functions gets subclassed is_done should be set to False. Else the finished signal might be emitted to early"""
+    def run(self, is_done=True) -> None:
+        """if this functions gets subclassed is_done should be set to False.
+        Else the finished signal might be emitted to early"""
 
         self.signaller.started.emit(self.ifc_paths)
         files = self.get_check_file_list()
@@ -279,6 +290,7 @@ class IfcRunner(QRunnable):
         self.signaller.status.emit(f"Import Done!")
         sleep(0.1)
         return ifc
+
 
 class Signaller(QObject):
     started = Signal(str)

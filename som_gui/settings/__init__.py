@@ -36,7 +36,7 @@ def _get_config() -> ConfigParser:
 
 
 def _get_path(value: str) -> str | list | set:
-    path = _get_string_setting(PATHS_SECTION,value)
+    path = _get_string_setting(PATHS_SECTION, value)
     if not path:
         return ""
     if PATH_SEPERATOR in path:
@@ -55,7 +55,7 @@ def _write_config(config_parser) -> None:
         config_parser.write(f)
 
 
-def _get_bool_setting(section:str, path:str) -> bool:
+def _get_bool_setting(section: str, path: str) -> bool:
     config_parser = _get_config()
     if config_parser.has_option(section, path):
         path = config_parser.get(section, path)
@@ -64,7 +64,7 @@ def _get_bool_setting(section:str, path:str) -> bool:
     return False
 
 
-def set_setting(section:str, path:str, value) -> None:
+def set_setting(section: str, path: str, value) -> None:
     config_parser = _get_config()
     if not config_parser.has_section(section):
         config_parser.add_section(section)
@@ -72,7 +72,7 @@ def set_setting(section:str, path:str, value) -> None:
     _write_config(config_parser)
 
 
-def _get_string_setting(section:str, path:str,default = "") -> str:
+def _get_string_setting(section: str, path: str, default="") -> str:
     config_parser = _get_config()
     if config_parser.has_option(section, path):
         path = config_parser.get(section, path)
@@ -129,7 +129,7 @@ def set_seperator_status(value: bool) -> None:
 
 
 def get_seperator() -> str:
-    return _get_string_setting(SEPERATOR_SECTION,SEPERATOR,",")
+    return _get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
 
 
 def set_seperator(value: str) -> None:
@@ -161,7 +161,7 @@ def set_save_path(path) -> None:
 
 
 def get_ifc_path() -> str:
-    return  _get_path(IFC_PATH)
+    return _get_path(IFC_PATH)
 
 
 def set_ifc_path(path) -> None:
@@ -175,8 +175,10 @@ def get_issue_path() -> str:
 def set_issue_path(path) -> None:
     _set_path(ISSUE_PATH, path)
 
+
 def get_group_folder() -> str:
     return _get_path(GROUP_FOLDER)
+
 
 def set_group_folder(value) -> None:
     _set_path(GROUP_FOLDER, value)

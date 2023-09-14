@@ -105,7 +105,7 @@ def db_create_entity(cursor, element: entity_instance, project, file_name, baute
 
 
 @sql_command
-def query_issues(cursor: sqlite3.Cursor|str) -> list:
+def query_issues(cursor: sqlite3.Cursor | str) -> list:
     cursor.execute(
         "SELECT i.creation_date, e.GUID,i.short_description,i.issue_type,e.Name,i.PropertySet,i.Attribut, e.datei, e.bauteilKlassifikation  FROM issues AS i JOIN entities e on i.GUID = e.GUID_ZWC")
 

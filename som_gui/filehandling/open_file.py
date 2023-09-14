@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtCore import QPointF
 from PySide6.QtWidgets import QInputDialog, QLineEdit, QFileDialog
 from SOMcreator import classes
-from SOMcreator import constants as som_constants
+from SOMcreator import json_constants
 
 from .. import settings
 from ..data import constants
@@ -15,6 +15,7 @@ from ..data.constants import FILETYPE
 from ..widgets import object_widget
 from ..windows import popups
 from ..windows.aggregation_view import aggregation_window
+
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
@@ -26,12 +27,12 @@ def check_for_objects_without_aggregation(proj: classes.Project):
 
 
 def import_node_pos(main_dict: dict, graph_window: aggregation_window.AggregationWindow) -> None:
-    json_aggregation_dict: dict = main_dict[som_constants.AGGREGATIONS]
+    json_aggregation_dict: dict = main_dict[json_constants.AGGREGATIONS]
     aggregation_ref = {aggregation.uuid: aggregation for aggregation in classes.Aggregation}
     for uuid, aggregation_dict in json_aggregation_dict.items():
         aggregation = aggregation_ref[uuid]
-        x_pos = aggregation_dict.get(som_constants.X_POS) or 0.0
-        y_pos = aggregation_dict.get(som_constants.Y_POS) or 0.0
+        x_pos = aggregation_dict.get(json_constants.X_POS) or 0.0
+        y_pos = aggregation_dict.get(json_constants.Y_POS) or 0.0
         graph_window.create_node(aggregation, QPointF(x_pos, y_pos))
 
     scene_dict = main_dict.get(constants.AGGREGATION_SCENES) or dict()
@@ -64,7 +65,7 @@ def get_path(main_window: MainWindow, title: str, file_text: str) -> str:
     return QFileDialog.getOpenFileName(main_window, title, str(cur_path), file_text)[0]
 
 
-def import_data(main_window:MainWindow,path:str):
+def import_data(main_window: MainWindow, path: str):
     settings.set_open_path(path)
     settings.set_save_path(path)
     main_dict = main_window.project.open(path)
@@ -74,9 +75,10 @@ def import_data(main_window:MainWindow,path:str):
     logging.info(f"Import Done!")
     main_window.generate_window_title()
 
+
 def open_file_clicked(main_window: MainWindow) -> None:
     path = get_path(main_window, "Open Project", FILETYPE)
     if not path:
         return
 
-    import_data(main_window,path)
+    import_data(main_window, path)

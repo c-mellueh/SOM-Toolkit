@@ -7,7 +7,7 @@ from PySide6.QtGui import QPainter, QCursor, QPainterPath, QColor, QPen
 from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout, \
     QGraphicsProxyWidget, QGraphicsPathItem, QGraphicsRectItem, QGraphicsItem, QStyleOptionGraphicsItem, \
     QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsEllipseItem
-from SOMcreator import classes
+from SOMcreator import classes,value_constants
 
 from ...data import constants
 from ...windows import popups
@@ -384,7 +384,7 @@ class Connection(QGraphicsPathItem):
     DRAW_MODE = 1
 
     def __init__(self, bottom_node: NodeProxy, top_node: NodeProxy, mode=0,
-                 connection_type=constants.AGGREGATION) -> None:
+                 connection_type=value_constants.AGGREGATION) -> None:
         super(Connection, self).__init__()
         self.mode: int = mode
 
@@ -442,30 +442,30 @@ class Connection(QGraphicsPathItem):
 
         factor = 3
         if len(connections) == 1:
-            displacement_dict = {constants.AGGREGATION: 0,
-                                 constants.INHERITANCE: 0,
-                                 constants.AGGREGATION + constants.INHERITANCE: 0}
+            displacement_dict = {value_constants.AGGREGATION: 0,
+                                 value_constants.INHERITANCE: 0,
+                                 value_constants.AGGREGATION + value_constants.INHERITANCE: 0}
 
         if len(connections) == 2:
-            if {constants.AGGREGATION, constants.INHERITANCE} == connections:
-                displacement_dict = {constants.INHERITANCE: -constants.ARROW_WIDTH * factor,
-                                     constants.AGGREGATION: +constants.ARROW_WIDTH * factor,
-                                     constants.AGGREGATION + constants.INHERITANCE: 0}
+            if {value_constants.AGGREGATION, value_constants.INHERITANCE} == connections:
+                displacement_dict = {value_constants.INHERITANCE: -constants.ARROW_WIDTH * factor,
+                                     value_constants.AGGREGATION: +constants.ARROW_WIDTH * factor,
+                                     value_constants.AGGREGATION + value_constants.INHERITANCE: 0}
 
-            if {constants.AGGREGATION, constants.INHERITANCE + constants.AGGREGATION} == connections:
-                displacement_dict = {constants.AGGREGATION: -constants.ARROW_WIDTH * factor,
-                                     constants.INHERITANCE: 0,
-                                     constants.AGGREGATION + constants.INHERITANCE: +constants.ARROW_WIDTH * factor}
+            if {value_constants.AGGREGATION, value_constants.INHERITANCE + value_constants.AGGREGATION} == connections:
+                displacement_dict = {value_constants.AGGREGATION: -constants.ARROW_WIDTH * factor,
+                                     value_constants.INHERITANCE: 0,
+                                     value_constants.AGGREGATION + value_constants.INHERITANCE: +constants.ARROW_WIDTH * factor}
 
-            if {constants.INHERITANCE, constants.INHERITANCE + constants.AGGREGATION} == connections:
-                displacement_dict = {constants.AGGREGATION: 0,
-                                     constants.INHERITANCE: +constants.ARROW_WIDTH * factor,
-                                     constants.AGGREGATION + constants.INHERITANCE: -constants.ARROW_WIDTH * factor}
+            if {value_constants.INHERITANCE, value_constants.INHERITANCE + value_constants.AGGREGATION} == connections:
+                displacement_dict = {value_constants.AGGREGATION: 0,
+                                     value_constants.INHERITANCE: +constants.ARROW_WIDTH * factor,
+                                     value_constants.AGGREGATION + value_constants.INHERITANCE: -constants.ARROW_WIDTH * factor}
 
         if len(connections) == 3:
-            displacement_dict = {constants.INHERITANCE: -constants.ARROW_WIDTH * factor,
-                                 constants.AGGREGATION: 0,
-                                 constants.AGGREGATION + constants.INHERITANCE: +constants.ARROW_WIDTH * factor}
+            displacement_dict = {value_constants.INHERITANCE: -constants.ARROW_WIDTH * factor,
+                                 value_constants.AGGREGATION: 0,
+                                 value_constants.AGGREGATION + value_constants.INHERITANCE: +constants.ARROW_WIDTH * factor}
 
         return displacement_dict.get(self.connection_type)
 
@@ -563,15 +563,15 @@ class Connection(QGraphicsPathItem):
         point_bottom = self.bottom_node.top_anchor_point()  # top center of Bottom Node
         point_top.setX(point_top.x() + self.get_connection_displacement())
 
-        if self.connection_type in (constants.AGGREGATION, constants.INHERITANCE):
+        if self.connection_type in (value_constants.AGGREGATION, value_constants.INHERITANCE):
             points = [QPointF() for _ in range(8)]
         else:
             points = [QPointF() for _ in range(14)]
 
-        if self.connection_type == constants.AGGREGATION:
+        if self.connection_type == value_constants.AGGREGATION:
             aggregation_points()
 
-        elif self.connection_type == constants.INHERITANCE:
+        elif self.connection_type == value_constants.INHERITANCE:
             inheritance_points()
         else:
             combo_points()

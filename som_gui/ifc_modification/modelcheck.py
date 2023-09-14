@@ -4,7 +4,7 @@ import re
 
 import SOMcreator
 import ifcopenshell
-from SOMcreator import constants as som_constants
+from SOMcreator import value_constants
 from ifcopenshell import entity_instance
 from ifcopenshell.util import element as ifc_el
 
@@ -19,10 +19,10 @@ SUBGROUPS = "subgroups"
 SUBELEMENT = "subelement"
 
 datatype_dict = {
-    som_constants.XS_STRING: str,
-    som_constants.XS_BOOL: bool,
-    som_constants.XS_INT: int,
-    som_constants.XS_DOUBLE: float
+    value_constants.XS_STRING: str,
+    value_constants.XS_BOOL: bool,
+    value_constants.XS_INT: int,
+    value_constants.XS_DOUBLE: float
 }
 
 rev_datatype_dict = {
@@ -41,8 +41,8 @@ def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_at
                   ifc_name: str, ident_dict: dict[str, SOMcreator.Object], element_type: str, project_name: str,
                   is_in_group=True):
     def check_values(value, attribute: SOMcreator.Attribute):
-        check_dict = {som_constants.LIST: check_list, som_constants.RANGE: check_range,
-                      som_constants.FORMAT: check_format, constants.GER_LIST: check_list,
+        check_dict = {value_constants.LIST: check_list, value_constants.RANGE: check_range,
+                      value_constants.FORMAT: check_format, constants.GER_LIST: check_list,
                       constants.GER_VALUE: check_values, constants.GER_FORMAT: check_format,
                       constants.GER_RANGE: check_range}
         func = check_dict[attribute.value_type]
@@ -77,17 +77,16 @@ def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_at
             issues.range_issue(database_path, guid, attribute, element_type)
 
     def check_for_attributes(pset_dict, obj: SOMcreator.Object):
-        guid = element.GlobalId
         for property_set in obj.property_sets:
             pset_name = property_set.name
             if pset_name not in pset_dict:
-                issues.property_set_issue(database_path, guid, pset_name, element_type)
+                issues.property_set_issue(database_path, element.GlobalId, pset_name, element_type)
                 continue
 
             for attribute in property_set.attributes:
                 attribute_name = attribute.name
                 if attribute.name not in pset_dict[pset_name]:
-                    issues.attribute_issue(database_path, guid, pset_name, attribute_name, element_type)
+                    issues.attribute_issue(database_path, element.GlobalId, pset_name, attribute_name, element_type)
                     continue
 
                 value = pset_dict[pset_name][attribute_name]
