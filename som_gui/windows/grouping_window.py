@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING
 
 import SOMcreator
 import ifcopenshell
-from ifcopenshell.util import element
-from PySide6.QtWidgets import QLineEdit,QFileDialog
+from PySide6.QtWidgets import QLineEdit, QFileDialog
 from SOMcreator import classes
+from ifcopenshell.util import element
 
 from .ifc_mod_window import IfcWindow, IfcRunner
 
@@ -45,7 +45,6 @@ class GroupingWindow(IfcWindow):
             return
         settings.set_group_folder(path)
         self.widget.line_edit_export.setText(path)
-
 
     def set_fixed_sizes(self):
         def set_line_edit_size(le: QLineEdit):
@@ -129,7 +128,7 @@ class Grouping(IfcRunner):
         if self.is_aborted:
             return
 
-        export_name = os.path.join(self.export_path,self.base_name)
+        export_name = os.path.join(self.export_path, self.base_name)
         self.signaller.progress.emit(0)
         self.signaller.status.emit(f"Write File to {export_name}")
         if self.is_aborted:
@@ -158,13 +157,13 @@ class Grouping(IfcRunner):
 
     def create_structure_dict(self, ifc_file: ifcopenshell.file) -> None:
         self.object_count = len(ifc_file.by_type("IfcElement"))
-        for index,el in enumerate(list(ifc_file.by_type("IfcElement"))):
+        for index, el in enumerate(list(ifc_file.by_type("IfcElement"))):
             if self.is_aborted:
                 self.set_abort_status()
                 return
 
-            if index %10== 0:
-                self.increment_progress(f"Bauwerksstruktur Einlesen",10)
+            if index % 10 == 0:
+                self.increment_progress(f"Bauwerksstruktur Einlesen", 10)
 
             attrib, gruppe, identity = self.get_ifc_el_info(el)
             self.entity_object_dict[el] = self.bk_dict.get(attrib)
@@ -206,7 +205,6 @@ class Grouping(IfcRunner):
 
     def create_aggregation_structure(self, ifc_file: ifcopenshell.file, structure: dict, id_gruppe: list[str],
                                      parent_group, is_sammler: bool, obj=None):
-
 
         def create_ifc_property(property_name: str, value: str):
             prop = ifc_file.create_entity("IfcPropertySingleValue", property_name, DESCRIPTION,
@@ -250,7 +248,7 @@ class Grouping(IfcRunner):
             return ifc_group
 
         for abbreviation in structure[GROUP]:
-            if self.is_aborted: #on Abort press
+            if self.is_aborted:  # on Abort press
                 return
             ifc_rep = structure[GROUP][abbreviation][IFC_REP]
             new_id_gruppe = id_gruppe + [abbreviation]
@@ -268,7 +266,6 @@ class Grouping(IfcRunner):
                 group = ifc_rep
             self.create_aggregation_structure(ifc_file, structure[GROUP][abbreviation], new_id_gruppe, group,
                                               not is_sammler, obj)
-
 
         if not is_sammler:
             for relation_ship in parent_group.IsGroupedBy:

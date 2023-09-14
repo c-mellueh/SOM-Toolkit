@@ -22,7 +22,7 @@ class MainWindow(QMainWindow):
             self.ui.action_file_new.triggered.connect(lambda: popups.new_file_clicked(self))
             self.ui.action_file_Save.triggered.connect(lambda: save_file.save_clicked(self))
             self.ui.action_file_Save_As.triggered.connect(lambda: save_file.save_as_clicked(self))
-            #Export
+            # Export
 
             self.ui.action_export_bs.triggered.connect(lambda: export.export_building_structure(self))
             self.ui.action_export_bookmarks.triggered.connect(lambda: export.export_bookmarks(self))
@@ -34,7 +34,7 @@ class MainWindow(QMainWindow):
             self.ui.action_allplan.triggered.connect(lambda: export.export_allplan_excel(self))
             self.ui.action_abbreviation_json.triggered.connect(lambda: export.export_desite_abbreviation(self))
             self.ui.action_desite_export.triggered.connect(lambda: export.export_desite_rules(self))
-            #Windows
+            # Windows
 
             self.ui.action_show_list.triggered.connect(self.open_predefined_pset_window)
             self.ui.action_settings.triggered.connect(self.open_settings_window)
@@ -77,14 +77,14 @@ class MainWindow(QMainWindow):
         self.ui.statusbar.addWidget(self.permanent_status_text)
         self.generate_window_title()
 
-        #Icons
+        # Icons
         self.setWindowIcon(icons.get_icon())
         self.ui.button_search.setIcon(icons.get_search_icon())
 
         if open_file_path is not None:
             open_file.import_data(self, open_file_path)
 
-# Windows
+    # Windows
 
     def open_mapping_window(self):
         self.mapping_window = mapping_window.MappingWindow(self)

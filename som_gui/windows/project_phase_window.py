@@ -143,7 +143,7 @@ class ProjectPhaseWindow(QWidget):
             return
         header_item.setText(column, new_name)
         self.main_window.project.rename_project_phase(old_name, new_name)
-        for entity,project_phase_dict in self.data_model.items():
+        for entity, project_phase_dict in self.data_model.items():
             value = project_phase_dict[old_name]
             project_phase_dict[new_name] = value
             project_phase_dict.pop(old_name)
@@ -153,7 +153,7 @@ class ProjectPhaseWindow(QWidget):
         self.main_window.project.remove_project_phase(phase_name)
         self.set_object_tree_header()
         self.fill_object_tree()
-        for entity,project_phase_dict in self.data_model.items():
+        for entity, project_phase_dict in self.data_model.items():
             project_phase_dict.pop(phase_name)
         self.tree_model.clear()
 
@@ -170,7 +170,7 @@ class ProjectPhaseWindow(QWidget):
         self.main_window.project.add_project_phase(project_phase_name)
         self.set_object_tree_header()
         self.fill_object_tree()
-        for entity,project_phase_dict in self.data_model.items():
+        for entity, project_phase_dict in self.data_model.items():
             project_phase_dict[project_phase_name] = True
         self.tree_model.clear()
 

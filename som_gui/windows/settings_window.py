@@ -1,20 +1,19 @@
 from __future__ import annotations  # make own class referencable
 
-import logging
 from typing import TYPE_CHECKING
-import re
 
 from PySide6.QtWidgets import QDialog
-from ..qt_designs import ui_project_settings
-from .. import icons
+
 from .. import __version__
-from ..data.constants import  PROJECT_PHASE_COUNT
+from .. import icons
+from ..qt_designs import ui_project_settings
+
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
 
 class SettingsDialog(QDialog):
-    def __init__(self,main_window:MainWindow):
+    def __init__(self, main_window: MainWindow):
         super(SettingsDialog, self).__init__()
         widget = ui_project_settings.Ui_Dialog()
         widget.setupUi(self)

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtWidgets import QTreeWidgetItem, QMenu, QMainWindow, QFileDialog
-from SOMcreator import classes, constants, revit
+from SOMcreator import classes, revit, json_constants, value_constants
 
 from .. import icons
 from ..qt_designs import ui_mapping_window
@@ -68,7 +68,7 @@ class MappingWindow(QMainWindow):
                 new_item.addChild(new_child)
                 copy_children(child, new_child)
 
-                if child.object.mapping_dict[constants.IFC_MAPPING]:
+                if child.object.mapping_dict[json_constants.IFC_MAPPING]:
                     new_child.setCheckState(0, Qt.Checked)
                 else:
                     new_child.setCheckState(0, Qt.Unchecked)
@@ -100,7 +100,7 @@ class MappingWindow(QMainWindow):
             self.pset_trees[_object].append(pset_item)
             for attribute in pset.attributes:
                 AttributeTreeItem(pset_item, attribute)
-            if pset.mapping_dict[constants.IFC_MAPPING]:
+            if pset.mapping_dict[json_constants.IFC_MAPPING]:
                 pset_item.setCheckState(0, Qt.Checked)
             else:
                 pset_item.setCheckState(0, Qt.Unchecked)
@@ -162,17 +162,17 @@ class MappingWindow(QMainWindow):
 
             def compare_property_sets():
                 for property_set in child.object.property_sets:
-                    if property_set.mapping_dict[constants.IFC_MAPPING]:
+                    if property_set.mapping_dict[json_constants.IFC_MAPPING]:
                         if pset_dict.get(property_set.name) is None:
                             saved_attributes: list[classes.Attribute] = list()
                             for attribute in property_set.attributes:
-                                if attribute.mapping_dict[constants.IFC_MAPPING]:
+                                if attribute.mapping_dict[json_constants.IFC_MAPPING]:
                                     saved_attributes.append(attribute)
                             ifc_mapping = child.object.ifc_mapping
                         else:
                             (saved_attributes, ifc_mapping) = pset_dict.get(property_set.name)
                             for attribute in property_set.attributes:
-                                mapping_bool = attribute.mapping_dict[constants.IFC_MAPPING]
+                                mapping_bool = attribute.mapping_dict[json_constants.IFC_MAPPING]
                                 if attribute.name not in [x.name for x in saved_attributes] and mapping_bool:
                                     saved_attributes.append(attribute)
                             ifc_mapping = set.union(ifc_mapping, child.object.ifc_mapping)
@@ -206,8 +206,9 @@ class MappingWindow(QMainWindow):
         if path:
             revit.export_shared_parameters(path, pset_dict)
 
-    def object_double_clicked(self,item: ObjectTreeItem) -> None:
+    def object_double_clicked(self, item: ObjectTreeItem) -> None:
         object_widget.object_double_clicked(self.main_window, item.object)
+
 
 class ObjectTreeItem(QTreeWidgetItem):
     def __init__(self, obj: classes.Object, parent: QTreeWidgetItem | ObjectTreeItem = None) -> None:
@@ -243,7 +244,7 @@ class AttributeTreeItem(QTreeWidgetItem):
     def __init__(self, parent: QTreeWidgetItem | AttributeTreeItem, attribute: classes.Attribute) -> None:
         super(AttributeTreeItem, self).__init__(parent)
         self.attribute = attribute
-        if self.attribute.mapping_dict[constants.IFC_MAPPING]:
+        if self.attribute.mapping_dict[json_constants.IFC_MAPPING]:
             self.setCheckState(0, Qt.Checked)
         else:
             self.setCheckState(0, Qt.Unchecked)
@@ -267,8 +268,8 @@ def item_checked(item: ObjectTreeItem | PsetTreeItem | AttributeTreeItem) -> Non
     if isinstance(item, AttributeTreeItem):
         linked_data = item.attribute
 
-    linked_data.mapping_dict[constants.IFC_MAPPING] = check
-    linked_data.mapping_dict[constants.SHARED_PARAMETERS] = check
+    linked_data.mapping_dict[json_constants.IFC_MAPPING] = check
+    linked_data.mapping_dict[value_constants.SHARED_PARAMETERS] = check
 
     disable = not check
     for index in range(item.childCount()):
@@ -280,5 +281,3 @@ def pset_double_clicked(item: PsetTreeItem | AttributeTreeItem):
     if not isinstance(item, PsetTreeItem):
         popups.attribute_mapping(item.attribute)
     item.update()
-
-

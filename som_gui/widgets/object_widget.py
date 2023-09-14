@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtCore import QPoint, Qt
 from PySide6.QtGui import QShortcut, QKeySequence, QDropEvent
 from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem, QDialog, QLineEdit, QCompleter
-from SOMcreator import classes, constants
+from SOMcreator import classes, value_constants
 from SOMcreator.Template import IFC_4_1
 
 from ..icons import get_icon
@@ -383,7 +383,7 @@ def copy(main_window: MainWindow):
             psets.append(new_pset)
 
         if is_concept:
-            new_object = classes.Object(name=obj_name, ident_attrib="Group",project = main_window.project)
+            new_object = classes.Object(name=obj_name, ident_attrib="Group", project=main_window.project)
         else:
             is_empty = [True for text in input_fields if not bool(text)]
             if is_empty:
@@ -407,13 +407,13 @@ def copy(main_window: MainWindow):
                             ident_attribute.value = [ident_value]
                         else:
                             ident_name = ident_attrib_name
-                            ident_attribute = classes.Attribute(pset, ident_name, [ident_value], constants.LIST)
+                            ident_attribute = classes.Attribute(pset, ident_name, [ident_value], value_constants.LIST)
 
                 if ident_attribute is None:
                     ident_pset = classes.PropertySet(ident_pset_name)
-                    ident_attribute = classes.Attribute(ident_pset, ident_attrib_name, [ident_value], constants.LIST)
+                    ident_attribute = classes.Attribute(ident_pset, ident_attrib_name, [ident_value], value_constants.LIST)
                     psets.append(ident_pset)
-                new_object = classes.Object(name=obj_name,ident_attrib= ident_attribute,project = main_window.project)
+                new_object = classes.Object(name=obj_name, ident_attrib=ident_attribute, project=main_window.project)
 
         for pset in psets:
             new_object.add_property_set(pset)
@@ -450,7 +450,7 @@ def rc_group_items(main_window: MainWindow):
             parent: QTreeWidgetItem = main_window.ui.tree_object.invisibleRootItem()
 
     if is_concept:
-        group_obj = classes.Object(name = group_name,ident_attrib= "Group",project = main_window.project)
+        group_obj = classes.Object(name=group_name, ident_attrib="Group", project=main_window.project)
     else:
 
         pset_parent: classes.PropertySet | None = None
@@ -465,7 +465,8 @@ def rc_group_items(main_window: MainWindow):
         else:
             pset = classes.PropertySet(ident_pset)
         identifier = create_ident(pset, ident_attrib, [ident_value])
-        group_obj = classes.Object(name=group_name, ident_attrib=identifier, abbreviation=abbreviation,project = main_window.project)
+        group_obj = classes.Object(name=group_name, ident_attrib=identifier, abbreviation=abbreviation,
+                                   project=main_window.project)
         group_obj.add_property_set(pset)
 
     group_item: CustomObjectTreeItem = add_object_to_tree(main_window, group_obj, parent)
@@ -579,7 +580,7 @@ def check_for_predefined_psets(property_set_name, main_window):
 def create_ident(pset: classes.PropertySet, ident_name: str, ident_value: [str]) -> classes.Attribute:
     ident_attrib: classes.Attribute = pset.get_attribute_by_name(ident_name)
     if ident_attrib is None:
-        ident_attrib = classes.Attribute(pset, ident_name, ident_value, constants.LIST)
+        ident_attrib = classes.Attribute(pset, ident_name, ident_value, value_constants.LIST)
     else:
         ident_attrib.value = ident_value
     return ident_attrib
@@ -642,7 +643,7 @@ def add_object(main_window: MainWindow):
         property_set = classes.PropertySet(p_set_name)
 
     ident = create_ident(property_set, ident_attrib_name, ident_attrib_value)
-    obj = classes.Object(name = name, ident_attrib=ident, abbreviation=abbreviation, project = main_window.project)
+    obj = classes.Object(name=name, ident_attrib=ident, abbreviation=abbreviation, project=main_window.project)
     obj.add_property_set(ident.property_set)
     add_object_to_tree(main_window, obj)
     clear_object_input(main_window)
@@ -693,7 +694,7 @@ def rc_delete(main_window: MainWindow):
         main_window.project.changed = True
 
 
-def reload(main_window:MainWindow) -> None:
+def reload(main_window: MainWindow) -> None:
     main_window.object_tree.clear()
     fill_tree(main_window)
     obj = main_window.active_object

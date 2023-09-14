@@ -17,10 +17,13 @@ NO_GROUP_ISSUE = 11
 REPETETIVE_GROUP_ISSUE = 12
 DATATYPE_ISSUE = 13
 
-def datatype_issue(cursor,guid,attribute,element_type,datatype:str):
-    description = f"{element_type} besitzt den falschen Datentype ({datatype} nicht erlaubt) {attribute.property_set.name}:{attribute.name}"
+
+def datatype_issue(cursor, guid, attribute, element_type, datatype: str):
+    description = f"{element_type} besitzt den falschen Datentype ({datatype} nicht erlaubt)" \
+                  f" {attribute.property_set.name}:{attribute.name}"
     issue_nr = DATATYPE_ISSUE
     sql.add_issues(cursor, guid, description, issue_nr, attribute)
+
 
 def format_issue(cursor, guid, attribute, element_type):
     description = f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
@@ -83,7 +86,7 @@ def guid_issue(cursor, guid, file1, file2):
 
 # GROUP ISSUES
 
-def subgroup_issue(cursor, guid,child_ident):
+def subgroup_issue(cursor, guid, child_ident):
     description = f"Gruppensammler besitzt falsche Untergruppe ({child_ident} nicht erlaubt)"
     issue_nr = SUBGROUP_ISSUE
     sql.add_issues(cursor, guid, description, issue_nr, None)
@@ -95,7 +98,7 @@ def empty_group_issue(cursor, element):
     sql.add_issues(cursor, element.GlobalId, description, issue_nr, None)
 
 
-def parent_issue(cursor, element:entity_instance, parent_element:entity_instance, ag, bk,element_type):
+def parent_issue(cursor, element: entity_instance, parent_element: entity_instance, ag, bk, element_type):
     ident_value = ifc_el.get_pset(parent_element, ag, bk)
     description = f"{element_type} besitzt die falsche Elternklasse ({ident_value} nicht erlaubt)"
     issue_nr = PARENT_ISSUE
@@ -108,7 +111,7 @@ def no_group_issue(cursor, element):
     sql.add_issues(cursor, element.GlobalId, description, issue_nr, None)
 
 
-def repetetive_group_issue(cursor,element):
+def repetetive_group_issue(cursor, element):
     description = f"Gruppe besitzt mehrere Subelemente mit der selben Bauteilklassifikation"
     issue_nr = REPETETIVE_GROUP_ISSUE
     sql.add_issues(cursor, element.GlobalId, description, issue_nr, None)

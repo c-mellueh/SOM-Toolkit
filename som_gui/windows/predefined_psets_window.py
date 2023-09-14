@@ -10,8 +10,8 @@ from SOMcreator import classes, constants
 
 from .. import icons
 from ..qt_designs import ui_predefined_property_sets
+from ..widgets import object_widget, property_widget
 from ..windows import popups
-from ..widgets import object_widget,property_widget
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
@@ -20,11 +20,11 @@ if TYPE_CHECKING:
 class PsetItem(QListWidgetItem):
     _registry = list()
 
-    def __init__(self, property_set: classes.PropertySet = None,project:classes.Project|None = None) -> None:
+    def __init__(self, property_set: classes.PropertySet = None, project: classes.Project | None = None) -> None:
         super(PsetItem, self).__init__()
 
         if property_set is None:
-            self.property_set = classes.PropertySet(name="NewPset",project = project)
+            self.property_set = classes.PropertySet(name="NewPset", project=project)
             self.setText(f"NewPset_{self.get_number()}")
 
         else:
@@ -87,7 +87,7 @@ class PropertySetInherWindow(QWidget):
         sel_items = self.widget.list_view_pset.selectedItems()
         if len(sel_items) == 1:
             item = self.widget.list_view_pset.selectedItems()[0]
-            property_widget.open_pset_window(self.main_window, item.property_set,None, item.property_set.name)
+            property_widget.open_pset_window(self.main_window, item.property_set, None, item.property_set.name)
 
     def add_pset(self):
         item = PsetItem(project=self.main_window.project)
@@ -100,7 +100,7 @@ class PropertySetInherWindow(QWidget):
         items = self.widget.list_view_pset.selectedItems()
         string_list = [x.property_set.name for x in items]
 
-        delete_request = popups.msg_del_items(string_list,item_type=3)
+        delete_request = popups.msg_del_items(string_list, item_type=3)
 
         if delete_request:
             for item in items:
@@ -149,7 +149,7 @@ def open_pset_list(main_window):
     return pset_window
 
 
-def reload(main_window:MainWindow):
+def reload(main_window: MainWindow):
     window: PropertySetInherWindow = main_window.predefined_pset_window
     if window is None:
         return

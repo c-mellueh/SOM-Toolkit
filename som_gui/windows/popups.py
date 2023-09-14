@@ -91,7 +91,9 @@ def msg_close():
     msg_box = QMessageBox(QMessageBox.Icon.Warning,
                           "Message",
                           text,
-                          QMessageBox.StandardButton.Cancel | QMessageBox.StandardButton.Save | QMessageBox.StandardButton.No)
+                          QMessageBox.StandardButton.Cancel |
+                          QMessageBox.StandardButton.Save |
+                          QMessageBox.StandardButton.No)
 
     msg_box.setWindowIcon(icon)
     reply = msg_box.exec()
