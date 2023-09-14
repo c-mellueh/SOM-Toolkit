@@ -8,7 +8,7 @@ from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget
 from SOMcreator import classes
-from SOMcreator.constants import json_constants,value_constants
+from SOMcreator.constants import value_constants
 
 from .. import icons, settings
 from ..data import constants as constants
@@ -92,7 +92,7 @@ def set_table_line(table, row: int, attrib: classes.Attribute) -> None:
 
     table.setItem(row, 0, name_item)
     table.setItem(row, 1, CustomTableItem(attrib, attrib.data_type))
-    table.setItem(row, 2, CustomTableItem(attrib, constants.VALUE_TYPE_LOOKUP[attrib.value_type]))
+    table.setItem(row, 2, CustomTableItem(attrib, constants.GER_TYPES_LOOKUP[attrib.value_type]))
     table.setItem(row, 3, CustomTableItem(attrib, value_text))
     table.setItem(row, 4, CustomCheckItem(attrib))
     if attrib.is_child:
@@ -477,7 +477,7 @@ class PropertySetWindow(QtWidgets.QWidget):
 
             return attrib
 
-        value_type = constants.VALUE_TYPE_LOOKUP[self.widget.combo_type.currentText()]
+        value_type = constants.EN_TYPE_LOOKUP[self.widget.combo_type.currentText()]
         data_type = self.widget.combo_data_type.currentText()
         new_name = self.widget.lineEdit_name.text()
         attribute = self.find_attribute_by_name(new_name)
@@ -552,8 +552,8 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.update_tab_order()
 
     def fill_with_attribute(self, attribute: classes.Attribute) -> None:
-        eng_type = constants.VALUE_TYPE_LOOKUP[attribute.value_type]
-        index = self.widget.combo_type.findText(constants.GER_TYPES_LOOKUP[eng_type])
+        ger_type = constants.GER_TYPES_LOOKUP[attribute.value_type]
+        index = self.widget.combo_type.findText(ger_type)
         self.widget.combo_type.setCurrentIndex(index)
 
         index = self.widget.combo_data_type.findText(attribute.data_type)

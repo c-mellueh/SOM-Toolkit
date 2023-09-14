@@ -10,7 +10,7 @@ from SOMcreator import json_constants
 
 from .. import settings
 from ..data import constants
-from ..data.constants import FILETYPE
+from . import FILETYPE
 from ..windows import popups
 
 if TYPE_CHECKING:
