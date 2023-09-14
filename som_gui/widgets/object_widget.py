@@ -616,7 +616,7 @@ def add_object(main_window: MainWindow):
     ident_attrib_name = main_window.ui.lineEdit_ident_attribute.text()
     ident_attrib_value = [main_window.ui.lineEdit_ident_value.text()]
     abbreviation = main_window.ui.line_edit_abbreviation.text()
-    input_list = [name, p_set_name, ident_attrib_name, ident_attrib_value, abbreviation]
+    input_list = [name, p_set_name, ident_attrib_name, ident_attrib_value]
 
     if missing_input():
         popups.msg_missing_input()
