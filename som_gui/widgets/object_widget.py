@@ -664,6 +664,10 @@ def rc_delete(main_window: MainWindow):
         for aggregation in list(obj.aggregations):
             node = main_window.graph_window.aggregation_dict().get(aggregation)
             node.delete(recursive)
+        if not recursive:
+            return
+        for child in obj.children:
+            delete_nodes(child, recursive)
 
     selected_tree_items = main_window.ui.tree_object.selectedItems()
     selected_objects: list[classes.Object] = [item.object for item in selected_tree_items]

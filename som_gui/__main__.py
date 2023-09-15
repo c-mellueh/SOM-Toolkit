@@ -3,11 +3,7 @@ import logging
 import os
 import sys
 from logging import config
-
-from PySide6.QtWidgets import QApplication
-
-from som_gui import main_window, logs
-
+from som_gui import logs
 
 def start_log(state: int | None = None) -> None:
     if os.path.exists(logs.LOG_PATH):
@@ -23,6 +19,10 @@ def start_log(state: int | None = None) -> None:
 
 
 def main(initial_file: str | None = None):
+    from PySide6.QtWidgets import QApplication
+    from som_gui import main_window
+
+    print("START")
     app = QApplication(sys.argv)
     window = main_window.MainWindow(app, initial_file)
     window.show()

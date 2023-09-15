@@ -154,7 +154,7 @@ class NodeProxy(QGraphicsProxyWidget):
     def delete(self, recursive: bool = False) -> None:
         """Delete Node and existings Connections"""
 
-        logging.debug(f"Delete {self.__class__.__name__} {self.name}")
+        logging.debug(f"Delete Node {self.name}")
         scene: AggregationScene = self.scene()
         scene.aggregation_window.scene_dict[scene.name][constants.NODES].remove(self.aggregation.uuid)
 

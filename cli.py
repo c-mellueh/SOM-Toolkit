@@ -1,14 +1,26 @@
 import logging
 
+import SOMcreator
 from pypi_latest import PypiLatest
 
-from som_gui.__main__ import main, start_log
+from som_gui.__main__ import start_log
 
-if __name__ == "__main__":
+
+def cli():
     start_log(logging.DEBUG)
-    ppl = PypiLatest("SOMcreator", "1.2.7")
+    ppl = PypiLatest("SOMcreator", SOMcreator.__version__)
     latest = ppl.check_latest()
-    if latest:
+    if not latest:
         ppl.upgrade()
+        print()
+        print("*" * 60)
+        print(f"Update von SOMcreator installiert, Runtime neu start!")
+        print("*" * 60)
+        return
+    from som_gui.__main__ import main
 
     main()
+
+
+if __name__ == "__main__":
+    cli()
