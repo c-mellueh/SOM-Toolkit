@@ -6,7 +6,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QListWidgetItem, QCompleter, \
     QTableWidgetItem
 from SOMcreator import classes
-from fuzzywuzzy import fuzz
+from thefuzz import fuzz
 
 from .. import icons
 from ..icons import get_icon

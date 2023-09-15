@@ -4,8 +4,9 @@ jinja2
 openpyxl
 setuptools
 SOMcreator
-fuzzywuzzy
+thefuzz
+rapidfuzz
 ifcopenshell
 tqdm
-python-Levenshtein
 pypi-latest
+lark
