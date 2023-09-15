@@ -165,9 +165,8 @@ class AggregationScene(QGraphicsScene):
                 self.add_node(child_node, recursive=True)
 
     def remove_node(self, node_proxy: NodeProxy) -> None:
-        self.removeItem(node_proxy)
-        self.aggregation_window.scene_dict[self.name][constants.NODES].remove(node_proxy.aggregation.uuid)
         node_proxy.delete()
+        self.removeItem(node_proxy)
 
     def max_z_value(self) -> float:
         return max((item.zValue() for item in self.items()), default=0)
@@ -759,6 +758,11 @@ class AggregationWindow(QWidget):
         This allows for saving multiple rootnodes in one scene.
         If no scenes are defined there will be created a scene for each rootnode"""
 
+        logging.debug(f"Create Missing Scenes")
+        if len(self.scene_dict) == 0 and len(self.nodes) == 0:
+            self.active_scene = self.create_new_scene()
+            return
+
         scene_dict = self.scene_dict
         node_dict: dict[str, NodeProxy] = {node.uuid: node for node in self.nodes}
         for name, uuid_dict in tuple(scene_dict.items()):
@@ -788,10 +792,6 @@ class AggregationWindow(QWidget):
             super(AggregationWindow, self).show()
             return
 
-        if len(self.scene_dict) == 0 and len(self.nodes) == 0:
-            self.active_scene = self.create_new_scene()
-        else:
-            self.create_missing_scenes()
         super(AggregationWindow, self).show()
         self.view.auto_fit()
         self.widget.combo_box.setCurrentIndex(0)

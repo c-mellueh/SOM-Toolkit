@@ -1,5 +1,6 @@
 from __future__ import annotations  # make own class referencable
 
+import logging
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt, QRectF, QPointF
@@ -7,11 +8,12 @@ from PySide6.QtGui import QPainter, QCursor, QPainterPath, QColor, QPen
 from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout, \
     QGraphicsProxyWidget, QGraphicsPathItem, QGraphicsRectItem, QGraphicsItem, QStyleOptionGraphicsItem, \
     QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsEllipseItem
-from SOMcreator import classes,value_constants
+from SOMcreator import classes, value_constants
 
 from ...data import constants
-from ...windows import popups
 from ...widgets import property_widget
+from ...windows import popups
+
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
     from .aggregation_window import AggregationScene, AggregationWindow
@@ -58,6 +60,7 @@ class NodeProxy(QGraphicsProxyWidget):
         super(NodeProxy, self).update(*args)
         self.frame.update()
         self.header.update()
+
         def refresh_title():
             if self.title_settings == [None, None]:
                 self.reset_title()
@@ -139,7 +142,6 @@ class NodeProxy(QGraphicsProxyWidget):
             connection.update_line()
         if self.top_connection is not None:
             self.top_connection.update_line()
-        #self.update()
 
     def child_nodes(self) -> set[NodeProxy]:
         return set(self.aggregation_dict().get(aggreg) for aggreg in self.aggregation.children)
@@ -149,8 +151,13 @@ class NodeProxy(QGraphicsProxyWidget):
         aggreg = self.aggregation.parent
         return self.aggregation_dict().get(aggreg)
 
-    def delete(self) -> None:
+    def delete(self, recursive: bool = False) -> None:
         """Delete Node and existings Connections"""
+
+        logging.debug(f"Delete {self.__class__.__name__} {self.name}")
+        scene: AggregationScene = self.scene()
+        scene.aggregation_window.scene_dict[scene.name][constants.NODES].remove(self.aggregation.uuid)
+
         for connection in list(self.bottom_connections):
             connection.delete()
 
@@ -160,6 +167,11 @@ class NodeProxy(QGraphicsProxyWidget):
         self.aggregation.delete()
         self.deleteLater()
         self._registry.remove(self)
+        if not recursive:
+            return
+
+        for child in self.child_nodes():
+            child.delete(recursive)
 
     def bottom_anchor_point(self) -> QPointF:
         """Point where Connection will end"""
@@ -416,6 +428,7 @@ class Connection(QGraphicsPathItem):
         if self in self.top_node.bottom_connections:
             self.top_node.bottom_connections.remove(self)
         if self.bottom_node is not None:
+            self.bottom_node.aggregation.parent.remove_child(self.bottom_node.aggregation)
             self.bottom_node.aggregation.remove_parent()
             self.bottom_node.top_connection = None
         self.scene().removeItem(self)

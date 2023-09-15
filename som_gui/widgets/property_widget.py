@@ -90,7 +90,7 @@ def delete_selection(main_window: MainWindow) -> None:
     row_list = [item.row() for item in list_item if item.column() == 0]
 
     obj = main_window.active_object
-    delete_request = msg_del_items([pset.name for pset in property_sets], item_type=3)
+    delete_request, recursive_deletion = msg_del_items([pset.name for pset in property_sets], item_type=3)
 
     if not delete_request:
         return
@@ -103,7 +103,7 @@ def delete_selection(main_window: MainWindow) -> None:
         if property_set.is_child:
             property_set.parent.remove_child(property_set)
         else:
-            property_set.delete()
+            property_set.delete(recursive_deletion)
 
     for i in sorted(row_list, reverse=True):
         main_window.pset_table.removeRow(i)
