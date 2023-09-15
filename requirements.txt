@@ -8,3 +8,4 @@ fuzzywuzzy
 ifcopenshell
 tqdm
 python-Levenshtein
+pypi-latest

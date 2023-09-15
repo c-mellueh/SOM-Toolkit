@@ -13,7 +13,7 @@ added_files = [('som_gui/icons', 'som_gui/icons'),
                ]
 
 a = Analysis(
-    ['cli.py', ],
+    ['./som_gui/__main__.py', ],
     pathex=[],
     binaries=[],
     datas=added_files,

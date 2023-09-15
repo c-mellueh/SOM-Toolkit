@@ -21,11 +21,11 @@ def get_version(rel_path: str) -> str:
 
 
 setup(
-    name='som_gui',
+    name='som-Toolkit',
     version=get_version("som_gui/__init__.py"),
-    description='Create Modelcheckingrules for Desite',
+    description='A usefule GUI for your BIM-Data Specification',
     author='Christoph Mellüh',
     author_email='christoph.mellueh@deutschebahn.com',
-    packages=['som_gui'],  # would be the same as name
-    install_requires=['PySide6', 'openpyxl', 'lxml', 'jinja2','SOMcreator','ifcopenshell','tqdm'],  # external packages acting as dependencies
+    packages=['som-Toolkit'],  # would be the same as name
+    install_requires=['PySide6', 'openpyxl', 'lxml', 'jinja2','SOMcreator','ifcopenshell','tqdm',"pypi-latest"],  # external packages acting as dependencies
 )
