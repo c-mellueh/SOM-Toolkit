@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 def check_for_objects_without_aggregation(proj: classes.Project):
     for obj in proj.objects:
         if not obj.aggregations:
-            logging.warning(f"Objekt {obj.name} ({obj.ident_value} kommt in keiner Aggregation vor)")
+            logging.info(f"Objekt {obj.name} ({obj.ident_value} kommt in keiner Aggregation vor)")
 
 
 def import_node_pos(main_dict: dict, graph_window: aggregation_window.AggregationWindow) -> None:
@@ -74,6 +74,7 @@ def import_data(main_window: MainWindow, path: str):
     check_for_objects_without_aggregation(main_window.project)
     logging.info(f"Import Done!")
     main_window.generate_window_title()
+    main_window.graph_window.create_missing_scenes()
 
 
 def open_file_clicked(main_window: MainWindow) -> None:

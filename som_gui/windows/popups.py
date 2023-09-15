@@ -164,7 +164,7 @@ def req_merge_pset():
         return None
 
 
-def msg_del_items(string_list, item_type=1):
+def msg_del_items(string_list, item_type=1) -> (bool, bool):
     """
     item_type 1= Object,2= Node, 3 = PropertySet, 4 = Attribute
     """
@@ -193,11 +193,9 @@ def msg_del_items(string_list, item_type=1):
 
     for text in string_list:
         widget.listWidget.addItem(QListWidgetItem(text))
-
-    if parent.exec():
-        return True
-    else:
-        return False
+    result = parent.exec()
+    check_box_state = True if widget.check_box_recursion.checkState() == Qt.CheckState.Checked else False
+    return bool(result), check_box_state
 
 
 def req_boq_pset(main_window, words):

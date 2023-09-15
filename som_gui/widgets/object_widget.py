@@ -283,7 +283,7 @@ def clear_all(main_window: MainWindow):
 
     # Delete Attributes & Objects
     for obj in classes.Object:
-        obj.delete()
+        obj.delete(False)
 
 
 def search_object(main_window: MainWindow):
@@ -331,22 +331,22 @@ def right_click(main_window: MainWindow, position: QPoint):
 
 def info(main_window: MainWindow):
     item = selected_object(main_window).object
-    print(item.name)
-    print(f"parent: {item.parent}")
+    logging.debug(item.name)
+    logging.debug(f"parent: {item.parent}")
 
     if item.children:
-        print("children:")
+        logging.debug("children:")
         for child in item.children:
-            print(f"  {child}")
+            logging.debug(f"  {child}")
     else:
-        print("no children")
+        logging.debug("no children")
 
     if item.aggregations:
-        print("nodes:")
+        logging.debug("nodes:")
         for node in item.aggregations:
-            print(f"   {node}")
+            logging.debug(f"   {node}")
     else:
-        print("no nodes")
+        logging.debug("no nodes")
 
 
 def rc_collapse(tree: QTreeWidget):
@@ -411,7 +411,8 @@ def copy(main_window: MainWindow):
 
                 if ident_attribute is None:
                     ident_pset = classes.PropertySet(ident_pset_name)
-                    ident_attribute = classes.Attribute(ident_pset, ident_attrib_name, [ident_value], value_constants.LIST)
+                    ident_attribute = classes.Attribute(ident_pset, ident_attrib_name, [ident_value],
+                                                        value_constants.LIST)
                     psets.append(ident_pset)
                 new_object = classes.Object(name=obj_name, ident_attrib=ident_attribute, project=main_window.project)
 
@@ -659,39 +660,26 @@ def add_object_to_tree(main_window: MainWindow, obj: classes.Object, parent: QTr
 
 
 def rc_delete(main_window: MainWindow):
-    def delete_item(item: CustomObjectTreeItem) -> None:
-        parent = item.parent()
-        invisible_root = main_window.ui.tree_object.invisibleRootItem()
-        for aggregation in list(item.object.aggregations):
+    def delete_nodes(obj: classes.Object, recursive: bool):
+        for aggregation in list(obj.aggregations):
             node = main_window.graph_window.aggregation_dict().get(aggregation)
-            node.delete()
-        item.object.delete()
-
-        for index in reversed(range(item.childCount())):
-            child = item.child(index)
-            delete_item(child)
-        (parent or invisible_root).removeChild(item)
-
-    def append_string_list(obj: classes.Object) -> None:
-        nonlocal string_list
-        string_list.append(str(obj.name))
+            node.delete(recursive)
+        if not recursive:
+            return
         for child in obj.children:
-            child: classes.Object
-            append_string_list(child)
-        pass
+            delete_nodes(child, recursive)
 
-    string_list = list()
+    selected_tree_items = main_window.ui.tree_object.selectedItems()
+    selected_objects: list[classes.Object] = [item.object for item in selected_tree_items]
+    string_list = [obj.name for obj in selected_objects]
 
-    loop_item: CustomObjectTreeItem
-    for loop_item in main_window.ui.tree_object.selectedItems():
-        append_string_list(loop_item.object)
-
-    delete_request = popups.msg_del_items(string_list, item_type=1)
-
+    delete_request, recursive_deletion = popups.msg_del_items(string_list, item_type=1)
     if delete_request:
-        for loop_item in main_window.ui.tree_object.selectedItems():
-            delete_item(loop_item)
-        main_window.project.changed = True
+        for obj in selected_objects:
+            delete_nodes(obj, recursive_deletion)  # Nodes need to be deleted before object
+            # because the aggregations will be deleted together with the object
+            obj.delete(recursive_deletion)
+    main_window.reload()
 
 
 def reload(main_window: MainWindow) -> None:

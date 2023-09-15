@@ -6,9 +6,10 @@ from typing import TYPE_CHECKING
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QShowEvent
 from PySide6.QtWidgets import QWidget, QListWidgetItem
-from SOMcreator import classes, constants
+from SOMcreator import classes
 
 from .. import icons
+from ..data import constants
 from ..qt_designs import ui_predefined_property_sets
 from ..widgets import object_widget, property_widget
 from ..windows import popups
@@ -100,12 +101,12 @@ class PropertySetInherWindow(QWidget):
         items = self.widget.list_view_pset.selectedItems()
         string_list = [x.property_set.name for x in items]
 
-        delete_request = popups.msg_del_items(string_list, item_type=3)
+        delete_request, recursive_deletion = popups.msg_del_items(string_list, item_type=3)
 
         if delete_request:
             for item in items:
                 self.widget.list_view_pset.removeItemWidget(item)
-                item.property_set.delete()
+                item.property_set.delete(recursive_deletion)
                 item: PsetItem = self.widget.list_view_pset.takeItem(self.widget.list_view_pset.row(item))
                 item.delete()
             self.select_first_item()

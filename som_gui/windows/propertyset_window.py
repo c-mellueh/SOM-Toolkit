@@ -293,19 +293,19 @@ class PropertySetWindow(QtWidgets.QWidget):
         selected_rows = get_selected_rows(self.table)
         attributes: list[classes.Attribute] = [self.table.item(row, 0).linked_data for row in selected_rows]
         if self.active_object is not None:
-
             if self.active_object.ident_attrib in attributes:
                 popups.msg_mod_ident()
                 return
 
-        delete_request = popups.msg_del_items([attrib.name for attrib in attributes], item_type=4)
+        delete_request, recursive_deletion = popups.msg_del_items([attrib.name for attrib in attributes], item_type=4)
         if not delete_request:
             return
 
         for row in sorted(selected_rows, reverse=True):
-            attribute: classes.Attribute = self.table.item(row, 0).linked_data
             self.widget.table_widget.removeRow(row)
-            attribute.delete()
+
+        for attribute in attributes:
+            attribute.delete(recursive_deletion)
 
         self.mainWindow.reload()
 
@@ -330,13 +330,16 @@ class PropertySetWindow(QtWidgets.QWidget):
         table_item: CustomTableItem = self.widget.table_widget.item(row, 0)
         item = table_item.linked_data
         print(item.name)
-        print(f"parent: {item.parent}")
+
         print(f"property_set: {item.property_set}")
         print(f"in pset: {item in self.property_set.attributes}")
+
+        if item.parent is not None:
+            print(f"parent: {item.parent.property_set.object} -> {item.parent}")
         if item.children:
             print("children:")
             for child in item.children:
-                print(f"  {child}")
+                print(f"{child.property_set.object} ->  {child}")
         else:
             print("no children")
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>143</height>
+    <width>397</width>
+    <height>202</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,6 +23,13 @@
    </item>
    <item>
     <widget class="QListWidget" name="listWidget"/>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="check_box_recursion">
+     <property name="text">
+      <string>Auch die Kindelemente löschen?</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
