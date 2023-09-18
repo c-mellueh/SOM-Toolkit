@@ -20,6 +20,10 @@ REGEX_ATTRIBUTE_IMPORT = "regex"
 RANGE_ATTRIBUTE_IMPORT = "range"
 COLOR_ATTTRIBUTE_IMPORT = "color"
 PATH_SEPERATOR = " ;"
+IFC_MOD = "ifc_modification"
+GROUP_PSET = "group_pset"
+GROUP_ATTRIBUTE = "group_attribute"
+CREATE_EMPTY = "create_empty"
 
 
 def _get_config() -> ConfigParser:
@@ -182,3 +186,27 @@ def get_group_folder() -> str:
 
 def set_group_folder(value) -> None:
     _set_path(GROUP_FOLDER, value)
+
+
+def set_group_pset(value: str) -> None:
+    set_setting(IFC_MOD, GROUP_PSET, value)
+
+
+def set_group_attribute(value: str) -> None:
+    set_setting(IFC_MOD, GROUP_ATTRIBUTE, value)
+
+
+def get_group_pset() -> str:
+    return _get_string_setting(IFC_MOD, GROUP_PSET)
+
+
+def get_group_attribute() -> str:
+    return _get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
+
+
+def set_group_create_empty_attributes(value: bool) -> None:
+    set_setting(IFC_MOD, CREATE_EMPTY, value)
+
+
+def get_group_create_empty_attributes() -> bool:
+    return _get_bool_setting(IFC_MOD, CREATE_EMPTY)
