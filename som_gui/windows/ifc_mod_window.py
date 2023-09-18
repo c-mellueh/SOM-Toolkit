@@ -48,6 +48,8 @@ def get_main_attribute(proj: classes.Project) -> (str, str):
     ident_attributes = dict()
     ident_psets = dict()
     for obj in proj.objects:
+        if obj.ident_attrib is None:
+            continue
         ident_pset = obj.ident_attrib.property_set.name
         ident_attribute = obj.ident_attrib.name
         if not ident_pset in ident_psets:
