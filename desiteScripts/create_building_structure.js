@@ -136,12 +136,13 @@ function getName(abkuerzung) { //BauteilName als Abkuerzungsverzeichnis lesen
 }
 
 function getBS() { // gewollte Bauwerksstruktur als JSON erstellen
-    var all_elements = desiteAPI.getAllElements();
+    var all_elements = desiteAPI.getAllElements("geometry");
     var element_liste = [];
     var bauwerksstruktur = {};
     var elementeOhneGruppenAttribut = [];
     for (var i in all_elements) { //Erstellt Liste aus allen Elementen und deren Gruppenzugehörigkeiten
         var id = all_elements[i];
+        if (desiteAPI.isContainer(id)){continue}
         var gruppe = desiteAPI.getPropertyValue(id, GRUPPIERUNGSATTRIB, STRNG)
         var bauteilKlassifikation = desiteAPI.getPropertyValue(id, KLASSIFIKATION, STRNG)
         if (gruppe != undefined) {
