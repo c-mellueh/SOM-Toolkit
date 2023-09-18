@@ -1,4 +1,4 @@
-﻿//Die Erstellung der Bauwerksstruktur ist Aufgabe des AN
+//Die Erstellung der Bauwerksstruktur ist Aufgabe des AN
 //Dieses Script ist nur eine HILFESTELLUNG
 //DER AG ÜBERNIMMT KEINE VERANTWORTUNG FÜR DIE ERSTELLTE STRUKTUR
 //Die Bauwerksstruktur muss im Nachhinein haendisch auf Fehler Geprueft werden!
@@ -17,8 +17,7 @@ var GRUPPIERUNGSATTRIB = "Gruppierung:idGruppe"
 var BSNAME = "Bauwerksstruktur"
 
 //Ablageorrt der Abkuerzungsdatei
-var ABKUERZUNGSDATEI = desiteAPI.getProjectDirectory() + "/DB_scripts/abkuerzungen.json"
-
+var SOM_JSON_DATEI = "" //<-- Hier Pfad zu SOMjson einfügen Bsp: "C:/Users/ChristophMellueh/Desktop/test.SOMjson"
 //Trennzeichen bei mehrfacher Gruppenzugehörigkeit
 var GRUPPENTRENNER = ";"
 
@@ -38,18 +37,20 @@ var modelId = desiteAPI.createModel(timestamp + " GroupIssues", true, domain = "
 main()
 
 function main() {
-    bauwerksstruktur = getBS(); // gewollte Bauwerksstruktur als JSON einlesen
+    var abkuerzungs_dict = getAbkuerzung(SOM_JSON_DATEI)
+    var bauwerksstruktur = getBS(abkuerzungs_dict); // gewollte Bauwerksstruktur als JSON einlesen
     var model = getModel(BSNAME); // BS Model mit BSNAME finden
-    buildLayer(model, bauwerksstruktur); //BS erstellen und verlinken
+    buildLayer(model, bauwerksstruktur, abkuerzungs_dict); //BS erstellen und verlinken
 
 }
 
-function buildLayer(parent_id, bsLayerDict) { // Ebene erstellen
+function buildLayer(parent_id, bsLayerDict, abkuerzungs_dict) { // Ebene erstellen
 
     for (var layerKuerzel in bsLayerDict) {
-        var desiteBSID = createIfNotExist(parent_id, layerKuerzel);
+        var desiteBSID = createIfNotExist(parent_id, layerKuerzel,undefined, abkuerzungs_dict);
+
         for (var layerChild in bsLayerDict[layerKuerzel].children) {
-            buildInstances(desiteBSID, bsLayerDict, layerChild, layerKuerzel);
+            buildInstances(desiteBSID, bsLayerDict, layerChild, layerKuerzel, abkuerzungs_dict);
 
 
         }
@@ -62,17 +63,18 @@ function buildLayer(parent_id, bsLayerDict) { // Ebene erstellen
     }
 }
 
-function buildInstances(parent_id, bs_dictIn, levelName, instanceKuerzel) { //individuen verknüpfen
-    var desiteBSID = createIfNotExist(parent_id, instanceKuerzel, "_" + levelName);
-    buildLayer(desiteBSID, bs_dictIn[instanceKuerzel].children[levelName]);
+function buildInstances(parent_id, bs_dictIn, levelName, instanceKuerzel, abkuerzungs_dict) { //individuen verknüpfen
+    var desiteBSID = createIfNotExist(parent_id, instanceKuerzel, "_" + levelName, abkuerzungs_dict);
+    buildLayer(desiteBSID, bs_dictIn[instanceKuerzel].children[levelName], abkuerzungs_dict);
 }
 
-function createIfNotExist(par_id, kuerzel, suffix) { // wenn layer noch nicht existiert, wird es erstellt
+function createIfNotExist(par_id, kuerzel, suffix, abkuerzungs_dict) { // wenn layer noch nicht existiert, wird es erstellt
+
     if (suffix == undefined) {
         suffix = ""
     }
-    var vgKlass = getBauteilKlassifikation(kuerzel);
-    var vgName = getName(kuerzel) + suffix;
+    var vgKlass = getBauteilKlassifikation(kuerzel, abkuerzungs_dict);
+    var vgName = getName(kuerzel, abkuerzungs_dict) + suffix;
     var does_not_exist = true;
     var child_elements = desiteAPI.getContainedElements(par_id, 1);
     for (var i in child_elements) {
@@ -101,17 +103,17 @@ function getModel(bsName) { //BS MODEL finden oder erstellen
         if (rootName == bsName) {
             return id
         }
-
     }
     id = desiteAPI.createModel(bsName, createRootC = false, domain = "building") + "-oh"
     return id
 }
 
-function getBauteilKlassifikation(abkuerzung) { //bauteilKlassifikation anhand von Abkuerzung erhalten
-    abkuerzung = abkuerzung.toUpperCase()
-    if (abkuerzung in getAbkuerzung()) {
 
-        return getAbkuerzung()[abkuerzung][0]
+function getBauteilKlassifikation(abkuerzung, abkuerzungs_dict) { //bauteilKlassifikation anhand von Abkuerzung erhalten
+    abkuerzung = abkuerzung.toUpperCase()
+    if (abkuerzung in abkuerzungs_dict) {
+
+        return abkuerzungs_dict[abkuerzung][0]
 
     } else {
         console.log("Abkuerzung nicht bekannt: " + abkuerzung)
@@ -120,12 +122,12 @@ function getBauteilKlassifikation(abkuerzung) { //bauteilKlassifikation anhand v
 
 }
 
-function getName(abkuerzung) { //BauteilName als Abkuerzungsverzeichnis lesen
+function getName(abkuerzung, abkuerzungs_dict) { //BauteilName als Abkuerzungsverzeichnis lesen
     abkuerzung = abkuerzung.toUpperCase()
 
-    if (abkuerzung in getAbkuerzung()) {
+    if (abkuerzung in abkuerzungs_dict) {
 
-        return getAbkuerzung()[abkuerzung][1]
+        return abkuerzungs_dict[abkuerzung][1]
 
     } else {
         console.log("Abkuerzung nicht bekannt: " + abkuerzung)
@@ -134,7 +136,7 @@ function getName(abkuerzung) { //BauteilName als Abkuerzungsverzeichnis lesen
 
 }
 
-function getBS() { // gewollte Bauwerksstruktur als JSON erstellen
+function getBS(abkuerzungs_dict) { // gewollte Bauwerksstruktur als JSON erstellen
     var all_elements = desiteAPI.getAllElements("geometry");
     var element_liste = [];
     var bauwerksstruktur = {};
@@ -163,10 +165,10 @@ function getBS() { // gewollte Bauwerksstruktur als JSON erstellen
         id = element_liste[i][0];
         identitaet = element_liste[i][1];   //Wert von idGruppe nach split(";")
         bauteilKlassifikation = element_liste[i][2]
-        if (checkForGroupError(identitaet)) {
+        if (checkForGroupError(identitaet, abkuerzungs_dict)) {
             groupErrorList.push(id)
         }
-        eigene_abkuerzung = getReverseAbkuerzung(bauteilKlassifikation)
+        eigene_abkuerzung = getReverseAbkuerzung(bauteilKlassifikation, abkuerzungs_dict)
 
         split_ident = identitaet.split("_")
         fokus_struktur = bauwerksstruktur
@@ -195,7 +197,7 @@ function getBS() { // gewollte Bauwerksstruktur als JSON erstellen
                 }
                 fokus_struktur[eigene_abkuerzung].instances.push(id)
 
-                continue
+
             }
         }
     }
@@ -214,14 +216,42 @@ function getBS() { // gewollte Bauwerksstruktur als JSON erstellen
     return bauwerksstruktur
 }
 
-function getAbkuerzung() { // abkuerzungsverzeichnis einlesen
-    txt = desiteAPI.readTextFileAsString(ABKUERZUNGSDATEI)
-    return JSON.parse(txt)
+
+function getIdentAttrib(objectDict, attributeId) {
+    var pset_dict = objectDict["PropertySets"];
+    for (var pset_id in pset_dict) {
+        var attributes_dict = pset_dict[pset_id]["Attributes"]
+        for (var a_id in attributes_dict) {
+            if (a_id !== attributeId) {
+                continue
+            }
+            var value_list = attributes_dict[a_id]["Value"]
+            if (value_list.length > 0) {
+                return value_list[0]
+            } else {
+                return undefined
+            }
+        }
+    }
 }
 
-function getReverseAbkuerzung(bk) { // abkuerzungsverzeichnis umwandlen -> bauteilKlassifikation als Key
+function getAbkuerzung(path) { // abkuerzungsverzeichnis einlesen
+    var text = desiteAPI.readTextFileAsString(path)
+    var somjson = JSON.parse(text);
+    var return_dict = {}
+    for (var obj_id in somjson["Objects"]) {
+        var obj_dict = somjson["Objects"][obj_id];
+        var abbrev = obj_dict["abbreviation"]
+        var name = obj_dict["name"]
+        var ident = getIdentAttrib(obj_dict, obj_dict["ident_attribute"])
+        return_dict[abbrev] = [ident, name]
+    }
+    return return_dict
+}
+
+function getReverseAbkuerzung(bk, abkuerzungs_dict) { // abkuerzungsverzeichnis umwandlen -> bauteilKlassifikation als Key
     var reverse_abkz = {};
-    abkz = getAbkuerzung()
+    abkz = abkuerzungs_dict
     for (i in abkz) {
         bauteilKlass = abkz[i][0];
         reverse_abkz[bauteilKlass] = i;
@@ -234,12 +264,12 @@ function getReverseAbkuerzung(bk) { // abkuerzungsverzeichnis umwandlen -> baute
     return ret
 }
 
-function checkForGroupError(identitaet) { // Fehlermeldung wenn gruppenid komisch ist
+function checkForGroupError(identitaet, abkuerzungs_dict) { // Fehlermeldung wenn gruppenid komisch ist
     check_bool = false
 
     sp = identitaet.split("_")
     last_entry = sp[sp.length - 1]
-    if (last_entry in getAbkuerzung()) {
+    if (last_entry in abkuerzungs_dict) {
         check_bool = true
     }
     if (sp.length % 2 != 0) {
@@ -270,10 +300,7 @@ function createIssue(issueName, description, modelId, idList) {
     desiteAPI.zoomToSelected();
     map = {
         "issue": {
-            "name": description,
-            "description": description,
-            "status": "Open",
-            "priority": "Normal",
+            "name": description, "description": description, "status": "Open", "priority": "Normal",
         }
     }
 
@@ -287,9 +314,5 @@ function createIssue(issueName, description, modelId, idList) {
 
 function getDate() {
     date = new Date()
-    return [
-        date.getDate(),
-        date.getMonth() + 1,
-        date.getFullYear(),
-    ].join('.') + " " + date.toLocaleTimeString();
+    return [date.getDate(), date.getMonth() + 1, date.getFullYear(),].join('.') + " " + date.toLocaleTimeString();
 }
