@@ -207,9 +207,9 @@ def add_pset_to_table(main_window: MainWindow, pset: str | classes.PropertySet, 
 
     if property_set.is_child:
         if property_set.parent.object is not None:
-            inherit_table_item = propertyset_window.CustomTableItem(pset, pset.parent.object.name)
+            inherit_table_item = propertyset_window.CustomTableItem(property_set, property_set.parent.object.name)
         else:
-            inherit_table_item = propertyset_window.CustomTableItem(pset, json_constants.INHERITED_TEXT)
+            inherit_table_item = propertyset_window.CustomTableItem(property_set, json_constants.INHERITED_TEXT)
         main_window.pset_table.setItem(row_index, 1, inherit_table_item)
 
     pset_table_item = propertyset_window.CustomTableItem(property_set, property_set.name)
