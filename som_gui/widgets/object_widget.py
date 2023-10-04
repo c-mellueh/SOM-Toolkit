@@ -227,20 +227,22 @@ def update_completer(main_window: MainWindow):
     main_window.ui.lineEdit_pSet_name.setCompleter(completer)
 
 
-def fill_tree(main_window: MainWindow) -> None:
-    root_item = main_window.object_tree.invisibleRootItem()
-    item_dict: dict[classes.Object, CustomObjectTreeItem] = \
-        {obj: add_object_to_tree(main_window, obj, root_item) for obj in
-         main_window.project.objects}  # add all Objects to Tree without Order
+def fill_tree(object_list: list[classes.Object], tree: QTreeWidget, tree_object_class) -> None:
+    object_list = list(object_list)
+    root_item = tree.invisibleRootItem()
+    item_dict: dict[classes.Object, tree_object_class] = \
+        {obj: add_object_to_tree(tree, obj, root_item, tree_object_class) for obj in
+         object_list}  # add all Objects to Tree without Order
 
-    for obj in main_window.project.objects:
+    for obj in object_list:
         tree_item = item_dict[obj]
-        if obj.parent is not None and obj.parent in item_dict:
+        parent_is_none = obj.parent is None
+        parent_in_dict = obj.parent in item_dict
+        if not parent_is_none and parent_in_dict:
             parent_item = item_dict[obj.parent]
             root = tree_item.treeWidget().invisibleRootItem()
             item = root.takeChild(root.indexOfChild(tree_item))
             parent_item.addChild(item)
-    resize_tree(main_window)
 
 
 def resize_tree(main_window: MainWindow):
@@ -422,7 +424,7 @@ def copy(main_window: MainWindow):
             parent = item.treeWidget().invisibleRootItem()
         else:
             parent = item.parent()
-        add_object_to_tree(main_window, new_object, parent)
+        add_object_to_tree(main_window.object_tree, new_object, parent)
         if old_obj.parent is not None:
             new_object.parent = old_obj.parent
 
@@ -470,7 +472,7 @@ def rc_group_items(main_window: MainWindow):
                                    project=main_window.project)
         group_obj.add_property_set(pset)
 
-    group_item: CustomObjectTreeItem = add_object_to_tree(main_window, group_obj, parent)
+    group_item: CustomObjectTreeItem = add_object_to_tree(main_window.object_tree, group_obj, parent)
 
     for item in parent_classes:
         child: CustomObjectTreeItem = parent.takeChild(parent.indexOfChild(item))
@@ -646,14 +648,15 @@ def add_object(main_window: MainWindow):
     ident = create_ident(property_set, ident_attrib_name, ident_attrib_value)
     obj = classes.Object(name=name, ident_attrib=ident, abbreviation=abbreviation, project=main_window.project)
     obj.add_property_set(ident.property_set)
-    add_object_to_tree(main_window, obj)
+    add_object_to_tree(main_window.object_tree, obj, main_window.object_tree.invisibleRootItem())
     clear_object_input(main_window)
 
 
-def add_object_to_tree(main_window: MainWindow, obj: classes.Object, parent: QTreeWidgetItem = None):
-    item = CustomObjectTreeItem(obj)
+def add_object_to_tree(tree: QTreeWidget, obj: classes.Object, parent: QTreeWidgetItem = None,
+                       treeObjectClass=CustomObjectTreeItem):
+    item = treeObjectClass(obj)
     if parent is None:
-        main_window.object_tree.invisibleRootItem().addChild(item)
+        tree.invisibleRootItem().addChild(item)
     else:
         parent.addChild(item)
     return item
@@ -684,7 +687,8 @@ def rc_delete(main_window: MainWindow):
 
 def reload(main_window: MainWindow) -> None:
     main_window.object_tree.clear()
-    fill_tree(main_window)
+    fill_tree(main_window.project.objects, main_window.object_tree, CustomObjectTreeItem)
+    resize_tree(main_window)
     obj = main_window.active_object
     if obj is None:
         return

@@ -5,8 +5,9 @@ import os
 from typing import TYPE_CHECKING
 
 from PySide6.QtWidgets import QFileDialog
-from SOMcreator import desite, classes, vestra, card1, filehandling, allplan
+from SOMcreator import classes, vestra, card1, filehandling, allplan
 from SOMcreator import excel as som_excel
+from SOMcreator.external_software.desite import modelcheck, bookmarks, building_structure, bill_of_quantities
 
 from .. import settings
 from ..windows import popups
@@ -43,23 +44,24 @@ def get_folder(main_window: MainWindow) -> str:
     return path
 
 
-def export_desite_rules(main_window: MainWindow):
+def export_desite_rules(main_window: MainWindow, export_typ: str):
+    """export type either CSV or JS"""
     path = get_path(main_window, "qa.xml")
     if path:
-        desite.export_modelcheck(main_window.project, path)
+        modelcheck.export(main_window.project, path, None, export_typ)
 
 
 def export_building_structure(main_window: MainWindow):
     """Exports dummy Building Structure for Desite"""
     path = get_path(main_window, "bs.xml")
     if path:
-        desite.export_bs(main_window.project, path)
+        building_structure.export_bs(main_window.project, path)
 
 
 def export_bookmarks(main_window: MainWindow):
     path = get_folder(main_window)
     if path:
-        desite.export_bookmarks(main_window.project, path)
+        bookmarks.export_bookmarks(main_window.project, path)
 
 
 def export_bill_of_quantities(main_window: MainWindow):
@@ -70,7 +72,7 @@ def export_bill_of_quantities(main_window: MainWindow):
         return
     ok, pset_name = popups.req_boq_pset(main_window, words)
     if path and ok:
-        desite.export_boq(path, pset_name)
+        bill_of_quantities.export_boq(main_window.project, path, pset_name)
 
 
 def export_vestra_mapping(main_window: MainWindow) -> None:

@@ -10,6 +10,8 @@ spec.loader.exec_module(module)
 block_cipher = None
 added_files = [('som_gui/icons', 'som_gui/icons'),
                ('som_gui/logs', 'som_gui/logs'),
+               ('venv/Lib/site-packages/ifcopenshell/express','ifcopenshell/express'),
+
                ]
 
 a = Analysis(
@@ -17,8 +19,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=added_files,
-    hiddenimports=['jinja2', 'lxml', 'SOMcreator', 'ifcopenshell', 'tqdm', 'openpyxl', 'ifcopenshell.express.rules',
-                   'ifcopenshell.express', 'ifcopenshell.express.express_parser', 'ifcopenshell.express.rules.IFC2X3'],
+    hiddenimports=['jinja2', 'lxml', 'SOMcreator', 'ifcopenshell', 'tqdm', 'openpyxl'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

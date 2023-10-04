@@ -26,3 +26,5 @@ GER_TYPES_LOOKUP = {value_constants.VALUE: GER_VALUE,
                     value_constants.RANGE: GER_RANGE,
                     value_constants.LIST: GER_LIST, }
 EN_TYPE_LOOKUP = {value: key for key, value in GER_TYPES_LOOKUP.items()}
+
+

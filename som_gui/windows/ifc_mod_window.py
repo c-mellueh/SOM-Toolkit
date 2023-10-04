@@ -12,7 +12,7 @@ from SOMcreator import classes
 
 from .. import settings
 from ..icons import get_icon
-from ..qt_designs import ui_modelcheck
+from ..qt_designs import ui_modelcheck_old
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
@@ -110,7 +110,7 @@ class IfcWindow(QWidget):
     def __init__(self, main_window: MainWindow):
         super(IfcWindow, self).__init__()
         self.main_window = main_window
-        self.widget = ui_modelcheck.Ui_Form()
+        self.widget = ui_modelcheck_old.Ui_Form()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
         self.widget.button_ifc.clicked.connect(lambda: ifc_file_dialog(self, self.widget.line_edit_ifc))
