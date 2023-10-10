@@ -110,7 +110,6 @@ class ProjectPhaseWindow(QWidget):
         header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         header.customContextMenuRequested.connect(self.header_context_menu)
         header.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
-        print(self.main_window.project.current_project_phase)
 
     def header_context_menu(self, pos: QPoint):
         header = self.widget.object_tree.header()
@@ -258,7 +257,6 @@ class ProjectPhaseWindow(QWidget):
         resize_tree_view(self.widget.property_set_tree)
 
     def fill_object_tree(self) -> None:
-        print(f"FILL OBJECT TREE")
         project = self.main_window.project
         tree = self.widget.object_tree
         tree.clear()

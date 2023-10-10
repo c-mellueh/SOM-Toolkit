@@ -4,13 +4,14 @@ from PySide6.QtWidgets import QMainWindow, QTableWidget, QLabel
 from SOMcreator import classes
 
 from som_gui.windows.aggregation_view import aggregation_window
-from . import icons,settings,__version__
+from . import icons, settings, __version__
 from .filehandling import open_file, save_file, export
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import property_widget, object_widget
-from .windows import predefined_psets_window, propertyset_window, mapping_window, popups, ifc_modelcheck, \
-    grouping_window, attribute_import_window, settings_window, project_phase_window,modelcheck
-from .data import constants
+from .windows import predefined_psets_window, propertyset_window, mapping_window, popups, grouping_window, \
+    attribute_import_window, settings_window, project_phase_window
+from .windows.modelcheck import modelcheck_window
+
 
 class MainWindow(QMainWindow):
     def __init__(self, application, open_file_path: str | None):
@@ -32,20 +33,16 @@ class MainWindow(QMainWindow):
             self.ui.action_mapping_script.triggered.connect(lambda: export.export_mapping_script(self))
             self.ui.action_allplan.triggered.connect(lambda: export.export_allplan_excel(self))
             self.ui.action_abbreviation_json.triggered.connect(lambda: export.export_desite_abbreviation(self))
-            self.ui.action_desite_export.triggered.connect(lambda: export.export_desite_rules(self))
             # Windows
 
             self.ui.action_show_list.triggered.connect(self.open_predefined_pset_window)
             self.ui.action_settings.triggered.connect(self.open_settings_window)
-            self.ui.action_modelcheck.triggered.connect(self.open_modelcheck_window)
+            self.ui.action_modelcheck.triggered.connect(lambda: modelcheck_window.ModelcheckWindow(self))
             self.ui.action_create_groups.triggered.connect(self.open_grouping_window)
             self.ui.action_model_control.triggered.connect(self.open_attribute_import_window)
             self.ui.action_project_phase.triggered.connect(self.open_project_phase_window)
             self.ui.action_show_graphs.triggered.connect(self.open_aggregation_window)
             self.ui.action_mapping.triggered.connect(self.open_mapping_window)
-            self.ui.action_desite_js.triggered.connect(lambda: modelcheck.ModelcheckWindow(self,modelcheck.DESITE_JS))
-            self.ui.action_desite_csv.triggered.connect(lambda: modelcheck.ModelcheckWindow(self,modelcheck.DESITE_TABLE))
-            self.ui.action_bim_collab.triggered.connect(lambda: modelcheck.ModelcheckWindow(self,modelcheck.BIMCOLLAB))
 
         super(MainWindow, self).__init__()
 
@@ -65,7 +62,7 @@ class MainWindow(QMainWindow):
         self.project_phase_window: project_phase_window.ProjectPhaseWindow | None = None
         self.graph_window = aggregation_window.AggregationWindow(self)
         self.mapping_window = None
-        self.modelcheck_window: ifc_modelcheck.ModelcheckWindow | None = None
+        self.modelcheck_window: modelcheck_window.ModelcheckWindow | None = None
         self.search_ui: popups.ObjectSearchWindow | popups.AttributeSearchWindow | None = None
         self.object_info_widget: object_widget.ObjectInfoWidget | None = None
         self.predefined_pset_window: predefined_psets_window.PropertySetInherWindow | None = None
@@ -97,12 +94,6 @@ class MainWindow(QMainWindow):
             self.group_window = grouping_window.GroupingWindow(self)
         else:
             self.group_window.show()
-
-    def open_modelcheck_window(self):
-        if self.modelcheck_window is None:
-            self.modelcheck_window = ifc_modelcheck.ModelcheckWindow(self)
-        else:
-            self.modelcheck_window.show()
 
     def open_attribute_import_window(self):
         if self.model_control_window is None:

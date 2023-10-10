@@ -313,8 +313,6 @@ class Ui_MainWindow(object):
         self.menuShow_Graphs.setObjectName(u"menuShow_Graphs")
         self.menu_ifc = QMenu(self.menubar)
         self.menu_ifc.setObjectName(u"menu_ifc")
-        self.menu_modelcheck = QMenu(self.menubar)
-        self.menu_modelcheck.setObjectName(u"menu_modelcheck")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -336,7 +334,6 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuPredefined_Psets.menuAction())
         self.menubar.addAction(self.menuShow_Graphs.menuAction())
         self.menubar.addAction(self.menu_ifc.menuAction())
-        self.menubar.addAction(self.menu_modelcheck.menuAction())
         self.menuFile.addAction(self.action_file_new)
         self.menuFile.addAction(self.action_file_Open)
         self.menuFile.addAction(self.action_file_Save)
@@ -359,9 +356,6 @@ class Ui_MainWindow(object):
         self.menu_ifc.addAction(self.action_modelcheck)
         self.menu_ifc.addAction(self.action_create_groups)
         self.menu_ifc.addAction(self.action_model_control)
-        self.menu_modelcheck.addAction(self.action_desite_js)
-        self.menu_modelcheck.addAction(self.action_desite_csv)
-        self.menu_modelcheck.addAction(self.action_bim_collab)
 
         self.retranslateUi(MainWindow)
 
@@ -479,6 +473,5 @@ class Ui_MainWindow(object):
         self.menuPredefined_Psets.setTitle(QCoreApplication.translate("MainWindow", u"Vordefinierte Psets", None))
         self.menuShow_Graphs.setTitle(QCoreApplication.translate("MainWindow", u"Bauwerksstruktur", None))
         self.menu_ifc.setTitle(QCoreApplication.translate("MainWindow", u"IFC", None))
-        self.menu_modelcheck.setTitle(QCoreApplication.translate("MainWindow", u"Modellpr\u00fcfung", None))
     # retranslateUi
 

@@ -10,111 +10,38 @@ from PySide6.QtCore import QObject, Signal, QRunnable, QThreadPool
 from PySide6.QtWidgets import QFileDialog, QWidget, QLineEdit, QLabel
 from SOMcreator import classes
 
-from .. import settings
-from ..icons import get_icon
-from ..qt_designs import ui_modelcheck_old
+from som_gui import settings
+from som_gui.icons import get_icon
+from som_gui.qt_designs import ui_ifc_widget
 
 if TYPE_CHECKING:
-    from ..main_window import MainWindow
+    from som_gui.main_window import MainWindow
 
 ABORT = "ABORT"
 
 
-def ifc_file_dialog(window: QWidget, line_edit: QLineEdit) -> None | list:
-    file_text = "IFC Files (*.ifc *.IFC);;"
-    ifc_paths = settings.get_ifc_path()
-    if isinstance(ifc_paths, list):
-        ifc_paths = ifc_paths[0]
-    path = QFileDialog.getOpenFileNames(window, "IFC-Files", ifc_paths, file_text)[0]
-    if not path:
-        return
-    settings.set_ifc_path(path)
-    line_edit.setText(settings.PATH_SEPERATOR.join(path))
-    return path
-
-
-def get_ifc_path(line_edit_ifc: QLineEdit) -> list[str]:
-    paths = line_edit_ifc.text().split(settings.PATH_SEPERATOR)
-    result = list()
-    for path in paths:
-        if not os.path.exists(path):
-            logging.error(f"IFC-File does not exist: '{path}'")
-        else:
-            result.append(path)
-    return result
-
-
-def get_main_attribute(proj: classes.Project) -> (str, str):
-    ident_attributes = dict()
-    ident_psets = dict()
-    for obj in proj.objects:
-        if obj.ident_attrib is None:
-            continue
-        ident_pset = obj.ident_attrib.property_set.name
-        ident_attribute = obj.ident_attrib.name
-        if not ident_pset in ident_psets:
-            ident_psets[ident_pset] = 0
-        if not ident_attribute in ident_attributes:
-            ident_attributes[ident_attribute] = 0
-        ident_psets[ident_pset] += 1
-        ident_attributes[ident_attribute] += 1
-
-    ident_attribute = (sorted(ident_attributes.items(), key=lambda x: x[1]))
-    ident_pset = (sorted(ident_psets.items(), key=lambda x: x[1]))
-    if ident_attribute and ident_pset:
-        return ident_pset[0][0], ident_attribute[0][0]
-    else:
-        return "", ""
-
-
-def set_main_attribute(proj: classes.Project, line_edit_pset: QLineEdit, line_edit_attribute: QLineEdit) -> None:
-    pset, attribute = get_main_attribute(proj)
-    line_edit_pset.setText(pset)
-    line_edit_attribute.setText(attribute)
-
-
-def auto_set_ifc_path(line_edit_ifc: QLineEdit):
-    ifc_path = settings.get_ifc_path()
-    if ifc_path:
-        if isinstance(ifc_path, list):
-            ifc_path = settings.PATH_SEPERATOR.join(ifc_path)
-        line_edit_ifc.setText(ifc_path)
-
-
-def check_for_ifc(line_edit_ifc: QLineEdit, label_ifc_missing: QLabel):
-    if not get_ifc_path(line_edit_ifc):
-        if line_edit_ifc.text():
-            label_ifc_missing.setText("Path doesn't exist!")
-        else:
-            label_ifc_missing.setText("IFC File Path is missing!")
-        label_ifc_missing.show()
-        return False
-    return True
-
-
-def check_for_export_path(export_path: str, label_export_missing: QLabel):
-    allow = True
-    if not export_path:
-        label_export_missing.setText("Export Path is missing!")
-        label_export_missing.show()
-        allow = False
-
-    elif not os.path.exists(os.path.dirname(export_path)):
-        label_export_missing.setText("Path doesn't exist!")
-        label_export_missing.show()
-        allow = False
-    return allow
-
-
-class IfcWindow(QWidget):
+class IfcWidget(QWidget):
     def __init__(self, main_window: MainWindow):
-        super(IfcWindow, self).__init__()
+        super(IfcWidget, self).__init__()
         self.main_window = main_window
-        self.widget = ui_modelcheck_old.Ui_Form()
+        self.widget = ui_ifc_widget.Ui_Form()
         self.widget.setupUi(self)
-        self.setWindowIcon(get_icon())
         self.widget.button_ifc.clicked.connect(lambda: ifc_file_dialog(self, self.widget.line_edit_ifc))
         self.widget.button_export.clicked.connect(self.export_file_dialog)
+
+        self.active_threads = 0
+        self.thread_pool = QThreadPool()
+        self.widget.button_run.clicked.connect(self.accept)
+        self.widget.button_close.clicked.connect(self.close_button_clicked)
+        self.start_time = None
+        self.end_time = None
+        self.task_is_running = False
+        self.format_window()
+        self.set_min_size()
+        self.show()
+
+    def format_window(self):
+        self.setWindowIcon(get_icon())
         set_main_attribute(self.main_window.project, self.widget.line_edit_ident_pset,
                            self.widget.line_edit_ident_attribute)
         self.widget.label_ifc_missing.hide()
@@ -125,20 +52,19 @@ class IfcWindow(QWidget):
         self.widget.line_edit_export.textEdited.connect(self.widget.label_export_missing.hide)
         self.widget.progress_bar.hide()
         self.widget.label_status.hide()
-
         auto_set_ifc_path(self.widget.line_edit_ifc)
-
         if settings.get_issue_path():
             self.widget.line_edit_export.setText(settings.get_issue_path())
 
-        self.active_threads = 0
-        self.thread_pool = QThreadPool()
-        self.widget.button_run.clicked.connect(self.accept)
-        self.widget.button_close.clicked.connect(self.close_button_clicked)
-        self.show()
-        self.start_time = None
-        self.end_time = None
-        self.task_is_running = False
+    def set_min_size(self):
+        def set_line_edit_size(le: QLineEdit):
+            text = le.text()
+            fm = le.fontMetrics()
+            width = fm.boundingRect(text).width()
+            le.setMinimumSize(max(width, le.width()), le.height())
+
+        set_line_edit_size(self.widget.line_edit_ident_pset)
+        set_line_edit_size(self.widget.line_edit_ident_attribute)
 
     def connect_runner(self, runner: IfcRunner):
         runner.signaller.started.connect(self.on_started)
@@ -224,6 +150,7 @@ class IfcRunner(QRunnable):
         self.object_count: int = 0
         self.checked_objects: int = 0
         self.function_name = function_name
+        self.base_name: str | None = None
 
     def increment_progress(self, text="", increment_value=1):
         if self.is_aborted:
@@ -262,7 +189,7 @@ class IfcRunner(QRunnable):
         self.is_aborted = True
         self.set_abort_status()
 
-    def run(self, is_done=True) -> None:
+    def run(self) -> None:
         """if this functions gets subclassed is_done should be set to False.
         Else the finished signal might be emitted to early"""
 
@@ -278,11 +205,11 @@ class IfcRunner(QRunnable):
             self.signaller.finished.emit(ABORT)
             return
 
-        if is_done:
-            self.signaller.finished.emit(self.ifc_paths)
-            self.signaller.status.emit(f"{self.function_name} Abgeschlossen!")
+        self.signaller.finished.emit(self.ifc_paths)
+        self.signaller.status.emit(f"{self.function_name} Abgeschlossen!")
 
     def run_file_function(self, file_path) -> ifcopenshell.file:
+        """imports the Ifc-File"""
         self.base_name = os.path.basename(file_path)
         self.signaller.status.emit(f"Import {self.base_name}")
         self.signaller.progress.emit(0)
@@ -299,3 +226,89 @@ class Signaller(QObject):
     finished = Signal(str)
     progress = Signal(int)
     status = Signal(str)
+
+
+def ifc_file_dialog(window: QWidget, line_edit: QLineEdit) -> None | list:
+    file_text = "IFC Files (*.ifc *.IFC);;"
+    ifc_paths = settings.get_ifc_path()
+    if isinstance(ifc_paths, list):
+        ifc_paths = ifc_paths[0]
+    path = QFileDialog.getOpenFileNames(window, "IFC-Files", ifc_paths, file_text)[0]
+    if not path:
+        return
+    settings.set_ifc_path(path)
+    line_edit.setText(settings.PATH_SEPERATOR.join(path))
+    return path
+
+
+def get_ifc_path(line_edit_ifc: QLineEdit) -> list[str]:
+    paths = line_edit_ifc.text().split(settings.PATH_SEPERATOR)
+    result = list()
+    for path in paths:
+        if not os.path.exists(path):
+            logging.error(f"IFC-File does not exist: '{path}'")
+        else:
+            result.append(path)
+    return result
+
+
+def get_main_attribute(proj: classes.Project) -> (str, str):
+    ident_attributes = dict()
+    ident_psets = dict()
+    for obj in proj.objects:
+        if obj.ident_attrib is None:
+            continue
+        ident_pset = obj.ident_attrib.property_set.name
+        ident_attribute = obj.ident_attrib.name
+        if ident_pset not in ident_psets:
+            ident_psets[ident_pset] = 0
+        if ident_attribute not in ident_attributes:
+            ident_attributes[ident_attribute] = 0
+        ident_psets[ident_pset] += 1
+        ident_attributes[ident_attribute] += 1
+
+    ident_attribute = (sorted(ident_attributes.items(), key=lambda x: x[1]))
+    ident_pset = (sorted(ident_psets.items(), key=lambda x: x[1]))
+    if ident_attribute and ident_pset:
+        return ident_pset[0][0], ident_attribute[0][0]
+    else:
+        return "", ""
+
+
+def set_main_attribute(proj: classes.Project, line_edit_pset: QLineEdit, line_edit_attribute: QLineEdit) -> None:
+    pset, attribute = proj.get_main_attribute()
+    line_edit_pset.setText(pset)
+    line_edit_attribute.setText(attribute)
+
+
+def auto_set_ifc_path(line_edit_ifc: QLineEdit):
+    ifc_path = settings.get_ifc_path()
+    if ifc_path:
+        if isinstance(ifc_path, list):
+            ifc_path = settings.PATH_SEPERATOR.join(ifc_path)
+        line_edit_ifc.setText(ifc_path)
+
+
+def check_for_ifc(line_edit_ifc: QLineEdit, label_ifc_missing: QLabel):
+    if not get_ifc_path(line_edit_ifc):
+        if line_edit_ifc.text():
+            label_ifc_missing.setText("Path doesn't exist!")
+        else:
+            label_ifc_missing.setText("IFC File Path is missing!")
+        label_ifc_missing.show()
+        return False
+    return True
+
+
+def check_for_export_path(export_path: str, label_export_missing: QLabel):
+    allow = True
+    if not export_path:
+        label_export_missing.setText("Export Path is missing!")
+        label_export_missing.show()
+        allow = False
+
+    elif not os.path.exists(os.path.dirname(export_path)):
+        label_export_missing.setText("Path doesn't exist!")
+        label_export_missing.show()
+        allow = False
+    return allow
