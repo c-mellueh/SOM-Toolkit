@@ -39,6 +39,7 @@ def get_identifier(el: entity_instance, main_pset: str, main_attribute: str) -> 
 
 def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_attribute: str, database_path: str,
                   ifc_name: str, ident_dict: dict[str, SOMcreator.Object], element_type: str, project_name: str,
+                  data_dict:dict[SOMcreator.Object,dict[SOMcreator.PropertySet,list[SOMcreator.Attribute]]],
                   is_in_group=True):
     def check_values(value, attribute: SOMcreator.Attribute):
         check_dict = {value_constants.LIST: check_list, value_constants.RANGE: check_range,
@@ -77,13 +78,13 @@ def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_at
             issues.range_issue(database_path, guid, attribute, element_type)
 
     def check_for_attributes(pset_dict, obj: SOMcreator.Object):
-        for property_set in obj.property_sets:
+        for property_set in data_dict[obj]:
             pset_name = property_set.name
             if pset_name not in pset_dict:
                 issues.property_set_issue(database_path, element.GlobalId, pset_name, element_type)
                 continue
 
-            for attribute in property_set.attributes:
+            for attribute in data_dict[obj][property_set]:
                 attribute_name = attribute.name
                 if attribute.name not in pset_dict[pset_name]:
                     issues.attribute_issue(database_path, element.GlobalId, pset_name, attribute_name, element_type)
@@ -110,14 +111,18 @@ def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_at
     if obj_rep is None:
         issues.ident_unknown(database_path, guid, main_pset, main_attribute, element_type, bauteil_klassifikation)
         return
+    if obj_rep not in data_dict:
+        return
     if not is_in_group:
         if obj_rep.aggregations:
             issues.no_group_issue(database_path, element)
     check_for_attributes(psets, obj_rep)
 
 
-def build_group_structure(focus_group: ifcopenshell.entity_instance, group_dict: dict, ag: str, bk: str,
-                          group_parent_dict: dict):
+def iterate_group_structure(focus_group: ifcopenshell.entity_instance, group_dict: dict, ag: str, bk: str,
+                            group_parent_dict: dict):
+
+
     relationships = getattr(focus_group, "IsGroupedBy", [])
     for relationship in relationships:
         for sub_element in relationship.RelatedObjects:  # IfcGroup or IfcElement
@@ -125,7 +130,7 @@ def build_group_structure(focus_group: ifcopenshell.entity_instance, group_dict:
             group_parent_dict[sub_element] = focus_group
             group_dict[sub_element] = dict()
             if sub_element.is_a("IfcGroup"):
-                build_group_structure(sub_element, group_dict[sub_element], ag, bk, group_parent_dict)
+                iterate_group_structure(sub_element, group_dict[sub_element], ag, bk, group_parent_dict)
 
 
 def get_parent_group(group: entity_instance) -> list[entity_instance]:

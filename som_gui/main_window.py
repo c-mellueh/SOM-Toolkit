@@ -4,13 +4,13 @@ from PySide6.QtWidgets import QMainWindow, QTableWidget, QLabel
 from SOMcreator import classes
 
 from som_gui.windows.aggregation_view import aggregation_window
-from . import icons
-from . import settings, __version__
+from . import icons, settings, __version__
 from .filehandling import open_file, save_file, export
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import property_widget, object_widget
-from .windows import predefined_psets_window, propertyset_window, mapping_window, popups, modelcheck_window, \
-    grouping_window, attribute_import_window, settings_window, project_phase_window
+from .windows import predefined_psets_window, propertyset_window, mapping_window, popups, grouping_window, \
+    attribute_import_window, settings_window, project_phase_window
+from .windows.modelcheck import modelcheck_window
 
 
 class MainWindow(QMainWindow):
@@ -33,12 +33,11 @@ class MainWindow(QMainWindow):
             self.ui.action_mapping_script.triggered.connect(lambda: export.export_mapping_script(self))
             self.ui.action_allplan.triggered.connect(lambda: export.export_allplan_excel(self))
             self.ui.action_abbreviation_json.triggered.connect(lambda: export.export_desite_abbreviation(self))
-            self.ui.action_desite_export.triggered.connect(lambda: export.export_desite_rules(self))
             # Windows
 
             self.ui.action_show_list.triggered.connect(self.open_predefined_pset_window)
             self.ui.action_settings.triggered.connect(self.open_settings_window)
-            self.ui.action_modelcheck.triggered.connect(self.open_modelcheck_window)
+            self.ui.action_modelcheck.triggered.connect(lambda: modelcheck_window.ModelcheckWindow(self))
             self.ui.action_create_groups.triggered.connect(self.open_grouping_window)
             self.ui.action_model_control.triggered.connect(self.open_attribute_import_window)
             self.ui.action_project_phase.triggered.connect(self.open_project_phase_window)
@@ -95,12 +94,6 @@ class MainWindow(QMainWindow):
             self.group_window = grouping_window.GroupingWindow(self)
         else:
             self.group_window.show()
-
-    def open_modelcheck_window(self):
-        if self.modelcheck_window is None:
-            self.modelcheck_window = modelcheck_window.ModelcheckWindow(self)
-        else:
-            self.modelcheck_window.show()
 
     def open_attribute_import_window(self):
         if self.model_control_window is None:

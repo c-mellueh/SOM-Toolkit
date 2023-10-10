@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QLineEdit, QFileDialog, QCheckBox
 from SOMcreator import classes
 from SOMcreator.ifc_modification import grouping
 
-from .ifc_mod_window import IfcWindow, IfcRunner
+from som_gui.widgets.ifc_widget import IfcWidget, IfcRunner
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
@@ -26,13 +26,12 @@ DESCRIPTION = "automatisch erzeugt"
 NAME = "bauteilName"
 
 
-class GroupingWindow(IfcWindow):
+class GroupingWindow(IfcWidget):
     def __init__(self, main_window: MainWindow):
         super(GroupingWindow, self).__init__(main_window)
         self.setWindowTitle("Gruppen erzeugen")
         self.empty_attributes_checkbox = QCheckBox()
         self.create_group_line_input()
-        self.set_fixed_sizes()
         self.adjustSize()
         self.widget.label_export.setText("Export Ordner")
         if settings.get_group_folder():
@@ -46,16 +45,6 @@ class GroupingWindow(IfcWindow):
             return
         settings.set_group_folder(path)
         self.widget.line_edit_export.setText(path)
-
-    def set_fixed_sizes(self):
-        def set_line_edit_size(le: QLineEdit):
-            text = le.text()
-            fm = le.fontMetrics()
-            width = fm.boundingRect(text).width()
-            le.setMinimumSize(max(width, le.width()), le.height())
-
-        set_line_edit_size(self.widget.line_edit_ident_pset)
-        set_line_edit_size(self.widget.line_edit_ident_attribute)
 
     def create_group_line_input(self):
         self.line_edit_group_pset = QLineEdit()

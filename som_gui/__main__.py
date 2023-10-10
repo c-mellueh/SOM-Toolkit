@@ -4,6 +4,7 @@ import os
 import sys
 from logging import config
 from som_gui import logs
+#import ifcopenshell.express.rules.IFC2X3 as IFC2X3
 
 def start_log(state: int | None = None) -> None:
     if os.path.exists(logs.LOG_PATH):
@@ -23,6 +24,7 @@ def main(initial_file: str | None = None):
     from som_gui import main_window
 
     print("START")
+    #print(IFC2X3.dead_load_g)
     app = QApplication(sys.argv)
     window = main_window.MainWindow(app, initial_file)
     window.show()

@@ -9,8 +9,8 @@ from PySide6.QtGui import QBrush
 from PySide6.QtWidgets import QWidget, QTableWidgetItem, QTableWidget, QDialog
 from SOMcreator import classes, value_constants
 from ifcopenshell.util.element import get_pset
+from ..widgets import ifc_widget
 
-from . import ifc_mod_window
 from .. import settings
 from ..icons import get_icon, get_settings_icon
 from ..ifc_modification.modelcheck import get_identifier
@@ -59,9 +59,9 @@ class AttributeImport(QWidget):
         self.widget.label_status.hide()
         self.objects: set[ObjectCollection] = set()
         create_connections()
-        ifc_mod_window.set_main_attribute(self.main_window.project, self.widget.line_edit_ident_pset,
+        ifc_widget.set_main_attribute(self.main_window.project, self.widget.line_edit_ident_pset,
                                           self.widget.line_edit_ident_attribute)
-        ifc_mod_window.auto_set_ifc_path(self.widget.line_edit_ifc)
+        ifc_widget.auto_set_ifc_path(self.widget.line_edit_ifc)
         self.widget.progress_bar.hide()
         self._current_index = 0
         self.object_list: list[ObjectCollection] = list()
@@ -222,7 +222,7 @@ class AttributeImport(QWidget):
         self.setGeometry(geometry)
 
     def ifc_clicked(self):
-        path = ifc_mod_window.ifc_file_dialog(self, self.widget.line_edit_ifc)
+        path = ifc_widget.ifc_file_dialog(self, self.widget.line_edit_ifc)
         if path is None:
             return
         self.import_ifc(path)
@@ -254,7 +254,7 @@ class AttributeImport(QWidget):
         self.widget.progress_bar.hide()
         self.widget.label_status.hide()
 
-        if value == ifc_mod_window.ABORT:
+        if value == ifc_widget.ABORT:
             self.abort_clicked()
             return
 
@@ -309,7 +309,7 @@ class AttributeImport(QWidget):
             self.hide()
 
 
-class ModelControlRunner(ifc_mod_window.IfcRunner):
+class ModelControlRunner(ifc_widget.IfcRunner):
     def __init__(self, ifc_paths: list[str] | str, project: classes.Project, main_pset: str, main_attribute: str,
                  function_name: str):
 

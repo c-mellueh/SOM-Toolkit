@@ -462,6 +462,7 @@
     <addaction name="action_desite_export"/>
     <addaction name="action_export_bookmarks"/>
     <addaction name="action_mapping_script"/>
+    <addaction name="actionModellpr_fung_CSV"/>
    </widget>
    <widget class="QMenu" name="menuPredefined_Psets">
     <property name="title">
@@ -644,6 +645,26 @@
   <action name="action_project_phase">
    <property name="text">
     <string>Leistungsphase</string>
+   </property>
+  </action>
+  <action name="actionModellpr_fung_CSV">
+   <property name="text">
+    <string>Modellprüfung CSV</string>
+   </property>
+  </action>
+  <action name="action_desite_js">
+   <property name="text">
+    <string>Desite JavaScript</string>
+   </property>
+  </action>
+  <action name="action_desite_csv">
+   <property name="text">
+    <string>Desite CSV</string>
+   </property>
+  </action>
+  <action name="action_bim_collab">
+   <property name="text">
+    <string>BimCollabZoom</string>
    </property>
   </action>
  </widget>
