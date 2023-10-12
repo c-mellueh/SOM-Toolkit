@@ -34,6 +34,8 @@ class Ui_Modelcheck(object):
         self.action_bimcollab_zoom.setObjectName(u"action_bimcollab_zoom")
         self.action_desite_fast = QAction(Modelcheck)
         self.action_desite_fast.setObjectName(u"action_desite_fast")
+        self.action_ids = QAction(Modelcheck)
+        self.action_ids.setObjectName(u"action_ids")
         self.centralwidget = QWidget(Modelcheck)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -51,15 +53,19 @@ class Ui_Modelcheck(object):
         self.menuDesite.setObjectName(u"menuDesite")
         self.menuBIMcollab_ZOOM = QMenu(self.menubar)
         self.menuBIMcollab_ZOOM.setObjectName(u"menuBIMcollab_ZOOM")
+        self.menuBuildingSmart = QMenu(self.menubar)
+        self.menuBuildingSmart.setObjectName(u"menuBuildingSmart")
         Modelcheck.setMenuBar(self.menubar)
 
         self.menubar.addAction(self.menuDesite.menuAction())
         self.menubar.addAction(self.menuBIMcollab_ZOOM.menuAction())
+        self.menubar.addAction(self.menuBuildingSmart.menuAction())
         self.menuDesite.addAction(self.action_desite_js)
         self.menuDesite.addAction(self.action_desite_attributes)
         self.menuDesite.addAction(self.action_desite_csv)
         self.menuDesite.addAction(self.action_desite_fast)
         self.menuBIMcollab_ZOOM.addAction(self.action_bimcollab_zoom)
+        self.menuBuildingSmart.addAction(self.action_ids)
 
         self.retranslateUi(Modelcheck)
 
@@ -73,7 +79,9 @@ class Ui_Modelcheck(object):
         self.action_desite_csv.setText(QCoreApplication.translate("Modelcheck", u"Export Modelcheck-CSV", None))
         self.action_bimcollab_zoom.setText(QCoreApplication.translate("Modelcheck", u"Export Modelcheck", None))
         self.action_desite_fast.setText(QCoreApplication.translate("Modelcheck", u"Export Fast JS Rules", None))
+        self.action_ids.setText(QCoreApplication.translate("Modelcheck", u"IDS", None))
         self.menuDesite.setTitle(QCoreApplication.translate("Modelcheck", u"Desite", None))
         self.menuBIMcollab_ZOOM.setTitle(QCoreApplication.translate("Modelcheck", u"BIMcollab ZOOM", None))
+        self.menuBuildingSmart.setTitle(QCoreApplication.translate("Modelcheck", u"BuildingSmart", None))
     # retranslateUi
 
