@@ -5,9 +5,10 @@ from typing import TYPE_CHECKING
 import SOMcreator
 from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtWidgets import QMainWindow, QSplitter
+from SOMcreator.external_software.IDS import main
 from SOMcreator.external_software.bim_collab_zoom import modelcheck as bc_modelcheck
 from SOMcreator.external_software.desite import modelcheck
-from anytree import AnyNode, RenderTree
+from anytree import AnyNode
 
 from ... import icons
 from ...filehandling import export
@@ -27,6 +28,7 @@ class ModelcheckWindow(QMainWindow):
             self.widget.action_desite_csv.triggered.connect(self.export_desite_csv)
             self.widget.action_desite_fast.triggered.connect(self.export_desite_fast)
             self.widget.action_bimcollab_zoom.triggered.connect(self.export_bimcollab)
+            self.widget.action_ids.triggered.connect(self.export_ids)
 
         super(ModelcheckWindow, self).__init__(main_window)
         self.widget = ui_modelcheck.Ui_Modelcheck()
@@ -77,6 +79,13 @@ class ModelcheckWindow(QMainWindow):
             handle_item(model.index(row, 0, root_index))
         return data_dict
 
+    def export_ids(self):
+        path = export.get_path(self.main_window, "ids")
+        if not path:
+            return
+        data_dict = self.build_data_dict()
+        main.export(self.main_window.project, data_dict, path)
+
     def export_bimcollab(self):
         path = export.get_path(self.main_window, "bcsv")
         if not path:
@@ -94,7 +103,7 @@ class ModelcheckWindow(QMainWindow):
         modelcheck.fast_check(self.main_window.project, pset, attrib, data_dict, path)
 
     def export_desite_csv(self):
-        path = export.get_path(self.main_window, "qa.xml")
+        path = export.get_path(self.main_window, "csv")
         if not path:
             return
         data_dict = self.build_data_dict()
@@ -130,17 +139,10 @@ class ModelcheckWindow(QMainWindow):
         tree = self.data_model_widget.widget.object_tree
         model = tree.model()
         root_index = tree.rootIndex()
-        print(model.rowCount(root_index))
 
         base = AnyNode(id=self.main_window.project.name, name=self.main_window.project.name,
                        obj=self.main_window.project)
 
         for row in range(model.rowCount(root_index)):
             handle_item(model.index(row, 0, root_index), base)
-
-        print(base.children)
-
-        for pre, fill, node in RenderTree(base):
-            print("%s%s" % (pre, node.name))
-
         return base

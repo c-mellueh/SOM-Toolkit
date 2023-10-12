@@ -44,8 +44,15 @@
     </property>
     <addaction name="action_bimcollab_zoom"/>
    </widget>
+   <widget class="QMenu" name="menuBuildingSmart">
+    <property name="title">
+     <string>BuildingSmart</string>
+    </property>
+    <addaction name="action_ids"/>
+   </widget>
    <addaction name="menuDesite"/>
    <addaction name="menuBIMcollab_ZOOM"/>
+   <addaction name="menuBuildingSmart"/>
   </widget>
   <action name="action_desite_js">
    <property name="text">
@@ -70,6 +77,11 @@
   <action name="action_desite_fast">
    <property name="text">
     <string>Export Fast JS Rules</string>
+   </property>
+  </action>
+  <action name="action_ids">
+   <property name="text">
+    <string>IDS</string>
    </property>
   </action>
  </widget>
