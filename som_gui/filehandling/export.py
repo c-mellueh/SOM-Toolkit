@@ -44,13 +44,6 @@ def get_folder(main_window: MainWindow) -> str:
     return path
 
 
-def export_desite_rules(main_window: MainWindow, export_typ: str):
-    """export type either CSV or JS"""
-    path = get_path(main_window, "qa.xml")
-    if path:
-        modelcheck.export(main_window.project, path, None, export_typ)
-
-
 def export_building_structure(main_window: MainWindow):
     """Exports dummy Building Structure for Desite"""
     path = get_path(main_window, "bs.xml")
