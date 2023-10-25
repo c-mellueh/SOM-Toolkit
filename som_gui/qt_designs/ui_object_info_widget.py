@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ObjectInfoWidget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.0
+## Created by: Qt User Interface Compiler version 6.6.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,15 +15,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
-    QHBoxLayout, QLabel, QLineEdit, QPushButton,
-    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QApplication, QComboBox, QDialog,
+    QDialogButtonBox, QHBoxLayout, QLabel, QLineEdit,
+    QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout,
+    QWidget)
 
 class Ui_ObjectInfo(object):
     def setupUi(self, ObjectInfo):
         if not ObjectInfo.objectName():
             ObjectInfo.setObjectName(u"ObjectInfo")
-        ObjectInfo.resize(562, 140)
+        ObjectInfo.resize(782, 170)
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -56,15 +57,40 @@ class Ui_ObjectInfo(object):
 
         self.verticalLayout.addLayout(self.horizontal_layout_info)
 
+        self.layout_ident_attribute = QHBoxLayout()
+        self.layout_ident_attribute.setObjectName(u"layout_ident_attribute")
+        self.combo_box_pset = QComboBox(ObjectInfo)
+        self.combo_box_pset.setObjectName(u"combo_box_pset")
+
+        self.layout_ident_attribute.addWidget(self.combo_box_pset)
+
+        self.combo_box_attribute = QComboBox(ObjectInfo)
+        self.combo_box_attribute.setObjectName(u"combo_box_attribute")
+
+        self.layout_ident_attribute.addWidget(self.combo_box_attribute)
+
+        self.line_edit_attribute_value = QLineEdit(ObjectInfo)
+        self.line_edit_attribute_value.setObjectName(u"line_edit_attribute_value")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.line_edit_attribute_value.sizePolicy().hasHeightForWidth())
+        self.line_edit_attribute_value.setSizePolicy(sizePolicy1)
+
+        self.layout_ident_attribute.addWidget(self.line_edit_attribute_value)
+
+
+        self.verticalLayout.addLayout(self.layout_ident_attribute)
+
         self.horizontal_layout_ifc = QHBoxLayout()
         self.horizontal_layout_ifc.setObjectName(u"horizontal_layout_ifc")
         self.label_ifc_mapping = QLabel(ObjectInfo)
         self.label_ifc_mapping.setObjectName(u"label_ifc_mapping")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.label_ifc_mapping.sizePolicy().hasHeightForWidth())
-        self.label_ifc_mapping.setSizePolicy(sizePolicy1)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.label_ifc_mapping.sizePolicy().hasHeightForWidth())
+        self.label_ifc_mapping.setSizePolicy(sizePolicy2)
 
         self.horizontal_layout_ifc.addWidget(self.label_ifc_mapping)
 
@@ -74,11 +100,11 @@ class Ui_ObjectInfo(object):
 
         self.button_add_ifc = QPushButton(ObjectInfo)
         self.button_add_ifc.setObjectName(u"button_add_ifc")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.button_add_ifc.sizePolicy().hasHeightForWidth())
-        self.button_add_ifc.setSizePolicy(sizePolicy2)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.button_add_ifc.sizePolicy().hasHeightForWidth())
+        self.button_add_ifc.setSizePolicy(sizePolicy3)
 
         self.horizontal_layout_ifc.addWidget(self.button_add_ifc)
 

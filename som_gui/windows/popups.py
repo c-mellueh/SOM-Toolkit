@@ -33,6 +33,13 @@ def msg_already_exists():
     text = "Objekt existiert bereits!"
     default_message(text)
 
+def msg_ident_already_exists():
+    text = "Identifier existiert bereits!"
+    default_message(text)
+
+def msg_abbrev_already_exists():
+    text = "Kürzel existiert bereits!"
+    default_message(text)
 
 def msg_attribute_already_exists():
     text = "Attribut existiert bereits!"

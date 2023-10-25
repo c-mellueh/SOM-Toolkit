@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>562</width>
-    <height>140</height>
+    <width>782</width>
+    <height>170</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -41,6 +41,26 @@
      </item>
      <item>
       <widget class="QLineEdit" name="line_edit_abbreviation"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="layout_ident_attribute">
+     <item>
+      <widget class="QComboBox" name="combo_box_pset"/>
+     </item>
+     <item>
+      <widget class="QComboBox" name="combo_box_attribute"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="line_edit_attribute_value">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
