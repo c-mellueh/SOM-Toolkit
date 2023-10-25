@@ -119,12 +119,18 @@ class ObjectInfoWidget(QDialog):
     def __init__(self, main_window: MainWindow, obj: classes.Object):
         super(ObjectInfoWidget, self).__init__()
 
+        def connect():
+            self.widget.line_edit_attribute_value.textChanged.connect(self.ident_edited)
+            self.widget.line_edit_abbreviation.textChanged.connect(self.abbrev_edited)
+            self.widget.combo_box_pset.currentIndexChanged.connect(self.pset_combobox_change)
+
         self.object = obj
         self.main_window = main_window
         self.main_window.object_info_widget = self
 
         self.widget = ui_object_info_widget.Ui_ObjectInfo()
         self.widget.setupUi(self)
+        connect()
 
         self.setWindowTitle(f"bearbeite Objektvorgabe '{self.object.name}'")
         self.setWindowIcon(get_icon())
@@ -135,13 +141,33 @@ class ObjectInfoWidget(QDialog):
         self.completer = QCompleter(IFC_4_1)
         self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.widget.line_edit_ifc.setCompleter(self.completer)
-
         self.fill_with_values()
+
+    def ident_edited(self, val):
+        if val in [o.ident_value for o in self.main_window.project.get_all_objects() if o != self.object]:
+            style = "color:red"
+        else:
+            style = "color:black"
+        self.widget.line_edit_attribute_value.setStyleSheet(style)
+
+    def abbrev_edited(self, val):
+        if val in [o.abbreviation for o in self.main_window.project.get_all_objects() if o != self.object]:
+            style = "color:red"
+        else:
+            style = "color:black"
+        self.widget.line_edit_abbreviation.setStyleSheet(style)
+
+    def pset_combobox_change(self, item_index):
+        self.widget.combo_box_attribute.clear()
+        text = self.widget.combo_box_pset.itemText(item_index)
+        pset = self.object.get_property_set_by_name(text)
+        attribute_list = [attribute.name for attribute in pset.attributes if
+                          attribute.data_type == value_constants.XS_STRING]
+        self.widget.combo_box_attribute.addItems(attribute_list)
 
     def fill_with_values(self):
         self.widget.line_edit_abbreviation.setText(self.object.abbreviation)
         self.widget.line_edit_name.setText(self.object.name)
-
         ifc_mappings = len(self.object.ifc_mapping)
 
         for _ in range(ifc_mappings - 1):
@@ -149,6 +175,15 @@ class ObjectInfoWidget(QDialog):
 
         for index, ifc_mapping in enumerate(self.object.ifc_mapping):
             self.ifc_lines[index].setText(ifc_mapping)
+
+        if self.object.is_concept:
+            self.widget.layout_ident_attribute.hide()
+            return
+
+        self.widget.combo_box_pset.addItems(sorted([pset.name for pset in self.object.property_sets]))
+        self.widget.combo_box_pset.setCurrentText(self.object.ident_attrib.property_set.name)
+        self.widget.combo_box_attribute.setCurrentText(self.object.ident_attrib.name)
+        self.widget.line_edit_attribute_value.setText(self.object.ident_value)
 
     @property
     def ifc_values(self) -> set[str]:
@@ -165,12 +200,31 @@ class ObjectInfoWidget(QDialog):
 def object_double_clicked(main_window: MainWindow, obj: classes.Object):
     object_widget = ObjectInfoWidget(main_window, obj)
     is_ok = object_widget.exec()
+    old_ident_attribute = obj.ident_attrib
     if not is_ok:
+        return
+
+    abbreviation = object_widget.widget.line_edit_abbreviation.text()
+    ident_value = object_widget.widget.line_edit_attribute_value.text()
+
+    if abbreviation in [o.abbreviation for o in main_window.project.get_all_objects() if o != obj]:
+        popups.msg_abbrev_already_exists()
+        return
+
+    if ident_value in [o.ident_value for o in main_window.project.get_all_objects() if o != obj]:
+        popups.msg_ident_already_exists()
         return
 
     obj.ifc_mapping = object_widget.ifc_values
     obj.name = object_widget.widget.line_edit_name.text()
-    obj.abbreviation = object_widget.widget.line_edit_abbreviation.text()
+    obj.abbreviation = abbreviation
+
+    ident_pset_name = object_widget.widget.combo_box_pset.currentText()
+    ident_attribute_name = object_widget.widget.combo_box_attribute.currentText()
+
+    ident_attribute = obj.get_property_set_by_name(ident_pset_name).get_attribute_by_name(ident_attribute_name)
+    obj.ident_attrib = ident_attribute
+    obj.ident_attrib.value = [ident_value]
     main_window.reload()
 
 
