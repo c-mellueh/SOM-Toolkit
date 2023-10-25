@@ -207,16 +207,11 @@ def object_double_clicked(main_window: MainWindow, obj: classes.Object):
     abbreviation = object_widget.widget.line_edit_abbreviation.text()
     ident_value = object_widget.widget.line_edit_attribute_value.text()
 
-    abbreviations = [o.abbreviation for o in main_window.project.get_all_objects() if o != obj]
-    ident_values = [o.ident_value for o in main_window.project.get_all_objects() if o != obj]
-    print(abbreviations)
-    print(ident_values)
-
-    if abbreviation in abbreviations:
+    if abbreviation in [o.abbreviation for o in main_window.project.get_all_objects() if o != obj]:
         popups.msg_abbrev_already_exists()
         return
 
-    if ident_value in ident_values:
+    if ident_value in [o.ident_value for o in main_window.project.get_all_objects() if o != obj]:
         popups.msg_ident_already_exists()
         return
 
