@@ -91,7 +91,10 @@ def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_at
                     continue
 
                 value = pset_dict[pset_name][attribute_name]
-                check_values(value, attribute)
+                if value is None:
+                    issues.empty_value_issue(database_path,guid,pset_name,attribute.name,element_type)
+                else:
+                    check_values(value, attribute)
 
     guid = element.GlobalId
     psets = ifc_el.get_psets(element)

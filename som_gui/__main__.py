@@ -24,7 +24,6 @@ def main(initial_file: str | None = None):
     from som_gui import main_window
 
     print("START")
-    #print(IFC2X3.dead_load_g)
     app = QApplication(sys.argv)
     window = main_window.MainWindow(app, initial_file)
     window.show()

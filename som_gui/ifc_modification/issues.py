@@ -50,8 +50,14 @@ def property_set_issue(cursor, guid, pset_name, element_type):
     sql.add_issues(cursor, guid, description, issue_nr, None, pset_name=pset_name)
 
 
+def empty_value_issue(cursor,guid,pset_name,attribute_name,element_type):
+    description = f"{element_type} hat ein leeres Attribut {pset_name}:{attribute_name}"
+    issue_nr = ATTRIBUTE_EXIST_ISSUE
+    sql.add_issues(cursor, guid, description, issue_nr, None, pset_name=pset_name,
+                   attribute_name=attribute_name)
+
 def attribute_issue(cursor, guid, pset_name, attribute_name, element_type):
-    description = f"{element_type} besitzt nicht das Attribute {pset_name}:{attribute_name}"
+    description = f"{element_type} besitzt nicht das Attribut {pset_name}:{attribute_name}"
     issue_nr = ATTRIBUTE_EXIST_ISSUE
     sql.add_issues(cursor, guid, description, issue_nr, None, pset_name=pset_name,
                    attribute_name=attribute_name)
