@@ -107,7 +107,7 @@ class ModelcheckWindow(QMainWindow):
         if not path:
             return
         data_dict = self.build_data_dict()
-        modelcheck._csv_export(self.main_window.project, data_dict, path)
+        modelcheck.csv_export(data_dict, path)
 
     def export_desite_js(self):
         path = export.get_path(self.main_window, "qa.xml")

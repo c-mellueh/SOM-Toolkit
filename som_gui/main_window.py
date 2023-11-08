@@ -139,7 +139,8 @@ class MainWindow(QMainWindow):
     def clear_all(self):
         object_widget.clear_all(self)
         property_widget.clear_all(self)
-        self.predefined_pset_window.clear_all()
+        if self.predefined_pset_window is not None:
+            self.predefined_pset_window.clear_all()
         self.project.clear()
 
     def reload(self):

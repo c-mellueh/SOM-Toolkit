@@ -459,10 +459,8 @@
     <property name="title">
      <string>Desite</string>
     </property>
-    <addaction name="action_desite_export"/>
     <addaction name="action_export_bookmarks"/>
     <addaction name="action_mapping_script"/>
-    <addaction name="actionModellpr_fung_CSV"/>
    </widget>
    <widget class="QMenu" name="menuPredefined_Psets">
     <property name="title">
