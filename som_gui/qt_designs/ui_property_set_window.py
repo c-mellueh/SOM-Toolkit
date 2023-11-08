@@ -3,17 +3,23 @@
 ################################################################################
 ## Form generated from reading UI file 'PropertySetWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.2
+## Created by: Qt User Interface Compiler version 6.6.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication,  QMetaObject, QSize,)
-
-from PySide6.QtWidgets import (QAbstractItemView,  QCheckBox, QComboBox,
-    QGridLayout, QHBoxLayout,  QLabel,
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComboBox,
+    QGridLayout, QHBoxLayout, QHeaderView, QLabel,
     QLineEdit, QPushButton, QSizePolicy, QSpacerItem,
-    QTableWidget, QTableWidgetItem, QTextEdit, QVBoxLayout,)
+    QTableWidget, QTableWidgetItem, QTextEdit, QVBoxLayout,
+    QWidget)
 
 class Ui_layout_main(object):
     def setupUi(self, layout_main):
@@ -167,6 +173,7 @@ class Ui_layout_main(object):
         self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table_widget.setIconSize(QSize(10, 10))
         self.table_widget.setShowGrid(True)
+        self.table_widget.setSortingEnabled(True)
         self.table_widget.setCornerButtonEnabled(True)
         self.table_widget.setRowCount(5)
         self.table_widget.horizontalHeader().setVisible(True)

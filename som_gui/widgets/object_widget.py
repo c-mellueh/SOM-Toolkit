@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy as cp
 import logging
+import uuid
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QPoint, Qt
@@ -116,7 +117,7 @@ class CustomObjectTreeItem(QTreeWidgetItem):
 
 
 class ObjectInfoWidget(QDialog):
-    def __init__(self, main_window: MainWindow, obj: classes.Object):
+    def __init__(self, main_window: MainWindow, obj: classes.Object, copy=False):
         super(ObjectInfoWidget, self).__init__()
 
         def connect():
@@ -124,6 +125,7 @@ class ObjectInfoWidget(QDialog):
             self.widget.line_edit_abbreviation.textChanged.connect(self.abbrev_edited)
             self.widget.combo_box_pset.currentIndexChanged.connect(self.pset_combobox_change)
 
+        self.copy = copy
         self.object = obj
         self.main_window = main_window
         self.main_window.object_info_widget = self
@@ -144,14 +146,21 @@ class ObjectInfoWidget(QDialog):
         self.fill_with_values()
 
     def ident_edited(self, val):
-        if val in [o.ident_value for o in self.main_window.project.get_all_objects() if o != self.object]:
+        check_obj = self.object
+        if self.copy:
+            check_obj = None
+
+        if check_identifier(self.main_window.project, check_obj, val):
             style = "color:red"
         else:
             style = "color:black"
         self.widget.line_edit_attribute_value.setStyleSheet(style)
 
     def abbrev_edited(self, val):
-        if val in [o.abbreviation for o in self.main_window.project.get_all_objects() if o != self.object]:
+        check_obj = self.object
+        if self.copy:
+            check_obj = None
+        if check_abbrev(self.main_window.project, check_obj, val):
             style = "color:red"
         else:
             style = "color:black"
@@ -177,7 +186,10 @@ class ObjectInfoWidget(QDialog):
             self.ifc_lines[index].setText(ifc_mapping)
 
         if self.object.is_concept:
-            self.widget.layout_ident_attribute.hide()
+            for i in range(self.widget.layout_ident_attribute.count()):
+                self.widget.layout_ident_attribute.itemAt(i).widget().hide()
+
+            # self.widget.layout_ident_attribute.hide()
             return
 
         self.widget.combo_box_pset.addItems(sorted([pset.name for pset in self.object.property_sets]))
@@ -196,36 +208,25 @@ class ObjectInfoWidget(QDialog):
         self.widget.vertical_layout_ifc.addWidget(line_edit)
         line_edit.show()
 
+    def exec(self):
+        return_value = super().exec()
+        if not return_value:
+            return return_value
 
-def object_double_clicked(main_window: MainWindow, obj: classes.Object):
-    object_widget = ObjectInfoWidget(main_window, obj)
-    is_ok = object_widget.exec()
-    old_ident_attribute = obj.ident_attrib
-    if not is_ok:
-        return
+        abbreviation = self.widget.line_edit_abbreviation.text()
+        ident_value = self.widget.line_edit_attribute_value.text()
+        if check_abbrev(self.main_window.project, self.object, abbreviation):
+            popups.msg_abbrev_already_exists()
+            return False
 
-    abbreviation = object_widget.widget.line_edit_abbreviation.text()
-    ident_value = object_widget.widget.line_edit_attribute_value.text()
+        if self.object.is_concept:
+            return return_value
 
-    if abbreviation in [o.abbreviation for o in main_window.project.get_all_objects() if o != obj]:
-        popups.msg_abbrev_already_exists()
-        return
+        if check_identifier(self.main_window.project, self.object, ident_value):
+            popups.msg_ident_already_exists()
+            return False
 
-    if ident_value in [o.ident_value for o in main_window.project.get_all_objects() if o != obj]:
-        popups.msg_ident_already_exists()
-        return
-
-    obj.ifc_mapping = object_widget.ifc_values
-    obj.name = object_widget.widget.line_edit_name.text()
-    obj.abbreviation = abbreviation
-
-    ident_pset_name = object_widget.widget.combo_box_pset.currentText()
-    ident_attribute_name = object_widget.widget.combo_box_attribute.currentText()
-
-    ident_attribute = obj.get_property_set_by_name(ident_pset_name).get_attribute_by_name(ident_attribute_name)
-    obj.ident_attrib = ident_attribute
-    obj.ident_attrib.value = [ident_value]
-    main_window.reload()
+        return return_value
 
 
 def init(main_window: MainWindow):
@@ -273,6 +274,36 @@ def init(main_window: MainWindow):
     main_window.group_shortcut = QShortcut(QKeySequence('Ctrl+G'), main_window)
     main_window.search_shortcut = QShortcut(QKeySequence('Ctrl+F'), main_window)
     connect_items()
+
+
+def check_identifier(project: classes.Project, obj: classes.Object | None, value) -> bool:
+    return value in [o.ident_value for o in project.get_all_objects() if o != obj]
+
+
+def check_abbrev(project: classes.Project, obj: classes.Object | None, value) -> bool:
+    return value in [o.abbreviation for o in project.get_all_objects() if o != obj]
+
+
+def object_double_clicked(main_window: MainWindow, obj: classes.Object):
+    object_widget = ObjectInfoWidget(main_window, obj)
+    is_ok = object_widget.exec()
+    if not is_ok:
+        return
+
+    abbreviation = object_widget.widget.line_edit_abbreviation.text()
+    ident_value = object_widget.widget.line_edit_attribute_value.text()
+    obj.ifc_mapping = object_widget.ifc_values
+    obj.name = object_widget.widget.line_edit_name.text()
+    obj.abbreviation = abbreviation
+
+    if not obj.is_concept:
+        ident_pset_name = object_widget.widget.combo_box_pset.currentText()
+        ident_attribute_name = object_widget.widget.combo_box_attribute.currentText()
+        ident_attribute = obj.get_property_set_by_name(ident_pset_name).get_attribute_by_name(ident_attribute_name)
+        obj.ident_attrib = ident_attribute
+        obj.ident_attrib.value = [ident_value]
+
+    main_window.reload()
 
 
 def update_completer(main_window: MainWindow):
@@ -416,6 +447,12 @@ def rc_expand(tree: QTreeWidget):
 
 
 def copy(main_window: MainWindow):
+    def add_new_item_to_tree(new_obj):
+        parent = item.parent() or item.treeWidget().invisibleRootItem()
+        add_object_to_tree(main_window.object_tree, new_obj, parent)
+        if old_obj.parent is not None:
+            new_obj.parent = old_obj.parent
+
     selected_items = main_window.ui.tree_object.selectedItems()
     item: CustomObjectTreeItem = selected_items[0]
     old_obj = item.object
@@ -428,63 +465,64 @@ def copy(main_window: MainWindow):
                   old_obj.ident_attrib.name,
                   old_obj.ident_attrib.value[0]]
 
-    input_fields, is_concept = popups.req_group_name(main_window, prefil)
-    [obj_name, ident_pset_name, ident_attrib_name, ident_value] = input_fields
+    info_widget = ObjectInfoWidget(main_window, old_obj, copy=True)
+    if not info_widget.exec():
+        return
 
-    if obj_name:
-        psets = list()
+    obj_name = info_widget.widget.line_edit_name.text()
+    is_concept = info_widget
+    abbreviation = info_widget.widget.line_edit_abbreviation.text()
+    ident_pset_name = info_widget.widget.combo_box_pset.currentText()
+    ident_attrib_name = info_widget.widget.combo_box_attribute.currentText()
+    ident_value = info_widget.widget.line_edit_attribute_value.text()
+    is_concept = old_obj.is_concept
 
-        for pset in old_obj.property_sets:
-            new_pset = cp.copy(pset)
-            psets.append(new_pset)
+    psets = list()
+    for pset in old_obj.property_sets:
+        new_pset = cp.copy(pset)
+        psets.append(new_pset)
 
-        if is_concept:
-            new_object = classes.Object(name=obj_name, ident_attrib="Group", project=main_window.project)
+    if is_concept:
+        new_object = classes.Object(name=obj_name, ident_attrib=str(uuid.uuid4()), project=main_window.project,
+                                    project_phases=old_obj.get_project_phase_dict(),abbreviation= abbreviation,description=old_obj.description)
+        add_new_item_to_tree(new_object)
+        return
+
+    ident_attribute = None
+    for pset in psets:
+        # ident pset finden
+        if not pset.name == ident_pset_name:
+            continue
+
+        merk_attrib = None
+        for attribute in pset.attributes:
+            # ident Attrib finden
+            if attribute.name == ident_attrib_name:
+                merk_attrib = attribute
+
+        if merk_attrib is not None:
+            ident_attribute = merk_attrib
+            ident_attribute.value = [ident_value]
         else:
-            is_empty = [True for text in input_fields if not bool(text)]
-            if is_empty:
-                popups.msg_missing_input()
-                return
-            else:
-                ident_attribute = None
+            ident_name = ident_attrib_name
+            ident_attribute = classes.Attribute(pset, ident_name, [ident_value], value_constants.LIST)
 
-                for pset in psets:
+    if ident_attribute is None:
+        ident_pset = classes.PropertySet(ident_pset_name)
+        ident_attribute = classes.Attribute(ident_pset, ident_attrib_name, [ident_value],
+                                            value_constants.LIST)
+        psets.append(ident_pset)
+    new_object = classes.Object(name=obj_name, ident_attrib=ident_attribute, project=main_window.project,abbreviation= abbreviation,
+                                project_phases=old_obj.get_project_phase_dict(),description=old_obj.description)
+    for pset in psets:
+        new_object.add_property_set(pset)
 
-                    # ident pset finden
-                    if pset.name == ident_pset_name:
-                        merk_attrib = None
-                        for attribute in pset.attributes:
-
-                            # ident Attrib finden
-                            if attribute.name == ident_attrib_name:
-                                merk_attrib = attribute
-                        if merk_attrib is not None:
-                            ident_attribute = merk_attrib
-                            ident_attribute.value = [ident_value]
-                        else:
-                            ident_name = ident_attrib_name
-                            ident_attribute = classes.Attribute(pset, ident_name, [ident_value], value_constants.LIST)
-
-                if ident_attribute is None:
-                    ident_pset = classes.PropertySet(ident_pset_name)
-                    ident_attribute = classes.Attribute(ident_pset, ident_attrib_name, [ident_value],
-                                                        value_constants.LIST)
-                    psets.append(ident_pset)
-                new_object = classes.Object(name=obj_name, ident_attrib=ident_attribute, project=main_window.project)
-
-        for pset in psets:
-            new_object.add_property_set(pset)
-        if item.parent() is None:
-            parent = item.treeWidget().invisibleRootItem()
-        else:
-            parent = item.parent()
-        add_object_to_tree(main_window.object_tree, new_object, parent)
-        if old_obj.parent is not None:
-            new_object.parent = old_obj.parent
+    add_new_item_to_tree(new_object)
 
 
 def rc_group_items(main_window: MainWindow):
     input_fields, is_concept = popups.req_group_name(main_window)
+    print(input_fields)
     [group_name, ident_pset, ident_attrib, ident_value, abbreviation] = input_fields
     if not group_name:
         popups.msg_missing_input()
@@ -507,7 +545,8 @@ def rc_group_items(main_window: MainWindow):
             parent: QTreeWidgetItem = main_window.ui.tree_object.invisibleRootItem()
 
     if is_concept:
-        group_obj = classes.Object(name=group_name, ident_attrib="Group", project=main_window.project)
+        group_obj = classes.Object(name=group_name, abbreviation=abbreviation, ident_attrib=str(uuid.uuid4()),
+                                   project=main_window.project, ifc_mapping={"IfcGroup"})
     else:
 
         pset_parent: classes.PropertySet | None = None
@@ -652,26 +691,18 @@ def add_object(main_window: MainWindow):
 
     def allready_exists():
         """checks if abbreviation allready exists or if there is an object with the same ident Attribute"""
-        ident_attrib_list = input_list[1:-1]
-        abbreviation = input_list[-1]
-        for iter_obj in classes.Object:
-            ident_attrib: classes.Attribute = iter_obj.ident_attrib
-            if iter_obj.is_concept:
-                continue
-            ident_list = [ident_attrib.property_set.name,
-                          ident_attrib.name,
-                          ident_attrib.value,
-                          ]
-            if ident_list == ident_attrib_list:
-                return True
-            if abbreviation == iter_obj.abbreviation:
-                return True
-        return False  #
+        if check_abbrev(main_window.project, None, abbreviation):
+            popups.msg_abbrev_already_exists()
+            return True
+        if check_identifier(main_window.project, None, ident_attrib_value):
+            popups.msg_ident_already_exists()
+            return True
+        return False
 
     name = main_window.ui.line_edit_object_name.text()
     p_set_name = main_window.ui.lineEdit_ident_pSet.text()
     ident_attrib_name = main_window.ui.lineEdit_ident_attribute.text()
-    ident_attrib_value = [main_window.ui.lineEdit_ident_value.text()]
+    ident_attrib_value = main_window.ui.lineEdit_ident_value.text()
     abbreviation = main_window.ui.line_edit_abbreviation.text()
     input_list = [name, p_set_name, ident_attrib_name, ident_attrib_value]
 
@@ -683,7 +714,6 @@ def add_object(main_window: MainWindow):
         return
 
     if allready_exists():
-        popups.msg_already_exists()
         return
 
     parent = None
@@ -699,7 +729,7 @@ def add_object(main_window: MainWindow):
     else:
         property_set = classes.PropertySet(p_set_name)
 
-    ident = create_ident(property_set, ident_attrib_name, ident_attrib_value)
+    ident = create_ident(property_set, ident_attrib_name, [ident_attrib_value])
     obj = classes.Object(name=name, ident_attrib=ident, abbreviation=abbreviation, project=main_window.project)
     obj.add_property_set(ident.property_set)
     add_object_to_tree(main_window.object_tree, obj, main_window.object_tree.invisibleRootItem())

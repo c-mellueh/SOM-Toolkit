@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.2
+## Created by: Qt User Interface Compiler version 6.6.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -347,10 +347,8 @@ class Ui_MainWindow(object):
         self.menuExport.addAction(self.action_card1)
         self.menuExport.addAction(self.action_vestra)
         self.menuExport.addAction(self.action_excel)
-        self.menuDesite.addAction(self.action_desite_export)
         self.menuDesite.addAction(self.action_export_bookmarks)
         self.menuDesite.addAction(self.action_mapping_script)
-        self.menuDesite.addAction(self.actionModellpr_fung_CSV)
         self.menuPredefined_Psets.addAction(self.action_show_list)
         self.menuShow_Graphs.addAction(self.action_show_graphs)
         self.menu_ifc.addAction(self.action_modelcheck)

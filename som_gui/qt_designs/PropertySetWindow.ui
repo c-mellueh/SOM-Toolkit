@@ -243,6 +243,9 @@
      <property name="showGrid">
       <bool>true</bool>
      </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
      <property name="cornerButtonEnabled">
       <bool>true</bool>
      </property>
