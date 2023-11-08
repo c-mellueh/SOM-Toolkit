@@ -10,3 +10,4 @@ ifcopenshell
 tqdm
 pypi-latest
 lark
+anytree

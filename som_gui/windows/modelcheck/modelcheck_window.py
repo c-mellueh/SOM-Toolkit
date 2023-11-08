@@ -114,14 +114,20 @@ class ModelcheckWindow(QMainWindow):
         if not path:
             return
         data_dict = self.build_data_dict()
-        modelcheck.export(self.main_window.project, data_dict, path, project_tree=self.tree())
+        pset = self.ifc_modelcheck.ident_pset
+        attrib = self.ifc_modelcheck.ident_attribute
+        modelcheck.export(self.main_window.project, data_dict, path, main_pset=pset, main_attribute=attrib,
+                          project_tree=self.tree())
 
     def export_desite_attribute_table(self):
         path = export.get_path(self.main_window, "qa.xml")
         if not path:
             return
         data_dict = self.build_data_dict()
-        modelcheck.export(self.main_window.project, data_dict, path, project_tree=self.tree(),
+        pset = self.ifc_modelcheck.ident_pset
+        attrib = self.ifc_modelcheck.ident_attribute
+        modelcheck.export(self.main_window.project, data_dict, path, main_pset=pset, main_attribute=attrib,
+                          project_tree=self.tree(),
                           export_type=modelcheck.TABLE_EXPORT)
 
     def tree(self) -> AnyNode:
