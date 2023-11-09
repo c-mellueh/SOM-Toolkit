@@ -17,14 +17,14 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QComboBox, QDialog,
     QDialogButtonBox, QHBoxLayout, QLabel, QLineEdit,
-    QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout,
-    QWidget)
+    QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
+    QVBoxLayout, QWidget)
 
 class Ui_ObjectInfo(object):
     def setupUi(self, ObjectInfo):
         if not ObjectInfo.objectName():
             ObjectInfo.setObjectName(u"ObjectInfo")
-        ObjectInfo.resize(782, 170)
+        ObjectInfo.resize(782, 196)
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -56,6 +56,10 @@ class Ui_ObjectInfo(object):
 
 
         self.verticalLayout.addLayout(self.horizontal_layout_info)
+
+        self.button_gruppe = QRadioButton(ObjectInfo)
+        self.button_gruppe.setObjectName(u"button_gruppe")
+        self.verticalLayout.addWidget(self.button_gruppe)
 
         self.layout_ident_attribute = QHBoxLayout()
         self.layout_ident_attribute.setObjectName(u"layout_ident_attribute")
@@ -147,6 +151,7 @@ class Ui_ObjectInfo(object):
         ObjectInfo.setWindowTitle(QCoreApplication.translate("ObjectInfo", u"Dialog", None))
         self.label_name.setText(QCoreApplication.translate("ObjectInfo", u"Name", None))
         self.label_abbreviation.setText(QCoreApplication.translate("ObjectInfo", u"Abk\u00fcrzung:", None))
+        self.button_gruppe.setText(QCoreApplication.translate("ObjectInfo", u"Gruppe", None))
         self.label_ifc_mapping.setText(QCoreApplication.translate("ObjectInfo", u"IFC Mapping", None))
         self.button_add_ifc.setText(QCoreApplication.translate("ObjectInfo", u"+", None))
     # retranslateUi

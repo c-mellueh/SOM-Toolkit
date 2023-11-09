@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>782</width>
-    <height>170</height>
+    <height>196</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -43,6 +43,13 @@
       <widget class="QLineEdit" name="line_edit_abbreviation"/>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="button_gruppe">
+     <property name="text">
+      <string>Gruppe</string>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="layout_ident_attribute">
