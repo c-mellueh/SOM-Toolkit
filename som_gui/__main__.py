@@ -7,8 +7,8 @@ from som_gui import logs,settings
 #import ifcopenshell.express.rules.IFC2X3 as IFC2X3
 
 def start_log(state: int | None = None) -> None:
-    if os.path.exists(logs.LOG_PATH):
-        os.remove(logs.LOG_PATH)
+    if not os.path.exists(logs.DIR_PATH):
+        os.mkdir(logs.DIR_PATH)
     config.fileConfig(settings.LOG_CONFIG_PATH, defaults={'logfilename': logs.LOG_PATH.replace("\\", "/")})
     if state is None:
         return

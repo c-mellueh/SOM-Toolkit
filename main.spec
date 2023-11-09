@@ -9,9 +9,8 @@ spec.loader.exec_module(module)
 
 block_cipher = None
 added_files = [('som_gui/icons', 'som_gui/icons'),
-               ('som_gui/logs', 'som_gui/logs'),
+               ('som_gui/settings/logging.conf','som_gui/settings'),
                ('venv/Lib/site-packages/ifcopenshell/express','ifcopenshell/express'),
-
                ]
 
 a = Analysis(
