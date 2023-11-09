@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import os
 from configparser import ConfigParser
-
+DIR_PATH = os.path.dirname(__file__)
+LOG_CONFIG_PATH = os.path.join(DIR_PATH, "logging.conf")
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.ini")
 PATHS_SECTION = "paths"
 OPEN_PATH = "open_path"
