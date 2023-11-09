@@ -124,6 +124,7 @@ class ObjectInfoWidget(QDialog):
             self.widget.line_edit_attribute_value.textChanged.connect(self.ident_edited)
             self.widget.line_edit_abbreviation.textChanged.connect(self.abbrev_edited)
             self.widget.combo_box_pset.currentIndexChanged.connect(self.pset_combobox_change)
+            self.widget.button_gruppe.clicked.connect(self.concept_state_changed)
 
         self.copy = copy
         self.object = obj
@@ -144,6 +145,24 @@ class ObjectInfoWidget(QDialog):
         self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.widget.line_edit_ifc.setCompleter(self.completer)
         self.fill_with_values()
+
+    @property
+    def is_concept(self):
+        return self.widget.button_gruppe.isChecked()
+
+    def concept_state_changed(self):
+        if self.widget.button_gruppe.isChecked():
+            self.hide_identifier()
+        else:
+            self.show_identifier()
+
+    def hide_identifier(self):
+        for i in range(self.widget.layout_ident_attribute.count()):
+            self.widget.layout_ident_attribute.itemAt(i).widget().hide()
+
+    def show_identifier(self):
+        for i in range(self.widget.layout_ident_attribute.count()):
+            self.widget.layout_ident_attribute.itemAt(i).widget().show()
 
     def ident_edited(self, val):
         check_obj = self.object
@@ -178,7 +197,7 @@ class ObjectInfoWidget(QDialog):
         self.widget.line_edit_abbreviation.setText(self.object.abbreviation)
         self.widget.line_edit_name.setText(self.object.name)
         ifc_mappings = len(self.object.ifc_mapping)
-
+        self.widget.combo_box_pset.addItems(sorted([pset.name for pset in self.object.property_sets]))
         for _ in range(ifc_mappings - 1):
             self.add_line()
 
@@ -186,13 +205,10 @@ class ObjectInfoWidget(QDialog):
             self.ifc_lines[index].setText(ifc_mapping)
 
         if self.object.is_concept:
-            for i in range(self.widget.layout_ident_attribute.count()):
-                self.widget.layout_ident_attribute.itemAt(i).widget().hide()
-
-            # self.widget.layout_ident_attribute.hide()
+            self.hide_identifier()
+            self.widget.button_gruppe.setChecked(True)
             return
 
-        self.widget.combo_box_pset.addItems(sorted([pset.name for pset in self.object.property_sets]))
         self.widget.combo_box_pset.setCurrentText(self.object.ident_attrib.property_set.name)
         self.widget.combo_box_attribute.setCurrentText(self.object.ident_attrib.name)
         self.widget.line_edit_attribute_value.setText(self.object.ident_value)
@@ -285,6 +301,8 @@ def check_abbrev(project: classes.Project, obj: classes.Object | None, value) ->
 
 
 def object_double_clicked(main_window: MainWindow, obj: classes.Object):
+    was_concept = bool(obj.is_concept)
+
     object_widget = ObjectInfoWidget(main_window, obj)
     is_ok = object_widget.exec()
     if not is_ok:
@@ -296,13 +314,15 @@ def object_double_clicked(main_window: MainWindow, obj: classes.Object):
     obj.name = object_widget.widget.line_edit_name.text()
     obj.abbreviation = abbreviation
 
-    if not obj.is_concept:
+    if not object_widget.is_concept:
         ident_pset_name = object_widget.widget.combo_box_pset.currentText()
         ident_attribute_name = object_widget.widget.combo_box_attribute.currentText()
         ident_attribute = obj.get_property_set_by_name(ident_pset_name).get_attribute_by_name(ident_attribute_name)
         obj.ident_attrib = ident_attribute
         obj.ident_attrib.value = [ident_value]
 
+    elif not was_concept:
+        obj.ident_attrib = str(uuid.uuid4())
     main_window.reload()
 
 
@@ -470,12 +490,11 @@ def copy(main_window: MainWindow):
         return
 
     obj_name = info_widget.widget.line_edit_name.text()
-    is_concept = info_widget
+    is_concept = info_widget.is_concept
     abbreviation = info_widget.widget.line_edit_abbreviation.text()
     ident_pset_name = info_widget.widget.combo_box_pset.currentText()
     ident_attrib_name = info_widget.widget.combo_box_attribute.currentText()
     ident_value = info_widget.widget.line_edit_attribute_value.text()
-    is_concept = old_obj.is_concept
 
     psets = list()
     for pset in old_obj.property_sets:
