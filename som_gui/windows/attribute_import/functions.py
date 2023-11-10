@@ -171,13 +171,12 @@ class IfcImportRunner(ifc_widget.IfcRunner):
         if attribute_index is None:
             self.add_attribute_to_model(pset_index, attribute,value)
             return
-
         item = self.item_model.itemFromIndex(attribute_index)
         current_count = item.data(COUNT_ROLE)
-        current_values = item.data(VALUE_ROLE)
-        current_values.add(value)
         item.setData(current_count + 1, COUNT_ROLE)
-        item.setData(current_values, VALUE_ROLE)
+        values = {self.item_model.index(row,0,attribute_index).data(VALUE_ROLE) for row in range(self.item_model.rowCount(attribute_index))}
+        if not value in values:
+            self.add_value_to_model(attribute_index,value)
 
     def add_object_to_model(self, obj: classes.Object, entity_type) -> QModelIndex:
         item = QStandardItem()
@@ -203,9 +202,18 @@ class IfcImportRunner(ifc_widget.IfcRunner):
         item = QStandardItem(attribute.name)
         item.setData(attribute.name)
         item.setData(attribute, CLASS_DATA_ROLE)
-        item.setData(Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole)
         item.setData(1, COUNT_ROLE)
-        item.setData({value}, VALUE_ROLE)
+        parent_item.appendRow(item)
+        self.add_value_to_model(item.index(),value)
+
+        return self.item_model.indexFromItem(item)
+
+    def add_value_to_model(self,attribute_index:QModelIndex,value):
+        parent_item = self.item_model.itemFromIndex(attribute_index)
+        text = "undefined" if value is None else str(value)
+        item = QStandardItem(text)
+        item.setData(Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole)
+        item.setData(value,VALUE_ROLE)
         parent_item.appendRow(item)
         return self.item_model.indexFromItem(item)
 
@@ -220,7 +228,7 @@ def init(window: gui.AttributeImport):
         window.widget.button_accept.clicked.connect(lambda: button_accept_clicked(window))
         window.widget.button_settings.clicked.connect(lambda: settings_clicked(window))
         window.widget.button_abort.clicked.connect(lambda: abort_clicked(window))
-        window.widget.table_widget_property_set.clicked.connect(pset_table_clicked)
+        window.widget.table_widget_property_set.clicked.connect(lambda index: pset_table_clicked(window,index))
         window.widget.table_widget_attribute.clicked.connect(attribute_table_clicked)
         window.widget.table_widget_attribute.doubleClicked.connect(attribute_table_double_clicked)
         window.widget.table_widget_value.clicked.connect(value_table_clicked)
@@ -311,7 +319,6 @@ def type_index_changed(window: gui.AttributeImport):
 
 def object_index_changed(window: gui.AttributeImport):
     model = window.item_model
-
     current_text = window.widget.combo_box_name.currentText()
     if current_text == ALL:
         # TODO: All
@@ -319,6 +326,11 @@ def object_index_changed(window: gui.AttributeImport):
     object_items = list(model.item(row, 0) for row in range(model.rowCount()))
     current_item: QStandardItem | None = {format_object_for_combobox(o.data(CLASS_DATA_ROLE)): o for o in
                                           object_items}.get(current_text)
+    if current_item is None:
+        return
+    object_count = current_item.data(COUNT_ROLE)
+    window.widget.label_object_count.setText(f"Anzahl: {object_count}")
+
     property_set_items = list()
     for row in range(model.rowCount(current_item.index())):
         pset_index = model.index(row, 0, current_item.index())
@@ -329,18 +341,32 @@ def object_index_changed(window: gui.AttributeImport):
     for pset_item in sorted(property_set_items, key=lambda item: item.data(CLASS_DATA_ROLE).name):
         new_item = pset_item.clone()
         new_item.setData(pset_item.index(), REFERENCE_ROLE)
-        table_model.appendRow([new_item, QStandardItem(str(pset_item.data(COUNT_ROLE)))])
+        count_item = QStandardItem(str(pset_item.data(COUNT_ROLE)))
+        table_model.appendRow([new_item, count_item])
     window.widget.table_widget_property_set.setModel(table_model)
+
+
+def pset_table_clicked(window:gui.AttributeImport,index:QModelIndex):
+    pset_index:QModelIndex = index.model().index(index.row(),0).data(REFERENCE_ROLE)
+
+    model = window.item_model
+    attribute_table_model:QStandardItemModel = window.widget.table_widget_attribute.model()
+    clear_table(window.widget.table_widget_attribute)
+
+    for row in range(model.rowCount(pset_index)):
+        attribute_index = model.index(row,0,pset_index)
+        new_attribute_item = model.itemFromIndex(attribute_index).clone()
+        new_attribute_item.setData(attribute_index,REFERENCE_ROLE)
+        count_item = QStandardItem(str(new_attribute_item.data(COUNT_ROLE)))
+        distinct_item = QStandardItem(str(model.rowCount(attribute_index)))
+
+        attribute_table_model.appendRow([new_attribute_item,count_item,distinct_item])
+
 
 def clear_table(table:QTableView):
     model = table.model()
     for row in reversed(range(model.rowCount())):
         model.removeRow(row)
-
-
-def pset_table_clicked():
-    pass
-
 
 def attribute_table_clicked():
     pass

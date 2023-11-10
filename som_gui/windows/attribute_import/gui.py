@@ -51,11 +51,11 @@ class AttributeImport(QWidget):
         self.item_model = functions.ObjectModel()
 
         self.widget.table_widget_property_set.setModel(QStandardItemModel())
-        model:QStandardItemModel = self.widget.table_widget_property_set.model()
-        model.setHorizontalHeaderLabels(["PropertySet","Anzahl"])
-        self.widget.table_widget_property_set.verticalHeader().hide()
-
+        self.widget.table_widget_property_set.model().setHorizontalHeaderLabels(["PropertySet","Anzahl"])
+        hor_header = self.widget.table_widget_property_set.horizontalHeader()
+        hor_header.setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         self.widget.table_widget_attribute.setModel(QStandardItemModel())
+        self.widget.table_widget_attribute.model().setHorizontalHeaderLabels(["Attribut", "Anzahl","Eindeutig"])
         self.widget.table_widget_value.setModel(QStandardItemModel())
 
 
