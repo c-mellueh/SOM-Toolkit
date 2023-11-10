@@ -346,6 +346,8 @@ def object_index_changed(window: gui.AttributeImport):
 
     table_model = window.widget.table_widget_property_set.model()
     clear_table(window.widget.table_widget_property_set)
+    clear_table(window.widget.table_widget_attribute)
+    clear_table(window.widget.table_widget_value)
     for pset_item in sorted(property_set_items, key=lambda item: item.data(CLASS_DATA_ROLE).name):
         new_item = pset_item.clone()
         new_item.setData(pset_item.index(), REFERENCE_ROLE)
@@ -360,6 +362,7 @@ def pset_table_clicked(window:gui.AttributeImport,index:QModelIndex):
     model = window.item_model
     attribute_table_model:QStandardItemModel = window.widget.table_widget_attribute.model()
     clear_table(window.widget.table_widget_attribute)
+    clear_table(window.widget.table_widget_value)
 
     for row in range(model.rowCount(pset_index)):
         attribute_index = model.index(row,0,pset_index)
@@ -399,10 +402,35 @@ def value_table_clicked(window:gui.AttributeImport,index:QModelIndex):
     value_index:QModelIndex = index.model().index(index.row(),0).data(REFERENCE_ROLE)
     new_check_state = index.data(Qt.ItemDataRole.CheckStateRole)
     window.item_model.setData(value_index,new_check_state,Qt.ItemDataRole.CheckStateRole)
+    print()
+    all_checked = are_all_values_checked(window.item_model,value_index.parent())
+    print(f"All checkd {all_checked}")
 
-def main_checkbox_clicked():
-    pass
+    if all_checked:
+        window.widget.check_box_values.setChecked(True)
+    else:
+        window.widget.check_box_values.setChecked(False)
 
+def are_all_values_checked(model:ObjectModel,attribute_index:QModelIndex):
+    for row in range(model.rowCount(attribute_index)):
+        state = model.index(row,0,attribute_index).data(Qt.ItemDataRole.CheckStateRole)
+        print(f"state: {state}")
+
+        if  state == Qt.CheckState.Unchecked or state ==0 :
+            return False
+    return True
+
+
+def main_checkbox_clicked(window:gui.AttributeImport):
+    new_check_state = window.widget.check_box_values.checkState()
+    model = window.widget.table_widget_value.model()
+    for row in range(model.rowCount()):
+        index = model.index(row,0)
+        model.setData(index,new_check_state,Qt.ItemDataRole.CheckStateRole)
+
+    for row in range(model.rowCount()):
+        index = model.index(row, 0)
+        value_table_clicked(window,index)
 
 def settings_clicked():
     pass

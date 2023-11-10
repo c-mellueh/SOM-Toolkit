@@ -202,7 +202,7 @@ class Ui_Form(object):
         self.table_widget_attribute.horizontalHeader().setHighlightSections(True)
         self.table_widget_attribute.horizontalHeader().setProperty("showSortIndicator", True)
         self.table_widget_attribute.horizontalHeader().setStretchLastSection(True)
-        self.table_widget_attribute.verticalHeader().setVisible(True)
+        self.table_widget_attribute.verticalHeader().setVisible(False)
         self.table_widget_attribute.verticalHeader().setCascadingSectionResizes(True)
         self.table_widget_attribute.verticalHeader().setDefaultSectionSize(24)
 
@@ -221,7 +221,7 @@ class Ui_Form(object):
         self.check_box_values.setObjectName(u"check_box_values")
         self.check_box_values.setMinimumSize(QSize(0, 24))
         self.check_box_values.setMaximumSize(QSize(16777215, 24))
-        self.check_box_values.setChecked(True)
+        self.check_box_values.setChecked(False)
 
         self.horizontalLayout_2.addWidget(self.check_box_values)
 
@@ -241,10 +241,10 @@ class Ui_Form(object):
         self.table_widget_value.setObjectName(u"table_widget_value")
         sizePolicy6.setHeightForWidth(self.table_widget_value.sizePolicy().hasHeightForWidth())
         self.table_widget_value.setSizePolicy(sizePolicy6)
-        self.table_widget_value.setEditTriggers(QAbstractItemView.CurrentChanged)
+        self.table_widget_value.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_widget_value.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table_widget_value.horizontalHeader().setStretchLastSection(True)
-        self.table_widget_value.verticalHeader().setVisible(True)
+        self.table_widget_value.verticalHeader().setVisible(False)
         self.table_widget_value.verticalHeader().setCascadingSectionResizes(True)
         self.table_widget_value.verticalHeader().setDefaultSectionSize(24)
 
