@@ -61,7 +61,6 @@ class AttributeImport(QWidget):
 
         self.widget.check_box_values.setCheckState(Qt.CheckState.Unchecked)
         self.combi_mode = False
-
         functions.init(self)
         functions.hide_progress_bar(self,True)
         functions.hide_tables(self,True)
@@ -71,6 +70,9 @@ class AttributeImport(QWidget):
         for item in items:
             getattr(item,func_name)()
         self.adjustSize()
+
+    def set_object_count(self,count:int):
+        self.widget.label_object_count.setText(f"Anzahl: {count}")
 
     @staticmethod
     def clear_table(table:QTableView):
