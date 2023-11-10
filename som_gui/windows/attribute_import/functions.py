@@ -28,6 +28,8 @@ CLASS_DATA_ROLE = Qt.ItemDataRole.UserRole + 1
 COUNT_ROLE = Qt.ItemDataRole.UserRole + 2
 ENTITY_TYPE_ROLE = Qt.ItemDataRole.UserRole + 3
 
+ALL = "Alles"
+
 
 class ObjectModel(QStandardItemModel):
     def __init__(self):
@@ -159,14 +161,6 @@ class IfcImportRunner(ifc_widget.IfcRunner):
         value = ifc_pset_dict.get(attribute_name)
         if value is None:
             return
-
-        add_range = settings.get_setting_attribute_import_range()
-        add_regex = settings.get_setting_attribute_import_regex()
-        if attribute.value_type == value_constants.RANGE and not add_range:
-            return
-        if attribute.value_type == value_constants.FORMAT and not add_regex:
-            return
-
         item = QStandardItem()
         item.setData(Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole)
         item.setData(attribute, CLASS_DATA_ROLE)
@@ -270,16 +264,53 @@ def fill_type_combobox(window: gui.AttributeImport):
 
     window.widget.combo_box_group.clear()
     texts = [str(t) for t in sorted(all_entity_types) if t is not None]
+    texts.append(ALL)
     window.widget.combo_box_group.addItems(texts)
     pass
 
 
-def object_index_changed(window: gui.AttributeImport):
-    pass
-
-
 def type_index_changed(window: gui.AttributeImport):
-    pass
+    current_type = window.widget.combo_box_group.currentText()
+    items = list()
+    for row in range(window.item_model.rowCount()):
+        item = window.item_model.item(row,0)
+        if current_type in item.data(ENTITY_TYPE_ROLE) or current_type == ALL:
+            items.append(item)
+
+    texts = [format_object_for_combobox(item.data(CLASS_DATA_ROLE)) for item in items if item.data(CLASS_DATA_ROLE) is not None]
+    texts.append(ALL)
+    window.widget.combo_box_name.clear()
+    window.widget.combo_box_name.addItems(texts)
+
+
+def object_index_changed(window: gui.AttributeImport):
+    model = window.item_model
+
+    current_text = window.widget.combo_box_name.currentText()
+    if current_text == ALL:
+        #TODO: All
+        return
+    object_items= list(model.item(row,0) for row in range(model.rowCount()))
+    current_item:QStandardItem|None = {format_object_for_combobox(o.data(CLASS_DATA_ROLE)):o for o in object_items}.get(current_text)
+
+    property_set_items = list(model.item(row,0) for row in range(model.rowCount(current_item.index())))
+    table_model = window.widget.table_widget_property_set.model()
+    #table_model.clear()
+    for pset_item in sorted(property_set_items,key= lambda item:item.data(CLASS_DATA_ROLE).name):
+        pset = pset_item.data(CLASS_DATA_ROLE)
+        print(pset.name)
+        pset_item.setData(pset.name,Qt.ItemDataRole.DisplayRole)
+        table_model.appendRow(pset_item)
+
+
+
+
+
+    window.widget.table_widget_property_set.setModel(table_model)
+
+
+
+
 
 
 def pset_table_clicked():
@@ -323,3 +354,6 @@ def hide_tables(window: gui.AttributeImport, value: bool) -> None:
     items = [window.widget.splitter_tables, window.widget.combo_box_group, window.widget.combo_box_name,
              window.widget.label_object_count, window.widget.label_status]
     window.hide_items(items, value)
+
+def format_object_for_combobox(obj:classes.Object) -> str:
+    return f"{obj.name} ({obj.ident_value})"

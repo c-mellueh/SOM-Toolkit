@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 import ifcopenshell
 from PySide6.QtCore import QThreadPool, Qt
 from PySide6.QtGui import QBrush,QStandardItemModel
-from PySide6.QtWidgets import QWidget, QTableWidgetItem, QTableWidget, QDialog,QSizePolicy
+from PySide6.QtWidgets import QWidget, QTableWidgetItem, QTableWidget, QDialog,QSizePolicy,QHeaderView
 from SOMcreator import classes, value_constants
 from ifcopenshell.util.element import get_pset
 from ...widgets import ifc_widget
@@ -49,6 +49,13 @@ class AttributeImport(QWidget):
         self.widget.button_accept.hide()
 
         self.item_model = functions.ObjectModel()
+
+        self.widget.table_widget_property_set.setModel(QStandardItemModel())
+        model:QStandardItemModel = self.widget.table_widget_property_set.model()
+        model.setHorizontalHeaderLabels(["PropertySet","Anzahl"])
+        self.widget.table_widget_attribute.setModel(QStandardItemModel())
+        self.widget.table_widget_value.setModel(QStandardItemModel())
+
 
         functions.init(self)
         functions.hide_progress_bar(self,True)
