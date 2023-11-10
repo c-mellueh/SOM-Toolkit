@@ -481,6 +481,7 @@
     <addaction name="action_modelcheck"/>
     <addaction name="action_create_groups"/>
     <addaction name="action_model_control"/>
+    <addaction name="action_model_control_v2"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDesite"/>
@@ -663,6 +664,11 @@
   <action name="action_bim_collab">
    <property name="text">
     <string>BimCollabZoom</string>
+   </property>
+  </action>
+  <action name="action_model_control_v2">
+   <property name="text">
+    <string>Modellinformationen V2</string>
    </property>
   </action>
  </widget>

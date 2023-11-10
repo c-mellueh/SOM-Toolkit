@@ -11,8 +11,7 @@ from .widgets import property_widget, object_widget
 from .windows import predefined_psets_window, propertyset_window, mapping_window, popups, grouping_window, \
     attribute_import_window, settings_window, project_phase_window
 from .windows.modelcheck import modelcheck_window
-
-
+from .windows.attribute_import.gui import AttributeImport
 class MainWindow(QMainWindow):
     def __init__(self, application, open_file_path: str | None):
         def connect_actions():
@@ -43,6 +42,7 @@ class MainWindow(QMainWindow):
             self.ui.action_project_phase.triggered.connect(self.open_project_phase_window)
             self.ui.action_show_graphs.triggered.connect(self.open_aggregation_window)
             self.ui.action_mapping.triggered.connect(self.open_mapping_window)
+            self.ui.action_model_control_v2.triggered.connect(lambda: AttributeImport(self))
 
         super(MainWindow, self).__init__()
 

@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1104</width>
-    <height>568</height>
+    <width>913</width>
+    <height>442</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-    <horstretch>0</horstretch>
+   <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+    <horstretch>1</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>30</width>
-    <height>100</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -77,6 +77,12 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>600</width>
+         <height>0</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -201,7 +207,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QTableWidget" name="table_widget_property_set">
+        <widget class="QTableView" name="table_widget_property_set">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -215,36 +221,20 @@
           <enum>QAbstractItemView::SelectRows</enum>
          </property>
          <attribute name="horizontalHeaderMinimumSectionSize">
-          <number>30</number>
-         </attribute>
-         <attribute name="horizontalHeaderDefaultSectionSize">
           <number>100</number>
-         </attribute>
-         <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-          <bool>true</bool>
          </attribute>
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
          </attribute>
          <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
+          <bool>true</bool>
          </attribute>
-         <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-          <bool>false</bool>
+         <attribute name="verticalHeaderCascadingSectionResizes">
+          <bool>true</bool>
          </attribute>
-         <attribute name="verticalHeaderStretchLastSection">
-          <bool>false</bool>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>24</number>
          </attribute>
-         <column>
-          <property name="text">
-           <string>PropertySet</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Anzahl</string>
-          </property>
-         </column>
         </widget>
        </item>
       </layout>
@@ -274,7 +264,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QTableWidget" name="table_widget_attribute">
+        <widget class="QTableView" name="table_widget_attribute">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -290,13 +280,7 @@
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
          </property>
-         <attribute name="horizontalHeaderCascadingSectionResizes">
-          <bool>true</bool>
-         </attribute>
          <attribute name="horizontalHeaderMinimumSectionSize">
-          <number>20</number>
-         </attribute>
-         <attribute name="horizontalHeaderDefaultSectionSize">
           <number>50</number>
          </attribute>
          <attribute name="horizontalHeaderHighlightSections">
@@ -309,29 +293,14 @@
           <bool>true</bool>
          </attribute>
          <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
+          <bool>true</bool>
          </attribute>
-         <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-          <bool>false</bool>
+         <attribute name="verticalHeaderCascadingSectionResizes">
+          <bool>true</bool>
          </attribute>
-         <attribute name="verticalHeaderStretchLastSection">
-          <bool>false</bool>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>24</number>
          </attribute>
-         <column>
-          <property name="text">
-           <string>Attribut</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Anzahl</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Eindeutig</string>
-          </property>
-         </column>
         </widget>
        </item>
       </layout>
@@ -393,7 +362,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QTableWidget" name="table_widget_value">
+        <widget class="QTableView" name="table_widget_value">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
@@ -406,28 +375,18 @@
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
          </property>
-         <attribute name="horizontalHeaderMinimumSectionSize">
-          <number>30</number>
-         </attribute>
-         <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-          <bool>true</bool>
-         </attribute>
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
          </attribute>
          <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
+          <bool>true</bool>
          </attribute>
-         <column>
-          <property name="text">
-           <string>Wert</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Anzahl</string>
-          </property>
-         </column>
+         <attribute name="verticalHeaderCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>24</number>
+         </attribute>
         </widget>
        </item>
       </layout>
@@ -487,6 +446,13 @@
        </property>
        <property name="text">
         <string>Abbrechen</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_accept">
+       <property name="text">
+        <string>Werte Übernehmen</string>
        </property>
       </widget>
      </item>
