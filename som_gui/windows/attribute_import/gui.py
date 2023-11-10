@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 import ifcopenshell
 from PySide6.QtCore import QThreadPool, Qt
-from PySide6.QtGui import QBrush
+from PySide6.QtGui import QBrush,QStandardItemModel
 from PySide6.QtWidgets import QWidget, QTableWidgetItem, QTableWidget, QDialog,QSizePolicy
 from SOMcreator import classes, value_constants
 from ifcopenshell.util.element import get_pset
@@ -47,6 +47,8 @@ class AttributeImport(QWidget):
         self.runner: None = None
         self.widget.button_settings.setIcon(get_settings_icon())
         self.widget.button_accept.hide()
+
+        self.item_model = functions.ObjectModel()
 
         functions.init(self)
         functions.hide_progress_bar(self,True)
