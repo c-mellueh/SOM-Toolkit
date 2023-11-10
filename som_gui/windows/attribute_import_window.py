@@ -24,6 +24,15 @@ if TYPE_CHECKING:
 from ..qt_designs import ui_attribute_import_window, ui_attribute_import_settings_window
 
 STANDARD_CHECK_STATE = False
+ALL = "Alles"
+GROUP = "Gruppe"
+ELEMENT = "Element"
+TYPE = "Type"
+PROPERTYSETS = "PropertySets"
+
+
+def get_object_text(obj: classes.Object) -> str:
+    return f"{obj.name} [{obj.ident_value}]"
 
 
 class AttributeImport(QWidget):
@@ -32,8 +41,8 @@ class AttributeImport(QWidget):
         def create_connections():
             self.widget.button_ifc.clicked.connect(self.ifc_clicked)
             self.widget.line_edit_ifc.returnPressed.connect(lambda: self.import_ifc(self.widget.line_edit_ifc.text()))
-            self.widget.button_last.clicked.connect(self.last_object_clicked)
-            self.widget.button_next.clicked.connect(self.next_object_clicked)
+            self.widget.combo_box_name.currentIndexChanged.connect(self.object_changed)
+            self.widget.combo_box_group.currentIndexChanged.connect(self.group_selector_changed)
             self.widget.table_widget_property_set.itemClicked.connect(
                 lambda item: item.activate(self.widget.table_widget_attribute))
             self.widget.table_widget_attribute.itemClicked.connect(
@@ -60,10 +69,9 @@ class AttributeImport(QWidget):
         self.objects: set[ObjectCollection] = set()
         create_connections()
         ifc_widget.set_main_attribute(self.main_window.project, self.widget.line_edit_ident_pset,
-                                          self.widget.line_edit_ident_attribute)
+                                      self.widget.line_edit_ident_attribute)
         ifc_widget.auto_set_ifc_path(self.widget.line_edit_ifc)
         self.widget.progress_bar.hide()
-        self._current_index = 0
         self.object_list: list[ObjectCollection] = list()
         self.data_dict = dict()
         self.count_dict = dict()
@@ -71,8 +79,27 @@ class AttributeImport(QWidget):
         self.header_dict = {self.widget.table_widget_property_set: ["PropertySet", "Anzahl"],
                             self.widget.table_widget_attribute: ["Attribut", "Anzahl", "Eindeutig"],
                             self.widget.table_widget_value: ["Wert", "Anzahl"]}
-
+        self.widget.combo_box_group.addItems([ALL, GROUP, ELEMENT])
         self.show_items(False)
+
+    def get_objects_by_type(self, type_text) -> list[ObjectCollection]:
+        if type_text == GROUP:
+            objects = [o for o in self.object_list if o.type == "IfcGroup"]
+        elif type_text == ALL:
+            objects = [o for o in self.object_list]
+        else:
+            objects = [o for o in self.object_list if o.type != "IfcGroup"]
+        return objects
+
+    def fill_object_name_combo_box(self):
+        type_text = self.widget.combo_box_group.currentText()
+        names = self.get_objects_by_type(type_text)
+        names = [get_object_text(o.object) for o in names]
+        self.widget.combo_box_name.clear()
+        self.widget.combo_box_name.addItems(names)
+
+    def group_selector_changed(self):
+        self.fill_object_name_combo_box()
 
     def settings_clicked(self):
         settings_dict = {
@@ -97,31 +124,6 @@ class AttributeImport(QWidget):
         property_widget.open_pset_window(self.main_window, property_set, self.main_window.active_object, None)
         self.main_window.property_set_window.table_clicked(None, attribute)
 
-    @property
-    def current_index(self) -> int:
-        return self._current_index
-
-    @current_index.setter
-    def current_index(self, value) -> None:
-        self._current_index = value
-        if value == self.max_objects - 1:
-            self.widget.button_next.setEnabled(False)
-            self.widget.button_next.setText("-")
-        else:
-            self.widget.button_next.setEnabled(True)
-            next_index = self._current_index + 1
-            next_object_name = self.object_list[next_index].object.name
-            self.widget.button_next.setText(f"{next_object_name} ({next_index + 1}/{self.max_objects})")
-
-        if value == 0:
-            self.widget.button_last.setEnabled(False)
-            self.widget.button_last.setText("-")
-        else:
-            last_index = self._current_index - 1
-            last_object_name = self.object_list[last_index].object.name
-            self.widget.button_last.setEnabled(True)
-            self.widget.button_last.setText(f"{last_object_name} ({last_index + 1}/{self.max_objects})")
-
     def button_run_clicked(self):
         if self.task_status == 0:
             path = self.widget.line_edit_ifc.text()
@@ -130,12 +132,13 @@ class AttributeImport(QWidget):
         if self.task_status == 1:
             return
 
-        for obj, property_set_dict in self.data_dict.items():
+        for obj, data_dict in self.data_dict.items():
+            property_set_dict = data_dict[PROPERTYSETS]
             for property_set, attribute_dict in property_set_dict.items():
                 for attribute, value_dict in attribute_dict.items():
                     attribute: classes.Attribute
                     values = attribute.value
-                    for value, [accept_bool, count] in value_dict.items():
+                    for value, [accept_bool, _] in value_dict.items():
                         if value not in values and accept_bool:
                             values.append(value)
                             logging.info(
@@ -189,17 +192,11 @@ class AttributeImport(QWidget):
         property_set = attribute.property_set
         obj = property_set.object
         if item.checkState() == Qt.CheckState.Checked:
-            self.data_dict[obj][property_set][attribute][item.value][0] = True
+            self.data_dict[obj][PROPERTYSETS][property_set][attribute][item.value][0] = True
         else:
-            self.data_dict[obj][property_set][attribute][item.value][0] = False
+            self.data_dict[obj][PROPERTYSETS][property_set][attribute][item.value][0] = False
         if update_value_checkbox:
             self.update_value_checkbox()
-
-    def next_object_clicked(self):
-        self.display_object_by_index(self.current_index + 1)
-
-    def last_object_clicked(self):
-        self.display_object_by_index(self.current_index - 1)
 
     def show_items(self, show_bool: bool) -> None:
         """func_name either 'hide or 'show'"""
@@ -209,9 +206,9 @@ class AttributeImport(QWidget):
             func_name = "hide"
 
         getattr(self.widget.splitter_tables, func_name)()
-        getattr(self.widget.button_next, func_name)()
-        getattr(self.widget.button_last, func_name)()
-        getattr(self.widget.label_object_name, func_name)()
+        getattr(self.widget.combo_box_group, func_name)()
+        getattr(self.widget.combo_box_name, func_name)()
+        getattr(self.widget.label_object_count, func_name)()
         getattr(self.widget.label_status, func_name)()
         geometry = self.geometry()
         if show_bool:
@@ -261,18 +258,24 @@ class AttributeImport(QWidget):
         self.data_dict = self.runner.data_dict
         self.count_dict = self.runner.count_dict
 
-        objects = [ObjectCollection(obj, self, pset_dict, self.count_dict) for obj, pset_dict in self.data_dict.items()]
-        self.object_list = sorted(list(objects), key=lambda obj: obj.name)
-        self.display_object_by_index(0)
+        objects = [ObjectCollection(obj, self, data_items, self.count_dict) for obj, data_items in
+                   self.data_dict.items()]
 
-    def display_object_by_index(self, index: int):
-        self.current_index = index
-        obj = self.object_list[index]
-        self.widget.label_object_name.setText(obj.name)
-        self.reset_table(self.widget.table_widget_property_set, )
+        self.object_list = sorted(list(objects), key=lambda obj: obj.name)
+        self.fill_object_name_combo_box()
+        self.widget.combo_box_name.setCurrentIndex(0)
+
+    def object_changed(self):
+        current_object_text = self.widget.combo_box_name.currentText()
+        object_collection: ObjectCollection | None = {get_object_text(o.object): o for o in self.object_list}.get(
+            current_object_text)
+        if object_collection is None:
+            return
+        self.widget.label_object_count.setText(str(object_collection.count))
+        self.reset_table(self.widget.table_widget_property_set)
         self.reset_table(self.widget.table_widget_attribute)
         self.reset_table(self.widget.table_widget_value)
-        obj.activate(self.widget.table_widget_property_set)
+        object_collection.activate(self.widget.table_widget_property_set)
 
     def reset_table(self, table: QTableWidget):
         table.clear()
@@ -332,17 +335,17 @@ class ModelControlRunner(ifc_widget.IfcRunner):
 
             def get_layers(internal_entity: ifcopenshell.entity_instance) -> set[int]:
                 parent_groups = get_parent_groups(internal_entity)
-                layers = set()
+                _layers = set()
 
                 if not parent_groups:
-                    layers.add(0)
-                    return layers
+                    _layers.add(0)
+                    return _layers
 
                 for parent in parent_groups:
                     for layer in get_layers(parent):
-                        layers.add(layer + 1)
+                        _layers.add(layer + 1)
 
-                return layers
+                return _layers
 
             layers = get_layers(entity)
             values = [layer % 2 == 0 for layer in layers]
@@ -363,10 +366,10 @@ class ModelControlRunner(ifc_widget.IfcRunner):
                 if obj is None:
                     return
                 if obj not in d_dict:
-                    d_dict[obj] = {}
-                if obj not in count_dict:
-                    count_dict[obj] = 0
-                count_dict[obj] += 1
+                    d_dict[obj] = {TYPE: entity.get_info()["type"], PROPERTYSETS: {}}
+                if obj not in _count_dict:
+                    _count_dict[obj] = 0
+                _count_dict[obj] += 1
                 for property_set in obj.property_sets:
                     check_property_set(d_dict[obj], property_set, entity)
 
@@ -377,15 +380,15 @@ class ModelControlRunner(ifc_widget.IfcRunner):
                 if ifc_pset_dict is None:
                     return
 
-                if property_set not in sub_dict:
-                    sub_dict[property_set] = dict()
+                if property_set not in sub_dict[PROPERTYSETS]:
+                    sub_dict[PROPERTYSETS][property_set] = dict()
 
-                if property_set not in count_dict:
-                    count_dict[property_set] = 0
-                count_dict[property_set] += 1
+                if property_set not in _count_dict:
+                    _count_dict[property_set] = 0
+                _count_dict[property_set] += 1
 
                 for attribute in property_set.attributes:
-                    check_attribute(sub_dict[property_set], attribute, ifc_pset_dict)
+                    check_attribute(sub_dict[PROPERTYSETS][property_set], attribute, ifc_pset_dict)
 
             def check_attribute(sub_dict, attribute, ifc_pset_dict):
                 attribute_name = attribute.name
@@ -408,9 +411,9 @@ class ModelControlRunner(ifc_widget.IfcRunner):
 
                 if attribute not in sub_dict:
                     sub_dict[attribute] = dict()
-                if attribute not in count_dict:
-                    count_dict[attribute] = 0
-                count_dict[attribute] += 1
+                if attribute not in _count_dict:
+                    _count_dict[attribute] = 0
+                _count_dict[attribute] += 1
 
                 if value not in sub_dict[attribute]:
                     sub_dict[attribute][value] = [check_state, 1]
@@ -421,7 +424,7 @@ class ModelControlRunner(ifc_widget.IfcRunner):
             add_range = settings.get_setting_attribute_import_range()
             add_regex = settings.get_setting_attribute_import_regex()
             dd = dict()
-            count_dict = dict()
+            _count_dict = dict()
             element_count = len(elements)
 
             for index, element in enumerate(elements, start=1):
@@ -433,7 +436,7 @@ class ModelControlRunner(ifc_widget.IfcRunner):
                     self.signaller.progress.emit(progress)
                 check_entity(dd, element)
 
-            return dd, count_dict
+            return dd, _count_dict
 
         ifc = super(ModelControlRunner, self).run_file_function(file_path)
         entities = ifc.by_type("IfcElement")
@@ -448,10 +451,11 @@ class ModelControlRunner(ifc_widget.IfcRunner):
 
 
 class ObjectCollection(object):
-    def __init__(self, obj: classes.Object, window: AttributeImport, property_set_dict: dict, count_dict: dict):
+    def __init__(self, obj: classes.Object, window: AttributeImport, data_items: dict, count_dict: dict):
         self.object = obj
         self.count = count_dict[self.object]
-        self.property_set_dict = property_set_dict
+        self.property_set_dict = data_items[PROPERTYSETS]
+        self.type = data_items[TYPE]
         self.count_dict = count_dict
         self.window = window
         super(ObjectCollection, self).__init__()
