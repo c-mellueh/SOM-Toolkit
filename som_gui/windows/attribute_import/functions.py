@@ -174,9 +174,16 @@ class IfcImportRunner(ifc_widget.IfcRunner):
         item = self.item_model.itemFromIndex(attribute_index)
         current_count = item.data(COUNT_ROLE)
         item.setData(current_count + 1, COUNT_ROLE)
-        values = {self.item_model.index(row,0,attribute_index).data(VALUE_ROLE) for row in range(self.item_model.rowCount(attribute_index))}
-        if not value in values:
-            self.add_value_to_model(attribute_index,value)
+
+        for row in range(self.item_model.rowCount(attribute_index)):
+            value_index = self.item_model.index(row,0,attribute_index)
+            existing_value = value_index.data(VALUE_ROLE)
+            if value == existing_value:
+                count_data = self.item_model.data(value_index,COUNT_ROLE)
+                self.item_model.setData(value_index,count_data+1,COUNT_ROLE)
+                return
+
+        self.add_value_to_model(attribute_index,value)
 
     def add_object_to_model(self, obj: classes.Object, entity_type) -> QModelIndex:
         item = QStandardItem()
@@ -214,6 +221,7 @@ class IfcImportRunner(ifc_widget.IfcRunner):
         item = QStandardItem(text)
         item.setData(Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole)
         item.setData(value,VALUE_ROLE)
+        item.setData(1,COUNT_ROLE)
         parent_item.appendRow(item)
         return self.item_model.indexFromItem(item)
 
@@ -229,7 +237,7 @@ def init(window: gui.AttributeImport):
         window.widget.button_settings.clicked.connect(lambda: settings_clicked(window))
         window.widget.button_abort.clicked.connect(lambda: abort_clicked(window))
         window.widget.table_widget_property_set.clicked.connect(lambda index: pset_table_clicked(window,index))
-        window.widget.table_widget_attribute.clicked.connect(attribute_table_clicked)
+        window.widget.table_widget_attribute.clicked.connect(lambda index: attribute_table_clicked(window,index))
         window.widget.table_widget_attribute.doubleClicked.connect(attribute_table_double_clicked)
         window.widget.table_widget_value.clicked.connect(value_table_clicked)
 
@@ -359,7 +367,6 @@ def pset_table_clicked(window:gui.AttributeImport,index:QModelIndex):
         new_attribute_item.setData(attribute_index,REFERENCE_ROLE)
         count_item = QStandardItem(str(new_attribute_item.data(COUNT_ROLE)))
         distinct_item = QStandardItem(str(model.rowCount(attribute_index)))
-
         attribute_table_model.appendRow([new_attribute_item,count_item,distinct_item])
 
 
@@ -368,8 +375,19 @@ def clear_table(table:QTableView):
     for row in reversed(range(model.rowCount())):
         model.removeRow(row)
 
-def attribute_table_clicked():
-    pass
+def attribute_table_clicked(window:gui.AttributeImport,index:QModelIndex):
+    attribute_index: QModelIndex = index.model().index(index.row(), 0).data(REFERENCE_ROLE)
+
+    model = window.item_model
+    value_table_model: QStandardItemModel = window.widget.table_widget_value.model()
+    clear_table(window.widget.table_widget_value)
+
+    for row in range(model.rowCount(attribute_index)):
+        value_index = model.index(row, 0, attribute_index)
+        new_item = model.itemFromIndex(value_index).clone()
+        new_item.setData(attribute_index, REFERENCE_ROLE)
+        count_item = QStandardItem(str(new_item.data(COUNT_ROLE)))
+        value_table_model.appendRow([new_item, count_item])
 
 
 def attribute_table_double_clicked():

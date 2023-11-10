@@ -57,7 +57,9 @@ class AttributeImport(QWidget):
         self.widget.table_widget_attribute.setModel(QStandardItemModel())
         self.widget.table_widget_attribute.model().setHorizontalHeaderLabels(["Attribut", "Anzahl","Eindeutig"])
         self.widget.table_widget_value.setModel(QStandardItemModel())
+        self.widget.table_widget_value.model().setHorizontalHeaderLabels(["Wert","Anzahl"])
 
+        self.widget.check_box_values.setCheckState(Qt.CheckState.Unchecked)
 
         functions.init(self)
         functions.hide_progress_bar(self,True)
