@@ -53,6 +53,8 @@ class AttributeImport(QWidget):
         self.widget.table_widget_property_set.setModel(QStandardItemModel())
         model:QStandardItemModel = self.widget.table_widget_property_set.model()
         model.setHorizontalHeaderLabels(["PropertySet","Anzahl"])
+        self.widget.table_widget_property_set.verticalHeader().hide()
+
         self.widget.table_widget_attribute.setModel(QStandardItemModel())
         self.widget.table_widget_value.setModel(QStandardItemModel())
 

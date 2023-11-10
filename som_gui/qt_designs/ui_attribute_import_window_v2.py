@@ -25,7 +25,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(913, 442)
+        Form.resize(1051, 442)
         sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
@@ -71,7 +71,7 @@ class Ui_Form(object):
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.line_edit_ifc.sizePolicy().hasHeightForWidth())
         self.line_edit_ifc.setSizePolicy(sizePolicy3)
-        self.line_edit_ifc.setMinimumSize(QSize(600, 0))
+        self.line_edit_ifc.setMinimumSize(QSize(1000, 0))
 
         self.horizontal_layout_ifc.addWidget(self.line_edit_ifc)
 

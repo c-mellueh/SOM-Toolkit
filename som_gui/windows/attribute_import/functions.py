@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 import ifcopenshell
 from PySide6.QtCore import QThreadPool, Qt, QModelIndex
 from PySide6.QtGui import QBrush, QStandardItem, QStandardItemModel
-from PySide6.QtWidgets import QWidget, QTableWidgetItem, QTableWidget, QDialog
+from PySide6.QtWidgets import QWidget, QTableWidgetItem, QTableWidget, QDialog,QTableView
 from SOMcreator import classes, value_constants
 from ifcopenshell.util.element import get_pset
 from ...widgets import ifc_widget
@@ -27,7 +27,8 @@ from ...qt_designs import ui_attribute_import_window, ui_attribute_import_settin
 CLASS_DATA_ROLE = Qt.ItemDataRole.UserRole + 1
 COUNT_ROLE = Qt.ItemDataRole.UserRole + 2
 ENTITY_TYPE_ROLE = Qt.ItemDataRole.UserRole + 3
-
+REFERENCE_ROLE = Qt.ItemDataRole.UserRole + 4
+VALUE_ROLE = Qt.ItemDataRole.UserRole + 5
 ALL = "Alles"
 
 
@@ -48,6 +49,14 @@ class ObjectModel(QStandardItemModel):
             model_index = self.index(row, 0, obj_index)
             item: classes.PropertySet = self.itemFromIndex(model_index).data(CLASS_DATA_ROLE)
             if item == property_set:
+                return model_index
+        return None
+
+    def find_attribute(self, attribute, pset_index: QModelIndex) -> QModelIndex | None:
+        for row in range(self.rowCount(pset_index)):
+            model_index = self.index(row, 0, pset_index)
+            item: classes.Attribute = self.itemFromIndex(model_index).data(CLASS_DATA_ROLE)
+            if item == attribute:
                 return model_index
         return None
 
@@ -152,24 +161,27 @@ class IfcImportRunner(ifc_widget.IfcRunner):
         else:
             current_count = self.item_model.itemFromIndex(pset_index).data(COUNT_ROLE)
             self.item_model.itemFromIndex(pset_index).setData(current_count + 1, COUNT_ROLE)
-
         for attribute in property_set.attributes:
             self.import_attribute(pset_index, attribute, ifc_pset_dict)
 
     def import_attribute(self, pset_index: QModelIndex, attribute, ifc_pset_dict):
-        attribute_name = attribute.name
-        value = ifc_pset_dict.get(attribute_name)
-        if value is None:
+        attribute_index = self.item_model.find_attribute(attribute, pset_index)
+        value = ifc_pset_dict.get(attribute.name)
+
+        if attribute_index is None:
+            self.add_attribute_to_model(pset_index, attribute,value)
             return
-        item = QStandardItem()
-        item.setData(Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole)
-        item.setData(attribute, CLASS_DATA_ROLE)
-        item.setData(1, COUNT_ROLE)
-        parent_item = self.item_model.itemFromIndex(pset_index)
-        parent_item.appendRow(item)
+
+        item = self.item_model.itemFromIndex(attribute_index)
+        current_count = item.data(COUNT_ROLE)
+        current_values = item.data(VALUE_ROLE)
+        current_values.add(value)
+        item.setData(current_count + 1, COUNT_ROLE)
+        item.setData(current_values, VALUE_ROLE)
 
     def add_object_to_model(self, obj: classes.Object, entity_type) -> QModelIndex:
         item = QStandardItem()
+        item.setData(obj.name)
         item.setData(obj, CLASS_DATA_ROLE)
         item.setData(1, COUNT_ROLE)
         item.setData({entity_type}, ENTITY_TYPE_ROLE)
@@ -178,9 +190,22 @@ class IfcImportRunner(ifc_widget.IfcRunner):
 
     def add_pset_to_model(self, object_index: QModelIndex, property_set: classes.PropertySet) -> QModelIndex:
         parent_item = self.item_model.itemFromIndex(object_index)
-        item = QStandardItem()
+        item = QStandardItem(property_set.name)
+        item.setData(property_set.name)
         item.setData(property_set, CLASS_DATA_ROLE)
         item.setData(1, COUNT_ROLE)
+        parent_item.appendRow(item)
+        return self.item_model.indexFromItem(item)
+
+    def add_attribute_to_model(self, pset_index: QModelIndex, attribute: classes.Attribute,
+                               value: str | int | float | None) -> QModelIndex:
+        parent_item = self.item_model.itemFromIndex(pset_index)
+        item = QStandardItem(attribute.name)
+        item.setData(attribute.name)
+        item.setData(attribute, CLASS_DATA_ROLE)
+        item.setData(Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole)
+        item.setData(1, COUNT_ROLE)
+        item.setData({value}, VALUE_ROLE)
         parent_item.appendRow(item)
         return self.item_model.indexFromItem(item)
 
@@ -273,11 +298,12 @@ def type_index_changed(window: gui.AttributeImport):
     current_type = window.widget.combo_box_group.currentText()
     items = list()
     for row in range(window.item_model.rowCount()):
-        item = window.item_model.item(row,0)
+        item = window.item_model.item(row, 0)
         if current_type in item.data(ENTITY_TYPE_ROLE) or current_type == ALL:
             items.append(item)
 
-    texts = [format_object_for_combobox(item.data(CLASS_DATA_ROLE)) for item in items if item.data(CLASS_DATA_ROLE) is not None]
+    texts = [format_object_for_combobox(item.data(CLASS_DATA_ROLE)) for item in items if
+             item.data(CLASS_DATA_ROLE) is not None]
     texts.append(ALL)
     window.widget.combo_box_name.clear()
     window.widget.combo_box_name.addItems(texts)
@@ -288,29 +314,28 @@ def object_index_changed(window: gui.AttributeImport):
 
     current_text = window.widget.combo_box_name.currentText()
     if current_text == ALL:
-        #TODO: All
+        # TODO: All
         return
-    object_items= list(model.item(row,0) for row in range(model.rowCount()))
-    current_item:QStandardItem|None = {format_object_for_combobox(o.data(CLASS_DATA_ROLE)):o for o in object_items}.get(current_text)
+    object_items = list(model.item(row, 0) for row in range(model.rowCount()))
+    current_item: QStandardItem | None = {format_object_for_combobox(o.data(CLASS_DATA_ROLE)): o for o in
+                                          object_items}.get(current_text)
+    property_set_items = list()
+    for row in range(model.rowCount(current_item.index())):
+        pset_index = model.index(row, 0, current_item.index())
+        property_set_items.append(model.itemFromIndex(pset_index))
 
-    property_set_items = list(model.item(row,0) for row in range(model.rowCount(current_item.index())))
     table_model = window.widget.table_widget_property_set.model()
-    #table_model.clear()
-    for pset_item in sorted(property_set_items,key= lambda item:item.data(CLASS_DATA_ROLE).name):
-        pset = pset_item.data(CLASS_DATA_ROLE)
-        print(pset.name)
-        pset_item.setData(pset.name,Qt.ItemDataRole.DisplayRole)
-        table_model.appendRow(pset_item)
-
-
-
-
-
+    clear_table(window.widget.table_widget_property_set)
+    for pset_item in sorted(property_set_items, key=lambda item: item.data(CLASS_DATA_ROLE).name):
+        new_item = pset_item.clone()
+        new_item.setData(pset_item.index(), REFERENCE_ROLE)
+        table_model.appendRow([new_item, QStandardItem(str(pset_item.data(COUNT_ROLE)))])
     window.widget.table_widget_property_set.setModel(table_model)
 
-
-
-
+def clear_table(table:QTableView):
+    model = table.model()
+    for row in reversed(range(model.rowCount())):
+        model.removeRow(row)
 
 
 def pset_table_clicked():
@@ -355,5 +380,6 @@ def hide_tables(window: gui.AttributeImport, value: bool) -> None:
              window.widget.label_object_count, window.widget.label_status]
     window.hide_items(items, value)
 
-def format_object_for_combobox(obj:classes.Object) -> str:
+
+def format_object_for_combobox(obj: classes.Object) -> str:
     return f"{obj.name} ({obj.ident_value})"
