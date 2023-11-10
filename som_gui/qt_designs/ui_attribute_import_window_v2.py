@@ -241,7 +241,7 @@ class Ui_Form(object):
         self.table_widget_value.setObjectName(u"table_widget_value")
         sizePolicy6.setHeightForWidth(self.table_widget_value.sizePolicy().hasHeightForWidth())
         self.table_widget_value.setSizePolicy(sizePolicy6)
-        self.table_widget_value.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_widget_value.setEditTriggers(QAbstractItemView.CurrentChanged)
         self.table_widget_value.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table_widget_value.horizontalHeader().setStretchLastSection(True)
         self.table_widget_value.verticalHeader().setVisible(True)

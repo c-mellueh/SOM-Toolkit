@@ -239,7 +239,7 @@ def init(window: gui.AttributeImport):
         window.widget.table_widget_property_set.clicked.connect(lambda index: pset_table_clicked(window,index))
         window.widget.table_widget_attribute.clicked.connect(lambda index: attribute_table_clicked(window,index))
         window.widget.table_widget_attribute.doubleClicked.connect(attribute_table_double_clicked)
-        window.widget.table_widget_value.clicked.connect(value_table_clicked)
+        window.widget.table_widget_value.clicked.connect(lambda index: value_table_clicked(window,index))
 
     connect()
     ifc_widget.set_main_attribute(window.project, window.widget.line_edit_ident_pset,
@@ -385,7 +385,8 @@ def attribute_table_clicked(window:gui.AttributeImport,index:QModelIndex):
     for row in range(model.rowCount(attribute_index)):
         value_index = model.index(row, 0, attribute_index)
         new_item = model.itemFromIndex(value_index).clone()
-        new_item.setData(attribute_index, REFERENCE_ROLE)
+        new_item.setCheckable(True)
+        new_item.setData(value_index, REFERENCE_ROLE)
         count_item = QStandardItem(str(new_item.data(COUNT_ROLE)))
         value_table_model.appendRow([new_item, count_item])
 
@@ -394,9 +395,10 @@ def attribute_table_double_clicked():
     pass
 
 
-def value_table_clicked():
-    pass
-
+def value_table_clicked(window:gui.AttributeImport,index:QModelIndex):
+    value_index:QModelIndex = index.model().index(index.row(),0).data(REFERENCE_ROLE)
+    new_check_state = index.data(Qt.ItemDataRole.CheckStateRole)
+    window.item_model.setData(value_index,new_check_state,Qt.ItemDataRole.CheckStateRole)
 
 def main_checkbox_clicked():
     pass
