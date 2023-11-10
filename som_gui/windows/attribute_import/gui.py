@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 import ifcopenshell
 from PySide6.QtCore import QThreadPool, Qt
 from PySide6.QtGui import QBrush,QStandardItemModel
-from PySide6.QtWidgets import QWidget, QTableWidgetItem, QTableWidget, QDialog,QSizePolicy,QHeaderView
+from PySide6.QtWidgets import QWidget, QTableWidgetItem, QTableWidget, QDialog,QSizePolicy,QHeaderView,QTableView
 from SOMcreator import classes, value_constants
 from ifcopenshell.util.element import get_pset
 from ...widgets import ifc_widget
@@ -60,6 +60,7 @@ class AttributeImport(QWidget):
         self.widget.table_widget_value.model().setHorizontalHeaderLabels(["Wert","Anzahl"])
 
         self.widget.check_box_values.setCheckState(Qt.CheckState.Unchecked)
+        self.combi_mode = False
 
         functions.init(self)
         functions.hide_progress_bar(self,True)
@@ -71,4 +72,8 @@ class AttributeImport(QWidget):
             getattr(item,func_name)()
         self.adjustSize()
 
-
+    @staticmethod
+    def clear_table(table:QTableView):
+        model = table.model()
+        for row in reversed(range(model.rowCount())):
+            model.removeRow(row)

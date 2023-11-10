@@ -5,24 +5,17 @@ import os
 from typing import TYPE_CHECKING
 
 import ifcopenshell
-from PySide6.QtCore import QThreadPool, Qt, QModelIndex
-from PySide6.QtGui import QBrush, QStandardItem, QStandardItemModel
-from PySide6.QtWidgets import QWidget, QTableWidgetItem, QTableWidget, QDialog,QTableView
-from SOMcreator import classes, value_constants
+from PySide6.QtCore import Qt, QModelIndex
+from PySide6.QtGui import QStandardItem, QStandardItemModel
+from SOMcreator import classes
 from ifcopenshell.util.element import get_pset
 from ...widgets import ifc_widget
 
 from ... import settings
-from ...icons import get_icon, get_settings_icon
 from ...ifc_modification.modelcheck import get_identifier
-from ...settings import EXISTING_ATTRIBUTE_IMPORT, RANGE_ATTRIBUTE_IMPORT, REGEX_ATTRIBUTE_IMPORT, \
-    COLOR_ATTTRIBUTE_IMPORT
-from ...widgets import property_widget
 
 if TYPE_CHECKING:
-    from som_gui.main_window import MainWindow
     from som_gui.windows.attribute_import import gui
-from ...qt_designs import ui_attribute_import_window, ui_attribute_import_settings_window
 
 CLASS_DATA_ROLE = Qt.ItemDataRole.UserRole + 1
 COUNT_ROLE = Qt.ItemDataRole.UserRole + 2
@@ -59,6 +52,14 @@ class ObjectModel(QStandardItemModel):
             if item == attribute:
                 return model_index
         return None
+
+    def get_all_property_sets(self):
+        property_sets = set()
+        for row in range(self.rowCount()):
+            object_index = self.index(row,0)
+            for pset_row in range(self.rowCount(object_index)):
+                pset = self.index(pset_row,0,object_index).data(CLASS_DATA_ROLE)
+                property_sets.add(pset)
 
 
 class IfcImportRunner(ifc_widget.IfcRunner):
@@ -169,21 +170,21 @@ class IfcImportRunner(ifc_widget.IfcRunner):
         value = ifc_pset_dict.get(attribute.name)
 
         if attribute_index is None:
-            self.add_attribute_to_model(pset_index, attribute,value)
+            self.add_attribute_to_model(pset_index, attribute, value)
             return
         item = self.item_model.itemFromIndex(attribute_index)
         current_count = item.data(COUNT_ROLE)
         item.setData(current_count + 1, COUNT_ROLE)
 
         for row in range(self.item_model.rowCount(attribute_index)):
-            value_index = self.item_model.index(row,0,attribute_index)
+            value_index = self.item_model.index(row, 0, attribute_index)
             existing_value = value_index.data(VALUE_ROLE)
             if value == existing_value:
-                count_data = self.item_model.data(value_index,COUNT_ROLE)
-                self.item_model.setData(value_index,count_data+1,COUNT_ROLE)
+                count_data = self.item_model.data(value_index, COUNT_ROLE)
+                self.item_model.setData(value_index, count_data + 1, COUNT_ROLE)
                 return
 
-        self.add_value_to_model(attribute_index,value)
+        self.add_value_to_model(attribute_index, value)
 
     def add_object_to_model(self, obj: classes.Object, entity_type) -> QModelIndex:
         item = QStandardItem()
@@ -211,17 +212,17 @@ class IfcImportRunner(ifc_widget.IfcRunner):
         item.setData(attribute, CLASS_DATA_ROLE)
         item.setData(1, COUNT_ROLE)
         parent_item.appendRow(item)
-        self.add_value_to_model(item.index(),value)
+        self.add_value_to_model(item.index(), value)
 
         return self.item_model.indexFromItem(item)
 
-    def add_value_to_model(self,attribute_index:QModelIndex,value):
+    def add_value_to_model(self, attribute_index: QModelIndex, value):
         parent_item = self.item_model.itemFromIndex(attribute_index)
         text = "undefined" if value is None else str(value)
         item = QStandardItem(text)
         item.setData(Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole)
-        item.setData(value,VALUE_ROLE)
-        item.setData(1,COUNT_ROLE)
+        item.setData(value, VALUE_ROLE)
+        item.setData(1, COUNT_ROLE)
         parent_item.appendRow(item)
         return self.item_model.indexFromItem(item)
 
@@ -236,10 +237,10 @@ def init(window: gui.AttributeImport):
         window.widget.button_accept.clicked.connect(lambda: button_accept_clicked(window))
         window.widget.button_settings.clicked.connect(lambda: settings_clicked(window))
         window.widget.button_abort.clicked.connect(lambda: abort_clicked(window))
-        window.widget.table_widget_property_set.clicked.connect(lambda index: pset_table_clicked(window,index))
-        window.widget.table_widget_attribute.clicked.connect(lambda index: attribute_table_clicked(window,index))
+        window.widget.table_widget_property_set.clicked.connect(lambda index: pset_table_clicked(window, index))
+        window.widget.table_widget_attribute.clicked.connect(lambda index: attribute_table_clicked(window, index))
         window.widget.table_widget_attribute.doubleClicked.connect(attribute_table_double_clicked)
-        window.widget.table_widget_value.clicked.connect(lambda index: value_table_clicked(window,index))
+        window.widget.table_widget_value.clicked.connect(lambda index: value_table_clicked(window, index))
 
     connect()
     ifc_widget.set_main_attribute(window.project, window.widget.line_edit_ident_pset,
@@ -329,8 +330,11 @@ def object_index_changed(window: gui.AttributeImport):
     model = window.item_model
     current_text = window.widget.combo_box_name.currentText()
     if current_text == ALL:
-        # TODO: All
+        window.combi_mode = True
+        combi_mode_activated(window)
         return
+    else:
+        window.combi_mode = False
     object_items = list(model.item(row, 0) for row in range(model.rowCount()))
     current_item: QStandardItem | None = {format_object_for_combobox(o.data(CLASS_DATA_ROLE)): o for o in
                                           object_items}.get(current_text)
@@ -345,9 +349,9 @@ def object_index_changed(window: gui.AttributeImport):
         property_set_items.append(model.itemFromIndex(pset_index))
 
     table_model = window.widget.table_widget_property_set.model()
-    clear_table(window.widget.table_widget_property_set)
-    clear_table(window.widget.table_widget_attribute)
-    clear_table(window.widget.table_widget_value)
+    window.clear_table(window.widget.table_widget_property_set)
+    window.clear_table(window.widget.table_widget_attribute)
+    window.clear_table(window.widget.table_widget_value)
     for pset_item in sorted(property_set_items, key=lambda item: item.data(CLASS_DATA_ROLE).name):
         new_item = pset_item.clone()
         new_item.setData(pset_item.index(), REFERENCE_ROLE)
@@ -356,34 +360,37 @@ def object_index_changed(window: gui.AttributeImport):
     window.widget.table_widget_property_set.setModel(table_model)
 
 
-def pset_table_clicked(window:gui.AttributeImport,index:QModelIndex):
-    pset_index:QModelIndex = index.model().index(index.row(),0).data(REFERENCE_ROLE)
+def combi_mode_activated(window:gui.AttributeImport):
+    window.clear_table(window.widget.table_widget_property_set)
+    window.clear_table(window.widget.table_widget_attribute)
+    window.clear_table(window.widget.table_widget_value)
+
+
+
+
+def pset_table_clicked(window: gui.AttributeImport, index: QModelIndex):
+    pset_index: QModelIndex = index.model().index(index.row(), 0).data(REFERENCE_ROLE)
 
     model = window.item_model
-    attribute_table_model:QStandardItemModel = window.widget.table_widget_attribute.model()
-    clear_table(window.widget.table_widget_attribute)
-    clear_table(window.widget.table_widget_value)
+    attribute_table_model: QStandardItemModel = window.widget.table_widget_attribute.model()
+    window.clear_table(window.widget.table_widget_attribute)
+    window.clear_table(window.widget.table_widget_value)
 
     for row in range(model.rowCount(pset_index)):
-        attribute_index = model.index(row,0,pset_index)
+        attribute_index = model.index(row, 0, pset_index)
         new_attribute_item = model.itemFromIndex(attribute_index).clone()
-        new_attribute_item.setData(attribute_index,REFERENCE_ROLE)
+        new_attribute_item.setData(attribute_index, REFERENCE_ROLE)
         count_item = QStandardItem(str(new_attribute_item.data(COUNT_ROLE)))
         distinct_item = QStandardItem(str(model.rowCount(attribute_index)))
-        attribute_table_model.appendRow([new_attribute_item,count_item,distinct_item])
+        attribute_table_model.appendRow([new_attribute_item, count_item, distinct_item])
 
 
-def clear_table(table:QTableView):
-    model = table.model()
-    for row in reversed(range(model.rowCount())):
-        model.removeRow(row)
-
-def attribute_table_clicked(window:gui.AttributeImport,index:QModelIndex):
+def attribute_table_clicked(window: gui.AttributeImport, index: QModelIndex):
     attribute_index: QModelIndex = index.model().index(index.row(), 0).data(REFERENCE_ROLE)
 
     model = window.item_model
     value_table_model: QStandardItemModel = window.widget.table_widget_value.model()
-    clear_table(window.widget.table_widget_value)
+    window.clear_table(window.widget.table_widget_value)
 
     for row in range(model.rowCount(attribute_index)):
         value_index = model.index(row, 0, attribute_index)
@@ -398,45 +405,43 @@ def attribute_table_double_clicked():
     pass
 
 
-def value_table_clicked(window:gui.AttributeImport,index:QModelIndex):
-    value_index:QModelIndex = index.model().index(index.row(),0).data(REFERENCE_ROLE)
+def value_table_clicked(window: gui.AttributeImport, index: QModelIndex):
+    value_index: QModelIndex = index.model().index(index.row(), 0).data(REFERENCE_ROLE)
     new_check_state = index.data(Qt.ItemDataRole.CheckStateRole)
-    window.item_model.setData(value_index,new_check_state,Qt.ItemDataRole.CheckStateRole)
-    print()
-    all_checked = are_all_values_checked(window.item_model,value_index.parent())
-    print(f"All checkd {all_checked}")
+    window.item_model.setData(value_index, new_check_state, Qt.ItemDataRole.CheckStateRole)
+    all_checked = are_all_values_checked(window.item_model, value_index.parent())
 
     if all_checked:
         window.widget.check_box_values.setChecked(True)
     else:
         window.widget.check_box_values.setChecked(False)
 
-def are_all_values_checked(model:ObjectModel,attribute_index:QModelIndex):
-    for row in range(model.rowCount(attribute_index)):
-        state = model.index(row,0,attribute_index).data(Qt.ItemDataRole.CheckStateRole)
-        print(f"state: {state}")
 
-        if  state == Qt.CheckState.Unchecked or state ==0 :
+def are_all_values_checked(model: ObjectModel, attribute_index: QModelIndex):
+    for row in range(model.rowCount(attribute_index)):
+        state = model.index(row, 0, attribute_index).data(Qt.ItemDataRole.CheckStateRole)
+        if state == Qt.CheckState.Unchecked or state == 0:
             return False
     return True
 
 
-def main_checkbox_clicked(window:gui.AttributeImport):
+def main_checkbox_clicked(window: gui.AttributeImport):
     new_check_state = window.widget.check_box_values.checkState()
     model = window.widget.table_widget_value.model()
     for row in range(model.rowCount()):
-        index = model.index(row,0)
-        model.setData(index,new_check_state,Qt.ItemDataRole.CheckStateRole)
+        index = model.index(row, 0)
+        model.setData(index, new_check_state, Qt.ItemDataRole.CheckStateRole)
 
     for row in range(model.rowCount()):
         index = model.index(row, 0)
-        value_table_clicked(window,index)
+        value_table_clicked(window, index)
 
-def settings_clicked():
+
+def settings_clicked(window: gui.AttributeImport):
     pass
 
 
-def abort_clicked():
+def abort_clicked(window: gui.AttributeImport):
     pass
 
 
