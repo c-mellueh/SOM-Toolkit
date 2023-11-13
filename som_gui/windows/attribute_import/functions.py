@@ -332,7 +332,9 @@ class IfcImportRunner(ifc_widget.IfcRunner):
         parent_item = self.item_model.itemFromIndex(attribute_index)
         text = "undefined" if value is None else str(value)
         item = QStandardItem(text)
-        item.setData(Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole)
+        attribute: classes.Attribute = attribute_index.data(CLASS_DATA_ROLE)
+        cs = Qt.CheckState.Unchecked if value not in attribute.value else Qt.CheckState.Checked
+        item.setData(cs, Qt.ItemDataRole.CheckStateRole)
         item.setData(value, VALUE_ROLE)
         item.setData(1, COUNT_ROLE)
         parent_item.appendRow(item)
@@ -420,6 +422,34 @@ def fill_type_combobox(window: gui.AttributeImport):
     window.widget.combo_box_group.addItems(texts)
 
 
+def type_combi_mode_activated(current_type: str, current_text: str, window: gui.AttributeImport):
+    model = window.item_model
+    objects = model.get_objects(current_type, current_text)
+    object_count = sum(o.data(COUNT_ROLE) for o in objects if format_index_for_combobox(o))
+    window.set_object_count(object_count)
+    obj_combi_mode_activated(window)
+
+
+def obj_combi_mode_activated(window: gui.AttributeImport):
+    window.clear_table(window.widget.table_widget_property_set)
+    window.clear_table(window.widget.table_widget_attribute)
+    window.clear_table(window.widget.table_widget_value)
+    model = window.item_model
+    current_type = window.widget.combo_box_group.currentText()
+    current_object = window.widget.combo_box_name.currentText()
+    object_count = sum(o.data(COUNT_ROLE) for o in model.get_objects(current_type, current_object))
+    window.set_object_count(object_count)
+
+    property_sets = window.item_model.get_property_sets(current_type, current_object)
+
+    property_set_names = {index.data(CLASS_DATA_ROLE).name for index in property_sets}
+    for property_set in property_set_names:
+        pset_name_item = QStandardItem(property_set)
+        pset_count_item = QStandardItem(str(
+            window.item_model.count_property_set(current_type, current_object, property_set)))
+        window.widget.table_widget_property_set.model().appendRow([pset_name_item, pset_count_item])
+
+
 def type_index_changed(window: gui.AttributeImport):
     current_type = window.widget.combo_box_group.currentText()
     model = window.item_model
@@ -456,50 +486,29 @@ def object_index_changed(window: gui.AttributeImport):
         current_item: QStandardItem | None = model.itemFromIndex(index_list[0])
         object_count = current_item.data(COUNT_ROLE)
         window.set_object_count(object_count)
-
-        property_set_items = list()
-        for row in range(model.rowCount(current_item.index())):
-            pset_index = model.index(row, 0, current_item.index())
-            property_set_items.append(model.itemFromIndex(pset_index))
-
+        property_set_index = model.get_property_sets(current_type, current_text)
         table_model = window.widget.table_widget_property_set.model()
         window.clear_table(window.widget.table_widget_property_set)
         window.clear_table(window.widget.table_widget_attribute)
         window.clear_table(window.widget.table_widget_value)
-        for pset_item in sorted(property_set_items, key=lambda item: item.data(CLASS_DATA_ROLE).name):
-            new_item = pset_item.clone()
-            new_item.setData(pset_item.index(), REFERENCE_ROLE)
-            count_item = QStandardItem(str(pset_item.data(COUNT_ROLE)))
+        for pset_index in sorted(property_set_index, key=lambda index: index.data(CLASS_DATA_ROLE).name):
+            new_item = model.itemFromIndex(pset_index).clone()
+            new_item.setData(pset_index, REFERENCE_ROLE)
+            count_item = QStandardItem(str(pset_index.data(COUNT_ROLE)))
             table_model.appendRow([new_item, count_item])
         window.widget.table_widget_property_set.setModel(table_model)
 
 
-def type_combi_mode_activated(current_type: str, current_text: str, window: gui.AttributeImport):
-    model = window.item_model
-    objects = model.get_objects(current_type, current_text)
-    object_count = sum(o.data(COUNT_ROLE) for o in objects if format_index_for_combobox(o))
-    window.set_object_count(object_count)
-    obj_combi_mode_activated(window)
-
-
-def obj_combi_mode_activated(window: gui.AttributeImport):
-    window.clear_table(window.widget.table_widget_property_set)
-    window.clear_table(window.widget.table_widget_attribute)
-    window.clear_table(window.widget.table_widget_value)
-    model = window.item_model
-    current_type = window.widget.combo_box_group.currentText()
-    current_object = window.widget.combo_box_name.currentText()
-    object_count = sum(o.data(COUNT_ROLE) for o in model.get_objects(current_type, current_object))
-    window.set_object_count(object_count)
-
-    property_sets = window.item_model.get_property_sets(current_type, current_object)
-
-    property_set_names = {index.data(CLASS_DATA_ROLE).name for index in property_sets}
-    for property_set in property_set_names:
-        pset_name_item = QStandardItem(property_set)
-        pset_count_item = QStandardItem(str(
-            window.item_model.count_property_set(current_type, current_object, property_set)))
-        window.widget.table_widget_property_set.model().appendRow([pset_name_item, pset_count_item])
+def color_cells(cells: list[QStandardItem], distinct, count):
+    only_single_attribute_color = QBrush("#f5a9b8")
+    all_different_color = QBrush("#5bcffa")
+    for cell in cells:
+        if count == 1:
+            continue
+        if distinct == 1:
+            cell.setBackground(only_single_attribute_color)
+        if distinct == count:
+            cell.setBackground(all_different_color)
 
 
 def combi_model_pset_clicked(window: gui.AttributeImport, pset_index: QModelIndex):
@@ -514,29 +523,20 @@ def combi_model_pset_clicked(window: gui.AttributeImport, pset_index: QModelInde
     attribute_names = {index.data(CLASS_DATA_ROLE).name for index in attributes}
 
     for attribute_name in attribute_names:
-        attribute_name_item = QStandardItem(attribute_name)
-        attribute_name_item.setData(pset_name, CLASS_DATA_ROLE)
+
         attribute_count = model.count_attributes(current_type, current_object, pset_name, attribute_name)
-        attribute_count_item = QStandardItem(str(attribute_count))
         values = model.get_all_values(current_type, current_object, pset_name, attribute_name, )
         distinct_count = len({index.data(VALUE_ROLE) for index in values})
+        if not distinct_count:
+            continue
+        attribute_name_item = QStandardItem(attribute_name)
+        attribute_name_item.setData(pset_name, CLASS_DATA_ROLE)
+        attribute_count_item = QStandardItem(str(attribute_count))
         attribute_distinct_item = QStandardItem(str(distinct_count))
         cells = [attribute_name_item, attribute_count_item, attribute_distinct_item]
         if settings.get_setting_attribute_color():
             color_cells(cells, distinct_count, attribute_count)
         window.widget.table_widget_attribute.model().appendRow(cells)
-
-
-def color_cells(cells: list[QStandardItem], distinct, count):
-    only_single_attribute_color = QBrush("#f5a9b8")
-    all_different_color = QBrush("#5bcffa")
-    for cell in cells:
-        if count == 1:
-            continue
-        if distinct == 1:
-            cell.setBackground(only_single_attribute_color)
-        if distinct == count:
-            cell.setBackground(all_different_color)
 
 
 def combi_model_attribute_clicked(window: gui.AttributeImport, attribute_index: QModelIndex):
@@ -582,6 +582,8 @@ def combi_model_value_clicked(window: gui.AttributeImport, value_index: QModelIn
 
 
 def pset_table_clicked(window: gui.AttributeImport, index: QModelIndex):
+    model = window.item_model
+    index = index.sibling(index.row(), 0)
     window.clear_table(window.widget.table_widget_attribute)
     window.clear_table(window.widget.table_widget_value)
     window.widget.check_box_values.setEnabled(False)
@@ -589,18 +591,23 @@ def pset_table_clicked(window: gui.AttributeImport, index: QModelIndex):
         combi_model_pset_clicked(window, index)
         return
 
-    pset_index: QModelIndex = index.model().index(index.row(), 0).data(REFERENCE_ROLE)
-    model = window.item_model
-    attribute_table_model: QStandardItemModel = window.widget.table_widget_attribute.model()
+    current_type = window.widget.combo_box_group.currentText()
+    current_object = window.widget.combo_box_name.currentText()
 
-    for row in range(model.rowCount(pset_index)):
-        attribute_index = model.index(row, 0, pset_index)
-        new_attribute_item = model.itemFromIndex(attribute_index).clone()
-        new_attribute_item.setData(attribute_index, REFERENCE_ROLE)
-        count = new_attribute_item.data(COUNT_ROLE)
-        distinct = model.rowCount(attribute_index)
+    attribute_table_model: QStandardItemModel = window.widget.table_widget_attribute.model()
+    property_set = index.data(CLASS_DATA_ROLE)
+    attribute_indexes = model.get_attributes(current_type, current_object, property_set.name)
+    for attribute_index in attribute_indexes:
+        attribute = attribute_index.data(CLASS_DATA_ROLE)
+        count = model.count_attributes(current_type, current_object, index.data(CLASS_DATA_ROLE).name, attribute.name)
+        values = model.get_all_values(current_type, current_object, property_set.name, attribute.name)
+        distinct = len({index.data(VALUE_ROLE) for index in values})
+        if not distinct:
+            continue
         count_item = QStandardItem(str(count))
         distinct_item = QStandardItem(str(distinct))
+        new_attribute_item = model.itemFromIndex(attribute_index).clone()
+        new_attribute_item.setData(attribute_index, REFERENCE_ROLE)
         cells = [new_attribute_item, count_item, distinct_item]
         if settings.get_setting_attribute_color():
             color_cells(cells, distinct, count)
@@ -608,19 +615,21 @@ def pset_table_clicked(window: gui.AttributeImport, index: QModelIndex):
 
 
 def attribute_table_clicked(window: gui.AttributeImport, index: QModelIndex):
+    index = index.sibling(index.row(), 0)
     window.clear_table(window.widget.table_widget_value)
     window.widget.check_box_values.setEnabled(True)
     if window.object_combi_mode or window.type_combi_mode:
         combi_model_attribute_clicked(window, index)
         are_all_values_checked(window)
         return
-    attribute_index: QModelIndex = index.model().index(index.row(), 0).data(REFERENCE_ROLE)
-
+    current_type = window.widget.combo_box_group.currentText()
+    current_obj = window.widget.combo_box_name.currentText()
+    attribute: classes.Attribute = index.data(CLASS_DATA_ROLE)
+    property_set = attribute.property_set
     model = window.item_model
     value_table_model: QStandardItemModel = window.widget.table_widget_value.model()
 
-    for row in range(model.rowCount(attribute_index)):
-        value_index = model.index(row, 0, attribute_index)
+    for value_index in model.get_all_values(current_type, current_obj, property_set.name, attribute.name):
         new_item = model.itemFromIndex(value_index).clone()
         new_item.setCheckable(True)
         new_item.setData(value_index, REFERENCE_ROLE)
@@ -653,6 +662,7 @@ def attribute_table_double_clicked(window: gui.AttributeImport, attribute_index:
 
 
 def value_table_clicked(window: gui.AttributeImport, index: QModelIndex):
+    index = index.sibling(index.row(), 0)
     if window.object_combi_mode or window.type_combi_mode:
         combi_model_value_clicked(window, index)
     else:
@@ -718,10 +728,6 @@ def hide_tables(window: gui.AttributeImport, value: bool) -> None:
     window.hide_items(items, value)
 
 
-def format_object_for_combobox(obj: classes.Object) -> str:
-    return f"{obj.name} ({obj.ident_value})"
-
-
 def format_index_for_combobox(index: QModelIndex) -> str:
     obj = index.data(CLASS_DATA_ROLE)
-    return format_object_for_combobox(obj)
+    return f"{obj.name} ({obj.ident_value})"
