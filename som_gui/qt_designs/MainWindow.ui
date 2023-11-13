@@ -481,7 +481,6 @@
     <addaction name="action_modelcheck"/>
     <addaction name="action_create_groups"/>
     <addaction name="action_model_control"/>
-    <addaction name="action_model_control_v2"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDesite"/>

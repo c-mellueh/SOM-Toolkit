@@ -356,7 +356,6 @@ class Ui_MainWindow(object):
         self.menu_ifc.addAction(self.action_modelcheck)
         self.menu_ifc.addAction(self.action_create_groups)
         self.menu_ifc.addAction(self.action_model_control)
-        self.menu_ifc.addAction(self.action_model_control_v2)
 
         self.retranslateUi(MainWindow)
 

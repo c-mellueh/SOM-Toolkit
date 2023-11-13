@@ -3,16 +3,13 @@ from __future__ import annotations  # make own class referencable
 import logging
 import os
 from typing import TYPE_CHECKING
-
-import SOMcreator
 import ifcopenshell
 from PySide6.QtCore import Qt, QModelIndex
-from PySide6.QtGui import QStandardItem, QStandardItemModel,QBrush
-from SOMcreator import classes
+from PySide6.QtGui import QStandardItem, QStandardItemModel, QBrush
+from SOMcreator import classes,value_constants
 from ifcopenshell.util.element import get_pset
-from ...widgets import ifc_widget
-from SOMcreator import value_constants
 
+from ...widgets import ifc_widget
 from ... import settings
 from ...ifc_modification.modelcheck import get_identifier
 
@@ -65,7 +62,7 @@ class ObjectModel(QStandardItemModel):
                 return model_index
         return None
 
-    def _get_all_objects(self):
+    def get_all_objects(self):
         index_list = list()
         for row in range(self.rowCount()):
             type_index = self.index(row, 0)
@@ -75,7 +72,7 @@ class ObjectModel(QStandardItemModel):
         return index_list
 
     def get_objects(self, type_text: str, object_text: str) -> list[QModelIndex]:
-        index_list = list(self._get_all_objects())
+        index_list = list(self.get_all_objects())
 
         type_filterd_list = list(index_list)
         if type_text != ALL:
@@ -101,13 +98,13 @@ class ObjectModel(QStandardItemModel):
                 counter += property_set_index.data(COUNT_ROLE)
         return counter
 
-    def get_all_attributes(self, type_text: str, object_text, property_set_name: str) -> list[QModelIndex]:
+    def get_attributes(self, type_text: str, object_text, property_set_name: str) -> list[QModelIndex]:
         attributes = list()
         add_range = settings.get_setting_attribute_import_range()
         add_regex = settings.get_setting_attribute_import_regex()
         property_sets = self.get_property_sets(type_text, object_text)
         for property_set_index in property_sets:
-            if property_set_index.data(CLASS_DATA_ROLE).name != property_set_name:
+            if property_set_index.data(CLASS_DATA_ROLE).name != property_set_name and property_set_name != ALL:
                 continue
             for attribute_row in range(self.rowCount(property_set_index)):
                 attribute_index = self.index(attribute_row, 0, property_set_index)
@@ -120,7 +117,7 @@ class ObjectModel(QStandardItemModel):
         return attributes
 
     def count_attributes(self, type_text: str, object_text, pset_name, attribute_name):
-        attributes = self.get_all_attributes(type_text, object_text, pset_name)
+        attributes = self.get_attributes(type_text, object_text, pset_name)
         counter = 0
         for attribute_index in attributes:
             if attribute_index.data(CLASS_DATA_ROLE).name == attribute_name:
@@ -131,14 +128,14 @@ class ObjectModel(QStandardItemModel):
         values = list()
         add_existing = settings.get_setting_attribute_import_existing()
 
-        attributes = self.get_all_attributes(type_text, object_text, pset_name)
+        attributes = self.get_attributes(type_text, object_text, pset_name)
         for attribute_index in attributes:
-            if attribute_index.data(CLASS_DATA_ROLE).name != attribute_name:
+            if attribute_index.data(CLASS_DATA_ROLE).name != attribute_name and attribute_name != ALL:
                 continue
             for value_row in range(self.rowCount(attribute_index)):
                 v = self.index(value_row, 0, attribute_index)
                 value_name = v.data(VALUE_ROLE)
-                attribute:SOMcreator.Attribute = attribute_index.data(CLASS_DATA_ROLE)
+                attribute: classes.Attribute = attribute_index.data(CLASS_DATA_ROLE)
                 if value_name in attribute.value and not add_existing:
                     continue
                 if v is None:
@@ -431,9 +428,7 @@ def type_index_changed(window: gui.AttributeImport):
     else:
         window.type_combi_mode = False
     object_indexes = model.get_objects(current_type, ALL)
-    items = [o.data(CLASS_DATA_ROLE) for o in object_indexes]
-    texts = {format_object_for_combobox(item) for item in items if
-             item is not None}
+    texts = {format_index_for_combobox(o) for o in object_indexes}
     texts = sorted(texts)
     texts.append(ALL)
     window.widget.combo_box_name.clear()
@@ -514,7 +509,7 @@ def combi_model_pset_clicked(window: gui.AttributeImport, pset_index: QModelInde
     current_type = window.widget.combo_box_group.currentText()
     current_object = window.widget.combo_box_name.currentText()
 
-    attributes = model.get_all_attributes(current_type, current_object, pset_name)
+    attributes = model.get_attributes(current_type, current_object, pset_name)
     attribute_names = {index.data(CLASS_DATA_ROLE).name for index in attributes}
 
     for attribute_name in attribute_names:
@@ -527,14 +522,15 @@ def combi_model_pset_clicked(window: gui.AttributeImport, pset_index: QModelInde
         attribute_distinct_item = QStandardItem(str(distinct_count))
         cells = [attribute_name_item, attribute_count_item, attribute_distinct_item]
         if settings.get_setting_attribute_color():
-            color_cells(cells,distinct_count,attribute_count)
+            color_cells(cells, distinct_count, attribute_count)
         window.widget.table_widget_attribute.model().appendRow(cells)
 
-def color_cells(cells:list[QStandardItem],distinct,count):
+
+def color_cells(cells: list[QStandardItem], distinct, count):
     only_single_attribute_color = QBrush("#f5a9b8")
     all_different_color = QBrush("#5bcffa")
     for cell in cells:
-        if  count == 1:
+        if count == 1:
             continue
         if distinct == 1:
             cell.setBackground(only_single_attribute_color)
@@ -554,7 +550,8 @@ def combi_model_attribute_clicked(window: gui.AttributeImport, attribute_index: 
     value_texts = {index.data(VALUE_ROLE) for index in values}
     window.clear_table(window.widget.table_widget_value)
     for value in value_texts:
-        value_text_item = QStandardItem(value)
+        value_text = "undefined" if value is None else value
+        value_text_item = QStandardItem(value_text)
         value_text_item.setData(pset_name, PSET_NAME_ROLE)
         value_text_item.setData(attribute_name, ATTRIBUTE_NAME_ROLE)
         value_count_item = QStandardItem(str(
@@ -605,7 +602,7 @@ def pset_table_clicked(window: gui.AttributeImport, index: QModelIndex):
         distinct_item = QStandardItem(str(distinct))
         cells = [new_attribute_item, count_item, distinct_item]
         if settings.get_setting_attribute_color():
-            color_cells(cells,distinct,count)
+            color_cells(cells, distinct, count)
         attribute_table_model.appendRow(cells)
 
 
@@ -669,11 +666,26 @@ def main_checkbox_clicked(window: gui.AttributeImport):
 
 
 def abort_clicked(window: gui.AttributeImport):
-    pass
+    window.close()
 
 
 def button_accept_clicked(window: gui.AttributeImport):
-    pass
+    model = window.item_model
+    attribute_indexes = model.get_attributes(ALL, ALL, ALL)
+    for index in attribute_indexes:
+        attribute: classes.Attribute = index.data(CLASS_DATA_ROLE)
+        for value_row in range(model.rowCount(index)):
+            value_index = model.index(value_row, 0, index)
+            value = value_index.data(VALUE_ROLE)
+            check_state = value_index.data(Qt.ItemDataRole.CheckStateRole)
+            check_state = True if check_state == Qt.CheckState.Checked or check_state == 2 else False
+            if not check_state:
+                continue
+            if value not in attribute.value:
+                new_value_list = attribute.value + [value]
+                attribute.value = new_value_list
+
+    window.close()
 
 
 def hide_progress_bar(window: gui.AttributeImport, value: bool) -> None:
