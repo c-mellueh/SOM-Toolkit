@@ -80,3 +80,53 @@ class AttributeImport(QWidget):
         model = table.model()
         for row in reversed(range(model.rowCount())):
             model.removeRow(row)
+    def settings_clicked(self):
+        settings_dict = {
+            RANGE_ATTRIBUTE_IMPORT: settings.get_setting_attribute_import_range(),
+            EXISTING_ATTRIBUTE_IMPORT: settings.get_setting_attribute_import_existing(),
+            REGEX_ATTRIBUTE_IMPORT: settings.get_setting_attribute_import_regex(),
+            COLOR_ATTTRIBUTE_IMPORT: settings.get_setting_attribute_color()
+        }
+        self.settings_popup = SettingsDialog(settings_dict)
+        val = self.settings_popup.exec()
+        if not val:
+            return
+
+        for key, value in val.items():
+            settings.set_setting(settings.ATTRIBUTE_IMPORT_SECTION, key, value)
+class SettingsDialog(QDialog):
+    EXISTING = EXISTING_ATTRIBUTE_IMPORT
+    REGEX = REGEX_ATTRIBUTE_IMPORT
+    RANGE = RANGE_ATTRIBUTE_IMPORT
+    COLOR = COLOR_ATTTRIBUTE_IMPORT
+
+    def __init__(self, settings_dict: dict[str, bool]):
+        super(SettingsDialog, self).__init__()
+        self.widget = ui_attribute_import_settings_window.Ui_Dialog()
+        self.widget.setupUi(self)
+        self.setWindowIcon(get_icon())
+        self.setWindowTitle("Einstellungen")
+        self.check_box_dict = {
+            self.EXISTING: self.widget.check_box_existing_attributes,
+            self.REGEX: self.widget.check_box_regex,
+            self.RANGE: self.widget.check_box_range,
+            self.COLOR: self.widget.check_box_color
+        }
+
+        for key, check_box in self.check_box_dict.items():
+            if settings_dict[key]:
+                check_box.setCheckState(Qt.CheckState.Checked)
+            else:
+                check_box.setCheckState(Qt.CheckState.Unchecked)
+
+    def exec(self) -> dict[str, bool] | int:
+        val = super(SettingsDialog, self).exec()
+        if not val:
+            return val
+        settings_dict = dict()
+        for key, check_box in self.check_box_dict.items():
+            if check_box.checkState() == Qt.CheckState.Checked:
+                settings_dict[key] = True
+            else:
+                settings_dict[key] = False
+        return settings_dict
