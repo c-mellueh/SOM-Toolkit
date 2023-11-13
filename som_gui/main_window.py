@@ -9,8 +9,9 @@ from .filehandling import open_file, save_file, export
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import property_widget, object_widget
 from .windows import predefined_psets_window, propertyset_window, mapping_window, popups, grouping_window, \
-    attribute_import_window, settings_window, project_phase_window
+    settings_window, project_phase_window
 from .windows.modelcheck import modelcheck_window
+from .windows.attribute_import.gui import AttributeImport
 
 
 class MainWindow(QMainWindow):
@@ -58,7 +59,7 @@ class MainWindow(QMainWindow):
 
         # Windows
         self.group_window: grouping_window.GroupingWindow | None = None
-        self.model_control_window: attribute_import_window.AttributeImport | None = None
+        self.model_control_window: AttributeImport | None = None
         self.project_phase_window: project_phase_window.ProjectPhaseWindow | None = None
         self.graph_window = aggregation_window.AggregationWindow(self)
         self.mapping_window = None
@@ -97,7 +98,7 @@ class MainWindow(QMainWindow):
 
     def open_attribute_import_window(self):
         if self.model_control_window is None:
-            self.model_control_window = attribute_import_window.AttributeImport(self)
+            self.model_control_window = AttributeImport(self)
         else:
             self.model_control_window.show()
 

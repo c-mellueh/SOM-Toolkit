@@ -665,6 +665,11 @@
     <string>BimCollabZoom</string>
    </property>
   </action>
+  <action name="action_model_control_v2">
+   <property name="text">
+    <string>Modellinformationen V2</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>line_edit_object_name</tabstop>
