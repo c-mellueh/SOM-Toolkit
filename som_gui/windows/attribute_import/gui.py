@@ -60,7 +60,8 @@ class AttributeImport(QWidget):
         self.widget.table_widget_value.model().setHorizontalHeaderLabels(["Wert","Anzahl"])
 
         self.widget.check_box_values.setCheckState(Qt.CheckState.Unchecked)
-        self.combi_mode = False
+        self.object_combi_mode = False
+        self.type_combi_mode  = False
         functions.init(self)
         functions.hide_progress_bar(self,True)
         functions.hide_tables(self,True)
