@@ -6,10 +6,10 @@ from typing import TYPE_CHECKING
 import ifcopenshell
 from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtGui import QStandardItem, QStandardItemModel, QBrush
-from SOMcreator import classes,value_constants
+from SOMcreator import classes, value_constants
 from ifcopenshell.util.element import get_pset
 
-from ...widgets import ifc_widget
+from ...widgets import ifc_widget, property_widget
 from ... import settings
 from ...ifc_modification.modelcheck import get_identifier
 
@@ -351,7 +351,8 @@ def init(window: gui.AttributeImport):
         window.widget.button_abort.clicked.connect(lambda: abort_clicked(window))
         window.widget.table_widget_property_set.clicked.connect(lambda index: pset_table_clicked(window, index))
         window.widget.table_widget_attribute.clicked.connect(lambda index: attribute_table_clicked(window, index))
-        window.widget.table_widget_attribute.doubleClicked.connect(attribute_table_double_clicked)
+        window.widget.table_widget_attribute.doubleClicked.connect(
+            lambda index: attribute_table_double_clicked(window, index))
         window.widget.table_widget_value.clicked.connect(lambda index: value_table_clicked(window, index))
 
     connect()
@@ -629,8 +630,26 @@ def attribute_table_clicked(window: gui.AttributeImport, index: QModelIndex):
     are_all_values_checked(window)
 
 
-def attribute_table_double_clicked():
-    pass
+def attribute_table_double_clicked(window: gui.AttributeImport, attribute_index: QModelIndex):
+    if window.object_combi_mode:
+        return
+    model = window.item_model
+    current_type = window.widget.combo_box_group.currentText()
+    current_object = window.widget.combo_box_name.currentText()
+    current_objects = model.get_objects(current_type, current_object)
+    if not current_objects:
+        return
+
+    current_object: classes.Object = current_objects[0].data(CLASS_DATA_ROLE)
+    if window.type_combi_mode:
+        pset_name = attribute_index.data(CLASS_DATA_ROLE)
+        property_set = current_object.get_property_set_by_name(pset_name)
+        attribute = property_set.get_attribute_by_name(attribute_index.data())
+    else:
+        attribute: classes.Attribute = attribute_index.data(CLASS_DATA_ROLE)
+        property_set = attribute.property_set
+    property_widget.open_pset_window(window.main_window, property_set, current_object)
+    window.main_window.property_set_window.table_clicked(None, attribute)
 
 
 def value_table_clicked(window: gui.AttributeImport, index: QModelIndex):
