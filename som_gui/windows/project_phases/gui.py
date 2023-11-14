@@ -283,7 +283,6 @@ class ProjectPhaseWindow(QWidget):
         if not object_indexes:
             return
         index: QModelIndex = object_indexes[0]
-        obj = index.data(CLASS_REFERENCE)
         self.object_index_clicked(index)
 
     def object_index_clicked(self, object_index: QStandardItem):
