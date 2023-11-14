@@ -98,8 +98,8 @@ class ProjectPhaseWindow(QWidget):
     def header_context_menu(self, pos: QPoint):
         header = self.widget.object_tree.header()
         column = header.logicalIndexAt(pos)
-        header_item = self.widget.object_tree.headerItem()
-        phase_name = header_item.text(column)
+        index = header.logicalIndexAt(pos)
+        phase_name = header.model().headerData(index, Qt.Orientation.Horizontal)
 
         object_header_menu = QMenu()
         action_add_project_phase = QAction("Leistungsphase hinzufügen")
@@ -112,7 +112,7 @@ class ProjectPhaseWindow(QWidget):
 
         action_add_project_phase.triggered.connect(lambda: self.add_header())
         action_rename.triggered.connect(lambda: self.rename_header(column))
-        action_remove.triggered.connect(lambda: self.remove_header(phase_name))
+        action_remove.triggered.connect(lambda: self.remove_header(column))
 
         global_pos = self.widget.object_tree.header().mapToGlobal(pos)
         object_header_menu.exec(global_pos)
@@ -120,44 +120,63 @@ class ProjectPhaseWindow(QWidget):
     def rename_header(self, column: int) -> None:
         if column < 2:
             return
-        header_item = self.widget.object_tree.headerItem()
-        old_name = header_item.text(column)
+        header = self.object_tree.header()
+        old_name = header.model().headerData(column, Qt.Orientation.Horizontal)
         new_name, ok = QInputDialog.getText(self, "Leistungsphase umbenennen", "Neuer Name:", QLineEdit.EchoMode.Normal,
                                             old_name)
         if not ok:
             return
-        header_item.setText(column, new_name)
-        self.main_window.project.rename_project_phase(old_name, new_name)
-        for entity, project_phase_dict in self.data_model.items():
-            value = project_phase_dict[old_name]
-            project_phase_dict[new_name] = value
-            project_phase_dict.pop(old_name)
-        self.tree_model.clear()
+        header.model().setHeaderData(column, Qt.Orientation.Horizontal, new_name)
+        self.property_set_tree.model().setHeaderData(column - 1, Qt.Orientation.Horizontal, new_name)
 
-    def remove_header(self, phase_name: str) -> None:
-        self.main_window.project.remove_project_phase(phase_name)
-        self.set_object_tree_header()
-        self.fill_object_tree()
-        for entity, project_phase_dict in self.data_model.items():
-            project_phase_dict.pop(phase_name)
-        self.tree_model.clear()
+    def remove_header(self, column: int) -> None:
+        def iter_tree(model: QStandardItemModel, parent_index: QModelIndex, shift=0):
+            for row in range(model.rowCount(parent_index)):
+                iter_tree(model, model.index(row, 0, parent_index))
+            model.removeColumn(column + shift, parent_index)
+
+        object_model = self.object_tree.model()
+        iter_tree(object_model, self.object_tree.rootIndex())
+        property_set_model = self.property_set_tree.model()
+        iter_tree(property_set_model, self.property_set_tree.rootIndex(), -1)
 
     def add_header(self, standard_name: str = "Neu") -> None:
+
+        def create_check_items(item_count: int):
+            cs_items = [QStandardItem() for _ in range(item_count)]
+            for item in cs_items:
+                item.setCheckState(Qt.CheckState.Checked)
+                item.setCheckable(True)
+            return cs_items
+
+        def iter_objects(model: QStandardItemModel, parent_item: QStandardItem):
+            parent_index = parent_item.index()
+            check_items = create_check_items(model.rowCount(parent_index))
+            parent_item.appendColumn(check_items)
+            for row in range(model.rowCount(parent_index)):
+                child_index = model.index(row, 0, parent_index)
+                iter_objects(model, model.itemFromIndex(child_index))
+
         def loop_name(new_name):
-            if new_name in self._project_phases:
+            if new_name in existing_names:
                 if new_name == standard_name:
                     return loop_name(f"{new_name}_1")
                 index = int(new_name[-1])
                 return loop_name(f"{new_name[:-1]}{index + 1}")
             return new_name
 
+        object_model = self.object_tree.model()
+        header_count = object_model.columnCount() - 2
+        existing_names = [object_model.headerData(2 + column, Qt.Orientation.Horizontal) for column in
+                          range(header_count)]
         project_phase_name = loop_name(standard_name)
-        self.main_window.project.add_project_phase(project_phase_name)
-        self.set_object_tree_header()
-        # self.fill_object_tree()
-        for entity, project_phase_dict in self.data_model.items():
-            project_phase_dict[project_phase_name] = True
-        self.tree_model.clear()
+        iter_objects(object_model, object_model.invisibleRootItem())
+        object_model.setHeaderData(object_model.columnCount() - 1, Qt.Orientation.Horizontal, project_phase_name)
+
+        property_set_model = self.property_set_tree.model()
+        iter_objects(property_set_model, property_set_model.invisibleRootItem())
+        property_set_model.setHeaderData(property_set_model.columnCount() - 1, Qt.Orientation.Horizontal,
+                                         project_phase_name)
 
     @property
     def _project_phases(self) -> list[str]:
@@ -167,17 +186,18 @@ class ProjectPhaseWindow(QWidget):
         model: QStandardItemModel = self.object_tree.model()
         model.setHorizontalHeaderLabels(["Objekt", "Identifier"] + self.project.get_project_phase_list())
 
-    def property_set_checked(self, item:QStandardItem):
+    def property_set_checked(self, item: QStandardItem):
         pset_index = item.index().siblingAtColumn(0)
         self.handle_attribute_states(pset_index)
 
-
     def create_state_list(self, model, focus_index: QModelIndex, start=2):
         c_list = list()
-        for c in range(start, start + len(self._project_phases)):
+        for c in range(start, model.columnCount()):
             sibling_index = focus_index.siblingAtColumn(c)
             check_state = sibling_index.data(Qt.ItemDataRole.CheckStateRole)
             children_enabled = True if check_state in (2, Qt.CheckState.Checked) else False
+            if model.itemFromIndex(sibling_index) is None:
+                continue
             children_enabled = False if not model.itemFromIndex(sibling_index).isEnabled() else children_enabled
             c_list.append(children_enabled)
         return c_list
@@ -212,7 +232,7 @@ class ProjectPhaseWindow(QWidget):
         super(ProjectPhaseWindow, self).show()
 
     def accepted(self):
-        #TODO
+        # TODO
         for item, project_phase_dict in self.data_model.items():
             for project_phase_name, value in project_phase_dict.items():
                 if item.get_project_phase_state(project_phase_name) != value:
