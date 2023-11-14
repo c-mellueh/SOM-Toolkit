@@ -31,7 +31,7 @@ def resize_tree(tree: QTreeView):
         tree.resizeColumnToContents(index)
 
 
-def create_state_list(model: QStandardItemModel, focus_index: QModelIndex, start=2) -> list[bool]:
+def create_state_list(model: QStandardItemModel, focus_index: QModelIndex, start: int) -> list[bool]:
     """creates a list for all project_phases that describes if the subobjects will be enabled or not"""
     c_list = list()
     for c in range(start, model.columnCount()):
@@ -48,9 +48,9 @@ def create_state_list(model: QStandardItemModel, focus_index: QModelIndex, start
 def handle_attribute_states(property_set_index: QModelIndex):
     """checks for state of propertySetItem and disables attributes as needed"""
     model = property_set_index.model()
-    attribute_states = create_state_list(model, property_set_index, start=1)
+    attribute_states = create_state_list(model, property_set_index, start=len(PSET_TITLES))
     for attribute_row in range(model.rowCount(property_set_index)):
-        for col, state in enumerate(attribute_states, start=1):
+        for col, state in enumerate(attribute_states, start=len(PSET_TITLES)):
             model.itemFromIndex(model.index(attribute_row, col, property_set_index)).setEnabled(state)
 
 
@@ -125,7 +125,7 @@ class ProjectPhaseWindow(QWidget):
 
     def rename_header(self, column: int) -> None:
         """renames Header of ObjectTree and PsetTree -> this leads to the renaming of project phases"""
-        if column < 2:
+        if column < self.object_tree.title_count:
             return
         header = self.object_tree.header()
         old_name = header.model().headerData(column, Qt.Orientation.Horizontal)
@@ -147,7 +147,8 @@ class ProjectPhaseWindow(QWidget):
         object_model = self.object_tree.model()
         iter_tree(object_model, self.object_tree.rootIndex())
         property_set_model = self.property_set_tree.model()
-        iter_tree(property_set_model, self.property_set_tree.rootIndex(), -1)
+        s = self.object_tree.title_count-self.property_set_tree.title_count
+        iter_tree(property_set_model, self.property_set_tree.rootIndex(), -s)
         for project_phase, index in self.project_phase_dict.items():
             if index is None:
                 continue
@@ -185,8 +186,9 @@ class ProjectPhaseWindow(QWidget):
             return new_name
 
         object_model = self.object_tree.model()
-        header_count = object_model.columnCount() - 2
-        existing_names = [object_model.headerData(2 + column, Qt.Orientation.Horizontal) for column in
+        header_count = object_model.columnCount() - self.object_tree.title_count
+        existing_names = [object_model.headerData(self.object_tree.title_count + column, Qt.Orientation.Horizontal) for
+                          column in
                           range(header_count)]
         project_phase_name = loop_name(standard_name)
         iter_objects(object_model, object_model.invisibleRootItem())
@@ -201,9 +203,9 @@ class ProjectPhaseWindow(QWidget):
         """gets callend if the data of an objectItem is changed (usually if the item is checked or unchecked)"""
 
         def iter_tree(parent_index: QModelIndex):
-            state_list = create_state_list(self.object_tree.model(), parent_index)
+            state_list = create_state_list(self.object_tree.model(), parent_index, self.object_tree.title_count)
             for row in range(model.rowCount(parent_index)):
-                for column, state in enumerate(state_list, 2):
+                for column, state in enumerate(state_list, self.object_tree.title_count):
                     child_index = model.index(row, column, index)
                     item = model.itemFromIndex(child_index)
                     if item is None:  # while creating new project_phases this is necessary
@@ -306,13 +308,13 @@ class ProjectPhaseWindow(QWidget):
 
         def handle_enable_status(property_set_indexes: list[QModelIndex]):
             for pset_index in property_set_indexes:
-                for col, state in enumerate(state_list, start=1):
+                for col, state in enumerate(state_list, start=self.property_set_tree.title_count):
                     model.itemFromIndex(pset_index.sibling(pset_index.row(), col)).setEnabled(
                         state)  # set Checkmark enabled
                 handle_attribute_states(pset_index)
 
         selected_object = object_index.data(CLASS_REFERENCE)
-        state_list = create_state_list(self.object_tree.model(), object_index, 2)
+        state_list = create_state_list(self.object_tree.model(), object_index, self.object_tree.title_count)
         tree = self.property_set_tree
         model: QStandardItemModel = tree.model()
         shown_property_sets = list()
