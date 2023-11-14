@@ -19,17 +19,10 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QTreeWidget" name="object_tree">
-      <column>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Identifier</string>
-       </property>
-      </column>
+     <widget class="QTreeView" name="object_tree">
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
      </widget>
      <widget class="QWidget" name="verticalLayoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">

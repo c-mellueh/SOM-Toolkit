@@ -4,7 +4,7 @@ import logging
 from typing import TYPE_CHECKING
 
 import SOMcreator
-from PySide6.QtCore import Qt, QPoint
+from PySide6.QtCore import Qt, QPoint, QModelIndex
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QFont, QAction
 from PySide6.QtWidgets import QWidget, QTreeWidgetItem, QTreeWidget, QTreeView, QMenu, QAbstractItemView, QInputDialog, \
     QLineEdit
@@ -16,6 +16,9 @@ from ..qt_designs import ui_project_phase_window
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
+CLASS_REFERENCE = Qt.ItemDataRole.UserRole + 1
+PSET_MODEL = Qt.ItemDataRole.UserRole + 2
+
 
 def resize_tree_view(tree: QTreeView):
     columns = tree.model().columnCount()
@@ -23,8 +26,8 @@ def resize_tree_view(tree: QTreeView):
         tree.resizeColumnToContents(index)
 
 
-def resize_tree(tree: QTreeWidget):
-    for index in range(tree.columnCount()):
+def resize_tree(tree: QTreeView):
+    for index in range(tree.model().columnCount()):
         tree.resizeColumnToContents(index)
 
 
@@ -37,18 +40,6 @@ class PropertySetModel(QStandardItemModel):
         super(PropertySetModel, self).clear()
         texte = list(self.project.get_project_phase_list())
         self.setHorizontalHeaderLabels(["PropertySet, Attribut"] + texte)
-
-
-class ObjectItem(QTreeWidgetItem):
-    def __init__(self, data: classes.Object | classes.PropertySet | classes.Attribute):
-        self.object = data
-        super(ObjectItem, self).__init__()
-        self.setText(0, self.object.name)
-        self.setText(1, self.object.ident_value)
-        for index, project_phase_name in enumerate(self.object.project.get_project_phase_list(), start=2):
-            value = self.object.get_project_phase_state(project_phase_name)
-            check_state = Qt.CheckState.Checked if value else Qt.CheckState.Unchecked
-            self.setCheckState(index, check_state)
 
 
 class CheckBoxItem(QStandardItem):
@@ -68,17 +59,6 @@ class AttributeItem(QStandardItem):
         self.setEditable(False)
 
 
-class PropertySetItem(QStandardItem):
-    def __init__(self, property_set: classes.PropertySet):
-        super(PropertySetItem, self).__init__()
-        font = QFont()
-        font.setBold(True)
-        self.setFont(font)
-        self.property_set = property_set
-        self.setEditable(False)
-        self.setText(property_set.name)
-
-
 def checkstate_to_bool(check_state: Qt.CheckState) -> bool:
     return True if check_state == Qt.CheckState.Checked else False
 
@@ -86,19 +66,23 @@ def checkstate_to_bool(check_state: Qt.CheckState) -> bool:
 class ProjectPhaseWindow(QWidget):
     def __init__(self, main_window: MainWindow) -> None:
         def connect() -> None:
-            obj_tree = self.widget.object_tree
-            pset_tree = self.widget.property_set_tree
-            obj_tree.itemExpanded.connect(lambda: resize_tree(obj_tree))
-            obj_tree.itemSelectionChanged.connect(self.object_selection_changed)
-            pset_tree.expanded.connect(lambda: resize_tree_view(pset_tree))
-            self.tree_model.itemChanged.connect(self.modify_data_model)
-            obj_tree.itemChanged.connect(self.modify_data_model)
+            self.object_tree.expanded.connect(lambda: resize_tree(self.object_tree))
+            self.object_tree.clicked.connect(self.object_selection_changed)
+            self.property_set_tree.expanded.connect(lambda: resize_tree_view(self.property_set_tree))
+            self.property_set_tree.model().itemChanged.connect(self.property_set_checked)
+            self.object_tree.model().itemChanged.connect(self.modify_data_model)
             self.widget.buttonBox.accepted.connect(self.accepted)
             self.widget.buttonBox.rejected.connect(self.close)
 
         super().__init__()
+        self.project = main_window.project
         self.widget = ui_project_phase_window.Ui_Form()
         self.widget.setupUi(self)
+        self.object_tree = self.widget.object_tree
+        self.property_set_tree = self.widget.property_set_tree
+
+        self.widget.object_tree.setModel(QStandardItemModel())
+
         self.tree_model = PropertySetModel(main_window.project)
         self.widget.property_set_tree.setModel(self.tree_model)
         self.setWindowIcon(icons.get_icon())
@@ -134,6 +118,8 @@ class ProjectPhaseWindow(QWidget):
         object_header_menu.exec(global_pos)
 
     def rename_header(self, column: int) -> None:
+        if column < 2:
+            return
         header_item = self.widget.object_tree.headerItem()
         old_name = header_item.text(column)
         new_name, ok = QInputDialog.getText(self, "Leistungsphase umbenennen", "Neuer Name:", QLineEdit.EchoMode.Normal,
@@ -168,7 +154,7 @@ class ProjectPhaseWindow(QWidget):
         project_phase_name = loop_name(standard_name)
         self.main_window.project.add_project_phase(project_phase_name)
         self.set_object_tree_header()
-        self.fill_object_tree()
+        # self.fill_object_tree()
         for entity, project_phase_dict in self.data_model.items():
             project_phase_dict[project_phase_name] = True
         self.tree_model.clear()
@@ -178,59 +164,55 @@ class ProjectPhaseWindow(QWidget):
         return self.main_window.project.get_project_phase_list()
 
     def set_object_tree_header(self):
-        project_phases = self.main_window.project.get_project_phase_list()
-        tree_widget = self.widget.object_tree
-        tree_widget.setColumnCount(len(project_phases) + 2)
-        header_text = ["Objekt", "Identifier"]
-        header_text += list(project_phases)
-        for index, text in enumerate(header_text):
-            tree_widget.headerItem().setText(index, text)
+        model: QStandardItemModel = self.object_tree.model()
+        model.setHorizontalHeaderLabels(["Objekt", "Identifier"] + self.project.get_project_phase_list())
 
-    def modify_data_model(self, tree_item: CheckBoxItem | ObjectItem):
-        def modify_object_data(obj_item: ObjectItem):
-            obj = obj_item.object
-            check_state_dict = dict()
-            for column_index in range(2, 2 + len(self._project_phases)):
-                header_text = self.widget.object_tree.headerItem().text(column_index)
-                check_state_dict[header_text] = checkstate_to_bool(obj_item.checkState(column_index))
-            self.data_model[obj] = check_state_dict
-            self.fill_property_set_tree(obj)
+    def property_set_checked(self, item:QStandardItem):
+        pset_index = item.index().siblingAtColumn(0)
+        self.handle_attribute_states(pset_index)
 
-        def modify_checkbox_data(check_box_item: CheckBoxItem):
-            model_index = check_box_item.index()
-            column = model_index.column()
-            new_checkstate = True if check_box_item.checkState() == Qt.CheckState.Checked else False
-            data_index = model_index.siblingAtColumn(0)
-            data_item = self.tree_model.itemFromIndex(data_index)
-            header_text = self.tree_model.horizontalHeaderItem(column).text()
-            if isinstance(data_item, PropertySetItem):
-                data = data_item.property_set
-            elif isinstance(data_item, AttributeItem):
-                data = data_item.attribute
-            else:
-                raise TypeError(f"Datatype {type(data_item)} doesn't match!")
-            self.data_model[data][header_text] = new_checkstate
 
-            if isinstance(data_item, PropertySetItem):
-                for index in range(data_item.rowCount()):
-                    data_item.child(index, column).setEnabled(new_checkstate)
+    def create_state_list(self, model, focus_index: QModelIndex, start=2):
+        c_list = list()
+        for c in range(start, start + len(self._project_phases)):
+            sibling_index = focus_index.siblingAtColumn(c)
+            check_state = sibling_index.data(Qt.ItemDataRole.CheckStateRole)
+            children_enabled = True if check_state in (2, Qt.CheckState.Checked) else False
+            children_enabled = False if not model.itemFromIndex(sibling_index).isEnabled() else children_enabled
+            c_list.append(children_enabled)
+        return c_list
 
-        if isinstance(tree_item, ObjectItem):
-            modify_object_data(tree_item)
-        elif isinstance(tree_item, CheckBoxItem):
-            modify_checkbox_data(tree_item)
+    def modify_data_model(self, obj_item: QStandardItem):
+        def iter_tree(parent_index: QModelIndex):
+            state_list = self.create_state_list(self.object_tree.model(), parent_index)
+            for row in range(model.rowCount(parent_index)):
+                for column, state in enumerate(state_list, 2):
+                    child_index = model.index(row, column, index)
+                    item = model.itemFromIndex(child_index)
+                    if item is None:
+                        continue
+                    item.setEnabled(state)
+                new_focus_index = model.index(row, 0, parent_index)
+                iter_tree(new_focus_index)
+
+        model: QStandardItemModel = self.object_tree.model()
+        index = model.indexFromItem(obj_item)
+        index = model.sibling(index.row(), 0, index)
+        iter_tree(index)
+        # self.fill_property_set_tree(index)
 
     def show(self) -> None:
-        self.widget.object_tree.clear()
-        self.tree_model.clear()
+        self.clear_tree(self.object_tree)
+        self.clear_tree(self.property_set_tree)
         self.set_object_tree_header()
-        self.fill_data_model()
+        self.fill_pset_model()
         self.fill_object_tree()
+
         self.widget.label_object.hide()
         super(ProjectPhaseWindow, self).show()
 
     def accepted(self):
-
+        #TODO
         for item, project_phase_dict in self.data_model.items():
             for project_phase_name, value in project_phase_dict.items():
                 if item.get_project_phase_state(project_phase_name) != value:
@@ -239,78 +221,145 @@ class ProjectPhaseWindow(QWidget):
         self.hide()
         self.main_window.reload()
 
-    def fill_data_model(self):
-        def add_to_model(entity: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute) -> None:
-            self.data_model[entity] = {name: entity.get_project_phase_state(name) for name in self._project_phases}
-
-        self.data_model = dict()
-        for obj in self.main_window.project.get_all_objects():
-            add_to_model(obj)
-            for pset in obj.get_all_property_sets():
-                add_to_model(pset)
-                for attribute in pset.get_all_attributes():
-                    add_to_model(attribute)
-
     def resize_to_content(self) -> None:
         """resizes Tree to content so it allways looks fresh and tidy"""
         resize_tree(self.widget.object_tree)
         resize_tree_view(self.widget.property_set_tree)
 
+    def clear_tree(self, tree: QTreeView):
+        for row in reversed(range(tree.model().rowCount())):
+            self.object_tree.model().removeRow(row)
+
     def fill_object_tree(self) -> None:
-        project = self.main_window.project
+        def iter_tree(object_list, parent_item: QStandardItem):
+            for obj in object_list:
+                item_list = list()
+                new_item = QStandardItem(obj.name)
+                new_item.setData(obj, CLASS_REFERENCE)
+                item_list.append(new_item)
+                item_list.append(QStandardItem(obj.ident_value))
+
+                for project_phase in project.get_project_phase_list():
+                    phase_item = QStandardItem()
+                    phase_item.setCheckable(True)
+                    cs = Qt.CheckState.Checked if obj.get_project_phase_state(
+                        project_phase) else Qt.CheckState.Unchecked
+                    phase_item.setCheckState(cs)
+                    item_list.append(phase_item)
+                parent_item.appendRow(item_list)
+                iter_tree(obj.children, new_item)
+
+        project: classes.Project = self.main_window.project
         tree = self.widget.object_tree
-        tree.clear()
-        root = tree.invisibleRootItem()
-        obj_item_dict: dict[classes.Object, ObjectItem] = dict()
-
+        self.clear_tree(tree)
         objects = list(project.get_all_objects())
+        root_objects = [obj for obj in sorted(objects) if obj.parent is None]
+        model: QStandardItemModel = tree.model()
+        self.set_object_tree_header()
 
-        for obj in objects:
-            obj_item = ObjectItem(obj)
-            obj_item_dict[obj] = obj_item
-            root.addChild(obj_item)
-
-        for obj in objects:
-            tree_item = obj_item_dict[obj]
-            if obj.parent is not None:
-                parent_item = obj_item_dict[obj.parent]
-                root = tree_item.treeWidget().invisibleRootItem()
-                item = root.takeChild(root.indexOfChild(tree_item))
-                parent_item.addChild(item)
-
+        iter_tree(root_objects, model.invisibleRootItem())
         resize_tree(tree)
 
-    def object_selection_changed(self):
-        object_items = self.widget.object_tree.selectedItems()
-        if not len(object_items):
-            return
-        item: ObjectItem = object_items[0]
-        self.fill_property_set_tree(item.object)
-        self.widget.label_object.show()
-        self.widget.label_object.setText(f"{item.object.name} ({item.object.ident_value})")
+    def fill_pset_model(self):
+        def format_pset_item(item):
+            font = QFont()
+            font.setBold(True)
+            item.setFont(font)
+            item.setEditable(False)
 
-    def fill_property_set_tree(self, selected_object: classes.Object):
-        tree = self.widget.property_set_tree
-        self.tree_model.clear()
-        root = self.tree_model.invisibleRootItem()
-        tree.setModel(self.tree_model)
-        for property_set in selected_object.get_all_property_sets():
-            pset_item = PropertySetItem(property_set)
-            pset_row = [pset_item]
-            for index, project_phase_name in enumerate(self._project_phases):
-                pset_is_enabled = self.data_model[selected_object][project_phase_name]
-                pset_is_checked = self.data_model[property_set][project_phase_name]
-                pset_row.append(CheckBoxItem(pset_is_checked, pset_is_enabled))
-            root.appendRow(pset_row)
-            for attribute in property_set.get_all_attributes():
-                attribute_row = [AttributeItem(attribute)]
-                for index, project_phase_name in enumerate(self._project_phases):
-                    pset_is_enabled = self.data_model[selected_object][project_phase_name]
-                    attribute_is_enabled = self.data_model[property_set][project_phase_name]
-                    attribute_is_checked = self.data_model[attribute][project_phase_name]
-                    attribute_row.append(
-                        CheckBoxItem(attribute_is_checked, all((attribute_is_enabled, pset_is_enabled))))
-                pset_item.appendRow(attribute_row)
+        def handle_phases(item: QStandardItem):
+            item_list = [item]
+            item_class = item.data(CLASS_REFERENCE)
+            for phase in project_phases:
+                phase_item = QStandardItem()
+                phase_item.setCheckable(True)
+                cs = Qt.CheckState.Checked if item_class.get_project_phase_state(phase) else Qt.CheckState.Unchecked
+                phase_item.setCheckState(cs)
+                item_list.append(phase_item)
+            return item_list
+
+        model = self.property_set_tree.model()
+
+        project_phases = self.project.get_project_phase_list()
+
+        model.setHorizontalHeaderLabels(["PropertySet, Attribut"] + project_phases)
+
+        for obj in self.main_window.project.get_all_objects():
+            obj: classes.Object
+            pset: classes.PropertySet
+            for pset in obj.get_all_property_sets():
+                pset_item = QStandardItem(pset.name)
+                format_pset_item(pset_item)
+                pset_item.setData(pset, CLASS_REFERENCE)
+                items = handle_phases(pset_item)
+                model.appendRow(items)
+                for attribute in pset.get_all_attributes():
+                    attribute_item = QStandardItem(attribute.name)
+                    attribute_item.setData(attribute, CLASS_REFERENCE)
+                    items = handle_phases(attribute_item)
+                    pset_item.appendRow(items)
+                self.property_set_tree.setRowHidden(pset_item.row(), model.invisibleRootItem().index(), True)
+
+    def object_selection_changed(self):
+        object_indexes = self.widget.object_tree.selectedIndexes()
+        if not object_indexes:
+            return
+        index: QModelIndex = object_indexes[0]
+        obj = index.data(CLASS_REFERENCE)
+        self.fill_property_set_tree(index)
+        self.widget.label_object.show()
+        self.widget.label_object.setText(f"{obj.name} ({obj.ident_value})")
+
+    def handle_attribute_states(self, property_set_index: QModelIndex):
+        model = property_set_index.model()
+        attribute_states = self.create_state_list(model, property_set_index, start=1)
+        for attribute_row in range(model.rowCount(property_set_index)):
+            for col, state in enumerate(attribute_states, start=1):
+                model.itemFromIndex(model.index(attribute_row, col, property_set_index)).setEnabled(state)
+
+    def fill_property_set_tree(self, object_index: QStandardItem):
+        def handle_enable_status(property_set_indexes: list[QModelIndex]):
+            for pset_index in property_set_indexes:
+                for col, state in enumerate(state_list, start=1):
+                    model.itemFromIndex(pset_index.sibling(pset_index.row(), col)).setEnabled(
+                        state)  # set Checkmark enabled
+                self.handle_attribute_states(pset_index)
+
+        selected_object = object_index.data(CLASS_REFERENCE)
+        state_list = self.create_state_list(self.object_tree.model(), object_index, 2)
+        tree = self.property_set_tree
+        model: QStandardItemModel = tree.model()
+        shown_property_sets = list()
+
+        for row in range(model.rowCount()):
+            index = model.index(row, 0)
+            pset: classes.PropertySet = index.data(CLASS_REFERENCE)
+            if pset.object == selected_object:
+                shown_property_sets.append(index)
+                tree.setRowHidden(row, tree.rootIndex(), False)
+            else:
+                tree.setRowHidden(row, tree.rootIndex(), True)
+        handle_enable_status(shown_property_sets)
+
+        # for property_set in selected_object.get_all_property_sets():
+        #     pset_item = QStandardItem(property_set.name)
+        #     pset_item.setData(property_set, CLASS_REFERENCE)
+        #     # format_pset_item(pset_item)
+        #     pset_row = [pset_item]
+        #     for index, project_phase_name in enumerate(self._project_phases):
+        #         pset_is_enabled = self.data_model[selected_object][project_phase_name]
+        #         pset_is_checked = self.data_model[property_set][project_phase_name]
+        #         pset_row.append(CheckBoxItem(pset_is_checked, pset_is_enabled))
+        #     root.appendRow(pset_row)
+        #     for attribute in property_set.get_all_attributes():
+        #         attribute_row = [AttributeItem(attribute)]
+        #         for index, project_phase_name in enumerate(self._project_phases):
+        #             pset_is_enabled = self.data_model[selected_object][project_phase_name]
+        #             attribute_is_enabled = self.data_model[property_set][project_phase_name]
+        #             attribute_is_checked = self.data_model[attribute][project_phase_name]
+        #             attribute_row.append(
+        #                 CheckBoxItem(attribute_is_checked, all((attribute_is_enabled, pset_is_enabled))))
+        #         pset_item.appendRow(attribute_row)
 
         resize_tree_view(tree)
         tree.expandAll()
