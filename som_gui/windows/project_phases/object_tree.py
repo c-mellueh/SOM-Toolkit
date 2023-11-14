@@ -1,6 +1,28 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from PySide6.QtWidgets import QTreeView, QWidget
 from PySide6.QtGui import QMouseEvent,QStandardItemModel
 from PySide6.QtCore import Qt, QModelIndex
+from SOMcreator import classes
+
+if TYPE_CHECKING:
+    from .gui import  ProjectPhaseWindow
+
+CLASS_REFERENCE = Qt.ItemDataRole.UserRole + 1
+OBJECT_TITLES = ["Objekt", "Identifier"]
+PSET_TITLES = ["PropertySet, Attribut"]
+
+def resize_tree_view(tree: QTreeView):
+    columns = tree.model().columnCount()
+    for index in range(columns):
+        tree.resizeColumnToContents(index)
+
+
+def resize_tree(tree: QTreeView):
+    for index in range(tree.model().columnCount()):
+        tree.resizeColumnToContents(index)
 
 
 class ObjectTreeView(QTreeView):
@@ -42,7 +64,20 @@ class ObjectTreeView(QTreeView):
 
     def model(self) -> QStandardItemModel:
         return super().model()
+
+    def window(self) -> ProjectPhaseWindow:
+        return super().window()
+
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
         self.is_already_pressed = False
         self.check_state = None
+        index = self.indexAt(event.pos())
+        if index is None:
+            return
+        focus_index = index.sibling(index.row(),0)
+        if isinstance(focus_index.data(CLASS_REFERENCE),classes.Object):
+            self.window().object_index_clicked(focus_index)
+
+
+

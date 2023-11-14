@@ -4,31 +4,16 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt, QPoint, QModelIndex
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QFont, QAction
-from PySide6.QtWidgets import QWidget, QTreeView, QMenu, QAbstractItemView, QInputDialog, \
-    QLineEdit
+from PySide6.QtWidgets import QWidget, QMenu, QAbstractItemView, QInputDialog, QLineEdit
 from SOMcreator import classes
 
 from som_gui import icons
 from som_gui.qt_designs import ui_project_phase_window
+from . import object_tree
+from .object_tree import CLASS_REFERENCE, OBJECT_TITLES, PSET_TITLES
 
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
-
-OBJECT_TITLES = ["Objekt", "Identifier"]
-PSET_TITLES = ["PropertySet, Attribut"]
-CLASS_REFERENCE = Qt.ItemDataRole.UserRole + 1
-PSET_MODEL = Qt.ItemDataRole.UserRole + 2
-
-
-def resize_tree_view(tree: QTreeView):
-    columns = tree.model().columnCount()
-    for index in range(columns):
-        tree.resizeColumnToContents(index)
-
-
-def resize_tree(tree: QTreeView):
-    for index in range(tree.model().columnCount()):
-        tree.resizeColumnToContents(index)
 
 
 def create_state_list(model: QStandardItemModel, focus_index: QModelIndex, start: int) -> list[bool]:
@@ -64,9 +49,9 @@ def property_set_checked(item: QStandardItem):
 class ProjectPhaseWindow(QWidget):
     def __init__(self, main_window: MainWindow) -> None:
         def connect() -> None:
-            self.object_tree.expanded.connect(lambda: resize_tree(self.object_tree))
+            self.object_tree.expanded.connect(lambda: object_tree.resize_tree(self.object_tree))
             self.object_tree.clicked.connect(self.object_selection_changed)
-            self.property_set_tree.expanded.connect(lambda: resize_tree_view(self.property_set_tree))
+            self.property_set_tree.expanded.connect(lambda: object_tree.resize_tree_view(self.property_set_tree))
             self.property_set_tree.model().itemChanged.connect(property_set_checked)
             self.object_tree.model().itemChanged.connect(self.object_checked)
             self.widget.buttonBox.accepted.connect(self.accepted)
@@ -147,7 +132,7 @@ class ProjectPhaseWindow(QWidget):
         object_model = self.object_tree.model()
         iter_tree(object_model, self.object_tree.rootIndex())
         property_set_model = self.property_set_tree.model()
-        s = self.object_tree.title_count-self.property_set_tree.title_count
+        s = self.object_tree.title_count - self.property_set_tree.title_count
         iter_tree(property_set_model, self.property_set_tree.rootIndex(), -s)
         for project_phase, index in self.project_phase_dict.items():
             if index is None:
@@ -247,7 +232,7 @@ class ProjectPhaseWindow(QWidget):
         root_objects = [obj for obj in sorted(objects) if obj.parent is None]
         model: QStandardItemModel = tree.model()
         iter_tree(root_objects, model.invisibleRootItem())
-        resize_tree(tree)
+        object_tree.resize_tree(tree)
 
     def fill_property_set_tree(self):
         """adds all propertySetObjects to PropertySetTree and Hides them.
@@ -299,11 +284,9 @@ class ProjectPhaseWindow(QWidget):
             return
         index: QModelIndex = object_indexes[0]
         obj = index.data(CLASS_REFERENCE)
-        self.show_property_sets(index)
-        self.widget.label_object.show()
-        self.widget.label_object.setText(f"{obj.name} ({obj.ident_value})")
+        self.object_index_clicked(index)
 
-    def show_property_sets(self, object_index: QStandardItem):
+    def object_index_clicked(self, object_index: QStandardItem):
         """shows propertySetItems which match the selected object"""
 
         def handle_enable_status(property_set_indexes: list[QModelIndex]):
@@ -314,6 +297,9 @@ class ProjectPhaseWindow(QWidget):
                 handle_attribute_states(pset_index)
 
         selected_object = object_index.data(CLASS_REFERENCE)
+        self.widget.label_object.show()
+        self.widget.label_object.setText(f"{selected_object.name} ({selected_object.ident_value})")
+
         state_list = create_state_list(self.object_tree.model(), object_index, self.object_tree.title_count)
         tree = self.property_set_tree
         model: QStandardItemModel = tree.model()
@@ -328,7 +314,7 @@ class ProjectPhaseWindow(QWidget):
             else:
                 tree.setRowHidden(row, tree.rootIndex(), True)
         handle_enable_status(shown_property_sets)
-        resize_tree_view(tree)
+        object_tree.resize_tree_view(tree)
         tree.expandAll()
 
     def get_project_phase_titles(self) -> list[str]:
