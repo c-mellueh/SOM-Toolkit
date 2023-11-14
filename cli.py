@@ -51,9 +51,9 @@ def install_missing_packages():
     if made_an_update:
         print()
         print("*" * 60)
-        print(f"Update von SOMcreator installiert, Runtime neu starten!")
+        print(f"Update installiert, Runtime neu starten!")
         print("*" * 60)
-        return True
+        return False
     return False
 
 

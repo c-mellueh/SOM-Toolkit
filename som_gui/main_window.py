@@ -9,7 +9,8 @@ from .filehandling import open_file, save_file, export
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import property_widget, object_widget
 from .windows import predefined_psets_window, propertyset_window, mapping_window, popups, grouping_window, \
-    settings_window, project_phase_window
+    settings_window
+from .windows.project_phases import gui as project_phase_window
 from .windows.modelcheck import modelcheck_window
 from .windows.attribute_import.gui import AttributeImport
 
@@ -41,7 +42,7 @@ class MainWindow(QMainWindow):
             self.ui.action_modelcheck.triggered.connect(lambda: modelcheck_window.ModelcheckWindow(self))
             self.ui.action_create_groups.triggered.connect(self.open_grouping_window)
             self.ui.action_model_control.triggered.connect(self.open_attribute_import_window)
-            self.ui.action_project_phase.triggered.connect(self.open_project_phase_window)
+            self.ui.action_project_phase.triggered.connect(lambda:  project_phase_window.ProjectPhaseWindow(self))
             self.ui.action_show_graphs.triggered.connect(self.open_aggregation_window)
             self.ui.action_mapping.triggered.connect(self.open_mapping_window)
 
@@ -101,11 +102,6 @@ class MainWindow(QMainWindow):
             self.model_control_window = AttributeImport(self)
         else:
             self.model_control_window.show()
-
-    def open_project_phase_window(self):
-        if self.project_phase_window is None:
-            self.project_phase_window = project_phase_window.ProjectPhaseWindow(self)
-        self.project_phase_window.show()
 
     def open_predefined_pset_window(self):
         if self.predefined_pset_window is None:

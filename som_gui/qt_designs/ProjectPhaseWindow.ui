@@ -19,17 +19,10 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QTreeWidget" name="object_tree">
-      <column>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Identifier</string>
-       </property>
-      </column>
+     <widget class="ObjectTreeView" name="object_tree">
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
      </widget>
      <widget class="QWidget" name="verticalLayoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -41,7 +34,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QTreeView" name="property_set_tree"/>
+        <widget class="ObjectTreeView" name="property_set_tree"/>
        </item>
       </layout>
      </widget>
@@ -56,6 +49,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ObjectTreeView</class>
+   <extends>QTreeView</extends>
+   <header>..windows.project_phases.object_tree</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
