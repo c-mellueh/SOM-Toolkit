@@ -191,10 +191,8 @@ class ProjectPhaseWindow(QWidget):
             state_list = create_state_list(self.object_tree.model(), parent_index, self.object_tree.title_count)
             for row in range(model.rowCount(parent_index)):
                 for column, state in enumerate(state_list, self.object_tree.title_count):
-                    child_index = model.index(row, column, index)
+                    child_index = model.index(row, column, parent_index)
                     item = model.itemFromIndex(child_index)
-                    if item is None:  # while creating new project_phases this is necessary
-                        continue
                     item.setEnabled(state)
                 new_focus_index = model.index(row, 0, parent_index)
                 iter_tree(new_focus_index)

@@ -41,6 +41,10 @@ class ObjectTreeView(QTreeView):
         if index.column() < self.title_count:
             super().mousePressEvent(event)
             return
+
+        if not self.model().itemFromIndex(index).isEnabled():
+            return
+
         old_check_state = index.data(Qt.ItemDataRole.CheckStateRole)
         new_check_state = Qt.CheckState.Unchecked if old_check_state in (
             2, Qt.CheckState.Checked) else Qt.CheckState.Checked
