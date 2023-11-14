@@ -17,7 +17,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QDialogButtonBox,
     QHeaderView, QLabel, QSizePolicy, QSplitter,
-    QTreeView, QVBoxLayout, QWidget)
+    QVBoxLayout, QWidget)
+
+from ..windows.project_phases.object_tree import ObjectTreeView
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -29,7 +31,7 @@ class Ui_Form(object):
         self.splitter = QSplitter(Form)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Horizontal)
-        self.object_tree = QTreeView(self.splitter)
+        self.object_tree = ObjectTreeView(self.splitter)
         self.object_tree.setObjectName(u"object_tree")
         self.object_tree.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.splitter.addWidget(self.object_tree)
@@ -43,7 +45,7 @@ class Ui_Form(object):
 
         self.verticalLayout_2.addWidget(self.label_object)
 
-        self.property_set_tree = QTreeView(self.verticalLayoutWidget)
+        self.property_set_tree = ObjectTreeView(self.verticalLayoutWidget)
         self.property_set_tree.setObjectName(u"property_set_tree")
 
         self.verticalLayout_2.addWidget(self.property_set_tree)

@@ -8,11 +8,11 @@ from PySide6.QtWidgets import QWidget, QTreeView, QMenu, QAbstractItemView, QInp
     QLineEdit
 from SOMcreator import classes
 
-from .. import icons
-from ..qt_designs import ui_project_phase_window
+from som_gui import icons
+from som_gui.qt_designs import ui_project_phase_window
 
 if TYPE_CHECKING:
-    from ..main_window import MainWindow
+    from som_gui.main_window import MainWindow
 
 OBJECT_TITLES = ["Objekt", "Identifier"]
 PSET_TITLES = ["PropertySet, Attribut"]
@@ -84,7 +84,9 @@ class ProjectPhaseWindow(QWidget):
         self.widget.setupUi(self)
 
         self.object_tree = self.widget.object_tree
+        self.object_tree.title_count = len(OBJECT_TITLES)
         self.property_set_tree = self.widget.property_set_tree
+        self.property_set_tree.title_count = len(PSET_TITLES)
         self.object_tree.setModel(QStandardItemModel())
         self.property_set_tree.setModel(QStandardItemModel())
 
@@ -92,7 +94,8 @@ class ProjectPhaseWindow(QWidget):
         self.object_tree.model().setHorizontalHeaderLabels(
             OBJECT_TITLES + self.project.get_project_phase_list())
         self.main_window.project_phase_window = self
-        self.project_phase_dict = {name: index + 2 for index, name in enumerate(self.project.get_project_phase_list())}
+        self.project_phase_dict = {name: index + self.object_tree.title_count for index, name in
+                                   enumerate(self.project.get_project_phase_list())}
 
         self.fill_property_set_tree()
         self.fill_object_tree()

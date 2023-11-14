@@ -9,7 +9,8 @@ from .filehandling import open_file, save_file, export
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .widgets import property_widget, object_widget
 from .windows import predefined_psets_window, propertyset_window, mapping_window, popups, grouping_window, \
-    settings_window, project_phase_window
+    settings_window
+from .windows.project_phases import gui as project_phase_window
 from .windows.modelcheck import modelcheck_window
 from .windows.attribute_import.gui import AttributeImport
 
