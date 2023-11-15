@@ -75,18 +75,14 @@ def _save(main_window: MainWindow, path):
 
 
 def close_event(main_window: MainWindow):
-    status = main_window.project.changed
-    if status:
-        reply = popups.msg_close()
-        if reply == QMessageBox.StandardButton.Save:
-            path = save_clicked(main_window)
-            if not path or path is None:
-                return False
-            else:
-                return True
-        elif reply == QMessageBox.StandardButton.No:
-            return True
-        else:
+    reply = popups.msg_close()
+    if reply == QMessageBox.StandardButton.Save:
+        path = save_clicked(main_window)
+        if not path or path is None:
             return False
-    else:
+        else:
+            return True
+    elif reply == QMessageBox.StandardButton.No:
         return True
+    else:
+        return False
