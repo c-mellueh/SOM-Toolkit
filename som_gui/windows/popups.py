@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from ..main_window import MainWindow
 
 UMLAUT_DICT = {ord('ä'): 'ae', ord('ü'): 'ue', ord('ö'): 'oe', ord('ß'): 'ss'}
+CLASS_REFERENCE = Qt.ItemDataRole.UserRole + 1
 
 
 def default_message(text):
@@ -33,13 +34,16 @@ def msg_already_exists():
     text = "Objekt existiert bereits!"
     default_message(text)
 
+
 def msg_ident_already_exists():
     text = "Identifier existiert bereits!"
     default_message(text)
 
+
 def msg_abbrev_already_exists():
     text = "Kürzel existiert bereits!"
     default_message(text)
+
 
 def msg_attribute_already_exists():
     text = "Attribut existiert bereits!"
@@ -245,195 +249,72 @@ def req_worksheet_name(main_window, worksheet_names: list[str]):
     return text, ok
 
 
-class ObjectSearchItem(QTableWidgetItem):
-    def __init__(self, object: classes.Object, text: str | None):
-        super(ObjectSearchItem, self).__init__()
-        self.object = object
-        if text is None:
-            text = ""
-        self.setFlags(self.flags().ItemIsSelectable | self.flags().ItemIsEnabled)
-        self.setText(text)
+class SearchWindow(QDialog):
 
+    def __init__(self, main_window: MainWindow, text_matrix: list[list[str]], connection_list: list,
+                 header_list: list[str], threshold: int = 65):
+        super(SearchWindow, self).__init__()
 
-class AttributeSearchItem(QTableWidgetItem):
-    def __init__(self, pset_name, attribute_name, text: str | None):
-        super(AttributeSearchItem, self).__init__()
-        self.attribute_name = attribute_name
-        self.pset_name = pset_name
-        if text is None:
-            text = ""
-        self.setFlags(self.flags().ItemIsSelectable | self.flags().ItemIsEnabled)
-        self.setText(text)
-
-
-class ObjectSearchWindow(QDialog):
-    def __init__(self, main_window: MainWindow, ):
-        super(ObjectSearchWindow, self).__init__()
-
-        #
         def connect_items():
-            self.widget.lineEdit.textChanged.connect(self.update_table)
+            self.widget.lineEdit.textChanged.connect(self.search)
             self.widget.tableWidget.itemDoubleClicked.connect(self.item_clicked)
 
-        #
         self.widget = ui_search.Ui_Dialog()
         self.widget.setupUi(self)
-        self.setWindowTitle("Search")
-        self.setWindowIcon(get_icon())
-        self.main_window = main_window
-        self.main_window.search_ui = self
-        self.project: classes.Project = self.main_window.project
-        self.widget.tableWidget.verticalHeader().setVisible(False)
-        self.row_dict = dict()
-        self.item_dict: dict[classes.Object, list[ObjectSearchItem]] = {
-            obj: [ObjectSearchItem(obj, obj.name), ObjectSearchItem(obj, obj.ident_value),
-                  ObjectSearchItem(obj, obj.abbreviation), ObjectSearchItem(obj, "100")] for obj in
-            self.project.objects}
+        main_window.search_ui = self
+        self.table = self.widget.tableWidget
 
-        self.MATCH_INDEX = 3
-        self.fill_table()
+        self.item_cols = len(text_matrix[0])
+        self.threshold = threshold
+        self.project: classes.Project = main_window.project
+        self.data = None
+
+        self.style_window(header_list)
+        self.fill_table(text_matrix, connection_list)
+        connect_items()
+
+    def style_window(self, header_list: list[str]) -> None:
+        self.widget.tableWidget.verticalHeader().setVisible(False)
+        self.table.setColumnCount(self.item_cols + 1)
+        self.table.sortByColumn(self.item_cols, Qt.SortOrder.DescendingOrder)
+        self.table.hideColumn(self.item_cols)
         table_header = self.widget.tableWidget.horizontalHeader()
         table_header.setStretchLastSection(True)
         table_header.setSectionResizeMode(0, table_header.ResizeMode.ResizeToContents)
-        self.widget.tableWidget.setColumnHidden(self.MATCH_INDEX, True)
-        self.widget.tableWidget.sortByColumn(self.MATCH_INDEX, Qt.SortOrder.AscendingOrder)
-        self.widget.tableWidget.setSortingEnabled(True)
-        self.objects = set(obj for obj in self.project.objects)
-        connect_items()
-        self.selected_object: classes.Object | None = None
-
-    def get_row(self, obj):
-        return self.item_dict[obj][0].row()
-
-    def fill_table(self):
-
-        table = self.widget.tableWidget
-        table.setRowCount(len(self.item_dict))
-        for row, (obj, items) in enumerate(self.item_dict.items()):
-            for column, item in enumerate(items):
-                table.setItem(row, column, item)
-            self.row_dict[obj] = row
-
-    def item_clicked(self, table_item: ObjectSearchItem):
-        obj = table_item.object
-        self.selected_object = obj
-        self.accept()
-
-    def update_table(self):
-        table = self.widget.tableWidget
-        text = self.widget.lineEdit.text().lower()
-        text_umlaut = text.translate(UMLAUT_DICT)
-        possible_objects = set()
-        for obj in self.objects:
-            check_values = [obj.name.lower(), str(obj.ident_value.lower()), str(obj.abbreviation.lower())]
-            value_with_umlaut = max([fuzz.partial_ratio(text, val) for val in check_values])
-            value_without_umlaut = max([fuzz.partial_ratio(text_umlaut, val) for val in check_values])
-            value = max([value_with_umlaut, value_without_umlaut])
-            row = self.get_row(obj)
-            table.item(row, self.MATCH_INDEX).setText(str(value))
-            if value > 75:
-                possible_objects.add(obj)
-
-        forbidden_objects = self.objects.difference(possible_objects)
-        for obj in possible_objects:
-            table.showRow(self.get_row(obj))
-        for obj in forbidden_objects:
-            table.hideRow(self.get_row(obj))
-
-
-class AttributeSearchWindow(QDialog):
-    def __init__(self, main_window: MainWindow):
-        super(AttributeSearchWindow, self).__init__()
-
-        #
-        def connect_items():
-            self.widget.lineEdit.textChanged.connect(self.update_table)
-            self.widget.tableWidget.itemDoubleClicked.connect(self.item_clicked)
-
-        #
-        self.widget = ui_search.Ui_Dialog()
-        self.widget.setupUi(self)
+        self.table.setHorizontalHeaderLabels(header_list)
         self.setWindowTitle("Search")
         self.setWindowIcon(get_icon())
-        self.main_window = main_window
-        self.main_window.search_ui = self
-        self.project: classes.Project = self.main_window.project
-        self.widget.tableWidget.verticalHeader().setVisible(False)
-        self.row_dict = dict()
 
-        self.main_dict: dict[str, set[str]] = dict()
+    def fill_table(self, text_matrix: list[list[str]], connection_list: list) -> None:
+        for row, (text_list, connection_item) in enumerate(zip(text_matrix, connection_list)):
+            item_list = [QTableWidgetItem(text) for text in text_list]
+            [item.setData(CLASS_REFERENCE, connection_item) for item in item_list]
+            self.table.insertRow(self.table.rowCount())
+            for col, value in enumerate(item_list):
+                self.table.setItem(self.table.rowCount() - 1, col, value)
 
-        self.item_dict = self.create_item_dict()
-
-        self.MATCH_INDEX = 2
-        self.fill_table()
-        table_header = self.widget.tableWidget.horizontalHeader()
-        table_header.setStretchLastSection(True)
-        table_header.setSectionResizeMode(0, table_header.ResizeMode.ResizeToContents)
-
-        self.widget.tableWidget.setColumnHidden(self.MATCH_INDEX, True)
-        self.widget.tableWidget.sortByColumn(self.MATCH_INDEX, Qt.SortOrder.AscendingOrder)
-        self.widget.tableWidget.setSortingEnabled(True)
-        connect_items()
-        self.selected_attribute_name: str | None = None
-        self.selected_pset_name: str | None = None
-        self.attributes = set(self.item_dict.keys())
-
-    def get_row(self, value):
-        return self.item_dict[value][0].row()
-
-    def create_item_dict(self) -> dict[str, list[AttributeSearchItem, AttributeSearchItem, AttributeSearchItem]]:
-        item_dict = dict()
-        for obj in self.project.objects:
-            for pset in obj.property_sets:
-                if not pset.name in self.main_dict:
-                    self.main_dict[pset.name] = set()
-                attribute_list = self.main_dict[pset.name]
-                for attribute in pset.attributes:
-                    if attribute.name not in attribute_list:
-                        attribute_list.add(attribute.name)
-                        row_1 = AttributeSearchItem(pset.name, attribute.name, pset.name)
-                        row_2 = AttributeSearchItem(pset.name, attribute.name, attribute.name)
-                        row_3 = AttributeSearchItem(pset.name, attribute.name, "100")
-                        item_dict[f"{pset.name}:{attribute.name}"] = [row_1, row_2, row_3]
-        return item_dict
-
-    def fill_table(self):
-
-        table = self.widget.tableWidget
-        table.setRowCount(len(self.item_dict))
-        table.setColumnCount(3)
-        for row, (attribute_name, items) in enumerate(self.item_dict.items()):
-            for column, item in enumerate(items):
-                table.setItem(row, column, item)
-            self.row_dict[attribute_name] = row
-
-    def item_clicked(self, table_item: AttributeSearchItem):
-        self.selected_attribute_name = table_item.attribute_name
-        self.selected_pset_name = table_item.pset_name
+    def item_clicked(self, table_item: QTableWidgetItem) -> None:
+        self.data = table_item.data(CLASS_REFERENCE)
         self.accept()
 
-    def update_table(self):
-        table = self.widget.tableWidget
-        text = self.widget.lineEdit.text().lower()
-        text_umlaut = text.translate(UMLAUT_DICT)
-        possible_attributes = set()
-        for attribute in self.attributes:
-            check_values = attribute.split(":")
-            value_with_umlaut = max([fuzz.partial_ratio(text, val) for val in check_values])
-            value_without_umlaut = max([fuzz.partial_ratio(text_umlaut, val) for val in check_values])
-            value = max([value_with_umlaut, value_without_umlaut])
-            row = self.get_row(attribute)
-            table.item(row, self.MATCH_INDEX).setText(str(value))
-            if value > 75:
-                possible_attributes.add(attribute)
+    def check_row(self, search_text: str, row: int) -> float:
+        model = self.widget.tableWidget.model()
+        texts = [model.data(model.index(row, col)).lower() for col in range(self.item_cols)]
+        ratio = max(fuzz.ratio(search_text, text) for text in texts)
+        model.setData(model.index(row, self.item_cols), ratio, Qt.ItemDataRole.DisplayRole)
+        return ratio
 
-        forbidden_objects = self.attributes.difference(possible_attributes)
-        for attribute in possible_attributes:
-            table.showRow(self.get_row(attribute))
-
-        for attribute in forbidden_objects:
-            table.hideRow(self.get_row(attribute))
+    def search(self) -> None:
+        self.table.setSortingEnabled(False)
+        search_text = self.widget.lineEdit.text().lower()
+        search_text = search_text.translate(UMLAUT_DICT)
+        for row in range(self.table.model().rowCount()):
+            ratio = self.check_row(search_text, row)
+            if ratio > self.threshold:
+                self.table.showRow(row)
+            else:
+                self.table.hideRow(row)
+        self.table.setSortingEnabled(True)
 
 
 def new_file_clicked(main_window: MainWindow):

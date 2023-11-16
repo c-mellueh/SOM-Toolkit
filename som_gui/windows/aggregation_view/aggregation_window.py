@@ -2,7 +2,7 @@ from __future__ import annotations  # make own class referencable
 
 import logging
 import os.path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator
 
 import tqdm
 from PySide6 import QtGui, QtCore
@@ -17,6 +17,7 @@ from .node import NodeProxy, Header, Frame, Connection, Circle
 from ...data import constants
 from ...icons import get_icon, get_reload_icon, get_search_icon
 from ...windows import popups
+from ...widgets import object_widget
 
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
@@ -40,6 +41,25 @@ CURSOR_DICT = {
     10: Qt.CursorShape.ClosedHandCursor,
     11: Qt.CursorShape.ArrowCursor,
 }
+
+
+def get_attribute_matrix(project):
+    hir_items = project.get_all_hirarchy_items()
+    attributes: Iterator[classes.Attribute] = filter(lambda item: isinstance(item, classes.Attribute), hir_items)
+    existing_combis = list()
+    text_matrix = list()
+    connect_list = list()
+    for attribute in attributes:
+        pset_name = attribute.property_set.name
+        combi = [pset_name, attribute.name]
+        if combi in existing_combis:
+            continue
+        existing_combis.append(combi)
+        text_list = combi
+        connection = combi
+        text_matrix.append(text_list)
+        connect_list.append(connection)
+    return text_matrix, connect_list
 
 
 def center_nodes(nodes: set[NodeProxy], orientation: int) -> None:
@@ -269,18 +289,23 @@ class AggregationView(QGraphicsView):
 
     def right_click(self, pos: QPointF):
         def rc_add_node():
-            search = popups.ObjectSearchWindow(self.window().main_window)
-            if not search.exec():
+            main_window = self.window().main_window
+            text_matrix, connection_list = object_widget.get_object_text_matrix(main_window.project)
+            sw = popups.SearchWindow(main_window, text_matrix, connection_list,
+                                     ["Objekt", "Identifier", "Abkürzung"])
+            if not sw.exec():
                 return
-            obj = search.selected_object
+            obj = sw.data
             aggregation = classes.Aggregation(obj)
             node = self.window().create_node(aggregation, node_pos, self.scene())
 
         def rc_set_info():
-            search = popups.AttributeSearchWindow(self.window().main_window)
+            main_window = self.window().main_window
+            text_matrix, connection_list = get_attribute_matrix(main_window.project)
+            header_list = ["PropertySet", "Attribut"]
+            search = popups.SearchWindow(main_window, text_matrix, connection_list, header_list)
             if search.exec():
-                pset_name = search.selected_pset_name
-                attribute_name = search.selected_attribute_name
+                [pset_name,attribute_name] = search.data
                 self.window().set_info(pset_name, attribute_name)
 
         def rc_delete_node():
@@ -726,11 +751,13 @@ class AggregationWindow(QWidget):
             self.reset_filter()
             return
 
-        search = popups.ObjectSearchWindow(self.main_window)
-        if not search.exec():
+        text_matrix, connection_list = object_widget.get_object_text_matrix(self.main_window.project)
+        sw = popups.SearchWindow(self.main_window, text_matrix, connection_list,
+                                 ["Objekt", "Identifier", "Abkürzung"])
+        if not sw.exec():
             return
 
-        obj = search.selected_object
+        obj = sw.data
         for scene in self.scenes:
             nodes = scene.nodes
             objects = [node.aggregation.object for node in nodes]
