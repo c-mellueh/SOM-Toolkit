@@ -393,11 +393,22 @@ def clear_all(main_window: MainWindow):
         obj.delete(False)
 
 
+def get_object_text_matrix(project: classes.Project):
+    text_matrix = list()
+    connect_list = list()
+    for obj in project.objects:
+        text_list = [obj.name, obj.ident_value, obj.abbreviation]
+        text_matrix.append(text_list)
+        connect_list.append(obj)
+    return text_matrix, connect_list
+
+
 def search_object(main_window: MainWindow):
-    sw = popups.ObjectSearchWindow(main_window)
+    text_matrix, connection_list = get_object_text_matrix(main_window.project)
+    sw = popups.SearchWindow(main_window, text_matrix, connection_list, ["Objekt", "Identifier", "Abkürzung"])
     if not sw.exec():
         return
-    obj = sw.selected_object
+    obj = sw.data
     tree: CustomTree = main_window.object_tree
 
     for selected_item in tree.selectedItems():
@@ -417,7 +428,7 @@ def right_click(main_window: MainWindow, position: QPoint):
     selected_items = main_window.ui.tree_object.selectedItems()
     if len(selected_items) == 1:
         main_window.action_copy = menu.addAction("Copy")
-        main_window.action_copy.triggered.connect(lambda: copy(main_window))
+        main_window.action_copy.triggered.connect(lambda: copy_selected_object(main_window))
 
     if len(selected_items) != 0:
         main_window.action_delete_attribute = menu.addAction("Delete")
@@ -466,7 +477,7 @@ def rc_expand(tree: QTreeWidget):
         tree.expandRecursively(item)
 
 
-def copy(main_window: MainWindow):
+def copy_selected_object(main_window: MainWindow):
     def add_new_item_to_tree(new_obj):
         parent = item.parent() or item.treeWidget().invisibleRootItem()
         add_object_to_tree(main_window.object_tree, new_obj, parent)
@@ -716,8 +727,8 @@ def add_object(main_window: MainWindow):
 
 
 def add_object_to_tree(tree: QTreeWidget, obj: classes.Object, parent: QTreeWidgetItem = None,
-                       treeObjectClass=CustomObjectTreeItem):
-    item = treeObjectClass(obj)
+                       tree_object_class=CustomObjectTreeItem):
+    item = tree_object_class(obj)
     if parent is None:
         tree.invisibleRootItem().addChild(item)
     else:
@@ -751,7 +762,7 @@ def rc_delete(main_window: MainWindow):
 def reload(main_window: MainWindow) -> None:
     def iter_tree(parent_index):
         for row in range(model.rowCount(parent_index)):
-            index = model.index(row, 0,parent_index)
+            index = model.index(row, 0, parent_index)
             item: CustomObjectTreeItem = tree.itemFromIndex(index)
             focus_object = item.object
             identifier_index = model.sibling(index.row(), 1, index)
@@ -761,7 +772,7 @@ def reload(main_window: MainWindow) -> None:
             model.setData(identifier_index, ident_text)
             model.setData(abbreviaion_index, focus_object.abbreviation)
             cs = Qt.CheckState.Checked if focus_object.optional else Qt.CheckState.Unchecked
-            model.setData(optional_index,cs, Qt.ItemDataRole.CheckStateRole)
+            model.setData(optional_index, cs, Qt.ItemDataRole.CheckStateRole)
             hide_bool: bool = focus_object.get_project_phase_state(main_window.project.current_project_phase)
             tree.setRowHidden(row, parent_index, not hide_bool)
             iter_tree(index)

@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout
 from SOMcreator import classes, value_constants
 
 from ...data import constants
-from ...widgets import property_widget
+from ...widgets import property_widget, object_widget
 from ...windows import popups
 
 if TYPE_CHECKING:
@@ -272,12 +272,11 @@ class NodeProxy(QGraphicsProxyWidget):
 
     def button_clicked(self) -> None:
         main_window = self.scene().views()[0].window().main_window
-        search = popups.ObjectSearchWindow(main_window)
-
-        if not search.exec():
+        text_matrix, connection_list = object_widget.get_object_text_matrix(main_window.project)
+        sw = popups.SearchWindow(main_window, text_matrix, connection_list, ["Objekt", "Identifier", "Abkürzung"])
+        if not sw.exec():
             return
-
-        obj = search.selected_object
+        obj = sw.data
         aggregation = classes.Aggregation(obj)
         rect = self.sceneBoundingRect()
         input_point = rect.bottomLeft()

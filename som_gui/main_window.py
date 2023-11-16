@@ -65,7 +65,7 @@ class MainWindow(QMainWindow):
         self.graph_window = aggregation_window.AggregationWindow(self)
         self.mapping_window = None
         self.modelcheck_window: modelcheck_window.ModelcheckWindow | None = None
-        self.search_ui: popups.ObjectSearchWindow | popups.AttributeSearchWindow | None = None
+        self.search_ui: popups.SearchWindow | None = None
         self.object_info_widget: object_widget.ObjectInfoWidget | None = None
         self.predefined_pset_window: predefined_psets_window.PropertySetInherWindow | None = None
         self.property_set_window: None | propertyset_window.PropertySetWindow = None
