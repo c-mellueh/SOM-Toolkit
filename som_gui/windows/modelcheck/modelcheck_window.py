@@ -73,7 +73,7 @@ class ModelcheckWindow(QMainWindow):
         tree = self.data_model_widget.widget.object_tree
         model = tree.model()
         root_index = tree.rootIndex()
-        data_dict = dict()
+        data_dict:dict[SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]] = dict()
 
         for row in range(model.rowCount(root_index)):
             handle_item(model.index(row, 0, root_index))
