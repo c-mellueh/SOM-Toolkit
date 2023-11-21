@@ -329,7 +329,7 @@ def object_double_clicked(main_window: MainWindow, obj: classes.Object):
 
 
 def update_completer(main_window: MainWindow):
-    completer = QCompleter(property_widget.predefined_pset_list(main_window), main_window)
+    completer = QCompleter(property_widget.predefined_pset_dict(main_window.project).keys(), main_window)
     main_window.ui.lineEdit_ident_pSet.setCompleter(completer)
     main_window.ui.lineEdit_pSet_name.setCompleter(completer)
 
@@ -659,8 +659,7 @@ def multi_selection(main_window: MainWindow):
 
 
 def check_for_predefined_psets(property_set_name, main_window):
-    if property_set_name in property_widget.predefined_pset_list(
-            main_window):  # if PropertySet allready predefined
+    if property_set_name in property_widget.predefined_pset_dict(main_window.project).keys():  # if PropertySet allready predefined
         return True
     return False
 

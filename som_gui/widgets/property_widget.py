@@ -56,20 +56,8 @@ def open_menu(main_window: MainWindow, position: QPointF) -> None:
     menu.exec(main_window.pset_table.viewport().mapToGlobal(position))
 
 
-def predefined_pset_list(main_window: MainWindow) -> set[str]:
-    def iterate_parents(parent: classes.Object) -> None:
-        if parent is not None:
-            for property_set in parent.property_sets:
-                property_list.add(property_set.name)
-            iterate_parents(parent.parent)
-
-    property_list = {pset.name for pset in classes.PropertySet if pset.object is None}
-
-    if main_window.active_object is not None:
-        iterate_parents(main_window.active_object.parent)
-        completer = QCompleter(property_list)
-        main_window.ui.lineEdit_pSet_name.setCompleter(completer)
-    return property_list
+def predefined_pset_dict(proj:classes.Project) -> dict[str,classes.PropertySet]:
+    return {pset.name:pset for pset in proj.get_predefined_psets()}
 
 
 def clear_all(main_window: MainWindow) -> None:
@@ -228,12 +216,12 @@ def add_pset_to_table(main_window: MainWindow, pset: str | classes.PropertySet, 
 def create_new_pset(main_window: MainWindow) -> None:
     name = main_window.ui.lineEdit_pSet_name.text()
     inherited = False
-    if name in predefined_pset_list(main_window):
+    if name in predefined_pset_dict(main_window.project).keys():
         inherited = popups.req_merge_pset()
 
     parent = None
     if inherited:
-        parent = get_parent_by_name(main_window.active_object, name)
+        parent = predefined_pset_dict(main_window.project).get(name)
 
     add_pset_to_table(main_window, name, parent)
     text_changed(main_window, main_window.ui.lineEdit_pSet_name.text())

@@ -118,7 +118,10 @@ class PropertySetInherWindow(QWidget):
         children = item.property_set.children
         self.widget.list_view_existance.clear()
         for child in children:
-            text = f"{child.object.name} : {child.name}"
+            if child.object is not None:
+                text = f"{child.object.name} : {child.name}"
+            else:
+                text = f"{child}: {child.name}"
             item = QListWidgetItem(text)
             self.widget.list_view_existance.addItem(item)
 
