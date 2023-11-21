@@ -277,6 +277,7 @@ def init(main_window: MainWindow):
         main_window.group_shortcut.activated.connect(lambda: rc_group_items(main_window))
         main_window.delete_shortcut.activated.connect(lambda: rc_delete(main_window))
         main_window.search_shortcut.activated.connect(lambda: search_object(main_window))
+        main_window.reload_shortcut.activated.connect(lambda: refill_tree(main_window))
 
     main_window.ui.verticalLayout_objects.removeWidget(main_window.ui.tree_object)
     main_window.ui.tree_object.close()
@@ -289,6 +290,7 @@ def init(main_window: MainWindow):
     main_window.delete_shortcut = QShortcut(QKeySequence('Ctrl+X'), main_window)
     main_window.group_shortcut = QShortcut(QKeySequence('Ctrl+G'), main_window)
     main_window.search_shortcut = QShortcut(QKeySequence('Ctrl+F'), main_window)
+    main_window.reload_shortcut = QShortcut(QKeySequence('Ctrl+R'),main_window)
     connect_items()
 
 
@@ -747,16 +749,37 @@ def rc_delete(main_window: MainWindow):
             delete_nodes(child, recursive)
 
     selected_tree_items = main_window.ui.tree_object.selectedItems()
+    tree = main_window.object_tree
+
     selected_objects: list[classes.Object] = [item.object for item in selected_tree_items]
     string_list = [obj.name for obj in selected_objects]
 
     delete_request, recursive_deletion = popups.msg_del_items(string_list, item_type=1)
-    if delete_request:
-        for obj in selected_objects:
-            delete_nodes(obj, recursive_deletion)  # Nodes need to be deleted before object
-            # because the aggregations will be deleted together with the object
-            obj.delete(recursive_deletion)
+    if not delete_request:
+        return
+
+    if recursive_deletion:
+        for item in selected_tree_items:
+            index = tree.indexFromItem(item, 0)
+            tree.model().removeRow(index.row(), index.parent())
+    else:
+        for item in selected_tree_items:
+            parent = item.parent() or tree.invisibleRootItem()
+            parent.insertChildren(0, item.takeChildren())
+            index = tree.indexFromItem(item, 0)
+            tree.model().removeRow(index.row(), index.parent())
+
+    for obj in selected_objects:
+        delete_nodes(obj, recursive_deletion)  # Nodes need to be deleted before object
+        # because the aggregations will be deleted together with the object
+        obj.delete(recursive_deletion)
     main_window.reload()
+
+
+def refill_tree(main_window:MainWindow) -> None:
+    reload(main_window)
+    main_window.object_tree.clear()
+    fill_tree(main_window.project.objects, main_window.object_tree, CustomObjectTreeItem)
 
 
 def reload(main_window: MainWindow) -> None:
