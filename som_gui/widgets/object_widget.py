@@ -299,7 +299,7 @@ def check_identifier(project: classes.Project, obj: classes.Object | None, value
 
 
 def check_abbrev(project: classes.Project, obj: classes.Object | None, value) -> bool:
-    return value in [o.abbreviation for o in project.get_all_objects() if o != obj]
+    return value in [o.abbreviation for o in project.get_all_objects() if o != obj and o.abbreviation!=""]
 
 
 def object_double_clicked(main_window: MainWindow, obj: classes.Object):
@@ -521,7 +521,7 @@ def rc_group_items(main_window: MainWindow):
         return
 
     if not is_concept:
-        is_empty = [True for text in input_fields if not bool(text)]
+        is_empty = [True for text in input_fields[:-1] if not bool(text)]
         if is_empty:
             popups.msg_missing_input()
             return

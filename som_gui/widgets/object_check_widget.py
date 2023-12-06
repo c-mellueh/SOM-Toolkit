@@ -70,7 +70,8 @@ class ObjectCheckWidget(QWidget):
             parent_item.appendRow([object_item, IdentItem(obj)])
 
             for child in obj.children:
-                iter_objects(child, object_item)
+                if child.get_project_phase_state(self.main_window.project.current_project_phase):
+                    iter_objects(child, object_item)
 
         tree = self.widget.object_tree
         self.object_model.clear()
