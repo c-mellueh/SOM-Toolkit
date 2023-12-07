@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import time
 from typing import TYPE_CHECKING
@@ -128,7 +129,12 @@ class Grouping(IfcRunner):
 
         self.signaller.progress.emit(50)
         self.signaller.status.emit("create Structure")
-        owner_history = list(ifc_file.by_type("IfcOwnerHistory"))[0]
+        possible_owner_histories = list(ifc_file.by_type("IfcOwnerHistory"))
+        if possible_owner_histories:
+            owner_history = possible_owner_histories[0]
+        else:
+            owner_history = ifc_file.create_entity("IfcOwnerHistory")
+            logging.warning(f"IfcOwnerHistory Existiert nicht. -> neue IfcOwnerHistory wird erzeugt.")
         kuerzel_dict = {obj.abbreviation.upper(): obj for obj in self.project.objects}
         grouping.create_aggregation_structure(ifc_file, structure_dict, [], None, True, attribute_bundle, owner_history,
                                               kuerzel_dict, self.create_empty_attributes, None)
