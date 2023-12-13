@@ -1,1 +1,1 @@
-__version__ = "2.8.9bugfix"
+__version__ = "2.8.10"

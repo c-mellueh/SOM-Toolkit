@@ -66,7 +66,7 @@ def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_at
     def check_list(value, attribute):
         if not attribute.value:
             return
-        if value not in attribute.value:
+        if str(value) not in [str(v) for v in attribute.value]:
             issues.list_issue(database_path, guid, attribute, element_type)
 
     def check_range(value, attribute):
