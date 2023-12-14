@@ -150,7 +150,7 @@ def req_pset_name(main_window: MainWindow, old):
     return text
 
 
-def req_attribute_name(main_window: MainWindow, old):
+def req_attribute_name(main_window, old):
     text = QInputDialog.getText(main_window, "New Attribute Name ", "New Attribute Name", text=old)
     return text
 
