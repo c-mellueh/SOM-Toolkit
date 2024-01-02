@@ -228,6 +228,7 @@ def req_boq_pset(main_window, words):
 def attribute_mapping(attribute: classes.Attribute):
     parent = QDialog()
     widget = ui_attribute_mapping.Ui_Dialog()
+    parent.setWindowIcon(get_icon())
     widget.setupUi(parent)
     widget.label_name.setText(f"RevitMapping {attribute.name}")
     widget.line_edit_revit_mapping.setText(attribute.revit_name)
