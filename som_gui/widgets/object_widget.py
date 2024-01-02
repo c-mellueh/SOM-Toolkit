@@ -190,7 +190,7 @@ class ObjectInfoWidget(QDialog):
         text = self.widget.combo_box_pset.itemText(item_index)
         pset = self.object.get_property_set_by_name(text)
         attribute_list = [attribute.name for attribute in pset.attributes if
-                          attribute.data_type == value_constants.XS_STRING]
+                          attribute.data_type == value_constants.LABEL]
         self.widget.combo_box_attribute.addItems(attribute_list)
 
     def fill_with_values(self):
