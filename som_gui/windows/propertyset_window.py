@@ -340,6 +340,8 @@ class PropertySetWindow(QtWidgets.QWidget):
         if text == value_constants.REAL:
             validator = QtGui.QDoubleValidator()
             validator.setNotation(QtGui.QDoubleValidator.Notation.StandardNotation)
+        elif text == value_constants.INTEGER:
+            validator = QtGui.QIntValidator()
         else:
             validator = QtGui.QRegularExpressionValidator()
 
@@ -387,19 +389,29 @@ class PropertySetWindow(QtWidgets.QWidget):
                         if len(value.strip()) > 0:
                             values.append(value)
 
-            if data_type in value_constants.NUMBER_DATATYPES:  # transform text to number
+            if data_type == value_constants.REAL:  # transform text to number
                 for i, value in enumerate(values):
                     try:
                         if self.widget.combo_type.currentText() in constants.RANGE_STRINGS:
-                            values[i] = [string_to_float(value[0]), string_to_float(value[1])]
+                            values[i] = [string_to_float(value[0].replace(".", "")),
+                                         string_to_float(value[1].replace(".", ""))]
                         else:
-                            values[i] = string_to_float(value)
+                            values[i] = string_to_float(value.replace(".",""))
                     except ValueError:  # move to popup
-                        msg_box = QMessageBox()
-                        msg_box.setText("Value can't be converted to Double!")
-                        msg_box.setWindowTitle(" ")
-                        msg_box.setIcon(QMessageBox.Icon.Warning)
-                        msg_box.exec()
+                        popups.error_convert_double()
+                        return None
+
+            elif data_type == value_constants.INTEGER:
+                for i, value in enumerate(values):
+                    try:
+                        if self.widget.combo_type.currentText() in constants.RANGE_STRINGS:
+                            v1 = int(value[0].replace(".", ""))
+                            v2 = int(value[1].replace(".", ""))
+                            values[i] = [v1, v2]
+                        else:
+                            values[i] = int(value.replace(".", ""))
+                    except ValueError:  # move to popup
+                        popups.error_convert_integer()
                         return None
             return values
 
@@ -545,7 +557,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                 if attribute.data_type == value_constants.REAL:
                     line.setText(float_to_string(attribute_value))
                 else:
-                    line.setText(attribute_value)
+                    line.setText(str(attribute_value))
         # input Name
         self.widget.lineEdit_name.setText(attribute.name)
 

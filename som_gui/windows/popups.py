@@ -327,3 +327,19 @@ def new_file_clicked(main_window: MainWindow):
             main_window.clear_all()
             main_window.setWindowTitle(main_window.project.name)
             main_window.project.name = project_name[0]
+
+
+def error_convert_double():
+    msg_box = QMessageBox()
+    msg_box.setText("Wert kann nicht in Dezimalzahl umgewandelt werden!")
+    msg_box.setWindowTitle(" ")
+    msg_box.setIcon(QMessageBox.Icon.Warning)
+    msg_box.exec()
+
+
+def error_convert_integer():
+    msg_box = QMessageBox()
+    msg_box.setText("Wert kann nicht in Ganzzahl umgewandelt werden!")
+    msg_box.setWindowTitle(" ")
+    msg_box.setIcon(QMessageBox.Icon.Warning)
+    msg_box.exec()
