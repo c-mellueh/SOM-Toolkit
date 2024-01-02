@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING
 
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import Qt, QPointF
-from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget, QVBoxLayout, \
+    QWidget
 from SOMcreator import classes
 from SOMcreator.constants import value_constants
 
@@ -165,14 +166,18 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         self.widget.combo_data_type.addItems(list(value_constants.DATA_TYPES))
         self.show()
-        self.resize(1000, 400)
-
         self._description_changed = False
-
         self.horizontal_layout_list: list[QHBoxLayout] = list()
         self.line_edit_list: list[LineInput] = list()
         self.active_line_edit: LineInput | None = None
         connect_items()
+        self.value_layout = QVBoxLayout()
+        self.value_layout.setSpacing(2)
+        self.value_layout.setContentsMargins(2, 2, 2, 2)
+        self.value_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.widget.scroll_area.setWidget(QWidget())
+        self.widget.scroll_area.widget().setLayout(self.value_layout)
+
         self.new_line()
 
     @property
@@ -490,7 +495,7 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         status = self.widget.combo_type.currentText()
         layout = QHBoxLayout()
-        self.widget.verticalLayout.addLayout(layout)
+        self.value_layout.addLayout(layout)
         self.horizontal_layout_list.append(layout)
 
         if status in constants.RANGE_STRINGS:
@@ -574,7 +579,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         create_table_line(self.table, item.row(), item.data(ATTRIBUTE_DATA_ROLE))
 
     def table_double_clicked(self, table_item: QTableWidgetItem):
-        popups.attribute_mapping(table_item.attribute)
+        popups.attribute_mapping(table_item.data(ATTRIBUTE_DATA_ROLE))
         self.refresh_table_row(table_item.row())
 
     def decription_changed(self):
