@@ -4,6 +4,7 @@ import re
 
 import SOMcreator
 import ifcopenshell
+
 from SOMcreator import value_constants
 from ifcopenshell import entity_instance
 from ifcopenshell.util import element as ifc_el
@@ -17,13 +18,6 @@ ELEMENT = "Element"
 
 SUBGROUPS = "subgroups"
 SUBELEMENT = "subelement"
-
-datatype_dict = {
-    value_constants.XS_STRING: str,
-    value_constants.XS_BOOL: bool,
-    value_constants.XS_INT: int,
-    value_constants.XS_DOUBLE: float
-}
 
 rev_datatype_dict = {
     str: "IfcText/IfcLabel",
@@ -39,7 +33,7 @@ def get_identifier(el: entity_instance, main_pset: str, main_attribute: str) -> 
 
 def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_attribute: str, database_path: str,
                   ifc_name: str, ident_dict: dict[str, SOMcreator.Object], element_type: str, project_name: str,
-                  data_dict:dict[SOMcreator.Object,dict[SOMcreator.PropertySet,list[SOMcreator.Attribute]]],
+                  data_dict: dict[SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]],
                   is_in_group=True):
     def check_values(value, attribute: SOMcreator.Attribute):
         check_dict = {value_constants.LIST: check_list, value_constants.RANGE: check_range,
@@ -51,7 +45,7 @@ def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_at
         check_datatype(value, attribute)
 
     def check_datatype(value, attribute):
-        data_type = datatype_dict[attribute.data_type]
+        data_type = value_constants.DATATYPE_DICT[attribute.data_type]
         if not isinstance(value, data_type):
             issues.datatype_issue(database_path, guid, attribute, element_type, rev_datatype_dict[type(value)])
 
@@ -92,7 +86,7 @@ def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_at
 
                 value = pset_dict[pset_name][attribute_name]
                 if value is None:
-                    issues.empty_value_issue(database_path,guid,pset_name,attribute.name,element_type)
+                    issues.empty_value_issue(database_path, guid, pset_name, attribute.name, element_type)
                 else:
                     check_values(value, attribute)
 
@@ -124,8 +118,6 @@ def check_element(element: ifcopenshell.entity_instance, main_pset: str, main_at
 
 def iterate_group_structure(focus_group: ifcopenshell.entity_instance, group_dict: dict, ag: str, bk: str,
                             group_parent_dict: dict):
-
-
     relationships = getattr(focus_group, "IsGroupedBy", [])
     for relationship in relationships:
         for sub_element in relationship.RelatedObjects:  # IfcGroup or IfcElement
