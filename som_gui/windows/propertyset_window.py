@@ -337,7 +337,7 @@ class PropertySetWindow(QtWidgets.QWidget):
     def data_combo_change(self, text: str) -> None:
         """if datatype changes to xs:double -> only digits are allowed to be entered into line edits"""
 
-        if text == value_constants.DATATYPE_NUMBER:
+        if text == value_constants.REAL:
             validator = QtGui.QDoubleValidator()
             validator.setNotation(QtGui.QDoubleValidator.Notation.StandardNotation)
         else:
@@ -387,7 +387,7 @@ class PropertySetWindow(QtWidgets.QWidget):
                         if len(value.strip()) > 0:
                             values.append(value)
 
-            if data_type == value_constants.DATATYPE_NUMBER:  # transform text to number
+            if data_type in value_constants.NUMBER_DATATYPES:  # transform text to number
                 for i, value in enumerate(values):
                     try:
                         if self.widget.combo_type.currentText() in constants.RANGE_STRINGS:
@@ -536,13 +536,13 @@ class PropertySetWindow(QtWidgets.QWidget):
         for attribute_value, lines in zip(attribute.value, self.input_lines2.values()):
             if len(lines) > 1:
                 for k, val in enumerate(attribute_value):
-                    if attribute.data_type == value_constants.XS_DOUBLE:
+                    if attribute.data_type == value_constants.REAL:
                         lines[k].setText(float_to_string(val))
                     else:
                         lines[k].setText(val)
             else:
                 line = lines[0]
-                if attribute.data_type == value_constants.XS_DOUBLE:
+                if attribute.data_type == value_constants.REAL:
                     line.setText(float_to_string(attribute_value))
                 else:
                     line.setText(attribute_value)
