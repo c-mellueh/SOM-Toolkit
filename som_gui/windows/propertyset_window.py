@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING
 
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import Qt, QPointF
-from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget, QVBoxLayout, \
+    QWidget
 from SOMcreator import classes
 from SOMcreator.constants import value_constants
 
@@ -19,48 +20,7 @@ from ..windows import popups
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
-
-class CustomTableItem(QTableWidgetItem):
-    def __init__(self, item: classes.Object | classes.PropertySet | classes.Attribute, text: str):
-        super(CustomTableItem, self).__init__()
-        self.linked_data = item
-        self.setText(text)
-
-    def update(self):
-        pass
-
-
-class CustomCheckItem(QTableWidgetItem):
-    def __init__(self, linked_item: classes.PropertySet | classes.Attribute):
-        super(CustomCheckItem, self).__init__()
-        if linked_item.optional:
-            self.setCheckState(Qt.CheckState.Checked)
-        else:
-            self.setCheckState(Qt.CheckState.Unchecked)
-        self.linked_item = linked_item
-
-    def update(self):
-        check_state = self.checkState()
-        if check_state == Qt.CheckState.Checked:
-            check_bool = True
-        elif check_state == Qt.CheckState.Unchecked:
-            check_bool = False
-        elif check_state == Qt.CheckState.PartiallyChecked:
-            logging.error("Partially Checking not Allowed")
-            check_bool = True
-        else:
-            check_bool = True
-        self.linked_item.optional = check_bool
-
-
-class MappingTableItem(QTableWidgetItem):
-    def __init__(self, attribute: classes.Attribute) -> None:
-        super(MappingTableItem, self).__init__()
-        self.attribute = attribute
-        self.update()
-
-    def update(self) -> None:
-        self.setText(self.attribute.revit_name)
+ATTRIBUTE_DATA_ROLE = Qt.ItemDataRole.UserRole + 1
 
 
 def float_to_string(value: float) -> str:
@@ -75,29 +35,33 @@ def string_to_float(value: str) -> float:
 
 
 def get_selected_rows(table_widget: QTableWidget) -> list[int]:
-    selectedRows = []
+    selected_rows = []
     for item in table_widget.selectedItems():
-        if item.row() not in selectedRows:
-            selectedRows.append(item.row())
-    selectedRows.sort()
-    return selectedRows
+        if item.row() not in selected_rows:
+            selected_rows.append(item.row())
+    selected_rows.sort()
+    return selected_rows
 
 
-def set_table_line(table, row: int, attrib: classes.Attribute) -> None:
-    name_item = CustomTableItem(attrib, attrib.name)
-    if attrib.value_type == value_constants.RANGE:
-        value_text = ";".join("-".join((str(x) for x in ran)) for ran in attrib.value)
+def create_table_line(table: QTableWidget, row: int, attribute: classes.Attribute) -> None:
+    items = [QTableWidgetItem() for _ in range(5)]
+    items[0].setText(attribute.name)
+    items[1].setText(attribute.data_type)
+    items[2].setText(constants.GER_TYPES_LOOKUP[attribute.value_type])
+    if attribute.value_type == value_constants.RANGE:
+        value_text = ";".join("-".join((str(x) for x in ran)) for ran in attribute.value)
     else:
-        value_text = ";".join(str(x) for x in attrib.value)
+        value_text = ";".join(str(x) for x in attribute.value)
+    items[3].setText(value_text)
+    items[4].setCheckState(Qt.CheckState.Checked if attribute.optional else Qt.CheckState.Unchecked)
 
-    table.setItem(row, 0, name_item)
-    table.setItem(row, 1, CustomTableItem(attrib, attrib.data_type))
-    table.setItem(row, 2, CustomTableItem(attrib, constants.GER_TYPES_LOOKUP[attrib.value_type]))
-    table.setItem(row, 3, CustomTableItem(attrib, value_text))
-    table.setItem(row, 4, CustomCheckItem(attrib))
-    if attrib.is_child:
+    for index, item in enumerate(items):
+        item.setData(ATTRIBUTE_DATA_ROLE, attribute)
+        table.setItem(row, index, item)
+
+    if attribute.is_child:
         link_item = icons.get_link_icon()
-        name_item.setIcon(link_item)
+        items[0].setIcon(link_item)
 
 
 def fill_attribute_table(active_object: classes.Object,
@@ -116,9 +80,7 @@ def fill_attribute_table(active_object: classes.Object,
     table_widget.setRowCount(len(property_set.attributes))
 
     for i, attribute in enumerate(property_set.attributes):
-        CustomTableItem(attribute, attribute.name)
-
-        set_table_line(table_widget, i, attribute)
+        create_table_line(table_widget, i, attribute)
         if active_object is None:
             continue
         if attribute == active_object.ident_attrib:
@@ -136,7 +98,7 @@ class LineInput(QLineEdit):
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
         seperator = settings.get_seperator()
         sep_bool = settings.get_seperator_status()
-        if event.matches(QtGui.QKeySequence.Paste) and sep_bool:
+        if event.matches(QtGui.QKeySequence.StandardKey.Paste) and sep_bool:
             text = QtGui.QGuiApplication.clipboard().text()
             text_list = text.split(seperator)
             if len(text_list) < 2:
@@ -177,6 +139,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.widget = ui_property_set_window.Ui_layout_main()
         self.widget.setupUi(self)
 
+        # Variables
         self.mainWindow = main_window
         self.property_set = property_set
         self.active_object = active_object
@@ -184,6 +147,7 @@ class PropertySetWindow(QtWidgets.QWidget):
         self._line_validator = QtGui.QRegularExpressionValidator()
         self.table: QTableWidget = self.widget.table_widget
 
+        # Functions
         self.setWindowTitle(window_title)
         self.setWindowIcon(icons.get_icon())
         fill_attribute_table(self.active_object, self.widget.table_widget, self.property_set)
@@ -196,20 +160,24 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.widget.table_widget.dropEvent = self.tableDropEvent
         self.widget.table_widget.dropMimeData = self.tableDropMimeData
 
-        # Fillst combo_Data_type with own Values
+        # Fill combo_Data_type with own Values
         for i in reversed(range(self.widget.combo_data_type.count())):
             self.widget.combo_data_type.removeItem(i)
 
         self.widget.combo_data_type.addItems(list(value_constants.DATA_TYPES))
         self.show()
-        self.resize(1000, 400)
-
         self._description_changed = False
-
         self.horizontal_layout_list: list[QHBoxLayout] = list()
         self.line_edit_list: list[LineInput] = list()
         self.active_line_edit: LineInput | None = None
         connect_items()
+        self.value_layout = QVBoxLayout()
+        self.value_layout.setSpacing(2)
+        self.value_layout.setContentsMargins(2, 2, 2, 2)
+        self.value_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.widget.scroll_area.setWidget(QWidget())
+        self.widget.scroll_area.widget().setLayout(self.value_layout)
+
         self.new_line()
 
     @property
@@ -220,9 +188,6 @@ class PropertySetWindow(QtWidgets.QWidget):
             for index in range(layout.count()):
                 line_dict[layout].append(layout.itemAt(index).widget())
         return line_dict
-
-    def item_changed(self, item: CustomCheckItem):
-        item.update()
 
     @property
     def line_validator(self) -> QtGui.QValidator:
@@ -240,12 +205,12 @@ class PropertySetWindow(QtWidgets.QWidget):
         sender: QTableWidget = event.source()
         if sender == self.table:
             return
-
         self.widget.table_widget.orig_drop_event(event)
         drop_row = self.last_drop_row
         selected_rows = get_selected_rows(sender)
-        sender_attribute_names = {sender.item(row, 0).linked_data.name: row for row in selected_rows}
-        receiver_attribute_names = [self.table.item(row, 0).linked_data.name for row in range(self.table.rowCount())]
+        sender_attribute_names = {sender.item(row, 0).data(ATTRIBUTE_DATA_ROLE).name: row for row in selected_rows}
+        receiver_attribute_names = [self.table.item(row, 0).data(ATTRIBUTE_DATA_ROLE).name for row in
+                                    range(self.table.rowCount())]
 
         for name, row in sender_attribute_names.items():  # remove Rows with existing names
             if name in receiver_attribute_names:
@@ -255,17 +220,16 @@ class PropertySetWindow(QtWidgets.QWidget):
             self.table.insertRow(drop_row)
 
         for offset, row_index in enumerate(selected_rows):  # iterate rows
+            old_attribute: classes.Attribute = self.table.item(row_index, 0).data(ATTRIBUTE_DATA_ROLE)
+            new_attribute = copy.copy(old_attribute)
+            self.property_set.add_attribute(new_attribute)
             for col_index in range(self.table.columnCount()):  # iterate columns
-                old_item: CustomTableItem
+                old_item: QTableWidgetItem
                 old_item = sender.item(row_index, col_index)
-
-                if col_index == 0:  # get attribute
-                    old_attribute: classes.Attribute = old_item.linked_data
-                    new_attribute = copy.copy(old_attribute)
-                    self.property_set.add_attribute(new_attribute)
                 if old_item:
                     if col_index == 0:
-                        new_item = CustomTableItem(new_attribute, new_attribute.name)
+                        new_item = QTableWidgetItem(new_attribute.name)
+                        new_item.setData(ATTRIBUTE_DATA_ROLE, new_attribute)
                         if new_attribute.is_child:
                             new_item.setIcon(icons.get_link_icon())
                     else:
@@ -291,7 +255,8 @@ class PropertySetWindow(QtWidgets.QWidget):
         """delete selected Table items"""
 
         selected_rows = get_selected_rows(self.table)
-        attributes: list[classes.Attribute] = [self.table.item(row, 0).linked_data for row in selected_rows]
+        attributes: list[classes.Attribute] = [self.table.item(row, 0).data(ATTRIBUTE_DATA_ROLE) for row in
+                                               selected_rows]
         if self.active_object is not None:
             if self.active_object.ident_attrib in attributes:
                 popups.msg_mod_ident()
@@ -327,8 +292,8 @@ class PropertySetWindow(QtWidgets.QWidget):
     def info(self) -> None:
         """print infos of attribute to console (debug only)"""
         row = get_selected_rows(self.widget.table_widget)[0]
-        table_item: CustomTableItem = self.widget.table_widget.item(row, 0)
-        item = table_item.linked_data
+        table_item: QTableWidgetItem = self.widget.table_widget.item(row, 0)
+        item = table_item.data(ATTRIBUTE_DATA_ROLE)
         print(item.name)
 
         print(f"property_set: {item.property_set}")
@@ -349,8 +314,8 @@ class PropertySetWindow(QtWidgets.QWidget):
             return
 
         row = selected_rows[0]
-        item: CustomTableItem = self.table.item(row, 0)
-        attribute: classes.Attribute = item.linked_data
+        item: QTableWidgetItem = self.table.item(row, 0)
+        attribute: classes.Attribute = item.data(ATTRIBUTE_DATA_ROLE)
         old_name = attribute.name
         existing_names = [attrib.name for attrib in self.property_set.attributes]
         new_name, fulfilled = popups.req_attribute_name(self, old_name)
@@ -455,7 +420,7 @@ class PropertySetWindow(QtWidgets.QWidget):
             attribute.value = values
 
             item: QTableWidgetItem = self.widget.table_widget.findItems(attribute.name, Qt.MatchFlag.MatchExactly)[0]
-            set_table_line(self.table, item.row(), attribute)
+            create_table_line(self.table, item.row(), attribute)
             return attribute
 
         def create_attribute() -> classes.Attribute | None:
@@ -476,7 +441,7 @@ class PropertySetWindow(QtWidgets.QWidget):
 
             rows = self.widget.table_widget.rowCount()
             self.widget.table_widget.setRowCount(rows + 1)
-            set_table_line(self.table, rows, attrib)
+            create_table_line(self.table, rows, attrib)
 
             return attrib
 
@@ -530,7 +495,7 @@ class PropertySetWindow(QtWidgets.QWidget):
 
         status = self.widget.combo_type.currentText()
         layout = QHBoxLayout()
-        self.widget.verticalLayout.addLayout(layout)
+        self.value_layout.addLayout(layout)
         self.horizontal_layout_list.append(layout)
 
         if status in constants.RANGE_STRINGS:
@@ -591,11 +556,9 @@ class PropertySetWindow(QtWidgets.QWidget):
         self._description_changed = False
         self.update_tab_order()
 
-    def table_clicked(self, table_item: QTableWidgetItem | CustomTableItem | None, attribute=None) -> None:
+    def table_clicked(self, table_item: QTableWidgetItem | None, attribute=None) -> None:
         if attribute is None:
-            self.item_changed(table_item)
-            item: CustomTableItem = self.table.item(table_item.row(), 0)
-            attribute = item.linked_data
+            attribute = table_item.data(ATTRIBUTE_DATA_ROLE)
         if attribute.is_child:
             status = False
             self.widget.combo_type.setToolTip("Attribut wurde geerbt -> Keine Änderung des Types möglich")
@@ -607,11 +570,17 @@ class PropertySetWindow(QtWidgets.QWidget):
         self.enable_menus(status)
         self.fill_with_attribute(attribute)
 
-    def table_double_clicked(self, table_item: QTableWidgetItem | CustomTableItem | MappingTableItem):
-        if not isinstance(table_item, MappingTableItem):
+    def refresh_table_row(self, row: int):
+        if row > self.table.rowCount():
+            logging.error(f"Rowcount < selected Row")
             return
-        popups.attribute_mapping(table_item.attribute)
-        table_item.update()
+
+        item = self.table.item(row, 0)
+        create_table_line(self.table, item.row(), item.data(ATTRIBUTE_DATA_ROLE))
+
+    def table_double_clicked(self, table_item: QTableWidgetItem):
+        popups.attribute_mapping(table_item.data(ATTRIBUTE_DATA_ROLE))
+        self.refresh_table_row(table_item.row())
 
     def decription_changed(self):
         """if description is changed self._description_changed will be set to True

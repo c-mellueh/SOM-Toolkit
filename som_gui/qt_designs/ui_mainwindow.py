@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.0
+## Created by: Qt User Interface Compiler version 6.6.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -290,6 +290,7 @@ class Ui_MainWindow(object):
         self.table_attribute.setHorizontalHeaderItem(3, __qtablewidgetitem6)
         self.table_attribute.setObjectName(u"table_attribute")
         self.table_attribute.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_attribute.setSortingEnabled(True)
         self.splitter_2.addWidget(self.table_attribute)
         self.table_attribute.horizontalHeader().setStretchLastSection(True)
 
