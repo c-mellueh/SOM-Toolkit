@@ -41,13 +41,13 @@ function main() {
     var bauwerksstruktur = getBS(abkuerzungs_dict); // gewollte Bauwerksstruktur als JSON einlesen
     var model = getModel(BSNAME); // BS Model mit BSNAME finden
     buildLayer(model, bauwerksstruktur, abkuerzungs_dict); //BS erstellen und verlinken
-
+    search_for_empty_groups(modelId) // Leere Gruppen löschen
 }
 
 function buildLayer(parent_id, bsLayerDict, abkuerzungs_dict) { // Ebene erstellen
 
     for (var layerKuerzel in bsLayerDict) {
-        var desiteBSID = createIfNotExist(parent_id, layerKuerzel,undefined, abkuerzungs_dict);
+        var desiteBSID = createIfNotExist(parent_id, layerKuerzel, undefined, abkuerzungs_dict);
 
         for (var layerChild in bsLayerDict[layerKuerzel].children) {
             buildInstances(desiteBSID, bsLayerDict, layerChild, layerKuerzel, abkuerzungs_dict);
@@ -315,4 +315,28 @@ function createIssue(issueName, description, modelId, idList) {
 function getDate() {
     date = new Date()
     return [date.getDate(), date.getMonth() + 1, date.getFullYear(),].join('.') + " " + date.toLocaleTimeString();
+}
+
+function search_for_empty_groups(element_id) {
+    var children = check_and_delete_empty_groups(element_id)
+    for (child_index in children) {
+        var child_id = children[child_index];
+        var child_type = desiteAPI.getPropertyValue(child_id, "Type", "xs:string");
+        if (child_type === "typeBsGroup") {
+            search_for_empty_groups(child_id);
+        }
+    }
+}
+
+function check_and_delete_empty_groups(element_id) {
+    var children = desiteAPI.getContainedElements(element_id, 1);
+    var linked_objects = desiteAPI.getLinkedObjects(element_id);
+    if (children.length === 0 && linked_objects.length === 0) {
+        var name = desiteAPI.getPropertyValue(element_id, "cpName", "xs:string");
+        console.log("Delete " + element_id + "   " + name +" because it's empty");
+        var parent_id = desiteAPI.getParent(element_id);
+        desiteAPI.deleteObjects([element_id]);
+        check_and_delete_empty_groups(parent_id);
+    }
+    return children
 }
