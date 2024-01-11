@@ -290,7 +290,7 @@ def init(main_window: MainWindow):
     main_window.delete_shortcut = QShortcut(QKeySequence('Ctrl+X'), main_window)
     main_window.group_shortcut = QShortcut(QKeySequence('Ctrl+G'), main_window)
     main_window.search_shortcut = QShortcut(QKeySequence('Ctrl+F'), main_window)
-    main_window.reload_shortcut = QShortcut(QKeySequence('Ctrl+R'),main_window)
+    main_window.reload_shortcut = QShortcut(QKeySequence('Ctrl+R'), main_window)
     connect_items()
 
 
@@ -299,7 +299,7 @@ def check_identifier(project: classes.Project, obj: classes.Object | None, value
 
 
 def check_abbrev(project: classes.Project, obj: classes.Object | None, value) -> bool:
-    return value in [o.abbreviation for o in project.get_all_objects() if o != obj and o.abbreviation!=""]
+    return value in [o.abbreviation for o in project.get_all_objects() if o != obj and o.abbreviation != ""]
 
 
 def object_double_clicked(main_window: MainWindow, obj: classes.Object):
@@ -636,8 +636,8 @@ def multi_selection(main_window: MainWindow):
         ident_values = [item.object.ident_attrib.value for item in items]
 
         line_assignment = {
-            main_window.ui.line_edit_object_name: object_names,
-            main_window.ui.lineEdit_ident_pSet: ident_psets,
+            main_window.ui.line_edit_object_name:    object_names,
+            main_window.ui.lineEdit_ident_pSet:      ident_psets,
             main_window.ui.lineEdit_ident_attribute: ident_attributes,
         }
 
@@ -659,7 +659,8 @@ def multi_selection(main_window: MainWindow):
 
 
 def check_for_predefined_psets(property_set_name, main_window):
-    if property_set_name in property_widget.predefined_pset_dict(main_window.project).keys():  # if PropertySet allready predefined
+    if property_set_name in property_widget.predefined_pset_dict(
+            main_window.project).keys():  # if PropertySet allready predefined
         return True
     return False
 
@@ -775,7 +776,7 @@ def rc_delete(main_window: MainWindow):
     main_window.reload()
 
 
-def refill_tree(main_window:MainWindow) -> None:
+def refill_tree(main_window: MainWindow) -> None:
     reload(main_window)
     main_window.object_tree.clear()
     fill_tree(main_window.project.objects, main_window.object_tree, CustomObjectTreeItem)
