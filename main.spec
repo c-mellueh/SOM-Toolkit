@@ -1,24 +1,17 @@
 # -*- mode: python ; coding: utf-8 -*-
-import importlib.util
-import os
-
-path = os.path.join(os.path.join(os.path.abspath(os.curdir), "som_gui"), "__init__.py")
-spec = importlib.util.spec_from_file_location("som_gui", path)
-module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(module)
 
 block_cipher = None
 added_files = [('som_gui/icons', 'som_gui/icons'),
                ('som_gui/settings/logging.conf','som_gui/settings'),
-               ('venv/Lib/site-packages/ifcopenshell/express','ifcopenshell/express'),
+               ('venv/Lib/site-packages/ifcopenshell/express','ifcopenshell/express'),('som_gui/module','som_gui/module')
                ]
-
+hi = ['jinja2', 'lxml', 'SOMcreator', 'ifcopenshell', 'tqdm', 'openpyxl','som_gui']
 a = Analysis(
-    ['./main.py', ],
+    ['main.py'],
     pathex=[],
     binaries=[],
     datas=added_files,
-    hiddenimports=['jinja2', 'lxml', 'SOMcreator', 'ifcopenshell', 'tqdm', 'openpyxl'],
+    hiddenimports=hi,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -56,5 +49,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name=f"SOM-Toolkit_v{module.__version__}",
+    name=f"SOM-Toolkit",
 )

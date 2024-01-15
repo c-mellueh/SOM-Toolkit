@@ -1,5 +1,5 @@
 class UseCase:
-    def create_use_case(self):
+    def create_use_case(self, name):
         pass
 
 

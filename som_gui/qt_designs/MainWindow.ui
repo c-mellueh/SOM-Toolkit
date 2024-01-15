@@ -454,6 +454,7 @@
     <addaction name="menuExport"/>
     <addaction name="action_mapping"/>
     <addaction name="action_project_phase"/>
+    <addaction name="action_use_cases"/>
    </widget>
    <widget class="QMenu" name="menuDesite">
     <property name="toolTip">
@@ -671,6 +672,11 @@
   <action name="action_model_control_v2">
    <property name="text">
     <string>Modellinformationen V2</string>
+   </property>
+  </action>
+  <action name="action_use_cases">
+   <property name="text">
+    <string>Anwendungsfälle</string>
    </property>
   </action>
  </widget>

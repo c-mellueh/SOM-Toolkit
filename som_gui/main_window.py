@@ -3,6 +3,7 @@ from __future__ import annotations
 from PySide6.QtWidgets import QMainWindow, QTableWidget, QLabel
 from SOMcreator import classes
 
+import som_gui
 from som_gui.windows.aggregation_view import aggregation_window
 from . import icons, settings, __version__
 from .filehandling import open_file, save_file, export
@@ -85,6 +86,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.app = application
+        som_gui.MainUi.ui = self.ui
 
         # variables
         self.active_object: classes.Object | None = None

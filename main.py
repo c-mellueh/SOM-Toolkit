@@ -3,6 +3,8 @@ import logging
 import os
 import sys
 from logging import config
+
+import som_gui
 from som_gui import logs, settings
 
 
@@ -37,6 +39,7 @@ def main(initial_file: str | None = None):
     app = QApplication(sys.argv)
     window = main_window.MainWindow(app, initial_file)
     window.show()
+    som_gui.load_ui_triggers()
     sys.exit(app.exec())
 
 

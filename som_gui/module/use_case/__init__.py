@@ -1,6 +1,10 @@
 import som_gui
-from . import ui, operator, prop
+from som_gui.module.use_case import ui, operator, prop
 
 
 def register():
     som_gui.UseCaseProperties = prop.UseCaseProperties
+
+
+def load_ui_triggers():
+    ui.load_triggers()
