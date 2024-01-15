@@ -7,7 +7,15 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QPoint, Qt
 from PySide6.QtGui import QShortcut, QKeySequence, QDropEvent
-from PySide6.QtWidgets import QMenu, QTreeWidget, QAbstractItemView, QTreeWidgetItem, QDialog, QLineEdit, QCompleter
+from PySide6.QtWidgets import (
+    QMenu,
+    QTreeWidget,
+    QAbstractItemView,
+    QTreeWidgetItem,
+    QDialog,
+    QLineEdit,
+    QCompleter,
+)
 from SOMcreator import classes, value_constants
 from SOMcreator.Template import IFC_4_1
 
@@ -32,7 +40,10 @@ class CustomTree(QTreeWidget):
     def dropEvent(self, event: QDropEvent) -> None:
         selected_items = self.selectedItems()
         droped_on_item = self.itemFromIndex(self.indexAt(event.pos()))
-        if self.dropIndicatorPosition() == QAbstractItemView.DropIndicatorPosition.OnItem:
+        if (
+            self.dropIndicatorPosition()
+            == QAbstractItemView.DropIndicatorPosition.OnItem
+        ):
             super(CustomTree, self).dropEvent(event)
             parent: classes.Object = droped_on_item.object
 
@@ -90,13 +101,11 @@ class CustomObjectTreeItem(QTreeWidgetItem):
             self.setText(index, value)
 
         if self.object.optional:
-
             self.setCheckState(CHECK_POS, Qt.CheckState.Checked)
         else:
             self.setCheckState(CHECK_POS, Qt.CheckState.Unchecked)
 
     def update(self) -> None:
-        logging.debug(f"Item toggled if item is not Toggled contact me")
         check_state = self.checkState(CHECK_POS)
 
         if check_state == Qt.CheckState.Checked:
@@ -123,7 +132,9 @@ class ObjectInfoWidget(QDialog):
         def connect():
             self.widget.line_edit_attribute_value.textChanged.connect(self.ident_edited)
             self.widget.line_edit_abbreviation.textChanged.connect(self.abbrev_edited)
-            self.widget.combo_box_pset.currentIndexChanged.connect(self.pset_combobox_change)
+            self.widget.combo_box_pset.currentIndexChanged.connect(
+                self.pset_combobox_change
+            )
             self.widget.button_gruppe.clicked.connect(self.concept_state_changed)
 
         self.copy = copy
@@ -189,15 +200,20 @@ class ObjectInfoWidget(QDialog):
         self.widget.combo_box_attribute.clear()
         text = self.widget.combo_box_pset.itemText(item_index)
         pset = self.object.get_property_set_by_name(text)
-        attribute_list = [attribute.name for attribute in pset.attributes if
-                          attribute.data_type == value_constants.LABEL]
+        attribute_list = [
+            attribute.name
+            for attribute in pset.attributes
+            if attribute.data_type == value_constants.LABEL
+        ]
         self.widget.combo_box_attribute.addItems(attribute_list)
 
     def fill_with_values(self):
         self.widget.line_edit_abbreviation.setText(self.object.abbreviation)
         self.widget.line_edit_name.setText(self.object.name)
         ifc_mappings = len(self.object.ifc_mapping)
-        self.widget.combo_box_pset.addItems(sorted([pset.name for pset in self.object.property_sets]))
+        self.widget.combo_box_pset.addItems(
+            sorted([pset.name for pset in self.object.property_sets])
+        )
         for _ in range(ifc_mappings - 1):
             self.add_line()
 
@@ -209,7 +225,9 @@ class ObjectInfoWidget(QDialog):
             self.widget.button_gruppe.setChecked(True)
             return
 
-        self.widget.combo_box_pset.setCurrentText(self.object.ident_attrib.property_set.name)
+        self.widget.combo_box_pset.setCurrentText(
+            self.object.ident_attrib.property_set.name
+        )
         self.widget.combo_box_attribute.setCurrentText(self.object.ident_attrib.name)
         self.widget.line_edit_attribute_value.setText(self.object.ident_value)
 
@@ -248,7 +266,7 @@ class ObjectInfoWidget(QDialog):
 def init(main_window: MainWindow):
     def init_tree(tree: CustomTree):
         # Design Tree
-        tree.setObjectName(u"treeWidget_objects")
+        tree.setObjectName("treeWidget_objects")
         tree.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
         tree.setDefaultDropAction(Qt.MoveAction)
         tree.setAlternatingRowColors(False)
@@ -270,13 +288,21 @@ def init(main_window: MainWindow):
         ui.tree_object.itemClicked.connect(lambda item: single_click(main_window, item))
         ui.tree_object.itemChanged.connect(lambda item: item.update())
         ui.tree_object.itemExpanded.connect(lambda: resize_tree(main_window))
-        ui.tree_object.customContextMenuRequested.connect(lambda pos: right_click(main_window, pos))
-        ui.tree_object.itemDoubleClicked.connect(lambda item: object_double_clicked(main_window, item.object))
+        ui.tree_object.customContextMenuRequested.connect(
+            lambda pos: right_click(main_window, pos)
+        )
+        ui.tree_object.itemDoubleClicked.connect(
+            lambda item: object_double_clicked(main_window, item.object)
+        )
         ui.button_search.clicked.connect(lambda: search_object(main_window))
         ui.button_objects_add.clicked.connect(lambda: add_object(main_window))
-        main_window.group_shortcut.activated.connect(lambda: rc_group_items(main_window))
+        main_window.group_shortcut.activated.connect(
+            lambda: rc_group_items(main_window)
+        )
         main_window.delete_shortcut.activated.connect(lambda: rc_delete(main_window))
-        main_window.search_shortcut.activated.connect(lambda: search_object(main_window))
+        main_window.search_shortcut.activated.connect(
+            lambda: search_object(main_window)
+        )
         main_window.reload_shortcut.activated.connect(lambda: refill_tree(main_window))
 
     main_window.ui.verticalLayout_objects.removeWidget(main_window.ui.tree_object)
@@ -287,19 +313,25 @@ def init(main_window: MainWindow):
 
     main_window.ui.verticalLayout_objects.addWidget(main_window.ui.tree_object)
 
-    main_window.delete_shortcut = QShortcut(QKeySequence('Ctrl+X'), main_window)
-    main_window.group_shortcut = QShortcut(QKeySequence('Ctrl+G'), main_window)
-    main_window.search_shortcut = QShortcut(QKeySequence('Ctrl+F'), main_window)
-    main_window.reload_shortcut = QShortcut(QKeySequence('Ctrl+R'), main_window)
+    main_window.delete_shortcut = QShortcut(QKeySequence("Ctrl+X"), main_window)
+    main_window.group_shortcut = QShortcut(QKeySequence("Ctrl+G"), main_window)
+    main_window.search_shortcut = QShortcut(QKeySequence("Ctrl+F"), main_window)
+    main_window.reload_shortcut = QShortcut(QKeySequence("Ctrl+R"), main_window)
     connect_items()
 
 
-def check_identifier(project: classes.Project, obj: classes.Object | None, value) -> bool:
+def check_identifier(
+    project: classes.Project, obj: classes.Object | None, value
+) -> bool:
     return value in [o.ident_value for o in project.get_all_objects() if o != obj]
 
 
 def check_abbrev(project: classes.Project, obj: classes.Object | None, value) -> bool:
-    return value in [o.abbreviation for o in project.get_all_objects() if o != obj and o.abbreviation != ""]
+    return value in [
+        o.abbreviation
+        for o in project.get_all_objects()
+        if o != obj and o.abbreviation != ""
+    ]
 
 
 def object_double_clicked(main_window: MainWindow, obj: classes.Object):
@@ -319,7 +351,9 @@ def object_double_clicked(main_window: MainWindow, obj: classes.Object):
     if not object_widget.is_concept:
         ident_pset_name = object_widget.widget.combo_box_pset.currentText()
         ident_attribute_name = object_widget.widget.combo_box_attribute.currentText()
-        ident_attribute = obj.get_property_set_by_name(ident_pset_name).get_attribute_by_name(ident_attribute_name)
+        ident_attribute = obj.get_property_set_by_name(
+            ident_pset_name
+        ).get_attribute_by_name(ident_attribute_name)
         obj.ident_attrib = ident_attribute
         obj.ident_attrib.value = [ident_value]
 
@@ -329,17 +363,22 @@ def object_double_clicked(main_window: MainWindow, obj: classes.Object):
 
 
 def update_completer(main_window: MainWindow):
-    completer = QCompleter(property_widget.predefined_pset_dict(main_window.project).keys(), main_window)
+    completer = QCompleter(
+        property_widget.predefined_pset_dict(main_window.project).keys(), main_window
+    )
     main_window.ui.lineEdit_ident_pSet.setCompleter(completer)
     main_window.ui.lineEdit_pSet_name.setCompleter(completer)
 
 
-def fill_tree(object_list: list[classes.Object], tree: QTreeWidget, tree_object_class) -> None:
+def fill_tree(
+    object_list: list[classes.Object], tree: QTreeWidget, tree_object_class
+) -> None:
     object_list = list(object_list)
     root_item = tree.invisibleRootItem()
-    item_dict: dict[classes.Object, tree_object_class] = \
-        {obj: add_object_to_tree(tree, obj, root_item, tree_object_class) for obj in
-         object_list}  # add all Objects to Tree without Order
+    item_dict: dict[classes.Object, tree_object_class] = {
+        obj: add_object_to_tree(tree, obj, root_item, tree_object_class)
+        for obj in object_list
+    }  # add all Objects to Tree without Order
 
     for obj in object_list:
         tree_item = item_dict[obj]
@@ -376,11 +415,13 @@ def all_equal(iterator):
 
 
 def clear_object_input(main_window: MainWindow):
-    obj_line_edit_list = [main_window.ui.line_edit_object_name,
-                          main_window.ui.lineEdit_ident_value,
-                          main_window.ui.lineEdit_ident_attribute,
-                          main_window.ui.lineEdit_ident_pSet,
-                          main_window.ui.line_edit_abbreviation]
+    obj_line_edit_list = [
+        main_window.ui.line_edit_object_name,
+        main_window.ui.lineEdit_ident_value,
+        main_window.ui.lineEdit_ident_attribute,
+        main_window.ui.lineEdit_ident_pSet,
+        main_window.ui.line_edit_abbreviation,
+    ]
     for el in obj_line_edit_list:
         el.clear()
 
@@ -407,7 +448,9 @@ def get_object_text_matrix(project: classes.Project):
 
 def search_object(main_window: MainWindow):
     text_matrix, connection_list = get_object_text_matrix(main_window.project)
-    sw = popups.SearchWindow(main_window, text_matrix, connection_list, ["Objekt", "Identifier", "Abkürzung"])
+    sw = popups.SearchWindow(
+        main_window, text_matrix, connection_list, ["Objekt", "Identifier", "Abkürzung"]
+    )
     if not sw.exec():
         return
     obj = sw.data
@@ -430,18 +473,28 @@ def right_click(main_window: MainWindow, position: QPoint):
     selected_items = main_window.ui.tree_object.selectedItems()
     if len(selected_items) == 1:
         main_window.action_copy = menu.addAction("Copy")
-        main_window.action_copy.triggered.connect(lambda: copy_selected_object(main_window))
+        main_window.action_copy.triggered.connect(
+            lambda: copy_selected_object(main_window)
+        )
 
     if len(selected_items) != 0:
         main_window.action_delete_attribute = menu.addAction("Delete")
         main_window.action_expand_selection = menu.addAction("Expand")
         main_window.action_collapse_selection = menu.addAction("Collapse")
-        main_window.action_delete_attribute.triggered.connect(lambda: rc_delete(main_window))
-        main_window.action_expand_selection.triggered.connect(lambda: rc_expand(main_window.ui.tree_object))
-        main_window.action_collapse_selection.triggered.connect(lambda: rc_collapse(main_window.ui.tree_object))
+        main_window.action_delete_attribute.triggered.connect(
+            lambda: rc_delete(main_window)
+        )
+        main_window.action_expand_selection.triggered.connect(
+            lambda: rc_expand(main_window.ui.tree_object)
+        )
+        main_window.action_collapse_selection.triggered.connect(
+            lambda: rc_collapse(main_window.ui.tree_object)
+        )
 
     main_window.action_group_objects = menu.addAction("Group")
-    main_window.action_group_objects.triggered.connect(lambda: rc_group_items(main_window))
+    main_window.action_group_objects.triggered.connect(
+        lambda: rc_group_items(main_window)
+    )
 
     if logging.root.level <= logging.DEBUG:
         main_window.action_info = menu.addAction("Info")
@@ -504,7 +557,9 @@ def copy_selected_object(main_window: MainWindow):
     if is_concept:
         new_object.ident_attrib = str(uuid.uuid4())
     else:
-        ident_attribute = new_object.get_property_set_by_name(ident_pset_name).get_attribute_by_name(ident_attrib_name)
+        ident_attribute = new_object.get_property_set_by_name(
+            ident_pset_name
+        ).get_attribute_by_name(ident_attrib_name)
         new_object.ident_attrib = ident_attribute
         new_object.ident_attrib.value = ident_value.split("|")
 
@@ -531,21 +586,29 @@ def rc_group_items(main_window: MainWindow):
         parent_classes = list()
         parent: QTreeWidgetItem = main_window.ui.tree_object.invisibleRootItem()
     else:
-        parent_classes = [item for item in selected_items if item.parent() not in selected_items]
+        parent_classes = [
+            item for item in selected_items if item.parent() not in selected_items
+        ]
         parent = parent_classes[0].parent()
         if parent is None:
             parent: QTreeWidgetItem = main_window.ui.tree_object.invisibleRootItem()
 
     if is_concept:
-        group_obj = classes.Object(name=group_name, abbreviation=abbreviation, ident_attrib=str(uuid.uuid4()),
-                                   project=main_window.project, ifc_mapping={"IfcGroup"})
+        group_obj = classes.Object(
+            name=group_name,
+            abbreviation=abbreviation,
+            ident_attrib=str(uuid.uuid4()),
+            project=main_window.project,
+            ifc_mapping={"IfcGroup"},
+        )
     else:
-
         pset_parent: classes.PropertySet | None = None
         if check_for_predefined_psets(ident_pset, main_window):
             result = popups.req_merge_pset()  # ask if you want to merge
             if result is True:
-                pset_parent = property_widget.get_parent_by_name(main_window.active_object, ident_pset)
+                pset_parent = property_widget.get_parent_by_name(
+                    main_window.active_object, ident_pset
+                )
             elif result is None:
                 return
         if pset_parent is not None:
@@ -553,11 +616,17 @@ def rc_group_items(main_window: MainWindow):
         else:
             pset = classes.PropertySet(ident_pset)
         identifier = create_ident(pset, ident_attrib, [ident_value])
-        group_obj = classes.Object(name=group_name, ident_attrib=identifier, abbreviation=abbreviation,
-                                   project=main_window.project)
+        group_obj = classes.Object(
+            name=group_name,
+            ident_attrib=identifier,
+            abbreviation=abbreviation,
+            project=main_window.project,
+        )
         group_obj.add_property_set(pset)
 
-    group_item: CustomObjectTreeItem = add_object_to_tree(main_window.object_tree, group_obj, parent)
+    group_item: CustomObjectTreeItem = add_object_to_tree(
+        main_window.object_tree, group_obj, parent
+    )
 
     for item in parent_classes:
         child: CustomObjectTreeItem = parent.takeChild(parent.indexOfChild(item))
@@ -630,19 +699,21 @@ def multi_selection(main_window: MainWindow):
     else:
         set_ident_line_enable(main_window, True)
         object_names = [item.object.name for item in items]
-        ident_psets = [item.object.ident_attrib.property_set.name for item in items if
-                       isinstance(item.object.ident_attrib, classes.Attribute)]
+        ident_psets = [
+            item.object.ident_attrib.property_set.name
+            for item in items
+            if isinstance(item.object.ident_attrib, classes.Attribute)
+        ]
         ident_attributes = [item.object.ident_attrib.name for item in items]
         ident_values = [item.object.ident_attrib.value for item in items]
 
         line_assignment = {
-            main_window.ui.line_edit_object_name:    object_names,
-            main_window.ui.lineEdit_ident_pSet:      ident_psets,
+            main_window.ui.line_edit_object_name: object_names,
+            main_window.ui.lineEdit_ident_pSet: ident_psets,
             main_window.ui.lineEdit_ident_attribute: ident_attributes,
         }
 
         for key, item in line_assignment.items():
-
             if all_equal(item):
                 key.setText(item[0])
             else:
@@ -659,16 +730,22 @@ def multi_selection(main_window: MainWindow):
 
 
 def check_for_predefined_psets(property_set_name, main_window):
-    if property_set_name in property_widget.predefined_pset_dict(
-            main_window.project).keys():  # if PropertySet allready predefined
+    if (
+        property_set_name
+        in property_widget.predefined_pset_dict(main_window.project).keys()
+    ):  # if PropertySet allready predefined
         return True
     return False
 
 
-def create_ident(pset: classes.PropertySet, ident_name: str, ident_value: [str]) -> classes.Attribute:
+def create_ident(
+    pset: classes.PropertySet, ident_name: str, ident_value: [str]
+) -> classes.Attribute:
     ident_attrib: classes.Attribute = pset.get_attribute_by_name(ident_name)
     if ident_attrib is None:
-        ident_attrib = classes.Attribute(pset, ident_name, ident_value, value_constants.LIST)
+        ident_attrib = classes.Attribute(
+            pset, ident_name, ident_value, value_constants.LIST
+        )
     else:
         ident_attrib.value = ident_value
     return ident_attrib
@@ -712,7 +789,9 @@ def add_object(main_window: MainWindow):
     if check_for_predefined_psets(p_set_name, main_window):
         result = popups.req_merge_pset()  # ask if you want to merge
         if result is True:
-            parent = property_widget.get_parent_by_name(main_window.active_object, p_set_name)
+            parent = property_widget.get_parent_by_name(
+                main_window.active_object, p_set_name
+            )
         elif result is None:
             return
 
@@ -722,14 +801,25 @@ def add_object(main_window: MainWindow):
         property_set = classes.PropertySet(p_set_name)
 
     ident = create_ident(property_set, ident_attrib_name, [ident_attrib_value])
-    obj = classes.Object(name=name, ident_attrib=ident, abbreviation=abbreviation, project=main_window.project)
+    obj = classes.Object(
+        name=name,
+        ident_attrib=ident,
+        abbreviation=abbreviation,
+        project=main_window.project,
+    )
     obj.add_property_set(ident.property_set)
-    add_object_to_tree(main_window.object_tree, obj, main_window.object_tree.invisibleRootItem())
+    add_object_to_tree(
+        main_window.object_tree, obj, main_window.object_tree.invisibleRootItem()
+    )
     clear_object_input(main_window)
 
 
-def add_object_to_tree(tree: QTreeWidget, obj: classes.Object, parent: QTreeWidgetItem = None,
-                       tree_object_class=CustomObjectTreeItem):
+def add_object_to_tree(
+    tree: QTreeWidget,
+    obj: classes.Object,
+    parent: QTreeWidgetItem = None,
+    tree_object_class=CustomObjectTreeItem,
+):
     item = tree_object_class(obj)
     if parent is None:
         tree.invisibleRootItem().addChild(item)
@@ -751,7 +841,9 @@ def rc_delete(main_window: MainWindow):
     selected_tree_items = main_window.ui.tree_object.selectedItems()
     tree = main_window.object_tree
 
-    selected_objects: list[classes.Object] = [item.object for item in selected_tree_items]
+    selected_objects: list[classes.Object] = [
+        item.object for item in selected_tree_items
+    ]
     string_list = [obj.name for obj in selected_objects]
 
     delete_request, recursive_deletion = popups.msg_del_items(string_list, item_type=1)
@@ -779,7 +871,9 @@ def rc_delete(main_window: MainWindow):
 def refill_tree(main_window: MainWindow) -> None:
     reload(main_window)
     main_window.object_tree.clear()
-    fill_tree(main_window.project.objects, main_window.object_tree, CustomObjectTreeItem)
+    fill_tree(
+        main_window.project.objects, main_window.object_tree, CustomObjectTreeItem
+    )
 
 
 def reload(main_window: MainWindow) -> None:
@@ -794,9 +888,15 @@ def reload(main_window: MainWindow) -> None:
             ident_text = "" if focus_object.is_concept else focus_object.ident_value
             model.setData(identifier_index, ident_text)
             model.setData(abbreviaion_index, focus_object.abbreviation)
-            cs = Qt.CheckState.Checked if focus_object.optional else Qt.CheckState.Unchecked
+            cs = (
+                Qt.CheckState.Checked
+                if focus_object.optional
+                else Qt.CheckState.Unchecked
+            )
             model.setData(optional_index, cs, Qt.ItemDataRole.CheckStateRole)
-            hide_bool: bool = focus_object.get_project_phase_state(main_window.project.current_project_phase)
+            hide_bool: bool = focus_object.get_project_phase_state(
+                main_window.project.current_project_phase
+            )
             tree.setRowHidden(row, parent_index, not hide_bool)
             iter_tree(index)
 
