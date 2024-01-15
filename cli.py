@@ -5,7 +5,7 @@ import subprocess
 import sys
 from importlib import import_module
 
-from som_gui.__main__ import start_log
+import main as main_func
 
 # implement pip as a subprocess:
 
@@ -15,13 +15,14 @@ REVERSE_MAPPING = {val: key for key, val in MAPPING.items()}
 
 def check_for_pp_latest():
     if importlib.util.find_spec("pypi_latest") is None:
-        subprocess.run([sys.executable, '-m', 'pip', 'install', 'pypi-latest'])
+        subprocess.run([sys.executable, "-m", "pip", "install", "pypi-latest"])
         os.kill(os.getpid(), 9)
 
 
 def install_missing_packages():
     check_for_pp_latest()
     from pypi_latest import PypiLatest
+
     made_an_update = False
     with open("./requirements.txt", "r") as file:
         lines = set(line.strip() for line in file.readlines())
@@ -60,8 +61,8 @@ def install_missing_packages():
 def cli():
     if install_missing_packages():
         return
-    start_log(logging.DEBUG)
-    from som_gui.__main__ import main
+    main_func.start_log(logging.DEBUG)
+    from main import main
 
     main()
 
