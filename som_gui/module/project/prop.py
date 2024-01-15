@@ -4,7 +4,7 @@ from SOMcreator import Project
 
 @dataclass
 class ProjectProperties:
-    active_project: Project
     project_name: str
     author: str
     version: str
+    active_project: Project | None = None

@@ -89,8 +89,7 @@ def get_path(main_window: MainWindow, title: str, file_text: str) -> str:
 def import_data(main_window: MainWindow, path: str):
     settings.set_open_path(path)
     settings.set_save_path(path)
-    main_window.project = project_core.open_project(path, ProjectTool)
-    main_dict = main_window.project.open(path)
+    main_window.project, main_dict = project_core.open_project(path, ProjectTool)
     import_node_pos(main_dict, main_window.graph_window)
     fill_ui(main_window)
     check_for_objects_without_aggregation(main_window.project)
