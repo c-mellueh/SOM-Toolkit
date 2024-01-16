@@ -1,12 +1,12 @@
 import SOMcreator
 from PySide6.QtCore import Qt, QModelIndex
-from PySide6.QtWidgets import QTreeView
+from PySide6.QtWidgets import QTreeView, QMenu, QInputDialog, QLineEdit
 import som_gui.core.tool
 from som_gui.tool.project import Project
 from som_gui.module.use_case import data as use_case_data
 import som_gui.module.use_case.constants
 import som_gui
-from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QAction
 from typing import TYPE_CHECKING
 from som_gui.module.project.constants import CLASS_REFERENCE
 
@@ -31,6 +31,57 @@ def create_row(entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.Pro
 
 
 class UseCase(som_gui.core.tool.UseCase):
+
+    @classmethod
+    def remove_use_case_column(cls,use_case_index:int,model:QStandardItemModel):
+        title_length = cls.get_title_lenght_by_model(model)
+        column = title_length+use_case_index
+        model.removeColumn(column)
+
+    @classmethod
+    def get_new_use_case_name(cls,standard_name:str):
+        def loop_name(new_name):
+            if new_name in existing_names:
+                if new_name == standard_name:
+                    return loop_name(f"{new_name}_1")
+                index = int(new_name[-1])
+                return loop_name(f"{new_name[:-1]}{index + 1}")
+            return new_name
+        existing_names = cls.get_use_case_list()
+        return loop_name(standard_name)
+
+    @classmethod
+    def request_rename_use_case_name(cls, old_name):
+        prop = som_gui.UseCaseProperties
+        active_window = prop.use_case_window
+        new_name, ok = QInputDialog.getText(active_window, "Anwendungsfall umbenennen", "Neuer Name:",
+                                            QLineEdit.EchoMode.Normal,                                            old_name)
+        if not ok:
+            return None
+        return new_name
+
+    @classmethod
+    def create_context_menu(cls, global_pos, action_dict):
+        """
+        action_dict: dict of action name and collectable function
+        """
+        menu = QMenu()
+        actions = list()
+        for action_name, action_function in action_dict.items():
+            action = QAction(action_name)
+            actions.append(action)
+            menu.addAction(action)
+            action.triggered.connect(action_function)
+        menu.exec(global_pos)
+
+    @classmethod
+    def get_object_tree_view(cls):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        window = prop.use_case_window
+        if window is None:
+            return None
+        return window.widget.object_tree
+
     @classmethod
     def create_tree(cls, entities: set[SOMcreator.Attribute | SOMcreator.Object], parent_item: QStandardItem,
                     use_case_list,
@@ -51,6 +102,11 @@ class UseCase(som_gui.core.tool.UseCase):
         for child_row in range(parent_item.rowCount()):
             for child_column, _ in enumerate(use_case_list, start=pre_header_text_length):
                 child_item = parent_item.child(child_row, child_column)
+                if child_item is None:
+                    child_item = QStandardItem()
+                    child_item.setCheckable(True)
+                    child_item.setCheckState(Qt.CheckState.Checked)
+                    parent_item.setChild(child_row,child_column,child_item)
                 cls.update_enable_status(child_item, model)
             class_item = parent_item.child(child_row, 0)
             obj = class_item.data(CLASS_REFERENCE)
@@ -330,7 +386,13 @@ class UseCase(som_gui.core.tool.UseCase):
 
             for child_row in range(root_item.rowCount()):
                 for child_column, enable_state in enumerate(sub_enable_states, start=len(pset_header_texts)):
-                    root_item.child(child_row, child_column).setEnabled(enable_state)
+                    child_item = root_item.child(child_row, child_column)
+                    if child_item is None:
+                        child_item = QStandardItem()
+                        child_item.setCheckable(True)
+                        child_item.setCheckState(Qt.CheckState.Checked)
+                        root_item.setChild(child_row,child_column,child_item)
+                    child_item.setEnabled(enable_state)
                 pset = root_item.child(child_row, 0).data(CLASS_REFERENCE)
                 cls.create_tree(pset.get_all_attributes(), root_item.child(child_row, 0), use_case_list,
                                 len(pset_header_texts), model)
