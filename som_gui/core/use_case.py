@@ -40,7 +40,7 @@ def load_objects(use_case_tool: Type[UseCase], project_tool: Type[Project]):
 def tree_mouse_press_event(index: QModelIndex, use_case_tool: Type[UseCase]):
     if index is None:
         return False
-    if index.column() < use_case_tool.get_object_title_count():
+    if index.column() < use_case_tool.get_title_count_by_index(index):
         return True
     if not use_case_tool.is_object_enabled(index):
         return False
@@ -48,7 +48,7 @@ def tree_mouse_press_event(index: QModelIndex, use_case_tool: Type[UseCase]):
 
 
 def tree_mouse_move_event(index: QModelIndex, use_case_tool: Type[UseCase]):
-    if not use_case_tool.is_object_tree_clicked():
+    if not use_case_tool.is_tree_clicked():
         use_case_tool.tree_activate_click_drag(index)
         return
     use_case_tool.tree_move_click_drag(index)

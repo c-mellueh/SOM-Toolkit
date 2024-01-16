@@ -13,4 +13,4 @@ class UseCaseProperties:
     active_object: SOMcreator.Object = None
     active_check_state: Qt.CheckState = None
     use_case_window: UseCaseWindow = None
-    object_tree_is_clicked: bool = False
+    tree_is_clicked: bool = False
