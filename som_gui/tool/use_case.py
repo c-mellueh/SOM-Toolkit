@@ -120,14 +120,14 @@ class UseCase(som_gui.core.tool.UseCase):
         return prop.object_tree_is_clicked
 
     @classmethod
-    def objecttree_activate_click_drag(cls, index: QModelIndex):
+    def tree_activate_click_drag(cls, index: QModelIndex):
         prop: UseCaseProperties = som_gui.UseCaseProperties
         prop.object_tree_is_clicked = True
         checkstate = index.data(Qt.ItemDataRole.CheckStateRole)
         prop.active_check_state = checkstate
 
     @classmethod
-    def objecttree_move_click_drag(cls, index: QModelIndex):
+    def tree_move_click_drag(cls, index: QModelIndex):
         if index.column() < cls.get_object_title_count():
             return
         active_checkstate = cls.get_active_checkstate()
@@ -139,7 +139,7 @@ class UseCase(som_gui.core.tool.UseCase):
         model.setData(index, active_checkstate, Qt.ItemDataRole.CheckStateRole)
 
     @classmethod
-    def objecttree_release_click_drag(cls, index: QModelIndex):
+    def tree_release_click_drag(cls, index: QModelIndex):
         prop: UseCaseProperties = som_gui.UseCaseProperties
         prop.object_tree_is_clicked = False
         prop.active_check_state = None

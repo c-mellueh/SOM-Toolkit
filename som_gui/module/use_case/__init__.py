@@ -1,5 +1,5 @@
 import som_gui
-from som_gui.module.use_case import ui, operator, prop, window
+from som_gui.module.use_case import ui, trigger, prop, window
 
 
 def register():
