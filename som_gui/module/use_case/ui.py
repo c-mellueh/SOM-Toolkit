@@ -3,6 +3,8 @@ from som_gui import MainUi
 from PySide6.QtWidgets import QWidget
 import som_gui.module.use_case as use_case
 from som_gui import icons
+from som_gui.core import use_case as core
+from som_gui.tool.use_case import UseCase
 
 
 class UseCaseWindow(QWidget):
@@ -56,40 +58,12 @@ class ObjectTreeView(QTreeView):
 
     def mousePressEvent(self, event: QMouseEvent):
         index = self.indexAt(event.pos())
-
-        if index is None:
-            return
-        if index.column() < self.title_count:
+        if core.object_tree_mouse_press_event(index, UseCase):
             super().mousePressEvent(event)
-            return
-
-        if not self.model().itemFromIndex(index).isEnabled():
-            return
-
-        old_check_state = index.data(Qt.ItemDataRole.CheckStateRole)
-        new_check_state = (
-            Qt.CheckState.Unchecked
-            if old_check_state in (2, Qt.CheckState.Checked)
-            else Qt.CheckState.Checked
-        )
-        self.model().setData(index, new_check_state, Qt.ItemDataRole.CheckStateRole)
 
     def mouseMoveEvent(self, event: QMouseEvent):
         super().mouseMoveEvent(event)
-        if not self.is_already_pressed:
-            self.is_already_pressed = True
-            index = self.indexAt(event.pos())
-            cs = index.data(Qt.ItemDataRole.CheckStateRole)
-            self.check_state = cs
-            return
-        index: QModelIndex = self.indexAt(event.pos())
-        if index.column() < self.title_count:
-            return
-        if self.check_state is None or index.model() is None:
-            return
-        if not self.model().itemFromIndex(index).isEnabled():
-            return
-        self.model().setData(index, self.check_state, Qt.ItemDataRole.CheckStateRole)
+        core.object_tree_mouse_move_event(self.indexAt(event.pos()), UseCase)
 
     def model(self) -> QStandardItemModel:
         return super().model()
@@ -99,11 +73,5 @@ class ObjectTreeView(QTreeView):
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
-        self.is_already_pressed = False
-        self.check_state = None
         index = self.indexAt(event.pos())
-        if index is None:
-            return
-        focus_index = index.sibling(index.row(), 0)
-        if isinstance(focus_index.data(CLASS_REFERENCE), classes.Object):
-            self.window().object_index_clicked(focus_index)
+        core.object_tree_mouse_release_event(index, UseCase)

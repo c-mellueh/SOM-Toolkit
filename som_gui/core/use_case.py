@@ -1,6 +1,7 @@
 from som_gui.tool.use_case import UseCase
 from som_gui.tool.project import Project
 from typing import Type
+from PySide6.QtCore import QModelIndex
 
 
 def create_use_case(use_case_tool: Type[UseCase]):
@@ -21,3 +22,26 @@ def load_headers(use_case_tool: Type[UseCase]):
 def load_objects(use_case_tool: Type[UseCase], project_tool: Type[Project]):
     root_objects = project_tool.get_root_objects(filter=False)
     use_case_tool.fill_object_tree(root_objects)
+
+
+def object_tree_mouse_press_event(index: QModelIndex, use_case_tool: Type[UseCase]):
+    if index is None:
+        return False
+    if index.column() < use_case_tool.get_object_title_count():
+        return True
+    if not use_case_tool.is_object_enabled(index):
+        return False
+    use_case_tool.toggle_checkstate(index)
+
+
+def object_tree_mouse_move_event(index: QModelIndex, use_case_tool: Type[UseCase]):
+    if not use_case_tool.is_object_tree_clicked():
+        use_case_tool.objecttree_activate_click_drag(index)
+        return
+    use_case_tool.objecttree_move_click_drag(index)
+
+
+def object_tree_mouse_release_event(index, use_case_tool: Type[UseCase]):
+    if index is None:
+        return
+    use_case_tool.objecttree_release_click_drag(index)

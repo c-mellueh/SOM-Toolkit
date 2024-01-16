@@ -3,6 +3,7 @@ from som_gui.module.use_case.ui import UseCaseWindow
 import som_gui.core.use_case as core
 from som_gui.tool.use_case import UseCase
 from som_gui.tool.project import Project
+from PySide6.QtCore import QModelIndex
 
 
 def menu_action_use_cases():
@@ -15,3 +16,8 @@ def menu_action_use_cases():
 def refresh_object_tree():
     core.load_headers(UseCase)
     core.load_objects(UseCase, Project)
+
+
+def object_tree_mouse_press_event(index: QModelIndex):
+    if index is None:
+        return False

@@ -1,8 +1,9 @@
 import SOMcreator
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QModelIndex
 import som_gui.core.tool
 from som_gui.tool.project import Project
 from som_gui.module.use_case.data import UseCaseData
+import som_gui.module.use_case.constants
 import som_gui
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from typing import TYPE_CHECKING
@@ -33,9 +34,8 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def set_header_labels(cls, labels: list[str]):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
-        object_tree = prop.use_case_window.widget.object_tree
-        object_tree.model().setHorizontalHeaderLabels(labels)
+        model = cls.get_object_model()
+        model.setHorizontalHeaderLabels(labels)
 
     @classmethod
     def get_object_dict(cls) -> dict[SOMcreator.Object, dict[str, bool]]:
@@ -43,7 +43,7 @@ class UseCase(som_gui.core.tool.UseCase):
         return {obj: obj.get_use_case_dict() for obj in objects}
 
     @classmethod
-    def fill_object_tree(cls, root_objects: list[SOMcreator.Object]):
+    def fill_object_tree(cls, root_objects: list[SOMcreator.Object]) -> None:
         def create_row(obj: SOMcreator.Object):
             obj_item = QStandardItem(obj.name)
             obj_item.setData(obj, CLASS_REFERENCE)
@@ -80,7 +80,78 @@ class UseCase(som_gui.core.tool.UseCase):
                 parent_item.appendRow(row)
                 iter_tree(new_object.children, row[0])
 
-        prop: UseCaseProperties = som_gui.UseCaseProperties
-        model = prop.use_case_window.widget.object_tree.model()
+        model = cls.get_object_model()
         use_case_list = cls.get_use_case_list()
         iter_tree(set(root_objects), model.invisibleRootItem())
+
+    @classmethod
+    def get_object_title_count(cls) -> int:
+        return len(som_gui.module.use_case.constants.OBJECT_TITLES)
+
+    @classmethod
+    def is_object_enabled(cls, index: QModelIndex) -> bool:
+        model = cls.get_object_model()
+        return model.itemFromIndex(index).isEnabled()
+
+    @classmethod
+    def toggle_checkstate(cls, index: QModelIndex) -> None:
+        old_check_state = cls.get_checkstate(index)
+        new_check_state = (
+            Qt.CheckState.Unchecked
+            if old_check_state in (2, Qt.CheckState.Checked)
+            else Qt.CheckState.Checked
+        )
+        cls.get_object_model().setData(
+            index, new_check_state, Qt.ItemDataRole.CheckStateRole
+        )
+
+    @classmethod
+    def get_checkstate(cls, index: QModelIndex) -> int:
+        return index.data(Qt.ItemDataRole.CheckStateRole)
+
+    @classmethod
+    def get_object_model(cls) -> QStandardItemModel:
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        return prop.use_case_window.widget.object_tree.model()
+
+    @classmethod
+    def is_object_tree_clicked(cls) -> bool:
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        return prop.object_tree_is_clicked
+
+    @classmethod
+    def objecttree_activate_click_drag(cls, index: QModelIndex):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop.object_tree_is_clicked = True
+        checkstate = index.data(Qt.ItemDataRole.CheckStateRole)
+        prop.active_check_state = checkstate
+
+    @classmethod
+    def objecttree_move_click_drag(cls, index: QModelIndex):
+        if index.column() < cls.get_object_title_count():
+            return
+        active_checkstate = cls.get_active_checkstate()
+        if active_checkstate is None:
+            return
+        model = cls.get_object_model()
+        if not model.itemFromIndex(index).isEnabled():
+            return
+        model.setData(index, active_checkstate, Qt.ItemDataRole.CheckStateRole)
+
+    @classmethod
+    def objecttree_release_click_drag(cls, index: QModelIndex):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop.object_tree_is_clicked = False
+        prop.active_check_state = None
+        focus_index = index.sibling(index.row(), 0)
+        if isinstance(focus_index.data(CLASS_REFERENCE), SOMcreator.Object):
+            cls.object_tree_clicked(focus_index)
+
+    @classmethod
+    def get_active_checkstate(cls) -> Qt.CheckState:
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        return prop.active_check_state
+
+    @classmethod
+    def object_tree_clicked(cls, index):
+        pass
