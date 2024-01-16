@@ -1,8 +1,9 @@
 import SOMcreator
 from PySide6.QtCore import Qt, QModelIndex
+from PySide6.QtWidgets import QTreeView
 import som_gui.core.tool
 from som_gui.tool.project import Project
-from som_gui.module.use_case.data import UseCaseData
+from som_gui.module.use_case import data as use_case_data
 import som_gui.module.use_case.constants
 import som_gui
 from PySide6.QtGui import QStandardItemModel, QStandardItem
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
 class UseCase(som_gui.core.tool.UseCase):
     @classmethod
     def create_use_case(cls):
-        pass
+        use_case_data.refresh()
 
     @classmethod
     def load_use_cases(cls):
@@ -28,9 +29,9 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def get_use_case_list(cls):
-        if not UseCaseData.is_loaded:
-            UseCaseData.load()
-        return UseCaseData.data["data_classes"]
+        if not use_case_data.UseCaseData.is_loaded:
+            use_case_data.UseCaseData.load()
+        return use_case_data.UseCaseData.data["data_classes"]
 
     @classmethod
     def set_header_labels(cls, labels: list[str]):
@@ -155,3 +156,9 @@ class UseCase(som_gui.core.tool.UseCase):
     @classmethod
     def object_tree_clicked(cls, index):
         pass
+
+    @classmethod
+    def resize_tree(cls, tree: QTreeView):
+        columns = tree.model().columnCount()
+        for index in range(columns):
+            tree.resizeColumnToContents(index)

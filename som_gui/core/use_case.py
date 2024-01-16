@@ -4,7 +4,7 @@ from typing import Type
 from PySide6.QtCore import QModelIndex
 
 
-def refresh_object_tree(use_case_tool,project_tool):
+def refresh_object_tree(use_case_tool, project_tool):
     load_headers(use_case_tool)
     load_objects(use_case_tool, project_tool)
 
@@ -50,3 +50,7 @@ def tree_mouse_release_event(index, use_case_tool: Type[UseCase]):
     if index is None:
         return
     use_case_tool.tree_release_click_drag(index)
+
+
+def resize_tree(tree, use_case_tool: Type[UseCase]):
+    use_case_tool.resize_tree(tree)

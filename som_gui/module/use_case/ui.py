@@ -7,6 +7,7 @@ from som_gui.tool.use_case import UseCase
 from som_gui.tool.project import Project
 from PySide6.QtWidgets import QTreeView, QWidget
 from PySide6.QtGui import QMouseEvent
+import som_gui
 
 
 class UseCaseWindow(QWidget):
@@ -18,9 +19,14 @@ class UseCaseWindow(QWidget):
 
 
 def load_triggers():
-    MainUi.ui.action_use_cases.triggered.connect(
-        use_case.operator.menu_action_use_cases
-    )
+    prop: use_case.prop.UseCaseProperties = som_gui.UseCaseProperties
+    MainUi.ui.action_use_cases.triggered.connect(use_case.trigger.menu_action_use_cases)
+    use_case_window = prop.use_case_window
+
+    if not use_case_window:
+        return
+    object_tree = prop.use_case_window.widget.object_tree
+    object_tree.expanded.connect(lambda: core.resize_tree(object_tree, UseCase))
 
 
 class ObjectTreeView(QTreeView):
