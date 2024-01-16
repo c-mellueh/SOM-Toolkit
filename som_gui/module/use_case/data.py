@@ -23,4 +23,5 @@ class UseCaseData:
         proj: SOMcreator.Project = som_gui.ProjectProperties.active_project
         if proj is None:
             return list()
-        return proj.get_use_case_list()
+        use_case_list = proj.get_use_case_list()
+        return use_case_list

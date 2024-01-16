@@ -34,9 +34,15 @@ class UseCase(som_gui.core.tool.UseCase):
         return use_case_data.UseCaseData.data["data_classes"]
 
     @classmethod
-    def set_header_labels(cls, labels: list[str]):
-        model = cls.get_object_model()
+    def set_header_labels(cls, model: QStandardItemModel, labels: list[str]):
         model.setHorizontalHeaderLabels(labels)
+
+
+    @classmethod
+    def get_header_texts(cls):
+        obj_title = list(som_gui.module.use_case.constants.OBJECT_TITLES)
+        pset_titles = list(som_gui.module.use_case.constants.PSET_TITLES)
+        return obj_title, pset_titles
 
     @classmethod
     def get_object_dict(cls) -> dict[SOMcreator.Object, dict[str, bool]]:
@@ -62,24 +68,29 @@ class UseCase(som_gui.core.tool.UseCase):
             return item_list
 
         def iter_tree(objects: set[SOMcreator.Object], parent_item: QStandardItem):
-            existing_objects_dict = {
+            old_object_dict = {
                 parent_item.child(index, 0).data(CLASS_REFERENCE): index
                 for index in range(parent_item.rowCount())
             }
-            existing_objects = set(existing_objects_dict.keys())
-            new_objects = objects.difference(existing_objects)
-            delete_objects = existing_objects.difference(objects)
+            old_objects = set(old_object_dict.keys())
+            existing_objects = objects.intersection(old_objects)
+            new_objects = objects.difference(old_objects)
+            delete_objects = old_objects.difference(objects)
 
             for obj in reversed(
-                sorted(delete_objects, key=lambda o: existing_objects_dict[o])
+                    sorted(delete_objects, key=lambda o: old_object_dict[o])
             ):
-                row_index = existing_objects_dict[obj]
+                row_index = old_object_dict[obj]
                 parent_item.removeRow(row_index)
 
             for new_object in new_objects:
                 row = create_row(new_object)
                 parent_item.appendRow(row)
                 iter_tree(new_object.children, row[0])
+
+            for existing_object in existing_objects:
+                row_index = old_object_dict[existing_object]
+                iter_tree(existing_object.children, parent_item.child(row_index, 0))
 
         model = cls.get_object_model()
         use_case_list = cls.get_use_case_list()
@@ -114,6 +125,11 @@ class UseCase(som_gui.core.tool.UseCase):
     def get_object_model(cls) -> QStandardItemModel:
         prop: UseCaseProperties = som_gui.UseCaseProperties
         return prop.use_case_window.widget.object_tree.model()
+
+    @classmethod
+    def get_pset_model(cls) -> QStandardItemModel:
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        return prop.use_case_window.widget.property_set_tree.model()
 
     @classmethod
     def is_object_tree_clicked(cls) -> bool:
@@ -173,6 +189,7 @@ class UseCase(som_gui.core.tool.UseCase):
         prop: UseCaseProperties = som_gui.UseCaseProperties
         prop.active_object = obj
         cls.update_active_object_label()
+
     @classmethod
     def update_active_object_label(cls):
         prop: UseCaseProperties = som_gui.UseCaseProperties
@@ -183,3 +200,79 @@ class UseCase(som_gui.core.tool.UseCase):
         else:
             label.show()
             label.setText(f"{active_object.name} ({active_object.ident_value})")
+
+    @classmethod
+    def update_pset_tree(cls):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        active_object = prop.active_object
+        pset_tree = prop.use_case_window.widget.property_set_tree
+        if active_object is None:
+            pset_tree.setModel(QStandardItemModel())
+            return
+
+        def create_row(element: SOMcreator.PropertySet | SOMcreator.Attribute):
+            item = QStandardItem(element.name)
+            item.setData(element, CLASS_REFERENCE)
+            item_list = [item]
+            for use_case in use_case_list:
+                item = QStandardItem()
+                item.setCheckable(True)
+                cs = (
+                    Qt.CheckState.Checked
+                    if element.get_use_case_state(use_case)
+                    else Qt.CheckState.Unchecked
+                )
+                item.setCheckState(cs)
+                item_list.append(item)
+            return item_list
+
+        def handle_attributes(
+                attributes: set[SOMcreator.Attribute], parent_item: QStandardItem
+        ):
+            existing_attribute_dict = {
+                parent_item.child(index, 0).data(CLASS_REFERENCE): index
+                for index in range(parent_item.rowCount())
+            }
+            old_attributes = set(existing_attribute_dict.keys())
+            new_attributes = attributes.difference(old_attributes)
+            delete_attributes = old_attributes.difference(attributes)
+            for attribute in reversed(
+                    sorted(delete_attributes, key=lambda o: existing_attribute_dict[o])
+            ):
+                row_index = existing_attribute_dict[attribute]
+                parent_item.removeRow(row_index)
+
+            for new_attribute in new_attributes:
+                row = create_row(new_attribute)
+                parent_item.appendRow(row)
+
+        def handle_psets(property_sets: set[SOMcreator.PropertySet]):
+            existing_pset_dict = {
+                root_item.child(index, 0).data(CLASS_REFERENCE): index
+                for index in range(root_item.rowCount())
+            }
+            old_property_sets = set(existing_pset_dict.keys())
+            existing_property_sets = property_sets.intersection(old_property_sets)
+            new_property_sets = property_sets.difference(old_property_sets)
+            delete_property_sets = old_property_sets.difference(property_sets)
+            for pset in reversed(
+                    sorted(delete_property_sets, key=lambda o: existing_pset_dict[o])
+            ):
+                row_index = existing_pset_dict[pset]
+                root_item.removeRow(row_index)
+
+            for new_pset in new_property_sets:
+                row = create_row(new_pset)
+                root_item.appendRow(row)
+                handle_attributes(set(new_pset.get_all_attributes()), row[0])
+
+            for existing_pset in existing_property_sets:
+                row_index = existing_pset_dict[existing_pset]
+                handle_attributes(
+                    existing_pset.get_all_attributes(), root_item.child(row_index, 0)
+                )
+
+        model = cls.get_pset_model()
+        use_case_list = cls.get_use_case_list()
+        root_item = model.invisibleRootItem()
+        handle_psets(set(active_object.get_all_property_sets()))

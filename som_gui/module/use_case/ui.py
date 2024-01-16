@@ -27,7 +27,8 @@ def load_triggers():
         return
     object_tree = prop.use_case_window.widget.object_tree
     object_tree.expanded.connect(lambda: core.resize_tree(object_tree, UseCase))
-
+    pset_tree = prop.use_case_window.widget.property_set_tree
+    pset_tree.expanded.connect(lambda :core.resize_tree(pset_tree,UseCase))
 
 class ObjectTreeView(QTreeView):
     def __init__(self, parent: QWidget):

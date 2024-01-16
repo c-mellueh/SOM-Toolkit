@@ -91,6 +91,7 @@ def delete_selection(main_window: MainWindow) -> None:
     for property_set in property_sets:
         if property_set.is_child:
             property_set.parent.remove_child(property_set)
+            property_set.delete()
         else:
             property_set.delete(recursive_deletion)
 

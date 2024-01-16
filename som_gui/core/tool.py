@@ -8,7 +8,7 @@ class UseCase:
     def get_use_case_list(self):
         pass
 
-    def set_header_labels(self, labels):
+    def set_header_labels(self,model, labels):
         pass
 
 
