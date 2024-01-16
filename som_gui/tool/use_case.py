@@ -32,10 +32,11 @@ def create_row(entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.Pro
 
 class UseCase(som_gui.core.tool.UseCase):
     @classmethod
-    def create_tree(cls,entities: set[SOMcreator.Attribute | SOMcreator.Object], parent_item: QStandardItem, use_case_list,
+    def create_tree(cls, entities: set[SOMcreator.Attribute | SOMcreator.Object], parent_item: QStandardItem,
+                    use_case_list,
                     pre_header_text_length: int, model: QStandardItemModel):
         existing_entities_dict = {parent_item.child(index, 0).data(CLASS_REFERENCE): index for index in
-                                   range(parent_item.rowCount())}
+                                  range(parent_item.rowCount())}
         old_entities = set(existing_entities_dict.keys())
         new_entities = entities.difference(old_entities)
         delete_entities = old_entities.difference(entities)
@@ -51,10 +52,10 @@ class UseCase(som_gui.core.tool.UseCase):
             for child_column, _ in enumerate(use_case_list, start=pre_header_text_length):
                 child_item = parent_item.child(child_row, child_column)
                 cls.update_enable_status(child_item, model)
-            class_item = parent_item.child(child_row,0)
+            class_item = parent_item.child(child_row, 0)
             obj = class_item.data(CLASS_REFERENCE)
-            if isinstance(obj,SOMcreator.Object):
-                cls.create_tree(obj.get_all_children(),class_item,use_case_list,pre_header_text_length,model)
+            if isinstance(obj, SOMcreator.Object):
+                cls.create_tree(obj.get_all_children(), class_item, use_case_list, pre_header_text_length, model)
 
     @classmethod
     def get_title_lenght_by_model(cls, model: QStandardItemModel):
@@ -190,7 +191,7 @@ class UseCase(som_gui.core.tool.UseCase):
         object_header_texts, _ = cls.get_header_texts()
         model = cls.get_object_model()
         use_case_list = cls.get_use_case_list()
-        cls.create_tree(set(root_objects), model.invisibleRootItem(),use_case_list,len(object_header_texts),model)
+        cls.create_tree(set(root_objects), model.invisibleRootItem(), use_case_list, len(object_header_texts), model)
 
     @classmethod
     def get_title_count_by_index(cls, index) -> int:
@@ -331,7 +332,8 @@ class UseCase(som_gui.core.tool.UseCase):
                 for child_column, enable_state in enumerate(sub_enable_states, start=len(pset_header_texts)):
                     root_item.child(child_row, child_column).setEnabled(enable_state)
                 pset = root_item.child(child_row, 0).data(CLASS_REFERENCE)
-                cls.create_tree(pset.get_all_attributes(),root_item.child(child_row, 0),use_case_list,len(pset_header_texts),model)
+                cls.create_tree(pset.get_all_attributes(), root_item.child(child_row, 0), use_case_list,
+                                len(pset_header_texts), model)
 
         _, pset_header_texts = cls.get_header_texts()
         model = cls.get_pset_model()
