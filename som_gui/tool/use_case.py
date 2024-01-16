@@ -162,3 +162,24 @@ class UseCase(som_gui.core.tool.UseCase):
         columns = tree.model().columnCount()
         for index in range(columns):
             tree.resizeColumnToContents(index)
+
+    @classmethod
+    def get_linked_data(cls, index: QModelIndex):
+        focus_index = index.sibling(index.row(), 0)
+        return focus_index.data(CLASS_REFERENCE)
+
+    @classmethod
+    def set_active_object(cls, obj: SOMcreator.Object):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop.active_object = obj
+        cls.update_active_object_label()
+    @classmethod
+    def update_active_object_label(cls):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        active_object = prop.active_object
+        label = prop.use_case_window.widget.label_object
+        if active_object is None:
+            label.hide()
+        else:
+            label.show()
+            label.setText(f"{active_object.name} ({active_object.ident_value})")

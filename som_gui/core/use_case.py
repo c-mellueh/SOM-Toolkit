@@ -1,12 +1,15 @@
+import SOMcreator
+
 from som_gui.tool.use_case import UseCase
 from som_gui.tool.project import Project
 from typing import Type
 from PySide6.QtCore import QModelIndex
 
 
-def refresh_object_tree(use_case_tool, project_tool):
+def refresh_object_tree(use_case_tool: Type[UseCase], project_tool: Type[Project]):
     load_headers(use_case_tool)
     load_objects(use_case_tool, project_tool)
+    use_case_tool.update_active_object_label()
 
 
 def create_use_case(use_case_tool: Type[UseCase]):
@@ -50,7 +53,14 @@ def tree_mouse_release_event(index, use_case_tool: Type[UseCase]):
     if index is None:
         return
     use_case_tool.tree_release_click_drag(index)
+    linked_data = use_case_tool.get_linked_data(index)
+    if isinstance(linked_data, SOMcreator.Object):
+        object_clicked(linked_data, use_case_tool)
 
 
 def resize_tree(tree, use_case_tool: Type[UseCase]):
     use_case_tool.resize_tree(tree)
+
+
+def object_clicked(obj: SOMcreator.Object, use_case_tool: Type[UseCase]):
+    use_case_tool.set_active_object(obj)
