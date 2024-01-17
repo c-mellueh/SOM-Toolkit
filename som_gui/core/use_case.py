@@ -5,6 +5,24 @@ from som_gui.tool.project import Project
 from typing import Type
 from PySide6.QtCore import QModelIndex
 from PySide6.QtWidgets import QTreeView
+from PySide6.QtGui import QStandardItem
+
+
+def accept_changes(use_case_tool: Type[UseCase]):
+    use_case_tool.update_pset_data()
+    use_case_tool.update_attribute_data()
+    use_case_tool.update_project_use_cases()
+    use_case_tool.update_attribute_uses_cases()
+    use_case_tool.update_pset_uses_cases()
+    use_case_tool.update_object_uses_cases()
+    window = use_case_tool.delete_use_case_window()
+    window.close()
+    pass
+
+
+def reject_changes(use_case_tool: Type[UseCase]):
+    window = use_case_tool.delete_use_case_window()
+    window.close()
 
 
 def create_header_context_menu(pos, tree_view: QTreeView, use_case_tool: Type[UseCase], project_tool):
@@ -15,39 +33,36 @@ def create_header_context_menu(pos, tree_view: QTreeView, use_case_tool: Type[Us
     proj = project_tool.get()
     if use_case_index < 0:
         action_dict = {
-            "Anwendungsfall hinzufügen": lambda: create_use_case(use_case_tool, proj), }
+            "Anwendungsfall hinzufügen": lambda: create_use_case(use_case_tool, ), }
     else:
         action_dict = {
-            "Anwendungsfall hinzufügen": lambda: create_use_case(use_case_tool, proj),
-            "Umbenennen":                lambda: rename_use_case(use_case_index, use_case_tool, proj),
-            "Löschen":                   lambda: delete_use_case(use_case_index, use_case_tool, proj),
+            "Anwendungsfall hinzufügen": lambda: create_use_case(use_case_tool, ),
+            "Umbenennen":                lambda: rename_use_case(use_case_index, use_case_tool),
+            "Löschen":                   lambda: delete_use_case(use_case_index, use_case_tool),
         }
 
     use_case_tool.create_context_menu(header.mapToGlobal(pos), action_dict)
     pass
 
 
-def rename_use_case(use_case_index: int, use_case_tool: Type[UseCase], project: SOMcreator.Project):
+def rename_use_case(use_case_index: int, use_case_tool: Type[UseCase]):
     old_name = use_case_tool.get_use_case_list()[use_case_index]
     new_name = use_case_tool.request_rename_use_case_name(old_name)
     if new_name is None:
         return
-    project.rename_use_case(old_name, new_name)
+    use_case_tool.rename_use_case(use_case_index, new_name)
 
 
-def delete_use_case(use_case_index: int, use_case_tool: Type[UseCase], project: SOMcreator.Project):
+def delete_use_case(use_case_index: int, use_case_tool: Type[UseCase]):
     use_case_list = use_case_tool.get_use_case_list()
-    if len(use_case_list) < 2:
+    if len(use_case_list) < 2:  # At least 1 Use case needs to exist
         return
-    old_name = use_case_list[use_case_index]
-    use_case_tool.remove_use_case_column(use_case_index, use_case_tool.get_object_model())
-    use_case_tool.remove_use_case_column(use_case_index, use_case_tool.get_pset_model())
-    project.remove_use_case(old_name)
+    use_case_tool.remove_use_case(use_case_index)
 
 
-def create_use_case(use_case_tool: Type[UseCase], project: SOMcreator.Project):
+def create_use_case(use_case_tool: Type[UseCase]):
     new_name = use_case_tool.get_new_use_case_name("Unbenannt")
-    project.add_use_case(new_name)
+    use_case_tool.add_use_case(new_name)
 
 
 def refresh_object_tree(use_case_tool: Type[UseCase], project_tool: Type[Project]):
@@ -58,8 +73,8 @@ def refresh_object_tree(use_case_tool: Type[UseCase], project_tool: Type[Project
 
 
 def load_use_cases(use_case_tool: Type[UseCase]):
-    use_case_list = use_case_tool.get_use_case_list()
     use_case_tool.load_use_cases()
+    use_case_tool.create_tree_models()
 
 
 def load_headers(use_case_tool: Type[UseCase]):
@@ -93,7 +108,9 @@ def tree_mouse_move_event(index: QModelIndex, use_case_tool: Type[UseCase]):
         use_case_tool.tree_activate_click_drag(index)
         return
     use_case_tool.tree_move_click_drag(index)
-
+    linked_data = use_case_tool.get_linked_data(index)
+    if isinstance(linked_data, SOMcreator.Object):
+        use_case_tool.update_object_data(linked_data)
 
 def tree_mouse_release_event(index, use_case_tool: Type[UseCase]):
     if index is None:
@@ -107,7 +124,9 @@ def tree_mouse_release_event(index, use_case_tool: Type[UseCase]):
 def resize_tree(tree: QTreeView, use_case_tool: Type[UseCase]):
     use_case_tool.resize_tree(tree)
 
-
 def object_clicked(obj: SOMcreator.Object, use_case_tool: Type[UseCase]):
+    use_case_tool.update_pset_data()
+    use_case_tool.update_attribute_data()
     use_case_tool.set_active_object(obj)
     use_case_tool.update_pset_tree()
+    use_case_tool.update_object_data(obj)

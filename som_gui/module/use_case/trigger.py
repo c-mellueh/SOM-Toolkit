@@ -4,6 +4,7 @@ import som_gui.core.use_case as core
 from som_gui.tool.use_case import UseCase
 from PySide6.QtCore import Qt, QPoint
 
+
 def menu_action_use_cases():
     if not UseCaseProperties.use_case_window:
         UseCaseProperties.use_case_window = UseCaseWindow()
@@ -14,5 +15,5 @@ def menu_action_use_cases():
     header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
 
 
-def header_context_menu_called(pos:QPoint):
+def header_context_menu_called(pos: QPoint):
     pass

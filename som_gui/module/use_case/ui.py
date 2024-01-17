@@ -32,7 +32,8 @@ def load_triggers():
     header =object_tree.header()
     header.customContextMenuRequested.connect(lambda pos: core.create_header_context_menu(pos,object_tree,UseCase,Project))
     header.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
-
+    use_case_window.widget.buttonBox.accepted.connect(lambda: core.accept_changes(UseCase))
+    use_case_window.widget.buttonBox.rejected.connect(lambda: core.reject_changes(UseCase))
 
 class ObjectTreeView(QTreeView):
     def __init__(self, parent: QWidget):

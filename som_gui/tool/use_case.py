@@ -1,6 +1,6 @@
 import SOMcreator
 from PySide6.QtCore import Qt, QModelIndex
-from PySide6.QtWidgets import QTreeView, QMenu, QInputDialog, QLineEdit
+from PySide6.QtWidgets import QTreeView, QMenu, QInputDialog, QLineEdit, QWidget
 import som_gui.core.tool
 from som_gui.tool.project import Project
 from som_gui.module.use_case import data as use_case_data
@@ -14,32 +14,112 @@ if TYPE_CHECKING:
     from som_gui.module.use_case.prop import UseCaseProperties
 
 
-def create_row(entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.PropertySet, use_case_list):
-    entity_item = QStandardItem(entity.name)
-    item_list = [entity_item]
-    entity_item.setData(entity, CLASS_REFERENCE)
-    if isinstance(entity, SOMcreator.Object):
-        item_list.append(QStandardItem(entity.ident_value))
-
-    for use_case in use_case_list:
-        item = QStandardItem()
-        item.setCheckable(True)
-        cs = Qt.CheckState.Checked if entity.get_use_case_state(use_case) else Qt.CheckState.Unchecked
-        item.setCheckState(cs)
-        item_list.append(item)
-    return item_list
-
-
 class UseCase(som_gui.core.tool.UseCase):
+    @classmethod
+    def create_row(cls, entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.PropertySet, use_case_list):
+        entity_item = QStandardItem(entity.name)
+        item_list = [entity_item]
+        entity_item.setData(entity, CLASS_REFERENCE)
+        if isinstance(entity, SOMcreator.Object):
+            item_list.append(QStandardItem(entity.ident_value))
+        for use_case in use_case_list:
+            item = QStandardItem()
+            item.setCheckable(True)
+            cs = cls.get_use_case_state(use_case, entity)
+            item.setCheckState(cs)
+            item_list.append(item)
+        return item_list
 
     @classmethod
-    def remove_use_case_column(cls,use_case_index:int,model:QStandardItemModel):
+    def get_use_case_state(cls, use_case_name,
+                           entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.PropertySet):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+
+        if isinstance(entity, SOMcreator.Object):
+            data_dict = prop.object_dict
+        elif isinstance(entity, SOMcreator.PropertySet):
+            data_dict = prop.pset_dict
+        elif isinstance(entity, SOMcreator.Attribute):
+            data_dict = prop.attribute_dict
+        if data_dict.get(entity) is None:
+            data_dict[entity] = {name: True for name in cls.get_use_case_list()}
+
+        check_state = data_dict[entity].get(use_case_name)
+        if check_state is None:
+            check_state = True
+
+        return Qt.CheckState.Checked if check_state else Qt.CheckState.Unchecked
+
+    @classmethod
+    def update_object_uses_cases(cls):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        for obj, use_case_dict in prop.object_dict.items():
+            for use_case_name, state in use_case_dict.items():
+                obj.set_use_case(use_case_name, state)
+
+    @classmethod
+    def update_pset_uses_cases(cls):
+        print(cls.get_pset_dict())
+        for pset, use_case_dict in cls.get_pset_dict().items():
+            for use_case_name, state in use_case_dict.items():
+                pset.set_use_case(use_case_name, state)
+
+    @classmethod
+    def update_attribute_uses_cases(cls):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        for attribute, use_case_dict in prop.attribute_dict.items():
+            for use_case_name, state in use_case_dict.items():
+                attribute.set_use_case(use_case_name, state)
+
+    @classmethod
+    def update_project_use_cases(cls):
+        use_case_list = cls.get_use_case_list()
+        proj = Project.get()
+        old_use_cases = proj.get_use_case_list()
+        for index, old_use_case in enumerate(old_use_cases):
+            if index != 0:
+                proj.remove_use_case(old_use_case)
+
+        proj.rename_use_case(old_use_case[0], use_case_list[0])
+        for use_case in use_case_list[1:]:
+            proj.add_use_case(use_case)
+
+    @classmethod
+    def delete_use_case_window(cls) -> QWidget:
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        old_window = prop.use_case_window
+        prop.use_case_window = None
+        prop.active_object = None
+        prop.use_cases = list()
+        return old_window
+
+    @classmethod
+    def add_use_case(cls, use_case_name: str) -> None:
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop.use_cases.append(use_case_name)
+        for data_dict in [prop.object_dict, prop.pset_dict, prop.attribute_dict]:
+            for use_case_dict in data_dict.values():
+                use_case_dict[use_case_name] = True
+
+    @classmethod
+    def remove_use_case_column(cls, use_case_index: int, model: QStandardItemModel):
         title_length = cls.get_title_lenght_by_model(model)
-        column = title_length+use_case_index
+        column = title_length + use_case_index
         model.removeColumn(column)
 
     @classmethod
-    def get_new_use_case_name(cls,standard_name:str):
+    def remove_use_case(cls, use_case_index: int):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        use_case_text = prop.use_cases[use_case_index]
+        prop.use_cases.pop(use_case_index)
+        cls.remove_use_case_column(use_case_index, cls.get_object_model())
+        cls.remove_use_case_column(use_case_index, cls.get_pset_model())
+        for data_dict in [prop.object_dict, prop.pset_dict, prop.attribute_dict]:
+            for use_case_dict in data_dict.values():
+                use_case_dict.pop(use_case_text)
+
+    @classmethod
+    def get_new_use_case_name(cls, standard_name: str):
         def loop_name(new_name):
             if new_name in existing_names:
                 if new_name == standard_name:
@@ -47,6 +127,7 @@ class UseCase(som_gui.core.tool.UseCase):
                 index = int(new_name[-1])
                 return loop_name(f"{new_name[:-1]}{index + 1}")
             return new_name
+
         existing_names = cls.get_use_case_list()
         return loop_name(standard_name)
 
@@ -55,10 +136,20 @@ class UseCase(som_gui.core.tool.UseCase):
         prop = som_gui.UseCaseProperties
         active_window = prop.use_case_window
         new_name, ok = QInputDialog.getText(active_window, "Anwendungsfall umbenennen", "Neuer Name:",
-                                            QLineEdit.EchoMode.Normal,                                            old_name)
+                                            QLineEdit.EchoMode.Normal, old_name)
         if not ok:
             return None
         return new_name
+
+    @classmethod
+    def rename_use_case(cls, use_case_index: int, new_name: str) -> None:
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        old_name = prop.use_cases[use_case_index]
+        prop.use_cases[use_case_index] = new_name
+        for data_dict in [prop.object_dict, prop.pset_dict, prop.attribute_dict]:
+            for use_case_dict in data_dict.values():
+                use_case_dict[new_name] = use_case_dict[old_name]
+                use_case_dict.pop(old_name)
 
     @classmethod
     def create_context_menu(cls, global_pos, action_dict):
@@ -95,8 +186,8 @@ class UseCase(som_gui.core.tool.UseCase):
             row_index = existing_entities_dict[entity]
             parent_item.removeRow(row_index)
 
-        for new_entity in new_entities:
-            row = create_row(new_entity, use_case_list)
+        for new_entity in sorted(new_entities, key=lambda x: x.name):
+            row = cls.create_row(new_entity, use_case_list)
             parent_item.appendRow(row)
 
         for child_row in range(parent_item.rowCount()):
@@ -106,7 +197,7 @@ class UseCase(som_gui.core.tool.UseCase):
                     child_item = QStandardItem()
                     child_item.setCheckable(True)
                     child_item.setCheckState(Qt.CheckState.Checked)
-                    parent_item.setChild(child_row,child_column,child_item)
+                    parent_item.setChild(child_row, child_column, child_item)
                 cls.update_enable_status(child_item, model)
             class_item = parent_item.child(child_row, 0)
             obj = class_item.data(CLASS_REFERENCE)
@@ -138,7 +229,7 @@ class UseCase(som_gui.core.tool.UseCase):
         return res
 
     @classmethod
-    def get_check_status(cls, index: QModelIndex):
+    def get_check_statuses(cls, index: QModelIndex) -> list[bool]:
         model: QStandardItemModel = index.model()
         title_lenght = cls.get_title_lenght_by_model(model)
         res = list()
@@ -181,22 +272,38 @@ class UseCase(som_gui.core.tool.UseCase):
         return iter_items(object_model.invisibleRootItem()).index()
 
     @classmethod
-    def create_use_case(cls):
-        use_case_data.refresh()
+    def load_use_cases(cls):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        if not use_case_data.UseCaseData.is_loaded:
+            use_case_data.UseCaseData.load()
+        prop.use_cases = use_case_data.UseCaseData.data["data_classes"]
+        object_dict = dict()
+        pset_dict = dict()
+        attribute_dict = dict()
+        for obj in Project.get().get_all_objects():
+            object_dict[obj] = obj.get_use_case_dict()
+            for pset in obj.get_all_property_sets():
+                pset_dict[pset] = pset.get_use_case_dict()
+                for attribute in pset.get_all_attributes():
+                    attribute_dict[attribute] = attribute.get_use_case_dict()
+
+        prop.object_dict = object_dict
+        prop.pset_dict = pset_dict
+        prop.attribute_dict = attribute_dict
 
     @classmethod
-    def load_use_cases(cls):
+    def create_tree_models(cls):
         prop: UseCaseProperties = som_gui.UseCaseProperties
         object_tree = prop.use_case_window.widget.object_tree
         object_tree.setModel(QStandardItemModel())
         property_set_tree = prop.use_case_window.widget.property_set_tree
-        property_set_tree.setModel(QStandardItemModel())
+        model = QStandardItemModel()
+        property_set_tree.setModel(model)
 
     @classmethod
     def get_use_case_list(cls):
-        if not use_case_data.UseCaseData.is_loaded:
-            use_case_data.UseCaseData.load()
-        return use_case_data.UseCaseData.data["data_classes"]
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        return prop.use_cases
 
     @classmethod
     def set_header_labels(cls, model: QStandardItemModel, labels: list[str]):
@@ -209,40 +316,7 @@ class UseCase(som_gui.core.tool.UseCase):
         return obj_title, pset_titles
 
     @classmethod
-    def get_object_dict(cls) -> dict[SOMcreator.Object, dict[str, bool]]:
-        objects = Project.get_all_objects()
-        return {obj: obj.get_use_case_dict() for obj in objects}
-
-    @classmethod
     def fill_object_tree(cls, root_objects: list[SOMcreator.Object]) -> None:
-
-        def iter_tree(objects: set[SOMcreator.Object], parent_item: QStandardItem):
-            old_object_dict = {parent_item.child(index, 0).data(CLASS_REFERENCE): index for index in
-                               range(parent_item.rowCount())}
-            old_objects = set(old_object_dict.keys())
-            existing_objects = objects.intersection(old_objects)
-            new_objects = objects.difference(old_objects)
-            delete_objects = old_objects.difference(objects)
-
-            for obj in reversed(
-                    sorted(delete_objects, key=lambda o: old_object_dict[o])
-            ):
-                row_index = old_object_dict[obj]
-                parent_item.removeRow(row_index)
-
-            for new_object in new_objects:
-                row = create_row(new_object, use_case_list)
-                parent_item.appendRow(row)
-                iter_tree(new_object.children, row[0])
-
-            for existing_object in existing_objects:
-                row_index = old_object_dict[existing_object]
-                iter_tree(existing_object.children, parent_item.child(row_index, 0))
-            if parent_item == model.invisibleRootItem():
-                return
-            for child_row in range(parent_item.rowCount()):
-                for child_column, _ in enumerate(use_case_list, start=len(object_header_texts)):
-                    cls.update_enable_status(parent_item.child(child_row, child_column), model)
 
         object_header_texts, _ = cls.get_header_texts()
         model = cls.get_object_model()
@@ -363,6 +437,7 @@ class UseCase(som_gui.core.tool.UseCase):
     def update_pset_tree(cls):
         active_object = cls.get_active_object()
         prop: UseCaseProperties = som_gui.UseCaseProperties
+
         pset_tree = prop.use_case_window.widget.property_set_tree
         if active_object is None:
             pset_tree.setModel(QStandardItemModel())
@@ -381,7 +456,7 @@ class UseCase(som_gui.core.tool.UseCase):
                 root_item.removeRow(row_index)
 
             for new_pset in new_property_sets:
-                row = create_row(new_pset, use_case_list)
+                row = cls.create_row(new_pset, use_case_list)
                 root_item.appendRow(row)
 
             for child_row in range(root_item.rowCount()):
@@ -391,7 +466,7 @@ class UseCase(som_gui.core.tool.UseCase):
                         child_item = QStandardItem()
                         child_item.setCheckable(True)
                         child_item.setCheckState(Qt.CheckState.Checked)
-                        root_item.setChild(child_row,child_column,child_item)
+                        root_item.setChild(child_row, child_column, child_item)
                     child_item.setEnabled(enable_state)
                 pset = root_item.child(child_row, 0).data(CLASS_REFERENCE)
                 cls.create_tree(pset.get_all_attributes(), root_item.child(child_row, 0), use_case_list,
@@ -402,7 +477,57 @@ class UseCase(som_gui.core.tool.UseCase):
         use_case_list = cls.get_use_case_list()
         root_item = model.invisibleRootItem()
         active_object_index = cls.get_index_by_object(active_object)
-        check_states = cls.get_check_status(active_object_index)
+        check_states = cls.get_check_statuses(active_object_index)
         enable_states = cls.get_enabled_status(active_object_index)
         sub_enable_states = [all((c, e)) for c, e in zip(check_states, enable_states)]
         handle_psets(set(active_object.get_all_property_sets()))
+
+    @classmethod
+    def get_object_dict(cls):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        return prop.object_dict
+
+    @classmethod
+    def get_pset_dict(cls):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        return prop.pset_dict
+
+    @classmethod
+    def get_attribute_dict(cls):
+        prop: UseCaseProperties = som_gui.UseCaseProperties
+        return prop.attribute_dict
+
+    @classmethod
+    def update_pset_data(cls):
+        model = cls.get_pset_model()
+        use_cases = cls.get_use_case_list()
+        pset_dict = cls.get_pset_dict()
+        for row in range(model.rowCount()):
+            index = model.index(row, 0)
+            pset = index.data(CLASS_REFERENCE)
+            check_statuses = cls.get_check_statuses(index)
+            use_case_dict = {use_case: status for use_case, status in zip(use_cases, check_statuses)}
+            pset_dict[pset] = use_case_dict
+
+    @classmethod
+    def update_attribute_data(cls):
+        model = cls.get_pset_model()
+        use_cases = cls.get_use_case_list()
+        attribute_dict = cls.get_attribute_dict()
+        for row in range(model.rowCount()):
+            pset_index = model.index(row, 0)
+            for attribute_row in range(model.rowCount(pset_index)):
+                index = model.index(attribute_row, 0, pset_index)
+                attribute = index.data(CLASS_REFERENCE)
+                check_statuses = cls.get_check_statuses(index)
+                use_case_dict = {use_case: status for use_case, status in zip(use_cases, check_statuses)}
+                attribute_dict[attribute] = use_case_dict
+
+    @classmethod
+    def update_object_data(cls, obj: SOMcreator.Object):
+        index = cls.get_index_by_object(obj)
+        use_cases = cls.get_use_case_list()
+        object_dict = cls.get_object_dict()
+        check_statuses = cls.get_check_statuses(index)
+        use_case_dict = {use_case: status for use_case, status in zip(use_cases, check_statuses)}
+        object_dict[obj] = use_case_dict
