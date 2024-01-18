@@ -1,5 +1,5 @@
 import som_gui
-from . import ui, trigger, prop
+from . import ui, trigger, prop,window
 
 
 def register():
@@ -7,4 +7,5 @@ def register():
 
 
 def load_ui_triggers():
-    pass
+    print(F"Load UI Triggers")
+    ui.load_triggers()

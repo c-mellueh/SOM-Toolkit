@@ -15,8 +15,8 @@ from .windows import (
     mapping_window,
     popups,
     grouping_window,
-    settings_window,
 )
+from .module.project import ui
 from .windows.project_phases import gui as project_phase_window
 from .windows.modelcheck import modelcheck_window
 from .windows.attribute_import.gui import AttributeImport
@@ -67,7 +67,6 @@ class MainWindow(QMainWindow):
             # Windows
 
             self.ui.action_show_list.triggered.connect(self.open_predefined_pset_window)
-            self.ui.action_settings.triggered.connect(self.open_settings_window)
             self.ui.action_modelcheck.triggered.connect(
                 lambda: modelcheck_window.ModelcheckWindow(self)
             )
@@ -148,8 +147,7 @@ class MainWindow(QMainWindow):
             )
         self.predefined_pset_window.show()
 
-    def open_settings_window(self):
-        settings_window.SettingsDialog(self)
+
 
     def open_aggregation_window(self):
         self.graph_window.show()
