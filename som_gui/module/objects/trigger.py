@@ -13,13 +13,10 @@ def repaint_event():
     core.refresh_object_tree(Objects, Project)
 
 
-def mouse_press_event(event):
-    pass
+def change_event():
+    core.item_changed(Objects)
 
 
-def mouse_move_event(event):
-    pass
-
-
-def mouse_release_event(event):
-    pass
+def drop_event(event):
+    print(F"DROP EVENT")
+    core.item_dropped_on(event.pos(), Objects)

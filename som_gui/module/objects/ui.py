@@ -1,30 +1,25 @@
-from som_gui import MainUi
 from som_gui.module import objects
 from PySide6.QtWidgets import QTreeWidget, QWidget
-from PySide6.QtGui import QMouseEvent
 
 
 def load_triggers():
     objects.trigger.connect()
-    # MainUi.ui.action_settings.triggered.connect(objects.trigger.repaint_event())
 
 
 class ObjectTreeWidget(QTreeWidget):
+
     def __init__(self, parent: QWidget):
         super().__init__(parent)
+        self.test_bool = False
 
     def paintEvent(self, event):
         super().paintEvent(event)
         objects.trigger.repaint_event()
 
-    def mousePressEvent(self, event: QMouseEvent):
-        super().mousePressEvent(event)
-        objects.trigger.mouse_press_event(event)
+    def changeEvent(self, event):
+        super().changeEvent(event)
+        objects.trigger.change_event()
 
-    def mouseMoveEvent(self, event: QMouseEvent):
-        super().mouseMoveEvent(event)
-        objects.trigger.mouse_move_event(event)
-
-    def mouseReleaseEvent(self, event):
-        super().mouseReleaseEvent(event)
-        objects.trigger.mouse_release_event(event)
+    def dropEvent(self, event):
+        objects.trigger.drop_event(event)
+        super().dropEvent(event)

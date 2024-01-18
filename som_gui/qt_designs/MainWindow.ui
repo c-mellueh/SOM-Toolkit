@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>1254</width>
-       <height>710</height>
+    <width>1254</width>
+    <height>710</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -217,9 +217,15 @@
          </layout>
         </item>
         <item>
-            <widget class="ObjectTreeWidget" name="tree_object">
+         <widget class="ObjectTreeWidget" name="tree_object">
           <property name="enabled">
            <bool>true</bool>
+          </property>
+          <property name="dragEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="dragDropOverwriteMode">
+           <bool>false</bool>
           </property>
           <property name="dragDropMode">
            <enum>QAbstractItemView::InternalMove</enum>
@@ -244,7 +250,7 @@
           </attribute>
           <column>
            <property name="text">
-               <string>Objekt</string>
+            <string>Objekt</string>
            </property>
           </column>
           <column>
@@ -254,7 +260,7 @@
           </column>
           <column>
            <property name="text">
-               <string>Neue Spalte</string>
+            <string>Neue Spalte</string>
            </property>
           </column>
           <column>
@@ -428,7 +434,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-        <width>1254</width>
+     <width>1254</width>
      <height>22</height>
     </rect>
    </property>
@@ -682,7 +688,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-      <class>ObjectTreeWidget</class>
+   <class>ObjectTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>som_gui.module.objects.ui</header>
   </customwidget>

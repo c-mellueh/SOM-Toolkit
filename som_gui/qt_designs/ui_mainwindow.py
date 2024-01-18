@@ -206,6 +206,8 @@ class Ui_MainWindow(object):
         self.tree_object = ObjectTreeWidget(self.layoutWidget)
         self.tree_object.setObjectName(u"tree_object")
         self.tree_object.setEnabled(True)
+        self.tree_object.setDragEnabled(True)
+        self.tree_object.setDragDropOverwriteMode(False)
         self.tree_object.setDragDropMode(QAbstractItemView.InternalMove)
         self.tree_object.setDefaultDropAction(Qt.MoveAction)
         self.tree_object.setAlternatingRowColors(False)
