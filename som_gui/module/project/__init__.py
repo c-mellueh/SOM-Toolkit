@@ -1,3 +1,5 @@
+import logging
+
 import som_gui
 from . import ui, trigger, prop,window
 
@@ -7,5 +9,5 @@ def register():
 
 
 def load_ui_triggers():
-    print(F"Load UI Triggers")
+    logging.info(f"Load Project UI Triggers")
     ui.load_triggers()

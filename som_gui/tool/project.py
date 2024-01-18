@@ -1,3 +1,5 @@
+import logging
+
 import som_gui.core.tool
 import SOMcreator
 import som_gui
@@ -84,13 +86,11 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def load_project(cls, path: str):
-
-        print("Load Project")
+        logging.info("Load Project")
         prop: ProjectProperties = som_gui.ProjectProperties
         proj = SOMcreator.Project()
         project_dict = proj.open(path)
         prop.active_project = proj
-
         cls.add_project_info(cls.get_project_version, cls.update_project_version, VERSION)
         cls.add_project_info(cls.get_project_author, cls.update_project_author, AUTHOR)
         cls.add_project_info(cls.get_project_name, cls.update_project_name, NAME)
