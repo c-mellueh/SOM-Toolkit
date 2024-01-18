@@ -59,7 +59,7 @@ class ProjectPhaseWindow(QWidget):
             header = self.widget.object_tree.header()
             header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             header.customContextMenuRequested.connect(self.header_context_menu)
-            header.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
+            #header.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
 
         super().__init__()
         self.main_window = main_window

@@ -18,17 +18,25 @@ from ..windows.aggregation_view import aggregation_window
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
+from som_gui.core import project as project_core
+from som_gui.tool.project import Project as ProjectTool
 
 
 def check_for_objects_without_aggregation(proj: classes.Project):
     for obj in proj.objects:
         if not obj.aggregations:
-            logging.info(f"Objekt {obj.name} ({obj.ident_value} kommt in keiner Aggregation vor)")
+            logging.info(
+                f"Objekt {obj.name} ({obj.ident_value} kommt in keiner Aggregation vor)"
+            )
 
 
-def import_node_pos(main_dict: dict, graph_window: aggregation_window.AggregationWindow) -> None:
+def import_node_pos(
+    main_dict: dict, graph_window: aggregation_window.AggregationWindow
+) -> None:
     json_aggregation_dict: dict = main_dict[json_constants.AGGREGATIONS]
-    aggregation_ref = {aggregation.uuid: aggregation for aggregation in classes.Aggregation}
+    aggregation_ref = {
+        aggregation.uuid: aggregation for aggregation in classes.Aggregation
+    }
     for uuid, aggregation_dict in json_aggregation_dict.items():
         aggregation = aggregation_ref[uuid]
         x_pos = aggregation_dict.get(json_constants.X_POS) or 0.0
@@ -42,7 +50,13 @@ def import_node_pos(main_dict: dict, graph_window: aggregation_window.Aggregatio
 def new_file(main_window: MainWindow) -> None:
     ok = popups.msg_unsaved()
     if ok:
-        proj_name = QInputDialog.getText(main_window, "New Project", "new Project Name:", QLineEdit.EchoMode.Normal, "")
+        proj_name = QInputDialog.getText(
+            main_window,
+            "New Project",
+            "new Project Name:",
+            QLineEdit.EchoMode.Normal,
+            "",
+        )
 
         if proj_name[1]:
             main_window.project = classes.Project(main_window.project, proj_name[0])
@@ -54,7 +68,11 @@ def new_file(main_window: MainWindow) -> None:
 def fill_ui(main_window: MainWindow) -> None:
     object_widget.clear_object_input(main_window)
     main_window.ui.tree_object.clear()
-    object_widget.fill_tree(main_window.project.get_all_objects(),main_window.object_tree,object_widget.CustomObjectTreeItem)
+    object_widget.fill_tree(
+        main_window.project.get_all_objects(),
+        main_window.object_tree,
+        object_widget.CustomObjectTreeItem,
+    )
     object_widget.resize_tree(main_window)
     main_window.graph_window.is_initial_opening = True
     main_window.graph_window.hide()
@@ -71,7 +89,7 @@ def get_path(main_window: MainWindow, title: str, file_text: str) -> str:
 def import_data(main_window: MainWindow, path: str):
     settings.set_open_path(path)
     settings.set_save_path(path)
-    main_dict = main_window.project.open(path)
+    main_window.project, main_dict = project_core.open_project(path, ProjectTool)
     import_node_pos(main_dict, main_window.graph_window)
     fill_ui(main_window)
     check_for_objects_without_aggregation(main_window.project)
