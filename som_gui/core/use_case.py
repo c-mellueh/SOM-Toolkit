@@ -1,3 +1,5 @@
+import logging
+
 import SOMcreator
 
 from som_gui.tool.use_case import UseCase
@@ -8,7 +10,10 @@ from PySide6.QtWidgets import QTreeView
 from PySide6.QtGui import QStandardItem
 
 
-def add_use_case_to_settings_dict(use_case_tool: Type[UseCase]):
+def on_startup(use_case_tool: Type[UseCase]):
+    logging.debug(f"Startup UseCase")
+    use_case_tool.reset_use_case_data()
+    use_case_tool.load_use_cases()
     use_case_tool.add_use_case_to_settings_window()
 
 def accept_changes(use_case_tool: Type[UseCase]):
@@ -80,6 +85,7 @@ def refresh_object_tree(use_case_tool: Type[UseCase], project_tool: Type[Project
 
 
 def load_use_cases(use_case_tool: Type[UseCase]):
+    logging.debug(f"Load UseCases")
     use_case_tool.load_use_cases()
     use_case_tool.create_tree_models()
 

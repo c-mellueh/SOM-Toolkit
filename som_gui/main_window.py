@@ -23,13 +23,9 @@ from .windows.attribute_import.gui import AttributeImport
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, application, open_file_path: str | None):
+    def __init__(self, application):
         def connect_actions():
             # connect Menubar signals
-
-            self.ui.action_file_Open.triggered.connect(
-                lambda: open_file.open_file_clicked(self)
-            )
             self.ui.action_file_new.triggered.connect(
                 lambda: popups.new_file_clicked(self)
             )
@@ -86,6 +82,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.app = application
         som_gui.MainUi.ui = self.ui
+        som_gui.MainUi.window = self
 
         # variables
         self.active_object: classes.Object | None = None
@@ -118,9 +115,6 @@ class MainWindow(QMainWindow):
         # Icons
         self.setWindowIcon(icons.get_icon())
         self.ui.button_search.setIcon(icons.get_search_icon())
-
-        if open_file_path is not None:
-            open_file.import_data(self, open_file_path)
 
     # Windows
 

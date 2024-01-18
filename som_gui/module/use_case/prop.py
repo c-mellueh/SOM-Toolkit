@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import SOMcreator
 
@@ -10,10 +10,10 @@ from PySide6.QtCore import Qt
 class UseCaseProperties:
     active_use_case_index: int
     active_use_case_name: str
-    use_cases:list
-    object_dict:dict
-    pset_dict:dict
-    attribute_dict:dict
+    object_dict: dict
+    pset_dict: dict
+    attribute_dict: dict
+    use_cases: list[str]
     active_object: SOMcreator.Object = None
     active_check_state: Qt.CheckState = None
     use_case_window: UseCaseWindow = None

@@ -96,11 +96,3 @@ def import_data(main_window: MainWindow, path: str):
     logging.info(f"Import Done!")
     main_window.generate_window_title()
     main_window.graph_window.create_missing_scenes()
-
-
-def open_file_clicked(main_window: MainWindow) -> None:
-    path = get_path(main_window, "Open Project", FILETYPE)
-    if not path:
-        return
-
-    import_data(main_window, path)

@@ -1,3 +1,5 @@
+import logging
+
 import SOMcreator
 from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtWidgets import QTreeView, QMenu, QInputDialog, QLineEdit, QWidget
@@ -16,6 +18,9 @@ if TYPE_CHECKING:
 USE_CASE = "Anwedungsfall"
 
 class UseCase(som_gui.core.tool.UseCase):
+    @classmethod
+    def reset_use_case_data(cls):
+        use_case_data.refresh()
 
     @classmethod
     def update_use_case_by_settings_window(cls):
@@ -37,9 +42,8 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def add_use_case_to_settings_window(cls):
-        proj = Project.get()
         Project.add_project_info(cls.get_use_case,
-                                 cls.update_use_case_by_settings_window, USE_CASE, proj.get_use_case_list)
+                                 cls.update_use_case_by_settings_window, USE_CASE, cls.get_use_case_list)
 
     @classmethod
     def create_row(cls, entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.PropertySet, use_case_list):
@@ -115,7 +119,7 @@ class UseCase(som_gui.core.tool.UseCase):
         old_window = prop.use_case_window
         prop.use_case_window = None
         prop.active_object = None
-        prop.use_cases = list()
+        use_case_data.refresh()
         return old_window
 
     @classmethod
@@ -232,7 +236,7 @@ class UseCase(som_gui.core.tool.UseCase):
     @classmethod
     def get_title_lenght_by_model(cls, model: QStandardItemModel):
         """
-        checks if model is object or pset model and looks up the titles
+        checks if model is objects or pset model and looks up the titles
         """
         object_titles, pset_titles = cls.get_header_texts()
         title_lenght = 0
@@ -302,6 +306,7 @@ class UseCase(som_gui.core.tool.UseCase):
         if not use_case_data.UseCaseData.is_loaded:
             use_case_data.UseCaseData.load()
         prop.use_cases = use_case_data.UseCaseData.data["data_classes"]
+        logging.debug(f"Use Cases: {prop.use_cases}")
         object_dict = dict()
         pset_dict = dict()
         attribute_dict = dict()

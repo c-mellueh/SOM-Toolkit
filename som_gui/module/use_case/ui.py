@@ -20,7 +20,6 @@ class UseCaseWindow(QWidget):
 
 def load_triggers():
     MainUi.ui.action_use_cases.triggered.connect(use_case.trigger.menu_action_use_cases)
-    core.add_use_case_to_settings_dict(UseCase)
 
 class ObjectTreeView(QTreeView):
     def __init__(self, parent: QWidget):

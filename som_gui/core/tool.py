@@ -1,3 +1,6 @@
+class Object:
+    def create_object(self):
+        pass
 class UseCase:
     def create_use_case(self, name):
         pass
@@ -16,6 +19,8 @@ class Project:
     def load_project(self, path):
         pass
 
+    def create_project(self): pass
+
     def get(self):
         pass
 
@@ -24,3 +29,7 @@ class Project:
 
     def get_root_objects(self, filter):
         pass
+
+
+class Settings:
+    def get_open_path(self): pass

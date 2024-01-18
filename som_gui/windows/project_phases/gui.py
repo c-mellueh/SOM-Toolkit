@@ -234,7 +234,7 @@ class ProjectPhaseWindow(QWidget):
 
     def fill_property_set_tree(self):
         """adds all propertySetObjects to PropertySetTree and Hides them.
-        When an object is clicked only the relating PropertySets will be shown"""
+        When an objects is clicked only the relating PropertySets will be shown"""
 
         def format_pset_item(item):
             font = QFont()
@@ -284,7 +284,7 @@ class ProjectPhaseWindow(QWidget):
         self.object_index_clicked(index)
 
     def object_index_clicked(self, object_index: QStandardItem):
-        """shows propertySetItems which match the selected object"""
+        """shows propertySetItems which match the selected objects"""
 
         def handle_enable_status(property_set_indexes: list[QModelIndex]):
             for pset_index in property_set_indexes:
