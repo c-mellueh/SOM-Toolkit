@@ -6,8 +6,8 @@ from logging import config
 
 import som_gui
 from som_gui import logs, settings
-
-
+from som_gui.core import project
+from som_gui.tool import Project
 # import ifcopenshell.express.rules.IFC2X3 as IFC2X3
 
 
@@ -37,9 +37,12 @@ def main(initial_file: str | None = None):
 
     print("START")
     app = QApplication(sys.argv)
-    window = main_window.MainWindow(app, initial_file)
+    window = main_window.MainWindow(app)
     window.show()
+    project.create_project(Project)
     som_gui.load_ui_triggers()
+    if initial_file is not None:
+        project.open_project(initial_file, Project)
     sys.exit(app.exec())
 
 

@@ -17,3 +17,7 @@ def menu_action_settings():
 
 def repaint_event():
     core.repaint_settings_dialog(tool.Project)
+
+
+def menu_action_open_file():
+    core.open_file_clicked(tool.Project)

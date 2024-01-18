@@ -29,5 +29,6 @@ def menu_action_use_cases():
     use_case_window.widget.buttonBox.accepted.connect(lambda: core.accept_changes(UseCase))
     use_case_window.widget.buttonBox.rejected.connect(lambda: core.reject_changes(UseCase))
 
-def header_context_menu_called(pos: QPoint):
-    pass
+
+def on_new_project():
+    core.on_startup(UseCase)

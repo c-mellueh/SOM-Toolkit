@@ -19,7 +19,7 @@ from ..windows.propertyset_window import ATTRIBUTE_DATA_ROLE
 
 
 def get_parent_by_name(active_object: classes.Object, name: str) -> classes.PropertySet | None:
-    """find Propertyset which has the same name and is not from the same object"""
+    """find Propertyset which has the same name and is not from the same objects"""
 
     for pset in classes.PropertySet:
         is_master = pset.parent is None

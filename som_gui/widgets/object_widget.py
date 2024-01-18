@@ -761,7 +761,7 @@ def add_object(main_window: MainWindow):
         return False
 
     def allready_exists():
-        """checks if abbreviation allready exists or if there is an object with the same ident Attribute"""
+        """checks if abbreviation allready exists or if there is an objects with the same ident Attribute"""
         if check_abbrev(main_window.project, None, abbreviation):
             popups.msg_abbrev_already_exists()
             return True
@@ -864,8 +864,8 @@ def rc_delete(main_window: MainWindow):
             tree.model().removeRow(index.row(), index.parent())
 
     for obj in selected_objects:
-        delete_nodes(obj, recursive_deletion)  # Nodes need to be deleted before object
-        # because the aggregations will be deleted together with the object
+        delete_nodes(obj, recursive_deletion)  # Nodes need to be deleted before objects
+        # because the aggregations will be deleted together with the objects
         obj.delete(recursive_deletion)
     main_window.reload()
 

@@ -7,9 +7,28 @@ from som_gui.module.project.prop import ProjectProperties, InfoDict
 from som_gui.module.project.constants import VERSION, AUTHOR, NAME, PROJECT_PHASE
 from PySide6.QtWidgets import QFormLayout, QLineEdit, QComboBox, QLabel
 from typing import Callable
-
-
+from som_gui import tool
+import os
+from PySide6.QtWidgets import QFileDialog
 class Project(som_gui.core.tool.Project):
+    @classmethod  # TODO: Move to Filehandling Module
+    def get_path(cls, title: str, file_text: str) -> str:
+        main_window = som_gui.MainUi.window
+        cur_path = tool.Settings.get_open_path()
+        if not os.path.exists(cur_path):
+            cur_path = os.getcwd() + "/"
+        return QFileDialog.getOpenFileName(main_window, title, str(cur_path), file_text)[0]
+
+    @classmethod
+    def create_project(cls):
+
+        proj = SOMcreator.Project()
+        prop: ProjectProperties = som_gui.ProjectProperties
+        prop.active_project = proj
+        prop.project_infos = list()
+        cls.create_project_infos()
+        som_gui.on_new_project()
+
     @classmethod
     def get_project_phase_list(cls):
         proj = cls.get()
@@ -85,16 +104,31 @@ class Project(som_gui.core.tool.Project):
         return proj.current_project_phase
 
     @classmethod
-    def load_project(cls, path: str):
-        logging.info("Load Project")
-        prop: ProjectProperties = som_gui.ProjectProperties
-        proj = SOMcreator.Project()
-        project_dict = proj.open(path)
-        prop.active_project = proj
+    def create_project_infos(cls):
+        logging.debug(f"Create Project Infos")
         cls.add_project_info(cls.get_project_version, cls.update_project_version, VERSION)
         cls.add_project_info(cls.get_project_author, cls.update_project_author, AUTHOR)
         cls.add_project_info(cls.get_project_name, cls.update_project_name, NAME)
         cls.add_project_info(cls.get_project_phase, cls.update_project_phase, PROJECT_PHASE, cls.get_project_phase_list)
+
+    @classmethod
+    def load_project(cls, path: str):
+        from som_gui.filehandling.open_file import import_node_pos, fill_ui
+        logging.info("Load Project")
+        main_window = som_gui.MainUi.window
+        tool.Settings.set_open_path(path)
+        tool.Settings.set_save_path(path)
+        prop: ProjectProperties = som_gui.ProjectProperties
+        proj = SOMcreator.Project()
+        project_dict = proj.open(path)
+        prop.active_project = proj
+        cls.create_project_infos()
+        som_gui.on_new_project()
+        main_window.project, main_dict = proj, project_dict
+        import_node_pos(main_dict, main_window.graph_window)
+        fill_ui(main_window)
+        main_window.generate_window_title()
+        main_window.graph_window.create_missing_scenes()
         return proj, project_dict
 
     @classmethod

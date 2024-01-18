@@ -10,6 +10,7 @@ from som_gui.module import project
 
 def load_triggers():
     MainUi.ui.action_settings.triggered.connect(project.trigger.menu_action_settings)
+    MainUi.ui.action_file_Open.triggered.connect(project.trigger.menu_action_open_file)
 
 class SettingsDialog(QDialog):
     def __init__(self):
