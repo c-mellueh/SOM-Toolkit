@@ -17,13 +17,17 @@ for name in modules.keys():
 
 
 def register():
-    for mod in modules.values():
-        mod.register()
+    modules["project"].register()
+    for name, mod in modules.items():
+        if name != "project":
+            mod.register()
 
 
 def load_ui_triggers():
-    for mod in modules.values():
-        mod.load_ui_triggers()
+    modules["project"].load_ui_triggers()
+    for name, mod in modules.items():
+        if name != "project":
+            mod.load_ui_triggers()
 
 
 register()

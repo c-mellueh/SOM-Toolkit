@@ -642,6 +642,8 @@ def single_click(main_window: MainWindow, item: CustomObjectTreeItem):
         return
 
     obj: classes.Object = item.object
+    for aggreg in obj.aggregations:
+        print(aggreg.get_use_case_dict())
     main_window.active_object = obj
     property_widget.fill_table(main_window, obj)
     update_completer(main_window)

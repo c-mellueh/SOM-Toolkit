@@ -13,6 +13,7 @@ def open_project(path, project_tool: Type[Project]):
 
 
 def repaint_settings_dialog(project_tool: Type[Project]):
+    print(project_tool.get().get_use_case_list())
     project_infos = project_tool.get_project_infos()
     for index, info_dict in enumerate(project_infos):
         project_tool.refresh_info_dict(info_dict, index)
@@ -33,4 +34,4 @@ def update_settings(project_tool: Type[Project]):
 def reset_settings_dialog(project_tool: Type[Project]):
     project_infos = project_tool.get_project_infos()
     for info_dict in project_infos:
-        info_dict["value"] = info_dict["fallback_value"]
+        info_dict["value"] = info_dict["get_function"]()

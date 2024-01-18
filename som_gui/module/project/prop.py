@@ -5,11 +5,11 @@ from typing import TypedDict, Callable
 
 
 class InfoDict(TypedDict):
-    value_set_function: Callable
+    get_function: Callable
+    set_function: Callable
     display_name: str
     value: str
     options: Callable
-    fallback_value: str
 
 
 @dataclass

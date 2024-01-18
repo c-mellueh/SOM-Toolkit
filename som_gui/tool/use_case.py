@@ -13,8 +13,34 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 if TYPE_CHECKING:
     from som_gui.module.use_case.prop import UseCaseProperties
 
+USE_CASE = "Anwedungsfall"
 
 class UseCase(som_gui.core.tool.UseCase):
+
+    @classmethod
+    def update_use_case_by_settings_window(cls):
+        prop = som_gui.ProjectProperties
+        proj = Project.get()
+        for info_dict in prop.project_infos:
+            if info_dict["display_name"] == USE_CASE:
+                proj.current_use_case = info_dict["value"]
+
+    @classmethod
+    def get_use_case(cls):
+        proj = Project.get()
+        return proj.current_use_case
+
+    @classmethod
+    def set_use_case(cls, value: str):
+        proj = Project.get()
+        proj.current_use_case = value
+
+    @classmethod
+    def add_use_case_to_settings_window(cls):
+        proj = Project.get()
+        Project.add_project_info(cls.get_use_case,
+                                 cls.update_use_case_by_settings_window, USE_CASE, proj.get_use_case_list)
+
     @classmethod
     def create_row(cls, entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.PropertySet, use_case_list):
         entity_item = QStandardItem(entity.name)
@@ -59,7 +85,6 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def update_pset_uses_cases(cls):
-        print(cls.get_pset_dict())
         for pset, use_case_dict in cls.get_pset_dict().items():
             for use_case_name, state in use_case_dict.items():
                 pset.set_use_case(use_case_name, state)
@@ -75,12 +100,12 @@ class UseCase(som_gui.core.tool.UseCase):
     def update_project_use_cases(cls):
         use_case_list = cls.get_use_case_list()
         proj = Project.get()
+
         old_use_cases = proj.get_use_case_list()
         for index, old_use_case in enumerate(old_use_cases):
             if index != 0:
                 proj.remove_use_case(old_use_case)
-
-        proj.rename_use_case(old_use_case[0], use_case_list[0])
+        proj.rename_use_case(old_use_cases[0], use_case_list[0])
         for use_case in use_case_list[1:]:
             proj.add_use_case(use_case)
 

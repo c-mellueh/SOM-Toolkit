@@ -6,6 +6,7 @@ from som_gui.module.project.constants import VERSION, AUTHOR, NAME, PROJECT_PHAS
 from PySide6.QtWidgets import QFormLayout, QLineEdit, QComboBox, QLabel
 from typing import Callable
 
+
 class Project(som_gui.core.tool.Project):
     @classmethod
     def get_project_phase_list(cls):
@@ -18,8 +19,11 @@ class Project(som_gui.core.tool.Project):
         prop.project_infos = list()
 
     @classmethod
-    def add_project_info(cls, value_set_function, name, value, options: Callable= None):
-        d = {"value_set_function": value_set_function, "display_name": name, "value": str(value),"fallback_value":str(value)}
+    def add_project_info(cls, get_function: Callable, set_function: Callable, name: str,
+                         options: Callable | None = None):
+        value = get_function()
+        d = {"set_function": set_function, "display_name": name, "value": str(value),
+             "get_function": get_function}
         if options is not None:
             d["options"] = options
 
@@ -33,6 +37,7 @@ class Project(som_gui.core.tool.Project):
         for info_dict in prop.project_infos:
             if info_dict["display_name"] == VERSION:
                 proj.version = info_dict["value"]
+
     @classmethod
     def update_project_author(cls):
         prop: ProjectProperties = som_gui.ProjectProperties
@@ -58,6 +63,26 @@ class Project(som_gui.core.tool.Project):
                 proj.current_project_phase = info_dict["value"]
 
     @classmethod
+    def get_project_version(cls):
+        proj = cls.get()
+        return proj.version
+
+    @classmethod
+    def get_project_author(cls):
+        proj = cls.get()
+        return proj.author
+
+    @classmethod
+    def get_project_name(cls):
+        proj = cls.get()
+        return proj.name
+
+    @classmethod
+    def get_project_phase(cls):
+        proj = cls.get()
+        return proj.current_project_phase
+
+    @classmethod
     def load_project(cls, path: str):
 
         print("Load Project")
@@ -66,11 +91,10 @@ class Project(som_gui.core.tool.Project):
         project_dict = proj.open(path)
         prop.active_project = proj
 
-        cls.add_project_info(cls.update_project_version, VERSION, proj.version,)
-        cls.add_project_info(cls.update_project_author, AUTHOR, proj.author)
-        cls.add_project_info(cls.update_project_name, NAME, proj.name)
-        cls.add_project_info(cls.update_project_phase, PROJECT_PHASE, proj.current_project_phase,
-                             cls.get_project_phase_list)
+        cls.add_project_info(cls.get_project_version, cls.update_project_version, VERSION)
+        cls.add_project_info(cls.get_project_author, cls.update_project_author, AUTHOR)
+        cls.add_project_info(cls.get_project_name, cls.update_project_name, NAME)
+        cls.add_project_info(cls.get_project_phase, cls.update_project_phase, PROJECT_PHASE, cls.get_project_phase_list)
         return proj, project_dict
 
     @classmethod
@@ -102,7 +126,7 @@ class Project(som_gui.core.tool.Project):
         prop: ProjectProperties = som_gui.ProjectProperties
 
     @classmethod
-    def add_setting_to_dialog(cls, info_dict:InfoDict):
+    def add_setting_to_dialog(cls, info_dict: InfoDict):
         value = info_dict["value"]
         prop: ProjectProperties = som_gui.ProjectProperties
         layout: QFormLayout = prop.settings_window.layout()
@@ -115,23 +139,21 @@ class Project(som_gui.core.tool.Project):
         else:
             edit = QLineEdit(dialog)
             edit.setText(value)
-        layout.insertRow(layout.rowCount()-1,info_dict["display_name"],edit)
-
+        layout.insertRow(layout.rowCount() - 1, info_dict["display_name"], edit)
 
     @classmethod
-    def refresh_info_dict(cls, info_dict:InfoDict, index):
-        prop:ProjectProperties = som_gui.ProjectProperties
-        layout_item = prop.settings_window.layout().itemAt(index,QFormLayout.FieldRole)
+    def refresh_info_dict(cls, info_dict: InfoDict, index):
+        prop: ProjectProperties = som_gui.ProjectProperties
+        layout_item = prop.settings_window.layout().itemAt(index, QFormLayout.FieldRole)
         widget = layout_item.widget()
-        if isinstance(widget,QComboBox):
+        if isinstance(widget, QComboBox):
             value = widget.currentText()
-        elif isinstance(widget,QLineEdit):
+        elif isinstance(widget, QLineEdit):
             value = widget.text()
         else:
             return
         info_dict["value"] = value
 
     @classmethod
-    def update_setting(cls,info_dict:InfoDict):
-        info_dict["fallback_value"] = info_dict["value"]
-        info_dict["value_set_function"]()
+    def update_setting(cls, info_dict: InfoDict):
+        info_dict["set_function"]()
