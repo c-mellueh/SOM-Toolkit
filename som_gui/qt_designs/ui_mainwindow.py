@@ -20,13 +20,15 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHB
     QHeaderView, QLabel, QLineEdit, QMainWindow,
     QMenu, QMenuBar, QPushButton, QSizePolicy,
     QSplitter, QStatusBar, QTableWidget, QTableWidgetItem,
-    QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
+                               QTreeWidgetItem, QVBoxLayout, QWidget)
+
+from som_gui.module.objects.ui import ObjectTreeView
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1315, 503)
+        MainWindow.resize(1313, 745)
         MainWindow.setMinimumSize(QSize(0, 0))
         self.action_file_new = QAction(MainWindow)
         self.action_file_new.setObjectName(u"action_file_new")
@@ -201,7 +203,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_objects.addLayout(self.gridLayout_objects)
 
-        self.tree_object = QTreeWidget(self.layoutWidget)
+        self.tree_object = ObjectTreeView(self.layoutWidget)
         self.tree_object.setObjectName(u"tree_object")
         self.tree_object.setEnabled(True)
         self.tree_object.setDragDropMode(QAbstractItemView.InternalMove)
@@ -305,7 +307,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.verticalLayout_main)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1315, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1313, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuExport = QMenu(self.menuFile)
