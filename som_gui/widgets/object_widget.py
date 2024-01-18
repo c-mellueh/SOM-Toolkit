@@ -879,33 +879,6 @@ def refill_tree(main_window: MainWindow) -> None:
 
 
 def reload(main_window: MainWindow) -> None:
-    def iter_tree(parent_index):
-        for row in range(model.rowCount(parent_index)):
-            index = model.index(row, 0, parent_index)
-            item: CustomObjectTreeItem = tree.itemFromIndex(index)
-            focus_object = item.object
-            identifier_index = model.sibling(index.row(), 1, index)
-            abbreviaion_index = model.sibling(index.row(), 2, index)
-            optional_index = model.sibling(index.row(), 3, index)
-            ident_text = "" if focus_object.is_concept else focus_object.ident_value
-            model.setData(identifier_index, ident_text)
-            model.setData(abbreviaion_index, focus_object.abbreviation)
-            cs = (
-                Qt.CheckState.Checked
-                if focus_object.optional
-                else Qt.CheckState.Unchecked
-            )
-            model.setData(optional_index, cs, Qt.ItemDataRole.CheckStateRole)
-            hide_bool: bool = focus_object.get_project_phase_state(
-                main_window.project.current_project_phase
-            )
-            tree.setRowHidden(row, parent_index, not hide_bool)
-            iter_tree(index)
-
-    model = main_window.object_tree.model()
-    tree = main_window.object_tree
-    p_index = tree.rootIndex()
-    iter_tree(p_index)
     resize_tree(main_window)
     obj = main_window.active_object
     if obj is None:

@@ -11,6 +11,9 @@ if TYPE_CHECKING:
 
 
 def refresh_object_tree(object_tool: Type[Objects], project_tool: Type[Project]):
+    """
+    gets called on Paint Event
+    """
     load_objects(object_tool, project_tool)
 
 
@@ -22,3 +25,10 @@ def load_objects(object_tool: Type[Objects], project_tool: Type[Project]):
 
 def item_changed(item: QTreeWidgetItem, object_tool: Type[Objects]):
     object_tool.update_check_state(item)
+
+
+def item_selection_changed(object_tool: Type[Objects]):
+    selected_items = object_tool.get_selected_items()
+    if len(selected_items) == 1:
+        obj = object_tool.get_object_from_item(selected_items[0])
+        object_tool.set_active_object(obj)

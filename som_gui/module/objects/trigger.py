@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QTreeWidget
 def connect():
     widget: QTreeWidget = Objects.get_object_tree()
     widget.itemChanged.connect(lambda item: core.item_changed(item, Objects))
-
+    widget.itemSelectionChanged.connect(lambda: core.item_selection_changed(Objects))
 
 def repaint_event():
     core.refresh_object_tree(Objects, Project)
