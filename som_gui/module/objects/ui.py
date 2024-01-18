@@ -5,11 +5,11 @@ from PySide6.QtGui import QMouseEvent
 
 
 def load_triggers():
-    pass
+    objects.trigger.connect()
     # MainUi.ui.action_settings.triggered.connect(objects.trigger.repaint_event())
 
 
-class ObjectTreeView(QTreeWidget):
+class ObjectTreeWidget(QTreeWidget):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
 
@@ -27,5 +27,4 @@ class ObjectTreeView(QTreeWidget):
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
-        index = self.indexAt(event.pos())
         objects.trigger.mouse_release_event(event)

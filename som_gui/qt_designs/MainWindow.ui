@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1313</width>
-    <height>745</height>
+       <width>1254</width>
+       <height>710</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -217,7 +217,7 @@
          </layout>
         </item>
         <item>
-         <widget class="ObjectTreeView" name="tree_object">
+            <widget class="ObjectTreeWidget" name="tree_object">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -244,7 +244,7 @@
           </attribute>
           <column>
            <property name="text">
-            <string>Objektvorgaben</string>
+               <string>Objekt</string>
            </property>
           </column>
           <column>
@@ -254,7 +254,7 @@
           </column>
           <column>
            <property name="text">
-            <string>Abkürzung</string>
+               <string>Neue Spalte</string>
            </property>
           </column>
           <column>
@@ -428,7 +428,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1313</width>
+        <width>1254</width>
      <height>22</height>
     </rect>
    </property>
@@ -682,7 +682,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ObjectTreeView</class>
+      <class>ObjectTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>som_gui.module.objects.ui</header>
   </customwidget>

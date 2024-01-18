@@ -105,7 +105,7 @@ class MainWindow(QMainWindow):
         self.property_set_window: None | propertyset_window.PropertySetWindow = None
 
         # init Object- and PropertyWidget
-        object_widget.init(self)
+        # object_widget.init(self)
         property_widget.init(self)
         connect_actions()
         settings.reset_save_path()
