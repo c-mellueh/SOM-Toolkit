@@ -11,8 +11,10 @@ def connect():
     widget.itemSelectionChanged.connect(lambda: core.item_selection_changed(Objects))
     widget.itemDoubleClicked.connect(item_double_clicked)
     widget.customContextMenuRequested.connect(lambda p: core.create_context_menu(p, Objects))
-    core.load_context_menus(Objects)
     widget.expanded.connect(lambda: core.resize_columns(Objects))
+
+    core.load_context_menus(Objects)
+    core.add_shortcuts(Objects, Project)
 
 def item_double_clicked():
     core.create_object_info_widget(mode=1, object_tool=Objects)

@@ -14,12 +14,23 @@ if TYPE_CHECKING:
     from PySide6.QtCore import QPoint
 
 
+def add_shortcuts(object_tool: Type[Objects], project_tool: Type[Project]):
+    project_tool.add_shortcut("Ctrl+X", som_gui.MainUi.window, object_tool.delete_selection)
+    project_tool.add_shortcut("Ctrl+G", som_gui.MainUi.window, object_tool.group_selection)
+    project_tool.add_shortcut("Ctrl+F", som_gui.MainUi.window, lambda: search_object(object_tool))
+
+
+def search_object(object_tool: Type[Objects]):
+    print("SEARCH")
+
 def reset_tree(object_tool: Type[Objects]):
     object_tool.get_object_properties().first_paint = True
 
 
 def resize_columns(object_tool: Type[Objects]):
     object_tool.resize_tree()
+
+
 def create_object_info_widget(mode: int, object_tool: Type[Objects]):
     dialog = object_tool.oi_create_widget()
     widget = dialog.widget

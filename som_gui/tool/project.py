@@ -5,12 +5,25 @@ import SOMcreator
 import som_gui
 from som_gui.module.project.prop import ProjectProperties, InfoDict
 from som_gui.module.project.constants import VERSION, AUTHOR, NAME, PROJECT_PHASE
-from PySide6.QtWidgets import QFormLayout, QLineEdit, QComboBox, QLabel
+from PySide6.QtWidgets import QFormLayout, QLineEdit, QComboBox, QLabel, QWidget
+from PySide6.QtGui import QShortcut, QKeySequence
 from typing import Callable
 from som_gui import tool
 import os
 from PySide6.QtWidgets import QFileDialog
+
+
 class Project(som_gui.core.tool.Project):
+
+    @classmethod
+    def add_shortcut(cls, sequence: str, window: QWidget, function: Callable):
+        prop: ProjectProperties = som_gui.ProjectProperties
+        shortcut = QShortcut(QKeySequence(sequence), window)
+        if not hasattr(prop, "shortcuts"):
+            prop.shourtcuts = list()
+        prop.shourtcuts.append(shortcut)
+        shortcut.activated.connect(function)
+
     @classmethod  # TODO: Move to Filehandling Module
     def get_path(cls, title: str, file_text: str) -> str:
         main_window = som_gui.MainUi.window

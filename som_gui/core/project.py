@@ -10,7 +10,6 @@ FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
 if TYPE_CHECKING:
     from som_gui.tool.project import Project
 
-
 def open_file_clicked(project_tool: Type[Project]):
     path = project_tool.get_path("Open Project", FILETYPE)
     if not path:

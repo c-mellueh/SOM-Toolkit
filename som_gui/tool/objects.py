@@ -18,6 +18,16 @@ if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
 
 
+def update_completer(main_window: MainWindow):
+    # TODO: in Module für PropertySets umwandlen
+    from som_gui.widgets import property_widget
+    completer = QCompleter(
+        property_widget.predefined_pset_dict(main_window.project).keys(), main_window
+    )
+    main_window.ui.lineEdit_ident_pSet.setCompleter(completer)
+    main_window.ui.lineEdit_pSet_name.setCompleter(completer)
+
+
 class ObjectDataDict(TypedDict):
     name: str
     is_group: bool
@@ -499,10 +509,19 @@ class Objects(som_gui.core.tool.Object):
     @classmethod
     def set_active_object(cls, obj: SOMcreator.Object):
         logging.debug(f"Set Active Object")
-
         prop: ObjectProperties = som_gui.ObjectProperties
         prop.active_object = obj
         cls.fill_object_entry(obj)
+        # TODO: Aufrufe in Modules umwandeln
+        main_window = som_gui.MainUi.window
+        from som_gui.widgets import property_widget
+        property_widget.clear_attribute_table(main_window)
+        update_completer(main_window)
+        property_widget.fill_table(main_window, obj)
+        if obj.is_concept:
+            return
+        if obj.property_sets:
+            property_widget.left_click(main_window, main_window.ui.table.pset.item(0, 0))
 
     @classmethod
     def update_check_state(cls, item: QTreeWidgetItem):
