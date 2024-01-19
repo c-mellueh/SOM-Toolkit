@@ -1,5 +1,5 @@
 import som_gui
-from som_gui.tool import Project, Objects
+from som_gui.tool import Project, Objects, Search
 from som_gui.core import objects as core
 from PySide6.QtWidgets import QTreeWidget
 from som_gui.module.objects.prop import ObjectProperties, ObjectInfoWidgetProperties
@@ -14,7 +14,7 @@ def connect():
     widget.expanded.connect(lambda: core.resize_columns(Objects))
 
     core.load_context_menus(Objects)
-    core.add_shortcuts(Objects, Project)
+    core.add_shortcuts(Objects, Project, Search)
 
 def item_double_clicked():
     core.create_object_info_widget(mode=1, object_tool=Objects)

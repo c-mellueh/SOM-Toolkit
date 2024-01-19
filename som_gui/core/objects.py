@@ -9,19 +9,20 @@ import SOMcreator
 import som_gui.module.objects
 
 if TYPE_CHECKING:
-    from som_gui.tool import Objects, Project
+    from som_gui.tool import Objects, Project, Search
     from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
     from PySide6.QtCore import QPoint
 
 
-def add_shortcuts(object_tool: Type[Objects], project_tool: Type[Project]):
+def add_shortcuts(object_tool: Type[Objects], project_tool: Type[Project], search_tool: Type[Search]):
     project_tool.add_shortcut("Ctrl+X", som_gui.MainUi.window, object_tool.delete_selection)
     project_tool.add_shortcut("Ctrl+G", som_gui.MainUi.window, object_tool.group_selection)
-    project_tool.add_shortcut("Ctrl+F", som_gui.MainUi.window, lambda: search_object(object_tool))
+    project_tool.add_shortcut("Ctrl+F", som_gui.MainUi.window, lambda: search_object(search_tool))
 
 
-def search_object(object_tool: Type[Objects]):
-    print("SEARCH")
+def search_object(search_tool: Type[Search]):
+    obj = search_tool.search_object()
+    print(obj)
 
 def reset_tree(object_tool: Type[Objects]):
     object_tool.get_object_properties().first_paint = True

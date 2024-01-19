@@ -10,7 +10,8 @@ from thefuzz import fuzz
 
 from .. import icons
 from ..icons import get_icon
-from ..qt_designs import ui_delete_request, ui_group_name_request, ui_search, ui_attribute_mapping
+from ..qt_designs import ui_delete_request, ui_group_name_request, ui_attribute_mapping
+from ..module.search import window
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
