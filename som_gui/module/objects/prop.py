@@ -10,6 +10,8 @@ if TYPE_CHECKING:
 
 @dataclass
 class ObjectInfoWidgetProperties:
+    focus_object: SOMcreator.Object = None
+    mode: int = 0  # 1= Info 2 =Copy
     ifc_mappings: list[str] = field(default_factory=lambda: [])
     name: str = ""
     abbreviation: str = ""

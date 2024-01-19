@@ -13,9 +13,14 @@ def connect():
 
 
 def item_double_clicked():
+    create_object_info_widget(mode=1)
+
+
+def create_object_info_widget(mode: int):
     prop: ObjectProperties = som_gui.ObjectProperties
     prop.object_info_widget_properties = ObjectInfoWidgetProperties()
     prop.object_info_widget = ObjectInfoWidget()
+    prop.object_info_widget_properties.mode = mode
     widget = prop.object_info_widget.widget
     widget.button_add_ifc.pressed.connect(lambda: core.object_info_add_ifc(Objects))
     widget.combo_box_pset.currentIndexChanged.connect(lambda: core.object_info_pset_changed(Objects))
@@ -23,6 +28,9 @@ def item_double_clicked():
     if prop.object_info_widget.exec():
         core.object_info_accept(Objects)
 
+
+def item_copy_event():
+    create_object_info_widget(mode=2)
 
 def object_info_paint_event():
     core.object_info_refresh(Objects)

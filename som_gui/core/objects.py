@@ -3,6 +3,8 @@ from __future__ import annotations
 import uuid
 from typing import Type, TYPE_CHECKING
 
+import SOMcreator
+
 if TYPE_CHECKING:
     from som_gui.tool import Objects, Project
     from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
@@ -10,33 +12,24 @@ if TYPE_CHECKING:
 
 
 def object_info_accept(object_tool: Type[Objects]):
-    name, abbreviation, group, pset, attribute, ident_value, ifc_mappings = object_tool.oi_get_values()
-    active_object = object_tool.get_active_object()
-
-    if group:
-        active_object.name = name
-        active_object.ifc_mapping = ifc_mappings
-        if not active_object.is_concept:
-            active_object.ident_attrib = str(uuid.uuid4())
-            object_tool.fill_object_entry(active_object)
-        return
-    if not object_tool.abbreviation_is_allowed(abbreviation, active_object.abbreviation):
-        print(f"Abkürzung existiert bereits")
-        return
-    if not object_tool.identifier_is_allowed(ident_value, active_object.ident_value):
-        print(f"Identifier existiert bereits")
-        return
-    active_object.name = name
-    active_object.ifc_mapping = ifc_mappings
-    ident_attribute = object_tool.find_attribute(active_object, pset, attribute)
-    active_object.ident_attrib = ident_attribute
-    active_object.abbreviation = abbreviation
-    object_tool.fill_object_entry(active_object)
+    data_dict = object_tool.oi_get_values()
+    focus_object = object_tool.oi_get_focus_object()
+    mode = object_tool.oi_get_mode()
+    result = 666
+    if mode == 1:
+        result = object_tool.change_object_info(focus_object, data_dict)
+    if mode == 2:
+        result, focus_object = object_tool.copy_object(focus_object, data_dict)
+    if object_tool.handle_attribute_issue(result):
+        object_tool.fill_object_entry(focus_object)
 
 
 def object_info_refresh(object_tool: Type[Objects]):
-    name, abbreviation, group, pset, attribute, ident_value, ifc_mappings = object_tool.oi_get_values()
-    object_tool.oi_set_values(name, abbreviation, group, pset, attribute, ident_value, ifc_mappings)
+    data_dict = object_tool.oi_get_values()
+    object_tool.oi_set_values(data_dict)
+    ident_value = data_dict["ident_value"]
+    abbreviation = data_dict["abbreviation"]
+    group = data_dict["is_group"]
     if not object_tool.identifier_is_allowed(ident_value, object_tool.get_active_object().ident_value):
         object_tool.oi_set_ident_value_color("red")
     else:
@@ -46,7 +39,6 @@ def object_info_refresh(object_tool: Type[Objects]):
         object_tool.oi_set_abbrev_value_color("red")
     else:
         object_tool.oi_set_abbrev_value_color("black")
-
     object_tool.oi_change_visibility_identifiers(group)
 
 
@@ -77,7 +69,7 @@ def item_changed(item: QTreeWidgetItem, object_tool: Type[Objects]):
 
 
 def item_double_clicked(object_tool: Type[Objects]):
-    object_tool.oi_fill_properties()
+    object_tool.oi_fill_properties(mode=1)
     object_tool.oi_update_dialog()
 
 
