@@ -607,3 +607,16 @@ class Objects(som_gui.core.tool.Object):
             obj: SOMcreator.Object = cls.get_object_from_item(item)
             cls.update_item(item, obj)
             cls.fill_object_tree(obj.children, item)
+
+    @classmethod
+    def clear_object_input(cls):
+        ui = som_gui.MainUi.ui
+        obj_line_edit_list = [
+            ui.line_edit_object_name,
+            ui.lineEdit_ident_value,
+            ui.lineEdit_ident_attribute,
+            ui.lineEdit_ident_pSet,
+            ui.line_edit_abbreviation,
+        ]
+        for el in obj_line_edit_list:
+            el.clear()
