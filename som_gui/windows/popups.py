@@ -27,7 +27,6 @@ def default_message(text):
     msg_box.setIcon(QMessageBox.Icon.Warning)
 
     msg_box.setWindowIcon(icon)
-    msg_box.exec()
 
 
 def msg_already_exists():

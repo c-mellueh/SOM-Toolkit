@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ObjectInfoWidget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.0
+## Created by: Qt User Interface Compiler version 6.6.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -59,6 +59,7 @@ class Ui_ObjectInfo(object):
 
         self.button_gruppe = QRadioButton(ObjectInfo)
         self.button_gruppe.setObjectName(u"button_gruppe")
+
         self.verticalLayout.addWidget(self.button_gruppe)
 
         self.layout_ident_attribute = QHBoxLayout()
@@ -117,11 +118,6 @@ class Ui_ObjectInfo(object):
 
         self.vertical_layout_ifc = QVBoxLayout()
         self.vertical_layout_ifc.setObjectName(u"vertical_layout_ifc")
-        self.line_edit_ifc = QLineEdit(ObjectInfo)
-        self.line_edit_ifc.setObjectName(u"line_edit_ifc")
-
-        self.vertical_layout_ifc.addWidget(self.line_edit_ifc)
-
 
         self.verticalLayout.addLayout(self.vertical_layout_ifc)
 
@@ -136,7 +132,6 @@ class Ui_ObjectInfo(object):
 
         self.verticalLayout.addWidget(self.button_box)
 
-        QWidget.setTabOrder(self.line_edit_ifc, self.line_edit_name)
         QWidget.setTabOrder(self.line_edit_name, self.line_edit_abbreviation)
         QWidget.setTabOrder(self.line_edit_abbreviation, self.button_add_ifc)
 

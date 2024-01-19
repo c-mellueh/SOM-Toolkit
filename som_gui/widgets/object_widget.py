@@ -20,7 +20,8 @@ from SOMcreator import classes, value_constants
 from SOMcreator.Template import IFC_4_1
 
 from ..icons import get_icon
-from ..qt_designs import ui_mainwindow, ui_object_info_widget
+from ..qt_designs import ui_mainwindow
+from ..module.objects import window
 from ..widgets import property_widget
 from ..windows import popups
 
@@ -124,6 +125,76 @@ class CustomObjectTreeItem(QTreeWidgetItem):
         if self.parent() is not None:
             self.parent().expand_to_me()
 
+
+def init(main_window: MainWindow):
+    def init_tree(tree: CustomTree):
+        # Design Tree
+        tree.setObjectName("treeWidget_objects")
+        tree.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+        tree.setDefaultDropAction(Qt.MoveAction)
+        tree.setAlternatingRowColors(False)
+        tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        tree.setSortingEnabled(True)
+        tree.setExpandsOnDoubleClick(False)
+        tree.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+        tree.setContextMenuPolicy(Qt.CustomContextMenu)
+        tree.viewport().setAcceptDrops(True)
+
+        ___qtreewidgetitem = tree.headerItem()
+        ___qtreewidgetitem.setText(0, "Objektvorgaben")
+        ___qtreewidgetitem.setText(1, "Identifier")
+        ___qtreewidgetitem.setText(2, "Abkürzung")
+        ___qtreewidgetitem.setText(3, "Optional")
+
+    def connect_items():
+        ui: ui_mainwindow.Ui_MainWindow = main_window.ui
+        ui.tree_object.itemClicked.connect(lambda item: single_click(main_window, item))
+        ui.tree_object.itemChanged.connect(lambda item: item.update())
+        ui.tree_object.itemExpanded.connect(lambda: resize_tree(main_window))
+        ui.tree_object.customContextMenuRequested.connect(
+            lambda pos: right_click(main_window, pos)
+        )
+        ui.tree_object.itemDoubleClicked.connect(
+            lambda item: object_double_clicked(main_window, item.object)
+        )
+        ui.button_search.clicked.connect(lambda: search_object(main_window))
+        ui.button_objects_add.clicked.connect(lambda: add_object(main_window))
+        main_window.group_shortcut.activated.connect(
+            lambda: rc_group_items(main_window)
+        )
+        main_window.delete_shortcut.activated.connect(lambda: rc_delete(main_window))
+        main_window.search_shortcut.activated.connect(
+            lambda: search_object(main_window)
+        )
+        main_window.reload_shortcut.activated.connect(lambda: refill_tree(main_window))
+
+    main_window.ui.verticalLayout_objects.removeWidget(main_window.ui.tree_object)
+    main_window.ui.tree_object.close()
+    main_window.ui.tree_object = CustomTree(main_window.ui.verticalLayout_main)
+    main_window.ui.verticalLayout_objects.addWidget(main_window.ui.tree_object)
+    init_tree(main_window.ui.tree_object)
+
+    main_window.ui.verticalLayout_objects.addWidget(main_window.ui.tree_object)
+
+    main_window.delete_shortcut = QShortcut(QKeySequence("Ctrl+X"), main_window)
+    main_window.group_shortcut = QShortcut(QKeySequence("Ctrl+G"), main_window)
+    main_window.search_shortcut = QShortcut(QKeySequence("Ctrl+F"), main_window)
+    main_window.reload_shortcut = QShortcut(QKeySequence("Ctrl+R"), main_window)
+    connect_items()
+
+
+def check_identifier(
+        project: classes.Project, obj: classes.Object | None, value
+) -> bool:
+    return value in [o.ident_value for o in project.get_all_objects() if o != obj]
+
+
+def check_abbrev(project: classes.Project, obj: classes.Object | None, value) -> bool:
+    return value in [
+        o.abbreviation
+        for o in project.get_all_objects()
+        if o != obj and o.abbreviation != ""
+    ]
 
 class ObjectInfoWidget(QDialog):
     def __init__(self, main_window: MainWindow, obj: classes.Object, copy=False):
@@ -261,77 +332,6 @@ class ObjectInfoWidget(QDialog):
             return False
 
         return return_value
-
-
-def init(main_window: MainWindow):
-    def init_tree(tree: CustomTree):
-        # Design Tree
-        tree.setObjectName("treeWidget_objects")
-        tree.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
-        tree.setDefaultDropAction(Qt.MoveAction)
-        tree.setAlternatingRowColors(False)
-        tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        tree.setSortingEnabled(True)
-        tree.setExpandsOnDoubleClick(False)
-        tree.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
-        tree.setContextMenuPolicy(Qt.CustomContextMenu)
-        tree.viewport().setAcceptDrops(True)
-
-        ___qtreewidgetitem = tree.headerItem()
-        ___qtreewidgetitem.setText(0, "Objektvorgaben")
-        ___qtreewidgetitem.setText(1, "Identifier")
-        ___qtreewidgetitem.setText(2, "Abkürzung")
-        ___qtreewidgetitem.setText(3, "Optional")
-
-    def connect_items():
-        ui: ui_mainwindow.Ui_MainWindow = main_window.ui
-        ui.tree_object.itemClicked.connect(lambda item: single_click(main_window, item))
-        ui.tree_object.itemChanged.connect(lambda item: item.update())
-        ui.tree_object.itemExpanded.connect(lambda: resize_tree(main_window))
-        ui.tree_object.customContextMenuRequested.connect(
-            lambda pos: right_click(main_window, pos)
-        )
-        ui.tree_object.itemDoubleClicked.connect(
-            lambda item: object_double_clicked(main_window, item.object)
-        )
-        ui.button_search.clicked.connect(lambda: search_object(main_window))
-        ui.button_objects_add.clicked.connect(lambda: add_object(main_window))
-        main_window.group_shortcut.activated.connect(
-            lambda: rc_group_items(main_window)
-        )
-        main_window.delete_shortcut.activated.connect(lambda: rc_delete(main_window))
-        main_window.search_shortcut.activated.connect(
-            lambda: search_object(main_window)
-        )
-        main_window.reload_shortcut.activated.connect(lambda: refill_tree(main_window))
-
-    main_window.ui.verticalLayout_objects.removeWidget(main_window.ui.tree_object)
-    main_window.ui.tree_object.close()
-    main_window.ui.tree_object = CustomTree(main_window.ui.verticalLayout_main)
-    main_window.ui.verticalLayout_objects.addWidget(main_window.ui.tree_object)
-    init_tree(main_window.ui.tree_object)
-
-    main_window.ui.verticalLayout_objects.addWidget(main_window.ui.tree_object)
-
-    main_window.delete_shortcut = QShortcut(QKeySequence("Ctrl+X"), main_window)
-    main_window.group_shortcut = QShortcut(QKeySequence("Ctrl+G"), main_window)
-    main_window.search_shortcut = QShortcut(QKeySequence("Ctrl+F"), main_window)
-    main_window.reload_shortcut = QShortcut(QKeySequence("Ctrl+R"), main_window)
-    connect_items()
-
-
-def check_identifier(
-    project: classes.Project, obj: classes.Object | None, value
-) -> bool:
-    return value in [o.ident_value for o in project.get_all_objects() if o != obj]
-
-
-def check_abbrev(project: classes.Project, obj: classes.Object | None, value) -> bool:
-    return value in [
-        o.abbreviation
-        for o in project.get_all_objects()
-        if o != obj and o.abbreviation != ""
-    ]
 
 
 def object_double_clicked(main_window: MainWindow, obj: classes.Object):

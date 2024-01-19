@@ -115,11 +115,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="vertical_layout_ifc">
-     <item>
-      <widget class="QLineEdit" name="line_edit_ifc"/>
-     </item>
-    </layout>
+       <layout class="QVBoxLayout" name="vertical_layout_ifc"/>
    </item>
    <item>
     <spacer name="vertical_spacer">
@@ -147,7 +143,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>line_edit_ifc</tabstop>
   <tabstop>line_edit_name</tabstop>
   <tabstop>line_edit_abbreviation</tabstop>
   <tabstop>button_add_ifc</tabstop>
