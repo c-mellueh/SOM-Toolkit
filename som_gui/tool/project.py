@@ -65,12 +65,9 @@ class Project(som_gui.core.tool.Project):
         prop.project_infos.append(d)
 
     @classmethod
-    def update_project_version(cls):
-        prop: ProjectProperties = som_gui.ProjectProperties
+    def set_project_version(cls, version: str):
         proj = cls.get()
-        for info_dict in prop.project_infos:
-            if info_dict["display_name"] == VERSION:
-                proj.version = info_dict["value"]
+        proj.version = version
 
     @classmethod
     def set_project_author(cls, author: str):
@@ -110,7 +107,7 @@ class Project(som_gui.core.tool.Project):
     @classmethod
     def create_project_infos(cls):
         logging.debug(f"Create Project Infos")
-        cls.add_project_setting(cls.get_project_version, cls.update_project_version, VERSION)
+        cls.add_project_setting(cls.get_project_version, cls.set_project_version, VERSION)
         cls.add_project_setting(cls.get_project_author, cls.set_project_author, AUTHOR)
         cls.add_project_setting(cls.get_project_name, cls.set_project_name, NAME)
         cls.add_project_setting(cls.get_project_phase, cls.set_project_phase, PROJECT_PHASE,
@@ -160,7 +157,6 @@ class Project(som_gui.core.tool.Project):
         prop: ProjectProperties = som_gui.ProjectProperties
         return prop.project_infos
 
-
     @classmethod
     def add_setting_to_dialog(cls, setting_dict: InfoDict):
         value = setting_dict["value"]
@@ -193,5 +189,5 @@ class Project(som_gui.core.tool.Project):
     @classmethod
     def update_setting(cls, info_dict: InfoDict):
         value = info_dict["value"]
-        #TODO: add value to set function
+        # TODO: add value to set function
         info_dict["set_function"](value)

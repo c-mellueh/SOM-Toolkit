@@ -277,7 +277,7 @@ class Project:
 
     def set_project_phase(self, phase): pass
 
-    def update_project_version(self): pass
+    def set_project_version(self): pass
 
     def update_setting(self, info_dict): pass
 
