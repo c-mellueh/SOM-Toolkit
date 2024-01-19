@@ -37,7 +37,7 @@ class Search(som_gui.core.tool.Search):
         prop = cls.get_search_properties()
         prop.search_mode = 1
         prop.search_window = search.ui.SearchWindow()
-        prop.search_window.widget.tableWidget.itemDoubleClicked.connect(cls.item_double_clicked)
+        prop.search_window.widget.tableWidget.itemDoubleClicked.connect(cls.activate_item)
         cls.fill_dialog()
         prop.search_window.setWindowTitle("Objektsuche")
         if not prop.search_window.exec():
@@ -108,7 +108,7 @@ class Search(som_gui.core.tool.Search):
         return som_gui.SearchProperties
 
     @classmethod
-    def item_double_clicked(cls):
+    def activate_item(cls):
         item = cls.get_dialog().widget.tableWidget.selectedItems()[0]
         prop = cls.get_search_properties()
         prop.selected_info = item.data(CLASS_REFERENCE)

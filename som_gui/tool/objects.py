@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
     from som_gui.module.objects.ui import ObjectTreeWidget
 
+
 def update_completer(main_window: MainWindow):
     # TODO: in Module für PropertySets umwandlen
     from som_gui.widgets import property_widget
@@ -99,9 +100,9 @@ class Objects(som_gui.core.tool.Object):
         ifc_mappings = data_dict.get("ifc_mappings")
 
         if ident_pset_name and ident_attribute_name and ident_value and not is_group:
-            if not cls.identifier_is_allowed(ident_value):
+            if not cls.is_identifier_allowed(ident_value):
                 return som_gui.module.objects.IDENT_ISSUE, None
-            if not cls.abbreviation_is_allowed(abbreviation):
+            if not cls.is_abbreviation_allowed(abbreviation):
                 return som_gui.module.objects.ABBREV_ISSUE, None
             pset = SOMcreator.PropertySet(ident_pset_name)
             attribute = SOMcreator.Attribute(pset, ident_attribute_name, value=[ident_value],
@@ -216,10 +217,10 @@ class Objects(som_gui.core.tool.Object):
         pset = data_dict.get("ident_pset_name")
         attribute = data_dict.get("ident_attribute_name")
 
-        if not cls.identifier_is_allowed(ident_value):
+        if not cls.is_identifier_allowed(ident_value):
             return som_gui.module.objects.IDENT_ISSUE, None
 
-        if not cls.abbreviation_is_allowed(abbreviation):
+        if not cls.is_abbreviation_allowed(abbreviation):
             logging.error(f"Abkürzung {abbreviation} existiert bereits!")
             return som_gui.module.objects.ABBREV_ISSUE, None
         new_object = cp.copy(obj)
@@ -241,9 +242,9 @@ class Objects(som_gui.core.tool.Object):
 
         is_group = obj.is_concept if is_group is None else is_group
         if not is_group:
-            if identifer is not None and not cls.identifier_is_allowed(identifer, obj.ident_value):
+            if identifer is not None and not cls.is_identifier_allowed(identifer, obj.ident_value):
                 return som_gui.module.objects.IDENT_ISSUE
-            if abbreviation is not None and not cls.abbreviation_is_allowed(abbreviation, obj.abbreviation):
+            if abbreviation is not None and not cls.is_abbreviation_allowed(abbreviation, obj.abbreviation):
                 return som_gui.module.objects.ABBREV_ISSUE
         obj.name = name if name else obj.name
         obj.ifc_mapping = ifc_mappings if ifc_mappings is not None else obj.ifc_mapping
@@ -280,7 +281,7 @@ class Objects(som_gui.core.tool.Object):
 
     @classmethod
     def get_active_object(cls) -> SOMcreator.Object:
-        return som_gui.ObjectProperties.active_object
+        return cls.get_object_properties().active_object
 
     @classmethod
     def get_existing_ident_values(cls) -> set[str]:
@@ -301,7 +302,7 @@ class Objects(som_gui.core.tool.Object):
         return abbreviations
 
     @classmethod
-    def identifier_is_allowed(cls, identifier, ignore=None):
+    def is_identifier_allowed(cls, identifier, ignore=None):
         identifiers = cls.get_existing_ident_values()
         if ignore is not None:
             identifiers = list(filter(lambda i: i != ignore, identifiers))
@@ -311,7 +312,7 @@ class Objects(som_gui.core.tool.Object):
             return True
 
     @classmethod
-    def abbreviation_is_allowed(cls, abbreviation, ignore=None):
+    def is_abbreviation_allowed(cls, abbreviation, ignore=None):
         abbreviations = cls.get_existing_abbriviations()
         if ignore is not None:
             abbreviations = list(filter(lambda a: a != ignore, abbreviations))
@@ -321,7 +322,7 @@ class Objects(som_gui.core.tool.Object):
             return True
 
     @classmethod
-    def oi_create_widget(cls):
+    def oi_create_dialog(cls):
         prop: ObjectProperties = som_gui.ObjectProperties
         prop.object_info_widget_properties = som_gui.module.objects.prop.ObjectInfoWidgetProperties()
         prop.object_info_widget = som_gui.module.objects.ui.ObjectInfoWidget()
@@ -379,11 +380,6 @@ class Objects(som_gui.core.tool.Object):
             prop.ident_value = data_dict.get("ident_value")
         if data_dict.get("ifc_mappings"):
             prop.ifc_mappings = data_dict.get("ifc_mappings")
-
-    @classmethod
-    def oi_set_group_value(cls, value):
-        prop = cls.get_object_info_properties()
-        prop.is_group = value
 
     @classmethod
     def oi_set_ident_value_color(cls, color: str):
@@ -474,19 +470,6 @@ class Objects(som_gui.core.tool.Object):
         info_prop = prop.object_info_widget_properties
         info_prop.ifc_lines.append(line_edit)
         prop.object_info_widget.widget.vertical_layout_ifc.addWidget(line_edit)
-
-    @classmethod
-    def set_mouse_press(cls, is_pressed: bool):
-        logging.debug(f"Set Mouse Press")
-        prop: ObjectProperties = som_gui.ObjectProperties
-        prop.mouse_is_pressed = is_pressed
-
-    @classmethod
-    def is_mouse_pressed(cls) -> bool:
-        logging.debug(f"Mouse State Requested")
-
-        prop: ObjectProperties = som_gui.ObjectProperties
-        return prop.mouse_is_pressed
 
     @classmethod
     def drop_indication_pos_is_on_item(cls):

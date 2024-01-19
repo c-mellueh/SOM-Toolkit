@@ -53,8 +53,8 @@ class Project(som_gui.core.tool.Project):
         prop.project_infos = list()
 
     @classmethod
-    def add_project_info(cls, get_function: Callable, set_function: Callable, name: str,
-                         options: Callable | None = None):
+    def add_project_setting(cls, get_function: Callable, set_function: Callable, name: str,
+                            options: Callable | None = None):
         value = get_function()
         d = {"set_function": set_function, "display_name": name, "value": str(value),
              "get_function": get_function}
@@ -74,6 +74,7 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def update_project_author(cls):
+        # TODO: change to setter function with value input (for all elements)
         prop: ProjectProperties = som_gui.ProjectProperties
         proj = cls.get()
         for info_dict in prop.project_infos:
@@ -119,10 +120,11 @@ class Project(som_gui.core.tool.Project):
     @classmethod
     def create_project_infos(cls):
         logging.debug(f"Create Project Infos")
-        cls.add_project_info(cls.get_project_version, cls.update_project_version, VERSION)
-        cls.add_project_info(cls.get_project_author, cls.update_project_author, AUTHOR)
-        cls.add_project_info(cls.get_project_name, cls.update_project_name, NAME)
-        cls.add_project_info(cls.get_project_phase, cls.update_project_phase, PROJECT_PHASE, cls.get_project_phase_list)
+        cls.add_project_setting(cls.get_project_version, cls.update_project_version, VERSION)
+        cls.add_project_setting(cls.get_project_author, cls.update_project_author, AUTHOR)
+        cls.add_project_setting(cls.get_project_name, cls.update_project_name, NAME)
+        cls.add_project_setting(cls.get_project_phase, cls.update_project_phase, PROJECT_PHASE,
+                                cls.get_project_phase_list)
 
     @classmethod
     def load_project(cls, path: str):
@@ -168,25 +170,22 @@ class Project(som_gui.core.tool.Project):
         prop: ProjectProperties = som_gui.ProjectProperties
         return prop.project_infos
 
-    @classmethod
-    def get_project_info_options(cls):
-        prop: ProjectProperties = som_gui.ProjectProperties
 
     @classmethod
-    def add_setting_to_dialog(cls, info_dict: InfoDict):
-        value = info_dict["value"]
+    def add_setting_to_dialog(cls, setting_dict: InfoDict):
+        value = setting_dict["value"]
         prop: ProjectProperties = som_gui.ProjectProperties
         layout: QFormLayout = prop.settings_window.layout()
         dialog = prop.settings_window
-        if "options" in info_dict:
-            option = info_dict["options"]()
+        if "options" in setting_dict:
+            option = setting_dict["options"]()
             edit = QComboBox(dialog)
             edit.addItems(option)
             edit.setCurrentText(value)
         else:
             edit = QLineEdit(dialog)
             edit.setText(value)
-        layout.insertRow(layout.rowCount() - 1, info_dict["display_name"], edit)
+        layout.insertRow(layout.rowCount() - 1, setting_dict["display_name"], edit)
 
     @classmethod
     def refresh_info_dict(cls, info_dict: InfoDict, index):
@@ -203,4 +202,5 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def update_setting(cls, info_dict: InfoDict):
+        #TODO: add value to set function
         info_dict["set_function"]()

@@ -34,7 +34,7 @@ def resize_columns(object_tool: Type[Objects]):
 
 
 def create_object_info_widget(mode: int, object_tool: Type[Objects]):
-    dialog = object_tool.oi_create_widget()
+    dialog = object_tool.oi_create_dialog()
     widget = dialog.widget
     widget.button_add_ifc.pressed.connect(lambda: object_info_add_ifc(object_tool))
     widget.combo_box_pset.currentIndexChanged.connect(lambda: object_info_pset_changed(object_tool))
@@ -66,12 +66,12 @@ def object_info_refresh(object_tool: Type[Objects]):
 
     ident_filter = object_tool.get_active_object().ident_value if object_tool.oi_get_mode() == 1 else None
     abbrev_filter = object_tool.get_active_object().abbreviation if object_tool.oi_get_mode() == 1 else None
-    if not object_tool.identifier_is_allowed(ident_value, ident_filter):
+    if not object_tool.is_identifier_allowed(ident_value, ident_filter):
         object_tool.oi_set_ident_value_color("red")
     else:
         object_tool.oi_set_ident_value_color("black")
 
-    if not object_tool.abbreviation_is_allowed(abbreviation, abbrev_filter):
+    if not object_tool.is_abbreviation_allowed(abbreviation, abbrev_filter):
         object_tool.oi_set_abbrev_value_color("red")
     else:
         object_tool.oi_set_abbrev_value_color("black")
