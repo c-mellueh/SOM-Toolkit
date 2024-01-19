@@ -7,20 +7,19 @@ import uuid
 import som_gui.core.tool
 import som_gui.tool as tool
 import SOMcreator
-from PySide6.QtWidgets import QTreeWidgetItem, QTreeWidget, QAbstractItemView, QLineEdit, QCompleter
+from PySide6.QtWidgets import QTreeWidgetItem, QTreeWidget, QAbstractItemView, QLineEdit, QCompleter, QMenu
 from PySide6.QtCore import Qt, QPoint
 import som_gui
-from typing import TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING, TypedDict, Callable
 from SOMcreator.Template import IFC_4_1
 
 if TYPE_CHECKING:
-    from som_gui.module.objects.prop import ObjectProperties
+    from som_gui.module.objects.prop import ObjectProperties, ContextMenuDict
     from som_gui.main_window import MainWindow
 
 
 class ObjectDataDict(TypedDict):
     name: str
-    ident_attrib: str
     is_group: bool
     abbreviation: str
     ident_pset_name: str
@@ -30,6 +29,116 @@ class ObjectDataDict(TypedDict):
 
 
 class Objects(som_gui.core.tool.Object):
+
+    @classmethod
+    def group_objects(cls, parent: SOMcreator.Object, children: set[SOMcreator.Object]):
+        for child in children:
+            parent.add_child(child)
+
+    @classmethod
+    def create_object(cls, data_dict: ObjectDataDict):
+        name = data_dict["name"]
+        is_group = data_dict["is_group"]
+        abbreviation = data_dict.get("abbreviation")
+        ident_pset_name = data_dict.get("ident_pset_name")
+        ident_attribute_name = data_dict.get("ident_attribute_name")
+        ident_value = data_dict.get("ident_value")
+        ifc_mappings = data_dict.get("ifc_mappings")
+
+        if ident_pset_name and ident_attribute_name and ident_value and not is_group:
+            if not cls.identifier_is_allowed(ident_value):
+                return som_gui.module.objects.IDENT_ISSUE, None
+            if not cls.abbreviation_is_allowed(abbreviation):
+                return som_gui.module.objects.ABBREV_ISSUE, None
+            pset = SOMcreator.PropertySet(ident_pset_name)
+            attribute = SOMcreator.Attribute(pset, ident_attribute_name, value=[ident_value],
+                                             value_type=SOMcreator.value_constants.LABEL)
+            obj = SOMcreator.Object(name, attribute, project=tool.Project.get())
+        else:
+            id = str(uuid.uuid4())
+            obj = SOMcreator.Object(name, id, uuid=id, project=tool.Project.get())
+        if ifc_mappings:
+            obj.ifc_mapping = ifc_mappings
+        if abbreviation:
+            obj.abbreviation = abbreviation
+        return som_gui.module.objects.OK, obj
+
+    @classmethod
+    def create_context_menu(cls):
+        menu = QMenu()
+        prop = cls.get_object_properties()
+        selected_items = cls.get_selected_items()
+        menu_list = prop.context_menu_list
+        if len(selected_items) == 1:
+            menu_list = filter(lambda d: d["on_single_select"], menu_list)
+        if len(selected_items) > 1:
+            menu_list = filter(lambda d: d["on_multi_select"], menu_list)
+        for menu_entry in menu_list:
+            menu_entry["action"] = menu.addAction(menu_entry["display_name"])
+            menu_entry["action"].triggered.connect(menu_entry["function"])
+        return menu
+
+    @classmethod
+    def get_selected_objects(cls) -> list[SOMcreator.Object]:
+        selected_items = cls.get_selected_items()
+        return [cls.get_object_from_item(item) for item in selected_items]
+
+    @classmethod
+    def delete_object(cls, obj: SOMcreator.Object, recursive: bool = False):
+        # TODO: Refactor NodeWindow so nodes delete automatically
+        def delete_nodes(o: SOMcreator.Object):
+            for aggregation in list(o.aggregations):
+                node = som_gui.MainUi.window.graph_window.aggregation_dict().get(aggregation)
+                node.delete(recursive)
+            if recursive:
+                for child in o.get_all_children():
+                    delete_nodes(child)
+
+        delete_nodes(obj)
+        obj.delete(recursive)
+
+    @classmethod
+    def delete_selection(cls):
+        objects = cls.get_selected_objects()
+        from som_gui.windows.popups import msg_del_items
+        delete_request, recursive_deletion = msg_del_items([o.name for o in objects], item_type=1)
+        if not delete_request:
+            return
+        for o in objects:
+            cls.delete_object(o, recursive_deletion)
+
+    @classmethod
+    def expand_selection(cls):
+        tree = cls.get_object_tree()
+        for index in tree.selectedIndexes():
+            tree.expandRecursively(index)
+
+    @classmethod
+    def collapse_selection(cls):
+        tree = cls.get_object_tree()
+        for item in tree.selectedItems():
+            tree.collapseItem(item)
+
+    @classmethod
+    def group_selection(cls):
+        pass
+
+    @classmethod
+    def clear_context_menu_list(cls):
+        prop = cls.get_object_properties()
+        prop.context_menu_list = list()
+
+    @classmethod
+    def add_context_menu_entry(cls, name: str, function: Callable, single: bool, multi: bool) -> ContextMenuDict:
+        d: ContextMenuDict = dict()
+        d["display_name"] = name
+        d["function"] = function
+        d["on_multi_select"] = multi
+        d["on_single_select"] = single
+        prop = cls.get_object_properties()
+        print(prop.object_info_widget)
+        prop.context_menu_list.append(d)
+
     @classmethod
     def handle_attribute_issue(cls, result: int):
         if result == som_gui.module.objects.OK:
@@ -64,6 +173,7 @@ class Objects(som_gui.core.tool.Object):
         if pset and attribute:
             new_object.ident_attrib = cls.find_attribute(new_object, pset, attribute)
         new_object.ident_attrib.value = [ident_value]
+        new_object.abbreviation = abbreviation
         return som_gui.module.objects.OK, new_object
 
     @classmethod
@@ -158,6 +268,13 @@ class Objects(som_gui.core.tool.Object):
             return True
 
     @classmethod
+    def oi_create_widget(cls):
+        prop: ObjectProperties = som_gui.ObjectProperties
+        prop.object_info_widget_properties = som_gui.module.objects.prop.ObjectInfoWidgetProperties()
+        prop.object_info_widget = som_gui.module.objects.ui.ObjectInfoWidget()
+        return prop.object_info_widget
+
+    @classmethod
     def oi_get_focus_object(cls):
         return cls.get_object_info_properties().focus_object
 
@@ -179,7 +296,7 @@ class Objects(som_gui.core.tool.Object):
         d["abbreviation"] = widget.line_edit_abbreviation.text()
         d["ident_pset_name"] = widget.combo_box_pset.currentText()
         d["ident_attribute_name"] = widget.combo_box_attribute.currentText()
-        d["ident_attribute_name"] = widget.line_edit_name.text()
+        d["name"] = widget.line_edit_name.text()
         d["ifc_mappings"] = cls.get_ifc_mappings()
         return d
 
@@ -273,7 +390,7 @@ class Objects(som_gui.core.tool.Object):
         info_properties.is_group = info_properties.focus_object.is_concept
         info_properties.name = info_properties.focus_object.name
         info_properties.ifc_mappings = list(info_properties.focus_object.ifc_mapping)
-        if info_properties.focus_object.ident_attrib:
+        if not info_properties.focus_object.is_concept:
             info_properties.pset_name = info_properties.focus_object.ident_attrib.property_set.name
             info_properties.attribute_name = info_properties.focus_object.ident_attrib.name
 

@@ -1,14 +1,28 @@
 from __future__ import annotations
 
+import logging
 import uuid
 from typing import Type, TYPE_CHECKING
 
 import SOMcreator
 
+import som_gui.module.objects
+
 if TYPE_CHECKING:
     from som_gui.tool import Objects, Project
     from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
     from PySide6.QtCore import QPoint
+
+
+def create_object_info_widget(mode: int, object_tool: Type[Objects]):
+    dialog = object_tool.oi_create_widget()
+    widget = dialog.widget
+    widget.button_add_ifc.pressed.connect(lambda: object_info_add_ifc(object_tool))
+    widget.combo_box_pset.currentIndexChanged.connect(lambda: object_info_pset_changed(object_tool))
+    object_tool.oi_fill_properties(mode=mode)
+    object_tool.oi_update_dialog()
+    if dialog.exec():
+        object_info_accept(object_tool)
 
 
 def object_info_accept(object_tool: Type[Objects]):
@@ -30,12 +44,15 @@ def object_info_refresh(object_tool: Type[Objects]):
     ident_value = data_dict["ident_value"]
     abbreviation = data_dict["abbreviation"]
     group = data_dict["is_group"]
-    if not object_tool.identifier_is_allowed(ident_value, object_tool.get_active_object().ident_value):
+
+    ident_filter = object_tool.get_active_object().ident_value if object_tool.oi_get_mode() == 1 else None
+    abbrev_filter = object_tool.get_active_object().abbreviation if object_tool.oi_get_mode() == 1 else None
+    if not object_tool.identifier_is_allowed(ident_value, ident_filter):
         object_tool.oi_set_ident_value_color("red")
     else:
         object_tool.oi_set_ident_value_color("black")
 
-    if not object_tool.abbreviation_is_allowed(abbreviation, object_tool.get_active_object().abbreviation):
+    if not object_tool.abbreviation_is_allowed(abbreviation, abbrev_filter):
         object_tool.oi_set_abbrev_value_color("red")
     else:
         object_tool.oi_set_abbrev_value_color("black")
@@ -48,6 +65,34 @@ def object_info_pset_changed(object_tool: Type[Objects]):
 
 def object_info_add_ifc(object_tool: Type[Objects]):
     object_tool.add_ifc_mapping("")
+
+
+def load_context_menus(object_tool: Type[Objects]):
+    object_tool.clear_context_menu_list()
+    object_tool.add_context_menu_entry("Kopieren", lambda: create_object_info_widget(2, object_tool), True, False)
+    object_tool.add_context_menu_entry("Löschen", object_tool.delete_selection, True, True)
+    object_tool.add_context_menu_entry("Ausklappen", object_tool.expand_selection, True, True)
+    object_tool.add_context_menu_entry("Einklappen", object_tool.collapse_selection, True, True)
+    object_tool.add_context_menu_entry("Gruppieren", lambda: create_group(object_tool), True, True)
+    object_tool.add_context_menu_entry("Info", lambda: create_object_info_widget(1, object_tool), True, False)
+
+
+def create_group(object_tool: Type[Objects]):
+    d = {
+        "name":         "NeueGruppe",
+        "is_group":     True,
+        "ifc_mappings": ["IfcGroup"]
+    }
+    result, obj = object_tool.create_object(d)
+    if result == som_gui.module.objects.OK:
+        selected_objects = set(object_tool.get_selected_objects())
+        object_tool.group_objects(obj, selected_objects)
+
+
+def create_context_menu(pos: QPoint, object_tool: Type[Objects]):
+    menu = object_tool.create_context_menu()
+    menu_pos = object_tool.get_object_tree().viewport().mapToGlobal(pos)
+    menu.exec(menu_pos)
 
 
 def refresh_object_tree(object_tool: Type[Objects], project_tool: Type[Project]):
@@ -66,11 +111,6 @@ def load_objects(object_tool: Type[Objects], project_tool: Type[Project]):
 def item_changed(item: QTreeWidgetItem, object_tool: Type[Objects]):
     object_tool.update_check_state(item)
     pass
-
-
-def item_double_clicked(object_tool: Type[Objects]):
-    object_tool.oi_fill_properties(mode=1)
-    object_tool.oi_update_dialog()
 
 
 def item_selection_changed(object_tool: Type[Objects]):

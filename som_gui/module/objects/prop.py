@@ -1,12 +1,20 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
+from PySide6.QtGui import QAction
 import SOMcreator
 from PySide6.QtWidgets import QDialog
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict, Callable
 
 if TYPE_CHECKING:
     from .ui import ObjectInfoWidget
 
+
+class ContextMenuDict(TypedDict):
+    display_name: str
+    function: Callable
+    on_single_select: bool
+    on_multi_select: bool
+    action: QAction
 
 @dataclass
 class ObjectInfoWidgetProperties:
@@ -25,4 +33,5 @@ class ObjectInfoWidgetProperties:
 class ObjectProperties:
     active_object: SOMcreator.Object
     object_info_widget_properties: ObjectInfoWidgetProperties
+    context_menu_list: list[ContextMenuDict] = field(default_factory=lambda: [])
     object_info_widget: ObjectInfoWidget = None
