@@ -6,14 +6,14 @@ from typing import TYPE_CHECKING
 
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import Qt, QPointF
-from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMessageBox, QMenu, QTableWidgetItem, QTableWidget, QVBoxLayout, \
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QMenu, QTableWidgetItem, QTableWidget, QVBoxLayout, \
     QWidget
 from SOMcreator import classes
 from SOMcreator.constants import value_constants
 
 from .. import icons, settings
 from ..data import constants as constants
-from ..qt_designs import ui_property_set_window
+from ..module.property_set import window
 from ..widgets import property_widget
 from ..windows import popups
 

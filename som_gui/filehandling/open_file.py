@@ -67,7 +67,7 @@ def new_file(main_window: MainWindow) -> None:
 
 
 def fill_ui(main_window: MainWindow) -> None:
-    tool.Objects.clear_object_input()
+    tool.Object.clear_object_input()
     main_window.graph_window.is_initial_opening = True
     main_window.graph_window.hide()
 

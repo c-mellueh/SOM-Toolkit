@@ -340,7 +340,7 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <widget class="QTableWidget" name="table_pset">
+             <widget class="PsetTableWidget" name="table_pset">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -694,6 +694,11 @@
    <class>ObjectTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>som_gui.module.objects.ui</header>
+  </customwidget>
+     <customwidget>
+         <class>PsetTableWidget</class>
+         <extends>QTableWidget</extends>
+         <header>som_gui.module.property_set.ui</header>
   </customwidget>
  </customwidgets>
  <tabstops>

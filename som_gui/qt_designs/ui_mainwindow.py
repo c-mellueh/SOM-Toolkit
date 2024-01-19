@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHB
                                QTreeWidgetItem, QVBoxLayout, QWidget)
 
 from som_gui.module.objects.ui import ObjectTreeWidget
+from som_gui.module.property_set.ui import PsetTableWidget
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -258,7 +259,7 @@ class Ui_MainWindow(object):
         sizePolicy4.setHeightForWidth(self.splitter_2.sizePolicy().hasHeightForWidth())
         self.splitter_2.setSizePolicy(sizePolicy4)
         self.splitter_2.setOrientation(Qt.Horizontal)
-        self.table_pset = QTableWidget(self.splitter_2)
+        self.table_pset = PsetTableWidget(self.splitter_2)
         if (self.table_pset.columnCount() < 3):
             self.table_pset.setColumnCount(3)
         __qtablewidgetitem = QTableWidgetItem()

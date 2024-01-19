@@ -111,7 +111,7 @@ class MainWindow(QMainWindow):
 
         # init Object- and PropertyWidget
         # object_widget.init(self)
-        property_widget.init(self)
+        # property_widget.init(self)
         connect_actions()
         settings.reset_save_path()
         self.ui.statusbar.addWidget(self.permanent_status_text)
@@ -151,7 +151,7 @@ class MainWindow(QMainWindow):
 
     @property
     def object_tree(self) -> ObjectTreeWidget:
-        return tool.Objects.get_object_tree()
+        return tool.Object.get_object_tree()
 
     @property
     def pset_table(self) -> QTableWidget:

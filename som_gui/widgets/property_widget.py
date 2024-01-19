@@ -133,6 +133,7 @@ def set_enable(main_window: MainWindow, value: bool) -> None:
 
 
 def left_click(main_window: MainWindow, item: QListWidgetItem) -> None:
+    print("LC")
     item: QTableWidgetItem = main_window.pset_table.item(
         main_window.pset_table.row(item), 0)
 
