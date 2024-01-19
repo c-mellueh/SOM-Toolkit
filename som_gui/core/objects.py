@@ -17,12 +17,13 @@ if TYPE_CHECKING:
 def add_shortcuts(object_tool: Type[Objects], project_tool: Type[Project], search_tool: Type[Search]):
     project_tool.add_shortcut("Ctrl+X", som_gui.MainUi.window, object_tool.delete_selection)
     project_tool.add_shortcut("Ctrl+G", som_gui.MainUi.window, object_tool.group_selection)
-    project_tool.add_shortcut("Ctrl+F", som_gui.MainUi.window, lambda: search_object(search_tool))
+    project_tool.add_shortcut("Ctrl+F", som_gui.MainUi.window, lambda: search_object(search_tool, object_tool))
 
 
-def search_object(search_tool: Type[Search]):
+def search_object(search_tool: Type[Search], object_tool: Type[Objects]):
     obj = search_tool.search_object()
-    print(obj)
+    object_tool.select_object(obj)
+
 
 def reset_tree(object_tool: Type[Objects]):
     object_tool.get_object_properties().first_paint = True

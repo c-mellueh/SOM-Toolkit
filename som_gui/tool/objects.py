@@ -40,6 +40,38 @@ class ObjectDataDict(TypedDict):
 
 class Objects(som_gui.core.tool.Object):
     @classmethod
+    def get_item_from_object(cls, obj: SOMcreator.Object) -> QTreeWidgetItem:
+        def iter_tree(item: QTreeWidgetItem):
+            for child_index in range(item.childCount()):
+                child = item.child(child_index)
+                if cls.get_object_from_item(child) == obj:
+                    return child
+                result = iter_tree(child)
+                if result is not None:
+                    return result
+            return None
+
+        tree = cls.get_object_tree()
+        return iter_tree(tree.invisibleRootItem())
+
+    @classmethod
+    def select_object(cls, obj: SOMcreator.Object) -> None:
+        item = cls.get_item_from_object(obj)
+        if item is None:
+            return
+        tree = cls.get_object_tree()
+        for selected_item in tree.selectedItems():
+            selected_item.setSelected(False)
+        item.setSelected(True)
+        cls.expand_to_item(item)
+
+    @classmethod
+    def expand_to_item(cls, item: QTreeWidgetItem):
+        item.setExpanded(True)
+        if item.parent() is not None:
+            cls.expand_to_item(item.parent())
+
+    @classmethod
     def autofit_tree(cls):
         if cls.get_object_properties().first_paint:
             cls.resize_tree()
@@ -520,8 +552,6 @@ class Objects(som_gui.core.tool.Object):
         property_widget.fill_table(main_window, obj)
         if obj.is_concept:
             return
-        if obj.property_sets:
-            property_widget.left_click(main_window, main_window.ui.table.pset.item(0, 0))
 
     @classmethod
     def update_check_state(cls, item: QTreeWidgetItem):
