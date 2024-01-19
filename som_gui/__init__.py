@@ -1,3 +1,9 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from som_gui.main_window import MainWindow, Ui_MainWindow
+
 __version__ = "2.9.1"
 
 import importlib
@@ -6,12 +12,13 @@ modules = {
     "use_case": None,
     "project": None,
     "objects": None,
+    "search": None,
 }
 
 
 class MainUi:
-    ui = None
-    window = None
+    ui: Ui_MainWindow = None
+    window: MainWindow = None
 
 for name in modules.keys():
     modules[name] = importlib.import_module(f"som_gui.module.{name}")

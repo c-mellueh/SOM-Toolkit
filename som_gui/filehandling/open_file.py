@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     from ..main_window import MainWindow
 from som_gui.core import project as project_core
 from som_gui.tool.project import Project as ProjectTool
+from som_gui import tool
 
 
 def check_for_objects_without_aggregation(proj: classes.Project):
@@ -66,17 +67,9 @@ def new_file(main_window: MainWindow) -> None:
 
 
 def fill_ui(main_window: MainWindow) -> None:
-    object_widget.clear_object_input(main_window)
-    main_window.ui.tree_object.clear()
-    object_widget.fill_tree(
-        main_window.project.get_all_objects(),
-        main_window.object_tree,
-        object_widget.CustomObjectTreeItem,
-    )
-    object_widget.resize_tree(main_window)
+    tool.Objects.clear_object_input()
     main_window.graph_window.is_initial_opening = True
     main_window.graph_window.hide()
-    object_widget.reload(main_window)
 
 
 def get_path(main_window: MainWindow, title: str, file_text: str) -> str:

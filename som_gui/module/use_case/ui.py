@@ -24,9 +24,6 @@ def load_triggers():
 class ObjectTreeView(QTreeView):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
-        self.is_already_pressed = False
-        self.check_state = None
-        self.title_count = 2
 
     def paintEvent(self, event):
         super().paintEvent(event)

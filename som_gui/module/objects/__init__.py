@@ -2,6 +2,10 @@ import logging
 from . import ui, trigger, prop
 import som_gui
 
+OK = 0
+IDENT_ISSUE = 1
+ABBREV_ISSUE = 2
+
 
 def register():
     som_gui.ObjectProperties = prop.ObjectProperties
@@ -9,8 +13,8 @@ def register():
 
 def load_ui_triggers():
     logging.info(f"Load Objects UI Triggers")
-    ui.load_triggers()
+    trigger.connect()
 
 
 def on_new_project():
-    pass
+    trigger.on_new_project()

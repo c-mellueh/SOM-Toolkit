@@ -20,13 +20,15 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHB
     QHeaderView, QLabel, QLineEdit, QMainWindow,
     QMenu, QMenuBar, QPushButton, QSizePolicy,
     QSplitter, QStatusBar, QTableWidget, QTableWidgetItem,
-    QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
+                               QTreeWidgetItem, QVBoxLayout, QWidget)
+
+from som_gui.module.objects.ui import ObjectTreeWidget
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1315, 503)
+        MainWindow.resize(1254, 710)
         MainWindow.setMinimumSize(QSize(0, 0))
         self.action_file_new = QAction(MainWindow)
         self.action_file_new.setObjectName(u"action_file_new")
@@ -201,9 +203,12 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_objects.addLayout(self.gridLayout_objects)
 
-        self.tree_object = QTreeWidget(self.layoutWidget)
+        self.tree_object = ObjectTreeWidget(self.layoutWidget)
         self.tree_object.setObjectName(u"tree_object")
         self.tree_object.setEnabled(True)
+        self.tree_object.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tree_object.setDragEnabled(True)
+        self.tree_object.setDragDropOverwriteMode(False)
         self.tree_object.setDragDropMode(QAbstractItemView.InternalMove)
         self.tree_object.setDefaultDropAction(Qt.MoveAction)
         self.tree_object.setAlternatingRowColors(False)
@@ -305,7 +310,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.verticalLayout_main)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1315, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1254, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuExport = QMenu(self.menuFile)
@@ -451,9 +456,9 @@ class Ui_MainWindow(object):
         self.label_Ident.setText(QCoreApplication.translate("MainWindow", u"Identifier", None))
         ___qtreewidgetitem = self.tree_object.headerItem()
         ___qtreewidgetitem.setText(3, QCoreApplication.translate("MainWindow", u"Optional", None));
-        ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Abk\u00fcrzung", None));
+        ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Neue Spalte", None));
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None));
-        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objektvorgaben", None));
+        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objekt", None));
         self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))
         self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Erstellen", None))
         ___qtablewidgetitem = self.table_pset.horizontalHeaderItem(0)

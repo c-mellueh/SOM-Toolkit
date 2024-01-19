@@ -17,7 +17,7 @@ def on_startup(use_case_tool: Type[UseCase]):
     use_case_tool.add_use_case_to_settings_window()
 
 def accept_changes(use_case_tool: Type[UseCase]):
-    old_current_use_case = use_case_tool.get_use_case()
+    old_current_use_case = use_case_tool.get_active_use_case()
     use_case_tool.update_project_use_cases()
     # if active usecase is deleted take first usecase as active usecase
     if old_current_use_case not in use_case_tool.get_use_case_list():
@@ -25,8 +25,8 @@ def accept_changes(use_case_tool: Type[UseCase]):
     use_case_tool.update_pset_data()
     use_case_tool.update_attribute_data()
     use_case_tool.update_attribute_uses_cases()
-    use_case_tool.update_pset_uses_cases()
-    use_case_tool.update_object_uses_cases()
+    use_case_tool.update_pset_use_cases()
+    use_case_tool.update_object_use_cases()
     window = use_case_tool.delete_use_case_window()
     window.close()
     pass

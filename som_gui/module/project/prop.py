@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from SOMcreator import Project
 from PySide6.QtWidgets import QDialog
 from typing import TypedDict, Callable
@@ -17,3 +17,4 @@ class ProjectProperties:
     project_infos: list[InfoDict]
     active_project: Project | None = None
     settings_window: QDialog = None
+    shourtcuts: list = field(default_factory=lambda: [])

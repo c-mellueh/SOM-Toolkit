@@ -23,15 +23,12 @@ class UseCase(som_gui.core.tool.UseCase):
         use_case_data.refresh()
 
     @classmethod
-    def update_use_case_by_settings_window(cls):
-        prop = som_gui.ProjectProperties
+    def set_active_use_case(cls, value: str):
         proj = Project.get()
-        for info_dict in prop.project_infos:
-            if info_dict["display_name"] == USE_CASE:
-                proj.current_use_case = info_dict["value"]
+        proj.current_use_case = value
 
     @classmethod
-    def get_use_case(cls):
+    def get_active_use_case(cls):
         proj = Project.get()
         return proj.current_use_case
 
@@ -42,8 +39,8 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def add_use_case_to_settings_window(cls):
-        Project.add_project_info(cls.get_use_case,
-                                 cls.update_use_case_by_settings_window, USE_CASE, cls.get_use_case_list)
+        Project.add_project_setting(cls.get_active_use_case,
+                                    cls.set_active_use_case, USE_CASE, cls.get_use_case_list)
 
     @classmethod
     def create_row(cls, entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.PropertySet, use_case_list):
@@ -81,14 +78,14 @@ class UseCase(som_gui.core.tool.UseCase):
         return Qt.CheckState.Checked if check_state else Qt.CheckState.Unchecked
 
     @classmethod
-    def update_object_uses_cases(cls):
+    def update_object_use_cases(cls):
         prop: UseCaseProperties = som_gui.UseCaseProperties
         for obj, use_case_dict in prop.object_dict.items():
             for use_case_name, state in use_case_dict.items():
                 obj.set_use_case(use_case_name, state)
 
     @classmethod
-    def update_pset_uses_cases(cls):
+    def update_pset_use_cases(cls):
         for pset, use_case_dict in cls.get_pset_dict().items():
             for use_case_name, state in use_case_dict.items():
                 pset.set_use_case(use_case_name, state)
@@ -130,19 +127,19 @@ class UseCase(som_gui.core.tool.UseCase):
             for use_case_dict in data_dict.values():
                 use_case_dict[use_case_name] = True
 
-    @classmethod
-    def remove_use_case_column(cls, use_case_index: int, model: QStandardItemModel):
-        title_length = cls.get_title_lenght_by_model(model)
-        column = title_length + use_case_index
-        model.removeColumn(column)
 
     @classmethod
     def remove_use_case(cls, use_case_index: int):
+        def remove_use_case_column(index: int, model: QStandardItemModel):
+            title_length = cls.get_title_lenght_by_model(model)
+            column = title_length + index
+            model.removeColumn(column)
+
         prop: UseCaseProperties = som_gui.UseCaseProperties
         use_case_text = prop.use_cases[use_case_index]
         prop.use_cases.pop(use_case_index)
-        cls.remove_use_case_column(use_case_index, cls.get_object_model())
-        cls.remove_use_case_column(use_case_index, cls.get_pset_model())
+        remove_use_case_column(use_case_index, cls.get_object_model())
+        remove_use_case_column(use_case_index, cls.get_pset_model())
         for data_dict in [prop.object_dict, prop.pset_dict, prop.attribute_dict]:
             for use_case_dict in data_dict.values():
                 use_case_dict.pop(use_case_text)
@@ -247,7 +244,7 @@ class UseCase(som_gui.core.tool.UseCase):
         return title_lenght
 
     @classmethod
-    def get_enabled_status(cls, index: QModelIndex):
+    def get_enabled_statuses(cls, index: QModelIndex):
         model: QStandardItemModel = index.model()
         title_lenght = cls.get_title_lenght_by_model(model)
         res = list()
@@ -423,17 +420,11 @@ class UseCase(som_gui.core.tool.UseCase):
         prop.tree_is_clicked = False
         prop.active_check_state = None
         focus_index = index.sibling(index.row(), 0)
-        if isinstance(focus_index.data(CLASS_REFERENCE), SOMcreator.Object):
-            cls.object_tree_clicked(focus_index)
 
     @classmethod
     def get_active_checkstate(cls) -> Qt.CheckState:
         prop: UseCaseProperties = som_gui.UseCaseProperties
         return prop.active_check_state
-
-    @classmethod
-    def object_tree_clicked(cls, index):
-        pass
 
     @classmethod
     def resize_tree(cls, tree: QTreeView):
@@ -508,7 +499,7 @@ class UseCase(som_gui.core.tool.UseCase):
         root_item = model.invisibleRootItem()
         active_object_index = cls.get_index_by_object(active_object)
         check_states = cls.get_check_statuses(active_object_index)
-        enable_states = cls.get_enabled_status(active_object_index)
+        enable_states = cls.get_enabled_statuses(active_object_index)
         sub_enable_states = [all((c, e)) for c, e in zip(check_states, enable_states)]
         handle_psets(set(active_object.get_all_property_sets()))
 

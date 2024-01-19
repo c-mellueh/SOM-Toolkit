@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QMainWindow, QTableWidget, QLabel
 from SOMcreator import classes
 
 import som_gui
+from som_gui import tool
 from som_gui.windows.aggregation_view import aggregation_window
 from . import icons, settings, __version__
 from .filehandling import open_file, save_file, export
@@ -20,6 +21,11 @@ from .module.project import ui
 from .windows.project_phases import gui as project_phase_window
 from .windows.modelcheck import modelcheck_window
 from .windows.attribute_import.gui import AttributeImport
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from som_gui.module.objects.ui import ObjectTreeWidget
 
 
 class MainWindow(QMainWindow):
@@ -98,14 +104,13 @@ class MainWindow(QMainWindow):
         self.mapping_window = None
         self.modelcheck_window: modelcheck_window.ModelcheckWindow | None = None
         self.search_ui: popups.SearchWindow | None = None
-        self.object_info_widget: object_widget.ObjectInfoWidget | None = None
         self.predefined_pset_window: predefined_psets_window.PropertySetInherWindow | None = (
             None
         )
         self.property_set_window: None | propertyset_window.PropertySetWindow = None
 
         # init Object- and PropertyWidget
-        object_widget.init(self)
+        # object_widget.init(self)
         property_widget.init(self)
         connect_actions()
         settings.reset_save_path()
@@ -141,14 +146,12 @@ class MainWindow(QMainWindow):
             )
         self.predefined_pset_window.show()
 
-
-
     def open_aggregation_window(self):
         self.graph_window.show()
 
     @property
-    def object_tree(self) -> object_widget.CustomTree:
-        return self.ui.tree_object
+    def object_tree(self) -> ObjectTreeWidget:
+        return tool.Objects.get_object_tree()
 
     @property
     def pset_table(self) -> QTableWidget:
@@ -166,7 +169,6 @@ class MainWindow(QMainWindow):
 
     # Main
     def clear_all(self):
-        object_widget.clear_all(self)
         property_widget.clear_all(self)
         if self.predefined_pset_window is not None:
             self.predefined_pset_window.clear_all()
