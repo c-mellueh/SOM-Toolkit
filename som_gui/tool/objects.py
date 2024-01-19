@@ -195,12 +195,13 @@ class Objects(som_gui.core.tool.Object):
     def handle_attribute_issue(cls, result: int):
         if result == som_gui.module.objects.OK:
             return True
-        # TODO: Popups erstellen
         if result == som_gui.module.objects.IDENT_ISSUE:
             logging.error(f"Identifier existiert bereits")
+            tool.Popups.create_warning_popup("Identifier existiert bereits")
             return False
         if result == som_gui.module.objects.ABBREV_ISSUE:
             logging.error(f"Abkürzung existiert bereits")
+            tool.Popups.create_warning_popup("Abkürzung existiert bereits")
             return False
 
     @classmethod

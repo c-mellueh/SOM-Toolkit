@@ -1,3 +1,5 @@
+class Popups:
+    pass
 class Search:
     pass
 class Object:
