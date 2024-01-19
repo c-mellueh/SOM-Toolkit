@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QMainWindow, QTableWidget, QLabel
 from SOMcreator import classes
 
 import som_gui
+from som_gui import tool
 from som_gui.windows.aggregation_view import aggregation_window
 from . import icons, settings, __version__
 from .filehandling import open_file, save_file, export
@@ -21,6 +22,10 @@ from .windows.project_phases import gui as project_phase_window
 from .windows.modelcheck import modelcheck_window
 from .windows.attribute_import.gui import AttributeImport
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from som_gui.module.objects.ui import ObjectTreeWidget
 
 class MainWindow(QMainWindow):
     def __init__(self, application):
@@ -147,8 +152,8 @@ class MainWindow(QMainWindow):
         self.graph_window.show()
 
     @property
-    def object_tree(self) -> object_widget.CustomTree:
-        return self.ui.tree_object
+    def object_tree(self) -> ObjectTreeWidget:
+        return tool.Objects.get_object_tree()
 
     @property
     def pset_table(self) -> QTableWidget:

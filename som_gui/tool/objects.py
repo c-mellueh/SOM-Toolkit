@@ -16,7 +16,7 @@ from SOMcreator.Template import IFC_4_1
 if TYPE_CHECKING:
     from som_gui.module.objects.prop import ObjectProperties, ContextMenuDict
     from som_gui.main_window import MainWindow
-
+    from som_gui.module.objects.ui import ObjectTreeWidget
 
 def update_completer(main_window: MainWindow):
     # TODO: in Module für PropertySets umwandlen
@@ -561,7 +561,7 @@ class Objects(som_gui.core.tool.Object):
         obj.optional = True if item.checkState(3) == Qt.CheckState.Checked else False
 
     @classmethod
-    def get_object_tree(cls) -> QTreeWidget:
+    def get_object_tree(cls) -> ObjectTreeWidget:
         logging.debug(f"ObjectTree Requested")
 
         return som_gui.MainUi.ui.tree_object
