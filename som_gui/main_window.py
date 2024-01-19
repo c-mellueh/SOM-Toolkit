@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from som_gui.module.objects.ui import ObjectTreeWidget
 
+
 class MainWindow(QMainWindow):
     def __init__(self, application):
         def connect_actions():
@@ -103,7 +104,6 @@ class MainWindow(QMainWindow):
         self.mapping_window = None
         self.modelcheck_window: modelcheck_window.ModelcheckWindow | None = None
         self.search_ui: popups.SearchWindow | None = None
-        self.object_info_widget: object_widget.ObjectInfoWidget | None = None
         self.predefined_pset_window: predefined_psets_window.PropertySetInherWindow | None = (
             None
         )
@@ -146,8 +146,6 @@ class MainWindow(QMainWindow):
             )
         self.predefined_pset_window.show()
 
-
-
     def open_aggregation_window(self):
         self.graph_window.show()
 
@@ -171,7 +169,6 @@ class MainWindow(QMainWindow):
 
     # Main
     def clear_all(self):
-        object_widget.clear_all(self)
         property_widget.clear_all(self)
         if self.predefined_pset_window is not None:
             self.predefined_pset_window.clear_all()
