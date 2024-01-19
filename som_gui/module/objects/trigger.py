@@ -12,6 +12,7 @@ def connect():
     widget.itemDoubleClicked.connect(item_double_clicked)
     widget.customContextMenuRequested.connect(lambda p: core.create_context_menu(p, Objects))
     core.load_context_menus(Objects)
+    widget.expanded.connect(lambda: core.resize_columns(Objects))
 
 def item_double_clicked():
     core.create_object_info_widget(mode=1, object_tool=Objects)
@@ -34,3 +35,7 @@ def change_event():
 def drop_event(event):
     print(F"DROP EVENT")
     core.item_dropped_on(event.pos(), Objects)
+
+
+def on_new_project():
+    core.reset_tree(Objects)

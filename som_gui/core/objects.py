@@ -14,6 +14,12 @@ if TYPE_CHECKING:
     from PySide6.QtCore import QPoint
 
 
+def reset_tree(object_tool: Type[Objects]):
+    object_tool.get_object_properties().first_paint = True
+
+
+def resize_columns(object_tool: Type[Objects]):
+    object_tool.resize_tree()
 def create_object_info_widget(mode: int, object_tool: Type[Objects]):
     dialog = object_tool.oi_create_widget()
     widget = dialog.widget
@@ -100,7 +106,7 @@ def refresh_object_tree(object_tool: Type[Objects], project_tool: Type[Project])
     gets called on Paint Event
     """
     load_objects(object_tool, project_tool)
-
+    object_tool.autofit_tree()
 
 def load_objects(object_tool: Type[Objects], project_tool: Type[Project]):
     root_objects = project_tool.get_root_objects(filter=True)

@@ -17,4 +17,4 @@ def load_ui_triggers():
 
 
 def on_new_project():
-    pass
+    trigger.on_new_project()

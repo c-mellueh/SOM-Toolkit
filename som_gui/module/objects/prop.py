@@ -35,3 +35,4 @@ class ObjectProperties:
     object_info_widget_properties: ObjectInfoWidgetProperties
     context_menu_list: list[ContextMenuDict] = field(default_factory=lambda: [])
     object_info_widget: ObjectInfoWidget = None
+    first_paint = True

@@ -29,6 +29,17 @@ class ObjectDataDict(TypedDict):
 
 
 class Objects(som_gui.core.tool.Object):
+    @classmethod
+    def autofit_tree(cls):
+        if cls.get_object_properties().first_paint:
+            cls.resize_tree()
+            cls.get_object_properties().first_paint = False
+
+    @classmethod
+    def resize_tree(cls):
+        tree = cls.get_object_tree()
+        for col in reversed(range(tree.columnCount())):
+            tree.resizeColumnToContents(col)
 
     @classmethod
     def group_objects(cls, parent: SOMcreator.Object, children: set[SOMcreator.Object]):
