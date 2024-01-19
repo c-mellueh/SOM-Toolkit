@@ -73,29 +73,19 @@ class Project(som_gui.core.tool.Project):
                 proj.version = info_dict["value"]
 
     @classmethod
-    def update_project_author(cls):
-        # TODO: change to setter function with value input (for all elements)
-        prop: ProjectProperties = som_gui.ProjectProperties
+    def set_project_author(cls, author: str):
         proj = cls.get()
-        for info_dict in prop.project_infos:
-            if info_dict["display_name"] == AUTHOR:
-                proj.author = info_dict["value"]
+        proj.author = author
 
     @classmethod
-    def update_project_name(cls):
-        prop: ProjectProperties = som_gui.ProjectProperties
+    def set_project_name(cls, name: str):
         proj = cls.get()
-        for info_dict in prop.project_infos:
-            if info_dict["display_name"] == NAME:
-                proj.name = info_dict["value"]
+        proj.name = name
 
     @classmethod
-    def update_project_phase(cls):
-        prop: ProjectProperties = som_gui.ProjectProperties
+    def set_project_phase(cls, phase: str):
         proj = cls.get()
-        for info_dict in prop.project_infos:
-            if info_dict["display_name"] == PROJECT_PHASE:
-                proj.current_project_phase = info_dict["value"]
+        proj.current_project_phase = phase
 
     @classmethod
     def get_project_version(cls):
@@ -121,9 +111,9 @@ class Project(som_gui.core.tool.Project):
     def create_project_infos(cls):
         logging.debug(f"Create Project Infos")
         cls.add_project_setting(cls.get_project_version, cls.update_project_version, VERSION)
-        cls.add_project_setting(cls.get_project_author, cls.update_project_author, AUTHOR)
-        cls.add_project_setting(cls.get_project_name, cls.update_project_name, NAME)
-        cls.add_project_setting(cls.get_project_phase, cls.update_project_phase, PROJECT_PHASE,
+        cls.add_project_setting(cls.get_project_author, cls.set_project_author, AUTHOR)
+        cls.add_project_setting(cls.get_project_name, cls.set_project_name, NAME)
+        cls.add_project_setting(cls.get_project_phase, cls.set_project_phase, PROJECT_PHASE,
                                 cls.get_project_phase_list)
 
     @classmethod
@@ -202,5 +192,6 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def update_setting(cls, info_dict: InfoDict):
+        value = info_dict["value"]
         #TODO: add value to set function
-        info_dict["set_function"]()
+        info_dict["set_function"](value)

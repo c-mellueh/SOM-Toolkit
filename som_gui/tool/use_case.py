@@ -23,12 +23,9 @@ class UseCase(som_gui.core.tool.UseCase):
         use_case_data.refresh()
 
     @classmethod
-    def update_use_case_by_settings_window(cls):
-        prop = som_gui.ProjectProperties
+    def set_active_use_case(cls, value: str):
         proj = Project.get()
-        for info_dict in prop.project_infos:
-            if info_dict["display_name"] == USE_CASE:
-                proj.current_use_case = info_dict["value"]
+        proj.current_use_case = value
 
     @classmethod
     def get_active_use_case(cls):
@@ -43,7 +40,7 @@ class UseCase(som_gui.core.tool.UseCase):
     @classmethod
     def add_use_case_to_settings_window(cls):
         Project.add_project_setting(cls.get_active_use_case,
-                                    cls.update_use_case_by_settings_window, USE_CASE, cls.get_use_case_list)
+                                    cls.set_active_use_case, USE_CASE, cls.get_use_case_list)
 
     @classmethod
     def create_row(cls, entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.PropertySet, use_case_list):

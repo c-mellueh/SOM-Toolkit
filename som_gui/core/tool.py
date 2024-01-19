@@ -231,7 +231,7 @@ class UseCase:
 
     def update_pset_use_cases(self): pass
 
-    def update_use_case_by_settings_window(self): pass
+    def set_active_use_case(self, value): pass
 
 
 class Project:
@@ -271,11 +271,11 @@ class Project:
 
     def reset_project_infos(self): pass
 
-    def update_project_author(self): pass
+    def set_project_author(self, author): pass
 
-    def update_project_name(self): pass
+    def set_project_name(self, name): pass
 
-    def update_project_phase(self): pass
+    def set_project_phase(self, phase): pass
 
     def update_project_version(self): pass
 
