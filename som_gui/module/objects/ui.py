@@ -2,10 +2,6 @@ from som_gui.module import objects
 from PySide6.QtWidgets import QTreeWidget, QWidget, QDialog
 from som_gui.module.objects.window import Ui_ObjectInfo
 
-def load_triggers():
-    objects.trigger.connect()
-
-
 class ObjectTreeWidget(QTreeWidget):
 
     def __init__(self, parent: QWidget):

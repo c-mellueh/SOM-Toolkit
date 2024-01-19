@@ -24,7 +24,7 @@ def get_reload_icon() -> QIcon:
 
 
 def get_search_icon() -> QIcon:
-    icon_path = os.path.join(ICON_PATH, ICON_DICT["search"])
+    icon_path = os.path.join(ICON_PATH, ICON_DICT["min"])
     return QIcon(icon_path)
 
 
@@ -32,5 +32,5 @@ ICON_PATH = os.path.dirname(__file__)
 ICON_DICT = {"icon": "icon.ico",
              "link": "link.png",
              "reload": "reload.svg",
-             "search": "search.png",
+             "min": "min.png",
              "settings": "setting.png"}

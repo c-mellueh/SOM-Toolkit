@@ -6,6 +6,7 @@ modules = {
     "use_case": None,
     "project": None,
     "objects": None,
+    "search": None,
 }
 
 

@@ -1,3 +1,5 @@
+class Search:
+    pass
 class Object:
     def create_object(self):
         pass

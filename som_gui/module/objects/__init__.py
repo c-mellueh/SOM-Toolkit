@@ -13,7 +13,7 @@ def register():
 
 def load_ui_triggers():
     logging.info(f"Load Objects UI Triggers")
-    ui.load_triggers()
+    trigger.connect()
 
 
 def on_new_project():
