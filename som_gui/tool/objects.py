@@ -136,7 +136,6 @@ class Objects(som_gui.core.tool.Object):
         d["on_multi_select"] = multi
         d["on_single_select"] = single
         prop = cls.get_object_properties()
-        print(prop.object_info_widget)
         prop.context_menu_list.append(d)
 
     @classmethod
