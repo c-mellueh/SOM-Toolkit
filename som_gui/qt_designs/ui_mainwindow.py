@@ -19,9 +19,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHBoxLayout,
     QHeaderView, QLabel, QLineEdit, QMainWindow,
     QMenu, QMenuBar, QPushButton, QSizePolicy,
-    QSplitter, QStatusBar, QTableWidget, QTableWidgetItem,
-                               QTreeWidgetItem, QVBoxLayout, QWidget)
+                               QSplitter, QStatusBar, QTableWidgetItem, QTreeWidgetItem,
+                               QVBoxLayout, QWidget)
 
+from som_gui.module.attribute.ui import AttributeTable
 from som_gui.module.objects.ui import ObjectTreeWidget
 from som_gui.module.property_set.ui import PsetTableWidget
 
@@ -285,7 +286,7 @@ class Ui_MainWindow(object):
         self.table_pset.horizontalHeader().setStretchLastSection(True)
         self.table_pset.verticalHeader().setVisible(False)
         self.table_pset.verticalHeader().setCascadingSectionResizes(False)
-        self.table_attribute = QTableWidget(self.splitter_2)
+        self.table_attribute = AttributeTable(self.splitter_2)
         if (self.table_attribute.columnCount() < 4):
             self.table_attribute.setColumnCount(4)
         __qtablewidgetitem3 = QTableWidgetItem()

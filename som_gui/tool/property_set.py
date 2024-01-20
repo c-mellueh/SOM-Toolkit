@@ -3,7 +3,7 @@ import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui.tool import Object, Project
-from PySide6.QtWidgets import QTableWidgetItem, QCompleter
+from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QWidget
 from PySide6.QtCore import Qt
 from som_gui.module.project.constants import CLASS_REFERENCE
 from SOMcreator.constants.json_constants import INHERITED_TEXT
@@ -17,12 +17,21 @@ from som_gui.module.property_set import ui
 
 class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
+    def get_property_set_from_window(cls, window: QWidget):
+        prop = cls.get_pset_properties()
+        return prop.property_set_windows.get(window)
+
+    @classmethod
+    def get_selected_property_set(cls):
+        active_window = som_gui.MainUi.window.app.activeWindow()
+        return cls.get_property_set_from_window(active_window)
+
+    @classmethod
     def get_pset_from_item(cls, item: QTableWidgetItem):
         return item.data(CLASS_REFERENCE)
 
     @classmethod
-    def get_existing_psets_in_table(cls):
-        table = cls.get_table()
+    def get_existing_psets_in_table(cls, table: QTableWidget):
         psets = set()
         for row in range(table.rowCount()):
             item = table.item(row, 0)
@@ -55,15 +64,13 @@ class PropertySet(som_gui.core.tool.PropertySet):
                 return row
 
     @classmethod
-    def remove_property_sets_from_table(cls, property_sets: set[SOMcreator.PropertySet]):
-        d = {cls.get_row_from_pset(p): p for p in property_sets}
-        table = cls.get_table()
-        for row in reversed(d.keys()):
+    def remove_property_sets_from_table(cls, property_sets: set[SOMcreator.PropertySet], table: QTableWidget):
+        rows = sorted(cls.get_row_from_pset(p) for p in property_sets)
+        for row in reversed(rows):
             table.removeRow(row)
 
     @classmethod
-    def add_property_sets_to_table(cls, property_sets: set[SOMcreator.PropertySet]):
-        table = cls.get_table()
+    def add_property_sets_to_table(cls, property_sets: set[SOMcreator.PropertySet], table: QTableWidget):
         for property_set in property_sets:
             items = [QTableWidgetItem() for _ in range(3)]
             row = table.rowCount()
@@ -109,17 +116,19 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return som_gui.PropertySetProperties
 
     @classmethod
-    def set_active_pset(cls, property_set: SOMcreator.PropertySet):
+    def set_active_property_set(cls, property_set: SOMcreator.PropertySet):
         prop = cls.get_pset_properties()
         prop.active_pset = property_set
         obj = Object.get_active_object()
 
-        from som_gui.windows import propertyset_window
-        propertyset_window.fill_attribute_table(obj, som_gui.MainUi.ui.table_attribute, property_set)
+    @classmethod
+    def get_active_property_set(cls) -> SOMcreator.PropertySet:
+        prop = cls.get_pset_properties()
+        return prop.active_pset
 
     @classmethod
     def open_pset_window(cls, property_set: SOMcreator.PropertySet):
         prop = cls.get_pset_properties()
         widget = ui.PropertySetWindow()
-        prop.property_set_windows.append(widget)
+        prop.property_set_windows[widget] = property_set
         widget.show()

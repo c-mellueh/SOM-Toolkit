@@ -5,3 +5,4 @@ from som_gui.tool.object import Object
 from som_gui.tool.search import Search
 from som_gui.tool.popups import Popups
 from som_gui.tool.property_set import PropertySet
+from som_gui.tool.attribute import Attribute

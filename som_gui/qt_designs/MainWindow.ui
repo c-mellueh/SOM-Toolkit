@@ -393,7 +393,7 @@
             </property>
            </column>
           </widget>
-          <widget class="QTableWidget" name="table_attribute">
+             <widget class="AttributeTable" name="table_attribute">
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
@@ -699,6 +699,11 @@
          <class>PsetTableWidget</class>
          <extends>QTableWidget</extends>
          <header>som_gui.module.property_set.ui</header>
+     </customwidget>
+     <customwidget>
+         <class>AttributeTable</class>
+         <extends>QTableWidget</extends>
+         <header>som_gui.module.attribute.ui</header>
   </customwidget>
  </customwidgets>
  <tabstops>

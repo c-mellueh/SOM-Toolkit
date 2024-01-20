@@ -189,7 +189,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>408</width>
+                <width>489</width>
              <height>242</height>
             </rect>
            </property>
@@ -222,7 +222,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QTableWidget" name="table_widget">
+        <widget class="AttributeTable" name="table_widget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -350,6 +350,13 @@
    </item>
   </layout>
  </widget>
+    <customwidgets>
+        <customwidget>
+            <class>AttributeTable</class>
+            <extends>QTableWidget</extends>
+            <header>som_gui.module.attribute.ui</header>
+        </customwidget>
+    </customwidgets>
  <resources/>
  <connections/>
 </ui>

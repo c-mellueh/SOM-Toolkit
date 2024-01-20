@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from PySide6.QtWidgets import QMainWindow, QTableWidget, QLabel
+from PySide6.QtWidgets import QMainWindow, QTableWidget, QLabel, QApplication
 from SOMcreator import classes
 
 import som_gui
@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, application):
+    def __init__(self, application: QApplication):
         def connect_actions():
             # connect Menubar signals
             self.ui.action_file_new.triggered.connect(
@@ -86,7 +86,7 @@ class MainWindow(QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.app = application
+        self.app: QApplication = application
         som_gui.MainUi.ui = self.ui
         som_gui.MainUi.window = self
 

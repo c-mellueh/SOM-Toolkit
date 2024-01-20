@@ -1,8 +1,11 @@
 from __future__ import annotations
 from typing import Type, TYPE_CHECKING
 
+import som_gui
+from som_gui.core import attribute as attribute_core
+
 if TYPE_CHECKING:
-    from som_gui.tool import PropertySet, Object
+    from som_gui.tool import PropertySet, Object, Attribute
     from som_gui.module.property_set.ui import PropertySetWindow
 
 
@@ -12,19 +15,21 @@ def refresh_table(property_set_tool: Type[PropertySet], object_tool: Type[Object
     else:
         property_set_tool.set_enabled(False)
     new_property_sets = property_set_tool.get_property_sets()
-    existing_property_sets = property_set_tool.get_existing_psets_in_table()
+    table = property_set_tool.get_table()
+
+    existing_property_sets = property_set_tool.get_existing_psets_in_table(table)
     delete_property_sets = existing_property_sets.difference(new_property_sets)
     add_property_sets = new_property_sets.difference(existing_property_sets)
-    property_set_tool.remove_property_sets_from_table(delete_property_sets)
-    property_set_tool.add_property_sets_to_table(add_property_sets)
+    property_set_tool.remove_property_sets_from_table(delete_property_sets, table)
+    property_set_tool.add_property_sets_to_table(add_property_sets, table)
     table = property_set_tool.get_table()
     table.resizeColumnsToContents()
 
 
-def pset_selection_changed(property_set_tool: Type[PropertySet]):
+def pset_selection_changed(property_set_tool: Type[PropertySet], attribute_tool: Type[Attribute]):
     property_set = property_set_tool.get_selecte_property_set()
-    print(f"PropertySet: {property_set}")
-    property_set_tool.set_active_pset(property_set)
+    property_set_tool.set_active_property_set(property_set)
+    attribute_core.refresh_attribute_table(som_gui.MainUi.ui.table_attribute, attribute_tool)
 
 
 def table_double_clicked(property_set_tool: Type[PropertySet]):
@@ -33,6 +38,8 @@ def table_double_clicked(property_set_tool: Type[PropertySet]):
     pass
 
 
-def repaint_pset_window(window: PropertySetWindow, property_set_tool: Type[PropertySet]):
-    print(f"repaint")
+def repaint_pset_window(window: PropertySetWindow, property_set_tool: Type[PropertySet],
+                        attribute_tool: Type[Attribute]):
+    pset = property_set_tool.get_property_set_from_window(window)
+    attribute_core.refresh_attribute_table(window.widget.table_widget, attribute_tool)
     pass

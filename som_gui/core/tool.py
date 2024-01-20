@@ -2,6 +2,9 @@ class Popups:
     def create_warning_popups(self, text):    pass
 
 
+class Attribute:
+    pass
+
 class PropertySet:
     def get_property_sets(self): pass
 

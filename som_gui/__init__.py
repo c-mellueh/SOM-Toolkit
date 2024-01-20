@@ -14,6 +14,7 @@ modules = {
     "objects": None,
     "search": None,
     "property_set": None,
+    "attribute": None
 }
 
 

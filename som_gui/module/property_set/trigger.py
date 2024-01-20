@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 def connect():
     table = som_gui.MainUi.ui.table_pset
-    table.itemSelectionChanged.connect(lambda: core.pset_selection_changed(tool.PropertySet))
+    table.itemSelectionChanged.connect(lambda: core.pset_selection_changed(tool.PropertySet, tool.Attribute))
     table.itemDoubleClicked.connect(lambda: core.table_double_clicked(tool.PropertySet))
 
 
@@ -19,7 +19,7 @@ def connect_property_set_window(widget: PropertySetWindow):
 
 
 def repaint_pset_window(widget: PropertySetWindow):
-    core.repaint_pset_window(widget, tool.PropertySet)
+    core.repaint_pset_window(widget, tool.PropertySet, tool.Attribute)
 
 
 def on_new_project():
