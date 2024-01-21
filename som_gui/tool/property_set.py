@@ -3,15 +3,17 @@ import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui.tool import Object, Project
-from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QWidget
+from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QWidget, QHBoxLayout
 from PySide6.QtCore import Qt
 from som_gui.module.project.constants import CLASS_REFERENCE
+from som_gui.module.attribute import trigger as attribute_trigger
 from SOMcreator.constants.json_constants import INHERITED_TEXT
 from som_gui.icons import get_link_icon
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
+    from som_gui.module.property_set.ui import PropertySetWindow, LineInput
 from som_gui.module.property_set import ui
 
 
@@ -129,6 +131,70 @@ class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
     def open_pset_window(cls, property_set: SOMcreator.PropertySet):
         prop = cls.get_pset_properties()
-        widget = ui.PropertySetWindow()
-        prop.property_set_windows[widget] = property_set
-        widget.show()
+        window = ui.PropertySetWindow()
+        prop.property_set_windows[window] = property_set
+        window.show()
+        attribute_trigger.connect_attribute_table(window.widget.table_widget)
+
+    @classmethod
+    def pw_toggle_comboboxes(cls, attribute: SOMcreator.Attribute, window: PropertySetWindow):
+        is_child = attribute.is_child
+        window.widget.combo_type.setEnabled(is_child)
+        window.widget.combo_data_type.setEnabled(is_child)
+        t1 = "Attribut wurde geerbt -> Keine Änderung des Types möglich" if is_child else ""
+        t2 = "Attribut wurde geerbt -> Keine Änderung des Datentyps möglich" if is_child else ""
+        window.widget.combo_type.setToolTip(t1)
+        window.widget.combo_data_type.setToolTip(t2)
+
+    @classmethod
+    def pw_set_data_type(cls, data_type: str, window: PropertySetWindow):
+        window.widget.combo_data_type.setCurrentText(data_type)
+
+    @classmethod
+    def pw_set_value_type(cls, value_type: str, window: PropertySetWindow):
+        window.widget.combo_type.setCurrentText(value_type)
+
+    @classmethod
+    def add_value_line(cls, column_count: int, window: PropertySetWindow) -> QHBoxLayout:
+        new_layout = QHBoxLayout()
+        for _ in range(column_count):
+            new_layout.addWidget(LineInput())
+        window.widget.verticalLayout_2.addLayout(new_layout)
+        return new_layout
+
+    @classmethod
+    def get_input_value_lines(cls, window: PropertySetWindow):
+        line_dict = dict()
+        for layout in window.widget.horizontal_layout_list:
+            line_dict[layout] = list()
+            for index in range(layout.count()):
+                line_dict[layout].append(layout.itemAt(index).widget())
+        return line_dict
+
+    @classmethod
+    def pw_clear_values(cls, window: PropertySetWindow):
+        layout = window.widget.verticalLayout_2
+        for row in reversed(range(layout.count())):
+            item: QHBoxLayout = layout.itemAt(row)
+            for col in reversed(range(item.count())):
+                item.itemAt(col).widget().deleteLater()
+            item.layout().deleteLater()
+            layout.removeItem(item)
+
+    @classmethod
+    def pw_set_values(cls, values: list[str | list[str]], window: PropertySetWindow):
+        for value in values:
+            if isinstance(value, (list, set)):
+                line_layout = cls.add_value_line(len(value), window)
+                for col, v in enumerate(value):
+                    line_edit: LineInput = line_layout.itemAt(col).widget()
+                    line_edit.setText(v)
+
+            else:
+                line_layout = cls.add_value_line(1, window)
+                line_edit: LineInput = line_layout.itemAt(0).widget()
+                line_edit.setText(value)
+
+    @classmethod
+    def pw_set_description(cls, description: str, window: PropertySetWindow):
+        window.widget.description.setText(description)

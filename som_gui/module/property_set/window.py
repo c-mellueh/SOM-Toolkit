@@ -18,7 +18,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComboBox,
     QGridLayout, QHBoxLayout, QHeaderView, QLabel,
     QLineEdit, QPushButton, QScrollArea, QSizePolicy,
-                               QSplitter, QTableWidgetItem, QTextEdit, QWidget)
+                               QSplitter, QTableWidgetItem, QTextEdit, QVBoxLayout,
+                               QWidget)
 
 from som_gui.module.attribute.ui import AttributeTable
 
@@ -127,10 +128,12 @@ class Ui_layout_main(object):
         sizePolicy3.setHeightForWidth(self.scroll_area.sizePolicy().hasHeightForWidth())
         self.scroll_area.setSizePolicy(sizePolicy3)
         self.scroll_area.setWidgetResizable(True)
-        self.scrollAreaWidgetContents = QWidget()
-        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 489, 242))
-        self.scroll_area.setWidget(self.scrollAreaWidgetContents)
+        self.scroll_area_content = QWidget()
+        self.scroll_area_content.setObjectName(u"scroll_area_content")
+        self.scroll_area_content.setGeometry(QRect(0, 0, 489, 242))
+        self.verticalLayout_2 = QVBoxLayout(self.scroll_area_content)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.scroll_area.setWidget(self.scroll_area_content)
         self.splitter.addWidget(self.scroll_area)
         self.description = QTextEdit(self.splitter)
         self.description.setObjectName(u"description")

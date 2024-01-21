@@ -184,7 +184,7 @@
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents">
+             <widget class="QWidget" name="scroll_area_content">
            <property name="geometry">
             <rect>
              <x>0</x>
@@ -193,6 +193,7 @@
              <height>242</height>
             </rect>
            </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_2"/>
           </widget>
          </widget>
          <widget class="QTextEdit" name="description">

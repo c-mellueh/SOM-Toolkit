@@ -11,7 +11,7 @@ from som_gui.module.property_set import ui as property_set_ui
 
 if TYPE_CHECKING:
     from som_gui.module.attribute.prop import AttributeProperties
-
+    from som_gui.module.property_set.ui import PropertySetWindow
 
 class Attribute(som_gui.core.tool.Attribute):
     @classmethod
@@ -35,6 +35,9 @@ class Attribute(som_gui.core.tool.Attribute):
     def get_attribute_values(cls, attribute: SOMcreator.Attribute):
         return attribute.value
 
+    @classmethod
+    def get_attribute_description(cls, attribute: SOMcreator.Attribute):
+        return attribute.description
     @classmethod
     def is_attribute_optional(cls, attribute: SOMcreator.Attribute):
         return attribute.optional
@@ -134,3 +137,4 @@ class Attribute(som_gui.core.tool.Attribute):
             [item.setData(CLASS_REFERENCE, attribute) for item in items]
             [table.setItem(row, col, item) for col, item in enumerate(items)]
             cls.update_row(table, row)
+

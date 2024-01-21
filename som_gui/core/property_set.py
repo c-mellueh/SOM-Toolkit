@@ -3,7 +3,7 @@ from typing import Type, TYPE_CHECKING
 
 import som_gui
 from som_gui.core import attribute as attribute_core
-
+from som_gui.module.attribute import trigger as attribute_trigger
 if TYPE_CHECKING:
     from som_gui.tool import PropertySet, Object, Attribute
     from som_gui.module.property_set.ui import PropertySetWindow

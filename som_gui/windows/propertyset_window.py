@@ -505,7 +505,6 @@ class PropertySetWindow(QtWidgets.QWidget):
                 last_line = line
 
     def new_line(self) -> list[LineInput]:
-
         status = self.widget.combo_type.currentText()
         layout = QHBoxLayout()
         self.value_layout.addLayout(layout)
