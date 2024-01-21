@@ -42,6 +42,12 @@ def repaint_pset_window(window: PropertySetWindow, property_set_tool: Type[Prope
                         attribute_tool: Type[Attribute]):
     pset = property_set_tool.get_property_set_from_window(window)
     attribute_core.refresh_attribute_table(window.widget.table_widget, attribute_tool)
+    attribute_name = property_set_tool.pw_get_attribute_name(window)
+    if attribute_name in [a.name for a in pset.attributes]:
+        property_set_tool.pw_set_add_button_text("Update", window)
+    else:
+        property_set_tool.pw_set_add_button_text("Hinzufügen", window)
+
     pass
 
 

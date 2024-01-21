@@ -22,7 +22,7 @@ from som_gui.module.property_set import ui
 
 class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
-    def get_property_set_from_window(cls, window: QWidget):
+    def get_property_set_from_window(cls, window: QWidget) -> SOMcreator.PropertySet:
         prop = cls.get_pset_properties()
         return prop.property_set_windows.get(window)
 
@@ -159,6 +159,10 @@ class PropertySet(som_gui.core.tool.PropertySet):
         window.widget.combo_data_type.setToolTip(t2)
 
     @classmethod
+    def pw_set_attribute_name(cls, name: str, window: PropertySetWindow):
+        window.widget.lineEdit_name.setText(name)
+
+    @classmethod
     def pw_set_data_type(cls, data_type: str, window: PropertySetWindow):
         window.widget.combo_data_type.setCurrentText(data_type)
 
@@ -212,9 +216,19 @@ class PropertySet(som_gui.core.tool.PropertySet):
         window.widget.description.setText(description)
 
     @classmethod
+    def pw_set_add_button_text(cls, text: str, window: PropertySetWindow):
+        button = window.widget.button_add
+        button.setText(text)
+
+    @classmethod
+    def pw_get_attribute_name(cls, window: PropertySetWindow):
+        return window.widget.lineEdit_name.text()
+
+    @classmethod
     def get_allowed_value_types(cls):
         return VALUE_TYPE_LOOKUP.keys()
 
     @classmethod
     def get_allowed_data_types(cls):
         return DATA_TYPES
+

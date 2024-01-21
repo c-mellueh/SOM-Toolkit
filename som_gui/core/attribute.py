@@ -39,12 +39,15 @@ def refresh_attribute_table(table: QTableWidget, attribute_tool: Type[Attribute]
 
 def attribute_clicked(item: QTableWidgetItem, attribute_tool: Type[Attribute], property_set_tool: Type[PropertySet]):
     attribute = attribute_tool.get_attribute_from_item(item)
+
+    name = attribute_tool.get_attribute_name(attribute)
     data_type = attribute_tool.get_attribute_data_type(attribute)
     value_type = attribute_tool.get_attribute_value_type(attribute)
     values = attribute_tool.get_attribute_values(attribute)
     description = attribute_tool.get_attribute_description(attribute)
     window = item.tableWidget().window()
 
+    property_set_tool.pw_set_attribute_name(name, window)
     property_set_tool.pw_set_data_type(data_type, window)
     property_set_tool.pw_set_value_type(value_type, window)
     property_set_tool.pw_set_description(description, window)
