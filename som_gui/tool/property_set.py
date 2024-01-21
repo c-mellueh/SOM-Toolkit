@@ -7,13 +7,16 @@ from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QWidge
 from PySide6.QtCore import Qt
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.attribute import trigger as attribute_trigger
+from som_gui.module.property_set import trigger as property_set_trigger
 from SOMcreator.constants.json_constants import INHERITED_TEXT
+from SOMcreator.constants.value_constants import VALUE_TYPE_LOOKUP, DATA_TYPES
 from som_gui.icons import get_link_icon
 from typing import TYPE_CHECKING
+from som_gui.module.property_set import ui as ui_property_set
 
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
-    from som_gui.module.property_set.ui import PropertySetWindow, LineInput
+    from som_gui.module.property_set.ui import PropertySetWindow
 from som_gui.module.property_set import ui
 
 
@@ -93,7 +96,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return proj.get_predefined_psets()
 
     @classmethod
-    def get_selecte_property_set(cls) -> SOMcreator.PropertySet:
+    def get_selecte_property_set(cls) -> SOMcreator.PropertySet | None:
         table = cls.get_table()
         items = table.selectedItems()
         if not items:
@@ -134,7 +137,16 @@ class PropertySet(som_gui.core.tool.PropertySet):
         window = ui.PropertySetWindow()
         prop.property_set_windows[window] = property_set
         window.show()
+        window.widget.combo_type.clear()
+        window.widget.combo_type.addItems(cls.get_allowed_value_types())
+
+        window.widget.combo_data_type.clear()
+        window.widget.combo_data_type.addItems(cls.get_allowed_data_types())
         attribute_trigger.connect_attribute_table(window.widget.table_widget)
+        property_set_trigger.connect_property_set_window(window)
+
+        title = f"{property_set.object.name}:{property_set.name}" if property_set.object else f"{property_set.name}"
+        window.setWindowTitle(title)
 
     @classmethod
     def pw_toggle_comboboxes(cls, attribute: SOMcreator.Attribute, window: PropertySetWindow):
@@ -155,10 +167,10 @@ class PropertySet(som_gui.core.tool.PropertySet):
         window.widget.combo_type.setCurrentText(value_type)
 
     @classmethod
-    def add_value_line(cls, column_count: int, window: PropertySetWindow) -> QHBoxLayout:
+    def pw_add_value_line(cls, column_count: int, window: PropertySetWindow) -> QHBoxLayout:
         new_layout = QHBoxLayout()
         for _ in range(column_count):
-            new_layout.addWidget(LineInput())
+            new_layout.addWidget(ui_property_set.LineInput())
         window.widget.verticalLayout_2.addLayout(new_layout)
         return new_layout
 
@@ -185,16 +197,24 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def pw_set_values(cls, values: list[str | list[str]], window: PropertySetWindow):
         for value in values:
             if isinstance(value, (list, set)):
-                line_layout = cls.add_value_line(len(value), window)
+                line_layout = cls.pw_add_value_line(len(value), window)
                 for col, v in enumerate(value):
-                    line_edit: LineInput = line_layout.itemAt(col).widget()
+                    line_edit: ui_property_set.LineInput = line_layout.itemAt(col).widget()
                     line_edit.setText(v)
 
             else:
-                line_layout = cls.add_value_line(1, window)
-                line_edit: LineInput = line_layout.itemAt(0).widget()
+                line_layout = cls.pw_add_value_line(1, window)
+                line_edit: ui_property_set.LineInput = line_layout.itemAt(0).widget()
                 line_edit.setText(value)
 
     @classmethod
     def pw_set_description(cls, description: str, window: PropertySetWindow):
         window.widget.description.setText(description)
+
+    @classmethod
+    def get_allowed_value_types(cls):
+        return VALUE_TYPE_LOOKUP.keys()
+
+    @classmethod
+    def get_allowed_data_types(cls):
+        return DATA_TYPES

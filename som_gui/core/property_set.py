@@ -3,7 +3,7 @@ from typing import Type, TYPE_CHECKING
 
 import som_gui
 from som_gui.core import attribute as attribute_core
-from som_gui.module.attribute import trigger as attribute_trigger
+from SOMcreator.constants.value_constants import RANGE
 if TYPE_CHECKING:
     from som_gui.tool import PropertySet, Object, Attribute
     from som_gui.module.property_set.ui import PropertySetWindow
@@ -43,3 +43,12 @@ def repaint_pset_window(window: PropertySetWindow, property_set_tool: Type[Prope
     pset = property_set_tool.get_property_set_from_window(window)
     attribute_core.refresh_attribute_table(window.widget.table_widget, attribute_tool)
     pass
+
+
+def add_attribute_button_clicked(window: PropertySetWindow, property_set_tool: Type[PropertySet]):
+    print(f"ADD")
+    value_type = window.widget.combo_type.currentText()
+    if value_type == RANGE:
+        property_set_tool.pw_add_value_line(2, window)
+    else:
+        property_set_tool.pw_add_value_line(1, window)

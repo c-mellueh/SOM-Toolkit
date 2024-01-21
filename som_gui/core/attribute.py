@@ -54,6 +54,6 @@ def attribute_clicked(item: QTableWidgetItem, attribute_tool: Type[Attribute], p
     property_set_tool.pw_set_values(values, window)
     if not values:
         if value_type == RANGE:
-            property_set_tool.add_value_line(2, window)
+            property_set_tool.pw_add_value_line(2, window)
         else:
-            property_set_tool.add_value_line(1, window)
+            property_set_tool.pw_add_value_line(1, window)

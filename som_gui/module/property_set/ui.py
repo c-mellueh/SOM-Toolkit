@@ -3,7 +3,7 @@ from PySide6.QtCore import Qt
 from PySide6 import QtGui
 from som_gui.module import property_set
 from .window import Ui_layout_main
-
+from som_gui.icons import get_icon
 
 class PsetTableWidget(QTableWidget):
 
@@ -23,6 +23,7 @@ class PropertySetWindow(QWidget):
         self.widget.verticalLayout_2.setSpacing(2)
         self.widget.verticalLayout_2.setContentsMargins(2, 2, 2, 2)
         self.widget.verticalLayout_2.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.setWindowIcon(get_icon())
 
     def paintEvent(self, event):
         super().paintEvent(event)

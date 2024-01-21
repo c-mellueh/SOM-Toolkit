@@ -14,8 +14,8 @@ def connect():
     table.itemDoubleClicked.connect(lambda: core.table_double_clicked(tool.PropertySet))
 
 
-def connect_property_set_window(widget: PropertySetWindow):
-    pass
+def connect_property_set_window(window: PropertySetWindow):
+    window.widget.button_add_line.clicked.connect(lambda: core.add_attribute_button_clicked(window, tool.PropertySet))
 
 
 def repaint_pset_window(widget: PropertySetWindow):
