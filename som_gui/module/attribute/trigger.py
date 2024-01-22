@@ -11,6 +11,8 @@ if TYPE_CHECKING:
 def connect():
     core.add_basic_attribute_columns(tool.Attribute)
     core.add_basic_attribute_data(tool.Attribute)
+    som_gui.MainUi.ui.table_attribute.itemDoubleClicked.connect(
+        lambda item: core.attribute_double_clicked(item, tool.Attribute, tool.PropertySet))
 
 def on_new_project():
     core.setup_table_header(som_gui.MainUi.ui.table_attribute, tool.Attribute)

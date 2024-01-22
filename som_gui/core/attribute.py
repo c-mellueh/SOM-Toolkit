@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import SOMcreator
 from SOMcreator.constants.value_constants import RANGE
 from typing import TYPE_CHECKING, Type
 
@@ -53,13 +55,17 @@ def refresh_attribute_table(table: QTableWidget, attribute_tool: Type[Attribute]
 
 def attribute_clicked(item: QTableWidgetItem, attribute_tool: Type[Attribute], property_set_tool: Type[PropertySet]):
     attribute = attribute_tool.get_attribute_from_item(item)
+    window = item.tableWidget().window()
+    activate_attribute(attribute, window, attribute_tool, property_set_tool)
 
+
+def activate_attribute(attribute: SOMcreator.Attribute, window, attribute_tool: Type[Attribute],
+                       property_set_tool: Type[PropertySet]):
     name = attribute_tool.get_attribute_name(attribute)
     data_type = attribute_tool.get_attribute_data_type(attribute)
     value_type = attribute_tool.get_attribute_value_type(attribute)
     values = attribute_tool.get_attribute_values(attribute)
     description = attribute_tool.get_attribute_description(attribute)
-    window = item.tableWidget().window()
 
     property_set_tool.pw_set_attribute_name(name, window)
     property_set_tool.pw_set_data_type(data_type, window)
@@ -74,3 +80,10 @@ def attribute_clicked(item: QTableWidgetItem, attribute_tool: Type[Attribute], p
             property_set_tool.pw_add_value_line(2, window)
         else:
             property_set_tool.pw_add_value_line(1, window)
+
+
+def attribute_double_clicked(item: QTableWidgetItem, attribute_tool: Type[Attribute],
+                             property_set_tool: Type[PropertySet]):
+    attriute = attribute_tool.get_attribute_from_item(item)
+    window = property_set_tool.open_pset_window(property_set_tool.get_active_property_set())
+    activate_attribute(attriute, window, attribute_tool, property_set_tool)
