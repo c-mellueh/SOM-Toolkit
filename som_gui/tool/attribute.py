@@ -165,7 +165,9 @@ class Attribute(som_gui.core.tool.Attribute):
         attribute = cls.get_attribute_from_item(row[0])
         brush = QtGui.QBrush()
         brush.setStyle(Qt.BrushStyle.SolidPattern)
-        if attribute.property_set.object.ident_attrib == attribute:
+        if not attribute.property_set.object:
+            brush.setColor(Qt.GlobalColor.white)
+        elif attribute.property_set.object.ident_attrib == attribute:
             brush.setColor(Qt.GlobalColor.lightGray)
         else:
             brush.setColor(Qt.GlobalColor.white)

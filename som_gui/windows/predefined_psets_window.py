@@ -14,6 +14,8 @@ from ..qt_designs import ui_predefined_property_sets
 from ..widgets import object_widget, property_widget
 from ..windows import popups
 
+from som_gui.core import property_set as property_set_core
+from som_gui import tool
 if TYPE_CHECKING:
     from ..main_window import MainWindow
 
@@ -88,7 +90,7 @@ class PropertySetInherWindow(QWidget):
         sel_items = self.widget.list_view_pset.selectedItems()
         if len(sel_items) == 1:
             item = self.widget.list_view_pset.selectedItems()[0]
-            property_widget.open_pset_window(self.main_window, item.property_set, None, item.property_set.name)
+            property_set_core.predefined_pset_clicked(item.property_set, tool.PropertySet, tool.Attribute)
 
     def add_pset(self):
         item = PsetItem(project=self.main_window.project)

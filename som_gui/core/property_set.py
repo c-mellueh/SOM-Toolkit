@@ -1,5 +1,7 @@
 from __future__ import annotations
 from typing import Type, TYPE_CHECKING
+
+import SOMcreator
 from PySide6 import QtGui
 import som_gui
 from som_gui.core import attribute as attribute_core
@@ -38,6 +40,14 @@ def table_double_clicked(property_set_tool: Type[PropertySet], attribute_tool: T
     attribute_core.refresh_attribute_table(table, attribute_tool)
     table.resizeColumnsToContents()
     pass
+
+
+def predefined_pset_clicked(property_set: SOMcreator.PropertySet, property_set_tool: Type[PropertySet],
+                            attribute_tool: Type[Attribute]):
+    window = property_set_tool.open_pset_window(property_set)
+    table = attribute_tool.get_table(window)
+    attribute_core.refresh_attribute_table(table, attribute_tool)
+    table.resizeColumnsToContents()
 
 
 def repaint_pset_window(window: PropertySetWindow, property_set_tool: Type[PropertySet],
