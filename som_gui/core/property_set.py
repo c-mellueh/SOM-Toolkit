@@ -82,3 +82,7 @@ def value_type_changed(window: PropertySetWindow, property_set_tool: Type[Proper
     else:
         property_set_tool.set_value_columns(1, window)
         property_set_tool.remove_data_type_restriction(window)
+
+
+def close_pset_window(window: PropertySetWindow, property_set_tool: Type[PropertySet]):
+    property_set_tool.close_property_set_window(window)

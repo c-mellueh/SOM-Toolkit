@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+import logging
+
 import SOMcreator
 import som_gui
 import som_gui.core.tool
@@ -23,6 +26,15 @@ from som_gui.module.property_set import ui
 
 
 class PropertySet(som_gui.core.tool.PropertySet):
+    @classmethod
+    def close_property_set_window(cls, window: PropertySetWindow):
+        logging.debug(f"Remove {window}")
+        prop = cls.get_pset_properties()
+        if window in prop.property_set_windows:
+            prop.property_set_windows.pop(window)
+        else:
+            logging.warning(f"PropertySetWindow can't be removed because it's not registred")
+
     @classmethod
     def get_property_set_from_window(cls, window: QWidget) -> SOMcreator.PropertySet:
         prop = cls.get_pset_properties()
@@ -136,6 +148,11 @@ class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
     def open_pset_window(cls, property_set: SOMcreator.PropertySet):
         prop = cls.get_pset_properties()
+        reversed_dict = {pset: window for window, pset in prop.property_set_windows.items()}
+        window: PropertySetWindow = reversed_dict.get(property_set)
+        if window is not None:
+            window.raise_()
+            return window
         window = ui.PropertySetWindow()
         prop.property_set_windows[window] = property_set
         window.show()
@@ -149,6 +166,9 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
         title = f"{property_set.object.name}:{property_set.name}" if property_set.object else f"{property_set.name}"
         window.setWindowTitle(title)
+        window.widget.combo_type.setCurrentText(value_constants.LIST)
+        window.widget.combo_data_type.setCurrentText(value_constants.LABEL)
+        cls.pw_add_value_line(1, window)
         return window
 
     @classmethod
@@ -271,7 +291,9 @@ class PropertySet(som_gui.core.tool.PropertySet):
         lines = cls.get_input_value_lines(window)
         value_list = list()
         for row in lines:
-            values = cls.format_values([line.text() for line in row], window)
+            values = cls.format_values([line.text() for line in row if line.text()], window)
+            if not values:
+                continue
             if len(values) > 1:
                 value_list.append(values)
             else:

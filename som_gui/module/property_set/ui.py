@@ -14,7 +14,6 @@ class PsetTableWidget(QTableWidget):
         super().paintEvent(event)
         property_set.trigger.repaint_event()
 
-
 class PropertySetWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -24,6 +23,10 @@ class PropertySetWindow(QWidget):
         self.widget.verticalLayout_2.setContentsMargins(2, 2, 2, 2)
         self.widget.verticalLayout_2.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.setWindowIcon(get_icon())
+
+    def closeEvent(self, event):
+        super().closeEvent(event)
+        property_set.trigger.close_pset_window(self)
 
     def paintEvent(self, event):
         super().paintEvent(event)

@@ -24,6 +24,9 @@ def repaint_pset_window(widget: PropertySetWindow):
     core.repaint_pset_window(widget, tool.PropertySet, tool.Attribute)
 
 
+def close_pset_window(window: PropertySetWindow):
+    core.close_pset_window(window, tool.PropertySet)
+
 def on_new_project():
     pass
 

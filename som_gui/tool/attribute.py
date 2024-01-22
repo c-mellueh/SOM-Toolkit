@@ -51,7 +51,6 @@ class Attribute(som_gui.core.tool.Attribute):
             if not d:
                 logging.warning(f"data {name} not found")
                 continue
-            print(f'{d["setter"]} -> {value}')
             d["setter"](value, attribute)
 
     @classmethod
@@ -201,6 +200,8 @@ class Attribute(som_gui.core.tool.Attribute):
     @classmethod
     def create_attribute(cls, property_set: SOMcreator.PropertySet, attribute_data: dict[str, str | list]):
         name = attribute_data["name"]
+        if not name:
+            return
         values = attribute_data["values"]
         value_type = attribute_data["value_type"]
         attribute = SOMcreator.Attribute(property_set, name, values, value_type)
