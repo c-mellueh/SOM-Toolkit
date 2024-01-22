@@ -5,6 +5,7 @@ import SOMcreator
 from PySide6 import QtGui
 import som_gui
 from som_gui.core import attribute as attribute_core
+from som_gui.core import property_set as property_set_core
 from SOMcreator.constants.value_constants import RANGE
 
 if TYPE_CHECKING:
@@ -42,12 +43,13 @@ def table_double_clicked(property_set_tool: Type[PropertySet], attribute_tool: T
     pass
 
 
-def predefined_pset_clicked(property_set: SOMcreator.PropertySet, property_set_tool: Type[PropertySet],
-                            attribute_tool: Type[Attribute]):
+def open_pset_window(property_set: SOMcreator.PropertySet, property_set_tool: Type[PropertySet],
+                     attribute_tool: Type[Attribute]):
     window = property_set_tool.open_pset_window(property_set)
     table = attribute_tool.get_table(window)
     attribute_core.refresh_attribute_table(table, attribute_tool)
     table.resizeColumnsToContents()
+    return window
 
 
 def repaint_pset_window(window: PropertySetWindow, property_set_tool: Type[PropertySet],

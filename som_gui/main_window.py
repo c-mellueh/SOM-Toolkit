@@ -7,12 +7,10 @@ import som_gui
 from som_gui import tool
 from som_gui.windows.aggregation_view import aggregation_window
 from . import icons, settings, __version__
-from .filehandling import open_file, save_file, export
+from .filehandling import save_file, export
 from .qt_designs.ui_mainwindow import Ui_MainWindow
-from .widgets import property_widget, object_widget
 from .windows import (
     predefined_psets_window,
-    propertyset_window,
     mapping_window,
     popups,
     grouping_window,
@@ -107,7 +105,6 @@ class MainWindow(QMainWindow):
         self.predefined_pset_window: predefined_psets_window.PropertySetInherWindow | None = (
             None
         )
-        self.property_set_window: None | propertyset_window.PropertySetWindow = None
 
         # init Object- and PropertyWidget
         # object_widget.init(self)
@@ -169,15 +166,10 @@ class MainWindow(QMainWindow):
 
     # Main
     def clear_all(self):
-        property_widget.clear_all(self)
-        if self.predefined_pset_window is not None:
-            self.predefined_pset_window.clear_all()
         self.project.clear()
 
     def reload(self):
-        object_widget.reload(self)
         predefined_psets_window.reload(self)
-        property_widget.reload(self)
         self.generate_window_title()
 
     def generate_window_title(self) -> str:

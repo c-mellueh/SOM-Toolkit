@@ -11,8 +11,6 @@ from SOMcreator import json_constants
 
 from .. import settings
 from ..data import constants
-from . import FILETYPE
-from ..widgets import object_widget
 from ..windows import popups
 from ..windows.aggregation_view import aggregation_window
 
