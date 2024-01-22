@@ -39,22 +39,5 @@ class LineInput(QLineEdit):
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
         super().keyPressEvent(event)
-        # seperator = settings.get_seperator()
-        # sep_bool = settings.get_seperator_status()
-        # if not event.matches(QtGui.QKeySequence.StandardKey.Paste) and sep_bool:
-        #     super(LineInput, self).keyPressEvent(event)
-        #     return
-        # text = QtGui.QGuiApplication.clipboard().text()
-        # text_list = text.split(seperator)
-        # if len(text_list) < 2:
-        #     super(LineInput, self).keyPressEvent(event)
-        #     return
-        #
-        # dif = len(text_list) - len(self.pset_window.input_lines2)
-        # if dif >= 0:
-        #     for i in range(dif + 1):
-        #         self.pset_window.new_line()
-        # for i, (text, lines) in enumerate(zip(text_list, self.pset_window.input_lines2.values())):
-        #     text = text.strip()
-        #     line: LineInput = lines[0]
-        #     line.setText(text)
+        if property_set.trigger.key_press_event(event, self.window()):
+            super().keyPressEvent(event)

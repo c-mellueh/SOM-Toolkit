@@ -5,7 +5,7 @@ import logging
 import SOMcreator
 import som_gui
 import som_gui.core.tool
-from som_gui.tool import Object, Project
+from som_gui.tool import Object, Project, Settings
 from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QWidget, QHBoxLayout, QLineEdit
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QValidator, QIntValidator, QDoubleValidator, QRegularExpressionValidator
@@ -358,3 +358,16 @@ class PropertySet(som_gui.core.tool.PropertySet):
         window.widget.combo_data_type.clear()
         window.widget.combo_data_type.addItems(data_type)
         window.widget.combo_data_type.setCurrentText(active_type)
+
+    @classmethod
+    def pw_set_seperator(cls, window: PropertySetWindow):
+        seperator = Settings.get_seperator()
+        seperator_status = Settings.get_seperator_status()
+        window.widget.check_box_seperator.setChecked(seperator_status)
+        window.widget.line_edit_seperator.setText(seperator)
+
+    @classmethod
+    def get_seperator_state(cls, window: PropertySetWindow) -> (str, bool):
+        seperator_text = window.widget.line_edit_seperator.text()
+        seperator_state = window.widget.check_box_seperator.isChecked()
+        return seperator_text, seperator_state
