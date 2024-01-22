@@ -4,6 +4,7 @@ from typing import Type, TYPE_CHECKING
 import som_gui
 from som_gui.core import attribute as attribute_core
 from SOMcreator.constants.value_constants import RANGE
+
 if TYPE_CHECKING:
     from som_gui.tool import PropertySet, Object, Attribute
     from som_gui.module.property_set.ui import PropertySetWindow
@@ -22,8 +23,7 @@ def refresh_table(property_set_tool: Type[PropertySet], object_tool: Type[Object
     add_property_sets = new_property_sets.difference(existing_property_sets)
     property_set_tool.remove_property_sets_from_table(delete_property_sets, table)
     property_set_tool.add_property_sets_to_table(add_property_sets, table)
-    table = property_set_tool.get_table()
-    table.resizeColumnsToContents()
+
 
 
 def pset_selection_changed(property_set_tool: Type[PropertySet], attribute_tool: Type[Attribute]):
@@ -32,9 +32,12 @@ def pset_selection_changed(property_set_tool: Type[PropertySet], attribute_tool:
     attribute_core.refresh_attribute_table(som_gui.MainUi.ui.table_attribute, attribute_tool)
 
 
-def table_double_clicked(property_set_tool: Type[PropertySet]):
+def table_double_clicked(property_set_tool: Type[PropertySet], attribute_tool: Type[Attribute]):
     property_set = property_set_tool.get_selecte_property_set()
-    property_set_tool.open_pset_window(property_set)
+    window = property_set_tool.open_pset_window(property_set)
+    table = attribute_tool.get_table(window)
+    attribute_core.refresh_attribute_table(table, attribute_tool)
+    table.resizeColumnsToContents()
     pass
 
 
@@ -47,14 +50,35 @@ def repaint_pset_window(window: PropertySetWindow, property_set_tool: Type[Prope
         property_set_tool.pw_set_add_button_text("Update", window)
     else:
         property_set_tool.pw_set_add_button_text("Hinzufügen", window)
+    property_set_tool.update_line_validators(window)
 
-    pass
 
-
-def add_attribute_button_clicked(window: PropertySetWindow, property_set_tool: Type[PropertySet]):
-    print(f"ADD")
+def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[PropertySet]):
     value_type = window.widget.combo_type.currentText()
     if value_type == RANGE:
         property_set_tool.pw_add_value_line(2, window)
     else:
         property_set_tool.pw_add_value_line(1, window)
+
+
+def add_attribute_button_clicked(window: PropertySetWindow, property_set_tool: Type[PropertySet],
+                                 attribute_tool: Type[Attribute]):
+    pset = property_set_tool.get_property_set_from_window(window)
+    attribute_name = property_set_tool.pw_get_attribute_name(window)
+    attribute_dict = {a.name: a for a in pset.attributes}
+    attribute = attribute_dict.get(attribute_name)
+    attribute_data = property_set_tool.pw_get_attribute_data(window)
+    if attribute is None:
+        attribute_tool.create_attribute(pset, attribute_data)
+    else:
+        attribute_tool.set_attribute_data(attribute, attribute_data)
+
+
+def value_type_changed(window: PropertySetWindow, property_set_tool: Type[PropertySet]):
+    value_type = property_set_tool.pw_get_value_type(window)
+    if value_type == RANGE:
+        property_set_tool.set_value_columns(2, window)
+        property_set_tool.restrict_data_type_to_numbers(window)
+    else:
+        property_set_tool.set_value_columns(1, window)
+        property_set_tool.remove_data_type_restriction(window)

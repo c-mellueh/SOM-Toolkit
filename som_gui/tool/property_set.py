@@ -3,13 +3,15 @@ import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui.tool import Object, Project
-from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QWidget, QHBoxLayout
+from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QWidget, QHBoxLayout, QLineEdit
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QValidator, QIntValidator, QDoubleValidator, QRegularExpressionValidator
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.attribute import trigger as attribute_trigger
 from som_gui.module.property_set import trigger as property_set_trigger
 from SOMcreator.constants.json_constants import INHERITED_TEXT
 from SOMcreator.constants.value_constants import VALUE_TYPE_LOOKUP, DATA_TYPES
+from SOMcreator.constants import value_constants
 from som_gui.icons import get_link_icon
 from typing import TYPE_CHECKING
 from som_gui.module.property_set import ui as ui_property_set
@@ -147,12 +149,13 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
         title = f"{property_set.object.name}:{property_set.name}" if property_set.object else f"{property_set.name}"
         window.setWindowTitle(title)
+        return window
 
     @classmethod
     def pw_toggle_comboboxes(cls, attribute: SOMcreator.Attribute, window: PropertySetWindow):
         is_child = attribute.is_child
-        window.widget.combo_type.setEnabled(is_child)
-        window.widget.combo_data_type.setEnabled(is_child)
+        window.widget.combo_type.setEnabled(not is_child)
+        window.widget.combo_data_type.setEnabled(not is_child)
         t1 = "Attribut wurde geerbt -> Keine Änderung des Types möglich" if is_child else ""
         t2 = "Attribut wurde geerbt -> Keine Änderung des Datentyps möglich" if is_child else ""
         window.widget.combo_type.setToolTip(t1)
@@ -179,13 +182,13 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return new_layout
 
     @classmethod
-    def get_input_value_lines(cls, window: PropertySetWindow):
-        line_dict = dict()
-        for layout in window.widget.horizontal_layout_list:
-            line_dict[layout] = list()
-            for index in range(layout.count()):
-                line_dict[layout].append(layout.itemAt(index).widget())
-        return line_dict
+    def get_input_value_lines(cls, window: PropertySetWindow) -> list[list[QLineEdit]]:
+        lines = list()
+        base_layout = window.widget.verticalLayout_2
+        for row in range(base_layout.count()):
+            hor_layout: QHBoxLayout = base_layout.itemAt(row)
+            lines.append([hor_layout.itemAt(col).widget() for col in range(hor_layout.count())])
+        return lines
 
     @classmethod
     def pw_clear_values(cls, window: PropertySetWindow):
@@ -200,16 +203,17 @@ class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
     def pw_set_values(cls, values: list[str | list[str]], window: PropertySetWindow):
         for value in values:
+            value = "" if value is None else value
             if isinstance(value, (list, set)):
                 line_layout = cls.pw_add_value_line(len(value), window)
                 for col, v in enumerate(value):
+                    v = "" if value is None else v
                     line_edit: ui_property_set.LineInput = line_layout.itemAt(col).widget()
-                    line_edit.setText(v)
-
+                    line_edit.setText(cls.value_to_string(v))
             else:
                 line_layout = cls.pw_add_value_line(1, window)
                 line_edit: ui_property_set.LineInput = line_layout.itemAt(0).widget()
-                line_edit.setText(value)
+                line_edit.setText(cls.value_to_string(value))
 
     @classmethod
     def pw_set_description(cls, description: str, window: PropertySetWindow):
@@ -232,3 +236,103 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def get_allowed_data_types(cls):
         return DATA_TYPES
 
+    @classmethod
+    def pw_get_data_type(cls, window: PropertySetWindow):
+        return window.widget.combo_data_type.currentText()
+
+    @classmethod
+    def pw_get_value_type(cls, window: PropertySetWindow):
+        return window.widget.combo_type.currentText()
+
+    @classmethod
+    def format_values(cls, value_list: list[str], window: PropertySetWindow):
+        data_type = cls.pw_get_data_type(window)
+        if data_type not in (value_constants.REAL, value_constants.INTEGER):
+            return [str(val) for val in value_list]
+        values = [val.replace(".", "") for val in value_list]  # remove thousend Point
+        values = [float(val.replace(",", ".")) for val in values if val]
+        if data_type == value_constants.INTEGER:
+            values = [int(val) for val in value_list]
+        if len(values) < len(value_list):
+            values += [None for _ in range(len(value_list) - len(values))]
+        return values
+
+    @classmethod
+    def value_to_string(cls, value):
+        if isinstance(value, str):
+            return value
+        if isinstance(value, int):
+            return str(value)
+        if isinstance(value, float):
+            return str(value).replace(".", ",")
+
+    @classmethod
+    def pw_get_values(cls, window: PropertySetWindow):
+        lines = cls.get_input_value_lines(window)
+        value_list = list()
+        for row in lines:
+            values = cls.format_values([line.text() for line in row], window)
+            if len(values) > 1:
+                value_list.append(values)
+            else:
+                value_list.append(values[0])
+        return value_list
+
+    @classmethod
+    def pw_get_attribute_data(cls, window: PropertySetWindow):
+        d = dict()
+        d["name"] = cls.pw_get_attribute_name(window)
+        d["data_type"] = window.widget.combo_data_type.currentText()
+        d["value_type"] = window.widget.combo_type.currentText()
+        d["values"] = cls.pw_get_values(window)
+        d["description"] = window.widget.description.toPlainText()
+        return d
+
+    @classmethod
+    def update_line_validators(cls, window: PropertySetWindow):
+        data_type = cls.pw_get_data_type(window)
+        value_type = cls.pw_get_value_type(window)
+        if data_type == value_constants.INTEGER:
+            validator = QIntValidator()
+        elif data_type == value_constants.REAL:
+            validator = QDoubleValidator()
+        elif value_type == value_constants.FORMAT:
+            validator = QRegularExpressionValidator()
+        else:
+            validator = QRegularExpressionValidator()
+        for row in cls.get_input_value_lines(window):
+            for line in row:
+                line.setValidator(validator)
+
+    @classmethod
+    def set_value_columns(cls, column_count: int, window: PropertySetWindow):
+        main_layout = window.widget.verticalLayout_2
+        for row_index in range(main_layout.count()):
+            hor_layout: QHBoxLayout = main_layout.itemAt(row_index)
+            existing_columns = hor_layout.count()
+            dif = column_count - existing_columns
+            if dif > 0:
+                for _ in range(dif):
+                    hor_layout.addWidget(ui_property_set.LineInput())
+            elif dif < 0:
+                for _ in range(abs(dif)):
+                    item = hor_layout.itemAt(hor_layout.count() - 1)
+                    item.widget().deleteLater()
+                    hor_layout.removeItem(item)
+
+    @classmethod
+    def restrict_data_type_to_numbers(cls, window: PropertySetWindow):
+        active_type = window.widget.combo_data_type.currentText()
+        data_types = [value_constants.REAL, value_constants.INTEGER]
+        window.widget.combo_data_type.clear()
+        window.widget.combo_data_type.addItems(data_types)
+        if active_type in data_types:
+            window.widget.combo_data_type.setCurrentText(active_type)
+
+    @classmethod
+    def remove_data_type_restriction(cls, window: PropertySetWindow):
+        active_type = window.widget.combo_data_type.currentText()
+        data_type = cls.get_allowed_data_types()
+        window.widget.combo_data_type.clear()
+        window.widget.combo_data_type.addItems(data_type)
+        window.widget.combo_data_type.setCurrentText(active_type)
