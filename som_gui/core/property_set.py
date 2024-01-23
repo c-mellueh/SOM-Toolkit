@@ -13,6 +13,9 @@ if TYPE_CHECKING:
     from som_gui.module.property_set.ui import PropertySetWindow
 
 
+def repaint_predefined_pset_window(widget, property_set_tool: Type[PropertySet]):
+    pass
+
 def refresh_table(property_set_tool: Type[PropertySet], object_tool: Type[Object]):
     if object_tool.get_active_object() is not None:
         property_set_tool.set_enabled(True)

@@ -1,8 +1,9 @@
-from PySide6.QtWidgets import QTableWidget, QWidget, QLineEdit
+from PySide6.QtWidgets import QTableWidget, QWidget, QLineEdit, QDialog
 from PySide6.QtCore import Qt
 from PySide6 import QtGui
 from som_gui.module import property_set
 from .window import Ui_layout_main
+from .ui_predefined_pset import Ui_Dialog
 from som_gui.icons import get_icon
 
 class PsetTableWidget(QTableWidget):
@@ -33,6 +34,13 @@ class PropertySetWindow(QWidget):
         property_set.trigger.repaint_pset_window(self)
 
 
+class PredefinedPropertySetWindow(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.widget = Ui_Dialog()
+        self.widget.setupUi(self)
+        self.setWindowIcon(get_icon())
+
 class LineInput(QLineEdit):
     def __init__(self) -> None:
         super(LineInput, self).__init__()
@@ -41,3 +49,4 @@ class LineInput(QLineEdit):
         super().keyPressEvent(event)
         if property_set.trigger.key_press_event(event, self.window()):
             super().keyPressEvent(event)
+
