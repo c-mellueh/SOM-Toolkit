@@ -37,8 +37,8 @@ def main(initial_file: str | None = None):
     app = QApplication(sys.argv)
     window = som_gui.main_window.MainWindow(app)
     window.show()
-    core.project.create_project(tool.Project)
     som_gui.load_ui_triggers()
+    core.project.create_project(tool.Project)
     core.main_window.create_menus(tool.MainWindow)
 
     if initial_file is not None:

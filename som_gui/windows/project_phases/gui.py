@@ -6,7 +6,7 @@ from PySide6.QtCore import Qt, QPoint, QModelIndex
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QFont, QAction
 from PySide6.QtWidgets import QWidget, QMenu, QAbstractItemView, QInputDialog, QLineEdit
 from SOMcreator import classes
-
+from som_gui import tool
 from som_gui import icons
 from som_gui.qt_designs import ui_project_phase_window
 from . import object_tree
@@ -63,7 +63,7 @@ class ProjectPhaseWindow(QWidget):
 
         super().__init__()
         self.main_window = main_window
-        self.project = self.main_window.project
+        self.project = tool.Project.get()
 
         self.widget = ui_project_phase_window.Ui_Form()
         self.widget.setupUi(self)

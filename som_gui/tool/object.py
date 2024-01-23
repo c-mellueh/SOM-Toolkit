@@ -19,9 +19,6 @@ if TYPE_CHECKING:
     from som_gui.module.objects.ui import ObjectTreeWidget
 
 
-
-
-
 class ObjectDataDict(TypedDict):
     name: str
     is_group: bool
@@ -81,34 +78,6 @@ class Object(som_gui.core.tool.Object):
     def group_objects(cls, parent: SOMcreator.Object, children: set[SOMcreator.Object]):
         for child in children:
             parent.add_child(child)
-
-    @classmethod
-    def create_object(cls, data_dict: ObjectDataDict):
-        name = data_dict["name"]
-        is_group = data_dict["is_group"]
-        abbreviation = data_dict.get("abbreviation")
-        ident_pset_name = data_dict.get("ident_pset_name")
-        ident_attribute_name = data_dict.get("ident_attribute_name")
-        ident_value = data_dict.get("ident_value")
-        ifc_mappings = data_dict.get("ifc_mappings")
-
-        if ident_pset_name and ident_attribute_name and ident_value and not is_group:
-            if not cls.is_identifier_allowed(ident_value):
-                return som_gui.module.objects.IDENT_ISSUE, None
-            if not cls.is_abbreviation_allowed(abbreviation):
-                return som_gui.module.objects.ABBREV_ISSUE, None
-            pset = SOMcreator.PropertySet(ident_pset_name)
-            attribute = SOMcreator.Attribute(pset, ident_attribute_name, value=[ident_value],
-                                             value_type=SOMcreator.value_constants.LABEL)
-            obj = SOMcreator.Object(name, attribute, project=tool.Project.get())
-        else:
-            id = str(uuid.uuid4())
-            obj = SOMcreator.Object(name, id, uuid=id, project=tool.Project.get())
-        if ifc_mappings:
-            obj.ifc_mapping = ifc_mappings
-        if abbreviation:
-            obj.abbreviation = abbreviation
-        return som_gui.module.objects.OK, obj
 
     @classmethod
     def create_context_menu(cls):
@@ -189,14 +158,23 @@ class Object(som_gui.core.tool.Object):
     def handle_attribute_issue(cls, result: int):
         if result == som_gui.module.objects.OK:
             return True
+        app = tool.MainWindow.get_app()
+        print(result)
         if result == som_gui.module.objects.IDENT_ISSUE:
-            logging.error(f"Identifier existiert bereits")
-            tool.Popups.create_warning_popup("Identifier existiert bereits")
-            return False
-        if result == som_gui.module.objects.ABBREV_ISSUE:
-            logging.error(f"Abkürzung existiert bereits")
-            tool.Popups.create_warning_popup("Abkürzung existiert bereits")
-            return False
+            text = "Identifier existiert bereits oder is nicht erlaubt!"
+        elif result == som_gui.module.objects.ABBREV_ISSUE:
+            text = u"Abkürzung existiert bereits!"
+        elif result == som_gui.module.objects.IDENT_ATTRIBUTE_ISSUE:
+            text = u"Attribute Name is nicht erlaubt!"
+        elif result == som_gui.module.objects.IDENT_PSET_ISSUE:
+            text = u"PropertySet Name is nicht erlaubt!"
+        else:
+            text = f"Oh! Ich weiß leider nicht, was gerade schief gelaufen ist. Fehler"
+
+        text = app.translate("MainWindow", text)
+        logging.error(text)
+        tool.Popups.create_warning_popup(text)
+        return False
 
     @classmethod
     def copy_object(cls, obj: SOMcreator.Object, data_dict: ObjectDataDict) -> tuple[int, SOMcreator.Object | None]:
@@ -214,7 +192,6 @@ class Object(som_gui.core.tool.Object):
             return som_gui.module.objects.IDENT_ISSUE, None
 
         if not cls.is_abbreviation_allowed(abbreviation):
-            logging.error(f"Abkürzung {abbreviation} existiert bereits!")
             return som_gui.module.objects.ABBREV_ISSUE, None
         new_object = cp.copy(obj)
         if pset and attribute:
@@ -222,6 +199,39 @@ class Object(som_gui.core.tool.Object):
         new_object.ident_attrib.value = [ident_value]
         new_object.abbreviation = abbreviation
         return som_gui.module.objects.OK, new_object
+
+    @classmethod
+    def create_object(cls, data_dict: ObjectDataDict):
+        name = data_dict["name"]
+        is_group = data_dict["is_group"]
+        abbreviation = data_dict.get("abbreviation")
+        ident_pset_name = data_dict.get("ident_pset_name")
+        ident_attribute_name = data_dict.get("ident_attribute_name")
+        ident_value = data_dict.get("ident_value")
+        ifc_mappings = data_dict.get("ifc_mappings")
+        if is_group:
+            ident = str(uuid.uuid4())
+            obj = SOMcreator.Object(name, ident, uuid=ident, project=tool.Project.get())
+        else:
+            if not cls.is_identifier_allowed(ident_value):
+                return som_gui.module.objects.IDENT_ISSUE, None
+            if not cls.is_abbreviation_allowed(abbreviation):
+                return som_gui.module.objects.ABBREV_ISSUE, None
+            if not ident_pset_name:
+                return som_gui.module.objects.IDENT_PSET_ISSUE, None
+            if not ident_attribute_name:
+                return som_gui.module.objects.IDENT_ATTRIBUTE_ISSUE, None
+
+            pset = SOMcreator.PropertySet(ident_pset_name)
+            attribute = SOMcreator.Attribute(pset, ident_attribute_name, value=[ident_value],
+                                             value_type=SOMcreator.value_constants.LABEL)
+            obj = SOMcreator.Object(name, attribute, project=tool.Project.get())
+            obj.add_property_set(pset)
+        if ifc_mappings:
+            obj.ifc_mapping = ifc_mappings
+        if abbreviation:
+            obj.abbreviation = abbreviation
+        return som_gui.module.objects.OK, obj
 
     @classmethod
     def change_object_info(cls, obj: SOMcreator.Object, data_dict: ObjectDataDict) -> int:
@@ -301,7 +311,7 @@ class Object(som_gui.core.tool.Object):
         identifiers = cls.get_existing_ident_values()
         if ignore is not None:
             identifiers = list(filter(lambda i: i != ignore, identifiers))
-        if identifier in identifiers:
+        if identifier in identifiers or not identifier:
             return False
         else:
             return True

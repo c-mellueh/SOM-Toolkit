@@ -34,7 +34,7 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def create_project(cls):
-
+        logging.info("Create new Project")
         proj = SOMcreator.Project()
         prop: ProjectProperties = som_gui.ProjectProperties
         prop.active_project = proj

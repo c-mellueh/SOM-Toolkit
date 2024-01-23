@@ -5,6 +5,8 @@ import som_gui
 OK = 0
 IDENT_ISSUE = 1
 ABBREV_ISSUE = 2
+IDENT_PSET_ISSUE = 3
+IDENT_ATTRIBUTE_ISSUE = 4
 
 
 def register():

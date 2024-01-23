@@ -9,3 +9,7 @@ def connect():
 
 def on_new_project():
     pass
+
+
+def new_file_clicked():
+    core.open_new_file(tool.Project, tool.Popups)
