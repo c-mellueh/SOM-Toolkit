@@ -3,7 +3,7 @@ import som_gui.core.tool
 import som_gui
 from typing import TYPE_CHECKING, Callable
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMenu, QMenuBar, QApplication
+from PySide6.QtWidgets import QMenu, QMenuBar, QApplication, QLabel
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.prop import MainWindowProperties, MenuDict
@@ -12,8 +12,24 @@ if TYPE_CHECKING:
 
 class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
+    def set_window_title(cls, title: str):
+        cls.get().setWindowTitle(title)
+
+    @classmethod
+    def create_status_label(cls):
+        label = QLabel()
+        prop = cls.get_main_menu_properties()
+        prop.status_bar_label = label
+        cls.get_ui().statusbar.addWidget(label)
+
+    @classmethod
+    def set_status_bar_text(cls, text: str):
+        cls.get_main_menu_properties().status_bar_label.setText(text)
+
+
+    @classmethod
     def get_menu_bar(cls) -> QMenuBar:
-        return cls.get().menubar
+        return cls.get_ui().menubar
 
     @classmethod
     def test_call(cls):
@@ -41,7 +57,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         menu_steps = menu_path.split("/")
         menu_dict = cls.get_menu_dict()
         focus_dict = menu_dict
-        parent = cls.get().menubar
+        parent = cls.get_ui().menubar
         for index, menu_name in enumerate(menu_steps):
             if not menu_name in {menu["name"] for menu in focus_dict["submenu"]}:
                 menu = QMenu(parent)
@@ -72,8 +88,12 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return som_gui.MainWindowProperties
 
     @classmethod
-    def get(cls) -> Ui_MainWindow:
-        return som_gui.MainUi.ui
+    def get_ui(cls) -> Ui_MainWindow:
+        return cls.get_main_menu_properties().ui
+
+    @classmethod
+    def get(cls) -> som_gui.MainWindow:
+        return cls.get_main_menu_properties().window
 
     @classmethod
     def get_app(cls) -> QApplication:
@@ -82,11 +102,12 @@ class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
     def set(cls, window):
         prop = cls.get_main_menu_properties()
-        prop.active_main_window = window
+        prop.window = window
+        prop.ui = window.ui
 
     @classmethod
     def get_object_infos(cls) -> ObjectDataDict:
-        ui = cls.get()
+        ui = cls.get_ui()
         d: ObjectDataDict = dict()
         d["name"] = ui.line_edit_object_name.text()
         d["is_group"] = False
@@ -99,4 +120,4 @@ class MainWindow(som_gui.core.tool.MainWindow):
 
     @classmethod
     def get_pset_name(cls):
-        return cls.get().lineEdit_pSet_name.text()
+        return cls.get_ui().lineEdit_pSet_name.text()

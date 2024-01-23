@@ -129,7 +129,6 @@ class Project(som_gui.core.tool.Project):
         main_window.project, main_dict = proj, project_dict
         import_node_pos(main_dict, main_window.graph_window)
         fill_ui(main_window)
-        main_window.generate_window_title()
         main_window.graph_window.create_missing_scenes()
         return proj, project_dict
 

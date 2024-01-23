@@ -10,7 +10,7 @@ def connect():
     widget.itemDoubleClicked.connect(item_double_clicked)
     widget.customContextMenuRequested.connect(lambda p: core.create_context_menu(p, tool.Object))
     widget.expanded.connect(lambda: core.resize_columns(tool.Object))
-    main_ui = tool.MainWindow.get()
+    main_ui = tool.MainWindow.get_ui()
 
     main_ui.button_search.pressed.connect(lambda: core.search_object(tool.Search, tool.Object))
     main_ui.button_objects_add.clicked.connect(

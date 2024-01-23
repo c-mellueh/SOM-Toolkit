@@ -11,6 +11,9 @@ def set_main_window(window, main_window_tool: Type[MainWindow]):
     main_window_tool.set(window)
 
 
+def add_label_to_statusbar(main_window_tool: Type[MainWindow]):
+    main_window_tool.create_status_label()
+
 def create_menus(main_window_tool: Type[MainWindow]):
     menu_dict = main_window_tool.get_menu_dict()
     menu_bar = main_window_tool.get_menu_bar()
@@ -18,6 +21,11 @@ def create_menus(main_window_tool: Type[MainWindow]):
     for menu in menu_dict["submenu"]:
         main_window_tool.create_actions(menu, menu_bar)
 
+
+def refresh_main_window(main_window_tool: Type[MainWindow], project_tool: Type[Project]):
+    status = f"{project_tool.get_project_name()} {project_tool.get_project_version()}"
+    main_window_tool.set_status_bar_text(status)
+    main_window_tool.set_window_title(f"SOM-Toolkit v{som_gui.__version__}")
 
 def fill_old_menus(main_window_tool: Type[MainWindow]):
     """

@@ -36,6 +36,7 @@ def main(initial_file: str | None = None):
     som_gui.register()
     app = QApplication(sys.argv)
     window = som_gui.main_window.MainWindow(app)
+    core.main_window.set_main_window(window, tool.MainWindow)
     window.show()
     som_gui.load_ui_triggers()
     core.project.create_project(tool.Project)

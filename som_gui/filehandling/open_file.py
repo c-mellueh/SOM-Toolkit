@@ -85,5 +85,4 @@ def import_data(main_window: MainWindow, path: str):
     fill_ui(main_window)
     check_for_objects_without_aggregation(main_window.project)
     logging.info(f"Import Done!")
-    main_window.generate_window_title()
     main_window.graph_window.create_missing_scenes()

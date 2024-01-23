@@ -36,13 +36,12 @@ class MainWindow(QMainWindow):
         self.app: QApplication = application
         som_gui.MainUi.ui = self.ui
         som_gui.MainUi.window = self
-        core.set_main_window(self.ui, tool.MainWindow)
+
 
         # variables
         self.active_object: classes.Object | None = None
         self.active_property_set: classes.PropertySet | None = None
         self.project = None
-        self.permanent_status_text = QLabel()
 
         # Windows
         self.group_window: grouping_window.GroupingWindow | None = None
@@ -56,8 +55,6 @@ class MainWindow(QMainWindow):
             None
         )
         settings.reset_save_path()
-        self.ui.statusbar.addWidget(self.permanent_status_text)
-        self.generate_window_title()
 
         # Icons
         self.setWindowIcon(icons.get_icon())
@@ -115,13 +112,7 @@ class MainWindow(QMainWindow):
 
     def reload(self):
         predefined_psets_window.reload(self)
-        self.generate_window_title()
 
-    def generate_window_title(self) -> str:
-        text = f"SOM-Toolkit v{__version__}"
-        self.setWindowTitle(text)
-        if self.project:
-            self.permanent_status_text.setText(
-                f"{self.project.name} v{self.project.version}"
-            )
-        return text
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        som_gui.core.main_window.refresh_main_window(tool.MainWindow, tool.Project)
