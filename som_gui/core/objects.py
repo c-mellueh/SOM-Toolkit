@@ -8,7 +8,7 @@ import som_gui.module.objects
 from som_gui.core.property_set import refresh_table as refresh_property_set_table
 
 if TYPE_CHECKING:
-    from som_gui.tool import Object, Project, Search, PropertySet
+    from som_gui.tool import Object, Project, Search, PropertySet, MainWindow
     from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
     from PySide6.QtCore import QPoint
 
@@ -159,3 +159,10 @@ def item_dropped_on(pos: QPoint, object_tool: Type[Object]):
             obj.remove_parent()
         else:
             obj.parent = dropped_on_object
+
+
+def add_object_clicked(main_window_tool: Type[MainWindow], object_tool: Type[Object], project_tool: Type[Project]):
+    object_infos = main_window_tool.get_object_infos()
+    issue, obj = object_tool.create_object(object_infos)
+    object_tool.handle_attribute_issue(issue)
+    refresh_object_tree(object_tool, project_tool)

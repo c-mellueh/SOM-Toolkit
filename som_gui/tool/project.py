@@ -34,7 +34,7 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def create_project(cls):
-
+        logging.info("Create new Project")
         proj = SOMcreator.Project()
         prop: ProjectProperties = som_gui.ProjectProperties
         prop.active_project = proj
@@ -129,7 +129,6 @@ class Project(som_gui.core.tool.Project):
         main_window.project, main_dict = proj, project_dict
         import_node_pos(main_dict, main_window.graph_window)
         fill_ui(main_window)
-        main_window.generate_window_title()
         main_window.graph_window.create_missing_scenes()
         return proj, project_dict
 
@@ -159,7 +158,7 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def add_setting_to_dialog(cls, setting_dict: InfoDict):
-        value = setting_dict["value"]
+        value = setting_dict["get_function"]()
         prop: ProjectProperties = som_gui.ProjectProperties
         layout: QFormLayout = prop.settings_window.layout()
         dialog = prop.settings_window

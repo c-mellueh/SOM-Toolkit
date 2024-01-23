@@ -9,7 +9,7 @@ from som_gui.core import property_set as property_set_core
 from SOMcreator.constants.value_constants import RANGE
 
 if TYPE_CHECKING:
-    from som_gui.tool import PropertySet, Object, Attribute, Settings
+    from som_gui.tool import PropertySet, Object, Attribute, Settings, MainWindow, Popups
     from som_gui.module.property_set.ui import PropertySetWindow
 
 
@@ -124,3 +124,11 @@ def update_seperator(window: PropertySetWindow, property_set_tool: Type[Property
     text, state = property_set_tool.get_seperator_state(window)
     settings_tool.set_seperator_status(state)
     settings_tool.set_seperator(text)
+
+
+def add_property_set_button_pressed(object_tool: Type[Object], main_window_tool: Type[MainWindow],
+                                    property_set_tool: Type[PropertySet]):
+    obj = object_tool.get_active_object()
+    pset_name = main_window_tool.get_pset_name()
+    property_set_tool.create_property_set(pset_name, obj)
+    refresh_table(property_set_tool, object_tool)

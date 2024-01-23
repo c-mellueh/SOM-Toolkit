@@ -441,65 +441,6 @@
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>Datei</string>
-    </property>
-    <widget class="QMenu" name="menuExport">
-     <property name="title">
-      <string>Export</string>
-     </property>
-     <addaction name="action_abbreviation_json"/>
-     <addaction name="action_allplan"/>
-     <addaction name="action_card1"/>
-     <addaction name="action_vestra"/>
-     <addaction name="action_excel"/>
-    </widget>
-    <addaction name="action_file_new"/>
-    <addaction name="action_file_Open"/>
-    <addaction name="action_file_Save"/>
-    <addaction name="action_file_Save_As"/>
-    <addaction name="action_settings"/>
-    <addaction name="menuExport"/>
-    <addaction name="action_mapping"/>
-    <addaction name="action_project_phase"/>
-    <addaction name="action_use_cases"/>
-   </widget>
-   <widget class="QMenu" name="menuDesite">
-    <property name="toolTip">
-     <string/>
-    </property>
-    <property name="title">
-     <string>Desite</string>
-    </property>
-    <addaction name="action_export_bookmarks"/>
-    <addaction name="action_mapping_script"/>
-   </widget>
-   <widget class="QMenu" name="menuPredefined_Psets">
-    <property name="title">
-     <string>Vordefinierte Psets</string>
-    </property>
-    <addaction name="action_show_list"/>
-   </widget>
-   <widget class="QMenu" name="menuShow_Graphs">
-    <property name="title">
-     <string>Bauwerksstruktur</string>
-    </property>
-    <addaction name="action_show_graphs"/>
-   </widget>
-   <widget class="QMenu" name="menu_ifc">
-    <property name="title">
-     <string>IFC</string>
-    </property>
-    <addaction name="action_modelcheck"/>
-    <addaction name="action_create_groups"/>
-    <addaction name="action_model_control"/>
-   </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuDesite"/>
-   <addaction name="menuPredefined_Psets"/>
-   <addaction name="menuShow_Graphs"/>
-   <addaction name="menu_ifc"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_file_new">
@@ -690,6 +631,11 @@
   </action>
  </widget>
  <customwidgets>
+     <customwidget>
+         <class>AttributeTable</class>
+         <extends>QTableWidget</extends>
+         <header>som_gui.module.attribute.ui</header>
+     </customwidget>
   <customwidget>
    <class>ObjectTreeWidget</class>
    <extends>QTreeWidget</extends>
@@ -699,11 +645,6 @@
          <class>PsetTableWidget</class>
          <extends>QTableWidget</extends>
          <header>som_gui.module.property_set.ui</header>
-     </customwidget>
-     <customwidget>
-         <class>AttributeTable</class>
-         <extends>QTableWidget</extends>
-         <header>som_gui.module.attribute.ui</header>
   </customwidget>
  </customwidgets>
  <tabstops>

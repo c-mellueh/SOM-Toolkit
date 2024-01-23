@@ -4,12 +4,9 @@ import os
 import sys
 from logging import config
 
-import som_gui
 from som_gui import logs, settings
-from som_gui.core import project
-from som_gui.tool import Project
-# import ifcopenshell.express.rules.IFC2X3 as IFC2X3
-
+from som_gui import core
+from som_gui import tool
 
 def start_log(state: int | None = None) -> None:
     if not os.path.exists(logs.DIR_PATH):
@@ -33,16 +30,20 @@ def start_log(state: int | None = None) -> None:
 
 def main(initial_file: str | None = None):
     from PySide6.QtWidgets import QApplication
-    from som_gui import main_window
+    import som_gui.main_window
 
     print("START")
+    som_gui.register()
     app = QApplication(sys.argv)
-    window = main_window.MainWindow(app)
+    window = som_gui.main_window.MainWindow(app)
+    core.main_window.set_main_window(window, tool.MainWindow)
     window.show()
-    project.create_project(Project)
     som_gui.load_ui_triggers()
+    core.project.create_project(tool.Project)
+    core.main_window.create_menus(tool.MainWindow)
+
     if initial_file is not None:
-        project.open_project(initial_file, Project)
+        core.project.open_project(initial_file, tool.Project)
     sys.exit(app.exec())
 
 

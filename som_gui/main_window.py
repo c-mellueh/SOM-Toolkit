@@ -25,60 +25,9 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from som_gui.module.objects.ui import ObjectTreeWidget
 
-
+from som_gui.core import main_window as core
 class MainWindow(QMainWindow):
     def __init__(self, application: QApplication):
-        def connect_actions():
-            # connect Menubar signals
-            self.ui.action_file_new.triggered.connect(
-                lambda: popups.new_file_clicked(self)
-            )
-            self.ui.action_file_Save.triggered.connect(
-                lambda: save_file.save_clicked(self)
-            )
-            self.ui.action_file_Save_As.triggered.connect(
-                lambda: save_file.save_as_clicked(self)
-            )
-            # Export
-
-            self.ui.action_export_bs.triggered.connect(
-                lambda: export.export_building_structure(self)
-            )
-            self.ui.action_export_bookmarks.triggered.connect(
-                lambda: export.export_bookmarks(self)
-            )
-            self.ui.action_export_boq.triggered.connect(
-                lambda: export.export_bill_of_quantities(self)
-            )
-            self.ui.action_vestra.triggered.connect(
-                lambda: export.export_vestra_mapping(self)
-            )
-            self.ui.action_card1.triggered.connect(lambda: export.export_card_1(self))
-            self.ui.action_excel.triggered.connect(lambda: export.export_excel(self))
-            self.ui.action_mapping_script.triggered.connect(
-                lambda: export.export_mapping_script(self)
-            )
-            self.ui.action_allplan.triggered.connect(
-                lambda: export.export_allplan_excel(self)
-            )
-            self.ui.action_abbreviation_json.triggered.connect(
-                lambda: export.export_desite_abbreviation(self)
-            )
-            # Windows
-
-            self.ui.action_show_list.triggered.connect(self.open_predefined_pset_window)
-            self.ui.action_modelcheck.triggered.connect(
-                lambda: modelcheck_window.ModelcheckWindow(self)
-            )
-            self.ui.action_create_groups.triggered.connect(self.open_grouping_window)
-            self.ui.action_model_control.triggered.connect(
-                self.open_attribute_import_window
-            )
-            self.ui.action_project_phase.triggered.connect(
-                lambda: project_phase_window.ProjectPhaseWindow(self)
-            )
-            self.ui.action_show_graphs.triggered.connect(self.open_aggregation_window)
-            self.ui.action_mapping.triggered.connect(self.open_mapping_window)
 
         super(MainWindow, self).__init__()
 
@@ -88,11 +37,11 @@ class MainWindow(QMainWindow):
         som_gui.MainUi.ui = self.ui
         som_gui.MainUi.window = self
 
+
         # variables
         self.active_object: classes.Object | None = None
         self.active_property_set: classes.PropertySet | None = None
         self.project = None
-        self.permanent_status_text = QLabel()
 
         # Windows
         self.group_window: grouping_window.GroupingWindow | None = None
@@ -105,14 +54,7 @@ class MainWindow(QMainWindow):
         self.predefined_pset_window: predefined_psets_window.PropertySetInherWindow | None = (
             None
         )
-
-        # init Object- and PropertyWidget
-        # object_widget.init(self)
-        # property_widget.init(self)
-        connect_actions()
         settings.reset_save_path()
-        self.ui.statusbar.addWidget(self.permanent_status_text)
-        self.generate_window_title()
 
         # Icons
         self.setWindowIcon(icons.get_icon())
@@ -170,13 +112,7 @@ class MainWindow(QMainWindow):
 
     def reload(self):
         predefined_psets_window.reload(self)
-        self.generate_window_title()
 
-    def generate_window_title(self) -> str:
-        text = f"SOM-Toolkit v{__version__}"
-        self.setWindowTitle(text)
-        if self.project:
-            self.permanent_status_text.setText(
-                f"{self.project.name} v{self.project.version}"
-            )
-        return text
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        som_gui.core.main_window.refresh_main_window(tool.MainWindow, tool.Project)

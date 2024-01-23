@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+
 import SOMcreator
 from SOMcreator.constants.value_constants import RANGE
 from typing import TYPE_CHECKING, Type
@@ -10,6 +12,7 @@ if TYPE_CHECKING:
 
 
 def add_basic_attribute_columns(attribute_tool: Type[Attribute]):
+    logging.info("Add Basic Attribute Columns")
     attribute_tool.add_column_to_table("Name", attribute_tool.get_attribute_name)
     attribute_tool.add_column_to_table("Datentyp", attribute_tool.get_attribute_data_type)
     attribute_tool.add_column_to_table("Werttyp", attribute_tool.get_attribute_value_type)
@@ -33,6 +36,7 @@ def add_basic_attribute_data(attribute_tool: Type[Attribute]):
 
 
 def setup_table_header(table: QTableWidget, attribute_tool: Type[Attribute]):
+    logging.info(f"Setup Attribute Table Headers")
     header_texts = attribute_tool.get_attribute_table_header_names()
     table.setColumnCount(len(header_texts))
     table.setHorizontalHeaderLabels(header_texts)

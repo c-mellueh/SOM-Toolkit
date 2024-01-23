@@ -18,9 +18,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHBoxLayout,
     QHeaderView, QLabel, QLineEdit, QMainWindow,
-    QMenu, QMenuBar, QPushButton, QSizePolicy,
-                               QSplitter, QStatusBar, QTableWidgetItem, QTreeWidgetItem,
-                               QVBoxLayout, QWidget)
+                               QMenuBar, QPushButton, QSizePolicy, QSplitter,
+                               QStatusBar, QTableWidgetItem, QTreeWidgetItem, QVBoxLayout,
+                               QWidget)
 
 from som_gui.module.attribute.ui import AttributeTable
 from som_gui.module.objects.ui import ObjectTreeWidget
@@ -313,18 +313,6 @@ class Ui_MainWindow(object):
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
         self.menubar.setGeometry(QRect(0, 0, 1254, 22))
-        self.menuFile = QMenu(self.menubar)
-        self.menuFile.setObjectName(u"menuFile")
-        self.menuExport = QMenu(self.menuFile)
-        self.menuExport.setObjectName(u"menuExport")
-        self.menuDesite = QMenu(self.menubar)
-        self.menuDesite.setObjectName(u"menuDesite")
-        self.menuPredefined_Psets = QMenu(self.menubar)
-        self.menuPredefined_Psets.setObjectName(u"menuPredefined_Psets")
-        self.menuShow_Graphs = QMenu(self.menubar)
-        self.menuShow_Graphs.setObjectName(u"menuShow_Graphs")
-        self.menu_ifc = QMenu(self.menubar)
-        self.menu_ifc.setObjectName(u"menu_ifc")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -340,33 +328,6 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.lineEdit_pSet_name, self.button_Pset_add)
         QWidget.setTabOrder(self.button_Pset_add, self.table_pset)
         QWidget.setTabOrder(self.table_pset, self.table_attribute)
-
-        self.menubar.addAction(self.menuFile.menuAction())
-        self.menubar.addAction(self.menuDesite.menuAction())
-        self.menubar.addAction(self.menuPredefined_Psets.menuAction())
-        self.menubar.addAction(self.menuShow_Graphs.menuAction())
-        self.menubar.addAction(self.menu_ifc.menuAction())
-        self.menuFile.addAction(self.action_file_new)
-        self.menuFile.addAction(self.action_file_Open)
-        self.menuFile.addAction(self.action_file_Save)
-        self.menuFile.addAction(self.action_file_Save_As)
-        self.menuFile.addAction(self.action_settings)
-        self.menuFile.addAction(self.menuExport.menuAction())
-        self.menuFile.addAction(self.action_mapping)
-        self.menuFile.addAction(self.action_project_phase)
-        self.menuFile.addAction(self.action_use_cases)
-        self.menuExport.addAction(self.action_abbreviation_json)
-        self.menuExport.addAction(self.action_allplan)
-        self.menuExport.addAction(self.action_card1)
-        self.menuExport.addAction(self.action_vestra)
-        self.menuExport.addAction(self.action_excel)
-        self.menuDesite.addAction(self.action_export_bookmarks)
-        self.menuDesite.addAction(self.action_mapping_script)
-        self.menuPredefined_Psets.addAction(self.action_show_list)
-        self.menuShow_Graphs.addAction(self.action_show_graphs)
-        self.menu_ifc.addAction(self.action_modelcheck)
-        self.menu_ifc.addAction(self.action_create_groups)
-        self.menu_ifc.addAction(self.action_model_control)
 
         self.retranslateUi(MainWindow)
 
@@ -477,14 +438,5 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Format", None));
         ___qtablewidgetitem6 = self.table_attribute.horizontalHeaderItem(3)
         ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Wert", None));
-        self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"Datei", None))
-        self.menuExport.setTitle(QCoreApplication.translate("MainWindow", u"Export", None))
-#if QT_CONFIG(tooltip)
-        self.menuDesite.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.menuDesite.setTitle(QCoreApplication.translate("MainWindow", u"Desite", None))
-        self.menuPredefined_Psets.setTitle(QCoreApplication.translate("MainWindow", u"Vordefinierte Psets", None))
-        self.menuShow_Graphs.setTitle(QCoreApplication.translate("MainWindow", u"Bauwerksstruktur", None))
-        self.menu_ifc.setTitle(QCoreApplication.translate("MainWindow", u"IFC", None))
     # retranslateUi
 
