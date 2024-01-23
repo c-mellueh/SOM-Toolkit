@@ -19,10 +19,12 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHBoxLayout,
     QHeaderView, QLabel, QLineEdit, QMainWindow,
     QMenu, QMenuBar, QPushButton, QSizePolicy,
-    QSplitter, QStatusBar, QTableWidget, QTableWidgetItem,
-                               QTreeWidgetItem, QVBoxLayout, QWidget)
+                               QSplitter, QStatusBar, QTableWidgetItem, QTreeWidgetItem,
+                               QVBoxLayout, QWidget)
 
+from som_gui.module.attribute.ui import AttributeTable
 from som_gui.module.objects.ui import ObjectTreeWidget
+from som_gui.module.property_set.ui import PsetTableWidget
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -258,7 +260,7 @@ class Ui_MainWindow(object):
         sizePolicy4.setHeightForWidth(self.splitter_2.sizePolicy().hasHeightForWidth())
         self.splitter_2.setSizePolicy(sizePolicy4)
         self.splitter_2.setOrientation(Qt.Horizontal)
-        self.table_pset = QTableWidget(self.splitter_2)
+        self.table_pset = PsetTableWidget(self.splitter_2)
         if (self.table_pset.columnCount() < 3):
             self.table_pset.setColumnCount(3)
         __qtablewidgetitem = QTableWidgetItem()
@@ -284,7 +286,7 @@ class Ui_MainWindow(object):
         self.table_pset.horizontalHeader().setStretchLastSection(True)
         self.table_pset.verticalHeader().setVisible(False)
         self.table_pset.verticalHeader().setCascadingSectionResizes(False)
-        self.table_attribute = QTableWidget(self.splitter_2)
+        self.table_attribute = AttributeTable(self.splitter_2)
         if (self.table_attribute.columnCount() < 4):
             self.table_attribute.setColumnCount(4)
         __qtablewidgetitem3 = QTableWidgetItem()

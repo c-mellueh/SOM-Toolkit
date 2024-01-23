@@ -6,7 +6,6 @@ class ObjectTreeWidget(QTreeWidget):
 
     def __init__(self, parent: QWidget):
         super().__init__(parent)
-        self.test_bool = False
 
     def paintEvent(self, event):
         super().paintEvent(event)

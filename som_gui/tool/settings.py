@@ -35,3 +35,19 @@ class Settings(som_gui.core.tool.Settings):
     @classmethod
     def set_save_path(cls, path):
         settings._set_path(SAVE_PATH, path)
+
+    @classmethod
+    def get_seperator(cls) -> str:
+        return settings._get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
+
+    @classmethod
+    def set_seperator_status(cls, value: bool) -> None:
+        settings.set_setting(SEPERATOR_SECTION, SEPERATOR_STATUS, value)
+
+    @classmethod
+    def set_seperator(cls, value: str) -> None:
+        settings.set_setting(SEPERATOR_SECTION, SEPERATOR, value)
+
+    @classmethod
+    def get_seperator_status(cls) -> bool:
+        return settings._get_bool_setting(SEPERATOR_SECTION, SEPERATOR_STATUS)

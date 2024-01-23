@@ -19,14 +19,7 @@ if TYPE_CHECKING:
     from som_gui.module.objects.ui import ObjectTreeWidget
 
 
-def update_completer(main_window: MainWindow):
-    # TODO: in Module für PropertySets umwandlen
-    from som_gui.widgets import property_widget
-    completer = QCompleter(
-        property_widget.predefined_pset_dict(main_window.project).keys(), main_window
-    )
-    main_window.ui.lineEdit_ident_pSet.setCompleter(completer)
-    main_window.ui.lineEdit_pSet_name.setCompleter(completer)
+
 
 
 class ObjectDataDict(TypedDict):
@@ -39,7 +32,7 @@ class ObjectDataDict(TypedDict):
     ifc_mappings: list[str]
 
 
-class Objects(som_gui.core.tool.Object):
+class Object(som_gui.core.tool.Object):
     @classmethod
     def get_item_from_object(cls, obj: SOMcreator.Object) -> QTreeWidgetItem:
         def iter_tree(item: QTreeWidgetItem):
@@ -280,7 +273,9 @@ class Objects(som_gui.core.tool.Object):
         return som_gui.ObjectProperties
 
     @classmethod
-    def get_active_object(cls) -> SOMcreator.Object:
+    def get_active_object(cls) -> SOMcreator.Object | None:
+        if not hasattr(cls.get_object_properties(), "active_object"):
+            return None
         return cls.get_object_properties().active_object
 
     @classmethod
@@ -528,14 +523,6 @@ class Objects(som_gui.core.tool.Object):
         prop: ObjectProperties = som_gui.ObjectProperties
         prop.active_object = obj
         cls.fill_object_entry(obj)
-        # TODO: Aufrufe in Modules umwandeln
-        main_window = som_gui.MainUi.window
-        from som_gui.widgets import property_widget
-        property_widget.clear_attribute_table(main_window)
-        update_completer(main_window)
-        property_widget.fill_table(main_window, obj)
-        if obj.is_concept:
-            return
 
     @classmethod
     def update_check_state(cls, item: QTreeWidgetItem):

@@ -1,18 +1,16 @@
 from __future__ import annotations
 
-from PySide6.QtWidgets import QMainWindow, QTableWidget, QLabel
+from PySide6.QtWidgets import QMainWindow, QTableWidget, QLabel, QApplication
 from SOMcreator import classes
 
 import som_gui
 from som_gui import tool
 from som_gui.windows.aggregation_view import aggregation_window
 from . import icons, settings, __version__
-from .filehandling import open_file, save_file, export
+from .filehandling import save_file, export
 from .qt_designs.ui_mainwindow import Ui_MainWindow
-from .widgets import property_widget, object_widget
 from .windows import (
     predefined_psets_window,
-    propertyset_window,
     mapping_window,
     popups,
     grouping_window,
@@ -29,7 +27,7 @@ if TYPE_CHECKING:
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, application):
+    def __init__(self, application: QApplication):
         def connect_actions():
             # connect Menubar signals
             self.ui.action_file_new.triggered.connect(
@@ -86,7 +84,7 @@ class MainWindow(QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.app = application
+        self.app: QApplication = application
         som_gui.MainUi.ui = self.ui
         som_gui.MainUi.window = self
 
@@ -107,11 +105,10 @@ class MainWindow(QMainWindow):
         self.predefined_pset_window: predefined_psets_window.PropertySetInherWindow | None = (
             None
         )
-        self.property_set_window: None | propertyset_window.PropertySetWindow = None
 
         # init Object- and PropertyWidget
         # object_widget.init(self)
-        property_widget.init(self)
+        # property_widget.init(self)
         connect_actions()
         settings.reset_save_path()
         self.ui.statusbar.addWidget(self.permanent_status_text)
@@ -151,7 +148,7 @@ class MainWindow(QMainWindow):
 
     @property
     def object_tree(self) -> ObjectTreeWidget:
-        return tool.Objects.get_object_tree()
+        return tool.Object.get_object_tree()
 
     @property
     def pset_table(self) -> QTableWidget:
@@ -169,15 +166,10 @@ class MainWindow(QMainWindow):
 
     # Main
     def clear_all(self):
-        property_widget.clear_all(self)
-        if self.predefined_pset_window is not None:
-            self.predefined_pset_window.clear_all()
         self.project.clear()
 
     def reload(self):
-        object_widget.reload(self)
         predefined_psets_window.reload(self)
-        property_widget.reload(self)
         self.generate_window_title()
 
     def generate_window_title(self) -> str:

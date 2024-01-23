@@ -13,6 +13,8 @@ modules = {
     "project": None,
     "objects": None,
     "search": None,
+    "property_set": None,
+    "attribute": None
 }
 
 

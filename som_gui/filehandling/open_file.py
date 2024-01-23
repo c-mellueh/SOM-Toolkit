@@ -11,8 +11,6 @@ from SOMcreator import json_constants
 
 from .. import settings
 from ..data import constants
-from . import FILETYPE
-from ..widgets import object_widget
 from ..windows import popups
 from ..windows.aggregation_view import aggregation_window
 
@@ -67,7 +65,7 @@ def new_file(main_window: MainWindow) -> None:
 
 
 def fill_ui(main_window: MainWindow) -> None:
-    tool.Objects.clear_object_input()
+    tool.Object.clear_object_input()
     main_window.graph_window.is_initial_opening = True
     main_window.graph_window.hide()
 

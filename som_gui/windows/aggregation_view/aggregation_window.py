@@ -12,12 +12,12 @@ from PySide6.QtWidgets import QGraphicsItem, QWidget, QGraphicsScene, QGraphicsV
     QFileDialog
 from SOMcreator import classes, value_constants
 
+from som_gui import tool
 from som_gui.qt_designs import ui_aggregation_window
 from .node import NodeProxy, Header, Frame, Connection, Circle
 from ...data import constants
 from ...icons import get_icon, get_reload_icon, get_search_icon
 from ...windows import popups
-from ...widgets import object_widget
 
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
@@ -290,12 +290,9 @@ class AggregationView(QGraphicsView):
     def right_click(self, pos: QPointF):
         def rc_add_node():
             main_window = self.window().main_window
-            text_matrix, connection_list = object_widget.get_object_text_matrix(main_window.project)
-            sw = popups.SearchWindow(main_window, text_matrix, connection_list,
-                                     ["Objekt", "Identifier", "Abkürzung"])
-            if not sw.exec():
+            obj = tool.Search.search_object()
+            if not obj:
                 return
-            obj = sw.data
             aggregation = classes.Aggregation(obj)
             node = self.window().create_node(aggregation, node_pos, self.scene())
 
@@ -751,13 +748,7 @@ class AggregationWindow(QWidget):
             self.reset_filter()
             return
 
-        text_matrix, connection_list = object_widget.get_object_text_matrix(self.main_window.project)
-        sw = popups.SearchWindow(self.main_window, text_matrix, connection_list,
-                                 ["Objekt", "Identifier", "Abkürzung"])
-        if not sw.exec():
-            return
-
-        obj = sw.data
+        obj = tool.Search.search_object()
         for scene in self.scenes:
             nodes = scene.nodes
             objects = [node.aggregation.object for node in nodes]

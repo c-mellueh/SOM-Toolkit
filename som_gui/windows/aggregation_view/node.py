@@ -11,8 +11,9 @@ from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout
 from SOMcreator import classes, value_constants
 
 from ...data import constants
-from ...widgets import property_widget, object_widget
-from ...windows import popups
+from som_gui.core import property_set as property_set_core
+from som_gui.core import attribute as attribute_core
+from som_gui import tool
 
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow
@@ -271,12 +272,7 @@ class NodeProxy(QGraphicsProxyWidget):
         return super(NodeProxy, self).widget()
 
     def button_clicked(self) -> None:
-        main_window = self.scene().views()[0].window().main_window
-        text_matrix, connection_list = object_widget.get_object_text_matrix(main_window.project)
-        sw = popups.SearchWindow(main_window, text_matrix, connection_list, ["Objekt", "Identifier", "Abkürzung"])
-        if not sw.exec():
-            return
-        obj = sw.data
+        obj = tool.Search.search_object()
         aggregation = classes.Aggregation(obj)
         rect = self.sceneBoundingRect()
         input_point = rect.bottomLeft()
@@ -614,17 +610,14 @@ class CustomPsetTree(QTreeWidget):
                 CustomAttribTreeItem(item, attribute)
 
     def item_clicked(self, item: CustomPSetTreeItem | CustomAttribTreeItem) -> None:
-        main_window = self.main_window
-
         if isinstance(item, CustomPSetTreeItem):
             property_set = item.property_set
-            property_widget.open_pset_window(main_window, property_set, self.object, None)
+            property_set_core.open_pset_window(property_set, tool.PropertySet, tool.Attribute)
 
         if isinstance(item, CustomAttribTreeItem):
             property_set = item.attribute.property_set
-            property_widget.open_pset_window(main_window, property_set, self.object, None)
-            main_window.property_set_window.fill_with_attribute(item.attribute)
-
+            window = property_set_core.open_pset_window(property_set, tool.PropertySet, tool.Attribute)
+            attribute_core.activate_attribute(item.attribute, window, tool.Attribute, tool.PropertySet)
 
 class CustomPSetTreeItem(QTreeWidgetItem):
     def __init__(self, tree: QTreeWidget, pset: classes.PropertySet) -> None:

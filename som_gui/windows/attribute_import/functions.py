@@ -9,7 +9,10 @@ from PySide6.QtGui import QStandardItem, QStandardItemModel, QBrush
 from SOMcreator import classes, value_constants
 from ifcopenshell.util.element import get_pset
 
-from ...widgets import ifc_widget, property_widget
+from som_gui.core import property_set as property_set_core
+from som_gui.core import attribute as attribute_core
+from som_gui import tool
+from ...widgets import ifc_widget
 from ... import settings
 from ...ifc_modification.modelcheck import get_identifier
 
@@ -657,9 +660,8 @@ def attribute_table_double_clicked(window: gui.AttributeImport, attribute_index:
     else:
         attribute: classes.Attribute = attribute_index.data(CLASS_DATA_ROLE)
         property_set = attribute.property_set
-    property_widget.open_pset_window(window.main_window, property_set, current_object)
-    window.main_window.property_set_window.table_clicked(None, attribute)
-
+    window = property_set_core.open_pset_window(property_set, tool.PropertySet, tool.Attribute)
+    attribute_core.activate_attribute(attribute, window, tool.Attribute, tool.PropertySet)
 
 def value_table_clicked(window: gui.AttributeImport, index: QModelIndex):
     index = index.sibling(index.row(), 0)
