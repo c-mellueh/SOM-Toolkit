@@ -2,6 +2,9 @@ class Popups:
     def create_warning_popups(self, text):    pass
 
 
+class MainWindow:
+    pass
+
 class Attribute:
     pass
 

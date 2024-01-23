@@ -25,7 +25,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from som_gui.module.objects.ui import ObjectTreeWidget
 
-
+from som_gui.core import main_window as core
 class MainWindow(QMainWindow):
     def __init__(self, application: QApplication):
         def connect_actions():
@@ -87,6 +87,7 @@ class MainWindow(QMainWindow):
         self.app: QApplication = application
         som_gui.MainUi.ui = self.ui
         som_gui.MainUi.window = self
+        core.set_main_window(self.ui, tool.MainWindow)
 
         # variables
         self.active_object: classes.Object | None = None

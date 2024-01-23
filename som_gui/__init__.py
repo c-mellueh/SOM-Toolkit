@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow, Ui_MainWindow
 
-__version__ = "2.9.1"
+__version__ = "2.10.0"
 
 import importlib
 
@@ -14,7 +14,8 @@ modules = {
     "objects": None,
     "search": None,
     "property_set": None,
-    "attribute": None
+    "attribute":   None,
+    "main_window": None,
 }
 
 
@@ -45,4 +46,3 @@ def on_new_project():
         if name != "project":
             mod.on_new_project()
 
-register()
