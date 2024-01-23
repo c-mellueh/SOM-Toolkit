@@ -1,13 +1,31 @@
+from __future__ import annotations
 import logging
-
 import SOMcreator
+from PySide6.QtWidgets import QAbstractItemView
+from typing import TYPE_CHECKING, Type
 
-from som_gui.tool.use_case import UseCase
-from som_gui.tool.project import Project
-from typing import Type
-from PySide6.QtCore import QModelIndex
-from PySide6.QtWidgets import QTreeView
-from PySide6.QtGui import QStandardItem
+if TYPE_CHECKING:
+    from som_gui.tool import UseCase, Project
+    from PySide6.QtCore import QModelIndex
+    from PySide6.QtWidgets import QTreeView
+
+
+def open_use_case_window(use_case_tool: Type[UseCase], project_tool: Type[Project]):
+    window = use_case_tool.create_window()
+    window.show()
+    load_use_cases(use_case_tool)
+    use_case_tool.format_object_tree_header()
+    object_tree = use_case_tool.get_object_tree()
+    object_tree.expanded.connect(lambda: resize_tree(object_tree, use_case_tool))
+    pset_tree = use_case_tool.get_pset_tree()
+    pset_tree.expanded.connect(lambda: resize_tree(pset_tree, use_case_tool))
+
+    header = object_tree.header()
+    header.customContextMenuRequested.connect(
+        lambda pos: create_header_context_menu(pos, object_tree, use_case_tool, project_tool))
+    header.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
+    use_case_tool.get_widget().buttonBox.accepted.connect(lambda: accept_changes(use_case_tool))
+    use_case_tool.get_widget().buttonBox.rejected.connect(lambda: reject_changes(use_case_tool))
 
 
 def on_startup(use_case_tool: Type[UseCase]):
@@ -15,6 +33,7 @@ def on_startup(use_case_tool: Type[UseCase]):
     use_case_tool.reset_use_case_data()
     use_case_tool.load_use_cases()
     use_case_tool.add_use_case_to_settings_window()
+
 
 def accept_changes(use_case_tool: Type[UseCase]):
     old_current_use_case = use_case_tool.get_active_use_case()
@@ -125,6 +144,7 @@ def tree_mouse_move_event(index: QModelIndex, use_case_tool: Type[UseCase]):
     if isinstance(linked_data, SOMcreator.Object):
         use_case_tool.update_object_data(linked_data)
 
+
 def tree_mouse_release_event(index, use_case_tool: Type[UseCase]):
     if index is None:
         return
@@ -136,6 +156,7 @@ def tree_mouse_release_event(index, use_case_tool: Type[UseCase]):
 
 def resize_tree(tree: QTreeView, use_case_tool: Type[UseCase]):
     use_case_tool.resize_tree(tree)
+
 
 def object_clicked(obj: SOMcreator.Object, use_case_tool: Type[UseCase]):
     use_case_tool.update_pset_data()

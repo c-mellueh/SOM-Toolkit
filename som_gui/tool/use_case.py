@@ -1,3 +1,4 @@
+from __future__ import annotations
 import logging
 
 import SOMcreator
@@ -6,6 +7,7 @@ from PySide6.QtWidgets import QTreeView, QMenu, QInputDialog, QLineEdit, QWidget
 import som_gui.core.tool
 from som_gui.tool.project import Project
 from som_gui.module.use_case import data as use_case_data
+from som_gui.module import use_case
 import som_gui.module.use_case.constants
 import som_gui
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QAction
@@ -18,6 +20,36 @@ if TYPE_CHECKING:
 USE_CASE = "Anwedungsfall"
 
 class UseCase(som_gui.core.tool.UseCase):
+    @classmethod
+    def get_widget(cls):
+        return cls.get_use_case_properties().use_case_window.widget
+
+    @classmethod
+    def format_object_tree_header(cls):
+        header = cls.get_object_tree().header()
+        header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+
+    @classmethod
+    def get_object_tree(cls):
+        return cls.get_use_case_properties().use_case_window.widget.object_tree
+
+    @classmethod
+    def get_pset_tree(cls):
+        return cls.get_use_case_properties().use_case_window.widget.property_set_tree
+
+    @classmethod
+    def get_use_case_properties(cls) -> UseCaseProperties:
+        return som_gui.UseCaseProperties
+
+    @classmethod
+    def create_window(cls):
+        window = cls.get_use_case_properties().use_case_window
+
+        if not window:
+            window = use_case.ui.UseCaseWindow()
+        cls.get_use_case_properties().use_case_window = window
+        return window
+
     @classmethod
     def reset_use_case_data(cls):
         use_case_data.refresh()
@@ -190,14 +222,6 @@ class UseCase(som_gui.core.tool.UseCase):
             menu.addAction(action)
             action.triggered.connect(action_function)
         menu.exec(global_pos)
-
-    @classmethod
-    def get_object_tree_view(cls):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
-        window = prop.use_case_window
-        if window is None:
-            return None
-        return window.widget.object_tree
 
     @classmethod
     def create_tree(cls, entities: set[SOMcreator.Attribute | SOMcreator.Object], parent_item: QStandardItem,

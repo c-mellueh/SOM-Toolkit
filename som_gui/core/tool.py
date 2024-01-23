@@ -176,7 +176,7 @@ class UseCase:
 
     def get_object_model(self): pass
 
-    def get_object_tree_view(self): pass
+    def get_object_tree(self): pass
 
     def get_pset_dict(self): pass
 
