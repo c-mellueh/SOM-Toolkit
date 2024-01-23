@@ -13,6 +13,8 @@ def connect():
     table = som_gui.MainUi.ui.table_pset
     table.itemSelectionChanged.connect(lambda: core.pset_selection_changed(tool.PropertySet, tool.Attribute))
     table.itemDoubleClicked.connect(lambda: core.table_double_clicked(tool.PropertySet, tool.Attribute))
+    tool.MainWindow.get().button_Pset_add.clicked.connect(
+        lambda: core.add_property_set_button_pressed(tool.Object, tool.MainWindow, tool.PropertySet))
 
 
 def connect_property_set_window(window: PropertySetWindow):
@@ -25,12 +27,15 @@ def connect_property_set_window(window: PropertySetWindow):
         lambda: core.update_seperator(window, tool.PropertySet, tool.Settings))
     window.widget.check_box_seperator.stateChanged.connect(
         lambda: core.update_seperator(window, tool.PropertySet, tool.Settings))
+
+
 def repaint_pset_window(widget: PropertySetWindow):
     core.repaint_pset_window(widget, tool.PropertySet, tool.Attribute)
 
 
 def close_pset_window(window: PropertySetWindow):
     core.close_pset_window(window, tool.PropertySet)
+
 
 def on_new_project():
     pass

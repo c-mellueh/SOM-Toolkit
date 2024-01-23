@@ -100,3 +100,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         d["ifc_mappings"] = ["IfcBuildingElementProxy"]
         d["abbreviation"] = ui.line_edit_abbreviation.text()
         return d
+
+    @classmethod
+    def get_pset_name(cls):
+        return cls.get().lineEdit_pSet_name.text()

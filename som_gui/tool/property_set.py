@@ -6,6 +6,7 @@ import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui.tool import Object, Project, Settings
+from som_gui import tool
 from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QWidget, QHBoxLayout, QLineEdit
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QValidator, QIntValidator, QDoubleValidator, QRegularExpressionValidator
@@ -26,6 +27,13 @@ from som_gui.module.property_set import ui
 
 
 class PropertySet(som_gui.core.tool.PropertySet):
+    @classmethod
+    def create_property_set(cls, name: str, obj: SOMcreator.Object | None = None) -> SOMcreator.PropertySet | None:
+        if name in {p.name for p in obj.property_sets}:
+            tool.Popups.create_warning_popup(f"PropertySet existiert bereits")
+            return None
+        return SOMcreator.PropertySet(name, obj, project=tool.Project.get())
+
     @classmethod
     def close_property_set_window(cls, window: PropertySetWindow):
         logging.debug(f"Remove {window}")
