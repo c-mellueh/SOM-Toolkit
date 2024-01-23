@@ -161,7 +161,8 @@ def item_dropped_on(pos: QPoint, object_tool: Type[Object]):
             obj.parent = dropped_on_object
 
 
-def add_object_clicked(main_window_tool: Type[MainWindow], object_tool: Type[Object]):
+def add_object_clicked(main_window_tool: Type[MainWindow], object_tool: Type[Object], project_tool: Type[Project]):
     object_infos = main_window_tool.get_object_infos()
     issue, obj = object_tool.create_object(object_infos)
     object_tool.handle_attribute_issue(issue)
+    refresh_object_tree(object_tool, project_tool)

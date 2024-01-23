@@ -13,7 +13,8 @@ def connect():
     main_ui = tool.MainWindow.get()
 
     main_ui.button_search.pressed.connect(lambda: core.search_object(tool.Search, tool.Object))
-    main_ui.button_objects_add.clicked.connect(lambda: core.add_object_clicked(tool.MainWindow, tool.Object))
+    main_ui.button_objects_add.clicked.connect(
+        lambda: core.add_object_clicked(tool.MainWindow, tool.Object, tool.Project))
 
     core.load_context_menus(tool.Object)
     core.add_shortcuts(tool.Object, tool.Project, tool.Search)
