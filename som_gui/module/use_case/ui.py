@@ -18,9 +18,6 @@ class UseCaseWindow(QWidget):
         self.setWindowIcon(icons.get_icon())
 
 
-def load_triggers():
-    MainUi.ui.action_use_cases.triggered.connect(use_case.trigger.menu_action_use_cases)
-
 class ObjectTreeView(QTreeView):
     def __init__(self, parent: QWidget):
         super().__init__(parent)

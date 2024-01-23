@@ -1,7 +1,10 @@
 import som_gui.core.tool
 from som_gui.icons import get_icon
-from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit
+from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QFileDialog
 from som_gui import tool
+
+FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
+
 
 class Popups(som_gui.core.tool.Popups):
     @classmethod
@@ -38,3 +41,7 @@ class Popups(som_gui.core.tool.Popups):
             return project_name[0]
         else:
             return None
+
+    @classmethod
+    def get_save_path(cls, base_path: str):
+        return QFileDialog.getSaveFileName(som_gui.MainUi.window, "Save Project", base_path, FILETYPE)[0]

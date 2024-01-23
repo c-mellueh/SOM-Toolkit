@@ -25,20 +25,16 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return prop.menu_dict
 
     @classmethod
-    def create_actions(cls, menu_dict: MenuDict):
-        def iter_menus(d: MenuDict, parent: QMenu | QMenuBar):
-            menu = d["menu"]
-            parent.addMenu(menu)
-            for action in d["actions"]:
-                menu.addAction(action)
-            for sd in d["submenu"]:
-                iter_menus(sd, menu)
-
-        menu_bar = cls.get_menu_bar()
+    def create_actions(cls, menu_dict: MenuDict, parent: QMenu | QMenuBar):
+        menu = menu_dict["menu"]
+        parent.addMenu(menu)
+        print(menu.title())
         for action in menu_dict["actions"]:
-            menu_bar.addAction(action)
-        for sub_menu_dict in menu_dict["submenu"]:
-            iter_menus(sub_menu_dict, menu_bar)
+            menu.addAction(action)
+            print(action.text())
+        for sd in menu_dict["submenu"]:
+            cls.create_actions(sd, menu)
+
 
     @classmethod
     def add_menu(cls, menu_path: str) -> MenuDict:

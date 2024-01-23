@@ -3,13 +3,9 @@ from som_gui import tool
 
 
 def connect():
-    core.add_menu_entries(tool.MainWindow)
-    pass
+    core.fill_old_menus(tool.MainWindow)
 
 
 def on_new_project():
     pass
 
-
-def new_file_clicked():
-    core.open_new_file(tool.Project, tool.Popups)

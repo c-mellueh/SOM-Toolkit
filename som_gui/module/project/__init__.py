@@ -10,4 +10,4 @@ def register():
 
 def load_ui_triggers():
     logging.info(f"Load Project UI Triggers")
-    ui.load_triggers()
+    trigger.connect()

@@ -1,11 +1,15 @@
 from som_gui.module.use_case.prop import UseCaseProperties
-from som_gui.module.use_case.ui import UseCaseWindow, load_triggers
+from som_gui.module.use_case.ui import UseCaseWindow
 import som_gui.core.use_case as core
 from som_gui.tool.use_case import UseCase
 from PySide6.QtCore import Qt, QPoint
 import som_gui
 from som_gui import tool
 from PySide6.QtWidgets import QAbstractItemView
+
+
+def connect():
+    tool.MainWindow.add_action("Datei/Anwendungsfälle", menu_action_use_cases)
 
 def menu_action_use_cases():
     prop: UseCaseProperties = som_gui.UseCaseProperties
