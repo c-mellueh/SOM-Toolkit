@@ -22,12 +22,22 @@ from som_gui.module.property_set import ui
 import SOMcreator
 
 from typing import TYPE_CHECKING, Callable
+
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
     from som_gui.module.property_set.ui import PropertySetWindow, PredefinedPropertySetWindow
 
 
 class PropertySet(som_gui.core.tool.PropertySet):
+    @classmethod
+    def get_inheritable_property_sets(cls, obj: SOMcreator.Object) -> list[SOMcreator.PropertySet]:
+        def loop(o):
+            psets = o.property_sets
+            if o.parent:
+                psets += loop(o.parent)
+            return psets
+
+        return loop(obj)
 
     @classmethod
     def get_pset_from_index(cls, index: QModelIndex) -> SOMcreator.PropertySet:
@@ -336,9 +346,12 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return cls.get_pset_from_item(item)
 
     @classmethod
-    def update_completer(cls):
-        psets = [pset.name for pset in cls.get_predefined_psets()]
-        completer = QCompleter(psets)
+    def update_completer(cls, obj: SOMcreator.Object = None):
+        psets = list(cls.get_predefined_psets())
+        if obj is not None:
+            psets += cls.get_inheritable_property_sets(obj)
+        pset_names = sorted({p.name for p in psets})
+        completer = QCompleter(pset_names)
         som_gui.MainUi.ui.lineEdit_ident_pSet.setCompleter(completer)
         som_gui.MainUi.ui.lineEdit_pSet_name.setCompleter(completer)
 

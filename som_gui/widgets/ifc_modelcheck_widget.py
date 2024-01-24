@@ -309,8 +309,6 @@ class Modelcheck(IfcRunner):
         if object_rep is not None and object_rep not in self.data_dict:
             return
 
-        logging.debug(f"Check Element {element.GlobalId} {identifier} Even Layer: {even_layer}")
-
         if element.is_a("IfcElement"):
             element_type = modelcheck.ELEMENT
             check_real_element()

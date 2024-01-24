@@ -50,8 +50,7 @@ def new_file_clicked(project_tool: Type[Project], popup_tool: Type[Popups]):
 def save_project(path: str, project_tool: Type[Project], settings_tool: Type[Settings]):
     project = project_tool.get()
     main_dict = project.save(path)
-    from som_gui.filehandling.save_file import add_node_pos
-    add_node_pos(som_gui.MainUi.window, main_dict, path)
+    project_tool.add_node_pos(som_gui.MainUi.window, main_dict, path)
     settings_tool.set_open_path(path)
     settings_tool.set_save_path(path)
     logging.info(f"Speichern abgeschlossen")

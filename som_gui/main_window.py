@@ -7,7 +7,6 @@ import som_gui
 from som_gui import tool
 from som_gui.windows.aggregation_view import aggregation_window
 from . import icons, settings, __version__
-from .filehandling import save_file, export
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .windows import (
     predefined_psets_window,

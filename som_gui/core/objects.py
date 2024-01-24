@@ -137,7 +137,7 @@ def item_selection_changed(object_tool: Type[Object], property_set_tool: Type[Pr
     if len(selected_items) == 1:
         obj = object_tool.get_object_from_item(selected_items[0])
         object_tool.set_active_object(obj)
-        property_set_tool.update_completer()
+        property_set_tool.update_completer(obj)
         property_set_tool.set_enabled(True)
         refresh_property_set_table(property_set_tool, object_tool)
     else:

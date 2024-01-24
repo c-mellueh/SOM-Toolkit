@@ -269,20 +269,14 @@ class AggregationView(QGraphicsView):
         return cursor_style, node
 
     def auto_fit(self):
-        logging.debug("Autofit Start")
         bounding_rect = self.scene().get_items_bounding_rect(self.scene().nodes)
-        logging.debug(f"Bounding_rect: {bounding_rect}")
         sr_center = self.scene().sceneRect().center()
         br_center = bounding_rect.center()
         dif = sr_center - br_center
-        logging.debug(f"SceneRectCenter: {sr_center}")
-        logging.debug(f"BoundingRectCenter: {br_center}")
-        logging.debug(f"Difference: {dif}")
         for item in self.scene().nodes:
             item.moveBy(dif.x(), dif.y())
 
         bounding_rect = self.scene().get_items_bounding_rect(self.scene().nodes)
-        logging.debug(f"New Bounding_rect: {bounding_rect}")
         marg = constants.SCENE_MARGIN
         self.fitInView(bounding_rect.adjusted(-marg, -marg, marg, marg),
                        aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)

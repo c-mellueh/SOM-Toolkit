@@ -2,16 +2,18 @@ import logging
 
 import som_gui.core.tool
 import SOMcreator
+from SOMcreator.constants import json_constants
 import som_gui
 from som_gui.module.project.prop import ProjectProperties, InfoDict
 from som_gui.module.project.constants import VERSION, AUTHOR, NAME, PROJECT_PHASE
 from PySide6.QtWidgets import QFormLayout, QLineEdit, QComboBox, QWidget
 from PySide6.QtGui import QShortcut, QKeySequence
+from PySide6.QtCore import QPointF
 from typing import Callable
 from som_gui import tool
 import os
 from PySide6.QtWidgets import QFileDialog
-
+import json
 
 class Project(som_gui.core.tool.Project):
     @classmethod
@@ -125,7 +127,6 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def load_project(cls, path: str):
-        from som_gui.filehandling.open_file import import_node_pos, fill_ui
         cls.reset_project_infos()
         logging.info("Load Project")
         main_window = som_gui.MainUi.window
@@ -138,10 +139,49 @@ class Project(som_gui.core.tool.Project):
         cls.create_project_infos()
         som_gui.on_new_project()
         main_window.project, main_dict = proj, project_dict
-        import_node_pos(main_dict, main_window.graph_window)
-        fill_ui(main_window)
+        cls.import_node_pos(main_dict, main_window.graph_window)
         main_window.graph_window.create_missing_scenes()
         return proj, project_dict
+
+    @classmethod
+    def import_node_pos(cls, main_dict: dict, graph_window) -> None:
+        proj = cls.get()
+
+        json_aggregation_dict: dict = main_dict[SOMcreator.json_constants.AGGREGATIONS]
+        aggregation_ref = {aggregation.uuid: aggregation for aggregation in proj.get_all_aggregations()}
+        for uuid, aggregation_dict in json_aggregation_dict.items():
+            aggregation = aggregation_ref[uuid]
+            x_pos = aggregation_dict.get(json_constants.X_POS) or 0.0
+            y_pos = aggregation_dict.get(json_constants.Y_POS) or 0.0
+            graph_window.create_node(aggregation, QPointF(x_pos, y_pos))
+
+        scene_dict = main_dict.get("AggregationScenes") or dict()
+        graph_window.scene_dict.update(scene_dict)
+
+    @classmethod
+    def add_node_pos(cls, main_window, main_dict: dict, path: str):
+        def filter_scene_dict(scene_dict: dict) -> dict:
+            new_dict = dict()
+            for name, node_dict in scene_dict.items():
+                node_list = node_dict[json_constants.NODES]
+                if node_list:
+                    new_dict[name] = {json_constants.NODES: node_list}
+            return new_dict
+
+        aggregation_dict = main_dict[json_constants.AGGREGATIONS]
+        for node in main_window.graph_window.nodes:
+            uuid = node.aggregation.uuid
+            try:
+                aggregation_entry = aggregation_dict[uuid]
+                aggregation_entry[json_constants.X_POS] = node.x()
+                aggregation_entry[json_constants.Y_POS] = node.y()
+            except KeyError:
+                logging.warning(f"KeyError: {node}")
+
+        main_dict["AggregationScenes"] = filter_scene_dict(main_window.graph_window.scene_dict)
+
+        with open(path, "w") as file:
+            json.dump(main_dict, file)
 
     @classmethod
     def get(cls) -> SOMcreator.Project:

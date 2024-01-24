@@ -258,11 +258,25 @@ def add_property_set_button_pressed(object_tool: Type[Object], main_window_tool:
         return
 
     predefined_pset_dict = {p.name: p for p in property_set_tool.get_predefined_psets()}
-    connect_pset = False
+    connect_predefined_pset = False
     if pset_name in predefined_pset_dict:
-        connect_pset = popup_tool.request_property_set_merge(pset_name)
-        if connect_pset is None:
+        connect_predefined_pset = popup_tool.request_property_set_merge(pset_name, 1)
+        if connect_predefined_pset is None:
             return
-    parent: SOMcreator.PropertySet | None = predefined_pset_dict.get(pset_name) if connect_pset else None
+
+    parent_property_sets = property_set_tool.get_inheritable_property_sets(obj)
+    parent_pset_dict = {p.name: p for p in parent_property_sets}
+    connect_parent_pset = False
+    if pset_name in parent_pset_dict and not connect_predefined_pset:
+        connect_parent_pset = popup_tool.request_property_set_merge(pset_name, 2)
+        if connect_parent_pset is None:
+            return
+
+    if connect_predefined_pset:
+        parent = predefined_pset_dict.get(pset_name)
+    elif connect_parent_pset:
+        parent = parent_pset_dict.get(pset_name)
+    else:
+        parent = None
     property_set_tool.create_property_set(pset_name, obj, parent)
     repaint_pset_table(property_set_tool, object_tool)

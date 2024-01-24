@@ -69,11 +69,14 @@ class Popups(som_gui.core.tool.Popups):
         return QFileDialog.getSaveFileName(som_gui.MainUi.window, "Save Project", base_path, FILETYPE)[0]
 
     @classmethod
-    def request_property_set_merge(cls, name: str):
+    def request_property_set_merge(cls, name: str, mode):
         icon = get_icon()
         msg_box = QMessageBox()
-        msg_box.setText(
-            f"Es existiert ein PropertySet mit dem Namen '{name}' in den Vordefinierten PropertySets. Soll eine Verknüpfung hergestellt werden?")
+        if mode == 1:
+            text = f"Es existiert ein PropertySet mit dem Namen '{name}' in den Vordefinierten PropertySets. Soll eine Verknüpfung hergestellt werden?"
+        if mode == 2:
+            text = f"Es existiert ein PropertySet mit dem Namen '{name}' in einem übergeordneten Objekt. Soll eine Verknüpfung hergestellt werden?"
+        msg_box.setText(text)
         msg_box.setWindowTitle("Verdefiniertes PropertySet gefunden")
         msg_box.setIcon(QMessageBox.Icon.Question)
         msg_box.setStandardButtons(
