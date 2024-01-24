@@ -9,6 +9,26 @@ FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
 
 
 class Popups(som_gui.core.tool.Popups):
+
+    @classmethod
+    def request_save_before_exit(cls):
+        icon = get_icon()
+        text = "Möchten Sie ihr Projekt vor dem Verlassen speichern?"
+        msg_box = QMessageBox(QMessageBox.Icon.Question,
+                              "Vor verlassen speichern?",
+                              text,
+                              QMessageBox.StandardButton.Cancel |
+                              QMessageBox.StandardButton.Save |
+                              QMessageBox.StandardButton.No)
+
+        msg_box.setWindowIcon(icon)
+        reply = msg_box.exec()
+        if reply == msg_box.StandardButton.Save:
+            return True
+        elif reply == msg_box.StandardButton.No:
+            return False
+        return None
+
     @classmethod
     def create_warning_popup(cls, text):
         icon = get_icon()

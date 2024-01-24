@@ -83,8 +83,8 @@ class MainWindow(QMainWindow):
 
     # Open / Close windows
     def closeEvent(self, event):
-        action = save_file.close_event(self)
-        if action:
+        result = core.close_event(tool.Project, tool.Settings, tool.Popups)
+        if result:
             self.app.closeAllWindows()
             event.accept()
         else:

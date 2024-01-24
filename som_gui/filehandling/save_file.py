@@ -73,16 +73,3 @@ def _save(main_window: MainWindow, path):
     settings.set_save_path(path)
     logging.info(f"Speichern abgeschlossen")
 
-
-def close_event(main_window: MainWindow):
-    reply = popups.msg_close()
-    if reply == QMessageBox.StandardButton.Save:
-        path = save_clicked(main_window)
-        if not path or path is None:
-            return False
-        else:
-            return True
-    elif reply == QMessageBox.StandardButton.No:
-        return True
-    else:
-        return False

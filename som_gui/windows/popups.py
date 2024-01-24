@@ -8,21 +8,6 @@ from ..icons import get_icon
 from ..qt_designs import ui_delete_request, ui_attribute_mapping
 
 
-def msg_close():
-    icon = icons.get_icon()
-    text = "Möchten Sie ihr Projekt vor dem Verlassen speichern?"
-    msg_box = QMessageBox(QMessageBox.Icon.Warning,
-                          "Message",
-                          text,
-                          QMessageBox.StandardButton.Cancel |
-                          QMessageBox.StandardButton.Save |
-                          QMessageBox.StandardButton.No)
-
-    msg_box.setWindowIcon(icon)
-    reply = msg_box.exec()
-    return reply
-
-
 def msg_del_items(string_list, item_type=1) -> (bool, bool):
     """
     item_type 1= Object,2= Node, 3 = PropertySet, 4 = Attribute
