@@ -40,36 +40,3 @@ def add_node_pos(main_window: MainWindow, main_dict: dict, path: str):
 
     with open(path, "w") as file:
         json.dump(main_dict, file, indent=2)
-
-
-def save_clicked(main_window: MainWindow) -> str:
-    path = settings.get_save_path()
-    if not os.path.exists(path) or not path.endswith("json"):
-        path = save_as_clicked(main_window)
-    else:
-        logging.info(f"Saved project to {path}")
-        _save(main_window, path)
-    return path
-
-
-def save_as_clicked(main_window: MainWindow) -> str:
-    path = settings.get_save_path()
-    if not os.path.exists(path):
-        path = \
-            QFileDialog.getSaveFileName(main_window, "Save Project", "", FILETYPE)[0]
-    else:
-        path = os.path.splitext(path)[0]
-        path = QFileDialog.getSaveFileName(main_window, "Save Project", path, FILETYPE)[0]
-
-    if path:
-        _save(main_window, path)
-    return path
-
-
-def _save(main_window: MainWindow, path):
-    main_dict = main_window.project.save(path)
-    add_node_pos(main_window, main_dict, path)
-    settings.set_open_path(path)
-    settings.set_save_path(path)
-    logging.info(f"Speichern abgeschlossen")
-
