@@ -45,6 +45,19 @@ class Search(som_gui.core.tool.Search):
         return prop.selected_info
 
     @classmethod
+    def search_attribute(cls):
+        prop = cls.get_search_properties()
+        prop.search_mode = 2
+        prop.search_window = search.ui.SearchWindow()
+        prop.search_window.widget.tableWidget.itemDoubleClicked.connect(cls.activate_item)
+        cls.fill_dialog()
+        prop.search_window.setWindowTitle("AttributSuche")
+        if not prop.search_window.exec():
+            return None
+        return prop.selected_info
+
+
+    @classmethod
     def fill_dialog(cls):
         dialog = cls.get_dialog()
         table = dialog.widget.tableWidget
@@ -66,7 +79,7 @@ class Search(som_gui.core.tool.Search):
         elif cls.get_search_mode() == 2:
             attributes = filter(lambda item: isinstance(item, SOMcreator.Attribute), project.get_all_hirarchy_items())
             for attribute in attributes:
-                val = [attribute.property_set.name, attribute.name]
+                val = tuple([attribute.property_set.name, attribute.name])
                 item_dict[val] = val
 
         item_list = list()

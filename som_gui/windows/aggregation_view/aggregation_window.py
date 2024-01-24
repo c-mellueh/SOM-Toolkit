@@ -297,13 +297,10 @@ class AggregationView(QGraphicsView):
             node = self.window().create_node(aggregation, node_pos, self.scene())
 
         def rc_set_info():
-            # TODO: Refactor to Use Search Window
-            main_window = self.window().main_window
-            text_matrix, connection_list = get_attribute_matrix(main_window.project)
-            header_list = ["PropertySet", "Attribut"]
-            search = popups.SearchWindow(main_window, text_matrix, connection_list, header_list)
-            if search.exec():
-                [pset_name,attribute_name] = search.data
+            from som_gui.tool import Search
+            result = Search.search_attribute()
+            if result:
+                [pset_name, attribute_name] = result
                 self.window().set_info(pset_name, attribute_name)
 
         def rc_delete_node():

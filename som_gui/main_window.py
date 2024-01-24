@@ -50,7 +50,6 @@ class MainWindow(QMainWindow):
         self.graph_window = aggregation_window.AggregationWindow(self)
         self.mapping_window = None
         self.modelcheck_window: modelcheck_window.ModelcheckWindow | None = None
-        self.search_ui: popups.SearchWindow | None = None
         settings.reset_save_path()
 
         # Icons
