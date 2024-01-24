@@ -14,7 +14,7 @@ def connect():
     table.itemSelectionChanged.connect(lambda: core.pset_selection_changed(tool.PropertySet, tool.Attribute))
     table.itemDoubleClicked.connect(lambda: core.table_double_clicked(tool.PropertySet, tool.Attribute))
     tool.MainWindow.get_ui().button_Pset_add.clicked.connect(
-        lambda: core.add_property_set_button_pressed(tool.Object, tool.MainWindow, tool.PropertySet))
+        lambda: core.add_property_set_button_pressed(tool.Object, tool.MainWindow, tool.PropertySet, tool.Popups))
     tool.MainWindow.add_action("Vordefinierte Psets/Anzeigen",
                                lambda: core.create_predefined_pset_window(tool.Attribute, tool.PropertySet,
                                                                           tool.Object))

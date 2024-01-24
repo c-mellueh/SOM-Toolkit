@@ -45,7 +45,8 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def add_predefined_pset(cls):
-        cls.create_property_set(tool.UseCase.get_new_use_case_name("Neues PropertySet"))
+        existing_names = [p.name for p in cls.get_predefined_psets()]
+        cls.create_property_set(tool.UseCase.get_new_use_case_name("Neues PropertySet", existing_names))
 
     @classmethod
     def create_context_menu(cls, global_pos, function_list: list[list[str, Callable]]):
@@ -162,13 +163,23 @@ class PropertySet(som_gui.core.tool.PropertySet):
             item.setText(f"{property_set.object.name}")
 
     @classmethod
-    def create_property_set(cls, name: str, obj: SOMcreator.Object | None = None) -> SOMcreator.PropertySet | None:
+    def check_if_pset_allready_exists(cls, pset_name: str, active_object: SOMcreator.Object):
+        return bool(pset_name in {p.name for p in active_object.get_all_property_sets()})
+
+    @classmethod
+    def create_property_set(cls, name: str, obj: SOMcreator.Object | None = None,
+                            parent: SOMcreator.PropertySet | None = None) -> SOMcreator.PropertySet | None:
+
         if obj:
             if name in {p.name for p in obj.property_sets}:
                 tool.Popups.create_warning_popup(f"PropertySet existiert bereits")
                 return None
-        property_set = SOMcreator.PropertySet(name, obj, project=tool.Project.get())
-
+        if parent is not None:
+            property_set = parent.create_child(name)
+            obj.add_property_set(property_set)
+        else:
+            property_set = SOMcreator.PropertySet(name, obj, project=tool.Project.get())
+        return property_set
 
     @classmethod
     def close_property_set_window(cls, window: PropertySetWindow):

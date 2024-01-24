@@ -6,7 +6,6 @@ from PySide6 import QtGui
 from PySide6.QtCore import QPoint
 import som_gui
 from som_gui.core import attribute as attribute_core
-from som_gui.core import property_set as property_set_core
 from SOMcreator.constants.value_constants import RANGE
 
 if TYPE_CHECKING:
@@ -220,8 +219,19 @@ def update_seperator(window: PropertySetWindow, property_set_tool: Type[Property
 
 
 def add_property_set_button_pressed(object_tool: Type[Object], main_window_tool: Type[MainWindow],
-                                    property_set_tool: Type[PropertySet]):
+                                    property_set_tool: Type[PropertySet], popup_tool: Type[Popups]):
     obj = object_tool.get_active_object()
     pset_name = main_window_tool.get_pset_name()
-    property_set_tool.create_property_set(pset_name, obj)
+    if property_set_tool.check_if_pset_allready_exists(pset_name, obj):
+        popup_tool.create_warning_popup(f"PropertySet '{pset_name}' existiert bereits")
+        return
+
+    predefined_pset_dict = {p.name: p for p in property_set_tool.get_predefined_psets()}
+    connect_pset = False
+    if pset_name in predefined_pset_dict:
+        connect_pset = popup_tool.request_property_set_merge(pset_name)
+        if connect_pset is None:
+            return
+    parent: SOMcreator.PropertySet | None = predefined_pset_dict.get(pset_name) if connect_pset else None
+    property_set_tool.create_property_set(pset_name, obj, parent)
     refresh_table(property_set_tool, object_tool)

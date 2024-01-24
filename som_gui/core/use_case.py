@@ -91,7 +91,9 @@ def delete_use_case(use_case_index: int, use_case_tool: Type[UseCase]):
 
 
 def create_use_case(use_case_tool: Type[UseCase]):
-    new_name = use_case_tool.get_new_use_case_name("Unbenannt")
+    existing_names = use_case_tool.get_use_case_list()
+
+    new_name = use_case_tool.get_new_use_case_name("Unbenannt", existing_names)
     use_case_tool.add_use_case(new_name)
 
 
