@@ -161,18 +161,23 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def add_property_sets_to_list(cls, property_sets: list[SOMcreator.PropertySet], list_widget: QListWidget):
+        list_widget.setSortingEnabled(False)
+
         for property_set in property_sets:
             item = QListWidgetItem(property_set.name)
             item.setData(CLASS_REFERENCE, property_set)
             list_widget.addItem(item)
+        list_widget.setSortingEnabled(True)
 
     @classmethod
     def add_property_sets_to_inheritance_list(cls, property_sets: list[SOMcreator.PropertySet],
                                               list_widget: QListWidget):
+        list_widget.setSortingEnabled(False)
         for property_set in property_sets:
             item = QListWidgetItem(property_set.object.name)
             item.setData(CLASS_REFERENCE, property_set)
             list_widget.addItem(item)
+        list_widget.setSortingEnabled(True)
 
     @classmethod
     def get_existing_psets_in_list(cls, pset_list: QListWidget):
@@ -280,6 +285,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def add_property_sets_to_table(cls, property_sets: set[SOMcreator.PropertySet], table: QTableWidget):
+        table.setSortingEnabled(False)
         for property_set in property_sets:
             items = [QTableWidgetItem() for _ in range(3)]
             row = table.rowCount()
@@ -287,7 +293,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
             [item.setData(CLASS_REFERENCE, property_set) for item in items]
             [item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable) for item in items]
             [table.setItem(row, col, item) for col, item in enumerate(items)]
-
+        table.setSortingEnabled(True)
 
     @classmethod
     def update_property_set_table(cls, table: QTableWidget):
