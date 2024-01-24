@@ -297,6 +297,7 @@ class AggregationView(QGraphicsView):
             node = self.window().create_node(aggregation, node_pos, self.scene())
 
         def rc_set_info():
+            # TODO: Refactor to Use Search Window
             main_window = self.window().main_window
             text_matrix, connection_list = get_attribute_matrix(main_window.project)
             header_list = ["PropertySet", "Attribut"]

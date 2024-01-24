@@ -318,15 +318,6 @@ class SearchWindow(QDialog):
         self.table.setSortingEnabled(True)
 
 
-def new_file_clicked(main_window: MainWindow):
-    new_file = msg_unsaved()
-    if new_file:
-        project_name = QInputDialog.getText(main_window, "New Project", "new Project Name:", QLineEdit.EchoMode.Normal,
-                                            "")
-        if project_name[1]:
-            main_window.clear_all()
-            main_window.setWindowTitle(main_window.project.name)
-            main_window.project.name = project_name[0]
 
 
 def error_convert_double():

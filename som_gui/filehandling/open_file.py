@@ -46,23 +46,6 @@ def import_node_pos(
     graph_window.scene_dict.update(scene_dict)
 
 
-def new_file(main_window: MainWindow) -> None:
-    ok = popups.msg_unsaved()
-    if ok:
-        proj_name = QInputDialog.getText(
-            main_window,
-            "New Project",
-            "new Project Name:",
-            QLineEdit.EchoMode.Normal,
-            "",
-        )
-
-        if proj_name[1]:
-            main_window.project = classes.Project(main_window.project, proj_name[0])
-            main_window.setWindowTitle(main_window.project.name)
-            main_window.project.name = proj_name[0]
-            main_window.clear_all()
-
 
 def fill_ui(main_window: MainWindow) -> None:
     tool.Object.clear_object_input()
