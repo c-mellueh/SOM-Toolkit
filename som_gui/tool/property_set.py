@@ -1,30 +1,30 @@
 from __future__ import annotations
-
 import logging
 
-import SOMcreator
-import som_gui
-import som_gui.core.tool
-from som_gui.tool import Object, Project, Settings
-from som_gui import tool
-from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QWidget, QHBoxLayout, QLineEdit, QListWidget, \
+from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QHBoxLayout, QLineEdit, QListWidget, \
     QListWidgetItem, QMenu
 from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QAction, QIcon
-from som_gui.module.project.constants import CLASS_REFERENCE
-from som_gui.module.attribute import trigger as attribute_trigger
-from som_gui.module.property_set import trigger as property_set_trigger
+
 from SOMcreator.constants.json_constants import INHERITED_TEXT
 from SOMcreator.constants.value_constants import VALUE_TYPE_LOOKUP, DATA_TYPES
 from SOMcreator.constants import value_constants
-from som_gui.icons import get_link_icon
-from typing import TYPE_CHECKING, Callable
-from som_gui.module.property_set import ui as ui_property_set
 
+import som_gui
+import som_gui.core.tool
+from som_gui import tool
+from som_gui.icons import get_link_icon
+from som_gui.module.project.constants import CLASS_REFERENCE
+from som_gui.module.attribute import trigger as attribute_trigger
+from som_gui.module.property_set import trigger as property_set_trigger
+from som_gui.module.property_set import ui
+
+import SOMcreator
+
+from typing import TYPE_CHECKING, Callable
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
     from som_gui.module.property_set.ui import PropertySetWindow, PredefinedPropertySetWindow
-from som_gui.module.property_set import ui
 
 
 class PropertySet(som_gui.core.tool.PropertySet):
@@ -236,7 +236,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
             logging.warning(f"PropertySetWindow can't be removed because it's not registred")
 
     @classmethod
-    def get_property_set_from_window(cls, window: QWidget) -> SOMcreator.PropertySet:
+    def get_property_set_from_window(cls, window: PropertySetWindow) -> SOMcreator.PropertySet:
         prop = cls.get_pset_properties()
         return prop.property_set_windows.get(window)
 
@@ -260,7 +260,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def get_property_sets(cls) -> set[SOMcreator.PropertySet]:
-        active_object = Object.get_active_object()
+        active_object = tool.Object.get_active_object()
         if active_object is None:
             return set()
         return set(active_object.property_sets)
@@ -314,7 +314,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def get_predefined_psets(cls) -> set[SOMcreator.PropertySet]:
-        proj = Project.get()
+        proj = tool.Project.get()
         return proj.get_predefined_psets()
 
     @classmethod
@@ -355,7 +355,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def set_active_property_set(cls, property_set: SOMcreator.PropertySet):
         prop = cls.get_pset_properties()
         prop.active_pset = property_set
-        obj = Object.get_active_object()
 
     @classmethod
     def get_active_property_set(cls) -> SOMcreator.PropertySet:
@@ -414,7 +413,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def pw_add_value_line(cls, column_count: int, window: PropertySetWindow) -> QHBoxLayout:
         new_layout = QHBoxLayout()
         for _ in range(column_count):
-            new_layout.addWidget(ui_property_set.LineInput())
+            new_layout.addWidget(ui.LineInput())
         window.widget.verticalLayout_2.addLayout(new_layout)
         return new_layout
 
@@ -445,11 +444,11 @@ class PropertySet(som_gui.core.tool.PropertySet):
                 line_layout = cls.pw_add_value_line(len(value), window)
                 for col, v in enumerate(value):
                     v = "" if value is None else v
-                    line_edit: ui_property_set.LineInput = line_layout.itemAt(col).widget()
+                    line_edit: ui.LineInput = line_layout.itemAt(col).widget()
                     line_edit.setText(cls.value_to_string(v))
             else:
                 line_layout = cls.pw_add_value_line(1, window)
-                line_edit: ui_property_set.LineInput = line_layout.itemAt(0).widget()
+                line_edit: ui.LineInput = line_layout.itemAt(0).widget()
                 line_edit.setText(cls.value_to_string(value))
 
     @classmethod
@@ -552,7 +551,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
             dif = column_count - existing_columns
             if dif > 0:
                 for _ in range(dif):
-                    hor_layout.addWidget(ui_property_set.LineInput())
+                    hor_layout.addWidget(ui.LineInput())
             elif dif < 0:
                 for _ in range(abs(dif)):
                     item = hor_layout.itemAt(hor_layout.count() - 1)
@@ -578,8 +577,8 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def pw_set_seperator(cls, window: PropertySetWindow):
-        seperator = Settings.get_seperator()
-        seperator_status = Settings.get_seperator_status()
+        seperator = tool.Settings.get_seperator()
+        seperator_status = tool.Settings.get_seperator_status()
         window.widget.check_box_seperator.setChecked(seperator_status)
         window.widget.line_edit_seperator.setText(seperator)
 
