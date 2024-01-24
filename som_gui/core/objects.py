@@ -5,7 +5,7 @@ import uuid
 from typing import Type, TYPE_CHECKING
 
 import som_gui.module.objects
-from som_gui.core.property_set import refresh_table as refresh_property_set_table
+from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
 
 if TYPE_CHECKING:
     from som_gui.tool import Object, Project, Search, PropertySet, MainWindow
@@ -122,7 +122,7 @@ def refresh_object_tree(object_tool: Type[Object], project_tool: Type[Project]):
 
 
 def load_objects(object_tool: Type[Object], project_tool: Type[Project]):
-    root_objects = project_tool.get_root_objects(filter=True)
+    root_objects = project_tool.get_root_objects(filter_objects=True)
     object_tree: QTreeWidget = object_tool.get_object_tree()
     object_tool.fill_object_tree(set(root_objects), object_tree.invisibleRootItem())
 
@@ -137,7 +137,7 @@ def item_selection_changed(object_tool: Type[Object], property_set_tool: Type[Pr
     if len(selected_items) == 1:
         obj = object_tool.get_object_from_item(selected_items[0])
         object_tool.set_active_object(obj)
-        property_set_tool.update_completer()
+        property_set_tool.update_completer(obj)
         property_set_tool.set_enabled(True)
         refresh_property_set_table(property_set_tool, object_tool)
     else:

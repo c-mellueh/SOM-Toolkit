@@ -229,8 +229,8 @@ class Modelcheck(IfcRunner):
         try:
             workbook.save(path)
         except PermissionError:
-            print("-" * 60)
-            print(f"folgende Datei ist noch geöffnet: {path} \n Datei schließen und beliebige Taste Drücken")
+            logging.warning("-" * 60)
+            logging.warning(f"folgende Datei ist noch geöffnet: {path} \n Datei schließen und beliebige Taste Drücken")
             input("Achtung! Datei wird danach überschrieben!")
             self.save_workbook(workbook, path)
 
@@ -308,8 +308,6 @@ class Modelcheck(IfcRunner):
         object_rep = self.ident_dict.get(identifier)
         if object_rep is not None and object_rep not in self.data_dict:
             return
-
-        logging.debug(f"Check Element {element.GlobalId} {identifier} Even Layer: {even_layer}")
 
         if element.is_a("IfcElement"):
             element_type = modelcheck.ELEMENT

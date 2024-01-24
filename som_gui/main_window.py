@@ -7,7 +7,6 @@ import som_gui
 from som_gui import tool
 from som_gui.windows.aggregation_view import aggregation_window
 from . import icons, settings, __version__
-from .filehandling import save_file, export
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .windows import (
     predefined_psets_window,
@@ -50,10 +49,6 @@ class MainWindow(QMainWindow):
         self.graph_window = aggregation_window.AggregationWindow(self)
         self.mapping_window = None
         self.modelcheck_window: modelcheck_window.ModelcheckWindow | None = None
-        self.search_ui: popups.SearchWindow | None = None
-        self.predefined_pset_window: predefined_psets_window.PropertySetInherWindow | None = (
-            None
-        )
         settings.reset_save_path()
 
         # Icons
@@ -78,19 +73,8 @@ class MainWindow(QMainWindow):
         else:
             self.model_control_window.show()
 
-    def open_predefined_pset_window(self):
-        if self.predefined_pset_window is None:
-            self.predefined_pset_window = (
-                predefined_psets_window.PropertySetInherWindow(self)
-            )
-        self.predefined_pset_window.show()
-
     def open_aggregation_window(self):
         self.graph_window.show()
-
-    @property
-    def object_tree(self) -> ObjectTreeWidget:
-        return tool.Object.get_object_tree()
 
     @property
     def pset_table(self) -> QTableWidget:
@@ -98,20 +82,13 @@ class MainWindow(QMainWindow):
 
     # Open / Close windows
     def closeEvent(self, event):
-        action = save_file.close_event(self)
-
-        if action:
+        result = core.close_event(tool.Project, tool.Settings, tool.Popups)
+        if result:
             self.app.closeAllWindows()
             event.accept()
         else:
             event.ignore()
 
-    # Main
-    def clear_all(self):
-        self.project.clear()
-
-    def reload(self):
-        predefined_psets_window.reload(self)
 
     def paintEvent(self, event):
         super().paintEvent(event)

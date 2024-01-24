@@ -69,7 +69,7 @@ for (ifcName in ifcDict) {
         vorheriger_wert = fortschritt(issueIndex, errorCounter, vorheriger_wert)
         issueIndex += 1;
         var error_items = errorDict[errorMessage];
-        print("Error:" + error_items)
+        console.log("Error:" + error_items)
         //console.log(items)
         desiteAPI.selectElements(error_items.join(";"), true);
         desiteAPI.zoomToSelected();

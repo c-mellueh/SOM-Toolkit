@@ -201,7 +201,7 @@ class AggregationScene(QGraphicsScene):
 
                 sub_node: NodeProxy = node_dict.get(sub_aggregation)
                 if sub_node is None:
-                    print(f"{aggregation} -> {sub_aggregation} missing")
+                    logging.warning(f"{aggregation} -> {sub_aggregation} missing")
                     continue
                 Connection(sub_node, node, Connection.NORMAL_MODE, sub_node.aggregation.parent_connection)
 
@@ -269,20 +269,14 @@ class AggregationView(QGraphicsView):
         return cursor_style, node
 
     def auto_fit(self):
-        logging.debug("Autofit Start")
         bounding_rect = self.scene().get_items_bounding_rect(self.scene().nodes)
-        logging.debug(f"Bounding_rect: {bounding_rect}")
         sr_center = self.scene().sceneRect().center()
         br_center = bounding_rect.center()
         dif = sr_center - br_center
-        logging.debug(f"SceneRectCenter: {sr_center}")
-        logging.debug(f"BoundingRectCenter: {br_center}")
-        logging.debug(f"Difference: {dif}")
         for item in self.scene().nodes:
             item.moveBy(dif.x(), dif.y())
 
         bounding_rect = self.scene().get_items_bounding_rect(self.scene().nodes)
-        logging.debug(f"New Bounding_rect: {bounding_rect}")
         marg = constants.SCENE_MARGIN
         self.fitInView(bounding_rect.adjusted(-marg, -marg, marg, marg),
                        aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
@@ -297,12 +291,10 @@ class AggregationView(QGraphicsView):
             node = self.window().create_node(aggregation, node_pos, self.scene())
 
         def rc_set_info():
-            main_window = self.window().main_window
-            text_matrix, connection_list = get_attribute_matrix(main_window.project)
-            header_list = ["PropertySet", "Attribut"]
-            search = popups.SearchWindow(main_window, text_matrix, connection_list, header_list)
-            if search.exec():
-                [pset_name,attribute_name] = search.data
+            from som_gui.tool import Search
+            result = Search.search_attribute()
+            if result:
+                [pset_name, attribute_name] = result
                 self.window().set_info(pset_name, attribute_name)
 
         def rc_delete_node():
@@ -399,7 +391,7 @@ class AggregationView(QGraphicsView):
             self.auto_fit()
             path = os.path.join(folder_path, f"{scene.name}.png")
             self.print_view(path)
-        print("Done")
+        logging.info("Done")
 
     def draw_connection_mouse_release(self, event: QMouseEvent):
         """if the user draws a line and the mouse was released this event should be called to determine if a new Connection gets established"""

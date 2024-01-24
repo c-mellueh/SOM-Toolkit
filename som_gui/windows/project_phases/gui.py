@@ -355,4 +355,3 @@ class ProjectPhaseWindow(QWidget):
         root_index = self.property_set_tree.rootIndex()
         iter_tree(pset_model, root_index, PSET_TITLES)
         self.close()
-        self.main_window.reload()

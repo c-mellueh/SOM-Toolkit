@@ -3,9 +3,10 @@
 block_cipher = None
 added_files = [('som_gui/icons', 'som_gui/icons'),
                ('som_gui/settings/logging.conf','som_gui/settings'),
-               ('venv/Lib/site-packages/ifcopenshell/express','ifcopenshell/express'),('som_gui/module','som_gui/module')
+               ('venv/Lib/site-packages/ifcopenshell/express','ifcopenshell/express'),('som_gui/module','som_gui/module'),
+               ('som_gui/core','som_gui/core'),('som_gui/tool','som_gui/tool')
                ]
-hi = ['jinja2', 'lxml', 'SOMcreator', 'ifcopenshell', 'tqdm', 'openpyxl','som_gui']
+hi = ['jinja2', 'lxml', 'SOMcreator', 'ifcopenshell', 'tqdm', 'openpyxl','som_gui','thefuzz.fuzz']
 a = Analysis(
     ['main.py'],
     pathex=[],
@@ -15,7 +16,7 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['som_gui.core','som_gui.tool'],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,

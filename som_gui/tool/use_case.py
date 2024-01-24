@@ -177,7 +177,7 @@ class UseCase(som_gui.core.tool.UseCase):
                 use_case_dict.pop(use_case_text)
 
     @classmethod
-    def get_new_use_case_name(cls, standard_name: str):
+    def get_new_use_case_name(cls, standard_name: str, existing_names: list[str]) -> str:
         def loop_name(new_name):
             if new_name in existing_names:
                 if new_name == standard_name:
@@ -186,7 +186,6 @@ class UseCase(som_gui.core.tool.UseCase):
                 return loop_name(f"{new_name[:-1]}{index + 1}")
             return new_name
 
-        existing_names = cls.get_use_case_list()
         return loop_name(standard_name)
 
     @classmethod

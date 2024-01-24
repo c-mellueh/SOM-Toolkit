@@ -73,7 +73,8 @@ class MappingWindow(QMainWindow):
                 else:
                     new_child.setCheckState(0, Qt.Unchecked)
 
-        orig_root = self.main_window.object_tree.invisibleRootItem()
+        from som_gui.tool import Object as object_tool
+        orig_root = object_tool.get_object_tree().invisibleRootItem()
         new_root = self.object_tree.invisibleRootItem()
         copy_children(orig_root, new_root)
 

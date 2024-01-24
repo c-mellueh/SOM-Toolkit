@@ -151,11 +151,3 @@ def open_pset_list(main_window):
     pset_window = PropertySetInherWindow(main_window)
     return pset_window
 
-
-def reload(main_window: MainWindow):
-    window: PropertySetInherWindow = main_window.predefined_pset_window
-    if window is None:
-        return
-    widget = window.widget
-    if widget.list_view_pset.selectedItems():
-        window.single_click(widget.list_view_pset.selectedItems()[0])

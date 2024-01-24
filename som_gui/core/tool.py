@@ -1,5 +1,5 @@
 class Popups:
-    def create_warning_popups(self, text):    pass
+    def create_warning_popup(self, text):    pass
 
 
 class MainWindow:
@@ -170,7 +170,7 @@ class UseCase:
 
     def get_linked_data(self, index): pass
 
-    def get_new_use_case_name(self, standar_name): pass
+    def get_new_use_case_name(self, standar_name, existing_names): pass
 
     def get_object_dict(self): pass
 
@@ -286,7 +286,7 @@ class Project:
 
     def set_project_phase(self, phase): pass
 
-    def set_project_version(self): pass
+    def set_project_version(self, version): pass
 
     def update_setting(self, info_dict): pass
 

@@ -4,7 +4,18 @@ from typing import TYPE_CHECKING, Type
 import som_gui
 
 if TYPE_CHECKING:
-    from som_gui.tool import MainWindow, Popups, Project
+    from som_gui.tool import MainWindow, Settings, Project, Popups
+
+
+def close_event(project_tool: Type[Project], settings_tool: Type[Settings],
+                popups_tool: Type[Popups]):
+    reply = popups_tool.request_save_before_exit()
+    if reply is None:  # abort Dialog
+        return False
+    if reply is False:  # No
+        return True
+    som_gui.core.project.save_clicked(project_tool, popups_tool, settings_tool)
+    return True
 
 
 def set_main_window(window, main_window_tool: Type[MainWindow]):
@@ -13,6 +24,7 @@ def set_main_window(window, main_window_tool: Type[MainWindow]):
 
 def add_label_to_statusbar(main_window_tool: Type[MainWindow]):
     main_window_tool.create_status_label()
+
 
 def create_menus(main_window_tool: Type[MainWindow]):
     menu_dict = main_window_tool.get_menu_dict()
@@ -26,6 +38,7 @@ def refresh_main_window(main_window_tool: Type[MainWindow], project_tool: Type[P
     status = f"{project_tool.get_project_name()} {project_tool.get_project_version()}"
     main_window_tool.set_status_bar_text(status)
     main_window_tool.set_window_title(f"SOM-Toolkit v{som_gui.__version__}")
+
 
 def fill_old_menus(main_window_tool: Type[MainWindow]):
     """
@@ -46,8 +59,7 @@ def fill_old_menus(main_window_tool: Type[MainWindow]):
     main_window_tool.add_action("Modelle/Gruppen Generieren", lambda: main_window.open_grouping_window())
     main_window_tool.add_action("Modelle/Modellprüfung", lambda: modelcheck_window.ModelcheckWindow(main_window))
     main_window_tool.add_action("Modelle/Informationen einlesen", lambda: main_window.open_attribute_import_window())
-    main_window_tool.add_action("Vordefinierte Psets/Anzeigen", lambda: main_window.open_predefined_pset_window())
-    main_window_tool.add_action("Bauwerksstruktur/Anzeigen", lambda: main_window.open_aggregation_window)
+    main_window_tool.add_action("Bauwerksstruktur/Anzeigen", lambda: main_window.open_aggregation_window())
 
     main_window_tool.add_action("Desite/Lesezeichen", lambda: fh_export.export_bookmarks(main_window))
     main_window_tool.add_action("Desite/Mapping Script", lambda: fh_export.export_mapping_script(main_window))

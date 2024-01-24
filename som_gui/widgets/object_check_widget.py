@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING
 
 import SOMcreator
@@ -88,14 +87,12 @@ class ObjectCheckWidget(QWidget):
     def object_selection_changed(self):
         tree = self.widget.object_tree
         index = tree.selectionModel().selectedIndexes()[0].siblingAtColumn(0)
-        logging.debug(f"selected Index: {index}")
         obj = index.data(OBJECT_DATA_INDEX)
         self.widget.label_object.show()
         self.widget.label_object.setText(f"{obj.name} ({obj.ident_value})")
         self.fill_property_set_tree(obj)
 
     def fill_property_set_tree(self, selected_object: classes.Object):
-        logging.debug(f"fill PsetTree {selected_object}")
         tree = self.widget.property_set_tree
         self.tree_model.clear()
         root = self.tree_model.invisibleRootItem()
@@ -116,10 +113,8 @@ class ObjectCheckWidget(QWidget):
         tree.expandAll()
 
     def update_data_model(self, model_index: QModelIndex):
-        logging.debug(f"update Datamodel {model_index}")
 
         def modify_checkbox_data():
-            logging.debug(f"Modify Checkbox Data: {data}")
             self.data_model[data] = new_checkstate
             if isinstance(data, SOMcreator.PropertySet):
                 for index in range(tree_item.rowCount()):
