@@ -573,7 +573,6 @@ class Object(som_gui.core.tool.Object):
         old_objects = set(old_objects_dict.keys())
         new_objects = objects.difference(old_objects)
         delete_objects = old_objects.difference(objects)
-
         for obj in reversed(sorted(delete_objects, key=lambda o: old_objects_dict[o])):
             row_index = old_objects_dict[obj]
             parent_item.removeChild(parent_item.child(row_index))
@@ -586,7 +585,7 @@ class Object(som_gui.core.tool.Object):
             item = parent_item.child(index)
             obj: SOMcreator.Object = cls.get_object_from_item(item)
             cls.update_item(item, obj)
-            cls.fill_object_tree(obj.children, item)
+            cls.fill_object_tree(set(obj.children), item)
 
     @classmethod
     def clear_object_input(cls):

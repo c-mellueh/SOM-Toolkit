@@ -122,7 +122,7 @@ def refresh_object_tree(object_tool: Type[Object], project_tool: Type[Project]):
 
 
 def load_objects(object_tool: Type[Object], project_tool: Type[Project]):
-    root_objects = project_tool.get_root_objects(filter=True)
+    root_objects = project_tool.get_root_objects(filter_objects=True)
     object_tree: QTreeWidget = object_tool.get_object_tree()
     object_tool.fill_object_tree(set(root_objects), object_tree.invisibleRootItem())
 

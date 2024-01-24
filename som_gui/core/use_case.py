@@ -122,7 +122,7 @@ def load_headers(use_case_tool: Type[UseCase]):
 
 
 def load_objects(use_case_tool: Type[UseCase], project_tool: Type[Project]):
-    root_objects = project_tool.get_root_objects(filter=False)
+    root_objects = project_tool.get_root_objects(filter_objects=False)
     use_case_tool.fill_object_tree(root_objects)
 
 

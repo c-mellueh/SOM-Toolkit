@@ -109,7 +109,7 @@ def repaint_predefined_pset_inheritance_list(property_set_tool: Type[PropertySet
     if property_set is None:
         list_widget.clear()
         return
-    predefined_property_sets = property_set.children
+    predefined_property_sets = set(property_set.children)
     existing_property_sets = property_set_tool.get_existing_psets_in_list(list_widget)
     delete_property_sets = existing_property_sets.difference(predefined_property_sets)
     add_property_sets = sorted(predefined_property_sets.difference(existing_property_sets), key=lambda p: p.name)

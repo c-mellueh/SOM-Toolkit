@@ -59,7 +59,7 @@ def fill_old_menus(main_window_tool: Type[MainWindow]):
     main_window_tool.add_action("Modelle/Gruppen Generieren", lambda: main_window.open_grouping_window())
     main_window_tool.add_action("Modelle/Modellprüfung", lambda: modelcheck_window.ModelcheckWindow(main_window))
     main_window_tool.add_action("Modelle/Informationen einlesen", lambda: main_window.open_attribute_import_window())
-    main_window_tool.add_action("_Bauwerksstruktur/Anzeigen", lambda: main_window.open_aggregation_window())
+    main_window_tool.add_action("Bauwerksstruktur/Anzeigen", lambda: main_window.open_aggregation_window())
 
     main_window_tool.add_action("Desite/Lesezeichen", lambda: fh_export.export_bookmarks(main_window))
     main_window_tool.add_action("Desite/Mapping Script", lambda: fh_export.export_mapping_script(main_window))

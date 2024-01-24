@@ -63,7 +63,6 @@ def create_project(project_tool: Type[Project]):
 
 
 def open_project(path, project_tool: Type[Project]):
-    project_tool.reset_project_infos()
     return project_tool.load_project(path)
 
 

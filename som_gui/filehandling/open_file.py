@@ -58,14 +58,3 @@ def get_path(main_window: MainWindow, title: str, file_text: str) -> str:
     if not os.path.exists(cur_path):
         cur_path = os.getcwd() + "/"
     return QFileDialog.getOpenFileName(main_window, title, str(cur_path), file_text)[0]
-
-
-def import_data(main_window: MainWindow, path: str):
-    settings.set_open_path(path)
-    settings.set_save_path(path)
-    main_window.project, main_dict = project_core.open_project(path, ProjectTool)
-    import_node_pos(main_dict, main_window.graph_window)
-    fill_ui(main_window)
-    check_for_objects_without_aggregation(main_window.project)
-    logging.info(f"Import Done!")
-    main_window.graph_window.create_missing_scenes()
