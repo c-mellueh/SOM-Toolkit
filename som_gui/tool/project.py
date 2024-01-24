@@ -126,9 +126,7 @@ class Project(som_gui.core.tool.Project):
     @classmethod
     def load_project(cls, path: str):
         from som_gui.filehandling.open_file import import_node_pos, fill_ui
-
         cls.reset_project_infos()
-
         logging.info("Load Project")
         main_window = som_gui.MainUi.window
         tool.Settings.set_open_path(path)
