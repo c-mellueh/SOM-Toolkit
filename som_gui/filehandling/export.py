@@ -56,18 +56,6 @@ def export_bookmarks(main_window: MainWindow):
     if path:
         bookmarks.export_bookmarks(main_window.project, path)
 
-
-def export_bill_of_quantities(main_window: MainWindow):
-    path = get_path(main_window, "csv")
-    words = list({pset.name for pset in classes.PropertySet})  # every Pset name only once
-
-    if not path or path is None:
-        return
-    ok, pset_name = popups.req_boq_pset(main_window, words)
-    if path and ok:
-        bill_of_quantities.export_boq(main_window.project, path, pset_name)
-
-
 def export_vestra_mapping(main_window: MainWindow) -> None:
     file_text = "Excel Files (*.xlsx);;"
     export_path = settings.get_export_path()

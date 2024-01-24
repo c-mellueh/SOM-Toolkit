@@ -41,23 +41,6 @@ def msg_del_items(string_list, item_type=1) -> (bool, bool):
     check_box_state = True if widget.check_box_recursion.checkState() == Qt.CheckState.Checked else False
     return bool(result), check_box_state
 
-
-def req_boq_pset(main_window, words):
-    input_dialog = QInputDialog(main_window)
-    input_dialog.setWindowTitle("Bill of Quantities")
-    input_dialog.setLabelText("BoQ PropertySet Name")
-    input_dialog.setTextValue("BoQ")
-    line_edit: QLineEdit = input_dialog.findChild(QLineEdit)
-
-    completer = QCompleter(words)
-    line_edit.setCompleter(completer)
-    ok = input_dialog.exec()
-    if ok == 1:
-        return True, input_dialog.textValue()
-    else:
-        return False, None
-
-
 def attribute_mapping(attribute: classes.Attribute):
     parent = QDialog()
     widget = ui_attribute_mapping.Ui_Dialog()
