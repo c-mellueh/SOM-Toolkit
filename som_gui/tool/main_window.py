@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from som_gui.tool.object import ObjectDataDict
     from som_gui.main_window import Ui_MainWindow
 
+
 class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
     def set_window_title(cls, title: str):
@@ -26,14 +27,9 @@ class MainWindow(som_gui.core.tool.MainWindow):
     def set_status_bar_text(cls, text: str):
         cls.get_main_menu_properties().status_bar_label.setText(text)
 
-
     @classmethod
     def get_menu_bar(cls) -> QMenuBar:
         return cls.get_ui().menubar
-
-    @classmethod
-    def test_call(cls):
-        print("TEST")
 
     @classmethod
     def get_menu_dict(cls) -> MenuDict:
@@ -44,13 +40,10 @@ class MainWindow(som_gui.core.tool.MainWindow):
     def create_actions(cls, menu_dict: MenuDict, parent: QMenu | QMenuBar):
         menu = menu_dict["menu"]
         parent.addMenu(menu)
-        print(menu.title())
         for action in menu_dict["actions"]:
             menu.addAction(action)
-            print(action.text())
         for sd in menu_dict["submenu"]:
             cls.create_actions(sd, menu)
-
 
     @classmethod
     def add_menu(cls, menu_path: str) -> MenuDict:

@@ -5,7 +5,7 @@ import uuid
 from typing import Type, TYPE_CHECKING
 
 import som_gui.module.objects
-from som_gui.core.property_set import refresh_table as refresh_property_set_table
+from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
 
 if TYPE_CHECKING:
     from som_gui.tool import Object, Project, Search, PropertySet, MainWindow

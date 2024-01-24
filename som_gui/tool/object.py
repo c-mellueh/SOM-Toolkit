@@ -159,7 +159,6 @@ class Object(som_gui.core.tool.Object):
         if result == som_gui.module.objects.OK:
             return True
         app = tool.MainWindow.get_app()
-        print(result)
         if result == som_gui.module.objects.IDENT_ISSUE:
             text = "Identifier existiert bereits oder is nicht erlaubt!"
         elif result == som_gui.module.objects.ABBREV_ISSUE:

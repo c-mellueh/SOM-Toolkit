@@ -201,7 +201,7 @@ class AggregationScene(QGraphicsScene):
 
                 sub_node: NodeProxy = node_dict.get(sub_aggregation)
                 if sub_node is None:
-                    print(f"{aggregation} -> {sub_aggregation} missing")
+                    logging.warning(f"{aggregation} -> {sub_aggregation} missing")
                     continue
                 Connection(sub_node, node, Connection.NORMAL_MODE, sub_node.aggregation.parent_connection)
 
@@ -399,7 +399,7 @@ class AggregationView(QGraphicsView):
             self.auto_fit()
             path = os.path.join(folder_path, f"{scene.name}.png")
             self.print_view(path)
-        print("Done")
+        logging.info("Done")
 
     def draw_connection_mouse_release(self, event: QMouseEvent):
         """if the user draws a line and the mouse was released this event should be called to determine if a new Connection gets established"""

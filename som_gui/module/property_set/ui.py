@@ -8,9 +8,13 @@ from som_gui.icons import get_icon
 
 
 class PsetTableWidget(QTableWidget):
+    edit_started = Signal(QModelIndex)
+    edit_stopped = Signal(QModelIndex)
 
     def __init__(self, parent: QWidget):
         super().__init__(parent)
+        self.customContextMenuRequested.connect(property_set.trigger.pset_table_context_menu_requested)
+        self.setItemDelegate(LineEditDelegate(self))
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -78,8 +82,9 @@ class LineEditDelegate(QStyledItemDelegate):
         self.edit_started.connect(parent.edit_started)
 
     def createEditor(self, parent, option, index):
-        editor = super().createEditor(parent, option, index)
         self.edit_started.emit(index)
+        editor: QLineEdit = super().createEditor(parent, option, index)
+        editor.textChanged.connect(lambda text: property_set.trigger.pset_name_changed(text, index))
         return editor
 
     def destroyEditor(self, editor, index):

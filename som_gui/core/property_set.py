@@ -3,7 +3,7 @@ from typing import Type, TYPE_CHECKING
 
 import SOMcreator
 from PySide6 import QtGui
-from PySide6.QtCore import QPoint
+from PySide6.QtCore import QModelIndex
 import som_gui
 from som_gui.core import attribute as attribute_core
 from SOMcreator.constants.value_constants import RANGE
@@ -11,6 +11,33 @@ from SOMcreator.constants.value_constants import RANGE
 if TYPE_CHECKING:
     from som_gui.tool import PropertySet, Object, Attribute, Settings, MainWindow, Popups
     from som_gui.module.property_set.ui import PropertySetWindow
+
+
+def pset_table_edit_started(property_set_tool: Type[PropertySet]):
+    property_set_tool.pset_table_edit_started()
+
+
+def pset_table_edit_stopped(property_set_tool: Type[PropertySet]):
+    property_set_tool.pset_table_edit_stopped()
+
+
+def pset_table_context_menu(pos, property_set_tool: Type[PropertySet]):
+    table = property_set_tool.get_table()
+    pset = property_set_tool.get_pset_from_item(table.itemAt(pos))
+    if pset.is_child:
+
+        actions = [["Löschen", property_set_tool.delete_table_pset], ]
+    else:
+
+        actions = [["Umbenennen", property_set_tool.rename_table_pset],
+                   ["Löschen", property_set_tool.delete_table_pset], ]
+
+    property_set_tool.create_context_menu(table.mapToGlobal(pos), actions)
+
+
+def rename_pset_by_editor(new_name: str, index: QModelIndex, property_set_tool: Type[PropertySet]):
+    pset = property_set_tool.get_pset_from_index(index)
+    pset.name = new_name
 
 
 def create_predefined_pset_window(attribute_tool: Type[Attribute], property_set_tool: Type[PropertySet],
@@ -104,11 +131,15 @@ def predef_object_double_clicked(property_set_tool: Type[PropertySet], object_to
     property_set_tool.select_property_set(property_set)
 
 
-def refresh_table(property_set_tool: Type[PropertySet], object_tool: Type[Object]):
+def repaint_pset_table(property_set_tool: Type[PropertySet], object_tool: Type[Object]):
     if object_tool.get_active_object() is not None:
         property_set_tool.set_enabled(True)
     else:
         property_set_tool.set_enabled(False)
+
+    if property_set_tool.pset_table_is_editing():
+        return
+
     new_property_sets = property_set_tool.get_property_sets()
     table = property_set_tool.get_table()
 
@@ -121,13 +152,13 @@ def refresh_table(property_set_tool: Type[PropertySet], object_tool: Type[Object
 
 
 def pset_selection_changed(property_set_tool: Type[PropertySet], attribute_tool: Type[Attribute]):
-    property_set = property_set_tool.get_selecte_property_set()
+    property_set = property_set_tool.get_selecte_property_set_from_table()
     property_set_tool.set_active_property_set(property_set)
     attribute_core.refresh_attribute_table(som_gui.MainUi.ui.table_attribute, attribute_tool)
 
 
 def table_double_clicked(property_set_tool: Type[PropertySet], attribute_tool: Type[Attribute]):
-    property_set = property_set_tool.get_selecte_property_set()
+    property_set = property_set_tool.get_selecte_property_set_from_table()
     window = property_set_tool.open_pset_window(property_set)
     table = attribute_tool.get_table(window)
     attribute_core.refresh_attribute_table(table, attribute_tool)
@@ -234,4 +265,4 @@ def add_property_set_button_pressed(object_tool: Type[Object], main_window_tool:
             return
     parent: SOMcreator.PropertySet | None = predefined_pset_dict.get(pset_name) if connect_pset else None
     property_set_tool.create_property_set(pset_name, obj, parent)
-    refresh_table(property_set_tool, object_tool)
+    repaint_pset_table(property_set_tool, object_tool)

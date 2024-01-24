@@ -1,4 +1,5 @@
 import datetime
+import logging
 import re
 import sqlite3
 
@@ -100,7 +101,7 @@ def db_create_entity(cursor, element: entity_instance, project, file_name, baute
                         ('{guid_zwc}','{guid}','{name}','{project}','{ifc_type}',{center[0]},{center[1]},{center[2]},'{file_name}','{bauteil_klasse}')
                   ''')
     except sqlite3.IntegrityError:
-        print("Integrity Error -> Element allready exists")
+        logging.warning("Integrity Error -> Element allready exists")
         pass
 
 

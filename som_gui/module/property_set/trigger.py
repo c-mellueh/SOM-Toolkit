@@ -9,15 +9,27 @@ if TYPE_CHECKING:
     from .ui import PropertySetWindow, PredefinedPropertySetWindow
 
 
+def pset_table_context_menu_requested(pos):
+    core.pset_table_context_menu(pos, tool.PropertySet)
+
+
+def pset_name_changed(text, index):
+    core.rename_pset_by_editor(text, index, tool.PropertySet)
+
 def connect():
     table = som_gui.MainUi.ui.table_pset
     table.itemSelectionChanged.connect(lambda: core.pset_selection_changed(tool.PropertySet, tool.Attribute))
     table.itemDoubleClicked.connect(lambda: core.table_double_clicked(tool.PropertySet, tool.Attribute))
+    table.edit_started.connect(lambda: core.pset_table_edit_started(tool.PropertySet))
+    table.edit_stopped.connect(lambda: core.pset_table_edit_stopped(tool.PropertySet))
+
+
     tool.MainWindow.get_ui().button_Pset_add.clicked.connect(
         lambda: core.add_property_set_button_pressed(tool.Object, tool.MainWindow, tool.PropertySet, tool.Popups))
     tool.MainWindow.add_action("Vordefinierte Psets/Anzeigen",
                                lambda: core.create_predefined_pset_window(tool.Attribute, tool.PropertySet,
                                                                           tool.Object))
+
 
 def connect_property_set_window(window: PropertySetWindow):
     window.widget.button_add_line.clicked.connect(lambda: core.add_value_button_clicked(window, tool.PropertySet))
@@ -51,7 +63,7 @@ def on_new_project():
 
 
 def repaint_event():
-    core.refresh_table(tool.PropertySet, tool.Object)
+    core.repaint_pset_table(tool.PropertySet, tool.Object)
 
 
 def key_press_event(event, window: PropertySetWindow):

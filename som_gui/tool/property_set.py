@@ -9,7 +9,7 @@ from som_gui.tool import Object, Project, Settings
 from som_gui import tool
 from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QWidget, QHBoxLayout, QLineEdit, QListWidget, \
     QListWidgetItem, QMenu
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QAction, QIcon
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.attribute import trigger as attribute_trigger
@@ -28,6 +28,47 @@ from som_gui.module.property_set import ui
 
 
 class PropertySet(som_gui.core.tool.PropertySet):
+
+    @classmethod
+    def get_pset_from_index(cls, index: QModelIndex) -> SOMcreator.PropertySet:
+        return index.data(CLASS_REFERENCE)
+
+    @classmethod
+    def pset_table_is_editing(cls):
+        props = cls.get_pset_properties()
+        return props.is_renaming_property_set
+
+    @classmethod
+    def pset_table_edit_started(cls):
+        pset = cls.get_selecte_property_set_from_table()
+        table = cls.get_table()
+        for row in range(table.rowCount()):
+            item = table.item(row, 0)
+            if cls.get_pset_from_item(item) == pset:
+                pset.name = item.text()
+
+        props = cls.get_pset_properties()
+        props.is_renaming_property_set = True
+
+    @classmethod
+    def pset_table_edit_stopped(cls):
+        props = cls.get_pset_properties()
+        props.is_renaming_property_set = False
+
+    @classmethod
+    def rename_table_pset(cls):
+        property_set = cls.get_selecte_property_set_from_table()
+        table = cls.get_table()
+        for row in range(table.rowCount()):
+            item = table.item(row, 0)
+            if cls.get_property_set_from_item(item) == property_set:
+                table.editItem(item)
+
+    @classmethod
+    def delete_table_pset(cls):
+        property_set = cls.get_selecte_property_set_from_table()
+        property_set.delete()
+
     @classmethod
     def delete_predefined_pset(cls):
         property_set = cls.get_active_predefined_pset()
@@ -35,7 +76,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def rename_predefined_pset(cls):
-
         pset = cls.get_active_predefined_pset()
         list_widget = cls.get_predefine_pset_list_widget()
         for row in range(list_widget.count()):
@@ -196,12 +236,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return prop.property_set_windows.get(window)
 
     @classmethod
-    def get_selected_property_set(cls):
-        active_window = som_gui.MainUi.window.app.activeWindow()
-        return cls.get_property_set_from_window(active_window)
-
-    @classmethod
-    def get_pset_from_item(cls, item: QTableWidgetItem):
+    def get_pset_from_item(cls, item: QTableWidgetItem) -> SOMcreator.PropertySet:
         return item.data(CLASS_REFERENCE)
 
     @classmethod
@@ -250,7 +285,9 @@ class PropertySet(som_gui.core.tool.PropertySet):
             row = table.rowCount()
             table.setRowCount(row + 1)
             [item.setData(CLASS_REFERENCE, property_set) for item in items]
+            [item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable) for item in items]
             [table.setItem(row, col, item) for col, item in enumerate(items)]
+
 
     @classmethod
     def update_property_set_table(cls, table: QTableWidget):
@@ -284,7 +321,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
                 table.setCurrentCell(row, 0)
 
     @classmethod
-    def get_selecte_property_set(cls) -> SOMcreator.PropertySet | None:
+    def get_selecte_property_set_from_table(cls) -> SOMcreator.PropertySet | None:
         table = cls.get_table()
         items = table.selectedItems()
         if not items:

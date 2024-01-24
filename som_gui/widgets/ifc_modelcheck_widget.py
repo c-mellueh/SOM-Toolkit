@@ -229,8 +229,8 @@ class Modelcheck(IfcRunner):
         try:
             workbook.save(path)
         except PermissionError:
-            print("-" * 60)
-            print(f"folgende Datei ist noch geöffnet: {path} \n Datei schließen und beliebige Taste Drücken")
+            logging.warning("-" * 60)
+            logging.warning(f"folgende Datei ist noch geöffnet: {path} \n Datei schließen und beliebige Taste Drücken")
             input("Achtung! Datei wird danach überschrieben!")
             self.save_workbook(workbook, path)
 

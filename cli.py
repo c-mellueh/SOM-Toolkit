@@ -50,10 +50,10 @@ def install_missing_packages():
             made_an_update = True
 
     if made_an_update:
-        print()
-        print("*" * 60)
-        print(f"Update installiert, Runtime neu starten!")
-        print("*" * 60)
+        logging.info(" ")
+        logging.info("*" * 60)
+        logging.info(f"Update installiert, Runtime neu starten!")
+        logging.info("*" * 60)
         return False
     return False
 
