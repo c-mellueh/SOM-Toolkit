@@ -15,12 +15,9 @@ def connect():
     table.itemDoubleClicked.connect(lambda: core.table_double_clicked(tool.PropertySet, tool.Attribute))
     tool.MainWindow.get_ui().button_Pset_add.clicked.connect(
         lambda: core.add_property_set_button_pressed(tool.Object, tool.MainWindow, tool.PropertySet))
-    tool.MainWindow.add_action("Vordefinierte Psets/Anzeigen", active_predefined_property_sets)
-
-
-def active_predefined_property_sets():
-    dialog = som_gui.module.property_set.ui.PredefinedPropertySetWindow()
-    dialog.exec()
+    tool.MainWindow.add_action("Vordefinierte Psets/Anzeigen",
+                               lambda: core.create_predefined_pset_window(tool.Attribute, tool.PropertySet,
+                                                                          tool.Object))
 
 def connect_property_set_window(window: PropertySetWindow):
     window.widget.button_add_line.clicked.connect(lambda: core.add_value_button_clicked(window, tool.PropertySet))
@@ -38,8 +35,12 @@ def repaint_pset_window(widget: PropertySetWindow):
     core.repaint_pset_window(widget, tool.PropertySet, tool.Attribute)
 
 
-def repaint_predefined_pset_window(widget: PredefinedPropertySetWindow):
-    core.repaint_predefined_pset_window(widget, tool.PropertySet)
+def predefined_pset_window_accept():
+    tool.PropertySet.close_predefined_pset_window()
+
+
+def repaint_predefined_pset_window():
+    core.repaint_predefined_pset_window(tool.PropertySet)
 
 def close_pset_window(window: PropertySetWindow):
     core.close_pset_window(window, tool.PropertySet)

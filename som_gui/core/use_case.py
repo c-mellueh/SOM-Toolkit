@@ -61,7 +61,6 @@ def create_header_context_menu(pos, tree_view: QTreeView, use_case_tool: Type[Us
     column_index = header.logicalIndexAt(pos)
     model = tree_view.model()
     use_case_index = column_index - use_case_tool.get_title_lenght_by_model(model)
-    proj = project_tool.get()
     if use_case_index < 0:
         action_dict = {
             "Anwendungsfall hinzufügen": lambda: create_use_case(use_case_tool, ), }

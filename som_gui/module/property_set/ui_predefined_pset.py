@@ -15,20 +15,22 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QFont, QFontDatabase, QGradient, QIcon,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
-                               QGridLayout, QLabel, QListWidget, QListWidgetItem,
-                               QSizePolicy, QWidget)
-
+from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QDialog,
+                               QDialogButtonBox, QGridLayout, QLabel, QListWidget,
+                               QListWidgetItem, QSizePolicy, QWidget)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
         Dialog.resize(640, 480)
+        Dialog.setContextMenuPolicy(Qt.CustomContextMenu)
         self.gridLayout = QGridLayout(Dialog)
         self.gridLayout.setObjectName(u"gridLayout")
         self.list_view_existance = QListWidget(Dialog)
         self.list_view_existance.setObjectName(u"list_view_existance")
+        self.list_view_existance.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.list_view_existance.setSortingEnabled(True)
 
         self.gridLayout.addWidget(self.list_view_existance, 1, 1, 1, 1)
 
@@ -41,6 +43,9 @@ class Ui_Dialog(object):
 
         self.list_view_pset = QListWidget(Dialog)
         self.list_view_pset.setObjectName(u"list_view_pset")
+        self.list_view_pset.setFocusPolicy(Qt.StrongFocus)
+        self.list_view_pset.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.list_view_pset.setEditTriggers(QAbstractItemView.EditKeyPressed)
         self.list_view_pset.setSortingEnabled(True)
 
         self.gridLayout.addWidget(self.list_view_pset, 1, 0, 1, 1)
@@ -60,7 +65,6 @@ class Ui_Dialog(object):
         self.buttonBox.rejected.connect(Dialog.reject)
 
         QMetaObject.connectSlotsByName(Dialog)
-
     # setupUi
 
     def retranslateUi(self, Dialog):

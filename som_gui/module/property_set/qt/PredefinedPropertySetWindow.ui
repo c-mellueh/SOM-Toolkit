@@ -10,12 +10,22 @@
                 <height>480</height>
             </rect>
         </property>
+        <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+        </property>
         <property name="windowTitle">
             <string>Dialog</string>
         </property>
         <layout class="QGridLayout" name="gridLayout">
             <item row="1" column="1">
-                <widget class="QListWidget" name="list_view_existance"/>
+                <widget class="QListWidget" name="list_view_existance">
+                    <property name="editTriggers">
+                        <set>QAbstractItemView::NoEditTriggers</set>
+                    </property>
+                    <property name="sortingEnabled">
+                        <bool>true</bool>
+                    </property>
+                </widget>
             </item>
             <item row="2" column="0" colspan="2">
                 <widget class="QDialogButtonBox" name="buttonBox">
@@ -29,6 +39,15 @@
             </item>
             <item row="1" column="0">
                 <widget class="QListWidget" name="list_view_pset">
+                    <property name="focusPolicy">
+                        <enum>Qt::StrongFocus</enum>
+                    </property>
+                    <property name="contextMenuPolicy">
+                        <enum>Qt::CustomContextMenu</enum>
+                    </property>
+                    <property name="editTriggers">
+                        <set>QAbstractItemView::EditKeyPressed</set>
+                    </property>
                     <property name="sortingEnabled">
                         <bool>true</bool>
                     </property>
