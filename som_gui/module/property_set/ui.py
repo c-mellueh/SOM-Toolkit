@@ -45,7 +45,6 @@ class LineInput(QLineEdit):
         super(LineInput, self).__init__()
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
-        super().keyPressEvent(event)
         if property_set.trigger.key_press_event(event, self.window()):
             super().keyPressEvent(event)
 

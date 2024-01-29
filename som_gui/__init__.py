@@ -4,7 +4,7 @@ from thefuzz import fuzz
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow, Ui_MainWindow
 
-__version__ = "2.10.0"
+__version__ = "2.10.0bugfix"
 
 import importlib
 
