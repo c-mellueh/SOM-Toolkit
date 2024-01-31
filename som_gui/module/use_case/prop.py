@@ -13,8 +13,9 @@ class UseCaseProperties:
     object_dict: dict
     pset_dict: dict
     attribute_dict: dict
-    use_cases: list[str]
+    use_cases: list[SOMcreator.classes.UseCase]
     active_object: SOMcreator.Object = None
     active_check_state: Qt.CheckState = None
     use_case_window: UseCaseWindow = None
     tree_is_clicked: bool = False
+    header_data: list[list[str, int, int]] = None

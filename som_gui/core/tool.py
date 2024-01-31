@@ -188,7 +188,7 @@ class UseCase:
 
     def get_use_case_list(self): pass
 
-    def get_use_case_state(self, use_case_name, entity): pass
+    def get_check_state(self, project_phase_index, use_case_index, entity): pass
 
     def is_object_enabled(self, index): pass
 

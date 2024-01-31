@@ -16,8 +16,8 @@ def open_use_case_window(use_case_tool: Type[UseCase], project_tool: Type[Projec
     load_use_cases(use_case_tool)
     use_case_tool.format_object_tree_header()
     object_tree = use_case_tool.get_object_tree()
-    object_tree.expanded.connect(lambda: resize_tree(object_tree, use_case_tool))
     pset_tree = use_case_tool.get_pset_tree()
+    object_tree.expanded.connect(lambda: resize_tree(object_tree, use_case_tool))
     pset_tree.expanded.connect(lambda: resize_tree(pset_tree, use_case_tool))
 
     header = object_tree.header()
@@ -36,11 +36,6 @@ def on_startup(use_case_tool: Type[UseCase]):
 
 
 def accept_changes(use_case_tool: Type[UseCase]):
-    old_current_use_case = use_case_tool.get_active_use_case()
-    use_case_tool.update_project_use_cases()
-    # if active usecase is deleted take first usecase as active usecase
-    if old_current_use_case not in use_case_tool.get_use_case_list():
-        use_case_tool.set_use_case(use_case_tool.get_use_case_list()[0])
     use_case_tool.update_pset_data()
     use_case_tool.update_attribute_data()
     use_case_tool.update_attribute_uses_cases()
@@ -57,21 +52,22 @@ def reject_changes(use_case_tool: Type[UseCase]):
 
 
 def create_header_context_menu(pos, tree_view: QTreeView, use_case_tool: Type[UseCase], project_tool):
-    header = tree_view.header()
-    column_index = header.logicalIndexAt(pos)
-    model = tree_view.model()
-    use_case_index = column_index - use_case_tool.get_title_lenght_by_model(model)
-    if use_case_index < 0:
-        action_dict = {
-            "Anwendungsfall hinzufügen": lambda: create_use_case(use_case_tool, ), }
-    else:
-        action_dict = {
-            "Anwendungsfall hinzufügen": lambda: create_use_case(use_case_tool, ),
-            "Umbenennen":                lambda: rename_use_case(use_case_index, use_case_tool),
-            "Löschen":                   lambda: delete_use_case(use_case_index, use_case_tool),
-        }
-
-    use_case_tool.create_context_menu(header.mapToGlobal(pos), action_dict)
+    # header = tree_view.header()
+    # column_index = header.logicalIndexAt(pos)
+    # model = tree_view.model()
+    # use_case_index = column_index - use_case_tool.get_title_lenght_by_model(model)
+    # if use_case_index < 0:
+    #     action_dict = {
+    #         "Anwendungsfall hinzufügen": lambda: create_use_case(use_case_tool, ),
+    #         "Leistungsph"}
+    # else:
+    #     action_dict = {
+    #         "Anwendungsfall hinzufügen": lambda: create_use_case(use_case_tool, ),
+    #         "Umbenennen":                lambda: rename_use_case(use_case_index, use_case_tool),
+    #         "Löschen":                   lambda: delete_use_case(use_case_index, use_case_tool),
+    #     }
+    #
+    # use_case_tool.create_context_menu(header.mapToGlobal(pos), action_dict)
     pass
 
 
@@ -112,11 +108,14 @@ def load_use_cases(use_case_tool: Type[UseCase]):
 
 def load_headers(use_case_tool: Type[UseCase]):
     obj_titles, pset_titles = use_case_tool.get_header_texts()
-    use_case_list = use_case_tool.get_use_case_list()
-    obj_titles += use_case_list
+    filter_matrix = use_case_tool.get_filter_matrix()
+    header_data = use_case_tool.create_header_data(filter_matrix)
+    use_case_tool.set_header_data(header_data)
+    header_texts = use_case_tool.get_filter_names()
+    obj_titles += header_texts
     object_model = use_case_tool.get_object_model()
     use_case_tool.set_header_labels(object_model, obj_titles)
-    pset_titles += use_case_list
+    pset_titles += header_texts
     pset_model = use_case_tool.get_pset_model()
     use_case_tool.set_header_labels(pset_model, pset_titles)
 

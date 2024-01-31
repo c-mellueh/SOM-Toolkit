@@ -53,6 +53,11 @@ class Project(som_gui.core.tool.Project):
         return proj.get_project_phase_list()
 
     @classmethod
+    def get_project_phase_name_list(cls):
+        proj = cls.get()
+        return [ph.name for ph in proj.get_project_phase_list()]
+
+    @classmethod
     def reset_project_infos(cls):
         prop: ProjectProperties = cls.get_project_properties()
         prop.project_infos = list()
@@ -92,9 +97,11 @@ class Project(som_gui.core.tool.Project):
         proj.name = name
 
     @classmethod
-    def set_project_phase(cls, phase: str):
+    def set_project_phase(cls, phase_name: str):
         proj = cls.get()
-        proj.current_project_phase = phase
+        phase = proj.get_project_phase_by_name(phase_name)
+        if phase is not None:
+            proj.current_project_phase = phase
 
     @classmethod
     def get_project_version(cls):
@@ -117,13 +124,17 @@ class Project(som_gui.core.tool.Project):
         return proj.current_project_phase
 
     @classmethod
+    def get_project_phase_name(cls):
+        return cls.get_project_phase().name
+
+    @classmethod
     def create_project_infos(cls):
         logging.debug(f"Create Project Infos")
         cls.add_project_setting(cls.get_project_version, cls.set_project_version, VERSION)
         cls.add_project_setting(cls.get_project_author, cls.set_project_author, AUTHOR)
         cls.add_project_setting(cls.get_project_name, cls.set_project_name, NAME)
-        cls.add_project_setting(cls.get_project_phase, cls.set_project_phase, PROJECT_PHASE,
-                                cls.get_project_phase_list)
+        cls.add_project_setting(cls.get_project_phase_name, cls.set_project_phase, PROJECT_PHASE,
+                                cls.get_project_phase_name_list)
 
     @classmethod
     def load_project(cls, path: str):

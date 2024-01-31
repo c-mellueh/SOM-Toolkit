@@ -18,7 +18,6 @@ class UseCaseData:
     def load(cls):
         cls.data["data_classes"] = cls.load_data_classes()
 
-
     @classmethod
     def load_data_classes(cls):
         proj: SOMcreator.Project = som_gui.ProjectProperties.active_project
