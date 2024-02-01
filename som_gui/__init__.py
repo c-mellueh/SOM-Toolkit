@@ -10,6 +10,7 @@ import importlib
 
 modules = {
     "object_filter": None,
+    "project_filter": None,
     "project": None,
     "objects": None,
     "search": None,

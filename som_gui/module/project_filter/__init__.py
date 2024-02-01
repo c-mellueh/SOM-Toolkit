@@ -1,8 +1,8 @@
-from . import ui, prop, trigger
-
+from . import ui, prop, trigger, window
+import som_gui
 
 def register():
-    pass
+    som_gui.ProjectFilterProperties = prop.ProjectFilterProperties
 
 
 def load_ui_triggers():

@@ -6,4 +6,6 @@ if TYPE_CHECKING:
 
 
 def open_project_filter_window(project_filter_tool: Type[tool.ProjectFilter], project_tool: Type[tool.Project]):
+    window = project_filter_tool.create_dialog()
+    window.show()
     pass
