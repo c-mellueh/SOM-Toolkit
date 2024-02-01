@@ -46,7 +46,6 @@ def fill_old_menus(main_window_tool: Type[MainWindow]):
     """
     from som_gui.filehandling import export as fh_export
     from som_gui.windows.modelcheck import modelcheck_window
-    from som_gui.windows.project_phases import gui as project_phase_window
     main_window = som_gui.MainUi.window
     main_window_tool.add_action("Datei/Export/Vestra", lambda: fh_export.export_vestra_mapping(main_window))
     main_window_tool.add_action("Datei/Export/Card1", lambda: fh_export.export_card_1(main_window))
