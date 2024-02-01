@@ -8,9 +8,9 @@ class ProjectFilterDialog(QDialog):
         super().__init__()
         self.widget = som_gui.module.project_filter.window.Ui_Dialog()
         self.widget.setupUi(self)
+        self.setWindowIcon(get_icon())
 
 
 class ProjectFilterTable(QTableWidget):
     def __init__(self, parent):
         super().__init__(parent)
-        self.setWindowIcon(get_icon())
