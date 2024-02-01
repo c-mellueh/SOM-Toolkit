@@ -1,5 +1,5 @@
 from som_gui.tool.project import Project
-from som_gui.tool.use_case import UseCase
+from som_gui.tool.object_filter import ObjectFilter
 from som_gui.tool.settings import Settings
 from som_gui.tool.object import Object
 from som_gui.tool.search import Search

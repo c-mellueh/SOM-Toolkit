@@ -6,34 +6,34 @@ from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtWidgets import QTreeView, QMenu, QInputDialog, QLineEdit, QWidget
 import som_gui.core.tool
 from som_gui.tool.project import Project
-from som_gui.module.use_case import data as use_case_data
-from som_gui.module import use_case
-import som_gui.module.use_case.constants
+from som_gui.module.object_filter import data as object_filter_data
+from som_gui.module import object_filter
+import som_gui.module.object_filter.constants
 import som_gui
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QAction
 from typing import TYPE_CHECKING
 from som_gui.module.project.constants import CLASS_REFERENCE
 
 if TYPE_CHECKING:
-    from som_gui.module.use_case.prop import UseCaseProperties
+    from som_gui.module.object_filter.prop import ObjectFilterProperties
 
 USE_CASE = "Anwedungsfall"
 
 
-class UseCase(som_gui.core.tool.UseCase):
+class ObjectFilter(som_gui.core.tool.ObjectFilter):
     @classmethod
     def set_header_data(cls, header_data: list[list[str, int, int]]):
-        prop = cls.get_use_case_properties()
+        prop = cls.get_objectfilter_properties()
         prop.header_data = header_data
 
     @classmethod
     def get_filter_names(cls):
-        prop = cls.get_use_case_properties()
+        prop = cls.get_objectfilter_properties()
         return [li[0] for li in prop.header_data]
 
     @classmethod
     def get_filter_indexes(cls):
-        prop = cls.get_use_case_properties()
+        prop = cls.get_objectfilter_properties()
         return [[li[1], li[2]] for li in prop.header_data]
 
     @classmethod
@@ -54,7 +54,7 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def get_widget(cls):
-        return cls.get_use_case_properties().use_case_window.widget
+        return cls.get_objectfilter_properties().object_filter_window.widget
 
     @classmethod
     def format_object_tree_header(cls):
@@ -63,28 +63,28 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def get_object_tree(cls):
-        return cls.get_use_case_properties().use_case_window.widget.object_tree
+        return cls.get_objectfilter_properties().object_filter_window.widget.object_tree
 
     @classmethod
     def get_pset_tree(cls):
-        return cls.get_use_case_properties().use_case_window.widget.property_set_tree
+        return cls.get_objectfilter_properties().object_filter_window.widget.property_set_tree
 
     @classmethod
-    def get_use_case_properties(cls) -> UseCaseProperties:
-        return som_gui.UseCaseProperties
+    def get_objectfilter_properties(cls) -> ObjectFilterProperties:
+        return som_gui.ObjectFilterProperties
 
     @classmethod
     def create_window(cls):
-        window = cls.get_use_case_properties().use_case_window
+        window = cls.get_objectfilter_properties().object_filter_window
 
         if not window:
-            window = use_case.ui.UseCaseWindow()
-        cls.get_use_case_properties().use_case_window = window
+            window = object_filter.ui.ObjectFilterWindow()
+        cls.get_objectfilter_properties().object_filter_window = window
         return window
 
     @classmethod
     def reset_use_case_data(cls):
-        use_case_data.refresh()
+        object_filter_data.refresh()
 
     @classmethod
     def set_active_use_case(cls, value: str):
@@ -132,7 +132,7 @@ class UseCase(som_gui.core.tool.UseCase):
     @classmethod
     def get_check_state(cls, project_phase_index: int, use_case_index: int,
                         entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.PropertySet):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
 
         if isinstance(entity, SOMcreator.Object):
             data_dict = prop.object_dict
@@ -151,7 +151,7 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def update_object_use_cases(cls):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         proj = Project.get()
         project_use_case_list = proj.get_use_case_list()
         project_phase_list = proj.get_project_phase_list()
@@ -165,7 +165,7 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def update_pset_use_cases(cls):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         proj = Project.get()
         project_use_case_list = proj.get_use_case_list()
         project_phase_list = proj.get_project_phase_list()
@@ -178,7 +178,7 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def update_attribute_uses_cases(cls):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         proj = Project.get()
         project_use_case_list = proj.get_use_case_list()
         project_phase_list = proj.get_project_phase_list()
@@ -204,16 +204,16 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def delete_use_case_window(cls) -> QWidget:
-        prop: UseCaseProperties = som_gui.UseCaseProperties
-        old_window = prop.use_case_window
-        prop.use_case_window = None
+        prop = cls.get_objectfilter_properties()
+        old_window = prop.object_filter_window
+        prop.object_filter_window = None
         prop.active_object = None
-        use_case_data.refresh()
+        object_filter_data.refresh()
         return old_window
 
     @classmethod
     def add_use_case(cls, use_case_name: str) -> None:
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         prop.use_cases.append(use_case_name)
         for data_dict in [prop.object_dict, prop.pset_dict, prop.attribute_dict]:
             for use_case_dict in data_dict.values():
@@ -226,7 +226,7 @@ class UseCase(som_gui.core.tool.UseCase):
             column = title_length + index
             model.removeColumn(column)
 
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         use_case_text = prop.use_cases[use_case_index]
         prop.use_cases.pop(use_case_index)
         remove_use_case_column(use_case_index, cls.get_object_model())
@@ -249,8 +249,8 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def request_rename_use_case_name(cls, old_name):
-        prop = som_gui.UseCaseProperties
-        active_window = prop.use_case_window
+        prop = cls.get_objectfilter_properties()
+        active_window = prop.object_filter_window
         new_name, ok = QInputDialog.getText(active_window, "Anwendungsfall umbenennen", "Neuer Name:",
                                             QLineEdit.EchoMode.Normal, old_name)
         if not ok:
@@ -259,7 +259,7 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def rename_use_case(cls, use_case_index: int, new_name: str) -> None:
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         old_name = prop.use_cases[use_case_index]
         prop.use_cases[use_case_index] = new_name
         for data_dict in [prop.object_dict, prop.pset_dict, prop.attribute_dict]:
@@ -361,7 +361,7 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def get_active_object(cls):
-        return som_gui.UseCaseProperties.active_object
+        return cls.get_objectfilter_properties().active_object
 
     @classmethod
     def get_index_by_object(cls, obj: SOMcreator.Object) -> QModelIndex:
@@ -381,10 +381,10 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def load_use_cases(cls):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
-        if not use_case_data.UseCaseData.is_loaded:
-            use_case_data.UseCaseData.load()
-        prop.use_cases = use_case_data.UseCaseData.data["data_classes"]
+        prop = cls.get_objectfilter_properties()
+        if not object_filter_data.ObjectFilterData.is_loaded:
+            object_filter_data.ObjectFilterData.load()
+        prop.use_cases = object_filter_data.ObjectFilterData.data["data_classes"]
         logging.debug(f"Use Cases: {prop.use_cases}")
         object_dict = dict()
         pset_dict = dict()
@@ -401,16 +401,16 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def create_tree_models(cls):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
-        object_tree = prop.use_case_window.widget.object_tree
+        prop = cls.get_objectfilter_properties()
+        object_tree = prop.object_filter_window.widget.object_tree
         object_tree.setModel(QStandardItemModel())
-        property_set_tree = prop.use_case_window.widget.property_set_tree
+        property_set_tree = prop.object_filter_window.widget.property_set_tree
         model = QStandardItemModel()
         property_set_tree.setModel(model)
 
     @classmethod
     def get_use_case_list(cls) -> list[SOMcreator.classes.UseCase]:
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         return prop.use_cases
 
     @classmethod
@@ -423,8 +423,8 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def get_header_texts(cls):
-        obj_title = list(som_gui.module.use_case.constants.OBJECT_TITLES)
-        pset_titles = list(som_gui.module.use_case.constants.PSET_TITLES)
+        obj_title = list(som_gui.module.object_filter.constants.OBJECT_TITLES)
+        pset_titles = list(som_gui.module.object_filter.constants.PSET_TITLES)
         return obj_title, pset_titles
 
     @classmethod
@@ -438,9 +438,9 @@ class UseCase(som_gui.core.tool.UseCase):
     def get_title_count_by_index(cls, index) -> int:
         model = index.model()
         if model == cls.get_object_model():
-            return len(som_gui.module.use_case.constants.OBJECT_TITLES)
+            return len(som_gui.module.object_filter.constants.OBJECT_TITLES)
         if model == cls.get_pset_model():
-            return len(som_gui.module.use_case.constants.PSET_TITLES)
+            return len(som_gui.module.object_filter.constants.PSET_TITLES)
         return 0
 
     @classmethod
@@ -466,22 +466,22 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def get_object_model(cls) -> QStandardItemModel:
-        prop: UseCaseProperties = som_gui.UseCaseProperties
-        return prop.use_case_window.widget.object_tree.model()
+        prop = cls.get_objectfilter_properties()
+        return prop.object_filter_window.widget.object_tree.model()
 
     @classmethod
     def get_pset_model(cls) -> QStandardItemModel:
-        prop: UseCaseProperties = som_gui.UseCaseProperties
-        return prop.use_case_window.widget.property_set_tree.model()
+        prop = cls.get_objectfilter_properties()
+        return prop.object_filter_window.widget.property_set_tree.model()
 
     @classmethod
     def is_tree_clicked(cls) -> bool:
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         return prop.tree_is_clicked
 
     @classmethod
     def tree_activate_click_drag(cls, index: QModelIndex):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         prop.tree_is_clicked = True
         checkstate = index.data(Qt.ItemDataRole.CheckStateRole)
         prop.active_check_state = checkstate
@@ -500,14 +500,14 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def tree_release_click_drag(cls, index: QModelIndex):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         prop.tree_is_clicked = False
         prop.active_check_state = None
         focus_index = index.sibling(index.row(), 0)
 
     @classmethod
     def get_active_checkstate(cls) -> Qt.CheckState:
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         return prop.active_check_state
 
     @classmethod
@@ -523,15 +523,15 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def set_active_object(cls, obj: SOMcreator.Object):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         prop.active_object = obj
         cls.update_active_object_label()
 
     @classmethod
     def update_active_object_label(cls):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         active_object = prop.active_object
-        label = prop.use_case_window.widget.label_object
+        label = prop.object_filter_window.widget.label_object
         if active_object is None:
             label.hide()
         else:
@@ -541,9 +541,9 @@ class UseCase(som_gui.core.tool.UseCase):
     @classmethod
     def update_pset_tree(cls):
         active_object = cls.get_active_object()
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
 
-        pset_tree = prop.use_case_window.widget.property_set_tree
+        pset_tree = prop.object_filter_window.widget.property_set_tree
         if active_object is None:
             pset_tree.setModel(QStandardItemModel())
             return
@@ -589,17 +589,17 @@ class UseCase(som_gui.core.tool.UseCase):
 
     @classmethod
     def get_object_dict(cls):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         return prop.object_dict
 
     @classmethod
     def get_pset_dict(cls):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         return prop.pset_dict
 
     @classmethod
     def get_attribute_dict(cls):
-        prop: UseCaseProperties = som_gui.UseCaseProperties
+        prop = cls.get_objectfilter_properties()
         return prop.attribute_dict
 
     @classmethod

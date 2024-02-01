@@ -1,16 +1,15 @@
 from dataclasses import dataclass
-from som_gui.tool.project import Project
 import SOMcreator
 
 import som_gui
 
 
 def refresh():
-    UseCaseData.is_loaded = False
+    ObjectFilterData.is_loaded = False
 
 
 @dataclass
-class UseCaseData:
+class ObjectFilterData:
     data = {}
     is_loaded = False
 

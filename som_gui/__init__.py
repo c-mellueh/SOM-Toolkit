@@ -9,7 +9,7 @@ __version__ = "2.10.0bugfix"
 import importlib
 
 modules = {
-    "use_case": None,
+    "object_filter": None,
     "project": None,
     "objects": None,
     "search": None,

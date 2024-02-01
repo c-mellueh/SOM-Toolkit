@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication,
     QHeaderView, QLabel, QSizePolicy, QSplitter,
     QVBoxLayout, QWidget)
 
-from som_gui.module.use_case.ui import ObjectTreeView
+from som_gui.module.object_filter.ui import ObjectTreeView
 
 class Ui_Form(object):
     def setupUi(self, Form):

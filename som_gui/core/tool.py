@@ -137,7 +137,7 @@ class Object:
     def update_item(self, item, obj): pass
 
 
-class UseCase:
+class ObjectFilter:
     def add_use_case(self, use_case_name): pass
 
     def add_use_case_to_settings_window(self): pass
