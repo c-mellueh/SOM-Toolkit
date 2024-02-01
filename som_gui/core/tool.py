@@ -297,3 +297,7 @@ class Settings:
     def set_open_path(self, path): pass
 
     def set_save_path(self, path): pass
+
+
+class ProjectFilter:
+    pass
