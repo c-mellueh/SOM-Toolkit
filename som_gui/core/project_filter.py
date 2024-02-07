@@ -5,6 +5,7 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 
 if TYPE_CHECKING:
     from som_gui import tool
+    from PySide6.QtWidgets import QTableWidgetItem
 
 
 def open_project_filter_window(project_filter_tool: Type[tool.ProjectFilter], project_tool: Type[tool.Project]):
@@ -40,14 +41,8 @@ def context_menu(local_pos, orientation: int, project_filter: Type[tool.ProjectF
     project_filter.set_selected_header(item)
     project_filter.create_context_menu(index, menu_list, pos)
 
-    pass
 
-
-def update_project_filter(project_filter_tool: Type[tool.ProjectFilter]):
-    pass
-
-
-def refresh_table(project_filter: Type[tool.ProjectFilter], project: Type[tool.Project]):
+def refresh_table(project_filter: Type[tool.ProjectFilter]):
     use_case_list = project_filter.get_use_case_list()
     phase_list = project_filter.get_phase_list()
     table = project_filter.get_table()
@@ -68,3 +63,10 @@ def refresh_table(project_filter: Type[tool.ProjectFilter], project: Type[tool.P
 
 def close_dialog(project_filter_tool: Type[tool.ProjectFilter]):
     project_filter_tool.delete_dialog()
+
+
+def item_changed(item: QTableWidgetItem, project_filter: Type[tool.ProjectFilter]):
+    use_case = project_filter.get_header_item(item.column(), Qt.Orientation.Horizontal)
+    phase = project_filter.get_header_item(item.row(), Qt.Orientation.Vertical)
+    state = True if item.checkState() == Qt.CheckState.Checked else False
+    project_filter.set_state(use_case, phase, state)

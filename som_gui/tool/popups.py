@@ -10,8 +10,10 @@ FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
 
 class Popups(som_gui.core.tool.Popups):
     @classmethod
-    def _request_text_input(cls, title: str, request_text, prefill):
-        answer = QInputDialog.getText(som_gui.MainUi.window, title, request_text,
+    def _request_text_input(cls, title: str, request_text, prefill, parent=None):
+        if parent is None:
+            parent = som_gui.MainUi.window
+        answer = QInputDialog.getText(parent, title, request_text,
                                       QLineEdit.EchoMode.Normal,
                                       prefill)
         if answer[1]:
@@ -67,12 +69,12 @@ class Popups(som_gui.core.tool.Popups):
         return cls._request_text_input("Neues Projekt", "Projekt Name", "")
 
     @classmethod
-    def get_new_use_case_name(cls, old_name: str = ""):
-        return cls._request_text_input("Anwendungsfall umbenennen", "Neuer Name", old_name)
+    def get_new_use_case_name(cls, old_name: str = "", parent=None):
+        return cls._request_text_input("Anwendungsfall umbenennen", "Neuer Name", old_name, parent)
 
     @classmethod
-    def get_phase_name(cls, old_name: str = ""):
-        return cls._request_text_input("Leistungsphase umbenennen", "Neuer Name", old_name)
+    def get_phase_name(cls, old_name: str = "", parent=None):
+        return cls._request_text_input("Leistungsphase umbenennen", "Neuer Name", old_name, parent)
 
 
     @classmethod

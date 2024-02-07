@@ -25,6 +25,7 @@ class ProjectFilterTable(QTableWidget):
         self.verticalHeader().customContextMenuRequested.connect(
             som_gui.module.project_filter.trigger.pp_context_menu_requested)
 
+        self.itemClicked.connect(som_gui.module.project_filter.trigger.item_changed)
     def paintEvent(self, e):
         super().paintEvent(e)
         som_gui.module.project_filter.trigger.refresh_table()

@@ -25,7 +25,7 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(640, 480)
+        Dialog.resize(1047, 698)
         self.gridLayout = QGridLayout(Dialog)
         self.gridLayout.setObjectName(u"gridLayout")
         self.tableWidget = ProjectFilterTable(Dialog)
@@ -33,6 +33,7 @@ class Ui_Dialog(object):
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.tableWidget.setDragEnabled(True)
         self.tableWidget.setDragDropMode(QAbstractItemView.InternalMove)
+        self.tableWidget.horizontalHeader().setStretchLastSection(True)
 
         self.gridLayout.addWidget(self.tableWidget, 0, 0, 1, 1)
 

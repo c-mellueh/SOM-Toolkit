@@ -7,7 +7,7 @@ from som_gui.module import project_filter
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui import tool
 from typing import TYPE_CHECKING, Callable
-from PySide6.QtWidgets import QTableWidgetItem, QMenu
+from PySide6.QtWidgets import QTableWidgetItem, QMenu, QCheckBox
 from PySide6.QtGui import QStandardItemModel, QAction
 from PySide6.QtCore import Qt, QAbstractItemModel
 from SOMcreator.classes import UseCase, Phase
@@ -49,9 +49,9 @@ class ProjectFilter(som_gui.core.tool.ProjectFilter):
         props = cls.get_properties()
         filter_item = props.selected_header
         if isinstance(filter_item, UseCase):
-            new_name = tool.Popups.get_new_use_case_name(filter_item.name)
+            new_name = tool.Popups.get_new_use_case_name(filter_item.name, props.project_filter_dialog)
         else:
-            new_name = tool.Popups.get_phase_name(filter_item.name)
+            new_name = tool.Popups.get_phase_name(filter_item.name, props.project_filter_dialog)
         filter_item.name = new_name
 
     @classmethod
@@ -60,6 +60,7 @@ class ProjectFilter(som_gui.core.tool.ProjectFilter):
         new_use_case = UseCase(new_name, new_name, "")
         proj = tool.Project.get()
         proj.add_use_case(new_use_case)
+        cls.get_table().resizeColumnsToContents()
 
     @classmethod
     def add_phase(cls):
@@ -67,6 +68,7 @@ class ProjectFilter(som_gui.core.tool.ProjectFilter):
         new_name = tool.Project.get_new_name("Neue Leistungsphase", [pp.name for pp in cls.get_phase_list()])
         new_phase = Phase(new_name, new_name, "")
         proj.add_project_phase(new_phase)
+        cls.get_table().resizeRowsToContents()
 
     @classmethod
     def delete_dialog(cls):
@@ -169,3 +171,8 @@ class ProjectFilter(som_gui.core.tool.ProjectFilter):
     @classmethod
     def get_filter_matrix(cls):
         return tool.Project.get().get_filter_matrix()
+
+    @classmethod
+    def set_state(cls, use_case, phase, state):
+        proj = tool.Project.get()
+        proj.set_filter_state(phase, use_case, state)
