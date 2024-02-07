@@ -15,7 +15,33 @@ import os
 from PySide6.QtWidgets import QFileDialog
 import json
 
+
 class Project(som_gui.core.tool.Project):
+
+    @classmethod
+    def get_new_name(cls, standard_name: str, existing_names: list[str]) -> str:
+        def loop_name(new_name):
+            if new_name in existing_names:
+                if new_name == standard_name:
+                    return loop_name(f"{new_name}_1")
+                index = int(new_name[-1])
+                return loop_name(f"{new_name[:-1]}{index + 1}")
+            return new_name
+
+        return loop_name(standard_name)
+
+    @classmethod
+    def get_filter_matrix(cls):
+        return cls.get().get_filter_matrix()
+
+    @classmethod
+    def get_use_cases(cls):
+        return cls.get().get_use_case_list()
+
+    @classmethod
+    def get_phases(cls):
+        return cls.get().get_project_phase_list()
+
     @classmethod
     def get_project_properties(cls) -> ProjectProperties:
         return som_gui.ProjectProperties

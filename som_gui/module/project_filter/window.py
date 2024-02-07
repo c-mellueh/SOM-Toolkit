@@ -15,12 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QFont, QFontDatabase, QGradient, QIcon,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
-                               QGridLayout, QHeaderView, QSizePolicy, QTableWidgetItem,
-                               QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QDialog,
+                               QDialogButtonBox, QGridLayout, QHeaderView, QSizePolicy,
+                               QTableWidgetItem, QWidget)
 
 from som_gui.module.project_filter.ui import ProjectFilterTable
-
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -31,6 +30,10 @@ class Ui_Dialog(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.tableWidget = ProjectFilterTable(Dialog)
         self.tableWidget.setObjectName(u"tableWidget")
+        self.tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableWidget.setDragEnabled(True)
+        self.tableWidget.setDragDropMode(QAbstractItemView.InternalMove)
 
         self.gridLayout.addWidget(self.tableWidget, 0, 0, 1, 1)
 
@@ -46,9 +49,9 @@ class Ui_Dialog(object):
         self.buttonBox.rejected.connect(Dialog.reject)
 
         QMetaObject.connectSlotsByName(Dialog)
-
     # setupUi
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
     # retranslateUi
+
