@@ -8,15 +8,11 @@ if TYPE_CHECKING:
 
 
 def open_project_filter_window(project_filter_tool: Type[tool.ProjectFilter], project_tool: Type[tool.Project]):
-    print(project_tool.get().get_use_case_list())
     dialog = project_filter_tool.create_dialog()
     project_filter_tool.fill_filter_properties()
     project_filter_tool.create_header()
-
-    if dialog.exec():
-        update_project_filter(project_filter_tool)
-    else:
-        close_dialog(project_filter_tool)
+    dialog.exec()
+    close_dialog(project_filter_tool)
 
 
 def context_menu(local_pos, orientation: int, project_filter: Type[tool.ProjectFilter]):

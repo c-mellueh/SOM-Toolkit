@@ -38,43 +38,35 @@ class ProjectFilter(som_gui.core.tool.ProjectFilter):
     def delete_filter(cls):
         props = cls.get_properties()
         filter_item = props.selected_header
-        print(filter_item)
+        proj = tool.Project.get()
         if isinstance(filter_item, UseCase):
-            props.use_cases.remove(filter_item)
-            props.delete_use_cases.append(filter_item)
+            proj.remove_use_case(filter_item.name)
         else:
-            props.phases.remove(filter_item)
-            props.delete_phases.append(filter_item)
+            proj.remove_project_phase(filter_item.name)
 
     @classmethod
     def rename_filter(cls):
         props = cls.get_properties()
         filter_item = props.selected_header
         if isinstance(filter_item, UseCase):
-            props.use_cases.remove(filter_item)
-            props.delete_use_cases.append(filter_item)
+            new_name = tool.Popups.get_new_use_case_name(filter_item.name)
         else:
-            props.phases.remove(filter_item)
-            props.delete_phases.append(filter_item)
+            new_name = tool.Popups.get_phase_name(filter_item.name)
+        filter_item.name = new_name
 
     @classmethod
     def add_use_case(cls):
-        props = cls.get_properties()
         new_name = tool.Project.get_new_name("Neuer Anwendungsfall", [uc.name for uc in cls.get_use_case_list()])
         new_use_case = UseCase(new_name, new_name, "")
-        props.use_cases.append(new_use_case)
-        props.add_use_cases.append(new_use_case)
-        for uc_list in props.filter_matrix:
-            uc_list.append(True)
+        proj = tool.Project.get()
+        proj.add_use_case(new_use_case)
 
     @classmethod
     def add_phase(cls):
-        props = cls.get_properties()
+        proj = tool.Project.get()
         new_name = tool.Project.get_new_name("Neue Leistungsphase", [pp.name for pp in cls.get_phase_list()])
         new_phase = Phase(new_name, new_name, "")
-        props.phases.append(new_phase)
-        props.add_phases.append(new_phase)
-        props.filter_matrix.append([True for _ in props.use_cases])
+        proj.add_project_phase(new_phase)
 
     @classmethod
     def delete_dialog(cls):
@@ -82,11 +74,11 @@ class ProjectFilter(som_gui.core.tool.ProjectFilter):
 
     @classmethod
     def get_use_case_list(cls):
-        return cls.get_properties().use_cases
+        return tool.Project.get().get_use_case_list()
 
     @classmethod
     def get_phase_list(cls):
-        return cls.get_properties().phases
+        return tool.Project.get().get_project_phase_list()
 
     @classmethod
     def fill_filter_properties(cls):
@@ -170,7 +162,10 @@ class ProjectFilter(som_gui.core.tool.ProjectFilter):
     @classmethod
     def get_filter_state(cls, phase: Phase, use_case: UseCase):
         prop = cls.get_properties()
+        phase_index = cls.get_phase_list().index(phase)
+        use_case_index = cls.get_use_case_list().index(use_case)
+        return cls.get_filter_matrix()[phase_index][use_case_index]
 
-        phase_index = prop.phases.index(phase)
-        use_case_index = prop.use_cases.index(use_case)
-        return prop.filter_matrix[phase_index][use_case_index]
+    @classmethod
+    def get_filter_matrix(cls):
+        return tool.Project.get().get_filter_matrix()

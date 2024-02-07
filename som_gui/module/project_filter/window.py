@@ -30,7 +30,6 @@ class Ui_Dialog(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.tableWidget = ProjectFilterTable(Dialog)
         self.tableWidget.setObjectName(u"tableWidget")
-        self.tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.tableWidget.setDragEnabled(True)
         self.tableWidget.setDragDropMode(QAbstractItemView.InternalMove)
@@ -40,7 +39,8 @@ class Ui_Dialog(object):
         self.buttonBox = QDialogButtonBox(Dialog)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Ok)
+        self.buttonBox.setCenterButtons(False)
 
         self.gridLayout.addWidget(self.buttonBox, 1, 0, 1, 1)
 
