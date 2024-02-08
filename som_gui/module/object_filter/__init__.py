@@ -1,9 +1,9 @@
 import som_gui
-from som_gui.module.use_case import ui, trigger, prop, window
+from som_gui.module.object_filter import ui, trigger, prop, window
 import logging
 
 def register():
-    som_gui.UseCaseProperties = prop.UseCaseProperties
+    som_gui.ObjectFilterProperties = prop.ObjectFilterProperties
 
 
 def load_ui_triggers():

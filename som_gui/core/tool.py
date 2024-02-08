@@ -137,7 +137,7 @@ class Object:
     def update_item(self, item, obj): pass
 
 
-class UseCase:
+class ObjectFilter:
     def add_use_case(self, use_case_name): pass
 
     def add_use_case_to_settings_window(self): pass
@@ -188,7 +188,7 @@ class UseCase:
 
     def get_use_case_list(self): pass
 
-    def get_use_case_state(self, use_case_name, entity): pass
+    def get_check_state(self, project_phase_index, use_case_index, entity): pass
 
     def is_object_enabled(self, index): pass
 
@@ -297,3 +297,7 @@ class Settings:
     def set_open_path(self, path): pass
 
     def set_save_path(self, path): pass
+
+
+class ProjectFilter:
+    pass

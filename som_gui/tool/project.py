@@ -15,7 +15,33 @@ import os
 from PySide6.QtWidgets import QFileDialog
 import json
 
+
 class Project(som_gui.core.tool.Project):
+
+    @classmethod
+    def get_new_name(cls, standard_name: str, existing_names: list[str]) -> str:
+        def loop_name(new_name):
+            if new_name in existing_names:
+                if new_name == standard_name:
+                    return loop_name(f"{new_name}_1")
+                index = int(new_name[-1])
+                return loop_name(f"{new_name[:-1]}{index + 1}")
+            return new_name
+
+        return loop_name(standard_name)
+
+    @classmethod
+    def get_filter_matrix(cls):
+        return cls.get().get_filter_matrix()
+
+    @classmethod
+    def get_use_cases(cls):
+        return cls.get().get_use_case_list()
+
+    @classmethod
+    def get_phases(cls):
+        return cls.get().get_project_phase_list()
+
     @classmethod
     def get_project_properties(cls) -> ProjectProperties:
         return som_gui.ProjectProperties
@@ -51,6 +77,11 @@ class Project(som_gui.core.tool.Project):
     def get_project_phase_list(cls):
         proj = cls.get()
         return proj.get_project_phase_list()
+
+    @classmethod
+    def get_project_phase_name_list(cls):
+        proj = cls.get()
+        return [ph.name for ph in proj.get_project_phase_list()]
 
     @classmethod
     def reset_project_infos(cls):
@@ -92,9 +123,11 @@ class Project(som_gui.core.tool.Project):
         proj.name = name
 
     @classmethod
-    def set_project_phase(cls, phase: str):
+    def set_project_phase(cls, phase_name: str):
         proj = cls.get()
-        proj.current_project_phase = phase
+        phase = proj.get_project_phase_by_name(phase_name)
+        if phase is not None:
+            proj.current_project_phase = phase
 
     @classmethod
     def get_project_version(cls):
@@ -117,13 +150,17 @@ class Project(som_gui.core.tool.Project):
         return proj.current_project_phase
 
     @classmethod
+    def get_project_phase_name(cls):
+        return cls.get_project_phase().name
+
+    @classmethod
     def create_project_infos(cls):
         logging.debug(f"Create Project Infos")
         cls.add_project_setting(cls.get_project_version, cls.set_project_version, VERSION)
         cls.add_project_setting(cls.get_project_author, cls.set_project_author, AUTHOR)
         cls.add_project_setting(cls.get_project_name, cls.set_project_name, NAME)
-        cls.add_project_setting(cls.get_project_phase, cls.set_project_phase, PROJECT_PHASE,
-                                cls.get_project_phase_list)
+        cls.add_project_setting(cls.get_project_phase_name, cls.set_project_phase, PROJECT_PHASE,
+                                cls.get_project_phase_name_list)
 
     @classmethod
     def load_project(cls, path: str):

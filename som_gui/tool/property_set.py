@@ -96,7 +96,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
     def add_predefined_pset(cls):
         existing_names = [p.name for p in cls.get_predefined_psets()]
-        cls.create_property_set(tool.UseCase.get_new_use_case_name("Neues PropertySet", existing_names))
+        cls.create_property_set(tool.ObjectFilter.get_new_use_case_name("Neues PropertySet", existing_names))
 
     @classmethod
     def create_context_menu(cls, global_pos, function_list: list[list[str, Callable]]):

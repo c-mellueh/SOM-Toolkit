@@ -4,12 +4,13 @@ from thefuzz import fuzz
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow, Ui_MainWindow
 
-__version__ = "2.10.0bugfix"
+__version__ = "2.10.1"
 
 import importlib
 
 modules = {
-    "use_case": None,
+    "object_filter": None,
+    "project_filter": None,
     "project": None,
     "objects": None,
     "search": None,

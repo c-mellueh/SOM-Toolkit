@@ -15,7 +15,6 @@ from .windows import (
     grouping_window,
 )
 from .module.project import ui
-from .windows.project_phases import gui as project_phase_window
 from .windows.modelcheck import modelcheck_window
 from .windows.attribute_import.gui import AttributeImport
 
@@ -45,7 +44,6 @@ class MainWindow(QMainWindow):
         # Windows
         self.group_window: grouping_window.GroupingWindow | None = None
         self.model_control_window: AttributeImport | None = None
-        self.project_phase_window: project_phase_window.ProjectPhaseWindow | None = None
         self.graph_window = aggregation_window.AggregationWindow(self)
         self.mapping_window = None
         self.modelcheck_window: modelcheck_window.ModelcheckWindow | None = None
