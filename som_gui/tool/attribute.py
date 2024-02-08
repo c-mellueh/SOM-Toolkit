@@ -8,7 +8,7 @@ from typing import Callable, TYPE_CHECKING, Any
 from som_gui import tool
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
 from PySide6 import QtGui
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QPoint
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.property_set import ui as property_set_ui
 
@@ -18,6 +18,28 @@ if TYPE_CHECKING:
 
 
 class Attribute(som_gui.core.tool.Attribute):
+    @classmethod
+    def set_active_attribute(cls, attribute: SOMcreator.Attribute):
+        prop = cls.get_attribute_properties()
+        prop.active_attribute = attribute
+
+    @classmethod
+    def edit_attribute_name(cls):
+        attribute = cls.get_attribute_properties().active_attribute
+        window = tool.PropertySet.get_active_window()
+        answer = tool.Popups.request_attribute_name(attribute.name, window)
+        if answer:
+            attribute.name = answer
+
+    @classmethod
+    def delete(cls):
+        attribute = cls.get_attribute_properties().active_attribute
+        attribute.delete()
+
+    @classmethod
+    def get_item_from_pos(cls, table: QTableWidget, pos: QPoint):
+        item = table.itemAt(pos)
+        return cls.get_attribute_from_item(item)
 
     @classmethod
     def get_table(cls, window: PropertySetWindow):

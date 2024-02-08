@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 def pset_table_context_menu_requested(pos):
     core.pset_table_context_menu(pos, tool.PropertySet)
 
-
 def pset_name_changed(text, index):
     core.rename_pset_by_editor(text, index, tool.PropertySet)
 
@@ -36,6 +35,8 @@ def connect_property_set_window(window: PropertySetWindow):
     window.widget.button_add.clicked.connect(
         lambda: core.add_attribute_button_clicked(window, tool.PropertySet, tool.Attribute))
 
+    window.widget.table_widget.customContextMenuRequested.connect(
+        lambda pos: core.pset_window_context_menu(window, pos, tool.PropertySet, tool.Attribute))
     window.widget.combo_type.currentIndexChanged.connect(lambda: core.value_type_changed(window, tool.PropertySet))
     window.widget.line_edit_seperator.textChanged.connect(
         lambda: core.update_seperator(window, tool.PropertySet, tool.Settings))

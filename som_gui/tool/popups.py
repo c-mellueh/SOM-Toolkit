@@ -20,6 +20,11 @@ class Popups(som_gui.core.tool.Popups):
             return answer[0]
         else:
             return None
+
+    @classmethod
+    def request_attribute_name(cls, old_name, parent):
+        return cls._request_text_input("Attribut umbenennen", "Neuer Name für Attribut:", old_name, parent)
+
     @classmethod
     def request_save_before_exit(cls):
         icon = get_icon()

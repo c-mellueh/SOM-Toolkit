@@ -21,6 +21,20 @@ def pset_table_edit_stopped(property_set_tool: Type[PropertySet]):
     property_set_tool.pset_table_edit_stopped()
 
 
+def pset_window_context_menu(window, pos, property_set: Type[PropertySet], attribute: Type[Attribute]):
+    table = attribute.get_table(window)
+    active_attribute = attribute.get_item_from_pos(table, pos)
+    attribute.set_active_attribute(active_attribute)
+    property_set.set_active_window(window)
+    if active_attribute.property_set.object.ident_attrib == active_attribute:
+
+        actions = [["Umbenennen", attribute.edit_attribute_name], ]
+    else:
+
+        actions = [["Umbenennen", attribute.edit_attribute_name],
+                   ["Löschen", attribute.delete], ]
+    property_set.create_context_menu(table.mapToGlobal(pos), actions)
+
 def pset_table_context_menu(pos, property_set_tool: Type[PropertySet]):
     table = property_set_tool.get_table()
     pset = property_set_tool.get_pset_from_item(table.itemAt(pos))
