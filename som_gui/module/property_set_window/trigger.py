@@ -22,7 +22,7 @@ def connect_window(window: PropertySetWindow):
         lambda: core.add_attribute_button_clicked(window, tool.PropertySet, tool.PropertySetWindow, tool.Attribute))
 
     window.widget.table_widget.customContextMenuRequested.connect(
-        lambda pos: core.context_menu(window, pos, tool.PropertySet, tool.Attribute))
+        lambda pos: core.context_menu(window, pos, tool.PropertySet, tool.PropertySetWindow))
     window.widget.combo_type.currentIndexChanged.connect(lambda: core.value_type_changed(window, tool.PropertySet))
     window.widget.line_edit_seperator.textChanged.connect(
         lambda: core.update_seperator(window, tool.PropertySet, tool.Settings))
@@ -35,7 +35,7 @@ def repaint_window(widget: PropertySetWindow):
 
 
 def close_window(window: PropertySetWindow):
-    core.close_pset_window(window, tool.PropertySet)
+    core.close_pset_window(window, tool.PropertySetWindow)
 
 
 def key_press_event(event, window: PropertySetWindow):

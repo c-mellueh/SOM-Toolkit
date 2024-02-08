@@ -239,15 +239,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return property_set
 
     @classmethod
-    def close_property_set_window(cls, window: PropertySetWindow):
-        logging.debug(f"Remove {window}")
-        prop = cls.get_pset_properties()
-        if window in prop.property_set_windows:
-            prop.property_set_windows.pop(window)
-        else:
-            logging.warning(f"PropertySetWindow can't be removed because it's not registred")
-
-    @classmethod
     def get_pset_from_item(cls, item: QTableWidgetItem) -> SOMcreator.PropertySet:
         return item.data(CLASS_REFERENCE)
 

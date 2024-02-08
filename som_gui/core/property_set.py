@@ -31,10 +31,6 @@ def add_property_set_button_pressed(object_tool: Type[Object], main_window_tool:
     repaint_pset_table(property_set_tool, object_tool)
 
 
-def close_pset_window(window: PropertySetWindow, property_set_tool: Type[PropertySet]):
-    property_set_tool.close_property_set_window(window)
-
-
 def create_predefined_pset_window(attribute_tool: Type[Attribute], property_set_tool: Type[PropertySet],
                                   object_tool: Type[Object]):
     if not property_set_tool.get_predefined_pset_window():

@@ -145,3 +145,12 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
             new_layout.addWidget(ui.LineInput())
         window.widget.verticalLayout_2.addLayout(new_layout)
         return new_layout
+
+    @classmethod
+    def close_property_set_window(cls, window: ui.PropertySetWindow):
+        logging.debug(f"Remove {window}")
+        prop = cls.get_properties()
+        if window in prop.property_set_windows:
+            prop.property_set_windows.pop(window)
+        else:
+            logging.warning(f"PropertySetWindow can't be removed because it's not registred")

@@ -48,3 +48,7 @@ def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[
         property_set_tool.add_value_line(2, window)
     else:
         property_set_tool.add_value_line(1, window)
+
+
+def close_pset_window(window: PropertySetWindow, property_set_tool: Type[tool.PropertySetWindow]):
+    property_set_tool.close_property_set_window(window)
