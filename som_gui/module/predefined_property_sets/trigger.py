@@ -5,9 +5,12 @@ from som_gui import tool
 def connect():
     pass
 
-
 def edit_name(text, index):
     core.rename_pset_by_editor(text, index, tool.PropertySet)
+
+
+def context_menu_requested(pos):
+    core.pset_table_context_menu(pos, tool.PropertySet)
 
 
 def on_new_project():

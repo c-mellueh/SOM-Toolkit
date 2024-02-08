@@ -17,6 +17,9 @@ def connect():
                                                                           tool.Object))
 
 
+def edit_name(text, index):
+    core.rename_pset_by_editor(text, index, tool.PropertySet)
+
 def on_new_project():
     pass
 
