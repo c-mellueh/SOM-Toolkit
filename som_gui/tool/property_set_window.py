@@ -33,39 +33,13 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def get_properties(cls) -> PropertySetWindowProperties:
         return som_gui.PropertySetWindowProperties
 
-    @classmethod
-    def edit_attribute_name(cls):
-        attribute = cls.get_properties().active_attribute
-        window = tool.PropertySet.get_active_window()
-        answer = tool.Popups.request_attribute_name(attribute.name, window)
-        if answer:
-            attribute.name = answer
 
-    @classmethod
-    def delete_selected_attribute(cls):
-        attribute = cls.get_properties().active_attribute
-        tool.Attribute.delete(attribute)
 
-    @classmethod
-    def get_attribute_from_item(cls, item: QTableWidgetItem):
-        if item is None:
-            return None
-        entity = item.data(CLASS_REFERENCE)
-        return entity if isinstance(entity, SOMcreator.Attribute) else None
-
-    @classmethod
-    def get_item_from_pos(cls, table: QTableWidget, pos: QPoint):
-        item = table.itemAt(pos)
-        return cls.get_attribute_from_item(item)
 
     @classmethod
     def get_table(cls, window: ui.PropertySetWindow):
         return window.widget.table_widget
 
-    @classmethod
-    def set_active_attribute(cls, attribute: SOMcreator.Attribute):
-        prop = cls.get_properties()
-        prop.active_attribute = attribute
 
     @classmethod
     def set_active_window(cls, window):
@@ -74,6 +48,11 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def get_table(cls, window: PropertySetWindow):
         return window.widget.table_widget
+
+    @classmethod
+    def get_window_by_property_set(cls, property_set: SOMcreator.PropertySet):
+        prop = cls.get_properties()
+        return {pset: window for window, pset in prop.property_set_windows.items()}.get(property_set)
 
     @classmethod
     def get_property_set_from_window(cls, window: PropertySetWindow) -> SOMcreator.PropertySet:
@@ -173,3 +152,41 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
             return 2
         else:
             return 1
+
+    @classmethod
+    def bring_window_to_front(cls, window: ui.PropertySetWindow):
+        window.raise_()
+
+    @classmethod
+    def create_window(cls, property_set: SOMcreator.PropertySet):
+        prop = cls.get_properties()
+        window = ui.PropertySetWindow()
+        prop.property_set_windows[window] = property_set
+        window.show()
+
+    @classmethod
+    def get_allowed_value_types(cls):
+        return VALUE_TYPE_LOOKUP.keys()
+
+    @classmethod
+    def get_allowed_data_types(cls):
+        return DATA_TYPES
+
+    @classmethod
+    def fill_window_ui(cls, window: ui.PropertySetWindow):
+        window.widget.combo_type.clear()
+        window.widget.combo_type.addItems(cls.get_allowed_value_types())
+        window.widget.combo_data_type.clear()
+        window.widget.combo_data_type.addItems(cls.get_allowed_data_types())
+        window.widget.combo_type.setCurrentText(value_constants.LIST)
+        window.widget.combo_data_type.setCurrentText(value_constants.LABEL)
+        cls.add_value_line(1, window)
+
+    @classmethod
+    def connect_window_triggers(cls, window):
+        som_gui.module.property_set_window.trigger.connect_window(window)
+
+    @classmethod
+    def fill_window_title(cls, window: ui.PropertySetWindow, property_set: SOMcreator.PropertySet):
+        title = f"{property_set.object.name}:{property_set.name}" if property_set.object else f"{property_set.name}"
+        window.setWindowTitle(title)

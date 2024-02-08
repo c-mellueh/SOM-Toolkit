@@ -1,5 +1,6 @@
 from __future__ import annotations
 from som_gui.core import property_set_window as core
+import som_gui
 from som_gui import tool
 from typing import TYPE_CHECKING
 from PySide6 import QtGui
@@ -20,14 +21,16 @@ def connect_window(window: PropertySetWindow):
     window.widget.button_add_line.clicked.connect(lambda: core.add_value_button_clicked(window, tool.PropertySetWindow))
     window.widget.button_add.clicked.connect(
         lambda: core.add_attribute_button_clicked(window, tool.PropertySet, tool.PropertySetWindow, tool.Attribute))
-
-    window.widget.table_widget.customContextMenuRequested.connect(
-        lambda pos: core.context_menu(window, pos, tool.PropertySet, tool.PropertySetWindow))
     window.widget.combo_type.currentIndexChanged.connect(lambda: core.value_type_changed(window, tool.PropertySet))
     window.widget.line_edit_seperator.textChanged.connect(
         lambda: core.update_seperator(window, tool.PropertySet, tool.Settings))
     window.widget.check_box_seperator.stateChanged.connect(
         lambda: core.update_seperator(window, tool.PropertySet, tool.Settings))
+
+    som_gui.module.attribute_trigger.connect_attribute_table(window.widget.table_widget)
+
+    table = window.widget.table_widget
+    table.itemClicked.connect(lambda item: core.attribute_clicked(item, tool.Attribute, tool.PropertySet))
 
 
 def repaint_window(widget: PropertySetWindow):
@@ -43,3 +46,4 @@ def key_press_event(event, window: PropertySetWindow):
     if not event.matches(QtGui.QKeySequence.StandardKey.Paste) and sep_bool:
         return True
     return core.handle_paste_event(window, tool.PropertySetWindow)
+

@@ -362,31 +362,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         prop = cls.get_pset_properties()
         return prop.active_pset
 
-    @classmethod
-    def open_pset_window(cls, property_set: SOMcreator.PropertySet):
-        prop = cls.get_pset_properties()
-        reversed_dict = {pset: window for window, pset in prop.property_set_windows.items()}
-        window: PropertySetWindow = reversed_dict.get(property_set)
-        if window is not None:
-            window.raise_()
-            return window
-        window = ui.PropertySetWindow()
-        prop.property_set_windows[window] = property_set
-        window.show()
-        window.widget.combo_type.clear()
-        window.widget.combo_type.addItems(cls.get_allowed_value_types())
 
-        window.widget.combo_data_type.clear()
-        window.widget.combo_data_type.addItems(cls.get_allowed_data_types())
-        attribute_trigger.connect_attribute_table(window.widget.table_widget)
-        property_set_trigger.connect_property_set_window(window)
-
-        title = f"{property_set.object.name}:{property_set.name}" if property_set.object else f"{property_set.name}"
-        window.setWindowTitle(title)
-        window.widget.combo_type.setCurrentText(value_constants.LIST)
-        window.widget.combo_data_type.setCurrentText(value_constants.LABEL)
-        cls.pw_add_value_line(1, window)
-        return window
 
     @classmethod
     def pw_toggle_comboboxes(cls, attribute: SOMcreator.Attribute, window: PropertySetWindow):
@@ -444,13 +420,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         button = window.widget.button_add
         button.setText(text)
 
-    @classmethod
-    def get_allowed_value_types(cls):
-        return VALUE_TYPE_LOOKUP.keys()
 
-    @classmethod
-    def get_allowed_data_types(cls):
-        return DATA_TYPES
 
     @classmethod
     def value_to_string(cls, value):

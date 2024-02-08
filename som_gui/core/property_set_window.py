@@ -11,21 +11,10 @@ from SOMcreator.constants.value_constants import RANGE
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_set.ui import PropertySetWindow
+    from PySide6.QtWidgets import QTableWidget
 
 
-def context_menu(window, pos, property_set: Type[tool.PropertySet], property_set_window: Type[tool.PropertySetWindow]):
-    table = property_set_window.get_table(window)
-    active_attribute = property_set_window.get_item_from_pos(table, pos)
-    property_set_window.set_active_attribute(active_attribute)
-    property_set_window.set_active_window(window)
-    if active_attribute.property_set.object.ident_attrib == active_attribute:
 
-        actions = [["Umbenennen", property_set_window.edit_attribute_name], ]
-    else:
-
-        actions = [["Umbenennen", property_set_window.edit_attribute_name],
-                   ["Löschen", property_set_window.delete], ]
-    property_set.create_context_menu(table.mapToGlobal(pos), actions)
 
 
 def add_attribute_button_clicked(window: PropertySetWindow, property_set: Type[tool.PropertySet],
@@ -48,6 +37,22 @@ def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[
         property_set_tool.add_value_line(2, window)
     else:
         property_set_tool.add_value_line(1, window)
+
+
+def open_pset_window(property_set: SOMcreator.PropertySet, property_set_window: Type[tool.PropertySetWindow]):
+    existing_window = property_set_window.get_window_by_property_set(property_set)
+    if existing_window is not None:
+        property_set_window.bring_window_to_front(existing_window)
+        return existing_window
+
+    window = property_set_window.create_window(property_set)
+    property_set_window.fill_window_ui(window)
+    property_set_window.connect_window_triggers(window)
+
+    table = property_set_window.get_table(window)
+    # paint_attribute_table(table, property_set_window) TODO: Muss imported werden
+    table.resizeColumnsToContents()
+    return window
 
 
 def close_pset_window(window: PropertySetWindow, property_set_tool: Type[tool.PropertySetWindow]):

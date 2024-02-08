@@ -6,6 +6,8 @@ class PredefinedPropertySet:
     pass
 
 
+class AttributeTable:
+    pass
 class PropertySetWindow:
     pass
 
