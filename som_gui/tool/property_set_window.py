@@ -137,3 +137,11 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def get_value_type(cls, window: ui.PropertySetWindow):
         return window.widget.combo_type.currentText()
+
+    @classmethod
+    def add_value_line(cls, column_count: int, window: ui.PropertySetWindow) -> QHBoxLayout:
+        new_layout = QHBoxLayout()
+        for _ in range(column_count):
+            new_layout.addWidget(ui.LineInput())
+        window.widget.verticalLayout_2.addLayout(new_layout)
+        return new_layout

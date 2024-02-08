@@ -420,14 +420,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
         window.widget.combo_type.setCurrentText(value_type)
 
     @classmethod
-    def pw_add_value_line(cls, column_count: int, window: PropertySetWindow) -> QHBoxLayout:
-        new_layout = QHBoxLayout()
-        for _ in range(column_count):
-            new_layout.addWidget(ui.LineInput())
-        window.widget.verticalLayout_2.addLayout(new_layout)
-        return new_layout
-
-    @classmethod
     def pw_clear_values(cls, window: PropertySetWindow):
         layout = window.widget.verticalLayout_2
         for row in reversed(range(layout.count())):

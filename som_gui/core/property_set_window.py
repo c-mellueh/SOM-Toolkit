@@ -40,3 +40,11 @@ def add_attribute_button_clicked(window: PropertySetWindow, property_set: Type[t
         attribute.create_attribute(pset, attribute_data)
     else:
         attribute.set_attribute_data(old_attribute, attribute_data)
+
+
+def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[tool.PropertySetWindow]):
+    value_type = window.widget.combo_type.currentText()
+    if value_type == RANGE:
+        property_set_tool.add_value_line(2, window)
+    else:
+        property_set_tool.add_value_line(1, window)

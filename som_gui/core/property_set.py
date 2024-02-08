@@ -31,14 +31,6 @@ def add_property_set_button_pressed(object_tool: Type[Object], main_window_tool:
     repaint_pset_table(property_set_tool, object_tool)
 
 
-def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[PropertySet]):
-    value_type = window.widget.combo_type.currentText()
-    if value_type == RANGE:
-        property_set_tool.pw_add_value_line(2, window)
-    else:
-        property_set_tool.pw_add_value_line(1, window)
-
-
 def close_pset_window(window: PropertySetWindow, property_set_tool: Type[PropertySet]):
     property_set_tool.close_property_set_window(window)
 
