@@ -6,6 +6,7 @@ from som_gui.module import property_set
 class PsetTableWidget(QTableWidget):
     edit_started = Signal(QModelIndex)
     edit_stopped = Signal(QModelIndex)
+    text_changed = Signal(str, QModelIndex)
 
     def __init__(self, parent: QWidget):
         super().__init__(parent)
@@ -29,8 +30,8 @@ class LineEditDelegate(QStyledItemDelegate):
 
     def createEditor(self, parent, option, index):
         self.edit_started.emit(index)
-        editor: QLineEdit = super().createEditor(parent, option, index)
-        editor.textChanged.connect(lambda text: property_set.trigger.edit_name(text, index))
+        editor = super().createEditor(parent, option, index)
+        editor.textChanged.connect(lambda text: self.parent().text_changed(text, index))
         return editor
 
     def destroyEditor(self, editor, index):

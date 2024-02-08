@@ -15,6 +15,7 @@ def connect():
     tool.MainWindow.add_action("Vordefinierte Psets/Anzeigen",
                                lambda: core.create_predefined_pset_window(tool.Attribute, tool.PropertySet,
                                                                           tool.Object))
+    table.text_changed.connect(edit_name)
 
 
 def edit_name(text, index):
