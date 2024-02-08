@@ -2,13 +2,6 @@ from __future__ import annotations
 import som_gui
 from som_gui.core import property_set as core
 from som_gui import tool
-from typing import TYPE_CHECKING
-from PySide6 import QtGui
-
-if TYPE_CHECKING:
-    from .ui import PropertySetWindow, PredefinedPropertySetWindow
-
-
 
 
 def connect():
@@ -22,7 +15,6 @@ def connect():
     tool.MainWindow.add_action("Vordefinierte Psets/Anzeigen",
                                lambda: core.create_predefined_pset_window(tool.Attribute, tool.PropertySet,
                                                                           tool.Object))
-
 
 
 def on_new_project():

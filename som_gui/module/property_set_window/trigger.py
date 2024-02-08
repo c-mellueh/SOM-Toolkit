@@ -1,5 +1,4 @@
 from __future__ import annotations
-import som_gui
 from som_gui.core import property_set_window as core
 from som_gui import tool
 from typing import TYPE_CHECKING
