@@ -8,3 +8,4 @@ if TYPE_CHECKING:
 class PropertySetWindowProperties:
     property_set_windows: dict[PropertySetWindow, SOMcreator.PropertySet] = dict()
     active_window: PropertySetWindow = None
+    active_attribute: SOMcreator.Attribute = None

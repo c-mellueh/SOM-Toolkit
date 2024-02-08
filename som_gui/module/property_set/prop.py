@@ -3,3 +3,4 @@ import SOMcreator
 
 class PropertySetProperties:
     active_pset: SOMcreator.PropertySet = None
+    is_renaming_property_set = False

@@ -22,7 +22,7 @@ def connect_window(window: PropertySetWindow):
         lambda: core.add_attribute_button_clicked(window, tool.PropertySet, tool.Attribute))
 
     window.widget.table_widget.customContextMenuRequested.connect(
-        lambda pos: core.pset_window_context_menu(window, pos, tool.PropertySet, tool.Attribute))
+        lambda pos: core.context_menu(window, pos, tool.PropertySet, tool.Attribute))
     window.widget.combo_type.currentIndexChanged.connect(lambda: core.value_type_changed(window, tool.PropertySet))
     window.widget.line_edit_seperator.textChanged.connect(
         lambda: core.update_seperator(window, tool.PropertySet, tool.Settings))

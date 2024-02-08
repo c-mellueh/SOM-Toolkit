@@ -9,4 +9,3 @@ class PredefinedPsetProperties:
     predefined_property_set_window: PredefinedPropertySetWindow = None
     active_predefined_pset: SOMcreator.PropertySet = None
     is_renaming_predefined_pset = False
-    is_renaming_property_set = False

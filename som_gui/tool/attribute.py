@@ -18,32 +18,10 @@ if TYPE_CHECKING:
 
 
 class Attribute(som_gui.core.tool.Attribute):
-    @classmethod
-    def set_active_attribute(cls, attribute: SOMcreator.Attribute):
-        prop = cls.get_attribute_properties()
-        prop.active_attribute = attribute
 
     @classmethod
-    def edit_attribute_name(cls):
-        attribute = cls.get_attribute_properties().active_attribute
-        window = tool.PropertySet.get_active_window()
-        answer = tool.Popups.request_attribute_name(attribute.name, window)
-        if answer:
-            attribute.name = answer
-
-    @classmethod
-    def delete(cls):
-        attribute = cls.get_attribute_properties().active_attribute
+    def delete(cls, attribute: SOMcreator.Attribute):
         attribute.delete()
-
-    @classmethod
-    def get_item_from_pos(cls, table: QTableWidget, pos: QPoint):
-        item = table.itemAt(pos)
-        return cls.get_attribute_from_item(item)
-
-    @classmethod
-    def get_table(cls, window: PropertySetWindow):
-        return window.widget.table_widget
 
     @classmethod
     def add_attribute_data_value(cls, name: str, getter: Callable, setter: Callable):

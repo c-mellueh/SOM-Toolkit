@@ -29,9 +29,11 @@ if TYPE_CHECKING:
 
 
 class PropertySet(som_gui.core.tool.PropertySet):
+
     @classmethod
-    def set_active_window(cls, window):
-        cls.get_pset_properties().active_window = window
+    def get_attribute_by_name(cls, property_set: SOMcreator.PropertySet, name: str):
+        attribute_dict = {a.name: a for a in property_set.get_all_attributes()}
+        return attribute_dict[name]
 
     @classmethod
     def get_active_window(cls):
@@ -56,21 +58,14 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return props.is_renaming_property_set
 
     @classmethod
-    def pset_table_edit_started(cls):
-        pset = cls.get_selecte_property_set_from_table()
-        table = cls.get_table()
-        for row in range(table.rowCount()):
-            item = table.item(row, 0)
-            if cls.get_pset_from_item(item) == pset:
-                pset.name = item.text()
-
-        props = cls.get_pset_properties()
-        props.is_renaming_property_set = True
+    def get_property_set_from_row(cls, row, table):
+        return cls.get_property_set_from_item(table.item(row, 0))
 
     @classmethod
-    def pset_table_edit_stopped(cls):
-        props = cls.get_pset_properties()
-        props.is_renaming_property_set = False
+    def set_pset_name_by_row(cls, pset, row, table):
+        item = table.item(row, 0)
+        pset.name = item.text()
+
 
     @classmethod
     def rename_table_pset(cls):
@@ -253,11 +248,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
             logging.warning(f"PropertySetWindow can't be removed because it's not registred")
 
     @classmethod
-    def get_property_set_from_window(cls, window: PropertySetWindow) -> SOMcreator.PropertySet:
-        prop = cls.get_pset_properties()
-        return prop.property_set_windows.get(window)
-
-    @classmethod
     def get_pset_from_item(cls, item: QTableWidgetItem) -> SOMcreator.PropertySet:
         return item.data(CLASS_REFERENCE)
 
@@ -438,15 +428,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return new_layout
 
     @classmethod
-    def get_input_value_lines(cls, window: PropertySetWindow) -> list[list[QLineEdit]]:
-        lines = list()
-        base_layout = window.widget.verticalLayout_2
-        for row in range(base_layout.count()):
-            hor_layout: QHBoxLayout = base_layout.itemAt(row)
-            lines.append([hor_layout.itemAt(col).widget() for col in range(hor_layout.count())])
-        return lines
-
-    @classmethod
     def pw_clear_values(cls, window: PropertySetWindow):
         layout = window.widget.verticalLayout_2
         for row in reversed(range(layout.count())):
@@ -481,37 +462,12 @@ class PropertySet(som_gui.core.tool.PropertySet):
         button.setText(text)
 
     @classmethod
-    def pw_get_attribute_name(cls, window: PropertySetWindow):
-        return window.widget.lineEdit_name.text()
-
-    @classmethod
     def get_allowed_value_types(cls):
         return VALUE_TYPE_LOOKUP.keys()
 
     @classmethod
     def get_allowed_data_types(cls):
         return DATA_TYPES
-
-    @classmethod
-    def pw_get_data_type(cls, window: PropertySetWindow):
-        return window.widget.combo_data_type.currentText()
-
-    @classmethod
-    def pw_get_value_type(cls, window: PropertySetWindow):
-        return window.widget.combo_type.currentText()
-
-    @classmethod
-    def format_values(cls, value_list: list[str], window: PropertySetWindow):
-        data_type = cls.pw_get_data_type(window)
-        if data_type not in (value_constants.REAL, value_constants.INTEGER):
-            return [str(val) for val in value_list]
-        values = [val.replace(".", "") for val in value_list]  # remove thousend Point
-        values = [float(val.replace(",", ".")) for val in values if val]
-        if data_type == value_constants.INTEGER:
-            values = [int(val) for val in value_list]
-        if len(values) < len(value_list):
-            values += [None for _ in range(len(value_list) - len(values))]
-        return values
 
     @classmethod
     def value_to_string(cls, value):
@@ -521,30 +477,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
             return str(value)
         if isinstance(value, float):
             return str(value).replace(".", ",")
-
-    @classmethod
-    def pw_get_values(cls, window: PropertySetWindow):
-        lines = cls.get_input_value_lines(window)
-        value_list = list()
-        for row in lines:
-            values = cls.format_values([line.text() for line in row if line.text()], window)
-            if not values:
-                continue
-            if len(values) > 1:
-                value_list.append(values)
-            else:
-                value_list.append(values[0])
-        return value_list
-
-    @classmethod
-    def pw_get_attribute_data(cls, window: PropertySetWindow):
-        d = dict()
-        d["name"] = cls.pw_get_attribute_name(window)
-        d["data_type"] = window.widget.combo_data_type.currentText()
-        d["value_type"] = window.widget.combo_type.currentText()
-        d["values"] = cls.pw_get_values(window)
-        d["description"] = window.widget.description.toPlainText()
-        return d
 
     @classmethod
     def update_line_validators(cls, window: PropertySetWindow):
