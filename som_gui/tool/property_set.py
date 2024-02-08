@@ -30,6 +30,13 @@ if TYPE_CHECKING:
 
 class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
+    def set_active_window(cls, window):
+        cls.get_pset_properties().active_window = window
+
+    @classmethod
+    def get_active_window(cls):
+        return cls.get_pset_properties().active_window
+    @classmethod
     def get_inheritable_property_sets(cls, obj: SOMcreator.Object) -> list[SOMcreator.PropertySet]:
         def loop(o):
             psets = o.property_sets

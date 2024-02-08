@@ -1,5 +1,4 @@
 from __future__ import annotations
-from dataclasses import dataclass
 
 from typing import TYPE_CHECKING
 
@@ -8,7 +7,6 @@ import SOMcreator
 if TYPE_CHECKING:
     from som_gui.module.property_set.ui import PropertySetWindow, PredefinedPropertySetWindow
 
-
 class PropertySetProperties:
     active_pset = None
     property_set_windows: dict[PropertySetWindow, SOMcreator.PropertySet] = dict()
@@ -16,3 +14,4 @@ class PropertySetProperties:
     active_predefined_pset = None
     is_renaming_predefined_pset = False
     is_renaming_property_set = False
+    active_window: PropertySetWindow = None

@@ -56,9 +56,9 @@ def refresh_attribute_table(table: QTableWidget, attribute_tool: Type[Attribute]
     for row in range(table.rowCount()):
         attribute_tool.update_row(table, row)
 
-
 def attribute_clicked(item: QTableWidgetItem, attribute_tool: Type[Attribute], property_set_tool: Type[PropertySet]):
     attribute = attribute_tool.get_attribute_from_item(item)
+    attribute_tool.set_active_attribute(attribute)
     window = item.tableWidget().window()
     activate_attribute(attribute, window, attribute_tool, property_set_tool)
 

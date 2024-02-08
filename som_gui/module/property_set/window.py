@@ -180,6 +180,7 @@ class Ui_layout_main(object):
         sizePolicy5.setHeightForWidth(self.table_widget.sizePolicy().hasHeightForWidth())
         self.table_widget.setSizePolicy(sizePolicy5)
         self.table_widget.setMinimumSize(QSize(480, 0))
+        self.table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_widget.setDragEnabled(True)
         self.table_widget.setDragDropMode(QAbstractItemView.DragDrop)
