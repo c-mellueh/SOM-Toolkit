@@ -52,3 +52,20 @@ def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[
 
 def close_pset_window(window: PropertySetWindow, property_set_tool: Type[tool.PropertySetWindow]):
     property_set_tool.close_property_set_window(window)
+
+
+def handle_paste_event(window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow]) -> bool:
+    text_list = property_set_window.get_paste_text_list()
+    if len(text_list) < 2:
+        return True
+
+    existing_input_lines = property_set_window.get_input_value_lines(window)
+    lines_to_create = max(len(text_list) - len(existing_input_lines), -1)
+    column_count = property_set_window.get_required_column_count(window)
+
+    for i in range(lines_to_create + 1):
+        property_set_window.add_value_line(column_count, window)
+
+    for text, lines in zip(text_list, property_set_window.get_input_value_lines(window)):
+        lines[0].setText(text.strip())
+    return False

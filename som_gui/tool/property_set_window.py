@@ -4,7 +4,7 @@ import logging
 from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QHBoxLayout, QLineEdit, QListWidget, \
     QListWidgetItem, QMenu
 from PySide6.QtCore import Qt, QModelIndex, QPoint
-from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QAction, QIcon
+from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QAction, QIcon, QGuiApplication
 
 from SOMcreator.constants.json_constants import INHERITED_TEXT
 from SOMcreator.constants.value_constants import VALUE_TYPE_LOOKUP, DATA_TYPES
@@ -154,3 +154,22 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
             prop.property_set_windows.pop(window)
         else:
             logging.warning(f"PropertySetWindow can't be removed because it's not registred")
+
+    @classmethod
+    def get_paste_text_list(cls):
+        seperator = tool.Settings.get_seperator()
+        seperator_status = tool.Settings.get_seperator_status()
+        if not seperator_status:
+            return True
+
+        text = QGuiApplication.clipboard().text()
+        text_list = text.split(seperator)
+        return text_list
+
+    @classmethod
+    def get_required_column_count(cls, window: ui.PropertySetWindow):
+        value_type = cls.get_value_type(window)
+        if value_type == value_constants.RANGE:
+            return 2
+        else:
+            return 1

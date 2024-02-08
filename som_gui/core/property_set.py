@@ -47,24 +47,7 @@ def create_predefined_pset_window(attribute_tool: Type[Attribute], property_set_
     property_set_tool.get_predefined_pset_window().show()
 
 
-def handle_paste_event(window: PropertySetWindow, property_set_tool: Type[PropertySet], settings_tool: Type[Settings]):
-    seperator = settings_tool.get_seperator()
-    seperator_status = settings_tool.get_seperator_status()
-    if not seperator_status:
-        return True
-    text = QtGui.QGuiApplication.clipboard().text()
-    text_list = text.split(seperator)
-    if len(text_list) < 2:
-        return True
 
-    dif = len(text_list) - len(property_set_tool.get_input_value_lines(window))
-    column_count = 2 if property_set_tool.pw_get_value_type(window) == RANGE else 1
-    if dif >= 0:
-        for i in range(dif + 1):
-            property_set_tool.pw_add_value_line(column_count, window)
-    for text, lines in zip(text_list, property_set_tool.get_input_value_lines(window)):
-        lines[0].setText(text.strip())
-    return False
 
 
 def open_pset_window(property_set: SOMcreator.PropertySet, property_set_tool: Type[PropertySet],

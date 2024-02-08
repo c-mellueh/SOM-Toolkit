@@ -42,4 +42,4 @@ def key_press_event(event, window: PropertySetWindow):
     sep_bool = tool.Settings.get_seperator_status()
     if not event.matches(QtGui.QKeySequence.StandardKey.Paste) and sep_bool:
         return True
-    return core.handle_paste_event(window, tool.PropertySet, tool.Settings)
+    return core.handle_paste_event(window, tool.PropertySetWindow)
