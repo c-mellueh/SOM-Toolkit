@@ -19,7 +19,7 @@ def on_new_project():
 def connect_window(window: PropertySetWindow):
     window.widget.button_add_line.clicked.connect(lambda: core.add_value_button_clicked(window, tool.PropertySetWindow))
     window.widget.button_add.clicked.connect(
-        lambda: core.add_attribute_button_clicked(window, tool.PropertySet, tool.Attribute))
+        lambda: core.add_attribute_button_clicked(window, tool.PropertySet, tool.PropertySetWindow, tool.Attribute))
 
     window.widget.table_widget.customContextMenuRequested.connect(
         lambda pos: core.context_menu(window, pos, tool.PropertySet, tool.Attribute))
