@@ -25,7 +25,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
     def get_attribute_by_name(cls, property_set: SOMcreator.PropertySet, name: str):
         attribute_dict = {a.name: a for a in property_set.get_all_attributes()}
-        return attribute_dict[name]
+        return attribute_dict.get(name)
 
     @classmethod
     def get_inheritable_property_sets(cls, obj: SOMcreator.Object) -> list[SOMcreator.PropertySet]:
@@ -195,7 +195,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def update_completer(cls, obj: SOMcreator.Object = None):
-        psets = list(tool.PredefinedPropertySet.get_predefined_psets())
+        psets = list(tool.PredefinedPropertySet.get_property_sets())
         if obj is not None:
             psets += cls.get_inheritable_property_sets(obj)
         pset_names = sorted({p.name for p in psets})

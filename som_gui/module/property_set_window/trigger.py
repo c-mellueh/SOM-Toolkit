@@ -21,7 +21,8 @@ def connect_window(window: PropertySetWindow):
     window.widget.button_add_line.clicked.connect(lambda: core.add_value_button_clicked(window, tool.PropertySetWindow))
     window.widget.button_add.clicked.connect(
         lambda: core.add_attribute_button_clicked(window, tool.PropertySet, tool.PropertySetWindow, tool.Attribute))
-    window.widget.combo_type.currentIndexChanged.connect(lambda: core.value_type_changed(window, tool.PropertySet))
+    window.widget.combo_type.currentIndexChanged.connect(
+        lambda: core.value_type_changed(window, tool.PropertySetWindow))
     window.widget.line_edit_seperator.textChanged.connect(
         lambda: core.update_seperator(window, tool.PropertySetWindow, tool.Settings))
     window.widget.check_box_seperator.stateChanged.connect(

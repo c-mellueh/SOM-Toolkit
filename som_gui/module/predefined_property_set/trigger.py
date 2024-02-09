@@ -10,23 +10,23 @@ if TYPE_CHECKING:
 
 def connect():
     tool.MainWindow.add_action("Vordefinierte Psets/Anzeigen",
-                               lambda: core.create_window(tool.PredefinedPropertySet))
+                               lambda: core.open_window(tool.PredefinedPropertySet))
 
 
 def connect_dialog(dialog: PredefinedPropertySetWindow):
     dialog.widget.list_view_pset.itemSelectionChanged.connect(
-        lambda: core.predef_selection_changed(tool.PredefinedPropertySet))
+        lambda: core.pset_selection_changed(tool.PredefinedPropertySet))
     dialog.widget.list_view_existance.itemDoubleClicked.connect(
-        lambda: core.predef_object_double_clicked(tool.PredefinedPropertySet, tool.PropertySet, tool.Object))
+        lambda: core.object_double_clicked(tool.PredefinedPropertySet, tool.PropertySet, tool.Object))
     dialog.widget.list_view_pset.customContextMenuRequested.connect(
-        lambda pos: core.predefined_pset_window_context_menu(pos, tool.PredefinedPropertySet, tool.PropertySet))
+        lambda pos: core.pset_context_menu(pos, tool.PredefinedPropertySet, tool.PropertySet))
     dialog.widget.list_view_pset.itemChanged.connect(
-        lambda item: core.predefined_pset_item_changed(item, tool.PropertySet))
+        lambda item: core.pset_data_changed(item, tool.PropertySet))
     dialog.widget.list_view_pset.itemDoubleClicked.connect(
-        lambda item: core.pset_item_double_clicked(item, tool.PropertySet, tool.PropertySetWindow))
+        lambda item: core.pset_double_clicked(item, tool.PropertySet, tool.PropertySetWindow))
 
-    dialog.edit_started.connect(lambda: core.predef_edit_started(tool.PredefinedPropertySet))
-    dialog.edit_stopped.connect(lambda: core.predef_edit_stopped(tool.PredefinedPropertySet))
+    dialog.edit_started.connect(lambda: core.name_edit_started(tool.PredefinedPropertySet))
+    dialog.edit_stopped.connect(lambda: core.name_edit_stopped(tool.PredefinedPropertySet))
 
 
 def edit_name(text, index):
@@ -38,8 +38,8 @@ def on_new_project():
 
 
 def repaint_window():
-    core.repaint_predefined_pset_window(tool.PredefinedPropertySet)
+    core.repaint_window(tool.PredefinedPropertySet)
 
 
 def accept():
-    core.close_predefined_pset_window(tool.PredefinedPropertySet)
+    core.close_window(tool.PredefinedPropertySet)
