@@ -4,18 +4,18 @@ from PySide6.QtWidgets import QTableWidgetItem, QTableWidget
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QBrush
 
+import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
 from som_gui.module.project.constants import CLASS_REFERENCE
+from som_gui.module.property_set_window.ui import PropertySetWindow
 
 from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
     from som_gui.module.attribute_table.prop import AttributeTableProperties
-    import SOMcreator
     from som_gui.module.attribute_table import ui
-    from som_gui.module.property_set_window.ui import PropertySetWindow
 
 
 class AttributeTable(som_gui.core.tool.AttributeTable):

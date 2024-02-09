@@ -6,7 +6,7 @@ from som_gui.module import property_set
 class PsetTableWidget(QTableWidget):
     edit_started = Signal(QModelIndex)
     edit_stopped = Signal(QModelIndex)
-    text_changed = Signal(str, QModelIndex)
+
 
     def __init__(self, parent: QWidget):
         super().__init__(parent)
@@ -16,6 +16,9 @@ class PsetTableWidget(QTableWidget):
     def paintEvent(self, event):
         super().paintEvent(event)
         property_set.trigger.repaint_event()
+
+    def text_changed(self, text, index):
+        property_set.trigger.edit_name(text, index)
 
 
 class LineEditDelegate(QStyledItemDelegate):

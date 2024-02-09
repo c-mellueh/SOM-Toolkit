@@ -23,3 +23,6 @@ class PredefinedPropertySetWindow(QDialog):
 
     def accept(self):
         predefined_property_set.trigger.accept()
+
+    def text_changed(self, text, index):
+        predefined_property_set.trigger.edit_name(text, index)

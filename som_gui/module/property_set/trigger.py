@@ -13,11 +13,6 @@ def connect():
     table.edit_stopped.connect(lambda: core.pset_table_edit_stopped(tool.PropertySet))
     tool.MainWindow.get_ui().button_Pset_add.clicked.connect(
         lambda: core.add_property_set_button_pressed(tool.Object, tool.MainWindow, tool.PropertySet, tool.Popups))
-    tool.MainWindow.add_action("Vordefinierte Psets/Anzeigen",
-                               lambda: core.create_predefined_pset_window(tool.PropertySetWindow, tool.PropertySet,
-                                                                          tool.Object))
-    table.text_changed.connect(edit_name)
-
 
 def edit_name(text, index):
     core.rename_pset_by_editor(text, index, tool.PropertySet)
