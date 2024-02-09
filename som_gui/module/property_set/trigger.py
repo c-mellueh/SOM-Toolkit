@@ -6,14 +6,15 @@ from som_gui import tool
 
 def connect():
     table = som_gui.MainUi.ui.table_pset
-    table.itemSelectionChanged.connect(lambda: core.pset_selection_changed(tool.PropertySet, tool.Attribute))
-    table.itemDoubleClicked.connect(lambda: core.table_double_clicked(tool.PropertySet, tool.Attribute))
+    table.itemSelectionChanged.connect(lambda: core.pset_selection_changed(tool.PropertySet, tool.AttributeTable))
+    table.itemDoubleClicked.connect(
+        lambda: core.table_double_clicked(tool.PropertySet, tool.AttributeTable, tool.PropertySetWindow))
     table.edit_started.connect(lambda: core.pset_table_edit_started(tool.PropertySet))
     table.edit_stopped.connect(lambda: core.pset_table_edit_stopped(tool.PropertySet))
     tool.MainWindow.get_ui().button_Pset_add.clicked.connect(
         lambda: core.add_property_set_button_pressed(tool.Object, tool.MainWindow, tool.PropertySet, tool.Popups))
     tool.MainWindow.add_action("Vordefinierte Psets/Anzeigen",
-                               lambda: core.create_predefined_pset_window(tool.Attribute, tool.PropertySet,
+                               lambda: core.create_predefined_pset_window(tool.PropertySetWindow, tool.PropertySet,
                                                                           tool.Object))
     table.text_changed.connect(edit_name)
 

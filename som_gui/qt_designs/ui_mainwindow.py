@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHB
                                QStatusBar, QTableWidgetItem, QTreeWidgetItem, QVBoxLayout,
                                QWidget)
 
-from som_gui.module.attribute.ui import AttributeTable
+from som_gui.module.attribute_table.ui import AttributeTable
 from som_gui.module.objects.ui import ObjectTreeWidget
 from som_gui.module.property_set.ui import PsetTableWidget
 
@@ -298,6 +298,7 @@ class Ui_MainWindow(object):
         __qtablewidgetitem6 = QTableWidgetItem()
         self.table_attribute.setHorizontalHeaderItem(3, __qtablewidgetitem6)
         self.table_attribute.setObjectName(u"table_attribute")
+        self.table_attribute.setContextMenuPolicy(Qt.CustomContextMenu)
         self.table_attribute.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_attribute.setSortingEnabled(True)
         self.splitter_2.addWidget(self.table_attribute)

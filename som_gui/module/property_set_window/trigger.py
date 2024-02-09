@@ -23,18 +23,17 @@ def connect_window(window: PropertySetWindow):
         lambda: core.add_attribute_button_clicked(window, tool.PropertySet, tool.PropertySetWindow, tool.Attribute))
     window.widget.combo_type.currentIndexChanged.connect(lambda: core.value_type_changed(window, tool.PropertySet))
     window.widget.line_edit_seperator.textChanged.connect(
-        lambda: core.update_seperator(window, tool.PropertySet, tool.Settings))
+        lambda: core.update_seperator(window, tool.PropertySetWindow, tool.Settings))
     window.widget.check_box_seperator.stateChanged.connect(
-        lambda: core.update_seperator(window, tool.PropertySet, tool.Settings))
-
-    som_gui.module.attribute_trigger.connect_attribute_table(window.widget.table_widget)
+        lambda: core.update_seperator(window, tool.PropertySetWindow, tool.Settings))
 
     table = window.widget.table_widget
-    table.itemClicked.connect(lambda item: core.attribute_clicked(item, tool.Attribute, tool.PropertySet))
+    table.itemClicked.connect(
+        lambda item: core.attribute_clicked(item, tool.Attribute, tool.AttributeTable, tool.PropertySetWindow))
 
 
 def repaint_window(widget: PropertySetWindow):
-    core.repaint_pset_window(widget, tool.PropertySet, tool.Attribute)
+    core.repaint_pset_window(widget, tool.PropertySetWindow, tool.AttributeTable)
 
 
 def close_window(window: PropertySetWindow):

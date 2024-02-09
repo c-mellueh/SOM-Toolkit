@@ -1,5 +1,18 @@
-def add_property_set_button_pressed(object_tool: Type[Object], main_window_tool: Type[MainWindow],
-                                    property_set_tool: Type[PropertySet], popup_tool: Type[Popups]):
+from __future__ import annotations
+
+import som_gui
+from som_gui.core import property_set_window as property_set_window_core
+from som_gui.core import attribute_table as attribute_table_core
+from typing import Type, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from som_gui import tool
+    from som_gui.module.property_set_window.ui import PropertySetWindow
+from PySide6.QtCore import QModelIndex
+
+
+def add_property_set_button_pressed(object_tool: Type[tool.Object], main_window_tool: Type[tool.MainWindow],
+                                    property_set_tool: Type[tool.PropertySet], popup_tool: Type[tool.Popups]):
     obj = object_tool.get_active_object()
     pset_name = main_window_tool.get_pset_name()
     if property_set_tool.check_if_pset_allready_exists(pset_name, obj):
@@ -31,8 +44,9 @@ def add_property_set_button_pressed(object_tool: Type[Object], main_window_tool:
     repaint_pset_table(property_set_tool, object_tool)
 
 
-def create_predefined_pset_window(attribute_tool: Type[Attribute], property_set_tool: Type[PropertySet],
-                                  object_tool: Type[Object]):
+def create_predefined_pset_window(property_set_window: Type[tool.PropertySetWindow],
+                                  property_set_tool: Type[tool.PropertySet],
+                                  object_tool: Type[tool.Object]):
     if not property_set_tool.get_predefined_pset_window():
         dialog = property_set_tool.create_predefined_pset_window()
         dialog.widget.list_view_pset.itemSelectionChanged.connect(lambda: predef_selection_changed(property_set_tool))
@@ -43,11 +57,11 @@ def create_predefined_pset_window(attribute_tool: Type[Attribute], property_set_
         dialog.widget.list_view_pset.itemChanged.connect(
             lambda item: predefined_pset_item_changed(item, property_set_tool))
         dialog.widget.list_view_pset.itemDoubleClicked.connect(
-            lambda item: pset_item_double_clicked(item, property_set_tool, attribute_tool))
+            lambda item: pset_item_double_clicked(item, property_set_tool, property_set_window))
     property_set_tool.get_predefined_pset_window().show()
 
 
-def predef_object_double_clicked(property_set_tool: Type[PropertySet], object_tool: Type[Object]):
+def predef_object_double_clicked(property_set_tool: Type[tool.PropertySet], object_tool: Type[tool.Object]):
     item = property_set_tool.get_predefined_pset_inheritance_list().selectedItems()[0]
     property_set = property_set_tool.get_property_set_from_item(item)
     property_set_tool.close_predefined_pset_window()
@@ -59,18 +73,18 @@ def predef_object_double_clicked(property_set_tool: Type[PropertySet], object_to
     property_set_tool.select_property_set(property_set)
 
 
-def predef_selection_changed(property_set_tool: Type[PropertySet]):
+def predef_selection_changed(property_set_tool: Type[tool.PropertySet]):
     property_set = property_set_tool.get_selected_predef_property_set()
     property_set_tool.set_predef_property_set(property_set)
     repaint_predefined_pset_inheritance_list(property_set_tool)
 
 
-def predefined_pset_item_changed(item, property_set_tool: Type[PropertySet]):
+def predefined_pset_item_changed(item, property_set_tool: Type[tool.PropertySet]):
     property_set = property_set_tool.get_property_set_from_item(item)
     property_set.name = item.text()
 
 
-def predefined_pset_window_context_menu(pos, property_set_tool: Type[PropertySet]):
+def predefined_pset_window_context_menu(pos, property_set_tool: Type[tool.PropertySet]):
     functions = [
         ["Löschen", property_set_tool.delete_predefined_pset],
         ["Umbenennen", property_set_tool.rename_predefined_pset],
@@ -80,18 +94,19 @@ def predefined_pset_window_context_menu(pos, property_set_tool: Type[PropertySet
     property_set_tool.create_context_menu(list_widget.mapToGlobal(pos), functions)
 
 
-def pset_item_double_clicked(item, property_set_tool: Type[PropertySet], attribute_tool: Type[Attribute]):
-    property_set = property_set_tool.get_property_set_from_item(item)
-    open_pset_window(property_set, property_set_tool, attribute_tool)
+def pset_item_double_clicked(item, property_set: Type[tool.PropertySet],
+                             property_set_window: Type[tool.PropertySetWindow]):
+    pset = property_set.get_property_set_from_item(item)
+    property_set_window_core.open_pset_window(pset, property_set_window)
 
 
-def pset_selection_changed(property_set_tool: Type[PropertySet], attribute_tool: Type[Attribute]):
+def pset_selection_changed(property_set_tool: Type[tool.PropertySet], attribute_table: Type[tool.AttributeTable]):
     property_set = property_set_tool.get_selecte_property_set_from_table()
     property_set_tool.set_active_property_set(property_set)
-    attribute_core.refresh_attribute_table(som_gui.MainUi.ui.table_attribute, attribute_tool)
+    attribute_table_core.paint_attribute_table(som_gui.MainUi.ui.table_attribute, attribute_table)
 
 
-def pset_table_context_menu(pos, property_set_tool: Type[PropertySet]):
+def pset_table_context_menu(pos, property_set_tool: Type[tool.PropertySet]):
     table = property_set_tool.get_table()
     pset = property_set_tool.get_pset_from_item(table.itemAt(pos))
     if pset.is_child:
@@ -105,7 +120,7 @@ def pset_table_context_menu(pos, property_set_tool: Type[PropertySet]):
     property_set_tool.create_context_menu(table.mapToGlobal(pos), actions)
 
 
-def pset_table_edit_started(property_set: Type[PropertySet]):
+def pset_table_edit_started(property_set: Type[tool.PropertySet]):
     pset = property_set.get_selecte_property_set_from_table()
     table = property_set.get_table()
     for row in range(table.rowCount()):
@@ -116,17 +131,17 @@ def pset_table_edit_started(property_set: Type[PropertySet]):
     props.is_renaming_property_set = True
 
 
-def pset_table_edit_stopped(property_set_tool: Type[PropertySet]):
+def pset_table_edit_stopped(property_set_tool: Type[tool.PropertySet]):
     props = property_set_tool.get_pset_properties()
     props.is_renaming_property_set = False
 
 
-def rename_pset_by_editor(new_name: str, index: QModelIndex, property_set_tool: Type[PropertySet]):
+def rename_pset_by_editor(new_name: str, index: QModelIndex, property_set_tool: Type[tool.PropertySet]):
     pset = property_set_tool.get_pset_from_index(index)
     pset.name = new_name
 
 
-def repaint_predefined_pset_inheritance_list(property_set_tool: Type[PropertySet]):
+def repaint_predefined_pset_inheritance_list(property_set_tool: Type[tool.PropertySet]):
     property_set = property_set_tool.get_active_predefined_pset()
     list_widget = property_set_tool.get_predefined_pset_inheritance_list()
 
@@ -143,7 +158,7 @@ def repaint_predefined_pset_inheritance_list(property_set_tool: Type[PropertySet
     property_set_tool.update_predefined_pset_inheritance_list()
 
 
-def repaint_predefined_pset_list(property_set_tool: Type[PropertySet]):
+def repaint_predefined_pset_list(property_set_tool: Type[tool.PropertySet]):
     if property_set_tool.predefined_pset_list_is_editing():
         return
     property_set_tool.get_predefine_pset_list_widget()
@@ -157,13 +172,13 @@ def repaint_predefined_pset_list(property_set_tool: Type[PropertySet]):
     property_set_tool.update_predefined_pset_list()
 
 
-def repaint_predefined_pset_window(property_set_tool: Type[PropertySet]):
+def repaint_predefined_pset_window(property_set_tool: Type[tool.PropertySet]):
     repaint_predefined_pset_list(property_set_tool)
     repaint_predefined_pset_inheritance_list(property_set_tool)
     pass
 
 
-def repaint_pset_table(property_set_tool: Type[PropertySet], object_tool: Type[Object]):
+def repaint_pset_table(property_set_tool: Type[tool.PropertySet], object_tool: Type[tool.Object]):
     if object_tool.get_active_object() is not None:
         property_set_tool.set_enabled(True)
     else:
@@ -183,55 +198,11 @@ def repaint_pset_table(property_set_tool: Type[PropertySet], object_tool: Type[O
     property_set_tool.update_property_set_table(table)
 
 
-def repaint_pset_window(window: PropertySetWindow, property_set_tool: Type[PropertySet],
-                        attribute_tool: Type[Attribute]):
-    pset = property_set_tool.get_property_set_from_window(window)
-    attribute_core.refresh_attribute_table(window.widget.table_widget, attribute_tool)
-    attribute_name = property_set_tool.pw_get_attribute_name(window)
-    if attribute_name in [a.name for a in pset.attributes]:
-        property_set_tool.pw_set_add_button_text("Update", window)
-    else:
-        property_set_tool.pw_set_add_button_text("Hinzufügen", window)
-    property_set_tool.update_line_validators(window)
-    property_set_tool.pw_set_seperator(window)
-
-
-def table_double_clicked(property_set_tool: Type[PropertySet], attribute_tool: Type[Attribute]):
+def table_double_clicked(property_set_tool: Type[tool.PropertySet], attribute_table: Type[tool.AttributeTable],
+                         property_set_window: Type[tool.PropertySetWindow]):
     property_set = property_set_tool.get_selecte_property_set_from_table()
-    window = property_set_tool.open_pset_window(property_set)
-    table = attribute_tool.get_table(window)
-    attribute_core.refresh_attribute_table(table, attribute_tool)
+    window = property_set_window_core.open_pset_window(property_set, property_set_window)
+    table = property_set_window.get_table(window)
+    attribute_table_core.paint_attribute_table(table, attribute_table)
     table.resizeColumnsToContents()
     pass
-
-
-def update_seperator(window: PropertySetWindow, property_set_tool: Type[PropertySet], settings_tool: Type[Settings]):
-    text, state = property_set_tool.get_seperator_state(window)
-    settings_tool.set_seperator_status(state)
-    settings_tool.set_seperator(text)
-
-
-def value_type_changed(window: PropertySetWindow, property_set_tool: Type[PropertySet]):
-    value_type = property_set_tool.pw_get_value_type(window)
-    if value_type == RANGE:
-        property_set_tool.set_value_columns(2, window)
-        property_set_tool.restrict_data_type_to_numbers(window)
-    else:
-        property_set_tool.set_value_columns(1, window)
-        property_set_tool.remove_data_type_restriction(window)
-
-
-from __future__ import annotations
-from PySide6 import QtGui
-from PySide6.QtCore import QModelIndex
-from som_gui.core import attribute as attribute_core
-from SOMcreator.constants.value_constants import RANGE
-
-from typing import Type, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from som_gui.tool import PropertySet, Object, Attribute, Settings, MainWindow, Popups
-    from som_gui.module.property_set.ui import PropertySetWindow
-
-import som_gui
-import SOMcreator

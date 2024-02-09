@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from thefuzz import fuzz
+
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow, Ui_MainWindow
 
@@ -9,20 +10,24 @@ __version__ = "2.10.1"
 import importlib
 
 modules = {
-    "object_filter": None,
-    "project_filter": None,
-    "project": None,
-    "objects": None,
-    "search": None,
-    "property_set": None,
-    "attribute":   None,
-    "main_window": None,
+    "object_filter":           None,
+    "project_filter":          None,
+    "project":                 None,
+    "objects":                 None,
+    "search":                  None,
+    "property_set":            None,
+    "attribute":               None,
+    "main_window":             None,
+    "attribute_table":         None,
+    "property_set_window":     None,
+    "predefined_property_set": None,
 }
 
 
 class MainUi:
     ui: Ui_MainWindow = None
     window: MainWindow = None
+
 
 for name in modules.keys():
     modules[name] = importlib.import_module(f"som_gui.module.{name}")
@@ -46,4 +51,3 @@ def on_new_project():
     for name, mod in sorted(modules.items()):
         if name != "project":
             mod.on_new_project()
-

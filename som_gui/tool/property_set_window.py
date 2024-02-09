@@ -1,31 +1,23 @@
 from __future__ import annotations
 import logging
 
-from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QHBoxLayout, QLineEdit, QListWidget, \
-    QListWidgetItem, QMenu
-from PySide6.QtCore import Qt, QModelIndex, QPoint
-from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QAction, QIcon, QGuiApplication
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit
 
-from SOMcreator.constants.json_constants import INHERITED_TEXT
+from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QGuiApplication
+
 from SOMcreator.constants.value_constants import VALUE_TYPE_LOOKUP, DATA_TYPES
 from SOMcreator.constants import value_constants
-
+import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
-from som_gui.icons import get_link_icon
 from som_gui.module.project.constants import CLASS_REFERENCE
-from som_gui.module.attribute import trigger as attribute_trigger
-from som_gui.module.property_set import trigger as property_set_trigger
-from som_gui.module.property_set import ui
+from som_gui.module.property_set_window import ui
 
-import SOMcreator
-
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from som_gui.module.property_set_window.prop import PropertySetWindowProperties
-    from som_gui.module.property_set_window import ui
 
 
 class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
@@ -33,21 +25,13 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def get_properties(cls) -> PropertySetWindowProperties:
         return som_gui.PropertySetWindowProperties
 
-
-
-
     @classmethod
     def get_table(cls, window: ui.PropertySetWindow):
         return window.widget.table_widget
 
-
     @classmethod
     def set_active_window(cls, window):
         cls.get_properties().active_window = window
-
-    @classmethod
-    def get_table(cls, window: PropertySetWindow):
-        return window.widget.table_widget
 
     @classmethod
     def get_window_by_property_set(cls, property_set: SOMcreator.PropertySet):
@@ -55,7 +39,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         return {pset: window for window, pset in prop.property_set_windows.items()}.get(property_set)
 
     @classmethod
-    def get_property_set_from_window(cls, window: PropertySetWindow) -> SOMcreator.PropertySet:
+    def get_property_set_from_window(cls, window: ui.PropertySetWindow) -> SOMcreator.PropertySet:
         prop = cls.get_properties()
         return prop.property_set_windows.get(window)
 
@@ -64,7 +48,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         return window.widget.lineEdit_name.text()
 
     @classmethod
-    def pw_get_attribute_data(cls, window: ui.PropertySetWindow):
+    def get_attribute_data(cls, window: ui.PropertySetWindow):
         d = dict()
         d["name"] = cls.get_attribute_name(window)
         d["data_type"] = window.widget.combo_data_type.currentText()
@@ -162,7 +146,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         prop = cls.get_properties()
         window = ui.PropertySetWindow()
         prop.property_set_windows[window] = property_set
-        window.show()
+        return window
 
     @classmethod
     def get_allowed_value_types(cls):
@@ -190,3 +174,139 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def fill_window_title(cls, window: ui.PropertySetWindow, property_set: SOMcreator.PropertySet):
         title = f"{property_set.object.name}:{property_set.name}" if property_set.object else f"{property_set.name}"
         window.setWindowTitle(title)
+
+    @classmethod
+    def refresh_add_button(cls, window: ui.PropertySetWindow):
+        attribute_name = cls.get_attribute_name(window)
+        pset = cls.get_property_set_from_window(window)
+        if attribute_name in [a.name for a in pset.attributes]:
+            cls.set_add_button_text("Update", window)
+        else:
+            cls.set_add_button_text("Hinzufügen", window)
+
+    @classmethod
+    def toggle_comboboxes(cls, attribute: SOMcreator.Attribute, window: ui.PropertySetWindow):
+        is_child = attribute.is_child
+        window.widget.combo_type.setEnabled(not is_child)
+        window.widget.combo_data_type.setEnabled(not is_child)
+        t1 = "Attribut wurde geerbt -> Keine Änderung des Types möglich" if is_child else ""
+        t2 = "Attribut wurde geerbt -> Keine Änderung des Datentyps möglich" if is_child else ""
+        window.widget.combo_type.setToolTip(t1)
+        window.widget.combo_data_type.setToolTip(t2)
+
+    @classmethod
+    def set_attribute_name(cls, name: str, window: ui.PropertySetWindow):
+        window.widget.lineEdit_name.setText(name)
+
+    @classmethod
+    def set_data_type(cls, data_type: str, window: ui.PropertySetWindow):
+        window.widget.combo_data_type.setCurrentText(data_type)
+
+    @classmethod
+    def set_value_type(cls, value_type: str, window: ui.PropertySetWindow):
+        window.widget.combo_type.setCurrentText(value_type)
+
+    @classmethod
+    def clear_values(cls, window: ui.PropertySetWindow):
+        layout = window.widget.verticalLayout_2
+        for row in reversed(range(layout.count())):
+            item: QHBoxLayout = layout.itemAt(row)
+            for col in reversed(range(item.count())):
+                item.itemAt(col).widget().deleteLater()
+            item.layout().deleteLater()
+            layout.removeItem(item)
+
+    @classmethod
+    def set_values(cls, values: list[str | list[str]], window: ui.PropertySetWindow):
+        for value in values:
+            value = "" if value is None else value
+            if isinstance(value, (list, set)):
+                line_layout = cls.add_value_line(len(value), window)
+                for col, v in enumerate(value):
+                    v = "" if value is None else v
+                    line_edit: ui.LineInput = line_layout.itemAt(col).widget()
+                    line_edit.setText(cls.value_to_string(v))
+            else:
+                line_layout = cls.add_value_line(1, window)
+                line_edit: ui.LineInput = line_layout.itemAt(0).widget()
+                line_edit.setText(cls.value_to_string(value))
+
+    @classmethod
+    def set_description(cls, description: str, window: ui.PropertySetWindow):
+        window.widget.description.setText(description)
+
+    @classmethod
+    def set_add_button_text(cls, text: str, window: ui.PropertySetWindow):
+        button = window.widget.button_add
+        button.setText(text)
+
+    @classmethod
+    def update_line_validators(cls, window: ui.PropertySetWindow):
+        data_type = cls.get_data_type(window)
+        value_type = cls.get_value_type(window)
+        if data_type == value_constants.INTEGER:
+            validator = QIntValidator()
+        elif data_type == value_constants.REAL:
+            validator = QDoubleValidator()
+        elif value_type == value_constants.FORMAT:
+            validator = QRegularExpressionValidator()
+        else:
+            validator = QRegularExpressionValidator()
+        for row in cls.get_input_value_lines(window):
+            for line in row:
+                line.setValidator(validator)
+
+    @classmethod
+    def value_to_string(cls, value):
+        if isinstance(value, str):
+            return value
+        if isinstance(value, int):
+            return str(value)
+        if isinstance(value, float):
+            return str(value).replace(".", ",")
+
+    @classmethod
+    def set_value_columns(cls, column_count: int, window: ui.PropertySetWindow):
+        main_layout = window.widget.verticalLayout_2
+        for row_index in range(main_layout.count()):
+            hor_layout: QHBoxLayout = main_layout.itemAt(row_index)
+            existing_columns = hor_layout.count()
+            dif = column_count - existing_columns
+            if dif > 0:
+                for _ in range(dif):
+                    hor_layout.addWidget(ui.LineInput())
+            elif dif < 0:
+                for _ in range(abs(dif)):
+                    item = hor_layout.itemAt(hor_layout.count() - 1)
+                    item.widget().deleteLater()
+                    hor_layout.removeItem(item)
+
+    @classmethod
+    def restrict_data_type_to_numbers(cls, window: ui.PropertySetWindow):
+        active_type = window.widget.combo_data_type.currentText()
+        data_types = [value_constants.REAL, value_constants.INTEGER]
+        window.widget.combo_data_type.clear()
+        window.widget.combo_data_type.addItems(data_types)
+        if active_type in data_types:
+            window.widget.combo_data_type.setCurrentText(active_type)
+
+    @classmethod
+    def remove_data_type_restriction(cls, window: ui.PropertySetWindow):
+        active_type = window.widget.combo_data_type.currentText()
+        data_type = cls.get_allowed_data_types()
+        window.widget.combo_data_type.clear()
+        window.widget.combo_data_type.addItems(data_type)
+        window.widget.combo_data_type.setCurrentText(active_type)
+
+    @classmethod
+    def pw_set_seperator(cls, window: ui.PropertySetWindow):
+        seperator = tool.Settings.get_seperator()
+        seperator_status = tool.Settings.get_seperator_status()
+        window.widget.check_box_seperator.setChecked(seperator_status)
+        window.widget.line_edit_seperator.setText(seperator)
+
+    @classmethod
+    def get_seperator_state(cls, window: ui.PropertySetWindow) -> (str, bool):
+        seperator_text = window.widget.line_edit_seperator.text()
+        seperator_state = window.widget.check_box_seperator.isChecked()
+        return seperator_text, seperator_state

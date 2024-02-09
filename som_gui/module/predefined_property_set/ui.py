@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QTableWidget, QWidget, QDialog, QStyledItemDelegate, QLineEdit
 from PySide6.QtCore import Signal, QModelIndex
-from som_gui.module import predefined_property_sets
+from som_gui.module import predefined_property_set
 from .window import Ui_Dialog
 from som_gui.icons import get_icon
 from som_gui.module.property_set.ui import LineEditDelegate
@@ -19,8 +19,7 @@ class PredefinedPropertySetWindow(QDialog):
 
     def paintEvent(self, event):
         super().paintEvent(event)
-        predefined_property_sets.trigger.repaint_window()
+        predefined_property_set.trigger.repaint_window()
 
     def accept(self):
-        predefined_property_sets.trigger.accept()
-
+        predefined_property_set.trigger.accept()

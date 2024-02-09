@@ -5,16 +5,9 @@ import logging
 import SOMcreator
 import som_gui.core.tool
 from typing import Callable, TYPE_CHECKING, Any
-from som_gui import tool
-from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
-from PySide6 import QtGui
-from PySide6.QtCore import Qt, QPoint
-from som_gui.module.project.constants import CLASS_REFERENCE
-from som_gui.module.property_set import ui as property_set_ui
 
 if TYPE_CHECKING:
-    from som_gui.module.attribute.prop import AttributeProperties, AttributeData
-    from som_gui.module.property_set.ui import PropertySetWindow
+    from som_gui.module.attribute.prop import AttributeProperties
 
 
 class Attribute(som_gui.core.tool.Attribute):
@@ -28,11 +21,6 @@ class Attribute(som_gui.core.tool.Attribute):
         prop = cls.get_attribute_properties()
         prop.attribute_data_dict[name] = {"getter": getter,
                                           "setter": setter}
-
-    @classmethod
-    def get_attribute_table_header_names(cls):
-        prop = cls.get_attribute_properties()
-        return [d["display_name"] for d in prop.attribute_table_columns]
 
     @classmethod
     def get_attribute_data(cls, attribute: SOMcreator.Attribute) -> dict[str, Any]:

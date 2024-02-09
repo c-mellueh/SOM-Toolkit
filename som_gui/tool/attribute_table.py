@@ -1,33 +1,21 @@
-import som_gui.core.tool
 from __future__ import annotations
-import logging
 
-from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QHBoxLayout, QLineEdit, QListWidget, \
-    QListWidgetItem, QMenu
-from PySide6.QtCore import Qt, QModelIndex, QPoint
-from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QAction, QIcon, QGuiApplication, \
-    QBrush
-
-from SOMcreator.constants.json_constants import INHERITED_TEXT
-from SOMcreator.constants.value_constants import VALUE_TYPE_LOOKUP, DATA_TYPES
-from SOMcreator.constants import value_constants
+from PySide6.QtWidgets import QTableWidgetItem, QTableWidget
+from PySide6.QtCore import Qt, QPoint
+from PySide6.QtGui import QBrush
 
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
-from som_gui.icons import get_link_icon
 from som_gui.module.project.constants import CLASS_REFERENCE
-from som_gui.module.attribute import trigger as attribute_trigger
-from som_gui.module.property_set import trigger as property_set_trigger
-from som_gui.module.attribute_table import ui
-
-import SOMcreator
 
 from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
     from som_gui.module.attribute_table.prop import AttributeTableProperties
-    from som_gui.module.property_set_window import ui
+    import SOMcreator
+    from som_gui.module.attribute_table import ui
+    from som_gui.module.property_set_window.ui import PropertySetWindow
 
 
 class AttributeTable(som_gui.core.tool.AttributeTable):
@@ -134,7 +122,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def add_column_to_table(cls, name: str, get_function: Callable):
-        prop = cls.get_attribute_properties()
+        prop = cls.get_properties()
         d = {"display_name": name,
              "get_function": get_function}
         prop.attribute_table_columns.append(d)
@@ -150,7 +138,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def get_property_set_by_table(cls, table: QTableWidget):
         window = table.window()
-        if isinstance(window, ui.PropertySetWindow):
+        if isinstance(window, PropertySetWindow):
             return tool.PropertySetWindow.get_property_set_from_window(window)
         if isinstance(window, som_gui.main_window.MainWindow):
             return tool.PropertySet.get_active_property_set()
@@ -159,3 +147,8 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     def get_item_from_pos(cls, table: QTableWidget, pos: QPoint):
         item = table.itemAt(pos)
         return cls.get_attribute_from_item(item)
+
+    @classmethod
+    def get_attribute_table_header_names(cls):
+        prop = cls.get_properties()
+        return [d["display_name"] for d in prop.attribute_table_columns]

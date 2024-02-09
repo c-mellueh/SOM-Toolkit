@@ -12,13 +12,7 @@ class ColumnDict(TypedDict):
     get_function: Callable
 
 
-class AttributeData(TypedDict):
-    getter: Callable
-    setter: Callable
-
-
 class AttributeTableProperties:
     attribute_table_columns: list[ColumnDict] = list()
-    attribute_data_dict: dict[str, AttributeData] = list()
     active_attribute: SOMcreator.Attribute = None
     active_table: AttributeTable = None
