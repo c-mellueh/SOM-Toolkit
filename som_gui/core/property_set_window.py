@@ -44,7 +44,6 @@ def open_pset_window(property_set: SOMcreator.PropertySet, property_set_window: 
     property_set_window.connect_window_triggers(window)
     property_set_window.fill_window_title(window, property_set)
     table = property_set_window.get_table(window)
-    # paint_attribute_table(table, property_set_window) TODO: Muss imported werden
     table.resizeColumnsToContents()
     window.show()
     return window
