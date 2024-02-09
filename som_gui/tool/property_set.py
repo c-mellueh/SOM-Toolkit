@@ -1,23 +1,16 @@
 from __future__ import annotations
-import logging
 
-from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QHBoxLayout, QLineEdit, QListWidget, \
-    QListWidgetItem, QMenu
+from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QListWidgetItem, QMenu
 from PySide6.QtCore import Qt, QModelIndex
-from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QAction, QIcon
+from PySide6.QtGui import QAction, QIcon
 
 from SOMcreator.constants.json_constants import INHERITED_TEXT
-from SOMcreator.constants.value_constants import VALUE_TYPE_LOOKUP, DATA_TYPES
-from SOMcreator.constants import value_constants
 
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
 from som_gui.icons import get_link_icon
 from som_gui.module.project.constants import CLASS_REFERENCE
-from som_gui.module.attribute import trigger as attribute_trigger
-from som_gui.module.property_set import trigger as property_set_trigger
-from som_gui.module.property_set import ui
 
 import SOMcreator
 
@@ -25,17 +18,15 @@ from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
-    from som_gui.module.property_set.ui import PropertySetWindow, PredefinedPropertySetWindow
 
 
 class PropertySet(som_gui.core.tool.PropertySet):
-    @classmethod
-    def set_active_window(cls, window):
-        cls.get_pset_properties().active_window = window
 
     @classmethod
-    def get_active_window(cls):
-        return cls.get_pset_properties().active_window
+    def get_attribute_by_name(cls, property_set: SOMcreator.PropertySet, name: str):
+        attribute_dict = {a.name: a for a in property_set.get_all_attributes()}
+        return attribute_dict.get(name)
+
     @classmethod
     def get_inheritable_property_sets(cls, obj: SOMcreator.Object) -> list[SOMcreator.PropertySet]:
         def loop(o):
@@ -56,21 +47,13 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return props.is_renaming_property_set
 
     @classmethod
-    def pset_table_edit_started(cls):
-        pset = cls.get_selecte_property_set_from_table()
-        table = cls.get_table()
-        for row in range(table.rowCount()):
-            item = table.item(row, 0)
-            if cls.get_pset_from_item(item) == pset:
-                pset.name = item.text()
-
-        props = cls.get_pset_properties()
-        props.is_renaming_property_set = True
+    def get_property_set_from_row(cls, row, table):
+        return cls.get_property_set_from_item(table.item(row, 0))
 
     @classmethod
-    def pset_table_edit_stopped(cls):
-        props = cls.get_pset_properties()
-        props.is_renaming_property_set = False
+    def set_pset_name_by_row(cls, pset, row, table):
+        item = table.item(row, 0)
+        pset.name = item.text()
 
     @classmethod
     def rename_table_pset(cls):
@@ -87,25 +70,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
         property_set.delete()
 
     @classmethod
-    def delete_predefined_pset(cls):
-        property_set = cls.get_active_predefined_pset()
-        property_set.delete(False, False)
-
-    @classmethod
-    def rename_predefined_pset(cls):
-        pset = cls.get_active_predefined_pset()
-        list_widget = cls.get_predefine_pset_list_widget()
-        for row in range(list_widget.count()):
-            item = list_widget.item(row)
-            if cls.get_property_set_from_item(item) == pset:
-                list_widget.editItem(item)
-
-    @classmethod
-    def add_predefined_pset(cls):
-        existing_names = [p.name for p in cls.get_predefined_psets()]
-        cls.create_property_set(tool.ObjectFilter.get_new_use_case_name("Neues PropertySet", existing_names))
-
-    @classmethod
     def create_context_menu(cls, global_pos, function_list: list[list[str, Callable]]):
         menu = QMenu()
         actions = list()
@@ -117,112 +81,8 @@ class PropertySet(som_gui.core.tool.PropertySet):
         menu.exec(global_pos)
 
     @classmethod
-    def close_predefined_pset_window(cls):
-        window = cls.get_pset_properties().predefined_property_set_window
-        window.hide()
-
-    @classmethod
     def get_property_set_from_item(cls, item: QTableWidgetItem | QListWidgetItem) -> SOMcreator.PropertySet:
         return item.data(CLASS_REFERENCE)
-
-    @classmethod
-    def get_selected_predef_property_set(cls):
-        props = cls.get_pset_properties()
-        return props.predefined_property_set_window.widget.list_view_pset.selectedItems()[0].data(CLASS_REFERENCE)
-
-    @classmethod
-    def set_predef_property_set(cls, property_set: SOMcreator.PropertySet):
-        props = cls.get_pset_properties()
-        props.active_predefined_pset = property_set
-
-    @classmethod
-    def get_active_predefined_pset(cls) -> SOMcreator.PropertySet:
-        props = cls.get_pset_properties()
-        return props.active_predefined_pset
-
-    @classmethod
-    def get_predefined_pset_window(cls):
-        props = cls.get_pset_properties()
-        return props.predefined_property_set_window
-
-    @classmethod
-    def create_predefined_pset_window(cls) -> PredefinedPropertySetWindow:
-        props = cls.get_pset_properties()
-        window = som_gui.module.property_set.ui.PredefinedPropertySetWindow()
-        props.predefined_property_set_window = window
-        window.edit_started.connect(cls.predef_edit_started)
-        window.edit_stopped.connect(cls.predef_edit_stopped)
-        return props.predefined_property_set_window
-
-    @classmethod
-    def predefined_pset_list_is_editing(cls):
-        props = cls.get_pset_properties()
-        return props.is_renaming_predefined_pset
-
-    @classmethod
-    def predef_edit_started(cls):
-        props = cls.get_pset_properties()
-        props.is_renaming_predefined_pset = True
-
-    @classmethod
-    def predef_edit_stopped(cls):
-        props = cls.get_pset_properties()
-        props.is_renaming_predefined_pset = False
-
-    @classmethod
-    def remove_property_sets_from_list(cls, property_sets: list[SOMcreator.PropertySet], list_widget: QListWidget):
-        rows = {row for row in range(list_widget.count()) if
-                list_widget.item(row).data(CLASS_REFERENCE) in property_sets}
-        for row in reversed(sorted(rows)):
-            list_widget.takeItem(row)
-
-    @classmethod
-    def add_property_sets_to_list(cls, property_sets: list[SOMcreator.PropertySet], list_widget: QListWidget):
-        list_widget.setSortingEnabled(False)
-
-        for property_set in property_sets:
-            item = QListWidgetItem(property_set.name)
-            item.setData(CLASS_REFERENCE, property_set)
-            list_widget.addItem(item)
-        list_widget.setSortingEnabled(True)
-
-    @classmethod
-    def add_property_sets_to_inheritance_list(cls, property_sets: list[SOMcreator.PropertySet],
-                                              list_widget: QListWidget):
-        list_widget.setSortingEnabled(False)
-        for property_set in property_sets:
-            item = QListWidgetItem(property_set.object.name)
-            item.setData(CLASS_REFERENCE, property_set)
-            list_widget.addItem(item)
-        list_widget.setSortingEnabled(True)
-
-    @classmethod
-    def get_existing_psets_in_list(cls, pset_list: QListWidget):
-        return {pset_list.item(row).data(CLASS_REFERENCE) for row in range(pset_list.count())}
-
-    @classmethod
-    def get_predefine_pset_list_widget(cls):
-        return cls.get_pset_properties().predefined_property_set_window.widget.list_view_pset
-
-    @classmethod
-    def get_predefined_pset_inheritance_list(cls):
-        return cls.get_pset_properties().predefined_property_set_window.widget.list_view_existance
-
-    @classmethod
-    def update_predefined_pset_list(cls):
-        list_widget = cls.get_predefine_pset_list_widget()
-        for row in range(list_widget.count()):
-            item = list_widget.item(row)
-            item.setText(item.data(CLASS_REFERENCE).name)
-            item.setFlags(item.flags() | Qt.ItemIsEditable)
-
-    @classmethod
-    def update_predefined_pset_inheritance_list(cls):
-        list_widget = cls.get_predefined_pset_inheritance_list()
-        for row in range(list_widget.count()):
-            item = list_widget.item(row)
-            property_set: SOMcreator.PropertySet = item.data(CLASS_REFERENCE)
-            item.setText(f"{property_set.object.name}")
 
     @classmethod
     def check_if_pset_allready_exists(cls, pset_name: str, active_object: SOMcreator.Object):
@@ -242,20 +102,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
         else:
             property_set = SOMcreator.PropertySet(name, obj, project=tool.Project.get())
         return property_set
-
-    @classmethod
-    def close_property_set_window(cls, window: PropertySetWindow):
-        logging.debug(f"Remove {window}")
-        prop = cls.get_pset_properties()
-        if window in prop.property_set_windows:
-            prop.property_set_windows.pop(window)
-        else:
-            logging.warning(f"PropertySetWindow can't be removed because it's not registred")
-
-    @classmethod
-    def get_property_set_from_window(cls, window: PropertySetWindow) -> SOMcreator.PropertySet:
-        prop = cls.get_pset_properties()
-        return prop.property_set_windows.get(window)
 
     @classmethod
     def get_pset_from_item(cls, item: QTableWidgetItem) -> SOMcreator.PropertySet:
@@ -330,11 +176,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
             items[2].setCheckState(check_state)
 
     @classmethod
-    def get_predefined_psets(cls) -> set[SOMcreator.PropertySet]:
-        proj = tool.Project.get()
-        return proj.get_predefined_psets()
-
-    @classmethod
     def select_property_set(cls, property_set: SOMcreator.PropertySet):
         table = cls.get_table()
         table.setFocus()
@@ -354,7 +195,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def update_completer(cls, obj: SOMcreator.Object = None):
-        psets = list(cls.get_predefined_psets())
+        psets = list(tool.PredefinedPropertySet.get_property_sets())
         if obj is not None:
             psets += cls.get_inheritable_property_sets(obj)
         pset_names = sorted({p.name for p in psets})
@@ -380,230 +221,3 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def get_active_property_set(cls) -> SOMcreator.PropertySet:
         prop = cls.get_pset_properties()
         return prop.active_pset
-
-    @classmethod
-    def open_pset_window(cls, property_set: SOMcreator.PropertySet):
-        prop = cls.get_pset_properties()
-        reversed_dict = {pset: window for window, pset in prop.property_set_windows.items()}
-        window: PropertySetWindow = reversed_dict.get(property_set)
-        if window is not None:
-            window.raise_()
-            return window
-        window = ui.PropertySetWindow()
-        prop.property_set_windows[window] = property_set
-        window.show()
-        window.widget.combo_type.clear()
-        window.widget.combo_type.addItems(cls.get_allowed_value_types())
-
-        window.widget.combo_data_type.clear()
-        window.widget.combo_data_type.addItems(cls.get_allowed_data_types())
-        attribute_trigger.connect_attribute_table(window.widget.table_widget)
-        property_set_trigger.connect_property_set_window(window)
-
-        title = f"{property_set.object.name}:{property_set.name}" if property_set.object else f"{property_set.name}"
-        window.setWindowTitle(title)
-        window.widget.combo_type.setCurrentText(value_constants.LIST)
-        window.widget.combo_data_type.setCurrentText(value_constants.LABEL)
-        cls.pw_add_value_line(1, window)
-        return window
-
-    @classmethod
-    def pw_toggle_comboboxes(cls, attribute: SOMcreator.Attribute, window: PropertySetWindow):
-        is_child = attribute.is_child
-        window.widget.combo_type.setEnabled(not is_child)
-        window.widget.combo_data_type.setEnabled(not is_child)
-        t1 = "Attribut wurde geerbt -> Keine Änderung des Types möglich" if is_child else ""
-        t2 = "Attribut wurde geerbt -> Keine Änderung des Datentyps möglich" if is_child else ""
-        window.widget.combo_type.setToolTip(t1)
-        window.widget.combo_data_type.setToolTip(t2)
-
-    @classmethod
-    def pw_set_attribute_name(cls, name: str, window: PropertySetWindow):
-        window.widget.lineEdit_name.setText(name)
-
-    @classmethod
-    def pw_set_data_type(cls, data_type: str, window: PropertySetWindow):
-        window.widget.combo_data_type.setCurrentText(data_type)
-
-    @classmethod
-    def pw_set_value_type(cls, value_type: str, window: PropertySetWindow):
-        window.widget.combo_type.setCurrentText(value_type)
-
-    @classmethod
-    def pw_add_value_line(cls, column_count: int, window: PropertySetWindow) -> QHBoxLayout:
-        new_layout = QHBoxLayout()
-        for _ in range(column_count):
-            new_layout.addWidget(ui.LineInput())
-        window.widget.verticalLayout_2.addLayout(new_layout)
-        return new_layout
-
-    @classmethod
-    def get_input_value_lines(cls, window: PropertySetWindow) -> list[list[QLineEdit]]:
-        lines = list()
-        base_layout = window.widget.verticalLayout_2
-        for row in range(base_layout.count()):
-            hor_layout: QHBoxLayout = base_layout.itemAt(row)
-            lines.append([hor_layout.itemAt(col).widget() for col in range(hor_layout.count())])
-        return lines
-
-    @classmethod
-    def pw_clear_values(cls, window: PropertySetWindow):
-        layout = window.widget.verticalLayout_2
-        for row in reversed(range(layout.count())):
-            item: QHBoxLayout = layout.itemAt(row)
-            for col in reversed(range(item.count())):
-                item.itemAt(col).widget().deleteLater()
-            item.layout().deleteLater()
-            layout.removeItem(item)
-
-    @classmethod
-    def pw_set_values(cls, values: list[str | list[str]], window: PropertySetWindow):
-        for value in values:
-            value = "" if value is None else value
-            if isinstance(value, (list, set)):
-                line_layout = cls.pw_add_value_line(len(value), window)
-                for col, v in enumerate(value):
-                    v = "" if value is None else v
-                    line_edit: ui.LineInput = line_layout.itemAt(col).widget()
-                    line_edit.setText(cls.value_to_string(v))
-            else:
-                line_layout = cls.pw_add_value_line(1, window)
-                line_edit: ui.LineInput = line_layout.itemAt(0).widget()
-                line_edit.setText(cls.value_to_string(value))
-
-    @classmethod
-    def pw_set_description(cls, description: str, window: PropertySetWindow):
-        window.widget.description.setText(description)
-
-    @classmethod
-    def pw_set_add_button_text(cls, text: str, window: PropertySetWindow):
-        button = window.widget.button_add
-        button.setText(text)
-
-    @classmethod
-    def pw_get_attribute_name(cls, window: PropertySetWindow):
-        return window.widget.lineEdit_name.text()
-
-    @classmethod
-    def get_allowed_value_types(cls):
-        return VALUE_TYPE_LOOKUP.keys()
-
-    @classmethod
-    def get_allowed_data_types(cls):
-        return DATA_TYPES
-
-    @classmethod
-    def pw_get_data_type(cls, window: PropertySetWindow):
-        return window.widget.combo_data_type.currentText()
-
-    @classmethod
-    def pw_get_value_type(cls, window: PropertySetWindow):
-        return window.widget.combo_type.currentText()
-
-    @classmethod
-    def format_values(cls, value_list: list[str], window: PropertySetWindow):
-        data_type = cls.pw_get_data_type(window)
-        if data_type not in (value_constants.REAL, value_constants.INTEGER):
-            return [str(val) for val in value_list]
-        values = [val.replace(".", "") for val in value_list]  # remove thousend Point
-        values = [float(val.replace(",", ".")) for val in values if val]
-        if data_type == value_constants.INTEGER:
-            values = [int(val) for val in value_list]
-        if len(values) < len(value_list):
-            values += [None for _ in range(len(value_list) - len(values))]
-        return values
-
-    @classmethod
-    def value_to_string(cls, value):
-        if isinstance(value, str):
-            return value
-        if isinstance(value, int):
-            return str(value)
-        if isinstance(value, float):
-            return str(value).replace(".", ",")
-
-    @classmethod
-    def pw_get_values(cls, window: PropertySetWindow):
-        lines = cls.get_input_value_lines(window)
-        value_list = list()
-        for row in lines:
-            values = cls.format_values([line.text() for line in row if line.text()], window)
-            if not values:
-                continue
-            if len(values) > 1:
-                value_list.append(values)
-            else:
-                value_list.append(values[0])
-        return value_list
-
-    @classmethod
-    def pw_get_attribute_data(cls, window: PropertySetWindow):
-        d = dict()
-        d["name"] = cls.pw_get_attribute_name(window)
-        d["data_type"] = window.widget.combo_data_type.currentText()
-        d["value_type"] = window.widget.combo_type.currentText()
-        d["values"] = cls.pw_get_values(window)
-        d["description"] = window.widget.description.toPlainText()
-        return d
-
-    @classmethod
-    def update_line_validators(cls, window: PropertySetWindow):
-        data_type = cls.pw_get_data_type(window)
-        value_type = cls.pw_get_value_type(window)
-        if data_type == value_constants.INTEGER:
-            validator = QIntValidator()
-        elif data_type == value_constants.REAL:
-            validator = QDoubleValidator()
-        elif value_type == value_constants.FORMAT:
-            validator = QRegularExpressionValidator()
-        else:
-            validator = QRegularExpressionValidator()
-        for row in cls.get_input_value_lines(window):
-            for line in row:
-                line.setValidator(validator)
-
-    @classmethod
-    def set_value_columns(cls, column_count: int, window: PropertySetWindow):
-        main_layout = window.widget.verticalLayout_2
-        for row_index in range(main_layout.count()):
-            hor_layout: QHBoxLayout = main_layout.itemAt(row_index)
-            existing_columns = hor_layout.count()
-            dif = column_count - existing_columns
-            if dif > 0:
-                for _ in range(dif):
-                    hor_layout.addWidget(ui.LineInput())
-            elif dif < 0:
-                for _ in range(abs(dif)):
-                    item = hor_layout.itemAt(hor_layout.count() - 1)
-                    item.widget().deleteLater()
-                    hor_layout.removeItem(item)
-
-    @classmethod
-    def restrict_data_type_to_numbers(cls, window: PropertySetWindow):
-        active_type = window.widget.combo_data_type.currentText()
-        data_types = [value_constants.REAL, value_constants.INTEGER]
-        window.widget.combo_data_type.clear()
-        window.widget.combo_data_type.addItems(data_types)
-        if active_type in data_types:
-            window.widget.combo_data_type.setCurrentText(active_type)
-
-    @classmethod
-    def remove_data_type_restriction(cls, window: PropertySetWindow):
-        active_type = window.widget.combo_data_type.currentText()
-        data_type = cls.get_allowed_data_types()
-        window.widget.combo_data_type.clear()
-        window.widget.combo_data_type.addItems(data_type)
-        window.widget.combo_data_type.setCurrentText(active_type)
-
-    @classmethod
-    def pw_set_seperator(cls, window: PropertySetWindow):
-        seperator = tool.Settings.get_seperator()
-        seperator_status = tool.Settings.get_seperator_status()
-        window.widget.check_box_seperator.setChecked(seperator_status)
-        window.widget.line_edit_seperator.setText(seperator)
-
-    @classmethod
-    def get_seperator_state(cls, window: PropertySetWindow) -> (str, bool):
-        seperator_text = window.widget.line_edit_seperator.text()
-        seperator_state = window.widget.check_box_seperator.isChecked()
-        return seperator_text, seperator_state

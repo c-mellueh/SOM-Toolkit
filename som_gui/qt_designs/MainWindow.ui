@@ -394,6 +394,9 @@
            </column>
           </widget>
              <widget class="AttributeTable" name="table_attribute">
+                 <property name="contextMenuPolicy">
+                     <enum>Qt::CustomContextMenu</enum>
+                 </property>
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
@@ -634,7 +637,7 @@
      <customwidget>
          <class>AttributeTable</class>
          <extends>QTableWidget</extends>
-         <header>som_gui.module.attribute.ui</header>
+         <header>som_gui.module.attribute_table.ui</header>
      </customwidget>
   <customwidget>
    <class>ObjectTreeWidget</class>
