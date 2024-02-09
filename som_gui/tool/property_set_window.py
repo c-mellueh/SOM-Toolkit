@@ -39,18 +39,18 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         return {pset: window for window, pset in prop.property_set_windows.items()}.get(property_set)
 
     @classmethod
-    def get_property_set_from_window(cls, window: ui.PropertySetWindow) -> SOMcreator.PropertySet:
+    def get_property_set_by_window(cls, window: ui.PropertySetWindow) -> SOMcreator.PropertySet:
         prop = cls.get_properties()
         return prop.property_set_windows.get(window)
 
     @classmethod
-    def get_attribute_name(cls, window: ui.PropertySetWindow):
+    def get_attribute_name_input(cls, window: ui.PropertySetWindow):
         return window.widget.lineEdit_name.text()
 
     @classmethod
     def get_attribute_data(cls, window: ui.PropertySetWindow):
         d = dict()
-        d["name"] = cls.get_attribute_name(window)
+        d["name"] = cls.get_attribute_name_input(window)
         d["data_type"] = window.widget.combo_data_type.currentText()
         d["value_type"] = window.widget.combo_type.currentText()
         d["values"] = cls.get_values(window)
@@ -176,13 +176,15 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.setWindowTitle(title)
 
     @classmethod
-    def refresh_add_button(cls, window: ui.PropertySetWindow):
-        attribute_name = cls.get_attribute_name(window)
-        pset = cls.get_property_set_from_window(window)
+    def update_add_button(cls, window: ui.PropertySetWindow):
+        attribute_name = cls.get_attribute_name_input(window)
+        pset = cls.get_property_set_by_window(window)
         if attribute_name in [a.name for a in pset.attributes]:
             cls.set_add_button_text("Update", window)
         else:
             cls.set_add_button_text("Hinzufügen", window)
+
+        cls.set_add_button_enabled(bool(attribute_name), window)
 
     @classmethod
     def toggle_comboboxes(cls, attribute: SOMcreator.Attribute, window: ui.PropertySetWindow):
@@ -239,6 +241,11 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def set_add_button_text(cls, text: str, window: ui.PropertySetWindow):
         button = window.widget.button_add
         button.setText(text)
+
+    @classmethod
+    def set_add_button_enabled(cls, enabled: bool, window: ui.PropertySetWindow):
+        button = window.widget.button_add
+        button.setEnabled(enabled)
 
     @classmethod
     def update_line_validators(cls, window: ui.PropertySetWindow):
@@ -299,7 +306,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.widget.combo_data_type.setCurrentText(active_type)
 
     @classmethod
-    def pw_set_seperator(cls, window: ui.PropertySetWindow):
+    def set_seperator(cls, window: ui.PropertySetWindow):
         seperator = tool.Settings.get_seperator()
         seperator_status = tool.Settings.get_seperator_status()
         window.widget.check_box_seperator.setChecked(seperator_status)

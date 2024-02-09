@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 def add_attribute_button_clicked(window: PropertySetWindow, property_set: Type[tool.PropertySet],
                                  property_set_window: Type[tool.PropertySetWindow],
                                  attribute: Type[tool.Attribute]):
-    pset = property_set_window.get_property_set_from_window(window)
-    attribute_name = property_set_window.get_attribute_name(window)
+    pset = property_set_window.get_property_set_by_window(window)
+    attribute_name = property_set_window.get_attribute_name_input(window)
 
     old_attribute = property_set.get_attribute_by_name(pset, attribute_name)
     attribute_data = property_set_window.get_attribute_data(window)
@@ -31,7 +31,7 @@ def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[
         property_set_tool.add_value_line(2, window)
     else:
         property_set_tool.add_value_line(1, window)
-
+    property_set_tool.update_line_validators(window)
 
 def open_pset_window(property_set: SOMcreator.PropertySet, property_set_window: Type[tool.PropertySetWindow]):
     existing_window = property_set_window.get_window_by_property_set(property_set)
@@ -75,10 +75,10 @@ def repaint_pset_window(window: PropertySetWindow, property_set_window: Type[too
                         attribute_table: Type[tool.AttributeTable]):
     table = property_set_window.get_table(window)
     attribute_table_core.paint_attribute_table(table, attribute_table)
-    property_set_window.refresh_add_button(window)
 
+    property_set_window.update_add_button(window)
     property_set_window.update_line_validators(window)
-    property_set_window.pw_set_seperator(window)
+    property_set_window.set_seperator(window)
 
 
 def value_type_changed(window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow]):

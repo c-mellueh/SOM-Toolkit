@@ -139,7 +139,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     def get_property_set_by_table(cls, table: QTableWidget):
         window = table.window()
         if isinstance(window, PropertySetWindow):
-            return tool.PropertySetWindow.get_property_set_from_window(window)
+            return tool.PropertySetWindow.get_property_set_by_window(window)
         if isinstance(window, som_gui.main_window.MainWindow):
             return tool.PropertySet.get_active_property_set()
 
