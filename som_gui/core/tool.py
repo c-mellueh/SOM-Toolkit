@@ -249,7 +249,6 @@ class ObjectFilter:
 
     def update_pset_use_cases(self): pass
 
-    def set_active_use_case(self, value): pass
 
 
 class Project:
