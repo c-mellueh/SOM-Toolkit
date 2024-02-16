@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QTreeView
 
 
-def open_use_case_window(objectfilter_tool: Type[ObjectFilter], project_tool: Type[Project]):
+def open_use_case_window(objectfilter_tool: Type[ObjectFilter]):
     window = objectfilter_tool.create_window()
     window.show()
     load_use_cases(objectfilter_tool)
@@ -19,14 +19,9 @@ def open_use_case_window(objectfilter_tool: Type[ObjectFilter], project_tool: Ty
     pset_tree = objectfilter_tool.get_pset_tree()
     object_tree.expanded.connect(lambda: resize_tree(object_tree, objectfilter_tool))
     pset_tree.expanded.connect(lambda: resize_tree(pset_tree, objectfilter_tool))
-
-    header = object_tree.header()
-    header.customContextMenuRequested.connect(
-        lambda pos: create_header_context_menu(pos, object_tree, objectfilter_tool, project_tool))
-    header.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
     objectfilter_tool.get_widget().buttonBox.accepted.connect(lambda: accept_changes(objectfilter_tool))
     objectfilter_tool.get_widget().buttonBox.rejected.connect(lambda: reject_changes(objectfilter_tool))
-
+    pset_tree.setEnabled(False)
 
 def on_startup(objectfilter_tool: Type[ObjectFilter]):
     logging.debug(f"Startup UseCase")
@@ -159,6 +154,7 @@ def resize_tree(tree: QTreeView, objectfilter_tool: Type[ObjectFilter]):
 
 
 def object_clicked(obj: SOMcreator.Object, objectfilter_tool: Type[ObjectFilter]):
+    objectfilter_tool.get_pset_tree().setEnabled(True)
     objectfilter_tool.update_pset_data()
     objectfilter_tool.update_attribute_data()
     objectfilter_tool.set_active_object(obj)
