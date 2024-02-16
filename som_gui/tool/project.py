@@ -170,21 +170,19 @@ class Project(som_gui.core.tool.Project):
         tool.Settings.set_open_path(path)
         tool.Settings.set_save_path(path)
         prop: ProjectProperties = cls.get_project_properties()
-        proj = SOMcreator.Project()
-        project_dict = proj.open(path)
-        prop.active_project = proj
+        prop.active_project = SOMcreator.Project.open(path)
+        main_window.project = cls.get()
         cls.create_project_infos()
         som_gui.on_new_project()
-        main_window.project, main_dict = proj, project_dict
-        cls.import_node_pos(main_dict, main_window.graph_window)
+        cls.import_node_pos(main_window.graph_window)
         main_window.graph_window.create_missing_scenes()
-        return proj, project_dict
+        return main_window.project
 
     @classmethod
-    def import_node_pos(cls, main_dict: dict, graph_window) -> None:
+    def import_node_pos(cls, graph_window) -> None:
         proj = cls.get()
-
-        json_aggregation_dict: dict = main_dict[SOMcreator.json_constants.AGGREGATIONS]
+        plugin_dict = cls.get().import_dict
+        json_aggregation_dict: dict = plugin_dict[SOMcreator.json_constants.AGGREGATIONS]
         aggregation_ref = {aggregation.uuid: aggregation for aggregation in proj.get_all_aggregations()}
         for uuid, aggregation_dict in json_aggregation_dict.items():
             aggregation = aggregation_ref[uuid]
@@ -192,7 +190,7 @@ class Project(som_gui.core.tool.Project):
             y_pos = aggregation_dict.get(json_constants.Y_POS) or 0.0
             graph_window.create_node(aggregation, QPointF(x_pos, y_pos))
 
-        scene_dict = main_dict.get("AggregationScenes") or dict()
+        scene_dict = plugin_dict.get("AggregationScenes") or dict()
         graph_window.scene_dict.update(scene_dict)
 
     @classmethod
