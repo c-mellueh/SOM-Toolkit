@@ -283,10 +283,12 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def create_tree(cls, entities: set[SOMcreator.Attribute | SOMcreator.Object], parent_item: QStandardItem,
-                    filter_index_list: list[[int, int]], pre_header_text_length: int, model: QStandardItemModel):
+                    filter_index_list: list[[int, int]], pre_header_text_length: int, model: QStandardItemModel,
+                    tree: QTreeView):
 
         existing_entities_dict = {parent_item.child(index, 0).data(CLASS_REFERENCE): index for index in
                                   range(parent_item.rowCount())}
+
         old_entities = set(existing_entities_dict.keys())
         new_entities = entities.difference(old_entities)
         delete_entities = old_entities.difference(entities)
@@ -310,7 +312,9 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             class_item = parent_item.child(child_row, 0)
             obj = class_item.data(CLASS_REFERENCE)
             if isinstance(obj, SOMcreator.Object):
-                cls.create_tree(obj.get_all_children(), class_item, filter_index_list, pre_header_text_length, model)
+                if tree.isExpanded(parent_item.index()) or parent_item == model.invisibleRootItem():
+                    cls.create_tree(obj.get_all_children(), class_item, filter_index_list, pre_header_text_length,
+                                    model, tree)
 
     @classmethod
     def get_title_lenght_by_model(cls, model: QStandardItemModel):
@@ -432,7 +436,9 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         object_header_texts, _ = cls.get_header_texts()
         model = cls.get_object_model()
         use_case_list = cls.get_filter_indexes()
-        cls.create_tree(set(root_objects), model.invisibleRootItem(), use_case_list, len(object_header_texts), model)
+        tree = cls.get_object_tree()
+        cls.create_tree(set(root_objects), model.invisibleRootItem(), use_case_list, len(object_header_texts), model,
+                        tree)
 
     @classmethod
     def get_title_count_by_index(cls, index) -> int:
@@ -575,7 +581,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
                     child_item.setEnabled(enable_state)
                 pset = root_item.child(child_row, 0).data(CLASS_REFERENCE)
                 cls.create_tree(pset.get_all_attributes(), root_item.child(child_row, 0), filter_index_list,
-                                len(pset_header_texts), model)
+                                len(pset_header_texts), model, cls.get_pset_tree())
 
         _, pset_header_texts = cls.get_header_texts()
         model = cls.get_pset_model()
