@@ -155,7 +155,7 @@ class ObjectFilter:
 
     def create_row(self, entity, use_case_list): pass
 
-    def create_tree(self, entities, parent_item, use_case_list, pre_header_text_length, model): pass
+    def create_tree(self, entities, parent_item, use_case_list, pre_header_text_length, model, tree): pass
 
     def create_tree_models(self): pass
 
