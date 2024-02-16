@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComb
                                QSplitter, QTableWidgetItem, QTextEdit, QVBoxLayout,
                                QWidget)
 
-from som_gui.module.attribute.ui import AttributeTable
+from som_gui.module.attribute_table.ui import AttributeTable
 
 class Ui_layout_main(object):
     def setupUi(self, layout_main):
