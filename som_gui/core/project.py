@@ -83,7 +83,8 @@ def add_project(project_tool: Type[Project]):
         return
     p1 = project_tool.get()
     p2 = project_tool.load_project(path)
-    project_tool.merge_projects(p1, p2)
+    project_tool.get_mapping_dicts(p1, p2)
+
     logging.warning(f"Import der Bauwerksstruktur wird noch nicht unterstützt")
     # project_tool.import_node_pos(p2)
 

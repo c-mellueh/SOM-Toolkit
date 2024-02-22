@@ -1,7 +1,7 @@
 import logging
 
 import som_gui
-from . import ui, trigger, prop,window
+from . import ui, trigger, prop, window, window_merge
 
 
 def register():
