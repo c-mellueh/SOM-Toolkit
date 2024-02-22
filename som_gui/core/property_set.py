@@ -12,14 +12,15 @@ from PySide6.QtCore import QModelIndex
 
 
 def add_property_set_button_pressed(object_tool: Type[tool.Object], main_window_tool: Type[tool.MainWindow],
-                                    property_set_tool: Type[tool.PropertySet], popup_tool: Type[tool.Popups]):
+                                    property_set_tool: Type[tool.PropertySet], popup_tool: Type[tool.Popups],
+                                    predefined_psets: Type[tool.PredefinedPropertySet]):
     obj = object_tool.get_active_object()
     pset_name = main_window_tool.get_pset_name()
     if property_set_tool.check_if_pset_allready_exists(pset_name, obj):
         popup_tool.create_warning_popup(f"PropertySet '{pset_name}' existiert bereits")
         return
 
-    predefined_pset_dict = {p.name: p for p in property_set_tool.get_predefined_psets()}
+    predefined_pset_dict = {p.name: p for p in predefined_psets.get_property_sets()}
     connect_predefined_pset = False
     if pset_name in predefined_pset_dict:
         connect_predefined_pset = popup_tool.request_property_set_merge(pset_name, 1)
