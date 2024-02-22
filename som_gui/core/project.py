@@ -31,11 +31,19 @@ def save_as_clicked(project_tool: Type[Project], popup_tool: Type[Popups], setti
         save_project(save_path, project_tool, settings_tool)
 
 
-def open_file_clicked(project_tool: Type[Project]):
+def open_file_clicked(project_tool: Type[Project], settings: Type[Settings]):
     path = project_tool.get_path("Open Project", FILETYPE)
     if not path:
         return
-    project_tool.load_project(path)
+
+    project_tool.reset_project_infos()
+    logging.info("Load Project")
+    settings.set_open_path(path)
+    settings.set_save_path(path)
+    proj = project_tool.load_project(path)
+    project_tool.set_active_project(proj)
+    som_gui.on_new_project()
+    project_tool.import_node_pos(proj)
 
 
 def new_file_clicked(project_tool: Type[Project], popup_tool: Type[Popups]):
@@ -62,8 +70,22 @@ def create_project(project_tool: Type[Project]):
 
 
 def open_project(path, project_tool: Type[Project]):
-    return project_tool.load_project(path)
+    proj = project_tool.load_project(path)
+    project_tool.set_active_project(proj)
+    som_gui.on_new_project()
+    project_tool.import_node_pos(proj)
+    return proj
 
+
+def add_project(project_tool: Type[Project]):
+    path = project_tool.get_path("Add Project", FILETYPE)
+    if not path:
+        return
+    p1 = project_tool.get()
+    p2 = project_tool.load_project(path)
+    project_tool.merge_projects(p1, p2)
+    logging.warning(f"Import der Bauwerksstruktur wird noch nicht unterstützt")
+    # project_tool.import_node_pos(p2)
 
 def repaint_settings_dialog(project_tool: Type[Project]):
     project_infos = project_tool.get_project_infos()
@@ -87,3 +109,4 @@ def reset_settings_dialog(project_tool: Type[Project]):
     project_infos = project_tool.get_project_infos()
     for info_dict in project_infos:
         info_dict["value"] = info_dict["get_function"]()
+

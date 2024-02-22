@@ -1,8 +1,8 @@
 import logging
-
 import som_gui.core.tool
 import SOMcreator
 from SOMcreator.constants import json_constants
+import SOMcreator.tools.merge_projects
 import som_gui
 from som_gui.module.project.prop import ProjectProperties, InfoDict
 from som_gui.module.project.constants import VERSION, AUTHOR, NAME, PROJECT_PHASE
@@ -164,24 +164,12 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def load_project(cls, path: str):
-        cls.reset_project_infos()
-        logging.info("Load Project")
-        main_window = som_gui.MainUi.window
-        tool.Settings.set_open_path(path)
-        tool.Settings.set_save_path(path)
-        prop: ProjectProperties = cls.get_project_properties()
-        prop.active_project = SOMcreator.Project.open(path)
-        main_window.project = cls.get()
-        cls.create_project_infos()
-        som_gui.on_new_project()
-        cls.import_node_pos(main_window.graph_window)
-        main_window.graph_window.create_missing_scenes()
-        return main_window.project
+        return SOMcreator.Project.open(path)
 
     @classmethod
-    def import_node_pos(cls, graph_window) -> None:
-        proj = cls.get()
-        plugin_dict = cls.get().import_dict
+    def import_node_pos(cls, proj) -> None:
+        graph_window = som_gui.MainUi.window.graph_window
+        plugin_dict = proj.import_dict
         json_aggregation_dict: dict = plugin_dict[SOMcreator.json_constants.AGGREGATIONS]
         aggregation_ref = {aggregation.uuid: aggregation for aggregation in proj.get_all_aggregations()}
         for uuid, aggregation_dict in json_aggregation_dict.items():
@@ -192,7 +180,7 @@ class Project(som_gui.core.tool.Project):
 
         scene_dict = plugin_dict.get("AggregationScenes") or dict()
         graph_window.scene_dict.update(scene_dict)
-
+        graph_window.create_missing_scenes()
     @classmethod
     def add_node_pos(cls, main_window, main_dict: dict, path: str):
         def filter_scene_dict(scene_dict: dict) -> dict:
@@ -217,6 +205,13 @@ class Project(som_gui.core.tool.Project):
 
         with open(path, "w") as file:
             json.dump(main_dict, file)
+
+    @classmethod
+    def set_active_project(cls, proj: SOMcreator.Project):
+        prop = cls.get_project_properties()
+        prop.active_project = proj
+        som_gui.MainUi.window.project = cls.get()
+        cls.create_project_infos()
 
     @classmethod
     def get(cls) -> SOMcreator.Project:
@@ -276,3 +271,17 @@ class Project(som_gui.core.tool.Project):
     def update_setting(cls, info_dict: InfoDict):
         value = info_dict["value"]
         info_dict["set_function"](value)
+
+    @classmethod
+    def get_phase_mapping(cls, p1: SOMcreator.Project, p2: SOMcreator.Project):
+        return {ph1: ph2 for ph1, ph2 in zip(p1.get_project_phase_list(), p2.get_project_phase_list())}
+
+    @classmethod
+    def get_use_case_mapping(cls, p1: SOMcreator.Project, p2: SOMcreator.Project):
+        return {ph1: ph2 for ph1, ph2 in zip(p1.get_use_case_list(), p2.get_use_case_list())}
+
+    @classmethod
+    def merge_projects(cls, project_1, project_2):
+        phase_mapping = cls.get_phase_mapping(project_1, project_2)
+        use_case_mapping = cls.get_use_case_mapping(project_1, project_2)
+        SOMcreator.tools.merge_projects.merge_projects(project_1, project_2, phase_mapping, use_case_mapping)
