@@ -5,7 +5,7 @@ from thefuzz import fuzz
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow, Ui_MainWindow
 
-__version__ = "2.10.2"
+__version__ = "2.10.3"
 
 import importlib
 
@@ -21,6 +21,8 @@ modules = {
     "attribute_table":         None,
     "property_set_window":     None,
     "predefined_property_set": None,
+    "modelcheck":   None,
+    "ifc_importer": None,
 }
 
 

@@ -1,9 +1,8 @@
-import som_gui
 from . import ui, prop, trigger
 
 
 def register():
-    som_gui.ModelcheckProperties = prop.ModelcheckProperties()
+    pass
 
 
 def load_ui_triggers():

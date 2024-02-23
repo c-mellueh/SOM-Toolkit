@@ -12,3 +12,4 @@ from som_gui.tool.predefined_property_set import PredefinedPropertySet
 from som_gui.tool.property_set_window import PropertySetWindow
 from som_gui.tool.attribute_table import AttributeTable
 from som_gui.tool.modelcheck import Modelcheck
+from som_gui.tool.ifc_importer import IfcImporter

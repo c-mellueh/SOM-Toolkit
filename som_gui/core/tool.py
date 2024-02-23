@@ -2,6 +2,8 @@ class Popups:
     def create_warning_popup(self, text):    pass
 
 
+class IfcImporter:
+    pass
 class Modelcheck:
     pass
 
