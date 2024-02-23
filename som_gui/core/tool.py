@@ -2,6 +2,9 @@ class Popups:
     def create_warning_popup(self, text):    pass
 
 
+class Modelcheck:
+    pass
+
 class PredefinedPropertySet:
     pass
 
