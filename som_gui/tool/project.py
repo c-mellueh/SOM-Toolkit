@@ -324,7 +324,7 @@ class Project(som_gui.core.tool.Project):
         return cls.create_mapping_window(p1.get_use_case_list(), p2.get_use_case_list())
 
     @classmethod
-    def get_mapping_dicts(cls, project_1, project_2):
+    def merge_projects(cls, project_1, project_2):
         phase_mapping = cls.get_phase_mapping(project_1, project_2)
         if phase_mapping is None:
             return
