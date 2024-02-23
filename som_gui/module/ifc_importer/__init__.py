@@ -1,8 +1,8 @@
 from . import ui, prop, trigger
-
+import som_gui
 
 def register():
-    pass
+    som_gui.IfcImportProperties = prop.IfcImportProperties()
 
 
 def load_ui_triggers():
