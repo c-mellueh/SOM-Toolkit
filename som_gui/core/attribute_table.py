@@ -7,9 +7,11 @@ from typing import TYPE_CHECKING, Type
 if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
+    from som_gui.module.attribute_table import ui
 
 
-def context_menu(table, pos, property_set: Type[tool.PropertySet], attribute_table: Type[tool.AttributeTable]):
+def context_menu(table: ui.AttributeTable, pos, property_set: Type[tool.PropertySet],
+                 attribute_table: Type[tool.AttributeTable]):
     active_attribute = attribute_table.get_item_from_pos(table, pos)
     attribute_table.set_active_table(table)
     attribute_table.set_active_attribute(active_attribute)
@@ -23,7 +25,6 @@ def context_menu(table, pos, property_set: Type[tool.PropertySet], attribute_tab
         actions = [["Umbenennen", attribute_table.edit_attribute_name],
                    ["Löschen", attribute_table.delete_selected_attribute], ]
 
-
     if active_attribute.is_child:
         actions.append(["Verknpüfung Lösen", attribute_table.remove_parent_of_selected_attribute])
     else:
@@ -31,7 +32,7 @@ def context_menu(table, pos, property_set: Type[tool.PropertySet], attribute_tab
         if possible_parent:
             actions.append(["Verknpüfung Hinzufügen", attribute_table.add_parent_of_selected_attribute])
 
-    property_set.create_context_menu(table.mapToGlobal(pos), actions)
+    property_set.create_context_menu(table.viewport().mapToGlobal(pos), actions)
 
 
 def add_basic_attribute_columns(attribute: Type[tool.Attribute], attribute_table: Type[tool.AttributeTable]):
