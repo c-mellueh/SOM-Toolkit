@@ -22,6 +22,10 @@ def context_menu(table, pos, property_set: Type[tool.PropertySet], attribute_tab
 
         actions = [["Umbenennen", attribute_table.edit_attribute_name],
                    ["Löschen", attribute_table.delete_selected_attribute], ]
+
+    if active_attribute.is_child:
+        actions.append(["Verknpüfung Lösen", attribute_table.remove_parent_of_selected_attribute])
+
     property_set.create_context_menu(table.mapToGlobal(pos), actions)
 
 
