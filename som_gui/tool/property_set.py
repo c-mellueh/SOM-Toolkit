@@ -180,8 +180,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
         if items[2].checkState() != check_state:
             items[2].setCheckState(check_state)
 
-
-
     @classmethod
     def update_property_set_table(cls, table: QTableWidget):
         for row in range(table.rowCount()):
