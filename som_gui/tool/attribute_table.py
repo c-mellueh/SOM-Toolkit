@@ -54,6 +54,15 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         attribute.parent.remove_child(attribute)
 
     @classmethod
+    def add_parent_of_selected_attribute(cls):
+        attribute = cls.get_properties().active_attribute
+        parent = cls.get_possible_parent(attribute)
+        if not parent:
+            return
+
+        parent.add_child(attribute)
+
+    @classmethod
     def get_properties(cls) -> AttributeTableProperties:
         return som_gui.AttributeTableProperties
 
@@ -170,3 +179,11 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     def get_attribute_table_header_names(cls):
         prop = cls.get_properties()
         return [d["display_name"] for d in prop.attribute_table_columns]
+
+    @classmethod
+    def get_possible_parent(cls, attribute: SOMcreator.Attribute) -> None | SOMcreator.Attribute:
+        if not attribute.property_set:
+            return None
+        if not attribute.property_set.parent:
+            return None
+        return {a.name: a for a in attribute.property_set.parent.attributes}.get(attribute.name)
