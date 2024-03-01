@@ -541,16 +541,21 @@ class Object(som_gui.core.tool.Object):
         item = QTreeWidgetItem()
         item.object = obj  # item.setData(0,obj) leads to recursion bug so allocating directly
         item.setText(0, obj.name)
+        item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsSelectable)
+        item.setCheckState(3, Qt.CheckState.Unchecked)
         return item
 
     @classmethod
     def update_item(cls, item: QTreeWidgetItem, obj: SOMcreator.Object):
-        item.setText(0, obj.name)
-        item.setText(1, obj.ident_value)
-        item.setText(2, obj.abbreviation)
+        values = [obj.name, obj.ident_value, obj.abbreviation]
+
+        for column, value in enumerate(values):
+            if item.text(column) != value:
+                item.setText(column, value)
+
         cs = Qt.CheckState.Checked if obj.optional else Qt.CheckState.Unchecked
-        item.setCheckState(3, cs)
-        item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsSelectable)
+        if item.checkState(3) != cs:
+            item.setCheckState(3, cs)
 
     @classmethod
     def fill_object_tree(cls, objects: set[SOMcreator.Object], parent_item: QTreeWidgetItem) -> None:

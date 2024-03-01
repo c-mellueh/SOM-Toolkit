@@ -6,9 +6,10 @@ from typing import Type, TYPE_CHECKING
 
 import som_gui.module.objects
 from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
-
+from som_gui import tool
 if TYPE_CHECKING:
     from som_gui.tool import Object, Project, Search, PropertySet, MainWindow
+
     from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
     from PySide6.QtCore import QPoint
 
@@ -117,8 +118,9 @@ def refresh_object_tree(object_tool: Type[Object], project_tool: Type[Project]):
     """
     gets called on Paint Event
     """
+    logging.debug(f"Repaint Object Widget")
     load_objects(object_tool, project_tool)
-    object_tool.autofit_tree()
+    # object_tool.autofit_tree()
 
 
 def load_objects(object_tool: Type[Object], project_tool: Type[Project]):
