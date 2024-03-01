@@ -44,6 +44,8 @@ def attribute_double_clicked(item: QTableWidgetItem, attribute: Type[tool.Attrib
 
 
 def paint_attribute_table(table: QTableWidget, attribute_table: Type[tool.AttributeTable]):
+    logging.debug(f"Repaint Attribute Table")
+
     existing_attributes = attribute_table.get_existing_attributes_in_table(table)
     property_set = attribute_table.get_property_set_by_table(table)
     if property_set is None:

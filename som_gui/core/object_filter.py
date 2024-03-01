@@ -23,6 +23,7 @@ def open_use_case_window(objectfilter_tool: Type[ObjectFilter]):
     objectfilter_tool.get_widget().buttonBox.rejected.connect(lambda: reject_changes(objectfilter_tool))
     pset_tree.setEnabled(False)
 
+
 def on_startup(objectfilter_tool: Type[ObjectFilter]):
     logging.debug(f"Startup UseCase")
     objectfilter_tool.reset_use_case_data()
@@ -44,26 +45,6 @@ def accept_changes(objectfilter_tool: Type[ObjectFilter]):
 def reject_changes(objectfilter_tool: Type[ObjectFilter]):
     window = objectfilter_tool.delete_use_case_window()
     window.close()
-
-
-def create_header_context_menu(pos, tree_view: QTreeView, objectfilter_tool: Type[ObjectFilter], project_tool):
-    # header = tree_view.header()
-    # column_index = header.logicalIndexAt(pos)
-    # model = tree_view.model()
-    # use_case_index = column_index - objectfilter_tool.get_title_lenght_by_model(model)
-    # if use_case_index < 0:
-    #     action_dict = {
-    #         "Anwendungsfall hinzufügen": lambda: create_use_case(objectfilter_tool, ),
-    #         "Leistungsph"}
-    # else:
-    #     action_dict = {
-    #         "Anwendungsfall hinzufügen": lambda: create_use_case(objectfilter_tool, ),
-    #         "Umbenennen":                lambda: rename_use_case(use_case_index, objectfilter_tool),
-    #         "Löschen":                   lambda: delete_use_case(use_case_index, objectfilter_tool),
-    #     }
-    #
-    # objectfilter_tool.create_context_menu(header.mapToGlobal(pos), action_dict)
-    pass
 
 
 def rename_use_case(use_case_index: int, objectfilter_tool: Type[ObjectFilter]):
