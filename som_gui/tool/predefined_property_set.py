@@ -4,7 +4,7 @@ import som_gui.module.predefined_property_set
 import SOMcreator
 from som_gui.module.project.constants import CLASS_REFERENCE
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QListWidget, QListWidgetItem
+from PySide6.QtWidgets import QListWidget, QListWidgetItem, QTableWidget, QTableWidgetItem
 from som_gui import tool
 
 from typing import TYPE_CHECKING
@@ -45,8 +45,8 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         window.hide()
 
     @classmethod
-    def get_object_list_widget(cls):
-        return cls.get_window().widget.list_view_existance
+    def get_object_table_widget(cls) -> QTableWidget:
+        return cls.get_window().widget.table_widgets_objects
 
     @classmethod
     def get_pset_list_widget(cls):
@@ -62,11 +62,12 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
 
     @classmethod
     def update_object_widget(cls):
-        list_widget = cls.get_object_list_widget()
-        for row in range(list_widget.count()):
-            item = list_widget.item(row)
-            property_set: SOMcreator.PropertySet = item.data(CLASS_REFERENCE)
+        table_widget = cls.get_object_table_widget()
+        for row in range(table_widget.rowCount()):
+            item = table_widget.item(row, 0)
+            property_set: SOMcreator.PropertySet = tool.PropertySet.get_property_set_from_item(item)
             item.setText(f"{property_set.object.name}")
+            table_widget.item(row, 1).setText(f"{property_set.object.ident_value}")
 
     @classmethod
     def get_selected_property_set(cls):
@@ -89,11 +90,23 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         return props.is_renaming_predefined_pset
 
     @classmethod
-    def remove_property_sets_from_widget(cls, property_sets: list[SOMcreator.PropertySet], list_widget: QListWidget):
+    def remove_property_sets_from_list_widget(cls, property_sets: list[SOMcreator.PropertySet],
+                                              list_widget: QListWidget):
         rows = {row for row in range(list_widget.count()) if
                 list_widget.item(row).data(CLASS_REFERENCE) in property_sets}
         for row in reversed(sorted(rows)):
             list_widget.takeItem(row)
+
+    @classmethod
+    def remove_property_sets_from_table_widget(cls, property_sets: list[SOMcreator.PropertySet],
+                                               table_widget: QTableWidget):
+        remove_rows = set()
+        for row in range(table_widget.rowCount()):
+            item = table_widget.item(row, 0)
+            if tool.PropertySet.get_property_set_from_item(item) in property_sets:
+                remove_rows.add(row)
+        for row in reversed(sorted(remove_rows)):
+            table_widget.removeRow(row)
 
     @classmethod
     def add_property_sets_to_widget(cls, property_sets: list[SOMcreator.PropertySet], list_widget: QListWidget):
@@ -106,18 +119,32 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         list_widget.setSortingEnabled(True)
 
     @classmethod
-    def add_objects_to_widgets(cls, property_sets: list[SOMcreator.PropertySet],
-                               list_widget: QListWidget):
-        list_widget.setSortingEnabled(False)
+    def add_objects_to_table_widget(cls, property_sets: list[SOMcreator.PropertySet], table_widget: QTableWidget):
         for property_set in property_sets:
-            item = QListWidgetItem(property_set.object.name)
-            item.setData(CLASS_REFERENCE, property_set)
-            list_widget.addItem(item)
-        list_widget.setSortingEnabled(True)
+            row_count = table_widget.rowCount()
+            table_widget.setRowCount(row_count + 1)
+            obj = property_set.object
+
+            item_1 = QTableWidgetItem(obj.name)
+            item_2 = QTableWidgetItem(obj.ident_value)
+
+            item_1.setData(CLASS_REFERENCE, property_set)
+            item_2.setData(CLASS_REFERENCE, property_set)
+
+            table_widget.setItem(row_count, 0, item_1)
+            table_widget.setItem(row_count, 1, item_2)
 
     @classmethod
-    def get_existing_psets_in_widget(cls, pset_list: QListWidget):
+    def get_existing_psets_in_list_widget(cls, pset_list: QListWidget):
         return {pset_list.item(row).data(CLASS_REFERENCE) for row in range(pset_list.count())}
+
+    @classmethod
+    def get_existing_psets_in_table_widget(cls, object_table: QTableWidget):
+        psets = set()
+        for row in range(object_table.rowCount()):
+            item = object_table.item(row, 0)
+            psets.add(tool.PropertySet.get_property_set_from_item(item))
+        return psets
 
     @classmethod
     def delete_selected_property_set(cls):
@@ -146,3 +173,27 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         """
         proj = tool.Project.get()
         return proj.get_predefined_psets()
+
+    @classmethod
+    def get_selected_linked_psets(cls) -> set[SOMcreator.PropertySet]:
+        return {tool.PropertySet.get_property_set_from_item(item) for item in
+                cls.get_object_table_widget().selectedItems()}
+
+    @classmethod
+    def delete_selected_objects(cls):
+        property_sets = cls.get_selected_linked_psets()
+        for property_set in property_sets:
+            property_set.delete(override_ident_deletion=False)
+
+    @classmethod
+    def remove_selected_links(cls):
+        property_sets = cls.get_selected_linked_psets()
+        parent = cls.get_active_property_set()
+        for property_set in property_sets:
+            parent.remove_child(property_set)
+
+    @classmethod
+    def clear_object_table(cls):
+        table = cls.get_object_table_widget()
+        for row in reversed(range(table.rowCount())):
+            table.removeRow(row)
