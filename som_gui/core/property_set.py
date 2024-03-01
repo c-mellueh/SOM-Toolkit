@@ -4,7 +4,7 @@ import som_gui
 from som_gui.core import property_set_window as property_set_window_core
 from som_gui.core import attribute_table as attribute_table_core
 from typing import Type, TYPE_CHECKING
-
+import logging
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_set_window.ui import PropertySetWindow
@@ -87,10 +87,13 @@ def rename_pset_by_editor(new_name: str, index: QModelIndex, property_set_tool: 
 
 
 def repaint_pset_table(property_set_tool: Type[tool.PropertySet], object_tool: Type[tool.Object]):
+    logging.debug(f"Repaint PropertySet Table")
+
     if object_tool.get_active_object() is not None:
         property_set_tool.set_enabled(True)
     else:
         property_set_tool.set_enabled(False)
+        return
 
     if property_set_tool.pset_table_is_editing():
         return
