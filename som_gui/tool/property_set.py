@@ -148,7 +148,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def add_property_sets_to_table(cls, property_sets: set[SOMcreator.PropertySet], table: QTableWidget):
-        table.setSortingEnabled(False)
         for property_set in property_sets:
             items = [QTableWidgetItem() for _ in range(3)]
             row = table.rowCount()
@@ -156,24 +155,35 @@ class PropertySet(som_gui.core.tool.PropertySet):
             [item.setData(CLASS_REFERENCE, property_set) for item in items]
             [item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable) for item in items]
             [table.setItem(row, col, item) for col, item in enumerate(items)]
-        table.setSortingEnabled(True)
+            items[1].setCheckState(Qt.CheckState.Unchecked)
+
+    @classmethod
+    def update_table_row(cls, table, row):
+        items = [table.item(row, col) for col in range(table.columnCount())]
+        item = items[0]
+        property_set = cls.get_property_set_from_item(item)
+        check_state = Qt.CheckState.Checked if property_set.optional else Qt.CheckState.Unchecked
+
+        if items[0].text() != property_set.name:
+            items[0].setText(f"{property_set.name}")
+        if property_set.is_child:
+            text = property_set.parent.name if property_set.parent.object is not None else INHERITED_TEXT
+
+            if items[1].text() != text:
+                items[1].setText(text)
+                items[0].setIcon(get_link_icon())
+        else:
+            if items[1].text() != "":
+                items[0].setIcon(QIcon())
+                items[1].setText("")
+
+        if items[2].checkState() != check_state:
+            items[2].setCheckState(check_state)
 
     @classmethod
     def update_property_set_table(cls, table: QTableWidget):
         for row in range(table.rowCount()):
-            item = table.item(row, 0)
-            items = [table.item(row, col) for col in range(table.columnCount())]
-            property_set = cls.get_property_set_from_item(item)
-            check_state = Qt.CheckState.Checked if property_set.optional else Qt.CheckState.Unchecked
-            items[0].setText(f"{property_set.name}")
-            if property_set.is_child:
-                text = property_set.parent.name if property_set.parent.object is not None else INHERITED_TEXT
-                items[1].setText(text)
-                items[0].setIcon(get_link_icon())
-            else:
-                items[0].setIcon(QIcon())
-                items[1].setText("")
-            items[2].setCheckState(check_state)
+            cls.update_table_row(table, row)
 
     @classmethod
     def select_property_set(cls, property_set: SOMcreator.PropertySet):

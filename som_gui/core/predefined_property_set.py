@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+import SOMcreator
+
 from som_gui.core import property_set_window as property_set_window_core
 from typing import Type, TYPE_CHECKING
 
@@ -42,9 +45,18 @@ def pset_double_clicked(item, property_set: Type[tool.PropertySet],
     property_set_window_core.open_pset_window(pset, property_set_window)
 
 
+def object_context_menu(pos, predefined_pset: Type[tool.PredefinedPropertySet],
+                        property_set: Type[tool.PropertySet]):
+    functions = [
+        ["Löschen", predefined_pset.delete_selected_objects],
+        ["Verknüpfung entfernen", predefined_pset.remove_selected_links],
+    ]
+    table_widget = predefined_pset.get_object_table_widget()
+    property_set.create_context_menu(table_widget.mapToGlobal(pos), functions)
+
 def object_double_clicked(predefined_pset: Type[tool.PredefinedPropertySet],
                           property_set: Type[tool.PropertySet], object_tool: Type[tool.Object]):
-    item = predefined_pset.get_object_list_widget().selectedItems()[0]
+    item = predefined_pset.get_object_table_widget().selectedItems()[0]
     pset = property_set.get_property_set_from_item(item)
     predefined_pset.close_window()
 
@@ -81,18 +93,21 @@ def repaint_window(predefined_pset: Type[tool.PredefinedPropertySet]):
 
 def repaint_object_list(predefined_pset: Type[tool.PredefinedPropertySet]):
     property_set = predefined_pset.get_active_property_set()
-    list_widget = predefined_pset.get_object_list_widget()
+    table_widget = predefined_pset.get_object_table_widget()
 
     if property_set is None:
-        list_widget.clear()
+        predefined_pset.clear_object_table()
         return
     predefined_property_sets = set(property_set.children)
-    existing_property_sets = predefined_pset.get_existing_psets_in_widget(list_widget)
+    existing_property_sets = predefined_pset.get_existing_psets_in_table_widget(table_widget)
     delete_property_sets = existing_property_sets.difference(predefined_property_sets)
     add_property_sets = sorted(predefined_property_sets.difference(existing_property_sets), key=lambda p: p.name)
-    predefined_pset.remove_property_sets_from_widget(delete_property_sets, list_widget)
-    predefined_pset.add_objects_to_widgets(sorted(add_property_sets, key=lambda p: p.name),
-                                           list_widget)
+
+    predefined_pset.remove_property_sets_from_table_widget(delete_property_sets, table_widget)
+    predefined_pset.add_objects_to_table_widget(sorted(add_property_sets, key=lambda p: p.object.name),
+                                                table_widget)
+
+    table_widget.resizeColumnToContents(0)
     predefined_pset.update_object_widget()
 
 
@@ -102,9 +117,9 @@ def repaint_pset_list(predefined_pset: Type[tool.PredefinedPropertySet]):
     predefined_pset.get_pset_list_widget()
     predefined_property_sets = set(predefined_pset.get_property_sets())
     list_widget = predefined_pset.get_pset_list_widget()
-    existing_property_sets = predefined_pset.get_existing_psets_in_widget(list_widget)
+    existing_property_sets = predefined_pset.get_existing_psets_in_list_widget(list_widget)
     delete_property_sets = existing_property_sets.difference(predefined_property_sets)
     add_property_sets = sorted(predefined_property_sets.difference(existing_property_sets), key=lambda p: p.name)
-    predefined_pset.remove_property_sets_from_widget(delete_property_sets, list_widget)
+    predefined_pset.remove_property_sets_from_list_widget(delete_property_sets, list_widget)
     predefined_pset.add_property_sets_to_widget(sorted(add_property_sets), list_widget)
     predefined_pset.update_pset_widget()

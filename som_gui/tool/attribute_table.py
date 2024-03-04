@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from PySide6.QtWidgets import QTableWidgetItem, QTableWidget
 from PySide6.QtCore import Qt, QPoint
-from PySide6.QtGui import QBrush
+from PySide6.QtGui import QBrush, QIcon
 
 import SOMcreator
 import som_gui
@@ -10,12 +10,15 @@ import som_gui.core.tool
 from som_gui import tool
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.property_set_window.ui import PropertySetWindow
-
+from som_gui.icons import get_link_icon
 from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
     from som_gui.module.attribute_table.prop import AttributeTableProperties
     from som_gui.module.attribute_table import ui
+
+LINKSTATE = Qt.ItemDataRole.UserRole + 2
+
 
 
 class AttributeTable(som_gui.core.tool.AttributeTable):
@@ -44,6 +47,20 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     def delete_selected_attribute(cls):
         attribute = cls.get_properties().active_attribute
         tool.Attribute.delete(attribute)
+
+    @classmethod
+    def remove_parent_of_selected_attribute(cls):
+        attribute = cls.get_properties().active_attribute
+        attribute.parent.remove_child(attribute)
+
+    @classmethod
+    def add_parent_of_selected_attribute(cls):
+        attribute = cls.get_properties().active_attribute
+        parent = cls.get_possible_parent(attribute)
+        if not parent:
+            return
+
+        parent.add_child(attribute)
 
     @classmethod
     def get_properties(cls) -> AttributeTableProperties:
@@ -89,6 +106,16 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         attribute = cls.get_attribute_from_item(items[0])
         if attribute is None:
             return
+        if attribute.parent is not None:
+            if not items[0].data(LINKSTATE):
+                items[0].setIcon(get_link_icon())
+                items[0].setData(LINKSTATE, True)
+        else:
+            if items[0].data(LINKSTATE):
+                items[0].setIcon(QIcon())
+                items[0].setData(LINKSTATE, False)
+
+
         for item, column_dict in zip(items, column_list):
             value = column_dict["get_function"](attribute)
             cls.format_attribute_table_value(item, value)
@@ -152,3 +179,11 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     def get_attribute_table_header_names(cls):
         prop = cls.get_properties()
         return [d["display_name"] for d in prop.attribute_table_columns]
+
+    @classmethod
+    def get_possible_parent(cls, attribute: SOMcreator.Attribute) -> None | SOMcreator.Attribute:
+        if not attribute.property_set:
+            return None
+        if not attribute.property_set.parent:
+            return None
+        return {a.name: a for a in attribute.property_set.parent.attributes}.get(attribute.name)

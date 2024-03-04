@@ -37,19 +37,19 @@ for name in modules.keys():
 
 def register():
     modules["project"].register()
-    for name, mod in sorted(modules.items()):
-        if name != "project":
+    for n, mod in sorted(modules.items()):
+        if n != "project":
             mod.register()
 
 
 def load_ui_triggers():
     modules["project"].load_ui_triggers()
-    for name, mod in sorted(modules.items()):
-        if name != "project":
+    for n, mod in sorted(modules.items()):
+        if n != "project":
             mod.load_ui_triggers()
 
 
 def on_new_project():
-    for name, mod in sorted(modules.items()):
-        if name != "project":
+    for n, mod in sorted(modules.items()):
+        if n != "project":
             mod.on_new_project()
