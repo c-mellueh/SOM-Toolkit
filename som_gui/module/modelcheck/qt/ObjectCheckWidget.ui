@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>978</width>
-    <height>486</height>
+       <width>1269</width>
+       <height>734</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QTreeView" name="object_tree"/>
+        <widget class="ObjectTree" name="object_tree"/>
      <widget class="QWidget" name="verticalLayoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
@@ -44,6 +44,13 @@
    </item>
   </layout>
  </widget>
+    <customwidgets>
+        <customwidget>
+            <class>ObjectTree</class>
+            <extends>QTreeView</extends>
+            <header>som_gui.module.modelcheck.ui</header>
+        </customwidget>
+    </customwidgets>
  <resources/>
  <connections/>
 </ui>

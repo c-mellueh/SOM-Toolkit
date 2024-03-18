@@ -18,12 +18,13 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QSizePolicy,
                                QSplitter, QTreeView, QVBoxLayout, QWidget)
 
+from som_gui.module.modelcheck.ui import ObjectTree
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(978, 486)
+        Form.resize(1269, 734)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.splitter = QSplitter(Form)
@@ -34,7 +35,7 @@ class Ui_Form(object):
         sizePolicy.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
         self.splitter.setSizePolicy(sizePolicy)
         self.splitter.setOrientation(Qt.Horizontal)
-        self.object_tree = QTreeView(self.splitter)
+        self.object_tree = ObjectTree(self.splitter)
         self.object_tree.setObjectName(u"object_tree")
         self.splitter.addWidget(self.object_tree)
         self.verticalLayoutWidget = QWidget(self.splitter)
@@ -59,10 +60,10 @@ class Ui_Form(object):
         self.retranslateUi(Form)
 
         QMetaObject.connectSlotsByName(Form)
-
     # setupUi
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.label_object.setText(QCoreApplication.translate("Form", u"TextLabel", None))
     # retranslateUi
+

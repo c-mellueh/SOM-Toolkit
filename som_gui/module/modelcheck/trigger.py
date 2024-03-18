@@ -5,12 +5,22 @@ from som_gui.core import modelcheck as core
 
 if TYPE_CHECKING:
     from .ui import ModelcheckWindow
-
+    from PySide6.QtWidgets import QTreeView
+    from PySide6.QtGui import QStandardItemModel
 
 def connect():
     tool.MainWindow.add_action("Modelcheck/Interne Modellprüfung",
                                lambda: core.open_window(tool.Modelcheck, tool.IfcImporter))
 
+
+def paint_object_tree():
+    core.paint_object_tree(tool.Modelcheck, tool.Project)
+
+
+def connect_object_check_tree(widget: QTreeView):
+    model: QStandardItemModel = widget.model()
+    model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.Modelcheck))
+    widget.selectionModel().selectionChanged.connect(lambda item: core.object_selection_changed(item, tool.Modelcheck))
 
 def connect_window(widget: ModelcheckWindow):
     pass
