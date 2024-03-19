@@ -53,11 +53,13 @@ def import_finished(widget: IfcImportWidget, runner: IfcImportRunner, modelcheck
                     ifc_importer: Type[tool.IfcImporter]):
     ifc_importer.set_status(widget, f"Import Abgeschlossen")
     ifc_file = runner.ifc
-    run_modelcheck_on_ifc(ifc_file, modelcheck)
+    runner = modelcheck.create_modelcheck_runner(lambda: run_modelcheck_on_ifc(ifc_file, modelcheck))
+    modelcheck.get_modelcheck_threadpool().start(runner)
 
 
-def run_modelcheck_on_ifc(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck]):
-    pass
+def run_modelcheck_on_ifc(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck],
+                          ifc_importer: Type[tool.IfcImporter]):
+    ifc_importer.set_status("Prüfe Elemente mit Gruppenzuordnung")
 
 
 def export_selection_clicked(widget: IfcImportWidget, modelcheck: Type[tool.Modelcheck], settings: Type[tool.Settings]):

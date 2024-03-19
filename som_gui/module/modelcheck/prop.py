@@ -5,6 +5,7 @@ import SOMcreator
 
 if TYPE_CHECKING:
     from .ui import ModelcheckWindow, ObjectCheckWidget
+    from PySide6.QtCore import QThreadPool
 
 
 class ModelcheckProperties:
@@ -12,3 +13,4 @@ class ModelcheckProperties:
     checkbox_widget: ObjectCheckWidget = None
     check_state_dict: dict[SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute, bool] = None
     selected_object: SOMcreator.Object = None
+    thread_pool: QThreadPool = None

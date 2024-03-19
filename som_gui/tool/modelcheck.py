@@ -4,16 +4,26 @@ from som_gui import tool
 from som_gui.module.modelcheck import ui, trigger
 from som_gui.module.project.constants import CLASS_REFERENCE
 import SOMcreator
-from typing import TYPE_CHECKING
-from PySide6.QtCore import Qt
+from typing import TYPE_CHECKING, Callable
+from PySide6.QtCore import Qt, QRunnable, QThreadPool
 from PySide6.QtWidgets import QSplitter, QLayout, QWidget, QTreeView, QFileDialog
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 import os
+
 if TYPE_CHECKING:
     from som_gui.module.modelcheck.prop import ModelcheckProperties
     from som_gui.module.ifc_importer.ui import IfcImportWidget
 
+
 class Modelcheck(som_gui.core.tool.Modelcheck):
+    @classmethod
+    def get_modelcheck_threadpool(cls):
+        if cls.get_properties().thread_pool is None:
+            tp = QThreadPool()
+            cls.get_properties().thread_pool = tp
+            tp.setMaxThreadCount(3)
+        return cls.get_properties().thread_pool
+
     @classmethod
     def open_export_dialog(cls, widget: IfcImportWidget, base_path: os.PathLike, file_text: str):
         path = QFileDialog.getSaveFileName(widget.window(), "Export", base_path, file_text)[0]
@@ -197,3 +207,14 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         for row in range(root_item.rowCount()):
             item = root_item.child(row, 0)
             cls._update_pset_row(item, enabled)
+
+    @classmethod
+    def create_modelcheck_runner(cls, run_function: Callable) -> QRunnable:
+        class ModelcheckRunner(QRunnable):
+            def __init__(self, ):
+                super().__init__()
+
+            def run(self):
+                run_function()
+
+        return ModelcheckRunner()
