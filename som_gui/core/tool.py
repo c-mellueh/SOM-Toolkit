@@ -4,7 +4,9 @@ class Popups:
 
 class IfcImporter:
     pass
-class Modelcheck:
+
+
+class ModelcheckWindow:
     pass
 
 class PredefinedPropertySet:

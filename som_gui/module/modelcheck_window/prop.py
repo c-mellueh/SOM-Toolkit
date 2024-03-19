@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from PySide6.QtCore import QThreadPool
 
 
-class ModelcheckProperties:
+class ModelcheckWindowProperties:
     active_window: ModelcheckWindow = None
     checkbox_widget: ObjectCheckWidget = None
     check_state_dict: dict[SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute, bool] = None

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from som_gui import tool
-from som_gui.core import modelcheck as core
+from som_gui.core import modelcheck_window as core
 
 if TYPE_CHECKING:
     from .ui import ModelcheckWindow
@@ -12,33 +12,33 @@ if TYPE_CHECKING:
 
 def connect():
     tool.MainWindow.add_action("Modelcheck/Interne Modellprüfung",
-                               lambda: core.open_window(tool.Modelcheck, tool.IfcImporter))
+                               lambda: core.open_window(tool.ModelcheckWindow, tool.IfcImporter))
 
 
 def paint_object_tree():
-    core.paint_object_tree(tool.Modelcheck, tool.Project)
+    core.paint_object_tree(tool.ModelcheckWindow, tool.Project)
 
 
 def paint_pset_tree():
-    core.paint_pset_tree(tool.Modelcheck)
+    core.paint_pset_tree(tool.ModelcheckWindow)
 
 
 def connect_ifc_import_widget(widget: IfcImportWidget):
     widget.widget.button_export.clicked.connect(
-        lambda: core.export_selection_clicked(widget, tool.Modelcheck, tool.Settings))
-    widget.widget.button_run.clicked.connect(lambda: core.run_clicked(widget, tool.Modelcheck, tool.IfcImporter))
+        lambda: core.export_selection_clicked(widget, tool.ModelcheckWindow, tool.Settings))
+    widget.widget.button_run.clicked.connect(lambda: core.run_clicked(widget, tool.ModelcheckWindow, tool.IfcImporter))
 
 
 def connect_object_check_tree(widget: QTreeView):
     model: QStandardItemModel = widget.model()
-    model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.Modelcheck))
+    model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.ModelcheckWindow))
     widget.selectionModel().selectionChanged.connect(
-        lambda item: core.object_selection_changed(widget.selectionModel(), tool.Modelcheck))
+        lambda item: core.object_selection_changed(widget.selectionModel(), tool.ModelcheckWindow))
 
 
 def connect_pset_check_tree(widget: QTreeView):
     model: QStandardItemModel = widget.model()
-    model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.Modelcheck))
+    model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.ModelcheckWindow))
 
 
 def connect_window(widget: ModelcheckWindow):

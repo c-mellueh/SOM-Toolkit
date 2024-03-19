@@ -18,7 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QSizePolicy,
                                QSplitter, QVBoxLayout, QWidget)
 
-from som_gui.module.modelcheck.ui import (ObjectTree, PsetTree)
+from som_gui.module.modelcheck_window.ui import (ObjectTree, PsetTree)
 
 class Ui_Form(object):
     def setupUi(self, Form):

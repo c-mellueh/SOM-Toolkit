@@ -3,7 +3,7 @@ from . import ui, prop, trigger, widget_object_check
 
 
 def register():
-    som_gui.ModelcheckProperties = prop.ModelcheckProperties()
+    som_gui.ModelcheckWindowProperties = prop.ModelcheckWindowProperties()
 
 
 def load_ui_triggers():

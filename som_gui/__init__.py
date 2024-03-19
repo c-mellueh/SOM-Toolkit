@@ -21,7 +21,7 @@ modules = {
     "attribute_table":         None,
     "property_set_window":     None,
     "predefined_property_set": None,
-    "modelcheck":   None,
+    "modelcheck_window": None,
     "ifc_importer": None,
 }
 

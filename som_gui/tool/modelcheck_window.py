@@ -1,7 +1,7 @@
 from __future__ import annotations
 import som_gui.core.tool
 from som_gui import tool
-from som_gui.module.modelcheck import ui, trigger
+from som_gui.module.modelcheck_window import ui, trigger
 from som_gui.module.project.constants import CLASS_REFERENCE
 import SOMcreator
 from typing import TYPE_CHECKING, Callable
@@ -11,11 +11,11 @@ from PySide6.QtGui import QStandardItem, QStandardItemModel
 import os
 
 if TYPE_CHECKING:
-    from som_gui.module.modelcheck.prop import ModelcheckProperties
+    from som_gui.module.modelcheck_window.prop import ModelcheckWindowProperties
     from som_gui.module.ifc_importer.ui import IfcImportWidget
 
 
-class Modelcheck(som_gui.core.tool.Modelcheck):
+class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def get_modelcheck_threadpool(cls):
         if cls.get_properties().thread_pool is None:
@@ -82,8 +82,8 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         cd[item] = cs
 
     @classmethod
-    def get_properties(cls) -> ModelcheckProperties:
-        return som_gui.ModelcheckProperties
+    def get_properties(cls) -> ModelcheckWindowProperties:
+        return som_gui.ModelcheckWindowProperties
 
     @classmethod
     def create_checkbox_widget(cls):
