@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.1
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -122,7 +122,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_object_button.setObjectName(u"horizontalLayout_object_button")
         self.line_edit_object_name = QLineEdit(self.layoutWidget)
         self.line_edit_object_name.setObjectName(u"line_edit_object_name")
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.line_edit_object_name.sizePolicy().hasHeightForWidth())
@@ -135,7 +135,7 @@ class Ui_MainWindow(object):
 
         self.line_edit_abbreviation = QLineEdit(self.layoutWidget)
         self.line_edit_abbreviation.setObjectName(u"line_edit_abbreviation")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.line_edit_abbreviation.sizePolicy().hasHeightForWidth())
@@ -157,7 +157,7 @@ class Ui_MainWindow(object):
 
         self.label_object_name = QLabel(self.layoutWidget)
         self.label_object_name.setObjectName(u"label_object_name")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.label_object_name.sizePolicy().hasHeightForWidth())
@@ -179,7 +179,7 @@ class Ui_MainWindow(object):
 
         self.button_search = QPushButton(self.layoutWidget)
         self.button_search.setObjectName(u"button_search")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.button_search.sizePolicy().hasHeightForWidth())
@@ -254,7 +254,7 @@ class Ui_MainWindow(object):
 
         self.splitter_2 = QSplitter(self.box_layout_pset)
         self.splitter_2.setObjectName(u"splitter_2")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.splitter_2.sizePolicy().hasHeightForWidth())
@@ -270,7 +270,7 @@ class Ui_MainWindow(object):
         __qtablewidgetitem2 = QTableWidgetItem()
         self.table_pset.setHorizontalHeaderItem(2, __qtablewidgetitem2)
         self.table_pset.setObjectName(u"table_pset")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy5.setHorizontalStretch(0)
         sizePolicy5.setVerticalStretch(0)
         sizePolicy5.setHeightForWidth(self.table_pset.sizePolicy().hasHeightForWidth())
@@ -420,7 +420,7 @@ class Ui_MainWindow(object):
         self.label_Ident.setText(QCoreApplication.translate("MainWindow", u"Identifier", None))
         ___qtreewidgetitem = self.tree_object.headerItem()
         ___qtreewidgetitem.setText(3, QCoreApplication.translate("MainWindow", u"Optional", None));
-        ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Neue Spalte", None));
+        ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Abk\u00fcrzung", None));
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objekt", None));
         self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))

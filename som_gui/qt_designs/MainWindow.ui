@@ -263,7 +263,7 @@
           </column>
           <column>
            <property name="text">
-            <string>Neue Spalte</string>
+               <string>Abkürzung</string>
            </property>
           </column>
           <column>
