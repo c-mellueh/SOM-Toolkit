@@ -11,6 +11,14 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QTableWidgetItem
 
 
+def inherit_checkbox_toggled(window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow],
+                             attribute: Type[tool.Attribute]):
+    state = property_set_window.get_inherit_checkbox_state(window)
+    active_attribute = property_set_window.get_active_attribute(window)
+    if active_attribute:
+        attribute.set_inherit_state(state, active_attribute)
+
+
 def add_attribute_button_clicked(window: PropertySetWindow, property_set: Type[tool.PropertySet],
                                  property_set_window: Type[tool.PropertySetWindow],
                                  attribute: Type[tool.Attribute]):
@@ -32,6 +40,7 @@ def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[
     else:
         property_set_tool.add_value_line(1, window)
     property_set_tool.update_line_validators(window)
+
 
 def open_pset_window(property_set: SOMcreator.PropertySet, property_set_window: Type[tool.PropertySetWindow]):
     existing_window = property_set_window.get_window_by_property_set(property_set)
@@ -55,6 +64,8 @@ def close_pset_window(window: PropertySetWindow, property_set_tool: Type[tool.Pr
 
 def handle_paste_event(window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow]) -> bool:
     text_list = property_set_window.get_paste_text_list()
+    if text_list is True:
+        return text_list
     if len(text_list) < 2:
         return True
 
@@ -107,20 +118,23 @@ def attribute_clicked(item: QTableWidgetItem, attribute: Type[tool.Attribute],
 
 def activate_attribute(active_attribute: SOMcreator.Attribute, window, attribute: Type[tool.Attribute],
                        property_set_window: Type[tool.PropertySetWindow]):
+
     name = attribute.get_attribute_name(active_attribute)
     data_type = attribute.get_attribute_data_type(active_attribute)
     value_type = attribute.get_attribute_value_type(active_attribute)
     values = attribute.get_attribute_values(active_attribute)
     description = attribute.get_attribute_description(active_attribute)
+    inherit_state = attribute.get_inherit_state(active_attribute)
 
     property_set_window.set_attribute_name(name, window)
     property_set_window.set_data_type(data_type, window)
     property_set_window.set_value_type(value_type, window)
     property_set_window.set_description(description, window)
     property_set_window.toggle_comboboxes(active_attribute, window)
+    property_set_window.set_inherit_checkbox_state(inherit_state, window)
 
     property_set_window.clear_values(window)
-    property_set_window.set_values(values, window)
+    property_set_window.set_values(active_attribute, window)
     if not values:
         if value_type == RANGE:
             property_set_window.add_value_line(2, window)
