@@ -16,15 +16,15 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QSizePolicy,
-                               QSplitter, QTreeView, QVBoxLayout, QWidget)
+                               QSplitter, QVBoxLayout, QWidget)
 
-from som_gui.module.modelcheck.ui import ObjectTree
+from som_gui.module.modelcheck.ui import (ObjectTree, PsetTree)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(1269, 734)
+        Form.resize(1139, 720)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.splitter = QSplitter(Form)
@@ -48,7 +48,7 @@ class Ui_Form(object):
 
         self.verticalLayout_2.addWidget(self.label_object)
 
-        self.property_set_tree = QTreeView(self.verticalLayoutWidget)
+        self.property_set_tree = PsetTree(self.verticalLayoutWidget)
         self.property_set_tree.setObjectName(u"property_set_tree")
 
         self.verticalLayout_2.addWidget(self.property_set_tree)

@@ -15,6 +15,16 @@ if TYPE_CHECKING:
 
 class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
+    def set_pset_tree_title(cls, text: str):
+        prop = cls.get_properties()
+        prop.checkbox_widget.widget.label_object.setText(text)
+
+    @classmethod
+    def show_pset_tree_title(cls, show: bool):
+        prop = cls.get_properties()
+        prop.checkbox_widget.widget.label_object.setVisible(show)
+
+    @classmethod
     def set_selected_object(cls, obj: SOMcreator.Object):
         prop = cls.get_properties()
         prop.selected_object = obj
@@ -29,26 +39,32 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         return prop.checkbox_widget.widget.object_tree
 
     @classmethod
-    def get_object_checkstate_dict(cls):
+    def get_pset_tree(cls):
+        prop = cls.get_properties()
+        return prop.checkbox_widget.widget.property_set_tree
+
+    @classmethod
+    def get_item_checkstate_dict(cls):
         prop = cls.get_properties()
         if not prop.check_state_dict:
             prop.check_state_dict = {o: True for o in tool.Object.get_all_objects()}
         return prop.check_state_dict
 
     @classmethod
-    def get_object_check_state(cls, obj: SOMcreator.Object) -> Qt.CheckState:
-        cd = cls.get_object_checkstate_dict()
-        if cd.get(obj) is None:
-            cd[obj] = True
-        check_state = Qt.CheckState.Checked if cd[obj] else Qt.CheckState.Unchecked
+    def get_item_check_state(cls,
+                             item: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute) -> Qt.CheckState:
+        cd = cls.get_item_checkstate_dict()
+        if cd.get(item) is None:
+            cd[item] = True
+        check_state = Qt.CheckState.Checked if cd[item] else Qt.CheckState.Unchecked
         return check_state
 
     @classmethod
-    def set_object_check_state(cls, obj: SOMcreator.Object, cs: Qt.CheckState) -> None:
-        print(f"set Object_check-state: {cs}")
+    def set_item_check_state(cls, item: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute,
+                             cs: Qt.CheckState) -> None:
         cs = True if cs == Qt.CheckState.Checked else False
-        cd = cls.get_object_checkstate_dict()
-        cd[obj] = cs
+        cd = cls.get_item_checkstate_dict()
+        cd[item] = cs
 
     @classmethod
     def get_properties(cls) -> ModelcheckProperties:
@@ -96,7 +112,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             if items[column].text() != text:
                 items[column].setText(text)
 
-        cs = cls.get_object_check_state(items[0].data(CLASS_REFERENCE))
+        cs = cls.get_item_check_state(items[0].data(CLASS_REFERENCE))
         if items[0].checkState() != cs:
             items[0].setCheckState(cs)
 
@@ -143,7 +159,22 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             cls.create_pset_tree_row(attribute, item)
 
     @classmethod
-    def fill_pset_tree(cls, property_sets: set[SOMcreator.PropertySet], tree: QTreeView):
+    def _update_pset_row(cls, item: QStandardItem, enabled: bool):
+        pset = item.data(CLASS_REFERENCE)
+        check_state = item.checkState()
+        new_check_state = cls.get_item_check_state(pset)
+        if new_check_state != check_state:
+            item.setCheckState(new_check_state)
+        item.setEnabled(enabled)
+        if not isinstance(pset, SOMcreator.PropertySet):
+            return
+        enabled = True if new_check_state == Qt.CheckState.Checked and enabled else False
+        for row in range(item.rowCount()):
+            attribute_item = item.child(row, 0)
+            cls._update_pset_row(attribute_item, enabled)
+
+    @classmethod
+    def fill_pset_tree(cls, property_sets: set[SOMcreator.PropertySet], enabled: bool, tree: QTreeView):
         root_item: QStandardItem = tree.model().invisibleRootItem()
         existing_psets_dict = {root_item.child(row, 0).data(CLASS_REFERENCE): row for row in
                                range(root_item.rowCount())}
@@ -156,5 +187,8 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             root_item.removeRow(row_index)
 
         for new_entity in sorted(new_psets, key=lambda x: x.name):
-            row = cls.create_pset_tree_row(new_entity, root_item)
-            root_item.appendRow(row)
+            cls.create_pset_tree_row(new_entity, root_item)
+
+        for row in range(root_item.rowCount()):
+            item = root_item.child(row, 0)
+            cls._update_pset_row(item, enabled)

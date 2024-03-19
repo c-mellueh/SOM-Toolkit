@@ -17,10 +17,19 @@ def paint_object_tree():
     core.paint_object_tree(tool.Modelcheck, tool.Project)
 
 
+def paint_pset_tree():
+    core.paint_pset_tree(tool.Modelcheck)
+
 def connect_object_check_tree(widget: QTreeView):
     model: QStandardItemModel = widget.model()
     model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.Modelcheck))
-    widget.selectionModel().selectionChanged.connect(lambda item: core.object_selection_changed(item, tool.Modelcheck))
+    widget.selectionModel().selectionChanged.connect(
+        lambda item: core.object_selection_changed(widget.selectionModel(), tool.Modelcheck))
+
+
+def connect_pset_check_tree(widget: QTreeView):
+    model: QStandardItemModel = widget.model()
+    model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.Modelcheck))
 
 def connect_window(widget: ModelcheckWindow):
     pass
