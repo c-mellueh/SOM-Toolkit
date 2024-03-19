@@ -9,6 +9,10 @@ class IfcImporter:
 class ModelcheckWindow:
     pass
 
+
+class Modelcheck:
+    pass
+
 class PredefinedPropertySet:
     pass
 
