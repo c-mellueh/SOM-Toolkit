@@ -7,6 +7,8 @@ if TYPE_CHECKING:
     from .ui import ModelcheckWindow
     from PySide6.QtWidgets import QTreeView
     from PySide6.QtGui import QStandardItemModel
+    from som_gui.module.ifc_importer.ui import IfcImportWidget
+
 
 def connect():
     tool.MainWindow.add_action("Modelcheck/Interne Modellprüfung",
@@ -20,6 +22,13 @@ def paint_object_tree():
 def paint_pset_tree():
     core.paint_pset_tree(tool.Modelcheck)
 
+
+def connect_ifc_import_widget(widget: IfcImportWidget):
+    widget.widget.button_export.clicked.connect(
+        lambda: core.export_selection_clicked(widget, tool.Modelcheck, tool.Settings))
+    widget.widget.button_run.clicked.connect(lambda: core.run_clicked(widget, tool.Modelcheck, tool.IfcImporter))
+
+
 def connect_object_check_tree(widget: QTreeView):
     model: QStandardItemModel = widget.model()
     model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.Modelcheck))
@@ -30,6 +39,7 @@ def connect_object_check_tree(widget: QTreeView):
 def connect_pset_check_tree(widget: QTreeView):
     model: QStandardItemModel = widget.model()
     model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.Modelcheck))
+
 
 def connect_window(widget: ModelcheckWindow):
     pass

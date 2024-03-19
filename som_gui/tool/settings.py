@@ -82,3 +82,11 @@ class Settings(som_gui.core.tool.Settings):
     @classmethod
     def set_ifc_path(cls, path) -> None:
         cls._set_path(IFC_PATH, path)
+
+    @classmethod
+    def get_issue_path(cls) -> str:
+        return cls._get_path(ISSUE_PATH)
+
+    @classmethod
+    def set_issue_path(cls, path) -> None:
+        cls._set_path(ISSUE_PATH, path)

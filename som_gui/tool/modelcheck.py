@@ -6,14 +6,19 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 import SOMcreator
 from typing import TYPE_CHECKING
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QSplitter, QLayout, QWidget, QTreeView
+from PySide6.QtWidgets import QSplitter, QLayout, QWidget, QTreeView, QFileDialog
 from PySide6.QtGui import QStandardItem, QStandardItemModel
-
+import os
 if TYPE_CHECKING:
     from som_gui.module.modelcheck.prop import ModelcheckProperties
-
+    from som_gui.module.ifc_importer.ui import IfcImportWidget
 
 class Modelcheck(som_gui.core.tool.Modelcheck):
+    @classmethod
+    def open_export_dialog(cls, widget: IfcImportWidget, base_path: os.PathLike, file_text: str):
+        path = QFileDialog.getSaveFileName(widget.window(), "Export", base_path, file_text)[0]
+        return path
+
     @classmethod
     def set_pset_tree_title(cls, text: str):
         prop = cls.get_properties()
