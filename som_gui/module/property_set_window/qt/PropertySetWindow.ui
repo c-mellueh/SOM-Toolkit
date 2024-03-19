@@ -98,7 +98,7 @@
        <item row="1" column="1">
         <widget class="QCheckBox" name="check_box_inherit">
          <property name="text">
-          <string>Vererbt</string>
+             <string>Werte Vererben</string>
          </property>
         </widget>
        </item>
@@ -358,7 +358,7 @@
         <customwidget>
             <class>AttributeTable</class>
             <extends>QTableWidget</extends>
-            <header>som_gui.module.attribute.ui</header>
+            <header>som_gui.module.attribute_table.ui</header>
         </customwidget>
     </customwidgets>
  <resources/>

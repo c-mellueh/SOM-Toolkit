@@ -11,6 +11,13 @@ if TYPE_CHECKING:
 
 
 class Attribute(som_gui.core.tool.Attribute):
+    @classmethod
+    def set_inherit_state(cls, state: bool, attribute: SOMcreator.Attribute):
+        attribute.child_inherits_values = state
+
+    @classmethod
+    def get_inherit_state(cls, attribute: SOMcreator.Attribute):
+        return attribute.child_inherits_values
 
     @classmethod
     def delete(cls, attribute: SOMcreator.Attribute):
@@ -94,12 +101,13 @@ class Attribute(som_gui.core.tool.Attribute):
         return som_gui.AttributeProperties
 
     @classmethod
-    def create_attribute(cls, property_set: SOMcreator.PropertySet, attribute_data: dict[str, str | list]):
+    def create_attribute(cls, property_set: SOMcreator.PropertySet, attribute_data: dict[str, str | list | bool]):
         name = attribute_data["name"]
         if not name:
             return
         values = attribute_data["values"]
         value_type = attribute_data["value_type"]
-        attribute = SOMcreator.Attribute(property_set, name, values, value_type)
+        inherit = attribute_data["inherit_value"]
+        attribute = SOMcreator.Attribute(property_set, name, values, value_type, child_inherits_values=inherit)
         cls.set_attribute_data(attribute, attribute_data)
         return attribute

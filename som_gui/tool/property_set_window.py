@@ -4,7 +4,7 @@ import logging
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit
 
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QGuiApplication
-
+from PySide6.QtCore import Qt
 from SOMcreator.constants.value_constants import VALUE_TYPE_LOOKUP, DATA_TYPES
 from SOMcreator.constants import value_constants
 import SOMcreator
@@ -21,6 +21,21 @@ if TYPE_CHECKING:
 
 
 class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
+    @classmethod
+    def get_active_attribute(cls, window: ui.PropertySetWindow) -> None | SOMcreator.Attribute:
+        attribute_name = cls.get_attribute_name_input(window)
+        pset = cls.get_property_set_by_window(window)
+        return tool.PropertySet.get_attribute_by_name(pset, attribute_name)
+
+    @classmethod
+    def get_inherit_checkbox_state(cls, window: ui.PropertySetWindow) -> bool:
+        return window.widget.check_box_inherit.checkState() == Qt.CheckState.Checked
+
+    @classmethod
+    def set_inherit_checkbox_state(cls, state: bool, window: ui.PropertySetWindow):
+        cs = Qt.CheckState.Checked if state else Qt.CheckState.Unchecked
+        window.widget.check_box_inherit.setCheckState(cs)
+
     @classmethod
     def get_properties(cls) -> PropertySetWindowProperties:
         return som_gui.PropertySetWindowProperties
@@ -55,6 +70,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         d["value_type"] = window.widget.combo_type.currentText()
         d["values"] = cls.get_values(window)
         d["description"] = window.widget.description.toPlainText()
+        d["inherit_value"] = cls.get_inherit_checkbox_state(window)
         return d
 
     @classmethod
@@ -219,8 +235,11 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
             layout.removeItem(item)
 
     @classmethod
-    def set_values(cls, values: list[str | list[str]], window: ui.PropertySetWindow):
-        for value in values:
+    def set_values(cls, attribute: SOMcreator.Attribute, window: ui.PropertySetWindow):
+        inherits = attribute.is_inheriting_values
+        parent_values = attribute.parent.value if attribute.parent else []
+        for value in attribute.value:
+
             value = "" if value is None else value
             if isinstance(value, (list, set)):
                 line_layout = cls.add_value_line(len(value), window)
@@ -232,6 +251,12 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
                 line_layout = cls.add_value_line(1, window)
                 line_edit: ui.LineInput = line_layout.itemAt(0).widget()
                 line_edit.setText(cls.value_to_string(value))
+
+            # If Value is Inherited by Parent set layout disabled
+            enabled = False if inherits and value in parent_values else True
+            print(enabled)
+            line_edit.setEnabled(enabled)
+
 
     @classmethod
     def set_description(cls, description: str, window: ui.PropertySetWindow):

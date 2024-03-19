@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'PropertySetWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.1
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -54,7 +54,7 @@ class Ui_layout_main(object):
 
         self.button_add_line = QPushButton(self.gridLayoutWidget)
         self.button_add_line.setObjectName(u"button_add_line")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.button_add_line.sizePolicy().hasHeightForWidth())
@@ -90,7 +90,7 @@ class Ui_layout_main(object):
 
         self.line_edit_seperator = QLineEdit(self.gridLayoutWidget)
         self.line_edit_seperator.setObjectName(u"line_edit_seperator")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.line_edit_seperator.sizePolicy().hasHeightForWidth())
@@ -108,7 +108,7 @@ class Ui_layout_main(object):
 
         self.lineEdit_name = QLineEdit(self.gridLayoutWidget)
         self.lineEdit_name.setObjectName(u"lineEdit_name")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.lineEdit_name.sizePolicy().hasHeightForWidth())
@@ -122,7 +122,7 @@ class Ui_layout_main(object):
         self.splitter.setOrientation(Qt.Vertical)
         self.scroll_area = QScrollArea(self.splitter)
         self.scroll_area.setObjectName(u"scroll_area")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(1)
         sizePolicy3.setHeightForWidth(self.scroll_area.sizePolicy().hasHeightForWidth())
@@ -137,7 +137,7 @@ class Ui_layout_main(object):
         self.splitter.addWidget(self.scroll_area)
         self.description = QTextEdit(self.splitter)
         self.description.setObjectName(u"description")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.description.sizePolicy().hasHeightForWidth())
@@ -174,7 +174,7 @@ class Ui_layout_main(object):
         __qtablewidgetitem8 = QTableWidgetItem()
         self.table_widget.setItem(0, 3, __qtablewidgetitem8)
         self.table_widget.setObjectName(u"table_widget")
-        sizePolicy5 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding)
         sizePolicy5.setHorizontalStretch(0)
         sizePolicy5.setVerticalStretch(0)
         sizePolicy5.setHeightForWidth(self.table_widget.sizePolicy().hasHeightForWidth())
@@ -220,7 +220,7 @@ class Ui_layout_main(object):
         self.button_add_line.setText(QCoreApplication.translate("layout_main", u"+", None))
         self.button_add.setText(QCoreApplication.translate("layout_main", u"Hinzuf\u00fcgen", None))
         self.check_box_seperator.setText(QCoreApplication.translate("layout_main", u"Trennzeichen:", None))
-        self.check_box_inherit.setText(QCoreApplication.translate("layout_main", u"Vererbt", None))
+        self.check_box_inherit.setText(QCoreApplication.translate("layout_main", u"Werte Vererben", None))
         self.combo_data_type.setItemText(0, QCoreApplication.translate("layout_main", u"xs:string", None))
         self.combo_data_type.setItemText(1, QCoreApplication.translate("layout_main", u"xs:int", None))
         self.combo_data_type.setItemText(2, QCoreApplication.translate("layout_main", u"xs:double", None))

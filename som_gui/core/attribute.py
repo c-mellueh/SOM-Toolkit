@@ -19,3 +19,5 @@ def add_basic_attribute_data(attribute_tool: Type[Attribute]):
                                             attribute_tool.set_attribute_description)
     attribute_tool.add_attribute_data_value("optional", attribute_tool.is_attribute_optional,
                                             attribute_tool.set_attribute_optional)
+    attribute_tool.add_attribute_data_value("inherit_value", attribute_tool.get_inherit_state,
+                                            attribute_tool.set_inherit_state)

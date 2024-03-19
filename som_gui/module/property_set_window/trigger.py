@@ -28,6 +28,9 @@ def connect_window(window: PropertySetWindow):
     window.widget.check_box_seperator.stateChanged.connect(
         lambda: core.update_seperator(window, tool.PropertySetWindow, tool.Settings))
 
+    window.widget.check_box_inherit.stateChanged.connect(
+        lambda: core.inherit_checkbox_toggled(window, tool.PropertySetWindow, tool.Attribute))
+
     table = window.widget.table_widget
     table.itemClicked.connect(
         lambda item: core.attribute_clicked(item, tool.Attribute, tool.AttributeTable, tool.PropertySetWindow))
