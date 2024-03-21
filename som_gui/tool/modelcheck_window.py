@@ -16,6 +16,16 @@ if TYPE_CHECKING:
 
 
 class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
+
+    @classmethod
+    def read_inputs(cls, widget: IfcImportWidget):
+        ifc_paths = tool.IfcImporter.get_ifc_paths(widget)
+        export_path = cls.get_export_path(widget)
+        main_pset = tool.IfcImporter.get_main_pset(widget)
+        main_attribute = tool.IfcImporter.get_main_attribute(widget)
+        return ifc_paths, export_path, main_pset, main_attribute
+
+
     @classmethod
     def get_modelcheck_threadpool(cls):
         if cls.get_properties().thread_pool is None:

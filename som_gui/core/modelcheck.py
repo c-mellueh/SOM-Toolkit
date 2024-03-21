@@ -26,6 +26,7 @@ rev_datatype_dict = {
 
 def check_file(file: ifcopenshell.file, widget: IfcImportWidget, modelcheck: Type[tool.Modelcheck],
                modelcheck_window: Type[tool.ModelcheckWindow]):
+
     modelcheck.connect_to_data_base(modelcheck.get_database_path())
     modelcheck.set_progress_bar(widget.widget.progress_bar)
     modelcheck.set_status_label(widget.widget.label_status)
@@ -35,11 +36,13 @@ def check_file(file: ifcopenshell.file, widget: IfcImportWidget, modelcheck: Typ
 
     modelcheck.set_object_checked_count(0)
     modelcheck.set_object_count(modelcheck.get_element_count())
-    modelcheck.set_status("Prüfe Elemente mit Gruppenzuordnung")
+    modelcheck.set_status("Prüfe Gruppenzuordnung")
     modelcheck.set_progress(0)
     check_groups(file, modelcheck)
-    modelcheck.set_status("Prüfe Elemente ohne Gruppenzuordnung")
+    modelcheck.set_progress(0)
+    modelcheck.set_status("Prüfe Elemente")
     entities = file.by_type("IfcElement")
+    modelcheck.set_object_checked_count(0)
     modelcheck.set_object_count(len(entities))
     check_entities(entities, modelcheck)
 
@@ -52,7 +55,8 @@ def check_file(file: ifcopenshell.file, widget: IfcImportWidget, modelcheck: Typ
 
 
 def check_groups(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck]):
-    for entity in modelcheck.get_root_groups(file):
+    root_groups = modelcheck.get_root_groups(file)
+    for entity in root_groups:
         if modelcheck.is_aborted():
             return
         check_group(entity, 0, modelcheck)
@@ -114,7 +118,7 @@ def check_correct_parent(entity: ifcopenshell.entity_instance, modelcheck: Type[
     Checks if an Entity or Group has an allowed Parent Group
     """
     object_rep = modelcheck.get_object_representation(entity)
-    parent_entity: ifcopenshell.entity_instance = modelcheck.get_parent_entity(entity)
+    parent_entity: ifcopenshell.entity_instance = modelcheck.get_parent_entity(modelcheck.get_parent_entity(entity))
     allowed_parents = modelcheck.get_allowed_parents(object_rep)
     if parent_entity is None:
         if None not in allowed_parents:
@@ -144,7 +148,7 @@ def check_element(element: ifcopenshell.entity_instance, modelcheck: Type[tool.M
         modelcheck.ident_pset_issue(element.GlobalId, main_pset_name)
         return
 
-    elif modelcheck.is_attribute_existing(element, main_pset_name, main_attribute_name):
+    elif not modelcheck.is_attribute_existing(element, main_pset_name, main_attribute_name):
         modelcheck.ident_issue(element.GlobalId, main_pset_name, main_attribute_name)
         return
 

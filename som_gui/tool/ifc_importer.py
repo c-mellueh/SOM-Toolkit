@@ -20,6 +20,14 @@ if TYPE_CHECKING:
 
 class IfcImporter(som_gui.core.tool.IfcImporter):
     @classmethod
+    def get_main_pset(cls, widget: ui.IfcImportWidget) -> str:
+        return widget.widget.line_edit_ident_pset.text()
+
+    @classmethod
+    def get_main_attribute(cls, widget: ui.IfcImportWidget) -> str:
+        return widget.widget.line_edit_ident_attribute.text()
+
+    @classmethod
     def set_status(cls, widget: ui.IfcImportWidget, status: str):
         widget.widget.label_status.setText(status)
 

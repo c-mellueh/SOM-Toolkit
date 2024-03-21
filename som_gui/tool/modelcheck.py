@@ -62,17 +62,17 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         return len(set(sub_idents)) != len(sub_idents)
 
     @classmethod
-    def get_sub_entities(cls, entity: ifcopenshell.entity_instance):
+    def get_sub_entities(cls, entity: ifcopenshell.entity_instance) -> set[ifcopenshell.entity_instance]:
         group_dict = cls.get_properties().group_dict
-        return group_dict.get(entity).keys() if entity in group_dict else []
+        return group_dict.get(entity) if entity in group_dict else set()
 
     @classmethod
     def set_sub_entities(cls, entity: ifcopenshell.entity_instance, sub_entities: set[ifcopenshell.entity_instance]):
         cls.get_properties().group_dict[entity] = sub_entities
 
     @classmethod
-    def get_parent_entity(cls, entity: ifcopenshell.entity_instance):
-        cls.get_properties().group_parent_dict.get(entity)
+    def get_parent_entity(cls, entity: ifcopenshell.entity_instance) -> ifcopenshell.entity_instance | None:
+        return cls.get_properties().group_parent_dict.get(entity)
 
     @classmethod
     def set_parent_entity(cls, entity: ifcopenshell.entity_instance,
@@ -170,8 +170,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         return ModelcheckRunner()
 
     @classmethod
-    def get_parent_group(cls, group: ifcopenshell.stream_entity) -> list[entity_instance]:
-        return []
+    def is_root_group(cls, group: ifcopenshell.stream_entity) -> bool:
         parent_assignment = []
         for assignement in group.HasAssignments:
             if not assignement.is_a("IfcRelAssignsToGroup"):
@@ -179,12 +178,12 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             parent_assignment.append(assignement)
 
         if not parent_assignment:
-            return []
-        return [assignment.RelatingGroup for assignment in parent_assignment]
+            return True
+        return False
 
     @classmethod
     def get_root_groups(cls, ifc: ifcopenshell.file) -> list[ifcopenshell.entity_instance]:
-        return [group for group in ifc.by_type("IfcGroup") if not cls.get_parent_group(group)]
+        return [group for group in ifc.by_type("IfcGroup") if cls.is_root_group(group)]
 
     @classmethod
     def iterate_group_structure(cls, entity: entity_instance):

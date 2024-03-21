@@ -36,8 +36,10 @@ def run_clicked(widget: IfcImportWidget, modelcheck_window: Type[tool.Modelcheck
                 modelcheck: Type[tool.Modelcheck], modelcheck_results: Type[tool.ModelcheckResults],
                 ifc_importer: Type[tool.IfcImporter], project: Type[tool.Project],
                 modelcheck_core: mc_core, modelcheck_results_core: mc_results_core):
-    ifc_paths = ifc_importer.get_ifc_paths(widget)
-    export_path = modelcheck_window.get_export_path(widget)
+    ifc_paths, export_path, main_pset, main_attribute = modelcheck_window.read_inputs(widget)
+
+    modelcheck.set_main_pset_name(main_pset)
+    modelcheck.set_main_attribute_name(main_attribute)
     modelcheck_results.set_export_path(export_path)
 
     widget.pool = ifc_importer.create_thread_pool()
