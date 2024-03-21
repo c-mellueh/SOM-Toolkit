@@ -38,7 +38,6 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         new_progress_value = min(100, int(checked_count / object_count * 100))
         if new_progress_value > progress_value:
             cls.set_progress(new_progress_value)
-            print(new_progress_value)
 
     @classmethod
     def entity_is_in_group(cls, entity: ifcopenshell.entity_instance):
