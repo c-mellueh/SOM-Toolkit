@@ -57,7 +57,7 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         ifc_path = tool.Settings.get_ifc_path()
         if ifc_path:
             if isinstance(ifc_path, list):
-                ifc_path = tool.Settings.PATH_SEPERATOR.join(ifc_path)
+                ifc_path = tool.Settings.get_seperator().join(ifc_path)
             line_edit.setText(ifc_path)
 
     @classmethod

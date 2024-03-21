@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from som_gui import tool
 from som_gui.core import modelcheck_window as core
-
+from som_gui.core import modelcheck as mc_core
 if TYPE_CHECKING:
     from .ui import ModelcheckWindow
     from PySide6.QtWidgets import QTreeView
@@ -26,7 +26,9 @@ def paint_pset_tree():
 def connect_ifc_import_widget(widget: IfcImportWidget):
     widget.widget.button_export.clicked.connect(
         lambda: core.export_selection_clicked(widget, tool.ModelcheckWindow, tool.Settings))
-    widget.widget.button_run.clicked.connect(lambda: core.run_clicked(widget, tool.ModelcheckWindow, tool.IfcImporter))
+    widget.widget.button_run.clicked.connect(
+        lambda: core.run_clicked(widget, tool.ModelcheckWindow, tool.Modelcheck, tool.IfcImporter, tool.Project,
+                                 mc_core))
 
 
 def connect_object_check_tree(widget: QTreeView):

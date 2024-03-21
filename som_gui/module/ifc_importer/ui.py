@@ -27,7 +27,7 @@ class IfcImportRunner(QRunnable):
 
     def run(self):
         self.signaller.started.emit()
-        self.ifc = ifcopenshell.open(self.path, should_stream=True)
+        self.ifc = ifcopenshell.open(self.path)
         self.signaller.finished.emit()
 
 

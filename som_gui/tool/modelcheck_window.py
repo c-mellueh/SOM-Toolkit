@@ -21,7 +21,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         if cls.get_properties().thread_pool is None:
             tp = QThreadPool()
             cls.get_properties().thread_pool = tp
-            tp.setMaxThreadCount(3)
+            tp.setMaxThreadCount(1)
         return cls.get_properties().thread_pool
 
     @classmethod
@@ -61,8 +61,16 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def get_item_checkstate_dict(cls):
         prop = cls.get_properties()
+        data_dict = dict()
         if not prop.check_state_dict:
-            prop.check_state_dict = {o: True for o in tool.Object.get_all_objects()}
+            for obj in tool.Project.get().objects:
+                data_dict[obj] = True
+                for property_set in obj.property_sets:
+                    data_dict[property_set] = True
+                    for attribute in property_set.attributes:
+                        data_dict[attribute] = True
+            prop.check_state_dict = data_dict
+
         return prop.check_state_dict
 
     @classmethod
@@ -208,13 +216,4 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             item = root_item.child(row, 0)
             cls._update_pset_row(item, enabled)
 
-    @classmethod
-    def create_modelcheck_runner(cls, run_function: Callable) -> QRunnable:
-        class ModelcheckRunner(QRunnable):
-            def __init__(self, ):
-                super().__init__()
 
-            def run(self):
-                run_function()
-
-        return ModelcheckRunner()
