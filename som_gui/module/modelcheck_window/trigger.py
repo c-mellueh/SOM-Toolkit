@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from som_gui import tool
 from som_gui.core import modelcheck_window as core
 from som_gui.core import modelcheck as mc_core
+from som_gui.core import modelcheck_results as mc_results_core
 if TYPE_CHECKING:
     from .ui import ModelcheckWindow
     from PySide6.QtWidgets import QTreeView
@@ -27,8 +28,9 @@ def connect_ifc_import_widget(widget: IfcImportWidget):
     widget.widget.button_export.clicked.connect(
         lambda: core.export_selection_clicked(widget, tool.ModelcheckWindow, tool.Settings))
     widget.widget.button_run.clicked.connect(
-        lambda: core.run_clicked(widget, tool.ModelcheckWindow, tool.Modelcheck, tool.IfcImporter, tool.Project,
-                                 mc_core))
+        lambda: core.run_clicked(widget, tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
+                                 tool.IfcImporter, tool.Project,
+                                 mc_core, mc_results_core))
 
 
 def connect_object_check_tree(widget: QTreeView):

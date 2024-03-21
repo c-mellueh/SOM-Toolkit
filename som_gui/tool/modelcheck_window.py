@@ -25,6 +25,10 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return cls.get_properties().thread_pool
 
     @classmethod
+    def get_export_path(cls, widget: IfcImportWidget):
+        return widget.widget.line_edit_export.text()
+
+    @classmethod
     def open_export_dialog(cls, widget: IfcImportWidget, base_path: os.PathLike, file_text: str):
         path = QFileDialog.getSaveFileName(widget.window(), "Export", base_path, file_text)[0]
         return path

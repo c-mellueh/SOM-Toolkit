@@ -100,6 +100,7 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
             def run(self):
                 self.signaller.started.emit()
+                time.sleep(1)
                 self.ifc = ifcopenshell.open(self.path)
                 self.signaller.finished.emit()
 

@@ -495,15 +495,6 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             logging.warning("Integrity Error -> Element allready exists")
             pass
 
-    @classmethod
-    def query_issues(cls) -> list:
-        cursor = cls.get_cursor()
-        cursor.execute(
-            "SELECT i.creation_date, e.GUID,i.short_description,i.issue_type,e.Name,i.PropertySet,i.Attribut, e.datei, e.bauteilKlassifikation  FROM issues AS i JOIN entities e on i.GUID = e.GUID_ZWC")
-        cls.commit_sql()
-        query = cursor.fetchall()
-        return query
-
     ## Getter and Setter
     @classmethod
     def get_ident_value(cls, entity: entity_instance):
