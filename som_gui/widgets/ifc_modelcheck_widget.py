@@ -134,7 +134,6 @@ class Modelcheck(IfcRunner):
         self.create_issues()
 
     def run_file_function(self, file_path) -> ifcopenshell.file:
-
         ifc_file = super(Modelcheck, self).run_file_function(file_path)
         self.check_all_elements(ifc_file)
         return ifc_file

@@ -14,3 +14,4 @@ from som_gui.tool.attribute_table import AttributeTable
 from som_gui.tool.modelcheck_window import ModelcheckWindow
 from som_gui.tool.ifc_importer import IfcImporter
 from som_gui.tool.modelcheck import Modelcheck
+from som_gui.tool.modelcheck_results import ModelcheckResults

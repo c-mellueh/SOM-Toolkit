@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import time
 from typing import TYPE_CHECKING, Callable
 
 import ifcopenshell
@@ -9,7 +10,7 @@ import som_gui
 from som_gui import tool
 import som_gui.core.tool
 from som_gui.module.ifc_importer import ui
-from PySide6.QtCore import QThreadPool
+from PySide6.QtCore import QThreadPool, QObject, Signal, QRunnable
 from PySide6.QtWidgets import QFileDialog
 
 if TYPE_CHECKING:
@@ -89,10 +90,26 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
     @classmethod
     def create_runner(cls, status_label: QLabel, path: os.PathLike | str):
+        class IfcImportRunner(QRunnable):
+            def __init__(self, path: os.PathLike | str, status_label: QLabel):
+                super(IfcImportRunner, self).__init__()
+                self.path = path
+                self.ifc: ifcopenshell.file | None = None
+                self.signaller = Signaller()
+                self.status_label = status_label
+
+            def run(self):
+                self.signaller.started.emit()
+                self.ifc = ifcopenshell.open(self.path)
+                self.signaller.finished.emit()
+
+        class Signaller(QObject):
+            started = Signal()
+            finished = Signal()
+
         if not os.path.exists(path):
             return
-        runner = ui.IfcImportRunner(path, status_label)
-        return runner
+        return IfcImportRunner(path, status_label)
 
     @classmethod
     def fill_main_attribute(cls, widget: ui.IfcImportWidget, pset: str, attribute: str):

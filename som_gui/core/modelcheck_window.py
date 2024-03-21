@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Type
 import os
 import ifcopenshell
 import SOMcreator
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QThread
 
 import som_gui.module.modelcheck_window.trigger
 from som_gui.module.project.constants import CLASS_REFERENCE
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtGui import QStandardItem
     from PySide6.QtCore import QItemSelectionModel, QModelIndex, QRunnable
-    from som_gui.module.ifc_importer.ui import IfcImportWidget, IfcImportRunner
+    from som_gui.module.ifc_importer.ui import IfcImportWidget
     from som_gui.core import modelcheck as mc_core
 
 
@@ -38,7 +38,7 @@ def run_clicked(widget: IfcImportWidget, modelcheck_window: Type[tool.Modelcheck
     paths = ifc_importer.get_ifc_paths(widget)
     widget.pool = ifc_importer.create_thread_pool()
     widget.pool.setMaxThreadCount(3)
-    db_path = modelcheck.create_new_sql_database()
+    modelcheck.create_new_sql_database()
     modelcheck.build_ident_dict(set(project.get().objects))
     ifc_importer.set_progressbar_visible(widget, True)
     ifc_importer.set_progress(widget, 0)
@@ -47,41 +47,50 @@ def run_clicked(widget: IfcImportWidget, modelcheck_window: Type[tool.Modelcheck
         ifc_importer.set_status(widget, f"Import '{os.path.basename(path)}'")
         time.sleep(1)
 
-        runner = ifc_importer.create_runner(widget.widget.label_status, path)
-        on_start = lambda: import_started(widget, runner, modelcheck_window, ifc_importer)
-        on_finish = lambda: import_finished(widget, runner, modelcheck_window, modelcheck, ifc_importer,
+        widget.runner = ifc_importer.create_runner(widget.widget.label_status, path)
+        on_start = lambda: import_started(widget, widget.runner, modelcheck_window, ifc_importer)
+        on_finish = lambda: import_finished(widget, widget.runner, modelcheck_window, modelcheck, ifc_importer,
                                             modelcheck_core)
-        runner.signaller.started.connect(on_start)
-        runner.signaller.finished.connect(on_finish)
-        widget.pool.start(runner)
+
+        widget.runner.signaller.started.connect(on_start)
+        widget.runner.signaller.finished.connect(on_finish)
+        widget.pool.start(widget.runner)
 
 
-def import_started(widget: IfcImportWidget, runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow],
+def test():
+    print(f"Import finished")
+
+
+def import_started(widget: IfcImportWidget, runner: QRunnable, modelcheck_window: Type[tool.ModelcheckWindow],
                    ifc_importer: Type[tool.IfcImporter]):
     ifc_importer.set_progressbar_visible(widget, True)
     ifc_importer.set_status(widget, f"Import '{os.path.basename(runner.path)}'")
     ifc_importer.set_progress(widget, 0)
 
 
-def import_finished(widget: IfcImportWidget, runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow],
+def import_finished(widget: IfcImportWidget, runner: QRunnable, modelcheck_window: Type[tool.ModelcheckWindow],
                     modelcheck: Type[tool.Modelcheck],
                     ifc_importer: Type[tool.IfcImporter], modelcheck_core: mc_core):
     ifc_importer.set_status(widget, f"Import Abgeschlossen")
     ifc_file = runner.ifc
     modelcheck.set_ifc_name(os.path.basename(runner.path))
+
     modelcheck_runner = modelcheck.create_modelcheck_runner(
         lambda: modelcheck_core.check_file(ifc_file, widget, modelcheck, modelcheck_window))
+
     modelcheck_runner.signaller.finished.connect(
         lambda: modelcheck_finished(modelcheck_runner, modelcheck, modelcheck_window))
+
     modelcheck.set_current_runner(modelcheck_runner)
     modelcheck_window.get_modelcheck_threadpool().start(modelcheck_runner)
+    print(modelcheck_window.get_modelcheck_threadpool().activeThreadCount())
 
 
 def modelcheck_finished(runner: QRunnable, modelcheck: Type[tool.Modelcheck],
                         modelcheck_window: Type[tool.ModelcheckWindow]):
     thread_pool = modelcheck_window.get_modelcheck_threadpool()
     if thread_pool.activeThreadCount() < 1:
-        pass
+        create_results(modelcheck.get_database_path(), modelcheck)
     else:
         print(f"Prüfung von Datei abgeschlossen, nächste Datei ist dran.")
 
