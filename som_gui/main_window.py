@@ -15,7 +15,6 @@ from .windows import (
     grouping_window,
 )
 from .module.project import ui
-from .windows.modelcheck import modelcheck_window
 from .windows.attribute_import.gui import AttributeImport
 
 from typing import TYPE_CHECKING
@@ -46,7 +45,6 @@ class MainWindow(QMainWindow):
         self.model_control_window: AttributeImport | None = None
         self.graph_window = aggregation_window.AggregationWindow(self)
         self.mapping_window = None
-        self.modelcheck_window: modelcheck_window.ModelcheckWindow | None = None
         settings.reset_save_path()
 
         # Icons
