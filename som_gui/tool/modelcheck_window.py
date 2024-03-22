@@ -6,7 +6,8 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 import SOMcreator
 from typing import TYPE_CHECKING, Callable
 from PySide6.QtCore import Qt, QThreadPool, QSize, QRunnable
-from PySide6.QtWidgets import QSplitter, QSizePolicy, QLayout, QWidget, QTreeView, QFileDialog, QLineEdit, QPushButton
+from PySide6.QtWidgets import QSplitter, QSizePolicy, QLayout, QWidget, QTreeView, QFileDialog, QLineEdit, QPushButton, \
+    QLabel
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 import os
 
@@ -174,6 +175,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     def create_export_line(cls, widget: IfcImportWidget):
         export_line_edit = QLineEdit()
         export_line_edit.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Maximum))
+        widget.widget.gridLayout.addWidget(QLabel("Export Pfad"), 5, 0, 1, 2)
         widget.widget.gridLayout.addWidget(export_line_edit, 6, 0, 1, 2)
         export_button = QPushButton()
         export_button.setMaximumSize(QSize(25, 16777215))
