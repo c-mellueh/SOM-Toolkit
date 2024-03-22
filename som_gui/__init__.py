@@ -23,6 +23,7 @@ modules = {
     "predefined_property_set": None,
     "modelcheck_window": None,
     "modelcheck_results": None,
+    "modelcheck_external": None,
     "modelcheck": None,
     "ifc_importer": None,
 }

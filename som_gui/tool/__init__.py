@@ -15,3 +15,4 @@ from som_gui.tool.modelcheck_window import ModelcheckWindow
 from som_gui.tool.ifc_importer import IfcImporter
 from som_gui.tool.modelcheck import Modelcheck
 from som_gui.tool.modelcheck_results import ModelcheckResults
+from som_gui.tool.modelcheck_external import ModelcheckExternal
