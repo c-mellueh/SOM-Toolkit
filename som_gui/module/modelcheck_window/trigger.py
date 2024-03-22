@@ -46,7 +46,7 @@ def connect_pset_check_tree(widget: QTreeView):
 
 
 def connect_modelcheck_runner(runner: ModelcheckRunner):
-    runner.signaller.finished.connect(core.modelcheck_finished(tool.ModelcheckWindow, tool.ModelcheckResults))
+    runner.signaller.finished.connect(lambda: core.modelcheck_finished(tool.ModelcheckWindow, tool.ModelcheckResults))
     runner.signaller.status.connect(tool.ModelcheckWindow.set_status)
     runner.signaller.progress.connect(tool.ModelcheckWindow.set_progress)
 

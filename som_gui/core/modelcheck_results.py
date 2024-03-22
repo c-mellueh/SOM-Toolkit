@@ -18,7 +18,7 @@ def create_results(data_base_path: os.PathLike | str, results: Type[tool.Modelch
 
     if len(_issues) == 0:
         modelcheck_window.set_status("Modelle fehlerfrei!")
-
+        return
     workbook, worksheet = results.create_workbook()
     last_cell = results.fill_worksheet(_issues, worksheet)
     results.create_table(worksheet, last_cell)

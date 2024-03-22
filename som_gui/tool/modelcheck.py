@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import os.path
 from typing import TYPE_CHECKING, Callable
 from som_gui import tool
 from PySide6.QtCore import QRunnable, Signal, QObject
@@ -405,7 +407,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     @classmethod
     def create_new_sql_database(cls) -> str:
-        db_path = tempfile.NamedTemporaryFile(suffix=".db").name
+        db_path = os.path.abspath(tempfile.NamedTemporaryFile(suffix=".db").name)
         cls.set_database_path(db_path)
         logging.info(f"Database: {db_path}")
 
@@ -640,11 +642,13 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     @classmethod
     def connect_to_data_base(cls, path):
+        print("Connect To Database")
         conn = sqlite3.connect(path)
         cls.get_properties().connection = conn
 
     @classmethod
     def disconnect_from_data_base(cls):
+        print("Disconnect from Database")
         cls.get_properties().connection.commit()
         cls.get_properties().connection.close()
         cls.get_properties().connection = None
