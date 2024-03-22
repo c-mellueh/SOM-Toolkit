@@ -4,7 +4,7 @@ import ifcopenshell
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from PySide6.QtCore import QRunnable
+    from som_gui.tool.modelcheck import ModelcheckRunner
     from PySide6.QtWidgets import QLabel, QProgressBar
     from sqlite3 import Connection
 
@@ -19,7 +19,7 @@ class ModelcheckProperties:
     data_dict: dict = dict()
     active_element: ifcopenshell.entity_instance = None
     active_element_type: str = None
-    runner: QRunnable = None
+    runner: ModelcheckRunner = None
     status_label: QLabel = None
     progress_bar: QProgressBar = None
     object_checked_count: int = 0

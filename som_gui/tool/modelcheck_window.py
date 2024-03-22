@@ -17,14 +17,15 @@ if TYPE_CHECKING:
 
 class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
-    def increment_checked_items(cls):
-        checked_count = tool.Modelcheck.get_object_checked_count()
-        tool.Modelcheck.set_object_checked_count(checked_count)
-        object_count = tool.Modelcheck.get_object_count()
-        progress_value = cls.get_ifc_import_widget().widget.progress_bar.value()
-        new_progress_value = min(100, int(checked_count / object_count * 100))
-        if new_progress_value > progress_value:
-            cls.set_progress(new_progress_value)
+    def set_abort_button_text(cls, text: str):
+        button = cls.get_properties().abort_button
+        button.setText(text)
+
+    @classmethod
+    def modelcheck_is_running(cls):
+        return cls.get_modelcheck_threadpool().activeThreadCount() > 0
+
+
 
     @classmethod
     def connect_ifc_import_runner(cls, runner: QRunnable):
@@ -202,10 +203,22 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return ifc, export, run, abort
 
     @classmethod
+    def is_window_allready_build(cls):
+        return bool(cls.get_properties().active_window)
+
+    @classmethod
+    def get_window(cls) -> ui.ModelcheckWindow:
+        return cls.get_properties().active_window
+
+    @classmethod
     def create_window(cls):
         prop = cls.get_properties()
         prop.active_window = ui.ModelcheckWindow()
         return prop.active_window
+
+    @classmethod
+    def close_window(cls):
+        cls.get_properties().active_window.hide()
 
     @classmethod
     def connect_window(cls):

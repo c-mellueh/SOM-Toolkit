@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QTreeView, QPushButton
     from PySide6.QtGui import QStandardItemModel
     from som_gui.module.ifc_importer.ui import IfcImportWidget
-
+    from som_gui.tool.modelcheck import ModelcheckRunner
 
 def connect():
     tool.MainWindow.add_action("Modelcheck/Interne Modellprüfung",
@@ -31,6 +31,7 @@ def connect_buttons(ifc_button: QPushButton, export_button: QPushButton, run_but
     run_button.clicked.connect(lambda: core.run_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
                                                         tool.IfcImporter, tool.Project))
 
+    abort_button.clicked.connect(lambda: core.cancel_clicked(tool.ModelcheckWindow, tool.Modelcheck))
 
 def connect_object_check_tree(widget: QTreeView):
     model: QStandardItemModel = widget.model()
@@ -44,9 +45,10 @@ def connect_pset_check_tree(widget: QTreeView):
     model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.ModelcheckWindow))
 
 
-def connect_modelcheck_runner(runner: QRunnable):
+def connect_modelcheck_runner(runner: ModelcheckRunner):
     runner.signaller.finished.connect(core.modelcheck_finished(tool.ModelcheckWindow, tool.ModelcheckResults))
-
+    runner.signaller.status.connect(tool.ModelcheckWindow.set_status)
+    runner.signaller.progress.connect(tool.ModelcheckWindow.set_progress)
 
 def connect_ifc_import_runner(runner: QRunnable):
     runner.signaller.started.connect(lambda: core.ifc_import_started(runner, tool.ModelcheckWindow, tool.IfcImporter))

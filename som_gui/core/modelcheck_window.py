@@ -15,16 +15,26 @@ if TYPE_CHECKING:
 
 
 def open_window(modelcheck_window: Type[tool.ModelcheckWindow], ifc_importer: Type[tool.IfcImporter]):
+    if modelcheck_window.is_window_allready_build():
+        modelcheck_window.get_window().show()
+        return
+
     window = modelcheck_window.create_window()
     check_box_widget = modelcheck_window.create_checkbox_widget()
     ifc_import_widget = ifc_importer.create_importer()
     modelcheck_window.create_export_line(ifc_import_widget)
-
     modelcheck_window.set_importer_widget(ifc_import_widget)
     modelcheck_window.add_splitter(window.vertical_layout, Qt.Orientation.Vertical, check_box_widget, ifc_import_widget)
     modelcheck_window.connect_window()
     window.show()
 
+
+def cancel_clicked(modelcheck_window: Type[tool.ModelcheckWindow], modelcheck: Type[tool.Modelcheck]):
+    if modelcheck_window.modelcheck_is_running():
+        modelcheck.abort()
+        modelcheck_window.set_abort_button_text(f"Close")
+    else:
+        modelcheck_window.close_window()
 
 def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
                 modelcheck: Type[tool.Modelcheck], modelcheck_results: Type[tool.ModelcheckResults],
@@ -36,7 +46,9 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
     if not inputs_are_valid or not export_path_is_valid:
         return
 
+    modelcheck_window.set_abort_button_text(f"Abbrechen")
     ifc_import_widget = modelcheck_window.get_ifc_import_widget()
+    modelcheck.reset_abort()
     modelcheck.set_main_pset_name(main_pset)
     modelcheck.set_main_attribute_name(main_attribute)
     modelcheck_results.set_export_path(export_path)
@@ -76,8 +88,8 @@ def ifc_import_finished(runner: QRunnable, modelcheck_window: Type[tool.Modelche
 
     modelcheck.set_ifc_name(os.path.basename(runner.path))
     modelcheck_runner = modelcheck.create_modelcheck_runner(runner.ifc)
-    modelcheck_window.connect_modelcheck_runner(modelcheck_runner)
 
+    modelcheck_window.connect_modelcheck_runner(modelcheck_runner)
     modelcheck.set_current_runner(modelcheck_runner)
     modelcheck_window.get_modelcheck_threadpool().start(modelcheck_runner)
 
@@ -87,6 +99,7 @@ def modelcheck_finished(modelcheck_window: Type[tool.ModelcheckWindow],
     thread_pool = modelcheck_window.get_modelcheck_threadpool()
     if thread_pool.activeThreadCount() < 1:
         modelcheck_results.last_modelcheck_finished()
+        modelcheck_window.set_abort_button_text(f"Close")
     else:
         print(f"Prüfung von Datei abgeschlossen, nächste Datei ist dran.")
 
