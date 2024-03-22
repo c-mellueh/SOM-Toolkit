@@ -6,7 +6,8 @@ from som_gui.core import modelcheck as mc_core
 from som_gui.core import modelcheck_results as mc_results_core
 if TYPE_CHECKING:
     from .ui import ModelcheckWindow
-    from PySide6.QtWidgets import QTreeView
+    from PySide6.QtCore import QRunnable
+    from PySide6.QtWidgets import QTreeView, QPushButton
     from PySide6.QtGui import QStandardItemModel
     from som_gui.module.ifc_importer.ui import IfcImportWidget
 
@@ -24,13 +25,11 @@ def paint_pset_tree():
     core.paint_pset_tree(tool.ModelcheckWindow)
 
 
-def connect_ifc_import_widget(widget: IfcImportWidget):
-    widget.widget.button_export.clicked.connect(
-        lambda: core.export_selection_clicked(widget, tool.ModelcheckWindow, tool.Settings))
-    widget.widget.button_run.clicked.connect(
-        lambda: core.run_clicked(widget, tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
-                                 tool.IfcImporter, tool.Project,
-                                 mc_core, mc_results_core))
+def connect_buttons(ifc_button: QPushButton, export_button: QPushButton, run_button: QPushButton,
+                    abort_button: QPushButton):
+    export_button.clicked.connect(lambda: core.export_selection_clicked(tool.ModelcheckWindow, tool.Settings))
+    run_button.clicked.connect(lambda: core.run_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
+                                                        tool.IfcImporter, tool.Project))
 
 
 def connect_object_check_tree(widget: QTreeView):
@@ -45,9 +44,13 @@ def connect_pset_check_tree(widget: QTreeView):
     model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.ModelcheckWindow))
 
 
-def connect_window(widget: ModelcheckWindow):
-    pass
+def connect_modelcheck_runner(runner: QRunnable):
+    runner.signaller.finished.connect(core.modelcheck_finished(tool.ModelcheckWindow, tool.ModelcheckResults))
 
+
+def connect_ifc_import_runner(runner: QRunnable):
+    runner.signaller.started.connect(lambda: core.ifc_import_started(runner, tool.ModelcheckWindow, tool.IfcImporter))
+    runner.signaller.finished.connect(lambda: core.ifc_import_finished(runner, tool.ModelcheckWindow, tool.Modelcheck))
 
 def on_new_project():
     pass

@@ -12,8 +12,9 @@ from openpyxl.cell.cell import Cell
 import openpyxl
 
 import som_gui.core.tool
+from som_gui import tool
 import som_gui
-
+from som_gui.module.modelcheck_results import trigger
 if TYPE_CHECKING:
     from som_gui.module.modelcheck_results.prop import ModelcheckResultProperties
 
@@ -21,6 +22,10 @@ HEADER = ["Datum", "GUID", "Beschreibung", "Typ", "Name", "PropertySet", "Attrib
           "Bauteilklassifikation"]
 
 class ModelcheckResults(som_gui.core.tool.ModelcheckResults):
+    @classmethod
+    def last_modelcheck_finished(cls, ):
+        trigger.last_modelcheck_finished(tool.Modelcheck.get_database_path())
+
     @classmethod
     def autofit_column_width(cls, worksheet: Worksheet):
         max_widths = cls.get_max_width(worksheet)

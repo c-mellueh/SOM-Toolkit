@@ -19,6 +19,7 @@ from som_gui.module.modelcheck.constants import *
 from ifcopenshell.util import element as ifc_el
 from SOMcreator import value_constants
 from som_gui.data import constants
+from som_gui.module.modelcheck import trigger
 
 rev_datatype_dict = {
     str:   "IfcText/IfcLabel",
@@ -29,15 +30,6 @@ rev_datatype_dict = {
 
 
 class Modelcheck(som_gui.core.tool.Modelcheck):
-    @classmethod
-    def increment_checked_items(cls):
-        cls.get_properties().object_checked_count += 1
-        checked_count = cls.get_properties().object_checked_count
-        object_count = cls.get_properties().object_count
-        progress_value = cls.get_progress_bar().value()
-        new_progress_value = min(100, int(checked_count / object_count * 100))
-        if new_progress_value > progress_value:
-            cls.set_progress(new_progress_value)
 
     @classmethod
     def entity_is_in_group(cls, entity: ifcopenshell.entity_instance):
@@ -148,25 +140,23 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def set_status(cls, status: str):
         cls.get_status_label().setText(status)
 
-    @classmethod
-    def set_progress(cls, progress: int):
-        cls.get_progress_bar().setValue(progress)
 
     @classmethod
-    def create_modelcheck_runner(cls, run_function: Callable) -> QRunnable:
+    def create_modelcheck_runner(cls, ifc_file) -> QRunnable:
         class ModelcheckRunner(QRunnable):
-            def __init__(self, ):
+            def __init__(self, ifc_file: ifcopenshell.file):
                 super().__init__()
+                self.file = ifc_file
                 self.signaller = Signaller()
 
             def run(self):
-                run_function()
+                trigger.start_modelcheck(self.file)
                 self.signaller.finished.emit()
 
         class Signaller(QObject):
             finished = Signal()
 
-        return ModelcheckRunner()
+        return ModelcheckRunner(ifc_file)
 
     @classmethod
     def is_root_group(cls, group: ifcopenshell.stream_entity) -> bool:

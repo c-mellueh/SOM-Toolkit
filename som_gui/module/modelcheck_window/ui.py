@@ -11,6 +11,7 @@ class ModelcheckWindow(QWidget):
         self.setWindowIcon(get_icon())
         self.vertical_layout = QVBoxLayout(self)
         self.resize(1139, 720)
+        self.setWindowTitle("Modellprüfung")
 
 class ObjectCheckWidget(QWidget):
     def __init__(self):

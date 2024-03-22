@@ -24,54 +24,55 @@ rev_datatype_dict = {
 }
 
 
-def check_file(file: ifcopenshell.file, widget: IfcImportWidget, modelcheck: Type[tool.Modelcheck],
+def check_file(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck],
                modelcheck_window: Type[tool.ModelcheckWindow]):
 
     modelcheck.connect_to_data_base(modelcheck.get_database_path())
-    modelcheck.set_progress_bar(widget.widget.progress_bar)
-    modelcheck.set_status_label(widget.widget.label_status)
     modelcheck.remove_existing_issues(datetime.today())
     modelcheck.build_data_dict(modelcheck_window.get_item_checkstate_dict())
     modelcheck.build_group_structure(file)
 
     modelcheck.set_object_checked_count(0)
     modelcheck.set_object_count(modelcheck.get_element_count())
-    modelcheck.set_status("Prüfe Gruppenzuordnung")
-    modelcheck.set_progress(0)
-    check_groups(file, modelcheck)
-    modelcheck.set_progress(0)
-    modelcheck.set_status("Prüfe Elemente")
+    modelcheck_window.set_status("Prüfe Gruppenzuordnung")
+    modelcheck_window.set_progress(0)
+    check_groups(file, modelcheck, modelcheck_window)
+    modelcheck_window.set_progress(0)
+    modelcheck_window.set_status("Prüfe Elemente")
     entities = file.by_type("IfcElement")
     modelcheck.set_object_checked_count(0)
     modelcheck.set_object_count(len(entities))
-    check_entities(entities, modelcheck)
+    check_entities(entities, modelcheck, modelcheck_window)
 
     entities_without_group_assignment = modelcheck.get_entities_without_group_assertion(file)
     modelcheck.set_object_checked_count(0)
     modelcheck.set_object_count(len(entities_without_group_assignment))
     modelcheck.disconnect_from_data_base()
-    modelcheck.set_status("Prüfung abgeschlossen")
-    modelcheck.set_progress(100)
+
+    modelcheck_window.set_status("Prüfung abgeschlossen")
+    modelcheck_window.set_progress(100)
 
 
-def check_groups(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck]):
+def check_groups(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck],
+                 modelcheck_window: Type[tool.ModelcheckWindow]):
     root_groups = modelcheck.get_root_groups(file)
     for entity in root_groups:
         if modelcheck.is_aborted():
             return
-        check_group(entity, 0, modelcheck)
+        check_group(entity, 0, modelcheck, modelcheck_window)
 
 
-def check_entities(entities, modelcheck: Type[tool.Modelcheck]):
+def check_entities(entities, modelcheck: Type[tool.Modelcheck], modelcheck_window: Type[tool.Modelcheck]):
     for entity in entities:
-        modelcheck.increment_checked_items()
+        modelcheck_window.increment_checked_items()
         if modelcheck.is_aborted():
             return
         check_element(entity, modelcheck)
 
 
-def check_group(group_entity: ifcopenshell.entity_instance, layer_index, modelcheck: Type[tool.Modelcheck]):
-    modelcheck.increment_checked_items()
+def check_group(group_entity: ifcopenshell.entity_instance, layer_index, modelcheck: Type[tool.Modelcheck],
+                modelcheck_window: Type[tool.ModelcheckWindow]):
+    modelcheck_window.increment_checked_items()
     if not modelcheck.entity_should_be_tested(group_entity):
         return
 
@@ -94,7 +95,7 @@ def check_group(group_entity: ifcopenshell.entity_instance, layer_index, modelch
     for sub_group in modelcheck.get_sub_entities(group_entity):
         if modelcheck.is_aborted():
             return
-        check_group(sub_group, layer_index + 1, modelcheck)
+        check_group(sub_group, layer_index + 1, modelcheck, modelcheck_window)
 
 
 def check_group_entity(entity: ifcopenshell.entity_instance, modelcheck: Type[tool.Modelcheck]):

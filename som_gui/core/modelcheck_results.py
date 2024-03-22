@@ -12,12 +12,12 @@ HEADER = ["Datum", "GUID", "Beschreibung", "Typ", "Name", "PropertySet", "Attrib
 
 
 def create_results(data_base_path: os.PathLike | str, results: Type[tool.ModelcheckResults],
-                   modelcheck: Type[tool.Modelcheck]):
+                   modelcheck_window: Type[tool.ModelcheckWindow]):
     _issues = results.query_issues(data_base_path)
-    modelcheck.set_status(f"{len(_issues)} Fehler gefunden!")
+    modelcheck_window.set_status(f"{len(_issues)} Fehler gefunden!")
 
     if len(_issues) == 0:
-        modelcheck.set_status("Modelle fehlerfrei!")
+        modelcheck_window.set_status("Modelle fehlerfrei!")
 
     workbook, worksheet = results.create_workbook()
     last_cell = results.fill_worksheet(_issues, worksheet)

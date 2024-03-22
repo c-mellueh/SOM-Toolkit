@@ -20,6 +20,22 @@ if TYPE_CHECKING:
 
 class IfcImporter(som_gui.core.tool.IfcImporter):
     @classmethod
+    def check_inputs(cls, ifc_paths, main_pset, main_attribute):
+        for path in ifc_paths:
+            if not os.path.isfile(path):
+                tool.Popups.create_file_dne_warning(path)
+                return False
+
+        if not main_pset:
+            tool.Popups.create_warning_popup(f"PropertySet Name ist nicht ausgefüllt")
+            return False
+
+        if not main_attribute:
+            tool.Popups.create_warning_popup(f"Attribut Name ist nicht ausgefüllt")
+            return False
+        return True
+
+    @classmethod
     def get_main_pset(cls, widget: ui.IfcImportWidget) -> str:
         return widget.widget.line_edit_ident_pset.text()
 
@@ -50,18 +66,6 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         widget.widget.label_status.setVisible(visible)
 
     @classmethod
-    def _format_importer(cls, importer: ui.IfcImportWidget):
-        importer.widget.label_ifc_missing.hide()
-        importer.widget.label_export_missing.hide()
-        importer.widget.label_export_missing.setStyleSheet("QLabel { color : red; }")
-        importer.widget.label_ifc_missing.setStyleSheet("QLabel { color : red; }")
-        importer.widget.line_edit_ifc.textEdited.connect(importer.widget.label_ifc_missing.hide)
-        importer.widget.line_edit_export.textEdited.connect(importer.widget.label_export_missing.hide)
-        importer.widget.progress_bar.hide()
-        importer.widget.label_status.hide()
-        cls.autofill_ifcpath(importer.widget.line_edit_ifc)
-
-    @classmethod
     def autofill_ifcpath(cls, line_edit: QLineEdit):
         ifc_path = tool.Settings.get_ifc_path()
         if ifc_path:
@@ -88,12 +92,13 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
     @classmethod
     def create_importer(cls):
         widget = ui.IfcImportWidget()
-        cls._format_importer(widget)
+        cls.autofill_ifcpath(widget.widget.line_edit_ifc)
         prop = cls.get_properties()
         prop.active_importer = widget
         som_gui.module.ifc_importer.trigger.connect_new_importer(widget)
         pset, attribute = tool.Project.get().get_main_attribute()
         cls.fill_main_attribute(widget, pset, attribute)
+        cls.set_progressbar_visible(widget, False)
         return widget
 
     @classmethod

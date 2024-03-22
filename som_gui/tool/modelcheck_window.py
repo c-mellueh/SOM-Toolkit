@@ -5,8 +5,8 @@ from som_gui.module.modelcheck_window import ui, trigger
 from som_gui.module.project.constants import CLASS_REFERENCE
 import SOMcreator
 from typing import TYPE_CHECKING, Callable
-from PySide6.QtCore import Qt, QRunnable, QThreadPool
-from PySide6.QtWidgets import QSplitter, QLayout, QWidget, QTreeView, QFileDialog
+from PySide6.QtCore import Qt, QThreadPool, QSize, QRunnable
+from PySide6.QtWidgets import QSplitter, QSizePolicy, QLayout, QWidget, QTreeView, QFileDialog, QLineEdit, QPushButton
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 import os
 
@@ -16,15 +16,64 @@ if TYPE_CHECKING:
 
 
 class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
+    @classmethod
+    def increment_checked_items(cls):
+        checked_count = tool.Modelcheck.get_object_checked_count()
+        tool.Modelcheck.set_object_checked_count(checked_count)
+        object_count = tool.Modelcheck.get_object_count()
+        progress_value = cls.get_ifc_import_widget().widget.progress_bar.value()
+        new_progress_value = min(100, int(checked_count / object_count * 100))
+        if new_progress_value > progress_value:
+            cls.set_progress(new_progress_value)
 
     @classmethod
-    def read_inputs(cls, widget: IfcImportWidget):
+    def connect_ifc_import_runner(cls, runner: QRunnable):
+        trigger.connect_ifc_import_runner(runner)
+
+    @classmethod
+    def connect_modelcheck_runner(cls, runner: QRunnable):
+        trigger.connect_modelcheck_runner(runner)
+
+    @classmethod
+    def create_import_runner(cls, ifc_import_path: str):
+        status_label = cls.get_properties().status_label
+        runner = tool.IfcImporter.create_runner(status_label, ifc_import_path)
+        cls.get_properties().ifc_import_runners.append(runner)
+        return runner
+
+    @classmethod
+    def destroy_import_runner(cls, runner: QRunnable):
+        cls.get_properties().ifc_import_runners.remove(runner)
+
+    @classmethod
+    def check_export_path(cls, export_path):
+        export_folder_path = os.path.dirname(export_path)
+
+        if not os.path.isdir(export_folder_path):
+            tool.Popups.create_folder_dne_warning(export_folder_path)
+            return False
+        return True
+
+    @classmethod
+    def set_progress(cls, value: int):
+        cls.get_ifc_import_widget().widget.progress_bar.setValue(value)
+
+    @classmethod
+    def set_status(cls, text: str):
+        cls.get_properties().status_label.setText(text)
+
+    @classmethod
+    def set_export_line_text(cls, text: str):
+        cls.get_properties().export_line_edit.setText(text)
+
+    @classmethod
+    def read_inputs(cls):
+        widget = cls.get_properties().ifc_import_widget
         ifc_paths = tool.IfcImporter.get_ifc_paths(widget)
-        export_path = cls.get_export_path(widget)
+        export_path = cls.get_properties().export_line_edit.text()
         main_pset = tool.IfcImporter.get_main_pset(widget)
         main_attribute = tool.IfcImporter.get_main_attribute(widget)
         return ifc_paths, export_path, main_pset, main_attribute
-
 
     @classmethod
     def get_modelcheck_threadpool(cls):
@@ -39,8 +88,8 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return widget.widget.line_edit_export.text()
 
     @classmethod
-    def open_export_dialog(cls, widget: IfcImportWidget, base_path: os.PathLike, file_text: str):
-        path = QFileDialog.getSaveFileName(widget.window(), "Export", base_path, file_text)[0]
+    def open_export_dialog(cls, base_path: os.PathLike | str, file_text: str):
+        path = QFileDialog.getSaveFileName(cls.get_properties().active_window, "Export", base_path, file_text)[0]
         return path
 
     @classmethod
@@ -111,7 +160,46 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     def create_checkbox_widget(cls):
         prop = cls.get_properties()
         prop.checkbox_widget = ui.ObjectCheckWidget()
+        cls.show_pset_tree_title(False)
         return prop.checkbox_widget
+
+    @classmethod
+    def autofill_export_path(cls):
+        export_path = tool.Settings.get_issue_path()
+        if export_path:
+            cls.get_properties().export_line_edit.setText(export_path)
+
+    @classmethod
+    def create_export_line(cls, widget: IfcImportWidget):
+        export_line_edit = QLineEdit()
+        export_line_edit.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Maximum))
+        widget.widget.gridLayout.addWidget(export_line_edit, 6, 0, 1, 2)
+        export_button = QPushButton()
+        export_button.setMaximumSize(QSize(25, 16777215))
+        widget.widget.gridLayout.addWidget(export_button, 6, 2, 1, 1)
+        export_button.show()
+        export_button.setText("...")
+        cls.get_properties().export_button = export_button
+        cls.get_properties().export_line_edit = export_line_edit
+        cls.autofill_export_path()
+
+    @classmethod
+    def set_importer_widget(cls, widget: IfcImportWidget):
+        prop = cls.get_properties()
+        prop.ifc_import_widget = widget
+        prop.ifc_button = widget.widget.button_ifc
+        prop.ifc_line_edit = widget.widget.line_edit_ifc
+        prop.run_button = widget.widget.button_run
+        prop.abort_button = widget.widget.button_close
+        prop.status_label = widget.widget.label_status
+
+    @classmethod
+    def get_buttons(cls) -> tuple[QPushButton, QPushButton, QPushButton, QPushButton]:
+        ifc = cls.get_properties().ifc_button
+        export = cls.get_properties().export_button
+        run = cls.get_properties().run_button
+        abort = cls.get_properties().abort_button
+        return ifc, export, run, abort
 
     @classmethod
     def create_window(cls):
@@ -120,8 +208,8 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return prop.active_window
 
     @classmethod
-    def connect_window(cls, window: ui.ModelcheckWindow):
-        trigger.connect_window(window)
+    def connect_window(cls):
+        trigger.connect_buttons(*cls.get_buttons())
 
     @classmethod
     def add_splitter(cls, layout: QLayout, orientation: Qt.Orientation, widget_1: QWidget, widget_2: QWidget):
@@ -230,4 +318,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             item = root_item.child(row, 0)
             cls._update_pset_row(item, enabled)
 
-
+    @classmethod
+    def get_ifc_import_widget(cls) -> IfcImportWidget:
+        return cls.get_properties().ifc_import_widget

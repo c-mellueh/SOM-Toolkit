@@ -1,3 +1,5 @@
+import os.path
+
 import SOMcreator
 
 import som_gui.core.tool
@@ -53,6 +55,18 @@ class Popups(som_gui.core.tool.Popups):
         msg_box.setIcon(QMessageBox.Icon.Warning)
         msg_box.setWindowIcon(icon)
         msg_box.exec()
+
+    @classmethod
+    def create_file_dne_warning(cls, path):
+        base_name = os.path.basename(path)
+        text = f"Datei '{base_name}' existiert nicht an angegebenem Ort"
+        cls.create_warning_popup(text)
+
+    @classmethod
+    def create_folder_dne_warning(cls, path):
+        base_name = os.path.basename(path)
+        text = f"Ordner '{base_name}' existiert nicht an angegebenem Ort"
+        cls.create_warning_popup(text)
 
     @classmethod
     def msg_unsaved(cls):
