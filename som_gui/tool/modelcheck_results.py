@@ -15,11 +15,13 @@ import som_gui.core.tool
 from som_gui import tool
 import som_gui
 from som_gui.module.modelcheck_results import trigger
+
 if TYPE_CHECKING:
     from som_gui.module.modelcheck_results.prop import ModelcheckResultProperties
 
-HEADER = ["Datum", "GUID", "Beschreibung", "Typ", "Name", "PropertySet", "Attribut", "Datei",
-          "Bauteilklassifikation"]
+HEADER = ["Datum", "GUID", "Beschreibung", "Typ", "Name", "Bauteilklassifikation", "PropertySet", "Attribut", "Wert",
+          "Datei", ]
+
 
 class ModelcheckResults(som_gui.core.tool.ModelcheckResults):
     @classmethod
@@ -88,7 +90,8 @@ class ModelcheckResults(som_gui.core.tool.ModelcheckResults):
         conn = sqlite3.connect(path)
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT i.creation_date, e.GUID,i.short_description,i.issue_type,e.Name,i.PropertySet,i.Attribut, e.datei, e.bauteilKlassifikation  FROM issues AS i JOIN entities e on i.GUID = e.GUID_ZWC")
+            'SELECT i.creation_date, e.GUID,i.short_description,i.issue_type,e.Name,e.bauteilKlassifikation,'
+            'i.PropertySet,i.Attribut,i.Value, e.datei   FROM issues AS i JOIN entities e on i.GUID = e.GUID_ZWC')
         conn.commit()
         query = cursor.fetchall()
         return query

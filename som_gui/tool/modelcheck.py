@@ -227,7 +227,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         data_type = value_constants.DATATYPE_DICT[attribute.data_type]
         element_type = cls.get_active_element_type()
         if not isinstance(value, data_type):
-            cls.datatype_issue(guid, attribute, element_type, rev_datatype_dict[type(value)])
+            cls.datatype_issue(guid, attribute, element_type, rev_datatype_dict[type(value)], value)
 
     @classmethod
     def check_format(cls, value, attribute):
@@ -247,7 +247,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         element_type = cls.get_active_element_type()
         guid = cls.get_active_guid()
         if str(value) not in [str(v) for v in attribute.value]:
-            cls.list_issue(guid, attribute, element_type)
+            cls.list_issue(guid, attribute, element_type, value)
 
     @classmethod
     def check_range(cls, value, attribute):
@@ -258,7 +258,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             if min(possible_range) <= value <= max(possible_range):
                 is_ok = True
         if not is_ok:
-            cls.range_issue(guid, attribute, element_type)
+            cls.range_issue(guid, attribute, element_type, value)
 
     @classmethod
     def check_for_attributes(cls, element, obj: SOMcreator.Object):
@@ -291,30 +291,30 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     ###################################################################################
 
     @classmethod
-    def datatype_issue(cls, guid, attribute, element_type, datatype: str):
+    def datatype_issue(cls, guid, attribute, element_type, datatype: str, value):
         description = f"{element_type} besitzt den falschen Datentype ({datatype} nicht erlaubt)" \
                       f" {attribute.property_set.name}:{attribute.name}"
         issue_nr = DATATYPE_ISSUE
-        cls.add_issues(guid, description, issue_nr, attribute)
+        cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
-    def format_issue(cls, guid, attribute, element_type):
+    def format_issue(cls, guid, attribute, element_type, value):
         description = f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
         issue_nr = ATTRIBUTE_VALUE_ISSUES
-        cls.add_issues(guid, description, issue_nr, attribute)
+        cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
-    def list_issue(cls, guid, attribute, element_type):
+    def list_issue(cls, guid, attribute, element_type, value):
         description = f"{element_type} besitzt nicht den richtigen Wert für {attribute.property_set.name}:{attribute.name}"
         issue_nr = ATTRIBUTE_VALUE_ISSUES
-        cls.add_issues(guid, description, issue_nr, attribute)
+        cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
-    def range_issue(cls, guid, attribute, element_type):
+    def range_issue(cls, guid, attribute, element_type, value):
         description = f"""{element_type}  {attribute.property_set.name}:{attribute.name} 
                       ist nicht in den vorgegebenen Wertebereichen"""
         issue_nr = ATTRIBUTE_VALUE_ISSUES
-        cls.add_issues(guid, description, issue_nr, attribute)
+        cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
     def property_set_issue(cls, guid, pset_name, element_type):
@@ -354,11 +354,11 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def ident_unknown(cls, guid, pset_name, attribute_name, value):
         element_type = cls.get_active_element_type()
-        description = f"""{element_type} Zuweisungsattribut {pset_name}:{attribute_name}={value} 
+        description = f"""{element_type} Wert von Matchkey {pset_name}:{attribute_name}
                       konnte nicht in SOM gefunden werden"""
         issue_nr = IDENT_ATTRIBUTE_UNKNOWN
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
-                       attribute_name=attribute_name)
+                       attribute_name=attribute_name, value=value)
 
     @classmethod
     def guid_issue(cls, guid, file1, file2):
@@ -450,12 +450,12 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS issues
                   ([creation_date] TEXT,[GUID] CHAR(64), [short_description] TEXT,[issue_type] INT,
-                  [PropertySet] TEXT, [Attribut] TEXT)
+                  [PropertySet] TEXT, [Attribut] TEXT, [Value] Text)
                   ''')
         cls.commit_sql()
 
     @classmethod
-    def add_issues(cls, guid, description, issue_type, attribute, pset_name="", attribute_name=""):
+    def add_issues(cls, guid, description, issue_type, attribute, pset_name="", attribute_name="", value=""):
         cursor = cls.get_cursor()
         guid = cls.transform_guid(guid, True)
         date = datetime.date.today()
@@ -463,9 +463,9 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             pset_name = attribute.property_set.name
             attribute_name = attribute.name
         cursor.execute(f'''
-              INSERT INTO issues (creation_date,GUID,short_description,issue_type,PropertySet,Attribut)
+              INSERT INTO issues (creation_date,GUID,short_description,issue_type,PropertySet,Attribut,Value)
                     VALUES
-                    ('{date}','{guid}','{description}',{issue_type},'{pset_name}','{attribute_name}')
+                    ('{date}','{guid}','{description}',{issue_type},'{pset_name}','{attribute_name}','{value}')
               ''')
         cls.commit_sql()
 
