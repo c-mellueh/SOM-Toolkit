@@ -1,6 +1,6 @@
-from som_gui.module import objects
+from som_gui.module import object
 from PySide6.QtWidgets import QTreeWidget, QWidget, QDialog
-from som_gui.module.objects.window import Ui_ObjectInfo
+from som_gui.module.object.window import Ui_ObjectInfo
 
 class ObjectTreeWidget(QTreeWidget):
 
@@ -9,14 +9,10 @@ class ObjectTreeWidget(QTreeWidget):
 
     def paintEvent(self, event):
         super().paintEvent(event)
-        objects.trigger.repaint_event()
-
-    def changeEvent(self, event):
-        super().changeEvent(event)
-        objects.trigger.change_event()
+        object.trigger.repaint_event()
 
     def dropEvent(self, event):
-        objects.trigger.drop_event(event)
+        object.trigger.drop_event(event)
         super().dropEvent(event)
 
 
@@ -27,6 +23,6 @@ class ObjectInfoWidget(QDialog):
         self.widget.setupUi(self)
 
     def paintEvent(self, event):
-        objects.trigger.object_info_paint_event()
+        object.trigger.object_info_paint_event()
         super().paintEvent(event)
 

@@ -20,7 +20,7 @@ from .windows.attribute_import.gui import AttributeImport
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from som_gui.module.objects.ui import ObjectTreeWidget
+    from som_gui.module.object.ui import ObjectTreeWidget
 
 from som_gui.core import main_window as core
 class MainWindow(QMainWindow):

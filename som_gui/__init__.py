@@ -13,7 +13,7 @@ modules = {
     "object_filter":           None,
     "project_filter":          None,
     "project":                 None,
-    "objects":                 None,
+    "object": None,
     "search":                  None,
     "property_set":            None,
     "attribute":               None,

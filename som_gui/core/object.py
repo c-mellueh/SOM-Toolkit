@@ -4,14 +4,42 @@ import logging
 import uuid
 from typing import Type, TYPE_CHECKING
 
-import som_gui.module.objects
+import SOMcreator
+
+import som_gui.module.object
 from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
 from som_gui import tool
+
 if TYPE_CHECKING:
     from som_gui.tool import Object, Project, Search, PropertySet, MainWindow
 
     from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
     from PySide6.QtCore import QPoint
+
+
+def connect_object_input_widget(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
+                                predefined_pset: Type[tool.PredefinedPropertySet]):
+    main_window.get_ui().lineEdit_ident_pSet.textChanged.connect(
+        lambda: ident_pset_changed(object_tool, main_window, predefined_pset))
+    main_window.get_ui().lineEdit_ident_attribute.textChanged.connect(
+        lambda: ident_attribute_changed(object_tool, main_window, predefined_pset))
+
+
+def ident_pset_changed(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
+                       predefined_pset: Type[tool.PredefinedPropertySet]):
+    pset_names = sorted([p.name for p in predefined_pset.get_property_sets()])
+    object_tool.create_completer(pset_names, main_window.get_ui().lineEdit_ident_pSet)
+
+
+def ident_attribute_changed(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
+                            predefined_pset: Type[tool.PredefinedPropertySet]):
+    ident_pset_name = main_window.get_object_infos()["ident_pset_name"]
+    predefined_pset: SOMcreator.PropertySet = {p.name: p for p in predefined_pset.get_property_sets()}.get(
+        ident_pset_name)
+    attribute_names = list()
+    if predefined_pset:
+        attribute_names = [a.name for a in predefined_pset.attributes]
+    object_tool.create_completer(attribute_names, main_window.get_ui().lineEdit_ident_attribute)
 
 
 def add_shortcuts(object_tool: Type[Object], project_tool: Type[Project], search_tool: Type[Search]):
@@ -26,7 +54,7 @@ def search_object(search_tool: Type[Search], object_tool: Type[Object]):
 
 
 def reset_tree(object_tool: Type[Object]):
-    object_tool.get_object_properties().first_paint = True
+    object_tool.get_properties().first_paint = True
 
 
 def resize_columns(object_tool: Type[Object]):
@@ -102,7 +130,8 @@ def create_group(object_tool: Type[Object]):
         "is_group":     True,
         "ifc_mappings": ["IfcGroup"]
     }
-    result, obj = object_tool.create_object(d)
+    result = object_tool.check_object_creation_imput(d)
+    obj = object_tool.create_object(d, None, None)
     if result == som_gui.module.objects.OK:
         selected_objects = set(object_tool.get_selected_objects())
         object_tool.group_objects(obj, selected_objects)
@@ -163,8 +192,37 @@ def item_dropped_on(pos: QPoint, object_tool: Type[Object]):
             obj.parent = dropped_on_object
 
 
-def add_object_clicked(main_window_tool: Type[MainWindow], object_tool: Type[Object], project_tool: Type[Project]):
-    object_infos = main_window_tool.get_object_infos()
-    issue, obj = object_tool.create_object(object_infos)
-    object_tool.handle_attribute_issue(issue)
-    refresh_object_tree(object_tool, project_tool)
+def add_object_clicked(main_window: Type[MainWindow], object_tool: Type[Object], project: Type[Project],
+                       property_set: Type[tool.PropertySet], predefined_property_set: Type[tool.PredefinedPropertySet],
+                       popup: Type[tool.Popups]):
+    object_infos = main_window.get_object_infos()
+    issue = object_tool.check_object_creation_imput(object_infos)
+    if not object_tool.handle_attribute_issue(issue):
+        return
+
+    pset_name = object_infos["ident_pset_name"]
+    pset_dict = {p.name: p for p in predefined_property_set.get_property_sets()}
+
+    connect_predefined_pset = False
+    if pset_name in pset_dict:
+        connect_predefined_pset = popup.request_property_set_merge(pset_name, 1)
+        if connect_predefined_pset is None:
+            return
+
+    if connect_predefined_pset:
+        parent = pset_dict.get(pset_name)
+    else:
+        parent = None
+
+    pset = property_set.create_property_set(pset_name, None, parent)
+    attribute_name = object_infos["ident_attribute_name"]
+    attribute: SOMcreator.Attribute = {a.name: a for a in pset.attributes}.get(attribute_name)
+
+    if not attribute:
+        attribute = SOMcreator.Attribute(pset, attribute_name, [object_infos["ident_value"]],
+                                         SOMcreator.value_constants.LIST)
+    else:
+        attribute.value = [object_infos["ident_value"]]
+
+    object_tool.create_object(object_infos, pset, attribute)
+    refresh_object_tree(object_tool, project)
