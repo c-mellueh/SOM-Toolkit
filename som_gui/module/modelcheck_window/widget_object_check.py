@@ -15,8 +15,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QFont, QFontDatabase, QGradient, QIcon,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QSizePolicy,
-                               QSplitter, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QHeaderView, QLabel,
+                               QSizePolicy, QSplitter, QVBoxLayout, QWidget)
 
 from som_gui.module.modelcheck_window.ui import (ObjectTree, PsetTree)
 
@@ -24,7 +24,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(1139, 720)
+        Form.resize(1109, 681)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.splitter = QSplitter(Form)
@@ -37,6 +37,8 @@ class Ui_Form(object):
         self.splitter.setOrientation(Qt.Horizontal)
         self.object_tree = ObjectTree(self.splitter)
         self.object_tree.setObjectName(u"object_tree")
+        self.object_tree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.object_tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.splitter.addWidget(self.object_tree)
         self.verticalLayoutWidget = QWidget(self.splitter)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
@@ -50,6 +52,8 @@ class Ui_Form(object):
 
         self.property_set_tree = PsetTree(self.verticalLayoutWidget)
         self.property_set_tree.setObjectName(u"property_set_tree")
+        self.property_set_tree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.property_set_tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
         self.verticalLayout_2.addWidget(self.property_set_tree)
 

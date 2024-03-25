@@ -38,12 +38,15 @@ def connect_object_check_tree(widget: QTreeView):
     model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.ModelcheckWindow))
     widget.selectionModel().selectionChanged.connect(
         lambda item: core.object_selection_changed(widget.selectionModel(), tool.ModelcheckWindow))
+    widget.customContextMenuRequested.connect(
+        lambda pos: core.object_tree_conect_menu_requested(pos, widget, tool.ModelcheckWindow))
 
 
 def connect_pset_check_tree(widget: QTreeView):
     model: QStandardItemModel = widget.model()
     model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.ModelcheckWindow))
-
+    widget.customContextMenuRequested.connect(
+        lambda pos: core.object_tree_conect_menu_requested(pos, widget, tool.ModelcheckWindow))
 
 def connect_modelcheck_runner(runner: ModelcheckRunner):
     runner.signaller.finished.connect(lambda: core.modelcheck_finished(tool.ModelcheckWindow, tool.ModelcheckResults))

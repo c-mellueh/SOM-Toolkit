@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>1139</width>
-       <height>720</height>
+       <width>1109</width>
+       <height>681</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,14 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-        <widget class="ObjectTree" name="object_tree"/>
+        <widget class="ObjectTree" name="object_tree">
+            <property name="contextMenuPolicy">
+                <enum>Qt::CustomContextMenu</enum>
+            </property>
+            <property name="selectionMode">
+                <enum>QAbstractItemView::ExtendedSelection</enum>
+            </property>
+        </widget>
      <widget class="QWidget" name="verticalLayoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
@@ -36,7 +43,14 @@
         </widget>
        </item>
        <item>
-           <widget class="PsetTree" name="property_set_tree"/>
+           <widget class="PsetTree" name="property_set_tree">
+               <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+               </property>
+               <property name="selectionMode">
+                   <enum>QAbstractItemView::ExtendedSelection</enum>
+               </property>
+           </widget>
        </item>
       </layout>
      </widget>
@@ -48,12 +62,12 @@
         <customwidget>
             <class>ObjectTree</class>
             <extends>QTreeView</extends>
-            <header>som_gui.module.modelcheck.ui</header>
+            <header>som_gui.module.modelcheck_window.ui</header>
         </customwidget>
         <customwidget>
             <class>PsetTree</class>
             <extends>QTreeView</extends>
-            <header>som_gui.module.modelcheck.ui</header>
+            <header>som_gui.module.modelcheck_window.ui</header>
         </customwidget>
     </customwidgets>
  <resources/>

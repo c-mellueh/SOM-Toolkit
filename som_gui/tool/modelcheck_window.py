@@ -7,8 +7,8 @@ import SOMcreator
 from typing import TYPE_CHECKING, Callable
 from PySide6.QtCore import Qt, QThreadPool, QSize, QRunnable
 from PySide6.QtWidgets import QSplitter, QSizePolicy, QLayout, QWidget, QTreeView, QFileDialog, QLineEdit, QPushButton, \
-    QLabel
-from PySide6.QtGui import QStandardItem, QStandardItemModel
+    QLabel, QMenu
+from PySide6.QtGui import QStandardItem, QStandardItemModel, QAction
 import os
 
 if TYPE_CHECKING:
@@ -17,9 +17,54 @@ if TYPE_CHECKING:
 
 
 class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
+
+    @classmethod
+    def create_context_menu(cls, pos, funcion_list: list[list[str, Callable]], widget: ui.ObjectTree | ui.PsetTree):
+        global_pos = widget.viewport().mapToGlobal(pos)
+        menu = QMenu()
+        actions = list()
+        for function_name, function in funcion_list:
+            actions.append(QAction(function_name))
+            menu.addAction(actions[-1])
+            actions[-1].triggered.connect(function)
+        menu.exec(global_pos)
+
+    @classmethod
+    def expand_selection(cls, widget: ui.ObjectTree | ui.PsetTree):
+        indexes = [i for i in widget.selectedIndexes()]
+        for index in indexes:
+            widget.expand(index)
+
+    @classmethod
+    def collapse_selection(cls, widget: ui.ObjectTree | ui.PsetTree):
+        indexes = [i for i in widget.selectedIndexes()]
+        for index in indexes:
+            widget.collapse(index)
+
+    @classmethod
+    def check_selection(cls, widget: ui.ObjectTree | ui.PsetTree):
+        indexes = [i for i in widget.selectedIndexes()]
+        for index in indexes:
+            if index.column() != 0:
+                continue
+            widget.model().setData(index, Qt.CheckState.Checked, Qt.ItemDataRole.CheckStateRole)
+
+    @classmethod
+    def uncheck_selection(cls, widget: ui.ObjectTree | ui.PsetTree):
+        indexes = [i for i in widget.selectedIndexes()]
+        for index in indexes:
+            if index.column() != 0:
+                continue
+            widget.model().setData(index, Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole)
+
     @classmethod
     def resize_object_tree(cls):
         cls.get_properties().checkbox_widget.widget.object_tree.resizeColumnToContents(0)
+
+    @classmethod
+    def get_selected_items(cls, widget: ui.ObjectTree | ui.PsetTree):
+        return [i.data(CLASS_REFERENCE) for i in widget.selectedIndexes()]
+
 
     @classmethod
     def is_initial_paint(cls):

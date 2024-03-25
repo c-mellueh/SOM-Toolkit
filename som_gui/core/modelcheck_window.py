@@ -136,7 +136,10 @@ def object_check_changed(item: QStandardItem, modelcheck_window: Type[tool.Model
 
 
 def object_selection_changed(selection_model: QItemSelectionModel, modelcheck_window: Type[tool.ModelcheckWindow]):
-    index: QModelIndex = selection_model.selectedIndexes()[0]
+    selected_indexes = selection_model.selectedIndexes()
+    if not selected_indexes:
+        return
+    index: QModelIndex = selected_indexes[0]
     obj: SOMcreator.Object = index.data(CLASS_REFERENCE)
     modelcheck_window.set_selected_object(obj)
     paint_pset_tree(modelcheck_window)
@@ -156,3 +159,14 @@ def paint_pset_tree(modelcheck_window: Type[tool.ModelcheckWindow]):
     cs = modelcheck_window.get_item_check_state(obj)
     enabled = True if cs == Qt.CheckState.Checked else False
     modelcheck_window.fill_pset_tree(set(obj.property_sets), enabled, modelcheck_window.get_pset_tree())
+
+
+def object_tree_conect_menu_requested(pos, widget, modelcheck_window: Type[tool.ModelcheckWindow]):
+    actions = [
+        ["Ausklappen", lambda: modelcheck_window.expand_selection(widget)],
+        ["Einklappen", lambda: modelcheck_window.collapse_selection(widget)],
+        ["Aktivieren", lambda: modelcheck_window.check_selection(widget)],
+        ["Deaktivieren", lambda: modelcheck_window.uncheck_selection(widget)]
+    ]
+
+    modelcheck_window.create_context_menu(pos, actions, widget)
