@@ -25,3 +25,4 @@ class ModelcheckWindowProperties:
     ifc_import_widget = None
     status_label: QLabel = None
     ifc_import_runners = list()
+    initial_paint = True

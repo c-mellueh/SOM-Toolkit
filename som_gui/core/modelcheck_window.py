@@ -123,7 +123,8 @@ def paint_object_tree(modelcheck_window: Type[tool.ModelcheckWindow], project: T
     tree = modelcheck_window.get_object_tree()
     invisible_root_entity = tree.model().invisibleRootItem()
     modelcheck_window.fill_object_tree(root_objects, invisible_root_entity, tree.model(), tree)
-
+    if modelcheck_window.is_initial_paint:
+        modelcheck_window.resize_object_tree()
 
 def object_check_changed(item: QStandardItem, modelcheck_window: Type[tool.ModelcheckWindow]):
     obj = item.data(CLASS_REFERENCE)

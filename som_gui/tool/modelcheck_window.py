@@ -18,6 +18,17 @@ if TYPE_CHECKING:
 
 class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
+    def resize_object_tree(cls):
+        cls.get_properties().checkbox_widget.widget.object_tree.resizeColumnToContents(0)
+
+    @classmethod
+    def is_initial_paint(cls):
+        if cls.get_properties().initial_paint:
+            cls.get_properties().initial_paint = False
+            return True
+        return False
+
+    @classmethod
     def set_abort_button_text(cls, text: str):
         button = cls.get_properties().abort_button
         button.setText(text)
