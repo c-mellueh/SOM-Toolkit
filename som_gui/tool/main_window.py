@@ -71,7 +71,6 @@ class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
     def add_action(cls, menu_path: str, function: Callable):
         menu_steps = menu_path.split("/")
-        print(menu_path)
         if len(menu_steps) != 1:
             menu_dict = cls.add_menu("/".join(menu_steps[:-1]))
             action = QAction(menu_dict["menu"])
