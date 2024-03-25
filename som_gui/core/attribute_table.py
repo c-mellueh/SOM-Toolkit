@@ -17,20 +17,20 @@ def context_menu(table: ui.AttributeTable, pos, property_set: Type[tool.Property
     attribute_table.set_active_attribute(active_attribute)
     if active_attribute is None:
         return
-    if active_attribute.property_set.object.ident_attrib == active_attribute:
 
-        actions = [["Umbenennen", attribute_table.edit_attribute_name], ]
-    else:
+    actions = [["Umbenennen", attribute_table.edit_attribute_name],
+               ["Löschen", attribute_table.delete_selected_attribute], ]
 
-        actions = [["Umbenennen", attribute_table.edit_attribute_name],
-                   ["Löschen", attribute_table.delete_selected_attribute], ]
+    if active_attribute.property_set.object:
+        if active_attribute.property_set.object.ident_attrib == active_attribute:
+            actions = [["Umbenennen", attribute_table.edit_attribute_name], ]
 
     if active_attribute.is_child:
-        actions.append(["Verknpüfung Lösen", attribute_table.remove_parent_of_selected_attribute])
+        actions.append(["Verknüpfung Lösen", attribute_table.remove_parent_of_selected_attribute])
     else:
         possible_parent = attribute_table.get_possible_parent(active_attribute)
         if possible_parent:
-            actions.append(["Verknpüfung Hinzufügen", attribute_table.add_parent_of_selected_attribute])
+            actions.append(["Verknüpfung Hinzufügen", attribute_table.add_parent_of_selected_attribute])
 
     property_set.create_context_menu(table.viewport().mapToGlobal(pos), actions)
 
