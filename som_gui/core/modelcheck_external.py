@@ -1,19 +1,7 @@
 from __future__ import annotations
-
-import logging
 from typing import TYPE_CHECKING, Type
-import os
-import SOMcreator
-from PySide6.QtCore import Qt, QThread
-from PySide6.QtWidgets import QPushButton
-
-from som_gui.module.project.constants import CLASS_REFERENCE
-
 if TYPE_CHECKING:
     from som_gui import tool
-    from PySide6.QtGui import QStandardItem
-    from PySide6.QtCore import QItemSelectionModel, QModelIndex, QRunnable
-
 
 def open_window(modelcheck_external: Type[tool.ModelcheckExternal], modelcheck_window: Type[tool.ModelcheckWindow],
                 project: Type[tool.Project]):
