@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+       <width>1109</width>
+       <height>681</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+        <widget class="ObjectTree" name="object_tree">
+            <property name="contextMenuPolicy">
+                <enum>Qt::CustomContextMenu</enum>
+            </property>
+            <property name="selectionMode">
+                <enum>QAbstractItemView::ExtendedSelection</enum>
+            </property>
+        </widget>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_object">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+           <widget class="PsetTree" name="property_set_tree">
+               <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+               </property>
+               <property name="selectionMode">
+                   <enum>QAbstractItemView::ExtendedSelection</enum>
+               </property>
+           </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+    <customwidgets>
+        <customwidget>
+            <class>ObjectTree</class>
+            <extends>QTreeView</extends>
+            <header>som_gui.module.modelcheck_window.ui</header>
+        </customwidget>
+        <customwidget>
+            <class>PsetTree</class>
+            <extends>QTreeView</extends>
+            <header>som_gui.module.modelcheck_window.ui</header>
+        </customwidget>
+    </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

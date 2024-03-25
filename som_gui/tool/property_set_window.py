@@ -138,10 +138,11 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def get_paste_text_list(cls):
         seperator = tool.Settings.get_seperator()
         seperator_status = tool.Settings.get_seperator_status()
-        if not seperator_status:
-            return True
-
         text = QGuiApplication.clipboard().text()
+
+        if not seperator_status:
+            return [text]
+
         text_list = text.split(seperator)
         return text_list
 

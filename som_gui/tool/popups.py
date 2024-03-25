@@ -1,3 +1,5 @@
+import os.path
+
 import SOMcreator
 
 import som_gui.core.tool
@@ -9,6 +11,24 @@ FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
 
 
 class Popups(som_gui.core.tool.Popups):
+    @classmethod
+    def get_path(cls, file_format: str, window) -> str:
+        """ File Open Dialog with modifiable file_format"""
+        path = tool.Settings.get_export_path()
+        if path:
+            basename = os.path.basename(path)
+            split = os.path.splitext(basename)[0]
+            filename_without_extension = os.path.splitext(split)[0]
+            dirname = os.path.dirname(path)
+            path = os.path.join(dirname, filename_without_extension)
+
+        path = \
+            QFileDialog.getSaveFileName(window, f"Save {file_format}", path,
+                                        f"{file_format} Files (*.{file_format})")[0]
+        if path:
+            tool.Settings.set_export_path(path)
+        return path
+
     @classmethod
     def _request_text_input(cls, title: str, request_text, prefill, parent=None):
         if parent is None:
@@ -45,14 +65,39 @@ class Popups(som_gui.core.tool.Popups):
         return None
 
     @classmethod
-    def create_warning_popup(cls, text):
+    def create_warning_popup(cls, text, title="Warning"):
         icon = get_icon()
         msg_box = QMessageBox()
         msg_box.setText(text)
-        msg_box.setWindowTitle("Warning")
+        msg_box.setWindowTitle(title)
         msg_box.setIcon(QMessageBox.Icon.Warning)
         msg_box.setWindowIcon(icon)
         msg_box.exec()
+
+    @classmethod
+    def file_in_use_warning(cls, title, text, detail=""):
+        msg_box = QMessageBox()
+        msg_box.setText(text)
+        msg_box.setWindowTitle(title)
+        msg_box.setIcon(QMessageBox.Icon.Warning)
+        msg_box.setWindowIcon(get_icon())
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+        msg_box.setDetailedText(detail)
+        result = msg_box.exec()
+        return result == QMessageBox.StandardButton.Ok
+
+
+    @classmethod
+    def create_file_dne_warning(cls, path):
+        base_name = os.path.basename(path)
+        text = f"Datei '{base_name}' existiert nicht an angegebenem Ort"
+        cls.create_warning_popup(text)
+
+    @classmethod
+    def create_folder_dne_warning(cls, path):
+        base_name = os.path.basename(path)
+        text = f"Ordner '{base_name}' existiert nicht an angegebenem Ort"
+        cls.create_warning_popup(text)
 
     @classmethod
     def msg_unsaved(cls):

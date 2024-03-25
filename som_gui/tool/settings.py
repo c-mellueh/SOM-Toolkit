@@ -25,12 +25,20 @@ CREATE_EMPTY = "create_empty"
 
 class Settings(som_gui.core.tool.Settings):
     @classmethod
+    def get_export_path(cls, ) -> str:
+        return cls._get_path(EXPORT_PATH)
+
+    @classmethod
+    def set_export_path(cls, path) -> None:
+        cls._set_path(EXPORT_PATH, path)
+
+    @classmethod
     def get_save_path(cls):
-        return settings._get_path(SAVE_PATH)
+        return cls._get_path(SAVE_PATH)
 
     @classmethod
     def set_save_path(cls, value: str):
-        return settings._set_path(SAVE_PATH, value)
+        return cls._set_path(SAVE_PATH, value)
 
     @classmethod
     def get_open_path(self):
@@ -59,3 +67,34 @@ class Settings(som_gui.core.tool.Settings):
     @classmethod
     def get_seperator_status(cls) -> bool:
         return settings._get_bool_setting(SEPERATOR_SECTION, SEPERATOR_STATUS)
+
+    @classmethod
+    def _get_path(cls, value: str) -> str | list | set:
+        path = settings._get_string_setting(PATHS_SECTION, value)
+        if not path:
+            return ""
+        if PATH_SEPERATOR in path:
+            return path.split(PATH_SEPERATOR)
+        return path
+
+    @classmethod
+    def _set_path(cls, path, value: str | list | set) -> None:
+        if isinstance(value, (list, set)):
+            value = PATH_SEPERATOR.join(value)
+        settings.set_setting(PATHS_SECTION, path, value)
+
+    @classmethod
+    def get_ifc_path(cls) -> str:
+        return cls._get_path(IFC_PATH)
+
+    @classmethod
+    def set_ifc_path(cls, path) -> None:
+        cls._set_path(IFC_PATH, path)
+
+    @classmethod
+    def get_issue_path(cls) -> str:
+        return cls._get_path(ISSUE_PATH)
+
+    @classmethod
+    def set_issue_path(cls, path) -> None:
+        cls._set_path(ISSUE_PATH, path)

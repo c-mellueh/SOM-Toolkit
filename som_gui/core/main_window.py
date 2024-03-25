@@ -30,8 +30,7 @@ def create_menus(main_window_tool: Type[MainWindow]):
     menu_dict = main_window_tool.get_menu_dict()
     menu_bar = main_window_tool.get_menu_bar()
     menu_dict["menu"] = menu_bar
-    for menu in menu_dict["submenu"]:
-        main_window_tool.create_actions(menu, menu_bar)
+    main_window_tool.create_actions(menu_dict, None)
 
 
 def refresh_main_window(main_window_tool: Type[MainWindow], project_tool: Type[Project]):
@@ -45,7 +44,6 @@ def fill_old_menus(main_window_tool: Type[MainWindow]):
     fill menus of functions / windows that aren't refactored
     """
     from som_gui.filehandling import export as fh_export
-    from som_gui.windows.modelcheck import modelcheck_window
     main_window = som_gui.MainUi.window
     main_window_tool.add_action("Datei/Export/Vestra", lambda: fh_export.export_vestra_mapping(main_window))
     main_window_tool.add_action("Datei/Export/Card1", lambda: fh_export.export_card_1(main_window))
@@ -54,9 +52,8 @@ def fill_old_menus(main_window_tool: Type[MainWindow]):
     main_window_tool.add_action("Datei/Export/Abkürzungen", lambda: fh_export.export_desite_abbreviation(main_window))
     main_window_tool.add_action("Datei/Mappings", lambda: main_window.open_mapping_window())
     main_window_tool.add_action("Modelle/Gruppen Generieren", lambda: main_window.open_grouping_window())
-    main_window_tool.add_action("Modelle/Modellprüfung", lambda: modelcheck_window.ModelcheckWindow(main_window))
     main_window_tool.add_action("Modelle/Informationen einlesen", lambda: main_window.open_attribute_import_window())
-    main_window_tool.add_action("Bauwerksstruktur/Anzeigen", lambda: main_window.open_aggregation_window())
+    main_window_tool.add_action("Bauwerksstruktur", lambda: main_window.open_aggregation_window())
 
     main_window_tool.add_action("Desite/Lesezeichen", lambda: fh_export.export_bookmarks(main_window))
     main_window_tool.add_action("Desite/Mapping Script", lambda: fh_export.export_mapping_script(main_window))
