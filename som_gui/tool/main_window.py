@@ -39,11 +39,12 @@ class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
     def create_actions(cls, menu_dict: MenuDict, parent: QMenu | QMenuBar):
         menu = menu_dict["menu"]
-        parent.addMenu(menu)
-        for action in menu_dict["actions"]:
-            menu.addAction(action)
+        if parent is not None:
+            parent.addMenu(menu)
         for sd in menu_dict["submenu"]:
             cls.create_actions(sd, menu)
+        for action in menu_dict["actions"]:
+            menu.addAction(action)
 
     @classmethod
     def add_menu(cls, menu_path: str) -> MenuDict:
@@ -70,11 +71,17 @@ class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
     def add_action(cls, menu_path: str, function: Callable):
         menu_steps = menu_path.split("/")
-        menu_dict = cls.add_menu("/".join(menu_steps[:-1]))
-        action = QAction(menu_dict["menu"])
-        action.setText(action.tr(menu_steps[-1]))
-        action.triggered.connect(function)
-        menu_dict["actions"].append(action)
+        print(menu_path)
+        if len(menu_steps) != 1:
+            menu_dict = cls.add_menu("/".join(menu_steps[:-1]))
+            action = QAction(menu_dict["menu"])
+            action.setText(action.tr(menu_steps[-1]))
+            action.triggered.connect(function)
+            menu_dict["actions"].append(action)
+        else:
+            action = QAction(menu_steps[0])
+            cls.get_menu_dict()["actions"].append(action)
+            action.triggered.connect(function)
 
     @classmethod
     def get_main_menu_properties(cls) -> MainWindowProperties:

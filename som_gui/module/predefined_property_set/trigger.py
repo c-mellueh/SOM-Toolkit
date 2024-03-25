@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 def connect():
-    tool.MainWindow.add_action("Vordefinierte Psets/Anzeigen",
+    tool.MainWindow.add_action("Vordefinierte Psets",
                                lambda: core.open_window(tool.PredefinedPropertySet))
 
 
