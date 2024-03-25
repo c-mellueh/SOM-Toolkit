@@ -27,8 +27,4 @@ def open_window(modelcheck_external: Type[tool.ModelcheckExternal], modelcheck_w
     main_pset_name, main_attribute_name = project.get().get_main_attribute()
     modelcheck_window.connect_check_widget(check_box_widget)
     modelcheck_external.create_menubar(window, main_pset_name, main_attribute_name)
-    button = QPushButton()
-    check_box_widget.layout().addWidget(button)
-    # modelcheck_window.add_splitter(window.vertical_layout, Qt.Orientation.Vertical, check_box_widget)
-    # modelcheck_window.connect_window()
     window.show()
