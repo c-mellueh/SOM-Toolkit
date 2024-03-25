@@ -10,15 +10,24 @@ def connect():
     widget.itemDoubleClicked.connect(item_double_clicked)
     widget.customContextMenuRequested.connect(lambda p: core.create_context_menu(p, tool.Object))
     widget.expanded.connect(lambda: core.resize_columns(tool.Object))
-    main_ui = tool.MainWindow.get_ui()
 
+    # Connect MainWindow
+    main_ui = tool.MainWindow.get_ui()
     main_ui.button_search.pressed.connect(lambda: core.search_object(tool.Search, tool.Object))
     main_ui.button_objects_add.clicked.connect(
-        lambda: core.add_object_clicked(tool.MainWindow, tool.Object, tool.Project))
+        lambda: core.add_object_clicked(tool.MainWindow, tool.Object, tool.Project, tool.PropertySet,
+                                        tool.PredefinedPropertySet, tool.Popups))
+    main_ui.lineEdit_ident_pSet.textChanged.connect(
+        lambda: core.ident_pset_changed(tool.Object, tool.MainWindow, tool.PredefinedPropertySet))
+    main_ui.lineEdit_ident_attribute.textChanged.connect(
+        lambda: core.ident_attribute_changed(tool.Object, tool.MainWindow, tool.PredefinedPropertySet))
+    main_ui.button_search.setIcon(get_search_icon())
+
 
     core.load_context_menus(tool.Object)
     core.add_shortcuts(tool.Object, tool.Project, tool.Search)
-    main_ui.button_search.setIcon(get_search_icon())
+    core.connect_object_input_widget(tool.Object, tool.MainWindow, tool.PredefinedPropertySet)
+
 
 def item_double_clicked():
     core.create_object_info_widget(mode=1, object_tool=tool.Object)

@@ -98,7 +98,8 @@ class PropertySet(som_gui.core.tool.PropertySet):
                 return None
         if parent is not None:
             property_set = parent.create_child(name)
-            obj.add_property_set(property_set)
+            if obj:
+                obj.add_property_set(property_set)
         else:
             property_set = SOMcreator.PropertySet(name, obj, project=tool.Project.get())
         return property_set

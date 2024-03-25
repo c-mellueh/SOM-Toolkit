@@ -109,7 +109,7 @@ class Object:
 
     def get_object_from_item(self, item): pass
 
-    def get_object_info_properties(): pass
+    def get_object_info_properties(self): pass
 
     def get_object_tree(self): pass
 
