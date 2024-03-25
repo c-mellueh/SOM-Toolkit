@@ -65,14 +65,27 @@ class Popups(som_gui.core.tool.Popups):
         return None
 
     @classmethod
-    def create_warning_popup(cls, text):
+    def create_warning_popup(cls, text, title="Warning"):
         icon = get_icon()
         msg_box = QMessageBox()
         msg_box.setText(text)
-        msg_box.setWindowTitle("Warning")
+        msg_box.setWindowTitle(title)
         msg_box.setIcon(QMessageBox.Icon.Warning)
         msg_box.setWindowIcon(icon)
         msg_box.exec()
+
+    @classmethod
+    def file_in_use_warning(cls, title, text, detail=""):
+        msg_box = QMessageBox()
+        msg_box.setText(text)
+        msg_box.setWindowTitle(title)
+        msg_box.setIcon(QMessageBox.Icon.Warning)
+        msg_box.setWindowIcon(get_icon())
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+        msg_box.setDetailedText(detail)
+        result = msg_box.exec()
+        return result == QMessageBox.StandardButton.Ok
+
 
     @classmethod
     def create_file_dne_warning(cls, path):

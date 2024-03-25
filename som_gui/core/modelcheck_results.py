@@ -2,10 +2,7 @@ from __future__ import annotations
 
 from typing import Type, TYPE_CHECKING
 import os
-import logging
-
-if TYPE_CHECKING:
-    from som_gui import tool
+from som_gui import tool
 
 HEADER = ["Datum", "GUID", "Beschreibung", "Typ", "Name", "PropertySet", "Attribut", "Datei",
           "Bauteilklassifikation"]
@@ -31,7 +28,8 @@ def save_workbook(workbook, results: Type[tool.ModelcheckResults]):
     try:
         workbook.save(path)
     except PermissionError:
-        logging.warning("-" * 60)
-        logging.warning(f"folgende Datei ist noch geöffnet: {path} \n Datei schließen und beliebige Taste Drücken")
-        input("Achtung! Datei wird danach überschrieben!")
-        save_workbook(workbook, path)
+        title = "Datei noch geöffnet"
+        text = "Die Ausgabedatei ist noch in einem anderen Programm geöffnet"
+        detail = f"Dateipfad:'{path}' \n Achtung! nach bestätigung wird die Datei überschrieben"
+        if tool.Popups.file_in_use_warning(title, text, detail):
+            save_workbook(workbook, results)
