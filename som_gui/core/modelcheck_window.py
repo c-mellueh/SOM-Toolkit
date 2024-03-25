@@ -25,7 +25,8 @@ def open_window(modelcheck_window: Type[tool.ModelcheckWindow], ifc_importer: Ty
     modelcheck_window.create_export_line(ifc_import_widget)
     modelcheck_window.set_importer_widget(ifc_import_widget)
     modelcheck_window.add_splitter(window.vertical_layout, Qt.Orientation.Vertical, check_box_widget, ifc_import_widget)
-    modelcheck_window.connect_window()
+    modelcheck_window.connect_buttons(modelcheck_window.get_buttons())
+    modelcheck_window.connect_check_widget(check_box_widget)
     window.show()
 
 
@@ -39,6 +40,7 @@ def cancel_clicked(modelcheck_window: Type[tool.ModelcheckWindow], modelcheck: T
 def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
                 modelcheck: Type[tool.Modelcheck], modelcheck_results: Type[tool.ModelcheckResults],
                 ifc_importer: Type[tool.IfcImporter], project: Type[tool.Project], ):
+
     ifc_paths, export_path, main_pset, main_attribute = modelcheck_window.read_inputs()
     inputs_are_valid = ifc_importer.check_inputs(ifc_paths, main_pset, main_attribute)
     export_path_is_valid = modelcheck_window.check_export_path(export_path)
@@ -57,6 +59,7 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
     pool.setMaxThreadCount(3)
 
     modelcheck.create_new_sql_database()
+    modelcheck.reset_guids()
     modelcheck.build_ident_dict(set(project.get().objects))
 
     ifc_importer.set_progressbar_visible(ifc_import_widget, True)
@@ -101,7 +104,7 @@ def modelcheck_finished(modelcheck_window: Type[tool.ModelcheckWindow],
         modelcheck_results.last_modelcheck_finished()
         modelcheck_window.set_abort_button_text(f"Close")
     else:
-        print(f"Prüfung von Datei abgeschlossen, nächste Datei ist dran.")
+        logging.info(f"Prüfung von Datei abgeschlossen, nächste Datei ist dran.")
 
 
 def export_selection_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
@@ -126,7 +129,8 @@ def object_check_changed(item: QStandardItem, modelcheck_window: Type[tool.Model
     obj = item.data(CLASS_REFERENCE)
     if item.column() != 0:
         return
-    modelcheck_window.set_item_check_state(obj, item.checkState())
+
+    modelcheck_window.set_item_check_state(obj, item.checkState(), item.isEnabled())
     paint_pset_tree(modelcheck_window)
 
 

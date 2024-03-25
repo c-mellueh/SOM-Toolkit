@@ -49,6 +49,10 @@ class Signaller(QObject):
 
 class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
+    def reset_guids(cls):
+        cls.get_properties().guids = dict()
+
+    @classmethod
     def get_group_count(cls) -> int:
         return len(cls.get_properties().group_parent_dict)
 
@@ -152,29 +156,32 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         cls.get_properties().ident_dict = {o.ident_value: o for o in objects}
 
     @classmethod
-    def build_data_dict(cls, data: dict[SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute, bool]):
-        output_data_dict = dict()
-        for obj in tool.Project.get_all_objects():
-
-            if not data.get(obj):
-                continue
-            for property_set in obj.get_all_property_sets():
-                if not data.get(property_set):
+    def build_data_dict(cls, check_state_dict: dict[
+        SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute, bool]):
+        def iter_objects(objects: set[SOMcreator.Object]):
+            for obj in objects:
+                if not check_state_dict.get(obj):
                     continue
-                attribute_list = list()
-                for attribute in property_set.get_all_attributes():
-                    if not data.get(attribute):
+                for property_set in obj.get_all_property_sets():
+                    if not check_state_dict.get(property_set):
                         continue
-                    attribute_list.append(attribute)
+                    attribute_list = list()
+                    for attribute in property_set.get_all_attributes():
+                        if not check_state_dict.get(attribute):
+                            continue
+                        attribute_list.append(attribute)
 
-                if not attribute_list:
-                    continue
-                if obj not in output_data_dict:
-                    output_data_dict[obj] = {property_set: attribute_list}
-                else:
-                    output_data_dict[obj][property_set] = attribute_list
+                    if not attribute_list:
+                        continue
+                    if obj not in output_data_dict:
+                        output_data_dict[obj] = {property_set: attribute_list}
+                    else:
+                        output_data_dict[obj][property_set] = attribute_list
+                iter_objects(obj.children)
+        output_data_dict = dict()
+        iter_objects(tool.Project.get_root_objects())
         cls.set_data_dict(output_data_dict)
-
+        return output_data_dict
 
     @classmethod
     def create_modelcheck_runner(cls, ifc_file) -> ModelcheckRunner:
@@ -238,7 +245,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             if re.match(form, value) is not None:
                 is_ok = True
         if not is_ok:
-            cls.format_issue(guid, attribute, element_type)
+            cls.format_issue(guid, attribute, element_type, value)
 
     @classmethod
     def check_list(cls, value, attribute):
@@ -597,6 +604,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     @classmethod
     def get_database_path(cls) -> str:
+        print(cls.get_properties().database_path)
         return cls.get_properties().database_path
 
     @classmethod
@@ -642,13 +650,11 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     @classmethod
     def connect_to_data_base(cls, path):
-        print("Connect To Database")
         conn = sqlite3.connect(path)
         cls.get_properties().connection = conn
 
     @classmethod
     def disconnect_from_data_base(cls):
-        print("Disconnect from Database")
         cls.get_properties().connection.commit()
         cls.get_properties().connection.close()
         cls.get_properties().connection = None

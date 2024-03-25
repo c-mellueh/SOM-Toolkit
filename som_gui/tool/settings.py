@@ -24,6 +24,13 @@ CREATE_EMPTY = "create_empty"
 
 
 class Settings(som_gui.core.tool.Settings):
+    @classmethod
+    def get_export_path(cls, ) -> str:
+        return cls._get_path(EXPORT_PATH)
+
+    @classmethod
+    def set_export_path(cls, path) -> None:
+        cls._set_path(EXPORT_PATH, path)
 
     @classmethod
     def get_save_path(cls):

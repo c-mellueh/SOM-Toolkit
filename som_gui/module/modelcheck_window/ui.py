@@ -26,7 +26,6 @@ class ObjectTree(QTreeView):
         super().__init__(*args, **kwargs)
         model = QStandardItemModel()
         self.setModel(model)
-        modelcheck_window.trigger.connect_object_check_tree(self)
         model.setHorizontalHeaderLabels(["Objekt", "Identifier"])
 
     def paintEvent(self, event):

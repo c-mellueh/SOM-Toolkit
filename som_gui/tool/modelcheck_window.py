@@ -124,7 +124,18 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return prop.checkbox_widget.widget.property_set_tree
 
     @classmethod
+    def get_item_status_dict(cls):
+        checkstate_dict = cls.get_item_checkstate_dict()
+
+
+
+
+
+    @classmethod
     def get_item_checkstate_dict(cls):
+        """
+        returns item checkstate in TreeView
+        """
         prop = cls.get_properties()
         data_dict = dict()
         if not prop.check_state_dict:
@@ -149,7 +160,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def set_item_check_state(cls, item: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute,
-                             cs: Qt.CheckState) -> None:
+                             cs: Qt.CheckState, es: bool) -> None:
         cs = True if cs == Qt.CheckState.Checked else False
         cd = cls.get_item_checkstate_dict()
         cd[item] = cs
@@ -223,8 +234,12 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         cls.get_properties().active_window.hide()
 
     @classmethod
-    def connect_window(cls):
-        trigger.connect_buttons(*cls.get_buttons())
+    def connect_check_widget(cls, widget: ui.ObjectCheckWidget):
+        trigger.connect_object_check_tree(widget.widget.object_tree)
+
+    @classmethod
+    def connect_buttons(cls, buttons):
+        trigger.connect_buttons(*buttons)
 
     @classmethod
     def add_splitter(cls, layout: QLayout, orientation: Qt.Orientation, widget_1: QWidget, widget_2: QWidget):

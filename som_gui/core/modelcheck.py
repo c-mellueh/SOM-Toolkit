@@ -28,6 +28,7 @@ def check_file(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck],
 
     modelcheck.connect_to_data_base(modelcheck.get_database_path())
     modelcheck.remove_existing_issues(datetime.today())
+
     modelcheck.build_data_dict(modelcheck_window.get_item_checkstate_dict())
     modelcheck.build_group_structure(file)
 
