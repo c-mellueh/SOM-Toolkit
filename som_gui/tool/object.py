@@ -14,9 +14,9 @@ from typing import TYPE_CHECKING, TypedDict, Callable
 from SOMcreator.Template import IFC_4_1
 
 if TYPE_CHECKING:
-    from som_gui.module.objects.prop import ObjectProperties, ContextMenuDict
+    from som_gui.module.object.prop import ObjectProperties, ContextMenuDict
     from som_gui.main_window import MainWindow
-    from som_gui.module.objects.ui import ObjectTreeWidget
+    from som_gui.module.object.ui import ObjectTreeWidget
 
 
 class ObjectDataDict(TypedDict):

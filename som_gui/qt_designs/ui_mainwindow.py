@@ -23,7 +23,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHB
                                QWidget)
 
 from som_gui.module.attribute_table.ui import AttributeTable
-from som_gui.module.objects.ui import ObjectTreeWidget
+from som_gui.module.object.ui import ObjectTreeWidget
 from som_gui.module.property_set.ui import PsetTableWidget
 
 class Ui_MainWindow(object):

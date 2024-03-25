@@ -4,7 +4,7 @@ import logging
 import uuid
 from typing import Type, TYPE_CHECKING
 
-import som_gui.module.objects
+import som_gui.module.object
 from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
 from som_gui import tool
 if TYPE_CHECKING:
