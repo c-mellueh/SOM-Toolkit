@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 
 import som_gui
-
+from som_gui.filehandling import export as fh_export
 if TYPE_CHECKING:
     from som_gui.tool import MainWindow, Settings, Project, Popups
 
@@ -43,7 +43,7 @@ def fill_old_menus(main_window_tool: Type[MainWindow]):
     """
     fill menus of functions / windows that aren't refactored
     """
-    from som_gui.filehandling import export as fh_export
+
     main_window = som_gui.MainUi.window
     main_window_tool.add_action("Datei/Export/Vestra", lambda: fh_export.export_vestra_mapping(main_window))
     main_window_tool.add_action("Datei/Export/Card1", lambda: fh_export.export_card_1(main_window))

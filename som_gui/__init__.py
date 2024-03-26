@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from thefuzz import fuzz
+from .filehandling import export as fh_export
 
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow, Ui_MainWindow

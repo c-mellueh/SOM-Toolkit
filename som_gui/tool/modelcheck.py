@@ -604,7 +604,6 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     @classmethod
     def get_database_path(cls) -> str:
-        print(cls.get_properties().database_path)
         return cls.get_properties().database_path
 
     @classmethod

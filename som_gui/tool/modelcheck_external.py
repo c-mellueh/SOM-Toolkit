@@ -6,21 +6,16 @@ import SOMcreator
 import som_gui.core.tool
 from som_gui.module.modelcheck_external import ui
 from PySide6.QtGui import QAction
-from PySide6.QtCore import QModelIndex, Qt, QRect
 from PySide6.QtWidgets import QMainWindow, QMenuBar, QMenu
 
 from som_gui import tool
-from SOMcreator.external_software.IDS import main as main_ids
+from SOMcreator.external_software.IDS import main
 from SOMcreator.external_software.bim_collab_zoom import modelcheck as bc_modelcheck
 from SOMcreator.external_software.desite import modelcheck
 
-from anytree import AnyNode
-from som_gui.module.project.constants import CLASS_REFERENCE
-
 if TYPE_CHECKING:
     from som_gui.module.modelcheck_external.prop import ModelcheckExternalProperties
-    from som_gui.module.ifc_importer.ui import IfcImportWidget
-    from som_gui.module.modelcheck_window.ui import ObjectTree
+
 class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
     @classmethod
     def get_properties(cls) -> ModelcheckExternalProperties:
@@ -80,7 +75,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
         if not path:
             return
         data_dict = cls.get_data_dict()
-        main_ids.export(tool.Project.get(), data_dict, path)
+        main.export(tool.Project.get(), data_dict, path)
 
     @classmethod
     def export_bimcollab(cls):
