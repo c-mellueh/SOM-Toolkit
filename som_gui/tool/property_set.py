@@ -150,6 +150,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
     def add_property_sets_to_table(cls, property_sets: set[SOMcreator.PropertySet], table: QTableWidget):
         for property_set in property_sets:
+            table.setSortingEnabled(False)
             items = [QTableWidgetItem() for _ in range(3)]
             row = table.rowCount()
             table.setRowCount(row + 1)
@@ -157,12 +158,12 @@ class PropertySet(som_gui.core.tool.PropertySet):
             [item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable) for item in items]
             [table.setItem(row, col, item) for col, item in enumerate(items)]
             items[2].setCheckState(Qt.CheckState.Unchecked)
+            table.setSortingEnabled(True)
 
     @classmethod
     def update_table_row(cls, table, row):
         items = [table.item(row, col) for col in range(table.columnCount())]
-        item = items[0]
-        property_set = cls.get_property_set_from_item(item)
+        property_set = cls.get_property_set_from_item(items[0])
         check_state = Qt.CheckState.Checked if property_set.optional else Qt.CheckState.Unchecked
 
         if items[0].text() != property_set.name:
@@ -185,7 +186,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def update_property_set_table(cls, table: QTableWidget):
         for row in range(table.rowCount()):
             cls.update_table_row(table, row)
-
     @classmethod
     def select_property_set(cls, property_set: SOMcreator.PropertySet):
         table = cls.get_table()
