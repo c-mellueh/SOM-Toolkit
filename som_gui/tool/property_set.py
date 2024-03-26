@@ -156,7 +156,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
             [item.setData(CLASS_REFERENCE, property_set) for item in items]
             [item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable) for item in items]
             [table.setItem(row, col, item) for col, item in enumerate(items)]
-            items[1].setCheckState(Qt.CheckState.Unchecked)
+            items[2].setCheckState(Qt.CheckState.Unchecked)
 
     @classmethod
     def update_table_row(cls, table, row):
