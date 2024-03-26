@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from som_gui.tool.modelcheck import ModelcheckRunner
 
 def connect():
-    tool.MainWindow.add_action("Modelcheck",
+    tool.MainWindow.add_action("Modelle/Modelcheck",
                                lambda: core.open_window(tool.ModelcheckWindow, tool.IfcImporter))
 
 
