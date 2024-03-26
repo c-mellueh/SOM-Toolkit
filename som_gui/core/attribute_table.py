@@ -1,13 +1,60 @@
 from __future__ import annotations
 
+import copy
+
+import SOMcreator
+
 from som_gui.core import property_set_window as property_set_window_core
 import logging
 from typing import TYPE_CHECKING, Type
+from PySide6.QtCore import QMimeData, Qt
 
 if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
+    from PySide6.QtGui import QDropEvent
     from som_gui.module.attribute_table import ui
+
+
+def drop_event(event: QDropEvent, table: ui.AttributeTable, property_set_window: Type[tool.PropertySetWindow],
+               attribute_tool: Type[tool.Attribute]):
+    attributes: set[SOMcreator.Attribute] = event.mimeData().property("Objects")
+    window = table.window()
+    source_window = event.source().window()
+    if source_window == window:
+        event.accept()
+        return
+
+    proposed_action = event.proposedAction()
+    property_set = property_set_window.get_property_set_by_window(window)
+
+    existing_attributes = {a.name: a for a in property_set.get_all_attributes()}
+
+    if proposed_action == Qt.DropAction.CopyAction:
+        for attribute in attributes:
+            existing_attribute = existing_attributes.get(attribute.name)
+            if existing_attribute:
+                data = attribute_tool.get_attribute_data(attribute)
+                attribute_tool.set_attribute_data(existing_attribute, data)
+            else:
+                attribute = copy.copy(attribute)
+                attribute.remove_parent()
+                property_set.add_attribute(attribute)
+
+    elif proposed_action == Qt.DropAction.MoveAction:
+        for attribute in attributes:
+            existing_attribute = existing_attributes.get(attribute.name)
+            if existing_attribute:
+                property_set.remove_attribute(existing_attribute)
+            property_set.add_attribute(attribute)
+            attribute.remove_parent()
+    event.accept()
+
+
+def create_mime_data(items: list[QTableWidgetItem], mime_data: QMimeData, attribute_table: Type[tool.AttributeTable]):
+    objects = {attribute_table.get_attribute_from_item(item) for item in items}
+    mime_data.setProperty("Objects", objects)
+    return mime_data
 
 
 def context_menu(table: ui.AttributeTable, pos, property_set: Type[tool.PropertySet],

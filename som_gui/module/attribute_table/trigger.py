@@ -2,7 +2,7 @@ from __future__ import annotations
 from som_gui.core import attribute_table as core
 from som_gui import tool
 import som_gui
-from PySide6.QtWidgets import QTableWidget
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
 
 from typing import TYPE_CHECKING
 
@@ -20,6 +20,14 @@ def connect():
 def connect_table(table: AttributeTable):
     table.customContextMenuRequested.connect(
         lambda pos: core.context_menu(table, pos, tool.PropertySet, tool.AttributeTable))
+
+
+def drop_event(event, table):
+    core.drop_event(event, table, tool.PropertySetWindow, tool.Attribute)
+
+
+def create_mime_data(items: list[QTableWidgetItem], mime_data):
+    return core.create_mime_data(items, mime_data, tool.AttributeTable)
 
 
 def on_new_project():
