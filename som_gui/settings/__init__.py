@@ -83,7 +83,7 @@ def _get_string_setting(section: str, path: str, default="") -> str:
         path = config_parser.get(section, path)
         if path is not None:
             return path
-    return ""
+    return default
 
 
 def get_setting_attribute_import_existing() -> bool:
