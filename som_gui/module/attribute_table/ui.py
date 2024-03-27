@@ -15,18 +15,6 @@ class AttributeTable(QTableWidget):
         mime_data = super().mimeData(items)
         return attribute_table.trigger.create_mime_data(list(items), mime_data)
 
-    # def dragEnterEvent(self, event):
-    #     print(event)
-    #     if event.mimeData().property("Objects"):
-    #         event.acceptProposedAction()
-    #
-    # def dragMoveEvent(self, event:QDragMoveEvent):
-    #     event.acceptProposedAction()
-    #     #super().dragMoveEvent(event)
-    #
-    # def dropMimeData(self, row, column, data, action):
-    #     return True
-
     def dropEvent(self, event: QDropEvent):
         attribute_table.trigger.drop_event(event, self)
         super().dropEvent(event)

@@ -155,7 +155,8 @@ class PropertySet(som_gui.core.tool.PropertySet):
             row = table.rowCount()
             table.setRowCount(row + 1)
             [item.setData(CLASS_REFERENCE, property_set) for item in items]
-            [item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable) for item in items]
+            [item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsUserCheckable) for item in
+             items]
             [table.setItem(row, col, item) for col, item in enumerate(items)]
             items[2].setCheckState(Qt.CheckState.Unchecked)
             table.setSortingEnabled(True)

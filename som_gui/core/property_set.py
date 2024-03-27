@@ -5,10 +5,12 @@ from som_gui.core import property_set_window as property_set_window_core
 from som_gui.core import attribute_table as attribute_table_core
 from typing import Type, TYPE_CHECKING
 import logging
+
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_set_window.ui import PropertySetWindow
-from PySide6.QtCore import QModelIndex
+    from PySide6.QtWidgets import QTableWidgetItem
+from PySide6.QtCore import QModelIndex, Qt
 
 
 def add_property_set_button_pressed(object_tool: Type[tool.Object], main_window_tool: Type[tool.MainWindow],
@@ -44,6 +46,13 @@ def add_property_set_button_pressed(object_tool: Type[tool.Object], main_window_
     property_set_tool.create_property_set(pset_name, obj, parent)
     repaint_pset_table(property_set_tool, object_tool)
 
+
+def pset_clicked(item: QTableWidgetItem, property_set: Type[tool.PropertySet]):
+    pset = property_set.get_pset_from_item(item)
+    if not item.column() == 2:
+        return
+    cs = True if item.checkState() == Qt.CheckState.Checked else False
+    pset.optional = cs
 
 def pset_selection_changed(property_set_tool: Type[tool.PropertySet], attribute_table: Type[tool.AttributeTable]):
     property_set = property_set_tool.get_selecte_property_set_from_table()

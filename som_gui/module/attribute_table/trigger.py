@@ -20,7 +20,7 @@ def connect():
 def connect_table(table: AttributeTable):
     table.customContextMenuRequested.connect(
         lambda pos: core.context_menu(table, pos, tool.PropertySet, tool.AttributeTable))
-
+    table.itemClicked.connect(lambda item: core.item_changed(item, tool.AttributeTable))
 
 def drop_event(event, table):
     core.drop_event(event, table, tool.PropertySetWindow, tool.Attribute)

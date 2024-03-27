@@ -16,6 +16,14 @@ if TYPE_CHECKING:
     from som_gui.module.attribute_table import ui
 
 
+def item_changed(item: QTableWidgetItem, attribute_table: Type[tool.AttributeTable]):
+    attribute = attribute_table.get_attribute_from_item(item)
+    if not item.column() == 4:
+        return
+    cs = True if item.checkState() == Qt.CheckState.Checked else False
+    attribute.optional = cs
+
+
 def drop_event(event: QDropEvent, table: ui.AttributeTable, property_set_window: Type[tool.PropertySetWindow],
                attribute_tool: Type[tool.Attribute]):
     attributes: set[SOMcreator.Attribute] = event.mimeData().property("Objects")

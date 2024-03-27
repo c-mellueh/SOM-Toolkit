@@ -96,6 +96,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             table.setRowCount(row + 1)
             [item.setData(CLASS_REFERENCE, attribute) for item in items]
             [table.setItem(row, col, item) for col, item in enumerate(items)]
+            [item.setFlags(item.flags() | item.flags().ItemIsUserCheckable) for item in items]
             cls.update_row(table, row)
 
     @classmethod
@@ -106,6 +107,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         attribute = cls.get_attribute_from_item(items[0])
         if attribute is None:
             return
+
         if attribute.parent is not None:
             if not items[0].data(LINKSTATE):
                 items[0].setIcon(get_link_icon())

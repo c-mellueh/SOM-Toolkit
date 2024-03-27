@@ -18,7 +18,7 @@ def connect():
     tool.MainWindow.get_ui().button_Pset_add.clicked.connect(
         lambda: core.add_property_set_button_pressed(tool.Object, tool.MainWindow, tool.PropertySet, tool.Popups,
                                                      tool.PredefinedPropertySet))
-
+    table.itemClicked.connect(lambda item: core.pset_clicked(item, tool.PropertySet))
 
 def edit_name(text, index):
     core.rename_pset_by_editor(text, index, tool.PropertySet)
