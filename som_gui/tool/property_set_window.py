@@ -255,7 +255,6 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
 
             # If Value is Inherited by Parent set layout disabled
             enabled = False if inherits and value in parent_values else True
-            print(enabled)
             line_edit.setEnabled(enabled)
 
 
