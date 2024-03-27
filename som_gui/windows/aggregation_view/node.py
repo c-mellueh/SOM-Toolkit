@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout
 from SOMcreator import classes, value_constants
 
 from ...data import constants
-from som_gui.core import property_set as property_set_core
+from som_gui.core import property_set_window as property_set_window_core
 from som_gui.core import attribute as attribute_core
 from som_gui import tool
 
@@ -612,12 +612,12 @@ class CustomPsetTree(QTreeWidget):
     def item_clicked(self, item: CustomPSetTreeItem | CustomAttribTreeItem) -> None:
         if isinstance(item, CustomPSetTreeItem):
             property_set = item.property_set
-            property_set_core.open_pset_window(property_set, tool.PropertySet, tool.Attribute)
+            property_set_window_core.open_pset_window(property_set, tool.PropertySetWindow)
 
         if isinstance(item, CustomAttribTreeItem):
             property_set = item.attribute.property_set
-            window = property_set_core.open_pset_window(property_set, tool.PropertySet, tool.Attribute)
-            attribute_core.activate_attribute(item.attribute, window, tool.Attribute, tool.PropertySet)
+            window = property_set_window_core.open_pset_window(property_set, tool.PropertySetWindow)
+            property_set_window_core.activate_attribute(item.attribute, window, tool.Attribute, tool.PropertySetWindow)
 
 class CustomPSetTreeItem(QTreeWidgetItem):
     def __init__(self, tree: QTreeWidget, pset: classes.PropertySet) -> None:
