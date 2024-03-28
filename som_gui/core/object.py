@@ -132,7 +132,7 @@ def create_group(object_tool: Type[Object]):
     }
     result = object_tool.check_object_creation_imput(d)
     obj = object_tool.create_object(d, None, None)
-    if result == som_gui.module.objects.OK:
+    if result == som_gui.module.object.OK:
         selected_objects = set(object_tool.get_selected_objects())
         object_tool.group_objects(obj, selected_objects)
 
