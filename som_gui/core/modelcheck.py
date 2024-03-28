@@ -137,6 +137,7 @@ def check_correct_parent(entity: ifcopenshell.entity_instance, modelcheck: Type[
 
 
 def check_element(element: ifcopenshell.entity_instance, modelcheck: Type[tool.Modelcheck]):
+    modelcheck.set_active_element_type(ELEMENT)
     modelcheck.set_active_element(element)
 
     data_dict = modelcheck.get_data_dict()

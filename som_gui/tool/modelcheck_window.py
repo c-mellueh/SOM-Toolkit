@@ -79,6 +79,10 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         button.setText(text)
 
     @classmethod
+    def set_run_button_enabled(cls, state):
+        cls.get_properties().run_button.setEnabled(state)
+
+    @classmethod
     def modelcheck_is_running(cls):
         return cls.get_modelcheck_threadpool().activeThreadCount() > 0
 

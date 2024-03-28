@@ -245,7 +245,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             if re.match(form, value) is not None:
                 is_ok = True
         if not is_ok:
-            cls.format_issue(guid, attribute, element_type, value)
+            cls.format_issue(guid, attribute, value)
 
     @classmethod
     def check_list(cls, value, attribute):
@@ -305,7 +305,8 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
-    def format_issue(cls, guid, attribute, element_type, value):
+    def format_issue(cls, guid, attribute, value):
+        element_type = cls.get_active_element_type()
         description = f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
