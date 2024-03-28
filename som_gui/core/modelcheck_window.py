@@ -140,7 +140,7 @@ def object_check_changed(item: QStandardItem, modelcheck_window: Type[tool.Model
     if item.column() != 0:
         return
 
-    modelcheck_window.set_item_check_state(obj, item.checkState(), item.isEnabled())
+    modelcheck_window.set_item_check_state(obj, item.checkState())
     paint_pset_tree(modelcheck_window)
 
 

@@ -213,7 +213,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def set_item_check_state(cls, item: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute,
-                             cs: Qt.CheckState, es: bool) -> None:
+                             cs: Qt.CheckState) -> None:
         cs = True if cs == Qt.CheckState.Checked else False
         cd = cls.get_item_checkstate_dict()
         cd[item] = cs
