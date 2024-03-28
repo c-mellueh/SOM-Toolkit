@@ -65,7 +65,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     def get_selected_items(cls, widget: ui.ObjectTree | ui.PsetTree):
         return [i.data(CLASS_REFERENCE) for i in widget.selectedIndexes()]
 
-
     @classmethod
     def is_initial_paint(cls):
         if cls.get_properties().initial_paint:
@@ -85,8 +84,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def modelcheck_is_running(cls):
         return cls.get_modelcheck_threadpool().activeThreadCount() > 0
-
-
 
     @classmethod
     def connect_ifc_import_runner(cls, runner: QRunnable):
@@ -186,10 +183,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def get_item_status_dict(cls):
         checkstate_dict = cls.get_item_checkstate_dict()
-
-
-
-
 
     @classmethod
     def get_item_checkstate_dict(cls):
