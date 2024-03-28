@@ -288,7 +288,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
                     continue
 
                 value = pset_dict[pset_name][attribute_name]
-                if value is None:
+                if value is None or value == "":
                     cls.empty_value_issue(guid, pset_name, attribute.name, element_type)
                 else:
                     cls.check_values(value, attribute)
