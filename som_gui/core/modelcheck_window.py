@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import time
 from typing import TYPE_CHECKING, Type
 import os
 import SOMcreator
@@ -48,6 +49,7 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
     if not inputs_are_valid or not export_path_is_valid:
         return
 
+    modelcheck_window.set_run_button_enabled(False)
     modelcheck_window.set_abort_button_text(f"Abbrechen")
     ifc_import_widget = modelcheck_window.get_ifc_import_widget()
     modelcheck.reset_abort()
@@ -64,7 +66,6 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
 
     ifc_importer.set_progressbar_visible(ifc_import_widget, True)
     ifc_importer.set_progress(ifc_import_widget, 0)
-
     for path in ifc_paths:
         modelcheck_window.set_status(f"Import '{os.path.basename(path)}'")
         runner = modelcheck_window.create_import_runner(path)
@@ -97,12 +98,20 @@ def ifc_import_finished(runner: QRunnable, modelcheck_window: Type[tool.Modelche
     modelcheck_window.get_modelcheck_threadpool().start(modelcheck_runner)
 
 
-def modelcheck_finished(modelcheck_window: Type[tool.ModelcheckWindow],
-                        modelcheck_results: Type[tool.ModelcheckResults], ):
-    thread_pool = modelcheck_window.get_modelcheck_threadpool()
-    if thread_pool.activeThreadCount() < 1:
+def modelcheck_finished(modelcheck_window: Type[tool.ModelcheckWindow], modelcheck: Type[tool.Modelcheck],
+                        modelcheck_results: Type[tool.ModelcheckResults], ifc_importer: Type[tool.IfcImporter]):
+    if modelcheck.is_aborted():
+        ifc_import_widget = modelcheck_window.get_ifc_import_widget()
+        ifc_importer.set_progressbar_visible(ifc_import_widget, False)
+        modelcheck_window.set_abort_button_text(f"Close")
+        modelcheck_window.set_run_button_enabled(True)
+        return
+
+    time.sleep(0.2)
+    if not modelcheck_window.modelcheck_is_running():
         modelcheck_results.last_modelcheck_finished()
         modelcheck_window.set_abort_button_text(f"Close")
+        modelcheck_window.set_run_button_enabled(True)
     else:
         logging.info(f"Prüfung von Datei abgeschlossen, nächste Datei ist dran.")
 
