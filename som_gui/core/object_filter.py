@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 def open_use_case_window(objectfilter_tool: Type[ObjectFilter]):
     window = objectfilter_tool.create_window()
-    window.show()
+
     load_use_cases(objectfilter_tool)
     objectfilter_tool.format_object_tree_header()
     object_tree = objectfilter_tool.get_object_tree()
@@ -22,6 +22,7 @@ def open_use_case_window(objectfilter_tool: Type[ObjectFilter]):
     objectfilter_tool.get_widget().buttonBox.accepted.connect(lambda: accept_changes(objectfilter_tool))
     objectfilter_tool.get_widget().buttonBox.rejected.connect(lambda: reject_changes(objectfilter_tool))
     pset_tree.setEnabled(False)
+    window.show()
 
 
 def on_startup(objectfilter_tool: Type[ObjectFilter]):
@@ -45,28 +46,6 @@ def accept_changes(objectfilter_tool: Type[ObjectFilter]):
 def reject_changes(objectfilter_tool: Type[ObjectFilter]):
     window = objectfilter_tool.delete_use_case_window()
     window.close()
-
-
-def rename_use_case(use_case_index: int, objectfilter_tool: Type[ObjectFilter]):
-    old_name = objectfilter_tool.get_use_case_list()[use_case_index]
-    new_name = objectfilter_tool.request_rename_use_case_name(old_name)
-    if new_name is None:
-        return
-    objectfilter_tool.rename_use_case(use_case_index, new_name)
-
-
-def delete_use_case(use_case_index: int, objectfilter_tool: Type[ObjectFilter]):
-    use_case_list = objectfilter_tool.get_use_case_list()
-    if len(use_case_list) < 2:  # At least 1 Use case needs to exist
-        return
-    objectfilter_tool.remove_use_case(use_case_index)
-
-
-def create_use_case(objectfilter_tool: Type[ObjectFilter]):
-    existing_names = objectfilter_tool.get_use_case_list()
-
-    new_name = objectfilter_tool.get_new_use_case_name("Unbenannt", existing_names)
-    objectfilter_tool.add_use_case(new_name)
 
 
 def refresh_object_tree(objectfilter_tool: Type[ObjectFilter], project_tool: Type[Project]):
