@@ -603,11 +603,7 @@ class Object:
 
 
 class ObjectFilter:
-    def add_use_case(self, use_case_name): pass
-
     def add_use_case_to_settings_window(self): pass
-
-    def create_context_menu(self, global_pos, action_dict): pass
 
     def create_header_data(self, filter_matrix): pass
 
@@ -675,8 +671,6 @@ class ObjectFilter:
 
     def get_title_lenght_by_model(self, model): pass
 
-    def get_title_length_by_model(self, model): pass
-
     def get_use_case_list(self): pass
 
     def get_use_case_name_list(self): pass
@@ -688,12 +682,6 @@ class ObjectFilter:
     def is_tree_clicked(self): pass
 
     def load_use_cases(self): pass
-
-    def remove_use_case(self, use_case_index): pass
-
-    def rename_use_case(self, use_case_index, new_name): pass
-
-    def request_rename_use_case_name(self, old_name): pass
 
     def reset_use_case_data(self): pass
 
@@ -719,8 +707,6 @@ class ObjectFilter:
 
     def update_attribute_data(self): pass
 
-    def update_attribute_use_cases(self): pass
-
     def update_attribute_uses_cases(self): pass
 
     def update_enable_status(self, item, model): pass
@@ -728,8 +714,6 @@ class ObjectFilter:
     def update_object_data(self, obj): pass
 
     def update_object_use_cases(self): pass
-
-    def update_project_use_cases(self): pass
 
     def update_pset_data(self): pass
 

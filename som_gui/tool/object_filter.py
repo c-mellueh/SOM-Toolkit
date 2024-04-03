@@ -151,11 +151,16 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         project_use_case_list = proj.get_use_case_list()
         project_phase_list = proj.get_project_phase_list()
         for obj, filter_matrix in prop.object_dict.items():
+            print(f"{obj}")
             obj: SOMcreator.Object
             for phase_index, use_case_list in enumerate(filter_matrix):
                 phase = project_phase_list[phase_index]
+                print(f"    Phase: {phase}")
                 for use_case_index, value in enumerate(use_case_list):
                     use_c = project_use_case_list[use_case_index]
+                    print(f"        UseCase: {use_c}")
+                    print(f"        Value: {value}")
+
                     obj.set_filter_state(phase, use_c, value)
 
     @classmethod
@@ -185,19 +190,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
                     attribute.set_filter_state(phase, use_c, value)
 
     @classmethod
-    def update_project_use_cases(cls):
-        use_case_list = cls.get_use_case_list()
-        proj = Project.get()
-
-        old_use_cases = proj.get_use_case_list()
-        for index, old_use_case in enumerate(old_use_cases):
-            if index != 0:
-                proj.remove_use_case(old_use_case)
-        proj.rename_use_case(old_use_cases[0], use_case_list[0])
-        for use_case in use_case_list[1:]:
-            proj.add_use_case(use_case)
-
-    @classmethod
     def delete_use_case_window(cls) -> QWidget:
         prop = cls.get_objectfilter_properties()
         old_window = prop.object_filter_window
@@ -205,30 +197,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         prop.active_object = None
         object_filter_data.refresh()
         return old_window
-
-    @classmethod
-    def add_use_case(cls, use_case_name: str) -> None:
-        prop = cls.get_objectfilter_properties()
-        prop.use_cases.append(use_case_name)
-        for data_dict in [prop.object_dict, prop.pset_dict, prop.attribute_dict]:
-            for use_case_dict in data_dict.values():
-                use_case_dict[use_case_name] = True
-
-    @classmethod
-    def remove_use_case(cls, use_case_index: int):
-        def remove_use_case_column(index: int, model: QStandardItemModel):
-            title_length = cls.get_title_lenght_by_model(model)
-            column = title_length + index
-            model.removeColumn(column)
-
-        prop = cls.get_objectfilter_properties()
-        use_case_text = prop.use_cases[use_case_index]
-        prop.use_cases.pop(use_case_index)
-        remove_use_case_column(use_case_index, cls.get_object_model())
-        remove_use_case_column(use_case_index, cls.get_pset_model())
-        for data_dict in [prop.object_dict, prop.pset_dict, prop.attribute_dict]:
-            for use_case_dict in data_dict.values():
-                use_case_dict.pop(use_case_text)
 
     @classmethod
     def get_new_use_case_name(cls, standard_name: str, existing_names: list[str]) -> str:
@@ -241,40 +209,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             return new_name
 
         return loop_name(standard_name)
-
-    @classmethod
-    def request_rename_use_case_name(cls, old_name):
-        prop = cls.get_objectfilter_properties()
-        active_window = prop.object_filter_window
-        new_name, ok = QInputDialog.getText(active_window, "Anwendungsfall umbenennen", "Neuer Name:",
-                                            QLineEdit.EchoMode.Normal, old_name)
-        if not ok:
-            return None
-        return new_name
-
-    @classmethod
-    def rename_use_case(cls, use_case_index: int, new_name: str) -> None:
-        prop = cls.get_objectfilter_properties()
-        old_name = prop.use_cases[use_case_index]
-        prop.use_cases[use_case_index] = new_name
-        for data_dict in [prop.object_dict, prop.pset_dict, prop.attribute_dict]:
-            for use_case_dict in data_dict.values():
-                use_case_dict[new_name] = use_case_dict[old_name]
-                use_case_dict.pop(old_name)
-
-    @classmethod
-    def create_context_menu(cls, global_pos, action_dict):
-        """
-        action_dict: dict of action name and collectable function
-        """
-        menu = QMenu()
-        actions = list()
-        for action_name, action_function in action_dict.items():
-            action = QAction(action_name)
-            actions.append(action)
-            menu.addAction(action)
-            action.triggered.connect(action_function)
-        menu.exec(global_pos)
 
     @classmethod
     def create_tree(cls, entities: set[SOMcreator.Attribute | SOMcreator.Object], parent_item: QStandardItem,
@@ -330,7 +264,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         title_lenght = cls.get_title_lenght_by_model(model)
         res = list()
         focus_row = index.row()
-        for column, _ in enumerate(cls.get_use_case_list(), start=title_lenght):
+        for column, _ in enumerate(cls.get_filter_names(), start=title_lenght):
             item = model.itemFromIndex(index.sibling(focus_row, column))
             res.append(item.isEnabled())
         return res
@@ -341,7 +275,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         title_lenght = cls.get_title_lenght_by_model(model)
         res = list()
         focus_row = index.row()
-        for column, _ in enumerate(cls.get_use_case_list(), start=title_lenght):
+        for column, _ in enumerate(cls.get_filter_names(), start=title_lenght):
             item = model.itemFromIndex(index.sibling(focus_row, column))
             res.append(item.checkState() == Qt.CheckState.Checked)
         return res
@@ -635,5 +569,10 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         filter_indexes = cls.get_filter_indexes()
         object_dict = cls.get_object_dict()
         check_statuses = cls.get_check_statuses(index)
+
+        print(f"Filter Indexes: {filter_indexes}")
+        print(f"check_statuses: {check_statuses}")
+
         for [phase_index, use_case_index], status in zip(filter_indexes, check_statuses):
+            print(f"   {phase_index}:{use_case_index} -> {status}")
             object_dict[obj][phase_index][use_case_index] = status
