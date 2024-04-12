@@ -100,7 +100,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QTableView" name="table_widget_property_set">
+           <widget class="PropertySetTable" name="table_widget_property_set">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -120,24 +120,24 @@
           <enum>QAbstractItemView::SelectRows</enum>
          </property>
          <attribute name="horizontalHeaderMinimumSectionSize">
-          <number>25</number>
+             <number>1</number>
+         </attribute>
+               <attribute name="horizontalHeaderDefaultSectionSize">
+                   <number>39</number>
+               </attribute>
+               <attribute name="horizontalHeaderHighlightSections">
+                   <bool>true</bool>
          </attribute>
          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-          <bool>true</bool>
+             <bool>false</bool>
          </attribute>
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
          </attribute>
          <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderCascadingSectionResizes">
           <bool>true</bool>
          </attribute>
-         <attribute name="verticalHeaderDefaultSectionSize">
-          <number>24</number>
-         </attribute>
-         <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+               <attribute name="verticalHeaderHighlightSections">
           <bool>false</bool>
          </attribute>
         </widget>
@@ -169,7 +169,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QTableView" name="table_widget_attribute">
+           <widget class="AttributeTable" name="table_widget_attribute">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -185,26 +185,26 @@
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
          </property>
+               <attribute name="horizontalHeaderCascadingSectionResizes">
+                   <bool>true</bool>
+               </attribute>
          <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>1</number>
+         </attribute>
+               <attribute name="horizontalHeaderDefaultSectionSize">
           <number>50</number>
          </attribute>
          <attribute name="horizontalHeaderHighlightSections">
           <bool>true</bool>
          </attribute>
          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-          <bool>true</bool>
+             <bool>false</bool>
          </attribute>
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
          </attribute>
          <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderCascadingSectionResizes">
           <bool>true</bool>
-         </attribute>
-         <attribute name="verticalHeaderDefaultSectionSize">
-          <number>24</number>
          </attribute>
         </widget>
        </item>
@@ -270,7 +270,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QTableView" name="table_widget_value">
+           <widget class="ValueTable" name="table_widget_value">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
@@ -283,17 +283,17 @@
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
          </property>
-         <attribute name="horizontalHeaderStretchLastSection">
-          <bool>true</bool>
+               <attribute name="horizontalHeaderMinimumSectionSize">
+                   <number>1</number>
          </attribute>
-         <attribute name="verticalHeaderVisible">
+               <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
           <bool>false</bool>
          </attribute>
-         <attribute name="verticalHeaderCascadingSectionResizes">
+               <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
          </attribute>
-         <attribute name="verticalHeaderDefaultSectionSize">
-          <number>24</number>
+               <attribute name="verticalHeaderVisible">
+                   <bool>true</bool>
          </attribute>
         </widget>
        </item>
@@ -387,6 +387,23 @@
    </item>
   </layout>
  </widget>
+    <customwidgets>
+        <customwidget>
+            <class>PropertySetTable</class>
+            <extends>QTableWidget</extends>
+            <header>som_gui.module.attribute_import.ui</header>
+        </customwidget>
+        <customwidget>
+            <class>AttributeTable</class>
+            <extends>QTableWidget</extends>
+            <header>som_gui.module.attribute_import.ui</header>
+        </customwidget>
+        <customwidget>
+            <class>ValueTable</class>
+            <extends>QTableWidget</extends>
+            <header>som_gui.module.attribute_import.ui</header>
+        </customwidget>
+    </customwidgets>
  <resources/>
  <connections/>
 </ui>

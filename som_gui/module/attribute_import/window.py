@@ -18,8 +18,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComboBox,
                                QHBoxLayout, QHeaderView, QLabel, QLayout,
                                QPushButton, QSizePolicy, QSpacerItem, QSplitter,
-                               QTableView, QVBoxLayout, QWidget)
+                               QTableWidgetItem, QVBoxLayout, QWidget)
 
+from som_gui.module.attribute_import.ui import (AttributeTable, PropertySetTable, ValueTable)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -60,6 +61,7 @@ class Ui_Form(object):
 
         self.horizontal_layout_buttons.addWidget(self.label_object_count)
 
+
         self.main_layout.addLayout(self.horizontal_layout_buttons)
 
         self.splitter_tables = QSplitter(Form)
@@ -84,7 +86,7 @@ class Ui_Form(object):
 
         self.vertival_layout_pset.addWidget(self.label_proeprty_sets)
 
-        self.table_widget_property_set = QTableView(self.verticalLayoutWidget_3)
+        self.table_widget_property_set = PropertySetTable(self.verticalLayoutWidget_3)
         self.table_widget_property_set.setObjectName(u"table_widget_property_set")
         sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         sizePolicy3.setHorizontalStretch(0)
@@ -95,13 +97,13 @@ class Ui_Form(object):
         self.table_widget_property_set.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.table_widget_property_set.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_widget_property_set.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.table_widget_property_set.horizontalHeader().setMinimumSectionSize(25)
-        self.table_widget_property_set.horizontalHeader().setProperty("showSortIndicator", True)
+        self.table_widget_property_set.horizontalHeader().setMinimumSectionSize(1)
+        self.table_widget_property_set.horizontalHeader().setDefaultSectionSize(39)
+        self.table_widget_property_set.horizontalHeader().setHighlightSections(True)
+        self.table_widget_property_set.horizontalHeader().setProperty("showSortIndicator", False)
         self.table_widget_property_set.horizontalHeader().setStretchLastSection(True)
-        self.table_widget_property_set.verticalHeader().setVisible(False)
-        self.table_widget_property_set.verticalHeader().setCascadingSectionResizes(True)
-        self.table_widget_property_set.verticalHeader().setDefaultSectionSize(24)
-        self.table_widget_property_set.verticalHeader().setProperty("showSortIndicator", False)
+        self.table_widget_property_set.verticalHeader().setVisible(True)
+        self.table_widget_property_set.verticalHeader().setHighlightSections(False)
 
         self.vertival_layout_pset.addWidget(self.table_widget_property_set)
 
@@ -120,20 +122,20 @@ class Ui_Form(object):
 
         self.vertical_layout_attribute.addWidget(self.label_attributes)
 
-        self.table_widget_attribute = QTableView(self.verticalLayoutWidget_2)
+        self.table_widget_attribute = AttributeTable(self.verticalLayoutWidget_2)
         self.table_widget_attribute.setObjectName(u"table_widget_attribute")
         sizePolicy3.setHeightForWidth(self.table_widget_attribute.sizePolicy().hasHeightForWidth())
         self.table_widget_attribute.setSizePolicy(sizePolicy3)
         self.table_widget_attribute.setAutoScroll(False)
         self.table_widget_attribute.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_widget_attribute.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.table_widget_attribute.horizontalHeader().setMinimumSectionSize(50)
+        self.table_widget_attribute.horizontalHeader().setCascadingSectionResizes(True)
+        self.table_widget_attribute.horizontalHeader().setMinimumSectionSize(1)
+        self.table_widget_attribute.horizontalHeader().setDefaultSectionSize(50)
         self.table_widget_attribute.horizontalHeader().setHighlightSections(True)
-        self.table_widget_attribute.horizontalHeader().setProperty("showSortIndicator", True)
+        self.table_widget_attribute.horizontalHeader().setProperty("showSortIndicator", False)
         self.table_widget_attribute.horizontalHeader().setStretchLastSection(True)
-        self.table_widget_attribute.verticalHeader().setVisible(False)
-        self.table_widget_attribute.verticalHeader().setCascadingSectionResizes(True)
-        self.table_widget_attribute.verticalHeader().setDefaultSectionSize(24)
+        self.table_widget_attribute.verticalHeader().setVisible(True)
 
         self.vertical_layout_attribute.addWidget(self.table_widget_attribute)
 
@@ -164,18 +166,19 @@ class Ui_Form(object):
 
         self.horizontalLayout_2.addWidget(self.label_value)
 
+
         self.vertical_layout_value.addLayout(self.horizontalLayout_2)
 
-        self.table_widget_value = QTableView(self.verticalLayoutWidget)
+        self.table_widget_value = ValueTable(self.verticalLayoutWidget)
         self.table_widget_value.setObjectName(u"table_widget_value")
         sizePolicy2.setHeightForWidth(self.table_widget_value.sizePolicy().hasHeightForWidth())
         self.table_widget_value.setSizePolicy(sizePolicy2)
         self.table_widget_value.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_widget_value.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table_widget_value.horizontalHeader().setMinimumSectionSize(1)
+        self.table_widget_value.horizontalHeader().setProperty("showSortIndicator", False)
         self.table_widget_value.horizontalHeader().setStretchLastSection(True)
-        self.table_widget_value.verticalHeader().setVisible(False)
-        self.table_widget_value.verticalHeader().setCascadingSectionResizes(True)
-        self.table_widget_value.verticalHeader().setDefaultSectionSize(24)
+        self.table_widget_value.verticalHeader().setVisible(True)
 
         self.vertical_layout_value.addWidget(self.table_widget_value)
 
@@ -221,7 +224,6 @@ class Ui_Form(object):
         self.retranslateUi(Form)
 
         QMetaObject.connectSlotsByName(Form)
-
     # setupUi
 
     def retranslateUi(self, Form):
@@ -236,3 +238,4 @@ class Ui_Form(object):
         self.button_accept.setText(QCoreApplication.translate("Form", u"Werte \u00dcbernehmen", None))
         self.button_run.setText(QCoreApplication.translate("Form", u"IFC Einlesen", None))
     # retranslateUi
+
