@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 LINKSTATE = Qt.ItemDataRole.UserRole + 2
 
 
-
 class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def set_active_table(cls, table: ui.AttributeTable):
@@ -118,7 +117,6 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             if items[0].data(LINKSTATE):
                 items[0].setIcon(QIcon())
                 items[0].setData(LINKSTATE, False)
-
 
         for item, column_dict in zip(items, column_list):
             value = column_dict["get_function"](attribute)
