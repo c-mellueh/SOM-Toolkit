@@ -1,3 +1,6 @@
+class AttributeImport:
+    pass
+
 class Attribute:
     def add_attribute_data_value(self, name, getter, setter): pass
 

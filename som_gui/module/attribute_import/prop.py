@@ -1,0 +1,2 @@
+class AttributeImportProperties:
+    pass

@@ -27,6 +27,7 @@ modules = {
     "modelcheck_external": None,
     "modelcheck": None,
     "ifc_importer": None,
+    "attribute_import": None,
 }
 
 
