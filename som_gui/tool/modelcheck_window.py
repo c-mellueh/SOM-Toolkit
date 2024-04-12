@@ -95,8 +95,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def create_import_runner(cls, ifc_import_path: str):
-        status_label = cls.get_properties().status_label
-        runner = tool.IfcImporter.create_runner(status_label, ifc_import_path)
+        runner = tool.IfcImporter.create_runner(ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner
 
@@ -127,11 +126,8 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def read_inputs(cls):
-        widget = cls.get_properties().ifc_import_widget
-        ifc_paths = tool.IfcImporter.get_ifc_paths(widget)
         export_path = cls.get_properties().export_line_edit.text()
-        main_pset = tool.IfcImporter.get_main_pset(widget)
-        main_attribute = tool.IfcImporter.get_main_attribute(widget)
+        ifc_paths, main_pset, main_attribute = tool.IfcImporter.read_inputs(cls.get_properties().ifc_import_widget)
         return ifc_paths, export_path, main_pset, main_attribute
 
     @classmethod

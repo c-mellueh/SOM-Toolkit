@@ -9,3 +9,9 @@ class AttributeImportProperties:
     attribute_import_widget: AttributeImportWidget = None
     ifc_import_widget: IfcImportWidget = None
     settings_dialog: SettingsDialog = None
+    main_pset: str = "Undefined"
+    main_attribute: str = "Undefined"
+    import_is_aborted = False
+    ifc_import_runners = []
+    runner = None
+    thread_pool = None

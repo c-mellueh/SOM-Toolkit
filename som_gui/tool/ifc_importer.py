@@ -20,6 +20,20 @@ if TYPE_CHECKING:
 
 class IfcImporter(som_gui.core.tool.IfcImporter):
     @classmethod
+    def set_close_button_text(cls, text, widget: ui.IfcImportWidget) -> None:
+        widget.widget.button_close.setText(text)
+
+    @classmethod
+    def set_run_button_enabled(cls, value: bool, widget: ui.IfcImportWidget) -> None:
+        widget.widget.button_run.setEnabled(value)
+
+    @classmethod
+    def read_inputs(cls, widget: ui.IfcImportWidget):
+        ifc_paths = cls.get_ifc_paths(widget)
+        main_pset, main_attribute = cls.get_main_pset(widget), cls.get_main_attribute(widget)
+        return [ifc_paths, main_pset, main_attribute]
+
+    @classmethod
     def check_inputs(cls, ifc_paths, main_pset, main_attribute):
         for path in ifc_paths:
             if not os.path.isfile(path):
@@ -102,14 +116,13 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         return widget
 
     @classmethod
-    def create_runner(cls, status_label: QLabel, path: os.PathLike | str):
+    def create_runner(cls, path: os.PathLike | str):
         class IfcImportRunner(QRunnable):
-            def __init__(self, path: os.PathLike | str, status_label: QLabel):
+            def __init__(self, path: os.PathLike | str):
                 super(IfcImportRunner, self).__init__()
                 self.path = path
                 self.ifc: ifcopenshell.file | None = None
                 self.signaller = Signaller()
-                self.status_label = status_label
 
             def run(self):
                 self.signaller.started.emit()
@@ -123,7 +136,7 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
         if not os.path.exists(path):
             return
-        return IfcImportRunner(path, status_label)
+        return IfcImportRunner(path)
 
     @classmethod
     def fill_main_attribute(cls, widget: ui.IfcImportWidget, pset: str, attribute: str):
