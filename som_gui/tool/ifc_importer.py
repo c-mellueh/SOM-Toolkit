@@ -11,7 +11,7 @@ from som_gui import tool
 import som_gui.core.tool
 from som_gui.module.ifc_importer import ui
 from PySide6.QtCore import QThreadPool, QObject, Signal, QRunnable
-from PySide6.QtWidgets import QFileDialog
+from PySide6.QtWidgets import QFileDialog, QSpacerItem
 
 if TYPE_CHECKING:
     from som_gui.module.ifc_importer.prop import IfcImportProperties
@@ -132,3 +132,7 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
         widget.widget.line_edit_ident_pset.setText(pset)
         widget.widget.line_edit_ident_attribute.setText(attribute)
+
+    @classmethod
+    def hide_buttons(cls, widget: ui.IfcImportWidget):
+        widget.widget.button_widget.hide()
