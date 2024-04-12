@@ -91,6 +91,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         prop = cls.get_properties()
         column_list = prop.attribute_table_columns
         for attribute in attributes:
+            table.setSortingEnabled(False)
             items = [QTableWidgetItem() for _ in range(len(column_list))]
             row = table.rowCount()
             table.setRowCount(row + 1)
@@ -98,6 +99,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             [table.setItem(row, col, item) for col, item in enumerate(items)]
             [item.setFlags(item.flags() | item.flags().ItemIsUserCheckable) for item in items]
             cls.update_row(table, row)
+            table.setSortingEnabled(True)
 
     @classmethod
     def update_row(cls, table: QTableWidget, index: int):
