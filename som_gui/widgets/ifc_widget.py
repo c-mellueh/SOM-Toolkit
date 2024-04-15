@@ -10,6 +10,7 @@ from PySide6.QtCore import QObject, Signal, QRunnable, QThreadPool
 from PySide6.QtWidgets import QFileDialog, QWidget, QLineEdit, QLabel
 from SOMcreator import classes
 
+import som_gui.tool
 from som_gui import settings
 from som_gui.icons import get_icon
 from som_gui.qt_designs import ui_ifc_widget
@@ -42,7 +43,8 @@ class IfcWidget(QWidget):
 
     def format_window(self):
         self.setWindowIcon(get_icon())
-        set_main_attribute(self.main_window.project, self.widget.line_edit_ident_pset,
+        from som_gui import tool
+        set_main_attribute(tool.Project.get(), self.widget.line_edit_ident_pset,
                            self.widget.line_edit_ident_attribute)
         self.widget.label_ifc_missing.hide()
         self.widget.label_export_missing.hide()
@@ -108,7 +110,7 @@ class IfcWidget(QWidget):
         self.start_time = time()
         self.widget.button_run.setEnabled(False)
         self.widget.button_close.setText(ABORT)
-        proj = self.main_window.project
+        proj = som_gui.tool.Project.get()
         ifc = get_ifc_path(self.widget.line_edit_ifc)
         pset = self.widget.line_edit_ident_pset.text()
         attribute = self.widget.line_edit_ident_attribute.text()
