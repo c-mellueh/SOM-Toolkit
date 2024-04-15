@@ -569,10 +569,5 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         filter_indexes = cls.get_filter_indexes()
         object_dict = cls.get_object_dict()
         check_statuses = cls.get_check_statuses(index)
-
-        print(f"Filter Indexes: {filter_indexes}")
-        print(f"check_statuses: {check_statuses}")
-
         for [phase_index, use_case_index], status in zip(filter_indexes, check_statuses):
-            print(f"   {phase_index}:{use_case_index} -> {status}")
             object_dict[obj][phase_index][use_case_index] = status
