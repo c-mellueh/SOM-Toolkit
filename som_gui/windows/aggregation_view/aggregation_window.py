@@ -741,7 +741,7 @@ class AggregationWindow(QWidget):
             return
 
         obj = tool.Search.search_object()
-        for scene in self.scenes:
+        for scene in list(self.scenes):
             nodes = scene.nodes
             objects = [node.aggregation.object for node in nodes]
             if not obj in objects:
@@ -802,9 +802,13 @@ class AggregationWindow(QWidget):
             super(AggregationWindow, self).show()
             return
 
-        super(AggregationWindow, self).show()
+        if len(self.scenes) == 0:
+            scene = self.create_new_scene("Undefined")
+            self.select_scene(scene)
+            self.active_scene = scene
         self.view.auto_fit()
         self.widget.combo_box.setCurrentIndex(0)
+        super(AggregationWindow, self).show()
         self.is_initial_opening = False
 
     def add_scene_button_pressed(self) -> None:
