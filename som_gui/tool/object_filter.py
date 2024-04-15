@@ -151,16 +151,11 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         project_use_case_list = proj.get_use_case_list()
         project_phase_list = proj.get_project_phase_list()
         for obj, filter_matrix in prop.object_dict.items():
-            print(f"{obj}")
             obj: SOMcreator.Object
             for phase_index, use_case_list in enumerate(filter_matrix):
                 phase = project_phase_list[phase_index]
-                print(f"    Phase: {phase}")
                 for use_case_index, value in enumerate(use_case_list):
                     use_c = project_use_case_list[use_case_index]
-                    print(f"        UseCase: {use_c}")
-                    print(f"        Value: {value}")
-
                     obj.set_filter_state(phase, use_c, value)
 
     @classmethod
