@@ -24,7 +24,6 @@ def open_window(attribute_import: Type[tool.AttributeImport], ifc_importer: Type
     attribute_import.set_ifc_importer_widget(ifc_import_widget)
     attribute_import.connect_buttons(attribute_import.get_buttons())
     window.show()
-    print(attribute_import_widget)
 
 
 def run_clicked(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
@@ -97,6 +96,12 @@ def ifc_import_finished(runner, attribute_import: Type[tool.AttributeImport], if
     attribute_import.get_attribute_import_threadpool().start(attribute_import_runner)
 
 
+def start_attribute_import(file: ifcopenshell.file, attribute_import: Type[tool.AttributeImport]):
+    pass
+
+
+
+
 def attribute_import_finished(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
     ifc_import_widget = attribute_import.get_ifc_import_widget()
 
@@ -119,5 +124,3 @@ def last_import_finished(attribute_import: Type[tool.AttributeImport]):
     pass
 
 
-def start_attribute_import(file: ifcopenshell.file, attribute_import: Type[tool.AttributeImport]):
-    pass
