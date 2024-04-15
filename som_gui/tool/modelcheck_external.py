@@ -41,7 +41,9 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
                        ["Export Javascript (schnelle Prüfung)",
                         lambda: cls.export_desite_fast(main_pset_name, main_attribute_name)],
                        ["Export Attribut Regeln",
-                        lambda: cls.export_desite_attribute_table(main_pset_name, main_attribute_name)]]
+                        lambda: cls.export_desite_attribute_table(main_pset_name, main_attribute_name)],
+                       ["Export Modelcheck-CSV", lambda: cls.export_desite_csv()]
+                       ]
 
         bim_collab_menu = [["SmartViews exportieren", cls.export_bimcollab]]
 
