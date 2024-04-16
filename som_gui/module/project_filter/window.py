@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'project_filter.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.1
+## Created by: Qt User Interface Compiler version 6.7.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -31,8 +31,9 @@ class Ui_Dialog(object):
         self.tableWidget = ProjectFilterTable(Dialog)
         self.tableWidget.setObjectName(u"tableWidget")
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.tableWidget.setDragEnabled(True)
-        self.tableWidget.setDragDropMode(QAbstractItemView.InternalMove)
+        self.tableWidget.setDragEnabled(False)
+        self.tableWidget.setDragDropOverwriteMode(False)
+        self.tableWidget.setDragDropMode(QAbstractItemView.NoDragDrop)
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
 
         self.gridLayout.addWidget(self.tableWidget, 0, 0, 1, 1)

@@ -5,6 +5,7 @@ from PySide6.QtCore import QThreadPool, Qt
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtWidgets import QWidget, QDialog, QHeaderView, QTableView
 
+import som_gui.tool
 from ... import settings
 from ...icons import get_icon, get_settings_icon
 from ...settings import EXISTING_ATTRIBUTE_IMPORT, RANGE_ATTRIBUTE_IMPORT, REGEX_ATTRIBUTE_IMPORT, \
@@ -27,7 +28,7 @@ PROPERTYSETS = "PropertySets"
 class AttributeImport(QWidget):
     def __init__(self, main_window: MainWindow):
         self.main_window = main_window
-        self.project = self.main_window.project
+        self.project = som_gui.tool.Project.get()
         self.main_window.model_control_window = self
         super(AttributeImport, self).__init__()
         self.widget = ui_attribute_import_window.Ui_Form()

@@ -43,9 +43,9 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             attribute.name = answer
 
     @classmethod
-    def delete_selected_attribute(cls):
+    def delete_selected_attribute(cls, delete_subattributes=False):
         attribute = cls.get_properties().active_attribute
-        tool.Attribute.delete(attribute)
+        tool.Attribute.delete(attribute, delete_subattributes)
 
     @classmethod
     def remove_parent_of_selected_attribute(cls):

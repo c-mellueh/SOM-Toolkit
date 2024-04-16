@@ -12,6 +12,7 @@ from PySide6.QtWidgets import QLineEdit, QFileDialog, QCheckBox
 from SOMcreator import classes
 from SOMcreator.ifc_modification import grouping
 
+import som_gui.tool
 from som_gui.widgets.ifc_widget import IfcWidget, IfcRunner
 
 if TYPE_CHECKING:
@@ -48,6 +49,8 @@ class GroupingWindow(IfcWidget):
         self.widget.line_edit_export.setText(path)
 
     def create_group_line_input(self):
+        from som_gui import tool
+        project = tool.Project.get()
         self.line_edit_group_pset = QLineEdit()
         self.widget.layout_attribute.addWidget(self.line_edit_group_pset, 1, 0, 1, 1)
         self.line_edit_group_attrib = QLineEdit()
@@ -56,8 +59,8 @@ class GroupingWindow(IfcWidget):
         self.empty_attributes_checkbox.setText("Leere Attribute hinzufügen")
         self.line_edit_group_pset.setPlaceholderText("Gruppen PropertySet")
         self.line_edit_group_attrib.setPlaceholderText("Gruppen Attribut")
-        self.line_edit_group_attrib.setText(self.main_window.project.aggregation_attribute)
-        self.line_edit_group_pset.setText(self.main_window.project.aggregation_pset)
+        self.line_edit_group_attrib.setText(project.aggregation_attribute)
+        self.line_edit_group_pset.setText(project.aggregation_pset)
         self.line_edit_group_attrib.textEdited.connect(self.update_grouping_values)
         self.line_edit_group_pset.textEdited.connect(self.update_grouping_values)
         self.line_edit_group_pset.setText(settings.get_group_pset())
@@ -81,10 +84,11 @@ class GroupingWindow(IfcWidget):
         return proj, ifc, pset, attribute, export_path
 
     def update_grouping_values(self):
+        project = som_gui.tool.Project.get()
         group_pset = self.line_edit_group_pset.text()
         group_attrib = self.line_edit_group_attrib.text()
-        self.main_window.project.aggregation_pset = group_pset
-        self.main_window.project.aggregation_attribute = group_attrib
+        project.aggregation_pset = group_pset
+        project.aggregation_attribute = group_attrib
 
 
 class Grouping(IfcRunner):
