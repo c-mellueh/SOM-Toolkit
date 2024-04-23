@@ -51,12 +51,12 @@ class Project(som_gui.core.tool.Project):
         return cls.get().get_project_phase_list()
 
     @classmethod
-    def get_project_properties(cls) -> ProjectProperties:
+    def get_properties(cls) -> ProjectProperties:
         return som_gui.ProjectProperties
 
     @classmethod
     def add_shortcut(cls, sequence: str, window: QWidget, function: Callable):
-        prop: ProjectProperties = cls.get_project_properties()
+        prop: ProjectProperties = cls.get_properties()
         shortcut = QShortcut(QKeySequence(sequence), window)
         if not hasattr(prop, "shortcuts"):
             prop.shourtcuts = list()
@@ -75,7 +75,7 @@ class Project(som_gui.core.tool.Project):
     def create_project(cls):
         logging.info("Create new Project")
         proj = SOMcreator.Project()
-        prop: ProjectProperties = cls.get_project_properties()
+        prop: ProjectProperties = cls.get_properties()
         prop.active_project = proj
         prop.project_infos = list()
         cls.create_project_infos()
@@ -93,13 +93,13 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def reset_project_infos(cls):
-        prop: ProjectProperties = cls.get_project_properties()
+        prop: ProjectProperties = cls.get_properties()
         prop.project_infos = list()
 
     @classmethod
     def add_project_setting(cls, get_function: Callable, set_function: Callable, name: str,
                             options: Callable = None):
-        prop = cls.get_project_properties()
+        prop = cls.get_properties()
         value = get_function()
         d = {"set_function": set_function, "display_name": name, "value": str(value),
              "get_function": get_function}
@@ -218,23 +218,23 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def set_active_project(cls, proj: SOMcreator.Project):
-        prop = cls.get_project_properties()
+        prop = cls.get_properties()
         prop.active_project = proj
         som_gui.MainUi.window.project = cls.get()
         cls.create_project_infos()
 
     @classmethod
     def get(cls) -> SOMcreator.Project:
-        return cls.get_project_properties().active_project
+        return cls.get_properties().active_project
 
     @classmethod
     def get_all_objects(cls) -> list[SOMcreator.Object]:
-        proj: SOMcreator.Project = cls.get_project_properties().active_project
+        proj: SOMcreator.Project = cls.get_properties().active_project
         return list(proj.get_all_objects())
 
     @classmethod
     def get_root_objects(cls, filter_objects=True):
-        proj: SOMcreator.Project = cls.get_project_properties().active_project
+        proj: SOMcreator.Project = cls.get_properties().active_project
         if proj is None:
             return []
         if filter_objects:
@@ -244,13 +244,13 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def get_project_infos(cls):
-        prop: ProjectProperties = cls.get_project_properties()
+        prop: ProjectProperties = cls.get_properties()
         return prop.project_infos
 
     @classmethod
     def add_setting_to_dialog(cls, setting_dict: InfoDict):
         value = setting_dict["get_function"]()
-        prop: ProjectProperties = cls.get_project_properties()
+        prop: ProjectProperties = cls.get_properties()
         layout: QFormLayout = prop.settings_window.layout()
         dialog = prop.settings_window
         if "options" in setting_dict:
@@ -265,7 +265,7 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def refresh_info_dict(cls, info_dict: InfoDict, index):
-        prop: ProjectProperties = cls.get_project_properties()
+        prop: ProjectProperties = cls.get_properties()
         layout: QFormLayout = prop.settings_window.layout()
         layout_item = layout.itemAt(index, QFormLayout.FieldRole)
         widget = layout_item.widget()
