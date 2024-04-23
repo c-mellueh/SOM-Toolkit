@@ -1,4 +1,10 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from som_gui import MainWindow
 import logging
+
 import som_gui.core.tool
 import SOMcreator
 from SOMcreator.constants import json_constants
@@ -171,37 +177,41 @@ class Project(som_gui.core.tool.Project):
         plugin_dict = proj.import_dict
         json_aggregation_dict: dict = plugin_dict[SOMcreator.json_constants.AGGREGATIONS]
         aggregation_ref = {aggregation.uuid: aggregation for aggregation in proj.get_all_aggregations()}
+        scene_dict = plugin_dict.get("AggregationScenes") or dict()
+        position_dict = dict()
+        for scene_name, node_dict in scene_dict.items():
+            if isinstance(node_dict[json_constants.NODES], list):
+                continue
+
+            for uuid, position in node_dict[json_constants.NODES].items():
+                position_dict[uuid] = position
+
         for uuid, aggregation_dict in json_aggregation_dict.items():
             aggregation = aggregation_ref[uuid]
             x_pos = aggregation_dict.get(json_constants.X_POS) or 0.0
             y_pos = aggregation_dict.get(json_constants.Y_POS) or 0.0
+
+            if uuid in position_dict:
+                [x_pos, y_pos] = position_dict.get(uuid)
+
             graph_window.create_node(aggregation, QPointF(x_pos, y_pos))
 
-        scene_dict = plugin_dict.get("AggregationScenes") or dict()
+
         graph_window.scene_dict.update(scene_dict)
         graph_window.create_missing_scenes()
 
     @classmethod
-    def add_node_pos(cls, main_window, main_dict: dict, path: str):
-        def filter_scene_dict(scene_dict: dict) -> dict:
-            new_dict = dict()
-            for name, node_dict in scene_dict.items():
-                node_list = node_dict[json_constants.NODES]
-                if node_list:
-                    new_dict[name] = {json_constants.NODES: node_list}
-            return new_dict
+    def add_node_pos(cls, main_window: MainWindow, main_dict: dict, path: str):
 
-        aggregation_dict = main_dict[json_constants.AGGREGATIONS]
-        for node in main_window.graph_window.nodes:
-            uuid = node.aggregation.uuid
-            try:
-                aggregation_entry = aggregation_dict[uuid]
-                aggregation_entry[json_constants.X_POS] = node.x()
-                aggregation_entry[json_constants.Y_POS] = node.y()
-            except KeyError:
-                logging.warning(f"KeyError: {node}")
+        nodes = main_window.graph_window.nodes
+        scenes = {node.scene() for node in nodes}
+        aggregation_scenes_dict = dict()
+        for scene in scenes:
+            scene_nodes = {node for node in nodes if node.scene() == scene}
+            node_dict = {node.aggregation.uuid: [node.x(), node.y()] for node in scene_nodes}
+            aggregation_scenes_dict[scene.name] = {json_constants.NODES: node_dict}
 
-        main_dict["AggregationScenes"] = filter_scene_dict(main_window.graph_window.scene_dict)
+        main_dict["AggregationScenes"] = aggregation_scenes_dict
 
         with open(path, "w") as file:
             json.dump(main_dict, file)
