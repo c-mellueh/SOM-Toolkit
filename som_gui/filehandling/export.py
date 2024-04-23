@@ -11,6 +11,7 @@ from SOMcreator.external_software.desite import modelcheck, bookmarks, building_
 
 from .. import settings
 from ..windows import popups
+from SOMcreator.tool import ExportExcel
 
 if TYPE_CHECKING:
     from ..main_window import MainWindow
@@ -92,9 +93,7 @@ def export_excel(main_window: MainWindow):
     path = QFileDialog.getSaveFileName(main_window, "SOM Excel", export_path, "Excel Files (*.xlsx);;")[0]
     if not path:
         return
-    mapping_dict = {"aus": "Ausbau", "lst": "LST"}  # TODO: implement GUI method to create extra mapping dict
-
-    som_excel.export(main_window.project, path, mapping_dict)
+    som_excel.export(main_window.project, path, ExportExcel)
     settings.set_export_path(path)
 
 
