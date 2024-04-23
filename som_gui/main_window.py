@@ -67,10 +67,9 @@ class MainWindow(QMainWindow):
             self.group_window.show()
 
     def open_attribute_import_window(self):
-        if self.model_control_window is None:
-            self.model_control_window = AttributeImport(self)
-        else:
-            self.model_control_window.show()
+        if self.model_control_window is not None:
+            self.model_control_window.close()
+        self.model_control_window = AttributeImport(self)
 
     def open_aggregation_window(self):
         self.graph_window.show()
