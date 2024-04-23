@@ -865,7 +865,7 @@ class Project:
 
     def get_project_phase_name_list(self): pass
 
-    def get_project_properties(self): pass
+    def get_properties(self): pass
 
     def get_project_version(self): pass
 

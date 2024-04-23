@@ -10,6 +10,7 @@ from som_gui.module.object_filter import data as object_filter_data
 from som_gui.module import object_filter
 import som_gui.module.object_filter.constants
 import som_gui
+from som_gui import tool
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QAction
 from typing import TYPE_CHECKING
 from som_gui.module.project.constants import CLASS_REFERENCE
@@ -337,13 +338,9 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         property_set_tree.setModel(model)
 
     @classmethod
-    def get_use_case_list(cls) -> list[SOMcreator.classes.UseCase]:
-        prop = cls.get_objectfilter_properties()
-        return prop.use_cases
-
-    @classmethod
     def get_use_case_name_list(cls) -> list[str]:
-        return [uc.name for uc in cls.get_use_case_list()]
+        project = tool.Project.get()
+        return [uc.name for uc in project.get_use_case_list()]
 
     @classmethod
     def set_header_labels(cls, model: QStandardItemModel, labels: list[str]):
