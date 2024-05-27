@@ -41,7 +41,7 @@ function main() {
     bauwerksstruktur = getBS(); // gewollte Bauwerksstruktur als JSON einlesen
     var model = getModel(BSNAME); // BS Model mit BSNAME finden
     buildLayer(model, bauwerksstruktur); //BS erstellen und verlinken
-    search_for_empty_groups(modelId) // Leere Gruppen löschen
+    //search_for_empty_groups(modelId) // Leere Gruppen löschen
 }
 
 function buildLayer(parent_id, bsLayerDict) { // Ebene erstellen
@@ -103,7 +103,7 @@ function getModel(bsName) { //BS MODEL finden oder erstellen
         }
 
     }
-    id = desiteAPI.createModel(bsName, createRootC = false, domain = "building") + "-oh"
+    id = desiteAPI.createModel(bsName, createRootC = false, domain = "building")
     return id
 }
 
