@@ -32,16 +32,17 @@ const STRNG = "xs:string";
 const t1 = '<section name="';
 const t2 = '" type="typeBsGroup"/>';
 var timestamp = getDate()
-var modelId = desiteAPI.createModel(timestamp + " GroupIssues", true, domain = "issues")
+var issueModelId = desiteAPI.createModel(timestamp + " GroupIssues", true, domain = "issues")
 
 main()
 
 function main() {
     var abkuerzungs_dict = getAbkuerzung(SOM_JSON_DATEI)
     var bauwerksstruktur = getBS(abkuerzungs_dict); // gewollte Bauwerksstruktur als JSON einlesen
-    var model = getModel(BSNAME); // BS Model mit BSNAME finden
-    buildLayer(model, bauwerksstruktur, abkuerzungs_dict); //BS erstellen und verlinken
-    search_for_empty_groups(modelId) // Leere Gruppen löschen
+    var buildingStructureModelId = getModel(BSNAME); // BS Model mit BSNAME finden
+    console.log(buildingStructureModelId)
+    buildLayer(buildingStructureModelId, bauwerksstruktur, abkuerzungs_dict); //BS erstellen und verlinken
+    //search_for_empty_groups(modelId) // Leere Gruppen löschen
 }
 
 function buildLayer(parent_id, bsLayerDict, abkuerzungs_dict) { // Ebene erstellen
@@ -104,7 +105,7 @@ function getModel(bsName) { //BS MODEL finden oder erstellen
             return id
         }
     }
-    id = desiteAPI.createModel(bsName, createRootC = false, domain = "building") + "-oh"
+    id = desiteAPI.createModel(bsName, createRootC = false, domain = "building")
     return id
 }
 
@@ -205,12 +206,12 @@ function getBS(abkuerzungs_dict) { // gewollte Bauwerksstruktur als JSON erstell
     if (groupErrorList.length > 0) {
         text = "Fehler in Aufbau von idGruppe"
         console.log("Einige Elemente haben einem Fehler im Attribut '" + GRUPPIERUNGSATTRIB + "' -> Viewpoint wurde erstellt")
-        createIssue("Fehler Aufbau", text, modelId, groupErrorList)
+        createIssue("Fehler Aufbau", text, issueModelId, groupErrorList)
     }
     if (elementeOhneGruppenAttribut.length > 0) {
         console.log("Einige Elemente haben nicht das Attribut '" + GRUPPIERUNGSATTRIB + "' -> Viewpoint wurde erstellt")
         text = "Attribut " + GRUPPIERUNGSATTRIB + "Fehlt"
-        createIssue("Fehler Attribut", text, modelId, elementeOhneGruppenAttribut)
+        createIssue("Fehler Attribut", text, issueModelId, elementeOhneGruppenAttribut)
     }
 
     return bauwerksstruktur
@@ -333,7 +334,7 @@ function check_and_delete_empty_groups(element_id) {
     var linked_objects = desiteAPI.getLinkedObjects(element_id);
     if (children.length === 0 && linked_objects.length === 0) {
         var name = desiteAPI.getPropertyValue(element_id, "cpName", "xs:string");
-        console.log("Delete " + element_id + "   " + name +" because it's empty");
+        console.log("Delete " + element_id + "   " + name + " because it's empty");
         var parent_id = desiteAPI.getParent(element_id);
         desiteAPI.deleteObjects([element_id]);
         check_and_delete_empty_groups(parent_id);
