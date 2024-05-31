@@ -9,7 +9,7 @@ def connect():
 
 
 def update_combo_box():
-    core.update_combo_box(tool.Window)
+    core.update_combo_box(tool.Window, tool.View)
 
 
 def on_new_project():

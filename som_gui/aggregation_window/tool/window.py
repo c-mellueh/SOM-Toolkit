@@ -38,3 +38,8 @@ class Window(som_gui.aggregation_window.core.tool.Window):
     @classmethod
     def get_combo_box(cls) -> ui_window.ComboBox:
         return cls.get_properties().combo_box
+
+    @classmethod
+    def get_combo_box_texts(cls) -> list[str]:
+        cb = cls.get_combo_box()
+        return [cb.itemText(i) for i in range(cb.count())]

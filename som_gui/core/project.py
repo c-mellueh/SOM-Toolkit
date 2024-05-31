@@ -32,7 +32,6 @@ def save_as_clicked(project_tool: Type[Project], popup_tool: Type[Popups], setti
 
 
 def open_file_clicked(project_tool: Type[Project], settings: Type[Settings]):
-    start = time.time()
     path = project_tool.get_path("Open Project", FILETYPE)
     if not path:
         return
@@ -44,9 +43,7 @@ def open_file_clicked(project_tool: Type[Project], settings: Type[Settings]):
     proj = project_tool.load_project(path)
     project_tool.set_active_project(proj)
     som_gui.on_new_project()
-    # project_tool.import_node_pos(proj)
-    end = time.time()
-    print(end - start)
+
 
 def new_file_clicked(project_tool: Type[Project], popup_tool: Type[Popups]):
     if not popup_tool.msg_unsaved():
@@ -75,7 +72,6 @@ def open_project(path, project_tool: Type[Project]):
     proj = project_tool.load_project(path)
     project_tool.set_active_project(proj)
     som_gui.on_new_project()
-    project_tool.import_node_pos(proj)
     return proj
 
 
@@ -88,7 +84,6 @@ def add_project(project_tool: Type[Project]):
     project_tool.merge_projects(p1, p2)
 
     logging.warning(f"Import der Bauwerksstruktur wird noch nicht unterstützt")
-    # project_tool.import_node_pos(p2)
 
 def repaint_settings_dialog(project_tool: Type[Project]):
     project_infos = project_tool.get_project_infos()

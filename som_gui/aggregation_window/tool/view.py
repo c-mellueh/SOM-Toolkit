@@ -49,10 +49,16 @@ class View(som_gui.aggregation_window.core.tool.View):
 
         for scene_name, node_dict in import_scene_dict.items():
             if isinstance(node_dict[json_constants.NODES], list):
-                continue
+                logging.warning(
+                    f"SOMJson was written in OLD version. Please open with SOM-Toolkit v2.11.3 and save it as new version.")
+                return
             if scene_name not in scene_dict:
                 scene_dict[scene_name] = list()
 
             for uuid, position in node_dict[json_constants.NODES].items():
                 aggregation = aggregation_ref[uuid]
                 scene_dict[scene_name].append((aggregation, QPointF(*position)))
+
+    @classmethod
+    def get_scene_names(cls) -> list[str]:
+        return sorted(cls.get_properties().scene_dict.keys())

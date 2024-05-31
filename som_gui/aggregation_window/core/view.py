@@ -10,4 +10,3 @@ def import_positions(view: Type[aw_tool.View], project: Type[tool.Project]):
     proj = project.get()
     plugin_dict = proj.import_dict
     view.create_scene_dict(proj, plugin_dict)
-    print(view.get_properties().scene_dict)
