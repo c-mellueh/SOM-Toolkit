@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 
 class Window(som_gui.aggregation_window.core.tool.Window):
+
     @classmethod
     def get_properties(cls) -> WindowProperties:
         return som_gui.WindowProperties
@@ -19,3 +20,15 @@ class Window(som_gui.aggregation_window.core.tool.Window):
         window = ui_window.AggregationWindow()
         cls.get_properties().aggregation_window = window
         return window
+
+    @classmethod
+    def create_combo_box(cls) -> ui_window.ComboBox:
+        cls.get_properties().combo_box = ui_window.ComboBox()
+        return cls.get_properties().combo_box
+
+    @classmethod
+    def add_widget_to_layout(cls, widget, *args, **kwargs):
+        window = cls.get_properties().aggregation_window
+        if window is None:
+            return
+        window.central_layout.addWidget(widget, *args, **kwargs)
