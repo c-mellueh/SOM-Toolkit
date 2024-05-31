@@ -3,7 +3,7 @@ import som_gui
 
 
 def register():
-    som_gui.WindowProperties = prop.WindowProperties()
+    som_gui.ViewProperties = prop.ViewProperties()
 
 
 def load_ui_triggers():

@@ -1,16 +1,6 @@
-from PySide6.QtWidgets import QMainWindow, QGraphicsView, QGraphicsScene
+from PySide6.QtWidgets import QMainWindow
 
 
 class AggregationWindow(QMainWindow):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class AggregationView(QGraphicsView):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class AggregationScene(QGraphicsScene):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
