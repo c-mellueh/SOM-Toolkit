@@ -4,7 +4,7 @@ import logging
 import os
 from typing import Type
 from typing import TYPE_CHECKING
-
+import time
 import som_gui
 
 FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
@@ -32,6 +32,7 @@ def save_as_clicked(project_tool: Type[Project], popup_tool: Type[Popups], setti
 
 
 def open_file_clicked(project_tool: Type[Project], settings: Type[Settings]):
+    start = time.time()
     path = project_tool.get_path("Open Project", FILETYPE)
     if not path:
         return
@@ -43,8 +44,9 @@ def open_file_clicked(project_tool: Type[Project], settings: Type[Settings]):
     proj = project_tool.load_project(path)
     project_tool.set_active_project(proj)
     som_gui.on_new_project()
-    project_tool.import_node_pos(proj)
-
+    # project_tool.import_node_pos(proj)
+    end = time.time()
+    print(end - start)
 
 def new_file_clicked(project_tool: Type[Project], popup_tool: Type[Popups]):
     if not popup_tool.msg_unsaved():

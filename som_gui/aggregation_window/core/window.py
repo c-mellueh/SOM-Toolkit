@@ -12,3 +12,10 @@ def create_window(window: Type[Window], view: Type[View]):
     window.add_widget_to_layout(combo_box)
     window.add_widget_to_layout(aggregation_view)
     aggregation_window.show()
+
+
+def update_combo_box(window: Type[Window]):
+    combo_box = window.get_combo_box()
+    if combo_box is None:
+        return
+    combo_box.item

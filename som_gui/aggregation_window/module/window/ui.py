@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QMainWindow, QMenuBar, QStatusBar, QVBoxLayout, QWidget, QComboBox
 from som_gui.icons import get_icon
-
+from . import trigger
 class AggregationWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -16,3 +16,7 @@ class AggregationWindow(QMainWindow):
 class ComboBox(QComboBox):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def paintEvent(self, e):
+        super().paintEvent(e)
+        trigger.update_combo_box()

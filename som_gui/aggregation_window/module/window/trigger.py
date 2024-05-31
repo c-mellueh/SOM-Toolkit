@@ -8,5 +8,9 @@ def connect():
                                   lambda: core.create_window(tool.Window, tool.View))
 
 
+def update_combo_box():
+    core.update_combo_box(tool.Window)
+
+
 def on_new_project():
     pass

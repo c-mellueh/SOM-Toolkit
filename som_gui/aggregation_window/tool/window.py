@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.window import ui as ui_window
 import som_gui
+from som_gui import tool
+from som_gui.aggregation_window import tool as aw_tool
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.window.prop import WindowProperties
@@ -32,3 +34,7 @@ class Window(som_gui.aggregation_window.core.tool.Window):
         if window is None:
             return
         window.central_layout.addWidget(widget, *args, **kwargs)
+
+    @classmethod
+    def get_combo_box(cls) -> ui_window.ComboBox:
+        return cls.get_properties().combo_box
