@@ -12,3 +12,7 @@ def on_new_project():
 
 def pset_tree_double_clicked(item: QTreeWidgetItem, _: int):
     core.pset_tree_double_clicked(item, aw_tool.Node, tool.PropertySetWindow, tool.Attribute, tool.AttributeTable)
+
+
+def drag_move(header, dif):
+    core.header_drag_move(header, dif, aw_tool.Node)

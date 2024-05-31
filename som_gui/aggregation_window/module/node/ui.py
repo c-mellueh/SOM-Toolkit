@@ -28,3 +28,24 @@ class PropertySetTree(QTreeWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.itemDoubleClicked.connect(trigger.pset_tree_double_clicked)
+
+
+class Header(QGraphicsRectItem):
+    def __init__(self):
+        super().__init__()
+        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, True)
+        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
+
+    def mouseMoveEvent(self, event):
+        last_pos = self.pos()
+        super().mouseMoveEvent(event)
+        new_pos = self.pos()
+        dif = new_pos - last_pos
+        trigger.drag_move(self, dif)
+
+
+class Frame(QGraphicsRectItem):
+    def __init__(self):
+        super().__init__()
+        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, False)
+        self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)

@@ -13,14 +13,13 @@ from som_gui.core import property_set_window as property_set_window_core
 def add_node(view: Type[View], node: Type[Node]):
     from som_gui.tool import Project as project
     proj = project.get()
-
     aggregations = list(proj.get_all_aggregations())
     aggregation = aggregations[0]
-    print(aggregation)
     scene = view.get_active_scene()
     new_node = node.create_node(aggregation)
     node.add_node_to_scene(new_node, scene)
-
+    node.create_header(new_node, scene)
+    node.create_frame(new_node, scene)
 
 def pset_tree_double_clicked(item, node: Type[Node], property_set_window: Type[tool.PropertySetWindow],
                              attribute: Type[tool.Attribute], attribute_table: Type[tool.AttributeTable]):
@@ -41,3 +40,8 @@ def pset_tree_double_clicked(item, node: Type[Node], property_set_window: Type[t
     if active_attribute is None:
         return
     property_set_window_core.activate_attribute(active_attribute, window, attribute, property_set_window)
+
+
+def header_drag_move(header, dif, node: Type[Node]):
+    active_node = node.get_node_from_header(header)
+    node.move_node(active_node, dif)
