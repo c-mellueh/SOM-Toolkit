@@ -612,11 +612,12 @@ class CustomPsetTree(QTreeWidget):
     def item_clicked(self, item: CustomPSetTreeItem | CustomAttribTreeItem) -> None:
         if isinstance(item, CustomPSetTreeItem):
             property_set = item.property_set
-            property_set_window_core.open_pset_window(property_set, tool.PropertySetWindow)
+            property_set_window_core.open_pset_window(property_set, tool.PropertySetWindow, tool.AttributeTable)
 
         if isinstance(item, CustomAttribTreeItem):
             property_set = item.attribute.property_set
-            window = property_set_window_core.open_pset_window(property_set, tool.PropertySetWindow)
+            window = property_set_window_core.open_pset_window(property_set, tool.PropertySetWindow,
+                                                               tool.AttributeTable)
             property_set_window_core.activate_attribute(item.attribute, window, tool.Attribute, tool.PropertySetWindow)
 
 class CustomPSetTreeItem(QTreeWidgetItem):

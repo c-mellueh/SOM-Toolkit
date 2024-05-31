@@ -108,7 +108,7 @@ def attribute_double_clicked(item: QTableWidgetItem, attribute: Type[tool.Attrib
                              property_set: Type[tool.PropertySet], property_set_window: Type[tool.PropertySetWindow]):
     active_attribute = attribute_table.get_attribute_from_item(item)
     active_property_set = property_set.get_active_property_set()
-    window = property_set_window_core.open_pset_window(active_property_set, property_set_window)
+    window = property_set_window_core.open_pset_window(active_property_set, property_set_window, attribute_table)
     property_set_window_core.activate_attribute(active_attribute, window, attribute, property_set_window)
 
 

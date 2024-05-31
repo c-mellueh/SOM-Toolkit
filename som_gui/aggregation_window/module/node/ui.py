@@ -2,7 +2,7 @@ from __future__ import annotations
 from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout, \
     QGraphicsProxyWidget, QGraphicsPathItem, QGraphicsRectItem, QGraphicsItem, QStyleOptionGraphicsItem, \
     QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsEllipseItem
-
+from . import trigger
 
 class NodeProxy(QGraphicsProxyWidget):
     def __init__(self, *args, **kwargs):
@@ -27,3 +27,4 @@ class NodeWidget(QWidget):
 class PropertySetTree(QTreeWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.itemDoubleClicked.connect(trigger.pset_tree_double_clicked)

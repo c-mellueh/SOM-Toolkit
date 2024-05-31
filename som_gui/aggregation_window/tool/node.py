@@ -49,3 +49,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
     @classmethod
     def add_node_to_scene(cls, node: node_ui.NodeProxy, scene: view_ui.AggregationScene):
         scene.addItem(node)
+
+    @classmethod
+    def get_linked_item(cls, pset_tree_item: QTreeWidgetItem) -> SOMcreator.PropertySet | SOMcreator.Attribute:
+        return pset_tree_item.data(0, CLASS_REFERENCE)
