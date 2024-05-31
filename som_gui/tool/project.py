@@ -196,8 +196,7 @@ class Project(som_gui.core.tool.Project):
 
             graph_window.create_node(aggregation, QPointF(x_pos, y_pos))
 
-
-        graph_window.scene_dict.update(scene_dict)
+        graph_window.aggregation_dict.update(scene_dict)
         graph_window.create_missing_scenes()
 
     @classmethod

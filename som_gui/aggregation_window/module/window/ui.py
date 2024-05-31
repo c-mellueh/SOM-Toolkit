@@ -16,7 +16,7 @@ class AggregationWindow(QMainWindow):
 class ComboBox(QComboBox):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
+        self.currentIndexChanged.connect(trigger.combo_box_changed)
     def paintEvent(self, e):
         super().paintEvent(e)
         trigger.update_combo_box()

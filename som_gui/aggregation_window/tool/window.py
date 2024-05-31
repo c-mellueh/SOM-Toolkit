@@ -10,7 +10,6 @@ from som_gui.aggregation_window import tool as aw_tool
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.window.prop import WindowProperties
 
-
 class Window(som_gui.aggregation_window.core.tool.Window):
 
     @classmethod
@@ -43,3 +42,7 @@ class Window(som_gui.aggregation_window.core.tool.Window):
     def get_combo_box_texts(cls) -> list[str]:
         cb = cls.get_combo_box()
         return [cb.itemText(i) for i in range(cb.count())]
+
+    @classmethod
+    def get_combo_box_text(cls) -> str:
+        return cls.get_combo_box().currentText()

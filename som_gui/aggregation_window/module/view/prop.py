@@ -9,4 +9,5 @@ if TYPE_CHECKING:
 class ViewProperties:
     aggregation_view: AggregationView = None
     active_scene: AggregationScene = None
-    scene_dict: dict[str, list[tuple[Aggregation, QPointF]]] = dict()
+    aggregation_dict: dict[str, list[tuple[Aggregation, QPointF]]] = dict()
+    scene_dict: dict[str, AggregationScene] = dict()
