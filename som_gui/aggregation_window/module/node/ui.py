@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout
     QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsEllipseItem
 from . import trigger
 
+
 class NodeProxy(QGraphicsProxyWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -35,6 +36,9 @@ class Header(QGraphicsRectItem):
         super().__init__()
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, True)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
+
+    def paint(self, painter, option, widget):
+        trigger.paint_header(self, painter)
 
     def mouseMoveEvent(self, event):
         last_pos = self.pos()

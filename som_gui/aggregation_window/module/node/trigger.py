@@ -2,6 +2,8 @@ from PySide6.QtWidgets import QTreeWidgetItem
 from som_gui.aggregation_window.core import node as core
 from som_gui import tool
 from som_gui.aggregation_window import tool as aw_tool
+from PySide6.QtGui import QPainter
+from PySide6.QtWidgets import QStyleOptionGraphicsItem
 def connect():
     pass
 
@@ -16,3 +18,7 @@ def pset_tree_double_clicked(item: QTreeWidgetItem, _: int):
 
 def drag_move(header, dif):
     core.header_drag_move(header, dif, aw_tool.Node)
+
+
+def paint_header(header, painter: QPainter):
+    core.paint_header(painter, header, aw_tool.Node)

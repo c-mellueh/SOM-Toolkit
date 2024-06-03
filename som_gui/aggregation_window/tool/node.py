@@ -46,6 +46,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         node.setWidget(node_widget)
         node_widget.setMinimumSize(QSize(250, 150))
         node.widget().layout().insertWidget(0, cls.create_tree_widget(aggregation.object))
+        cls.get_properties().aggregation_dict[aggregation] = node
         return node
 
     @classmethod
@@ -94,3 +95,46 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         node.moveBy(dif.x(), dif.y())
         frame = cls.get_frame_from_node(node)
         frame.moveBy(dif.x(), dif.y())
+
+    @classmethod
+    def get_title(cls, node: node_ui.NodeProxy, pset_name: str, attribute_name: str):
+        aggregation = cls.get_aggregation_from_node(node)
+        if not (pset_name and attribute_name):
+            base_text = f"{aggregation.name} ({aggregation.object.abbreviation})"
+
+            if aggregation.is_root:
+                title = base_text
+            else:
+                title = f"{base_text}\nidGruppe: {aggregation.id_group()}"
+            return title
+        undef = f"{aggregation.name}\n{attribute_name}: undefined"
+        obj = aggregation.object
+        pset = obj.get_property_set_by_name(pset_name)
+        if pset is None:
+            return undef
+        attribute = pset.get_attribute_by_name(attribute_name)
+        if attribute is None:
+            return undef
+
+        if len(attribute.value) == 0:
+            return undef
+        return f"{aggregation.name}\n{attribute_name}: {attribute.value[0]}"
+
+    @classmethod
+    def get_aggregation_from_node(cls, node: node_ui.NodeProxy):
+        ad = cls.get_properties().aggregation_dict
+        print(ad)
+        reversed = {v: k for k, v in ad.items()}
+        return reversed.get(node)
+
+    @classmethod
+    def get_title_settings(cls):
+        return cls.get_properties().title_pset, cls.get_properties().title_attribute
+
+    @classmethod
+    def set_title_settings(cls, pset_name, attribute_name):
+        cls.get_properties().title_pset, cls.get_properties().title_attribute = pset_name, attribute_name
+
+    @classmethod
+    def reset_title_settings(cls):
+        cls.get_properties().title_pset, cls.get_properties().title_attribute = None, None

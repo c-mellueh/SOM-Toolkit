@@ -90,3 +90,11 @@ class View(som_gui.aggregation_window.core.tool.View):
     def activate_scene(cls, scene: ui_view.AggregationScene):
         cls.get_properties().aggregation_view.setScene(scene)
         cls.get_properties().active_scene = scene
+
+    @classmethod
+    def set_cursor(cls, cursor_style):
+        cls.get_properties().aggregation_view.viewport().setCursor(cursor_style)
+
+    @classmethod
+    def get_hovered_node(cls):
+        scene = cls.get_active_scene()

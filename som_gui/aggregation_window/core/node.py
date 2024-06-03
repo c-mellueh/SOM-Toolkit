@@ -2,10 +2,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 
 import SOMcreator
-
+from PySide6.QtCore import Qt
 if TYPE_CHECKING:
     from som_gui.aggregation_window.tool import View, Window, Node
     from som_gui import tool
+    from som_gui.aggregation_window.module.node.ui import Header
+    from PySide6.QtGui import QPainter
 from SOMcreator.classes import Aggregation
 from som_gui.core import property_set_window as property_set_window_core
 
@@ -20,6 +22,7 @@ def add_node(view: Type[View], node: Type[Node]):
     node.add_node_to_scene(new_node, scene)
     node.create_header(new_node, scene)
     node.create_frame(new_node, scene)
+
 
 def pset_tree_double_clicked(item, node: Type[Node], property_set_window: Type[tool.PropertySetWindow],
                              attribute: Type[tool.Attribute], attribute_table: Type[tool.AttributeTable]):
@@ -45,3 +48,13 @@ def pset_tree_double_clicked(item, node: Type[Node], property_set_window: Type[t
 def header_drag_move(header, dif, node: Type[Node]):
     active_node = node.get_node_from_header(header)
     node.move_node(active_node, dif)
+
+
+def paint_header(painter: QPainter, header: Header, node: Type[Node]):
+    painter.save()
+    painter.restore()
+    painter.drawRect(header.rect())
+    active_node = node.get_node_from_header(header)
+    pset_name, attribute_name = node.get_title_settings()
+    title_text = node.get_title(active_node, pset_name, attribute_name)
+    painter.drawText(header.rect(), Qt.AlignmentFlag.AlignCenter, title_text)
