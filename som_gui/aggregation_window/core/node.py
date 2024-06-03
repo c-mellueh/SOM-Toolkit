@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Type
 
 import SOMcreator
 from PySide6.QtCore import Qt
+
 if TYPE_CHECKING:
     from som_gui.aggregation_window.tool import View, Window, Node
     from som_gui import tool
@@ -48,6 +49,7 @@ def pset_tree_double_clicked(item, node: Type[Node], property_set_window: Type[t
 def node_clicked(selected_node, node: Type[Node]):
     z_level = node.increment_z_level()
     node.set_z_level_of_node(selected_node, z_level)
+
 
 def header_drag_move(header, dif, node: Type[Node]):
     active_node = node.get_node_from_header(header)
