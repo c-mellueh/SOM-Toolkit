@@ -147,3 +147,9 @@ class Node(som_gui.aggregation_window.core.tool.Node):
     @classmethod
     def reset_title_settings(cls):
         cls.get_properties().title_pset, cls.get_properties().title_attribute = None, None
+
+    @classmethod
+    def set_node_pos(cls, node: node_ui.NodeProxy, pos: QPointF):
+        dif = node.header.scenePos() - pos
+        node.header.moveBy(dif.x(), dif.y())
+        cls.move_node(node, dif)

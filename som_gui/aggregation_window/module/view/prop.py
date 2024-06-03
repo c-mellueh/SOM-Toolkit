@@ -12,3 +12,4 @@ class ViewProperties:
     scene_name_list: list[str] = list()
     scene_list: list[AggregationScene] = list()
     node_list: list[set[NodeProxy]] = list()
+    import_list: list[list[tuple[Aggregation, QPointF]]] = list()

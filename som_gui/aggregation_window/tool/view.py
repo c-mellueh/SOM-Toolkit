@@ -54,6 +54,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         cls.get_properties().scene_name_list.append(scene_name)
         cls.get_properties().scene_list.append(scene)
         cls.get_properties().node_list.append(set())
+        cls.get_properties().import_list.append(list())
         return scene, scene_name
 
     @classmethod
@@ -79,6 +80,9 @@ class View(som_gui.aggregation_window.core.tool.View):
                 scene, scene_name = cls.create_scene(scene_name)
 
             scene_id = cls.get_scene_index(scene_name)
+            for aggregation_uuid, pos in node_dict["Nodes"].items():
+                aggregation_tuple = (aggregation_ref[aggregation_uuid], QPointF(pos[0], pos[1]))
+                cls.get_properties().import_list[scene_id].append(aggregation_tuple)
 
     @classmethod
     def get_scene_names(cls) -> list[str]:
@@ -109,3 +113,8 @@ class View(som_gui.aggregation_window.core.tool.View):
         scene.addItem(node)
         scene_index = cls.get_scene_index(scene)
         cls.get_properties().node_list[scene_index].add(node)
+
+    @classmethod
+    def clean_import_list_for_scene(cls, scene: ui_view.AggregationScene):
+        index = cls.get_scene_index(scene)
+        cls.get_properties().import_list[index] = list()

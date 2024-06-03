@@ -7,3 +7,7 @@ def connect():
 
 def on_new_project():
     core.import_positions(aw_tool.View, tool.Project)
+
+
+def view_paint_event():
+    core.paint_event(aw_tool.View, aw_tool.Node)
