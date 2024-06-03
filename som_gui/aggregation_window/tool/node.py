@@ -11,6 +11,7 @@ from SOMcreator.classes import Aggregation, Object
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.node import ui as node_ui
 from som_gui.aggregation_window.module.node import constants as node_constants
+from som_gui.aggregation_window import tool as aw_tool
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.node.prop import NodeProperties
@@ -19,8 +20,22 @@ if TYPE_CHECKING:
 
 class Node(som_gui.aggregation_window.core.tool.Node):
     @classmethod
+    def set_z_level_of_node(cls, node: node_ui.NodeProxy, z_level: int) -> None:
+        node.setZValue(z_level)
+        node.frame.setZValue(z_level)
+        node.header.setZValue(z_level)
+    @classmethod
     def get_properties(cls) -> NodeProperties:
         return som_gui.NodeProperties
+
+    @classmethod
+    def increment_z_level(cls) -> int:
+        cls.get_properties().z_level += 1
+        return cls.get_properties().z_level
+
+    @classmethod
+    def get_z_level(cls) -> int:
+        return cls.get_properties().z_level
 
     @classmethod
     def create_tree_widget(cls, obj: Object) -> node_ui.PropertySetTree:
@@ -46,7 +61,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         node.setWidget(node_widget)
         node_widget.setMinimumSize(QSize(250, 150))
         node.widget().layout().insertWidget(0, cls.create_tree_widget(aggregation.object))
-        cls.get_properties().aggregation_dict[aggregation] = node
+        node.aggregation = aggregation
         return node
 
     @classmethod
@@ -59,7 +74,8 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         header.setRect(QRectF(x, -height, width, height))
         scene.addItem(header)
         header.show()
-        cls.get_properties().header_dict[header] = node
+        node.header = header
+        header.node = node
 
     @classmethod
     def create_frame(cls, node: node_ui.NodeProxy, scene: view_ui.AggregationScene):
@@ -72,23 +88,19 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         frame.setRect(rect)
         scene.addItem(frame)
         frame.show()
-        cls.get_properties().frame_dict[node] = frame
-
-    @classmethod
-    def add_node_to_scene(cls, node: node_ui.NodeProxy, scene: view_ui.AggregationScene):
-        scene.addItem(node)
-
+        node.frame = frame
+        frame.node = node
     @classmethod
     def get_linked_item(cls, pset_tree_item: QTreeWidgetItem) -> SOMcreator.PropertySet | SOMcreator.Attribute:
         return pset_tree_item.data(0, CLASS_REFERENCE)
 
     @classmethod
-    def get_node_from_header(cls, header):
-        return cls.get_properties().header_dict.get(header)
+    def get_node_from_header(cls, header: node_ui.Header) -> node_ui.NodeProxy:
+        return header.node
 
     @classmethod
-    def get_frame_from_node(cls, node: node_ui.NodeProxy):
-        return cls.get_properties().frame_dict[node]
+    def get_frame_from_node(cls, node: node_ui.NodeProxy) -> node_ui.Frame:
+        return node.frame
 
     @classmethod
     def move_node(cls, node: node_ui.NodeProxy, dif: QPointF):
@@ -122,10 +134,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
 
     @classmethod
     def get_aggregation_from_node(cls, node: node_ui.NodeProxy):
-        ad = cls.get_properties().aggregation_dict
-        print(ad)
-        reversed = {v: k for k, v in ad.items()}
-        return reversed.get(node)
+        return node.aggregation
 
     @classmethod
     def get_title_settings(cls):

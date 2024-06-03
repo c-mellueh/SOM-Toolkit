@@ -19,7 +19,7 @@ def add_node(view: Type[View], node: Type[Node]):
     aggregation = aggregations[0]
     scene = view.get_active_scene()
     new_node = node.create_node(aggregation)
-    node.add_node_to_scene(new_node, scene)
+    view.add_node_to_scene(new_node, scene)
     node.create_header(new_node, scene)
     node.create_frame(new_node, scene)
 
@@ -45,6 +45,10 @@ def pset_tree_double_clicked(item, node: Type[Node], property_set_window: Type[t
     property_set_window_core.activate_attribute(active_attribute, window, attribute, property_set_window)
 
 
+def node_clicked(selected_node, node: Type[Node]):
+    z_level = node.increment_z_level()
+    node.set_z_level_of_node(selected_node, z_level)
+
 def header_drag_move(header, dif, node: Type[Node]):
     active_node = node.get_node_from_header(header)
     node.move_node(active_node, dif)
@@ -53,6 +57,7 @@ def header_drag_move(header, dif, node: Type[Node]):
 def paint_header(painter: QPainter, header: Header, node: Type[Node]):
     painter.save()
     painter.restore()
+    painter.setBrush(Qt.GlobalColor.white)
     painter.drawRect(header.rect())
     active_node = node.get_node_from_header(header)
     pset_name, attribute_name = node.get_title_settings()

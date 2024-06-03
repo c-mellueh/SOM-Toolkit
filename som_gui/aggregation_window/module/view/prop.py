@@ -11,5 +11,4 @@ class ViewProperties:
     active_scene: AggregationScene = None
     scene_name_list: list[str] = list()
     scene_list: list[AggregationScene] = list()
-    aggregation_list: list[list[tuple[Aggregation, QPointF]]] = list()
-    node_list: list[list[NodeProxy]] = list()
+    node_list: list[set[NodeProxy]] = list()

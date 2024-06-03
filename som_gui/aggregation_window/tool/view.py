@@ -29,8 +29,12 @@ class View(som_gui.aggregation_window.core.tool.View):
         return som_gui.ViewProperties
 
     @classmethod
-    def get_scene_index(cls, scene_name: str) -> int:
-        return cls.get_properties().scene_name_list.index(scene_name)
+    def get_scene_index(cls, scene: str | ui_view.AggregationScene) -> int:
+        if isinstance(scene, str):
+            return cls.get_properties().scene_name_list.index(scene)
+        if isinstance(scene, ui_view.AggregationScene):
+            return cls.get_properties().scene_list.index(scene)
+        raise TypeError(f"type {type(scene)} not supported for function 'get_scene_index'")
 
     @classmethod
     def get_scene_by_name(cls, scene_name: str) -> ui_view.AggregationScene:
@@ -49,8 +53,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         scene = ui_view.AggregationScene()
         cls.get_properties().scene_name_list.append(scene_name)
         cls.get_properties().scene_list.append(scene)
-        cls.get_properties().aggregation_list.append(list())
-        cls.get_properties().node_list.append(list())
+        cls.get_properties().node_list.append(set())
         return scene, scene_name
 
     @classmethod
@@ -77,9 +80,6 @@ class View(som_gui.aggregation_window.core.tool.View):
 
             scene_id = cls.get_scene_index(scene_name)
 
-            for uuid, position in node_dict[json_constants.NODES].items():
-                cls.get_properties().aggregation_list[scene_id].append((aggregation_ref[uuid], QPointF(*position)))
-
     @classmethod
     def get_scene_names(cls) -> list[str]:
         return cls.get_properties().scene_name_list
@@ -103,3 +103,9 @@ class View(som_gui.aggregation_window.core.tool.View):
     @classmethod
     def get_hovered_node(cls):
         scene = cls.get_active_scene()
+
+    @classmethod
+    def add_node_to_scene(cls, node, scene: ui_view.AggregationScene):
+        scene.addItem(node)
+        scene_index = cls.get_scene_index(scene)
+        cls.get_properties().node_list[scene_index].add(node)

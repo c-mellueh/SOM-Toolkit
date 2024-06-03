@@ -1,9 +1,14 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from PySide6.QtWidgets import QTreeWidgetItem
 from som_gui.aggregation_window.core import node as core
 from som_gui import tool
 from som_gui.aggregation_window import tool as aw_tool
 from PySide6.QtGui import QPainter
-from PySide6.QtWidgets import QStyleOptionGraphicsItem
+
+if TYPE_CHECKING:
+    from . import ui
+
 def connect():
     pass
 
@@ -22,3 +27,7 @@ def drag_move(header, dif):
 
 def paint_header(header, painter: QPainter):
     core.paint_header(painter, header, aw_tool.Node)
+
+
+def header_clicked(header: ui.Header):
+    core.node_clicked(header.node, aw_tool.Node)

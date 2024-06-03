@@ -7,8 +7,6 @@ if TYPE_CHECKING:
 
 
 class NodeProperties:
-    aggregation_dict: dict[Aggregation, NodeProxy] = dict()
-    header_dict: dict[Header, NodeProxy] = dict()
-    frame_dict: dict[NodeProxy, Frame] = dict()
     title_pset: str | None = None
     title_attribute: str | None = None
+    z_level: int = 1
