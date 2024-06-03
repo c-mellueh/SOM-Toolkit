@@ -38,7 +38,7 @@ def update_combo_box(window: Type[Window], view: Type[View]):
 
 def combobox_changed(window: Type[Window], view: Type[View]):
     text = window.get_combo_box_text()
-    scene = view.get_scene_dict().get(text)
+    scene = view.get_scene_by_name(text)
     if scene is None:
         scene = view.create_scene("Undefined")
     view.activate_scene(scene)

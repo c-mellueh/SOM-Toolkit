@@ -29,6 +29,14 @@ class View(som_gui.aggregation_window.core.tool.View):
         return som_gui.ViewProperties
 
     @classmethod
+    def get_scene_index(cls, scene_name: str) -> int:
+        return cls.get_properties().scene_name_list.index(scene_name)
+
+    @classmethod
+    def get_scene_by_name(cls, scene_name: str) -> ui_view.AggregationScene:
+        return cls.get_properties().scene_list[cls.get_scene_index(scene_name)]
+
+    @classmethod
     def create_view(cls) -> ui_view.AggregationView:
         view = ui_view.AggregationView()
         cls.get_properties().aggregation_view = view
@@ -39,8 +47,10 @@ class View(som_gui.aggregation_window.core.tool.View):
         if scene_name in cls.get_scene_names():
             scene_name = loop_name(scene_name, cls.get_scene_names(), 0)
         scene = ui_view.AggregationScene()
-        cls.get_properties().scene_dict[scene_name] = scene
-        cls.get_properties().aggregation_dict[scene_name] = list()
+        cls.get_properties().scene_name_list.append(scene_name)
+        cls.get_properties().scene_list.append(scene)
+        cls.get_properties().aggregation_list.append(list())
+        cls.get_properties().node_list.append(list())
         return scene, scene_name
 
     @classmethod
@@ -56,35 +66,30 @@ class View(som_gui.aggregation_window.core.tool.View):
                 f"SOMJson was written in OLD version. Please open with SOM-Toolkit v2.11.3 and save it as new version.")
             return
 
-        aggregation_dict = cls.get_properties().aggregation_dict
+        existing_scene_names = cls.get_properties().scene_name_list
         for scene_name, node_dict in import_scene_dict.items():
             if isinstance(node_dict[json_constants.NODES], list):
                 logging.warning(
                     f"SOMJson was written in OLD version. Please open with SOM-Toolkit v2.11.3 and save it as new version.")
                 return
-            if scene_name not in aggregation_dict:
+            if scene_name not in existing_scene_names:
                 scene, scene_name = cls.create_scene(scene_name)
-                cls.get_properties().scene_dict[scene_name] = scene
-                aggregation_dict[scene_name] = list()
+
+            scene_id = cls.get_scene_index(scene_name)
 
             for uuid, position in node_dict[json_constants.NODES].items():
-                aggregation = aggregation_ref[uuid]
-                aggregation_dict[scene_name].append((aggregation, QPointF(*position)))
+                cls.get_properties().aggregation_list[scene_id].append((aggregation_ref[uuid], QPointF(*position)))
 
     @classmethod
     def get_scene_names(cls) -> list[str]:
-        return sorted(cls.get_properties().aggregation_dict.keys())
+        return cls.get_properties().scene_name_list
 
     @classmethod
     def get_active_scene(cls):
         scene = cls.get_properties().active_scene
         if scene is None:
-            cls.create_scene()
+            cls.create_scene("Undefined")
         return cls.get_properties().active_scene
-
-    @classmethod
-    def get_scene_dict(cls) -> dict[str, ui_view.AggregationScene]:
-        return cls.get_properties().scene_dict
 
     @classmethod
     def activate_scene(cls, scene: ui_view.AggregationScene):
