@@ -3,13 +3,13 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QPointF
+from PySide6.QtCore import QPointF, QRectF, Qt
 
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.view import ui as ui_view
 import SOMcreator
 from SOMcreator.constants import json_constants
-from som_gui.aggregation_window.module.view.constants import AGGREGATIONSCENES
+from som_gui.aggregation_window.module.view.constants import AGGREGATIONSCENES, SCENE_SIZE, SCENE_MARGIN
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.view.prop import ViewProperties
@@ -27,6 +27,10 @@ class View(som_gui.aggregation_window.core.tool.View):
     @classmethod
     def get_properties(cls) -> ViewProperties:
         return som_gui.ViewProperties
+
+    @classmethod
+    def get_view(cls) -> ui_view.AggregationView:
+        return cls.get_properties().aggregation_view
 
     @classmethod
     def get_scene_index(cls, scene: str | ui_view.AggregationScene) -> int:
@@ -51,6 +55,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         if scene_name in cls.get_scene_names():
             scene_name = loop_name(scene_name, cls.get_scene_names(), 0)
         scene = ui_view.AggregationScene()
+        scene.setSceneRect(QRectF(0, 0, SCENE_SIZE[0], SCENE_SIZE[1]))
         cls.get_properties().scene_name_list.append(scene_name)
         cls.get_properties().scene_list.append(scene)
         cls.get_properties().node_list.append(set())
@@ -80,8 +85,15 @@ class View(som_gui.aggregation_window.core.tool.View):
                 scene, scene_name = cls.create_scene(scene_name)
 
             scene_id = cls.get_scene_index(scene_name)
+            position_values = node_dict["Nodes"].values()
+            x_values, y_values = zip(*position_values)
+            x_min = min(x_values)
+            y_min = min(y_values)
             for aggregation_uuid, pos in node_dict["Nodes"].items():
-                aggregation_tuple = (aggregation_ref[aggregation_uuid], QPointF(pos[0], pos[1]))
+                x = SCENE_SIZE[0] / 2 - pos[0] + x_min
+                y = SCENE_SIZE[1] / 2 - pos[1] + y_min
+                print(x, y)
+                aggregation_tuple = (aggregation_ref[aggregation_uuid], QPointF(x, y))
                 cls.get_properties().import_list[scene_id].append(aggregation_tuple)
 
     @classmethod
@@ -118,3 +130,22 @@ class View(som_gui.aggregation_window.core.tool.View):
     def clean_import_list_for_scene(cls, scene: ui_view.AggregationScene):
         index = cls.get_scene_index(scene)
         cls.get_properties().import_list[index] = list()
+
+    @classmethod
+    def autofit_view(cls):
+        def get_bounding_rect():
+            items = scene.items()
+            rects = [item.sceneBoundingRect() for item in items]
+            top_left, bottom_right = zip(*[(br.topLeft(), br.bottomRight()) for br in rects if br is not None])
+            tl_x, tl_y = zip(*[[tl.x(), tl.y()] for tl in top_left])
+            br_x, br_y = zip(*[[br.x(), br.y()] for br in bottom_right])
+            x_min, x_max = min(tl_x), max(br_x)
+            y_min, y_max = min(tl_y), max(br_y)
+            return QRectF(QPointF(x_min, y_min), QPointF(x_max, y_max))
+
+        scene = cls.get_active_scene()
+        view = cls.get_view()
+        bounding_rect = get_bounding_rect()
+        marg = SCENE_MARGIN
+        view.fitInView(bounding_rect.adjusted(-marg, -marg, marg, marg),
+                       aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)

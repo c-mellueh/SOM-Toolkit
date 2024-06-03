@@ -150,6 +150,6 @@ class Node(som_gui.aggregation_window.core.tool.Node):
 
     @classmethod
     def set_node_pos(cls, node: node_ui.NodeProxy, pos: QPointF):
-        dif = node.header.scenePos() - pos
+        dif = pos - node.header.scenePos()
         node.header.moveBy(dif.x(), dif.y())
         cls.move_node(node, dif)
