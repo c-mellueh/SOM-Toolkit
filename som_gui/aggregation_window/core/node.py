@@ -7,8 +7,9 @@ from PySide6.QtCore import Qt
 if TYPE_CHECKING:
     from som_gui.aggregation_window.tool import View, Window, Node
     from som_gui import tool
-    from som_gui.aggregation_window.module.node.ui import Header
+    from som_gui.aggregation_window.module.node.ui import Header, NodeProxy
     from PySide6.QtGui import QPainter
+    from PySide6.QtCore import QPointF
 from SOMcreator.classes import Aggregation
 from som_gui.core import property_set_window as property_set_window_core
 
@@ -46,12 +47,12 @@ def pset_tree_double_clicked(item, node: Type[Node], property_set_window: Type[t
     property_set_window_core.activate_attribute(active_attribute, window, attribute, property_set_window)
 
 
-def node_clicked(selected_node, node: Type[Node]):
+def node_clicked(selected_node: NodeProxy, node: Type[Node]):
     z_level = node.increment_z_level()
     node.set_z_level_of_node(selected_node, z_level)
 
 
-def header_drag_move(header, dif, node: Type[Node]):
+def header_drag_move(header: Header, dif: QPointF, node: Type[Node]):
     active_node = node.get_node_from_header(header)
     node.move_node(active_node, dif)
 
