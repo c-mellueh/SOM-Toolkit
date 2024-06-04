@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from som_gui.aggregation_window.tool import View, Window, Node
     from som_gui import tool
     from som_gui.aggregation_window.module.node.ui import Header, NodeProxy, PropertySetTree
-    from PySide6.QtGui import QPainter
+    from PySide6.QtGui import QPainter, QPainterPath
     from PySide6.QtCore import QPointF
     from PySide6.QtWidgets import QTreeWidget
 from SOMcreator.classes import Aggregation

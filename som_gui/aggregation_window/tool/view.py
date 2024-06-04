@@ -62,6 +62,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         cls.get_properties().scene_list.append(scene)
         cls.get_properties().node_list.append(set())
         cls.get_properties().import_list.append(list())
+        cls.get_properties().connections_list.append(set())
         return scene, scene_name
 
     @classmethod

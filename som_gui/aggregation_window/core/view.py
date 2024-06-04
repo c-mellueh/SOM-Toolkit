@@ -35,6 +35,19 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], project: Typ
         if existing_node.aggregation not in existing_aggregations:
             view.remove_node_from_scene(existing_node, scene)
 
+    # create connections
+    node_dict = {node.aggregation: node for node in view.get_nodes_in_scene(scene)}
+    for aggregation, top_node in node_dict.items():
+        sub_elements = aggregation.children
+        for sub_aggregation in sub_elements:
+            sub_node = node_dict.get(sub_aggregation)
+            if sub_node is None:
+                continue
+            if not node.is_node_connected_to_node(top_node, sub_node):
+                node.create_connection(top_node, sub_node, sub_node.aggregation.parent_connection)
+
+
+
 
 def mouse_move_event(position: QPointF, view: Type[aw_tool.View]):
     last_pos = view.get_last_mouse_pos()

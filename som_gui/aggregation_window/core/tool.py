@@ -13,3 +13,7 @@ class View():
 
 class Node:
     pass
+
+
+class Connection():
+    pass

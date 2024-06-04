@@ -4,6 +4,11 @@ from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout
     QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsEllipseItem
 from . import trigger
 import SOMcreator
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..connection.ui import Connection
+
 
 class NodeProxy(QGraphicsProxyWidget):
     def __init__(self, *args, **kwargs):
@@ -11,6 +16,9 @@ class NodeProxy(QGraphicsProxyWidget):
         self.header: Header | None = None
         self.frame: Frame | None = None
         self.aggregation: SOMcreator.classes.Aggregation | None = None
+        self.top_connection: Connection | None = None
+        self.bottom_connections: set[Connection] = set()
+
     def widget(self) -> QWidget | NodeWidget:
         return super().widget()
 
@@ -37,6 +45,7 @@ class PropertySetTree(QTreeWidget):
         super().paintEvent(event)
         trigger.paint_propertyset_tree(self)
 
+
 class Header(QGraphicsRectItem):
     def __init__(self):
         super().__init__()
@@ -57,6 +66,7 @@ class Header(QGraphicsRectItem):
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
         trigger.header_clicked(self)
+
 
 class Frame(QGraphicsRectItem):
     def __init__(self):

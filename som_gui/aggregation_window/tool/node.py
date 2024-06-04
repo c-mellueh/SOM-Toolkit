@@ -168,3 +168,12 @@ class Node(som_gui.aggregation_window.core.tool.Node):
     @classmethod
     def get_node_from_tree_widget(cls, tree_widget: node_ui.PropertySetTree) -> node_ui.NodeProxy:
         return tree_widget.node
+
+    @classmethod
+    def is_node_connected_to_node(cls, node1: node_ui.NodeProxy, node2: node_ui.NodeProxy) -> bool:
+        if node1.top_connection == node2:
+            return True
+
+        if node2.top_connection == node1:
+            return True
+        return False
