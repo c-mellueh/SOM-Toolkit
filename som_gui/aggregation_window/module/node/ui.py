@@ -1,6 +1,7 @@
 from __future__ import annotations
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QPainter
+from PySide6.QtGui import QColor, QPainter, QPen
+
 from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout, \
     QGraphicsProxyWidget, QGraphicsPathItem, QGraphicsRectItem, QGraphicsItem, QStyleOptionGraphicsItem, \
     QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsEllipseItem
@@ -93,7 +94,8 @@ class ResizeRect(QGraphicsRectItem):
         super().__init__(*args, **kwargs)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, False)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
-        self.setBrush(Qt.GlobalColor.red)
+        self.setBrush(Qt.GlobalColor.transparent)
+        self.setPen(QPen(Qt.GlobalColor.transparent))
         self.node: NodeProxy | None = None
         self.setAcceptHoverEvents(True)
 
