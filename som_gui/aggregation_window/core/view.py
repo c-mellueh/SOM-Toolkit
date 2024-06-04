@@ -51,6 +51,9 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
                 logging.debug("create new connection")
                 view.add_connection_to_scene(new_connection, scene)
 
+    if not view.scene_was_alleady_focused(scene):
+        view.autofit_view()
+
 
 def mouse_move_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node]):
     last_pos = view.get_last_mouse_pos()
@@ -78,7 +81,6 @@ def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw
     mouse_mode = view.get_mouse_mode_by_subitem(item_under_mouse)
     view.set_cursor_style(cursor_style)
     view.set_mouse_mode(mouse_mode)
-
 
     if node.item_is_resize_rect(item_under_mouse):
         view.set_focus_node(item_under_mouse.node)
@@ -116,3 +118,7 @@ def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]):
         x_angle, y_angle = y_angle, x_angle
 
     view.scroll_view(x_angle, y_angle)
+
+
+def context_menu_requested(pos: QPointF, view: Type[aw_tool.View]):
+    print(pos)

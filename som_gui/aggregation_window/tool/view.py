@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from som_gui.aggregation_window.module.view.prop import ViewProperties
     from som_gui.aggregation_window.module.connection import ui as ui_connection
 
+
 def loop_name(name, names, index: int):
     new_name = f"{name}_{str(index).zfill(2)}"
     if new_name in names:
@@ -26,6 +27,7 @@ def loop_name(name, names, index: int):
 
 
 class View(som_gui.aggregation_window.core.tool.View):
+
     @classmethod
     def get_properties(cls) -> ViewProperties:
         return som_gui.ViewProperties
@@ -58,12 +60,26 @@ class View(som_gui.aggregation_window.core.tool.View):
             scene_name = loop_name(scene_name, cls.get_scene_names(), 0)
         scene = ui_view.AggregationScene()
         scene.setSceneRect(QRectF(0, 0, SCENE_SIZE[0], SCENE_SIZE[1]))
-        cls.get_properties().scene_name_list.append(scene_name)
-        cls.get_properties().scene_list.append(scene)
-        cls.get_properties().node_list.append(set())
-        cls.get_properties().import_list.append(list())
-        cls.get_properties().connections_list.append(set())
+        prop = cls.get_properties()
+        prop.scene_name_list.append(scene_name)
+        prop.scene_list.append(scene)
+        prop.node_list.append(set())
+        prop.import_list.append(list())
+        prop.connections_list.append(set())
+        prop.focus_list.append(False)
+        prop.scene_settings_list.append(None)
+
         return scene, scene_name
+
+    @classmethod
+    def delete_scene(cls, scene_name: str):
+        scene_index = cls.get_scene_index(scene_name)
+        prop = cls.get_properties()
+        scene = prop.scene_list[scene_index]
+        lists = [prop.scene_name_list, prop.node_list, prop.import_list, prop.connections_list, prop.focus_list,
+                 prop.scene_settings_list]
+        [l.pop(scene_index) for l in lists]
+        scene.deleteLater()
 
     @classmethod
     def create_scene_dict(cls, proj: SOMcreator.Project, plugin_dict: dict) -> None:
@@ -111,8 +127,31 @@ class View(som_gui.aggregation_window.core.tool.View):
 
     @classmethod
     def activate_scene(cls, scene: ui_view.AggregationScene):
-        cls.get_properties().aggregation_view.setScene(scene)
-        cls.get_properties().active_scene = scene
+        view = cls.get_view()
+
+        old_scene = cls.get_active_scene()
+        prop = cls.get_properties()
+
+        if old_scene is not None:
+            old_index = cls.get_scene_index(old_scene)
+            horizontal = view.horizontalScrollBar().value()
+            vertical = view.verticalScrollBar().value()
+            prop.scene_settings_list[old_index] = view.transform(), horizontal, vertical
+
+        prop.aggregation_view.setScene(scene)
+        prop.active_scene = scene
+        new_scene_index = cls.get_scene_index(scene)
+        value = prop.scene_settings_list[new_scene_index]
+        if value is None:
+            return
+        trans, horizontal, vertical = value
+        view.setTransform(trans)
+        view.horizontalScrollBar().setValue(horizontal)
+        view.verticalScrollBar().setValue(vertical)
+
+    @classmethod
+    def test(cls):
+        pass
 
     @classmethod
     def set_cursor_style(cls, cursor_style):
@@ -154,6 +193,8 @@ class View(som_gui.aggregation_window.core.tool.View):
         marg = SCENE_MARGIN
         view.fitInView(bounding_rect.adjusted(-marg, -marg, marg, marg),
                        aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
+        scene_id = cls.get_scene_index(scene)
+        cls.get_properties().focus_list[scene_id] = True
 
     @classmethod
     def get_nodes_in_scene(cls, scene: ui_view.AggregationScene):
@@ -283,3 +324,8 @@ class View(som_gui.aggregation_window.core.tool.View):
         }
         val = cursor_dict.get(sub_item_type) or 1
         return val
+
+    @classmethod
+    def scene_was_alleady_focused(cls, scene: ui_view.AggregationScene):
+        scene_id = cls.get_scene_index(scene)
+        return cls.get_properties().focus_list[scene_id]

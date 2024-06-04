@@ -17,7 +17,7 @@ def create_window(window: Type[Window], view: Type[View], node: Type[Node]):
 
     button = QPushButton('Test')
     window.add_widget_to_layout(button)
-    button.clicked.connect(view.autofit_view)
+    button.clicked.connect(view.test)
 
     aggregation_window.show()
 

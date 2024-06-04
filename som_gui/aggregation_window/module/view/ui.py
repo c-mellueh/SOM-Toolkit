@@ -9,7 +9,8 @@ class AggregationView(QGraphicsView):
         self.setTransformationAnchor(QGraphicsView.ViewportAnchor.NoAnchor)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(trigger.context_menu_requested)
     def paintEvent(self, event):
         super().paintEvent(event)
         trigger.view_paint_event()

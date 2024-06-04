@@ -27,3 +27,7 @@ def mouse_release_event(pos):
 
 def mouse_wheel_event(event):
     core.mouse_wheel_event(event, aw_tool.View)
+
+
+def context_menu_requested(pos):
+    core.context_menu_requested(pos, aw_tool.View)
