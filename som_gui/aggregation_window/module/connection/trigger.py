@@ -18,5 +18,5 @@ def on_new_project():
     pass
 
 
-def paint_connection(connection, painter, option, widget):
-    core.paint_connection(connection, painter, option, widget, aw_tool.Node)
+def paint_connection(connection):
+    core.paint_connection(connection, aw_tool.Connection)

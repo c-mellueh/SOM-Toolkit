@@ -171,9 +171,8 @@ class Node(som_gui.aggregation_window.core.tool.Node):
 
     @classmethod
     def is_node_connected_to_node(cls, node1: node_ui.NodeProxy, node2: node_ui.NodeProxy) -> bool:
-        if node1.top_connection == node2:
+        if node1.top_connection and node1.top_connection.top_node == node2:
             return True
-
-        if node2.top_connection == node1:
+        if node2.top_connection and node2.top_connection.top_node == node1:
             return True
         return False

@@ -231,3 +231,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         view = cls.get_view()
         view.horizontalScrollBar().setValue(view.horizontalScrollBar().value() - x_angle)
         view.verticalScrollBar().setValue(view.verticalScrollBar().value() - y_angle)
+
+    @classmethod
+    def add_connection_to_scene(cls, connection, scene: ui_view.AggregationScene):
+        scene.addItem(connection)

@@ -17,7 +17,8 @@ def import_positions(view: Type[aw_tool.View], project: Type[tool.Project]):
     view.create_scene_dict(proj, plugin_dict)
 
 
-def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], project: Type[tool.Project]):
+def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: Type[aw_tool.Connection],
+                project: Type[tool.Project]):
     scene = view.get_active_scene()
     scene_id = view.get_scene_index(scene)
 
@@ -44,8 +45,10 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], project: Typ
             if sub_node is None:
                 continue
             if not node.is_node_connected_to_node(top_node, sub_node):
-                node.create_connection(top_node, sub_node, sub_node.aggregation.parent_connection)
-
+                new_connection = connection.create_connection(top_node, sub_node,
+                                                              sub_node.aggregation.parent_connection)
+                logging.debug("create new connection")
+                view.add_connection_to_scene(new_connection, scene)
 
 
 
@@ -64,7 +67,6 @@ def mouse_press_event(position: QPointF, view: Type[aw_tool.View]):
     item_under_mouse = view.get_item_under_mouse(view.map_to_scene(position))
     if item_under_mouse is None:
         view.set_mouse_mode(1)
-
 
 def mouse_release_event(view: Type[aw_tool.View]):
     view.set_last_mouse_pos(None)

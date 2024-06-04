@@ -10,7 +10,7 @@ def on_new_project():
 
 
 def view_paint_event():
-    core.paint_event(aw_tool.View, aw_tool.Node, tool.Project)
+    core.paint_event(aw_tool.View, aw_tool.Node, aw_tool.Connection, tool.Project)
 
 
 def mouse_move_event(position):
