@@ -199,7 +199,12 @@ class View(som_gui.aggregation_window.core.tool.View):
 
     @classmethod
     def pan(cls, last_pos: QPointF, new_pos: QPointF):
+        if last_pos is None:
+            return
         dif = new_pos - last_pos
-        print(dif)
         view = cls.get_view()
-        print(view.translate(dif.x(), dif.y()))
+        view.translate(dif.x(), dif.y())
+
+    @classmethod
+    def map_to_scene(cls, pos: QPointF):
+        return cls.get_properties().aggregation_view.mapToScene(pos)

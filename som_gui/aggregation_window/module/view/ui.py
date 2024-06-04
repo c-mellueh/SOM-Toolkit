@@ -11,11 +11,11 @@ class AggregationView(QGraphicsView):
 
     def mouseMoveEvent(self, event):
         super().mouseMoveEvent(event)
-        trigger.mouse_move_event(self.mapToScene(event.pos()))
+        trigger.mouse_move_event(event.pos())
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
-        trigger.mouse_press_event(self.mapToScene(event.pos()))
+        trigger.mouse_press_event(event.pos())
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)

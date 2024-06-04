@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtCore import QPointF
 
+
 def import_positions(view: Type[aw_tool.View], project: Type[tool.Project]):
     proj = project.get()
     plugin_dict = proj.import_dict
@@ -39,14 +40,14 @@ def mouse_move_event(position: QPointF, view: Type[aw_tool.View]):
     mouse_mode = view.get_mouse_mode()
 
     if mouse_mode == 1:
-        view.pan(last_pos, position)
-
-    view.set_last_mouse_pos(position)
+        # mouse pos needs to be transformed to scene pos or scaling won't be right
+        view.pan(last_pos, view.map_to_scene(position))
+    view.set_last_mouse_pos(view.map_to_scene(position))
 
 
 def mouse_press_event(position: QPointF, view: Type[aw_tool.View]):
-    view.set_last_mouse_pos(position)
-    item_under_mouse = view.get_item_under_mouse(position)
+    view.set_last_mouse_pos(view.map_to_scene(position))
+    item_under_mouse = view.get_item_under_mouse(view.map_to_scene(position))
     if item_under_mouse is None:
         view.set_mouse_mode(1)
 
