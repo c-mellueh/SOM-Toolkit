@@ -4,7 +4,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QPointF, QRectF, Qt
-
+from PySide6.QtGui import QTransform
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.view import ui as ui_view
 import SOMcreator
@@ -14,6 +14,7 @@ from som_gui.aggregation_window.module.view.constants import AGGREGATIONSCENES, 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.view.prop import ViewProperties
     from som_gui.aggregation_window.module.node import ui as ui_node
+
 
 def loop_name(name, names, index: int):
     new_name = f"{name}_{str(index).zfill(2)}"
@@ -168,3 +169,37 @@ class View(som_gui.aggregation_window.core.tool.View):
         scene.removeItem(node.frame)
         scene.removeItem(node)
         node.deleteLater()
+
+    @classmethod
+    def get_last_mouse_pos(cls) -> QPointF | None:
+        return cls.get_properties().last_mouse_pos
+
+    @classmethod
+    def set_last_mouse_pos(cls, mouse_pos: QPointF | None):
+        cls.get_properties().last_mouse_pos = mouse_pos
+
+    @classmethod
+    def get_item_under_mouse(cls, position: QPointF):
+        scene = cls.get_active_scene()
+        return scene.itemAt(position, QTransform())
+
+    @classmethod
+    def set_mouse_mode(cls, mode: int):
+        """
+        mode: 0= None 1= pan, 2= drag
+        """
+        cls.get_properties().mouse_mode = mode
+
+    @classmethod
+    def get_mouse_mode(cls) -> int:
+        """
+        mode: 0= None 1= pan, 2= drag
+        """
+        return cls.get_properties().mouse_mode
+
+    @classmethod
+    def pan(cls, last_pos: QPointF, new_pos: QPointF):
+        dif = new_pos - last_pos
+        print(dif)
+        view = cls.get_view()
+        print(view.translate(dif.x(), dif.y()))

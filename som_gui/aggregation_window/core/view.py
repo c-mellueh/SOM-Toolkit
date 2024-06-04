@@ -1,10 +1,12 @@
 from __future__ import annotations
+
+import logging
 from typing import TYPE_CHECKING, Type
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window import tool as aw_tool
     from som_gui import tool
-
+    from PySide6.QtCore import QPointF
 
 def import_positions(view: Type[aw_tool.View], project: Type[tool.Project]):
     proj = project.get()
@@ -13,6 +15,7 @@ def import_positions(view: Type[aw_tool.View], project: Type[tool.Project]):
 
 
 def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], project: Type[tool.Project]):
+    logging.debug("Paint View Event")
     scene = view.get_active_scene()
     scene_id = view.get_scene_index(scene)
 
@@ -29,3 +32,25 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], project: Typ
     for existing_node in list(nodes):
         if existing_node.aggregation not in existing_aggregations:
             view.remove_node_from_scene(existing_node, scene)
+
+
+def mouse_move_event(position: QPointF, view: Type[aw_tool.View]):
+    last_pos = view.get_last_mouse_pos()
+    mouse_mode = view.get_mouse_mode()
+
+    if mouse_mode == 1:
+        view.pan(last_pos, position)
+
+    view.set_last_mouse_pos(position)
+
+
+def mouse_press_event(position: QPointF, view: Type[aw_tool.View]):
+    view.set_last_mouse_pos(position)
+    item_under_mouse = view.get_item_under_mouse(position)
+    if item_under_mouse is None:
+        view.set_mouse_mode(1)
+
+
+def mouse_release_event(view: Type[aw_tool.View]):
+    view.set_last_mouse_pos(None)
+    view.set_mouse_mode(0)

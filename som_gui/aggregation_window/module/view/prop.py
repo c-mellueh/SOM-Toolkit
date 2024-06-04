@@ -13,3 +13,5 @@ class ViewProperties:
     scene_list: list[AggregationScene] = list()
     node_list: list[set[NodeProxy]] = list()
     import_list: list[list[tuple[Aggregation, QPointF]]] = list()
+    last_mouse_pos: QPointF = None
+    mouse_mode: int = 0
