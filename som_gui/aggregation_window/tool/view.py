@@ -266,7 +266,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         cursor_dict = {
             ui_node.Header:     [Qt.CursorShape.ClosedHandCursor, Qt.CursorShape.OpenHandCursor],
             ui_node.ResizeRect: [Qt.CursorShape.SizeFDiagCursor, Qt.CursorShape.SizeFDiagCursor],
-            None:               [Qt.CursorShape.ClosedHandCursor, Qt.CursorShape.ArrowCursor]
+            type(None): [Qt.CursorShape.ClosedHandCursor, Qt.CursorShape.ArrowCursor]
         }
         val = cursor_dict.get(sub_item_type)
         if val is None:

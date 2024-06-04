@@ -75,12 +75,10 @@ def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw
             item_under_mouse = header
 
     cursor_style = view.get_cursor_style_by_subitem(item_under_mouse, 0)
-    print(item_under_mouse)
     mouse_mode = view.get_mouse_mode_by_subitem(item_under_mouse)
     view.set_cursor_style(cursor_style)
     view.set_mouse_mode(mouse_mode)
 
-    print(mouse_mode)
 
     if node.item_is_resize_rect(item_under_mouse):
         view.set_focus_node(item_under_mouse.node)
@@ -97,7 +95,6 @@ def mouse_release_event(position: QPointF, node: Type[aw_tool.Node], view: Type[
         if header.isUnderMouse():
             item_under_mouse = header
     cursor_style = view.get_cursor_style_by_subitem(item_under_mouse, 1)
-    print(cursor_style)
     view.set_cursor_style(cursor_style)
 
 
