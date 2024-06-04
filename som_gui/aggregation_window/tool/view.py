@@ -13,7 +13,7 @@ from som_gui.aggregation_window.module.view.constants import AGGREGATIONSCENES, 
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.view.prop import ViewProperties
-
+    from som_gui.aggregation_window.module.node import ui as ui_node
 
 def loop_name(name, names, index: int):
     new_name = f"{name}_{str(index).zfill(2)}"
@@ -121,8 +121,10 @@ class View(som_gui.aggregation_window.core.tool.View):
         scene = cls.get_active_scene()
 
     @classmethod
-    def add_node_to_scene(cls, node, scene: ui_view.AggregationScene):
+    def add_node_to_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene):
         scene.addItem(node)
+        scene.addItem(node.header)
+        scene.addItem(node.frame)
         scene_index = cls.get_scene_index(scene)
         cls.get_properties().node_list[scene_index].add(node)
 
@@ -149,3 +151,20 @@ class View(som_gui.aggregation_window.core.tool.View):
         marg = SCENE_MARGIN
         view.fitInView(bounding_rect.adjusted(-marg, -marg, marg, marg),
                        aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
+
+    @classmethod
+    def get_nodes_in_scene(cls, scene: ui_view.AggregationScene):
+        scene_index = cls.get_scene_index(scene)
+        return cls.get_properties().node_list[scene_index]
+
+    @classmethod
+    def remove_node_from_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene):
+        logging.debug(f"Delete Node {node.aggregation.name}")
+
+        scene_index = cls.get_scene_index(scene)
+        prop = cls.get_properties()
+        prop.node_list[scene_index].remove(node)
+        scene.removeItem(node.header)
+        scene.removeItem(node.frame)
+        scene.removeItem(node)
+        node.deleteLater()

@@ -24,6 +24,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         node.setZValue(z_level)
         node.frame.setZValue(z_level)
         node.header.setZValue(z_level)
+
     @classmethod
     def get_properties(cls) -> NodeProperties:
         return som_gui.NodeProperties
@@ -62,23 +63,23 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         node_widget.setMinimumSize(QSize(250, 150))
         node.widget().layout().insertWidget(0, cls.create_tree_widget(aggregation.object))
         node.aggregation = aggregation
+        cls.create_header(node)
+        cls.create_frame(node)
         return node
 
     @classmethod
-    def create_header(cls, node: node_ui.NodeProxy, scene: view_ui.AggregationScene):
+    def create_header(cls, node: node_ui.NodeProxy):
         header = node_ui.Header()
         line_width = header.pen().width()  # if ignore Linewidth: box of Node and Header won't match
         x = line_width / 2
         width = node.widget().width() - line_width
         height = node_constants.HEADER_HEIGHT
         header.setRect(QRectF(x, -height, width, height))
-        scene.addItem(header)
-        header.show()
         node.header = header
         header.node = node
 
     @classmethod
-    def create_frame(cls, node: node_ui.NodeProxy, scene: view_ui.AggregationScene):
+    def create_frame(cls, node: node_ui.NodeProxy):
         frame = node_ui.Frame()
         rect = node.rect()
         rect.setWidth(rect.width() - frame.pen().width() / 2)
@@ -86,10 +87,9 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         rect.setHeight(rect.height())
         rect.setX(frame.x() + frame.pen().width() / 2)
         frame.setRect(rect)
-        scene.addItem(frame)
-        frame.show()
         node.frame = frame
         frame.node = node
+
     @classmethod
     def get_linked_item(cls, pset_tree_item: QTreeWidgetItem) -> SOMcreator.PropertySet | SOMcreator.Attribute:
         return pset_tree_item.data(0, CLASS_REFERENCE)
