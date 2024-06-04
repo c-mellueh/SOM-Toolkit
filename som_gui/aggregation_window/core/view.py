@@ -18,7 +18,6 @@ def import_positions(view: Type[aw_tool.View], project: Type[tool.Project]):
 
 
 def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], project: Type[tool.Project]):
-    logging.debug("Paint View Event")
     scene = view.get_active_scene()
     scene_id = view.get_scene_index(scene)
 
