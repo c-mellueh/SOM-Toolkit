@@ -14,15 +14,15 @@ def view_paint_event():
 
 
 def mouse_move_event(position):
-    core.mouse_move_event(position, aw_tool.View)
+    core.mouse_move_event(position, aw_tool.View, aw_tool.Node)
 
 
 def mouse_press_event(position):
-    core.mouse_press_event(position, aw_tool.View)
+    core.mouse_press_event(position, aw_tool.View, aw_tool.Node)
 
 
-def mouse_release_event():
-    core.mouse_release_event(aw_tool.View)
+def mouse_release_event(pos):
+    core.mouse_release_event(pos, aw_tool.Node, aw_tool.View)
 
 
 def mouse_wheel_event(event):

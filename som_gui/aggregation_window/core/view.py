@@ -3,13 +3,12 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 from PySide6.QtCore import Qt
-
 if TYPE_CHECKING:
     from som_gui.aggregation_window import tool as aw_tool
     from som_gui import tool
     from PySide6.QtCore import QPointF
     from PySide6.QtGui import QWheelEvent
-
+    from som_gui.aggregation_window.module.node import ui as node_ui
 
 def import_positions(view: Type[aw_tool.View], project: Type[tool.Project]):
     proj = project.get()
@@ -53,26 +52,54 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
                 view.add_connection_to_scene(new_connection, scene)
 
 
-
-def mouse_move_event(position: QPointF, view: Type[aw_tool.View]):
+def mouse_move_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node]):
     last_pos = view.get_last_mouse_pos()
     mouse_mode = view.get_mouse_mode()
 
     if mouse_mode == 1:
         # mouse pos needs to be transformed to scene pos or scaling won't be right
         view.pan(last_pos, view.map_to_scene(position))
+
+    elif mouse_mode == 3:
+        node.resize_node(view.get_focus_node(), last_pos, view.map_to_scene(position))
+
     view.set_last_mouse_pos(view.map_to_scene(position))
 
 
-def mouse_press_event(position: QPointF, view: Type[aw_tool.View]):
+def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node]):
     view.set_last_mouse_pos(view.map_to_scene(position))
     item_under_mouse = view.get_item_under_mouse(view.map_to_scene(position))
-    if item_under_mouse is None:
-        view.set_mouse_mode(1)
+    if node.item_is_frame(item_under_mouse):
+        header: node_ui.Header = item_under_mouse.node.header
+        if header.isUnderMouse():
+            item_under_mouse = header
 
-def mouse_release_event(view: Type[aw_tool.View]):
+    cursor_style = view.get_cursor_style_by_subitem(item_under_mouse, 0)
+    print(item_under_mouse)
+    mouse_mode = view.get_mouse_mode_by_subitem(item_under_mouse)
+    view.set_cursor_style(cursor_style)
+    view.set_mouse_mode(mouse_mode)
+
+    print(mouse_mode)
+
+    if node.item_is_resize_rect(item_under_mouse):
+        view.set_focus_node(item_under_mouse.node)
+
+
+def mouse_release_event(position: QPointF, node: Type[aw_tool.Node], view: Type[aw_tool.View]):
     view.set_last_mouse_pos(None)
     view.set_mouse_mode(0)
+    view.set_focus_node(None)
+    view.set_last_mouse_pos(view.map_to_scene(position))
+    item_under_mouse = view.get_item_under_mouse(view.map_to_scene(position))
+    if node.item_is_frame(item_under_mouse):
+        header: node_ui.Header = item_under_mouse.node.header
+        if header.isUnderMouse():
+            item_under_mouse = header
+    cursor_style = view.get_cursor_style_by_subitem(item_under_mouse, 1)
+    print(cursor_style)
+    view.set_cursor_style(cursor_style)
+
 
 
 def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]):

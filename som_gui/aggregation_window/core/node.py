@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt
 if TYPE_CHECKING:
     from som_gui.aggregation_window.tool import View, Window, Node
     from som_gui import tool
-    from som_gui.aggregation_window.module.node.ui import Header, NodeProxy, PropertySetTree
+    from som_gui.aggregation_window.module.node.ui import Header, NodeProxy, PropertySetTree, ResizeRect
     from PySide6.QtGui import QPainter, QPainterPath
     from PySide6.QtCore import QPointF
     from PySide6.QtWidgets import QTreeWidget
@@ -50,11 +50,13 @@ def paint_header(painter: QPainter, header: Header, node: Type[Node]):
     painter.save()
     painter.restore()
     painter.setBrush(Qt.GlobalColor.white)
-    painter.drawRect(header.rect())
+    rect = node.get_header_geometry(header, header.node)
+    header.setRect(rect)
+    painter.drawRect(rect)
     active_node = node.get_node_from_header(header)
     pset_name, attribute_name = node.get_title_settings()
     title_text = node.get_title(active_node, pset_name, attribute_name)
-    painter.drawText(header.rect(), Qt.AlignmentFlag.AlignCenter, title_text)
+    painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, title_text)
 
 
 def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]):
@@ -93,3 +95,24 @@ def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]):
         for attribute, attribute_item in attribute_dict.items():
             if attribute not in property_set.attributes:
                 pset_item.removeChild(attribute_item)
+
+
+def paint_node(active_node: NodeProxy, node: Type[Node]):
+    frame = active_node.frame
+    frame.setRect(node.get_frame_geometry(frame, active_node))
+
+
+def hover_enter_resize_rect(resize_rect: ResizeRect, view: Type[View]):
+    view.set_cursor_style(Qt.CursorShape.SizeFDiagCursor)
+
+
+def hover_leave_resize_rect(resize_rect: ResizeRect, view: Type[View]):
+    view.reset_cursor_style()
+
+
+def hover_enter_header(header: Header, view: Type[View]):
+    view.set_cursor_style(Qt.CursorShape.OpenHandCursor)
+
+
+def hover_leave_header(header: Header, view: Type[View]):
+    view.reset_cursor_style()

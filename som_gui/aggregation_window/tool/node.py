@@ -24,6 +24,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         node.setZValue(z_level)
         node.frame.setZValue(z_level)
         node.header.setZValue(z_level)
+        node.resize_rect.setZValue(z_level)
 
     @classmethod
     def get_properties(cls) -> NodeProperties:
@@ -76,30 +77,55 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         node.widget().layout().insertWidget(0, cls.create_tree_widget(node))
         cls.create_header(node)
         cls.create_frame(node)
+        cls.create_resize_rect(node)
         return node
 
     @classmethod
-    def create_header(cls, node: node_ui.NodeProxy):
-        header = node_ui.Header()
+    def get_header_geometry(cls, header, node: node_ui.NodeProxy):
         line_width = header.pen().width()  # if ignore Linewidth: box of Node and Header won't match
         x = line_width / 2
         width = node.widget().width() - line_width
         height = node_constants.HEADER_HEIGHT
-        header.setRect(QRectF(x, -height, width, height))
+        return QRectF(x, -height, width, height)
+
+    @classmethod
+    def get_frame_geometry(cls, frame: node_ui.Frame, node: node_ui.NodeProxy):
+        line_width = frame.pen().width()
+        rect = node.rect()
+        rect.setWidth(rect.width() - line_width / 2)
+        rect.setHeight(rect.height())
+        rect.setY(rect.y() - node_constants.HEADER_HEIGHT)
+        rect.setX(rect.x() + frame.pen().width() / 2)
+        return rect
+    @classmethod
+    def create_header(cls, node: node_ui.NodeProxy):
+        header = node_ui.Header()
+
+        header.setRect(cls.get_header_geometry(header, node))
         node.header = header
         header.node = node
 
     @classmethod
     def create_frame(cls, node: node_ui.NodeProxy):
         frame = node_ui.Frame()
-        rect = node.rect()
-        rect.setWidth(rect.width() - frame.pen().width() / 2)
-        rect.setY(rect.y() - node_constants.HEADER_HEIGHT)
-        rect.setHeight(rect.height())
-        rect.setX(frame.x() + frame.pen().width() / 2)
+        rect = cls.get_frame_geometry(frame, node)
+
         frame.setRect(rect)
         node.frame = frame
         frame.node = node
+
+    @classmethod
+    def create_resize_rect(cls, node: node_ui.NodeProxy):
+        size = node_constants.RESIZE_RECT_SIZE
+        frame_rect = node.rect()
+
+        x = frame_rect.width() - size / 2
+        y = frame_rect.height() - size / 2
+        resize_rect = node_ui.ResizeRect()
+        resize_rect.setRect(QRectF(x, y, size, size))
+        node.resize_rect = resize_rect
+        resize_rect.node = node
+
 
     @classmethod
     def get_linked_item(cls, pset_tree_item: QTreeWidgetItem) -> SOMcreator.PropertySet | SOMcreator.Attribute:
@@ -118,6 +144,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         node.moveBy(dif.x(), dif.y())
         frame = cls.get_frame_from_node(node)
         frame.moveBy(dif.x(), dif.y())
+        node.resize_rect.moveBy(dif.x(), dif.y())
 
     @classmethod
     def get_title(cls, node: node_ui.NodeProxy, pset_name: str, attribute_name: str):
@@ -176,3 +203,29 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         if node2.top_connection and node2.top_connection.top_node == node1:
             return True
         return False
+
+    @classmethod
+    def item_is_resize_rect(cls, item):
+        return bool(isinstance(item, node_ui.ResizeRect))
+
+    @classmethod
+    def item_is_header(cls, item):
+        return bool(isinstance(item, node_ui.Header))
+
+    @classmethod
+    def item_is_frame(cls, item):
+        return bool(isinstance(item, node_ui.Frame))
+
+    @classmethod
+    def resize_node(cls, node: node_ui.NodeProxy, last_pos: QPointF, new_pos: QPointF):
+        dif = new_pos - last_pos
+        geom = node.geometry()
+        height = geom.height() + dif.y()
+        width = geom.width() + dif.x()
+        if height >= node.minimumHeight():
+            geom.setHeight(height)
+            node.resize_rect.moveBy(0., dif.y())
+        if width >= node.minimumWidth():
+            geom.setWidth(width)
+            node.resize_rect.moveBy(dif.x(), 0.)
+        node.setGeometry(geom)

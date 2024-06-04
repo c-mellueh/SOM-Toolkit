@@ -24,7 +24,7 @@ class AggregationView(QGraphicsView):
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
-        trigger.mouse_release_event()
+        trigger.mouse_release_event(event.pos())
 
     def wheelEvent(self, event: QWheelEvent):
         # super().wheelEvent(event)

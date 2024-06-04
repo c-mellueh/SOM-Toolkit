@@ -33,5 +33,25 @@ def header_clicked(header: ui.Header):
     core.node_clicked(header.node, aw_tool.Node)
 
 
-def paint_propertyset_tree(tree: QTreeWidget):
+def paint_propertyset_tree(tree: ui.PropertySetTree):
     core.paint_pset_tree(tree, aw_tool.Node)
+
+
+def paint_node(node: ui.NodeProxy):
+    core.paint_node(node, aw_tool.Node)
+
+
+def hover_enter_resize_rect(resize_rect: ui.ResizeRect):
+    core.hover_enter_resize_rect(resize_rect, aw_tool.View)
+
+
+def hover_leave_resize_rect(resize_rect: ui.ResizeRect):
+    core.hover_leave_resize_rect(resize_rect, aw_tool.View)
+
+
+def hover_enter_header(header: ui.Header):
+    core.hover_enter_header(header, aw_tool.View)
+
+
+def hover_leave_header(header: ui.Header):
+    core.hover_leave_header(header, aw_tool.View)

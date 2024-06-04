@@ -11,10 +11,10 @@ from som_gui.aggregation_window.module.view import ui as ui_view
 import SOMcreator
 from SOMcreator.constants import json_constants
 from som_gui.aggregation_window.module.view.constants import AGGREGATIONSCENES, SCENE_SIZE, SCENE_MARGIN
+from som_gui.aggregation_window.module.node import ui as ui_node
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.view.prop import ViewProperties
-    from som_gui.aggregation_window.module.node import ui as ui_node
     from som_gui.aggregation_window.module.connection import ui as ui_connection
 
 def loop_name(name, names, index: int):
@@ -119,10 +119,15 @@ class View(som_gui.aggregation_window.core.tool.View):
         cls.get_properties().aggregation_view.viewport().setCursor(cursor_style)
 
     @classmethod
+    def reset_cursor_style(cls):
+        cls.get_properties().aggregation_view.viewport().unsetCursor()
+
+    @classmethod
     def add_node_to_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene):
         scene.addItem(node)
         scene.addItem(node.header)
         scene.addItem(node.frame)
+        scene.addItem(node.resize_rect)
         scene_index = cls.get_scene_index(scene)
         cls.get_properties().node_list[scene_index].add(node)
 
@@ -164,6 +169,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         prop.node_list[scene_index].remove(node)
         scene.removeItem(node.header)
         scene.removeItem(node.frame)
+        scene.removeItem(node.resize_rect)
         scene.removeItem(node)
         node.deleteLater()
 
@@ -188,14 +194,14 @@ class View(som_gui.aggregation_window.core.tool.View):
     @classmethod
     def set_mouse_mode(cls, mode: int):
         """
-        mode: 0= None 1= pan, 2= drag
+        mode: 0= None 1= pan, 2= drag, 3 = resize
         """
         cls.get_properties().mouse_mode = mode
 
     @classmethod
     def get_mouse_mode(cls) -> int:
         """
-        mode: 0= None 1= pan, 2= drag
+        mode: 0= None 1= pan, 2= drag 3 = resize
         """
         return cls.get_properties().mouse_mode
 
@@ -241,3 +247,39 @@ class View(som_gui.aggregation_window.core.tool.View):
     def add_connection_to_scene(cls, connection: ui_connection.Connection, scene: ui_view.AggregationScene):
         scene.addItem(connection)
         cls.get_properties().connections_list[cls.get_scene_index(scene)].add(connection)
+
+    @classmethod
+    def set_focus_node(cls, node: ui_node.NodeProxy | None):
+        cls.get_properties().focus_node = node
+
+    @classmethod
+    def get_focus_node(cls) -> ui_node.NodeProxy:
+        return cls.get_properties().focus_node
+
+    @classmethod
+    def get_cursor_style_by_subitem(cls, sub_item, mode):
+        """
+        sub_item_type: type() of subitem
+        mode: 0 = click, 1 = release
+        """
+        sub_item_type = type(sub_item)
+        cursor_dict = {
+            ui_node.Header:     [Qt.CursorShape.ClosedHandCursor, Qt.CursorShape.OpenHandCursor],
+            ui_node.ResizeRect: [Qt.CursorShape.SizeFDiagCursor, Qt.CursorShape.SizeFDiagCursor],
+            None:               [Qt.CursorShape.ClosedHandCursor, Qt.CursorShape.ArrowCursor]
+        }
+        val = cursor_dict.get(sub_item_type)
+        if val is None:
+            val = [Qt.CursorShape.ArrowCursor, Qt.CursorShape.ArrowCursor]
+        return val[mode]
+
+    @classmethod
+    def get_mouse_mode_by_subitem(cls, sub_item):
+        sub_item_type = type(sub_item)
+        cursor_dict = {
+            ui_node.Header:     2,
+            ui_node.ResizeRect: 3,
+            None:               1
+        }
+        val = cursor_dict.get(sub_item_type) or 1
+        return val
