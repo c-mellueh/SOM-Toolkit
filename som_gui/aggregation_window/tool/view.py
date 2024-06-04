@@ -93,9 +93,8 @@ class View(som_gui.aggregation_window.core.tool.View):
             x_min = min(x_values)
             y_min = min(y_values)
             for aggregation_uuid, pos in node_dict["Nodes"].items():
-                x = SCENE_SIZE[0] / 2 - pos[0] + x_min
-                y = SCENE_SIZE[1] / 2 - pos[1] + y_min
-                print(x, y)
+                x = SCENE_SIZE[0] / 2 + pos[0] - x_min
+                y = SCENE_SIZE[1] / 2 + pos[1] - y_min
                 aggregation_tuple = (aggregation_ref[aggregation_uuid], QPointF(x, y))
                 cls.get_properties().import_list[scene_id].append(aggregation_tuple)
 
