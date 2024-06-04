@@ -14,18 +14,6 @@ from SOMcreator.classes import Aggregation
 from som_gui.core import property_set_window as property_set_window_core
 
 
-def add_node(view: Type[View], node: Type[Node]):
-    from som_gui.tool import Project as project
-    proj = project.get()
-    aggregations = list(proj.get_all_aggregations())
-    aggregation = aggregations[0]
-    scene = view.get_active_scene()
-    new_node = node.create_node(aggregation)
-    view.add_node_to_scene(new_node, scene)
-    node.create_header(new_node, scene)
-    node.create_frame(new_node, scene)
-
-
 def pset_tree_double_clicked(item, node: Type[Node], property_set_window: Type[tool.PropertySetWindow],
                              attribute: Type[tool.Attribute], attribute_table: Type[tool.AttributeTable]):
     linked_item = node.get_linked_item(item)

@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 
 
 def create_window(window: Type[Window], view: Type[View], node: Type[Node]):
-    from som_gui.aggregation_window.core.node import add_node
     aggregation_window = window.create_window()
     combo_box = window.create_combo_box()
     aggregation_view = view.create_view()
