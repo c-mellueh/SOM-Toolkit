@@ -34,6 +34,8 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
     existing_aggregations = list(project.get().get_all_aggregations())
     for existing_node in list(nodes):
         if existing_node.aggregation not in existing_aggregations:
+            view.remove_connection_from_scene(existing_node.top_connection, scene)
+            [view.remove_connection_from_scene(c, scene) for c in existing_node.bottom_connections]
             view.remove_node_from_scene(existing_node, scene)
 
     # create connections

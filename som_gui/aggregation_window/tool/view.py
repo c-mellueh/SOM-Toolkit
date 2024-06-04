@@ -15,7 +15,7 @@ from som_gui.aggregation_window.module.view.constants import AGGREGATIONSCENES, 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.view.prop import ViewProperties
     from som_gui.aggregation_window.module.node import ui as ui_node
-
+    from som_gui.aggregation_window.module.connection import ui as ui_connection
 
 def loop_name(name, names, index: int):
     new_name = f"{name}_{str(index).zfill(2)}"
@@ -168,6 +168,11 @@ class View(som_gui.aggregation_window.core.tool.View):
         node.deleteLater()
 
     @classmethod
+    def remove_connection_from_scene(cls, connection: ui_connection.Connection, scene: ui_view.AggregationScene):
+        scene.removeItem(connection)
+        cls.get_properties().connections_list[cls.get_scene_index(scene)].remove(connection)
+
+    @classmethod
     def get_last_mouse_pos(cls) -> QPointF | None:
         return cls.get_properties().last_mouse_pos
 
@@ -233,5 +238,6 @@ class View(som_gui.aggregation_window.core.tool.View):
         view.verticalScrollBar().setValue(view.verticalScrollBar().value() - y_angle)
 
     @classmethod
-    def add_connection_to_scene(cls, connection, scene: ui_view.AggregationScene):
+    def add_connection_to_scene(cls, connection: ui_connection.Connection, scene: ui_view.AggregationScene):
         scene.addItem(connection)
+        cls.get_properties().connections_list[cls.get_scene_index(scene)].add(connection)
