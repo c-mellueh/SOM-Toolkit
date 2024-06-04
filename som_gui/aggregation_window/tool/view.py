@@ -3,8 +3,9 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QPointF, QRectF, Qt
+from PySide6.QtCore import QPointF, QRectF, Qt, QPoint
 from PySide6.QtGui import QTransform
+from PySide6.QtWidgets import QApplication
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.view import ui as ui_view
 import SOMcreator
@@ -80,7 +81,8 @@ class View(som_gui.aggregation_window.core.tool.View):
         for scene_name, node_dict in import_scene_dict.items():
             if isinstance(node_dict[json_constants.NODES], list):
                 logging.warning(
-                    f"SOMJson was written in OLD version. Please open with SOM-Toolkit v2.11.3 and save it as new version.")
+                    f"SOMJson was written in OLD version. "
+                    f"Please open with SOM-Toolkit v2.11.3 and save it as new version.")
                 return
             if scene_name not in existing_scene_names:
                 scene, scene_name = cls.create_scene(scene_name)
@@ -114,12 +116,8 @@ class View(som_gui.aggregation_window.core.tool.View):
         cls.get_properties().active_scene = scene
 
     @classmethod
-    def set_cursor(cls, cursor_style):
+    def set_cursor_style(cls, cursor_style):
         cls.get_properties().aggregation_view.viewport().setCursor(cursor_style)
-
-    @classmethod
-    def get_hovered_node(cls):
-        scene = cls.get_active_scene()
 
     @classmethod
     def add_node_to_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene):
@@ -208,3 +206,29 @@ class View(som_gui.aggregation_window.core.tool.View):
     @classmethod
     def map_to_scene(cls, pos: QPointF):
         return cls.get_properties().aggregation_view.mapToScene(pos)
+
+    @classmethod
+    def get_keyboard_modifier(cls):
+        return QApplication.keyboardModifiers()
+
+    @classmethod
+    def scale_view(cls, agle: float, target_viewport_pos: QPoint):
+        # copied from https://stackoverflow.com/questions/19113532/
+        # qgraphicsview-zooming-in-and-out-under-mouse-position-using-mouse-wheel
+
+        view = cls.get_view()
+        factor = 1.0015 ** agle
+        target_scene_pos = cls.map_to_scene(target_viewport_pos)
+
+        view.scale(factor, factor)
+        view.centerOn(target_scene_pos)
+        delta_viewport_pos = target_viewport_pos.toPointF() - QPointF(view.viewport().width() / 2.0,
+                                                                      view.viewport().height() / 2.0)
+        viewport_center = view.mapFromScene(target_scene_pos).toPointF() - delta_viewport_pos
+        view.centerOn(view.mapToScene(viewport_center.toPoint()))
+
+    @classmethod
+    def scroll_view(cls, x_angle, y_angle):
+        view = cls.get_view()
+        view.horizontalScrollBar().setValue(view.horizontalScrollBar().value() - x_angle)
+        view.verticalScrollBar().setValue(view.verticalScrollBar().value() - y_angle)

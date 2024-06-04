@@ -23,3 +23,7 @@ def mouse_press_event(position):
 
 def mouse_release_event():
     core.mouse_release_event(aw_tool.View)
+
+
+def mouse_wheel_event(event):
+    core.mouse_wheel_event(event, aw_tool.View)

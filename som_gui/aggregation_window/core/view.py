@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING, Type
+from PySide6.QtCore import Qt
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window import tool as aw_tool
     from som_gui import tool
     from PySide6.QtCore import QPointF
+    from PySide6.QtGui import QWheelEvent
 
 
 def import_positions(view: Type[aw_tool.View], project: Type[tool.Project]):
@@ -55,3 +57,22 @@ def mouse_press_event(position: QPointF, view: Type[aw_tool.View]):
 def mouse_release_event(view: Type[aw_tool.View]):
     view.set_last_mouse_pos(None)
     view.set_mouse_mode(0)
+
+
+def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]):
+    y_angle = wheel_event.angleDelta().y()
+    x_angle = wheel_event.angleDelta().x()
+
+    modifier = view.get_keyboard_modifier()
+    if modifier == Qt.ControlModifier:
+        angle = [x_angle, y_angle]
+        if 0 in angle:
+            angle.remove(0)
+
+        view.scale_view(angle[0], wheel_event.position().toPoint())
+        return
+
+    if modifier == Qt.ShiftModifier:
+        x_angle, y_angle = y_angle, x_angle
+
+    view.scroll_view(x_angle, y_angle)
