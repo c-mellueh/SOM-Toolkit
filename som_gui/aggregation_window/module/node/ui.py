@@ -31,7 +31,11 @@ class PropertySetTree(QTreeWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.itemDoubleClicked.connect(trigger.pset_tree_double_clicked)
+        self.node: NodeProxy | None = None
 
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        trigger.paint_propertyset_tree(self)
 
 class Header(QGraphicsRectItem):
     def __init__(self):

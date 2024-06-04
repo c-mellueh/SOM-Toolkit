@@ -39,20 +39,31 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         return cls.get_properties().z_level
 
     @classmethod
-    def create_tree_widget(cls, obj: Object) -> node_ui.PropertySetTree:
+    def add_property_set_to_tree(cls, property_set: SOMcreator.PropertySet, tree_widget: node_ui.PropertySetTree):
+        item = QTreeWidgetItem()
+        item.setText(0, property_set.name)
+        item.setData(0, CLASS_REFERENCE, property_set)
+        tree_widget.addTopLevelItem(item)
+        return item
+
+    @classmethod
+    def get_pset_subelement_dict(cls, item: QTreeWidgetItem):
+        return {cls.get_linked_item(item.child(i)): item.child(i) for i in range(item.childCount())}
+
+    @classmethod
+    def add_attribute_to_property_set_tree(cls, attribute: SOMcreator.Attribute, property_set_item: QTreeWidgetItem):
+        attribute_item = QTreeWidgetItem()
+        attribute_item.setText(0, attribute.name)
+        attribute_item.setData(0, CLASS_REFERENCE, attribute)
+        property_set_item.addChild(attribute_item)
+        return attribute_item
+
+    @classmethod
+    def create_tree_widget(cls, node: node_ui.NodeProxy) -> node_ui.PropertySetTree:
+        obj = node.aggregation.object
         widget = node_ui.PropertySetTree()
         widget.setHeaderLabel("Name")
-        for property_set in obj.property_sets:
-            item = QTreeWidgetItem()
-            item.setText(0, property_set.name)
-            item.setData(0, CLASS_REFERENCE, property_set)
-
-            for attribute in property_set.attributes:
-                attribute_item = QTreeWidgetItem()
-                attribute_item.setText(0, attribute.name)
-                attribute_item.setData(0, CLASS_REFERENCE, attribute)
-                item.addChild(attribute_item)
-            widget.addTopLevelItem(item)
+        widget.node = node
         return widget
 
     @classmethod
@@ -61,8 +72,8 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         node_widget = node_ui.NodeWidget()
         node.setWidget(node_widget)
         node_widget.setMinimumSize(QSize(250, 150))
-        node.widget().layout().insertWidget(0, cls.create_tree_widget(aggregation.object))
         node.aggregation = aggregation
+        node.widget().layout().insertWidget(0, cls.create_tree_widget(node))
         cls.create_header(node)
         cls.create_frame(node)
         return node
@@ -153,3 +164,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         dif = pos - node.header.scenePos()
         node.header.moveBy(dif.x(), dif.y())
         cls.move_node(node, dif)
+
+    @classmethod
+    def get_node_from_tree_widget(cls, tree_widget: node_ui.PropertySetTree) -> node_ui.NodeProxy:
+        return tree_widget.node
