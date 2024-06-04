@@ -90,8 +90,7 @@ class View(som_gui.aggregation_window.core.tool.View):
             scene_id = cls.get_scene_index(scene_name)
             position_values = node_dict["Nodes"].values()
             x_values, y_values = zip(*position_values)
-            x_min = min(x_values)
-            y_min = min(y_values)
+            x_min, y_min = min(x_values), min(y_values)
             for aggregation_uuid, pos in node_dict["Nodes"].items():
                 x = SCENE_SIZE[0] / 2 + pos[0] - x_min
                 y = SCENE_SIZE[1] / 2 + pos[1] - y_min
