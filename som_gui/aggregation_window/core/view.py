@@ -128,6 +128,8 @@ def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw
     menu_list.append(["Node hinzufügen", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
     menu_list.append(["Info anpassen", lambda: change_header_text(node, search)])
     menu_list.append(["Info zurücksetzen", lambda: node.reset_title_settings()])
+    menu_list.append(["Drucken/Ansicht Drucken", lambda: view.print_scene(scene)])
+    # menu_list.append(["Drucken/Alles Drucken",lambda: view.print_all_scenes()])
 
     node_under_mouse = view.get_node_under_mouse(view.map_to_scene(pos))
     if node_under_mouse:

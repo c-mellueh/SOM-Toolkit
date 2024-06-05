@@ -1,11 +1,11 @@
 from __future__ import annotations
 
+import os
 import logging
 from typing import TYPE_CHECKING, Callable
-
 from PySide6.QtCore import QPointF, QRectF, Qt, QPoint
-from PySide6.QtGui import QTransform, QAction
-from PySide6.QtWidgets import QApplication, QMenu
+from PySide6.QtGui import QTransform, QAction, QImage, QPainter
+from PySide6.QtWidgets import QApplication, QMenu, QFileDialog
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.view import ui as ui_view
 import SOMcreator
@@ -127,8 +127,10 @@ class View(som_gui.aggregation_window.core.tool.View):
 
     @classmethod
     def activate_scene(cls, scene: ui_view.AggregationScene):
-        view = cls.get_view()
+        if scene == cls.get_active_scene():
+            return
 
+        view = cls.get_view()
         old_scene = cls.get_active_scene()
         prop = cls.get_properties()
 
@@ -179,6 +181,8 @@ class View(som_gui.aggregation_window.core.tool.View):
     def autofit_view(cls):
         def get_bounding_rect():
             items = scene.items()
+            if not items:
+                return QRectF()
             rects = [item.sceneBoundingRect() for item in items]
             top_left, bottom_right = zip(*[(br.topLeft(), br.bottomRight()) for br in rects if br is not None])
             tl_x, tl_y = zip(*[[tl.x(), tl.y()] for tl in top_left])
@@ -374,3 +378,30 @@ class View(som_gui.aggregation_window.core.tool.View):
         if aw_tool.Node.item_is_resize_rect(item_under_mouse):
             node = item_under_mouse.node
         return node
+
+    @classmethod
+    def print_scene(cls, scene: ui_view.AggregationScene, path: str | None = None):
+        view = cls.get_view()
+        if path is None:
+            file_text = "png Files (*.png);;"
+            path = QFileDialog.getSaveFileName(view, "Aggregationsansicht speichern", "", file_text)[0]
+        cls.activate_scene(scene)
+        rect = view.viewport().rect()
+        image = QImage(rect.size() * 8, QImage.Format.Format_RGB32)
+        image.fill(Qt.white)
+        painter = QPainter(image)
+        painter.setRenderHint(QPainter.Antialiasing)
+        view.render(painter)
+        image.save(path)
+        painter.end()
+
+    @classmethod
+    def print_all_scenes(cls):
+        view = cls.get_view()
+        folder_path = QFileDialog.getExistingDirectory(view, "Safe Aggregation", "")
+        for scene_index, scene in enumerate(cls.get_properties().scene_list):
+            scene_name = cls.get_scene_names()[scene_index]
+            cls.activate_scene(scene)
+            cls.autofit_view()
+            path = os.path.join(folder_path, f"{scene_name}.png")
+            cls.print_scene(scene, path)
