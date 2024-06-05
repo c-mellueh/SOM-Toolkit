@@ -3,12 +3,13 @@ from typing import TYPE_CHECKING, Type
 
 import SOMcreator
 from PySide6.QtCore import Qt
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QRectF
 from PySide6.QtGui import QPen
+
 if TYPE_CHECKING:
     from som_gui.aggregation_window.tool import View, Window, Node
     from som_gui import tool
-    from som_gui.aggregation_window.module.node.ui import Header, NodeProxy, PropertySetTree, ResizeRect
+    from som_gui.aggregation_window.module.node.ui import Header, NodeProxy, PropertySetTree, ResizeRect, Circle
     from PySide6.QtGui import QPainter, QPainterPath
     from PySide6.QtCore import QPointF
     from PySide6.QtWidgets import QTreeWidget
@@ -110,6 +111,14 @@ def paint_node(active_node: NodeProxy, node: Type[Node]):
         frame.setPen(QPen(Qt.GlobalColor.blue))
     else:
         frame.setPen(QPen(Qt.GlobalColor.black))
+
+    node.update_circle_rect(active_node.circle)
+
+
+def paint_circle(circle: Circle, node: Type[Node]):
+    node.update_circle_rect(circle)
+
+
 def hover_enter_resize_rect(resize_rect: ResizeRect, view: Type[View]):
     view.set_cursor_style(Qt.CursorShape.SizeFDiagCursor)
 

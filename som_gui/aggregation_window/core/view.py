@@ -95,7 +95,7 @@ def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw
 
     if node.item_is_resize_rect(item_under_mouse):
         view.set_resize_node(item_under_mouse.node)
-
+        view.set_drag_mode(view.get_view().DragMode.NoDrag)
 
 def mouse_release_event(position: QPointF, node: Type[aw_tool.Node], view: Type[aw_tool.View]):
     view.set_last_mouse_pos(None)

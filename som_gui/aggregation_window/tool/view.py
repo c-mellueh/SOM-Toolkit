@@ -5,7 +5,7 @@ import logging
 from typing import TYPE_CHECKING, Callable
 from PySide6.QtCore import QPointF, QRectF, Qt, QPoint
 from PySide6.QtGui import QTransform, QAction, QImage, QPainter
-from PySide6.QtWidgets import QApplication, QMenu, QFileDialog
+from PySide6.QtWidgets import QApplication, QMenu, QFileDialog, QGraphicsTextItem
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.view import ui as ui_view
 import SOMcreator
@@ -170,6 +170,8 @@ class View(som_gui.aggregation_window.core.tool.View):
         scene.addItem(node.header)
         scene.addItem(node.frame)
         scene.addItem(node.resize_rect)
+        scene.addItem(node.circle)
+        scene.addItem(node.circle.text)
         scene_index = cls.get_scene_index(scene)
         cls.get_properties().node_list[scene_index].add(node)
 
@@ -181,6 +183,7 @@ class View(som_gui.aggregation_window.core.tool.View):
     @classmethod
     def autofit_view(cls):
         def get_bounding_rect():
+            items = {item for item in scene.items() if isinstance(item, ui_node.Frame)}
             items = scene.items()
             if not items:
                 return QRectF()
@@ -218,6 +221,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         scene.removeItem(node.header)
         scene.removeItem(node.frame)
         scene.removeItem(node.resize_rect)
+        scene.removeItem(node.circle)
         scene.removeItem(node)
         node.deleteLater()
 

@@ -41,6 +41,9 @@ def paint_node(node: ui.NodeProxy):
     core.paint_node(node, aw_tool.Node)
 
 
+def paint_circle(circle: ui.Circle):
+    core.paint_circle(circle, aw_tool.Node)
+
 def hover_enter_resize_rect(resize_rect: ui.ResizeRect):
     core.hover_enter_resize_rect(resize_rect, aw_tool.View)
 

@@ -7,6 +7,7 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 import SOMcreator
 from PySide6.QtWidgets import QTreeWidgetItem, QGraphicsRectItem
 from PySide6.QtCore import QRectF
+from PySide6.QtGui import QCursor, QTransform
 from SOMcreator.classes import Aggregation, Object
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.node import ui as node_ui
@@ -25,6 +26,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         node.frame.setZValue(z_level)
         node.header.setZValue(z_level)
         node.resize_rect.setZValue(z_level)
+        node.circle.setZValue(z_level)
 
     @classmethod
     def get_properties(cls) -> NodeProperties:
@@ -68,6 +70,12 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         return widget
 
     @classmethod
+    def create_circle(cls, node: node_ui.NodeProxy) -> node_ui.Circle:
+        circle = node_ui.Circle()
+        circle.node = node
+        node.circle = circle
+
+    @classmethod
     def create_node(cls, aggregation: Aggregation):
         node = node_ui.NodeProxy()
         node_widget = node_ui.NodeWidget()
@@ -78,6 +86,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         cls.create_header(node)
         cls.create_frame(node)
         cls.create_resize_rect(node)
+        cls.create_circle(node)
         return node
 
     @classmethod
@@ -145,6 +154,21 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         frame = cls.get_frame_from_node(node)
         frame.moveBy(dif.x(), dif.y())
         node.resize_rect.moveBy(dif.x(), dif.y())
+        cls.update_circle_rect(node.circle)
+
+    @classmethod
+    def update_circle_rect(cls, circle: node_ui.Circle):
+        x = circle.node.sceneBoundingRect().center().x() - circle.DIAMETER / 2
+        y = circle.node.sceneBoundingRect().bottom() - circle.DIAMETER / 2
+        circle.setRect(QRectF(x, y, circle.DIAMETER, circle.DIAMETER))
+        view = aw_tool.View.get_view()
+        scene_pos = view.mapToScene(view.mapFromGlobal(QCursor.pos()))
+        frame = circle.node.frame
+        margin = 1.
+        bounding_rect = frame.sceneBoundingRect().adjusted(-margin, -margin, margin, margin)
+        circle.show() if bounding_rect.contains(scene_pos) else circle.hide()
+        circle.text.setX(x + 4.5)  # TODO: Find a better way to display text
+        circle.text.setY(y)
 
     @classmethod
     def get_title(cls, node: node_ui.NodeProxy, pset_name: str, attribute_name: str):
