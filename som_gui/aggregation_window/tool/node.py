@@ -97,6 +97,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         rect.setY(rect.y() - node_constants.HEADER_HEIGHT)
         rect.setX(rect.x() + frame.pen().width() / 2)
         return rect
+
     @classmethod
     def create_header(cls, node: node_ui.NodeProxy):
         header = node_ui.Header()
@@ -125,7 +126,6 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         resize_rect.setRect(QRectF(x, y, size, size))
         node.resize_rect = resize_rect
         resize_rect.node = node
-
 
     @classmethod
     def get_linked_item(cls, pset_tree_item: QTreeWidgetItem) -> SOMcreator.PropertySet | SOMcreator.Attribute:
@@ -229,3 +229,12 @@ class Node(som_gui.aggregation_window.core.tool.Node):
             geom.setWidth(width)
             node.resize_rect.moveBy(dif.x(), 0.)
         node.setGeometry(geom)
+
+    @classmethod
+    def set_connect_type(cls, node: node_ui.NodeProxy, type: int):
+        node.top_connection.connection_type = type
+        node.top_connection.update()
+
+    @classmethod
+    def is_root(cls, node: node_ui.NodeProxy):
+        return not bool(node.top_connection)

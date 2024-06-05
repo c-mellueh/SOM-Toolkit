@@ -1,18 +1,18 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from PySide6.QtCore import QPointF, QRectF, Qt, QPoint
-from PySide6.QtGui import QTransform
-from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import QTransform, QAction
+from PySide6.QtWidgets import QApplication, QMenu
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.view import ui as ui_view
 import SOMcreator
 from SOMcreator.constants import json_constants
 from som_gui.aggregation_window.module.view.constants import AGGREGATIONSCENES, SCENE_SIZE, SCENE_MARGIN
 from som_gui.aggregation_window.module.node import ui as ui_node
-
+from som_gui.aggregation_window import tool as aw_tool
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.view.prop import ViewProperties
     from som_gui.aggregation_window.module.connection import ui as ui_connection
@@ -204,7 +204,8 @@ class View(som_gui.aggregation_window.core.tool.View):
     @classmethod
     def remove_node_from_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene):
         logging.debug(f"Delete Node {node.aggregation.name}")
-
+        cls.remove_connection_from_scene(node.top_connection, scene)
+        [cls.remove_connection_from_scene(c, scene) for c in node.bottom_connections]
         scene_index = cls.get_scene_index(scene)
         prop = cls.get_properties()
         prop.node_list[scene_index].remove(node)
@@ -329,3 +330,47 @@ class View(som_gui.aggregation_window.core.tool.View):
     def scene_was_alleady_focused(cls, scene: ui_view.AggregationScene):
         scene_id = cls.get_scene_index(scene)
         return cls.get_properties().focus_list[scene_id]
+
+    @classmethod
+    def add_aggregation_to_import_list(cls, scene, aggregation, pos):
+        scene_id = cls.get_scene_index(scene)
+        cls.get_properties().import_list[scene_id].append((aggregation, pos))
+
+    @classmethod
+    def create_action(cls, menu_dict: dict[str, QAction | QMenu], name: str, action_func: Callable | None,
+                      is_sub_menu: bool):
+        parent_structure = "/".join(name.split("/")[:-1])
+        if parent_structure not in menu_dict:
+            parent: QMenu = cls.create_action(menu_dict, parent_structure, None, True)
+        else:
+            parent: QMenu = menu_dict[parent_structure]
+
+        if is_sub_menu:
+            menu = parent.addMenu(name.split("/")[-1])
+            menu_dict[name] = menu
+            return menu
+
+        action = parent.addAction(name.split("/")[-1])
+        if action_func is not None:
+            action.triggered.connect(action_func)
+        menu_dict[name] = action
+        return action
+
+    @classmethod
+    def create_context_menu(cls, menu_list):
+        menu_dict = dict()
+        menu = QMenu()
+        menu_dict[""] = menu
+        for text, function in sorted(menu_list, key=lambda x: x[0]):
+            cls.create_action(menu_dict, text, function, False)
+        return menu
+
+    @classmethod
+    def get_node_under_mouse(cls, pos: QPointF) -> ui_node.NodeProxy | None:
+        item_under_mouse = cls.get_item_under_mouse(pos)
+        node = None
+        if aw_tool.Node.item_is_frame(item_under_mouse):
+            node = item_under_mouse.node
+        if aw_tool.Node.item_is_resize_rect(item_under_mouse):
+            node = item_under_mouse.node
+        return node

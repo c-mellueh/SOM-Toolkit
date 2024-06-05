@@ -16,8 +16,8 @@ class ViewProperties:
     import_list: list[list[tuple[Aggregation, QPointF]]] = list()
     connections_list: list[set[Connection]] = list()
     scene_settings_list: list[
-        tuple[QTransform, float, float]] = list()  # (Transform, Horizontal Scroll, Vertical Scroll)
+        tuple[QTransform, float, float] | None] = list()  # (Transform, Horizontal Scroll, Vertical Scroll)
     focus_list = list()  # list for scenes which autofocussed at least once
     last_mouse_pos: QPointF = None
     mouse_mode: int = 0
-    focus_node: NodeProxy = None
+    focus_node: NodeProxy | None = None
