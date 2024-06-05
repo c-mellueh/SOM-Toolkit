@@ -238,3 +238,53 @@ class Node(som_gui.aggregation_window.core.tool.Node):
     @classmethod
     def is_root(cls, node: node_ui.NodeProxy):
         return not bool(node.top_connection)
+
+    @classmethod
+    def center_nodes(cls, nodes: set[node_ui.NodeProxy], orientation: int):
+        func_name = "x" if orientation == 0 else "y"
+        pos_list = [getattr(node.geometry(), func_name)() for node in nodes]
+        center = min(pos_list) + (max(pos_list) - min(pos_list)) / 2
+        for node in nodes:
+            node_pos = getattr(node.geometry(), func_name)()
+            dif = QPointF(center - node_pos, 0.) if orientation == 0 else QPointF(0., center - node_pos)
+            cls.move_node(node, dif)
+            node.header.moveBy(dif.x(), dif.y())
+
+    @classmethod
+    def distribute_by_layer(cls, nodes: set[node_ui.NodeProxy], orientation: int) -> None:
+        node_dict = {cls.get_node_level(node): set() for node in nodes}
+        [node_dict[cls.get_node_level(node)].add(node) for node in nodes]
+        for level, node_set in node_dict.items():
+            cls.distribute_nodes(node_set, orientation)
+
+    @classmethod
+    def distribute_nodes(cls, nodes: set[node_ui.NodeProxy], orientation: int) -> None:
+        if len(nodes) < 2:
+            return
+        func_name = "x" if orientation == 0 else "y"
+
+        pos_list = [getattr(node.geometry().center(), func_name)() for node in nodes]
+        border_1, border_2 = min(pos_list), max(pos_list)
+        full_length = border_2 - border_1
+        distance_between_nodes = full_length / (len(nodes) - 1)
+
+        for index, node in enumerate(sorted(nodes, key=lambda node: getattr(node.geometry().center(), func_name)())):
+            new_pos = border_1 + index * distance_between_nodes
+            old_pos = getattr(node.geometry().center(), func_name)()
+            dif = QPointF(new_pos - old_pos, 0.) if orientation == 0 else QPointF(0., new_pos - old_pos)
+            cls.move_node(node, dif)
+            node.header.moveBy(dif.x(), dif.y())
+
+    @classmethod
+    def get_node_level(cls, node: node_ui.NodeProxy) -> int:
+        parent_node = cls.get_parent_node(node)
+        if parent_node is not None:
+            return cls.get_node_level(parent_node) + 1
+        return 0
+
+    @classmethod
+    def get_parent_node(cls, node: node_ui.NodeProxy) -> node_ui.NodeProxy | None:
+        tc = node.top_connection
+        if not tc:
+            return None
+        return tc.top_node

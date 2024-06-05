@@ -22,7 +22,7 @@ class NodeProxy(QGraphicsProxyWidget):
         self.top_connection: Connection | None = None
         self.bottom_connections: set[Connection] = set()
         self.resize_rect: ResizeRect | None = None
-
+        self.setFlag(self.GraphicsItemFlag.ItemIsSelectable, True)
     def widget(self) -> QWidget | NodeWidget:
         return super().widget()
 

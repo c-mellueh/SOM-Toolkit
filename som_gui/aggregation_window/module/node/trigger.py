@@ -22,7 +22,7 @@ def pset_tree_double_clicked(item: QTreeWidgetItem, _: int):
 
 
 def drag_move(header, dif):
-    core.header_drag_move(header, dif, aw_tool.Node)
+    core.header_drag_move(header, dif, aw_tool.View, aw_tool.Node)
 
 
 def paint_header(header, painter: QPainter):

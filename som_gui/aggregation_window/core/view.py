@@ -60,38 +60,47 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
 def mouse_move_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node]):
     last_pos = view.get_last_mouse_pos()
     mouse_mode = view.get_mouse_mode()
-
-    if mouse_mode == 1:
-        # mouse pos needs to be transformed to scene pos or scaling won't be right
-        view.pan(last_pos, view.map_to_scene(position))
-
-    elif mouse_mode == 3:
-        node.resize_node(view.get_focus_node(), last_pos, view.map_to_scene(position))
+    if mouse_mode == 3:
+        node.resize_node(view.get_resize_node(), last_pos, view.map_to_scene(position))
 
     view.set_last_mouse_pos(view.map_to_scene(position))
 
 
 def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node]):
+    modifier = view.get_keyboard_modifier()
     view.set_last_mouse_pos(view.map_to_scene(position))
+    scene = view.get_active_scene()
     item_under_mouse = view.get_item_under_mouse(view.map_to_scene(position))
-    if node.item_is_frame(item_under_mouse):
-        header: node_ui.Header = item_under_mouse.node.header
+
+    if node.item_is_frame(item_under_mouse):  # Mouse is on Node
+        active_node: node_ui.NodeProxy = item_under_mouse.node
+        if modifier != Qt.KeyboardModifier.ControlModifier and active_node not in scene.selectedItems():
+            scene.clearSelection()
+        active_node.setSelected(True)
+        header: node_ui.Header = active_node.header
         if header.isUnderMouse():
             item_under_mouse = header
 
     cursor_style = view.get_cursor_style_by_subitem(item_under_mouse, 0)
     mouse_mode = view.get_mouse_mode_by_subitem(item_under_mouse)
+
+    if mouse_mode == 1:  # handle Rubber band
+        view.set_drag_mode(view.get_view().DragMode.ScrollHandDrag)
+        if modifier == Qt.KeyboardModifier.ShiftModifier:
+            mouse_mode = 4
+            view.set_drag_mode(view.get_view().DragMode.RubberBandDrag)
+
     view.set_cursor_style(cursor_style)
     view.set_mouse_mode(mouse_mode)
 
     if node.item_is_resize_rect(item_under_mouse):
-        view.set_focus_node(item_under_mouse.node)
+        view.set_resize_node(item_under_mouse.node)
 
 
 def mouse_release_event(position: QPointF, node: Type[aw_tool.Node], view: Type[aw_tool.View]):
     view.set_last_mouse_pos(None)
     view.set_mouse_mode(0)
-    view.set_focus_node(None)
+    view.set_resize_node(None)
     view.set_last_mouse_pos(view.map_to_scene(position))
     item_under_mouse = view.get_item_under_mouse(view.map_to_scene(position))
     if node.item_is_frame(item_under_mouse):
@@ -101,6 +110,10 @@ def mouse_release_event(position: QPointF, node: Type[aw_tool.Node], view: Type[
     cursor_style = view.get_cursor_style_by_subitem(item_under_mouse, 1)
     view.set_cursor_style(cursor_style)
 
+
+def rubber_band_changed(range_of_rect, view: Type[aw_tool.View]):
+    from_scene_point, to_scene_point = range_of_rect
+    scene = view.get_active_scene()
 
 def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]):
     y_angle = wheel_event.angleDelta().y()
@@ -125,15 +138,23 @@ def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw
     menu_list = list()
     scene = view.get_active_scene()
     menu_list.append(["Layout/Zoom zurücksetzen", view.autofit_view])
-    menu_list.append(["Node hinzufügen", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
+    selected_nodes = scene.selectedItems()
+    if len(selected_nodes) > 1:
+        menu_list.append(["Layout/Horizontal zentrieren", lambda: node.center_nodes(selected_nodes, 0)])
+        menu_list.append(["Layout/Vertikal zentrieren", lambda: node.center_nodes(selected_nodes, 1)])
+        menu_list.append(["Layout/Horizontal verteilen", lambda: node.distribute_by_layer(selected_nodes, 0)])
+        menu_list.append(["Layout/Vertikal verteilen", lambda: node.distribute_nodes(selected_nodes, 1)])
+
     menu_list.append(["Info anpassen", lambda: change_header_text(node, search)])
     menu_list.append(["Info zurücksetzen", lambda: node.reset_title_settings()])
     menu_list.append(["Drucken/Ansicht Drucken", lambda: view.print_scene(scene)])
     # menu_list.append(["Drucken/Alles Drucken",lambda: view.print_all_scenes()])
 
+    menu_list.append(["Node hinzufügen", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
     node_under_mouse = view.get_node_under_mouse(view.map_to_scene(pos))
     if node_under_mouse:
-        menu_list.append(["Node löschen", lambda: view.remove_node_from_scene(node_under_mouse, scene)])
+        txt = "Node Löschen" if len(selected_nodes) == 1 else "Nodes Löschen"
+        menu_list.append([txt, lambda: [view.remove_node_from_scene(n, scene) for n in selected_nodes]])
         if not node.is_root(node_under_mouse):
             aggreg_func = lambda: node.set_connect_type(node_under_mouse, value_constants.AGGREGATION)
             menu_list.append(["Verbindungsart/Aggregation", aggreg_func])

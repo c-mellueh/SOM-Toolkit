@@ -31,3 +31,11 @@ def mouse_wheel_event(event):
 
 def context_menu_requested(pos):
     core.context_menu_requested(pos, aw_tool.View, aw_tool.Node, tool.Search)
+
+
+def rubber_band_changed(viewportRect, fromScenePoint, toScenePoint):
+    core.rubber_band_changed([fromScenePoint, toScenePoint], aw_tool.View)
+
+
+def selection_changed():
+    print("Selection changed")

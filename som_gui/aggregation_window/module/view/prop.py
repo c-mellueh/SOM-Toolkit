@@ -20,4 +20,4 @@ class ViewProperties:
     focus_list = list()  # list for scenes which autofocussed at least once
     last_mouse_pos: QPointF = None
     mouse_mode: int = 0
-    focus_node: NodeProxy | None = None
+    resize_node: NodeProxy | None = None

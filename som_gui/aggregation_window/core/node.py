@@ -3,7 +3,8 @@ from typing import TYPE_CHECKING, Type
 
 import SOMcreator
 from PySide6.QtCore import Qt
-
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPen
 if TYPE_CHECKING:
     from som_gui.aggregation_window.tool import View, Window, Node
     from som_gui import tool
@@ -41,9 +42,14 @@ def node_clicked(selected_node: NodeProxy, node: Type[Node]):
     node.set_z_level_of_node(selected_node, z_level)
 
 
-def header_drag_move(header: Header, dif: QPointF, node: Type[Node]):
+def header_drag_move(header: Header, dif: QPointF, view: Type[View], node: Type[Node]):
+    active_scene = view.get_active_scene()
+    selected_nodes = active_scene.selectedItems()
     active_node = node.get_node_from_header(header)
-    node.move_node(active_node, dif)
+    for selected_node in selected_nodes:
+        if active_node != selected_node:
+            selected_node.header.moveBy(dif.x(), dif.y())
+        node.move_node(selected_node, dif)
 
 
 def paint_header(painter: QPainter, header: Header, node: Type[Node]):
@@ -100,8 +106,10 @@ def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]):
 def paint_node(active_node: NodeProxy, node: Type[Node]):
     frame = active_node.frame
     frame.setRect(node.get_frame_geometry(frame, active_node))
-
-
+    if active_node.isSelected():
+        frame.setPen(QPen(Qt.GlobalColor.blue))
+    else:
+        frame.setPen(QPen(Qt.GlobalColor.black))
 def hover_enter_resize_rect(resize_rect: ResizeRect, view: Type[View]):
     view.set_cursor_style(Qt.CursorShape.SizeFDiagCursor)
 
