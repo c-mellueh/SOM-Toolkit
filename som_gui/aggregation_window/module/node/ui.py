@@ -128,7 +128,7 @@ class Circle(QGraphicsEllipseItem):
         self.node: None | NodeProxy = None
         self.setBrush(Qt.GlobalColor.white)
         self.setPen(QPen(Qt.GlobalColor.black))
-        self.text = QGraphicsTextItem("+")
+        self.text = PlusText("+")
         # self.text.font().setPointSize(self.text.font().pointSize()*2)
         self.text.document().setPageSize(QSizeF(self.DIAMETER, self.DIAMETER))
         self.text.setParentItem(self)
@@ -136,3 +136,9 @@ class Circle(QGraphicsEllipseItem):
     def paint(self, painter, option, widget):
         trigger.paint_circle(self)
         super().paint(painter, option, widget)
+
+
+class PlusText(QGraphicsTextItem):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.node: None | NodeProxy = None

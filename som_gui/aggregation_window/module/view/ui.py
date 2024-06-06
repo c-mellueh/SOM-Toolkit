@@ -12,7 +12,6 @@ class AggregationView(QGraphicsView):
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(trigger.context_menu_requested)
         self.setRubberBandSelectionMode(Qt.ItemSelectionMode.ContainsItemBoundingRect)
-        self.rubberBandChanged.connect(trigger.rubber_band_changed)
 
     def paintEvent(self, event):
         super().paintEvent(event)

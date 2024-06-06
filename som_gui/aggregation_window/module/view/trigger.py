@@ -14,15 +14,15 @@ def view_paint_event():
 
 
 def mouse_move_event(position):
-    core.mouse_move_event(position, aw_tool.View, aw_tool.Node)
+    core.mouse_move_event(position, aw_tool.View, aw_tool.Node, aw_tool.Connection)
 
 
 def mouse_press_event(position):
-    core.mouse_press_event(position, aw_tool.View, aw_tool.Node)
+    core.mouse_press_event(position, aw_tool.View, aw_tool.Node, aw_tool.Connection)
 
 
 def mouse_release_event(pos):
-    core.mouse_release_event(pos, aw_tool.Node, aw_tool.View)
+    core.mouse_release_event(pos, aw_tool.Node, aw_tool.View, aw_tool.Connection, tool.Search)
 
 
 def mouse_wheel_event(event):
@@ -32,9 +32,6 @@ def mouse_wheel_event(event):
 def context_menu_requested(pos):
     core.context_menu_requested(pos, aw_tool.View, aw_tool.Node, tool.Search)
 
-
-def rubber_band_changed(viewportRect, fromScenePoint, toScenePoint):
-    core.rubber_band_changed([fromScenePoint, toScenePoint], aw_tool.View)
 
 
 def selection_changed():

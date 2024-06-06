@@ -32,7 +32,8 @@ modules = {
 aggregation_window_modules = {
     "window": None,
     "view":   None,
-    "node": None
+    "node":       None,
+    "connection": None,
 }
 
 class MainUi:

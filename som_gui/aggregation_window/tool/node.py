@@ -73,7 +73,9 @@ class Node(som_gui.aggregation_window.core.tool.Node):
     def create_circle(cls, node: node_ui.NodeProxy) -> node_ui.Circle:
         circle = node_ui.Circle()
         circle.node = node
+        circle.text.node = node
         node.circle = circle
+        return circle
 
     @classmethod
     def create_node(cls, aggregation: Aggregation):

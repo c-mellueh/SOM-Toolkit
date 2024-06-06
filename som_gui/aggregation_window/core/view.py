@@ -4,7 +4,7 @@ import logging
 from typing import TYPE_CHECKING, Type
 from PySide6.QtCore import Qt
 from SOMcreator import classes, value_constants
-from PySide6.QtWidgets import QMenu
+from PySide6.QtWidgets import QMenu, QGraphicsTextItem
 from PySide6.QtGui import QAction
 
 if TYPE_CHECKING:
@@ -43,8 +43,7 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
     # create connections
     node_dict = {node.aggregation: node for node in view.get_nodes_in_scene(scene)}
     for aggregation, top_node in node_dict.items():
-        sub_elements = aggregation.children
-        for sub_aggregation in sub_elements:
+        for sub_aggregation in aggregation.children:
             sub_node = node_dict.get(sub_aggregation)
             if sub_node is None:
                 continue
@@ -57,16 +56,20 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
         view.autofit_view()
 
 
-def mouse_move_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node]):
+def mouse_move_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node],
+                     connection: Type[aw_tool.Connection], ):
     last_pos = view.get_last_mouse_pos()
     mouse_mode = view.get_mouse_mode()
     if mouse_mode == 3:
         node.resize_node(view.get_resize_node(), last_pos, view.map_to_scene(position))
-
+    if mouse_mode == 5:
+        connection.draw_connection(view.get_active_scene(), view.map_to_scene(position))
+        connection.set_draw_started(True)
     view.set_last_mouse_pos(view.map_to_scene(position))
 
 
-def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node]):
+def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node],
+                      connection: Type[aw_tool.Connection], ):
     modifier = view.get_keyboard_modifier()
     view.set_last_mouse_pos(view.map_to_scene(position))
     scene = view.get_active_scene()
@@ -90,6 +93,10 @@ def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw
             mouse_mode = 4
             view.set_drag_mode(view.get_view().DragMode.RubberBandDrag)
 
+    if mouse_mode == 5:  # Set node from which the line is drawn
+        connection.set_draw_node(item_under_mouse.node)
+        view.set_drag_mode(view.get_view().DragMode.NoDrag)
+        connection.set_draw_started(False)
     view.set_cursor_style(cursor_style)
     view.set_mouse_mode(mouse_mode)
 
@@ -97,7 +104,32 @@ def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw
         view.set_resize_node(item_under_mouse.node)
         view.set_drag_mode(view.get_view().DragMode.NoDrag)
 
-def mouse_release_event(position: QPointF, node: Type[aw_tool.Node], view: Type[aw_tool.View]):
+
+def mouse_release_event(position: QPointF, node: Type[aw_tool.Node], view: Type[aw_tool.View],
+                        connection: Type[aw_tool.Connection], search: Type[tool.Search]):
+    mouse_mode = view.get_mouse_mode()
+    if mouse_mode == 5:
+        if connection.get_draw_started():
+            node_under_mouse = view.get_node_under_mouse(view.map_to_scene(position))
+            if node_under_mouse is not None:
+                node_under_mouse.aggregation.parent.remove_child(node_under_mouse.aggregation)
+                view.remove_connection_from_scene(node_under_mouse.top_connection, view.get_active_scene())
+                connection.get_draw_node().aggregation.add_child(node_under_mouse.aggregation, 1)
+            connection.delete_draw_connection()
+            connection.set_draw_started(False)
+        else:
+            obj = search.search_object()
+            aggregation = classes.Aggregation(obj)
+            rect = connection.get_draw_node().sceneBoundingRect()
+            input_point = rect.bottomLeft()
+            input_point.setY(input_point.y() + 100)
+            input_point.setX(input_point.x() + 60)
+            new_node = node.create_node(aggregation)
+            view.add_node_to_scene(new_node, view.get_active_scene())
+            node.set_node_pos(new_node, input_point)
+            con = connection.create_connection(connection.get_draw_node(), new_node, 1)
+            view.add_connection_to_scene(con, view.get_active_scene())
+
     view.set_last_mouse_pos(None)
     view.set_mouse_mode(0)
     view.set_resize_node(None)
@@ -109,11 +141,6 @@ def mouse_release_event(position: QPointF, node: Type[aw_tool.Node], view: Type[
             item_under_mouse = header
     cursor_style = view.get_cursor_style_by_subitem(item_under_mouse, 1)
     view.set_cursor_style(cursor_style)
-
-
-def rubber_band_changed(range_of_rect, view: Type[aw_tool.View]):
-    from_scene_point, to_scene_point = range_of_rect
-    scene = view.get_active_scene()
 
 def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]):
     y_angle = wheel_event.angleDelta().y()

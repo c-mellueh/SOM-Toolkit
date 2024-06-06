@@ -227,6 +227,12 @@ class View(som_gui.aggregation_window.core.tool.View):
 
     @classmethod
     def remove_connection_from_scene(cls, connection: ui_connection.Connection, scene: ui_view.AggregationScene):
+        if connection is None:
+            return
+
+        logging.debug(
+            f"Remove Con : {connection.bottom_node.aggregation.name} -> {connection.top_node.aggregation.name}")
+
         scene.removeItem(connection)
         connection.top_node.bottom_connections.remove(connection)
         connection.bottom_node.top_connection = None
@@ -302,6 +308,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         scene.addItem(connection)
         cls.get_properties().connections_list[cls.get_scene_index(scene)].add(connection)
 
+
     @classmethod
     def set_resize_node(cls, node: ui_node.NodeProxy | None):
         cls.get_properties().resize_node = node
@@ -330,13 +337,15 @@ class View(som_gui.aggregation_window.core.tool.View):
     @classmethod
     def get_mouse_mode_by_subitem(cls, sub_item) -> int:
         """
-                return: 0= None 1= pan, 2= drag, 3 = resize 4 = selection_rect
+                return: 0= None 1= pan, 2= drag, 3 = resize 4 = selection_rect  5 = draw connection
         """
         sub_item_type = type(sub_item)
         cursor_dict = {
             ui_node.Header:     2,
             ui_node.ResizeRect: 3,
-            type(None): 1
+            type(None):         1,
+            ui_node.Circle:     5,
+            ui_node.PlusText:   5,
         }
         val = cursor_dict.get(sub_item_type) or 1
         return val
@@ -382,13 +391,11 @@ class View(som_gui.aggregation_window.core.tool.View):
 
     @classmethod
     def get_node_under_mouse(cls, pos: QPointF) -> ui_node.NodeProxy | None:
-        item_under_mouse = cls.get_item_under_mouse(pos)
-        node = None
-        if aw_tool.Node.item_is_frame(item_under_mouse):
-            node = item_under_mouse.node
-        if aw_tool.Node.item_is_resize_rect(item_under_mouse):
-            node = item_under_mouse.node
-        return node
+        nodes = cls.get_nodes_in_scene(cls.get_active_scene())
+        for node in nodes:
+            if node.frame.isUnderMouse():
+                return node
+        return None
 
     @classmethod
     def print_scene(cls, scene: ui_view.AggregationScene, path: str | None = None):
