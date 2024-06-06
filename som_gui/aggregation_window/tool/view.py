@@ -46,7 +46,9 @@ class View(som_gui.aggregation_window.core.tool.View):
         raise TypeError(f"type {type(scene)} not supported for function 'get_scene_index'")
 
     @classmethod
-    def get_scene_by_name(cls, scene_name: str) -> ui_view.AggregationScene:
+    def get_scene_by_name(cls, scene_name: str) -> ui_view.AggregationScene | None:
+        if scene_name not in cls.get_properties().scene_name_list:
+            return None
         return cls.get_properties().scene_list[cls.get_scene_index(scene_name)]
 
     @classmethod
@@ -60,6 +62,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         if scene_name in cls.get_scene_names():
             scene_name = loop_name(scene_name, cls.get_scene_names(), 0)
         scene = ui_view.AggregationScene()
+        scene.name = scene_name
         scene.setSceneRect(QRectF(0, 0, SCENE_SIZE[0], SCENE_SIZE[1]))
         prop = cls.get_properties()
         prop.scene_name_list.append(scene_name)
@@ -69,16 +72,18 @@ class View(som_gui.aggregation_window.core.tool.View):
         prop.connections_list.append(set())
         prop.focus_list.append(False)
         prop.scene_settings_list.append(None)
-
         return scene, scene_name
 
     @classmethod
     def delete_scene(cls, scene: ui_view.AggregationScene):
+        for node in list(cls.get_nodes_in_scene(scene)):
+            cls.remove_node_from_scene(node, scene)
+        logging.debug(f"delete {scene}")
         scene_index = cls.get_scene_index(scene)
         prop = cls.get_properties()
         scene = prop.scene_list[scene_index]
         lists = [prop.scene_name_list, prop.node_list, prop.import_list, prop.connections_list, prop.focus_list,
-                 prop.scene_settings_list]
+                 prop.scene_settings_list, prop.scene_list]
         [l.pop(scene_index) for l in lists]
         scene.deleteLater()
 
@@ -135,7 +140,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         old_scene = cls.get_active_scene()
         prop = cls.get_properties()
 
-        if old_scene is not None:
+        if old_scene is not None and old_scene in cls.get_properties().scene_list:
             old_index = cls.get_scene_index(old_scene)
             horizontal = view.horizontalScrollBar().value()
             vertical = view.verticalScrollBar().value()
@@ -224,7 +229,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         scene.removeItem(node.circle)
         scene.removeItem(node)
         node.deleteLater()
-
+        node.aggregation.delete()
     @classmethod
     def remove_connection_from_scene(cls, connection: ui_connection.Connection, scene: ui_view.AggregationScene):
         if connection is None:

@@ -62,3 +62,15 @@ class Window(som_gui.aggregation_window.core.tool.Window):
     @classmethod
     def get_menu_list(cls):
         return cls.get_properties().menu_list
+
+    @classmethod
+    def set_combo_box(cls, text: str):
+        combo_box = cls.get_combo_box()
+        print(cls.get_combo_box_texts())
+        print(combo_box.setCurrentText(text))
+        # index = combo_box.findText(text)
+        # print(text)
+        # print(index)
+        # if index < 0:
+        #     return
+        # combo_box.setCurrentIndex(index)

@@ -36,3 +36,7 @@ class AggregationView(QGraphicsView):
 class AggregationScene(QGraphicsScene):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.name = "Undef"
+
+    def __str__(self):
+        return f"Scene {self.name}"
