@@ -31,6 +31,7 @@ class Connection(som_gui.aggregation_window.core.tool.Connection):
         top_node.bottom_connections.add(connection)
         bottom_node.top_connection = connection
         logging.debug(f"Add Con : {connection.bottom_node.aggregation.name} -> {connection.top_node.aggregation.name}")
+        connection.setZValue(0)
         return connection
 
     @classmethod

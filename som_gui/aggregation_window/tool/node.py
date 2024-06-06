@@ -89,6 +89,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         cls.create_frame(node)
         cls.create_resize_rect(node)
         cls.create_circle(node)
+        cls.set_z_level_of_node(node, cls.get_z_level() + 1)
         return node
 
     @classmethod
