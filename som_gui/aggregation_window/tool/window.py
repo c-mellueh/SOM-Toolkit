@@ -9,7 +9,7 @@ from som_gui.aggregation_window import tool as aw_tool
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.window.prop import WindowProperties
-
+    from PySide6.QtWidgets import QMenuBar
 class Window(som_gui.aggregation_window.core.tool.Window):
 
     @classmethod
@@ -46,3 +46,11 @@ class Window(som_gui.aggregation_window.core.tool.Window):
     @classmethod
     def get_combo_box_text(cls) -> str:
         return cls.get_combo_box().currentText()
+
+    @classmethod
+    def get_menu_bar(cls) -> QMenuBar:
+        return cls.get_properties().aggregation_window.menuBar()
+
+    @classmethod
+    def get_menu_dict(cls):
+        return cls.get_properties().menu_dict

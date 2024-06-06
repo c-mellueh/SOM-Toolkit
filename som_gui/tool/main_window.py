@@ -37,6 +37,11 @@ class MainWindow(som_gui.core.tool.MainWindow):
         prop = cls.get_main_menu_properties()
         return prop.menu_dict
 
+    @classmethod
+    def add_action(cls, menu_path: str, function: Callable):
+        menu_bar = cls.get_menu_bar()
+        menu_dict = cls.get_menu_dict()
+        tool.Util.add_action(menu_bar, menu_dict, menu_path, function)
 
     @classmethod
     def get_main_menu_properties(cls) -> MainWindowProperties:

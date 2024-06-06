@@ -73,8 +73,8 @@ class View(som_gui.aggregation_window.core.tool.View):
         return scene, scene_name
 
     @classmethod
-    def delete_scene(cls, scene_name: str):
-        scene_index = cls.get_scene_index(scene_name)
+    def delete_scene(cls, scene: ui_view.AggregationScene):
+        scene_index = cls.get_scene_index(scene)
         prop = cls.get_properties()
         scene = prop.scene_list[scene_index]
         lists = [prop.scene_name_list, prop.node_list, prop.import_list, prop.connections_list, prop.focus_list,
@@ -308,7 +308,6 @@ class View(som_gui.aggregation_window.core.tool.View):
         scene.addItem(connection)
         cls.get_properties().connections_list[cls.get_scene_index(scene)].add(connection)
 
-
     @classmethod
     def set_resize_node(cls, node: ui_node.NodeProxy | None):
         cls.get_properties().resize_node = node
@@ -427,3 +426,15 @@ class View(som_gui.aggregation_window.core.tool.View):
     @classmethod
     def set_drag_mode(cls, mode):
         cls.get_view().setDragMode(mode)
+
+    @classmethod
+    def filter_scenes(cls):
+        pass
+
+    @classmethod
+    def reset_filter(cls):
+        pass
+
+    @classmethod
+    def search_node(cls):
+        pass

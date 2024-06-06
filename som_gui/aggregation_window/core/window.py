@@ -6,21 +6,32 @@ from PySide6.QtWidgets import QPushButton
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.tool import Window, View, Node
+    from som_gui import tool
 
 
-def create_window(window: Type[Window], view: Type[View], node: Type[Node]):
+def create_window(window: Type[Window], view: Type[View], util: Type[tool.Util]):
     aggregation_window = window.create_window()
     combo_box = window.create_combo_box()
     aggregation_view = view.create_view()
     window.add_widget_to_layout(combo_box)
     window.add_widget_to_layout(aggregation_view)
-
     button = QPushButton('Test')
     window.add_widget_to_layout(button)
     button.clicked.connect(view.test)
 
+    menu_list = []
+    menu_list.append(["Ansicht/Ansichtig hinzufügen", lambda: view.create_scene("Undefined")])
+    menu_list.append(["Ansicht/Aktuelle Ansicht löschen", lambda: view.delete_scene(view.get_active_scene())])
+    menu_list.append(["Ansicht/Ansicht Filtern", lambda: view.filter_scenes()])
+    menu_list.append(["Ansicht/Filter Zurücksetzen", lambda: view.reset_filter()])
+    menu_list.append(["Aggregation/Aggregation finden", lambda: view.search_node()])
+    menu_bar = window.get_menu_bar()
+    menu_dict = window.get_menu_dict()
+    menu_dict["menu"] = menu_bar
+    for action, function in menu_list:
+        util.add_action(menu_bar, menu_dict, action, function)
+    util.create_actions(menu_dict, None)
     aggregation_window.show()
-
 
 def update_combo_box(window: Type[Window], view: Type[View]):
     combo_box = window.get_combo_box()
