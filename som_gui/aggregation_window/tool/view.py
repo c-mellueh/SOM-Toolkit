@@ -59,8 +59,11 @@ class View(som_gui.aggregation_window.core.tool.View):
 
     @classmethod
     def create_scene(cls, scene_name: str) -> tuple[ui_view.AggregationScene, str]:
+        if scene_name == "Undefined":
+            print("HIOER")
         if scene_name in cls.get_scene_names():
             scene_name = loop_name(scene_name, cls.get_scene_names(), 0)
+        logging.debug(f"Create Scene '{scene_name}'")
         scene = ui_view.AggregationScene()
         scene.name = scene_name
         scene.setSceneRect(QRectF(0, 0, SCENE_SIZE[0], SCENE_SIZE[1]))
@@ -126,9 +129,6 @@ class View(som_gui.aggregation_window.core.tool.View):
 
     @classmethod
     def get_active_scene(cls):
-        scene = cls.get_properties().active_scene
-        if scene is None:
-            cls.create_scene("Undefined")
         return cls.get_properties().active_scene
 
     @classmethod
