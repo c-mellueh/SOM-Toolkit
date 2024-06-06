@@ -12,6 +12,9 @@ class AggregationWindow(QMainWindow):
         self.setWindowTitle(self.tr("Bauwerksstruktur"))
         self.setWindowIcon(get_icon())
 
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        trigger.window_paint_event()
 
 class ComboBox(QComboBox):
     def __init__(self, *args, **kwargs):

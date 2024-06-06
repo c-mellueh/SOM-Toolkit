@@ -12,4 +12,4 @@ class MenuDict(TypedDict):
 
 
 class UtilProperties:
-    pass
+    shortcut = list()

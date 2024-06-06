@@ -1,6 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+import SOMcreator
+from PySide6.QtGui import QShortcut, QKeySequence
+
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.window import ui as ui_window
 import som_gui
@@ -10,6 +13,8 @@ from som_gui.aggregation_window import tool as aw_tool
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.window.prop import WindowProperties
     from PySide6.QtWidgets import QMenuBar
+
+
 class Window(som_gui.aggregation_window.core.tool.Window):
 
     @classmethod
@@ -66,11 +71,43 @@ class Window(som_gui.aggregation_window.core.tool.Window):
     @classmethod
     def set_combo_box(cls, text: str):
         combo_box = cls.get_combo_box()
-        print(cls.get_combo_box_texts())
-        print(combo_box.setCurrentText(text))
-        # index = combo_box.findText(text)
-        # print(text)
-        # print(index)
-        # if index < 0:
-        #     return
-        # combo_box.setCurrentIndex(index)
+        combo_box.setCurrentText(text)
+
+    @classmethod
+    def filter_is_activated(cls):
+        return cls.get_properties().filter_is_activated
+
+    @classmethod
+    def activate_filter(cls):
+        cls.get_properties().filter_is_activated = True
+
+    @classmethod
+    def deactivate_filter(cls):
+        cls.get_properties().filter_is_activated = False
+        cls.set_filter_object(None)
+
+    @classmethod
+    def get_allowed_scenes(cls) -> list:
+        if not cls.filter_is_activated():
+            return aw_tool.View.get_all_scenes()
+        return cls.get_properties().allowed_scenes
+
+    @classmethod
+    def set_allowed_scenes(cls, scene_list: list):
+        cls.get_properties().allowed_scenes = scene_list
+
+    @classmethod
+    def set_filter_object(cls, obj: SOMcreator.Object | None):
+        cls.get_properties().filter_object = obj
+
+    @classmethod
+    def get_status_bar(cls):
+        return cls.get_aggregation_window().statusBar()
+
+    @classmethod
+    def calculate_statusbar_text(cls):
+        filter_object = cls.get_properties().filter_object
+        texts = list()
+        if filter_object is not None:
+            texts.append(f"Filter by {filter_object.name}")
+        return " | ".join(texts)

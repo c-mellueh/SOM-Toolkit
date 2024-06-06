@@ -1,14 +1,16 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING
-from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMenu, QMenuBar
+from PySide6.QtGui import QAction, QShortcut, QKeySequence
+from PySide6.QtWidgets import QMenu, QMenuBar, QWidget
 import som_gui.core.tool
 
 if TYPE_CHECKING:
-    from som_gui.module.util.prop import MenuDict
-
+    from som_gui.module.util.prop import MenuDict, UtilProperties
 
 class Util(som_gui.core.tool.Util):
+    @classmethod
+    def get_properties(cls) -> UtilProperties:
+        return som_gui.UtilProperties
     @classmethod
     def add_menu(cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str) -> MenuDict:
         menu_steps = menu_path.split("/")
@@ -53,3 +55,12 @@ class Util(som_gui.core.tool.Util):
             cls.create_actions(sd, menu)
         for action in menu_dict["actions"]:
             menu.addAction(action)
+
+    @classmethod
+    def add_shortcut(cls, sequence: str, window: QWidget, function: Callable):
+        prop = cls.get_properties()
+        shortcut = QShortcut(QKeySequence(sequence), window)
+        if not hasattr(prop, "shortcuts"):
+            prop.shourtcuts = list()
+        prop.shourtcuts.append(shortcut)
+        shortcut.activated.connect(function)

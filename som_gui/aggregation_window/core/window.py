@@ -11,7 +11,16 @@ if TYPE_CHECKING:
     from som_gui import tool
 
 
-def create_window(window: Type[Window], view: Type[View], util: Type[tool.Util]):
+def paint_event(window: Type[Window]):
+    logging.debug(f"Paint Aggregation Window")
+    status_bar = window.get_status_bar()
+    new_status_bar_text = window.calculate_statusbar_text()
+    if status_bar.currentMessage() != new_status_bar_text:
+        status_bar.showMessage(new_status_bar_text)
+
+
+def create_window(window: Type[Window], view: Type[View], util: Type[tool.Util], search: Type[tool.Search],
+                  popup: Type[tool.Popups]):
     if window.get_aggregation_window() is not None:
         aggregation_window = window.get_aggregation_window()
         aggregation_window.show()
@@ -25,9 +34,9 @@ def create_window(window: Type[Window], view: Type[View], util: Type[tool.Util])
     menu_list = window.get_menu_list()
     menu_list.append(["Ansicht/Ansichtig hinzufügen", lambda: create_new_scene(window, view)])
     menu_list.append(["Ansicht/Aktuelle Ansicht löschen", lambda: delete_active_scene(window, view)])
-    menu_list.append(["Ansicht/Ansicht Filtern", lambda: view.filter_scenes()])
-    menu_list.append(["Ansicht/Filter Zurücksetzen", lambda: view.reset_filter()])
-    menu_list.append(["Aggregation/Aggregation finden", lambda: view.search_node()])
+    menu_list.append(["Ansicht/Ansicht Filtern", lambda: filter_scenes(window, view, search, popup)])
+    menu_list.append(["Ansicht/Filter Zurücksetzen", window.deactivate_filter])
+    menu_list.append(["Aggregation/Aggregation finden", lambda: search_aggregation(view, search, popup)])
     menu_bar = window.get_menu_bar()
     menu_dict = window.get_menu_dict()
     menu_dict["menu"] = menu_bar
@@ -35,6 +44,9 @@ def create_window(window: Type[Window], view: Type[View], util: Type[tool.Util])
         util.add_action(menu_bar, menu_dict, action, function)
     util.create_actions(menu_dict, None)
     aggregation_window.show()
+
+    util.add_shortcut("Ctrl+F", aggregation_window, lambda: search_aggregation(view, search, popup))
+
 
 
 def create_new_scene(window: Type[Window], view: Type[View]):
@@ -47,12 +59,14 @@ def delete_active_scene(window: Type[Window], view: Type[View]):
     view.delete_scene(view.get_active_scene())
     update_combo_box(window, view)
 
+
 def update_combo_box(window: Type[Window], view: Type[View]):
     combo_box = window.get_combo_box()
     if combo_box is None:
         return
     existing_texts = window.get_combo_box_texts()
-    wanted_texts = view.get_scene_names()
+    allowed_scenes = window.get_allowed_scenes()
+    wanted_texts = [view.get_scene_name(scene) for scene in allowed_scenes]
     new_texts = set(wanted_texts).difference(set(existing_texts))
     delete_texts = set(existing_texts).difference(set(wanted_texts))
     if new_texts:
@@ -73,3 +87,36 @@ def combobox_changed(window: Type[Window], view: Type[View]):
     if scene is None:
         scene, scene_name = view.create_scene("Undefined")
     view.activate_scene(scene)
+
+
+def filter_scenes(window: Type[Window], view: Type[View], search: Type[tool.Search], popup: Type[tool.Popups]):
+    allowed_scenes = window.get_allowed_scenes()
+    scene_list = view.get_all_scenes()
+    filter_object = search.search_object()
+    if filter_object is None:
+        return
+    for scene in scene_list:
+        objects_in_scene = view.get_objects_in_scene(scene)
+        if filter_object not in objects_in_scene:
+            allowed_scenes.remove(scene)
+    if not allowed_scenes:
+        popup.create_warning_popup(f"Objekt existiert in keiner Ansicht", "Objekt DNF")
+        return
+    window.set_filter_object(filter_object)
+    window.activate_filter()
+    window.set_allowed_scenes(allowed_scenes)
+    update_combo_box(window, view)
+
+
+def search_aggregation(view: Type[View], search: Type[tool.Search], popup: Type[tool.Popups]):
+    obj = search.search_object()
+    if obj is None:
+        return
+    scene = view.get_active_scene()
+    nodes = {node for node in view.get_nodes_in_scene(scene) if node.aggregation.object == obj}
+    if not nodes:
+        popup.create_warning_popup(f"Keine Aggregation mit diesem Objekt gefunden")
+        return
+    scene.clearSelection()
+    [n.setSelected(True) for n in nodes]
+    view.zoom_to_selected()

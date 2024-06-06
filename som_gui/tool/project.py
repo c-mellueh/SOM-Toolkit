@@ -54,15 +54,6 @@ class Project(som_gui.core.tool.Project):
     def get_properties(cls) -> ProjectProperties:
         return som_gui.ProjectProperties
 
-    @classmethod
-    def add_shortcut(cls, sequence: str, window: QWidget, function: Callable):
-        prop: ProjectProperties = cls.get_properties()
-        shortcut = QShortcut(QKeySequence(sequence), window)
-        if not hasattr(prop, "shortcuts"):
-            prop.shourtcuts = list()
-        prop.shourtcuts.append(shortcut)
-        shortcut.activated.connect(function)
-
     @classmethod  # TODO: Move to Filehandling Module
     def get_path(cls, title: str, file_text: str) -> str:
         main_window = som_gui.MainUi.window

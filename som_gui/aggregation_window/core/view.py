@@ -27,7 +27,7 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
     scene_id = view.get_scene_index(scene)
 
     # Add Nodes from import_list
-    for aggregation, position in view.get_properties().import_list[scene_id]:
+    for aggregation, position in view.get_import_list()[scene_id]:
         new_node = node.create_node(aggregation)
         view.add_node_to_scene(new_node, scene)
         node.set_node_pos(new_node, position)

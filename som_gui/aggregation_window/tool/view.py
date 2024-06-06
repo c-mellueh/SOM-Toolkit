@@ -52,6 +52,13 @@ class View(som_gui.aggregation_window.core.tool.View):
         return cls.get_properties().scene_list[cls.get_scene_index(scene_name)]
 
     @classmethod
+    def get_scene_name(cls, scene: ui_view.AggregationScene) -> str:
+        index = cls.get_scene_index(scene)
+        if index is None:
+            return None
+        return cls.get_properties().scene_name_list[index]
+
+    @classmethod
     def create_view(cls) -> ui_view.AggregationView:
         view = ui_view.AggregationView()
         cls.get_properties().aggregation_view = view
@@ -431,13 +438,35 @@ class View(som_gui.aggregation_window.core.tool.View):
         cls.get_view().setDragMode(mode)
 
     @classmethod
-    def filter_scenes(cls):
-        pass
-
-    @classmethod
-    def reset_filter(cls):
-        pass
-
-    @classmethod
     def search_node(cls):
         pass
+
+    @classmethod
+    def get_all_scenes(cls) -> list[ui_view.AggregationScene]:
+        return list(cls.get_properties().scene_list)
+
+    @classmethod
+    def get_objects_in_scene(cls, scene: ui_view.AggregationScene) -> set[SOMcreator.Object]:
+        nodes = cls.get_nodes_in_scene(scene)
+        scene_index = cls.get_scene_index(scene)
+        objects = {a.object for a, pos in cls.get_import_list()[scene_index]}
+        objects.update({n.aggregation.object for n in nodes})
+        return objects
+
+    @classmethod
+    def get_import_list(cls) -> list[list[tuple[SOMcreator.classes.Aggregation, QPointF]]]:
+        return cls.get_properties().import_list
+
+    @classmethod
+    def zoom_to_selected(cls):
+        scene = cls.get_active_scene()
+        selected_items = [node.frame for node in scene.selectedItems()]
+        if not selected_items:
+            return
+        view = cls.get_view()
+        rect: QRectF = selected_items[0].sceneBoundingRect()
+        for item in selected_items:
+            rect = rect.united(item.sceneBoundingRect())
+        margin = 50
+        rect.adjust(-margin, -margin, margin, margin)
+        view.fitInView(rect, Qt.AspectRatioMode.KeepAspectRatio)
