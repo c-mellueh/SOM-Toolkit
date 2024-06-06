@@ -59,8 +59,6 @@ class View(som_gui.aggregation_window.core.tool.View):
 
     @classmethod
     def create_scene(cls, scene_name: str) -> tuple[ui_view.AggregationScene, str]:
-        if scene_name == "Undefined":
-            print("HIOER")
         if scene_name in cls.get_scene_names():
             scene_name = loop_name(scene_name, cls.get_scene_names(), 0)
         logging.debug(f"Create Scene '{scene_name}'")
