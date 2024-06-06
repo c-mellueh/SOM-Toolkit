@@ -164,7 +164,7 @@ def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]):
 def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node], search: Type[tool.Search]):
     menu_list = list()
     scene = view.get_active_scene()
-    menu_list.append(["Layout/Zoom zurücksetzen", view.autofit_view])
+    menu_list.append(["Ansicht/Zoom zurücksetzen", view.autofit_view])
     selected_nodes = scene.selectedItems()
     if len(selected_nodes) > 1:
         menu_list.append(["Layout/Horizontal zentrieren", lambda: node.center_nodes(selected_nodes, 0)])
@@ -174,7 +174,7 @@ def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw
 
     menu_list.append(["Info anpassen", lambda: change_header_text(node, search)])
     menu_list.append(["Info zurücksetzen", lambda: node.reset_title_settings()])
-    menu_list.append(["Drucken/Ansicht Drucken", lambda: view.print_scene(scene)])
+    menu_list.append(["Ansicht/Ansicht Drucken", lambda: view.print_scene(scene)])
     # menu_list.append(["Drucken/Alles Drucken",lambda: view.print_all_scenes()])
 
     menu_list.append(["Node hinzufügen", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
