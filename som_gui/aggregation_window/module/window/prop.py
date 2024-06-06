@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
     from .ui import AggregationWindow, ComboBox
@@ -14,3 +14,4 @@ class WindowProperties:
         "menu":    None,
         "name":    "menubar",
     }
+    menu_list: list[tuple[str, Callable]] = list()  # MenubarPath,Function

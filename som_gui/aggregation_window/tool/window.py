@@ -54,3 +54,11 @@ class Window(som_gui.aggregation_window.core.tool.Window):
     @classmethod
     def get_menu_dict(cls):
         return cls.get_properties().menu_dict
+
+    @classmethod
+    def get_aggregation_window(cls) -> ui_window.AggregationWindow:
+        return cls.get_properties().aggregation_window
+
+    @classmethod
+    def get_menu_list(cls):
+        return cls.get_properties().menu_list

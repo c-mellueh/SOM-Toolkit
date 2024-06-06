@@ -10,16 +10,17 @@ if TYPE_CHECKING:
 
 
 def create_window(window: Type[Window], view: Type[View], util: Type[tool.Util]):
+    if window.get_aggregation_window() is not None:
+        aggregation_window = window.get_aggregation_window()
+        aggregation_window.show()
+        return
+
     aggregation_window = window.create_window()
     combo_box = window.create_combo_box()
     aggregation_view = view.create_view()
     window.add_widget_to_layout(combo_box)
     window.add_widget_to_layout(aggregation_view)
-    button = QPushButton('Test')
-    window.add_widget_to_layout(button)
-    button.clicked.connect(view.test)
-
-    menu_list = []
+    menu_list = window.get_menu_list()
     menu_list.append(["Ansicht/Ansichtig hinzufügen", lambda: view.create_scene("Undefined")])
     menu_list.append(["Ansicht/Aktuelle Ansicht löschen", lambda: view.delete_scene(view.get_active_scene())])
     menu_list.append(["Ansicht/Ansicht Filtern", lambda: view.filter_scenes()])
