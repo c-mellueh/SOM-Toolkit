@@ -5,7 +5,7 @@ import som_gui
 from som_gui.filehandling import export as fh_export
 if TYPE_CHECKING:
     from som_gui.tool import MainWindow, Settings, Project, Popups
-
+    from som_gui import tool
 
 def close_event(project_tool: Type[Project], settings_tool: Type[Settings],
                 popups_tool: Type[Popups]):
@@ -26,11 +26,11 @@ def add_label_to_statusbar(main_window_tool: Type[MainWindow]):
     main_window_tool.create_status_label()
 
 
-def create_menus(main_window_tool: Type[MainWindow]):
+def create_menus(main_window_tool: Type[MainWindow], util: Type[tool.Util]):
     menu_dict = main_window_tool.get_menu_dict()
     menu_bar = main_window_tool.get_menu_bar()
     menu_dict["menu"] = menu_bar
-    main_window_tool.create_actions(menu_dict, None)
+    util.create_actions(menu_dict, None)
 
 
 def refresh_main_window(main_window_tool: Type[MainWindow], project_tool: Type[Project]):

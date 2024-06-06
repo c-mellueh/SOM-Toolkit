@@ -40,7 +40,7 @@ def main(initial_file: str | None = None):
     window.show()
     som_gui.load_ui_triggers()
     core.project.create_project(tool.Project)
-    core.main_window.create_menus(tool.MainWindow)
+    core.main_window.create_menus(tool.MainWindow, tool.Util)
 
     if initial_file is not None:
         core.project.open_project(initial_file, tool.Project)
