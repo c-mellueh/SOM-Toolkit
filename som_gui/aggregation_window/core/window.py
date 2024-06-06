@@ -3,8 +3,13 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 
+import SOMcreator.classes
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import QPushButton
+import copy
+from SOMcreator.classes import Aggregation
+
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.tool import Window, View, Node
@@ -46,7 +51,8 @@ def create_window(window: Type[Window], view: Type[View], util: Type[tool.Util],
     aggregation_window.show()
 
     util.add_shortcut("Ctrl+F", aggregation_window, lambda: search_aggregation(view, search, popup))
-
+    util.add_shortcut("Ctrl+C", aggregation_window, lambda: copy_selected_nodes(view))
+    util.add_shortcut("Ctrl+V", aggregation_window, lambda: paste_nodes(view))
 
 
 def create_new_scene(window: Type[Window], view: Type[View]):
@@ -120,3 +126,24 @@ def search_aggregation(view: Type[View], search: Type[tool.Search], popup: Type[
     scene.clearSelection()
     [n.setSelected(True) for n in nodes]
     view.zoom_to_selected()
+
+
+def copy_selected_nodes(view: Type[View]):
+    nodes = view.get_selected_nodes()
+    bounding_box = view.get_bounding_box_of_nodes(nodes)
+    copy_list = list()
+    for node in nodes:
+        pos = node.sceneBoundingRect().topLeft() - bounding_box.topLeft()
+        copy_list.append((node.aggregation, pos))
+    view.set_copy_list(copy_list)
+
+
+def paste_nodes(view: Type[View]):
+    scene = view.get_active_scene()
+    cursor_pos = view.get_scene_cursor_pos()
+    for aggregation, local_pos in view.get_copy_list():
+        new_aggregation = Aggregation(aggregation.object)
+        node_pos = cursor_pos + local_pos
+        view.add_aggregation_to_import_list(scene, new_aggregation, node_pos)
+
+    scene.update()

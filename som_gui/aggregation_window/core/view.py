@@ -210,4 +210,3 @@ def change_header_text(node: Type[aw_tool.Node], search: Type[tool.Search]):
     result = search.search_attribute()
     if result:
         node.set_title_settings(*result)
-

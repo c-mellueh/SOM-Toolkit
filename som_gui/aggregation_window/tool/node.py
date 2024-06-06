@@ -165,7 +165,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         y = circle.node.sceneBoundingRect().bottom() - circle.DIAMETER / 2
         circle.setRect(QRectF(x, y, circle.DIAMETER, circle.DIAMETER))
         view = aw_tool.View.get_view()
-        scene_pos = view.mapToScene(view.mapFromGlobal(QCursor.pos()))
+        scene_pos = aw_tool.View.get_scene_cursor_pos()
         frame = circle.node.frame
         margin = 1.
         bounding_rect = frame.sceneBoundingRect().adjusted(-margin, -margin, margin, margin)

@@ -4,7 +4,7 @@ import os
 import logging
 from typing import TYPE_CHECKING, Callable
 from PySide6.QtCore import QPointF, QRectF, Qt, QPoint
-from PySide6.QtGui import QTransform, QAction, QImage, QPainter
+from PySide6.QtGui import QTransform, QAction, QImage, QPainter, QCursor
 from PySide6.QtWidgets import QApplication, QMenu, QFileDialog, QGraphicsTextItem
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.view import ui as ui_view
@@ -365,7 +365,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         return cls.get_properties().focus_list[scene_id]
 
     @classmethod
-    def add_aggregation_to_import_list(cls, scene, aggregation, pos):
+    def add_aggregation_to_import_list(cls, scene, aggregation, pos: QPointF):
         scene_id = cls.get_scene_index(scene)
         cls.get_properties().import_list[scene_id].append((aggregation, pos))
 
@@ -470,3 +470,33 @@ class View(som_gui.aggregation_window.core.tool.View):
         margin = 50
         rect.adjust(-margin, -margin, margin, margin)
         view.fitInView(rect, Qt.AspectRatioMode.KeepAspectRatio)
+
+    @classmethod
+    def get_bounding_box_of_nodes(cls, nodes: set[ui_node.NodeProxy]):
+        if not nodes:
+            return QRectF()
+        items = [n.frame for n in nodes]
+        rect: QRectF = items[0].sceneBoundingRect()
+        for item in items:
+            rect = rect.united(item.sceneBoundingRect())
+        return rect
+
+    @classmethod
+    def get_selected_nodes(cls) -> set[ui_node.NodeProxy]:
+        scene = cls.get_active_scene()
+        return {node for node in scene.selectedItems() if isinstance(node, ui_node.NodeProxy)}
+
+    @classmethod
+    def set_copy_list(cls, copy_list: list[tuple[SOMcreator.classes.Aggregation, QPointF]]):
+        cls.get_properties().copy_list = copy_list
+        pass
+
+    @classmethod
+    def get_copy_list(cls) -> list[tuple[SOMcreator.classes.Aggregation, QPointF]]:
+        return list(cls.get_properties().copy_list)
+
+    @classmethod
+    def get_scene_cursor_pos(cls) -> QPointF:
+        view = cls.get_view()
+        cursor_pos = view.mapToScene(view.mapFromGlobal(QCursor.pos()))
+        return cursor_pos

@@ -21,3 +21,4 @@ class ViewProperties:
     last_mouse_pos: QPointF = None
     mouse_mode: int = 0
     resize_node: NodeProxy | None = None
+    copy_list: list[tuple[Aggregation, QPointF]] = list()
