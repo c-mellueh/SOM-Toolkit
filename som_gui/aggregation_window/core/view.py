@@ -23,12 +23,13 @@ def import_positions(view: Type[aw_tool.View], project: Type[tool.Project]):
 
 def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: Type[aw_tool.Connection],
                 project: Type[tool.Project]):
-    logging.debug(f"View Paint Event")
+    # logging.debug(f"View Paint Event")
     scene = view.get_active_scene()
     scene_id = view.get_scene_index(scene)
 
     # Add Nodes from import_list
     for aggregation, position in view.get_import_list()[scene_id]:
+        print(f"Add {aggregation}")
         new_node = node.create_node(aggregation)
         view.add_node_to_scene(new_node, scene)
         node.set_node_pos(new_node, position)

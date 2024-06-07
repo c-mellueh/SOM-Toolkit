@@ -141,9 +141,16 @@ def copy_selected_nodes(view: Type[View]):
 def paste_nodes(view: Type[View]):
     scene = view.get_active_scene()
     cursor_pos = view.get_scene_cursor_pos()
-    for aggregation, local_pos in view.get_copy_list():
-        new_aggregation = Aggregation(aggregation.object)
+    aggregation_dict: dict[Aggregation, Aggregation] = dict()
+
+    for old_aggregation, local_pos in view.get_copy_list():
+        new_aggregation = Aggregation(old_aggregation.object)
+        aggregation_dict[old_aggregation] = new_aggregation
         node_pos = cursor_pos + local_pos
         view.add_aggregation_to_import_list(scene, new_aggregation, node_pos)
 
+    for old_aggregation, new_aggregation in aggregation_dict.items():
+        if old_aggregation.parent in aggregation_dict:
+            aggregation_dict[old_aggregation.parent].add_child(new_aggregation, old_aggregation.parent_connection)
+            new_aggregation.set_parent(aggregation_dict[old_aggregation.parent], old_aggregation.parent_connection)
     scene.update()
