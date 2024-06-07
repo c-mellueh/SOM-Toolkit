@@ -7,7 +7,6 @@ from SOMcreator import classes
 
 import som_gui
 from som_gui import tool
-from som_gui.windows.aggregation_view import aggregation_window
 from . import icons, settings, __version__
 from .qt_designs.ui_mainwindow import Ui_MainWindow
 from .windows import (
@@ -46,7 +45,6 @@ class MainWindow(QMainWindow):
         # Windows
         self.group_window: grouping_window.GroupingWindow | None = None
         self.model_control_window: AttributeImport | None = None
-        self.graph_window = aggregation_window.AggregationWindow(self)
         self.mapping_window = None
         settings.reset_save_path()
 
@@ -71,8 +69,6 @@ class MainWindow(QMainWindow):
             self.model_control_window.close()
         self.model_control_window = AttributeImport(self)
 
-    def open_aggregation_window(self):
-        self.graph_window.show()
 
     @property
     def pset_table(self) -> QTableWidget:

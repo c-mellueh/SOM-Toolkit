@@ -2,7 +2,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from thefuzz import fuzz
 from .filehandling import export as fh_export
-
+from SOMcreator.external_software.IDS import main
+from SOMcreator.external_software.bim_collab_zoom import modelcheck
+from SOMcreator.external_software.desite import modelcheck
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow, Ui_MainWindow
 

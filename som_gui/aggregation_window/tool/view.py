@@ -180,7 +180,6 @@ class View(som_gui.aggregation_window.core.tool.View):
         scene.addItem(node.frame)
         scene.addItem(node.resize_rect)
         scene.addItem(node.circle)
-        scene.addItem(node.circle.text)
         scene_index = cls.get_scene_index(scene)
         cls.get_properties().node_list[scene_index].add(node)
 
