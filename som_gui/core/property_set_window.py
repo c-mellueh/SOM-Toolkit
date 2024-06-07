@@ -42,7 +42,8 @@ def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[
     property_set_tool.update_line_validators(window)
 
 
-def open_pset_window(property_set: SOMcreator.PropertySet, property_set_window: Type[tool.PropertySetWindow]):
+def open_pset_window(property_set: SOMcreator.PropertySet, property_set_window: Type[tool.PropertySetWindow],
+                     attribute_table: Type[tool.AttributeTable]):
     existing_window = property_set_window.get_window_by_property_set(property_set)
     if existing_window is not None:
         property_set_window.bring_window_to_front(existing_window)
@@ -53,6 +54,7 @@ def open_pset_window(property_set: SOMcreator.PropertySet, property_set_window: 
     property_set_window.connect_window_triggers(window)
     property_set_window.fill_window_title(window, property_set)
     table = property_set_window.get_table(window)
+    attribute_table_core.paint_attribute_table(table, attribute_table)
     table.resizeColumnsToContents()
     window.show()
     return window

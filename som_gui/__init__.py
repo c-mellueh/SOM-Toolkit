@@ -6,7 +6,7 @@ from .filehandling import export as fh_export
 if TYPE_CHECKING:
     from som_gui.main_window import MainWindow, Ui_MainWindow
 
-__version__ = "2.11.3"
+__version__ = "2.12.0"
 
 import importlib
 
@@ -27,8 +27,15 @@ modules = {
     "modelcheck_external": None,
     "modelcheck": None,
     "ifc_importer": None,
+    "util": None,
 }
 
+aggregation_window_modules = {
+    "window": None,
+    "view":   None,
+    "node":       None,
+    "connection": None,
+}
 
 class MainUi:
     ui: Ui_MainWindow = None
@@ -38,6 +45,10 @@ class MainUi:
 for name in modules.keys():
     modules[name] = importlib.import_module(f"som_gui.module.{name}")
 
+for name in aggregation_window_modules.keys():
+    aggregation_window_modules[name] = importlib.import_module(f"som_gui.aggregation_window.module.{name}")
+
+modules.update(aggregation_window_modules)
 
 def register():
     modules["project"].register()

@@ -42,10 +42,10 @@ def ident_attribute_changed(object_tool: Type[tool.Object], main_window: Type[to
     object_tool.create_completer(attribute_names, main_window.get_ui().lineEdit_ident_attribute)
 
 
-def add_shortcuts(object_tool: Type[Object], project_tool: Type[Project], search_tool: Type[Search]):
-    project_tool.add_shortcut("Ctrl+X", som_gui.MainUi.window, object_tool.delete_selection)
-    project_tool.add_shortcut("Ctrl+G", som_gui.MainUi.window, object_tool.group_selection)
-    project_tool.add_shortcut("Ctrl+F", som_gui.MainUi.window, lambda: search_object(search_tool, object_tool))
+def add_shortcuts(object_tool: Type[Object], util: Type[tool.Util], search_tool: Type[Search]):
+    util.add_shortcut("Ctrl+X", som_gui.MainUi.window, object_tool.delete_selection)
+    util.add_shortcut("Ctrl+G", som_gui.MainUi.window, object_tool.group_selection)
+    util.add_shortcut("Ctrl+F", som_gui.MainUi.window, lambda: search_object(search_tool, object_tool))
 
 
 def search_object(search_tool: Type[Search], object_tool: Type[Object]):

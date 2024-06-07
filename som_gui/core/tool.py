@@ -1146,3 +1146,7 @@ class Settings:
     def set_seperator(self, value): pass
 
     def set_seperator_status(self, value): pass
+
+
+class Util:
+    pass
