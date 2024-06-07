@@ -264,6 +264,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
             geom.setWidth(width)
             node.resize_rect.moveBy(dif.x(), 0.)
         node.setGeometry(geom)
+        node.circle.update()
 
     @classmethod
     def set_connect_type(cls, node: node_ui.NodeProxy, parent_con_type: int):
