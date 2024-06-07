@@ -29,7 +29,6 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
 
     # Add Nodes from import_list
     for aggregation, position in view.get_import_list()[scene_id]:
-        print(f"Add {aggregation}")
         new_node = node.create_node(aggregation)
         view.add_node_to_scene(new_node, scene)
         node.set_node_pos(new_node, position)
@@ -170,10 +169,11 @@ def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw
     menu_list.append(["Ansicht/Ansicht Drucken", lambda: view.print_scene(scene)])
     # menu_list.append(["Drucken/Alles Drucken",lambda: view.print_all_scenes()])
 
-    menu_list.append(["Node hinzufügen", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
     node_under_mouse = view.get_node_under_mouse(view.map_to_scene(pos))
     if node_under_mouse:
-        txt = "Node Löschen" if len(selected_nodes) == 1 else "Nodes Löschen"
+        menu_list.append(["Node/Node hinzufügen", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
+
+        txt = "Node/Node Löschen" if len(selected_nodes) == 1 else "Nodes Löschen"
         menu_list.append([txt, lambda: [view.remove_node_from_scene(n, scene) for n in selected_nodes]])
         if not node.is_root(node_under_mouse):
             aggreg_func = lambda: node.set_connect_type(node_under_mouse, value_constants.AGGREGATION)
@@ -185,10 +185,13 @@ def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw
             combi_func = lambda: node.set_connect_type(node_under_mouse,
                                                        value_constants.AGGREGATION + value_constants.INHERITANCE)
             menu_list.append(["Verbindungsart/Aggregation+Vererbung", combi_func])
+    else:
+        menu_list.append(["Node hinzufügen", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
 
     menu = view.create_context_menu(menu_list)
     menu.exec(view.get_view().viewport().mapToGlobal(pos))
     paint_event(view, node, connection, project)
+
 
 def add_node_at_pos(pos, view: Type[aw_tool.View], search: Type[tool.Search]):
     scene = view.get_active_scene()
