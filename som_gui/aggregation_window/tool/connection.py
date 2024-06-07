@@ -1,64 +1,44 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import logging
+
 from SOMcreator.classes import Aggregation
 from SOMcreator.constants import value_constants
 import som_gui
+import som_gui.aggregation_window.core.tool
+from som_gui.aggregation_window.module.connection import constants
+from som_gui.aggregation_window.module.connection import ui as connection_ui
+from som_gui.aggregation_window.module.connection import trigger as connection_trigger
+
+from PySide6.QtCore import QPointF
+from PySide6.QtWidgets import QGraphicsPathItem
+from PySide6.QtGui import QPainterPath
+
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.node import ui as node_ui
     from som_gui.aggregation_window.module.connection.prop import ConnectionProperties
     from som_gui.aggregation_window.module.view import ui as view_ui
-from som_gui.aggregation_window.module.connection import constants
-import som_gui.aggregation_window.core.tool
-from PySide6.QtCore import QPointF
-from som_gui.aggregation_window.module.connection import ui as connection_ui
-from som_gui.aggregation_window.module.connection import trigger as connection_trigger
-from som_gui.aggregation_window import tool as aw_tool
-from PySide6.QtWidgets import QGraphicsPathItem
-from PySide6.QtGui import QPainterPath
+
+
 class Connection(som_gui.aggregation_window.core.tool.Connection):
     @classmethod
     def get_properties(cls) -> ConnectionProperties:
         return som_gui.ConnectionProperties
 
     @classmethod
-    def create_connection(cls, top_node: node_ui.NodeProxy, bottom_node: node_ui.NodeProxy, connection_type: int):
-        # if bottom_node.top_connection:
-        #     aw_tool.View.remove_connection_from_scene(bottom_node.top_connection,aw_tool.View.get_active_scene())
+    def create_connection(cls, top_node: node_ui.NodeProxy, bottom_node: node_ui.NodeProxy,
+                          connection_type: int) -> Connection:
         top_node.aggregation.add_child(bottom_node.aggregation, connection_type)
         connection = connection_ui.Connection(top_node, bottom_node, connection_type)
         connection_trigger.paint_connection(connection)
         top_node.bottom_connections.add(connection)
         bottom_node.top_connection = connection
-        logging.debug(f"Add Con : {connection.bottom_node.aggregation.name} -> {connection.top_node.aggregation.name}")
         connection.setZValue(0)
+        logging.debug(f"Add Con : {connection.bottom_node.aggregation.name} -> {connection.top_node.aggregation.name}")
         return connection
 
     @classmethod
-    def get_aggregation_point_list(cls, point_bottom, point_top, ) -> list[QPointF]:
-        points = [QPointF() for _ in range(8)]
-        mid_y = (point_top.y() + constants.BOX_BOTTOM_DISTANCE)
-
-        points[0] = point_bottom
-        points[1].setX(point_bottom.x())
-        points[2].setX(point_top.x())
-        points[3].setX(point_top.x())
-        points[4].setX(point_top.x() - constants.ARROW_WIDTH / 2)
-        points[5].setX(point_top.x())
-        points[6].setX(point_top.x() + constants.ARROW_WIDTH / 2)
-        points[7].setX(point_top.x())
-
-        points[1].setY(mid_y - constants.ARROW_WIDTH / 2)
-        points[2].setY(points[1].y())
-        points[3].setY(point_top.y() + constants.ARROW_HEIGHT)
-        points[4].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
-        points[5].setY(point_top.y())
-        points[6].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
-        points[7].setY(point_top.y() + constants.ARROW_HEIGHT)
-        return points
-
-    @classmethod
-    def get_inheritance_point_list(cls, point_bottom, point_top) -> list[QPointF]:
+    def _get_base_points(cls, point_bottom: QPointF, point_top: QPointF) -> list[QPointF]:
         points = [QPointF() for _ in range(8)]
         mid_y = (point_top.y() + constants.BOX_BOTTOM_DISTANCE)
 
@@ -73,6 +53,22 @@ class Connection(som_gui.aggregation_window.core.tool.Connection):
 
         points[1].setY(mid_y - constants.ARROW_HEIGHT / 2)
         points[2].setY(points[1].y())
+        return points
+
+    @classmethod
+    def get_aggregation_point_list(cls, point_bottom: QPointF, point_top: QPointF) -> list[QPointF]:
+        points = cls._get_base_points(point_bottom, point_top)
+        points[3].setY(point_top.y() + constants.ARROW_HEIGHT)
+        points[4].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
+        points[5].setY(point_top.y())
+        points[6].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
+        points[7].setY(point_top.y() + constants.ARROW_HEIGHT)
+        return points
+
+    @classmethod
+    def get_inheritance_point_list(cls, point_bottom, point_top) -> list[QPointF]:
+        points = cls._get_base_points(point_bottom, point_top)
+
         points[3].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
         points[4].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
         points[5].setY(point_top.y())
@@ -131,38 +127,30 @@ class Connection(som_gui.aggregation_window.core.tool.Connection):
     def get_connection_displacement(cls, connection: connection_ui.Connection) -> float:
         aggreg: Aggregation
         connections = {aggreg.parent_connection for aggreg in connection.top_node.aggregation.children}
-        displacement_dict = dict()
-
+        disp_dict = dict()
+        agg = value_constants.AGGREGATION
+        inh = value_constants.INHERITANCE
         factor = 3
+
         if len(connections) == 1:
-            displacement_dict = {value_constants.AGGREGATION:                               0,
-                                 value_constants.INHERITANCE:                               0,
-                                 value_constants.AGGREGATION + value_constants.INHERITANCE: 0}
+            disp_dict = {agg: 0, inh: 0, agg + inh: 0}
 
         if len(connections) == 2:
             if {value_constants.AGGREGATION, value_constants.INHERITANCE} == connections:
-                displacement_dict = {value_constants.INHERITANCE:                               -constants.ARROW_WIDTH * factor,
-                                     value_constants.AGGREGATION:                               +constants.ARROW_WIDTH * factor,
-                                     value_constants.AGGREGATION + value_constants.INHERITANCE: 0}
+                disp_dict = {inh: -constants.ARROW_WIDTH * factor, agg: +constants.ARROW_WIDTH * factor, agg + inh: 0}
 
             if {value_constants.AGGREGATION, value_constants.INHERITANCE + value_constants.AGGREGATION} == connections:
-                displacement_dict = {value_constants.AGGREGATION:                               -constants.ARROW_WIDTH * factor,
-                                     value_constants.INHERITANCE:                               0,
-                                     value_constants.AGGREGATION + value_constants.INHERITANCE: +constants.ARROW_WIDTH * factor}
+                disp_dict = {agg: -constants.ARROW_WIDTH * factor, inh: 0, agg + inh: +constants.ARROW_WIDTH * factor}
 
             if {value_constants.INHERITANCE, value_constants.INHERITANCE + value_constants.AGGREGATION} == connections:
-                displacement_dict = {value_constants.AGGREGATION:                               0,
-                                     value_constants.INHERITANCE:                               +constants.ARROW_WIDTH * factor,
-                                     value_constants.AGGREGATION + value_constants.INHERITANCE: -constants.ARROW_WIDTH * factor}
+                disp_dict = {agg: 0, inh: +constants.ARROW_WIDTH * factor, agg + inh: -constants.ARROW_WIDTH * factor}
 
         if len(connections) == 3:
-            displacement_dict = {value_constants.INHERITANCE:                               -constants.ARROW_WIDTH * factor,
-                                 value_constants.AGGREGATION:                               0,
-                                 value_constants.AGGREGATION + value_constants.INHERITANCE: +constants.ARROW_WIDTH * factor}
-        return displacement_dict.get(connection.connection_type) or 0
+            disp_dict = {inh: -constants.ARROW_WIDTH * factor, agg: 0, agg + inh: +constants.ARROW_WIDTH * factor}
+        return disp_dict.get(connection.connection_type) or 0.
 
     @classmethod
-    def set_draw_node(cls, node: node_ui.NodeProxy):
+    def set_draw_node(cls, node: node_ui.NodeProxy) -> None:
         cls.get_properties().draw_node = node
 
     @classmethod
@@ -170,7 +158,8 @@ class Connection(som_gui.aggregation_window.core.tool.Connection):
         return cls.get_properties().draw_node
 
     @classmethod
-    def calculate_painter_path(cls, point_top: QPointF, point_bottom: QPointF, displacement, connection_type: int):
+    def calculate_painter_path(cls, point_top: QPointF, point_bottom: QPointF, displacement: float,
+                               connection_type: int) -> QPainterPath:
         path = QPainterPath()
 
         point_top.setX(point_top.x() + displacement)
@@ -188,7 +177,7 @@ class Connection(som_gui.aggregation_window.core.tool.Connection):
         return path
 
     @classmethod
-    def draw_connection(cls, scene: view_ui.AggregationScene, mouse_pos: QPointF):
+    def draw_connection(cls, scene: view_ui.AggregationScene, mouse_pos: QPointF) -> None:
         connection = cls.get_properties().draw_connection
         if connection is None:
             connection = QGraphicsPathItem()
@@ -201,7 +190,7 @@ class Connection(som_gui.aggregation_window.core.tool.Connection):
         cls.get_properties().draw_connection = connection
 
     @classmethod
-    def delete_draw_connection(cls):
+    def delete_draw_connection(cls) -> None:
         connection = cls.get_properties().draw_connection
         cls.set_draw_started(False)
         if connection is None:
@@ -211,9 +200,9 @@ class Connection(som_gui.aggregation_window.core.tool.Connection):
         cls.get_properties().draw_connection = None
 
     @classmethod
-    def set_draw_started(cls, value: bool):
+    def set_draw_started(cls, value: bool) -> None:
         cls.get_properties().draw_started = value
 
     @classmethod
-    def get_draw_started(cls):
+    def is_drawing_started(cls) -> bool:
         return cls.get_properties().draw_started

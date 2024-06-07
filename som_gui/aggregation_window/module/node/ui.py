@@ -1,12 +1,10 @@
 from __future__ import annotations
 from PySide6.QtCore import QSizeF, Qt
-from PySide6.QtGui import QColor, QPainter, QPen
+from PySide6.QtGui import QPaintEvent, QPen
 
-from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout, \
-    QGraphicsProxyWidget, QGraphicsPathItem, QGraphicsRectItem, QGraphicsItem, QStyleOptionGraphicsItem, \
-    QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsEllipseItem, QGraphicsTextItem
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QGraphicsProxyWidget, QGraphicsRectItem, QGraphicsItem, \
+    QTreeWidget, QGraphicsEllipseItem, QGraphicsTextItem, QGraphicsSceneMouseEvent
 
-import som_gui.aggregation_window.tool
 from . import trigger
 import SOMcreator
 from typing import TYPE_CHECKING
@@ -31,7 +29,7 @@ class NodeProxy(QGraphicsProxyWidget):
     def widget(self) -> QWidget | NodeWidget:
         return super().widget()
 
-    def paint(self, *args, **kwargs):
+    def paint(self, *args, **kwargs) -> None:
         super().paint(*args, **kwargs)
         trigger.paint_node(self)
 
@@ -40,59 +38,48 @@ class NodeWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setLayout(QVBoxLayout())
-        self.button = QPushButton(self.tr('Subelement hinzufügen'))
-        self.layout().addWidget(self.button)
-        self.button.hide()
 
     def graphicsProxyWidget(self) -> NodeProxy:
         return super(NodeWidget, self).graphicsProxyWidget()
 
 
 class PropertySetTree(QTreeWidget):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.itemDoubleClicked.connect(trigger.pset_tree_double_clicked)
         self.node: NodeProxy | None = None
 
-    def paintEvent(self, event):
+    def paintEvent(self, event: QPaintEvent) -> None:
         super().paintEvent(event)
         trigger.paint_propertyset_tree(self)
 
 
 class Header(QGraphicsRectItem):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, True)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
         self.node: NodeProxy | None = None
         self.setAcceptHoverEvents(True)
 
-    def paint(self, painter, option, widget):
+    def paint(self, painter, *args, **kwargs) -> None:
         trigger.paint_header(self, painter)
 
-    def mouseMoveEvent(self, event):
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         last_pos = self.pos()
         super().mouseMoveEvent(event)
         new_pos = self.pos()
         dif = new_pos - last_pos
         trigger.drag_move(self, dif)
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         super().mousePressEvent(event)
         trigger.header_clicked(self)
 
-    def hoverEnterEvent(self, event):
-        super().hoverEnterEvent(event)
-        trigger.hover_enter_header(self)
-
-    def hoverLeaveEvent(self, event):
-        super().hoverLeaveEvent(event)
-        trigger.hover_leave_header(self)
-
 
 class Frame(QGraphicsRectItem):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, False)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
         self.node: NodeProxy | None = None
@@ -100,7 +87,7 @@ class Frame(QGraphicsRectItem):
 
 
 class ResizeRect(QGraphicsRectItem):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsMovable, False)
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
@@ -108,14 +95,6 @@ class ResizeRect(QGraphicsRectItem):
         self.setPen(QPen(Qt.GlobalColor.transparent))
         self.node: NodeProxy | None = None
         self.setAcceptHoverEvents(True)
-
-    def hoverEnterEvent(self, event):
-        super().hoverEnterEvent(event)
-        trigger.hover_enter_resize_rect(self)
-
-    def hoverLeaveEvent(self, event):
-        super().hoverLeaveEvent(event)
-        trigger.hover_leave_resize_rect(self)
 
 
 class Circle(QGraphicsEllipseItem):
@@ -128,17 +107,16 @@ class Circle(QGraphicsEllipseItem):
         self.node: None | NodeProxy = None
         self.setBrush(Qt.GlobalColor.white)
         self.setPen(QPen(Qt.GlobalColor.black))
-        self.text = PlusText("+")
-        # self.text.font().setPointSize(self.text.font().pointSize()*2)
+        self.text: PlusText = PlusText("+")
         self.text.document().setPageSize(QSizeF(self.DIAMETER, self.DIAMETER))
         self.text.setParentItem(self)
 
-    def paint(self, painter, option, widget):
+    def paint(self, *args, **kwargs) -> None:
         trigger.paint_circle(self)
-        super().paint(painter, option, widget)
+        super().paint(*args, **kwargs)
 
 
 class PlusText(QGraphicsTextItem):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.node: None | NodeProxy = None

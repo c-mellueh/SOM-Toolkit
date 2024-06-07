@@ -2,25 +2,27 @@ from __future__ import annotations
 
 import os
 import logging
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Any
+
 from PySide6.QtCore import QPointF, QRectF, Qt, QPoint
 from PySide6.QtGui import QTransform, QAction, QImage, QPainter, QCursor
-from PySide6.QtWidgets import QApplication, QMenu, QFileDialog, QGraphicsTextItem
-import som_gui.aggregation_window.core.tool
-from som_gui.aggregation_window.module.view import ui as ui_view
+from PySide6.QtWidgets import QApplication, QMenu, QFileDialog, QGraphicsView
+
 import SOMcreator
 from SOMcreator.classes import Aggregation
 from SOMcreator.constants import json_constants
 from som_gui.aggregation_window.module.view.constants import AGGREGATIONSCENES, SCENE_SIZE, SCENE_MARGIN
 from som_gui.aggregation_window.module.node import ui as ui_node
 from som_gui.aggregation_window import tool as aw_tool
+from som_gui.aggregation_window.module.view import ui as ui_view
+import som_gui.aggregation_window.core.tool
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.view.prop import ViewProperties
     from som_gui.aggregation_window.module.connection import ui as ui_connection
 
 
-def loop_name(name, names, index: int):
+def loop_name(name, names, index: int) -> str:
     new_name = f"{name}_{str(index).zfill(2)}"
     if new_name in names:
         index += 1
@@ -53,7 +55,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         return cls.get_properties().scene_list[cls.get_scene_index(scene_name)]
 
     @classmethod
-    def get_scene_name(cls, scene: ui_view.AggregationScene) -> str:
+    def get_scene_name(cls, scene: ui_view.AggregationScene) -> str | None:
         index = cls.get_scene_index(scene)
         if index is None:
             return None
@@ -71,7 +73,6 @@ class View(som_gui.aggregation_window.core.tool.View):
             scene_name = loop_name(scene_name, cls.get_scene_names(), 0)
         logging.debug(f"Create Scene '{scene_name}'")
         scene = ui_view.AggregationScene()
-        scene.name = scene_name
         scene.setSceneRect(QRectF(0, 0, SCENE_SIZE[0], SCENE_SIZE[1]))
         prop = cls.get_properties()
         prop.scene_name_list.append(scene_name)
@@ -84,7 +85,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         return scene, scene_name
 
     @classmethod
-    def delete_scene(cls, scene: ui_view.AggregationScene):
+    def delete_scene(cls, scene: ui_view.AggregationScene) -> None:
         for node in list(cls.get_nodes_in_scene(scene)):
             cls.remove_node_from_scene(node, scene)
         logging.debug(f"delete {scene}")
@@ -93,11 +94,12 @@ class View(som_gui.aggregation_window.core.tool.View):
         scene = prop.scene_list[scene_index]
         lists = [prop.scene_name_list, prop.node_list, prop.import_list, prop.connections_list, prop.focus_list,
                  prop.scene_settings_list, prop.scene_list]
-        [l.pop(scene_index) for l in lists]
+        [scene_list.pop(scene_index) for scene_list in lists]
         scene.deleteLater()
 
     @classmethod
-    def create_scene_dict(cls, proj: SOMcreator.Project, plugin_dict: dict) -> None:
+    def import_aggregations_from_project(cls, proj: SOMcreator.Project) -> None:
+        plugin_dict = proj.import_dict
         if not plugin_dict:
             return
 
@@ -134,11 +136,11 @@ class View(som_gui.aggregation_window.core.tool.View):
         return cls.get_properties().scene_name_list
 
     @classmethod
-    def get_active_scene(cls):
+    def get_active_scene(cls) -> None | ui_view.AggregationScene:
         return cls.get_properties().active_scene
 
     @classmethod
-    def activate_scene(cls, scene: ui_view.AggregationScene):
+    def activate_scene(cls, scene: ui_view.AggregationScene) -> None:
         if scene == cls.get_active_scene():
             return
 
@@ -164,19 +166,15 @@ class View(som_gui.aggregation_window.core.tool.View):
         view.verticalScrollBar().setValue(vertical)
 
     @classmethod
-    def test(cls):
-        pass
-
-    @classmethod
-    def set_cursor_style(cls, cursor_style):
+    def set_cursor_style(cls, cursor_style: Qt.CursorShape) -> None:
         cls.get_properties().aggregation_view.viewport().setCursor(cursor_style)
 
     @classmethod
-    def reset_cursor_style(cls):
+    def reset_cursor_style(cls) -> None:
         cls.get_properties().aggregation_view.viewport().unsetCursor()
 
     @classmethod
-    def add_node_to_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene):
+    def add_node_to_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene) -> None:
         scene.addItem(node)
         scene.addItem(node.header)
         scene.addItem(node.frame)
@@ -187,41 +185,28 @@ class View(som_gui.aggregation_window.core.tool.View):
         cls.get_properties().node_list[scene_index].add(node)
 
     @classmethod
-    def clean_import_list_for_scene(cls, scene: ui_view.AggregationScene):
+    def clean_import_list_of_scene(cls, scene: ui_view.AggregationScene) -> None:
         index = cls.get_scene_index(scene)
         cls.get_properties().import_list[index] = list()
 
     @classmethod
-    def autofit_view(cls):
-        def get_bounding_rect():
-            items = {item for item in scene.items() if isinstance(item, ui_node.Frame)}
-            items = scene.items()
-            if not items:
-                return QRectF()
-            rects = [item.sceneBoundingRect() for item in items]
-            top_left, bottom_right = zip(*[(br.topLeft(), br.bottomRight()) for br in rects if br is not None])
-            tl_x, tl_y = zip(*[[tl.x(), tl.y()] for tl in top_left])
-            br_x, br_y = zip(*[[br.x(), br.y()] for br in bottom_right])
-            x_min, x_max = min(tl_x), max(br_x)
-            y_min, y_max = min(tl_y), max(br_y)
-            return QRectF(QPointF(x_min, y_min), QPointF(x_max, y_max))
-
+    def autofit_view(cls) -> None:
         scene = cls.get_active_scene()
-        view = cls.get_view()
-        bounding_rect = get_bounding_rect()
-        marg = SCENE_MARGIN
-        view.fitInView(bounding_rect.adjusted(-marg, -marg, marg, marg),
-                       aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
+        bounding_rect = QRectF()
+        for item in scene.items():
+            bounding_rect = bounding_rect.united(item.sceneBoundingRect())
+        cls.get_view().fitInView(bounding_rect.adjusted(-SCENE_MARGIN, -SCENE_MARGIN, SCENE_MARGIN, SCENE_MARGIN),
+                                 aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
         scene_id = cls.get_scene_index(scene)
         cls.get_properties().focus_list[scene_id] = True
 
     @classmethod
-    def get_nodes_in_scene(cls, scene: ui_view.AggregationScene):
+    def get_nodes_in_scene(cls, scene: ui_view.AggregationScene) -> set[ui_node.NodeProxy]:
         scene_index = cls.get_scene_index(scene)
         return cls.get_properties().node_list[scene_index]
 
     @classmethod
-    def remove_node_from_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene):
+    def remove_node_from_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene) -> None:
         logging.debug(f"Delete Node {node.aggregation.name}")
         if node.top_connection:
             cls.remove_connection_from_scene(node.top_connection, scene)
@@ -238,12 +223,10 @@ class View(som_gui.aggregation_window.core.tool.View):
         node.aggregation.delete()
 
     @classmethod
-    def remove_connection_from_scene(cls, connection: ui_connection.Connection, scene: ui_view.AggregationScene):
+    def remove_connection_from_scene(cls, connection: ui_connection.Connection,
+                                     scene: ui_view.AggregationScene) -> None:
         if connection is None:
             return
-
-        logging.debug(
-            f"Remove Con : {connection.bottom_node.aggregation.name} -> {connection.top_node.aggregation.name}")
 
         scene.removeItem(connection)
         connection.top_node.bottom_connections.remove(connection)
@@ -255,16 +238,16 @@ class View(som_gui.aggregation_window.core.tool.View):
         return cls.get_properties().last_mouse_pos
 
     @classmethod
-    def set_last_mouse_pos(cls, mouse_pos: QPointF | None):
+    def set_last_mouse_pos(cls, mouse_pos: QPointF | None) -> None:
         cls.get_properties().last_mouse_pos = mouse_pos
 
     @classmethod
-    def get_item_under_mouse(cls, position: QPointF):
+    def get_item_under_mouse(cls, position: QPointF) -> Any:
         scene = cls.get_active_scene()
         return scene.itemAt(position, QTransform())
 
     @classmethod
-    def set_mouse_mode(cls, mode: int):
+    def set_mouse_mode(cls, mode: int) -> None:
         """
         mode: 0= None 1= pan, 2= drag, 3 = resize 4 = selection_rect
         """
@@ -278,23 +261,15 @@ class View(som_gui.aggregation_window.core.tool.View):
         return cls.get_properties().mouse_mode
 
     @classmethod
-    def pan(cls, last_pos: QPointF, new_pos: QPointF):
-        if last_pos is None:
-            return
-        dif = new_pos - last_pos
-        view = cls.get_view()
-        view.translate(dif.x(), dif.y())
-
-    @classmethod
-    def map_to_scene(cls, pos: QPointF):
+    def map_to_scene(cls, pos: QPoint) -> QPointF:
         return cls.get_properties().aggregation_view.mapToScene(pos)
 
     @classmethod
-    def get_keyboard_modifier(cls):
+    def get_keyboard_modifier(cls) -> Qt.KeyboardModifiers:
         return QApplication.keyboardModifiers()
 
     @classmethod
-    def scale_view(cls, agle: float, target_viewport_pos: QPoint):
+    def scale_view(cls, agle: float, target_viewport_pos: QPoint) -> None:
         # copied from https://stackoverflow.com/questions/19113532/
         # qgraphicsview-zooming-in-and-out-under-mouse-position-using-mouse-wheel
 
@@ -310,15 +285,10 @@ class View(som_gui.aggregation_window.core.tool.View):
         view.centerOn(view.mapToScene(viewport_center.toPoint()))
 
     @classmethod
-    def scroll_view(cls, x_angle, y_angle):
+    def scroll_view(cls, x_angle, y_angle) -> None:
         view = cls.get_view()
         view.horizontalScrollBar().setValue(view.horizontalScrollBar().value() - x_angle)
         view.verticalScrollBar().setValue(view.verticalScrollBar().value() - y_angle)
-
-    @classmethod
-    def add_connection_to_scene(cls, connection: ui_connection.Connection, scene: ui_view.AggregationScene):
-        scene.addItem(connection)
-        cls.get_properties().connections_list[cls.get_scene_index(scene)].add(connection)
 
     @classmethod
     def set_resize_node(cls, node: ui_node.NodeProxy | None):
@@ -345,17 +315,17 @@ class View(som_gui.aggregation_window.core.tool.View):
         return val
 
     @classmethod
-    def scene_was_alleady_focused(cls, scene: ui_view.AggregationScene):
+    def scene_was_alleady_focused(cls, scene: ui_view.AggregationScene) -> bool:
         scene_id = cls.get_scene_index(scene)
         return cls.get_properties().focus_list[scene_id]
 
     @classmethod
-    def add_aggregation_to_import_list(cls, scene, aggregation, pos: QPointF):
+    def add_aggregation_to_import_list(cls, scene, aggregation, pos: QPointF) -> None:
         scene_id = cls.get_scene_index(scene)
         cls.get_properties().import_list[scene_id].append((aggregation, pos))
 
     @classmethod
-    def create_action(cls, menu_dict: dict[str, QAction | QMenu], name: str, action_func: Callable | None,
+    def create_action(cls, menu_dict: dict[str, QAction | QMenu], name: str, action_func: None | Callable,
                       is_sub_menu: bool):
         parent_structure = "/".join(name.split("/")[:-1])
         if parent_structure not in menu_dict:
@@ -375,7 +345,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         return action
 
     @classmethod
-    def create_context_menu(cls, menu_list):
+    def create_context_menu(cls, menu_list: list[str, Callable]) -> QMenu:
         menu_dict = dict()
         menu = QMenu()
         menu_dict[""] = menu
@@ -384,7 +354,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         return menu
 
     @classmethod
-    def get_node_under_mouse(cls, pos: QPointF) -> ui_node.NodeProxy | None:
+    def get_node_under_mouse(cls) -> ui_node.NodeProxy | None:
         nodes = cls.get_nodes_in_scene(cls.get_active_scene())
         for node in nodes:
             if node.frame.isUnderMouse():
@@ -392,7 +362,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         return None
 
     @classmethod
-    def print_scene(cls, scene: ui_view.AggregationScene, path: str | None = None):
+    def print_scene(cls, scene: ui_view.AggregationScene, path: str | None = None) -> None:
         view = cls.get_view()
         if path is None:
             file_text = "png Files (*.png);;"
@@ -408,7 +378,10 @@ class View(som_gui.aggregation_window.core.tool.View):
         painter.end()
 
     @classmethod
-    def print_all_scenes(cls):
+    def print_all_scenes(cls) -> None:
+        """
+        Deprecated
+        """
         view = cls.get_view()
         folder_path = QFileDialog.getExistingDirectory(view, "Safe Aggregation", "")
         for scene_index, scene in enumerate(cls.get_properties().scene_list):
@@ -419,12 +392,8 @@ class View(som_gui.aggregation_window.core.tool.View):
             cls.print_scene(scene, path)
 
     @classmethod
-    def set_drag_mode(cls, mode):
+    def set_drag_mode(cls, mode: QGraphicsView.DragMode) -> None:
         cls.get_view().setDragMode(mode)
-
-    @classmethod
-    def search_node(cls):
-        pass
 
     @classmethod
     def get_all_scenes(cls) -> list[ui_view.AggregationScene]:
@@ -443,7 +412,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         return cls.get_properties().import_list
 
     @classmethod
-    def zoom_to_selected(cls):
+    def zoom_to_selected(cls) -> None:
         scene = cls.get_active_scene()
         selected_items = [node.frame for node in scene.selectedItems()]
         if not selected_items:
@@ -457,7 +426,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         view.fitInView(rect, Qt.AspectRatioMode.KeepAspectRatio)
 
     @classmethod
-    def get_bounding_box_of_nodes(cls, nodes: set[ui_node.NodeProxy]):
+    def get_bounding_box_of_nodes(cls, nodes: set[ui_node.NodeProxy]) -> QRectF:
         if not nodes:
             return QRectF()
         items = [n.frame for n in nodes]
@@ -472,9 +441,8 @@ class View(som_gui.aggregation_window.core.tool.View):
         return {node for node in scene.selectedItems() if isinstance(node, ui_node.NodeProxy)}
 
     @classmethod
-    def set_copy_list(cls, copy_list: list[tuple[SOMcreator.classes.Aggregation, QPointF]]):
+    def set_copy_list(cls, copy_list: list[tuple[SOMcreator.classes.Aggregation, QPointF]]) -> None:
         cls.get_properties().copy_list = copy_list
-        pass
 
     @classmethod
     def get_copy_list(cls) -> list[tuple[SOMcreator.classes.Aggregation, QPointF]]:
@@ -487,9 +455,14 @@ class View(som_gui.aggregation_window.core.tool.View):
         return cursor_pos
 
     @classmethod
-    def create_connection_by_pos(cls, top_node: ui_node.NodeProxy, pos: QPointF):
+    def add_connection_to_scene(cls, connection: ui_connection.Connection, scene: ui_view.AggregationScene) -> None:
+        scene.addItem(connection)
+        cls.get_properties().connections_list[cls.get_scene_index(scene)].add(connection)
+
+    @classmethod
+    def create_connection_by_pos(cls, top_node: ui_node.NodeProxy):
         scene = cls.get_active_scene()
-        bottom_node = cls.get_node_under_mouse(pos)
+        bottom_node = cls.get_node_under_mouse()
         if bottom_node is None:
             return
         if bottom_node.aggregation.parent is not None:
@@ -498,9 +471,10 @@ class View(som_gui.aggregation_window.core.tool.View):
         top_node.aggregation.add_child(bottom_node.aggregation, 1)
 
     @classmethod
-    def create_connection_by_search(cls, top_node: ui_node.NodeProxy, obj: SOMcreator.Object):
+    def create_connection_by_search(cls, top_node: ui_node.NodeProxy,
+                                    obj: SOMcreator.Object) -> ui_node.NodeProxy | None:
         if obj is None:
-            return
+            return None
         scene = cls.get_active_scene()
         aggregation = Aggregation(obj)
         rect = top_node.sceneBoundingRect()
@@ -511,14 +485,14 @@ class View(som_gui.aggregation_window.core.tool.View):
         return new_node
 
     @classmethod
-    def reset_cursor(cls, position):
+    def reset_cursor(cls, position) -> None:
         cls.set_mouse_mode(0)
         cls.set_resize_node(None)
         cls.set_last_mouse_pos(cls.map_to_scene(position))
         cls.get_view().viewport().unsetCursor()
 
     @classmethod
-    def get_hover_cursor(cls, scene_pos: QPointF):
+    def get_hover_cursor(cls, scene_pos: QPointF) -> Qt.CursorShape:
         item_under_mouse = cls.get_item_under_mouse(scene_pos)
         if aw_tool.Node.item_is_resize_rect(item_under_mouse):
             return Qt.CursorShape.SizeFDiagCursor
@@ -536,7 +510,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         return Qt.CursorShape.ArrowCursor
 
     @classmethod
-    def get_press_cursor(cls, scene_pos: QPointF):
+    def get_press_cursor(cls, scene_pos: QPointF) -> Qt.CursorShape:
         item_under_mouse = cls.get_item_under_mouse(scene_pos)
         if aw_tool.Node.item_is_resize_rect(item_under_mouse):
             return Qt.CursorShape.SizeFDiagCursor
@@ -554,3 +528,11 @@ class View(som_gui.aggregation_window.core.tool.View):
         if item_under_mouse is None:
             return Qt.CursorShape.ClosedHandCursor
         return Qt.CursorShape.ArrowCursor
+
+    @classmethod
+    def remove_nodes_with_deleted_aggregations(cls, scene: ui_view.AggregationScene, proj: SOMcreator.Project) -> None:
+        nodes = cls.get_nodes_in_scene(scene)
+        existing_aggregations = list(proj.get_all_aggregations())
+        for existing_node in list(nodes):
+            if existing_node.aggregation not in existing_aggregations:
+                cls.remove_node_from_scene(existing_node, scene)

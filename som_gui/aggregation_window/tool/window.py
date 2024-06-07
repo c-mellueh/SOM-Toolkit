@@ -1,18 +1,16 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 import SOMcreator
-from PySide6.QtGui import QShortcut, QKeySequence
-
-import som_gui.aggregation_window.core.tool
-from som_gui.aggregation_window.module.window import ui as ui_window
 import som_gui
-from som_gui import tool
+import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window import tool as aw_tool
+from som_gui.aggregation_window.module.window import ui as ui_window
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.window.prop import WindowProperties
-    from PySide6.QtWidgets import QMenuBar
+    from PySide6.QtWidgets import QMenuBar, QStatusBar
+    from som_gui.module.util.prop import MenuDict
 
 
 class Window(som_gui.aggregation_window.core.tool.Window):
@@ -33,7 +31,7 @@ class Window(som_gui.aggregation_window.core.tool.Window):
         return cls.get_properties().combo_box
 
     @classmethod
-    def add_widget_to_layout(cls, widget, *args, **kwargs):
+    def add_widget_to_layout(cls, widget, *args, **kwargs) -> None:
         window = cls.get_properties().aggregation_window
         if window is None:
             return
@@ -57,7 +55,7 @@ class Window(som_gui.aggregation_window.core.tool.Window):
         return cls.get_properties().aggregation_window.menuBar()
 
     @classmethod
-    def get_menu_dict(cls):
+    def get_menu_dict(cls) -> MenuDict:
         return cls.get_properties().menu_dict
 
     @classmethod
@@ -65,47 +63,47 @@ class Window(som_gui.aggregation_window.core.tool.Window):
         return cls.get_properties().aggregation_window
 
     @classmethod
-    def get_menu_list(cls):
+    def get_menu_list(cls) -> list[tuple[str, Callable]]:
         return cls.get_properties().menu_list
 
     @classmethod
-    def set_combo_box(cls, text: str):
+    def set_combo_box(cls, text: str) -> None:
         combo_box = cls.get_combo_box()
         combo_box.setCurrentText(text)
 
     @classmethod
-    def filter_is_activated(cls):
+    def is_filter_activated(cls) -> bool:
         return cls.get_properties().filter_is_activated
 
     @classmethod
-    def activate_filter(cls):
+    def activate_filter(cls) -> None:
         cls.get_properties().filter_is_activated = True
 
     @classmethod
-    def deactivate_filter(cls):
+    def remove_filter(cls) -> None:
         cls.get_properties().filter_is_activated = False
         cls.set_filter_object(None)
 
     @classmethod
     def get_allowed_scenes(cls) -> list:
-        if not cls.filter_is_activated():
+        if not cls.is_filter_activated():
             return aw_tool.View.get_all_scenes()
         return cls.get_properties().allowed_scenes
 
     @classmethod
-    def set_allowed_scenes(cls, scene_list: list):
+    def set_allowed_scenes(cls, scene_list: list) -> None:
         cls.get_properties().allowed_scenes = scene_list
 
     @classmethod
-    def set_filter_object(cls, obj: SOMcreator.Object | None):
+    def set_filter_object(cls, obj: SOMcreator.Object | None) -> None:
         cls.get_properties().filter_object = obj
 
     @classmethod
-    def get_status_bar(cls):
+    def get_status_bar(cls) -> QStatusBar:
         return cls.get_aggregation_window().statusBar()
 
     @classmethod
-    def calculate_statusbar_text(cls):
+    def calculate_statusbar_text(cls) -> str:
         filter_object = cls.get_properties().filter_object
         texts = list()
         if filter_object is not None:

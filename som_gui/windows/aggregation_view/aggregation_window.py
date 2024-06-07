@@ -370,16 +370,7 @@ class AggregationView(QGraphicsView):
         global_pos = self.viewport().mapToGlobal(pos)
         self.right_click_menu.exec(global_pos)
 
-    def print_view(self, path):
 
-        rect = self.viewport().rect()
-        image = QImage(rect.size() * 8, QImage.Format.Format_RGB32)
-        image.fill(Qt.white)
-        painter = QPainter(image)
-        painter.setRenderHint(QPainter.Antialiasing)
-        self.render(painter)
-        image.save(path)
-        painter.end()
 
     def print_all(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Safe Aggregation", "")

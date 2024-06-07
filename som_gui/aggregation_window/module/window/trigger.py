@@ -3,22 +3,23 @@ from som_gui.aggregation_window import tool as aw_tool
 from som_gui import tool
 
 
-def connect():
-    tool.MainWindow.add_action("Test",
+def connect() -> None:
+    tool.MainWindow.add_action("Bauwerksstruktur",
                                lambda: core.create_window(aw_tool.Window, aw_tool.View, tool.Util, tool.Search,
                                                           tool.Popups))
 
 
-def update_combo_box():
+def on_new_project() -> None:
+    pass
+
+
+def update_combo_box() -> None:
     core.update_combo_box(aw_tool.Window, aw_tool.View)
 
 
-def combo_box_changed():
+def combo_box_changed() -> None:
     core.combobox_changed(aw_tool.Window, aw_tool.View)
 
 
-def window_paint_event():
+def window_paint_event() -> None:
     core.paint_event(aw_tool.Window)
-
-def on_new_project():
-    pass

@@ -47,7 +47,7 @@ class Util(som_gui.core.tool.Util):
             action.triggered.connect(function)
 
     @classmethod
-    def create_actions(cls, menu_dict: MenuDict, parent: QMenu | QMenuBar):
+    def create_actions(cls, menu_dict: MenuDict, parent: QMenu | QMenuBar | None):
         menu = menu_dict["menu"]
         if parent is not None:
             parent.addMenu(menu)

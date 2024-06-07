@@ -1,29 +1,22 @@
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Type
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QPointF
 from SOMcreator import classes, value_constants
-from PySide6.QtWidgets import QMenu, QGraphicsTextItem
-from PySide6.QtGui import QAction
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window import tool as aw_tool
     from som_gui import tool
-    from PySide6.QtCore import QPointF
     from PySide6.QtGui import QWheelEvent
     from som_gui.aggregation_window.module.node import ui as node_ui
 
 
-def import_positions(view: Type[aw_tool.View], project: Type[tool.Project]):
-    proj = project.get()
-    plugin_dict = proj.import_dict
-    view.create_scene_dict(proj, plugin_dict)
+def import_pos_from_project(view: Type[aw_tool.View], project: Type[tool.Project]) -> None:
+    view.import_aggregations_from_project(project.get())
 
 
 def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: Type[aw_tool.Connection],
-                project: Type[tool.Project]):
-    # logging.debug(f"View Paint Event")
+                project: Type[tool.Project]) -> None:
     scene = view.get_active_scene()
     scene_id = view.get_scene_index(scene)
 
@@ -32,14 +25,10 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
         new_node = node.create_node(aggregation)
         view.add_node_to_scene(new_node, scene)
         node.set_node_pos(new_node, position)
-    view.clean_import_list_for_scene(scene)
+    view.clean_import_list_of_scene(scene)
 
     # delete Nodes with deleted Aggregations
-    nodes = view.get_nodes_in_scene(scene)
-    existing_aggregations = list(project.get().get_all_aggregations())
-    for existing_node in list(nodes):
-        if existing_node.aggregation not in existing_aggregations:
-            view.remove_node_from_scene(existing_node, scene)
+    view.remove_nodes_with_deleted_aggregations(scene, project.get())
 
     # create connections
     node_dict = {node.aggregation: node for node in view.get_nodes_in_scene(scene)}
@@ -79,7 +68,7 @@ def mouse_move_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_
 
 
 def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node],
-                      connection: Type[aw_tool.Connection], ):
+                      connection: Type[aw_tool.Connection]) -> None:
     modifier = view.get_keyboard_modifier()
     view.set_last_mouse_pos(view.map_to_scene(position))
     scene = view.get_active_scene()
@@ -116,11 +105,11 @@ def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw
 
 
 def mouse_release_event(position: QPointF, view: Type[aw_tool.View],
-                        connection: Type[aw_tool.Connection], search: Type[tool.Search]):
+                        connection: Type[aw_tool.Connection], search: Type[tool.Search]) -> None:
     mouse_mode = view.get_mouse_mode()
     if mouse_mode == 5:  # Handle Connection Drawing
-        if connection.get_draw_started():
-            view.create_connection_by_pos(connection.get_draw_node(), view.map_to_scene(position))
+        if connection.is_drawing_started():
+            view.create_connection_by_pos(connection.get_draw_node())
             connection.delete_draw_connection()
         else:
             obj = search.search_object()
@@ -133,9 +122,8 @@ def mouse_release_event(position: QPointF, view: Type[aw_tool.View],
     view.set_cursor_style(new_cursor)
 
 
-def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]):
-    y_angle = wheel_event.angleDelta().y()
-    x_angle = wheel_event.angleDelta().x()
+def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]) -> None:
+    x_angle, y_angle = wheel_event.angleDelta().x(), wheel_event.angleDelta().y()
 
     modifier = view.get_keyboard_modifier()
     if modifier == Qt.ControlModifier:
@@ -153,7 +141,7 @@ def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]):
 
 
 def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node], search: Type[tool.Search],
-                           connection: Type[aw_tool.Connection], project: Type[tool.Project]):
+                           connection: Type[aw_tool.Connection], project: Type[tool.Project]) -> None:
     menu_list = list()
     scene = view.get_active_scene()
     menu_list.append(["Ansicht/Zoom zurücksetzen", view.autofit_view])
@@ -167,24 +155,21 @@ def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw
     menu_list.append(["Info anpassen", lambda: change_header_text(node, search)])
     menu_list.append(["Info zurücksetzen", lambda: node.reset_title_settings()])
     menu_list.append(["Ansicht/Ansicht Drucken", lambda: view.print_scene(scene)])
-    # menu_list.append(["Drucken/Alles Drucken",lambda: view.print_all_scenes()])
 
-    node_under_mouse = view.get_node_under_mouse(view.map_to_scene(pos))
+    node_under_mouse = view.get_node_under_mouse()
     if node_under_mouse:
         menu_list.append(["Node/Node hinzufügen", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
 
         txt = "Node/Node Löschen" if len(selected_nodes) == 1 else "Nodes Löschen"
         menu_list.append([txt, lambda: [view.remove_node_from_scene(n, scene) for n in selected_nodes]])
         if not node.is_root(node_under_mouse):
-            aggreg_func = lambda: node.set_connect_type(node_under_mouse, value_constants.AGGREGATION)
-            menu_list.append(["Verbindungsart/Aggregation", aggreg_func])
-
-            inher_func = lambda: node.set_connect_type(node_under_mouse, value_constants.INHERITANCE)
-            menu_list.append(["Verbindungsart/Vererbung", inher_func])
-
-            combi_func = lambda: node.set_connect_type(node_under_mouse,
-                                                       value_constants.AGGREGATION + value_constants.INHERITANCE)
-            menu_list.append(["Verbindungsart/Aggregation+Vererbung", combi_func])
+            menu_list.append(["Verbindungsart/Aggregation",
+                              lambda: node.set_connect_type(node_under_mouse, value_constants.AGGREGATION)])
+            menu_list.append(["Verbindungsart/Vererbung",
+                              lambda: node.set_connect_type(node_under_mouse, value_constants.INHERITANCE)])
+            menu_list.append(["Verbindungsart/Aggregation+Vererbung",
+                              lambda: node.set_connect_type(node_under_mouse,
+                                                            value_constants.AGGREGATION + value_constants.INHERITANCE)])
     else:
         menu_list.append(["Node hinzufügen", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
 
@@ -193,7 +178,7 @@ def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw
     paint_event(view, node, connection, project)
 
 
-def add_node_at_pos(pos, view: Type[aw_tool.View], search: Type[tool.Search]):
+def add_node_at_pos(pos, view: Type[aw_tool.View], search: Type[tool.Search]) -> None:
     scene = view.get_active_scene()
     obj = search.search_object()
     if not obj:
@@ -202,7 +187,7 @@ def add_node_at_pos(pos, view: Type[aw_tool.View], search: Type[tool.Search]):
     view.add_aggregation_to_import_list(scene, aggregation, pos)
 
 
-def change_header_text(node: Type[aw_tool.Node], search: Type[tool.Search]):
+def change_header_text(node: Type[aw_tool.Node], search: Type[tool.Search]) -> None:
     result = search.search_attribute()
     if result:
         node.set_title_settings(*result)

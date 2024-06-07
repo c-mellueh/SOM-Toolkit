@@ -2,21 +2,15 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING, Type
-
-import SOMcreator.classes
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QCursor
-from PySide6.QtWidgets import QPushButton
-import copy
 from SOMcreator.classes import Aggregation
 
-
 if TYPE_CHECKING:
-    from som_gui.aggregation_window.tool import Window, View, Node
+    from som_gui.aggregation_window import tool as aw_tool
     from som_gui import tool
 
 
-def paint_event(window: Type[Window]):
+def paint_event(window: Type[aw_tool.Window]) -> None:
     logging.debug(f"Paint Aggregation Window")
     status_bar = window.get_status_bar()
     new_status_bar_text = window.calculate_statusbar_text()
@@ -24,8 +18,8 @@ def paint_event(window: Type[Window]):
         status_bar.showMessage(new_status_bar_text)
 
 
-def create_window(window: Type[Window], view: Type[View], util: Type[tool.Util], search: Type[tool.Search],
-                  popup: Type[tool.Popups]):
+def create_window(window: Type[aw_tool.Window], view: Type[aw_tool.View], util: Type[tool.Util],
+                  search: Type[tool.Search], popup: Type[tool.Popups]) -> None:
     if window.get_aggregation_window() is not None:
         aggregation_window = window.get_aggregation_window()
         aggregation_window.show()
@@ -40,7 +34,7 @@ def create_window(window: Type[Window], view: Type[View], util: Type[tool.Util],
     menu_list.append(["Ansicht/Ansichtig hinzufügen", lambda: create_new_scene(window, view)])
     menu_list.append(["Ansicht/Aktuelle Ansicht löschen", lambda: delete_active_scene(window, view)])
     menu_list.append(["Ansicht/Ansicht Filtern", lambda: filter_scenes(window, view, search, popup)])
-    menu_list.append(["Ansicht/Filter Zurücksetzen", window.deactivate_filter])
+    menu_list.append(["Ansicht/Filter Zurücksetzen", window.remove_filter])
     menu_list.append(["Aggregation/Aggregation finden", lambda: search_aggregation(view, search, popup)])
     menu_bar = window.get_menu_bar()
     menu_dict = window.get_menu_dict()
@@ -55,24 +49,24 @@ def create_window(window: Type[Window], view: Type[View], util: Type[tool.Util],
     util.add_shortcut("Ctrl+V", aggregation_window, lambda: paste_nodes(view))
 
 
-def create_new_scene(window: Type[Window], view: Type[View]):
+def create_new_scene(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> None:
     scene, scene_name = view.create_scene("Undefined")
     update_combo_box(window, view)
     window.set_combo_box(scene_name)
 
 
-def delete_active_scene(window: Type[Window], view: Type[View]):
+def delete_active_scene(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> None:
     view.delete_scene(view.get_active_scene())
     update_combo_box(window, view)
 
 
-def update_combo_box(window: Type[Window], view: Type[View]):
+def update_combo_box(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> None:
     combo_box = window.get_combo_box()
     if combo_box is None:
         return
     existing_texts = window.get_combo_box_texts()
     allowed_scenes = window.get_allowed_scenes()
-    wanted_texts = [view.get_scene_name(scene) for scene in allowed_scenes]
+    wanted_texts = [view.get_scene_name(scene) for scene in allowed_scenes if view.get_scene_name(scene) is not None]
     new_texts = set(wanted_texts).difference(set(existing_texts))
     delete_texts = set(existing_texts).difference(set(wanted_texts))
     if new_texts:
@@ -86,7 +80,7 @@ def update_combo_box(window: Type[Window], view: Type[View]):
             combo_box.removeItem(index)
 
 
-def combobox_changed(window: Type[Window], view: Type[View]):
+def combobox_changed(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> None:
     text = window.get_combo_box_text()
     scene = view.get_scene_by_name(text)
     logging.debug(f"Activate {scene}")
@@ -95,7 +89,8 @@ def combobox_changed(window: Type[Window], view: Type[View]):
     view.activate_scene(scene)
 
 
-def filter_scenes(window: Type[Window], view: Type[View], search: Type[tool.Search], popup: Type[tool.Popups]):
+def filter_scenes(window: Type[aw_tool.Window], view: Type[aw_tool.View], search: Type[tool.Search],
+                  popup: Type[tool.Popups]) -> None:
     allowed_scenes = window.get_allowed_scenes()
     scene_list = view.get_all_scenes()
     filter_object = search.search_object()
@@ -114,7 +109,7 @@ def filter_scenes(window: Type[Window], view: Type[View], search: Type[tool.Sear
     update_combo_box(window, view)
 
 
-def search_aggregation(view: Type[View], search: Type[tool.Search], popup: Type[tool.Popups]):
+def search_aggregation(view: Type[aw_tool.View], search: Type[tool.Search], popup: Type[tool.Popups]) -> None:
     obj = search.search_object()
     if obj is None:
         return
@@ -128,7 +123,7 @@ def search_aggregation(view: Type[View], search: Type[tool.Search], popup: Type[
     view.zoom_to_selected()
 
 
-def copy_selected_nodes(view: Type[View]):
+def copy_selected_nodes(view: Type[aw_tool.View]) -> None:
     nodes = view.get_selected_nodes()
     bounding_box = view.get_bounding_box_of_nodes(nodes)
     copy_list = list()
@@ -138,7 +133,7 @@ def copy_selected_nodes(view: Type[View]):
     view.set_copy_list(copy_list)
 
 
-def paste_nodes(view: Type[View]):
+def paste_nodes(view: Type[aw_tool.View]) -> None:
     scene = view.get_active_scene()
     cursor_pos = view.get_scene_cursor_pos()
     aggregation_dict: dict[Aggregation, Aggregation] = dict()

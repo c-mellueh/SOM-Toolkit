@@ -1,25 +1,29 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from PySide6.QtCore import QSize, QPointF
-
-from som_gui.module.project.constants import CLASS_REFERENCE
-import SOMcreator
-from PySide6.QtWidgets import QTreeWidgetItem, QGraphicsRectItem
+from PySide6.QtWidgets import QTreeWidgetItem
 from PySide6.QtCore import QRectF
-from PySide6.QtGui import QCursor, QTransform
-from SOMcreator.classes import Aggregation, Object
+
+import SOMcreator
+from SOMcreator.classes import Aggregation
+from SOMcreator import value_constants
+
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.node import ui as node_ui
 from som_gui.aggregation_window.module.node import constants as node_constants
 from som_gui.aggregation_window import tool as aw_tool
+from som_gui.module.project.constants import CLASS_REFERENCE
 
 if TYPE_CHECKING:
     from som_gui.aggregation_window.module.node.prop import NodeProperties
-    from som_gui.aggregation_window.module.view import ui as view_ui
 
 
 class Node(som_gui.aggregation_window.core.tool.Node):
+    @classmethod
+    def get_properties(cls) -> NodeProperties:
+        return som_gui.NodeProperties
+
     @classmethod
     def set_z_level_of_node(cls, node: node_ui.NodeProxy, z_level: int) -> None:
         node.setZValue(z_level)
@@ -27,10 +31,6 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         node.header.setZValue(z_level)
         node.resize_rect.setZValue(z_level)
         node.circle.setZValue(z_level)
-
-    @classmethod
-    def get_properties(cls) -> NodeProperties:
-        return som_gui.NodeProperties
 
     @classmethod
     def increment_z_level(cls) -> int:
@@ -42,7 +42,8 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         return cls.get_properties().z_level
 
     @classmethod
-    def add_property_set_to_tree(cls, property_set: SOMcreator.PropertySet, tree_widget: node_ui.PropertySetTree):
+    def add_property_set_to_tree(cls, property_set: SOMcreator.PropertySet,
+                                 tree_widget: node_ui.PropertySetTree) -> QTreeWidgetItem:
         item = QTreeWidgetItem()
         item.setText(0, property_set.name)
         item.setData(0, CLASS_REFERENCE, property_set)
@@ -50,11 +51,13 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         return item
 
     @classmethod
-    def get_pset_subelement_dict(cls, item: QTreeWidgetItem):
+    def get_pset_subelement_dict(cls, item: QTreeWidgetItem) -> dict[
+        SOMcreator.PropertySet | SOMcreator.Attribute, QTreeWidgetItem]:
         return {cls.get_linked_item(item.child(i)): item.child(i) for i in range(item.childCount())}
 
     @classmethod
-    def add_attribute_to_property_set_tree(cls, attribute: SOMcreator.Attribute, property_set_item: QTreeWidgetItem):
+    def add_attribute_to_property_set_tree(cls, attribute: SOMcreator.Attribute,
+                                           property_set_item: QTreeWidgetItem) -> QTreeWidgetItem:
         attribute_item = QTreeWidgetItem()
         attribute_item.setText(0, attribute.name)
         attribute_item.setData(0, CLASS_REFERENCE, attribute)
@@ -63,7 +66,6 @@ class Node(som_gui.aggregation_window.core.tool.Node):
 
     @classmethod
     def create_tree_widget(cls, node: node_ui.NodeProxy) -> node_ui.PropertySetTree:
-        obj = node.aggregation.object
         widget = node_ui.PropertySetTree()
         widget.setHeaderLabel("Name")
         widget.node = node
@@ -78,7 +80,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         return circle
 
     @classmethod
-    def create_node(cls, aggregation: Aggregation):
+    def create_node(cls, aggregation: Aggregation) -> node_ui.NodeProxy:
         node = node_ui.NodeProxy()
         node_widget = node_ui.NodeWidget()
         node.setWidget(node_widget)
@@ -93,15 +95,15 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         return node
 
     @classmethod
-    def get_header_geometry(cls, header, node: node_ui.NodeProxy):
-        line_width = header.pen().width()  # if ignore Linewidth: box of Node and Header won't match
+    def get_header_geometry(cls, header, node: node_ui.NodeProxy) -> QRectF:
+        line_width = header.pen().width()  # if ignore Line width: box of Node and Header won't match
         x = line_width / 2
         width = node.widget().width() - line_width
         height = node_constants.HEADER_HEIGHT
         return QRectF(x, -height, width, height)
 
     @classmethod
-    def get_frame_geometry(cls, frame: node_ui.Frame, node: node_ui.NodeProxy):
+    def get_frame_geometry(cls, frame: node_ui.Frame, node: node_ui.NodeProxy) -> QRectF:
         line_width = frame.pen().width()
         rect = node.rect()
         rect.setWidth(rect.width() - line_width / 2)
@@ -111,33 +113,34 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         return rect
 
     @classmethod
-    def create_header(cls, node: node_ui.NodeProxy):
+    def create_header(cls, node: node_ui.NodeProxy) -> node_ui.Header:
         header = node_ui.Header()
 
         header.setRect(cls.get_header_geometry(header, node))
         node.header = header
         header.node = node
+        return header
 
     @classmethod
-    def create_frame(cls, node: node_ui.NodeProxy):
+    def create_frame(cls, node: node_ui.NodeProxy) -> node_ui.Frame:
         frame = node_ui.Frame()
         rect = cls.get_frame_geometry(frame, node)
 
         frame.setRect(rect)
         node.frame = frame
         frame.node = node
+        return frame
 
     @classmethod
-    def create_resize_rect(cls, node: node_ui.NodeProxy):
+    def create_resize_rect(cls, node: node_ui.NodeProxy) -> node_ui.ResizeRect:
         size = node_constants.RESIZE_RECT_SIZE
         frame_rect = node.rect()
-
-        x = frame_rect.width() - size / 2
-        y = frame_rect.height() - size / 2
+        x, y = frame_rect.width() - size / 2, frame_rect.height() - size / 2
         resize_rect = node_ui.ResizeRect()
         resize_rect.setRect(QRectF(x, y, size, size))
         node.resize_rect = resize_rect
         resize_rect.node = node
+        return resize_rect
 
     @classmethod
     def get_linked_item(cls, pset_tree_item: QTreeWidgetItem) -> SOMcreator.PropertySet | SOMcreator.Attribute:
@@ -152,7 +155,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         return node.frame
 
     @classmethod
-    def move_node(cls, node: node_ui.NodeProxy, dif: QPointF):
+    def move_node(cls, node: node_ui.NodeProxy, dif: QPointF) -> None:
         node.moveBy(dif.x(), dif.y())
         frame = cls.get_frame_from_node(node)
         frame.moveBy(dif.x(), dif.y())
@@ -160,21 +163,47 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         cls.update_circle_rect(node.circle)
 
     @classmethod
-    def update_circle_rect(cls, circle: node_ui.Circle):
+    def set_node_pos(cls, node: node_ui.NodeProxy, pos: QPointF) -> None:
+        dif = pos - node.header.scenePos()
+        node.header.moveBy(dif.x(), dif.y())
+        cls.move_node(node, dif)
+
+    @classmethod
+    def update_circle_rect(cls, circle: node_ui.Circle) -> None:
         x = circle.node.sceneBoundingRect().center().x() - circle.DIAMETER / 2
         y = circle.node.sceneBoundingRect().bottom() - circle.DIAMETER / 2
         circle.setRect(QRectF(x, y, circle.DIAMETER, circle.DIAMETER))
-        view = aw_tool.View.get_view()
         scene_pos = aw_tool.View.get_scene_cursor_pos()
         frame = circle.node.frame
         margin = 1.
         bounding_rect = frame.sceneBoundingRect().adjusted(-margin, -margin, margin, margin)
         circle.show() if bounding_rect.contains(scene_pos) else circle.hide()
-        circle.text.setX(x + 4.5)  # TODO: Find a better way to display text
+        circle.text.setX(x + 4.5)
         circle.text.setY(y)
 
     @classmethod
-    def get_title(cls, node: node_ui.NodeProxy, pset_name: str, attribute_name: str):
+    def get_id_group(cls, node: node_ui.NodeProxy) -> str:
+        abbrev_list = list()
+
+        def iter_id(element: Aggregation):
+            if element.parent_connection in (value_constants.AGGREGATION,
+                                             value_constants.AGGREGATION + value_constants.INHERITANCE):
+                abbrev_list.append(element.parent.object.abbreviation)
+            if not element.is_root:
+                iter_id(element.parent)
+
+        if node.aggregation.is_root:
+            return ""
+
+        iter_id(node.aggregation)
+        return "_xxx_".join(reversed(abbrev_list)) + "_xxx"
+
+    @classmethod
+    def get_identity(cls, node: node_ui.NodeProxy):
+        return cls.get_id_group(node) + "_" + node.aggregation.object.abbreviation + "_xxx"
+
+    @classmethod
+    def get_title(cls, node: node_ui.NodeProxy, pset_name: str, attribute_name: str) -> str:
         aggregation = cls.get_aggregation_from_node(node)
         if not (pset_name and attribute_name):
             base_text = f"{aggregation.name} ({aggregation.object.abbreviation})"
@@ -182,7 +211,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
             if aggregation.is_root:
                 title = base_text
             else:
-                title = f"{base_text}\nidGruppe: {aggregation.id_group()}"
+                title = f"{base_text}\nidGruppe: {cls.get_id_group(node)}"
             return title
         undef = f"{aggregation.name}\n{attribute_name}: undefined"
         obj = aggregation.object
@@ -198,26 +227,20 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         return f"{aggregation.name}\n{attribute_name}: {attribute.value[0]}"
 
     @classmethod
-    def get_aggregation_from_node(cls, node: node_ui.NodeProxy):
+    def get_aggregation_from_node(cls, node: node_ui.NodeProxy) -> Aggregation:
         return node.aggregation
 
     @classmethod
-    def get_title_settings(cls):
+    def get_title_settings(cls) -> tuple[str, str]:
         return cls.get_properties().title_pset, cls.get_properties().title_attribute
 
     @classmethod
-    def set_title_settings(cls, pset_name, attribute_name):
+    def set_title_settings(cls, pset_name: str, attribute_name: str) -> None:
         cls.get_properties().title_pset, cls.get_properties().title_attribute = pset_name, attribute_name
 
     @classmethod
-    def reset_title_settings(cls):
+    def reset_title_settings(cls) -> None:
         cls.get_properties().title_pset, cls.get_properties().title_attribute = None, None
-
-    @classmethod
-    def set_node_pos(cls, node: node_ui.NodeProxy, pos: QPointF):
-        dif = pos - node.header.scenePos()
-        node.header.moveBy(dif.x(), dif.y())
-        cls.move_node(node, dif)
 
     @classmethod
     def get_node_from_tree_widget(cls, tree_widget: node_ui.PropertySetTree) -> node_ui.NodeProxy:
@@ -232,50 +255,51 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         return False
 
     @classmethod
-    def item_is_resize_rect(cls, item):
-        return bool(isinstance(item, node_ui.ResizeRect))
+    def item_is_resize_rect(cls, item: Any) -> bool:
+        return isinstance(item, node_ui.ResizeRect)
 
     @classmethod
-    def item_is_header(cls, item):
-        return bool(isinstance(item, node_ui.Header))
+    def item_is_header(cls, item: Any) -> bool:
+        return isinstance(item, node_ui.Header)
 
     @classmethod
-    def item_is_frame(cls, item):
-        return bool(isinstance(item, node_ui.Frame))
+    def item_is_frame(cls, item: Any) -> bool:
+        return isinstance(item, node_ui.Frame)
 
     @classmethod
-    def item_is_circle(cls, item):
-        return bool(isinstance(item, node_ui.Circle))
+    def item_is_circle(cls, item: Any) -> bool:
+        return isinstance(item, node_ui.Circle)
 
     @classmethod
-    def item_is_circle_text(cls, item):
-        return bool(isinstance(item, node_ui.PlusText))
+    def item_is_circle_text(cls, item: Any) -> bool:
+        return isinstance(item, node_ui.PlusText)
 
     @classmethod
-    def resize_node(cls, node: node_ui.NodeProxy, last_pos: QPointF, new_pos: QPointF):
+    def resize_node(cls, node: node_ui.NodeProxy, last_pos: QPointF, new_pos: QPointF) -> None:
         dif = new_pos - last_pos
+        dx, dy = dif.x(), dif.y()
         geom = node.geometry()
-        height = geom.height() + dif.y()
-        width = geom.width() + dif.x()
+        height = geom.height() + dy
+        width = geom.width() + dx
         if height >= node.minimumHeight():
             geom.setHeight(height)
-            node.resize_rect.moveBy(0., dif.y())
+            node.resize_rect.moveBy(0., dy)
         if width >= node.minimumWidth():
             geom.setWidth(width)
-            node.resize_rect.moveBy(dif.x(), 0.)
+            node.resize_rect.moveBy(dx, 0.)
         node.setGeometry(geom)
         node.circle.update()
 
     @classmethod
-    def set_connect_type(cls, node: node_ui.NodeProxy, parent_con_type: int):
+    def set_connect_type(cls, node: node_ui.NodeProxy, parent_con_type: int) -> None:
         node.aggregation.parent_connection = parent_con_type
 
     @classmethod
-    def is_root(cls, node: node_ui.NodeProxy):
-        return not bool(node.top_connection)
+    def is_root(cls, node: node_ui.NodeProxy) -> bool:
+        return node.aggregation.is_root
 
     @classmethod
-    def center_nodes(cls, nodes: set[node_ui.NodeProxy], orientation: int):
+    def center_nodes(cls, nodes: set[node_ui.NodeProxy], orientation: int) -> None:
         func_name = "x" if orientation == 0 else "y"
         pos_list = [getattr(node.geometry(), func_name)() for node in nodes]
         center = min(pos_list) + (max(pos_list) - min(pos_list)) / 2

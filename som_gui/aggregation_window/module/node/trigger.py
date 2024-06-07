@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from PySide6.QtWidgets import QTreeWidgetItem, QTreeWidget
+from PySide6.QtWidgets import QTreeWidgetItem
 from som_gui.aggregation_window.core import node as core
 from som_gui import tool
 from som_gui.aggregation_window import tool as aw_tool
@@ -9,52 +9,38 @@ from PySide6.QtGui import QPainter
 if TYPE_CHECKING:
     from . import ui
 
-def connect():
+
+def connect() -> None:
     pass
 
 
-def on_new_project():
+def on_new_project() -> None:
     pass
 
 
-def pset_tree_double_clicked(item: QTreeWidgetItem, _: int):
+def pset_tree_double_clicked(item: QTreeWidgetItem, _: int) -> None:
     core.pset_tree_double_clicked(item, aw_tool.Node, tool.PropertySetWindow, tool.Attribute, tool.AttributeTable)
 
 
-def drag_move(header, dif):
+def drag_move(header, dif) -> None:
     core.header_drag_move(header, dif, aw_tool.View, aw_tool.Node)
 
 
-def paint_header(header, painter: QPainter):
-    core.paint_header(painter, header, aw_tool.Node)
-
-
-def header_clicked(header: ui.Header):
+def header_clicked(header: ui.Header) -> None:
     core.node_clicked(header.node, aw_tool.Node)
 
 
-def paint_propertyset_tree(tree: ui.PropertySetTree):
+def paint_propertyset_tree(tree: ui.PropertySetTree) -> None:
     core.paint_pset_tree(tree, aw_tool.Node)
 
 
-def paint_node(node: ui.NodeProxy):
+def paint_node(node: ui.NodeProxy) -> None:
     core.paint_node(node, aw_tool.Node)
 
 
-def paint_circle(circle: ui.Circle):
+def paint_header(header, painter: QPainter) -> None:
+    core.paint_header(painter, header, aw_tool.Node)
+
+
+def paint_circle(circle: ui.Circle) -> None:
     core.paint_circle(circle, aw_tool.Node)
-
-def hover_enter_resize_rect(resize_rect: ui.ResizeRect):
-    core.hover_enter_resize_rect(resize_rect, aw_tool.View)
-
-
-def hover_leave_resize_rect(resize_rect: ui.ResizeRect):
-    core.hover_leave_resize_rect(resize_rect, aw_tool.View)
-
-
-def hover_enter_header(header: ui.Header):
-    core.hover_enter_header(header, aw_tool.View)
-
-
-def hover_leave_header(header: ui.Header):
-    core.hover_leave_header(header, aw_tool.View)

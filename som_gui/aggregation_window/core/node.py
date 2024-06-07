@@ -2,23 +2,20 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 
 import SOMcreator
-from PySide6.QtCore import Qt
-from PySide6.QtCore import Qt, QRectF
-from PySide6.QtGui import QPen
-
-if TYPE_CHECKING:
-    from som_gui.aggregation_window.tool import View, Window, Node
-    from som_gui import tool
-    from som_gui.aggregation_window.module.node.ui import Header, NodeProxy, PropertySetTree, ResizeRect, Circle
-    from PySide6.QtGui import QPainter, QPainterPath
-    from PySide6.QtCore import QPointF
-    from PySide6.QtWidgets import QTreeWidget
-from SOMcreator.classes import Aggregation
 from som_gui.core import property_set_window as property_set_window_core
 
+from PySide6.QtCore import Qt, QPointF
+from PySide6.QtGui import QPen, QPainter
+from PySide6.QtWidgets import QTreeWidgetItem
 
-def pset_tree_double_clicked(item, node: Type[Node], property_set_window: Type[tool.PropertySetWindow],
-                             attribute: Type[tool.Attribute], attribute_table: Type[tool.AttributeTable]):
+if TYPE_CHECKING:
+    from som_gui.aggregation_window.tool import View, Node
+    from som_gui import tool
+    from som_gui.aggregation_window.module.node.ui import Header, NodeProxy, PropertySetTree, Circle
+
+
+def pset_tree_double_clicked(item: QTreeWidgetItem, node: Type[Node], property_set_window: Type[tool.PropertySetWindow],
+                             attribute: Type[tool.Attribute], attribute_table: Type[tool.AttributeTable]) -> None:
     linked_item = node.get_linked_item(item)
     active_attribute = None
     active_property_set = None
@@ -38,14 +35,12 @@ def pset_tree_double_clicked(item, node: Type[Node], property_set_window: Type[t
     property_set_window_core.activate_attribute(active_attribute, window, attribute, property_set_window)
 
 
-def node_clicked(selected_node: NodeProxy, node: Type[Node]):
-    z_level = node.increment_z_level()
-    node.set_z_level_of_node(selected_node, z_level)
+def node_clicked(selected_node: NodeProxy, node: Type[Node]) -> None:
+    node.set_z_level_of_node(selected_node, node.increment_z_level())
 
 
-def header_drag_move(header: Header, dif: QPointF, view: Type[View], node: Type[Node]):
-    active_scene = view.get_active_scene()
-    selected_nodes = active_scene.selectedItems()
+def header_drag_move(header: Header, dif: QPointF, view: Type[View], node: Type[Node]) -> None:
+    selected_nodes = view.get_active_scene().selectedItems()
     active_node = node.get_node_from_header(header)
     for selected_node in selected_nodes:
         if active_node != selected_node:
@@ -53,7 +48,7 @@ def header_drag_move(header: Header, dif: QPointF, view: Type[View], node: Type[
         node.move_node(selected_node, dif)
 
 
-def paint_header(painter: QPainter, header: Header, node: Type[Node]):
+def paint_header(painter: QPainter, header: Header, node: Type[Node]) -> None:
     painter.save()
     painter.restore()
     painter.setBrush(Qt.GlobalColor.white)
@@ -66,7 +61,7 @@ def paint_header(painter: QPainter, header: Header, node: Type[Node]):
     painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, title_text)
 
 
-def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]):
+def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]) -> None:
     selected_node = node.get_node_from_tree_widget(tree_widget)
     obj = selected_node.aggregation.object
     ir = tree_widget.invisibleRootItem()
@@ -104,7 +99,7 @@ def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]):
                 pset_item.removeChild(attribute_item)
 
 
-def paint_node(active_node: NodeProxy, node: Type[Node]):
+def paint_node(active_node: NodeProxy, node: Type[Node]) -> None:
     frame = active_node.frame
     frame.setRect(node.get_frame_geometry(frame, active_node))
     if active_node.isSelected():
@@ -115,21 +110,5 @@ def paint_node(active_node: NodeProxy, node: Type[Node]):
     node.update_circle_rect(active_node.circle)
 
 
-def paint_circle(circle: Circle, node: Type[Node]):
+def paint_circle(circle: Circle, node: Type[Node]) -> None:
     node.update_circle_rect(circle)
-
-
-def hover_enter_resize_rect(resize_rect: ResizeRect, view: Type[View]):
-    view.set_cursor_style(Qt.CursorShape.SizeFDiagCursor)
-
-
-def hover_leave_resize_rect(resize_rect: ResizeRect, view: Type[View]):
-    view.reset_cursor_style()
-
-
-def hover_enter_header(header: Header, view: Type[View]):
-    view.set_cursor_style(Qt.CursorShape.OpenHandCursor)
-
-
-def hover_leave_header(header: Header, view: Type[View]):
-    view.reset_cursor_style()

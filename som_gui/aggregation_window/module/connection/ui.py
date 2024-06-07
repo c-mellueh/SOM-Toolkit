@@ -1,11 +1,9 @@
 from __future__ import annotations
-from PySide6.QtWidgets import QPushButton, QWidget, QTreeWidgetItem, QVBoxLayout, \
-    QGraphicsProxyWidget, QGraphicsPathItem, QGraphicsRectItem, QGraphicsItem, QStyleOptionGraphicsItem, \
-    QGraphicsSceneHoverEvent, QTreeWidget, QGraphicsEllipseItem
+from PySide6.QtWidgets import QGraphicsPathItem, QStyleOptionGraphicsItem
 from PySide6.QtCore import Qt, QPointF
-from PySide6.QtGui import QPen, QBrush, QColor
+from PySide6.QtGui import QPen, QPainter
 from . import trigger
-import SOMcreator
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -21,6 +19,6 @@ class Connection(QGraphicsPathItem):
         self.setPen(QPen(Qt.black))
         self.last_anchor_points: tuple[QPointF, QPointF] | tuple[None, None] = (None, None)
 
-    def paint(self, painter, option, widget):
+    def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, *args, **kwargs):
         trigger.paint_connection(self)
-        super().paint(painter, option, widget)
+        super().paint(painter, option, *args, **kwargs)
