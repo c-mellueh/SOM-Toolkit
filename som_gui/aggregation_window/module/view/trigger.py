@@ -30,7 +30,7 @@ def mouse_wheel_event(event):
 
 
 def context_menu_requested(pos):
-    core.context_menu_requested(pos, aw_tool.View, aw_tool.Node, tool.Search)
+    core.context_menu_requested(pos, aw_tool.View, aw_tool.Node, tool.Search, aw_tool.Connection, tool.Project)
 
 
 

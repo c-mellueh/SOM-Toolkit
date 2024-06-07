@@ -250,6 +250,7 @@ class Node(som_gui.aggregation_window.core.tool.Node):
     @classmethod
     def item_is_circle_text(cls, item):
         return bool(isinstance(item, node_ui.PlusText))
+
     @classmethod
     def resize_node(cls, node: node_ui.NodeProxy, last_pos: QPointF, new_pos: QPointF):
         dif = new_pos - last_pos
@@ -265,9 +266,8 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         node.setGeometry(geom)
 
     @classmethod
-    def set_connect_type(cls, node: node_ui.NodeProxy, type: int):
-        node.top_connection.connection_type = type
-        node.top_connection.update()
+    def set_connect_type(cls, node: node_ui.NodeProxy, parent_con_type: int):
+        node.aggregation.parent_connection = parent_con_type
 
     @classmethod
     def is_root(cls, node: node_ui.NodeProxy):

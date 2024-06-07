@@ -23,6 +23,7 @@ def import_positions(view: Type[aw_tool.View], project: Type[tool.Project]):
 
 def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: Type[aw_tool.Connection],
                 project: Type[tool.Project]):
+    logging.debug(f"View Paint Event")
     scene = view.get_active_scene()
     scene_id = view.get_scene_index(scene)
 
@@ -51,6 +52,12 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
                 new_connection = connection.create_connection(top_node, sub_node,
                                                               sub_node.aggregation.parent_connection)
                 view.add_connection_to_scene(new_connection, scene)
+
+        if not top_node.top_connection:
+            continue
+        if aggregation.parent_connection != top_node.top_connection.connection_type:
+            top_node.top_connection.connection_type = aggregation.parent_connection
+            top_node.top_connection.update()
 
     if not view.scene_was_alleady_focused(scene):
         view.autofit_view()
@@ -145,7 +152,8 @@ def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]):
     view.scroll_view(x_angle, y_angle)
 
 
-def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node], search: Type[tool.Search]):
+def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node], search: Type[tool.Search],
+                           connection: Type[aw_tool.Connection], project: Type[tool.Project]):
     menu_list = list()
     scene = view.get_active_scene()
     menu_list.append(["Ansicht/Zoom zurücksetzen", view.autofit_view])
@@ -179,7 +187,7 @@ def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw
 
     menu = view.create_context_menu(menu_list)
     menu.exec(view.get_view().viewport().mapToGlobal(pos))
-
+    paint_event(view, node, connection, project)
 
 def add_node_at_pos(pos, view: Type[aw_tool.View], search: Type[tool.Search]):
     scene = view.get_active_scene()
