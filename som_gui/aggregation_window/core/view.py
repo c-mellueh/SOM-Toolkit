@@ -66,6 +66,9 @@ def mouse_move_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_
         connection.draw_connection(view.get_active_scene(), view.map_to_scene(position))
         connection.set_draw_started(True)
     view.set_last_mouse_pos(view.map_to_scene(position))
+    if mouse_mode == 0:
+        cursor = view.get_hover_cursor(view.map_to_scene(position))
+        view.set_cursor_style(cursor)
 
 
 def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node],
@@ -84,7 +87,7 @@ def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw
         if header.isUnderMouse():
             item_under_mouse = header
 
-    cursor_style = view.get_cursor_style_by_subitem(item_under_mouse, 0)
+    cursor_style = view.get_press_cursor(view.map_to_scene(position))
     mouse_mode = view.get_mouse_mode_by_subitem(item_under_mouse)
 
     if mouse_mode == 1:  # handle Rubber band
@@ -105,42 +108,23 @@ def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw
         view.set_drag_mode(view.get_view().DragMode.NoDrag)
 
 
-def mouse_release_event(position: QPointF, node: Type[aw_tool.Node], view: Type[aw_tool.View],
+def mouse_release_event(position: QPointF, view: Type[aw_tool.View],
                         connection: Type[aw_tool.Connection], search: Type[tool.Search]):
     mouse_mode = view.get_mouse_mode()
-    if mouse_mode == 5:
+    if mouse_mode == 5:  # Handle Connection Drawing
         if connection.get_draw_started():
-            node_under_mouse = view.get_node_under_mouse(view.map_to_scene(position))
-            if node_under_mouse is not None:
-                node_under_mouse.aggregation.parent.remove_child(node_under_mouse.aggregation)
-                view.remove_connection_from_scene(node_under_mouse.top_connection, view.get_active_scene())
-                connection.get_draw_node().aggregation.add_child(node_under_mouse.aggregation, 1)
+            view.create_connection_by_pos(connection.get_draw_node(), view.map_to_scene(position))
             connection.delete_draw_connection()
-            connection.set_draw_started(False)
         else:
             obj = search.search_object()
-            aggregation = classes.Aggregation(obj)
-            rect = connection.get_draw_node().sceneBoundingRect()
-            input_point = rect.bottomLeft()
-            input_point.setY(input_point.y() + 100)
-            input_point.setX(input_point.x() + 60)
-            new_node = node.create_node(aggregation)
-            view.add_node_to_scene(new_node, view.get_active_scene())
-            node.set_node_pos(new_node, input_point)
+            new_node = view.create_connection_by_search(connection.get_draw_node(), obj)
             con = connection.create_connection(connection.get_draw_node(), new_node, 1)
             view.add_connection_to_scene(con, view.get_active_scene())
 
-    view.set_last_mouse_pos(None)
-    view.set_mouse_mode(0)
-    view.set_resize_node(None)
-    view.set_last_mouse_pos(view.map_to_scene(position))
-    item_under_mouse = view.get_item_under_mouse(view.map_to_scene(position))
-    if node.item_is_frame(item_under_mouse):
-        header: node_ui.Header = item_under_mouse.node.header
-        if header.isUnderMouse():
-            item_under_mouse = header
-    cursor_style = view.get_cursor_style_by_subitem(item_under_mouse, 1)
-    view.set_cursor_style(cursor_style)
+    view.reset_cursor(position)
+    new_cursor = view.get_hover_cursor(view.map_to_scene(position))
+    view.set_cursor_style(new_cursor)
+
 
 def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]):
     y_angle = wheel_event.angleDelta().y()

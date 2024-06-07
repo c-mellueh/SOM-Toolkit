@@ -244,6 +244,13 @@ class Node(som_gui.aggregation_window.core.tool.Node):
         return bool(isinstance(item, node_ui.Frame))
 
     @classmethod
+    def item_is_circle(cls, item):
+        return bool(isinstance(item, node_ui.Circle))
+
+    @classmethod
+    def item_is_circle_text(cls, item):
+        return bool(isinstance(item, node_ui.PlusText))
+    @classmethod
     def resize_node(cls, node: node_ui.NodeProxy, last_pos: QPointF, new_pos: QPointF):
         dif = new_pos - last_pos
         geom = node.geometry()

@@ -203,6 +203,7 @@ class Connection(som_gui.aggregation_window.core.tool.Connection):
     @classmethod
     def delete_draw_connection(cls):
         connection = cls.get_properties().draw_connection
+        cls.set_draw_started(False)
         if connection is None:
             return
 

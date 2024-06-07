@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QApplication, QMenu, QFileDialog, QGraphicsTextIte
 import som_gui.aggregation_window.core.tool
 from som_gui.aggregation_window.module.view import ui as ui_view
 import SOMcreator
+from SOMcreator.classes import Aggregation
 from SOMcreator.constants import json_constants
 from som_gui.aggregation_window.module.view.constants import AGGREGATIONSCENES, SCENE_SIZE, SCENE_MARGIN
 from som_gui.aggregation_window.module.node import ui as ui_node
@@ -235,6 +236,7 @@ class View(som_gui.aggregation_window.core.tool.View):
         scene.removeItem(node)
         node.deleteLater()
         node.aggregation.delete()
+
     @classmethod
     def remove_connection_from_scene(cls, connection: ui_connection.Connection, scene: ui_view.AggregationScene):
         if connection is None:
@@ -325,23 +327,6 @@ class View(som_gui.aggregation_window.core.tool.View):
     @classmethod
     def get_resize_node(cls) -> ui_node.NodeProxy:
         return cls.get_properties().resize_node
-
-    @classmethod
-    def get_cursor_style_by_subitem(cls, sub_item, mode):
-        """
-        sub_item_type: type() of subitem
-        mode: 0 = click, 1 = release
-        """
-        sub_item_type = type(sub_item)
-        cursor_dict = {
-            ui_node.Header:     [Qt.CursorShape.ClosedHandCursor, Qt.CursorShape.OpenHandCursor],
-            ui_node.ResizeRect: [Qt.CursorShape.SizeFDiagCursor, Qt.CursorShape.SizeFDiagCursor],
-            type(None): [Qt.CursorShape.ClosedHandCursor, Qt.CursorShape.ArrowCursor]
-        }
-        val = cursor_dict.get(sub_item_type)
-        if val is None:
-            val = [Qt.CursorShape.ArrowCursor, Qt.CursorShape.ArrowCursor]
-        return val[mode]
 
     @classmethod
     def get_mouse_mode_by_subitem(cls, sub_item) -> int:
@@ -500,3 +485,72 @@ class View(som_gui.aggregation_window.core.tool.View):
         view = cls.get_view()
         cursor_pos = view.mapToScene(view.mapFromGlobal(QCursor.pos()))
         return cursor_pos
+
+    @classmethod
+    def create_connection_by_pos(cls, top_node: ui_node.NodeProxy, pos: QPointF):
+        scene = cls.get_active_scene()
+        bottom_node = cls.get_node_under_mouse(pos)
+        if bottom_node is None:
+            return
+        if bottom_node.aggregation.parent is not None:
+            bottom_node.aggregation.parent.remove_child(bottom_node.aggregation)
+            cls.remove_connection_from_scene(bottom_node.top_connection, scene)
+        top_node.aggregation.add_child(bottom_node.aggregation, 1)
+
+    @classmethod
+    def create_connection_by_search(cls, top_node: ui_node.NodeProxy, obj: SOMcreator.Object):
+        if obj is None:
+            return
+        scene = cls.get_active_scene()
+        aggregation = Aggregation(obj)
+        rect = top_node.sceneBoundingRect()
+        input_point = rect.bottomLeft() + QPointF(100., 60.)
+        new_node = aw_tool.Node.create_node(aggregation)
+        cls.add_node_to_scene(new_node, scene)
+        aw_tool.Node.set_node_pos(new_node, input_point)
+        return new_node
+
+    @classmethod
+    def reset_cursor(cls, position):
+        cls.set_mouse_mode(0)
+        cls.set_resize_node(None)
+        cls.set_last_mouse_pos(cls.map_to_scene(position))
+        cls.get_view().viewport().unsetCursor()
+
+    @classmethod
+    def get_hover_cursor(cls, scene_pos: QPointF):
+        item_under_mouse = cls.get_item_under_mouse(scene_pos)
+        if aw_tool.Node.item_is_resize_rect(item_under_mouse):
+            return Qt.CursorShape.SizeFDiagCursor
+        if aw_tool.Node.item_is_frame(item_under_mouse):
+            item_under_mouse: ui_node.Frame
+            node = item_under_mouse.node
+            if node.header.isUnderMouse():
+                return Qt.CursorShape.OpenHandCursor
+            if node.circle.isUnderMouse():
+                return Qt.CursorShape.CrossCursor
+        if aw_tool.Node.item_is_circle(item_under_mouse):
+            return Qt.CursorShape.CrossCursor
+        if aw_tool.Node.item_is_circle_text(item_under_mouse):
+            return Qt.CursorShape.CrossCursor
+        return Qt.CursorShape.ArrowCursor
+
+    @classmethod
+    def get_press_cursor(cls, scene_pos: QPointF):
+        item_under_mouse = cls.get_item_under_mouse(scene_pos)
+        if aw_tool.Node.item_is_resize_rect(item_under_mouse):
+            return Qt.CursorShape.SizeFDiagCursor
+        if aw_tool.Node.item_is_frame(item_under_mouse):
+            item_under_mouse: ui_node.Frame
+            node = item_under_mouse.node
+            if node.header.isUnderMouse():
+                return Qt.CursorShape.ClosedHandCursor
+            if node.circle.isUnderMouse():
+                return Qt.CursorShape.CrossCursor
+        if aw_tool.Node.item_is_circle(item_under_mouse):
+            return Qt.CursorShape.CrossCursor
+        if aw_tool.Node.item_is_circle_text(item_under_mouse):
+            return Qt.CursorShape.CrossCursor
+        if item_under_mouse is None:
+            return Qt.CursorShape.ClosedHandCursor
+        return Qt.CursorShape.ArrowCursor

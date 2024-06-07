@@ -22,7 +22,7 @@ def mouse_press_event(position):
 
 
 def mouse_release_event(pos):
-    core.mouse_release_event(pos, aw_tool.Node, aw_tool.View, aw_tool.Connection, tool.Search)
+    core.mouse_release_event(pos, aw_tool.View, aw_tool.Connection, tool.Search)
 
 
 def mouse_wheel_event(event):
