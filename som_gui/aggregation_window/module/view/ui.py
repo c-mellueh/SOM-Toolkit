@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QGraphicsView, QGraphicsScene
 from . import trigger
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QWheelEvent, QPaintEvent, QMouseEvent
+from PySide6.QtGui import QKeyEvent, QWheelEvent, QPaintEvent, QMouseEvent
 
 
 class AggregationView(QGraphicsView):
@@ -13,6 +13,10 @@ class AggregationView(QGraphicsView):
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(trigger.context_menu_requested)
         self.setRubberBandSelectionMode(Qt.ItemSelectionMode.ContainsItemBoundingRect)
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        trigger.key_press_event(event)
+        super().keyPressEvent(event)
 
     def paintEvent(self, event: QPaintEvent) -> None:
         super().paintEvent(event)

@@ -460,6 +460,8 @@ class View(som_gui.aggregation_window.core.tool.View):
 
     @classmethod
     def create_connection_by_pos(cls, top_node: ui_node.NodeProxy):
+        if top_node is None:
+            return
         scene = cls.get_active_scene()
         bottom_node = cls.get_node_under_mouse()
         if bottom_node is None:
@@ -487,7 +489,7 @@ class View(som_gui.aggregation_window.core.tool.View):
     def reset_cursor(cls, position) -> None:
         cls.set_mouse_mode(0)
         cls.set_resize_node(None)
-        cls.set_last_mouse_pos(cls.map_to_scene(position))
+        cls.set_last_mouse_pos(position)
         cls.get_view().viewport().unsetCursor()
 
     @classmethod
