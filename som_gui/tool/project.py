@@ -25,6 +25,29 @@ import json
 
 
 class Project(som_gui.core.tool.Project):
+    @classmethod
+    def update_plugin_dict(cls, project: SOMcreator.Project, key, value):
+        if not project.plugin_dict.get(key):
+            project.plugin_dict[key] = value
+        elif isinstance(project.plugin_dict[key], (dict, set)):
+            project.plugin_dict[key].update(value)
+        elif isinstance(project.plugin_dict[key], (list, tuple)):
+            project.plugin_dict[key] += value
+        else:
+            project.plugin_dict[key] = value
+
+    @classmethod
+    def add_plugin_save_function(cls, func: Callable):
+        cls.get_properties().plugin_save_functions.append(func)
+
+    @classmethod
+    def get_plugin_functions(cls):
+        return cls.get_properties().plugin_save_functions
+
+    @classmethod
+    def delete_plugin_dict(cls):
+        proj = cls.get()
+        proj.plugin_dict = dict()
 
     @classmethod
     def get_new_name(cls, standard_name: str, existing_names: list[str]) -> str:
@@ -190,21 +213,6 @@ class Project(som_gui.core.tool.Project):
         graph_window.aggregation_dict.update(scene_dict)
         graph_window.create_missing_scenes()
 
-    @classmethod
-    def add_node_pos(cls, main_window: MainWindow, main_dict: dict, path: str):
-
-        nodes = main_window.graph_window.nodes
-        scenes = {node.scene() for node in nodes}
-        aggregation_scenes_dict = dict()
-        for scene in scenes:
-            scene_nodes = {node for node in nodes if node.scene() == scene}
-            node_dict = {node.aggregation.uuid: [node.x(), node.y()] for node in scene_nodes}
-            aggregation_scenes_dict[scene.name] = {json_constants.NODES: node_dict}
-
-        main_dict["AggregationScenes"] = aggregation_scenes_dict
-
-        with open(path, "w") as file:
-            json.dump(main_dict, file)
 
     @classmethod
     def set_active_project(cls, proj: SOMcreator.Project):

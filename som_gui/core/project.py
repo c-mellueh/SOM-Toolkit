@@ -4,7 +4,6 @@ import logging
 import os
 from typing import Type
 from typing import TYPE_CHECKING
-import time
 import som_gui
 
 FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
@@ -55,9 +54,11 @@ def new_file_clicked(project_tool: Type[Project], popup_tool: Type[Popups]):
 
 
 def save_project(path: str, project_tool: Type[Project], settings_tool: Type[Settings]):
+    project_tool.delete_plugin_dict()
+    for plugin_function in project_tool.get_plugin_functions():
+        plugin_function()
     project = project_tool.get()
-    main_dict = project.save(path)
-    project_tool.add_node_pos(som_gui.MainUi.window, main_dict, path)
+    project.save(path)
     settings_tool.set_open_path(path)
     settings_tool.set_save_path(path)
     logging.info(f"Speichern abgeschlossen")
@@ -85,6 +86,7 @@ def add_project(project_tool: Type[Project]):
 
     logging.warning(f"Import der Bauwerksstruktur wird noch nicht unterstützt")
 
+
 def repaint_settings_dialog(project_tool: Type[Project]):
     project_infos = project_tool.get_project_infos()
     for index, info_dict in enumerate(project_infos):
@@ -107,4 +109,3 @@ def reset_settings_dialog(project_tool: Type[Project]):
     project_infos = project_tool.get_project_infos()
     for info_dict in project_infos:
         info_dict["value"] = info_dict["get_function"]()
-

@@ -31,6 +31,20 @@ def loop_name(name, names, index: int) -> str:
 
 
 class View(som_gui.aggregation_window.core.tool.View):
+    @classmethod
+    def create_aggregation_scenes_dict(cls, agrgegation_uuid_dict):
+        main_dict = {"AggregationScenes": dict()}
+        aggregation_scenes_dict = main_dict["AggregationScenes"]
+        for scene_index, scene in enumerate(cls.get_all_scenes()):
+            scene_name = cls.get_scene_name(scene)
+            aggregation_scenes_dict[scene_name] = dict()
+
+            position_list = cls.get_aggregations_in_scene(scene)
+            node_dict = dict()
+            for aggregation, pos in position_list:
+                node_dict[agrgegation_uuid_dict[aggregation]] = [pos.x(), pos.y()]
+            aggregation_scenes_dict[scene_name]["Nodes"] = node_dict
+        return aggregation_scenes_dict
 
     @classmethod
     def get_properties(cls) -> ViewProperties:
@@ -203,6 +217,14 @@ class View(som_gui.aggregation_window.core.tool.View):
     def get_nodes_in_scene(cls, scene: ui_view.AggregationScene) -> set[ui_node.NodeProxy]:
         scene_index = cls.get_scene_index(scene)
         return cls.get_properties().node_list[scene_index]
+
+    @classmethod
+    def get_aggregations_in_scene(cls, scene):
+        scene_index = cls.get_scene_index(scene)
+        aggregation_list = list(cls.get_import_list()[scene_index])
+        nodes = cls.get_nodes_in_scene(scene)
+        aggregation_list += [(n.aggregation, n.scenePos()) for n in nodes]
+        return aggregation_list
 
     @classmethod
     def remove_node_from_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene) -> None:
