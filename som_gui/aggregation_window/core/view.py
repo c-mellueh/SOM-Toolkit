@@ -7,9 +7,20 @@ from SOMcreator import classes, value_constants
 if TYPE_CHECKING:
     from som_gui.aggregation_window import tool as aw_tool
     from som_gui import tool
-    from PySide6.QtGui import QWheelEvent
+    from PySide6.QtGui import QWheelEvent, QKeyEvent
     from som_gui.aggregation_window.module.node import ui as node_ui
 
+
+def key_press_event(event: QKeyEvent, view: Type[aw_tool.View], connection: Type[aw_tool.Connection]) -> None:
+    mouse_mode = view.get_mouse_mode()
+    if mouse_mode == 5 and event.key() == Qt.Key.Key_Escape:
+        connection.delete_draw_connection()
+        view.reset_cursor(view.get_scene_cursor_pos())
+
+    if event.key() == Qt.Key.Key_Delete:
+        nodes = view.get_selected_nodes()
+        for node in nodes:
+            view.remove_node_from_scene(node, view.get_active_scene())
 
 def import_pos_from_project(view: Type[aw_tool.View], project: Type[tool.Project]) -> None:
     view.import_aggregations_from_project(project.get())
@@ -116,11 +127,12 @@ def mouse_release_event(position: QPointF, view: Type[aw_tool.View],
             connection.delete_draw_connection()
         else:
             obj = search.search_object()
-            new_node = view.create_connection_by_search(connection.get_draw_node(), obj)
-            con = connection.create_connection(connection.get_draw_node(), new_node, 1)
-            view.add_connection_to_scene(con, view.get_active_scene())
+            if obj is not None:
+                new_node = view.create_connection_by_search(connection.get_draw_node(), obj)
+                con = connection.create_connection(connection.get_draw_node(), new_node, 1)
+                view.add_connection_to_scene(con, view.get_active_scene())
 
-    view.reset_cursor(position)
+    view.reset_cursor(view.map_to_scene(position))
     new_cursor = view.get_hover_cursor(view.map_to_scene(position))
     view.set_cursor_style(new_cursor)
 
