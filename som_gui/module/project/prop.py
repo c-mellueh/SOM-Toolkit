@@ -12,9 +12,9 @@ class InfoDict(TypedDict):
     options: Callable
 
 
-@dataclass
 class ProjectProperties:
-    project_infos: list[InfoDict]
+    project_infos: list[InfoDict] = list()
     active_project: Project | None = None
     settings_window: QDialog = None
-    shourtcuts: list = field(default_factory=lambda: [])
+    shourtcuts: list = list()
+    plugin_save_functions: list[Callable] = list()
