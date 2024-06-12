@@ -4,6 +4,7 @@ import os
 import sys
 from logging import config
 
+
 from som_gui import logs, settings
 from som_gui import core
 from som_gui import tool
@@ -29,8 +30,8 @@ def start_log(state: int | None = None) -> None:
 
 
 def main(initial_file: str | None = None):
+    import som_gui
     from PySide6.QtWidgets import QApplication
-    import som_gui.main_window
 
     print("START")
     som_gui.register()

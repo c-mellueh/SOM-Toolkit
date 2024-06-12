@@ -5,16 +5,17 @@ import os
 from typing import TYPE_CHECKING
 
 from PySide6.QtWidgets import QFileDialog
-from SOMcreator import classes, vestra, card1, filehandling, allplan
+from SOMcreator import vestra, card1, filehandling, allplan
 from SOMcreator import excel as som_excel
-from SOMcreator.external_software.desite import modelcheck, bookmarks, building_structure, bill_of_quantities
+from SOMcreator.external_software.desite import bookmarks, building_structure
 
 from .. import settings
 from ..windows import popups
 from SOMcreator.tool import ExportExcel
+from som_gui import tool
 
 if TYPE_CHECKING:
-    from ..main_window import MainWindow
+    from som_gui.module.main_window.ui import MainWindow
 
 
 def get_path(main_window: MainWindow, file_format: str) -> str:
@@ -49,13 +50,14 @@ def export_building_structure(main_window: MainWindow):
     """Exports dummy Building Structure for Desite"""
     path = get_path(main_window, "bs.xml")
     if path:
-        building_structure.export_bs(main_window.project, path)
+        building_structure.export_bs(tool.Project.get(), path)
 
 
 def export_bookmarks(main_window: MainWindow):
     path = get_folder(main_window)
     if path:
-        bookmarks.export_bookmarks(main_window.project, path)
+        bookmarks.export_bookmarks(tool.Project.get(), path)
+
 
 def export_vestra_mapping(main_window: MainWindow) -> None:
     file_text = "Excel Files (*.xlsx);;"
@@ -66,7 +68,7 @@ def export_vestra_mapping(main_window: MainWindow) -> None:
     if answer:
         export_folder = QFileDialog.getExistingDirectory(main_window, "Export Folder", export_path)
         if export_folder:
-            vestra.create_mapping(excel_path, export_folder, main_window.project)
+            vestra.create_mapping(excel_path, export_folder, tool.Project.get())
             settings.set_export_path(export_folder)
 
 
@@ -82,7 +84,7 @@ def export_card_1(main_window: MainWindow) -> None:
     path = QFileDialog.getSaveFileName(main_window, "CARD1 Excel", export_path, file_text)[0]
 
     if path:
-        card1.create_mapping(src, path, main_window.project)
+        card1.create_mapping(src, path, tool.Project.get())
         settings.set_export_path(path)
 
 
@@ -93,7 +95,7 @@ def export_excel(main_window: MainWindow):
     path = QFileDialog.getSaveFileName(main_window, "SOM Excel", export_path, "Excel Files (*.xlsx);;")[0]
     if not path:
         return
-    som_excel.export(main_window.project, path, ExportExcel)
+    som_excel.export(tool.Project.get(), path, ExportExcel)
     settings.set_export_path(path)
 
 
@@ -111,7 +113,7 @@ def export_mapping_script(main_window: MainWindow):
     if not path:
         return
 
-    project = main_window.project
+    project = tool.Project.get()
     filehandling.create_mapping_script(project, name, path)
     settings.set_export_path(path)
 
@@ -127,13 +129,13 @@ def export_allplan_excel(main_window: MainWindow) -> None:
     path = QFileDialog.getSaveFileName(main_window, "Safe Attribute Excel", export_path, file_text)[0]
 
     if path:
-        allplan.create_mapping(main_window.project, path, name)
+        allplan.create_mapping(tool.Project.get(), path, name)
         settings.set_export_path(path)
 
 
 def export_desite_abbreviation(main_window: MainWindow) -> None:
     abbrev = {obj.abbreviation: [obj.ident_value, obj.name] for obj in
-              main_window.project.objects}
+              tool.Project.get().objects}
     export_path = settings.get_export_path()
     file_text = "JSON (*.json);;"
     path = QFileDialog.getSaveFileName(main_window, "Abbreviations File", export_path, file_text)[0]

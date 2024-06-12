@@ -2,25 +2,28 @@ from __future__ import annotations
 import som_gui.core.tool
 import som_gui
 from typing import TYPE_CHECKING, Callable
-from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMenu, QMenuBar, QApplication, QLabel
+from PySide6.QtWidgets import QMenuBar, QApplication, QLabel
 from som_gui import tool
-from som_gui.module.main_window import ui
+from som_gui.module.main_window import ui as ui_main_window
+from som_gui.windows import mapping_window, grouping_window
+from som_gui.windows.attribute_import.gui import AttributeImport
+
 if TYPE_CHECKING:
     from som_gui.module.main_window.prop import MainWindowProperties, MenuDict
     from som_gui.tool.object import ObjectDataDict
-    from som_gui.main_window import Ui_MainWindow
+    from som_gui.module.main_window.window import Ui_MainWindow
 
 
 class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
     def create(cls, application: QApplication):
         if cls.get_properties().window is None:
-            window = ui.MainWindow(application)
+            window = ui_main_window.MainWindow(application)
             cls.get_properties().window = window
             cls.get_properties().ui = window.ui
             cls.get_properties().application = application
         return cls.get_properties().window
+
     @classmethod
     def set_window_title(cls, title: str):
         cls.get().setWindowTitle(title)
@@ -67,7 +70,6 @@ class MainWindow(som_gui.core.tool.MainWindow):
     def get_app(cls) -> QApplication:
         return cls.get_properties().application
 
-
     @classmethod
     def get_object_infos(cls) -> ObjectDataDict:
         ui = cls.get_ui()
@@ -108,3 +110,22 @@ class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
     def get_pset_layout(cls):
         return cls.get_ui().box_layout_pset
+
+    @classmethod
+    def open_mapping_window(cls):
+        window = cls.get()
+        cls.get_properties().mapping_window = mapping_window.MappingWindow(window)
+        cls.get_properties().mapping_window.show()
+
+    @classmethod
+    def open_grouping_window(cls):
+        if cls.get_properties().grouping_window is None:
+            cls.get_properties().grouping_window = grouping_window.GroupingWindow(cls.get())
+        else:
+            cls.get_properties().grouping_window.show()
+
+    @classmethod
+    def open_attribute_import_window(cls):
+        if cls.get_properties().attribute_import_window is not None:
+            cls.get_properties().attribute_import_window.close()
+        cls.get_properties().attribute_import_window = AttributeImport(cls.get())

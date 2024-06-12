@@ -7,7 +7,8 @@ from PySide6.QtWidgets import QMenu, QLabel, QApplication
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from som_gui.main_window import Ui_MainWindow, MainWindow
+    from som_gui.module.main_window.ui import MainWindow
+    from som_gui.module.main_window.window import Ui_MainWindow
 
 
 class MenuDict(TypedDict):
@@ -28,3 +29,6 @@ class MainWindowProperties:
     window: MainWindow = None
     status_bar_label: QLabel = None
     application: QApplication = None
+    mapping_window = None
+    attribute_import_window = None
+    grouping_window = None

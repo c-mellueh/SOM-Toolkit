@@ -1,12 +1,13 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from som_gui import core
+from som_gui import tool
 from thefuzz import fuzz
-from .filehandling import export as fh_export
 from SOMcreator.external_software.IDS import main
 from SOMcreator.external_software.bim_collab_zoom import modelcheck
 from SOMcreator.external_software.desite import modelcheck
 if TYPE_CHECKING:
-    from som_gui.main_window import MainWindow, Ui_MainWindow
+    from som_gui.module.main_window.ui import MainWindow
 
 __version__ = "2.12.1"
 

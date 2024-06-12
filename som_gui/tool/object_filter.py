@@ -3,7 +3,7 @@ import logging
 
 import SOMcreator
 from PySide6.QtCore import Qt, QModelIndex
-from PySide6.QtWidgets import QTreeView, QMenu, QInputDialog, QLineEdit, QWidget
+from PySide6.QtWidgets import QTreeView, QWidget
 import som_gui.core.tool
 from som_gui.tool.project import Project
 from som_gui.module.object_filter import data as object_filter_data
@@ -11,7 +11,7 @@ from som_gui.module import object_filter
 import som_gui.module.object_filter.constants
 import som_gui
 from som_gui import tool
-from PySide6.QtGui import QStandardItemModel, QStandardItem, QAction
+from PySide6.QtGui import QStandardItemModel, QStandardItem
 from typing import TYPE_CHECKING
 from som_gui.module.project.constants import CLASS_REFERENCE
 

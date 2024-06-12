@@ -13,7 +13,7 @@ from ..widgets import object_widget
 from ..windows import popups
 
 if TYPE_CHECKING:
-    from ..main_window import MainWindow
+    from som_gui.module.main_window.ui import MainWindow
 
 
 class MappingWindow(QMainWindow):
