@@ -15,7 +15,7 @@ from SOMcreator.Template import IFC_4_1
 
 if TYPE_CHECKING:
     from som_gui.module.object.prop import ObjectProperties, ContextMenuDict
-    from som_gui.main_window import MainWindow
+    from som_gui.module.main_window.ui import MainWindow
     from som_gui.module.object.ui import ObjectTreeWidget
 
 
@@ -519,7 +519,7 @@ class Object(som_gui.core.tool.Object):
     @classmethod
     def fill_object_entry(cls, obj: SOMcreator.Object):
 
-        window: MainWindow = som_gui.MainUi.window
+        window: MainWindow = tool.MainWindow.get()
         window.ui.line_edit_object_name.setText(obj.name)
         window.ui.line_edit_abbreviation.setText(obj.abbreviation)
 
@@ -551,7 +551,7 @@ class Object(som_gui.core.tool.Object):
 
     @classmethod
     def get_object_tree(cls) -> ObjectTreeWidget:
-        return som_gui.MainUi.ui.tree_object
+        return tool.MainWindow.get_object_tree_widget()
 
     @classmethod
     def create_item(cls, obj: SOMcreator.Object):
@@ -595,8 +595,7 @@ class Object(som_gui.core.tool.Object):
             cls.fill_object_tree(set(obj.children), item)
 
     @classmethod
-    def clear_object_input(cls):
-        ui = som_gui.MainUi.ui
+    def clear_object_input(cls, ui):
         obj_line_edit_list = [
             ui.line_edit_object_name,
             ui.lineEdit_ident_value,

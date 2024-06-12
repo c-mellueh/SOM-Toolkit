@@ -1,27 +1,24 @@
 from __future__ import annotations
 
 from PySide6.QtGui import QPalette
-from PySide6.QtWidgets import QMainWindow, QTableWidget, QLabel, QApplication
+from PySide6.QtWidgets import QMainWindow, QTableWidget, QApplication
 from PySide6.QtCore import Qt
 from SOMcreator import classes
 
 import som_gui
 from som_gui import tool
-from . import icons, settings, __version__
-from .qt_designs.ui_mainwindow import Ui_MainWindow
+from . import icons, settings
+from som_gui.module.main_window.window import Ui_MainWindow
 from .windows import (
-    predefined_psets_window,
     mapping_window,
-    popups,
     grouping_window,
 )
-from .module.project import ui
 from .windows.attribute_import.gui import AttributeImport
 
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from som_gui.module.object.ui import ObjectTreeWidget
+    pass
 
 from som_gui.core import main_window as core
 class MainWindow(QMainWindow):
@@ -33,9 +30,6 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.app: QApplication = application
-        som_gui.MainUi.ui = self.ui
-        som_gui.MainUi.window = self
-
 
         # variables
         self.active_object: classes.Object | None = None

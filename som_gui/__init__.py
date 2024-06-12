@@ -16,7 +16,7 @@ modules = {
     "object_filter":           None,
     "project_filter":          None,
     "project":                 None,
-    "object": None,
+    "object":              None,
     "search":                  None,
     "property_set":            None,
     "attribute":               None,
@@ -24,12 +24,12 @@ modules = {
     "attribute_table":         None,
     "property_set_window":     None,
     "predefined_property_set": None,
-    "modelcheck_window": None,
-    "modelcheck_results": None,
+    "modelcheck_window":   None,
+    "modelcheck_results":  None,
     "modelcheck_external": None,
-    "modelcheck": None,
-    "ifc_importer": None,
-    "util": None,
+    "modelcheck":          None,
+    "ifc_importer":        None,
+    "util":                None,
 }
 
 aggregation_window_modules = {
@@ -38,11 +38,6 @@ aggregation_window_modules = {
     "node":       None,
     "connection": None,
 }
-
-class MainUi:
-    ui: Ui_MainWindow = None
-    window: MainWindow = None
-
 
 for name in modules.keys():
     modules[name] = importlib.import_module(f"som_gui.module.{name}")

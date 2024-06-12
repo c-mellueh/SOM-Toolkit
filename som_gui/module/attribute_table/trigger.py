@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 def connect():
     core.add_basic_attribute_columns(tool.Attribute, tool.AttributeTable)
-    som_gui.MainUi.ui.table_attribute.itemDoubleClicked.connect(
+    tool.MainWindow.get_attribute_table().itemDoubleClicked.connect(
         lambda item: core.attribute_double_clicked(item, tool.Attribute, tool.AttributeTable, tool.PropertySet,
                                                    tool.PropertySetWindow))
 
@@ -31,7 +31,7 @@ def create_mime_data(items: list[QTableWidgetItem], mime_data):
 
 
 def on_new_project():
-    core.setup_table_header(som_gui.MainUi.ui.table_attribute, tool.AttributeTable)
+    core.setup_table_header(tool.MainWindow, tool.AttributeTable)
 
 
 def table_paint_event(table: QTableWidget):

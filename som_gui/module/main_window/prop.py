@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TypedDict
 from dataclasses import dataclass, field
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMenu, QLabel
+from PySide6.QtWidgets import QMenu, QLabel, QApplication
 
 from typing import TYPE_CHECKING
 
@@ -27,3 +27,4 @@ class MainWindowProperties:
     ui: Ui_MainWindow | None = None
     window: MainWindow = None
     status_bar_label: QLabel = None
+    application: QApplication = None

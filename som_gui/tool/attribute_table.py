@@ -10,6 +10,7 @@ import som_gui.core.tool
 from som_gui import tool
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.property_set_window.ui import PropertySetWindow
+from som_gui.module.main_window.ui import MainWindow
 from som_gui.icons import get_link_icon
 from typing import TYPE_CHECKING, Callable
 
@@ -169,7 +170,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         window = table.window()
         if isinstance(window, PropertySetWindow):
             return tool.PropertySetWindow.get_property_set_by_window(window)
-        if isinstance(window, som_gui.main_window.MainWindow):
+        if isinstance(window, MainWindow):
             return tool.PropertySet.get_active_property_set()
 
     @classmethod

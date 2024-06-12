@@ -55,10 +55,11 @@ def pset_clicked(item: QTableWidgetItem, property_set: Type[tool.PropertySet]):
     pset.optional = cs
 
 
-def pset_selection_changed(property_set_tool: Type[tool.PropertySet], attribute_table: Type[tool.AttributeTable]):
+def pset_selection_changed(property_set_tool: Type[tool.PropertySet], attribute_table: Type[tool.AttributeTable],
+                           main_window: Type[tool.MainWindow]):
     property_set = property_set_tool.get_selecte_property_set_from_table()
     property_set_tool.set_active_property_set(property_set)
-    attribute_table_core.paint_attribute_table(som_gui.MainUi.ui.table_attribute, attribute_table)
+    attribute_table_core.paint_attribute_table(main_window.get_attribute_table(), attribute_table)
 
 
 def pset_table_context_menu(pos, property_set_tool: Type[tool.PropertySet]):

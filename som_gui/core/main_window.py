@@ -3,9 +3,16 @@ from typing import TYPE_CHECKING, Type
 
 import som_gui
 from som_gui.filehandling import export as fh_export
+from PySide6.QtWidgets import QApplication
 if TYPE_CHECKING:
     from som_gui.tool import MainWindow, Settings, Project, Popups
     from som_gui import tool
+
+
+def create_main_window(application: QApplication, main_window: Type[tool.MainWindow]):
+    mw = main_window.create(application)
+    mw.show()
+
 
 def close_event(project_tool: Type[Project], settings_tool: Type[Settings],
                 popups_tool: Type[Popups]):
@@ -16,10 +23,6 @@ def close_event(project_tool: Type[Project], settings_tool: Type[Settings],
         return True
     som_gui.core.project.save_clicked(project_tool, popups_tool, settings_tool)
     return True
-
-
-def set_main_window(window, main_window_tool: Type[MainWindow]):
-    main_window_tool.set(window)
 
 
 def add_label_to_statusbar(main_window_tool: Type[MainWindow]):
@@ -44,7 +47,7 @@ def fill_old_menus(main_window_tool: Type[MainWindow]):
     fill menus of functions / windows that aren't refactored
     """
 
-    main_window = som_gui.MainUi.window
+    main_window = main_window_tool.get()
     main_window_tool.add_action("Datei/Export/Vestra", lambda: fh_export.export_vestra_mapping(main_window))
     main_window_tool.add_action("Datei/Export/Card1", lambda: fh_export.export_card_1(main_window))
     main_window_tool.add_action("Datei/Export/Excel", lambda: fh_export.export_excel(main_window))

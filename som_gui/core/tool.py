@@ -127,7 +127,7 @@ class MainWindow:
 
     def get_app(self): pass
 
-    def get_main_menu_properties(self): pass
+    def get_properties(self): pass
 
     def get_menu_bar(self): pass
 
@@ -493,7 +493,7 @@ class Object:
 
     def clear_context_menu_list(self): pass
 
-    def clear_object_input(self): pass
+    def clear_object_input(self, ui): pass
 
     def collapse_selection(self): pass
 

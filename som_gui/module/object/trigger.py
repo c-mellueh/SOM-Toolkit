@@ -25,7 +25,7 @@ def connect():
 
 
     core.load_context_menus(tool.Object)
-    core.add_shortcuts(tool.Object, tool.Util, tool.Search)
+    core.add_shortcuts(tool.Object, tool.Util, tool.Search, tool.MainWindow)
     core.connect_object_input_widget(tool.Object, tool.MainWindow, tool.PredefinedPropertySet)
 
 
