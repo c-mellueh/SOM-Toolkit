@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
-
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit
 import SOMcreator
 import som_gui
 import som_gui.aggregation_window.core.tool
@@ -18,6 +18,14 @@ class Window(som_gui.aggregation_window.core.tool.Window):
     @classmethod
     def get_properties(cls) -> WindowProperties:
         return som_gui.WindowProperties
+
+    @classmethod
+    def create_abbreviation_line_edit(cls, layout: QHBoxLayout) -> QLineEdit:
+        le = QLineEdit()
+        le.setPlaceholderText(le.tr("Abkürzung"))
+        cls.get_properties().abbreviation_line_edit = le
+        layout.insertWidget(-1, le)
+        return le
 
     @classmethod
     def create_window(cls) -> ui_window.AggregationWindow:

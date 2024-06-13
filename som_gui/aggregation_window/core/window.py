@@ -10,8 +10,12 @@ if TYPE_CHECKING:
     from som_gui import tool
 
 
-def init_main_window(object_tool: Type[tool.Object]):
+def init_main_window(object_tool: Type[tool.Object], window: Type[aw_tool.Window], main_window: Type[tool.MainWindow]):
     object_tool.add_column_to_tree("Abkürzung", -1, lambda o: getattr(o, "abbreviation"))
+
+    layout = main_window.get_object_name_horizontal_layout()
+    line_edit = window.create_abbreviation_line_edit(layout)
+    object_tool.add_object_activate_function(lambda o: line_edit.setText(o.abbreviation))
 
 def paint_event(window: Type[aw_tool.Window]) -> None:
     logging.debug(f"Paint Aggregation Window")

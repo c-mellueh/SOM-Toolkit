@@ -527,26 +527,46 @@ class Object(som_gui.core.tool.Object):
         return item.object
 
     @classmethod
-    def fill_object_entry(cls, obj: SOMcreator.Object):
-
-        window: MainWindow = tool.MainWindow.get()
-        window.ui.line_edit_object_name.setText(obj.name)
-        window.ui.line_edit_abbreviation.setText(obj.abbreviation)
-
-        ident_widgets = [window.ui.lineEdit_ident_pSet,
-                         window.ui.lineEdit_ident_attribute,
-                         window.ui.lineEdit_ident_value, ]
+    def fill_object_property_set_line_edit(cls, line_edit: QLineEdit, obj: SOMcreator.Object, ):
         if obj.is_concept:
-
-            ident_values = ["", "", ""]
+            line_edit.setText("")
+            line_edit.setEnabled(False)
+            return
         else:
-            ident_values = [obj.ident_attrib.property_set.name,
-                            obj.ident_attrib.name,
-                            obj.ident_value]
+            line_edit.setEnabled(True)
 
-        for widget, value in zip(ident_widgets, ident_values):
-            widget.setText(value)
-            widget.setDisabled(obj.is_concept)
+        if not obj.ident_attrib:
+            line_edit.setText("")
+            return
+        if not obj.ident_attrib.property_set:
+            line_edit.setText("")
+            return
+        line_edit.setText(obj.ident_attrib.property_set.name)
+
+    @classmethod
+    def fill_object_attribute_line_edit(cls, line_edit: QLineEdit, obj: SOMcreator.Object):
+        if obj.is_concept:
+            line_edit.setText("")
+            line_edit.setEnabled(False)
+            return
+        else:
+            line_edit.setEnabled(True)
+
+        if not obj.ident_attrib:
+            line_edit.setText("")
+            return
+        line_edit.setText(obj.ident_attrib.name)
+
+    @classmethod
+    def add_object_activate_function(cls, func: Callable):
+        cls.get_properties().object_activate_functions.append(func)
+
+
+
+    @classmethod
+    def fill_object_entry(cls, obj: SOMcreator.Object):
+        for func in cls.get_properties().object_activate_functions:
+            func(obj)
 
     @classmethod
     def set_active_object(cls, obj: SOMcreator.Object):

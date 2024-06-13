@@ -17,12 +17,19 @@ if TYPE_CHECKING:
     from PySide6.QtCore import QPoint
 
 
-def create_object_tree_columns(object_tool: Type[Object]) -> None:
+def init_main_window(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow]) -> None:
     tree = object_tool.get_object_tree()
     tree.setColumnCount(0)
     object_tool.add_column_to_tree("Objekt", 0, lambda o: getattr(o, "name"))
     object_tool.add_column_to_tree("Identifier", 1, lambda o: getattr(o, "ident_value"))
     object_tool.add_column_to_tree("Optional", 2, lambda o: getattr(o, "optional"))
+
+    object_tool.add_object_activate_function(lambda o: main_window.get_object_name_line_edit().setText(o.name))
+    pset_le = main_window.get_ident_pset_name_line_edit()
+    attribute_e = main_window.get_attribute_name_line_edit()
+    object_tool.add_object_activate_function(lambda o: object_tool.fill_object_property_set_line_edit(pset_le, o))
+    object_tool.add_object_activate_function(lambda o: object_tool.fill_object_attribute_line_edit(attribute_e, o))
+    object_tool.add_object_activate_function(lambda o: main_window.get_ident_value_line_edit().setText(o.ident_value))
 
 
 def connect_object_input_widget(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
@@ -41,6 +48,7 @@ def ident_pset_changed(object_tool: Type[tool.Object], main_window: Type[tool.Ma
 
 def ident_attribute_changed(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
                             predefined_pset: Type[tool.PredefinedPropertySet]):
+    return  # TODO Rewrite
     ident_pset_name = main_window.get_object_infos()["ident_pset_name"]
     predefined_pset: SOMcreator.PropertySet = {p.name: p for p in predefined_pset.get_property_sets()}.get(
         ident_pset_name)

@@ -36,3 +36,4 @@ class ObjectProperties:
     object_info_widget: ObjectInfoWidget = None
     first_paint = True
     column_List: list[tuple[str, Callable]] = list()
+    object_activate_functions = list()
