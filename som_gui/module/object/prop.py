@@ -29,10 +29,10 @@ class ObjectInfoWidgetProperties:
     ident_value: str = ""
     ifc_lines: list = field(default_factory=lambda: [])
 
-@dataclass
 class ObjectProperties:
     active_object: SOMcreator.Object
     object_info_widget_properties: ObjectInfoWidgetProperties
-    context_menu_list: list[ContextMenuDict] = field(default_factory=lambda: [])
+    context_menu_list: list[ContextMenuDict] = list()
     object_info_widget: ObjectInfoWidget = None
     first_paint = True
+    column_List: list[tuple[str, Callable]] = list()

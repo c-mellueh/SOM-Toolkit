@@ -10,6 +10,9 @@ if TYPE_CHECKING:
     from som_gui import tool
 
 
+def init_main_window(object_tool: Type[tool.Object]):
+    object_tool.add_column_to_tree("Abkürzung", -1, None)
+
 def paint_event(window: Type[aw_tool.Window]) -> None:
     logging.debug(f"Paint Aggregation Window")
     status_bar = window.get_status_bar()

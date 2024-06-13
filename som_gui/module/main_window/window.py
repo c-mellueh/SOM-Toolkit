@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.7.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -133,16 +133,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_object_button.addWidget(self.line_edit_object_name)
 
-        self.line_edit_abbreviation = QLineEdit(self.layoutWidget)
-        self.line_edit_abbreviation.setObjectName(u"line_edit_abbreviation")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.line_edit_abbreviation.sizePolicy().hasHeightForWidth())
-        self.line_edit_abbreviation.setSizePolicy(sizePolicy1)
-
-        self.horizontalLayout_object_button.addWidget(self.line_edit_abbreviation)
-
 
         self.gridLayout_objects.addLayout(self.horizontalLayout_object_button, 0, 2, 1, 3)
 
@@ -157,11 +147,11 @@ class Ui_MainWindow(object):
 
         self.label_object_name = QLabel(self.layoutWidget)
         self.label_object_name.setObjectName(u"label_object_name")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.label_object_name.sizePolicy().hasHeightForWidth())
-        self.label_object_name.setSizePolicy(sizePolicy2)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.label_object_name.sizePolicy().hasHeightForWidth())
+        self.label_object_name.setSizePolicy(sizePolicy1)
         self.label_object_name.setMinimumSize(QSize(30, 0))
         self.label_object_name.setLineWidth(1)
 
@@ -179,11 +169,11 @@ class Ui_MainWindow(object):
 
         self.button_search = QPushButton(self.layoutWidget)
         self.button_search.setObjectName(u"button_search")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Fixed)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.button_search.sizePolicy().hasHeightForWidth())
-        self.button_search.setSizePolicy(sizePolicy3)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.button_search.sizePolicy().hasHeightForWidth())
+        self.button_search.setSizePolicy(sizePolicy2)
         self.button_search.setMinimumSize(QSize(24, 0))
         self.button_search.setMaximumSize(QSize(24, 24))
         self.button_search.setIconSize(QSize(16, 16))
@@ -243,8 +233,8 @@ class Ui_MainWindow(object):
 
         self.button_Pset_add = QPushButton(self.box_layout_pset)
         self.button_Pset_add.setObjectName(u"button_Pset_add")
-        sizePolicy2.setHeightForWidth(self.button_Pset_add.sizePolicy().hasHeightForWidth())
-        self.button_Pset_add.setSizePolicy(sizePolicy2)
+        sizePolicy1.setHeightForWidth(self.button_Pset_add.sizePolicy().hasHeightForWidth())
+        self.button_Pset_add.setSizePolicy(sizePolicy1)
         self.button_Pset_add.setAutoDefault(True)
 
         self.horizontalLayout_pSet_button.addWidget(self.button_Pset_add)
@@ -254,11 +244,11 @@ class Ui_MainWindow(object):
 
         self.splitter_2 = QSplitter(self.box_layout_pset)
         self.splitter_2.setObjectName(u"splitter_2")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.splitter_2.sizePolicy().hasHeightForWidth())
-        self.splitter_2.setSizePolicy(sizePolicy4)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.splitter_2.sizePolicy().hasHeightForWidth())
+        self.splitter_2.setSizePolicy(sizePolicy3)
         self.splitter_2.setOrientation(Qt.Horizontal)
         self.table_pset = PsetTableWidget(self.splitter_2)
         if (self.table_pset.columnCount() < 3):
@@ -270,11 +260,11 @@ class Ui_MainWindow(object):
         __qtablewidgetitem2 = QTableWidgetItem()
         self.table_pset.setHorizontalHeaderItem(2, __qtablewidgetitem2)
         self.table_pset.setObjectName(u"table_pset")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.table_pset.sizePolicy().hasHeightForWidth())
-        self.table_pset.setSizePolicy(sizePolicy5)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.table_pset.sizePolicy().hasHeightForWidth())
+        self.table_pset.setSizePolicy(sizePolicy4)
         self.table_pset.setFocusPolicy(Qt.StrongFocus)
         self.table_pset.setContextMenuPolicy(Qt.CustomContextMenu)
         self.table_pset.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -318,8 +308,7 @@ class Ui_MainWindow(object):
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
-        QWidget.setTabOrder(self.line_edit_object_name, self.line_edit_abbreviation)
-        QWidget.setTabOrder(self.line_edit_abbreviation, self.lineEdit_ident_pSet)
+        QWidget.setTabOrder(self.line_edit_object_name, self.lineEdit_ident_pSet)
         QWidget.setTabOrder(self.lineEdit_ident_pSet, self.lineEdit_ident_attribute)
         QWidget.setTabOrder(self.lineEdit_ident_attribute, self.lineEdit_ident_value)
         QWidget.setTabOrder(self.lineEdit_ident_value, self.button_objects_add)
@@ -397,10 +386,6 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.line_edit_object_name.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Name", None))
 #if QT_CONFIG(tooltip)
-        self.line_edit_abbreviation.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>die Abk\u00fcrzung ist relevant f\u00fcr die Bauwerksstruktur.<br/>Sie sollte zwischen 1-10 Zeichen Lang sein und darf nur einmal vorkommen.</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.line_edit_abbreviation.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Abk\u00fcrzung", None))
-#if QT_CONFIG(tooltip)
         self.lineEdit_ident_pSet.setToolTip(QCoreApplication.translate("MainWindow", u"Name des PropertySets in dem das Identifier Attribut sich befindet", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_ident_pSet.setPlaceholderText(QCoreApplication.translate("MainWindow", u"PropertySet", None))
@@ -418,11 +403,6 @@ class Ui_MainWindow(object):
         self.label_Ident.setToolTip(QCoreApplication.translate("MainWindow", u"Anhand des Identifiers wird bestimmt, welche Objektvorgabe auf eine Entit\u00e4t angewendet werden muss", None))
 #endif // QT_CONFIG(tooltip)
         self.label_Ident.setText(QCoreApplication.translate("MainWindow", u"Identifier", None))
-        ___qtreewidgetitem = self.tree_object.headerItem()
-        ___qtreewidgetitem.setText(3, QCoreApplication.translate("MainWindow", u"Optional", None));
-        ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Abk\u00fcrzung", None));
-        ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Identifier", None));
-        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Objekt", None));
         self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))
         self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Erstellen", None))
         ___qtablewidgetitem = self.table_pset.horizontalHeaderItem(0)

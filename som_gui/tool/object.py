@@ -32,6 +32,27 @@ class ObjectDataDict(TypedDict):
 class Object(som_gui.core.tool.Object):
 
     @classmethod
+    def get_object_is_optional(cls, obj: SOMcreator.Object) -> bool:
+        return obj.optional
+
+    @classmethod
+    def get_object_identifier(cls, obj: SOMcreator.Object) -> str:
+        return obj.ident_value
+
+    @classmethod
+    def get_object_name(cls, obj: SOMcreator.Object) -> str:
+        return obj.name
+
+    @classmethod
+    def add_column_to_tree(cls, name, index, getter_func):
+        tree = cls.get_object_tree()
+        header = tree.headerItem()
+        header_texts = [header.text(i) for i in range(header.columnCount())]
+        header_texts.insert(index, name)
+        tree.setColumnCount(tree.columnCount() + 1)
+        [header.setText(i, t) for i, t in enumerate(header_texts)]
+        cls.get_properties().column_List.insert(index, (name, getter_func))
+    @classmethod
     def create_completer(cls, texts, lineedit: QLineEdit):
         completer = QCompleter(texts)
         lineedit.setCompleter(completer)

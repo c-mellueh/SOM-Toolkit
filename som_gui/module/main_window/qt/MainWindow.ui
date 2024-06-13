@@ -70,22 +70,6 @@
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QLineEdit" name="line_edit_abbreviation">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;die Abkürzung ist relevant für die Bauwerksstruktur.&lt;br/&gt;Sie sollte zwischen 1-10 Zeichen Lang sein und darf nur einmal vorkommen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="placeholderText">
-               <string>Abkürzung</string>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item row="1" column="2">
@@ -251,26 +235,6 @@
           <attribute name="headerShowSortIndicator" stdset="0">
            <bool>true</bool>
           </attribute>
-          <column>
-           <property name="text">
-            <string>Objekt</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Identifier</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-               <string>Abkürzung</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Optional</string>
-           </property>
-          </column>
          </widget>
         </item>
        </layout>
@@ -642,7 +606,7 @@
   <customwidget>
    <class>ObjectTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>som_gui.module.objects.ui</header>
+      <header>som_gui.module.object.ui</header>
   </customwidget>
      <customwidget>
          <class>PsetTableWidget</class>
@@ -652,7 +616,6 @@
  </customwidgets>
  <tabstops>
   <tabstop>line_edit_object_name</tabstop>
-  <tabstop>line_edit_abbreviation</tabstop>
   <tabstop>lineEdit_ident_pSet</tabstop>
   <tabstop>lineEdit_ident_attribute</tabstop>
   <tabstop>lineEdit_ident_value</tabstop>

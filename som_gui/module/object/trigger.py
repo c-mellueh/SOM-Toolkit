@@ -27,7 +27,7 @@ def connect():
     core.load_context_menus(tool.Object)
     core.add_shortcuts(tool.Object, tool.Util, tool.Search, tool.MainWindow)
     core.connect_object_input_widget(tool.Object, tool.MainWindow, tool.PredefinedPropertySet)
-
+    core.create_object_tree_columns(tool.Object)
 
 def item_double_clicked():
     core.create_object_info_widget(mode=1, object_tool=tool.Object)
