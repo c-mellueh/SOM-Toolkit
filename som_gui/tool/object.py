@@ -37,7 +37,7 @@ class Object(som_gui.core.tool.Object):
         tree = cls.get_object_tree()
         header = tree.headerItem()
         header_texts = [header.text(i) for i in range(header.columnCount())]
-        header_texts.insert(index, name)
+        header_texts.insert(index, tree.tr(name))
         tree.setColumnCount(tree.columnCount() + 1)
         [header.setText(i, t) for i, t in enumerate(header_texts)]
         cls.get_properties().column_List.insert(index, (name, getter_func))
