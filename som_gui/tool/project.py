@@ -79,7 +79,7 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod  # TODO: Move to Filehandling Module
     def get_path(cls, title: str, file_text: str) -> str:
-        main_window = som_gui.MainUi.window
+        main_window = tool.MainWindow.get()
         cur_path = tool.Settings.get_open_path()
         if not os.path.exists(cur_path):
             cur_path = os.getcwd() + "/"
@@ -186,39 +186,9 @@ class Project(som_gui.core.tool.Project):
         return SOMcreator.Project.open(path)
 
     @classmethod
-    def import_node_pos(cls, proj) -> None:
-        graph_window = som_gui.MainUi.window.graph_window
-        plugin_dict = proj.import_dict
-        json_aggregation_dict: dict = plugin_dict[SOMcreator.json_constants.AGGREGATIONS]
-        aggregation_ref = {aggregation.uuid: aggregation for aggregation in proj.get_all_aggregations()}
-        scene_dict = plugin_dict.get("AggregationScenes") or dict()
-        position_dict = dict()
-        for scene_name, node_dict in scene_dict.items():
-            if isinstance(node_dict[json_constants.NODES], list):
-                continue
-
-            for uuid, position in node_dict[json_constants.NODES].items():
-                position_dict[uuid] = position
-
-        for uuid, aggregation_dict in json_aggregation_dict.items():
-            aggregation = aggregation_ref[uuid]
-            x_pos = aggregation_dict.get(json_constants.X_POS) or 0.0
-            y_pos = aggregation_dict.get(json_constants.Y_POS) or 0.0
-
-            if uuid in position_dict:
-                [x_pos, y_pos] = position_dict.get(uuid)
-
-            graph_window.create_node(aggregation, QPointF(x_pos, y_pos))
-
-        graph_window.aggregation_dict.update(scene_dict)
-        graph_window.create_missing_scenes()
-
-
-    @classmethod
     def set_active_project(cls, proj: SOMcreator.Project):
         prop = cls.get_properties()
         prop.active_project = proj
-        som_gui.MainUi.window.project = cls.get()
         cls.create_project_infos()
 
     @classmethod

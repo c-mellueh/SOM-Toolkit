@@ -16,7 +16,7 @@ import som_gui.tool
 from som_gui.widgets.ifc_widget import IfcWidget, IfcRunner
 
 if TYPE_CHECKING:
-    from ..main_window import MainWindow
+    from som_gui.module.main_window.ui import MainWindow
 
 from .. import settings
 

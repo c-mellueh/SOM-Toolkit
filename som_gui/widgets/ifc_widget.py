@@ -16,7 +16,7 @@ from som_gui.icons import get_icon
 from som_gui.qt_designs import ui_ifc_widget
 
 if TYPE_CHECKING:
-    from som_gui.main_window import MainWindow
+    from som_gui.module.main_window.ui import MainWindow
 
 ABORT = "ABORT"
 

@@ -12,7 +12,7 @@ from ...settings import EXISTING_ATTRIBUTE_IMPORT, RANGE_ATTRIBUTE_IMPORT, REGEX
     COLOR_ATTTRIBUTE_IMPORT
 
 if TYPE_CHECKING:
-    from som_gui.main_window import MainWindow
+    from som_gui.module.main_window.ui import MainWindow
 
 from . import functions
 from ...qt_designs import ui_attribute_import_window, ui_attribute_import_settings_window

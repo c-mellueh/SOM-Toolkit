@@ -32,7 +32,7 @@ class Popups(som_gui.core.tool.Popups):
     @classmethod
     def _request_text_input(cls, title: str, request_text, prefill, parent=None):
         if parent is None:
-            parent = som_gui.MainUi.window
+            parent = tool.MainWindow.get()
         answer = QInputDialog.getText(parent, title, request_text,
                                       QLineEdit.EchoMode.Normal,
                                       prefill)
@@ -129,7 +129,8 @@ class Popups(som_gui.core.tool.Popups):
 
     @classmethod
     def get_save_path(cls, base_path: str):
-        return QFileDialog.getSaveFileName(som_gui.MainUi.window, "Save Project", base_path, FILETYPE)[0]
+        window = tool.MainWindow.get()
+        return QFileDialog.getSaveFileName(window, "Save Project", base_path, FILETYPE)[0]
 
     @classmethod
     def request_property_set_merge(cls, name: str, mode):
