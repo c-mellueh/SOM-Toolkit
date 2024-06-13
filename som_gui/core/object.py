@@ -20,9 +20,10 @@ if TYPE_CHECKING:
 def create_object_tree_columns(object_tool: Type[Object]) -> None:
     tree = object_tool.get_object_tree()
     tree.setColumnCount(0)
-    object_tool.add_column_to_tree("Objekt", 0, object_tool.get_object_name)
-    object_tool.add_column_to_tree("Identifier", 1, object_tool.get_object_identifier)
-    object_tool.add_column_to_tree("Optional", 2, object_tool.get_object_is_optional)
+    object_tool.add_column_to_tree("Objekt", 0, lambda o: getattr(o, "name"))
+    object_tool.add_column_to_tree("Identifier", 1, lambda o: getattr(o, "ident_value"))
+    object_tool.add_column_to_tree("Optional", 2, lambda o: getattr(o, "optional"))
+
 
 def connect_object_input_widget(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
                                 predefined_pset: Type[tool.PredefinedPropertySet]):

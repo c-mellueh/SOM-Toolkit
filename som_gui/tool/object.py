@@ -31,17 +31,6 @@ class ObjectDataDict(TypedDict):
 
 class Object(som_gui.core.tool.Object):
 
-    @classmethod
-    def get_object_is_optional(cls, obj: SOMcreator.Object) -> bool:
-        return obj.optional
-
-    @classmethod
-    def get_object_identifier(cls, obj: SOMcreator.Object) -> str:
-        return obj.ident_value
-
-    @classmethod
-    def get_object_name(cls, obj: SOMcreator.Object) -> str:
-        return obj.name
 
     @classmethod
     def add_column_to_tree(cls, name, index, getter_func):
@@ -585,15 +574,16 @@ class Object(som_gui.core.tool.Object):
 
     @classmethod
     def update_item(cls, item: QTreeWidgetItem, obj: SOMcreator.Object):
-        values = [obj.name, obj.ident_value, obj.abbreviation]
+        values = [f(obj) for n, f in cls.get_properties().column_List]
 
         for column, value in enumerate(values):
-            if item.text(column) != value:
-                item.setText(column, value)
+            if isinstance(value, bool):
+                cs = Qt.CheckState.Checked if value else Qt.CheckState.Unchecked
+                if item.checkState(column) != cs:
+                    item.setCheckState(column, cs)
 
-        cs = Qt.CheckState.Checked if obj.optional else Qt.CheckState.Unchecked
-        if item.checkState(3) != cs:
-            item.setCheckState(3, cs)
+            elif item.text(column) != value:
+                item.setText(column, value)
 
     @classmethod
     def fill_object_tree(cls, objects: set[SOMcreator.Object], parent_item: QTreeWidgetItem) -> None:

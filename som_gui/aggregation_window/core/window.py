@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 def init_main_window(object_tool: Type[tool.Object]):
-    object_tool.add_column_to_tree("Abkürzung", -1, None)
+    object_tool.add_column_to_tree("Abkürzung", -1, lambda o: getattr(o, "abbreviation"))
 
 def paint_event(window: Type[aw_tool.Window]) -> None:
     logging.debug(f"Paint Aggregation Window")
