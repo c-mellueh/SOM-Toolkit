@@ -16,6 +16,8 @@ def init_main_window(object_tool: Type[tool.Object], window: Type[aw_tool.Window
     layout = main_window.get_object_name_horizontal_layout()
     line_edit = window.create_abbreviation_line_edit(layout)
     object_tool.add_object_activate_function(lambda o: line_edit.setText(o.abbreviation))
+    object_tool.add_objects_infos_add_function("abbreviation", line_edit.text)
+
 
 def paint_event(window: Type[aw_tool.Window]) -> None:
     logging.debug(f"Paint Aggregation Window")
@@ -38,11 +40,11 @@ def create_window(window: Type[aw_tool.Window], view: Type[aw_tool.View], util: 
     window.add_widget_to_layout(combo_box)
     window.add_widget_to_layout(aggregation_view)
     menu_list = window.get_menu_list()
-    menu_list.append(["Ansicht/Ansichtig hinzufügen", lambda: create_new_scene(window, view)])
-    menu_list.append(["Ansicht/Aktuelle Ansicht löschen", lambda: delete_active_scene(window, view)])
-    menu_list.append(["Ansicht/Ansicht Filtern", lambda: filter_scenes(window, view, search, popup)])
-    menu_list.append(["Ansicht/Filter Zurücksetzen", window.remove_filter])
-    menu_list.append(["Aggregation/Aggregation finden", lambda: search_aggregation(view, search, popup)])
+    menu_list.append(("Ansicht/Ansichtig hinzufügen", lambda: create_new_scene(window, view)))
+    menu_list.append(("Ansicht/Aktuelle Ansicht löschen", lambda: delete_active_scene(window, view)))
+    menu_list.append(("Ansicht/Ansicht Filtern", lambda: filter_scenes(window, view, search, popup)))
+    menu_list.append(("Ansicht/Filter Zurücksetzen", window.remove_filter))
+    menu_list.append(("Aggregation/Aggregation finden", lambda: search_aggregation(view, search, popup)))
     menu_bar = window.get_menu_bar()
     menu_dict = window.get_menu_dict()
     menu_dict["menu"] = menu_bar

@@ -71,19 +71,6 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_properties().application
 
     @classmethod
-    def get_object_infos(cls) -> ObjectDataDict:
-        ui = cls.get_ui()
-        d: ObjectDataDict = dict()
-        d["name"] = ui.line_edit_object_name.text()
-        d["is_group"] = False
-        d["ident_pset_name"] = ui.lineEdit_ident_pSet.text()
-        d["ident_attribute_name"] = ui.lineEdit_ident_attribute.text()
-        d["ident_value"] = ui.lineEdit_ident_value.text()
-        d["ifc_mappings"] = ["IfcBuildingElementProxy"]
-        d["abbreviation"] = ui.line_edit_abbreviation.text()
-        return d
-
-    @classmethod
     def get_pset_name(cls):
         return cls.get_ui().lineEdit_pSet_name.text()
 

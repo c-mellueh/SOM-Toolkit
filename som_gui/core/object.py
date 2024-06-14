@@ -31,6 +31,13 @@ def init_main_window(object_tool: Type[tool.Object], main_window: Type[tool.Main
     object_tool.add_object_activate_function(lambda o: object_tool.fill_object_attribute_line_edit(attribute_e, o))
     object_tool.add_object_activate_function(lambda o: main_window.get_ident_value_line_edit().setText(o.ident_value))
 
+    object_tool.add_objects_infos_add_function("name", main_window.get_object_name_line_edit().text)
+    object_tool.add_objects_infos_add_function("is_group", lambda: False)
+    object_tool.add_objects_infos_add_function("ident_pset_name", main_window.get_ident_pset_name_line_edit().text)
+    object_tool.add_objects_infos_add_function("ident_attribute_name", main_window.get_attribute_name_line_edit().text)
+    object_tool.add_objects_infos_add_function("ident_value", main_window.get_ident_value_line_edit().text)
+    object_tool.add_objects_infos_add_function("ifc_mappings", lambda: ["IfcBuildingElementProxy"])
+
 
 def connect_object_input_widget(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
                                 predefined_pset: Type[tool.PredefinedPropertySet]):
@@ -48,8 +55,7 @@ def ident_pset_changed(object_tool: Type[tool.Object], main_window: Type[tool.Ma
 
 def ident_attribute_changed(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
                             predefined_pset: Type[tool.PredefinedPropertySet]):
-    return  # TODO Rewrite
-    ident_pset_name = main_window.get_object_infos()["ident_pset_name"]
+    ident_pset_name = object_tool.get_object_infos()["ident_pset_name"]
     predefined_pset: SOMcreator.PropertySet = {p.name: p for p in predefined_pset.get_property_sets()}.get(
         ident_pset_name)
     attribute_names = list()
@@ -209,10 +215,10 @@ def item_dropped_on(pos: QPoint, object_tool: Type[Object]):
             obj.parent = dropped_on_object
 
 
-def add_object_clicked(main_window: Type[MainWindow], object_tool: Type[Object], project: Type[Project],
+def add_object_clicked(object_tool: Type[Object], project: Type[Project],
                        property_set: Type[tool.PropertySet], predefined_property_set: Type[tool.PredefinedPropertySet],
                        popup: Type[tool.Popups]):
-    object_infos = main_window.get_object_infos()
+    object_infos = object_tool.get_object_infos()
     issue = object_tool.check_object_creation_imput(object_infos)
     if not object_tool.handle_attribute_issue(issue):
         return

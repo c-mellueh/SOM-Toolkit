@@ -30,7 +30,12 @@ class ObjectDataDict(TypedDict):
 
 
 class Object(som_gui.core.tool.Object):
-
+    @classmethod
+    def get_object_infos(cls) -> ObjectDataDict:
+        d = dict()
+        for key, func in cls.get_properties().object_add_infos_functions:
+            d[key] = func()
+        return d
 
     @classmethod
     def add_column_to_tree(cls, name, index, getter_func):
@@ -41,6 +46,7 @@ class Object(som_gui.core.tool.Object):
         tree.setColumnCount(tree.columnCount() + 1)
         [header.setText(i, t) for i, t in enumerate(header_texts)]
         cls.get_properties().column_List.insert(index, (name, getter_func))
+
     @classmethod
     def create_completer(cls, texts, lineedit: QLineEdit):
         completer = QCompleter(texts)
@@ -561,7 +567,9 @@ class Object(som_gui.core.tool.Object):
     def add_object_activate_function(cls, func: Callable):
         cls.get_properties().object_activate_functions.append(func)
 
-
+    @classmethod
+    def add_objects_infos_add_function(cls, key: str, getter_function: Callable):
+        cls.get_properties().object_add_infos_functions.append((key, getter_function))
 
     @classmethod
     def fill_object_entry(cls, obj: SOMcreator.Object):
