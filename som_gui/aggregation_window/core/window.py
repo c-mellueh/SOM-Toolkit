@@ -31,6 +31,7 @@ def init_main_window(object_tool: Type[tool.Object], window: Type[aw_tool.Window
                                     object_info_line_edit.setText,
                                     window.test_abbreviation,
                                     window.set_object_abbreviation)
+    main_window.add_action("Modelle/Gruppen Generieren", lambda: main_window.open_grouping_window())
 
 
 def refresh_object_info_line_edit(object_tool: Type[tool.Object], window: Type[aw_tool.Window]):

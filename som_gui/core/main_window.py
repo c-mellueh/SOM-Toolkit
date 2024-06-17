@@ -56,7 +56,6 @@ def fill_old_menus(main_window_tool: Type[MainWindow]):
     main_window_tool.add_action("Datei/Export/Allplan", lambda: fh_export.export_allplan_excel(main_window))
     main_window_tool.add_action("Datei/Export/Abkürzungen", lambda: fh_export.export_desite_abbreviation(main_window))
     main_window_tool.add_action("Datei/Mappings", lambda: main_window_tool.open_mapping_window())
-    main_window_tool.add_action("Modelle/Gruppen Generieren", lambda: main_window_tool.open_grouping_window())
     main_window_tool.add_action("Modelle/Informationen einlesen",
                                 lambda: main_window_tool.open_attribute_import_window())
     main_window_tool.add_action("Desite/Lesezeichen", lambda: fh_export.export_bookmarks(main_window))

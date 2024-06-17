@@ -117,13 +117,6 @@ class MainWindow(som_gui.core.tool.MainWindow):
         cls.get_properties().mapping_window.show()
 
     @classmethod
-    def open_grouping_window(cls):
-        if cls.get_properties().grouping_window is None:
-            cls.get_properties().grouping_window = grouping_window.GroupingWindow(cls.get())
-        else:
-            cls.get_properties().grouping_window.show()
-
-    @classmethod
     def open_attribute_import_window(cls):
         if cls.get_properties().attribute_import_window is not None:
             cls.get_properties().attribute_import_window.close()

@@ -24,3 +24,4 @@ class WindowProperties:
     filter_object: SOMcreator.Object | None = None
     abbreviation_line_edit: QLineEdit | None = None
     object_info_line_edit: QLineEdit | None = None
+    grouping_window = None

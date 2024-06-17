@@ -8,7 +8,6 @@ def connect() -> None:
                                lambda: core.create_window(aw_tool.Window, aw_tool.View, tool.Util, tool.Search,
                                                           tool.Popups))
     core.init_main_window(tool.Object, aw_tool.Window, tool.MainWindow)
-
 def on_new_project() -> None:
     pass
 

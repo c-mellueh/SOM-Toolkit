@@ -42,12 +42,12 @@ aggregation_window_modules = {
 
 for name in modules.keys():
     modules[name] = importlib.import_module(f"som_gui.module.{name}")
-
+"""
 for name in aggregation_window_modules.keys():
     aggregation_window_modules[name] = importlib.import_module(f"som_gui.aggregation_window.module.{name}")
 
 modules.update(aggregation_window_modules)
-
+"""
 def register():
     modules["project"].register()
     for n, mod in sorted(modules.items()):
