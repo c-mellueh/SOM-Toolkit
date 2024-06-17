@@ -38,6 +38,7 @@ aggregation_window_modules = {
     "view":   None,
     "node":       None,
     "connection": None,
+    "aggregation": None,
 }
 
 for name in modules.keys():

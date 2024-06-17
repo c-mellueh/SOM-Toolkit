@@ -84,14 +84,6 @@ class Window(som_gui.aggregation_window.core.tool.Window):
         return cls.get_properties().object_info_line_edit
 
     @classmethod
-    def create_abbreviation_line_edit(cls, layout: QHBoxLayout) -> QLineEdit:
-        le = QLineEdit()
-        le.setPlaceholderText(le.tr("Abkürzung"))
-        cls.get_properties().abbreviation_line_edit = le
-        layout.insertWidget(-1, le)
-        return le
-
-    @classmethod
     def create_window(cls) -> ui_window.AggregationWindow:
         window = ui_window.AggregationWindow()
         cls.get_properties().aggregation_window = window

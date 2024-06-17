@@ -1,3 +1,6 @@
+class Aggregation():
+    pass
+
 class Window():
     def create_window(self):
         pass
