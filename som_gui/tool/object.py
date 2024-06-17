@@ -12,7 +12,7 @@ from PySide6.QtCore import Qt, QPoint
 import som_gui
 from typing import TYPE_CHECKING, TypedDict, Callable
 from SOMcreator.Template import IFC_4_1
-
+from som_gui.module.object.prop import PluginProperty
 if TYPE_CHECKING:
     from som_gui.module.object.prop import ObjectProperties, ContextMenuDict
     from som_gui.module.main_window.ui import MainWindow
@@ -30,6 +30,14 @@ class ObjectDataDict(TypedDict):
 
 
 class Object(som_gui.core.tool.Object):
+    @classmethod
+    def oi_add_plugin_entry(cls, key: str, layout_name: str, widget, index, init_value_getter, widget_value_getter,
+                            widget_value_setter, test_function, value_setter):
+        prop = PluginProperty(key, layout_name, widget, index, init_value_getter, widget_value_getter,
+                              widget_value_setter, test_function, value_setter)
+
+        cls.get_properties().object_info_plugin_list.append(prop)
+
     @classmethod
     def get_object_infos(cls) -> ObjectDataDict:
         d = dict()
@@ -188,15 +196,12 @@ class Object(som_gui.core.tool.Object):
         app = tool.MainWindow.get_app()
         if result == som_gui.module.object.IDENT_ISSUE:
             text = "Identifier existiert bereits oder is nicht erlaubt!"
-        elif result == som_gui.module.object.ABBREV_ISSUE:
-            text = u"Abkürzung existiert bereits!"
         elif result == som_gui.module.object.IDENT_ATTRIBUTE_ISSUE:
             text = u"Attribute Name is nicht erlaubt!"
         elif result == som_gui.module.object.IDENT_PSET_ISSUE:
             text = u"PropertySet Name is nicht erlaubt!"
         else:
-            text = f"Oh! Ich weiß leider nicht, was gerade schief gelaufen ist. Fehler"
-
+            return False
         text = app.translate("MainWindow", text)
         logging.error(text)
         tool.Popups.create_warning_popup(text)
@@ -210,20 +215,23 @@ class Object(som_gui.core.tool.Object):
             new_object.ident_attrib = uuid.uuid4()
             return som_gui.module.object.OK, new_object
         ident_value = data_dict["ident_value"]
-        abbreviation = data_dict.get("abbreviation")
         pset = data_dict.get("ident_pset_name")
         attribute = data_dict.get("ident_attribute_name")
 
         if not cls.is_identifier_allowed(ident_value):
             return som_gui.module.object.IDENT_ISSUE, None
 
-        if not cls.is_abbreviation_allowed(abbreviation):
-            return som_gui.module.object.ABBREV_ISSUE, None
+        for plugin in cls.get_properties().object_info_plugin_list:  # Call Test Func
+            result = plugin.value_test(data_dict[plugin.key], obj)
+            if result != som_gui.module.object.OK:
+                return result, None
         new_object = cp.copy(obj)
         if pset and attribute:
             new_object.ident_attrib = cls.find_attribute(new_object, pset, attribute)
         new_object.ident_attrib.value = [ident_value]
-        new_object.abbreviation = abbreviation
+        for plugin in cls.get_properties().object_info_plugin_list:  # call Setter Func
+            plugin.value_setter(new_object, data_dict[plugin.key])
+
         return som_gui.module.object.OK, new_object
 
     @classmethod
@@ -271,7 +279,6 @@ class Object(som_gui.core.tool.Object):
         name = data_dict.get("name")
         ifc_mappings = data_dict.get("ifc_mappings")
         identifer = data_dict.get("ident_value")
-        abbreviation = data_dict.get("abbreviation")
         pset_name = data_dict.get("ident_pset_name")
         attribute_name = data_dict.get("ident_attribute_name")
         is_group = data_dict.get("is_group")
@@ -280,8 +287,12 @@ class Object(som_gui.core.tool.Object):
         if not is_group:
             if identifer is not None and not cls.is_identifier_allowed(identifer, obj.ident_value):
                 return som_gui.module.object.IDENT_ISSUE
-            if abbreviation is not None and not cls.is_abbreviation_allowed(abbreviation, obj.abbreviation):
-                return som_gui.module.object.ABBREV_ISSUE
+
+        for plugin in cls.get_properties().object_info_plugin_list:  # Call Test Func
+            result = plugin.value_test(data_dict[plugin.key], obj)
+            if result != som_gui.module.object.OK:
+                return result
+
         obj.name = name if name else obj.name
         obj.ifc_mapping = ifc_mappings if ifc_mappings is not None else obj.ifc_mapping
 
@@ -295,7 +306,9 @@ class Object(som_gui.core.tool.Object):
 
         if identifer is not None:
             cls.set_ident_value(obj, identifer)
-        obj.abbreviation = abbreviation if abbreviation is not None else obj.abbreviation
+        for plugin in cls.get_properties().object_info_plugin_list:  # call Setter Func
+            plugin.value_setter(obj, data_dict[plugin.key])
+
         return som_gui.module.object.OK
 
     @classmethod
@@ -330,14 +343,7 @@ class Object(som_gui.core.tool.Object):
                 ident_values.add(obj.ident_value)
         return ident_values
 
-    @classmethod
-    def get_existing_abbriviations(cls) -> set[str]:
-        proj = tool.Project.get()
-        abbreviations = set()
-        for obj in proj.get_all_objects():
-            if obj.abbreviation:
-                abbreviations.add(obj.abbreviation)
-        return abbreviations
+
 
     @classmethod
     def is_identifier_allowed(cls, identifier, ignore=None):
@@ -349,21 +355,17 @@ class Object(som_gui.core.tool.Object):
         else:
             return True
 
-    @classmethod
-    def is_abbreviation_allowed(cls, abbreviation, ignore=None):
-        abbreviations = cls.get_existing_abbriviations()
-        if ignore is not None:
-            abbreviations = list(filter(lambda a: a != ignore, abbreviations))
-        if abbreviation in abbreviations:
-            return False
-        else:
-            return True
+
 
     @classmethod
     def oi_create_dialog(cls):
-        prop: ObjectProperties = cls.get_properties()
+        prop = cls.get_properties()
         prop.object_info_widget_properties = som_gui.module.object.prop.ObjectInfoWidgetProperties()
-        prop.object_info_widget = som_gui.module.object.ui.ObjectInfoWidget()
+        dialog = som_gui.module.object.ui.ObjectInfoWidget()
+        for plugin in prop.object_info_plugin_list:
+            getattr(dialog.widget, plugin.layout_name).insertWidget(plugin.index, plugin.widget)
+            setattr(prop.object_info_widget_properties, plugin.key, plugin.init_value_getter)
+        prop.object_info_widget = dialog
         return prop.object_info_widget
 
     @classmethod
@@ -385,11 +387,12 @@ class Object(som_gui.core.tool.Object):
 
         d["is_group"] = widget.button_gruppe.isChecked()
         d["ident_value"] = widget.line_edit_attribute_value.text()
-        d["abbreviation"] = widget.line_edit_abbreviation.text()
         d["ident_pset_name"] = widget.combo_box_pset.currentText()
         d["ident_attribute_name"] = widget.combo_box_attribute.currentText()
         d["name"] = widget.line_edit_name.text()
         d["ifc_mappings"] = cls.get_ifc_mappings()
+        for plugin in cls.get_properties().object_info_plugin_list:
+            d[plugin.key] = plugin.widget_value_getter()
         return d
 
     @classmethod
@@ -424,10 +427,7 @@ class Object(som_gui.core.tool.Object):
         widget = cls.get_properties().object_info_widget.widget
         widget.line_edit_attribute_value.setStyleSheet(f"color:{color}")
 
-    @classmethod
-    def oi_set_abbrev_value_color(cls, color: str):
-        widget = cls.get_properties().object_info_widget.widget
-        widget.line_edit_abbreviation.setStyleSheet(f"color:{color}")
+
 
     @classmethod
     def oi_set_abbreviation(cls, value):
@@ -468,17 +468,19 @@ class Object(som_gui.core.tool.Object):
     def oi_fill_properties(cls, mode: int):
         prop: ObjectProperties = cls.get_properties()
         info_properties = prop.object_info_widget_properties
+        obj = prop.active_object
         info_properties.focus_object = prop.active_object
-        info_properties.ident_value = info_properties.focus_object.ident_value
+        info_properties.ident_value = obj.ident_value
         info_properties.mode = mode
 
-        info_properties.abbreviation = info_properties.focus_object.abbreviation
-        info_properties.is_group = info_properties.focus_object.is_concept
-        info_properties.name = info_properties.focus_object.name
-        info_properties.ifc_mappings = list(info_properties.focus_object.ifc_mapping)
-        if not info_properties.focus_object.is_concept:
-            info_properties.pset_name = info_properties.focus_object.ident_attrib.property_set.name
-            info_properties.attribute_name = info_properties.focus_object.ident_attrib.name
+        for plugin in prop.object_info_plugin_list:
+            info_properties.plugin_infos[plugin.key] = plugin.init_value_getter(obj)
+        info_properties.is_group = obj.is_concept
+        info_properties.name = obj.name
+        info_properties.ifc_mappings = list(obj.ifc_mapping)
+        if not obj.is_concept:
+            info_properties.pset_name = obj.ident_attrib.property_set.name
+            info_properties.attribute_name = obj.ident_attrib.name
 
     @classmethod
     def oi_update_dialog(cls):
@@ -486,7 +488,6 @@ class Object(som_gui.core.tool.Object):
         dialog = prop.object_info_widget
         info_prop = prop.object_info_widget_properties
         dialog.widget.line_edit_name.setText(info_prop.name)
-        dialog.widget.line_edit_abbreviation.setText(info_prop.abbreviation)
         dialog.widget.button_gruppe.setChecked(info_prop.is_group)
         active_object = prop.active_object
         dialog.widget.combo_box_pset.clear()
@@ -497,6 +498,10 @@ class Object(som_gui.core.tool.Object):
             dialog.widget.line_edit_attribute_value.setText(info_prop.ident_value)
         for mapping in info_prop.ifc_mappings:
             cls.add_ifc_mapping(mapping)
+
+        for plugin in prop.object_info_plugin_list:
+            plugin.widget_value_setter(info_prop.plugin_infos.get(plugin.key))
+
 
     @classmethod
     def add_ifc_mapping(cls, mapping):

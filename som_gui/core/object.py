@@ -112,20 +112,12 @@ def object_info_refresh(object_tool: Type[Object]):
     data_dict = object_tool.oi_get_values()
     object_tool.oi_set_values(data_dict)
     ident_value = data_dict["ident_value"]
-    abbreviation = data_dict["abbreviation"]
     group = data_dict["is_group"]
-
     ident_filter = object_tool.get_active_object().ident_value if object_tool.oi_get_mode() == 1 else None
-    abbrev_filter = object_tool.get_active_object().abbreviation if object_tool.oi_get_mode() == 1 else None
     if not object_tool.is_identifier_allowed(ident_value, ident_filter):
         object_tool.oi_set_ident_value_color("red")
     else:
         object_tool.oi_set_ident_value_color("black")
-
-    if not object_tool.is_abbreviation_allowed(abbreviation, abbrev_filter):
-        object_tool.oi_set_abbrev_value_color("red")
-    else:
-        object_tool.oi_set_abbrev_value_color("black")
     object_tool.oi_change_visibility_identifiers(group)
 
 

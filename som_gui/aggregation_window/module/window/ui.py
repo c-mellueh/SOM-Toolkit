@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QMenuBar, QStatusBar, QVBoxLayout, QWidget, QComboBox
+from PySide6.QtWidgets import QLineEdit, QMainWindow, QMenuBar, QStatusBar, QVBoxLayout, QWidget, QComboBox
 from PySide6.QtGui import QPaintEvent
 from som_gui.icons import get_icon
 from . import trigger
@@ -28,3 +28,12 @@ class ComboBox(QComboBox):
     def paintEvent(self, event: QPaintEvent) -> None:
         super().paintEvent(event)
         trigger.update_combo_box()
+
+
+class ObjectInfoLineEdit(QLineEdit):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+    def paintEvent(self, event: QPaintEvent) -> None:
+        super().paintEvent(event)
+        trigger.refresh_object_info_line_edit()

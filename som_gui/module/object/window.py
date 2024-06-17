@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ObjectInfoWidget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.1
+## Created by: Qt User Interface Compiler version 6.7.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -24,8 +24,8 @@ class Ui_ObjectInfo(object):
     def setupUi(self, ObjectInfo):
         if not ObjectInfo.objectName():
             ObjectInfo.setObjectName(u"ObjectInfo")
-        ObjectInfo.resize(782, 196)
-        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Maximum)
+        ObjectInfo.resize(881, 178)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(ObjectInfo.sizePolicy().hasHeightForWidth())
@@ -44,23 +44,17 @@ class Ui_ObjectInfo(object):
 
         self.horizontal_layout_info.addWidget(self.line_edit_name)
 
-        self.label_abbreviation = QLabel(ObjectInfo)
-        self.label_abbreviation.setObjectName(u"label_abbreviation")
-
-        self.horizontal_layout_info.addWidget(self.label_abbreviation)
-
-        self.line_edit_abbreviation = QLineEdit(ObjectInfo)
-        self.line_edit_abbreviation.setObjectName(u"line_edit_abbreviation")
-
-        self.horizontal_layout_info.addWidget(self.line_edit_abbreviation)
-
 
         self.verticalLayout.addLayout(self.horizontal_layout_info)
 
+        self.horizontal_layout_group = QHBoxLayout()
+        self.horizontal_layout_group.setObjectName(u"horizontal_layout_group")
         self.button_gruppe = QRadioButton(ObjectInfo)
         self.button_gruppe.setObjectName(u"button_gruppe")
 
-        self.verticalLayout.addWidget(self.button_gruppe)
+        self.horizontal_layout_group.addWidget(self.button_gruppe)
+
+        self.verticalLayout.addLayout(self.horizontal_layout_group)
 
         self.layout_ident_attribute = QHBoxLayout()
         self.layout_ident_attribute.setObjectName(u"layout_ident_attribute")
@@ -76,7 +70,7 @@ class Ui_ObjectInfo(object):
 
         self.line_edit_attribute_value = QLineEdit(ObjectInfo)
         self.line_edit_attribute_value.setObjectName(u"line_edit_attribute_value")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.line_edit_attribute_value.sizePolicy().hasHeightForWidth())
@@ -87,11 +81,13 @@ class Ui_ObjectInfo(object):
 
         self.verticalLayout.addLayout(self.layout_ident_attribute)
 
+        self.vertical_layout_ifc_box = QVBoxLayout()
+        self.vertical_layout_ifc_box.setObjectName(u"vertical_layout_ifc_box")
         self.horizontal_layout_ifc = QHBoxLayout()
         self.horizontal_layout_ifc.setObjectName(u"horizontal_layout_ifc")
         self.label_ifc_mapping = QLabel(ObjectInfo)
         self.label_ifc_mapping.setObjectName(u"label_ifc_mapping")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.label_ifc_mapping.sizePolicy().hasHeightForWidth())
@@ -99,13 +95,13 @@ class Ui_ObjectInfo(object):
 
         self.horizontal_layout_ifc.addWidget(self.label_ifc_mapping)
 
-        self.horizontal_spacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontal_spacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontal_layout_ifc.addItem(self.horizontal_spacer)
 
         self.button_add_ifc = QPushButton(ObjectInfo)
         self.button_add_ifc.setObjectName(u"button_add_ifc")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Maximum)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.button_add_ifc.sizePolicy().hasHeightForWidth())
@@ -113,15 +109,16 @@ class Ui_ObjectInfo(object):
 
         self.horizontal_layout_ifc.addWidget(self.button_add_ifc)
 
-
-        self.verticalLayout.addLayout(self.horizontal_layout_ifc)
+        self.vertical_layout_ifc_box.addLayout(self.horizontal_layout_ifc)
 
         self.vertical_layout_ifc = QVBoxLayout()
         self.vertical_layout_ifc.setObjectName(u"vertical_layout_ifc")
 
-        self.verticalLayout.addLayout(self.vertical_layout_ifc)
+        self.vertical_layout_ifc_box.addLayout(self.vertical_layout_ifc)
 
-        self.vertical_spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalLayout.addLayout(self.vertical_layout_ifc_box)
+
+        self.vertical_spacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.vertical_spacer)
 
@@ -132,8 +129,7 @@ class Ui_ObjectInfo(object):
 
         self.verticalLayout.addWidget(self.button_box)
 
-        QWidget.setTabOrder(self.line_edit_name, self.line_edit_abbreviation)
-        QWidget.setTabOrder(self.line_edit_abbreviation, self.button_add_ifc)
+        QWidget.setTabOrder(self.line_edit_name, self.button_add_ifc)
 
         self.retranslateUi(ObjectInfo)
         self.button_box.accepted.connect(ObjectInfo.accept)
@@ -145,7 +141,6 @@ class Ui_ObjectInfo(object):
     def retranslateUi(self, ObjectInfo):
         ObjectInfo.setWindowTitle(QCoreApplication.translate("ObjectInfo", u"Dialog", None))
         self.label_name.setText(QCoreApplication.translate("ObjectInfo", u"Name", None))
-        self.label_abbreviation.setText(QCoreApplication.translate("ObjectInfo", u"Abk\u00fcrzung:", None))
         self.button_gruppe.setText(QCoreApplication.translate("ObjectInfo", u"Gruppe", None))
         self.label_ifc_mapping.setText(QCoreApplication.translate("ObjectInfo", u"IFC Mapping", None))
         self.button_add_ifc.setText(QCoreApplication.translate("ObjectInfo", u"+", None))

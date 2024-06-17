@@ -23,3 +23,7 @@ def combo_box_changed() -> None:
 
 def window_paint_event() -> None:
     core.paint_event(aw_tool.Window)
+
+
+def refresh_object_info_line_edit() -> None:
+    core.refresh_object_info_line_edit(tool.Object, aw_tool.Window)

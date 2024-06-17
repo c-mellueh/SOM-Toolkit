@@ -557,8 +557,6 @@ class Object:
 
     def handle_attribute_issue(self, result): pass
 
-    def is_abbreviation_allowed(self, abbreviation, ignore): pass
-
     def is_identifier_allowed(self, identifier, ignore): pass
 
     def oi_change_visibilit_identifiers(self, hide): pass
