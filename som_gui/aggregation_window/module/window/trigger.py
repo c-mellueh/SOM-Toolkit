@@ -7,7 +7,6 @@ def connect() -> None:
     tool.MainWindow.add_action("Bauwerksstruktur",
                                lambda: core.create_window(aw_tool.Window, aw_tool.View, tool.Util, tool.Search,
                                                           tool.Popups))
-    core.init_main_window(tool.Object, aw_tool.Window, tool.MainWindow)
 def on_new_project() -> None:
     pass
 
@@ -23,6 +22,3 @@ def combo_box_changed() -> None:
 def window_paint_event() -> None:
     core.paint_event(aw_tool.Window)
 
-
-def refresh_object_info_line_edit() -> None:
-    core.refresh_object_info_line_edit(tool.Object, aw_tool.Window)

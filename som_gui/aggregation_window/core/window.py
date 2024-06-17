@@ -12,15 +12,6 @@ if TYPE_CHECKING:
     from som_gui import tool
 
 
-
-
-
-def refresh_object_info_line_edit(object_tool: Type[tool.Object], window: Type[aw_tool.Window]):
-    data_dict = object_tool.oi_get_values()
-    abbrev_filter = object_tool.get_active_object().abbreviation if object_tool.oi_get_mode() == 1 else None
-    window.object_info_line_edit_paint(data_dict, abbrev_filter)
-
-
 def paint_event(window: Type[aw_tool.Window]) -> None:
     logging.debug(f"Paint Aggregation Window")
     status_bar = window.get_status_bar()

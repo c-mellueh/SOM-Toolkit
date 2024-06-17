@@ -28,12 +28,3 @@ class ComboBox(QComboBox):
     def paintEvent(self, event: QPaintEvent) -> None:
         super().paintEvent(event)
         trigger.update_combo_box()
-
-
-class ObjectInfoLineEdit(QLineEdit):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
-    def paintEvent(self, event: QPaintEvent) -> None:
-        super().paintEvent(event)
-        trigger.refresh_object_info_line_edit()

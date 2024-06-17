@@ -43,23 +43,25 @@ aggregation_window_modules = {
 
 for name in modules.keys():
     modules[name] = importlib.import_module(f"som_gui.module.{name}")
-"""
+
 for name in aggregation_window_modules.keys():
     aggregation_window_modules[name] = importlib.import_module(f"som_gui.aggregation_window.module.{name}")
 
 modules.update(aggregation_window_modules)
-"""
+
 def register():
     modules["project"].register()
-    for n, mod in sorted(modules.items()):
-        if n != "project":
+    modules["main_window"].register()
+    for n, mod in modules.items():
+        if n not in ("project", "main_window"):
             mod.register()
 
 
 def load_ui_triggers():
     modules["project"].load_ui_triggers()
-    for n, mod in sorted(modules.items()):
-        if n != "project":
+    modules["main_window"].load_ui_triggers()
+    for n, mod in modules.items():
+        if n not in ("project", "main_window"):
             mod.load_ui_triggers()
 
 
