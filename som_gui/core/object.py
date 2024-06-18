@@ -34,8 +34,13 @@ def init_main_window(object_tool: Type[tool.Object], main_window: Type[tool.Main
     object_tool.add_objects_infos_add_function("name", main_window.get_object_name_line_edit().text)
     object_tool.add_objects_infos_add_function("is_group", lambda: False)
     object_tool.add_objects_infos_add_function("ident_pset_name", main_window.get_ident_pset_name_line_edit().text)
+    object_tool.add_object_creation_check("ident_pset_name", object_tool.check_if_ident_pset_is_valid)
+
     object_tool.add_objects_infos_add_function("ident_attribute_name", main_window.get_attribute_name_line_edit().text)
+    object_tool.add_object_creation_check("ident_attribute_name", object_tool.check_if_ident_attribute_is_valid)
+
     object_tool.add_objects_infos_add_function("ident_value", main_window.get_ident_value_line_edit().text)
+    object_tool.add_object_creation_check("ident_value", object_tool.check_if_identifier_is_unique)
     object_tool.add_objects_infos_add_function("ifc_mappings", lambda: ["IfcBuildingElementProxy"])
 
 
@@ -145,11 +150,12 @@ def create_group(object_tool: Type[Object]):
         "is_group":     True,
         "ifc_mappings": ["IfcGroup"]
     }
-    result = object_tool.check_object_creation_imput(d)
+    is_allowed = object_tool.check_object_creation_input(d)
+    if not is_allowed:
+        return
     obj = object_tool.create_object(d, None, None)
-    if result == som_gui.module.object.OK:
-        selected_objects = set(object_tool.get_selected_objects())
-        object_tool.group_objects(obj, selected_objects)
+    selected_objects = set(object_tool.get_selected_objects())
+    object_tool.group_objects(obj, selected_objects)
 
 
 def create_context_menu(pos: QPoint, object_tool: Type[Object]):
@@ -211,8 +217,8 @@ def add_object_clicked(object_tool: Type[Object], project: Type[Project],
                        property_set: Type[tool.PropertySet], predefined_property_set: Type[tool.PredefinedPropertySet],
                        popup: Type[tool.Popups]):
     object_infos = object_tool.get_object_infos()
-    issue = object_tool.check_object_creation_imput(object_infos)
-    if not object_tool.handle_attribute_issue(issue):
+    is_allowed = object_tool.check_object_creation_input(object_infos)
+    if not is_allowed:
         return
 
     pset_name = object_infos["ident_pset_name"]
