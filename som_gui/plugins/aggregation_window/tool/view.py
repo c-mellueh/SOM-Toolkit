@@ -11,15 +11,15 @@ from PySide6.QtWidgets import QApplication, QMenu, QFileDialog, QGraphicsView
 import SOMcreator
 from SOMcreator.classes import Aggregation
 from SOMcreator.constants import json_constants
-from som_gui.aggregation_window.module.view.constants import AGGREGATIONSCENES, SCENE_SIZE, SCENE_MARGIN
-from som_gui.aggregation_window.module.node import ui as ui_node
-from som_gui.aggregation_window import tool as aw_tool
-from som_gui.aggregation_window.module.view import ui as ui_view
-import som_gui.aggregation_window.core.tool
+from som_gui.plugins.aggregation_window.module.view.constants import AGGREGATIONSCENES, SCENE_SIZE, SCENE_MARGIN
+from som_gui.plugins.aggregation_window.module.node import ui as ui_node
+from som_gui.plugins.aggregation_window import tool as aw_tool
+from som_gui.plugins.aggregation_window.module.view import ui as ui_view
+import som_gui.plugins.aggregation_window.core.tool
 
 if TYPE_CHECKING:
-    from som_gui.aggregation_window.module.view.prop import ViewProperties
-    from som_gui.aggregation_window.module.connection import ui as ui_connection
+    from som_gui.plugins.aggregation_window.module.view.prop import ViewProperties
+    from som_gui.plugins.aggregation_window.module.connection import ui as ui_connection
 
 
 def loop_name(name, names, index: int) -> str:
@@ -30,7 +30,7 @@ def loop_name(name, names, index: int) -> str:
     return new_name
 
 
-class View(som_gui.aggregation_window.core.tool.View):
+class View(som_gui.plugins.aggregation_window.core.tool.View):
     @classmethod
     def create_aggregation_scenes_dict(cls, agrgegation_uuid_dict):
         main_dict = {"AggregationScenes": dict()}

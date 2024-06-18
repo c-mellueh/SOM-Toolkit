@@ -1,9 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from PySide6.QtWidgets import QTreeWidgetItem
-from som_gui.aggregation_window.core import node as core
+from som_gui.plugins.aggregation_window.core import node as core
 from som_gui import tool
-from som_gui.aggregation_window import tool as aw_tool
+from ... import tool as aw_tool
 from PySide6.QtGui import QPainter
 
 if TYPE_CHECKING:

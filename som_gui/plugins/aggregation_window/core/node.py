@@ -9,9 +9,9 @@ from PySide6.QtGui import QPen, QPainter
 from PySide6.QtWidgets import QTreeWidgetItem
 
 if TYPE_CHECKING:
-    from som_gui.aggregation_window.tool import View, Node
+    from som_gui.plugins.aggregation_window.tool import View, Node
     from som_gui import tool
-    from som_gui.aggregation_window.module.node.ui import Header, NodeProxy, PropertySetTree, Circle
+    from som_gui.plugins.aggregation_window.module.node.ui import Header, NodeProxy, PropertySetTree, Circle
 
 
 def pset_tree_double_clicked(item: QTreeWidgetItem, node: Type[Node], property_set_window: Type[tool.PropertySetWindow],

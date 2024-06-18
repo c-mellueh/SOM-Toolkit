@@ -9,17 +9,16 @@ import SOMcreator
 from SOMcreator.classes import Aggregation
 from SOMcreator import value_constants
 
-import som_gui.aggregation_window.core.tool
-from som_gui.aggregation_window.module.node import ui as node_ui
-from som_gui.aggregation_window.module.node import constants as node_constants
-from som_gui.aggregation_window import tool as aw_tool
+import som_gui.plugins.aggregation_window.core.tool
+from som_gui.plugins.aggregation_window.module.node import constants as node_constants, ui as node_ui
+from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui.module.project.constants import CLASS_REFERENCE
 
 if TYPE_CHECKING:
-    from som_gui.aggregation_window.module.node.prop import NodeProperties
+    from som_gui.plugins.aggregation_window.module.node.prop import NodeProperties
 
 
-class Node(som_gui.aggregation_window.core.tool.Node):
+class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     @classmethod
     def get_properties(cls) -> NodeProperties:
         return som_gui.NodeProperties

@@ -1,22 +1,18 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
-from PySide6.QtWidgets import QHBoxLayout, QLineEdit
 import SOMcreator
 import som_gui
-import som_gui.aggregation_window.core.tool
-from som_gui.module.object import OK
-from som_gui.aggregation_window import tool as aw_tool
-from som_gui.aggregation_window.module.window import ui as ui_window
-from som_gui import tool
-from som_gui.windows import grouping_window
+import som_gui.plugins.aggregation_window.core.tool
+from som_gui.plugins.aggregation_window import tool as aw_tool
+from som_gui.plugins.aggregation_window.module.window import ui as ui_window
+
 if TYPE_CHECKING:
-    from som_gui.aggregation_window.module.window.prop import WindowProperties
+    from som_gui.plugins.aggregation_window.module.window.prop import WindowProperties
     from PySide6.QtWidgets import QMenuBar, QStatusBar
     from som_gui.module.util.prop import MenuDict
 
 
-
-class Window(som_gui.aggregation_window.core.tool.Window):
+class Window(som_gui.plugins.aggregation_window.core.tool.Window):
 
 
     @classmethod

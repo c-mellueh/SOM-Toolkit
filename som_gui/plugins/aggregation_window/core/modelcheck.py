@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Type
 from som_gui import tool
-from som_gui.aggregation_window import tool as aw_tool
+from som_gui.plugins.aggregation_window import tool as aw_tool
 import ifcopenshell
 from som_gui.core.modelcheck import ELEMENT, GROUP
 import logging

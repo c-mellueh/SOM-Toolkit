@@ -1,5 +1,5 @@
-import som_gui.aggregation_window.core.tool
-from som_gui.aggregation_window.module.modelcheck.prop import AggregationModelcheckProperties
+import som_gui.plugins.aggregation_window.core.tool
+from som_gui.plugins.aggregation_window.module.modelcheck.prop import AggregationModelcheckProperties
 from ifcopenshell import entity_instance
 import ifcopenshell
 
@@ -12,7 +12,7 @@ from som_gui.module.modelcheck.constants import *
 ABBREV_ISSUE = 2
 
 
-class Modelcheck(som_gui.aggregation_window.core.tool.Modelcheck):
+class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
     @classmethod
     def get_all_groups(cls, file: ifcopenshell.file):
         return file.by_type("IfcGroup")

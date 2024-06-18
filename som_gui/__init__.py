@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from som_gui import core
 from som_gui import tool
+from som_gui import settings
 from thefuzz import fuzz
 from SOMcreator.external_software.IDS import main
 from SOMcreator.external_software.bim_collab_zoom import modelcheck
@@ -33,23 +34,27 @@ modules = {
     "ifc_importer":            [None, "ifc_importer"],
     "util":                    [None, "util"],
 }
-
-aggregation_window_modules = {
+plugins_dict = {
+    "aggregation_window": {
     "window":        [None, "window"],
     "view":          [None, "view"],
     "node":          [None, "node"],
     "connection":    [None, "connection"],
     "aggregation":   [None, "aggregation"],
     "aw_modelcheck": [None, "modelcheck"]
+    },
 }
-
 for key, (_, name) in modules.items():
     modules[key][0] = importlib.import_module(f"som_gui.module.{name}")
+for plugin_name, plugin_modules in plugins_dict.items():
+    if not settings.get_setting_plugin_activated(plugin_name):
+        continue
 
-for key, (_, name) in aggregation_window_modules.items():
-    aggregation_window_modules[key][0] = importlib.import_module(f"som_gui.aggregation_window.module.{name}")
+    for key, (_, name) in plugin_modules.items():
+        text = f".{plugin_name}.module.{name}"
 
-modules.update(aggregation_window_modules)
+        plugins_dict[plugin_name][key][0] = importlib.import_module(text, f"som_gui.plugins")
+    modules.update(plugin_modules)
 
 
 def register():

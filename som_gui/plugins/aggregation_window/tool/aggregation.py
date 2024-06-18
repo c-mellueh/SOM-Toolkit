@@ -1,16 +1,16 @@
-import som_gui.aggregation_window.core.tool
+import som_gui.plugins.aggregation_window.core.tool
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit
-from som_gui.aggregation_window.module.aggregation.prop import AggregationProperties
+from som_gui.plugins.aggregation_window.module.aggregation.prop import AggregationProperties
 import SOMcreator
 from som_gui import tool
 from som_gui.module.object import OK
 from som_gui.windows import grouping_window
-from som_gui.aggregation_window.module.aggregation import ui as ui_aggregation
+from som_gui.plugins.aggregation_window.module.aggregation import ui as ui_aggregation
 
 ABBREV_ISSUE = 2
 
 
-class Aggregation(som_gui.aggregation_window.core.tool.Aggregation):
+class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     @classmethod
     def get_properties(cls) -> AggregationProperties:
         return som_gui.AggregationProperties

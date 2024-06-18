@@ -5,10 +5,10 @@ from PySide6.QtCore import Qt, QPointF
 from SOMcreator import classes, value_constants
 
 if TYPE_CHECKING:
-    from som_gui.aggregation_window import tool as aw_tool
+    from som_gui.plugins.aggregation_window import tool as aw_tool
     from som_gui import tool
     from PySide6.QtGui import QWheelEvent, QKeyEvent
-    from som_gui.aggregation_window.module.node import ui as node_ui
+    from som_gui.plugins.aggregation_window.module.node import ui as node_ui
 
 
 def save_aggregations(view: Type[aw_tool.View], project: Type[tool.Project]):

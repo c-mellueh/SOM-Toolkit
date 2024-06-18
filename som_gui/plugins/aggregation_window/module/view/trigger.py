@@ -1,5 +1,5 @@
-from som_gui.aggregation_window.core import view as core
-from som_gui.aggregation_window import tool as aw_tool
+from som_gui.plugins.aggregation_window.core import view as core
+from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui import tool
 
 

@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QLineEdit, QMainWindow, QMenuBar, QStatusBar, QVBoxLayout, QWidget, QComboBox
+from PySide6.QtWidgets import QMainWindow, QMenuBar, QStatusBar, QVBoxLayout, QWidget, QComboBox
 from PySide6.QtGui import QPaintEvent
 from som_gui.icons import get_icon
 from . import trigger

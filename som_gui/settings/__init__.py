@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from configparser import ConfigParser
+
 DIR_PATH = os.path.dirname(__file__)
 LOG_CONFIG_PATH = os.path.join(DIR_PATH, "logging.conf")
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.ini")
@@ -25,6 +26,7 @@ IFC_MOD = "ifc_modification"
 GROUP_PSET = "group_pset"
 GROUP_ATTRIBUTE = "group_attribute"
 CREATE_EMPTY = "create_empty"
+PLUGINS = "plugins"
 
 
 def _get_config() -> ConfigParser:
@@ -211,3 +213,15 @@ def set_group_create_empty_attributes(value: bool) -> None:
 
 def get_group_create_empty_attributes() -> bool:
     return _get_bool_setting(IFC_MOD, CREATE_EMPTY)
+
+
+def get_setting_plugin_activated(name: str) -> bool:
+    config_parser = _get_config()
+    if not config_parser.has_option(PLUGINS, name):
+        set_setting(PLUGINS, name, True)
+        return True
+    return _get_bool_setting(PLUGINS, name)
+
+
+def set_settings_plugin_activated(name: str, value: bool) -> None:
+    set_setting(PLUGINS, name, value)

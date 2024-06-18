@@ -2,8 +2,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 
 if TYPE_CHECKING:
-    from som_gui.aggregation_window import tool
-    from som_gui.aggregation_window.module.connection import ui as ui_connection
+    from som_gui.plugins.aggregation_window import tool
+    from som_gui.plugins.aggregation_window.module.connection import ui as ui_connection
 
 
 def paint_connection(active_connection: ui_connection.Connection, connection: Type[tool.Connection]) -> None:

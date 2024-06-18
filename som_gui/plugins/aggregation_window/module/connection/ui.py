@@ -7,7 +7,7 @@ from . import trigger
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from som_gui.aggregation_window.module.node.ui import NodeProxy
+    from som_gui.plugins.aggregation_window.module.node.ui import NodeProxy
 
 
 class Connection(QGraphicsPathItem):

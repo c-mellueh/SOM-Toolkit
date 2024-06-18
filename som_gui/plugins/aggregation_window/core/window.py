@@ -3,12 +3,10 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QLabel
 from SOMcreator.classes import Aggregation
-from som_gui.module.object import OK
 
 if TYPE_CHECKING:
-    from som_gui.aggregation_window import tool as aw_tool
+    from som_gui.plugins.aggregation_window import tool as aw_tool
     from som_gui import tool
 
 

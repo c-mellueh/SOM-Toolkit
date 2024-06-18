@@ -5,7 +5,7 @@ from som_gui.module.object import OK
 
 if TYPE_CHECKING:
     from som_gui import tool
-    from som_gui.aggregation_window import tool as aw_tool
+    from som_gui.plugins.aggregation_window import tool as aw_tool
 
 
 def init_main_window(object_tool: Type[tool.Object], aggregation: Type[aw_tool.Aggregation],
