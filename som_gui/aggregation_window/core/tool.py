@@ -20,3 +20,7 @@ class Node:
 
 class Connection():
     pass
+
+
+class Modelcheck:
+    pass

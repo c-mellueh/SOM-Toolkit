@@ -47,14 +47,27 @@ class Signaller(QObject):
     status = Signal(str)
     progress = Signal(int)
 
+
 class Modelcheck(som_gui.core.tool.Modelcheck):
+    @classmethod
+    def get_file_check_plugins(cls) -> list[Callable]:
+        return cls.get_properties().file_check_plugins
+
+    @classmethod
+    def get_entity_check_plugins(cls) -> list[Callable]:
+        return cls.get_properties().entity_check_plugins
+
+    @classmethod
+    def add_file_check_plugin(cls, file_check_func):
+        cls.get_properties().file_check_plugins.append(file_check_func)
+
+    @classmethod
+    def add_entity_check_plugin(cls, entity_check_func):
+        cls.get_properties().entity_check_plugins.append(entity_check_func)
+
     @classmethod
     def reset_guids(cls):
         cls.get_properties().guids = dict()
-
-    @classmethod
-    def get_group_count(cls) -> int:
-        return len(cls.get_properties().group_parent_dict)
 
     @classmethod
     def increment_checked_items(cls):
@@ -74,61 +87,15 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def set_progress(cls, value: int):
         cls.get_properties().runner.signaller.progress.emit(value)
 
-    @classmethod
-    def entity_is_in_group(cls, entity: ifcopenshell.entity_instance):
-        return bool([assignment for assignment in getattr(entity, "HasAssignments", []) if
-                     assignment.is_a("IfcRelAssignsToGroup")])
+
 
     @classmethod
-    def get_entities_without_group_assertion(cls, ifc: ifcopenshell.file) -> list[ifcopenshell.entity_instance]:
-        return [entity for entity in ifc.by_type("IfcElement") if
-                not [assignment for assignment in getattr(entity, "HasAssignments", []) if
-                     assignment.is_a("IfcRelAssignsToGroup")]]
+    def get_entites(cls, ifc: ifcopenshell.file) -> list[ifcopenshell.entity_instance]:
+        return ifc.by_type("IfcElement")
 
     @classmethod
     def get_element_count(cls) -> int:
         return len(cls.get_properties().group_parent_dict.keys())
-
-    @classmethod
-    def subelements_have_doubling_identifier(cls, entity: ifcopenshell):
-        """Checks if there are multiple classes of subelements in a Group that have the same Matchkey"""
-        sub_idents = [cls.get_ident_value(sub_group) for sub_group in cls.get_sub_entities(entity)]
-        return len(set(sub_idents)) != len(sub_idents)
-
-    @classmethod
-    def get_sub_entities(cls, entity: ifcopenshell.entity_instance) -> set[ifcopenshell.entity_instance]:
-        group_dict = cls.get_properties().group_dict
-        return group_dict.get(entity) if entity in group_dict else set()
-
-    @classmethod
-    def set_sub_entities(cls, entity: ifcopenshell.entity_instance, sub_entities: set[ifcopenshell.entity_instance]):
-        cls.get_properties().group_dict[entity] = sub_entities
-
-    @classmethod
-    def get_parent_entity(cls, entity: ifcopenshell.entity_instance) -> ifcopenshell.entity_instance | None:
-        return cls.get_properties().group_parent_dict.get(entity)
-
-    @classmethod
-    def set_parent_entity(cls, entity: ifcopenshell.entity_instance,
-                          parent_entity: ifcopenshell.entity_instance | None):
-        cls.get_properties().group_parent_dict[entity] = parent_entity
-
-    @classmethod
-    def is_parent_allowed(cls, entity: ifcopenshell.entity_instance, parent_entity: ifcopenshell.entity_instance):
-        object_rep = cls.get_object_representation(entity)
-        parent_object_rep = cls.get_object_representation(parent_entity)
-        allowed_parents = cls.get_allowed_parents(object_rep)
-        return bool(parent_object_rep.aggregations.intersection(allowed_parents))
-
-    @classmethod
-    def get_allowed_parents(cls, obj: SOMcreator.Object):
-        def _loop_parent(el: SOMcreator.classes.Aggregation) -> SOMcreator.classes.Aggregation:
-            if el.parent_connection != value_constants.INHERITANCE:
-                return el.parent
-            else:
-                return _loop_parent(el.parent)
-
-        return set(_loop_parent(aggreg) for aggreg in obj.aggregations)
 
     @classmethod
     def entity_should_be_tested(cls, entity: ifcopenshell.entity_instance) -> bool:
@@ -141,15 +108,6 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def get_object_representation(cls, entity: ifcopenshell.entity_instance) -> SOMcreator.Object | None:
         identifier = cls.get_ident_value(entity)
         return cls.get_ident_dict().get(identifier)
-
-    @classmethod
-    def build_group_structure(cls, ifc: ifcopenshell.file):
-        cls.get_properties().group_dict = dict()
-        cls.get_properties().group_parent_dict = dict()
-
-        for entity in cls.get_root_groups(ifc):
-            cls.iterate_group_structure(entity)
-            cls.set_parent_entity(entity, None)
 
     @classmethod
     def build_ident_dict(cls, objects: set[SOMcreator.Object]):
@@ -178,6 +136,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
                     else:
                         output_data_dict[obj][property_set] = attribute_list
                 iter_objects(obj.children)
+
         output_data_dict = dict()
         iter_objects(tool.Project.get_root_objects())
         cls.set_data_dict(output_data_dict)
@@ -186,33 +145,6 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def create_modelcheck_runner(cls, ifc_file) -> ModelcheckRunner:
         return ModelcheckRunner(ifc_file)
-
-    @classmethod
-    def is_root_group(cls, group: ifcopenshell.stream_entity) -> bool:
-        parent_assignment = []
-        for assignement in group.HasAssignments:
-            if not assignement.is_a("IfcRelAssignsToGroup"):
-                continue
-            parent_assignment.append(assignement)
-
-        if not parent_assignment:
-            return True
-        return False
-
-    @classmethod
-    def get_root_groups(cls, ifc: ifcopenshell.file) -> list[ifcopenshell.entity_instance]:
-        return [group for group in ifc.by_type("IfcGroup") if cls.is_root_group(group)]
-
-    @classmethod
-    def iterate_group_structure(cls, entity: entity_instance):
-        relationships = getattr(entity, "IsGroupedBy", [])
-        for relationship in relationships:
-            sub_entities: set[ifcopenshell.entity_instance] = set(se for se in relationship.RelatedObjects)
-            cls.set_sub_entities(entity, sub_entities)
-            for sub_entity in sub_entities:  # IfcGroup or IfcElement
-                cls.set_parent_entity(sub_entity, entity)
-                if sub_entity.is_a("IfcGroup"):
-                    cls.iterate_group_structure(sub_entity)
 
     #######################################################################################
     ###############################Modelchecks#############################################
@@ -373,41 +305,6 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         description = f'GUID kommt in Datei "{file1}" und "{file2}" vor'
         issue_nr = GUID_ISSUE
         cls.add_issues(guid, description, issue_nr, None)
-
-    # GROUP ISSUES
-    @classmethod
-    def subgroup_issue(cls, child_ident):
-        description = f"Gruppensammler besitzt falsche Untergruppe ({child_ident} nicht erlaubt)"
-        issue_nr = SUBGROUP_ISSUE
-        cls.add_issues(cls.get_active_guid(), description, issue_nr, None)
-
-    @classmethod
-    def empty_group_issue(cls, element):
-        description = f"Gruppe besitzt keine Subelemente "
-        issue_nr = EMPTY_GROUP_ISSUE
-        cls.add_issues(element.GlobalId, description, issue_nr, None)
-
-    @classmethod
-    def parent_issue(cls, element: entity_instance, parent_element: entity_instance):
-        main_pset_name = cls.get_main_pset_name()
-        main_attribute_name = cls.get_main_attribute_name()
-        element_type = cls.get_active_element_type()
-        ident_value = ifc_el.get_pset(parent_element, main_pset_name, main_attribute_name)
-        description = f"{element_type} besitzt die falsche Elternklasse ({ident_value} nicht erlaubt)"
-        issue_nr = PARENT_ISSUE
-        cls.add_issues(element.GlobalId, description, issue_nr, None)
-
-    @classmethod
-    def no_group_issue(cls, element):
-        description = f"Element hat keine Gruppenzuweisung"
-        issue_nr = NO_GROUP_ISSUE
-        cls.add_issues(element.GlobalId, description, issue_nr, None)
-
-    @classmethod
-    def repetetive_group_issue(cls, element):
-        description = f"Gruppe besitzt mehrere Subelemente mit der selben Bauteilklassifikation"
-        issue_nr = REPETETIVE_GROUP_ISSUE
-        cls.add_issues(element.GlobalId, description, issue_nr, None)
 
     ################
     ###### SQL #####
@@ -618,7 +515,6 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def set_current_runner(cls, runner: QRunnable):
         cls.get_properties().runner = runner
-
 
     @classmethod
     def get_object_checked_count(cls) -> int:
