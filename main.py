@@ -7,7 +7,7 @@ from logging import config
 from som_gui import logs, settings
 from som_gui import core
 from som_gui import tool
-
+import ifcopenshell.guid
 def start_log(state: int | None = None) -> None:
     if not os.path.exists(logs.DIR_PATH):
         os.mkdir(logs.DIR_PATH)

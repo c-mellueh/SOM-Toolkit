@@ -5,6 +5,9 @@ from som_gui.plugins.aggregation_window import tool as aw_tool
 
 def connect():
     core.init_main_window(tool.Object, aw_tool.Aggregation, tool.MainWindow)
+    tool.MainWindow.add_action("Desite/Bauwerksstruktur exportieren",
+                               lambda: core.export_building_structure(tool.Exports, aw_tool.Aggregation,
+                                                                      tool.MainWindow, tool.Project))
 
 
 def on_new_project():

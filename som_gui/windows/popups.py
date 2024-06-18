@@ -1,8 +1,7 @@
 from __future__ import annotations
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QDialog, QListWidgetItem, QCompleter
-from SOMcreator import classes
-
+from som_gui.windows import *
 from .. import icons
 from ..icons import get_icon
 from ..qt_designs import ui_delete_request, ui_attribute_mapping
@@ -51,7 +50,3 @@ def attribute_mapping(attribute: classes.Attribute):
 
     if parent.exec():
         attribute.revit_name = widget.line_edit_revit_mapping.text()
-
-
-def req_export_pset_name(main_window):
-    return QInputDialog.getText(main_window, "PropertySet name", "What's the name of the Export PropertySet?")

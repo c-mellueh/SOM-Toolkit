@@ -31,6 +31,15 @@ def init_main_window(object_tool: Type[tool.Object], aggregation: Type[aw_tool.A
     main_window.add_action("Modelle/Gruppen Generieren", lambda: aggregation.open_grouping_window(main_window.get()))
 
 
+def export_building_structure(exports: Type[tool.Exports], aggregation: Type[aw_tool.Aggregation],
+                              main_window: Type[tool.MainWindow],
+                              project: Type[tool.Project]) -> None:
+    """Exports dummy Building Structure for Desite"""
+    path = exports.get_path(main_window.get(), "bs.xml")
+    if path:
+        aggregation.export_building_structure(project.get(), path)
+
+
 def refresh_object_info_line_edit(object_tool: Type[tool.Object], aggregation: Type[aw_tool.Aggregation]):
     data_dict = object_tool.oi_get_values()
     abbrev_filter = object_tool.get_active_object().abbreviation if object_tool.oi_get_mode() == 1 else None

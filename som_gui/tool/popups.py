@@ -170,3 +170,7 @@ class Popups(som_gui.core.tool.Popups):
         msg_box.setWindowTitle(" ")
         msg_box.setIcon(QMessageBox.Icon.Warning)
         msg_box.exec()
+
+    @classmethod
+    def req_export_pset_name(cls, parent_window):
+        return QInputDialog.getText(parent_window, "PropertySet name", "What's the name of the Export PropertySet?")

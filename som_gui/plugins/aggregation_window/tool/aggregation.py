@@ -8,9 +8,13 @@ from som_gui.windows import grouping_window
 from som_gui.plugins.aggregation_window.module.aggregation import ui as ui_aggregation
 
 ABBREV_ISSUE = 2
-
+from SOMcreator.external_software.desite import building_structure
 
 class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
+    @classmethod
+    def export_building_structure(cls, project: SOMcreator.Project, path):
+        building_structure.export_bs(project, path)
+
     @classmethod
     def get_properties(cls) -> AggregationProperties:
         return som_gui.AggregationProperties

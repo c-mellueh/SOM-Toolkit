@@ -7,7 +7,6 @@ from thefuzz import fuzz
 from SOMcreator.external_software.IDS import main
 from SOMcreator.external_software.bim_collab_zoom import modelcheck
 from SOMcreator.external_software.desite import modelcheck
-
 if TYPE_CHECKING:
     from som_gui.module.main_window.ui import MainWindow
 
@@ -33,6 +32,7 @@ modules = {
     "modelcheck":              [None, "modelcheck"],
     "ifc_importer":            [None, "ifc_importer"],
     "util":                    [None, "util"],
+    "exports": [None, "exports"],
 }
 plugins_dict = {
     "aggregation_window": {

@@ -17,3 +17,4 @@ from som_gui.tool.modelcheck import Modelcheck
 from som_gui.tool.modelcheck_results import ModelcheckResults
 from som_gui.tool.modelcheck_external import ModelcheckExternal
 from som_gui.tool.util import Util
+from som_gui.tool.exports import Exports
