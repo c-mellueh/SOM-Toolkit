@@ -1,0 +1,2 @@
+class ExportsSettings:
+    pass

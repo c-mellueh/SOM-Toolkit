@@ -17,6 +17,28 @@ if TYPE_CHECKING:
     from PySide6.QtCore import QPoint
 
 
+def init_main_window(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow]) -> None:
+    tree = object_tool.get_object_tree()
+    tree.setColumnCount(0)
+    object_tool.add_column_to_tree("Objekt", 0, lambda o: getattr(o, "name"))
+    object_tool.add_column_to_tree("Identifier", 1, lambda o: getattr(o, "ident_value"))
+    object_tool.add_column_to_tree("Optional", 2, lambda o: getattr(o, "optional"))
+
+    object_tool.add_object_activate_function(lambda o: main_window.get_object_name_line_edit().setText(o.name))
+    pset_le = main_window.get_ident_pset_name_line_edit()
+    attribute_e = main_window.get_attribute_name_line_edit()
+    object_tool.add_object_activate_function(lambda o: object_tool.fill_object_property_set_line_edit(pset_le, o))
+    object_tool.add_object_activate_function(lambda o: object_tool.fill_object_attribute_line_edit(attribute_e, o))
+    object_tool.add_object_activate_function(lambda o: main_window.get_ident_value_line_edit().setText(o.ident_value))
+
+    object_tool.add_objects_infos_add_function("name", main_window.get_object_name_line_edit().text)
+    object_tool.add_objects_infos_add_function("is_group", lambda: False)
+    object_tool.add_objects_infos_add_function("ident_pset_name", main_window.get_ident_pset_name_line_edit().text)
+    object_tool.add_objects_infos_add_function("ident_attribute_name", main_window.get_attribute_name_line_edit().text)
+    object_tool.add_objects_infos_add_function("ident_value", main_window.get_ident_value_line_edit().text)
+    object_tool.add_objects_infos_add_function("ifc_mappings", lambda: ["IfcBuildingElementProxy"])
+
+
 def connect_object_input_widget(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
                                 predefined_pset: Type[tool.PredefinedPropertySet]):
     main_window.get_ui().lineEdit_ident_pSet.textChanged.connect(
@@ -33,7 +55,7 @@ def ident_pset_changed(object_tool: Type[tool.Object], main_window: Type[tool.Ma
 
 def ident_attribute_changed(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
                             predefined_pset: Type[tool.PredefinedPropertySet]):
-    ident_pset_name = main_window.get_object_infos()["ident_pset_name"]
+    ident_pset_name = object_tool.get_object_infos()["ident_pset_name"]
     predefined_pset: SOMcreator.PropertySet = {p.name: p for p in predefined_pset.get_property_sets()}.get(
         ident_pset_name)
     attribute_names = list()
@@ -90,20 +112,12 @@ def object_info_refresh(object_tool: Type[Object]):
     data_dict = object_tool.oi_get_values()
     object_tool.oi_set_values(data_dict)
     ident_value = data_dict["ident_value"]
-    abbreviation = data_dict["abbreviation"]
     group = data_dict["is_group"]
-
     ident_filter = object_tool.get_active_object().ident_value if object_tool.oi_get_mode() == 1 else None
-    abbrev_filter = object_tool.get_active_object().abbreviation if object_tool.oi_get_mode() == 1 else None
     if not object_tool.is_identifier_allowed(ident_value, ident_filter):
         object_tool.oi_set_ident_value_color("red")
     else:
         object_tool.oi_set_ident_value_color("black")
-
-    if not object_tool.is_abbreviation_allowed(abbreviation, abbrev_filter):
-        object_tool.oi_set_abbrev_value_color("red")
-    else:
-        object_tool.oi_set_abbrev_value_color("black")
     object_tool.oi_change_visibility_identifiers(group)
 
 
@@ -193,10 +207,10 @@ def item_dropped_on(pos: QPoint, object_tool: Type[Object]):
             obj.parent = dropped_on_object
 
 
-def add_object_clicked(main_window: Type[MainWindow], object_tool: Type[Object], project: Type[Project],
+def add_object_clicked(object_tool: Type[Object], project: Type[Project],
                        property_set: Type[tool.PropertySet], predefined_property_set: Type[tool.PredefinedPropertySet],
                        popup: Type[tool.Popups]):
-    object_infos = main_window.get_object_infos()
+    object_infos = object_tool.get_object_infos()
     issue = object_tool.check_object_creation_imput(object_infos)
     if not object_tool.handle_attribute_issue(issue):
         return

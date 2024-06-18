@@ -155,7 +155,6 @@ class Modelcheck:
 
     def build_data_dict(self, check_state_dict): pass
 
-    def build_group_structure(self, ifc): pass
 
     def build_ident_dict(self, objects): pass
 
@@ -203,7 +202,6 @@ class Modelcheck:
 
     def get_active_guid(self): pass
 
-    def get_allowed_parents(self, obj): pass
 
     def get_attribute_value(self, entity, pset_name, attribute_name): pass
 
@@ -245,7 +243,6 @@ class Modelcheck:
 
     def get_root_groups(self, ifc): pass
 
-    def get_sub_entities(self, entity): pass
 
     def guid_issue(self, guid, file1, file2): pass
 
@@ -261,7 +258,6 @@ class Modelcheck:
 
     def is_attribute_existing(self, entity, pset_name, attribute_name): pass
 
-    def is_parent_allowed(self, entity, parent_entity): pass
 
     def is_pset_existing(self, entity, pset_name): pass
 
@@ -270,8 +266,6 @@ class Modelcheck:
     def iterate_group_structure(self, entity): pass
 
     def list_issue(self, guid, attribute, element_type, value): pass
-
-    def no_group_issue(self, element): pass
 
     def parent_issue(self, element, parent_element): pass
 
@@ -315,7 +309,6 @@ class Modelcheck:
 
     def set_sub_entities(self, entity, sub_entities): pass
 
-    def subelements_have_doubling_identifier(self, entity): pass
 
     def subgroup_issue(self, child_ident): pass
 
@@ -556,8 +549,6 @@ class Object:
     def group_selection(self): pass
 
     def handle_attribute_issue(self, result): pass
-
-    def is_abbreviation_allowed(self, abbreviation, ignore): pass
 
     def is_identifier_allowed(self, identifier, ignore): pass
 
@@ -1149,4 +1140,8 @@ class Settings:
 
 
 class Util:
+    pass
+
+
+class Exports:
     pass

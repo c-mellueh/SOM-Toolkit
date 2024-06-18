@@ -2,7 +2,7 @@ from __future__ import annotations
 import som_gui.core.tool
 import som_gui
 from typing import TYPE_CHECKING, Callable
-from PySide6.QtWidgets import QMenuBar, QApplication, QLabel
+from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLabel, QLineEdit
 from som_gui import tool
 from som_gui.module.main_window import ui as ui_main_window
 from som_gui.windows import mapping_window, grouping_window
@@ -71,19 +71,6 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_properties().application
 
     @classmethod
-    def get_object_infos(cls) -> ObjectDataDict:
-        ui = cls.get_ui()
-        d: ObjectDataDict = dict()
-        d["name"] = ui.line_edit_object_name.text()
-        d["is_group"] = False
-        d["ident_pset_name"] = ui.lineEdit_ident_pSet.text()
-        d["ident_attribute_name"] = ui.lineEdit_ident_attribute.text()
-        d["ident_value"] = ui.lineEdit_ident_value.text()
-        d["ifc_mappings"] = ["IfcBuildingElementProxy"]
-        d["abbreviation"] = ui.line_edit_abbreviation.text()
-        return d
-
-    @classmethod
     def get_pset_name(cls):
         return cls.get_ui().lineEdit_pSet_name.text()
 
@@ -104,6 +91,18 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_ui().lineEdit_ident_pSet
 
     @classmethod
+    def get_ident_value_line_edit(cls):
+        return cls.get_ui().lineEdit_ident_value
+
+    @classmethod
+    def get_attribute_name_line_edit(cls) -> QLineEdit:
+        return cls.get_ui().lineEdit_ident_attribute
+
+    @classmethod
+    def get_object_name_line_edit(cls):
+        return cls.get_ui().line_edit_object_name
+
+    @classmethod
     def get_pset_name_line_edit(cls):
         return cls.get_ui().lineEdit_pSet_name
 
@@ -118,14 +117,11 @@ class MainWindow(som_gui.core.tool.MainWindow):
         cls.get_properties().mapping_window.show()
 
     @classmethod
-    def open_grouping_window(cls):
-        if cls.get_properties().grouping_window is None:
-            cls.get_properties().grouping_window = grouping_window.GroupingWindow(cls.get())
-        else:
-            cls.get_properties().grouping_window.show()
-
-    @classmethod
     def open_attribute_import_window(cls):
         if cls.get_properties().attribute_import_window is not None:
             cls.get_properties().attribute_import_window.close()
         cls.get_properties().attribute_import_window = AttributeImport(cls.get())
+
+    @classmethod
+    def get_object_name_horizontal_layout(cls) -> QHBoxLayout:
+        return cls.get_ui().horizontalLayout_object_button

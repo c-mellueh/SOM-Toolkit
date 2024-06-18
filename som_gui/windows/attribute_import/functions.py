@@ -14,7 +14,6 @@ from som_gui.core import attribute as attribute_core
 from som_gui import tool
 from ...widgets import ifc_widget
 from ... import settings
-from ...ifc_modification.modelcheck import get_identifier
 
 if TYPE_CHECKING:
     from som_gui.windows.attribute_import import gui
@@ -238,7 +237,7 @@ class IfcImportRunner(ifc_widget.IfcRunner):
     def import_entity(self, entity: ifcopenshell.entity_instance):
         if self.is_aborted:
             return
-        ident = get_identifier(entity, self.main_pset, self.main_attribute)
+        ident = tool.Modelcheck.get_ident_value(entity, self.main_pset, self.main_attribute)
         obj = self.bk_dict.get(ident)
         if obj is None:
             return

@@ -28,3 +28,5 @@ class ModelcheckProperties:
     group_parent_dict: dict = dict()
     group_dict: dict = dict()
     connection: Connection = None
+    file_check_plugins = list()
+    entity_check_plugins = list()

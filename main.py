@@ -4,11 +4,10 @@ import os
 import sys
 from logging import config
 
-
 from som_gui import logs, settings
 from som_gui import core
 from som_gui import tool
-
+import ifcopenshell.guid
 def start_log(state: int | None = None) -> None:
     if not os.path.exists(logs.DIR_PATH):
         os.mkdir(logs.DIR_PATH)
@@ -32,6 +31,8 @@ def start_log(state: int | None = None) -> None:
 def main(initial_file: str | None = None):
     import som_gui
     from PySide6.QtWidgets import QApplication
+    import som_gui.core.main_window
+    import som_gui.core.project
 
     print("START")
     som_gui.register()

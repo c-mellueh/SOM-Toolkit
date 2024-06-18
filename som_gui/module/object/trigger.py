@@ -15,7 +15,7 @@ def connect():
     main_ui = tool.MainWindow.get_ui()
     main_ui.button_search.pressed.connect(lambda: core.search_object(tool.Search, tool.Object))
     main_ui.button_objects_add.clicked.connect(
-        lambda: core.add_object_clicked(tool.MainWindow, tool.Object, tool.Project, tool.PropertySet,
+        lambda: core.add_object_clicked(tool.Object, tool.Project, tool.PropertySet,
                                         tool.PredefinedPropertySet, tool.Popups))
     main_ui.lineEdit_ident_pSet.textChanged.connect(
         lambda: core.ident_pset_changed(tool.Object, tool.MainWindow, tool.PredefinedPropertySet))
@@ -27,7 +27,7 @@ def connect():
     core.load_context_menus(tool.Object)
     core.add_shortcuts(tool.Object, tool.Util, tool.Search, tool.MainWindow)
     core.connect_object_input_widget(tool.Object, tool.MainWindow, tool.PredefinedPropertySet)
-
+    core.init_main_window(tool.Object, tool.MainWindow)
 
 def item_double_clicked():
     core.create_object_info_widget(mode=1, object_tool=tool.Object)
