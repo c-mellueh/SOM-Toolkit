@@ -235,25 +235,51 @@ class Object(som_gui.core.tool.Object):
         return som_gui.module.object.OK, new_object
 
     @classmethod
-    def check_object_creation_imput(cls, data_dict) -> int:
+    def check_object_creation_input(cls, data_dict: ObjectDataDict) -> bool:
+        prop = cls.get_properties()
+        for key, check_function in prop.object_add_checks:
+            if not check_function(data_dict):
+                return False
+        return True
+
+    @classmethod
+    def check_if_ident_pset_is_valid(cls, data_dict: ObjectDataDict):
         is_group = data_dict["is_group"]
-        abbreviation = data_dict.get("abbreviation")
-        ident_pset_name = data_dict.get("ident_pset_name")
-        ident_attribute_name = data_dict.get("ident_attribute_name")
-        ident_value = data_dict.get("ident_value")
         if is_group:
-            return som_gui.module.object.OK
-        else:
-            if not cls.is_identifier_allowed(ident_value):
-                return som_gui.module.object.IDENT_ISSUE
-            elif not cls.is_abbreviation_allowed(abbreviation):
-                return som_gui.module.object.ABBREV_ISSUE
-            elif not ident_pset_name:
-                return som_gui.module.object.IDENT_PSET_ISSUE
-            elif not ident_attribute_name:
-                return som_gui.module.object.IDENT_ATTRIBUTE_ISSUE
-            else:
-                return som_gui.module.object.OK
+            return True
+        value = data_dict["ident_pset_name"]
+        if not value:
+            text = u"PropertySet Name is nicht erlaubt!"
+            logging.error(text)
+            tool.Popups.create_warning_popup(text)
+            return False
+        return True
+
+    @classmethod
+    def check_if_ident_attribute_is_valid(cls, data_dict: ObjectDataDict):
+        is_group = data_dict["is_group"]
+        if is_group:
+            return True
+        value = data_dict["ident_attribute_name"]
+        if not value:
+            text = u"Attribute Name is nicht erlaubt!"
+            logging.error(text)
+            tool.Popups.create_warning_popup(text)
+            return False
+        return True
+
+    @classmethod
+    def check_if_identifier_is_unique(cls, data_dict: ObjectDataDict):
+        is_group = data_dict["is_group"]
+        if is_group:
+            return True
+        value = data_dict["ident_value"]
+        if not cls.is_identifier_allowed(value):
+            text = "Identifier existiert bereits oder is nicht erlaubt!"
+            logging.error(text)
+            tool.Popups.create_warning_popup(text)
+            return False
+        return True
 
     @classmethod
     def create_object(cls, data_dict: ObjectDataDict, property_set: SOMcreator.PropertySet,
@@ -409,8 +435,7 @@ class Object(som_gui.core.tool.Object):
         prop = cls.get_object_info_properties()
         if data_dict.get("name"):
             prop.name = data_dict.get("name")
-        if data_dict.get("abbreviation"):
-            prop.abbreviation = data_dict.get("abbreviation")
+
         if data_dict.get("is_group") is not None:
             prop.is_group = data_dict.get("is_group")
         if data_dict.get("ident_pset_name"):
@@ -421,6 +446,10 @@ class Object(som_gui.core.tool.Object):
             prop.ident_value = data_dict.get("ident_value")
         if data_dict.get("ifc_mappings"):
             prop.ifc_mappings = data_dict.get("ifc_mappings")
+
+        for plugin_values in cls.get_properties().object_info_plugin_list:
+            setattr(prop, plugin_values.key, data_dict.get(plugin_values.key))
+
 
     @classmethod
     def oi_set_ident_value_color(cls, color: str):
@@ -649,3 +678,7 @@ class Object(som_gui.core.tool.Object):
         ]
         for el in obj_line_edit_list:
             el.clear()
+
+    @classmethod
+    def add_object_creation_check(cls, key, check_function):
+        cls.get_properties().object_add_checks.append((key, check_function))

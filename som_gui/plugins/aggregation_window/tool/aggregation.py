@@ -6,7 +6,7 @@ from som_gui import tool
 from som_gui.module.object import OK
 from som_gui.windows import grouping_window
 from som_gui.plugins.aggregation_window.module.aggregation import ui as ui_aggregation
-
+import logging
 ABBREV_ISSUE = 2
 from SOMcreator.external_software.desite import building_structure
 
@@ -85,3 +85,15 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     def create_oi_line_edit(cls):
         cls.get_properties().object_info_line_edit = ui_aggregation.ObjectInfoLineEdit()
         return cls.get_properties().object_info_line_edit
+
+    @classmethod
+    def abbreviation_check(cls, data_dict: dict):
+        value = data_dict.get("abbreviation")
+        if value is None:
+            return True
+        if not cls.is_abbreviation_allowed(value):
+            text = "Abkürzung existiert bereits!"
+            logging.error(text)
+            tool.Popups.create_warning_popup(text)
+            return False
+        return True

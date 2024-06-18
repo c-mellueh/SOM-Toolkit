@@ -38,7 +38,7 @@ class ObjectProperties:
     object_activate_functions = list()
     object_add_infos_functions = list()
     object_info_plugin_list: list[PluginProperty] = list()
-
+    object_add_checks = list()
 
 @dataclass
 class PluginProperty:

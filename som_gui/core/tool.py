@@ -482,7 +482,7 @@ class Object:
 
     def change_object_info(self, obj, data_dict): pass
 
-    def check_object_creation_imput(self, data_dict): pass
+    def check_object_creation_input(self, data_dict): pass
 
     def clear_context_menu_list(self): pass
 
