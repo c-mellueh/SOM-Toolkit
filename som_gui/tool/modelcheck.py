@@ -412,8 +412,10 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     ## Getter and Setter
     @classmethod
-    def get_ident_value(cls, entity: entity_instance):
-        return ifc_el.get_pset(entity, cls.get_main_pset_name(), cls.get_main_attribute_name())
+    def get_ident_value(cls, entity: entity_instance, main_pset_name=None, main_attribute_name=None):
+        pset_name = cls.get_main_pset_name() if main_pset_name is None else main_pset_name
+        attribute_name = cls.get_main_attribute_name() if main_attribute_name is None else main_attribute_name
+        return ifc_el.get_pset(entity, pset_name, attribute_name)
 
     @classmethod
     def get_attribute_value(cls, entity: entity_instance, pset_name: str, attribute_name: str):
