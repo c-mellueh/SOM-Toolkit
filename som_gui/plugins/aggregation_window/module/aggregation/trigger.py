@@ -8,7 +8,7 @@ def connect():
     tool.MainWindow.add_action("Desite/Bauwerksstruktur exportieren",
                                lambda: core.export_building_structure(tool.Exports, aw_tool.Aggregation,
                                                                       tool.MainWindow, tool.Project))
-
+    tool.Project.add_plugin_save_function(lambda: core.save_aggregations(aw_tool.View, tool.Project))
 
 def on_new_project():
     pass

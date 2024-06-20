@@ -32,7 +32,7 @@ def loop_name(name, names, index: int) -> str:
 
 class View(som_gui.plugins.aggregation_window.core.tool.View):
     @classmethod
-    def create_aggregation_scenes_dict(cls, agrgegation_uuid_dict):
+    def create_aggregation_scenes_dict(cls, agrgegation_uuid_dict: dict):
         main_dict = {"AggregationScenes": dict()}
         aggregation_scenes_dict = main_dict["AggregationScenes"]
         for scene_index, scene in enumerate(cls.get_all_scenes()):

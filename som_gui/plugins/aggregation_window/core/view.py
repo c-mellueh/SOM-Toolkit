@@ -11,12 +11,7 @@ if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.module.node import ui as node_ui
 
 
-def save_aggregations(view: Type[aw_tool.View], project: Type[tool.Project]):
-    proj = project.get()
-    aggregations = proj.get_all_aggregations()
-    uuid_dict = view.create_aggregation_scenes_dict({ag: ag.uuid for ag in aggregations})
 
-    project.update_plugin_dict(proj, "AggregationScenes", uuid_dict)
 
 
 def key_press_event(event: QKeyEvent, view: Type[aw_tool.View], connection: Type[aw_tool.Connection]) -> None:

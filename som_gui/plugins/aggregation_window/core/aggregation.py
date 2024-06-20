@@ -45,3 +45,11 @@ def refresh_object_info_line_edit(object_tool: Type[tool.Object], aggregation: T
     data_dict = object_tool.oi_get_values()
     abbrev_filter = object_tool.get_active_object().abbreviation if object_tool.oi_get_mode() == 1 else None
     aggregation.object_info_line_edit_paint(data_dict, abbrev_filter)
+
+
+def save_aggregations(view: Type[aw_tool.View], project: Type[tool.Project]):
+    proj = project.get()
+    aggregations = proj.get_all_aggregations()
+    uuid_dict = view.create_aggregation_scenes_dict({ag: ag.uuid for ag in aggregations})
+
+    project.get().plugin_dict["AggregationScenes"] = uuid_dict
