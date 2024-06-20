@@ -97,3 +97,4 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
             tool.Popups.create_warning_popup(text)
             return False
         return True
+

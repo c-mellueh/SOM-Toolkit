@@ -4,7 +4,7 @@ from som_gui import tool
 
 
 def connect():
-    tool.Project.add_plugin_save_function(lambda: core.save_aggregations(aw_tool.View, tool.Project))
+    pass
 
 
 def on_new_project() -> None:

@@ -54,7 +54,6 @@ def new_file_clicked(project_tool: Type[Project], popup_tool: Type[Popups]):
 
 
 def save_project(path: str, project_tool: Type[Project], settings_tool: Type[Settings]):
-    project_tool.delete_plugin_dict()
     for plugin_function in project_tool.get_plugin_functions():
         plugin_function()
     project = project_tool.get()

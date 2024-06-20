@@ -46,14 +46,14 @@ class Object(som_gui.core.tool.Object):
         return d
 
     @classmethod
-    def add_column_to_tree(cls, name, index, getter_func):
+    def add_column_to_tree(cls, name, index, getter_func, setter_func=None):
         tree = cls.get_object_tree()
         header = tree.headerItem()
         header_texts = [header.text(i) for i in range(header.columnCount())]
         header_texts.insert(index, tree.tr(name))
         tree.setColumnCount(tree.columnCount() + 1)
         [header.setText(i, t) for i, t in enumerate(header_texts)]
-        cls.get_properties().column_List.insert(index, (name, getter_func))
+        cls.get_properties().column_List.insert(index, (name, getter_func, setter_func))
 
     @classmethod
     def create_completer(cls, texts, lineedit: QLineEdit):
@@ -619,7 +619,14 @@ class Object(som_gui.core.tool.Object):
     @classmethod
     def update_check_state(cls, item: QTreeWidgetItem):
         obj: SOMcreator.Object = cls.get_object_from_item(item)
-        obj.optional = True if item.checkState(3) == Qt.CheckState.Checked else False
+        values = [[getter_func(obj), setter_func] for n, getter_func, setter_func in cls.get_properties().column_List]
+        for column, [value, setter_func] in enumerate(values):
+            if setter_func is not None:
+                setter_func(item, column)
+
+
+
+
 
     @classmethod
     def get_object_tree(cls) -> ObjectTreeWidget:
@@ -631,12 +638,15 @@ class Object(som_gui.core.tool.Object):
         item.object = obj  # item.setData(0,obj) leads to recursion bug so allocating directly
         item.setText(0, obj.name)
         item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsSelectable)
-        item.setCheckState(3, Qt.CheckState.Unchecked)
+        values = [getter_func(obj) for n, getter_func, setter_func in cls.get_properties().column_List]
+        for column, value in enumerate(values):
+            if isinstance(value, bool):
+                item.setCheckState(column, Qt.CheckState.Unchecked)
         return item
 
     @classmethod
     def update_item(cls, item: QTreeWidgetItem, obj: SOMcreator.Object):
-        values = [f(obj) for n, f in cls.get_properties().column_List]
+        values = [getter_func(obj) for n, getter_func, setter_func in cls.get_properties().column_List]
 
         for column, value in enumerate(values):
             if isinstance(value, bool):
@@ -682,3 +692,8 @@ class Object(som_gui.core.tool.Object):
     @classmethod
     def add_object_creation_check(cls, key, check_function):
         cls.get_properties().object_add_checks.append((key, check_function))
+
+    @classmethod
+    def set_object_optional_by_tree_item_state(cls, item: QTreeWidgetItem, column_index: int):
+        obj = cls.get_object_from_item(item)
+        obj.optional = True if item.checkState(column_index) == Qt.CheckState.Checked else False
