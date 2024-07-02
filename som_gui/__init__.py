@@ -10,7 +10,7 @@ from SOMcreator.external_software.desite import modelcheck
 if TYPE_CHECKING:
     from som_gui.module.main_window.ui import MainWindow
 
-__version__ = "2.12.2"
+__version__ = "2.12.2bugfix"
 
 import importlib
 
@@ -41,7 +41,8 @@ plugins_dict = {
     "node":          [None, "node"],
     "connection":    [None, "connection"],
     "aggregation":   [None, "aggregation"],
-    "aw_modelcheck": [None, "modelcheck"]
+        "aw_modelcheck":   [None, "modelcheck"],
+        "grouping_window": [None, "grouping_window"],
     },
 }
 for key, (_, name) in modules.items():

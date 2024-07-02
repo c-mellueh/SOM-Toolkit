@@ -10,12 +10,11 @@ import som_gui
 from som_gui import tool
 import som_gui.core.tool
 from som_gui.module.ifc_importer import ui
-from PySide6.QtCore import QThreadPool, QObject, Signal, QRunnable
-from PySide6.QtWidgets import QFileDialog
+from PySide6.QtCore import QThreadPool, QObject, Signal, QRunnable, QSize
+from PySide6.QtWidgets import QFileDialog, QPushButton, QSizePolicy, QLineEdit, QLabel
 
 if TYPE_CHECKING:
     from som_gui.module.ifc_importer.prop import IfcImportProperties
-    from PySide6.QtWidgets import QLineEdit, QLabel
 
 
 class IfcImporter(som_gui.core.tool.IfcImporter):
@@ -132,3 +131,16 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
         widget.widget.line_edit_ident_pset.setText(pset)
         widget.widget.line_edit_ident_attribute.setText(attribute)
+
+    @classmethod
+    def create_export_line(cls, widget: ui.IfcImportWidget) -> tuple[QPushButton, QLineEdit]:
+        export_line_edit = QLineEdit()
+        export_line_edit.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Maximum))
+        widget.widget.gridLayout.addWidget(QLabel("Export Pfad"), 5, 0, 1, 2)
+        widget.widget.gridLayout.addWidget(export_line_edit, 6, 0, 1, 2)
+        export_button = QPushButton()
+        export_button.setMaximumSize(QSize(25, 16777215))
+        widget.widget.gridLayout.addWidget(export_button, 6, 2, 1, 1)
+        export_button.show()
+        export_button.setText("...")
+        return export_button, export_line_edit

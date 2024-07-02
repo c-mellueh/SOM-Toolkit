@@ -29,7 +29,7 @@ def init_main_window(object_tool: Type[tool.Object], aggregation: Type[aw_tool.A
                                     object_info_line_edit.setText,
                                     aggregation.test_abbreviation,
                                     aggregation.set_object_abbreviation)
-    main_window.add_action("Modelle/Gruppen Generieren", lambda: aggregation.open_grouping_window(main_window.get()))
+
 
 
 def export_building_structure(exports: Type[tool.Exports], aggregation: Type[aw_tool.Aggregation],

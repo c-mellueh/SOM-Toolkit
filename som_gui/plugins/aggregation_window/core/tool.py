@@ -1,3 +1,6 @@
+class GroupingWindow():
+    pass
+
 class Aggregation():
     pass
 

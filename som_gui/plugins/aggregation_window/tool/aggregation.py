@@ -4,7 +4,6 @@ from som_gui.plugins.aggregation_window.module.aggregation.prop import Aggregati
 import SOMcreator
 from som_gui import tool
 from som_gui.module.object import OK
-from som_gui.windows import grouping_window
 from som_gui.plugins.aggregation_window.module.aggregation import ui as ui_aggregation
 import logging
 ABBREV_ISSUE = 2
@@ -69,13 +68,6 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
             if obj.abbreviation:
                 abbreviations.add(obj.abbreviation)
         return abbreviations
-
-    @classmethod
-    def open_grouping_window(cls, parent_window):
-        if cls.get_properties().grouping_window is None:
-            cls.get_properties().grouping_window = grouping_window.GroupingWindow(parent_window)
-        else:
-            cls.get_properties().grouping_window.show()
 
     @classmethod
     def set_object_abbreviation(cls, obj: SOMcreator.Object, abbreviation: str):

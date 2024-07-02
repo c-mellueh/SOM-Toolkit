@@ -75,6 +75,16 @@ class Popups(som_gui.core.tool.Popups):
         msg_box.exec()
 
     @classmethod
+    def create_info_popup(cls, text, title="Info"):
+        icon = get_icon()
+        msg_box = QMessageBox()
+        msg_box.setText(text)
+        msg_box.setWindowTitle(title)
+        msg_box.setIcon(QMessageBox.Icon.Information)
+        msg_box.setWindowIcon(icon)
+        msg_box.exec()
+
+    @classmethod
     def file_in_use_warning(cls, title, text, detail=""):
         msg_box = QMessageBox()
         msg_box.setText(text)
