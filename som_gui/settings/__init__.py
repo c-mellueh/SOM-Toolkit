@@ -183,30 +183,6 @@ def set_issue_path(path) -> None:
     _set_path(ISSUE_PATH, path)
 
 
-def get_group_folder() -> str:
-    return _get_path(GROUP_FOLDER)
-
-
-def set_group_folder(value) -> None:
-    _set_path(GROUP_FOLDER, value)
-
-
-def set_group_pset(value: str) -> None:
-    set_setting(IFC_MOD, GROUP_PSET, value)
-
-
-def set_group_attribute(value: str) -> None:
-    set_setting(IFC_MOD, GROUP_ATTRIBUTE, value)
-
-
-def get_group_pset() -> str:
-    return _get_string_setting(IFC_MOD, GROUP_PSET)
-
-
-def get_group_attribute() -> str:
-    return _get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
-
-
 def set_group_create_empty_attributes(value: bool) -> None:
     set_setting(IFC_MOD, CREATE_EMPTY, value)
 

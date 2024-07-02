@@ -23,7 +23,11 @@ def open_window(modelcheck_window: Type[tool.ModelcheckWindow], ifc_importer: Ty
     window = modelcheck_window.create_window()
     check_box_widget = modelcheck_window.create_checkbox_widget()
     ifc_import_widget = ifc_importer.create_importer()
-    modelcheck_window.create_export_line(ifc_import_widget)
+    export_button, export_line_edit = ifc_importer.create_export_line(ifc_import_widget)
+    modelcheck_window.get_properties().export_button = export_button
+    modelcheck_window.get_properties().export_line_edit = export_line_edit
+    modelcheck_window.autofill_export_path()
+
     modelcheck_window.set_importer_widget(ifc_import_widget)
     modelcheck_window.add_splitter(window.vertical_layout, Qt.Orientation.Vertical, check_box_widget, ifc_import_widget)
     modelcheck_window.connect_buttons(modelcheck_window.get_buttons())

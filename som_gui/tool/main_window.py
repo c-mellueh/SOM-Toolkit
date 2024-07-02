@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Callable
 from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLabel, QLineEdit
 from som_gui import tool
 from som_gui.module.main_window import ui as ui_main_window
-from som_gui.windows import mapping_window, grouping_window
+from som_gui.windows import mapping_window
 from som_gui.windows.attribute_import.gui import AttributeImport
 
 if TYPE_CHECKING:
