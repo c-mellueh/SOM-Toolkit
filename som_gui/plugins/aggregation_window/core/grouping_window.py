@@ -7,6 +7,8 @@ import logging
 import time
 import os
 from PySide6.QtCore import QRunnable
+
+
 def open_window(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Type[tool.IfcImporter]):
     window = grouping_window.create_window()
     grouping_window.create_grouping_line_edits()
@@ -30,7 +32,8 @@ def export_selection_clicked(grouping_window: Type[aw_tool.GroupingWindow], sett
 
 
 def run_clicked(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Type[tool.IfcImporter]):
-    group_pset_name, group_attribute_name, main_pset_name, main_attribute_name, ifc_paths, export_path = grouping_window.read_inputs()
+    (group_pset_name, group_attribute_name, main_pset_name,
+     main_attribute_name, ifc_paths, export_path) = grouping_window.read_inputs()
     ifc_inputs_are_valid = ifc_importer.check_inputs(ifc_paths, main_pset_name, main_attribute_name)
     export_path_is_valid = grouping_window.check_export_path(export_path)
     if not ifc_inputs_are_valid or not export_path_is_valid:

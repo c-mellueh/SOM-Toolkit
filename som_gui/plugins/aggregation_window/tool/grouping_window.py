@@ -246,7 +246,8 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         main_pset_name, main_attribute_name = cls.get_properties().main_attribute
         group_pset_name, group_attribute_name = cls.get_properties().grouping_attribute
         identity_attribute = cls.get_properties().identity_attribute
-        return main_pset_name, main_attribute_name, group_pset_name, group_attribute_name, main_pset_name, identity_attribute
+        return (main_pset_name, main_attribute_name, group_pset_name,
+                group_attribute_name, main_pset_name, identity_attribute)
 
     # Grouping Functions
     @classmethod

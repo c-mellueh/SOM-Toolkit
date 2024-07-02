@@ -4,6 +4,7 @@ from ...core import grouping_window as core
 from PySide6.QtWidgets import QPushButton
 import ifcopenshell
 
+
 def connect():
     tool.MainWindow.add_action("Modelle/Gruppen Generieren",
                                lambda: core.open_window(aw_tool.GroupingWindow, tool.IfcImporter))
@@ -14,7 +15,7 @@ def connect_ifc_import_runner(runner):
     runner.signaller.finished.connect(lambda: core.ifc_import_finished(runner, aw_tool.GroupingWindow))
 
 
-def connect_buttons(ifc_button: QPushButton, export_button: QPushButton, run_button: QPushButton,
+def connect_buttons(_: QPushButton, export_button: QPushButton, run_button: QPushButton,
                     abort_button: QPushButton):
     export_button.clicked.connect(lambda: core.export_selection_clicked(aw_tool.GroupingWindow, tool.Settings))
     run_button.clicked.connect(lambda: core.run_clicked(aw_tool.GroupingWindow, tool.IfcImporter))

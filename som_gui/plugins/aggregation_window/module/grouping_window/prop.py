@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from som_gui.module.ifc_importer.ui import IfcImportWidget
 
 
-class GroupingWindowProperties():
+class GroupingWindowProperties:
     grouping_attribute_line_edit: QLineEdit | None = None
     grouping_pset_line_edit: QLineEdit | None = None
     grouping_window: ui.GroupingWindow | None = None
