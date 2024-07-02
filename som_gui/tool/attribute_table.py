@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from PySide6.QtWidgets import QTableWidgetItem, QTableWidget
 from PySide6.QtCore import Qt, QPoint
-from PySide6.QtGui import QBrush, QIcon
+from PySide6.QtGui import QBrush, QIcon, QPalette
 
 import SOMcreator
 import som_gui
@@ -139,14 +139,13 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def format_row(cls, row: list[QTableWidgetItem]):
         attribute = cls.get_attribute_from_item(row[0])
-        brush = QBrush()
-        brush.setStyle(Qt.BrushStyle.SolidPattern)
+        palette = QPalette()
         if not attribute.property_set.object:
-            brush.setColor(Qt.GlobalColor.white)
+            brush = palette.base()
         elif attribute.property_set.object.ident_attrib == attribute:
-            brush.setColor(Qt.GlobalColor.lightGray)
+            brush = palette.mid()
         else:
-            brush.setColor(Qt.GlobalColor.white)
+            brush = palette.base()
         for item in row:
             item.setBackground(brush)
 
