@@ -1,8 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from som_gui import core
-from som_gui import tool
-from som_gui import settings
+from som_gui import core, tool, settings
 from thefuzz import fuzz
 from SOMcreator.external_software.IDS import main
 from SOMcreator.external_software.bim_collab_zoom import modelcheck
@@ -10,7 +8,7 @@ from SOMcreator.external_software.desite import modelcheck
 if TYPE_CHECKING:
     from som_gui.module.main_window.ui import MainWindow
 
-__version__ = "2.12.2bugfix"
+__version__ = "2.12.3"
 
 import importlib
 
