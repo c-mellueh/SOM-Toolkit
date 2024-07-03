@@ -47,9 +47,9 @@ class AttributeTable:
 
     def add_parent_of_selected_attribute(self): pass
 
-    def delete_selected_attribute(self): pass
+    def delete_selected_attributes(self): pass
 
-    def edit_attribute_name(self): pass
+    def edit_selected_attribute_name(self): pass
 
     def format_attribute_table_value(self, item, value): pass
 

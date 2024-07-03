@@ -16,6 +16,14 @@ if TYPE_CHECKING:
     from som_gui.module.attribute_table import ui
 
 
+def init_context_menu(attribute_table: Type[tool.AttributeTable]):
+    attribute_table.add_context_menu_builder(attribute_table.context_menu_rename_builder)
+    attribute_table.add_context_menu_builder(attribute_table.context_menu_delete_builder)
+    attribute_table.add_context_menu_builder(attribute_table.context_menu_delete_subattributes_builder)
+    attribute_table.add_context_menu_builder(attribute_table.context_menu_remove_connection_builder)
+    attribute_table.add_context_menu_builder(attribute_table.context_menu_add_connection_builder)
+
+
 def item_changed(item: QTableWidgetItem, attribute_table: Type[tool.AttributeTable]):
     attribute = attribute_table.get_attribute_from_item(item)
     if not item.column() == 4:
@@ -65,34 +73,17 @@ def create_mime_data(items: list[QTableWidgetItem], mime_data: QMimeData, attrib
     return mime_data
 
 
-def context_menu(table: ui.AttributeTable, pos, property_set: Type[tool.PropertySet],
-                 attribute_table: Type[tool.AttributeTable]):
-    active_attribute = attribute_table.get_item_from_pos(table, pos)
+def context_menu(table: ui.AttributeTable, pos, attribute_table: Type[tool.AttributeTable], util: Type[tool.Util]):
+    menu_list = list()
     attribute_table.set_active_table(table)
-    attribute_table.set_active_attribute(active_attribute)
-    if active_attribute is None:
-        return
 
-    actions = [["Umbenennen", attribute_table.edit_attribute_name],
-               ["Löschen", lambda: attribute_table.delete_selected_attribute(False)], ]
+    for context_menu_builder in attribute_table.get_context_menu_builders():
+        result = context_menu_builder(table)
+        if result is not None:
+            menu_list.append(result)
 
-    if active_attribute.property_set.object:
-        if active_attribute.property_set.object.ident_attrib == active_attribute:
-            actions = [["Umbenennen", attribute_table.edit_attribute_name], ]
-
-    if active_attribute.is_child:
-        actions.append(["Verknüpfung Lösen", attribute_table.remove_parent_of_selected_attribute])
-    else:
-        possible_parent = attribute_table.get_possible_parent(active_attribute)
-        if possible_parent:
-            actions.append(["Verknüpfung Hinzufügen", attribute_table.add_parent_of_selected_attribute])
-
-    if active_attribute.is_parent:
-        actions.append(["Löschen (mit Verknüpfung)", lambda: attribute_table.delete_selected_attribute(True)])
-
-
-    property_set.create_context_menu(table.viewport().mapToGlobal(pos), actions)
-
+    menu = util.create_context_menu(menu_list)
+    menu.exec(table.viewport().mapToGlobal(pos))
 
 def add_basic_attribute_columns(attribute: Type[tool.Attribute], attribute_table: Type[tool.AttributeTable]):
     logging.info("Add Basic Attribute Columns")
