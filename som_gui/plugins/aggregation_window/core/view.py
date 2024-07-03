@@ -160,7 +160,8 @@ def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]) -> Non
 
 
 def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node], search: Type[tool.Search],
-                           connection: Type[aw_tool.Connection], project: Type[tool.Project]) -> None:
+                           connection: Type[aw_tool.Connection], project: Type[tool.Project],
+                           util: Type[tool.Util]) -> None:
     menu_list = list()
     scene = view.get_active_scene()
     menu_list.append(["Ansicht/Zoom zurücksetzen", view.autofit_view])
@@ -192,7 +193,7 @@ def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw
     else:
         menu_list.append(["Node hinzufügen", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
 
-    menu = view.create_context_menu(menu_list)
+    menu = util.create_context_menu(menu_list)
     menu.exec(view.get_view().viewport().mapToGlobal(pos))
     paint_event(view, node, connection, project)
 

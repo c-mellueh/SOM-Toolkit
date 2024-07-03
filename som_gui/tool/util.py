@@ -12,7 +12,7 @@ class Util(som_gui.core.tool.Util):
     def get_properties(cls) -> UtilProperties:
         return som_gui.UtilProperties
     @classmethod
-    def add_menu(cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str) -> MenuDict:
+    def menu_bar_add_menu(cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str) -> MenuDict:
         menu_steps = menu_path.split("/")
         focus_dict = menu_dict
         parent = menu_bar
@@ -33,10 +33,10 @@ class Util(som_gui.core.tool.Util):
         return focus_dict
 
     @classmethod
-    def add_action(cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str, function: Callable):
+    def menu_bar_add_action(cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str, function: Callable):
         menu_steps = menu_path.split("/")
         if len(menu_steps) != 1:
-            menu_dict = cls.add_menu(menu_bar, menu_dict, "/".join(menu_steps[:-1]))
+            menu_dict = cls.menu_bar_add_menu(menu_bar, menu_dict, "/".join(menu_steps[:-1]))
             action = QAction(menu_dict["menu"])
             action.setText(action.tr(menu_steps[-1]))
             action.triggered.connect(function)
@@ -47,12 +47,12 @@ class Util(som_gui.core.tool.Util):
             action.triggered.connect(function)
 
     @classmethod
-    def create_actions(cls, menu_dict: MenuDict, parent: QMenu | QMenuBar | None):
+    def menu_bar_create_actions(cls, menu_dict: MenuDict, parent: QMenu | QMenuBar | None):
         menu = menu_dict["menu"]
         if parent is not None:
             parent.addMenu(menu)
         for sd in menu_dict["submenu"]:
-            cls.create_actions(sd, menu)
+            cls.menu_bar_create_actions(sd, menu)
         for action in menu_dict["actions"]:
             menu.addAction(action)
 
@@ -64,3 +64,38 @@ class Util(som_gui.core.tool.Util):
             prop.shourtcuts = list()
         prop.shourtcuts.append(shortcut)
         shortcut.activated.connect(function)
+
+    @classmethod
+    def create_context_menu(cls, menu_list: list[list[str, Callable]]) -> QMenu:
+        """
+        Create a context menu from a menu list.
+        The Menu List contains of tuples containing the displayname of action and the callable function itself
+        If the displayname contains '/' submenus will be created
+        """
+
+        menu_dict = dict()
+        menu = QMenu()
+        menu_dict[""] = menu
+        for text, function in menu_list:
+            cls.context_menu_create_action(menu_dict, text, function, False)
+        return menu
+
+    @classmethod
+    def context_menu_create_action(cls, menu_dict: dict[str, QAction | QMenu], name: str, action_func: None | Callable,
+                                   is_sub_menu: bool):
+        parent_structure = "/".join(name.split("/")[:-1])
+        if parent_structure not in menu_dict:
+            parent: QMenu = cls.context_menu_create_action(menu_dict, parent_structure, None, True)
+        else:
+            parent: QMenu = menu_dict[parent_structure]
+
+        if is_sub_menu:
+            menu = parent.addMenu(name.split("/")[-1])
+            menu_dict[name] = menu
+            return menu
+
+        action = parent.addAction(name.split("/")[-1])
+        if action_func is not None:
+            action.triggered.connect(action_func)
+        menu_dict[name] = action
+        return action

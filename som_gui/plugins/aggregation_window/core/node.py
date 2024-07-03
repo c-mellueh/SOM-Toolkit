@@ -5,7 +5,7 @@ import SOMcreator
 from som_gui.core import property_set_window as property_set_window_core
 
 from PySide6.QtCore import Qt, QPointF
-from PySide6.QtGui import QPen, QPainter
+from PySide6.QtGui import QPen, QPainter, QPalette
 from PySide6.QtWidgets import QTreeWidgetItem
 
 if TYPE_CHECKING:
@@ -51,7 +51,8 @@ def header_drag_move(header: Header, dif: QPointF, view: Type[View], node: Type[
 def paint_header(painter: QPainter, header: Header, node: Type[Node]) -> None:
     painter.save()
     painter.restore()
-    painter.setBrush(Qt.GlobalColor.white)
+
+    painter.setBrush(QPalette().base())
     rect = node.get_header_geometry(header, header.node)
     header.setRect(rect)
     painter.drawRect(rect)
@@ -103,9 +104,9 @@ def paint_node(active_node: NodeProxy, node: Type[Node]) -> None:
     frame = active_node.frame
     frame.setRect(node.get_frame_geometry(frame, active_node))
     if active_node.isSelected():
-        frame.setPen(QPen(Qt.GlobalColor.blue))
+        frame.setPen(QPalette().accent().color())
     else:
-        frame.setPen(QPen(Qt.GlobalColor.black))
+        frame.setPen(QPen(QPalette().text().color()))
 
     node.update_circle_rect(active_node.circle)
 

@@ -345,34 +345,6 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         scene_id = cls.get_scene_index(scene)
         cls.get_properties().import_list[scene_id].append((aggregation, pos))
 
-    @classmethod
-    def create_action(cls, menu_dict: dict[str, QAction | QMenu], name: str, action_func: None | Callable,
-                      is_sub_menu: bool):
-        parent_structure = "/".join(name.split("/")[:-1])
-        if parent_structure not in menu_dict:
-            parent: QMenu = cls.create_action(menu_dict, parent_structure, None, True)
-        else:
-            parent: QMenu = menu_dict[parent_structure]
-
-        if is_sub_menu:
-            menu = parent.addMenu(name.split("/")[-1])
-            menu_dict[name] = menu
-            return menu
-
-        action = parent.addAction(name.split("/")[-1])
-        if action_func is not None:
-            action.triggered.connect(action_func)
-        menu_dict[name] = action
-        return action
-
-    @classmethod
-    def create_context_menu(cls, menu_list: list[str, Callable]) -> QMenu:
-        menu_dict = dict()
-        menu = QMenu()
-        menu_dict[""] = menu
-        for text, function in menu_list:
-            cls.create_action(menu_dict, text, function, False)
-        return menu
 
     @classmethod
     def get_node_under_mouse(cls) -> ui_node.NodeProxy | None:

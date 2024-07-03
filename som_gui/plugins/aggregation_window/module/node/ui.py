@@ -1,6 +1,6 @@
 from __future__ import annotations
 from PySide6.QtCore import QSizeF, Qt
-from PySide6.QtGui import QPaintEvent, QPen
+from PySide6.QtGui import QPaintEvent, QPen, QPalette
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QGraphicsProxyWidget, QGraphicsRectItem, QGraphicsItem, \
     QTreeWidget, QGraphicsEllipseItem, QGraphicsTextItem, QGraphicsSceneMouseEvent
@@ -85,7 +85,6 @@ class Frame(QGraphicsRectItem):
         self.node: NodeProxy | None = None
         self.setAcceptHoverEvents(True)
 
-
 class ResizeRect(QGraphicsRectItem):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -105,8 +104,8 @@ class Circle(QGraphicsEllipseItem):
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemStacksBehindParent, False)
         self.setAcceptHoverEvents(True)
         self.node: None | NodeProxy = None
-        self.setBrush(Qt.GlobalColor.white)
-        self.setPen(QPen(Qt.GlobalColor.black))
+        self.setBrush(QPalette().base())
+        self.setPen(QPen(QPalette().mid().color()))
         self.text: PlusText = PlusText("+")
         self.text.document().setPageSize(QSizeF(self.DIAMETER, self.DIAMETER))
         self.text.setParentItem(self)

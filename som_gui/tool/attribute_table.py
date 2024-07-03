@@ -23,6 +23,10 @@ LINKSTATE = Qt.ItemDataRole.UserRole + 2
 
 class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
+    def get_selected_attributes(cls, table: ui.AttributeTable):
+        return {cls.get_attribute_from_item(item) for item in table.selectedItems()}
+
+    @classmethod
     def set_active_table(cls, table: ui.AttributeTable):
         cls.get_properties().active_table = table
 
@@ -36,31 +40,40 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         prop.active_attribute = attribute
 
     @classmethod
-    def edit_attribute_name(cls):
-        attribute = cls.get_properties().active_attribute
-        window = cls.get_active_table().window()
+    def edit_selected_attribute_name(cls, table: ui.AttributeTable):
+        attributes = cls.get_selected_attributes(table)
+        if len(attributes) != 1:
+            return
+        attribute = list(attributes)[0]
+        window = table.window()
         answer = tool.Popups.request_attribute_name(attribute.name, window)
         if answer:
             attribute.name = answer
 
     @classmethod
-    def delete_selected_attribute(cls, delete_subattributes=False):
-        attribute = cls.get_properties().active_attribute
-        tool.Attribute.delete(attribute, delete_subattributes)
+    def delete_selected_attributes(cls, table: ui.AttributeTable, delete_subattributes=False):
+        attributes = cls.get_selected_attributes(table)
+        tool.Attribute.delete(attributes, delete_subattributes)
 
     @classmethod
-    def remove_parent_of_selected_attribute(cls):
-        attribute = cls.get_properties().active_attribute
-        attribute.parent.remove_child(attribute)
+    def remove_parent_of_selected_attribute(cls, table: ui.AttributeTable) -> None:
+        attributes = cls.get_selected_attributes(table)
+        for attribute in attributes:
+            if not attribute.parent:
+                continue
+            if not attribute in attribute.parent.children:
+                continue
+            attribute.parent.remove_child(attribute)
 
     @classmethod
-    def add_parent_of_selected_attribute(cls):
-        attribute = cls.get_properties().active_attribute
-        parent = cls.get_possible_parent(attribute)
-        if not parent:
-            return
+    def add_parent_of_selected_attribute(cls, table: ui.AttributeTable) -> None:
+        attributes = cls.get_selected_attributes(table)
+        for attribute in attributes:
+            parent = cls.get_possible_parent(attribute)
+            if not parent:
+                continue
 
-        parent.add_child(attribute)
+            parent.add_child(attribute)
 
     @classmethod
     def get_properties(cls) -> AttributeTableProperties:
@@ -188,4 +201,76 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             return None
         if not attribute.property_set.parent:
             return None
-        return {a.name: a for a in attribute.property_set.parent.attributes}.get(attribute.name)
+        possible_parents = {a.name: a for a in attribute.property_set.parent.attributes}.get(attribute.name)
+        return possible_parents if possible_parents else None
+
+    @classmethod
+    def get_context_menu_builders(cls) -> list:
+        """
+        Functions that are getting called if context menu is requested. Return tuple with name and function or None # Each builder gets passed the current table
+        """
+        return cls.get_properties().context_menu_builders
+
+    @classmethod
+    def add_context_menu_builder(cls, callable: Callable):
+        cls.get_properties().context_menu_builders.append(callable)
+
+    @classmethod
+    def context_menu_rename_builder(cls, table: ui.AttributeTable):
+        name = "Umbenennen"
+        selected_attributes = cls.get_selected_attributes(table)
+        if len(selected_attributes) == 1:
+            return [name, lambda: cls.edit_selected_attribute_name(table)]
+        return None
+
+    @classmethod
+    def context_menu_delete_builder(cls, table: ui.AttributeTable):
+        name = "Löschen"
+        selected_attributes = cls.get_selected_attributes(table)
+        if len(selected_attributes) == 0:
+            return None
+        obj = cls.get_property_set_by_table(table).object
+        ident_attrib = None if obj is None else obj.ident_attrib
+        if ident_attrib in selected_attributes:
+            return None
+
+        return [name, lambda: cls.delete_selected_attributes(table, delete_subattributes=False)]
+
+    @classmethod
+    def context_menu_delete_subattributes_builder(cls, table: ui.AttributeTable):
+        name = "Löschen (mit verknüpften Subattributen)"
+        selected_attributes = cls.get_selected_attributes(table)
+        if len(selected_attributes) == 0:
+            return None
+        obj = cls.get_property_set_by_table(table).object
+        ident_attrib = None if obj is None else obj.ident_attrib
+        if ident_attrib in selected_attributes:
+            return None
+
+        if not all(a.is_parent for a in selected_attributes):
+            return None
+        return [name, lambda: cls.delete_selected_attributes(table, delete_subattributes=True)]
+
+    @classmethod
+    def context_menu_remove_connection_builder(cls, table: ui.AttributeTable):
+        name = "Verknüpfung lösen"
+        selected_attributes = cls.get_selected_attributes(table)
+        if len(selected_attributes) == 0:
+            return None
+
+        if not any(a.is_child for a in selected_attributes):
+            return None
+        return [name, lambda: cls.remove_parent_of_selected_attribute(table)]
+
+    @classmethod
+    def context_menu_add_connection_builder(cls, table: ui.AttributeTable):
+        name = "Verknüpfung hinzufügen"
+        selected_attributes = cls.get_selected_attributes(table)
+        if len(selected_attributes) == 0:
+            return None
+
+        possible_parents = [(a, cls.get_possible_parent(a)) for a in selected_attributes]
+
+        if not any(parent is not None for a, parent in possible_parents if a.parent != parent):
+            return None
+        return [name, lambda: cls.add_parent_of_selected_attribute(table)]

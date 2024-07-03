@@ -32,7 +32,8 @@ def mouse_wheel_event(event) -> None:
 
 
 def context_menu_requested(pos) -> None:
-    core.context_menu_requested(pos, aw_tool.View, aw_tool.Node, tool.Search, aw_tool.Connection, tool.Project)
+    core.context_menu_requested(pos, aw_tool.View, aw_tool.Node, tool.Search, aw_tool.Connection, tool.Project,
+                                tool.Util)
 
 
 def key_press_event(event) -> None:

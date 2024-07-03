@@ -16,3 +16,4 @@ class AttributeTableProperties:
     attribute_table_columns: list[ColumnDict] = list()
     active_attribute: SOMcreator.Attribute = None
     active_table: AttributeTable = None
+    context_menu_builders = list()
