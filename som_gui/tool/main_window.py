@@ -52,7 +52,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
     def add_action(cls, menu_path: str, function: Callable):
         menu_bar = cls.get_menu_bar()
         menu_dict = cls.get_menu_dict()
-        tool.Util.add_action(menu_bar, menu_dict, menu_path, function)
+        tool.Util.menu_bar_add_action(menu_bar, menu_dict, menu_path, function)
 
     @classmethod
     def get_properties(cls) -> MainWindowProperties:

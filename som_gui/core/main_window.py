@@ -34,7 +34,7 @@ def create_menus(main_window_tool: Type[MainWindow], util: Type[tool.Util]):
     menu_dict = main_window_tool.get_menu_dict()
     menu_bar = main_window_tool.get_menu_bar()
     menu_dict["menu"] = menu_bar
-    util.create_actions(menu_dict, None)
+    util.menu_bar_create_actions(menu_dict, None)
 
 
 def refresh_main_window(main_window_tool: Type[MainWindow], project_tool: Type[Project]):
