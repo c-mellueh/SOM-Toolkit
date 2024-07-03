@@ -40,8 +40,8 @@ def create_window(window: Type[aw_tool.Window], view: Type[aw_tool.View], util: 
     menu_dict = window.get_menu_dict()
     menu_dict["menu"] = menu_bar
     for action, function in menu_list:
-        util.add_action(menu_bar, menu_dict, action, function)
-    util.create_actions(menu_dict, None)
+        util.menu_bar_add_action(menu_bar, menu_dict, action, function)
+    util.menu_bar_create_actions(menu_dict, None)
     aggregation_window.show()
 
     util.add_shortcut("Ctrl+F", aggregation_window, lambda: search_aggregation(view, search, popup))
