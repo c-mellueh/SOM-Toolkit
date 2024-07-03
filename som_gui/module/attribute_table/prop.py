@@ -16,4 +16,4 @@ class AttributeTableProperties:
     attribute_table_columns: list[ColumnDict] = list()
     active_attribute: SOMcreator.Attribute = None
     active_table: AttributeTable = None
-    context_menu_builders = list()  # Functions that are getting called if context menu is requested. Return QAction or None # Each builder gets passed the current table
+    context_menu_builders = list()

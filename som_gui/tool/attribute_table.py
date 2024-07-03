@@ -206,6 +206,9 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def get_context_menu_builders(cls) -> list:
+        """
+        Functions that are getting called if context menu is requested. Return tuple with name and function or None # Each builder gets passed the current table
+        """
         return cls.get_properties().context_menu_builders
 
     @classmethod
