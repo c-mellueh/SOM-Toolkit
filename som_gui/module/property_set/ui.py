@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QTableWidget, QWidget, QLineEdit, QStyledItemDelegate
-from PySide6.QtCore import Signal, QModelIndex
+from PySide6.QtWidgets import QTableWidget, QWidget, QStyledItemDelegate
+from PySide6.QtCore import Signal, QModelIndex, Qt
 from som_gui.module import property_set
 
 
@@ -7,11 +7,12 @@ class PsetTableWidget(QTableWidget):
     edit_started = Signal(QModelIndex)
     edit_stopped = Signal(QModelIndex)
 
-
     def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.customContextMenuRequested.connect(property_set.trigger.pset_table_context_menu_requested)
         self.setItemDelegate(LineEditDelegate(self))
+        self.setSortingEnabled(True)
+        self.sortByColumn(0, Qt.AscendingOrder)
 
     def paintEvent(self, event):
         super().paintEvent(event)
