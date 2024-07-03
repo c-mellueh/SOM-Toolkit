@@ -12,7 +12,7 @@ from som_gui.plugins.aggregation_window.module.connection import trigger as conn
 
 from PySide6.QtCore import QPointF
 from PySide6.QtWidgets import QGraphicsPathItem
-from PySide6.QtGui import QPainterPath
+from PySide6.QtGui import QPainterPath, QPalette
 
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.module.node import ui as node_ui
@@ -187,6 +187,7 @@ class Connection(som_gui.plugins.aggregation_window.core.tool.Connection):
         displacement = 0.
         path = cls.calculate_painter_path(point_top, point_bottom, displacement, 1)
         connection.setPath(path)
+        connection.setPen(QPalette().accent().color())
         cls.get_properties().draw_connection = connection
 
     @classmethod
