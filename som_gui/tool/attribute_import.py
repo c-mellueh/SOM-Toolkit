@@ -152,3 +152,9 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
     def last_import_finished(cls):
         trigger.last_import_finished()
+
+
+class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
+    @classmethod
+    def get_properties(cls):
+        return som_gui.AttributeImportSQLProperties

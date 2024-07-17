@@ -45,6 +45,7 @@ def run_clicked(attribute_import: Type[tool.AttributeImport], ifc_importer: Type
     pool.setMaxThreadCount(3)
     ifc_importer.set_progressbar_visible(ifc_import_widget, True)
     ifc_importer.set_progress(ifc_import_widget, 0)
+
     for path in ifc_paths:
         ifc_importer.set_status(ifc_import_widget, f"Import '{os.path.basename(path)}'")
         runner = attribute_import.create_import_runner(path)

@@ -19,3 +19,7 @@ class AttributeImportProperties:
     ifc_button: QPushButton = None
     abort_button: QPushButton = None
     status_label: QLabel = None
+
+
+class AttributeImportSQLProperties:
+    pass

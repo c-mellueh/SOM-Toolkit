@@ -1148,3 +1148,7 @@ class Util:
 
 class Exports:
     pass
+
+
+class AttributeImportSQL:
+    pass
