@@ -191,6 +191,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
     @classmethod
     def get_database_path(cls) -> str:
         return cls.get_properties().database_path
+
     @classmethod
     def connect_to_data_base(cls, path):
         conn = sqlite3.connect(path)
@@ -222,7 +223,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         # imported_attributes
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS attributes
-                  ([GUID] CHAR(64), [PropertySet] TEXT, [Attribut] TEXT, [Value] Text, [ValueType] Text)
+                  ([GUID_ZWC] CHAR(64),[GUID] CHAR(64), [PropertySet] TEXT, [Attribut] TEXT, [Value] Text, [DataType] Text)
                   ''')
         cls.commit_sql()
 
@@ -281,10 +282,49 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         identifier = ifc_element_util.get_pset(entity, main_pset, main_attribute) or ""
         entity_guid = entity.GlobalId
         entity_guid_zw = tool.Util.transform_guid(entity_guid, True)
+
         text = f'''
           INSERT INTO entities (GUID_ZWC,GUID,Name,ifc_type,datei,bauteilKlassifikation)
                 VALUES
                 ('{entity_guid_zw}','{entity_guid}','{entity.Name}','{entity.is_a()}','{file_name}','{identifier}')
                   '''
-        cursor.execute(text)
+
+        try:
+            cursor.execute(text)
+        except sqlite3.IntegrityError:
+            logging.warning(f"GUID '{entity_guid}' exists for multiple Entities! ")
         cls.commit_sql()
+
+    @classmethod
+    def import_entity_attributes(cls, entity: ifcopenshell.entity_instance, ifc_file: ifcopenshell.file):
+
+        cursor = cls.get_cursor()
+        pset_dict = ifc_element_util.get_psets(entity, verbose=True)
+        entity_guid = entity.GlobalId
+        entity_guid_zw = tool.Util.transform_guid(entity_guid, True)
+
+        for property_set_name, attribute_dict in pset_dict.items():
+            for attribute_name, value_dict in attribute_dict.items():
+                if not isinstance(value_dict, dict):
+                    continue
+                value = value_dict.get("value") or ""
+                value_id = value_dict.get("id")
+                data_type = cls.get_datatype_from_value(ifc_file.by_id(value_id))
+                if data_type is None:
+                    continue
+
+                text = f'''
+                 INSERT INTO attributes (GUID_ZWC,GUID,PropertySet,Attribut,Value,DataType)
+                VALUES
+                ('{entity_guid_zw}','{entity_guid}','{property_set_name}','{attribute_name}','{value}','{data_type}')
+                '''
+                cursor.execute(text)
+        cls.commit_sql()
+
+    @classmethod
+    def get_datatype_from_value(cls, value: ifcopenshell.entity_instance):
+        if value.is_a() == "IfcPropertySingleValue":
+            return value.NominalValue.is_a()
+        logging.info(f"Datatype getter for {value.is_a()} is not defined")
+        return None
+        # ToDo: add different Value Types

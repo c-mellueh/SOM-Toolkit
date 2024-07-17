@@ -235,6 +235,7 @@ class IfcImportRunner(ifc_widget.IfcRunner):
             self.import_entity(entity)
 
     def import_entity(self, entity: ifcopenshell.entity_instance):
+        print(entity)
         if self.is_aborted:
             return
         ident = tool.Modelcheck.get_ident_value(entity, self.main_pset, self.main_attribute)

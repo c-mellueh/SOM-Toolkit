@@ -141,7 +141,7 @@ def start_attribute_import(file: ifcopenshell.file, path, attribute_import: Type
             attribute_import.set_progress(int(index / entity_count * 100))
             attribute_import.set_status(f"{status_text} {index}/{entity_count}")
         attribute_import_sql.add_entity(entity, pset_name, attribute_name, os.path.basename(path))
-
+        attribute_import_sql.import_entity_attributes(entity, file)
     attribute_import_sql.disconnect_from_database()
 
 
