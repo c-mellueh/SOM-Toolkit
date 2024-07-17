@@ -38,7 +38,11 @@ def create_menus(main_window_tool: Type[MainWindow], util: Type[tool.Util]):
 
 
 def refresh_main_window(main_window_tool: Type[MainWindow], project_tool: Type[Project]):
-    status = f"{project_tool.get_project_name()} {project_tool.get_project_version()}"
+    name = project_tool.get_project_name()
+    version = f"Version: {project_tool.get_project_version()}"
+    phase_name = project_tool.get_project_phase().name
+    use_case_name = project_tool.get().current_use_case.name
+    status = " | ".join([name, version, phase_name, use_case_name])
     main_window_tool.set_status_bar_text(status)
     main_window_tool.set_window_title(f"SOM-Toolkit v{som_gui.__version__}")
 
