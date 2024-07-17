@@ -1,5 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+
+import SOMcreator
+
 import som_gui.core.tool
 import som_gui
 from som_gui.module.attribute_import import ui, trigger
@@ -47,12 +50,13 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         attribute_import_widget.hide()
 
     @classmethod
-    def add_ifc_importer_to_window(cls, ifc_importer):
+    def add_ifc_importer_to_window(cls, ifc_importer: IfcImportWidget):
         cls.get_properties().ifc_importer = ifc_importer
         cls.get_properties().ifc_button = ifc_importer.widget.button_ifc
         cls.get_properties().run_button = ifc_importer.widget.button_run
         cls.get_properties().abort_button = ifc_importer.widget.button_close
         cls.get_properties().status_label = ifc_importer.widget.label_status
+        cls.get_properties().progress_bar = ifc_importer.widget.progress_bar
         cls.get_window().layout().addWidget(ifc_importer)
 
     @classmethod
@@ -154,6 +158,13 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     def last_import_finished(cls):
         trigger.last_import_finished()
 
+    @classmethod
+    def set_progress(cls, value: int):
+        cls.get_properties().progress_bar.setValue(value)
+
+    @classmethod
+    def set_status(cls, text: str):
+        cls.get_properties().status_label.setText(text)
 
 class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
     @classmethod
@@ -204,9 +215,9 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.commit_sql()
 
         cursor.execute('''
-                  CREATE TABLE IF NOT EXISTS som_attributes
-                  ([bauteilKlassifikation] TEXT, [PropertySet] TEXT, [Attribut] TEXT, [Value] Text,[ValueType] Text)
-                  ''')
+          CREATE TABLE IF NOT EXISTS som_attributes
+          ([bauteilKlassifikation] TEXT, [PropertySet] TEXT, [Attribut] TEXT, [Value] Text,[ValueType] Text,[DataType] Text)
+          ''')
         cls.commit_sql()
 
     @classmethod
@@ -217,3 +228,37 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.connect_to_data_base(db_path)
         cls.create_tables()
         cls.disconnect_from_database()
+
+    @classmethod
+    def get_attribute_data(cls, attribute: SOMcreator.Attribute):
+        bauteilklassifikation = attribute.property_set.object.ident_value
+        propertyset = attribute.property_set.name
+        attribute_name = attribute.name
+        valuetype = attribute.value_type
+        datatype = attribute.data_type
+        return bauteilklassifikation, propertyset, attribute_name, valuetype, datatype
+
+    @classmethod
+    def add_attribute_without_value(cls, attribute: SOMcreator.Attribute):
+        cursor = cls.get_cursor()
+        bauteilklassifikation, propertyset, attribute_name, valuetype, datatype = cls.get_attribute_data(attribute)
+        text = f'''
+                      INSERT INTO som_attributes (bauteilKlassifikation,PropertySet,Attribut,Value,ValueType,DataType)
+                            VALUES
+                            ('{bauteilklassifikation}','{propertyset}','{attribute_name}','','{valuetype}','{datatype}')
+                      '''
+        cursor.execute(text)
+        cls.commit_sql()
+
+    @classmethod
+    def add_attribute_with_value(cls, attribute: SOMcreator.Attribute):
+        cursor = cls.get_cursor()
+        bauteilklassifikation, propertyset, attribute_name, valuetype, datatype = cls.get_attribute_data(attribute)
+        for value in attribute.value:
+            text = f'''
+                          INSERT INTO som_attributes (bauteilKlassifikation,PropertySet,Attribut,Value,ValueType,DataType)
+                                VALUES
+                                ('{bauteilklassifikation}','{propertyset}','{attribute_name}','{value}','{valuetype}','{datatype}')
+                                  '''
+            cursor.execute(text)
+            cls.commit_sql()

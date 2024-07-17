@@ -23,7 +23,7 @@ class AttributeImportProperties:
     ifc_button: QPushButton = None
     abort_button: QPushButton = None
     status_label: QLabel = None
-
+    progress_bar: QProgressBar = None
 
 class AttributeImportSQLProperties:
     database_path: str = None

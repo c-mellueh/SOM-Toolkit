@@ -11,7 +11,8 @@ def connect():
 
 def connect_import_buttons(run_button: QPushButton, abort_button: QPushButton):
     run_button.clicked.connect(
-        lambda: core.run_clicked(tool.AttributeImport, tool.IfcImporter, tool.AttributeImportSQL, tool.Util))
+        lambda: core.run_clicked(tool.AttributeImport, tool.IfcImporter, tool.AttributeImportSQL, tool.Project,
+                                 tool.Util))
     abort_button.clicked.connect(lambda: core.abort_clicked())
 
 def connect_ifc_import_runner(runner):

@@ -27,7 +27,8 @@ def open_results_window(attribute_import: Type[tool.AttributeImport]):
 
 
 def run_clicked(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter],
-                attribute_import_sql: Type[tool.AttributeImportSQL], util: Type[tool.Util]):
+                attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project],
+                util: Type[tool.Util]):
     ifc_import_widget = attribute_import.get_ifc_import_widget()
     ifc_paths = ifc_importer.get_ifc_paths(ifc_import_widget)
     main_pset_name = ifc_importer.get_main_pset(ifc_import_widget)
@@ -46,13 +47,40 @@ def run_clicked(attribute_import: Type[tool.AttributeImport], ifc_importer: Type
     pool.setMaxThreadCount(3)
     ifc_importer.set_progressbar_visible(ifc_import_widget, True)
     ifc_importer.set_progress(ifc_import_widget, 0)
-    attribute_import_sql.init_database(util.create_tempfile(".db"))
+    sql_init_database(attribute_import, attribute_import_sql, project, util)
     for path in ifc_paths:
         ifc_importer.set_status(ifc_import_widget, f"Import '{os.path.basename(path)}'")
         runner = attribute_import.create_import_runner(path)
         attribute_import.connect_ifc_import_runner(runner)
         pool.start(runner)
 
+
+def sql_init_database(attribute_import: Type[tool.AttributeImport], attribute_import_sql: Type[tool.AttributeImportSQL],
+                      project: Type[tool.Project], util: Type[tool.Util]):
+    proj = project.get()
+    db_path = util.create_tempfile(".db")
+    attribute_import_sql.init_database(db_path)
+    all_attributes = list(proj.get_all_attributes())
+    attribute_count = len(all_attributes)
+    attribute_import_sql.connect_to_data_base(db_path)
+    status_text = "Attribute aus SOM importieren:"
+
+    for index, attribute in enumerate(all_attributes):
+        if index % 100 == 0:
+            attribute_import.set_progress(int(index / attribute_count * 100))
+            attribute_import.set_status(f"{status_text} {index}/{attribute_count}")
+
+        if not attribute.property_set.object:
+            continue
+
+        if not attribute.value:
+            attribute_import_sql.add_attribute_without_value(attribute)
+        else:
+            attribute_import_sql.add_attribute_with_value(attribute)
+
+    attribute_import_sql.disconnect_from_database()
+    attribute_import.set_progress(100)
+    attribute_import.set_status(f"{status_text} {attribute_count}/{attribute_count}")
 
 def accept_clicked():
     pass
