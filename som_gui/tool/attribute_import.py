@@ -7,10 +7,12 @@ from som_gui import tool
 from PySide6.QtWidgets import QPushButton
 from PySide6.QtCore import QRunnable, QObject, Signal, QThreadPool
 import ifcopenshell
+import logging
 
 if TYPE_CHECKING:
-    from som_gui.module.attribute_import.prop import AttributeImportProperties
+    from som_gui.module.attribute_import.prop import AttributeImportProperties, AttributeImportSQLProperties
     from som_gui.module.ifc_importer.ui import IfcImportWidget
+import sqlite3
 
 
 class AttributeImportRunner(QRunnable):
@@ -80,7 +82,6 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
     def get_ifc_import_widget(cls):
         return cls.get_properties().ifc_importer
-
 
     @classmethod
     def connect_buttons(cls, button_list: list[QPushButton]):
@@ -156,5 +157,63 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
 
 class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
     @classmethod
-    def get_properties(cls):
+    def get_properties(cls) -> AttributeImportSQLProperties:
         return som_gui.AttributeImportSQLProperties
+
+    @classmethod
+    def get_cursor(cls):
+        return cls.get_properties().connection.cursor()
+
+    @classmethod
+    def set_database_path(cls, path: str) -> None:
+        cls.get_properties().database_path = path
+
+    @classmethod
+    def connect_to_data_base(cls, path):
+        conn = sqlite3.connect(path)
+        cls.get_properties().connection = conn
+
+    @classmethod
+    def disconnect_from_database(cls):
+        cls.get_properties().connection.commit()
+        cls.get_properties().connection.close()
+        cls.get_properties().connection = None
+
+    @classmethod
+    def commit_sql(cls):
+        con = cls.get_properties().connection
+        if con is None:
+            return
+        con.commit()
+
+    @classmethod
+    def create_tables(cls):
+        cursor = cls.get_cursor()
+        # entities
+        cursor.execute('''
+                  CREATE TABLE IF NOT EXISTS entities
+                  ([GUID_ZWC] CHAR(64) PRIMARY KEY,[GUID] CHAR(64),[Name] CHAR(64), [ifc_type] TEXT,[datei] TEXT,[bauteilKlassifikation] TEXT)
+                  ''')
+        cls.commit_sql()
+
+        # imported_attributes
+        cursor.execute('''
+                  CREATE TABLE IF NOT EXISTS attributes
+                  ([GUID] CHAR(64), [PropertySet] TEXT, [Attribut] TEXT, [Value] Text, [ValueType] Text)
+                  ''')
+        cls.commit_sql()
+
+        cursor.execute('''
+                  CREATE TABLE IF NOT EXISTS som_attributes
+                  ([bauteilKlassifikation] TEXT, [PropertySet] TEXT, [Attribut] TEXT, [Value] Text,[ValueType] Text)
+                  ''')
+        cls.commit_sql()
+
+    @classmethod
+    def init_database(cls, db_path: str):
+        cls.set_database_path(db_path)
+        logging.info(f"Database: {db_path}")
+
+        cls.connect_to_data_base(db_path)
+        cls.create_tables()
+        cls.disconnect_from_database()

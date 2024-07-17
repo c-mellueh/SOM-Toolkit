@@ -1,9 +1,13 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from .ui import AttributeImportWindow, AttributeImportWidget, SettingsDialog
-from som_gui.module.ifc_importer.ui import IfcImportWidget
-from PySide6.QtWidgets import QPushButton, QLabel
-
+if TYPE_CHECKING:
+    from .ui import AttributeImportWindow, AttributeImportWidget, SettingsDialog
+    from som_gui.module.ifc_importer.ui import IfcImportWidget
+    from PySide6.QtWidgets import QPushButton, QLabel
+    from som_gui.tool.modelcheck import ModelcheckRunner
+    from PySide6.QtWidgets import QLabel, QProgressBar
+    from sqlite3 import Connection
 class AttributeImportProperties:
     active_window: AttributeImportWindow = None
     attribute_import_widget: AttributeImportWidget = None
@@ -22,4 +26,5 @@ class AttributeImportProperties:
 
 
 class AttributeImportSQLProperties:
-    pass
+    database_path: str = None
+    connection: Connection = None

@@ -26,7 +26,8 @@ def open_results_window(attribute_import: Type[tool.AttributeImport]):
     attribute_import_widget.show()
 
 
-def run_clicked(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
+def run_clicked(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter],
+                attribute_import_sql: Type[tool.AttributeImportSQL], util: Type[tool.Util]):
     ifc_import_widget = attribute_import.get_ifc_import_widget()
     ifc_paths = ifc_importer.get_ifc_paths(ifc_import_widget)
     main_pset_name = ifc_importer.get_main_pset(ifc_import_widget)
@@ -45,7 +46,7 @@ def run_clicked(attribute_import: Type[tool.AttributeImport], ifc_importer: Type
     pool.setMaxThreadCount(3)
     ifc_importer.set_progressbar_visible(ifc_import_widget, True)
     ifc_importer.set_progress(ifc_import_widget, 0)
-
+    attribute_import_sql.init_database(util.create_tempfile(".db"))
     for path in ifc_paths:
         ifc_importer.set_status(ifc_import_widget, f"Import '{os.path.basename(path)}'")
         runner = attribute_import.create_import_runner(path)

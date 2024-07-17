@@ -311,8 +311,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     ################
 
     @classmethod
-    def create_new_sql_database(cls) -> str:
-        db_path = os.path.abspath(tempfile.NamedTemporaryFile(suffix=".db").name)
+    def init_sql_database(cls, db_path: str) -> str:
         cls.set_database_path(db_path)
         logging.info(f"Database: {db_path}")
 

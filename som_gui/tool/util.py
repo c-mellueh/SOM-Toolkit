@@ -1,5 +1,7 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING
+import os, tempfile
+from PySide6.QtCore import QFile
 from PySide6.QtGui import QAction, QShortcut, QKeySequence
 from PySide6.QtWidgets import QMenu, QMenuBar, QWidget
 import som_gui.core.tool
@@ -99,3 +101,8 @@ class Util(som_gui.core.tool.Util):
             action.triggered.connect(action_func)
         menu_dict[name] = action
         return action
+
+    @classmethod
+    def create_tempfile(cls, suffix: str | None = None) -> str:
+        suffix = ".tmp" if suffix is None else suffix
+        return os.path.abspath(tempfile.NamedTemporaryFile(suffix=suffix).name)

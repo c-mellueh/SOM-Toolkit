@@ -44,7 +44,7 @@ def cancel_clicked(modelcheck_window: Type[tool.ModelcheckWindow], modelcheck: T
 
 def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
                 modelcheck: Type[tool.Modelcheck], modelcheck_results: Type[tool.ModelcheckResults],
-                ifc_importer: Type[tool.IfcImporter], project: Type[tool.Project], ):
+                ifc_importer: Type[tool.IfcImporter], project: Type[tool.Project], util: Type[tool.Util]):
 
     ifc_paths, export_path, main_pset, main_attribute = modelcheck_window.read_inputs()
     inputs_are_valid = ifc_importer.check_inputs(ifc_paths, main_pset, main_attribute)
@@ -64,7 +64,7 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
     pool = ifc_importer.create_thread_pool()
     pool.setMaxThreadCount(3)
 
-    modelcheck.create_new_sql_database()
+    modelcheck.init_sql_database(util.create_tempfile(".db"))
     modelcheck.reset_guids()
     modelcheck.build_ident_dict(set(project.get().objects))
 
