@@ -3,11 +3,10 @@ from typing import Type, TYPE_CHECKING
 import os
 import logging
 import ifcopenshell
-
 if TYPE_CHECKING:
     from som_gui import tool
+    from som_gui.tool.ifc_importer import IfcImportRunner
 import time
-
 
 def open_import_window(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
     if attribute_import.is_window_allready_build():
@@ -114,7 +113,8 @@ def ifc_import_started(runner, attribute_import: Type[tool.AttributeImport],
     ifc_importer.set_progress(widget, 0)
 
 
-def ifc_import_finished(runner, attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
+def ifc_import_finished(runner: IfcImportRunner, attribute_import: Type[tool.AttributeImport],
+                        ifc_importer: Type[tool.IfcImporter]):
     """
     creates and runs Modelcheck Runnable
     """
@@ -122,17 +122,27 @@ def ifc_import_finished(runner, attribute_import: Type[tool.AttributeImport], if
     attribute_import.destroy_import_runner(runner)
     ifc_import_widget = attribute_import.get_ifc_import_widget()
     ifc_importer.set_status(ifc_import_widget, f"Import Abgeschlossen")
-    attribute_import_runner = attribute_import.create_attribute_import_runner(runner.ifc)
+    attribute_import_runner = attribute_import.create_attribute_import_runner(runner)
     attribute_import.connect_attribute_import_runner(attribute_import_runner)
     attribute_import.set_current_runner(attribute_import_runner)
     attribute_import.get_attribute_import_threadpool().start(attribute_import_runner)
 
 
-def start_attribute_import(file: ifcopenshell.file, attribute_import: Type[tool.AttributeImport]):
-    for i in range(100):
-        print(f"Hier {i}")
+def start_attribute_import(file: ifcopenshell.file, path, attribute_import: Type[tool.AttributeImport],
+                           attribute_import_sql: Type[tool.AttributeImportSQL]):
+    attribute_import.set_ifc_path(path)
+    pset_name, attribute_name = attribute_import.get_main_pset(), attribute_import.get_main_attribute()
+    attribute_import_sql.connect_to_data_base(attribute_import_sql.get_database_path())
+    entity_list = list(file.by_type("IfcObject"))
+    entity_count = len(entity_list)
+    status_text = "Entität aus Datei importieren:"
+    for index, entity in enumerate(entity_list):
+        if index % 100 == 0:
+            attribute_import.set_progress(int(index / entity_count * 100))
+            attribute_import.set_status(f"{status_text} {index}/{entity_count}")
+        attribute_import_sql.add_entity(entity, pset_name, attribute_name, os.path.basename(path))
 
-    pass
+    attribute_import_sql.disconnect_from_database()
 
 
 def attribute_import_finished(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):

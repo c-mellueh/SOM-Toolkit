@@ -5,7 +5,7 @@ from PySide6.QtCore import QFile
 from PySide6.QtGui import QAction, QShortcut, QKeySequence
 from PySide6.QtWidgets import QMenu, QMenuBar, QWidget
 import som_gui.core.tool
-
+import re
 if TYPE_CHECKING:
     from som_gui.module.util.prop import MenuDict, UtilProperties
 
@@ -106,3 +106,11 @@ class Util(som_gui.core.tool.Util):
     def create_tempfile(cls, suffix: str | None = None) -> str:
         suffix = ".tmp" if suffix is None else suffix
         return os.path.abspath(tempfile.NamedTemporaryFile(suffix=suffix).name)
+
+    @classmethod
+    def transform_guid(cls, guid: str, add_zero_width: bool):
+        """Fügt Zero Width Character ein weil PowerBI (WARUM AUCH IMMER FÜR EIN BI PROGRAMM?????) Case Insensitive ist"""
+        if add_zero_width:
+            return re.sub(r"([A-Z])", lambda m: m.group(0) + u"\u200B", guid)
+        else:
+            return guid

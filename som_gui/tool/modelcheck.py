@@ -361,7 +361,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def add_issues(cls, guid, description, issue_type, attribute, pset_name="", attribute_name="", value=""):
         cursor = cls.get_cursor()
-        guid = cls.transform_guid(guid, True)
+        guid = tool.Util.transform_guid(guid, True)
         date = datetime.date.today()
         if attribute is not None:
             pset_name = attribute.property_set.name
@@ -374,20 +374,12 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         cls.commit_sql()
 
     @classmethod
-    def transform_guid(cls, guid: str, add_zero_width: bool):
-        """Fügt Zero Width Character ein weil PowerBI (WARUM AUCH IMMER FÜR EIN BI PROGRAMM?????) Case Insensitive ist"""
-        if add_zero_width:
-            return re.sub(r"([A-Z])", lambda m: m.group(0) + u"\u200B", guid)
-        else:
-            return guid
-
-    @classmethod
     def db_create_entity(cls, element: entity_instance, bauteil_klasse):
         cursor = cls.get_cursor()
         file_name = cls.get_ifc_name()
         project = tool.Project.get_project_name()
-        guid_zwc = cls.transform_guid(element.GlobalId, True)
-        guid = cls.transform_guid(element.GlobalId, False)
+        guid_zwc = tool.Util.transform_guid(element.GlobalId, True)
+        guid = tool.Util.transform_guid(element.GlobalId, False)
         name = element.Name
         ifc_type = element.is_a()
         center = [0, 0, 0]

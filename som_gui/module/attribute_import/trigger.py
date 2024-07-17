@@ -46,6 +46,6 @@ def last_import_finished():
     core.last_import_finished(tool.AttributeImport)
 
 
-def start_attribute_import(file: ifcopenshell.file):
-    core.start_attribute_import(file, tool.AttributeImport)
+def start_attribute_import(file: ifcopenshell.file, path: str):
+    core.start_attribute_import(file, path, tool.AttributeImport, tool.AttributeImportSQL)
     pass

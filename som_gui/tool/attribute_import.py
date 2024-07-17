@@ -10,22 +10,26 @@ from som_gui import tool
 from PySide6.QtWidgets import QPushButton
 from PySide6.QtCore import QRunnable, QObject, Signal, QThreadPool
 import ifcopenshell
+from ifcopenshell.util import element as ifc_element_util
+
 import logging
 
 if TYPE_CHECKING:
     from som_gui.module.attribute_import.prop import AttributeImportProperties, AttributeImportSQLProperties
     from som_gui.module.ifc_importer.ui import IfcImportWidget
+    from som_gui.tool.ifc_importer import IfcImportRunner
 import sqlite3
 
 
 class AttributeImportRunner(QRunnable):
-    def __init__(self, ifc_file: ifcopenshell.file):
+    def __init__(self, runner: IfcImportRunner):
         super().__init__()
-        self.file = ifc_file
+        self.file = runner.ifc
+        self.path = runner.path
         self.signaller = Signaller()
 
     def run(self):
-        trigger.start_attribute_import(self.file)
+        trigger.start_attribute_import(self.file, self.path)
         self.signaller.finished.emit()
 
 
@@ -43,6 +47,10 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
     def connect_import_buttons(cls):
         trigger.connect_import_buttons(cls.get_properties().run_button, cls.get_properties().abort_button)
+
+    @classmethod
+    def set_ifc_path(cls, path):
+        cls.get_properties().ifc_path = path
 
     @classmethod
     def add_attribute_import_widget_to_window(cls, attribute_import_widget):
@@ -131,8 +139,8 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         cls.get_properties().ifc_import_runners.remove(runner)
 
     @classmethod
-    def create_attribute_import_runner(cls, ifc_file: ifcopenshell.file) -> AttributeImportRunner:
-        return AttributeImportRunner(ifc_file)
+    def create_attribute_import_runner(cls, runner: IfcImportRunner) -> AttributeImportRunner:
+        return AttributeImportRunner(runner)
 
     @classmethod
     def connect_attribute_import_runner(cls, runner: AttributeImportRunner) -> None:
@@ -166,6 +174,7 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     def set_status(cls, text: str):
         cls.get_properties().status_label.setText(text)
 
+
 class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
     @classmethod
     def get_properties(cls) -> AttributeImportSQLProperties:
@@ -179,6 +188,9 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
     def set_database_path(cls, path: str) -> None:
         cls.get_properties().database_path = path
 
+    @classmethod
+    def get_database_path(cls) -> str:
+        return cls.get_properties().database_path
     @classmethod
     def connect_to_data_base(cls, path):
         conn = sqlite3.connect(path)
@@ -262,3 +274,17 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                                   '''
             cursor.execute(text)
             cls.commit_sql()
+
+    @classmethod
+    def add_entity(cls, entity: ifcopenshell.entity_instance, main_pset: str, main_attribute: str, file_name):
+        cursor = cls.get_cursor()
+        identifier = ifc_element_util.get_pset(entity, main_pset, main_attribute) or ""
+        entity_guid = entity.GlobalId
+        entity_guid_zw = tool.Util.transform_guid(entity_guid, True)
+        text = f'''
+          INSERT INTO entities (GUID_ZWC,GUID,Name,ifc_type,datei,bauteilKlassifikation)
+                VALUES
+                ('{entity_guid_zw}','{entity_guid}','{entity.Name}','{entity.is_a()}','{file_name}','{identifier}')
+                  '''
+        cursor.execute(text)
+        cls.commit_sql()

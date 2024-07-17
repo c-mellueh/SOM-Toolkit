@@ -18,6 +18,25 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QLineEdit, QLabel
 
 
+class Signaller(QObject):
+    started = Signal()
+    finished = Signal()
+
+
+class IfcImportRunner(QRunnable):
+    def __init__(self, path: os.PathLike | str, status_label: QLabel):
+        super(IfcImportRunner, self).__init__()
+        self.path = path
+        self.ifc: ifcopenshell.file | None = None
+        self.signaller = Signaller()
+        self.status_label = status_label
+
+    def run(self):
+        self.signaller.started.emit()
+        time.sleep(1)
+        self.ifc = ifcopenshell.open(self.path)
+        self.signaller.finished.emit()
+
 class IfcImporter(som_gui.core.tool.IfcImporter):
     @classmethod
     def check_inputs(cls, ifc_paths, main_pset, main_attribute):
@@ -103,23 +122,6 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
     @classmethod
     def create_runner(cls, status_label: QLabel, path: os.PathLike | str):
-        class IfcImportRunner(QRunnable):
-            def __init__(self, path: os.PathLike | str, status_label: QLabel):
-                super(IfcImportRunner, self).__init__()
-                self.path = path
-                self.ifc: ifcopenshell.file | None = None
-                self.signaller = Signaller()
-                self.status_label = status_label
-
-            def run(self):
-                self.signaller.started.emit()
-                time.sleep(1)
-                self.ifc = ifcopenshell.open(self.path)
-                self.signaller.finished.emit()
-
-        class Signaller(QObject):
-            started = Signal()
-            finished = Signal()
 
         if not os.path.exists(path):
             return
