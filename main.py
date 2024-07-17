@@ -7,7 +7,8 @@ from logging import config
 from som_gui import logs, settings
 from som_gui import core
 from som_gui import tool
-
+import ifcopenshell.guid
+import ifcopenshell.express
 def start_log(state: int | None = None) -> None:
     if not os.path.exists(logs.DIR_PATH):
         os.mkdir(logs.DIR_PATH)
@@ -29,18 +30,18 @@ def start_log(state: int | None = None) -> None:
 
 
 def main(initial_file: str | None = None):
+    import som_gui
     from PySide6.QtWidgets import QApplication
-    import som_gui.main_window
+    import som_gui.core.main_window
+    import som_gui.core.project
 
     print("START")
     som_gui.register()
     app = QApplication(sys.argv)
-    window = som_gui.main_window.MainWindow(app)
-    core.main_window.set_main_window(window, tool.MainWindow)
-    window.show()
+    core.main_window.create_main_window(app, tool.MainWindow)
     som_gui.load_ui_triggers()
     core.project.create_project(tool.Project)
-    core.main_window.create_menus(tool.MainWindow)
+    core.main_window.create_menus(tool.MainWindow, tool.Util)
 
     if initial_file is not None:
         core.project.open_project(initial_file, tool.Project)

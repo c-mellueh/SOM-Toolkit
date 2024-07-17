@@ -40,9 +40,9 @@ def pset_selection_changed(predefined_pset: Type[tool.PredefinedPropertySet]):
 
 
 def pset_double_clicked(item, property_set: Type[tool.PropertySet],
-                        property_set_window: Type[tool.PropertySetWindow]):
+                        property_set_window: Type[tool.PropertySetWindow], attribute_table: Type[tool.AttributeTable]):
     pset = property_set.get_property_set_from_item(item)
-    property_set_window_core.open_pset_window(pset, property_set_window)
+    property_set_window_core.open_pset_window(pset, property_set_window, attribute_table)
 
 
 def object_context_menu(pos, predefined_pset: Type[tool.PredefinedPropertySet],

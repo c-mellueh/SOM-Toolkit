@@ -131,7 +131,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def get_table(cls):
-        return som_gui.MainUi.ui.table_pset
+        return tool.MainWindow.get_property_set_table_widget()
 
     @classmethod
     def get_row_from_pset(cls, property_set: SOMcreator.PropertySet):
@@ -187,6 +187,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def update_property_set_table(cls, table: QTableWidget):
         for row in range(table.rowCount()):
             cls.update_table_row(table, row)
+
     @classmethod
     def select_property_set(cls, property_set: SOMcreator.PropertySet):
         table = cls.get_table()
@@ -212,13 +213,12 @@ class PropertySet(som_gui.core.tool.PropertySet):
             psets += cls.get_inheritable_property_sets(obj)
         pset_names = sorted({p.name for p in psets})
         completer = QCompleter(pset_names)
-        som_gui.MainUi.ui.lineEdit_ident_pSet.setCompleter(completer)
-        som_gui.MainUi.ui.lineEdit_pSet_name.setCompleter(completer)
+        tool.MainWindow.get_ident_pset_name_line_edit().setCompleter(completer)
+        tool.MainWindow.get_pset_name_line_edit().setCompleter(completer)
 
     @classmethod
     def set_enabled(cls, enabled: bool):
-        layout = som_gui.MainUi.ui.box_layout_pset
-        layout.setEnabled(enabled)
+        tool.MainWindow.get_pset_layout().setEnabled(enabled)
 
     @classmethod
     def get_pset_properties(cls) -> PropertySetProperties:

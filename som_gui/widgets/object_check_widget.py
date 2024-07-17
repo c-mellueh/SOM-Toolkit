@@ -7,12 +7,13 @@ from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtGui import QStandardItem, QFont, QStandardItemModel
 from PySide6.QtWidgets import QWidget, QTreeView, QTreeWidget
 from SOMcreator import classes
+from som_gui import tool
 
 from .. import icons
 from ..qt_designs import ui_object_check_widget
 
 if TYPE_CHECKING:
-    from ..main_window import MainWindow
+    from som_gui.module.main_window.ui import MainWindow
 
 OBJECT_DATA_INDEX = 1312
 OBJECT_ITEM_INDEX = 161
@@ -38,8 +39,8 @@ class ObjectCheckWidget(QWidget):
         super(ObjectCheckWidget, self).__init__(main_window)
         self.widget = ui_object_check_widget.Ui_Form()
         self.widget.setupUi(self)
-        self.tree_model = PropertySetModel(main_window.project)
-        self.object_model = ObjectModel(main_window.project)
+        self.tree_model = PropertySetModel(tool.Project.get())
+        self.object_model = ObjectModel(tool.Project.get())
         self.widget.property_set_tree.setModel(self.tree_model)
         self.setWindowIcon(icons.get_icon())
         self.data_model: dict[classes.Object | classes.PropertySet | classes.Attribute, bool] = dict()
@@ -76,7 +77,7 @@ class ObjectCheckWidget(QWidget):
         root = self.object_model.invisibleRootItem()
         tree.setModel(self.object_model)
 
-        for o in self.main_window.project.objects:
+        for o in self.tool.Project.get().objects:
             if o.parent is None:
                 iter_objects(o, root)
 
@@ -135,7 +136,7 @@ class ObjectCheckWidget(QWidget):
         def add_to_model(entity: classes.Object | classes.PropertySet | classes.Attribute) -> None:
             data_model[entity] = True
 
-        project = self.main_window.project
+        project = self.tool.Project.get()
         data_model = dict()
         for obj in project.get_all_objects():
             add_to_model(obj)

@@ -2,16 +2,28 @@ from __future__ import annotations
 import som_gui.core.tool
 import som_gui
 from typing import TYPE_CHECKING, Callable
-from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMenu, QMenuBar, QApplication, QLabel
+from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLabel, QLineEdit
+from som_gui import tool
+from som_gui.module.main_window import ui as ui_main_window
+from som_gui.windows import mapping_window
+from som_gui.windows.attribute_import.gui import AttributeImport
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.prop import MainWindowProperties, MenuDict
     from som_gui.tool.object import ObjectDataDict
-    from som_gui.main_window import Ui_MainWindow
+    from som_gui.module.main_window.window import Ui_MainWindow
 
 
 class MainWindow(som_gui.core.tool.MainWindow):
+    @classmethod
+    def create(cls, application: QApplication):
+        if cls.get_properties().window is None:
+            window = ui_main_window.MainWindow(application)
+            cls.get_properties().window = window
+            cls.get_properties().ui = window.ui
+            cls.get_properties().application = application
+        return cls.get_properties().window
+
     @classmethod
     def set_window_title(cls, title: str):
         cls.get().setWindowTitle(title)
@@ -19,13 +31,13 @@ class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
     def create_status_label(cls):
         label = QLabel()
-        prop = cls.get_main_menu_properties()
+        prop = cls.get_properties()
         prop.status_bar_label = label
         cls.get_ui().statusbar.addWidget(label)
 
     @classmethod
     def set_status_bar_text(cls, text: str):
-        cls.get_main_menu_properties().status_bar_label.setText(text)
+        cls.get_properties().status_bar_label.setText(text)
 
     @classmethod
     def get_menu_bar(cls) -> QMenuBar:
@@ -33,90 +45,83 @@ class MainWindow(som_gui.core.tool.MainWindow):
 
     @classmethod
     def get_menu_dict(cls) -> MenuDict:
-        prop = cls.get_main_menu_properties()
+        prop = cls.get_properties()
         return prop.menu_dict
 
     @classmethod
-    def create_actions(cls, menu_dict: MenuDict, parent: QMenu | QMenuBar):
-        menu = menu_dict["menu"]
-        if parent is not None:
-            parent.addMenu(menu)
-        for sd in menu_dict["submenu"]:
-            cls.create_actions(sd, menu)
-        for action in menu_dict["actions"]:
-            menu.addAction(action)
-
-    @classmethod
-    def add_menu(cls, menu_path: str) -> MenuDict:
-        menu_steps = menu_path.split("/")
-        menu_dict = cls.get_menu_dict()
-        focus_dict = menu_dict
-        parent = cls.get_ui().menubar
-        for index, menu_name in enumerate(menu_steps):
-            if not menu_name in {menu["name"] for menu in focus_dict["submenu"]}:
-                menu = QMenu(parent)
-                menu.setTitle(menu.tr(menu_name))
-                d = {
-                    "name":    menu_name,
-                    "submenu": list(),
-                    "actions": list(),
-                    "menu":    menu
-                }
-                focus_dict["submenu"].append(d)
-            sub_menus = {menu["name"]: menu for menu in focus_dict["submenu"]}
-            focus_dict = sub_menus[menu_name]
-            parent = focus_dict["menu"]
-        return focus_dict
-
-    @classmethod
     def add_action(cls, menu_path: str, function: Callable):
-        menu_steps = menu_path.split("/")
-        if len(menu_steps) != 1:
-            menu_dict = cls.add_menu("/".join(menu_steps[:-1]))
-            action = QAction(menu_dict["menu"])
-            action.setText(action.tr(menu_steps[-1]))
-            action.triggered.connect(function)
-            menu_dict["actions"].append(action)
-        else:
-            action = QAction(menu_steps[0])
-            cls.get_menu_dict()["actions"].append(action)
-            action.triggered.connect(function)
+        menu_bar = cls.get_menu_bar()
+        menu_dict = cls.get_menu_dict()
+        tool.Util.menu_bar_add_action(menu_bar, menu_dict, menu_path, function)
 
     @classmethod
-    def get_main_menu_properties(cls) -> MainWindowProperties:
+    def get_properties(cls) -> MainWindowProperties:
         return som_gui.MainWindowProperties
 
     @classmethod
     def get_ui(cls) -> Ui_MainWindow:
-        return cls.get_main_menu_properties().ui
+        return cls.get_properties().ui
 
     @classmethod
     def get(cls) -> som_gui.MainWindow:
-        return cls.get_main_menu_properties().window
+        return cls.get_properties().window
 
     @classmethod
     def get_app(cls) -> QApplication:
-        return som_gui.MainUi.window.app
-
-    @classmethod
-    def set(cls, window):
-        prop = cls.get_main_menu_properties()
-        prop.window = window
-        prop.ui = window.ui
-
-    @classmethod
-    def get_object_infos(cls) -> ObjectDataDict:
-        ui = cls.get_ui()
-        d: ObjectDataDict = dict()
-        d["name"] = ui.line_edit_object_name.text()
-        d["is_group"] = False
-        d["ident_pset_name"] = ui.lineEdit_ident_pSet.text()
-        d["ident_attribute_name"] = ui.lineEdit_ident_attribute.text()
-        d["ident_value"] = ui.lineEdit_ident_value.text()
-        d["ifc_mappings"] = ["IfcBuildingElementProxy"]
-        d["abbreviation"] = ui.line_edit_abbreviation.text()
-        return d
+        return cls.get_properties().application
 
     @classmethod
     def get_pset_name(cls):
         return cls.get_ui().lineEdit_pSet_name.text()
+
+    @classmethod
+    def get_attribute_table(cls):
+        return cls.get_ui().table_attribute
+
+    @classmethod
+    def get_object_tree_widget(cls):
+        return cls.get_ui().tree_object
+
+    @classmethod
+    def get_property_set_table_widget(cls):
+        return cls.get_ui().table_pset
+
+    @classmethod
+    def get_ident_pset_name_line_edit(cls):
+        return cls.get_ui().lineEdit_ident_pSet
+
+    @classmethod
+    def get_ident_value_line_edit(cls):
+        return cls.get_ui().lineEdit_ident_value
+
+    @classmethod
+    def get_attribute_name_line_edit(cls) -> QLineEdit:
+        return cls.get_ui().lineEdit_ident_attribute
+
+    @classmethod
+    def get_object_name_line_edit(cls):
+        return cls.get_ui().line_edit_object_name
+
+    @classmethod
+    def get_pset_name_line_edit(cls):
+        return cls.get_ui().lineEdit_pSet_name
+
+    @classmethod
+    def get_pset_layout(cls):
+        return cls.get_ui().box_layout_pset
+
+    @classmethod
+    def open_mapping_window(cls):
+        window = cls.get()
+        cls.get_properties().mapping_window = mapping_window.MappingWindow(window)
+        cls.get_properties().mapping_window.show()
+
+    @classmethod
+    def open_attribute_import_window(cls):
+        if cls.get_properties().attribute_import_window is not None:
+            cls.get_properties().attribute_import_window.close()
+        cls.get_properties().attribute_import_window = AttributeImport(cls.get())
+
+    @classmethod
+    def get_object_name_horizontal_layout(cls) -> QHBoxLayout:
+        return cls.get_ui().horizontalLayout_object_button

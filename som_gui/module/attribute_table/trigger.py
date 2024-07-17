@@ -12,14 +12,14 @@ if TYPE_CHECKING:
 
 def connect():
     core.add_basic_attribute_columns(tool.Attribute, tool.AttributeTable)
-    som_gui.MainUi.ui.table_attribute.itemDoubleClicked.connect(
+    tool.MainWindow.get_attribute_table().itemDoubleClicked.connect(
         lambda item: core.attribute_double_clicked(item, tool.Attribute, tool.AttributeTable, tool.PropertySet,
                                                    tool.PropertySetWindow))
-
+    core.init_context_menu(tool.AttributeTable)
 
 def connect_table(table: AttributeTable):
     table.customContextMenuRequested.connect(
-        lambda pos: core.context_menu(table, pos, tool.PropertySet, tool.AttributeTable))
+        lambda pos: core.context_menu(table, pos, tool.AttributeTable, tool.Util))
     table.itemClicked.connect(lambda item: core.item_changed(item, tool.AttributeTable))
 
 def drop_event(event, table):
@@ -31,7 +31,7 @@ def create_mime_data(items: list[QTableWidgetItem], mime_data):
 
 
 def on_new_project():
-    core.setup_table_header(som_gui.MainUi.ui.table_attribute, tool.AttributeTable)
+    core.setup_table_header(tool.MainWindow, tool.AttributeTable)
 
 
 def table_paint_event(table: QTableWidget):

@@ -12,10 +12,10 @@ from PySide6.QtCore import Qt, QPoint
 import som_gui
 from typing import TYPE_CHECKING, TypedDict, Callable
 from SOMcreator.Template import IFC_4_1
-
+from som_gui.module.object.prop import PluginProperty
 if TYPE_CHECKING:
     from som_gui.module.object.prop import ObjectProperties, ContextMenuDict
-    from som_gui.main_window import MainWindow
+    from som_gui.module.main_window.ui import MainWindow
     from som_gui.module.object.ui import ObjectTreeWidget
 
 
@@ -30,6 +30,30 @@ class ObjectDataDict(TypedDict):
 
 
 class Object(som_gui.core.tool.Object):
+    @classmethod
+    def oi_add_plugin_entry(cls, key: str, layout_name: str, widget, index, init_value_getter, widget_value_getter,
+                            widget_value_setter, test_function, value_setter):
+        prop = PluginProperty(key, layout_name, widget, index, init_value_getter, widget_value_getter,
+                              widget_value_setter, test_function, value_setter)
+
+        cls.get_properties().object_info_plugin_list.append(prop)
+
+    @classmethod
+    def get_object_infos(cls) -> ObjectDataDict:
+        d = dict()
+        for key, func in cls.get_properties().object_add_infos_functions:
+            d[key] = func()
+        return d
+
+    @classmethod
+    def add_column_to_tree(cls, name, index, getter_func, setter_func=None):
+        tree = cls.get_object_tree()
+        header = tree.headerItem()
+        header_texts = [header.text(i) for i in range(header.columnCount())]
+        header_texts.insert(index, tree.tr(name))
+        tree.setColumnCount(tree.columnCount() + 1)
+        [header.setText(i, t) for i, t in enumerate(header_texts)]
+        cls.get_properties().column_List.insert(index, (name, getter_func, setter_func))
 
     @classmethod
     def create_completer(cls, texts, lineedit: QLineEdit):
@@ -112,15 +136,15 @@ class Object(som_gui.core.tool.Object):
     @classmethod
     def delete_object(cls, obj: SOMcreator.Object, recursive: bool = False):
         # TODO: Refactor NodeWindow so nodes delete automatically
-        def delete_nodes(o: SOMcreator.Object):
-            for aggregation in list(o.aggregations):
-                node = som_gui.MainUi.window.graph_window.aggregation_dict().get(aggregation)
-                node.delete(recursive)
-            if recursive:
-                for child in o.get_all_children():
-                    delete_nodes(child)
-
-        delete_nodes(obj)
+        # def delete_nodes(o: SOMcreator.Object):
+        #     for aggregation in list(o.aggregations):
+        #         node = som_gui.MainUi.window.graph_window.aggregation_dict().get(aggregation)
+        #         node.delete(recursive)
+        #     if recursive:
+        #         for child in o.get_all_children():
+        #             delete_nodes(child)
+        #
+        # delete_nodes(obj)
         obj.delete(recursive)
 
     @classmethod
@@ -172,15 +196,12 @@ class Object(som_gui.core.tool.Object):
         app = tool.MainWindow.get_app()
         if result == som_gui.module.object.IDENT_ISSUE:
             text = "Identifier existiert bereits oder is nicht erlaubt!"
-        elif result == som_gui.module.object.ABBREV_ISSUE:
-            text = u"Abkürzung existiert bereits!"
         elif result == som_gui.module.object.IDENT_ATTRIBUTE_ISSUE:
             text = u"Attribute Name is nicht erlaubt!"
         elif result == som_gui.module.object.IDENT_PSET_ISSUE:
             text = u"PropertySet Name is nicht erlaubt!"
         else:
-            text = f"Oh! Ich weiß leider nicht, was gerade schief gelaufen ist. Fehler"
-
+            return False
         text = app.translate("MainWindow", text)
         logging.error(text)
         tool.Popups.create_warning_popup(text)
@@ -194,42 +215,71 @@ class Object(som_gui.core.tool.Object):
             new_object.ident_attrib = uuid.uuid4()
             return som_gui.module.object.OK, new_object
         ident_value = data_dict["ident_value"]
-        abbreviation = data_dict.get("abbreviation")
         pset = data_dict.get("ident_pset_name")
         attribute = data_dict.get("ident_attribute_name")
 
         if not cls.is_identifier_allowed(ident_value):
             return som_gui.module.object.IDENT_ISSUE, None
 
-        if not cls.is_abbreviation_allowed(abbreviation):
-            return som_gui.module.object.ABBREV_ISSUE, None
+        for plugin in cls.get_properties().object_info_plugin_list:  # Call Test Func
+            result = plugin.value_test(data_dict[plugin.key], obj)
+            if result != som_gui.module.object.OK:
+                return result, None
         new_object = cp.copy(obj)
         if pset and attribute:
             new_object.ident_attrib = cls.find_attribute(new_object, pset, attribute)
         new_object.ident_attrib.value = [ident_value]
-        new_object.abbreviation = abbreviation
+        for plugin in cls.get_properties().object_info_plugin_list:  # call Setter Func
+            plugin.value_setter(new_object, data_dict[plugin.key])
+
         return som_gui.module.object.OK, new_object
 
     @classmethod
-    def check_object_creation_imput(cls, data_dict) -> int:
+    def check_object_creation_input(cls, data_dict: ObjectDataDict) -> bool:
+        prop = cls.get_properties()
+        for key, check_function in prop.object_add_checks:
+            if not check_function(data_dict):
+                return False
+        return True
+
+    @classmethod
+    def check_if_ident_pset_is_valid(cls, data_dict: ObjectDataDict):
         is_group = data_dict["is_group"]
-        abbreviation = data_dict.get("abbreviation")
-        ident_pset_name = data_dict.get("ident_pset_name")
-        ident_attribute_name = data_dict.get("ident_attribute_name")
-        ident_value = data_dict.get("ident_value")
         if is_group:
-            return som_gui.module.object.OK
-        else:
-            if not cls.is_identifier_allowed(ident_value):
-                return som_gui.module.object.IDENT_ISSUE
-            elif not cls.is_abbreviation_allowed(abbreviation):
-                return som_gui.module.object.ABBREV_ISSUE
-            elif not ident_pset_name:
-                return som_gui.module.object.IDENT_PSET_ISSUE
-            elif not ident_attribute_name:
-                return som_gui.module.object.IDENT_ATTRIBUTE_ISSUE
-            else:
-                return som_gui.module.object.OK
+            return True
+        value = data_dict["ident_pset_name"]
+        if not value:
+            text = u"PropertySet Name is nicht erlaubt!"
+            logging.error(text)
+            tool.Popups.create_warning_popup(text)
+            return False
+        return True
+
+    @classmethod
+    def check_if_ident_attribute_is_valid(cls, data_dict: ObjectDataDict):
+        is_group = data_dict["is_group"]
+        if is_group:
+            return True
+        value = data_dict["ident_attribute_name"]
+        if not value:
+            text = u"Attribute Name is nicht erlaubt!"
+            logging.error(text)
+            tool.Popups.create_warning_popup(text)
+            return False
+        return True
+
+    @classmethod
+    def check_if_identifier_is_unique(cls, data_dict: ObjectDataDict):
+        is_group = data_dict["is_group"]
+        if is_group:
+            return True
+        value = data_dict["ident_value"]
+        if not cls.is_identifier_allowed(value):
+            text = "Identifier existiert bereits oder is nicht erlaubt!"
+            logging.error(text)
+            tool.Popups.create_warning_popup(text)
+            return False
+        return True
 
     @classmethod
     def create_object(cls, data_dict: ObjectDataDict, property_set: SOMcreator.PropertySet,
@@ -255,7 +305,6 @@ class Object(som_gui.core.tool.Object):
         name = data_dict.get("name")
         ifc_mappings = data_dict.get("ifc_mappings")
         identifer = data_dict.get("ident_value")
-        abbreviation = data_dict.get("abbreviation")
         pset_name = data_dict.get("ident_pset_name")
         attribute_name = data_dict.get("ident_attribute_name")
         is_group = data_dict.get("is_group")
@@ -264,8 +313,12 @@ class Object(som_gui.core.tool.Object):
         if not is_group:
             if identifer is not None and not cls.is_identifier_allowed(identifer, obj.ident_value):
                 return som_gui.module.object.IDENT_ISSUE
-            if abbreviation is not None and not cls.is_abbreviation_allowed(abbreviation, obj.abbreviation):
-                return som_gui.module.object.ABBREV_ISSUE
+
+        for plugin in cls.get_properties().object_info_plugin_list:  # Call Test Func
+            result = plugin.value_test(data_dict[plugin.key], obj)
+            if result != som_gui.module.object.OK:
+                return result
+
         obj.name = name if name else obj.name
         obj.ifc_mapping = ifc_mappings if ifc_mappings is not None else obj.ifc_mapping
 
@@ -279,7 +332,9 @@ class Object(som_gui.core.tool.Object):
 
         if identifer is not None:
             cls.set_ident_value(obj, identifer)
-        obj.abbreviation = abbreviation if abbreviation is not None else obj.abbreviation
+        for plugin in cls.get_properties().object_info_plugin_list:  # call Setter Func
+            plugin.value_setter(obj, data_dict[plugin.key])
+
         return som_gui.module.object.OK
 
     @classmethod
@@ -314,14 +369,7 @@ class Object(som_gui.core.tool.Object):
                 ident_values.add(obj.ident_value)
         return ident_values
 
-    @classmethod
-    def get_existing_abbriviations(cls) -> set[str]:
-        proj = tool.Project.get()
-        abbreviations = set()
-        for obj in proj.get_all_objects():
-            if obj.abbreviation:
-                abbreviations.add(obj.abbreviation)
-        return abbreviations
+
 
     @classmethod
     def is_identifier_allowed(cls, identifier, ignore=None):
@@ -333,21 +381,17 @@ class Object(som_gui.core.tool.Object):
         else:
             return True
 
-    @classmethod
-    def is_abbreviation_allowed(cls, abbreviation, ignore=None):
-        abbreviations = cls.get_existing_abbriviations()
-        if ignore is not None:
-            abbreviations = list(filter(lambda a: a != ignore, abbreviations))
-        if abbreviation in abbreviations:
-            return False
-        else:
-            return True
+
 
     @classmethod
     def oi_create_dialog(cls):
-        prop: ObjectProperties = cls.get_properties()
+        prop = cls.get_properties()
         prop.object_info_widget_properties = som_gui.module.object.prop.ObjectInfoWidgetProperties()
-        prop.object_info_widget = som_gui.module.object.ui.ObjectInfoWidget()
+        dialog = som_gui.module.object.ui.ObjectInfoWidget()
+        for plugin in prop.object_info_plugin_list:
+            getattr(dialog.widget, plugin.layout_name).insertWidget(plugin.index, plugin.widget)
+            setattr(prop.object_info_widget_properties, plugin.key, plugin.init_value_getter)
+        prop.object_info_widget = dialog
         return prop.object_info_widget
 
     @classmethod
@@ -369,11 +413,12 @@ class Object(som_gui.core.tool.Object):
 
         d["is_group"] = widget.button_gruppe.isChecked()
         d["ident_value"] = widget.line_edit_attribute_value.text()
-        d["abbreviation"] = widget.line_edit_abbreviation.text()
         d["ident_pset_name"] = widget.combo_box_pset.currentText()
         d["ident_attribute_name"] = widget.combo_box_attribute.currentText()
         d["name"] = widget.line_edit_name.text()
         d["ifc_mappings"] = cls.get_ifc_mappings()
+        for plugin in cls.get_properties().object_info_plugin_list:
+            d[plugin.key] = plugin.widget_value_getter()
         return d
 
     @classmethod
@@ -390,8 +435,7 @@ class Object(som_gui.core.tool.Object):
         prop = cls.get_object_info_properties()
         if data_dict.get("name"):
             prop.name = data_dict.get("name")
-        if data_dict.get("abbreviation"):
-            prop.abbreviation = data_dict.get("abbreviation")
+
         if data_dict.get("is_group") is not None:
             prop.is_group = data_dict.get("is_group")
         if data_dict.get("ident_pset_name"):
@@ -403,15 +447,16 @@ class Object(som_gui.core.tool.Object):
         if data_dict.get("ifc_mappings"):
             prop.ifc_mappings = data_dict.get("ifc_mappings")
 
+        for plugin_values in cls.get_properties().object_info_plugin_list:
+            setattr(prop, plugin_values.key, data_dict.get(plugin_values.key))
+
+
     @classmethod
     def oi_set_ident_value_color(cls, color: str):
         widget = cls.get_properties().object_info_widget.widget
         widget.line_edit_attribute_value.setStyleSheet(f"color:{color}")
 
-    @classmethod
-    def oi_set_abbrev_value_color(cls, color: str):
-        widget = cls.get_properties().object_info_widget.widget
-        widget.line_edit_abbreviation.setStyleSheet(f"color:{color}")
+
 
     @classmethod
     def oi_set_abbreviation(cls, value):
@@ -452,17 +497,19 @@ class Object(som_gui.core.tool.Object):
     def oi_fill_properties(cls, mode: int):
         prop: ObjectProperties = cls.get_properties()
         info_properties = prop.object_info_widget_properties
+        obj = prop.active_object
         info_properties.focus_object = prop.active_object
-        info_properties.ident_value = info_properties.focus_object.ident_value
+        info_properties.ident_value = obj.ident_value
         info_properties.mode = mode
 
-        info_properties.abbreviation = info_properties.focus_object.abbreviation
-        info_properties.is_group = info_properties.focus_object.is_concept
-        info_properties.name = info_properties.focus_object.name
-        info_properties.ifc_mappings = list(info_properties.focus_object.ifc_mapping)
-        if not info_properties.focus_object.is_concept:
-            info_properties.pset_name = info_properties.focus_object.ident_attrib.property_set.name
-            info_properties.attribute_name = info_properties.focus_object.ident_attrib.name
+        for plugin in prop.object_info_plugin_list:
+            info_properties.plugin_infos[plugin.key] = plugin.init_value_getter(obj)
+        info_properties.is_group = obj.is_concept
+        info_properties.name = obj.name
+        info_properties.ifc_mappings = list(obj.ifc_mapping)
+        if not obj.is_concept:
+            info_properties.pset_name = obj.ident_attrib.property_set.name
+            info_properties.attribute_name = obj.ident_attrib.name
 
     @classmethod
     def oi_update_dialog(cls):
@@ -470,7 +517,6 @@ class Object(som_gui.core.tool.Object):
         dialog = prop.object_info_widget
         info_prop = prop.object_info_widget_properties
         dialog.widget.line_edit_name.setText(info_prop.name)
-        dialog.widget.line_edit_abbreviation.setText(info_prop.abbreviation)
         dialog.widget.button_gruppe.setChecked(info_prop.is_group)
         active_object = prop.active_object
         dialog.widget.combo_box_pset.clear()
@@ -481,6 +527,10 @@ class Object(som_gui.core.tool.Object):
             dialog.widget.line_edit_attribute_value.setText(info_prop.ident_value)
         for mapping in info_prop.ifc_mappings:
             cls.add_ifc_mapping(mapping)
+
+        for plugin in prop.object_info_plugin_list:
+            plugin.widget_value_setter(info_prop.plugin_infos.get(plugin.key))
+
 
     @classmethod
     def add_ifc_mapping(cls, mapping):
@@ -517,26 +567,48 @@ class Object(som_gui.core.tool.Object):
         return item.object
 
     @classmethod
-    def fill_object_entry(cls, obj: SOMcreator.Object):
-
-        window: MainWindow = som_gui.MainUi.window
-        window.ui.line_edit_object_name.setText(obj.name)
-        window.ui.line_edit_abbreviation.setText(obj.abbreviation)
-
-        ident_widgets = [window.ui.lineEdit_ident_pSet,
-                         window.ui.lineEdit_ident_attribute,
-                         window.ui.lineEdit_ident_value, ]
+    def fill_object_property_set_line_edit(cls, line_edit: QLineEdit, obj: SOMcreator.Object, ):
         if obj.is_concept:
-
-            ident_values = ["", "", ""]
+            line_edit.setText("")
+            line_edit.setEnabled(False)
+            return
         else:
-            ident_values = [obj.ident_attrib.property_set.name,
-                            obj.ident_attrib.name,
-                            obj.ident_value]
+            line_edit.setEnabled(True)
 
-        for widget, value in zip(ident_widgets, ident_values):
-            widget.setText(value)
-            widget.setDisabled(obj.is_concept)
+        if not obj.ident_attrib:
+            line_edit.setText("")
+            return
+        if not obj.ident_attrib.property_set:
+            line_edit.setText("")
+            return
+        line_edit.setText(obj.ident_attrib.property_set.name)
+
+    @classmethod
+    def fill_object_attribute_line_edit(cls, line_edit: QLineEdit, obj: SOMcreator.Object):
+        if obj.is_concept:
+            line_edit.setText("")
+            line_edit.setEnabled(False)
+            return
+        else:
+            line_edit.setEnabled(True)
+
+        if not obj.ident_attrib:
+            line_edit.setText("")
+            return
+        line_edit.setText(obj.ident_attrib.name)
+
+    @classmethod
+    def add_object_activate_function(cls, func: Callable):
+        cls.get_properties().object_activate_functions.append(func)
+
+    @classmethod
+    def add_objects_infos_add_function(cls, key: str, getter_function: Callable):
+        cls.get_properties().object_add_infos_functions.append((key, getter_function))
+
+    @classmethod
+    def fill_object_entry(cls, obj: SOMcreator.Object):
+        for func in cls.get_properties().object_activate_functions:
+            func(obj)
 
     @classmethod
     def set_active_object(cls, obj: SOMcreator.Object):
@@ -547,11 +619,18 @@ class Object(som_gui.core.tool.Object):
     @classmethod
     def update_check_state(cls, item: QTreeWidgetItem):
         obj: SOMcreator.Object = cls.get_object_from_item(item)
-        obj.optional = True if item.checkState(3) == Qt.CheckState.Checked else False
+        values = [[getter_func(obj), setter_func] for n, getter_func, setter_func in cls.get_properties().column_List]
+        for column, [value, setter_func] in enumerate(values):
+            if setter_func is not None:
+                setter_func(item, column)
+
+
+
+
 
     @classmethod
     def get_object_tree(cls) -> ObjectTreeWidget:
-        return som_gui.MainUi.ui.tree_object
+        return tool.MainWindow.get_object_tree_widget()
 
     @classmethod
     def create_item(cls, obj: SOMcreator.Object):
@@ -559,20 +638,24 @@ class Object(som_gui.core.tool.Object):
         item.object = obj  # item.setData(0,obj) leads to recursion bug so allocating directly
         item.setText(0, obj.name)
         item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsSelectable)
-        item.setCheckState(3, Qt.CheckState.Unchecked)
+        values = [getter_func(obj) for n, getter_func, setter_func in cls.get_properties().column_List]
+        for column, value in enumerate(values):
+            if isinstance(value, bool):
+                item.setCheckState(column, Qt.CheckState.Unchecked)
         return item
 
     @classmethod
     def update_item(cls, item: QTreeWidgetItem, obj: SOMcreator.Object):
-        values = [obj.name, obj.ident_value, obj.abbreviation]
+        values = [getter_func(obj) for n, getter_func, setter_func in cls.get_properties().column_List]
 
         for column, value in enumerate(values):
-            if item.text(column) != value:
-                item.setText(column, value)
+            if isinstance(value, bool):
+                cs = Qt.CheckState.Checked if value else Qt.CheckState.Unchecked
+                if item.checkState(column) != cs:
+                    item.setCheckState(column, cs)
 
-        cs = Qt.CheckState.Checked if obj.optional else Qt.CheckState.Unchecked
-        if item.checkState(3) != cs:
-            item.setCheckState(3, cs)
+            elif item.text(column) != value:
+                item.setText(column, value)
 
     @classmethod
     def fill_object_tree(cls, objects: set[SOMcreator.Object], parent_item: QTreeWidgetItem) -> None:
@@ -595,8 +678,7 @@ class Object(som_gui.core.tool.Object):
             cls.fill_object_tree(set(obj.children), item)
 
     @classmethod
-    def clear_object_input(cls):
-        ui = som_gui.MainUi.ui
+    def clear_object_input(cls, ui):
         obj_line_edit_list = [
             ui.line_edit_object_name,
             ui.lineEdit_ident_value,
@@ -606,3 +688,12 @@ class Object(som_gui.core.tool.Object):
         ]
         for el in obj_line_edit_list:
             el.clear()
+
+    @classmethod
+    def add_object_creation_check(cls, key, check_function):
+        cls.get_properties().object_add_checks.append((key, check_function))
+
+    @classmethod
+    def set_object_optional_by_tree_item_state(cls, item: QTreeWidgetItem, column_index: int):
+        obj = cls.get_object_from_item(item)
+        obj.optional = True if item.checkState(column_index) == Qt.CheckState.Checked else False

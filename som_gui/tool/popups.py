@@ -32,7 +32,7 @@ class Popups(som_gui.core.tool.Popups):
     @classmethod
     def _request_text_input(cls, title: str, request_text, prefill, parent=None):
         if parent is None:
-            parent = som_gui.MainUi.window
+            parent = tool.MainWindow.get()
         answer = QInputDialog.getText(parent, title, request_text,
                                       QLineEdit.EchoMode.Normal,
                                       prefill)
@@ -71,6 +71,16 @@ class Popups(som_gui.core.tool.Popups):
         msg_box.setText(text)
         msg_box.setWindowTitle(title)
         msg_box.setIcon(QMessageBox.Icon.Warning)
+        msg_box.setWindowIcon(icon)
+        msg_box.exec()
+
+    @classmethod
+    def create_info_popup(cls, text, title="Info"):
+        icon = get_icon()
+        msg_box = QMessageBox()
+        msg_box.setText(text)
+        msg_box.setWindowTitle(title)
+        msg_box.setIcon(QMessageBox.Icon.Information)
         msg_box.setWindowIcon(icon)
         msg_box.exec()
 
@@ -129,7 +139,8 @@ class Popups(som_gui.core.tool.Popups):
 
     @classmethod
     def get_save_path(cls, base_path: str):
-        return QFileDialog.getSaveFileName(som_gui.MainUi.window, "Save Project", base_path, FILETYPE)[0]
+        window = tool.MainWindow.get()
+        return QFileDialog.getSaveFileName(window, "Save Project", base_path, FILETYPE)[0]
 
     @classmethod
     def request_property_set_merge(cls, name: str, mode):
@@ -169,3 +180,7 @@ class Popups(som_gui.core.tool.Popups):
         msg_box.setWindowTitle(" ")
         msg_box.setIcon(QMessageBox.Icon.Warning)
         msg_box.exec()
+
+    @classmethod
+    def req_export_pset_name(cls, parent_window):
+        return QInputDialog.getText(parent_window, "PropertySet name", "What's the name of the Export PropertySet?")

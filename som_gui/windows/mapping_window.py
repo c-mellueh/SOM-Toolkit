@@ -7,13 +7,13 @@ from PySide6.QtCore import Qt, QPoint
 from PySide6.QtWidgets import QTreeWidgetItem, QMenu, QMainWindow, QFileDialog
 from SOMcreator import classes, revit, json_constants, value_constants
 
-from .. import icons
-from ..qt_designs import ui_mapping_window
-from ..widgets import object_widget
-from ..windows import popups
+from som_gui import icons
+from som_gui.qt_designs import ui_mapping_window
+from som_gui.widgets import object_widget
+from som_gui.windows import popups
 
 if TYPE_CHECKING:
-    from ..main_window import MainWindow
+    from som_gui.module.main_window.ui import MainWindow
 
 
 class MappingWindow(QMainWindow):

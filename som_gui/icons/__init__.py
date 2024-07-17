@@ -23,14 +23,22 @@ def get_reload_icon() -> QIcon:
     return QIcon(icon_path)
 
 
+def get_add_icon() -> QIcon:
+    icon_path = os.path.join(ICON_PATH, ICON_DICT["add"])
+    return QIcon(icon_path)
+
+
 def get_search_icon() -> QIcon:
     icon_path = os.path.join(ICON_PATH, ICON_DICT["search"])
     return QIcon(icon_path)
 
 
 ICON_PATH = os.path.dirname(__file__)
-ICON_DICT = {"icon": "icon.ico",
-             "link": "link.png",
-             "reload": "reload.svg",
-             "search": "search.png",
-             "settings": "setting.png"}
+ICON_DICT = {
+    "icon":     "icon.ico",
+    "link":     "link.png",
+    "reload":   "reload.svg",
+    "search":   "search.png",
+    "settings": "setting.png",
+    "add":      "add.png"
+}

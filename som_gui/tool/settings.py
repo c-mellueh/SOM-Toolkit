@@ -98,3 +98,27 @@ class Settings(som_gui.core.tool.Settings):
     @classmethod
     def set_issue_path(cls, path) -> None:
         cls._set_path(ISSUE_PATH, path)
+
+    @classmethod
+    def get_group_folder(cls) -> str:
+        return cls._get_path(GROUP_FOLDER)
+
+    @classmethod
+    def set_group_folder(cls, value) -> None:
+        cls._set_path(GROUP_FOLDER, value)
+
+    @classmethod
+    def set_group_pset(cls, value: str) -> None:
+        settings.set_setting(IFC_MOD, GROUP_PSET, value)
+
+    @classmethod
+    def set_group_attribute(cls, value: str) -> None:
+        settings.set_setting(IFC_MOD, GROUP_ATTRIBUTE, value)
+
+    @classmethod
+    def get_group_pset(cls, ) -> str:
+        return settings._get_string_setting(IFC_MOD, GROUP_PSET)
+
+    @classmethod
+    def get_group_attribute(cls, ) -> str:
+        return settings._get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)

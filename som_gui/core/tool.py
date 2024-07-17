@@ -50,9 +50,9 @@ class AttributeTable:
 
     def add_parent_of_selected_attribute(self): pass
 
-    def delete_selected_attribute(self): pass
+    def delete_selected_attributes(self): pass
 
-    def edit_attribute_name(self): pass
+    def edit_selected_attribute_name(self): pass
 
     def format_attribute_table_value(self, item, value): pass
 
@@ -130,7 +130,7 @@ class MainWindow:
 
     def get_app(self): pass
 
-    def get_main_menu_properties(self): pass
+    def get_properties(self): pass
 
     def get_menu_bar(self): pass
 
@@ -158,7 +158,6 @@ class Modelcheck:
 
     def build_data_dict(self, check_state_dict): pass
 
-    def build_group_structure(self, ifc): pass
 
     def build_ident_dict(self, objects): pass
 
@@ -206,7 +205,6 @@ class Modelcheck:
 
     def get_active_guid(self): pass
 
-    def get_allowed_parents(self, obj): pass
 
     def get_attribute_value(self, entity, pset_name, attribute_name): pass
 
@@ -248,7 +246,6 @@ class Modelcheck:
 
     def get_root_groups(self, ifc): pass
 
-    def get_sub_entities(self, entity): pass
 
     def guid_issue(self, guid, file1, file2): pass
 
@@ -264,7 +261,6 @@ class Modelcheck:
 
     def is_attribute_existing(self, entity, pset_name, attribute_name): pass
 
-    def is_parent_allowed(self, entity, parent_entity): pass
 
     def is_pset_existing(self, entity, pset_name): pass
 
@@ -273,8 +269,6 @@ class Modelcheck:
     def iterate_group_structure(self, entity): pass
 
     def list_issue(self, guid, attribute, element_type, value): pass
-
-    def no_group_issue(self, element): pass
 
     def parent_issue(self, element, parent_element): pass
 
@@ -318,7 +312,6 @@ class Modelcheck:
 
     def set_sub_entities(self, entity, sub_entities): pass
 
-    def subelements_have_doubling_identifier(self, entity): pass
 
     def subgroup_issue(self, child_ident): pass
 
@@ -492,11 +485,11 @@ class Object:
 
     def change_object_info(self, obj, data_dict): pass
 
-    def check_object_creation_imput(self, data_dict): pass
+    def check_object_creation_input(self, data_dict): pass
 
     def clear_context_menu_list(self): pass
 
-    def clear_object_input(self): pass
+    def clear_object_input(self, ui): pass
 
     def collapse_selection(self): pass
 
@@ -559,8 +552,6 @@ class Object:
     def group_selection(self): pass
 
     def handle_attribute_issue(self, result): pass
-
-    def is_abbreviation_allowed(self, abbreviation, ignore): pass
 
     def is_identifier_allowed(self, identifier, ignore): pass
 
@@ -868,7 +859,7 @@ class Project:
 
     def get_project_phase_name_list(self): pass
 
-    def get_project_properties(self): pass
+    def get_properties(self): pass
 
     def get_project_version(self): pass
 
@@ -1149,3 +1140,11 @@ class Settings:
     def set_seperator(self, value): pass
 
     def set_seperator_status(self, value): pass
+
+
+class Util:
+    pass
+
+
+class Exports:
+    pass

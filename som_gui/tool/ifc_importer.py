@@ -10,8 +10,8 @@ import som_gui
 from som_gui import tool
 import som_gui.core.tool
 from som_gui.module.ifc_importer import ui
-from PySide6.QtCore import QThreadPool, QObject, Signal, QRunnable
-from PySide6.QtWidgets import QFileDialog, QSpacerItem
+from PySide6.QtCore import QThreadPool, QObject, Signal, QRunnable, QSize
+from PySide6.QtWidgets import QFileDialog, QPushButton, QSizePolicy, QLineEdit, QLabel
 
 if TYPE_CHECKING:
     from som_gui.module.ifc_importer.prop import IfcImportProperties
@@ -19,20 +19,6 @@ if TYPE_CHECKING:
 
 
 class IfcImporter(som_gui.core.tool.IfcImporter):
-    @classmethod
-    def set_close_button_text(cls, text, widget: ui.IfcImportWidget) -> None:
-        widget.widget.button_close.setText(text)
-
-    @classmethod
-    def set_run_button_enabled(cls, value: bool, widget: ui.IfcImportWidget) -> None:
-        widget.widget.button_run.setEnabled(value)
-
-    @classmethod
-    def read_inputs(cls, widget: ui.IfcImportWidget):
-        ifc_paths = cls.get_ifc_paths(widget)
-        main_pset, main_attribute = cls.get_main_pset(widget), cls.get_main_attribute(widget)
-        return [ifc_paths, main_pset, main_attribute]
-
     @classmethod
     def check_inputs(cls, ifc_paths, main_pset, main_attribute):
         for path in ifc_paths:
@@ -116,13 +102,14 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         return widget
 
     @classmethod
-    def create_runner(cls, path: os.PathLike | str):
+    def create_runner(cls, status_label: QLabel, path: os.PathLike | str):
         class IfcImportRunner(QRunnable):
-            def __init__(self, path: os.PathLike | str):
+            def __init__(self, path: os.PathLike | str, status_label: QLabel):
                 super(IfcImportRunner, self).__init__()
                 self.path = path
                 self.ifc: ifcopenshell.file | None = None
                 self.signaller = Signaller()
+                self.status_label = status_label
 
             def run(self):
                 self.signaller.started.emit()
@@ -136,7 +123,7 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
         if not os.path.exists(path):
             return
-        return IfcImportRunner(path)
+        return IfcImportRunner(path, status_label)
 
     @classmethod
     def fill_main_attribute(cls, widget: ui.IfcImportWidget, pset: str, attribute: str):
@@ -147,5 +134,14 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         widget.widget.line_edit_ident_attribute.setText(attribute)
 
     @classmethod
-    def hide_buttons(cls, widget: ui.IfcImportWidget):
-        widget.widget.button_widget.hide()
+    def create_export_line(cls, widget: ui.IfcImportWidget) -> tuple[QPushButton, QLineEdit]:
+        export_line_edit = QLineEdit()
+        export_line_edit.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Maximum))
+        widget.widget.gridLayout.addWidget(QLabel("Export Pfad"), 5, 0, 1, 2)
+        widget.widget.gridLayout.addWidget(export_line_edit, 6, 0, 1, 2)
+        export_button = QPushButton()
+        export_button.setMaximumSize(QSize(25, 16777215))
+        widget.widget.gridLayout.addWidget(export_button, 6, 2, 1, 1)
+        export_button.show()
+        export_button.setText("...")
+        return export_button, export_line_edit

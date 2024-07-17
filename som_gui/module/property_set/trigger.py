@@ -9,8 +9,9 @@ if TYPE_CHECKING:
 
 
 def connect():
-    table: PsetTableWidget = som_gui.MainUi.ui.table_pset
-    table.itemSelectionChanged.connect(lambda: core.pset_selection_changed(tool.PropertySet, tool.AttributeTable))
+    table: PsetTableWidget = tool.MainWindow.get_property_set_table_widget()
+    table.itemSelectionChanged.connect(
+        lambda: core.pset_selection_changed(tool.PropertySet, tool.AttributeTable, tool.MainWindow))
     table.itemDoubleClicked.connect(
         lambda: core.table_double_clicked(tool.PropertySet, tool.AttributeTable, tool.PropertySetWindow))
     table.edit_started.connect(lambda: core.pset_table_edit_started(tool.PropertySet))

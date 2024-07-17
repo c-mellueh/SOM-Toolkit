@@ -20,8 +20,9 @@ class Attribute(som_gui.core.tool.Attribute):
         return attribute.child_inherits_values
 
     @classmethod
-    def delete(cls, attribute: SOMcreator.Attribute, with_subattributes=False):
-        attribute.delete(with_subattributes)
+    def delete(cls, attributes: set[SOMcreator.Attribute], with_subattributes=False):
+        for attribute in attributes:
+            attribute.delete(with_subattributes)
 
     @classmethod
     def add_attribute_data_value(cls, name: str, getter: Callable, setter: Callable):
