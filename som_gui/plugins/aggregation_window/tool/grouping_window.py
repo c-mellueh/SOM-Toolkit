@@ -138,14 +138,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
             return False
         return True
 
-    @classmethod
-    def set_run_button_enabled(cls, state):
-        cls.get_properties().run_button.setEnabled(state)
 
-    @classmethod
-    def set_abort_button_text(cls, text: str):
-        button = cls.get_properties().abort_button
-        button.setText(button.tr(text))
 
     @classmethod
     def reset_abort(cls) -> None:

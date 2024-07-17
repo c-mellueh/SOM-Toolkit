@@ -15,7 +15,7 @@ class AttributeImportWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setLayout(QVBoxLayout())
-        self.setWindowTitle("Modellinformationen Einlesen")
+        self.setWindowTitle(self.tr("Modellinformationen Einlesen"))
         self.setWindowIcon(get_icon())
 
 
@@ -26,7 +26,8 @@ class AttributeImportWidget(QWidget):
         self.widget.setupUi(self)
         self.widget.button_settings.setIcon(get_settings_icon())
         self.widget.button_accept.hide()
-
+        self.setWindowTitle(self.tr("Modellinformationen Einlesen"))
+        self.setWindowIcon(get_icon())
 
 class PropertySetTable(QTableWidget):
     def __init__(self, *args, **kwargs):

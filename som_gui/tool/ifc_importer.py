@@ -145,3 +145,11 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         export_button.show()
         export_button.setText("...")
         return export_button, export_line_edit
+
+    @classmethod
+    def set_close_button_text(cls, widget: ui.IfcImportWidget, text: str):
+        widget.widget.button_close.setText(widget.tr(text))
+
+    @classmethod
+    def set_run_button_enabled(cls, widget: ui.IfcImportWidget, enabled: bool):
+        widget.widget.button_run.setEnabled(enabled)

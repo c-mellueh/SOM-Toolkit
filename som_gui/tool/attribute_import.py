@@ -36,6 +36,24 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         return som_gui.AttributeImportProperties
 
     @classmethod
+    def connect_import_buttons(cls):
+        trigger.connect_import_buttons(cls.get_properties().run_button, cls.get_properties().abort_button)
+
+    @classmethod
+    def add_attribute_import_widget_to_window(cls, attribute_import_widget):
+        cls.get_window().layout().addWidget(attribute_import_widget)
+        attribute_import_widget.hide()
+
+    @classmethod
+    def add_ifc_importer_to_window(cls, ifc_importer):
+        cls.get_properties().ifc_importer = ifc_importer
+        cls.get_properties().ifc_button = ifc_importer.widget.button_ifc
+        cls.get_properties().run_button = ifc_importer.widget.button_run
+        cls.get_properties().abort_button = ifc_importer.widget.button_close
+        cls.get_properties().status_label = ifc_importer.widget.label_status
+        cls.get_window().layout().addWidget(ifc_importer)
+
+    @classmethod
     def is_window_allready_build(cls) -> bool:
         return cls.get_attribute_widget() is not None
 
@@ -60,28 +78,13 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         return prop.attribute_import_widget
 
     @classmethod
-    def set_ifc_importer_widget(cls, widget: IfcImportWidget):
-        cls.get_properties().ifc_import_widget = widget
-
-    @classmethod
     def get_ifc_import_widget(cls):
-        return cls.get_properties().ifc_import_widget
+        return cls.get_properties().ifc_importer
 
-    @classmethod
-    def get_buttons(cls):
-        window = cls.get_attribute_widget()
-        ifc_importer = cls.get_ifc_import_widget()
-
-        run_button = ifc_importer.widget.button_run
-        abort_button = ifc_importer.widget.button_close
-
-        accept_button = window.widget.button_accept
-        close_button = window.widget.button_abort
-        return [run_button, abort_button, accept_button, close_button]
 
     @classmethod
     def connect_buttons(cls, button_list: list[QPushButton]):
-        trigger.connect_buttons(*button_list)
+        trigger.connect_import_buttons(*button_list)
 
     @classmethod
     def set_main_pset(cls, main_pset_name: str) -> None:
@@ -109,7 +112,8 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def create_import_runner(cls, ifc_import_path: str) -> QRunnable:
-        runner = tool.IfcImporter.create_runner(ifc_import_path)
+        status_label = cls.get_ifc_import_widget().widget.label_status
+        runner = tool.IfcImporter.create_runner(status_label, ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner
 

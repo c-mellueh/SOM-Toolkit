@@ -6,16 +6,12 @@ from som_gui.core import attribute_import as core
 
 def connect():
     tool.MainWindow.add_action("Modelle/Modellinformationen Einlesen21",
-                               lambda: core.open_window(tool.AttributeImport, tool.IfcImporter))
+                               lambda: core.open_import_window(tool.AttributeImport, tool.IfcImporter))
 
 
-def connect_buttons(run_button: QPushButton, abort_button: QPushButton, accept_button: QPushButton,
-                    close_button: QPushButton):
+def connect_import_buttons(run_button: QPushButton, abort_button: QPushButton):
     run_button.clicked.connect(lambda: core.run_clicked(tool.AttributeImport, tool.IfcImporter))
-    accept_button.clicked.connect(lambda: core.accept_clicked())
     abort_button.clicked.connect(lambda: core.abort_clicked())
-    close_button.clicked.connect(lambda: core.close_clicked())
-
 
 def connect_ifc_import_runner(runner):
     runner.signaller.started.connect(lambda: core.ifc_import_started(runner, tool.AttributeImport, tool.IfcImporter))

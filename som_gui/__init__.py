@@ -31,6 +31,7 @@ modules = {
     "ifc_importer":            [None, "ifc_importer"],
     "util":                    [None, "util"],
     "exports": [None, "exports"],
+    "attribute_import": [None, "attribute_import"],
 }
 plugins_dict = {
     "aggregation_window": {

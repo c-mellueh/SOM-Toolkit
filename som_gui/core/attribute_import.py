@@ -9,34 +9,36 @@ if TYPE_CHECKING:
 import time
 
 
-def open_window(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
+def open_import_window(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
     if attribute_import.is_window_allready_build():
         attribute_import.get_attribute_widget().show()
         return
 
     window = attribute_import.create_window()
-    attribute_import_widget = attribute_import.create_import_widget()
     ifc_import_widget = ifc_importer.create_importer()
-    window.layout().addWidget(ifc_import_widget)
-    window.layout().addWidget(attribute_import_widget)
-    attribute_import_widget.hide()
-
-    attribute_import.set_ifc_importer_widget(ifc_import_widget)
-    attribute_import.connect_buttons(attribute_import.get_buttons())
+    attribute_import.add_ifc_importer_to_window(ifc_import_widget)
+    attribute_import.connect_import_buttons()
     window.show()
+
+
+def open_results_window(attribute_import: Type[tool.AttributeImport]):
+    attribute_import_widget = attribute_import.create_import_widget()
+    attribute_import_widget.show()
 
 
 def run_clicked(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
     ifc_import_widget = attribute_import.get_ifc_import_widget()
-    ifc_paths, main_pset_name, main_attribute_name = ifc_importer.read_inputs(ifc_import_widget)
+    ifc_paths = ifc_importer.get_ifc_paths(ifc_import_widget)
+    main_pset_name = ifc_importer.get_main_pset(ifc_import_widget)
+    main_attribute_name = ifc_importer.get_main_attribute(ifc_import_widget)
 
     if not ifc_importer.check_inputs(ifc_paths, main_pset_name, main_attribute_name):
         return
 
     attribute_import.reset_abort()
 
-    ifc_importer.set_run_button_enabled(False, ifc_import_widget)
-    ifc_importer.set_close_button_text("Abbrechen", ifc_import_widget)
+    ifc_importer.set_run_button_enabled(ifc_import_widget, False)
+    ifc_importer.set_close_button_text(ifc_import_widget, "Abbrechen")
     attribute_import.set_main_pset(main_pset_name)
     attribute_import.set_main_attribute(main_attribute_name)
     pool = ifc_importer.create_thread_pool()
@@ -97,9 +99,10 @@ def ifc_import_finished(runner, attribute_import: Type[tool.AttributeImport], if
 
 
 def start_attribute_import(file: ifcopenshell.file, attribute_import: Type[tool.AttributeImport]):
+    for i in range(100):
+        print(f"Hier {i}")
+
     pass
-
-
 
 
 def attribute_import_finished(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
@@ -107,20 +110,19 @@ def attribute_import_finished(attribute_import: Type[tool.AttributeImport], ifc_
 
     if attribute_import.is_aborted():
         ifc_importer.set_progressbar_visible(ifc_import_widget, False)
-        ifc_importer.set_close_button_text(f"Close", ifc_import_widget)
-        ifc_importer.set_run_button_enabled(False, ifc_import_widget)
+        ifc_importer.set_close_button_text(ifc_import_widget, "Close")
+        ifc_importer.set_run_button_enabled(ifc_import_widget, True)
         return
 
     time.sleep(0.2)
     if not attribute_import.attribute_import_is_running():
+        ifc_importer.set_close_button_text(ifc_import_widget, f"Close")
+        ifc_importer.set_run_button_enabled(ifc_import_widget, True)
         attribute_import.last_import_finished()
-        ifc_importer.set_close_button_text(f"Close", ifc_import_widget)
-        ifc_importer.set_run_button_enabled(True, ifc_import_widget)
     else:
         logging.info(f"Prüfung von Datei abgeschlossen, nächste Datei ist dran.")
 
 
 def last_import_finished(attribute_import: Type[tool.AttributeImport]):
-    pass
-
-
+    attribute_import.get_window().close()
+    open_results_window(attribute_import)
