@@ -1,6 +1,7 @@
 from . import prop, trigger, window, settings_window, ui
 import som_gui
 
+ALL = "Alles"
 
 def register():
     som_gui.AttributeImportProperties = prop.AttributeImportProperties()

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QDialog, QTableWidget
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QDialog, QTableWidget, QComboBox
 from som_gui.module import attribute_import
 from ...icons import get_icon, get_settings_icon
 
@@ -38,6 +38,31 @@ class PropertySetTable(QTableWidget):
         attribute_import.trigger.paint_property_set_table()
 
 
+class TypeComboBox(QComboBox):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def paintEvent(self, e):
+        super().paintEvent(e)
+        attribute_import.trigger.type_combobox_paint_event()
+
+
+class IfcTypeComboBox(QComboBox):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def paintEvent(self, e):
+        super().paintEvent(e)
+        attribute_import.trigger.ifctype_combobox_paint_event()
+
+
+class SOMTypeComboBox(QComboBox):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def paintEvent(self, e):
+        super().paintEvent(e)
+        attribute_import.trigger.somtype_combobox_paint_event()
 class AttributeTable(QTableWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

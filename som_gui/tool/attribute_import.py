@@ -7,7 +7,7 @@ import som_gui.core.tool
 import som_gui
 from som_gui.module.attribute_import import ui, trigger
 from som_gui import tool
-from PySide6.QtWidgets import QPushButton
+from PySide6.QtWidgets import QComboBox, QPushButton
 from PySide6.QtCore import QRunnable, QObject, Signal, QThreadPool
 import ifcopenshell
 from ifcopenshell.util import element as ifc_element_util
@@ -49,6 +49,34 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         trigger.connect_import_buttons(cls.get_properties().run_button, cls.get_properties().abort_button)
 
     @classmethod
+    def get_ifctype_combo_box(cls) -> QComboBox:
+        return cls.get_properties().ifc_combobox
+
+    @classmethod
+    def get_somtype_combo_box(cls) -> QComboBox:
+        return cls.get_properties().som_combobox
+
+    @classmethod
+    def update_combobox(cls, combobox: QComboBox, allowed_values: set[str]):
+        existing_ifc_types = set(tool.Util.get_combobox_values(combobox))
+        add_items = allowed_values.difference(existing_ifc_types)
+        delete_items = existing_ifc_types.difference(allowed_values)
+        combobox.addItems(list(add_items))
+        for item in delete_items:
+            combobox.removeItem(combobox.findText(item))
+        if add_items or delete_items:
+            combobox.model().sort(0)
+
+    @classmethod
+    def get_all_keyword(cls) -> str:
+        return cls.get_properties().all_keyword
+
+    @classmethod
+    def format_somtypes(cls, som_types: set[str], object_list: list[SOMcreator.Object]):
+        object_dict = {obj.ident_value: obj.name for obj in object_list}
+        return {f"{object_dict.get(som_type)} ({som_type})" for som_type in som_types}
+
+    @classmethod
     def set_ifc_path(cls, path):
         cls.get_properties().ifc_path = path
 
@@ -88,7 +116,11 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
     def create_import_widget(cls) -> ui.AttributeImportWidget:
         prop = cls.get_properties()
-        prop.attribute_import_widget = ui.AttributeImportWidget()
+        widget = ui.AttributeImportWidget()
+        prop.attribute_import_widget = widget
+        prop.ifc_combobox = widget.widget.combo_box_group
+        prop.som_combobox = widget.widget.combo_box_name
+
         return prop.attribute_import_widget
 
     @classmethod
@@ -328,3 +360,42 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         logging.info(f"Datatype getter for {value.is_a()} is not defined")
         return None
         # ToDo: add different Value Types
+
+    @classmethod
+    def get_wanted_ifc_types(cls):
+        cls.connect_to_data_base(cls.get_database_path())
+        cursor = cls.get_cursor()
+        cursor.execute('''
+            SELECT DISTINCT ifc_type
+            FROM entities
+            WHERE bauteilKlassifikation IS NOT '';
+        ''')
+        ifc_type_list = cursor.fetchall()
+        ifc_type_list = [item[0] for item in ifc_type_list]
+        cls.disconnect_from_database()
+        return ifc_type_list
+
+    @classmethod
+    def get_identifier_types(cls, ifc_type: str, all_keyword: str) -> list[str]:
+        cls.connect_to_data_base(cls.get_database_path())
+        cursor = cls.get_cursor()
+        if ifc_type == all_keyword:
+            cursor.execute('''
+                SELECT DISTINCT bauteilKlassifikation
+                FROM entities
+                WHERE bauteilKlassifikation IS NOT '';
+            ''')
+            identifier_list = cursor.fetchall()
+            identifier_list = [item[0] for item in identifier_list]
+
+        else:
+            cursor.execute(f'''
+            SELECT DISTINCT bauteilKlassifikation
+            FROM entities
+            WHERE bauteilKlassifikation IS NOT "" AND ifc_type IS "{ifc_type}";
+            ''')
+            identifier_list = cursor.fetchall()
+            identifier_list = [item[0] for item in identifier_list]
+
+        cls.disconnect_from_database()
+        return identifier_list

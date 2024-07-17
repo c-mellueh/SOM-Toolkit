@@ -3,7 +3,7 @@ from typing import Callable, TYPE_CHECKING
 import os, tempfile
 from PySide6.QtCore import QFile
 from PySide6.QtGui import QAction, QShortcut, QKeySequence
-from PySide6.QtWidgets import QMenu, QMenuBar, QWidget
+from PySide6.QtWidgets import QMenu, QMenuBar, QWidget, QComboBox
 import som_gui.core.tool
 import re
 if TYPE_CHECKING:
@@ -114,3 +114,8 @@ class Util(som_gui.core.tool.Util):
             return re.sub(r"([A-Z])", lambda m: m.group(0) + u"\u200B", guid)
         else:
             return guid
+
+    @classmethod
+    def get_combobox_values(cls, combo_box: QComboBox):
+        count = combo_box.count()
+        return [combo_box.itemText(i) for i in range(count)]

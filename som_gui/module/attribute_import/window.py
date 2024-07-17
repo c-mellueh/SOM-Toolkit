@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'AttributeImport.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.0
+## Created by: Qt User Interface Compiler version 6.7.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,12 +15,13 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QFont, QFontDatabase, QGradient, QIcon,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComboBox,
-                               QHBoxLayout, QHeaderView, QLabel, QLayout,
-                               QPushButton, QSizePolicy, QSpacerItem, QSplitter,
-                               QTableWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QHBoxLayout,
+                               QHeaderView, QLabel, QLayout, QPushButton,
+                               QSizePolicy, QSpacerItem, QSplitter, QTableWidgetItem,
+                               QVBoxLayout, QWidget)
 
-from som_gui.module.attribute_import.ui import (AttributeTable, PropertySetTable, ValueTable)
+from som_gui.module.attribute_import.ui import (AttributeTable, IfcTypeComboBox, PropertySetTable, SOMTypeComboBox,
+                                                ValueTable)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -39,12 +40,12 @@ class Ui_Form(object):
         self.horizontal_layout_buttons = QHBoxLayout()
         self.horizontal_layout_buttons.setObjectName(u"horizontal_layout_buttons")
         self.horizontal_layout_buttons.setSizeConstraint(QLayout.SetDefaultConstraint)
-        self.combo_box_group = QComboBox(Form)
+        self.combo_box_group = IfcTypeComboBox(Form)
         self.combo_box_group.setObjectName(u"combo_box_group")
 
         self.horizontal_layout_buttons.addWidget(self.combo_box_group)
 
-        self.combo_box_name = QComboBox(Form)
+        self.combo_box_name = SOMTypeComboBox(Form)
         self.combo_box_name.setObjectName(u"combo_box_name")
 
         self.horizontal_layout_buttons.addWidget(self.combo_box_name)

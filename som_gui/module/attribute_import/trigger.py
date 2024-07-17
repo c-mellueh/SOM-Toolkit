@@ -49,3 +49,11 @@ def last_import_finished():
 def start_attribute_import(file: ifcopenshell.file, path: str):
     core.start_attribute_import(file, path, tool.AttributeImport, tool.AttributeImportSQL)
     pass
+
+
+def somtype_combobox_paint_event():
+    core.update_somtype_combobox(tool.AttributeImport, tool.AttributeImportSQL, tool.Project)
+
+
+def ifctype_combobox_paint_event():
+    core.update_ifctype_combobox(tool.AttributeImport, tool.AttributeImportSQL, tool.Project)

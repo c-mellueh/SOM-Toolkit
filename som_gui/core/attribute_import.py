@@ -3,10 +3,12 @@ from typing import Type, TYPE_CHECKING
 import os
 import logging
 import ifcopenshell
+
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.tool.ifc_importer import IfcImportRunner
 import time
+
 
 def open_import_window(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
     if attribute_import.is_window_allready_build():
@@ -23,6 +25,28 @@ def open_import_window(attribute_import: Type[tool.AttributeImport], ifc_importe
 def open_results_window(attribute_import: Type[tool.AttributeImport]):
     attribute_import_widget = attribute_import.create_import_widget()
     attribute_import_widget.show()
+
+
+def update_ifctype_combobox(attribute_import: Type[tool.AttributeImport],
+                            attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
+    combobox = attribute_import.get_ifctype_combo_box()
+    wanted_ifc_types = set(attribute_import_sql.get_wanted_ifc_types())
+    wanted_ifc_types.add(attribute_import.get_all_keyword())
+    attribute_import.update_combobox(combobox, wanted_ifc_types)
+    update_somtype_combobox(attribute_import, attribute_import_sql, project)
+
+
+def update_somtype_combobox(attribute_import: Type[tool.AttributeImport],
+                            attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
+    combobox = attribute_import.get_somtype_combo_box()
+    ifc_type = attribute_import.get_ifctype_combo_box().currentText()
+    object_list = list(project.get().get_all_objects())
+
+    wanted_som_types = set(attribute_import_sql.get_identifier_types(ifc_type, attribute_import.get_all_keyword()))
+    wanted_som_types = attribute_import.format_somtypes(wanted_som_types, object_list)
+
+    wanted_som_types.add(attribute_import.get_all_keyword())
+    attribute_import.update_combobox(combobox, wanted_som_types)
 
 
 def run_clicked(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter],
@@ -80,6 +104,7 @@ def sql_init_database(attribute_import: Type[tool.AttributeImport], attribute_im
     attribute_import_sql.disconnect_from_database()
     attribute_import.set_progress(100)
     attribute_import.set_status(f"{status_text} {attribute_count}/{attribute_count}")
+
 
 def accept_clicked():
     pass
