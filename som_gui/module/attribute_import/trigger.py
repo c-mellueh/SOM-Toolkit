@@ -31,7 +31,7 @@ def paint_property_set_table():
 
 
 def paint_attribute_table():
-    core.paint_attribute_table()
+    core.paint_attribute_table(tool.AttributeImport, tool.AttributeImportSQL)
 
 
 def paint_value_table():

@@ -128,14 +128,36 @@ def close_clicked():
 
 def paint_property_set_table(attribute_import: Type[tool.AttributeImport],
                              attribute_import_sql: Type[tool.AttributeImportSQL]):
+    logging.debug(f"paint Pset Table")
     ifc_type = attribute_import.get_ifctype_combo_box().currentText()
     som_object = attribute_import.get_somtype_combo_box().currentData(Qt.ItemDataRole.UserRole)
     all_keyword = attribute_import.get_all_keyword()
+    if ifc_type is None or som_object is None:
+        return
     property_set_list = attribute_import_sql.get_property_sets(ifc_type, som_object, all_keyword)
-    attribute_import.update_property_set_table(set(property_set_list))
+    table_widget = attribute_import.get_pset_table()
+    attribute_import.update_table_widget(set(property_set_list), table_widget, [str, int])
 
-def paint_attribute_table():
-    pass
+
+def paint_attribute_table(attribute_import: Type[tool.AttributeImport],
+                          attribute_import_sql: Type[tool.AttributeImportSQL]):
+    logging.debug(f"paint Attribute Table")
+
+    table_widget = attribute_import.get_attribute_table()
+    ifc_type = attribute_import.get_ifctype_combo_box().currentText()
+    som_object = attribute_import.get_somtype_combo_box().currentData(Qt.ItemDataRole.UserRole)
+    if not attribute_import.get_pset_table().selectedItems():
+        table_widget.setDisabled(True)
+        table_widget.setRowCount(0)
+        return
+    else:
+        table_widget.setDisabled(False)
+    property_set = attribute_import.get_pset_table().selectedItems()[0].text()
+    all_keyword = attribute_import.get_all_keyword()
+    if ifc_type is None or som_object is None:
+        return
+    attribute_list = attribute_import_sql.get_attributes(ifc_type, som_object, property_set, all_keyword)
+    attribute_import.update_table_widget(set(attribute_list), table_widget, [str, int, int])
 
 
 def paint_value_table():

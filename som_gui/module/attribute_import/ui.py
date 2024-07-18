@@ -41,16 +41,6 @@ class PropertySetTable(QTableWidget):
         super().paintEvent(e)
         attribute_import.trigger.paint_property_set_table()
 
-
-class TypeComboBox(QComboBox):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def paintEvent(self, e):
-        super().paintEvent(e)
-        attribute_import.trigger.type_combobox_paint_event()
-
-
 class IfcTypeComboBox(QComboBox):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -70,6 +60,10 @@ class SOMTypeComboBox(QComboBox):
 class AttributeTable(QTableWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.clear()
+        self.setColumnCount(3)
+        self.setRowCount(2)
+        self.setHorizontalHeaderLabels([self.tr("Attribut"), self.tr("Anzahl"), self.tr("Eindeutig")])
 
     def paintEvent(self, e):
         super().paintEvent(e)

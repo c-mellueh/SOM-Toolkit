@@ -7,7 +7,7 @@ import som_gui.core.tool
 import som_gui
 from som_gui.module.attribute_import import ui, trigger
 from som_gui import tool
-from PySide6.QtWidgets import QComboBox, QPushButton, QTableWidgetItem
+from PySide6.QtWidgets import QComboBox, QPushButton, QTableWidgetItem, QTableWidget
 from PySide6.QtCore import QRunnable, QObject, Signal, QThreadPool, Qt
 import ifcopenshell
 from ifcopenshell.util import element as ifc_element_util
@@ -235,38 +235,43 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         return cls.get_attribute_widget().widget.table_widget_property_set
 
     @classmethod
-    def update_property_set_table(cls, allowed_property_sets: set[tuple[str, str]]):
-        table_widget = cls.get_pset_table()
-        existing_propertysets = set()
-        for row in range(table_widget.rowCount()):
-            item_name = table_widget.item(row, 0)
-            item_count = table_widget.item(row, 1)
-            if item_name is None or item_count is None:
-                continue
-            existing_propertysets.add((item_name.text(), int(item_count.text())))
+    def get_attribute_table(cls) -> ui.AttributeTable:
+        return cls.get_attribute_widget().widget.table_widget_attribute
 
-        add_items = allowed_property_sets.difference(existing_propertysets)
-        delete_items = existing_propertysets.difference(allowed_property_sets)
+    @classmethod
+    def update_table_widget(cls, allowed_values: set[tuple], table_widget: QTableWidget, datatypes: list):
+        if not allowed_values:
+            return
+        column_count = len(list(allowed_values)[0])
+
+        existing_values = set()
+        for row in range(table_widget.rowCount()):
+            items = [table_widget.item(row, col) for col in range(column_count)]
+            if None in items:
+                continue
+            existing_values.add(tuple(dt(item.text()) for item, dt in zip(items, datatypes)))
+
+        add_items = allowed_values.difference(existing_values)
+        delete_items = existing_values.difference(allowed_values)
         if not (add_items or delete_items):
             return
+
         table_widget.setSortingEnabled(False)
         old_row_count = table_widget.rowCount()
         table_widget.setRowCount(old_row_count + len(add_items))
-        for row_position, (pset_text, count) in enumerate(add_items, start=old_row_count):
-            table_widget.setItem(row_position, 0, QTableWidgetItem(pset_text))
-            count_item = QTableWidgetItem()
-            count_item.setData(Qt.ItemDataRole.EditRole, count)
-            table_widget.setItem(row_position, 1, count_item)
+        for row, values in enumerate(add_items, start=old_row_count):
+            for col, value in enumerate(values):
+                item = QTableWidgetItem()
+                item.setData(Qt.ItemDataRole.EditRole, value)
+                table_widget.setItem(row, col, item)
 
-        for row_index in reversed(range(table_widget.rowCount())):
-            if table_widget.item(row_index, 0) is None:
-                table_widget.removeRow(row_index)
-                print(f"remove row {row_index}")
+        for row in reversed(range(table_widget.rowCount())):
+            if table_widget.item(row, 0) is None:
+                table_widget.removeRow(row)
                 continue
-            pset_name = table_widget.item(row_index, 0).text()
-            count = int(table_widget.item(row_index, 1).text())
-            if (pset_name, count) in delete_items:
-                table_widget.removeRow(row_index)
+            tup = tuple(table_widget.item(row, col).data(Qt.ItemDataRole.EditRole) for col in range(column_count))
+            if tup in delete_items:
+                table_widget.removeRow(row)
         table_widget.resizeColumnsToContents()
         table_widget.setSortingEnabled(True)
 
@@ -459,11 +464,10 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def get_property_sets(cls, ifc_type: str, som_object: str | SOMcreator.Object, all_keyword: str) -> list[
-        tuple[str, str]]:
+        tuple[str, int]]:
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
-        ifc_type = all_keyword if ifc_type is None else ifc_type
-        som_object = all_keyword if som_object is None else som_object
+
         ifc_type_filter = f"=='{ifc_type}'" if ifc_type != all_keyword else "IS NOT ''"
         identifier_filter = f"=='{som_object.ident_value}'" if som_object != all_keyword else "IS NOT ''"
         sql_query = f'''
@@ -478,3 +482,26 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         pset_list = cursor.fetchall()
         cls.disconnect_from_database()
         return pset_list
+
+    @classmethod
+    def get_attributes(cls, ifc_type: str, som_object: str | SOMcreator.Object, property_set: str, all_keyword: str) -> \
+    list[tuple[str, int, int]]:
+        cls.connect_to_data_base(cls.get_database_path())
+        cursor = cls.get_cursor()
+        ifc_type = all_keyword if ifc_type is None else ifc_type
+        som_object = all_keyword if som_object is None else som_object
+        ifc_type_filter = f"=='{ifc_type}'" if ifc_type != all_keyword else "IS NOT ''"
+        identifier_filter = f"=='{som_object.ident_value}'" if som_object != all_keyword else "IS NOT ''"
+        sql_query = f"""
+        SELECT  DISTINCT attributes.Attribut, COUNT(attributes.Value),COUNT(DISTINCT attributes.Value)
+        FROM attributes
+        JOIN entities ON attributes.guid = entities.guid
+        WHERE entities.bauteilKlassifikation {identifier_filter}
+        AND entities.ifc_type {ifc_type_filter}
+        AND attributes.PropertySet == '{property_set}'
+        GROUP BY attributes.Attribut ;
+        """
+        cursor.execute(sql_query)
+        attribute_list = cursor.fetchall()
+        cls.disconnect_from_database()
+        return attribute_list
