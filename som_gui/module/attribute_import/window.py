@@ -103,7 +103,7 @@ class Ui_Form(object):
         self.table_widget_property_set.horizontalHeader().setHighlightSections(True)
         self.table_widget_property_set.horizontalHeader().setProperty("showSortIndicator", False)
         self.table_widget_property_set.horizontalHeader().setStretchLastSection(True)
-        self.table_widget_property_set.verticalHeader().setVisible(True)
+        self.table_widget_property_set.verticalHeader().setVisible(False)
         self.table_widget_property_set.verticalHeader().setHighlightSections(False)
 
         self.vertival_layout_pset.addWidget(self.table_widget_property_set)

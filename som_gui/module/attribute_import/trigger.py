@@ -27,7 +27,7 @@ def connect_attribute_import_runner(runner):
     runner.signaller.progress.connect(tool.ModelcheckWindow.set_progress)
 
 def paint_property_set_table():
-    core.paint_property_set_table()
+    core.paint_property_set_table(tool.AttributeImport, tool.AttributeImportSQL)
 
 
 def paint_attribute_table():
@@ -57,3 +57,7 @@ def somtype_combobox_paint_event():
 
 def ifctype_combobox_paint_event():
     core.update_ifctype_combobox(tool.AttributeImport, tool.AttributeImportSQL, tool.Project)
+
+
+def update_attribute_import_window():
+    core.update_results_window(tool.AttributeImport)

@@ -7,11 +7,10 @@ import som_gui.core.tool
 import som_gui
 from som_gui.module.attribute_import import ui, trigger
 from som_gui import tool
-from PySide6.QtWidgets import QComboBox, QPushButton
-from PySide6.QtCore import QRunnable, QObject, Signal, QThreadPool
+from PySide6.QtWidgets import QComboBox, QPushButton, QTableWidgetItem
+from PySide6.QtCore import QRunnable, QObject, Signal, QThreadPool, Qt
 import ifcopenshell
 from ifcopenshell.util import element as ifc_element_util
-
 import logging
 
 if TYPE_CHECKING:
@@ -57,6 +56,16 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         return cls.get_properties().som_combobox
 
     @classmethod
+    def connect_update_trigger(cls, attribute_widget: ui.AttributeImportWidget):
+        widget = attribute_widget.widget
+        update_trigger = trigger.update_attribute_import_window
+        widget.combo_box_name.currentIndexChanged.connect(update_trigger)
+        widget.combo_box_group.currentIndexChanged.connect(update_trigger)
+        widget.table_widget_property_set.itemSelectionChanged.connect(update_trigger)
+        widget.table_widget_attribute.itemSelectionChanged.connect(update_trigger)
+        widget.table_widget_value.itemSelectionChanged.connect(update_trigger)
+
+    @classmethod
     def update_combobox(cls, combobox: QComboBox, allowed_values: set[str]):
         existing_ifc_types = set(tool.Util.get_combobox_values(combobox))
         add_items = allowed_values.difference(existing_ifc_types)
@@ -68,13 +77,28 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
             combobox.model().sort(0)
 
     @classmethod
-    def get_all_keyword(cls) -> str:
-        return cls.get_properties().all_keyword
+    def update_som_combobox(cls, combobox: QComboBox, allowed_values: set[str], object_list: list[SOMcreator.Object]):
+        all_keyword = cls.get_all_keyword()
+        object_dict = {obj.ident_value: obj for obj in object_list}
+        allowed_objects = set(object_dict.get(v) for v in allowed_values)
+        existing_objects = {combobox.itemData(index, Qt.ItemDataRole.UserRole) for index in range(combobox.count()) if
+                            combobox.itemText(index) != all_keyword}
+        add_items = allowed_objects.difference(existing_objects)
+        delete_items = existing_objects.difference(allowed_objects)
+
+        for obj in add_items:
+            combobox.addItem(f"{obj.name} ({obj.ident_value})", userData=obj)
+        for obj in delete_items:
+            combobox.removeItem(combobox.findData(obj, Qt.ItemDataRole.UserRole))
+
+        if combobox.findText(all_keyword) == -1:
+            combobox.addItem(all_keyword, userData=all_keyword)
+        if add_items or delete_items:
+            combobox.model().sort(0)
 
     @classmethod
-    def format_somtypes(cls, som_types: set[str], object_list: list[SOMcreator.Object]):
-        object_dict = {obj.ident_value: obj.name for obj in object_list}
-        return {f"{object_dict.get(som_type)} ({som_type})" for som_type in som_types}
+    def get_all_keyword(cls) -> str:
+        return cls.get_properties().all_keyword
 
     @classmethod
     def set_ifc_path(cls, path):
@@ -179,7 +203,7 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         trigger.connect_attribute_import_runner(runner)
 
     @classmethod
-    def set_current_runner(cls, runner) -> AttributeImportRunner:
+    def set_current_runner(cls, runner: AttributeImportRunner) -> None:
         cls.get_properties().runner = runner
 
     @classmethod
@@ -205,6 +229,46 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
     def set_status(cls, text: str):
         cls.get_properties().status_label.setText(text)
+
+    @classmethod
+    def get_pset_table(cls) -> ui.PropertySetTable:
+        return cls.get_attribute_widget().widget.table_widget_property_set
+
+    @classmethod
+    def update_property_set_table(cls, allowed_property_sets: set[tuple[str, str]]):
+        table_widget = cls.get_pset_table()
+        existing_propertysets = set()
+        for row in range(table_widget.rowCount()):
+            item_name = table_widget.item(row, 0)
+            item_count = table_widget.item(row, 1)
+            if item_name is None or item_count is None:
+                continue
+            existing_propertysets.add((item_name.text(), int(item_count.text())))
+
+        add_items = allowed_property_sets.difference(existing_propertysets)
+        delete_items = existing_propertysets.difference(allowed_property_sets)
+        if not (add_items or delete_items):
+            return
+        table_widget.setSortingEnabled(False)
+        old_row_count = table_widget.rowCount()
+        table_widget.setRowCount(old_row_count + len(add_items))
+        for row_position, (pset_text, count) in enumerate(add_items, start=old_row_count):
+            table_widget.setItem(row_position, 0, QTableWidgetItem(pset_text))
+            count_item = QTableWidgetItem()
+            count_item.setData(Qt.ItemDataRole.EditRole, count)
+            table_widget.setItem(row_position, 1, count_item)
+
+        for row_index in reversed(range(table_widget.rowCount())):
+            if table_widget.item(row_index, 0) is None:
+                table_widget.removeRow(row_index)
+                print(f"remove row {row_index}")
+                continue
+            pset_name = table_widget.item(row_index, 0).text()
+            count = int(table_widget.item(row_index, 1).text())
+            if (pset_name, count) in delete_items:
+                table_widget.removeRow(row_index)
+        table_widget.resizeColumnsToContents()
+        table_widget.setSortingEnabled(True)
 
 
 class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
@@ -379,23 +443,38 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
     def get_identifier_types(cls, ifc_type: str, all_keyword: str) -> list[str]:
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
-        if ifc_type == all_keyword:
-            cursor.execute('''
+
+        ifc_type_filter = "" if ifc_type == all_keyword else f"AND ifc_type IS '{ifc_type}'"
+        sql_query = f'''
                 SELECT DISTINCT bauteilKlassifikation
                 FROM entities
-                WHERE bauteilKlassifikation IS NOT '';
-            ''')
-            identifier_list = cursor.fetchall()
-            identifier_list = [item[0] for item in identifier_list]
-
-        else:
-            cursor.execute(f'''
-            SELECT DISTINCT bauteilKlassifikation
-            FROM entities
-            WHERE bauteilKlassifikation IS NOT "" AND ifc_type IS "{ifc_type}";
-            ''')
-            identifier_list = cursor.fetchall()
-            identifier_list = [item[0] for item in identifier_list]
+                WHERE bauteilKlassifikation IS NOT '' {ifc_type_filter};
+            '''
+        cursor.execute(sql_query)
+        identifier_list = cursor.fetchall()
+        identifier_list = [item[0] for item in identifier_list]
 
         cls.disconnect_from_database()
         return identifier_list
+
+    @classmethod
+    def get_property_sets(cls, ifc_type: str, som_object: str | SOMcreator.Object, all_keyword: str) -> list[
+        tuple[str, str]]:
+        cls.connect_to_data_base(cls.get_database_path())
+        cursor = cls.get_cursor()
+        ifc_type = all_keyword if ifc_type is None else ifc_type
+        som_object = all_keyword if som_object is None else som_object
+        ifc_type_filter = f"=='{ifc_type}'" if ifc_type != all_keyword else "IS NOT ''"
+        identifier_filter = f"=='{som_object.ident_value}'" if som_object != all_keyword else "IS NOT ''"
+        sql_query = f'''
+        SELECT DISTINCT attributes.propertyset, COUNT(DISTINCT attributes.GUID)
+        FROM attributes
+        JOIN entities ON attributes.guid = entities.guid
+        WHERE entities.bauteilKlassifikation {identifier_filter}
+        AND entities.ifc_type {ifc_type_filter}
+        GROUP BY attributes.propertyset;
+        '''
+        cursor.execute(sql_query)
+        pset_list = cursor.fetchall()
+        cls.disconnect_from_database()
+        return pset_list

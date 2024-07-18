@@ -32,6 +32,10 @@ class AttributeImportWidget(QWidget):
 class PropertySetTable(QTableWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.clear()
+        self.setColumnCount(2)
+        self.setRowCount(2)
+        self.setHorizontalHeaderLabels([self.tr("PropertySet"), self.tr("Anzahl")])
 
     def paintEvent(self, e):
         super().paintEvent(e)

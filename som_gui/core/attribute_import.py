@@ -3,6 +3,7 @@ from typing import Type, TYPE_CHECKING
 import os
 import logging
 import ifcopenshell
+from PySide6.QtCore import Qt
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -24,8 +25,18 @@ def open_import_window(attribute_import: Type[tool.AttributeImport], ifc_importe
 
 def open_results_window(attribute_import: Type[tool.AttributeImport]):
     attribute_import_widget = attribute_import.create_import_widget()
+    attribute_import.connect_update_trigger(attribute_import_widget)
     attribute_import_widget.show()
 
+
+def update_results_window(attribute_import: Type[tool.AttributeImport]):
+    widget = attribute_import.get_attribute_widget().widget
+    widget.table_widget_property_set.repaint()
+    widget.table_widget_attribute.repaint()
+    widget.table_widget_value.repaint()
+    widget.label_object_count.repaint()
+    widget.combo_box_name.repaint()
+    widget.combo_box_group.repaint()
 
 def update_ifctype_combobox(attribute_import: Type[tool.AttributeImport],
                             attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
@@ -43,10 +54,7 @@ def update_somtype_combobox(attribute_import: Type[tool.AttributeImport],
     object_list = list(project.get().get_all_objects())
 
     wanted_som_types = set(attribute_import_sql.get_identifier_types(ifc_type, attribute_import.get_all_keyword()))
-    wanted_som_types = attribute_import.format_somtypes(wanted_som_types, object_list)
-
-    wanted_som_types.add(attribute_import.get_all_keyword())
-    attribute_import.update_combobox(combobox, wanted_som_types)
+    attribute_import.update_som_combobox(combobox, wanted_som_types, object_list)
 
 
 def run_clicked(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter],
@@ -118,9 +126,13 @@ def close_clicked():
     pass
 
 
-def paint_property_set_table():
-    pass
-
+def paint_property_set_table(attribute_import: Type[tool.AttributeImport],
+                             attribute_import_sql: Type[tool.AttributeImportSQL]):
+    ifc_type = attribute_import.get_ifctype_combo_box().currentText()
+    som_object = attribute_import.get_somtype_combo_box().currentData(Qt.ItemDataRole.UserRole)
+    all_keyword = attribute_import.get_all_keyword()
+    property_set_list = attribute_import_sql.get_property_sets(ifc_type, som_object, all_keyword)
+    attribute_import.update_property_set_table(set(property_set_list))
 
 def paint_attribute_table():
     pass
