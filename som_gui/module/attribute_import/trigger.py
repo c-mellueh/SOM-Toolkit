@@ -28,15 +28,15 @@ def connect_attribute_import_runner(runner):
     runner.signaller.progress.connect(tool.ModelcheckWindow.set_progress)
 
 def paint_property_set_table():
-    core.paint_property_set_table(tool.AttributeImport, tool.AttributeImportSQL)
+    core.update_property_set_table(tool.AttributeImport, tool.AttributeImportSQL)
 
 
 def paint_attribute_table():
-    core.paint_attribute_table(tool.AttributeImport, tool.AttributeImportSQL)
+    core.update_attribute_table(tool.AttributeImport, tool.AttributeImportSQL)
 
 
 def paint_value_table():
-    core.paint_value_table(tool.AttributeImport, tool.AttributeImportSQL)
+    core.update_value_table(tool.AttributeImport, tool.AttributeImportSQL)
 
 
 def on_new_project():
@@ -53,7 +53,7 @@ def start_attribute_import(file: ifcopenshell.file, path: str):
 
 
 def somtype_combobox_paint_event():
-    core.update_somtype_combobox(tool.AttributeImport, tool.AttributeImportSQL, tool.Project)
+    core.update_identifier_combobox(tool.AttributeImport, tool.AttributeImportSQL, tool.Project)
 
 
 def ifctype_combobox_paint_event():

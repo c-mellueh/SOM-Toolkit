@@ -19,9 +19,9 @@ class AttributeImportWindow(QWidget):
         self.setWindowIcon(get_icon())
 
 
-class AttributeImportWidget(QWidget):
+class AttributeImportResultWindow(QWidget):
     def __init__(self):
-        super(AttributeImportWidget, self).__init__()
+        super(AttributeImportResultWindow, self).__init__()
         self.widget = attribute_import.window.Ui_Form()
         self.widget.setupUi(self)
         self.widget.button_settings.setIcon(get_settings_icon())

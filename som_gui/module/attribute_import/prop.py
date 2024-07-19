@@ -2,15 +2,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .ui import AttributeImportWindow, AttributeImportWidget, SettingsDialog
+    from .ui import AttributeImportWindow, AttributeImportResultWindow, SettingsDialog
     from som_gui.module.ifc_importer.ui import IfcImportWidget
     from PySide6.QtWidgets import QComboBox, QPushButton, QLabel
     from som_gui.tool.modelcheck import ModelcheckRunner
     from PySide6.QtWidgets import QLabel, QProgressBar
     from sqlite3 import Connection
 class AttributeImportProperties:
-    active_window: AttributeImportWindow = None
-    attribute_import_widget: AttributeImportWidget = None
+    ifc_import_window: AttributeImportWindow = None
+    attribute_import_window: AttributeImportResultWindow = None
     ifc_importer: IfcImportWidget = None
     settings_dialog: SettingsDialog = None
     main_pset: str = "Undefined"
@@ -28,7 +28,8 @@ class AttributeImportProperties:
     ifc_combobox: QComboBox = None
     som_combobox: QComboBox = None
     all_keyword: str = "Alles"
-    table_editing: bool = False
+    is_updating_locked: bool = False
+    update_lock_reason: str = ""
 
 class AttributeImportSQLProperties:
     database_path: str = None
