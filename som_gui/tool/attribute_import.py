@@ -280,7 +280,6 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
                 values.append(Qt.CheckState)
         return tuple(values)
 
-
     @classmethod
     def get_existing_values_in_table(cls, table_widget: QTableWidget, datatypes: list):
         existing_values = set()
@@ -360,6 +359,7 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
                 check_item.setCheckState(cs)
 
         cls.stop_table_editing()
+
     @classmethod
     def get_value_checkstate_dict(cls, value_list: list[tuple[str, int, int, int]]):
         value_dict = dict()
@@ -379,11 +379,28 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def get_input_variables(cls):
+        all_keyword = cls.get_all_keyword()
         ifc_type = cls.get_ifctype_combo_box().currentText()
         som_object = cls.get_somtype_combo_box().currentData(Qt.ItemDataRole.UserRole)
+        som_object = som_object.ident_value if som_object != all_keyword else all_keyword
         property_set = cls.get_selected_property_set()
         attribute = cls.get_selected_attribute()
-        return ifc_type, som_object, property_set, attribute
+
+        values = [ifc_type, som_object, property_set, attribute]
+        outputs = list()
+        for value in values:
+            if value is None:
+                outputs.append(None)
+            elif value == all_keyword:
+                outputs.append("IS NOT ''")
+            else:
+                outputs.append(f"=='{value}'")
+        return tuple(outputs)
+
+    @classmethod
+    def set_object_count_label_text(cls, text: str):
+        label = cls.get_attribute_widget().widget.label_object_count
+        label.setText(label.tr(text))
 
 
 class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
@@ -573,19 +590,17 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return identifier_list
 
     @classmethod
-    def get_property_sets(cls, ifc_type: str, som_object: str | SOMcreator.Object, all_keyword: str) -> list[
+    def get_property_sets(cls, ifc_type: str, identifier: str | SOMcreator.Object) -> list[
         tuple[str, int]]:
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
 
-        ifc_type_filter = f"=='{ifc_type}'" if ifc_type != all_keyword else "IS NOT ''"
-        identifier_filter = f"=='{som_object.ident_value}'" if som_object != all_keyword else "IS NOT ''"
         sql_query = f'''
         SELECT DISTINCT attributes.propertyset, COUNT(DISTINCT attributes.GUID)
         FROM attributes
         JOIN entities ON attributes.guid = entities.guid
-        WHERE entities.bauteilKlassifikation {identifier_filter}
-        AND entities.ifc_type {ifc_type_filter}
+        WHERE entities.bauteilKlassifikation {identifier}
+        AND entities.ifc_type {ifc_type}
         GROUP BY attributes.propertyset;
         '''
         cursor.execute(sql_query)
@@ -594,21 +609,18 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return pset_list
 
     @classmethod
-    def get_attributes(cls, ifc_type: str, som_object: str | SOMcreator.Object, property_set: str, all_keyword: str) -> \
+    def get_attributes(cls, ifc_type: str, identifier: str | SOMcreator.Object, property_set: str) -> \
             list[tuple[str, int, int]]:
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
-        ifc_type = all_keyword if ifc_type is None else ifc_type
-        som_object = all_keyword if som_object is None else som_object
-        ifc_type_filter = f"=='{ifc_type}'" if ifc_type != all_keyword else "IS NOT ''"
-        identifier_filter = f"=='{som_object.ident_value}'" if som_object != all_keyword else "IS NOT ''"
+
         sql_query = f"""
         SELECT  DISTINCT attributes.Attribut, COUNT(attributes.Value),COUNT(DISTINCT attributes.Value)
         FROM attributes
         JOIN entities ON attributes.guid = entities.guid
-        WHERE entities.bauteilKlassifikation {identifier_filter}
-        AND entities.ifc_type {ifc_type_filter}
-        AND attributes.PropertySet == '{property_set}'
+        WHERE entities.bauteilKlassifikation {identifier}
+        AND entities.ifc_type {ifc_type}
+        AND attributes.PropertySet {property_set}
         GROUP BY attributes.Attribut ;
         """
         cursor.execute(sql_query)
@@ -617,25 +629,21 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return attribute_list
 
     @classmethod
-    def get_values(cls, ifc_type, som_object, property_set, attribute, all_keyword):
+    def get_values(cls, ifc_type, identifier, property_set, attribute):
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
-
-        ifc_type = all_keyword if ifc_type is None else ifc_type
-        som_object = all_keyword if som_object is None else som_object
-        ifc_type_filter = f"=='{ifc_type}'" if ifc_type != all_keyword else "IS NOT ''"
-        identifier_filter = f"=='{som_object.ident_value}'" if som_object != all_keyword else "IS NOT ''"
 
         sql_query = f"""
             SELECT  DISTINCT attributes.Value, COUNT(attributes.Value), attributes.Checked, COUNT (DISTINCT attributes.Checked)
             FROM attributes
             JOIN entities ON attributes.guid = entities.guid
-            WHERE entities.bauteilKlassifikation {identifier_filter}
-            AND entities.ifc_type {ifc_type_filter}
-            AND attributes.PropertySet == '{property_set}'
-            AND attributes.Attribut == '{attribute}'
+            WHERE entities.bauteilKlassifikation {identifier}
+            AND entities.ifc_type {ifc_type}
+            AND attributes.PropertySet {property_set}
+            AND attributes.Attribut {attribute}
             GROUP BY attributes.Value ;
                 """
+
         cursor.execute(sql_query)
         value_list = cursor.fetchall()
         cls.disconnect_from_database()
@@ -649,13 +657,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return result_list, checkstate_dict
 
     @classmethod
-    def change_checkstate_of_values(cls, ifc_type, som_object, property_set, attribute, value_text, checkstate,
-                                    all_keyword):
-        ifc_type = all_keyword if ifc_type is None else ifc_type
-        som_object = all_keyword if som_object is None else som_object
-        ifc_type_filter = f"=='{ifc_type}'" if ifc_type != all_keyword else "IS NOT ''"
-        identifier_filter = f"=='{som_object.ident_value}'" if som_object != all_keyword else "IS NOT ''"
-
+    def change_checkstate_of_values(cls, ifc_type, identifier, property_set, attribute, value_text, checkstate):
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
 
@@ -666,12 +668,31 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             SELECT attributes.GUID
             from attributes
             JOIN entities on attributes.GUID = entities.GUID
-            WHERE entities.bauteilKlassifikation {identifier_filter}
-            AND entities.ifc_type {ifc_type_filter}
-            AND attributes.PropertySet == '{property_set}'
-            AND attributes.Attribut == '{attribute}'
-            AND attributes.Value == '{value_text}'
+            WHERE entities.bauteilKlassifikation {identifier}
+            AND entities.ifc_type {ifc_type}
+            
             )        
+        AND PropertySet {property_set}
+        AND Attribut  {attribute}
+        AND Value  == '{value_text}'
         """
         cursor.execute(sql_query)
         cls.disconnect_from_database()
+
+    @classmethod
+    def count_objects(cls, ifc_type, identifier) -> int:
+        cls.connect_to_data_base(cls.get_database_path())
+        cursor = cls.get_cursor()
+        sql_query = f"""
+        SELECT count(distinct(entities.guid))
+        FROM entities
+        JOIN attributes ON entities.guid = attributes.guid
+        WHERE entities.bauteilKlassifikation {identifier}
+        AND entities.ifc_type {ifc_type}
+        
+        """
+
+        cursor.execute(sql_query)
+        value_list = cursor.fetchall()
+        cls.disconnect_from_database()
+        return value_list[0][0]
