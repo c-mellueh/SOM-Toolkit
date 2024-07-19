@@ -7,7 +7,7 @@ import som_gui.core.tool
 import som_gui
 from som_gui.module.attribute_import import ui, trigger
 from som_gui import tool
-from PySide6.QtWidgets import QComboBox, QPushButton, QTableWidgetItem, QTableWidget, QCheckBox
+from PySide6.QtWidgets import QComboBox, QTableWidgetItem, QTableWidget, QCheckBox
 from PySide6.QtCore import QRunnable, QObject, Signal, QThreadPool, Qt
 import ifcopenshell
 from ifcopenshell.util import element as ifc_element_util
@@ -38,18 +38,10 @@ class Signaller(QObject):
     progress = Signal(int)
 
 
-class AttributeImport(som_gui.core.tool.AttributeImport):
+class AttributeImportResults(som_gui.core.tool.AttributeImport):
     @classmethod
     def get_properties(cls) -> AttributeImportProperties:
         return som_gui.AttributeImportProperties
-
-    @classmethod
-    def set_ifc_path(cls, path):
-        cls.get_properties().ifc_path = path
-
-    @classmethod
-    def connect_import_buttons(cls):
-        trigger.connect_import_buttons(cls.get_properties().run_button, cls.get_properties().abort_button)
 
     @classmethod
     def get_ifctype_combo_box(cls) -> QComboBox:
@@ -311,7 +303,20 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         label = cls.get_results_window().widget.label_object_count
         label.setText(label.tr(text))
 
-    # IFC Importer
+
+class AttributeImport(som_gui.core.tool.AttributeImport):
+    @classmethod
+    def get_properties(cls) -> AttributeImportProperties:
+        return som_gui.AttributeImportProperties
+
+    @classmethod
+    def set_ifc_path(cls, path):
+        cls.get_properties().ifc_path = path
+
+    @classmethod
+    def connect_import_buttons(cls):
+        trigger.connect_import_buttons(cls.get_properties().run_button, cls.get_properties().abort_button)
+
     @classmethod
     def create_ifc_import_window(cls) -> ui.AttributeImportWindow:
         prop = cls.get_properties()
