@@ -251,8 +251,10 @@ def update_value_table(attribute_import_results: Type[tool.AttributeImportResult
 
     if None in [ifc_type, identifier, property_set, attribute]:
         attribute_import_results.disable_table(table_widget)
+        attribute_import_results.get_all_checkbox().setDisabled(True)
         return
     else:
+        attribute_import_results.get_all_checkbox().setDisabled(False)
         table_widget.setDisabled(False)
 
     value_list, checkstate_dict = attribute_import_sql.get_values(ifc_type, identifier, property_set, attribute)
