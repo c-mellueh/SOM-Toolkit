@@ -39,9 +39,14 @@ class Signaller(QObject):
 
 
 class AttributeImportResults(som_gui.core.tool.AttributeImport):
+
     @classmethod
     def get_properties(cls) -> AttributeImportProperties:
         return som_gui.AttributeImportProperties
+
+    @classmethod
+    def checkstate_to_int(cls, checkstate: Qt.CheckState) -> int:
+        return 1 if checkstate in (Qt.CheckState.Checked, Qt.CheckState.PartiallyChecked) else 0
 
     @classmethod
     def get_ifctype_combo_box(cls) -> QComboBox:
@@ -60,7 +65,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         widget.table_widget_property_set.itemSelectionChanged.connect(trigger.pset_table_selection_changed)
         widget.table_widget_attribute.itemSelectionChanged.connect(trigger.attribute_table_selection_changed)
         widget.table_widget_value.itemSelectionChanged.connect(trigger.value_table_selection_changed)
-
+        cls.get_properties().all_checkbox.checkStateChanged.connect(trigger.all_checkbox_checkstate_changed)
     @classmethod
     def update_combobox(cls, combobox: QComboBox, allowed_values: set[str]):
         cls.lock_updating("IfcType ComboBox")
@@ -72,7 +77,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
             combobox.removeItem(combobox.findText(item))
         if add_items or delete_items:
             combobox.model().sort(0)
-        cls.release_updating()
+        cls.unlock_updating()
 
     @classmethod
     def update_som_combobox(cls, combobox: QComboBox, allowed_values: set[str], object_list: list[SOMcreator.Object]):
@@ -87,7 +92,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         delete_items = existing_objects.difference(allowed_objects)
 
         if not (add_items or delete_items):
-            cls.release_updating()
+            cls.unlock_updating()
             return
 
         for obj in delete_items:
@@ -100,7 +105,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
             combobox.addItem(all_keyword, userData=all_keyword)
         if add_items or delete_items:
             combobox.model().sort(0)
-        cls.release_updating()
+        cls.unlock_updating()
 
     @classmethod
     def get_all_keyword(cls) -> str:
@@ -121,6 +126,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         prop.attribute_import_window = widget
         prop.ifc_combobox = widget.widget.combo_box_group
         prop.som_combobox = widget.widget.combo_box_name
+        prop.all_checkbox = widget.widget.check_box_values
 
         return prop.attribute_import_window
 
@@ -190,7 +196,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         cls.get_properties().update_lock_reason = reason
 
     @classmethod
-    def release_updating(cls):
+    def unlock_updating(cls):
         cls.get_properties().is_updating_locked = False
         cls.get_properties().update_lock_reason = ""
 
@@ -241,7 +247,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
                 table_widget.removeRow(row)
         table_widget.resizeColumnsToContents()
         table_widget.setSortingEnabled(True)
-        cls.release_updating()
+        cls.unlock_updating()
 
     @classmethod
     def update_valuetable_checkstate(cls, checkstate_dict: dict[str, bool]):
@@ -258,7 +264,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
             if check_item.checkState() != cs:
                 check_item.setCheckState(cs)
 
-        cls.release_updating()
+        cls.unlock_updating()
 
     @classmethod
     def get_value_checkstate_dict(cls, value_list: list[tuple[str, int, int, int]]):
@@ -303,6 +309,27 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         label = cls.get_results_window().widget.label_object_count
         label.setText(label.tr(text))
 
+    @classmethod
+    def calculate_all_checkbox_state(cls) -> Qt.CheckState | None:
+        table = cls.get_value_table()
+        if table.cellWidget(0, 0) is None:
+            return None
+        checkstates = {table.cellWidget(row, 0).checkState() for row in range(table.rowCount())}
+        if len(checkstates) == 1:
+            if None in checkstates:
+                return None
+            return list(checkstates)[0]
+        return Qt.CheckState.PartiallyChecked
+
+    @classmethod
+    def set_all_checkbox_state(cls, state: Qt.CheckState):
+        cls.lock_updating(f"Update All Checkbox")
+        cls.get_properties().all_checkbox.setCheckState(state)
+        cls.unlock_updating()
+
+    @classmethod
+    def get_all_checkbox(cls):
+        return cls.get_properties().all_checkbox
 
 class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
@@ -688,7 +715,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             )        
         AND PropertySet {property_set}
         AND Attribut  {attribute}
-        AND Value  == '{value_text}'
+        AND Value {value_text}
         """
         cursor.execute(sql_query)
         cls.disconnect_from_database()

@@ -85,3 +85,7 @@ def paint_attribute_table():
 
 def paint_value_table():
     core.update_value_table(tool.AttributeImportResults, tool.AttributeImportSQL)
+
+
+def all_checkbox_checkstate_changed():
+    core.all_checkbox_checkstate_changed(tool.AttributeImportResults, tool.AttributeImportSQL)

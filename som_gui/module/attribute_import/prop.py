@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .ui import AttributeImportWindow, AttributeImportResultWindow, SettingsDialog
     from som_gui.module.ifc_importer.ui import IfcImportWidget
-    from PySide6.QtWidgets import QComboBox, QPushButton, QLabel
+    from PySide6.QtWidgets import QComboBox, QPushButton, QLabel, QCheckBox
     from som_gui.tool.modelcheck import ModelcheckRunner
     from PySide6.QtWidgets import QLabel, QProgressBar
     from sqlite3 import Connection
@@ -30,6 +30,7 @@ class AttributeImportProperties:
     all_keyword: str = "Alles"
     is_updating_locked: bool = False
     update_lock_reason: str = ""
+    all_checkbox: QCheckBox = None
 
 class AttributeImportSQLProperties:
     database_path: str = None

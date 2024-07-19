@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from som_gui.module.attribute_import.ui import ValueCheckBox
 import time
 
-DB_PATH = ""  # "C:/Users/CHRIST~1/AppData/Local/Temp/tmpxqjw4ehg.db"  # "C:/Users/CHRIST~1/AppData/Local/Temp/tmpqpvbsv88.db"
+DB_PATH = "C:/Users/CHRIST~1/AppData/Local/Temp/tmpxqjw4ehg.db"  # "C:/Users/CHRIST~1/AppData/Local/Temp/tmpqpvbsv88.db"
 
 
 def open_import_window(attribute_import: Type[tool.AttributeImport],
@@ -90,8 +90,10 @@ def init_database(attribute_import: Type[tool.AttributeImport], attribute_import
     attribute_import.set_progress(100)
     attribute_import.set_status(f"{status_text} {attribute_count}/{attribute_count}")
 
+
 def abort_clicked():
     pass
+
 
 def ifc_import_started(runner, attribute_import: Type[tool.AttributeImport],
                        ifc_importer: Type[tool.IfcImporter]):
@@ -171,7 +173,7 @@ def update_results_window(attriubte_import_results: Type[tool.AttributeImportRes
     update_property_set_table(attriubte_import_results, attribute_import_sql)
     widget.label_object_count.repaint()
     update_object_count(attriubte_import_results, attribute_import_sql)
-
+    update_all_checkbox(attriubte_import_results)
 
 def update_ifctype_combobox(attribute_import_results: Type[tool.AttributeImportResults],
                             attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
@@ -202,10 +204,10 @@ def update_identifier_combobox(attribute_import_results: Type[tool.AttributeImpo
 
 def update_object_count(attribute_import_results: Type[tool.AttributeImportResults],
                         attribute_import_sql: Type[tool.AttributeImportSQL]):
-    ifc_type, som_object, property_set, attribute = attribute_import_results.get_input_variables()
-    if None in (ifc_type, som_object):
+    ifc_type, identifier, property_set, attribute = attribute_import_results.get_input_variables()
+    if None in (ifc_type, identifier):
         return
-    object_count = attribute_import_sql.count_objects(ifc_type, som_object)
+    object_count = attribute_import_sql.count_objects(ifc_type, identifier)
     attribute_import_results.set_object_count_label_text(f"Anzahl: {object_count}")
 
 
@@ -213,10 +215,10 @@ def update_property_set_table(attribute_import_results: Type[tool.AttributeImpor
                               attribute_import_sql: Type[tool.AttributeImportSQL]):
     if attribute_import_results.is_updating_locked():
         return
-    ifc_type, som_object, property_set, attribute = attribute_import_results.get_input_variables()
-    if ifc_type is None or som_object is None:
+    ifc_type, identifier, property_set, attribute = attribute_import_results.get_input_variables()
+    if ifc_type is None or identifier is None:
         return
-    property_set_list = attribute_import_sql.get_property_sets(ifc_type, som_object)
+    property_set_list = attribute_import_sql.get_property_sets(ifc_type, identifier)
     table_widget = attribute_import_results.get_pset_table()
     attribute_import_results.update_table_widget(set(property_set_list), table_widget, [str, int])
     update_attribute_table(attribute_import_results, attribute_import_sql)
@@ -227,15 +229,15 @@ def update_attribute_table(attribute_import_results: Type[tool.AttributeImportRe
     if attribute_import_results.is_updating_locked():
         return
     table_widget = attribute_import_results.get_attribute_table()
-    ifc_type, som_object, property_set, attribute = attribute_import_results.get_input_variables()
+    ifc_type, identifier, property_set, attribute = attribute_import_results.get_input_variables()
 
-    if None in [ifc_type, som_object, property_set]:
+    if None in [ifc_type, identifier, property_set]:
         attribute_import_results.disable_table(table_widget)
         return
     else:
         table_widget.setDisabled(False)
 
-    attribute_list = attribute_import_sql.get_attributes(ifc_type, som_object, property_set)
+    attribute_list = attribute_import_sql.get_attributes(ifc_type, identifier, property_set)
     attribute_import_results.update_table_widget(set(attribute_list), table_widget, [str, int, int])
     update_value_table(attribute_import_results, attribute_import_sql)
 
@@ -245,15 +247,15 @@ def update_value_table(attribute_import_results: Type[tool.AttributeImportResult
     if attribute_import_results.is_updating_locked():
         return
     table_widget = attribute_import_results.get_value_table()
-    ifc_type, som_object, property_set, attribute = attribute_import_results.get_input_variables()
+    ifc_type, identifier, property_set, attribute = attribute_import_results.get_input_variables()
 
-    if None in [ifc_type, som_object, property_set, attribute]:
+    if None in [ifc_type, identifier, property_set, attribute]:
         attribute_import_results.disable_table(table_widget)
         return
     else:
         table_widget.setDisabled(False)
 
-    value_list, checkstate_dict = attribute_import_sql.get_values(ifc_type, som_object, property_set, attribute)
+    value_list, checkstate_dict = attribute_import_sql.get_values(ifc_type, identifier, property_set, attribute)
     if not value_list:
         return
     attribute_import_results.update_table_widget(set(value_list), table_widget, [Qt.CheckState, str, int])
@@ -270,14 +272,42 @@ def value_checkstate_changed(checkbox: ValueCheckBox, attribute_import_results: 
     if value_table.item(row, 1) is None:
         return
     value_text = value_table.item(row, 1).text()
-    ifc_type, som_object, property_set, attribute = attribute_import_results.get_input_variables()
+    ifc_type, identifier, property_set, attribute = attribute_import_results.get_input_variables()
 
-    checkstate = 1 if checkbox.checkState() in (Qt.CheckState.Checked, Qt.CheckState.PartiallyChecked) else 0
+    checkstate = attribute_import_results.checkstate_to_int(checkbox.checkState())
     logging.info(f"value_checkstate_changed {row} {checkbox.checkState()} new: {checkstate}")
     logging.info(f"checkstate: {checkbox.checkState()} {checkbox} {checkbox.isTristate()}")
-    if None in [ifc_type, som_object, property_set, attribute]:
+    if None in [ifc_type, identifier, property_set, attribute]:
         return
 
-    attribute_import_sql.change_checkstate_of_values(ifc_type, som_object, property_set, attribute, value_text,
+    sql_value_text = f"== '{value_text}'"
+
+    attribute_import_sql.change_checkstate_of_values(ifc_type, identifier, property_set, attribute, sql_value_text,
                                                      checkstate)
 
+    update_all_checkbox(attribute_import_results)
+
+
+def update_all_checkbox(attribute_import_results: Type[tool.AttributeImportResults]):
+    checkstate = attribute_import_results.calculate_all_checkbox_state()
+    if checkstate == attribute_import_results.get_all_checkbox().checkState():
+        return
+    if checkstate is None:
+        return
+    attribute_import_results.set_all_checkbox_state(checkstate)
+
+
+def all_checkbox_checkstate_changed(attribute_import_results: Type[tool.AttributeImportResults],
+                                    attribute_import_sql: Type[tool.AttributeImportSQL]):
+    if attribute_import_results.is_updating_locked():
+        logging.debug(f"abort all_checkbox_change because {attribute_import_results.get_update_lock_reason()}")
+        return
+
+    checkbox = attribute_import_results.get_all_checkbox()
+    checkstate = attribute_import_results.checkstate_to_int(checkbox.checkState())
+    ifc_type, identifier, property_set, attribute = attribute_import_results.get_input_variables()
+    value_text = "IS NOT NULL"
+    attribute_import_sql.change_checkstate_of_values(ifc_type, identifier, property_set, attribute, value_text,
+                                                     checkstate)
+
+    update_value_table(attribute_import_results, attribute_import_sql)

@@ -153,10 +153,11 @@ class Ui_Form(object):
         self.horizontalLayout_2.setSizeConstraint(QLayout.SetMinimumSize)
         self.check_box_values = QCheckBox(self.verticalLayoutWidget)
         self.check_box_values.setObjectName(u"check_box_values")
-        self.check_box_values.setEnabled(False)
+        self.check_box_values.setEnabled(True)
         self.check_box_values.setMinimumSize(QSize(0, 24))
         self.check_box_values.setMaximumSize(QSize(16777215, 24))
         self.check_box_values.setChecked(False)
+        self.check_box_values.setTristate(False)
 
         self.horizontalLayout_2.addWidget(self.check_box_values)
 
