@@ -61,9 +61,9 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         update_trigger = trigger.update_attribute_import_window
         widget.combo_box_name.currentIndexChanged.connect(update_trigger)
         widget.combo_box_group.currentIndexChanged.connect(update_trigger)
-        widget.table_widget_property_set.itemSelectionChanged.connect(update_trigger)
-        widget.table_widget_attribute.itemSelectionChanged.connect(update_trigger)
-        widget.table_widget_value.itemSelectionChanged.connect(update_trigger)
+        widget.table_widget_property_set.itemSelectionChanged.connect(trigger.pset_table_selection_changed)
+        widget.table_widget_attribute.itemSelectionChanged.connect(trigger.attribute_table_selection_changed)
+        widget.table_widget_value.itemSelectionChanged.connect(trigger.value_table_selection_changed)
 
     @classmethod
     def update_combobox(cls, combobox: QComboBox, allowed_values: set[str]):
@@ -235,36 +235,82 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         return cls.get_attribute_widget().widget.table_widget_property_set
 
     @classmethod
+    def get_selected_property_set(cls) -> str | None:
+        items = cls.get_pset_table().selectedItems()
+        if not items:
+            return None
+        return items[0].text()
+
+    @classmethod
     def get_attribute_table(cls) -> ui.AttributeTable:
         return cls.get_attribute_widget().widget.table_widget_attribute
 
     @classmethod
-    def update_table_widget(cls, allowed_values: set[tuple], table_widget: QTableWidget, datatypes: list):
-        if not allowed_values:
-            return
-        column_count = len(list(allowed_values)[0])
+    def disable_table(cls, table_widget: QTableWidget):
+        table_widget.setRowCount(0)
+        table_widget.setDisabled(True)
 
+    @classmethod
+    def get_selected_attribute(cls) -> str | None:
+        items = cls.get_attribute_table().selectedItems()
+        if not items:
+            return None
+        return items[0].text()
+
+    @classmethod
+    def get_value_table(cls) -> ui.ValueTable:
+        return cls.get_attribute_widget().widget.table_widget_value
+
+    @classmethod
+    def get_existing_values_in_table(cls, table_widget: QTableWidget, datatypes: list):
+        column_count = table_widget.columnCount()
         existing_values = set()
         for row in range(table_widget.rowCount()):
             items = [table_widget.item(row, col) for col in range(column_count)]
             if None in items:
                 continue
             existing_values.add(tuple(dt(item.text()) for item, dt in zip(items, datatypes)))
+        return existing_values
 
+    @classmethod
+    def start_table_editing(cls):
+        cls.get_properties().table_editing = True
+
+    @classmethod
+    def stop_table_editing(cls):
+        cls.get_properties().table_editing = False
+
+    @classmethod
+    def is_table_editing(cls):
+        return cls.get_properties().table_editing
+
+    @classmethod
+    def update_table_widget(cls, allowed_values: set[tuple], table_widget: QTableWidget, datatypes: list,
+                            add_checkbox: bool = False):
+        if not allowed_values:
+            return
+        column_count = len(list(allowed_values)[0])
+        existing_values = cls.get_existing_values_in_table(table_widget, datatypes)
         add_items = allowed_values.difference(existing_values)
         delete_items = existing_values.difference(allowed_values)
-        if not (add_items or delete_items):
+
+        if not add_items and not delete_items:
             return
 
+        cls.start_table_editing()
+
         table_widget.setSortingEnabled(False)
+
         old_row_count = table_widget.rowCount()
         table_widget.setRowCount(old_row_count + len(add_items))
+
         for row, values in enumerate(add_items, start=old_row_count):
             for col, value in enumerate(values):
                 item = QTableWidgetItem()
                 item.setData(Qt.ItemDataRole.EditRole, value)
                 table_widget.setItem(row, col, item)
-
+            if add_checkbox:
+                table_widget.item(row, 0).setCheckState(Qt.CheckState.Unchecked)
         for row in reversed(range(table_widget.rowCount())):
             if table_widget.item(row, 0) is None:
                 table_widget.removeRow(row)
@@ -272,8 +318,34 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
             tup = tuple(table_widget.item(row, col).data(Qt.ItemDataRole.EditRole) for col in range(column_count))
             if tup in delete_items:
                 table_widget.removeRow(row)
+        existing_values = cls.get_existing_values_in_table(table_widget, datatypes)
         table_widget.resizeColumnsToContents()
         table_widget.setSortingEnabled(True)
+        cls.stop_table_editing()
+
+    @classmethod
+    def update_valuetable_checkstate(cls, checkstate_dict: dict[str, bool]):
+        table_widget = cls.get_value_table()
+        for row in range(table_widget.rowCount()):
+
+            item = table_widget.item(row, 0)
+            if not item:
+                continue
+            value_text = item.text()
+            cs = checkstate_dict[value_text]
+            if item.checkState() != cs:
+                item.setCheckState(cs)
+
+    @classmethod
+    def get_value_checkstate_dict(cls, value_list: list[tuple[str, int, int, int]]):
+        value_dict = dict()
+        for value, value_count, check, check_count in value_list:
+            if check_count > 1:
+                cs = Qt.CheckState.PartiallyChecked
+            else:
+                cs = Qt.CheckState.Checked if check == 1 else Qt.CheckState.Unchecked
+            value_dict[value] = cs
+        return value_dict
 
 
 class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
@@ -324,7 +396,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         # imported_attributes
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS attributes
-                  ([GUID_ZWC] CHAR(64),[GUID] CHAR(64), [PropertySet] TEXT, [Attribut] TEXT, [Value] Text, [DataType] Text)
+                  ([GUID_ZWC] CHAR(64),[GUID] CHAR(64), [PropertySet] TEXT, [Attribut] TEXT, [Value] Text, [DataType] Text,[Checked] INTEGER)
                   ''')
         cls.commit_sql()
 
@@ -415,9 +487,9 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                     continue
 
                 text = f'''
-                 INSERT INTO attributes (GUID_ZWC,GUID,PropertySet,Attribut,Value,DataType)
+                 INSERT INTO attributes (GUID_ZWC,GUID,PropertySet,Attribut,Value,DataType,Checked)
                 VALUES
-                ('{entity_guid_zw}','{entity_guid}','{property_set_name}','{attribute_name}','{value}','{data_type}')
+                ('{entity_guid_zw}','{entity_guid}','{property_set_name}','{attribute_name}','{value}','{data_type}',{0})
                 '''
                 cursor.execute(text)
         cls.commit_sql()
@@ -485,7 +557,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def get_attributes(cls, ifc_type: str, som_object: str | SOMcreator.Object, property_set: str, all_keyword: str) -> \
-    list[tuple[str, int, int]]:
+            list[tuple[str, int, int]]:
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
         ifc_type = all_keyword if ifc_type is None else ifc_type
@@ -505,3 +577,28 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         attribute_list = cursor.fetchall()
         cls.disconnect_from_database()
         return attribute_list
+
+    @classmethod
+    def get_values(cls, ifc_type, som_object, property_set, attribute, all_keyword):
+        cls.connect_to_data_base(cls.get_database_path())
+        cursor = cls.get_cursor()
+
+        ifc_type = all_keyword if ifc_type is None else ifc_type
+        som_object = all_keyword if som_object is None else som_object
+        ifc_type_filter = f"=='{ifc_type}'" if ifc_type != all_keyword else "IS NOT ''"
+        identifier_filter = f"=='{som_object.ident_value}'" if som_object != all_keyword else "IS NOT ''"
+
+        sql_query = f"""
+            SELECT  DISTINCT attributes.Value, COUNT(attributes.Value), attributes.Checked, COUNT (DISTINCT attributes.Checked)
+            FROM attributes
+            JOIN entities ON attributes.guid = entities.guid
+            WHERE entities.bauteilKlassifikation {identifier_filter}
+            AND entities.ifc_type {ifc_type_filter}
+            AND attributes.PropertySet == '{property_set}'
+            AND attributes.Attribut == '{attribute}'
+            GROUP BY attributes.Value ;
+                """
+        cursor.execute(sql_query)
+        value_list = cursor.fetchall()
+        cls.disconnect_from_database()
+        return value_list

@@ -6,7 +6,8 @@ from som_gui.core import attribute_import as core
 
 def connect():
     tool.MainWindow.add_action("Modelle/Modellinformationen Einlesen21",
-                               lambda: core.open_import_window(tool.AttributeImport, tool.IfcImporter))
+                               lambda: core.open_import_window(tool.AttributeImport, tool.AttributeImportSQL,
+                                                               tool.IfcImporter))
 
 
 def connect_import_buttons(run_button: QPushButton, abort_button: QPushButton):
@@ -35,7 +36,7 @@ def paint_attribute_table():
 
 
 def paint_value_table():
-    core.paint_value_table()
+    core.paint_value_table(tool.AttributeImport, tool.AttributeImportSQL)
 
 
 def on_new_project():
@@ -60,4 +61,16 @@ def ifctype_combobox_paint_event():
 
 
 def update_attribute_import_window():
-    core.update_results_window(tool.AttributeImport)
+    core.update_results_window(tool.AttributeImport, tool.AttributeImportSQL)
+
+
+def pset_table_selection_changed():
+    core.update_results_window(tool.AttributeImport, tool.AttributeImportSQL)
+
+
+def attribute_table_selection_changed():
+    core.update_results_window(tool.AttributeImport, tool.AttributeImportSQL)
+
+
+def value_table_selection_changed():
+    core.update_results_window(tool.AttributeImport, tool.AttributeImportSQL)

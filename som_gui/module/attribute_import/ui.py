@@ -73,12 +73,14 @@ class AttributeTable(QTableWidget):
 class ValueTable(QTableWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.clear()
+        self.setColumnCount(2)
+        self.setRowCount(2)
+        self.setHorizontalHeaderLabels([self.tr("Wert"), self.tr("Anzahl")])
 
     def paintEvent(self, e):
         super().paintEvent(e)
         attribute_import.trigger.paint_value_table()
-
-
 class SettingsDialog(QDialog):
     def __init__(self):
         super(SettingsDialog, self).__init__()

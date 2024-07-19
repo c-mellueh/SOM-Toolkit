@@ -97,6 +97,7 @@ class Ui_Form(object):
         self.table_widget_property_set.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.table_widget_property_set.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.table_widget_property_set.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_widget_property_set.setSelectionMode(QAbstractItemView.SingleSelection)
         self.table_widget_property_set.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table_widget_property_set.horizontalHeader().setMinimumSectionSize(1)
         self.table_widget_property_set.horizontalHeader().setDefaultSectionSize(39)
@@ -129,6 +130,7 @@ class Ui_Form(object):
         self.table_widget_attribute.setSizePolicy(sizePolicy3)
         self.table_widget_attribute.setAutoScroll(False)
         self.table_widget_attribute.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_widget_attribute.setSelectionMode(QAbstractItemView.SingleSelection)
         self.table_widget_attribute.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table_widget_attribute.horizontalHeader().setCascadingSectionResizes(True)
         self.table_widget_attribute.horizontalHeader().setMinimumSectionSize(1)
@@ -136,7 +138,7 @@ class Ui_Form(object):
         self.table_widget_attribute.horizontalHeader().setHighlightSections(True)
         self.table_widget_attribute.horizontalHeader().setProperty("showSortIndicator", False)
         self.table_widget_attribute.horizontalHeader().setStretchLastSection(True)
-        self.table_widget_attribute.verticalHeader().setVisible(True)
+        self.table_widget_attribute.verticalHeader().setVisible(False)
 
         self.vertical_layout_attribute.addWidget(self.table_widget_attribute)
 
@@ -179,7 +181,7 @@ class Ui_Form(object):
         self.table_widget_value.horizontalHeader().setMinimumSectionSize(1)
         self.table_widget_value.horizontalHeader().setProperty("showSortIndicator", False)
         self.table_widget_value.horizontalHeader().setStretchLastSection(True)
-        self.table_widget_value.verticalHeader().setVisible(True)
+        self.table_widget_value.verticalHeader().setVisible(False)
 
         self.vertical_layout_value.addWidget(self.table_widget_value)
 

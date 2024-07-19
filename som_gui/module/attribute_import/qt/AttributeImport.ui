@@ -116,6 +116,9 @@
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
+               <property name="selectionMode">
+                   <enum>QAbstractItemView::SingleSelection</enum>
+               </property>
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
          </property>
@@ -182,6 +185,9 @@
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
+               <property name="selectionMode">
+                   <enum>QAbstractItemView::SingleSelection</enum>
+               </property>
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
          </property>
@@ -204,7 +210,7 @@
           <bool>true</bool>
          </attribute>
          <attribute name="verticalHeaderVisible">
-          <bool>true</bool>
+             <bool>false</bool>
          </attribute>
         </widget>
        </item>
@@ -293,7 +299,7 @@
           <bool>true</bool>
          </attribute>
                <attribute name="verticalHeaderVisible">
-                   <bool>true</bool>
+                   <bool>false</bool>
          </attribute>
         </widget>
        </item>

@@ -29,14 +29,14 @@ def open_results_window(attribute_import: Type[tool.AttributeImport]):
     attribute_import_widget.show()
 
 
-def update_results_window(attribute_import: Type[tool.AttributeImport]):
+def update_results_window(attribute_import: Type[tool.AttributeImport],
+                          attribute_import_sql: Type[tool.AttributeImportSQL]):
     widget = attribute_import.get_attribute_widget().widget
-    widget.table_widget_property_set.repaint()
-    widget.table_widget_attribute.repaint()
-    widget.table_widget_value.repaint()
-    widget.label_object_count.repaint()
     widget.combo_box_name.repaint()
     widget.combo_box_group.repaint()
+    paint_property_set_table(attribute_import, attribute_import_sql)
+    widget.label_object_count.repaint()
+
 
 def update_ifctype_combobox(attribute_import: Type[tool.AttributeImport],
                             attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
@@ -128,7 +128,8 @@ def close_clicked():
 
 def paint_property_set_table(attribute_import: Type[tool.AttributeImport],
                              attribute_import_sql: Type[tool.AttributeImportSQL]):
-    logging.debug(f"paint Pset Table")
+    if attribute_import.is_table_editing():
+        return
     ifc_type = attribute_import.get_ifctype_combo_box().currentText()
     som_object = attribute_import.get_somtype_combo_box().currentData(Qt.ItemDataRole.UserRole)
     all_keyword = attribute_import.get_all_keyword()
@@ -137,31 +138,54 @@ def paint_property_set_table(attribute_import: Type[tool.AttributeImport],
     property_set_list = attribute_import_sql.get_property_sets(ifc_type, som_object, all_keyword)
     table_widget = attribute_import.get_pset_table()
     attribute_import.update_table_widget(set(property_set_list), table_widget, [str, int])
+    paint_attribute_table(attribute_import, attribute_import_sql)
 
 
 def paint_attribute_table(attribute_import: Type[tool.AttributeImport],
                           attribute_import_sql: Type[tool.AttributeImportSQL]):
-    logging.debug(f"paint Attribute Table")
-
+    if attribute_import.is_table_editing():
+        return
     table_widget = attribute_import.get_attribute_table()
     ifc_type = attribute_import.get_ifctype_combo_box().currentText()
     som_object = attribute_import.get_somtype_combo_box().currentData(Qt.ItemDataRole.UserRole)
-    if not attribute_import.get_pset_table().selectedItems():
-        table_widget.setDisabled(True)
-        table_widget.setRowCount(0)
+    property_set = attribute_import.get_selected_property_set()
+    all_keyword = attribute_import.get_all_keyword()
+
+    if None in [ifc_type, som_object, property_set]:
+        attribute_import.disable_table(table_widget)
         return
     else:
         table_widget.setDisabled(False)
-    property_set = attribute_import.get_pset_table().selectedItems()[0].text()
-    all_keyword = attribute_import.get_all_keyword()
-    if ifc_type is None or som_object is None:
-        return
+
     attribute_list = attribute_import_sql.get_attributes(ifc_type, som_object, property_set, all_keyword)
     attribute_import.update_table_widget(set(attribute_list), table_widget, [str, int, int])
+    paint_value_table(attribute_import, attribute_import_sql)
 
 
-def paint_value_table():
-    pass
+def paint_value_table(attribute_import: Type[tool.AttributeImport],
+                      attribute_import_sql: Type[tool.AttributeImportSQL]):
+    if attribute_import.is_table_editing():
+        return
+    table_widget = attribute_import.get_value_table()
+    ifc_type = attribute_import.get_ifctype_combo_box().currentText()
+    som_object = attribute_import.get_somtype_combo_box().currentData(Qt.ItemDataRole.UserRole)
+    property_set = attribute_import.get_selected_property_set()
+    attribute = attribute_import.get_selected_attribute()
+    all_keyword = attribute_import.get_all_keyword()
+
+    if None in [ifc_type, som_object, property_set, attribute]:
+        attribute_import.disable_table(table_widget)
+        return
+    else:
+        table_widget.setDisabled(False)
+
+    value_list = attribute_import_sql.get_values(ifc_type, som_object, property_set, attribute, all_keyword)
+    if not value_list:
+        return
+    table_values = set(v[:-2] for v in value_list)
+    attribute_import.update_table_widget(table_values, table_widget, [str, int], add_checkbox=True)
+    check_state_dict = attribute_import.get_value_checkstate_dict(value_list)
+    attribute_import.update_valuetable_checkstate(check_state_dict)
 
 
 def ifc_import_started(runner, attribute_import: Type[tool.AttributeImport],

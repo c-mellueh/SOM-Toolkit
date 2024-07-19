@@ -28,6 +28,7 @@ class AttributeImportProperties:
     ifc_combobox: QComboBox = None
     som_combobox: QComboBox = None
     all_keyword: str = "Alles"
+    table_editing: bool = False
 
 class AttributeImportSQLProperties:
     database_path: str = None
