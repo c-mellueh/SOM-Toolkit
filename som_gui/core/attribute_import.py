@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.tool.ifc_importer import IfcImportRunner
+    from som_gui.module.attribute_import.ui import ValueCheckBox
 import time
 
 
@@ -130,8 +131,7 @@ def paint_property_set_table(attribute_import: Type[tool.AttributeImport],
                              attribute_import_sql: Type[tool.AttributeImportSQL]):
     if attribute_import.is_table_editing():
         return
-    ifc_type = attribute_import.get_ifctype_combo_box().currentText()
-    som_object = attribute_import.get_somtype_combo_box().currentData(Qt.ItemDataRole.UserRole)
+    ifc_type, som_object, property_set, attribute = attribute_import.get_input_variables()
     all_keyword = attribute_import.get_all_keyword()
     if ifc_type is None or som_object is None:
         return
@@ -146,9 +146,7 @@ def paint_attribute_table(attribute_import: Type[tool.AttributeImport],
     if attribute_import.is_table_editing():
         return
     table_widget = attribute_import.get_attribute_table()
-    ifc_type = attribute_import.get_ifctype_combo_box().currentText()
-    som_object = attribute_import.get_somtype_combo_box().currentData(Qt.ItemDataRole.UserRole)
-    property_set = attribute_import.get_selected_property_set()
+    ifc_type, som_object, property_set, attribute = attribute_import.get_input_variables()
     all_keyword = attribute_import.get_all_keyword()
 
     if None in [ifc_type, som_object, property_set]:
@@ -167,10 +165,7 @@ def paint_value_table(attribute_import: Type[tool.AttributeImport],
     if attribute_import.is_table_editing():
         return
     table_widget = attribute_import.get_value_table()
-    ifc_type = attribute_import.get_ifctype_combo_box().currentText()
-    som_object = attribute_import.get_somtype_combo_box().currentData(Qt.ItemDataRole.UserRole)
-    property_set = attribute_import.get_selected_property_set()
-    attribute = attribute_import.get_selected_attribute()
+    ifc_type, som_object, property_set, attribute = attribute_import.get_input_variables()
     all_keyword = attribute_import.get_all_keyword()
 
     if None in [ifc_type, som_object, property_set, attribute]:
@@ -179,14 +174,35 @@ def paint_value_table(attribute_import: Type[tool.AttributeImport],
     else:
         table_widget.setDisabled(False)
 
-    value_list = attribute_import_sql.get_values(ifc_type, som_object, property_set, attribute, all_keyword)
+    value_list, checkstate_dict = attribute_import_sql.get_values(ifc_type, som_object, property_set, attribute,
+                                                                  all_keyword)
     if not value_list:
         return
-    table_values = set(v[:-2] for v in value_list)
-    attribute_import.update_table_widget(table_values, table_widget, [str, int], add_checkbox=True)
-    check_state_dict = attribute_import.get_value_checkstate_dict(value_list)
-    attribute_import.update_valuetable_checkstate(check_state_dict)
+    attribute_import.update_table_widget(set(value_list), table_widget, [Qt.CheckState, str, int])
+    attribute_import.update_valuetable_checkstate(checkstate_dict)
 
+
+def value_checkstate_changed(checkbox: ValueCheckBox, attribute_import: Type[tool.AttributeImport],
+                             attribute_import_sql: Type[tool.AttributeImportSQL]):
+    if attribute_import.is_table_editing():
+        return
+    value_table = attribute_import.get_value_table()
+    row = attribute_import.find_checkbox_row_in_table(value_table, checkbox)
+
+    if value_table.item(row, 1) is None:
+        return
+    value_text = value_table.item(row, 1).text()
+    ifc_type, som_object, property_set, attribute = attribute_import.get_input_variables()
+
+    checkstate = 1 if checkbox.checkState() in (Qt.CheckState.Checked, Qt.CheckState.PartiallyChecked) else 0
+    logging.info(f"value_checkstate_changed {row} {checkbox.checkState()} new: {checkstate}")
+    all_keyword = attribute_import.get_all_keyword()
+    logging.info(f"checkstate: {checkbox.checkState()} {checkbox} {checkbox.isTristate()}")
+    if None in [ifc_type, som_object, property_set, attribute]:
+        return
+
+    attribute_import_sql.change_checkstate_of_values(ifc_type, som_object, property_set, attribute, value_text,
+                                                     checkstate, all_keyword)
 
 def ifc_import_started(runner, attribute_import: Type[tool.AttributeImport],
                        ifc_importer: Type[tool.IfcImporter]):

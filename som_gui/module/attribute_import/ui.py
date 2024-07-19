@@ -1,5 +1,5 @@
 from __future__ import annotations
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QDialog, QTableWidget, QComboBox
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QDialog, QTableWidget, QComboBox, QCheckBox
 from som_gui.module import attribute_import
 from ...icons import get_icon, get_settings_icon
 
@@ -74,13 +74,20 @@ class ValueTable(QTableWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.clear()
-        self.setColumnCount(2)
+        self.setColumnCount(3)
         self.setRowCount(2)
-        self.setHorizontalHeaderLabels([self.tr("Wert"), self.tr("Anzahl")])
+        self.setHorizontalHeaderLabels([self.tr("Übernehmen"), self.tr("Wert"), self.tr("Anzahl")])
 
     def paintEvent(self, e):
         super().paintEvent(e)
         attribute_import.trigger.paint_value_table()
+
+
+class ValueCheckBox(QCheckBox):
+    def __init__(self, table_widget, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.table_widget = table_widget
+        self.checkStateChanged.connect(lambda: attribute_import.trigger.value_checkstate_changed(self))
 class SettingsDialog(QDialog):
     def __init__(self):
         super(SettingsDialog, self).__init__()

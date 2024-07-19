@@ -74,3 +74,7 @@ def attribute_table_selection_changed():
 
 def value_table_selection_changed():
     core.update_results_window(tool.AttributeImport, tool.AttributeImportSQL)
+
+
+def value_checkstate_changed(check_box):
+    core.value_checkstate_changed(check_box, tool.AttributeImport, tool.AttributeImportSQL)

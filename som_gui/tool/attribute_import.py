@@ -7,7 +7,7 @@ import som_gui.core.tool
 import som_gui
 from som_gui.module.attribute_import import ui, trigger
 from som_gui import tool
-from PySide6.QtWidgets import QComboBox, QPushButton, QTableWidgetItem, QTableWidget
+from PySide6.QtWidgets import QComboBox, QPushButton, QTableWidgetItem, QTableWidget, QCheckBox
 from PySide6.QtCore import QRunnable, QObject, Signal, QThreadPool, Qt
 import ifcopenshell
 from ifcopenshell.util import element as ifc_element_util
@@ -262,14 +262,33 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         return cls.get_attribute_widget().widget.table_widget_value
 
     @classmethod
-    def get_existing_values_in_table(cls, table_widget: QTableWidget, datatypes: list):
+    def get_value_from_table_row(cls, table_widget: QTableWidget, row: int, data_types: list):
         column_count = table_widget.columnCount()
+        items = list()
+        for col, data_type in zip(range(column_count), data_types):
+            if data_type == Qt.CheckState:
+                items.append(table_widget.cellWidget(row, col))
+            else:
+                items.append(table_widget.item(row, col))
+
+        values = list()
+
+        for item, data_type in zip(items, data_types):
+            if isinstance(item, QTableWidgetItem):
+                values.append(data_type(item.text()))
+            else:
+                values.append(Qt.CheckState)
+        return tuple(values)
+
+
+    @classmethod
+    def get_existing_values_in_table(cls, table_widget: QTableWidget, datatypes: list):
         existing_values = set()
         for row in range(table_widget.rowCount()):
-            items = [table_widget.item(row, col) for col in range(column_count)]
-            if None in items:
+            check_item = table_widget.cellWidget(row, 0) if datatypes[0] == Qt.CheckState else table_widget.item(row, 0)
+            if check_item is None:
                 continue
-            existing_values.add(tuple(dt(item.text()) for item, dt in zip(items, datatypes)))
+            existing_values.add(cls.get_value_from_table_row(table_widget, row, datatypes))
         return existing_values
 
     @classmethod
@@ -285,15 +304,12 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         return cls.get_properties().table_editing
 
     @classmethod
-    def update_table_widget(cls, allowed_values: set[tuple], table_widget: QTableWidget, datatypes: list,
-                            add_checkbox: bool = False):
+    def update_table_widget(cls, allowed_values: set[tuple], table_widget: QTableWidget, datatypes: list, ):
         if not allowed_values:
             return
-        column_count = len(list(allowed_values)[0])
         existing_values = cls.get_existing_values_in_table(table_widget, datatypes)
         add_items = allowed_values.difference(existing_values)
         delete_items = existing_values.difference(allowed_values)
-
         if not add_items and not delete_items:
             return
 
@@ -306,36 +322,44 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
 
         for row, values in enumerate(add_items, start=old_row_count):
             for col, value in enumerate(values):
-                item = QTableWidgetItem()
-                item.setData(Qt.ItemDataRole.EditRole, value)
-                table_widget.setItem(row, col, item)
-            if add_checkbox:
-                table_widget.item(row, 0).setCheckState(Qt.CheckState.Unchecked)
+                if datatypes[col] == Qt.CheckState:
+                    item = ui.ValueCheckBox(table_widget)
+                    table_widget.setCellWidget(row, col, item)
+                    item.setCheckState(Qt.CheckState.Unchecked)
+                else:
+                    item = QTableWidgetItem()
+                    item.setData(Qt.ItemDataRole.EditRole, value)
+                    table_widget.setItem(row, col, item)
+
         for row in reversed(range(table_widget.rowCount())):
-            if table_widget.item(row, 0) is None:
+            check_item = table_widget.cellWidget(row, 0) if datatypes[0] == Qt.CheckState else table_widget.item(row, 0)
+
+            if check_item is None:
                 table_widget.removeRow(row)
                 continue
-            tup = tuple(table_widget.item(row, col).data(Qt.ItemDataRole.EditRole) for col in range(column_count))
+            tup = cls.get_value_from_table_row(table_widget, row, datatypes)
             if tup in delete_items:
                 table_widget.removeRow(row)
-        existing_values = cls.get_existing_values_in_table(table_widget, datatypes)
         table_widget.resizeColumnsToContents()
         table_widget.setSortingEnabled(True)
         cls.stop_table_editing()
 
     @classmethod
     def update_valuetable_checkstate(cls, checkstate_dict: dict[str, bool]):
+        cls.start_table_editing()
+
         table_widget = cls.get_value_table()
         for row in range(table_widget.rowCount()):
-
-            item = table_widget.item(row, 0)
-            if not item:
+            check_item: QCheckBox = table_widget.cellWidget(row, 0)
+            value_item = table_widget.item(row, 1)
+            if None in (check_item, value_item):
                 continue
-            value_text = item.text()
+            value_text = value_item.text()
             cs = checkstate_dict[value_text]
-            if item.checkState() != cs:
-                item.setCheckState(cs)
+            if check_item.checkState() != cs:
+                check_item.setCheckState(cs)
 
+        cls.stop_table_editing()
     @classmethod
     def get_value_checkstate_dict(cls, value_list: list[tuple[str, int, int, int]]):
         value_dict = dict()
@@ -346,6 +370,20 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
                 cs = Qt.CheckState.Checked if check == 1 else Qt.CheckState.Unchecked
             value_dict[value] = cs
         return value_dict
+
+    @classmethod
+    def find_checkbox_row_in_table(cls, table_widget: QTableWidget, checkbox: ui.ValueCheckBox):
+        for row in range(table_widget.rowCount()):
+            if table_widget.cellWidget(row, 0) == checkbox:
+                return row
+
+    @classmethod
+    def get_input_variables(cls):
+        ifc_type = cls.get_ifctype_combo_box().currentText()
+        som_object = cls.get_somtype_combo_box().currentData(Qt.ItemDataRole.UserRole)
+        property_set = cls.get_selected_property_set()
+        attribute = cls.get_selected_attribute()
+        return ifc_type, som_object, property_set, attribute
 
 
 class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
@@ -601,4 +639,39 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cursor.execute(sql_query)
         value_list = cursor.fetchall()
         cls.disconnect_from_database()
-        return value_list
+
+        result_list = list()
+        checkstate_dict = dict()
+        for value, value_count, check_state, check_count in value_list:
+            cs = Qt.CheckState.PartiallyChecked if check_count > 1 else Qt.CheckState.Checked if check_state else Qt.CheckState.Unchecked
+            result_list.append((Qt.CheckState, value, value_count))
+            checkstate_dict[value] = cs
+        return result_list, checkstate_dict
+
+    @classmethod
+    def change_checkstate_of_values(cls, ifc_type, som_object, property_set, attribute, value_text, checkstate,
+                                    all_keyword):
+        ifc_type = all_keyword if ifc_type is None else ifc_type
+        som_object = all_keyword if som_object is None else som_object
+        ifc_type_filter = f"=='{ifc_type}'" if ifc_type != all_keyword else "IS NOT ''"
+        identifier_filter = f"=='{som_object.ident_value}'" if som_object != all_keyword else "IS NOT ''"
+
+        cls.connect_to_data_base(cls.get_database_path())
+        cursor = cls.get_cursor()
+
+        sql_query = f"""
+        UPDATE attributes
+        SET checked = {checkstate}
+        WHERE guid IN (
+            SELECT attributes.GUID
+            from attributes
+            JOIN entities on attributes.GUID = entities.GUID
+            WHERE entities.bauteilKlassifikation {identifier_filter}
+            AND entities.ifc_type {ifc_type_filter}
+            AND attributes.PropertySet == '{property_set}'
+            AND attributes.Attribut == '{attribute}'
+            AND attributes.Value == '{value_text}'
+            )        
+        """
+        cursor.execute(sql_query)
+        cls.disconnect_from_database()
