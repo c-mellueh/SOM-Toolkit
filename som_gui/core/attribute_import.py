@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from som_gui.module.attribute_import.ui import ValueCheckBox
 import time
 
-DB_PATH = "C:/Users/CHRIST~1/AppData/Local/Temp/tmpxqjw4ehg.db"  # "C:/Users/CHRIST~1/AppData/Local/Temp/tmpqpvbsv88.db"
+DB_PATH = "C:/Users/CHRIST~1/AppData/Local/Temp/tmph6digaia.db"  # "C:/Users/CHRIST~1/AppData/Local/Temp/tmpqpvbsv88.db"
 
 
 def open_import_window(attribute_import: Type[tool.AttributeImport],
@@ -119,19 +119,21 @@ def ifc_import_finished(runner: IfcImportRunner, attribute_import: Type[tool.Att
 
 
 def start_attribute_import(file: ifcopenshell.file, path, attribute_import: Type[tool.AttributeImport],
-                           attribute_import_sql: Type[tool.AttributeImportSQL]):
+                           attribute_import_results: Type[tool.AttributeImportResults],
+                           attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
     attribute_import.set_ifc_path(path)
     pset_name, attribute_name = attribute_import.get_main_pset(), attribute_import.get_main_attribute()
     attribute_import_sql.connect_to_data_base(attribute_import_sql.get_database_path())
     entity_list = list(file.by_type("IfcObject"))
     entity_count = len(entity_list)
     status_text = "Entität aus Datei importieren:"
+    attribute_dict = attribute_import_results.build_attribute_dict(list(project.get().get_all_objects()))
     for index, entity in enumerate(entity_list):
         if index % 100 == 0:
             attribute_import.set_progress(int(index / entity_count * 100))
             attribute_import.set_status(f"{status_text} {index}/{entity_count}")
         attribute_import_sql.add_entity(entity, pset_name, attribute_name, os.path.basename(path))
-        attribute_import_sql.import_entity_attributes(entity, file)
+        attribute_import_sql.import_entity_attributes(entity, file, attribute_dict)
     attribute_import_sql.disconnect_from_database()
 
 
@@ -315,11 +317,11 @@ def all_checkbox_checkstate_changed(attribute_import_results: Type[tool.Attribut
     update_value_table(attribute_import_results, attribute_import_sql)
 
 
-def settings_clicked(attriubte_import_results: Type[tool.AttributeImportResults]):
-    settings_dialog = attriubte_import_results.create_settings_window()
-    attriubte_import_results.update_settins_dialog_checkstates(settings_dialog)
+def settings_clicked(attriubte_import_sql: Type[tool.AttributeImportSQL]):
+    settings_dialog = attriubte_import_sql.create_settings_window()
+    attriubte_import_sql.update_settins_dialog_checkstates(settings_dialog)
     if settings_dialog.exec():
-        attriubte_import_results.settings_dialog_accepted(settings_dialog)
+        attriubte_import_sql.settings_dialog_accepted(settings_dialog)
 
 def results_abort_clicked(attribute_import_results: Type[tool.AttributeImportResults]):
     window = attribute_import_results.get_results_window()

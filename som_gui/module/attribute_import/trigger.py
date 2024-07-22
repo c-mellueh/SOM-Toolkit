@@ -43,7 +43,8 @@ def last_import_finished():
 
 
 def start_attribute_import(file: ifcopenshell.file, path: str):
-    core.start_attribute_import(file, path, tool.AttributeImport, tool.AttributeImportSQL)
+    core.start_attribute_import(file, path, tool.AttributeImport, tool.AttributeImportResults, tool.AttributeImportSQL,
+                                tool.Project)
     pass
 
 
@@ -100,4 +101,4 @@ def result_acccept_clicked():
 
 
 def settings_clicked():
-    core.settings_clicked(tool.AttributeImportResults)
+    core.settings_clicked(tool.AttributeImportSQL)
