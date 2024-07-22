@@ -9,6 +9,8 @@ from som_gui.module.attribute_import import ui, trigger
 from som_gui import tool
 from PySide6.QtWidgets import QComboBox, QTableWidgetItem, QTableWidget, QCheckBox
 from PySide6.QtCore import QRunnable, QObject, Signal, QThreadPool, Qt
+from PySide6.QtGui import QBrush, QPalette
+
 import ifcopenshell
 from ifcopenshell.util import element as ifc_element_util
 import logging
@@ -356,6 +358,41 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
             result_dict[obj.ident_value] = object_dict
         return result_dict
 
+    @classmethod
+    def get_attribute_item_text_color(cls, row: int):
+        palette = QPalette()
+        if not tool.AttributeImportSQL.get_properties().color_values:
+            return palette.base(), palette.text()
+
+        table_widget = cls.get_attribute_table()
+        count_item = table_widget.item(row, 1)
+        distinct_count_item = table_widget.item(row, 2)
+        count = int(count_item.text())
+        distinct_count = int(distinct_count_item.text())
+        if distinct_count == 1:
+            if count > 1:
+                return Qt.GlobalColor.red, palette.text()
+        elif distinct_count == count:
+            return Qt.GlobalColor.blue, palette.text()
+        return palette.base(), palette.text()
+
+    @classmethod
+    def set_attribute_row_text_color(cls, row: int, color: Qt.GlobalColor):
+        table_widget = cls.get_attribute_table()
+        for column in range(table_widget.columnCount()):
+            item = table_widget.item(row, column)
+            item.setBackground(QBrush(color))
+
+    @classmethod
+    def update_attribute_table_styling(cls):
+        table_widget = cls.get_attribute_table()
+        column_count = table_widget.columnCount()
+        for row in range(table_widget.rowCount()):
+            brush_col, text_col = cls.get_attribute_item_text_color(row)
+            for column in range(column_count):
+                brush = QBrush(brush_col)
+                table_widget.item(row, column).setBackground(brush)
+
 
 class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
@@ -672,7 +709,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def create_settings_filter(cls):
-        sql_query = ""
+        sql_query = "AND a.DataType is not 'IfcBoolean' \n"
         prop = cls.get_properties()
         if not prop.show_regex_values:
             sql_query += f"AND sa.ValueType is not '{SOMcreator.value_constants.FORMAT}'\n"

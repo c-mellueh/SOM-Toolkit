@@ -239,6 +239,7 @@ def update_attribute_table(attribute_import_results: Type[tool.AttributeImportRe
         attribute_list = attribute_import_sql.get_attributes(ifc_type, identifier, property_set)
         attribute_import_results.update_table_widget(set(attribute_list), table_widget, [str, int, int])
 
+    attribute_import_results.update_attribute_table_styling()
     update_value_table(attribute_import_results, attribute_import_sql)
 
 
