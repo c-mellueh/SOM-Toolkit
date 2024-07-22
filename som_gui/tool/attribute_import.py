@@ -44,7 +44,6 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
     def get_properties(cls) -> AttributeImportProperties:
         return som_gui.AttributeImportProperties
 
-
     @classmethod
     def checkstate_to_int(cls, checkstate: Qt.CheckState) -> int:
         return 1 if checkstate in (Qt.CheckState.Checked, Qt.CheckState.PartiallyChecked) else 0
@@ -508,7 +507,6 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         prop.color_values = widget.check_box_color.isChecked()
         prop.show_range_values = widget.check_box_range.isChecked()
 
-
     @classmethod
     def get_cursor(cls):
         return cls.get_properties().connection.cursor()
@@ -624,6 +622,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             logging.warning(f"GUID '{entity_guid}' exists for multiple Entities! ")
         cls.commit_sql()
         return identifier
+
     @classmethod
     def import_entity_attributes(cls, entity: ifcopenshell.entity_instance, ifc_file: ifcopenshell.file,
                                  identifier, existing_object_dict):

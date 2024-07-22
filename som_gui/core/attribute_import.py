@@ -177,6 +177,7 @@ def open_results_window(attribute_import_results: Type[tool.AttributeImportResul
 def update_results_window(attriubte_import_results: Type[tool.AttributeImportResults]):
     attriubte_import_results.update_results_window()
 
+
 def update_ifctype_combobox(attribute_import_results: Type[tool.AttributeImportResults],
                             attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
     if attribute_import_results.is_updating_locked():
@@ -263,6 +264,7 @@ def update_value_table(attribute_import_results: Type[tool.AttributeImportResult
     attribute_import_results.update_valuetable_checkstate(checkstate_dict)
     update_all_checkbox(attribute_import_results)
 
+
 def value_checkstate_changed(checkbox: ValueCheckBox, attribute_import_results: Type[tool.AttributeImportResults],
                              attribute_import_sql: Type[tool.AttributeImportSQL]):
     logging.debug("Update Value Checkstates")
@@ -324,6 +326,8 @@ def settings_clicked(attribute_import_results: Type[tool.AttributeImportResults]
     if settings_dialog.exec():
         attriubte_import_sql.settings_dialog_accepted(settings_dialog)
         attribute_import_results.update_results_window()
+
+
 def results_abort_clicked(attribute_import_results: Type[tool.AttributeImportResults]):
     window = attribute_import_results.get_results_window()
     window.close()
