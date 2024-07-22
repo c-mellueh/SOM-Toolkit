@@ -25,7 +25,6 @@ class AttributeImportResultWindow(QWidget):
         self.widget = attribute_import.window.Ui_Form()
         self.widget.setupUi(self)
         self.widget.button_settings.setIcon(get_settings_icon())
-        self.widget.button_accept.hide()
         self.setWindowTitle(self.tr("Modellinformationen Einlesen"))
         self.setWindowIcon(get_icon())
 

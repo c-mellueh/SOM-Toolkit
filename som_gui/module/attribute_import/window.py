@@ -216,14 +216,9 @@ class Ui_Form(object):
 
         self.horzontal_layout_action_buttons.addWidget(self.button_accept)
 
-        self.button_run = QPushButton(Form)
-        self.button_run.setObjectName(u"button_run")
-        self.button_run.setMinimumSize(QSize(0, 24))
-        self.button_run.setMaximumSize(QSize(16777215, 24))
-
-        self.horzontal_layout_action_buttons.addWidget(self.button_run)
 
         self.main_layout.addLayout(self.horzontal_layout_action_buttons)
+
 
         self.retranslateUi(Form)
 
@@ -239,7 +234,6 @@ class Ui_Form(object):
         self.label_value.setText(QCoreApplication.translate("Form", u"Werte", None))
         self.button_settings.setText("")
         self.button_abort.setText(QCoreApplication.translate("Form", u"Abbrechen", None))
-        self.button_accept.setText(QCoreApplication.translate("Form", u"Werte \u00dcbernehmen", None))
-        self.button_run.setText(QCoreApplication.translate("Form", u"IFC Einlesen", None))
+        self.button_accept.setText(QCoreApplication.translate("Form", u"\u00dcbernehmen", None))
     # retranslateUi
 

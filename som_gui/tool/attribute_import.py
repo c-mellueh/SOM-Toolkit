@@ -66,6 +66,9 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         widget.table_widget_attribute.itemSelectionChanged.connect(trigger.attribute_table_selection_changed)
         widget.table_widget_value.itemSelectionChanged.connect(trigger.value_table_selection_changed)
         cls.get_properties().all_checkbox.checkStateChanged.connect(trigger.all_checkbox_checkstate_changed)
+        widget.button_accept.clicked.connect(trigger.result_acccept_clicked)
+        widget.button_abort.clicked.connect(trigger.result_abort_clicked)
+
     @classmethod
     def update_combobox(cls, combobox: QComboBox, allowed_values: set[str]):
         cls.lock_updating("IfcType ComboBox")
@@ -330,6 +333,18 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
     @classmethod
     def get_all_checkbox(cls):
         return cls.get_properties().all_checkbox
+
+    @classmethod
+    def build_attribute_dict(cls, objects: list[SOMcreator.Object]) -> dict[
+        str, dict[str, dict[str, SOMcreator.Attribute]]]:
+        result_dict = dict()
+        for obj in objects:
+            object_dict = dict()
+            for pset in obj.property_sets:
+                object_dict[pset.name] = {a.name: a for a in pset.attributes}
+            result_dict[obj.ident_value] = object_dict
+        return result_dict
+
 
 class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
@@ -737,3 +752,29 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         value_list = cursor.fetchall()
         cls.disconnect_from_database()
         return value_list[0][0]
+
+    @classmethod
+    def get_new_attribute_values(cls):
+        cls.connect_to_data_base(cls.get_database_path())
+        cursor = cls.get_cursor()
+        sql_query = f"""
+        
+        SELECT DISTINCT sa.bauteilKlassifikation,sa.PropertySet,sa.Attribut, a.value
+        from som_attributes sa
+        JOIN entities e ON sa.bauteilklassifikation = e.bauteilklassifikation
+        JOIN attributes a ON e.guid = a.guid
+        WHERE a.checked = 1
+        AND a.Attribut = sa.Attribut
+        AND a.PropertySet = sa.PropertySet
+        AND  (sa.bauteilKlassifikation,sa.PropertySet,sa.Attribut, a.value) not in (
+        SELECT sa.bauteilKlassifikation,sa.PropertySet,sa.Attribut, a.value
+        from  som_attributes sa
+        WHERE a.Attribut = sa.Attribut
+        AND a.PropertySet = sa.PropertySet
+        AND a.Value = sa.Value
+        )
+        """
+        cursor.execute(sql_query)
+        value_list = cursor.fetchall()
+        cls.disconnect_from_database()
+        return value_list

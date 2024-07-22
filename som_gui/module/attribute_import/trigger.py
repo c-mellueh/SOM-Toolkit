@@ -89,3 +89,11 @@ def paint_value_table():
 
 def all_checkbox_checkstate_changed():
     core.all_checkbox_checkstate_changed(tool.AttributeImportResults, tool.AttributeImportSQL)
+
+
+def result_abort_clicked():
+    core.results_abort_clicked(tool.AttributeImportResults)
+
+
+def result_acccept_clicked():
+    core.results_accept_clicked(tool.AttributeImportResults, tool.AttributeImportSQL, tool.Project)

@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from som_gui.module.attribute_import.ui import ValueCheckBox
 import time
 
-DB_PATH = "C:/Users/CHRIST~1/AppData/Local/Temp/tmpxqjw4ehg.db"  # "C:/Users/CHRIST~1/AppData/Local/Temp/tmpqpvbsv88.db"
+DB_PATH = ""  # "C:/Users/CHRIST~1/AppData/Local/Temp/tmpxqjw4ehg.db"  # "C:/Users/CHRIST~1/AppData/Local/Temp/tmpqpvbsv88.db"
 
 
 def open_import_window(attribute_import: Type[tool.AttributeImport],
@@ -313,3 +313,22 @@ def all_checkbox_checkstate_changed(attribute_import_results: Type[tool.Attribut
                                                      checkstate)
 
     update_value_table(attribute_import_results, attribute_import_sql)
+
+
+def results_abort_clicked(attribute_import_results: Type[tool.AttributeImportResults]):
+    window = attribute_import_results.get_results_window()
+    window.close()
+
+
+def results_accept_clicked(attribute_import_results: Type[tool.AttributeImportResults],
+                           attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
+    proj = project.get()
+    new_attribute_values = attribute_import_sql.get_new_attribute_values()
+    attribute_dict = attribute_import_results.build_attribute_dict(list(proj.get_all_objects()))
+
+    for identifier, property_set_name, attribute_name, value in new_attribute_values:
+        attribute = attribute_dict[identifier][property_set_name][attribute_name]
+        attribute.value.append(value)
+
+    window = attribute_import_results.get_results_window()
+    window.close()
