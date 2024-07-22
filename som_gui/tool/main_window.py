@@ -6,7 +6,6 @@ from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLabel, QLine
 from som_gui import tool
 from som_gui.module.main_window import ui as ui_main_window
 from som_gui.windows import mapping_window
-from som_gui.windows.attribute_import.gui import AttributeImport
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.prop import MainWindowProperties, MenuDict
@@ -116,11 +115,6 @@ class MainWindow(som_gui.core.tool.MainWindow):
         cls.get_properties().mapping_window = mapping_window.MappingWindow(window)
         cls.get_properties().mapping_window.show()
 
-    @classmethod
-    def open_attribute_import_window(cls):
-        if cls.get_properties().attribute_import_window is not None:
-            cls.get_properties().attribute_import_window.close()
-        cls.get_properties().attribute_import_window = AttributeImport(cls.get())
 
     @classmethod
     def get_object_name_horizontal_layout(cls) -> QHBoxLayout:

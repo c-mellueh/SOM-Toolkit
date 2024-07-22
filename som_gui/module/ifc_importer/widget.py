@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'IfcWidget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.7.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,7 +23,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(865, 180)
+        Form.resize(865, 196)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -96,23 +96,26 @@ class Ui_Form(object):
 
         self.verticalLayout.addWidget(self.progress_bar)
 
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.button_widget = QWidget(Form)
+        self.button_widget.setObjectName(u"button_widget")
+        self.horizontalLayout_2 = QHBoxLayout(self.button_widget)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalSpacer = QSpacerItem(664, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.horizontalLayout.addItem(self.horizontalSpacer)
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
 
-        self.button_run = QPushButton(Form)
-        self.button_run.setObjectName(u"button_run")
-
-        self.horizontalLayout.addWidget(self.button_run)
-
-        self.button_close = QPushButton(Form)
+        self.button_close = QPushButton(self.button_widget)
         self.button_close.setObjectName(u"button_close")
 
-        self.horizontalLayout.addWidget(self.button_close)
+        self.horizontalLayout_2.addWidget(self.button_close)
 
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.button_run = QPushButton(self.button_widget)
+        self.button_run.setObjectName(u"button_run")
+
+        self.horizontalLayout_2.addWidget(self.button_run)
+
+        self.verticalLayout.addWidget(self.button_widget)
+
 
         self.retranslateUi(Form)
 
@@ -127,7 +130,7 @@ class Ui_Form(object):
         self.label_ifc.setText(QCoreApplication.translate("Form", u"IFC Pfad", None))
         self.button_ifc.setText(QCoreApplication.translate("Form", u"...", None))
         self.label_status.setText(QCoreApplication.translate("Form", u"Status Label", None))
-        self.button_run.setText(QCoreApplication.translate("Form", u"Run", None))
         self.button_close.setText(QCoreApplication.translate("Form", u"Close", None))
+        self.button_run.setText(QCoreApplication.translate("Form", u"Run", None))
     # retranslateUi
 

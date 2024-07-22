@@ -19,7 +19,7 @@ def connect_buttons(_: QPushButton, export_button: QPushButton, run_button: QPus
                     abort_button: QPushButton):
     export_button.clicked.connect(lambda: core.export_selection_clicked(aw_tool.GroupingWindow, tool.Settings))
     run_button.clicked.connect(lambda: core.run_clicked(aw_tool.GroupingWindow, tool.IfcImporter))
-    abort_button.clicked.connect(lambda: core.cancel_clicked(aw_tool.GroupingWindow))
+    abort_button.clicked.connect(lambda: core.cancel_clicked(aw_tool.GroupingWindow, tool.IfcImporter))
 
 
 def start_grouping(ifc_file: ifcopenshell.file):

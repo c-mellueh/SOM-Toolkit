@@ -29,7 +29,7 @@ def connect_buttons(ifc_button: QPushButton, export_button: QPushButton, run_but
                     abort_button: QPushButton):
     export_button.clicked.connect(lambda: core.export_selection_clicked(tool.ModelcheckWindow, tool.Settings))
     run_button.clicked.connect(lambda: core.run_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
-                                                        tool.IfcImporter, tool.Project))
+                                                        tool.IfcImporter, tool.Project, tool.Util))
 
     abort_button.clicked.connect(lambda: core.cancel_clicked(tool.ModelcheckWindow, tool.Modelcheck))
 

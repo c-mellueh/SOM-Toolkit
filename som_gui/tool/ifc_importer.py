@@ -15,7 +15,27 @@ from PySide6.QtWidgets import QFileDialog, QPushButton, QSizePolicy, QLineEdit, 
 
 if TYPE_CHECKING:
     from som_gui.module.ifc_importer.prop import IfcImportProperties
+    from PySide6.QtWidgets import QLineEdit, QLabel
 
+
+class Signaller(QObject):
+    started = Signal()
+    finished = Signal()
+
+
+class IfcImportRunner(QRunnable):
+    def __init__(self, path: os.PathLike | str, status_label: QLabel):
+        super(IfcImportRunner, self).__init__()
+        self.path = path
+        self.ifc: ifcopenshell.file | None = None
+        self.signaller = Signaller()
+        self.status_label = status_label
+
+    def run(self):
+        self.signaller.started.emit()
+        time.sleep(1)
+        self.ifc = ifcopenshell.open(self.path)
+        self.signaller.finished.emit()
 
 class IfcImporter(som_gui.core.tool.IfcImporter):
     @classmethod
@@ -102,23 +122,6 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
     @classmethod
     def create_runner(cls, status_label: QLabel, path: os.PathLike | str):
-        class IfcImportRunner(QRunnable):
-            def __init__(self, path: os.PathLike | str, status_label: QLabel):
-                super(IfcImportRunner, self).__init__()
-                self.path = path
-                self.ifc: ifcopenshell.file | None = None
-                self.signaller = Signaller()
-                self.status_label = status_label
-
-            def run(self):
-                self.signaller.started.emit()
-                time.sleep(1)
-                self.ifc = ifcopenshell.open(self.path)
-                self.signaller.finished.emit()
-
-        class Signaller(QObject):
-            started = Signal()
-            finished = Signal()
 
         if not os.path.exists(path):
             return
@@ -144,3 +147,11 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         export_button.show()
         export_button.setText("...")
         return export_button, export_line_edit
+
+    @classmethod
+    def set_close_button_text(cls, widget: ui.IfcImportWidget, text: str):
+        widget.widget.button_close.setText(widget.tr(text))
+
+    @classmethod
+    def set_run_button_enabled(cls, widget: ui.IfcImportWidget, enabled: bool):
+        widget.widget.button_run.setEnabled(enabled)

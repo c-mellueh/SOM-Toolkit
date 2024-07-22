@@ -1,9 +1,11 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING
+import os, tempfile
+from PySide6.QtCore import QFile
 from PySide6.QtGui import QAction, QShortcut, QKeySequence
-from PySide6.QtWidgets import QMenu, QMenuBar, QWidget
+from PySide6.QtWidgets import QMenu, QMenuBar, QWidget, QComboBox
 import som_gui.core.tool
-
+import re
 if TYPE_CHECKING:
     from som_gui.module.util.prop import MenuDict, UtilProperties
 
@@ -99,3 +101,21 @@ class Util(som_gui.core.tool.Util):
             action.triggered.connect(action_func)
         menu_dict[name] = action
         return action
+
+    @classmethod
+    def create_tempfile(cls, suffix: str | None = None) -> str:
+        suffix = ".tmp" if suffix is None else suffix
+        return os.path.abspath(tempfile.NamedTemporaryFile(suffix=suffix).name)
+
+    @classmethod
+    def transform_guid(cls, guid: str, add_zero_width: bool):
+        """Fügt Zero Width Character ein weil PowerBI (WARUM AUCH IMMER FÜR EIN BI PROGRAMM?????) Case Insensitive ist"""
+        if add_zero_width:
+            return re.sub(r"([A-Z])", lambda m: m.group(0) + u"\u200B", guid)
+        else:
+            return guid
+
+    @classmethod
+    def get_combobox_values(cls, combo_box: QComboBox):
+        count = combo_box.count()
+        return [combo_box.itemText(i) for i in range(count)]
