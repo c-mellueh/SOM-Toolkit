@@ -55,5 +55,3 @@ def fill_old_menus(main_window_tool: Type[MainWindow]):
     main_window = main_window_tool.get()
 
     main_window_tool.add_action("Datei/Mappings", lambda: main_window_tool.open_mapping_window())
-    main_window_tool.add_action("Modelle/Informationen einlesen",
-                                lambda: main_window_tool.open_attribute_import_window())

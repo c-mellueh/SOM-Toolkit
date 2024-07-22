@@ -5,9 +5,8 @@ from som_gui.core import attribute_import as core
 
 
 def connect():
-    tool.MainWindow.add_action("Modelle/Modellinformationen Einlesen21",
+    tool.MainWindow.add_action("Modelle/Informationen einlesen",
                                lambda: core.open_import_window(tool.AttributeImport, tool.AttributeImportResults,
-                                                               tool.AttributeImportSQL,
                                                                tool.IfcImporter))
 
 
@@ -29,9 +28,6 @@ def connect_attribute_import_runner(runner):
         lambda: core.attribute_import_finished(tool.AttributeImport, tool.IfcImporter))
     runner.signaller.status.connect(tool.ModelcheckWindow.set_status)
     runner.signaller.progress.connect(tool.ModelcheckWindow.set_progress)
-
-
-
 
 
 def on_new_project():
@@ -58,6 +54,7 @@ def update_identifier_combobox():
 
 def update_object_count():
     core.update_object_count(tool.AttributeImportResults, tool.AttributeImportSQL)
+
 
 def update_attribute_import_window():
     core.update_results_window(tool.AttributeImportResults)

@@ -13,19 +13,12 @@ if TYPE_CHECKING:
     from som_gui.module.attribute_import.ui import ValueCheckBox
 import time
 
-DB_PATH = "C:/Users/CHRIST~1/AppData/Local/Temp/tmpmw9o0zaz.db"
-
 
 # DB_PATH = ""
 
 def open_import_window(attribute_import: Type[tool.AttributeImport],
                        attribute_import_results: Type[tool.AttributeImportResults],
-                       attribute_import_sql: Type[tool.AttributeImportSQL], ifc_importer: Type[tool.IfcImporter]):
-    # DEBUG
-    if DB_PATH:
-        attribute_import_sql.set_database_path(DB_PATH)
-        open_results_window(attribute_import_results)
-        return
+                       ifc_importer: Type[tool.IfcImporter]):
 
     if attribute_import_results.is_window_allready_build():
         attribute_import_results.get_results_window().show()
