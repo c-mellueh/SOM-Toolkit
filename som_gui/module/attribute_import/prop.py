@@ -40,3 +40,4 @@ class AttributeImportSQLProperties:
     show_regex_values: bool = False
     show_range_values: bool = False
     color_values: bool = False
+    show_boolean_values: bool = False

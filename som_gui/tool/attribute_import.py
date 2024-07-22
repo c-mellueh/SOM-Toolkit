@@ -525,6 +525,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                          (widget.check_box_existing_attributes, prop.show_existing_values),
                          (widget.check_box_color, prop.color_values),
                          (widget.check_box_range, prop.show_range_values),
+                         (widget.check_box_boolean_values, prop.show_boolean_values)
                          ]
         return checkbox_list
 
@@ -543,6 +544,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         prop.show_existing_values = widget.check_box_existing_attributes.isChecked()
         prop.color_values = widget.check_box_color.isChecked()
         prop.show_range_values = widget.check_box_range.isChecked()
+        prop.show_boolean_values = widget.check_box_boolean_values.isChecked()
 
     @classmethod
     def get_cursor(cls):
@@ -709,14 +711,17 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def create_settings_filter(cls):
-        sql_query = "AND a.DataType is not 'IfcBoolean' \n"
+        sql_query = ""
         prop = cls.get_properties()
         if not prop.show_regex_values:
             sql_query += f"AND sa.ValueType is not '{SOMcreator.value_constants.FORMAT}'\n"
         if not prop.show_range_values:
             sql_query += f"AND sa.ValueType is not '{SOMcreator.value_constants.RANGE}'\n"
         if not prop.show_existing_values:
-            sql_query += "AND a.IsDefined == 0"
+            sql_query += "AND a.IsDefined == 0 \n"
+        if not prop.show_boolean_values:
+            sql_query += "AND a.DataType is not 'IfcBoolean' \n"
+
         return sql_query
 
     @classmethod

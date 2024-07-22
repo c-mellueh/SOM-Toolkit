@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>245</width>
-    <height>146</height>
+       <width>275</width>
+       <height>172</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,12 +15,12 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QCheckBox" name="check_box_existing_attributes">
+       <widget class="QCheckBox" name="check_box_boolean_values">
      <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="text">
-      <string>Bereits existierende Vorgaben anzeigen</string>
+         <string>IfcBoolean importieren</string>
      </property>
     </widget>
    </item>
@@ -30,7 +30,7 @@
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="text">
-      <string>Regex-Vorgaben importieren</string>
+         <string>RegEx-Vorgaben importieren</string>
      </property>
     </widget>
    </item>
@@ -40,7 +40,17 @@
       <enum>Qt::RightToLeft</enum>
      </property>
      <property name="text">
-      <string>Bereich-Vorgaben importieren</string>
+         <string>Range-Vorgaben importieren</string>
+     </property>
+    </widget>
+   </item>
+      <item>
+          <widget class="QCheckBox" name="check_box_existing_attributes">
+              <property name="layoutDirection">
+                  <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="text">
+                  <string>Bereits existierende Vorgaben anzeigen</string>
      </property>
     </widget>
    </item>
