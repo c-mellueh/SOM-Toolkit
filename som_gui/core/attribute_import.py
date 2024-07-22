@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import Type, TYPE_CHECKING
 import os
 import logging
+
+import SOMcreator.constants.value_constants as value_constants
 import ifcopenshell
 from PySide6.QtCore import Qt
 
@@ -11,16 +13,18 @@ if TYPE_CHECKING:
     from som_gui.module.attribute_import.ui import ValueCheckBox
 import time
 
-DB_PATH = "C:/Users/CHRIST~1/AppData/Local/Temp/tmph6digaia.db"  # "C:/Users/CHRIST~1/AppData/Local/Temp/tmpqpvbsv88.db"
+DB_PATH = "C:/Users/CHRIST~1/AppData/Local/Temp/tmpmw9o0zaz.db"
 
+
+# DB_PATH = ""
 
 def open_import_window(attribute_import: Type[tool.AttributeImport],
                        attribute_import_results: Type[tool.AttributeImportResults],
                        attribute_import_sql: Type[tool.AttributeImportSQL], ifc_importer: Type[tool.IfcImporter]):
     # DEBUG
     if DB_PATH:
-        open_results_window(attribute_import_results)
         attribute_import_sql.set_database_path(DB_PATH)
+        open_results_window(attribute_import_results)
         return
 
     if attribute_import_results.is_window_allready_build():
@@ -132,8 +136,8 @@ def start_attribute_import(file: ifcopenshell.file, path, attribute_import: Type
         if index % 100 == 0:
             attribute_import.set_progress(int(index / entity_count * 100))
             attribute_import.set_status(f"{status_text} {index}/{entity_count}")
-        attribute_import_sql.add_entity(entity, pset_name, attribute_name, os.path.basename(path))
-        attribute_import_sql.import_entity_attributes(entity, file, attribute_dict)
+        identifier = attribute_import_sql.add_entity(entity, pset_name, attribute_name, os.path.basename(path))
+        attribute_import_sql.import_entity_attributes(entity, file, identifier, attribute_dict)
     attribute_import_sql.disconnect_from_database()
 
 
@@ -165,17 +169,13 @@ def open_results_window(attribute_import_results: Type[tool.AttributeImportResul
     attribute_import_widget = attribute_import_results.create_attribute_import_window()
     attribute_import_results.connect_trigger(attribute_import_widget)
     attribute_import_widget.show()
+    attribute_import_results.update_results_window()
+    attribute_import_results.get_ifctype_combo_box().setCurrentText(attribute_import_results.get_all_keyword())
+    attribute_import_results.get_somtype_combo_box().setCurrentText(attribute_import_results.get_all_keyword())
 
 
-def update_results_window(attriubte_import_results: Type[tool.AttributeImportResults],
-                          attribute_import_sql: Type[tool.AttributeImportSQL]):
-    widget = attriubte_import_results.get_results_window().widget
-    widget.combo_box_name.repaint()
-    widget.combo_box_group.repaint()
-    update_property_set_table(attriubte_import_results, attribute_import_sql)
-    widget.label_object_count.repaint()
-    update_object_count(attriubte_import_results, attribute_import_sql)
-    update_all_checkbox(attriubte_import_results)
+def update_results_window(attriubte_import_results: Type[tool.AttributeImportResults]):
+    attriubte_import_results.update_results_window()
 
 def update_ifctype_combobox(attribute_import_results: Type[tool.AttributeImportResults],
                             attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
@@ -215,39 +215,36 @@ def update_object_count(attribute_import_results: Type[tool.AttributeImportResul
 
 def update_property_set_table(attribute_import_results: Type[tool.AttributeImportResults],
                               attribute_import_sql: Type[tool.AttributeImportSQL]):
-    if attribute_import_results.is_updating_locked():
-        return
+    logging.debug("Update propertyset table")
     ifc_type, identifier, property_set, attribute = attribute_import_results.get_input_variables()
-    if ifc_type is None or identifier is None:
-        return
-    property_set_list = attribute_import_sql.get_property_sets(ifc_type, identifier)
-    table_widget = attribute_import_results.get_pset_table()
-    attribute_import_results.update_table_widget(set(property_set_list), table_widget, [str, int])
+    if not (ifc_type is None or identifier is None):
+        property_set_list = attribute_import_sql.get_property_sets(ifc_type, identifier)
+        table_widget = attribute_import_results.get_pset_table()
+        attribute_import_results.update_table_widget(set(property_set_list), table_widget, [str, int])
     update_attribute_table(attribute_import_results, attribute_import_sql)
 
 
 def update_attribute_table(attribute_import_results: Type[tool.AttributeImportResults],
                            attribute_import_sql: Type[tool.AttributeImportSQL]):
-    if attribute_import_results.is_updating_locked():
-        return
+    logging.debug("Update Attribute table")
+
     table_widget = attribute_import_results.get_attribute_table()
     ifc_type, identifier, property_set, attribute = attribute_import_results.get_input_variables()
 
     if None in [ifc_type, identifier, property_set]:
         attribute_import_results.disable_table(table_widget)
-        return
     else:
         table_widget.setDisabled(False)
+        attribute_list = attribute_import_sql.get_attributes(ifc_type, identifier, property_set)
+        attribute_import_results.update_table_widget(set(attribute_list), table_widget, [str, int, int])
 
-    attribute_list = attribute_import_sql.get_attributes(ifc_type, identifier, property_set)
-    attribute_import_results.update_table_widget(set(attribute_list), table_widget, [str, int, int])
     update_value_table(attribute_import_results, attribute_import_sql)
 
 
 def update_value_table(attribute_import_results: Type[tool.AttributeImportResults],
                        attribute_import_sql: Type[tool.AttributeImportSQL]):
-    if attribute_import_results.is_updating_locked():
-        return
+    logging.debug("Update Value table")
+
     table_widget = attribute_import_results.get_value_table()
     ifc_type, identifier, property_set, attribute = attribute_import_results.get_input_variables()
 
@@ -264,10 +261,11 @@ def update_value_table(attribute_import_results: Type[tool.AttributeImportResult
         return
     attribute_import_results.update_table_widget(set(value_list), table_widget, [Qt.CheckState, str, int])
     attribute_import_results.update_valuetable_checkstate(checkstate_dict)
-
+    update_all_checkbox(attribute_import_results)
 
 def value_checkstate_changed(checkbox: ValueCheckBox, attribute_import_results: Type[tool.AttributeImportResults],
                              attribute_import_sql: Type[tool.AttributeImportSQL]):
+    logging.debug("Update Value Checkstates")
     if attribute_import_results.is_updating_locked():
         return
     value_table = attribute_import_results.get_value_table()
@@ -282,6 +280,7 @@ def value_checkstate_changed(checkbox: ValueCheckBox, attribute_import_results: 
     logging.info(f"value_checkstate_changed {row} {checkbox.checkState()} new: {checkstate}")
     logging.info(f"checkstate: {checkbox.checkState()} {checkbox} {checkbox.isTristate()}")
     if None in [ifc_type, identifier, property_set, attribute]:
+        update_all_checkbox(attribute_import_results)
         return
 
     sql_value_text = f"== '{value_text}'"
@@ -293,6 +292,7 @@ def value_checkstate_changed(checkbox: ValueCheckBox, attribute_import_results: 
 
 
 def update_all_checkbox(attribute_import_results: Type[tool.AttributeImportResults]):
+    logging.debug(f"Update All Checkbox")
     checkstate = attribute_import_results.calculate_all_checkbox_state()
     if checkstate == attribute_import_results.get_all_checkbox().checkState():
         return
@@ -317,12 +317,13 @@ def all_checkbox_checkstate_changed(attribute_import_results: Type[tool.Attribut
     update_value_table(attribute_import_results, attribute_import_sql)
 
 
-def settings_clicked(attriubte_import_sql: Type[tool.AttributeImportSQL]):
+def settings_clicked(attribute_import_results: Type[tool.AttributeImportResults],
+                     attriubte_import_sql: Type[tool.AttributeImportSQL]):
     settings_dialog = attriubte_import_sql.create_settings_window()
     attriubte_import_sql.update_settins_dialog_checkstates(settings_dialog)
     if settings_dialog.exec():
         attriubte_import_sql.settings_dialog_accepted(settings_dialog)
-
+        attribute_import_results.update_results_window()
 def results_abort_clicked(attribute_import_results: Type[tool.AttributeImportResults]):
     window = attribute_import_results.get_results_window()
     window.close()
@@ -336,7 +337,14 @@ def results_accept_clicked(attribute_import_results: Type[tool.AttributeImportRe
 
     for identifier, property_set_name, attribute_name, value in new_attribute_values:
         attribute = attribute_dict[identifier][property_set_name][attribute_name]
-        attribute.value.append(value)
+        if attribute.value_type in [value_constants.FORMAT, value_constants.RANGE]:
+            continue
+        if value not in attribute.value:
+            attribute.value.append(value)
 
+    removed_values = attribute_import_sql.get_removed_attribute_values()
+    for identifier, property_set_name, attribute_name, value in removed_values:
+        attribute = attribute_dict[identifier][property_set_name][attribute_name]
+        attribute.value.remove(value)
     window = attribute_import_results.get_results_window()
     window.close()

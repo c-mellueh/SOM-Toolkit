@@ -48,43 +48,46 @@ def start_attribute_import(file: ifcopenshell.file, path: str):
     pass
 
 
-def somtype_combobox_paint_event():
-    core.update_identifier_combobox(tool.AttributeImportResults, tool.AttributeImportSQL, tool.Project)
-
-
-def ifctype_combobox_paint_event():
+def update_ifc_type_combobox():
     core.update_ifctype_combobox(tool.AttributeImportResults, tool.AttributeImportSQL, tool.Project)
 
 
+def update_identifier_combobox():
+    core.update_identifier_combobox(tool.AttributeImportResults, tool.AttributeImportSQL, tool.Project)
+
+
+def update_object_count():
+    core.update_object_count(tool.AttributeImportResults, tool.AttributeImportSQL)
+
 def update_attribute_import_window():
-    core.update_results_window(tool.AttributeImportResults, tool.AttributeImportSQL)
+    core.update_results_window(tool.AttributeImportResults)
 
 
 def pset_table_selection_changed():
-    core.update_results_window(tool.AttributeImportResults, tool.AttributeImportSQL)
+    core.update_attribute_table(tool.AttributeImportResults, tool.AttributeImportSQL)
 
 
 def attribute_table_selection_changed():
-    core.update_results_window(tool.AttributeImportResults, tool.AttributeImportSQL)
-
-
-def value_table_selection_changed():
-    core.update_results_window(tool.AttributeImportResults, tool.AttributeImportSQL)
+    core.update_value_table(tool.AttributeImportResults, tool.AttributeImportSQL)
 
 
 def value_checkstate_changed(check_box):
     core.value_checkstate_changed(check_box, tool.AttributeImportResults, tool.AttributeImportSQL)
 
 
-def paint_property_set_table():
+def update_property_set_table():
     core.update_property_set_table(tool.AttributeImportResults, tool.AttributeImportSQL)
 
 
-def paint_attribute_table():
+def update_all_checkbox():
+    core.update_all_checkbox(tool.AttributeImportResults)
+
+
+def update_attribute_table():
     core.update_attribute_table(tool.AttributeImportResults, tool.AttributeImportSQL)
 
 
-def paint_value_table():
+def update_value_table():
     core.update_value_table(tool.AttributeImportResults, tool.AttributeImportSQL)
 
 
@@ -101,4 +104,4 @@ def result_acccept_clicked():
 
 
 def settings_clicked():
-    core.settings_clicked(tool.AttributeImportSQL)
+    core.settings_clicked(tool.AttributeImportResults, tool.AttributeImportSQL)

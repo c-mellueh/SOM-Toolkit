@@ -35,10 +35,10 @@
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
      <item>
-         <widget class="IfcTypeComboBox" name="combo_box_group"/>
+         <widget class="IfcTypeComboBox" name="combo_box_ifc_type"/>
      </item>
      <item>
-         <widget class="SOMTypeComboBox" name="combo_box_name"/>
+         <widget class="SOMTypeComboBox" name="combo_box_identifier"/>
      </item>
      <item>
       <widget class="QLabel" name="label_object_count">

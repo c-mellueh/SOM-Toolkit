@@ -40,15 +40,15 @@ class Ui_Form(object):
         self.horizontal_layout_buttons = QHBoxLayout()
         self.horizontal_layout_buttons.setObjectName(u"horizontal_layout_buttons")
         self.horizontal_layout_buttons.setSizeConstraint(QLayout.SetDefaultConstraint)
-        self.combo_box_group = IfcTypeComboBox(Form)
-        self.combo_box_group.setObjectName(u"combo_box_group")
+        self.combo_box_ifc_type = IfcTypeComboBox(Form)
+        self.combo_box_ifc_type.setObjectName(u"combo_box_ifc_type")
 
-        self.horizontal_layout_buttons.addWidget(self.combo_box_group)
+        self.horizontal_layout_buttons.addWidget(self.combo_box_ifc_type)
 
-        self.combo_box_name = SOMTypeComboBox(Form)
-        self.combo_box_name.setObjectName(u"combo_box_name")
+        self.combo_box_identifier = SOMTypeComboBox(Form)
+        self.combo_box_identifier.setObjectName(u"combo_box_identifier")
 
-        self.horizontal_layout_buttons.addWidget(self.combo_box_name)
+        self.horizontal_layout_buttons.addWidget(self.combo_box_identifier)
 
         self.label_object_count = QLabel(Form)
         self.label_object_count.setObjectName(u"label_object_count")
