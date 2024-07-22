@@ -13,6 +13,10 @@ class AttributeImportProperties:
     attribute_import_window: AttributeImportResultWindow = None
     ifc_importer: IfcImportWidget = None
     settings_dialog: SettingsDialog = None
+    show_existing_values: bool = False
+    show_regex_values: bool = False
+    show_range_values: bool = False
+    color_values: bool = False
     main_pset: str = "Undefined"
     main_attribute: str = "Undefined"
     import_is_aborted = False

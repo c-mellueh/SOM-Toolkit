@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from som_gui.module.attribute_import.ui import ValueCheckBox
 import time
 
-DB_PATH = ""  # "C:/Users/CHRIST~1/AppData/Local/Temp/tmpxqjw4ehg.db"  # "C:/Users/CHRIST~1/AppData/Local/Temp/tmpqpvbsv88.db"
+DB_PATH = "C:/Users/CHRIST~1/AppData/Local/Temp/tmpxqjw4ehg.db"  # "C:/Users/CHRIST~1/AppData/Local/Temp/tmpqpvbsv88.db"
 
 
 def open_import_window(attribute_import: Type[tool.AttributeImport],
@@ -161,7 +161,7 @@ def last_import_finished(attribute_import: Type[tool.AttributeImport],
 
 def open_results_window(attribute_import_results: Type[tool.AttributeImportResults]):
     attribute_import_widget = attribute_import_results.create_attribute_import_window()
-    attribute_import_results.connect_update_trigger(attribute_import_widget)
+    attribute_import_results.connect_trigger(attribute_import_widget)
     attribute_import_widget.show()
 
 
@@ -314,6 +314,12 @@ def all_checkbox_checkstate_changed(attribute_import_results: Type[tool.Attribut
 
     update_value_table(attribute_import_results, attribute_import_sql)
 
+
+def settings_clicked(attriubte_import_results: Type[tool.AttributeImportResults]):
+    settings_dialog = attriubte_import_results.create_settings_window()
+    attriubte_import_results.update_settins_dialog_checkstates(settings_dialog)
+    if settings_dialog.exec():
+        attriubte_import_results.settings_dialog_accepted(settings_dialog)
 
 def results_abort_clicked(attribute_import_results: Type[tool.AttributeImportResults]):
     window = attribute_import_results.get_results_window()

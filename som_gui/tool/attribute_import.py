@@ -45,6 +45,37 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         return som_gui.AttributeImportProperties
 
     @classmethod
+    def create_settings_window(cls, ):
+        cls.get_properties().settings_dialog = ui.SettingsDialog()
+        return cls.get_properties().settings_dialog
+
+    @classmethod
+    def get_settings_dialog_checkbox_list(cls, dialog: ui.SettingsDialog) -> list[tuple[QCheckBox, bool]]:
+        widget = dialog.widget
+        prop = cls.get_properties()
+        checkbox_list = [(widget.check_box_regex, prop.show_regex_values),
+                         (widget.check_box_existing_attributes, prop.show_existing_values),
+                         (widget.check_box_color, prop.color_values),
+                         (widget.check_box_range, prop.show_range_values),
+                         ]
+        return checkbox_list
+
+    @classmethod
+    def update_settins_dialog_checkstates(cls, dialog: ui.SettingsDialog):
+        checkbox_list = cls.get_settings_dialog_checkbox_list(dialog)
+
+        for checkbox, value in checkbox_list:
+            checkbox.setChecked(value)
+
+    @classmethod
+    def settings_dialog_accepted(cls, dialog: ui.SettingsDialog):
+        prop = cls.get_properties()
+        widget = dialog.widget
+        prop.show_regex_values = widget.check_box_regex.isChecked()
+        prop.show_existing_values = widget.check_box_existing_attributes.isChecked()
+        prop.color_values = widget.check_box_color.isChecked()
+        prop.show_range_values = widget.check_box_range.isChecked()
+    @classmethod
     def checkstate_to_int(cls, checkstate: Qt.CheckState) -> int:
         return 1 if checkstate in (Qt.CheckState.Checked, Qt.CheckState.PartiallyChecked) else 0
 
@@ -57,7 +88,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         return cls.get_properties().som_combobox
 
     @classmethod
-    def connect_update_trigger(cls, attribute_widget: ui.AttributeImportResultWindow):
+    def connect_trigger(cls, attribute_widget: ui.AttributeImportResultWindow):
         widget = attribute_widget.widget
         update_trigger = trigger.update_attribute_import_window
         widget.combo_box_name.currentIndexChanged.connect(update_trigger)
@@ -68,6 +99,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         cls.get_properties().all_checkbox.checkStateChanged.connect(trigger.all_checkbox_checkstate_changed)
         widget.button_accept.clicked.connect(trigger.result_acccept_clicked)
         widget.button_abort.clicked.connect(trigger.result_abort_clicked)
+        widget.button_settings.clicked.connect(trigger.settings_clicked)
 
     @classmethod
     def update_combobox(cls, combobox: QComboBox, allowed_values: set[str]):
