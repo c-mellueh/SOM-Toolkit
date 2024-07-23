@@ -4,9 +4,10 @@ import SOMcreator
 
 import som_gui.core.tool
 from som_gui.icons import get_icon
-from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QFileDialog
+from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QFileDialog, QListWidgetItem
+from PySide6.QtCore import Qt
 from som_gui import tool
-
+from som_gui.module.popups import ui
 FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
 
 
@@ -184,3 +185,35 @@ class Popups(som_gui.core.tool.Popups):
     @classmethod
     def req_export_pset_name(cls, parent_window):
         return QInputDialog.getText(parent_window, "PropertySet name", "What's the name of the Export PropertySet?")
+
+    @classmethod
+    def req_delete_items(cls, string_list, item_type=1) -> (bool, bool):
+        """
+            item_type 1= Object,2= Node, 3 = PropertySet, 4 = Attribute
+            """
+        dialog = ui.DeleteRequestDialog()
+        widget = dialog.widget
+        if len(string_list) <= 1:
+            if item_type == 1:
+                widget.label.setText("Dieses Objekt löschen?")
+            if item_type == 2:
+                widget.label.setText("Diese Node löschen?")
+            if item_type == 3:
+                widget.label.setText("Dieses PropertySet löschen?")
+            if item_type == 4:
+                widget.label.setText("Dieses Attribut löschen?")
+        else:
+            if item_type == 1:
+                widget.label.setText("Diese Objekte löschen?")
+            if item_type == 2:
+                widget.label.setText("Diese Nodes öschen?")
+            if item_type == 3:
+                widget.label.setText("Diese PropertySets löschen?")
+            if item_type == 4:
+                widget.label.setText("Diese Attribute löschen?")
+
+        for text in string_list:
+            widget.listWidget.addItem(QListWidgetItem(text))
+        result = dialog.exec()
+        check_box_state = True if widget.check_box_recursion.checkState() == Qt.CheckState.Checked else False
+        return bool(result), check_box_state
