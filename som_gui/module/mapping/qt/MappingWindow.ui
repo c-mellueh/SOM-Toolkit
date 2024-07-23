@@ -23,23 +23,13 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTreeWidget" name="object_tree">
+         <widget class="ObjectTreeWidget" name="object_tree">
        <property name="selectionMode">
         <enum>QAbstractItemView::ExtendedSelection</enum>
        </property>
        <property name="sortingEnabled">
         <bool>true</bool>
        </property>
-       <column>
-        <property name="text">
-         <string>Objekt</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>IfcMapping</string>
-        </property>
-       </column>
       </widget>
       <widget class="QWidget" name="gridLayoutWidget">
        <layout class="QGridLayout" name="right_layout">
@@ -56,20 +46,10 @@
            </widget>
           </item>
           <item>
-           <widget class="QTreeWidget" name="pset_tree">
+              <widget class="PropertySetTreeWidget" name="pset_tree">
             <property name="sortingEnabled">
              <bool>true</bool>
             </property>
-            <column>
-             <property name="text">
-              <string>PropertySet/Attribute</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Mapping</string>
-             </property>
-            </column>
            </widget>
           </item>
          </layout>
@@ -101,7 +81,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_ifc">
    <property name="text">
-    <string>Export IFC</string>
+       <string>Export IFC-Mapping</string>
    </property>
   </action>
   <action name="action_shared_parameters">
@@ -150,6 +130,18 @@
    </property>
   </action>
  </widget>
+    <customwidgets>
+        <customwidget>
+            <class>ObjectTreeWidget</class>
+            <extends>QTreeWidget</extends>
+            <header>som_gui.module.mapping.ui</header>
+        </customwidget>
+        <customwidget>
+            <class>PropertySetTreeWidget</class>
+            <extends>QTreeWidget</extends>
+            <header>som_gui.module.mapping.ui</header>
+        </customwidget>
+    </customwidgets>
  <resources/>
  <connections/>
 </ui>

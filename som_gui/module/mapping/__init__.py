@@ -3,7 +3,7 @@ import som_gui
 
 
 def register():
-    pass
+    som_gui.MappingProperties = prop.MappingProperties()
 
 
 def load_ui_triggers():
