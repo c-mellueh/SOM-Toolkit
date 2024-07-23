@@ -9,6 +9,27 @@ from som_gui import core
 from som_gui import tool
 import ifcopenshell.guid
 import ifcopenshell.express
+
+
+class CustomFormatter(logging.Formatter):
+    def __init__(self, fmt=None, datefmt=None, style='%'):
+        super().__init__(fmt, datefmt, style)
+
+    def format(self, record):
+        # Combine module and function name
+        module_func = f"{record.module}.{record.funcName}"
+        # Ensure the combined string is 50 characters long
+        if len(module_func) > 50:
+            module_func = module_func[:47] + '...'
+        else:
+            module_func = module_func.ljust(50)
+
+        # Set the custom attribute
+        record.module_func = module_func
+
+        return super().format(record)
+
+
 def start_log(state: int | None = None) -> None:
     if not os.path.exists(logs.DIR_PATH):
         os.mkdir(logs.DIR_PATH)
@@ -25,8 +46,12 @@ def start_log(state: int | None = None) -> None:
         for handler in logging.getLogger("root").handlers
         if isinstance(handler, logging.StreamHandler)
     ]
+    log_format = "%(asctime)s | %(levelname)6s | %(module_func)50s [%(lineno)04d] |  %(message)s"
+
+    formatter = CustomFormatter(log_format)
     for handler in sh_list:
         handler.setLevel(state)
+        handler.setFormatter(formatter)
 
 
 def main(initial_file: str | None = None):
@@ -49,5 +74,5 @@ def main(initial_file: str | None = None):
 
 
 if __name__ == "__main__":
-    start_log()
+    start_log(logging.WARNING)
     main()
