@@ -31,12 +31,12 @@ def init_main_window(object_tool: Type[tool.Object], aggregation: Type[aw_tool.A
                                     aggregation.set_object_abbreviation)
 
 
-
-def export_building_structure(exports: Type[tool.Exports], aggregation: Type[aw_tool.Aggregation],
+def export_building_structure(aggregation: Type[aw_tool.Aggregation],
                               main_window: Type[tool.MainWindow],
-                              project: Type[tool.Project]) -> None:
+                              project: Type[tool.Project],
+                              popups: Type[tool.Popups]) -> None:
     """Exports dummy Building Structure for Desite"""
-    path = exports.get_path(main_window.get(), "bs.xml")
+    path = popups.get_path("bs.xml", main_window.get())
     if path:
         aggregation.export_building_structure(project.get(), path)
 

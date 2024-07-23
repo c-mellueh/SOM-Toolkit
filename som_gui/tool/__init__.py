@@ -1,3 +1,4 @@
+from som_gui.tool.logging import Logging
 from som_gui.tool.project import Project
 from som_gui.tool.object_filter import ObjectFilter
 from som_gui.tool.settings import Settings

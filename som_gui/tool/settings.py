@@ -1,29 +1,14 @@
+from __future__ import annotations
 import som_gui.core.tool
-import som_gui.settings as settings
-
-PATHS_SECTION = "paths"
-OPEN_PATH = "open_path"
-SAVE_PATH = "save_path"
-EXPORT_PATH = "export_path"
-IFC_PATH = "ifc_path"
-ISSUE_PATH = "issue_path"
-SEPERATOR_SECTION = "seperator"
-SEPERATOR_STATUS = "seperator_status"
-SEPERATOR = "seperator"
-GROUP_FOLDER = "group_folder_path"
-ATTRIBUTE_IMPORT_SECTION = "attribute_import"
-EXISTING_ATTRIBUTE_IMPORT = "existing"
-REGEX_ATTRIBUTE_IMPORT = "regex"
-RANGE_ATTRIBUTE_IMPORT = "range"
-COLOR_ATTTRIBUTE_IMPORT = "color"
-PATH_SEPERATOR = " ;"
-IFC_MOD = "ifc_modification"
-GROUP_PSET = "group_pset"
-GROUP_ATTRIBUTE = "group_attribute"
-CREATE_EMPTY = "create_empty"
-
+from som_gui.module.settings.paths import *
+import som_gui
+from configparser import ConfigParser
+import os
+import appdirs
+from som_gui import tool
 
 class Settings(som_gui.core.tool.Settings):
+
     @classmethod
     def get_export_path(cls, ) -> str:
         return cls._get_path(EXPORT_PATH)
@@ -41,36 +26,32 @@ class Settings(som_gui.core.tool.Settings):
         return cls._set_path(SAVE_PATH, value)
 
     @classmethod
-    def get_open_path(self):
-        return settings._get_path(OPEN_PATH)
+    def get_open_path(cls):
+        return cls._get_path(OPEN_PATH)
 
     @classmethod
     def set_open_path(cls, path):
-        settings._set_path(OPEN_PATH, path)
-
-    @classmethod
-    def set_save_path(cls, path):
-        settings._set_path(SAVE_PATH, path)
+        cls._set_path(OPEN_PATH, path)
 
     @classmethod
     def get_seperator(cls) -> str:
-        return settings._get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
+        return cls._get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
 
     @classmethod
     def set_seperator_status(cls, value: bool) -> None:
-        settings.set_setting(SEPERATOR_SECTION, SEPERATOR_STATUS, value)
+        cls.set_setting(SEPERATOR_SECTION, SEPERATOR_STATUS, value)
 
     @classmethod
     def set_seperator(cls, value: str) -> None:
-        settings.set_setting(SEPERATOR_SECTION, SEPERATOR, value)
+        cls.set_setting(SEPERATOR_SECTION, SEPERATOR, value)
 
     @classmethod
     def get_seperator_status(cls) -> bool:
-        return settings._get_bool_setting(SEPERATOR_SECTION, SEPERATOR_STATUS)
+        return cls._get_bool_setting(SEPERATOR_SECTION, SEPERATOR_STATUS)
 
     @classmethod
     def _get_path(cls, value: str) -> str | list | set:
-        path = settings._get_string_setting(PATHS_SECTION, value)
+        path = cls._get_string_setting(PATHS_SECTION, value)
         if not path:
             return ""
         if PATH_SEPERATOR in path:
@@ -81,7 +62,7 @@ class Settings(som_gui.core.tool.Settings):
     def _set_path(cls, path, value: str | list | set) -> None:
         if isinstance(value, (list, set)):
             value = PATH_SEPERATOR.join(value)
-        settings.set_setting(PATHS_SECTION, path, value)
+        cls.set_setting(PATHS_SECTION, path, value)
 
     @classmethod
     def get_ifc_path(cls) -> str:
@@ -109,16 +90,73 @@ class Settings(som_gui.core.tool.Settings):
 
     @classmethod
     def set_group_pset(cls, value: str) -> None:
-        settings.set_setting(IFC_MOD, GROUP_PSET, value)
+        cls.set_setting(IFC_MOD, GROUP_PSET, value)
 
     @classmethod
     def set_group_attribute(cls, value: str) -> None:
-        settings.set_setting(IFC_MOD, GROUP_ATTRIBUTE, value)
+        cls.set_setting(IFC_MOD, GROUP_ATTRIBUTE, value)
 
     @classmethod
     def get_group_pset(cls, ) -> str:
-        return settings._get_string_setting(IFC_MOD, GROUP_PSET)
+        return cls._get_string_setting(IFC_MOD, GROUP_PSET)
 
     @classmethod
     def get_group_attribute(cls, ) -> str:
-        return settings._get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
+        return cls._get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
+
+    @classmethod
+    def set_setting(cls, section: str, path: str, value):
+        config_parser = cls._get_config()
+        if not config_parser.has_section(section):
+            config_parser.add_section(section)
+        config_parser.set(section, path, str(value))
+        cls._write_config(config_parser)
+
+    @classmethod
+    def _get_string_setting(cls, section: str, path: str, default="") -> str:
+        config_parser = cls._get_config()
+        if config_parser.has_option(section, path):
+            path = config_parser.get(section, path)
+            if path is not None:
+                return path
+        return default
+
+    @classmethod
+    def get_settings_path(cls):
+        return os.path.join(appdirs.user_config_dir(som_gui.__name__), "config.ini")
+
+    @classmethod
+    def _write_config(cls, config_parser) -> None:
+        with open(cls.get_settings_path(), "w") as f:
+            config_parser.write(f)
+
+    @classmethod
+    def _get_config(cls, ) -> ConfigParser:
+        config = ConfigParser()
+        config_path = cls.get_settings_path()
+        parent_folder = os.path.dirname(config_path)
+        if not os.path.exists(parent_folder):
+            tool.Util.create_directory(parent_folder)
+            return config
+        if not os.path.exists(config_path):
+            return config
+        with open(config_path, "r") as f:
+            config.read_file(f)
+        return config
+
+    @classmethod
+    def _get_bool_setting(cls, section: str, path: str) -> bool:
+        config_parser = cls._get_config()
+        if config_parser.has_option(section, path):
+            path = config_parser.get(section, path)
+            if path is not None:
+                return eval(path)
+        return False
+
+    @classmethod
+    def is_plugin_activated(cls, name):
+        config_parser = cls._get_config()
+        if not config_parser.has_option(PLUGINS, name):
+            cls.set_setting(PLUGINS, name, True)
+            return True
+        return cls._get_bool_setting(PLUGINS, name)

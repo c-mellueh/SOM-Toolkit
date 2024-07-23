@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from som_gui import core, tool, settings
+from som_gui import core, tool
 from thefuzz import fuzz
 from SOMcreator.external_software.IDS import main
 from SOMcreator.external_software.bim_collab_zoom import modelcheck
@@ -13,6 +13,7 @@ __version__ = "2.12.4"
 import importlib
 
 modules = {
+    "logging":  [None, "logging"],
     "object_filter":           [None, "object_filter"],
     "project_filter":          [None, "project_filter"],
     "project":                 [None, "project"],
@@ -34,6 +35,7 @@ modules = {
     "attribute_import": [None, "attribute_import"],
     "mapping": [None, 'mapping'],
     "popups":  [None, 'popups'],
+    "settings": [None, 'settings'],
 }
 plugins_dict = {
     "aggregation_window": {
@@ -48,8 +50,9 @@ plugins_dict = {
 }
 for key, (_, name) in modules.items():
     modules[key][0] = importlib.import_module(f"som_gui.module.{name}")
+
 for plugin_name, plugin_modules in plugins_dict.items():
-    if not settings.get_setting_plugin_activated(plugin_name):
+    if not tool.Settings.is_plugin_activated(plugin_name):
         continue
 
     for key, (_, name) in plugin_modules.items():

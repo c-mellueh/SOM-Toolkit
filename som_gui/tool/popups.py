@@ -13,9 +13,10 @@ FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
 
 class Popups(som_gui.core.tool.Popups):
     @classmethod
-    def get_path(cls, file_format: str, window) -> str:
+    def get_path(cls, file_format: str, window, path=None) -> str:
         """ File Open Dialog with modifiable file_format"""
-        path = tool.Settings.get_export_path()
+        if path is None:
+            path = tool.Settings.get_export_path()
         if path:
             basename = os.path.basename(path)
             split = os.path.splitext(basename)[0]
@@ -28,6 +29,16 @@ class Popups(som_gui.core.tool.Popups):
                                         f"{file_format} Files (*.{file_format})")[0]
         if path:
             tool.Settings.set_export_path(path)
+        return path
+
+    @classmethod
+    def get_folder(cls, window) -> str:
+        """Folder Open Dialog"""
+        path = tool.Settings.get_export_path()
+        if path:
+            path = os.path.basename(path)
+        path = \
+            QFileDialog.getExistingDirectory(parent=window, dir=path)
         return path
 
     @classmethod

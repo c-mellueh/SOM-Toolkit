@@ -127,3 +127,13 @@ class Util(som_gui.core.tool.Util):
     @classmethod
     def bool_to_checkstate(cls, checkstate: bool) -> Qt.CheckState:
         return Qt.CheckState.Checked if checkstate else Qt.CheckState.Unchecked
+
+    @classmethod
+    def create_directory(cls, path: os.PathLike):
+        cur_path = list()
+        split_path = str(path).split(os.sep)
+        for path in split_path:
+            cur_path.append(path)
+            p = "/".join(cur_path)
+            if not os.path.exists(p):
+                os.mkdir(p)
