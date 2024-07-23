@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING
 import os, tempfile
-from PySide6.QtCore import QFile
+from PySide6.QtCore import QFile, Qt
 from PySide6.QtGui import QAction, QShortcut, QKeySequence
 from PySide6.QtWidgets import QMenu, QMenuBar, QWidget, QComboBox
 import som_gui.core.tool
@@ -119,3 +119,11 @@ class Util(som_gui.core.tool.Util):
     def get_combobox_values(cls, combo_box: QComboBox):
         count = combo_box.count()
         return [combo_box.itemText(i) for i in range(count)]
+
+    @classmethod
+    def checkstate_to_bool(cls, checkstate: Qt.CheckState) -> bool:
+        return False if checkstate == Qt.CheckState.Unchecked else True
+
+    @classmethod
+    def bool_to_checkstate(cls, checkstate: bool) -> Qt.CheckState:
+        return Qt.CheckState.Checked if checkstate else Qt.CheckState.Unchecked

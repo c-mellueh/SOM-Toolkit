@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Callable
 from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLabel, QLineEdit
 from som_gui import tool
 from som_gui.module.main_window import ui as ui_main_window
-from som_gui.windows import mapping_window
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.prop import MainWindowProperties, MenuDict
@@ -108,13 +107,6 @@ class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
     def get_pset_layout(cls):
         return cls.get_ui().box_layout_pset
-
-    @classmethod
-    def open_mapping_window(cls):
-        window = cls.get()
-        cls.get_properties().mapping_window = mapping_window.MappingWindow(window)
-        cls.get_properties().mapping_window.show()
-
 
     @classmethod
     def get_object_name_horizontal_layout(cls) -> QHBoxLayout:

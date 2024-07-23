@@ -45,13 +45,3 @@ def refresh_main_window(main_window_tool: Type[MainWindow], project_tool: Type[P
     status = " | ".join([name, version, phase_name, use_case_name])
     main_window_tool.set_status_bar_text(status)
     main_window_tool.set_window_title(f"SOM-Toolkit v{som_gui.__version__}")
-
-
-def fill_old_menus(main_window_tool: Type[MainWindow]):
-    """
-    fill menus of functions / windows that aren't refactored
-    """
-
-    main_window = main_window_tool.get()
-
-    main_window_tool.add_action("Datei/Mappings", lambda: main_window_tool.open_mapping_window())
