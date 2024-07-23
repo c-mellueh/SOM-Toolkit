@@ -325,6 +325,7 @@ def settings_clicked(attribute_import_results: Type[tool.AttributeImportResults]
 def results_abort_clicked(attribute_import_results: Type[tool.AttributeImportResults]):
     window = attribute_import_results.get_results_window()
     window.close()
+    attribute_import_results.remove_results_window()
 
 
 def results_accept_clicked(attribute_import_results: Type[tool.AttributeImportResults],
@@ -346,3 +347,4 @@ def results_accept_clicked(attribute_import_results: Type[tool.AttributeImportRe
         attribute.value.remove(value)
     window = attribute_import_results.get_results_window()
     window.close()
+    attribute_import_results.remove_results_window()

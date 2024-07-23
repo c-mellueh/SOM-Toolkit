@@ -129,6 +129,10 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         return cls.get_properties().attribute_import_window
 
     @classmethod
+    def remove_results_window(cls):
+        cls.get_properties().attribute_import_window = None
+
+    @classmethod
     def create_attribute_import_window(cls) -> ui.AttributeImportResultWindow:
         prop = cls.get_properties()
         widget = ui.AttributeImportResultWindow()
