@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QTableWidget, QMainWindow, QLineEdit, QDialog, QStyledItemDelegate
+from PySide6.QtWidgets import QTreeWidget, QMainWindow, QLineEdit, QDialog, QStyledItemDelegate
 from PySide6.QtCore import Qt, Signal, QModelIndex
 from PySide6 import QtGui
 from som_gui.module import property_set_window
@@ -17,22 +17,22 @@ class MappingWindow(QMainWindow):
         self.setWindowTitle(self.tr("Mapping"))
 
 
-class ObjectTreeWidget(QTableWidget):
+class ObjectTreeWidget(QTreeWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setColumnCount(2)
-        self.setHorizontalHeaderLabels([self.tr("Objekt"), self.tr("IfcMapping")])
+        self.setHeaderLabels([self.tr("Objekt"), self.tr("IfcMapping")])
 
     def paintEvent(self, e):
         super().paintEvent(e)
         trigger.update_object_tree()
 
 
-class PropertySetTreeWidget(QTableWidget):
+class PropertySetTreeWidget(QTreeWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setColumnCount(2)
-        self.setHorizontalHeaderLabels([self.tr("PropertySet/Attribut"), self.tr("Revit Mapping")])
+        self.setHeaderLabels([self.tr("PropertySet/Attribut"), self.tr("Revit Mapping")])
 
     def paintEvent(self, e):
         super().paintEvent(e)

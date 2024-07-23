@@ -4,9 +4,13 @@ from typing import TYPE_CHECKING
 import SOMcreator
 
 if TYPE_CHECKING:
-    from .ui import MappingWindow
+    from .ui import MappingWindow, ObjectTreeWidget, PropertySetTreeWidget
+    from PySide6.QtWidgets import QTreeWidget
 
 
 class MappingProperties:
     window: MappingWindow = None
-    object_check_state_dict: dict[SOMcreator.Object, bool] = dict()
+    check_state_dict: dict[SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute, bool] = dict()
+    object_tree: ObjectTreeWidget = None
+    pset_tree: PropertySetTreeWidget = None
+    ifc_export_dict: dict[str, (list[SOMcreator.Attribute], set[str])] = dict()
