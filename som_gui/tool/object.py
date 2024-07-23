@@ -135,23 +135,12 @@ class Object(som_gui.core.tool.Object):
 
     @classmethod
     def delete_object(cls, obj: SOMcreator.Object, recursive: bool = False):
-        # TODO: Refactor NodeWindow so nodes delete automatically
-        # def delete_nodes(o: SOMcreator.Object):
-        #     for aggregation in list(o.aggregations):
-        #         node = som_gui.MainUi.window.graph_window.aggregation_dict().get(aggregation)
-        #         node.delete(recursive)
-        #     if recursive:
-        #         for child in o.get_all_children():
-        #             delete_nodes(child)
-        #
-        # delete_nodes(obj)
         obj.delete(recursive)
 
     @classmethod
     def delete_selection(cls):
         objects = cls.get_selected_objects()
-        from som_gui.windows.popups import msg_del_items
-        delete_request, recursive_deletion = msg_del_items([o.name for o in objects], item_type=1)
+        delete_request, recursive_deletion = tool.Popups.req_delete_items([o.name for o in objects], item_type=1)
         if not delete_request:
             return
         for o in objects:

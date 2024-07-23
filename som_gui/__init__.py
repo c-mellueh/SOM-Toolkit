@@ -32,7 +32,8 @@ modules = {
     "util":                    [None, "util"],
     "exports": [None, "exports"],
     "attribute_import": [None, "attribute_import"],
-    "mapping": [None, 'mapping']
+    "mapping": [None, 'mapping'],
+    "popups":  [None, 'popups'],
 }
 plugins_dict = {
     "aggregation_window": {
