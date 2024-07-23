@@ -1,5 +1,6 @@
 import som_gui.plugins.aggregation_window.core.tool
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit
+from PySide6.QtGui import QPalette
 from som_gui.plugins.aggregation_window.module.aggregation.prop import AggregationProperties
 import SOMcreator
 from som_gui import tool
@@ -32,7 +33,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
         if not cls.is_abbreviation_allowed(abbreviation, abbrev_filter):
             cls.oi_set_abbrev_value_color("red")
         else:
-            cls.oi_set_abbrev_value_color("black")
+            cls.oi_set_abbrev_value_color(QPalette().text())
 
     @classmethod
     def test_abbreviation(cls, abbreviation: str, obj: SOMcreator.Object) -> int:

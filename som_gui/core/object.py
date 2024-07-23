@@ -5,6 +5,7 @@ import uuid
 from typing import Type, TYPE_CHECKING
 
 import SOMcreator
+from PySide6.QtGui import QPalette
 
 import som_gui.module.object
 from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
@@ -123,7 +124,7 @@ def object_info_refresh(object_tool: Type[Object]):
     if not object_tool.is_identifier_allowed(ident_value, ident_filter):
         object_tool.oi_set_ident_value_color("red")
     else:
-        object_tool.oi_set_ident_value_color("black")
+        object_tool.oi_set_ident_value_color(QPalette().text())
     object_tool.oi_change_visibility_identifiers(group)
 
 
