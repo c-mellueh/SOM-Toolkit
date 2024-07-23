@@ -1,6 +1,9 @@
 class AttributeImport:
     pass
 
+
+class Mapping:
+    pass
 class Attribute:
     def add_attribute_data_value(self, name, getter, setter): pass
 

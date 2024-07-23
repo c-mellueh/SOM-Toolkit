@@ -1,0 +1,2 @@
+class MappingProperties:
+    pass
