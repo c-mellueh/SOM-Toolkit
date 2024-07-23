@@ -17,7 +17,8 @@ class CustomFormatter(logging.Formatter):
 
     def format(self, record):
         # Combine module and function name
-        module_func = f"{record.module}.{record.funcName}"
+        path_name = record.pathname.split("\\")[-2]
+        module_func = f"{path_name}.{record.module}.{record.funcName}"
         # Ensure the combined string is 50 characters long
         if len(module_func) > 50:
             module_func = module_func[:47] + '...'
