@@ -265,6 +265,10 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
                 focus_dict = focus_dict[GROUP][part]
 
             obj: SOMcreator.Object = bk_dict.get(attrib)
+            if obj is None:
+                logging.warning(
+                    f"Die Entität '{el.GlobalId}' besitzt einen unbekannten identifier ({attrib}) und kann dadurch nicht ausgewertet werden!")
+                continue
             abbrev = obj.abbreviation
             if abbrev.upper() not in focus_dict[GROUP]:
                 focus_dict[GROUP][abbrev] = {GROUP: {}, ELEMENT: list(), IFC_REP: None}
