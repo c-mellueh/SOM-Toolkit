@@ -2,6 +2,8 @@ class AttributeImport:
     pass
 
 
+class Compare:
+    pass
 class Logging:
     pass
 class Mapping:

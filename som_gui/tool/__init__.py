@@ -21,3 +21,4 @@ from som_gui.tool.attribute_import import AttributeImport, AttributeImportSQL, A
 from som_gui.tool.util import Util
 from som_gui.tool.exports import Exports
 from som_gui.tool.mapping import Mapping
+from som_gui.tool.compare import Compare

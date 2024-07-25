@@ -1,0 +1,2 @@
+class CompareProperties():
+    pass
