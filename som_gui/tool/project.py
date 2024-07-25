@@ -201,8 +201,9 @@ class Project(som_gui.core.tool.Project):
         return list(proj.get_all_objects())
 
     @classmethod
-    def get_root_objects(cls, filter_objects=True):
-        proj: SOMcreator.Project = cls.get_properties().active_project
+    def get_root_objects(cls, filter_objects=True, proj: SOMcreator.Project = None):
+        if proj is None:
+            proj: SOMcreator.Project = cls.get_properties().active_project
         if proj is None:
             return []
         if filter_objects:
