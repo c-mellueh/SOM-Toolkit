@@ -11,3 +11,4 @@ tqdm
 pypi-latest
 lark
 anytree
+appdirs

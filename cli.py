@@ -61,10 +61,10 @@ def install_missing_packages():
 def cli():
     if install_missing_packages():
         return
-    main_func.start_log(logging.DEBUG)
     from main import main
 
     main()
+    main_func.start_log(logging.DEBUG)
 
 
 if __name__ == "__main__":
