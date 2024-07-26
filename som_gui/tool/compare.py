@@ -1,11 +1,15 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+
+from PySide6.QtGui import QBrush, QPalette, QColor
+
 from som_gui import tool
 import SOMcreator
 from som_gui.module.compare import ui
 import som_gui.core.tool
 import som_gui
 from PySide6.QtWidgets import QTableWidgetItem, QTreeWidgetItem
+from PySide6.QtCore import Qt
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.compare import trigger
 
@@ -135,9 +139,6 @@ class Compare(som_gui.core.tool.Compare):
         if attribute1 is not None:
             cls.get_properties().values_lists[attribute1] = value_list
 
-
-
-
     @classmethod
     def create_object_dicts(cls):
         project_0 = cls.get_project(0)
@@ -181,11 +182,11 @@ class Compare(som_gui.core.tool.Compare):
     @classmethod
     def add_object_to_item(cls, obj: SOMcreator.Object, item: QTreeWidgetItem, index: int):
 
-        start_index = index * 2
-        item.setText(start_index, obj.name)
-        item.setText(start_index + 1, obj.ident_value)
+        start_index = index
+        ident_text = f"({obj.ident_value})" if obj.ident_value else ""
+        text = f"{obj.name} {ident_text}"
+        item.setText(start_index, text)
         item.setData(start_index, CLASS_REFERENCE, obj)
-        item.setData(start_index + 1, CLASS_REFERENCE, obj)
         cls.get_properties().object_tree_item_dict[obj] = item
 
     @classmethod
@@ -234,7 +235,6 @@ class Compare(som_gui.core.tool.Compare):
     def create_triggers(cls, window: ui.CompareDialog):
         window.widget.tree_widget_object.itemSelectionChanged.connect(trigger.object_tree_selection_changed)
         window.widget.tree_widget_propertysets.itemSelectionChanged.connect(trigger.pset_tree_selection_changed)
-
 
     @classmethod
     def get_pset_tree(cls):
@@ -298,7 +298,7 @@ class Compare(som_gui.core.tool.Compare):
         item = cls.get_object_tree().selectedItems()[0]
         data = item.data(0, CLASS_REFERENCE)
         if data is None:
-            data = item.data(2, CLASS_REFERENCE)
+            data = item.data(1, CLASS_REFERENCE)
         return data
 
     @classmethod
@@ -336,7 +336,91 @@ class Compare(som_gui.core.tool.Compare):
             if value1 is not None:
                 item1.setText(value1)
 
-            print(value0, value1)
             table.insertRow(table.rowCount())
             table.setItem(table.rowCount() - 1, 0, item0)
             table.setItem(table.rowCount() - 1, 1, item1)
+
+    @classmethod
+    def attributes_are_identical(cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute):
+        if attribute0 is None or attribute1 is None:
+            return False
+        values = set(attribute0.value) == set(attribute1.value)
+        data_types = attribute0.data_type == attribute1.data_type
+        value_types = attribute0.value_type == attribute1.value_type
+        names = attribute0.name == attribute1.name
+        return all((values, data_types, value_types, names))
+
+    @classmethod
+    def property_sets_are_identival(cls, property_set0: SOMcreator.PropertySet, property_set1: SOMcreator.PropertySet):
+        if property_set0 is None or property_set1 is None:
+            return False
+        names = property_set0.name == property_set1.name
+        attribute_list = cls.get_properties().attributes_lists.get(property_set0)
+        if not attribute_list:
+            return False
+        attributes_are_matching = all(cls.attributes_are_identical(a0, a1) for a0, a1 in attribute_list)
+        return all((names, attributes_are_matching))
+
+    @classmethod
+    def objects_are_identical(cls, object0: SOMcreator.Object, object1: SOMcreator.Object):
+        if object0 is None or object1 is None:
+            return
+        names = object0.name == object1.name
+        identifier = object0.ident_value == object1.ident_value
+        property_set_list = cls.get_properties().pset_lists.get(object0)
+        if not property_set_list:
+            return False
+        psets_are_matching = all(cls.property_sets_are_identival(p0, p1) for p0, p1 in property_set_list)
+        return all((names, identifier, psets_are_matching))
+
+    @classmethod
+    def set_tree_row_color(cls, item: QTreeWidgetItem, color: str | None, index):
+        tree = item.treeWidget()
+        col_count = tree.columnCount()
+
+        brush = QBrush(QColor(color)) if color is not None else QPalette().base()
+        item.setBackground(index, brush)
+        # for col in range(col_count):
+        #     item.setBackground(col,brush)
+        #     item.setForeground(col,Qt.GlobalColor.black)
+
+    @classmethod
+    def style_object_tree_item(cls, item: QTreeWidgetItem):
+        obj0 = item.data(0, CLASS_REFERENCE)
+        obj1 = item.data(1, CLASS_REFERENCE)
+
+        if obj0 is None:
+            cls.set_tree_row_color(item, "#006605", 1)
+
+        elif obj1 is None:
+
+            cls.set_tree_row_color(item, "#840002", 0)
+
+        else:
+            if isinstance(obj0, SOMcreator.Object):
+                compare_func = cls.objects_are_identical
+            elif isinstance(obj0, SOMcreator.PropertySet):
+                compare_func = cls.property_sets_are_identival
+            else:
+                compare_func = cls.attributes_are_identical
+
+            if compare_func(obj0, obj1):
+                cls.set_tree_row_color(item, None, 0)
+                cls.set_tree_row_color(item, None, 1)
+            else:
+                cls.set_tree_row_color(item, "#897e00", 0)
+                cls.set_tree_row_color(item, "#897e00", 1)
+
+        for child_index in range(item.childCount()):
+            if not isinstance(obj0, SOMcreator.Attribute):
+                cls.style_object_tree_item(item.child(child_index))
+
+    @classmethod
+    def set_header_labels(cls, h0: str, h1: str):
+        cls.get_object_tree().setHeaderLabels([h0, h1])
+        cls.get_pset_tree().setHeaderLabels([h0, h1])
+        cls.get_value_table().setHorizontalHeaderLabels([h0, h1])
+
+    @classmethod
+    def header_name(cls, project: SOMcreator.Project):
+        return f"{project.name} v{project.version}"
