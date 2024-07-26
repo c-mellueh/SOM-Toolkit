@@ -9,4 +9,5 @@ class CompareProperties():
     missing_objects: list[list[SOMcreator.Object]] = [None, None]
     object_tree_item_dict = dict()
     pset_lists: dict[SOMcreator.Object, list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]] = dict()
-    attributes_list: dict[SOMcreator.PropertySet, list[tuple[SOMcreator.Attribute, SOMcreator.Attribute]]] = dict()
+    attributes_lists: dict[SOMcreator.PropertySet, list[tuple[SOMcreator.Attribute, SOMcreator.Attribute]]] = dict()
+    values_lists: dict[SOMcreator.Attribute, list[tuple[str, str]]] = dict()

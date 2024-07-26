@@ -13,3 +13,4 @@ class CompareDialog(QDialog):
 
         self.widget.tree_widget_object.setColumnCount(4)
         self.widget.tree_widget_propertysets.setColumnCount(2)
+        self.widget.table_widget_values.setColumnCount(2)

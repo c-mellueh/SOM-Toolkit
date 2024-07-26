@@ -108,8 +108,33 @@ class Compare(som_gui.core.tool.Compare):
         for attribute1 in missing_attributes1:
             attributes_list.append((None, attribute1))
 
-        cls.get_properties().attributes_list[pset0] = attributes_list
-        cls.get_properties().attributes_list[pset1] = attributes_list
+        for a1, a2 in attributes_list:
+            cls.compare_attributes(a1, a2)
+
+        cls.get_properties().attributes_lists[pset0] = attributes_list
+        cls.get_properties().attributes_lists[pset1] = attributes_list
+
+    @classmethod
+    def compare_attributes(cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute):
+        if attribute0 is not None:
+            values0 = set(attribute0.value)
+        else:
+            values0 = set()
+        if attribute1 is not None:
+            values1 = set(attribute1.value)
+        else:
+            values1 = set()
+
+        unique0 = values0.difference(values1)
+        main = values0.intersection(values1)
+        unique1 = values1.difference(values0)
+
+        value_list = [(v, v) for v in main] + [(v, None) for v in unique0] + [(None, v) for v in unique1]
+        if attribute0 is not None:
+            cls.get_properties().values_lists[attribute0] = value_list
+        if attribute1 is not None:
+            cls.get_properties().values_lists[attribute1] = value_list
+
 
 
 
@@ -208,10 +233,8 @@ class Compare(som_gui.core.tool.Compare):
     @classmethod
     def create_triggers(cls, window: ui.CompareDialog):
         window.widget.tree_widget_object.itemSelectionChanged.connect(trigger.object_tree_selection_changed)
+        window.widget.tree_widget_propertysets.itemSelectionChanged.connect(trigger.pset_tree_selection_changed)
 
-    @classmethod
-    def get_obj_from_item(cls, item):
-        return item.data(0, CLASS_REFERENCE)
 
     @classmethod
     def get_pset_tree(cls):
@@ -251,7 +274,7 @@ class Compare(som_gui.core.tool.Compare):
         elif pset1 is not None and pset0 is None:
             attribute_list = [(None, a) for a in pset1.get_all_attributes()]
         else:
-            attribute_list = cls.get_properties().attributes_list.get(pset0)
+            attribute_list = cls.get_properties().attributes_lists.get(pset0)
         print(attribute_list)
         if attribute_list is None:
             return
@@ -265,3 +288,55 @@ class Compare(som_gui.core.tool.Compare):
             if attribute1:
                 item.setText(1, attribute1.name)
                 item.setData(1, CLASS_REFERENCE, attribute1)
+
+    @classmethod
+    def get_object_tree(cls):
+        return cls.get_window().widget.tree_widget_object
+
+    @classmethod
+    def get_selected_object(cls) -> SOMcreator.Object | None:
+        item = cls.get_object_tree().selectedItems()[0]
+        data = item.data(0, CLASS_REFERENCE)
+        if data is None:
+            data = item.data(2, CLASS_REFERENCE)
+        return data
+
+    @classmethod
+    def get_selected_pset(cls) -> SOMcreator.PropertySet | SOMcreator.Attribute | None:
+        selected_items = cls.get_pset_tree().selectedItems()
+        if not selected_items:
+            return None
+        item = selected_items[0]
+        data = item.data(0, CLASS_REFERENCE)
+        if data is None:
+            data = item.data(1, CLASS_REFERENCE)
+        return data
+
+    @classmethod
+    def get_value_table(cls):
+        return cls.get_window().widget.table_widget_values
+
+    @classmethod
+    def fill_value_table(cls, attribute: SOMcreator.Attribute):
+
+        value_list = cls.get_properties().values_lists.get(attribute)
+        table = cls.get_value_table()
+        table.setRowCount(0)
+
+        if value_list is None:
+            return
+
+        for value0, value1 in value_list:
+            item0 = QTableWidgetItem()
+            item1 = QTableWidgetItem()
+
+            if value0 is not None:
+                item0.setText(value0)
+
+            if value1 is not None:
+                item1.setText(value1)
+
+            print(value0, value1)
+            table.insertRow(table.rowCount())
+            table.setItem(table.rowCount() - 1, 0, item0)
+            table.setItem(table.rowCount() - 1, 1, item1)

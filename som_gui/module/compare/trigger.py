@@ -12,3 +12,7 @@ def on_new_project():
 
 def object_tree_selection_changed():
     core.object_tree_selection_changed(tool.Compare)
+
+
+def pset_tree_selection_changed():
+    core.pset_tree_selection_changed(tool.Compare)
