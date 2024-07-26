@@ -77,14 +77,6 @@ class Project(som_gui.core.tool.Project):
     def get_properties(cls) -> ProjectProperties:
         return som_gui.ProjectProperties
 
-    @classmethod  # TODO: Move to Filehandling Module
-    def get_path(cls, title: str, file_text: str) -> str:
-        main_window = tool.MainWindow.get()
-        cur_path = tool.Settings.get_open_path()
-        if not os.path.exists(cur_path):
-            cur_path = os.getcwd() + "/"
-        return QFileDialog.getOpenFileName(main_window, title, str(cur_path), file_text)[0]
-
     @classmethod
     def create_project(cls):
         logging.info("Create new Project")
