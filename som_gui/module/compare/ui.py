@@ -12,3 +12,4 @@ class CompareDialog(QDialog):
         self.setWindowTitle(self.tr("Projekte Vergleichen"))
 
         self.widget.tree_widget_object.setColumnCount(4)
+        self.widget.tree_widget_propertysets.setColumnCount(2)

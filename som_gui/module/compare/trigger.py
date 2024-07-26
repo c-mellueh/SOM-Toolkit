@@ -8,3 +8,7 @@ def connect():
 
 def on_new_project():
     pass
+
+
+def object_tree_selection_changed():
+    core.object_tree_selection_changed(tool.Compare)

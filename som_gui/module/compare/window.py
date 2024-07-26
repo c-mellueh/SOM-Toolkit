@@ -20,7 +20,6 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogBu
                                QTableWidgetItem, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
                                QWidget)
 
-
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
@@ -37,12 +36,15 @@ class Ui_Dialog(object):
         self.tree_widget_object.setHeaderItem(__qtreewidgetitem)
         self.tree_widget_object.setObjectName(u"tree_widget_object")
         self.splitter.addWidget(self.tree_widget_object)
-        self.table_widget_propertysets = QTableWidget(self.splitter)
-        self.table_widget_propertysets.setObjectName(u"table_widget_propertysets")
-        self.splitter.addWidget(self.table_widget_propertysets)
-        self.table_widget_attributes = QTableWidget(self.splitter)
-        self.table_widget_attributes.setObjectName(u"table_widget_attributes")
-        self.splitter.addWidget(self.table_widget_attributes)
+        self.tree_widget_propertysets = QTreeWidget(self.splitter)
+        __qtreewidgetitem1 = QTreeWidgetItem()
+        __qtreewidgetitem1.setText(0, u"1");
+        self.tree_widget_propertysets.setHeaderItem(__qtreewidgetitem1)
+        self.tree_widget_propertysets.setObjectName(u"tree_widget_propertysets")
+        self.splitter.addWidget(self.tree_widget_propertysets)
+        self.table_widget_values = QTableWidget(self.splitter)
+        self.table_widget_values.setObjectName(u"table_widget_values")
+        self.splitter.addWidget(self.table_widget_values)
 
         self.verticalLayout.addWidget(self.splitter)
 
@@ -58,9 +60,9 @@ class Ui_Dialog(object):
         self.buttonBox.rejected.connect(Dialog.reject)
 
         QMetaObject.connectSlotsByName(Dialog)
-
     # setupUi
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
     # retranslateUi
+

@@ -26,8 +26,14 @@
                             </property>
                         </column>
                     </widget>
-                    <widget class="QTableWidget" name="table_widget_propertysets"/>
-                    <widget class="QTableWidget" name="table_widget_attributes"/>
+                    <widget class="QTreeWidget" name="tree_widget_propertysets">
+                        <column>
+                            <property name="text">
+                                <string notr="true">1</string>
+                            </property>
+                        </column>
+                    </widget>
+                    <widget class="QTableWidget" name="table_widget_values"/>
                 </widget>
             </item>
             <item>
