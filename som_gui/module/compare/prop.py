@@ -1,10 +1,17 @@
-import SOMcreator
-from SOMcreator import Project
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import SOMcreator
+    from .ui import ImportDialog, CompareDialog
+COMPARE_SETTING = "compare"
+
 class CompareProperties():
+    import_dialog: ImportDialog = None
     projects = [None, None]
     uuid_dicts = [None, None]
     ident_dicts = [None, None]
-    window = None
+    window: CompareDialog = None
     object_dicts = [None, None]
     missing_objects: list[list[SOMcreator.Object]] = [None, None]
     object_tree_item_dict = dict()

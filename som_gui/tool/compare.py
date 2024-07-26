@@ -12,7 +12,7 @@ from PySide6.QtWidgets import QTableWidgetItem, QTreeWidgetItem
 from PySide6.QtCore import Qt
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.compare import trigger
-
+from som_gui.module.compare.prop import COMPARE_SETTING
 if TYPE_CHECKING:
     from som_gui.module.compare.prop import CompareProperties
 
@@ -22,6 +22,24 @@ class Compare(som_gui.core.tool.Compare):
     @classmethod
     def get_properties(cls) -> CompareProperties:
         return som_gui.CompareProperties
+
+    @classmethod
+    def create_import_dialog(cls):
+        dialog = ui.ImportDialog()
+        dialog.widget.button_project.clicked.connect(trigger.project_button_clicked)
+        cls.get_properties().import_dialog = dialog
+        return dialog
+
+    @classmethod
+    def get_import_dialog(cls) -> ui.ImportDialog:
+        return cls.get_properties().import_dialog
+
+    @classmethod
+    def set_import_dialog_lineedit(cls, project_path: str):
+        if project_path:
+            cls.get_import_dialog().widget.line_edit_project.setText(project_path)
+
+
 
     @classmethod
     def set_projects(cls, project1, project2) -> None:
