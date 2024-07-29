@@ -15,12 +15,17 @@ if TYPE_CHECKING:
 def open_project_selection_window(compare: Type[tool.Compare], settings: Type[tool.Settings],
                                   project: Type[tool.Project],
                                   popups: Type[tool.Popups]):
-    import_dialog = compare.create_import_dialog()
-    project_path = settings.get_string_setting(PATHS_SECTION, COMPARE_SETTING)
-    compare.set_import_dialog_lineedit(project_path)
-    import_dialog.widget.label_project.setText(compare.header_name(project.get()))
+    if compare.get_window():
+        compare.get_window().exec()
+        return
+    compare.reset_properties()
+    proj_select_dialog = compare.create_project_select_dialog()
+    compare.connect_project_select_dialog(proj_select_dialog)
 
-    if import_dialog.exec_():
+    path = settings.get_string_setting(PATHS_SECTION, COMPARE_SETTING)
+    compare.fill_project_select_dialog(project.get(), path)
+
+    if proj_select_dialog.exec():
         open_compare_window(compare, project, settings, popups)
 
 
@@ -43,19 +48,19 @@ def switch_clicked(compare: Type[tool.Compare]):
 
 
 def project_button_clicked(compare: Type[tool.Compare], popups: Type[tool.Popups], settings: Type[tool.Settings]):
-    dialog = compare.get_import_dialog()
+    dialog = compare.get_project_select_dialog()
     path = settings.get_string_setting(PATHS_SECTION, COMPARE_SETTING)
     path = popups.get_path(FILETYPE, dialog, path)
     if not path:
         return
-    compare.set_import_dialog_lineedit(path)
+    compare.set_project_select_path(path)
 
 
 def open_compare_window(compare: Type[tool.Compare], project: Type[tool.Project], settings: Type[tool.Settings],
                         popups: Type[tool.Popups]):
     window = compare.create_window()
     window.show()
-    other_file_path = compare.get_import_dialog().widget.line_edit.text()
+    other_file_path = compare.get_project_select_path()
     if os.path.exists(other_file_path):
         settings.set_path(COMPARE_SETTING, other_file_path)
     else:
@@ -65,7 +70,7 @@ def open_compare_window(compare: Type[tool.Compare], project: Type[tool.Project]
     project_0 = project.get()
     project_1 = Project.open(other_file_path)
 
-    if not compare.get_properties().current_project_as_input:
+    if not compare.get_properties().is_current_proj_input:
         project_0, project_1 = project_1, project_0
 
     compare.set_projects(project_0, project_1)
@@ -74,22 +79,24 @@ def open_compare_window(compare: Type[tool.Compare], project: Type[tool.Project]
 
     root = compare.get_object_tree().invisibleRootItem()
     for child_index in range(root.childCount()):
-        compare.style_object_tree_item(root.child(child_index))
+        compare.style_tree_item(root.child(child_index))
 
-    compare.set_header_labels(compare.header_name(project_0), compare.header_name(project_1))
-    compare.create_triggers(window)
-    window.exec()
-
+    compare.set_header_labels(compare.get_header_name_from_project(project_0),
+                              compare.get_header_name_from_project(project_1))
+    compare.create_compare_window_triggers(window)
+    window.hide()
+    if window.exec():
+        compare.delete_window()
 
 def object_tree_selection_changed(compare: Type[tool.Compare]):
-    obj = compare.get_selected_object()
+    obj = compare.get_selected_item_from_tree(compare.get_object_tree())
     compare.fill_pset_table(obj)
     root = compare.get_pset_tree().invisibleRootItem()
 
     for child_index in range(root.childCount()):
-        compare.style_object_tree_item(root.child(child_index))
+        compare.style_tree_item(root.child(child_index))
 
 
 def pset_tree_selection_changed(compare: Type[tool.Compare]):
-    attribute = compare.get_selected_pset()
+    attribute = compare.get_selected_item_from_tree(compare.get_pset_tree())
     compare.fill_value_table(attribute)

@@ -18,7 +18,8 @@ class CompareDialog(QDialog):
         self.widget.tree_widget_propertysets.setColumnCount(2)
         self.widget.table_widget_values.setColumnCount(2)
 
-class ImportDialog(QDialog):
+
+class ProjectSelectDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.widget = Ui_ImportDialog()

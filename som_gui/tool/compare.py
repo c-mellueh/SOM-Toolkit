@@ -9,10 +9,9 @@ from som_gui.module.compare import ui
 import som_gui.core.tool
 import som_gui
 from PySide6.QtWidgets import QTableWidgetItem, QTreeWidgetItem
-from PySide6.QtCore import Qt
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.compare import trigger
-from som_gui.module.compare.prop import COMPARE_SETTING
+
 if TYPE_CHECKING:
     from som_gui.module.compare.prop import CompareProperties
 
@@ -24,11 +23,58 @@ style_list = [
 
 ]
 
+
 class Compare(som_gui.core.tool.Compare):
 
     @classmethod
     def get_properties(cls) -> CompareProperties:
         return som_gui.CompareProperties
+
+    # main
+    @classmethod
+    def reset_properties(cls):
+        prop = cls.get_properties()
+        prop.proj_select_dialog = None
+        prop.projects = [None, None]
+        prop.uuid_dicts = [None, None]
+        prop.ident_dicts = [None, None]
+        prop.window = None
+        prop.object_dicts = [None, None]
+        prop.missing_objects = [None, None]
+        prop.object_tree_item_dict = dict()
+        prop.pset_lists = dict()
+        prop.attributes_lists = dict()
+        prop.values_lists = dict()
+        prop.layout_proj0 = None
+        prop.layout_proj1 = None
+        prop.is_current_proj_input = False
+        prop.label_project = None
+        prop.layout_input = None
+
+    # project Select Window
+    @classmethod
+    def create_project_select_dialog(cls):
+        dialog = ui.ProjectSelectDialog()
+        cls.get_properties().proj_select_dialog = dialog
+        cls.get_properties().layout_proj0 = dialog.widget.layout_top
+        cls.get_properties().layout_proj1 = dialog.widget.layout_bottom
+        cls.get_properties().label_project = dialog.widget.label_project
+        cls.get_properties().layout_input = dialog.widget.layout_input
+        return dialog
+
+    @classmethod
+    def get_project_select_dialog(cls) -> ui.ProjectSelectDialog:
+        return cls.get_properties().proj_select_dialog
+
+    @classmethod
+    def connect_project_select_dialog(cls, dialog: ui.ProjectSelectDialog):
+        dialog.widget.button.clicked.connect(trigger.project_button_clicked)
+        dialog.widget.button_switch.clicked.connect(trigger.switch_button_clicked)
+
+    @classmethod
+    def fill_project_select_dialog(cls, project, open_path):
+        cls.set_project_select_path(open_path)
+        cls.get_properties().label_project.setText(cls.get_header_name_from_project(project))
 
     @classmethod
     def get_project_layouts(cls):
@@ -46,35 +92,38 @@ class Compare(som_gui.core.tool.Compare):
     @classmethod
     def toggle_current_project_as_input(cls):
         prop = cls.get_properties()
-        prop.current_project_as_input = not prop.current_project_as_input
+        prop.is_current_proj_input = not prop.is_current_proj_input
 
     @classmethod
     def is_current_project_input(cls):
-        return cls.get_properties().current_project_as_input
+        return cls.get_properties().is_current_proj_input
 
     @classmethod
-    def create_import_dialog(cls):
-        dialog = ui.ImportDialog()
-        dialog.widget.button.clicked.connect(trigger.project_button_clicked)
-        dialog.widget.button_switch.clicked.connect(trigger.switch_button_clicked)
-        cls.get_properties().import_dialog = dialog
-        cls.get_properties().layout_proj0 = dialog.widget.layout_top
-        cls.get_properties().layout_proj1 = dialog.widget.layout_bottom
-        cls.get_properties().label_project = dialog.widget.label_project
-        cls.get_properties().layout_input = dialog.widget.layout_input
-
-        return dialog
+    def set_project_select_path(cls, project_path: str):
+        cls.get_project_select_dialog().widget.line_edit.setText(project_path)
 
     @classmethod
-    def get_import_dialog(cls) -> ui.ImportDialog:
-        return cls.get_properties().import_dialog
+    def get_project_select_path(cls):
+        cls.get_project_select_dialog().widget.line_edit.text()
+
+    # Compare Window
+    @classmethod
+    def create_window(cls):
+        cls.get_properties().window = ui.CompareDialog()
+        return cls.get_window()
 
     @classmethod
-    def set_import_dialog_lineedit(cls, project_path: str):
-        if project_path:
-            cls.get_import_dialog().widget.line_edit.setText(project_path)
+    def create_compare_window_triggers(cls, window: ui.CompareDialog):
+        window.widget.tree_widget_object.itemSelectionChanged.connect(trigger.object_tree_selection_changed)
+        window.widget.tree_widget_propertysets.itemSelectionChanged.connect(trigger.pset_tree_selection_changed)
 
+    @classmethod
+    def get_window(cls) -> ui.CompareDialog:
+        return cls.get_properties().window
 
+    @classmethod
+    def delete_window(cls):
+        cls.get_properties().window = None
 
     @classmethod
     def set_projects(cls, project1, project2) -> None:
@@ -114,40 +163,40 @@ class Compare(som_gui.core.tool.Compare):
 
         if ident_match:
             return ident_match
-
         return None
 
     @classmethod
-    def find_matching_pset(cls, pset_0, property_set_uuid_dict1,
-                           property_set_name_dict1) -> SOMcreator.PropertySet | None:
-        if pset_0.uuid in property_set_uuid_dict1:
-            return property_set_uuid_dict1[pset_0.uuid]
-        if pset_0.name in property_set_name_dict1:
-            return property_set_name_dict1[pset_0.name]
+    def find_matching_entity(cls, entity_0, uuid_dict1,
+                             name_dict1) -> SOMcreator.PropertySet | SOMcreator.Attribute | None:
+        if entity_0.uuid in uuid_dict1:
+            return uuid_dict1[entity_0.uuid]
+        if entity_0.name in name_dict1:
+            return name_dict1[entity_0.name]
         return None
 
     @classmethod
-    def compare_objects(cls, obj0: SOMcreator.Object, obj1: SOMcreator.Object):
-        property_set_uuid_dict1 = {p.uuid: p for p in obj1.get_all_property_sets()}
-        property_set_name_dict1 = {p.name: p for p in obj1.get_all_property_sets()}
-        # ToDo: Edgecase where 1 pset has matching uuid but different pset has same name
+    def compare_objects(cls, obj0: None | SOMcreator.Object, obj1: None | SOMcreator.Object):
+        property_set_uuid_dict1 = {p.uuid: p for p in obj1.get_all_property_sets()} if obj1 is not None else dict()
+        property_set_name_dict1 = {p.name: p for p in obj1.get_all_property_sets()} if obj1 is not None else dict()
         pset_list = list()
 
-        missing_property_sets1 = list(obj1.get_all_property_sets())
-
-        for property_set0 in obj0.get_all_property_sets():
-            match = cls.find_matching_pset(property_set0, property_set_uuid_dict1, property_set_name_dict1)
-            if match is not None:
-                missing_property_sets1.remove(match)
-                pset_list.append((property_set0, match))
-                cls.compare_psets(property_set0, match)
-            else:
-                pset_list.append((property_set0, None))
+        missing_property_sets1 = list(obj1.get_all_property_sets()) if obj1 is not None else []
+        if obj0 is not None:
+            for property_set0 in obj0.get_all_property_sets():
+                match = cls.find_matching_entity(property_set0, property_set_uuid_dict1, property_set_name_dict1)
+                if match is not None:
+                    missing_property_sets1.remove(match)
+                    pset_list.append((property_set0, match))
+                    cls.compare_psets(property_set0, match)
+                else:
+                    pset_list.append((property_set0, None))
 
         for property_set1 in missing_property_sets1:
             pset_list.append((None, property_set1))
-        cls.get_properties().pset_lists[obj0] = pset_list
-        cls.get_properties().pset_lists[obj1] = pset_list
+        if obj0 is not None:
+            cls.get_properties().pset_lists[obj0] = pset_list
+        if obj1 is not None:
+            cls.get_properties().pset_lists[obj1] = pset_list
 
     @classmethod
     def compare_psets(cls, pset0: SOMcreator.PropertySet, pset1: SOMcreator.PropertySet):
@@ -156,7 +205,7 @@ class Compare(som_gui.core.tool.Compare):
         missing_attributes1 = list(pset1.get_all_attributes())
         attributes_list = list()
         for attribute0 in pset0.get_all_attributes():
-            match = cls.find_matching_pset(attribute0, attribute_uuid_dict1, attribute_name_dict1)
+            match = cls.find_matching_entity(attribute0, attribute_uuid_dict1, attribute_name_dict1)
             if match is not None:
                 missing_attributes1.remove(match)
                 attributes_list.append((attribute0, match))
@@ -210,19 +259,13 @@ class Compare(som_gui.core.tool.Compare):
             else:
                 object_dict0[obj] = None
                 missing_objects_0.append(obj)
+                cls.compare_objects(obj, None)
         for obj in missing_objects_1:
             object_dict1[obj] = None
+            cls.compare_objects(None, obj)
+
         cls.get_properties().missing_objects = [missing_objects_0, missing_objects_1]
         cls.get_properties().object_dicts = [object_dict0, object_dict1]
-
-    @classmethod
-    def create_window(cls):
-        cls.get_properties().window = ui.CompareDialog()
-        return cls.get_window()
-
-    @classmethod
-    def get_window(cls) -> ui.CompareDialog:
-        return cls.get_properties().window
 
     @classmethod
     def get_object_dict(cls, index=1) -> dict:
@@ -234,7 +277,6 @@ class Compare(som_gui.core.tool.Compare):
 
     @classmethod
     def add_object_to_item(cls, obj: SOMcreator.Object, item: QTreeWidgetItem, index: int):
-
         start_index = index
         ident_text = f"({obj.ident_value})" if obj.ident_value else ""
         text = f"{obj.name} {ident_text}"
@@ -254,6 +296,13 @@ class Compare(som_gui.core.tool.Compare):
                 cls.add_object_to_item(match_obj, item, 1)
             parent_item.addChild(item)
             cls.fill_object_tree_layer(list(obj.children), item)
+
+    @classmethod
+    def fill_object_tree(cls):
+        tree = cls.get_window().widget.tree_widget_object
+        proj0, proj1 = cls.get_project(0), cls.get_project(1)
+        cls.fill_object_tree_layer(tool.Project.get_root_objects(False, proj0), tree.invisibleRootItem())
+        cls.add_missing_objects_to_tree(tool.Project.get_root_objects(False, proj1))
 
     @classmethod
     def find_existing_parent(cls, obj: SOMcreator.Object):
@@ -276,22 +325,6 @@ class Compare(som_gui.core.tool.Compare):
                 cls.add_object_to_item(obj, item, 1)
                 parent.addChild(item)
             cls.add_missing_objects_to_tree(list(obj.children))
-
-    @classmethod
-    def fill_object_tree(cls):
-        tree = cls.get_window().widget.tree_widget_object
-        proj0, proj1 = cls.get_project(0), cls.get_project(1)
-        cls.fill_object_tree_layer(tool.Project.get_root_objects(False, proj0), tree.invisibleRootItem())
-        cls.add_missing_objects_to_tree(tool.Project.get_root_objects(False, proj1))
-
-    @classmethod
-    def create_triggers(cls, window: ui.CompareDialog):
-        window.widget.tree_widget_object.itemSelectionChanged.connect(trigger.object_tree_selection_changed)
-        window.widget.tree_widget_propertysets.itemSelectionChanged.connect(trigger.pset_tree_selection_changed)
-
-    @classmethod
-    def get_pset_tree(cls):
-        return cls.get_window().widget.tree_widget_propertysets
 
     @classmethod
     def fill_pset_table(cls, obj: SOMcreator.Object):
@@ -319,44 +352,36 @@ class Compare(som_gui.core.tool.Compare):
 
     @classmethod
     def add_attribute_to_psetitem(cls, pset_item: QTreeWidgetItem):
-        pset0 = pset_item.data(0, CLASS_REFERENCE)
-        pset1 = pset_item.data(1, CLASS_REFERENCE)
+        pset0: SOMcreator.PropertySet | None = pset_item.data(0, CLASS_REFERENCE)
+        pset1: SOMcreator.PropertySet | None = pset_item.data(1, CLASS_REFERENCE)
 
         if pset0 is not None and pset1 is None:
             attribute_list = [(a, None) for a in pset0.get_all_attributes()]
         elif pset1 is not None and pset0 is None:
             attribute_list = [(None, a) for a in pset1.get_all_attributes()]
         else:
+            pset0: SOMcreator.PropertySet
             attribute_list = cls.get_properties().attributes_lists.get(pset0)
-        print(attribute_list)
+
         if attribute_list is None:
             return
+
+        attribute_list: list[tuple[SOMcreator.Attribute | None, SOMcreator.Attribute | None]]
 
         for attribute0, attribute1 in attribute_list:
             item = QTreeWidgetItem()
             pset_item.addChild(item)
-            if attribute0:
+            if attribute0 is not None:
                 item.setText(0, attribute0.name)
                 item.setData(0, CLASS_REFERENCE, attribute0)
-            if attribute1:
+            if attribute1 is not None:
                 item.setText(1, attribute1.name)
                 item.setData(1, CLASS_REFERENCE, attribute1)
 
     @classmethod
-    def get_object_tree(cls):
-        return cls.get_window().widget.tree_widget_object
-
-    @classmethod
-    def get_selected_object(cls) -> SOMcreator.Object | None:
-        item = cls.get_object_tree().selectedItems()[0]
-        data = item.data(0, CLASS_REFERENCE)
-        if data is None:
-            data = item.data(1, CLASS_REFERENCE)
-        return data
-
-    @classmethod
-    def get_selected_pset(cls) -> SOMcreator.PropertySet | SOMcreator.Attribute | None:
-        selected_items = cls.get_pset_tree().selectedItems()
+    def get_selected_item_from_tree(cls,
+                                    tree) -> SOMcreator.PropertySet | SOMcreator.Attribute | SOMcreator.Object | None:
+        selected_items = tree.selectedItems()
         if not selected_items:
             return None
         item = selected_items[0]
@@ -364,10 +389,6 @@ class Compare(som_gui.core.tool.Compare):
         if data is None:
             data = item.data(1, CLASS_REFERENCE)
         return data
-
-    @classmethod
-    def get_value_table(cls):
-        return cls.get_window().widget.table_widget_values
 
     @classmethod
     def fill_value_table(cls, attribute: SOMcreator.Attribute):
@@ -394,7 +415,7 @@ class Compare(som_gui.core.tool.Compare):
             table.setItem(table.rowCount() - 1, 1, item1)
 
     @classmethod
-    def attributes_are_identical(cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute):
+    def are_attributes_identical(cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute):
         if attribute0 is None or attribute1 is None:
             return False
         values = set(attribute0.value) == set(attribute1.value)
@@ -404,18 +425,18 @@ class Compare(som_gui.core.tool.Compare):
         return all((values, data_types, value_types, names))
 
     @classmethod
-    def property_sets_are_identical(cls, property_set0: SOMcreator.PropertySet, property_set1: SOMcreator.PropertySet):
+    def are_property_sets_identical(cls, property_set0: SOMcreator.PropertySet, property_set1: SOMcreator.PropertySet):
         if property_set0 is None or property_set1 is None:
             return False
         names = property_set0.name == property_set1.name
         attribute_list = cls.get_properties().attributes_lists.get(property_set0)
         if not attribute_list:
             return False
-        attributes_are_matching = all(cls.attributes_are_identical(a0, a1) for a0, a1 in attribute_list)
+        attributes_are_matching = all(cls.are_attributes_identical(a0, a1) for a0, a1 in attribute_list)
         return all((names, attributes_are_matching))
 
     @classmethod
-    def objects_are_identical(cls, object0: SOMcreator.Object, object1: SOMcreator.Object):
+    def are_objects_identical(cls, object0: SOMcreator.Object, object1: SOMcreator.Object):
         if object0 is None or object1 is None:
             return
         names = object0.name == object1.name
@@ -423,7 +444,7 @@ class Compare(som_gui.core.tool.Compare):
         property_set_list = cls.get_properties().pset_lists.get(object0)
         if not property_set_list:
             return False
-        psets_are_matching = all(cls.property_sets_are_identical(p0, p1) for p0, p1 in property_set_list)
+        psets_are_matching = all(cls.are_property_sets_identical(p0, p1) for p0, p1 in property_set_list)
         return all((names, identifier, psets_are_matching))
 
     @classmethod
@@ -444,37 +465,32 @@ class Compare(som_gui.core.tool.Compare):
             cls.set_tree_row_color(parent, style)
             cls.style_parent_item(parent, style)
 
-
-
     @classmethod
-    def style_object_tree_item(cls, item: QTreeWidgetItem):
+    def style_tree_item(cls, item: QTreeWidgetItem):
         obj0 = item.data(0, CLASS_REFERENCE)
         obj1 = item.data(1, CLASS_REFERENCE)
 
         if obj0 is None:
             style = 2
-
-
         elif obj1 is None:
             style = 3
-
         else:
             if isinstance(obj0, SOMcreator.Object):
-                compare_func = cls.objects_are_identical
+                compare_func = cls.are_objects_identical
             elif isinstance(obj0, SOMcreator.PropertySet):
-                compare_func = cls.property_sets_are_identical
+                compare_func = cls.are_property_sets_identical
             else:
-                compare_func = cls.attributes_are_identical
+                compare_func = cls.are_attributes_identical
 
             style = 0 if compare_func(obj0, obj1) else 1
 
         cls.set_tree_row_color(item, style)
-        if isinstance(obj0, SOMcreator.Object) or isinstance(obj1, SOMcreator.Object):
-            cls.style_parent_item(item, style)
+        if (isinstance(obj0, SOMcreator.Object) or isinstance(obj1, SOMcreator.Object)) and style > 0:
+            cls.style_parent_item(item, 1)
 
         for child_index in range(item.childCount()):
             if not isinstance(obj0, SOMcreator.Attribute):
-                cls.style_object_tree_item(item.child(child_index))
+                cls.style_tree_item(item.child(child_index))
 
     @classmethod
     def set_header_labels(cls, h0: str, h1: str):
@@ -483,5 +499,17 @@ class Compare(som_gui.core.tool.Compare):
         cls.get_value_table().setHorizontalHeaderLabels([h0, h1])
 
     @classmethod
-    def header_name(cls, project: SOMcreator.Project):
+    def get_header_name_from_project(cls, project: SOMcreator.Project):
         return f"{project.name} v{project.version}"
+
+    @classmethod
+    def get_object_tree(cls):
+        return cls.get_window().widget.tree_widget_object
+
+    @classmethod
+    def get_pset_tree(cls):
+        return cls.get_window().widget.tree_widget_propertysets
+
+    @classmethod
+    def get_value_table(cls):
+        return cls.get_window().widget.table_widget_values
