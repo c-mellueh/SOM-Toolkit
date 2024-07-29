@@ -16,6 +16,13 @@ from som_gui.module.compare.prop import COMPARE_SETTING
 if TYPE_CHECKING:
     from som_gui.module.compare.prop import CompareProperties
 
+style_list = [
+    [None, [0, 1]],
+    ["#897e00", [0, 1]],  # Yellow
+    ["#006605", [1]],  # green
+    ["#840002", [0]]  # red
+
+]
 
 class Compare(som_gui.core.tool.Compare):
 
@@ -26,8 +33,14 @@ class Compare(som_gui.core.tool.Compare):
     @classmethod
     def create_import_dialog(cls):
         dialog = ui.ImportDialog()
-        dialog.widget.button_project.clicked.connect(trigger.project_button_clicked)
+        dialog.widget.button.clicked.connect(trigger.project_button_clicked)
+        dialog.widget.button_switch.clicked.connect(trigger.switch_button_clicked)
         cls.get_properties().import_dialog = dialog
+        cls.get_properties().layout_proj0 = dialog.widget.layout_top
+        cls.get_properties().layout_proj1 = dialog.widget.layout_bottom
+        cls.get_properties().label_project = dialog.widget.label_project
+        cls.get_properties().layout_input = dialog.widget.layout_input
+
         return dialog
 
     @classmethod
@@ -37,7 +50,7 @@ class Compare(som_gui.core.tool.Compare):
     @classmethod
     def set_import_dialog_lineedit(cls, project_path: str):
         if project_path:
-            cls.get_import_dialog().widget.line_edit_project.setText(project_path)
+            cls.get_import_dialog().widget.line_edit.setText(project_path)
 
 
 
@@ -369,7 +382,7 @@ class Compare(som_gui.core.tool.Compare):
         return all((values, data_types, value_types, names))
 
     @classmethod
-    def property_sets_are_identival(cls, property_set0: SOMcreator.PropertySet, property_set1: SOMcreator.PropertySet):
+    def property_sets_are_identical(cls, property_set0: SOMcreator.PropertySet, property_set1: SOMcreator.PropertySet):
         if property_set0 is None or property_set1 is None:
             return False
         names = property_set0.name == property_set1.name
@@ -388,19 +401,28 @@ class Compare(som_gui.core.tool.Compare):
         property_set_list = cls.get_properties().pset_lists.get(object0)
         if not property_set_list:
             return False
-        psets_are_matching = all(cls.property_sets_are_identival(p0, p1) for p0, p1 in property_set_list)
+        psets_are_matching = all(cls.property_sets_are_identical(p0, p1) for p0, p1 in property_set_list)
         return all((names, identifier, psets_are_matching))
 
     @classmethod
-    def set_tree_row_color(cls, item: QTreeWidgetItem, color: str | None, index):
-        tree = item.treeWidget()
-        col_count = tree.columnCount()
+    def set_tree_row_color(cls, item: QTreeWidgetItem, style_index):
+        item.setData(0, CLASS_REFERENCE + 1, style_index)
+        color, column_list = style_list[style_index]
+        for column in column_list:
+            brush = QBrush(QColor(color)) if color is not None else QPalette().base()
+            item.setBackground(column, brush)
 
-        brush = QBrush(QColor(color)) if color is not None else QPalette().base()
-        item.setBackground(index, brush)
-        # for col in range(col_count):
-        #     item.setBackground(col,brush)
-        #     item.setForeground(col,Qt.GlobalColor.black)
+    @classmethod
+    def style_parent_item(cls, item: QTreeWidgetItem, style: int):
+        parent = item.parent()
+        if parent is None or parent == item.treeWidget().invisibleRootItem():
+            return
+        parent_style_index = parent.data(0, CLASS_REFERENCE + 1)
+        if parent_style_index < style:
+            cls.set_tree_row_color(parent, style)
+            cls.style_parent_item(parent, style)
+
+
 
     @classmethod
     def style_object_tree_item(cls, item: QTreeWidgetItem):
@@ -408,26 +430,25 @@ class Compare(som_gui.core.tool.Compare):
         obj1 = item.data(1, CLASS_REFERENCE)
 
         if obj0 is None:
-            cls.set_tree_row_color(item, "#006605", 1)
+            style = 2
+
 
         elif obj1 is None:
-
-            cls.set_tree_row_color(item, "#840002", 0)
+            style = 3
 
         else:
             if isinstance(obj0, SOMcreator.Object):
                 compare_func = cls.objects_are_identical
             elif isinstance(obj0, SOMcreator.PropertySet):
-                compare_func = cls.property_sets_are_identival
+                compare_func = cls.property_sets_are_identical
             else:
                 compare_func = cls.attributes_are_identical
 
-            if compare_func(obj0, obj1):
-                cls.set_tree_row_color(item, None, 0)
-                cls.set_tree_row_color(item, None, 1)
-            else:
-                cls.set_tree_row_color(item, "#897e00", 0)
-                cls.set_tree_row_color(item, "#897e00", 1)
+            style = 0 if compare_func(obj0, obj1) else 1
+
+        cls.set_tree_row_color(item, style)
+        if isinstance(obj0, SOMcreator.Object) or isinstance(obj1, SOMcreator.Object):
+            cls.style_parent_item(item, style)
 
         for child_index in range(item.childCount()):
             if not isinstance(obj0, SOMcreator.Attribute):

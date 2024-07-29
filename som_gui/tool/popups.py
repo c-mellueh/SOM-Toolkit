@@ -8,6 +8,7 @@ from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QFileDialog,
 from PySide6.QtCore import Qt
 from som_gui import tool
 from som_gui.module.popups import ui
+
 FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
 
 
@@ -25,9 +26,11 @@ class Popups(som_gui.core.tool.Popups):
             path = os.path.join(dirname, filename_without_extension)
         if title is None:
             title = f"Save {file_format}" if save else f"Open {file_format}"
-        path = \
-            QFileDialog.getSaveFileName(window, title, path,
-                                        f"{file_format} Files (*.{file_format})")[0]
+
+        if save:
+            path = QFileDialog.getSaveFileName(window, title, path, f"{file_format} Files (*.{file_format})")[0]
+        else:
+            path = QFileDialog.getOpenFileName(window, title, path, f"{file_format} Files (*.{file_format})")[0]
         if path:
             tool.Settings.set_export_path(path)
         return path
@@ -109,7 +112,6 @@ class Popups(som_gui.core.tool.Popups):
         result = msg_box.exec()
         return result == QMessageBox.StandardButton.Ok
 
-
     @classmethod
     def create_file_dne_warning(cls, path):
         base_name = os.path.basename(path)
@@ -148,7 +150,6 @@ class Popups(som_gui.core.tool.Popups):
     @classmethod
     def get_phase_name(cls, old_name: str = "", parent=None):
         return cls._request_text_input("Leistungsphase umbenennen", "Neuer Name", old_name, parent)
-
 
     @classmethod
     def get_save_path(cls, base_path: str):

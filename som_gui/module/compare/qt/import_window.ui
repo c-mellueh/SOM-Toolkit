@@ -6,61 +6,84 @@
             <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>660</width>
-                <height>96</height>
+                <width>618</width>
+                <height>130</height>
             </rect>
+        </property>
+        <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+            </sizepolicy>
+        </property>
+        <property name="minimumSize">
+            <size>
+                <width>500</width>
+                <height>0</height>
+            </size>
         </property>
         <property name="windowTitle">
             <string>Dialog</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
-            <property name="sizeConstraint">
-                <enum>QLayout::SetFixedSize</enum>
-            </property>
             <item>
-                <widget class="QLabel" name="label">
+                <layout class="QHBoxLayout" name="layout_top">
+                    <item>
+                        <layout class="QHBoxLayout" name="layout_input">
+                            <item>
+                                <widget class="QLineEdit" name="line_edit"/>
+                            </item>
+                            <item>
+                                <widget class="QPushButton" name="button">
+                                    <property name="minimumSize">
+                                        <size>
+                                            <width>25</width>
+                                            <height>0</height>
+                                        </size>
+                                    </property>
+                                    <property name="maximumSize">
+                                        <size>
+                                            <width>25</width>
+                                            <height>16777215</height>
+                                        </size>
+                                    </property>
+                                    <property name="text">
+                                        <string>...</string>
+                                    </property>
+                                </widget>
+                            </item>
+                        </layout>
+                    </item>
+                </layout>
+            </item>
+            <item>
+                <widget class="QPushButton" name="button_switch">
+                    <property name="minimumSize">
+                        <size>
+                            <width>25</width>
+                            <height>0</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>25</width>
+                            <height>16777215</height>
+                        </size>
+                    </property>
+                    <property name="layoutDirection">
+                        <enum>Qt::LeftToRight</enum>
+                    </property>
                     <property name="text">
-                        <string>Vergleichsprojekt:</string>
+                        <string>SW</string>
                     </property>
                 </widget>
             </item>
             <item>
-                <layout class="QHBoxLayout" name="horizontalLayout">
-                    <property name="sizeConstraint">
-                        <enum>QLayout::SetMinimumSize</enum>
-                    </property>
+                <layout class="QHBoxLayout" name="layout_bottom">
                     <item>
-                        <widget class="QLineEdit" name="line_edit_project">
-                            <property name="sizePolicy">
-                                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                        </widget>
-                    </item>
-                    <item>
-                        <widget class="QPushButton" name="button_project">
-                            <property name="sizePolicy">
-                                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>25</width>
-                                    <height>0</height>
-                                </size>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>25</width>
-                                    <height>16777215</height>
-                                </size>
-                            </property>
+                        <widget class="QLabel" name="label_project">
                             <property name="text">
-                                <string>...</string>
+                                <string>TextLabel</string>
                             </property>
                         </widget>
                     </item>

@@ -16,49 +16,58 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
-                               QHBoxLayout, QLabel, QLayout, QLineEdit,
-                               QPushButton, QSizePolicy, QVBoxLayout, QWidget)
-
+                               QHBoxLayout, QLabel, QLineEdit, QPushButton,
+                               QSizePolicy, QVBoxLayout, QWidget)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(660, 96)
-        self.verticalLayout = QVBoxLayout(Dialog)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setSizeConstraint(QLayout.SetFixedSize)
-        self.label = QLabel(Dialog)
-        self.label.setObjectName(u"label")
-
-        self.verticalLayout.addWidget(self.label)
-
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalLayout.setSizeConstraint(QLayout.SetMinimumSize)
-        self.line_edit_project = QLineEdit(Dialog)
-        self.line_edit_project.setObjectName(u"line_edit_project")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        Dialog.resize(618, 130)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line_edit_project.sizePolicy().hasHeightForWidth())
-        self.line_edit_project.setSizePolicy(sizePolicy)
+        sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
+        Dialog.setSizePolicy(sizePolicy)
+        Dialog.setMinimumSize(QSize(500, 0))
+        self.verticalLayout = QVBoxLayout(Dialog)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.layout_top = QHBoxLayout()
+        self.layout_top.setObjectName(u"layout_top")
+        self.layout_input = QHBoxLayout()
+        self.layout_input.setObjectName(u"layout_input")
+        self.line_edit = QLineEdit(Dialog)
+        self.line_edit.setObjectName(u"line_edit")
 
-        self.horizontalLayout.addWidget(self.line_edit_project)
+        self.layout_input.addWidget(self.line_edit)
 
-        self.button_project = QPushButton(Dialog)
-        self.button_project.setObjectName(u"button_project")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.button_project.sizePolicy().hasHeightForWidth())
-        self.button_project.setSizePolicy(sizePolicy1)
-        self.button_project.setMinimumSize(QSize(25, 0))
-        self.button_project.setMaximumSize(QSize(25, 16777215))
+        self.button = QPushButton(Dialog)
+        self.button.setObjectName(u"button")
+        self.button.setMinimumSize(QSize(25, 0))
+        self.button.setMaximumSize(QSize(25, 16777215))
 
-        self.horizontalLayout.addWidget(self.button_project)
+        self.layout_input.addWidget(self.button)
 
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.layout_top.addLayout(self.layout_input)
+
+        self.verticalLayout.addLayout(self.layout_top)
+
+        self.button_switch = QPushButton(Dialog)
+        self.button_switch.setObjectName(u"button_switch")
+        self.button_switch.setMinimumSize(QSize(25, 0))
+        self.button_switch.setMaximumSize(QSize(25, 16777215))
+        self.button_switch.setLayoutDirection(Qt.LeftToRight)
+
+        self.verticalLayout.addWidget(self.button_switch)
+
+        self.layout_bottom = QHBoxLayout()
+        self.layout_bottom.setObjectName(u"layout_bottom")
+        self.label_project = QLabel(Dialog)
+        self.label_project.setObjectName(u"label_project")
+
+        self.layout_bottom.addWidget(self.label_project)
+
+        self.verticalLayout.addLayout(self.layout_bottom)
 
         self.buttonBox = QDialogButtonBox(Dialog)
         self.buttonBox.setObjectName(u"buttonBox")
@@ -67,16 +76,18 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addWidget(self.buttonBox)
 
+
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
 
         QMetaObject.connectSlotsByName(Dialog)
-
     # setupUi
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"Vergleichsprojekt:", None))
-        self.button_project.setText(QCoreApplication.translate("Dialog", u"...", None))
+        self.button.setText(QCoreApplication.translate("Dialog", u"...", None))
+        self.button_switch.setText(QCoreApplication.translate("Dialog", u"SW", None))
+        self.label_project.setText(QCoreApplication.translate("Dialog", u"TextLabel", None))
     # retranslateUi
+

@@ -3,12 +3,16 @@ from som_gui import tool
 
 
 def connect():
-    tool.MainWindow.add_action("Compare", lambda: core.open_compare_window(tool.Compare, tool.Settings, tool.Project))
+    tool.MainWindow.add_action("Compare",
+                               lambda: core.open_compare_window(tool.Compare, tool.Settings, tool.Project, tool.Popups))
 
 
 def on_new_project():
     pass
 
+
+def switch_button_clicked():
+    core.switch_clicked(tool.Compare)
 
 def project_button_clicked():
     core.project_button_clicked(tool.Compare, tool.Popups, tool.Settings)
