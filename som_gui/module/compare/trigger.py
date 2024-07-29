@@ -4,7 +4,8 @@ from som_gui import tool
 
 def connect():
     tool.MainWindow.add_action("Compare",
-                               lambda: core.open_compare_window(tool.Compare, tool.Settings, tool.Project, tool.Popups))
+                               lambda: core.open_project_selection_window(tool.Compare, tool.Settings, tool.Project,
+                                                                          tool.Popups))
 
 
 def on_new_project():

@@ -31,6 +31,28 @@ class Compare(som_gui.core.tool.Compare):
         return som_gui.CompareProperties
 
     @classmethod
+    def get_project_layouts(cls):
+        prop = cls.get_properties()
+        return prop.layout_proj0, prop.layout_proj1
+
+    @classmethod
+    def get_input_layout(cls):
+        return cls.get_properties().layout_input
+
+    @classmethod
+    def get_project_label(cls):
+        return cls.get_properties().label_project
+
+    @classmethod
+    def toggle_current_project_as_input(cls):
+        prop = cls.get_properties()
+        prop.current_project_as_input = not prop.current_project_as_input
+
+    @classmethod
+    def is_current_project_input(cls):
+        return cls.get_properties().current_project_as_input
+
+    @classmethod
     def create_import_dialog(cls):
         dialog = ui.ImportDialog()
         dialog.widget.button.clicked.connect(trigger.project_button_clicked)
