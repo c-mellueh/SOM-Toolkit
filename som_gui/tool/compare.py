@@ -103,8 +103,8 @@ class Compare(som_gui.core.tool.Compare):
         cls.get_project_select_dialog().widget.line_edit.setText(project_path)
 
     @classmethod
-    def get_project_select_path(cls):
-        cls.get_project_select_dialog().widget.line_edit.text()
+    def get_project_select_path(cls) -> str:
+        return cls.get_project_select_dialog().widget.line_edit.text()
 
     # Compare Window
     @classmethod
