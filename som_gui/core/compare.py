@@ -16,7 +16,8 @@ def open_project_selection_window(compare: Type[tool.Compare], settings: Type[to
                                   project: Type[tool.Project],
                                   popups: Type[tool.Popups]):
     if compare.get_window():
-        compare.get_window().exec()
+        if compare.get_window().exec():
+            compare.delete_window()
         return
     compare.reset_properties()
     proj_select_dialog = compare.create_project_select_dialog()
