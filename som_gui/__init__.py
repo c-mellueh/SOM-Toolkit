@@ -5,6 +5,7 @@ from thefuzz import fuzz
 from SOMcreator.external_software.IDS import main
 from SOMcreator.external_software.bim_collab_zoom import modelcheck
 from SOMcreator.external_software.desite import modelcheck
+
 if TYPE_CHECKING:
     from som_gui.module.main_window.ui import MainWindow
 
@@ -13,7 +14,7 @@ __version__ = "2.12.4"
 import importlib
 
 modules = {
-    "logging":  [None, "logging"],
+    "logging":          [None, "logging"],
     "object_filter":           [None, "object_filter"],
     "project_filter":          [None, "project_filter"],
     "project":                 [None, "project"],
@@ -31,19 +32,20 @@ modules = {
     "modelcheck":              [None, "modelcheck"],
     "ifc_importer":            [None, "ifc_importer"],
     "util":                    [None, "util"],
-    "exports": [None, "exports"],
+    "exports":          [None, "exports"],
     "attribute_import": [None, "attribute_import"],
-    "mapping": [None, 'mapping'],
-    "popups":  [None, 'popups'],
-    "settings": [None, 'settings'],
+    "mapping":          [None, 'mapping'],
+    "popups":           [None, 'popups'],
+    "settings":         [None, 'settings'],
+    "compare":          [None, 'compare'],
 }
 plugins_dict = {
     "aggregation_window": {
-    "window":        [None, "window"],
-    "view":          [None, "view"],
-    "node":          [None, "node"],
-    "connection":    [None, "connection"],
-    "aggregation":   [None, "aggregation"],
+        "window":      [None, "window"],
+        "view":        [None, "view"],
+        "node":        [None, "node"],
+        "connection":  [None, "connection"],
+        "aggregation": [None, "aggregation"],
         "aw_modelcheck":   [None, "modelcheck"],
         "grouping_window": [None, "grouping_window"],
     },

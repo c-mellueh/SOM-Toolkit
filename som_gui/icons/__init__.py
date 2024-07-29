@@ -3,6 +3,10 @@ import os
 from PySide6.QtGui import QIcon
 
 
+def get_switch() -> QIcon:
+    icon_path = os.path.join(ICON_PATH, ICON_DICT["switch"])
+    return QIcon(icon_path)
+
 def get_icon() -> QIcon:
     icon_path = os.path.join(ICON_PATH, ICON_DICT["icon"])
     return QIcon(icon_path)
@@ -40,5 +44,6 @@ ICON_DICT = {
     "reload":   "reload.svg",
     "search":   "search.png",
     "settings": "setting.png",
-    "add":      "add.png"
+    "add":    "add.png",
+    "switch": "switch.png",
 }
