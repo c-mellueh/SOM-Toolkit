@@ -23,7 +23,7 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(618, 130)
+        Dialog.resize(500, 78)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -32,6 +32,8 @@ class Ui_Dialog(object):
         Dialog.setMinimumSize(QSize(500, 0))
         self.verticalLayout = QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.layout_top = QHBoxLayout()
         self.layout_top.setObjectName(u"layout_top")
         self.layout_input = QHBoxLayout()
@@ -48,9 +50,10 @@ class Ui_Dialog(object):
 
         self.layout_input.addWidget(self.button)
 
+
         self.layout_top.addLayout(self.layout_input)
 
-        self.verticalLayout.addLayout(self.layout_top)
+        self.horizontalLayout.addLayout(self.layout_top)
 
         self.button_switch = QPushButton(Dialog)
         self.button_switch.setObjectName(u"button_switch")
@@ -58,7 +61,7 @@ class Ui_Dialog(object):
         self.button_switch.setMaximumSize(QSize(25, 16777215))
         self.button_switch.setLayoutDirection(Qt.LeftToRight)
 
-        self.verticalLayout.addWidget(self.button_switch)
+        self.horizontalLayout.addWidget(self.button_switch)
 
         self.layout_bottom = QHBoxLayout()
         self.layout_bottom.setObjectName(u"layout_bottom")
@@ -67,7 +70,9 @@ class Ui_Dialog(object):
 
         self.layout_bottom.addWidget(self.label_project)
 
-        self.verticalLayout.addLayout(self.layout_bottom)
+        self.horizontalLayout.addLayout(self.layout_bottom)
+
+        self.verticalLayout.addLayout(self.horizontalLayout)
 
         self.buttonBox = QDialogButtonBox(Dialog)
         self.buttonBox.setObjectName(u"buttonBox")

@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QDialog
 from .window import Ui_Dialog
 from .import_window import Ui_Dialog as Ui_ImportDialog
-from som_gui.icons import get_icon, ICON_PATH, ICON_DICT
+from som_gui.icons import get_icon, ICON_PATH, ICON_DICT, get_switch
 from PySide6.QtGui import QIcon, QPixmap, QTransform
 from PySide6.QtCore import Qt
 import os
@@ -29,4 +29,5 @@ class ProjectSelectDialog(QDialog):
         self.widget.button_switch.setText("")
         pixmap = QPixmap(os.path.join(ICON_PATH, ICON_DICT["switch"]))
         icon = QIcon(pixmap.transformed(QTransform().rotate(90), Qt.TransformationMode.FastTransformation))
+        icon = get_switch()
         self.widget.button_switch.setIcon(icon)
