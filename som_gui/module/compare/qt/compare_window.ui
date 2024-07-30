@@ -2,12 +2,15 @@
 <ui version="4.0">
     <class>Dialog</class>
     <widget class="QDialog" name="Dialog">
+        <property name="windowModality">
+            <enum>Qt::WindowModal</enum>
+        </property>
         <property name="geometry">
             <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>1594</width>
-                <height>925</height>
+                <width>702</width>
+                <height>421</height>
             </rect>
         </property>
         <property name="windowTitle">
@@ -15,25 +18,19 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
             <item>
-                <widget class="QSplitter" name="splitter">
-                    <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
+                <widget class="QTabWidget" name="tabWidget">
+                    <property name="tabPosition">
+                        <enum>QTabWidget::West</enum>
                     </property>
-                    <widget class="QTreeWidget" name="tree_widget_object">
-                        <column>
-                            <property name="text">
-                                <string notr="true">1</string>
-                            </property>
-                        </column>
-                    </widget>
-                    <widget class="QTreeWidget" name="tree_widget_propertysets">
-                        <column>
-                            <property name="text">
-                                <string notr="true">1</string>
-                            </property>
-                        </column>
-                    </widget>
-                    <widget class="QTableWidget" name="table_widget_values"/>
+                    <property name="tabShape">
+                        <enum>QTabWidget::Rounded</enum>
+                    </property>
+                    <property name="currentIndex">
+                        <number>-1</number>
+                    </property>
+                    <property name="elideMode">
+                        <enum>Qt::ElideMiddle</enum>
+                    </property>
                 </widget>
             </item>
             <item>
@@ -42,7 +39,7 @@
                         <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="standardButtons">
-                        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+                        <set>QDialogButtonBox::Ok</set>
                     </property>
                 </widget>
             </item>

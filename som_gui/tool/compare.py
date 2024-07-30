@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from PySide6.QtGui import QBrush, QPalette, QColor
+from PySide6.QtGui import QBrush, QPalette, QColor, QIcon
 
 from som_gui import tool
 import SOMcreator
@@ -13,7 +13,8 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.compare import trigger
 
 if TYPE_CHECKING:
-    from som_gui.module.compare.prop import CompareProperties
+    from som_gui.module.compare.prop import CompareAttributesProperties, CompareWindowProperties, \
+        CompareProjectSelectProperties
 
 style_list = [
     [None, [0, 1]],
@@ -26,8 +27,8 @@ style_list = [
 
 class CompareProjectSelector(som_gui.core.tool.CompareProjectSelector):
     @classmethod
-    def get_properties(cls) -> CompareProperties:
-        return som_gui.CompareProperties
+    def get_properties(cls) -> CompareProjectSelectProperties:
+        return som_gui.CompareProjectSelectProperties
 
     @classmethod
     def create_project_select_dialog(cls):
@@ -84,49 +85,40 @@ class CompareProjectSelector(som_gui.core.tool.CompareProjectSelector):
     def get_project_select_path(cls) -> str:
         return cls.get_project_select_dialog().widget.line_edit.text()
 
-
-class Compare(som_gui.core.tool.Compare):
     @classmethod
-    def get_properties(cls) -> CompareProperties:
-        return som_gui.CompareProperties
+    def accept_clicked(cls):
+        trigger.accept_clicked()
+
+
+class AttributeCompare(som_gui.core.tool.Compare):
+    @classmethod
+    def get_properties(cls) -> CompareAttributesProperties:
+        return som_gui.CompareAttributesProperties
 
     @classmethod
-    def reset_properties(cls):
+    def get_widget(cls):
+        if cls.get_properties().widget is None:
+            cls.get_properties().widget = ui.AttributeWidget()
+        return cls.get_properties().widget
+
+    @classmethod
+    def reset(cls):
         prop = cls.get_properties()
-        prop.proj_select_dialog = None
         prop.projects = [None, None]
         prop.uuid_dicts = [None, None]
         prop.ident_dicts = [None, None]
-        prop.window = None
         prop.object_dicts = [None, None]
         prop.missing_objects = [None, None]
         prop.object_tree_item_dict = dict()
         prop.pset_lists = dict()
         prop.attributes_lists = dict()
         prop.values_lists = dict()
-        prop.layout_proj0 = None
-        prop.layout_proj1 = None
-        prop.is_current_proj_input = False
-        prop.label_project = None
-        prop.layout_input = None
-
-    @classmethod
-    def create_window(cls):
-        cls.get_properties().window = ui.CompareDialog()
-        return cls.get_window()
+        prop.widget = None
 
     @classmethod
     def create_compare_window_triggers(cls, window: ui.CompareDialog):
         window.widget.tree_widget_object.itemSelectionChanged.connect(trigger.object_tree_selection_changed)
         window.widget.tree_widget_propertysets.itemSelectionChanged.connect(trigger.pset_tree_selection_changed)
-
-    @classmethod
-    def get_window(cls) -> ui.CompareDialog:
-        return cls.get_properties().window
-
-    @classmethod
-    def delete_window(cls):
-        cls.get_properties().window = None
 
     @classmethod
     def set_projects(cls, project1, project2) -> None:
@@ -302,14 +294,14 @@ class Compare(som_gui.core.tool.Compare):
 
     @classmethod
     def fill_object_tree(cls):
-        tree = cls.get_window().widget.tree_widget_object
+        tree = cls.get_object_tree()
         proj0, proj1 = cls.get_project(0), cls.get_project(1)
         cls.fill_object_tree_layer(tool.Project.get_root_objects(False, proj0), tree.invisibleRootItem())
         cls.add_missing_objects_to_tree(tool.Project.get_root_objects(False, proj1))
 
     @classmethod
     def find_existing_parent(cls, obj: SOMcreator.Object):
-        tree = cls.get_window().widget.tree_widget_object
+        tree = cls.get_object_tree()
         object_tree_item_dict = cls.get_properties().object_tree_item_dict
         parent = obj.parent
         while parent is not None:
@@ -507,12 +499,60 @@ class Compare(som_gui.core.tool.Compare):
 
     @classmethod
     def get_object_tree(cls):
-        return cls.get_window().widget.tree_widget_object
+        return cls.get_widget().widget.tree_widget_object
 
     @classmethod
     def get_pset_tree(cls):
-        return cls.get_window().widget.tree_widget_propertysets
+        return cls.get_widget().widget.tree_widget_propertysets
 
     @classmethod
     def get_value_table(cls):
-        return cls.get_window().widget.table_widget_values
+        return cls.get_widget().widget.table_widget_values
+
+
+class CompareWindow(som_gui.core.tool.CompareWindow):
+    @classmethod
+    def get_properties(cls) -> CompareWindowProperties:
+        return som_gui.CompareWindowProperties
+
+    @classmethod
+    def add_tab(cls, name: str, widget, init_func, _tool):
+        prop = cls.get_properties()
+        prop.names.append(name)
+        prop.widgets.append(widget)
+        prop.init_functions.append(init_func)
+        prop.tools.append(_tool)
+
+    @classmethod
+    def create_window(cls):
+        cls.get_properties().window = ui.CompareDialog()
+        return cls.get_window()
+
+    @classmethod
+    def get_window(cls) -> ui.CompareDialog:
+        return cls.get_properties().window
+
+    @classmethod
+    def set_projects(cls, project1, project2) -> None:
+        cls.get_properties().projects = [project1, project2]
+
+    @classmethod
+    def get_tabwidget(cls):
+        return cls.get_window().widget.tabWidget
+
+    @classmethod
+    def init_tabs(cls, project0, project1):
+        names = cls.get_properties().names
+        widgets = cls.get_properties().widgets
+        init_functions = cls.get_properties().init_functions
+        tab_widget = cls.get_tabwidget()
+        for name, widget_getter, init_func in zip(names, widgets, init_functions):
+            tab_widget.addTab(widget_getter(), QIcon(), name)
+            init_func(project0, project1)
+
+    @classmethod
+    def reset(cls):
+        prop = cls.get_properties()
+        prop.window = None
+        for _tool in cls.get_properties().tools:
+            _tool.reset()

@@ -5,6 +5,10 @@ class AttributeImport:
 class CompareProjectSelector:
     pass
 
+
+class CompareWindow:
+    pass
+
 class Compare:
     pass
 class Logging:

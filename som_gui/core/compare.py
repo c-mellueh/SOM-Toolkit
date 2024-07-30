@@ -12,15 +12,16 @@ if TYPE_CHECKING:
     from som_gui import tool
 
 
-def open_project_selection_window(compare: Type[tool.Compare], project_selector: Type[tool.CompareProjectSelector],
+def open_project_selection_window(compare_window: Type[tool.CompareWindow],
+                                  project_selector: Type[tool.CompareProjectSelector],
                                   settings: Type[tool.Settings],
-                                  project: Type[tool.Project],
-                                  popups: Type[tool.Popups]):
-    if compare.get_window():
-        if compare.get_window().exec():
-            compare.delete_window()
+                                  project: Type[tool.Project], ):
+    window = compare_window.get_window()
+    if window is not None:
+        if window.exec():
+            compare_window.reset()
         return
-    compare.reset_properties()
+
     proj_select_dialog = project_selector.create_project_select_dialog()
     project_selector.connect_project_select_dialog(proj_select_dialog)
 
@@ -28,7 +29,7 @@ def open_project_selection_window(compare: Type[tool.Compare], project_selector:
     project_selector.fill_project_select_dialog(project.get(), path)
 
     if proj_select_dialog.exec():
-        open_compare_window(compare, project_selector, project, settings, popups)
+        project_selector.accept_clicked()
 
 
 def switch_clicked(project_selector: Type[tool.CompareProjectSelector]):
@@ -59,49 +60,59 @@ def project_button_clicked(project_selector: Type[tool.CompareProjectSelector], 
     project_selector.set_project_select_path(path)
 
 
-def open_compare_window(compare: Type[tool.Compare], project_selector: Type[tool.CompareProjectSelector],
+def open_compare_window(compare_window: Type[tool.CompareWindow], project_selector: Type[tool.CompareProjectSelector],
                         project: Type[tool.Project], settings: Type[tool.Settings],
                         popups: Type[tool.Popups]):
-    window = compare.create_window()
-    window.show()
     other_file_path = project_selector.get_project_select_path()
-    if os.path.exists(other_file_path):
-        settings.set_path(COMPARE_SETTING, other_file_path)
-    else:
+    if not os.path.exists(other_file_path):
         popups.create_warning_popup(f"File {other_file_path} does not exist!")
         return
 
+    window = compare_window.create_window()
+
+    settings.set_path(COMPARE_SETTING, other_file_path)
     project_0 = project.get()
     project_1 = Project.open(other_file_path)
 
-    if not compare.get_properties().is_current_proj_input:
+    if not project_selector.is_current_project_input():
         project_0, project_1 = project_1, project_0
 
-    compare.set_projects(project_0, project_1)
-    compare.create_object_dicts()
-    compare.fill_object_tree()
+    compare_window.set_projects(project_0, project_1)
 
-    root = compare.get_object_tree().invisibleRootItem()
-    for child_index in range(root.childCount()):
-        compare.style_tree_item(root.child(child_index))
+    compare_window.init_tabs(project_0, project_1)
 
-    compare.set_header_labels(compare.get_header_name_from_project(project_0),
-                              compare.get_header_name_from_project(project_1))
-    compare.create_compare_window_triggers(window)
-    window.hide()
     if window.exec():
-        compare.delete_window()
+        compare_window.reset()
 
 
-def object_tree_selection_changed(compare: Type[tool.Compare]):
-    obj = compare.get_selected_item_from_tree(compare.get_object_tree())
-    compare.fill_pset_table(obj)
-    root = compare.get_pset_tree().invisibleRootItem()
+def object_tree_selection_changed(attribute_compare: Type[tool.AttributeCompare]):
+    obj = attribute_compare.get_selected_item_from_tree(attribute_compare.get_object_tree())
+    attribute_compare.fill_pset_table(obj)
+    root = attribute_compare.get_pset_tree().invisibleRootItem()
 
     for child_index in range(root.childCount()):
-        compare.style_tree_item(root.child(child_index))
+        attribute_compare.style_tree_item(root.child(child_index))
 
 
-def pset_tree_selection_changed(compare: Type[tool.Compare]):
-    attribute = compare.get_selected_item_from_tree(compare.get_pset_tree())
-    compare.fill_value_table(attribute)
+def pset_tree_selection_changed(attribute_compare: Type[tool.AttributeCompare]):
+    attribute = attribute_compare.get_selected_item_from_tree(attribute_compare.get_pset_tree())
+    attribute_compare.fill_value_table(attribute)
+
+
+def add_attribute_compare_widget(attribute_compare: Type[tool.AttributeCompare],
+                                 compare_window: Type[tool.CompareWindow]):
+    compare_window.add_tab("Attributes", attribute_compare.get_widget, lambda p0, p1: init(p0, p1, attribute_compare),
+                           attribute_compare)
+
+
+def init(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
+    attribute_compare.set_projects(project0, project1)
+    attribute_compare.create_object_dicts()
+    attribute_compare.fill_object_tree()
+    root = attribute_compare.get_object_tree().invisibleRootItem()
+    for child_index in range(root.childCount()):
+        attribute_compare.style_tree_item(root.child(child_index))
+
+    attribute_compare.set_header_labels(attribute_compare.get_header_name_from_project(project0),
+                                        attribute_compare.get_header_name_from_project(project1))
+    attribute_compare.create_compare_window_triggers(attribute_compare.get_widget())
