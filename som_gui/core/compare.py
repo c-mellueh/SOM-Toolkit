@@ -12,7 +12,8 @@ if TYPE_CHECKING:
     from som_gui import tool
 
 
-def open_project_selection_window(compare: Type[tool.Compare], settings: Type[tool.Settings],
+def open_project_selection_window(compare: Type[tool.Compare], project_selector: Type[tool.CompareProjectSelector],
+                                  settings: Type[tool.Settings],
                                   project: Type[tool.Project],
                                   popups: Type[tool.Popups]):
     if compare.get_window():
@@ -20,22 +21,22 @@ def open_project_selection_window(compare: Type[tool.Compare], settings: Type[to
             compare.delete_window()
         return
     compare.reset_properties()
-    proj_select_dialog = compare.create_project_select_dialog()
-    compare.connect_project_select_dialog(proj_select_dialog)
+    proj_select_dialog = project_selector.create_project_select_dialog()
+    project_selector.connect_project_select_dialog(proj_select_dialog)
 
     path = settings.get_string_setting(PATHS_SECTION, COMPARE_SETTING)
-    compare.fill_project_select_dialog(project.get(), path)
+    project_selector.fill_project_select_dialog(project.get(), path)
 
     if proj_select_dialog.exec():
-        open_compare_window(compare, project, settings, popups)
+        open_compare_window(compare, project_selector, project, settings, popups)
 
 
-def switch_clicked(compare: Type[tool.Compare]):
-    layout0, layout1 = compare.get_project_layouts()
-    input_layout = compare.get_input_layout()
-    project_label = compare.get_project_label()
+def switch_clicked(project_selector: Type[tool.CompareProjectSelector]):
+    layout0, layout1 = project_selector.get_project_layouts()
+    input_layout = project_selector.get_input_layout()
+    project_label = project_selector.get_project_label()
 
-    if compare.is_current_project_input():
+    if project_selector.is_current_project_input():
         layout0.removeWidget(project_label)
         layout1.removeItem(input_layout)
         layout0.addItem(input_layout)
@@ -45,23 +46,25 @@ def switch_clicked(compare: Type[tool.Compare]):
         layout1.removeWidget(project_label)
         layout0.addWidget(project_label)
         layout1.addItem(input_layout)
-    compare.toggle_current_project_as_input()
+    project_selector.toggle_current_project_as_input()
 
 
-def project_button_clicked(compare: Type[tool.Compare], popups: Type[tool.Popups], settings: Type[tool.Settings]):
-    dialog = compare.get_project_select_dialog()
+def project_button_clicked(project_selector: Type[tool.CompareProjectSelector], popups: Type[tool.Popups],
+                           settings: Type[tool.Settings]):
+    dialog = project_selector.get_project_select_dialog()
     path = settings.get_string_setting(PATHS_SECTION, COMPARE_SETTING)
     path = popups.get_path(FILETYPE, dialog, path)
     if not path:
         return
-    compare.set_project_select_path(path)
+    project_selector.set_project_select_path(path)
 
 
-def open_compare_window(compare: Type[tool.Compare], project: Type[tool.Project], settings: Type[tool.Settings],
+def open_compare_window(compare: Type[tool.Compare], project_selector: Type[tool.CompareProjectSelector],
+                        project: Type[tool.Project], settings: Type[tool.Settings],
                         popups: Type[tool.Popups]):
     window = compare.create_window()
     window.show()
-    other_file_path = compare.get_project_select_path()
+    other_file_path = project_selector.get_project_select_path()
     if os.path.exists(other_file_path):
         settings.set_path(COMPARE_SETTING, other_file_path)
     else:
@@ -88,6 +91,7 @@ def open_compare_window(compare: Type[tool.Compare], project: Type[tool.Project]
     window.hide()
     if window.exec():
         compare.delete_window()
+
 
 def object_tree_selection_changed(compare: Type[tool.Compare]):
     obj = compare.get_selected_item_from_tree(compare.get_object_tree())

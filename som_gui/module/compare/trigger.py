@@ -4,7 +4,8 @@ from som_gui import tool
 
 def connect():
     tool.MainWindow.add_action("Datei/SOM-Vergleichen",
-                               lambda: core.open_project_selection_window(tool.Compare, tool.Settings, tool.Project,
+                               lambda: core.open_project_selection_window(tool.Compare, tool.CompareProjectSelector,
+                                                                          tool.Settings, tool.Project,
                                                                           tool.Popups))
 
 
@@ -13,10 +14,10 @@ def on_new_project():
 
 
 def switch_button_clicked():
-    core.switch_clicked(tool.Compare)
+    core.switch_clicked(tool.CompareProjectSelector)
 
 def project_button_clicked():
-    core.project_button_clicked(tool.Compare, tool.Popups, tool.Settings)
+    core.project_button_clicked(tool.CompareProjectSelector, tool.Popups, tool.Settings)
 
 
 def object_tree_selection_changed():

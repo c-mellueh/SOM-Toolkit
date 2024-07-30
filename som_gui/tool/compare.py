@@ -24,34 +24,11 @@ style_list = [
 ]
 
 
-class Compare(som_gui.core.tool.Compare):
-
+class CompareProjectSelector(som_gui.core.tool.CompareProjectSelector):
     @classmethod
     def get_properties(cls) -> CompareProperties:
         return som_gui.CompareProperties
 
-    # main
-    @classmethod
-    def reset_properties(cls):
-        prop = cls.get_properties()
-        prop.proj_select_dialog = None
-        prop.projects = [None, None]
-        prop.uuid_dicts = [None, None]
-        prop.ident_dicts = [None, None]
-        prop.window = None
-        prop.object_dicts = [None, None]
-        prop.missing_objects = [None, None]
-        prop.object_tree_item_dict = dict()
-        prop.pset_lists = dict()
-        prop.attributes_lists = dict()
-        prop.values_lists = dict()
-        prop.layout_proj0 = None
-        prop.layout_proj1 = None
-        prop.is_current_proj_input = False
-        prop.label_project = None
-        prop.layout_input = None
-
-    # project Select Window
     @classmethod
     def create_project_select_dialog(cls):
         dialog = ui.ProjectSelectDialog()
@@ -74,7 +51,8 @@ class Compare(som_gui.core.tool.Compare):
     @classmethod
     def fill_project_select_dialog(cls, project, open_path):
         cls.set_project_select_path(open_path)
-        cls.get_properties().label_project.setText(cls.get_header_name_from_project(project))
+        name = f"{project.name} v{project.version}"
+        cls.get_properties().label_project.setText(name)
 
     @classmethod
     def get_project_layouts(cls):
@@ -106,7 +84,32 @@ class Compare(som_gui.core.tool.Compare):
     def get_project_select_path(cls) -> str:
         return cls.get_project_select_dialog().widget.line_edit.text()
 
-    # Compare Window
+
+class Compare(som_gui.core.tool.Compare):
+    @classmethod
+    def get_properties(cls) -> CompareProperties:
+        return som_gui.CompareProperties
+
+    @classmethod
+    def reset_properties(cls):
+        prop = cls.get_properties()
+        prop.proj_select_dialog = None
+        prop.projects = [None, None]
+        prop.uuid_dicts = [None, None]
+        prop.ident_dicts = [None, None]
+        prop.window = None
+        prop.object_dicts = [None, None]
+        prop.missing_objects = [None, None]
+        prop.object_tree_item_dict = dict()
+        prop.pset_lists = dict()
+        prop.attributes_lists = dict()
+        prop.values_lists = dict()
+        prop.layout_proj0 = None
+        prop.layout_proj1 = None
+        prop.is_current_proj_input = False
+        prop.label_project = None
+        prop.layout_input = None
+
     @classmethod
     def create_window(cls):
         cls.get_properties().window = ui.CompareDialog()

@@ -2,6 +2,9 @@ class AttributeImport:
     pass
 
 
+class CompareProjectSelector:
+    pass
+
 class Compare:
     pass
 class Logging:
