@@ -38,3 +38,14 @@ class CompareWindowProperties:
     init_functions = list()
     tools = list()
     window: CompareDialog = None
+
+
+class ObjectFilterCompareProperties:
+    widget: AttributeWidget = None
+    usecase_list = list()
+    use_case_indexes = list()
+    phase_list = list()
+    phase_indexes = list()
+    column_count: int = None
+    projects = [None, None]
+    match_list = []
