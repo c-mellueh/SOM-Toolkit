@@ -42,6 +42,8 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
             position_list = cls.get_aggregations_in_scene(scene)
             node_dict = dict()
             for aggregation, pos in position_list:
+                if aggregation not in agrgegation_uuid_dict:
+                    continue  # object and aggregation were deleted without refreshing the widget
                 node_dict[agrgegation_uuid_dict[aggregation]] = [pos.x(), pos.y()]
             aggregation_scenes_dict[scene_name]["Nodes"] = node_dict
         return aggregation_scenes_dict
@@ -241,7 +243,8 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         scene.removeItem(node.circle)
         scene.removeItem(node)
         node.deleteLater()
-        node.aggregation.delete()
+        if node.aggregation in node.aggregation.project.get_all_aggregations():
+            node.aggregation.delete()
 
     @classmethod
     def remove_connection_from_scene(cls, connection: ui_connection.Connection,
