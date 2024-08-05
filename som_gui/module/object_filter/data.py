@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import SOMcreator
-
+from som_gui import tool
 import som_gui
 
 
@@ -19,7 +19,7 @@ class ObjectFilterData:
 
     @classmethod
     def load_data_classes(cls):
-        proj: SOMcreator.Project = som_gui.ProjectProperties.active_project
+        proj: SOMcreator.Project = tool.Project.get()
         if proj is None:
             return list()
         use_case_list = proj.get_use_case_list()

@@ -9,7 +9,7 @@ def connect():
                                                                           tool.Settings, tool.Project))
 
     core.add_attribute_compare_widget(tool.AttributeCompare, tool.CompareWindow)
-    core.add_object_filter_widget(tool.ObjectFilterCompare, tool.AttributeCompare, tool.CompareWindow)
+
 
 def on_new_project():
     pass
@@ -29,11 +29,6 @@ def project_button_clicked():
 
 def object_tree_selection_changed(widget, ):
     core.object_tree_selection_changed(widget, tool.AttributeCompare)
-
-
-def filter_tab_object_tree_selection_changed(widget):
-    core.filter_tab_object_tree_selection_changed(widget, tool.AttributeCompare, tool.ObjectFilterCompare)
-
 
 
 def pset_tree_selection_changed(widget):

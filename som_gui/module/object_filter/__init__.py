@@ -4,7 +4,7 @@ import logging
 
 def register():
     som_gui.ObjectFilterProperties = prop.ObjectFilterProperties
-
+    som_gui.ObjectFilterCompareProperties = prop.ObjectFilterCompareProperties()
 
 def load_ui_triggers():
     logging.info(f"Load Use-Case UI Triggers")
