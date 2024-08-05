@@ -47,7 +47,6 @@ class WordWrapHeaderView(QHeaderView):
     def sectionSizeFromContents(self, logicalIndex):
         text = str(self.model().headerData(logicalIndex, self.orientation(), Qt.ItemDataRole.DisplayRole))
         max_width = self.sectionSize(logicalIndex)
-        print(max_width)
         maxheight = 5000
         alignement = self.defaultAlignment()
         metrics = self.fontMetrics()

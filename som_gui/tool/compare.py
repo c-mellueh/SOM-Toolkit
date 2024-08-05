@@ -108,7 +108,6 @@ class AttributeCompare(som_gui.core.tool.Compare):
     @classmethod
     def get_branch_color(cls, index: QModelIndex):
         color = index.data(CLASS_REFERENCE + 1)
-        print(color)
         return QColor(color) if isinstance(color, str) else None
 
     @classmethod
@@ -138,7 +137,6 @@ class AttributeCompare(som_gui.core.tool.Compare):
         prop.attributes_lists = dict()
         prop.values_lists = dict()
         prop.widget = None
-        print(f"RESET AW {cls.get_properties().widget}")
 
     @classmethod
     def create_tree_selection_trigger(cls, widget: ui.AttributeWidget):
@@ -622,7 +620,6 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         widget.widget.tree_widget_object.itemSelectionChanged.connect(
             lambda: trigger.filter_tab_object_tree_selection_changed(widget))
 
-
     @classmethod
     def get_matching_usecases(cls, proj0: SOMcreator.Project = None, proj1: SOMcreator.Project = None):
         if proj0 is None:
@@ -666,8 +663,6 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         prop.projects = [None, None]
         prop.widget = None
 
-        print(f"RESET OF {cls.get_properties().widget}")
-
 
     @classmethod
     def append_collumns(cls, count: int, object_tree_widget: QTreeWidget, pset_tree_widget: QTreeWidget):
@@ -702,25 +697,75 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         return cls.get_properties().match_list
 
     @classmethod
-    def fill_object_tree_checkstates(cls, item: QTreeWidgetItem):
-        tree = item.treeWidget()
-        obj0: SOMcreator.Object = item.data(0, CLASS_REFERENCE)
-        obj1: SOMcreator.Object = item.data(1, CLASS_REFERENCE)
-        matches = cls.get_match_list()
-
-        for column, [usecase, phase] in enumerate(matches, start=2):
+    def get_filter_list(cls, entity0: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute,
+                        entity1: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute) -> list[
+        tuple[None | bool, None | bool]]:
+        filter_list = list()
+        for column, [usecase, phase] in enumerate(cls.get_match_list(), start=2):
             filter_state = [None, None]
-            if obj0 is not None:
-                filter_state[0] = obj0.get_filter_state(phase, usecase)
-            if obj1 is not None:
-                filter_state[1] = obj1.get_filter_state(phase, usecase)
+            if entity0 is not None:
+                filter_state[0] = entity0.get_filter_state(phase, usecase)
+            if entity1 is not None:
+                filter_state[1] = entity1.get_filter_state(phase, usecase)
+            filter_list.append(tuple(filter_state))
+        return filter_list
 
+    @classmethod
+    def are_all_filters_identical(cls, filter_list: list[tuple[None | bool, None | bool]]) -> bool:
+        return all(f0 == f1 for f0, f1 in filter_list if f0 is not None and f1 is not None)
+
+    @classmethod
+    def are_objects_identical(cls, obj0: SOMcreator.Object, obj1: SOMcreator.Object) -> bool:
+        filter_list = cls.get_filter_list(obj0, obj1)
+        objects_are_identical = cls.are_all_filters_identical(filter_list)
+        if not objects_are_identical:
+            print(f"{obj0} -> Objects")
+            return False
+        pset_lists = tool.AttributeCompare.get_properties().pset_lists.get(obj0)
+        if pset_lists is None:
+            return True
+        for p0, p1 in pset_lists:
+            if not cls.are_psets_identical(p0, p1):
+                print(f"{obj0} -> Psets")
+
+                return False
+        return True
+
+    @classmethod
+    def are_psets_identical(cls, pset0: SOMcreator.PropertySet, pset1: SOMcreator.PropertySet) -> bool:
+        filter_list = cls.get_filter_list(pset0, pset1)
+        all_psets_are_identical = cls.are_all_filters_identical(filter_list)
+        if not all_psets_are_identical:
+            print(f"{pset0} not identical")
+            return False
+        attribute_lists = tool.AttributeCompare.get_properties().attributes_lists.get(pset0)
+        if attribute_lists is None:
+            return True
+        for a0, a1 in attribute_lists:
+            if not cls.are_attributes_identical(a0, a1):
+                print(f"{a0} not identical")
+                return False
+        return True
+
+    @classmethod
+    def are_attributes_identical(cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute):
+        filter_list = cls.get_filter_list(attribute0, attribute1)
+        return cls.are_all_filters_identical(filter_list)
+
+    @classmethod
+    def fill_tree_with_checkstates(cls, item: QTreeWidgetItem):
+        tree = item.treeWidget()
+        entity_0: SOMcreator.Object = item.data(0, CLASS_REFERENCE)
+        entity_1: SOMcreator.Object = item.data(1, CLASS_REFERENCE)
+        filter_list = cls.get_filter_list(entity_0, entity_1)
+        for column, filter_state in enumerate(filter_list, start=2):
             widget = cls._create_combobox_widget(filter_state[0], filter_state[1])
             tree.setItemWidget(item, column, widget)
             if filter_state[0] != filter_state[1]:
                 cls.set_tree_item_column_color(item, column, style_list[1][0])
+
         for child_index in range(item.childCount()):
-            cls.fill_object_tree_checkstates(item.child(child_index))
+            cls.fill_tree_with_checkstates(item.child(child_index))
 
     @classmethod
     def _create_combobox_widget(cls, cs0: bool | None, cs1: bool | None):
@@ -757,3 +802,17 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         item.setBackground(0, color)
         item.setBackground(1, color)
         item.setData(0, CLASS_REFERENCE + 1, 1)
+
+    @classmethod
+    def style_object_tree(cls, item: QTreeWidgetItem):
+        entity_0: SOMcreator.Object = item.data(0, CLASS_REFERENCE)
+        entity_1: SOMcreator.Object = item.data(1, CLASS_REFERENCE)
+        for column, filter_state in enumerate(cls.get_filter_list(entity_0, entity_1), start=2):
+            if filter_state[0] != filter_state[1]:
+                cls.set_tree_item_column_color(item, column, style_list[1][0])
+
+        if not cls.are_objects_identical(entity_0, entity_1):
+            cls.set_tree_item_column_color(item, 0, style_list[1][0])
+
+        for child_index in range(item.childCount()):
+            cls.style_object_tree(item.child(child_index))

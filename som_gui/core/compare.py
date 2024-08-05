@@ -101,7 +101,6 @@ def draw_tree_branch(tree: QTreeWidget, painter: QPainter, rect, index: QModelIn
     start_point = width - arrow_width
     color = attribute_compare.get_branch_color(index)
 
-    print(f"{item.text(0)} {color}")
     if item.childCount() and color is not None:
         painter.setBackground(Qt.GlobalColor.red)
         painter.setBrush(color)
@@ -119,7 +118,7 @@ def filter_tab_object_tree_selection_changed(widget: ui.AttributeWidget, attribu
 
     for child_index in range(tree_widget.invisibleRootItem().childCount()):
         child = tree_widget.invisibleRootItem().child(child_index)
-        object_filter_compare.fill_object_tree_checkstates(child)
+        object_filter_compare.fill_tree_with_checkstates(child)
 
     for col in range(2, tree_widget.columnCount()):
         tree_widget.setColumnWidth(col, 58)
@@ -197,8 +196,8 @@ def init_object_filter(project0: SOMcreator.Project, project1: SOMcreator.Projec
     object_filter_compare.append_collumns(extra_columns, object_tree_widget, pset_tree)
     for child_index in range(object_tree_widget.invisibleRootItem().childCount()):
         child = object_tree_widget.invisibleRootItem().child(child_index)
-        object_filter_compare.fill_object_tree_checkstates(child)
-
+        object_filter_compare.fill_tree_with_checkstates(child)
+        object_filter_compare.style_object_tree(child)
     for col in range(2, object_tree_widget.columnCount()):
         object_tree_widget.setColumnWidth(col, 58)
 
