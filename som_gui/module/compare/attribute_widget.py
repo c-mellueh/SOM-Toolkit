@@ -16,9 +16,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHeaderView, QSizePolicy, QSplitter,
-                               QTableWidget, QTableWidgetItem, QTreeWidget, QTreeWidgetItem,
-                               QVBoxLayout, QWidget)
+                               QTableWidget, QTableWidgetItem, QTreeWidgetItem, QVBoxLayout,
+                               QWidget)
 
+from som_gui.module.compare.ui import EntityTreeWidget
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -35,7 +36,7 @@ class Ui_Form(object):
         sizePolicy.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
         self.splitter.setSizePolicy(sizePolicy)
         self.splitter.setOrientation(Qt.Horizontal)
-        self.tree_widget_object = QTreeWidget(self.splitter)
+        self.tree_widget_object = EntityTreeWidget(self.splitter)
         __qtreewidgetitem = QTreeWidgetItem()
         __qtreewidgetitem.setText(0, u"1");
         self.tree_widget_object.setHeaderItem(__qtreewidgetitem)
@@ -46,7 +47,7 @@ class Ui_Form(object):
         sizePolicy1.setHeightForWidth(self.tree_widget_object.sizePolicy().hasHeightForWidth())
         self.tree_widget_object.setSizePolicy(sizePolicy1)
         self.splitter.addWidget(self.tree_widget_object)
-        self.tree_widget_propertysets = QTreeWidget(self.splitter)
+        self.tree_widget_propertysets = EntityTreeWidget(self.splitter)
         __qtreewidgetitem1 = QTreeWidgetItem()
         __qtreewidgetitem1.setText(0, u"1");
         self.tree_widget_propertysets.setHeaderItem(__qtreewidgetitem1)
@@ -65,9 +66,9 @@ class Ui_Form(object):
         self.retranslateUi(Form)
 
         QMetaObject.connectSlotsByName(Form)
-
     # setupUi
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
     # retranslateUi
+

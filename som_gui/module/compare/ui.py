@@ -1,16 +1,15 @@
-from PySide6.QtWidgets import QDialog, QHeaderView, QWidget
-from .window import Ui_Dialog
-from .import_window import Ui_Dialog as Ui_ImportDialog
-from .attribute_widget import Ui_Form as Ui_AttributeWidget
+from PySide6.QtWidgets import QDialog, QHeaderView, QWidget, QTreeWidget
+from . import window, import_window, attribute_widget, trigger
 from som_gui.icons import get_icon, ICON_PATH, ICON_DICT, get_switch
-from PySide6.QtGui import QIcon, QPixmap, QTransform
-from PySide6.QtCore import Qt, QRect, QSize
+from PySide6.QtGui import QIcon, QPalette, QPixmap, QTransform
+from PySide6.QtCore import QModelIndex, Qt, QRect, QSize
 import os
+
 
 class CompareDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.widget = Ui_Dialog()
+        self.widget = window.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
         self.setWindowTitle(self.tr("Projekte Vergleichen"))
@@ -20,16 +19,17 @@ class CompareDialog(QDialog):
 class AttributeWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.widget = Ui_AttributeWidget()
+        self.widget = attribute_widget.Ui_Form()
         self.widget.setupUi(self)
         self.widget.tree_widget_object.setColumnCount(2)
         self.widget.tree_widget_propertysets.setColumnCount(2)
         self.widget.table_widget_values.setColumnCount(2)
 
+
 class ProjectSelectDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.widget = Ui_ImportDialog()
+        self.widget = import_window.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
         self.setWindowTitle(self.tr("Projekte Vergleichen"))
@@ -54,3 +54,12 @@ class WordWrapHeaderView(QHeaderView):
         rect = metrics.boundingRect(QRect(0, 0, max_width, maxheight), alignement, text)
         text_margin_buffer = QSize(2, 2)
         return rect.size() + text_margin_buffer
+
+
+class EntityTreeWidget(QTreeWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def drawBranches(self, painter, rect, index: QModelIndex):
+        results = trigger.draw_branches(self, painter, rect, index)
+        super().drawBranches(*results)

@@ -1,4 +1,4 @@
-from . import ui, prop, trigger
+from . import window, attribute_widget, ui, prop, trigger
 import som_gui
 
 

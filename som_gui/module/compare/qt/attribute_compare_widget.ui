@@ -25,7 +25,7 @@
                     <property name="orientation">
                         <enum>Qt::Horizontal</enum>
                     </property>
-                    <widget class="QTreeWidget" name="tree_widget_object">
+                    <widget class="EntityTreeWidget" name="tree_widget_object">
                         <property name="sizePolicy">
                             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                                 <horstretch>0</horstretch>
@@ -38,7 +38,7 @@
                             </property>
                         </column>
                     </widget>
-                    <widget class="QTreeWidget" name="tree_widget_propertysets">
+                    <widget class="EntityTreeWidget" name="tree_widget_propertysets">
                         <property name="sizePolicy">
                             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                                 <horstretch>0</horstretch>
@@ -63,6 +63,13 @@
             </item>
         </layout>
     </widget>
+    <customwidgets>
+        <customwidget>
+            <class>EntityTreeWidget</class>
+            <extends>QTreeWidget</extends>
+            <header>som_gui.module.compare.ui</header>
+        </customwidget>
+    </customwidgets>
     <resources/>
     <connections/>
 </ui>

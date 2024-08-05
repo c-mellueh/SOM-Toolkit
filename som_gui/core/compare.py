@@ -14,6 +14,9 @@ from SOMcreator import Project
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.compare import ui
+    from PySide6.QtCore import QModelIndex
+    from PySide6.QtGui import QPainter
+    from PySide6.QtWidgets import QTreeWidget
 
 def open_project_selection_window(compare_window: Type[tool.CompareWindow],
                                   project_selector: Type[tool.CompareProjectSelector],
@@ -88,14 +91,46 @@ def open_compare_window(compare_window: Type[tool.CompareWindow], project_select
         compare_window.reset()
 
 
-def object_tree_selection_changed(widget: ui.AttributeWidget, style: bool,
+def draw_tree_branch(tree: QTreeWidget, painter: QPainter, rect, index: QModelIndex,
+                     attribute_compare: Type[tool.AttributeCompare]):
+    level = attribute_compare.get_level(index)
+    item = tree.itemFromIndex(index)
+
+    width = rect.width()
+    arrow_width = width / level
+    start_point = width - arrow_width
+    color = attribute_compare.get_branch_color(index)
+
+    print(f"{item.text(0)} {color}")
+    if item.childCount() and color is not None:
+        painter.setBackground(Qt.GlobalColor.red)
+        painter.setBrush(color)
+        painter.setPen(Qt.GlobalColor.transparent)
+        rect.setRect(start_point, rect.y(), arrow_width, rect.height())
+        painter.drawRect(rect)
+    return painter, rect, index
+
+
+def filter_tab_object_tree_selection_changed(widget: ui.AttributeWidget, attribute_compare: Type[tool.AttributeCompare],
+                                             object_filter_compare: Type[tool.ObjectFilterCompare]):
+    obj = attribute_compare.get_selected_item_from_tree(attribute_compare.get_object_tree(widget))
+    tree_widget = attribute_compare.get_pset_tree(widget)
+    attribute_compare.fill_pset_tree(tree_widget, obj, add_missing=False)
+
+    for child_index in range(tree_widget.invisibleRootItem().childCount()):
+        child = tree_widget.invisibleRootItem().child(child_index)
+        object_filter_compare.fill_object_tree_checkstates(child)
+
+    for col in range(2, tree_widget.columnCount()):
+        tree_widget.setColumnWidth(col, 58)
+
+
+def object_tree_selection_changed(widget: ui.AttributeWidget,
                                   attribute_compare: Type[tool.AttributeCompare]):
     obj = attribute_compare.get_selected_item_from_tree(attribute_compare.get_object_tree(widget))
     tree = attribute_compare.get_pset_tree(widget)
-    attribute_compare.fill_pset_tree(tree, obj)
+    attribute_compare.fill_pset_tree(tree, obj, add_missing=True)
     root = attribute_compare.get_pset_tree(widget).invisibleRootItem()
-    if not style:
-        return
     for child_index in range(root.childCount()):
         attribute_compare.style_tree_item(root.child(child_index))
 
@@ -119,7 +154,7 @@ def init(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
     pset_tree = attribute_compare.get_pset_tree(widget)
     value_table = attribute_compare.get_value_table(widget)
 
-    attribute_compare.fill_object_tree(object_tree_widget)
+    attribute_compare.fill_object_tree(object_tree_widget, add_missing=True)
     root = object_tree_widget.invisibleRootItem()
     for child_index in range(root.childCount()):
         attribute_compare.style_tree_item(root.child(child_index))
@@ -135,15 +170,17 @@ def add_object_filter_widget(object_filter_compare: Type[tool.ObjectFilterCompar
                              compare_window: Type[tool.CompareWindow]):
     compare_window.add_tab("Objekt Filter", object_filter_compare.get_widget,
                            lambda p0, p1: init_object_filter(p0, p1, object_filter_compare, attribute_compare),
-                           attribute_compare)
+                           object_filter_compare)
 
 
 def init_object_filter(project0: SOMcreator.Project, project1: SOMcreator.Project,
                        object_filter_compare: Type[tool.ObjectFilterCompare],
                        attribute_compare: Type[tool.AttributeCompare]):
+
     attribute_compare.set_projects(project0, project1)
     object_filter_compare.set_projects(project0, project1)
     attribute_compare.create_object_dicts()
+
     widget = object_filter_compare.get_widget()
     object_tree_widget = attribute_compare.get_object_tree(widget)
     pset_tree = attribute_compare.get_pset_tree(widget)
@@ -151,7 +188,7 @@ def init_object_filter(project0: SOMcreator.Project, project1: SOMcreator.Projec
     object_filter_compare.set_wordwrap_header(object_tree_widget)
     object_filter_compare.set_wordwrap_header(pset_tree)
 
-    attribute_compare.fill_object_tree(object_tree_widget)
+    attribute_compare.fill_object_tree(object_tree_widget, add_missing=False)
     attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table,
                                         attribute_compare.get_header_name_from_project(project0),
                                         attribute_compare.get_header_name_from_project(project1))

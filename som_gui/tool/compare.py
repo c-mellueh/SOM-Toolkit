@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from PySide6.QtGui import QBrush, QPalette, QColor, QIcon
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QModelIndex
 from som_gui import tool
 import SOMcreator
 from som_gui.module.compare import ui
@@ -97,6 +97,29 @@ class AttributeCompare(som_gui.core.tool.Compare):
         return som_gui.CompareAttributesProperties
 
     @classmethod
+    def get_level(cls, index):
+        parent = index.parent()
+        level = 1
+        while parent.isValid():
+            parent = parent.parent()
+            level += 1
+        return level
+
+    @classmethod
+    def get_branch_color(cls, index: QModelIndex):
+        color = index.data(CLASS_REFERENCE + 1)
+        print(color)
+        return QColor(color) if isinstance(color, str) else None
+
+    @classmethod
+    def set_branch_color(cls, tree: QTreeWidget, index: QModelIndex, color: str):
+        model = tree.model()
+        model.setData(index, color, CLASS_REFERENCE + 1)
+
+        if index.parent().isValid():
+            cls.set_branch_color(tree, index.parent(), color)
+
+    @classmethod
     def get_widget(cls):
         if cls.get_properties().widget is None:
             cls.get_properties().widget = ui.AttributeWidget()
@@ -115,11 +138,12 @@ class AttributeCompare(som_gui.core.tool.Compare):
         prop.attributes_lists = dict()
         prop.values_lists = dict()
         prop.widget = None
+        print(f"RESET AW {cls.get_properties().widget}")
 
     @classmethod
     def create_tree_selection_trigger(cls, widget: ui.AttributeWidget):
         widget.widget.tree_widget_object.itemSelectionChanged.connect(
-            lambda: trigger.object_tree_selection_changed(widget, True))
+            lambda: trigger.object_tree_selection_changed(widget))
         widget.widget.tree_widget_propertysets.itemSelectionChanged.connect(
             lambda: trigger.pset_tree_selection_changed(widget))
 
@@ -285,7 +309,7 @@ class AttributeCompare(som_gui.core.tool.Compare):
         cls.get_properties().object_tree_item_dict[obj] = item
 
     @classmethod
-    def fill_object_tree_layer(cls, objects: list[SOMcreator.Object], parent_item: QTreeWidgetItem):
+    def fill_object_tree_layer(cls, objects: list[SOMcreator.Object], parent_item: QTreeWidgetItem, add_missing: bool):
         obj_dict0, obj_dict1 = cls.get_object_dict(0), cls.get_object_dict(1)
 
         for obj in objects:
@@ -294,14 +318,19 @@ class AttributeCompare(som_gui.core.tool.Compare):
             cls.add_object_to_item(obj, item, 0)
             if match_obj:
                 cls.add_object_to_item(match_obj, item, 1)
-            parent_item.addChild(item)
-            cls.fill_object_tree_layer(list(obj.get_all_children()), item)
+
+            if match_obj is not None or add_missing:
+                parent_item.addChild(item)
+            cls.fill_object_tree_layer(list(obj.get_all_children()), item, add_missing)
 
     @classmethod
-    def fill_object_tree(cls, tree: QTreeWidget):
+    def fill_object_tree(cls, tree: QTreeWidget, add_missing: bool = True):
         proj0, proj1 = cls.get_project(0), cls.get_project(1)
-        cls.fill_object_tree_layer(tool.Project.get_root_objects(False, proj0), tree.invisibleRootItem())
-        cls.add_missing_objects_to_tree(tree, tool.Project.get_root_objects(False, proj1))
+        tree_root = tree.invisibleRootItem()
+        root_objects = tool.Project.get_root_objects(False, proj0)
+        cls.fill_object_tree_layer(root_objects, tree_root, add_missing)
+        if add_missing:
+            cls.add_missing_objects_to_tree(tree, tool.Project.get_root_objects(False, proj1))
 
     @classmethod
     def find_existing_parent(cls, obj: SOMcreator.Object):
@@ -326,7 +355,7 @@ class AttributeCompare(som_gui.core.tool.Compare):
             cls.add_missing_objects_to_tree(tree, list(obj.get_all_children()))
 
     @classmethod
-    def fill_pset_tree(cls, tree: QTreeWidget, obj: SOMcreator.Object):
+    def fill_pset_tree(cls, tree: QTreeWidget, obj: SOMcreator.Object, add_missing: bool = True):
 
         pset_list = cls.get_properties().pset_lists.get(obj)
         root = tree.invisibleRootItem()
@@ -338,7 +367,6 @@ class AttributeCompare(som_gui.core.tool.Compare):
 
         for pset0, pset1 in pset_list:
             item = QTreeWidgetItem()
-            root.addChild(item)
             if pset0:
                 item.setText(0, pset0.name)
                 item.setData(0, CLASS_REFERENCE, pset0)
@@ -346,10 +374,12 @@ class AttributeCompare(som_gui.core.tool.Compare):
                 item.setText(1, pset1.name)
                 item.setData(1, CLASS_REFERENCE, pset1)
 
-            cls.add_attribute_to_psetitem(item)
+            if (pset0 and pset1) or add_missing:
+                root.addChild(item)
+                cls.add_attribute_to_psetitem(item, add_missing)
 
     @classmethod
-    def add_attribute_to_psetitem(cls, pset_item: QTreeWidgetItem):
+    def add_attribute_to_psetitem(cls, pset_item: QTreeWidgetItem, add_missing: bool):
         pset0: SOMcreator.PropertySet | None = pset_item.data(0, CLASS_REFERENCE)
         pset1: SOMcreator.PropertySet | None = pset_item.data(1, CLASS_REFERENCE)
 
@@ -368,13 +398,15 @@ class AttributeCompare(som_gui.core.tool.Compare):
 
         for attribute0, attribute1 in attribute_list:
             item = QTreeWidgetItem()
-            pset_item.addChild(item)
             if attribute0 is not None:
                 item.setText(0, attribute0.name)
                 item.setData(0, CLASS_REFERENCE, attribute0)
             if attribute1 is not None:
                 item.setText(1, attribute1.name)
                 item.setData(1, CLASS_REFERENCE, attribute1)
+
+            if (attribute0 and attribute1) or add_missing:
+                pset_item.addChild(item)
 
     @classmethod
     def get_selected_item_from_tree(cls,
@@ -483,7 +515,9 @@ class AttributeCompare(som_gui.core.tool.Compare):
 
         cls.set_tree_row_color(item, style)
         if (isinstance(obj0, SOMcreator.Object) or isinstance(obj1, SOMcreator.Object)) and style > 0:
-            cls.style_parent_item(item, 1)
+            parent = item.parent()
+            index = item.treeWidget().indexFromItem(parent, 0)
+            cls.set_branch_color(item.treeWidget(), index, style_list[1][0])
 
         for child_index in range(item.childCount()):
             if not isinstance(obj0, SOMcreator.Attribute):
@@ -586,9 +620,8 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
     @classmethod
     def create_tree_selection_trigger(cls, widget: ui.AttributeWidget):
         widget.widget.tree_widget_object.itemSelectionChanged.connect(
-            lambda: trigger.object_tree_selection_changed(widget, False))
-        widget.widget.tree_widget_propertysets.itemSelectionChanged.connect(
-            lambda: trigger.pset_tree_selection_changed(widget))
+            lambda: trigger.filter_tab_object_tree_selection_changed(widget))
+
 
     @classmethod
     def get_matching_usecases(cls, proj0: SOMcreator.Project = None, proj1: SOMcreator.Project = None):
@@ -631,6 +664,10 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         prop.phase_indexes = list()
         prop.column_count = None
         prop.projects = [None, None]
+        prop.widget = None
+
+        print(f"RESET OF {cls.get_properties().widget}")
+
 
     @classmethod
     def append_collumns(cls, count: int, object_tree_widget: QTreeWidget, pset_tree_widget: QTreeWidget):
@@ -711,13 +748,12 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
 
     @classmethod
     def set_tree_item_column_color(cls, item: QTreeWidgetItem, column, color):
+        tree = item.treeWidget()
+        index = tree.indexFromItem(item, 0)
+        tool.AttributeCompare.set_branch_color(tree, index, color)
         color = QColor(color)
         item.setBackground(column, color)
         item.setData(CLASS_REFERENCE + 1, column, 1)
-        while item is not None:
-            if item.data(0, CLASS_REFERENCE + 1) == 1:
-                return
-            item.setBackground(0, color)
-            item.setBackground(1, color)
-            item.setData(0, CLASS_REFERENCE + 1, 1)
-            item = item.parent()
+        item.setBackground(0, color)
+        item.setBackground(1, color)
+        item.setData(0, CLASS_REFERENCE + 1, 1)
