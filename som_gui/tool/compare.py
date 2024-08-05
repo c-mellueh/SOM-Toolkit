@@ -719,15 +719,12 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         filter_list = cls.get_filter_list(obj0, obj1)
         objects_are_identical = cls.are_all_filters_identical(filter_list)
         if not objects_are_identical:
-            print(f"{obj0} -> Objects")
             return False
         pset_lists = tool.AttributeCompare.get_properties().pset_lists.get(obj0)
         if pset_lists is None:
             return True
         for p0, p1 in pset_lists:
             if not cls.are_psets_identical(p0, p1):
-                print(f"{obj0} -> Psets")
-
                 return False
         return True
 
@@ -736,14 +733,12 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         filter_list = cls.get_filter_list(pset0, pset1)
         all_psets_are_identical = cls.are_all_filters_identical(filter_list)
         if not all_psets_are_identical:
-            print(f"{pset0} not identical")
             return False
         attribute_lists = tool.AttributeCompare.get_properties().attributes_lists.get(pset0)
         if attribute_lists is None:
             return True
         for a0, a1 in attribute_lists:
             if not cls.are_attributes_identical(a0, a1):
-                print(f"{a0} not identical")
                 return False
         return True
 
