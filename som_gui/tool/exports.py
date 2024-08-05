@@ -7,7 +7,6 @@ from SOMcreator.external_software import allplan
 from SOMcreator.filehandling import create_mapping_script
 from SOMcreator import excel as som_excel
 from SOMcreator.tool import ExportExcel
-from som_gui import settings
 from som_gui.module.main_window.ui import MainWindow
 from PySide6.QtWidgets import QFileDialog
 import os

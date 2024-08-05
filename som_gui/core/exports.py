@@ -49,12 +49,13 @@ def export_excel(exports: Type[tool.Exports], main_window: Type[tool.MainWindow]
 
 def export_mapping_script(exports: Type[tool.Exports], main_window: Type[tool.MainWindow], project: Type[tool.Project],
                           popups: Type[tool.Popups], settings: Type[tool.Settings]):
-    name, answer = popups.req_export_pset_name(main_window)
+    name, answer = popups.req_export_pset_name(main_window.get())
 
     if not answer:
         return
     file_text = "JavaScript (*.js);;"
-    path = popups.get_path(file_text, main_window.get(), settings.get_export_path())
+    path = popups.get_path(file_text, main_window.get(), settings.get_export_path(), save=True,
+                           title="Export Mapping Script")
     if not path:
         return
 

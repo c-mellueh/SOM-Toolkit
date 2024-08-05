@@ -9,7 +9,6 @@ added_files = [('C:/Users/ChristophMellueh/AppData/Local/miniconda3/envs/SOM-Too
                 ('som_gui/module','som_gui/module'),
                 ('som_gui/data','som_gui/data'),
                 ('som_gui/icons','som_gui/icons'),
-                ('som_gui/settings/logging.conf','som_gui/settings/'),
                ]
 
 hi = ['appdirs','jinja2', 'lxml', 'SOMcreator', 'tqdm', 'openpyxl','som_gui','thefuzz.fuzz','SOMcreator.external_software','ifcopenshell','ifcopenshell.util','ifcopenshell.util.element','som_gui.settings']

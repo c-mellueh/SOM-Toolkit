@@ -9,7 +9,7 @@ from SOMcreator.external_software.desite import modelcheck
 if TYPE_CHECKING:
     from som_gui.module.main_window.ui import MainWindow
 
-__version__ = "2.12.4"
+__version__ = "2.12.5"
 
 import importlib
 

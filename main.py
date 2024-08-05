@@ -6,7 +6,6 @@ import os
 import sys
 from logging import config
 
-from som_gui import logs, settings
 from som_gui import core
 from som_gui import tool
 import ifcopenshell.guid
