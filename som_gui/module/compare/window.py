@@ -16,48 +16,38 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
-                               QHeaderView, QSizePolicy, QSplitter, QTableWidget,
-                               QTableWidgetItem, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
-                               QWidget)
+                               QSizePolicy, QTabWidget, QVBoxLayout, QWidget)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(1594, 925)
+        Dialog.setWindowModality(Qt.WindowModal)
+        Dialog.resize(702, 421)
         self.verticalLayout = QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.splitter = QSplitter(Dialog)
-        self.splitter.setObjectName(u"splitter")
-        self.splitter.setOrientation(Qt.Horizontal)
-        self.tree_widget_object = QTreeWidget(self.splitter)
-        __qtreewidgetitem = QTreeWidgetItem()
-        __qtreewidgetitem.setText(0, u"1");
-        self.tree_widget_object.setHeaderItem(__qtreewidgetitem)
-        self.tree_widget_object.setObjectName(u"tree_widget_object")
-        self.splitter.addWidget(self.tree_widget_object)
-        self.tree_widget_propertysets = QTreeWidget(self.splitter)
-        __qtreewidgetitem1 = QTreeWidgetItem()
-        __qtreewidgetitem1.setText(0, u"1");
-        self.tree_widget_propertysets.setHeaderItem(__qtreewidgetitem1)
-        self.tree_widget_propertysets.setObjectName(u"tree_widget_propertysets")
-        self.splitter.addWidget(self.tree_widget_propertysets)
-        self.table_widget_values = QTableWidget(self.splitter)
-        self.table_widget_values.setObjectName(u"table_widget_values")
-        self.splitter.addWidget(self.table_widget_values)
+        self.tabWidget = QTabWidget(Dialog)
+        self.tabWidget.setObjectName(u"tabWidget")
+        self.tabWidget.setTabPosition(QTabWidget.West)
+        self.tabWidget.setTabShape(QTabWidget.Rounded)
+        self.tabWidget.setElideMode(Qt.ElideMiddle)
 
-        self.verticalLayout.addWidget(self.splitter)
+        self.verticalLayout.addWidget(self.tabWidget)
 
         self.buttonBox = QDialogButtonBox(Dialog)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Ok)
 
         self.verticalLayout.addWidget(self.buttonBox)
+
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
+
+        self.tabWidget.setCurrentIndex(-1)
+
 
         QMetaObject.connectSlotsByName(Dialog)
     # setupUi

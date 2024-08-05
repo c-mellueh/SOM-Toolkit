@@ -1,57 +1,34 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from PySide6.QtGui import QBrush, QPalette, QColor
-
+from PySide6.QtGui import QBrush, QPalette, QColor, QIcon
+from PySide6.QtCore import QModelIndex
 from som_gui import tool
 import SOMcreator
 from som_gui.module.compare import ui
 import som_gui.core.tool
 import som_gui
-from PySide6.QtWidgets import QTableWidgetItem, QTreeWidgetItem
+from PySide6.QtWidgets import QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QTableWidget
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.compare import trigger
 
 if TYPE_CHECKING:
-    from som_gui.module.compare.prop import CompareProperties
+    from som_gui.module.compare.prop import CompareAttributesProperties, CompareWindowProperties, \
+        CompareProjectSelectProperties
 
 style_list = [
     [None, [0, 1]],
     ["#897e00", [0, 1]],  # Yellow
     ["#006605", [1]],  # green
     ["#840002", [0]]  # red
-
 ]
 
 
-class Compare(som_gui.core.tool.Compare):
-
+class CompareProjectSelector(som_gui.core.tool.CompareProjectSelector):
     @classmethod
-    def get_properties(cls) -> CompareProperties:
-        return som_gui.CompareProperties
+    def get_properties(cls) -> CompareProjectSelectProperties:
+        return som_gui.CompareProjectSelectProperties
 
-    # main
-    @classmethod
-    def reset_properties(cls):
-        prop = cls.get_properties()
-        prop.proj_select_dialog = None
-        prop.projects = [None, None]
-        prop.uuid_dicts = [None, None]
-        prop.ident_dicts = [None, None]
-        prop.window = None
-        prop.object_dicts = [None, None]
-        prop.missing_objects = [None, None]
-        prop.object_tree_item_dict = dict()
-        prop.pset_lists = dict()
-        prop.attributes_lists = dict()
-        prop.values_lists = dict()
-        prop.layout_proj0 = None
-        prop.layout_proj1 = None
-        prop.is_current_proj_input = False
-        prop.label_project = None
-        prop.layout_input = None
-
-    # project Select Window
     @classmethod
     def create_project_select_dialog(cls):
         dialog = ui.ProjectSelectDialog()
@@ -74,7 +51,8 @@ class Compare(som_gui.core.tool.Compare):
     @classmethod
     def fill_project_select_dialog(cls, project, open_path):
         cls.set_project_select_path(open_path)
-        cls.get_properties().label_project.setText(cls.get_header_name_from_project(project))
+        name = f"{project.name} v{project.version}"
+        cls.get_properties().label_project.setText(name)
 
     @classmethod
     def get_project_layouts(cls):
@@ -106,24 +84,64 @@ class Compare(som_gui.core.tool.Compare):
     def get_project_select_path(cls) -> str:
         return cls.get_project_select_dialog().widget.line_edit.text()
 
-    # Compare Window
     @classmethod
-    def create_window(cls):
-        cls.get_properties().window = ui.CompareDialog()
-        return cls.get_window()
+    def accept_clicked(cls):
+        trigger.accept_clicked()
+
+
+class AttributeCompare(som_gui.core.tool.Compare):
+    @classmethod
+    def get_properties(cls) -> CompareAttributesProperties:
+        return som_gui.CompareAttributesProperties
 
     @classmethod
-    def create_compare_window_triggers(cls, window: ui.CompareDialog):
-        window.widget.tree_widget_object.itemSelectionChanged.connect(trigger.object_tree_selection_changed)
-        window.widget.tree_widget_propertysets.itemSelectionChanged.connect(trigger.pset_tree_selection_changed)
+    def get_level(cls, index):
+        parent = index.parent()
+        level = 1
+        while parent.isValid():
+            parent = parent.parent()
+            level += 1
+        return level
 
     @classmethod
-    def get_window(cls) -> ui.CompareDialog:
-        return cls.get_properties().window
+    def get_branch_color(cls, index: QModelIndex):
+        color = index.data(CLASS_REFERENCE + 1)
+        return QColor(color) if isinstance(color, str) else None
 
     @classmethod
-    def delete_window(cls):
-        cls.get_properties().window = None
+    def set_branch_color(cls, tree: QTreeWidget, index: QModelIndex, color: str | None):
+        model = tree.model()
+        model.setData(index, color, CLASS_REFERENCE + 1)
+
+        if index.parent().isValid():
+            cls.set_branch_color(tree, index.parent(), color)
+
+    @classmethod
+    def get_widget(cls):
+        if cls.get_properties().widget is None:
+            cls.get_properties().widget = ui.AttributeWidget()
+        return cls.get_properties().widget
+
+    @classmethod
+    def reset(cls):
+        prop = cls.get_properties()
+        prop.projects = [None, None]
+        prop.uuid_dicts = [None, None]
+        prop.ident_dicts = [None, None]
+        prop.object_dicts = [None, None]
+        prop.missing_objects = [None, None]
+        prop.object_tree_item_dict = dict()
+        prop.pset_lists = dict()
+        prop.attributes_lists = dict()
+        prop.values_lists = dict()
+        prop.widget = None
+
+    @classmethod
+    def create_tree_selection_trigger(cls, widget: ui.AttributeWidget):
+        widget.widget.tree_widget_object.itemSelectionChanged.connect(
+            lambda: trigger.object_tree_selection_changed(widget))
+        widget.widget.tree_widget_propertysets.itemSelectionChanged.connect(
+            lambda: trigger.pset_tree_selection_changed(widget))
 
     @classmethod
     def set_projects(cls, project1, project2) -> None:
@@ -243,6 +261,8 @@ class Compare(som_gui.core.tool.Compare):
 
     @classmethod
     def create_object_dicts(cls):
+        if cls.get_properties().missing_objects[0] is not None:
+            return
         project_0 = cls.get_project(0)
         project_1 = cls.get_project(1)
         missing_objects_0 = list()
@@ -285,7 +305,7 @@ class Compare(som_gui.core.tool.Compare):
         cls.get_properties().object_tree_item_dict[obj] = item
 
     @classmethod
-    def fill_object_tree_layer(cls, objects: list[SOMcreator.Object], parent_item: QTreeWidgetItem):
+    def fill_object_tree_layer(cls, objects: list[SOMcreator.Object], parent_item: QTreeWidgetItem, add_missing: bool):
         obj_dict0, obj_dict1 = cls.get_object_dict(0), cls.get_object_dict(1)
 
         for obj in objects:
@@ -294,43 +314,46 @@ class Compare(som_gui.core.tool.Compare):
             cls.add_object_to_item(obj, item, 0)
             if match_obj:
                 cls.add_object_to_item(match_obj, item, 1)
-            parent_item.addChild(item)
-            cls.fill_object_tree_layer(list(obj.children), item)
+
+            if match_obj is not None or add_missing:
+                parent_item.addChild(item)
+            cls.fill_object_tree_layer(list(obj.get_all_children()), item, add_missing)
 
     @classmethod
-    def fill_object_tree(cls):
-        tree = cls.get_window().widget.tree_widget_object
+    def fill_object_tree(cls, tree: QTreeWidget, add_missing: bool = True):
         proj0, proj1 = cls.get_project(0), cls.get_project(1)
-        cls.fill_object_tree_layer(tool.Project.get_root_objects(False, proj0), tree.invisibleRootItem())
-        cls.add_missing_objects_to_tree(tool.Project.get_root_objects(False, proj1))
+        tree_root = tree.invisibleRootItem()
+        root_objects = tool.Project.get_root_objects(False, proj0)
+        cls.fill_object_tree_layer(root_objects, tree_root, add_missing)
+        if add_missing:
+            cls.add_missing_objects_to_tree(tree, tool.Project.get_root_objects(False, proj1))
 
     @classmethod
     def find_existing_parent(cls, obj: SOMcreator.Object):
-        tree = cls.get_window().widget.tree_widget_object
         object_tree_item_dict = cls.get_properties().object_tree_item_dict
         parent = obj.parent
         while parent is not None:
             if parent in object_tree_item_dict:
                 return object_tree_item_dict[parent]
             parent = parent.parent
-        return tree.invisibleRootItem()
+        return None
 
     @classmethod
-    def add_missing_objects_to_tree(cls, root_objects: list[SOMcreator.Object]):
+    def add_missing_objects_to_tree(cls, tree: QTreeWidget, root_objects: list[SOMcreator.Object]):
         missing_objects = cls.get_missing_objects(1)
         for obj in root_objects:
             if obj in missing_objects:
                 parent = cls.find_existing_parent(obj)
+                parent = parent if parent is not None else tree.invisibleRootItem()
                 item = QTreeWidgetItem()
                 cls.add_object_to_item(obj, item, 1)
                 parent.addChild(item)
-            cls.add_missing_objects_to_tree(list(obj.children))
+            cls.add_missing_objects_to_tree(tree, list(obj.get_all_children()))
 
     @classmethod
-    def fill_pset_table(cls, obj: SOMcreator.Object):
+    def fill_pset_tree(cls, tree: QTreeWidget, obj: SOMcreator.Object, add_missing: bool = True):
 
         pset_list = cls.get_properties().pset_lists.get(obj)
-        tree = cls.get_pset_tree()
         root = tree.invisibleRootItem()
         for child_index in reversed(range(tree.invisibleRootItem().childCount())):
             root.removeChild(root.child(child_index))
@@ -340,7 +363,6 @@ class Compare(som_gui.core.tool.Compare):
 
         for pset0, pset1 in pset_list:
             item = QTreeWidgetItem()
-            root.addChild(item)
             if pset0:
                 item.setText(0, pset0.name)
                 item.setData(0, CLASS_REFERENCE, pset0)
@@ -348,10 +370,12 @@ class Compare(som_gui.core.tool.Compare):
                 item.setText(1, pset1.name)
                 item.setData(1, CLASS_REFERENCE, pset1)
 
-            cls.add_attribute_to_psetitem(item)
+            if (pset0 and pset1) or add_missing:
+                root.addChild(item)
+                cls.add_attribute_to_psetitem(item, add_missing)
 
     @classmethod
-    def add_attribute_to_psetitem(cls, pset_item: QTreeWidgetItem):
+    def add_attribute_to_psetitem(cls, pset_item: QTreeWidgetItem, add_missing: bool):
         pset0: SOMcreator.PropertySet | None = pset_item.data(0, CLASS_REFERENCE)
         pset1: SOMcreator.PropertySet | None = pset_item.data(1, CLASS_REFERENCE)
 
@@ -370,13 +394,15 @@ class Compare(som_gui.core.tool.Compare):
 
         for attribute0, attribute1 in attribute_list:
             item = QTreeWidgetItem()
-            pset_item.addChild(item)
             if attribute0 is not None:
                 item.setText(0, attribute0.name)
                 item.setData(0, CLASS_REFERENCE, attribute0)
             if attribute1 is not None:
                 item.setText(1, attribute1.name)
                 item.setData(1, CLASS_REFERENCE, attribute1)
+
+            if (attribute0 and attribute1) or add_missing:
+                pset_item.addChild(item)
 
     @classmethod
     def get_selected_item_from_tree(cls,
@@ -391,10 +417,9 @@ class Compare(som_gui.core.tool.Compare):
         return data
 
     @classmethod
-    def fill_value_table(cls, attribute: SOMcreator.Attribute):
+    def fill_value_table(cls, table: QTableWidget, attribute: SOMcreator.Attribute):
 
         value_list = cls.get_properties().values_lists.get(attribute)
-        table = cls.get_value_table()
         table.setRowCount(0)
 
         if value_list is None:
@@ -486,30 +511,80 @@ class Compare(som_gui.core.tool.Compare):
 
         cls.set_tree_row_color(item, style)
         if (isinstance(obj0, SOMcreator.Object) or isinstance(obj1, SOMcreator.Object)) and style > 0:
-            cls.style_parent_item(item, 1)
+            parent = item.parent()
+            index = item.treeWidget().indexFromItem(parent, 0)
+            cls.set_branch_color(item.treeWidget(), index, style_list[1][0])
 
         for child_index in range(item.childCount()):
             if not isinstance(obj0, SOMcreator.Attribute):
                 cls.style_tree_item(item.child(child_index))
 
     @classmethod
-    def set_header_labels(cls, h0: str, h1: str):
-        cls.get_object_tree().setHeaderLabels([h0, h1])
-        cls.get_pset_tree().setHeaderLabels([h0, h1])
-        cls.get_value_table().setHorizontalHeaderLabels([h0, h1])
+    def set_header_labels(cls, object_tree, pset_tree, value_table, h0: str, h1: str):
+        object_tree.setHeaderLabels([h0, h1])
+        pset_tree.setHeaderLabels([h0, h1])
+        value_table.setHorizontalHeaderLabels([h0, h1])
 
     @classmethod
     def get_header_name_from_project(cls, project: SOMcreator.Project):
         return f"{project.name} v{project.version}"
 
     @classmethod
-    def get_object_tree(cls):
-        return cls.get_window().widget.tree_widget_object
+    def get_object_tree(cls, widget: ui.AttributeWidget):
+        return widget.widget.tree_widget_object
 
     @classmethod
-    def get_pset_tree(cls):
-        return cls.get_window().widget.tree_widget_propertysets
+    def get_pset_tree(cls, widget: ui.AttributeWidget):
+        return widget.widget.tree_widget_propertysets
 
     @classmethod
-    def get_value_table(cls):
-        return cls.get_window().widget.table_widget_values
+    def get_value_table(cls, widget: ui.AttributeWidget):
+        return widget.widget.table_widget_values
+
+
+class CompareWindow(som_gui.core.tool.CompareWindow):
+    @classmethod
+    def get_properties(cls) -> CompareWindowProperties:
+        return som_gui.CompareWindowProperties
+
+    @classmethod
+    def add_tab(cls, name: str, widget, init_func, _tool):
+        prop = cls.get_properties()
+        prop.names.append(name)
+        prop.widgets.append(widget)
+        prop.init_functions.append(init_func)
+        prop.tools.append(_tool)
+
+    @classmethod
+    def create_window(cls):
+        cls.get_properties().window = ui.CompareDialog()
+        return cls.get_window()
+
+    @classmethod
+    def get_window(cls) -> ui.CompareDialog:
+        return cls.get_properties().window
+
+    @classmethod
+    def set_projects(cls, project1, project2) -> None:
+        cls.get_properties().projects = [project1, project2]
+
+    @classmethod
+    def get_tabwidget(cls):
+        return cls.get_window().widget.tabWidget
+
+    @classmethod
+    def init_tabs(cls, project0, project1):
+        names = cls.get_properties().names
+        widgets = cls.get_properties().widgets
+        init_functions = cls.get_properties().init_functions
+        tab_widget = cls.get_tabwidget()
+        for name, widget_getter, init_func in zip(names, widgets, init_functions):
+            tab_widget.addTab(widget_getter(), QIcon(), name)
+            init_func(project0, project1)
+
+    @classmethod
+    def reset(cls):
+        prop = cls.get_properties()
+        prop.window = None
+        for _tool in cls.get_properties().tools:
+            _tool.reset()

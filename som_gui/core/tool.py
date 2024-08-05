@@ -2,6 +2,17 @@ class AttributeImport:
     pass
 
 
+class CompareProjectSelector:
+    pass
+
+
+class CompareWindow:
+    pass
+
+
+class ObjectFilterCompare:
+    pass
+
 class Compare:
     pass
 class Logging:
