@@ -45,7 +45,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         return Project.get().get_filter_matrix()
 
     @classmethod
-    def create_header_data(cls, filter_matrix: list[list[bool]]) -> list[list[str, int, int]]:
+    def create_header_data(cls, filter_matrix: list[list[bool]]) -> list[list[str | int]]:
         use_case_list = Project.get().get_use_case_list()
         project_phase_list = Project.get().get_project_phase_list()
         header_data = list()
@@ -114,7 +114,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def create_row(cls, entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.PropertySet,
-                   filter_index_list: list[list[int, int]]):
+                   filter_index_list: list[list[str | int]]):
         entity_item = QStandardItem(entity.name)
         item_list = [entity_item]
         entity_item.setData(entity, CLASS_REFERENCE)
@@ -139,6 +139,8 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             data_dict = prop.pset_dict
         elif isinstance(entity, SOMcreator.Attribute):
             data_dict = prop.attribute_dict
+        else:
+            data_dict = dict()
         if data_dict.get(entity) is None:
             data_dict[entity] = list()
             for __ in Project.get().get_project_phase_list():
@@ -164,7 +166,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def update_pset_use_cases(cls):
-        prop = cls.get_objectfilter_properties()
         proj = Project.get()
         project_use_case_list = proj.get_use_case_list()
         project_phase_list = proj.get_project_phase_list()
@@ -196,18 +197,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         prop.active_object = None
         object_filter_data.refresh()
         return old_window
-
-    @classmethod
-    def get_new_use_case_name(cls, standard_name: str, existing_names: list[str]) -> str:
-        def loop_name(new_name):
-            if new_name in existing_names:
-                if new_name == standard_name:
-                    return loop_name(f"{new_name}_1")
-                index = int(new_name[-1])
-                return loop_name(f"{new_name[:-1]}{index + 1}")
-            return new_name
-
-        return loop_name(standard_name)
 
     @classmethod
     def create_tree(cls, entities: set[SOMcreator.Attribute | SOMcreator.Object], parent_item: QStandardItem,

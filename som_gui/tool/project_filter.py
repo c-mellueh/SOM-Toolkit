@@ -56,7 +56,7 @@ class ProjectFilter(som_gui.core.tool.ProjectFilter):
 
     @classmethod
     def add_use_case(cls):
-        new_name = tool.Project.get_new_name("Neuer Anwendungsfall", [uc.name for uc in cls.get_use_case_list()])
+        new_name = tool.Util.get_new_name("Neuer Anwendungsfall", [uc.name for uc in cls.get_use_case_list()])
         new_use_case = UseCase(new_name, new_name, "")
         proj = tool.Project.get()
         proj.add_use_case(new_use_case)
@@ -65,7 +65,7 @@ class ProjectFilter(som_gui.core.tool.ProjectFilter):
     @classmethod
     def add_phase(cls):
         proj = tool.Project.get()
-        new_name = tool.Project.get_new_name("Neue Leistungsphase", [pp.name for pp in cls.get_phase_list()])
+        new_name = tool.Util.get_new_name("Neue Leistungsphase", [pp.name for pp in cls.get_phase_list()])
         new_phase = Phase(new_name, new_name, "")
         proj.add_project_phase(new_phase)
         cls.get_table().resizeRowsToContents()

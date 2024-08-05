@@ -164,7 +164,7 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
     def create_property_set(cls):
         existing_names = [p.name for p in cls.get_property_sets()]
         tool.PropertySet.create_property_set(
-            tool.ObjectFilter.get_new_use_case_name("Neues PropertySet", existing_names))
+            tool.Util.get_new_name("Neues PropertySet", existing_names))
 
     @classmethod
     def get_property_sets(cls) -> set[SOMcreator.PropertySet]:
