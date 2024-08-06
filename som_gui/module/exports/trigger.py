@@ -18,7 +18,8 @@ def connect():
                                lambda: core.export_desite_abbreviation(tool.Exports, tool.MainWindow, tool.Project,
                                                                        tool.Settings, tool.Popups))
     tool.MainWindow.add_action("Desite/Lesezeichen",
-                               lambda: core.export_bookmarks(tool.Exports, tool.MainWindow, tool.Project, tool.Popups))
+                               lambda: core.export_bookmarks(tool.Exports, tool.MainWindow, tool.Project, tool.Popups,
+                                                             tool.Settings))
     tool.MainWindow.add_action("Desite/Mapping Script",
                                lambda: core.export_mapping_script(tool.Exports, tool.MainWindow, tool.Project,
                                                                   tool.Popups, tool.Settings))

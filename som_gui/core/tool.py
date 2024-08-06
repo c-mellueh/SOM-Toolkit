@@ -751,7 +751,7 @@ class Popups:
 
     def get_new_use_case_name(self, old_name, parent): pass
 
-    def get_path(self, file_format, window): pass
+    def _get_path(self, file_format, window): pass
 
     def get_phase_name(self, old_name, parent): pass
 

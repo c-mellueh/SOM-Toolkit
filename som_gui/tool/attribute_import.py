@@ -99,7 +99,8 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
 
         add_items = allowed_objects.difference(existing_objects)
         delete_items = existing_objects.difference(allowed_objects)
-
+        if None in add_items:
+            add_items.remove(None)
         if not (add_items or delete_items):
             cls.unlock_updating()
             return

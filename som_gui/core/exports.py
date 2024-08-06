@@ -2,21 +2,22 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 import os
 import json
-
+from som_gui.module.exports.constants import EXPORT_PATH
 if TYPE_CHECKING:
     from som_gui import tool
 
 
 def export_bookmarks(exports: Type[tool.Exports], main_window: Type[tool.MainWindow],
-                     project: Type[tool.Project], popups: Type[tool.Popups], ):
-    path = popups.get_folder(main_window.get())
+                     project: Type[tool.Project], popups: Type[tool.Popups], settings: Type[tool.Settings]):
+    path = settings.get_path(EXPORT_PATH)
+    path = popups.get_folder(main_window.get(), path)
     if path:
         exports.export_bookmarks(project.get(), path)
 
 
 def export_vestra_mapping(exports: Type[tool.Exports], main_window: Type[tool.MainWindow],
                           project: Type[tool.Project], settings: Type[tool.Settings]) -> None:
-    export_path = settings.get_export_path()
+    export_path = settings.get_path(EXPORT_PATH)
     if not export_path:
         export_path = str(os.getcwd() + "/")
         export_folder = exports.export_vestra(project.get(), main_window.get(), export_path)
@@ -26,7 +27,7 @@ def export_vestra_mapping(exports: Type[tool.Exports], main_window: Type[tool.Ma
 
 def export_card_1(exports: Type[tool.Exports], main_window: Type[tool.MainWindow], project: Type[tool.Project],
                   settings: Type[tool.Settings]) -> None:
-    export_path = settings.get_export_path()
+    export_path = settings.get_path(EXPORT_PATH)
     if not export_path:
         export_path = str(os.getcwd() + "/")
 
@@ -37,10 +38,10 @@ def export_card_1(exports: Type[tool.Exports], main_window: Type[tool.MainWindow
 
 def export_excel(exports: Type[tool.Exports], main_window: Type[tool.MainWindow], project: Type[tool.Project],
                  settings: Type[tool.Settings], popups: Type[tool.Popups]):
-    export_path = settings.get_export_path()
+    export_path = settings.get_path(EXPORT_PATH)
     if export_path is None:
         export_path = str(os.getcwd() + "/")
-    path = popups.get_path("Excel Files (*.xlsx);;", main_window.get(), export_path)
+    path = popups.get_save_path("Excel Files (*.xlsx);;", main_window.get(), export_path)
     if not path:
         return
     exports.export_excel(project.get(), path)
@@ -54,8 +55,8 @@ def export_mapping_script(exports: Type[tool.Exports], main_window: Type[tool.Ma
     if not answer:
         return
     file_text = "JavaScript (*.js);;"
-    path = popups.get_path(file_text, main_window.get(), settings.get_export_path(), save=True,
-                           title="Export Mapping Script")
+    path = popups.get_save_path(file_text, main_window.get(), settings.get_path(EXPORT_PATH),
+                                title="Export Mapping Script")
     if not path:
         return
 
@@ -70,7 +71,7 @@ def export_allplan_excel(exports: Type[tool.Exports], main_window: Type[tool.Mai
         return
 
     file_text = "Excel Files (*.xlsx);;"
-    path = popups.get_path(file_text, main_window.get(), settings.get_export_path())
+    path = popups.get_save_path(file_text, main_window.get(), settings.get_path(EXPORT_PATH))
     if not path:
         return
     if path:
@@ -81,7 +82,7 @@ def export_allplan_excel(exports: Type[tool.Exports], main_window: Type[tool.Mai
 def export_desite_abbreviation(exports: Type[tool.Exports], main_window: Type[tool.MainWindow],
                                project: Type[tool.Project], settings: Type[tool.Settings],
                                popups: Type[tool.Popups]) -> None:
-    path = popups.get_path("JSON (*.json);;", main_window.get(), )
+    path = popups.get_save_path("JSON (*.json);;", main_window.get())
     if path is not None:
         abbrev = {obj.abbreviation: [obj.ident_value, obj.name] for obj in project.get().get_all_objects()}
         with open(path, "w") as file:

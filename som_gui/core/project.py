@@ -12,29 +12,27 @@ if TYPE_CHECKING:
     from som_gui import tool
 
 
-def save_clicked(project_tool: Type[Project], popup_tool: Type[Popups], settings_tool: Type[Settings]):
-    save_path = settings_tool.get_save_path()
+def save_clicked(project_tool: Type[Project], popup_tool: Type[Popups], settings_tool: Type[Settings],
+                 main_window: Type[tool.MainWindow]):
+    save_path = settings_tool.get_path(SAVE_PATH)
     if not os.path.exists(save_path) or not save_path.endswith("json"):
-        save_as_clicked(project_tool, popup_tool, settings_tool)
+        save_as_clicked(project_tool, popup_tool, settings_tool, main_window)
     else:
         save_project(save_path, project_tool, settings_tool)
 
 
-def save_as_clicked(project_tool: Type[Project], popup_tool: Type[Popups], settings_tool: Type[Settings]):
-    save_path = settings_tool.get_save_path()
-    if not os.path.exists(save_path):
-        save_path = ""
-    else:
-        save_path = os.path.splitext(save_path)[0]
-    save_path = popup_tool.get_save_path(save_path)
-    if save_path:
-        save_project(save_path, project_tool, settings_tool)
+def save_as_clicked(project_tool: Type[Project], popup_tool: Type[Popups], settings_tool: Type[Settings],
+                    main_window: Type[tool.MainWindow]):
+    path = settings_tool.get_path(SAVE_PATH)
+    path = popup_tool.get_save_path(FILETYPE, main_window.get(), path, "Save Project")
+    if path:
+        save_project(path, project_tool, settings_tool)
 
 
 def open_file_clicked(project_tool: Type[Project], settings: Type[Settings], main_window: Type[tool.MainWindow],
                       popups: Type[tool.Popups]):
     path = settings.get_path(OPEN_PATH)
-    path = popups.get_path(FILETYPE, main_window.get(), path, False, "Open Project")
+    path = popups.get_open_path(FILETYPE, main_window.get(), path, "Open Project")
     if not path:
         return
 
@@ -81,7 +79,7 @@ def open_project(path, project_tool: Type[Project]):
 def add_project(project_tool: Type[Project], settings: Type[tool.Settings], popups: Type[tool.Popups],
                 main_window: Type[tool.MainWindow]):
     path = settings.get_path(OPEN_PATH)
-    path = popups.get_path(FILETYPE, main_window.get(), path, False, "Open Project")
+    path = popups.get_open_path(FILETYPE, main_window.get(), path, "Open Project")
     if not path:
         return
     p1 = project_tool.get()

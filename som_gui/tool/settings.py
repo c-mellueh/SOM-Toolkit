@@ -18,14 +18,6 @@ class Settings(som_gui.core.tool.Settings):
         cls.set_path(EXPORT_PATH, path)
 
     @classmethod
-    def get_save_path(cls):
-        return cls.get_path(SAVE_PATH)
-
-
-
-
-
-    @classmethod
     def get_seperator(cls) -> str:
         return cls.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
 

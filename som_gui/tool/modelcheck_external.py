@@ -73,7 +73,8 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_ids(cls):
-        path = tool.Popups.get_path("ids", cls.get_window())
+        file_format = "IDS (*.ids);;all (*.*)"
+        path = tool.Popups.get_save_path(file_format, cls.get_window())
         if not path:
             return
         data_dict = cls.get_data_dict()
@@ -81,7 +82,8 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_bimcollab(cls):
-        path = tool.Popups.get_path("bcsv", cls.get_window())
+        file_format = "BIMcollab-SmartView (*.bcsv);;all (*.*)"
+        path = tool.Popups.get_save_path(file_format, cls.get_window())
         if not path:
             return
         data_dict = cls.get_data_dict()
@@ -89,7 +91,8 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_desite_fast(cls, pset_name: str, attribute_name: str):
-        path = tool.Popups.get_path("qa.xml", cls.get_window())
+        file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
+        path = tool.Popups.get_save_path(file_format, cls.get_window())
         if not path:
             return
 
@@ -98,7 +101,8 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_desite_csv(cls):
-        path = tool.Popups.get_path("csv", cls.get_window())
+        file_format = "CSV (*.csv);;all (*.*)"
+        path = tool.Popups.get_save_path(file_format, cls.get_window())
         if not path:
             return
         data_dict = cls.get_data_dict()
@@ -106,7 +110,8 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_desite_js(cls, main_pset_name, main_attribute_name):
-        path = tool.Popups.get_path("qa.xml", cls.get_window())
+        file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
+        path = tool.Popups.get_save_path(file_format, cls.get_window())
         if not path:
             return
         data_dict = cls.get_data_dict()
@@ -116,7 +121,8 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_desite_attribute_table(cls, main_pset_name: str, main_attribute_name: str):
-        path = tool.Popups.get_path("qa.xml", cls.get_window())
+        file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
+        path = tool.Popups.get_save_path(file_format, cls.get_window())
         if not path:
             return
 

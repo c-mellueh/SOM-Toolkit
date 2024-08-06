@@ -60,7 +60,7 @@ def project_button_clicked(project_selector: Type[tool.CompareProjectSelector], 
                            settings: Type[tool.Settings]):
     dialog = project_selector.get_project_select_dialog()
     path = settings.get_string_setting(PATHS_SECTION, COMPARE_SETTING)
-    path = popups.get_path(FILETYPE, dialog, path)
+    path = popups.get_open_path(FILETYPE, dialog, path)
     if not path:
         return
     project_selector.set_project_select_path(path)

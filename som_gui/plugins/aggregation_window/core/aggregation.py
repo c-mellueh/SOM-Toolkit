@@ -36,7 +36,8 @@ def export_building_structure(aggregation: Type[aw_tool.Aggregation],
                               project: Type[tool.Project],
                               popups: Type[tool.Popups]) -> None:
     """Exports dummy Building Structure for Desite"""
-    path = popups.get_path("bs.xml", main_window.get())
+    file_format = "BuildingStructure-XML  (*.bs.xml);;all (*.*)"
+    path = popups.get_save_path(file_format, main_window.get())
     if path:
         aggregation.export_building_structure(project.get(), path)
 

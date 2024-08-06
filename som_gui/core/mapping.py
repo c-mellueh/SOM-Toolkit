@@ -18,7 +18,7 @@ def open_window(mapping: Type[tool.Mapping]):
 
 
 def export_revit_ifc_mapping(mapping: Type[tool.Mapping], project: Type[tool.Project], popups: Type[tool.Popups]):
-    path = popups.get_path("txt Files (*.txt);;", mapping.get_window())
+    path = popups.get_save_path("txt Files (*.txt);;", mapping.get_window())
     if not path:
         return
 
@@ -27,7 +27,7 @@ def export_revit_ifc_mapping(mapping: Type[tool.Mapping], project: Type[tool.Pro
 
 
 def export_revit_shared_parameters(mapping: Type[tool.Mapping], project: Type[tool.Project], popups: Type[tool.Popups]):
-    path = popups.get_path("txt Files (*.txt);;", mapping.get_window())
+    path = popups.get_save_path("txt Files (*.txt);;", mapping.get_window())
     if not path:
         return
     export_dict = mapping.create_export_dict(project.get_root_objects())

@@ -14,7 +14,7 @@ def connect():
                                lambda: core.add_project(tool.Project, tool.Settings, tool.Popups, tool.MainWindow))
     tool.MainWindow.add_action("Datei/Speichern", lambda: core.save_clicked(tool.Project, tool.Popups, tool.Settings))
     tool.MainWindow.add_action("Datei/Speichern unter ...",
-                               lambda: core.save_as_clicked(tool.Project, tool.Popups, tool.Settings))
+                               lambda: core.save_as_clicked(tool.Project, tool.Popups, tool.Settings, tool.MainWindow))
     tool.MainWindow.add_action("Datei/Einstellungen", menu_action_settings)
 
 

@@ -13,11 +13,19 @@ FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
 
 
 class Popups(som_gui.core.tool.Popups):
+
     @classmethod
-    def get_path(cls, file_format: str, window, path=None, save: bool = False, title=None) -> str:
+    def get_open_path(cls, file_format: str, window, path=None, title=None) -> str:
+        return cls._get_path(file_format, window, path, False, title)
+
+    @classmethod
+    def get_save_path(cls, file_format: str, window, path=None, title=None) -> str:
+        window = tool.MainWindow.get()
+        return cls._get_path(file_format, window, path, True, title)
+
+    @classmethod
+    def _get_path(cls, file_format: str, window, path=None, save: bool = False, title=None) -> str:
         """ File Open Dialog with modifiable file_format"""
-        if path is None:
-            path = tool.Settings.get_export_path()
         if path:
             basename = os.path.basename(path)
             split = os.path.splitext(basename)[0]
@@ -36,9 +44,8 @@ class Popups(som_gui.core.tool.Popups):
         return path
 
     @classmethod
-    def get_folder(cls, window) -> str:
+    def get_folder(cls, window, path: str) -> str:
         """Folder Open Dialog"""
-        path = tool.Settings.get_export_path()
         if path:
             path = os.path.basename(path)
         path = \
@@ -151,10 +158,7 @@ class Popups(som_gui.core.tool.Popups):
     def get_phase_name(cls, old_name: str = "", parent=None):
         return cls._request_text_input("Leistungsphase umbenennen", "Neuer Name", old_name, parent)
 
-    @classmethod
-    def get_save_path(cls, base_path: str):
-        window = tool.MainWindow.get()
-        return QFileDialog.getSaveFileName(window, "Save Project", base_path, FILETYPE)[0]
+
 
     @classmethod
     def request_property_set_merge(cls, name: str, mode):
@@ -219,7 +223,7 @@ class Popups(som_gui.core.tool.Popups):
             if item_type == 1:
                 widget.label.setText("Diese Objekte löschen?")
             if item_type == 2:
-                widget.label.setText("Diese Nodes öschen?")
+                widget.label.setText("Diese Nodes löschen?")
             if item_type == 3:
                 widget.label.setText("Diese PropertySets löschen?")
             if item_type == 4:
