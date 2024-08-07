@@ -3,7 +3,7 @@ from som_gui import tool
 
 
 def connect():
-    core.create_logger(tool.Logging, tool.Util)
+    core.create_logger(tool.Logging, tool.Util, tool.MainWindow)
 
 
 def on_new_project():

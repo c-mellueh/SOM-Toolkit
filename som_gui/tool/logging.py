@@ -1,23 +1,26 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-
+from PySide6.QtWidgets import QMessageBox, QCheckBox
 import appdirs
-
+import sys
 import som_gui.core.tool
 import os
 import som_gui
 import datetime
 import logging
+import traceback
 
 if TYPE_CHECKING:
     from som_gui.module.logging.prop import LoggingProperties
+from som_gui.icons import get_icon
+from som_gui import tool
 
 
 class CustomFormatter(logging.Formatter):
     def __init__(self, fmt=None, datefmt=None, style='%'):
         super().__init__(fmt, datefmt, style)
 
-    def format(self, record):
+    def format(self, record: logging.LogRecord):
         # Combine module and function name
         path_name = record.pathname.split("\\")[-2]
         module_func = f"{path_name}.{record.module}.{record.funcName}"
@@ -33,7 +36,41 @@ class CustomFormatter(logging.Formatter):
         return super().format(record)
 
 
+class PopupHandler(logging.Handler):
+    def __init__(self, parent=None):
+        super().__init__()
+        self.parent = parent
+
+    def emit(self, record):
+        if record.levelno >= logging.WARNING:
+            msg = self.format(record)
+            tool.Logging.show_popup(record.levelno, msg, record.message)
+
+
 class Logging(som_gui.core.tool.Logging):
+    @classmethod
+    def show_popup(cls, level_no, message, base_message=None):
+        if base_message is None:
+            base_message = message
+        if base_message in cls.get_properties().ignore_texts:
+            return
+        msg_box = QMessageBox()
+        states = [
+            (QMessageBox.Icon.Information, "Information"),
+            (QMessageBox.Icon.Warning, "Warning"),
+            (QMessageBox.Icon.Critical, "Error"),
+        ]
+        icon, level = states[0] if level_no < logging.WARNING else states[1] if level_no < logging.ERROR else states[2]
+        msg_box.setIcon(icon)
+        cb = QCheckBox("nicht erneut anzeigen")
+        msg_box.setCheckBox(cb)
+        msg_box.setWindowIcon(get_icon())
+        msg_box.setWindowTitle(f"{level}")
+        msg_box.setText(f"An {level} occurred:")
+        msg_box.setDetailedText(message)
+        if msg_box.exec() and cb.isChecked():
+            cls.get_properties().ignore_texts.append(base_message)
+
     @classmethod
     def get_properties(cls) -> LoggingProperties:
         return som_gui.LoggingProperties
@@ -90,3 +127,20 @@ class Logging(som_gui.core.tool.Logging):
             log_format = cls.get_properties().log_format
             cls.get_properties().custom_formatter = CustomFormatter(log_format)
         return cls.get_properties().custom_formatter
+
+    @classmethod
+    def create_popup_handler(cls, main_window):
+        popup_handler = PopupHandler(main_window)
+        popup_handler.setLevel(cls.get_log_level())
+        popup_handler.setFormatter(cls.get_custom_formatter())
+        return popup_handler
+
+    @classmethod
+    def create_error_popup(cls):
+        sys.excepthook = cls.show_exception_popup
+
+    @classmethod
+    def show_exception_popup(cls, exctype, value, tb):
+        error_message = ''.join(traceback.format_exception(exctype, value, tb))
+        print(error_message)  # Log to console or file if needed
+        cls.show_popup(logging.ERROR, error_message)
