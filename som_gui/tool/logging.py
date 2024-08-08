@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+from PySide6.QtCore import Signal, QObject
 from PySide6.QtWidgets import QMessageBox, QCheckBox
 import appdirs
 import sys
@@ -36,18 +38,27 @@ class CustomFormatter(logging.Formatter):
         return super().format(record)
 
 
+class Signaller(QObject):
+    error = Signal(int, str, str)
+
+
 class PopupHandler(logging.Handler):
+    error_sigal = Signal()
+
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
+        self.signaller = tool.Logging.get_signaller()
 
     def emit(self, record):
         if record.levelno >= logging.WARNING:
             msg = self.format(record)
-            tool.Logging.show_popup(record.levelno, msg, record.message)
+            print(record.levelno, msg, record.message)
+            self.signaller.error.emit(record.levelno, msg, record.message)
 
 
 class Logging(som_gui.core.tool.Logging):
+
     @classmethod
     def show_popup(cls, level_no, message, base_message=None):
         if base_message is None:
@@ -68,12 +79,19 @@ class Logging(som_gui.core.tool.Logging):
         msg_box.setWindowTitle(f"{level}")
         msg_box.setText(f"An {level} occurred:")
         msg_box.setDetailedText(message)
-        if msg_box.exec() and cb.isChecked():
+        if msg_box.exec_() and cb.isChecked():
             cls.get_properties().ignore_texts.append(base_message)
 
     @classmethod
     def get_properties(cls) -> LoggingProperties:
         return som_gui.LoggingProperties
+
+    @classmethod
+    def get_signaller(cls):
+        if cls.get_properties().signaller is None:
+            cls.get_properties().signaller = Signaller()
+            cls.get_properties().signaller.error.connect(cls.show_popup)
+        return cls.get_properties().signaller
 
     @classmethod
     def get_log_level(cls):
@@ -131,6 +149,7 @@ class Logging(som_gui.core.tool.Logging):
     @classmethod
     def create_popup_handler(cls, main_window):
         popup_handler = PopupHandler(main_window)
+
         popup_handler.setLevel(cls.get_log_level())
         popup_handler.setFormatter(cls.get_custom_formatter())
         return popup_handler
@@ -142,5 +161,5 @@ class Logging(som_gui.core.tool.Logging):
     @classmethod
     def show_exception_popup(cls, exctype, value, tb):
         error_message = ''.join(traceback.format_exception(exctype, value, tb))
-        print(error_message)  # Log to console or file if needed
-        cls.show_popup(logging.ERROR, error_message)
+        cls.get_signaller().error.emit(logging.ERROR, error_message, error_message)
+        print(error_message)

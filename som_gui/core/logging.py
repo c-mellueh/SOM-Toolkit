@@ -12,6 +12,7 @@ def create_logger(logging_tool: Type[tool.Logging], util: Type[tool.Util], main_
     if not os.path.exists(log_dir_path):
         util.create_directory(log_dir_path)
     logger = logging_tool.get_logger()
+    signaller = logging_tool.get_signaller()  # create signaller
     for handler in logger.handlers:
         logger.removeHandler(handler)
     if logging_tool.get_log_level() is None:
