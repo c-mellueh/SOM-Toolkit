@@ -5,8 +5,6 @@ if TYPE_CHECKING:
     import SOMcreator
     from PySide6.QtWidgets import QHBoxLayout, QLabel
     from .ui import ProjectSelectDialog, CompareDialog, AttributeWidget
-COMPARE_SETTING = "compare"
-
 
 class CompareProjectSelectProperties:
     proj_select_dialog: ProjectSelectDialog = None
@@ -22,9 +20,10 @@ class CompareAttributesProperties:
     projects = [None, None]
     uuid_dicts = [None, None]
     ident_dicts = [None, None]
-    object_dicts = [None, None]
+    object_dict: dict[SOMcreator.Object, SOMcreator.Object | None] = dict()
     missing_objects: list[list[SOMcreator.Object]] = [None, None]
     object_tree_item_dict = dict()
+    object_lists: list[tuple[SOMcreator.Object | None, SOMcreator.Object | None]] = list()
     pset_lists: dict[SOMcreator.Object, list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]] = dict()
     attributes_lists: dict[SOMcreator.PropertySet, list[tuple[SOMcreator.Attribute, SOMcreator.Attribute]]] = dict()
     values_lists: dict[SOMcreator.Attribute, list[tuple[str, str]]] = dict()
@@ -37,3 +36,4 @@ class CompareWindowProperties:
     init_functions = list()
     tools = list()
     window: CompareDialog = None
+    export_funcs = list()

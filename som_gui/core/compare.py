@@ -1,11 +1,10 @@
 from __future__ import annotations
-
 import os.path
 from typing import TYPE_CHECKING, Type
-
+from som_gui.module.compare.constants import COMPARE_SETTING, EXPORT_PATH
+import SOMcreator
 from PySide6.QtCore import Qt
 from som_gui.module.settings.paths import PATHS_SECTION
-from som_gui.module.compare.prop import COMPARE_SETTING
 from som_gui.module.project.constants import FILETYPE
 
 from SOMcreator import Project
@@ -75,6 +74,7 @@ def open_compare_window(compare_window: Type[tool.CompareWindow], project_select
         return
 
     window = compare_window.create_window()
+    compare_window.connect_triggers()
 
     settings.set_path(COMPARE_SETTING, other_file_path)
     project_0 = project.get()
@@ -86,10 +86,10 @@ def open_compare_window(compare_window: Type[tool.CompareWindow], project_select
     compare_window.set_projects(project_0, project_1)
 
     compare_window.init_tabs(project_0, project_1)
-
-    if window.exec():
-        compare_window.reset()
-
+    window.show()
+    window.raise_()
+    window.activateWindow()
+    window.accepted.connect(compare_window.reset)
 
 def draw_tree_branch(tree: QTreeWidget, painter: QPainter, rect, index: QModelIndex,
                      attribute_compare: Type[tool.AttributeCompare]):
@@ -112,7 +112,7 @@ def draw_tree_branch(tree: QTreeWidget, painter: QPainter, rect, index: QModelIn
 
 def object_tree_selection_changed(widget: ui.AttributeWidget,
                                   attribute_compare: Type[tool.AttributeCompare]):
-    obj = attribute_compare.get_selected_item_from_tree(attribute_compare.get_object_tree(widget))
+    obj = attribute_compare.get_selected_entity(attribute_compare.get_object_tree(widget))
     tree = attribute_compare.get_pset_tree(widget)
     attribute_compare.fill_pset_tree(tree, obj, add_missing=True)
     root = attribute_compare.get_pset_tree(widget).invisibleRootItem()
@@ -121,19 +121,37 @@ def object_tree_selection_changed(widget: ui.AttributeWidget,
 
 
 def pset_tree_selection_changed(widget: ui.AttributeWidget, attribute_compare: Type[tool.AttributeCompare]):
-    attribute = attribute_compare.get_selected_item_from_tree(attribute_compare.get_pset_tree(widget))
+    attribute = attribute_compare.get_selected_entity(attribute_compare.get_pset_tree(widget))
     attribute_compare.fill_value_table(attribute_compare.get_value_table(widget), attribute)
 
 
 def add_attribute_compare_widget(attribute_compare: Type[tool.AttributeCompare],
                                  compare_window: Type[tool.CompareWindow]):
-    compare_window.add_tab("Attributes", attribute_compare.get_widget, lambda p0, p1: init(p0, p1, attribute_compare),
-                           attribute_compare)
+    compare_window.add_tab("Attributes", attribute_compare.get_widget,
+                           lambda p0, p1: init_attribute_compare(p0, p1, attribute_compare),
+                           attribute_compare, lambda file: export_attribute_differences(file, attribute_compare))
 
 
-def init(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
+def export_attribute_differences(file, attribute_compare: Type[tool.AttributeCompare]):
+    objects0: list[SOMcreator.Object] = attribute_compare.get_missing_objects(0)
+    objects1: list[SOMcreator.Object] = attribute_compare.get_missing_objects(1)
+    file.write("\nATTRIBUTE COMPARISON\n\n")
+
+    for obj in sorted(objects0, key=lambda x: x.name):
+        file.write(f"{obj.name} ({obj.ident_value}) was deleted\n")
+
+    for obj in sorted(objects1, key=lambda x: x.name):
+        file.write(f"{obj.name} ({obj.ident_value}) was added\n")
+
+    if objects0 or objects1:
+        file.write("\n\n")
+
+    attribute_compare.export_object_differences(file)
+
+
+def init_attribute_compare(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
     attribute_compare.set_projects(project0, project1)
-    attribute_compare.create_object_dicts()
+    attribute_compare.create_object_lists()
     widget = attribute_compare.get_widget()
     object_tree_widget = attribute_compare.get_object_tree(widget)
     pset_tree = attribute_compare.get_pset_tree(widget)
@@ -144,7 +162,20 @@ def init(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
     for child_index in range(root.childCount()):
         attribute_compare.style_tree_item(root.child(child_index))
 
-    attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table,
-                                        attribute_compare.get_header_name_from_project(project0),
-                                        attribute_compare.get_header_name_from_project(project1))
+    header_labels = [attribute_compare.get_header_name_from_project(project0),
+                     attribute_compare.get_header_name_from_project(project1)]
+    attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table, header_labels)
     attribute_compare.create_tree_selection_trigger(widget)
+
+
+def download_changelog(compare_window: Type[tool.CompareWindow], popups: Type[tool.Popups],
+                       settings: Type[tool.Settings]):
+    path = settings.get_path(EXPORT_PATH)
+    path = popups.get_save_path("txt Files (*.txt);;", compare_window.get_window(), path)
+    if not path:
+        return
+    settings.set_path(EXPORT_PATH, path)
+    with open(path, "w") as file:
+        for func in compare_window.get_export_functions():
+            file.write(f'{"**" * 75}\n{"**" * 75}\n')
+            func(file)

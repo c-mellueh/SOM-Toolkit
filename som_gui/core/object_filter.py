@@ -39,7 +39,8 @@ def add_object_filter_widget(object_filter_compare: Type[tool.ObjectFilterCompar
                              compare_window: Type[tool.CompareWindow]):
     compare_window.add_tab("Objekt Filter", object_filter_compare.get_widget,
                            lambda p0, p1: init_compare_object_filter(p0, p1, object_filter_compare, attribute_compare),
-                           object_filter_compare)
+                           object_filter_compare,
+                           lambda file: export_filter_differences(file, object_filter_compare, attribute_compare))
 
 
 def accept_changes(objectfilter_tool: Type[ObjectFilter]):
@@ -139,22 +140,24 @@ def init_compare_object_filter(project0: SOMcreator.Project, project1: SOMcreato
                                attribute_compare: Type[tool.AttributeCompare]):
     attribute_compare.set_projects(project0, project1)
     object_filter_compare.set_projects(project0, project1)
-    attribute_compare.create_object_dicts()
+    attribute_compare.create_object_lists()
 
     widget = object_filter_compare.get_widget()
     object_tree_widget = attribute_compare.get_object_tree(widget)
     pset_tree = attribute_compare.get_pset_tree(widget)
     value_table = attribute_compare.get_value_table(widget)
-    object_filter_compare.set_wordwrap_header(object_tree_widget)
-    object_filter_compare.set_wordwrap_header(pset_tree)
+    object_filter_compare.make_header_wordwrap(object_tree_widget)
+    object_filter_compare.make_header_wordwrap(pset_tree)
 
     attribute_compare.fill_object_tree(object_tree_widget, add_missing=False)
-    attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table,
-                                        attribute_compare.get_header_name_from_project(project0),
-                                        attribute_compare.get_header_name_from_project(project1))
+    header_labels = [attribute_compare.get_header_name_from_project(project0),
+                     attribute_compare.get_header_name_from_project(project1)]
+    attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table, header_labels)
     object_filter_compare.create_tree_selection_trigger(widget)
-    extra_columns = object_filter_compare.get_extra_column_count()
-    object_filter_compare.append_collumns(extra_columns, object_tree_widget, pset_tree)
+    object_filter_compare.find_matching_phases(project0, project1)
+    object_filter_compare.find_matching_usecases(project0, project1)
+
+    object_filter_compare.append_collumns(object_tree_widget, pset_tree)
     for child_index in range(object_tree_widget.invisibleRootItem().childCount()):
         child = object_tree_widget.invisibleRootItem().child(child_index)
         object_filter_compare.fill_tree_with_checkstates(child)
@@ -168,7 +171,7 @@ def init_compare_object_filter(project0: SOMcreator.Project, project1: SOMcreato
 def filter_tab_object_tree_selection_changed(widget: compare_ui.AttributeWidget,
                                              attribute_compare: Type[tool.AttributeCompare],
                                              object_filter_compare: Type[tool.ObjectFilterCompare]):
-    obj = attribute_compare.get_selected_item_from_tree(attribute_compare.get_object_tree(widget))
+    obj = attribute_compare.get_selected_entity(attribute_compare.get_object_tree(widget))
     tree_widget = attribute_compare.get_pset_tree(widget)
     attribute_compare.fill_pset_tree(tree_widget, obj, add_missing=False)
 
@@ -178,3 +181,10 @@ def filter_tab_object_tree_selection_changed(widget: compare_ui.AttributeWidget,
 
     for col in range(2, tree_widget.columnCount()):
         tree_widget.setColumnWidth(col, 58)
+
+
+def export_filter_differences(file, object_filter_compare: Type[tool.ObjectFilterCompare],
+                              attribute_compare: Type[tool.AttributeCompare]):
+    file.write(f"\n{'OBJECT FILTER':46s}\n\n")
+    object_filter_compare.export_object_filter_differences(file, attribute_compare)
+    file.write("\n")

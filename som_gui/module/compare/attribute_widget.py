@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QFont, QFontDatabase, QGradient, QIcon,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHeaderView, QSizePolicy, QSplitter,
-                               QTableWidget, QTableWidgetItem, QTreeWidgetItem, QVBoxLayout,
-                               QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QHeaderView, QSizePolicy,
+                               QSplitter, QTableWidget, QTableWidgetItem, QTreeWidgetItem,
+                               QVBoxLayout, QWidget)
 
 from som_gui.module.compare.ui import EntityTreeWidget
 
@@ -59,7 +59,9 @@ class Ui_Form(object):
         self.table_widget_values.setObjectName(u"table_widget_values")
         sizePolicy1.setHeightForWidth(self.table_widget_values.sizePolicy().hasHeightForWidth())
         self.table_widget_values.setSizePolicy(sizePolicy1)
+        self.table_widget_values.setSelectionMode(QAbstractItemView.NoSelection)
         self.splitter.addWidget(self.table_widget_values)
+        self.table_widget_values.horizontalHeader().setStretchLastSection(True)
 
         self.verticalLayout.addWidget(self.splitter)
 

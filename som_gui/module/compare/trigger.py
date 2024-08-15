@@ -3,7 +3,7 @@ from som_gui import tool
 
 
 def connect():
-    tool.MainWindow.add_action("Datei/SOM-Vergleichen",
+    tool.MainWindow.add_action("Datei/Projekte Vergleichen",
                                lambda: core.open_project_selection_window(tool.CompareWindow,
                                                                           tool.CompareProjectSelector,
                                                                           tool.Settings, tool.Project))
@@ -37,3 +37,7 @@ def pset_tree_selection_changed(widget):
 
 def draw_branches(tree, painter, rect, index):
     return core.draw_tree_branch(tree, painter, rect, index, tool.AttributeCompare)
+
+
+def download_clicked():
+    core.download_changelog(tool.CompareWindow, tool.Popups, tool.Settings)
