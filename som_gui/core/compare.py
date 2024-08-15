@@ -86,10 +86,10 @@ def open_compare_window(compare_window: Type[tool.CompareWindow], project_select
     compare_window.set_projects(project_0, project_1)
 
     compare_window.init_tabs(project_0, project_1)
-
-    if window.exec():
-        compare_window.reset()
-
+    window.show()
+    window.raise_()
+    window.activateWindow()
+    window.accepted.connect(compare_window.reset)
 
 def draw_tree_branch(tree: QTreeWidget, painter: QPainter, rect, index: QModelIndex,
                      attribute_compare: Type[tool.AttributeCompare]):
