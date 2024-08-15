@@ -38,6 +38,7 @@ modules = {
     "popups":           [None, 'popups'],
     "settings":         [None, 'settings'],
     "compare":          [None, 'compare'],
+    "console": [None, 'console'],
 }
 plugins_dict = {
     "aggregation_window": {

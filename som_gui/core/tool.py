@@ -2,6 +2,8 @@ class AttributeImport:
     pass
 
 
+class Console:
+    pass
 class CompareProjectSelector:
     pass
 

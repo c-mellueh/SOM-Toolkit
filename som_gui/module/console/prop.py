@@ -1,0 +1,2 @@
+class ConsoleProperties:
+    pass
