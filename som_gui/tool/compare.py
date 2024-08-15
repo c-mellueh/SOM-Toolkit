@@ -8,7 +8,7 @@ import SOMcreator
 from som_gui.module.compare import ui
 import som_gui.core.tool
 import som_gui
-from PySide6.QtWidgets import QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QTableWidget
+from PySide6.QtWidgets import QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QTableWidget, QPushButton
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.compare import trigger
 
@@ -701,9 +701,6 @@ class CompareWindow(som_gui.core.tool.CompareWindow):
     @classmethod
     def create_window(cls):
         cls.get_properties().window = ui.CompareDialog()
-        button = cls.get_properties().window.widget.button_download
-        button.setIcon(get_download_icon())
-        button.setText("")
         return cls.get_window()
 
     @classmethod

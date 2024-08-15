@@ -1,9 +1,16 @@
-from PySide6.QtWidgets import QDialog, QHeaderView, QWidget, QTreeWidget
+from PySide6.QtWidgets import QDialog, QHeaderView, QWidget, QTreeWidget, QPushButton
 from . import window, import_window, attribute_widget, trigger
-from som_gui.icons import get_icon, ICON_PATH, ICON_DICT, get_switch
-from PySide6.QtGui import QIcon, QPalette, QPixmap, QTransform
+from som_gui.icons import get_icon, get_switch_icon, get_download_icon
+from PySide6.QtGui import QPalette
 from PySide6.QtCore import QModelIndex, Qt, QRect, QSize
 import os
+
+
+def color_button(button: QPushButton) -> None:
+    button.setAutoFillBackground(True)
+    pal = button.palette()
+    pal.setColor(QPalette.ColorRole.Button, pal.accent().color())
+    button.setPalette(pal)
 
 
 class CompareDialog(QDialog):
@@ -14,7 +21,10 @@ class CompareDialog(QDialog):
         self.setWindowIcon(get_icon())
         self.setWindowTitle(self.tr("Projekte Vergleichen"))
         self.widget.tabWidget.setTabText(0, self.tr("Attribute"))
-
+        button = self.widget.button_download
+        button.setIcon(get_download_icon())
+        color_button(button)
+        button.setText("")
 
 class AttributeWidget(QWidget):
     def __init__(self, *args, **kwargs):
@@ -33,11 +43,10 @@ class ProjectSelectDialog(QDialog):
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
         self.setWindowTitle(self.tr("Projekte Vergleichen"))
-        self.widget.button_switch.setText("")
-        pixmap = QPixmap(os.path.join(ICON_PATH, ICON_DICT["switch"]))
-        icon = QIcon(pixmap.transformed(QTransform().rotate(90), Qt.TransformationMode.FastTransformation))
-        icon = get_switch()
-        self.widget.button_switch.setIcon(icon)
+        button = self.widget.button_switch
+        button.setText("")
+        button.setIcon(get_switch_icon())
+        color_button(button)
 
 
 class WordWrapHeaderView(QHeaderView):

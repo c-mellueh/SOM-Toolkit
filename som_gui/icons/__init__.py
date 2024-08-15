@@ -3,7 +3,7 @@ import os
 from PySide6.QtGui import QIcon
 
 
-def get_switch() -> QIcon:
+def get_switch_icon() -> QIcon:
     icon_path = os.path.join(ICON_PATH, ICON_DICT["switch"])
     return QIcon(icon_path)
 
