@@ -16,13 +16,13 @@ def create_main_window(application: QApplication, main_window: Type[tool.MainWin
 
 
 def close_event(project_tool: Type[Project], settings_tool: Type[Settings],
-                popups_tool: Type[Popups]):
+                popups_tool: Type[Popups], main_window: Type[tool.MainWindow]):
     reply = popups_tool.request_save_before_exit()
     if reply is None:  # abort Dialog
         return False
     if reply is False:  # No
         return True
-    core_project.save_clicked(project_tool, popups_tool, settings_tool)
+    core_project.save_clicked(project_tool, popups_tool, settings_tool, main_window)
     return True
 
 
