@@ -2,7 +2,7 @@ from __future__ import annotations
 import som_gui.core.tool
 import som_gui
 from typing import TYPE_CHECKING, Callable
-from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLabel, QLineEdit
+from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLabel, QLineEdit, QStatusBar
 from som_gui import tool
 from som_gui.module.main_window import ui as ui_main_window
 
@@ -27,15 +27,12 @@ class MainWindow(som_gui.core.tool.MainWindow):
         cls.get().setWindowTitle(title)
 
     @classmethod
-    def create_status_label(cls):
-        label = QLabel()
-        prop = cls.get_properties()
-        prop.status_bar_label = label
-        cls.get_ui().statusbar.addWidget(label)
+    def get_statusbar(cls) -> QStatusBar:
+        return cls.get_ui().statusbar
 
     @classmethod
     def set_status_bar_text(cls, text: str):
-        cls.get_properties().status_bar_label.setText(text)
+        cls.get_ui().statusbar.showMessage(text)
 
     @classmethod
     def get_menu_bar(cls) -> QMenuBar:

@@ -26,10 +26,6 @@ def close_event(project_tool: Type[Project], settings_tool: Type[Settings],
     return True
 
 
-def add_label_to_statusbar(main_window_tool: Type[MainWindow]):
-    main_window_tool.create_status_label()
-
-
 def create_menus(main_window_tool: Type[MainWindow], util: Type[tool.Util]):
     menu_dict = main_window_tool.get_menu_dict()
     menu_bar = main_window_tool.get_menu_bar()

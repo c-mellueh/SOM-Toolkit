@@ -11,7 +11,7 @@ added_files = [('SOMcreator','SOMcreator'),
                 ('som_gui/icons','som_gui/icons'),
                ]
 
-hi = ['appdirs','jinja2', 'lxml', 'SOMcreator', 'tqdm', 'openpyxl','som_gui','thefuzz.fuzz','SOMcreator.external_software','ifcopenshell','ifcopenshell.util','ifcopenshell.util.element','som_gui.settings']
+hi = ['pyqtconsole.console','appdirs','jinja2', 'lxml', 'SOMcreator', 'tqdm', 'openpyxl','som_gui','thefuzz.fuzz','SOMcreator.external_software','ifcopenshell','ifcopenshell.util','ifcopenshell.util.element','som_gui.settings']
 a = Analysis(
     ['main.py'],
     pathex=[],
@@ -39,7 +39,7 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
