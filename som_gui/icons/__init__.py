@@ -37,6 +37,11 @@ def get_search_icon() -> QIcon:
     return QIcon(icon_path)
 
 
+def get_download_icon() -> QIcon:
+    icon_path = os.path.join(ICON_PATH, ICON_DICT["download"])
+    return QIcon(icon_path)
+
+
 ICON_PATH = os.path.dirname(__file__)
 ICON_DICT = {
     "icon":     "icon.ico",
@@ -46,4 +51,5 @@ ICON_DICT = {
     "settings": "setting.png",
     "add":    "add.png",
     "switch": "switch.png",
+    "download": "download.png"
 }

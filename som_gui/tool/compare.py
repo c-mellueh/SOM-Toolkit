@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
-
+from som_gui.icons import get_download_icon
 from PySide6.QtGui import QBrush, QPalette, QColor, QIcon
 from PySide6.QtCore import QModelIndex
 from som_gui import tool
@@ -628,6 +628,9 @@ class CompareWindow(som_gui.core.tool.CompareWindow):
     @classmethod
     def create_window(cls):
         cls.get_properties().window = ui.CompareDialog()
+        button = cls.get_properties().window.widget.button_download
+        button.setIcon(get_download_icon())
+        button.setText("")
         return cls.get_window()
 
     @classmethod
