@@ -518,7 +518,10 @@ class AttributeCompare(som_gui.core.tool.Compare):
         for attrib0, attrib1 in sorted(attribute_list, key=lambda x: x[0].name if x[0] is not None else "aaa"):
             if cls.are_attributes_identical(attrib0, attrib1):
                 continue
-            cls.export_existance_check(file, at, attrib0, attrib1, 2)
+
+            both_exist = cls.export_existance_check(file, at, attrib0, attrib1, 2)
+            if not both_exist:
+                continue
             cls.export_name_check(file, at, attrib0, attrib1, 2)
             cls.export_attribute_check(file, at, attrib0, attrib1, 2)
 

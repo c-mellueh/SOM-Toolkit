@@ -146,16 +146,18 @@ def init_compare_object_filter(project0: SOMcreator.Project, project1: SOMcreato
     object_tree_widget = attribute_compare.get_object_tree(widget)
     pset_tree = attribute_compare.get_pset_tree(widget)
     value_table = attribute_compare.get_value_table(widget)
-    object_filter_compare.set_wordwrap_header(object_tree_widget)
-    object_filter_compare.set_wordwrap_header(pset_tree)
+    object_filter_compare.make_header_wordwrap(object_tree_widget)
+    object_filter_compare.make_header_wordwrap(pset_tree)
 
     attribute_compare.fill_object_tree(object_tree_widget, add_missing=False)
     header_labels = [attribute_compare.get_header_name_from_project(project0),
                      attribute_compare.get_header_name_from_project(project1)]
     attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table, header_labels)
     object_filter_compare.create_tree_selection_trigger(widget)
-    extra_columns = object_filter_compare.get_extra_column_count()
-    object_filter_compare.append_collumns(extra_columns, object_tree_widget, pset_tree)
+    object_filter_compare.find_matching_phases(project0, project1)
+    object_filter_compare.find_matching_usecases(project0, project1)
+
+    object_filter_compare.append_collumns(object_tree_widget, pset_tree)
     for child_index in range(object_tree_widget.invisibleRootItem().childCount()):
         child = object_tree_widget.invisibleRootItem().child(child_index)
         object_filter_compare.fill_tree_with_checkstates(child)

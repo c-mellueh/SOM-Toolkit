@@ -30,6 +30,5 @@ class ObjectFilterCompareProperties:
     use_case_indexes = list()
     phase_list = list()
     phase_indexes = list()
-    column_count: int = None
     projects = [None, None]
     match_list = []
