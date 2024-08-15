@@ -3,7 +3,7 @@ from som_gui import tool
 
 
 def connect():
-    tool.MainWindow.add_action("Datei/SOM-Vergleichen",
+    tool.MainWindow.add_action("Datei/Projekte Vergleichen",
                                lambda: core.open_project_selection_window(tool.CompareWindow,
                                                                           tool.CompareProjectSelector,
                                                                           tool.Settings, tool.Project))
