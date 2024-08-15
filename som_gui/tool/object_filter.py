@@ -774,7 +774,7 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
     @classmethod
     def export_object_filter_differences(cls, file, attribute_compare: Type[tool.AttributeCompare]):
         project_0 = cls.get_project(0)
-        object_dict = attribute_compare.get_object_dict(0)
+        object_dict = attribute_compare.get_object_dict()
         matches = cls.get_match_list()
         for obj0 in sorted(project_0.get_all_objects(), key=lambda x: x.name):
             obj1 = object_dict[obj0]

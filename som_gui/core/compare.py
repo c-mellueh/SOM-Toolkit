@@ -112,7 +112,7 @@ def draw_tree_branch(tree: QTreeWidget, painter: QPainter, rect, index: QModelIn
 
 def object_tree_selection_changed(widget: ui.AttributeWidget,
                                   attribute_compare: Type[tool.AttributeCompare]):
-    obj = attribute_compare.get_selected_item_from_tree(attribute_compare.get_object_tree(widget))
+    obj = attribute_compare.get_selected_entity(attribute_compare.get_object_tree(widget))
     tree = attribute_compare.get_pset_tree(widget)
     attribute_compare.fill_pset_tree(tree, obj, add_missing=True)
     root = attribute_compare.get_pset_tree(widget).invisibleRootItem()
@@ -121,13 +121,14 @@ def object_tree_selection_changed(widget: ui.AttributeWidget,
 
 
 def pset_tree_selection_changed(widget: ui.AttributeWidget, attribute_compare: Type[tool.AttributeCompare]):
-    attribute = attribute_compare.get_selected_item_from_tree(attribute_compare.get_pset_tree(widget))
+    attribute = attribute_compare.get_selected_entity(attribute_compare.get_pset_tree(widget))
     attribute_compare.fill_value_table(attribute_compare.get_value_table(widget), attribute)
 
 
 def add_attribute_compare_widget(attribute_compare: Type[tool.AttributeCompare],
                                  compare_window: Type[tool.CompareWindow]):
-    compare_window.add_tab("Attributes", attribute_compare.get_widget, lambda p0, p1: init(p0, p1, attribute_compare),
+    compare_window.add_tab("Attributes", attribute_compare.get_widget,
+                           lambda p0, p1: init_attribute_compare(p0, p1, attribute_compare),
                            attribute_compare, lambda file: export_attribute_differences(file, attribute_compare))
 
 
@@ -148,9 +149,10 @@ def export_attribute_differences(file, attribute_compare: Type[tool.AttributeCom
 
     attribute_compare.export_object_differences(file)
 
-def init(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
+
+def init_attribute_compare(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
     attribute_compare.set_projects(project0, project1)
-    attribute_compare.create_object_dicts()
+    attribute_compare.create_object_lists()
     widget = attribute_compare.get_widget()
     object_tree_widget = attribute_compare.get_object_tree(widget)
     pset_tree = attribute_compare.get_pset_tree(widget)
@@ -161,9 +163,9 @@ def init(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
     for child_index in range(root.childCount()):
         attribute_compare.style_tree_item(root.child(child_index))
 
-    attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table,
-                                        attribute_compare.get_header_name_from_project(project0),
-                                        attribute_compare.get_header_name_from_project(project1))
+    header_labels = [attribute_compare.get_header_name_from_project(project0),
+                     attribute_compare.get_header_name_from_project(project1)]
+    attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table, header_labels)
     attribute_compare.create_tree_selection_trigger(widget)
 
 

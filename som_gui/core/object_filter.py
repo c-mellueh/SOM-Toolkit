@@ -140,7 +140,7 @@ def init_compare_object_filter(project0: SOMcreator.Project, project1: SOMcreato
                                attribute_compare: Type[tool.AttributeCompare]):
     attribute_compare.set_projects(project0, project1)
     object_filter_compare.set_projects(project0, project1)
-    attribute_compare.create_object_dicts()
+    attribute_compare.create_object_lists()
 
     widget = object_filter_compare.get_widget()
     object_tree_widget = attribute_compare.get_object_tree(widget)
@@ -150,9 +150,9 @@ def init_compare_object_filter(project0: SOMcreator.Project, project1: SOMcreato
     object_filter_compare.set_wordwrap_header(pset_tree)
 
     attribute_compare.fill_object_tree(object_tree_widget, add_missing=False)
-    attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table,
-                                        attribute_compare.get_header_name_from_project(project0),
-                                        attribute_compare.get_header_name_from_project(project1))
+    header_labels = [attribute_compare.get_header_name_from_project(project0),
+                     attribute_compare.get_header_name_from_project(project1)]
+    attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table, header_labels)
     object_filter_compare.create_tree_selection_trigger(widget)
     extra_columns = object_filter_compare.get_extra_column_count()
     object_filter_compare.append_collumns(extra_columns, object_tree_widget, pset_tree)
@@ -169,7 +169,7 @@ def init_compare_object_filter(project0: SOMcreator.Project, project1: SOMcreato
 def filter_tab_object_tree_selection_changed(widget: compare_ui.AttributeWidget,
                                              attribute_compare: Type[tool.AttributeCompare],
                                              object_filter_compare: Type[tool.ObjectFilterCompare]):
-    obj = attribute_compare.get_selected_item_from_tree(attribute_compare.get_object_tree(widget))
+    obj = attribute_compare.get_selected_entity(attribute_compare.get_object_tree(widget))
     tree_widget = attribute_compare.get_pset_tree(widget)
     attribute_compare.fill_pset_tree(tree_widget, obj, add_missing=False)
 
