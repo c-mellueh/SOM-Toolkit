@@ -184,22 +184,6 @@ class Popups(som_gui.core.tool.Popups):
             return None
 
     @classmethod
-    def error_convert_double():
-        msg_box = QMessageBox()
-        msg_box.setText("Wert kann nicht in Dezimalzahl umgewandelt werden!")
-        msg_box.setWindowTitle(" ")
-        msg_box.setIcon(QMessageBox.Icon.Warning)
-        msg_box.exec()
-
-    @classmethod
-    def error_convert_integer():
-        msg_box = QMessageBox()
-        msg_box.setText("Wert kann nicht in Ganzzahl umgewandelt werden!")
-        msg_box.setWindowTitle(" ")
-        msg_box.setIcon(QMessageBox.Icon.Warning)
-        msg_box.exec()
-
-    @classmethod
     def req_export_pset_name(cls, parent_window):
         return QInputDialog.getText(parent_window, "PropertySet name", "What's the name of the Export PropertySet?")
 

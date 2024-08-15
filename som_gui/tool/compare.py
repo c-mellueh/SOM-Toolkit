@@ -93,7 +93,7 @@ class CompareProjectSelector(som_gui.core.tool.CompareProjectSelector):
         trigger.accept_clicked()
 
 
-class AttributeCompare(som_gui.core.tool.Compare):
+class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def get_properties(cls) -> CompareAttributesProperties:
         return som_gui.CompareAttributesProperties
