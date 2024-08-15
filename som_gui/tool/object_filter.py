@@ -653,11 +653,11 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         return cls.get_properties().column_count
 
     @classmethod
-    def get_match_list(cls):
+    def get_match_list(cls) -> list[tuple[SOMcreator.classes.UseCase, SOMcreator.classes.Phase]]:
         usecases = cls.get_matching_usecases()
         phases = cls.get_matching_phases()
         if not cls.get_properties().match_list:
-            cls.get_properties().match_list = [[usecase, phase] for usecase in usecases for phase in phases]
+            cls.get_properties().match_list = [(usecase, phase) for usecase in usecases for phase in phases]
         return cls.get_properties().match_list
 
     @classmethod
@@ -770,3 +770,7 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         cb0.setEnabled(False)
         cb1.setEnabled(False)
         return widget
+
+    @classmethod
+    def export_object_filter_differences(cls):
+        cls.get_properties()

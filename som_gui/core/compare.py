@@ -135,12 +135,13 @@ def export_attribute_differences(file, attribute_compare: Type[tool.AttributeCom
     missing_objects = attribute_compare.get_properties().missing_objects
     objects0: list[SOMcreator.Object] = missing_objects[0]
     objects1: list[SOMcreator.Object] = missing_objects[1]
+    file.write("\nATTRIBUTE COMPARISON\n\n")
 
     for obj in objects0:
-        file.write(f"{obj.name} ({obj.ident_value}) wurde entfernt\n")
+        file.write(f"{obj.name} ({obj.ident_value}) was deleted\n")
 
     for obj in objects1:
-        file.write(f"{obj.name} ({obj.ident_value}) wurde hinzugefügt\n")
+        file.write(f"{obj.name} ({obj.ident_value}) was added\n")
 
     if objects0 or objects1:
         file.write("\n\n")
@@ -175,4 +176,5 @@ def download_changelog(compare_window: Type[tool.CompareWindow], popups: Type[to
     settings.set_path(EXPORT_PATH, path)
     with open(path, "w") as file:
         for func in compare_window.get_export_functions():
+            file.write(f'{"**" * 75}\n{"**" * 75}\n')
             func(file)

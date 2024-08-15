@@ -16,6 +16,10 @@ if TYPE_CHECKING:
     from som_gui.module.compare.prop import CompareAttributesProperties, CompareWindowProperties, \
         CompareProjectSelectProperties
 
+DELETE_TEXT = "was deleted."
+ADD_TEXT = "was added."
+RENAME_TEXT = "was renamed to"
+CHANGED_FROM = "was changed from"
 style_list = [
     [None, [0, 1]],
     ["#897e00", [0, 1]],  # Yellow
@@ -560,11 +564,14 @@ class AttributeCompare(som_gui.core.tool.Compare):
             if cls.are_property_sets_identical(pset0, pset1):
                 continue
             if pset0 and not pset1:
-                file.write(f"   PropertySet '{pset0.name}' wurde entfernt.\n")
+                file.write(f"   PropertySet '{pset0.name}' {DELETE_TEXT}\n")
                 continue
             elif pset1 and not pset0:
-                file.write(f"   PropertySet '{pset1.name}' wurde hinzugefügt.\n")
+                file.write(f"   PropertySet '{pset1.name}' {ADD_TEXT}\n")
                 continue
+
+            if pset0.name != pset1.name:
+                file.write(f"      PropertySet '{pset0.name} {RENAME_TEXT} '{pset1.name}'\n")
             file.write(f"   PropertySet '{pset0.name}':\n")
 
             attribute_list = cls.get_properties().attributes_lists[pset0]
@@ -576,23 +583,23 @@ class AttributeCompare(som_gui.core.tool.Compare):
             if cls.are_attributes_identical(attrib0, attrib1):
                 continue
             if attrib0 and not attrib1:
-                file.write(f"      Attribut '{attrib0.name}' wurde entfernt.\n")
+                file.write(f"      Attribute '{attrib0.name}' {DELETE_TEXT}\n")
                 continue
             elif attrib1 and not attrib0:
-                file.write(f"      Attribut '{attrib1.name}' wurde hinzugefügt.\n")
+                file.write(f"      Attribute '{attrib1.name}' {ADD_TEXT}\n")
                 continue
 
             if attrib0.name != attrib1.name:
-                file.write(f"      Attribut '{attrib0.name} wurde umbenannt zu '{attrib1.name}'\n")
+                file.write(f"      Attribute '{attrib0.name} {RENAME_TEXT} '{attrib1.name}'\n")
             if attrib0.value != attrib1.value:
                 file.write(
-                    f"      Attribut '{attrib0.name}' Werte wurden geändert von '{attrib0.value}' zu '{attrib1.value}'\n")
+                    f"      Attribute '{attrib0.name}' Values {CHANGED_FROM} '{attrib0.value}' to '{attrib1.value}'\n")
             if attrib0.data_type != attrib1.data_type:
                 file.write(
-                    f"      Attribut '{attrib0.name}' Datentyp wurde geändert von '{attrib0.data_type}' zu '{attrib1.data_type}'\n")
+                    f"      Attribute '{attrib0.name}' Datatype {CHANGED_FROM} '{attrib0.data_type}' to '{attrib1.data_type}'\n")
             if attrib0.value_type != attrib1.value_type:
                 file.write(
-                    f"      Attribut '{attrib0.name}' Wertart wurde geändert von '{attrib0.value_type}' zu '{attrib1.value_type}'\n")
+                    f"      Attribute '{attrib0.name}' ValueType {CHANGED_FROM} '{attrib0.value_type}' to '{attrib1.value_type}'\n")
 
 
 class CompareWindow(som_gui.core.tool.CompareWindow):
