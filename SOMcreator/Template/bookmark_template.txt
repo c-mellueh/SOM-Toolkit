@@ -1,0 +1,13 @@
+// Attribute für Bauteilstruktur erstellen
+
+var attribute_dict = get_attribute_dict();
+
+for ( attribute_name in attribute_dict) {
+var data_type = attribute_dict[attribute_name];
+desiteAPI.createPropertyType(attribute_name,data_type,"",true,1,"building")
+}
+
+
+function get_attribute_dict(){
+return {{ attribute_dict }}
+}

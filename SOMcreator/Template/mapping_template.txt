@@ -1,0 +1,87 @@
+DELETE_OLD_PROPERTY = true
+
+
+IDENT = "{{ pset_name }}:bauteilKlassifikation"
+
+attributes_dict = {{ attribute_dict }}
+
+// Logging File erstellen
+    var filepath = desiteAPI.getProjectDirectory()
+    desiteAPI.createDirectory(filepath, "logging")
+    filepath = filepath + "/logging/logger.csv"
+    desiteAPI.openFile(filepath)
+
+ids = desiteAPI.getAllElements("geometry") // alle Elemente sammeln
+vorheriger_wert = 0.0
+len_ges = ids.length
+
+for (k=0; k<=len_ges-1;k++) {
+    vorheriger_wert = fortschritt(k,len_ges, vorheriger_wert)
+    id = ids[k]
+    if (desiteAPI.isContainer(id)) {continue}
+    answer = getKlassifikation(id)
+    klassifikation = answer[0]
+    ok = answer[1]
+    if(!ok) {continue}
+    attributes = attributes_dict[klassifikation]
+    if (attributes === undefined) {
+        desiteAPI.writeToFile(id+";"+klassifikation+";{{ pset_name }};"+"Klassifikiation unknown\n")
+        continue
+    }
+    move_attributes(id,attributes)
+}
+desiteAPI.closeFile()
+
+function move_attributes(id,pset_dict) {
+    old_pset = "{{ pset_name }}"
+    for(pset_name in pset_dict) {
+        attribute_dict = pset_dict[pset_name]
+        for(attribute_name in attribute_dict){
+            data_type = attribute_dict[attribute_name]
+            old_text = old_pset+":"+attribute_name
+            new_text = pset_name+":"+attribute_name
+
+            value = desiteAPI.getPropertyValue(id,old_text,data_type)
+            new_value = desiteAPI.getPropertyValue(id,new_text,data_type)
+
+            if (value === undefined && new_value === undefined) {
+                desiteAPI.writeToFile(id+";"+klass+";"+pset_name+";"+attribute_name+"\n")
+            }
+            else if (value !== undefined) {
+                desiteAPI.setPropertyValue(id, new_text, data_type, value)
+                if (DELETE_OLD_PROPERTY) {
+                    desiteAPI.deleteProperty(id,old_text,data_type)
+                }
+            }
+        }
+    }
+}
+function fortschritt(durchlauf, anzahl_gesamt, vorheriger_wert) {
+
+    steigerung = 1
+    prozent = durchlauf / anzahl_gesamt * 100;
+    if (prozent >= vorheriger_wert + steigerung) {
+        console.log("	 Fortschritt: " + Math.round(prozent, 1) + "%")
+        return Math.floor(prozent)
+
+    } else {
+        return vorheriger_wert
+    }
+
+}
+
+function getKlassifikation(id){
+    klassifikation = desiteAPI.getPropertyValue(id,IDENT,"xs:string")
+    klassifikation_neu = desiteAPI.getPropertyValue(id,"Allgemeine Eigenschaften:bauteilKlassifikation","xs:string")
+    if (klassifikation === undefined && klassifikation_neu ===undefined) {
+        desiteAPI.writeToFile(id+";"+klassifikation+";{{ pset_name }};"+IDENT+"\n")
+        return [undefined,false]
+    }
+    else{
+        klass = klassifikation
+        if (klassifikation === undefined) {
+            klass = klassifikation_neu
+        }
+    }
+    return [klass,true]
+}
