@@ -133,9 +133,8 @@ def add_attribute_compare_widget(attribute_compare: Type[tool.AttributeCompare],
 
 
 def export_attribute_differences(file, attribute_compare: Type[tool.AttributeCompare]):
-    missing_objects = attribute_compare.get_properties().missing_objects
-    objects0: list[SOMcreator.Object] = missing_objects[0]
-    objects1: list[SOMcreator.Object] = missing_objects[1]
+    objects0: list[SOMcreator.Object] = attribute_compare.get_missing_objects(0)
+    objects1: list[SOMcreator.Object] = attribute_compare.get_missing_objects(1)
     file.write("\nATTRIBUTE COMPARISON\n\n")
 
     for obj in sorted(objects0, key=lambda x: x.name):
