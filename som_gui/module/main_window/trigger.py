@@ -3,7 +3,7 @@ from som_gui import tool
 
 
 def connect():
-    core.add_label_to_statusbar(tool.MainWindow)
+    pass
 
 
 def on_new_project():

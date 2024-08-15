@@ -22,3 +22,4 @@ from som_gui.tool.util import Util
 from som_gui.tool.exports import Exports
 from som_gui.tool.mapping import Mapping
 from som_gui.tool.compare import AttributeCompare, CompareProjectSelector, CompareWindow
+from som_gui.tool.console import Console

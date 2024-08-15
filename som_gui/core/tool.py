@@ -2,6 +2,8 @@ class AttributeImport:
     pass
 
 
+class Console:
+    pass
 class CompareProjectSelector:
     pass
 
@@ -142,7 +144,7 @@ class MainWindow:
 
     def create_actions(self, menu_dict, parent): pass
 
-    def create_status_label(self): pass
+    def get_status_bar_label(self): pass
 
     def get(self): pass
 
