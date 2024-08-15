@@ -185,49 +185,5 @@ def filter_tab_object_tree_selection_changed(widget: compare_ui.AttributeWidget,
 def export_filter_differences(file, object_filter_compare: Type[tool.ObjectFilterCompare],
                               attribute_compare: Type[tool.AttributeCompare]):
     file.write("\nOBJECT FILTER\n\n")
-    project_0 = object_filter_compare.get_project(0)
-    object_dict = attribute_compare.get_object_dict(0)
-    matches = object_filter_compare.get_match_list()
-    for obj0 in project_0.get_all_objects():
-        obj1 = object_dict[obj0]
-        if obj1 is None:
-            continue
-        if object_filter_compare.are_objects_identical(obj0, obj1):
-            continue
-        filter_list = object_filter_compare.get_filter_list(obj0, obj1)
-        file.write(f"\nObject '{obj0.name}' ({obj0.ident_value}):\n")
-        for index, (f0, f1) in enumerate(filter_list):
-            if f0 == f1:
-                continue
-            usecase, phase = matches[index]
-            file.write(f"Object [{usecase.name}][{phase.name}] state changed from {f0} to {f1}\n")
-        pset_list = attribute_compare.get_properties().pset_lists.get(obj0)
-        if pset_list is None:
-            continue
-        for p0, p1 in pset_list:
-            if object_filter_compare.are_psets_identical(p0, p1):
-                continue
-            file.write(f"   PropertySet '{p0.name}':\n")
-            filter_list = object_filter_compare.get_filter_list(p0, p1)
-            for index, (f0, f1) in enumerate(filter_list):
-                if f0 == f1:
-                    continue
-                usecase, phase = matches[index]
-                file.write(f"      [{usecase.name}][{phase.name}] state changed from {f0} to {f1}\n")
-
-            attribute_list = attribute_compare.get_properties().attributes_lists.get(p0)
-            if attribute_list is None:
-                continue
-            for a0, a1 in attribute_list:
-                if object_filter_compare.are_attributes_identical(a0, a1):
-                    continue
-                filter_list = object_filter_compare.get_filter_list(a0, a1)
-                for index, (f0, f1) in enumerate(filter_list):
-                    if f0 == f1:
-                        continue
-                    usecase, phase = matches[index]
-                    use_case_phase_text = f"[{usecase.name}][{phase.name}]"
-                    text = "      Attribut {0:30} {1:30} state changed from {2:5} to {3:5}\n"
-                    file.write(text.format(f"'{a0.name}'", use_case_phase_text, str(f0), str(f1)))
-
+    object_filter_compare.export_object_filter_differences(file, attribute_compare)
     file.write("\n")

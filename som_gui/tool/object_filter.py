@@ -13,7 +13,7 @@ import som_gui.module.object_filter.constants
 import som_gui
 from som_gui import tool
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QColor
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Type
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.compare import ui as compare_ui
 
@@ -772,5 +772,59 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         return widget
 
     @classmethod
-    def export_object_filter_differences(cls):
-        cls.get_properties()
+    def export_object_filter_differences(cls, file, attribute_compare: Type[tool.AttributeCompare]):
+        project_0 = cls.get_project(0)
+        object_dict = attribute_compare.get_object_dict(0)
+        matches = cls.get_match_list()
+        for obj0 in project_0.get_all_objects():
+            obj1 = object_dict[obj0]
+            if obj1 is None:
+                continue
+            if cls.are_objects_identical(obj0, obj1):
+                continue
+            filter_list = cls.get_filter_list(obj0, obj1)
+            file.write(f"\nObject '{obj0.name}' ({obj0.ident_value}):\n")
+            for index, (f0, f1) in enumerate(filter_list):
+                if f0 == f1:
+                    continue
+                usecase, phase = matches[index]
+                file.write(f"Object [{usecase.name}][{phase.name}] state changed from {f0} to {f1}\n")
+            pset_list = attribute_compare.get_properties().pset_lists.get(obj0)
+            cls.export_pset_filter_differences(file, pset_list, attribute_compare)
+
+    @classmethod
+    def export_pset_filter_differences(cls, file, pset_list, attribute_compare: Type[tool.AttributeCompare]):
+        matches = cls.get_match_list()
+        if pset_list is None:
+            return
+        for p0, p1 in pset_list:
+            if cls.are_psets_identical(p0, p1):
+                continue
+            file.write(f"   PropertySet '{p0.name}':\n")
+            filter_list = cls.get_filter_list(p0, p1)
+            for index, (f0, f1) in enumerate(filter_list):
+                if f0 == f1:
+                    continue
+                usecase, phase = matches[index]
+                file.write(f"      [{usecase.name}][{phase.name}] state changed from {f0} to {f1}\n")
+
+            attribute_list = attribute_compare.get_properties().attributes_lists.get(p0)
+            cls.export_attribute_filter_differences(file, attribute_list)
+
+    @classmethod
+    def export_attribute_filter_differences(cls, file, attribute_list):
+        matches = cls.get_match_list()
+
+        if attribute_list is None:
+            return
+        for a0, a1 in attribute_list:
+            if cls.are_attributes_identical(a0, a1):
+                continue
+            filter_list = cls.get_filter_list(a0, a1)
+            for index, (f0, f1) in enumerate(filter_list):
+                if f0 == f1:
+                    continue
+                usecase, phase = matches[index]
+                use_case_phase_text = f"[{usecase.name}][{phase.name}]"
+                text = "      Attribut {0:30} {1:30} state changed from {2:5} to {3:5}\n"
+                file.write(text.format(f"'{a0.name}'", use_case_phase_text, str(f0), str(f1)))
