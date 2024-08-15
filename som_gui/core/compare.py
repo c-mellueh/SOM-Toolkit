@@ -1,11 +1,10 @@
 from __future__ import annotations
-
 import os.path
 from typing import TYPE_CHECKING, Type
-
+from som_gui.module.compare.constants import COMPARE_SETTING, EXPORT_PATH
+import SOMcreator
 from PySide6.QtCore import Qt
 from som_gui.module.settings.paths import PATHS_SECTION
-from som_gui.module.compare.prop import COMPARE_SETTING
 from som_gui.module.project.constants import FILETYPE
 
 from SOMcreator import Project
@@ -75,6 +74,7 @@ def open_compare_window(compare_window: Type[tool.CompareWindow], project_select
         return
 
     window = compare_window.create_window()
+    compare_window.connect_triggers()
 
     settings.set_path(COMPARE_SETTING, other_file_path)
     project_0 = project.get()
@@ -128,8 +128,24 @@ def pset_tree_selection_changed(widget: ui.AttributeWidget, attribute_compare: T
 def add_attribute_compare_widget(attribute_compare: Type[tool.AttributeCompare],
                                  compare_window: Type[tool.CompareWindow]):
     compare_window.add_tab("Attributes", attribute_compare.get_widget, lambda p0, p1: init(p0, p1, attribute_compare),
-                           attribute_compare)
+                           attribute_compare, lambda file: export_attribute_differences(file, attribute_compare))
 
+
+def export_attribute_differences(file, attribute_compare: Type[tool.AttributeCompare]):
+    missing_objects = attribute_compare.get_properties().missing_objects
+    objects0: list[SOMcreator.Object] = missing_objects[0]
+    objects1: list[SOMcreator.Object] = missing_objects[1]
+
+    for obj in objects0:
+        file.write(f"{obj.name} ({obj.ident_value}) wurde entfernt\n")
+
+    for obj in objects1:
+        file.write(f"{obj.name} ({obj.ident_value}) wurde hinzugefügt\n")
+
+    if objects0 or objects1:
+        file.write("\n\n")
+
+    attribute_compare.export_object_differences(file)
 
 def init(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
     attribute_compare.set_projects(project0, project1)
@@ -148,3 +164,15 @@ def init(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
                                         attribute_compare.get_header_name_from_project(project0),
                                         attribute_compare.get_header_name_from_project(project1))
     attribute_compare.create_tree_selection_trigger(widget)
+
+
+def download_changelog(compare_window: Type[tool.CompareWindow], popups: Type[tool.Popups],
+                       settings: Type[tool.Settings]):
+    path = settings.get_path(EXPORT_PATH)
+    path = popups.get_save_path("txt Files (*.txt);;", compare_window.get_window(), path)
+    if not path:
+        return
+    settings.set_path(EXPORT_PATH, path)
+    with open(path, "w") as file:
+        for func in compare_window.get_export_functions():
+            func(file)

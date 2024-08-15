@@ -5,8 +5,6 @@ if TYPE_CHECKING:
     import SOMcreator
     from PySide6.QtWidgets import QHBoxLayout, QLabel
     from .ui import ProjectSelectDialog, CompareDialog, AttributeWidget
-COMPARE_SETTING = "compare"
-
 
 class CompareProjectSelectProperties:
     proj_select_dialog: ProjectSelectDialog = None
@@ -37,3 +35,4 @@ class CompareWindowProperties:
     init_functions = list()
     tools = list()
     window: CompareDialog = None
+    export_funcs = list()

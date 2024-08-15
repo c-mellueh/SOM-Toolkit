@@ -39,8 +39,11 @@ def add_object_filter_widget(object_filter_compare: Type[tool.ObjectFilterCompar
                              compare_window: Type[tool.CompareWindow]):
     compare_window.add_tab("Objekt Filter", object_filter_compare.get_widget,
                            lambda p0, p1: init_compare_object_filter(p0, p1, object_filter_compare, attribute_compare),
-                           object_filter_compare)
+                           object_filter_compare, lambda file: export_filter_differences(file, object_filter_compare))
 
+
+def export_filter_differences(file, object_filter_compare: Type[tool.ObjectFilterCompare]):
+    pass
 
 def accept_changes(objectfilter_tool: Type[ObjectFilter]):
     objectfilter_tool.update_pset_data()

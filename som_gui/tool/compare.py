@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from PySide6.QtGui import QBrush, QPalette, QColor, QIcon
 from PySide6.QtCore import QModelIndex
@@ -541,6 +541,59 @@ class AttributeCompare(som_gui.core.tool.Compare):
     def get_value_table(cls, widget: ui.AttributeWidget):
         return widget.widget.table_widget_values
 
+    @classmethod
+    def export_object_differences(cls, file):
+        project0 = cls.get_project(0)
+
+        object_dict = cls.get_object_dict(0)
+        for obj0 in project0.get_all_objects():
+            obj1 = object_dict[obj0]
+            if cls.are_objects_identical(obj0, obj1):
+                continue
+            file.write(f"\n{obj0.name} ({obj0.ident_value}):\n")
+            pset_list = cls.get_properties().pset_lists.get(obj0)
+            cls.export_pset_differences(file, pset_list)
+
+    @classmethod
+    def export_pset_differences(cls, file, pset_list):
+        for pset0, pset1 in pset_list:
+            if cls.are_property_sets_identical(pset0, pset1):
+                continue
+            if pset0 and not pset1:
+                file.write(f"   PropertySet '{pset0.name}' wurde entfernt.\n")
+                continue
+            elif pset1 and not pset0:
+                file.write(f"   PropertySet '{pset1.name}' wurde hinzugefügt.\n")
+                continue
+            file.write(f"   PropertySet '{pset0.name}':\n")
+
+            attribute_list = cls.get_properties().attributes_lists[pset0]
+            cls.export_attribute_differences(file, attribute_list)
+
+    @classmethod
+    def export_attribute_differences(cls, file, attribute_list):
+        for attrib0, attrib1 in attribute_list:
+            if cls.are_attributes_identical(attrib0, attrib1):
+                continue
+            if attrib0 and not attrib1:
+                file.write(f"      Attribut '{attrib0.name}' wurde entfernt.\n")
+                continue
+            elif attrib1 and not attrib0:
+                file.write(f"      Attribut '{attrib1.name}' wurde hinzugefügt.\n")
+                continue
+
+            if attrib0.name != attrib1.name:
+                file.write(f"      Attribut '{attrib0.name} wurde umbenannt zu '{attrib1.name}'\n")
+            if attrib0.value != attrib1.value:
+                file.write(
+                    f"      Attribut '{attrib0.name}' Werte wurden geändert von '{attrib0.value}' zu '{attrib1.value}'\n")
+            if attrib0.data_type != attrib1.data_type:
+                file.write(
+                    f"      Attribut '{attrib0.name}' Datentyp wurde geändert von '{attrib0.data_type}' zu '{attrib1.data_type}'\n")
+            if attrib0.value_type != attrib1.value_type:
+                file.write(
+                    f"      Attribut '{attrib0.name}' Wertart wurde geändert von '{attrib0.value_type}' zu '{attrib1.value_type}'\n")
+
 
 class CompareWindow(som_gui.core.tool.CompareWindow):
     @classmethod
@@ -548,12 +601,22 @@ class CompareWindow(som_gui.core.tool.CompareWindow):
         return som_gui.CompareWindowProperties
 
     @classmethod
-    def add_tab(cls, name: str, widget, init_func, _tool):
+    def connect_triggers(cls):
+        window = cls.get_window()
+        window.widget.button_download.clicked.connect(trigger.download_clicked)
+
+    @classmethod
+    def add_tab(cls, name: str, widget, init_func, _tool, export_func):
         prop = cls.get_properties()
         prop.names.append(name)
         prop.widgets.append(widget)
         prop.init_functions.append(init_func)
         prop.tools.append(_tool)
+        prop.export_funcs.append(export_func)
+
+    @classmethod
+    def get_export_functions(cls) -> list[Callable]:
+        return cls.get_properties().export_funcs
 
     @classmethod
     def create_window(cls):

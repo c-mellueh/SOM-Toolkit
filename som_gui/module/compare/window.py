@@ -16,14 +16,15 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
-                               QSizePolicy, QTabWidget, QVBoxLayout, QWidget)
+                               QHBoxLayout, QPushButton, QSizePolicy, QTabWidget,
+                               QVBoxLayout, QWidget)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
         Dialog.setWindowModality(Qt.WindowModal)
-        Dialog.resize(702, 421)
+        Dialog.resize(1245, 787)
         self.verticalLayout = QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.tabWidget = QTabWidget(Dialog)
@@ -34,12 +35,22 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addWidget(self.tabWidget)
 
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.button_download = QPushButton(Dialog)
+        self.button_download.setObjectName(u"button_download")
+        self.button_download.setMaximumSize(QSize(24, 16777215))
+
+        self.horizontalLayout.addWidget(self.button_download)
+
         self.buttonBox = QDialogButtonBox(Dialog)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Ok)
 
-        self.verticalLayout.addWidget(self.buttonBox)
+        self.horizontalLayout.addWidget(self.buttonBox)
+
+        self.verticalLayout.addLayout(self.horizontalLayout)
 
 
         self.retranslateUi(Dialog)
@@ -54,5 +65,6 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
+        self.button_download.setText(QCoreApplication.translate("Dialog", u"PushButton", None))
     # retranslateUi
 

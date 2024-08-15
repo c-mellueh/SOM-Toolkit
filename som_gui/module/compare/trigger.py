@@ -37,3 +37,7 @@ def pset_tree_selection_changed(widget):
 
 def draw_branches(tree, painter, rect, index):
     return core.draw_tree_branch(tree, painter, rect, index, tool.AttributeCompare)
+
+
+def download_clicked():
+    core.download_changelog(tool.CompareWindow, tool.Popups, tool.Settings)
