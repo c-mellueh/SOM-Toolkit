@@ -1,0 +1,107 @@
+var None = null
+var id = desiteThis.ID()
+var isContainer = desiteAPI.getPropertyValue(id,'cpIsContainer','xs:boolean');
+var isComposite = desiteAPI.getPropertyValue(id,'cpIsComposite','xs:boolean');
+var objectName = desiteAPI.getPropertyValue(id,"ifcTypeObjectName","xs:string");
+var valueIfcType = desiteAPI.getPropertyValue(id,'ifcType','xs:string');
+
+if (isContainer == true && isComposite == false) {
+    desiteResult.setCheckState('ignored');
+    desiteResult.addMessage('Container was ignored.');
+}else{
+    //-------------------------------------------------------------------------------------------
+    //-----------------------------------Attributpruefung----------------------------------------
+    //-------------------------------------------------------------------------------------------
+    var pset_dict = get_property_set_dict(id);
+    var checkfailed = 0;
+    var attrib_count =0;
+    var object_not_checked = false;
+
+var ident_value = desiteAPI.getPropertyValue(id,"{{main_pset}}:{{main_attrib}}","xs:string");
+switch(ident_value){
+{% for obj in object_dict %}
+case "{{ obj.ident_value}}":
+{% set pset_dict = object_dict[obj] %}
+
+      {%for pset in pset_dict%}
+        {% set attribute_list = pset_dict[pset]%}
+        {%if pset.name ==ignore_pset%}
+        var propertySetName = '';
+        {%else%}
+    var propertySetName = '{{pset.name}}';
+    if(check_property_set(pset_dict,propertySetName)) {
+        {%endif-%}
+        {%for attribute in attribute_list%}
+
+        attributeName= '{{attribute.name}}';
+        returnFormat= '{{xs_dict[attribute.data_type]}}';
+        existingData = pset_dict[propertySetName][attributeName]
+        {%if attribute.value_type == constants.LIST%}
+        var list = {{attribute.value}};
+        {%if attribute.value ==[]%}
+        //Kontrolliert ob Attribut "{{attribute.property_set.name}}:{{attribute.name}}" existiert
+        checkfailed +=check_exist(attributeName, propertySetName, returnFormat, existingData)
+        {%else%}
+        //Kontrolliert ob Attribut "{{attribute.property_set.name}}:{{attribute.name}}" einen dieser Werte entspricht: {{attribute.value}}
+        checkfailed +=check_for_value(attributeName, propertySetName, returnFormat, list, existingData);
+        {%endif-%}
+        {%-elif attribute.value_type == constants.RANGE %}
+        range = {{attribute.value}};
+        //Kontrolliert ob Attribut "{{attribute.property_set.name}}:{{attribute.name}}" einen in einem der folgenden Wertebereiche liegt: {{attribute.value}}
+        checkfailed+= check_range(attributeName, propertySetName, returnFormat, range, existingData);
+        {%elif attribute.value_type == constants.FORMAT %}
+        format = [
+        {%-for value in attribute.value -%}
+        {%-if not loop.index==1-%} ,'{{value.replace('\\','\\\\')}}'
+        {%-else-%}
+        '{{value.replace('\\','\\\\')}}'
+        {%-endif-%}
+        {%-endfor-%}]
+        //Kontrolliert ob Attribut "{{attribute.property_set.name}}:{{attribute.name}}" einen der folgenden RegExp entspricht: {{attribute.value}}
+        checkfailed +=check_format(attributeName, propertySetName, returnFormat, format, existingData);
+        {%-endif%}
+        attrib_count+=1;
+        {%endfor%}
+    }
+    else {checkfailed+= {{ pset.attributes.__len__() }};} //Wenn das PropertySet "{{pset.name}}" nicht existiert werden alle fehlenden Attribut Aufaddiert
+
+        {% endfor %}
+
+    break;
+{% endfor %}
+default:
+    object_not_checked = true;
+}
+
+    if (object_not_checked == true){
+        desiteResult.setCheckState('ignored');
+
+    }
+    else{
+
+    //-------------------------------------------------------------------------------------------
+    //--------------------------------------Auswertung-------------------------------------------
+    //-------------------------------------------------------------------------------------------
+    var check_status = "Undefined"
+    if (checkfailed == 0) {
+    desiteResult.setCheckState('passed'); check_status = "Passed"
+    }
+
+
+    if (attrib_count == checkfailed) {
+    desiteResult.setCheckState('failed');
+    check_status = "Failed"
+    desiteResult.addMessage('Keine der geforderten Eigenschaften vorhanden!');
+    }
+
+    if (checkfailed < attrib_count && checkfailed != 0) {
+    desiteResult.setCheckState('warning');
+    check_status = "Warning";
+    }
+
+    desiteAPI.setPropertyValue( id , "Check_State" , "xs:string", check_status);
+    desiteAPI.setPropertyValue(id, "zu_pruefende_eigenschaften","xs:int",attrib_count);
+    desiteAPI.setPropertyValue(id, "fehlerhafte_eigenschaften","xs:int",checkfailed);
+
+    }
+}

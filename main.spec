@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
-added_files = [('C:/Users/ChristophMellueh/AppData/Local/miniconda3/envs/SOM-Toolkit/Lib/site-packages/SOMcreator','SOMcreator'),
+added_files = [('SOMcreator','SOMcreator'),
                ('C:/Users/ChristophMellueh/AppData/Local/miniconda3/envs/SOM-Toolkit/Lib/site-packages/ifcopenshell/express','ifcopenshell/express'),
                ('som_gui/core','som_gui/core'),
                ('som_gui/tool','som_gui/tool'),
