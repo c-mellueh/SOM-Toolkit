@@ -776,7 +776,7 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         project_0 = cls.get_project(0)
         object_dict = attribute_compare.get_object_dict(0)
         matches = cls.get_match_list()
-        for obj0 in project_0.get_all_objects():
+        for obj0 in sorted(project_0.get_all_objects(), key=lambda x: x.name):
             obj1 = object_dict[obj0]
             if obj1 is None:
                 continue
@@ -797,7 +797,9 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         matches = cls.get_match_list()
         if pset_list is None:
             return
-        for p0, p1 in pset_list:
+        for p0, p1 in sorted(pset_list, key=lambda x: x[0].name if x[0] is not None else "aaa"):
+            if p0 is None or p1 is None:
+                continue
             if cls.are_psets_identical(p0, p1):
                 continue
             file.write(f"   PropertySet '{p0.name}':\n")
@@ -817,7 +819,9 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
 
         if attribute_list is None:
             return
-        for a0, a1 in attribute_list:
+        for a0, a1 in sorted(attribute_list, key=lambda x: x[0].name if x[0] is not None else "aaa"):
+            if a0 is None or a1 is None:
+                continue
             if cls.are_attributes_identical(a0, a1):
                 continue
             filter_list = cls.get_filter_list(a0, a1)

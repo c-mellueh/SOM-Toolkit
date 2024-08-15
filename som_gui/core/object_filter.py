@@ -43,7 +43,6 @@ def add_object_filter_widget(object_filter_compare: Type[tool.ObjectFilterCompar
                            lambda file: export_filter_differences(file, object_filter_compare, attribute_compare))
 
 
-
 def accept_changes(objectfilter_tool: Type[ObjectFilter]):
     objectfilter_tool.update_pset_data()
     objectfilter_tool.update_attribute_data()
@@ -184,6 +183,6 @@ def filter_tab_object_tree_selection_changed(widget: compare_ui.AttributeWidget,
 
 def export_filter_differences(file, object_filter_compare: Type[tool.ObjectFilterCompare],
                               attribute_compare: Type[tool.AttributeCompare]):
-    file.write("\nOBJECT FILTER\n\n")
+    file.write(f"\n{'OBJECT FILTER':46s}\n\n")
     object_filter_compare.export_object_filter_differences(file, attribute_compare)
     file.write("\n")

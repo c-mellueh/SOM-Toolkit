@@ -550,7 +550,7 @@ class AttributeCompare(som_gui.core.tool.Compare):
         project0 = cls.get_project(0)
 
         object_dict = cls.get_object_dict(0)
-        for obj0 in project0.get_all_objects():
+        for obj0 in sorted(project0.get_all_objects(), key=lambda x: x.name):
             obj1 = object_dict[obj0]
             if cls.are_objects_identical(obj0, obj1):
                 continue
@@ -560,7 +560,7 @@ class AttributeCompare(som_gui.core.tool.Compare):
 
     @classmethod
     def export_pset_differences(cls, file, pset_list):
-        for pset0, pset1 in pset_list:
+        for pset0, pset1 in sorted(pset_list, key=lambda x: x[0].name if x[0] is not None else "aaa"):
             if cls.are_property_sets_identical(pset0, pset1):
                 continue
             if pset0 and not pset1:
@@ -579,7 +579,7 @@ class AttributeCompare(som_gui.core.tool.Compare):
 
     @classmethod
     def export_attribute_differences(cls, file, attribute_list):
-        for attrib0, attrib1 in attribute_list:
+        for attrib0, attrib1 in sorted(attribute_list, key=lambda x: x[0].name if x[0] is not None else "aaa"):
             if cls.are_attributes_identical(attrib0, attrib1):
                 continue
             if attrib0 and not attrib1:

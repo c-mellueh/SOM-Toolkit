@@ -137,10 +137,10 @@ def export_attribute_differences(file, attribute_compare: Type[tool.AttributeCom
     objects1: list[SOMcreator.Object] = missing_objects[1]
     file.write("\nATTRIBUTE COMPARISON\n\n")
 
-    for obj in objects0:
+    for obj in sorted(objects0, key=lambda x: x.name):
         file.write(f"{obj.name} ({obj.ident_value}) was deleted\n")
 
-    for obj in objects1:
+    for obj in sorted(objects1, key=lambda x: x.name):
         file.write(f"{obj.name} ({obj.ident_value}) was added\n")
 
     if objects0 or objects1:
