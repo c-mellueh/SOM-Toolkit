@@ -34,6 +34,7 @@ class AttributeWidget(QWidget):
         self.widget.tree_widget_object.setColumnCount(2)
         self.widget.tree_widget_propertysets.setColumnCount(2)
         self.widget.table_widget_values.setColumnCount(2)
+        self.widget.table_infos.setColumnCount(3)
 
 
 class ProjectSelectDialog(QDialog):

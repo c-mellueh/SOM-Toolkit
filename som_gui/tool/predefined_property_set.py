@@ -238,67 +238,6 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
             lambda: som_gui.module.predefined_property_set.trigger.compare_psetselection_changed(widget))
 
     @classmethod
-    def create_value_dict(cls, pset_list: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]):
-        value_dict = dict()
-        for pset0, pset1 in pset_list:
-            result_list = tool.AttributeCompare.create_child_matchup(pset0, pset1)
-            if pset0 is not None:
-                value_dict[pset0] = result_list
-            if pset1 is not None:
-                value_dict[pset1] = result_list
-        cls.get_properties().value_dict = value_dict
-
-    @classmethod
-    def fill_pset_info(cls):
-        pset_tree = tool.AttributeCompare.get_pset_tree(cls.get_widget())
-        item = tool.AttributeCompare.get_selected_item(pset_tree)
-        table = cls.get_info_table(cls.get_widget())
-
-        pset0, pset1 = tool.AttributeCompare.get_entities_from_item(item)
-
-        item0 = QTableWidgetItem()
-        item0.setData(Qt.ItemDataRole.EditRole, len(list(pset0.children)))
-        item1 = QTableWidgetItem()
-        item1.setData(Qt.ItemDataRole.EditRole, len(list(pset1.children)))
-
-        table.insertRow(table.rowCount())
-        table.setItem(table.rowCount() - 1, 0, QTableWidgetItem("Child Count"))
-        table.setItem(table.rowCount() - 1, 1, item0)
-        table.setItem(table.rowCount() - 1, 2, item1)
-
-    @classmethod
-    def fill_attribute_info(cls):
-        pset_tree = tool.AttributeCompare.get_pset_tree(cls.get_widget())
-        item = tool.AttributeCompare.get_selected_item(pset_tree)
-        table = cls.get_info_table(cls.get_widget())
-        attributes = tool.AttributeCompare.get_entities_from_item(item)
-        info_list = list()
-        info_list.append(("Vererbt Werte", lambda a: getattr(a, "child_inherits_values")))
-        info_list.append(("Datentyp", lambda a: getattr(a, "data_type")))
-        info_list.append(("Werttyp", lambda a: getattr(a, "value_type")))
-
-        for text, getter_func in info_list:
-            table.insertRow(table.rowCount())
-            table.setItem(table.rowCount() - 1, 0, QTableWidgetItem(text))
-            for index, attrib in enumerate(attributes):
-                item = QTableWidgetItem()
-                item.setData(Qt.ItemDataRole.EditRole, getter_func(attrib))
-                table.setItem(table.rowCount() - 1, 1 + index, item)
-
-    @classmethod
-    def fill_value_table_pset(cls):
-        pset_tree = tool.AttributeCompare.get_pset_tree(cls.get_widget())
-        item = tool.AttributeCompare.get_selected_item(pset_tree)
-        table = tool.AttributeCompare.get_value_table(cls.get_widget())
-        tool.AttributeCompare.clear_table(table)
-        pset0, pset1 = tool.AttributeCompare.get_entities_from_item(item)
-        for property_sets in cls.get_value_list(pset0 or pset1):
-            table.insertRow(table.rowCount())
-            for index, p in enumerate(property_sets):
-                item = QTableWidgetItem(p.object.name if p else "")
-                table.setItem(table.rowCount() - 1, index, item)
-
-    @classmethod
     def get_widget(cls):
         if cls.get_properties().widget is None:
             cls.get_properties().widget = som_gui.module.predefined_property_set.ui.CompareWidget()
@@ -319,11 +258,3 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
     @classmethod
     def get_pset_lists(cls) -> list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]:
         return cls.get_properties().pset_lists
-
-    @classmethod
-    def get_info_table(cls, widget: ui.CompareWidget):
-        return widget.widget.table_infos
-
-    @classmethod
-    def get_value_list(cls, pset: SOMcreator.PropertySet) -> list[tuple[SOMcreator.PropertySet]]:
-        return cls.get_properties().value_dict.get(pset)
