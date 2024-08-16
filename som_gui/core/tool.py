@@ -93,7 +93,7 @@ class AttributeCompare:
 
     def find_existing_parent_item(self, obj): pass
 
-    def find_matching_entity(self, entity_0, uuid_dict1, name_dict1): pass
+    def find_matching_entity(self, entity_0, uuid_dict1, name_dict1, name_override=None): pass
 
     def find_matching_object(self, obj, index): pass
 

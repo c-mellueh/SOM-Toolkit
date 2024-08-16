@@ -20,6 +20,8 @@ DELETE_TEXT = "was deleted."
 ADD_TEXT = "was added."
 RENAME_TEXT = "was renamed to"
 CHANGED_FROM = "was changed from"
+ADD_CHILD = "added child"
+REMOVE_CHILD = "removed child"
 style_list = [
     [None, [0, 1]],
     ["#897e00", [0, 1]],  # Yellow
@@ -395,7 +397,6 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                 if (attribute0 and attribute1) or add_missing:
                     item.addChild(attribute_item)
 
-
     @classmethod
     def fill_value_table(cls, table: QTableWidget, attribute: SOMcreator.Attribute):
         cls.clear_table(table)
@@ -428,9 +429,13 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         children1 = entity1.get_all_children()
         missing = list(children1)
         uuid_dict = cls.generate_uuid_dict(children1)
+        name_dict = {cls.get_name_path(e): e for e in children1}
         result_list = list()
         for pset in children0:
-            match = cls.find_matching_entity(pset, uuid_dict, [])
+            name_path = cls.get_name_path(pset)
+            match = cls.find_matching_entity(pset, uuid_dict, {})
+            if match is None:
+                match = name_dict.get(name_path)
             if match is not None:
                 missing.remove(match)
             result_list.append((pset, match))
@@ -442,7 +447,6 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def children_are_identical(cls, entity0, entity1):
         child_matchup = cls.create_child_matchup(entity0, entity1)
         return all(None not in x for x in child_matchup)
-
 
     @classmethod
     def are_objects_identical(cls, object0: SOMcreator.Object, object1: SOMcreator.Object, check_pset=True) -> bool:
@@ -514,7 +518,6 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             for col in range(column_count):
                 table.item(row, col).setBackground(brush)
 
-
     @classmethod
     def style_parent_item(cls, item: QTreeWidgetItem, style: int) -> None:
         """
@@ -577,7 +580,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         Writes differences between Names of entities to File
         """
         if entity0.name != entity1.name:
-            file.write(f"{'   ' * indent}{type_name} '{entity0.name} '{RENAME_TEXT} '{entity1.name}'\n")
+            file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {RENAME_TEXT} '{entity1.name}'\n")
             return False
         return True
 
@@ -593,10 +596,49 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             change_list.append(['Datatype', attrib0.data_type, attrib1.data_type])
         if attrib0.value_type != attrib1.value_type:
             change_list.append(['Datatype', attrib0.value_type, attrib1.value_type])
-
+        if attrib0.child_inherits_values != attrib1.child_inherits_values:
+            change_list.append(['Child Inheritance', attrib0.child_inherits_values, attrib1.child_inherits_values])
         for t, v0, v1 in change_list:
             file.write(f"{'   ' * indent}{type_name} '{attrib0.name}' {t} {CHANGED_FROM} '{v0}' to '{v1}'\n")
         return bool(change_list)
+
+    @classmethod
+    def get_name_path(cls, entity: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute) -> str:
+        text = entity.name
+        if isinstance(entity, SOMcreator.Object):
+            return text
+        if isinstance(entity, SOMcreator.PropertySet):
+            obj = entity.object
+            if obj is None:
+                return text
+            return f"{obj.name}:{text}"
+        if isinstance(entity, SOMcreator.Attribute):
+            pset = entity.property_set
+            if pset is None:
+                return text
+            text = f"{pset.name}:{text}"
+            obj = pset.object
+            if obj is None:
+                return text
+            return f"{obj.name}:{text}"
+        else:
+            return ""
+
+    @classmethod
+    def export_child_check(cls, file: TextIO, type_name, entity0, entity1, indent: int) -> bool:
+        child_matchup = cls.create_child_matchup(entity0, entity1)
+        identical = True
+
+        for c0, c1 in child_matchup:  # ALT,NEU
+            if c0 is None:
+                cn = cls.get_name_path(c1)
+                file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {ADD_CHILD} '{cn}'\n")
+                identical = False
+            elif c1 is None:
+                cn = cls.get_name_path(c0)
+                file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {REMOVE_CHILD} '{cn}'\n")
+                identical = False
+        return identical
 
     @classmethod
     def export_object_differences(cls, file: TextIO):
@@ -612,18 +654,20 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def export_pset_differences(cls, file: TextIO,
-                                pset_list: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]):
+                                pset_list: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]],
+                                lb: bool = False):
         ps = "PropertySet"
         for pset0, pset1 in sorted(pset_list, key=lambda x: x[0].name if x[0] is not None else "aaa"):
             if cls.are_property_sets_identical(pset0, pset1):
                 continue
-
+            if lb:
+                file.write("\n")
             both_exist = cls.export_existance_check(file, ps, pset0, pset1, 1)
             if not both_exist:
                 continue
-
-            cls.export_name_check(file, ps, pset0, pset1, 2)
             file.write(f"   PropertySet '{pset0.name}':\n")
+            cls.export_name_check(file, ps, pset0, pset1, 2)
+            cls.export_child_check(file, ps, pset0, pset1, 2)
 
             attribute_list = cls.get_properties().attributes_lists[pset0]
             cls.export_attribute_differences(file, attribute_list)
@@ -639,6 +683,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             both_exist = cls.export_existance_check(file, at, attrib0, attrib1, 2)
             if not both_exist:
                 continue
+            cls.export_child_check(file, at, attrib0, attrib1, 2)
             cls.export_name_check(file, at, attrib0, attrib1, 2)
             cls.export_attribute_check(file, at, attrib0, attrib1, 2)
 

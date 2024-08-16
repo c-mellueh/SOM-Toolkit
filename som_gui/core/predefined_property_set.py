@@ -166,4 +166,5 @@ def init_compare_window(project0: SOMcreator.Project, project1: SOMcreator.Proje
 
 def export_compare(file: TextIO, pset_compare: Type[tool.PredefinedPropertySetCompare],
                    attribute_compare: Type[tool.AttributeCompare]):
-    pass
+    file.write("\nPREDEFINED PROPERTYSETS\n\n")
+    attribute_compare.export_pset_differences(file, pset_compare.get_pset_lists(), True)
