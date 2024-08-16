@@ -192,8 +192,8 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def compare_attributes(cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute):
-        values0 = set(attribute0.value) if attribute0 is not None else set()
-        values1 = set(attribute1.value) if attribute1 is not None else set()
+        values0 = set(attribute0.get_own_values()) if attribute0 is not None else set()
+        values1 = set(attribute1.get_own_values()) if attribute1 is not None else set()
 
         unique0 = values0.difference(values1)
         main = values0.intersection(values1)
@@ -391,7 +391,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def are_attributes_identical(cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute) -> bool:
         if attribute0 is None or attribute1 is None:
             return False
-        values_are_identical = set(attribute0.value) == set(attribute1.value)
+        values_are_identical = set(attribute0.get_own_values()) == set(attribute1.get_own_values())
         datatypes_are_identical = attribute0.data_type == attribute1.data_type
         valuetypes_are_identical = attribute0.value_type == attribute1.value_type
         names_are_identical = attribute0.name == attribute1.name
@@ -470,8 +470,8 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         Writes differences between Attributes to File
         """
         change_list = list()
-        if attrib0.value != attrib1.value:
-            change_list.append(['Values', attrib0.value, attrib1.value])
+        if attrib0.get_own_values() != attrib1.get_own_values():
+            change_list.append(['Values', attrib0.get_own_values(), attrib1.get_own_values()])
         if attrib0.data_type != attrib1.data_type:
             change_list.append(['Datatype', attrib0.data_type, attrib1.data_type])
         if attrib0.value_type != attrib1.value_type:
