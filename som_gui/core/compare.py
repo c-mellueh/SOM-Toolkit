@@ -121,22 +121,24 @@ def object_tree_selection_changed(widget: ui.AttributeWidget,
     attribute_compare.add_attributes_to_pset_tree(tree, True)
     root = tree.invisibleRootItem()
 
+
     for child_index in range(root.childCount()):
         attribute_compare.style_tree_item(root.child(child_index))
 
 
 def pset_tree_selection_changed(widget: ui.AttributeWidget, attribute_compare: Type[tool.AttributeCompare]):
-    entity = attribute_compare.get_selected_entity(attribute_compare.get_pset_tree(widget))
-    attribute_compare.fill_value_table(attribute_compare.get_value_table(widget), entity)
+    item = attribute_compare.get_selected_item(attribute_compare.get_pset_tree(widget))
+    entity0, entity1 = attribute_compare.get_entities_from_item(item)
     attribute_compare.style_table(attribute_compare.get_value_table(widget))
     table = attribute_compare.get_info_table(widget)
     attribute_compare.clear_table(table)
 
-    if isinstance(entity, SOMcreator.PropertySet):
+    if isinstance(entity0 or entity1, SOMcreator.PropertySet):
         attribute_compare.fill_value_table_pset(widget)
-        attribute_compare.fill_pset_info(widget)
+        attribute_compare.fill_table(table, attribute_compare.get_pset_info_list(), (entity0, entity1))
     else:
-        attribute_compare.fill_attribute_info(widget)
+        attribute_compare.fill_value_table(attribute_compare.get_value_table(widget), entity0 or entity1)
+        attribute_compare.fill_table(table, attribute_compare.get_attribute_info_list(), (entity0, entity1))
 
     attribute_compare.style_table(table, 1)
     attribute_compare.style_table(attribute_compare.get_value_table(widget))

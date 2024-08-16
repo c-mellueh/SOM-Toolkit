@@ -1,6 +1,7 @@
 from __future__ import annotations
 import som_gui.core.tool
 import som_gui.module.predefined_property_set
+import som_gui.module.compare
 import SOMcreator
 from som_gui.module.project.constants import CLASS_REFERENCE
 from PySide6.QtCore import Qt
@@ -235,7 +236,7 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
     @classmethod
     def create_tree_selection_trigger(cls, widget: ui.CompareWidget):
         widget.widget.tree_widget_propertysets.itemSelectionChanged.connect(
-            lambda: som_gui.module.predefined_property_set.trigger.compare_psetselection_changed(widget))
+            lambda: som_gui.module.compare.trigger.pset_tree_selection_changed(widget))
 
     @classmethod
     def get_widget(cls):

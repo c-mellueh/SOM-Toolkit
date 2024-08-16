@@ -164,11 +164,6 @@ def init_compare_window(project0: SOMcreator.Project, project1: SOMcreator.Proje
         attribute_compare.style_tree_item(root.child(child_index))
 
 
-def compare_pset_selection_changed(widget, pset_compare: Type[tool.PredefinedPropertySetCompare],
-                                   attribute_compare: Type[tool.AttributeCompare]):
-    pass
-
-
 def export_compare(file: TextIO, pset_compare: Type[tool.PredefinedPropertySetCompare],
                    attribute_compare: Type[tool.AttributeCompare]):
     pass

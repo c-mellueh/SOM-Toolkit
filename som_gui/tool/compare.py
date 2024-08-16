@@ -291,7 +291,6 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         table = cls.get_value_table(widget)
         cls.clear_table(table)
         pset0, pset1 = cls.get_entities_from_item(item)
-        print(pset0 or pset1)
         for property_sets in cls.get_value_list(pset0 or pset1):
             table.insertRow(table.rowCount())
             for index, p in enumerate(property_sets):
@@ -299,41 +298,33 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                 table.setItem(table.rowCount() - 1, index, item)
 
     @classmethod
-    def fill_pset_info(cls, widget: ui.AttributeWidget):
-        pset_tree = cls.get_pset_tree(widget)
-        item = cls.get_selected_item(pset_tree)
-        table = cls.get_info_table(widget)
-
-        property_sets = cls.get_entities_from_item(item)
-        table.insertRow(table.rowCount())
-        table.setItem(table.rowCount() - 1, 0, QTableWidgetItem("Child Count"))
-        for index, pset in enumerate(property_sets):
-            item = QTableWidgetItem()
-            data = len(list(pset.children)) if pset else ""
-            item.setData(Qt.ItemDataRole.EditRole, data)
-            table.setItem(table.rowCount() - 1, 1 + index, item)
-
-    @classmethod
-    def fill_attribute_info(cls, widget: ui.AttributeWidget):
-        pset_tree = cls.get_pset_tree(widget)
-        item = cls.get_selected_item(pset_tree)
-        table = cls.get_info_table(widget)
-        attributes = cls.get_entities_from_item(item)
-        info_list = list()
-        info_list.append(("Vererbt Werte", lambda a: getattr(a, "child_inherits_values")))
-        info_list.append(("Datentyp", lambda a: getattr(a, "data_type")))
-        info_list.append(("Werttyp", lambda a: getattr(a, "value_type")))
-
+    def fill_table(cls, table: QTableWidget, info_list, entities):
         for text, getter_func in info_list:
             table.insertRow(table.rowCount())
             table.setItem(table.rowCount() - 1, 0, QTableWidgetItem(text))
-            for index, attrib in enumerate(attributes):
+            for index, entity in enumerate(entities):
                 item = QTableWidgetItem()
-                text = getter_func(attrib) if attrib is not None else ""
+                text = getter_func(entity) if entity is not None else ""
 
                 item.setData(Qt.ItemDataRole.EditRole, text)
                 table.setItem(table.rowCount() - 1, 1 + index, item)
-                
+
+    @classmethod
+    def get_pset_info_list(cls):
+        info_list = list()
+        info_list.append(("Name", lambda p: getattr(p, "name")))
+        info_list.append(("Child Count", lambda p: len(list(p.children)) if p else ""))
+        return info_list
+
+    @classmethod
+    def get_attribute_info_list(cls):
+        info_list = list()
+        info_list.append(("Name", lambda a: getattr(a, "name")))
+        info_list.append(("Vererbt Werte", lambda a: getattr(a, "child_inherits_values")))
+        info_list.append(("Datentyp", lambda a: getattr(a, "data_type")))
+        info_list.append(("Werttyp", lambda a: getattr(a, "value_type")))
+        return info_list
+
     @classmethod
     def find_existing_parent_item(cls, obj: SOMcreator.Object) -> QTreeWidgetItem | None:
         parent = obj.parent
@@ -404,11 +395,6 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                 if (attribute0 and attribute1) or add_missing:
                     item.addChild(attribute_item)
 
-    @classmethod
-    def add_attributes_to_psetitem(cls, item: QTreeWidgetItem, add_missing: bool) -> None:
-        pset0, pset1 = cls.get_entities_from_item(item)
-        attribute_list = cls.get_attribute_list(pset0) or cls.get_attribute_list(pset1)
-
 
     @classmethod
     def fill_value_table(cls, table: QTableWidget, attribute: SOMcreator.Attribute):
@@ -446,7 +432,6 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         for pset in children0:
             match = cls.find_matching_entity(pset, uuid_dict, [])
             if match is not None:
-                print(match)
                 missing.remove(match)
             result_list.append((pset, match))
         for pset in missing:
@@ -556,7 +541,6 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                 compare_func = cls.are_attributes_identical
 
             style = 0 if compare_func(entity0, entity1) else 1
-        print(f"{entity0} {entity1} -> {style}")
         cls.set_tree_row_color(item, style)
         if style > 0:
             parent = item.parent()
@@ -816,6 +800,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def get_info_table(cls, widget: ui.AttributeWidget):
         return widget.widget.table_infos
+
 
 class CompareWindow(som_gui.core.tool.CompareWindow):
     @classmethod
