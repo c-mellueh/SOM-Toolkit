@@ -360,6 +360,8 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def fill_value_table(cls, table: QTableWidget, attribute: SOMcreator.Attribute):
         cls.clear_table(table)
+        if attribute is None:
+            return
         if cls.get_value_list(attribute) is None:
             return
 
@@ -378,7 +380,34 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             table.setItem(table.rowCount() - 1, 1, item1)
 
     @classmethod
-    def are_objects_identical(cls, object0: SOMcreator.Object, object1: SOMcreator.Object) -> bool:
+    def create_child_matchup(cls, entity0, entity1):
+        if entity0 is None:
+            return [(None, p) for p in entity1.get_all_children()]
+        if entity1 is None:
+            return [(p, None) for p in entity0.get_all_children()]
+        children0 = entity0.get_all_children()
+        children1 = entity1.get_all_children()
+        missing = list(children1)
+        uuid_dict = tool.AttributeCompare.generate_uuid_dict(children1)
+        result_list = list()
+        for pset in children0:
+            match = tool.AttributeCompare.find_matching_entity(pset, uuid_dict, [])
+            if match is not None:
+                print(match)
+                missing.remove(match)
+            result_list.append((pset, match))
+        for pset in missing:
+            result_list.append((None, pset))
+        return result_list
+
+    @classmethod
+    def children_are_identical(cls, entity0, entity1):
+        child_matchup = cls.create_child_matchup(entity0, entity1)
+        return all(None not in x for x in child_matchup)
+
+
+    @classmethod
+    def are_objects_identical(cls, object0: SOMcreator.Object, object1: SOMcreator.Object, check_pset=True) -> bool:
         if object0 is None or object1 is None:
             return False
         names_are_identical = object0.name == object1.name
@@ -386,21 +415,31 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         property_set_list = cls.get_pset_list(object0)
         if not property_set_list:
             return False
-        psets_are_identical = all(cls.are_property_sets_identical(p0, p1) for p0, p1 in property_set_list)
+
+        if check_pset:
+            psets_are_identical = all(cls.are_property_sets_identical(p0, p1) for p0, p1 in property_set_list)
+        else:
+            psets_are_identical = True
         return all((names_are_identical, identifiers_are_identical, psets_are_identical))
 
     @classmethod
     def are_property_sets_identical(cls, property_set0: SOMcreator.PropertySet,
-                                    property_set1: SOMcreator.PropertySet) -> bool:
+                                    property_set1: SOMcreator.PropertySetm, check_attributes=True) -> bool:
         if property_set0 is None or property_set1 is None:
             return False
         attribute_list = cls.get_attribute_list(property_set0)
         if not attribute_list:
             return False
 
-        names_are_identical = property_set0.name == property_set1.name
-        attributes_are_identical = all(cls.are_attributes_identical(a0, a1) for a0, a1 in attribute_list)
-        return all((names_are_identical, attributes_are_identical))
+        checks = list()
+
+        checks.append(property_set0.name == property_set1.name)  # names_are_identical
+
+        if check_attributes:
+            checks.append(
+                all(cls.are_attributes_identical(a0, a1) for a0, a1 in attribute_list))  # are attributes identical
+        checks.append(cls.children_are_identical(property_set0, property_set1))
+        return all(checks)
 
     @classmethod
     def are_attributes_identical(cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute) -> bool:
@@ -414,6 +453,29 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         checks.append(attribute0.name == attribute1.name)  # names_are_identical
         checks.append(attribute0.child_inherits_values == attribute1.child_inherits_values)  # Inherits Values
         return all(checks)
+
+    @classmethod
+    def style_table(cls, table: QTableWidget, shift=0):
+        column_count = table.columnCount()
+        for row in range(table.rowCount()):
+            item0 = table.item(row, shift)
+            item1 = table.item(row, shift + 1)
+            t0 = item0.text()
+            t1 = item1.text()
+
+            if t0 and not t1:
+                color = style_list[3][0]
+            elif t1 and not t0:
+                color = style_list[2][0]
+            elif t1 != t0:
+                color = style_list[1][0]
+            else:
+                color = None
+
+            brush = QBrush(QColor(color)) if color is not None else QBrush()
+            for col in range(column_count):
+                table.item(row, col).setBackground(brush)
+
 
     @classmethod
     def style_parent_item(cls, item: QTreeWidgetItem, style: int) -> None:
@@ -436,14 +498,14 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             if isinstance(entity0, SOMcreator.Object):
                 compare_func = cls.are_objects_identical
             elif isinstance(entity0, SOMcreator.PropertySet):
-                compare_func = cls.are_property_sets_identical
+                compare_func = lambda p1, p2: cls.are_property_sets_identical(p1, p2, False)
             else:
                 compare_func = cls.are_attributes_identical
 
             style = 0 if compare_func(entity0, entity1) else 1
-
+        print(f"{entity0} {entity1} -> {style}")
         cls.set_tree_row_color(item, style)
-        if (isinstance(entity0, SOMcreator.Object) or isinstance(entity1, SOMcreator.Object)) and style > 0:
+        if style > 0:
             parent = item.parent()
             index = item.treeWidget().indexFromItem(parent, 0)
             cls.set_branch_color(item.treeWidget(), index, style_list[1][0])
@@ -608,7 +670,6 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def set_branch_color(cls, tree: QTreeWidget, index: QModelIndex, color: str | None):
         model = tree.model()
         model.setData(index, color, CLASS_REFERENCE + 1)
-
         if index.parent().isValid():
             cls.set_branch_color(tree, index.parent(), color)
 
@@ -688,6 +749,8 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def get_entities_from_item(cls, item: QTreeWidgetItem) -> tuple[
         SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute,
         SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute]:
+        if item is None:
+            return None, None
         entity0 = item.data(0, CLASS_REFERENCE)
         entity1 = item.data(1, CLASS_REFERENCE)
         return entity0, entity1

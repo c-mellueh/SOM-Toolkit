@@ -125,7 +125,7 @@ def object_tree_selection_changed(widget: ui.AttributeWidget,
 def pset_tree_selection_changed(widget: ui.AttributeWidget, attribute_compare: Type[tool.AttributeCompare]):
     attribute = attribute_compare.get_selected_entity(attribute_compare.get_pset_tree(widget))
     attribute_compare.fill_value_table(attribute_compare.get_value_table(widget), attribute)
-
+    attribute_compare.style_table(attribute_compare.get_value_table(widget))
 
 def add_attribute_compare_widget(attribute_compare: Type[tool.AttributeCompare],
                                  compare_window: Type[tool.CompareWindow]):

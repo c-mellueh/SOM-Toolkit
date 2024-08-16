@@ -179,6 +179,9 @@ def compare_pset_selection_changed(widget, pset_compare: Type[tool.PredefinedPro
     else:
         pset_compare.fill_attribute_info()
 
+    attribute_compare.style_table(table, 1)
+    attribute_compare.style_table(attribute_compare.get_value_table(widget))
+
 
 def export_compare(file: TextIO, pset_compare: Type[tool.PredefinedPropertySetCompare],
                    attribute_compare: Type[tool.AttributeCompare]):

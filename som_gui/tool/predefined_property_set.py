@@ -5,6 +5,7 @@ import SOMcreator
 from som_gui.module.project.constants import CLASS_REFERENCE
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QListWidget, QListWidgetItem, QTableWidget, QTableWidgetItem
+from PySide6.QtGui import QBrush, QColor
 from som_gui import tool
 
 from typing import TYPE_CHECKING
@@ -240,27 +241,11 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
     def create_value_dict(cls, pset_list: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]):
         value_dict = dict()
         for pset0, pset1 in pset_list:
-            if pset0 is None:
-                value_dict[pset1] = [(None, p) for p in pset1.get_all_attributes()]
-                continue
-            if pset1 is None:
-                value_dict[pset0] = [(p, None) for p in pset0.get_all_attributes()]
-                continue
-            children0 = pset0.get_all_children()
-            children1 = pset1.get_all_children()
-            missing = list(children1)
-            uuid_dict = tool.AttributeCompare.generate_uuid_dict(children1)
-            result_list = list()
-            for pset in children0:
-                match = tool.AttributeCompare.find_matching_entity(pset, uuid_dict, [])
-                if match is not None:
-                    print(match)
-                    missing.remove(match)
-                result_list.append((pset, match))
-            for pset in missing:
-                result_list.append((None, pset))
-            value_dict[pset0] = result_list
-            value_dict[pset1] = result_list
+            result_list = tool.AttributeCompare.create_child_matchup(pset0, pset1)
+            if pset0 is not None:
+                value_dict[pset0] = result_list
+            if pset1 is not None:
+                value_dict[pset1] = result_list
         cls.get_properties().value_dict = value_dict
 
     @classmethod
@@ -312,8 +297,6 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
             for index, p in enumerate(property_sets):
                 item = QTableWidgetItem(p.object.name if p else "")
                 table.setItem(table.rowCount() - 1, index, item)
-
-
 
     @classmethod
     def get_widget(cls):
