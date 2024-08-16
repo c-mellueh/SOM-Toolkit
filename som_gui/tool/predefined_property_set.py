@@ -229,7 +229,10 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
         cls.set_pset_lists(pset_list)
         return pset_list
 
-
+    @classmethod
+    def create_tree_selection_trigger(cls, widget: ui.CompareWidget):
+        widget.widget.tree_widget_propertysets.itemSelectionChanged.connect(
+            lambda: som_gui.module.predefined_property_set.trigger.compare_psetselection_changed(widget))
 
     @classmethod
     def get_widget(cls):
@@ -252,3 +255,7 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
     @classmethod
     def get_pset_lists(cls) -> list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]:
         return cls.get_properties().pset_lists
+
+    @classmethod
+    def get_info_table(cls, widget: ui.CompareWidget):
+        return widget.widget.table_infos

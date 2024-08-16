@@ -143,7 +143,7 @@ class AttributeCompare:
 
     def set_branch_color(self, tree, index, color): pass
 
-    def set_header_labels(self, object_tree, pset_tree, value_table, labels): pass
+    def set_header_labels(self, trees, tables, labels): pass
 
     def set_object_item_relation(self, obj, item): pass
 

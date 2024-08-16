@@ -453,15 +453,11 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                 cls.style_tree_item(item.child(child_index))
 
     @classmethod
-    def set_header_labels(cls, object_tree: QTreeWidget | None, pset_tree: QTreeWidget | None,
-                          value_table: QTableWidget | None,
-                          labels: list[str]):
-        if object_tree is not None:
-            object_tree.setHeaderLabels(labels)
-        if pset_tree is not None:
-            pset_tree.setHeaderLabels(labels)
-        if value_table is not None:
-            value_table.setHorizontalHeaderLabels(labels)
+    def set_header_labels(cls, trees: list[QTreeWidget], tables: list[QTableWidget], labels: list[str]):
+        for tree in trees:
+            tree.setHeaderLabels(labels)
+        for table in tables:
+            table.setHorizontalHeaderLabels(labels)
 
     @classmethod
     def export_existance_check(cls, file: TextIO, type_name: str, entity0, entity1, indent: int) -> bool:

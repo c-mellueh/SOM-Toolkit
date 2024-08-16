@@ -166,7 +166,7 @@ def init_attribute_compare(project0, project1, attribute_compare: Type[tool.Attr
 
     header_labels = [attribute_compare.get_header_name_from_project(project0),
                      attribute_compare.get_header_name_from_project(project1)]
-    attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table, header_labels)
+    attribute_compare.set_header_labels([object_tree_widget, pset_tree], [value_table], header_labels)
     attribute_compare.create_tree_selection_trigger(widget)
 
 

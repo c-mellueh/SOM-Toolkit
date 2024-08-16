@@ -59,3 +59,7 @@ def repaint_window():
 
 def accept():
     core.close_window(tool.PredefinedPropertySet)
+
+
+def compare_psetselection_changed(widget):
+    core.compare_pset_selection_changed(widget, tool.PredefinedPropertySetCompare, tool.AttributeCompare)

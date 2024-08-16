@@ -152,7 +152,7 @@ def init_compare_object_filter(project0: SOMcreator.Project, project1: SOMcreato
     attribute_compare.fill_object_tree(object_tree_widget, add_missing=False)
     header_labels = [attribute_compare.get_header_name_from_project(project0),
                      attribute_compare.get_header_name_from_project(project1)]
-    attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table, header_labels)
+    attribute_compare.set_header_labels([object_tree_widget, pset_tree], [value_table], header_labels)
     object_filter_compare.create_tree_selection_trigger(widget)
     object_filter_compare.find_matching_phases(project0, project1)
     object_filter_compare.find_matching_usecases(project0, project1)
