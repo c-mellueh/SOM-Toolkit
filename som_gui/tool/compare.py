@@ -670,12 +670,16 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return cls.get_properties().object_tree_item_dict.get(obj)
 
     @classmethod
-    def get_selected_entity(cls,
-                            tree: QTreeWidget) -> SOMcreator.PropertySet | SOMcreator.Attribute | SOMcreator.Object | None:
+    def get_selected_item(cls, tree: QTreeWidget):
         selected_items = tree.selectedItems()
         if not selected_items:
             return None
-        item = selected_items[0]
+        return selected_items[0]
+
+    @classmethod
+    def get_selected_entity(cls,
+                            tree: QTreeWidget) -> SOMcreator.PropertySet | SOMcreator.Attribute | SOMcreator.Object | None:
+        item = cls.get_selected_item(tree)
         d0, d1 = cls.get_entities_from_item(item)
         data = d0 or d1
         return data

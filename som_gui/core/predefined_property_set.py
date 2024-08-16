@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import SOMcreator
-
 from som_gui.core import property_set_window as property_set_window_core
 from typing import TextIO, Type, TYPE_CHECKING
 
@@ -140,20 +139,24 @@ def init_compare_window(project0: SOMcreator.Project, project1: SOMcreator.Proje
                         attribute_compare: Type[tool.AttributeCompare]):
     widget = pset_compare.get_widget()
     pset_tree = attribute_compare.get_pset_tree(widget)
-
     value_table = attribute_compare.get_value_table(widget)
     info_table = pset_compare.get_info_table(widget)
     pset_compare.create_tree_selection_trigger(widget)
+
     psets0, psets1 = project0.get_predefined_psets(), project1.get_predefined_psets()
     pset_compare.set_predefined_psets(psets0, psets1)
 
     pset_list = pset_compare.create_pset_list()
     for pset0, pset1 in [x for x in pset_list if not None in x]:
         attribute_compare.generate_attribute_list(pset0, pset1)
+        pset_compare.create_value_dict(pset_list)
+
 
     header_labels = [attribute_compare.get_header_name_from_project(project0),
                      attribute_compare.get_header_name_from_project(project1)]
-    attribute_compare.set_header_labels([pset_tree], [value_table, info_table], header_labels)
+    attribute_compare.set_header_labels([pset_tree], [value_table], header_labels)
+    attribute_compare.set_header_labels([], [info_table], ["Name"] + header_labels)
+
 
     attribute_compare.fill_pset_tree(pset_tree, pset_compare.get_pset_lists(), True)
     attribute_compare.add_attributes_to_pset_tree(pset_tree, True)
@@ -164,8 +167,18 @@ def init_compare_window(project0: SOMcreator.Project, project1: SOMcreator.Proje
 
 def compare_pset_selection_changed(widget, pset_compare: Type[tool.PredefinedPropertySetCompare],
                                    attribute_compare: Type[tool.AttributeCompare]):
-    attribute = attribute_compare.get_selected_entity(attribute_compare.get_pset_tree(widget))
-    attribute_compare.fill_value_table(attribute_compare.get_value_table(widget), attribute)
+    pset_tree = attribute_compare.get_pset_tree(widget)
+    entity = attribute_compare.get_selected_entity(pset_tree)
+    attribute_compare.fill_value_table(attribute_compare.get_value_table(widget), entity)
+    table = pset_compare.get_info_table(widget)
+    attribute_compare.clear_table(table)
+
+    if isinstance(entity, SOMcreator.PropertySet):
+        pset_compare.fill_value_table_pset()
+        pset_compare.fill_pset_info()
+    else:
+        pset_compare.fill_attribute_info()
+
 
 def export_compare(file: TextIO, pset_compare: Type[tool.PredefinedPropertySetCompare],
                    attribute_compare: Type[tool.AttributeCompare]):

@@ -36,5 +36,5 @@ class CompareWidget(QWidget):
         self.widget.setupUi(self)
         self.widget.tree_widget_propertysets.setColumnCount(2)
         self.widget.table_widget_values.setColumnCount(2)
-        self.widget.table_infos.setColumnCount(2)
-        self.widget.table_infos.setVerticalHeaderLabels(["Name", "Value"])
+        self.widget.table_infos.setColumnCount(3)
+        self.widget.table_infos.setVerticalHeaderLabels(["Name", "XXX", "XXX"])

@@ -13,5 +13,6 @@ class PredefinedPsetProperties:
 
 class PredefinedPsetCompareProperties:
     widget = None
-    predefined_psets = tuple[set[SOMcreator.PropertySet], set[SOMcreator.PropertySet]]
-    pset_lists = list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]
+    predefined_psets: tuple[set[SOMcreator.PropertySet], set[SOMcreator.PropertySet]] = None
+    pset_lists: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]] = list()
+    value_dict = dict()

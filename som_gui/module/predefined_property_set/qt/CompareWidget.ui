@@ -40,7 +40,7 @@
                             <property name="sizePolicy">
                                 <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
                                     <horstretch>0</horstretch>
-                                    <verstretch>3</verstretch>
+                                    <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
                             <property name="selectionMode">
@@ -52,9 +52,9 @@
                         </widget>
                         <widget class="QTableWidget" name="table_infos">
                             <property name="sizePolicy">
-                                <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                                <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
                                     <horstretch>0</horstretch>
-                                    <verstretch>1</verstretch>
+                                    <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
                             <attribute name="horizontalHeaderStretchLastSection">
