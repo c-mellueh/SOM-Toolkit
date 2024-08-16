@@ -208,9 +208,47 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
     @classmethod
     def reset(cls):
         cls.get_properties().widget = None
+        cls.get_properties().predefined_psets = None
+
+    @classmethod
+    def create_pset_list(cls):
+        psets0, psets1 = cls.get_predefined_psets(0), cls.get_predefined_psets(1)
+        uuid_dict = tool.AttributeCompare.generate_uuid_dict(psets1)
+        name_dict = tool.AttributeCompare.generate_name_dict(psets1)
+        pset_list = list()
+        missing = list(psets1)
+        for pset in psets0:
+            match = tool.AttributeCompare.find_matching_entity(pset, uuid_dict, name_dict)
+            if match:
+                pset_list.append((pset, match))
+                missing.remove(match)
+            else:
+                pset_list.append((pset, None))
+        for pset in missing:
+            pset_list.append((None, pset))
+        cls.set_pset_lists(pset_list)
+        return pset_list
+
+
 
     @classmethod
     def get_widget(cls):
         if cls.get_properties().widget is None:
             cls.get_properties().widget = som_gui.module.predefined_property_set.ui.CompareWidget()
         return cls.get_properties().widget
+
+    @classmethod
+    def set_predefined_psets(cls, psets0, psets1):
+        cls.get_properties().predefined_psets = (psets0, psets1)
+
+    @classmethod
+    def get_predefined_psets(cls, index: int) -> set[SOMcreator.PropertySet]:
+        return cls.get_properties().predefined_psets[index]
+
+    @classmethod
+    def set_pset_lists(cls, list: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]) -> None:
+        cls.get_properties().pset_lists = list
+
+    @classmethod
+    def get_pset_lists(cls) -> list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]:
+        return cls.get_properties().pset_lists

@@ -114,8 +114,10 @@ def object_tree_selection_changed(widget: ui.AttributeWidget,
                                   attribute_compare: Type[tool.AttributeCompare]):
     obj = attribute_compare.get_selected_entity(attribute_compare.get_object_tree(widget))
     tree = attribute_compare.get_pset_tree(widget)
-    attribute_compare.fill_pset_tree(tree, obj, add_missing=True)
-    root = attribute_compare.get_pset_tree(widget).invisibleRootItem()
+    pset_list = attribute_compare.get_pset_list(obj)
+    attribute_compare.fill_pset_tree(tree, pset_list, add_missing=True)
+    attribute_compare.add_attributes_to_pset_tree(tree, True)
+    root = tree.invisibleRootItem()
     for child_index in range(root.childCount()):
         attribute_compare.style_tree_item(root.child(child_index))
 

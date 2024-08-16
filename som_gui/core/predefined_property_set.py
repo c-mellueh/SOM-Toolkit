@@ -54,6 +54,7 @@ def object_context_menu(pos, predefined_pset: Type[tool.PredefinedPropertySet],
     table_widget = predefined_pset.get_object_table_widget()
     property_set.create_context_menu(table_widget.mapToGlobal(pos), functions)
 
+
 def object_double_clicked(predefined_pset: Type[tool.PredefinedPropertySet],
                           property_set: Type[tool.PropertySet], object_tool: Type[tool.Object]):
     item = predefined_pset.get_object_table_widget().selectedItems()[0]
@@ -134,9 +135,30 @@ def add_compare_widget(pset_compare: Type[tool.PredefinedPropertySetCompare],
                            lambda file: export_compare(file, pset_compare, attribute_compare))
 
 
-def init_compare_window(project0, project1, pset_compare: Type[tool.PredefinedPropertySetCompare],
+def init_compare_window(project0: SOMcreator.Project, project1: SOMcreator.Project,
+                        pset_compare: Type[tool.PredefinedPropertySetCompare],
                         attribute_compare: Type[tool.AttributeCompare]):
-    pass
+    widget = pset_compare.get_widget()
+    pset_tree = attribute_compare.get_pset_tree(widget)
+    pset_tree.setColumnCount(2)
+    value_table = attribute_compare.get_value_table(widget)
+
+    psets0, psets1 = project0.get_predefined_psets(), project1.get_predefined_psets()
+    pset_compare.set_predefined_psets(psets0, psets1)
+
+    pset_list = pset_compare.create_pset_list()
+    for pset0, pset1 in [x for x in pset_list if not None in x]:
+        attribute_compare.generate_attribute_list(pset0, pset1)
+
+    header_labels = [attribute_compare.get_header_name_from_project(project0),
+                     attribute_compare.get_header_name_from_project(project1)]
+    attribute_compare.set_header_labels(None, pset_tree, value_table, header_labels)
+
+    attribute_compare.fill_pset_tree(pset_tree, pset_compare.get_pset_lists(), True)
+    attribute_compare.add_attributes_to_pset_tree(pset_tree, True)
+    root = pset_tree.invisibleRootItem()
+    for child_index in range(root.childCount()):
+        attribute_compare.style_tree_item(root.child(child_index))
 
 
 def export_compare(file: TextIO, pset_compare: Type[tool.PredefinedPropertySetCompare],

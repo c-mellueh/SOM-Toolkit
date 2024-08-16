@@ -173,7 +173,9 @@ def filter_tab_object_tree_selection_changed(widget: compare_ui.AttributeWidget,
                                              object_filter_compare: Type[tool.ObjectFilterCompare]):
     obj = attribute_compare.get_selected_entity(attribute_compare.get_object_tree(widget))
     tree_widget = attribute_compare.get_pset_tree(widget)
-    attribute_compare.fill_pset_tree(tree_widget, obj, add_missing=False)
+    pset_list = attribute_compare.get_pset_list(obj)
+    attribute_compare.fill_pset_tree(tree_widget, pset_list, add_missing=False)
+    attribute_compare.add_attributes_to_pset_tree(tree_widget, False)
 
     for child_index in range(tree_widget.invisibleRootItem().childCount()):
         child = tree_widget.invisibleRootItem().child(child_index)
