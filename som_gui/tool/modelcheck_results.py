@@ -92,7 +92,7 @@ class ModelcheckResults(som_gui.core.tool.ModelcheckResults):
         cursor = conn.cursor()
         cursor.execute(
             'SELECT i.creation_date, e.GUID,e.ifc_type,i.short_description,i.issue_type,e.Name,e.bauteilKlassifikation,'
-            'i.PropertySet,i.Attribut,i.Value, e.datei   FROM issues AS i JOIN entities e on i.GUID = e.GUID_ZWC')
+            'i.PropertySet,i.Attribut,i.Value, e.datei   FROM issues AS i JOIN entities e on i.GUID = e.GUID')
         conn.commit()
         query = cursor.fetchall()
         return query

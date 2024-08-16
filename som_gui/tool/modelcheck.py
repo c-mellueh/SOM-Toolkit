@@ -353,7 +353,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         # issues
         cursor.execute('''
                   CREATE TABLE IF NOT EXISTS issues
-                  ([creation_date] TEXT,[GUID] CHAR(64), [short_description] TEXT,[issue_type] INT,
+                  ([GUID_ZWC] CHAR(64) ,[creation_date] TEXT,[GUID] CHAR(64), [short_description] TEXT,[issue_type] INT,
                   [PropertySet] TEXT, [Attribut] TEXT, [Value] Text)
                   ''')
         cls.commit_sql()
@@ -361,15 +361,15 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def add_issues(cls, guid, description, issue_type, attribute, pset_name="", attribute_name="", value=""):
         cursor = cls.get_cursor()
-        guid = tool.Util.transform_guid(guid, True)
+        guid_zw = tool.Util.transform_guid(guid, True)
         date = datetime.date.today()
         if attribute is not None:
             pset_name = attribute.property_set.name
             attribute_name = attribute.name
         cursor.execute(f'''
-              INSERT INTO issues (creation_date,GUID,short_description,issue_type,PropertySet,Attribut,Value)
+              INSERT INTO issues (GUID_ZWC,creation_date,GUID,short_description,issue_type,PropertySet,Attribut,Value)
                     VALUES
-                    ('{date}','{guid}','{description}',{issue_type},'{pset_name}','{attribute_name}','{value}')
+                    ('{guid_zw}','{date}','{guid}','{description}',{issue_type},'{pset_name}','{attribute_name}','{value}')
               ''')
         cls.commit_sql()
 
