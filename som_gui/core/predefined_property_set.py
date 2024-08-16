@@ -3,7 +3,7 @@ from __future__ import annotations
 import SOMcreator
 
 from som_gui.core import property_set_window as property_set_window_core
-from typing import Type, TYPE_CHECKING
+from typing import TextIO, Type, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -123,3 +123,22 @@ def repaint_pset_list(predefined_pset: Type[tool.PredefinedPropertySet]):
     predefined_pset.remove_property_sets_from_list_widget(delete_property_sets, list_widget)
     predefined_pset.add_property_sets_to_widget(sorted(add_property_sets), list_widget)
     predefined_pset.update_pset_widget()
+
+
+def add_compare_widget(pset_compare: Type[tool.PredefinedPropertySetCompare],
+                       attribute_compare: Type[tool.AttributeCompare],
+                       compare_window: Type[tool.CompareWindow]):
+    compare_window.add_tab("Predefined Pset", pset_compare.get_widget,
+                           lambda p0, p1: init_compare_window(p0, p1, pset_compare, attribute_compare),
+                           pset_compare,
+                           lambda file: export_compare(file, pset_compare, attribute_compare))
+
+
+def init_compare_window(project0, project1, pset_compare: Type[tool.PredefinedPropertySetCompare],
+                        attribute_compare: Type[tool.AttributeCompare]):
+    pass
+
+
+def export_compare(file: TextIO, pset_compare: Type[tool.PredefinedPropertySetCompare],
+                   attribute_compare: Type[tool.AttributeCompare]):
+    pass

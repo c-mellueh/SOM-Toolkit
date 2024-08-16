@@ -10,7 +10,7 @@ from som_gui import tool
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from som_gui.module.predefined_property_set.prop import PredefinedPsetProperties
+    from som_gui.module.predefined_property_set.prop import PredefinedPsetProperties, PredefinedPsetCompareProperties
     from som_gui.module.predefined_property_set import ui
 
 
@@ -197,3 +197,20 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         table = cls.get_object_table_widget()
         for row in reversed(range(table.rowCount())):
             table.removeRow(row)
+
+
+class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompare):
+
+    @classmethod
+    def get_properties(cls) -> PredefinedPsetCompareProperties:
+        return som_gui.PredefinedPsetCompareProperties
+
+    @classmethod
+    def reset(cls):
+        cls.get_properties().widget = None
+
+    @classmethod
+    def get_widget(cls):
+        if cls.get_properties().widget is None:
+            cls.get_properties().widget = som_gui.module.predefined_property_set.ui.CompareWidget()
+        return cls.get_properties().widget

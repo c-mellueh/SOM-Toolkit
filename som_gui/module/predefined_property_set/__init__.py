@@ -4,7 +4,7 @@ import som_gui
 
 def register():
     som_gui.PredefinedPsetProperties = prop.PredefinedPsetProperties()
-
+    som_gui.PredefinedPsetCompareProperties = prop.PredefinedPsetCompareProperties()
 
 def load_ui_triggers():
     trigger.connect()

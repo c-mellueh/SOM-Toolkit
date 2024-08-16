@@ -4,6 +4,7 @@ from som_gui.module import predefined_property_set
 from .window import Ui_Dialog
 from som_gui.icons import get_icon
 from som_gui.module.property_set.ui import LineEditDelegate
+from .compare_widget import Ui_Form
 
 class PredefinedPropertySetWindow(QDialog):
     edit_started = Signal(QModelIndex)
@@ -26,3 +27,10 @@ class PredefinedPropertySetWindow(QDialog):
 
     def text_changed(self, text, index):
         predefined_property_set.trigger.edit_name(text, index)
+
+
+class CompareWidget(QWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.widget = Ui_Form()
+        self.widget.setupUi(self)
