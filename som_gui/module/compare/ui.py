@@ -1,9 +1,8 @@
-from PySide6.QtWidgets import QDialog, QHeaderView, QWidget, QTreeWidget, QPushButton
-from . import window, import_window, attribute_widget, trigger
+from PySide6.QtWidgets import QDialog, QHeaderView, QTreeWidget, QPushButton
+from . import window, import_window, trigger
 from som_gui.icons import get_icon, get_switch_icon, get_download_icon
 from PySide6.QtGui import QPalette
 from PySide6.QtCore import QModelIndex, Qt, QRect, QSize
-import os
 
 
 def color_button(button: QPushButton) -> None:
@@ -26,16 +25,6 @@ class CompareDialog(QDialog):
         color_button(button)
         button.setText("")
 
-class AttributeWidget(QWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.widget = attribute_widget.Ui_Form()
-        self.widget.setupUi(self)
-        self.widget.tree_widget_object.setColumnCount(2)
-        self.widget.tree_widget_propertysets.setColumnCount(2)
-        self.widget.table_widget_values.setColumnCount(2)
-        self.widget.table_infos.setColumnCount(3)
-
 
 class ProjectSelectDialog(QDialog):
     def __init__(self, *args, **kwargs):
@@ -50,19 +39,7 @@ class ProjectSelectDialog(QDialog):
         color_button(button)
 
 
-class WordWrapHeaderView(QHeaderView):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
-    def sectionSizeFromContents(self, logicalIndex):
-        text = str(self.model().headerData(logicalIndex, self.orientation(), Qt.ItemDataRole.DisplayRole))
-        max_width = self.sectionSize(logicalIndex)
-        maxheight = 5000
-        alignement = self.defaultAlignment()
-        metrics = self.fontMetrics()
-        rect = metrics.boundingRect(QRect(0, 0, max_width, maxheight), alignement, text)
-        text_margin_buffer = QSize(2, 2)
-        return rect.size() + text_margin_buffer
 
 
 class EntityTreeWidget(QTreeWidget):

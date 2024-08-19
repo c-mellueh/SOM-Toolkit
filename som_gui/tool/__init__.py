@@ -6,7 +6,7 @@ from som_gui.tool.object import Object
 from som_gui.tool.search import Search
 from som_gui.tool.popups import Popups
 from som_gui.tool.property_set import PropertySet
-from som_gui.tool.attribute import Attribute
+from som_gui.tool.attribute import Attribute, AttributeCompare
 from som_gui.tool.main_window import MainWindow
 from som_gui.tool.project_filter import ProjectFilter
 from som_gui.tool.predefined_property_set import PredefinedPropertySet, PredefinedPropertySetCompare
@@ -21,5 +21,5 @@ from som_gui.tool.attribute_import import AttributeImport, AttributeImportSQL, A
 from som_gui.tool.util import Util
 from som_gui.tool.exports import Exports
 from som_gui.tool.mapping import Mapping
-from som_gui.tool.compare import AttributeCompare, CompareProjectSelector, CompareWindow
+from som_gui.tool.compare import CompareProjectSelector, CompareWindow
 from som_gui.tool.console import Console
