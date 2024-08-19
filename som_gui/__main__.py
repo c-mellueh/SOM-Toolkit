@@ -1,4 +1,3 @@
-# main.py
 import som_gui
 
 import logging
@@ -17,7 +16,6 @@ def start_log(level: int | None = None) -> None:
 
 
 def main(initial_file: str | None = None, log_level=None):
-
     from PySide6.QtWidgets import QApplication
     import som_gui.core.main_window
     import som_gui.core.project

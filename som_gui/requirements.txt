@@ -12,3 +12,4 @@ pypi-latest
 lark
 anytree
 appdirs
+pyqtconsole

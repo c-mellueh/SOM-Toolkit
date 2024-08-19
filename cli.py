@@ -5,7 +5,7 @@ import subprocess
 import sys
 from importlib import import_module
 
-import main as main_func
+from som_gui import __main__ as main_module
 
 # implement pip as a subprocess:
 
@@ -24,7 +24,7 @@ def install_missing_packages():
     from pypi_latest import PypiLatest
 
     made_an_update = False
-    with open("./requirements.txt", "r") as file:
+    with open("som_gui/requirements.txt", "r") as file:
         lines = set(line.strip() for line in file.readlines())
 
     for line in lines:
@@ -61,10 +61,7 @@ def install_missing_packages():
 def cli():
     if install_missing_packages():
         return
-    from main import main
-
-    main()
-    main_func.start_log(logging.DEBUG)
+    main_module.main(log_level=logging.DEBUG)
 
 
 if __name__ == "__main__":

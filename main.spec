@@ -13,7 +13,7 @@ added_files = [('SOMcreator','SOMcreator'),
 
 hi = ['pyqtconsole.console','appdirs','jinja2', 'lxml', 'SOMcreator', 'tqdm', 'openpyxl','som_gui','thefuzz.fuzz','SOMcreator.external_software','ifcopenshell','ifcopenshell.util','ifcopenshell.util.element','som_gui.settings']
 a = Analysis(
-    ['main.py'],
+    ['som_gui/__main__.py'],
     pathex=[],
     binaries=[],
     datas=added_files,
