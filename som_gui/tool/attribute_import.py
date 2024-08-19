@@ -524,33 +524,31 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return cls.get_properties().settings_dialog
 
     @classmethod
-    def get_settings_dialog_checkbox_list(cls, dialog: ui.SettingsDialog) -> list[tuple[QCheckBox, bool]]:
+    def get_settings_dialog_checkbox_list(cls, dialog: ui.SettingsDialog) -> list[tuple[QCheckBox, str]]:
         widget = dialog.widget
         prop = cls.get_properties()
-        checkbox_list = [(widget.check_box_regex, prop.show_regex_values),
-                         (widget.check_box_existing_attributes, prop.show_existing_values),
-                         (widget.check_box_color, prop.color_values),
-                         (widget.check_box_range, prop.show_range_values),
-                         (widget.check_box_boolean_values, prop.show_boolean_values)
+        checkbox_list = [(widget.check_box_regex, "show_regex_values"),
+                         (widget.check_box_existing_attributes, "show_existing_values"),
+                         (widget.check_box_color, "color_values"),
+                         (widget.check_box_range, "show_range_values"),
+                         (widget.check_box_boolean_values, "show_boolean_values"),
+                         (widget.check_box_object_filter, "activate_object_filter")
                          ]
         return checkbox_list
 
     @classmethod
     def update_settins_dialog_checkstates(cls, dialog: ui.SettingsDialog):
         checkbox_list = cls.get_settings_dialog_checkbox_list(dialog)
-
-        for checkbox, value in checkbox_list:
-            checkbox.setChecked(value)
+        prop = cls.get_properties()
+        for checkbox, attribute_name in checkbox_list:
+            checkbox.setChecked(getattr(prop, attribute_name))
 
     @classmethod
     def settings_dialog_accepted(cls, dialog: ui.SettingsDialog):
         prop = cls.get_properties()
-        widget = dialog.widget
-        prop.show_regex_values = widget.check_box_regex.isChecked()
-        prop.show_existing_values = widget.check_box_existing_attributes.isChecked()
-        prop.color_values = widget.check_box_color.isChecked()
-        prop.show_range_values = widget.check_box_range.isChecked()
-        prop.show_boolean_values = widget.check_box_boolean_values.isChecked()
+        for widget, attribute_name in cls.get_settings_dialog_checkbox_list(dialog):
+            setattr(prop, attribute_name, widget.isChecked())
+
 
     @classmethod
     def get_cursor(cls):

@@ -22,7 +22,7 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(275, 172)
+        Dialog.resize(279, 203)
         self.verticalLayout = QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.check_box_boolean_values = QCheckBox(Dialog)
@@ -56,6 +56,12 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addWidget(self.check_box_color)
 
+        self.check_box_object_filter = QCheckBox(Dialog)
+        self.check_box_object_filter.setObjectName(u"check_box_object_filter")
+        self.check_box_object_filter.setLayoutDirection(Qt.RightToLeft)
+
+        self.verticalLayout.addWidget(self.check_box_object_filter)
+
         self.buttonBox = QDialogButtonBox(Dialog)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setOrientation(Qt.Horizontal)
@@ -79,5 +85,7 @@ class Ui_Dialog(object):
         self.check_box_existing_attributes.setText(
             QCoreApplication.translate("Dialog", u"Bereits existierende Vorgaben anzeigen", None))
         self.check_box_color.setText(QCoreApplication.translate("Dialog", u"Daten einf\u00e4rben", None))
+        self.check_box_object_filter.setText(
+            QCoreApplication.translate("Dialog", u"Nach Anwendungsfall/Leistungsphase filtern", None))
     # retranslateUi
 

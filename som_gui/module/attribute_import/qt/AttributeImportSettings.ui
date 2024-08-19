@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>275</width>
-       <height>172</height>
+       <width>279</width>
+       <height>203</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,6 +64,16 @@
      </property>
      <property name="text">
       <string>Daten einfärben</string>
+     </property>
+    </widget>
+   </item>
+      <item>
+          <widget class="QCheckBox" name="check_box_object_filter">
+              <property name="layoutDirection">
+                  <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="text">
+                  <string>Nach Anwendungsfall/Leistungsphase filtern</string>
      </property>
     </widget>
    </item>
