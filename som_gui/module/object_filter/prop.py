@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     import SOMcreator
     from som_gui.module.object_filter.ui import ObjectFilterWindow
     from PySide6.QtCore import Qt
-    from som_gui.module.compare.ui import AttributeWidget
+    from som_gui.module.attribute.ui import AttributeWidget
 
 
 @dataclass

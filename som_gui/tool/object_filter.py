@@ -791,6 +791,7 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
     def get_widget(cls):
         if cls.get_properties().widget is None:
             cls.get_properties().widget = attribute_ui.AttributeWidget()
+            cls.get_properties().widget.widget.table_widget_values.hide()
         return cls.get_properties().widget
 
     @classmethod
