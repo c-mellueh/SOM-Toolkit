@@ -7,7 +7,7 @@ from som_gui.core import attribute_import as core
 def connect():
     tool.MainWindow.add_action("Modelle/Informationen einlesen",
                                lambda: core.open_import_window(tool.AttributeImport, tool.AttributeImportResults,
-                                                               tool.IfcImporter))
+                                                               tool.IfcImporter, tool.Project, tool.AttributeImportSQL))
 
 
 def connect_import_buttons(run_button: QPushButton, abort_button: QPushButton):
@@ -35,7 +35,7 @@ def on_new_project():
 
 
 def last_import_finished():
-    core.last_import_finished(tool.AttributeImport, tool.AttributeImportResults)
+    core.last_import_finished(tool.AttributeImport, tool.AttributeImportResults, tool.AttributeImportSQL)
 
 
 def start_attribute_import(file: ifcopenshell.file, path: str):

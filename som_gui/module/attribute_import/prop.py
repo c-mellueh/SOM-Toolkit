@@ -41,3 +41,6 @@ class AttributeImportSQLProperties:
     show_range_values: bool = False
     color_values: bool = False
     show_boolean_values: bool = False
+    current_usecase = None
+    current_phase = None
+    activate_object_filter = True

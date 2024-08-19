@@ -5,6 +5,7 @@ import SOMcreator
 
 import som_gui.core.tool
 import som_gui
+from SOMcreator.filehandling import use_case_list
 from som_gui.module.attribute_import import ui, trigger
 from som_gui import tool
 from PySide6.QtWidgets import QComboBox, QTableWidgetItem, QTableWidget, QCheckBox
@@ -556,6 +557,17 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return cls.get_properties().connection.cursor()
 
     @classmethod
+    def set_current_object_filter(cls, usecase: SOMcreator.classes.UseCase, phase: SOMcreator.classes.Phase):
+        if usecase is not None:
+            cls.get_properties().current_usecase = usecase
+        if phase is not None:
+            cls.get_properties().current_phase = phase
+
+    @classmethod
+    def get_current_object_filter(cls) -> tuple[SOMcreator.classes.UseCase, SOMcreator.classes.Phase]:
+        return cls.get_properties().current_usecase, cls.get_properties().current_phase
+
+    @classmethod
     def set_database_path(cls, path: str) -> None:
         cls.get_properties().database_path = path
 
@@ -600,8 +612,55 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
         cursor.execute('''
           CREATE TABLE IF NOT EXISTS som_attributes
-          ([identifier] TEXT, [PropertySet] TEXT, [Attribut] TEXT, [Value] Text,[ValueType] Text,[DataType] Text)
+          ([identifier] TEXT, [PropertySet] TEXT, [Attribut] TEXT, [Value] Text,[ValueType] Text,[DataType] Text,[guid] TEXT)
           ''')
+        cls.commit_sql()
+
+        cursor.execute('''
+          CREATE TABLE IF NOT EXISTS filter_list
+          ([name] TEXT, [description] TEXT, [filter_type] INTEGER)
+          ''')
+        cls.commit_sql()
+
+        cursor.execute('''
+          CREATE TABLE IF NOT EXISTS attribute_filter
+          ([usecase] TEXT, [phase] TEXT, [AttributeGUID] TEXT, [Value] Integer)
+          ''')
+        cls.commit_sql()
+
+    @classmethod
+    def fill_filter_table(cls, project: SOMcreator.Project):
+        def add_table_entry(entity: SOMcreator.classes.UseCase | SOMcreator.classes.Phase):
+            cursor = cls.get_cursor()
+            text = f'''
+                                  INSERT INTO filter_list (name,description,filter_type)
+                                        VALUES
+                                        ('{entity.name}','{entity.description}','{entity.filter_type}')
+                                  '''
+            cursor.execute(text)
+            cls.commit_sql()
+
+        for usecase in project.get_use_case_list():
+            add_table_entry(usecase)
+        for phase in project.get_project_phase_list():
+            add_table_entry(phase)
+
+    @classmethod
+    def add_attribute_to_filter_table(cls, project: SOMcreator.Project, attribute: SOMcreator.Attribute):
+        use_case_list = project.get_use_case_list()
+        phase_list = project.get_project_phase_list()
+        cursor = cls.get_cursor()
+
+        for use_case in use_case_list:
+            for phase in phase_list:
+                state = attribute.get_filter_state(phase, use_case)
+                state = 1 if state is None else int(state)
+                text = f'''
+                    INSERT INTO attribute_filter (usecase,phase,AttributeGUID,Value)
+                    VALUES
+                    ('{use_case.name}','{phase.name}','{attribute.uuid}',{state})
+                        '''
+                cursor.execute(text)
         cls.commit_sql()
 
     @classmethod
@@ -627,9 +686,9 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cursor = cls.get_cursor()
         identifier, propertyset, attribute_name, valuetype, datatype = cls.get_attribute_data(attribute)
         text = f'''
-                      INSERT INTO som_attributes (identifier,PropertySet,Attribut,Value,ValueType,DataType)
+                      INSERT INTO som_attributes (identifier,PropertySet,Attribut,Value,ValueType,DataType,GUID)
                             VALUES
-                            ('{identifier}','{propertyset}','{attribute_name}','','{valuetype}','{datatype}')
+                            ('{identifier}','{propertyset}','{attribute_name}','','{valuetype}','{datatype}','{attribute.uuid}')
                       '''
         cursor.execute(text)
         cls.commit_sql()
@@ -640,9 +699,9 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         identifier, propertyset, attribute_name, valuetype, datatype = cls.get_attribute_data(attribute)
         for value in attribute.value:
             text = f'''
-                          INSERT INTO som_attributes (identifier,PropertySet,Attribut,Value,ValueType,DataType)
+                          INSERT INTO som_attributes (identifier,PropertySet,Attribut,Value,ValueType,DataType,GUID)
                                 VALUES
-                                ('{identifier}','{propertyset}','{attribute_name}','{value}','{valuetype}','{datatype}')
+                                ('{identifier}','{propertyset}','{attribute_name}','{value}','{valuetype}','{datatype}','{attribute.uuid}')
                                   '''
             cursor.execute(text)
             cls.commit_sql()
@@ -718,22 +777,55 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
     def create_settings_filter(cls):
         sql_query = ""
         prop = cls.get_properties()
-        if not prop.show_regex_values:
-            sql_query += f"AND sa.ValueType is not '{SOMcreator.value_constants.FORMAT}'\n"
-        if not prop.show_range_values:
-            sql_query += f"AND sa.ValueType is not '{SOMcreator.value_constants.RANGE}'\n"
         if not prop.show_existing_values:
             sql_query += "AND a.IsDefined == 0 \n"
         if not prop.show_boolean_values:
             sql_query += "AND a.DataType is not 'IfcBoolean' \n"
-
         return sql_query
+
+    @classmethod
+    def create_som_filter_table(cls) -> str:
+
+        cls.connect_to_data_base(cls.get_database_path())
+        cursor = cls.get_cursor()
+        cursor.execute("DROP TABLE IF EXISTS filtered_som_attributes;")
+        prop = cls.get_properties()
+        sql_query = f"""
+            
+            CREATE TABLE filtered_som_attributes AS
+            SELECT sa.* from som_attributes as sa
+            JOIN attribute_filter af ON af.AttributeGUID = sa.GUID"""
+        filters = list()
+        if cls.get_properties().activate_object_filter:
+            usecase, phase = cls.get_current_object_filter()
+            filters.append(f'af.phase = "{phase.name}" AND af.usecase = "{usecase.name}" and af.Value = 1')
+        if not prop.show_regex_values:
+            filters.append(f"sa.ValueType is not '{SOMcreator.value_constants.FORMAT}'")
+        if not prop.show_range_values:
+            filters.append(f"sa.ValueType is not '{SOMcreator.value_constants.RANGE}'")
+        if filters:
+            filter_query = "\nAND ".join(filters)
+            sql_query += f"\nWHERE {filter_query}"
+        sql_query += ";"
+        cursor.execute(sql_query)
+        cls.disconnect_from_database()
+        return sql_query
+
+    @classmethod
+    def get_attribute_query(cls) -> str:
+        query = """
+                FROM attributes a
+                JOIN entities e ON e.guid = a.guid
+                JOIN filtered_som_attributes sa ON sa.identifier = e.identifier and a.PropertySet = sa.PropertySet and a.Attribut = sa.Attribut
+            """
+        return query
 
     @classmethod
     def create_existing_filter(cls):
         return f"""
-        AND  a.IsDefined == 0
-        """
+            AND  a.IsDefined == 0
+            """
+
 
     @classmethod
     def get_wanted_ifc_types(cls):
@@ -741,16 +833,17 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
         cursor.execute('''
-            SELECT DISTINCT e.ifc_type
-            FROM entities e
-            WHERE identifier IS NOT '';
-        ''')
+                SELECT DISTINCT e.ifc_type
+                FROM entities e
+                WHERE identifier IS NOT '';
+            ''')
         ifc_type_list = cursor.fetchall()
         ifc_type_list = [item[0] for item in ifc_type_list]
         cls.disconnect_from_database()
         logging.debug("request IfcTypes Done")
 
         return ifc_type_list
+
 
     @classmethod
     def get_identifier_types(cls, ifc_type: str, all_keyword: str) -> list[str]:
@@ -760,10 +853,10 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
         ifc_type_filter = "" if ifc_type == all_keyword else f"AND ifc_type IS '{ifc_type}'"
         sql_query = f'''
-                SELECT DISTINCT e.identifier
-                FROM entities e
-                WHERE e.identifier IS NOT '' {ifc_type_filter};
-            '''
+                    SELECT DISTINCT e.identifier
+                    FROM entities e
+                    WHERE e.identifier IS NOT '' {ifc_type_filter};
+                '''
         cursor.execute(sql_query)
         identifier_list = cursor.fetchall()
         identifier_list = [item[0] for item in identifier_list]
@@ -773,6 +866,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
         return identifier_list
 
+
     @classmethod
     def get_property_sets(cls, ifc_type: str, identifier: str | SOMcreator.Object) -> list[
         tuple[str, int]]:
@@ -780,25 +874,26 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
+        attribute_query = cls.get_attribute_query()
         filter_query = cls.create_settings_filter()
         sql_query = f'''
-        SELECT DISTINCT a.propertyset, COUNT(DISTINCT a.GUID)
-        FROM attributes a
-        JOIN entities e ON e.guid = a.guid
-        JOIN som_attributes sa ON sa.identifier = e.identifier and a.PropertySet = sa.PropertySet and a.Attribut = sa.Attribut
-        WHERE e.identifier {identifier}
-        AND e.ifc_type {ifc_type}
-        AND a.Value iS NOT NULL
-
-        {filter_query}
-        GROUP BY a.propertyset;
-        '''
+            SELECT DISTINCT a.propertyset, COUNT(DISTINCT a.GUID)
+            {attribute_query}
+            WHERE e.identifier {identifier}
+            AND e.ifc_type {ifc_type}
+            AND a.Value iS NOT NULL
+        
+            {filter_query}
+            GROUP BY a.propertyset;
+            '''
+        logging.debug(f"get property_sets: \n{sql_query}")
         cursor.execute(sql_query)
         pset_list = cursor.fetchall()
         cls.disconnect_from_database()
         logging.debug("Request PropertySets Done")
 
         return pset_list
+
 
     @classmethod
     def get_attributes(cls, ifc_type: str, identifier: str | SOMcreator.Object, property_set: str) -> \
@@ -807,27 +902,26 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
+        attribute_query = cls.get_attribute_query()
         filter_query = cls.create_settings_filter()
-
-        sql_query = f"""
-
-        SELECT  DISTINCT a.Attribut, COUNT(a.Value),COUNT(DISTINCT a.Value)
-        FROM attributes a
-        JOIN entities e ON e.guid = a.guid
-        JOIN som_attributes sa ON sa.identifier = e.identifier and a.PropertySet = sa.PropertySet and a.Attribut = sa.Attribut
-        WHERE e.identifier {identifier}
-        AND e.ifc_type {ifc_type}
-        AND a.PropertySet {property_set}
-        AND a.Value iS NOT NULL
-        {filter_query}
-        GROUP BY a.Attribut ;
-        """
+        sql_query = f'''
+            SELECT  DISTINCT a.Attribut, COUNT(a.Value),COUNT(DISTINCT a.Value)
+            {attribute_query}
+            WHERE e.identifier {identifier}
+            AND e.ifc_type {ifc_type}
+            AND a.PropertySet {property_set}
+            AND a.Value iS NOT NULL
+            {filter_query}
+            GROUP BY a.Attribut ;
+            '''
+        logging.debug(f"get Attributes: \n{sql_query}")
         cursor.execute(sql_query)
         attribute_list = cursor.fetchall()
         cls.disconnect_from_database()
         logging.debug("Request Done")
 
         return attribute_list
+
 
     @classmethod
     def get_values(cls, ifc_type, identifier, property_set, attribute):
@@ -836,21 +930,24 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
         filter_query = cls.create_settings_filter()
-        sql_query = f"""
-            SELECT  DISTINCT a.Value, COUNT(a.Value), a.Checked, COUNT (DISTINCT a.Checked)
-            FROM attributes a
-            JOIN entities e ON e.guid = a.guid
-            JOIN som_attributes sa ON sa.identifier = e.identifier and a.PropertySet = sa.PropertySet and a.Attribut = sa.Attribut
-            WHERE e.identifier {identifier}
-            AND e.ifc_type {ifc_type}
-            AND a.PropertySet {property_set}
-            AND a.Attribut {attribute}
-            AND a.Value IS NOT NULL
-            {filter_query}
-            GROUP BY a.Value ;
-                """
+        attribute_query = cls.get_attribute_query()
+        sql_query = f'''
+                SELECT  DISTINCT a.Value, COUNT(a.Value), a.Checked, COUNT (DISTINCT a.Checked)
+                {attribute_query}
+                WHERE e.identifier {identifier}
+                AND e.ifc_type {ifc_type}
+                AND a.PropertySet {property_set}
+                AND a.Attribut {attribute}
+                AND a.Value IS NOT NULL
+                {filter_query}
+                GROUP BY a.Value ;
+                    '''
+
+        logging.debug(f"get Values: \n{sql_query}")
 
         cursor.execute(sql_query)
+        logging.debug("Request Done")
+
         value_list = cursor.fetchall()
         cls.disconnect_from_database()
 
@@ -860,7 +957,6 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             cs = Qt.CheckState.PartiallyChecked if check_count > 1 else Qt.CheckState.Checked if check_state else Qt.CheckState.Unchecked
             result_list.append((Qt.CheckState, value, value_count))
             checkstate_dict[value] = cs
-        logging.debug("Request Done")
 
         return result_list, checkstate_dict
 
@@ -872,19 +968,19 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cursor = cls.get_cursor()
 
         sql_query = f"""
-        UPDATE attributes
-        SET checked = {checkstate}
-        WHERE guid IN (
-            SELECT a.GUID
-            from attributes a
-            JOIN entities  e on a.GUID = e.GUID
-            WHERE e.identifier {identifier}
-            AND e.ifc_type {ifc_type}
-            )        
-        AND PropertySet {property_set}
-        AND Attribut  {attribute}
-        AND Value {value_text}
-        """
+                UPDATE attributes
+                SET checked = {checkstate}
+                WHERE guid IN (
+                    SELECT a.GUID
+                    from attributes a
+                    JOIN entities  e on a.GUID = e.GUID
+                    WHERE e.identifier {identifier}
+                    AND e.ifc_type {ifc_type}
+                    )        
+                AND PropertySet {property_set}
+                AND Attribut  {attribute}
+                AND Value {value_text}
+            """
         cursor.execute(sql_query)
         logging.debug("Request Done")
 
@@ -897,13 +993,13 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
         sql_query = f"""
-        SELECT count(distinct(e.guid))
-        FROM entities e
-        JOIN attributes a ON a.guid = e.guid
-        WHERE e.identifier {identifier}
-        AND e.ifc_type {ifc_type}
-        
-        """
+            SELECT count(distinct(e.guid))
+            FROM entities e
+            JOIN attributes a ON a.guid = e.guid
+            WHERE e.identifier {identifier}
+            AND e.ifc_type {ifc_type}
+            
+            """
         cursor.execute(sql_query)
         value_list = cursor.fetchall()
         cls.disconnect_from_database()
@@ -916,15 +1012,15 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
         sql_query = f"""
-        
-        SELECT DISTINCT sa.identifier,sa.PropertySet,sa.Attribut, a.value
-        from som_attributes sa
-        JOIN entities e ON sa.identifier = e.identifier
-        JOIN attributes a ON e.guid = a.guid
-        WHERE a.checked = 1
-        AND a.Attribut = sa.Attribut
-        AND a.PropertySet = sa.PropertySet
-        """
+            
+            SELECT DISTINCT sa.identifier,sa.PropertySet,sa.Attribut, a.value
+            from som_attributes sa
+            JOIN entities e ON sa.identifier = e.identifier
+            JOIN attributes a ON e.guid = a.guid
+            WHERE a.checked = 1
+            AND a.Attribut = sa.Attribut
+            AND a.PropertySet = sa.PropertySet
+            """
 
         cursor.execute(sql_query)
         value_list = cursor.fetchall()
@@ -936,17 +1032,17 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
         sql_query = f"""
-
-        SELECT DISTINCT sa.identifier,sa.PropertySet,sa.Attribut, a.value
-        from som_attributes sa
-        JOIN entities e ON sa.identifier = e.identifier
-        JOIN attributes a ON e.guid = a.guid
-        WHERE a.checked = 0
-        AND a.IsDefined = 1
-        AND a.Attribut = sa.Attribut
-        AND a.PropertySet = sa.PropertySet
         
-        """
+            SELECT DISTINCT sa.identifier,sa.PropertySet,sa.Attribut, a.value
+            from som_attributes sa
+            JOIN entities e ON sa.identifier = e.identifier
+            JOIN attributes a ON e.guid = a.guid
+            WHERE a.checked = 0
+            AND a.IsDefined = 1
+            AND a.Attribut = sa.Attribut
+            AND a.PropertySet = sa.PropertySet
+            
+            """
 
         cursor.execute(sql_query)
         value_list = cursor.fetchall()

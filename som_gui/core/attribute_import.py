@@ -18,9 +18,13 @@ import time
 
 def open_import_window(attribute_import: Type[tool.AttributeImport],
                        attribute_import_results: Type[tool.AttributeImportResults],
-                       ifc_importer: Type[tool.IfcImporter]):
-
+                       ifc_importer: Type[tool.IfcImporter], project: Type[tool.Project],
+                       attribute_import_sql: Type[tool.AttributeImportSQL]):
+    proj = project.get()
+    use_case, phase = proj.current_use_case, proj.current_project_phase
+    attribute_import_sql.set_current_object_filter(use_case, phase)
     if attribute_import_results.is_window_allready_build():
+        attribute_import_sql.create_som_filter_table()
         attribute_import_results.get_results_window().show()
         return
 
@@ -66,17 +70,21 @@ def init_database(attribute_import: Type[tool.AttributeImport], attribute_import
     db_path = util.create_tempfile(".db")
     attribute_import_sql.init_database(db_path)
     all_attributes = list(proj.get_all_attributes())
+
     attribute_count = len(all_attributes)
     attribute_import_sql.connect_to_data_base(db_path)
-    status_text = "Attribute aus SOM importieren:"
 
+    status_text = "Attribute aus SOM importieren:"
+    attribute_import_sql.fill_filter_table(proj)
     for index, attribute in enumerate(all_attributes):
+
         if index % 100 == 0:
             attribute_import.set_progress(int(index / attribute_count * 100))
             attribute_import.set_status(f"{status_text} {index}/{attribute_count}")
 
         if not attribute.property_set.object:
             continue
+        attribute_import_sql.add_attribute_to_filter_table(proj, attribute)
 
         if not attribute.value:
             attribute_import_sql.add_attribute_without_value(attribute)
@@ -133,7 +141,6 @@ def start_attribute_import(file: ifcopenshell.file, path, attribute_import: Type
         attribute_import_sql.import_entity_attributes(entity, file, identifier, attribute_dict)
     attribute_import_sql.disconnect_from_database()
 
-
 def attribute_import_finished(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
     ifc_import_widget = attribute_import.get_ifc_import_widget()
 
@@ -153,8 +160,10 @@ def attribute_import_finished(attribute_import: Type[tool.AttributeImport], ifc_
 
 
 def last_import_finished(attribute_import: Type[tool.AttributeImport],
-                         attribute_import_results: Type[tool.AttributeImportResults]):
+                         attribute_import_results: Type[tool.AttributeImportResults],
+                         attribute_import_sql: Type[tool.AttributeImportSQL]):
     attribute_import.get_ifc_import_window().close()
+    attribute_import_sql.create_som_filter_table()
     open_results_window(attribute_import_results)
 
 
@@ -319,6 +328,7 @@ def settings_clicked(attribute_import_results: Type[tool.AttributeImportResults]
     attriubte_import_sql.update_settins_dialog_checkstates(settings_dialog)
     if settings_dialog.exec():
         attriubte_import_sql.settings_dialog_accepted(settings_dialog)
+        attriubte_import_sql.create_som_filter_table()
         attribute_import_results.update_results_window()
 
 
