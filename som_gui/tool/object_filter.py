@@ -15,7 +15,7 @@ import som_gui
 from som_gui import tool
 from typing import TYPE_CHECKING, Type, TextIO
 from som_gui.module.project.constants import CLASS_REFERENCE
-from som_gui.module.compare import ui as compare_ui
+from som_gui.module.attribute import ui as attribute_ui
 
 if TYPE_CHECKING:
     from som_gui.module.object_filter.prop import ObjectFilterProperties, ObjectFilterCompareProperties
@@ -572,7 +572,7 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         prop.widget = None
 
     @classmethod
-    def create_tree_selection_trigger(cls, widget: compare_ui.AttributeWidget):
+    def create_tree_selection_trigger(cls, widget: attribute_ui.AttributeWidget):
         widget.widget.tree_widget_object.itemSelectionChanged.connect(
             lambda: trigger.filter_tab_object_tree_selection_changed(widget))
 
@@ -681,7 +681,7 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
     @classmethod
     def make_header_wordwrap(cls, tree: QTreeWidget) -> None:
         """because of long header texts make header wordwrap"""
-        header = compare_ui.WordWrapHeaderView(Qt.Orientation.Horizontal)
+        header = attribute_ui.WordWrapHeaderView(Qt.Orientation.Horizontal)
         tree.setHeader(header)
         header.setDefaultAlignment(Qt.AlignmentFlag.AlignCenter | Qt.TextFlag.TextWordWrap)
 
@@ -790,7 +790,8 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
     @classmethod
     def get_widget(cls):
         if cls.get_properties().widget is None:
-            cls.get_properties().widget = compare_ui.AttributeWidget()
+            cls.get_properties().widget = attribute_ui.AttributeWidget()
+            cls.get_properties().widget.widget.table_widget_values.hide()
         return cls.get_properties().widget
 
     @classmethod

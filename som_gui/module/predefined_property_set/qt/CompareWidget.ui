@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>Form</class>
+    <widget class="QWidget" name="Form">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>868</width>
+                <height>462</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Form</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+                <widget class="QSplitter" name="splitter_2">
+                    <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                    </property>
+                    <widget class="EntityTreeWidget" name="tree_widget_propertysets">
+                        <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <column>
+                            <property name="text">
+                                <string notr="true">1</string>
+                            </property>
+                        </column>
+                    </widget>
+                    <widget class="QSplitter" name="splitter">
+                        <property name="orientation">
+                            <enum>Qt::Vertical</enum>
+                        </property>
+                        <widget class="QTableWidget" name="table_widget_values">
+                            <property name="sizePolicy">
+                                <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="selectionMode">
+                                <enum>QAbstractItemView::NoSelection</enum>
+                            </property>
+                            <attribute name="horizontalHeaderStretchLastSection">
+                                <bool>true</bool>
+                            </attribute>
+                        </widget>
+                        <widget class="QTableWidget" name="table_infos">
+                            <property name="sizePolicy">
+                                <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <attribute name="horizontalHeaderStretchLastSection">
+                                <bool>true</bool>
+                            </attribute>
+                        </widget>
+                    </widget>
+                </widget>
+            </item>
+        </layout>
+    </widget>
+    <customwidgets>
+        <customwidget>
+            <class>EntityTreeWidget</class>
+            <extends>QTreeWidget</extends>
+            <header>som_gui.module.compare.ui</header>
+        </customwidget>
+    </customwidgets>
+    <resources/>
+    <connections/>
+</ui>

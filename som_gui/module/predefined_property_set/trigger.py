@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 def connect():
     tool.MainWindow.add_action("Vordefinierte Psets",
                                lambda: core.open_window(tool.PredefinedPropertySet))
+    core.add_compare_widget(tool.PredefinedPropertySetCompare, tool.AttributeCompare, tool.CompareWindow)
 
 
 def connect_object_pset_context_menu(actions: list[QAction], functions: list[Callable]):

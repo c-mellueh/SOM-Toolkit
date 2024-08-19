@@ -1,4 +1,5 @@
-
+class PredefinedPropertySetCompare:
+    pass
 class Attribute:
     def add_attribute_data_value(self, name, getter, setter): pass
 
@@ -92,7 +93,7 @@ class AttributeCompare:
 
     def find_existing_parent_item(self, obj): pass
 
-    def find_matching_entity(self, entity_0, uuid_dict1, name_dict1): pass
+    def find_matching_entity(self, entity_0, uuid_dict1, name_dict1, name_override=None): pass
 
     def find_matching_object(self, obj, index): pass
 
@@ -142,7 +143,7 @@ class AttributeCompare:
 
     def set_branch_color(self, tree, index, color): pass
 
-    def set_header_labels(self, object_tree, pset_tree, value_table, labels): pass
+    def set_header_labels(self, trees, tables, labels): pass
 
     def set_object_item_relation(self, obj, item): pass
 

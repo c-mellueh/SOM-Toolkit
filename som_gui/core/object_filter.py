@@ -152,7 +152,7 @@ def init_compare_object_filter(project0: SOMcreator.Project, project1: SOMcreato
     attribute_compare.fill_object_tree(object_tree_widget, add_missing=False)
     header_labels = [attribute_compare.get_header_name_from_project(project0),
                      attribute_compare.get_header_name_from_project(project1)]
-    attribute_compare.set_header_labels(object_tree_widget, pset_tree, value_table, header_labels)
+    attribute_compare.set_header_labels([object_tree_widget, pset_tree], [value_table], header_labels)
     object_filter_compare.create_tree_selection_trigger(widget)
     object_filter_compare.find_matching_phases(project0, project1)
     object_filter_compare.find_matching_usecases(project0, project1)
@@ -173,7 +173,9 @@ def filter_tab_object_tree_selection_changed(widget: compare_ui.AttributeWidget,
                                              object_filter_compare: Type[tool.ObjectFilterCompare]):
     obj = attribute_compare.get_selected_entity(attribute_compare.get_object_tree(widget))
     tree_widget = attribute_compare.get_pset_tree(widget)
-    attribute_compare.fill_pset_tree(tree_widget, obj, add_missing=False)
+    pset_list = attribute_compare.get_pset_list(obj)
+    attribute_compare.fill_pset_tree(tree_widget, pset_list, add_missing=False)
+    attribute_compare.add_attributes_to_pset_tree(tree_widget, False)
 
     for child_index in range(tree_widget.invisibleRootItem().childCount()):
         child = tree_widget.invisibleRootItem().child(child_index)

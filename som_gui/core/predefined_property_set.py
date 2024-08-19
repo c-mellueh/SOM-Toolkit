@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import SOMcreator
-
 from som_gui.core import property_set_window as property_set_window_core
-from typing import Type, TYPE_CHECKING
+from typing import TextIO, Type, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -53,6 +52,7 @@ def object_context_menu(pos, predefined_pset: Type[tool.PredefinedPropertySet],
     ]
     table_widget = predefined_pset.get_object_table_widget()
     property_set.create_context_menu(table_widget.mapToGlobal(pos), functions)
+
 
 def object_double_clicked(predefined_pset: Type[tool.PredefinedPropertySet],
                           property_set: Type[tool.PropertySet], object_tool: Type[tool.Object]):
@@ -123,3 +123,48 @@ def repaint_pset_list(predefined_pset: Type[tool.PredefinedPropertySet]):
     predefined_pset.remove_property_sets_from_list_widget(delete_property_sets, list_widget)
     predefined_pset.add_property_sets_to_widget(sorted(add_property_sets), list_widget)
     predefined_pset.update_pset_widget()
+
+
+def add_compare_widget(pset_compare: Type[tool.PredefinedPropertySetCompare],
+                       attribute_compare: Type[tool.AttributeCompare],
+                       compare_window: Type[tool.CompareWindow]):
+    compare_window.add_tab("Predefined Pset", pset_compare.get_widget,
+                           lambda p0, p1: init_compare_window(p0, p1, pset_compare, attribute_compare),
+                           pset_compare,
+                           lambda file: export_compare(file, pset_compare, attribute_compare))
+
+
+def init_compare_window(project0: SOMcreator.Project, project1: SOMcreator.Project,
+                        pset_compare: Type[tool.PredefinedPropertySetCompare],
+                        attribute_compare: Type[tool.AttributeCompare]):
+    widget = pset_compare.get_widget()
+    pset_tree = attribute_compare.get_pset_tree(widget)
+    value_table = attribute_compare.get_value_table(widget)
+    info_table = attribute_compare.get_info_table(widget)
+    pset_compare.create_tree_selection_trigger(widget)
+
+    psets0, psets1 = project0.get_predefined_psets(), project1.get_predefined_psets()
+    pset_compare.set_predefined_psets(psets0, psets1)
+
+    pset_list = pset_compare.create_pset_list()
+    for pset0, pset1 in [x for x in pset_list if not None in x]:
+        attribute_compare.compare_property_sets(pset0, pset1)
+
+
+    header_labels = [attribute_compare.get_header_name_from_project(project0),
+                     attribute_compare.get_header_name_from_project(project1)]
+    attribute_compare.set_header_labels([pset_tree], [value_table], header_labels)
+    attribute_compare.set_header_labels([], [info_table], ["Name"] + header_labels)
+
+
+    attribute_compare.fill_pset_tree(pset_tree, pset_compare.get_pset_lists(), True)
+    attribute_compare.add_attributes_to_pset_tree(pset_tree, True)
+    root = pset_tree.invisibleRootItem()
+    for child_index in range(root.childCount()):
+        attribute_compare.style_tree_item(root.child(child_index))
+
+
+def export_compare(file: TextIO, pset_compare: Type[tool.PredefinedPropertySetCompare],
+                   attribute_compare: Type[tool.AttributeCompare]):
+    file.write("\nPREDEFINED PROPERTYSETS\n\n")
+    attribute_compare.export_pset_differences(file, pset_compare.get_pset_lists(), True)
