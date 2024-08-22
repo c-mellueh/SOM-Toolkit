@@ -21,15 +21,15 @@ def get_ifc_el_info(entity: ifcopenshell.entity_instance, attribute_bundle: tupl
     def check_for_existence(pset_name: str, attribute_name: str):
         pset_dict = psets.get(pset_name)
         if pset_dict is None:
-            logging.warning(
-                f"Für Entität {entity.GlobalId} konnte keine Gruppe erstellt werden da das Propertyset "
+            logging.info(
+                f"Für Entität '{entity.GlobalId}' konnte keine Gruppe erstellt werden da das Propertyset "
                 f"'{pset_name}' nicht gefunden werden konnte")
             return False, None
         value = pset_dict.get(attribute_name)
 
         if value is None:
-            logging.warning(
-                f"Für Entität {entity.GlobalId} konnte keine Gruppe erstellt werden da das Attribut "
+            logging.info(
+                f"Für Entität '{entity.GlobalId}' konnte keine Gruppe erstellt werden da das Attribut "
                 f"'{pset_name}:{attribute_name}' nicht gefunden werden konnte")
             return False, None
         return True, value
