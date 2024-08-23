@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Callable
 from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLabel, QLineEdit, QStatusBar
 from som_gui import tool
 from som_gui.module.main_window import ui as ui_main_window
+import ctypes
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.prop import MainWindowProperties, MenuDict
@@ -21,6 +22,31 @@ class MainWindow(som_gui.core.tool.MainWindow):
             cls.get_properties().ui = window.ui
             cls.get_properties().application = application
         return cls.get_properties().window
+
+    @classmethod
+    def hide_console(cls):
+        hWnd = ctypes.windll.kernel32.GetConsoleWindow()
+        if hWnd != 0:
+            ctypes.windll.user32.ShowWindow(hWnd, 0)
+
+    @classmethod
+    def show_console(cls):
+        console_window = ctypes.windll.kernel32.GetConsoleWindow()
+        if console_window != 0:
+            # Check if the console is visible
+            ctypes.windll.user32.ShowWindow(console_window, 5)  # Show the console
+
+    @classmethod
+    def toggle_console(cls):
+        active_window = cls.get_app().activeWindow()
+        hWnd = ctypes.windll.kernel32.GetConsoleWindow()
+        if hWnd == 0:
+            return
+        if ctypes.windll.user32.IsWindowVisible(hWnd):
+            cls.hide_console()
+        else:
+            cls.show_console()
+        active_window.activateWindow()
 
     @classmethod
     def set_window_title(cls, title: str):

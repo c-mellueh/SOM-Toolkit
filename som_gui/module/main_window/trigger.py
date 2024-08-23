@@ -3,7 +3,7 @@ from som_gui import tool
 
 
 def connect():
-    pass
+    tool.MainWindow.add_action("Bearbeiten/Toggle Console", lambda: core.toggle_console_clicked(tool.MainWindow))
 
 
 def on_new_project():

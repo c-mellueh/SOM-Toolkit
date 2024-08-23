@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 def create_main_window(application: QApplication, main_window: Type[tool.MainWindow]):
     mw = main_window.create(application)
     mw.show()
+    main_window.hide_console()
 
 
 def close_event(project_tool: Type[Project], settings_tool: Type[Settings],
@@ -41,3 +42,7 @@ def refresh_main_window(main_window_tool: Type[MainWindow], project_tool: Type[P
     status = " | ".join([name, version, phase_name, use_case_name])
     main_window_tool.set_status_bar_text(status)
     main_window_tool.set_window_title(f"SOM-Toolkit v{som_gui.__version__}")
+
+
+def toggle_console_clicked(main_window: Type[tool.MainWindow]):
+    main_window.toggle_console()

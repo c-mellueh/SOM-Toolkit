@@ -127,7 +127,10 @@ class Logging(som_gui.core.tool.Logging):
     @classmethod
     def create_console_handler(cls):
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(cls.get_log_level())
+        log_level = cls.get_log_level()
+        if log_level != logging.INFO:
+            log_level -= 10
+        console_handler.setLevel(log_level)
         console_handler.setFormatter(cls.get_custom_formatter())
         return console_handler
 
