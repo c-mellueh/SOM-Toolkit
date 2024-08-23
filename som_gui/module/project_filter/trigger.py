@@ -3,7 +3,7 @@ from som_gui.core import project_filter as core
 
 
 def connect():
-    tool.MainWindow.add_action("Datei/Projektfilter",
+    tool.MainWindow.add_action("Bearbeiten/Projektfilter",
                                lambda: core.open_project_filter_window(tool.ProjectFilter, tool.Project))
 
 
