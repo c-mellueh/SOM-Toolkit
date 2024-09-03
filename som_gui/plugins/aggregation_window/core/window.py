@@ -32,9 +32,11 @@ def create_window(window: Type[aw_tool.Window], view: Type[aw_tool.View], util: 
     window.add_widget_to_layout(aggregation_view)
     menu_list = window.get_menu_list()
     menu_list.append(("Ansicht/Ansichtig hinzufügen", lambda: create_new_scene(window, view)))
+    menu_list.append(("Ansicht/Ansicht Umbenennen", window.request_scene_rename))
     menu_list.append(("Ansicht/Aktuelle Ansicht löschen", lambda: delete_active_scene(window, view)))
     menu_list.append(("Ansicht/Ansicht Filtern", lambda: filter_scenes(window, view, search, popup)))
     menu_list.append(("Ansicht/Filter Zurücksetzen", window.remove_filter))
+
     menu_list.append(("Aggregation/Aggregation finden", lambda: search_aggregation(view, search, popup)))
     menu_bar = window.get_menu_bar()
     menu_dict = window.get_menu_dict()
@@ -149,3 +151,14 @@ def paste_nodes(view: Type[aw_tool.View]) -> None:
             aggregation_dict[old_aggregation.parent].add_child(new_aggregation, old_aggregation.parent_connection)
             new_aggregation.set_parent(aggregation_dict[old_aggregation.parent], old_aggregation.parent_connection)
     scene.update()
+
+
+def request_scene_rename(window: Type[aw_tool.Window], view: Type[aw_tool.View], popups: Type[tool.Popups]):
+    scene = view.get_active_scene()
+    scene_name = view.get_scene_name(scene)
+    new_name = popups._request_text_input("Ansicht umbenennen", "Neuer Name", scene_name,
+                                          window.get_aggregation_window())
+    if new_name:
+        view.set_scene_name(scene, new_name)
+    update_combo_box(window, view)
+    window.get_combo_box().setCurrentText(new_name)

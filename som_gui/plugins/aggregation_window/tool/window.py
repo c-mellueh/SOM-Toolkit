@@ -2,10 +2,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
 import SOMcreator
 import som_gui
+from PySide6.QtWidgets import QMenu
+from PySide6.QtGui import QAction
 import som_gui.plugins.aggregation_window.core.tool
 from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui.plugins.aggregation_window.module.window import ui as ui_window
-
+from som_gui.plugins.aggregation_window.module.window import trigger
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.module.window.prop import WindowProperties
     from PySide6.QtWidgets import QMenuBar, QStatusBar
@@ -28,7 +30,22 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
     @classmethod
     def create_combo_box(cls) -> ui_window.ComboBox:
         cls.get_properties().combo_box = ui_window.ComboBox()
+        cls.get_properties().combo_box.customContextMenuRequested.connect(cls.create_combobox_context_menu)
         return cls.get_properties().combo_box
+
+    @classmethod
+    def create_combobox_context_menu(cls, pos):
+        menu = QMenu()
+        action = QAction("Umbenennen")
+        action.triggered.connect(cls.request_scene_rename)
+        menu.addAction(action)
+        menu.exec(cls.get_combo_box().mapToGlobal(pos))
+
+    @classmethod
+    def request_scene_rename(cls):
+        trigger.request_scene_rename()
+
+
 
     @classmethod
     def add_widget_to_layout(cls, widget, *args, **kwargs) -> None:

@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QMainWindow, QMenuBar, QStatusBar, QVBoxLayout, QW
 from PySide6.QtGui import QPaintEvent
 from som_gui.icons import get_icon
 from . import trigger
-
+from PySide6.QtCore import Qt
 
 class AggregationWindow(QMainWindow):
     def __init__(self, *args, **kwargs) -> None:
@@ -23,6 +23,7 @@ class AggregationWindow(QMainWindow):
 class ComboBox(QComboBox):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.currentIndexChanged.connect(trigger.combo_box_changed)
 
     def paintEvent(self, event: QPaintEvent) -> None:

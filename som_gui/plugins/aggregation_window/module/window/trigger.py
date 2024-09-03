@@ -22,3 +22,6 @@ def combo_box_changed() -> None:
 def window_paint_event() -> None:
     core.paint_event(aw_tool.Window)
 
+
+def request_scene_rename():
+    core.request_scene_rename(aw_tool.Window, aw_tool.View, tool.Popups, )
