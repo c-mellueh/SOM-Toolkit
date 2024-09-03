@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
-from PySide6.QtCore import Qt, QPointF
+from PySide6.QtCore import Qt, QPoint, QPointF
 from SOMcreator import classes, value_constants
-
+from som_gui import tool
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window import tool as aw_tool
-    from som_gui import tool
     from PySide6.QtGui import QWheelEvent, QKeyEvent
     from som_gui.plugins.aggregation_window.module.node import ui as node_ui
-
 
 
 
@@ -70,7 +68,7 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
         view.autofit_view()
 
 
-def mouse_move_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node],
+def mouse_move_event(position: QPoint, view: Type[aw_tool.View], node: Type[aw_tool.Node],
                      connection: Type[aw_tool.Connection], ):
     last_pos = view.get_last_mouse_pos()
     mouse_mode = view.get_mouse_mode()
@@ -85,7 +83,7 @@ def mouse_move_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_
         view.set_cursor_style(cursor)
 
 
-def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node],
+def mouse_press_event(position: QPoint, view: Type[aw_tool.View], node: Type[aw_tool.Node],
                       connection: Type[aw_tool.Connection]) -> None:
     modifier = view.get_keyboard_modifier()
     view.set_last_mouse_pos(view.map_to_scene(position))
@@ -122,7 +120,7 @@ def mouse_press_event(position: QPointF, view: Type[aw_tool.View], node: Type[aw
         view.set_drag_mode(view.get_view().DragMode.NoDrag)
 
 
-def mouse_release_event(position: QPointF, view: Type[aw_tool.View],
+def mouse_release_event(position: QPoint, view: Type[aw_tool.View],
                         connection: Type[aw_tool.Connection], search: Type[tool.Search]) -> None:
     mouse_mode = view.get_mouse_mode()
     if mouse_mode == 5:  # Handle Connection Drawing
@@ -132,9 +130,7 @@ def mouse_release_event(position: QPointF, view: Type[aw_tool.View],
         else:
             obj = search.search_object()
             if obj is not None:
-                new_node = view.create_connection_by_search(connection.get_draw_node(), obj)
-                con = connection.create_connection(connection.get_draw_node(), new_node, 1)
-                view.add_connection_to_scene(con, view.get_active_scene())
+                view.create_child_node(connection.get_draw_node(), obj)
 
     view.reset_cursor(view.map_to_scene(position))
     new_cursor = view.get_hover_cursor(view.map_to_scene(position))
@@ -145,7 +141,7 @@ def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]) -> Non
     x_angle, y_angle = wheel_event.angleDelta().x(), wheel_event.angleDelta().y()
 
     modifier = view.get_keyboard_modifier()
-    if modifier == Qt.ControlModifier:
+    if modifier == Qt.KeyboardModifier.ControlModifier:
         angle = [x_angle, y_angle]
         if 0 in angle:
             angle.remove(0)
@@ -153,13 +149,13 @@ def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]) -> Non
         view.scale_view(angle[0], wheel_event.position().toPoint())
         return
 
-    if modifier == Qt.ShiftModifier:
+    if modifier == Qt.KeyboardModifier.ShiftModifier:
         x_angle, y_angle = y_angle, x_angle
 
     view.scroll_view(x_angle, y_angle)
 
 
-def context_menu_requested(pos: QPointF, view: Type[aw_tool.View], node: Type[aw_tool.Node], search: Type[tool.Search],
+def context_menu_requested(pos: QPoint, view: Type[aw_tool.View], node: Type[aw_tool.Node], search: Type[tool.Search],
                            connection: Type[aw_tool.Connection], project: Type[tool.Project],
                            util: Type[tool.Util]) -> None:
     menu_list = list()
@@ -211,3 +207,21 @@ def change_header_text(node: Type[aw_tool.Node], search: Type[tool.Search]) -> N
     result = search.search_attribute()
     if result:
         node.set_title_settings(*result)
+
+
+def add_object_to_scene(obj: classes.Object, scene, parent_node: node_ui.NodeProxy | None, pos: QPoint | None,
+                        view: Type[aw_tool.View], connection: Type[aw_tool.Connection], node: Type[aw_tool.Node]):
+    if scene is None:
+        scene = view.get_active_scene()
+    if pos is None:
+        pos = QPointF(100., 100.)
+
+    aggregation = classes.Aggregation(obj)
+    new_node = node.create_node(aggregation)
+    view.add_node_to_scene(new_node, scene)
+    node.set_node_pos(new_node, pos)
+
+    if parent_node is not None:
+        con = connection.create_connection(parent_node, new_node, 1)
+        view.add_connection_to_scene(con, view.get_active_scene())
+    return new_node

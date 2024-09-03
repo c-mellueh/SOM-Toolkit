@@ -754,12 +754,18 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                 else:
                     checkstate = 1 if value in existing_attribute_dict[attribute_name].value else 0
 
-                value = f"'{value}'" if value is not None and value != '' else 'NULL'
+                if not value:
+                    value = 'NULL'
+                else:
+                    value = str(value).replace("'", "''")
+                    value = f"'{value}'"
                 text = f'''
                  INSERT INTO attributes (GUID_ZWC,GUID,PropertySet,Attribut,Value,DataType,Checked,IsDefined)
                 VALUES
                 ('{entity_guid_zw}','{entity_guid}','{property_set_name}','{attribute_name}',{value},'{data_type}',{checkstate},{checkstate})
                 '''
+
+                print(text)
                 cursor.execute(text)
         cls.commit_sql()
 

@@ -1,4 +1,4 @@
-from .classes import PropertySet, Object, Project, Attribute
+from .classes import PropertySet, Object, Project, Attribute, Aggregation
 from .external_software import desite, allplan, revit, vestra, card1
 from .constants import json_constants, value_constants
 from .tools import merge_projects

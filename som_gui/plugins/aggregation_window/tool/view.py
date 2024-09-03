@@ -15,6 +15,8 @@ from som_gui.plugins.aggregation_window.module.view.constants import AGGREGATION
 from som_gui.plugins.aggregation_window.module.node import ui as ui_node
 from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui.plugins.aggregation_window.module.view import ui as ui_view
+from som_gui.plugins.aggregation_window.module.view import trigger
+
 import som_gui.plugins.aggregation_window.core.tool
 
 if TYPE_CHECKING:
@@ -78,6 +80,15 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         return cls.get_properties().scene_name_list[index]
 
     @classmethod
+    def set_scene_name(cls, scene: ui_view.AggregationScene | int, name: str):
+        if isinstance(scene, ui_view.AggregationScene):
+            scene_index = cls.get_scene_index(scene)
+        else:
+            scene_index = scene
+        cls.get_properties().scene_name_list[scene_index] = name
+
+
+    @classmethod
     def create_view(cls) -> ui_view.AggregationView:
         view = ui_view.AggregationView()
         cls.get_properties().aggregation_view = view
@@ -139,6 +150,8 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
             scene_id = cls.get_scene_index(scene_name)
             position_values = node_dict["Nodes"].values()
+            if not position_values:
+                continue
             x_values, y_values = zip(*position_values)
             x_min, y_min = min(x_values), min(y_values)
             for aggregation_uuid, pos in node_dict["Nodes"].items():
@@ -468,19 +481,6 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
             cls.remove_connection_from_scene(bottom_node.top_connection, scene)
         top_node.aggregation.add_child(bottom_node.aggregation, 1)
 
-    @classmethod
-    def create_connection_by_search(cls, top_node: ui_node.NodeProxy,
-                                    obj: SOMcreator.Object) -> ui_node.NodeProxy | None:
-        if obj is None:
-            return None
-        scene = cls.get_active_scene()
-        aggregation = Aggregation(obj)
-        rect = top_node.sceneBoundingRect()
-        input_point = rect.bottomLeft() + QPointF(100., 60.)
-        new_node = aw_tool.Node.create_node(aggregation)
-        cls.add_node_to_scene(new_node, scene)
-        aw_tool.Node.set_node_pos(new_node, input_point)
-        return new_node
 
     @classmethod
     def reset_cursor(cls, position) -> None:
@@ -534,3 +534,16 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         for existing_node in list(nodes):
             if existing_node.aggregation not in existing_aggregations:
                 cls.remove_node_from_scene(existing_node, scene)
+
+    @classmethod
+    def add_object_to_active_scene(cls, obj: SOMcreator.Object):
+        scene = cls.get_active_scene()
+        parent_node = trigger.add_object_to_scene(obj, scene)
+        return parent_node
+
+    @classmethod
+    def create_child_node(cls, top_node: ui_node.NodeProxy,
+                          obj: SOMcreator.Object) -> ui_node.NodeProxy | None:
+        scene = top_node.scene()
+        pos = top_node.sceneBoundingRect().bottomLeft() + QPointF(100., 60.)
+        return trigger.add_object_to_scene(obj, scene, top_node, pos)
