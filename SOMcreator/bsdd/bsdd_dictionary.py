@@ -24,8 +24,8 @@ class Dictionary:
     classes = []
     properties = []
 
-    def serialize(self):
-        data_dict = dict()
+    @property
+    def mapping(self):
         mapping = {
             'Classes':                      [c.serialize() for c in self.classes],
             'DictionaryCode':               self.dictionary_code,
@@ -46,8 +46,12 @@ class Dictionary:
             'Status':                       self.status,
             'UseOwnUri':                    self.use_own_uri,
         }
+        return mapping
 
-        for key, value in mapping.items():
+    def serialize(self):
+        data_dict = dict()
+
+        for key, value in self.mapping.items():
             if value is None:
                 continue
             data_dict[key] = value

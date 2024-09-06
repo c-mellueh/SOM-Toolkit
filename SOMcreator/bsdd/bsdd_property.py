@@ -53,8 +53,8 @@ class Property:
     property_relations: list[PropertyRelation] = field(init=False, default=None)
     allowed_values: list[AllowedValue] = field(init=False, default=None)
 
-    def serialize(self):
-        data_dict = dict()
+    @property
+    def mapping(self):
         mapping = {'Code':                              self.code,
                    'Name':                              self.name,
                    'Definition':                        self.definition,
@@ -102,7 +102,12 @@ class Property:
                    'VisualRepresentationUri':           self.visual_representation_uri,
                    'PropertyRelations':                 self.property_relations,
                    'AllowedValues':                     self.allowed_values, }
-        for key, value in mapping.items():
+        return mapping
+
+    def serialize(self):
+        data_dict = dict()
+
+        for key, value in self.mapping.items():
             if value is None:
                 continue
             data_dict[key] = value
@@ -134,8 +139,8 @@ class ClassProperty:
     symbol: str = field(init=False, default=None)
     allowed_values: list[AllowedValue] = field(init=False, default_factory=list)
 
-    def serialize(self) -> dict:
-        data_dict = dict()
+    @property
+    def mapping(self):
         mapping = {'Code':            self.code,
                    'PropertyCode':    self.property_code,
                    'PropertyUri':     self.property_uri,
@@ -155,8 +160,11 @@ class ClassProperty:
                    'SortNumber':      self.sort_number,
                    'Symbol':          self.symbol,
                    'AllowedValues':   [v.serialize() for v in self.allowed_values], }
+        return mapping
 
-        for key, value in mapping.items():
+    def serialize(self) -> dict:
+        data_dict = dict()
+        for key, value in self.mapping.items():
             if value is None:
                 continue
             data_dict[key] = value
@@ -170,13 +178,18 @@ class PropertyRelation:
     relation_type: str
     owned_uri: str
 
-    def serialize(self):
-        data_dict = dict()
+    @property
+    def mapping(self):
         mapping = {'RelatedPropertyName': self.related_property_name,
                    'RelatedPropertyUri':  self.related_property_uri,
                    'RelationType':        self.relation_type,
                    'OwnedUri':            self.owned_uri, }
-        for key, value in mapping.items():
+        return mapping
+
+    def serialize(self):
+        data_dict = dict()
+
+        for key, value in self.mapping.items():
             if value is None:
                 continue
             data_dict[key] = value
@@ -192,15 +205,20 @@ class AllowedValue:
     sort_number: int = field(init=False, default=None)
     owned_uri: str = field(init=False, default=None)
 
-    def serialize(self):
-        data_dict = dict()
+    @property
+    def mapping(self):
         mapping = {'Code':        self.code,
                    'Value':       self.value,
                    'Description': self.description,
                    'Uri':         self.uri,
                    'SortNumber':  self.sort_number,
                    'OwnedUri':    self.owned_uri, }
-        for key, value in mapping.items():
+        return mapping
+
+    def serialize(self):
+        data_dict = dict()
+
+        for key, value in self.mapping.items():
             if value is None:
                 continue
             data_dict[key] = value

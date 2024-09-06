@@ -42,9 +42,8 @@ class Class:
     class_relations: list[ClassRelation] = field(init=False, default=None)
     dictionary: Dictionary = field(init=False, default=None)
 
-    def serialize(self):
-
-        data_dict = dict()
+    @property
+    def mapping(self):
         mapping = {
             'Code':                      self.code,
             'Name':                      self.name,
@@ -76,8 +75,12 @@ class Class:
             'ClassProperties':           [c.serialize() for c in self.class_properties],
             'ClassRelations':            [c.serialize() for c in self.class_relations],
         }
+        return mapping
 
-        for key, value in mapping.items():
+    def serialize(self):
+
+        data_dict = dict()
+        for key, value in self.mapping.items():
             if value is None:
                 continue
             data_dict[key] = value
@@ -95,8 +98,8 @@ class ClassRelation:
     fraction: float = field(init=False, default=None)
     owned_uri: str = field(init=False, default=None)
 
-    def serialize(self) -> dict:
-        data_dict = dict()
+    @property
+    def mapping(self):
         mapping = {
             'RelationType':     self.relation_type,
             'RelatedClassUri':  self.related_class_uri,
@@ -104,7 +107,12 @@ class ClassRelation:
             'Fraction':         self.fraction,
             'OwnedUri':         self.owned_uri,
         }
-        for key, value in mapping.items():
+        return mapping
+
+    def serialize(self) -> dict:
+        data_dict = dict()
+
+        for key, value in self.mapping.items():
             if value is None:
                 continue
             data_dict[key] = value
