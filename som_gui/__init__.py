@@ -39,6 +39,7 @@ modules = {
     "settings":         [None, 'settings'],
     "compare":          [None, 'compare'],
     "console": [None, 'console'],
+    "bsdd": [None, "bsdd"]
 }
 plugins_dict = {
     "aggregation_window": {
