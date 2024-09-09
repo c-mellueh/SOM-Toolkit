@@ -1,7 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-
+from PySide6.QtWidgets import QWidget
 if TYPE_CHECKING:
     from .ui import Widget
 class BsddProperties:
     widget: Widget = None
+    tab_names: list[str] = list()
+    tab_widgets: list[QWidget] = list()

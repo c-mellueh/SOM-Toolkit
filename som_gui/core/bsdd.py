@@ -7,4 +7,6 @@ if TYPE_CHECKING:
 
 def open_window(bsdd: Type[tool.Bsdd]):
     window = bsdd.get_window()
+    if not window:
+        window = bsdd.create_window()
     window.show()
