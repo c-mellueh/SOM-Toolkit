@@ -3,6 +3,8 @@ from datetime import datetime
 from .bsdd_class import Class
 import json
 import os
+
+
 @dataclass
 class Dictionary:
     OrganizationCode: str = field(init=True)
@@ -30,23 +32,25 @@ class Dictionary:
         path = os.path.dirname(__file__)
         with open(os.path.join(path, "language.json"), "r") as f:
             language_json = json.load(f)
-        return [['DictionaryCode', str, None],
-                ['DictionaryName', str, None],
-                ['DictionaryUri', str, None],
-                ['DictionaryVersion', str, None],
-                ['LanguageIsoCode', str, [x.get("IsoCode") for x in language_json]],
-                ['LanguageOnly', str, None],
-                ['License', str, None],
-                ['LicenseUrl', str, None],
-                ['ModelVersion', str, ["1.0", "2.0"]],
-                ['MoriInfoUrl', str, None],
-                ['OrganizationCode', str, None],
-                ['QualityAssuranceProcedure', str, None],
-                ['QualityAssuranceProcedureUrl', str, None],
-                ['ReleaseDate', str, None],
-                ['Status', str, ["Preview", "Active", "Inactive"]],
-                ['UseOwnUri', str, None],
-                ['ChangeRequestEmailAddress', str, None]]
+        return [
+            ['OrganizationCode', str, None],
+            ['DictionaryCode', str, None],
+            ['DictionaryName', str, None],
+            ['DictionaryVersion', str, None],
+            ['LanguageIsoCode', str, [x.get("IsoCode") for x in language_json]],
+            ['LanguageOnly', bool, None],
+            ['UseOwnUri', bool, None],
+            ['DictionaryUri', str, None],
+            ['License', str, None],
+            ['LicenseUrl', str, None],
+            ['ChangeRequestEmailAddress', str, None],
+            ['ModelVersion', str, ["1.0", "2.0"]],
+            ['MoreInfoUrl', str, None],
+            ['QualityAssuranceProcedure', str, None],
+            ['QualityAssuranceProcedureUrl', str, None],
+            ['ReleaseDate', str, None],
+            ['Status', str, ["Preview", "Active", "Inactive"]],
+        ]
 
     @classmethod
     def nested_classes(cls):
