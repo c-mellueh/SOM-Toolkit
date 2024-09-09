@@ -1,51 +1,62 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from .bsdd_class import Class
-
-
+import json
+import os
 @dataclass
 class Dictionary:
-    organization_code: str = field(init=True)
-    dictionary_code: str = field(init=True)
-    dictionary_name: str = field(init=True)
-    dictionary_version: str = field(init=True)
-    language_iso_code: str = field(init=True)
-    language_only: bool = field(init=True)
-    use_own_uri: bool = field(init=True)
-    dictionary_uri: str = field(init=False, default=None)
-    license: str = field(init=False, default=None)
-    license_url: str = field(init=False, default=None)
-    model_version: str = field(init=False, default="2.0")
-    mori_info_url: str = field(init=False, default=None)
-    quality_assurance_procedure: str = field(init=False, default=None)
-    quality_assurance_procedure_url: str = field(init=False, default=None)
-    release_date: datetime = field(init=False, default=None)
-    status: str = field(init=False, default=None)
-    classes = []
-    properties = []
+    OrganizationCode: str = field(init=True)
+    DictionaryCode: str = field(init=True)
+    DictionaryName: str = field(init=True)
+    DictionaryVersion: str = field(init=True)
+    LanguageIsoCode: str = field(init=True)
+    LanguageOnly: bool = field(init=True)
+    UseOwnUri: bool = field(init=True)
+    DictionaryUri: str = field(init=False, default=None)
+    License: str = field(init=False, default=None)
+    LicenseUrl: str = field(init=False, default=None)
+    ChangeRequestEmailAddress: str = field(init=False, default=None)
+    ModelVersion: str = field(init=False, default="2.0")
+    MoreInfoUrl: str = field(init=False, default=None)
+    QualityAssuranceProcedure: str = field(init=False, default=None)
+    QualityAssuranceProcedureUrl: str = field(init=False, default=None)
+    ReleaseDate: datetime = field(init=False, default=None)
+    Status: str = field(init=False, default=None)
+    Classes = []
+    Properties = []
+
+    @classmethod
+    def attributes(cls):
+        path = os.path.dirname(__file__)
+        with open(os.path.join(path, "language.json"), "r") as f:
+            language_json = json.load(f)
+        return [['DictionaryCode', str, None],
+                ['DictionaryName', str, None],
+                ['DictionaryUri', str, None],
+                ['DictionaryVersion', str, None],
+                ['LanguageIsoCode', str, [x.get("IsoCode") for x in language_json]],
+                ['LanguageOnly', str, None],
+                ['License', str, None],
+                ['LicenseUrl', str, None],
+                ['ModelVersion', str, ["1.0", "2.0"]],
+                ['MoriInfoUrl', str, None],
+                ['OrganizationCode', str, None],
+                ['QualityAssuranceProcedure', str, None],
+                ['QualityAssuranceProcedureUrl', str, None],
+                ['ReleaseDate', str, None],
+                ['Status', str, ["Preview", "Active", "Inactive"]],
+                ['UseOwnUri', str, None],
+                ['ChangeRequestEmailAddress', str, None]]
+
+    @classmethod
+    def nested_classes(cls):
+        return ['Classes', 'Properties']
 
     @property
     def mapping(self):
-        mapping = {
-            'Classes':                      [c.serialize() for c in self.classes],
-            'DictionaryCode':               self.dictionary_code,
-            'DictionaryName':               self.dictionary_name,
-            'DictionaryUri':                self.dictionary_uri,
-            'DictionaryVersion':            self.dictionary_version,
-            'LanguageIsoCode':              self.language_iso_code,
-            'LanguageOnly':                 self.language_only,
-            'License':                      self.license,
-            'LicenseUrl':                   self.license_url,
-            'ModelVersion':                 self.model_version,
-            'MoriInfoUrl':                  self.mori_info_url,
-            'OrganizationCode':             self.organization_code,
-            'Properties':                   [p.serialize() for p in self.properties],
-            'QualityAssuranceProcedure':    self.quality_assurance_procedure,
-            'QualityAssuranceProcedureUrl': self.quality_assurance_procedure_url,
-            'ReleaseDate':                  self.release_date,
-            'Status':                       self.status,
-            'UseOwnUri':                    self.use_own_uri,
-        }
+        mapping = {name: getattr(self, name) for name, datatype, preset in Dictionary.attributes()}
+        nested_classes = {name: [x.serialize() for x in getattr(self, name)] for name in Dictionary.nested_classes()}
+        mapping.update(nested_classes)
         return mapping
 
     def serialize(self):
@@ -58,17 +69,17 @@ class Dictionary:
         return data_dict
 
     def add_class(self, value: Class):
-        self.classes.append(value)
+        self.Classes.append(value)
         value.dictionary = self
 
     def base(self) -> str:
-        if self.use_own_uri:
-            return self.dictionary_uri
+        if self.UseOwnUri:
+            return self.DictionaryUri
         return "https://identifier.buildingsmart.org"
 
     def uri(self) -> str:
         duri = self.base()
-        orga_code = self.organization_code
-        dict_code = self.dictionary_code
-        version = self.dictionary_version
+        orga_code = self.OrganizationCode
+        dict_code = self.DictionaryCode
+        version = self.DictionaryVersion
         return "/".join([duri, "uri", orga_code, f"{dict_code}/{version}"])
