@@ -1,5 +1,4 @@
 from .widget import Ui_Form
-from .dictionary_widget import Ui_Form as DictionaryForm
 from som_gui.icons import get_icon
 from PySide6.QtWidgets import QWidget
 from . import trigger
