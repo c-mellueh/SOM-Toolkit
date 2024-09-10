@@ -491,7 +491,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
                         child_item.setCheckState(Qt.CheckState.Checked)
                         root_item.setChild(child_row, child_column, child_item)
                     child_item.setEnabled(enable_state)
-                pset = root_item.child(child_row, 0).data(CLASS_REFERENCE)
+                pset: SOMcreator.PropertySet = root_item.child(child_row, 0).data(CLASS_REFERENCE)
                 cls.create_tree(pset.get_all_attributes(), root_item.child(child_row, 0), filter_index_list,
                                 len(pset_header_texts), model, cls.get_pset_tree())
 

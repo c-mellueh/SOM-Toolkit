@@ -53,7 +53,6 @@ class PopupHandler(logging.Handler):
     def emit(self, record):
         if record.levelno >= logging.WARNING:
             msg = self.format(record)
-            print(record.levelno, msg, record.message)
             self.signaller.error.emit(record.levelno, msg, record.message)
 
 
@@ -152,7 +151,6 @@ class Logging(som_gui.core.tool.Logging):
     @classmethod
     def create_popup_handler(cls, main_window):
         popup_handler = PopupHandler(main_window)
-
         popup_handler.setLevel(cls.get_log_level())
         popup_handler.setFormatter(cls.get_custom_formatter())
         return popup_handler

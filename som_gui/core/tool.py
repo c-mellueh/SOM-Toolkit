@@ -1,3 +1,6 @@
+class Bsdd:
+    pass
+
 class PredefinedPropertySetCompare:
     pass
 class Attribute:
