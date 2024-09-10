@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 import json
 
 from .bsdd_dictionary import Dictionary
-from .bsdd_class import Class
-from .bsdd_property import Property
+from .bsdd_class import Class, ClassRelation
+from .bsdd_property import Property, ClassProperty, AllowedValue, PropertyRelation
 
 
 def export(dictionary: Dictionary, path):
