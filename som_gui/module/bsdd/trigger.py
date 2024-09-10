@@ -3,7 +3,7 @@ from som_gui.core import bsdd as core
 def connect():
     core.define_dictionary_widget(tool.Bsdd)
     tool.MainWindow.add_action("Datei/Export/bsDD",
-                               lambda: core.open_window(tool.Bsdd))
+                               lambda: core.open_window(tool.Bsdd, tool.Settings))
 
 
 def on_new_project():

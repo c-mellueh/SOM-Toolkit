@@ -11,12 +11,17 @@ import os
 
 BSDD_PATH = "bsDD"
 
-def open_window(bsdd: Type[tool.Bsdd]) -> None:
+
+def open_window(bsdd: Type[tool.Bsdd], settings: Type[tool.Settings]) -> None:
     window = bsdd.get_window()
     if not window:
         window = bsdd.create_window()
+        bsdd.get_path_line_edit().setText(settings.get_path(BSDD_PATH))
         bsdd.set_tabs(bsdd.get_tab_list())
-
+    dictionary = bsdd.get_dictionary()
+    if dictionary:
+        dictionary.Classes = list()
+        dictionary.Properties = list()
     window.show()
 
 
@@ -64,6 +69,7 @@ def export_path_requested(bsdd: Type[tool.Bsdd], popups: Type[tool.Popups], sett
     path = popups.get_save_path("JSON (*.json);;", window, path, "bsDD Json Export")
     if not path:
         return
+    settings.set_path(BSDD_PATH, path)
     bsdd.get_path_line_edit().setText(path)
 
 
