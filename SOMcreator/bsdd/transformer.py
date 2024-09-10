@@ -53,7 +53,7 @@ def _create_property(attribute: SOMcreator.Attribute) -> bsdd.Property:
     p.Definition = attribute.description
     p.DataType = DATATYPE_MAPPING[attribute.data_type]
     if attribute.value_type == value_constants.FORMAT and attribute.value:
-        p.Pattern = attribute.value[0]
+        p.Pattern = "|".join(attribute.value)
     p.PropertyValueKind = PROPERTY_KIND_MAPPING[attribute.value_type]
     return p
 
@@ -69,12 +69,11 @@ def _find_differences(obj_1: bsdd.Property, obj_2: bsdd.Property) -> dict:
 
 
 def _create_class_property(attribute: SOMcreator.Attribute, existing_properties: list[bsdd.Property]):
-    code = attribute.name
+    code = str(attribute.name)
     if parent_property := _check_for_existance(attribute, existing_properties):
         pass
     else:
         parent_property = _create_property(attribute)
-        print(f"create property: {parent_property.Code}")
         existing_properties.append(parent_property)
 
     class_property = bsdd.ClassProperty(code, parent_property.Code, "")
@@ -103,7 +102,7 @@ def _create_properties(predefined_attribute: list[SOMcreator.Attribute],
             if old_property != new_property:
                 difference = _find_differences(new_property, old_property)
                 logging.warning(
-                    f"Property mismatch found! There are two properties with the same code ({new_property.Code}) but different values for {'|'.join(difference.keys())}! -> keeping first property")
+                    f"Property mismatch found! There are two properties with the same code ({new_property.Code}) but different values for 'Property.{'|'.join(difference.keys())}'! -> keeping first property")
                 continue
         else:
             new_property = _create_property(attribute)
@@ -139,14 +138,7 @@ def _create_parent_reference(child_obj: SOMcreator.Object, parent_obj: SOMcreato
                              class_dict: dict[SOMcreator.Object, bsdd.Class]):
     parent_class = class_dict[parent_obj]
     child_class = class_dict[child_obj]
-    # has_parent_relation = ClassRelation("IsChildOf", parent_class.uri())
-    # has_parent_relation.related_class_name = parent_class.name
-    # child_class.class_relations.append(has_parent_relation)
-    child_class.parent_class_code = parent_class.Code
-    #
-    # has_child_relation = ClassRelation("IsParentOf", child_class.uri())
-    # has_child_relation.related_class_name = child_class.name
-    # parent_class.class_relations.append(has_child_relation)
+    child_class.ParentClassCode = parent_class.Code
 
 
 def _iterate_parent_relations(objects: list[SOMcreator.Object], class_dict: dict[SOMcreator.Object, bsdd.Class]):

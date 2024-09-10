@@ -16,13 +16,13 @@ def start_log(level: int | None = None) -> None:
 
 
 def main(initial_file: str | None = None, log_level=None):
+    print("START")
     from PySide6.QtWidgets import QApplication
     import som_gui.core.main_window
     import som_gui.core.project
     if log_level == None:
         log_level = logging.WARNING
 
-    print("START")
     som_gui.register()
     tool.Logging.set_log_level(log_level)
     app = QApplication(sys.argv)

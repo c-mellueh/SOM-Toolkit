@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+import os
 import logging
 from typing import TYPE_CHECKING, Type
 from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QLineEdit
@@ -7,10 +7,7 @@ from PySide6.QtCore import Qt
 if TYPE_CHECKING:
     from som_gui import tool
 
-import os
-
 BSDD_PATH = "bsDD"
-
 
 def open_window(bsdd: Type[tool.Bsdd], settings: Type[tool.Settings]) -> None:
     window = bsdd.get_window()
@@ -19,9 +16,6 @@ def open_window(bsdd: Type[tool.Bsdd], settings: Type[tool.Settings]) -> None:
         bsdd.get_path_line_edit().setText(settings.get_path(BSDD_PATH))
         bsdd.set_tabs(bsdd.get_tab_list())
     dictionary = bsdd.get_dictionary()
-    if dictionary:
-        dictionary.Classes = list()
-        dictionary.Properties = list()
     window.show()
 
 
@@ -79,6 +73,10 @@ def export_dictionary(bsdd: Type[tool.Bsdd], project: Type[tool.Project], popups
     if not os.path.exists(dirname):
         logging.error(f"folder '{dirname}' does not exist")
         return
+
+    dictionary = bsdd.get_dictionary()
+    dictionary.Classes = list()
+    dictionary.Properties = list()
     bsdd.add_objects_to_dictionary(project.get())
     bsdd.export_to_json(path)
     popups.create_info_popup("Export Abgeschlossen", "Export ist abgeschlossen")
