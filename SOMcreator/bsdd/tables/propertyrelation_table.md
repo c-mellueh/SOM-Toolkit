@@ -1,0 +1,6 @@
+| Field               | DataType | Requ- ired? | Trans- latable? | Description                                                                                                                                    |
+|---------------------|----------|-------------|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| RelatedPropertyName | Text     |             |                 | Name of the related `Property`.                                                                                                                |
+| RelatedPropertyUri  | Text     | ✅           |                 | Full URI of the related `Property`. It can be to same or a different `Dictionary`.                                                             |
+| RelationType        | Text     | ✅           |                 | One of:  `HasReference`,  `IsEqualTo`,  `IsSimilarTo`, ~~IsParentOf,  IsChildOf, HasPart~~. Read more about [Relation types](#relation-types). |
+| OwnedUri            | Text     |             |                 | If you specified `UseOwnUri = true` at the dictionary level, you must supply the URI that globally uniquely identifies the PropertyRelation    |

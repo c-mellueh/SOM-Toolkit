@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from .bsdd_class import Class
+from .bsdd_property import Property
 import json
 import os
 
@@ -24,8 +25,8 @@ class Dictionary:
     QualityAssuranceProcedureUrl: str = field(init=False, default=None)
     ReleaseDate: datetime = field(init=False, default=None)
     Status: str = field(init=False, default=None)
-    Classes = []
-    Properties = []
+    Classes: list[Class] = field(init=True, default_factory=list)
+    Properties: list[Property] = field(init=True, default_factory=list)
 
     @classmethod
     def attributes(cls):

@@ -11,74 +11,82 @@ if TYPE_CHECKING:
 
 @dataclass
 class Class:
-    code: str = field(init=True)
-    name: str = field(init=True)
-    class_type: str = field(init=True)
-    definition: str = field(init=False, default=None)
-    description: str = field(init=False, default=None)
-    parent_class_code: str = field(init=False, default=None)
-    related_ifc_entity_names_list: list[str] = field(init=False, default=None)
-    synonyms: list[str] = field(init=False, default=None)
-    activation_date_utc: datetime = field(init=False, default=None)
-    reference_code: str = field(init=False, default=None)
-    countries_of_use: list[str] = field(init=False, default=None)
-    country_of_origin: str = field(init=False, default=None)
-    creator_language_iso_code: str = field(init=False, default=None)
-    de_activation_date_utc: datetime = field(init=False, default=None)
-    deprecation_explanation: str = field(init=False, default=None)
-    document_reference: str = field(init=False, default=None)
-    owned_uri: str = field(init=False, default=None)
-    replaced_object_codes: list[str] = field(init=False, default=None)
-    replacing_object_codes: list[str] = field(init=False, default=None)
-    revision_date_utc: datetime = field(init=False, default=None)
-    revision_number: int = field(init=False, default=None)
-    status: str = field(init=False, default=None)
-    subdivisions_of_use: list[str] = field(init=False, default=None)
-    uid: str = field(init=False, default=None)
-    version_date_utc: datetime = field(init=False, default=None)
-    version_number: int = field(init=False, default=None)
-    visual_representation_uri: str = field(init=False, default=None)
-    class_properties: list[ClassProperty] = field(init=False, default=None)
-    class_relations: list[ClassRelation] = field(init=False, default=None)
+    Code: str = field(init=True)
+    Name: str = field(init=True)
+    ClassType: str = field(init=True)
+    Definition: str = field(init=False, default=None)
+    Description: str = field(init=False, default=None)
+    ParentClassCode: str = field(init=False, default=None)
+    RelatedIfcEntityNamesList: list[str] = field(init=False, default=None)
+    Synonyms: list[str] = field(init=False, default=None)
+    ActivationDateUtc: datetime = field(init=False, default=None)
+    ReferenceCode: str = field(init=False, default=None)
+    CountriesOfUse: list[str] = field(init=False, default=None)
+    CountryOfOrigin: str = field(init=False, default=None)
+    CreatorLanguageIsoCode: str = field(init=False, default=None)
+    DeActivationDateUtc: datetime = field(init=False, default=None)
+    DeprecationExplanation: str = field(init=False, default=None)
+    DocumentReference: str = field(init=False, default=None)
+    OwnedUri: str = field(init=False, default=None)
+    ReplacedObjectCodes: list[str] = field(init=False, default=None)
+    ReplacingObjectCodes: list[str] = field(init=False, default=None)
+    RevisionDateUtc: datetime = field(init=False, default=None)
+    RevisionNumber: int = field(init=False, default=None)
+    Status: str = field(init=False, default=None)
+    SubdivisionsOfUse: list[str] = field(init=False, default=None)
+    Uid: str = field(init=False, default=None)
+    VersionDateUtc: datetime = field(init=False, default=None)
+    VersionNumber: int = field(init=False, default=None)
+    VisualRepresentationUri: str = field(init=False, default=None)
+    ClassProperties: list[ClassProperty] = field(init=True, default_factory=list)
+    ClassRelations: list[ClassRelation] = field(init=True, default_factory=list)
     dictionary: Dictionary = field(init=False, default=None)
+
+    @classmethod
+    def attributes(cls):
+        return [
+            ['Code', str, None],
+            ['Name', str, None],
+            ['ClassType', str, None],
+            ['Definition', str, None],
+            ['Description', str, None],
+            ['ParentClassCode', str, None],
+            ['RelatedIfcEntityNamesList', list, None],
+            ['Synonyms', list, None],
+            ['ActivationDateUtc', datetime, None],
+            ['ReferenceCode', str, None],
+            ['CountriesOfUse', list, None],
+            ['CountryOfOrigin', str, None],
+            ['CreatorLanguageIsoCode', str, None],
+            ['DeActivationDateUtc', datetime, None],
+            ['DeprecationExplanation', str, None],
+            ['DocumentReference', str, None],
+            ['OwnedUri', str, None],
+            ['ReplacedObjectCodes', list, None],
+            ['ReplacingObjectCodes', list, None],
+            ['RevisionDateUtc', datetime, None],
+            ['RevisionNumber', int, None],
+            ['Status', str, None],
+            ['SubdivisionsOfUse', list, None],
+            ['Uid', str, None],
+            ['VersionDateUtc', datetime, None],
+            ['VersionNumber', int, None],
+            ['VisualRepresentationUri', str, None],
+
+        ]
+
+    @classmethod
+    def nested_classes(cls):
+        return ['ClassProperties', 'ClassRelations']
 
     @property
     def mapping(self):
-        mapping = {
-            'Code':                      self.code,
-            'Name':                      self.name,
-            'ClassType':                 self.class_type,
-            'Definition':                self.definition,
-            'Description':               self.description,
-            'ParentClassCode':           self.parent_class_code,
-            'RelatedIfcEntityNamesList': self.related_ifc_entity_names_list,
-            'Synonyms':                  self.synonyms,
-            'ActivationDateUtc':         self.activation_date_utc,
-            'ReferenceCode':             self.reference_code,
-            'CountriesOfUse':            self.countries_of_use,
-            'CountryOfOrigin':           self.country_of_origin,
-            'CreatorLanguageIsoCode':    self.creator_language_iso_code,
-            'DeActivationDateUtc':       self.de_activation_date_utc,
-            'DeprecationExplanation':    self.deprecation_explanation,
-            'DocumentReference':         self.document_reference,
-            'OwnedUri':                  self.owned_uri,
-            'ReplacedObjectCodes':       self.replaced_object_codes,
-            'ReplacingObjectCodes':      self.replacing_object_codes,
-            'RevisionDateUtc':           self.revision_date_utc,
-            'RevisionNumber':            self.revision_number,
-            'Status':                    self.status,
-            'SubdivisionsOfUse':         self.subdivisions_of_use,
-            'Uid':                       self.uid,
-            'VersionDateUtc':            self.version_date_utc,
-            'VersionNumber':             self.version_number,
-            'VisualRepresentationUri':   self.visual_representation_uri,
-            'ClassProperties':           [c.serialize() for c in self.class_properties],
-            'ClassRelations':            [c.serialize() for c in self.class_relations],
-        }
+        mapping = {name: getattr(self, name) for name, datatype, preset in Class.attributes()}
+        nested_classes = {name: [x.serialize() for x in getattr(self, name)] for name in Class.nested_classes()}
+        mapping.update(nested_classes)
         return mapping
 
     def serialize(self):
-
         data_dict = dict()
         for key, value in self.mapping.items():
             if value is None:
@@ -87,26 +95,30 @@ class Class:
         return data_dict
 
     def uri(self):
-        return "/".join([self.dictionary.uri(), "class", self.code])
+        return "/".join([self.dictionary.uri(), "class", self.Code])
 
 
 @dataclass
 class ClassRelation:
-    relation_type: str = field(init=True)
-    related_class_uri: str = field(init=True)
-    related_class_name: str = field(init=False, default=None)
-    fraction: float = field(init=False, default=None)
-    owned_uri: str = field(init=False, default=None)
+    RelationType: str = field(init=True)
+    RelatedClassUri: str = field(init=True)
+    RelatedClassName: str = field(init=False, default=None)
+    Fraction: float = field(init=False, default=None)
+    OwnedUri: str = field(init=False, default=None)
+
+    @classmethod
+    def attributes(cls):
+        return [
+            ['RelationType', str, None],
+            ['RelatedClassUri', str, None],
+            ['RelatedClassName', str, None],
+            ['Fraction', float, None],
+            ['OwnedUri', str, None],
+        ]
 
     @property
     def mapping(self):
-        mapping = {
-            'RelationType':     self.relation_type,
-            'RelatedClassUri':  self.related_class_uri,
-            'RelatedClassName': self.related_class_name,
-            'Fraction':         self.fraction,
-            'OwnedUri':         self.owned_uri,
-        }
+        mapping = {name: getattr(self, name) for name, datatype, preset in ClassRelation.attributes()}
         return mapping
 
     def serialize(self) -> dict:
