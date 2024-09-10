@@ -50,7 +50,8 @@ def _import_object(existing_project, import_project, obj, old_predefined_psets_m
         _add_item(existing_project, import_project, aggregation, phase_mapping, use_case_mapping)
 
 
-def _import_pset(existing_project, import_project, property_set, old_predefined_psets_mapping, phase_mapping,
+def _import_pset(existing_project, import_project, property_set: SOMcreator.PropertySet, old_predefined_psets_mapping,
+                 phase_mapping,
                  use_case_mapping):
     parent = old_predefined_psets_mapping.get(property_set.parent)
     _add_item(existing_project, import_project, property_set, phase_mapping, use_case_mapping)

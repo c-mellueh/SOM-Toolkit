@@ -706,7 +706,7 @@ class Object(Hirarchy):
 
     def get_all_attributes(self, inherit: bool = False) -> list[Attribute]:
         attributes = list()
-        for property_set in self.property_sets:
+        for property_set in self.get_all_property_sets():
             attributes += property_set.attributes
 
         if inherit:
@@ -721,14 +721,14 @@ class Object(Hirarchy):
     def delete(self, recursive: bool = False) -> None:
         super(Object, self).delete(recursive)
 
-        for pset in self.property_sets:
+        for pset in self.get_all_property_sets():
             pset.delete(recursive, override_ident_deletion=True)
 
         for aggregation in self.aggregations.copy():
             aggregation.delete(recursive)
 
     def get_property_set_by_name(self, property_set_name: str) -> PropertySet | None:
-        for property_set in self.property_sets:
+        for property_set in self.get_all_property_sets():
             if property_set.name == property_set_name:
                 return property_set
         return None
