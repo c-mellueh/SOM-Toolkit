@@ -20,7 +20,6 @@ class Popups(som_gui.core.tool.Popups):
 
     @classmethod
     def get_save_path(cls, file_format: str, window, path=None, title=None) -> str:
-        window = tool.MainWindow.get()
         return cls._get_path(file_format, window, path, True, title)
 
     @classmethod

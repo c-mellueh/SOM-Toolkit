@@ -153,5 +153,5 @@ class Util(som_gui.core.tool.Util):
         return loop_name(standard_name)
 
     @classmethod
-    def get_all_attributes(cls, object_list: set[SOMcreator.Object]):
+    def get_all_attributes(cls, object_list: list[SOMcreator.Object]):
         return [a for o in object_list for p in o.property_sets for a in p.attributes]

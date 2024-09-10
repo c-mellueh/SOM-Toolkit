@@ -16,3 +16,11 @@ def paint_dictionary():
 
 def dict_attribute_changed(value, widget):
     core.dict_attribute_changed(value, widget, tool.Bsdd)
+
+
+def path_button_clicked():
+    core.export_path_requested(tool.Bsdd, tool.Popups, tool.Settings)
+
+
+def run_clicked():
+    core.export_dictionary(tool.Bsdd, tool.Project, tool.Popups)

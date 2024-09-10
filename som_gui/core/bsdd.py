@@ -1,10 +1,15 @@
 from __future__ import annotations
+
+import logging
 from typing import TYPE_CHECKING, Type
 from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QLineEdit
 from PySide6.QtCore import Qt
 if TYPE_CHECKING:
     from som_gui import tool
 
+import os
+
+BSDD_PATH = "bsDD"
 
 def open_window(bsdd: Type[tool.Bsdd]) -> None:
     window = bsdd.get_window()
@@ -51,3 +56,23 @@ def dict_attribute_changed(value, widget, bsdd: Type[tool.Bsdd]):
     if isinstance(value, Qt.CheckState):
         value = True if value == Qt.CheckState.Checked else False
     setattr(dictionary, attribute_name, value)
+
+
+def export_path_requested(bsdd: Type[tool.Bsdd], popups: Type[tool.Popups], settings: Type[tool.Settings]):
+    path = settings.get_path(BSDD_PATH)
+    window = bsdd.get_window()
+    path = popups.get_save_path("JSON (*.json);;", window, path, "bsDD Json Export")
+    if not path:
+        return
+    bsdd.get_path_line_edit().setText(path)
+
+
+def export_dictionary(bsdd: Type[tool.Bsdd], project: Type[tool.Project], popups: Type[tool.Popups]):
+    path = bsdd.get_path_line_edit().text()
+    dirname = os.path.dirname(path)
+    if not os.path.exists(dirname):
+        logging.error(f"folder '{dirname}' does not exist")
+        return
+    bsdd.add_objects_to_dictionary(project.get())
+    bsdd.export_to_json(path)
+    popups.create_info_popup("Export Abgeschlossen", "Export ist abgeschlossen")
