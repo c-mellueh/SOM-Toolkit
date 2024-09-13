@@ -1,12 +1,9 @@
 from __future__ import annotations
-
 import logging
 import os
-from typing import TYPE_CHECKING, Type
-from som_gui import tool
+from typing import TYPE_CHECKING
 import SOMcreator
-import datetime
-
+from dataclasses import fields
 if TYPE_CHECKING:
     from som_gui.module.bsdd.prop import BsddProperties
 import som_gui.core.tool
@@ -16,6 +13,11 @@ from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QWidget, QToolB
 from som_gui.module.bsdd import trigger
 from SOMcreator import bsdd
 import SOMcreator.bsdd.transformer
+
+LANGUAGE_ISO_CODES = ['EN', 'en-GB', 'nl-NL', 'nb-NO', 'nl-BE', 'fr-BE', 'de-DE', 'it-IT', 'sv-SE', 'fr-FR', 'es-ES',
+                      'en-AU', 'fa-IR', 'pl-PL', 'lv-LV', 'en-NZ', 'sr-SP', 'zh-CN', 'ru-RU', 'vi-VN', 'bg-BG', 'kr-KR',
+                      'ar-SA', 'el-GR', 'de-AT', 'mn-MN', 'en-CA', 'lt-LT', 'da-DK', 'de-CH', 'et-EE', 'cs-CZ', 'nn-NO',
+                      'en-US', 'pt-BR', 'fi-FI', 'ja-JP', 'no-NO', 'pt-PT']
 
 
 class Bsdd(som_gui.core.tool.Bsdd):
@@ -69,10 +71,12 @@ class Bsdd(som_gui.core.tool.Bsdd):
         widget = cls.get_properties().dictionary_widget = ui.DictionaryWidget()
         widget.setLayout(QFormLayout())
         layout: QFormLayout = widget.layout()
-        attributes = Dictionary.attributes()
+        presets = cls.get_dict_presets()
+        attributes = [(f.name, f.type, presets.get(f.name)) for f in fields(Dictionary) if
+                      f.name not in ["Classes", "Properties"]]
 
         for index, (name, datatype, preset) in enumerate(attributes):
-            if datatype == str:
+            if datatype == "str":
                 if preset is None:
                     w = QLineEdit()
                     w.textChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, wid))
@@ -80,12 +84,17 @@ class Bsdd(som_gui.core.tool.Bsdd):
                     w = QComboBox()
                     w.addItems(preset)
                     w.currentTextChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, wid))
-            elif datatype == bool:
+            elif datatype == "bool":
                 w = QCheckBox()
                 w.checkStateChanged.connect(lambda state, wid=w: trigger.dict_attribute_changed(state, wid))
-            else:
-                logging.warning(f"Datatype: {datatype} not supported")
+            elif datatype == "datetime":
                 w = QLineEdit()
+                w.textChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, wid))
+            else:
+                logging.info(f"Datatype: '{datatype}' not supported")
+                w = QLineEdit()
+                w.textChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, wid))
+
             w.setProperty("attribute_name", name)
             layout.setWidget(index, QFormLayout.ItemRole.FieldRole, w)
             layout.setWidget(index, QFormLayout.ItemRole.LabelRole, QLabel(name))
@@ -128,3 +137,25 @@ class Bsdd(som_gui.core.tool.Bsdd):
     def export_to_json(cls, path: str | os.PathLike):
         dictionary = cls.get_dictionary()
         SOMcreator.bsdd.export(dictionary, path)
+
+    @classmethod
+    def get_dict_presets(cls):
+        return {
+            'OrganizationCode':             None,
+            'DictionaryCode':               None,
+            'DictionaryName':               None,
+            'DictionaryVersion':            None,
+            'LanguageIsoCode':              LANGUAGE_ISO_CODES,
+            'LanguageOnly':                 None,
+            'UseOwnUri':                    None,
+            'DictionaryUri':                None,
+            'License':                      None,
+            'LicenseUrl':                   None,
+            'ChangeRequestEmailAddress':    None,
+            'ModelVersion':                 ["1.0", "2.0"],
+            'MoreInfoUrl':                  None,
+            'QualityAssuranceProcedure':    None,
+            'QualityAssuranceProcedureUrl': None,
+            'ReleaseDate':                  None,
+            'Status':                       ["Preview", "Active", "Inactive"],
+        }
