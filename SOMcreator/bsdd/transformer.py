@@ -77,7 +77,7 @@ def _create_class_property(attribute: SOMcreator.Attribute, existing_properties:
         existing_properties.append(parent_property)
 
     class_property = bsdd.ClassProperty(code, parent_property.Code, "")
-    class_property.attribute, class_property.Description, class_property.PropertyType, class_property.IsRequired = (
+    class_property.attribute, class_property.Description, class_property.PropertySet, class_property.IsRequired = (
         attribute, attribute.description, str(attribute.property_set.name), not attribute.optional)
 
     if not attribute.value:
@@ -112,14 +112,13 @@ def _create_properties(predefined_attribute: list[SOMcreator.Attribute],
 
 
 def _create_class(obj: SOMcreator.Object, d: bsdd.Dictionary):
-    c = bsdd.Class(str(obj.ident_value), obj.name, "Class")
+    c = bsdd.Class(d, str(obj.ident_value), obj.name, "Class")
     c.Description = obj.description
     c.RelatedIfcEntityNamesList = list(obj.ifc_mapping)
     c.CountriesOfUse = ["DE"]
     c.CountryOfOrigin = "DE"
     c.CreatorLanguageIsoCode = "de-DE"
     c.Status = "Active"
-    d.add_class(c)
     return c
 
 

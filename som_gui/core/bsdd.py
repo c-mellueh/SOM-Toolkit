@@ -15,12 +15,12 @@ def open_window(bsdd: Type[tool.Bsdd], settings: Type[tool.Settings]) -> None:
         window = bsdd.create_window()
         bsdd.get_path_line_edit().setText(settings.get_path(BSDD_PATH))
         bsdd.set_tabs(bsdd.get_tab_list())
-    dictionary = bsdd.get_dictionary()
     window.show()
 
 
 def reset(bsdd: Type[tool.Bsdd]) -> None:
     bsdd.reset_dictionary()
+
 
 
 def define_dictionary_widget(bsdd: Type[tool.Bsdd]):
@@ -40,9 +40,9 @@ def paint_dictionary(bsdd: Type[tool.Bsdd], project: Type[tool.Project]):
         item = layout.itemAt(row * 2).widget()
         value = getattr(dictionary, item.property('attribute_name'))
         if isinstance(item, QLineEdit):
-            item.setText(value)
+            item.setText(value or "")
         elif isinstance(item, QComboBox):
-            item.setCurrentText(value)
+            item.setCurrentText(value or "")
         elif isinstance(item, QCheckBox):
             item.setChecked(value)
 
