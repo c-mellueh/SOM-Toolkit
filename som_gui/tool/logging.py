@@ -39,7 +39,7 @@ class CustomFormatter(logging.Formatter):
 
 
 class Signaller(QObject):
-    error = Signal(int, str, str)
+    error = Signal(logging.LogRecord, str)
 
 
 class PopupHandler(logging.Handler):
@@ -53,16 +53,18 @@ class PopupHandler(logging.Handler):
     def emit(self, record):
         if record.levelno >= logging.WARNING:
             msg = self.format(record)
-            self.signaller.error.emit(record.levelno, msg, record.message)
+            self.signaller.error.emit(record, msg)
 
 
 class Logging(som_gui.core.tool.Logging):
 
     @classmethod
-    def show_popup(cls, level_no, message, base_message=None):
-        if base_message is None:
-            base_message = message
-        if base_message in cls.get_properties().ignore_texts:
+    def show_popup(cls, record: logging.LogRecord, message):
+        level_no = record.levelno
+        # find path of error
+        identifier = f"{record.pathname}.{record.module}.{record.funcName}.{record.lineno}"
+        # if this error was set to be ignored, don't show popup
+        if identifier in cls.get_properties().ignore_texts:
             return
         msg_box = QMessageBox()
         states = [
@@ -79,7 +81,7 @@ class Logging(som_gui.core.tool.Logging):
         msg_box.setText(f"An {level} occurred:")
         msg_box.setDetailedText(message)
         if msg_box.exec_() and cb.isChecked():
-            cls.get_properties().ignore_texts.append(base_message)
+            cls.get_properties().ignore_texts.append(identifier)
 
     @classmethod
     def get_properties(cls) -> LoggingProperties:

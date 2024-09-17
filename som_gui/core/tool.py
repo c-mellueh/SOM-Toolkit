@@ -1,8 +1,4 @@
-class Bsdd:
-    pass
 
-class PredefinedPropertySetCompare:
-    pass
 class Attribute:
     def add_attribute_data_value(self, name, getter, setter): pass
 
@@ -46,7 +42,7 @@ class Attribute:
 
 
 class AttributeCompare:
-    def add_attributes_to_psetitem(self, item, add_missing): pass
+    def add_attributes_to_pset_tree(self, tree, add_missing): pass
 
     def add_missing_objects_to_tree(self, tree, root_objects): pass
 
@@ -54,9 +50,11 @@ class AttributeCompare:
 
     def are_attributes_identical(self, attribute0, attribute1): pass
 
-    def are_objects_identical(self, object0, object1): pass
+    def are_objects_identical(self, object0, object1, check_pset): pass
 
-    def are_property_sets_identical(self, property_set0, property_set1): pass
+    def are_property_sets_identical(self, property_set0, property_set1, check_attributes): pass
+
+    def children_are_identical(self, entity0, entity1): pass
 
     def clear_table(self, table): pass
 
@@ -66,7 +64,9 @@ class AttributeCompare:
 
     def compare_objects(self, obj0, obj1): pass
 
-    def compare_psets(self, pset0, pset1): pass
+    def compare_property_sets(self, pset0, pset1): pass
+
+    def create_child_matchup(self, entity0, entity1): pass
 
     def create_object_dicts(self, ): pass
 
@@ -78,27 +78,39 @@ class AttributeCompare:
 
     def export_attribute_differences(self, file, attribute_list): pass
 
+    def export_child_check(self, file, type_name, entity0, entity1, indent): pass
+
     def export_existance_check(self, file, type_name, entity0, entity1, indent): pass
 
     def export_name_check(self, file, type_name, entity0, entity1, indent): pass
 
     def export_object_differences(self, file): pass
 
-    def export_pset_differences(self, file, pset_list): pass
+    def export_pset_differences(self, file, pset_list, lb): pass
 
     def fill_object_tree(self, tree, add_missing): pass
 
     def fill_object_tree_layer(self, objects, parent_item, add_missing): pass
 
-    def fill_pset_tree(self, tree, obj, add_missing): pass
+    def fill_pset_tree(self, tree, pset_list, add_missing): pass
+
+    def fill_table(self, table, info_list, entities): pass
 
     def fill_value_table(self, table, attribute): pass
 
+    def fill_value_table_pset(self, widget): pass
+
     def find_existing_parent_item(self, obj): pass
 
-    def find_matching_entity(self, entity_0, uuid_dict1, name_dict1, name_override=None): pass
+    def find_matching_entity(self, entity_0, uuid_dict1, name_dict1): pass
 
     def find_matching_object(self, obj, index): pass
+
+    def generate_name_dict(self, entity_list): pass
+
+    def generate_uuid_dict(self, entity_list): pass
+
+    def get_attribute_info_list(self, ): pass
 
     def get_attribute_list(self, property_set): pass
 
@@ -110,11 +122,15 @@ class AttributeCompare:
 
     def get_ident_dict(self, index): pass
 
+    def get_info_table(self, widget): pass
+
     def get_item_from_object(self, obj): pass
 
     def get_level(self, index): pass
 
     def get_missing_objects(self, index): pass
+
+    def get_name_path(self, entity): pass
 
     def get_object_dict(self, ): pass
 
@@ -126,11 +142,15 @@ class AttributeCompare:
 
     def get_properties(self, ): pass
 
+    def get_pset_info_list(self, ): pass
+
     def get_pset_list(self, obj): pass
 
     def get_pset_tree(self, widget): pass
 
     def get_selected_entity(self, tree): pass
+
+    def get_selected_item(self, tree): pass
 
     def get_uuid_dict(self, index): pass
 
@@ -159,6 +179,8 @@ class AttributeCompare:
     def set_value_list(self, attribute, value_list): pass
 
     def style_parent_item(self, item, style): pass
+
+    def style_table(self, table, shift): pass
 
     def style_tree_item(self, item): pass
 
@@ -292,6 +314,8 @@ class AttributeImportResults:
 
 
 class AttributeImportSQL:
+    def add_attribute_to_filter_table(self, project, attribute): pass
+
     def add_attribute_with_value(self, attribute): pass
 
     def add_attribute_without_value(self, attribute): pass
@@ -312,13 +336,21 @@ class AttributeImportSQL:
 
     def create_settings_window(self, ): pass
 
+    def create_som_filter_table(self, ): pass
+
     def create_tables(self, ): pass
 
     def disconnect_from_database(self, ): pass
 
+    def fill_filter_table(self, project): pass
+
     def get_attribute_data(self, attribute): pass
 
+    def get_attribute_query(self, ): pass
+
     def get_attributes(self, ifc_type, identifier, property_set): pass
+
+    def get_current_object_filter(self, ): pass
 
     def get_cursor(self, ): pass
 
@@ -345,6 +377,8 @@ class AttributeImportSQL:
     def import_entity_attributes(self, entity, ifc_file, identifier, existing_object_dict): pass
 
     def init_database(self, db_path): pass
+
+    def set_current_object_filter(self, usecase, phase): pass
 
     def set_database_path(self, path): pass
 
@@ -411,6 +445,44 @@ class AttributeTable:
     def set_active_table(self, table): pass
 
     def update_row(self, table, index): pass
+
+
+class Bsdd:
+    def add_objects_to_dictionary(self, project): pass
+
+    def add_widget_to_toolbox(self, name, widget): pass
+
+    def clear_toolbox(self, ): pass
+
+    def create_dictionary_widget(self, ): pass
+
+    def create_window(self, ): pass
+
+    def export_to_json(self, path): pass
+
+    def get_dict_presets(self, ): pass
+
+    def get_dictionary(self, ): pass
+
+    def get_dictionary_widget(self, ): pass
+
+    def get_path_line_edit(self, ): pass
+
+    def get_properties(self, ): pass
+
+    def get_tab_list(self, ): pass
+
+    def get_toolbox(self, ): pass
+
+    def get_ui(self, ): pass
+
+    def get_window(self, ): pass
+
+    def reset_dictionary(self, ): pass
+
+    def set_tabs(self, tab_list): pass
+
+    def transform_project_to_dict(self, proj): pass
 
 
 class CompareProjectSelector:
@@ -548,7 +620,7 @@ class Logging:
 
     def show_exception_popup(self, exctype, value, tb): pass
 
-    def show_popup(self, level_no, message, base_message): pass
+    def show_popup(self, record, message): pass
 
 
 class MainWindow:
@@ -592,9 +664,15 @@ class MainWindow:
 
     def get_ui(self, ): pass
 
+    def hide_console(self, ): pass
+
     def set_status_bar_text(self, text): pass
 
     def set_window_title(self, title): pass
+
+    def show_console(self, ): pass
+
+    def toggle_console(self, ): pass
 
 
 class Mapping:
@@ -1360,6 +1438,26 @@ class PredefinedPropertySet:
     def update_pset_widget(self, ): pass
 
 
+class PredefinedPropertySetCompare:
+    def create_pset_list(self, ): pass
+
+    def create_tree_selection_trigger(self, widget): pass
+
+    def get_predefined_psets(self, index): pass
+
+    def get_properties(self, ): pass
+
+    def get_pset_lists(self, ): pass
+
+    def get_widget(self, ): pass
+
+    def reset(self, ): pass
+
+    def set_predefined_psets(self, psets0, psets1): pass
+
+    def set_pset_lists(self, list): pass
+
+
 class Project:
     def add_plugin_save_function(self, func): pass
 
@@ -1723,6 +1821,8 @@ class Util:
 
     def create_tempfile(self, suffix): pass
 
+    def get_all_attributes(self, object_list): pass
+
     def get_combobox_values(self, combo_box): pass
 
     def get_new_name(self, standard_name, existing_names): pass
@@ -1736,3 +1836,4 @@ class Util:
     def menu_bar_create_actions(self, menu_dict, parent): pass
 
     def transform_guid(self, guid, add_zero_width): pass
+
