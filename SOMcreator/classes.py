@@ -47,6 +47,9 @@ class IterRegistry(type):
 class Project(object):
     def __init__(self, name: str = "", author: str | None = None, phases: list[Phase] = None,
                  use_case: list[UseCase] = None, filter_matrix: list[list[bool]] = None) -> None:
+        """
+        filter_matrix: list[phase_index][use_case_index] = bool
+        """
         SOMcreator.active_project = self
         self._items = set()
         self._name = ""
