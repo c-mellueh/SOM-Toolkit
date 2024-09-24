@@ -1,3 +1,22 @@
+class Appdata:
+    def _get_config(self, ): pass
+
+    def _write_config(self, config_parser): pass
+
+    def get_bool_setting(self, section, path): pass
+
+    def get_path(self, value): pass
+
+    def get_settings_path(self, ): pass
+
+    def get_string_setting(self, section, path, default): pass
+
+    def is_plugin_activated(self, name): pass
+
+    def set_path(self, path, value): pass
+
+    def set_setting(self, section, path, value): pass
+
 
 class Attribute:
     def add_attribute_data_value(self, name, getter, setter): pass
@@ -1754,56 +1773,8 @@ class Search:
     def search_object(self, ): pass
 
 
-class Appdata:
-    def get_bool_setting(self, section, path): pass
-
-    def _get_config(self, ): pass
-
-    def _write_config(self, config_parser): pass
-
-    def get_export_path(self, ): pass
-
-    def get_group_attribute(self, ): pass
-
-    def get_group_folder(self, ): pass
-
-    def get_group_pset(self, ): pass
-
-    def get_ifc_path(self, ): pass
-
-    def get_issue_path(self, ): pass
-
-    def get_path(self, value): pass
-
-    def get_seperator(self, ): pass
-
-    def get_seperator_status(self, ): pass
-
-    def get_settings_path(self, ): pass
-
-    def get_string_setting(self, section, path, default): pass
-
-    def is_plugin_activated(self, name): pass
-
-    def set_export_path(self, path): pass
-
-    def set_group_attribute(self, value): pass
-
-    def set_group_folder(self, value): pass
-
-    def set_group_pset(self, value): pass
-
-    def set_ifc_path(self, path): pass
-
-    def set_issue_path(self, path): pass
-
-    def set_path(self, path, value): pass
-
-    def set_seperator(self, value): pass
-
-    def set_seperator_status(self, value): pass
-
-    def set_setting(self, section, path, value): pass
+class Settings:
+    def get_properties(self, ): pass
 
 
 class Util:

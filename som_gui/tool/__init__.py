@@ -24,3 +24,4 @@ from som_gui.tool.mapping import Mapping
 from som_gui.tool.compare import CompareProjectSelector, CompareWindow
 from som_gui.tool.console import Console
 from som_gui.tool.bsdd import Bsdd
+from som_gui.tool.settings import Settings
