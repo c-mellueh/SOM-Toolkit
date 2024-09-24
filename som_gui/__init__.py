@@ -1,10 +1,8 @@
 from __future__ import annotations
+
+import logging
 from typing import TYPE_CHECKING
 from som_gui import core, tool
-from thefuzz import fuzz
-from SOMcreator.external_software.IDS import main
-from SOMcreator.external_software.bim_collab_zoom import modelcheck
-from SOMcreator.external_software.desite import modelcheck
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.ui import MainWindow
@@ -12,34 +10,11 @@ if TYPE_CHECKING:
 __version__ = "2.13.1"
 
 import importlib
+import pkgutil
 
-modules = {
-    "logging":          [None, "logging"],
-    "object_filter":           [None, "object_filter"],
-    "project_filter":          [None, "project_filter"],
-    "project":                 [None, "project"],
-    "object":                  [None, "object"],
-    "search":                  [None, "search"],
-    "property_set":            [None, "property_set"],
-    "attribute":               [None, "attribute"],
-    "main_window":             [None, "main_window"],
-    "attribute_table":         [None, "attribute_table"],
-    "property_set_window":     [None, "property_set_window"],
-    "predefined_property_set": [None, "predefined_property_set"],
-    "modelcheck_window":       [None, "modelcheck_window"],
-    "modelcheck_results":      [None, "modelcheck_results"],
-    "modelcheck_external":     [None, "modelcheck_external"],
-    "modelcheck":              [None, "modelcheck"],
-    "ifc_importer":            [None, "ifc_importer"],
-    "util":                    [None, "util"],
-    "exports":          [None, "exports"],
-    "attribute_import": [None, "attribute_import"],
-    "mapping":          [None, 'mapping'],
-    "popups":           [None, 'popups'],
-    "compare":          [None, 'compare'],
-    "console": [None, 'console'],
-    "bsdd": [None, "bsdd"]
-}
+module = importlib.import_module("som_gui.module")
+modules = {m.name: [None, m.name] for m in pkgutil.iter_modules(module.__path__) if m.ispkg}
+
 plugins_dict = {
     "aggregation_window": {
         "window":      [None, "window"],
@@ -52,6 +27,7 @@ plugins_dict = {
     },
 }
 for key, (_, name) in modules.items():
+    logging.info(f"Importing Module '{name}'")
     modules[key][0] = importlib.import_module(f"som_gui.module.{name}")
 
 for plugin_name, plugin_modules in plugins_dict.items():
