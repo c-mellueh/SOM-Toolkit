@@ -1755,7 +1755,7 @@ class Search:
 
 
 class Appdata:
-    def _get_bool_setting(self, section, path): pass
+    def get_bool_setting(self, section, path): pass
 
     def _get_config(self, ): pass
 

@@ -4,7 +4,7 @@ import som_gui
 from som_gui import tool
 from typing import TYPE_CHECKING
 from PySide6 import QtGui
-
+from .constants import SEPERATOR, SEPERATOR_SECTION, SEPERATOR_STATUS
 if TYPE_CHECKING:
     from .ui import PropertySetWindow
 
@@ -45,7 +45,7 @@ def close_window(window: PropertySetWindow):
 
 
 def key_press_event(event, window: PropertySetWindow):
-    sep_bool = tool.Appdata.get_seperator_status()
+    sep_bool = tool.Appdata.cls.get_bool_setting(SEPERATOR_SECTION, SEPERATOR_STATUS)
     if not event.matches(QtGui.QKeySequence.StandardKey.Paste) and sep_bool:
         return True
     return core.handle_paste_event(window, tool.PropertySetWindow)

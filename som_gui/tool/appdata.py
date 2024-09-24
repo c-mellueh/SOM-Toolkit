@@ -1,38 +1,18 @@
 from __future__ import annotations
 import som_gui.core.tool
-from som_gui.module.settings.paths import *
 import som_gui
 from configparser import ConfigParser
 import os
 import appdirs
 from som_gui import tool
+from som_gui.module.util.constants import PATH_SEPERATOR
+
+PATHS_SECTION = "paths"
+PLUGINS = "plugins"
 
 
 class Appdata(som_gui.core.tool.Appdata):
 
-    @classmethod
-    def get_export_path(cls, ) -> str:
-        return cls.get_path(EXPORT_PATH)
-
-    @classmethod
-    def set_export_path(cls, path) -> None:
-        cls.set_path(EXPORT_PATH, path)
-
-    @classmethod
-    def get_seperator(cls) -> str:
-        return cls.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
-
-    @classmethod
-    def set_seperator_status(cls, value: bool) -> None:
-        cls.set_setting(SEPERATOR_SECTION, SEPERATOR_STATUS, value)
-
-    @classmethod
-    def set_seperator(cls, value: str) -> None:
-        cls.set_setting(SEPERATOR_SECTION, SEPERATOR, value)
-
-    @classmethod
-    def get_seperator_status(cls) -> bool:
-        return cls._get_bool_setting(SEPERATOR_SECTION, SEPERATOR_STATUS)
 
     @classmethod
     def get_path(cls, value: str) -> str | list | set:
@@ -49,38 +29,6 @@ class Appdata(som_gui.core.tool.Appdata):
             value = PATH_SEPERATOR.join(value)
         cls.set_setting(PATHS_SECTION, path, value)
 
-
-    @classmethod
-    def get_issue_path(cls) -> str:
-        return cls.get_path(ISSUE_PATH)
-
-    @classmethod
-    def set_issue_path(cls, path) -> None:
-        cls.set_path(ISSUE_PATH, path)
-
-    @classmethod
-    def get_group_folder(cls) -> str:
-        return cls.get_path(GROUP_FOLDER)
-
-    @classmethod
-    def set_group_folder(cls, value) -> None:
-        cls.set_path(GROUP_FOLDER, value)
-
-    @classmethod
-    def set_group_pset(cls, value: str) -> None:
-        cls.set_setting(IFC_MOD, GROUP_PSET, value)
-
-    @classmethod
-    def set_group_attribute(cls, value: str) -> None:
-        cls.set_setting(IFC_MOD, GROUP_ATTRIBUTE, value)
-
-    @classmethod
-    def get_group_pset(cls, ) -> str:
-        return cls.get_string_setting(IFC_MOD, GROUP_PSET)
-
-    @classmethod
-    def get_group_attribute(cls, ) -> str:
-        return cls.get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
 
     @classmethod
     def set_setting(cls, section: str, path: str, value):
@@ -123,7 +71,7 @@ class Appdata(som_gui.core.tool.Appdata):
         return config
 
     @classmethod
-    def _get_bool_setting(cls, section: str, path: str) -> bool:
+    def get_bool_setting(cls, section: str, path: str) -> bool:
         config_parser = cls._get_config()
         if config_parser.has_option(section, path):
             path = config_parser.get(section, path)
@@ -137,4 +85,4 @@ class Appdata(som_gui.core.tool.Appdata):
         if not config_parser.has_option(PLUGINS, name):
             cls.set_setting(PLUGINS, name, True)
             return True
-        return cls._get_bool_setting(PLUGINS, name)
+        return cls.get_bool_setting(PLUGINS, name)

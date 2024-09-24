@@ -10,7 +10,7 @@ from ..module.grouping_window import ui as grouping_ui
 from ..module.grouping_window import trigger
 import os
 import logging
-
+from ..module.grouping_window.constants import GROUP_FOLDER, GROUP_PSET, IFC_MOD, GROUP_ATTRIBUTE
 if TYPE_CHECKING:
     from ..module.grouping_window.prop import GroupingWindowProperties
     from som_gui.module.ifc_importer.ui import IfcImportWidget
@@ -69,7 +69,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def autofill_export_path(cls):
-        export_path = tool.Appdata.get_group_folder()
+        export_path = tool.Appdata.get_path(GROUP_FOLDER)
         if export_path:
             cls.get_properties().export_line_edit.setText(export_path)
 
@@ -89,8 +89,8 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def autofill_grouping_attributes(cls):
-        group_attribute = tool.Appdata.get_group_attribute()
-        group_pset = tool.Appdata.get_group_pset()
+        group_attribute = tool.Appdata.get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
+        group_pset = tool.Appdata.get_string_setting(IFC_MOD, GROUP_PSET)
         if group_attribute:
             cls.get_properties().grouping_attribute_line_edit.setText(group_attribute)
         if group_pset:
@@ -159,13 +159,13 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
     @classmethod
     def set_grouping_attribute(cls, pset_name, attribute_name):
         cls.get_properties().grouping_attribute = pset_name, attribute_name
-        tool.Appdata.set_group_pset(pset_name)
-        tool.Appdata.set_group_attribute(attribute_name)
+        tool.Appdata.set_setting(IFC_MOD, GROUP_PSET, pset_name)
+        tool.Appdata.set_setting(IFC_MOD, GROUP_ATTRIBUTE, attribute_name)
 
     @classmethod
     def set_export_path(cls, path):
         cls.get_properties().export_path = path
-        tool.Appdata.set_group_folder(path)
+        tool.Appdata.set_path(GROUP_FOLDER, path)
 
     @classmethod
     def get_export_path(cls):

@@ -22,7 +22,7 @@ def export_vestra_mapping(exports: Type[tool.Exports], main_window: Type[tool.Ma
         export_path = str(os.getcwd() + "/")
         export_folder = exports.export_vestra(project.get(), main_window.get(), export_path)
         if export_folder:
-            appdata.set_export_path(export_folder)
+            appdata.set_path(EXPORT_PATH, export_folder)
 
 
 def export_card_1(exports: Type[tool.Exports], main_window: Type[tool.MainWindow], project: Type[tool.Project],
@@ -33,7 +33,7 @@ def export_card_1(exports: Type[tool.Exports], main_window: Type[tool.MainWindow
 
     path = exports.export_card_1(project.get(), main_window.get(), export_path)
     if path:
-        appdata.set_export_path(path)
+        appdata.set_path(EXPORT_PATH, path)
 
 
 def export_excel(exports: Type[tool.Exports], main_window: Type[tool.MainWindow], project: Type[tool.Project],
@@ -45,7 +45,7 @@ def export_excel(exports: Type[tool.Exports], main_window: Type[tool.MainWindow]
     if not path:
         return
     exports.export_excel(project.get(), path)
-    appdata.set_export_path(path)
+    appdata.set_path(EXPORT_PATH, path)
 
 
 def export_mapping_script(exports: Type[tool.Exports], main_window: Type[tool.MainWindow], project: Type[tool.Project],
@@ -61,7 +61,7 @@ def export_mapping_script(exports: Type[tool.Exports], main_window: Type[tool.Ma
         return
 
     exports.create_mapping_script(project.get(), name, path)
-    appdata.set_export_path(path)
+    appdata.set_path(EXPORT_PATH, path)
 
 
 def export_allplan_excel(exports: Type[tool.Exports], main_window: Type[tool.MainWindow], project: Type[tool.Project],
@@ -76,7 +76,7 @@ def export_allplan_excel(exports: Type[tool.Exports], main_window: Type[tool.Mai
         return
     if path:
         exports.export_allplan(project.get(), path, name)
-        appdata.set_export_path(path)
+        appdata.set_path(EXPORT_PATH, path)
 
 
 def export_desite_abbreviation(main_window: Type[tool.MainWindow],
@@ -87,4 +87,4 @@ def export_desite_abbreviation(main_window: Type[tool.MainWindow],
         abbrev = {obj.abbreviation: [obj.ident_value, obj.name] for obj in project.get().get_all_objects()}
         with open(path, "w") as file:
             json.dump(abbrev, file, indent=2)
-        appdata.set_export_path(path)
+        appdata.set_path(EXPORT_PATH, path)

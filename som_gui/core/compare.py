@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Type
 from som_gui.module.compare.constants import COMPARE_SETTING, EXPORT_PATH
 import SOMcreator
 from PySide6.QtCore import Qt
-from som_gui.module.settings.paths import PATHS_SECTION
 from som_gui.module.project.constants import FILETYPE
 
 from SOMcreator import Project
@@ -30,7 +29,7 @@ def open_project_selection_window(compare_window: Type[tool.CompareWindow],
     proj_select_dialog = project_selector.create_project_select_dialog()
     project_selector.connect_project_select_dialog(proj_select_dialog)
 
-    path = appdata.get_string_setting(PATHS_SECTION, COMPARE_SETTING)
+    path = appdata.get_path(COMPARE_SETTING)
     project_selector.fill_project_select_dialog(project.get(), path)
 
     if proj_select_dialog.exec():
@@ -58,7 +57,7 @@ def switch_clicked(project_selector: Type[tool.CompareProjectSelector]):
 def project_button_clicked(project_selector: Type[tool.CompareProjectSelector], popups: Type[tool.Popups],
                            appdata: Type[tool.Appdata]):
     dialog = project_selector.get_project_select_dialog()
-    path = appdata.get_string_setting(PATHS_SECTION, COMPARE_SETTING)
+    path = appdata.get_path(COMPARE_SETTING)
     path = popups.get_open_path(FILETYPE, dialog, path)
     if not path:
         return

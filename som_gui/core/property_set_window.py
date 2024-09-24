@@ -4,7 +4,7 @@ from typing import Type, TYPE_CHECKING
 import SOMcreator
 from som_gui.core import attribute_table as attribute_table_core
 from SOMcreator.constants.value_constants import RANGE
-
+from som_gui.module.property_set_window.constants import SEPERATOR_SECTION, SEPERATOR, SEPERATOR_STATUS
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_set_window.ui import PropertySetWindow
@@ -106,8 +106,8 @@ def value_type_changed(window: PropertySetWindow, property_set_window: Type[tool
 def update_seperator(window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow],
                      appdata: Type[tool.Appdata]):
     text, state = property_set_window.get_seperator_state(window)
-    appdata.set_seperator_status(state)
-    appdata.set_seperator(text)
+    appdata.set_setting(SEPERATOR_SECTION, SEPERATOR_STATUS, state)
+    appdata.set_setting(SEPERATOR_SECTION, SEPERATOR, text)
 
 
 def attribute_clicked(item: QTableWidgetItem, attribute: Type[tool.Attribute],

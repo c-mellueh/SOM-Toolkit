@@ -36,7 +36,6 @@ modules = {
     "attribute_import": [None, "attribute_import"],
     "mapping":          [None, 'mapping'],
     "popups":           [None, 'popups'],
-    "settings":         [None, 'settings'],
     "compare":          [None, 'compare'],
     "console": [None, 'console'],
     "bsdd": [None, "bsdd"]
