@@ -8,38 +8,38 @@ import som_gui
 from som_gui.module.project.constants import FILETYPE, OPEN_PATH, SAVE_PATH
 
 if TYPE_CHECKING:
-    from som_gui.tool import Project, Popups, Settings
+    from som_gui.tool import Project, Popups, Appdata
     from som_gui import tool
 
 
-def save_clicked(project_tool: Type[Project], popup_tool: Type[Popups], settings_tool: Type[Settings],
+def save_clicked(project_tool: Type[Project], popup_tool: Type[Popups], appdata: Type[Appdata],
                  main_window: Type[tool.MainWindow]):
-    save_path = settings_tool.get_path(SAVE_PATH)
+    save_path = appdata.get_path(SAVE_PATH)
     if not os.path.exists(save_path) or not save_path.endswith("json"):
-        save_as_clicked(project_tool, popup_tool, settings_tool, main_window)
+        save_as_clicked(project_tool, popup_tool, appdata, main_window)
     else:
-        save_project(save_path, project_tool, settings_tool)
+        save_project(save_path, project_tool, appdata)
 
 
-def save_as_clicked(project_tool: Type[Project], popup_tool: Type[Popups], settings_tool: Type[Settings],
+def save_as_clicked(project_tool: Type[Project], popup_tool: Type[Popups], appdata: Type[Appdata],
                     main_window: Type[tool.MainWindow]):
-    path = settings_tool.get_path(SAVE_PATH)
+    path = appdata.get_path(SAVE_PATH)
     path = popup_tool.get_save_path(FILETYPE, main_window.get(), path, "Save Project")
     if path:
-        save_project(path, project_tool, settings_tool)
+        save_project(path, project_tool, appdata)
 
 
-def open_file_clicked(project_tool: Type[Project], settings: Type[Settings], main_window: Type[tool.MainWindow],
+def open_file_clicked(project_tool: Type[Project], appdata: Type[Appdata], main_window: Type[tool.MainWindow],
                       popups: Type[tool.Popups]):
-    path = settings.get_path(OPEN_PATH)
+    path = appdata.get_path(OPEN_PATH)
     path = popups.get_open_path(FILETYPE, main_window.get(), path, "Open Project")
     if not path:
         return
 
     project_tool.reset_project_infos()
     logging.info("Load Project")
-    settings.set_path(OPEN_PATH, path)
-    settings.set_path(SAVE_PATH, path)
+    appdata.set_path(OPEN_PATH, path)
+    appdata.set_path(SAVE_PATH, path)
     proj = project_tool.load_project(path)
     project_tool.set_active_project(proj)
     som_gui.on_new_project()
@@ -54,13 +54,13 @@ def new_file_clicked(project_tool: Type[Project], popup_tool: Type[Popups]):
         project_tool.set_project_name(name)
 
 
-def save_project(path: str, project_tool: Type[Project], settings_tool: Type[Settings]):
+def save_project(path: str, project_tool: Type[Project], appdata: Type[Appdata]):
     for plugin_function in project_tool.get_plugin_functions():
         plugin_function()
     project = project_tool.get()
     project.save(path)
-    settings_tool.set_path(OPEN_PATH, path)
-    settings_tool.set_path(SAVE_PATH, path)
+    appdata.set_path(OPEN_PATH, path)
+    appdata.set_path(SAVE_PATH, path)
     logging.info(f"Speichern abgeschlossen")
 
 
@@ -76,9 +76,9 @@ def open_project(path, project_tool: Type[Project]):
     return proj
 
 
-def add_project(project_tool: Type[Project], settings: Type[tool.Settings], popups: Type[tool.Popups],
+def add_project(project_tool: Type[Project], appdata: Type[tool.Appdata], popups: Type[tool.Popups],
                 main_window: Type[tool.MainWindow]):
-    path = settings.get_path(OPEN_PATH)
+    path = appdata.get_path(OPEN_PATH)
     path = popups.get_open_path(FILETYPE, main_window.get(), path, "Open Project")
     if not path:
         return

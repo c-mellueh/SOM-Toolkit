@@ -9,7 +9,8 @@ if TYPE_CHECKING:
 
 BSDD_PATH = "bsDD"
 
-def open_window(bsdd: Type[tool.Bsdd], settings: Type[tool.Settings]) -> None:
+
+def open_window(bsdd: Type[tool.Bsdd], settings: Type[tool.Appdata]) -> None:
     window = bsdd.get_window()
     if not window:
         window = bsdd.create_window()
@@ -57,13 +58,13 @@ def dict_attribute_changed(value, widget, bsdd: Type[tool.Bsdd]):
     setattr(dictionary, attribute_name, value)
 
 
-def export_path_requested(bsdd: Type[tool.Bsdd], popups: Type[tool.Popups], settings: Type[tool.Settings]):
-    path = settings.get_path(BSDD_PATH)
+def export_path_requested(bsdd: Type[tool.Bsdd], popups: Type[tool.Popups], appdata: Type[tool.Appdata]):
+    path = appdata.get_path(BSDD_PATH)
     window = bsdd.get_window()
     path = popups.get_save_path("JSON (*.json);;", window, path, "bsDD Json Export")
     if not path:
         return
-    settings.set_path(BSDD_PATH, path)
+    appdata.set_path(BSDD_PATH, path)
     bsdd.get_path_line_edit().setText(path)
 
 

@@ -3,7 +3,7 @@ from som_gui.core import bsdd as core
 def connect():
     core.define_dictionary_widget(tool.Bsdd)
     tool.MainWindow.add_action("Datei/Export/bsDD",
-                               lambda: core.open_window(tool.Bsdd, tool.Settings))
+                               lambda: core.open_window(tool.Bsdd, tool.Appdata))
 
 
 def on_new_project():
@@ -19,7 +19,7 @@ def dict_attribute_changed(value, widget):
 
 
 def path_button_clicked():
-    core.export_path_requested(tool.Bsdd, tool.Popups, tool.Settings)
+    core.export_path_requested(tool.Bsdd, tool.Popups, tool.Appdata)
 
 
 def run_clicked():

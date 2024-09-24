@@ -7,7 +7,8 @@ import os
 import appdirs
 from som_gui import tool
 
-class Settings(som_gui.core.tool.Settings):
+
+class Appdata(som_gui.core.tool.Appdata):
 
     @classmethod
     def get_export_path(cls, ) -> str:
@@ -48,13 +49,6 @@ class Settings(som_gui.core.tool.Settings):
             value = PATH_SEPERATOR.join(value)
         cls.set_setting(PATHS_SECTION, path, value)
 
-    @classmethod
-    def get_ifc_path(cls) -> str:
-        return cls.get_path(IFC_PATH)
-
-    @classmethod
-    def set_ifc_path(cls, path) -> None:
-        cls.set_path(IFC_PATH, path)
 
     @classmethod
     def get_issue_path(cls) -> str:

@@ -136,8 +136,8 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
 
     @classmethod
     def get_paste_text_list(cls):
-        seperator = tool.Settings.get_seperator()
-        seperator_status = tool.Settings.get_seperator_status()
+        seperator = tool.Appdata.get_seperator()
+        seperator_status = tool.Appdata.get_seperator_status()
         text = QGuiApplication.clipboard().text()
 
         if not seperator_status:
@@ -332,8 +332,8 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
 
     @classmethod
     def set_seperator(cls, window: ui.PropertySetWindow):
-        seperator = tool.Settings.get_seperator()
-        seperator_status = tool.Settings.get_seperator_status()
+        seperator = tool.Appdata.get_seperator()
+        seperator_status = tool.Appdata.get_seperator_status()
         window.widget.check_box_seperator.setChecked(seperator_status)
         window.widget.line_edit_seperator.setText(seperator)
 

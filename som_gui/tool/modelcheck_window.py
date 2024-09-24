@@ -231,7 +231,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def autofill_export_path(cls):
-        export_path = tool.Settings.get_issue_path()
+        export_path = tool.Appdata.get_issue_path()
         if export_path:
             cls.get_properties().export_line_edit.setText(export_path)
 

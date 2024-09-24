@@ -39,7 +39,7 @@ class Popups(som_gui.core.tool.Popups):
         else:
             path = QFileDialog.getOpenFileName(window, title, path, f"{file_format} Files (*.{file_format})")[0]
         if path:
-            tool.Settings.set_export_path(path)
+            tool.Appdata.set_export_path(path)
         return path
 
     @classmethod

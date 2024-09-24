@@ -6,7 +6,7 @@ from som_gui.core import project as core_project
 from PySide6.QtWidgets import QApplication
 
 if TYPE_CHECKING:
-    from som_gui.tool import MainWindow, Settings, Project, Popups
+    from som_gui.tool import MainWindow, Appdata, Project, Popups
     from som_gui import tool
 
 
@@ -16,14 +16,14 @@ def create_main_window(application: QApplication, main_window: Type[tool.MainWin
     main_window.hide_console()
 
 
-def close_event(project_tool: Type[Project], settings_tool: Type[Settings],
+def close_event(project_tool: Type[Project], appdata: Type[Appdata],
                 popups_tool: Type[Popups], main_window: Type[tool.MainWindow]):
     reply = popups_tool.request_save_before_exit()
     if reply is None:  # abort Dialog
         return False
     if reply is False:  # No
         return True
-    core_project.save_clicked(project_tool, popups_tool, settings_tool, main_window)
+    core_project.save_clicked(project_tool, popups_tool, appdata, main_window)
     return True
 
 

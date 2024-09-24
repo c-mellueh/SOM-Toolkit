@@ -8,14 +8,14 @@ from som_gui import tool
 def connect():
     tool.MainWindow.add_action("Datei/Neu", lambda: core.new_file_clicked(tool.Project, tool.Popups))
     tool.MainWindow.add_action("Datei/Projekt Öffnen",
-                               lambda: core.open_file_clicked(tool.Project, tool.Settings, tool.MainWindow,
+                               lambda: core.open_file_clicked(tool.Project, tool.Appdata, tool.MainWindow,
                                                               tool.Popups))
     tool.MainWindow.add_action("Datei/Projekt Hinzufügen",
-                               lambda: core.add_project(tool.Project, tool.Settings, tool.Popups, tool.MainWindow))
+                               lambda: core.add_project(tool.Project, tool.Appdata, tool.Popups, tool.MainWindow))
     tool.MainWindow.add_action("Datei/Speichern",
-                               lambda: core.save_clicked(tool.Project, tool.Popups, tool.Settings, tool.MainWindow))
+                               lambda: core.save_clicked(tool.Project, tool.Popups, tool.Appdata, tool.MainWindow))
     tool.MainWindow.add_action("Datei/Speichern unter ...",
-                               lambda: core.save_as_clicked(tool.Project, tool.Popups, tool.Settings, tool.MainWindow))
+                               lambda: core.save_as_clicked(tool.Project, tool.Popups, tool.Appdata, tool.MainWindow))
     tool.MainWindow.add_action("Bearbeiten/Einstellungen", menu_action_settings)
 
 

@@ -56,7 +56,7 @@ for key, (_, name) in modules.items():
     modules[key][0] = importlib.import_module(f"som_gui.module.{name}")
 
 for plugin_name, plugin_modules in plugins_dict.items():
-    if not tool.Settings.is_plugin_activated(plugin_name):
+    if not tool.Appdata.is_plugin_activated(plugin_name):
         continue
 
     for key, (_, name) in plugin_modules.items():

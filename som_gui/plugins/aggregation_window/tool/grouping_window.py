@@ -69,7 +69,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def autofill_export_path(cls):
-        export_path = tool.Settings.get_group_folder()
+        export_path = tool.Appdata.get_group_folder()
         if export_path:
             cls.get_properties().export_line_edit.setText(export_path)
 
@@ -89,8 +89,8 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def autofill_grouping_attributes(cls):
-        group_attribute = tool.Settings.get_group_attribute()
-        group_pset = tool.Settings.get_group_pset()
+        group_attribute = tool.Appdata.get_group_attribute()
+        group_pset = tool.Appdata.get_group_pset()
         if group_attribute:
             cls.get_properties().grouping_attribute_line_edit.setText(group_attribute)
         if group_pset:
@@ -159,13 +159,13 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
     @classmethod
     def set_grouping_attribute(cls, pset_name, attribute_name):
         cls.get_properties().grouping_attribute = pset_name, attribute_name
-        tool.Settings.set_group_pset(pset_name)
-        tool.Settings.set_group_attribute(attribute_name)
+        tool.Appdata.set_group_pset(pset_name)
+        tool.Appdata.set_group_attribute(attribute_name)
 
     @classmethod
     def set_export_path(cls, path):
         cls.get_properties().export_path = path
-        tool.Settings.set_group_folder(path)
+        tool.Appdata.set_group_folder(path)
 
     @classmethod
     def get_export_path(cls):

@@ -104,10 +104,10 @@ def value_type_changed(window: PropertySetWindow, property_set_window: Type[tool
 
 
 def update_seperator(window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow],
-                     settings: Type[tool.Settings]):
+                     appdata: Type[tool.Appdata]):
     text, state = property_set_window.get_seperator_state(window)
-    settings.set_seperator_status(state)
-    settings.set_seperator(text)
+    appdata.set_seperator_status(state)
+    appdata.set_seperator(text)
 
 
 def attribute_clicked(item: QTableWidgetItem, attribute: Type[tool.Attribute],

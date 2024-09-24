@@ -11,7 +11,7 @@ def on_new_project():
 
 
 def close_event():
-    return core.close_event(tool.Project, tool.Settings, tool.Popups, tool.MainWindow)
+    return core.close_event(tool.Project, tool.Appdata, tool.Popups, tool.MainWindow)
 
 
 def paint_event():
