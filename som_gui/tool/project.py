@@ -1,13 +1,11 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from som_gui import MainWindow
+
 import logging
 
 import som_gui.core.tool
 import SOMcreator
-from SOMcreator.constants import json_constants
 import SOMcreator.tools.merge_projects
 import som_gui
 from som_gui.module.project.prop import ProjectProperties, InfoDict
@@ -15,13 +13,11 @@ from som_gui.module.project.constants import VERSION, AUTHOR, NAME, PROJECT_PHAS
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.project.ui import MergeDialog
 from PySide6.QtWidgets import QFormLayout, QLineEdit, QComboBox, QWidget, QTableWidgetItem, QTableWidget
-from PySide6.QtGui import QShortcut, QKeySequence
-from PySide6.QtCore import QPointF
-from typing import Callable
-from som_gui import tool
-import os
-from PySide6.QtWidgets import QFileDialog
-import json
+from typing import Callable, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from som_gui.module.project import ui
+
 
 
 class Project(som_gui.core.tool.Project):
@@ -291,3 +287,11 @@ class Project(som_gui.core.tool.Project):
         if use_case_mapping is None:
             return
         SOMcreator.tools.merge_projects.merge_projects(project_1, project_2, phase_mapping, use_case_mapping)
+
+    @classmethod
+    def set_settings_general_widget(cls, widget: ui.SettingsGeneral):
+        cls.get_properties().settings_general_widget = widget
+
+    @classmethod
+    def get_settings_general_widget(cls) -> ui.SettingsGeneral:
+        return cls.get_properties().settings_general_widget
