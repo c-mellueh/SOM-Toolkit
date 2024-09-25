@@ -16,66 +16,66 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QGridLayout, QLabel, QLineEdit,
-                               QSizePolicy, QWidget)
-
+                               QPlainTextEdit, QSizePolicy, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(640, 124)
+        Form.resize(578, 173)
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
         self.le_version = QLineEdit(Form)
         self.le_version.setObjectName(u"le_version")
 
-        self.gridLayout.addWidget(self.le_version, 2, 1, 1, 1)
-
-        self.le_filepath = QLineEdit(Form)
-        self.le_filepath.setObjectName(u"le_filepath")
-
-        self.gridLayout.addWidget(self.le_filepath, 0, 1, 1, 1)
-
-        self.label = QLabel(Form)
-        self.label.setObjectName(u"label")
-
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.le_version, 1, 1, 1, 1)
 
         self.label_4 = QLabel(Form)
         self.label_4.setObjectName(u"label_4")
 
-        self.gridLayout.addWidget(self.label_4, 3, 0, 1, 1)
-
-        self.label_3 = QLabel(Form)
-        self.label_3.setObjectName(u"label_3")
-
-        self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.label_4, 2, 0, 1, 1)
 
         self.le_author_mail = QLineEdit(Form)
         self.le_author_mail.setObjectName(u"le_author_mail")
 
-        self.gridLayout.addWidget(self.le_author_mail, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.le_author_mail, 2, 1, 1, 1)
 
         self.le_name = QLineEdit(Form)
         self.le_name.setObjectName(u"le_name")
 
-        self.gridLayout.addWidget(self.le_name, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.le_name, 0, 1, 1, 1)
+
+        self.label_3 = QLabel(Form)
+        self.label_3.setObjectName(u"label_3")
+
+        self.gridLayout.addWidget(self.label_3, 1, 0, 1, 1)
 
         self.label_2 = QLabel(Form)
         self.label_2.setObjectName(u"label_2")
 
-        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.label_2, 0, 0, 1, 1)
+
+        self.label = QLabel(Form)
+        self.label.setObjectName(u"label")
+
+        self.gridLayout.addWidget(self.label, 3, 0, 1, 1)
+
+        self.le_description = QPlainTextEdit(Form)
+        self.le_description.setObjectName(u"le_description")
+
+        self.gridLayout.addWidget(self.le_description, 3, 1, 1, 1)
+
 
         self.retranslateUi(Form)
 
         QMetaObject.connectSlotsByName(Form)
-
     # setupUi
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-        self.label.setText(QCoreApplication.translate("Form", u"Projekt Datei:", None))
         self.label_4.setText(QCoreApplication.translate("Form", u"Author Email:", None))
-        self.label_3.setText(QCoreApplication.translate("Form", u"Version;", None))
+        self.label_3.setText(QCoreApplication.translate("Form", u"Version:", None))
         self.label_2.setText(QCoreApplication.translate("Form", u"Projekt Name:", None))
+        self.label.setText(QCoreApplication.translate("Form", u"Beschreibung:", None))
     # retranslateUi
+
