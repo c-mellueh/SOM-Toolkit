@@ -3,7 +3,7 @@ import os
 import logging
 
 
-def create_module(name):
+def create_module(name: str):
     module_path = os.path.abspath(os.path.join(os.curdir, "module", name))
 
     if os.path.exists(module_path):
@@ -20,7 +20,7 @@ from . import ui, prop, trigger
 
 
 def register():
-    som_gui.{name.title()}Properties = prop.{name.title()}Properties
+    som_gui.{name.title()}Properties = prop.{name.title()}Properties()
 
 
 def load_ui_triggers():
@@ -30,7 +30,8 @@ def load_ui_triggers():
 def on_new_project():
     trigger.on_new_project()
 
-""")
+"""
+        )
 
     prop_path = os.path.join(module_path, "prop.py")
     if os.path.exists(prop_path):
@@ -42,7 +43,8 @@ def on_new_project():
 class {name.title()}Properties:
     pass
 
-""")
+"""
+        )
     trigger_path = os.path.join(module_path, "trigger.py")
     if os.path.exists(trigger_path):
         logging.warning("trigger.py already exists")
@@ -50,6 +52,7 @@ class {name.title()}Properties:
         f.write(
             f"""from __future__ import annotations
 import som_gui
+from som_gui import tool
 from som_gui.core import {name} as core
 from typing import TYPE_CHECKING
 
@@ -59,14 +62,17 @@ def connect():
 
 def on_new_project():
     pass
-""")
+"""
+        )
     ui_path = os.path.join(module_path, "ui.py")
     if os.path.exists(ui_path):
         logging.warning("ui.py already exists")
     with open(ui_path, "w") as f:
-        f.write(f"""
+        f.write(
+            f"""
 
-    """)
+    """
+        )
 
 
 def create_core(name: str):
@@ -78,7 +84,8 @@ def create_core(name: str):
             f"""from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
-""")
+"""
+        )
 
 
 def create_tool(name: str):
@@ -110,6 +117,7 @@ class {name.title()}(som_gui.core.tool.{name.title()}):
 def update_tools():
     file_path = "core/tool.py"
     from som_gui import _update_tools
+
     with open(file_path, "w") as f:
         _update_tools.main(f)
 
@@ -119,6 +127,7 @@ def main(name: str):
     create_tool(name)
     create_module(name)
     update_tools()
+
 
 if __name__ == "__main__":
     module_name = "settings"
