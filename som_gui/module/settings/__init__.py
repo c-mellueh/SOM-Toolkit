@@ -3,7 +3,7 @@ from . import ui, prop, trigger
 
 
 def register():
-    som_gui.SettingsProperties = prop.SettingsProperties
+    som_gui.SettingsProperties = prop.SettingsProperties()
 
 
 def load_ui_triggers():
