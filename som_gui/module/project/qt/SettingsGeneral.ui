@@ -52,7 +52,7 @@
                 </widget>
             </item>
             <item row="3" column="1">
-                <widget class="QPlainTextEdit" name="le_description"/>
+                <widget class="QTextEdit" name="le_description"/>
             </item>
         </layout>
     </widget>

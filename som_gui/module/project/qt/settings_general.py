@@ -16,7 +16,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QGridLayout, QLabel, QLineEdit,
-                               QPlainTextEdit, QSizePolicy, QWidget)
+                               QSizePolicy, QTextEdit, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -60,7 +60,7 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.label, 3, 0, 1, 1)
 
-        self.le_description = QPlainTextEdit(Form)
+        self.le_description = QTextEdit(Form)
         self.le_description.setObjectName(u"le_description")
 
         self.gridLayout.addWidget(self.le_description, 3, 1, 1, 1)
