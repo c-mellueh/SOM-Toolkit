@@ -6,7 +6,16 @@ from som_gui import tool
 from som_gui.tool.project import Project
 from PySide6.QtWidgets import QTreeView, QWidget
 from PySide6.QtGui import QMouseEvent
+from som_gui.module import object_filter
+from .qt import settings
 
+
+class SettingsWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.ui = settings.Ui_Form()
+        self.ui.setupUi(self)
+        object_filter.trigger.settings_widget_created(self)
 
 class ObjectFilterWindow(QWidget):
     def __init__(self):

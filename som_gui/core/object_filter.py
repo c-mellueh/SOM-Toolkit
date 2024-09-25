@@ -190,3 +190,11 @@ def export_filter_differences(file, object_filter_compare: Type[tool.ObjectFilte
     file.write(f"\n{'OBJECT FILTER':46s}\n\n")
     object_filter_compare.export_object_filter_differences(file, attribute_compare)
     file.write("\n")
+
+
+def settings_widget_created(widget, object_filter: Type[tool.ObjectFilter]):
+    pass
+
+
+def settings_accepted(object_filter: Type[tool.ObjectFilter]):
+    pass
