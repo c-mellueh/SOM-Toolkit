@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 
 
 def connect():
-    return
     tool.MainWindow.add_action("Bearbeiten/Properties",
                                lambda: core.open_window(tool.Settings))
 
