@@ -13,4 +13,5 @@ def open_window(settings: Type[tool.Settings]):
     logging.info(f"Opening Settings Window")
     dialog = settings.create_dialog()
     if dialog.exec():
-        pass
+        for func in settings.get_accept_functions():
+            func()

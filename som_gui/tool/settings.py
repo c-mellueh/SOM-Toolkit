@@ -65,3 +65,7 @@ class Settings(som_gui.core.tool.Settings):
     @classmethod
     def get_tab_names(cls) -> list[str]:
         return sorted(cls.get_properties().tab_dict.keys())
+
+    @classmethod
+    def get_accept_functions(cls) -> list[Callable]:
+        return cls.get_properties().accept_functions

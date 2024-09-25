@@ -17,7 +17,8 @@ def connect():
     tool.MainWindow.add_action("Datei/Speichern unter ...",
                                lambda: core.save_as_clicked(tool.Project, tool.Popups, tool.Appdata, tool.MainWindow))
     tool.MainWindow.add_action("Bearbeiten/Einstellungen", menu_action_settings)
-    tool.Settings.add_page_to_toolbox(ui.SettingsGeneral, "General Settings", "General", core.settings_accepted)
+    tool.Settings.add_page_to_toolbox(ui.SettingsGeneral, "General Settings", "General",
+                                      lambda: core.settings_accepted(tool.Project))
 
 def menu_action_settings():
     prop: project.prop.ProjectProperties = som_gui.ProjectProperties

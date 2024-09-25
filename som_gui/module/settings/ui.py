@@ -11,8 +11,8 @@ class Dialog(QDialog):
         self.button_box = QDialogButtonBox(self)
         self.button_box.setOrientation(Qt.Orientation.Horizontal)
         self.button_box.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
-        self.button_box.accepted.connect(Dialog.accept)
-        self.button_box.rejected.connect(Dialog.reject)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
         self.layout().addWidget(self.button_box)
 
         self.setWindowTitle('Settings')
