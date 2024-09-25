@@ -119,7 +119,7 @@ def settings_general_created(widget: ui.SettingsGeneral, project: Type[tool.Proj
     proj = project.get()
     widget.ui.le_name.setText(proj.name)
     widget.ui.le_version.setText(proj.version)
-    widget.ui.le_description.setPlainText(proj.description)
+    widget.ui.le_description.setText(proj.description)
     widget.ui.le_author_mail.setText(proj.author)
 
 
