@@ -59,6 +59,7 @@ class Project(object):
         self.aggregation_attribute = ""
         self.aggregation_pset = ""
         self._filter_matrix = filter_matrix
+        self._description = ""
         self.plugin_dict = dict()
         self.import_dict = dict()
 
@@ -176,6 +177,14 @@ class Project(object):
     @version.setter
     def version(self, value: str):
         self._version = value
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, value: str):
+        self._description = value
 
     def tree(self) -> AnyNode:
         def create_childen(node: AnyNode):

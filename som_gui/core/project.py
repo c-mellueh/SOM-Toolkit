@@ -100,12 +100,7 @@ def fill_settings_dialog(project_tool: Type[Project]):
         project_tool.add_setting_to_dialog(info_dict)
 
 
-def settings_opened():
-    pass
 
-
-def settings_accepted():
-    pass
 
 def update_settings(project_tool: Type[Project]):
     project_infos = project_tool.get_project_infos()
@@ -124,5 +119,5 @@ def settings_general_created(widget: ui.SettingsGeneral, project: Type[tool.Proj
     proj = project.get()
     widget.ui.le_name.setText(proj.name)
     widget.ui.le_version.setText(proj.version)
-    widget.ui.le_filepath.setText(appdata.get_path(OPEN_PATH))
+    widget.ui.le_description.setPlainText(proj.description)
     widget.ui.le_author_mail.setText(proj.author)
