@@ -164,5 +164,4 @@ class Logging(som_gui.core.tool.Logging):
     @classmethod
     def show_exception_popup(cls, exctype, value, tb):
         error_message = ''.join(traceback.format_exception(exctype, value, tb))
-        print(error_message)
-        cls.get_signaller().error.emit(logging.ERROR, error_message, error_message)
+        logging.error(error_message)
