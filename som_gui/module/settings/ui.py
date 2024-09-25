@@ -1,7 +1,7 @@
-from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QDialog
 
 
-class Widget(QWidget):
+class Dialog(QDialog):
     def __init__(self):
         super().__init__()
         self.setLayout(QVBoxLayout())

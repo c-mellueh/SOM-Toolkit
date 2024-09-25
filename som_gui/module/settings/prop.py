@@ -7,4 +7,4 @@ class SettingsProperties:
     tab_dict: dict[str, dict[str, list[QWidget]]] = dict()  # dict[TabName,dict[ToolboxTabName,Widget]]
     open_functions: list[Callable] = list()
     accept_functions: list[Callable] = list()
-    widget: ui.Widget = None
+    widget: ui.Dialog = None

@@ -11,9 +11,6 @@ if TYPE_CHECKING:
 
 def open_window(settings: Type[tool.Settings]):
     logging.info(f"Opening Settings Window")
-    if not settings.get_widget():
-        widget = settings.create_widget()
-        settings.set_widget(widget)
-
-    widget = settings.get_widget()
-    widget.show()
+    dialog = settings.create_dialog()
+    if dialog.exec():
+        pass

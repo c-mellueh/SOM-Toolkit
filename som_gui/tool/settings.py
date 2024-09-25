@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
 import logging
-from PySide6.QtWidgets import QHBoxLayout, QTabWidget, QWidget, QToolBox
+from PySide6.QtWidgets import QVBoxLayout, QTabWidget, QWidget, QToolBox, QSpacerItem, QSizePolicy
 import som_gui.core.tool
 import som_gui
 from som_gui.module.settings import ui
@@ -15,44 +15,45 @@ class Settings(som_gui.core.tool.Settings):
         return som_gui.SettingsProperties
 
     @classmethod
-    def add_page_to_toolbox(cls, widget, page_name: str, tab_name: str, start_function: Callable,
-                            accept_function: Callable):
+    def add_page_to_toolbox(cls, widget, page_name: str, tab_name: str, accept_function: Callable):
         if tab_name not in cls.get_tab_dict():
             cls.get_properties().tab_dict[tab_name] = dict()
         if page_name not in cls.get_properties().tab_dict[tab_name]:
             cls.get_properties().tab_dict[tab_name][page_name] = list()
         cls.get_properties().tab_dict[tab_name][page_name].append(widget)
 
-        cls.get_properties().open_functions.append(start_function)
         cls.get_properties().accept_functions.append(accept_function)
 
     @classmethod
-    def get_widget(cls) -> ui.Widget:
+    def get_widget(cls) -> ui.Dialog:
         return cls.get_properties().widget
 
     @classmethod
-    def set_widget(cls, widget: ui.Widget):
+    def set_widget(cls, widget: ui.Dialog):
         cls.get_properties().widget = widget
 
     @classmethod
-    def create_widget(cls) -> ui.Widget:
-        widget = ui.Widget()
-        for name, toolbox_dict in cls.get_tab_dict():
+    def create_dialog(cls) -> ui.Dialog:
+        settings_dialog = ui.Dialog()
+        cls.set_widget(settings_dialog)
+        for name, toolbox_dict in cls.get_tab_dict().items():
             tool_box = cls.create_tab(cls.get_tab_widget(), name)
             for page_name, widgets in toolbox_dict.items():
                 page = QWidget()
-                page.setLayout(QHBoxLayout())
+                page.setLayout(QVBoxLayout())
                 tool_box.addItem(page, page_name)
                 for widget in widgets:
-                    page.layout().addWidget(widget)
-        return widget
+                    page.layout().addWidget(widget())
+                page.layout().addItem(
+                    QSpacerItem(20, 387, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding))
+        return settings_dialog
 
     @classmethod
     def get_tab_widget(cls) -> QTabWidget:
         return cls.get_widget().tab_widget
 
     @classmethod
-    def get_tab_dict(cls) -> dict[str, dict[str, QWidget]]:
+    def get_tab_dict(cls) -> dict[str, dict[str, list[QWidget]]]:
         return cls.get_properties().tab_dict
 
     @classmethod
