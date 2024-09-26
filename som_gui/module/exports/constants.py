@@ -1,1 +1,8 @@
 EXPORT_PATH = "export_path"
+EXCEL_PATH = "Excel"
+VESTRA_PATH = "VESTRA"
+CARD1_PATH = "Card1"
+ALLPLAN_PATH = "Allplan"
+ABBREV_PATH = "Desite_abbrev"
+BOOKMARK_PATH = "Desite_bookmark"
+MAPPING_PATH = "Desite_mapping"

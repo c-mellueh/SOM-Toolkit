@@ -1,5 +1,8 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import som_gui.core.tool
 import SOMcreator
+from som_gui.module.exports.constants import *
 from SOMcreator.external_software.desite import bookmarks
 from SOMcreator.external_software import vestra
 from SOMcreator.external_software import card1
@@ -7,13 +10,16 @@ from SOMcreator.external_software import allplan
 from SOMcreator.filehandling import create_mapping_script
 from SOMcreator import excel as som_excel
 from SOMcreator.tool import ExportExcel
-from som_gui.module.main_window.ui import MainWindow
-from PySide6.QtWidgets import QFileDialog
-import os
-from som_gui import tool
+from PySide6.QtWidgets import QFileDialog, QLineEdit, QWidget, QGridLayout, QLabel
+import som_gui
+
+if TYPE_CHECKING:
+    from som_gui.module.exports.prop import ExportProperties
 
 class Exports(som_gui.core.tool.Exports):
-
+    @classmethod
+    def get_properties(cls) -> ExportProperties:
+        return som_gui.ExportProperties
 
     @classmethod
     def export_bookmarks(cls, project: SOMcreator.Project, path: str):
@@ -52,3 +58,19 @@ class Exports(som_gui.core.tool.Exports):
     @classmethod
     def export_allplan(cls, project, path, name):
         allplan.create_mapping(project, path, name)
+
+    @classmethod
+    def create_settings_widget(cls, names):
+        widget = QWidget()
+        cls.get_properties().settings_widget = widget
+        widget.setLayout(QGridLayout())
+        layout: QGridLayout = widget.layout()
+        for row, name in enumerate(names):
+            layout.addWidget(QLabel(name), row, 0)
+            layout.addWidget(QLineEdit(), row, 1)
+        layout.setRowStretch(len(names), 1)
+        return widget
+
+    @classmethod
+    def get_settings_widget(cls) -> QWidget:
+        return cls.get_properties().settings_widget
