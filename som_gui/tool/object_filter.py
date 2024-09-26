@@ -19,7 +19,7 @@ from som_gui.module.attribute import ui as attribute_ui
 
 if TYPE_CHECKING:
     from som_gui.module.object_filter.prop import ObjectFilterProperties, ObjectFilterCompareProperties
-
+    from som_gui.module.object_filter import ui
 USE_CASE = "Anwedungsfall"
 YELLOW = "#897e00"
 
@@ -555,6 +555,34 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         for [phase_index, use_case_index], status in zip(filter_indexes, check_statuses):
             object_dict[obj][phase_index][use_case_index] = status
 
+    @classmethod
+    def connect_settings_widget(cls, widget: ui.SettingsWidget):
+        widget.ui.cb_phase.currentIndexChanged.connect(trigger.settings_combobox_changed)
+        widget.ui.cb_usecase.currentIndexChanged.connect(trigger.settings_combobox_changed)
+
+    @classmethod
+    def set_settings_widget(cls, widget: ui.SettingsWidget):
+        cls.get_objectfilter_properties().settings_widget = widget
+
+    @classmethod
+    def get_settings_widget(cls) -> ui.SettingsWidget:
+        return cls.get_objectfilter_properties().settings_widget
+
+    @classmethod
+    def get_allowed_usecases_by_phase(cls, project: SOMcreator.Project, phase: SOMcreator.classes.Phase):
+        usecase_list = project.get_use_case_list()
+        filter_matrix = project.get_filter_matrix()
+        phase_index = project.get_phase_index(phase)
+        return [uc for uc, state in zip(usecase_list, filter_matrix[phase_index]) if state]
+
+    @classmethod
+    def get_allowed_phases_by_usecase(cls, project: SOMcreator.Project, usecase: SOMcreator.classes.UseCase):
+        phase_list = project.get_project_phase_list()
+        usecase_index = project.get_use_case_index(usecase)
+        filter_matrix = project.get_filter_matrix()
+        return [phase for phase, value_list in zip(phase_list, filter_matrix) if value_list[usecase_index]]
+
+
 
 class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
     @classmethod
@@ -858,3 +886,4 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         item.setBackground(0, color)
         item.setBackground(1, color)
         item.setData(0, CLASS_REFERENCE + 1, 1)
+

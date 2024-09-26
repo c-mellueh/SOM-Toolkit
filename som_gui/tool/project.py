@@ -120,7 +120,7 @@ class Project(som_gui.core.tool.Project):
     @classmethod
     def set_project_phase(cls, phase_name: str):
         proj = cls.get()
-        phase = proj.get_project_phase_by_name(phase_name)
+        phase = proj.get_phase_by_name(phase_name)
         if phase is not None:
             proj.current_project_phase = phase
 

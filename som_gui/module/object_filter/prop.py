@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from som_gui.module.object_filter.ui import ObjectFilterWindow
     from PySide6.QtCore import Qt
     from som_gui.module.attribute.ui import AttributeWidget
-
+    from .ui import SettingsWidget
 
 @dataclass
 class ObjectFilterProperties:
@@ -22,7 +22,7 @@ class ObjectFilterProperties:
     object_filter_window: ObjectFilterWindow = None
     tree_is_clicked: bool = False
     header_data: list[list[str, int, int]] = None
-
+    settings_widget: SettingsWidget = None
 
 class ObjectFilterCompareProperties:
     widget: AttributeWidget = None

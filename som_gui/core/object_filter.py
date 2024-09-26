@@ -1,7 +1,11 @@
 from __future__ import annotations
 import logging
+
+from PySide6.QtGui import QBrush, QColor
+from som_gui.module.object_filter import constants
 import SOMcreator
-from PySide6.QtWidgets import QAbstractItemView
+from PySide6.QtWidgets import QAbstractItemView, QStyle
+from PySide6.QtGui import QIcon
 from typing import TYPE_CHECKING, Type
 from som_gui import tool
 
@@ -10,7 +14,7 @@ if TYPE_CHECKING:
     from PySide6.QtCore import QModelIndex
     from PySide6.QtWidgets import QTreeView
     from som_gui.module.compare import ui as compare_ui
-
+    from som_gui.module.object_filter import ui as object_filter_ui
 
 def open_use_case_window(objectfilter_tool: Type[ObjectFilter]):
     window = objectfilter_tool.create_window()
@@ -192,9 +196,45 @@ def export_filter_differences(file, object_filter_compare: Type[tool.ObjectFilte
     file.write("\n")
 
 
-def settings_widget_created(widget, object_filter: Type[tool.ObjectFilter]):
-    pass
+def settings_widget_created(widget: object_filter_ui.SettingsWidget, object_filter: Type[tool.ObjectFilter],
+                            project: Type[tool.Project]):
+    object_filter.set_settings_widget(widget)
+    object_filter.connect_settings_widget(widget)
 
+    combobox_usecase = widget.ui.cb_usecase
+    combobox_phase = widget.ui.cb_phase
+    combobox_usecase.addItems([uc.name for uc in project.get_use_cases()])
+    combobox_phase.addItems([ph.name for ph in project.get_phases()])
 
 def settings_accepted(object_filter: Type[tool.ObjectFilter]):
     pass
+
+
+def settings_combobox_changed(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project],
+                              settings: Type[tool.Settings]):
+    widget = object_filter.get_settings_widget()
+    combobox_usecase = widget.ui.cb_usecase
+    combobox_phase = widget.ui.cb_phase
+    usecase_name = combobox_usecase.currentText()
+    phase_name = combobox_phase.currentText()
+    if not all([usecase_name, phase_name]):
+        return
+    proj = project.get()
+    usecase = proj.get_use_case_by_name(usecase_name)
+    phase = proj.get_phase_by_name(phase_name)
+    allowed = proj.get_filter_state(phase, usecase)
+    # color red if not allowed
+    index = combobox_usecase.currentIndex()
+
+    if allowed:
+        icon = QIcon()
+    else:
+        icon = combobox_usecase.style().standardIcon(QStyle.StandardPixmap.SP_MessageBoxWarning)
+    settings.set_icon(constants.SETTINGS_TAB_NAME, constants.SETTINGS_PAGE_NAME, icon)
+    print(f"Allowed: {allowed} ->{icon}")
+
+    parent = widget.parent()
+    if not parent:
+        return
+    parent = parent.parent()
+    print(parent)

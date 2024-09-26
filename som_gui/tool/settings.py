@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
 import logging
 from PySide6.QtWidgets import QVBoxLayout, QTabWidget, QWidget, QToolBox, QSpacerItem, QSizePolicy
+from PySide6.QtGui import QIcon
 import som_gui.core.tool
 import som_gui
 from som_gui.module.settings import ui
@@ -18,6 +19,7 @@ class Settings(som_gui.core.tool.Settings):
     def add_page_to_toolbox(cls, widget, page_name: str, tab_name: str, accept_function: Callable):
         if tab_name not in cls.get_tab_dict():
             cls.get_properties().tab_dict[tab_name] = dict()
+
         if page_name not in cls.get_properties().tab_dict[tab_name]:
             cls.get_properties().tab_dict[tab_name][page_name] = list()
         cls.get_properties().tab_dict[tab_name][page_name].append(widget)
@@ -38,14 +40,18 @@ class Settings(som_gui.core.tool.Settings):
         cls.set_widget(settings_dialog)
         for name, toolbox_dict in cls.get_tab_dict().items():
             tool_box = cls.create_tab(cls.get_tab_widget(), name)
+            page_dict = dict()
             for page_name, widgets in toolbox_dict.items():
                 page = QWidget()
+                page_dict[page_name] = page
                 page.setLayout(QVBoxLayout())
                 tool_box.addItem(page, page_name)
                 for widget in widgets:
                     page.layout().addWidget(widget())
                 page.layout().addItem(
                     QSpacerItem(20, 387, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding))
+            cls.get_properties().tab_widget_dict[name] = (tool_box, page_dict)
+
         return settings_dialog
 
     @classmethod
@@ -69,3 +75,13 @@ class Settings(som_gui.core.tool.Settings):
     @classmethod
     def get_accept_functions(cls) -> list[Callable]:
         return cls.get_properties().accept_functions
+
+    @classmethod
+    def set_icon(cls, tab_name: str, page_name: str, icon: QIcon):
+        if not tab_name in cls.get_properties().tab_widget_dict:
+            return
+        toolbox = cls.get_properties().tab_widget_dict[tab_name][0]
+        if not page_name in cls.get_properties().tab_widget_dict[tab_name][1]:
+            return
+        page = cls.get_properties().tab_widget_dict[tab_name][1][page_name]
+        toolbox.setItemIcon(toolbox.indexOf(page), icon)
