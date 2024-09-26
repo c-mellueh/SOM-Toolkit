@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING
 import os, tempfile
-from PySide6.QtCore import QFile, Qt
+from PySide6.QtCore import QFile, Qt, QModelIndex
 from PySide6.QtGui import QAction, QShortcut, QKeySequence
 from PySide6.QtWidgets import QMenu, QMenuBar, QWidget, QComboBox
 
@@ -155,3 +155,9 @@ class Util(som_gui.core.tool.Util):
     @classmethod
     def get_all_attributes(cls, object_list: list[SOMcreator.Object]):
         return [a for o in object_list for p in o.property_sets for a in p.attributes]
+
+    @classmethod
+    def get_text_from_combobox(cls, combobox: QComboBox) -> dict[str, QModelIndex]:
+        model = combobox.model()
+        indexes = [model.index(r, 0) for r in range(model.rowCount())]
+        return {model.data(index, Qt.ItemDataRole.DisplayRole): index for index in indexes}

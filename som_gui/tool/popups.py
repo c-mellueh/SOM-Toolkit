@@ -85,11 +85,12 @@ class Popups(som_gui.core.tool.Popups):
         return None
 
     @classmethod
-    def create_warning_popup(cls, text, title="Warning"):
+    def create_warning_popup(cls, text, window_title="Warning", text_title="Warning"):
         icon = get_icon()
         msg_box = QMessageBox()
-        msg_box.setText(text)
-        msg_box.setWindowTitle(title)
+        msg_box.setText(text_title)
+        msg_box.setWindowTitle(window_title)
+        msg_box.setDetailedText(text)
         msg_box.setIcon(QMessageBox.Icon.Warning)
         msg_box.setWindowIcon(icon)
         msg_box.exec()

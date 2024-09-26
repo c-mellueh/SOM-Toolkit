@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QBrush, QColor
 from som_gui.module.object_filter import constants
 import SOMcreator
@@ -205,13 +205,11 @@ def settings_widget_created(widget: object_filter_ui.SettingsWidget, object_filt
     combobox_phase = widget.ui.cb_phase
     combobox_usecase.addItems([uc.name for uc in project.get_use_cases()])
     combobox_phase.addItems([ph.name for ph in project.get_phases()])
+    combobox_usecase.setCurrentText(project.get().current_use_case.name)
+    combobox_phase.setCurrentText(project.get().current_project_phase.name)
 
-def settings_accepted(object_filter: Type[tool.ObjectFilter]):
-    pass
 
-
-def settings_combobox_changed(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project],
-                              settings: Type[tool.Settings]):
+def settings_accepted(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project], popups: Type[tool.Popups]):
     widget = object_filter.get_settings_widget()
     combobox_usecase = widget.ui.cb_usecase
     combobox_phase = widget.ui.cb_phase
@@ -223,18 +221,41 @@ def settings_combobox_changed(object_filter: Type[tool.ObjectFilter], project: T
     usecase = proj.get_use_case_by_name(usecase_name)
     phase = proj.get_phase_by_name(phase_name)
     allowed = proj.get_filter_state(phase, usecase)
-    # color red if not allowed
-    index = combobox_usecase.currentIndex()
 
-    if allowed:
-        icon = QIcon()
+    if not allowed:
+        text = f"Kombination von Phase '{phase_name}' & Anwendungsfall '{usecase_name}' nicht erlaubt -> wird nicht übernommen"
+        popups.create_warning_popup(text, f"Achtung!", "Anwendungsfall/Phase wird nicht übernommen!")
     else:
-        icon = combobox_usecase.style().standardIcon(QStyle.StandardPixmap.SP_MessageBoxWarning)
-    settings.set_icon(constants.SETTINGS_TAB_NAME, constants.SETTINGS_PAGE_NAME, icon)
-    print(f"Allowed: {allowed} ->{icon}")
+        proj.current_use_case = usecase
+        proj.current_project_phase = phase
 
-    parent = widget.parent()
-    if not parent:
+
+def settings_combobox_changed(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project],
+                              util: Type[tool.Util]):
+    widget = object_filter.get_settings_widget()
+    combobox_usecase = widget.ui.cb_usecase
+    combobox_phase = widget.ui.cb_phase
+    usecase_name = combobox_usecase.currentText()
+    phase_name = combobox_phase.currentText()
+    if not all([usecase_name, phase_name]):
         return
-    parent = parent.parent()
-    print(parent)
+    proj = project.get()
+    usecase = proj.get_use_case_by_name(usecase_name)
+    phase = proj.get_phase_by_name(phase_name)
+
+    # add warning icons to combobox
+    for uc_name, index in util.get_text_from_combobox(combobox_usecase).items():
+        uc = proj.get_use_case_by_name(uc_name)
+        if not proj.get_filter_state(phase, uc):
+            warn_icon = widget.style().standardIcon(widget.style().StandardPixmap.SP_MessageBoxWarning)
+            combobox_usecase.setItemIcon(index.row(), warn_icon)
+        else:
+            combobox_usecase.setItemIcon(index.row(), QIcon())
+
+    for ph_name, index in util.get_text_from_combobox(combobox_phase).items():
+        ph = proj.get_phase_by_name(ph_name)
+        if not proj.get_filter_state(ph, usecase):
+            warn_icon = widget.style().standardIcon(widget.style().StandardPixmap.SP_MessageBoxWarning)
+            combobox_phase.setItemIcon(index.row(), warn_icon)
+        else:
+            combobox_phase.setItemIcon(index.row(), QIcon())

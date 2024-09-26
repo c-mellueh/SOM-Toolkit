@@ -6,7 +6,7 @@ def connect():
     tool.MainWindow.add_action("Bearbeiten/Objektfilter", lambda: core.open_use_case_window(tool.ObjectFilter))
     core.add_object_filter_widget(tool.ObjectFilterCompare, tool.AttributeCompare, tool.CompareWindow)
     tool.Settings.add_page_to_toolbox(ui.SettingsWidget, constants.SETTINGS_PAGE_NAME, constants.SETTINGS_TAB_NAME,
-                                      lambda: core.settings_accepted(tool.ObjectFilter))
+                                      lambda: core.settings_accepted(tool.ObjectFilter, tool.Project, tool.Popups))
 
 def filter_tab_object_tree_selection_changed(widget):
     core.filter_tab_object_tree_selection_changed(widget, tool.AttributeCompare, tool.ObjectFilterCompare)
@@ -21,4 +21,4 @@ def settings_widget_created(widget: ui.SettingsWidget):
 
 
 def settings_combobox_changed():
-    core.settings_combobox_changed(tool.ObjectFilter, tool.Project, tool.Settings)
+    core.settings_combobox_changed(tool.ObjectFilter, tool.Project, tool.Util)

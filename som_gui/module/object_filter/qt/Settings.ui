@@ -15,24 +15,24 @@
         </property>
         <layout class="QFormLayout" name="formLayout">
             <item row="0" column="0">
-                <widget class="QLabel" name="label_usecase">
-                    <property name="text">
-                        <string>Anwendungsfall</string>
-                    </property>
-                </widget>
-            </item>
-            <item row="0" column="1">
-                <widget class="QComboBox" name="cb_usecase"/>
-            </item>
-            <item row="1" column="0">
                 <widget class="QLabel" name="label_phase">
                     <property name="text">
                         <string>Leistungsphase</string>
                     </property>
                 </widget>
             </item>
-            <item row="1" column="1">
+            <item row="0" column="1">
                 <widget class="QComboBox" name="cb_phase"/>
+            </item>
+            <item row="1" column="0">
+                <widget class="QLabel" name="label_usecase">
+                    <property name="text">
+                        <string>Anwendungsfall</string>
+                    </property>
+                </widget>
+            </item>
+            <item row="1" column="1">
+                <widget class="QComboBox" name="cb_usecase"/>
             </item>
         </layout>
     </widget>

@@ -16,6 +16,10 @@ class Settings(som_gui.core.tool.Settings):
         return som_gui.SettingsProperties
 
     @classmethod
+    def close(cls):
+        cls.get_properties().tab_widget_dict = dict()
+
+    @classmethod
     def add_page_to_toolbox(cls, widget, page_name: str, tab_name: str, accept_function: Callable):
         if tab_name not in cls.get_tab_dict():
             cls.get_properties().tab_dict[tab_name] = dict()

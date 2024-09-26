@@ -583,7 +583,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         return [phase for phase, value_list in zip(phase_list, filter_matrix) if value_list[usecase_index]]
 
 
-
 class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
     @classmethod
     def get_properties(cls) -> ObjectFilterCompareProperties:

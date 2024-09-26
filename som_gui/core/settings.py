@@ -15,3 +15,4 @@ def open_window(settings: Type[tool.Settings]):
     if dialog.exec():
         for func in settings.get_accept_functions():
             func()
+    settings.close()
