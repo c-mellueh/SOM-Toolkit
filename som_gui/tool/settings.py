@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Type
 import logging
 from PySide6.QtWidgets import QVBoxLayout, QTabWidget, QWidget, QToolBox, QSpacerItem, QSizePolicy
 from PySide6.QtGui import QIcon
@@ -48,8 +48,6 @@ class Settings(som_gui.core.tool.Settings):
                 tool_box.addItem(page, page_name)
                 for widget in widgets:
                     page.layout().addWidget(widget())
-                page.layout().addItem(
-                    QSpacerItem(20, 387, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding))
             cls.get_properties().tab_widget_dict[name] = (tool_box, page_dict)
 
         return settings_dialog
@@ -59,7 +57,7 @@ class Settings(som_gui.core.tool.Settings):
         return cls.get_widget().tab_widget
 
     @classmethod
-    def get_tab_dict(cls) -> dict[str, dict[str, list[QWidget]]]:
+    def get_tab_dict(cls) -> dict[str, dict[str, list[Type[QWidget]]]]:
         return cls.get_properties().tab_dict
 
     @classmethod
