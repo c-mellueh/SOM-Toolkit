@@ -114,7 +114,7 @@ def reset_settings_dialog(project_tool: Type[Project]):
         info_dict["value"] = info_dict["get_function"]()
 
 
-def settings_general_created(widget: ui.SettingsGeneral, project: Type[tool.Project], appdata: Type[Appdata]):
+def settings_general_created(widget: ui.SettingsGeneral, project: Type[tool.Project]):
     project.set_settings_general_widget(widget)
     proj = project.get()
     widget.ui.le_name.setText(proj.name)
@@ -122,6 +122,9 @@ def settings_general_created(widget: ui.SettingsGeneral, project: Type[tool.Proj
     widget.ui.le_description.setText(proj.description)
     widget.ui.le_author_mail.setText(proj.author)
 
+
+def settings_path_created(widget: ui.SettingsGeneral, project: Type[tool.Project], appdata: Type[tool.Appdata]):
+    pass
 
 def settings_accepted(project: Type[tool.Project]):
     widget = project.get_settings_general_widget()

@@ -20,7 +20,7 @@ def connect():
     tool.Settings.add_page_to_toolbox(ui.SettingsGeneral, "General", "General Settings",
                                       lambda: core.settings_accepted(tool.Project))
 
-    tool.Settings.add_page_to_toolbox(ui.SettingsGeneral, "General", "General Settings",
+    tool.Settings.add_page_to_toolbox(ui.SettingsPath, "Path", "Project",
                                       lambda: core.settings_accepted(tool.Project))
 
 def menu_action_settings():
@@ -38,4 +38,8 @@ def repaint_event():
 
 
 def settings_general_created(widget: ui.SettingsGeneral):
-    core.settings_general_created(widget, tool.Project, tool.Appdata)
+    core.settings_general_created(widget, tool.Project)
+
+
+def settings_path_created(widget: ui.SettingsPath):
+    core.settings_path_created(widget, tool.Project, tool.Appdata)

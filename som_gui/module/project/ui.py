@@ -2,7 +2,7 @@ from __future__ import annotations  # make own class referencable
 from PySide6.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QWidget
 from som_gui import icons
 from som_gui.module import project
-from .qt import settings_general
+from .qt import settings_general, settings_path
 class SettingsDialog(QDialog):
     def __init__(self):
         super().__init__()
@@ -14,6 +14,13 @@ class SettingsDialog(QDialog):
         super().paintEvent(event)
         project.trigger.repaint_event()
 
+
+class SettingsPath(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.ui = settings_path.Ui_Form()
+        self.ui.setupUi(self)
+        project.trigger.settings_path_created(self)
 
 class SettingsGeneral(QWidget):
     def __init__(self):
