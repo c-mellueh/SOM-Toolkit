@@ -159,7 +159,9 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def load_project(cls, path: str):
-        return SOMcreator.Project.open(path)
+        proj = SOMcreator.Project.open(path)
+        proj.path = path
+        return proj
 
     @classmethod
     def set_active_project(cls, proj: SOMcreator.Project):
@@ -295,3 +297,11 @@ class Project(som_gui.core.tool.Project):
     @classmethod
     def get_settings_general_widget(cls) -> ui.SettingsGeneral:
         return cls.get_properties().settings_general_widget
+
+    @classmethod
+    def set_settings_path_widget(cls, widget: ui.SettingsPath):
+        cls.get_properties().settings_path_widget = widget
+
+    @classmethod
+    def get_settings_path_widget(cls, ) -> ui.SettingsPath:
+        return cls.get_properties().settings_path_widget

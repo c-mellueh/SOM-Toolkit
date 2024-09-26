@@ -18,10 +18,9 @@ def connect():
                                lambda: core.save_as_clicked(tool.Project, tool.Popups, tool.Appdata, tool.MainWindow))
     tool.MainWindow.add_action("Bearbeiten/Einstellungen", menu_action_settings)
     tool.Settings.add_page_to_toolbox(ui.SettingsGeneral, "General", "General Settings",
-                                      lambda: core.settings_accepted(tool.Project))
+                                      lambda: core.settings_accepted(tool.Project, tool.Appdata))
 
-    tool.Settings.add_page_to_toolbox(ui.SettingsPath, "Path", "Project",
-                                      lambda: core.settings_accepted(tool.Project))
+    tool.Settings.add_page_to_toolbox(ui.SettingsPath, "Path", "Project", lambda: None)
 
 def menu_action_settings():
     prop: project.prop.ProjectProperties = som_gui.ProjectProperties

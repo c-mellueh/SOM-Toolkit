@@ -22,3 +22,4 @@ class ProjectProperties:
     shourtcuts: list = list()
     plugin_save_functions: list[Callable] = list()
     settings_general_widget: ui.SettingsGeneral = None
+    settings_path_widget: ui.SettingsPath = None

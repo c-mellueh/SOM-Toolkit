@@ -123,13 +123,24 @@ def settings_general_created(widget: ui.SettingsGeneral, project: Type[tool.Proj
     widget.ui.le_author_mail.setText(proj.author)
 
 
-def settings_path_created(widget: ui.SettingsGeneral, project: Type[tool.Project], appdata: Type[tool.Appdata]):
-    pass
+def settings_path_created(widget: ui.SettingsPath, project: Type[tool.Project], appdata: Type[tool.Appdata]):
+    project.set_settings_path_widget(widget)
+    proj = project.get()
+    path = proj.path if "path" in dir(proj) else ""
+    widget.ui.le_project_path.setText(path)
+    widget.ui.le_save_path.setText(appdata.get_path(SAVE_PATH))
+    widget.ui.le_open_path.setText(appdata.get_path(OPEN_PATH))
 
-def settings_accepted(project: Type[tool.Project]):
+
+def settings_accepted(project: Type[tool.Project], appdata: Type[tool.Appdata]):
     widget = project.get_settings_general_widget()
     proj = project.get()
     proj.author = widget.ui.le_author_mail.text()
     proj.name = widget.ui.le_name.text()
     proj.version = widget.ui.le_version.text()
     proj.description = widget.ui.le_description.toPlainText()
+
+    path_widget = project.get_settings_path_widget()
+    proj.path = path_widget.ui.le_project_path.text()
+    appdata.set_path(SAVE_PATH, path_widget.ui.le_save_path.text())
+    appdata.set_path(OPEN_PATH, path_widget.ui.le_open_path.text())
