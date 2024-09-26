@@ -49,6 +49,7 @@ class Settings(som_gui.core.tool.Settings):
                 page = QWidget()
                 page_dict[page_name] = page
                 page.setLayout(QVBoxLayout())
+                page.layout().setContentsMargins(0, 0, 0, 0)
                 tool_box.addItem(page, page_name)
                 for widget in widgets:
                     page.layout().addWidget(widget())
