@@ -200,12 +200,14 @@ def settings_widget_created(widget: object_filter_ui.SettingsWidget, object_filt
     object_filter.set_settings_widget(widget)
     object_filter.connect_settings_widget(widget)
 
+    proj = project.get()
+
     combobox_usecase = widget.ui.cb_usecase
     combobox_phase = widget.ui.cb_phase
     combobox_usecase.addItems([uc.name for uc in project.get_use_cases()])
     combobox_phase.addItems([ph.name for ph in project.get_phases()])
-    combobox_usecase.setCurrentText(project.get().current_use_case.name)
-    combobox_phase.setCurrentText(project.get().current_project_phase.name)
+    combobox_usecase.setCurrentText(proj.get_usecase_by_index(proj.active_usecases[0]).name)
+    combobox_phase.setCurrentText(proj.get_phase_by_index(proj.active_phases[0]).name)
 
 
 def settings_accepted(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project], popups: Type[tool.Popups]):
@@ -225,8 +227,8 @@ def settings_accepted(object_filter: Type[tool.ObjectFilter], project: Type[tool
         text = f"Kombination von Phase '{phase_name}' & Anwendungsfall '{usecase_name}' nicht erlaubt -> wird nicht übernommen"
         popups.create_warning_popup(text, f"Achtung!", "Anwendungsfall/Phase wird nicht übernommen!")
     else:
-        proj.current_use_case = usecase
-        proj.current_project_phase = phase
+        proj.active_usecases = [proj.get_use_case_index(usecase)]
+        proj.active_phases = [proj.get_phase_index(phase)]
 
 
 def settings_combobox_changed(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project],

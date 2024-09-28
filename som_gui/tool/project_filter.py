@@ -40,9 +40,9 @@ class ProjectFilter(som_gui.core.tool.ProjectFilter):
         filter_item = props.selected_header
         proj = tool.Project.get()
         if isinstance(filter_item, UseCase):
-            proj.remove_use_case(filter_item.name)
+            proj.remove_use_case(filter_item)
         else:
-            proj.remove_project_phase(filter_item.name)
+            proj.remove_project_phase(filter_item)
 
     @classmethod
     def rename_filter(cls):

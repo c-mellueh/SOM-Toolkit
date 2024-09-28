@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 
+from ifcopenshell.express.rules.IFC4X1 import project
+
 import som_gui
 from som_gui.core import project as core_project
 from PySide6.QtWidgets import QApplication
@@ -35,11 +37,12 @@ def create_menus(main_window_tool: Type[MainWindow], util: Type[tool.Util]):
 
 
 def refresh_main_window(main_window_tool: Type[MainWindow], project_tool: Type[Project]):
-    name = project_tool.get_project_name()
-    version = f"Version: {project_tool.get_project_version()}"
-    phase_name = project_tool.get_project_phase().name
-    use_case_name = project_tool.get().current_use_case.name
-    status = " | ".join([name, version, phase_name, use_case_name])
+    proj = project_tool.get()
+    name = proj.name
+    version = f"Version: {proj.version}"
+    phase_names = ",".join(proj.get_phase_by_index(i).name for i in proj.active_phases)
+    usecase_names = ",".join(proj.get_usecase_by_index(i).name for i in proj.active_usecases)
+    status = " | ".join([name, version, phase_names, usecase_names])
     main_window_tool.set_status_bar_text(status)
     main_window_tool.set_window_title(f"SOM-Toolkit v{som_gui.__version__}")
 

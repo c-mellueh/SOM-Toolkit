@@ -377,7 +377,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def db_create_entity(cls, element: entity_instance, bauteil_klasse):
         cursor = cls.get_cursor()
         file_name = cls.get_ifc_name()
-        project = tool.Project.get_project_name()
+        project = tool.Project.get().name
         guid_zwc = tool.Util.transform_guid(element.GlobalId, True)
         guid = tool.Util.transform_guid(element.GlobalId, False)
         name = element.Name

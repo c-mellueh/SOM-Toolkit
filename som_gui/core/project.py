@@ -49,7 +49,7 @@ def new_file_clicked(project_tool: Type[Project], popup_tool: Type[Popups]):
     name = popup_tool.get_project_name()
     if name is not None:
         project_tool.create_project()
-        project_tool.set_project_name(name)
+        project_tool.get().name = name
 
 
 def save_project(path: str, project_tool: Type[Project], appdata: Type[Appdata]):

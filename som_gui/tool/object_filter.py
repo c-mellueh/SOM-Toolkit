@@ -90,22 +90,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
     def reset_use_case_data(cls):
         object_filter_data.refresh()
 
-    @classmethod
-    def get_active_use_case(cls):
-        proj = Project.get()
-        return proj.current_use_case
 
-    @classmethod
-    def get_active_use_case_name(cls):
-        return cls.get_active_use_case().name
-
-    @classmethod
-    def set_use_case(cls, use_case_name: str):
-        proj = Project.get()
-        uc = proj.get_use_case_by_name(use_case_name)
-        if uc is None:
-            return
-        proj.current_use_case = uc
 
 
     @classmethod
