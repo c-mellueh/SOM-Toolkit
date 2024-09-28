@@ -35,8 +35,11 @@ class Plugins(som_gui.core.tool.Plugins):
     @classmethod
     def import_plugin(cls, plugin_name: str) -> list[tuple[str, Any]]:
         module_text = f"som_gui.plugins.{plugin_name}.module"
+        logging.info(f"Import Plugin {plugin_name} -> {module_text}")
+
         submodule_names = [m.name for m in pkgutil.iter_modules(importlib.import_module(module_text).__path__) if
                            m.ispkg]
+        logging.info(f"Submodules: {submodule_names}")
         submodules = [importlib.import_module(f"{module_text}.{n}") for n in submodule_names]
         return list(zip(submodule_names, submodules))
 

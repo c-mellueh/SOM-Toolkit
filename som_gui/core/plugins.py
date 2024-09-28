@@ -19,6 +19,8 @@ def settings_accepted(plugins: Type[tool.Plugins], popups: Type[tool.Popups]):
             continue
         plugins.set_plugin_active(plugin_name, new_checkstate)
         state = "activated" if new_checkstate else "deactivated"
+        logging.info(f"{state[:-1]} Plugin '{friendly_name}'")
+
         info_text = f"The plugin '{friendly_name}' has been successfully {state}. \nPlease restart the program for the changes to take effect."
         popups.create_info_popup(info_text, f"Plugin {state.title()}: Restart Required")
 
