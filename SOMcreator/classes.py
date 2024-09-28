@@ -186,24 +186,6 @@ class Project(object):
     def description(self, value: str):
         self._description = value
 
-    def tree(self) -> AnyNode:
-        def create_childen(node: AnyNode):
-            n_obj: Object = node.obj
-            for child in n_obj.children:
-                child_node = AnyNode(name=child.name, id=child.ident_value, obj=child, parent=node)
-                create_childen(child_node)
-
-        base = AnyNode(id=self.name, obj=self)
-        root_objects = list()
-        for obj in self.objects:
-            if obj.parent is not None:
-                continue
-            root_objects.append(AnyNode(name=obj.name, id=obj.ident_value, obj=obj, parent=base))
-
-        for n in root_objects:
-            create_childen(n)
-        return base
-
     # UseCase / ProjectPhase Handling
 
     def create_filter_matrix(self, value: bool = True):
