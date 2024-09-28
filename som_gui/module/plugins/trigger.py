@@ -7,7 +7,7 @@ from . import ui
 
 def connect():
     tool.Settings.add_page_to_toolbox(ui.SettingsWidget, "Plugins", "Plugins",
-                                      lambda: core.settings_accepted(tool.Plugins, tool.Appdata))
+                                      lambda: core.settings_accepted(tool.Plugins, tool.Popups))
 
 
 def on_new_project():
@@ -15,5 +15,5 @@ def on_new_project():
 
 
 def settings_widget_created(widget: ui.SettingsWidget):
-    core.settings_widget_created(widget, tool.Plugins, tool.Appdata)
+    core.settings_widget_created(widget, tool.Plugins)
     pass
