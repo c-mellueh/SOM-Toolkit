@@ -107,8 +107,8 @@ def write(project: Project, main_dict: MainDict) -> None:
         ACTIVE_PHASES] = project.active_phases  # project_dict[CURRENT_PR0JECT_PHASE] = project.get_project_phase_list().index(project.current_project_phase)
     project_dict[
         ACTIVE_USECASES] = project.active_usecases  #    project_dict[CURRENT_USE_CASE] = project.get_use_case_list().index(project.current_use_case)
-    project_dict[PROJECT_PHASES] = _write_filter_dict(project.get_project_phase_list())
-    project_dict[USE_CASES] = _write_filter_dict(project.get_use_case_list())
+    project_dict[PROJECT_PHASES] = _write_filter_dict(project.get_phases())
+    project_dict[USE_CASES] = _write_filter_dict(project.get_usecases())
     project_dict[FILTER_MATRIX] = project.get_filter_matrix()
 
 

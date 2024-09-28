@@ -638,15 +638,15 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             cursor.execute(text)
             cls.commit_sql()
 
-        for usecase in project.get_use_case_list():
+        for usecase in project.get_usecases():
             add_table_entry(usecase)
-        for phase in project.get_project_phase_list():
+        for phase in project.get_phases():
             add_table_entry(phase)
 
     @classmethod
     def add_attribute_to_filter_table(cls, project: SOMcreator.Project, attribute: SOMcreator.Attribute):
-        use_case_list = project.get_use_case_list()
-        phase_list = project.get_project_phase_list()
+        use_case_list = project.get_usecases()
+        phase_list = project.get_phases()
         cursor = cls.get_cursor()
 
         for use_case in use_case_list:

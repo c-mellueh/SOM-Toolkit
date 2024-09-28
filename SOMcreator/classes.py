@@ -236,10 +236,10 @@ class Project(object):
             return self._use_cases.index(use_case)
         return None
 
-    def get_project_phase_list(self) -> list[Phase]:
+    def get_phases(self) -> list[Phase]:
         return list(self._phases)
 
-    def get_use_case_list(self) -> list[UseCase]:
+    def get_usecases(self) -> list[UseCase]:
         return list(self._use_cases)
 
     def add_project_phase(self, phase: Phase):
@@ -324,9 +324,9 @@ class Hirarchy(object, metaclass=IterRegistry):
         self._filter_matrix = filter_matrix
         if self._filter_matrix is None:
             self._filter_matrix = list()
-            for _ in project.get_project_phase_list():
+            for _ in project.get_phases():
                 phase_list = list()
-                for __ in project.get_use_case_list():
+                for __ in project.get_usecases():
                     phase_list.append(True)
                 self._filter_matrix.append(phase_list)
 
@@ -377,7 +377,7 @@ class Hirarchy(object, metaclass=IterRegistry):
             use_case_list.pop(use_case_index)
 
     def add_project_phase(self) -> None:
-        use_cases = self.project.get_use_case_list()
+        use_cases = self.project.get_usecases()
         self._filter_matrix.append([True for _ in use_cases])
 
     def add_use_case(self) -> None:

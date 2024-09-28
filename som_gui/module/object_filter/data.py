@@ -22,7 +22,7 @@ class ObjectFilterData:
         proj: SOMcreator.Project = tool.Project.get()
         if proj is None:
             return list()
-        use_case_list = proj.get_use_case_list()
+        use_case_list = proj.get_usecases()
         return use_case_list
 
 

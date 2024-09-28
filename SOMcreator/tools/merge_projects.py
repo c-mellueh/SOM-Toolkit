@@ -4,12 +4,12 @@ from SOMcreator.classes import Project, UseCase, Phase, Hirarchy
 
 def _calculate_new_filter_matrix(filter_matrix, existing_project: Project, import_project: Project, item: Hirarchy,
                                  phase_mapping, use_case_mapping):
-    for import_phase in import_project.get_project_phase_list():
+    for import_phase in import_project.get_phases():
         existing_phase = phase_mapping.get(import_phase)
         if existing_phase is None:
             continue
 
-        for import_use_case in import_project.get_use_case_list():
+        for import_use_case in import_project.get_usecases():
             existing_use_case = use_case_mapping.get(import_use_case)
             if existing_use_case is None:
                 continue

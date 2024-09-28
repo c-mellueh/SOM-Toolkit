@@ -76,11 +76,11 @@ class ProjectFilter(som_gui.core.tool.ProjectFilter):
 
     @classmethod
     def get_use_case_list(cls):
-        return tool.Project.get().get_use_case_list()
+        return tool.Project.get().get_usecases()
 
     @classmethod
     def get_phase_list(cls):
-        return tool.Project.get().get_project_phase_list()
+        return tool.Project.get().get_phases()
 
     @classmethod
     def fill_filter_properties(cls):
