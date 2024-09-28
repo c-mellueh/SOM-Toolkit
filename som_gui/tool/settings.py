@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Callable, Type
 import logging
 from PySide6.QtWidgets import QVBoxLayout, QTabWidget, QWidget, QToolBox, QSpacerItem, QSizePolicy
 from PySide6.QtGui import QIcon
+from PySide6.QtCore import QSize
 import som_gui.core.tool
 import som_gui
 from som_gui.module.settings import ui
@@ -55,6 +56,7 @@ class Settings(som_gui.core.tool.Settings):
                     page.layout().addWidget(widget())
             cls.get_properties().tab_widget_dict[name] = (tool_box, page_dict)
 
+        settings_dialog.resize(QSize(800, 500))
         return settings_dialog
 
     @classmethod
