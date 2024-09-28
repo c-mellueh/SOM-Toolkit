@@ -13,51 +13,37 @@ import importlib
 import pkgutil
 
 module = importlib.import_module("som_gui.module")
-modules = {m.name: [None, m.name] for m in pkgutil.iter_modules(module.__path__) if m.ispkg}
+modules = [[m.name, None] for m in pkgutil.iter_modules(module.__path__) if m.ispkg]
+preregister = ["logging", "project", "main_window"]
 
-plugins_dict = {
-    "aggregation_window": {
-        "window":      [None, "window"],
-        "view":        [None, "view"],
-        "node":        [None, "node"],
-        "connection":  [None, "connection"],
-        "aggregation": [None, "aggregation"],
-        "aw_modelcheck":   [None, "modelcheck"],
-        "grouping_window": [None, "grouping_window"],
-    },
-}
-for key, (_, name) in modules.items():
+for index, (name, _) in enumerate(modules):
     logging.info(f"Importing Module '{name}'")
-    modules[key][0] = importlib.import_module(f"som_gui.module.{name}")
+    modules[index][1] = importlib.import_module(f"som_gui.module.{name}")
 
-for plugin_name, plugin_modules in plugins_dict.items():
-    if not tool.Appdata.is_plugin_activated(plugin_name):
-        continue
-
-    for key, (_, name) in plugin_modules.items():
-        text = f".{plugin_name}.module.{name}"
-
-        plugins_dict[plugin_name][key][0] = importlib.import_module(text, f"som_gui.plugins")
-    modules.update(plugin_modules)
-
+for plugin_names in tool.Plugins.get_available_plugins():
+    if tool.Plugins.is_plugin_active(plugin_names):
+        modules += tool.Plugins.import_plugin(plugin_names)
 
 def register():
-    modules["project"][0].register()
-    modules["main_window"][0].register()
-    for k, (mod, _) in modules.items():
-        if k not in ("project", "main_window"):
-            mod.register()
+    for module_name in preregister:
+        index = [x[0] for x in modules].index(module_name)
+        modules[index][1].register()
+
+    for name, module in modules:
+        if name not in preregister:
+            module.register()
 
 
 def load_ui_triggers():
-    modules["project"][0].load_ui_triggers()
-    modules["main_window"][0].load_ui_triggers()
-    for k, (mod, _) in modules.items():
-        if k not in ("project", "main_window"):
-            mod.load_ui_triggers()
+    for module_name in preregister:
+        index = [x[0] for x in modules].index(module_name)
+        modules[index][1].load_ui_triggers()
+
+    for name, module in modules:
+        if name not in preregister:
+            module.load_ui_triggers()
 
 
 def on_new_project():
-    for k, (mod, _) in modules.items():
-        if k != "project":
-            mod.on_new_project()
+    for name, module in modules:
+        module.on_new_project()

@@ -8,7 +8,6 @@ from som_gui import tool
 from som_gui.module.util.constants import PATH_SEPERATOR
 
 PATHS_SECTION = "paths"
-PLUGINS = "plugins"
 
 
 class Appdata(som_gui.core.tool.Appdata):
@@ -78,11 +77,3 @@ class Appdata(som_gui.core.tool.Appdata):
             if path is not None:
                 return eval(path)
         return False
-
-    @classmethod
-    def is_plugin_activated(cls, name):
-        config_parser = cls._get_config()
-        if not config_parser.has_option(PLUGINS, name):
-            cls.set_setting(PLUGINS, name, True)
-            return True
-        return cls.get_bool_setting(PLUGINS, name)
