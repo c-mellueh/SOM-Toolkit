@@ -107,10 +107,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             return
         proj.current_use_case = uc
 
-    @classmethod
-    def add_use_case_to_settings_window(cls):
-        Project.add_project_setting(cls.get_active_use_case_name,
-                                    cls.set_use_case, USE_CASE, cls.get_use_case_name_list)
 
     @classmethod
     def create_row(cls, entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.PropertySet,

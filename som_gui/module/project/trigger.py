@@ -16,24 +16,11 @@ def connect():
                                lambda: core.save_clicked(tool.Project, tool.Popups, tool.Appdata, tool.MainWindow))
     tool.MainWindow.add_action("Datei/Speichern unter ...",
                                lambda: core.save_as_clicked(tool.Project, tool.Popups, tool.Appdata, tool.MainWindow))
-    tool.MainWindow.add_action("Bearbeiten/Einstellungen", menu_action_settings)
+
     tool.Settings.add_page_to_toolbox(ui.SettingsGeneral, "General", "General Settings",
                                       lambda: core.settings_accepted(tool.Project, tool.Appdata))
-
     tool.Settings.add_page_to_toolbox(ui.SettingsPath, "Path", "Project", lambda: None)
 
-def menu_action_settings():
-    prop: project.prop.ProjectProperties = som_gui.ProjectProperties
-    prop.settings_window = ui.SettingsDialog()
-    core.fill_settings_dialog(tool.Project)
-    if prop.settings_window.exec():
-        core.update_settings(tool.Project)
-    else:
-        core.reset_settings_dialog(tool.Project)
-
-
-def repaint_event():
-    core.repaint_settings_dialog(tool.Project)
 
 
 def settings_general_created(widget: ui.SettingsGeneral):

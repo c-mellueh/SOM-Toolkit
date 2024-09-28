@@ -35,7 +35,6 @@ def on_startup(objectfilter_tool: Type[ObjectFilter]):
     logging.debug(f"Startup UseCase")
     objectfilter_tool.reset_use_case_data()
     objectfilter_tool.load_use_cases()
-    objectfilter_tool.add_use_case_to_settings_window()
 
 
 def add_object_filter_widget(object_filter_compare: Type[tool.ObjectFilterCompare],

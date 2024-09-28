@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 
 def connect():
-    tool.MainWindow.add_action("Bearbeiten/Properties",
+    tool.MainWindow.add_action("Bearbeiten/Einstellungen",
                                lambda: core.open_window(tool.Settings))
 
 

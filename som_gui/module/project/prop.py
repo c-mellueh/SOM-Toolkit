@@ -16,9 +16,7 @@ class InfoDict(TypedDict):
 
 
 class ProjectProperties:
-    project_infos: list[InfoDict] = list()
     active_project: Project | None = None
-    settings_window: QDialog = None
     shourtcuts: list = list()
     plugin_save_functions: list[Callable] = list()
     settings_general_widget: ui.SettingsGeneral = None
