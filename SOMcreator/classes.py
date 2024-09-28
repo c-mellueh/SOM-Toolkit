@@ -59,6 +59,7 @@ class Project(object):
         self.aggregation_attribute = ""
         self.aggregation_pset = ""
         self._filter_matrix = filter_matrix
+        self._description = ""
         self.plugin_dict = dict()
         self.import_dict = dict()
 
@@ -177,6 +178,14 @@ class Project(object):
     def version(self, value: str):
         self._version = value
 
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, value: str):
+        self._description = value
+
     def tree(self) -> AnyNode:
         def create_childen(node: AnyNode):
             n_obj: Object = node.obj
@@ -204,6 +213,9 @@ class Project(object):
         return filter_matrix
 
     def get_filter_matrix(self) -> list[list[bool]]:
+        """
+        [Phase][Usecase] = State
+        """
         return self._filter_matrix
 
     def set_filter_matrix(self, matrix: list[list[bool]]):
@@ -266,7 +278,7 @@ class Project(object):
                 use_case_list.append(True)
         return self._use_cases.index(use_case)
 
-    def get_project_phase_by_name(self, name: str):
+    def get_phase_by_name(self, name: str):
         for project_phase in self._project_phases:
             if project_phase.name == name:
                 return project_phase
@@ -277,7 +289,7 @@ class Project(object):
                 return use_case
 
     def rename_project_phase(self, old_name: str, new_name: str) -> None:
-        phase = self.get_project_phase_by_name(old_name)
+        phase = self.get_phase_by_name(old_name)
         if phase is None:
             logging.warning(f"Leistungsphase '{old_name}' nicht vorhanden")
             return
@@ -291,7 +303,7 @@ class Project(object):
         use_case.name = new_name
 
     def remove_project_phase(self, project_phase_name: str) -> None:
-        phase = self.get_project_phase_by_name(project_phase_name)
+        phase = self.get_phase_by_name(project_phase_name)
         if phase is None:
             return
         index = self.get_phase_index(phase)

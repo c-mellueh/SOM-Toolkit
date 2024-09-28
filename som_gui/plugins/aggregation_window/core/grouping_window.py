@@ -7,7 +7,7 @@ import logging
 import time
 import os
 from PySide6.QtCore import QRunnable
-
+from som_gui.plugins.aggregation_window.module.grouping_window.constants import GROUP_FOLDER
 
 def open_window(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Type[tool.IfcImporter]):
     window = grouping_window.create_window()
@@ -22,12 +22,12 @@ def open_window(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Typ
     window.show()
 
 
-def export_selection_clicked(grouping_window: Type[aw_tool.GroupingWindow], settings: Type[tool.Settings]):
-    old_path = settings.get_group_folder()
+def export_selection_clicked(grouping_window: Type[aw_tool.GroupingWindow], appdata: Type[tool.Appdata]):
+    old_path = appdata.get_path(GROUP_FOLDER)
     new_path = grouping_window.open_export_dialog(old_path)
     if not new_path:
         return
-    settings.set_group_folder(new_path)
+    appdata.set_path(GROUP_FOLDER, new_path)
     grouping_window.set_export_line_text(new_path)
 
 

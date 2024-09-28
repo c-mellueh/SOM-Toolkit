@@ -1,7 +1,7 @@
 from som_gui.tool.logging import Logging
 from som_gui.tool.project import Project
 from som_gui.tool.object_filter import ObjectFilter, ObjectFilterCompare
-from som_gui.tool.settings import Settings
+from som_gui.tool.appdata import Appdata
 from som_gui.tool.object import Object
 from som_gui.tool.search import Search
 from som_gui.tool.popups import Popups
@@ -24,3 +24,5 @@ from som_gui.tool.mapping import Mapping
 from som_gui.tool.compare import CompareProjectSelector, CompareWindow
 from som_gui.tool.console import Console
 from som_gui.tool.bsdd import Bsdd
+from som_gui.tool.settings import Settings
+from som_gui.tool.plugins import Plugins

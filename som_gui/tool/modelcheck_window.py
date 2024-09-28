@@ -1,6 +1,7 @@
 from __future__ import annotations
 import som_gui.core.tool
 from som_gui import tool
+from som_gui.module.modelcheck.constants import ISSUE_PATH
 from som_gui.module.modelcheck_window import ui, trigger
 from som_gui.module.project.constants import CLASS_REFERENCE
 import SOMcreator
@@ -231,7 +232,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def autofill_export_path(cls):
-        export_path = tool.Settings.get_issue_path()
+        export_path = tool.Appdata.get_path(ISSUE_PATH)
         if export_path:
             cls.get_properties().export_line_edit.setText(export_path)
 

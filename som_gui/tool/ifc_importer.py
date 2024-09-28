@@ -12,7 +12,7 @@ import som_gui.core.tool
 from som_gui.module.ifc_importer import ui
 from PySide6.QtCore import QThreadPool, QObject, Signal, QRunnable, QSize
 from PySide6.QtWidgets import QFileDialog, QPushButton, QSizePolicy, QLineEdit, QLabel
-
+from som_gui.module.util.constants import PATH_SEPERATOR
 if TYPE_CHECKING:
     from som_gui.module.ifc_importer.prop import IfcImportProperties
     from PySide6.QtWidgets import QLineEdit, QLabel
@@ -86,10 +86,11 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
     @classmethod
     def autofill_ifcpath(cls, line_edit: QLineEdit):
-        ifc_path = tool.Settings.get_ifc_path()
+        from som_gui.core.ifc_importer import IFC_PATH
+        ifc_path = tool.Appdata.get_path(IFC_PATH)
         if ifc_path:
             if isinstance(ifc_path, list):
-                ifc_path = tool.Settings.get_seperator().join(ifc_path)
+                ifc_path = PATH_SEPERATOR.join(ifc_path)
             line_edit.setText(ifc_path)
 
     @classmethod
@@ -101,9 +102,8 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
     @classmethod
     def get_ifc_paths(cls, widget: ui.IfcImportWidget) -> list[str]:
         path = widget.widget.line_edit_ifc.text()
-        seperator = tool.Settings.get_seperator()
-        if seperator in path:
-            paths = path.split(seperator)
+        if PATH_SEPERATOR in path:
+            paths = path.split(PATH_SEPERATOR)
         else:
             paths = [path]
         return paths

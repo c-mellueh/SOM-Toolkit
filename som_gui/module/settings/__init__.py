@@ -1,10 +1,14 @@
+import som_gui
+from . import ui, prop, trigger
+
+
 def register():
-    pass
+    som_gui.SettingsProperties = prop.SettingsProperties()
 
 
 def load_ui_triggers():
-    pass
+    trigger.connect()
 
 
 def on_new_project():
-    pass
+    trigger.on_new_project()

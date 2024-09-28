@@ -1,146 +1,92 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING, Callable, Type
+import logging
+from PySide6.QtWidgets import QVBoxLayout, QTabWidget, QWidget, QToolBox, QSpacerItem, QSizePolicy
+from PySide6.QtGui import QIcon
+from PySide6.QtCore import QSize
 import som_gui.core.tool
-from som_gui.module.settings.paths import *
 import som_gui
-from configparser import ConfigParser
-import os
-import appdirs
-from som_gui import tool
+from som_gui.module.settings import ui
+if TYPE_CHECKING:
+    from som_gui.module.settings.prop import SettingsProperties
+
 
 class Settings(som_gui.core.tool.Settings):
+    @classmethod
+    def get_properties(cls) -> SettingsProperties:
+        return som_gui.SettingsProperties
 
     @classmethod
-    def get_export_path(cls, ) -> str:
-        return cls.get_path(EXPORT_PATH)
+    def close(cls):
+        cls.get_properties().tab_widget_dict = dict()
 
     @classmethod
-    def set_export_path(cls, path) -> None:
-        cls.set_path(EXPORT_PATH, path)
+    def add_page_to_toolbox(cls, widget, tab_name: str, page_name: str, accept_function: Callable):
+        if tab_name not in cls.get_tab_dict():
+            cls.get_properties().tab_dict[tab_name] = dict()
+
+        if page_name not in cls.get_properties().tab_dict[tab_name]:
+            cls.get_properties().tab_dict[tab_name][page_name] = list()
+        cls.get_properties().tab_dict[tab_name][page_name].append(widget)
+
+        cls.get_properties().accept_functions.append(accept_function)
 
     @classmethod
-    def get_seperator(cls) -> str:
-        return cls.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
+    def get_widget(cls) -> ui.Dialog:
+        return cls.get_properties().widget
 
     @classmethod
-    def set_seperator_status(cls, value: bool) -> None:
-        cls.set_setting(SEPERATOR_SECTION, SEPERATOR_STATUS, value)
+    def set_widget(cls, widget: ui.Dialog):
+        cls.get_properties().widget = widget
 
     @classmethod
-    def set_seperator(cls, value: str) -> None:
-        cls.set_setting(SEPERATOR_SECTION, SEPERATOR, value)
+    def create_dialog(cls) -> ui.Dialog:
+        settings_dialog = ui.Dialog()
+        cls.set_widget(settings_dialog)
+        for name, toolbox_dict in cls.get_tab_dict().items():
+            tool_box = cls.create_tab(cls.get_tab_widget(), name)
+            page_dict = dict()
+            for page_name, widgets in toolbox_dict.items():
+                page = QWidget()
+                page_dict[page_name] = page
+                page.setLayout(QVBoxLayout())
+                page.layout().setContentsMargins(0, 0, 0, 0)
+                tool_box.addItem(page, page_name)
+                for widget in widgets:
+                    page.layout().addWidget(widget())
+            cls.get_properties().tab_widget_dict[name] = (tool_box, page_dict)
+
+        settings_dialog.resize(QSize(800, 500))
+        return settings_dialog
 
     @classmethod
-    def get_seperator_status(cls) -> bool:
-        return cls._get_bool_setting(SEPERATOR_SECTION, SEPERATOR_STATUS)
+    def get_tab_widget(cls) -> QTabWidget:
+        return cls.get_widget().tab_widget
 
     @classmethod
-    def get_path(cls, value: str) -> str | list | set:
-        path = cls.get_string_setting(PATHS_SECTION, value)
-        if not path:
-            return ""
-        if PATH_SEPERATOR in path:
-            return path.split(PATH_SEPERATOR)
-        return path
+    def get_tab_dict(cls) -> dict[str, dict[str, list[Type[QWidget]]]]:
+        return cls.get_properties().tab_dict
 
     @classmethod
-    def set_path(cls, path, value: str | list | set) -> None:
-        if isinstance(value, (list, set)):
-            value = PATH_SEPERATOR.join(value)
-        cls.set_setting(PATHS_SECTION, path, value)
+    def create_tab(cls, tab_widget: QTabWidget, tab_name: str) -> QToolBox:
+        tb = QToolBox()
+        tab_widget.addTab(tb, tab_name)
+        return tb
 
     @classmethod
-    def get_ifc_path(cls) -> str:
-        return cls.get_path(IFC_PATH)
+    def get_tab_names(cls) -> list[str]:
+        return sorted(cls.get_properties().tab_dict.keys())
 
     @classmethod
-    def set_ifc_path(cls, path) -> None:
-        cls.set_path(IFC_PATH, path)
+    def get_accept_functions(cls) -> list[Callable]:
+        return cls.get_properties().accept_functions
 
     @classmethod
-    def get_issue_path(cls) -> str:
-        return cls.get_path(ISSUE_PATH)
-
-    @classmethod
-    def set_issue_path(cls, path) -> None:
-        cls.set_path(ISSUE_PATH, path)
-
-    @classmethod
-    def get_group_folder(cls) -> str:
-        return cls.get_path(GROUP_FOLDER)
-
-    @classmethod
-    def set_group_folder(cls, value) -> None:
-        cls.set_path(GROUP_FOLDER, value)
-
-    @classmethod
-    def set_group_pset(cls, value: str) -> None:
-        cls.set_setting(IFC_MOD, GROUP_PSET, value)
-
-    @classmethod
-    def set_group_attribute(cls, value: str) -> None:
-        cls.set_setting(IFC_MOD, GROUP_ATTRIBUTE, value)
-
-    @classmethod
-    def get_group_pset(cls, ) -> str:
-        return cls.get_string_setting(IFC_MOD, GROUP_PSET)
-
-    @classmethod
-    def get_group_attribute(cls, ) -> str:
-        return cls.get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
-
-    @classmethod
-    def set_setting(cls, section: str, path: str, value):
-        config_parser = cls._get_config()
-        if not config_parser.has_section(section):
-            config_parser.add_section(section)
-        config_parser.set(section, path, str(value))
-        cls._write_config(config_parser)
-
-    @classmethod
-    def get_string_setting(cls, section: str, path: str, default="") -> str:
-        config_parser = cls._get_config()
-        if config_parser.has_option(section, path):
-            path = config_parser.get(section, path)
-            if path is not None:
-                return path
-        return default
-
-    @classmethod
-    def get_settings_path(cls):
-        return os.path.join(appdirs.user_config_dir(som_gui.__name__), "config.ini")
-
-    @classmethod
-    def _write_config(cls, config_parser) -> None:
-        with open(cls.get_settings_path(), "w") as f:
-            config_parser.write(f)
-
-    @classmethod
-    def _get_config(cls, ) -> ConfigParser:
-        config = ConfigParser()
-        config_path = cls.get_settings_path()
-        parent_folder = os.path.dirname(config_path)
-        if not os.path.exists(parent_folder):
-            tool.Util.create_directory(parent_folder)
-            return config
-        if not os.path.exists(config_path):
-            return config
-        with open(config_path, "r") as f:
-            config.read_file(f)
-        return config
-
-    @classmethod
-    def _get_bool_setting(cls, section: str, path: str) -> bool:
-        config_parser = cls._get_config()
-        if config_parser.has_option(section, path):
-            path = config_parser.get(section, path)
-            if path is not None:
-                return eval(path)
-        return False
-
-    @classmethod
-    def is_plugin_activated(cls, name):
-        config_parser = cls._get_config()
-        if not config_parser.has_option(PLUGINS, name):
-            cls.set_setting(PLUGINS, name, True)
-            return True
-        return cls._get_bool_setting(PLUGINS, name)
+    def set_icon(cls, tab_name: str, page_name: str, icon: QIcon):
+        if not tab_name in cls.get_properties().tab_widget_dict:
+            return
+        toolbox = cls.get_properties().tab_widget_dict[tab_name][0]
+        if not page_name in cls.get_properties().tab_widget_dict[tab_name][1]:
+            return
+        page = cls.get_properties().tab_widget_dict[tab_name][1][page_name]
+        toolbox.setItemIcon(toolbox.indexOf(page), icon)

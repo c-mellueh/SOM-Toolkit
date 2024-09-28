@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Type
 from som_gui.module.compare.constants import COMPARE_SETTING, EXPORT_PATH
 import SOMcreator
 from PySide6.QtCore import Qt
-from som_gui.module.settings.paths import PATHS_SECTION
 from som_gui.module.project.constants import FILETYPE
 
 from SOMcreator import Project
@@ -19,7 +18,7 @@ if TYPE_CHECKING:
 
 def open_project_selection_window(compare_window: Type[tool.CompareWindow],
                                   project_selector: Type[tool.CompareProjectSelector],
-                                  settings: Type[tool.Settings],
+                                  appdata: Type[tool.Appdata],
                                   project: Type[tool.Project], ):
     window = compare_window.get_window()
     if window is not None:
@@ -30,7 +29,7 @@ def open_project_selection_window(compare_window: Type[tool.CompareWindow],
     proj_select_dialog = project_selector.create_project_select_dialog()
     project_selector.connect_project_select_dialog(proj_select_dialog)
 
-    path = settings.get_string_setting(PATHS_SECTION, COMPARE_SETTING)
+    path = appdata.get_path(COMPARE_SETTING)
     project_selector.fill_project_select_dialog(project.get(), path)
 
     if proj_select_dialog.exec():
@@ -56,9 +55,9 @@ def switch_clicked(project_selector: Type[tool.CompareProjectSelector]):
 
 
 def project_button_clicked(project_selector: Type[tool.CompareProjectSelector], popups: Type[tool.Popups],
-                           settings: Type[tool.Settings]):
+                           appdata: Type[tool.Appdata]):
     dialog = project_selector.get_project_select_dialog()
-    path = settings.get_string_setting(PATHS_SECTION, COMPARE_SETTING)
+    path = appdata.get_path(COMPARE_SETTING)
     path = popups.get_open_path(FILETYPE, dialog, path)
     if not path:
         return
@@ -66,7 +65,7 @@ def project_button_clicked(project_selector: Type[tool.CompareProjectSelector], 
 
 
 def open_compare_window(compare_window: Type[tool.CompareWindow], project_selector: Type[tool.CompareProjectSelector],
-                        project: Type[tool.Project], settings: Type[tool.Settings],
+                        project: Type[tool.Project], appdata: Type[tool.Appdata],
                         popups: Type[tool.Popups]):
     other_file_path = project_selector.get_project_select_path()
     if not os.path.exists(other_file_path):
@@ -76,7 +75,7 @@ def open_compare_window(compare_window: Type[tool.CompareWindow], project_select
     window = compare_window.create_window()
     compare_window.connect_triggers()
 
-    settings.set_path(COMPARE_SETTING, other_file_path)
+    appdata.set_path(COMPARE_SETTING, other_file_path)
     project_0 = project.get()
     project_1 = Project.open(other_file_path)
 
@@ -189,12 +188,12 @@ def init_attribute_compare(project0, project1, attribute_compare: Type[tool.Attr
 
 
 def download_changelog(compare_window: Type[tool.CompareWindow], popups: Type[tool.Popups],
-                       settings: Type[tool.Settings]):
-    path = settings.get_path(EXPORT_PATH)
+                       appdata: Type[tool.Appdata]):
+    path = appdata.get_path(EXPORT_PATH)
     path = popups.get_save_path("txt Files (*.txt);;", compare_window.get_window(), path)
     if not path:
         return
-    settings.set_path(EXPORT_PATH, path)
+    appdata.set_path(EXPORT_PATH, path)
     with open(path, "w") as file:
         for func in compare_window.get_export_functions():
             file.write(f'{"**" * 75}\n{"**" * 75}\n')

@@ -5,7 +5,7 @@ FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
 
 
 def register():
-    som_gui.ExportsSettings = prop.ExportsSettings
+    som_gui.ExportProperties = prop.ExportProperties
 
 
 def load_ui_triggers():

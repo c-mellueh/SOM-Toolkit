@@ -8,7 +8,7 @@ import SOMcreator
 from PySide6.QtCore import Qt, QThread
 
 from som_gui.module.project.constants import CLASS_REFERENCE
-
+from som_gui.module.modelcheck.constants import ISSUE_PATH
 if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtGui import QStandardItem
@@ -121,12 +121,12 @@ def modelcheck_finished(modelcheck_window: Type[tool.ModelcheckWindow], modelche
 
 
 def export_selection_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
-                             settings: Type[tool.Settings]):
-    old_path = settings.get_issue_path()
+                             appdata: Type[tool.Appdata]):
+    old_path = appdata.get_path(ISSUE_PATH)
     new_path = modelcheck_window.open_export_dialog(old_path, "Excel File (*.xlsx);;")
     if not new_path:
         return
-    settings.set_issue_path(new_path)
+    appdata.set_path(ISSUE_PATH, new_path)
     modelcheck_window.set_export_line_text(new_path)
 
 

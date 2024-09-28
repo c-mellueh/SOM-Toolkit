@@ -6,7 +6,7 @@ def connect():
     tool.MainWindow.add_action("Datei/Projekte Vergleichen",
                                lambda: core.open_project_selection_window(tool.CompareWindow,
                                                                           tool.CompareProjectSelector,
-                                                                          tool.Settings, tool.Project))
+                                                                          tool.Appdata, tool.Project))
 
     core.add_attribute_compare_widget(tool.AttributeCompare, tool.CompareWindow)
 
@@ -16,7 +16,7 @@ def on_new_project():
 
 
 def accept_clicked():
-    core.open_compare_window(tool.CompareWindow, tool.CompareProjectSelector, tool.Project, tool.Settings, tool.Popups)
+    core.open_compare_window(tool.CompareWindow, tool.CompareProjectSelector, tool.Project, tool.Appdata, tool.Popups)
 
 
 def switch_button_clicked():
@@ -24,7 +24,7 @@ def switch_button_clicked():
 
 
 def project_button_clicked():
-    core.project_button_clicked(tool.CompareProjectSelector, tool.Popups, tool.Settings)
+    core.project_button_clicked(tool.CompareProjectSelector, tool.Popups, tool.Appdata)
 
 
 def object_tree_selection_changed(widget, ):
@@ -40,4 +40,4 @@ def draw_branches(tree, painter, rect, index):
 
 
 def download_clicked():
-    core.download_changelog(tool.CompareWindow, tool.Popups, tool.Settings)
+    core.download_changelog(tool.CompareWindow, tool.Popups, tool.Appdata)

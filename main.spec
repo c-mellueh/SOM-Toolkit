@@ -46,7 +46,6 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     icon='som_gui/icons/icon.ico',
-    manifest='app.manifest',
 )
 coll = COLLECT(
     exe,

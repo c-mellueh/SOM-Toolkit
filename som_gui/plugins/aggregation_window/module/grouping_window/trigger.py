@@ -17,7 +17,7 @@ def connect_ifc_import_runner(runner):
 
 def connect_buttons(_: QPushButton, export_button: QPushButton, run_button: QPushButton,
                     abort_button: QPushButton):
-    export_button.clicked.connect(lambda: core.export_selection_clicked(aw_tool.GroupingWindow, tool.Settings))
+    export_button.clicked.connect(lambda: core.export_selection_clicked(aw_tool.GroupingWindow, tool.Appdata))
     run_button.clicked.connect(lambda: core.run_clicked(aw_tool.GroupingWindow, tool.IfcImporter))
     abort_button.clicked.connect(lambda: core.cancel_clicked(aw_tool.GroupingWindow, tool.IfcImporter))
 

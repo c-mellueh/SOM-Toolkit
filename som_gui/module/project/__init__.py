@@ -1,7 +1,7 @@
 import logging
 
 import som_gui
-from . import ui, trigger, prop, window, window_merge
+from . import ui, trigger, prop
 
 
 def register():
@@ -11,3 +11,7 @@ def register():
 def load_ui_triggers():
     logging.info(f"Load Project UI Triggers")
     trigger.connect()
+
+
+def on_new_project():
+    pass

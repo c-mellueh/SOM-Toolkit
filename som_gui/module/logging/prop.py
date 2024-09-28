@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from som_gui.tool.logging import Signaller
-
+    from . import ui
 
 class LoggingProperties:
     log_path: str = None
@@ -12,3 +12,4 @@ class LoggingProperties:
     custom_formatter = None
     ignore_texts = list()
     signaller: Signaller = None
+    settings_widget: ui.SettingsWidget = None
