@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
 from som_gui.icons import get_icon
 from som_gui import tool
+from som_gui.module.logging.constants import LOG_PATH, LOG_SECTION, LOG_LEVEL
 
 class CustomFormatter(logging.Formatter):
     def __init__(self, fmt=None, datefmt=None, style='%'):
@@ -58,6 +59,9 @@ class PopupHandler(logging.Handler):
 
 
 class Logging(som_gui.core.tool.Logging):
+    @classmethod
+    def get_properties(cls) -> LoggingProperties:
+        return som_gui.LoggingProperties
 
     @classmethod
     def show_popup(cls, record: logging.LogRecord, message):
@@ -84,9 +88,6 @@ class Logging(som_gui.core.tool.Logging):
         if msg_box.exec_() and cb.isChecked():
             cls.get_properties().ignore_texts.append(identifier)
 
-    @classmethod
-    def get_properties(cls) -> LoggingProperties:
-        return som_gui.LoggingProperties
 
     @classmethod
     def get_signaller(cls):
@@ -97,11 +98,12 @@ class Logging(som_gui.core.tool.Logging):
 
     @classmethod
     def get_log_level(cls):
-        return cls.get_properties().log_level
+        return tool.Appdata.get_integer_setting(LOG_SECTION, LOG_LEVEL, logging.WARNING)
 
     @classmethod
     def set_log_level(cls, log_level: int):
-        cls.get_properties().log_level = log_level
+        tool.Appdata.set_setting(LOG_SECTION, LOG_LEVEL, log_level)
+
         cls.get_logger().setLevel(log_level)
         for handler in cls.get_logger().handlers:
             handler.setLevel(log_level)
@@ -113,14 +115,35 @@ class Logging(som_gui.core.tool.Logging):
         return logging.getLogger()
 
     @classmethod
+    def set_logging_directory(cls, path: str):
+        if not path:
+            path = appdirs.user_log_dir(som_gui.__name__)
+        if path == cls.get_logging_directory():
+            return
+        if not os.path.exists(path):
+            tool.Util.create_directory(path)
+
+        tool.Appdata.set_path(LOG_PATH, path)
+        for handler in cls.get_logger().handlers:
+            if isinstance(handler, logging.FileHandler):
+                cls.get_logger().removeHandler(handler)
+                handler.close()
+
+        cls.get_logger().addHandler(cls.create_file_handler(cls.get_logging_filename()))
+
+    @classmethod
     def get_logging_directory(cls):
-        return appdirs.user_log_dir(som_gui.__name__)
+        path = tool.Appdata.get_path(LOG_PATH)
+        if not path:
+            appdata_path = appdirs.user_log_dir(som_gui.__name__)
+            cls.set_logging_directory(appdata_path)
+        return tool.Appdata.get_path(LOG_PATH)
 
     @classmethod
     def get_logging_filename(cls):
         if cls.get_properties().log_path is None:
             dir_path = cls.get_logging_directory()
-            file_name = f"{datetime.datetime.utcnow()}.log"
+            file_name = f"{datetime.datetime.now(datetime.timezone.utc)}.log"
             file_name = file_name.replace(":", "_")
             file_name = file_name.replace(" ", "_")
             logpath = os.path.join(dir_path, file_name)
@@ -139,7 +162,7 @@ class Logging(som_gui.core.tool.Logging):
         return console_handler
 
     @classmethod
-    def create_file_handler(cls, path):
+    def create_file_handler(cls, path: str | os.PathLike) -> logging.FileHandler:
         path = path.replace("\\", "/")
         file_handler = logging.FileHandler(path)
         file_handler.setLevel(cls.get_log_level())

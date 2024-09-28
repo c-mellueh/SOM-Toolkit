@@ -20,11 +20,10 @@ def main(initial_file: str | None = None, log_level=None):
     from PySide6.QtWidgets import QApplication
     import som_gui.core.main_window
     import som_gui.core.project
-    if log_level == None:
-        log_level = logging.WARNING
+    if log_level is not None:
+        tool.Logging.set_log_level(log_level)
 
     som_gui.register()
-    tool.Logging.set_log_level(log_level)
     app = QApplication(sys.argv)
     core.main_window.create_main_window(app, tool.MainWindow)
     som_gui.load_ui_triggers()

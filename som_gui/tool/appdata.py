@@ -37,14 +37,7 @@ class Appdata(som_gui.core.tool.Appdata):
         config_parser.set(section, path, str(value))
         cls._write_config(config_parser)
 
-    @classmethod
-    def get_string_setting(cls, section: str, path: str, default="") -> str:
-        config_parser = cls._get_config()
-        if config_parser.has_option(section, path):
-            path = config_parser.get(section, path)
-            if path is not None:
-                return path
-        return default
+
 
     @classmethod
     def get_settings_path(cls):
@@ -70,10 +63,31 @@ class Appdata(som_gui.core.tool.Appdata):
         return config
 
     @classmethod
-    def get_bool_setting(cls, section: str, path: str) -> bool:
+    def get_bool_setting(cls, section: str, path: str, default=False) -> bool:
         config_parser = cls._get_config()
         if config_parser.has_option(section, path):
             path = config_parser.get(section, path)
             if path is not None:
                 return eval(path)
-        return False
+        cls.set_setting(section, path, default)
+        return default
+
+    @classmethod
+    def get_string_setting(cls, section: str, path: str, default="") -> str:
+        config_parser = cls._get_config()
+        if config_parser.has_option(section, path):
+            value = config_parser.get(section, path)
+            if value is not None:
+                return value
+        cls.set_setting(section, path, default)
+        return default
+
+    @classmethod
+    def get_integer_setting(cls, section: str, path: str, default=0) -> bool:
+        config_parser = cls._get_config()
+        if config_parser.has_option(section, path):
+            path = config_parser.get(section, path)
+            if path is not None:
+                return eval(path)
+        cls.set_setting(section, path, default)
+        return default
