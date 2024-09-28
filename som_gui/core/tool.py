@@ -1,3 +1,4 @@
+
 class Appdata:
     def _get_config(self, ): pass
 
@@ -565,6 +566,8 @@ class Console:
 class Exports:
     def create_mapping_script(self, project, name, path): pass
 
+    def create_settings_widget(self, names): pass
+
     def export_allplan(self, project, path, name): pass
 
     def export_bookmarks(self, project, path): pass
@@ -574,6 +577,10 @@ class Exports:
     def export_excel(self, project, path): pass
 
     def export_vestra(self, project, parent_window, path): pass
+
+    def get_properties(self, ): pass
+
+    def get_settings_widget(self, ): pass
 
 
 class IfcImporter:
@@ -1174,6 +1181,8 @@ class Object:
 class ObjectFilter:
     def add_use_case_to_settings_window(self, ): pass
 
+    def connect_settings_widget(self, widget): pass
+
     def create_header_data(self, filter_matrix): pass
 
     def create_row(self, entity, filter_index_list): pass
@@ -1197,6 +1206,10 @@ class ObjectFilter:
     def get_active_use_case(self, ): pass
 
     def get_active_use_case_name(self, ): pass
+
+    def get_allowed_phases_by_usecase(self, project, usecase): pass
+
+    def get_allowed_usecases_by_phase(self, project, phase): pass
 
     def get_attribute_dict(self, ): pass
 
@@ -1234,6 +1247,8 @@ class ObjectFilter:
 
     def get_pset_tree(self, ): pass
 
+    def get_settings_widget(self, ): pass
+
     def get_title_count_by_index(self, index): pass
 
     def get_title_lenght_by_model(self, model): pass
@@ -1257,6 +1272,8 @@ class ObjectFilter:
     def set_header_data(self, header_data): pass
 
     def set_header_labels(self, model, labels): pass
+
+    def set_settings_widget(self, widget): pass
 
     def set_use_case(self, use_case_name): pass
 
@@ -1359,6 +1376,10 @@ class ObjectFilterCompare:
     def style_object_tree(self, item): pass
 
 
+class Plugins:
+    def get_properties(self, ): pass
+
+
 class Popups:
     def _get_path(self, file_format, window, path, save, title): pass
 
@@ -1370,7 +1391,7 @@ class Popups:
 
     def create_info_popup(self, text, title): pass
 
-    def create_warning_popup(self, text, title): pass
+    def create_warning_popup(self, text, window_title, text_title): pass
 
     def file_in_use_warning(self, title, text, detail): pass
 
@@ -1530,6 +1551,10 @@ class Project:
 
     def get_root_objects(self, filter_objects, proj): pass
 
+    def get_settings_general_widget(self, ): pass
+
+    def get_settings_path_widget(self, ): pass
+
     def get_use_case_mapping(self, p1, p2): pass
 
     def get_use_cases(self, ): pass
@@ -1551,6 +1576,10 @@ class Project:
     def set_project_phase(self, phase_name): pass
 
     def set_project_version(self, version): pass
+
+    def set_settings_general_widget(self, widget): pass
+
+    def set_settings_path_widget(self, widget): pass
 
     def update_plugin_dict(self, project, key, value): pass
 
@@ -1774,7 +1803,29 @@ class Search:
 
 
 class Settings:
+    def add_page_to_toolbox(self, widget, tab_name, page_name, accept_function): pass
+
+    def close(self, ): pass
+
+    def create_dialog(self, ): pass
+
+    def create_tab(self, tab_widget, tab_name): pass
+
+    def get_accept_functions(self, ): pass
+
     def get_properties(self, ): pass
+
+    def get_tab_dict(self, ): pass
+
+    def get_tab_names(self, ): pass
+
+    def get_tab_widget(self, ): pass
+
+    def get_widget(self, ): pass
+
+    def set_icon(self, tab_name, page_name, icon): pass
+
+    def set_widget(self, widget): pass
 
 
 class Util:
@@ -1799,6 +1850,8 @@ class Util:
     def get_new_name(self, standard_name, existing_names): pass
 
     def get_properties(self, ): pass
+
+    def get_text_from_combobox(self, combobox): pass
 
     def menu_bar_add_action(self, menu_bar, menu_dict, menu_path, function): pass
 

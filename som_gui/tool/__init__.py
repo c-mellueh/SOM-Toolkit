@@ -25,3 +25,4 @@ from som_gui.tool.compare import CompareProjectSelector, CompareWindow
 from som_gui.tool.console import Console
 from som_gui.tool.bsdd import Bsdd
 from som_gui.tool.settings import Settings
+from som_gui.tool.plugins import Plugins

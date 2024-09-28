@@ -132,5 +132,5 @@ def main(name: str):
 
 
 if __name__ == "__main__":
-    module_name = "settings"
+    module_name = "plugins"
     main(module_name)
