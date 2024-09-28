@@ -36,7 +36,6 @@ def open_file_clicked(project_tool: Type[Project], settings: Type[Settings], mai
     if not path:
         return
 
-    project_tool.reset_project_infos()
     logging.info("Load Project")
     settings.set_path(OPEN_PATH, path)
     settings.set_path(SAVE_PATH, path)
