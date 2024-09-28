@@ -14,9 +14,10 @@ import traceback
 
 if TYPE_CHECKING:
     from som_gui.module.logging.prop import LoggingProperties
+    from som_gui.module.logging import ui
+
 from som_gui.icons import get_icon
 from som_gui import tool
-
 
 class CustomFormatter(logging.Formatter):
     def __init__(self, fmt=None, datefmt=None, style='%'):
@@ -99,11 +100,13 @@ class Logging(som_gui.core.tool.Logging):
         return cls.get_properties().log_level
 
     @classmethod
-    def set_log_level(cls, log_level):
+    def set_log_level(cls, log_level: int):
         cls.get_properties().log_level = log_level
         cls.get_logger().setLevel(log_level)
         for handler in cls.get_logger().handlers:
             handler.setLevel(log_level)
+        logging.info(f"Set Loglevel {log_level}")
+
 
     @classmethod
     def get_logger(cls):
@@ -165,3 +168,11 @@ class Logging(som_gui.core.tool.Logging):
     def show_exception_popup(cls, exctype, value, tb):
         error_message = ''.join(traceback.format_exception(exctype, value, tb))
         logging.error(error_message)
+
+    @classmethod
+    def get_settings_widget(cls) -> ui.SettingsWidget:
+        return cls.get_properties().settings_widget
+
+    @classmethod
+    def set_settings_widget(cls, widget: ui.SettingsWidget):
+        cls.get_properties().settings_widget = widget
