@@ -1,10 +1,7 @@
 from __future__ import annotations
 import logging
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QBrush, QColor
-from som_gui.module.object_filter import constants
 import SOMcreator
-from PySide6.QtWidgets import QAbstractItemView, QStyle
+from PySide6.QtWidgets import QAbstractItemView, QStyle, QFormLayout, QLabel, QCheckBox
 from PySide6.QtGui import QIcon
 from typing import TYPE_CHECKING, Type
 from som_gui import tool
@@ -198,37 +195,48 @@ def export_filter_differences(file, object_filter_compare: Type[tool.ObjectFilte
 def settings_widget_created(widget: object_filter_ui.SettingsWidget, object_filter: Type[tool.ObjectFilter],
                             project: Type[tool.Project]):
     object_filter.set_settings_widget(widget)
-    object_filter.connect_settings_widget(widget)
 
     proj = project.get()
+    phase_layout = QFormLayout()
+    widget.ui.widget_phase.setLayout(phase_layout)
+    usecase_layout = QFormLayout()
+    widget.ui.widget_usecase.setLayout(usecase_layout)
 
-    combobox_usecase = widget.ui.cb_usecase
-    combobox_phase = widget.ui.cb_phase
-    combobox_usecase.addItems([uc.name for uc in project.get_use_cases()])
-    combobox_phase.addItems([ph.name for ph in project.get_phases()])
-    combobox_usecase.setCurrentText(proj.get_usecase_by_index(proj.active_usecases[0]).name)
-    combobox_phase.setCurrentText(proj.get_phase_by_index(proj.active_phases[0]).name)
+    for phase in proj.get_phases():
+        cb = QCheckBox()
+        phase_index = proj.get_phase_index(phase)
+        cb.setChecked(bool(phase_index in proj.active_phases))
+        phase_layout.addRow(QLabel(phase.name), cb)
 
+    for usecase in proj.get_usecases():
+        cb = QCheckBox()
+        usecase_index = proj.get_use_case_index(usecase)
+        cb.setChecked(bool(usecase_index in proj.active_usecases))
+        usecase_layout.addRow(QLabel(usecase.name), cb)
 
 def settings_accepted(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project], popups: Type[tool.Popups]):
-    widget = object_filter.get_settings_widget()
-    combobox_usecase = widget.ui.cb_usecase
-    combobox_phase = widget.ui.cb_phase
-    usecase_name = combobox_usecase.currentText()
-    phase_name = combobox_phase.currentText()
-    if not all([usecase_name, phase_name]):
-        return
     proj = project.get()
-    usecase = proj.get_use_case_by_name(usecase_name)
-    phase = proj.get_phase_by_name(phase_name)
-    allowed = proj.get_filter_state(phase, usecase)
+    widget = object_filter.get_settings_widget()
 
-    if not allowed:
-        text = f"Kombination von Phase '{phase_name}' & Anwendungsfall '{usecase_name}' nicht erlaubt -> wird nicht übernommen"
-        popups.create_warning_popup(text, f"Achtung!", "Anwendungsfall/Phase wird nicht übernommen!")
-    else:
-        proj.active_usecases = [proj.get_use_case_index(usecase)]
-        proj.active_phases = [proj.get_phase_index(phase)]
+    phase_layout: QFormLayout = widget.ui.widget_phase.layout()
+    usecase_layout: QFormLayout = widget.ui.widget_usecase.layout()
+
+    active_phases = list()
+    for row in range(phase_layout.rowCount()):
+        cb: QCheckBox = phase_layout.itemAt(row, QFormLayout.ItemRole.FieldRole).widget()
+        if cb.isChecked():
+            active_phases.append(row)
+
+    active_usecases = list()
+    for row in range(usecase_layout.rowCount()):
+        cb: QCheckBox = usecase_layout.itemAt(row, QFormLayout.ItemRole.FieldRole).widget()
+        if cb.isChecked():
+            active_usecases.append(row)
+    proj.active_phases = active_phases
+    proj.active_usecases = active_usecases
+    logging.info(f"Set Active Usecases {[proj.get_usecase_by_index(i).name for i in proj.active_usecases]}")
+    logging.info(f"Set Active Phases {[proj.get_phase_by_index(i).name for i in proj.active_phases]}")
+
 
 
 def settings_combobox_changed(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project],

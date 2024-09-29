@@ -537,11 +537,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             object_dict[obj][phase_index][use_case_index] = status
 
     @classmethod
-    def connect_settings_widget(cls, widget: ui.SettingsWidget):
-        widget.ui.cb_phase.currentIndexChanged.connect(trigger.settings_combobox_changed)
-        widget.ui.cb_usecase.currentIndexChanged.connect(trigger.settings_combobox_changed)
-
-    @classmethod
     def set_settings_widget(cls, widget: ui.SettingsWidget):
         cls.get_objectfilter_properties().settings_widget = widget
 

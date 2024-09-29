@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'Settings.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.2
+## Created by: Qt User Interface Compiler version 6.7.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,35 +15,50 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QFont, QFontDatabase, QGradient, QIcon,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QLabel,
-                               QSizePolicy, QWidget)
+from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QSizePolicy,
+                               QVBoxLayout, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(640, 68)
-        self.formLayout = QFormLayout(Form)
-        self.formLayout.setObjectName(u"formLayout")
+        Form.resize(708, 194)
+        self.horizontalLayout = QHBoxLayout(Form)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.verticalLayout_2 = QVBoxLayout()
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.label_phase = QLabel(Form)
         self.label_phase.setObjectName(u"label_phase")
 
-        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label_phase)
+        self.verticalLayout_2.addWidget(self.label_phase)
 
-        self.cb_phase = QComboBox(Form)
-        self.cb_phase.setObjectName(u"cb_phase")
+        self.widget_phase = QWidget(Form)
+        self.widget_phase.setObjectName(u"widget_phase")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(self.widget_phase.sizePolicy().hasHeightForWidth())
+        self.widget_phase.setSizePolicy(sizePolicy)
 
-        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.cb_phase)
+        self.verticalLayout_2.addWidget(self.widget_phase)
 
+        self.horizontalLayout.addLayout(self.verticalLayout_2)
+
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
         self.label_usecase = QLabel(Form)
         self.label_usecase.setObjectName(u"label_usecase")
 
-        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label_usecase)
+        self.verticalLayout.addWidget(self.label_usecase)
 
-        self.cb_usecase = QComboBox(Form)
-        self.cb_usecase.setObjectName(u"cb_usecase")
+        self.widget_usecase = QWidget(Form)
+        self.widget_usecase.setObjectName(u"widget_usecase")
+        sizePolicy.setHeightForWidth(self.widget_usecase.sizePolicy().hasHeightForWidth())
+        self.widget_usecase.setSizePolicy(sizePolicy)
 
-        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.cb_usecase)
+        self.verticalLayout.addWidget(self.widget_usecase)
+
+        self.horizontalLayout.addLayout(self.verticalLayout)
 
 
         self.retranslateUi(Form)
