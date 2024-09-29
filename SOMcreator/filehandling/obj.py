@@ -13,8 +13,8 @@ if TYPE_CHECKING:
 
 ### Import ###
 
-def _load_object(proj: SOMcreator.Project, object_dict: ObjectDict, identifier: str) -> None:
-    name, description, optional, parent, filter_matrix = core.get_basics(proj, object_dict)
+def _load_object(proj: SOMcreator.Project, object_dict: ObjectDict, identifier: str) -> SOMcreator.Object:
+    name, description, optional, parent, filter_matrix = core.get_basics(proj, object_dict, identifier)
     ifc_mapping = object_dict[IFC_MAPPINGS]
     if isinstance(ifc_mapping, list):
         ifc_mapping = set(ifc_mapping)
@@ -28,10 +28,11 @@ def _load_object(proj: SOMcreator.Project, object_dict: ObjectDict, identifier: 
     for ident, pset_dict in property_sets_dict.items():
         property_set.load(proj, pset_dict, ident, obj)
     ident_attrib_id = object_dict[IDENT_ATTRIBUTE]
-    ident_attrib = proj.get_element_by_uuid(ident_attrib_id)
-    obj.ident_attrib = ident_attrib
+    if ident_attrib_id is not None:
+        ident_attrib = SOMcreator.filehandling.attribute_uuid_dict[ident_attrib_id]
+        obj.ident_attrib = ident_attrib
     SOMcreator.filehandling.parent_dict[obj] = parent
-
+    SOMcreator.filehandling.object_uuid_dict[identifier] = obj
 
 def load(proj: Project, main_dict: dict):
     objects_dict: dict[str, ObjectDict] = main_dict.get(OBJECTS)
@@ -41,7 +42,6 @@ def load(proj: Project, main_dict: dict):
 
     for uuid_ident, entity_dict in objects_dict.items():
         _load_object(proj, entity_dict, uuid_ident)
-
 
 ### Export ###
 def _write_object(element: classes.Object) -> ObjectDict:
@@ -70,6 +70,5 @@ def _write_object(element: classes.Object) -> ObjectDict:
 
 def write(proj: Project, main_dict: MainDict):
     main_dict[OBJECTS] = dict()
-
     for obj in sorted(proj.get_all_objects(), key=lambda o: o.uuid):
         main_dict[OBJECTS][obj.uuid] = _write_object(obj)

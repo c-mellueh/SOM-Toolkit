@@ -5,6 +5,7 @@ CURRENT_USE_CASE = "current_use_case"  # deprecated
 PROJECT_PHASES = "ProjectPhases"
 USE_CASES = "UseCases"
 FILTER_MATRIX = "filter_matrix"
+FILTER_MATRIXES = "FilterMatrixes"
 AGGREGATION_PSET = "AggregationPsetName"
 AGGREGATION_ATTRIBUTE = "AggregationAttributeName"
 PREDEFINED_PSETS = "PredefinedPropertySets"

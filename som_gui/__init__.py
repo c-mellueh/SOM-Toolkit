@@ -7,7 +7,7 @@ from som_gui import core, tool
 if TYPE_CHECKING:
     from som_gui.module.main_window.ui import MainWindow
 
-__version__ = "2.13.3"
+__version__ = "2.13.2"
 
 import importlib
 import pkgutil

@@ -99,7 +99,7 @@ class Project(object):
             self._items.remove(item)
 
     # Item Getter Methods
-    def get_all_hirarchy_items(self) -> Iterator[Object, PropertySet, Attribute, Aggregation]:
+    def get_all_hirarchy_items(self) -> Iterator[Object, PropertySet, Attribute, Aggregation, Hirarchy]:
         return filter(lambda i: isinstance(i, (Object, PropertySet, Attribute, Aggregation)), self._items)
 
     def get_all_objects(self) -> Iterator[Object]:
@@ -153,6 +153,7 @@ class Project(object):
         return full_dict
 
     def get_element_by_uuid(self, uuid: str) -> Attribute | PropertySet | Object | Aggregation | None:
+        """warnging: don't use in iterations will slow down code substantially"""
         if uuid is None:
             return None
         return self.get_uuid_dict().get(uuid)

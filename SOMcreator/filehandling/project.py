@@ -6,6 +6,7 @@ from .typing import ProjectDict, FilterDict, MainDict
 import SOMcreator
 from SOMcreator import classes
 from SOMcreator.filehandling import core
+from collections import OrderedDict
 
 if TYPE_CHECKING:
     from SOMcreator import Project
@@ -96,6 +97,8 @@ def load(cls: Type[Project], main_dict: MainDict) -> tuple[Project, dict]:
 
 
 def write(project: Project, main_dict: MainDict) -> None:
+    main_dict[FILTER_MATRIXES] = create_existing_filter_states(project)
+    SOMcreator.filehandling.filter_matrixes = main_dict[FILTER_MATRIXES]
     main_dict[PROJECT] = dict()
     project_dict: ProjectDict = main_dict[PROJECT]
     project_dict[NAME] = project.name
@@ -112,6 +115,16 @@ def write(project: Project, main_dict: MainDict) -> None:
     project_dict[FILTER_MATRIX] = project.get_filter_matrix()
 
 
+def order_dict(main_dict: MainDict):
+    order = [PROJECT, PREDEFINED_PSETS, OBJECTS, AGGREGATIONS, FILTER_MATRIXES]
+    ordered_data = [(name, main_dict.get(name)) for name in order]
+    for key, data in main_dict.items():
+        if key not in order:
+            ordered_data.append((key, data))
+    return OrderedDict(ordered_data)
+
+
+
 def _write_filter_dict(filter_list: list[classes.Phase] | list[classes.UseCase]) -> list[FilterDict]:
     fl = list()
     for fil in filter_list:
@@ -121,3 +134,12 @@ def _write_filter_dict(filter_list: list[classes.Phase] | list[classes.UseCase])
             "description": fil.description
         })
     return fl
+
+
+def create_existing_filter_states(proj: Project):
+    filter_matrixes = set()
+    for entity in proj.get_all_hirarchy_items():
+        entity: SOMcreator.classes.Hirarchy
+        hashable = tuple(tuple(use_case_list) for use_case_list in entity.get_filter_matrix())
+        filter_matrixes.add(hashable)
+    return list(filter_matrixes)
