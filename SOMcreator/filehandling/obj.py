@@ -28,8 +28,9 @@ def _load_object(proj: SOMcreator.Project, object_dict: ObjectDict, identifier: 
     for ident, pset_dict in property_sets_dict.items():
         property_set.load(proj, pset_dict, ident, obj)
     ident_attrib_id = object_dict[IDENT_ATTRIBUTE]
-    ident_attrib = SOMcreator.filehandling.attribute_uuid_dict[ident_attrib_id]
-    obj.ident_attrib = ident_attrib
+    if ident_attrib_id is not None:
+        ident_attrib = SOMcreator.filehandling.attribute_uuid_dict[ident_attrib_id]
+        obj.ident_attrib = ident_attrib
     SOMcreator.filehandling.parent_dict[obj] = parent
     SOMcreator.filehandling.object_uuid_dict[identifier] = obj
 
