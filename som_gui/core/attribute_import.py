@@ -21,9 +21,9 @@ def open_import_window(attribute_import: Type[tool.AttributeImport],
                        ifc_importer: Type[tool.IfcImporter], project: Type[tool.Project],
                        attribute_import_sql: Type[tool.AttributeImportSQL]):
     proj = project.get()
-    use_case, phase = proj.get_usecases()[proj.active_usecases[0]], proj.get_phases()[
-        proj.active_phases[0]]  # ToDo Rewrite to fit multiple
-    attribute_import_sql.set_current_object_filter(use_case, phase)
+    usecases = [proj.get_usecase_by_index(i) for i in proj.active_usecases]
+    phases = [proj.get_phase_by_index(i) for i in proj.active_phases]
+    attribute_import_sql.set_current_object_filter(usecases, phases)
     if attribute_import_results.is_window_allready_build():
         attribute_import_sql.create_som_filter_table()
         attribute_import_results.get_results_window().show()

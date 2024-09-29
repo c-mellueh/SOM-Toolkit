@@ -549,21 +549,19 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         for widget, attribute_name in cls.get_settings_dialog_checkbox_list(dialog):
             setattr(prop, attribute_name, widget.isChecked())
 
-
     @classmethod
     def get_cursor(cls):
         return cls.get_properties().connection.cursor()
 
     @classmethod
-    def set_current_object_filter(cls, usecase: SOMcreator.classes.UseCase, phase: SOMcreator.classes.Phase):
-        if usecase is not None:
-            cls.get_properties().current_usecase = usecase
-        if phase is not None:
-            cls.get_properties().current_phase = phase
+    def set_current_object_filter(cls, usecases: list[SOMcreator.classes.UseCase],
+                                  phases: list[SOMcreator.classes.Phase]):
+        cls.get_properties().active_usecases = usecases
+        cls.get_properties().active_phases = phases
 
     @classmethod
-    def get_current_object_filter(cls) -> tuple[SOMcreator.classes.UseCase, SOMcreator.classes.Phase]:
-        return cls.get_properties().current_usecase, cls.get_properties().current_phase
+    def get_current_object_filter(cls) -> tuple[list[SOMcreator.classes.UseCase], list[SOMcreator.classes.Phase]]:
+        return cls.get_properties().active_usecases, cls.get_properties().active_phases
 
     @classmethod
     def set_database_path(cls, path: str) -> None:
@@ -764,14 +762,15 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                 VALUES
                 ('{entity_guid_zw}','{entity_guid}','{property_set_name}','{attribute_name}',{value},'{data_type}',{checkstate},{checkstate})
                 '''
-
-                print(text)
                 cursor.execute(text)
         cls.commit_sql()
 
     @classmethod
     def get_datatype_from_value(cls, value: ifcopenshell.entity_instance):
         if value.is_a() == "IfcPropertySingleValue":
+            if value.NominalValue is None:
+                logging.info(f"{value} has undefined Value")
+                return None
             return value.NominalValue.is_a()
         logging.info(f"Datatype getter for {value.is_a()} is not defined")
         return None
@@ -801,8 +800,11 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             JOIN attribute_filter af ON af.AttributeGUID = sa.GUID"""
         filters = list()
         if cls.get_properties().activate_object_filter:
-            usecase, phase = cls.get_current_object_filter()
-            filters.append(f'af.phase = "{phase.name}" AND af.usecase = "{usecase.name}" and af.Value = 1')
+            usecases, phases = cls.get_current_object_filter()
+            phase_names = ",".join(f"'{p.name}'" for p in phases)
+            usecase_names = ",".join(
+                f"'{u.name}'" for u in usecases)  # cant't use tuple because it adds comma at the end
+            filters.append(f'af.phase IN ({phase_names}) AND af.usecase IN ({usecase_names}) AND af.Value = 1')
         if not prop.show_regex_values:
             filters.append(f"sa.ValueType is not '{SOMcreator.value_constants.FORMAT}'")
         if not prop.show_range_values:
@@ -811,6 +813,8 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             filter_query = "\nAND ".join(filters)
             sql_query += f"\nWHERE {filter_query}"
         sql_query += ";"
+
+        logging.debug(sql_query)
         cursor.execute(sql_query)
         cls.disconnect_from_database()
         return sql_query
@@ -830,7 +834,6 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             AND  a.IsDefined == 0
             """
 
-
     @classmethod
     def get_wanted_ifc_types(cls):
         logging.debug("request IfcTypes")
@@ -847,7 +850,6 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         logging.debug("request IfcTypes Done")
 
         return ifc_type_list
-
 
     @classmethod
     def get_identifier_types(cls, ifc_type: str, all_keyword: str) -> list[str]:
@@ -869,7 +871,6 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         logging.debug("Request Identifier Done")
 
         return identifier_list
-
 
     @classmethod
     def get_property_sets(cls, ifc_type: str, identifier: str | SOMcreator.Object) -> list[
@@ -898,7 +899,6 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
         return pset_list
 
-
     @classmethod
     def get_attributes(cls, ifc_type: str, identifier: str | SOMcreator.Object, property_set: str) -> \
             list[tuple[str, int, int]]:
@@ -925,7 +925,6 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         logging.debug("Request Done")
 
         return attribute_list
-
 
     @classmethod
     def get_values(cls, ifc_type, identifier, property_set, attribute):

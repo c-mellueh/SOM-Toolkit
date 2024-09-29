@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+import SOMcreator.classes
+
 if TYPE_CHECKING:
     from .ui import AttributeImportWindow, AttributeImportResultWindow, SettingsDialog
     from som_gui.module.ifc_importer.ui import IfcImportWidget
@@ -41,6 +43,6 @@ class AttributeImportSQLProperties:
     show_range_values: bool = False
     color_values: bool = False
     show_boolean_values: bool = False
-    current_usecase = None
-    current_phase = None
+    active_usecases: list[SOMcreator.classes.UseCase] = list()
+    active_phases: list[SOMcreator.classes.Phase] = list()
     activate_object_filter = True
