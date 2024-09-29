@@ -7,3 +7,4 @@
 **.log
 **.ini
 test.*
+**.egg-info
