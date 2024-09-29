@@ -19,7 +19,7 @@ def load(proj: Project, pset_dict: PropertySetDict, identifier: str, obj: classe
     for ident, attribute_dict in attributes_dict.items():
         attribute.load(proj, attribute_dict, ident, pset)
     SOMcreator.filehandling.parent_dict[pset] = parent
-
+    SOMcreator.filehandling.property_set_uuid_dict[identifier] = pset
 
 #### Export ####
 

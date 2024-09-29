@@ -153,6 +153,7 @@ class Project(object):
         return full_dict
 
     def get_element_by_uuid(self, uuid: str) -> Attribute | PropertySet | Object | Aggregation | None:
+        """warnging: don't use in iterations will slow down code substantially"""
         if uuid is None:
             return None
         return self.get_uuid_dict().get(uuid)

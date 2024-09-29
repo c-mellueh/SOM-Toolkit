@@ -53,8 +53,6 @@ class AttributeDict(StandardDict):
 class AggregationDict(StandardDict):
     Object: str | None
     connection: int
-    x_pos: float
-    y_pos: float
 
 
 class AggregationScene(TypedDict):

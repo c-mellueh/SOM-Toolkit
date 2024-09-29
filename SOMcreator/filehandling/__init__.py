@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import logging
 import os
 import json
+import time
+
 import SOMcreator
 from .typing import MainDict
 from typing import Type, TYPE_CHECKING
@@ -17,7 +20,9 @@ aggregation_dict = dict()
 phase_list: list[Phase] = list()
 use_case_list: list[UseCase] = list()
 plugin_dict = dict()
-
+object_uuid_dict: dict[str, SOMcreator.Object] = dict()
+property_set_uuid_dict: dict[str, SOMcreator.PropertySet] = dict()
+attribute_uuid_dict: dict[str, SOMcreator.Attribute] = dict()
 
 def create_mapping_script(project: SOMcreator.Project, pset_name: str, path: str):
     attrib_dict = dict()
@@ -45,8 +50,15 @@ def create_mapping_script(project: SOMcreator.Project, pset_name: str, path: str
     pass
 
 
+def reset_uuid_dicts():
+    SOMcreator.filehandling.object_uuid_dict = dict()
+    SOMcreator.filehandling.property_set_uuid_dict = dict()
+    SOMcreator.filehandling.attribute_uuid_dict = dict()
+
 def open_json(cls: Type[Project], path: str):
     SOMcreator.filehandling.parent_dict = dict()
+    reset_uuid_dicts()
+    start_time = time.time()
 
     if not os.path.isfile(path):
         raise FileNotFoundError(f"File '{path}' does not exist!")

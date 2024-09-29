@@ -30,7 +30,7 @@ def load(proj: SOMcreator.Project, attribute_dict: dict, identifier: str,
                                   description=description, optional=optional, revit_mapping=revit_mapping,
                                   project=proj, filter_matrix=filter_matrix)
     filehandling.parent_dict[attribute] = parent
-
+    SOMcreator.filehandling.attribute_uuid_dict[identifier] = attribute
 
 def write(attribute: classes.Attribute) -> AttributeDict:
     attribute_dict: AttributeDict = dict()
