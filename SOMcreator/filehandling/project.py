@@ -78,8 +78,8 @@ def load(cls: Type[Project], main_dict: MainDict) -> tuple[Project, dict]:
     aggregation_pset_name = project_dict.get(AGGREGATION_PSET)
     aggregation_attribute = project_dict.get(AGGREGATION_ATTRIBUTE)
 
-    current_use_cases, use_case_list = _load_usecases(project_dict)
-    current_phases, phase_list = _load_phases(project_dict)
+    active_use_cases, use_case_list = _load_usecases(project_dict)
+    active_phases, phase_list = _load_phases(project_dict)
     filter_matrix = _load_filter_matrix(project_dict, use_case_list, phase_list)
 
     proj = cls(name, author, phase_list, use_case_list, filter_matrix)
@@ -89,8 +89,8 @@ def load(cls: Type[Project], main_dict: MainDict) -> tuple[Project, dict]:
     if aggregation_attribute is not None:
         proj.aggregation_attribute = aggregation_attribute
 
-    proj.active_usecases = current_use_cases
-    proj.active_phases = current_phases
+    proj.active_usecases = active_use_cases
+    proj.active_phases = active_phases
 
     return proj, project_dict
 
