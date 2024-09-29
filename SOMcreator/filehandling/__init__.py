@@ -93,7 +93,9 @@ def export_json(proj: Project, path: str) -> dict:
     start_time = time.time()
     main_dict = create_export_dict(proj)
     with open(path, "w") as file:
-        json.dump(main_dict, file)
+        json.dump(project.order_dict(main_dict), file)
+
+
     end_time = time.time()
     logging.info(f"Export Done. Time: {end_time - start_time}")
     return main_dict
@@ -101,8 +103,7 @@ def export_json(proj: Project, path: str) -> dict:
 
 def create_export_dict(proj: Project):
     main_dict: MainDict = dict()
-    main_dict["FilterMatrixes"] = project.create_existing_filter_states(proj)
-    SOMcreator.filehandling.filter_matrixes = main_dict["FilterMatrixes"]
+
     project.write(proj, main_dict)
     predefined_pset.write(proj, main_dict)
     obj.write(proj, main_dict)
