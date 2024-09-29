@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 def load(proj: Project, pset_dict: PropertySetDict, identifier: str, obj: classes.Object | None) -> None:
-    name, description, optional, parent, filter_matrix = core.get_basics(proj, pset_dict)
+    name, description, optional, parent, filter_matrix = core.get_basics(proj, pset_dict, identifier)
     pset = classes.PropertySet(name=name, obj=obj, uuid=identifier, description=description, optional=optional,
                                project=proj, filter_matrix=filter_matrix)
     attributes_dict = pset_dict[ATTRIBUTES]

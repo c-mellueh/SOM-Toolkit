@@ -5,7 +5,7 @@ from typing import TypedDict
 class StandardDict(TypedDict):
     name: str
     optional: bool
-    filter_matrix: list[list[bool]]
+    filter_matrix: list[list[bool]] | int
     parent: str | None
     description: str
 
@@ -16,7 +16,7 @@ class MainDict(TypedDict):
     Objects: dict[str, ObjectDict]
     Aggregations: dict[str, AggregationDict]
     AggregationScenes: dict[str, AggregationScene]
-
+    FilterMatrixes: list[tuple[tuple[bool]]]
 
 class ProjectDict(TypedDict):
     name: str

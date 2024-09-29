@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 ### Import ###
 def _get_aggregation(proj: SOMcreator.Project, aggregation_dict: AggregationDict, identifier: str, ):
-    name, description, optional, parent, filter_matrix = core.get_basics(proj, aggregation_dict)
+    name, description, optional, parent, filter_matrix = core.get_basics(proj, aggregation_dict, identifier)
 
     object_uuid = aggregation_dict[OBJECT]
     obj = SOMcreator.filehandling.object_uuid_dict[object_uuid]

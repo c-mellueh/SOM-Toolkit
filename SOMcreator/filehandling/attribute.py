@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 def load(proj: SOMcreator.Project, attribute_dict: dict, identifier: str,
          property_set: classes.PropertySet, ) -> None:
-    name, description, optional, parent, filter_matrix = core.get_basics(proj, attribute_dict)
+    name, description, optional, parent, filter_matrix = core.get_basics(proj, attribute_dict, identifier)
     value = attribute_dict[VALUE]
     value_type = attribute_dict[VALUE_TYPE]
     data_type = attribute_dict[DATA_TYPE]

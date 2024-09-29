@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 ### Import ###
 
 def _load_object(proj: SOMcreator.Project, object_dict: ObjectDict, identifier: str) -> SOMcreator.Object:
-    name, description, optional, parent, filter_matrix = core.get_basics(proj, object_dict)
+    name, description, optional, parent, filter_matrix = core.get_basics(proj, object_dict, identifier)
     ifc_mapping = object_dict[IFC_MAPPINGS]
     if isinstance(ifc_mapping, list):
         ifc_mapping = set(ifc_mapping)
@@ -70,6 +70,5 @@ def _write_object(element: classes.Object) -> ObjectDict:
 
 def write(proj: Project, main_dict: MainDict):
     main_dict[OBJECTS] = dict()
-
     for obj in sorted(proj.get_all_objects(), key=lambda o: o.uuid):
         main_dict[OBJECTS][obj.uuid] = _write_object(obj)

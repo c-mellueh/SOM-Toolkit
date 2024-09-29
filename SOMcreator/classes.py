@@ -99,7 +99,7 @@ class Project(object):
             self._items.remove(item)
 
     # Item Getter Methods
-    def get_all_hirarchy_items(self) -> Iterator[Object, PropertySet, Attribute, Aggregation]:
+    def get_all_hirarchy_items(self) -> Iterator[Object, PropertySet, Attribute, Aggregation, Hirarchy]:
         return filter(lambda i: isinstance(i, (Object, PropertySet, Attribute, Aggregation)), self._items)
 
     def get_all_objects(self) -> Iterator[Object]:

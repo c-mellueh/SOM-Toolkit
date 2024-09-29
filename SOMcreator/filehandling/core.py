@@ -39,65 +39,28 @@ def get_filter_lists(project_dict: ProjectDict):
     return phase_list, use_case_list
 
 
-def get_basics(proj: SOMcreator.Project, element_dict: StandardDict) -> tuple[str, str, bool, str, list[list[bool]]]:
-    def get_value(d: dict, p: str) -> bool:
-        return d.get(p) if d.get(p) is not None else True
+def load_filter_matrix(proj: SOMcreator.Project, element_dict: StandardDict, guid: str):
+    matrix: list[list[bool]] = element_dict.get(FILTER_MATRIX)
+    if matrix is None:
+        logging.warning(
+            f"Achtung! Filtermatrix für Element '{guid}' liegt nicht vor. Eventuell verwenden Sie eine alte Dateiversion. Bitte mit SOM-Toolkit 2.11.3 Öffnen und neu speichern!")
+        return proj.create_filter_matrix(True)
+    if isinstance(matrix, int):
+        return SOMcreator.filehandling.filter_matrixes[matrix]
+    if not check_size_eq(matrix, proj.get_filter_matrix()):
+        logging.warning(
+            f"Achtung! Filtermatrix für  Element '{guid}' hat die falsche Größe! Status wird überall auf True gesetzt!")
+        return proj.create_filter_matrix(True)
+    return matrix
 
+
+def get_basics(proj: SOMcreator.Project, element_dict: StandardDict, guid: str) -> tuple[
+    str, str, bool, str, list[list[bool]]]:
     name = element_dict[NAME]
     description = element_dict[DESCRIPTION]
     optional = element_dict[OPTIONAL]
     parent = element_dict[PARENT]
-    matrix = element_dict.get(FILTER_MATRIX)
-    phase_list, use_case_list = SOMcreator.filehandling.phase_list, SOMcreator.filehandling.use_case_list
-    matrix_list = list()
-    for _ in proj.get_phases():
-        matrix_list.append([True for __ in proj.get_usecases()])
-
-    if matrix is None:  # handle deprecated file types
-        matrix = list()
-        file_phases: list[bool] = element_dict.get(PROJECT_PHASES)
-        if isinstance(file_phases, dict):  # deprecated
-            output_phases = [get_value(file_phases, phase.name) for phase in proj.get_phases()]
-        elif file_phases is None:
-            output_phases = [True for _ in proj.get_phases()]
-        else:
-            output_phases = [True for _ in proj.get_phases()]
-            for output_index, existing_phase in enumerate(proj.get_phases()):
-                if existing_phase in phase_list:
-                    value = file_phases[phase_list.index(existing_phase)]
-                    output_phases[output_index] = value
-
-        file_use_cases: list[bool] = element_dict.get(USE_CASES)
-        if file_use_cases is None:
-            output_use_cases = [True for _ in proj.get_usecases()]
-        else:
-            output_use_cases = [True for _ in proj.get_usecases()]
-            for output_index, existing_use_case in enumerate(proj.get_usecases()):
-                if existing_use_case in use_case_list:
-                    value = file_use_cases[use_case_list.index(existing_use_case)]
-                    output_use_cases[output_index] = value
-
-        for phase_index, phase in enumerate(output_phases):
-            pl = list()
-            for use_case_index, use_case in enumerate(output_use_cases):
-                pl.append(bool(output_phases[phase_index] and output_use_cases[use_case_index]))
-            matrix.append(pl)
-
-    phase_count = len(SOMcreator.filehandling.phase_list)
-    use_case_count = len(SOMcreator.filehandling.use_case_list)
-
-    if phase_count > len(matrix):
-        for _ in range(phase_count - len(matrix)):
-            matrix.append([True for _ in range(use_case_count)])
-    elif phase_count < len(matrix):
-        matrix = matrix[:phase_count]
-
-    for phase_index, use_case_list in enumerate(matrix):
-        if use_case_count > len(use_case_list):
-            [use_case_list.append(True) for _ in range(use_case_count - len(use_case_list))]
-        elif use_case_count < len(use_case_list):
-            use_case_list = use_case_list[:use_case_count]
-        matrix[phase_index] = use_case_list
+    matrix = load_filter_matrix(proj, element_dict, guid)
     return name, description, optional, parent, matrix
 
 
@@ -119,17 +82,18 @@ def remove_part_of_dict(key):
 
 #### Export ######
 
+def check_size_eq(lst: list[list[bool]], master_list: list[list[bool]]):
+    phase_len = len(lst)
+    usecase_len = len(lst[0])
+
+    return phase_len == len(master_list) and usecase_len == len(master_list[0])
+
 def write_filter_matrix(element: classes.ClassTypes):
     proj = element.project
-    phases = proj.get_phases()
-    use_cases = proj.get_usecases()
-    matrix = list()
-    for phase in phases:
-        phase_list = list()
-        for use_case in use_cases:
-            phase_list.append(element.get_filter_state(phase, use_case))
-        matrix.append(phase_list)
-    return matrix
+    filter_matrix = element.get_filter_matrix()
+    if not check_size_eq(filter_matrix, proj.get_filter_matrix()):
+        logging.warning(f"Filter List of {element} doesn't match size of project filter list")
+    return SOMcreator.filehandling.filter_matrixes.index(tuple(tuple(use_case_list) for use_case_list in filter_matrix))
 
 
 def write_basics(entity_dict: ObjectDict | PropertySetDict | AttributeDict | AggregationDict,
