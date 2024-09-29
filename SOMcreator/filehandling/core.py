@@ -50,29 +50,29 @@ def get_basics(proj: SOMcreator.Project, element_dict: StandardDict) -> tuple[st
     matrix = element_dict.get(FILTER_MATRIX)
     phase_list, use_case_list = SOMcreator.filehandling.phase_list, SOMcreator.filehandling.use_case_list
     matrix_list = list()
-    for _ in proj.get_project_phase_list():
-        matrix_list.append([True for __ in proj.get_use_case_list()])
+    for _ in proj.get_phases():
+        matrix_list.append([True for __ in proj.get_usecases()])
 
     if matrix is None:  # handle deprecated file types
         matrix = list()
         file_phases: list[bool] = element_dict.get(PROJECT_PHASES)
         if isinstance(file_phases, dict):  # deprecated
-            output_phases = [get_value(file_phases, phase.name) for phase in proj.get_project_phase_list()]
+            output_phases = [get_value(file_phases, phase.name) for phase in proj.get_phases()]
         elif file_phases is None:
-            output_phases = [True for _ in proj.get_project_phase_list()]
+            output_phases = [True for _ in proj.get_phases()]
         else:
-            output_phases = [True for _ in proj.get_project_phase_list()]
-            for output_index, existing_phase in enumerate(proj.get_project_phase_list()):
+            output_phases = [True for _ in proj.get_phases()]
+            for output_index, existing_phase in enumerate(proj.get_phases()):
                 if existing_phase in phase_list:
                     value = file_phases[phase_list.index(existing_phase)]
                     output_phases[output_index] = value
 
         file_use_cases: list[bool] = element_dict.get(USE_CASES)
         if file_use_cases is None:
-            output_use_cases = [True for _ in proj.get_use_case_list()]
+            output_use_cases = [True for _ in proj.get_usecases()]
         else:
-            output_use_cases = [True for _ in proj.get_use_case_list()]
-            for output_index, existing_use_case in enumerate(proj.get_use_case_list()):
+            output_use_cases = [True for _ in proj.get_usecases()]
+            for output_index, existing_use_case in enumerate(proj.get_usecases()):
                 if existing_use_case in use_case_list:
                     value = file_use_cases[use_case_list.index(existing_use_case)]
                     output_use_cases[output_index] = value
@@ -121,8 +121,8 @@ def remove_part_of_dict(key):
 
 def write_filter_matrix(element: classes.ClassTypes):
     proj = element.project
-    phases = proj.get_project_phase_list()
-    use_cases = proj.get_use_case_list()
+    phases = proj.get_phases()
+    use_cases = proj.get_usecases()
     matrix = list()
     for phase in phases:
         phase_list = list()

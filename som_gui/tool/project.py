@@ -54,11 +54,11 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def get_use_cases(cls):
-        return cls.get().get_use_case_list()
+        return cls.get().get_usecases()
 
     @classmethod
     def get_phases(cls):
-        return cls.get().get_project_phase_list()
+        return cls.get().get_phases()
 
     @classmethod
     def get_properties(cls) -> ProjectProperties:
@@ -75,59 +75,7 @@ class Project(som_gui.core.tool.Project):
     @classmethod
     def get_project_phase_list(cls):
         proj = cls.get()
-        return proj.get_project_phase_list()
-
-    @classmethod
-    def get_project_phase_name_list(cls):
-        proj = cls.get()
-        return [ph.name for ph in proj.get_project_phase_list()]
-
-
-    @classmethod
-    def set_project_version(cls, version: str):
-        proj = cls.get()
-        proj.version = version
-
-    @classmethod
-    def set_project_author(cls, author: str):
-        proj = cls.get()
-        proj.author = author
-
-    @classmethod
-    def set_project_name(cls, name: str):
-        proj = cls.get()
-        proj.name = name
-
-    @classmethod
-    def set_project_phase(cls, phase_name: str):
-        proj = cls.get()
-        phase = proj.get_phase_by_name(phase_name)
-        if phase is not None:
-            proj.current_project_phase = phase
-
-    @classmethod
-    def get_project_version(cls):
-        proj = cls.get()
-        return proj.version
-
-    @classmethod
-    def get_project_author(cls):
-        proj = cls.get()
-        return proj.author
-
-    @classmethod
-    def get_project_name(cls):
-        proj = cls.get()
-        return proj.name
-
-    @classmethod
-    def get_project_phase(cls):
-        proj = cls.get()
-        return proj.current_project_phase
-
-    @classmethod
-    def get_project_phase_name(cls):
-        return cls.get_project_phase().name
+        return proj.get_phases()
 
     @classmethod
     def load_project(cls, path: str):
@@ -206,11 +154,11 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def get_phase_mapping(cls, p1: SOMcreator.Project, p2: SOMcreator.Project):
-        return cls.create_mapping_window(p1.get_project_phase_list(), p2.get_project_phase_list())
+        return cls.create_mapping_window(p1.get_phases(), p2.get_phases())
 
     @classmethod
     def get_use_case_mapping(cls, p1: SOMcreator.Project, p2: SOMcreator.Project):
-        return cls.create_mapping_window(p1.get_use_case_list(), p2.get_use_case_list())
+        return cls.create_mapping_window(p1.get_usecases(), p2.get_usecases())
 
     @classmethod
     def merge_projects(cls, project_1, project_2):

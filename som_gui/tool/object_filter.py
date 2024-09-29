@@ -46,8 +46,8 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def create_header_data(cls, filter_matrix: list[list[bool]]) -> list[list[str | int]]:
-        use_case_list = Project.get().get_use_case_list()
-        project_phase_list = Project.get().get_project_phase_list()
+        use_case_list = Project.get().get_usecases()
+        project_phase_list = Project.get().get_phases()
         header_data = list()
         for pp_index, pp in enumerate(project_phase_list):
             for uc_index, uc in enumerate(use_case_list):
@@ -90,22 +90,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
     def reset_use_case_data(cls):
         object_filter_data.refresh()
 
-    @classmethod
-    def get_active_use_case(cls):
-        proj = Project.get()
-        return proj.current_use_case
 
-    @classmethod
-    def get_active_use_case_name(cls):
-        return cls.get_active_use_case().name
-
-    @classmethod
-    def set_use_case(cls, use_case_name: str):
-        proj = Project.get()
-        uc = proj.get_use_case_by_name(use_case_name)
-        if uc is None:
-            return
-        proj.current_use_case = uc
 
 
     @classmethod
@@ -139,8 +124,8 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             data_dict = dict()
         if data_dict.get(entity) is None:
             data_dict[entity] = list()
-            for __ in Project.get().get_project_phase_list():
-                data_dict[entity].append([True for _ in Project.get().get_use_case_list()])
+            for __ in Project.get().get_phases():
+                data_dict[entity].append([True for _ in Project.get().get_usecases()])
         check_state = data_dict[entity][project_phase_index][use_case_index]
         if check_state is None:
             check_state = True
@@ -150,8 +135,8 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
     def update_object_use_cases(cls):
         prop = cls.get_objectfilter_properties()
         proj = Project.get()
-        project_use_case_list = proj.get_use_case_list()
-        project_phase_list = proj.get_project_phase_list()
+        project_use_case_list = proj.get_usecases()
+        project_phase_list = proj.get_phases()
         for obj, filter_matrix in prop.object_dict.items():
             obj: SOMcreator.Object
             for phase_index, use_case_list in enumerate(filter_matrix):
@@ -163,8 +148,8 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
     @classmethod
     def update_pset_use_cases(cls):
         proj = Project.get()
-        project_use_case_list = proj.get_use_case_list()
-        project_phase_list = proj.get_project_phase_list()
+        project_use_case_list = proj.get_usecases()
+        project_phase_list = proj.get_phases()
         for pset, filter_matrix in cls.get_pset_dict().items():
             for phase_index, use_case_list in enumerate(filter_matrix):
                 phase = project_phase_list[phase_index]
@@ -176,8 +161,8 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
     def update_attribute_uses_cases(cls):
         prop = cls.get_objectfilter_properties()
         proj = Project.get()
-        project_use_case_list = proj.get_use_case_list()
-        project_phase_list = proj.get_project_phase_list()
+        project_use_case_list = proj.get_usecases()
+        project_phase_list = proj.get_phases()
         for attribute, filter_matrix in prop.attribute_dict.items():
             for phase_index, use_case_list in enumerate(filter_matrix):
                 phase = project_phase_list[phase_index]
@@ -328,7 +313,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
     @classmethod
     def get_use_case_name_list(cls) -> list[str]:
         project = tool.Project.get()
-        return [uc.name for uc in project.get_use_case_list()]
+        return [uc.name for uc in project.get_usecases()]
 
     @classmethod
     def set_header_labels(cls, model: QStandardItemModel, labels: list[str]):
@@ -552,11 +537,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             object_dict[obj][phase_index][use_case_index] = status
 
     @classmethod
-    def connect_settings_widget(cls, widget: ui.SettingsWidget):
-        widget.ui.cb_phase.currentIndexChanged.connect(trigger.settings_combobox_changed)
-        widget.ui.cb_usecase.currentIndexChanged.connect(trigger.settings_combobox_changed)
-
-    @classmethod
     def set_settings_widget(cls, widget: ui.SettingsWidget):
         cls.get_objectfilter_properties().settings_widget = widget
 
@@ -566,14 +546,14 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def get_allowed_usecases_by_phase(cls, project: SOMcreator.Project, phase: SOMcreator.classes.Phase):
-        usecase_list = project.get_use_case_list()
+        usecase_list = project.get_usecases()
         filter_matrix = project.get_filter_matrix()
         phase_index = project.get_phase_index(phase)
         return [uc for uc, state in zip(usecase_list, filter_matrix[phase_index]) if state]
 
     @classmethod
     def get_allowed_phases_by_usecase(cls, project: SOMcreator.Project, usecase: SOMcreator.classes.UseCase):
-        phase_list = project.get_project_phase_list()
+        phase_list = project.get_phases()
         usecase_index = project.get_use_case_index(usecase)
         filter_matrix = project.get_filter_matrix()
         return [phase for phase, value_list in zip(phase_list, filter_matrix) if value_list[usecase_index]]
@@ -605,7 +585,7 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         proj1 = proj1 or cls.get_project(1)
 
         if not cls.get_usecase_list():
-            usecases = set(proj0.get_use_case_list()).intersection(set(proj1.get_use_case_list()))
+            usecases = set(proj0.get_usecases()).intersection(set(proj1.get_usecases()))
             cls.set_usecase_list(sorted(usecases, key=lambda x: x.name))
             for usecase in cls.get_usecase_list():
                 index0 = proj0.get_use_case_index(usecase)
@@ -619,7 +599,7 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         proj1 = proj1 or cls.get_project(1)
 
         if not cls.get_properties().phase_list:
-            phases = set(proj0.get_project_phase_list()).intersection(set(proj1.get_project_phase_list()))
+            phases = set(proj0.get_phases()).intersection(set(proj1.get_phases()))
             cls.set_phase_list(sorted(phases, key=lambda x: x.name))
             for phase in cls.get_phase_list():
                 index0 = proj0.get_phase_index(phase)

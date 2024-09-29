@@ -11,11 +11,11 @@ from ..external_software import xml
 import jinja2
 
 if TYPE_CHECKING:
-    from SOMcreator.classes import Project
+    from SOMcreator.classes import Project, UseCase, Phase
 parent_dict = dict()
 aggregation_dict = dict()
-phase_list = list()
-use_case_list = list()
+phase_list: list[Phase] = list()
+use_case_list: list[UseCase] = list()
 plugin_dict = dict()
 
 

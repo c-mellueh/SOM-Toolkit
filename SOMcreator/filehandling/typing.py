@@ -24,8 +24,8 @@ class ProjectDict(TypedDict):
     version: str
     AggregationAttributeName: str
     AggregationPsetName: str
-    current_project_phase: int
-    current_use_case: int
+    active_phases: list[int]  # was current_project_phase
+    active_usecases: list[int]
     ProjectPhases: list[FilterDict]
     UseCases: list[FilterDict]
     filter_matrix: list[list[bool]]

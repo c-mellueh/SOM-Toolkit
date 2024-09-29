@@ -1,7 +1,7 @@
 DESCRIPTION = "description"
 OPTIONAL = "optional"
-CURRENT_PR0JECT_PHASE = "current_project_phase"
-CURRENT_USE_CASE = "current_use_case"
+CURRENT_PR0JECT_PHASE = "current_project_phase"  # deprecated
+CURRENT_USE_CASE = "current_use_case"  # deprecated
 PROJECT_PHASES = "ProjectPhases"
 USE_CASES = "UseCases"
 FILTER_MATRIX = "filter_matrix"
@@ -31,3 +31,6 @@ ABBREVIATION = "abbreviation"
 REVIT_MAPPING = "revit_mapping"
 VALUE = "Value"
 IGNORE_PSET = "IFC"
+
+ACTIVE_PHASES = "active_phases"
+ACTIVE_USECASES = "active_usecases"
