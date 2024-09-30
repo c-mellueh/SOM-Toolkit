@@ -15,6 +15,10 @@ from dataclasses import dataclass, field
 
 # Add child to Parent leads to reverse
 
+def _create_filter_matrix(phase_count, usecase_count, default=True):
+    return [[default for __ in range(usecase_count)] for _ in range(phase_count)]
+
+
 def filter_by_filter_dict(func):
     """decorator function that filters list output of function by project phase and use_case"""
 
@@ -35,6 +39,7 @@ def filter_by_filter_dict(func):
             if res:
                 entities.append(entity)
         return entities
+
     return inner
 
 
@@ -207,10 +212,7 @@ class Project(object):
         return self._use_cases[index]
 
     def create_filter_matrix(self, default_state: bool = True):
-        filter_matrix = list()
-        for _ in self._phases:
-            filter_matrix.append([default_state for __ in self._use_cases])
-        return filter_matrix
+        return _create_filter_matrix(len(self._phases), len(self._use_cases), default_state)
 
     def get_filter_matrix(self) -> list[list[bool]]:
         """
@@ -270,25 +272,30 @@ class Project(object):
             if use_case.name == name:
                 return use_case
 
-    def remove_project_phase(self, phase: Phase) -> None:
+    def remove_phase(self, phase: Phase) -> None:
         if phase is None:
             return
         index = self.get_phase_index(phase)
         for item in self.get_all_hirarchy_items():
-            item.remove_project_phase(phase)
-
+            item.remove_phase(phase)
         self._phases.remove(phase)
         self._filter_matrix.pop(index)
+        if index in self.active_phases:
+            self.active_phases.remove(index)
 
     def remove_use_case(self, use_case: UseCase) -> None:
         if use_case is None:
             return
         index = self.get_use_case_index(use_case)
-        self._use_cases.remove(use_case)
         for item in self.get_all_hirarchy_items():
             item.remove_use_case(use_case)
+
+        self._use_cases.remove(use_case)
         for use_case_list in self._filter_matrix:
             use_case_list.pop(index)
+
+        if index in self.active_phases:
+            self.active_phases.remove(index)
 
     @property
     @filter_by_filter_dict
@@ -324,13 +331,7 @@ class Hirarchy(object, metaclass=IterRegistry):
         project.add_item(self)
         self._filter_matrix = filter_matrix
         if self._filter_matrix is None:
-            self._filter_matrix = list()
-            for _ in project.get_phases():
-                phase_list = list()
-                for __ in project.get_usecases():
-                    phase_list.append(True)
-                self._filter_matrix.append(phase_list)
-
+            self._filter_matrix = project.create_filter_matrix(True)
         self._parent = None
         self._children = set()
         self._name = name
@@ -368,9 +369,9 @@ class Hirarchy(object, metaclass=IterRegistry):
         use_case_index = self.project.get_use_case_index(use_case)
         self._filter_matrix[phase_index][use_case_index] = value
 
-    def remove_project_phase(self, phase: Phase) -> None:
+    def remove_phase(self, phase: Phase) -> None:
         phase_index = self.project.get_phase_index(phase)
-        self._filter_matrix.pop(phase_index)
+        self.get_filter_matrix().pop(phase_index)
 
     def remove_use_case(self, use_case: UseCase) -> None:
         use_case_index = self.project.get_use_case_index(use_case)

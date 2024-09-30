@@ -46,7 +46,7 @@ def load_filter_matrix(proj: SOMcreator.Project, element_dict: StandardDict, gui
             f"Achtung! Filtermatrix für Element '{guid}' liegt nicht vor. Eventuell verwenden Sie eine alte Dateiversion. Bitte mit SOM-Toolkit 2.11.3 Öffnen und neu speichern!")
         return proj.create_filter_matrix(True)
     if isinstance(matrix, int):
-        return SOMcreator.filehandling.filter_matrixes[matrix]
+        return list(SOMcreator.filehandling.filter_matrixes[matrix])
     if not check_size_eq(matrix, proj.get_filter_matrix()):
         logging.warning(
             f"Achtung! Filtermatrix für  Element '{guid}' hat die falsche Größe! Status wird überall auf True gesetzt!")
@@ -85,7 +85,6 @@ def remove_part_of_dict(key):
 def check_size_eq(lst: list[list[bool]], master_list: list[list[bool]]):
     phase_len = len(lst)
     usecase_len = len(lst[0])
-
     return phase_len == len(master_list) and usecase_len == len(master_list[0])
 
 def write_filter_matrix(element: classes.ClassTypes):
