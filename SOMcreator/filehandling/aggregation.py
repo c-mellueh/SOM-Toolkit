@@ -62,5 +62,5 @@ def _create_entry(element: classes.Aggregation) -> AggregationDict:
 
 def write(proj: Project, main_dict: MainDict):
     main_dict[AGGREGATIONS] = dict()
-    for aggregation in proj.get_all_aggregations():
+    for aggregation in proj.get_aggregations(filter=False):
         main_dict[AGGREGATIONS][aggregation.uuid] = _create_entry(aggregation)

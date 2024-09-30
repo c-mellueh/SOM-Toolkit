@@ -15,6 +15,7 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 import SOMcreator
 
 from typing import TYPE_CHECKING, Callable
+import itertools
 
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
@@ -29,13 +30,13 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def get_inheritable_property_sets(cls, obj: SOMcreator.Object) -> list[SOMcreator.PropertySet]:
-        def loop(o):
-            psets = o.property_sets
+        def loop(o: SOMcreator.Object):
+            psets = o.get_property_sets(filter=False)
             if o.parent:
-                psets += loop(o.parent)
+                psets = itertools.chain(psets, loop(o.parent))
             return psets
 
-        return loop(obj)
+        return list(loop(obj))
 
     @classmethod
     def get_pset_from_index(cls, index: QModelIndex) -> SOMcreator.PropertySet:

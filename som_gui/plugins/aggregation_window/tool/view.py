@@ -130,7 +130,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         if not plugin_dict:
             return
 
-        aggregation_ref = {aggregation.uuid: aggregation for aggregation in proj.get_all_aggregations()}
+        aggregation_ref = {aggregation.uuid: aggregation for aggregation in proj.get_aggregations(filter=False)}
         import_scene_dict = plugin_dict.get(AGGREGATIONSCENES)
 
         if import_scene_dict is None:
@@ -256,7 +256,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         scene.removeItem(node.circle)
         scene.removeItem(node)
         node.deleteLater()
-        if node.aggregation in node.aggregation.project.get_all_aggregations():
+        if node.aggregation in node.aggregation.project.get_aggregations(filter=False):
             node.aggregation.delete()
 
     @classmethod
@@ -530,7 +530,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
     @classmethod
     def remove_nodes_with_deleted_aggregations(cls, scene: ui_view.AggregationScene, proj: SOMcreator.Project) -> None:
         nodes = cls.get_nodes_in_scene(scene)
-        existing_aggregations = list(proj.get_all_aggregations())
+        existing_aggregations = list(proj.get_aggregations(filter=False))
         for existing_node in list(nodes):
             if existing_node.aggregation not in existing_aggregations:
                 cls.remove_node_from_scene(existing_node, scene)

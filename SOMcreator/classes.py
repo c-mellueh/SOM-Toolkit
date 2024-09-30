@@ -36,22 +36,7 @@ def filterable(func: Callable):
         proj: Project = self if isinstance(self, Project) else self.project
         if proj is None:
             return result
-
-        entities = list()
-        for entity in result:
-            filter_matrix = entity.get_filter_matrix()
-            is_active = False
-            for phase in proj.active_phases:
-                for usecase in proj.active_usecases:
-                    if filter_matrix[phase][usecase]:
-                        is_active = True
-                        break  # Exit the usecase loop
-                if is_active:
-                    break  # Exit the phase loop
-            if is_active:
-                entities.append(entity)
-        return entities
-
+        return filter(lambda e: e.is_active(), result)
     return inner
 
 
@@ -133,7 +118,8 @@ class Project(object):
     def get_attributes(self) -> Iterator[Attribute]:
         return filter(lambda item: isinstance(item, Attribute), self._items)
 
-    def get_all_aggregations(self) -> Iterator[Aggregation]:
+    @filterable
+    def get_aggregations(self) -> Iterator[Aggregation]:
         return filter(lambda item: isinstance(item, Aggregation), self._items)
 
     def get_predefined_psets(self) -> set[PropertySet]:
@@ -168,7 +154,7 @@ class Project(object):
         pset_dict = {pset.uuid: pset for pset in self.get_property_sets(filter=False)}
         object_dict = {obj.uuid: obj for obj in self.get_objects(filter=False)}
         attribute_dict = {attribute.uuid: attribute for attribute in self.get_attributes(filter=False)}
-        aggregation_dict = {aggreg.uuid: aggreg for aggreg in self.get_all_aggregations()}
+        aggregation_dict = {aggreg.uuid: aggreg for aggreg in self.get_aggregations(filter=False)}
         full_dict = pset_dict | object_dict | attribute_dict | aggregation_dict
         if None in full_dict:
             full_dict.pop(None)
@@ -403,6 +389,19 @@ class Hirarchy(object, metaclass=IterRegistry):
     def add_use_case(self) -> None:
         for use_case_list in self._filter_matrix:
             use_case_list.append(True)
+
+    def is_active(self) -> bool:
+        """
+        returns if Entity matches curren collection of usecases & phases
+        Returns True if no Project with Filters exists
+        """
+        if not self.project:
+            return True
+        for phase in self.project.active_phases:
+            for usecase in self.project.active_usecases:
+                if self._filter_matrix[phase][usecase]:
+                    return True
+        return False
 
     @property
     def optional_wo_hirarchy(self) -> bool:
@@ -653,6 +652,10 @@ class Object(Hirarchy):
     def get_all_property_sets(self) -> list[PropertySet]:
         """returns all Propertysets even if they don't fit the current Project Phase"""
         return self._property_sets
+
+    @filterable
+    def get_property_sets(self) -> Iterator[PropertySet]:
+        return iter(self._property_sets)
 
     @property
     @filterable
