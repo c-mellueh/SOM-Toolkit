@@ -58,7 +58,7 @@ def _build_requirements(property_set_dict: dict[classes.PropertySet, list[classe
 def _build_attribute_requirement(attribute: classes.Attribute, xml_parent: Element) -> None:
     xml_property = SubElement(xml_parent, ids_xsd.PROPERTY, nsmap=NSMAP)
     xml_property.set(ids_xsd.ATTR_DATATYPE, attribute.data_type)
-    if attribute.optional:
+    if attribute.is_optional(ignore_hirarchy=False):
         xml_property.set(xml_xsd.MINOCCURS, "0")
     else:
         xml_property.set(xml_xsd.MINOCCURS, "1")

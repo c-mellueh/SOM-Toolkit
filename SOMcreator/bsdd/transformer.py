@@ -78,7 +78,8 @@ def _create_class_property(attribute: SOMcreator.Attribute, existing_properties:
 
     class_property = bsdd.ClassProperty(code, parent_property.Code, "")
     class_property.attribute, class_property.Description, class_property.PropertySet, class_property.IsRequired = (
-        attribute, attribute.description, str(attribute.property_set.name), not attribute.optional)
+        attribute, attribute.description, str(attribute.property_set.name),
+        not attribute.is_optional(ignore_hirarchy=True))
 
     if not attribute.value:
         return class_property

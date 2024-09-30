@@ -29,7 +29,7 @@ def item_changed(item: QTableWidgetItem, attribute_table: Type[tool.AttributeTab
     if not item.column() == 4:
         return
     cs = True if item.checkState() == Qt.CheckState.Checked else False
-    attribute.optional = cs
+    attribute.set_optional(cs)
 
 
 def drop_event(event: QDropEvent, table: ui.AttributeTable, property_set_window: Type[tool.PropertySetWindow],

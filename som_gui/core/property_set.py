@@ -52,7 +52,7 @@ def pset_clicked(item: QTableWidgetItem, property_set: Type[tool.PropertySet]):
     if not item.column() == 2:
         return
     cs = True if item.checkState() == Qt.CheckState.Checked else False
-    pset.optional = cs
+    pset.set_optional(cs)
 
 
 def pset_selection_changed(property_set_tool: Type[tool.PropertySet], attribute_table: Type[tool.AttributeTable],

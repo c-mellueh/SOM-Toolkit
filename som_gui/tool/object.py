@@ -681,4 +681,4 @@ class Object(som_gui.core.tool.Object):
     @classmethod
     def set_object_optional_by_tree_item_state(cls, item: QTreeWidgetItem, column_index: int):
         obj = cls.get_object_from_item(item)
-        obj.optional = True if item.checkState(column_index) == Qt.CheckState.Checked else False
+        obj.set_optional(True if item.checkState(column_index) == Qt.CheckState.Checked else False)

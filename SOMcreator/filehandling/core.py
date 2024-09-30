@@ -99,7 +99,7 @@ def write_basics(entity_dict: ObjectDict | PropertySetDict | AttributeDict | Agg
                  element: classes.ClassTypes) -> None:
     """function gets called from all Entities"""
     entity_dict[NAME] = element.name
-    entity_dict[OPTIONAL] = element.optional
+    entity_dict[OPTIONAL] = element.is_optional(ignore_hirarchy=True)
     entity_dict[FILTER_MATRIX] = write_filter_matrix(element)
     parent = None if element.parent is None else element.parent.uuid
     entity_dict[PARENT] = parent

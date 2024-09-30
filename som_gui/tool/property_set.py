@@ -166,7 +166,8 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def update_table_row(cls, table, row):
         items = [table.item(row, col) for col in range(table.columnCount())]
         property_set = cls.get_property_set_from_item(items[0])
-        check_state = Qt.CheckState.Checked if property_set.optional else Qt.CheckState.Unchecked
+        check_state = Qt.CheckState.Checked if property_set.is_optional(
+            ignore_hirarchy=True) else Qt.CheckState.Unchecked
 
         if items[0].text() != property_set.name:
             items[0].setText(f"{property_set.name}")

@@ -96,7 +96,7 @@ class ExportExcel:
         for row, obj in enumerate(sorted(project.get_objects(filter=True)), start=2):
             for column, getter_function in enumerate(getter_functions, start=1):
                 sheet.cell(row, column).value = getter_function(obj)
-                if obj.optional:
+                if obj.is_optional(ignore_hirarchy=False):
                     sheet.cell(row, column).font = OPTIONAL_FONT
 
         table_range = f"{sheet.cell(1, 1).coordinate}:{sheet.cell(row, len(titles)).coordinate}"
@@ -125,7 +125,7 @@ class ExportExcel:
 
     @classmethod
     def create_object_entry(cls, obj: classes.Object, sheet, start_row, start_column, table_index):
-        if obj.optional:
+        if obj.is_optional(ignore_hirarchy=False):
             font_style = OPTIONAL_FONT
         else:
             font_style = styles.Font()
@@ -158,7 +158,7 @@ class ExportExcel:
                 sheet.cell(pset_start_row + index, start_column + 1).value = property_set.name
                 sheet.cell(pset_start_row + index, start_column + 2).value = attribute.description
                 sheet.cell(pset_start_row + index, start_column + 3).value = attribute.data_type
-                if attribute.optional:
+                if attribute.is_optional(ignore_hirarchy=False):
                     sheet.cell(pset_start_row + index, start_column).font = OPTIONAL_FONT
                     sheet.cell(pset_start_row + index, start_column + 1).font = OPTIONAL_FONT
                     sheet.cell(pset_start_row + index, start_column + 2).font = OPTIONAL_FONT

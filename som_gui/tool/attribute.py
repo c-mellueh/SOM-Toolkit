@@ -112,11 +112,11 @@ class Attribute(som_gui.core.tool.Attribute):
 
     @classmethod
     def is_attribute_optional(cls, attribute: SOMcreator.Attribute):
-        return attribute.optional
+        return attribute.is_optional(ignore_hirarchy=True)
 
     @classmethod
     def set_attribute_optional(cls, optional: bool, attribute: SOMcreator.Attribute):
-        attribute.optional = optional
+        attribute.set_optional(optional)
 
     @classmethod
     def get_attribute_properties(cls) -> AttributeProperties:

@@ -327,9 +327,7 @@ class Hirarchy(object, metaclass=IterRegistry):
         if optional is not None:
             self._optional = optional
 
-    @property
-    def project(self):
-        return self._project
+
 
     def remove_parent(self) -> None:
         self._parent = None
@@ -378,21 +376,20 @@ class Hirarchy(object, metaclass=IterRegistry):
                 if self._filter_matrix[phase][usecase]:
                     return True
         return False
-
     @property
-    def optional_wo_hirarchy(self) -> bool:
-        return self._optional
+    def project(self):
+        return self._project
 
-    @property
-    def optional(self) -> bool:
+    def is_optional(self, ignore_hirarchy=False) -> bool:
+        if ignore_hirarchy:
+            return self._optional
         if self.parent is not None:
-            if self.parent.optional:
+            if self.parent.is_optional:
                 return True
         return self._optional
 
-    @optional.setter
-    def optional(self, value: bool) -> None:
-        self._optional = value
+    def set_optional(self, optional: bool) -> None:
+        self._optional = optional
 
     @property
     def description(self):
@@ -538,7 +535,8 @@ class Object(Hirarchy):
 
         new_object = Object(name=self.name, ident_attrib=new_ident_attribute, uuid=str(uuid4()),
                             ifc_mapping=self.ifc_mapping,
-                            description=self.description, optional=self.optional, abbreviation=self.abbreviation,
+                            description=self.description, optional=self.is_optional(ignore_hirarchy=True),
+                            abbreviation=self.abbreviation,
                             project=self.project, filter_matrix=self._filter_matrix)
 
         for pset in new_property_sets:
@@ -718,7 +716,7 @@ class PropertySet(Hirarchy):
 
     def __copy__(self) -> PropertySet:
         new_pset = PropertySet(name=self.name, obj=None, uuid=str(uuid4()), description=self.description,
-                               optional=self.optional, project=self.project,
+                               optional=self.is_optional(ignore_hirarchy=True), project=self.project,
                                filter_matrix=self._filter_matrix)
 
         for attribute in self.attributes:
@@ -879,7 +877,8 @@ class Attribute(Hirarchy):
                                value_type=cp.copy(self.value_type),
                                data_type=cp.copy(self.data_type), child_inherits_values=self.child_inherits_values,
                                uuid=str(uuid4()),
-                               description=self.description, optional=self.optional, revit_mapping=self.revit_name,
+                               description=self.description, optional=self.is_optional(ignore_hirarchy=True),
+                               revit_mapping=self.revit_name,
                                project=self.project, filter_matrix=self._filter_matrix)
 
         if self.parent is not None:
