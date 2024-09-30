@@ -450,9 +450,6 @@ class Hirarchy(object, metaclass=IterRegistry):
     def get_children(self) -> Iterator[PropertySet | Object | Attribute | Aggregation]:
         return iter(self._children)
 
-    def get_all_children(self):
-        return self._children
-
     def add_child(self, child: PropertySet | Object | Attribute | Aggregation) -> None:
         self._children.add(child)
         child.parent = self

@@ -315,7 +315,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
             if match_obj is not None or add_missing:
                 parent_item.addChild(item)
-            cls.fill_object_tree_layer(list(obj.get_all_children()), item, add_missing)
+            cls.fill_object_tree_layer(list(obj.get_children(filter=False)), item, add_missing)
 
     @classmethod
     def fill_object_tree(cls, tree: QTreeWidget, add_missing: bool = True):
@@ -387,7 +387,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                 item = QTreeWidgetItem()
                 cls.add_object_to_item(obj, item, 1)
                 parent.addChild(item)
-            cls.add_missing_objects_to_tree(tree, list(obj.get_all_children()))
+            cls.add_missing_objects_to_tree(tree, list(obj.get_children(filter=False)))
 
     @classmethod
     def clear_tree(cls, tree: QTreeWidget):

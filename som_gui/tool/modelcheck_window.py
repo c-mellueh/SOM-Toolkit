@@ -352,8 +352,9 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
         for child_row in range(parent_item.rowCount()):
             class_item, obj = cls.update_object_tree_row(parent_item, child_row)
+            obj: SOMcreator.Object
             if tree.isExpanded(parent_item.index()) or parent_item == model.invisibleRootItem():
-                cls.fill_object_tree(obj.get_all_children(), class_item, model, tree)
+                cls.fill_object_tree(set(obj.get_children(filter=False)), class_item, model, tree)
 
     @classmethod
     def create_pset_tree_row(cls, entity: SOMcreator.PropertySet | SOMcreator.Attribute, parent_item: QStandardItem):

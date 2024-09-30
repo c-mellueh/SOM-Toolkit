@@ -81,7 +81,7 @@ class Mapping(som_gui.core.tool.Mapping):
             if not (parent_item.isExpanded() or parent_item == tree.invisibleRootItem()):
                 continue
             if isinstance(entity, SOMcreator.Object):
-                cls.update_tree(set(entity.get_all_children()), class_item, tree)
+                cls.update_tree(set(entity.get_children(filter=False)), class_item, tree)
             if isinstance(entity, SOMcreator.PropertySet):
                 cls.update_tree(set(entity.attributes), class_item, tree)
 

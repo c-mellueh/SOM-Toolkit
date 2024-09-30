@@ -211,7 +211,8 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             obj = class_item.data(CLASS_REFERENCE)
             if isinstance(obj, SOMcreator.Object):
                 if tree.isExpanded(parent_item.index()) or parent_item == model.invisibleRootItem():
-                    cls.create_tree(obj.get_all_children(), class_item, filter_index_list, pre_header_text_length,
+                    cls.create_tree(set(obj.get_children(filter=False)), class_item, filter_index_list,
+                                    pre_header_text_length,
                                     model, tree)
 
     @classmethod
