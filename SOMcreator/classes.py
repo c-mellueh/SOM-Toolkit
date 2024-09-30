@@ -4,7 +4,6 @@ import logging
 import os
 from typing import Iterator, Union
 from uuid import uuid4
-
 import copy as cp
 from anytree import AnyNode
 
@@ -12,6 +11,7 @@ from . import filehandling
 from .constants import value_constants
 from dataclasses import dataclass, field
 
+FILTER_KEYWORD = "filter"
 
 # Add child to Parent leads to reverse
 
@@ -19,11 +19,18 @@ def _create_filter_matrix(phase_count, usecase_count, default=True):
     return [[default for __ in range(usecase_count)] for _ in range(phase_count)]
 
 
-def filter_by_filter_dict(func):
-    """decorator function that filters list output of function by project phase and use_case"""
+def filterable(func):
+    """decorator function that filters list output of function by  phase and use_case"""
 
-    def inner(self):
-        result: list[Hirarchy | Project] = func(self)
+    def inner(self, *args, **kwargs):
+        filter_values = True
+        if FILTER_KEYWORD in kwargs:
+            filter_values = kwargs[FILTER_KEYWORD]
+            kwargs.pop(FILTER_KEYWORD)
+
+        result: list[Hirarchy | Project] = list(func(self, *args, **kwargs))
+        if not filter_values:
+            return result
         proj: Project = self if isinstance(self, Project) else self.project
         entities = list()
         for entity in result:
@@ -102,6 +109,7 @@ class Project(object):
     def remove_item(self, item: Hirarchy):
         if item in self._items:
             self._items.remove(item)
+
 
     # Item Getter Methods
     def get_all_hirarchy_items(self) -> Iterator[Object, PropertySet, Attribute, Aggregation, Hirarchy]:
@@ -297,23 +305,24 @@ class Project(object):
         if index in self.active_phases:
             self.active_phases.remove(index)
 
+
     @property
-    @filter_by_filter_dict
+    @filterable
     def objects(self) -> Iterator[Object]:
         return self.get_all_objects()
 
     @property
-    @filter_by_filter_dict
+    @filterable
     def property_sets(self) -> Iterator[PropertySet]:
         return self.get_all_property_sets()
 
     @property
-    @filter_by_filter_dict
+    @filterable
     def attributes(self) -> Iterator[Attribute]:
         return self.get_all_attributes()
 
     @property
-    @filter_by_filter_dict
+    @filterable
     def aggregations(self) -> list[Aggregation]:
         aggregations = list(Aggregation)
         return aggregations
@@ -458,7 +467,7 @@ class Hirarchy(object, metaclass=IterRegistry):
             return False
 
     @property
-    @filter_by_filter_dict
+    @filterable
     def children(self) -> set[PropertySet | Object | Attribute | Aggregation]:
         return self._children
 
@@ -637,7 +646,7 @@ class Object(Hirarchy):
         return self._property_sets
 
     @property
-    @filter_by_filter_dict
+    @filterable
     def property_sets(self) -> list[PropertySet]:
         return sorted(self._property_sets, key=lambda x: x.name)
 
@@ -668,7 +677,7 @@ class Object(Hirarchy):
 
         return attributes
 
-    @filter_by_filter_dict
+    @filterable
     def get_attributes(self, inherit: bool = False) -> list[Attribute]:
         return self.get_all_attributes(inherit)
 
@@ -794,7 +803,7 @@ class PropertySet(Hirarchy):
         return self._attributes
 
     @property
-    @filter_by_filter_dict
+    @filterable
     def attributes(self) -> list[Attribute]:
         """returns Attributes filtered"""
         return sorted(self._attributes, key=lambda a: a.name)
