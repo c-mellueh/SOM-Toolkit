@@ -6,6 +6,7 @@ import json
 import time
 
 import SOMcreator
+from .constants import FILTER_MATRIXES
 from .typing import MainDict
 from typing import Type, TYPE_CHECKING
 from . import constants, core, project, predefined_pset, property_set, obj, aggregation, inheritance
@@ -69,7 +70,9 @@ def open_json(cls: Type[Project], path: str):
         main_dict: MainDict = json.load(file)
 
     SOMcreator.filehandling.plugin_dict = dict(main_dict)
-    SOMcreator.filehandling.filter_matrixes = main_dict.get("FilterMatrixes")
+    SOMcreator.filehandling.filter_matrixes = main_dict.get(FILTER_MATRIXES)
+    core.remove_part_of_dict(FILTER_MATRIXES)
+
     project_dict = main_dict.get(constants.PROJECT)
     SOMcreator.filehandling.phase_list, SOMcreator.filehandling.use_case_list = core.get_filter_lists(project_dict)
 
@@ -95,7 +98,6 @@ def export_json(proj: Project, path: str) -> dict:
     with open(path, "w") as file:
         json.dump(project.order_dict(main_dict), file)
 
-
     end_time = time.time()
     logging.info(f"Export Done. Time: {end_time - start_time}")
     return main_dict
@@ -103,7 +105,6 @@ def export_json(proj: Project, path: str) -> dict:
 
 def create_export_dict(proj: Project):
     main_dict: MainDict = dict()
-
     project.write(proj, main_dict)
     predefined_pset.write(proj, main_dict)
     obj.write(proj, main_dict)
