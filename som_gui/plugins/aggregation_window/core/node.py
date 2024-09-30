@@ -80,7 +80,7 @@ def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]) -> None:
 
         attribute_dict = node.get_pset_subelement_dict(property_set_item)
 
-        for attribute in property_set.attributes:
+        for attribute in property_set.get_attributes(filter=True):
             if attribute not in attribute_dict:
                 attribute_item = node.add_attribute_to_property_set_tree(attribute, property_set_item)
                 attribute_dict[attribute] = attribute_item
@@ -96,7 +96,7 @@ def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]) -> None:
 
         attribute_dict = node.get_pset_subelement_dict(pset_item)
         for attribute, attribute_item in attribute_dict.items():
-            if attribute not in property_set.attributes:
+            if attribute not in property_set.get_attributes(filter=True):
                 pset_item.removeChild(attribute_item)
 
 

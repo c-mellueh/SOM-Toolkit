@@ -83,7 +83,7 @@ class Mapping(som_gui.core.tool.Mapping):
             if isinstance(entity, SOMcreator.Object):
                 cls.update_tree(set(entity.get_children(filter=False)), class_item, tree)
             if isinstance(entity, SOMcreator.PropertySet):
-                cls.update_tree(set(entity.attributes), class_item, tree)
+                cls.update_tree(set(entity.get_attributes(filter=True)), class_item, tree)
 
     @classmethod
     def create_child(cls, entity: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute) -> QTreeWidgetItem:

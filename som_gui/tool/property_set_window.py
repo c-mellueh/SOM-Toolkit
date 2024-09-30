@@ -196,7 +196,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def update_add_button(cls, window: ui.PropertySetWindow):
         attribute_name = cls.get_attribute_name_input(window)
         pset = cls.get_property_set_by_window(window)
-        if attribute_name in [a.name for a in pset.attributes]:
+        if attribute_name in [a.name for a in pset.get_attributes(filter=False)]:
             cls.set_add_button_text("Update", window)
         else:
             cls.set_add_button_text("Hinzufügen", window)

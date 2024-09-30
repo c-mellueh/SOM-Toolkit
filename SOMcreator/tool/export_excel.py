@@ -153,7 +153,7 @@ class ExportExcel:
         pset_start_row = start_row + 4
         index = 0
         for property_set in sorted(obj.get_property_sets(filter=True)):
-            for attribute in sorted(property_set.attributes):
+            for attribute in sorted(property_set.get_attributes(filter=True)):
                 sheet.cell(pset_start_row + index, start_column).value = attribute.name
                 sheet.cell(pset_start_row + index, start_column + 1).value = property_set.name
                 sheet.cell(pset_start_row + index, start_column + 2).value = attribute.description

@@ -154,7 +154,8 @@ class Util(som_gui.core.tool.Util):
 
     @classmethod
     def get_all_attributes(cls, object_list: list[SOMcreator.Object]):
-        return [a for o in object_list for p in o.get_property_sets(filter=False) for a in p.attributes]
+        return [a for o in object_list for p in o.get_property_sets(filter=False) for a in
+                p.get_attributes(filter=False)]
 
     @classmethod
     def get_text_from_combobox(cls, combobox: QComboBox) -> dict[str, QModelIndex]:

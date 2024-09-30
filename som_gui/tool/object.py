@@ -467,7 +467,7 @@ class Object(som_gui.core.tool.Object):
 
         property_set: SOMcreator.PropertySet = {p.name: p for p in active_object.get_property_sets(filter=False)}.get(
             pset_name)
-        attribute_names = sorted([a.name for a in property_set.attributes])
+        attribute_names = sorted([a.name for a in property_set.get_attributes(filter=False)])
         prop.object_info_widget.widget.combo_box_attribute.clear()
         prop.object_info_widget.widget.combo_box_attribute.addItems(attribute_names)
 

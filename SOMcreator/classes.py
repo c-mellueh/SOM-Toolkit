@@ -643,7 +643,7 @@ class Object(Hirarchy):
     def get_attributes(self, inherit: bool = False) -> Iterator[Attribute]:
         attributes = list()
         for property_set in self.get_property_sets(filter=False):
-            attributes += property_set.attributes
+            attributes += property_set.get_attributes(filter=False)
         if inherit:
             attributes += self.parent.get_attributes(inherit=True, filter=False)
         return iter(attributes)
@@ -701,7 +701,7 @@ class PropertySet(Hirarchy):
                                optional=self.is_optional(ignore_hirarchy=True), project=self.project,
                                filter_matrix=self._filter_matrix)
 
-        for attribute in self.attributes:
+        for attribute in self.get_attributes(filter=False):
             new_attribute = cp.copy(attribute)
             new_pset.add_attribute(new_attribute)
 
@@ -735,11 +735,11 @@ class PropertySet(Hirarchy):
     def remove_child(self, child: PropertySet) -> None:
         super().remove_child(child)
         child.remove_parent()
-        for attribute in [a for a in child.attributes if a.parent]:
+        for attribute in [a for a in child.get_attributes(filter=False) if a.parent]:
             attribute.parent.remove_child(attribute)
 
     def change_parent(self, new_parent: PropertySet) -> None:
-        for attribute in self.attributes:
+        for attribute in self.get_attributes(filter=False):
             if attribute.parent.property_set == self._parent:
                 self.remove_attribute(attribute)
         self.parent = new_parent
@@ -749,12 +749,12 @@ class PropertySet(Hirarchy):
         if self.object is not None:
             ident_attrib = self.object.ident_attrib
 
-        if ident_attrib in self.attributes and not override_ident_deletion:
+        if ident_attrib in self.get_attributes(filter=False) and not override_ident_deletion:
             logging.error(f"Can't delete Propertyset {self.name} because it countains the identifier Attribute")
             return
 
         super(PropertySet, self).delete()
-        [attrib.delete(recursive) for attrib in self.attributes if attrib]
+        [attrib.delete(recursive) for attrib in self.get_attributes(filter=False) if attrib]
         if self.object is not None:
             self.object.remove_property_set(self)
 
@@ -771,12 +771,6 @@ class PropertySet(Hirarchy):
         """returns all Attributes even if they don't fit the current Project Phase"""
         return iter(self._attributes)
 
-    @filterable
-    def attributes(self) -> list[Attribute]:
-        """returns Attributes filtered"""
-        return sorted(self._attributes, key=lambda a: a.name)
-
-
     def add_attribute(self, value: Attribute) -> None:
         if value.property_set is not None and value.property_set != self:
             value.property_set.remove_attribute(value)
@@ -789,7 +783,7 @@ class PropertySet(Hirarchy):
             child.add_attribute(attrib)
 
     def remove_attribute(self, value: Attribute, recursive=False) -> None:
-        if value in self.attributes:
+        if value in self.get_attributes(filter=False):
             self._attributes.remove(value)
             if recursive:
                 for child in value.get_children(filter=False):
@@ -798,7 +792,7 @@ class PropertySet(Hirarchy):
             logging.warning(f"{self.name} -> {value} not in Attributes")
 
     def get_attribute_by_name(self, name: str):
-        for attribute in self.attributes:
+        for attribute in self.get_attributes(filter=False):
             if attribute.name.lower() == name.lower():
                 return attribute
         return None
@@ -807,7 +801,7 @@ class PropertySet(Hirarchy):
         child = PropertySet(name=name, project=self.project)
         self._children.add(child)
         child.parent = self
-        for attribute in self.attributes:
+        for attribute in self.get_attributes(filter=False):
             new_attrib = attribute.create_child()
             child.add_attribute(new_attrib)
         return child

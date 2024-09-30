@@ -401,7 +401,7 @@ def build_full_data_dict(proj: classes.Project) -> dict[
         d[obj] = dict()
         for pset in obj.get_property_sets(filter=True):
             d[obj][pset] = list()
-            for attribute in pset.attributes:
+            for attribute in pset.get_attributes(filter=True):
                 d[obj][pset].append(attribute)
     return d
 

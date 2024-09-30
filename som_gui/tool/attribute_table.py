@@ -201,7 +201,8 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             return None
         if not attribute.property_set.parent:
             return None
-        possible_parents = {a.name: a for a in attribute.property_set.parent.attributes}.get(attribute.name)
+        possible_parents = {a.name: a for a in attribute.property_set.parent.get_attributes(filter=True)}.get(
+            attribute.name)
         return possible_parents if possible_parents else None
 
     @classmethod

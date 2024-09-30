@@ -116,5 +116,5 @@ def build_full_required_data_dict(project: classes.Project) -> REQUIRED_DATA_DIC
     for obj in list(project.get_objects(filter=True)):
         required_data[obj] = dict()
         for pset in obj.get_property_sets(filter=True):
-            required_data[obj][pset] = [attribute for attribute in pset.attributes]
+            required_data[obj][pset] = [attribute for attribute in pset.get_attributes(filter=True)]
     return required_data

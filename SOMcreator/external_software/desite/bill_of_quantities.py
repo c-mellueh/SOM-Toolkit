@@ -8,7 +8,7 @@ def get_distinct_attributes(property_sets: list[classes.PropertySet]):
 
     for property_set in property_sets:
         attribute: classes.Attribute
-        attribute_names += [attribute.name for attribute in property_set.attributes]
+        attribute_names += [attribute.name for attribute in property_set.get_attributes(filter=True)]
 
     distinct_attribute_names = list(dict.fromkeys(attribute_names))
 

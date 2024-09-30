@@ -8,7 +8,7 @@ from ...external_software import xml
 
 
 def _iter_attributes(property_set: classes.PropertySet, pset_dict: dict) -> None:
-    for attribute in property_set.attributes:
+    for attribute in property_set.get_attributes(filter=True):
         pset_dict[attribute.name] = dict()
         attribute_dict = pset_dict[attribute.name]
 
@@ -30,7 +30,7 @@ def export(project: classes.Project, path: str | os.PathLike) -> None:
         json_dict[obj.ident_value] = dict()
         obj_dict = json_dict[obj.ident_value]
         for property_set in obj.get_property_sets(filter=True):
-            if not property_set.attributes:
+            if not property_set.get_attributes(filter=True):
                 continue
             obj_dict[property_set.name] = dict()
             pset_dict = obj_dict[property_set.name]

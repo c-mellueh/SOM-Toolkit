@@ -113,8 +113,8 @@ def paint_attribute_table(table: QTableWidget, attribute_table: Type[tool.Attrib
             table.removeRow(row)
         return
     property_set: SOMcreator.PropertySet
-    delete_attributes = existing_attributes.difference(set(property_set.attributes))
-    new_attributes = set(property_set.attributes).difference(existing_attributes)
+    delete_attributes = existing_attributes.difference(set(property_set.get_attributes(filter=True)))
+    new_attributes = set(property_set.get_attributes(filter=True)).difference(existing_attributes)
     attribute_table.remove_attributes_from_table(delete_attributes, table)
     attribute_table.add_attributes_to_table(sorted(new_attributes), table)
     for row in range(table.rowCount()):

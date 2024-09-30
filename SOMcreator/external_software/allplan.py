@@ -59,7 +59,8 @@ def create_mapping(project: classes.Project, path: str, allplan_mapping_name: st
     def create_zuweisung(kenner: str, worksheet: Worksheet):
 
         def get_attrib_count(obj: classes.Object):
-            return sum(len([attrib for attrib in pset.attributes]) for pset in obj.get_property_sets(filter=True))
+            return sum(len([attrib for attrib in pset.get_attributes(filter=True)]) for pset in
+                       obj.get_property_sets(filter=True))
 
         max_attribs = max(
             get_attrib_count(obj) for obj in project.get_objects(filter=True))
@@ -71,7 +72,7 @@ def create_mapping(project: classes.Project, path: str, allplan_mapping_name: st
             worksheet.cell(row_index, 2, obj.ident_value)
             col_index = 3
             for propery_set in obj.get_property_sets(filter=True):
-                for attribute in propery_set.attributes:
+                for attribute in propery_set.get_attributes(filter=True):
                     if attribute.name != kenner:
                         worksheet.cell(row_index, col_index, attribute.name)
                         col_index += 2

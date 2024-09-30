@@ -127,7 +127,7 @@ def create_aggregation_structure(ifc_file: ifcopenshell.file, structure: dict, i
 
     def fill_group_with_empty_values(ifc_group: ifcopenshell.entity_instance, group_obj: classes.Object, identity):
         for pset in group_obj.get_property_sets(filter=True):
-            attributes = {attribute.name: None for attribute in pset.attributes}
+            attributes = {attribute.name: None for attribute in pset.get_attributes(filter=True)}
             if pset.name == main_pset:
                 attributes[main_attribute] = group_obj.ident_value
                 attributes[NAME] = group_obj.name

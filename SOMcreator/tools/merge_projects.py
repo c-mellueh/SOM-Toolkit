@@ -69,7 +69,7 @@ def _import_pset(existing_project, import_project, property_set: SOMcreator.Prop
 def _import_attribute(existing_project, import_project, attribute, phase_mapping, use_case_mapping,
                       parent_pset: SOMcreator.PropertySet = None):
     if parent_pset:
-        parent_attribute = {a.name: a for a in parent_pset.attributes}.get(attribute.name)
+        parent_attribute = {a.name: a for a in parent_pset.get_attributes(filter=False)}.get(attribute.name)
         if parent_attribute:
             attribute.parent = parent_attribute
     _add_item(existing_project, import_project, attribute, phase_mapping, use_case_mapping)
