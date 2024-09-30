@@ -84,7 +84,7 @@ def merge_projects(existing_project: Project, import_project: Project, phase_map
     :param use_case_mapping: mapping Dict import UseCase as Key existing UseCase as Value
     :return:
     """
-    existing_identifiers = {o.ident_value for o in existing_project.get_all_objects()}
+    existing_identifiers = {o.ident_value for o in existing_project.get_objects(filter=False)}
     import_predef_pset_dict = {p: p for p in import_project.get_predefined_psets()}
     existing_predefined_pset_name_dict = {p.name: p for p in existing_project.get_predefined_psets()}
 
@@ -95,7 +95,7 @@ def merge_projects(existing_project: Project, import_project: Project, phase_map
         else:
             import_predef_pset_dict[import_predef_pset] = new_pset
 
-    for obj in import_project.get_all_objects():
+    for obj in import_project.get_objects(filter=False):
         if obj.ident_value not in existing_identifiers:
             _import_object(existing_project, import_project, obj, import_predef_pset_dict, phase_mapping,
                            use_case_mapping)

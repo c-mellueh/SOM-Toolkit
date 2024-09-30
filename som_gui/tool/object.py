@@ -62,7 +62,7 @@ class Object(som_gui.core.tool.Object):
 
     @classmethod
     def get_all_objects(cls):
-        return tool.Project.get().get_all_objects()
+        return tool.Project.get().get_objects(filter=False)
 
     @classmethod
     def get_item_from_object(cls, obj: SOMcreator.Object) -> QTreeWidgetItem:
@@ -353,7 +353,7 @@ class Object(som_gui.core.tool.Object):
     def get_existing_ident_values(cls) -> set[str]:
         proj = tool.Project.get()
         ident_values = set()
-        for obj in proj.get_all_objects():
+        for obj in proj.get_objects(filter=False):
             if obj.ident_value:
                 ident_values.add(obj.ident_value)
         return ident_values

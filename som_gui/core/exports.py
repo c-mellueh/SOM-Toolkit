@@ -95,7 +95,7 @@ def export_desite_abbreviation(main_window: Type[tool.MainWindow],
                                popups: Type[tool.Popups]) -> None:
     path = popups.get_save_path("JSON (*.json);;", main_window.get(), appdata.get_path(ABBREV_PATH))
     if path is not None:
-        abbrev = {obj.abbreviation: [obj.ident_value, obj.name] for obj in project.get().get_all_objects()}
+        abbrev = {obj.abbreviation: [obj.ident_value, obj.name] for obj in project.get().get_objects(filter=False)}
         with open(path, "w") as file:
             json.dump(abbrev, file, indent=2)
         appdata.set_path(ABBREV_PATH, path)

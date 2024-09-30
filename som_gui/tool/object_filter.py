@@ -291,7 +291,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         object_dict = dict()
         pset_dict = dict()
         attribute_dict = dict()
-        for obj in Project.get().get_all_objects():
+        for obj in Project.get().get_objects(filter=False):
             object_dict[obj] = obj.get_filter_matrix()
             for pset in obj.get_all_property_sets():
                 pset_dict[pset] = pset.get_filter_matrix()
@@ -733,7 +733,7 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
     def export_object_filter_differences(cls, file: TextIO, attribute_compare: Type[tool.AttributeCompare]):
         project_0 = cls.get_project(0)
         object_dict = attribute_compare.get_object_dict()
-        for obj0 in sorted(project_0.get_all_objects(), key=lambda x: x.name):
+        for obj0 in sorted(project_0.get_objects(filter=False), key=lambda x: x.name):
             obj1 = object_dict[obj0]
             if obj1 is None:
                 continue

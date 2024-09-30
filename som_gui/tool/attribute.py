@@ -267,7 +267,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             return
         project_0, project_1 = cls.get_project(0), cls.get_project(1)
         found_objects = list()
-        for obj0 in project_0.get_all_objects():
+        for obj0 in project_0.get_objects(filter=False):
             match = cls.find_matching_object(obj0, 1)
             if match is None:
                 object_list.append((obj0, None))
@@ -277,7 +277,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                 found_objects.append(match)
                 cls.compare_objects(obj0, match)
 
-        for obj1 in [o for o in project_1.get_all_objects() if o not in found_objects]:
+        for obj1 in [o for o in project_1.get_objects(filter=False) if o not in found_objects]:
             object_list.append((None, obj1))
             cls.compare_objects(None, obj1)
 
@@ -685,7 +685,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         project0 = cls.get_project(0)
         object_dict = cls.get_object_dict()
 
-        for obj0 in sorted(project0.get_all_objects(), key=lambda x: x.name):
+        for obj0 in sorted(project0.get_objects(filter=False), key=lambda x: x.name):
             obj1 = object_dict[obj0]
             if cls.are_objects_identical(obj0, obj1):
                 continue
@@ -825,7 +825,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def get_ident_dict(cls, index=1) -> dict:
         if cls.get_properties().ident_dicts[index] is None:
             project = cls.get_project(index)
-            d = {obj.ident_value: obj for obj in project.get_all_objects()}
+            d = {obj.ident_value: obj for obj in project.get_objects(filter=False)}
             cls.get_properties().ident_dicts[index] = d
         return cls.get_properties().ident_dicts[index]
 

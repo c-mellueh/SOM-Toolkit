@@ -133,7 +133,7 @@ def start_attribute_import(file: ifcopenshell.file, path, attribute_import: Type
     entity_list = list(file.by_type("IfcObject"))
     entity_count = len(entity_list)
     status_text = "Entität aus Datei importieren:"
-    attribute_dict = attribute_import_results.build_attribute_dict(list(project.get().get_all_objects()))
+    attribute_dict = attribute_import_results.build_attribute_dict(list(project.get().get_objects(filter=False)))
     for index, entity in enumerate(entity_list):
         if index % 100 == 0:
             attribute_import.set_progress(int(index / entity_count * 100))
@@ -201,7 +201,7 @@ def update_identifier_combobox(attribute_import_results: Type[tool.AttributeImpo
         return
     combobox = attribute_import_results.get_somtype_combo_box()
     ifc_type = attribute_import_results.get_ifctype_combo_box().currentText()
-    object_list = list(project.get().get_all_objects())
+    object_list = list(project.get().get_objects(filter=False))
 
     wanted_som_types = set(
         attribute_import_sql.get_identifier_types(ifc_type, attribute_import_results.get_all_keyword()))
@@ -343,7 +343,7 @@ def results_accept_clicked(attribute_import_results: Type[tool.AttributeImportRe
                            attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
     proj = project.get()
     new_attribute_values = attribute_import_sql.get_new_attribute_values()
-    attribute_dict = attribute_import_results.build_attribute_dict(list(proj.get_all_objects()))
+    attribute_dict = attribute_import_results.build_attribute_dict(list(proj.get_objects(filter=False)))
 
     for identifier, property_set_name, attribute_name, value in new_attribute_values:
         attribute = attribute_dict[identifier][property_set_name][attribute_name]

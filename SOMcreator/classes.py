@@ -116,9 +116,10 @@ class Project(object):
     def get_hirarchy_items(self) -> Iterator[Object, PropertySet, Attribute, Aggregation, Hirarchy]:
         return filter(lambda i: isinstance(i, (Object, PropertySet, Attribute, Aggregation)), self._items)
 
-    def get_all_objects(self) -> Iterator[Object]:
+    @filterable
+    def get_objects(self) -> Iterator[Object]:
         return filter(lambda item: isinstance(item, Object), self._items)
-
+    
     def get_all_property_sets(self) -> Iterator[PropertySet]:
         return filter(lambda item: isinstance(item, PropertySet), self._items)
 
@@ -154,11 +155,11 @@ class Project(object):
             return "", ""
 
     def get_object_by_identifier(self, identifier: str) -> Object | None:
-        return {obj.ident_value: obj for obj in self.get_all_objects()}.get(identifier)
+        return {obj.ident_value: obj for obj in self.get_objects(filter=False)}.get(identifier)
 
     def get_uuid_dict(self):
         pset_dict = {pset.uuid: pset for pset in self.get_all_property_sets()}
-        object_dict = {obj.uuid: obj for obj in self.get_all_objects()}
+        object_dict = {obj.uuid: obj for obj in self.get_objects(filter=False)}
         attribute_dict = {attribute.uuid: attribute for attribute in self.get_all_attributes()}
         aggregation_dict = {aggreg.uuid: aggreg for aggreg in self.get_all_aggregations()}
         full_dict = pset_dict | object_dict | attribute_dict | aggregation_dict
@@ -310,7 +311,7 @@ class Project(object):
     @property
     @filterable
     def objects(self) -> Iterator[Object]:
-        return self.get_all_objects()
+        return self.get_objects(filter=False)
 
     @property
     @filterable
