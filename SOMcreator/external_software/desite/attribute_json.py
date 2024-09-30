@@ -22,7 +22,7 @@ def _iter_attributes(property_set: classes.PropertySet, pset_dict: dict) -> None
 
 def export(project: classes.Project, path: str | os.PathLike) -> None:
     json_dict = dict()
-    for obj in sorted(project.objects, key=lambda x: x.ident_value):
+    for obj in sorted(project.get_objects(filter=True), key=lambda x: x.ident_value):
         if not obj.property_sets:
             continue
         if obj.ident_value is None:

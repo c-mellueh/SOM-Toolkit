@@ -99,7 +99,7 @@ class Project(som_gui.core.tool.Project):
         if proj is None:
             return []
         if filter_objects:
-            return [obj for obj in proj.objects if obj.parent is None]
+            return [obj for obj in proj.get_objects(filter=True) if obj.parent is None]
         else:
             return [obj for obj in proj.get_objects(filter=False) if obj.parent is None]
 

@@ -13,7 +13,7 @@ def _handle_bookmark_list(proj: classes.Project) -> etree.ElementTree:
     xml_bookmark_list = etree.SubElement(xml_bookmarks, "cBookmarkList")
 
     obj: classes.Object
-    for obj in sorted(proj.objects, key=lambda o: o.ident_value):
+    for obj in sorted(proj.get_objects(filter=True), key=lambda o: o.ident_value):
         xml_bookmark = etree.SubElement(xml_bookmark_list, "cBookmark")
         xml_bookmark.set("ID", str(obj.uuid))
 
@@ -44,7 +44,7 @@ def _handle_bookmark_list(proj: classes.Project) -> etree.ElementTree:
 
 def _get_attribute_dict(proj: classes.Project) -> dict[str, str]:
     attribute_dict = {}
-    for obj in proj.objects:
+    for obj in proj.get_objects(filter=True):
         for property_set in obj.property_sets:
             for attribute in property_set.attributes:
                 attribute_dict[f"{property_set.name}:{attribute.name}"] = xml.transform_data_format(attribute.data_type)

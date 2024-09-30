@@ -62,12 +62,12 @@ def create_mapping(project: classes.Project, path: str, allplan_mapping_name: st
             return sum(len([attrib for attrib in pset.attributes]) for pset in obj.property_sets)
 
         max_attribs = max(
-            get_attrib_count(obj) for obj in project.objects)
+            get_attrib_count(obj) for obj in project.get_objects(filter=True))
         header = ["Kenner"] + ["Wert", "Name"] * max_attribs
         [worksheet.cell(1, i + 1, text) for i, text in enumerate(header)]  # print Header
         worksheet.cell(2, 1, kenner)
         row_index = 2
-        for obj in project.objects:
+        for obj in project.get_objects(filter=True):
             worksheet.cell(row_index, 2, obj.ident_value)
             col_index = 3
             for propery_set in obj.property_sets:

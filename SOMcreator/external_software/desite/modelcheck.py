@@ -397,7 +397,7 @@ def _fast_object_check(main_pset: str, main_attrib: str, author: str, required_d
 def build_full_data_dict(proj: classes.Project) -> dict[
     classes.Object, dict[classes.PropertySet, list[classes.Attribute]]]:
     d = dict()
-    for obj in proj.objects:
+    for obj in proj.get_objects(filter=True):
         d[obj] = dict()
         for pset in obj.property_sets:
             d[obj][pset] = list()
@@ -412,7 +412,7 @@ def export(project: classes.Project,
            object_structure: dict[classes.Object, set[classes.Object]] = None,
            export_type: str = "JS") -> None:
     if not object_structure:
-        object_structure = {o: o.children for o in project.objects}
+        object_structure = {o: o.children for o in project.get_objects(filter=True)}
 
     template = _handle_template(Template.TEMPLATE)
     xml_container, xml_qa_export = _init_xml(project.author, project.name, project.version)

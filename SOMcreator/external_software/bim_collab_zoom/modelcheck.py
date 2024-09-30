@@ -113,7 +113,7 @@ def export(required_data_dict: REQUIRED_DATA_DICT,
 
 def build_full_required_data_dict(project: classes.Project) -> REQUIRED_DATA_DICT:
     required_data = dict()
-    for obj in list(project.objects):
+    for obj in list(project.get_objects(filter=True)):
         required_data[obj] = dict()
         for pset in obj.property_sets:
             required_data[obj][pset] = [attribute for attribute in pset.attributes]

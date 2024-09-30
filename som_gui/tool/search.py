@@ -73,9 +73,9 @@ class Search(som_gui.core.tool.Search):
     @classmethod
     def create_table_items(cls):
         item_dict = dict()
-        project = tool.Project.get()
+        project: SOMcreator.Project = tool.Project.get()
         if cls.get_search_mode() == 1:
-            for obj in project.objects:
+            for obj in project.get_objects(filter=True):
                 item_dict[obj] = [obj.name, obj.ident_value, obj.abbreviation]
         elif cls.get_search_mode() == 2:
             attributes = filter(lambda item: isinstance(item, SOMcreator.Attribute),

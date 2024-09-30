@@ -193,7 +193,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         prop = cls.get_properties()
         data_dict = dict()
         if not prop.check_state_dict:
-            for obj in tool.Project.get().objects:
+            for obj in tool.Project.get().get_objects(filter=True):
                 data_dict[obj] = True
                 for property_set in obj.property_sets:
                     data_dict[property_set] = True

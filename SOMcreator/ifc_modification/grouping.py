@@ -53,7 +53,7 @@ def create_structure_dict(ifc_file: ifcopenshell.file, project: classes.Project,
                           attribute_bundle: tuple[str, str, str, str, str, str]) -> dict:
     """Iterate over all Entities, build the targeted Datastructure"""
     targeted_group_structure = {GROUP: {}, ELEMENT: {}, IFC_REP: None}
-    bk_dict = {obj.ident_value: obj for obj in project.objects}
+    bk_dict = {obj.ident_value: obj for obj in project.get_objects(filter=True)}
 
     for index, el in enumerate(list(ifc_file.by_type("IfcElement"))):
         attrib, gruppe, identity = get_ifc_el_info(el, attribute_bundle)
@@ -202,7 +202,7 @@ def main(ifc_path: os.PathLike | str, export_path: os.PathLike | str, project: c
 
     targeted_group_structure = create_structure_dict(ifc_file, project, attribute_bundle)
     fill_existing_groups(ifc_file, targeted_group_structure, attribute_bundle)
-    kuerzel_dict = {obj.abbreviation.upper(): obj for obj in project.objects}
+    kuerzel_dict = {obj.abbreviation.upper(): obj for obj in project.get_objects(filter=True)}
     create_aggregation_structure(ifc_file, targeted_group_structure, [], None, True, attribute_bundle, owner_history,
                                  kuerzel_dict, fill_with_empty_values, None)
     ifc_file.write(export_path)

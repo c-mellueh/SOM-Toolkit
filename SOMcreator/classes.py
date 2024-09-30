@@ -126,7 +126,7 @@ class Project(object):
     def get_main_attribute(self) -> tuple[str, str]:
         ident_attributes = dict()
         ident_psets = dict()
-        for obj in self.objects:
+        for obj in self.get_objects(filter=False):
             if not isinstance(obj.ident_attrib, Attribute):
                 continue
             ident_pset = obj.ident_attrib.property_set.name
@@ -297,12 +297,6 @@ class Project(object):
 
         if index in self.active_phases:
             self.active_phases.remove(index)
-
-
-    @property
-    @filterable
-    def objects(self) -> Iterator[Object]:
-        return self.get_objects(filter=False)
 
     @property
     @filterable

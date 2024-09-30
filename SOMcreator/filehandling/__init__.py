@@ -28,7 +28,7 @@ filter_matrixes = list()
 def create_mapping_script(project: SOMcreator.Project, pset_name: str, path: str):
     attrib_dict = dict()
     obj: SOMcreator.Object
-    for obj in project.objects:
+    for obj in project.get_objects:
         klass = obj.ident_attrib.value[0]
         obj_dict = dict()
         for pset in obj.property_sets:

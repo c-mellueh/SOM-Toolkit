@@ -27,7 +27,7 @@ def export_boq(project: classes.Project, path: str, pset_name: str) -> None:
         header = ["Ident", "Object"] + [f"{pset_name}:{name}" for name in distinct_attribute_names]
         writer.writerow(header)
 
-        for obj in project.objects:
+        for obj in project.get_objects(filter=True):
             if pset_name not in [pset.name for pset in obj.property_sets]:
                 continue
 

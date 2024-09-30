@@ -93,7 +93,7 @@ class ExportExcel:
             sheet.cell(1, column).value = text
 
         row = 1
-        for row, obj in enumerate(sorted(project.objects), start=2):
+        for row, obj in enumerate(sorted(project.get_objects(filter=True)), start=2):
             for column, getter_function in enumerate(getter_functions, start=1):
                 sheet.cell(row, column).value = getter_function(obj)
                 if obj.optional:
@@ -110,9 +110,9 @@ class ExportExcel:
     @classmethod
     def filter_to_sheets(cls, ) -> dict:
         project = cls.get_project()
-        d = {obj.ident_value: {NAME: obj.name, OBJECTS: []} for obj in project.objects if
+        d = {obj.ident_value: {NAME: obj.name, OBJECTS: []} for obj in project.get_objects(filter=True) if
              len(obj.ident_value.split(".")) == 1}
-        for obj in project.objects:
+        for obj in project.get_objects(filter=True):
             group = obj.ident_value.split(".")[0]
             d[group][OBJECTS].append(obj)
         d["son"] = {NAME: "Sonstige", OBJECTS: []}

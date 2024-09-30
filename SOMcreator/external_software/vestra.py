@@ -60,7 +60,7 @@ def create_mapping(excel_path: str, folder_path: str, project: classes.Project) 
         os.mkdir(folder_path)
 
     important_rows = [row for i, row in enumerate(sheet.rows) if row[2].value is not None and i != 0]
-    object_dict = {obj.ident_attrib.value[0]: obj for obj in project.objects if not obj.is_concept}
+    object_dict = {obj.ident_attrib.value[0]: obj for obj in project.get_objects(filter=True) if not obj.is_concept}
 
     for row in important_rows:
         values = list(map(lambda x: x.value, row))
