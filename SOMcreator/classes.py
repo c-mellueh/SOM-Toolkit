@@ -5,7 +5,7 @@ import os
 from typing import Iterator, Union
 from uuid import uuid4
 import copy as cp
-from anytree import AnyNode
+from typing import Callable
 
 from . import filehandling
 from .constants import value_constants
@@ -13,13 +13,14 @@ from dataclasses import dataclass, field
 
 FILTER_KEYWORD = "filter"
 
+
 # Add child to Parent leads to reverse
 
 def _create_filter_matrix(phase_count, usecase_count, default=True):
     return [[default for __ in range(usecase_count)] for _ in range(phase_count)]
 
 
-def filterable(func):
+def filterable(func: Callable):
     """decorator function that filters list output of function by  phase and use_case"""
 
     def inner(self, *args, **kwargs):
@@ -124,7 +125,8 @@ class Project(object):
     def get_property_sets(self) -> Iterator[PropertySet]:
         return filter(lambda item: isinstance(item, PropertySet), self._items)
 
-    def get_all_attributes(self) -> Iterator[Attribute]:
+    @filterable
+    def get_attributes(self) -> Iterator[Attribute]:
         return filter(lambda item: isinstance(item, Attribute), self._items)
 
     def get_all_aggregations(self) -> Iterator[Aggregation]:
@@ -161,7 +163,7 @@ class Project(object):
     def get_uuid_dict(self):
         pset_dict = {pset.uuid: pset for pset in self.get_property_sets(filter=False)}
         object_dict = {obj.uuid: obj for obj in self.get_objects(filter=False)}
-        attribute_dict = {attribute.uuid: attribute for attribute in self.get_all_attributes()}
+        attribute_dict = {attribute.uuid: attribute for attribute in self.get_attributes()}
         aggregation_dict = {aggreg.uuid: aggreg for aggreg in self.get_all_aggregations()}
         full_dict = pset_dict | object_dict | attribute_dict | aggregation_dict
         if None in full_dict:
@@ -322,7 +324,7 @@ class Project(object):
     @property
     @filterable
     def attributes(self) -> Iterator[Attribute]:
-        return self.get_all_attributes()
+        return self.get_attributes()
 
     @property
     @filterable

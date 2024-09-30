@@ -70,7 +70,7 @@ def init_database(attribute_import: Type[tool.AttributeImport], attribute_import
     proj = project.get()
     db_path = util.create_tempfile(".db")
     attribute_import_sql.init_database(db_path)
-    all_attributes = list(proj.get_all_attributes())
+    all_attributes = list(proj.get_attributes(filter=False))
 
     attribute_count = len(all_attributes)
     attribute_import_sql.connect_to_data_base(db_path)
