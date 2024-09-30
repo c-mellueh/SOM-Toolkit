@@ -34,6 +34,7 @@ def filterable(func: Callable):
         if proj is None:
             return result
         return filter(lambda e: e.is_active(), result)
+
     return inner
 
 
@@ -96,7 +97,6 @@ class Project(object):
     def remove_item(self, item: Hirarchy):
         if item in self._items:
             self._items.remove(item)
-
 
     # Item Getter Methods
     @filterable
@@ -327,8 +327,6 @@ class Hirarchy(object, metaclass=IterRegistry):
         if optional is not None:
             self._optional = optional
 
-
-
     def remove_parent(self) -> None:
         self._parent = None
 
@@ -376,6 +374,7 @@ class Hirarchy(object, metaclass=IterRegistry):
                 if self._filter_matrix[phase][usecase]:
                     return True
         return False
+
     @property
     def project(self):
         return self._project
@@ -418,7 +417,7 @@ class Hirarchy(object, metaclass=IterRegistry):
     @name.setter
     def name(self, value: str):
         self._name = value
-        for child in self.children:
+        for child in self.get_children(filter=False):
             child.name = value
 
     @property
@@ -435,7 +434,7 @@ class Hirarchy(object, metaclass=IterRegistry):
 
     @property
     def is_parent(self) -> bool:
-        if self.children:
+        if self.get_childrenget_children(filter=False):
             return True
         else:
             return False
@@ -447,10 +446,9 @@ class Hirarchy(object, metaclass=IterRegistry):
         else:
             return False
 
-    @property
     @filterable
-    def children(self) -> set[PropertySet | Object | Attribute | Aggregation]:
-        return self._children
+    def get_children(self) -> Iterator[PropertySet | Object | Attribute | Aggregation]:
+        return iter(self._children)
 
     def get_all_children(self):
         return self._children
@@ -473,11 +471,11 @@ class Hirarchy(object, metaclass=IterRegistry):
             self._registry.remove(self)
 
         if recursive:
-            for child in list(self.children):
+            for child in list(self.get_children(filter=False)):
                 child.delete(recursive)
 
         else:
-            for child in self.children:
+            for child in self.get_children(filter=False):
                 child.remove_parent()
         self.project.remove_item(self)
         del self
@@ -804,7 +802,7 @@ class PropertySet(Hirarchy):
         self._attributes.add(value)
 
         value.property_set = self
-        for child in self.children:
+        for child in self.get_children(filter=False):
             attrib: Attribute = cp.copy(value)
             value.add_child(attrib)
             child.add_attribute(attrib)
@@ -813,7 +811,7 @@ class PropertySet(Hirarchy):
         if value in self.attributes:
             self._attributes.remove(value)
             if recursive:
-                for child in list(value.children):
+                for child in value.get_children(filter=False):
                     child.property_set.remove_attribute(child)
         else:
             logging.warning(f"{self.name} -> {value} not in Attributes")
@@ -915,7 +913,7 @@ class Attribute(Hirarchy):
     def name(self, value: str) -> None:
         # ToDo: add request for unlink
         self._name = value
-        for child in self.children:
+        for child in self.get_children(filter=False):
             child.name = value
 
     @property
@@ -960,7 +958,7 @@ class Attribute(Hirarchy):
             self._value_type = value
 
         if self.is_parent:
-            for child in self.children:
+            for child in self.get_children(filter=False):
                 child._value_type = value
 
     @property
@@ -978,7 +976,7 @@ class Attribute(Hirarchy):
             self._data_type = value
 
         if self.is_parent:
-            for child in self.children:
+            for child in self.get_children(filter=False):
                 child._data_type = value
 
     @property

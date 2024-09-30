@@ -49,7 +49,7 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
     # create connections
     node_dict = {node.aggregation: node for node in view.get_nodes_in_scene(scene)}
     for aggregation, top_node in node_dict.items():
-        for sub_aggregation in aggregation.children:
+        for sub_aggregation in aggregation.get_children(filter=True):
             sub_node = node_dict.get(sub_aggregation)
             if sub_node is None:
                 continue

@@ -135,7 +135,7 @@ class Mapping(som_gui.core.tool.Mapping):
             if not cs:
                 return
             cls.add_object_to_ifc_export_data(o)
-            for child in o.children:
+            for child in o.get_children(filter=True):
                 _loop_objects(child)
 
         cls.reset_export_dict()

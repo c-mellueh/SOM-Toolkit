@@ -134,4 +134,4 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def _build_tree(cls) -> dict[SOMcreator.Object, set[SOMcreator.Object]]:
-        return {obj: obj.children for obj in tool.Project.get().get_objects(filter=False)}
+        return {obj: set(obj.get_children(filter=True)) for obj in tool.Project.get().get_objects(filter=False)}

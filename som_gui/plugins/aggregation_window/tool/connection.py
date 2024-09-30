@@ -126,7 +126,7 @@ class Connection(som_gui.plugins.aggregation_window.core.tool.Connection):
     @classmethod
     def get_connection_displacement(cls, connection: connection_ui.Connection) -> float:
         aggreg: Aggregation
-        connections = {aggreg.parent_connection for aggreg in connection.top_node.aggregation.children}
+        connections = {aggreg.parent_connection for aggreg in connection.top_node.aggregation.get_children(filter=True)}
         disp_dict = dict()
         agg = value_constants.AGGREGATION
         inh = value_constants.INHERITANCE

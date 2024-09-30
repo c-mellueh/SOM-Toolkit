@@ -19,7 +19,7 @@ def _handle_section(id_dict, aggregation: classes.Aggregation, xml_item: Element
     xml_child.set("type", "typeBsGroup")
     xml_child.set("takt", "")
 
-    for child in sorted(aggregation.children, key=lambda x: x.name):
+    for child in sorted(aggregation.get_children(filter=True), key=lambda x: x.name):
         connection_type = child.parent_connection
         if connection_type == value_constants.AGGREGATION:
             _handle_section(id_dict, child, xml_child)

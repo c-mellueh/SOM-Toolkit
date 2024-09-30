@@ -660,7 +660,7 @@ class Object(som_gui.core.tool.Object):
             item = parent_item.child(index)
             obj: SOMcreator.Object = cls.get_object_from_item(item)
             cls.update_item(item, obj)
-            cls.fill_object_tree(set(obj.children), item)
+            cls.fill_object_tree(set(obj.get_children(filter=True)), item)
 
     @classmethod
     def clear_object_input(cls, ui):

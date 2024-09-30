@@ -61,7 +61,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         for attribute in attributes:
             if not attribute.parent:
                 continue
-            if not attribute in attribute.parent.children:
+            if not attribute in attribute.parent.get_children(filter=True):
                 continue
             attribute.parent.remove_child(attribute)
 

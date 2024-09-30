@@ -355,7 +355,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def get_pset_info_list(cls):
         info_list = list()
         info_list.append(("Name", lambda p: getattr(p, "name")))
-        info_list.append(("Child Count", lambda p: len(list(p.children)) if p else ""))
+        info_list.append(("Child Count", lambda p: len(list(p.get_children(filter=True))) if p else ""))
         return info_list
 
     @classmethod

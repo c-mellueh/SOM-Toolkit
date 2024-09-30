@@ -77,7 +77,8 @@ def remove_part_of_dict(key):
     :param key:
     :return:
     """
-    SOMcreator.filehandling.plugin_dict.pop(key)
+    if key in SOMcreator.filehandling.plugin_dict:
+        SOMcreator.filehandling.plugin_dict.pop(key)
 
 
 #### Export ######

@@ -143,7 +143,7 @@ def _create_parent_reference(child_obj: SOMcreator.Object, parent_obj: SOMcreato
 
 def _iterate_parent_relations(objects: list[SOMcreator.Object], class_dict: dict[SOMcreator.Object, bsdd.Class]):
     def _iterate(obj: SOMcreator.Object):
-        for child in obj.children:
+        for child in obj.get_children(filter=True):
             _create_parent_reference(child, obj, class_dict)
             _iterate(child)
 
@@ -170,7 +170,7 @@ def _iterate_aggregations(objects: list[SOMcreator.Object], class_dict: dict[SOM
     for obj in objects:
         children = list()
         for aggregation in obj.aggregations:
-            for child_aggregation in aggregation.children:
+            for child_aggregation in aggregation.get_children(filter=True):
                 child_obj = child_aggregation.object
                 if child_obj in children:
                     continue

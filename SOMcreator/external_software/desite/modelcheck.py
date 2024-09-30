@@ -412,7 +412,7 @@ def export(project: classes.Project,
            object_structure: dict[classes.Object, set[classes.Object]] = None,
            export_type: str = "JS") -> None:
     if not object_structure:
-        object_structure = {o: o.children for o in project.get_objects(filter=True)}
+        object_structure = {o: o.get_children(filter=True) for o in project.get_objects(filter=True)}
 
     template = _handle_template(Template.TEMPLATE)
     xml_container, xml_qa_export = _init_xml(project.author, project.name, project.version)

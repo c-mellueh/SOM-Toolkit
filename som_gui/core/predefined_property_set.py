@@ -98,7 +98,7 @@ def repaint_object_list(predefined_pset: Type[tool.PredefinedPropertySet]):
     if property_set is None:
         predefined_pset.clear_object_table()
         return
-    predefined_property_sets = set(property_set.children)
+    predefined_property_sets = set(property_set.get_children(filter=True))
     existing_property_sets = predefined_pset.get_existing_psets_in_table_widget(table_widget)
     delete_property_sets = existing_property_sets.difference(predefined_property_sets)
     add_property_sets = sorted(predefined_property_sets.difference(existing_property_sets), key=lambda p: p.name)

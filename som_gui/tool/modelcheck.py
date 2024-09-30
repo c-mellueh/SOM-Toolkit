@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os.path
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Iterator
 from som_gui import tool
 from PySide6.QtCore import QRunnable, Signal, QObject
 from PySide6.QtWidgets import QLabel, QProgressBar
@@ -116,7 +116,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def build_data_dict(cls, check_state_dict: dict[
         SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute, bool]):
-        def iter_objects(objects: set[SOMcreator.Object]):
+        def iter_objects(objects: Iterator[SOMcreator.Object]):
             for obj in objects:
                 if not check_state_dict.get(obj):
                     continue
@@ -135,7 +135,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
                         output_data_dict[obj] = {property_set: attribute_list}
                     else:
                         output_data_dict[obj][property_set] = attribute_list
-                iter_objects(obj.children)
+                iter_objects(obj.get_children(filter=True))
 
         output_data_dict = dict()
         iter_objects(tool.Project.get_root_objects())
