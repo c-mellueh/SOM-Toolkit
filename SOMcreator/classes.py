@@ -16,9 +16,6 @@ FILTER_KEYWORD = "filter"
 
 # Add child to Parent leads to reverse
 
-def _create_filter_matrix(phase_count, usecase_count, default=True):
-    return [[default for __ in range(usecase_count)] for _ in range(phase_count)]
-
 
 def filterable(func: Callable):
     """decorator function that filters list output of function by  phase and use_case"""
@@ -216,7 +213,7 @@ class Project(object):
         return self._use_cases[index]
 
     def create_filter_matrix(self, default_state: bool = True):
-        return _create_filter_matrix(len(self._phases), len(self._use_cases), default_state)
+        return [[default_state for __ in range(len(self.get_usecases()))] for _ in range(len(self.get_phases()))]
 
     def get_filter_matrix(self) -> list[list[bool]]:
         """
