@@ -130,7 +130,7 @@ def _create_classes(objects: list[SOMcreator.Object], class_properties, dictiona
     for obj in objects:
         c = _create_class(obj, dictionary)
         class_dict[obj] = c
-        c.ClassProperties = [class_property_dict[a] for p in obj.property_sets for a in p.attributes]
+        c.ClassProperties = [class_property_dict[a] for p in obj.get_property_sets(filter=True) for a in p.attributes]
     return class_dict
 
 
@@ -179,4 +179,4 @@ def _iterate_aggregations(objects: list[SOMcreator.Object], class_dict: dict[SOM
 
 
 def _get_all_attributes(object_list: list[SOMcreator.Object]):
-    return [a for o in object_list for p in o.property_sets for a in p.attributes]
+    return [a for o in object_list for p in o.get_property_sets(filter=True) for a in p.attributes]

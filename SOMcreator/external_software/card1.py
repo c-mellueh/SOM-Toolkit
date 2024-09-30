@@ -9,7 +9,7 @@ def create_mapping(src_path: str, dest_path: str, project: classes.Project) -> N
     def _create_sheet(obj: classes.Object, workbook: Workbook, name):
         new_sheet = workbook.create_sheet(name)
         attributes = set()
-        for property_set in obj.property_sets:
+        for property_set in obj.get_property_sets(filter=True):
             for attribute in property_set.attributes:
                 attributes.add(attribute.name)
 

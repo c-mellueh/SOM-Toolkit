@@ -359,7 +359,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         result_dict = dict()
         for obj in objects:
             object_dict = dict()
-            for pset in obj.property_sets:
+            for pset in obj.get_property_sets(filter=True):
                 object_dict[pset.name] = {a.name: a for a in pset.attributes}
             result_dict[obj.ident_value] = object_dict
         return result_dict

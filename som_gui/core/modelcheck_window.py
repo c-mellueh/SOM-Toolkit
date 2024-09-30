@@ -171,7 +171,8 @@ def paint_pset_tree(modelcheck_window: Type[tool.ModelcheckWindow]):
         return
     cs = modelcheck_window.get_item_check_state(obj)
     enabled = True if cs == Qt.CheckState.Checked else False
-    modelcheck_window.fill_pset_tree(set(obj.property_sets), enabled, modelcheck_window.get_pset_tree())
+    modelcheck_window.fill_pset_tree(set(obj.get_property_sets(filter=True)), enabled,
+                                     modelcheck_window.get_pset_tree())
 
 
 def object_tree_conect_menu_requested(pos, widget, modelcheck_window: Type[tool.ModelcheckWindow]):

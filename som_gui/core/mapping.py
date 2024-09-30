@@ -46,7 +46,7 @@ def update_pset_tree(mapping: Type[tool.Mapping]):
     if selected_object is None:
         property_sets = set()
     else:
-        property_sets = set(selected_object.property_sets)
+        property_sets = set(selected_object.get_property_sets(filter=True))
 
     enable_state = True if mapping.get_checkstate(selected_object) and property_sets else False
     tree = mapping.get_pset_tree()

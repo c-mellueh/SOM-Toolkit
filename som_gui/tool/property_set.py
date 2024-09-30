@@ -94,7 +94,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
                             parent: SOMcreator.PropertySet | None = None) -> SOMcreator.PropertySet | None:
 
         if obj:
-            if name in {p.name for p in obj.property_sets}:
+            if name in {p.name for p in obj.get_property_sets(filter=False)}:
                 tool.Popups.create_warning_popup(f"PropertySet existiert bereits")
                 return None
         if parent is not None:
@@ -128,7 +128,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         active_object = tool.Object.get_active_object()
         if active_object is None:
             return set()
-        return set(active_object.property_sets)
+        return set(active_object.get_property_sets(filter=True))
 
     @classmethod
     def get_table(cls):

@@ -519,7 +519,7 @@ class Object(Hirarchy):
             ident_pset = self.ident_attrib.property_set
 
         new_property_sets = set()
-        for pset in self.property_sets:
+        for pset in self.get_property_sets(filter=False):
             new_pset = cp.copy(pset)
             new_property_sets.add(new_pset)
             if pset == ident_pset:
@@ -585,7 +585,7 @@ class Object(Hirarchy):
     @property
     def inherited_property_sets(self) -> dict[Object, list[PropertySet]]:
         def recursion(recursion_property_sets, recursion_obj: Object):
-            psets = recursion_obj.property_sets
+            psets = recursion_obj.get_property_sets(filter=False)
 
             if psets:
                 recursion_property_sets[recursion_obj] = psets
@@ -626,10 +626,6 @@ class Object(Hirarchy):
     def get_property_sets(self) -> Iterator[PropertySet]:
         return iter(self._property_sets)
 
-    @property
-    @filterable
-    def property_sets(self) -> list[PropertySet]:
-        return sorted(self._property_sets, key=lambda x: x.name)
 
     # override name setter because of intheritance
     @property

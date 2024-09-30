@@ -32,7 +32,7 @@ def _handle_bookmark_list(proj: classes.Project) -> etree.ElementTree:
         text = f"{attribute.property_set.name}:{attribute.name}##{data_type}"
         xml_col.set("v", text)
 
-        for property_set in obj.property_sets:
+        for property_set in obj.get_property_sets(filter=True):
             for attribute in property_set.attributes:
                 if attribute != obj.ident_attrib:
                     xml_col = etree.SubElement(xml_bookmark, "col")
@@ -45,7 +45,7 @@ def _handle_bookmark_list(proj: classes.Project) -> etree.ElementTree:
 def _get_attribute_dict(proj: classes.Project) -> dict[str, str]:
     attribute_dict = {}
     for obj in proj.get_objects(filter=True):
-        for property_set in obj.property_sets:
+        for property_set in obj.get_property_sets(filter=True):
             for attribute in property_set.attributes:
                 attribute_dict[f"{property_set.name}:{attribute.name}"] = xml.transform_data_format(attribute.data_type)
 

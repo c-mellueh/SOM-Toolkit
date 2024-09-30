@@ -465,7 +465,8 @@ class Object(som_gui.core.tool.Object):
         pset_name = prop.object_info_widget.widget.combo_box_pset.currentText()
         active_object = prop.object_info_widget_properties.focus_object
 
-        property_set: SOMcreator.PropertySet = {p.name: p for p in active_object.property_sets}.get(pset_name)
+        property_set: SOMcreator.PropertySet = {p.name: p for p in active_object.get_property_sets(filter=False)}.get(
+            pset_name)
         attribute_names = sorted([a.name for a in property_set.attributes])
         prop.object_info_widget.widget.combo_box_attribute.clear()
         prop.object_info_widget.widget.combo_box_attribute.addItems(attribute_names)
@@ -505,7 +506,7 @@ class Object(som_gui.core.tool.Object):
         dialog.widget.button_gruppe.setChecked(info_prop.is_group)
         active_object = prop.active_object
         dialog.widget.combo_box_pset.clear()
-        [dialog.widget.combo_box_pset.addItem(p.name) for p in active_object.property_sets]
+        [dialog.widget.combo_box_pset.addItem(p.name) for p in active_object.get_property_sets(filter=False)]
         if not info_prop.is_group:
             dialog.widget.combo_box_pset.setCurrentText(info_prop.pset_name)
             dialog.widget.combo_box_attribute.setCurrentText(info_prop.attribute_name)
