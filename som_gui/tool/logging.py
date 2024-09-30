@@ -116,11 +116,10 @@ class Logging(som_gui.core.tool.Logging):
         return logging.getLogger()
 
     @classmethod
-    def set_logging_directory(cls, path: str):
-        if not path:
-            path = appdirs.user_log_dir(som_gui.__name__)
-        if path == cls.get_logging_directory():
-            return
+    def set_logging_directory(cls, path: str, check_if_identical=True):
+        if check_if_identical:
+            if path == cls.get_logging_directory():
+                return
         if not os.path.exists(path):
             tool.Util.create_directory(path)
 
@@ -137,7 +136,7 @@ class Logging(som_gui.core.tool.Logging):
         path = tool.Appdata.get_path(LOG_PATH)
         if not path:
             appdata_path = appdirs.user_log_dir(som_gui.__name__)
-            cls.set_logging_directory(appdata_path)
+            cls.set_logging_directory(appdata_path, check_if_identical=False)
         return tool.Appdata.get_path(LOG_PATH)
 
     @classmethod
