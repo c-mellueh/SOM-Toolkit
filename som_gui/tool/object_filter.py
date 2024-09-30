@@ -294,7 +294,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         attribute_dict = dict()
         for obj in Project.get().get_objects(filter=False):
             object_dict[obj] = obj.get_filter_matrix()
-            for pset in obj.get_all_property_sets():
+            for pset in obj.get_property_sets(filter=False):
                 pset: SOMcreator.PropertySet
                 pset_dict[pset] = pset.get_filter_matrix()
                 for attribute in pset.get_all_attributes():
@@ -486,7 +486,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         check_states = cls.get_check_statuses(active_object_index)
         enable_states = cls.get_enabled_statuses(active_object_index)
         sub_enable_states = [all((c, e)) for c, e in zip(check_states, enable_states)]
-        handle_psets(set(active_object.get_all_property_sets()))
+        handle_psets(set(active_object.get_property_sets(filter=False)))
 
     @classmethod
     def get_object_dict(cls):

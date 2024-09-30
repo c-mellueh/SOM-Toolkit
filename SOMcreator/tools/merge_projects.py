@@ -43,7 +43,7 @@ def _import_object(existing_project: SOMcreator.Project, import_project: SOMcrea
                    old_predefined_psets_mapping, phase_mapping,
                    use_case_mapping):
     _add_item(existing_project, import_project, obj, phase_mapping, use_case_mapping)
-    for property_set in obj.get_all_property_sets():
+    for property_set in obj.get_property_sets(filter=False):
         _import_pset(existing_project, import_project, property_set, old_predefined_psets_mapping, phase_mapping,
                      use_case_mapping)
 

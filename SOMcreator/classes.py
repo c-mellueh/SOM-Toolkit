@@ -618,11 +618,6 @@ class Object(Hirarchy):
     def ident_attrib(self, value: Attribute) -> None:
         self._ident_attrib = value
 
-    def get_all_property_sets(self) -> list[PropertySet]:
-        """returns all Propertysets even if they don't fit the current Project Phase"""
-        return self._property_sets
-
-
     # override name setter because of intheritance
     @property
     def name(self) -> str:
@@ -647,7 +642,7 @@ class Object(Hirarchy):
     @filterable
     def get_attributes(self, inherit: bool = False) -> Iterator[Attribute]:
         attributes = list()
-        for property_set in self.get_all_property_sets():
+        for property_set in self.get_property_sets(filter=False):
             attributes += property_set.attributes
         if inherit:
             attributes += self.parent.get_attributes(inherit=True, filter=False)
@@ -657,14 +652,14 @@ class Object(Hirarchy):
     def delete(self, recursive: bool = False) -> None:
         super(Object, self).delete(recursive)
 
-        for pset in self.get_all_property_sets():
+        for pset in self.get_property_sets(filter=False):
             pset.delete(recursive, override_ident_deletion=True)
 
         for aggregation in self.aggregations.copy():
             aggregation.delete(recursive)
 
     def get_property_set_by_name(self, property_set_name: str) -> PropertySet | None:
-        for property_set in self.get_all_property_sets():
+        for property_set in self.get_property_sets(filter=False):
             if property_set.name == property_set_name:
                 return property_set
         return None

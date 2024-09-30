@@ -194,13 +194,15 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def compare_objects(cls, obj0: None | SOMcreator.Object, obj1: None | SOMcreator.Object):
-        property_set_uuid_dict1 = cls.generate_uuid_dict(obj1.get_all_property_sets()) if obj1 is not None else dict()
-        property_set_name_dict1 = cls.generate_name_dict(obj1.get_all_property_sets()) if obj1 is not None else dict()
+        property_set_uuid_dict1 = cls.generate_uuid_dict(
+            obj1.get_property_sets(filter=False)) if obj1 is not None else dict()
+        property_set_name_dict1 = cls.generate_name_dict(
+            obj1.get_property_sets(filter=False)) if obj1 is not None else dict()
         pset_list = list()
 
-        missing_property_sets1 = list(obj1.get_all_property_sets()) if obj1 is not None else []
+        missing_property_sets1 = list(obj1.get_property_sets(filter=False)) if obj1 is not None else []
         if obj0 is not None:
-            for property_set0 in obj0.get_all_property_sets():
+            for property_set0 in obj0.get_property_sets(filter=False):
                 match = cls.find_matching_entity(property_set0, property_set_uuid_dict1, property_set_name_dict1)
                 if match is not None:
                     missing_property_sets1.remove(match)

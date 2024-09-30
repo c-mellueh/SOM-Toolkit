@@ -87,7 +87,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def check_if_pset_allready_exists(cls, pset_name: str, active_object: SOMcreator.Object):
-        return bool(pset_name in {p.name for p in active_object.get_all_property_sets()})
+        return bool(pset_name in {p.name for p in active_object.get_property_sets(filter=False)})
 
     @classmethod
     def create_property_set(cls, name: str, obj: SOMcreator.Object | None = None,

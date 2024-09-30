@@ -120,7 +120,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             for obj in objects:
                 if not check_state_dict.get(obj):
                     continue
-                for property_set in obj.get_all_property_sets():
+                for property_set in obj.get_property_sets(filter=False):
                     if not check_state_dict.get(property_set):
                         continue
                     attribute_list = list()

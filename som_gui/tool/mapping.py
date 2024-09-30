@@ -146,7 +146,7 @@ class Mapping(som_gui.core.tool.Mapping):
     @classmethod
     def add_object_to_ifc_export_data(cls, obj: SOMcreator.Object) -> None:
         export_dict = cls.get_properties().ifc_export_dict
-        for property_set in obj.get_all_property_sets():
+        for property_set in obj.get_property_sets(filter=False):
             if not cls.get_checkstate(property_set):
                 continue
             for attribute in property_set.get_all_attributes():

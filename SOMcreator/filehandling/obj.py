@@ -54,7 +54,7 @@ def _write_object(element: classes.Object) -> ObjectDict:
         object_dict[IFC_MAPPINGS] = list(element.ifc_mapping)
 
     psets_dict = dict()
-    for pset in element.get_all_property_sets():
+    for pset in element.get_property_sets(filter=False):
         psets_dict[pset.uuid] = property_set.write_entry(pset)
 
     object_dict[PROPERTY_SETS] = psets_dict
