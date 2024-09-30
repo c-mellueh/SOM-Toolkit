@@ -112,7 +112,8 @@ class Project(object):
 
 
     # Item Getter Methods
-    def get_all_hirarchy_items(self) -> Iterator[Object, PropertySet, Attribute, Aggregation, Hirarchy]:
+    @filterable
+    def get_hirarchy_items(self) -> Iterator[Object, PropertySet, Attribute, Aggregation, Hirarchy]:
         return filter(lambda i: isinstance(i, (Object, PropertySet, Attribute, Aggregation)), self._items)
 
     def get_all_objects(self) -> Iterator[Object]:
@@ -256,7 +257,7 @@ class Project(object):
     def add_project_phase(self, phase: Phase):
         if phase not in self._phases:
             self._phases.append(phase)
-            for item in self.get_all_hirarchy_items():
+            for item in self.get_hirarchy_items(filter=False):
                 item.add_project_phase()
             self._filter_matrix.append([True for _ in self._use_cases])
         return self._phases.index(phase)
@@ -264,7 +265,7 @@ class Project(object):
     def add_use_case(self, use_case: UseCase):
         if use_case not in self._use_cases:
             self._use_cases.append(use_case)
-            for item in self.get_all_hirarchy_items():
+            for item in self.get_hirarchy_items(filter=False):
                 item.add_use_case()
             for use_case_list in self._filter_matrix:
                 use_case_list.append(True)
@@ -284,7 +285,7 @@ class Project(object):
         if phase is None:
             return
         index = self.get_phase_index(phase)
-        for item in self.get_all_hirarchy_items():
+        for item in self.get_hirarchy_items(filter=False):
             item.remove_phase(phase)
         self._phases.remove(phase)
         self._filter_matrix.pop(index)
@@ -295,7 +296,7 @@ class Project(object):
         if use_case is None:
             return
         index = self.get_use_case_index(use_case)
-        for item in self.get_all_hirarchy_items():
+        for item in self.get_hirarchy_items(filter=False):
             item.remove_use_case(use_case)
 
         self._use_cases.remove(use_case)

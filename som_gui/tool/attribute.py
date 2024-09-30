@@ -817,7 +817,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def get_uuid_dict(cls, index=1) -> dict:
         if cls.get_properties().uuid_dicts[index] is None:
             project = cls.get_project(index)
-            d = {hi.uuid: hi for hi in project.get_all_hirarchy_items()}
+            d = {hi.uuid: hi for hi in project.get_hirarchy_items(filter=False)}
             cls.get_properties().uuid_dicts[index] = d
         return cls.get_properties().uuid_dicts[index]
 

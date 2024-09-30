@@ -78,7 +78,8 @@ class Search(som_gui.core.tool.Search):
             for obj in project.objects:
                 item_dict[obj] = [obj.name, obj.ident_value, obj.abbreviation]
         elif cls.get_search_mode() == 2:
-            attributes = filter(lambda item: isinstance(item, SOMcreator.Attribute), project.get_all_hirarchy_items())
+            attributes = filter(lambda item: isinstance(item, SOMcreator.Attribute),
+                                project.get_hirarchy_items(filter=False))
             for attribute in attributes:
                 val = tuple([attribute.property_set.name, attribute.name])
                 item_dict[val] = val

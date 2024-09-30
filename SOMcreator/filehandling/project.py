@@ -138,7 +138,7 @@ def _write_filter_dict(filter_list: list[classes.Phase] | list[classes.UseCase])
 
 def create_existing_filter_states(proj: Project):
     filter_matrixes = set()
-    for entity in proj.get_all_hirarchy_items():
+    for entity in proj.get_hirarchy_items(filter=False):
         entity: SOMcreator.classes.Hirarchy
         hashable = tuple(tuple(use_case_list) for use_case_list in entity.get_filter_matrix())
         filter_matrixes.add(hashable)
