@@ -86,8 +86,8 @@ def merge_projects(existing_project: Project, import_project: Project, phase_map
     :return:
     """
     existing_identifiers = {o.ident_value for o in existing_project.get_objects(filter=False)}
-    import_predef_pset_dict = {p: p for p in import_project.get_predefined_psets()}
-    existing_predefined_pset_name_dict = {p.name: p for p in existing_project.get_predefined_psets()}
+    import_predef_pset_dict = {p: p for p in import_project.get_predefined_psets(filter=False)}
+    existing_predefined_pset_name_dict = {p.name: p for p in existing_project.get_predefined_psets(filter=False)}
 
     for import_predef_pset in import_predef_pset_dict.keys():
         new_pset = existing_predefined_pset_name_dict.get(import_predef_pset.name)

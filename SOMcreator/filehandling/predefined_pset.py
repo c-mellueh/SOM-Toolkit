@@ -20,5 +20,5 @@ def load(project: Project, main_dict: MainDict):
 
 def write(proj: Project, main_dict: MainDict):
     main_dict[PREDEFINED_PSETS] = dict()
-    for predefined_property_set in sorted(proj.get_predefined_psets(), key=lambda x: x.uuid):
+    for predefined_property_set in sorted(proj.get_predefined_psets(filter=False), key=lambda x: x.uuid):
         main_dict[PREDEFINED_PSETS][predefined_property_set.uuid] = property_set.write_entry(predefined_property_set)

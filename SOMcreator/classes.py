@@ -122,8 +122,9 @@ class Project(object):
     def get_aggregations(self) -> Iterator[Aggregation]:
         return filter(lambda item: isinstance(item, Aggregation), self._items)
 
-    def get_predefined_psets(self) -> set[PropertySet]:
-        return set(filter(lambda p: p.is_predefined, self.get_property_sets(filter=False)))
+    @filterable
+    def get_predefined_psets(self) -> Iterator[PropertySet]:
+        return filter(lambda p: p.is_predefined, self.get_property_sets(filter=False))
 
     def get_main_attribute(self) -> tuple[str, str]:
         ident_attributes = dict()

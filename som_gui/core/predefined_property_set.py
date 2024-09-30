@@ -143,7 +143,7 @@ def init_compare_window(project0: SOMcreator.Project, project1: SOMcreator.Proje
     info_table = attribute_compare.get_info_table(widget)
     pset_compare.create_tree_selection_trigger(widget)
 
-    psets0, psets1 = project0.get_predefined_psets(), project1.get_predefined_psets()
+    psets0, psets1 = project0.get_predefined_psets(filter=False), project1.get_predefined_psets(filter=False)
     pset_compare.set_predefined_psets(psets0, psets1)
 
     pset_list = pset_compare.create_pset_list()
