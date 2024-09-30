@@ -119,8 +119,9 @@ class Project(object):
     @filterable
     def get_objects(self) -> Iterator[Object]:
         return filter(lambda item: isinstance(item, Object), self._items)
-    
-    def get_all_property_sets(self) -> Iterator[PropertySet]:
+
+    @filterable
+    def get_property_sets(self) -> Iterator[PropertySet]:
         return filter(lambda item: isinstance(item, PropertySet), self._items)
 
     def get_all_attributes(self) -> Iterator[Attribute]:
@@ -130,7 +131,7 @@ class Project(object):
         return filter(lambda item: isinstance(item, Aggregation), self._items)
 
     def get_predefined_psets(self) -> set[PropertySet]:
-        return set(filter(lambda p: p.is_predefined, self.get_all_property_sets()))
+        return set(filter(lambda p: p.is_predefined, self.get_property_sets(filter=False)))
 
     def get_main_attribute(self) -> tuple[str, str]:
         ident_attributes = dict()
@@ -158,7 +159,7 @@ class Project(object):
         return {obj.ident_value: obj for obj in self.get_objects(filter=False)}.get(identifier)
 
     def get_uuid_dict(self):
-        pset_dict = {pset.uuid: pset for pset in self.get_all_property_sets()}
+        pset_dict = {pset.uuid: pset for pset in self.get_property_sets(filter=False)}
         object_dict = {obj.uuid: obj for obj in self.get_objects(filter=False)}
         attribute_dict = {attribute.uuid: attribute for attribute in self.get_all_attributes()}
         aggregation_dict = {aggreg.uuid: aggreg for aggreg in self.get_all_aggregations()}
@@ -316,7 +317,7 @@ class Project(object):
     @property
     @filterable
     def property_sets(self) -> Iterator[PropertySet]:
-        return self.get_all_property_sets()
+        return self.get_property_sets(filter=False)
 
     @property
     @filterable

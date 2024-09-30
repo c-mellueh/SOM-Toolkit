@@ -39,7 +39,8 @@ def _add_item(existing_project: SOMcreator.Project, import_project: SOMcreator.P
     item._filter_matrix = new_filter_matrix
 
 
-def _import_object(existing_project, import_project, obj, old_predefined_psets_mapping, phase_mapping,
+def _import_object(existing_project: SOMcreator.Project, import_project: SOMcreator.Project, obj: SOMcreator.Object,
+                   old_predefined_psets_mapping, phase_mapping,
                    use_case_mapping):
     _add_item(existing_project, import_project, obj, phase_mapping, use_case_mapping)
     for property_set in obj.get_all_property_sets():
