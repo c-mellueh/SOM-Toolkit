@@ -61,10 +61,6 @@ class Object(som_gui.core.tool.Object):
         lineedit.setCompleter(completer)
 
     @classmethod
-    def get_all_objects(cls):
-        return tool.Project.get().get_objects(filter=False)
-
-    @classmethod
     def get_item_from_object(cls, obj: SOMcreator.Object) -> QTreeWidgetItem:
         def iter_tree(item: QTreeWidgetItem):
             for child_index in range(item.childCount()):

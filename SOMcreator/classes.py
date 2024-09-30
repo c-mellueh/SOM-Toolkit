@@ -29,22 +29,26 @@ def filterable(func: Callable):
             filter_values = kwargs[FILTER_KEYWORD]
             kwargs.pop(FILTER_KEYWORD)
 
-        result: list[Hirarchy | Project] = list(func(self, *args, **kwargs))
+        result: list[Hirarchy | Project] = func(self, *args, **kwargs)
         if not filter_values:
             return result
+
         proj: Project = self if isinstance(self, Project) else self.project
+        if proj is None:
+            return result
+
         entities = list()
         for entity in result:
             filter_matrix = entity.get_filter_matrix()
-            res = False
+            is_active = False
             for phase in proj.active_phases:
                 for usecase in proj.active_usecases:
                     if filter_matrix[phase][usecase]:
-                        res = True
+                        is_active = True
                         break  # Exit the usecase loop
-                if res:
+                if is_active:
                     break  # Exit the phase loop
-            if res:
+            if is_active:
                 entities.append(entity)
         return entities
 
@@ -163,7 +167,7 @@ class Project(object):
     def get_uuid_dict(self):
         pset_dict = {pset.uuid: pset for pset in self.get_property_sets(filter=False)}
         object_dict = {obj.uuid: obj for obj in self.get_objects(filter=False)}
-        attribute_dict = {attribute.uuid: attribute for attribute in self.get_attributes()}
+        attribute_dict = {attribute.uuid: attribute for attribute in self.get_attributes(filter=False)}
         aggregation_dict = {aggreg.uuid: aggreg for aggreg in self.get_all_aggregations()}
         full_dict = pset_dict | object_dict | attribute_dict | aggregation_dict
         if None in full_dict:
@@ -324,7 +328,7 @@ class Project(object):
     @property
     @filterable
     def attributes(self) -> Iterator[Attribute]:
-        return self.get_attributes()
+        return self.get_attributes(filter=True)
 
     @property
     @filterable

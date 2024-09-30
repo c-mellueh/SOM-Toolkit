@@ -1106,7 +1106,6 @@ class Object:
 
     def get_active_object(self, ): pass
 
-    def get_all_objects(self, ): pass
 
     def get_existing_ident_values(self, ): pass
 
@@ -1518,8 +1517,6 @@ class Project:
     def fill_mapping_table(self, table, filter_1, filter_2): pass
 
     def get(self, ): pass
-
-    def get_all_objects(self, ): pass
 
     def get_filter_matrix(self, ): pass
 
