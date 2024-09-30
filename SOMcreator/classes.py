@@ -622,10 +622,6 @@ class Object(Hirarchy):
         """returns all Propertysets even if they don't fit the current Project Phase"""
         return self._property_sets
 
-    @filterable
-    def get_property_sets(self) -> Iterator[PropertySet]:
-        return iter(self._property_sets)
-
 
     # override name setter because of intheritance
     @property
@@ -644,19 +640,19 @@ class Object(Hirarchy):
         if property_set in self._property_sets:
             self._property_sets.remove(property_set)
 
-    def get_all_attributes(self, inherit: bool = False) -> list[Attribute]:
+    @filterable
+    def get_property_sets(self) -> Iterator[PropertySet]:
+        return iter(self._property_sets)
+
+    @filterable
+    def get_attributes(self, inherit: bool = False) -> Iterator[Attribute]:
         attributes = list()
         for property_set in self.get_all_property_sets():
             attributes += property_set.attributes
-
         if inherit:
-            attributes += self.parent.get_attributes(inherit=True)
+            attributes += self.parent.get_attributes(inherit=True, filter=False)
+        return iter(attributes)
 
-        return attributes
-
-    @filterable
-    def get_attributes(self, inherit: bool = False) -> list[Attribute]:
-        return self.get_all_attributes(inherit)
 
     def delete(self, recursive: bool = False) -> None:
         super(Object, self).delete(recursive)

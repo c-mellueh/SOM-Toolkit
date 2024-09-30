@@ -295,6 +295,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         for obj in Project.get().get_objects(filter=False):
             object_dict[obj] = obj.get_filter_matrix()
             for pset in obj.get_all_property_sets():
+                pset: SOMcreator.PropertySet
                 pset_dict[pset] = pset.get_filter_matrix()
                 for attribute in pset.get_all_attributes():
                     attribute_dict[attribute] = attribute.get_filter_matrix()
