@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QTableWidget, QDialog
 from som_gui.icons import get_icon
 import som_gui.module.project_filter as project_filter
 from PySide6.QtCore import Qt
+from som_gui import tool
 
 
 class ProjectFilterDialog(QDialog):
@@ -10,6 +11,7 @@ class ProjectFilterDialog(QDialog):
         self.widget = project_filter.window.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
+        self.setWindowTitle(f"Projekt Filter | {tool.Util.get_status_text()}")
 
     def closeEvent(self, event):
         project_filter.trigger.close_event()

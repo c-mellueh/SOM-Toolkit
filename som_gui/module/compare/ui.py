@@ -3,7 +3,7 @@ from . import window, import_window, trigger
 from som_gui.icons import get_icon, get_switch_icon, get_download_icon
 from PySide6.QtGui import QPalette
 from PySide6.QtCore import QModelIndex, Qt, QRect, QSize
-
+from som_gui import tool
 
 def color_button(button: QPushButton) -> None:
     button.setAutoFillBackground(True)
@@ -18,7 +18,7 @@ class CompareDialog(QDialog):
         self.widget = window.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(self.tr("Projekte Vergleichen"))
+        self.setWindowTitle(self.tr(f"Projekte Vergleichen | {tool.Util.get_status_text()}"))
         self.widget.tabWidget.setTabText(0, self.tr("Attribute"))
         button = self.widget.button_download
         button.setIcon(get_download_icon())
@@ -32,7 +32,7 @@ class ProjectSelectDialog(QDialog):
         self.widget = import_window.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(self.tr("Projekte Vergleichen"))
+        self.setWindowTitle(self.tr(f"Projekte Vergleichen | {tool.Util.get_status_text()}"))
         button = self.widget.button_switch
         button.setText("")
         button.setIcon(get_switch_icon())

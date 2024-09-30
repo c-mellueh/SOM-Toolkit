@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtWidgets import QTableWidgetItem, QTableWidget
 from PySide6.QtCore import Qt
 from som_gui import tool
+from som_gui import __version__ as version
 
 if TYPE_CHECKING:
     from som_gui.module.search.prop import SearchProperties
@@ -39,7 +40,7 @@ class Search(som_gui.core.tool.Search):
         prop.search_window = search.ui.SearchWindow()
         prop.search_window.widget.tableWidget.itemDoubleClicked.connect(cls.activate_item)
         cls.fill_dialog()
-        prop.search_window.setWindowTitle("Objektsuche")
+        prop.search_window.setWindowTitle(f"Objektsuche | {tool.Util.get_status_text()}")
         if not prop.search_window.exec():
             return None
         return prop.selected_info
@@ -51,7 +52,7 @@ class Search(som_gui.core.tool.Search):
         prop.search_window = search.ui.SearchWindow()
         prop.search_window.widget.tableWidget.itemDoubleClicked.connect(cls.activate_item)
         cls.fill_dialog()
-        prop.search_window.setWindowTitle("AttributSuche")
+        prop.search_window.setWindowTitle(f"AttributSuche v{version} | {tool.Util.get_status_text()}")
         if not prop.search_window.exec():
             return None
         return prop.selected_info

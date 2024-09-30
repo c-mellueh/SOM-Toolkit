@@ -4,9 +4,9 @@ import os, tempfile
 from PySide6.QtCore import QFile, Qt, QModelIndex
 from PySide6.QtGui import QAction, QShortcut, QKeySequence
 from PySide6.QtWidgets import QMenu, QMenuBar, QWidget, QComboBox
-
 import SOMcreator
 import som_gui.core.tool
+from som_gui import tool
 import re
 if TYPE_CHECKING:
     from som_gui.module.util.prop import MenuDict, UtilProperties
@@ -161,3 +161,10 @@ class Util(som_gui.core.tool.Util):
         model = combobox.model()
         indexes = [model.index(r, 0) for r in range(model.rowCount())]
         return {model.data(index, Qt.ItemDataRole.DisplayRole): index for index in indexes}
+
+    @classmethod
+    def get_status_text(cls):
+        proj = tool.Project.get()
+        if not proj:
+            return ""
+        return f"{proj.name} v{proj.version}"

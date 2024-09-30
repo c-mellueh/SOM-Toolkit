@@ -5,6 +5,7 @@ from som_gui.module import property_set_window
 
 from som_gui.icons import get_icon
 from . import trigger
+from som_gui import tool
 
 
 class MappingWindow(QMainWindow):
@@ -14,7 +15,7 @@ class MappingWindow(QMainWindow):
         self.widget = Ui_Form()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(self.tr("Mapping"))
+        self.setWindowTitle(self.tr(f"Mapping | {tool.Util.get_status_text()}"))
 
 
 class ObjectTreeWidget(QTreeWidget):

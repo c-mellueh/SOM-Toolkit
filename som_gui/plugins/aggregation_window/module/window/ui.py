@@ -3,6 +3,7 @@ from PySide6.QtGui import QPaintEvent
 from som_gui.icons import get_icon
 from . import trigger
 from PySide6.QtCore import Qt
+from som_gui import tool
 
 class AggregationWindow(QMainWindow):
     def __init__(self, *args, **kwargs) -> None:
@@ -12,7 +13,7 @@ class AggregationWindow(QMainWindow):
         self.setMenuBar(QMenuBar(self))
         self.setStatusBar(QStatusBar(self))
         self.resize(1245, 900)
-        self.setWindowTitle(self.tr("Bauwerksstruktur"))
+        self.setWindowTitle(self.tr(f"Bauwerksstruktur | {tool.Util.get_status_text()}"))
         self.setWindowIcon(get_icon())
 
     def paintEvent(self, event: QPaintEvent) -> None:

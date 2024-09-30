@@ -5,6 +5,7 @@ from .window import Ui_Dialog
 from som_gui.icons import get_icon
 from som_gui.module.property_set.ui import LineEditDelegate
 from .compare_widget import Ui_Form
+from som_gui import tool
 
 class PredefinedPropertySetWindow(QDialog):
     edit_started = Signal(QModelIndex)
@@ -15,7 +16,7 @@ class PredefinedPropertySetWindow(QDialog):
         self.widget = Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle("Vordefinierte PropertySets")
+        self.setWindowTitle(f"Vordefinierte PropertySets | {tool.Util.get_status_text()}")
         self.widget.list_view_pset.setItemDelegate(LineEditDelegate(self))
 
     def paintEvent(self, event):

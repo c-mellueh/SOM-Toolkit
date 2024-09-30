@@ -1,5 +1,6 @@
 from __future__ import annotations
-
+from som_gui import __version__ as version
+from som_gui import tool
 from typing import TYPE_CHECKING
 from PySide6.QtCore import Signal, QObject
 from PySide6.QtWidgets import QMessageBox, QCheckBox
@@ -82,7 +83,7 @@ class Logging(som_gui.core.tool.Logging):
         cb = QCheckBox("nicht erneut anzeigen")
         msg_box.setCheckBox(cb)
         msg_box.setWindowIcon(get_icon())
-        msg_box.setWindowTitle(f"{level}")
+        msg_box.setWindowTitle(f"{level} |{tool.Util.get_status_text()}")
         msg_box.setText(f"An {level} occurred:")
         msg_box.setDetailedText(message)
         if msg_box.exec_() and cb.isChecked():

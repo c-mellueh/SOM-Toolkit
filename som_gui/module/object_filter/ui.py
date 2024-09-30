@@ -23,6 +23,7 @@ class ObjectFilterWindow(QWidget):
         self.widget = object_filter.window.Ui_Form()
         self.widget.setupUi(self)
         self.setWindowIcon(icons.get_icon())
+        self.setWindowTitle(f"Anwendungsfälle | {tool.Util.get_status_text()}")
 
 class ObjectTreeView(QTreeView):
     def __init__(self, parent: QWidget):

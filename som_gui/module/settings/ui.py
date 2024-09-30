@@ -1,6 +1,8 @@
 from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QDialog, QDialogButtonBox
 from PySide6.QtCore import Qt
 from som_gui.icons import get_icon
+from som_gui import tool
+
 class Dialog(QDialog):
     def __init__(self):
         super().__init__()
@@ -15,5 +17,5 @@ class Dialog(QDialog):
         self.button_box.rejected.connect(self.reject)
         self.layout().addWidget(self.button_box)
 
-        self.setWindowTitle('Settings')
+        self.setWindowTitle(f'Settings | {tool.Util.get_status_text()}')
         self.setWindowIcon(get_icon())

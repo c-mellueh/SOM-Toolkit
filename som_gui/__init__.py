@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+__version__ = "2.13.2"
+
 import logging
 from typing import TYPE_CHECKING
 from som_gui import core, tool
@@ -7,7 +9,6 @@ from som_gui import core, tool
 if TYPE_CHECKING:
     from som_gui.module.main_window.ui import MainWindow
 
-__version__ = "2.13.2"
 
 import importlib
 import pkgutil
