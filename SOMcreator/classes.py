@@ -298,22 +298,6 @@ class Project(object):
         if index in self.active_phases:
             self.active_phases.remove(index)
 
-    @property
-    @filterable
-    def property_sets(self) -> Iterator[PropertySet]:
-        return self.get_property_sets(filter=False)
-
-    @property
-    @filterable
-    def attributes(self) -> Iterator[Attribute]:
-        return self.get_attributes(filter=True)
-
-    @property
-    @filterable
-    def aggregations(self) -> list[Aggregation]:
-        aggregations = list(Aggregation)
-        return aggregations
-
 
 class Hirarchy(object, metaclass=IterRegistry):
 

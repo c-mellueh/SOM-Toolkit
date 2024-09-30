@@ -3,6 +3,7 @@ from xml.etree.ElementTree import Element
 
 from lxml import etree
 
+import SOMcreator
 from ... import classes
 from ...constants import value_constants
 from . import handle_header
@@ -73,7 +74,7 @@ def _handle_property_section(xml_repo: etree.Element, id_dict: dict, attribute_d
     xml_property_section = etree.SubElement(xml_repo, "propertySection")
 
     for node, ref_id in id_dict.items():
-        obj = node.object
+        obj: SOMcreator.Object = node.object
         for property_set in obj.property_sets:
             for attribute in property_set.attributes:
                 attribute_text = f"{attribute.property_set.name}:{attribute.name}"
