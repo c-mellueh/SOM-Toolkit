@@ -226,12 +226,12 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
         if None in (pset0, pset1):
             return
-        attribute_uuid_dict1 = cls.generate_uuid_dict(pset1.get_all_attributes())
-        attribute_name_dict1 = cls.generate_name_dict(pset1.get_all_attributes())
-        missing_attributes1 = list(pset1.get_all_attributes())
+        attribute_uuid_dict1 = cls.generate_uuid_dict(pset1.get_attributes(filter=False))
+        attribute_name_dict1 = cls.generate_name_dict(pset1.get_attributes(filter=False))
+        missing_attributes1 = list(pset1.get_attributes(filter=False))
         attributes_list = list()
 
-        for attribute0 in pset0.get_all_attributes():
+        for attribute0 in pset0.get_attributes(filter=False):
             match = cls.find_matching_entity(attribute0, attribute_uuid_dict1, attribute_name_dict1)
             if match is not None:
                 missing_attributes1.remove(match)

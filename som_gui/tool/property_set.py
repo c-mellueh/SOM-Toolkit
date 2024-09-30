@@ -25,7 +25,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def get_attribute_by_name(cls, property_set: SOMcreator.PropertySet, name: str):
-        attribute_dict = {a.name: a for a in property_set.get_all_attributes()}
+        attribute_dict = {a.name: a for a in property_set.get_attributes(filter=False)}
         return attribute_dict.get(name)
 
     @classmethod

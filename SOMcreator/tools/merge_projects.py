@@ -59,10 +59,10 @@ def _import_pset(existing_project, import_project, property_set: SOMcreator.Prop
 
     if parent is not None:
         property_set.parent = parent
-        for attribute in property_set.get_all_attributes():
+        for attribute in property_set.get_attributes(filter=False):
             _import_attribute(existing_project, import_project, attribute, phase_mapping, use_case_mapping, parent)
     else:
-        for attribute in property_set.get_all_attributes():
+        for attribute in property_set.get_attributes(filter=False):
             _import_attribute(existing_project, import_project, attribute, phase_mapping, use_case_mapping)
 
 

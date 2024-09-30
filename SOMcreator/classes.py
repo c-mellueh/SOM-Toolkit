@@ -434,7 +434,7 @@ class Hirarchy(object, metaclass=IterRegistry):
 
     @property
     def is_parent(self) -> bool:
-        if self.get_childrenget_children(filter=False):
+        if self.get_children(filter=False):
             return True
         else:
             return False
@@ -766,19 +766,16 @@ class PropertySet(Hirarchy):
     def object(self, value: Object):
         self._object = value
 
-    def get_all_attributes(self) -> set[Attribute]:
+    @filterable
+    def get_attributes(self) -> Iterator[Attribute]:
         """returns all Attributes even if they don't fit the current Project Phase"""
-        return self._attributes
+        return iter(self._attributes)
 
-    @property
     @filterable
     def attributes(self) -> list[Attribute]:
         """returns Attributes filtered"""
         return sorted(self._attributes, key=lambda a: a.name)
 
-    @attributes.setter
-    def attributes(self, value: set[Attribute]) -> None:
-        self._attributes = value
 
     def add_attribute(self, value: Attribute) -> None:
         if value.property_set is not None and value.property_set != self:

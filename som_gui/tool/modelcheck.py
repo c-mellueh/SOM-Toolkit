@@ -124,7 +124,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
                     if not check_state_dict.get(property_set):
                         continue
                     attribute_list = list()
-                    for attribute in property_set.get_all_attributes():
+                    for attribute in property_set.get_attributes(filter=False):
                         if not check_state_dict.get(attribute):
                             continue
                         attribute_list.append(attribute)

@@ -44,7 +44,7 @@ def drop_event(event: QDropEvent, table: ui.AttributeTable, property_set_window:
     proposed_action = event.proposedAction()
     property_set = property_set_window.get_property_set_by_window(window)
 
-    existing_attributes = {a.name: a for a in property_set.get_all_attributes()}
+    existing_attributes = {a.name: a for a in property_set.get_attributes(filter=False)}
 
     if proposed_action == Qt.DropAction.CopyAction:
         for attribute in attributes:

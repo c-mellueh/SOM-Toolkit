@@ -27,7 +27,7 @@ def write_entry(pset: classes.PropertySet) -> PropertySetDict:
     pset_dict: PropertySetDict = dict()
     core.write_basics(pset_dict, pset)
     attributes_dict = dict()
-    for attrib in pset.get_all_attributes():
+    for attrib in pset.get_attributes(filter=False):
         new_dict = attribute.write(attrib)
         attributes_dict[attrib.uuid] = new_dict
     pset_dict[ATTRIBUTES] = attributes_dict

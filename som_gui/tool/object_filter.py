@@ -297,7 +297,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             for pset in obj.get_property_sets(filter=False):
                 pset: SOMcreator.PropertySet
                 pset_dict[pset] = pset.get_filter_matrix()
-                for attribute in pset.get_all_attributes():
+                for attribute in pset.get_attributes(filter=False):
                     attribute_dict[attribute] = attribute.get_filter_matrix()
         prop.object_dict = object_dict
         prop.pset_dict = pset_dict
@@ -475,7 +475,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
                         root_item.setChild(child_row, child_column, child_item)
                     child_item.setEnabled(enable_state)
                 pset: SOMcreator.PropertySet = root_item.child(child_row, 0).data(CLASS_REFERENCE)
-                cls.create_tree(pset.get_all_attributes(), root_item.child(child_row, 0), filter_index_list,
+                cls.create_tree(pset.get_attributes(filter=False), root_item.child(child_row, 0), filter_index_list,
                                 len(pset_header_texts), model, cls.get_pset_tree())
 
         _, pset_header_texts = cls.get_header_texts()

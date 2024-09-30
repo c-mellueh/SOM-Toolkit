@@ -25,15 +25,17 @@ object_uuid_dict: dict[str, SOMcreator.Object] = dict()
 property_set_uuid_dict: dict[str, SOMcreator.PropertySet] = dict()
 attribute_uuid_dict: dict[str, SOMcreator.Attribute] = dict()
 filter_matrixes = list()
+
+
 def create_mapping_script(project: SOMcreator.Project, pset_name: str, path: str):
     attrib_dict = dict()
     obj: SOMcreator.Object
-    for obj in project.get_objects:
+    for obj in project.get_objects(filter=True):
         klass = obj.ident_attrib.value[0]
         obj_dict = dict()
         for pset in obj.get_property_sets(filter=True):
             pset_dict = dict()
-            for attribute in pset.attributes:
+            for attribute in pset.get_attributes(filter=True):
                 name = attribute.name
                 data_format = xml.transform_data_format(attribute.data_type)
                 pset_dict[name] = data_format
