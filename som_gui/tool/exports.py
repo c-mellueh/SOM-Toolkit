@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import som_gui.core.tool
 import SOMcreator
-from SOMcreator.external_software.desite import bookmarks
+from SOMcreator.io.desite import bookmarks
 from SOMcreator.io import allplan, card1, vestra
 import SOMcreator.io.som_json
 from SOMcreator import excel as som_excel

@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 from lxml import etree
 
-from ...constants import value_constants
+from SOMcreator.constants import value_constants
 
 output_date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 

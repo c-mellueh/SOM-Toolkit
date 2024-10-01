@@ -13,8 +13,8 @@ from typing import TypedDict
 from . import handle_header, output_date_time
 from SOMcreator.util import xml
 from SOMcreator.util.misc import merge_list
-from ... import constants, Template
-from ...constants import value_constants
+from SOMcreator import constants, Template
+from SOMcreator.constants import value_constants
 import SOMcreator
 
 JS_EXPORT = "JS"

@@ -4,7 +4,7 @@ from xml.etree.ElementTree import Element
 from lxml import etree
 
 import SOMcreator
-from ...constants import value_constants
+from SOMcreator.constants import value_constants
 from . import handle_header
 from SOMcreator.util import xml
 

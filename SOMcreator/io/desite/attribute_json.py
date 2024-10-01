@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 import SOMcreator
-from ...constants import value_constants
+from SOMcreator.constants import value_constants
 from SOMcreator.util import xml
 DATA_TYPE = "data_type"
 VALUE_TYPE = "value_Type"
