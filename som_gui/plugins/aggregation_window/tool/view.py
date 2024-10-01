@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import os
 import logging
-from typing import TYPE_CHECKING, Callable, Any
+from typing import TYPE_CHECKING, Any
 
 from PySide6.QtCore import QPointF, QRectF, Qt, QPoint
-from PySide6.QtGui import QTransform, QAction, QImage, QPainter, QCursor
-from PySide6.QtWidgets import QApplication, QMenu, QFileDialog, QGraphicsView
+from PySide6.QtGui import QTransform, QImage, QPainter, QCursor
+from PySide6.QtWidgets import QApplication, QFileDialog, QGraphicsView
 
 import SOMcreator
-from SOMcreator.classes import Aggregation
 from SOMcreator.constants import json_constants
 from som_gui.plugins.aggregation_window.module.view.constants import AGGREGATIONSCENES, SCENE_SIZE, SCENE_MARGIN
 from som_gui.plugins.aggregation_window.module.node import ui as ui_node
@@ -417,7 +416,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         return objects
 
     @classmethod
-    def get_import_list(cls) -> list[list[tuple[SOMcreator.classes.Aggregation, QPointF]]]:
+    def get_import_list(cls) -> list[list[tuple[SOMcreator.Aggregation, QPointF]]]:
         return cls.get_properties().import_list
 
     @classmethod
@@ -450,11 +449,11 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         return {node for node in scene.selectedItems() if isinstance(node, ui_node.NodeProxy)}
 
     @classmethod
-    def set_copy_list(cls, copy_list: list[tuple[SOMcreator.classes.Aggregation, QPointF]]) -> None:
+    def set_copy_list(cls, copy_list: list[tuple[SOMcreator.Aggregation, QPointF]]) -> None:
         cls.get_properties().copy_list = copy_list
 
     @classmethod
-    def get_copy_list(cls) -> list[tuple[SOMcreator.classes.Aggregation, QPointF]]:
+    def get_copy_list(cls) -> list[tuple[SOMcreator.Aggregation, QPointF]]:
         return list(cls.get_properties().copy_list)
 
     @classmethod

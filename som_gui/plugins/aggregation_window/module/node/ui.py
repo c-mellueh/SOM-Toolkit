@@ -19,7 +19,7 @@ class NodeProxy(QGraphicsProxyWidget):
         self.header: Header | None = None
         self.frame: Frame | None = None
         self.circle: Circle | None = None
-        self.aggregation: SOMcreator.classes.Aggregation | None = None
+        self.aggregation: SOMcreator.Aggregation | None = None
         self.top_connection: Connection | None = None
         self.bottom_connections: set[Connection] = set()
         self.resize_rect: ResizeRect | None = None

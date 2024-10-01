@@ -6,7 +6,6 @@ from PySide6.QtWidgets import QTreeWidgetItem
 from PySide6.QtCore import QRectF
 
 import SOMcreator
-from SOMcreator.classes import Aggregation
 from SOMcreator import value_constants
 
 import som_gui.plugins.aggregation_window.core.tool
@@ -79,7 +78,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         return circle
 
     @classmethod
-    def create_node(cls, aggregation: Aggregation) -> node_ui.NodeProxy:
+    def create_node(cls, aggregation: SOMcreator.Aggregation) -> node_ui.NodeProxy:
         node = node_ui.NodeProxy()
         node_widget = node_ui.NodeWidget()
         node.setWidget(node_widget)
@@ -184,7 +183,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     def get_id_group(cls, node: node_ui.NodeProxy) -> str:
         abbrev_list = list()
 
-        def iter_id(element: Aggregation):
+        def iter_id(element: SOMcreator.Aggregation):
             if element.parent_connection in (value_constants.AGGREGATION,
                                              value_constants.AGGREGATION + value_constants.INHERITANCE):
                 abbrev_list.append(element.parent.object.abbreviation)
@@ -226,7 +225,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         return f"{aggregation.name}\n{attribute_name}: {attribute.value[0]}"
 
     @classmethod
-    def get_aggregation_from_node(cls, node: node_ui.NodeProxy) -> Aggregation:
+    def get_aggregation_from_node(cls, node: node_ui.NodeProxy) -> SOMcreator.Aggregation:
         return node.aggregation
 
     @classmethod

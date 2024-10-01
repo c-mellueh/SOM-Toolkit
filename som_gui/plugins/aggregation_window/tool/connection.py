@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import logging
 
-from SOMcreator.classes import Aggregation
+from SOMcreator import Aggregation
 from SOMcreator.constants import value_constants
 import som_gui
 import som_gui.plugins.aggregation_window.core.tool

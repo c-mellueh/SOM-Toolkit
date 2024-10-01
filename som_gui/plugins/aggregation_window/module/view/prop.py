@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from SOMcreator.classes import Aggregation
+from SOMcreator import Aggregation
 from PySide6.QtCore import QPointF
 
 if TYPE_CHECKING:

@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 from PySide6.QtCore import Qt
-from SOMcreator.classes import Aggregation
+from SOMcreator import Aggregation
 
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window import tool as aw_tool
