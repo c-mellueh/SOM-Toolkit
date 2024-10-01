@@ -7,7 +7,7 @@ from lxml.etree import Element, ElementTree, SubElement
 
 from . import ids_xsd, xml_xsd
 import SOMcreator
-from ...constants import value_constants, ifc_datatypes
+from SOMcreator.constants import value_constants, ifc_datatypes
 from SOMcreator.util.xml import transform_data_format
 
 NSMAP = {None:  ids_xsd.DEFAULT_NS[1:-1],
