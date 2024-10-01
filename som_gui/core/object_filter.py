@@ -37,14 +37,6 @@ def open_window(object_filter: Type[tool.ObjectFilter], project: Type[tool.Proje
     logging.debug(f"Window shown")
 
 
-def add_object_filter_widget(object_filter_compare: Type[tool.ObjectFilterCompare],
-                             attribute_compare: Type[tool.AttributeCompare],
-                             compare_window: Type[tool.CompareWindow]):
-    compare_window.add_tab("Objekt Filter", object_filter_compare.get_widget,
-                           lambda p0, p1: init_compare_object_filter(p0, p1, object_filter_compare, attribute_compare),
-                           object_filter_compare,
-                           lambda file: export_filter_differences(file, object_filter_compare, attribute_compare))
-
 
 def accept_changes(objectfilter_tool: Type[ObjectFilter]):
     objectfilter_tool.update_pset_data()
@@ -191,6 +183,7 @@ def export_filter_differences(file, object_filter_compare: Type[tool.ObjectFilte
     file.write("\n")
 
 
+# Settings Widget
 def settings_widget_created(widget: object_filter_ui.SettingsWidget, object_filter: Type[tool.ObjectFilter],
                             project: Type[tool.Project]):
     object_filter.set_settings_widget(widget)
@@ -267,3 +260,14 @@ def settings_combobox_changed(object_filter: Type[tool.ObjectFilter], project: T
             combobox_phase.setItemIcon(index.row(), warn_icon)
         else:
             combobox_phase.setItemIcon(index.row(), QIcon())
+
+
+# Compare Widget
+
+def add_compare_widget(object_filter_compare: Type[tool.ObjectFilterCompare],
+                       attribute_compare: Type[tool.AttributeCompare],
+                       compare_window: Type[tool.CompareWindow]):
+    compare_window.add_tab("Objekt Filter", object_filter_compare.get_widget,
+                           lambda p0, p1: init_compare_object_filter(p0, p1, object_filter_compare, attribute_compare),
+                           object_filter_compare,
+                           lambda file: export_filter_differences(file, object_filter_compare, attribute_compare))
