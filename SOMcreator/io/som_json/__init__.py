@@ -11,7 +11,7 @@ from .typing import MainDict
 from typing import Type, TYPE_CHECKING
 from . import constants, core, project, predefined_pset, property_set, obj, aggregation, inheritance
 from SOMcreator.Template import HOME_DIR, MAPPING_TEMPLATE
-from SOMcreator.external_software import xml
+from SOMcreator.util import xml
 import jinja2
 
 if TYPE_CHECKING:

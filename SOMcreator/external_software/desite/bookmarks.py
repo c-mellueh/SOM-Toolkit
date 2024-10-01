@@ -4,8 +4,7 @@ import jinja2
 from lxml import etree
 from ...Template import HOME_DIR, BOOKMARK_TEMPLATE
 import SOMcreator
-from ...external_software import xml
-
+from SOMcreator.util import xml
 
 def _handle_bookmark_list(proj: SOMcreator.Project) -> etree.ElementTree:
     xml_bookmarks = etree.Element("bookmarks")

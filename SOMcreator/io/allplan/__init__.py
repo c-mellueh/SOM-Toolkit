@@ -4,7 +4,7 @@ from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
 import SOMcreator
-from ..constants import value_constants
+from SOMcreator.constants import value_constants
 
 TITLES = ["Definition", "Zuweisung", "Mapping"]
 COLUMNS = ["AttributeName",

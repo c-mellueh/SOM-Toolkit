@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, IO, Iterator
 
 import SOMcreator
-from ..constants import value_constants
+from SOMcreator.constants import value_constants
 
 if TYPE_CHECKING:
     pass

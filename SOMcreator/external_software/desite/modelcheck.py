@@ -11,7 +11,7 @@ from lxml import etree
 from typing import TypedDict
 
 from . import handle_header, output_date_time
-from ...external_software import xml
+from SOMcreator.util import xml
 from SOMcreator.util.misc import merge_list
 from ... import constants, Template
 from ...constants import value_constants

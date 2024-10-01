@@ -6,8 +6,7 @@ from lxml import etree
 import SOMcreator
 from ...constants import value_constants
 from . import handle_header
-from ...external_software import xml
-
+from SOMcreator.util import xml
 
 def _handle_section(id_dict, aggregation: SOMcreator.Aggregation, xml_item: Element) -> None:
     xml_child = etree.SubElement(xml_item, "section")

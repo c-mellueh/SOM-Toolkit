@@ -3,9 +3,7 @@ from typing import TYPE_CHECKING
 import som_gui.core.tool
 import SOMcreator
 from SOMcreator.external_software.desite import bookmarks
-from SOMcreator.external_software import vestra
-from SOMcreator.external_software import card1
-from SOMcreator.external_software import allplan
+from SOMcreator.io import allplan, card1, vestra
 import SOMcreator.io.som_json
 from SOMcreator import excel as som_excel
 from SOMcreator.tool import ExportExcel

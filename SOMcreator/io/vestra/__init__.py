@@ -4,7 +4,7 @@ from lxml import etree, builder
 from openpyxl import load_workbook
 
 import SOMcreator
-from ..external_software import xml
+from SOMcreator.util import xml
 
 
 def create_mapping(excel_path: str, folder_path: str, project: SOMcreator.Project) -> None:

@@ -1,7 +1,6 @@
 import logging
 
 from openpyxl import load_workbook, Workbook
-
 import SOMcreator
 
 

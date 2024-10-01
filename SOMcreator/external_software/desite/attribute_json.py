@@ -4,8 +4,7 @@ import json
 import os
 import SOMcreator
 from ...constants import value_constants
-from ...external_software import xml
-
+from SOMcreator.util import xml
 DATA_TYPE = "data_type"
 VALUE_TYPE = "value_Type"
 VALUE = "value"
