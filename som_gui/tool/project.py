@@ -98,10 +98,7 @@ class Project(som_gui.core.tool.Project):
             proj: SOMcreator.Project = cls.get_properties().active_project
         if proj is None:
             return []
-        if filter_objects:
-            return [obj for obj in proj.get_objects(filter=True) if obj.parent is None]
-        else:
-            return [obj for obj in proj.get_objects(filter=False) if obj.parent is None]
+        return list(proj.get_root_objects(filter=filter_objects))
 
 
     @classmethod

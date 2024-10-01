@@ -22,7 +22,7 @@ def export_revit_ifc_mapping(mapping: Type[tool.Mapping], project: Type[tool.Pro
     if not path:
         return
 
-    export_dict = mapping.create_export_dict(project.get_root_objects())
+    export_dict = mapping.create_export_dict(list(project.get().get_root_objects(filter=False)))
     revit.export_ifc_template(path, export_dict)
 
 

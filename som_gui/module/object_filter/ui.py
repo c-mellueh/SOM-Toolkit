@@ -8,7 +8,6 @@ from PySide6.QtWidgets import QTreeView, QWidget, QPushButton
 from PySide6.QtGui import QMouseEvent, QIcon
 from som_gui.module import object_filter
 from .qt import settings
-
 class SettingsWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -31,7 +30,7 @@ class ObjectTreeView(QTreeView):
 
     def paintEvent(self, event):
         super().paintEvent(event)
-        core.refresh_object_tree(tool.ObjectFilter, Project)
+        object_filter.trigger.refresh_object_tree()
 
     def mousePressEvent(self, event: QMouseEvent):
         index = self.indexAt(event.pos())

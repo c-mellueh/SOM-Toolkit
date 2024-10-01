@@ -51,12 +51,16 @@ class Project(object):
         if item in self._items:
             self._items.remove(item)
 
+    @filterable
+    def get_root_objects(self) -> Iterator[SOMcreator.Object]:
+        return filter(lambda o: o.parent is None, self.get_objects())
+
     # Item Getter Methods
     @filterable
     def get_hirarchy_items(self) -> Iterator[
         SOMcreator.Object, SOMcreator.PropertySet, SOMcreator.Attribute, SOMcreator.Aggregation, Hirarchy]:
         return filter(lambda i: isinstance(i, (
-        SOMcreator.Object, SOMcreator.PropertySet, SOMcreator.Attribute, SOMcreator.Aggregation)), self._items)
+            SOMcreator.Object, SOMcreator.PropertySet, SOMcreator.Attribute, SOMcreator.Aggregation)), self._items)
 
     @filterable
     def get_objects(self) -> Iterator[SOMcreator.Object]:
