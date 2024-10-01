@@ -1,7 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 
-from .constants import *
+from SOMcreator.datastructure.som_json import FILTER_MATRIXES, FILTER_MATRIX, ACTIVE_USECASES, ACTIVE_PHASES, \
+    CURRENT_PR0JECT_PHASE, CURRENT_USE_CASE, PROJECT, NAME, AUTHOR, VERSION, AGGREGATION_PSET, AGGREGATION_ATTRIBUTE, \
+    PROJECT_PHASES, USE_CASES, PREDEFINED_PSETS, OBJECTS, AGGREGATIONS
 from SOMcreator.datastructure.som_json import ProjectDict, FilterDict, MainDict
 import SOMcreator
 from . import core

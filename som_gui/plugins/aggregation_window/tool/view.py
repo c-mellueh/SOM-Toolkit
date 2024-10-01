@@ -9,7 +9,7 @@ from PySide6.QtGui import QTransform, QImage, QPainter, QCursor
 from PySide6.QtWidgets import QApplication, QFileDialog, QGraphicsView
 
 import SOMcreator
-import SOMcreator.exporter.som_json.constants as json_constants
+from SOMcreator.datastructure.som_json import NODES
 from som_gui.plugins.aggregation_window.module.view.constants import AGGREGATIONSCENES, SCENE_SIZE, SCENE_MARGIN
 from som_gui.plugins.aggregation_window.module.node import ui as ui_node
 from som_gui.plugins.aggregation_window import tool as aw_tool
@@ -139,7 +139,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
         existing_scene_names = cls.get_properties().scene_name_list
         for scene_name, node_dict in import_scene_dict.items():
-            if isinstance(node_dict[json_constants.NODES], list):
+            if isinstance(node_dict[NODES], list):
                 logging.warning(
                     f"SOMJson was written in OLD version. "
                     f"Please open with SOM-Toolkit v2.11.3 and save it as new version.")

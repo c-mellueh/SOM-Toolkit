@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QListW
 from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtGui import QAction, QIcon
 
-from SOMcreator.exporter.som_json import constants as json_constants
+from SOMcreator.datastructure.som_json import INHERITED_TEXT
 
 import som_gui
 import som_gui.core.tool
@@ -172,7 +172,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         if items[0].text() != property_set.name:
             items[0].setText(f"{property_set.name}")
         if property_set.is_child:
-            text = property_set.parent.name if property_set.parent.object is not None else json_constants.INHERITED_TEXT
+            text = property_set.parent.name if property_set.parent.object is not None else INHERITED_TEXT
 
             if items[1].text() != text:
                 items[1].setText(text)

@@ -6,10 +6,9 @@ import json
 import time
 
 import SOMcreator
-from .constants import FILTER_MATRIXES
 from SOMcreator.datastructure.som_json import MainDict
-from typing import Type, TYPE_CHECKING
-from . import constants, core, project, predefined_pset, property_set, obj, aggregation, inheritance
+from typing import TYPE_CHECKING
+from . import core, project, predefined_pset, property_set, object_, aggregation, inheritance
 from SOMcreator.templates import HOME_DIR, MAPPING_TEMPLATE
 from SOMcreator.util import xml
 import jinja2
@@ -59,53 +58,6 @@ def reset_uuid_dicts():
     SOMcreator.exporter.som_json.attribute_uuid_dict = dict()
     SOMcreator.exporter.som_json.filter_matrixes = list()
 
-
-def open_json(cls: Type[Project], path: str):
-    start_time = time.time()
-
-    SOMcreator.exporter.som_json.parent_dict = dict()
-    reset_uuid_dicts()
-    if not os.path.isfile(path):
-        raise FileNotFoundError(f"File '{path}' does not exist!")
-
-    with open(path, "r") as file:
-        main_dict: MainDict = json.load(file)
-
-    SOMcreator.exporter.som_json.plugin_dict = dict(main_dict)
-    SOMcreator.exporter.som_json.filter_matrixes = main_dict.get(FILTER_MATRIXES)
-    core.remove_part_of_dict(FILTER_MATRIXES)
-
-    logging.debug(f"Filter Matrixes Read")
-    project_dict = main_dict.get(constants.PROJECT)
-    SOMcreator.exporter.som_json.phase_list, SOMcreator.exporter.som_json.use_case_list = core.get_filter_lists(
-        project_dict)
-    logging.debug(f"Filter List Read")
-
-    proj, project_dict = project.load(cls, main_dict)
-    logging.debug(f"Project Read")
-
-    predefined_pset.load(proj, main_dict)
-    logging.debug(f"Predefined Pset Read")
-
-    obj.load(proj, main_dict)
-    logging.debug(f"Objects Read")
-
-    aggregation.load(proj, main_dict)
-    logging.debug(f"Aggregations Read")
-
-    inheritance.calculate(proj)
-    logging.debug(f"Inheritance Calculated")
-
-    aggregation.calculate(proj)
-    logging.debug(f"Aggregation Calculated")
-
-    proj.plugin_dict = SOMcreator.exporter.som_json.plugin_dict
-    proj.import_dict = main_dict
-    end_time = time.time()
-    logging.info(f"Import Done. Time: {end_time - start_time}")
-    return proj
-
-
 def export_json(proj: Project, path: str) -> dict:
     start_time = time.time()
     main_dict = create_export_dict(proj)
@@ -121,7 +73,7 @@ def create_export_dict(proj: Project):
     main_dict: MainDict = dict()
     project.write(proj, main_dict)
     predefined_pset.write(proj, main_dict)
-    obj.write(proj, main_dict)
+    object_.write(proj, main_dict)
     aggregation.write(proj, main_dict)
     main_dict.update(proj.plugin_dict)
     return main_dict
