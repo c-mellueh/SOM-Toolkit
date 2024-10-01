@@ -1,5 +1,5 @@
 import SOMcreator
-from SOMcreator import bsdd
+from SOMcreator.exporter import bsdd
 from SOMcreator.constants import value_constants
 import logging
 import datetime
@@ -17,7 +17,6 @@ PROPERTY_KIND_MAPPING = {
     value_constants.RANGE:  "Range",
     value_constants.LIST:   "List",
 }
-
 
 def transform_objects_to_classes(dictionary: bsdd.Dictionary, objects: list[SOMcreator.Object],
                                  predefined_psets: list[SOMcreator.PropertySet]):

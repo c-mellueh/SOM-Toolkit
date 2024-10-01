@@ -189,9 +189,3 @@ class AllowedValue:
     Uri: str = field(init=False, default=None)
     SortNumber: int = field(init=False, default=None)
     OwnedUri: str = field(init=False, default=None)
-
-
-def export(dictionary: Dictionary, path: str | os.PathLike):
-    with open(path, "w") as file:
-        d = asdict(dictionary, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
-        json.dump(d, file, indent=2)

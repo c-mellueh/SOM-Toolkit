@@ -1,8 +1,6 @@
 import re
 import pandas as pd
 
-from SOMcreator.bsdd.bsdd_property import PropertyRelation
-
 with open("allowed_value_table.md", "r", encoding='UTF-8') as file:
     text = file.read()
 pattern = r"\|(.+)\|(.+)\|(.+)\|(.+)\|(.+)\|"
