@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Type
 from .constants import *
 from .typing import ProjectDict, FilterDict, MainDict
 import SOMcreator
-from SOMcreator.filehandling import core
+from . import core
 from collections import OrderedDict
 
 if TYPE_CHECKING:
@@ -43,7 +43,7 @@ def _load_single_filter(current_state: str | int | None,
 
 def _load_usecases(project_dict: ProjectDict) -> tuple[list[int], list[SOMcreator.UseCase]]:
     active_usecases: list[int] = project_dict.get(ACTIVE_USECASES)
-    use_case_list = SOMcreator.filehandling.use_case_list
+    use_case_list = SOMcreator.exporter.som_json.use_case_list
 
     if active_usecases is not None:
         return active_usecases, use_case_list
@@ -56,7 +56,7 @@ def _load_usecases(project_dict: ProjectDict) -> tuple[list[int], list[SOMcreato
 
 def _load_phases(project_dict: ProjectDict) -> tuple[list[int], list[SOMcreator.Phase]]:
     active_phases: list[int] = project_dict.get(ACTIVE_PHASES)
-    phase_list = SOMcreator.filehandling.phase_list
+    phase_list = SOMcreator.exporter.som_json.phase_list
 
     if active_phases is not None:
         return active_phases, phase_list
@@ -97,7 +97,7 @@ def load(cls: Type[Project], main_dict: MainDict) -> tuple[Project, dict]:
 
 def write(project: Project, main_dict: MainDict) -> None:
     main_dict[FILTER_MATRIXES] = create_existing_filter_states(project)
-    SOMcreator.filehandling.filter_matrixes = main_dict[FILTER_MATRIXES]
+    SOMcreator.exporter.som_json.filter_matrixes = main_dict[FILTER_MATRIXES]
     main_dict[PROJECT] = dict()
     project_dict: ProjectDict = main_dict[PROJECT]
     project_dict[NAME] = project.name

@@ -10,8 +10,8 @@ from .constants import FILTER_MATRIXES
 from .typing import MainDict
 from typing import Type, TYPE_CHECKING
 from . import constants, core, project, predefined_pset, property_set, obj, aggregation, inheritance
-from ..Template import HOME_DIR, MAPPING_TEMPLATE
-from ..external_software import xml
+from SOMcreator.Template import HOME_DIR, MAPPING_TEMPLATE
+from SOMcreator.external_software import xml
 import jinja2
 
 if TYPE_CHECKING:
@@ -54,16 +54,16 @@ def create_mapping_script(project: SOMcreator.Project, pset_name: str, path: str
 
 
 def reset_uuid_dicts():
-    SOMcreator.filehandling.object_uuid_dict = dict()
-    SOMcreator.filehandling.property_set_uuid_dict = dict()
-    SOMcreator.filehandling.attribute_uuid_dict = dict()
-    SOMcreator.filehandling.filter_matrixes = list()
+    SOMcreator.exporter.som_json.object_uuid_dict = dict()
+    SOMcreator.exporter.som_json.property_set_uuid_dict = dict()
+    SOMcreator.exporter.som_json.attribute_uuid_dict = dict()
+    SOMcreator.exporter.som_json.filter_matrixes = list()
 
 
 def open_json(cls: Type[Project], path: str):
     start_time = time.time()
 
-    SOMcreator.filehandling.parent_dict = dict()
+    SOMcreator.exporter.som_json.parent_dict = dict()
     reset_uuid_dicts()
     if not os.path.isfile(path):
         raise FileNotFoundError(f"File '{path}' does not exist!")
@@ -71,13 +71,14 @@ def open_json(cls: Type[Project], path: str):
     with open(path, "r") as file:
         main_dict: MainDict = json.load(file)
 
-    SOMcreator.filehandling.plugin_dict = dict(main_dict)
-    SOMcreator.filehandling.filter_matrixes = main_dict.get(FILTER_MATRIXES)
+    SOMcreator.exporter.som_json.plugin_dict = dict(main_dict)
+    SOMcreator.exporter.som_json.filter_matrixes = main_dict.get(FILTER_MATRIXES)
     core.remove_part_of_dict(FILTER_MATRIXES)
 
     logging.debug(f"Filter Matrixes Read")
     project_dict = main_dict.get(constants.PROJECT)
-    SOMcreator.filehandling.phase_list, SOMcreator.filehandling.use_case_list = core.get_filter_lists(project_dict)
+    SOMcreator.exporter.som_json.phase_list, SOMcreator.exporter.som_json.use_case_list = core.get_filter_lists(
+        project_dict)
     logging.debug(f"Filter List Read")
 
     proj, project_dict = project.load(cls, main_dict)
@@ -98,7 +99,7 @@ def open_json(cls: Type[Project], path: str):
     aggregation.calculate(proj)
     logging.debug(f"Aggregation Calculated")
 
-    proj.plugin_dict = SOMcreator.filehandling.plugin_dict
+    proj.plugin_dict = SOMcreator.exporter.som_json.plugin_dict
     proj.import_dict = main_dict
     end_time = time.time()
     logging.info(f"Import Done. Time: {end_time - start_time}")

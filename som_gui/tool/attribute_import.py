@@ -5,7 +5,6 @@ import SOMcreator
 
 import som_gui.core.tool
 import som_gui
-from SOMcreator.filehandling import use_case_list
 from som_gui.module.attribute_import import ui, trigger
 from som_gui import tool
 from PySide6.QtWidgets import QComboBox, QTableWidgetItem, QTableWidget, QCheckBox

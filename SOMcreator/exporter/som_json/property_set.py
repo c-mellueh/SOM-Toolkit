@@ -1,12 +1,12 @@
 from __future__ import annotations
 import SOMcreator
-from SOMcreator.filehandling import core
-from SOMcreator.filehandling.constants import PREDEFINED_PSETS, ATTRIBUTES
-from SOMcreator.filehandling import attribute
+from SOMcreator.exporter.som_json import core
+from SOMcreator.exporter.som_json.constants import ATTRIBUTES
+from SOMcreator.exporter.som_json import attribute
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from SOMcreator.filehandling.typing import PropertySetDict, MainDict
+    from SOMcreator.exporter.som_json.typing import PropertySetDict
     from SOMcreator import Project
 
 
@@ -17,8 +17,8 @@ def load(proj: Project, pset_dict: PropertySetDict, identifier: str, obj: SOMcre
     attributes_dict = pset_dict[ATTRIBUTES]
     for ident, attribute_dict in attributes_dict.items():
         attribute.load(proj, attribute_dict, ident, pset)
-    SOMcreator.filehandling.parent_dict[pset] = parent
-    SOMcreator.filehandling.property_set_uuid_dict[identifier] = pset
+    SOMcreator.exporter.som_json.parent_dict[pset] = parent
+    SOMcreator.exporter.som_json.property_set_uuid_dict[identifier] = pset
 
 #### Export ####
 

@@ -1,13 +1,13 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from SOMcreator.filehandling.constants import IFC_MAPPINGS, ABBREVIATION, PROPERTY_SETS, IDENT_ATTRIBUTE, OBJECTS
-from SOMcreator.filehandling import property_set
+from SOMcreator.exporter.som_json.constants import IFC_MAPPINGS, ABBREVIATION, PROPERTY_SETS, IDENT_ATTRIBUTE, OBJECTS
+from SOMcreator.exporter.som_json import property_set
 import SOMcreator
-from SOMcreator.filehandling import core
+from SOMcreator.exporter.som_json import core
 
 if TYPE_CHECKING:
     from SOMcreator import Project
-    from SOMcreator.filehandling.typing import ObjectDict, MainDict
+    from SOMcreator.exporter.som_json.typing import ObjectDict, MainDict
 
 
 ### Import ###
@@ -28,10 +28,10 @@ def _load_object(proj: SOMcreator.Project, object_dict: ObjectDict, identifier: 
         property_set.load(proj, pset_dict, ident, obj)
     ident_attrib_id = object_dict[IDENT_ATTRIBUTE]
     if ident_attrib_id is not None:
-        ident_attrib = SOMcreator.filehandling.attribute_uuid_dict[ident_attrib_id]
+        ident_attrib = SOMcreator.exporter.som_json.attribute_uuid_dict[ident_attrib_id]
         obj.ident_attrib = ident_attrib
-    SOMcreator.filehandling.parent_dict[obj] = parent
-    SOMcreator.filehandling.object_uuid_dict[identifier] = obj
+    SOMcreator.exporter.som_json.parent_dict[obj] = parent
+    SOMcreator.exporter.som_json.object_uuid_dict[identifier] = obj
 
 def load(proj: Project, main_dict: dict):
     objects_dict: dict[str, ObjectDict] = main_dict.get(OBJECTS)

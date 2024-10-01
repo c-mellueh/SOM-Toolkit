@@ -2,12 +2,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import som_gui.core.tool
 import SOMcreator
-from som_gui.module.exports.constants import *
 from SOMcreator.external_software.desite import bookmarks
 from SOMcreator.external_software import vestra
 from SOMcreator.external_software import card1
 from SOMcreator.external_software import allplan
-from SOMcreator.filehandling import create_mapping_script
+import SOMcreator.exporter.som_json
 from SOMcreator import excel as som_excel
 from SOMcreator.tool import ExportExcel
 from PySide6.QtWidgets import QFileDialog, QLineEdit, QWidget, QGridLayout, QLabel
@@ -53,7 +52,7 @@ class Exports(som_gui.core.tool.Exports):
 
     @classmethod
     def create_mapping_script(cls, project: SOMcreator.Project, name: str, path: str):
-        create_mapping_script(project, name, path)
+        SOMcreator.exporter.som_json.create_mapping_script(project, name, path)
 
     @classmethod
     def export_allplan(cls, project, path, name):

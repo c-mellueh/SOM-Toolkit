@@ -9,7 +9,7 @@ from PySide6.QtGui import QTransform, QImage, QPainter, QCursor
 from PySide6.QtWidgets import QApplication, QFileDialog, QGraphicsView
 
 import SOMcreator
-from SOMcreator.constants import json_constants
+import SOMcreator.exporter.som_json.constants as json_constants
 from som_gui.plugins.aggregation_window.module.view.constants import AGGREGATIONSCENES, SCENE_SIZE, SCENE_MARGIN
 from som_gui.plugins.aggregation_window.module.node import ui as ui_node
 from som_gui.plugins.aggregation_window import tool as aw_tool

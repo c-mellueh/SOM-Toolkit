@@ -1,11 +1,11 @@
 from __future__ import annotations
-from SOMcreator.filehandling import core
-from SOMcreator.filehandling.constants import PREDEFINED_PSETS
-from SOMcreator.filehandling import property_set
+from SOMcreator.exporter.som_json import core
+from SOMcreator.exporter.som_json.constants import PREDEFINED_PSETS
+from SOMcreator.exporter.som_json import property_set
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from SOMcreator.filehandling.typing import MainDict
+    from SOMcreator.exporter.som_json.typing import MainDict
     from SOMcreator import Project
 
 

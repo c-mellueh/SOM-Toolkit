@@ -35,3 +35,5 @@ IGNORE_PSET = "IFC"
 
 ACTIVE_PHASES = "active_phases"
 ACTIVE_USECASES = "active_usecases"
+NODES = "Nodes"
+INHERITED_TEXT = "Predefined Pset"

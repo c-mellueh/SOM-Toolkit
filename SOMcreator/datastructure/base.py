@@ -3,7 +3,7 @@ from SOMcreator.constants import value_constants
 import SOMcreator
 from typing import Iterator, Callable
 import logging
-from SOMcreator import filehandling
+import SOMcreator.exporter.som_json
 
 FILTER_KEYWORD = "filter"
 
@@ -59,7 +59,7 @@ class Hirarchy(object, metaclass=IterRegistry):
         self._name = name
         self._mapping_dict = {
             value_constants.SHARED_PARAMETERS:  True,
-            filehandling.constants.IFC_MAPPING: True
+            SOMcreator.exporter.som_json.constants.IFC_MAPPING: True
         }
         self._description = ""
         if description is not None:

@@ -3,21 +3,23 @@ from __future__ import annotations
 import json
 import os
 import SOMcreator
-from ...constants import json_constants, value_constants
+from ...constants import value_constants
 from ...external_software import xml
 
-
+DATA_TYPE = "data_type"
+VALUE_TYPE = "value_Type"
+VALUE = "value"
 def _iter_attributes(property_set: SOMcreator.PropertySet, pset_dict: dict) -> None:
     for attribute in property_set.get_attributes(filter=True):
         pset_dict[attribute.name] = dict()
         attribute_dict = pset_dict[attribute.name]
 
-        attribute_dict[json_constants.DATA_TYPE] = xml.transform_data_format(attribute.data_type)
+        attribute_dict[DATA_TYPE] = xml.transform_data_format(attribute.data_type)
         if not attribute.value:
-            attribute_dict[json_constants.VALUE_TYPE] = value_constants.EXISTS
+            attribute_dict[VALUE_TYPE] = value_constants.EXISTS
         else:
-            attribute_dict[json_constants.VALUE_TYPE] = attribute.value_type
-        attribute_dict[json_constants.VALUE] = attribute.value
+            attribute_dict[VALUE_TYPE] = attribute.value_type
+        attribute_dict[VALUE] = attribute.value
 
 
 def export(project: SOMcreator.Project, path: str | os.PathLike) -> None:

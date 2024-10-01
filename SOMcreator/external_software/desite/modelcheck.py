@@ -14,7 +14,7 @@ from . import handle_header, output_date_time
 from ...external_software import xml
 from ..bim_collab_zoom.rule import merge_list
 from ... import constants, Template
-from ...constants import json_constants, value_constants
+from ...constants import value_constants
 import SOMcreator
 
 JS_EXPORT = "JS"
@@ -183,7 +183,7 @@ def _handle_tree_structure(author: str, required_data_dict: dict, parent_xml_con
         xml_rule_script = _handle_rule_script(xml_attribute_rule_list, name=obj.name)
         xml_code = _handle_code(xml_rule_script)
         cdata_code = template.render(pset_dict=pset_dict, constants=value_constants,
-                                     ignore_pset=json_constants.IGNORE_PSET, xs_dict=xml.DATA_TYPE_MAPPING_DICT)
+                                     ignore_pset="", xs_dict=xml.DATA_TYPE_MAPPING_DICT)
         xml_code.text = cdata_code
         _handle_rule(xml_checkrun, "UniquePattern")
 
@@ -390,7 +390,7 @@ def _fast_object_check(main_pset: str, main_attrib: str, author: str, required_d
     xml_code = _handle_code(xml_rule_script)
     cdata_code = template.render(object_dict=required_data_dict, main_pset=main_pset, main_attrib=main_attrib,
                                  constants=value_constants,
-                                 ignore_pset=json_constants.IGNORE_PSET, xs_dict=xml.DATA_TYPE_MAPPING_DICT)
+                                 ignore_pset="", xs_dict=xml.DATA_TYPE_MAPPING_DICT)
     xml_code.text = cdata_code
     _handle_rule(xml_checkrun, "UniquePattern")
     return {xml_checkrun: None}
