@@ -1,6 +1,6 @@
 from __future__ import annotations
 import SOMcreator
-from SOMcreator.tool import ExportExcel
+from .tool import ExportExcel
 from typing import Type
 import os
 

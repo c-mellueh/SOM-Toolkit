@@ -125,7 +125,7 @@ class Hirarchy(object, metaclass=IterRegistry):
         if ignore_hirarchy:
             return self._optional
         if self.parent is not None:
-            if self.parent.is_optional:
+            if self.parent.is_optional():
                 return True
         return self._optional
 

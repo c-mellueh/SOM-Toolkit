@@ -4,7 +4,7 @@ from .datastructure import PropertySet, Attribute, Aggregation, UseCase, Phase, 
 
 from .io import desite
 from .util.project import merge_projects
-from .core import export_excel as excel
+from .io.excel.core import export as export_excel
 
 __version__ = "1.8.0"
 active_project = None
