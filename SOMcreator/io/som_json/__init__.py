@@ -7,7 +7,7 @@ import time
 
 import SOMcreator
 from .constants import FILTER_MATRIXES
-from .typing import MainDict
+from SOMcreator.datastructure.som_json import MainDict
 from typing import Type, TYPE_CHECKING
 from . import constants, core, project, predefined_pset, property_set, obj, aggregation, inheritance
 from SOMcreator.templates import HOME_DIR, MAPPING_TEMPLATE

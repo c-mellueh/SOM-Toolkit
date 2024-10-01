@@ -7,7 +7,7 @@ from SOMcreator.io.som_json import core
 
 if TYPE_CHECKING:
     from SOMcreator import Project
-    from SOMcreator.io.som_json.typing import ObjectDict, MainDict
+    from SOMcreator.datastructure.som_json import ObjectDict, MainDict
 
 
 ### Import ###

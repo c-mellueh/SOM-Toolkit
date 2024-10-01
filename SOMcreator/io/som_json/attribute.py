@@ -7,7 +7,7 @@ from SOMcreator.io import som_json
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from SOMcreator.io.som_json.typing import AttributeDict
+    from SOMcreator.datastructure.som_json import AttributeDict
 
 
 def load(proj: SOMcreator.Project, attribute_dict: dict, identifier: str,

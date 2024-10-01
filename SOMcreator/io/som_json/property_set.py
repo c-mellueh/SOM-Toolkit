@@ -6,7 +6,7 @@ from SOMcreator.io.som_json import attribute
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from SOMcreator.io.som_json.typing import PropertySetDict
+    from SOMcreator.datastructure.som_json import PropertySetDict
     from SOMcreator import Project
 
 

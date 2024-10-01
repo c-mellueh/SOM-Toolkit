@@ -7,7 +7,7 @@ from SOMcreator.io.som_json.constants import PROJECT_PHASES, USE_CASES, NAME, DE
 
 if TYPE_CHECKING:
     from SOMcreator import Project
-    from SOMcreator.io.som_json.typing import ProjectDict, StandardDict, ObjectDict, PropertySetDict, \
+    from SOMcreator.datastructure.som_json import ProjectDict, StandardDict, ObjectDict, PropertySetDict, \
         AttributeDict, \
         AggregationDict
 

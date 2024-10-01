@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 
 from .constants import *
-from .typing import ProjectDict, FilterDict, MainDict
+from SOMcreator.datastructure.som_json import ProjectDict, FilterDict, MainDict
 import SOMcreator
 from . import core
 from collections import OrderedDict

@@ -3,13 +3,13 @@ from __future__ import annotations
 import SOMcreator
 from SOMcreator.io.som_json import core
 from SOMcreator.io.som_json.constants import OBJECT, CONNECTION, AGGREGATIONS, PARENT
-from SOMcreator.io.som_json.typing import AggregationDict
+from SOMcreator.datastructure.som_json import AggregationDict
 
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from SOMcreator import Project
-    from SOMcreator.io.som_json.typing import MainDict
+    from SOMcreator.datastructure.som_json import MainDict
 
 
 ### Import ###
