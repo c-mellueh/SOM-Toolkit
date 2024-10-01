@@ -65,7 +65,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     def get_existing_abbriviations(cls) -> set[str]:
         proj = tool.Project.get()
         abbreviations = set()
-        for obj in proj.get_all_objects():
+        for obj in proj.get_objects(filter=False):
             if obj.abbreviation:
                 abbreviations.add(obj.abbreviation)
         return abbreviations

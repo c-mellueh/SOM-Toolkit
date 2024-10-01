@@ -29,7 +29,7 @@ def item_changed(item: QTableWidgetItem, attribute_table: Type[tool.AttributeTab
     if not item.column() == 4:
         return
     cs = True if item.checkState() == Qt.CheckState.Checked else False
-    attribute.optional = cs
+    attribute.set_optional(cs)
 
 
 def drop_event(event: QDropEvent, table: ui.AttributeTable, property_set_window: Type[tool.PropertySetWindow],
@@ -44,7 +44,7 @@ def drop_event(event: QDropEvent, table: ui.AttributeTable, property_set_window:
     proposed_action = event.proposedAction()
     property_set = property_set_window.get_property_set_by_window(window)
 
-    existing_attributes = {a.name: a for a in property_set.get_all_attributes()}
+    existing_attributes = {a.name: a for a in property_set.get_attributes(filter=False)}
 
     if proposed_action == Qt.DropAction.CopyAction:
         for attribute in attributes:
@@ -112,8 +112,9 @@ def paint_attribute_table(table: QTableWidget, attribute_table: Type[tool.Attrib
         for row in reversed(range(table.rowCount())):
             table.removeRow(row)
         return
-    delete_attributes = existing_attributes.difference(set(property_set.attributes))
-    new_attributes = set(property_set.attributes).difference(existing_attributes)
+    property_set: SOMcreator.PropertySet
+    delete_attributes = existing_attributes.difference(set(property_set.get_attributes(filter=True)))
+    new_attributes = set(property_set.get_attributes(filter=True)).difference(existing_attributes)
     attribute_table.remove_attributes_from_table(delete_attributes, table)
     attribute_table.add_attributes_to_table(sorted(new_attributes), table)
     for row in range(table.rowCount()):

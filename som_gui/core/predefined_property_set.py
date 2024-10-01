@@ -98,7 +98,7 @@ def repaint_object_list(predefined_pset: Type[tool.PredefinedPropertySet]):
     if property_set is None:
         predefined_pset.clear_object_table()
         return
-    predefined_property_sets = set(property_set.children)
+    predefined_property_sets = set(property_set.get_children(filter=True))
     existing_property_sets = predefined_pset.get_existing_psets_in_table_widget(table_widget)
     delete_property_sets = existing_property_sets.difference(predefined_property_sets)
     add_property_sets = sorted(predefined_property_sets.difference(existing_property_sets), key=lambda p: p.name)
@@ -143,7 +143,7 @@ def init_compare_window(project0: SOMcreator.Project, project1: SOMcreator.Proje
     info_table = attribute_compare.get_info_table(widget)
     pset_compare.create_tree_selection_trigger(widget)
 
-    psets0, psets1 = project0.get_predefined_psets(), project1.get_predefined_psets()
+    psets0, psets1 = project0.get_predefined_psets(filter=False), project1.get_predefined_psets(filter=False)
     pset_compare.set_predefined_psets(psets0, psets1)
 
     pset_list = pset_compare.create_pset_list()

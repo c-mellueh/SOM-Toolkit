@@ -5,8 +5,7 @@ import os
 
 import ifcopenshell
 from ifcopenshell.util import element
-
-from .. import classes
+import SOMcreator
 
 FILE_SPLIT = "; "
 ELEMENT = "Element"
@@ -49,11 +48,11 @@ def get_ifc_el_info(entity: ifcopenshell.entity_instance, attribute_bundle: tupl
         return None, None, None
 
 
-def create_structure_dict(ifc_file: ifcopenshell.file, project: classes.Project,
+def create_structure_dict(ifc_file: ifcopenshell.file, project: SOMcreator.Project,
                           attribute_bundle: tuple[str, str, str, str, str, str]) -> dict:
     """Iterate over all Entities, build the targeted Datastructure"""
     targeted_group_structure = {GROUP: {}, ELEMENT: {}, IFC_REP: None}
-    bk_dict = {obj.ident_value: obj for obj in project.objects}
+    bk_dict = {obj.ident_value: obj for obj in project.get_objects(filter=True)}
 
     for index, el in enumerate(list(ifc_file.by_type("IfcElement"))):
         attrib, gruppe, identity = get_ifc_el_info(el, attribute_bundle)
@@ -67,7 +66,7 @@ def create_structure_dict(ifc_file: ifcopenshell.file, project: classes.Project,
                 focus_dict[GROUP][part] = {GROUP: {}, ELEMENT: list(), IFC_REP: None}
             focus_dict = focus_dict[GROUP][part]
 
-        obj: classes.Object = bk_dict.get(attrib)
+        obj: SOMcreator.Object = bk_dict.get(attrib)
         abbrev = obj.abbreviation
         if abbrev.upper() not in focus_dict[GROUP]:
             focus_dict[GROUP][abbrev] = {GROUP: {}, ELEMENT: list(), IFC_REP: None}
@@ -125,9 +124,9 @@ def create_aggregation_structure(ifc_file: ifcopenshell.file, structure: dict, i
                                    f"Relationship {pset_name}", DESCRIPTION, [relating_entity], pset)
         return pset
 
-    def fill_group_with_empty_values(ifc_group: ifcopenshell.entity_instance, group_obj: classes.Object, identity):
-        for pset in group_obj.property_sets:
-            attributes = {attribute.name: None for attribute in pset.attributes}
+    def fill_group_with_empty_values(ifc_group: ifcopenshell.entity_instance, group_obj: SOMcreator.Object, identity):
+        for pset in group_obj.get_property_sets(filter=True):
+            attributes = {attribute.name: None for attribute in pset.get_attributes(filter=True)}
             if pset.name == main_pset:
                 attributes[main_attribute] = group_obj.ident_value
                 attributes[NAME] = group_obj.name
@@ -137,7 +136,7 @@ def create_aggregation_structure(ifc_file: ifcopenshell.file, structure: dict, i
                 attributes[group_attribute] = "_".join(identity[:-2])
             create_ifc_pset(pset.name, attributes, ifc_group)
 
-    def create_ifc_group(group_obj: classes.Object, group_name: str, identity: list[str],
+    def create_ifc_group(group_obj: SOMcreator.Object, group_name: str, identity: list[str],
                          parent: ifcopenshell.entity_instance = None) -> ifcopenshell.entity_instance:
         logging.info(f"create_new_group: {group_name}")
         ifc_group = ifc_file.create_entity("IfcGroup", ifcopenshell.guid.new(), owner_history, group_name,
@@ -158,7 +157,7 @@ def create_aggregation_structure(ifc_file: ifcopenshell.file, structure: dict, i
                 attributes[group_attribute] = "_".join(identity[:-1])
             else:
                 attributes[group_attribute] = "_".join(identity[:-2])
-            if group_pset in [pset.name for pset in group_obj.property_sets]:
+            if group_pset in [pset.name for pset in group_obj.get_property_sets(filter=True)]:
                 create_ifc_pset(group_pset, attributes, ifc_group)
 
         if parent is not None:
@@ -192,7 +191,7 @@ def create_aggregation_structure(ifc_file: ifcopenshell.file, structure: dict, i
         return
 
 
-def main(ifc_path: os.PathLike | str, export_path: os.PathLike | str, project: classes.Project,
+def main(ifc_path: os.PathLike | str, export_path: os.PathLike | str, project: SOMcreator.Project,
          main_pset: str, main_attribute: str,
          group_pset: str, group_attribute: str,
          identity_pset: str, identity_attribute: str, fill_with_empty_values=False):
@@ -202,7 +201,7 @@ def main(ifc_path: os.PathLike | str, export_path: os.PathLike | str, project: c
 
     targeted_group_structure = create_structure_dict(ifc_file, project, attribute_bundle)
     fill_existing_groups(ifc_file, targeted_group_structure, attribute_bundle)
-    kuerzel_dict = {obj.abbreviation.upper(): obj for obj in project.objects}
+    kuerzel_dict = {obj.abbreviation.upper(): obj for obj in project.get_objects(filter=True)}
     create_aggregation_structure(ifc_file, targeted_group_structure, [], None, True, attribute_bundle, owner_history,
                                  kuerzel_dict, fill_with_empty_values, None)
     ifc_file.write(export_path)

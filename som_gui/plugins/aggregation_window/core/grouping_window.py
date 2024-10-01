@@ -114,7 +114,7 @@ def create_groups_in_file(ifc_file: ifcopenshell.file, grouping_window: Type[aw_
     grouping_window.set_status("create Structure")
     owner_history = grouping_window.get_first_owner_history(ifc_file)
     grouping_window.create_new_grouping_strictures(ifc_file, structure_dict, owner_history,
-                                                   project.get().get_all_objects())
+                                                   project.get().get_objects(filter=False))
 
     if grouping_window.is_aborted():
         return

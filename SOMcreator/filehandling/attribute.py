@@ -1,6 +1,5 @@
 from __future__ import annotations
 import SOMcreator
-from SOMcreator import classes
 from SOMcreator.filehandling import core
 from SOMcreator.filehandling.constants import VALUE, VALUE_TYPE, DATA_TYPE, CHILD_INHERITS_VALUE, REVIT_MAPPING
 from SOMcreator.constants.value_constants import OLD_DATATYPE_DICT
@@ -12,7 +11,7 @@ if TYPE_CHECKING:
 
 
 def load(proj: SOMcreator.Project, attribute_dict: dict, identifier: str,
-         property_set: classes.PropertySet, ) -> None:
+         property_set: SOMcreator.PropertySet, ) -> None:
     name, description, optional, parent, filter_matrix = core.get_basics(proj, attribute_dict, identifier)
     value = attribute_dict[VALUE]
     value_type = attribute_dict[VALUE_TYPE]
@@ -24,7 +23,7 @@ def load(proj: SOMcreator.Project, attribute_dict: dict, identifier: str,
 
     child_inherits_value = attribute_dict[CHILD_INHERITS_VALUE]
     revit_mapping = attribute_dict[REVIT_MAPPING]
-    attribute = classes.Attribute(property_set=property_set, name=name, value=value, value_type=value_type,
+    attribute = SOMcreator.Attribute(property_set=property_set, name=name, value=value, value_type=value_type,
                                   data_type=data_type,
                                   child_inherits_values=child_inherits_value, uuid=identifier,
                                   description=description, optional=optional, revit_mapping=revit_mapping,
@@ -32,7 +31,8 @@ def load(proj: SOMcreator.Project, attribute_dict: dict, identifier: str,
     filehandling.parent_dict[attribute] = parent
     SOMcreator.filehandling.attribute_uuid_dict[identifier] = attribute
 
-def write(attribute: classes.Attribute) -> AttributeDict:
+
+def write(attribute: SOMcreator.Attribute) -> AttributeDict:
     attribute_dict: AttributeDict = dict()
     core.write_basics(attribute_dict, attribute)
     attribute_dict[DATA_TYPE] = attribute.data_type

@@ -6,7 +6,7 @@ from datetime import date
 from lxml.etree import Element, ElementTree, SubElement
 
 from . import ids_xsd, xml_xsd
-from ... import classes
+import SOMcreator
 from ...constants import value_constants, ifc_datatypes
 from ..xml import transform_data_format
 
@@ -15,7 +15,7 @@ NSMAP = {None:  ids_xsd.DEFAULT_NS[1:-1],
          "xsi": xml_xsd.NS_XSI[1:-1]}
 
 
-def _build_info(proj: classes.Project, author, xml_parent: Element) -> None:
+def _build_info(proj: SOMcreator.Project, author, xml_parent: Element) -> None:
     xml_element = SubElement(xml_parent, ids_xsd.INFO, nsmap=NSMAP)
     SubElement(xml_element, ids_xsd.TITLE, nsmap=NSMAP).text = f"Pruefregeln fuer Projekt '{proj.name}'"
     SubElement(xml_element, ids_xsd.COPYRIGHT, nsmap=NSMAP).text = "None"
@@ -35,7 +35,7 @@ def _build_specifications(required_data, xml_parent: Element) -> None:
         _build_specification(obj, property_set_dict, xml_specifications)
 
 
-def _build_applicability(obj: classes.Object, xml_parent: Element) -> None:
+def _build_applicability(obj: SOMcreator.Object, xml_parent: Element) -> None:
     xml_applicability = SubElement(xml_parent, ids_xsd.APPLICABILITY, nsmap=NSMAP)
     xml_property = SubElement(xml_applicability, ids_xsd.PROPERTY, nsmap=NSMAP)
     xml_property.set(ids_xsd.ATTR_DATATYPE, ifc_datatypes.LABEL)
@@ -47,7 +47,7 @@ def _build_applicability(obj: classes.Object, xml_parent: Element) -> None:
     SubElement(xml_value, ids_xsd.SIMPLEVALUE, nsmap=NSMAP).text = obj.ident_value
 
 
-def _build_requirements(property_set_dict: dict[classes.PropertySet, list[classes.Attribute]],
+def _build_requirements(property_set_dict: dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]],
                         xml_parent: Element) -> None:
     xml_requirement = SubElement(xml_parent, ids_xsd.REQUIREMENTS, nsmap=NSMAP)
     for property_set, attribute_list in property_set_dict.items():
@@ -55,10 +55,10 @@ def _build_requirements(property_set_dict: dict[classes.PropertySet, list[classe
             _build_attribute_requirement(attribute, xml_requirement)
 
 
-def _build_attribute_requirement(attribute: classes.Attribute, xml_parent: Element) -> None:
+def _build_attribute_requirement(attribute: SOMcreator.Attribute, xml_parent: Element) -> None:
     xml_property = SubElement(xml_parent, ids_xsd.PROPERTY, nsmap=NSMAP)
     xml_property.set(ids_xsd.ATTR_DATATYPE, attribute.data_type)
-    if attribute.optional:
+    if attribute.is_optional(ignore_hirarchy=False):
         xml_property.set(xml_xsd.MINOCCURS, "0")
     else:
         xml_property.set(xml_xsd.MINOCCURS, "1")
@@ -89,7 +89,8 @@ def _build_attribute_requirement(attribute: classes.Attribute, xml_parent: Eleme
         SubElement(xml_restriction, xml_xsd.PATTERN, nsmap=NSMAP).set(xml_xsd.VALUE, pattern)
 
 
-def _build_specification(obj: classes.Object, property_set_dict: dict[classes.PropertySet, list[classes.Attribute]],
+def _build_specification(obj: SOMcreator.Object,
+                         property_set_dict: dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]],
                          xml_parent: Element) -> None:
     xml_specification = SubElement(xml_parent, ids_xsd.SPECIFICATION, nsmap=NSMAP)
     xml_specification.set(ids_xsd.ATTR_NAME, f"Pruefregel {obj.name} ({obj.ident_value})")
@@ -101,8 +102,8 @@ def _build_specification(obj: classes.Object, property_set_dict: dict[classes.Pr
     _build_requirements(property_set_dict, xml_specification)
 
 
-def export(proj: classes.Project,
-           required_data: dict[classes.Object, dict[classes.PropertySet, list[classes.Attribute]]],
+def export(proj: SOMcreator.Project,
+           required_data: dict[SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]],
            path: str | os.PathLike, author=None) -> None:
     if not author:
         author = proj.author

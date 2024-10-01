@@ -24,7 +24,7 @@ def transform_objects_to_classes(dictionary: bsdd.Dictionary, objects: list[SOMc
     """
     Adds objects and Properties to bsdd.Dictionary
     """
-    predefined_attributes = [a for p in predefined_psets for a in p.attributes]
+    predefined_attributes = [a for p in predefined_psets for a in p.get_attributes(filter=True)]
     attributes = _get_all_attributes(objects)
     dictionary.Properties, all_class_properties = _create_properties(predefined_attributes, attributes)
     class_dict = _create_classes(objects, all_class_properties, dictionary)
@@ -78,7 +78,8 @@ def _create_class_property(attribute: SOMcreator.Attribute, existing_properties:
 
     class_property = bsdd.ClassProperty(code, parent_property.Code, "")
     class_property.attribute, class_property.Description, class_property.PropertySet, class_property.IsRequired = (
-        attribute, attribute.description, str(attribute.property_set.name), not attribute.optional)
+        attribute, attribute.description, str(attribute.property_set.name),
+        not attribute.is_optional(ignore_hirarchy=True))
 
     if not attribute.value:
         return class_property
@@ -129,7 +130,8 @@ def _create_classes(objects: list[SOMcreator.Object], class_properties, dictiona
     for obj in objects:
         c = _create_class(obj, dictionary)
         class_dict[obj] = c
-        c.ClassProperties = [class_property_dict[a] for p in obj.property_sets for a in p.attributes]
+        c.ClassProperties = [class_property_dict[a] for p in obj.get_property_sets(filter=True) for a in
+                             p.get_attributes(filter=True)]
     return class_dict
 
 
@@ -142,7 +144,7 @@ def _create_parent_reference(child_obj: SOMcreator.Object, parent_obj: SOMcreato
 
 def _iterate_parent_relations(objects: list[SOMcreator.Object], class_dict: dict[SOMcreator.Object, bsdd.Class]):
     def _iterate(obj: SOMcreator.Object):
-        for child in obj.children:
+        for child in obj.get_children(filter=True):
             _create_parent_reference(child, obj, class_dict)
             _iterate(child)
 
@@ -169,7 +171,7 @@ def _iterate_aggregations(objects: list[SOMcreator.Object], class_dict: dict[SOM
     for obj in objects:
         children = list()
         for aggregation in obj.aggregations:
-            for child_aggregation in aggregation.children:
+            for child_aggregation in aggregation.get_children(filter=True):
                 child_obj = child_aggregation.object
                 if child_obj in children:
                     continue
@@ -178,4 +180,4 @@ def _iterate_aggregations(objects: list[SOMcreator.Object], class_dict: dict[SOM
 
 
 def _get_all_attributes(object_list: list[SOMcreator.Object]):
-    return [a for o in object_list for p in o.property_sets for a in p.attributes]
+    return [a for o in object_list for p in o.get_property_sets(filter=True) for a in p.get_attributes(filter=True)]

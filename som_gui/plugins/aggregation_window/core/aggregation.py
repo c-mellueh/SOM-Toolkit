@@ -50,7 +50,7 @@ def refresh_object_info_line_edit(object_tool: Type[tool.Object], aggregation: T
 
 def save_aggregations(view: Type[aw_tool.View], project: Type[tool.Project]):
     proj = project.get()
-    aggregations = sorted(proj.get_all_aggregations(), key=lambda x: x.name)
+    aggregations = sorted(proj.get_aggregations(filter=False), key=lambda x: x.name)
     uuid_dict = view.create_aggregation_scenes_dict({ag: ag.uuid for ag in aggregations})
 
     project.get().plugin_dict["AggregationScenes"] = uuid_dict

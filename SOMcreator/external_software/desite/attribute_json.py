@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import json
 import os
-from ... import classes
+import SOMcreator
 from ...constants import json_constants, value_constants
 from ...external_software import xml
 
 
-def _iter_attributes(property_set: classes.PropertySet, pset_dict: dict) -> None:
-    for attribute in property_set.attributes:
+def _iter_attributes(property_set: SOMcreator.PropertySet, pset_dict: dict) -> None:
+    for attribute in property_set.get_attributes(filter=True):
         pset_dict[attribute.name] = dict()
         attribute_dict = pset_dict[attribute.name]
 
@@ -20,17 +20,17 @@ def _iter_attributes(property_set: classes.PropertySet, pset_dict: dict) -> None
         attribute_dict[json_constants.VALUE] = attribute.value
 
 
-def export(project: classes.Project, path: str | os.PathLike) -> None:
+def export(project: SOMcreator.Project, path: str | os.PathLike) -> None:
     json_dict = dict()
-    for obj in sorted(project.objects, key=lambda x: x.ident_value):
-        if not obj.property_sets:
+    for obj in sorted(project.get_objects(filter=True), key=lambda x: x.ident_value):
+        if not obj.get_property_sets(filter=True):
             continue
         if obj.ident_value is None:
             continue
         json_dict[obj.ident_value] = dict()
         obj_dict = json_dict[obj.ident_value]
-        for property_set in obj.property_sets:
-            if not property_set.attributes:
+        for property_set in obj.get_property_sets(filter=True):
+            if not property_set.get_attributes(filter=True):
                 continue
             obj_dict[property_set.name] = dict()
             pset_dict = obj_dict[property_set.name]

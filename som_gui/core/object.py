@@ -23,7 +23,7 @@ def init_main_window(object_tool: Type[tool.Object], main_window: Type[tool.Main
     tree.setColumnCount(0)
     object_tool.add_column_to_tree("Objekt", 0, lambda o: getattr(o, "name"))
     object_tool.add_column_to_tree("Identifier", 1, lambda o: getattr(o, "ident_value"))
-    object_tool.add_column_to_tree("Optional", 2, lambda o: getattr(o, "optional"),
+    object_tool.add_column_to_tree("Optional", 2, lambda o: o.is_optional(ignore_hirarchy=True),
                                    object_tool.set_object_optional_by_tree_item_state)
 
     object_tool.add_object_activate_function(lambda o: main_window.get_object_name_line_edit().setText(o.name))
@@ -67,7 +67,7 @@ def ident_attribute_changed(object_tool: Type[tool.Object], main_window: Type[to
         ident_pset_name)
     attribute_names = list()
     if predefined_pset:
-        attribute_names = [a.name for a in predefined_pset.attributes]
+        attribute_names = [a.name for a in predefined_pset.get_attributes(filter=True)]
     object_tool.create_completer(attribute_names, main_window.get_ui().lineEdit_ident_attribute)
 
 
@@ -239,7 +239,7 @@ def add_object_clicked(object_tool: Type[Object], project: Type[Project],
 
     pset = property_set.create_property_set(pset_name, None, parent)
     attribute_name = object_infos["ident_attribute_name"]
-    attribute: SOMcreator.Attribute = {a.name: a for a in pset.attributes}.get(attribute_name)
+    attribute: SOMcreator.Attribute = {a.name: a for a in pset.get_attributes(filter=True)}.get(attribute_name)
 
     if not attribute:
         attribute = SOMcreator.Attribute(pset, attribute_name, [object_infos["ident_value"]],

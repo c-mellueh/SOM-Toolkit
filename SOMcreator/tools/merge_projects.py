@@ -1,8 +1,8 @@
 import SOMcreator
-from SOMcreator.classes import Project, UseCase, Phase, Hirarchy
+from SOMcreator import Project, UseCase, Phase
 
 
-def _calculate_new_filter_matrix(filter_matrix, existing_project: Project, import_project: Project, item: Hirarchy,
+def _calculate_new_filter_matrix(filter_matrix, existing_project: Project, import_project: Project, item,
                                  phase_mapping, use_case_mapping):
     for import_phase in import_project.get_phases():
         existing_phase = phase_mapping.get(import_phase)
@@ -39,10 +39,11 @@ def _add_item(existing_project: SOMcreator.Project, import_project: SOMcreator.P
     item._filter_matrix = new_filter_matrix
 
 
-def _import_object(existing_project, import_project, obj, old_predefined_psets_mapping, phase_mapping,
+def _import_object(existing_project: SOMcreator.Project, import_project: SOMcreator.Project, obj: SOMcreator.Object,
+                   old_predefined_psets_mapping, phase_mapping,
                    use_case_mapping):
     _add_item(existing_project, import_project, obj, phase_mapping, use_case_mapping)
-    for property_set in obj.get_all_property_sets():
+    for property_set in obj.get_property_sets(filter=False):
         _import_pset(existing_project, import_project, property_set, old_predefined_psets_mapping, phase_mapping,
                      use_case_mapping)
 
@@ -58,17 +59,17 @@ def _import_pset(existing_project, import_project, property_set: SOMcreator.Prop
 
     if parent is not None:
         property_set.parent = parent
-        for attribute in property_set.get_all_attributes():
+        for attribute in property_set.get_attributes(filter=False):
             _import_attribute(existing_project, import_project, attribute, phase_mapping, use_case_mapping, parent)
     else:
-        for attribute in property_set.get_all_attributes():
+        for attribute in property_set.get_attributes(filter=False):
             _import_attribute(existing_project, import_project, attribute, phase_mapping, use_case_mapping)
 
 
 def _import_attribute(existing_project, import_project, attribute, phase_mapping, use_case_mapping,
                       parent_pset: SOMcreator.PropertySet = None):
     if parent_pset:
-        parent_attribute = {a.name: a for a in parent_pset.attributes}.get(attribute.name)
+        parent_attribute = {a.name: a for a in parent_pset.get_attributes(filter=False)}.get(attribute.name)
         if parent_attribute:
             attribute.parent = parent_attribute
     _add_item(existing_project, import_project, attribute, phase_mapping, use_case_mapping)
@@ -84,9 +85,9 @@ def merge_projects(existing_project: Project, import_project: Project, phase_map
     :param use_case_mapping: mapping Dict import UseCase as Key existing UseCase as Value
     :return:
     """
-    existing_identifiers = {o.ident_value for o in existing_project.get_all_objects()}
-    import_predef_pset_dict = {p: p for p in import_project.get_predefined_psets()}
-    existing_predefined_pset_name_dict = {p.name: p for p in existing_project.get_predefined_psets()}
+    existing_identifiers = {o.ident_value for o in existing_project.get_objects(filter=False)}
+    import_predef_pset_dict = {p: p for p in import_project.get_predefined_psets(filter=False)}
+    existing_predefined_pset_name_dict = {p.name: p for p in existing_project.get_predefined_psets(filter=False)}
 
     for import_predef_pset in import_predef_pset_dict.keys():
         new_pset = existing_predefined_pset_name_dict.get(import_predef_pset.name)
@@ -95,7 +96,7 @@ def merge_projects(existing_project: Project, import_project: Project, phase_map
         else:
             import_predef_pset_dict[import_predef_pset] = new_pset
 
-    for obj in import_project.get_all_objects():
+    for obj in import_project.get_objects(filter=False):
         if obj.ident_value not in existing_identifiers:
             _import_object(existing_project, import_project, obj, import_predef_pset_dict, phase_mapping,
                            use_case_mapping)

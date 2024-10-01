@@ -81,9 +81,9 @@ class Mapping(som_gui.core.tool.Mapping):
             if not (parent_item.isExpanded() or parent_item == tree.invisibleRootItem()):
                 continue
             if isinstance(entity, SOMcreator.Object):
-                cls.update_tree(set(entity.get_all_children()), class_item, tree)
+                cls.update_tree(set(entity.get_children(filter=False)), class_item, tree)
             if isinstance(entity, SOMcreator.PropertySet):
-                cls.update_tree(set(entity.attributes), class_item, tree)
+                cls.update_tree(set(entity.get_attributes(filter=True)), class_item, tree)
 
     @classmethod
     def create_child(cls, entity: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute) -> QTreeWidgetItem:
@@ -135,7 +135,7 @@ class Mapping(som_gui.core.tool.Mapping):
             if not cs:
                 return
             cls.add_object_to_ifc_export_data(o)
-            for child in o.children:
+            for child in o.get_children(filter=True):
                 _loop_objects(child)
 
         cls.reset_export_dict()
@@ -146,10 +146,10 @@ class Mapping(som_gui.core.tool.Mapping):
     @classmethod
     def add_object_to_ifc_export_data(cls, obj: SOMcreator.Object) -> None:
         export_dict = cls.get_properties().ifc_export_dict
-        for property_set in obj.get_all_property_sets():
+        for property_set in obj.get_property_sets(filter=False):
             if not cls.get_checkstate(property_set):
                 continue
-            for attribute in property_set.get_all_attributes():
+            for attribute in property_set.get_attributes(filter=False):
                 if not cls.get_checkstate(attribute):
                     continue
                 if property_set.name not in export_dict:

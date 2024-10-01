@@ -15,7 +15,7 @@ from ..external_software import xml
 import jinja2
 
 if TYPE_CHECKING:
-    from SOMcreator.classes import Project, UseCase, Phase
+    from SOMcreator import Project, UseCase, Phase
 parent_dict = dict()
 aggregation_dict = dict()
 phase_list: list[Phase] = list()
@@ -25,15 +25,17 @@ object_uuid_dict: dict[str, SOMcreator.Object] = dict()
 property_set_uuid_dict: dict[str, SOMcreator.PropertySet] = dict()
 attribute_uuid_dict: dict[str, SOMcreator.Attribute] = dict()
 filter_matrixes = list()
+
+
 def create_mapping_script(project: SOMcreator.Project, pset_name: str, path: str):
     attrib_dict = dict()
     obj: SOMcreator.Object
-    for obj in project.objects:
+    for obj in project.get_objects(filter=True):
         klass = obj.ident_attrib.value[0]
         obj_dict = dict()
-        for pset in obj.property_sets:
+        for pset in obj.get_property_sets(filter=True):
             pset_dict = dict()
-            for attribute in pset.attributes:
+            for attribute in pset.get_attributes(filter=True):
                 name = attribute.name
                 data_format = xml.transform_data_format(attribute.data_type)
                 pset_dict[name] = data_format
@@ -73,22 +75,33 @@ def open_json(cls: Type[Project], path: str):
     SOMcreator.filehandling.filter_matrixes = main_dict.get(FILTER_MATRIXES)
     core.remove_part_of_dict(FILTER_MATRIXES)
 
+    logging.debug(f"Filter Matrixes Read")
     project_dict = main_dict.get(constants.PROJECT)
     SOMcreator.filehandling.phase_list, SOMcreator.filehandling.use_case_list = core.get_filter_lists(project_dict)
+    logging.debug(f"Filter List Read")
 
     proj, project_dict = project.load(cls, main_dict)
+    logging.debug(f"Project Read")
+
     predefined_pset.load(proj, main_dict)
+    logging.debug(f"Predefined Pset Read")
 
     obj.load(proj, main_dict)
+    logging.debug(f"Objects Read")
 
     aggregation.load(proj, main_dict)
+    logging.debug(f"Aggregations Read")
 
     inheritance.calculate(proj)
+    logging.debug(f"Inheritance Calculated")
+
     aggregation.calculate(proj)
+    logging.debug(f"Aggregation Calculated")
+
     proj.plugin_dict = SOMcreator.filehandling.plugin_dict
     proj.import_dict = main_dict
     end_time = time.time()
-    logging.info(f"Export Done. Time: {end_time - start_time}")
+    logging.info(f"Import Done. Time: {end_time - start_time}")
     return proj
 
 

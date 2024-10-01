@@ -93,20 +93,15 @@ class Project(som_gui.core.tool.Project):
         return cls.get_properties().active_project
 
     @classmethod
-    def get_all_objects(cls) -> list[SOMcreator.Object]:
-        proj: SOMcreator.Project = cls.get_properties().active_project
-        return list(proj.get_all_objects())
-
-    @classmethod
     def get_root_objects(cls, filter_objects=True, proj: SOMcreator.Project = None):
         if proj is None:
             proj: SOMcreator.Project = cls.get_properties().active_project
         if proj is None:
             return []
         if filter_objects:
-            return [obj for obj in proj.objects if obj.parent is None]
+            return [obj for obj in proj.get_objects(filter=True) if obj.parent is None]
         else:
-            return [obj for obj in proj.get_all_objects() if obj.parent is None]
+            return [obj for obj in proj.get_objects(filter=False) if obj.parent is None]
 
 
     @classmethod
@@ -119,8 +114,8 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def fill_mapping_table(cls, table: QTableWidget,
-                           filter_1: list[SOMcreator.classes.ProjectFilter],
-                           filter_2: list[SOMcreator.classes.ProjectFilter]):
+                           filter_1: list[SOMcreator.UseCase | SOMcreator.Phase],
+                           filter_2: list[SOMcreator.UseCase | SOMcreator.Phase]):
 
         table.setRowCount(len(filter_2))
         for row, f in enumerate(filter_2):
@@ -143,8 +138,8 @@ class Project(som_gui.core.tool.Project):
         return mapping_dict
 
     @classmethod
-    def create_mapping_window(cls, filter_1: list[SOMcreator.classes.ProjectFilter],
-                              filter_2: list[SOMcreator.classes.ProjectFilter]):
+    def create_mapping_window(cls, filter_1: list[SOMcreator.UseCase | SOMcreator.Phase],
+                              filter_2: list[SOMcreator.UseCase | SOMcreator.Phase]):
         dialog = MergeDialog()
         cls.fill_mapping_table(dialog.widget.tableWidget, filter_1, filter_2)
         if not dialog.exec():

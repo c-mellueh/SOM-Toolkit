@@ -1,7 +1,7 @@
 from __future__ import annotations
 import logging
 import SOMcreator
-from PySide6.QtWidgets import QAbstractItemView, QStyle, QFormLayout, QLabel, QCheckBox
+from PySide6.QtWidgets import QFormLayout, QLabel, QCheckBox
 from PySide6.QtGui import QIcon
 from typing import TYPE_CHECKING, Type
 from som_gui import tool
@@ -13,25 +13,29 @@ if TYPE_CHECKING:
     from som_gui.module.compare import ui as compare_ui
     from som_gui.module.object_filter import ui as object_filter_ui
 
-def open_use_case_window(objectfilter_tool: Type[ObjectFilter]):
-    window = objectfilter_tool.create_window()
 
-    load_use_cases(objectfilter_tool)
-    objectfilter_tool.format_object_tree_header()
-    object_tree = objectfilter_tool.get_object_tree()
-    pset_tree = objectfilter_tool.get_pset_tree()
-    object_tree.expanded.connect(lambda: resize_tree(object_tree, objectfilter_tool))
-    pset_tree.expanded.connect(lambda: resize_tree(pset_tree, objectfilter_tool))
-    objectfilter_tool.get_widget().buttonBox.accepted.connect(lambda: accept_changes(objectfilter_tool))
-    objectfilter_tool.get_widget().buttonBox.rejected.connect(lambda: reject_changes(objectfilter_tool))
+def open_window(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project]) -> None:
+    window = object_filter.create_window()
+    logging.debug(f"Filter Window created")
+    object_filter.import_filter_matrixes(project.get())
+    object_filter.create_tree_models()
+    object_filter.format_object_tree_header()
+    logging.debug(f"Header formatted")
+    object_tree = object_filter.get_object_tree()
+    pset_tree = object_filter.get_pset_tree()
+    object_tree.expanded.connect(lambda: resize_tree(object_tree, object_filter))
+    pset_tree.expanded.connect(lambda: resize_tree(pset_tree, object_filter))
+    object_filter.get_widget().buttonBox.accepted.connect(lambda: accept_changes(object_filter))
+    object_filter.get_widget().buttonBox.rejected.connect(lambda: reject_changes(object_filter))
+    logging.debug(f"Trigger connected")
     pset_tree.setEnabled(False)
     window.show()
+    logging.debug(f"Window shown")
 
 
-def on_startup(objectfilter_tool: Type[ObjectFilter]):
-    logging.debug(f"Startup UseCase")
-    objectfilter_tool.reset_use_case_data()
-    objectfilter_tool.load_use_cases()
+def on_startup(objectfilter_tool: Type[ObjectFilter], project: Type[tool.Project]) -> None:
+    logging.debug(f"Startup ObjectFilter")
+    objectfilter_tool.import_filter_matrixes(project.get())
 
 
 def add_object_filter_widget(object_filter_compare: Type[tool.ObjectFilterCompare],
@@ -66,10 +70,6 @@ def refresh_object_tree(objectfilter_tool: Type[ObjectFilter], project_tool: Typ
     objectfilter_tool.update_pset_tree()
 
 
-def load_use_cases(objectfilter_tool: Type[ObjectFilter]):
-    logging.debug(f"Load UseCases")
-    objectfilter_tool.load_use_cases()
-    objectfilter_tool.create_tree_models()
 
 
 def load_headers(objectfilter_tool: Type[ObjectFilter]):

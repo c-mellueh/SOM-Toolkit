@@ -359,8 +359,8 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         result_dict = dict()
         for obj in objects:
             object_dict = dict()
-            for pset in obj.property_sets:
-                object_dict[pset.name] = {a.name: a for a in pset.attributes}
+            for pset in obj.get_property_sets(filter=True):
+                object_dict[pset.name] = {a.name: a for a in pset.get_attributes(filter=True)}
             result_dict[obj.ident_value] = object_dict
         return result_dict
 
@@ -554,13 +554,13 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return cls.get_properties().connection.cursor()
 
     @classmethod
-    def set_current_object_filter(cls, usecases: list[SOMcreator.classes.UseCase],
-                                  phases: list[SOMcreator.classes.Phase]):
+    def set_current_object_filter(cls, usecases: list[SOMcreator.UseCase],
+                                  phases: list[SOMcreator.Phase]):
         cls.get_properties().active_usecases = usecases
         cls.get_properties().active_phases = phases
 
     @classmethod
-    def get_current_object_filter(cls) -> tuple[list[SOMcreator.classes.UseCase], list[SOMcreator.classes.Phase]]:
+    def get_current_object_filter(cls) -> tuple[list[SOMcreator.UseCase], list[SOMcreator.Phase]]:
         return cls.get_properties().active_usecases, cls.get_properties().active_phases
 
     @classmethod
@@ -626,7 +626,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def fill_filter_table(cls, project: SOMcreator.Project):
-        def add_table_entry(entity: SOMcreator.classes.UseCase | SOMcreator.classes.Phase):
+        def add_table_entry(entity: SOMcreator.UseCase | SOMcreator.Phase):
             cursor = cls.get_cursor()
             text = f'''
                                   INSERT INTO filter_list (name,description,filter_type)

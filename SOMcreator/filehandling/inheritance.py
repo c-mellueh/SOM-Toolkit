@@ -1,9 +1,8 @@
 from __future__ import annotations
 import SOMcreator
-from SOMcreator import classes
 
 
-def _find_parent(uuid_dict, element: classes.ClassTypes):
+def _find_parent(uuid_dict, element):
     for test_el, identifier in SOMcreator.filehandling.parent_dict.items():
         if type(test_el) is not type(element):
             continue
@@ -17,7 +16,7 @@ def _find_parent(uuid_dict, element: classes.ClassTypes):
         if test_el.name != element.name:
             continue
 
-        if isinstance(test_el, classes.Attribute):
+        if isinstance(test_el, SOMcreator.Attribute):
             if test_el.value == element.value:
                 return identifier
         return identifier

@@ -2,15 +2,15 @@ import logging
 
 from openpyxl import load_workbook, Workbook
 
-from .. import classes
+import SOMcreator
 
 
-def create_mapping(src_path: str, dest_path: str, project: classes.Project) -> None:
-    def _create_sheet(obj: classes.Object, workbook: Workbook, name):
+def create_mapping(src_path: str, dest_path: str, project: SOMcreator.Project) -> None:
+    def _create_sheet(obj: SOMcreator.Object, workbook: Workbook, name):
         new_sheet = workbook.create_sheet(name)
         attributes = set()
-        for property_set in obj.property_sets:
-            for attribute in property_set.attributes:
+        for property_set in obj.get_property_sets(filter=True):
+            for attribute in property_set.get_attributes(filter=True):
                 attributes.add(attribute.name)
 
         for i, attrib_name in enumerate(sorted(attributes), start=1):
@@ -21,7 +21,7 @@ def create_mapping(src_path: str, dest_path: str, project: classes.Project) -> N
     wb = load_workbook(src_path)
     sheet = wb.active
     important_rows = [row for i, row in enumerate(sheet.rows) if row[2].value is not None and i != 0]
-    object_dict = {obj.ident_attrib.value[0]: obj for obj in project.objects if
+    object_dict = {obj.ident_attrib.value[0]: obj for obj in project.get_objects(filter=True) if
                    not obj.is_concept}
 
     for row in important_rows:

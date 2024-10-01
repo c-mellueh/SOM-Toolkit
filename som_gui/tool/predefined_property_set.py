@@ -174,7 +174,7 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         get all Predefined PropertySets
         """
         proj = tool.Project.get()
-        return proj.get_predefined_psets()
+        return set(proj.get_predefined_psets(filter=False))
 
     @classmethod
     def get_selected_linked_psets(cls) -> set[SOMcreator.PropertySet]:

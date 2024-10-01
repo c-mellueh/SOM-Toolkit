@@ -112,11 +112,11 @@ class Attribute(som_gui.core.tool.Attribute):
 
     @classmethod
     def is_attribute_optional(cls, attribute: SOMcreator.Attribute):
-        return attribute.optional
+        return attribute.is_optional(ignore_hirarchy=True)
 
     @classmethod
     def set_attribute_optional(cls, optional: bool, attribute: SOMcreator.Attribute):
-        attribute.optional = optional
+        attribute.set_optional(optional)
 
     @classmethod
     def get_attribute_properties(cls) -> AttributeProperties:
@@ -194,13 +194,15 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def compare_objects(cls, obj0: None | SOMcreator.Object, obj1: None | SOMcreator.Object):
-        property_set_uuid_dict1 = cls.generate_uuid_dict(obj1.get_all_property_sets()) if obj1 is not None else dict()
-        property_set_name_dict1 = cls.generate_name_dict(obj1.get_all_property_sets()) if obj1 is not None else dict()
+        property_set_uuid_dict1 = cls.generate_uuid_dict(
+            obj1.get_property_sets(filter=False)) if obj1 is not None else dict()
+        property_set_name_dict1 = cls.generate_name_dict(
+            obj1.get_property_sets(filter=False)) if obj1 is not None else dict()
         pset_list = list()
 
-        missing_property_sets1 = list(obj1.get_all_property_sets()) if obj1 is not None else []
+        missing_property_sets1 = list(obj1.get_property_sets(filter=False)) if obj1 is not None else []
         if obj0 is not None:
-            for property_set0 in obj0.get_all_property_sets():
+            for property_set0 in obj0.get_property_sets(filter=False):
                 match = cls.find_matching_entity(property_set0, property_set_uuid_dict1, property_set_name_dict1)
                 if match is not None:
                     missing_property_sets1.remove(match)
@@ -224,12 +226,12 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
         if None in (pset0, pset1):
             return
-        attribute_uuid_dict1 = cls.generate_uuid_dict(pset1.get_all_attributes())
-        attribute_name_dict1 = cls.generate_name_dict(pset1.get_all_attributes())
-        missing_attributes1 = list(pset1.get_all_attributes())
+        attribute_uuid_dict1 = cls.generate_uuid_dict(pset1.get_attributes(filter=False))
+        attribute_name_dict1 = cls.generate_name_dict(pset1.get_attributes(filter=False))
+        missing_attributes1 = list(pset1.get_attributes(filter=False))
         attributes_list = list()
 
-        for attribute0 in pset0.get_all_attributes():
+        for attribute0 in pset0.get_attributes(filter=False):
             match = cls.find_matching_entity(attribute0, attribute_uuid_dict1, attribute_name_dict1)
             if match is not None:
                 missing_attributes1.remove(match)
@@ -267,7 +269,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             return
         project_0, project_1 = cls.get_project(0), cls.get_project(1)
         found_objects = list()
-        for obj0 in project_0.get_all_objects():
+        for obj0 in project_0.get_objects(filter=False):
             match = cls.find_matching_object(obj0, 1)
             if match is None:
                 object_list.append((obj0, None))
@@ -277,7 +279,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                 found_objects.append(match)
                 cls.compare_objects(obj0, match)
 
-        for obj1 in [o for o in project_1.get_all_objects() if o not in found_objects]:
+        for obj1 in [o for o in project_1.get_objects(filter=False) if o not in found_objects]:
             object_list.append((None, obj1))
             cls.compare_objects(None, obj1)
 
@@ -315,7 +317,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
             if match_obj is not None or add_missing:
                 parent_item.addChild(item)
-            cls.fill_object_tree_layer(list(obj.get_all_children()), item, add_missing)
+            cls.fill_object_tree_layer(list(obj.get_children(filter=False)), item, add_missing)
 
     @classmethod
     def fill_object_tree(cls, tree: QTreeWidget, add_missing: bool = True):
@@ -355,7 +357,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def get_pset_info_list(cls):
         info_list = list()
         info_list.append(("Name", lambda p: getattr(p, "name")))
-        info_list.append(("Child Count", lambda p: len(list(p.children)) if p else ""))
+        info_list.append(("Child Count", lambda p: len(list(p.get_children(filter=True))) if p else ""))
         return info_list
 
     @classmethod
@@ -387,7 +389,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                 item = QTreeWidgetItem()
                 cls.add_object_to_item(obj, item, 1)
                 parent.addChild(item)
-            cls.add_missing_objects_to_tree(tree, list(obj.get_all_children()))
+            cls.add_missing_objects_to_tree(tree, list(obj.get_children(filter=False)))
 
     @classmethod
     def clear_tree(cls, tree: QTreeWidget):
@@ -685,7 +687,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         project0 = cls.get_project(0)
         object_dict = cls.get_object_dict()
 
-        for obj0 in sorted(project0.get_all_objects(), key=lambda x: x.name):
+        for obj0 in sorted(project0.get_objects(filter=False), key=lambda x: x.name):
             obj1 = object_dict[obj0]
             if cls.are_objects_identical(obj0, obj1):
                 continue
@@ -817,7 +819,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def get_uuid_dict(cls, index=1) -> dict:
         if cls.get_properties().uuid_dicts[index] is None:
             project = cls.get_project(index)
-            d = {hi.uuid: hi for hi in project.get_all_hirarchy_items()}
+            d = {hi.uuid: hi for hi in project.get_hirarchy_items(filter=False)}
             cls.get_properties().uuid_dicts[index] = d
         return cls.get_properties().uuid_dicts[index]
 
@@ -825,7 +827,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def get_ident_dict(cls, index=1) -> dict:
         if cls.get_properties().ident_dicts[index] is None:
             project = cls.get_project(index)
-            d = {obj.ident_value: obj for obj in project.get_all_objects()}
+            d = {obj.ident_value: obj for obj in project.get_objects(filter=False)}
             cls.get_properties().ident_dicts[index] = d
         return cls.get_properties().ident_dicts[index]
 

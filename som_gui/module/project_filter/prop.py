@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from SOMcreator.classes import UseCase, Phase
+    from SOMcreator import UseCase, Phase
     from .ui import ProjectFilterDialog
 
 

@@ -3,7 +3,7 @@ import logging
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
-from .. import classes, constants
+import SOMcreator
 from ..constants import value_constants
 
 TITLES = ["Definition", "Zuweisung", "Mapping"]
@@ -22,7 +22,7 @@ COLUMNS = ["AttributeName",
 INTERNAL_COLUMNS = ["Objekt", "AttributAllplan", "AttributIfc", "Pset", "Type"]
 
 
-def create_mapping(project: classes.Project, path: str, allplan_mapping_name: str):
+def create_mapping(project: SOMcreator.Project, path: str, allplan_mapping_name: str):
     def transform_datatype(data_type: str) -> str:
         if data_type == value_constants.INTEGER:
             return "Ganzzahl"
@@ -37,7 +37,7 @@ def create_mapping(project: classes.Project, path: str, allplan_mapping_name: st
 
         attribute_dict: dict[str, str] = dict()
 
-        for attribute in classes.Attribute:
+        for attribute in SOMcreator.Attribute:
             data_type = attribute.data_type
 
             if attribute.name in attribute_dict:
@@ -58,20 +58,21 @@ def create_mapping(project: classes.Project, path: str, allplan_mapping_name: st
 
     def create_zuweisung(kenner: str, worksheet: Worksheet):
 
-        def get_attrib_count(obj: classes.Object):
-            return sum(len([attrib for attrib in pset.attributes]) for pset in obj.property_sets)
+        def get_attrib_count(obj: SOMcreator.Object):
+            return sum(len([attrib for attrib in pset.get_attributes(filter=True)]) for pset in
+                       obj.get_property_sets(filter=True))
 
         max_attribs = max(
-            get_attrib_count(obj) for obj in project.objects)
+            get_attrib_count(obj) for obj in project.get_objects(filter=True))
         header = ["Kenner"] + ["Wert", "Name"] * max_attribs
         [worksheet.cell(1, i + 1, text) for i, text in enumerate(header)]  # print Header
         worksheet.cell(2, 1, kenner)
         row_index = 2
-        for obj in project.objects:
+        for obj in project.get_objects(filter=True):
             worksheet.cell(row_index, 2, obj.ident_value)
             col_index = 3
-            for propery_set in obj.property_sets:
-                for attribute in propery_set.attributes:
+            for propery_set in obj.get_property_sets(filter=True):
+                for attribute in propery_set.get_attributes(filter=True):
                     if attribute.name != kenner:
                         worksheet.cell(row_index, col_index, attribute.name)
                         col_index += 2

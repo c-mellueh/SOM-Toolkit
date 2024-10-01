@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, IO, Iterator
 
-from .. import classes
+import SOMcreator
 from ..constants import value_constants
 
 if TYPE_CHECKING:
@@ -15,9 +15,9 @@ def _transform_datatype(data_type: str, data_type_dict: dict[str, str]) -> str:
     return data_type_dict[data_type]
 
 
-def export_ifc_template(path: str, pset_dict: dict[str, (list[classes.Attribute], set[str])]) -> None:
+def export_ifc_template(path: str, pset_dict: dict[str, (list[SOMcreator.Attribute], set[str])]) -> None:
     with open(path, "w") as file:
-        property_set: classes.PropertySet
+        property_set: SOMcreator.PropertySet
         for pset_name, (attrib_list, ifc_mapping) in sorted(pset_dict.items()):
             file.write(f"PropertySet:   {pset_name} I  {','.join(ifc_mapping)} \n")
             for attribute in attrib_list:
@@ -59,7 +59,7 @@ class SP_Item(metaclass=IterItem):
         return _transform_datatype(self.attribute.data_type, value_constants.REVIT_SHARED_PARAM_DATATYPE_DICT)
 
 
-def export_shared_parameters(path: str, pset_dict: dict[str, (list[classes.Attribute], set[str])]) -> None:
+def export_shared_parameters(path: str, pset_dict: dict[str, (list[SOMcreator.Attribute], set[str])]) -> None:
     with open(path, "w") as file:
         file.write("# This is a Revit shared parameter file.\n"
                    "# Do not edit manually.\n"
@@ -73,7 +73,7 @@ def export_shared_parameters(path: str, pset_dict: dict[str, (list[classes.Attri
         file.write(
             "*PARAM	GUID	NAME	DATATYPE	DATACATEGORY	GROUP	VISIBLE	DESCRIPTION	USERMODIFIABLE\n")
 
-        property_set: classes.PropertySet
+        property_set: SOMcreator.PropertySet
         for i, (pset_name, (attrib_list, ifc_mapping)) in enumerate(sorted(pset_dict.items())):
             for attrib in attrib_list:
                 t = SP_Item(pset_name, attrib, i)

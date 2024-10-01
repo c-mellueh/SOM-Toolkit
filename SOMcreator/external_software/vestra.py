@@ -3,12 +3,12 @@ import os
 from lxml import etree, builder
 from openpyxl import load_workbook
 
-from .. import classes
+import SOMcreator
 from ..external_software import xml
 
 
-def create_mapping(excel_path: str, folder_path: str, project: classes.Project) -> None:
-    def create_xml(name: str, obj: classes.Object):
+def create_mapping(excel_path: str, folder_path: str, project: SOMcreator.Project) -> None:
+    def create_xml(name: str, obj: SOMcreator.Object):
         xsd = "http://www.w3.org/2001/XMLSchema"
         xsi = "http://www.w3.org/2001/XMLSchema-instance"
 
@@ -25,8 +25,8 @@ def create_mapping(excel_path: str, folder_path: str, project: classes.Project) 
 
         def create_manipulations() -> None:
             xml_manipulations = etree.SubElement(xml_manipulation_rule, "Manipulations")
-            for property_set in obj.property_sets:
-                for attribut in property_set.attributes:
+            for property_set in obj.get_property_sets(filter=True):
+                for attribut in property_set.get_attributes(filter=True):
                     xml_manipulation_base = etree.SubElement(xml_manipulations, "ManipulationBase")
                     xml_manipulation_base.set(f"{{{xsi}}}type", "AddManipulation")
                     xml_key = etree.SubElement(xml_manipulation_base, "Key", )
@@ -60,7 +60,7 @@ def create_mapping(excel_path: str, folder_path: str, project: classes.Project) 
         os.mkdir(folder_path)
 
     important_rows = [row for i, row in enumerate(sheet.rows) if row[2].value is not None and i != 0]
-    object_dict = {obj.ident_attrib.value[0]: obj for obj in project.objects if not obj.is_concept}
+    object_dict = {obj.ident_attrib.value[0]: obj for obj in project.get_objects(filter=True) if not obj.is_concept}
 
     for row in important_rows:
         values = list(map(lambda x: x.value, row))

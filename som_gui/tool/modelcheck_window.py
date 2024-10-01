@@ -193,11 +193,11 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         prop = cls.get_properties()
         data_dict = dict()
         if not prop.check_state_dict:
-            for obj in tool.Project.get().objects:
+            for obj in tool.Project.get().get_objects(filter=True):
                 data_dict[obj] = True
-                for property_set in obj.property_sets:
+                for property_set in obj.get_property_sets(filter=True):
                     data_dict[property_set] = True
-                    for attribute in property_set.attributes:
+                    for attribute in property_set.get_attributes(filter=True):
                         data_dict[attribute] = True
             prop.check_state_dict = data_dict
 
@@ -352,8 +352,9 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
         for child_row in range(parent_item.rowCount()):
             class_item, obj = cls.update_object_tree_row(parent_item, child_row)
+            obj: SOMcreator.Object
             if tree.isExpanded(parent_item.index()) or parent_item == model.invisibleRootItem():
-                cls.fill_object_tree(obj.get_all_children(), class_item, model, tree)
+                cls.fill_object_tree(set(obj.get_children(filter=False)), class_item, model, tree)
 
     @classmethod
     def create_pset_tree_row(cls, entity: SOMcreator.PropertySet | SOMcreator.Attribute, parent_item: QStandardItem):
@@ -364,7 +365,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         parent_item.appendRow(item)
         if not isinstance(entity, SOMcreator.PropertySet):
             return
-        for attribute in entity.attributes:
+        for attribute in entity.get_attributes(filter=True):
             cls.create_pset_tree_row(attribute, item)
 
     @classmethod

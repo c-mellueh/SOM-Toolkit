@@ -15,6 +15,7 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 import SOMcreator
 
 from typing import TYPE_CHECKING, Callable
+import itertools
 
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
@@ -24,18 +25,18 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def get_attribute_by_name(cls, property_set: SOMcreator.PropertySet, name: str):
-        attribute_dict = {a.name: a for a in property_set.get_all_attributes()}
+        attribute_dict = {a.name: a for a in property_set.get_attributes(filter=False)}
         return attribute_dict.get(name)
 
     @classmethod
     def get_inheritable_property_sets(cls, obj: SOMcreator.Object) -> list[SOMcreator.PropertySet]:
-        def loop(o):
-            psets = o.property_sets
+        def loop(o: SOMcreator.Object):
+            psets = o.get_property_sets(filter=False)
             if o.parent:
-                psets += loop(o.parent)
+                psets = itertools.chain(psets, loop(o.parent))
             return psets
 
-        return loop(obj)
+        return list(loop(obj))
 
     @classmethod
     def get_pset_from_index(cls, index: QModelIndex) -> SOMcreator.PropertySet:
@@ -86,14 +87,14 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def check_if_pset_allready_exists(cls, pset_name: str, active_object: SOMcreator.Object):
-        return bool(pset_name in {p.name for p in active_object.get_all_property_sets()})
+        return bool(pset_name in {p.name for p in active_object.get_property_sets(filter=False)})
 
     @classmethod
     def create_property_set(cls, name: str, obj: SOMcreator.Object | None = None,
                             parent: SOMcreator.PropertySet | None = None) -> SOMcreator.PropertySet | None:
 
         if obj:
-            if name in {p.name for p in obj.property_sets}:
+            if name in {p.name for p in obj.get_property_sets(filter=False)}:
                 tool.Popups.create_warning_popup(f"PropertySet existiert bereits")
                 return None
         if parent is not None:
@@ -127,7 +128,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         active_object = tool.Object.get_active_object()
         if active_object is None:
             return set()
-        return set(active_object.property_sets)
+        return set(active_object.get_property_sets(filter=True))
 
     @classmethod
     def get_table(cls):
@@ -165,7 +166,8 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def update_table_row(cls, table, row):
         items = [table.item(row, col) for col in range(table.columnCount())]
         property_set = cls.get_property_set_from_item(items[0])
-        check_state = Qt.CheckState.Checked if property_set.optional else Qt.CheckState.Unchecked
+        check_state = Qt.CheckState.Checked if property_set.is_optional(
+            ignore_hirarchy=True) else Qt.CheckState.Unchecked
 
         if items[0].text() != property_set.name:
             items[0].setText(f"{property_set.name}")

@@ -61,10 +61,6 @@ class Object(som_gui.core.tool.Object):
         lineedit.setCompleter(completer)
 
     @classmethod
-    def get_all_objects(cls):
-        return tool.Project.get().get_all_objects()
-
-    @classmethod
     def get_item_from_object(cls, obj: SOMcreator.Object) -> QTreeWidgetItem:
         def iter_tree(item: QTreeWidgetItem):
             for child_index in range(item.childCount()):
@@ -353,7 +349,7 @@ class Object(som_gui.core.tool.Object):
     def get_existing_ident_values(cls) -> set[str]:
         proj = tool.Project.get()
         ident_values = set()
-        for obj in proj.get_all_objects():
+        for obj in proj.get_objects(filter=False):
             if obj.ident_value:
                 ident_values.add(obj.ident_value)
         return ident_values
@@ -469,8 +465,9 @@ class Object(som_gui.core.tool.Object):
         pset_name = prop.object_info_widget.widget.combo_box_pset.currentText()
         active_object = prop.object_info_widget_properties.focus_object
 
-        property_set: SOMcreator.PropertySet = {p.name: p for p in active_object.property_sets}.get(pset_name)
-        attribute_names = sorted([a.name for a in property_set.attributes])
+        property_set: SOMcreator.PropertySet = {p.name: p for p in active_object.get_property_sets(filter=False)}.get(
+            pset_name)
+        attribute_names = sorted([a.name for a in property_set.get_attributes(filter=False)])
         prop.object_info_widget.widget.combo_box_attribute.clear()
         prop.object_info_widget.widget.combo_box_attribute.addItems(attribute_names)
 
@@ -509,7 +506,7 @@ class Object(som_gui.core.tool.Object):
         dialog.widget.button_gruppe.setChecked(info_prop.is_group)
         active_object = prop.active_object
         dialog.widget.combo_box_pset.clear()
-        [dialog.widget.combo_box_pset.addItem(p.name) for p in active_object.property_sets]
+        [dialog.widget.combo_box_pset.addItem(p.name) for p in active_object.get_property_sets(filter=False)]
         if not info_prop.is_group:
             dialog.widget.combo_box_pset.setCurrentText(info_prop.pset_name)
             dialog.widget.combo_box_attribute.setCurrentText(info_prop.attribute_name)
@@ -664,7 +661,7 @@ class Object(som_gui.core.tool.Object):
             item = parent_item.child(index)
             obj: SOMcreator.Object = cls.get_object_from_item(item)
             cls.update_item(item, obj)
-            cls.fill_object_tree(set(obj.children), item)
+            cls.fill_object_tree(set(obj.get_children(filter=True)), item)
 
     @classmethod
     def clear_object_input(cls, ui):
@@ -685,4 +682,4 @@ class Object(som_gui.core.tool.Object):
     @classmethod
     def set_object_optional_by_tree_item_state(cls, item: QTreeWidgetItem, column_index: int):
         obj = cls.get_object_from_item(item)
-        obj.optional = True if item.checkState(column_index) == Qt.CheckState.Checked else False
+        obj.set_optional(True if item.checkState(column_index) == Qt.CheckState.Checked else False)

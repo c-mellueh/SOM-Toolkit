@@ -7,7 +7,6 @@ from PySide6.QtGui import QStandardItemModel, QStandardItem, QColor, QBrush
 from PySide6.QtWidgets import QTreeView, QWidget, QTreeWidget, QTreeWidgetItem, QHBoxLayout, QCheckBox, QSizePolicy
 import som_gui.core.tool
 from som_gui.tool.project import Project
-from som_gui.module.object_filter import data as object_filter_data
 from som_gui.module.object_filter import trigger
 from som_gui.module import object_filter
 import som_gui.module.object_filter.constants
@@ -27,17 +26,17 @@ YELLOW = "#897e00"
 class ObjectFilter(som_gui.core.tool.ObjectFilter):
     @classmethod
     def set_header_data(cls, header_data: list[list[str, int, int]]):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         prop.header_data = header_data
 
     @classmethod
     def get_filter_names(cls):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         return [li[0] for li in prop.header_data]
 
     @classmethod
     def get_filter_indexes(cls):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         return [[li[1], li[2]] for li in prop.header_data]
 
     @classmethod
@@ -58,7 +57,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def get_widget(cls):
-        return cls.get_objectfilter_properties().object_filter_window.widget
+        return cls.get_properties().object_filter_window.widget
 
     @classmethod
     def format_object_tree_header(cls):
@@ -67,28 +66,25 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def get_object_tree(cls):
-        return cls.get_objectfilter_properties().object_filter_window.widget.object_tree
+        return cls.get_properties().object_filter_window.widget.object_tree
 
     @classmethod
     def get_pset_tree(cls):
-        return cls.get_objectfilter_properties().object_filter_window.widget.property_set_tree
+        return cls.get_properties().object_filter_window.widget.property_set_tree
 
     @classmethod
-    def get_objectfilter_properties(cls) -> ObjectFilterProperties:
+    def get_properties(cls) -> ObjectFilterProperties:
         return som_gui.ObjectFilterProperties
 
     @classmethod
     def create_window(cls):
-        window = cls.get_objectfilter_properties().object_filter_window
+        window = cls.get_properties().object_filter_window
 
         if not window:
             window = object_filter.ui.ObjectFilterWindow()
-        cls.get_objectfilter_properties().object_filter_window = window
+        cls.get_properties().object_filter_window = window
         return window
 
-    @classmethod
-    def reset_use_case_data(cls):
-        object_filter_data.refresh()
 
 
 
@@ -112,7 +108,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
     @classmethod
     def get_check_state(cls, project_phase_index: int, use_case_index: int,
                         entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.PropertySet):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
 
         if isinstance(entity, SOMcreator.Object):
             data_dict = prop.object_dict
@@ -133,7 +129,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def update_object_use_cases(cls):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         proj = Project.get()
         project_use_case_list = proj.get_usecases()
         project_phase_list = proj.get_phases()
@@ -159,7 +155,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def update_attribute_uses_cases(cls):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         proj = Project.get()
         project_use_case_list = proj.get_usecases()
         project_phase_list = proj.get_phases()
@@ -172,24 +168,23 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def delete_use_case_window(cls) -> QWidget:
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         old_window = prop.object_filter_window
         prop.object_filter_window = None
         prop.active_object = None
-        object_filter_data.refresh()
         return old_window
 
     @classmethod
     def create_tree(cls, entities: set[SOMcreator.Attribute | SOMcreator.Object], parent_item: QStandardItem,
-                    filter_index_list: list[[int, int]], pre_header_text_length: int, model: QStandardItemModel,
+                    filter_index_list: list[list[bool]], pre_header_text_length: int, model: QStandardItemModel,
                     tree: QTreeView):
 
         existing_entities_dict = {parent_item.child(index, 0).data(CLASS_REFERENCE): index for index in
                                   range(parent_item.rowCount())}
 
         old_entities = set(existing_entities_dict.keys())
-        new_entities = entities.difference(old_entities)
-        delete_entities = old_entities.difference(entities)
+        new_entities = set(entities).difference(old_entities)
+        delete_entities = old_entities.difference(set(entities))
         for entity in reversed(sorted(delete_entities, key=lambda o: existing_entities_dict[o])):
             row_index = existing_entities_dict[entity]
             parent_item.removeRow(row_index)
@@ -211,7 +206,8 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             obj = class_item.data(CLASS_REFERENCE)
             if isinstance(obj, SOMcreator.Object):
                 if tree.isExpanded(parent_item.index()) or parent_item == model.invisibleRootItem():
-                    cls.create_tree(obj.get_all_children(), class_item, filter_index_list, pre_header_text_length,
+                    cls.create_tree(set(obj.get_children(filter=False)), class_item, filter_index_list,
+                                    pre_header_text_length,
                                     model, tree)
 
     @classmethod
@@ -263,7 +259,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def get_active_object(cls):
-        return cls.get_objectfilter_properties().active_object
+        return cls.get_properties().active_object
 
     @classmethod
     def get_index_by_object(cls, obj: SOMcreator.Object) -> QModelIndex:
@@ -282,28 +278,21 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         return iter_items(object_model.invisibleRootItem()).index()
 
     @classmethod
-    def load_use_cases(cls):
-        prop = cls.get_objectfilter_properties()
-        if not object_filter_data.ObjectFilterData.is_loaded:
-            object_filter_data.ObjectFilterData.load()
-        prop.use_cases = object_filter_data.ObjectFilterData.data["data_classes"]
-        logging.debug(f"Use Cases: {prop.use_cases}")
-        object_dict = dict()
-        pset_dict = dict()
-        attribute_dict = dict()
-        for obj in Project.get().get_all_objects():
-            object_dict[obj] = obj.get_filter_matrix()
-            for pset in obj.get_all_property_sets():
-                pset_dict[pset] = pset.get_filter_matrix()
-                for attribute in pset.get_all_attributes():
-                    attribute_dict[attribute] = attribute.get_filter_matrix()
-        prop.object_dict = object_dict
-        prop.pset_dict = pset_dict
-        prop.attribute_dict = attribute_dict
+    def import_filter_matrixes(cls, project: SOMcreator.Project):
+        """
+        loads filtermatrix of entities and writes them into properties
+        """
+        prop = cls.get_properties()
+
+        prop.object_dict = {o: o.get_filter_matrix() for o in project.get_objects(filter=False)}
+        prop.pset_dict = {p: p.get_filter_matrix() for p in project.get_property_sets(filter=False)}
+        prop.attribute_dict = {a: a.get_filter_matrix() for a in project.get_attributes(filter=False)}
+        logging.debug(f"FilterMatrixes imported")
+
 
     @classmethod
     def create_tree_models(cls):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         object_tree = prop.object_filter_window.widget.object_tree
         object_tree.setModel(QStandardItemModel())
         property_set_tree = prop.object_filter_window.widget.property_set_tree
@@ -366,22 +355,22 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def get_object_model(cls) -> QStandardItemModel:
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         return prop.object_filter_window.widget.object_tree.model()
 
     @classmethod
     def get_pset_model(cls) -> QStandardItemModel:
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         return prop.object_filter_window.widget.property_set_tree.model()
 
     @classmethod
     def is_tree_clicked(cls) -> bool:
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         return prop.tree_is_clicked
 
     @classmethod
     def tree_activate_click_drag(cls, index: QModelIndex):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         prop.tree_is_clicked = True
         checkstate = index.data(Qt.ItemDataRole.CheckStateRole)
         prop.active_check_state = checkstate
@@ -400,13 +389,13 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def tree_release_click_drag(cls, index: QModelIndex):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         prop.tree_is_clicked = False
         prop.active_check_state = None
 
     @classmethod
     def get_active_checkstate(cls) -> Qt.CheckState:
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         return prop.active_check_state
 
     @classmethod
@@ -422,13 +411,13 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def set_active_object(cls, obj: SOMcreator.Object):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         prop.active_object = obj
         cls.update_active_object_label()
 
     @classmethod
     def update_active_object_label(cls):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         active_object = prop.active_object
         label = prop.object_filter_window.widget.label_object
         if active_object is None:
@@ -440,7 +429,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
     @classmethod
     def update_pset_tree(cls):
         active_object = cls.get_active_object()
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
 
         pset_tree = prop.object_filter_window.widget.property_set_tree
         if active_object is None:
@@ -473,7 +462,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
                         root_item.setChild(child_row, child_column, child_item)
                     child_item.setEnabled(enable_state)
                 pset: SOMcreator.PropertySet = root_item.child(child_row, 0).data(CLASS_REFERENCE)
-                cls.create_tree(pset.get_all_attributes(), root_item.child(child_row, 0), filter_index_list,
+                cls.create_tree(pset.get_attributes(filter=False), root_item.child(child_row, 0), filter_index_list,
                                 len(pset_header_texts), model, cls.get_pset_tree())
 
         _, pset_header_texts = cls.get_header_texts()
@@ -484,21 +473,21 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         check_states = cls.get_check_statuses(active_object_index)
         enable_states = cls.get_enabled_statuses(active_object_index)
         sub_enable_states = [all((c, e)) for c, e in zip(check_states, enable_states)]
-        handle_psets(set(active_object.get_all_property_sets()))
+        handle_psets(set(active_object.get_property_sets(filter=False)))
 
     @classmethod
     def get_object_dict(cls):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         return prop.object_dict
 
     @classmethod
     def get_pset_dict(cls):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         return prop.pset_dict
 
     @classmethod
     def get_attribute_dict(cls):
-        prop = cls.get_objectfilter_properties()
+        prop = cls.get_properties()
         return prop.attribute_dict
 
     @classmethod
@@ -538,21 +527,21 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
 
     @classmethod
     def set_settings_widget(cls, widget: ui.SettingsWidget):
-        cls.get_objectfilter_properties().settings_widget = widget
+        cls.get_properties().settings_widget = widget
 
     @classmethod
     def get_settings_widget(cls) -> ui.SettingsWidget:
-        return cls.get_objectfilter_properties().settings_widget
+        return cls.get_properties().settings_widget
 
     @classmethod
-    def get_allowed_usecases_by_phase(cls, project: SOMcreator.Project, phase: SOMcreator.classes.Phase):
+    def get_allowed_usecases_by_phase(cls, project: SOMcreator.Project, phase: SOMcreator.Phase):
         usecase_list = project.get_usecases()
         filter_matrix = project.get_filter_matrix()
         phase_index = project.get_phase_index(phase)
         return [uc for uc, state in zip(usecase_list, filter_matrix[phase_index]) if state]
 
     @classmethod
-    def get_allowed_phases_by_usecase(cls, project: SOMcreator.Project, usecase: SOMcreator.classes.UseCase):
+    def get_allowed_phases_by_usecase(cls, project: SOMcreator.Project, usecase: SOMcreator.UseCase):
         phase_list = project.get_phases()
         usecase_index = project.get_use_case_index(usecase)
         filter_matrix = project.get_filter_matrix()
@@ -733,7 +722,7 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
     def export_object_filter_differences(cls, file: TextIO, attribute_compare: Type[tool.AttributeCompare]):
         project_0 = cls.get_project(0)
         object_dict = attribute_compare.get_object_dict()
-        for obj0 in sorted(project_0.get_all_objects(), key=lambda x: x.name):
+        for obj0 in sorted(project_0.get_objects(filter=False), key=lambda x: x.name):
             obj1 = object_dict[obj0]
             if obj1 is None:
                 continue
@@ -802,11 +791,11 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         return cls.get_widget().widget.tree_widget_object
 
     @classmethod
-    def get_usecase_list(cls) -> list[SOMcreator.classes.UseCase]:
+    def get_usecase_list(cls) -> list[SOMcreator.UseCase]:
         return cls.get_properties().usecase_list
 
     @classmethod
-    def set_usecase_list(cls, usecase_list: list[SOMcreator.classes.UseCase]):
+    def set_usecase_list(cls, usecase_list: list[SOMcreator.UseCase]):
         cls.get_properties().usecase_list = usecase_list
 
     @classmethod
@@ -818,11 +807,11 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         cls.get_properties().use_case_indexes.append(value)
 
     @classmethod
-    def get_phase_list(cls) -> list[SOMcreator.classes.Phase]:
+    def get_phase_list(cls) -> list[SOMcreator.Phase]:
         return cls.get_properties().phase_list
 
     @classmethod
-    def set_phase_list(cls, phase_list: list[SOMcreator.classes.Phase]):
+    def set_phase_list(cls, phase_list: list[SOMcreator.Phase]):
         cls.get_properties().phase_list = phase_list
 
     @classmethod
@@ -834,7 +823,7 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         cls.get_properties().phase_indexes.append(value)
 
     @classmethod
-    def get_match_list(cls) -> list[tuple[SOMcreator.classes.UseCase, SOMcreator.classes.Phase]]:
+    def get_match_list(cls) -> list[tuple[SOMcreator.UseCase, SOMcreator.Phase]]:
         usecases = cls.get_usecase_list()
         phases = cls.get_phase_list()
         if not cls.get_properties().match_list:

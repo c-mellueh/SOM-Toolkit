@@ -3,13 +3,13 @@ from xml.etree.ElementTree import Element
 
 from lxml import etree
 
-from ... import classes
+import SOMcreator
 from ...constants import value_constants
 from . import handle_header
 from ...external_software import xml
 
 
-def _handle_section(id_dict, aggregation: classes.Aggregation, xml_item: Element) -> None:
+def _handle_section(id_dict, aggregation: SOMcreator.Aggregation, xml_item: Element) -> None:
     xml_child = etree.SubElement(xml_item, "section")
     id_dict[aggregation] = aggregation.uuid
     xml_child.set("ID", aggregation.uuid)
@@ -18,7 +18,7 @@ def _handle_section(id_dict, aggregation: classes.Aggregation, xml_item: Element
     xml_child.set("type", "typeBsGroup")
     xml_child.set("takt", "")
 
-    for child in sorted(aggregation.children, key=lambda x: x.name):
+    for child in sorted(aggregation.get_children(filter=True), key=lambda x: x.name):
         connection_type = child.parent_connection
         if connection_type == value_constants.AGGREGATION:
             _handle_section(id_dict, child, xml_child)
@@ -35,7 +35,7 @@ def _handle_elementsection(xml_parent: Element):
     xml_root.set("type", "typeBsContainer")
     xml_root.set("takt", "")
 
-    root_objects: list[classes.Aggregation] = [aggreg for aggreg in classes.Aggregation if
+    root_objects: list[SOMcreator.Aggregation] = [aggreg for aggreg in SOMcreator.Aggregation if
                                                aggreg.is_root]
 
     root_objects.sort(key=lambda x: x.name)
@@ -53,7 +53,7 @@ def _handle_property_type_section(xml_repo) -> dict[str, int]:
     attribute_dict = dict()
 
     i = 1
-    for attribute in classes.Attribute:
+    for attribute in SOMcreator.Attribute:
         # use attribute_text instead of attribute to remove duplicates
         attribute_text = f"{attribute.property_set.name}:{attribute.name}"
         if attribute_text not in attribute_dict:
@@ -73,9 +73,9 @@ def _handle_property_section(xml_repo: etree.Element, id_dict: dict, attribute_d
     xml_property_section = etree.SubElement(xml_repo, "propertySection")
 
     for node, ref_id in id_dict.items():
-        obj = node.object
-        for property_set in obj.property_sets:
-            for attribute in property_set.attributes:
+        obj: SOMcreator.Object = node.object
+        for property_set in obj.get_property_sets(filter=True):
+            for attribute in property_set.get_attributes(filter=True):
                 attribute_text = f"{attribute.property_set.name}:{attribute.name}"
                 ref_type = attribute_dict[attribute_text]
                 xml_property = etree.SubElement(xml_property_section, "property")
@@ -87,7 +87,7 @@ def _handle_property_section(xml_repo: etree.Element, id_dict: dict, attribute_d
                     xml_property.text = "füllen!"
 
 
-def _handle_repository(xml_parent: Element, id_dict: dict[classes.Aggregation, str]) -> None:
+def _handle_repository(xml_parent: Element, id_dict: dict[SOMcreator.Aggregation, str]) -> None:
     xml_repo = etree.SubElement(xml_parent, "repository")
     xml_id_mapping = etree.SubElement(xml_repo, "IDMapping")
 
@@ -107,7 +107,7 @@ def _handle_relation_section(xml_parent: Element) -> None:
     xml_relation.set("name", "default")
 
 
-def export_bs(project: classes.Project, path: str) -> None:
+def export_bs(project: SOMcreator.Project, path: str) -> None:
     if not path:
         return
     xml_boq_export = handle_header(project.author, "bsExport")

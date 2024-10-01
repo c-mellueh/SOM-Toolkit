@@ -10,7 +10,6 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.worksheet.worksheet import Worksheet
 
 import SOMcreator
-from SOMcreator import classes
 
 IDENT_PSET_NAME = "Allgemeine Eigenschaften"
 IDENT_ATTRIB_NAME = "bauteilKlassifikation"
@@ -68,19 +67,19 @@ class ExportExcel:
         return os.path.exists(os.path.dirname(path))
 
     @classmethod
-    def _get_name(cls, obj: classes.Object):
+    def _get_name(cls, obj: SOMcreator.Object):
         return obj.name
 
     @classmethod
-    def _get_identifier(cls, obj: classes.Object):
+    def _get_identifier(cls, obj: SOMcreator.Object):
         return obj.ident_value or ""
 
     @classmethod
-    def _get_abbreviation(cls, obj: classes.Object):
+    def _get_abbreviation(cls, obj: SOMcreator.Object):
         return obj.abbreviation or ""
 
     @classmethod
-    def _get_ifc_mapping(cls, obj: classes.Object):
+    def _get_ifc_mapping(cls, obj: SOMcreator.Object):
         return ";".join(obj.ifc_mapping) or ""
 
     @classmethod
@@ -93,10 +92,10 @@ class ExportExcel:
             sheet.cell(1, column).value = text
 
         row = 1
-        for row, obj in enumerate(sorted(project.objects), start=2):
+        for row, obj in enumerate(sorted(project.get_objects(filter=True)), start=2):
             for column, getter_function in enumerate(getter_functions, start=1):
                 sheet.cell(row, column).value = getter_function(obj)
-                if obj.optional:
+                if obj.is_optional(ignore_hirarchy=False):
                     sheet.cell(row, column).font = OPTIONAL_FONT
 
         table_range = f"{sheet.cell(1, 1).coordinate}:{sheet.cell(row, len(titles)).coordinate}"
@@ -110,9 +109,9 @@ class ExportExcel:
     @classmethod
     def filter_to_sheets(cls, ) -> dict:
         project = cls.get_project()
-        d = {obj.ident_value: {NAME: obj.name, OBJECTS: []} for obj in project.objects if
+        d = {obj.ident_value: {NAME: obj.name, OBJECTS: []} for obj in project.get_objects(filter=True) if
              len(obj.ident_value.split(".")) == 1}
-        for obj in project.objects:
+        for obj in project.get_objects(filter=True):
             group = obj.ident_value.split(".")[0]
             d[group][OBJECTS].append(obj)
         d["son"] = {NAME: "Sonstige", OBJECTS: []}
@@ -124,8 +123,8 @@ class ExportExcel:
         return d
 
     @classmethod
-    def create_object_entry(cls, obj: classes.Object, sheet, start_row, start_column, table_index):
-        if obj.optional:
+    def create_object_entry(cls, obj: SOMcreator.Object, sheet, start_row, start_column, table_index):
+        if obj.is_optional(ignore_hirarchy=False):
             font_style = OPTIONAL_FONT
         else:
             font_style = styles.Font()
@@ -152,13 +151,13 @@ class ExportExcel:
 
         pset_start_row = start_row + 4
         index = 0
-        for property_set in sorted(obj.property_sets):
-            for attribute in sorted(property_set.attributes):
+        for property_set in sorted(obj.get_property_sets(filter=True)):
+            for attribute in sorted(property_set.get_attributes(filter=True)):
                 sheet.cell(pset_start_row + index, start_column).value = attribute.name
                 sheet.cell(pset_start_row + index, start_column + 1).value = property_set.name
                 sheet.cell(pset_start_row + index, start_column + 2).value = attribute.description
                 sheet.cell(pset_start_row + index, start_column + 3).value = attribute.data_type
-                if attribute.optional:
+                if attribute.is_optional(ignore_hirarchy=False):
                     sheet.cell(pset_start_row + index, start_column).font = OPTIONAL_FONT
                     sheet.cell(pset_start_row + index, start_column + 1).font = OPTIONAL_FONT
                     sheet.cell(pset_start_row + index, start_column + 2).font = OPTIONAL_FONT

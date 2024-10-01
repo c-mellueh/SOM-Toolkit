@@ -8,12 +8,12 @@ import uuid
 from lxml import etree
 
 from ...constants import value_constants
-from ... import classes
+import SOMcreator
 from . import condition as c
 from . import constants as const
 from . import rule
 
-REQUIRED_DATA_DICT = dict[classes.Object, dict[classes.PropertySet, list[classes.Attribute]]]
+REQUIRED_DATA_DICT = dict[SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]]
 
 
 def _write_header(xml_header: etree.Element) -> None:
@@ -21,7 +21,7 @@ def _write_header(xml_header: etree.Element) -> None:
     etree.SubElement(xml_header, const.APPVER).text = "Win - Version: 6.8 (build 6.8.26.0)"
 
 
-def _write_smartview(property_set: classes.PropertySet, attribute_list: list[classes.Attribute],
+def _write_smartview(property_set: SOMcreator.PropertySet, attribute_list: list[SOMcreator.Attribute],
                      author: str) -> etree.Element:
     def write_smartview_basics():
         sv = etree.Element(const.SVIEW)
@@ -75,7 +75,7 @@ def _write_smartview(property_set: classes.PropertySet, attribute_list: list[cla
     return xml_smart_view
 
 
-def _write_smartviewset(obj: classes.Object, pset_dict: dict[classes.PropertySet, list[classes.Attribute]],
+def _write_smartviewset(obj: SOMcreator.Object, pset_dict: dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]],
                         author: str) -> etree.Element:
     smartview_set = etree.Element(const.SMVSET)
     etree.SubElement(smartview_set, const.TITLE).text = obj.name
@@ -111,10 +111,10 @@ def export(required_data_dict: REQUIRED_DATA_DICT,
         file.write(etree.tostring(svs, pretty_print=True))
 
 
-def build_full_required_data_dict(project: classes.Project) -> REQUIRED_DATA_DICT:
+def build_full_required_data_dict(project: SOMcreator.Project) -> REQUIRED_DATA_DICT:
     required_data = dict()
-    for obj in list(project.objects):
+    for obj in list(project.get_objects(filter=True)):
         required_data[obj] = dict()
-        for pset in obj.property_sets:
-            required_data[obj][pset] = [attribute for attribute in pset.attributes]
+        for pset in obj.get_property_sets(filter=True):
+            required_data[obj][pset] = [attribute for attribute in pset.get_attributes(filter=True)]
     return required_data

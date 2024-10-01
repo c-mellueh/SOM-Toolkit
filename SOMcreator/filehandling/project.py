@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Type
 from .constants import *
 from .typing import ProjectDict, FilterDict, MainDict
 import SOMcreator
-from SOMcreator import classes
 from SOMcreator.filehandling import core
 from collections import OrderedDict
 
@@ -12,8 +11,8 @@ if TYPE_CHECKING:
     from SOMcreator import Project
 
 
-def _load_filter_matrix(project_dict: ProjectDict, use_case_list: list[classes.UseCase],
-                        phase_list: list[classes.Phase]):
+def _load_filter_matrix(project_dict: ProjectDict, use_case_list: list[SOMcreator.UseCase],
+                        phase_list: list[SOMcreator.Phase]):
     old_filter_matrix: list[list[bool]] = project_dict.get(FILTER_MATRIX)
     filter_matrix = list()
     for _ in phase_list:
@@ -30,7 +29,7 @@ def _load_filter_matrix(project_dict: ProjectDict, use_case_list: list[classes.U
 
 
 def _load_single_filter(current_state: str | int | None,
-                        value_list: list[classes.UseCase] | list[classes.Phase]):
+                        value_list: list[SOMcreator.UseCase] | list[SOMcreator.Phase]):
     # deprecated usecases were defined by name not int
     if isinstance(current_state, str):
         current_state = {value.name: value for value in value_list}.get(current_state)
@@ -42,7 +41,7 @@ def _load_single_filter(current_state: str | int | None,
     return current_state, value_list
 
 
-def _load_usecases(project_dict: ProjectDict) -> tuple[list[int], list[classes.UseCase]]:
+def _load_usecases(project_dict: ProjectDict) -> tuple[list[int], list[SOMcreator.UseCase]]:
     active_usecases: list[int] = project_dict.get(ACTIVE_USECASES)
     use_case_list = SOMcreator.filehandling.use_case_list
 
@@ -55,7 +54,7 @@ def _load_usecases(project_dict: ProjectDict) -> tuple[list[int], list[classes.U
     return [phase_list.index(usecase)], use_case_list
 
 
-def _load_phases(project_dict: ProjectDict) -> tuple[list[int], list[classes.Phase]]:
+def _load_phases(project_dict: ProjectDict) -> tuple[list[int], list[SOMcreator.Phase]]:
     active_phases: list[int] = project_dict.get(ACTIVE_PHASES)
     phase_list = SOMcreator.filehandling.phase_list
 
@@ -124,8 +123,7 @@ def order_dict(main_dict: MainDict):
     return OrderedDict(ordered_data)
 
 
-
-def _write_filter_dict(filter_list: list[classes.Phase] | list[classes.UseCase]) -> list[FilterDict]:
+def _write_filter_dict(filter_list: list[SOMcreator.Phase] | list[SOMcreator.UseCase]) -> list[FilterDict]:
     fl = list()
     for fil in filter_list:
         fl.append({
@@ -138,8 +136,7 @@ def _write_filter_dict(filter_list: list[classes.Phase] | list[classes.UseCase])
 
 def create_existing_filter_states(proj: Project):
     filter_matrixes = set()
-    for entity in proj.get_all_hirarchy_items():
-        entity: SOMcreator.classes.Hirarchy
+    for entity in proj.get_hirarchy_items(filter=False):
         hashable = tuple(tuple(use_case_list) for use_case_list in entity.get_filter_matrix())
         filter_matrixes.add(hashable)
     return list(filter_matrixes)

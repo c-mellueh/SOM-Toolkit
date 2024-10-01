@@ -69,7 +69,7 @@ def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]) -> None:
     property_set_dict = node.get_pset_subelement_dict(ir)
 
     # add new property_sets and attributes
-    for property_set in obj.property_sets:
+    for property_set in obj.get_property_sets(filter=True):
         if property_set not in property_set_dict:
             property_set_item = node.add_property_set_to_tree(property_set, tree_widget)
             property_set_dict[property_set] = property_set_item
@@ -80,7 +80,7 @@ def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]) -> None:
 
         attribute_dict = node.get_pset_subelement_dict(property_set_item)
 
-        for attribute in property_set.attributes:
+        for attribute in property_set.get_attributes(filter=True):
             if attribute not in attribute_dict:
                 attribute_item = node.add_attribute_to_property_set_tree(attribute, property_set_item)
                 attribute_dict[attribute] = attribute_item
@@ -90,13 +90,13 @@ def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]) -> None:
 
     # delete old property_sets and attributes
     for property_set, pset_item in property_set_dict.items():
-        if property_set not in obj.property_sets:
+        if property_set not in obj.get_property_sets(filter=True):
             ir.removeChild(pset_item)
             continue
 
         attribute_dict = node.get_pset_subelement_dict(pset_item)
         for attribute, attribute_item in attribute_dict.items():
-            if attribute not in property_set.attributes:
+            if attribute not in property_set.get_attributes(filter=True):
                 pset_item.removeChild(attribute_item)
 
 

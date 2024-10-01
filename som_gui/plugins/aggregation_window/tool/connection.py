@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import logging
 
-from SOMcreator.classes import Aggregation
+from SOMcreator import Aggregation
 from SOMcreator.constants import value_constants
 import som_gui
 import som_gui.plugins.aggregation_window.core.tool
@@ -126,7 +126,7 @@ class Connection(som_gui.plugins.aggregation_window.core.tool.Connection):
     @classmethod
     def get_connection_displacement(cls, connection: connection_ui.Connection) -> float:
         aggreg: Aggregation
-        connections = {aggreg.parent_connection for aggreg in connection.top_node.aggregation.children}
+        connections = {aggreg.parent_connection for aggreg in connection.top_node.aggregation.get_children(filter=True)}
         disp_dict = dict()
         agg = value_constants.AGGREGATION
         inh = value_constants.INHERITANCE
