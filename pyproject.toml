@@ -31,4 +31,4 @@ include-package-data = true
 
 
 [project.entry-points.pyinstaller40]
-hook-dirs = "SOMcreator.Template.__pyinstaller:get_hook_dirs"
+hook-dirs = "SOMcreator.templates.__pyinstaller:get_hook_dirs"
