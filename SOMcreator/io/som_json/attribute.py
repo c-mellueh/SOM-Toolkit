@@ -1,13 +1,13 @@
 from __future__ import annotations
 import SOMcreator
-from SOMcreator.exporter.som_json import core
-from SOMcreator.exporter.som_json.constants import VALUE, VALUE_TYPE, DATA_TYPE, CHILD_INHERITS_VALUE, REVIT_MAPPING
+from SOMcreator.io.som_json import core
+from SOMcreator.io.som_json.constants import VALUE, VALUE_TYPE, DATA_TYPE, CHILD_INHERITS_VALUE, REVIT_MAPPING
 from SOMcreator.constants.value_constants import OLD_DATATYPE_DICT
-from SOMcreator.exporter import som_json
+from SOMcreator.io import som_json
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from SOMcreator.exporter.som_json.typing import AttributeDict
+    from SOMcreator.io.som_json.typing import AttributeDict
 
 
 def load(proj: SOMcreator.Project, attribute_dict: dict, identifier: str,
@@ -29,7 +29,7 @@ def load(proj: SOMcreator.Project, attribute_dict: dict, identifier: str,
                                   description=description, optional=optional, revit_mapping=revit_mapping,
                                   project=proj, filter_matrix=filter_matrix)
     som_json.parent_dict[attribute] = parent
-    SOMcreator.exporter.som_json.attribute_uuid_dict[identifier] = attribute
+    SOMcreator.io.som_json.attribute_uuid_dict[identifier] = attribute
 
 
 def write(attribute: SOMcreator.Attribute) -> AttributeDict:

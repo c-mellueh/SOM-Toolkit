@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import SOMcreator
-from SOMcreator.exporter import bsdd
+from SOMcreator.io import bsdd
 from SOMcreator.constants import value_constants
 import logging
 import datetime

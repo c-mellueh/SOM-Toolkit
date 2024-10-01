@@ -4,7 +4,7 @@ import os
 from typing import Iterator
 
 import SOMcreator
-import SOMcreator.exporter.som_json
+import SOMcreator.io.som_json
 from .base import Hirarchy, filterable
 
 
@@ -126,10 +126,10 @@ class Project(object):
 
     @classmethod
     def open(cls, path: str | os.PathLike) -> Project:
-        return SOMcreator.exporter.som_json.open_json(cls, path)
+        return SOMcreator.io.som_json.open_json(cls, path)
 
     def save(self, path: str | os.PathLike) -> dict:
-        json_dict = SOMcreator.exporter.som_json.export_json(self, path)
+        json_dict = SOMcreator.io.som_json.export_json(self, path)
         return json_dict
 
     @property

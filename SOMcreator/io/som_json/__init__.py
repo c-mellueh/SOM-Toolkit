@@ -54,16 +54,16 @@ def create_mapping_script(project: SOMcreator.Project, pset_name: str, path: str
 
 
 def reset_uuid_dicts():
-    SOMcreator.exporter.som_json.object_uuid_dict = dict()
-    SOMcreator.exporter.som_json.property_set_uuid_dict = dict()
-    SOMcreator.exporter.som_json.attribute_uuid_dict = dict()
-    SOMcreator.exporter.som_json.filter_matrixes = list()
+    SOMcreator.io.som_json.object_uuid_dict = dict()
+    SOMcreator.io.som_json.property_set_uuid_dict = dict()
+    SOMcreator.io.som_json.attribute_uuid_dict = dict()
+    SOMcreator.io.som_json.filter_matrixes = list()
 
 
 def open_json(cls: Type[Project], path: str):
     start_time = time.time()
 
-    SOMcreator.exporter.som_json.parent_dict = dict()
+    SOMcreator.io.som_json.parent_dict = dict()
     reset_uuid_dicts()
     if not os.path.isfile(path):
         raise FileNotFoundError(f"File '{path}' does not exist!")
@@ -71,13 +71,13 @@ def open_json(cls: Type[Project], path: str):
     with open(path, "r") as file:
         main_dict: MainDict = json.load(file)
 
-    SOMcreator.exporter.som_json.plugin_dict = dict(main_dict)
-    SOMcreator.exporter.som_json.filter_matrixes = main_dict.get(FILTER_MATRIXES)
+    SOMcreator.io.som_json.plugin_dict = dict(main_dict)
+    SOMcreator.io.som_json.filter_matrixes = main_dict.get(FILTER_MATRIXES)
     core.remove_part_of_dict(FILTER_MATRIXES)
 
     logging.debug(f"Filter Matrixes Read")
     project_dict = main_dict.get(constants.PROJECT)
-    SOMcreator.exporter.som_json.phase_list, SOMcreator.exporter.som_json.use_case_list = core.get_filter_lists(
+    SOMcreator.io.som_json.phase_list, SOMcreator.io.som_json.use_case_list = core.get_filter_lists(
         project_dict)
     logging.debug(f"Filter List Read")
 
@@ -99,7 +99,7 @@ def open_json(cls: Type[Project], path: str):
     aggregation.calculate(proj)
     logging.debug(f"Aggregation Calculated")
 
-    proj.plugin_dict = SOMcreator.exporter.som_json.plugin_dict
+    proj.plugin_dict = SOMcreator.io.som_json.plugin_dict
     proj.import_dict = main_dict
     end_time = time.time()
     logging.info(f"Import Done. Time: {end_time - start_time}")

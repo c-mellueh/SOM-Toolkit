@@ -11,8 +11,8 @@ import som_gui
 from som_gui.module.bsdd import ui
 from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QWidget, QToolBox, QLineEdit, QLabel
 from som_gui.module.bsdd import trigger
-from SOMcreator.exporter import bsdd
-import SOMcreator.exporter.bsdd.transformer
+from SOMcreator.io import bsdd
+import SOMcreator.io.bsdd.transformer
 
 LANGUAGE_ISO_CODES = ['EN', 'en-GB', 'nl-NL', 'nb-NO', 'nl-BE', 'fr-BE', 'de-DE', 'it-IT', 'sv-SE', 'fr-FR', 'es-ES',
                       'en-AU', 'fa-IR', 'pl-PL', 'lv-LV', 'en-NZ', 'sr-SP', 'zh-CN', 'ru-RU', 'vi-VN', 'bg-BG', 'kr-KR',
@@ -66,7 +66,7 @@ class Bsdd(som_gui.core.tool.Bsdd):
 
     @classmethod
     def create_dictionary_widget(cls):
-        from SOMcreator.exporter.bsdd import Dictionary
+        from SOMcreator.io.bsdd import Dictionary
 
         widget = cls.get_properties().dictionary_widget = ui.DictionaryWidget()
         widget.setLayout(QFormLayout())
@@ -114,12 +114,12 @@ class Bsdd(som_gui.core.tool.Bsdd):
 
     @classmethod
     def transform_project_to_dict(cls, proj: SOMcreator.Project):
-        d = SOMcreator.exporter.bsdd.transform_project_to_dict(proj)
+        d = SOMcreator.io.bsdd.transform_project_to_dict(proj)
         cls.get_properties().dictionary = d
         return d
 
     @classmethod
-    def get_dictionary(cls) -> SOMcreator.exporter.bsdd.Dictionary:
+    def get_dictionary(cls) -> SOMcreator.io.bsdd.Dictionary:
         return cls.get_properties().dictionary
 
     @classmethod
@@ -131,12 +131,12 @@ class Bsdd(som_gui.core.tool.Bsdd):
         dictionary = cls.get_dictionary()
         objects = list(project.get_objects(filter=True))
         predefined_psets = list(project.get_predefined_psets(filter=False))
-        SOMcreator.exporter.bsdd.transform_objects_to_classes(dictionary, objects, predefined_psets)
+        SOMcreator.io.bsdd.transform_objects_to_classes(dictionary, objects, predefined_psets)
 
     @classmethod
     def export_to_json(cls, path: str | os.PathLike):
         dictionary = cls.get_dictionary()
-        SOMcreator.exporter.bsdd.export_dict(dictionary, path)
+        SOMcreator.io.bsdd.export_dict(dictionary, path)
 
     @classmethod
     def get_dict_presets(cls):

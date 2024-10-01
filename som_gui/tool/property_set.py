@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QListW
 from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtGui import QAction, QIcon
 
-from SOMcreator.exporter.som_json import constants as json_constants
+from SOMcreator.io.som_json import constants as json_constants
 
 import som_gui
 import som_gui.core.tool
