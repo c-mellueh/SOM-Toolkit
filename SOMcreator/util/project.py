@@ -2,6 +2,36 @@ import SOMcreator
 from SOMcreator import Project, UseCase, Phase
 
 
+def merge_projects(existing_project: Project, import_project: Project, phase_mapping: dict[Phase, Phase],
+                   use_case_mapping: dict[UseCase, UseCase]):
+    """
+
+    :param existing_project: Existing Project
+    :param import_project: Project that will be imported into existing Project
+    :param phase_mapping: mapping Dict import Phase as Key existing Phase as Value
+    :param use_case_mapping: mapping Dict import UseCase as Key existing UseCase as Value
+    :return:
+    """
+    existing_identifiers = {o.ident_value for o in existing_project.get_objects(filter=False)}
+    import_predef_pset_dict = {p: p for p in import_project.get_predefined_psets(filter=False)}
+    existing_predefined_pset_name_dict = {p.name: p for p in existing_project.get_predefined_psets(filter=False)}
+
+    for import_predef_pset in import_predef_pset_dict.keys():
+        new_pset = existing_predefined_pset_name_dict.get(import_predef_pset.name)
+        if not new_pset:
+            _add_item(existing_project, import_project, import_predef_pset, phase_mapping, use_case_mapping)
+        else:
+            import_predef_pset_dict[import_predef_pset] = new_pset
+
+    for obj in import_project.get_objects(filter=False):
+        if obj.ident_value not in existing_identifiers:
+            _import_object(existing_project, import_project, obj, import_predef_pset_dict, phase_mapping,
+                           use_case_mapping)
+
+    existing_project.plugin_dict = _merge_dicts(existing_project.plugin_dict, import_project.plugin_dict)
+    existing_project.import_dict = _merge_dicts(existing_project.import_dict, import_project.import_dict)
+
+
 def _calculate_new_filter_matrix(filter_matrix, existing_project: Project, import_project: Project, item,
                                  phase_mapping, use_case_mapping):
     for import_phase in import_project.get_phases():
@@ -73,33 +103,3 @@ def _import_attribute(existing_project, import_project, attribute, phase_mapping
         if parent_attribute:
             attribute.parent = parent_attribute
     _add_item(existing_project, import_project, attribute, phase_mapping, use_case_mapping)
-
-
-def merge_projects(existing_project: Project, import_project: Project, phase_mapping: dict[Phase, Phase],
-                   use_case_mapping: dict[UseCase, UseCase]):
-    """
-
-    :param existing_project: Existing Project
-    :param import_project: Project that will be imported into existing Project
-    :param phase_mapping: mapping Dict import Phase as Key existing Phase as Value
-    :param use_case_mapping: mapping Dict import UseCase as Key existing UseCase as Value
-    :return:
-    """
-    existing_identifiers = {o.ident_value for o in existing_project.get_objects(filter=False)}
-    import_predef_pset_dict = {p: p for p in import_project.get_predefined_psets(filter=False)}
-    existing_predefined_pset_name_dict = {p.name: p for p in existing_project.get_predefined_psets(filter=False)}
-
-    for import_predef_pset in import_predef_pset_dict.keys():
-        new_pset = existing_predefined_pset_name_dict.get(import_predef_pset.name)
-        if not new_pset:
-            _add_item(existing_project, import_project, import_predef_pset, phase_mapping, use_case_mapping)
-        else:
-            import_predef_pset_dict[import_predef_pset] = new_pset
-
-    for obj in import_project.get_objects(filter=False):
-        if obj.ident_value not in existing_identifiers:
-            _import_object(existing_project, import_project, obj, import_predef_pset_dict, phase_mapping,
-                           use_case_mapping)
-
-    existing_project.plugin_dict = _merge_dicts(existing_project.plugin_dict, import_project.plugin_dict)
-    existing_project.import_dict = _merge_dicts(existing_project.import_dict, import_project.import_dict)
