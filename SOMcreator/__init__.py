@@ -1,6 +1,6 @@
-from .datastructure import Project, Object
+from .datastructure import Project, Object, PropertySet
 
-from .classes import PropertySet, Attribute, Aggregation, UseCase, Phase
+from .classes import Attribute, Aggregation, UseCase, Phase
 from .external_software import desite, allplan, revit, vestra, card1
 from .constants import json_constants, value_constants
 from .tools import merge_projects
