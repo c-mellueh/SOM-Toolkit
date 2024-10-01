@@ -1260,7 +1260,7 @@ class ObjectFilter:
 
     def is_tree_clicked(self, ): pass
 
-    def load_use_cases(self, ): pass
+    def import_filter_matrix(self, ): pass
 
     def reset_use_case_data(self, ): pass
 

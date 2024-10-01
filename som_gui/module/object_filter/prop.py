@@ -16,7 +16,6 @@ class ObjectFilterProperties:
     object_dict: dict
     pset_dict: dict
     attribute_dict: dict
-    use_cases: list[SOMcreator.UseCase]
     active_object: SOMcreator.Object = None
     active_check_state: Qt.CheckState = None
     object_filter_window: ObjectFilterWindow = None
