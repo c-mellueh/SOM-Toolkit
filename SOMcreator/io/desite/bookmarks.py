@@ -2,7 +2,7 @@ from __future__ import annotations
 import os
 import jinja2
 from lxml import etree
-from SOMcreator.Template import HOME_DIR, BOOKMARK_TEMPLATE
+from SOMcreator.templates import HOME_DIR, BOOKMARK_TEMPLATE
 import SOMcreator
 from SOMcreator.util import xml
 

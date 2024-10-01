@@ -13,7 +13,7 @@ from typing import TypedDict
 from . import handle_header, output_date_time
 from SOMcreator.util import xml
 from SOMcreator.util.misc import merge_list
-from SOMcreator import constants, Template
+from SOMcreator import constants, templates
 from SOMcreator.constants import value_constants
 import SOMcreator
 
@@ -26,7 +26,7 @@ class ObjectStructureDict(TypedDict):
 
 
 def _handle_template(path: str | os.PathLike) -> jinja2.Template:
-    file_loader = jinja2.FileSystemLoader(Template.HOME_DIR)
+    file_loader = jinja2.FileSystemLoader(templates.HOME_DIR)
     env = jinja2.Environment(loader=file_loader)
     env.trim_blocks = True
     env.lstrip_blocks = True
@@ -121,7 +121,7 @@ def _define_xml_elements(author: str, xml_container: Element, name: str) -> (Ele
 
 
 def _handle_js_rules(xml_attribute_rule_list: Element, starts_with: str) -> None:
-    folder = os.path.join(Template.HOME_DIR, constants.FILEPATH_JS)
+    folder = os.path.join(templates.HOME_DIR, constants.FILEPATH_JS)
 
     for fn in os.listdir(folder):
         if str(fn).startswith(starts_with):
@@ -351,7 +351,7 @@ def _handle_property_section(xml_qa_export: Element) -> None:
 
 
 def _handle_untested(xml_attribute_rule_list: etree.Element, main_pset: str, main_attribute: str):
-    template = _handle_template(Template.UNTESTED)
+    template = _handle_template(templates.UNTESTED)
     rule_script = etree.SubElement(xml_attribute_rule_list, "ruleScript")
     name = "untested"
     rule_script.set("name", name)
@@ -416,7 +416,7 @@ def export(project: SOMcreator.Project,
     if not object_structure:
         object_structure = {o: o.get_children(filter=True) for o in project.get_objects(filter=True)}
 
-    template = _handle_template(Template.TEMPLATE)
+    template = _handle_template(templates.TEMPLATE)
     xml_container, xml_qa_export = _init_xml(project.author, project.name, project.version)
     xml_checkrun_first, xml_attribute_rule_list = _define_xml_elements(project.author, xml_container, "initial_tests")
     _handle_js_rules(xml_attribute_rule_list, "start")
@@ -469,7 +469,7 @@ def fast_check(project: SOMcreator.Project, main_pset: str, main_attrib: str,
     :param path: Export Path
     :return:
     """
-    template = _handle_template(Template.FAST_TEMPLATE)
+    template = _handle_template(templates.FAST_TEMPLATE)
     xml_container, xml_qa_export = _init_xml(project.author, project.name, project.version)
     xml_checkrun_first, xml_attribute_rule_list = _define_xml_elements(project.author, xml_container, "initial_tests")
     _handle_js_rules(xml_attribute_rule_list, "start")
