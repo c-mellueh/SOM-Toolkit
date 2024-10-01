@@ -85,10 +85,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         cls.get_properties().object_filter_window = window
         return window
 
-
-
-
-
     @classmethod
     def create_row(cls, entity: SOMcreator.Object | SOMcreator.Attribute | SOMcreator.PropertySet,
                    filter_index_list: list[list[str | int]]):
@@ -183,8 +179,8 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
                                   range(parent_item.rowCount())}
 
         old_entities = set(existing_entities_dict.keys())
-        new_entities = set(entities).difference(old_entities)
-        delete_entities = old_entities.difference(set(entities))
+        new_entities = entities.difference(old_entities)
+        delete_entities = old_entities.difference(entities)
         for entity in reversed(sorted(delete_entities, key=lambda o: existing_entities_dict[o])):
             row_index = existing_entities_dict[entity]
             parent_item.removeRow(row_index)
@@ -275,7 +271,8 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             return None
 
         object_model = cls.get_object_model()
-        return iter_items(object_model.invisibleRootItem()).index()
+        item = iter_items(object_model.invisibleRootItem())
+        return None if item is None else item.index()
 
     @classmethod
     def import_filter_matrixes(cls, project: SOMcreator.Project):
@@ -288,7 +285,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         prop.pset_dict = {p: p.get_filter_matrix() for p in project.get_property_sets(filter=False)}
         prop.attribute_dict = {a: a.get_filter_matrix() for a in project.get_attributes(filter=False)}
         logging.debug(f"FilterMatrixes imported")
-
 
     @classmethod
     def create_tree_models(cls):
@@ -315,13 +311,12 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         return obj_title, pset_titles
 
     @classmethod
-    def fill_object_tree(cls, root_objects: list[SOMcreator.Object]) -> None:
+    def fill_object_tree(cls, root_objects: set[SOMcreator.Object]) -> None:
         object_header_texts, _ = cls.get_header_texts()
         model = cls.get_object_model()
-        use_case_list = cls.get_filter_indexes()
+        filter_indexes = cls.get_filter_indexes()  # combination of filters which are allowed
         tree = cls.get_object_tree()
-        cls.create_tree(set(root_objects), model.invisibleRootItem(), use_case_list, len(object_header_texts), model,
-                        tree)
+        cls.create_tree(root_objects, model.invisibleRootItem(), filter_indexes, len(object_header_texts), model, tree)
 
     @classmethod
     def get_title_count_by_index(cls, index) -> int:
@@ -432,9 +427,7 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         prop = cls.get_properties()
 
         pset_tree = prop.object_filter_window.widget.property_set_tree
-        if active_object is None:
-            pset_tree.setModel(QStandardItemModel())
-            return
+        pset_tree.setEnabled(False if active_object is None else True)
 
         def handle_psets(property_sets: set[SOMcreator.PropertySet]):
             old_pset_dict = {
@@ -444,6 +437,9 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             old_property_sets = set(old_pset_dict.keys())
             new_property_sets = property_sets.difference(old_property_sets)
             delete_property_sets = old_property_sets.difference(property_sets)
+            logging.debug(f"Delete Propertysets: {[p.name for p in delete_property_sets]}")
+            logging.debug(f"New Propertysets: {[p.name for p in new_property_sets]}")
+
             for pset in reversed(sorted(delete_property_sets, key=lambda o: old_pset_dict[o])):
                 row_index = old_pset_dict[pset]
                 root_item.removeRow(row_index)
@@ -451,7 +447,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
             for new_pset in new_property_sets:
                 row = cls.create_row(new_pset, filter_index_list)
                 root_item.appendRow(row)
-
             for child_row in range(root_item.rowCount()):
                 for child_column, enable_state in enumerate(sub_enable_states, start=len(pset_header_texts)):
                     child_item = root_item.child(child_row, child_column)
@@ -462,7 +457,8 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
                         root_item.setChild(child_row, child_column, child_item)
                     child_item.setEnabled(enable_state)
                 pset: SOMcreator.PropertySet = root_item.child(child_row, 0).data(CLASS_REFERENCE)
-                cls.create_tree(pset.get_attributes(filter=False), root_item.child(child_row, 0), filter_index_list,
+                cls.create_tree(set(pset.get_attributes(filter=False)), root_item.child(child_row, 0),
+                                filter_index_list,
                                 len(pset_header_texts), model, cls.get_pset_tree())
 
         _, pset_header_texts = cls.get_header_texts()
@@ -470,6 +466,8 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         filter_index_list = cls.get_filter_indexes()
         root_item = model.invisibleRootItem()
         active_object_index = cls.get_index_by_object(active_object)
+        if active_object_index is None:
+            return
         check_states = cls.get_check_statuses(active_object_index)
         enable_states = cls.get_enabled_statuses(active_object_index)
         sub_enable_states = [all((c, e)) for c, e in zip(check_states, enable_states)]
@@ -850,4 +848,3 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         item.setBackground(0, color)
         item.setBackground(1, color)
         item.setData(0, CLASS_REFERENCE + 1, 1)
-

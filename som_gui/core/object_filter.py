@@ -14,6 +14,11 @@ if TYPE_CHECKING:
     from som_gui.module.object_filter import ui as object_filter_ui
 
 
+def on_startup(objectfilter_tool: Type[ObjectFilter], project: Type[tool.Project]) -> None:
+    logging.debug(f"Startup ObjectFilter")
+    objectfilter_tool.import_filter_matrixes(project.get())
+
+
 def open_window(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project]) -> None:
     window = object_filter.create_window()
     logging.debug(f"Filter Window created")
@@ -33,43 +38,16 @@ def open_window(object_filter: Type[tool.ObjectFilter], project: Type[tool.Proje
     logging.debug(f"Window shown")
 
 
-def on_startup(objectfilter_tool: Type[ObjectFilter], project: Type[tool.Project]) -> None:
-    logging.debug(f"Startup ObjectFilter")
-    objectfilter_tool.import_filter_matrixes(project.get())
-
-
-def add_object_filter_widget(object_filter_compare: Type[tool.ObjectFilterCompare],
-                             attribute_compare: Type[tool.AttributeCompare],
-                             compare_window: Type[tool.CompareWindow]):
-    compare_window.add_tab("Objekt Filter", object_filter_compare.get_widget,
-                           lambda p0, p1: init_compare_object_filter(p0, p1, object_filter_compare, attribute_compare),
-                           object_filter_compare,
-                           lambda file: export_filter_differences(file, object_filter_compare, attribute_compare))
-
-
-def accept_changes(objectfilter_tool: Type[ObjectFilter]):
-    objectfilter_tool.update_pset_data()
-    objectfilter_tool.update_attribute_data()
-    objectfilter_tool.update_attribute_uses_cases()
-    objectfilter_tool.update_pset_use_cases()
-    objectfilter_tool.update_object_use_cases()
-    window = objectfilter_tool.delete_use_case_window()
-    window.close()
-    pass
-
-
-def reject_changes(objectfilter_tool: Type[ObjectFilter]):
-    window = objectfilter_tool.delete_use_case_window()
-    window.close()
-
-
 def refresh_object_tree(objectfilter_tool: Type[ObjectFilter], project_tool: Type[Project]):
+    logging.debug(f"refresh ObjectTree")
     load_headers(objectfilter_tool)
+    logging.debug(f"Header loaded")
     load_objects(objectfilter_tool, project_tool)
+    logging.debug(f"Objects loaded")
     objectfilter_tool.update_active_object_label()
+    logging.debug(f"ObjectLabel updated")
     objectfilter_tool.update_pset_tree()
-
-
+    logging.debug(f"PSet tree updated")
 
 
 def load_headers(objectfilter_tool: Type[ObjectFilter]):
@@ -87,8 +65,8 @@ def load_headers(objectfilter_tool: Type[ObjectFilter]):
 
 
 def load_objects(objectfilter_tool: Type[ObjectFilter], project_tool: Type[Project]):
-    root_objects = project_tool.get_root_objects(filter_objects=False)
-    objectfilter_tool.fill_object_tree(root_objects)
+    root_objects = project_tool.get().get_root_objects(filter=False)
+    objectfilter_tool.fill_object_tree(set(root_objects))
 
 
 def tree_mouse_press_event(index: QModelIndex, objectfilter_tool: Type[ObjectFilter]):
@@ -133,7 +111,113 @@ def object_clicked(obj: SOMcreator.Object, objectfilter_tool: Type[ObjectFilter]
     objectfilter_tool.update_object_data(obj)
 
 
-# Filter Compare
+def accept_changes(objectfilter_tool: Type[ObjectFilter]):
+    objectfilter_tool.update_pset_data()
+    objectfilter_tool.update_attribute_data()
+    objectfilter_tool.update_attribute_uses_cases()
+    objectfilter_tool.update_pset_use_cases()
+    objectfilter_tool.update_object_use_cases()
+    window = objectfilter_tool.delete_use_case_window()
+    window.close()
+    pass
+
+
+def reject_changes(objectfilter_tool: Type[ObjectFilter]):
+    window = objectfilter_tool.delete_use_case_window()
+    window.close()
+
+
+
+
+# Settings Widget
+def settings_widget_created(widget: object_filter_ui.SettingsWidget, object_filter: Type[tool.ObjectFilter],
+                            project: Type[tool.Project]):
+    object_filter.set_settings_widget(widget)
+
+    proj = project.get()
+    phase_layout = QFormLayout()
+    widget.ui.widget_phase.setLayout(phase_layout)
+    usecase_layout = QFormLayout()
+    widget.ui.widget_usecase.setLayout(usecase_layout)
+
+    for phase in proj.get_phases():
+        cb = QCheckBox()
+        phase_index = proj.get_phase_index(phase)
+        cb.setChecked(bool(phase_index in proj.active_phases))
+        phase_layout.addRow(QLabel(phase.name), cb)
+
+    for usecase in proj.get_usecases():
+        cb = QCheckBox()
+        usecase_index = proj.get_use_case_index(usecase)
+        cb.setChecked(bool(usecase_index in proj.active_usecases))
+        usecase_layout.addRow(QLabel(usecase.name), cb)
+
+
+def settings_accepted(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project], popups: Type[tool.Popups]):
+    proj = project.get()
+    widget = object_filter.get_settings_widget()
+
+    phase_layout: QFormLayout = widget.ui.widget_phase.layout()
+    usecase_layout: QFormLayout = widget.ui.widget_usecase.layout()
+
+    active_phases = list()
+    for row in range(phase_layout.rowCount()):
+        cb: QCheckBox = phase_layout.itemAt(row, QFormLayout.ItemRole.FieldRole).widget()
+        if cb.isChecked():
+            active_phases.append(row)
+
+    active_usecases = list()
+    for row in range(usecase_layout.rowCount()):
+        cb: QCheckBox = usecase_layout.itemAt(row, QFormLayout.ItemRole.FieldRole).widget()
+        if cb.isChecked():
+            active_usecases.append(row)
+    proj.active_phases = active_phases
+    proj.active_usecases = active_usecases
+    logging.info(f"Set Active Usecases {[proj.get_usecase_by_index(i).name for i in proj.active_usecases]}")
+    logging.info(f"Set Active Phases {[proj.get_phase_by_index(i).name for i in proj.active_phases]}")
+
+
+def settings_combobox_changed(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project],
+                              util: Type[tool.Util]):
+    widget = object_filter.get_settings_widget()
+    combobox_usecase = widget.ui.cb_usecase
+    combobox_phase = widget.ui.cb_phase
+    usecase_name = combobox_usecase.currentText()
+    phase_name = combobox_phase.currentText()
+    if not all([usecase_name, phase_name]):
+        return
+    proj = project.get()
+    usecase = proj.get_use_case_by_name(usecase_name)
+    phase = proj.get_phase_by_name(phase_name)
+
+    # add warning icons to combobox
+    for uc_name, index in util.get_text_from_combobox(combobox_usecase).items():
+        uc = proj.get_use_case_by_name(uc_name)
+        if not proj.get_filter_state(phase, uc):
+            warn_icon = widget.style().standardIcon(widget.style().StandardPixmap.SP_MessageBoxWarning)
+            combobox_usecase.setItemIcon(index.row(), warn_icon)
+        else:
+            combobox_usecase.setItemIcon(index.row(), QIcon())
+
+    for ph_name, index in util.get_text_from_combobox(combobox_phase).items():
+        ph = proj.get_phase_by_name(ph_name)
+        if not proj.get_filter_state(ph, usecase):
+            warn_icon = widget.style().standardIcon(widget.style().StandardPixmap.SP_MessageBoxWarning)
+            combobox_phase.setItemIcon(index.row(), warn_icon)
+        else:
+            combobox_phase.setItemIcon(index.row(), QIcon())
+
+
+# Compare Widget
+
+def add_compare_widget(object_filter_compare: Type[tool.ObjectFilterCompare],
+                       attribute_compare: Type[tool.AttributeCompare],
+                       compare_window: Type[tool.CompareWindow]):
+    compare_window.add_tab("Objekt Filter", object_filter_compare.get_widget,
+                           lambda p0, p1: init_compare_object_filter(p0, p1, object_filter_compare, attribute_compare),
+                           object_filter_compare,
+                           lambda file: export_filter_differences(file, object_filter_compare, attribute_compare))
+
 
 def init_compare_object_filter(project0: SOMcreator.Project, project1: SOMcreator.Project,
                                object_filter_compare: Type[tool.ObjectFilterCompare],
@@ -190,81 +274,3 @@ def export_filter_differences(file, object_filter_compare: Type[tool.ObjectFilte
     file.write(f"\n{'OBJECT FILTER':46s}\n\n")
     object_filter_compare.export_object_filter_differences(file, attribute_compare)
     file.write("\n")
-
-
-def settings_widget_created(widget: object_filter_ui.SettingsWidget, object_filter: Type[tool.ObjectFilter],
-                            project: Type[tool.Project]):
-    object_filter.set_settings_widget(widget)
-
-    proj = project.get()
-    phase_layout = QFormLayout()
-    widget.ui.widget_phase.setLayout(phase_layout)
-    usecase_layout = QFormLayout()
-    widget.ui.widget_usecase.setLayout(usecase_layout)
-
-    for phase in proj.get_phases():
-        cb = QCheckBox()
-        phase_index = proj.get_phase_index(phase)
-        cb.setChecked(bool(phase_index in proj.active_phases))
-        phase_layout.addRow(QLabel(phase.name), cb)
-
-    for usecase in proj.get_usecases():
-        cb = QCheckBox()
-        usecase_index = proj.get_use_case_index(usecase)
-        cb.setChecked(bool(usecase_index in proj.active_usecases))
-        usecase_layout.addRow(QLabel(usecase.name), cb)
-
-def settings_accepted(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project], popups: Type[tool.Popups]):
-    proj = project.get()
-    widget = object_filter.get_settings_widget()
-
-    phase_layout: QFormLayout = widget.ui.widget_phase.layout()
-    usecase_layout: QFormLayout = widget.ui.widget_usecase.layout()
-
-    active_phases = list()
-    for row in range(phase_layout.rowCount()):
-        cb: QCheckBox = phase_layout.itemAt(row, QFormLayout.ItemRole.FieldRole).widget()
-        if cb.isChecked():
-            active_phases.append(row)
-
-    active_usecases = list()
-    for row in range(usecase_layout.rowCount()):
-        cb: QCheckBox = usecase_layout.itemAt(row, QFormLayout.ItemRole.FieldRole).widget()
-        if cb.isChecked():
-            active_usecases.append(row)
-    proj.active_phases = active_phases
-    proj.active_usecases = active_usecases
-    logging.info(f"Set Active Usecases {[proj.get_usecase_by_index(i).name for i in proj.active_usecases]}")
-    logging.info(f"Set Active Phases {[proj.get_phase_by_index(i).name for i in proj.active_phases]}")
-
-
-
-def settings_combobox_changed(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project],
-                              util: Type[tool.Util]):
-    widget = object_filter.get_settings_widget()
-    combobox_usecase = widget.ui.cb_usecase
-    combobox_phase = widget.ui.cb_phase
-    usecase_name = combobox_usecase.currentText()
-    phase_name = combobox_phase.currentText()
-    if not all([usecase_name, phase_name]):
-        return
-    proj = project.get()
-    usecase = proj.get_use_case_by_name(usecase_name)
-    phase = proj.get_phase_by_name(phase_name)
-
-    # add warning icons to combobox
-    for uc_name, index in util.get_text_from_combobox(combobox_usecase).items():
-        uc = proj.get_use_case_by_name(uc_name)
-        if not proj.get_filter_state(phase, uc):
-            warn_icon = widget.style().standardIcon(widget.style().StandardPixmap.SP_MessageBoxWarning)
-            combobox_usecase.setItemIcon(index.row(), warn_icon)
-        else:
-            combobox_usecase.setItemIcon(index.row(), QIcon())
-
-    for ph_name, index in util.get_text_from_combobox(combobox_phase).items():
-        ph = proj.get_phase_by_name(ph_name)
-        if not proj.get_filter_state(ph, usecase):
-            warn_icon = widget.style().standardIcon(widget.style().StandardPixmap.SP_MessageBoxWarning)
-            combobox_phase.setItemIcon(index.row(), warn_icon)
-        else:
-            combobox_phase.setItemIcon(index.row(), QIcon())
