@@ -14,6 +14,10 @@ if TYPE_CHECKING:
     from som_gui.module.object_filter import ui as object_filter_ui
 
 
+def on_startup(objectfilter_tool: Type[ObjectFilter], project: Type[tool.Project]) -> None:
+    logging.debug(f"Startup ObjectFilter")
+    objectfilter_tool.import_filter_matrixes(project.get())
+
 def open_window(object_filter: Type[tool.ObjectFilter], project: Type[tool.Project]) -> None:
     window = object_filter.create_window()
     logging.debug(f"Filter Window created")
@@ -31,11 +35,6 @@ def open_window(object_filter: Type[tool.ObjectFilter], project: Type[tool.Proje
     pset_tree.setEnabled(False)
     window.show()
     logging.debug(f"Window shown")
-
-
-def on_startup(objectfilter_tool: Type[ObjectFilter], project: Type[tool.Project]) -> None:
-    logging.debug(f"Startup ObjectFilter")
-    objectfilter_tool.import_filter_matrixes(project.get())
 
 
 def add_object_filter_widget(object_filter_compare: Type[tool.ObjectFilterCompare],
