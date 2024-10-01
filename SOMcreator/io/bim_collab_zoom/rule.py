@@ -6,6 +6,7 @@ from lxml import etree
 from . import action as a
 from . import condition as c
 from . import constants as const
+from SOMcreator.util.misc import merge_list
 
 
 def _write_base(attribute_name: str, pset_name: str, value_type: str) -> (etree.Element, etree.Element):
@@ -85,17 +86,6 @@ def numeric_list(attribute_name, pset_name, value_list) -> list[etree.Element]:
             xml_rule = _generate_rule(attribute_name, pset_name, value, c.DOUBLE, c.NOTEQ, a.AND)
         rule_list.append(xml_rule)
     return rule_list
-
-
-def merge_list(range_list, start_index=0):
-    for i in range(start_index, len(range_list) - 1):
-        if range_list[i][1] > range_list[i + 1][0]:
-            new_start = range_list[i][0]
-            new_end = max(range_list[i + 1][1], range_list[i][1])
-            range_list[i] = [new_start, new_end]
-            del range_list[i + 1]
-            return merge_list(range_list.copy(), start_index=i)
-    return range_list
 
 
 def numeric_range(attribute_name: str, property_set_name: str,

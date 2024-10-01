@@ -1,4 +1,4 @@
-from ...constants import value_constants
+from SOMcreator.constants import value_constants
 
 STRING = "StringValue"
 DOUBLE = "DoubleValue"

@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QMainWindow, QMenuBar, QMenu
 
 from som_gui import tool
 from SOMcreator.external_software.IDS import main
-from SOMcreator.external_software.bim_collab_zoom import modelcheck as bc_modelcheck
+from SOMcreator.io.bim_collab_zoom import modelcheck as bc_modelcheck
 from SOMcreator.external_software.desite import modelcheck
 
 if TYPE_CHECKING:

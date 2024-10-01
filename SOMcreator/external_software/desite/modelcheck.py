@@ -12,7 +12,7 @@ from typing import TypedDict
 
 from . import handle_header, output_date_time
 from ...external_software import xml
-from ..bim_collab_zoom.rule import merge_list
+from SOMcreator.util.misc import merge_list
 from ... import constants, Template
 from ...constants import value_constants
 import SOMcreator
