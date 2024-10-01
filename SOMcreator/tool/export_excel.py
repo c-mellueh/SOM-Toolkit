@@ -10,7 +10,6 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.worksheet.worksheet import Worksheet
 
 import SOMcreator
-from SOMcreator import classes
 
 IDENT_PSET_NAME = "Allgemeine Eigenschaften"
 IDENT_ATTRIB_NAME = "bauteilKlassifikation"
@@ -68,19 +67,19 @@ class ExportExcel:
         return os.path.exists(os.path.dirname(path))
 
     @classmethod
-    def _get_name(cls, obj: classes.Object):
+    def _get_name(cls, obj: SOMcreator.Object):
         return obj.name
 
     @classmethod
-    def _get_identifier(cls, obj: classes.Object):
+    def _get_identifier(cls, obj: SOMcreator.Object):
         return obj.ident_value or ""
 
     @classmethod
-    def _get_abbreviation(cls, obj: classes.Object):
+    def _get_abbreviation(cls, obj: SOMcreator.Object):
         return obj.abbreviation or ""
 
     @classmethod
-    def _get_ifc_mapping(cls, obj: classes.Object):
+    def _get_ifc_mapping(cls, obj: SOMcreator.Object):
         return ";".join(obj.ifc_mapping) or ""
 
     @classmethod
@@ -124,7 +123,7 @@ class ExportExcel:
         return d
 
     @classmethod
-    def create_object_entry(cls, obj: classes.Object, sheet, start_row, start_column, table_index):
+    def create_object_entry(cls, obj: SOMcreator.Object, sheet, start_row, start_column, table_index):
         if obj.is_optional(ignore_hirarchy=False):
             font_style = OPTIONAL_FONT
         else:

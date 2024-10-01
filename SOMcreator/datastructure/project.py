@@ -5,7 +5,7 @@ from typing import Iterator
 
 import SOMcreator
 from SOMcreator import filehandling
-from SOMcreator.classes import Hirarchy, filterable
+from .base import Hirarchy, filterable
 
 
 class Project(object):

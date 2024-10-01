@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
 from PySide6.QtCore import Qt, QPoint, QPointF
-from SOMcreator import classes, value_constants
+from SOMcreator import value_constants
+import SOMcreator
 from som_gui import tool
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window import tool as aw_tool
@@ -199,7 +200,7 @@ def add_node_at_pos(pos, view: Type[aw_tool.View], search: Type[tool.Search]) ->
     obj = search.search_object()
     if not obj:
         return
-    aggregation = classes.Aggregation(obj)
+    aggregation = SOMcreator.Aggregation(obj)
     view.add_aggregation_to_import_list(scene, aggregation, pos)
 
 
@@ -209,14 +210,14 @@ def change_header_text(node: Type[aw_tool.Node], search: Type[tool.Search]) -> N
         node.set_title_settings(*result)
 
 
-def add_object_to_scene(obj: classes.Object, scene, parent_node: node_ui.NodeProxy | None, pos: QPoint | None,
+def add_object_to_scene(obj: SOMcreator.Object, scene, parent_node: node_ui.NodeProxy | None, pos: QPoint | None,
                         view: Type[aw_tool.View], connection: Type[aw_tool.Connection], node: Type[aw_tool.Node]):
     if scene is None:
         scene = view.get_active_scene()
     if pos is None:
         pos = QPointF(100., 100.)
 
-    aggregation = classes.Aggregation(obj)
+    aggregation = SOMcreator.Aggregation(obj)
     new_node = node.create_node(aggregation)
     view.add_node_to_scene(new_node, scene)
     node.set_node_pos(new_node, pos)

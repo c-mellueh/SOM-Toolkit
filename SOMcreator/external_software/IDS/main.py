@@ -35,7 +35,7 @@ def _build_specifications(required_data, xml_parent: Element) -> None:
         _build_specification(obj, property_set_dict, xml_specifications)
 
 
-def _build_applicability(obj: classes.Object, xml_parent: Element) -> None:
+def _build_applicability(obj: SOMcreator.Object, xml_parent: Element) -> None:
     xml_applicability = SubElement(xml_parent, ids_xsd.APPLICABILITY, nsmap=NSMAP)
     xml_property = SubElement(xml_applicability, ids_xsd.PROPERTY, nsmap=NSMAP)
     xml_property.set(ids_xsd.ATTR_DATATYPE, ifc_datatypes.LABEL)

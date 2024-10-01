@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 from SOMcreator.filehandling.constants import IFC_MAPPINGS, ABBREVIATION, PROPERTY_SETS, IDENT_ATTRIBUTE, OBJECTS
 from SOMcreator.filehandling import property_set
 import SOMcreator
-from SOMcreator import classes
 from SOMcreator.filehandling import core
 
 if TYPE_CHECKING:
@@ -21,7 +20,7 @@ def _load_object(proj: SOMcreator.Project, object_dict: ObjectDict, identifier: 
 
     abbreviation = object_dict.get(ABBREVIATION)
 
-    obj = classes.Object(name=name, ident_attrib=None, uuid=identifier, ifc_mapping=ifc_mapping,
+    obj = SOMcreator.Object(name=name, ident_attrib=None, uuid=identifier, ifc_mapping=ifc_mapping,
                          description=description, optional=optional, abbreviation=abbreviation, project=proj,
                          filter_matrix=filter_matrix)
     property_sets_dict = object_dict[PROPERTY_SETS]
@@ -44,7 +43,7 @@ def load(proj: Project, main_dict: dict):
         _load_object(proj, entity_dict, uuid_ident)
 
 ### Export ###
-def _write_object(element: classes.Object) -> ObjectDict:
+def _write_object(element: SOMcreator.Object) -> ObjectDict:
     object_dict: ObjectDict = dict()
     core.write_basics(object_dict, element)
 
@@ -60,7 +59,7 @@ def _write_object(element: classes.Object) -> ObjectDict:
     object_dict[PROPERTY_SETS] = psets_dict
     object_dict[ABBREVIATION] = element.abbreviation
 
-    if isinstance(element.ident_attrib, classes.Attribute):
+    if isinstance(element.ident_attrib, SOMcreator.Attribute):
         object_dict[IDENT_ATTRIBUTE] = element.ident_attrib.uuid
     else:
         object_dict[IDENT_ATTRIBUTE] = element.ident_attrib
