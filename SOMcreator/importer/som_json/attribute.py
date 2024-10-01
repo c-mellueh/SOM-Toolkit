@@ -2,7 +2,7 @@ from __future__ import annotations
 import SOMcreator
 from SOMcreator.importer.som_json import core
 from SOMcreator.constants.value_constants import OLD_DATATYPE_DICT
-from SOMcreator.io import som_json
+from SOMcreator.exporter import som_json
 from typing import TYPE_CHECKING
 
 from SOMcreator.datastructure.som_json import CHILD_INHERITS_VALUE, DATA_TYPE, REVIT_MAPPING, VALUE, \

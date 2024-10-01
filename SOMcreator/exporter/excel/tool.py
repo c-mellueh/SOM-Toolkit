@@ -19,7 +19,7 @@ TABLE_STYLE = "TableStyleLight1"
 OPTIONAL_FONT = styles.Font(color="4e6ec0")
 
 if TYPE_CHECKING:
-    from SOMcreator.io.excel import ExcelProperties
+    from SOMcreator.exporter.excel import ExcelProperties
 
 
 class ExportExcel:

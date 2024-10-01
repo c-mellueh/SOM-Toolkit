@@ -9,9 +9,9 @@ from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QMainWindow, QMenuBar, QMenu
 
 from som_gui import tool
-from SOMcreator.io.IDS import main
-from SOMcreator.io.bim_collab_zoom import modelcheck as bc_modelcheck
-from SOMcreator.io.desite import modelcheck
+from SOMcreator.exporter.IDS import main
+from SOMcreator.exporter.bim_collab_zoom import modelcheck as bc_modelcheck
+from SOMcreator.exporter.desite import modelcheck
 
 if TYPE_CHECKING:
     from som_gui.module.modelcheck_external.prop import ModelcheckExternalProperties

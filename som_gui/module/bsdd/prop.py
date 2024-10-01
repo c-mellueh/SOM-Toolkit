@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtWidgets import QWidget
 if TYPE_CHECKING:
     from .ui import Widget, DictionaryWidget
-    from SOMcreator.io.bsdd import Dictionary
+    from SOMcreator.exporter.bsdd import Dictionary
 
 class BsddProperties:
     widget: Widget = None

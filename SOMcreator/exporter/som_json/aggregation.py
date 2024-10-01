@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import SOMcreator
-from SOMcreator.io.som_json import core
-from SOMcreator.io.som_json.constants import OBJECT, CONNECTION, AGGREGATIONS, PARENT
+from SOMcreator.exporter.som_json import core
+from SOMcreator.exporter.som_json.constants import OBJECT, CONNECTION, AGGREGATIONS, PARENT
 from SOMcreator.datastructure.som_json import AggregationDict
 
 from typing import TYPE_CHECKING
@@ -17,11 +17,11 @@ def _get_aggregation(proj: SOMcreator.Project, aggregation_dict: AggregationDict
     name, description, optional, parent, filter_matrix = core.get_basics(proj, aggregation_dict, identifier)
 
     object_uuid = aggregation_dict[OBJECT]
-    obj = SOMcreator.io.som_json.object_uuid_dict[object_uuid]
+    obj = SOMcreator.exporter.som_json.object_uuid_dict[object_uuid]
     parent_connection = aggregation_dict[CONNECTION]
     aggregation = SOMcreator.Aggregation(obj=obj, parent_connection=parent_connection, uuid=identifier,
                                       description=description, optional=optional, filter_matrix=filter_matrix)
-    SOMcreator.io.som_json.aggregation_dict[aggregation] = (parent, parent_connection)
+    SOMcreator.exporter.som_json.aggregation_dict[aggregation] = (parent, parent_connection)
 
 
 def load(proj: SOMcreator.Project, main_dict: dict):
@@ -35,7 +35,7 @@ def load(proj: SOMcreator.Project, main_dict: dict):
 
 def calculate(proj: SOMcreator.Project):
     uuid_dict = proj.get_uuid_dict()
-    for aggregation, (uuid, connection_type) in SOMcreator.io.som_json.aggregation_dict.items():
+    for aggregation, (uuid, connection_type) in SOMcreator.exporter.som_json.aggregation_dict.items():
         parent = uuid_dict.get(uuid)
         if parent is None:
             continue
