@@ -1,10 +1,14 @@
+from __future__ import annotations
 import os, tempfile
-from typing import Type
-from SOMcreator.tool import ParseSQL, IfcToSQL
+from typing import Type, TYPE_CHECKING
 import logging
 from SOMcreator import Project
 import ifcopenshell
 from ifcopenshell.util import element
+
+if TYPE_CHECKING:
+    from SOMcreator.util.sql.tool import ParseSQL
+    from SOMcreator.util.ifc_to_sql.tool import IfcToSQL
 
 
 def import_ifc_files(proj: Project, main_pset_name, main_attribute_name, ifc_paths: list[os.PathLike], db_path,

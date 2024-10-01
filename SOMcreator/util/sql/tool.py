@@ -1,5 +1,5 @@
 import SOMcreator
-from SOMcreator.module import ParseSQLProperties
+from SOMcreator.util.sql.properties import SQLProperties
 from typing import Callable
 import os, tempfile, logging
 import sqlite3
@@ -8,8 +8,8 @@ import re
 
 class ParseSQL:
     @classmethod
-    def get_properties(cls) -> ParseSQLProperties:
-        return SOMcreator.ParseSQLProperties
+    def get_properties(cls) -> SQLProperties:
+        return SOMcreator.SQLProperties
 
     @classmethod
     def transform_guid(cls, guid: str, add_zero_width: bool):

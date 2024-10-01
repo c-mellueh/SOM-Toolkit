@@ -1,4 +1,8 @@
-from SOMcreator.module.ifctosql import IfcToSQLProperties
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from SOMcreator.util.ifc_to_sql.properties import IfcToSQLProperties
 import SOMcreator
 import sqlite3
 from SOMcreator import tool
