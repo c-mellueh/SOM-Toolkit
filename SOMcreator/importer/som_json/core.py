@@ -2,9 +2,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import logging
 import SOMcreator
-from SOMcreator.io.som_json.constants import PROJECT_PHASES, USE_CASES, NAME, DESCRIPTION, OPTIONAL, PARENT, \
+from SOMcreator.datastructure.som_json import PROJECT_PHASES, USE_CASES, NAME, DESCRIPTION, OPTIONAL, PARENT, \
     FILTER_MATRIX
-from SOMcreator.util.misc import check_size_eq
+import SOMcreator.util.misc
 
 if TYPE_CHECKING:
     from SOMcreator import Project
@@ -47,8 +47,8 @@ def load_filter_matrix(proj: SOMcreator.Project, element_dict: StandardDict, gui
             f"Achtung! Filtermatrix für Element '{guid}' liegt nicht vor. Eventuell verwenden Sie eine alte Dateiversion. Bitte mit SOM-Toolkit 2.11.3 Öffnen und neu speichern!")
         return proj.create_filter_matrix(True)
     if isinstance(matrix, int):
-        return list(SOMcreator.io.som_json.filter_matrixes[matrix])
-    if not check_size_eq(matrix, proj.get_filter_matrix()):
+        return list(SOMcreator.importer.som_json.filter_matrixes[matrix])
+    if not SOMcreator.util.misc.check_size_eq(matrix, proj.get_filter_matrix()):
         logging.warning(
             f"Achtung! Filtermatrix für  Element '{guid}' hat die falsche Größe! Status wird überall auf True gesetzt!")
         return proj.create_filter_matrix(True)
@@ -78,28 +78,5 @@ def remove_part_of_dict(key):
     :param key:
     :return:
     """
-    if key in SOMcreator.io.som_json.plugin_dict:
-        SOMcreator.io.som_json.plugin_dict.pop(key)
-
-
-#### Export ######
-
-
-def write_filter_matrix(element: SOMcreator.ClassTypes):
-    proj = element.project
-    filter_matrix = element.get_filter_matrix()
-    if not check_size_eq(filter_matrix, proj.get_filter_matrix()):
-        logging.warning(f"Filter List of {element} doesn't match size of project filter list")
-    return SOMcreator.io.som_json.filter_matrixes.index(
-        tuple(tuple(use_case_list) for use_case_list in filter_matrix))
-
-
-def write_basics(entity_dict: ObjectDict | PropertySetDict | AttributeDict | AggregationDict,
-                 element: SOMcreator.ClassTypes) -> None:
-    """function gets called from all Entities"""
-    entity_dict[NAME] = element.name
-    entity_dict[OPTIONAL] = element.is_optional(ignore_hirarchy=True)
-    entity_dict[FILTER_MATRIX] = write_filter_matrix(element)
-    parent = None if element.parent is None else element.parent.uuid
-    entity_dict[PARENT] = parent
-    entity_dict[DESCRIPTION] = element.description
+    if key in SOMcreator.importer.som_json.plugin_dict:
+        SOMcreator.importer.som_json.plugin_dict.pop(key)
