@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import json
 import os
-from ... import classes
+import SOMcreator
 from ...constants import json_constants, value_constants
 from ...external_software import xml
 
 
-def _iter_attributes(property_set: classes.PropertySet, pset_dict: dict) -> None:
+def _iter_attributes(property_set: SOMcreator.PropertySet, pset_dict: dict) -> None:
     for attribute in property_set.get_attributes(filter=True):
         pset_dict[attribute.name] = dict()
         attribute_dict = pset_dict[attribute.name]
@@ -20,7 +20,7 @@ def _iter_attributes(property_set: classes.PropertySet, pset_dict: dict) -> None
         attribute_dict[json_constants.VALUE] = attribute.value
 
 
-def export(project: classes.Project, path: str | os.PathLike) -> None:
+def export(project: SOMcreator.Project, path: str | os.PathLike) -> None:
     json_dict = dict()
     for obj in sorted(project.get_objects(filter=True), key=lambda x: x.ident_value):
         if not obj.get_property_sets(filter=True):

@@ -3,12 +3,12 @@ import os
 from lxml import etree, builder
 from openpyxl import load_workbook
 
-from .. import classes
+import SOMcreator
 from ..external_software import xml
 
 
-def create_mapping(excel_path: str, folder_path: str, project: classes.Project) -> None:
-    def create_xml(name: str, obj: classes.Object):
+def create_mapping(excel_path: str, folder_path: str, project: SOMcreator.Project) -> None:
+    def create_xml(name: str, obj: SOMcreator.Object):
         xsd = "http://www.w3.org/2001/XMLSchema"
         xsi = "http://www.w3.org/2001/XMLSchema-instance"
 

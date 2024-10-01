@@ -3,7 +3,7 @@ import logging
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
-from .. import classes, constants
+import SOMcreator
 from ..constants import value_constants
 
 TITLES = ["Definition", "Zuweisung", "Mapping"]
@@ -22,7 +22,7 @@ COLUMNS = ["AttributeName",
 INTERNAL_COLUMNS = ["Objekt", "AttributAllplan", "AttributIfc", "Pset", "Type"]
 
 
-def create_mapping(project: classes.Project, path: str, allplan_mapping_name: str):
+def create_mapping(project: SOMcreator.Project, path: str, allplan_mapping_name: str):
     def transform_datatype(data_type: str) -> str:
         if data_type == value_constants.INTEGER:
             return "Ganzzahl"
@@ -37,7 +37,7 @@ def create_mapping(project: classes.Project, path: str, allplan_mapping_name: st
 
         attribute_dict: dict[str, str] = dict()
 
-        for attribute in classes.Attribute:
+        for attribute in SOMcreator.Attribute:
             data_type = attribute.data_type
 
             if attribute.name in attribute_dict:
@@ -58,7 +58,7 @@ def create_mapping(project: classes.Project, path: str, allplan_mapping_name: st
 
     def create_zuweisung(kenner: str, worksheet: Worksheet):
 
-        def get_attrib_count(obj: classes.Object):
+        def get_attrib_count(obj: SOMcreator.Object):
             return sum(len([attrib for attrib in pset.get_attributes(filter=True)]) for pset in
                        obj.get_property_sets(filter=True))
 

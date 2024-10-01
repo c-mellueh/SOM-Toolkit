@@ -2,11 +2,11 @@ import logging
 
 from openpyxl import load_workbook, Workbook
 
-from .. import classes
+import SOMcreator
 
 
-def create_mapping(src_path: str, dest_path: str, project: classes.Project) -> None:
-    def _create_sheet(obj: classes.Object, workbook: Workbook, name):
+def create_mapping(src_path: str, dest_path: str, project: SOMcreator.Project) -> None:
+    def _create_sheet(obj: SOMcreator.Object, workbook: Workbook, name):
         new_sheet = workbook.create_sheet(name)
         attributes = set()
         for property_set in obj.get_property_sets(filter=True):

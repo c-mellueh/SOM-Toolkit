@@ -2,16 +2,15 @@ from __future__ import annotations
 import SOMcreator
 import logging
 import os
-from typing import Iterator, Union
+from typing import Iterator, TYPE_CHECKING, Union, Callable
 from uuid import uuid4
 import copy as cp
-from typing import Callable
-
 from . import filehandling
 from .constants import value_constants
 from dataclasses import dataclass, field
 
 FILTER_KEYWORD = "filter"
+
 
 
 # Add child to Parent leads to reverse
@@ -26,11 +25,11 @@ def filterable(func: Callable):
             filter_values = kwargs[FILTER_KEYWORD]
             kwargs.pop(FILTER_KEYWORD)
 
-        result: list[Hirarchy | Project] = func(self, *args, **kwargs)
+        result: list[Hirarchy | SOMcreator.Project] = func(self, *args, **kwargs)
         if not filter_values:
             return result
 
-        proj: Project = self if isinstance(self, Project) else self.project
+        proj: SOMcreator.Project = self if isinstance(self, SOMcreator.Project) else self.project
         if proj is None:
             return result
         return filter(lambda e: e.is_active(), result)
@@ -55,254 +54,11 @@ class IterRegistry(type):
         return len(self._registry)
 
 
-class Project(object):
-    def __init__(self, name: str = "", author: str | None = None, phases: list[Phase] = None,
-                 use_case: list[UseCase] = None, filter_matrix: list[list[bool]] = None) -> None:
-        """
-        filter_matrix: list[phase_index][use_case_index] = bool
-        """
-        SOMcreator.active_project = self
-        self._items = set()
-        self._name = ""
-        self._author = author
-        self._version = "1.0.0"
-        self.name = name
-        self.aggregation_attribute = ""
-        self.aggregation_pset = ""
-        self._filter_matrix = filter_matrix
-        self._description = ""
-        self.plugin_dict = dict()
-        self.import_dict = dict()
-
-        if phases is None:
-            self._phases = [Phase("Stand", "Standard", "Automatisch generiert. Bitte umbenennen")]
-        else:
-            self._phases = phases
-
-        self.active_phases = [0]
-
-        if not use_case:
-            self._use_cases = [UseCase("Stand", "Standard", "Automatisch generiert. Bitte umbenennen")]
-        else:
-            self._use_cases = use_case
-        if filter_matrix is None:
-            self._filter_matrix = self.create_filter_matrix(True)
-
-        self.active_usecases = [0]
-        self.change_log = list()
-
-    def add_item(self, item: Hirarchy):
-        self._items.add(item)
-
-    def remove_item(self, item: Hirarchy):
-        if item in self._items:
-            self._items.remove(item)
-
-    # Item Getter Methods
-    @filterable
-    def get_hirarchy_items(self) -> Iterator[Object, PropertySet, Attribute, Aggregation, Hirarchy]:
-        return filter(lambda i: isinstance(i, (Object, PropertySet, Attribute, Aggregation)), self._items)
-
-    @filterable
-    def get_objects(self) -> Iterator[Object]:
-        return filter(lambda item: isinstance(item, Object), self._items)
-
-    @filterable
-    def get_property_sets(self) -> Iterator[PropertySet]:
-        return filter(lambda item: isinstance(item, PropertySet), self._items)
-
-    @filterable
-    def get_attributes(self) -> Iterator[Attribute]:
-        return filter(lambda item: isinstance(item, Attribute), self._items)
-
-    @filterable
-    def get_aggregations(self) -> Iterator[Aggregation]:
-        return filter(lambda item: isinstance(item, Aggregation), self._items)
-
-    @filterable
-    def get_predefined_psets(self) -> Iterator[PropertySet]:
-        return filter(lambda p: p.is_predefined, self.get_property_sets(filter=False))
-
-    def get_main_attribute(self) -> tuple[str, str]:
-        ident_attributes = dict()
-        ident_psets = dict()
-        for obj in self.get_objects(filter=False):
-            if not isinstance(obj.ident_attrib, Attribute):
-                continue
-            ident_pset = obj.ident_attrib.property_set.name
-            ident_attribute = obj.ident_attrib.name
-            if ident_pset not in ident_psets:
-                ident_psets[ident_pset] = 0
-            if ident_attribute not in ident_attributes:
-                ident_attributes[ident_attribute] = 0
-            ident_psets[ident_pset] += 1
-            ident_attributes[ident_attribute] += 1
-
-        ident_attribute = (sorted(ident_attributes.items(), key=lambda x: x[1]))
-        ident_pset = (sorted(ident_psets.items(), key=lambda x: x[1]))
-        if ident_attribute and ident_pset:
-            return ident_pset[0][0], ident_attribute[0][0]
-        else:
-            return "", ""
-
-    def get_object_by_identifier(self, identifier: str) -> Object | None:
-        return {obj.ident_value: obj for obj in self.get_objects(filter=False)}.get(identifier)
-
-    def get_uuid_dict(self):
-        pset_dict = {pset.uuid: pset for pset in self.get_property_sets(filter=False)}
-        object_dict = {obj.uuid: obj for obj in self.get_objects(filter=False)}
-        attribute_dict = {attribute.uuid: attribute for attribute in self.get_attributes(filter=False)}
-        aggregation_dict = {aggreg.uuid: aggreg for aggreg in self.get_aggregations(filter=False)}
-        full_dict = pset_dict | object_dict | attribute_dict | aggregation_dict
-        if None in full_dict:
-            full_dict.pop(None)
-        return full_dict
-
-    def get_element_by_uuid(self, uuid: str) -> Attribute | PropertySet | Object | Aggregation | None:
-        """warnging: don't use in iterations will slow down code substantially"""
-        if uuid is None:
-            return None
-        return self.get_uuid_dict().get(uuid)
-
-    @classmethod
-    def open(cls, path: str | os.PathLike) -> Project:
-        return filehandling.open_json(cls, path)
-
-    def save(self, path: str | os.PathLike) -> dict:
-        json_dict = filehandling.export_json(self, path)
-        return json_dict
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @name.setter
-    def name(self, value: str):
-        self._name = value
-
-    @property
-    def author(self) -> str:
-        return self._author
-
-    @author.setter
-    def author(self, value: str):
-        self._author = value
-
-    @property
-    def version(self) -> str:
-        return self._version
-
-    @version.setter
-    def version(self, value: str):
-        self._version = value
-
-    @property
-    def description(self):
-        return self._description
-
-    @description.setter
-    def description(self, value: str):
-        self._description = value
-
-    # UseCase / ProjectPhase Handling
-
-    def get_phase_by_index(self, index: int) -> Phase:
-        return self._phases[index]
-
-    def get_usecase_by_index(self, index: int) -> UseCase:
-        return self._use_cases[index]
-
-    def create_filter_matrix(self, default_state: bool = True):
-        return [[default_state for __ in range(len(self.get_usecases()))] for _ in range(len(self.get_phases()))]
-
-    def get_filter_matrix(self) -> list[list[bool]]:
-        """
-        [Phase][Usecase] = State
-        """
-        return self._filter_matrix
-
-    def set_filter_matrix(self, matrix: list[list[bool]]):
-        self._filter_matrix = matrix
-
-    def get_filter_state(self, phase: Phase, use_case: UseCase):
-        return self._filter_matrix[self.get_phase_index(phase)][self.get_use_case_index(use_case)]
-
-    def set_filter_state(self, phase: Phase, use_case: UseCase, value: bool):
-        self._filter_matrix[self.get_phase_index(phase)][self.get_use_case_index(use_case)] = value
-
-    def get_phase_index(self, phase: Phase) -> int | None:
-        if phase in self._phases:
-            return self._phases.index(phase)
-        return None
-
-    def get_use_case_index(self, use_case: UseCase) -> int | None:
-        if use_case in self._use_cases:
-            return self._use_cases.index(use_case)
-        return None
-
-    def get_phases(self) -> list[Phase]:
-        return list(self._phases)
-
-    def get_usecases(self) -> list[UseCase]:
-        return list(self._use_cases)
-
-    def add_project_phase(self, phase: Phase):
-        if phase not in self._phases:
-            self._phases.append(phase)
-            for item in self.get_hirarchy_items(filter=False):
-                item.add_project_phase()
-            self._filter_matrix.append([True for _ in self._use_cases])
-        return self._phases.index(phase)
-
-    def add_use_case(self, use_case: UseCase):
-        if use_case not in self._use_cases:
-            self._use_cases.append(use_case)
-            for item in self.get_hirarchy_items(filter=False):
-                item.add_use_case()
-            for use_case_list in self._filter_matrix:
-                use_case_list.append(True)
-        return self._use_cases.index(use_case)
-
-    def get_phase_by_name(self, name: str):
-        for project_phase in self._phases:
-            if project_phase.name == name:
-                return project_phase
-
-    def get_use_case_by_name(self, name: str):
-        for use_case in self._use_cases:
-            if use_case.name == name:
-                return use_case
-
-    def remove_phase(self, phase: Phase) -> None:
-        if phase is None:
-            return
-        index = self.get_phase_index(phase)
-        for item in self.get_hirarchy_items(filter=False):
-            item.remove_phase(phase)
-        self._phases.remove(phase)
-        self._filter_matrix.pop(index)
-        if index in self.active_phases:
-            self.active_phases.remove(index)
-
-    def remove_use_case(self, use_case: UseCase) -> None:
-        if use_case is None:
-            return
-        index = self.get_use_case_index(use_case)
-        for item in self.get_hirarchy_items(filter=False):
-            item.remove_use_case(use_case)
-
-        self._use_cases.remove(use_case)
-        for use_case_list in self._filter_matrix:
-            use_case_list.pop(index)
-
-        if index in self.active_phases:
-            self.active_phases.remove(index)
-
 
 class Hirarchy(object, metaclass=IterRegistry):
 
     def __init__(self, name: str, description: str | None = None, optional: bool | None = None,
-                 project: Project | None = None,
+                 project: SOMcreator.Project | None = None,
                  filter_matrix: list[list[bool]] = None) -> None:
         if project is None:
             project = SOMcreator.active_project
@@ -483,7 +239,8 @@ class Object(Hirarchy):
 
     def __init__(self, name: str, ident_attrib: [Attribute, str], uuid: str = None,
                  ifc_mapping: set[str] | None = None, description: None | str = None,
-                 optional: None | bool = None, abbreviation: None | str = None, project: None | Project = None,
+                 optional: None | bool = None, abbreviation: None | str = None,
+                 project: None | SOMcreator.Project = None,
                  filter_matrix: list[list[bool]] = None) -> None:
         super(Object, self).__init__(name, description, optional, project, filter_matrix)
         self._registry.add(self)
@@ -543,7 +300,7 @@ class Object(Hirarchy):
         return new_object
 
     @property
-    def project(self) -> Project | None:
+    def project(self) -> SOMcreator.Project | None:
         return self._project
 
     @property
@@ -675,7 +432,7 @@ class PropertySet(Hirarchy):
     _registry: set[PropertySet] = set()
 
     def __init__(self, name: str, obj: Object = None, uuid: str = None, description: None | str = None,
-                 optional: None | bool = None, project: None | Project = None,
+                 optional: None | bool = None, project: None | SOMcreator.Project = None,
                  filter_matrix: list[list[bool]] = None) -> None:
         super(PropertySet, self).__init__(name, description, optional, project, filter_matrix)
         self._attributes = set()
@@ -813,7 +570,8 @@ class Attribute(Hirarchy):
     def __init__(self, property_set: PropertySet | None, name: str, value: list, value_type: str,
                  data_type: str = value_constants.LABEL,
                  child_inherits_values: bool = False, uuid: str = None, description: None | str = None,
-                 optional: None | bool = None, revit_mapping: None | str = None, project: Project | None = None,
+                 optional: None | bool = None, revit_mapping: None | str = None,
+                 project: SOMcreator.Project | None = None,
                  filter_matrix: list[list[bool]] = None):
 
         super(Attribute, self).__init__(name, description, optional, project, filter_matrix)
@@ -1018,7 +776,7 @@ class Aggregation(Hirarchy):
             self.parent.remove_child(self)
 
     @property
-    def project(self) -> Project | None:
+    def project(self) -> SOMcreator.Project | None:
         return self.object.project
 
     @property
@@ -1108,4 +866,6 @@ class Phase(ProjectFilter):
     filter_type = 1
 
 
-ClassTypes = Union[Project, Object, PropertySet, Attribute, Aggregation]
+if TYPE_CHECKING:
+    ClassTypes = Union[
+        SOMcreator.Project, SOMcreator.Object, SOMcreator.PropertySet, SOMcreator.Attribute, SOMcreator.Aggregation]

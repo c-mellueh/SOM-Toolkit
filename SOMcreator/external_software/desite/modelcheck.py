@@ -13,15 +13,16 @@ from typing import TypedDict
 from . import handle_header, output_date_time
 from ...external_software import xml
 from ..bim_collab_zoom.rule import merge_list
-from ... import classes, constants, Template
+from ... import constants, Template
 from ...constants import json_constants, value_constants
+import SOMcreator
 
 JS_EXPORT = "JS"
 TABLE_EXPORT = "TABLE"
 
 
 class ObjectStructureDict(TypedDict):
-    children: set[classes.Object]
+    children: set[SOMcreator.Object]
 
 
 def _handle_template(path: str | os.PathLike) -> jinja2.Template:
@@ -147,10 +148,11 @@ def _handle_attribute_rule_tree(xml_rule: Element) -> Element:
 
 
 def _handle_tree_structure(author: str, required_data_dict: dict, parent_xml_container,
-                           object_structure: dict[classes.Object, set[classes.Object]], parent_obj: classes.Object,
+                           object_structure: dict[SOMcreator.Object, set[SOMcreator.Object]],
+                           parent_obj: SOMcreator.Object,
                            template,
                            xml_object_dict, export_type: str) -> None:
-    def check_basics(obj: classes.Object):
+    def check_basics(obj: SOMcreator.Object):
         if obj.ident_attrib is None:
             return obj, None, True
 
@@ -211,11 +213,11 @@ def _handle_tree_structure(author: str, required_data_dict: dict, parent_xml_con
             create_table_object(parent_xml_container)
 
 
-def _csv_value_in_list(attribute: classes.Attribute):
+def _csv_value_in_list(attribute: SOMcreator.Attribute):
     return " ".join(f'"{str(val)}"' for val in attribute.value)
 
 
-def _csv_check_range(attribute: classes.Attribute) -> str:
+def _csv_check_range(attribute: SOMcreator.Attribute) -> str:
     sorted_range_list = sorted([[min(v1, v2), max(v1, v2)] for [v1, v2] in attribute.value])
     sorted_range_list = merge_list(sorted_range_list)
 
@@ -223,7 +225,7 @@ def _csv_check_range(attribute: classes.Attribute) -> str:
     return pattern
 
 
-def _build_basics_rule_item(xml_parent: etree.Element, attribute: classes.Attribute) -> etree.Element:
+def _build_basics_rule_item(xml_parent: etree.Element, attribute: SOMcreator.Attribute) -> etree.Element:
     xml_attrib = etree.SubElement(xml_parent, "ruleItem")
     xml_attrib.set("ID", attribute.uuid)
     data_type = xml.transform_data_format(attribute.data_type)
@@ -232,7 +234,7 @@ def _build_basics_rule_item(xml_parent: etree.Element, attribute: classes.Attrib
     return xml_attrib
 
 
-def _handle_rule_item_attribute(xml_parent: etree.Element, attribute: classes.Attribute):
+def _handle_rule_item_attribute(xml_parent: etree.Element, attribute: SOMcreator.Attribute):
     xml_attrib = _build_basics_rule_item(xml_parent, attribute)
 
     if not attribute.value:
@@ -262,8 +264,8 @@ def _handle_rule_item_attribute(xml_parent: etree.Element, attribute: classes.At
     xml_attrib.set("pattern", pattern)
 
 
-def _handle_rule_item_pset(xml_parent: etree.Element, property_set: classes.PropertySet,
-                           attributes: list[classes.Attribute]):
+def _handle_rule_item_pset(xml_parent: etree.Element, property_set: SOMcreator.PropertySet,
+                           attributes: list[SOMcreator.Attribute]):
     xml_pset = etree.SubElement(xml_parent, "ruleItem")
     xml_pset.set("ID", property_set.uuid)
     xml_pset.set("name", property_set.name)
@@ -272,17 +274,17 @@ def _handle_rule_item_pset(xml_parent: etree.Element, property_set: classes.Prop
         _handle_rule_item_attribute(xml_pset, attribute)
 
 
-def _handle_rule_items_by_pset_dict(pset_dict: dict[classes.PropertySet, list[classes.Attribute]],
+def _handle_rule_items_by_pset_dict(pset_dict: dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]],
                                     attribute_rule_tree: etree.Element):
     for pset, attribute_list in pset_dict.items():
         _handle_rule_item_pset(attribute_rule_tree, pset, attribute_list)
 
 
 def _handle_object_rules(author: str, required_data_dict: dict,
-                         object_structure: dict[classes.Object, set[classes.Object]],
+                         object_structure: dict[SOMcreator.Object, set[SOMcreator.Object]],
                          base_xml_container: Element,
-                         template: jinja2.Template, export_type: str) -> dict[Element, classes.Object]:
-    xml_object_dict: dict[Element, classes.Object] = dict()
+                         template: jinja2.Template, export_type: str) -> dict[Element, SOMcreator.Object]:
+    xml_object_dict: dict[Element, SOMcreator.Object] = dict()
 
     root_nodes = {obj for obj, value in object_structure.items() if not value}
 
@@ -294,7 +296,7 @@ def _handle_object_rules(author: str, required_data_dict: dict,
 
 
 def _handle_data_section(xml_qa_export: Element, xml_checkrun_first: Element,
-                         xml_checkrun_obj: dict[Element, classes.Object | None],
+                         xml_checkrun_obj: dict[Element, SOMcreator.Object | None],
                          xml_checkrun_last: Element) -> None:
     def get_name() -> str:
         """Transorms native IFC Attributes like IfcType into desite Attributes"""
@@ -359,7 +361,7 @@ def _handle_untested(xml_attribute_rule_list: etree.Element, main_pset: str, mai
     code.text = str(template.render(pset_name=main_pset, attribute_name=main_attribute))
 
 
-def _handle_attribute_rule(attribute: classes.Attribute) -> str:
+def _handle_attribute_rule(attribute: SOMcreator.Attribute) -> str:
     data_type = xml.transform_data_format(attribute.data_type)
     pset_name = attribute.property_set.name
 
@@ -394,8 +396,8 @@ def _fast_object_check(main_pset: str, main_attrib: str, author: str, required_d
     return {xml_checkrun: None}
 
 
-def build_full_data_dict(proj: classes.Project) -> dict[
-    classes.Object, dict[classes.PropertySet, list[classes.Attribute]]]:
+def build_full_data_dict(proj: SOMcreator.Project) -> dict[
+    SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]]:
     d = dict()
     for obj in proj.get_objects(filter=True):
         d[obj] = dict()
@@ -406,10 +408,10 @@ def build_full_data_dict(proj: classes.Project) -> dict[
     return d
 
 
-def export(project: classes.Project,
-           required_data_dict: dict[classes.Object, dict[classes.PropertySet, list[classes.Attribute]]],
+def export(project: SOMcreator.Project,
+           required_data_dict: dict[SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]],
            path: str, main_pset: str, main_attribute: str,
-           object_structure: dict[classes.Object, set[classes.Object]] = None,
+           object_structure: dict[SOMcreator.Object, set[SOMcreator.Object]] = None,
            export_type: str = "JS") -> None:
     if not object_structure:
         object_structure = {o: o.get_children(filter=True) for o in project.get_objects(filter=True)}
@@ -431,7 +433,8 @@ def export(project: classes.Project,
         tree.write(f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml")
 
 
-def csv_export(required_data_dict: dict[classes.Object, dict[classes.PropertySet, list[classes.Attribute]]], path):
+def csv_export(required_data_dict: dict[SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]],
+               path):
     from ... import __version__
     lines = list()
     lines.append(";".join(["#", f"Created by SOMcreator v{__version__}"]))
@@ -454,8 +457,8 @@ def csv_export(required_data_dict: dict[classes.Object, dict[classes.PropertySet
             file.write(line + "\n")
 
 
-def fast_check(project: classes.Project, main_pset: str, main_attrib: str,
-               required_data_dict: dict[classes.Object, dict[classes.PropertySet, list[classes.Attribute]]],
+def fast_check(project: SOMcreator.Project, main_pset: str, main_attrib: str,
+               required_data_dict: dict[SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]],
                path: str) -> None:
     """
     creates a single rule for all elements -> no containers for checkruns

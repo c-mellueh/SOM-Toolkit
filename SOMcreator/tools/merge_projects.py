@@ -1,8 +1,8 @@
 import SOMcreator
-from SOMcreator.classes import Project, UseCase, Phase, Hirarchy
+from SOMcreator import Project, UseCase, Phase
 
 
-def _calculate_new_filter_matrix(filter_matrix, existing_project: Project, import_project: Project, item: Hirarchy,
+def _calculate_new_filter_matrix(filter_matrix, existing_project: Project, import_project: Project, item,
                                  phase_mapping, use_case_mapping):
     for import_phase in import_project.get_phases():
         existing_phase = phase_mapping.get(import_phase)

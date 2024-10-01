@@ -5,7 +5,6 @@ import time
 from os import remove
 
 import SOMcreator
-from SOMcreator import classes
 from SOMcreator.filehandling import core
 from SOMcreator.filehandling.constants import OBJECT, CONNECTION, AGGREGATIONS, PARENT
 from SOMcreator.filehandling.typing import AggregationDict
@@ -24,12 +23,12 @@ def _get_aggregation(proj: SOMcreator.Project, aggregation_dict: AggregationDict
     object_uuid = aggregation_dict[OBJECT]
     obj = SOMcreator.filehandling.object_uuid_dict[object_uuid]
     parent_connection = aggregation_dict[CONNECTION]
-    aggregation = classes.Aggregation(obj=obj, parent_connection=parent_connection, uuid=identifier,
+    aggregation = SOMcreator.Aggregation(obj=obj, parent_connection=parent_connection, uuid=identifier,
                                       description=description, optional=optional, filter_matrix=filter_matrix)
     SOMcreator.filehandling.aggregation_dict[aggregation] = (parent, parent_connection)
 
 
-def load(proj: classes.Project, main_dict: dict):
+def load(proj: SOMcreator.Project, main_dict: dict):
     aggregations_dict: dict[str, AggregationDict] = main_dict.get(AGGREGATIONS)
     core.remove_part_of_dict(AGGREGATIONS)
     aggregations_dict = dict() if core.check_dict(aggregations_dict, AGGREGATIONS) else aggregations_dict
@@ -48,7 +47,7 @@ def calculate(proj: SOMcreator.Project):
 
 
 ### Export ###
-def _create_entry(element: classes.Aggregation) -> AggregationDict:
+def _create_entry(element: SOMcreator.Aggregation) -> AggregationDict:
     aggregation_dict: AggregationDict = dict()
     core.write_basics(aggregation_dict, element)
     aggregation_dict[OBJECT] = element.object.uuid
