@@ -114,8 +114,8 @@ class Project(som_gui.core.tool.Project):
 
     @classmethod
     def fill_mapping_table(cls, table: QTableWidget,
-                           filter_1: list[SOMcreator.classes.ProjectFilter],
-                           filter_2: list[SOMcreator.classes.ProjectFilter]):
+                           filter_1: list[SOMcreator.UseCase | SOMcreator.Phase],
+                           filter_2: list[SOMcreator.UseCase | SOMcreator.Phase]):
 
         table.setRowCount(len(filter_2))
         for row, f in enumerate(filter_2):
@@ -138,8 +138,8 @@ class Project(som_gui.core.tool.Project):
         return mapping_dict
 
     @classmethod
-    def create_mapping_window(cls, filter_1: list[SOMcreator.classes.ProjectFilter],
-                              filter_2: list[SOMcreator.classes.ProjectFilter]):
+    def create_mapping_window(cls, filter_1: list[SOMcreator.UseCase | SOMcreator.Phase],
+                              filter_2: list[SOMcreator.UseCase | SOMcreator.Phase]):
         dialog = MergeDialog()
         cls.fill_mapping_table(dialog.widget.tableWidget, filter_1, filter_2)
         if not dialog.exec():

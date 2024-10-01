@@ -1,7 +1,6 @@
 from .constants import json_constants, value_constants
-from .datastructure import Project, Object, PropertySet, Attribute, Aggregation
+from .datastructure import Project, Object, PropertySet, Attribute, Aggregation, UseCase, Phase
 
-from .classes import UseCase, Phase
 from .external_software import desite, allplan, revit, vestra, card1
 from .tools import merge_projects
 from .core import export_excel as excel

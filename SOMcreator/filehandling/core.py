@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import logging
-from SOMcreator import classes
 import SOMcreator
 from SOMcreator.filehandling.constants import PROJECT_PHASES, USE_CASES, NAME, DESCRIPTION, OPTIONAL, PARENT, \
     FILTER_MATRIX
@@ -22,20 +21,20 @@ def get_filter_lists(project_dict: ProjectDict):
     if project_phases is not None and isinstance(project_phases, list):
         for phase in project_phases:
             if isinstance(phase, str):
-                phase_list.append(classes.Phase(phase, phase, ""))
+                phase_list.append(SOMcreator.Phase(phase, phase, ""))
             else:
-                phase_list.append(classes.Phase(phase["name"], phase.get("long_name"), phase.get("description")))
+                phase_list.append(SOMcreator.Phase(phase["name"], phase.get("long_name"), phase.get("description")))
     else:
-        phase_list = [classes.Phase("Stand", "Standard", "Automatisch generiert bitte aktualisieren")]
+        phase_list = [SOMcreator.Phase("Stand", "Standard", "Automatisch generiert bitte aktualisieren")]
     if use_cases is not None and isinstance(use_cases, list):
         for use_case in use_cases:
             if isinstance(use_case, str):
-                use_case_list.append(classes.UseCase(use_case, use_case, ""))
+                use_case_list.append(SOMcreator.UseCase(use_case, use_case, ""))
             else:
                 use_case_list.append(
-                    classes.UseCase(use_case["name"], use_case.get("long_name"), use_case.get("description")))
+                    SOMcreator.UseCase(use_case["name"], use_case.get("long_name"), use_case.get("description")))
     else:
-        use_case_list = [classes.UseCase("Stand", "Standard", "Automatisch generiert bitte aktualisieren")]
+        use_case_list = [SOMcreator.UseCase("Stand", "Standard", "Automatisch generiert bitte aktualisieren")]
     return phase_list, use_case_list
 
 
@@ -88,7 +87,8 @@ def check_size_eq(lst: list[list[bool]], master_list: list[list[bool]]):
     usecase_len = len(lst[0])
     return phase_len == len(master_list) and usecase_len == len(master_list[0])
 
-def write_filter_matrix(element: classes.ClassTypes):
+
+def write_filter_matrix(element: SOMcreator.ClassTypes):
     proj = element.project
     filter_matrix = element.get_filter_matrix()
     if not check_size_eq(filter_matrix, proj.get_filter_matrix()):
@@ -97,7 +97,7 @@ def write_filter_matrix(element: classes.ClassTypes):
 
 
 def write_basics(entity_dict: ObjectDict | PropertySetDict | AttributeDict | AggregationDict,
-                 element: classes.ClassTypes) -> None:
+                 element: SOMcreator.ClassTypes) -> None:
     """function gets called from all Entities"""
     entity_dict[NAME] = element.name
     entity_dict[OPTIONAL] = element.is_optional(ignore_hirarchy=True)

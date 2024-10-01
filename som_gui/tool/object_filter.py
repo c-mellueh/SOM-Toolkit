@@ -547,14 +547,14 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         return cls.get_objectfilter_properties().settings_widget
 
     @classmethod
-    def get_allowed_usecases_by_phase(cls, project: SOMcreator.Project, phase: SOMcreator.classes.Phase):
+    def get_allowed_usecases_by_phase(cls, project: SOMcreator.Project, phase: SOMcreator.Phase):
         usecase_list = project.get_usecases()
         filter_matrix = project.get_filter_matrix()
         phase_index = project.get_phase_index(phase)
         return [uc for uc, state in zip(usecase_list, filter_matrix[phase_index]) if state]
 
     @classmethod
-    def get_allowed_phases_by_usecase(cls, project: SOMcreator.Project, usecase: SOMcreator.classes.UseCase):
+    def get_allowed_phases_by_usecase(cls, project: SOMcreator.Project, usecase: SOMcreator.UseCase):
         phase_list = project.get_phases()
         usecase_index = project.get_use_case_index(usecase)
         filter_matrix = project.get_filter_matrix()
@@ -804,11 +804,11 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         return cls.get_widget().widget.tree_widget_object
 
     @classmethod
-    def get_usecase_list(cls) -> list[SOMcreator.classes.UseCase]:
+    def get_usecase_list(cls) -> list[SOMcreator.UseCase]:
         return cls.get_properties().usecase_list
 
     @classmethod
-    def set_usecase_list(cls, usecase_list: list[SOMcreator.classes.UseCase]):
+    def set_usecase_list(cls, usecase_list: list[SOMcreator.UseCase]):
         cls.get_properties().usecase_list = usecase_list
 
     @classmethod
@@ -820,11 +820,11 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         cls.get_properties().use_case_indexes.append(value)
 
     @classmethod
-    def get_phase_list(cls) -> list[SOMcreator.classes.Phase]:
+    def get_phase_list(cls) -> list[SOMcreator.Phase]:
         return cls.get_properties().phase_list
 
     @classmethod
-    def set_phase_list(cls, phase_list: list[SOMcreator.classes.Phase]):
+    def set_phase_list(cls, phase_list: list[SOMcreator.Phase]):
         cls.get_properties().phase_list = phase_list
 
     @classmethod
@@ -836,7 +836,7 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
         cls.get_properties().phase_indexes.append(value)
 
     @classmethod
-    def get_match_list(cls) -> list[tuple[SOMcreator.classes.UseCase, SOMcreator.classes.Phase]]:
+    def get_match_list(cls) -> list[tuple[SOMcreator.UseCase, SOMcreator.Phase]]:
         usecases = cls.get_usecase_list()
         phases = cls.get_phase_list()
         if not cls.get_properties().match_list:
