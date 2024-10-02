@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt
 if TYPE_CHECKING:
     from som_gui import tool
 
-BSDD_PATH = "bsDD"
+BSDD_PATH = "../../SOMcreator/exporter/bsdd"
 
 
 def open_window(bsdd: Type[tool.Bsdd], settings: Type[tool.Appdata]) -> None:

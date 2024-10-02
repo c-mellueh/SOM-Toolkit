@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from ..module.grouping_window.prop import GroupingWindowProperties
     from som_gui.module.ifc_importer.ui import IfcImportWidget
 from som_gui import tool
-from SOMcreator.ifc_modification.grouping import GROUP, get_ifc_el_info, ELEMENT, IFC_REP, fill_existing_groups, \
+from SOMcreator.util.group_ifc import GROUP, get_ifc_el_info, ELEMENT, IFC_REP, fill_existing_groups, \
     create_aggregation_structure
 
 
