@@ -25,7 +25,7 @@ def paint_pset_tree():
     core.paint_pset_tree(tool.ModelcheckWindow)
 
 
-def connect_buttons(ifc_button: QPushButton, export_button: QPushButton, run_button: QPushButton,
+def connect_buttons(export_button: QPushButton, run_button: QPushButton,
                     abort_button: QPushButton):
     export_button.clicked.connect(lambda: core.export_selection_clicked(tool.ModelcheckWindow, tool.Appdata))
     run_button.clicked.connect(lambda: core.run_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,

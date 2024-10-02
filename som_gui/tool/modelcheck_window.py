@@ -143,9 +143,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             tp.setMaxThreadCount(1)
         return cls.get_properties().thread_pool
 
-    @classmethod
-    def get_export_path(cls, widget: IfcImportWidget):
-        return widget.widget.line_edit_export.text()
+
 
     @classmethod
     def open_export_dialog(cls, base_path: os.PathLike | str, file_text: str):
@@ -255,19 +253,16 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     def set_importer_widget(cls, widget: IfcImportWidget):
         prop = cls.get_properties()
         prop.ifc_import_widget = widget
-        prop.ifc_button = widget.widget.button_ifc
-        prop.ifc_line_edit = widget.widget.line_edit_ifc
         prop.run_button = widget.widget.button_run
         prop.abort_button = widget.widget.button_close
         prop.status_label = widget.widget.label_status
 
     @classmethod
-    def get_buttons(cls) -> tuple[QPushButton, QPushButton, QPushButton, QPushButton]:
-        ifc = cls.get_properties().ifc_button
+    def get_buttons(cls) -> tuple[QPushButton, QPushButton, QPushButton]:
         export = cls.get_properties().export_button
         run = cls.get_properties().run_button
         abort = cls.get_properties().abort_button
-        return ifc, export, run, abort
+        return export, run, abort
 
     @classmethod
     def is_window_allready_build(cls):

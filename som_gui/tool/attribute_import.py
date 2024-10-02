@@ -429,7 +429,6 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
     def add_ifc_importer_to_window(cls, ifc_importer: IfcImportWidget):
         cls.get_properties().ifc_importer = ifc_importer
-        cls.get_properties().ifc_button = ifc_importer.widget.button_ifc
         cls.get_properties().run_button = ifc_importer.widget.button_run
         cls.get_properties().abort_button = ifc_importer.widget.button_close
         cls.get_properties().status_label = ifc_importer.widget.label_status

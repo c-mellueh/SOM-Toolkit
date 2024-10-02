@@ -17,9 +17,7 @@ class ModelcheckWindowProperties:
     selected_object: SOMcreator.Object = None
     thread_pool: QThreadPool = None
     export_button: QPushButton = None
-    ifc_button: QPushButton = None
     export_line_edit: QLineEdit = None
-    ifc_line_edit: QLineEdit = None
     run_button: QPushButton = None
     abort_button: QPushButton = None
     ifc_import_widget = None

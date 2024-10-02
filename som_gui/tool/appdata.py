@@ -6,6 +6,7 @@ import os
 import appdirs
 from som_gui import tool
 from som_gui.module.util.constants import PATH_SEPERATOR
+import logging
 
 PATHS_SECTION = "paths"
 
@@ -15,6 +16,7 @@ class Appdata(som_gui.core.tool.Appdata):
 
     @classmethod
     def get_path(cls, value: str) -> str | list | set:
+        logging.info(f"Appdata Path '{value}' requested")
         path = cls.get_string_setting(PATHS_SECTION, value)
         if not path:
             return ""

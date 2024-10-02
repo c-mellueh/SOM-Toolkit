@@ -10,3 +10,11 @@ def on_new_project():
 
 def fileselector_clicked(widget):
     core.filesector_clicked(widget, tool.Util)
+
+
+def paint_file_selector(widget):
+    core.update_file_selector(widget, tool.Util)
+
+
+def main_attribute_selector_created(widget):
+    core.fill_main_attribute_selector(widget, tool.Util, tool.Project)

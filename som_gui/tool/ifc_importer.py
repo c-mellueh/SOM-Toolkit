@@ -13,6 +13,7 @@ from som_gui.module.ifc_importer import ui
 from PySide6.QtCore import QThreadPool, QObject, Signal, QRunnable, QSize
 from PySide6.QtWidgets import QFileDialog, QPushButton, QSizePolicy, QLineEdit, QLabel
 from som_gui.module.util.constants import PATH_SEPERATOR
+
 if TYPE_CHECKING:
     from som_gui.module.ifc_importer.prop import IfcImportProperties
     from PySide6.QtWidgets import QLineEdit, QLabel
@@ -37,6 +38,7 @@ class IfcImportRunner(QRunnable):
         self.ifc = ifcopenshell.open(self.path)
         self.signaller.finished.emit()
 
+
 class IfcImporter(som_gui.core.tool.IfcImporter):
     @classmethod
     def check_inputs(cls, ifc_paths, main_pset, main_attribute):
@@ -56,11 +58,11 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
     @classmethod
     def get_main_pset(cls, widget: ui.IfcImportWidget) -> str:
-        return widget.widget.line_edit_ident_pset.text()
+        return widget.widget.main_attribute_widget.ui.le_pset_name.text()
 
     @classmethod
     def get_main_attribute(cls, widget: ui.IfcImportWidget) -> str:
-        return widget.widget.line_edit_ident_attribute.text()
+        return widget.widget.main_attribute_widget.ui.le_attribute_name.text()
 
     @classmethod
     def set_status(cls, widget: ui.IfcImportWidget, status: str):
@@ -85,38 +87,17 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         widget.widget.label_status.setVisible(visible)
 
     @classmethod
-    def autofill_ifcpath(cls, line_edit: QLineEdit):
-        from som_gui.core.ifc_importer import IFC_PATH
-        ifc_path = tool.Appdata.get_path(IFC_PATH)
-        if ifc_path:
-            if isinstance(ifc_path, list):
-                ifc_path = PATH_SEPERATOR.join(ifc_path)
-            line_edit.setText(ifc_path)
-
-    @classmethod
-    def open_file_dialog(cls, window, base_path: os.PathLike):
-        file_text = "IFC Files (*.ifc *.IFC);;"
-        path = QFileDialog.getOpenFileNames(window, "IFC-Files", base_path, file_text)[0]
-        return path
-
-    @classmethod
     def get_ifc_paths(cls, widget: ui.IfcImportWidget) -> list[str]:
-        path = widget.widget.line_edit_ifc.text()
-        if PATH_SEPERATOR in path:
-            paths = path.split(PATH_SEPERATOR)
-        else:
-            paths = [path]
-        return paths
+        return tool.Util.get_path_from_fileselector(widget.widget.file_selector_widget)
 
     @classmethod
     def create_importer(cls):
         widget = ui.IfcImportWidget()
-        cls.autofill_ifcpath(widget.widget.line_edit_ifc)
+        from som_gui.core.ifc_importer import IFC_PATH
+        file_extension = "IFC Files (*.ifc *.IFC);;"
+        tool.Util.fill_file_selector(widget.widget.file_selector_widget, "Ifc File", file_extension, IFC_PATH)
         prop = cls.get_properties()
         prop.active_importer = widget
-        som_gui.module.ifc_importer.trigger.connect_new_importer(widget)
-        pset, attribute = tool.Project.get().get_main_attribute()
-        cls.fill_main_attribute(widget, pset, attribute)
         cls.set_progressbar_visible(widget, False)
         return widget
 
@@ -127,26 +108,13 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
             return
         return IfcImportRunner(path, status_label)
 
-    @classmethod
-    def fill_main_attribute(cls, widget: ui.IfcImportWidget, pset: str, attribute: str):
-        if not pset or not attribute:
-            return
 
-        widget.widget.line_edit_ident_pset.setText(pset)
-        widget.widget.line_edit_ident_attribute.setText(attribute)
 
     @classmethod
     def create_export_line(cls, widget: ui.IfcImportWidget) -> tuple[QPushButton, QLineEdit]:
-        export_line_edit = QLineEdit()
-        export_line_edit.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Maximum))
-        widget.widget.gridLayout.addWidget(QLabel("Export Pfad"), 5, 0, 1, 2)
-        widget.widget.gridLayout.addWidget(export_line_edit, 6, 0, 1, 2)
-        export_button = QPushButton()
-        export_button.setMaximumSize(QSize(25, 16777215))
-        widget.widget.gridLayout.addWidget(export_button, 6, 2, 1, 1)
-        export_button.show()
-        export_button.setText("...")
-        return export_button, export_line_edit
+        widget = tool.Util.create_file_selector(name="", file_extension="*.xlsx", appdata_text="ModelcheckExport",
+                                                request_save=True)
+        return widget.ui.pushButton, widget.ui.lineEdit
 
     @classmethod
     def set_close_button_text(cls, widget: ui.IfcImportWidget, text: str):

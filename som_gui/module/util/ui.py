@@ -1,20 +1,29 @@
 from PySide6.QtWidgets import QWidget, QFileDialog
-from .qt import file_selector
+from .qt import file_selector, main_attribute_select
 from . import trigger
 
 
 class FileSelector(QWidget):
-    def __init__(self, name, extension, parent_widget, appdata_text=None, request_folder=False, request_save=False,
-                 single_request=False):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.ui = file_selector.Ui_Form()
         self.ui.setupUi(self)
-        self.ui.label.setText(name)
-        self.parent_widget = parent_widget
-        self.request_folder = request_folder
-        self.extension = extension
-        self.name = name
-        self.appdata_text = appdata_text
-        self.request_save = request_save
-        self.single_request = single_request
+        self.request_folder = None
+        self.extension = None
+        self.name = None
+        self.appdata_text = None
+        self.request_save = None
+        self.single_request = None
         self.ui.pushButton.clicked.connect(lambda: trigger.fileselector_clicked(self))
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        trigger.paint_file_selector(self)
+
+
+class MainAttributeSelector(QWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ui = main_attribute_select.Ui_Form()
+        self.ui.setupUi(self)
+        trigger.main_attribute_selector_created(self)
