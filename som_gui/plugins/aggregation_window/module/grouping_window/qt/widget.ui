@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>Form</class>
+    <widget class="QWidget" name="Form">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>640</width>
+                <height>178</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Form</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+                <widget class="AttributeSelector" name="widget_group_attribute" native="true"/>
+            </item>
+            <item>
+                <widget class="AttributeSelector" name="widget_ident_attribute" native="true"/>
+            </item>
+            <item>
+                <widget class="FileSelector" name="widget_import" native="true"/>
+            </item>
+            <item>
+                <widget class="FileSelector" name="widget_export" native="true"/>
+            </item>
+            <item>
+                <widget class="Progressbar" name="widget_progress_bar" native="true"/>
+            </item>
+            <item>
+                <widget class="QDialogButtonBox" name="buttonBox">
+                    <property name="standardButtons">
+                        <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel</set>
+                    </property>
+                </widget>
+            </item>
+        </layout>
+    </widget>
+    <customwidgets>
+        <customwidget>
+            <class>FileSelector</class>
+            <extends>QWidget</extends>
+            <header>som_gui.module.util.ui</header>
+            <container>1</container>
+        </customwidget>
+        <customwidget>
+            <class>AttributeSelector</class>
+            <extends>QWidget</extends>
+            <header>som_gui.module.util.ui</header>
+            <container>1</container>
+        </customwidget>
+        <customwidget>
+            <class>Progressbar</class>
+            <extends>QWidget</extends>
+            <header>som_gui.module.util.ui</header>
+            <container>1</container>
+        </customwidget>
+    </customwidgets>
+    <resources/>
+    <connections/>
+</ui>

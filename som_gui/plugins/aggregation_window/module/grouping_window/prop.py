@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from . import ui
     from som_gui.module.ifc_importer.ui import IfcImportWidget
-
+    from som_gui.tool.ifc_importer import IfcImportRunner
 
 class GroupingWindowProperties:
     grouping_attribute_line_edit: QLineEdit | None = None
@@ -22,7 +22,7 @@ class GroupingWindowProperties:
     main_attribute: tuple[str, str] = ("", "")
     grouping_attribute: tuple[str, str] = ("", "")
     export_path: str = ""
-    ifc_import_runners = list()
+    ifc_import_runners: list[IfcImportRunner] = list()
     ifc_name: str = ""
     runner = None
     thread_pool = None

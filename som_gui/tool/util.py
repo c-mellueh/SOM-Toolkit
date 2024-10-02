@@ -227,8 +227,8 @@ class Util(som_gui.core.tool.Util):
 
     @classmethod
     def request_path(cls, widget: ui.FileSelector):
-
-        if not all([widget, widget.name, widget.extension]):
+        if widget is None:
+            logging.debug(f"Widget is not defined")
             return []
 
         if widget.appdata_text:
@@ -236,17 +236,21 @@ class Util(som_gui.core.tool.Util):
         else:
             start_path = ""
         if widget.request_folder:
-            path = QFileDialog.getExistingDirectory(widget, widget.name, start_path)
+            path = [QFileDialog.getExistingDirectory(widget, widget.name, start_path)]
 
         elif widget.request_save:
             path = [QFileDialog.getSaveFileName(widget, widget.name, start_path, widget.extension)[0]]
 
         elif widget.single_request:
             path = [QFileDialog.getOpenFileName(widget, widget.name, start_path, widget.extension)[0]]
-        else:
+        elif all([widget, widget.name, widget.extension]):
             path = QFileDialog.getOpenFileNames(widget, widget.name, start_path, widget.extension)[0]
+        else:
+            logging.warning(f"inputs are missing. no path requestable")
+            return []
         if widget.appdata_text:
             tool.Appdata.set_path(widget.appdata_text, path)
+
         return path
 
     @classmethod
@@ -258,9 +262,14 @@ class Util(som_gui.core.tool.Util):
             line_edit.setText(path)
 
     @classmethod
-    def fill_main_attribute(cls, widget: ui.AttributeSelector, pset_name: str, attribute_name: str):
+    def fill_main_attribute(cls, widget: ui.AttributeSelector, pset_name: str, attribute_name: str,
+                            pset_placeholder: str = None, attribute_placeholder: str = None):
         widget.ui.le_pset_name.setText(pset_name)
         widget.ui.le_attribute_name.setText(attribute_name)
+        if pset_placeholder is not None:
+            widget.ui.le_pset_name.setPlaceholderText(pset_placeholder)
+        if attribute_placeholder is not None:
+            widget.ui.le_attribute_name.setPlaceholderText(attribute_placeholder)
 
     @classmethod
     def get_attribute(cls, widget: ui.AttributeSelector):

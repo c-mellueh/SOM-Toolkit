@@ -3,8 +3,8 @@ import som_gui.plugins.aggregation_window.core.tool
 import som_gui
 import SOMcreator
 import ifcopenshell
-from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QPushButton, QFileDialog
-from PySide6.QtCore import QRunnable, Signal, QObject, QThreadPool
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QFileDialog
+from PySide6.QtCore import Signal, QObject, QThreadPool, QRunnable
 from typing import TYPE_CHECKING, Iterator
 from ..module.grouping_window import ui as grouping_ui
 from ..module.grouping_window import trigger
@@ -14,6 +14,8 @@ from ..module.grouping_window.constants import GROUP_FOLDER, GROUP_PSET, IFC_MOD
 if TYPE_CHECKING:
     from ..module.grouping_window.prop import GroupingWindowProperties
     from som_gui.module.ifc_importer.ui import IfcImportWidget
+    from som_gui.module.util.ui import AttributeSelector
+    from som_gui.tool.ifc_importer import IfcImportRunner
 from som_gui import tool
 from SOMcreator.util.group_ifc import GROUP, get_ifc_el_info, ELEMENT, IFC_REP, fill_existing_groups, \
     create_aggregation_structure
@@ -87,21 +89,11 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         cls.get_properties().export_button = export_button
         cls.get_properties().export_line_edit = export_line_edit
 
-    @classmethod
-    def autofill_grouping_attributes(cls):
-        group_attribute = tool.Appdata.get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
-        group_pset = tool.Appdata.get_string_setting(IFC_MOD, GROUP_PSET)
-        if group_attribute:
-            cls.get_properties().grouping_attribute_line_edit.setText(group_attribute)
-        if group_pset:
-            cls.get_properties().grouping_pset_line_edit.setText(group_pset)
 
 
     @classmethod
     def connect_buttons(cls, ):
-        run = cls.get_properties().run_button
-        abort = cls.get_properties().abort_button
-        trigger.connect_buttons(run, abort)
+        cls.get().ui.buttonBox.clicked.connect(trigger.button_clicked)
 
     @classmethod
     def open_export_dialog(cls, base_path: os.PathLike | str):
@@ -114,15 +106,10 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def read_inputs(cls):
-        group_pset_name = cls.get_properties().grouping_pset_line_edit.text()
-        group_attribute_name = cls.get_properties().grouping_attribute_line_edit.text()
-        export_path = cls.get_properties().export_line_edit.text()
-
-        widget = cls.get_properties().ifc_importer
-        ifc_paths = tool.IfcImporter.get_ifc_paths(widget)
-        main_pset_name = tool.IfcImporter.get_main_pset(widget)
-        main_attribute_name = tool.IfcImporter.get_main_attribute(widget)
-
+        group_pset_name, group_attribute_name = tool.Util.get_attribute(cls.get().ui.widget_group_attribute)
+        main_pset_name, main_attribute_name = tool.Util.get_attribute(cls.get().ui.widget_ident_attribute)
+        export_path = tool.Util.get_path_from_fileselector(cls.get().ui.widget_export)
+        ifc_paths = tool.Util.get_path_from_fileselector(cls.get().ui.widget_import)
         return group_pset_name, group_attribute_name, main_pset_name, main_attribute_name, ifc_paths, export_path
 
     @classmethod
@@ -172,11 +159,13 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def set_status(cls, text: str):
-        cls.get_properties().status_label.setText(text)
+        cls.get().ui.widget_progress_bar.ui.label.setText(text)
 
     @classmethod
     def set_progress(cls, value: int):
-        cls.get_ifc_importer().widget.progress_bar.setValue(value)
+        widget = cls.get().ui.widget_progress_bar
+        widget.show()
+        widget.ui.progressBar.setVisible(value)
 
     @classmethod
     def create_import_runner(cls, ifc_import_path: str):
@@ -186,11 +175,11 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         return runner
 
     @classmethod
-    def connect_ifc_import_runner(cls, runner: QRunnable):
+    def connect_ifc_import_runner(cls, runner: IfcImportRunner):
         trigger.connect_ifc_import_runner(runner)
 
     @classmethod
-    def destroy_import_runner(cls, runner: QRunnable):
+    def destroy_import_runner(cls, runner: IfcImportRunner):
         cls.get_properties().ifc_import_runners.remove(runner)
 
     @classmethod
@@ -295,4 +284,13 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def close_window(cls):
+        cls.get().hide()
         cls.get().close()
+
+    @classmethod
+    def set_buttons(cls, buttons):
+        cls.get().ui.buttonBox.setStandardButtons(buttons)
+
+    @classmethod
+    def set_progressbar_visible(cls, state: bool):
+        cls.get().ui.widget_progress_bar.setVisible(state)

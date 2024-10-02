@@ -1,47 +1,49 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Type
+
+from PySide6.QtWidgets import QDialogButtonBox
 from som_gui import tool
 import ifcopenshell
 from .. import tool as aw_tool
 import logging
 import time
 import os
-from PySide6.QtCore import QRunnable
+from ..module.grouping_window.constants import GROUP_FOLDER, GROUP_PSET, IFC_MOD, GROUP_ATTRIBUTE
+
 from som_gui.plugins.aggregation_window.module.grouping_window.constants import GROUP_FOLDER
 
-def open_window(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Type[tool.IfcImporter]):
+if TYPE_CHECKING:
+    from som_gui.tool.ifc_importer import IfcImportRunner
+
+
+def open_window(grouping_window: Type[aw_tool.GroupingWindow], util: Type[tool.Util]):
     window = grouping_window.create_window()
-    grouping_window.create_grouping_line_edits()
-    ifc_import_widget = ifc_importer.create_importer()
-    grouping_window.add_ifc_importer_to_window(ifc_import_widget)
-    export_button, export_line_edit = ifc_importer.create_export_line(ifc_import_widget)
-    grouping_window.add_export_line(export_button, export_line_edit)
-    grouping_window.autofill_export_path()
-    grouping_window.autofill_grouping_attributes()
+    util.fill_file_selector(window.ui.widget_export, "Export Pfad", "", GROUP_FOLDER, request_folder=True,
+                            request_save=True)
+    util.fill_file_selector(window.ui.widget_import, "IFC Pfad", "IFC Files (*.ifc *.IFC);;", "grouping_import")
+    group_attribute = tool.Appdata.get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
+    group_pset = tool.Appdata.get_string_setting(IFC_MOD, GROUP_PSET)
+    util.fill_main_attribute(window.ui.widget_group_attribute, group_pset, group_attribute, "Grouping PropertySet",
+                             "Grouping Attribute")
     grouping_window.connect_buttons()
+    grouping_window.set_progressbar_visible(False)
     window.show()
 
 
-def export_selection_clicked(grouping_window: Type[aw_tool.GroupingWindow], appdata: Type[tool.Appdata]):
-    old_path = appdata.get_path(GROUP_FOLDER)
-    new_path = grouping_window.open_export_dialog(old_path)
-    if not new_path:
-        return
-    appdata.set_path(GROUP_FOLDER, new_path)
-    grouping_window.set_export_line_text(new_path)
+def run_clicked(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Type[tool.IfcImporter],
+                util: Type[tool.Util]):
+    widget = grouping_window.get()
+    group_pset_name, group_attribute_name = util.get_attribute(widget.ui.widget_group_attribute)
+    main_pset_name, main_attribute_name = util.get_attribute(widget.ui.widget_ident_attribute)
+    export_path = util.get_path_from_fileselector(widget.ui.widget_export)[0]
+    ifc_paths = util.get_path_from_fileselector(widget.ui.widget_import)
 
-
-def run_clicked(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Type[tool.IfcImporter]):
-    ifc_import_widget = grouping_window.get_ifc_importer()
-
-    (group_pset_name, group_attribute_name, main_pset_name,
-     main_attribute_name, ifc_paths, export_path) = grouping_window.read_inputs()
     ifc_inputs_are_valid = ifc_importer.check_inputs(ifc_paths, main_pset_name, main_attribute_name)
     export_path_is_valid = grouping_window.check_export_path(export_path)
     if not ifc_inputs_are_valid or not export_path_is_valid:
         return
-    ifc_importer.set_run_button_enabled(ifc_import_widget, False)
-    ifc_importer.set_close_button_text(ifc_import_widget, "Abbrechen")
+
+    grouping_window.set_buttons(QDialogButtonBox.StandardButton.Abort)
     grouping_window.reset_abort()
     grouping_window.set_main_attribute(main_pset_name, main_attribute_name)
     grouping_window.set_grouping_attribute(group_pset_name, group_attribute_name)
@@ -50,8 +52,8 @@ def run_clicked(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Typ
     grouping_window.set_is_running(True)
     pool = ifc_importer.create_thread_pool()
     pool.setMaxThreadCount(3)
-    ifc_importer.set_progressbar_visible(ifc_import_widget, True)
-    ifc_importer.set_progress(ifc_import_widget, 0)
+    grouping_window.set_progressbar_visible(False)
+    grouping_window.set_progress(0)
 
     for path in ifc_paths:
         grouping_window.set_status(f"Import '{os.path.basename(path)}'")
@@ -60,26 +62,29 @@ def run_clicked(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Typ
         pool.start(runner)
 
 
-def cancel_clicked(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Type[tool.IfcImporter]):
+def abort_clicked(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Type[tool.IfcImporter]):
     logging.info(f"Cancel clicked")
+    if ifc_importer.import_is_running():
+        for runner in grouping_window.get_properties().ifc_import_runners:
+            runner.is_aborted = True
     if grouping_window.is_running():
         ifc_import_widget = grouping_window.get_ifc_importer()
         grouping_window.abort()
         ifc_importer.set_close_button_text(ifc_import_widget, "Close")
         grouping_window.set_is_running(False)
-    else:
-        grouping_window.close_window()
 
 
-def ifc_import_started(runner: QRunnable, grouping_window: Type[aw_tool.GroupingWindow],
-                       ifc_importer: Type[tool.IfcImporter]):
-    widget = grouping_window.get_ifc_importer()
-    ifc_importer.set_progressbar_visible(widget, True)
-    ifc_importer.set_status(widget, f"Import '{os.path.basename(runner.path)}'")
-    ifc_importer.set_progress(widget, 0)
+def cancel_clicked(grouping_window: Type[aw_tool.GroupingWindow], ):
+    grouping_window.close_window()
 
 
-def ifc_import_finished(runner: QRunnable, grouping_window: Type[aw_tool.GroupingWindow]):
+def ifc_import_started(runner: IfcImportRunner, grouping_window: Type[aw_tool.GroupingWindow]):
+    grouping_window.set_progressbar_visible(True)
+    grouping_window.set_status(f"Import '{os.path.basename(runner.path)}")
+    grouping_window.set_progress(0)
+
+
+def ifc_import_finished(runner: IfcImportRunner, grouping_window: Type[aw_tool.GroupingWindow]):
     """
     creates and runs Modelcheck Runnable
     """

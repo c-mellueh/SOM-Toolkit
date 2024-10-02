@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import logging
 from typing import TYPE_CHECKING, Type
 from som_gui.module.util.constants import PATH_SEPERATOR
 
@@ -8,6 +10,7 @@ if TYPE_CHECKING:
 
 
 def filesector_clicked(widget: ui.FileSelector, util: Type[tool.Util]):
+    logging.debug(f"filerequest clicked")
     paths = util.request_path(widget)
     if not paths:
         return
