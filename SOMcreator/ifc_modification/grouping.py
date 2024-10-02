@@ -4,6 +4,7 @@ import logging
 import os
 
 import ifcopenshell
+import ifcopenshell.guid
 from ifcopenshell.util import element
 import SOMcreator
 

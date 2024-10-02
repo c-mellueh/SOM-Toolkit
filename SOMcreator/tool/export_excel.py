@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 import os.path
 
@@ -87,7 +87,8 @@ class ExportExcel:
         project = cls.get_project()
         sheet.title = "Uebersicht"
         titles = ["bauteilName", "bauteilKlassifikation", "abkuerzung", "IfcMapping"]
-        getter_functions = [cls._get_name, cls._get_identifier, cls._get_abbreviation, cls._get_ifc_mapping]
+        getter_functions: list[Callable] = [cls._get_name, cls._get_identifier, cls._get_abbreviation,
+                                            cls._get_ifc_mapping]
         for column, text in enumerate(titles, start=1):
             sheet.cell(1, column).value = text
 
