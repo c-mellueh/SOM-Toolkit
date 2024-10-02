@@ -4,7 +4,7 @@ import logging
 from typing import TYPE_CHECKING, Type
 
 import SOMcreator
-from SOMcreator.external_software import revit
+from SOMcreator.exporter import revit
 
 if TYPE_CHECKING:
     from som_gui import tool

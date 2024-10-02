@@ -8,7 +8,8 @@ from som_gui.module.object import OK
 from som_gui.plugins.aggregation_window.module.aggregation import ui as ui_aggregation
 import logging
 ABBREV_ISSUE = 2
-from SOMcreator.external_software.desite import building_structure
+from SOMcreator.exporter.desite import building_structure
+
 
 class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     @classmethod

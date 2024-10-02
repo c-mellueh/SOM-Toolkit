@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QTreeWidgetItem, QAbstractItemView, QLineEdit, QCo
 from PySide6.QtCore import Qt, QPoint
 import som_gui
 from typing import TYPE_CHECKING, TypedDict, Callable
-from SOMcreator.Template import IFC_4_1
+from SOMcreator.templates import IFC_4_1
 from som_gui.module.object.prop import PluginProperty
 if TYPE_CHECKING:
     from som_gui.module.object.prop import ObjectProperties, ContextMenuDict

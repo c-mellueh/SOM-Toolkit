@@ -1,18 +1,15 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-
 
 import logging
 
 import som_gui.core.tool
 import SOMcreator
-import SOMcreator.tools.merge_projects
+import SOMcreator.util.project
 import som_gui
-from som_gui.module.project.prop import ProjectProperties, InfoDict
-from som_gui.module.project.constants import VERSION, AUTHOR, NAME, PROJECT_PHASE
+from som_gui.module.project.prop import ProjectProperties
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.project.ui import MergeDialog
-from PySide6.QtWidgets import QFormLayout, QLineEdit, QComboBox, QWidget, QTableWidgetItem, QTableWidget
+from PySide6.QtWidgets import QComboBox, QTableWidgetItem, QTableWidget
 from typing import Callable, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -160,7 +157,7 @@ class Project(som_gui.core.tool.Project):
         use_case_mapping = cls.get_use_case_mapping(project_1, project_2)
         if use_case_mapping is None:
             return
-        SOMcreator.tools.merge_projects.merge_projects(project_1, project_2, phase_mapping, use_case_mapping)
+        SOMcreator.util.project.merge_projects(project_1, project_2, phase_mapping, use_case_mapping)
 
     @classmethod
     def set_settings_general_widget(cls, widget: ui.SettingsGeneral):
