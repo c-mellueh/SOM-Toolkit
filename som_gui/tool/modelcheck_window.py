@@ -140,7 +140,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         window = cls.get_window()
         ifc_paths = tool.Util.get_path_from_fileselector(window.ui.widget_import)
         export_path = tool.Util.get_path_from_fileselector(window.ui.widget_export)[0]
-        main_pset, main_attribute = tool.Util.get_main_attribute(window.ui.main_attribute_widget)
+        main_pset, main_attribute = tool.Util.get_attribute(window.ui.main_attribute_widget)
         return ifc_paths, export_path, main_pset, main_attribute
 
     @classmethod

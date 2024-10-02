@@ -6,8 +6,8 @@
             <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>1012</width>
-                <height>650</height>
+                <width>1037</width>
+                <height>684</height>
             </rect>
         </property>
         <property name="windowTitle">
@@ -57,7 +57,7 @@
                 </widget>
             </item>
             <item>
-                <widget class="MainAttributeSelector" name="main_attribute_widget" native="true">
+                <widget class="AttributeSelector" name="main_attribute_widget" native="true">
                     <property name="minimumSize">
                         <size>
                             <width>0</width>
@@ -119,7 +119,7 @@
             <header>som_gui.module.modelcheck_window.ui</header>
         </customwidget>
         <customwidget>
-            <class>MainAttributeSelector</class>
+            <class>AttributeSelector</class>
             <extends>QWidget</extends>
             <header>som_gui.module.util.ui</header>
             <container>1</container>

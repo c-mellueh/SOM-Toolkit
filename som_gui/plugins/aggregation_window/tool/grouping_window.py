@@ -96,17 +96,12 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         if group_pset:
             cls.get_properties().grouping_pset_line_edit.setText(group_pset)
 
-    @classmethod
-    def get_buttons(cls) -> tuple[QPushButton, QPushButton, QPushButton, QPushButton]:
-        ifc = cls.get_properties().ifc_button
-        export = cls.get_properties().export_button
-        run = cls.get_properties().run_button
-        abort = cls.get_properties().abort_button
-        return ifc, export, run, abort
 
     @classmethod
-    def connect_buttons(cls, buttons):
-        trigger.connect_buttons(*buttons)
+    def connect_buttons(cls, ):
+        run = cls.get_properties().run_button
+        abort = cls.get_properties().abort_button
+        trigger.connect_buttons(run, abort)
 
     @classmethod
     def open_export_dialog(cls, base_path: os.PathLike | str):

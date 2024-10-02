@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QFileDialog
-from .qt import file_selector, main_attribute_select, progressbar
+from .qt import file_selector, attribute_select, progressbar
 from . import trigger
 
 
@@ -21,10 +21,10 @@ class FileSelector(QWidget):
         trigger.paint_file_selector(self)
 
 
-class MainAttributeSelector(QWidget):
+class AttributeSelector(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ui = main_attribute_select.Ui_Form()
+        self.ui = attribute_select.Ui_Form()
         self.ui.setupUi(self)
         trigger.main_attribute_selector_created(self)
 

@@ -20,14 +20,13 @@ from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication,
                                QVBoxLayout, QWidget)
 
 from som_gui.module.modelcheck_window.ui import (ObjectTree, PsetTree)
-from som_gui.module.util.ui import (FileSelector, MainAttributeSelector, Progressbar)
-
+from som_gui.module.util.ui import (AttributeSelector, FileSelector, Progressbar)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(1012, 650)
+        Form.resize(1037, 684)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.splitter = QSplitter(Form)
@@ -64,7 +63,7 @@ class Ui_Form(object):
 
         self.verticalLayout.addWidget(self.splitter)
 
-        self.main_attribute_widget = MainAttributeSelector(Form)
+        self.main_attribute_widget = AttributeSelector(Form)
         self.main_attribute_widget.setObjectName(u"main_attribute_widget")
         self.main_attribute_widget.setMinimumSize(QSize(0, 10))
 
@@ -97,7 +96,6 @@ class Ui_Form(object):
         self.retranslateUi(Form)
 
         QMetaObject.connectSlotsByName(Form)
-
     # setupUi
 
     def retranslateUi(self, Form):

@@ -18,7 +18,7 @@ def open_window(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Typ
     grouping_window.add_export_line(export_button, export_line_edit)
     grouping_window.autofill_export_path()
     grouping_window.autofill_grouping_attributes()
-    grouping_window.connect_buttons(grouping_window.get_buttons())
+    grouping_window.connect_buttons()
     window.show()
 
 
