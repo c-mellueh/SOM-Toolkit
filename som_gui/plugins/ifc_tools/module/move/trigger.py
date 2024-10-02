@@ -1,5 +1,4 @@
 from som_gui import tool
-from som_gui.plugins.ifc_tools import tool as ifc_tool
 from som_gui.plugins.ifc_tools.core import move as core
 
 

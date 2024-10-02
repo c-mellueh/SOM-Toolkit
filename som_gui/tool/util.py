@@ -3,18 +3,22 @@ from typing import Callable, TYPE_CHECKING
 import os, tempfile
 from PySide6.QtCore import QFile, Qt, QModelIndex
 from PySide6.QtGui import QAction, QShortcut, QKeySequence
-from PySide6.QtWidgets import QMenu, QMenuBar, QWidget, QComboBox
+from PySide6.QtWidgets import QMenu, QMenuBar, QWidget, QComboBox, QFileDialog
 import SOMcreator
 import som_gui.core.tool
 from som_gui import tool
 import re
+from som_gui.module.util import ui
+
 if TYPE_CHECKING:
     from som_gui.module.util.prop import MenuDict, UtilProperties
+
 
 class Util(som_gui.core.tool.Util):
     @classmethod
     def get_properties(cls) -> UtilProperties:
         return som_gui.UtilProperties
+
     @classmethod
     def menu_bar_add_menu(cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str) -> MenuDict:
         menu_steps = menu_path.split("/")
@@ -169,3 +173,27 @@ class Util(som_gui.core.tool.Util):
         if not proj:
             return ""
         return f"{proj.name} v{proj.version}"
+
+    @classmethod
+    def create_file_selector(cls, name: str, file_extension: str, appdata_text: str,
+                             parent_widget: QWidget, ) -> ui.FileSelector:
+        """
+        name: text that should be written in first row
+        file_extension: file extension(s) that are allowed to search
+        appdata_text: Appdata variable in which path(s) should be saved
+        parent_widget: Widget that functions as parent (used for displaying QFileDialog)
+        """
+        selector = ui.FileSelector(name, file_extension, appdata_text, parent_widget)
+
+    @classmethod
+    def get_path_from_fileselector(cls, file_selector: ui.FileSelector) -> list[str]:
+        from som_gui.module.util.constants import PATH_SEPERATOR
+        return file_selector.ui.lineEdit.text().split(PATH_SEPERATOR)
+
+    @classmethod
+    def request_path(cls, caption, parent_window, file_extension, appdata=None):
+        if appdata:
+            path = tool.Appdata.get_path(appdata)
+        else:
+            path = ""
+        return QFileDialog.getOpenFileName(parent_window, caption, path, file_extension)
