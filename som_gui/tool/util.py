@@ -239,10 +239,10 @@ class Util(som_gui.core.tool.Util):
             path = QFileDialog.getExistingDirectory(widget, widget.name, start_path)
 
         elif widget.request_save:
-            path = QFileDialog.getSaveFileName(widget, widget.name, start_path, widget.extension)[0]
+            path = [QFileDialog.getSaveFileName(widget, widget.name, start_path, widget.extension)[0]]
 
         elif widget.single_request:
-            path = QFileDialog.getOpenFileName(widget, widget.name, start_path, widget.extension)[0]
+            path = [QFileDialog.getOpenFileName(widget, widget.name, start_path, widget.extension)[0]]
         else:
             path = QFileDialog.getOpenFileNames(widget, widget.name, start_path, widget.extension)[0]
         if widget.appdata_text:

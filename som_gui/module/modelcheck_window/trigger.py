@@ -2,19 +2,21 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from som_gui import tool
 from som_gui.core import modelcheck_window as core
-from som_gui.core import modelcheck as mc_core
-from som_gui.core import modelcheck_results as mc_results_core
+import logging
+from PySide6.QtWidgets import QTreeView, QPushButton, QDialogButtonBox
+
+
 if TYPE_CHECKING:
     from .ui import ModelcheckWindow
     from PySide6.QtCore import QRunnable
-    from PySide6.QtWidgets import QTreeView, QPushButton
+
     from PySide6.QtGui import QStandardItemModel
     from som_gui.module.ifc_importer.ui import IfcImportWidget
     from som_gui.tool.modelcheck import ModelcheckRunner
 
 def connect():
     tool.MainWindow.add_action("Modelle/Modellprüfung",
-                               lambda: core.open_window(tool.ModelcheckWindow, tool.IfcImporter))
+                               lambda: core.open_window(tool.ModelcheckWindow, tool.Util, tool.Project))
 
 
 def paint_object_tree():
@@ -23,6 +25,19 @@ def paint_object_tree():
 
 def paint_pset_tree():
     core.paint_pset_tree(tool.ModelcheckWindow)
+
+
+def button_box_clicked(button: QPushButton):
+    logging.debug(f"button_box_clicked: {button}")
+    bb = tool.ModelcheckWindow.get_window().ui.buttonBox
+    if button == bb.button(bb.StandardButton.Apply):
+        core.run_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
+                         tool.IfcImporter, tool.Project, tool.Util)
+    if button == bb.button(bb.StandardButton.Cancel):
+        core.cancel_clicked(tool.ModelcheckWindow, tool.Modelcheck)
+
+    if button == bb.button(bb.StandardButton.Abort):
+        core.abort_clicked(tool.ModelcheckWindow, tool.Modelcheck)
 
 
 def connect_buttons(export_button: QPushButton, run_button: QPushButton,

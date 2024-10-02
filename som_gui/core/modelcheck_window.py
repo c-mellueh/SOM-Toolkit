@@ -5,7 +5,7 @@ import time
 from typing import TYPE_CHECKING, Type
 import os
 import SOMcreator
-from PySide6.QtCore import Qt, QThread
+from PySide6.QtCore import Qt
 
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.modelcheck.constants import ISSUE_PATH
@@ -15,23 +15,22 @@ if TYPE_CHECKING:
     from PySide6.QtCore import QItemSelectionModel, QModelIndex, QRunnable
 
 
-def open_window(modelcheck_window: Type[tool.ModelcheckWindow], ifc_importer: Type[tool.IfcImporter]):
+def open_window(modelcheck_window: Type[tool.ModelcheckWindow], util: Type[tool.Util], project: Type[tool.Project]):
     if modelcheck_window.is_window_allready_build():
         modelcheck_window.get_window().show()
         return
 
+    proj = project.get()
     window = modelcheck_window.create_window()
-    check_box_widget = modelcheck_window.create_checkbox_widget()
-    ifc_import_widget = ifc_importer.create_importer()
-    export_button, export_line_edit = ifc_importer.create_export_line(ifc_import_widget)
-    modelcheck_window.get_properties().export_button = export_button
-    modelcheck_window.get_properties().export_line_edit = export_line_edit
-    modelcheck_window.autofill_export_path()
-
-    modelcheck_window.set_importer_widget(ifc_import_widget)
-    modelcheck_window.add_splitter(window.vertical_layout, Qt.Orientation.Vertical, check_box_widget, ifc_import_widget)
-    modelcheck_window.connect_buttons(modelcheck_window.get_buttons())
-    modelcheck_window.connect_check_widget(check_box_widget)
+    main_pset_name, main_attribute_name = proj.get_main_attribute()
+    util.fill_main_attribute(window.ui.main_attribute_widget, main_pset_name, main_attribute_name)
+    util.fill_file_selector(window.ui.widget_import, "IFC Pfad", "IFC Files (*.ifc *.IFC);;", "modelcheck_files")
+    util.fill_file_selector(window.ui.widget_export, "Export Pfad", "Excel FIle (*xlsx);;", "modelcheck_export",
+                            request_save=True)
+    modelcheck_window.connect_buttons()
+    modelcheck_window.connect_object_tree(window.ui.object_tree)
+    window.ui.widget_progress_bar.hide()
+    modelcheck_window.set_run_button_text("Run")
     window.show()
 
 

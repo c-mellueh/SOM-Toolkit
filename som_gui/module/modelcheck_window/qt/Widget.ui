@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>Form</class>
+    <widget class="QWidget" name="Form">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>1012</width>
+                <height>650</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Form</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+                <widget class="QSplitter" name="splitter">
+                    <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                            <horstretch>0</horstretch>
+                            <verstretch>1</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                    </property>
+                    <widget class="ObjectTree" name="object_tree">
+                        <property name="contextMenuPolicy">
+                            <enum>Qt::CustomContextMenu</enum>
+                        </property>
+                        <property name="selectionMode">
+                            <enum>QAbstractItemView::ExtendedSelection</enum>
+                        </property>
+                    </widget>
+                    <widget class="QWidget" name="verticalLayoutWidget">
+                        <layout class="QVBoxLayout" name="verticalLayout_2">
+                            <item>
+                                <widget class="QLabel" name="label_object">
+                                    <property name="text">
+                                        <string>TextLabel</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="PsetTree" name="property_set_tree">
+                                    <property name="contextMenuPolicy">
+                                        <enum>Qt::CustomContextMenu</enum>
+                                    </property>
+                                    <property name="selectionMode">
+                                        <enum>QAbstractItemView::ExtendedSelection</enum>
+                                    </property>
+                                </widget>
+                            </item>
+                        </layout>
+                    </widget>
+                </widget>
+            </item>
+            <item>
+                <widget class="MainAttributeSelector" name="main_attribute_widget" native="true">
+                    <property name="minimumSize">
+                        <size>
+                            <width>0</width>
+                            <height>10</height>
+                        </size>
+                    </property>
+                </widget>
+            </item>
+            <item>
+                <widget class="FileSelector" name="widget_import" native="true">
+                    <property name="minimumSize">
+                        <size>
+                            <width>0</width>
+                            <height>30</height>
+                        </size>
+                    </property>
+                </widget>
+            </item>
+            <item>
+                <widget class="FileSelector" name="widget_export" native="true">
+                    <property name="minimumSize">
+                        <size>
+                            <width>0</width>
+                            <height>50</height>
+                        </size>
+                    </property>
+                </widget>
+            </item>
+            <item>
+                <widget class="Progressbar" name="widget_progress_bar" native="true"/>
+            </item>
+            <item>
+                <widget class="QDialogButtonBox" name="buttonBox">
+                    <property name="standardButtons">
+                        <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel</set>
+                    </property>
+                    <property name="centerButtons">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+            </item>
+        </layout>
+    </widget>
+    <customwidgets>
+        <customwidget>
+            <class>FileSelector</class>
+            <extends>QWidget</extends>
+            <header>som_gui.module.util.ui</header>
+            <container>1</container>
+        </customwidget>
+        <customwidget>
+            <class>ObjectTree</class>
+            <extends>QTreeView</extends>
+            <header>som_gui.module.modelcheck_window.ui</header>
+        </customwidget>
+        <customwidget>
+            <class>PsetTree</class>
+            <extends>QTreeView</extends>
+            <header>som_gui.module.modelcheck_window.ui</header>
+        </customwidget>
+        <customwidget>
+            <class>MainAttributeSelector</class>
+            <extends>QWidget</extends>
+            <header>som_gui.module.util.ui</header>
+            <container>1</container>
+        </customwidget>
+        <customwidget>
+            <class>Progressbar</class>
+            <extends>QWidget</extends>
+            <header>som_gui.module.util.ui</header>
+            <container>1</container>
+        </customwidget>
+    </customwidgets>
+    <resources/>
+    <connections/>
+</ui>

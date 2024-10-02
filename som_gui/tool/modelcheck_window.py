@@ -7,7 +7,8 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 import SOMcreator
 from typing import TYPE_CHECKING, Callable
 from PySide6.QtCore import Qt, QThreadPool, QSize, QRunnable
-from PySide6.QtWidgets import QSplitter, QSizePolicy, QLayout, QWidget, QTreeView, QFileDialog, QLineEdit, QPushButton, \
+from PySide6.QtWidgets import QDialogButtonBox, QSplitter, QSizePolicy, QLayout, QWidget, QTreeView, QFileDialog, \
+    QLineEdit, QPushButton, \
     QLabel, QMenu
 from PySide6.QtGui import QStandardItem, QStandardItemModel, QAction
 import os
@@ -60,7 +61,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def resize_object_tree(cls):
-        cls.get_properties().checkbox_widget.widget.object_tree.resizeColumnToContents(0)
+        cls.get_object_tree().resizeColumnToContents(0)
 
     @classmethod
     def get_selected_items(cls, widget: ui.ObjectTree | ui.PsetTree):
@@ -74,13 +75,19 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return False
 
     @classmethod
+    def show_buttons(cls, buttons):
+        cls.get_window().ui.buttonBox.setStandardButtons(buttons)
+
+    @classmethod
+    def set_run_button_text(cls, text):
+        cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Apply).setText(text)
+    @classmethod
     def set_abort_button_text(cls, text: str):
-        button = cls.get_properties().abort_button
-        button.setText(text)
+        cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Abort).setText(text)
 
     @classmethod
     def set_run_button_enabled(cls, state):
-        cls.get_properties().run_button.setEnabled(state)
+        cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Abort).setEnabled(state)
 
     @classmethod
     def modelcheck_is_running(cls):
@@ -153,12 +160,11 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def set_pset_tree_title(cls, text: str):
         prop = cls.get_properties()
-        prop.checkbox_widget.widget.label_object.setText(text)
+        cls.get_window().ui.label_object.setText(text)
 
     @classmethod
     def show_pset_tree_title(cls, show: bool):
-        prop = cls.get_properties()
-        prop.checkbox_widget.widget.label_object.setVisible(show)
+        cls.get_window().ui.label_object.setVisible(show)
 
     @classmethod
     def set_selected_object(cls, obj: SOMcreator.Object):
@@ -171,13 +177,12 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def get_object_tree(cls):
-        prop = cls.get_properties()
-        return prop.checkbox_widget.widget.object_tree
+        return cls.get_window().ui.object_tree
 
     @classmethod
     def get_pset_tree(cls):
         prop = cls.get_properties()
-        return prop.checkbox_widget.widget.property_set_tree
+        return prop.active_window.ui.property_set_tree
 
     @classmethod
     def get_item_status_dict(cls):
@@ -283,12 +288,13 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         cls.get_properties().active_window.hide()
 
     @classmethod
-    def connect_check_widget(cls, widget: ui.ObjectCheckWidget):
-        trigger.connect_object_check_tree(widget.widget.object_tree)
+    def connect_object_tree(cls, object_tree_widget: ui.ObjectTree):
+        trigger.connect_object_check_tree(object_tree_widget)
 
     @classmethod
-    def connect_buttons(cls, buttons):
-        trigger.connect_buttons(*buttons)
+    def connect_buttons(cls):
+        bb = cls.get_window().ui.buttonBox
+        bb.clicked.connect(trigger.button_box_clicked)
 
     @classmethod
     def add_splitter(cls, layout: QLayout, orientation: Qt.Orientation, widget_1: QWidget, widget_2: QWidget):

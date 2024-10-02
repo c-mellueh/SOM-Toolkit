@@ -4,14 +4,14 @@ from PySide6.QtGui import QStandardItemModel, QMouseEvent
 from som_gui.module import modelcheck_window
 from som_gui.icons import get_icon
 from som_gui import tool
-
+from . import qt
 
 class ModelcheckWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.ui = qt.widget.Ui_Form()
+        self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.vertical_layout = QVBoxLayout(self)
-        self.resize(1139, 720)
         self.setWindowTitle(f"Modellprüfung | {tool.Util.get_status_text()}")
 
 class ObjectCheckWidget(QWidget):
