@@ -2,15 +2,14 @@ from __future__ import annotations
 import som_gui.core.tool
 import som_gui
 from typing import TYPE_CHECKING, Callable
-from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLabel, QLineEdit, QStatusBar
+from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLineEdit, QStatusBar
 from som_gui import tool
 from som_gui.module.main_window import ui as ui_main_window
 import ctypes
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.prop import MainWindowProperties, MenuDict
-    from som_gui.tool.object import ObjectDataDict
-    from som_gui.module.main_window.window import Ui_MainWindow
+    from som_gui.module.main_window.qt.window import Ui_MainWindow
 
 
 class MainWindow(som_gui.core.tool.MainWindow):

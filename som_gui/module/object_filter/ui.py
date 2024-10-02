@@ -1,11 +1,9 @@
 from __future__ import annotations
-import som_gui.module.object_filter as object_filter
 from som_gui import icons
 from som_gui.core import object_filter as core
 from som_gui import tool
-from som_gui.tool.project import Project
-from PySide6.QtWidgets import QTreeView, QWidget, QPushButton
-from PySide6.QtGui import QMouseEvent, QIcon
+from PySide6.QtWidgets import QTreeView, QWidget
+from PySide6.QtGui import QMouseEvent
 from som_gui.module import object_filter
 from .qt import settings
 class SettingsWidget(QWidget):
@@ -18,8 +16,9 @@ class SettingsWidget(QWidget):
 
 class ObjectFilterWindow(QWidget):
     def __init__(self):
+        from .qt import widget
         super().__init__()
-        self.widget = object_filter.window.Ui_Form()
+        self.widget = widget.Ui_Form()
         self.widget.setupUi(self)
         self.setWindowIcon(icons.get_icon())
         self.setWindowTitle(f"Anwendungsfälle | {tool.Util.get_status_text()}")

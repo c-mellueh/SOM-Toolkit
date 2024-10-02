@@ -4,14 +4,13 @@ from typing import TYPE_CHECKING
 import SOMcreator
 
 if TYPE_CHECKING:
-    from .ui import ModelcheckWindow, ObjectCheckWidget
+    from .ui import ModelcheckWindow
     from PySide6.QtCore import QThreadPool
     from PySide6.QtWidgets import QPushButton, QLineEdit, QLabel
     from som_gui.tool.ifc_importer import IfcImportRunner
 
 class ModelcheckWindowProperties:
     active_window: ModelcheckWindow = None
-    checkbox_widget: ObjectCheckWidget = None
     check_state_dict: dict[SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute, bool] = None
     enabled_dict: dict[SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute, bool] = None
     selected_object: SOMcreator.Object = None

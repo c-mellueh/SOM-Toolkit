@@ -14,13 +14,6 @@ class ModelcheckWindow(QWidget):
         self.setWindowIcon(get_icon())
         self.setWindowTitle(f"Modellprüfung | {tool.Util.get_status_text()}")
 
-class ObjectCheckWidget(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.widget = modelcheck_window.widget_object_check.Ui_Form()
-        self.widget.setupUi(self)
-        self.setWindowIcon(get_icon())
-
 
 class ObjectTree(QTreeView):
     def __init__(self, *args, **kwargs):

@@ -1,9 +1,9 @@
 import som_gui
-from som_gui.module.object_filter import ui, trigger, prop, window
+from som_gui.module.object_filter import ui, trigger, prop
 import logging
 
 def register():
-    som_gui.ObjectFilterProperties = prop.ObjectFilterProperties
+    som_gui.ObjectFilterProperties = prop.ObjectFilterProperties()
     som_gui.ObjectFilterCompareProperties = prop.ObjectFilterCompareProperties()
 
 def load_ui_triggers():

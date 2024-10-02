@@ -1,4 +1,4 @@
-from . import prop, trigger, window, settings_window, ui
+from . import prop, trigger, ui
 import som_gui
 
 ALL = "Alles"

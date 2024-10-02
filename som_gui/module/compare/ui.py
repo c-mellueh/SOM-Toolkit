@@ -1,8 +1,9 @@
-from PySide6.QtWidgets import QDialog, QHeaderView, QTreeWidget, QPushButton
-from . import window, import_window, trigger
+from PySide6.QtWidgets import QDialog, QTreeWidget, QPushButton
+from . import trigger
+from .qt import import_window, widget
 from som_gui.icons import get_icon, get_switch_icon, get_download_icon
 from PySide6.QtGui import QPalette
-from PySide6.QtCore import QModelIndex, Qt, QRect, QSize
+from PySide6.QtCore import QModelIndex
 from som_gui import tool
 
 def color_button(button: QPushButton) -> None:
@@ -15,7 +16,7 @@ def color_button(button: QPushButton) -> None:
 class CompareDialog(QDialog):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.widget = window.Ui_Dialog()
+        self.widget = widget.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
         self.setWindowTitle(self.tr(f"Projekte Vergleichen | {tool.Util.get_status_text()}"))

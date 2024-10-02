@@ -226,13 +226,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return som_gui.ModelcheckWindowProperties
 
     @classmethod
-    def create_checkbox_widget(cls):
-        prop = cls.get_properties()
-        prop.checkbox_widget = ui.ObjectCheckWidget()
-        cls.show_pset_tree_title(False)
-        return prop.checkbox_widget
-
-    @classmethod
     def autofill_export_path(cls):
         export_path = tool.Appdata.get_path(ISSUE_PATH)
         if export_path:

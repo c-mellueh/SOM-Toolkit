@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import TypedDict
-from dataclasses import dataclass, field
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QMenu, QLabel, QApplication
 
@@ -8,7 +7,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.ui import MainWindow
-    from som_gui.module.main_window.window import Ui_MainWindow
+    from som_gui.module.main_window.qt.window import Ui_MainWindow
 
 
 class MenuDict(TypedDict):
