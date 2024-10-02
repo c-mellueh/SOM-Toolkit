@@ -124,15 +124,6 @@ def modelcheck_finished(modelcheck_window: Type[tool.ModelcheckWindow], modelche
         logging.info(f"Prüfung von Datei abgeschlossen, nächste Datei ist dran.")
 
 
-def export_selection_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
-                             appdata: Type[tool.Appdata]):
-    old_path = appdata.get_path(ISSUE_PATH)
-    new_path = modelcheck_window.open_export_dialog(old_path, "Excel File (*.xlsx);;")
-    if not new_path:
-        return
-    appdata.set_path(ISSUE_PATH, new_path)
-    modelcheck_window.set_export_line_text(new_path)
-
 
 def paint_object_tree(modelcheck_window: Type[tool.ModelcheckWindow], project: Type[tool.Project]):
     logging.debug(f"Repaint Modelcheck Object Tree")

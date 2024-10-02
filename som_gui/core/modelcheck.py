@@ -11,8 +11,6 @@ from datetime import datetime
 GROUP = "Gruppe"
 ELEMENT = "Element"
 
-SUBGROUPS = "subgroups"
-SUBELEMENT = "subelement"
 
 rev_datatype_dict = {
     str:   "IfcText/IfcLabel",

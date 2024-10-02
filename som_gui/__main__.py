@@ -11,10 +11,6 @@ import ifcopenshell.guid
 import ifcopenshell.express
 
 
-def start_log(level: int | None = None) -> None:
-    tool.Logging.set_log_level(level)
-
-
 def main(initial_file: str | None = None, log_level=None):
     print("START")
     from PySide6.QtWidgets import QApplication

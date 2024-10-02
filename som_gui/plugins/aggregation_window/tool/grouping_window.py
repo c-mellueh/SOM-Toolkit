@@ -14,7 +14,6 @@ from ..module.grouping_window.constants import GROUP_FOLDER, GROUP_PSET, IFC_MOD
 if TYPE_CHECKING:
     from ..module.grouping_window.prop import GroupingWindowProperties
     from som_gui.module.ifc_importer.ui import IfcImportWidget
-    from som_gui.module.util.ui import AttributeSelector
     from som_gui.tool.ifc_importer import IfcImportRunner
 from som_gui import tool
 from SOMcreator.util.group_ifc import GROUP, get_ifc_el_info, ELEMENT, IFC_REP, fill_existing_groups, \

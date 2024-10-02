@@ -75,9 +75,6 @@ def export_dictionary(bsdd: Type[tool.Bsdd], project: Type[tool.Project], popups
         logging.error(f"folder '{dirname}' does not exist")
         return
 
-    dictionary = bsdd.get_dictionary()
-    dictionary.Classes = list()
-    dictionary.Properties = list()
     bsdd.add_objects_to_dictionary(project.get())
     bsdd.export_to_json(path)
     popups.create_info_popup("Export Abgeschlossen", "Export ist abgeschlossen")

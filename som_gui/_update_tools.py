@@ -3,10 +3,6 @@ import inspect
 import som_gui.tool
 
 
-def cls_is_toolclass(cls):
-    if "__init__" in [x[0] for x in inspect.getmembers(cls, predicate=inspect.isfunction)]:
-        return False
-    return True
 
 
 def get_class_methods_and_params(cls, file):
