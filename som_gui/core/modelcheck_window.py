@@ -16,8 +16,8 @@ from som_gui.module.modelcheck.constants import ISSUE_PATH
 if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtGui import QStandardItem
-    from PySide6.QtCore import QItemSelectionModel, QModelIndex, QRunnable
-
+    from PySide6.QtCore import QItemSelectionModel, QModelIndex
+    from som_gui.tool.ifc_importer import IfcImportRunner
 
 def open_window(modelcheck_window: Type[tool.ModelcheckWindow], util: Type[tool.Util], project: Type[tool.Project]):
     if modelcheck_window.is_window_allready_build():
@@ -87,13 +87,13 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
         pool.start(runner)
 
 
-def ifc_import_started(runner: QRunnable, modelcheck_window: Type[tool.ModelcheckWindow]):
+def ifc_import_started(runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow]):
     modelcheck_window.set_progressbar_visible(True)
     modelcheck_window.set_status(f"Import '{os.path.basename(runner.path)}'")
     modelcheck_window.set_progress(0)
 
 
-def ifc_import_finished(runner: QRunnable, modelcheck_window: Type[tool.ModelcheckWindow],
+def ifc_import_finished(runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow],
                         modelcheck: Type[tool.Modelcheck]):
     """
     creates and runs Modelcheck Runnable
