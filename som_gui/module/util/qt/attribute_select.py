@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'MainAttributeSelect.ui'
+## Form generated from reading UI file 'AttributeSelect.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.7.3
 ##
@@ -18,7 +18,6 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLineEdit, QSizePolicy,
                                QWidget)
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
@@ -26,6 +25,7 @@ class Ui_Form(object):
         Form.resize(726, 40)
         self.horizontalLayout = QHBoxLayout(Form)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(-1, 0, -1, 0)
         self.le_pset_name = QLineEdit(Form)
         self.le_pset_name.setObjectName(u"le_pset_name")
 
@@ -39,7 +39,6 @@ class Ui_Form(object):
         self.retranslateUi(Form)
 
         QMetaObject.connectSlotsByName(Form)
-
     # setupUi
 
     def retranslateUi(self, Form):
@@ -47,3 +46,4 @@ class Ui_Form(object):
         self.le_pset_name.setPlaceholderText(QCoreApplication.translate("Form", u"Ident PropertySet", None))
         self.le_attribute_name.setPlaceholderText(QCoreApplication.translate("Form", u"Ident Attribute", None))
     # retranslateUi
+

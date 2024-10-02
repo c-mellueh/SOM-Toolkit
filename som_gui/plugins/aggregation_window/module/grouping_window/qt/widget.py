@@ -20,12 +20,11 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialogButtonBox, 
 
 from som_gui.module.util.ui import (AttributeSelector, FileSelector, Progressbar)
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(640, 178)
+        Form.resize(640, 122)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.widget_group_attribute = AttributeSelector(Form)
@@ -62,7 +61,6 @@ class Ui_Form(object):
         self.retranslateUi(Form)
 
         QMetaObject.connectSlotsByName(Form)
-
     # setupUi
 
     def retranslateUi(self, Form):

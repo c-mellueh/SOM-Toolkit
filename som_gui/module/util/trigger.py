@@ -13,7 +13,7 @@ def fileselector_clicked(widget):
 
 
 def paint_file_selector(widget):
-    core.update_file_selector(widget, tool.Util)
+    core.update_file_selector(widget)
 
 
 def main_attribute_selector_created(widget):

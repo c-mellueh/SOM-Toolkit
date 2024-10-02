@@ -3,7 +3,7 @@ import som_gui.plugins.aggregation_window.core.tool
 import som_gui
 import SOMcreator
 import ifcopenshell
-from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QFileDialog
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QFileDialog, QDialogButtonBox
 from PySide6.QtCore import Signal, QObject, QThreadPool, QRunnable
 from typing import TYPE_CHECKING, Iterator
 from ..module.grouping_window import ui as grouping_ui
@@ -228,13 +228,21 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     # Grouping Functions
     @classmethod
-    def create_structure_dict(cls, ifc_file: ifcopenshell.file, project: SOMcreator.Project) -> dict:
+    def create_structure_dict(cls, ifc_elements: list[ifcopenshell.entity_instance],
+                              project: SOMcreator.Project) -> dict:
         """Iterate over all Entities, build the targeted Datastructure"""
 
         targeted_group_structure = {GROUP: {}, ELEMENT: {}, IFC_REP: None}
         bk_dict = {obj.ident_value: obj for obj in project.get_objects(filter=True)}
+        entity_count = len(ifc_elements)
 
-        for index, el in enumerate(list(ifc_file.by_type("IfcElement"))):
+        percentages = list()
+        for index, el in enumerate(ifc_elements):
+            percentage = int(index / entity_count * 100)
+            if percentage % 5 == 0 and percentage not in percentages:
+                cls.set_progress(percentage)
+                percentages.append(percentage)
+
             if cls.is_aborted():
                 return dict()
             attrib, gruppe, identity = get_ifc_el_info(el, cls.get_attribute_bundle())
@@ -294,3 +302,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
     @classmethod
     def set_progressbar_visible(cls, state: bool):
         cls.get().ui.widget_progress_bar.setVisible(state)
+
+    @classmethod
+    def reset_buttons(cls):
+        cls.set_buttons(QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)

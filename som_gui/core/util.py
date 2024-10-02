@@ -18,7 +18,7 @@ def filesector_clicked(widget: ui.FileSelector, util: Type[tool.Util]):
     widget.ui.lineEdit.setText(paths_texts)
 
 
-def update_file_selector(widget: ui.FileSelector, util: Type[tool.Util]):
+def update_file_selector(widget: ui.FileSelector):
     if widget.name:
         widget.ui.label.show()
         widget.ui.label.setText(widget.name)

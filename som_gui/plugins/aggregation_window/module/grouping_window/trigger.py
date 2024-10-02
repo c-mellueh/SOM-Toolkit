@@ -31,7 +31,7 @@ def start_grouping(ifc_file: ifcopenshell.file):
 
 def connect_grouping_runner(runner):
     runner.signaller.finished.connect(
-        lambda: core.grouping_finished(aw_tool.GroupingWindow, tool.IfcImporter, tool.Popups))
+        lambda: core.grouping_finished(aw_tool.GroupingWindow, tool.Popups))
     runner.signaller.status.connect(aw_tool.GroupingWindow.set_status)
     runner.signaller.progress.connect(aw_tool.GroupingWindow.set_progress)
 

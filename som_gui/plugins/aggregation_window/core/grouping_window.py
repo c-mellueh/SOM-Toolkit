@@ -8,7 +8,7 @@ from .. import tool as aw_tool
 import logging
 import time
 import os
-from ..module.grouping_window.constants import GROUP_FOLDER, GROUP_PSET, IFC_MOD, GROUP_ATTRIBUTE
+from ..module.grouping_window.constants import GROUP_PSET, IFC_MOD, GROUP_ATTRIBUTE
 
 from som_gui.plugins.aggregation_window.module.grouping_window.constants import GROUP_FOLDER
 
@@ -80,7 +80,7 @@ def cancel_clicked(grouping_window: Type[aw_tool.GroupingWindow], ):
 
 def ifc_import_started(runner: IfcImportRunner, grouping_window: Type[aw_tool.GroupingWindow]):
     grouping_window.set_progressbar_visible(True)
-    grouping_window.set_status(f"Import '{os.path.basename(runner.path)}")
+    grouping_window.set_status(f"Import '{os.path.basename(runner.path)}'")
     grouping_window.set_progress(0)
 
 
@@ -103,29 +103,39 @@ def ifc_import_finished(runner: IfcImportRunner, grouping_window: Type[aw_tool.G
 def create_groups_in_file(ifc_file: ifcopenshell.file, grouping_window: Type[aw_tool.GroupingWindow],
                           project: Type[tool.Project]):
     grouping_window.set_progress(0)
+    start_time = time.time()
     grouping_window.set_status("create Structure Dict")
-    structure_dict = grouping_window.create_structure_dict(ifc_file, project.get())
+    ifc_elements = list(ifc_file.by_type("IfcElement"))
+    structure_dict = grouping_window.create_structure_dict(ifc_elements, project.get())
+    logging.info(f"creating Structure dict took {time.time() - start_time} seconds")
+
     if grouping_window.is_aborted():
         return
 
-    grouping_window.set_progress(15)
+    start_time = time.time()
+    grouping_window.set_progress(0)
     grouping_window.set_status("fill existing Groups")
     grouping_window.fill_existing_groups(ifc_file, structure_dict)
 
+    logging.info(f"fill existing Groups took {time.time() - start_time} seconds")
+
     if grouping_window.is_aborted():
         return
 
-    grouping_window.set_progress(50)
+    start_time = time.time()
+    grouping_window.set_progress(0)
     grouping_window.set_status("create Structure")
     owner_history = grouping_window.get_first_owner_history(ifc_file)
     grouping_window.create_new_grouping_strictures(ifc_file, structure_dict, owner_history,
                                                    project.get().get_objects(filter=False))
+    logging.info(f"Create Structure took {time.time() - start_time} seconds")
 
     if grouping_window.is_aborted():
         return
 
+    start_time = time.time()
     export_name = os.path.join(grouping_window.get_export_path(), grouping_window.get_ifc_name())
-    grouping_window.set_progress(75)
+    grouping_window.set_progress(0)
     grouping_window.set_status(f"Write File to {export_name}")
     if grouping_window.is_aborted():
         return
@@ -133,22 +143,19 @@ def create_groups_in_file(ifc_file: ifcopenshell.file, grouping_window: Type[aw_
     time.sleep(0.1)
     ifc_file.write(str(export_name))
     grouping_window.set_progress(100)
+    logging.info(f"Export took {time.time() - start_time} seconds")
 
 
-def grouping_finished(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Type[tool.IfcImporter],
-                      popups: Type[tool.Popups]):
-    ifc_import_widget = grouping_window.get_ifc_importer()
+def grouping_finished(grouping_window: Type[aw_tool.GroupingWindow], popups: Type[tool.Popups]):
+    grouping_window.set_progressbar_visible(False)
     if grouping_window.is_aborted():
-        ifc_importer.set_progressbar_visible(ifc_import_widget, False)
-        ifc_importer.set_close_button_text(ifc_import_widget, "Close")
-        ifc_importer.set_run_button_enabled(ifc_import_widget, True)
+        grouping_window.reset_buttons()
         grouping_window.set_is_running(False)
         return
 
     time.sleep(0.2)
     if not grouping_window.get_grouping_threadpool().activeThreadCount() > 0:
-        ifc_importer.set_close_button_text(ifc_import_widget, "Close")
-        ifc_importer.set_run_button_enabled(ifc_import_widget, True)
+        grouping_window.reset_buttons()
         popups.create_info_popup(f"Gruppierung abgeschlossen")
         grouping_window.set_is_running(False)
     else:
