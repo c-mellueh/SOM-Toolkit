@@ -261,3 +261,7 @@ class Util(som_gui.core.tool.Util):
     def fill_main_attribute(cls, widget: ui.MainAttributeSelector, pset_name: str, attribute_name: str):
         widget.ui.le_pset_name.setText(pset_name)
         widget.ui.le_attribute_name.setText(attribute_name)
+
+    @classmethod
+    def get_main_attribute(cls, widget: ui.MainAttributeSelector):
+        return widget.ui.le_pset_name.text(), widget.ui.le_attribute_name.text()

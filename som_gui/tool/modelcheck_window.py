@@ -79,15 +79,18 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         cls.get_window().ui.buttonBox.setStandardButtons(buttons)
 
     @classmethod
+    def reset_butons(cls):
+        cls.show_buttons(QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)
+        cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Apply).setText("Run")
+
+    @classmethod
     def set_run_button_text(cls, text):
         cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Apply).setText(text)
+
     @classmethod
     def set_abort_button_text(cls, text: str):
         cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Abort).setText(text)
 
-    @classmethod
-    def set_run_button_enabled(cls, state):
-        cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Abort).setEnabled(state)
 
     @classmethod
     def modelcheck_is_running(cls):
@@ -103,7 +106,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def create_import_runner(cls, ifc_import_path: str):
-        status_label = cls.get_properties().status_label
+        status_label = cls.get_status_label()
         runner = tool.IfcImporter.create_runner(status_label, ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner
@@ -115,7 +118,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def check_export_path(cls, export_path):
         export_folder_path = os.path.dirname(export_path)
-
         if not os.path.isdir(export_folder_path):
             tool.Popups.create_folder_dne_warning(export_folder_path)
             return False
@@ -123,11 +125,11 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def set_progress(cls, value: int):
-        cls.get_ifc_import_widget().widget.progress_bar.setValue(value)
+        cls.get_window().ui.widget_progress_bar.ui.progressBar.setValue(value)
 
     @classmethod
     def set_status(cls, text: str):
-        cls.get_properties().status_label.setText(text)
+        cls.get_status_label().setText(text)
 
     @classmethod
     def set_export_line_text(cls, text: str):
@@ -135,11 +137,10 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def read_inputs(cls):
-        widget = cls.get_properties().ifc_import_widget
-        ifc_paths = tool.IfcImporter.get_ifc_paths(widget)
-        export_path = cls.get_properties().export_line_edit.text()
-        main_pset = tool.IfcImporter.get_main_pset(widget)
-        main_attribute = tool.IfcImporter.get_main_attribute(widget)
+        window = cls.get_window()
+        ifc_paths = tool.Util.get_path_from_fileselector(window.ui.widget_import)
+        export_path = tool.Util.get_path_from_fileselector(window.ui.widget_export)[0]
+        main_pset, main_attribute = tool.Util.get_main_attribute(window.ui.main_attribute_widget)
         return ifc_paths, export_path, main_pset, main_attribute
 
     @classmethod
@@ -149,8 +150,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             cls.get_properties().thread_pool = tp
             tp.setMaxThreadCount(1)
         return cls.get_properties().thread_pool
-
-
 
     @classmethod
     def open_export_dialog(cls, base_path: os.PathLike | str, file_text: str):
@@ -254,13 +253,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         cls.get_properties().export_line_edit = export_line_edit
         cls.autofill_export_path()
 
-    @classmethod
-    def set_importer_widget(cls, widget: IfcImportWidget):
-        prop = cls.get_properties()
-        prop.ifc_import_widget = widget
-        prop.run_button = widget.widget.button_run
-        prop.abort_button = widget.widget.button_close
-        prop.status_label = widget.widget.label_status
 
     @classmethod
     def get_buttons(cls) -> tuple[QPushButton, QPushButton, QPushButton]:
@@ -407,3 +399,11 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def get_ifc_import_widget(cls) -> IfcImportWidget:
         return cls.get_properties().ifc_import_widget
+
+    @classmethod
+    def set_progressbar_visible(cls, state: bool):
+        cls.get_window().ui.widget_progress_bar.setVisible(state)
+
+    @classmethod
+    def get_status_label(cls) -> QLabel:
+        return cls.get_window().ui.widget_progress_bar.ui.label

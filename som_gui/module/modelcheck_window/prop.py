@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from .ui import ModelcheckWindow, ObjectCheckWidget
     from PySide6.QtCore import QThreadPool
     from PySide6.QtWidgets import QPushButton, QLineEdit, QLabel
-
+    from som_gui.tool.ifc_importer import IfcImportRunner
 
 class ModelcheckWindowProperties:
     active_window: ModelcheckWindow = None
@@ -22,5 +22,5 @@ class ModelcheckWindowProperties:
     abort_button: QPushButton = None
     ifc_import_widget = None
     status_label: QLabel = None
-    ifc_import_runners = list()
+    ifc_import_runners: list[IfcImportRunner] = list()
     initial_paint = True

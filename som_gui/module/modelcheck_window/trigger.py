@@ -34,19 +34,11 @@ def button_box_clicked(button: QPushButton):
         core.run_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
                          tool.IfcImporter, tool.Project, tool.Util)
     if button == bb.button(bb.StandardButton.Cancel):
-        core.cancel_clicked(tool.ModelcheckWindow, tool.Modelcheck)
+        core.cancel_clicked(tool.ModelcheckWindow)
 
     if button == bb.button(bb.StandardButton.Abort):
-        core.abort_clicked(tool.ModelcheckWindow, tool.Modelcheck)
+        core.abort_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.IfcImporter)
 
-
-def connect_buttons(export_button: QPushButton, run_button: QPushButton,
-                    abort_button: QPushButton):
-    export_button.clicked.connect(lambda: core.export_selection_clicked(tool.ModelcheckWindow, tool.Appdata))
-    run_button.clicked.connect(lambda: core.run_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
-                                                        tool.IfcImporter, tool.Project, tool.Util))
-
-    abort_button.clicked.connect(lambda: core.cancel_clicked(tool.ModelcheckWindow, tool.Modelcheck))
 
 def connect_object_check_tree(widget: QTreeView):
     model: QStandardItemModel = widget.model()
@@ -65,13 +57,12 @@ def connect_pset_check_tree(widget: QTreeView):
 
 def connect_modelcheck_runner(runner: ModelcheckRunner):
     runner.signaller.finished.connect(
-        lambda: core.modelcheck_finished(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
-                                         tool.IfcImporter))
+        lambda: core.modelcheck_finished(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults))
     runner.signaller.status.connect(tool.ModelcheckWindow.set_status)
     runner.signaller.progress.connect(tool.ModelcheckWindow.set_progress)
 
 def connect_ifc_import_runner(runner: QRunnable):
-    runner.signaller.started.connect(lambda: core.ifc_import_started(runner, tool.ModelcheckWindow, tool.IfcImporter))
+    runner.signaller.started.connect(lambda: core.ifc_import_started(runner, tool.ModelcheckWindow))
     runner.signaller.finished.connect(lambda: core.ifc_import_finished(runner, tool.ModelcheckWindow, tool.Modelcheck))
 
 def on_new_project():

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import time
 from typing import TYPE_CHECKING, Callable
@@ -31,13 +32,18 @@ class IfcImportRunner(QRunnable):
         self.ifc: ifcopenshell.file | None = None
         self.signaller = Signaller()
         self.status_label = status_label
+        self.is_aborted = False
 
     def run(self):
         self.signaller.started.emit()
         time.sleep(1)
         self.ifc = ifcopenshell.open(self.path)
-        self.signaller.finished.emit()
+        logging.info("Importer finished")
 
+        if not self.is_aborted:
+            self.signaller.finished.emit()
+        else:
+            logging.info("Import is aborted so Importer will notify noone")
 
 class IfcImporter(som_gui.core.tool.IfcImporter):
     @classmethod
@@ -55,6 +61,10 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
             tool.Popups.create_warning_popup(f"Attribut Name ist nicht ausgefüllt")
             return False
         return True
+
+    @classmethod
+    def import_is_running(cls) -> bool:
+        return cls.get_threadpool().activeThreadCount() > 0
 
     @classmethod
     def get_main_pset(cls, widget: ui.IfcImportWidget) -> str:
@@ -75,6 +85,10 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
     @classmethod
     def create_thread_pool(cls) -> QThreadPool:
         cls.get_properties().thread_pool = QThreadPool()
+        return cls.get_properties().thread_pool
+
+    @classmethod
+    def get_threadpool(cls) -> QThreadPool:
         return cls.get_properties().thread_pool
 
     @classmethod
@@ -103,7 +117,6 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
     @classmethod
     def create_runner(cls, status_label: QLabel, path: os.PathLike | str):
-
         if not os.path.exists(path):
             return
         return IfcImportRunner(path, status_label)
