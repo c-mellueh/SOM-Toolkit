@@ -4,7 +4,8 @@ from . import trigger
 
 
 class FileSelector(QWidget):
-    def __init__(self, name, extension, parent_widget, appdata_text=None, request_folder=False):
+    def __init__(self, name, extension, parent_widget, appdata_text=None, request_folder=False, request_save=False,
+                 single_request=False):
         super().__init__()
         self.ui = file_selector.Ui_Form()
         self.ui.setupUi(self)
@@ -14,4 +15,6 @@ class FileSelector(QWidget):
         self.extension = extension
         self.name = name
         self.appdata_text = appdata_text
+        self.request_save = request_save
+        self.single_request = single_request
         self.ui.pushButton.clicked.connect(lambda: trigger.fileselector_clicked(self))

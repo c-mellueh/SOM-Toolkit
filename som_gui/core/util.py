@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 def filesector_clicked(widget: ui.FileSelector, util: Type[tool.Util]):
-    paths = util.request_path(widget.name, widget.parent_widget, widget.extension, widget.appdata_text)
+    paths = util.request_path(widget)
     if not paths:
         return
     paths_texts = PATH_SEPERATOR.join(paths)

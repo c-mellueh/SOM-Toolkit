@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Callable, TYPE_CHECKING
 import os, tempfile
-from PySide6.QtCore import QFile, Qt, QModelIndex
+from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtGui import QAction, QShortcut, QKeySequence
 from PySide6.QtWidgets import QMenu, QMenuBar, QWidget, QComboBox, QFileDialog
 import SOMcreator
@@ -176,14 +176,20 @@ class Util(som_gui.core.tool.Util):
 
     @classmethod
     def create_file_selector(cls, name: str, file_extension: str, appdata_text: str,
-                             parent_widget: QWidget, ) -> ui.FileSelector:
+                             parent_widget: QWidget, request_folder=False, request_save=False,
+                             single_request=False) -> ui.FileSelector:
         """
         name: text that should be written in first row
         file_extension: file extension(s) that are allowed to search
         appdata_text: Appdata variable in which path(s) should be saved
         parent_widget: Widget that functions as parent (used for displaying QFileDialog)
+        request_folder: True if Folder is requested else File is Requested
+        request_save: True if Save is Requestes else Open is Requested
+        single_request: True if want to open single file else multifile is allowed
         """
-        selector = ui.FileSelector(name, file_extension, appdata_text, parent_widget)
+        selector = ui.FileSelector(name, file_extension, parent_widget, appdata_text, request_folder, request_save,
+                                   single_request)
+        return selector
 
     @classmethod
     def get_path_from_fileselector(cls, file_selector: ui.FileSelector) -> list[str]:
@@ -191,9 +197,17 @@ class Util(som_gui.core.tool.Util):
         return file_selector.ui.lineEdit.text().split(PATH_SEPERATOR)
 
     @classmethod
-    def request_path(cls, caption, parent_window, file_extension, appdata=None):
-        if appdata:
-            path = tool.Appdata.get_path(appdata)
+    def request_path(cls, widget: ui.FileSelector):
+        if widget.appdata_text:
+            path = tool.Appdata.get_path(widget.appdata_text)
         else:
             path = ""
-        return QFileDialog.getOpenFileName(parent_window, caption, path, file_extension)
+        if widget.request_folder:
+            return QFileDialog.getExistingDirectory(widget.parent_widget, widget.name, path)
+
+        if widget.request_save:
+            return QFileDialog.getSaveFileName(widget.parent_widget, widget.name, path, widget.extension)[0]
+
+        if widget.single_request:
+            return QFileDialog.getOpenFileName(widget.parent_widget, widget.name, path, widget.extension)[0]
+        return QFileDialog.getOpenFileNames(widget.parent_widget, widget.name, path, widget.extension)[0]
