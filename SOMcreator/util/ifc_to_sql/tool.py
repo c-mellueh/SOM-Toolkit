@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from SOMcreator.util.ifc_to_sql.properties import IfcToSQLProperties
 import SOMcreator
 import sqlite3
-from SOMcreator import tool
+from SOMcreator.util.sql import tool
 from ifcopenshell import entity_instance
 import ifcopenshell
 import logging
