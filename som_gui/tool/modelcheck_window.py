@@ -83,13 +83,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         cls.show_buttons(QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)
         cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Apply).setText("Run")
 
-    @classmethod
-    def set_run_button_text(cls, text):
-        cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Apply).setText(text)
-
-    @classmethod
-    def set_abort_button_text(cls, text: str):
-        cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Abort).setText(text)
 
 
     @classmethod
@@ -131,9 +124,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     def set_status(cls, text: str):
         cls.get_status_label().setText(text)
 
-    @classmethod
-    def set_export_line_text(cls, text: str):
-        cls.get_properties().export_line_edit.setText(text)
 
     @classmethod
     def read_inputs(cls):
@@ -150,11 +140,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             cls.get_properties().thread_pool = tp
             tp.setMaxThreadCount(1)
         return cls.get_properties().thread_pool
-
-    @classmethod
-    def open_export_dialog(cls, base_path: os.PathLike | str, file_text: str):
-        path = QFileDialog.getSaveFileName(cls.get_properties().active_window, "Export", base_path, file_text)[0]
-        return path
 
     @classmethod
     def set_pset_tree_title(cls, text: str):
@@ -183,9 +168,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         prop = cls.get_properties()
         return prop.active_window.ui.property_set_tree
 
-    @classmethod
-    def get_item_status_dict(cls):
-        checkstate_dict = cls.get_item_checkstate_dict()
 
     @classmethod
     def get_item_checkstate_dict(cls):
@@ -231,28 +213,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         if export_path:
             cls.get_properties().export_line_edit.setText(export_path)
 
-    @classmethod
-    def create_export_line(cls, widget: IfcImportWidget):
-        export_line_edit = QLineEdit()
-        export_line_edit.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Maximum))
-        widget.widget.gridLayout.addWidget(QLabel("Export Pfad"), 5, 0, 1, 2)
-        widget.widget.gridLayout.addWidget(export_line_edit, 6, 0, 1, 2)
-        export_button = QPushButton()
-        export_button.setMaximumSize(QSize(25, 16777215))
-        widget.widget.gridLayout.addWidget(export_button, 6, 2, 1, 1)
-        export_button.show()
-        export_button.setText("...")
-        cls.get_properties().export_button = export_button
-        cls.get_properties().export_line_edit = export_line_edit
-        cls.autofill_export_path()
 
-
-    @classmethod
-    def get_buttons(cls) -> tuple[QPushButton, QPushButton, QPushButton]:
-        export = cls.get_properties().export_button
-        run = cls.get_properties().run_button
-        abort = cls.get_properties().abort_button
-        return export, run, abort
 
     @classmethod
     def is_window_allready_build(cls):
@@ -280,13 +241,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     def connect_buttons(cls):
         bb = cls.get_window().ui.buttonBox
         bb.clicked.connect(trigger.button_box_clicked)
-
-    @classmethod
-    def add_splitter(cls, layout: QLayout, orientation: Qt.Orientation, widget_1: QWidget, widget_2: QWidget):
-        splitter = QSplitter(orientation)
-        layout.addWidget(splitter)
-        splitter.addWidget(widget_1)
-        splitter.addWidget(widget_2)
 
     @classmethod
     def create_object_tree_row(cls, obj: SOMcreator.Object):

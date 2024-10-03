@@ -1,9 +1,5 @@
-import os
-
-from PySide6.QtWidgets import QWidget, QLabel
-from PySide6.QtCore import QRunnable, Signal, QObject
+from PySide6.QtWidgets import QWidget
 from . import qt
-import ifcopenshell
 
 
 class IfcImportWidget(QWidget):
@@ -11,10 +7,3 @@ class IfcImportWidget(QWidget):
         super().__init__()
         self.widget = qt.Ui_Form()
         self.widget.setupUi(self)
-
-
-from time import sleep
-import random
-
-
-

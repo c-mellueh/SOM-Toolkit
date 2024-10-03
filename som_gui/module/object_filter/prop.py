@@ -10,7 +10,6 @@ if TYPE_CHECKING:
     from .ui import SettingsWidget
 
 class ObjectFilterProperties:
-    active_use_case_index: int
     active_use_case_name: str
     object_dict: dict
     pset_dict: dict

@@ -26,8 +26,6 @@ class MainWindowProperties:
     }
     ui: Ui_MainWindow | None = None
     window: MainWindow = None
-    status_bar_label: QLabel = None
     application: QApplication = None
     mapping_window = None
-    attribute_import_window = None
     grouping_window = None

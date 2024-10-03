@@ -46,8 +46,6 @@ class Signaller(QObject):
 
 
 class PopupHandler(logging.Handler):
-    error_sigal = Signal()
-
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent

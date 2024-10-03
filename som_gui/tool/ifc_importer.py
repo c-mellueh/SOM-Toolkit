@@ -111,7 +111,6 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         file_extension = "IFC Files (*.ifc *.IFC);;"
         tool.Util.fill_file_selector(widget.widget.file_selector_widget, "Ifc File", file_extension, IFC_PATH)
         prop = cls.get_properties()
-        prop.active_importer = widget
         cls.set_progressbar_visible(widget, False)
         return widget
 
@@ -122,12 +121,6 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         return IfcImportRunner(path, status_label)
 
 
-
-    @classmethod
-    def create_export_line(cls, widget: ui.IfcImportWidget) -> tuple[QPushButton, QLineEdit]:
-        widget = tool.Util.create_file_selector(name="", file_extension="*.xlsx", appdata_text="ModelcheckExport",
-                                                request_save=True)
-        return widget.ui.pushButton, widget.ui.lineEdit
 
     @classmethod
     def set_close_button_text(cls, widget: ui.IfcImportWidget, text: str):

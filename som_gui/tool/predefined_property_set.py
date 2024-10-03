@@ -225,7 +225,10 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
             match = tool.AttributeCompare.find_matching_entity(pset, uuid_dict, name_dict)
             if match:
                 pset_list.append((pset, match))
-                missing.remove(match)
+                if match not in missing:
+                    print(match)
+                else:
+                    missing.remove(match)
             else:
                 pset_list.append((pset, None))
         for pset in missing:

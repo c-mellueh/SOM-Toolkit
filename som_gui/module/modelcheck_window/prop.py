@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 class ModelcheckWindowProperties:
     active_window: ModelcheckWindow = None
     check_state_dict: dict[SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute, bool] = None
-    enabled_dict: dict[SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute, bool] = None
     selected_object: SOMcreator.Object = None
     thread_pool: QThreadPool = None
     export_button: QPushButton = None

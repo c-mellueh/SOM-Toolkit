@@ -8,7 +8,7 @@ import time
 import SOMcreator
 from SOMcreator.datastructure.som_json import MainDict
 from typing import TYPE_CHECKING
-from . import core, project, predefined_pset, property_set, object_, aggregation, inheritance
+from . import core, project, predefined_pset, property_set, object_, aggregation
 from SOMcreator.templates import HOME_DIR, MAPPING_TEMPLATE
 from SOMcreator.util import xml
 import jinja2

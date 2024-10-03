@@ -22,6 +22,5 @@ class WindowProperties:
     filter_is_activated: bool = False
     allowed_scenes: list = list()  # Scenes that will be displayed after filter is activated
     filter_object: SOMcreator.Object | None = None
-    abbreviation_line_edit: QLineEdit | None = None
     object_info_line_edit: QLineEdit | None = None
     grouping_window = None

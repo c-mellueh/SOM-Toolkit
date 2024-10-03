@@ -127,7 +127,6 @@ def ifc_import_finished(runner: IfcImportRunner, attribute_import: Type[tool.Att
 def start_attribute_import(file: ifcopenshell.file, path, attribute_import: Type[tool.AttributeImport],
                            attribute_import_results: Type[tool.AttributeImportResults],
                            attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
-    attribute_import.set_ifc_path(path)
     pset_name, attribute_name = attribute_import.get_main_pset(), attribute_import.get_main_attribute()
     attribute_import_sql.connect_to_data_base(attribute_import_sql.get_database_path())
     entity_list = list(file.by_type("IfcObject"))

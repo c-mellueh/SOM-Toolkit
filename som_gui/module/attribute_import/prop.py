@@ -25,7 +25,6 @@ class AttributeImportProperties:
     abort_button: QPushButton = None
     status_label: QLabel = None
     progress_bar: QProgressBar = None
-    ifc_path: str = None
     ifc_combobox: QComboBox = None
     som_combobox: QComboBox = None
     all_keyword: str = "Alles"

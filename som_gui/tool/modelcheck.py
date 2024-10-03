@@ -88,11 +88,6 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         cls.get_properties().runner.signaller.progress.emit(value)
 
 
-
-    @classmethod
-    def get_entites(cls, ifc: ifcopenshell.file) -> list[ifcopenshell.entity_instance]:
-        return ifc.by_type("IfcElement")
-
     @classmethod
     def get_element_count(cls) -> int:
         return len(cls.get_properties().group_parent_dict.keys())

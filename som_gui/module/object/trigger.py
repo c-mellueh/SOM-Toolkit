@@ -32,8 +32,6 @@ def connect():
 def item_double_clicked():
     core.create_object_info_widget(mode=1, object_tool=tool.Object)
 
-def item_copy_event():
-    core.create_object_info_widget(mode=2, object_tool=tool.Object)
 
 def object_info_paint_event():
     core.object_info_refresh(tool.Object)

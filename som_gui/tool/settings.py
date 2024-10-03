@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Callable, Type
-import logging
-from PySide6.QtWidgets import QVBoxLayout, QTabWidget, QWidget, QToolBox, QSpacerItem, QSizePolicy
+from PySide6.QtWidgets import QVBoxLayout, QTabWidget, QWidget, QToolBox
 from PySide6.QtGui import QIcon
 from PySide6.QtCore import QSize
 import som_gui.core.tool
@@ -73,9 +72,6 @@ class Settings(som_gui.core.tool.Settings):
         tab_widget.addTab(tb, tab_name)
         return tb
 
-    @classmethod
-    def get_tab_names(cls) -> list[str]:
-        return sorted(cls.get_properties().tab_dict.keys())
 
     @classmethod
     def get_accept_functions(cls) -> list[Callable]:

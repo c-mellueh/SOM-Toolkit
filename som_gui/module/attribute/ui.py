@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QHeaderView
 from PySide6.QtCore import Qt, QRect, QSize
-from . import compare_widget
+from .qt import compare_widget
 
 
 class AttributeWidget(QWidget):

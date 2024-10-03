@@ -8,16 +8,10 @@ if TYPE_CHECKING:
     from som_gui.tool.ifc_importer import IfcImportRunner
 
 class GroupingWindowProperties:
-    grouping_attribute_line_edit: QLineEdit | None = None
-    grouping_pset_line_edit: QLineEdit | None = None
     grouping_window: ui.GroupingWindow | None = None
-    status_label: QLabel | None = None
     export_button: QPushButton | None = None
     export_line_edit: QLineEdit | None = None
     ifc_importer: IfcImportWidget | None = None
-    ifc_button: QPushButton | None = None  # Button for selecting IFC files
-    run_button: QPushButton | None = None
-    abort_button: QPushButton | None = None
     abort: bool = False
     main_attribute: tuple[str, str] = ("", "")
     grouping_attribute: tuple[str, str] = ("", "")

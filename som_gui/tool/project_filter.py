@@ -6,9 +6,9 @@ from som_gui.module import project_filter
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui import tool
 from typing import TYPE_CHECKING, Callable
-from PySide6.QtWidgets import QTableWidgetItem, QMenu, QCheckBox
-from PySide6.QtGui import QStandardItemModel, QAction
-from PySide6.QtCore import Qt, QAbstractItemModel
+from PySide6.QtWidgets import QTableWidgetItem, QMenu
+from PySide6.QtGui import QAction
+from PySide6.QtCore import Qt
 from SOMcreator import UseCase, Phase
 
 if TYPE_CHECKING:

@@ -33,7 +33,7 @@ class Exports(som_gui.core.tool.Exports):
                 return export_folder
 
     @classmethod
-    def export_card_1(cl, project: SOMcreator.Project, parent_window, path):
+    def export_card_1(cls, project: SOMcreator.Project, parent_window, path):
         file_text = "Excel Files (*.xlsx);;"
         src, answer = QFileDialog.getOpenFileName(parent_window, "Template Excel", path, file_text)
         if not answer:

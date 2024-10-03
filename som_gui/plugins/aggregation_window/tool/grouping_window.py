@@ -11,6 +11,7 @@ from ..module.grouping_window import trigger
 import os
 import logging
 from ..module.grouping_window.constants import GROUP_FOLDER, GROUP_PSET, IFC_MOD, GROUP_ATTRIBUTE
+
 if TYPE_CHECKING:
     from ..module.grouping_window.prop import GroupingWindowProperties
     from som_gui.module.ifc_importer.ui import IfcImportWidget
@@ -53,55 +54,14 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         return widget
 
     @classmethod
-    def create_grouping_line_edits(cls):
-        layout = QHBoxLayout()
-        pset_le = QLineEdit()
-        pset_le.setPlaceholderText(pset_le.tr(f"Gruppen PropertySet"))
-        attribute_le = QLineEdit()
-        attribute_le.setPlaceholderText(pset_le.tr(f"Gruppen Attribut"))
-
-        cls.get_properties().grouping_pset_line_edit = pset_le
-        cls.get_properties().grouping_attribute_line_edit = attribute_le
-        layout.addWidget(pset_le)
-        layout.addWidget(attribute_le)
-        cls.get().layout().addLayout(layout)
-
-        return layout
-
-    @classmethod
     def autofill_export_path(cls):
         export_path = tool.Appdata.get_path(GROUP_FOLDER)
         if export_path:
             cls.get_properties().export_line_edit.setText(export_path)
 
     @classmethod
-    def add_ifc_importer_to_window(cls, ifc_importer: IfcImportWidget):
-        cls.get_properties().ifc_importer = ifc_importer
-        cls.get_properties().ifc_button = ifc_importer.widget.button_ifc
-        cls.get_properties().run_button = ifc_importer.widget.button_run
-        cls.get_properties().abort_button = ifc_importer.widget.button_close
-        cls.get_properties().status_label = ifc_importer.widget.label_status
-        cls.get().layout().addWidget(ifc_importer)
-
-    @classmethod
-    def add_export_line(cls, export_button, export_line_edit):
-        cls.get_properties().export_button = export_button
-        cls.get_properties().export_line_edit = export_line_edit
-
-
-
-    @classmethod
     def connect_buttons(cls, ):
         cls.get().ui.buttonBox.clicked.connect(trigger.button_clicked)
-
-    @classmethod
-    def open_export_dialog(cls, base_path: os.PathLike | str):
-        path = QFileDialog.getExistingDirectory(cls.get(), "Export", base_path)
-        return path
-
-    @classmethod
-    def set_export_line_text(cls, text: str):
-        cls.get_properties().export_line_edit.setText(text)
 
     @classmethod
     def read_inputs(cls):
@@ -118,8 +78,6 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
             tool.Popups.create_folder_dne_warning(export_folder_path)
             return False
         return True
-
-
 
     @classmethod
     def reset_abort(cls) -> None:
@@ -168,7 +126,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def create_import_runner(cls, ifc_import_path: str):
-        status_label = cls.get_properties().status_label
+        status_label = cls.get().ui.widget_progress_bar.ui.label
         runner = tool.IfcImporter.create_runner(status_label, ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner

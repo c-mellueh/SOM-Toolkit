@@ -1,8 +1,6 @@
 from . import prop, trigger, ui
 import som_gui
 
-ALL = "Alles"
-
 def register():
     som_gui.AttributeImportProperties = prop.AttributeImportProperties()
     som_gui.AttributeImportSQLProperties = prop.AttributeImportSQLProperties()
