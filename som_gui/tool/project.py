@@ -18,16 +18,6 @@ if TYPE_CHECKING:
 
 
 class Project(som_gui.core.tool.Project):
-    @classmethod
-    def update_plugin_dict(cls, project: SOMcreator.Project, key, value):
-        if not project.plugin_dict.get(key):
-            project.plugin_dict[key] = value
-        elif isinstance(project.plugin_dict[key], (dict, set)):
-            project.plugin_dict[key].update(value)
-        elif isinstance(project.plugin_dict[key], (list, tuple)):
-            project.plugin_dict[key] += value
-        else:
-            project.plugin_dict[key] = value
 
     @classmethod
     def add_plugin_save_function(cls, func: Callable):
@@ -40,10 +30,6 @@ class Project(som_gui.core.tool.Project):
     def get_plugin_functions(cls):
         return cls.get_properties().plugin_save_functions
 
-    @classmethod
-    def delete_plugin_dict(cls):
-        proj = cls.get()
-        proj.plugin_dict = dict()
 
     @classmethod
     def get_filter_matrix(cls):
@@ -69,10 +55,6 @@ class Project(som_gui.core.tool.Project):
         prop.active_project = proj
         som_gui.on_new_project()
 
-    @classmethod
-    def get_project_phase_list(cls):
-        proj = cls.get()
-        return proj.get_phases()
 
     @classmethod
     def load_project(cls, path: str):

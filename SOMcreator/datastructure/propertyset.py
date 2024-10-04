@@ -90,7 +90,7 @@ class PropertySet(Hirarchy):
             return
 
         super(PropertySet, self).delete()
-        [attrib.delete(recursive) for attrib in self.get_attributes(filter=False) if attrib]
+        [attrib.delete(recursive) for attrib in list(self.get_attributes(filter=False)) if attrib]
         if self.object is not None:
             self.object.remove_property_set(self)
 

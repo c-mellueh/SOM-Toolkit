@@ -71,7 +71,7 @@ class ModelcheckResults(som_gui.core.tool.ModelcheckResults):
     @classmethod
     def get_max_width(cls, worksheet: Worksheet) -> list[int]:
         col_widths = [0 for _ in range(worksheet.max_column)]
-        for r_index, row in enumerate(worksheet, start=1):
+        for row in worksheet:
             for c_index, cell in enumerate(row):
                 length = len(str(cell.value))
                 if length > col_widths[c_index]:

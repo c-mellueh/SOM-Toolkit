@@ -1,4 +1,4 @@
-from . import ui, prop, trigger, window
+from . import qt, ui, prop, trigger
 import som_gui
 
 def register():

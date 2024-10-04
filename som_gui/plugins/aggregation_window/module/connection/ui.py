@@ -17,7 +17,6 @@ class Connection(QGraphicsPathItem):
         self.bottom_node: NodeProxy | None = bottom_node
         self.connection_type = connection_type
         self.setPen(QPen(QPalette().text().color()))
-        self.last_anchor_points: tuple[QPointF, QPointF] | tuple[None, None] = (None, None)
 
     def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, *args, **kwargs):
         trigger.paint_connection(self)

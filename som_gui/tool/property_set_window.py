@@ -45,10 +45,6 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         return window.widget.table_widget
 
     @classmethod
-    def set_active_window(cls, window):
-        cls.get_properties().active_window = window
-
-    @classmethod
     def get_window_by_property_set(cls, property_set: SOMcreator.PropertySet):
         prop = cls.get_properties()
         return {pset: window for window, pset in prop.property_set_windows.items()}.get(property_set)

@@ -1,8 +1,7 @@
-from .widget import Ui_Form
+from som_gui.module.bsdd.qt.widget import Ui_Form
 from som_gui.icons import get_icon
-from PySide6.QtWidgets import QWidget, QStatusBar
+from PySide6.QtWidgets import QWidget
 from . import trigger
-from som_gui import __version__ as version
 from som_gui import tool
 class Widget(QWidget):
     def __init__(self):

@@ -16,10 +16,6 @@ def connect():
     core.add_compare_widget(tool.PredefinedPropertySetCompare, tool.AttributeCompare, tool.CompareWindow)
 
 
-def connect_object_pset_context_menu(actions: list[QAction], functions: list[Callable]):
-    for action, func in zip(actions, functions):
-        action.triggered.connect(func)
-
 
 def connect_dialog(dialog: PredefinedPropertySetWindow):
     dialog.widget.list_view_pset.itemSelectionChanged.connect(

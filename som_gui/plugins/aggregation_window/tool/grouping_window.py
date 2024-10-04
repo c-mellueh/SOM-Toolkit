@@ -3,17 +3,19 @@ import som_gui.plugins.aggregation_window.core.tool
 import som_gui
 import SOMcreator
 import ifcopenshell
-from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QPushButton, QFileDialog
-from PySide6.QtCore import QRunnable, Signal, QObject, QThreadPool
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QFileDialog, QDialogButtonBox
+from PySide6.QtCore import Signal, QObject, QThreadPool, QRunnable
 from typing import TYPE_CHECKING, Iterator
 from ..module.grouping_window import ui as grouping_ui
 from ..module.grouping_window import trigger
 import os
 import logging
 from ..module.grouping_window.constants import GROUP_FOLDER, GROUP_PSET, IFC_MOD, GROUP_ATTRIBUTE
+
 if TYPE_CHECKING:
     from ..module.grouping_window.prop import GroupingWindowProperties
     from som_gui.module.ifc_importer.ui import IfcImportWidget
+    from som_gui.tool.ifc_importer import IfcImportRunner
 from som_gui import tool
 from SOMcreator.util.group_ifc import GROUP, get_ifc_el_info, ELEMENT, IFC_REP, fill_existing_groups, \
     create_aggregation_structure
@@ -52,82 +54,21 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         return widget
 
     @classmethod
-    def create_grouping_line_edits(cls):
-        layout = QHBoxLayout()
-        pset_le = QLineEdit()
-        pset_le.setPlaceholderText(pset_le.tr(f"Gruppen PropertySet"))
-        attribute_le = QLineEdit()
-        attribute_le.setPlaceholderText(pset_le.tr(f"Gruppen Attribut"))
-
-        cls.get_properties().grouping_pset_line_edit = pset_le
-        cls.get_properties().grouping_attribute_line_edit = attribute_le
-        layout.addWidget(pset_le)
-        layout.addWidget(attribute_le)
-        cls.get().layout().addLayout(layout)
-
-        return layout
-
-    @classmethod
     def autofill_export_path(cls):
         export_path = tool.Appdata.get_path(GROUP_FOLDER)
         if export_path:
             cls.get_properties().export_line_edit.setText(export_path)
 
     @classmethod
-    def add_ifc_importer_to_window(cls, ifc_importer: IfcImportWidget):
-        cls.get_properties().ifc_importer = ifc_importer
-        cls.get_properties().ifc_button = ifc_importer.widget.button_ifc
-        cls.get_properties().run_button = ifc_importer.widget.button_run
-        cls.get_properties().abort_button = ifc_importer.widget.button_close
-        cls.get_properties().status_label = ifc_importer.widget.label_status
-        cls.get().layout().addWidget(ifc_importer)
-
-    @classmethod
-    def add_export_line(cls, export_button, export_line_edit):
-        cls.get_properties().export_button = export_button
-        cls.get_properties().export_line_edit = export_line_edit
-
-    @classmethod
-    def autofill_grouping_attributes(cls):
-        group_attribute = tool.Appdata.get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
-        group_pset = tool.Appdata.get_string_setting(IFC_MOD, GROUP_PSET)
-        if group_attribute:
-            cls.get_properties().grouping_attribute_line_edit.setText(group_attribute)
-        if group_pset:
-            cls.get_properties().grouping_pset_line_edit.setText(group_pset)
-
-    @classmethod
-    def get_buttons(cls) -> tuple[QPushButton, QPushButton, QPushButton, QPushButton]:
-        ifc = cls.get_properties().ifc_button
-        export = cls.get_properties().export_button
-        run = cls.get_properties().run_button
-        abort = cls.get_properties().abort_button
-        return ifc, export, run, abort
-
-    @classmethod
-    def connect_buttons(cls, buttons):
-        trigger.connect_buttons(*buttons)
-
-    @classmethod
-    def open_export_dialog(cls, base_path: os.PathLike | str):
-        path = QFileDialog.getExistingDirectory(cls.get(), "Export", base_path)
-        return path
-
-    @classmethod
-    def set_export_line_text(cls, text: str):
-        cls.get_properties().export_line_edit.setText(text)
+    def connect_buttons(cls, ):
+        cls.get().ui.buttonBox.clicked.connect(trigger.button_clicked)
 
     @classmethod
     def read_inputs(cls):
-        group_pset_name = cls.get_properties().grouping_pset_line_edit.text()
-        group_attribute_name = cls.get_properties().grouping_attribute_line_edit.text()
-        export_path = cls.get_properties().export_line_edit.text()
-
-        widget = cls.get_properties().ifc_importer
-        ifc_paths = tool.IfcImporter.get_ifc_paths(widget)
-        main_pset_name = tool.IfcImporter.get_main_pset(widget)
-        main_attribute_name = tool.IfcImporter.get_main_attribute(widget)
-
+        group_pset_name, group_attribute_name = tool.Util.get_attribute(cls.get().ui.widget_group_attribute)
+        main_pset_name, main_attribute_name = tool.Util.get_attribute(cls.get().ui.widget_ident_attribute)
+        export_path = tool.Util.get_path_from_fileselector(cls.get().ui.widget_export)
+        ifc_paths = tool.Util.get_path_from_fileselector(cls.get().ui.widget_import)
         return group_pset_name, group_attribute_name, main_pset_name, main_attribute_name, ifc_paths, export_path
 
     @classmethod
@@ -137,8 +78,6 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
             tool.Popups.create_folder_dne_warning(export_folder_path)
             return False
         return True
-
-
 
     @classmethod
     def reset_abort(cls) -> None:
@@ -177,25 +116,27 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def set_status(cls, text: str):
-        cls.get_properties().status_label.setText(text)
+        cls.get().ui.widget_progress_bar.ui.label.setText(text)
 
     @classmethod
     def set_progress(cls, value: int):
-        cls.get_ifc_importer().widget.progress_bar.setValue(value)
+        widget = cls.get().ui.widget_progress_bar
+        widget.show()
+        widget.ui.progressBar.setVisible(value)
 
     @classmethod
     def create_import_runner(cls, ifc_import_path: str):
-        status_label = cls.get_properties().status_label
+        status_label = cls.get().ui.widget_progress_bar.ui.label
         runner = tool.IfcImporter.create_runner(status_label, ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner
 
     @classmethod
-    def connect_ifc_import_runner(cls, runner: QRunnable):
+    def connect_ifc_import_runner(cls, runner: IfcImportRunner):
         trigger.connect_ifc_import_runner(runner)
 
     @classmethod
-    def destroy_import_runner(cls, runner: QRunnable):
+    def destroy_import_runner(cls, runner: IfcImportRunner):
         cls.get_properties().ifc_import_runners.remove(runner)
 
     @classmethod
@@ -244,13 +185,21 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     # Grouping Functions
     @classmethod
-    def create_structure_dict(cls, ifc_file: ifcopenshell.file, project: SOMcreator.Project) -> dict:
+    def create_structure_dict(cls, ifc_elements: list[ifcopenshell.entity_instance],
+                              project: SOMcreator.Project) -> dict:
         """Iterate over all Entities, build the targeted Datastructure"""
 
         targeted_group_structure = {GROUP: {}, ELEMENT: {}, IFC_REP: None}
         bk_dict = {obj.ident_value: obj for obj in project.get_objects(filter=True)}
+        entity_count = len(ifc_elements)
 
-        for index, el in enumerate(list(ifc_file.by_type("IfcElement"))):
+        percentages = list()
+        for index, el in enumerate(ifc_elements):
+            percentage = int(index / entity_count * 100)
+            if percentage % 5 == 0 and percentage not in percentages:
+                cls.set_progress(percentage)
+                percentages.append(percentage)
+
             if cls.is_aborted():
                 return dict()
             attrib, gruppe, identity = get_ifc_el_info(el, cls.get_attribute_bundle())
@@ -300,4 +249,17 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def close_window(cls):
+        cls.get().hide()
         cls.get().close()
+
+    @classmethod
+    def set_buttons(cls, buttons):
+        cls.get().ui.buttonBox.setStandardButtons(buttons)
+
+    @classmethod
+    def set_progressbar_visible(cls, state: bool):
+        cls.get().ui.widget_progress_bar.setVisible(state)
+
+    @classmethod
+    def reset_buttons(cls):
+        cls.set_buttons(QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)

@@ -24,7 +24,6 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     def create_abbreviation_line_edit(cls, layout: QHBoxLayout) -> QLineEdit:
         le = QLineEdit()
         le.setPlaceholderText(le.tr("Abkürzung"))
-        cls.get_properties().abbreviation_line_edit = le
         layout.insertWidget(-1, le)
         return le
 

@@ -7,14 +7,6 @@ if TYPE_CHECKING:
     from . import ui
 
 
-class InfoDict(TypedDict):
-    get_function: Callable
-    set_function: Callable
-    display_name: str
-    value: str
-    options: Callable
-
-
 class ProjectProperties:
     active_project: Project | None = None
     shourtcuts: list = list()

@@ -4,15 +4,15 @@ class Appdata:
 
     def _write_config(self, config_parser): pass
 
-    def get_bool_setting(self, section, path): pass
+    def get_bool_setting(self, section, path, default): pass
+
+    def get_integer_setting(self, section, path, default): pass
 
     def get_path(self, value): pass
 
     def get_settings_path(self, ): pass
 
     def get_string_setting(self, section, path, default): pass
-
-    def is_plugin_activated(self, name): pass
 
     def set_path(self, path, value): pass
 
@@ -398,7 +398,7 @@ class AttributeImportSQL:
 
     def init_database(self, db_path): pass
 
-    def set_current_object_filter(self, usecase, phase): pass
+    def set_current_object_filter(self, usecases, phases): pass
 
     def set_database_path(self, path): pass
 
@@ -584,8 +584,6 @@ class Exports:
 
 
 class IfcImporter:
-    def autofill_ifcpath(self, line_edit): pass
-
     def check_inputs(self, ifc_paths, main_pset, main_attribute): pass
 
     def create_export_line(self, widget): pass
@@ -596,8 +594,6 @@ class IfcImporter:
 
     def create_thread_pool(self, ): pass
 
-    def fill_main_attribute(self, widget, pset, attribute): pass
-
     def get_ifc_paths(self, widget): pass
 
     def get_main_attribute(self, widget): pass
@@ -606,7 +602,9 @@ class IfcImporter:
 
     def get_properties(self, ): pass
 
-    def open_file_dialog(self, window, base_path): pass
+    def get_threadpool(self, ): pass
+
+    def import_is_running(self, ): pass
 
     def set_close_button_text(self, widget, text): pass
 
@@ -640,9 +638,15 @@ class Logging:
 
     def get_properties(self, ): pass
 
+    def get_settings_widget(self, ): pass
+
     def get_signaller(self, ): pass
 
     def set_log_level(self, log_level): pass
+
+    def set_logging_directory(self, path, check_if_identical): pass
+
+    def set_settings_widget(self, widget): pass
 
     def show_exception_popup(self, exctype, value, tb): pass
 
@@ -948,13 +952,13 @@ class ModelcheckWindow:
 
     def collapse_selection(self, widget): pass
 
-    def connect_buttons(self, buttons): pass
-
-    def connect_check_widget(self, widget): pass
+    def connect_buttons(self, ): pass
 
     def connect_ifc_import_runner(self, runner): pass
 
     def connect_modelcheck_runner(self, runner): pass
+
+    def connect_object_tree(self, object_tree_widget): pass
 
     def create_checkbox_widget(self, ): pass
 
@@ -980,8 +984,6 @@ class ModelcheckWindow:
 
     def get_buttons(self, ): pass
 
-    def get_export_path(self, widget): pass
-
     def get_ifc_import_widget(self, ): pass
 
     def get_item_check_state(self, item): pass
@@ -1002,6 +1004,8 @@ class ModelcheckWindow:
 
     def get_selected_object(self, ): pass
 
+    def get_status_label(self, ): pass
+
     def get_window(self, ): pass
 
     def is_initial_paint(self, ): pass
@@ -1014,25 +1018,29 @@ class ModelcheckWindow:
 
     def read_inputs(self, ): pass
 
+    def reset_butons(self, ): pass
+
     def resize_object_tree(self, ): pass
 
     def set_abort_button_text(self, text): pass
 
     def set_export_line_text(self, text): pass
 
-    def set_importer_widget(self, widget): pass
-
     def set_item_check_state(self, item, cs): pass
 
     def set_progress(self, value): pass
 
+    def set_progressbar_visible(self, state): pass
+
     def set_pset_tree_title(self, text): pass
 
-    def set_run_button_enabled(self, state): pass
+    def set_run_button_text(self, text): pass
 
     def set_selected_object(self, obj): pass
 
     def set_status(self, text): pass
+
+    def show_buttons(self, buttons): pass
 
     def show_pset_tree_title(self, show): pass
 
@@ -1106,7 +1114,6 @@ class Object:
 
     def get_active_object(self, ): pass
 
-
     def get_existing_ident_values(self, ): pass
 
     def get_ifc_mappings(self, ): pass
@@ -1178,10 +1185,6 @@ class Object:
 
 
 class ObjectFilter:
-    def add_use_case_to_settings_window(self, ): pass
-
-    def connect_settings_widget(self, widget): pass
-
     def create_header_data(self, filter_matrix): pass
 
     def create_row(self, entity, filter_index_list): pass
@@ -1201,10 +1204,6 @@ class ObjectFilter:
     def get_active_checkstate(self, ): pass
 
     def get_active_object(self, ): pass
-
-    def get_active_use_case(self, ): pass
-
-    def get_active_use_case_name(self, ): pass
 
     def get_allowed_phases_by_usecase(self, project, usecase): pass
 
@@ -1238,7 +1237,7 @@ class ObjectFilter:
 
     def get_object_tree(self, ): pass
 
-    def get_objectfilter_properties(self, ): pass
+    def get_properties(self, ): pass
 
     def get_pset_dict(self, ): pass
 
@@ -1256,13 +1255,11 @@ class ObjectFilter:
 
     def get_widget(self, ): pass
 
+    def import_filter_matrixes(self, project): pass
+
     def is_object_enabled(self, index): pass
 
     def is_tree_clicked(self, ): pass
-
-    def import_filter_matrix(self, ): pass
-
-    def reset_use_case_data(self, ): pass
 
     def resize_tree(self, tree): pass
 
@@ -1273,8 +1270,6 @@ class ObjectFilter:
     def set_header_labels(self, model, labels): pass
 
     def set_settings_widget(self, widget): pass
-
-    def set_use_case(self, use_case_name): pass
 
     def toggle_checkstate(self, index): pass
 
@@ -1376,7 +1371,25 @@ class ObjectFilterCompare:
 
 
 class Plugins:
+    def create_settings_entry(self, plugin_name): pass
+
+    def get_available_plugins(self, ): pass
+
+    def get_description(self, name): pass
+
+    def get_friendly_name(self, name): pass
+
     def get_properties(self, ): pass
+
+    def get_settings_widget(self, ): pass
+
+    def import_plugin(self, plugin_name): pass
+
+    def is_plugin_active(self, plugin_name): pass
+
+    def set_plugin_active(self, plugin_name, state): pass
+
+    def set_settings_widget(self, widget): pass
 
 
 class Popups:
@@ -1500,17 +1513,11 @@ class PredefinedPropertySetCompare:
 class Project:
     def add_plugin_save_function(self, func): pass
 
-    def add_project_setting(self, get_function, set_function, name, options): pass
-
-    def add_setting_to_dialog(self, setting_dict): pass
-
     def create_combobox(self, filter_1): pass
 
     def create_mapping_window(self, filter_1, filter_2): pass
 
     def create_project(self, ): pass
-
-    def create_project_infos(self, ): pass
 
     def delete_plugin_dict(self, ): pass
 
@@ -1528,21 +1535,7 @@ class Project:
 
     def get_plugin_functions(self, ): pass
 
-    def get_project_author(self, ): pass
-
-    def get_project_infos(self, ): pass
-
-    def get_project_name(self, ): pass
-
-    def get_project_phase(self, ): pass
-
     def get_project_phase_list(self, ): pass
-
-    def get_project_phase_name(self, ): pass
-
-    def get_project_phase_name_list(self, ): pass
-
-    def get_project_version(self, ): pass
 
     def get_properties(self, ): pass
 
@@ -1560,27 +1553,13 @@ class Project:
 
     def merge_projects(self, project_1, project_2): pass
 
-    def refresh_info_dict(self, info_dict, index): pass
-
-    def reset_project_infos(self, ): pass
-
     def set_active_project(self, proj): pass
-
-    def set_project_author(self, author): pass
-
-    def set_project_name(self, name): pass
-
-    def set_project_phase(self, phase_name): pass
-
-    def set_project_version(self, version): pass
 
     def set_settings_general_widget(self, widget): pass
 
     def set_settings_path_widget(self, widget): pass
 
     def update_plugin_dict(self, project, key, value): pass
-
-    def update_setting(self, info_dict): pass
 
 
 class ProjectFilter:
@@ -1828,6 +1807,8 @@ class Settings:
 class Util:
     def add_shortcut(self, sequence, window, function): pass
 
+    def autofill_path(self, line_edit, appdata): pass
+
     def bool_to_checkstate(self, checkstate): pass
 
     def checkstate_to_bool(self, checkstate): pass
@@ -1838,15 +1819,29 @@ class Util:
 
     def create_directory(self, path): pass
 
+    def create_file_selector(self, name, file_extension, appdata_text, request_folder, request_save,
+                             single_request): pass
+
     def create_tempfile(self, suffix): pass
 
+    def fill_file_selector(self, widget, name, file_extension, appdata_text, request_folder, request_save,
+                           single_request): pass
+
+    def fill_main_attribute(self, widget, pset_name, attribute_name, pset_placeholder, attribute_placeholder): pass
+
     def get_all_attributes(self, object_list): pass
+
+    def get_attribute(self, widget): pass
 
     def get_combobox_values(self, combo_box): pass
 
     def get_new_name(self, standard_name, existing_names): pass
 
+    def get_path_from_fileselector(self, file_selector): pass
+
     def get_properties(self, ): pass
+
+    def get_status_text(self, ): pass
 
     def get_text_from_combobox(self, combobox): pass
 
@@ -1855,6 +1850,8 @@ class Util:
     def menu_bar_add_menu(self, menu_bar, menu_dict, menu_path): pass
 
     def menu_bar_create_actions(self, menu_dict, parent): pass
+
+    def request_path(self, widget): pass
 
     def transform_guid(self, guid, add_zero_width): pass
 

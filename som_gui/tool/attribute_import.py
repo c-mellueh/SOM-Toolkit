@@ -287,16 +287,6 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
 
         cls.unlock_updating()
 
-    @classmethod
-    def get_value_checkstate_dict(cls, value_list: list[tuple[str, int, int, int]]):
-        value_dict = dict()
-        for value, value_count, check, check_count in value_list:
-            if check_count > 1:
-                cs = Qt.CheckState.PartiallyChecked
-            else:
-                cs = Qt.CheckState.Checked if check == 1 else Qt.CheckState.Unchecked
-            value_dict[value] = cs
-        return value_dict
 
     @classmethod
     def find_checkbox_row_in_table(cls, table_widget: QTableWidget, checkbox: ui.ValueCheckBox):
@@ -382,13 +372,6 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         return palette.base(), palette.text()
 
     @classmethod
-    def set_attribute_row_text_color(cls, row: int, color: Qt.GlobalColor):
-        table_widget = cls.get_attribute_table()
-        for column in range(table_widget.columnCount()):
-            item = table_widget.item(row, column)
-            item.setBackground(QBrush(color))
-
-    @classmethod
     def update_attribute_table_styling(cls):
         table_widget = cls.get_attribute_table()
         column_count = table_widget.columnCount()
@@ -403,10 +386,6 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
     def get_properties(cls) -> AttributeImportProperties:
         return som_gui.AttributeImportProperties
-
-    @classmethod
-    def set_ifc_path(cls, path):
-        cls.get_properties().ifc_path = path
 
     @classmethod
     def connect_import_buttons(cls):
@@ -429,7 +408,6 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
     def add_ifc_importer_to_window(cls, ifc_importer: IfcImportWidget):
         cls.get_properties().ifc_importer = ifc_importer
-        cls.get_properties().ifc_button = ifc_importer.widget.button_ifc
         cls.get_properties().run_button = ifc_importer.widget.button_run
         cls.get_properties().abort_button = ifc_importer.widget.button_close
         cls.get_properties().status_label = ifc_importer.widget.label_status
@@ -827,11 +805,6 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             """
         return query
 
-    @classmethod
-    def create_existing_filter(cls):
-        return f"""
-            AND  a.IsDefined == 0
-            """
 
     @classmethod
     def get_wanted_ifc_types(cls):

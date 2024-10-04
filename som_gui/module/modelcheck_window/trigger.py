@@ -2,19 +2,20 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from som_gui import tool
 from som_gui.core import modelcheck_window as core
-from som_gui.core import modelcheck as mc_core
-from som_gui.core import modelcheck_results as mc_results_core
+import logging
+from PySide6.QtWidgets import QTreeView, QPushButton, QDialogButtonBox
+
 if TYPE_CHECKING:
-    from .ui import ModelcheckWindow
-    from PySide6.QtCore import QRunnable
-    from PySide6.QtWidgets import QTreeView, QPushButton
-    from PySide6.QtGui import QStandardItemModel
-    from som_gui.module.ifc_importer.ui import IfcImportWidget
+    from .ui import ModelcheckWindow, ObjectTree, PsetTree
+    from PySide6.QtCore import QRunnable, QItemSelectionModel, QPoint
+
+    from PySide6.QtGui import QStandardItem, QStandardItemModel
     from som_gui.tool.modelcheck import ModelcheckRunner
+
 
 def connect():
     tool.MainWindow.add_action("Modelle/Modellprüfung",
-                               lambda: core.open_window(tool.ModelcheckWindow, tool.IfcImporter))
+                               lambda: core.open_window(tool.ModelcheckWindow, tool.Util, tool.Project))
 
 
 def paint_object_tree():
@@ -25,39 +26,57 @@ def paint_pset_tree():
     core.paint_pset_tree(tool.ModelcheckWindow)
 
 
-def connect_buttons(ifc_button: QPushButton, export_button: QPushButton, run_button: QPushButton,
-                    abort_button: QPushButton):
-    export_button.clicked.connect(lambda: core.export_selection_clicked(tool.ModelcheckWindow, tool.Appdata))
-    run_button.clicked.connect(lambda: core.run_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
-                                                        tool.IfcImporter, tool.Project, tool.Util))
+def button_box_clicked(button: QPushButton):
+    logging.debug(f"button_box_clicked: {button}")
+    bb = tool.ModelcheckWindow.get_window().ui.buttonBox
+    if button == bb.button(bb.StandardButton.Apply):
+        core.run_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
+                         tool.IfcImporter, tool.Project, tool.Util)
+    if button == bb.button(bb.StandardButton.Cancel):
+        core.cancel_clicked(tool.ModelcheckWindow)
 
-    abort_button.clicked.connect(lambda: core.cancel_clicked(tool.ModelcheckWindow, tool.Modelcheck))
+    if button == bb.button(bb.StandardButton.Abort):
+        core.abort_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.IfcImporter)
 
-def connect_object_check_tree(widget: QTreeView):
-    model: QStandardItemModel = widget.model()
-    model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.ModelcheckWindow))
-    widget.selectionModel().selectionChanged.connect(
-        lambda item: core.object_selection_changed(widget.selectionModel(), tool.ModelcheckWindow))
-    widget.customContextMenuRequested.connect(
-        lambda pos: core.object_tree_conect_menu_requested(pos, widget, tool.ModelcheckWindow))
+
+def connect_object_check_tree(widget: ObjectTree):
+    core.connect_object_tree(widget, tool.ModelcheckWindow)
+
+
+def object_checkstate_changed(item: QStandardItem):
+    core.object_check_changed(item, tool.ModelcheckWindow)
+
+
+def object_selection_changed(selection_model: QItemSelectionModel):
+    core.object_selection_changed(selection_model, tool.ModelcheckWindow)
+
+
+def object_tree_context_menu_requested(pos: QPoint, tree_widget: ObjectTree):
+    core.object_tree_context_menu_requested(pos, tree_widget, tool.ModelcheckWindow)
 
 
 def connect_pset_check_tree(widget: QTreeView):
-    model: QStandardItemModel = widget.model()
-    model.itemChanged.connect(lambda item: core.object_check_changed(item, tool.ModelcheckWindow))
-    widget.customContextMenuRequested.connect(
-        lambda pos: core.object_tree_conect_menu_requested(pos, widget, tool.ModelcheckWindow))
+    core.connect_pset_tree(widget, tool.ModelcheckWindow)
+
+
+def pset_checkstate_changed(item: QStandardItem):
+    core.object_check_changed(item, tool.ModelcheckWindow)
+
+
+def pset_context_menu_requested(pos, widget: PsetTree):
+    core.object_tree_context_menu_requested(pos, widget, tool.ModelcheckWindow)
 
 def connect_modelcheck_runner(runner: ModelcheckRunner):
     runner.signaller.finished.connect(
-        lambda: core.modelcheck_finished(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
-                                         tool.IfcImporter))
+        lambda: core.modelcheck_finished(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults))
     runner.signaller.status.connect(tool.ModelcheckWindow.set_status)
     runner.signaller.progress.connect(tool.ModelcheckWindow.set_progress)
 
+
 def connect_ifc_import_runner(runner: QRunnable):
-    runner.signaller.started.connect(lambda: core.ifc_import_started(runner, tool.ModelcheckWindow, tool.IfcImporter))
+    runner.signaller.started.connect(lambda: core.ifc_import_started(runner, tool.ModelcheckWindow))
     runner.signaller.finished.connect(lambda: core.ifc_import_finished(runner, tool.ModelcheckWindow, tool.Modelcheck))
+
 
 def on_new_project():
     pass

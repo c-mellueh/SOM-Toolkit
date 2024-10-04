@@ -1,20 +1,28 @@
 from __future__ import annotations
+
+import logging
 from typing import Callable, TYPE_CHECKING
 import os, tempfile
-from PySide6.QtCore import QFile, Qt, QModelIndex
+from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtGui import QAction, QShortcut, QKeySequence
-from PySide6.QtWidgets import QMenu, QMenuBar, QWidget, QComboBox
+from PySide6.QtWidgets import QMenu, QMenuBar, QWidget, QComboBox, QFileDialog, QLineEdit
+from som_gui.module.util.constants import PATH_SEPERATOR
+
 import SOMcreator
 import som_gui.core.tool
 from som_gui import tool
 import re
+from som_gui.module.util import ui
+
 if TYPE_CHECKING:
     from som_gui.module.util.prop import MenuDict, UtilProperties
+
 
 class Util(som_gui.core.tool.Util):
     @classmethod
     def get_properties(cls) -> UtilProperties:
         return som_gui.UtilProperties
+
     @classmethod
     def menu_bar_add_menu(cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str) -> MenuDict:
         menu_steps = menu_path.split("/")
@@ -152,10 +160,6 @@ class Util(som_gui.core.tool.Util):
 
         return loop_name(standard_name)
 
-    @classmethod
-    def get_all_attributes(cls, object_list: list[SOMcreator.Object]):
-        return [a for o in object_list for p in o.get_property_sets(filter=False) for a in
-                p.get_attributes(filter=False)]
 
     @classmethod
     def get_text_from_combobox(cls, combobox: QComboBox) -> dict[str, QModelIndex]:
@@ -169,3 +173,100 @@ class Util(som_gui.core.tool.Util):
         if not proj:
             return ""
         return f"{proj.name} v{proj.version}"
+
+    @classmethod
+    def create_file_selector(cls, name: str, file_extension: str, appdata_text: str, request_folder=False,
+                             request_save=False,
+                             single_request=False) -> ui.FileSelector:
+        """
+        name: text that should be written in first row
+        file_extension: file extension(s) that are allowed to search
+        appdata_text: Appdata variable in which path(s) should be saved
+        parent_widget: Widget that functions as parent (used for displaying QFileDialog)
+        request_folder: True if Folder is requested else File is Requested
+        request_save: True if Save is Requestes else Open is Requested
+        single_request: True if want to open single file else multifile is allowed
+        """
+        selector = ui.FileSelector()
+        cls.fill_file_selector(selector, name, file_extension, appdata_text, request_folder, request_save,
+                               single_request)
+        return selector
+
+    @classmethod
+    def fill_file_selector(cls, widget: ui.FileSelector, name: str, file_extension: str, appdata_text: str,
+                           request_folder=False, request_save=False,
+                           single_request=False):
+        """
+        if file selector is created as placeholder in QtDesiger it can befilled after creation
+                name: text that should be written in first row
+        file_extension: file extension(s) that are allowed to search
+        appdata_text: Appdata variable in which path(s) should be saved
+        parent_widget: Widget that functions as parent (used for displaying QFileDialog)
+        request_folder: True if Folder is requested else File is Requested
+        request_save: True if Save is Requestes else Open is Requested
+        single_request: True if want to open single file else multifile is allowed
+        """
+        widget.name = name
+        widget.extension = file_extension
+        widget.appdata_text = appdata_text
+        widget.request_folder = request_folder
+        widget.request_save = request_save
+        widget.single_request = single_request
+        widget.ui.label.setText(name)
+
+        if appdata_text:
+            cls.autofill_path(widget.ui.lineEdit, appdata_text)
+
+    @classmethod
+    def get_path_from_fileselector(cls, file_selector: ui.FileSelector) -> list[str]:
+        return file_selector.ui.lineEdit.text().split(PATH_SEPERATOR)
+
+    @classmethod
+    def request_path(cls, widget: ui.FileSelector):
+        if widget is None:
+            logging.debug(f"Widget is not defined")
+            return []
+
+        if widget.appdata_text:
+            start_path = tool.Appdata.get_path(widget.appdata_text)
+        else:
+            start_path = ""
+        if widget.request_folder:
+            path = [QFileDialog.getExistingDirectory(widget, widget.name, start_path)]
+
+        elif widget.request_save:
+            path = [QFileDialog.getSaveFileName(widget, widget.name, start_path, widget.extension)[0]]
+
+        elif widget.single_request:
+            path = [QFileDialog.getOpenFileName(widget, widget.name, start_path, widget.extension)[0]]
+        elif all([widget, widget.name, widget.extension]):
+            path = QFileDialog.getOpenFileNames(widget, widget.name, start_path, widget.extension)[0]
+        else:
+            logging.warning(f"inputs are missing. no path requestable")
+            return []
+        if widget.appdata_text:
+            tool.Appdata.set_path(widget.appdata_text, path)
+
+        return path
+
+    @classmethod
+    def autofill_path(cls, line_edit: QLineEdit, appdata: str):
+        path = tool.Appdata.get_path(appdata)
+        if path:
+            if isinstance(path, list):
+                path = PATH_SEPERATOR.join(path)
+            line_edit.setText(path)
+
+    @classmethod
+    def fill_main_attribute(cls, widget: ui.AttributeSelector, pset_name: str, attribute_name: str,
+                            pset_placeholder: str = None, attribute_placeholder: str = None):
+        widget.ui.le_pset_name.setText(pset_name)
+        widget.ui.le_attribute_name.setText(attribute_name)
+        if pset_placeholder is not None:
+            widget.ui.le_pset_name.setPlaceholderText(pset_placeholder)
+        if attribute_placeholder is not None:
+            widget.ui.le_attribute_name.setPlaceholderText(attribute_placeholder)
+
+    @classmethod
+    def get_attribute(cls, widget: ui.AttributeSelector):
+        return widget.ui.le_pset_name.text(), widget.ui.le_attribute_name.text()

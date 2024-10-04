@@ -11,8 +11,6 @@ from datetime import datetime
 GROUP = "Gruppe"
 ELEMENT = "Element"
 
-SUBGROUPS = "subgroups"
-SUBELEMENT = "subelement"
 
 rev_datatype_dict = {
     str:   "IfcText/IfcLabel",
@@ -48,7 +46,7 @@ def check_file(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck],
     modelcheck.set_progress(100)
 
 
-def check_entities(entities, modelcheck: Type[tool.Modelcheck]):
+def check_entities(entities: list[ifcopenshell.entity_instance], modelcheck: Type[tool.Modelcheck]):
     modelcheck.set_status(f"{len(entities)} Entitäten werden geprüft")
     for entity in entities:
         modelcheck.increment_checked_items()

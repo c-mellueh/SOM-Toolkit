@@ -19,7 +19,6 @@ from som_gui.module.attribute import ui as attribute_ui
 if TYPE_CHECKING:
     from som_gui.module.object_filter.prop import ObjectFilterProperties, ObjectFilterCompareProperties
     from som_gui.module.object_filter import ui
-USE_CASE = "Anwedungsfall"
 YELLOW = "#897e00"
 
 
@@ -295,10 +294,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
         model = QStandardItemModel()
         property_set_tree.setModel(model)
 
-    @classmethod
-    def get_use_case_name_list(cls) -> list[str]:
-        project = tool.Project.get()
-        return [uc.name for uc in project.get_usecases()]
 
     @classmethod
     def set_header_labels(cls, model: QStandardItemModel, labels: list[str]):
@@ -530,20 +525,6 @@ class ObjectFilter(som_gui.core.tool.ObjectFilter):
     @classmethod
     def get_settings_widget(cls) -> ui.SettingsWidget:
         return cls.get_properties().settings_widget
-
-    @classmethod
-    def get_allowed_usecases_by_phase(cls, project: SOMcreator.Project, phase: SOMcreator.Phase):
-        usecase_list = project.get_usecases()
-        filter_matrix = project.get_filter_matrix()
-        phase_index = project.get_phase_index(phase)
-        return [uc for uc, state in zip(usecase_list, filter_matrix[phase_index]) if state]
-
-    @classmethod
-    def get_allowed_phases_by_usecase(cls, project: SOMcreator.Project, usecase: SOMcreator.UseCase):
-        phase_list = project.get_phases()
-        usecase_index = project.get_use_case_index(usecase)
-        filter_matrix = project.get_filter_matrix()
-        return [phase for phase, value_list in zip(phase_list, filter_matrix) if value_list[usecase_index]]
 
 
 class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
@@ -796,9 +777,6 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
     def set_usecase_list(cls, usecase_list: list[SOMcreator.UseCase]):
         cls.get_properties().usecase_list = usecase_list
 
-    @classmethod
-    def get_use_case_index_list(cls) -> list[tuple[int, int]]:
-        return cls.get_properties().use_case_indexes
 
     @classmethod
     def add_use_case_index_tuple(cls, value: tuple[int, int]):
@@ -812,9 +790,6 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
     def set_phase_list(cls, phase_list: list[SOMcreator.Phase]):
         cls.get_properties().phase_list = phase_list
 
-    @classmethod
-    def get_phase_index_list(cls) -> list[tuple[int, int]]:
-        return cls.get_properties().phase_indexes
 
     @classmethod
     def add_phase_index_tuple(cls, value: tuple[int, int]):
@@ -828,9 +803,6 @@ class ObjectFilterCompare(som_gui.core.tool.ObjectFilterCompare):
             cls.get_properties().match_list = [(usecase, phase) for usecase in usecases for phase in phases]
         return cls.get_properties().match_list
 
-    @classmethod
-    def get_extra_column_count(cls):
-        return len(cls.get_match_list())
 
     @classmethod
     def get_existing_header_texts(cls, tree_widget: QTreeWidget) -> list[str]:

@@ -8,7 +8,6 @@ if TYPE_CHECKING:
 
 
 class IfcImportProperties:
-    active_importer: IfcImportWidget = None
     imported_model: ifc_file = None
     runner: QRunnable = None
     thread_pool: QThreadPool = None

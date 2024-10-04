@@ -148,7 +148,7 @@ def _handle_attribute_rule_tree(xml_rule: Element) -> Element:
 
 
 def _handle_tree_structure(author: str, required_data_dict: dict, parent_xml_container,
-                           object_structure: dict[SOMcreator.Object, set[SOMcreator.Object]],
+                           object_structure: dict[SOMcreator.Object, SOMcreator.Object],
                            parent_obj: SOMcreator.Object,
                            template,
                            xml_object_dict, export_type: str) -> None:
@@ -167,7 +167,7 @@ def _handle_tree_structure(author: str, required_data_dict: dict, parent_xml_con
             create_js_object(new_xml_container)
         elif export_type == TABLE_EXPORT:
             create_table_object(new_xml_container)
-        children = object_structure.get(parent_obj)
+
         for child_obj in sorted(children, key=lambda x: x.name):
             _handle_tree_structure(author, required_data_dict, new_xml_container, object_structure, child_obj, template,
                                    xml_object_dict,
@@ -204,7 +204,9 @@ def _handle_tree_structure(author: str, required_data_dict: dict, parent_xml_con
 
         xml_object_dict[xml_checkrun] = obj
 
-    if object_structure.get(parent_obj) and required_data_dict.get(parent_obj):
+    children = {o for o, parent in object_structure.items() if parent == parent_obj}
+
+    if children and required_data_dict.get(parent_obj):
         create_container(parent_xml_container)
     else:
         if export_type == JS_EXPORT:
@@ -281,12 +283,12 @@ def _handle_rule_items_by_pset_dict(pset_dict: dict[SOMcreator.PropertySet, list
 
 
 def _handle_object_rules(author: str, required_data_dict: dict,
-                         object_structure: dict[SOMcreator.Object, set[SOMcreator.Object]],
+                         object_structure: dict[SOMcreator.Object, SOMcreator.Object],
                          base_xml_container: Element,
                          template: jinja2.Template, export_type: str) -> dict[Element, SOMcreator.Object]:
     xml_object_dict: dict[Element, SOMcreator.Object] = dict()
 
-    root_nodes = {obj for obj, value in object_structure.items() if not value}
+    root_nodes = {obj for obj, parent in object_structure.items() if parent is None}
 
     for root_node in sorted(root_nodes, key=lambda x: x.name):
         _handle_tree_structure(author, required_data_dict, base_xml_container, object_structure, root_node, template,
@@ -411,10 +413,10 @@ def build_full_data_dict(proj: SOMcreator.Project) -> dict[
 def export(project: SOMcreator.Project,
            required_data_dict: dict[SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]],
            path: str, main_pset: str, main_attribute: str,
-           object_structure: dict[SOMcreator.Object, set[SOMcreator.Object]] = None,
+           object_structure: dict[SOMcreator.Object, SOMcreator.Object] = None,
            export_type: str = "JS") -> None:
     if not object_structure:
-        object_structure = {o: o.get_children(filter=True) for o in project.get_objects(filter=True)}
+        object_structure = {o: o.parent for o in project.get_objects(filter=True)}
 
     template = _handle_template(templates.TEMPLATE)
     xml_container, xml_qa_export = _init_xml(project.author, project.name, project.version)

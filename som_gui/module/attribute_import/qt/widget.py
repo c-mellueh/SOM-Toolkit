@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'AttributeImport.ui'
+## Form generated from reading UI file 'Widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.2
+## Created by: Qt User Interface Compiler version 6.7.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QHBox
 
 from som_gui.module.attribute_import.ui import (AttributeTable, IfcTypeComboBox, PropertySetTable, SOMTypeComboBox,
                                                 ValueTable)
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -62,7 +63,6 @@ class Ui_Form(object):
 
         self.horizontal_layout_buttons.addWidget(self.label_object_count)
 
-
         self.main_layout.addLayout(self.horizontal_layout_buttons)
 
         self.splitter_tables = QSplitter(Form)
@@ -102,7 +102,7 @@ class Ui_Form(object):
         self.table_widget_property_set.horizontalHeader().setMinimumSectionSize(1)
         self.table_widget_property_set.horizontalHeader().setDefaultSectionSize(39)
         self.table_widget_property_set.horizontalHeader().setHighlightSections(True)
-        self.table_widget_property_set.horizontalHeader().setProperty("showSortIndicator", False)
+        self.table_widget_property_set.horizontalHeader().setProperty(u"showSortIndicator", False)
         self.table_widget_property_set.horizontalHeader().setStretchLastSection(True)
         self.table_widget_property_set.verticalHeader().setVisible(False)
         self.table_widget_property_set.verticalHeader().setHighlightSections(False)
@@ -136,7 +136,7 @@ class Ui_Form(object):
         self.table_widget_attribute.horizontalHeader().setMinimumSectionSize(1)
         self.table_widget_attribute.horizontalHeader().setDefaultSectionSize(50)
         self.table_widget_attribute.horizontalHeader().setHighlightSections(True)
-        self.table_widget_attribute.horizontalHeader().setProperty("showSortIndicator", False)
+        self.table_widget_attribute.horizontalHeader().setProperty(u"showSortIndicator", False)
         self.table_widget_attribute.horizontalHeader().setStretchLastSection(True)
         self.table_widget_attribute.verticalHeader().setVisible(False)
 
@@ -170,7 +170,6 @@ class Ui_Form(object):
 
         self.horizontalLayout_2.addWidget(self.label_value)
 
-
         self.vertical_layout_value.addLayout(self.horizontalLayout_2)
 
         self.table_widget_value = ValueTable(self.verticalLayoutWidget)
@@ -180,7 +179,7 @@ class Ui_Form(object):
         self.table_widget_value.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_widget_value.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table_widget_value.horizontalHeader().setMinimumSectionSize(1)
-        self.table_widget_value.horizontalHeader().setProperty("showSortIndicator", False)
+        self.table_widget_value.horizontalHeader().setProperty(u"showSortIndicator", False)
         self.table_widget_value.horizontalHeader().setStretchLastSection(True)
         self.table_widget_value.verticalHeader().setVisible(False)
 
@@ -216,13 +215,12 @@ class Ui_Form(object):
 
         self.horzontal_layout_action_buttons.addWidget(self.button_accept)
 
-
         self.main_layout.addLayout(self.horzontal_layout_action_buttons)
-
 
         self.retranslateUi(Form)
 
         QMetaObject.connectSlotsByName(Form)
+
     # setupUi
 
     def retranslateUi(self, Form):
@@ -236,4 +234,3 @@ class Ui_Form(object):
         self.button_abort.setText(QCoreApplication.translate("Form", u"Abbrechen", None))
         self.button_accept.setText(QCoreApplication.translate("Form", u"\u00dcbernehmen", None))
     # retranslateUi
-

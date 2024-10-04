@@ -4,48 +4,57 @@ import logging
 import time
 from typing import TYPE_CHECKING, Type
 import os
+
+from PySide6.QtWidgets import QDialogButtonBox
+
 import SOMcreator
-from PySide6.QtCore import Qt, QThread
+from PySide6.QtCore import Qt
 
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.modelcheck.constants import ISSUE_PATH
+
 if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtGui import QStandardItem
-    from PySide6.QtCore import QItemSelectionModel, QModelIndex, QRunnable
-
-
-def open_window(modelcheck_window: Type[tool.ModelcheckWindow], ifc_importer: Type[tool.IfcImporter]):
-    if modelcheck_window.is_window_allready_build():
-        modelcheck_window.get_window().show()
-        return
-
+    from PySide6.QtCore import QItemSelectionModel, QModelIndex
+    from som_gui.tool.ifc_importer import IfcImportRunner
+    from som_gui.module.modelcheck_window import ui
+def open_window(modelcheck_window: Type[tool.ModelcheckWindow], util: Type[tool.Util], project: Type[tool.Project]):
+    proj = project.get()
     window = modelcheck_window.create_window()
-    check_box_widget = modelcheck_window.create_checkbox_widget()
-    ifc_import_widget = ifc_importer.create_importer()
-    export_button, export_line_edit = ifc_importer.create_export_line(ifc_import_widget)
-    modelcheck_window.get_properties().export_button = export_button
-    modelcheck_window.get_properties().export_line_edit = export_line_edit
-    modelcheck_window.autofill_export_path()
-
-    modelcheck_window.set_importer_widget(ifc_import_widget)
-    modelcheck_window.add_splitter(window.vertical_layout, Qt.Orientation.Vertical, check_box_widget, ifc_import_widget)
-    modelcheck_window.connect_buttons(modelcheck_window.get_buttons())
-    modelcheck_window.connect_check_widget(check_box_widget)
+    main_pset_name, main_attribute_name = proj.get_main_attribute()
+    util.fill_main_attribute(window.ui.main_attribute_widget, main_pset_name, main_attribute_name)
+    util.fill_file_selector(window.ui.widget_import, "IFC Pfad", "IFC Files (*.ifc *.IFC);;", "modelcheck_files")
+    util.fill_file_selector(window.ui.widget_export, "Export Pfad", "Excel FIle (*xlsx);;", "modelcheck_export",
+                            request_save=True)
+    modelcheck_window.connect_buttons()
+    modelcheck_window.set_progressbar_visible(False)
+    modelcheck_window.reset_butons()
     window.show()
 
 
-def cancel_clicked(modelcheck_window: Type[tool.ModelcheckWindow], modelcheck: Type[tool.Modelcheck]):
-    if modelcheck_window.modelcheck_is_running():
+def cancel_clicked(modelcheck_window: Type[tool.ModelcheckWindow]):
+    modelcheck_window.close_window()
+
+
+def abort_clicked(modelcheck_window: Type[tool.ModelcheckWindow], modelcheck: Type[tool.Modelcheck],
+                  ifc_importer: Type[tool.IfcImporter]):
+    import_pool = ifc_importer.get_threadpool()
+    check_pool = modelcheck_window.get_modelcheck_threadpool()
+    logging.debug(f"Cancel clicked. Active threads: {import_pool.activeThreadCount()}|{check_pool.activeThreadCount()}")
+
+    if ifc_importer.import_is_running():
+        for runner in modelcheck_window.get_properties().ifc_import_runners:
+            runner.is_aborted = True
+    if modelcheck_window.modelcheck_is_running() or ifc_importer.import_is_running():
+        modelcheck_window.set_progressbar_visible(False)
         modelcheck.abort()
-        modelcheck_window.set_abort_button_text(f"Close")
-    else:
-        modelcheck_window.close_window()
+        modelcheck_window.reset_butons()
+
 
 def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
                 modelcheck: Type[tool.Modelcheck], modelcheck_results: Type[tool.ModelcheckResults],
                 ifc_importer: Type[tool.IfcImporter], project: Type[tool.Project], util: Type[tool.Util]):
-
     ifc_paths, export_path, main_pset, main_attribute = modelcheck_window.read_inputs()
     inputs_are_valid = ifc_importer.check_inputs(ifc_paths, main_pset, main_attribute)
     export_path_is_valid = modelcheck_window.check_export_path(export_path)
@@ -53,9 +62,7 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
     if not inputs_are_valid or not export_path_is_valid:
         return
 
-    modelcheck_window.set_run_button_enabled(False)
-    modelcheck_window.set_abort_button_text(f"Abbrechen")
-    ifc_import_widget = modelcheck_window.get_ifc_import_widget()
+    modelcheck_window.show_buttons(QDialogButtonBox.StandardButton.Abort)
     modelcheck.reset_abort()
     modelcheck.set_main_pset_name(main_pset)
     modelcheck.set_main_attribute_name(main_attribute)
@@ -63,13 +70,11 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
 
     pool = ifc_importer.create_thread_pool()
     pool.setMaxThreadCount(3)
-
     modelcheck.init_sql_database(util.create_tempfile(".db"))
     modelcheck.reset_guids()
     modelcheck.build_ident_dict(set(project.get().get_objects(filter=True)))
-
-    ifc_importer.set_progressbar_visible(ifc_import_widget, True)
-    ifc_importer.set_progress(ifc_import_widget, 0)
+    modelcheck_window.set_progress(0)
+    modelcheck_window.set_progressbar_visible(True)
     for path in ifc_paths:
         modelcheck_window.set_status(f"Import '{os.path.basename(path)}'")
         runner = modelcheck_window.create_import_runner(path)
@@ -77,15 +82,13 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
         pool.start(runner)
 
 
-def ifc_import_started(runner: QRunnable, modelcheck_window: Type[tool.ModelcheckWindow],
-                       ifc_importer: Type[tool.IfcImporter]):
-    widget = modelcheck_window.get_ifc_import_widget()
-    ifc_importer.set_progressbar_visible(widget, True)
-    ifc_importer.set_status(widget, f"Import '{os.path.basename(runner.path)}'")
-    ifc_importer.set_progress(widget, 0)
+def ifc_import_started(runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow]):
+    modelcheck_window.set_progressbar_visible(True)
+    modelcheck_window.set_status(f"Import '{os.path.basename(runner.path)}'")
+    modelcheck_window.set_progress(0)
 
 
-def ifc_import_finished(runner: QRunnable, modelcheck_window: Type[tool.ModelcheckWindow],
+def ifc_import_finished(runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow],
                         modelcheck: Type[tool.Modelcheck]):
     """
     creates and runs Modelcheck Runnable
@@ -103,31 +106,18 @@ def ifc_import_finished(runner: QRunnable, modelcheck_window: Type[tool.Modelche
 
 
 def modelcheck_finished(modelcheck_window: Type[tool.ModelcheckWindow], modelcheck: Type[tool.Modelcheck],
-                        modelcheck_results: Type[tool.ModelcheckResults], ifc_importer: Type[tool.IfcImporter]):
+                        modelcheck_results: Type[tool.ModelcheckResults]):
     if modelcheck.is_aborted():
-        ifc_import_widget = modelcheck_window.get_ifc_import_widget()
-        ifc_importer.set_progressbar_visible(ifc_import_widget, False)
-        modelcheck_window.set_abort_button_text(f"Close")
-        modelcheck_window.set_run_button_enabled(True)
+        modelcheck_window.reset_butons()
         return
 
     time.sleep(0.2)
     if not modelcheck_window.modelcheck_is_running():
         modelcheck_results.last_modelcheck_finished()
-        modelcheck_window.set_abort_button_text(f"Close")
-        modelcheck_window.set_run_button_enabled(True)
+        modelcheck_window.reset_butons()
     else:
         logging.info(f"Prüfung von Datei abgeschlossen, nächste Datei ist dran.")
 
-
-def export_selection_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
-                             appdata: Type[tool.Appdata]):
-    old_path = appdata.get_path(ISSUE_PATH)
-    new_path = modelcheck_window.open_export_dialog(old_path, "Excel File (*.xlsx);;")
-    if not new_path:
-        return
-    appdata.set_path(ISSUE_PATH, new_path)
-    modelcheck_window.set_export_line_text(new_path)
 
 
 def paint_object_tree(modelcheck_window: Type[tool.ModelcheckWindow], project: Type[tool.Project]):
@@ -139,6 +129,7 @@ def paint_object_tree(modelcheck_window: Type[tool.ModelcheckWindow], project: T
     if modelcheck_window.is_initial_paint:
         modelcheck_window.resize_object_tree()
 
+
 def object_check_changed(item: QStandardItem, modelcheck_window: Type[tool.ModelcheckWindow]):
     obj = item.data(CLASS_REFERENCE)
     if item.column() != 0:
@@ -149,6 +140,7 @@ def object_check_changed(item: QStandardItem, modelcheck_window: Type[tool.Model
 
 
 def object_selection_changed(selection_model: QItemSelectionModel, modelcheck_window: Type[tool.ModelcheckWindow]):
+    logging.debug(f"ObjectSelectionChanged: {selection_model.selectedIndexes()}")
     selected_indexes = selection_model.selectedIndexes()
     if not selected_indexes:
         return
@@ -175,7 +167,7 @@ def paint_pset_tree(modelcheck_window: Type[tool.ModelcheckWindow]):
                                      modelcheck_window.get_pset_tree())
 
 
-def object_tree_conect_menu_requested(pos, widget, modelcheck_window: Type[tool.ModelcheckWindow]):
+def object_tree_context_menu_requested(pos, widget, modelcheck_window: Type[tool.ModelcheckWindow]):
     actions = [
         ["Ausklappen", lambda: modelcheck_window.expand_selection(widget)],
         ["Einklappen", lambda: modelcheck_window.collapse_selection(widget)],
@@ -184,3 +176,11 @@ def object_tree_conect_menu_requested(pos, widget, modelcheck_window: Type[tool.
     ]
 
     modelcheck_window.create_context_menu(pos, actions, widget)
+
+
+def connect_object_tree(tree: ui.ObjectTree, modelcheck_window: Type[tool.ModelcheckWindow]):
+    modelcheck_window.connect_object_tree(tree)
+
+
+def connect_pset_tree(tree: ui.PsetTree, modelcheck_window: Type[tool.ModelcheckWindow]):
+    modelcheck_window.connect_pset_tree(tree)

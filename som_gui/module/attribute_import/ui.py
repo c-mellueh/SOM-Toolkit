@@ -1,14 +1,7 @@
 from __future__ import annotations
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QDialog, QTableWidget, QComboBox, QCheckBox
-from som_gui.module import attribute_import
 from ...icons import get_icon, get_settings_icon
-
-STANDARD_CHECK_STATE = False
-ALL = "Alles"
-GROUP = "Gruppe"
-ELEMENT = "Element"
-TYPE = "Type"
-PROPERTYSETS = "PropertySets"
+from . import trigger
 from som_gui import __version__ as version
 from som_gui import tool
 
@@ -22,8 +15,9 @@ class AttributeImportWindow(QWidget):
 
 class AttributeImportResultWindow(QWidget):
     def __init__(self):
+        from .qt import widget
         super(AttributeImportResultWindow, self).__init__()
-        self.widget = attribute_import.window.Ui_Form()
+        self.widget = widget.Ui_Form()
         self.widget.setupUi(self)
         self.widget.button_settings.setIcon(get_settings_icon())
         self.setWindowTitle(self.tr(f"Modellinformationen Einlesen | {tool.Util.get_status_text()}"))
@@ -74,13 +68,14 @@ class ValueCheckBox(QCheckBox):
     def __init__(self, table_widget, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.table_widget = table_widget
-        self.checkStateChanged.connect(lambda: attribute_import.trigger.value_checkstate_changed(self))
+        self.checkStateChanged.connect(lambda: trigger.value_checkstate_changed(self))
 
 
 class SettingsDialog(QDialog):
     def __init__(self):
         super(SettingsDialog, self).__init__()
-        self.widget = attribute_import.settings_window.Ui_Dialog()
+        from .qt import settings_widget
+        self.widget = settings_widget.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
         self.setWindowTitle(f"Einstellungen v{version}  | {tool.Util.get_status_text()}")

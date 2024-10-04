@@ -1,8 +1,8 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from PySide6.QtGui import QAction
 import SOMcreator
-from PySide6.QtWidgets import QDialog, QWidget
+from PySide6.QtWidgets import QWidget
 from typing import TYPE_CHECKING, TypedDict, Callable, Any
 
 if TYPE_CHECKING:

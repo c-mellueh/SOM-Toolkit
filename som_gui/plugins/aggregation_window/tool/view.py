@@ -198,10 +198,6 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         cls.get_properties().aggregation_view.viewport().setCursor(cursor_style)
 
     @classmethod
-    def reset_cursor_style(cls) -> None:
-        cls.get_properties().aggregation_view.viewport().unsetCursor()
-
-    @classmethod
     def add_node_to_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene) -> None:
         scene.addItem(node)
         scene.addItem(node.header)
@@ -386,20 +382,6 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         painter.end()
 
     @classmethod
-    def print_all_scenes(cls) -> None:
-        """
-        Deprecated
-        """
-        view = cls.get_view()
-        folder_path = QFileDialog.getExistingDirectory(view, "Safe Aggregation", "")
-        for scene_index, scene in enumerate(cls.get_properties().scene_list):
-            scene_name = cls.get_scene_names()[scene_index]
-            cls.activate_scene(scene)
-            cls.autofit_view()
-            path = os.path.join(folder_path, f"{scene_name}.png")
-            cls.print_scene(scene, path)
-
-    @classmethod
     def set_drag_mode(cls, mode: QGraphicsView.DragMode) -> None:
         cls.get_view().setDragMode(mode)
 
@@ -534,11 +516,6 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
             if existing_node.aggregation not in existing_aggregations:
                 cls.remove_node_from_scene(existing_node, scene)
 
-    @classmethod
-    def add_object_to_active_scene(cls, obj: SOMcreator.Object):
-        scene = cls.get_active_scene()
-        parent_node = trigger.add_object_to_scene(obj, scene)
-        return parent_node
 
     @classmethod
     def create_child_node(cls, top_node: ui_node.NodeProxy,

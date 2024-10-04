@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'AttributeImportSettings.ui'
+## Form generated from reading UI file 'SettingsWidget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.2
+## Created by: Qt User Interface Compiler version 6.7.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,6 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog,
                                QDialogButtonBox, QSizePolicy, QVBoxLayout, QWidget)
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -69,12 +70,12 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addWidget(self.buttonBox)
 
-
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
 
         QMetaObject.connectSlotsByName(Dialog)
+
     # setupUi
 
     def retranslateUi(self, Dialog):
@@ -88,4 +89,3 @@ class Ui_Dialog(object):
         self.check_box_object_filter.setText(
             QCoreApplication.translate("Dialog", u"Nach Anwendungsfall/Leistungsphase filtern", None))
     # retranslateUi
-

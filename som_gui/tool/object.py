@@ -93,12 +93,6 @@ class Object(som_gui.core.tool.Object):
             cls.expand_to_item(item.parent())
 
     @classmethod
-    def autofit_tree(cls):
-        if cls.get_properties().first_paint:
-            cls.resize_tree()
-            cls.get_properties().first_paint = False
-
-    @classmethod
     def resize_tree(cls):
         tree = cls.get_object_tree()
         for col in reversed(range(tree.columnCount())):
@@ -444,11 +438,6 @@ class Object(som_gui.core.tool.Object):
 
 
     @classmethod
-    def oi_set_abbreviation(cls, value):
-        prop = cls.get_object_info_properties()
-        prop.abbreviation = value
-
-    @classmethod
     def oi_change_visibility_identifiers(cls, hide: bool):
         prop = cls.get_properties()
         layout = prop.object_info_widget.widget.layout_ident_attribute
@@ -663,17 +652,6 @@ class Object(som_gui.core.tool.Object):
             cls.update_item(item, obj)
             cls.fill_object_tree(set(obj.get_children(filter=True)), item)
 
-    @classmethod
-    def clear_object_input(cls, ui):
-        obj_line_edit_list = [
-            ui.line_edit_object_name,
-            ui.lineEdit_ident_value,
-            ui.lineEdit_ident_attribute,
-            ui.lineEdit_ident_pSet,
-            ui.line_edit_abbreviation,
-        ]
-        for el in obj_line_edit_list:
-            el.clear()
 
     @classmethod
     def add_object_creation_check(cls, key, check_function):

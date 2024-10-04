@@ -4,22 +4,16 @@ from PySide6.QtGui import QStandardItemModel, QMouseEvent
 from som_gui.module import modelcheck_window
 from som_gui.icons import get_icon
 from som_gui import tool
+from . import qt
 
 
 class ModelcheckWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.ui = qt.widget.Ui_Form()
+        self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.vertical_layout = QVBoxLayout(self)
-        self.resize(1139, 720)
         self.setWindowTitle(f"Modellprüfung | {tool.Util.get_status_text()}")
-
-class ObjectCheckWidget(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.widget = modelcheck_window.widget_object_check.Ui_Form()
-        self.widget.setupUi(self)
-        self.setWindowIcon(get_icon())
 
 
 class ObjectTree(QTreeView):
@@ -28,10 +22,12 @@ class ObjectTree(QTreeView):
         model = QStandardItemModel()
         self.setModel(model)
         model.setHorizontalHeaderLabels(["Objekt", "Identifier"])
+        modelcheck_window.trigger.connect_object_check_tree(self)
 
     def paintEvent(self, event):
         super().paintEvent(event)
         modelcheck_window.trigger.paint_object_tree()
+
 
 class PsetTree(QTreeView):
     def __init__(self, *args, **kwargs):

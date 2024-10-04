@@ -9,9 +9,7 @@ if TYPE_CHECKING:
     from som_gui.module.attribute.ui import AttributeWidget
     from .ui import SettingsWidget
 
-@dataclass
 class ObjectFilterProperties:
-    active_use_case_index: int
     active_use_case_name: str
     object_dict: dict
     pset_dict: dict

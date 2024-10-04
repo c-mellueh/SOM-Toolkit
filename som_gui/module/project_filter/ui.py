@@ -4,11 +4,11 @@ import som_gui.module.project_filter as project_filter
 from PySide6.QtCore import Qt
 from som_gui import tool
 
-
 class ProjectFilterDialog(QDialog):
     def __init__(self):
         super().__init__()
-        self.widget = project_filter.window.Ui_Dialog()
+        from .qt import widget
+        self.widget = widget.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
         self.setWindowTitle(f"Projekt Filter | {tool.Util.get_status_text()}")

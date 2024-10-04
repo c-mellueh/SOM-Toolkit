@@ -1,7 +1,4 @@
-from PySide6.QtWidgets import QTreeWidget, QMainWindow, QLineEdit, QDialog, QStyledItemDelegate
-from PySide6.QtCore import Qt, Signal, QModelIndex
-from PySide6 import QtGui
-from som_gui.module import property_set_window
+from PySide6.QtWidgets import QTreeWidget, QMainWindow
 
 from som_gui.icons import get_icon
 from . import trigger
@@ -11,7 +8,7 @@ from som_gui import tool
 class MappingWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        from .window import Ui_Form
+        from .qt.window import Ui_Form
         self.widget = Ui_Form()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
