@@ -26,3 +26,4 @@ from som_gui.tool.console import Console
 from som_gui.tool.bsdd import Bsdd
 from som_gui.tool.settings import Settings
 from som_gui.tool.plugins import Plugins
+from som_gui.tool.filter_window import FilterWindow

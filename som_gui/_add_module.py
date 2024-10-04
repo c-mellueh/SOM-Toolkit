@@ -3,6 +3,10 @@ import os
 import logging
 
 
+def to_camel_case(snake_str):
+    return "".join(x.capitalize() for x in snake_str.lower().split("_"))
+
+
 def create_module(name: str):
     module_path = os.path.abspath(os.path.join(os.curdir, "module", name))
 
@@ -20,7 +24,7 @@ from . import ui, prop, trigger
 
 
 def register():
-    som_gui.{name.title()}Properties = prop.{name.title()}Properties()
+    som_gui.{to_camel_case(name)}Properties = prop.{to_camel_case(name)}Properties()
 
 
 def load_ui_triggers():
@@ -40,7 +44,7 @@ def on_new_project():
         f.write(
             f"""from __future__ import annotations
 
-class {name.title()}Properties:
+class {to_camel_case(name)}Properties:
     pass
 
 """
@@ -105,13 +109,13 @@ import som_gui.core.tool
 import som_gui
 
 if TYPE_CHECKING:
-    from som_gui.module.{name}.prop import {name.title()}Properties
-    
-    
-class {name.title()}(som_gui.core.tool.{name.title()}):
+    from som_gui.module.{name}.prop import {to_camel_case(name)}Properties
+
+
+class {to_camel_case(name)}(som_gui.core.tool.{to_camel_case(name)}):
     @classmethod
-    def get_properties(cls) -> {name.title()}Properties:
-        return som_gui.{name.title()}Properties
+    def get_properties(cls) -> {to_camel_case(name)}Properties:
+        return som_gui.{to_camel_case(name)}Properties
 """
         )
 
@@ -132,5 +136,5 @@ def main(name: str):
 
 
 if __name__ == "__main__":
-    module_name = "plugins"
+    module_name = "filter_window"
     main(module_name)
