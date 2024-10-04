@@ -16,9 +16,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QSizePolicy,
-                               QSplitter, QTableWidgetItem, QVBoxLayout, QWidget)
+                               QSplitter, QVBoxLayout, QWidget)
 
-from som_gui.module.filter_window.ui import (ObjectTreeView, ProjectTable, PsetTreeView)
+from som_gui.module.filter_window.ui import (ObjectTreeView, ProjectView, PsetTreeView)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -30,9 +30,9 @@ class Ui_Form(object):
         self.splitter_2 = QSplitter(Form)
         self.splitter_2.setObjectName(u"splitter_2")
         self.splitter_2.setOrientation(Qt.Vertical)
-        self.project_table = ProjectTable(self.splitter_2)
+        self.project_table = ProjectView(self.splitter_2)
         self.project_table.setObjectName(u"project_table")
-        self.project_table.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.project_table.setContextMenuPolicy(Qt.ActionsContextMenu)
         self.splitter_2.addWidget(self.project_table)
         self.splitter = QSplitter(self.splitter_2)
         self.splitter.setObjectName(u"splitter")

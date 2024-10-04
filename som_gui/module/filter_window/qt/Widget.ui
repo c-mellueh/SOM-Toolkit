@@ -19,9 +19,14 @@
                     <property name="orientation">
                         <enum>Qt::Vertical</enum>
                     </property>
-                    <widget class="ProjectTable" name="project_table">
+                    <widget class="ProjectView" name="project_table">
                         <property name="contextMenuPolicy">
-                            <enum>Qt::CustomContextMenu</enum>
+                            <enum>Qt::ActionsContextMenu</enum>
+                        </property>
+                        <property name="editTriggers">
+                            <set>
+                                QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked
+                            </set>
                         </property>
                     </widget>
                     <widget class="QSplitter" name="splitter">
@@ -60,8 +65,8 @@
             <header>som_gui.module.filter_window.ui</header>
         </customwidget>
         <customwidget>
-            <class>ProjectTable</class>
-            <extends>QTableWidget</extends>
+            <class>ProjectView</class>
+            <extends>QTableView</extends>
             <header>som_gui.module.filter_window.ui</header>
         </customwidget>
     </customwidgets>
