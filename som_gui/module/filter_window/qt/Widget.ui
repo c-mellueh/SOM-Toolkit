@@ -6,31 +6,65 @@
             <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>778</width>
-                <height>482</height>
+                <width>854</width>
+                <height>581</height>
             </rect>
         </property>
         <property name="windowTitle">
             <string>Form</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
                 <widget class="QSplitter" name="splitter_2">
                     <property name="orientation">
                         <enum>Qt::Vertical</enum>
                     </property>
-                    <widget class="QTableWidget" name="tableWidget"/>
+                    <widget class="ProjectTable" name="project_table">
+                        <property name="contextMenuPolicy">
+                            <enum>Qt::CustomContextMenu</enum>
+                        </property>
+                    </widget>
                     <widget class="QSplitter" name="splitter">
                         <property name="orientation">
                             <enum>Qt::Horizontal</enum>
                         </property>
-                        <widget class="QTreeView" name="treeView"/>
-                        <widget class="QTreeView" name="treeView_2"/>
+                        <widget class="ObjectTreeView" name="object_tree"/>
+                        <widget class="QWidget" name="verticalLayoutWidget">
+                            <layout class="QVBoxLayout" name="verticalLayout">
+                                <item>
+                                    <widget class="QLabel" name="label">
+                                        <property name="text">
+                                            <string>TextLabel</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item>
+                                    <widget class="PsetTreeView" name="pset_tree"/>
+                                </item>
+                            </layout>
+                        </widget>
                     </widget>
                 </widget>
             </item>
         </layout>
     </widget>
+    <customwidgets>
+        <customwidget>
+            <class>ObjectTreeView</class>
+            <extends>QTreeView</extends>
+            <header>som_gui.module.filter_window.ui</header>
+        </customwidget>
+        <customwidget>
+            <class>PsetTreeView</class>
+            <extends>QTreeView</extends>
+            <header>som_gui.module.filter_window.ui</header>
+        </customwidget>
+        <customwidget>
+            <class>ProjectTable</class>
+            <extends>QTableWidget</extends>
+            <header>som_gui.module.filter_window.ui</header>
+        </customwidget>
+    </customwidgets>
     <resources/>
     <connections/>
 </ui>

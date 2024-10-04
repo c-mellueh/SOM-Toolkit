@@ -15,43 +15,59 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QFont, QFontDatabase, QGradient, QIcon,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHeaderView, QSizePolicy, QSplitter,
-                               QTableWidget, QTableWidgetItem, QTreeView, QVBoxLayout,
-                               QWidget)
+from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QSizePolicy,
+                               QSplitter, QTableWidgetItem, QVBoxLayout, QWidget)
 
+from som_gui.module.filter_window.ui import (ObjectTreeView, ProjectTable, PsetTreeView)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(778, 482)
-        self.verticalLayout = QVBoxLayout(Form)
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        Form.resize(854, 581)
+        self.verticalLayout_2 = QVBoxLayout(Form)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.splitter_2 = QSplitter(Form)
         self.splitter_2.setObjectName(u"splitter_2")
         self.splitter_2.setOrientation(Qt.Vertical)
-        self.tableWidget = QTableWidget(self.splitter_2)
-        self.tableWidget.setObjectName(u"tableWidget")
-        self.splitter_2.addWidget(self.tableWidget)
+        self.project_table = ProjectTable(self.splitter_2)
+        self.project_table.setObjectName(u"project_table")
+        self.project_table.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.splitter_2.addWidget(self.project_table)
         self.splitter = QSplitter(self.splitter_2)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Horizontal)
-        self.treeView = QTreeView(self.splitter)
-        self.treeView.setObjectName(u"treeView")
-        self.splitter.addWidget(self.treeView)
-        self.treeView_2 = QTreeView(self.splitter)
-        self.treeView_2.setObjectName(u"treeView_2")
-        self.splitter.addWidget(self.treeView_2)
+        self.object_tree = ObjectTreeView(self.splitter)
+        self.object_tree.setObjectName(u"object_tree")
+        self.splitter.addWidget(self.object_tree)
+        self.verticalLayoutWidget = QWidget(self.splitter)
+        self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
+        self.verticalLayout = QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.label = QLabel(self.verticalLayoutWidget)
+        self.label.setObjectName(u"label")
+
+        self.verticalLayout.addWidget(self.label)
+
+        self.pset_tree = PsetTreeView(self.verticalLayoutWidget)
+        self.pset_tree.setObjectName(u"pset_tree")
+
+        self.verticalLayout.addWidget(self.pset_tree)
+
+        self.splitter.addWidget(self.verticalLayoutWidget)
         self.splitter_2.addWidget(self.splitter)
 
-        self.verticalLayout.addWidget(self.splitter_2)
+        self.verticalLayout_2.addWidget(self.splitter_2)
+
 
         self.retranslateUi(Form)
 
         QMetaObject.connectSlotsByName(Form)
-
     # setupUi
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+        self.label.setText(QCoreApplication.translate("Form", u"TextLabel", None))
     # retranslateUi
+
