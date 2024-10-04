@@ -123,9 +123,9 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
         if not path:
             return
         data_dict = cls.get_data_dict()
+        object_structure = cls._build_tree()
         modelcheck.export(tool.Project.get(), data_dict, path, main_pset=pset_name,
-                          main_attribute=attribute_name,
-                          object_structure=cls._build_tree())
+                          main_attribute=attribute_name, object_structure=object_structure)
 
     @classmethod
     def export_desite_attribute_table(cls):
@@ -143,5 +143,5 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
                           export_type=modelcheck.TABLE_EXPORT)
 
     @classmethod
-    def _build_tree(cls) -> dict[SOMcreator.Object, set[SOMcreator.Object]]:
-        return {obj: set(obj.get_children(filter=True)) for obj in tool.Project.get().get_objects(filter=False)}
+    def _build_tree(cls) -> dict[SOMcreator.Object, SOMcreator.Object]:
+        return {obj: obj.parent for obj in tool.Project.get().get_objects(filter=False)}
