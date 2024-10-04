@@ -21,6 +21,28 @@ if TYPE_CHECKING:
 class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
+    def connect_object_tree(cls, tree_widget: ui.ObjectTree):
+        prop = cls.get_properties()
+        if prop.object_tree_model is None:
+            prop.object_tree_model = tree_widget.model()
+            prop.object_tree_selection_model = tree_widget.selectionModel()
+        else:
+            tree_widget.setModel(prop.object_tree_model)
+        model: QStandardItemModel = tree_widget.model()
+        model.itemChanged.connect(lambda item: trigger.object_checkstate_changed(item))
+        tree_widget.selectionModel().selectionChanged.connect(
+            lambda: trigger.object_selection_changed(tree_widget.selectionModel()))
+        tree_widget.customContextMenuRequested.connect(
+            lambda pos: trigger.object_tree_context_menu_requested(pos, tree_widget))
+
+    @classmethod
+    def connect_pset_tree(self, tree_widget: ui.PsetTree):
+
+        tree_widget.model().itemChanged.connect(trigger.pset_checkstate_changed)
+        tree_widget.customContextMenuRequested.connect(
+            lambda pos: trigger.pset_context_menu_requested(pos, tree_widget))
+
+    @classmethod
     def create_context_menu(cls, pos, funcion_list: list[list[str, Callable]], widget: ui.ObjectTree | ui.PsetTree):
         global_pos = widget.viewport().mapToGlobal(pos)
         menu = QMenu()
@@ -184,7 +206,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
                     for attribute in property_set.get_attributes(filter=True):
                         data_dict[attribute] = True
             prop.check_state_dict = data_dict
-
         return prop.check_state_dict
 
     @classmethod
@@ -232,10 +253,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def close_window(cls):
         cls.get_properties().active_window.hide()
-
-    @classmethod
-    def connect_object_tree(cls, object_tree_widget: ui.ObjectTree):
-        trigger.connect_object_check_tree(object_tree_widget)
 
     @classmethod
     def connect_buttons(cls):

@@ -6,6 +6,7 @@ from som_gui.icons import get_icon
 from som_gui import tool
 from . import qt
 
+
 class ModelcheckWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -21,10 +22,12 @@ class ObjectTree(QTreeView):
         model = QStandardItemModel()
         self.setModel(model)
         model.setHorizontalHeaderLabels(["Objekt", "Identifier"])
+        modelcheck_window.trigger.connect_object_check_tree(self)
 
     def paintEvent(self, event):
         super().paintEvent(event)
         modelcheck_window.trigger.paint_object_tree()
+
 
 class PsetTree(QTreeView):
     def __init__(self, *args, **kwargs):

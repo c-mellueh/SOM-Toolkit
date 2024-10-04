@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 import SOMcreator
 
 import som_gui.core.tool
-from som_gui.module.modelcheck_external import ui
+from som_gui.module.modelcheck_external import ui, trigger
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QMainWindow, QMenuBar, QMenu
 
@@ -15,6 +15,7 @@ from SOMcreator.exporter.desite import modelcheck
 
 if TYPE_CHECKING:
     from som_gui.module.modelcheck_external.prop import ModelcheckExternalProperties
+
 
 class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
     @classmethod
@@ -33,16 +34,15 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
     def create_window(cls):
         prop = cls.get_properties()
         prop.window = ui.ModelcheckExternalWindow()
+        prop.window.ui.buttonBox.rejected.connect(trigger.close_window)
         return prop.window
 
     @classmethod
-    def create_menubar(cls, window: QMainWindow, main_pset_name: str, main_attribute_name: str):
-        desite_menu = [["Export Javascript Regeln", lambda: cls.export_desite_js(main_pset_name, main_attribute_name)],
-                       ["Export Javascript (schnelle Prüfung)",
-                        lambda: cls.export_desite_fast(main_pset_name, main_attribute_name)],
-                       ["Export Attribut Regeln",
-                        lambda: cls.export_desite_attribute_table(main_pset_name, main_attribute_name)],
-                       ["Export Modelcheck-CSV", lambda: cls.export_desite_csv()]
+    def create_menubar(cls, window: QMainWindow):
+        desite_menu = [["Export Javascript Regeln", cls.export_desite_js],
+                       ["Export Javascript (schnelle Prüfung)", cls.export_desite_fast],
+                       ["Export Attribut Regeln", cls.export_desite_attribute_table],
+                       ["Export Modelcheck-CSV", cls.export_desite_csv]
                        ]
 
         bim_collab_menu = [["SmartViews exportieren", cls.export_bimcollab]]
@@ -64,6 +64,11 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
                 action.setText(action_name)
                 menu.addAction(action)
                 action.triggered.connect(action_function)
+
+    @classmethod
+    def get_main_attribute(cls) -> tuple[str, str]:
+        widget = cls.get_window().ui.main_attribute_widget
+        return widget.ui.le_pset_name.text(), widget.ui.le_attribute_name.text()
 
     @classmethod
     def get_data_dict(cls):
@@ -90,7 +95,8 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
         bc_modelcheck.export(data_dict, path, tool.Project.get().author)
 
     @classmethod
-    def export_desite_fast(cls, pset_name: str, attribute_name: str):
+    def export_desite_fast(cls):
+        pset_name, attribute_name = cls.get_main_attribute()
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
         path = tool.Popups.get_save_path(file_format, cls.get_window())
         if not path:
@@ -109,18 +115,22 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
         modelcheck.csv_export(data_dict, path)
 
     @classmethod
-    def export_desite_js(cls, main_pset_name, main_attribute_name):
+    def export_desite_js(cls):
+        pset_name, attribute_name = cls.get_main_attribute()
+
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
         path = tool.Popups.get_save_path(file_format, cls.get_window())
         if not path:
             return
         data_dict = cls.get_data_dict()
-        modelcheck.export(tool.Project.get(), data_dict, path, main_pset=main_pset_name,
-                          main_attribute=main_attribute_name,
+        modelcheck.export(tool.Project.get(), data_dict, path, main_pset=pset_name,
+                          main_attribute=attribute_name,
                           object_structure=cls._build_tree())
 
     @classmethod
-    def export_desite_attribute_table(cls, main_pset_name: str, main_attribute_name: str):
+    def export_desite_attribute_table(cls):
+        pset_name, attribute_name = cls.get_main_attribute()
+
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
         path = tool.Popups.get_save_path(file_format, cls.get_window())
         if not path:
@@ -128,7 +138,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
         data_dict = cls.get_data_dict()
         project = tool.Project.get()
-        modelcheck.export(project, data_dict, path, main_pset=main_pset_name, main_attribute=main_attribute_name,
+        modelcheck.export(project, data_dict, path, main_pset=pset_name, main_attribute=attribute_name,
                           object_structure=cls._build_tree(),
                           export_type=modelcheck.TABLE_EXPORT)
 

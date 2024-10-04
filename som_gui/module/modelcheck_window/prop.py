@@ -5,8 +5,9 @@ import SOMcreator
 
 if TYPE_CHECKING:
     from .ui import ModelcheckWindow
-    from PySide6.QtCore import QThreadPool
+    from PySide6.QtCore import QThreadPool, QItemSelectionModel
     from PySide6.QtWidgets import QPushButton, QLineEdit, QLabel
+    from PySide6.QtGui import QStandardItemModel
     from som_gui.tool.ifc_importer import IfcImportRunner
 
 class ModelcheckWindowProperties:
@@ -22,3 +23,7 @@ class ModelcheckWindowProperties:
     status_label: QLabel = None
     ifc_import_runners: list[IfcImportRunner] = list()
     initial_paint = True
+    object_tree_model: QStandardItemModel = None
+    object_tree_selection_model: QItemSelectionModel = None
+    pset_tree_model: QStandardItemModel = None
+    pset_tree_selection_model: QStandardItemModel = None

@@ -18,12 +18,8 @@ if TYPE_CHECKING:
     from PySide6.QtGui import QStandardItem
     from PySide6.QtCore import QItemSelectionModel, QModelIndex
     from som_gui.tool.ifc_importer import IfcImportRunner
-
+    from som_gui.module.modelcheck_window import ui
 def open_window(modelcheck_window: Type[tool.ModelcheckWindow], util: Type[tool.Util], project: Type[tool.Project]):
-    if modelcheck_window.is_window_allready_build():
-        modelcheck_window.get_window().show()
-        return
-
     proj = project.get()
     window = modelcheck_window.create_window()
     main_pset_name, main_attribute_name = proj.get_main_attribute()
@@ -32,7 +28,6 @@ def open_window(modelcheck_window: Type[tool.ModelcheckWindow], util: Type[tool.
     util.fill_file_selector(window.ui.widget_export, "Export Pfad", "Excel FIle (*xlsx);;", "modelcheck_export",
                             request_save=True)
     modelcheck_window.connect_buttons()
-    modelcheck_window.connect_object_tree(window.ui.object_tree)
     modelcheck_window.set_progressbar_visible(False)
     modelcheck_window.reset_butons()
     window.show()
@@ -145,6 +140,7 @@ def object_check_changed(item: QStandardItem, modelcheck_window: Type[tool.Model
 
 
 def object_selection_changed(selection_model: QItemSelectionModel, modelcheck_window: Type[tool.ModelcheckWindow]):
+    logging.debug(f"ObjectSelectionChanged: {selection_model.selectedIndexes()}")
     selected_indexes = selection_model.selectedIndexes()
     if not selected_indexes:
         return
@@ -171,7 +167,7 @@ def paint_pset_tree(modelcheck_window: Type[tool.ModelcheckWindow]):
                                      modelcheck_window.get_pset_tree())
 
 
-def object_tree_conect_menu_requested(pos, widget, modelcheck_window: Type[tool.ModelcheckWindow]):
+def object_tree_context_menu_requested(pos, widget, modelcheck_window: Type[tool.ModelcheckWindow]):
     actions = [
         ["Ausklappen", lambda: modelcheck_window.expand_selection(widget)],
         ["Einklappen", lambda: modelcheck_window.collapse_selection(widget)],
@@ -180,3 +176,11 @@ def object_tree_conect_menu_requested(pos, widget, modelcheck_window: Type[tool.
     ]
 
     modelcheck_window.create_context_menu(pos, actions, widget)
+
+
+def connect_object_tree(tree: ui.ObjectTree, modelcheck_window: Type[tool.ModelcheckWindow]):
+    modelcheck_window.connect_object_tree(tree)
+
+
+def connect_pset_tree(tree: ui.PsetTree, modelcheck_window: Type[tool.ModelcheckWindow]):
+    modelcheck_window.connect_pset_tree(tree)
