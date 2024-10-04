@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 def connect():
     tool.MainWindow.add_action("Filter",
-                               lambda: core.open(tool.FilterWindow, tool.Project))
+                               lambda: core.open_window(tool.FilterWindow, tool.Project))
 
 
 def pt_remove_usecase_clicked(index):

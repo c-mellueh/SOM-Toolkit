@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from som_gui import tool
 
 
-def open(filter_window: Type[tool.FilterWindow], project: Type[tool.Project]):
+def open_window(filter_window: Type[tool.FilterWindow], project: Type[tool.Project]):
     widget = filter_window.create_widget(project.get())
     filter_window.connect_project_table(project.get())
     widget.show()
