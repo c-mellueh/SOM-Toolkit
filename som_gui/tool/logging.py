@@ -97,7 +97,7 @@ class Logging(som_gui.core.tool.Logging):
 
     @classmethod
     def get_log_level(cls):
-        return tool.Appdata.get_integer_setting(LOG_SECTION, LOG_LEVEL, logging.WARNING)
+        return tool.Appdata.get_int_setting(LOG_SECTION, LOG_LEVEL, logging.WARNING)
 
     @classmethod
     def set_log_level(cls, log_level: int):
