@@ -85,7 +85,17 @@ class Appdata(som_gui.core.tool.Appdata):
         return default
 
     @classmethod
-    def get_integer_setting(cls, section: str, path: str, default=0) -> bool:
+    def get_int_setting(cls, section: str, path: str, default=0) -> int:
+        config_parser = cls._get_config()
+        if config_parser.has_option(section, path):
+            path = config_parser.get(section, path)
+            if path is not None:
+                return eval(path)
+        cls.set_setting(section, path, default)
+        return default
+
+    @classmethod
+    def get_float_setting(cls, section: str, path: str, default=0) -> float:
         config_parser = cls._get_config()
         if config_parser.has_option(section, path):
             path = config_parser.get(section, path)
