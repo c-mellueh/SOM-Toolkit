@@ -132,18 +132,12 @@ class ObjectModel(QAbstractItemModel):
 
     def flags(self, index: QModelIndex):
         flags = super().flags(index)
-
         if index.column() < 2:
             return flags
         if index.column() >= 2:
             flags = flags | Qt.ItemFlag.ItemIsUserCheckable
-        obj: SOMcreator.Object = index.internalPointer()
         parent_index = self.parent(index)
-        if obj is None:
-            return flags
-        if not obj.parent:
-            return flags
-
+        parent_index = parent_index.sibling(parent_index.row(), index.column())
         if not parent_index.isValid():
             return flags
         is_parent_enabled = Qt.ItemFlag.ItemIsEnabled in parent_index.flags()
@@ -225,7 +219,7 @@ class ObjectModel(QAbstractItemModel):
         if not node.parent:
             return QModelIndex()
         parent_index: QModelIndex = node.parent.index
-        return parent_index.sibling(parent_index.row(), index.column())
+        return parent_index.sibling(parent_index.row(), 0)
 
     # Returns the data to be displayed for each cell
     def data(self, index, role=Qt.DisplayRole):

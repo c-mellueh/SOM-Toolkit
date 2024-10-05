@@ -34,12 +34,18 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         return cls.get().ui.pset_tree
 
     @classmethod
-    def create_widget(cls, project: SOMcreator.Project) -> ui.FilterWidget:
+    def create_widget(cls) -> ui.FilterWidget:
         cls.get_properties().widget = ui.FilterWidget()
-        cls.get_properties().widget.ui.object_tree.setModel(ui.ObjectModel(project))
-        # Connect Project Table Triggers
-
         return cls.get_properties().widget
+
+    @classmethod
+    def connect_object_tree(cls, project: SOMcreator.Project):
+        object_tree = cls.get_properties().widget.ui.object_tree
+        object_tree.setModel(ui.ObjectModel(project))
+        object_tree = cls.get_properties().widget.ui.object_tree
+        object_tree.setSelectionMode(object_tree.SelectionMode.SingleSelection)
+        object_tree.setSelectionBehavior(object_tree.SelectionBehavior.SelectRows)
+        object_tree.selectionModel().selectionChanged.connect(trigger.object_tree_clicked)
 
     @classmethod
     def connect_project_table(cls, project: SOMcreator.Project):
@@ -53,6 +59,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         vertical_header = project_table.verticalHeader()
         vertical_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         vertical_header.customContextMenuRequested.connect(trigger.pt_vertical_context_requested)
+
 
     @classmethod
     def get(cls) -> ui.FilterWidget | None:
@@ -111,9 +118,13 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         menu.exec(pos)
 
     @classmethod
-    def is_update_locked(cls) -> bool:
-        return cls.get_properties().object_tree_lock
+    def set_active_object(cls, obj: SOMcreator.Object):
+        cls.get_properties().active_object = obj
 
     @classmethod
-    def set_update_locked(cls, locked: bool):
-        cls.get_properties().object_tree_lock = locked
+    def get_active_object(cls) -> SOMcreator.Object:
+        return cls.get_properties().active_object
+
+    @classmethod
+    def set_object_label(cls, value: str):
+        cls.get().ui.label.setText(value)

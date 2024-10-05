@@ -29,15 +29,16 @@ def pt_vertical_context_requested(pos):
     pass
 
 
-def update_object_tree():
-    core.update_object_tree(tool.FilterWindow)
 
-def pt_item_clicked():
-    # was itemChanged
-    pass
+
 def on_new_project():
     pass
 
 
-def pt_update():
-    core.update_project_table(tool.FilterWindow, tool.Project, tool.Util)
+def update_object_tree():
+    core.update_object_tree(tool.FilterWindow)
+
+
+def object_tree_clicked(selected, deselected):
+    core.object_tree_selection_changed(selected, tool.FilterWindow)
+    pass
