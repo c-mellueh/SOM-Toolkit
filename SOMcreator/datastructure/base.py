@@ -79,8 +79,15 @@ class Hirarchy(object, metaclass=IterRegistry):
         if self.project:
             if not self.project.get_filter_state(phase, use_case):
                 return False
-        phase_index = self.project.get_phase_index(phase)
-        use_case_index = self.project.get_use_case_index(use_case)
+
+        if isinstance(phase, int):
+            phase_index = phase
+        else:
+            phase_index = self.project.get_phase_index(phase)
+        if isinstance(use_case, int):
+            use_case_index = use_case
+        else:
+            use_case_index = self.project.get_use_case_index(use_case)
         if phase_index is None or use_case_index is None:
             return None
         return self._filter_matrix[phase_index][use_case_index]
@@ -116,7 +123,7 @@ class Hirarchy(object, metaclass=IterRegistry):
             return True
         for phase in self.project.active_phases:
             for usecase in self.project.active_usecases:
-                if self._filter_matrix[phase][usecase]:
+                if self.get_filter_state(phase, usecase):
                     return True
         return False
 

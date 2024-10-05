@@ -186,6 +186,12 @@ class Project(object):
         self._filter_matrix = matrix
 
     def get_filter_state(self, phase: SOMcreator.Phase, use_case: SOMcreator.UseCase):
+        if phase is None or use_case is None:
+            return None
+        if isinstance(phase, int):
+            phase = self.get_phase_by_index(phase)
+        if isinstance(use_case, int):
+            use_case = self.get_usecase_by_index(use_case)
         return self._filter_matrix[self.get_phase_index(phase)][self.get_use_case_index(use_case)]
 
     def set_filter_state(self, phase: SOMcreator.Phase, use_case: SOMcreator.UseCase, value: bool):
