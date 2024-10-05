@@ -1,3 +1,4 @@
+from __future__ import annotations
 import logging
 from random import triangular
 from PySide6.QtCore import QAbstractTableModel, QModelIndex, QAbstractItemModel
@@ -22,6 +23,58 @@ class FilterWidget(QWidget):
         self.ui.setupUi(self)
         self.setWindowIcon(som_gui.get_icon())
         self.setWindowTitle(f"Projekt Filter {tool.Util.get_status_text()}")
+
+
+
+
+class ProjectView(QTableView):
+    def __init__(self, parent):
+        super().__init__(parent)
+        action = QAction(f"Add Column", self)
+        self.addAction(action)
+        action.triggered.connect(self.add_column)
+        self.setContextMenuPolicy(Qt.ActionsContextMenu)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+    def add_column(self):
+        self.model().add_usecase()
+
+    def model(self) -> ProjectModel:
+        return super().model()
+
+
+
+class ObjectTreeView(QTreeView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    #
+    # def paintEvent(self, event):
+    #     super().paintEvent(event)
+    #     object_filter.trigger.refresh_object_tree()
+    #
+    # def mousePressEvent(self, event: QMouseEvent):
+    #     index = self.indexAt(event.pos())
+    #     if core.tree_mouse_press_event(index, tool.ObjectFilter):
+    #         super().mousePressEvent(event)
+    #
+    # def mouseMoveEvent(self, event: QMouseEvent):
+    #     super().mouseMoveEvent(event)
+    #     core.tree_mouse_move_event(self.indexAt(event.pos()), tool.ObjectFilter)
+    #
+    # def mouseReleaseEvent(self, event):
+    #     super().mouseReleaseEvent(event)
+    #     index = self.indexAt(event.pos())
+    #     core.tree_mouse_release_event(index, tool.ObjectFilter)
+    def enterEvent(self, event):
+        super().enterEvent(event)
+        trigger.update_object_tree()
+
+    def model(self) -> ObjectModel:
+        return super().model()
+
+class PsetTreeView(QTreeView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
 
 class ProjectModel(QAbstractTableModel):
     def __init__(self, project: SOMcreator.Project):
@@ -67,21 +120,6 @@ class ProjectModel(QAbstractTableModel):
         phase = SOMcreator.Phase(new_name, new_name, new_name)
         self.project.add_project_phase(phase)
         self.endInsertRows()
-
-
-class ProjectView(QTableView):
-    def __init__(self, parent):
-        super().__init__(parent)
-        action = QAction(f"Add Column", self)
-        self.addAction(action)
-        action.triggered.connect(self.add_column)
-        self.setContextMenuPolicy(Qt.ActionsContextMenu)
-        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-    def add_column(self):
-        self.model().add_usecase()
-
-    def model(self) -> ProjectModel:
-        return super().model()
 
 
 class ObjectModel(QAbstractItemModel):
@@ -202,35 +240,3 @@ class ObjectModel(QAbstractItemModel):
         phase, usecase = self.get_allowed_combinations()[index.column() - 2]
         node.set_filter_state(phase, usecase, bool(value))
         return True
-
-class ObjectTreeView(QTreeView):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-    #
-    # def paintEvent(self, event):
-    #     super().paintEvent(event)
-    #     object_filter.trigger.refresh_object_tree()
-    #
-    # def mousePressEvent(self, event: QMouseEvent):
-    #     index = self.indexAt(event.pos())
-    #     if core.tree_mouse_press_event(index, tool.ObjectFilter):
-    #         super().mousePressEvent(event)
-    #
-    # def mouseMoveEvent(self, event: QMouseEvent):
-    #     super().mouseMoveEvent(event)
-    #     core.tree_mouse_move_event(self.indexAt(event.pos()), tool.ObjectFilter)
-    #
-    # def mouseReleaseEvent(self, event):
-    #     super().mouseReleaseEvent(event)
-    #     index = self.indexAt(event.pos())
-    #     core.tree_mouse_release_event(index, tool.ObjectFilter)
-    def enterEvent(self, event):
-        super().enterEvent(event)
-        trigger.update_object_tree()
-
-    def model(self) -> ObjectModel:
-        return super().model()
-
-class PsetTreeView(QTreeView):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
