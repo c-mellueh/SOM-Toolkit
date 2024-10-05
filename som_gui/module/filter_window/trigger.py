@@ -29,6 +29,9 @@ def pt_vertical_context_requested(pos):
     pass
 
 
+def update_object_tree():
+    core.update_object_tree(tool.FilterWindow)
+
 def pt_item_clicked():
     # was itemChanged
     pass

@@ -6,3 +6,4 @@ if TYPE_CHECKING:
 
 class FilterWindowProperties:
     widget: ui.FilterWidget = None
+    object_tree_lock = False

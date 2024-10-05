@@ -54,7 +54,7 @@ class Project(object):
 
     @filterable
     def get_root_objects(self) -> Iterator[SOMcreator.Object]:
-        return filter(lambda o: o.parent is None, self.get_objects())
+        return filter(lambda o: o.parent is None, self.get_objects(filter=False))
 
     # Item Getter Methods
     @filterable

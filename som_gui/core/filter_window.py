@@ -38,3 +38,7 @@ def pt_context_menu(local_pos, orientation: int, filter_window: Type[tool.Filter
         pos = table.horizontalHeader().viewport().mapToGlobal(local_pos)
 
     filter_window.create_context_menu(menu_list, pos)
+
+
+def update_object_tree(filter_window: Type[tool.FilterWindow]):
+    filter_window.get_object_tree().model().update()

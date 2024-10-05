@@ -76,6 +76,9 @@ class Hirarchy(object, metaclass=IterRegistry):
         return self._filter_matrix
 
     def get_filter_state(self, phase: SOMcreator.Phase, use_case: SOMcreator.UseCase) -> bool | None:
+        if self.project:
+            if not self.project.get_filter_state(phase, use_case):
+                return False
         phase_index = self.project.get_phase_index(phase)
         use_case_index = self.project.get_use_case_index(use_case)
         if phase_index is None or use_case_index is None:

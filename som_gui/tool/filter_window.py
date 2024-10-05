@@ -26,7 +26,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         return cls.get().ui.project_table
 
     @classmethod
-    def get_object_tree(cls):
+    def get_object_tree(cls) -> ui.ObjectTreeView:
         return cls.get().ui.object_tree
 
     @classmethod
@@ -36,7 +36,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
     @classmethod
     def create_widget(cls, project: SOMcreator.Project) -> ui.FilterWidget:
         cls.get_properties().widget = ui.FilterWidget()
-
+        cls.get_properties().widget.ui.object_tree.setModel(ui.ObjectModel(project))
         # Connect Project Table Triggers
 
         return cls.get_properties().widget
@@ -109,3 +109,11 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
             action.triggered.connect(action_func)
         menu.addActions(actions)
         menu.exec(pos)
+
+    @classmethod
+    def is_update_locked(cls) -> bool:
+        return cls.get_properties().object_tree_lock
+
+    @classmethod
+    def set_update_locked(cls, locked: bool):
+        cls.get_properties().object_tree_lock = locked
