@@ -76,6 +76,9 @@ class PsetTreeView(QTreeView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def enterEvent(self, event):
+        super().enterEvent(event)
+        trigger.update_pset_tree()
 
 class ProjectModel(QAbstractTableModel):
     def __init__(self, project: SOMcreator.Project):
@@ -105,6 +108,7 @@ class ProjectModel(QAbstractTableModel):
         usecase = self.project.get_usecase_by_index(index.column())
         self.project.set_filter_state(phase, usecase, bool(value))
         trigger.update_object_tree()
+        trigger.update_pset_tree()
         return True
 
     def headerData(self, section, orientation, role=...):
@@ -253,4 +257,148 @@ class ObjectModel(QAbstractItemModel):
         phase, usecase = self.get_allowed_combinations()[index.column() - 2]
         node.set_filter_state(phase, usecase, bool(value))
         trigger.update_object_tree()
+        trigger.update_pset_tree()
+        return True
+
+
+class PsetModel(QAbstractItemModel):
+    def __init__(self, project: SOMcreator.Project):
+        super().__init__()
+        self.project = project
+        self.active_object = tool.FilterWindow.get_active_object()
+        self.allowed_combinations = self.get_allowed_combinations()
+
+    def flags(self, index: QModelIndex):
+        flags = super().flags(index)
+        if index.column() < 1:
+            return flags
+        if index.column() >= 1:
+            flags = flags | Qt.ItemFlag.ItemIsUserCheckable
+
+        node: SOMcreator.PropertySet | SOMcreator.Attribute = index.internalPointer()
+
+        if isinstance(node, SOMcreator.PropertySet):
+            parent_index = node.object.index
+            parent_index = parent_index.sibling(parent_index.row(), index.column() + 1)
+
+        else:
+            parent_index = self.parent(index)
+            parent_index = parent_index.sibling(parent_index.row(), index.column())
+        if not parent_index.isValid():
+            return flags
+        is_parent_enabled = Qt.ItemFlag.ItemIsEnabled in parent_index.flags()
+        is_parent_checked = tool.Util.checkstate_to_bool(parent_index.data(Qt.ItemDataRole.CheckStateRole))
+        if not (is_parent_enabled and is_parent_checked):
+            flags = flags & ~ Qt.ItemFlag.ItemIsEnabled
+        return flags
+
+    def get_allowed_combinations(self):
+        allowed_combinations = list()
+        for phase in self.project.get_phases():
+            for usecase in self.project.get_usecases():
+                if self.project.get_filter_state(phase, usecase):
+                    allowed_combinations.append((phase, usecase))
+        return allowed_combinations
+
+    def update(self):
+        logging.debug("Update")
+        self.allowed_combinations = self.get_allowed_combinations()
+        self.active_object = tool.FilterWindow.get_active_object()
+        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount()))
+
+    def get_property_sets(self) -> list[SOMcreator.PropertySet]:
+        if tool.FilterWindow.get_active_object() is None:
+            return []
+        return list(tool.FilterWindow.get_active_object().get_property_sets(filter=False))
+
+    def get_root(self):
+        return self.root_objects
+
+    # Returns the number of children (rows) under the given index
+    def rowCount(self, parent=QModelIndex()):
+        if not parent.isValid():
+            return len(self.get_property_sets())  # Top-level items
+        node: SOMcreator.PropertySet = parent.internalPointer()
+        if isinstance(node, SOMcreator.Attribute):
+            return 0
+        count = len(list(node.get_attributes(filter=False)))  # Use get_children() to access children
+        return count
+
+    # Returns the number of columns for the children of the given parent
+    def columnCount(self, parent=QModelIndex()):
+        return 1 + len(self.allowed_combinations)
+
+    def headerData(self, section, orientation, role):
+        if orientation == Qt.Orientation.Horizontal:
+            if role == Qt.ItemDataRole.DisplayRole:
+                if section == 0:
+                    return "PropertySet/Attribut"
+                else:
+                    if section - 1 >= len(self.allowed_combinations):
+                        return None
+                    phase, usecase = self.allowed_combinations[section - 1]
+                    return f"{phase.name}-{usecase.name}"
+
+    # Creates an index for a given row and column
+    def index(self, row, column, parent=QModelIndex()):
+
+        if not parent.isValid():
+            if row >= self.rowCount():
+                self.beginRemoveRows(QModelIndex(), row, row)
+                self.endRemoveRows()
+                return QModelIndex()
+            item: SOMcreator.PropertySet = self.get_property_sets()[row]
+            item.index = self.createIndex(row, column, item)
+            return item.index
+
+        node: SOMcreator.PropertySet = parent.internalPointer()
+        children = list(node.get_attributes(filter=False))  # Use get_children() to access children
+
+        if row >= 0 and row < len(children):
+            child = children[row]
+            child.index = self.createIndex(row, column, child)
+            return child.index
+        return QModelIndex()
+
+    # Returns the parent index of the given index
+    def parent(self, index: QModelIndex):
+        if not index.isValid():
+            return QModelIndex()
+        node: SOMcreator.PropertySet | SOMcreator.Attribute = index.internalPointer()
+        if node is None:
+            return QModelIndex()
+        if isinstance(node, SOMcreator.PropertySet):
+            return QModelIndex()
+        parent_index: QModelIndex = node.property_set.index
+        return parent_index.sibling(parent_index.row(), 0)
+
+    # Returns the data to be displayed for each cell
+    def data(self, index, role=Qt.DisplayRole):
+        if not index.isValid():
+            return None
+        node: SOMcreator.PropertySet | SOMcreator.Attribute = index.internalPointer()
+
+        if role == Qt.DisplayRole:
+            if index.column() == 0:
+                return node.name
+        if role == Qt.ItemDataRole.CheckStateRole:
+            if index.column() > 0:
+                pos = index.column() - 1
+                if pos >= len(self.allowed_combinations):
+                    return None
+                phase, usecase = self.allowed_combinations[pos]
+                return tool.Util.bool_to_checkstate(node.get_filter_state(phase, usecase))
+
+        return None
+
+    def setData(self, index: QModelIndex, value, role: Qt.ItemDataRole):
+        if not index.isValid() or role != Qt.ItemDataRole.CheckStateRole:
+            return False
+        node: SOMcreator.PropertySet | SOMcreator.Attribute = index.internalPointer()
+        if index.column() - 1 >= len(self.allowed_combinations):
+            return False
+
+        phase, usecase = self.get_allowed_combinations()[index.column() - 1]
+        node.set_filter_state(phase, usecase, bool(value))
+        trigger.update_pset_tree()
         return True

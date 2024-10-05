@@ -12,7 +12,9 @@ def open_window(filter_window: Type[tool.FilterWindow], project: Type[tool.Proje
     widget = filter_window.create_widget()
     filter_window.connect_project_table(project.get())
     filter_window.connect_object_tree(project.get())
+    filter_window.connect_pset_tree(project.get())
     widget.show()
+
 def pt_context_menu(local_pos, orientation: int, filter_window: Type[tool.FilterWindow], project: Type[tool.Project]):
     proj = project.get()
 
@@ -51,3 +53,8 @@ def object_tree_selection_changed(selected: QItemSelection, filter_window: Type[
     obj: SOMcreator.Object = index.internalPointer()
     filter_window.set_active_object(obj)
     filter_window.set_object_label(obj.name)
+    update_pset_tree(filter_window)
+
+
+def update_pset_tree(filter_window: Type[tool.FilterWindow]):
+    filter_window.get_pset_tree().model().update()

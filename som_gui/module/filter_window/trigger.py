@@ -42,3 +42,7 @@ def update_object_tree():
 def object_tree_clicked(selected, deselected):
     core.object_tree_selection_changed(selected, tool.FilterWindow)
     pass
+
+
+def update_pset_tree():
+    core.update_pset_tree(tool.FilterWindow)

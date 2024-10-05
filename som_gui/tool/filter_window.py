@@ -39,10 +39,14 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         return cls.get_properties().widget
 
     @classmethod
+    def connect_pset_tree(cls, project: SOMcreator.Project):
+        pset_tree = cls.get_pset_tree()
+        pset_tree.setModel(ui.PsetModel(project))
+
+    @classmethod
     def connect_object_tree(cls, project: SOMcreator.Project):
-        object_tree = cls.get_properties().widget.ui.object_tree
+        object_tree = cls.get_object_tree()
         object_tree.setModel(ui.ObjectModel(project))
-        object_tree = cls.get_properties().widget.ui.object_tree
         object_tree.setSelectionMode(object_tree.SelectionMode.SingleSelection)
         object_tree.setSelectionBehavior(object_tree.SelectionBehavior.SelectRows)
         object_tree.selectionModel().selectionChanged.connect(trigger.object_tree_clicked)
