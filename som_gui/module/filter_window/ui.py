@@ -13,6 +13,7 @@ from PySide6.QtGui import QAction
 from som_gui import tool
 import som_gui
 from . import trigger
+from ...core.object import ident_attribute_changed
 
 
 class FilterWidget(QWidget):
@@ -25,8 +26,6 @@ class FilterWidget(QWidget):
         self.setWindowTitle(f"Projekt Filter {tool.Util.get_status_text()}")
 
 
-
-
 class ProjectView(QTableView):
     def __init__(self, parent):
         super().__init__(parent)
@@ -35,6 +34,7 @@ class ProjectView(QTableView):
         action.triggered.connect(self.add_column)
         self.setContextMenuPolicy(Qt.ActionsContextMenu)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+
     def add_column(self):
         self.model().add_usecase()
 
@@ -42,10 +42,10 @@ class ProjectView(QTableView):
         return super().model()
 
 
-
 class ObjectTreeView(QTreeView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
     #
     # def paintEvent(self, event):
     #     super().paintEvent(event)
@@ -70,6 +70,7 @@ class ObjectTreeView(QTreeView):
 
     def model(self) -> ObjectModel:
         return super().model()
+
 
 class PsetTreeView(QTreeView):
     def __init__(self, *args, **kwargs):
@@ -129,10 +130,26 @@ class ObjectModel(QAbstractItemModel):
         super().__init__()
         self.allowed_combinations = self.get_allowed_combinations()
 
-    def flags(self, index):
+    def flags(self, index: QModelIndex):
         flags = super().flags(index)
-        if index.column() == 2:
-            return flags | Qt.ItemFlag.ItemIsUserCheckable
+
+        if index.column() < 2:
+            return flags
+        if index.column() >= 2:
+            flags = flags | Qt.ItemFlag.ItemIsUserCheckable
+        obj: SOMcreator.Object = index.internalPointer()
+        parent_index = self.parent(index)
+        if obj is None:
+            return flags
+        if not obj.parent:
+            return flags
+
+        if not parent_index.isValid():
+            return flags
+        is_parent_enabled = Qt.ItemFlag.ItemIsEnabled in parent_index.flags()
+        is_parent_checked = tool.Util.checkstate_to_bool(parent_index.data(Qt.ItemDataRole.CheckStateRole))
+        if not (is_parent_enabled and is_parent_checked):
+            flags = flags & ~ Qt.ItemFlag.ItemIsEnabled
         return flags
 
     def get_allowed_combinations(self):
@@ -207,7 +224,8 @@ class ObjectModel(QAbstractItemModel):
             return QModelIndex()
         if not node.parent:
             return QModelIndex()
-        return node.parent.index
+        parent_index: QModelIndex = node.parent.index
+        return parent_index.sibling(parent_index.row(), index.column())
 
     # Returns the data to be displayed for each cell
     def data(self, index, role=Qt.DisplayRole):
@@ -220,6 +238,7 @@ class ObjectModel(QAbstractItemModel):
                 return node.name
             elif index.column() == 1:
                 return node.ident_value
+
         if role == Qt.ItemDataRole.CheckStateRole:
             if index.column() > 1:
                 pos = index.column() - 2
@@ -239,4 +258,5 @@ class ObjectModel(QAbstractItemModel):
 
         phase, usecase = self.get_allowed_combinations()[index.column() - 2]
         node.set_filter_state(phase, usecase, bool(value))
+        trigger.update_object_tree()
         return True
