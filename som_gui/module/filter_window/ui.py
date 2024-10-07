@@ -25,30 +25,33 @@ class ProjectView(QTableView):
     def __init__(self, parent):
         super().__init__(parent)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setSelectionMode(QTableView.SelectionMode.SingleSelection)
+
+    def enterEvent(self, event):
+        super().enterEvent(event)
+        self.model().update()
 
     def model(self) -> ProjectModel:
         return super().model()
+
+    def mouseMoveEvent(self, event: QMouseEvent):
+        super().mouseMoveEvent(event)
+        trigger.tree_mouse_move_event(self.indexAt(event.pos()))
+
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+        index = self.indexAt(event.pos())
+        trigger.tree_mouse_release_event(index)
 
 
 class ObjectTreeView(QTreeView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    #
-    # def paintEvent(self, event):
-    #     super().paintEvent(event)
-    #     object_filter.trigger.refresh_object_tree()
-    #
-    # def mousePressEvent(self, event: QMouseEvent):
-    #     index = self.indexAt(event.pos())
-    #     if core.tree_mouse_press_event(index, tool.ObjectFilter):
-    #         super().mousePressEvent(event)
-    #
     def mouseMoveEvent(self, event: QMouseEvent):
         super().mouseMoveEvent(event)
         trigger.tree_mouse_move_event(self.indexAt(event.pos()))
 
-    #
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
         index = self.indexAt(event.pos())
@@ -85,6 +88,10 @@ class ProjectModel(QAbstractTableModel):
     def __init__(self, project: SOMcreator.Project):
         super().__init__()
         self.project = project
+        self.check_column_index = 0
+
+    def update(self):
+        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount()))
 
     def flags(self, index):
         flags = super().flags(index)
@@ -136,6 +143,11 @@ class TreeModel(QAbstractItemModel):
         self.check_column_index = check_column_index  # index of first column with checkdata
         self.column_titles = column_titles
 
+    def update(self):
+        self.allowed_combinations = self.get_allowed_combinations()
+        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount()))
+
+
     def flags(self, index, parent_index):
         flags = super().flags(index)
         if index.column() < self.check_column_index:
@@ -158,9 +170,6 @@ class TreeModel(QAbstractItemModel):
                     allowed_combinations.append((phase, usecase))
         return allowed_combinations
 
-    def update(self):
-        self.allowed_combinations = self.get_allowed_combinations()
-        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount()))
 
     def columnCount(self, parent=QModelIndex()):
         return self.check_column_index + len(self.allowed_combinations)
