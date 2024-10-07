@@ -263,7 +263,7 @@ class ObjectModel(TreeModel):
         node: SOMcreator.Object = parent.internalPointer()
         children = list(node.get_children(filter=False))  # Use get_children() to access children
 
-        if row >= 0 and row < len(children):
+        if 0 <= row < len(children):
             child = children[row]
             child.index = self.createIndex(row, column, child)
             return child.index
@@ -309,9 +309,6 @@ class PsetModel(TreeModel):
         if tool.FilterWindow.get_active_object() is None:
             return []
         return list(tool.FilterWindow.get_active_object().get_property_sets(filter=False))
-
-    def get_root(self):
-        return self.root_objects
 
     # Returns the number of children (rows) under the given index
     def rowCount(self, parent=QModelIndex()):
