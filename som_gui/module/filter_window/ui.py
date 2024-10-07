@@ -11,6 +11,14 @@ from . import trigger
 from typing import Callable
 
 
+class SettingsWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        from .qt import settings
+        self.ui = settings.Ui_Form()
+        self.ui.setupUi(self)
+        trigger.settings_widget_created(self)
+
 class FilterWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

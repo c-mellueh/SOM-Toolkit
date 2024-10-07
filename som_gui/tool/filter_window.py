@@ -1,19 +1,25 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
-import logging
+from typing import TYPE_CHECKING, Callable, TextIO, Type
 from PySide6.QtCore import QModelIndex, Qt
-from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMenu, QInputDialog, QLineEdit
+from PySide6.QtGui import QAction, QColor
+from PySide6.QtWidgets import QMenu, QInputDialog, QLineEdit, QTreeWidget, QTreeWidgetItem, QWidget, QHBoxLayout, \
+    QCheckBox, QSizePolicy
+from som_gui.module.project.constants import CLASS_REFERENCE
 
 import SOMcreator
 import som_gui.core.tool
 import som_gui
 from som_gui import tool
+from som_gui.module.attribute import ui as attribute_ui
+
+YELLOW = "#897e00"
+
 
 if TYPE_CHECKING:
-    from som_gui.module.filter_window.prop import FilterWindowProperties
+    from som_gui.module.filter_window.prop import FilterWindowProperties, FilterCompareProperties
 from som_gui.module.filter_window import ui, trigger
+
 
 
 class FilterWindow(som_gui.core.tool.FilterWindow):
@@ -164,3 +170,305 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         prop = cls.get_properties()
         prop.tree_is_clicked = False
         prop.active_check_state = None
+
+    @classmethod
+    def set_settings_widget(cls, widget: ui.SettingsWidget):
+        cls.get_properties().settings_widget = widget
+
+    @classmethod
+    def get_settings_widget(cls) -> ui.SettingsWidget:
+        return cls.get_properties().settings_widget
+
+
+class FilterCompare(som_gui.core.tool.FilterCompare):
+    @classmethod
+    def get_properties(cls) -> FilterCompareProperties:
+        return som_gui.FilterCompareProperties
+
+    @classmethod
+    def reset(cls):
+        prop = cls.get_properties()
+        prop.usecase_list = list()
+        prop.use_case_indexes = list()
+        prop.phase_list = list()
+        prop.phase_indexes = list()
+        prop.projects = [None, None]
+        prop.widget = None
+
+    @classmethod
+    def create_tree_selection_trigger(cls, widget: attribute_ui.AttributeWidget):
+        widget.widget.tree_widget_object.itemSelectionChanged.connect(
+            lambda: trigger.filter_tab_object_tree_selection_changed(widget))
+
+    @classmethod
+    def find_matching_usecases(cls, proj0: SOMcreator.Project = None, proj1: SOMcreator.Project = None):
+        proj0 = proj0 or cls.get_project(0)
+        proj1 = proj1 or cls.get_project(1)
+
+        if not cls.get_usecase_list():
+            usecases = set(proj0.get_usecases()).intersection(set(proj1.get_usecases()))
+            cls.set_usecase_list(sorted(usecases, key=lambda x: x.name))
+            for usecase in cls.get_usecase_list():
+                index0 = proj0.get_use_case_index(usecase)
+                index1 = proj1.get_use_case_index(usecase)
+                cls.add_use_case_index_tuple((index0, index1))
+        return cls.get_usecase_list()
+
+    @classmethod
+    def find_matching_phases(cls, proj0: SOMcreator.Project = None, proj1: SOMcreator.Project = None):
+        proj0 = proj0 or cls.get_project(0)
+        proj1 = proj1 or cls.get_project(1)
+
+        if not cls.get_properties().phase_list:
+            phases = set(proj0.get_phases()).intersection(set(proj1.get_phases()))
+            cls.set_phase_list(sorted(phases, key=lambda x: x.name))
+            for phase in cls.get_phase_list():
+                index0 = proj0.get_phase_index(phase)
+                index1 = proj1.get_phase_index(phase)
+                cls.add_phase_index_tuple((index0, index1))
+        return cls.get_phase_list()
+
+    @classmethod
+    def append_collumns(cls, object_tree_widget: QTreeWidget, pset_tree_widget: QTreeWidget):
+        object_header_text = cls.get_existing_header_texts(object_tree_widget)
+        pset_header_text = cls.get_existing_header_texts(pset_tree_widget)
+
+        match_list = cls.get_match_list()
+        extra_header_texts = [f"{pp.name} - {uc.name}" for uc, pp in match_list]
+        count = len(extra_header_texts)
+
+        object_tree_widget.setColumnCount(object_tree_widget.columnCount() + count)
+        pset_tree_widget.setColumnCount(pset_tree_widget.columnCount() + count)
+        object_tree_widget.setHeaderLabels(object_header_text + extra_header_texts)
+        pset_tree_widget.setHeaderLabels(pset_header_text + extra_header_texts)
+
+    @classmethod
+    def get_filter_list(cls, entity0, entity1) -> list[tuple[None | bool, None | bool]]:
+        filter_list = list()
+        for column, [usecase, phase] in enumerate(cls.get_match_list(), start=2):
+            filter_list.append(
+                (entity0.get_filter_state(phase, usecase) if entity0 is not None else None,
+                 entity1.get_filter_state(phase, usecase) if entity1 is not None else None))
+        return filter_list
+
+    @classmethod
+    def are_all_filters_identical(cls, filter_list: list[tuple[None | bool, None | bool]]) -> bool:
+        return all(f0 == f1 for f0, f1 in filter_list if f0 is not None and f1 is not None)
+
+    @classmethod
+    def are_objects_identical(cls, obj0: SOMcreator.Object, obj1: SOMcreator.Object) -> bool:
+        filter_list = cls.get_filter_list(obj0, obj1)
+        objects_are_identical = cls.are_all_filters_identical(filter_list)
+        if not objects_are_identical:
+            return False
+        pset_lists = tool.AttributeCompare.get_pset_list(obj0)
+        if pset_lists is None:
+            return True
+        for p0, p1 in pset_lists:
+            if not cls.are_psets_identical(p0, p1):
+                return False
+        return True
+
+    @classmethod
+    def are_psets_identical(cls, pset0: SOMcreator.PropertySet, pset1: SOMcreator.PropertySet) -> bool:
+        filter_list = cls.get_filter_list(pset0, pset1)
+        all_psets_are_identical = cls.are_all_filters_identical(filter_list)
+        if not all_psets_are_identical:
+            return False
+        attribute_lists = tool.AttributeCompare.get_attribute_list(pset0)
+        if attribute_lists is None:
+            return True
+        for a0, a1 in attribute_lists:
+            if not cls.are_attributes_identical(a0, a1):
+                return False
+        return True
+
+    @classmethod
+    def are_attributes_identical(cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute):
+        filter_list = cls.get_filter_list(attribute0, attribute1)
+        return cls.are_all_filters_identical(filter_list)
+
+    @classmethod
+    def fill_tree_with_checkstates(cls, item: QTreeWidgetItem) -> None:
+
+        tree = item.treeWidget()
+        entity_0, entity_1 = tool.AttributeCompare.get_entities_from_item(item)
+        filter_list = cls.get_filter_list(entity_0, entity_1)
+        for column, filter_state in enumerate(filter_list, start=2):
+            widget = cls.create_combobox_widget(filter_state[0], filter_state[1])
+            tree.setItemWidget(item, column, widget)
+            if filter_state[0] != filter_state[1]:
+                cls.set_tree_item_column_color(item, column, YELLOW)
+
+        for child_index in range(item.childCount()):
+            cls.fill_tree_with_checkstates(item.child(child_index))
+
+    @classmethod
+    def make_header_wordwrap(cls, tree: QTreeWidget) -> None:
+        """because of long header texts make header wordwrap"""
+        header = attribute_ui.WordWrapHeaderView(Qt.Orientation.Horizontal)
+        tree.setHeader(header)
+        header.setDefaultAlignment(Qt.AlignmentFlag.AlignCenter | Qt.TextFlag.TextWordWrap)
+
+    @classmethod
+    def style_object_tree(cls, item: QTreeWidgetItem):
+        entity_0: SOMcreator.Object = item.data(0, CLASS_REFERENCE)
+        entity_1: SOMcreator.Object = item.data(1, CLASS_REFERENCE)
+        for column, filter_state in enumerate(cls.get_filter_list(entity_0, entity_1), start=2):
+            if filter_state[0] != filter_state[1]:
+                cls.set_tree_item_column_color(item, column, YELLOW)
+
+        if not cls.are_objects_identical(entity_0, entity_1):
+            cls.set_tree_item_column_color(item, 0, YELLOW)
+
+        for child_index in range(item.childCount()):
+            cls.style_object_tree(item.child(child_index))
+
+    @classmethod
+    def create_combobox_widget(cls, checkstate0: bool | None, checkstate1: bool | None):
+        widget = QWidget()
+        layout = QHBoxLayout()
+        cb0 = QCheckBox()
+        if checkstate0 is not None:
+            cb0.setChecked(checkstate0)
+        cb1 = QCheckBox()
+        cb1.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
+        if checkstate1 is not None:
+            cb1.setChecked(checkstate1)
+        layout.addWidget(cb0)
+        layout.addWidget(cb1)
+        widget.setLayout(layout)
+        cb0.setEnabled(False)
+        cb1.setEnabled(False)
+        return widget
+
+    @classmethod
+    def export_write_statechange(cls, file: TextIO, type_name: str, filter_list, indent: int):
+        matches = cls.get_match_list()
+        for index, (f0, f1) in enumerate(filter_list):
+            if f0 == f1:
+                continue
+            usecase, phase = matches[index]
+            file.write(f"{'   ' * indent}{type_name} [{usecase.name}][{phase.name}] state changed from {f0} to {f1}\n")
+
+    @classmethod
+    def export_object_filter_differences(cls, file: TextIO, attribute_compare: Type[tool.AttributeCompare]):
+        project_0 = cls.get_project(0)
+        object_dict = attribute_compare.get_object_dict()
+        for obj0 in sorted(project_0.get_objects(filter=False), key=lambda x: x.name):
+            obj1 = object_dict[obj0]
+            if obj1 is None:
+                continue
+            if cls.are_objects_identical(obj0, obj1):
+                continue
+            filter_list = cls.get_filter_list(obj0, obj1)
+            file.write(f"\nObject '{obj0.name}' ({obj0.ident_value}):\n")
+            cls.export_write_statechange(file, "Object", filter_list, 1)
+            pset_list = attribute_compare.get_properties().pset_lists.get(obj0)
+            cls.export_pset_filter_differences(file, pset_list, attribute_compare)
+
+    @classmethod
+    def export_pset_filter_differences(cls, file, pset_list, attribute_compare: Type[tool.AttributeCompare]):
+        if pset_list is None:
+            return
+        for p0, p1 in sorted(pset_list, key=lambda x: x[0].name if x[0] is not None else "aaa"):
+            if p0 is None or p1 is None:
+                continue
+            if cls.are_psets_identical(p0, p1):
+                continue
+            file.write(f"   PropertySet '{p0.name}':\n")
+            filter_list = cls.get_filter_list(p0, p1)
+            cls.export_write_statechange(file, "PropertySet", filter_list, 2)
+            attribute_list = attribute_compare.get_properties().attributes_lists.get(p0)
+            cls.export_attribute_filter_differences(file, attribute_list)
+
+    @classmethod
+    def export_attribute_filter_differences(cls, file, attribute_list):
+        matches = cls.get_match_list()
+
+        if attribute_list is None:
+            return
+        for a0, a1 in sorted(attribute_list, key=lambda x: x[0].name if x[0] is not None else "aaa"):
+            if a0 is None or a1 is None:
+                continue
+            if cls.are_attributes_identical(a0, a1):
+                continue
+            filter_list = cls.get_filter_list(a0, a1)
+            for index, (f0, f1) in enumerate(filter_list):
+                if f0 == f1:
+                    continue
+                usecase, phase = matches[index]
+                use_case_phase_text = f"[{usecase.name}][{phase.name}]"
+                text = "      Attribut {0:30} {1:30} state changed from {2:5} to {3:5}\n"
+                file.write(text.format(f"'{a0.name}'", use_case_phase_text, str(f0), str(f1)))
+
+    # GETTER & SETTER
+
+    @classmethod
+    def set_projects(cls, project1, project2) -> None:
+        cls.get_properties().projects = [project1, project2]
+
+    @classmethod
+    def get_project(cls, index=1) -> SOMcreator.Project:
+        return cls.get_properties().projects[index]
+
+    @classmethod
+    def get_widget(cls):
+        if cls.get_properties().widget is None:
+            cls.get_properties().widget = attribute_ui.AttributeWidget()
+            cls.get_properties().widget.widget.table_widget_values.hide()
+            cls.get_properties().widget.widget.table_infos.hide()
+        return cls.get_properties().widget
+
+    @classmethod
+    def get_object_tree(cls):
+        return cls.get_widget().widget.tree_widget_object
+
+    @classmethod
+    def get_usecase_list(cls) -> list[SOMcreator.UseCase]:
+        return cls.get_properties().usecase_list
+
+    @classmethod
+    def set_usecase_list(cls, usecase_list: list[SOMcreator.UseCase]):
+        cls.get_properties().usecase_list = usecase_list
+
+    @classmethod
+    def add_use_case_index_tuple(cls, value: tuple[int, int]):
+        cls.get_properties().use_case_indexes.append(value)
+
+    @classmethod
+    def get_phase_list(cls) -> list[SOMcreator.Phase]:
+        return cls.get_properties().phase_list
+
+    @classmethod
+    def set_phase_list(cls, phase_list: list[SOMcreator.Phase]):
+        cls.get_properties().phase_list = phase_list
+
+    @classmethod
+    def add_phase_index_tuple(cls, value: tuple[int, int]):
+        cls.get_properties().phase_indexes.append(value)
+
+    @classmethod
+    def get_match_list(cls) -> list[tuple[SOMcreator.UseCase, SOMcreator.Phase]]:
+        usecases = cls.get_usecase_list()
+        phases = cls.get_phase_list()
+        if not cls.get_properties().match_list:
+            cls.get_properties().match_list = [(usecase, phase) for usecase in usecases for phase in phases]
+        return cls.get_properties().match_list
+
+    @classmethod
+    def get_existing_header_texts(cls, tree_widget: QTreeWidget) -> list[str]:
+        header = tree_widget.headerItem()
+        return [header.text(index) for index in range(header.columnCount())]
+
+    @classmethod
+    def set_tree_item_column_color(cls, item: QTreeWidgetItem, column: int, color: str):
+        tree = item.treeWidget()
+        index = tree.indexFromItem(item, 0)
+        tool.AttributeCompare.set_branch_color(tree, index, color)
+        color = QColor(color)
+        item.setBackground(column, color)
+        item.setData(CLASS_REFERENCE + 1, column, 1)
+        item.setBackground(0, color)
+        item.setBackground(1, color)
+        item.setData(0, CLASS_REFERENCE + 1, 1)

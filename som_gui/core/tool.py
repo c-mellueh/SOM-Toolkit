@@ -1265,7 +1265,7 @@ class ObjectFilter:
     def update_pset_use_cases(self, ): pass
 
 
-class ObjectFilterCompare:
+class FilterCompare:
     def add_phase_index_tuple(self, value): pass
 
     def add_use_case_index_tuple(self, value): pass

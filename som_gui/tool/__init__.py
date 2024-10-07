@@ -1,6 +1,5 @@
 from som_gui.tool.logging import Logging
 from som_gui.tool.project import Project
-from som_gui.tool.object_filter import ObjectFilter, ObjectFilterCompare
 from som_gui.tool.appdata import Appdata
 from som_gui.tool.object import Object
 from som_gui.tool.search import Search
@@ -8,7 +7,6 @@ from som_gui.tool.popups import Popups
 from som_gui.tool.property_set import PropertySet
 from som_gui.tool.attribute import Attribute, AttributeCompare
 from som_gui.tool.main_window import MainWindow
-from som_gui.tool.project_filter import ProjectFilter
 from som_gui.tool.predefined_property_set import PredefinedPropertySet, PredefinedPropertySetCompare
 from som_gui.tool.property_set_window import PropertySetWindow
 from som_gui.tool.attribute_table import AttributeTable
@@ -26,4 +24,4 @@ from som_gui.tool.console import Console
 from som_gui.tool.bsdd import Bsdd
 from som_gui.tool.settings import Settings
 from som_gui.tool.plugins import Plugins
-from som_gui.tool.filter_window import FilterWindow
+from som_gui.tool.filter_window import FilterWindow, FilterCompare

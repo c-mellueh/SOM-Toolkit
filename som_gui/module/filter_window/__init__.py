@@ -4,7 +4,7 @@ from . import qt, ui, prop, trigger
 
 def register():
     som_gui.FilterWindowProperties = prop.FilterWindowProperties()
-
+    som_gui.FilterCompareProperties = prop.FilterCompareProperties()
 
 def load_ui_triggers():
     trigger.connect()
