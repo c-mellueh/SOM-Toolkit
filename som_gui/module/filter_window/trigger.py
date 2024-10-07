@@ -7,16 +7,9 @@ from typing import TYPE_CHECKING
 
 
 def connect():
-    tool.MainWindow.add_action("Filter",
-                               lambda: core.open_window(tool.FilterWindow, tool.Project))
+    tool.MainWindow.add_action("Bearbeiten",
+                               lambda: core.open_window(tool.FilterWindow, tool.Project, tool.Util, tool.Search))
 
-
-def pt_remove_usecase_clicked(index):
-    core.remove_usecase_clicked(index, tool.FilterWindow, tool.Project, tool.Util)
-
-
-def pt_add_usecase_clicked():
-    core.add_usecase_clicked(tool.FilterWindow, tool.Project, tool.Util)
 
 
 def pt_horizontal_context_requested(pos):

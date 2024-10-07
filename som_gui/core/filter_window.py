@@ -5,21 +5,43 @@ from typing import TYPE_CHECKING, Type
 import SOMcreator
 from PySide6.QtCore import Qt, QItemSelection, QModelIndex
 
-from som_gui.core.tool import FilterWindow
-
 if TYPE_CHECKING:
     from som_gui import tool
 
 
-def open_window(filter_window: Type[tool.FilterWindow], project: Type[tool.Project]):
+def open_window(filter_window: Type[tool.FilterWindow], project: Type[tool.Project], util: Type[tool.Util],
+                search: Type[tool.Search]):
     widget = filter_window.create_widget()
+    util.add_shortcut("Ctrl+F", widget, lambda: search_object(filter_window, search))
+
     filter_window.connect_project_table(project.get())
     filter_window.connect_object_tree(project.get())
     filter_window.connect_pset_tree(project.get())
     widget.show()
 
 
-def pt_context_menu(local_pos, orientation: int, filter_window: Type[tool.FilterWindow], project: Type[tool.Project]):
+def search_object(filter_window: Type[tool.FilterWindow], search: Type[tool.Search]):
+    obj = search.search_object()
+    if obj is None:
+        return
+    object_tree = filter_window.get_object_tree()
+    parent_list = list()
+    parent = obj.parent
+    while parent is not None:
+        parent_list.append(parent)
+        parent = parent.parent
+
+    for item in reversed(parent_list):
+        index: QModelIndex = item.index
+        object_tree.expand(index)
+    index: QModelIndex = obj.index
+    flags = object_tree.selectionModel().SelectionFlag.ClearAndSelect | object_tree.selectionModel().SelectionFlag.Rows
+    object_tree.selectionModel().select(index, flags)
+    object_tree.scrollTo(index.sibling(index.row(), 0))
+
+
+def pt_context_menu(local_pos, orientation: Qt.Orientation, filter_window: Type[tool.FilterWindow],
+                    project: Type[tool.Project]):
     proj = project.get()
 
     menu_list = list()

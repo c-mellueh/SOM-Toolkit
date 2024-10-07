@@ -8,7 +8,6 @@ from PySide6.QtWidgets import QTableWidgetItem, QTableWidget
 from PySide6.QtCore import Qt
 from som_gui import tool
 from som_gui import __version__ as version
-
 if TYPE_CHECKING:
     from som_gui.module.search.prop import SearchProperties
     from som_gui.module.search.ui import SearchWindow
@@ -34,7 +33,7 @@ class Search(som_gui.core.tool.Search):
         return cls.get_search_properties().search_mode
 
     @classmethod
-    def search_object(cls):
+    def search_object(cls) -> SOMcreator.Object | None:
         prop = cls.get_search_properties()
         prop.search_mode = 1
         prop.search_window = search.ui.SearchWindow()
