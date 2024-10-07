@@ -1,13 +1,11 @@
 from __future__ import annotations
-import som_gui
 from som_gui import tool
 from som_gui.core import filter_window as core
 from PySide6.QtCore import Qt
-from typing import TYPE_CHECKING
 from . import ui, constants
 
 def connect():
-    tool.MainWindow.add_action("Bearbeiten",
+    tool.MainWindow.add_action("Bearbeiten/Filter",
                                lambda: core.open_window(tool.FilterWindow, tool.Project, tool.Util, tool.Search))
     core.add_compare_widget(tool.FilterCompare, tool.AttributeCompare, tool.CompareWindow)
     tool.Settings.add_page_to_toolbox(ui.SettingsWidget, constants.SETTINGS_TAB_NAME, constants.SETTINGS_PAGE_NAME,

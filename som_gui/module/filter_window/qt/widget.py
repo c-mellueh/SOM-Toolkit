@@ -15,8 +15,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
                            QFont, QFontDatabase, QGradient, QIcon,
                            QImage, QKeySequence, QLinearGradient, QPainter,
                            QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QSizePolicy,
-                               QSplitter, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QHeaderView, QLabel,
+                               QSizePolicy, QSplitter, QVBoxLayout, QWidget)
 
 from som_gui.module.filter_window.ui import (ObjectTreeView, ProjectView, PsetTreeView)
 
@@ -24,7 +24,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(854, 581)
+        Form.resize(1263, 853)
         self.verticalLayout_2 = QVBoxLayout(Form)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.splitter_2 = QSplitter(Form)
@@ -33,6 +33,8 @@ class Ui_Form(object):
         self.project_table = ProjectView(self.splitter_2)
         self.project_table.setObjectName(u"project_table")
         self.project_table.setContextMenuPolicy(Qt.ActionsContextMenu)
+        self.project_table.setEditTriggers(
+            QAbstractItemView.AnyKeyPressed | QAbstractItemView.DoubleClicked | QAbstractItemView.EditKeyPressed | QAbstractItemView.SelectedClicked)
         self.splitter_2.addWidget(self.project_table)
         self.splitter = QSplitter(self.splitter_2)
         self.splitter.setObjectName(u"splitter")
@@ -68,6 +70,6 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-        self.label.setText(QCoreApplication.translate("Form", u"TextLabel", None))
+        self.label.setText("")
     # retranslateUi
 
