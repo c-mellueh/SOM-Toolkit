@@ -54,7 +54,7 @@ class Project(object):
 
     @filterable
     def get_root_objects(self) -> Iterator[SOMcreator.Object]:
-        return filter(lambda o: o.parent is None, self.get_objects())
+        return filter(lambda o: o.parent is None, self.get_objects(filter=False))
 
     # Item Getter Methods
     @filterable
@@ -186,6 +186,12 @@ class Project(object):
         self._filter_matrix = matrix
 
     def get_filter_state(self, phase: SOMcreator.Phase, use_case: SOMcreator.UseCase):
+        if phase is None or use_case is None:
+            return None
+        if isinstance(phase, int):
+            phase = self.get_phase_by_index(phase)
+        if isinstance(use_case, int):
+            use_case = self.get_usecase_by_index(use_case)
         return self._filter_matrix[self.get_phase_index(phase)][self.get_use_case_index(use_case)]
 
     def set_filter_state(self, phase: SOMcreator.Phase, use_case: SOMcreator.UseCase, value: bool):
@@ -238,23 +244,26 @@ class Project(object):
         if phase is None:
             return
         index = self.get_phase_index(phase)
+        new_active_phases = [self.get_phase_by_index(i) for i in self.active_phases if i != index]
         for item in self.get_hirarchy_items(filter=False):
             item.remove_phase(phase)
         self._phases.remove(phase)
         self._filter_matrix.pop(index)
-        if index in self.active_phases:
-            self.active_phases.remove(index)
+        self.active_phases = [self.get_phase_index(ph) for ph in new_active_phases]
+
 
     def remove_use_case(self, use_case: SOMcreator.UseCase) -> None:
         if use_case is None:
             return
         index = self.get_use_case_index(use_case)
+
+        new_active_usecases = [self.get_usecase_by_index(i) for i in self.active_usecases if i != index]
+
+
         for item in self.get_hirarchy_items(filter=False):
             item.remove_use_case(use_case)
 
         self._use_cases.remove(use_case)
         for use_case_list in self._filter_matrix:
             use_case_list.pop(index)
-
-        if index in self.active_phases:
-            self.active_phases.remove(index)
+        self.active_usecases = [self.get_use_case_index(uc) for uc in new_active_usecases]

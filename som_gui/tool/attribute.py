@@ -464,15 +464,17 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def create_child_matchup(cls, entity0: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute,
                              entity1: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute):
+
         if entity0 is None:
             return [(None, p) for p in entity1.get_children(filter=False)]
         if entity1 is None:
             return [(p, None) for p in entity0.get_children(filter=False)]
-        children0 = entity0.get_children(filter=False)
-        children1 = entity1.get_children(filter=False)
+        children0 = list(entity0.get_children(filter=False))
+        children1 = list(entity1.get_children(filter=False))
         missing = list(children1)
         uuid_dict = cls.generate_uuid_dict(children1)
         name_dict = {cls.get_name_path(e): e for e in children1}
+
         result_list = list()
         for pset in children0:
             name_path = cls.get_name_path(pset)

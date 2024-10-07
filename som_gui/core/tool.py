@@ -6,7 +6,9 @@ class Appdata:
 
     def get_bool_setting(self, section, path, default): pass
 
-    def get_integer_setting(self, section, path, default): pass
+    def get_float_setting(self, section, path, default): pass
+
+    def get_int_setting(self, section, path, default): pass
 
     def get_path(self, value): pass
 
@@ -18,6 +20,9 @@ class Appdata:
 
     def set_setting(self, section, path, value): pass
 
+
+class FilterWindow:
+    pass
 
 class Attribute:
     def add_attribute_data_value(self, name, getter, setter): pass
@@ -244,8 +249,6 @@ class AttributeImport:
 
     def set_current_runner(self, runner): pass
 
-    def set_ifc_path(self, path): pass
-
     def set_main_attribute(self, main_attribute_name): pass
 
     def set_main_pset(self, main_pset_name): pass
@@ -298,8 +301,6 @@ class AttributeImportResults:
 
     def get_update_lock_reason(self, ): pass
 
-    def get_value_checkstate_dict(self, value_list): pass
-
     def get_value_from_table_row(self, table_widget, row, data_types): pass
 
     def get_value_table(self, ): pass
@@ -313,8 +314,6 @@ class AttributeImportResults:
     def remove_results_window(self, ): pass
 
     def set_all_checkbox_state(self, state): pass
-
-    def set_attribute_row_text_color(self, row, color): pass
 
     def set_object_count_label_text(self, text): pass
 
@@ -349,8 +348,6 @@ class AttributeImportSQL:
     def connect_to_data_base(self, path): pass
 
     def count_objects(self, ifc_type, identifier): pass
-
-    def create_existing_filter(self, ): pass
 
     def create_settings_filter(self, ): pass
 
@@ -586,8 +583,6 @@ class Exports:
 class IfcImporter:
     def check_inputs(self, ifc_paths, main_pset, main_attribute): pass
 
-    def create_export_line(self, widget): pass
-
     def create_importer(self, ): pass
 
     def create_runner(self, status_label, path): pass
@@ -806,8 +801,6 @@ class Modelcheck:
 
     def get_element_count(self, ): pass
 
-    def get_entites(self, ifc): pass
-
     def get_entity_check_plugins(self, ): pass
 
     def get_file_check_plugins(self, ): pass
@@ -890,23 +883,25 @@ class Modelcheck:
 class ModelcheckExternal:
     def _build_tree(self, ): pass
 
-    def create_menubar(self, window, main_pset_name, main_attribute_name): pass
+    def create_menubar(self, window): pass
 
     def create_window(self, ): pass
 
     def export_bimcollab(self, ): pass
 
-    def export_desite_attribute_table(self, main_pset_name, main_attribute_name): pass
+    def export_desite_attribute_table(self, ): pass
 
     def export_desite_csv(self, ): pass
 
-    def export_desite_fast(self, pset_name, attribute_name): pass
+    def export_desite_fast(self, ): pass
 
-    def export_desite_js(self, main_pset_name, main_attribute_name): pass
+    def export_desite_js(self, ): pass
 
     def export_ids(self, ): pass
 
     def get_data_dict(self, ): pass
+
+    def get_main_attribute(self, ): pass
 
     def get_properties(self, ): pass
 
@@ -940,8 +935,6 @@ class ModelcheckResults:
 class ModelcheckWindow:
     def _update_pset_row(self, item, enabled): pass
 
-    def add_splitter(self, layout, orientation, widget_1, widget_2): pass
-
     def autofill_export_path(self, ): pass
 
     def check_export_path(self, export_path): pass
@@ -958,13 +951,11 @@ class ModelcheckWindow:
 
     def connect_modelcheck_runner(self, runner): pass
 
-    def connect_object_tree(self, object_tree_widget): pass
+    def connect_object_tree(self, tree_widget): pass
 
-    def create_checkbox_widget(self, ): pass
+    def connect_pset_tree(self, tree_widget): pass
 
     def create_context_menu(self, pos, funcion_list, widget): pass
-
-    def create_export_line(self, widget): pass
 
     def create_import_runner(self, ifc_import_path): pass
 
@@ -982,15 +973,11 @@ class ModelcheckWindow:
 
     def fill_pset_tree(self, property_sets, enabled, tree): pass
 
-    def get_buttons(self, ): pass
-
     def get_ifc_import_widget(self, ): pass
 
     def get_item_check_state(self, item): pass
 
     def get_item_checkstate_dict(self, ): pass
-
-    def get_item_status_dict(self, ): pass
 
     def get_modelcheck_threadpool(self, ): pass
 
@@ -1014,17 +1001,11 @@ class ModelcheckWindow:
 
     def modelcheck_is_running(self, ): pass
 
-    def open_export_dialog(self, base_path, file_text): pass
-
     def read_inputs(self, ): pass
 
     def reset_butons(self, ): pass
 
     def resize_object_tree(self, ): pass
-
-    def set_abort_button_text(self, text): pass
-
-    def set_export_line_text(self, text): pass
 
     def set_item_check_state(self, item, cs): pass
 
@@ -1033,8 +1014,6 @@ class ModelcheckWindow:
     def set_progressbar_visible(self, state): pass
 
     def set_pset_tree_title(self, text): pass
-
-    def set_run_button_text(self, text): pass
 
     def set_selected_object(self, obj): pass
 
@@ -1062,8 +1041,6 @@ class Object:
 
     def add_objects_infos_add_function(self, key, getter_function): pass
 
-    def autofit_tree(self, ): pass
-
     def change_object_info(self, obj, data_dict): pass
 
     def check_if_ident_attribute_is_valid(self, data_dict): pass
@@ -1075,8 +1052,6 @@ class Object:
     def check_object_creation_input(self, data_dict): pass
 
     def clear_context_menu_list(self, ): pass
-
-    def clear_object_input(self, ui): pass
 
     def collapse_selection(self, ): pass
 
@@ -1159,8 +1134,6 @@ class Object:
 
     def oi_get_values(self, ): pass
 
-    def oi_set_abbreviation(self, value): pass
-
     def oi_set_ident_value_color(self, color): pass
 
     def oi_set_values(self, data_dict): pass
@@ -1205,10 +1178,6 @@ class ObjectFilter:
 
     def get_active_object(self, ): pass
 
-    def get_allowed_phases_by_usecase(self, project, usecase): pass
-
-    def get_allowed_usecases_by_phase(self, project, phase): pass
-
     def get_attribute_dict(self, ): pass
 
     def get_check_state(self, project_phase_index, use_case_index, entity): pass
@@ -1250,8 +1219,6 @@ class ObjectFilter:
     def get_title_count_by_index(self, index): pass
 
     def get_title_lenght_by_model(self, model): pass
-
-    def get_use_case_name_list(self, ): pass
 
     def get_widget(self, ): pass
 
@@ -1298,7 +1265,7 @@ class ObjectFilter:
     def update_pset_use_cases(self, ): pass
 
 
-class ObjectFilterCompare:
+class FilterCompare:
     def add_phase_index_tuple(self, value): pass
 
     def add_use_case_index_tuple(self, value): pass
@@ -1333,23 +1300,17 @@ class ObjectFilterCompare:
 
     def get_existing_header_texts(self, tree_widget): pass
 
-    def get_extra_column_count(self, ): pass
-
     def get_filter_list(self, entity0, entity1): pass
 
     def get_match_list(self, ): pass
 
     def get_object_tree(self, ): pass
 
-    def get_phase_index_list(self, ): pass
-
     def get_phase_list(self, ): pass
 
     def get_project(self, index): pass
 
     def get_properties(self, ): pass
-
-    def get_use_case_index_list(self, ): pass
 
     def get_usecase_list(self, ): pass
 
@@ -1519,8 +1480,6 @@ class Project:
 
     def create_project(self, ): pass
 
-    def delete_plugin_dict(self, ): pass
-
     def fill_mapping_table(self, table, filter_1, filter_2): pass
 
     def get(self, ): pass
@@ -1534,8 +1493,6 @@ class Project:
     def get_phases(self, ): pass
 
     def get_plugin_functions(self, ): pass
-
-    def get_project_phase_list(self, ): pass
 
     def get_properties(self, ): pass
 
@@ -1558,8 +1515,6 @@ class Project:
     def set_settings_general_widget(self, widget): pass
 
     def set_settings_path_widget(self, widget): pass
-
-    def update_plugin_dict(self, project, key, value): pass
 
 
 class ProjectFilter:
@@ -1723,8 +1678,6 @@ class PropertySetWindow:
 
     def restrict_data_type_to_numbers(self, window): pass
 
-    def set_active_window(self, window): pass
-
     def set_add_button_enabled(self, enabled, window): pass
 
     def set_add_button_text(self, text, window): pass
@@ -1793,8 +1746,6 @@ class Settings:
 
     def get_tab_dict(self, ): pass
 
-    def get_tab_names(self, ): pass
-
     def get_tab_widget(self, ): pass
 
     def get_widget(self, ): pass
@@ -1828,8 +1779,6 @@ class Util:
                            single_request): pass
 
     def fill_main_attribute(self, widget, pset_name, attribute_name, pset_placeholder, attribute_placeholder): pass
-
-    def get_all_attributes(self, object_list): pass
 
     def get_attribute(self, widget): pass
 

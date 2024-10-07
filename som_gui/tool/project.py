@@ -72,7 +72,7 @@ class Project(som_gui.core.tool.Project):
         return cls.get_properties().active_project
 
     @classmethod
-    def get_root_objects(cls, filter_objects=True, proj: SOMcreator.Project = None):
+    def get_root_objects(cls, filter_objects=True, proj: SOMcreator.Project = None) -> list[SOMcreator.Object]:
         if proj is None:
             proj: SOMcreator.Project = cls.get_properties().active_project
         if proj is None:
