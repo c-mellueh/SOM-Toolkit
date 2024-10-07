@@ -132,3 +132,35 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
     @classmethod
     def set_object_label(cls, value: str):
         cls.get().ui.label.setText(value)
+
+    @classmethod
+    def is_tree_clicked(cls) -> bool:
+        prop = cls.get_properties()
+        return prop.tree_is_clicked
+
+    @classmethod
+    def tree_activate_click_drag(cls, index: QModelIndex):
+        prop = cls.get_properties()
+        prop.tree_is_clicked = True
+        checkstate = not tool.Util.checkstate_to_bool(index.data(Qt.ItemDataRole.CheckStateRole))
+        prop.active_check_state = checkstate
+
+    @classmethod
+    def tree_move_click_drag(cls, index: QModelIndex):
+        if not index.isValid():
+            return
+        if index.column() < index.model().check_column_index:
+            return
+        active_checkstate = cls.get_properties().active_check_state
+        if active_checkstate is None:
+            return
+        model = index.model()
+        if not Qt.ItemFlag.ItemIsEnabled in index.flags():
+            return
+        model.setData(index, active_checkstate, Qt.ItemDataRole.CheckStateRole)
+
+    @classmethod
+    def tree_release_click_drag(cls):
+        prop = cls.get_properties()
+        prop.tree_is_clicked = False
+        prop.active_check_state = None

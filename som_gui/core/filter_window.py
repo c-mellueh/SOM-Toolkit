@@ -3,7 +3,10 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 import SOMcreator
-from PySide6.QtCore import Qt, QItemSelection
+from PySide6.QtCore import Qt, QItemSelection, QModelIndex
+
+from som_gui.core.tool import FilterWindow
+
 if TYPE_CHECKING:
     from som_gui import tool
 
@@ -14,6 +17,7 @@ def open_window(filter_window: Type[tool.FilterWindow], project: Type[tool.Proje
     filter_window.connect_object_tree(project.get())
     filter_window.connect_pset_tree(project.get())
     widget.show()
+
 
 def pt_context_menu(local_pos, orientation: int, filter_window: Type[tool.FilterWindow], project: Type[tool.Project]):
     proj = project.get()
@@ -58,3 +62,16 @@ def object_tree_selection_changed(selected: QItemSelection, filter_window: Type[
 
 def update_pset_tree(filter_window: Type[tool.FilterWindow]):
     filter_window.get_pset_tree().model().update()
+
+
+def tree_mouse_move_event(index: QModelIndex, filter_window: Type[tool.FilterWindow]):
+    if not filter_window.is_tree_clicked():
+        filter_window.tree_activate_click_drag(index)
+        return
+    filter_window.tree_move_click_drag(index)
+
+
+def tree_mouse_release_event(index: QModelIndex, filter_window: Type[tool.FilterWindow]):
+    if index is None:
+        return
+    filter_window.tree_release_click_drag()

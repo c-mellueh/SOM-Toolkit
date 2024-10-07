@@ -35,6 +35,13 @@ def on_new_project():
     pass
 
 
+def tree_mouse_move_event(index):
+    core.tree_mouse_move_event(index, tool.FilterWindow)
+
+
+def tree_mouse_release_event(index):
+    core.tree_mouse_release_event(index, tool.FilterWindow)
+
 def update_object_tree():
     core.update_object_tree(tool.FilterWindow)
 

@@ -1,12 +1,10 @@
 from __future__ import annotations
 import logging
-from PySide6.QtCore import QAbstractTableModel, QModelIndex, QAbstractItemModel
+from PySide6.QtCore import QAbstractTableModel, QModelIndex, QAbstractItemModel, Qt
 from PySide6.QtWidgets import QTreeView, QWidget, QTableView
+from PySide6.QtGui import QMouseEvent
 
 import SOMcreator
-
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction
 from som_gui import tool
 import som_gui
 from . import trigger
@@ -46,14 +44,16 @@ class ObjectTreeView(QTreeView):
     #     if core.tree_mouse_press_event(index, tool.ObjectFilter):
     #         super().mousePressEvent(event)
     #
-    # def mouseMoveEvent(self, event: QMouseEvent):
-    #     super().mouseMoveEvent(event)
-    #     core.tree_mouse_move_event(self.indexAt(event.pos()), tool.ObjectFilter)
+    def mouseMoveEvent(self, event: QMouseEvent):
+        super().mouseMoveEvent(event)
+        trigger.tree_mouse_move_event(self.indexAt(event.pos()))
+
     #
-    # def mouseReleaseEvent(self, event):
-    #     super().mouseReleaseEvent(event)
-    #     index = self.indexAt(event.pos())
-    #     core.tree_mouse_release_event(index, tool.ObjectFilter)
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+        index = self.indexAt(event.pos())
+        trigger.tree_mouse_release_event(index)
+
     def enterEvent(self, event):
         super().enterEvent(event)
         trigger.update_object_tree()
@@ -69,6 +69,16 @@ class PsetTreeView(QTreeView):
     def enterEvent(self, event):
         super().enterEvent(event)
         trigger.update_pset_tree()
+
+    def mouseMoveEvent(self, event: QMouseEvent):
+        super().mouseMoveEvent(event)
+        trigger.tree_mouse_move_event(self.indexAt(event.pos()))
+
+    #
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+        index = self.indexAt(event.pos())
+        trigger.tree_mouse_release_event(index)
 
 
 class ProjectModel(QAbstractTableModel):
