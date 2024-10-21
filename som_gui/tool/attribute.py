@@ -12,13 +12,8 @@ import som_gui
 from PySide6.QtWidgets import QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QTableWidget
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.compare import trigger
+from PySide6.QtCore import QCoreApplication
 
-DELETE_TEXT = "was deleted."
-ADD_TEXT = "was added."
-RENAME_TEXT = "was renamed to"
-CHANGED_FROM = "was changed from"
-ADD_CHILD = "added child"
-REMOVE_CHILD = "removed child"
 style_list = [
     [None, [0, 1]],
     ["#897e00", [0, 1]],  # Yellow
@@ -611,11 +606,13 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         """
         Writes to File if one of 2 entities doesn't exist
         """
+        was_deleted = QCoreApplication.translate("AttributeCompare", "was deleted.")
+        was_added = QCoreApplication.translate("AttributeCompare", "was added.")
         if entity0 and not entity1:
-            file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {DELETE_TEXT}\n")
+            file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {was_deleted}\n")
             return False
         elif entity1 and not entity0:
-            file.write(f"{'   ' * indent}{type_name} '{entity1.name}' {ADD_TEXT}\n")
+            file.write(f"{'   ' * indent}{type_name} '{entity1.name}' {was_added}\n")
             return False
         return True
 
@@ -624,8 +621,10 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         """
         Writes differences between Names of entities to File
         """
+        rename_text = QCoreApplication.translate("AttributeCompare", "was renamed to")
+
         if entity0.name != entity1.name:
-            file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {RENAME_TEXT} '{entity1.name}'\n")
+            file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {rename_text} '{entity1.name}'\n")
             return False
         return True
 
@@ -643,8 +642,11 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             change_list.append(['Datatype', attrib0.value_type, attrib1.value_type])
         if attrib0.child_inherits_values != attrib1.child_inherits_values:
             change_list.append(['Child Inheritance', attrib0.child_inherits_values, attrib1.child_inherits_values])
+
+        changed = QCoreApplication.translate("AttributeCompare", "was changed from")
+        print(changed)
         for t, v0, v1 in change_list:
-            file.write(f"{'   ' * indent}{type_name} '{attrib0.name}' {t} {CHANGED_FROM} '{v0}' to '{v1}'\n")
+            file.write(f"{'   ' * indent}{type_name} '{attrib0.name}' {t} {changed} '{v0}' to '{v1}'\n")
         return bool(change_list)
 
     @classmethod
@@ -673,15 +675,16 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def export_child_check(cls, file: TextIO, type_name, entity0, entity1, indent: int) -> bool:
         child_matchup = cls.create_child_matchup(entity0, entity1)
         identical = True
-
+        add_child = QCoreApplication.translate("AttributeCompare", "added child")
+        remove_child = QCoreApplication.translate("AttributeCompare", "removed child")
         for c0, c1 in child_matchup:  # ALT,NEU
             if c0 is None:
                 cn = cls.get_name_path(c1)
-                file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {ADD_CHILD} '{cn}'\n")
+                file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {add_child} '{cn}'\n")
                 identical = False
             elif c1 is None:
                 cn = cls.get_name_path(c0)
-                file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {REMOVE_CHILD} '{cn}'\n")
+                file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {remove_child} '{cn}'\n")
                 identical = False
         return identical
 
