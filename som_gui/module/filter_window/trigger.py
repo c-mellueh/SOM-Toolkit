@@ -7,7 +7,7 @@ from . import ui, constants
 def connect():
     core.create_main_menu_actions(tool.FilterWindow, tool.MainWindow)
     core.add_compare_widget(tool.FilterCompare, tool.AttributeCompare, tool.CompareWindow)
-    tool.Settings.add_page_to_toolbox(ui.SettingsWidget, constants.SETTINGS_TAB_NAME, constants.SETTINGS_PAGE_NAME,
+    tool.Settings.add_page_to_toolbox(ui.SettingsWidget, constants.SETTINGS_PAGE_NAME,
                                       lambda: core.settings_accepted(tool.FilterWindow, tool.Project, tool.Popups))
 
 

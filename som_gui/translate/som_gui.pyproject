@@ -170,6 +170,7 @@
         "..\\module\\settings\\trigger.py",
         "..\\module\\settings\\ui.py",
         "..\\module\\settings\\__init__.py",
+        "..\\module\\settings\\qt\\Widget.ui",
         "..\\module\\util\\constants.py",
         "..\\module\\util\\prop.py",
         "..\\module\\util\\trigger.py",

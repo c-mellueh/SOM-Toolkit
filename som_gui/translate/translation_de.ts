@@ -295,44 +295,44 @@
     <context>
         <name>FilterWindow</name>
         <message>
-            <location filename="../core/filter_window.py" line="22"/>
-            <location filename="../core/filter_window.py" line="134"/>
+            <location filename="../core/filter_window.py" line="24"/>
+            <location filename="../core/filter_window.py" line="136"/>
             <location filename="../module/filter_window/ui.py" line="32"/>
             <source>Project Filter</source>
             <translation>Projekt Filter</translation>
         </message>
         <message>
-            <location filename="../core/filter_window.py" line="73"/>
+            <location filename="../core/filter_window.py" line="75"/>
             <source>Delete UseCase</source>
             <translation>Anwendungsfall Löschen</translation>
         </message>
         <message>
-            <location filename="../core/filter_window.py" line="74"/>
+            <location filename="../core/filter_window.py" line="76"/>
             <source>Rename UseCase</source>
             <translation>Anwendungsfall Umbenennen</translation>
         </message>
         <message>
-            <location filename="../core/filter_window.py" line="76"/>
+            <location filename="../core/filter_window.py" line="78"/>
             <source>Add UseCase</source>
             <translation>Anwendungsfall hinzufügen</translation>
         </message>
         <message>
-            <location filename="../core/filter_window.py" line="86"/>
+            <location filename="../core/filter_window.py" line="88"/>
             <source>Delete Phase</source>
             <translation>Leistungsphase Entfernen</translation>
         </message>
         <message>
-            <location filename="../core/filter_window.py" line="87"/>
+            <location filename="../core/filter_window.py" line="89"/>
             <source>Rename Phase</source>
             <translation>Leistungsphase Umbenennen</translation>
         </message>
         <message>
-            <location filename="../core/filter_window.py" line="89"/>
+            <location filename="../core/filter_window.py" line="91"/>
             <source>Add Phase</source>
             <translation>Leistungsphase hinzufügen</translation>
         </message>
         <message>
-            <location filename="../core/filter_window.py" line="193"/>
+            <location filename="../core/filter_window.py" line="195"/>
             <source>OBJECT FILTER</source>
             <translation>OBJEKT FILTER</translation>
         </message>
@@ -371,7 +371,18 @@
             <location filename="../tool/filter_window.py" line="370"/>
             <source>{}{} [{}][{}] state changed from {} to {}
             </source>
-            <translation>{}{} [{}][{}] Status hat sich von {} zu {} geändert
+            <translation type="unfinished"></translation>
+        </message>
+        <message>
+            <location filename="../tool/filter_window.py" line="426"/>
+            <source>Attribut {0:30} {1:30} state changed from {2:5} to {3:5}
+            </source>
+            <translation type="unfinished"></translation>
+        </message>
+        <message>
+            <source>{}{} [{}][{}] state changed from {} to {}
+            </source>
+            <translation type="vanished">{}{} [{}][{}] Status hat sich von {} zu {} geändert
             </translation>
         </message>
         <message>
@@ -386,10 +397,9 @@
             <translation>PropertySet</translation>
         </message>
         <message>
-            <location filename="../tool/filter_window.py" line="425"/>
             <source>Attribut {0:30} {1:30} state changed from {2:5} to {3:5}
             </source>
-            <translation>Attribut {0:30} {1:30} Status hat sich von {2:5} zu {3:5} geändert
+            <translation type="vanished">Attribut {0:30} {1:30} Status hat sich von {2:5} zu {3:5} geändert
             </translation>
         </message>
     </context>
@@ -876,6 +886,57 @@
             <location filename="../module/mapping/ui.py" line="33"/>
             <source>Revit Mapping</source>
             <translation type="unfinished"></translation>
+        </message>
+    </context>
+    <context>
+        <name>Settings</name>
+        <message>
+            <location filename="../core/settings.py" line="18"/>
+            <location filename="../module/settings/ui.py" line="16"/>
+            <source>Settings</source>
+            <translation>Einstellungen</translation>
+        </message>
+        <message>
+            <location filename="../module/settings/qt/Widget.ui" line="14"/>
+            <source>Dialog</source>
+            <translation>Dialog</translation>
+        </message>
+        <message>
+            <location filename="../module/settings/qt/Widget.ui" line="36"/>
+            <location filename="../module/settings/qt/Widget.ui" line="58"/>
+            <source>General</source>
+            <translation>Allgemein</translation>
+        </message>
+        <message>
+            <location filename="../module/settings/qt/Widget.ui" line="72"/>
+            <source>Logging</source>
+            <translation>Logging</translation>
+        </message>
+        <message>
+            <location filename="../module/settings/qt/Widget.ui" line="86"/>
+            <source>Filter</source>
+            <translation>Filter</translation>
+        </message>
+        <message>
+            <location filename="../module/settings/qt/Widget.ui" line="96"/>
+            <source>Path</source>
+            <translation>Pfad</translation>
+        </message>
+        <message>
+            <location filename="../module/settings/qt/Widget.ui" line="126"/>
+            <source>Project</source>
+            <translation>Projekt</translation>
+        </message>
+        <message>
+            <location filename="../module/settings/qt/Widget.ui" line="140"/>
+            <source>Export</source>
+            <translation>Export</translation>
+        </message>
+        <message>
+            <location filename="../module/settings/qt/Widget.ui" line="150"/>
+            <location filename="../module/settings/qt/Widget.ui" line="180"/>
+            <source>Plugins</source>
+            <translation>Plugins</translation>
         </message>
     </context>
     <context>

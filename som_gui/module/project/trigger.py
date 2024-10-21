@@ -17,9 +17,9 @@ def connect():
     tool.MainWindow.add_action("Datei/Speichern unter ...",
                                lambda: core.save_as_clicked(tool.Project, tool.Popups, tool.Appdata, tool.MainWindow))
 
-    tool.Settings.add_page_to_toolbox(ui.SettingsGeneral, "General", "General Settings",
+    tool.Settings.add_page_to_toolbox(ui.SettingsGeneral, "pageGeneral",
                                       lambda: core.settings_accepted(tool.Project, tool.Appdata))
-    tool.Settings.add_page_to_toolbox(ui.SettingsPath, "Path", "Project", lambda: None)
+    tool.Settings.add_page_to_toolbox(ui.SettingsPath, "pageProject", lambda: None)
 
 
 

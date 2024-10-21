@@ -1,21 +1,17 @@
 from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QDialog, QDialogButtonBox
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QCoreApplication
 from som_gui.icons import get_icon
 from som_gui import tool
 
 class Dialog(QDialog):
     def __init__(self):
         super().__init__()
-        self.setLayout(QVBoxLayout())
-        self.tab_widget = QTabWidget(self)
-        self.tab_widget.setTabPosition(QTabWidget.TabPosition.West)
-        self.layout().addWidget(self.tab_widget)
-        self.button_box = QDialogButtonBox(self)
-        self.button_box.setOrientation(Qt.Orientation.Horizontal)
-        self.button_box.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
-        self.button_box.accepted.connect(self.accept)
-        self.button_box.rejected.connect(self.reject)
-        self.layout().addWidget(self.button_box)
+        from .qt.ui_Widget import Ui_Settings
+        self.ui = Ui_Settings()
+        self.ui.setupUi(self)
+        self.setWindowIcon(get_icon())
 
-        self.setWindowTitle(f'Settings | {tool.Util.get_status_text()}')
+    def retranslate_ui(self):
+        text = QCoreApplication.translate('Settings', "Settings")
+        self.setWindowTitle(f'{text} | {tool.Util.get_status_text()}')
         self.setWindowIcon(get_icon())

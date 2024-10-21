@@ -6,7 +6,7 @@ from PySide6.QtCore import QCoreApplication
 
 def connect():
     core.create_main_menu_actions(tool.Exports, tool.MainWindow)
-    tool.Settings.add_page_to_toolbox(lambda: core.create_settings_ui(tool.Exports, tool.Appdata), "Path", "Export",
+    tool.Settings.add_page_to_toolbox(lambda: core.create_settings_ui(tool.Exports, tool.Appdata), "pageExport",
                                       lambda: core.settings_accepted(tool.Exports, tool.Appdata))
 
 
