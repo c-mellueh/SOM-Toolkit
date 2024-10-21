@@ -2,6 +2,12 @@ from __future__ import annotations
 
 __version__ = "2.13.3"
 
+
+def tr(*args, **kwargs):
+    from PySide6.QtCore import QCoreApplication
+    return QCoreApplication.translate(*args, **kwargs)
+
+
 import logging
 from typing import TYPE_CHECKING
 from som_gui import core, tool

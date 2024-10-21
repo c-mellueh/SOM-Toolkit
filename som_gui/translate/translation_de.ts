@@ -430,6 +430,48 @@
         </message>
     </context>
     <context>
+        <name>MainMenuBar</name>
+        <message>
+            <location filename="../module/attribute_import/trigger.py" line="9"/>
+            <source>Models</source>
+            <translation>Modelle</translation>
+        </message>
+        <message>
+            <location filename="../module/attribute_import/trigger.py" line="10"/>
+            <source>import values</source>
+            <translation>Werte Importieren</translation>
+        </message>
+        <message>
+            <location filename="../module/bsdd/trigger.py" line="6"/>
+            <location filename="../module/exports/trigger.py" line="7"/>
+            <location filename="../module/exports/trigger.py" line="12"/>
+            <source>File</source>
+            <translation>Datei</translation>
+        </message>
+        <message>
+            <location filename="../module/bsdd/trigger.py" line="6"/>
+            <location filename="../module/exports/trigger.py" line="7"/>
+            <location filename="../module/exports/trigger.py" line="12"/>
+            <source>Export</source>
+            <translation>Export</translation>
+        </message>
+        <message>
+            <location filename="../module/bsdd/trigger.py" line="8"/>
+            <source>bsDD</source>
+            <translation>bsDD</translation>
+        </message>
+        <message>
+            <location filename="../module/exports/trigger.py" line="9"/>
+            <source>Vestra</source>
+            <translation>Vestra</translation>
+        </message>
+        <message>
+            <location filename="../module/exports/trigger.py" line="14"/>
+            <source>Card1</source>
+            <translation>Card1</translation>
+        </message>
+    </context>
+    <context>
         <name>MainWindow</name>
         <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="20"/>
@@ -482,22 +524,9 @@
             <translation type="unfinished"></translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="178"/>
-            <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wert des Identifier Attributes&lt;/p&gt;&lt;p&gt;Dieser
-                Wert darf nur einmal vorkommen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-            </source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="187"/>
             <location filename="../module/main_window/qt/MainWindow.ui" line="390"/>
             <source>Wert</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="194"/>
-            <source>Anhand des Identifiers wird bestimmt, welche Objektvorgabe auf eine Entität angewendet werden muss
-            </source>
             <translation type="unfinished"></translation>
         </message>
         <message>
@@ -562,13 +591,6 @@
             <translation type="unfinished"></translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="446"/>
-            <source>Erstellt eine qa.xml-Datei die in Desite als Prüfdurchlauf eingelesen werden kann. Es wird dabei die
-                Attribuierung von Entitäten geprüft
-            </source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="451"/>
             <location filename="../module/main_window/qt/MainWindow.ui" line="474"/>
             <source>Anzeigen</source>
@@ -590,20 +612,8 @@
             <translation type="unfinished"></translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="469"/>
-            <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Erstellt ein Script und eine bk.xml-Datei.&lt;/p&gt;&lt;p&gt;Es
-                muss zuerst das Script ausgeführt werden bevor die bk.xml-Datei importiert wird!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-            </source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="477"/>
             <source>die Aggregationsstruktur in welcher die einzelnen Objekte gespeichert werden können</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="482"/>
-            <source>Export for BoQ</source>
             <translation type="unfinished"></translation>
         </message>
         <message>
@@ -634,6 +644,38 @@
         <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="510"/>
             <source>Mapping Script</source>
+            <translation type="unfinished"></translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="178"/>
+            <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wert des Identifier Attributes&lt;/p&gt;&lt;p&gt;Dieser
+                Wert darf nur einmal vorkommen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
+            </source>
+            <translation type="unfinished"></translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="194"/>
+            <source>Anhand des Identifiers wird bestimmt, welche Objektvorgabe auf eine Entität angewendet werden muss
+            </source>
+            <translation type="unfinished"></translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="446"/>
+            <source>Erstellt eine qa.xml-Datei die in Desite als Prüfdurchlauf eingelesen werden kann. Es wird dabei die
+                Attribuierung von Entitäten geprüft
+            </source>
+            <translation type="unfinished"></translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="469"/>
+            <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Erstellt ein Script und eine bk.xml-Datei.&lt;/p&gt;&lt;p&gt;Es
+                muss zuerst das Script ausgeführt werden bevor die bk.xml-Datei importiert wird!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
+            </source>
+            <translation type="unfinished"></translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="482"/>
+            <source>Export for BoQ</source>
             <translation type="unfinished"></translation>
         </message>
         <message>

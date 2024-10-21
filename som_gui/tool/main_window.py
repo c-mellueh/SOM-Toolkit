@@ -69,9 +69,11 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return prop.menu_dict
 
     @classmethod
-    def add_action(cls, menu_path: str, function: Callable):
+    def add_action(cls, menu_path: str | list[str], function: Callable):
         menu_bar = cls.get_menu_bar()
         menu_dict = cls.get_menu_dict()
+        if isinstance(menu_path, list):
+            menu_path = "/".join(menu_path)
         tool.Util.menu_bar_add_action(menu_bar, menu_dict, menu_path, function)
 
     @classmethod

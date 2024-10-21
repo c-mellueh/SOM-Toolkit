@@ -1,8 +1,12 @@
 from som_gui import tool
 from som_gui.core import bsdd as core
+from PySide6.QtCore import QCoreApplication
 def connect():
     core.define_dictionary_widget(tool.Bsdd)
-    tool.MainWindow.add_action("Datei/Export/bsDD",
+    path = [QCoreApplication.translate("MainMenuBar", "File"), QCoreApplication.translate("MainMenuBar", "Export"),
+            QCoreApplication.translate("MainMenuBar", "bsDD")]
+
+    tool.MainWindow.add_action(path,
                                lambda: core.open_window(tool.Bsdd, tool.Appdata))
 
 

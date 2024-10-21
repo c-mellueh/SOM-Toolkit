@@ -1,11 +1,14 @@
 from PySide6.QtWidgets import QPushButton
 import ifcopenshell
-from som_gui import tool
+from som_gui import tool, tr
 from som_gui.core import attribute_import as core
+from PySide6.QtCore import QCoreApplication
 
 
 def connect():
-    tool.MainWindow.add_action("Modelle/Informationen einlesen",
+    path = [QCoreApplication.translate("MainMenuBar", "Models"),
+            QCoreApplication.translate("MainMenuBar", "import values")]
+    tool.MainWindow.add_action(path,
                                lambda: core.open_import_window(tool.AttributeImport, tool.AttributeImportResults,
                                                                tool.IfcImporter, tool.Project, tool.AttributeImportSQL))
 

@@ -1,16 +1,31 @@
 from som_gui import tool
 from som_gui.core import exports as core
 from . import ui
+from PySide6.QtCore import QCoreApplication
 
 def connect():
-    tool.MainWindow.add_action("Datei/Export/Vestra",
+    path = [QCoreApplication.translate("MainMenuBar", "File"), QCoreApplication.translate("MainMenuBar", "Export"),
+            QCoreApplication.translate("MainMenuBar", "Vestra")]
+
+    tool.MainWindow.add_action(path,
                                lambda: core.export_vestra_mapping(tool.Exports, tool.MainWindow, tool.Project,
                                                                   tool.Appdata))
-    tool.MainWindow.add_action("Datei/Export/Card1",
+    path = [QCoreApplication.translate("MainMenuBar", "File"), QCoreApplication.translate("MainMenuBar", "Export"),
+            QCoreApplication.translate("MainMenuBar", "Card1")]
+
+    tool.MainWindow.add_action(path,
                                lambda: core.export_card_1(tool.Exports, tool.MainWindow, tool.Project, tool.Appdata))
-    tool.MainWindow.add_action("Datei/Export/Excel",
+
+    path = [QCoreApplication.translate("MainMenuBar", "File"), QCoreApplication.translate("MainMenuBar", "Export"),
+            QCoreApplication.translate("MainMenuBar", "Excel")]
+
+    tool.MainWindow.add_action(path,
                                lambda: core.export_excel(tool.Exports, tool.MainWindow, tool.Project, tool.Appdata,
                                                          tool.Popups))
+
+    path = [QCoreApplication.translate("MainMenuBar", "File"), QCoreApplication.translate("MainMenuBar", "Export"),
+            QCoreApplication.translate("MainMenuBar", "Excel")]
+
     tool.MainWindow.add_action("Datei/Export/Allplan",
                                lambda: core.export_allplan_excel(tool.Exports, tool.MainWindow, tool.Project,
                                                                  tool.Popups, tool.Appdata))
