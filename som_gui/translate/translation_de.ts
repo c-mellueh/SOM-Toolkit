@@ -14,22 +14,22 @@
         <message>
             <location filename="../tool/attribute.py" line="610"/>
             <source>was deleted.</source>
-            <translation type="unfinished"></translation>
+            <translation>wurde entfernt.</translation>
         </message>
         <message>
             <location filename="../tool/attribute.py" line="611"/>
             <source>was added.</source>
-            <translation type="unfinished"></translation>
+            <translation>wurde hinzugefügt.</translation>
         </message>
         <message>
             <location filename="../tool/attribute.py" line="626"/>
             <source>was renamed to</source>
-            <translation type="unfinished"></translation>
+            <translation>wurde umbenannt zu</translation>
         </message>
         <message>
             <location filename="../tool/attribute.py" line="647"/>
             <source>was changed from</source>
-            <translation type="unfinished"></translation>
+            <translation>wurde geändert zu</translation>
         </message>
         <message>
             <location filename="../tool/attribute.py" line="679"/>
