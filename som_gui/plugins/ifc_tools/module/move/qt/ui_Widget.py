@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'Widget.ui'
+## Form generated from reading UI file 'widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.3
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -20,7 +20,6 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialogButtonBox, 
                                QWidget)
 
 from som_gui.module.util.ui import (FileSelector, Progressbar)
-
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -70,6 +69,7 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.label_3, 0, 2, 1, 1)
 
+
         self.verticalLayout.addLayout(self.gridLayout)
 
         self.widget_file_selector = FileSelector(Form)
@@ -91,7 +91,6 @@ class Ui_Form(object):
         self.retranslateUi(Form)
 
         QMetaObject.connectSlotsByName(Form)
-
     # setupUi
 
     def retranslateUi(self, Form):
@@ -100,3 +99,4 @@ class Ui_Form(object):
         self.label_2.setText(QCoreApplication.translate("Form", u"Y-Verschiebung [m]", None))
         self.label_3.setText(QCoreApplication.translate("Form", u"Z-Verschieben [m]", None))
     # retranslateUi
+

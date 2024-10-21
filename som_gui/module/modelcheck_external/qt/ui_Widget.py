@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'Widget.ui'
+## Form generated from reading UI file 'widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.3
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -22,7 +22,6 @@ from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication,
 
 from som_gui.module.modelcheck_window.ui import (ObjectTree, PsetTree)
 from som_gui.module.util.ui import AttributeSelector
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -92,10 +91,10 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
-
     # setupUi
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.label_object.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
     # retranslateUi
+
