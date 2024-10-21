@@ -881,7 +881,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         attribute_query = cls.get_attribute_query()
         filter_query = cls.create_settings_filter()
         sql_query = f'''
-            SELECT  DISTINCT a.Attribut, COUNT(a.Value),COUNT(DISTINCT a.Value)
+            SELECT  DISTINCT a.Attribut, COUNT(DISTINCT e.GUID),COUNT(DISTINCT a.Value)
             {attribute_query}
             WHERE e.identifier {identifier}
             AND e.ifc_type {ifc_type}
@@ -907,7 +907,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         filter_query = cls.create_settings_filter()
         attribute_query = cls.get_attribute_query()
         sql_query = f'''
-                SELECT  DISTINCT a.Value, COUNT(a.Value), a.Checked, COUNT (DISTINCT a.Checked)
+                SELECT  DISTINCT a.Value, COUNT(DISTINCT e.GUID), a.Checked, COUNT (DISTINCT a.Checked)
                 {attribute_query}
                 WHERE e.identifier {identifier}
                 AND e.ifc_type {ifc_type}
