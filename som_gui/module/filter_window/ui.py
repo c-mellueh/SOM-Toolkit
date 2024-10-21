@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-from PySide6.QtCore import QAbstractTableModel, QModelIndex, QAbstractItemModel, Qt
+from PySide6.QtCore import QAbstractTableModel, QModelIndex, QAbstractItemModel, Qt, QCoreApplication
 from PySide6.QtWidgets import QTreeView, QWidget, QTableView
 from PySide6.QtGui import QMouseEvent
 
@@ -26,7 +26,10 @@ class FilterWidget(QWidget):
         self.ui = ui_Widget.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowIcon(som_gui.get_icon())
-        self.setWindowTitle(f"Projekt Filter {tool.Util.get_status_text()}")
+
+    def retranslate_ui(self):
+        title = QCoreApplication.translate("FilterWindow", "Project Filter")
+        self.setWindowTitle(f"{title} {tool.Util.get_status_text()}")
 
 
 class ProjectView(QTableView):
@@ -91,6 +94,8 @@ class PsetTreeView(QTreeView):
         index = self.indexAt(event.pos())
         trigger.tree_mouse_release_event(index)
 
+    def model(self) -> PsetModel:
+        return super().model()
 
 class ProjectModel(QAbstractTableModel):
     def __init__(self, project: SOMcreator.Project):
@@ -136,7 +141,9 @@ class ProjectModel(QAbstractTableModel):
             return self.project.get_phases()[section].name
 
     def insertRows(self, row, count, parent=None):
-        new_name = tool.Util.get_new_name("Neue Phase", [uc.name for uc in self.project.get_usecases()])
+        text = QCoreApplication.translate("FilterWindow", "New Phase")
+
+        new_name = tool.Util.get_new_name(text, [uc.name for uc in self.project.get_usecases()])
         self.beginInsertRows(QModelIndex(), row, row + count - 1)
         phase = SOMcreator.Phase(new_name, new_name, new_name)
         self.project.add_project_phase(phase)
@@ -232,8 +239,13 @@ class TreeModel(QAbstractItemModel):
 
 class ObjectModel(TreeModel):
     def __init__(self, project: SOMcreator.Project):
-        super().__init__(project, 2, ["Objekt", "Identifier"])
+        super().__init__(project, 2, ["h0", "h1"])
         self.root_objects = list(self.project.get_root_objects(filter=False))
+
+    def retranslate_ui(self):
+        h0 = QCoreApplication.translate("FilterWindow", "Object")
+        h1 = QCoreApplication.translate("FilterWindow", "Identifier")
+        self.column_titles = [h0, h1]
 
     def flags(self, index: QModelIndex):
         parent_index = self.parent(index)
@@ -295,8 +307,12 @@ class ObjectModel(TreeModel):
 
 class PsetModel(TreeModel):
     def __init__(self, project: SOMcreator.Project):
-        super().__init__(project, 1, ["PropertySet/Attribut"])
+        super().__init__(project, 1, ["h1"])
         self.active_object = tool.FilterWindow.get_active_object()
+
+    def retranslate_ui(self):
+        h0 = QCoreApplication.translate("FilterWindow", "PropertySet/Attribute")
+        self.column_titles = [h0]
 
     def flags(self, index: QModelIndex):
         node: SOMcreator.PropertySet | SOMcreator.Attribute = index.internalPointer()

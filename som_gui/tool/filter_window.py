@@ -19,7 +19,7 @@ YELLOW = "#897e00"
 if TYPE_CHECKING:
     from som_gui.module.filter_window.prop import FilterWindowProperties, FilterCompareProperties
 from som_gui.module.filter_window import ui, trigger
-
+from PySide6.QtCore import QCoreApplication
 
 
 class FilterWindow(som_gui.core.tool.FilterWindow):
@@ -28,15 +28,27 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         return som_gui.FilterWindowProperties
 
     @classmethod
+    def set_action(cls, name, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name) -> QAction:
+        return cls.get_properties().actions[name]
+
+    @classmethod
     def get_project_table(cls) -> ui.ProjectView:
         return cls.get().ui.project_table
 
     @classmethod
-    def get_object_tree(cls) -> ui.ObjectTreeView:
+    def get_object_tree(cls) -> ui.ObjectTreeView | None:
+        if not cls.get():
+            return None
         return cls.get().ui.object_tree
 
     @classmethod
-    def get_pset_tree(cls):
+    def get_pset_tree(cls) -> ui.PsetTreeView:
+        if not cls.get():
+            return None
         return cls.get().ui.pset_tree
 
     @classmethod
@@ -77,7 +89,8 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
 
     @classmethod
     def add_usecase(cls, project: SOMcreator.Project):
-        new_name = tool.Util.get_new_name("Neuer Anwendungsfall", [uc.name for uc in project.get_usecases()])
+        text = QCoreApplication.translate("FilterWindow", "New UseCase")
+        new_name = tool.Util.get_new_name(text, [uc.name for uc in project.get_usecases()])
         usecase = SOMcreator.UseCase(new_name, new_name, new_name)
         model = cls.get_project_table().model()
         model.beginInsertColumns(QModelIndex(), model.columnCount(), model.columnCount())
@@ -94,7 +107,9 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
 
     @classmethod
     def add_phase(cls, project: SOMcreator.Project):
-        new_name = tool.Util.get_new_name("Neue Phase", [uc.name for uc in project.get_usecases()])
+        text = QCoreApplication.translate("FilterWindow", "New Phase")
+
+        new_name = tool.Util.get_new_name(text, [uc.name for uc in project.get_usecases()])
         phase = SOMcreator.Phase(new_name, new_name, new_name)
         model = cls.get_project_table().model()
         model.beginInsertRows(QModelIndex(), model.rowCount(), model.rowCount())
@@ -111,8 +126,10 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
 
     @classmethod
     def rename_filter(cls, filter: SOMcreator.UseCase | SOMcreator.Phase):
-        new_name, ok = QInputDialog.getText(cls.get(), "Edit Header", "Enter new header title:", QLineEdit.Normal,
-                                            filter.name)
+        title = QCoreApplication.translate("FilterWindow", "Edit Header")
+        text = QCoreApplication.translate("FilterWindow", "Enter new header title:")
+
+        new_name, ok = QInputDialog.getText(cls.get(), title, text, QLineEdit.EchoMode.Normal, filter.name)
         if ok:
             filter.name = new_name
 
@@ -349,7 +366,8 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
             if f0 == f1:
                 continue
             usecase, phase = matches[index]
-            file.write(f"{'   ' * indent}{type_name} [{usecase.name}][{phase.name}] state changed from {f0} to {f1}\n")
+            text = QCoreApplication.translate("FilterWindow", "{}{} [{}][{}] state changed from {} to {}\n")
+            file.write(text.format('   ' * indent, type_name, usecase.name, phase.name, f0, f1))
 
     @classmethod
     def export_object_filter_differences(cls, file: TextIO, attribute_compare: Type[tool.AttributeCompare]):
@@ -362,8 +380,10 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
             if cls.are_objects_identical(obj0, obj1):
                 continue
             filter_list = cls.get_filter_list(obj0, obj1)
-            file.write(f"\nObject '{obj0.name}' ({obj0.ident_value}):\n")
-            cls.export_write_statechange(file, "Object", filter_list, 1)
+            text = QCoreApplication.translate("FilterWindow", "Object")
+
+            file.write(f"\n{text} '{obj0.name}' ({obj0.ident_value}):\n")
+            cls.export_write_statechange(file, text, filter_list, 1)
             pset_list = attribute_compare.get_properties().pset_lists.get(obj0)
             cls.export_pset_filter_differences(file, pset_list, attribute_compare)
 
@@ -376,9 +396,11 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
                 continue
             if cls.are_psets_identical(p0, p1):
                 continue
-            file.write(f"   PropertySet '{p0.name}':\n")
+            text = QCoreApplication.translate("FilterWindow", "PropertySet")
+
+            file.write(f"   {text} '{p0.name}':\n")
             filter_list = cls.get_filter_list(p0, p1)
-            cls.export_write_statechange(file, "PropertySet", filter_list, 2)
+            cls.export_write_statechange(file, text, filter_list, 2)
             attribute_list = attribute_compare.get_properties().attributes_lists.get(p0)
             cls.export_attribute_filter_differences(file, attribute_list)
 
@@ -399,7 +421,9 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
                     continue
                 usecase, phase = matches[index]
                 use_case_phase_text = f"[{usecase.name}][{phase.name}]"
-                text = "      Attribut {0:30} {1:30} state changed from {2:5} to {3:5}\n"
+                text = QCoreApplication.translate("FilterWindow",
+                                                  "Attribut {0:30} {1:30} state changed from {2:5} to {3:5}\n")
+                text = f"      {text}"
                 file.write(text.format(f"'{a0.name}'", use_case_phase_text, str(f0), str(f1)))
 
     # GETTER & SETTER

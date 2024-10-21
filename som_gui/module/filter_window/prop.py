@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QAction
 import SOMcreator
 
 if TYPE_CHECKING:
@@ -13,7 +14,7 @@ class FilterWindowProperties:
     tree_is_clicked = False
     active_check_state: Qt.CheckState = None
     settings_widget: ui.SettingsWidget = None
-
+    actions: dict[str, QAction] = dict()
 
 class FilterCompareProperties:
     widget: AttributeWidget = None

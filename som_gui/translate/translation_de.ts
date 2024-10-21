@@ -89,7 +89,7 @@
         <message>
             <location filename="../core/bsdd.py" line="21"/>
             <source>bsDD</source>
-            <translation type="unfinished">bsDD</translation>
+            <translation>bsDD</translation>
         </message>
     </context>
     <context>
@@ -226,38 +226,38 @@
     <context>
         <name>Export</name>
         <message>
-            <location filename="../core/exports.py" line="46"/>
+            <location filename="../core/exports.py" line="47"/>
             <source>Vestra</source>
             <translation>Vestra</translation>
         </message>
         <message>
-            <location filename="../core/exports.py" line="49"/>
+            <location filename="../core/exports.py" line="50"/>
             <source>Card1</source>
             <translation>Card1</translation>
         </message>
         <message>
-            <location filename="../core/exports.py" line="52"/>
+            <location filename="../core/exports.py" line="53"/>
             <source>Excel</source>
             <translation>Excel</translation>
         </message>
         <message>
-            <location filename="../core/exports.py" line="55"/>
+            <location filename="../core/exports.py" line="56"/>
             <source>Allplan</source>
             <translation>Allplan</translation>
         </message>
         <message>
-            <location filename="../core/exports.py" line="58"/>
+            <location filename="../core/exports.py" line="59"/>
             <source>Export Abbreviation</source>
             <translation>Abkürzungen Exportieren</translation>
         </message>
         <message>
-            <location filename="../core/exports.py" line="61"/>
+            <location filename="../core/exports.py" line="62"/>
             <source>Export Bookmarks</source>
             <translation>Lesezeichen Exportieren</translation>
         </message>
         <message>
-            <location filename="../core/exports.py" line="64"/>
-            <location filename="../core/exports.py" line="122"/>
+            <location filename="../core/exports.py" line="65"/>
+            <location filename="../core/exports.py" line="123"/>
             <source>Export Mapping Script</source>
             <translation>Mapping Script Exportieren</translation>
         </message>
@@ -286,6 +286,111 @@
             <location filename="../tool/exports.py" line="54"/>
             <source>CARD1 Excel</source>
             <translation>CARD1 Excel</translation>
+        </message>
+        <message>
+            <source>Object Filter</source>
+            <translation type="vanished">Objekt Filter</translation>
+        </message>
+    </context>
+    <context>
+        <name>FilterWindow</name>
+        <message>
+            <location filename="../core/filter_window.py" line="22"/>
+            <location filename="../core/filter_window.py" line="134"/>
+            <location filename="../module/filter_window/ui.py" line="32"/>
+            <source>Project Filter</source>
+            <translation>Projekt Filter</translation>
+        </message>
+        <message>
+            <location filename="../core/filter_window.py" line="73"/>
+            <source>Delete UseCase</source>
+            <translation>Anwendungsfall Löschen</translation>
+        </message>
+        <message>
+            <location filename="../core/filter_window.py" line="74"/>
+            <source>Rename UseCase</source>
+            <translation>Anwendungsfall Umbenennen</translation>
+        </message>
+        <message>
+            <location filename="../core/filter_window.py" line="76"/>
+            <source>Add UseCase</source>
+            <translation>Anwendungsfall hinzufügen</translation>
+        </message>
+        <message>
+            <location filename="../core/filter_window.py" line="86"/>
+            <source>Delete Phase</source>
+            <translation>Leistungsphase Entfernen</translation>
+        </message>
+        <message>
+            <location filename="../core/filter_window.py" line="87"/>
+            <source>Rename Phase</source>
+            <translation>Leistungsphase Umbenennen</translation>
+        </message>
+        <message>
+            <location filename="../core/filter_window.py" line="89"/>
+            <source>Add Phase</source>
+            <translation>Leistungsphase hinzufügen</translation>
+        </message>
+        <message>
+            <location filename="../core/filter_window.py" line="193"/>
+            <source>OBJECT FILTER</source>
+            <translation>OBJEKT FILTER</translation>
+        </message>
+        <message>
+            <location filename="../tool/filter_window.py" line="93"/>
+            <source>New UseCase</source>
+            <translation>Neuer Anwendungsfall</translation>
+        </message>
+        <message>
+            <location filename="../module/filter_window/ui.py" line="146"/>
+            <location filename="../tool/filter_window.py" line="112"/>
+            <source>New Phase</source>
+            <translation>Neue Leistungsphase</translation>
+        </message>
+        <message>
+            <location filename="../module/filter_window/ui.py" line="248"/>
+            <source>Identifier</source>
+            <translation>Identifier</translation>
+        </message>
+        <message>
+            <location filename="../module/filter_window/ui.py" line="315"/>
+            <source>PropertySet/Attribute</source>
+            <translation>PropertySet/Attribut</translation>
+        </message>
+        <message>
+            <location filename="../tool/filter_window.py" line="130"/>
+            <source>Edit Header</source>
+            <translation>Header Bearbeiten</translation>
+        </message>
+        <message>
+            <location filename="../tool/filter_window.py" line="132"/>
+            <source>Enter new header title:</source>
+            <translation>Neuer Titel:</translation>
+        </message>
+        <message>
+            <location filename="../tool/filter_window.py" line="370"/>
+            <source>{}{} [{}][{}] state changed from {} to {}
+            </source>
+            <translation>{}{} [{}][{}] Status hat sich von {} zu {} geändert
+            </translation>
+        </message>
+        <message>
+            <location filename="../module/filter_window/ui.py" line="247"/>
+            <location filename="../tool/filter_window.py" line="385"/>
+            <source>Object</source>
+            <translation>Objekt</translation>
+        </message>
+        <message>
+            <location filename="../tool/filter_window.py" line="401"/>
+            <source>PropertySet</source>
+            <translation>PropertySet</translation>
+        </message>
+        <message>
+            <location filename="../tool/filter_window.py" line="425"/>
+            <source>Attribut {0:30} {1:30} state changed from {2:5} to {3:5}
+            </source>
+            <translation>Attribut {0:30} {1:30} Status hat sich von {2:5} zu {3:5} geändert
+            </translation>
         </message>
     </context>
     <context>

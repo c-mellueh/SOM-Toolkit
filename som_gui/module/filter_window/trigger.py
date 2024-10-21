@@ -5,15 +5,17 @@ from PySide6.QtCore import Qt
 from . import ui, constants
 
 def connect():
-    tool.MainWindow.add_action("Bearbeiten/Filter",
-                               lambda: core.open_window(tool.FilterWindow, tool.Project, tool.Util, tool.Search))
+    core.create_main_menu_actions(tool.FilterWindow, tool.MainWindow)
     core.add_compare_widget(tool.FilterCompare, tool.AttributeCompare, tool.CompareWindow)
     tool.Settings.add_page_to_toolbox(ui.SettingsWidget, constants.SETTINGS_TAB_NAME, constants.SETTINGS_PAGE_NAME,
                                       lambda: core.settings_accepted(tool.FilterWindow, tool.Project, tool.Popups))
 
 
+def open_window():
+    core.open_window(tool.FilterWindow, tool.Project, tool.Util, tool.Search)
+
 def retranslate_ui():
-    pass
+    core.retranslate_ui(tool.FilterWindow)
 
 def pt_horizontal_context_requested(pos):
     core.pt_context_menu(pos, Qt.Orientation.Horizontal, tool.FilterWindow, tool.Project)

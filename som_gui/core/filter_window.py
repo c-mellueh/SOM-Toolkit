@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 import SOMcreator
-from PySide6.QtCore import Qt, QItemSelection, QModelIndex
+from PySide6.QtCore import Qt, QItemSelection, QModelIndex, QCoreApplication
 from PySide6.QtWidgets import QFormLayout, QLabel, QCheckBox
 from PySide6.QtGui import QIcon
 
@@ -12,6 +12,23 @@ if TYPE_CHECKING:
     from som_gui.module.attribute import ui as attribute_ui
     from som_gui.module.filter_window import ui
 
+
+def create_main_menu_actions(filter_window: Type[tool.FilterWindow], main_window: Type[tool.MainWindow]):
+    from som_gui.module.filter_window import trigger
+    action = main_window.add_action2("menuEdit", "FilterWindow", trigger.open_window)
+    filter_window.set_action("open_window", action)
+
+
+def retranslate_ui(filter_window: Type[tool.FilterWindow], ):
+    action = filter_window.get_action("open_window")
+    action.setText(QCoreApplication.translate("FilterWindow", "Project Filter"))
+
+    if filter_window.get():
+        filter_window.get().retranslate_ui()
+    if filter_window.get_object_tree():
+        filter_window.get_object_tree().model().retranslate_ui()
+    if filter_window.get_pset_tree():
+        filter_window.get_pset_tree().model().retranslate_ui()
 def open_window(filter_window: Type[tool.FilterWindow], project: Type[tool.Project], util: Type[tool.Util],
                 search: Type[tool.Search]):
     widget = filter_window.create_widget()
@@ -20,6 +37,7 @@ def open_window(filter_window: Type[tool.FilterWindow], project: Type[tool.Proje
     filter_window.connect_project_table(project.get())
     filter_window.connect_object_tree(project.get())
     filter_window.connect_pset_tree(project.get())
+    retranslate_ui(filter_window)
     widget.show()
 
 
@@ -52,19 +70,28 @@ def pt_context_menu(local_pos, orientation: Qt.Orientation, filter_window: Type[
     if orientation == Qt.Orientation.Horizontal:  # use_case
         index = table.horizontalHeader().logicalIndexAt(local_pos)
         usecase = proj.get_usecase_by_index(index)
+
+        del_uc = QCoreApplication.translate("FilterWindow", "Delete UseCase")
+        rename_uc = QCoreApplication.translate("FilterWindow", "Rename UseCase")
+        add_uc = QCoreApplication.translate("FilterWindow", "Add UseCase")
+
         if len(proj.get_usecases()) > 1:
-            menu_list.append(("Anwendungsfall löschen", lambda: filter_window.remove_usecase(usecase, proj)))
-        menu_list.append(("Anwendungsfall umbenennen", lambda: filter_window.rename_filter(usecase)))
-        menu_list.append(("Anwendungsfall hinzufügen", lambda: filter_window.add_usecase(proj)))
+            menu_list.append((del_uc, lambda: filter_window.remove_usecase(usecase, proj)))
+        menu_list.append((rename_uc, lambda: filter_window.rename_filter(usecase)))
+        menu_list.append((add_uc, lambda: filter_window.add_usecase(proj)))
         pos = table.horizontalHeader().viewport().mapToGlobal(local_pos)
 
     else:
         index = table.verticalHeader().logicalIndexAt(local_pos)
         phase = proj.get_phase_by_index(index)
+        del_ph = QCoreApplication.translate("FilterWindow", "Delete Phase")
+        rename_ph = QCoreApplication.translate("FilterWindow", "Rename Phase")
+        add_ph = QCoreApplication.translate("FilterWindow", "Add Phase")
+
         if len(proj.get_phases()) > 1:
-            menu_list.append(("Leistungsphase löschen", lambda: filter_window.remove_phase(phase, proj)))
-        menu_list.append(("Leistungsphase umbenennen", lambda: filter_window.rename_filter(phase)))
-        menu_list.append(("Leistungsphase hinzufügen", lambda: filter_window.add_phase(proj)))
+            menu_list.append((del_ph, lambda: filter_window.remove_phase(phase, proj)))
+        menu_list.append((rename_ph, lambda: filter_window.rename_filter(phase)))
+        menu_list.append((add_ph, lambda: filter_window.add_phase(proj)))
         pos = table.horizontalHeader().viewport().mapToGlobal(local_pos)
 
     filter_window.create_context_menu(menu_list, pos)
@@ -105,7 +132,8 @@ def tree_mouse_release_event(index: QModelIndex, filter_window: Type[tool.Filter
 def add_compare_widget(filter_compare: Type[tool.FilterCompare],
                        attribute_compare: Type[tool.AttributeCompare],
                        compare_window: Type[tool.CompareWindow]):
-    compare_window.add_tab("Objekt Filter", filter_compare.get_widget,
+    name = QCoreApplication.translate("FilterWindow", "Project Filter")
+    compare_window.add_tab(name, filter_compare.get_widget,
                            lambda p0, p1: init_compare_object_filter(p0, p1, filter_compare, attribute_compare),
                            filter_compare,
                            lambda file: export_filter_differences(file, filter_compare, attribute_compare))
@@ -163,7 +191,8 @@ def filter_tab_object_tree_selection_changed(widget: attribute_ui.AttributeWidge
 
 def export_filter_differences(file, filter_compare: Type[tool.FilterCompare],
                               attribute_compare: Type[tool.AttributeCompare]):
-    file.write(f"\n{'OBJECT FILTER':46s}\n\n")
+    name = QCoreApplication.translate("FilterWindow", "OBJECT FILTER")
+    file.write(f"\n{name:46s}\n\n")
     filter_compare.export_object_filter_differences(file, attribute_compare)
     file.write("\n")
 
