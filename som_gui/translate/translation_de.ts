@@ -86,7 +86,7 @@
         <message>
             <location filename="../module/compare/ui.py" line="23"/>
             <source>Attribute</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Attribut</translation>
         </message>
     </context>
     <context>
@@ -165,7 +165,7 @@
         <message>
             <location filename="../module/predefined_property_set/qt/Widget.ui" line="49"/>
             <source>PropertySet</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">PropertySet</translation>
         </message>
         <message>
             <location filename="../module/predefined_property_set/qt/Widget.ui" line="56"/>
@@ -176,13 +176,13 @@
             <location filename="../module/predefined_property_set/qt/Widget.ui" line="82"/>
             <location filename="../module/search/qt/Widget.ui" line="42"/>
             <source>Name</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Name</translation>
         </message>
         <message>
             <location filename="../module/predefined_property_set/qt/Widget.ui" line="87"/>
             <location filename="../module/search/qt/Widget.ui" line="47"/>
             <source>Identifier</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Identifier</translation>
         </message>
         <message>
             <location filename="../module/search/qt/Widget.ui" line="52"/>
@@ -229,7 +229,7 @@
         <message>
             <location filename="../module/attribute_import/qt/Widget.ui" line="167"/>
             <source>Attribute</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Attribut</translation>
         </message>
         <message>
             <location filename="../module/attribute_import/qt/Widget.ui" line="244"/>
@@ -296,7 +296,7 @@
         <message>
             <location filename="../module/mapping/qt/Window.ui" line="14"/>
             <source>MainWindow</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">SOM-Toolkit</translation>
         </message>
         <message>
             <location filename="../module/mapping/qt/Window.ui" line="74"/>
@@ -341,7 +341,7 @@
         <message>
             <location filename="../module/mapping/qt/Window.ui" line="119"/>
             <source>Vestra</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Vestra</translation>
         </message>
         <message>
             <location filename="../module/mapping/qt/Window.ui" line="124"/>
@@ -432,343 +432,184 @@
     <context>
         <name>MainMenuBar</name>
         <message>
-            <location filename="../module/attribute_import/trigger.py" line="9"/>
             <source>Models</source>
-            <translation>Modelle</translation>
+            <translation type="vanished">Modelle</translation>
         </message>
         <message>
-            <location filename="../module/attribute_import/trigger.py" line="10"/>
             <source>import values</source>
-            <translation>Werte Importieren</translation>
+            <translation type="vanished">Werte Importieren</translation>
         </message>
         <message>
             <location filename="../module/bsdd/trigger.py" line="6"/>
             <location filename="../module/exports/trigger.py" line="7"/>
-            <location filename="../module/exports/trigger.py" line="12"/>
+            <location filename="../module/exports/trigger.py" line="13"/>
+            <location filename="../module/exports/trigger.py" line="19"/>
+            <location filename="../module/exports/trigger.py" line="26"/>
             <source>File</source>
             <translation>Datei</translation>
         </message>
         <message>
             <location filename="../module/bsdd/trigger.py" line="6"/>
             <location filename="../module/exports/trigger.py" line="7"/>
-            <location filename="../module/exports/trigger.py" line="12"/>
+            <location filename="../module/exports/trigger.py" line="13"/>
+            <location filename="../module/exports/trigger.py" line="19"/>
+            <location filename="../module/exports/trigger.py" line="26"/>
             <source>Export</source>
             <translation>Export</translation>
         </message>
         <message>
-            <location filename="../module/bsdd/trigger.py" line="8"/>
+            <location filename="../module/bsdd/trigger.py" line="9"/>
             <source>bsDD</source>
             <translation>bsDD</translation>
         </message>
         <message>
-            <location filename="../module/exports/trigger.py" line="9"/>
+            <location filename="../module/exports/trigger.py" line="10"/>
             <source>Vestra</source>
             <translation>Vestra</translation>
         </message>
         <message>
-            <location filename="../module/exports/trigger.py" line="14"/>
+            <location filename="../module/exports/trigger.py" line="16"/>
             <source>Card1</source>
             <translation>Card1</translation>
+        </message>
+        <message>
+            <location filename="../module/exports/trigger.py" line="22"/>
+            <location filename="../module/exports/trigger.py" line="29"/>
+            <source>Excel</source>
+            <translation type="unfinished"></translation>
         </message>
     </context>
     <context>
         <name>MainWindow</name>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="20"/>
             <location filename="../module/modelcheck_external/qt/widget.ui" line="14"/>
             <source>MainWindow</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="39"/>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="287"/>
-            <source>Erstellen</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="57"/>
-            <source>Name der Objektvorgabe</source>
-            <translation type="unfinished"></translation>
+            <translation>SOM-Toolkit</translation>
         </message>
         <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="66"/>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="267"/>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="375"/>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="275"/>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="386"/>
             <source>Name</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="84"/>
-            <source>Name des PropertySets in dem das Identifier Attribut sich befindet</source>
-            <translation type="unfinished"></translation>
+            <translation>Name</translation>
         </message>
         <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="93"/>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="346"/>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="357"/>
             <source>PropertySet</source>
-            <translation type="unfinished"></translation>
+            <translation>PropertySet</translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="200"/>
+            <source>Identifier</source>
+            <translation>Identifier</translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="367"/>
+            <source>Optional</source>
+            <translation>Optional</translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="39"/>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="298"/>
+            <source>Create</source>
+            <translation>Erstellen</translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="84"/>
+            <source>Name of PropertySet which owns Identifier Attribute</source>
+            <translation>Name des PropertySets in dem sich das Identifier Attribut befindet</translation>
         </message>
         <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="115"/>
-            <source>Objektvorgabe</source>
-            <translation type="unfinished"></translation>
+            <source>Object</source>
+            <translation>Objekt</translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="190"/>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="401"/>
+            <source>Value</source>
+            <translation>Wert</translation>
         </message>
         <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="128"/>
-            <source>Name des Identifier Attributes</source>
-            <translation type="unfinished"></translation>
+            <source>Name of Attribute which owns the identifier value</source>
+            <translation>Name des Attributes in dem sich der Identifier befindet</translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="20"/>
+            <source>SOMToolkit</source>
+            <translation>SOMToolkit</translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="57"/>
+            <source>Name of Object</source>
+            <translation>Name des Objektes</translation>
         </message>
         <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="137"/>
-            <source>Attribut</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="187"/>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="390"/>
-            <source>Wert</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="197"/>
-            <source>Identifier</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="351"/>
-            <source>Geerbt von</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="356"/>
-            <source>Optional</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="380"/>
-            <source>Datentyp</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="385"/>
-            <source>Format</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="415"/>
-            <source>Neu</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="420"/>
-            <source>Speichern</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="425"/>
-            <source>Speichern unter ...</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="430"/>
-            <source>Öffnen</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="433"/>
-            <source>Öffnet eine SOMjson Datei</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="438"/>
-            <source>Settings</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="443"/>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="551"/>
-            <source>Modellprüfung</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="451"/>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="474"/>
-            <source>Anzeigen</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="456"/>
-            <source>Einstellungen</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="461"/>
-            <source>Export BS</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="466"/>
-            <source>Lesezeichen</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="477"/>
-            <source>die Aggregationsstruktur in welcher die einzelnen Objekte gespeichert werden können</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="487"/>
-            <source>Options</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="492"/>
-            <source>Mapping</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="495"/>
-            <source>Revit- &amp; IFC-Mapping</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="500"/>
-            <source>Shared Parameters</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="505"/>
-            <source>IFC Mapping</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="510"/>
-            <source>Mapping Script</source>
-            <translation type="unfinished"></translation>
+            <source>Attribute</source>
+            <translation>Attribut</translation>
         </message>
         <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="178"/>
-            <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wert des Identifier Attributes&lt;/p&gt;&lt;p&gt;Dieser
-                Wert darf nur einmal vorkommen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-            </source>
-            <translation type="unfinished"></translation>
+            <source>Needs to be unique!</source>
+            <translation>Muss eindeutig sein!</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="194"/>
-            <source>Anhand des Identifiers wird bestimmt, welche Objektvorgabe auf eine Entität angewendet werden muss
-            </source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="197"/>
+            <source>The Identifier defines which Object is selected it needs to be unique!</source>
+            <translation>Der Identifier definiert welches Objekt gemeint ist. Er muss eindeutig sein!</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="446"/>
-            <source>Erstellt eine qa.xml-Datei die in Desite als Prüfdurchlauf eingelesen werden kann. Es wird dabei die
-                Attribuierung von Entitäten geprüft
-            </source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="362"/>
+            <source>Inherited By</source>
+            <translation>Geerbt Von</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="469"/>
-            <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Erstellt ein Script und eine bk.xml-Datei.&lt;/p&gt;&lt;p&gt;Es
-                muss zuerst das Script ausgeführt werden bevor die bk.xml-Datei importiert wird!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-            </source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="391"/>
+            <source>Datatype</source>
+            <translation>Datentyp</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="482"/>
-            <source>Export for BoQ</source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="396"/>
+            <source>Format</source>
+            <translation>Format</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="513"/>
-            <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Das Mappingscript verschiebt Attribute aus einem
-                ausgewählten PropertySet in die nach SOM richtigen PropertySets&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
-            </source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="424"/>
+            <source>File</source>
+            <translation>Datei</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="518"/>
-            <source>Abbreviation JSON</source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="430"/>
+            <source>Edit</source>
+            <translation>Bearbeiten</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="523"/>
-            <source>Allplan</source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="435"/>
+            <source>Desite</source>
+            <translation>Desite</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="528"/>
-            <source>CARD1</source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="440"/>
+            <source>Models</source>
+            <translation>Modelle</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="533"/>
-            <source>Verstra</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="538"/>
-            <source>Excel</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="543"/>
-            <source>Excel Importieren</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="546"/>
-            <source>Importiert eine SOM-MaKa Excel</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="556"/>
-            <source>Gruppen Generieren</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="561"/>
-            <source>Modellinformationen einlesen</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="566"/>
-            <source>Leistungsphase</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="571"/>
-            <source>Modellprüfung CSV</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="576"/>
-            <source>Desite JavaScript</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="581"/>
-            <source>Desite CSV</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="586"/>
-            <source>BimCollabZoom</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="591"/>
-            <source>Modellinformationen V2</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="596"/>
-            <source>Anwendungsfälle</source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="451"/>
+            <source>Export</source>
+            <translation>Export</translation>
         </message>
         <message>
             <location filename="../module/modelcheck_external/qt/widget.ui" line="52"/>
             <source>TextLabel</source>
-            <translation type="unfinished"></translation>
+            <translation>Text</translation>
+        </message>
+        <message>
+            <location filename="../core/attribute_import.py" line="26"/>
+            <source>Import Values</source>
+            <translation>Werte importieren</translation>
         </message>
     </context>
     <context>
@@ -789,7 +630,7 @@
         <message>
             <location filename="../module/object/qt/InfoWidget.ui" line="28"/>
             <source>Name</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Name</translation>
         </message>
         <message>
             <location filename="../module/object/qt/InfoWidget.ui" line="42"/>
@@ -833,7 +674,7 @@
         <message>
             <location filename="../module/attribute_import/ui.py" line="33"/>
             <source>PropertySet</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">PropertySet</translation>
         </message>
         <message>
             <location filename="../module/attribute_import/ui.py" line="33"/>
@@ -947,7 +788,7 @@
             <location filename="../module/property_set_window/qt/Window.ui" line="168"/>
             <location filename="../module/property_set_window/qt/Window.ui" line="309"/>
             <source>Name</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Name</translation>
         </message>
         <message>
             <location filename="../module/property_set_window/qt/Window.ui" line="219"/>
@@ -962,7 +803,7 @@
         <message>
             <location filename="../module/property_set_window/qt/Window.ui" line="319"/>
             <source>Format</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Format</translation>
         </message>
         <message>
             <location filename="../module/property_set_window/qt/Window.ui" line="324"/>
@@ -972,7 +813,7 @@
         <message>
             <location filename="../module/property_set_window/qt/Window.ui" line="329"/>
             <source>Optional</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Optional</translation>
         </message>
     </context>
     <context>

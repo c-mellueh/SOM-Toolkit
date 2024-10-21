@@ -2,7 +2,8 @@ from __future__ import annotations
 import som_gui.core.tool
 import som_gui
 from typing import TYPE_CHECKING, Callable
-from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLineEdit, QStatusBar
+from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLineEdit, QStatusBar, QMenu
+from PySide6.QtGui import QAction
 from som_gui import tool
 from som_gui.module.main_window import ui as ui_main_window
 import ctypes
@@ -67,6 +68,24 @@ class MainWindow(som_gui.core.tool.MainWindow):
     def get_menu_dict(cls) -> MenuDict:
         prop = cls.get_properties()
         return prop.menu_dict
+
+    @classmethod
+    def add_submenu(cls, parent_name: str, name) -> QMenu:
+        if parent_name:
+            menu: QMenuBar | QMenu = getattr(cls.get_ui(), parent_name)
+        else:
+            menu = cls.get_menu_bar()
+        return menu.addMenu(name)
+
+    @classmethod
+    def add_action2(cls, parent_name: str, name: str, function: Callable) -> QAction:
+        if parent_name:
+            menu: QMenuBar | QMenu = getattr(cls.get_ui(), parent_name)
+        else:
+            menu = cls.get_menu_bar()
+        action = menu.addAction(name)
+        action.triggered.connect(function)
+        return action
 
     @classmethod
     def add_action(cls, menu_path: str | list[str], function: Callable):

@@ -9,7 +9,7 @@ from som_gui.module.attribute_import import ui, trigger
 from som_gui import tool
 from PySide6.QtWidgets import QComboBox, QTableWidgetItem, QTableWidget, QCheckBox
 from PySide6.QtCore import QRunnable, QObject, Signal, QThreadPool, Qt
-from PySide6.QtGui import QBrush, QPalette
+from PySide6.QtGui import QBrush, QPalette, QAction
 
 import ifcopenshell
 from ifcopenshell.util import element as ifc_element_util
@@ -386,6 +386,14 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
     def get_properties(cls) -> AttributeImportProperties:
         return som_gui.AttributeImportProperties
+
+    @classmethod
+    def set_action(cls, name, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name) -> QAction:
+        return cls.get_properties().actions[name]
 
     @classmethod
     def connect_import_buttons(cls):

@@ -6,15 +6,15 @@ from PySide6.QtCore import QCoreApplication
 
 
 def connect():
-    path = [QCoreApplication.translate("MainMenuBar", "Models"),
-            QCoreApplication.translate("MainMenuBar", "import values")]
-    tool.MainWindow.add_action(path,
-                               lambda: core.open_import_window(tool.AttributeImport, tool.AttributeImportResults,
-                                                               tool.IfcImporter, tool.Project, tool.AttributeImportSQL))
+    core.create_main_menu_actions(tool.AttributeImport, tool.MainWindow)
 
+
+def open_window():
+    core.open_import_window(tool.AttributeImport, tool.AttributeImportResults, tool.IfcImporter, tool.Project,
+                            tool.AttributeImportSQL)
 
 def retranslate_ui():
-    pass
+    core.retranslate_ui(tool.AttributeImport)
 
 def connect_import_buttons(run_button: QPushButton, abort_button: QPushButton):
     run_button.clicked.connect(

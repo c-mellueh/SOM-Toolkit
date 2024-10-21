@@ -5,7 +5,7 @@ import logging
 
 import SOMcreator.constants.value_constants as value_constants
 import ifcopenshell
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QCoreApplication
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -15,6 +15,16 @@ import time
 
 
 # DB_PATH = ""
+
+def create_main_menu_actions(attribute_import: Type[tool.AttributeImport], main_window: Type[tool.MainWindow]):
+    from som_gui.module.attribute_import import trigger
+    open_window_action = main_window.add_action2("menuModels", "IV", trigger.open_window)
+    attribute_import.set_action("open_window", open_window_action)
+
+
+def retranslate_ui(attribute_import: Type[tool.AttributeImport], ):
+    open_window_action = attribute_import.get_action("open_window")
+    open_window_action.setText(QCoreApplication.translate("AttributeImport", "Import Values"))
 
 def open_import_window(attribute_import: Type[tool.AttributeImport],
                        attribute_import_results: Type[tool.AttributeImportResults],

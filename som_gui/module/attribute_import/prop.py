@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from som_gui.module.ifc_importer.ui import IfcImportWidget
     from PySide6.QtWidgets import QComboBox, QPushButton, QLabel, QCheckBox
     from PySide6.QtWidgets import QLabel, QProgressBar
+    from PySide6.QtGui import QAction
     from sqlite3 import Connection
 
 class AttributeImportProperties:
@@ -31,6 +32,7 @@ class AttributeImportProperties:
     is_updating_locked: bool = False
     update_lock_reason: str = ""
     all_checkbox: QCheckBox = None
+    actions: dict[str, QAction] = dict()
 
 class AttributeImportSQLProperties:
     database_path: str = None
