@@ -43,6 +43,14 @@
         </message>
     </context>
     <context>
+        <name>AttributeImport</name>
+        <message>
+            <location filename="../core/attribute_import.py" line="27"/>
+            <source>Import Values</source>
+            <translation type="unfinished">Werte importieren</translation>
+        </message>
+    </context>
+    <context>
         <name>AttributeImportResultWindow</name>
         <message>
             <location filename="../module/attribute_import/ui.py" line="23"/>
@@ -77,16 +85,32 @@
         </message>
     </context>
     <context>
+        <name>BSDD</name>
+        <message>
+            <location filename="../core/bsdd.py" line="21"/>
+            <source>bsDD</source>
+            <translation type="unfinished">bsDD</translation>
+        </message>
+    </context>
+    <context>
         <name>CompareDialog</name>
         <message>
-            <location filename="../module/compare/ui.py" line="22"/>
-            <source>Projekte Vergleichen | {tool.Util.get_status_text()}</source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/compare/ui.py" line="23"/>
+            <source>Compare Projects</source>
+            <translation>Projekte vergleichen</translation>
         </message>
         <message>
-            <location filename="../module/compare/ui.py" line="23"/>
+            <location filename="../module/compare/ui.py" line="24"/>
             <source>Attribute</source>
             <translation type="unfinished">Attribut</translation>
+        </message>
+    </context>
+    <context>
+        <name>CompareWindow</name>
+        <message>
+            <location filename="../core/compare.py" line="26"/>
+            <source>Compare Projects</source>
+            <translation>Projekte vergleichen</translation>
         </message>
     </context>
     <context>
@@ -145,7 +169,7 @@
         <message>
             <location filename="../module/compare/qt/ImportWidget.ui" line="88"/>
             <source>TextLabel</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Text</translation>
         </message>
         <message>
             <location filename="../module/compare/qt/Widget.ui" line="47"/>
@@ -358,7 +382,7 @@
             <location filename="../module/util/qt/FileSelector.ui" line="23"/>
             <location filename="../module/util/qt/Progressbar.ui" line="20"/>
             <source>TextLabel</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Text</translation>
         </message>
         <message>
             <location filename="../module/project/qt/SettingsGeneral.ui" line="20"/>
@@ -440,7 +464,6 @@
             <translation type="vanished">Werte Importieren</translation>
         </message>
         <message>
-            <location filename="../module/bsdd/trigger.py" line="6"/>
             <location filename="../module/exports/trigger.py" line="7"/>
             <location filename="../module/exports/trigger.py" line="13"/>
             <location filename="../module/exports/trigger.py" line="19"/>
@@ -449,7 +472,6 @@
             <translation>Datei</translation>
         </message>
         <message>
-            <location filename="../module/bsdd/trigger.py" line="6"/>
             <location filename="../module/exports/trigger.py" line="7"/>
             <location filename="../module/exports/trigger.py" line="13"/>
             <location filename="../module/exports/trigger.py" line="19"/>
@@ -458,9 +480,8 @@
             <translation>Export</translation>
         </message>
         <message>
-            <location filename="../module/bsdd/trigger.py" line="9"/>
             <source>bsDD</source>
-            <translation>bsDD</translation>
+            <translation type="vanished">bsDD</translation>
         </message>
         <message>
             <location filename="../module/exports/trigger.py" line="10"/>
@@ -582,22 +603,27 @@
             <translation>Datei</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="430"/>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="435"/>
             <source>Edit</source>
             <translation>Bearbeiten</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="435"/>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="440"/>
             <source>Desite</source>
             <translation>Desite</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="440"/>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="445"/>
             <source>Models</source>
             <translation>Modelle</translation>
         </message>
         <message>
-            <location filename="../module/main_window/qt/MainWindow.ui" line="451"/>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="456"/>
+            <source>dqwd</source>
+            <translation type="unfinished"></translation>
+        </message>
+        <message>
+            <location filename="../module/main_window/qt/MainWindow.ui" line="428"/>
             <source>Export</source>
             <translation>Export</translation>
         </message>
@@ -607,9 +633,8 @@
             <translation>Text</translation>
         </message>
         <message>
-            <location filename="../core/attribute_import.py" line="26"/>
             <source>Import Values</source>
-            <translation>Werte importieren</translation>
+            <translation type="vanished">Werte importieren</translation>
         </message>
     </context>
     <context>
@@ -664,9 +689,9 @@
     <context>
         <name>ProjectSelectDialog</name>
         <message>
-            <location filename="../module/compare/ui.py" line="36"/>
-            <source>Projekte Vergleichen | {tool.Util.get_status_text()}</source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/compare/ui.py" line="38"/>
+            <source>Compare Projects</source>
+            <translation type="unfinished">Projekte vergleichen</translation>
         </message>
     </context>
     <context>

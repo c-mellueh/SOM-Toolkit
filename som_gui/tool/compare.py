@@ -6,7 +6,7 @@ from som_gui.module.compare import ui
 import som_gui.core.tool
 import som_gui
 from som_gui.module.compare import trigger
-
+from PySide6.QtGui import QAction
 if TYPE_CHECKING:
     from som_gui.module.compare.prop import CompareAttributesProperties, CompareWindowProperties, \
         CompareProjectSelectProperties
@@ -82,6 +82,13 @@ class CompareWindow(som_gui.core.tool.CompareWindow):
     def get_properties(cls) -> CompareWindowProperties:
         return som_gui.CompareWindowProperties
 
+    @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
     @classmethod
     def connect_triggers(cls):
         window = cls.get_window()

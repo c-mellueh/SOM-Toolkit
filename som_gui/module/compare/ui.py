@@ -19,8 +19,9 @@ class CompareDialog(QDialog):
         self.widget = ui_Widget.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(self.tr(f"Projekte Vergleichen | {tool.Util.get_status_text()}"))
-        self.widget.tabWidget.setTabText(0, self.tr("Attribute"))
+        title = self.tr(f"Compare Projects")
+        self.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
+        self.widget.tabWidget.setTabText(0, self.tr("Attributes"))
         button = self.widget.button_download
         button.setIcon(get_download_icon())
         color_button(button)
@@ -33,7 +34,8 @@ class ProjectSelectDialog(QDialog):
         self.widget = ui_ImportWidget.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(self.tr(f"Projekte Vergleichen | {tool.Util.get_status_text()}"))
+        title = self.tr(f"Compare Projects")
+        self.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
         button = self.widget.button_switch
         button.setText("")
         button.setIcon(get_switch_icon())

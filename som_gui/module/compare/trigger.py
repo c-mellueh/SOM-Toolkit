@@ -3,16 +3,17 @@ from som_gui import tool
 
 
 def connect():
-    tool.MainWindow.add_action("Datei/Projekte Vergleichen",
-                               lambda: core.open_project_selection_window(tool.CompareWindow,
-                                                                          tool.CompareProjectSelector,
-                                                                          tool.Appdata, tool.Project))
-
+    core.create_main_menu_actions(tool.CompareWindow, tool.MainWindow)
     core.add_attribute_compare_widget(tool.AttributeCompare, tool.CompareWindow)
 
 
+def open_window():
+    core.open_project_selection_window(tool.CompareWindow,
+                                       tool.CompareProjectSelector,
+                                       tool.Appdata, tool.Project)
+
 def retranslate_ui():
-    pass
+    core.retranslate_ui(tool.CompareWindow)
 
 def on_new_project():
     pass

@@ -30,7 +30,7 @@ def main(initial_file: str | None = None, log_level=None, open_last_project=Fals
         app.installTranslator(translator)
     translator = QTranslator(app)
     path = ':/translations'
-    if translator.load(QLocale.system(), 'translation', '_', path):
+    if translator.load("QLocale.system(), 'translation', '_', path"):
         app.installTranslator(translator)
 
     som_gui.register()

@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     import SOMcreator
     from PySide6.QtWidgets import QHBoxLayout, QLabel
     from .ui import ProjectSelectDialog, CompareDialog, AttributeWidget
-
+    from PySide6.QtGui import QAction
 class CompareProjectSelectProperties:
     proj_select_dialog: ProjectSelectDialog = None
     layout_proj0: QHBoxLayout = None
@@ -25,3 +25,4 @@ class CompareWindowProperties:
     tools = list()
     window: CompareDialog = None
     export_funcs = list()
+    actions: dict[str, QAction] = dict()

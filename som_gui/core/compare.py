@@ -3,7 +3,7 @@ import os.path
 from typing import TYPE_CHECKING, Type
 from som_gui.module.compare.constants import COMPARE_SETTING, EXPORT_PATH
 import SOMcreator
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QCoreApplication
 from som_gui.module.project.constants import FILETYPE
 
 from SOMcreator import Project
@@ -14,6 +14,17 @@ if TYPE_CHECKING:
     from PySide6.QtCore import QModelIndex
     from PySide6.QtGui import QPainter
     from PySide6.QtWidgets import QTreeWidget
+
+
+def create_main_menu_actions(compare_window: Type[tool.CompareWindow], main_window: Type[tool.MainWindow]):
+    from som_gui.module.compare import trigger
+    open_window_action = main_window.add_action2("menuFile", "Compare", trigger.open_window)
+    compare_window.set_action("open_window", open_window_action)
+
+
+def retranslate_ui(compare_window: Type[tool.CompareWindow], ):
+    open_window_action = compare_window.get_action("open_window")
+    open_window_action.setText(QCoreApplication.translate("CompareWindow", "Compare Projects"))
 
 
 def open_project_selection_window(compare_window: Type[tool.CompareWindow],
