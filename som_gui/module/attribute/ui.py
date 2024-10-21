@@ -1,12 +1,12 @@
 from PySide6.QtWidgets import QWidget, QHeaderView
 from PySide6.QtCore import Qt, QRect, QSize
-from .qt import compare_widget
+from .qt import ui_CompareWidget
 
 
 class AttributeWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.widget = compare_widget.Ui_Form()
+        self.widget = ui_CompareWidget.Ui_Form()
         self.widget.setupUi(self)
         self.widget.tree_widget_object.setColumnCount(2)
         self.widget.tree_widget_propertysets.setColumnCount(2)
