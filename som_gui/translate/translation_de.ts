@@ -15,6 +15,59 @@ type = "unfinished" > </translation>
 < /message>
 < /context>
 < context >
+<name>AttributeCompare < /name>
+< message >
+<location filename = "../tool/attribute.py"
+line = "610" / >
+    <source>was
+deleted. < /source>
+< translation
+type = "unfinished" > </translation>
+< /message>
+< message >
+<location filename = "../tool/attribute.py"
+line = "611" / >
+    <source>was
+added. < /source>
+< translation
+type = "unfinished" > </translation>
+< /message>
+< message >
+<location filename = "../tool/attribute.py"
+line = "626" / >
+    <source>was
+renamed
+to < /source>
+< translation
+type = "unfinished" > </translation>
+< /message>
+< message >
+<location filename = "../tool/attribute.py"
+line = "647" / >
+    <source>was
+changed
+from < /source>
+< translation
+type = "unfinished" > </translation>
+< /message>
+< message >
+<location filename = "../tool/attribute.py"
+line = "679" / >
+    <source>added
+child < /source>
+< translation
+type = "unfinished" > </translation>
+< /message>
+< message >
+<location filename = "../tool/attribute.py"
+line = "680" / >
+    <source>removed
+child < /source>
+< translation
+type = "unfinished" > </translation>
+< /message>
+< /context>
+< context >
 <name>AttributeImportResultWindow < /name>
 < message >
 <location filename = "../module/attribute_import/ui.py"
@@ -610,51 +663,6 @@ type = "unfinished" > </translation>
 < /context>
 < context >
 <name>MainWindow < /name>
-< message >
-<location filename = "../module/attribute_import/trigger.py"
-line = "9" / >
-    <source>Models / Import
-Attributes < /source>
-< translation
-type = "unfinished" > </translation>
-< /message>
-< message >
-<location filename = "../module/bsdd/trigger.py"
-line = "7" / >
-    <source>File / Export / bsDD < /source>
-    < translation
-type = "unfinished" > </translation>
-< /message>
-< message >
-<location filename = "../module/compare/trigger.py"
-line = "6" / >
-    <source>File / Compare
-Projects < /source>
-< translation
-type = "unfinished" > </translation>
-< /message>
-< message >
-<location filename = "../module/exports/trigger.py"
-line = "7" / >
-    <source>File / Export / </source>
-    < translation
-type = "unfinished" > </translation>
-< /message>
-< message >
-<location filename = "../module/exports/trigger.py"
-line = "33" / >
-    <source>Desite / Bookmarks < /source>
-    < translation
-type = "unfinished" > </translation>
-< /message>
-< message >
-<location filename = "../module/exports/trigger.py"
-line = "38" / >
-    <source>Desite / Mapping
-Script < /source>
-< translation
-type = "unfinished" > </translation>
-< /message>
 < message >
 <location filename = "../module/main_window/qt/MainWindow.ui"
 line = "20" / >
