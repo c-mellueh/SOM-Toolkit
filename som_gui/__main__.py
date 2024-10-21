@@ -11,11 +11,12 @@ import ifcopenshell.guid
 import ifcopenshell.express
 
 
-def main(initial_file: str | None = None, log_level=None):
+def main(initial_file: str | None = None, log_level=None, open_last_project=False):
     print("START")
     from PySide6.QtWidgets import QApplication
     import som_gui.core.main_window
     import som_gui.core.project
+    from som_gui.module.project.constants import OPEN_PATH
     if log_level is not None:
         tool.Logging.set_log_level(log_level)
 
@@ -27,6 +28,8 @@ def main(initial_file: str | None = None, log_level=None):
     core.main_window.create_menus(tool.MainWindow, tool.Util)
     if initial_file is not None:
         core.project.open_project(initial_file, tool.Project)
+    if open_last_project:
+        core.project.open_project(tool.Appdata.get_path(OPEN_PATH), tool.Project)
     sys.exit(app.exec())
 
 
