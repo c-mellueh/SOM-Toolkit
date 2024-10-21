@@ -502,64 +502,20 @@
             <translation type="unfinished"></translation>
         </message>
         <message>
-            <location filename="../module/mapping/qt/Window.ui" line="14"/>
             <source>MainWindow</source>
-            <translation type="unfinished">SOM-Toolkit</translation>
+            <translation type="obsolete">SOM-Toolkit</translation>
         </message>
         <message>
-            <location filename="../module/mapping/qt/Window.ui" line="74"/>
-            <source>Revit</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/mapping/qt/Window.ui" line="84"/>
-            <source>Export IFC-Mapping</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/mapping/qt/Window.ui" line="89"/>
-            <source>Export Shared Parameters</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/mapping/qt/Window.ui" line="94"/>
-            <source>Export Attribute Excel</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/mapping/qt/Window.ui" line="99"/>
-            <source>create mapping Script</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/mapping/qt/Window.ui" line="104"/>
-            <source>create .amrx</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/mapping/qt/Window.ui" line="109"/>
-            <source>create abbreviation JSON</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/mapping/qt/Window.ui" line="114"/>
             <source>Allplan</source>
-            <translation type="unfinished">Allplan</translation>
+            <translation type="obsolete">Allplan</translation>
         </message>
         <message>
-            <location filename="../module/mapping/qt/Window.ui" line="119"/>
             <source>Vestra</source>
-            <translation type="unfinished">Vestra</translation>
+            <translation type="obsolete">Vestra</translation>
         </message>
         <message>
-            <location filename="../module/mapping/qt/Window.ui" line="124"/>
-            <source>CARD1</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/mapping/qt/Window.ui" line="129"/>
             <source>Excel</source>
-            <translation type="unfinished">Excel</translation>
+            <translation type="obsolete">Excel</translation>
         </message>
         <message>
             <location filename="../module/modelcheck_window/qt/Widget.ui" line="41"/>
@@ -823,22 +779,82 @@
             <translation type="vanished">Werte importieren</translation>
         </message>
         <message>
-            <location filename="../core/main_window.py" line="24"/>
+            <location filename="../core/main_window.py" line="25"/>
             <source>Hide Console</source>
             <translation>Konsole Ausblenden</translation>
         </message>
         <message>
-            <location filename="../core/main_window.py" line="26"/>
+            <location filename="../core/main_window.py" line="27"/>
             <source>Show Console</source>
             <translation>Konsole Einblenden</translation>
         </message>
     </context>
     <context>
-        <name>MappingWindow</name>
+        <name>Mapping</name>
         <message>
-            <location filename="../module/mapping/ui.py" line="15"/>
-            <source>Mapping | {tool.Util.get_status_text()}</source>
-            <translation type="unfinished"></translation>
+            <location filename="../core/mapping.py" line="21"/>
+            <source>Revit-Mapping</source>
+            <translation>Revit-Mapping</translation>
+        </message>
+        <message>
+            <location filename="../module/mapping/qt/Window.ui" line="14"/>
+            <source>MainWindow</source>
+            <translation>Title</translation>
+        </message>
+        <message>
+            <location filename="../module/mapping/qt/Window.ui" line="84"/>
+            <source>Revit</source>
+            <translation>Revit</translation>
+        </message>
+        <message>
+            <location filename="../module/mapping/qt/Window.ui" line="94"/>
+            <source>Export IFC-Mapping</source>
+            <translation>Export IFC-Mapping</translation>
+        </message>
+        <message>
+            <location filename="../module/mapping/qt/Window.ui" line="99"/>
+            <source>Export Shared Parameters</source>
+            <translation>Export &apos;Shared Paramers&apos;</translation>
+        </message>
+        <message>
+            <location filename="../module/mapping/qt/Window.ui" line="104"/>
+            <source>Export Attribute Excel</source>
+            <translation>Export Attribut-Excel</translation>
+        </message>
+        <message>
+            <location filename="../module/mapping/qt/Window.ui" line="109"/>
+            <source>create mapping Script</source>
+            <translation>Erstelle Mapping Script</translation>
+        </message>
+        <message>
+            <location filename="../module/mapping/qt/Window.ui" line="114"/>
+            <source>create .amrx</source>
+            <translation></translation>
+        </message>
+        <message>
+            <location filename="../module/mapping/qt/Window.ui" line="119"/>
+            <source>create abbreviation JSON</source>
+            <translation></translation>
+        </message>
+        <message>
+            <location filename="../module/mapping/qt/Window.ui" line="124"/>
+            <source>Allplan</source>
+            <translation>Allplan</translation>
+        </message>
+        <message>
+            <location filename="../module/mapping/qt/Window.ui" line="129"/>
+            <source>Vestra</source>
+            <translation>Vestra</translation>
+        </message>
+        <message>
+            <location filename="../module/mapping/qt/Window.ui" line="134"/>
+            <source>CARD1</source>
+            <translation>CARD1</translation>
+        </message>
+        <message>
+            <location filename="../module/mapping/qt/Window.ui" line="139"/>
+            <source>Excel</source>
+            <translation>Excel</translation>
         </message>
     </context>
     <context>
@@ -872,12 +888,12 @@
     <context>
         <name>ObjectTreeWidget</name>
         <message>
-            <location filename="../module/mapping/ui.py" line="22"/>
+            <location filename="../module/mapping/ui.py" line="21"/>
             <source>Objekt</source>
             <translation type="unfinished"></translation>
         </message>
         <message>
-            <location filename="../module/mapping/ui.py" line="22"/>
+            <location filename="../module/mapping/ui.py" line="21"/>
             <source>IfcMapping</source>
             <translation type="unfinished"></translation>
         </message>
@@ -906,12 +922,12 @@
     <context>
         <name>PropertySetTreeWidget</name>
         <message>
-            <location filename="../module/mapping/ui.py" line="33"/>
+            <location filename="../module/mapping/ui.py" line="32"/>
             <source>PropertySet/Attribut</source>
             <translation type="unfinished"></translation>
         </message>
         <message>
-            <location filename="../module/mapping/ui.py" line="33"/>
+            <location filename="../module/mapping/ui.py" line="32"/>
             <source>Revit Mapping</source>
             <translation type="unfinished"></translation>
         </message>

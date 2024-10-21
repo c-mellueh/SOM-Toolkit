@@ -363,7 +363,7 @@ class Object(som_gui.core.tool.Object):
 
 
     @classmethod
-    def oi_create_dialog(cls):
+    def oi_create_dialog(cls) -> som_gui.module.object.ui.ObjectInfoWidget:
         prop = cls.get_properties()
         prop.object_info_widget_properties = som_gui.module.object.prop.ObjectInfoWidgetProperties()
         dialog = som_gui.module.object.ui.ObjectInfoWidget()

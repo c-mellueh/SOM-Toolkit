@@ -10,6 +10,7 @@ import SOMcreator
 
 if TYPE_CHECKING:
     from som_gui.module.mapping.prop import MappingProperties
+    from PySide6.QtGui import QAction
 from som_gui.module.project.constants import CLASS_REFERENCE
 
 
@@ -19,19 +20,27 @@ class Mapping(som_gui.core.tool.Mapping):
         return som_gui.MappingProperties
 
     @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
+
+    @classmethod
     def get_window(cls):
         prop = cls.get_properties()
         if prop.window is None:
             prop.window = ui.MappingWindow()
-            prop.object_tree = prop.window.widget.object_tree
-            prop.pset_tree = prop.window.widget.pset_tree
+            prop.object_tree = prop.window.ui.object_tree
+            prop.pset_tree = prop.window.ui.pset_tree
         return prop.window
 
     @classmethod
     def connect_window_triggers(cls, window: ui.MappingWindow) -> None:
-        window.widget.action_ifc.triggered.connect(trigger.export_revit_ifc_mapping)
-        window.widget.action_shared_parameters.triggered.connect(trigger.export_revit_shared_parameters)
-        window.widget.object_tree.itemSelectionChanged.connect(trigger.update_pset_tree)
+        window.ui.action_ifc.triggered.connect(trigger.export_revit_ifc_mapping)
+        window.ui.action_shared_parameters.triggered.connect(trigger.export_revit_shared_parameters)
+        window.ui.object_tree.itemSelectionChanged.connect(trigger.update_pset_tree)
         cls.get_object_tree().itemChanged.connect(trigger.tree_item_changed)
         cls.get_pset_tree().itemChanged.connect(trigger.tree_item_changed)
 

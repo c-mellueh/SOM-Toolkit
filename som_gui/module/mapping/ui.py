@@ -8,11 +8,10 @@ from som_gui import tool
 class MappingWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        from .qt.ui_Window import Ui_Form
-        self.widget = Ui_Form()
-        self.widget.setupUi(self)
+        from .qt.ui_Window import Ui_Mapping
+        self.ui = Ui_Mapping()
+        self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(self.tr(f"Mapping | {tool.Util.get_status_text()}"))
 
 
 class ObjectTreeWidget(QTreeWidget):

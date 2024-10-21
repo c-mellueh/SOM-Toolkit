@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QMainWindow" name="Form">
+    <class>Mapping</class>
+    <widget class="QMainWindow" name="Mapping">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1159</width>
-    <height>517</height>
+       <width>1194</width>
+       <height>549</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,18 +18,23 @@
     <item row="0" column="0">
      <widget class="QSplitter" name="splitter">
       <property name="frameShape">
-       <enum>QFrame::Box</enum>
+          <enum>QFrame::Shape::Box</enum>
       </property>
       <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
       </property>
          <widget class="ObjectTreeWidget" name="object_tree">
        <property name="selectionMode">
-        <enum>QAbstractItemView::ExtendedSelection</enum>
+           <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
        </property>
        <property name="sortingEnabled">
         <bool>true</bool>
        </property>
+             <column>
+                 <property name="text">
+                     <string notr="true">1</string>
+                 </property>
+             </column>
       </widget>
       <widget class="QWidget" name="gridLayoutWidget">
        <layout class="QGridLayout" name="right_layout">
@@ -50,6 +55,11 @@
             <property name="sortingEnabled">
              <bool>true</bool>
             </property>
+                  <column>
+                      <property name="text">
+                          <string notr="true">1</string>
+                      </property>
+                  </column>
            </widget>
           </item>
          </layout>
@@ -65,8 +75,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1159</width>
-     <height>22</height>
+        <width>1194</width>
+        <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_revit">
@@ -89,52 +99,12 @@
     <string>Export Shared Parameters</string>
    </property>
   </action>
-  <action name="action_export_attribute_excel">
-   <property name="text">
-    <string>Export Attribute Excel</string>
-   </property>
-  </action>
-  <action name="action_desite_mapping">
-   <property name="text">
-    <string>create mapping Script</string>
-   </property>
-  </action>
-  <action name="action_create_vestra_mapping">
-   <property name="text">
-    <string>create .amrx</string>
-   </property>
-  </action>
-  <action name="action_desite_abbreviation">
-   <property name="text">
-    <string>create abbreviation JSON</string>
-   </property>
-  </action>
-  <action name="action_allplan">
-   <property name="text">
-    <string>Allplan</string>
-   </property>
-  </action>
-  <action name="action_vestra">
-   <property name="text">
-    <string>Vestra</string>
-   </property>
-  </action>
-  <action name="action_card1">
-   <property name="text">
-    <string>CARD1</string>
-   </property>
-  </action>
-  <action name="action_excel">
-   <property name="text">
-    <string>Excel</string>
-   </property>
-  </action>
  </widget>
     <customwidgets>
         <customwidget>
             <class>ObjectTreeWidget</class>
             <extends>QTreeWidget</extends>
-            <header>som_gui.module.mapping.ui</header>
+            <header>som_gui.module.object.ui</header>
         </customwidget>
         <customwidget>
             <class>PropertySetTreeWidget</class>

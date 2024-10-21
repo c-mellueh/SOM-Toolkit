@@ -5,14 +5,28 @@ from typing import TYPE_CHECKING, Type
 
 import SOMcreator
 from SOMcreator.exporter import revit
-
+from PySide6.QtCore import QCoreApplication
 if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtWidgets import QTreeWidgetItem
 
 
+def create_main_menu_actions(mapping: Type[tool.Mapping], main_window: Type[tool.MainWindow]):
+    from som_gui.module.mapping import trigger
+    open_window_action = main_window.add_action2("menuExport", "Mapping", trigger.open_window)
+    mapping.set_action("open_window", open_window_action)
+
+
+def retranslate_ui(mapping: Type[tool.Mapping], ):
+    open_window_action = mapping.get_action("open_window")
+    open_window_action.setText(QCoreApplication.translate("Mapping", "Revit-Mapping"))
+    window = mapping.get_window()
+    window.setWindowTitle(f'{QCoreApplication.translate("Mapping", "Revit-Mapping")} | {tool.Util.get_status_text()}')
+
+
 def open_window(mapping: Type[tool.Mapping]):
     window = mapping.get_window()
+    retranslate_ui(mapping)
     mapping.connect_window_triggers(window)
     window.show()
 

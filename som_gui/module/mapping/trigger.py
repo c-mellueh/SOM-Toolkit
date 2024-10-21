@@ -3,8 +3,11 @@ from som_gui.core import mapping as core
 
 
 def connect():
-    tool.MainWindow.add_action("Datei/Revit-Mapping",
-                               lambda: core.open_window(tool.Mapping))
+    core.create_main_menu_actions(tool.Mapping, tool.MainWindow)
+
+
+def open_window():
+    core.open_window(tool.Mapping)
 
 
 def on_new_project():
@@ -12,7 +15,9 @@ def on_new_project():
 
 
 def retranslate_ui():
-    pass
+    core.retranslate_ui(tool.Mapping)
+
+
 def export_revit_ifc_mapping():
     core.export_revit_ifc_mapping(tool.Mapping, tool.Project, tool.Popups)
 

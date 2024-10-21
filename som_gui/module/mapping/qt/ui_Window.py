@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'MappingWindow.ui'
+## Form generated from reading UI file 'Window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.2
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -21,45 +21,33 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QGridLay
                                QMenuBar, QSizePolicy, QSplitter, QStatusBar,
                                QTreeWidgetItem, QVBoxLayout, QWidget)
 
-from som_gui.module.mapping.ui import (ObjectTreeWidget, PropertySetTreeWidget)
+from som_gui.module.mapping.ui import PropertySetTreeWidget
+from som_gui.module.object.ui import ObjectTreeWidget
 
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        if not Form.objectName():
-            Form.setObjectName(u"Form")
-        Form.resize(1159, 517)
-        self.action_ifc = QAction(Form)
+class Ui_Mapping(object):
+    def setupUi(self, Mapping):
+        if not Mapping.objectName():
+            Mapping.setObjectName(u"Mapping")
+        Mapping.resize(1194, 549)
+        self.action_ifc = QAction(Mapping)
         self.action_ifc.setObjectName(u"action_ifc")
-        self.action_shared_parameters = QAction(Form)
+        self.action_shared_parameters = QAction(Mapping)
         self.action_shared_parameters.setObjectName(u"action_shared_parameters")
-        self.action_export_attribute_excel = QAction(Form)
-        self.action_export_attribute_excel.setObjectName(u"action_export_attribute_excel")
-        self.action_desite_mapping = QAction(Form)
-        self.action_desite_mapping.setObjectName(u"action_desite_mapping")
-        self.action_create_vestra_mapping = QAction(Form)
-        self.action_create_vestra_mapping.setObjectName(u"action_create_vestra_mapping")
-        self.action_desite_abbreviation = QAction(Form)
-        self.action_desite_abbreviation.setObjectName(u"action_desite_abbreviation")
-        self.action_allplan = QAction(Form)
-        self.action_allplan.setObjectName(u"action_allplan")
-        self.action_vestra = QAction(Form)
-        self.action_vestra.setObjectName(u"action_vestra")
-        self.action_card1 = QAction(Form)
-        self.action_card1.setObjectName(u"action_card1")
-        self.action_excel = QAction(Form)
-        self.action_excel.setObjectName(u"action_excel")
-        self.centralwidget = QWidget(Form)
+        self.centralwidget = QWidget(Mapping)
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout = QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName(u"gridLayout")
         self.splitter = QSplitter(self.centralwidget)
         self.splitter.setObjectName(u"splitter")
-        self.splitter.setFrameShape(QFrame.Box)
-        self.splitter.setOrientation(Qt.Horizontal)
+        self.splitter.setFrameShape(QFrame.Shape.Box)
+        self.splitter.setOrientation(Qt.Orientation.Horizontal)
         self.object_tree = ObjectTreeWidget(self.splitter)
+        __qtreewidgetitem = QTreeWidgetItem()
+        __qtreewidgetitem.setText(0, u"1");
+        self.object_tree.setHeaderItem(__qtreewidgetitem)
         self.object_tree.setObjectName(u"object_tree")
-        self.object_tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.object_tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.object_tree.setSortingEnabled(True)
         self.splitter.addWidget(self.object_tree)
         self.gridLayoutWidget = QWidget(self.splitter)
@@ -76,10 +64,14 @@ class Ui_Form(object):
         self.verticalLayout.addWidget(self.label_object_name)
 
         self.pset_tree = PropertySetTreeWidget(self.gridLayoutWidget)
+        __qtreewidgetitem1 = QTreeWidgetItem()
+        __qtreewidgetitem1.setText(0, u"1");
+        self.pset_tree.setHeaderItem(__qtreewidgetitem1)
         self.pset_tree.setObjectName(u"pset_tree")
         self.pset_tree.setSortingEnabled(True)
 
         self.verticalLayout.addWidget(self.pset_tree)
+
 
         self.right_layout.addLayout(self.verticalLayout, 0, 0, 1, 1)
 
@@ -87,39 +79,31 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
 
-        Form.setCentralWidget(self.centralwidget)
-        self.menubar = QMenuBar(Form)
+        Mapping.setCentralWidget(self.centralwidget)
+        self.menubar = QMenuBar(Mapping)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1159, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1194, 33))
         self.menu_revit = QMenu(self.menubar)
         self.menu_revit.setObjectName(u"menu_revit")
-        Form.setMenuBar(self.menubar)
-        self.statusbar = QStatusBar(Form)
+        Mapping.setMenuBar(self.menubar)
+        self.statusbar = QStatusBar(Mapping)
         self.statusbar.setObjectName(u"statusbar")
-        Form.setStatusBar(self.statusbar)
+        Mapping.setStatusBar(self.statusbar)
 
         self.menubar.addAction(self.menu_revit.menuAction())
         self.menu_revit.addAction(self.action_ifc)
         self.menu_revit.addAction(self.action_shared_parameters)
 
-        self.retranslateUi(Form)
+        self.retranslateUi(Mapping)
 
-        QMetaObject.connectSlotsByName(Form)
-
+        QMetaObject.connectSlotsByName(Mapping)
     # setupUi
 
-    def retranslateUi(self, Form):
-        Form.setWindowTitle(QCoreApplication.translate("Form", u"MainWindow", None))
-        self.action_ifc.setText(QCoreApplication.translate("Form", u"Export IFC-Mapping", None))
-        self.action_shared_parameters.setText(QCoreApplication.translate("Form", u"Export Shared Parameters", None))
-        self.action_export_attribute_excel.setText(QCoreApplication.translate("Form", u"Export Attribute Excel", None))
-        self.action_desite_mapping.setText(QCoreApplication.translate("Form", u"create mapping Script", None))
-        self.action_create_vestra_mapping.setText(QCoreApplication.translate("Form", u"create .amrx", None))
-        self.action_desite_abbreviation.setText(QCoreApplication.translate("Form", u"create abbreviation JSON", None))
-        self.action_allplan.setText(QCoreApplication.translate("Form", u"Allplan", None))
-        self.action_vestra.setText(QCoreApplication.translate("Form", u"Vestra", None))
-        self.action_card1.setText(QCoreApplication.translate("Form", u"CARD1", None))
-        self.action_excel.setText(QCoreApplication.translate("Form", u"Excel", None))
+    def retranslateUi(self, Mapping):
+        Mapping.setWindowTitle(QCoreApplication.translate("Mapping", u"MainWindow", None))
+        self.action_ifc.setText(QCoreApplication.translate("Mapping", u"Export IFC-Mapping", None))
+        self.action_shared_parameters.setText(QCoreApplication.translate("Mapping", u"Export Shared Parameters", None))
         self.label_object_name.setText("")
-        self.menu_revit.setTitle(QCoreApplication.translate("Form", u"Revit", None))
+        self.menu_revit.setTitle(QCoreApplication.translate("Mapping", u"Revit", None))
     # retranslateUi
+
