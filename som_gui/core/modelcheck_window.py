@@ -19,13 +19,14 @@ if TYPE_CHECKING:
     from PySide6.QtCore import QItemSelectionModel, QModelIndex
     from som_gui.tool.ifc_importer import IfcImportRunner
     from som_gui.module.modelcheck_window import ui
+
 def open_window(modelcheck_window: Type[tool.ModelcheckWindow], util: Type[tool.Util], project: Type[tool.Project]):
     proj = project.get()
     window = modelcheck_window.create_window()
     main_pset_name, main_attribute_name = proj.get_main_attribute()
     util.fill_main_attribute(window.ui.main_attribute_widget, main_pset_name, main_attribute_name)
     util.fill_file_selector(window.ui.widget_import, "IFC Pfad", "IFC Files (*.ifc *.IFC);;", "modelcheck_files")
-    util.fill_file_selector(window.ui.widget_export, "Export Pfad", "Excel FIle (*xlsx);;", "modelcheck_export",
+    util.fill_file_selector(window.ui.widget_export, "Export Pfad", "Excel File (*.xlsx);;", "modelcheck_export",
                             request_save=True)
     modelcheck_window.connect_buttons()
     modelcheck_window.set_progressbar_visible(False)
@@ -68,7 +69,7 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
     modelcheck.set_main_attribute_name(main_attribute)
     modelcheck_results.set_export_path(export_path)
 
-    pool = ifc_importer.create_thread_pool()
+    pool = modelcheck_window.get_modelcheck_threadpool()
     pool.setMaxThreadCount(3)
     modelcheck.init_sql_database(util.create_tempfile(".db"))
     modelcheck.reset_guids()
