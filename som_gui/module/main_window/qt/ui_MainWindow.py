@@ -32,8 +32,8 @@ class Ui_MainWindow(object):
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1512, 740)
         MainWindow.setMinimumSize(QSize(0, 0))
-        self.actionExport = QAction(MainWindow)
-        self.actionExport.setObjectName(u"actionExport")
+        self.actiondqwd = QAction(MainWindow)
+        self.actiondqwd.setObjectName(u"actiondqwd")
         self.verticalLayout_main = QWidget(MainWindow)
         self.verticalLayout_main.setObjectName(u"verticalLayout_main")
         self.verticalLayout = QVBoxLayout(self.verticalLayout_main)
@@ -245,6 +245,8 @@ class Ui_MainWindow(object):
         self.menubar.setGeometry(QRect(0, 0, 1512, 33))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
+        self.menuExport = QMenu(self.menuFile)
+        self.menuExport.setObjectName(u"menuExport")
         self.menuEdit = QMenu(self.menubar)
         self.menuEdit.setObjectName(u"menuEdit")
         self.menuDesite = QMenu(self.menubar)
@@ -270,7 +272,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuModels.menuAction())
         self.menubar.addAction(self.menuDesite.menuAction())
-        self.menuFile.addAction(self.actionExport)
+        self.menuFile.addAction(self.menuExport.menuAction())
 
         self.retranslateUi(MainWindow)
 
@@ -279,7 +281,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"SOMToolkit", None))
-        self.actionExport.setText(QCoreApplication.translate("MainWindow", u"Export", None))
+        self.actiondqwd.setText(QCoreApplication.translate("MainWindow", u"dqwd", None))
         self.button_objects_add.setText(QCoreApplication.translate("MainWindow", u"Create", None))
 #if QT_CONFIG(tooltip)
         self.line_edit_object_name.setToolTip(QCoreApplication.translate("MainWindow", u"Name of Object", None))
@@ -311,7 +313,7 @@ class Ui_MainWindow(object):
         self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))
         # if QT_CONFIG(tooltip)
         self.lineEdit_pSet_name.setToolTip("")
-        # endif // QT_CONFIG(tooltip)
+        #endif // QT_CONFIG(tooltip)
         self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         ___qtablewidgetitem = self.table_pset.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"PropertySet", None));
@@ -328,6 +330,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem6 = self.table_attribute.horizontalHeaderItem(3)
         ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Value", None));
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
+        self.menuExport.setTitle(QCoreApplication.translate("MainWindow", u"Export", None))
         self.menuEdit.setTitle(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.menuDesite.setTitle(QCoreApplication.translate("MainWindow", u"Desite", None))
         self.menuModels.setTitle(QCoreApplication.translate("MainWindow", u"Models", None))

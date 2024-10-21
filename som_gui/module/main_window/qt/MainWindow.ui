@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>1512</width>
-       <height>740</height>
+    <width>1512</width>
+    <height>740</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -17,14 +17,14 @@
    </size>
   </property>
   <property name="windowTitle">
-      <string>SOMToolkit</string>
+   <string>SOMToolkit</string>
   </property>
   <widget class="QWidget" name="verticalLayout_main">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_objects">
@@ -36,7 +36,7 @@
           <item row="0" column="5">
            <widget class="QPushButton" name="button_objects_add">
             <property name="text">
-                <string>Create</string>
+             <string>Create</string>
             </property>
             <property name="autoDefault">
              <bool>true</bool>
@@ -54,13 +54,13 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-                  <string>Name of Object</string>
+               <string>Name of Object</string>
               </property>
               <property name="frame">
                <bool>true</bool>
               </property>
               <property name="echoMode">
-                  <enum>QLineEdit::EchoMode::Normal</enum>
+               <enum>QLineEdit::EchoMode::Normal</enum>
               </property>
               <property name="placeholderText">
                <string>Name</string>
@@ -81,13 +81,13 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-                <string>Name of PropertySet which owns Identifier Attribute</string>
+             <string>Name of PropertySet which owns Identifier Attribute</string>
             </property>
             <property name="frame">
              <bool>true</bool>
             </property>
             <property name="echoMode">
-                <enum>QLineEdit::EchoMode::Normal</enum>
+             <enum>QLineEdit::EchoMode::Normal</enum>
             </property>
             <property name="placeholderText">
              <string>PropertySet</string>
@@ -112,7 +112,7 @@
              <number>1</number>
             </property>
             <property name="text">
-                <string>Object</string>
+             <string>Object</string>
             </property>
            </widget>
           </item>
@@ -125,19 +125,19 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-                <string>Name of Attribute which owns the identifier value</string>
+             <string>Name of Attribute which owns the identifier value</string>
             </property>
             <property name="frame">
              <bool>true</bool>
             </property>
             <property name="echoMode">
-                <enum>QLineEdit::EchoMode::Normal</enum>
+             <enum>QLineEdit::EchoMode::Normal</enum>
             </property>
             <property name="placeholderText">
-                <string>Attribute</string>
+             <string>Attribute</string>
             </property>
             <property name="cursorMoveStyle">
-                <enum>Qt::CursorMoveStyle::LogicalMoveStyle</enum>
+             <enum>Qt::CursorMoveStyle::LogicalMoveStyle</enum>
             </property>
            </widget>
           </item>
@@ -175,26 +175,26 @@
           <item row="1" column="4" colspan="2">
            <widget class="QLineEdit" name="lineEdit_ident_value">
             <property name="toolTip">
-                <string>Needs to be unique!</string>
+             <string>Needs to be unique!</string>
             </property>
-               <property name="text">
-                   <string/>
+            <property name="text">
+             <string/>
             </property>
             <property name="frame">
              <bool>true</bool>
             </property>
             <property name="echoMode">
-                <enum>QLineEdit::EchoMode::Normal</enum>
+             <enum>QLineEdit::EchoMode::Normal</enum>
             </property>
             <property name="placeholderText">
-                <string>Value</string>
+             <string>Value</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
            <widget class="QLabel" name="label_Ident">
             <property name="toolTip">
-                <string>The Identifier defines which Object is selected it needs to be unique!</string>
+             <string>The Identifier defines which Object is selected it needs to be unique!</string>
             </property>
             <property name="text">
              <string>Identifier</string>
@@ -208,9 +208,9 @@
           <property name="enabled">
            <bool>true</bool>
           </property>
-             <property name="contextMenuPolicy">
-                 <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
-             </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
+          </property>
           <property name="dragEnabled">
            <bool>true</bool>
           </property>
@@ -218,16 +218,16 @@
            <bool>false</bool>
           </property>
           <property name="dragDropMode">
-              <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
+           <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
           </property>
           <property name="defaultDropAction">
-              <enum>Qt::DropAction::MoveAction</enum>
+           <enum>Qt::DropAction::MoveAction</enum>
           </property>
           <property name="alternatingRowColors">
            <bool>false</bool>
           </property>
           <property name="selectionMode">
-              <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
+           <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
           </property>
           <property name="sortingEnabled">
            <bool>true</bool>
@@ -238,11 +238,11 @@
           <attribute name="headerShowSortIndicator" stdset="0">
            <bool>true</bool>
           </attribute>
-             <column>
-                 <property name="text">
-                     <string notr="true">1</string>
-                 </property>
-             </column>
+          <column>
+           <property name="text">
+            <string notr="true">1</string>
+           </property>
+          </column>
          </widget>
         </item>
        </layout>
@@ -278,9 +278,9 @@
           </item>
           <item>
            <widget class="QLineEdit" name="lineEdit_pSet_name">
-               <property name="toolTip">
-                   <string/>
-               </property>
+            <property name="toolTip">
+             <string/>
+            </property>
             <property name="frame">
              <bool>true</bool>
             </property>
@@ -295,7 +295,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-                <string>Create</string>
+             <string>Create</string>
             </property>
             <property name="autoDefault">
              <bool>true</bool>
@@ -313,9 +313,9 @@
            </sizepolicy>
           </property>
           <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
-             <widget class="PsetTableWidget" name="table_pset">
+          <widget class="PsetTableWidget" name="table_pset">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -323,19 +323,19 @@
             </sizepolicy>
            </property>
            <property name="focusPolicy">
-               <enum>Qt::FocusPolicy::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
            <property name="contextMenuPolicy">
-               <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
+            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
            </property>
            <property name="editTriggers">
-               <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
            </property>
            <property name="selectionMode">
-               <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+            <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
            </property>
            <property name="selectionBehavior">
-               <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+            <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
            </property>
            <property name="sortingEnabled">
             <bool>true</bool>
@@ -359,7 +359,7 @@
            </column>
            <column>
             <property name="text">
-                <string>Inherited By</string>
+             <string>Inherited By</string>
             </property>
            </column>
            <column>
@@ -368,12 +368,12 @@
             </property>
            </column>
           </widget>
-             <widget class="AttributeTable" name="table_attribute">
-                 <property name="contextMenuPolicy">
-                     <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
-                 </property>
+          <widget class="AttributeTable" name="table_attribute">
+           <property name="contextMenuPolicy">
+            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
+           </property>
            <property name="editTriggers">
-               <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
            </property>
            <property name="sortingEnabled">
             <bool>true</bool>
@@ -388,7 +388,7 @@
            </column>
            <column>
             <property name="text">
-                <string>Datatype</string>
+             <string>Datatype</string>
             </property>
            </column>
            <column>
@@ -398,7 +398,7 @@
            </column>
            <column>
             <property name="text">
-                <string>Value</string>
+             <string>Value</string>
             </property>
            </column>
           </widget>
@@ -415,58 +415,63 @@
     <rect>
      <x>0</x>
      <y>0</y>
-        <width>1512</width>
-        <height>33</height>
+     <width>1512</width>
+     <height>33</height>
     </rect>
    </property>
-      <widget class="QMenu" name="menuFile">
-          <property name="title">
-              <string>File</string>
-          </property>
-          <addaction name="actionExport"/>
-      </widget>
-      <widget class="QMenu" name="menuEdit">
-          <property name="title">
-              <string>Edit</string>
-          </property>
-      </widget>
-      <widget class="QMenu" name="menuDesite">
-          <property name="title">
-              <string>Desite</string>
-          </property>
-      </widget>
-      <widget class="QMenu" name="menuModels">
-          <property name="title">
-              <string>Models</string>
-          </property>
-      </widget>
-      <addaction name="menuFile"/>
-      <addaction name="menuEdit"/>
-      <addaction name="menuModels"/>
-      <addaction name="menuDesite"/>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export</string>
+     </property>
+    </widget>
+    <addaction name="menuExport"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuDesite">
+    <property name="title">
+     <string>Desite</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuModels">
+    <property name="title">
+     <string>Models</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuModels"/>
+   <addaction name="menuDesite"/>
   </widget>
-     <widget class="QStatusBar" name="statusbar"/>
-     <action name="actionExport">
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actiondqwd">
    <property name="text">
-       <string>Export</string>
+    <string>dqwd</string>
    </property>
   </action>
  </widget>
  <customwidgets>
-     <customwidget>
-         <class>AttributeTable</class>
-         <extends>QTableWidget</extends>
-         <header>som_gui.module.attribute_table.ui</header>
-     </customwidget>
+  <customwidget>
+   <class>AttributeTable</class>
+   <extends>QTableWidget</extends>
+   <header>som_gui.module.attribute_table.ui</header>
+  </customwidget>
   <customwidget>
    <class>ObjectTreeWidget</class>
    <extends>QTreeWidget</extends>
-      <header>som_gui.module.object.ui</header>
+   <header>som_gui.module.object.ui</header>
   </customwidget>
-     <customwidget>
-         <class>PsetTableWidget</class>
-         <extends>QTableWidget</extends>
-         <header>som_gui.module.property_set.ui</header>
+  <customwidget>
+   <class>PsetTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>som_gui.module.property_set.ui</header>
   </customwidget>
  </customwidgets>
  <tabstops>

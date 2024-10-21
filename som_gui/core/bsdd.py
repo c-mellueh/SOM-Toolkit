@@ -3,11 +3,22 @@ import os
 import logging
 from typing import TYPE_CHECKING, Type
 from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QLineEdit
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QCoreApplication
 if TYPE_CHECKING:
     from som_gui import tool
 
 BSDD_PATH = "../../SOMcreator/exporter/bsdd"
+
+
+def create_main_menu_actions(bsdd: Type[tool.Bsdd], main_window: Type[tool.MainWindow]):
+    from som_gui.module.bsdd import trigger
+    open_window_action = main_window.add_action2("menuExport", "BSDD", trigger.open_window)
+    bsdd.set_action("open_window", open_window_action)
+
+
+def retranslate_ui(bsdd: Type[tool.Bsdd], ):
+    open_window_action = bsdd.get_action("open_window")
+    open_window_action.setText(QCoreApplication.translate("BSDD", "bsDD"))
 
 
 def open_window(bsdd: Type[tool.Bsdd], settings: Type[tool.Appdata]) -> None:
