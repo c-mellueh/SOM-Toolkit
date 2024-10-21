@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QWidget, QLineEdit
 from PySide6.QtCore import Qt
 from PySide6 import QtGui
 from som_gui.module import property_set_window
-from .qt.window import Ui_layout_main
+from .qt.ui_Window import Ui_layout_main
 from som_gui.icons import get_icon
 
 

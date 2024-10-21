@@ -15,9 +15,9 @@ class AttributeImportWindow(QWidget):
 
 class AttributeImportResultWindow(QWidget):
     def __init__(self):
-        from .qt import widget
+        from .qt import ui_Widget
         super(AttributeImportResultWindow, self).__init__()
-        self.widget = widget.Ui_Form()
+        self.widget = ui_Widget.Ui_Form()
         self.widget.setupUi(self)
         self.widget.button_settings.setIcon(get_settings_icon())
         self.setWindowTitle(self.tr(f"Modellinformationen Einlesen | {tool.Util.get_status_text()}"))
@@ -74,8 +74,8 @@ class ValueCheckBox(QCheckBox):
 class SettingsDialog(QDialog):
     def __init__(self):
         super(SettingsDialog, self).__init__()
-        from .qt import settings_widget
-        self.widget = settings_widget.Ui_Dialog()
+        from .qt import ui_SettingsWidget
+        self.widget = ui_SettingsWidget.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
         self.setWindowTitle(f"Einstellungen v{version}  | {tool.Util.get_status_text()}")

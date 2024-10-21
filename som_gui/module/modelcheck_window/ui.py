@@ -10,7 +10,7 @@ from . import qt
 class ModelcheckWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.ui = qt.widget.Ui_Form()
+        self.ui = qt.ui_Widget.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
         self.setWindowTitle(f"Modellprüfung | {tool.Util.get_status_text()}")

@@ -9,7 +9,7 @@ import ctypes
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.prop import MainWindowProperties, MenuDict
-    from som_gui.module.main_window.qt.window import Ui_MainWindow
+    from som_gui.module.main_window.qt.ui_MainWindow import Ui_MainWindow
 
 
 class MainWindow(som_gui.core.tool.MainWindow):

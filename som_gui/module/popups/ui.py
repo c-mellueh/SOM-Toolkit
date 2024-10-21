@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QDialog
-from .qt.delete_request import Ui_Dialog
+from .qt.ui_DeleteRequest import Ui_Dialog
 from som_gui.icons import get_icon
 
 

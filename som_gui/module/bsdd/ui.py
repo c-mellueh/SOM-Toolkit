@@ -1,4 +1,4 @@
-from som_gui.module.bsdd.qt.widget import Ui_Form
+from som_gui.module.bsdd.qt.ui_widget import Ui_Form
 from som_gui.icons import get_icon
 from PySide6.QtWidgets import QWidget
 from . import trigger

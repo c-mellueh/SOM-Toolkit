@@ -8,7 +8,7 @@ from som_gui import tool
 class MappingWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        from .qt.window import Ui_Form
+        from .qt.ui_Window import Ui_Form
         self.widget = Ui_Form()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
