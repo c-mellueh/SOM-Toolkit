@@ -15,3 +15,7 @@ def load_ui_triggers():
 
 def on_new_project():
     pass
+
+
+def retranslate_ui():
+    trigger.retranslate_ui()

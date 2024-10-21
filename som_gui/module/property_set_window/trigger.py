@@ -50,3 +50,6 @@ def key_press_event(event, window: PropertySetWindow):
         return True
     return core.handle_paste_event(window, tool.PropertySetWindow)
 
+
+def retranslate_ui():
+    pass

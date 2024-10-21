@@ -47,3 +47,7 @@ def drop_event(event):
 
 def on_new_project():
     core.reset_tree(tool.Object)
+
+
+def retranslate_ui():
+    pass

@@ -17,6 +17,9 @@ def connect():
                                                    tool.PropertySetWindow))
     core.init_context_menu(tool.AttributeTable)
 
+
+def retranslate_ui():
+    pass
 def connect_table(table: AttributeTable):
     table.customContextMenuRequested.connect(
         lambda pos: core.context_menu(table, pos, tool.AttributeTable, tool.Util))

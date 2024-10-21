@@ -42,7 +42,7 @@ def main(initial_file: str | None = None, log_level=None, open_last_project=Fals
         core.project.open_project(initial_file, tool.Project)
     if open_last_project:
         core.project.open_project(tool.Appdata.get_path(OPEN_PATH), tool.Project)
-
+    som_gui.retranslate_ui()
     sys.exit(app.exec())
 
 

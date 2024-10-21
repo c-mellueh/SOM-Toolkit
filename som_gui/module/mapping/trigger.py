@@ -11,6 +11,8 @@ def on_new_project():
     pass
 
 
+def retranslate_ui():
+    pass
 def export_revit_ifc_mapping():
     core.export_revit_ifc_mapping(tool.Mapping, tool.Project, tool.Popups)
 

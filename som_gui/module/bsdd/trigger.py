@@ -6,6 +6,8 @@ def connect():
                                lambda: core.open_window(tool.Bsdd, tool.Appdata))
 
 
+def retranslate_ui():
+    pass
 def on_new_project():
     core.reset(tool.Bsdd)
 

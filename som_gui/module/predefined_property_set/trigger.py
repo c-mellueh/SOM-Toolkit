@@ -55,3 +55,7 @@ def repaint_window():
 
 def accept():
     core.close_window(tool.PredefinedPropertySet)
+
+
+def retranslate_ui():
+    pass

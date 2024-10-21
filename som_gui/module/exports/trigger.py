@@ -27,5 +27,7 @@ def connect():
                                       lambda: core.settings_accepted(tool.Exports, tool.Appdata))
 
 
+def retranslate_ui():
+    pass
 def on_new_project():
     pass

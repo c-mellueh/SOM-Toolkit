@@ -10,6 +10,8 @@ def on_new_project():
     pass
 
 
+def retranslate_ui():
+    pass
 def close_event():
     return core.close_event(tool.Project, tool.Appdata, tool.Popups, tool.MainWindow)
 

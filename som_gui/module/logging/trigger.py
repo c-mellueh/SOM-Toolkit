@@ -11,6 +11,9 @@ def on_new_project():
     pass
 
 
+def retranslate_ui():
+    pass
+
 def settings_widget_created(widget: ui.SettingsWidget):
     core.settings_widget_created(widget, tool.Logging)
     pass

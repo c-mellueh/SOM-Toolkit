@@ -25,3 +25,7 @@ def window_paint_event() -> None:
 
 def request_scene_rename():
     core.request_scene_rename(aw_tool.Window, aw_tool.View, tool.Popups, )
+
+
+def retranslate_ui():
+    pass

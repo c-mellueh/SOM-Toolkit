@@ -44,3 +44,7 @@ def paint_header(header, painter: QPainter) -> None:
 
 def paint_circle(circle: ui.Circle) -> None:
     core.paint_circle(circle, aw_tool.Node)
+
+
+def retranslate_ui():
+    pass

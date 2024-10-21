@@ -13,3 +13,7 @@ def on_new_project():
 
 def paint_connection(connection):
     core.paint_connection(connection, aw_tool.Connection)
+
+
+def retranslate_ui():
+    pass

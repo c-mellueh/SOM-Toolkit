@@ -11,3 +11,7 @@ def on_new_project():
 
 def close_window():
     core.close_window(tool.ModelcheckExternal)
+
+
+def retranslate_ui():
+    pass

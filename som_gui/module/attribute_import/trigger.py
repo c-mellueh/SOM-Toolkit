@@ -10,6 +10,9 @@ def connect():
                                                                tool.IfcImporter, tool.Project, tool.AttributeImportSQL))
 
 
+def retranslate_ui():
+    pass
+
 def connect_import_buttons(run_button: QPushButton, abort_button: QPushButton):
     run_button.clicked.connect(
         lambda: core.ifc_import_run_clicked(tool.AttributeImport, tool.IfcImporter, tool.AttributeImportSQL,

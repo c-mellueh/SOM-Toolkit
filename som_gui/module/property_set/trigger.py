@@ -35,3 +35,7 @@ def repaint_event():
 
 def pset_table_context_menu_requested(pos):
     core.pset_table_context_menu(pos, tool.PropertySet)
+
+
+def retranslate_ui():
+    pass

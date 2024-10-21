@@ -11,6 +11,9 @@ def connect():
     core.add_attribute_compare_widget(tool.AttributeCompare, tool.CompareWindow)
 
 
+def retranslate_ui():
+    pass
+
 def on_new_project():
     pass
 

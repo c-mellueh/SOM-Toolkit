@@ -7,5 +7,8 @@ def on_new_project():
     pass
 
 
+def retranslate_ui():
+    pass
+
 def close_console():
     core.close(tool.Console)

@@ -29,3 +29,7 @@ def settings_general_created(widget: ui.SettingsGeneral):
 
 def settings_path_created(widget: ui.SettingsPath):
     core.settings_path_created(widget, tool.Project, tool.Appdata)
+
+
+def retranslate_ui():
+    pass

@@ -10,3 +10,7 @@ def start_modelcheck(ifc_file):
 
 def on_new_project():
     pass
+
+
+def retranslate_ui():
+    pass

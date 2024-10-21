@@ -46,6 +46,10 @@ def load_ui_triggers():
             module.load_ui_triggers()
 
 
+def retranslate_ui():
+    for name, module in modules:
+        module.retranslate_ui()
+
 def on_new_project():
     for name, module in modules:
         module.on_new_project()

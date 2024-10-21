@@ -12,6 +12,9 @@ def connect():
                                       lambda: core.settings_accepted(tool.FilterWindow, tool.Project, tool.Popups))
 
 
+def retranslate_ui():
+    pass
+
 def pt_horizontal_context_requested(pos):
     core.pt_context_menu(pos, Qt.Orientation.Horizontal, tool.FilterWindow, tool.Project)
     pass

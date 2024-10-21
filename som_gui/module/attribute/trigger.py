@@ -7,5 +7,8 @@ def connect():
     core.add_basic_attribute_data(tool.Attribute)
 
 
+def retranslate_ui():
+    pass
+
 def on_new_project():
     pass

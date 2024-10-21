@@ -38,3 +38,7 @@ def move_started(ifc_file: ifcopenshell.file, path: str):
 
 def move_finished():
     core.move_finished(ifc_tool.Move)
+
+
+def retranslate_ui():
+    pass

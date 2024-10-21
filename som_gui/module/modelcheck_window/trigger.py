@@ -80,3 +80,7 @@ def connect_ifc_import_runner(runner: QRunnable):
 
 def on_new_project():
     pass
+
+
+def retranslate_ui():
+    pass

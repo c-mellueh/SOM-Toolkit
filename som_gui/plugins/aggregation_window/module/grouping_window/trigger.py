@@ -38,3 +38,7 @@ def connect_grouping_runner(runner):
 
 def on_new_project():
     pass
+
+
+def retranslate_ui():
+    pass

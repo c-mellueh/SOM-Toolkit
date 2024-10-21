@@ -10,3 +10,7 @@ def on_new_project():
 
 def refresh_window():
     core.refresh_search_window(tool.Search)
+
+
+def retranslate_ui():
+    pass
