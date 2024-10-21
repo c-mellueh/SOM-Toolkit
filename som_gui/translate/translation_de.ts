@@ -128,7 +128,7 @@
             <location filename="../module/project/qt/ProjectMerge.ui" line="14"/>
             <location filename="../module/search/qt/Widget.ui" line="14"/>
             <source>Dialog</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Dialog</translation>
         </message>
         <message>
             <location filename="../module/attribute_import/qt/SettingsWidget.ui" line="23"/>
@@ -382,7 +382,13 @@
         <message>
             <source>{}{} [{}][{}] state changed from {} to {}
             </source>
-            <translation type="vanished">{}{} [{}][{}] Status hat sich von {} zu {} geändert
+            <translation type="obsolete">{}{} [{}][{}] Status hat sich von {} zu {} geändert
+            </translation>
+        </message>
+        <message>
+            <source>Attribut {0:30} {1:30} state changed from {2:5} to {3:5}
+            </source>
+            <translation type="obsolete">Attribut {0:30} {1:30} Status hat sich von {2:5} zu {3:5} geändert
             </translation>
         </message>
         <message>
@@ -395,12 +401,6 @@
             <location filename="../tool/filter_window.py" line="401"/>
             <source>PropertySet</source>
             <translation>PropertySet</translation>
-        </message>
-        <message>
-            <source>Attribut {0:30} {1:30} state changed from {2:5} to {3:5}
-            </source>
-            <translation type="vanished">Attribut {0:30} {1:30} Status hat sich von {2:5} zu {3:5} geändert
-            </translation>
         </message>
     </context>
     <context>
@@ -471,7 +471,7 @@
         </message>
         <message>
             <location filename="../module/bsdd/qt/Widget.ui" line="55"/>
-            <location filename="../module/util/qt/FileSelector.ui" line="48"/>
+            <location filename="../module/util/qt/FileSelector.ui" line="60"/>
             <source>...</source>
             <translation type="unfinished"></translation>
         </message>
@@ -563,7 +563,7 @@
         </message>
         <message>
             <location filename="../module/modelcheck_window/qt/Widget.ui" line="41"/>
-            <location filename="../module/util/qt/FileSelector.ui" line="23"/>
+            <location filename="../module/util/qt/FileSelector.ui" line="35"/>
             <location filename="../module/util/qt/Progressbar.ui" line="20"/>
             <source>TextLabel</source>
             <translation type="unfinished">Text</translation>
@@ -635,6 +635,24 @@
             <location filename="../plugins/aggregation_window/module/grouping_window/ui.py" line="13"/>
             <source>Gruppierung erzeugen | {tool.Util.get_status_text()}</source>
             <translation type="unfinished"></translation>
+        </message>
+    </context>
+    <context>
+        <name>Logging</name>
+        <message>
+            <location filename="../module/logging/qt/Widget.ui" line="14"/>
+            <source>Form</source>
+            <translation>Form</translation>
+        </message>
+        <message>
+            <location filename="../module/logging/qt/Widget.ui" line="20"/>
+            <source>Log Level:</source>
+            <translation>Log Level:</translation>
+        </message>
+        <message>
+            <location filename="../core/logging.py" line="37"/>
+            <source>Log Directory:</source>
+            <translation>Log Pfad:</translation>
         </message>
     </context>
     <context>
@@ -818,7 +836,7 @@
         <message>
             <location filename="../module/object/qt/InfoWidget.ui" line="20"/>
             <source>Dialog</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Dialog</translation>
         </message>
         <message>
             <location filename="../module/object/qt/InfoWidget.ui" line="28"/>
@@ -891,7 +909,7 @@
     <context>
         <name>Settings</name>
         <message>
-            <location filename="../core/settings.py" line="18"/>
+            <location filename="../core/settings.py" line="20"/>
             <location filename="../module/settings/ui.py" line="16"/>
             <source>Settings</source>
             <translation>Einstellungen</translation>

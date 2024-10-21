@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'FileSelector.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.3
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -18,7 +18,6 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QGridLayout, QLabel, QLineEdit,
                                QPushButton, QSizePolicy, QWidget)
 
-
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
@@ -26,6 +25,7 @@ class Ui_Form(object):
         Form.resize(641, 64)
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.lineEdit = QLineEdit(Form)
         self.lineEdit.setObjectName(u"lineEdit")
 
@@ -51,7 +51,6 @@ class Ui_Form(object):
         self.retranslateUi(Form)
 
         QMetaObject.connectSlotsByName(Form)
-
     # setupUi
 
     def retranslateUi(self, Form):
@@ -59,3 +58,4 @@ class Ui_Form(object):
         self.label.setText(QCoreApplication.translate("Form", u"TextLabel", None))
         self.pushButton.setText(QCoreApplication.translate("Form", u"...", None))
     # retranslateUi
+

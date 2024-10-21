@@ -88,6 +88,7 @@
         "..\\module\\logging\\trigger.py",
         "..\\module\\logging\\ui.py",
         "..\\module\\logging\\__init__.py",
+        "..\\module\\logging\\qt\\Widget.ui",
         "..\\module\\main_window\\prop.py",
         "..\\module\\main_window\\trigger.py",
         "..\\module\\main_window\\ui.py",

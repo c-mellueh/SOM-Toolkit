@@ -194,7 +194,7 @@ class Util(som_gui.core.tool.Util):
     @classmethod
     def fill_file_selector(cls, widget: ui.FileSelector, name: str, file_extension: str, appdata_text: str,
                            request_folder=False, request_save=False,
-                           single_request=False):
+                           single_request=False, update_appdata=True):
         """
         if file selector is created as placeholder in QtDesiger it can befilled after creation
                 name: text that should be written in first row
@@ -211,6 +211,7 @@ class Util(som_gui.core.tool.Util):
         widget.request_folder = request_folder
         widget.request_save = request_save
         widget.single_request = single_request
+        widget.update_appdata = update_appdata
         widget.ui.label.setText(name)
 
         if appdata_text:
@@ -251,7 +252,7 @@ class Util(som_gui.core.tool.Util):
         if path is not None:
             paths = [path]
 
-        if widget.appdata_text:
+        if widget.appdata_text and widget.update_appdata:
             tool.Appdata.set_path(widget.appdata_text, paths)
         return paths
 

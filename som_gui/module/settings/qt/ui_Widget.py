@@ -19,7 +19,6 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogBu
                                QSizePolicy, QTabWidget, QToolBox, QVBoxLayout,
                                QWidget)
 
-
 class Ui_Settings(object):
     def setupUi(self, Settings):
         if not Settings.objectName():
@@ -40,18 +39,19 @@ class Ui_Settings(object):
         self.toolBox.setObjectName(u"toolBox")
         self.pageGeneral = QWidget()
         self.pageGeneral.setObjectName(u"pageGeneral")
+        self.pageGeneral.setGeometry(QRect(0, 0, 856, 467))
         self.verticalLayout_9 = QVBoxLayout(self.pageGeneral)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
         self.toolBox.addItem(self.pageGeneral, u"General")
         self.pageLogging = QWidget()
         self.pageLogging.setObjectName(u"pageLogging")
-        self.pageLogging.setGeometry(QRect(0, 0, 575, 318))
+        self.pageLogging.setGeometry(QRect(0, 0, 98, 28))
         self.verticalLayout_8 = QVBoxLayout(self.pageLogging)
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
         self.toolBox.addItem(self.pageLogging, u"Logging")
         self.pageFilter = QWidget()
         self.pageFilter.setObjectName(u"pageFilter")
-        self.pageFilter.setGeometry(QRect(0, 0, 575, 318))
+        self.pageFilter.setGeometry(QRect(0, 0, 98, 28))
         self.verticalLayout_10 = QVBoxLayout(self.pageFilter)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
         self.toolBox.addItem(self.pageFilter, u"Filter")
@@ -74,7 +74,7 @@ class Ui_Settings(object):
         self.tbPath.addItem(self.pageProject, u"Project")
         self.pageExport = QWidget()
         self.pageExport.setObjectName(u"pageExport")
-        self.pageExport.setGeometry(QRect(0, 0, 575, 348))
+        self.pageExport.setGeometry(QRect(0, 0, 98, 28))
         self.verticalLayout_7 = QVBoxLayout(self.pageExport)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.tbPath.addItem(self.pageExport, u"Export")
@@ -91,7 +91,7 @@ class Ui_Settings(object):
         self.tbPlugins.setObjectName(u"tbPlugins")
         self.pagePlugins = QWidget()
         self.pagePlugins.setObjectName(u"pagePlugins")
-        self.pagePlugins.setGeometry(QRect(0, 0, 856, 527))
+        self.pagePlugins.setGeometry(QRect(0, 0, 98, 28))
         self.verticalLayout_5 = QVBoxLayout(self.pagePlugins)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.tbPlugins.addItem(self.pagePlugins, u"Plugins")
@@ -109,17 +109,17 @@ class Ui_Settings(object):
 
         self.verticalLayout.addWidget(self.buttonBox)
 
+
         self.retranslateUi(Settings)
         self.buttonBox.accepted.connect(Settings.accept)
         self.buttonBox.rejected.connect(Settings.reject)
 
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
         self.tbPath.setCurrentIndex(0)
         self.tbPlugins.setCurrentIndex(0)
 
         QMetaObject.connectSlotsByName(Settings)
-
     # setupUi
 
     def retranslateUi(self, Settings):
@@ -143,3 +143,4 @@ class Ui_Settings(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPlugins),
                                   QCoreApplication.translate("Settings", u"Plugins", None))
     # retranslateUi
+

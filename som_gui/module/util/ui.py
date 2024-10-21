@@ -14,6 +14,7 @@ class FileSelector(QWidget):
         self.appdata_text = None
         self.request_save = None
         self.single_request = None
+        self.update_appdata = None
         self.ui.pushButton.clicked.connect(lambda: trigger.fileselector_clicked(self))
 
     def paintEvent(self, event):
