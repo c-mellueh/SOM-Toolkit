@@ -1,4 +1,4 @@
 # name and description will be used for Settings Window
-friendly_name = "Aggreation Window"
+friendly_name = "IFC-Tools"
 description = "UI for manipulating IFC-Files"
-author = "christoph.mellueh.de"
+author = "christoph@mellueh.de"
