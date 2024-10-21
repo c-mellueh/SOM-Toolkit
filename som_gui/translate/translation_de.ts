@@ -422,7 +422,7 @@
             <location filename="../plugins/aggregation_window/module/grouping_window/qt/widget.ui" line="14"/>
             <location filename="../plugins/ifc_tools/module/move/qt/widget.ui" line="14"/>
             <source>Form</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Form</translation>
         </message>
         <message>
             <location filename="../module/attribute_import/qt/Widget.ui" line="58"/>
@@ -650,7 +650,7 @@
             <translation>Log Level:</translation>
         </message>
         <message>
-            <location filename="../core/logging.py" line="37"/>
+            <location filename="../core/logging.py" line="39"/>
             <source>Log Directory:</source>
             <translation>Log Pfad:</translation>
         </message>
@@ -806,7 +806,7 @@
         <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="456"/>
             <source>dqwd</source>
-            <translation type="unfinished"></translation>
+            <translation></translation>
         </message>
         <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="428"/>
@@ -821,6 +821,16 @@
         <message>
             <source>Import Values</source>
             <translation type="vanished">Werte importieren</translation>
+        </message>
+        <message>
+            <location filename="../core/main_window.py" line="24"/>
+            <source>Hide Console</source>
+            <translation>Konsole Ausblenden</translation>
+        </message>
+        <message>
+            <location filename="../core/main_window.py" line="26"/>
+            <source>Show Console</source>
+            <translation>Konsole Einblenden</translation>
         </message>
     </context>
     <context>
@@ -921,38 +931,38 @@
         </message>
         <message>
             <location filename="../module/settings/qt/Widget.ui" line="36"/>
-            <location filename="../module/settings/qt/Widget.ui" line="58"/>
+            <location filename="../module/settings/qt/Widget.ui" line="66"/>
             <source>General</source>
             <translation>Allgemein</translation>
         </message>
         <message>
-            <location filename="../module/settings/qt/Widget.ui" line="72"/>
+            <location filename="../module/settings/qt/Widget.ui" line="80"/>
             <source>Logging</source>
             <translation>Logging</translation>
         </message>
         <message>
-            <location filename="../module/settings/qt/Widget.ui" line="86"/>
+            <location filename="../module/settings/qt/Widget.ui" line="94"/>
             <source>Filter</source>
             <translation>Filter</translation>
         </message>
         <message>
-            <location filename="../module/settings/qt/Widget.ui" line="96"/>
+            <location filename="../module/settings/qt/Widget.ui" line="104"/>
             <source>Path</source>
             <translation>Pfad</translation>
         </message>
         <message>
-            <location filename="../module/settings/qt/Widget.ui" line="126"/>
+            <location filename="../module/settings/qt/Widget.ui" line="134"/>
             <source>Project</source>
             <translation>Projekt</translation>
         </message>
         <message>
-            <location filename="../module/settings/qt/Widget.ui" line="140"/>
+            <location filename="../module/settings/qt/Widget.ui" line="148"/>
             <source>Export</source>
             <translation>Export</translation>
         </message>
         <message>
-            <location filename="../module/settings/qt/Widget.ui" line="150"/>
-            <location filename="../module/settings/qt/Widget.ui" line="180"/>
+            <location filename="../module/settings/qt/Widget.ui" line="158"/>
+            <location filename="../module/settings/qt/Widget.ui" line="188"/>
             <source>Plugins</source>
             <translation>Plugins</translation>
         </message>
@@ -988,7 +998,7 @@
         <message>
             <location filename="../module/property_set_window/qt/Window.ui" line="14"/>
             <source>Form</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Form</translation>
         </message>
         <message>
             <location filename="../module/property_set_window/qt/Window.ui" line="33"/>

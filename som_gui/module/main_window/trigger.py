@@ -3,15 +3,19 @@ from som_gui import tool
 
 
 def connect():
-    tool.MainWindow.add_action("Bearbeiten/Toggle Console", lambda: core.toggle_console_clicked(tool.MainWindow))
-
+    core.create_main_menu_actions(tool.MainWindow)
 
 def on_new_project():
     pass
 
 
 def retranslate_ui():
-    pass
+    core.retranslate_ui(tool.MainWindow)
+
+
+def toggle_console():
+    core.toggle_console_clicked(tool.MainWindow)
+
 def close_event():
     return core.close_event(tool.Project, tool.Appdata, tool.Popups, tool.MainWindow)
 

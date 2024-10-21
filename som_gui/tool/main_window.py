@@ -15,6 +15,19 @@ if TYPE_CHECKING:
 
 class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
+    def get_properties(cls) -> MainWindowProperties:
+        return som_gui.MainWindowProperties
+
+    @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
+
+
+    @classmethod
     def create(cls, application: QApplication):
         if cls.get_properties().window is None:
             window = ui_main_window.MainWindow(application)
@@ -37,14 +50,19 @@ class MainWindow(som_gui.core.tool.MainWindow):
             ctypes.windll.user32.ShowWindow(console_window, 5)  # Show the console
 
     @classmethod
-    def toggle_console(cls):
-        active_window = cls.get_app().activeWindow()
+    def is_console_visible(cls):
         hWnd = ctypes.windll.kernel32.GetConsoleWindow()
         if hWnd == 0:
-            return
+            return False
         if ctypes.windll.user32.IsWindowVisible(hWnd):
+            return True
+        return False
+    @classmethod
+    def toggle_console(cls):
+        active_window = cls.get_app().activeWindow()
+        if cls.is_console_visible():
             cls.hide_console()
-        else:
+        elif ctypes.windll.kernel32.GetConsoleWindow() != 0:
             cls.show_console()
         active_window.activateWindow()
 
@@ -95,9 +113,6 @@ class MainWindow(som_gui.core.tool.MainWindow):
             menu_path = "/".join(menu_path)
         tool.Util.menu_bar_add_action(menu_bar, menu_dict, menu_path, function)
 
-    @classmethod
-    def get_properties(cls) -> MainWindowProperties:
-        return som_gui.MainWindowProperties
 
     @classmethod
     def get_ui(cls) -> Ui_MainWindow:

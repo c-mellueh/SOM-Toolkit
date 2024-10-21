@@ -20,7 +20,6 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QLabel,
 
 from som_gui.module.util.ui import FileSelector
 
-
 class Ui_Logging(object):
     def setupUi(self, Logging):
         if not Logging.objectName():
@@ -47,7 +46,6 @@ class Ui_Logging(object):
         self.retranslateUi(Logging)
 
         QMetaObject.connectSlotsByName(Logging)
-
     # setupUi
 
     def retranslateUi(self, Logging):

@@ -29,3 +29,4 @@ class MainWindowProperties:
     application: QApplication = None
     mapping_window = None
     grouping_window = None
+    actions: dict[str, QAction] = dict()
