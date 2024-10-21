@@ -160,7 +160,6 @@ class Util(som_gui.core.tool.Util):
 
         return loop_name(standard_name)
 
-
     @classmethod
     def get_text_from_combobox(cls, combobox: QComboBox) -> dict[str, QModelIndex]:
         model = combobox.model()
@@ -226,28 +225,35 @@ class Util(som_gui.core.tool.Util):
         if widget is None:
             logging.debug(f"Widget is not defined")
             return []
-
+        path, paths = None, []
         if widget.appdata_text:
             start_path = tool.Appdata.get_path(widget.appdata_text)
         else:
             start_path = ""
+        if isinstance(start_path, list):
+            start_path = start_path[0]
+
         if widget.request_folder:
-            path = [QFileDialog.getExistingDirectory(widget, widget.name, start_path)]
+            path = QFileDialog.getExistingDirectory(widget, widget.name, start_path)
 
         elif widget.request_save:
-            path = [QFileDialog.getSaveFileName(widget, widget.name, start_path, widget.extension)[0]]
+            path = QFileDialog.getSaveFileName(widget, widget.name, start_path, widget.extension)[0]
 
         elif widget.single_request:
-            path = [QFileDialog.getOpenFileName(widget, widget.name, start_path, widget.extension)[0]]
+            path = QFileDialog.getOpenFileName(widget, widget.name, start_path, widget.extension)[0]
+
         elif all([widget, widget.name, widget.extension]):
-            path = QFileDialog.getOpenFileNames(widget, widget.name, start_path, widget.extension)[0]
+            paths, _ = QFileDialog.getOpenFileNames(widget, widget.name, start_path, widget.extension)
         else:
             logging.warning(f"inputs are missing. no path requestable")
             return []
-        if widget.appdata_text:
-            tool.Appdata.set_path(widget.appdata_text, path)
 
-        return path
+        if path is not None:
+            paths = [path]
+
+        if widget.appdata_text:
+            tool.Appdata.set_path(widget.appdata_text, paths)
+        return paths
 
     @classmethod
     def autofill_path(cls, line_edit: QLineEdit, appdata: str):
