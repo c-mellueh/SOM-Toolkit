@@ -101,14 +101,18 @@
         </message>
         <message>
             <location filename="../module/compare/ui.py" line="24"/>
+            <source>Attributes</source>
+            <translation type="unfinished"></translation>
+        </message>
+        <message>
             <source>Attribute</source>
-            <translation type="unfinished">Attribut</translation>
+            <translation type="obsolete">Attribut</translation>
         </message>
     </context>
     <context>
         <name>CompareWindow</name>
         <message>
-            <location filename="../core/compare.py" line="26"/>
+            <location filename="../core/compare.py" line="27"/>
             <source>Compare Projects</source>
             <translation>Projekte vergleichen</translation>
         </message>
@@ -217,6 +221,71 @@
             <location filename="../module/search/qt/Widget.ui" line="57"/>
             <source>Match</source>
             <translation type="unfinished"></translation>
+        </message>
+    </context>
+    <context>
+        <name>Export</name>
+        <message>
+            <location filename="../core/exports.py" line="46"/>
+            <source>Vestra</source>
+            <translation>Vestra</translation>
+        </message>
+        <message>
+            <location filename="../core/exports.py" line="49"/>
+            <source>Card1</source>
+            <translation>Card1</translation>
+        </message>
+        <message>
+            <location filename="../core/exports.py" line="52"/>
+            <source>Excel</source>
+            <translation>Excel</translation>
+        </message>
+        <message>
+            <location filename="../core/exports.py" line="55"/>
+            <source>Allplan</source>
+            <translation>Allplan</translation>
+        </message>
+        <message>
+            <location filename="../core/exports.py" line="58"/>
+            <source>Export Abbreviation</source>
+            <translation>Abkürzungen Exportieren</translation>
+        </message>
+        <message>
+            <location filename="../core/exports.py" line="61"/>
+            <source>Export Bookmarks</source>
+            <translation>Lesezeichen Exportieren</translation>
+        </message>
+        <message>
+            <location filename="../core/exports.py" line="64"/>
+            <location filename="../core/exports.py" line="122"/>
+            <source>Export Mapping Script</source>
+            <translation>Mapping Script Exportieren</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="187"/>
+            <source>What&apos;s the name of the Export PropertySet?</source>
+            <translation>Wie soll das PropertySet heißen?</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="188"/>
+            <source>PropertySet name</source>
+            <translation>PropertySet Name</translation>
+        </message>
+        <message>
+            <location filename="../tool/exports.py" line="38"/>
+            <location filename="../tool/exports.py" line="50"/>
+            <source>Template Excel</source>
+            <translation>Vorlage Excel</translation>
+        </message>
+        <message>
+            <location filename="../tool/exports.py" line="41"/>
+            <source>Export Folder</source>
+            <translation>Ausgabeordner</translation>
+        </message>
+        <message>
+            <location filename="../tool/exports.py" line="54"/>
+            <source>CARD1 Excel</source>
+            <translation>CARD1 Excel</translation>
         </message>
     </context>
     <context>
@@ -360,7 +429,7 @@
         <message>
             <location filename="../module/mapping/qt/Window.ui" line="114"/>
             <source>Allplan</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Allplan</translation>
         </message>
         <message>
             <location filename="../module/mapping/qt/Window.ui" line="119"/>
@@ -375,7 +444,7 @@
         <message>
             <location filename="../module/mapping/qt/Window.ui" line="129"/>
             <source>Excel</source>
-            <translation type="unfinished"></translation>
+            <translation type="unfinished">Excel</translation>
         </message>
         <message>
             <location filename="../module/modelcheck_window/qt/Widget.ui" line="41"/>
@@ -464,40 +533,24 @@
             <translation type="vanished">Werte Importieren</translation>
         </message>
         <message>
-            <location filename="../module/exports/trigger.py" line="7"/>
-            <location filename="../module/exports/trigger.py" line="13"/>
-            <location filename="../module/exports/trigger.py" line="19"/>
-            <location filename="../module/exports/trigger.py" line="26"/>
             <source>File</source>
-            <translation>Datei</translation>
+            <translation type="vanished">Datei</translation>
         </message>
         <message>
-            <location filename="../module/exports/trigger.py" line="7"/>
-            <location filename="../module/exports/trigger.py" line="13"/>
-            <location filename="../module/exports/trigger.py" line="19"/>
-            <location filename="../module/exports/trigger.py" line="26"/>
             <source>Export</source>
-            <translation>Export</translation>
+            <translation type="vanished">Export</translation>
         </message>
         <message>
             <source>bsDD</source>
             <translation type="vanished">bsDD</translation>
         </message>
         <message>
-            <location filename="../module/exports/trigger.py" line="10"/>
             <source>Vestra</source>
-            <translation>Vestra</translation>
+            <translation type="vanished">Vestra</translation>
         </message>
         <message>
-            <location filename="../module/exports/trigger.py" line="16"/>
             <source>Card1</source>
-            <translation>Card1</translation>
-        </message>
-        <message>
-            <location filename="../module/exports/trigger.py" line="22"/>
-            <location filename="../module/exports/trigger.py" line="29"/>
-            <source>Excel</source>
-            <translation type="unfinished"></translation>
+            <translation type="vanished">Card1</translation>
         </message>
     </context>
     <context>

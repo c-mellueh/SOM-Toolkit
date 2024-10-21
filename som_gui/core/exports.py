@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 import os
 import json
-
+from PySide6.QtCore import QCoreApplication
 if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtWidgets import QGridLayout, QLineEdit, QWidget
@@ -15,6 +15,59 @@ names = [["Vestra", VESTRA_PATH, ],
          ["Desite Abkürzungen", ABBREV_PATH, ],
          ["Desite Lesezeichen", BOOKMARK_PATH, ],
          ["Desite Mapping", MAPPING_PATH, ], ]
+
+
+def create_main_menu_actions(exports: Type[tool.Exports], main_window: Type[tool.MainWindow]):
+    from som_gui.module.exports import trigger
+    name = "Vestra"
+    action = main_window.add_action2("menuExport", name, trigger.export_vestra)
+    exports.set_action(name, action)
+    name = "Card1"
+    action = main_window.add_action2("menuExport", name, trigger.export_card1)
+    exports.set_action(name, action)
+    name = "Excel"
+    action = main_window.add_action2("menuExport", name, trigger.export_excel)
+    exports.set_action(name, action)
+    name = "Allplan"
+    action = main_window.add_action2("menuExport", name, trigger.export_allplan)
+    exports.set_action(name, action)
+    name = "abbreviation"
+    action = main_window.add_action2("menuDesite", name, trigger.export_abbreviation)
+    exports.set_action(name, action)
+    name = "bookmarks"
+    action = main_window.add_action2("menuDesite", name, trigger.export_bookmarks)
+    exports.set_action(name, action)
+    name = "mapping_script"
+    action = main_window.add_action2("menuDesite", name, trigger.export_mapping_script)
+    exports.set_action(name, action)
+
+
+def retranslate_ui(exports: Type[tool.Exports], ):
+    action = exports.get_action("Vestra")
+    action.setText(QCoreApplication.translate("Export", "Vestra"))
+
+    action = exports.get_action("Card1")
+    action.setText(QCoreApplication.translate("Export", "Card1"))
+
+    action = exports.get_action("Excel")
+    action.setText(QCoreApplication.translate("Export", "Excel"))
+
+    action = exports.get_action("Allplan")
+    action.setText(QCoreApplication.translate("Export", "Allplan"))
+
+    action = exports.get_action("abbreviation")
+    action.setText(QCoreApplication.translate("Export", "Export Abbreviation"))
+
+    action = exports.get_action("bookmarks")
+    action.setText(QCoreApplication.translate("Export", "Export Bookmarks"))
+
+    action = exports.get_action("mapping_script")
+    action.setText(QCoreApplication.translate("Export", "Export Mapping Script"))
+
+
+
+
+
 
 
 def export_bookmarks(exports: Type[tool.Exports], main_window: Type[tool.MainWindow],
@@ -66,8 +119,9 @@ def export_mapping_script(exports: Type[tool.Exports], main_window: Type[tool.Ma
     if not answer:
         return
     file_text = "JavaScript (*.js);;"
+    title = QCoreApplication.translate("Export", "Export Mapping Script")
     path = popups.get_save_path(file_text, main_window.get(), appdata.get_path(MAPPING_PATH),
-                                title="Export Mapping Script")
+                                title=title)
     if not path:
         return
 

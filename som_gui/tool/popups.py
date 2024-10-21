@@ -10,7 +10,7 @@ from som_gui import tool
 from som_gui.module.popups import ui
 
 FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
-
+from PySide6.QtCore import QCoreApplication
 
 class Popups(som_gui.core.tool.Popups):
 
@@ -183,7 +183,9 @@ class Popups(som_gui.core.tool.Popups):
 
     @classmethod
     def req_export_pset_name(cls, parent_window):
-        return QInputDialog.getText(parent_window, "PropertySet name", "What's the name of the Export PropertySet?")
+        label = QCoreApplication.translate("Export", "What's the name of the Export PropertySet?")
+        title = QCoreApplication.translate("Export", "PropertySet name")
+        return QInputDialog.getText(parent_window, title, label)
 
     @classmethod
     def req_delete_items(cls, string_list, item_type=1) -> (bool, bool):
