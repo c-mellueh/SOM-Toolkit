@@ -28,7 +28,7 @@ def _load_object(proj: SOMcreator.Project, object_dict: ObjectDict, identifier: 
         property_set.load(proj, pset_dict, ident, obj)
     ident_attrib_id = object_dict[IDENT_ATTRIBUTE]
     if ident_attrib_id is not None:
-        ident_attrib = SOMcreator.importer.som_json.attribute_uuid_dict[ident_attrib_id]
+        ident_attrib = SOMcreator.importer.som_json.attribute_uuid_dict.get(ident_attrib_id)
         obj.ident_attrib = ident_attrib
     SOMcreator.importer.som_json.parent_dict[obj] = parent
     SOMcreator.importer.som_json.object_uuid_dict[identifier] = obj
