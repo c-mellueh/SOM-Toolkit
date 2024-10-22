@@ -42,12 +42,12 @@
         <message>
             <location filename="../tool/attribute.py" line="679"/>
             <source>added child</source>
-            <translation type="unfinished"></translation>
+            <translation>fügte Kindelement hinzu</translation>
         </message>
         <message>
             <location filename="../tool/attribute.py" line="680"/>
             <source>removed child</source>
-            <translation type="unfinished"></translation>
+            <translation>entfernte Kindelement</translation>
         </message>
     </context>
     <context>
@@ -57,12 +57,12 @@
             <location filename="../module/attribute_import/ui.py" line="14"/>
             <location filename="../module/attribute_import/ui.py" line="26"/>
             <source>Import Values</source>
-            <translation type="unfinished">Werte importieren</translation>
+            <translation>Werte importieren</translation>
         </message>
         <message>
             <location filename="../module/attribute_import/ui.py" line="85"/>
             <source>Settings v</source>
-            <translation type="unfinished"></translation>
+            <translation>Einstellungen v</translation>
         </message>
     </context>
     <context>
@@ -70,17 +70,18 @@
         <message>
             <location filename="../module/attribute_import/ui.py" line="58"/>
             <source>Attribute</source>
-            <translation type="unfinished">Attribut</translation>
+            <translation>Attribut</translation>
         </message>
         <message>
             <location filename="../module/attribute_import/ui.py" line="58"/>
             <source>Count</source>
-            <translation type="unfinished"></translation>
+            <translatorcomment>Eindeutig</translatorcomment>
+            <translation>Anzahl</translation>
         </message>
         <message>
             <location filename="../module/attribute_import/ui.py" line="58"/>
             <source>Unique</source>
-            <translation type="unfinished"></translation>
+            <translation></translation>
         </message>
     </context>
     <context>
@@ -101,7 +102,7 @@
         <message>
             <location filename="../module/compare/ui.py" line="24"/>
             <source>Attributes</source>
-            <translation type="unfinished"></translation>
+            <translation>Attribute</translation>
         </message>
         <message>
             <source>Attribute</source>
@@ -117,12 +118,29 @@
         </message>
     </context>
     <context>
+        <name>DeleteRequest</name>
+        <message>
+            <location filename="../module/popups/qt/DeleteRequest.ui" line="14"/>
+            <source>Dialog</source>
+            <translation>Dialog</translation>
+        </message>
+        <message>
+            <location filename="../module/popups/qt/DeleteRequest.ui" line="20"/>
+            <source>delete the following entities?</source>
+            <translation>Folgende Entitäten löschen?</translation>
+        </message>
+        <message>
+            <location filename="../module/popups/qt/DeleteRequest.ui" line="30"/>
+            <source>Alo delete child elements?</source>
+            <translation>Auch Kindelemente entfernen?</translation>
+        </message>
+    </context>
+    <context>
         <name>Dialog</name>
         <message>
             <location filename="../module/attribute_import/qt/SettingsWidget.ui" line="14"/>
             <location filename="../module/compare/qt/ImportWidget.ui" line="26"/>
             <location filename="../module/compare/qt/Widget.ui" line="17"/>
-            <location filename="../module/popups/qt/DeleteRequest.ui" line="14"/>
             <location filename="../module/predefined_property_set/qt/Widget.ui" line="17"/>
             <location filename="../module/project/qt/ProjectMerge.ui" line="14"/>
             <location filename="../module/search/qt/Widget.ui" line="14"/>
@@ -177,16 +195,6 @@
         <message>
             <location filename="../module/compare/qt/Widget.ui" line="47"/>
             <source>PushButton</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/popups/qt/DeleteRequest.ui" line="20"/>
-            <source>Folgende Vorgaben löschen?</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/popups/qt/DeleteRequest.ui" line="30"/>
-            <source>Auch die Kindelemente löschen?</source>
             <translation type="unfinished"></translation>
         </message>
         <message>
@@ -261,12 +269,12 @@
             <translation>Mapping Script Exportieren</translation>
         </message>
         <message>
-            <location filename="../tool/popups.py" line="187"/>
+            <location filename="../tool/popups.py" line="199"/>
             <source>What&apos;s the name of the Export PropertySet?</source>
             <translation>Wie soll das PropertySet heißen?</translation>
         </message>
         <message>
-            <location filename="../tool/popups.py" line="188"/>
+            <location filename="../tool/popups.py" line="200"/>
             <source>PropertySet name</source>
             <translation>PropertySet Name</translation>
         </message>
@@ -370,13 +378,15 @@
             <location filename="../tool/filter_window.py" line="370"/>
             <source>{}{} [{}][{}] state changed from {} to {}
             </source>
-            <translation type="unfinished"></translation>
+            <translation>{}{} [{}][{}] Status änderte sich von {} zu {}
+            </translation>
         </message>
         <message>
             <location filename="../tool/filter_window.py" line="426"/>
             <source>Attribut {0:30} {1:30} state changed from {2:5} to {3:5}
             </source>
-            <translation type="unfinished"></translation>
+            <translation>Attribut {0:30} {1:30} Status änderte sich von {2:5} zu {3:5}
+            </translation>
         </message>
         <message>
             <source>{}{} [{}][{}] state changed from {} to {}
@@ -588,6 +598,19 @@
             <location filename="../plugins/aggregation_window/module/grouping_window/ui.py" line="13"/>
             <source>Gruppierung erzeugen | {tool.Util.get_status_text()}</source>
             <translation type="unfinished"></translation>
+        </message>
+    </context>
+    <context>
+        <name>IfcImporter</name>
+        <message>
+            <location filename="../tool/ifc_importer.py" line="55"/>
+            <source>PropertySet Name is empty</source>
+            <translation>PropertySetname ist nicht befüllt</translation>
+        </message>
+        <message>
+            <location filename="../tool/ifc_importer.py" line="61"/>
+            <source>Attribute Name is empty</source>
+            <translation>Attributname ist nicht befüllt</translation>
         </message>
     </context>
     <context>
@@ -874,7 +897,9 @@
             <source>Path:&apos;{}&apos;
                 Warning: file will be overridden!
             </source>
-            <translation type="unfinished"></translation>
+            <translation>Pfad:&apos;{}&apos;
+                Achtung: Datei wird überschrieben!
+            </translation>
         </message>
         <message>
             <source>Path:&apos;{}&apos;
@@ -1165,65 +1190,65 @@
             <translation>Objekt</translation>
         </message>
         <message>
-            <location filename="../core/object.py" line="25"/>
+            <location filename="../core/object.py" line="26"/>
             <source>Identifier</source>
             <translation>Identifier</translation>
         </message>
         <message>
-            <location filename="../core/object.py" line="26"/>
+            <location filename="../core/object.py" line="28"/>
             <source>Optional</source>
             <translation>Optional</translation>
         </message>
         <message>
-            <location filename="../core/object.py" line="145"/>
+            <location filename="../core/object.py" line="149"/>
             <source>Copy</source>
             <translation>Kopieren</translation>
         </message>
         <message>
-            <location filename="../core/object.py" line="146"/>
+            <location filename="../core/object.py" line="151"/>
             <source>Delete</source>
             <translation>Löschen</translation>
         </message>
         <message>
-            <location filename="../core/object.py" line="147"/>
+            <location filename="../core/object.py" line="153"/>
             <source>Extend</source>
             <translation>Ausklappen</translation>
         </message>
         <message>
-            <location filename="../core/object.py" line="148"/>
+            <location filename="../core/object.py" line="155"/>
             <source>Collapse</source>
             <translation>Einklappen</translation>
         </message>
         <message>
-            <location filename="../core/object.py" line="149"/>
+            <location filename="../core/object.py" line="157"/>
             <source>Group</source>
             <translation>Gruppieren</translation>
         </message>
         <message>
-            <location filename="../core/object.py" line="150"/>
+            <location filename="../core/object.py" line="159"/>
             <source>Info</source>
             <translation>Info</translation>
         </message>
         <message>
-            <location filename="../core/object.py" line="155"/>
+            <location filename="../core/object.py" line="165"/>
             <source>NewGroup</source>
             <translation>NeueGruppe</translation>
         </message>
         <message>
-            <location filename="../tool/object.py" line="187"/>
-            <location filename="../tool/object.py" line="265"/>
+            <location filename="../tool/object.py" line="186"/>
+            <location filename="../tool/object.py" line="264"/>
             <source>Identifier exists allready or is not allowed</source>
             <translation>Identifier existiert bereits oder ist nicht erlaubt</translation>
         </message>
         <message>
-            <location filename="../tool/object.py" line="189"/>
-            <location filename="../tool/object.py" line="253"/>
+            <location filename="../tool/object.py" line="188"/>
+            <location filename="../tool/object.py" line="252"/>
             <source>Name of Attribute is not allowed</source>
             <translation>Name des Attributes ist nicht erlaubt</translation>
         </message>
         <message>
-            <location filename="../tool/object.py" line="191"/>
-            <location filename="../tool/object.py" line="240"/>
+            <location filename="../tool/object.py" line="190"/>
+            <location filename="../tool/object.py" line="239"/>
             <source>Name of PropertySet is not allowed</source>
             <translation>Name des PropertySets ist nicht erlaubt</translation>
         </message>
@@ -1266,12 +1291,134 @@
         <message>
             <location filename="../module/mapping/ui.py" line="21"/>
             <source>IfcMapping</source>
-            <translation type="unfinished"></translation>
+            <translation>IfcMapping</translation>
         </message>
         <message>
             <location filename="../module/mapping/ui.py" line="21"/>
             <source>Object</source>
-            <translation type="unfinished">Objekt</translation>
+            <translation>Objekt</translation>
+        </message>
+    </context>
+    <context>
+        <name>Popups</name>
+        <message>
+            <location filename="../tool/popups.py" line="67"/>
+            <source>Rename Attribute</source>
+            <translation>Attribut umbenennen</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="69"/>
+            <source>New name:</source>
+            <translation>Neuer Name:</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="75"/>
+            <source>Save before exit</source>
+            <translation>Vor dem Verlassen speichern</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="76"/>
+            <source>Do you want to save the project before leaving?</source>
+            <translation>Wollen Sie das Projekt vor dem Verlassen speichern?</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="95"/>
+            <location filename="../tool/popups.py" line="97"/>
+            <source>Warning</source>
+            <translation>Warnung</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="110"/>
+            <source>Info</source>
+            <translation>Info</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="133"/>
+            <source>File &apos;{}&apos; doesn&apos;t exist</source>
+            <translation>Datei &apos;{}&apos; existiert nicht</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="139"/>
+            <source>Folder &apos;{}&apos; doesn&apos;t exist</source>
+            <translation>Ordner &apos;{}&apos; existiert nicht</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="147"/>
+            <source>Warning! All unsaved changes will be lost!</source>
+            <translation>Achtung! Alle nicht gespeicherten Änderungen gehen verloren!</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="161"/>
+            <source>New Project</source>
+            <translation>Neues Projekt</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="163"/>
+            <source>Project Name</source>
+            <translation>Name des Projektes</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="171"/>
+            <source>PropertySet found</source>
+            <translation>PropertySet gefunden</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="175"/>
+            <source>A PropertySet with the name &apos;{}&apos; allready exists as Predefined PSet. Do you want to create
+                a link?
+            </source>
+            <translation>Ein PropertySet mit dem Namen &apos;{}&apos; existiert bereits als Vordefiniertes Pset. Wollen
+                Sie eine Verknüpfung erstellen?
+            </translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="179"/>
+            <source>A PropertySet with the name &apos;{}&apos; allready exists in a parent object. Do you want to create
+                a link?
+            </source>
+            <translation>Ein PropertySet mit dem Namen &apos;{}&apos; existiert bereits in einem Elternelement. Wollen
+                Sie eine Verknüpfung erstellen?
+            </translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="211"/>
+            <source>Delete Object?</source>
+            <translation>Objekt Löschen?</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="213"/>
+            <source>Delete Node?</source>
+            <translation>Node Löschen?</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="215"/>
+            <source>Delete PropertySet?</source>
+            <translation>PropertySet Löschen?</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="217"/>
+            <source>Delete Attribute?</source>
+            <translation>Attribut Löschen?</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="220"/>
+            <source>Delete Objects?</source>
+            <translation>Objekte Löschen?</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="222"/>
+            <source>Delete Nodes?</source>
+            <translation>Nodes Löschen?</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="224"/>
+            <source>Delete PropertySets?</source>
+            <translation>PropertySets Löschen?</translation>
+        </message>
+        <message>
+            <location filename="../tool/popups.py" line="226"/>
+            <source>Delete Attributes?</source>
+            <translation>Attribute Löschen?</translation>
         </message>
     </context>
     <context>
@@ -1279,7 +1426,7 @@
         <message>
             <location filename="../module/compare/ui.py" line="38"/>
             <source>Compare Projects</source>
-            <translation type="unfinished">Projekte vergleichen</translation>
+            <translation>Projekte vergleichen</translation>
         </message>
     </context>
     <context>
@@ -1292,7 +1439,7 @@
         <message>
             <location filename="../module/attribute_import/ui.py" line="36"/>
             <source>Count</source>
-            <translation type="unfinished"></translation>
+            <translation>Anzahl</translation>
         </message>
     </context>
     <context>
@@ -1364,25 +1511,25 @@
         <message>
             <location filename="../module/attribute_import/ui.py" line="67"/>
             <source>Accept</source>
-            <translation type="unfinished"></translation>
+            <translation>Akzeptieren</translation>
         </message>
         <message>
             <location filename="../module/attribute_import/ui.py" line="67"/>
             <source>Value</source>
-            <translation type="unfinished">Wert</translation>
+            <translation>Wert</translation>
         </message>
         <message>
             <location filename="../module/attribute_import/ui.py" line="67"/>
             <source>Count</source>
-            <translation type="unfinished"></translation>
+            <translation>Anzahl</translation>
         </message>
     </context>
     <context>
         <name>layout</name>
         <message>
-            <location filename="../plugins/aggregation_window/core/aggregation.py" line="20"/>
+            <location filename="../plugins/aggregation_window/core/aggregation.py" line="21"/>
             <source>Abbreviation</source>
-            <translation type="unfinished">Abkürzung</translation>
+            <translation>Abkürzung</translation>
         </message>
     </context>
     <context>

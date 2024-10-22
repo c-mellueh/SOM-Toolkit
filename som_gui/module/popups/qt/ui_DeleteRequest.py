@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'DeleteRequest.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.2
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -19,46 +19,47 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog
     QDialogButtonBox, QLabel, QListWidget, QListWidgetItem,
     QSizePolicy, QVBoxLayout, QWidget)
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        if not Dialog.objectName():
-            Dialog.setObjectName(u"Dialog")
-        Dialog.resize(397, 202)
-        self.verticalLayout = QVBoxLayout(Dialog)
+
+class Ui_DeleteRequest(object):
+    def setupUi(self, DeleteRequest):
+        if not DeleteRequest.objectName():
+            DeleteRequest.setObjectName(u"DeleteRequest")
+        DeleteRequest.resize(397, 202)
+        self.verticalLayout = QVBoxLayout(DeleteRequest)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.label = QLabel(Dialog)
+        self.label = QLabel(DeleteRequest)
         self.label.setObjectName(u"label")
 
         self.verticalLayout.addWidget(self.label)
 
-        self.listWidget = QListWidget(Dialog)
+        self.listWidget = QListWidget(DeleteRequest)
         self.listWidget.setObjectName(u"listWidget")
 
         self.verticalLayout.addWidget(self.listWidget)
 
-        self.check_box_recursion = QCheckBox(Dialog)
+        self.check_box_recursion = QCheckBox(DeleteRequest)
         self.check_box_recursion.setObjectName(u"check_box_recursion")
 
         self.verticalLayout.addWidget(self.check_box_recursion)
 
-        self.buttonBox = QDialogButtonBox(Dialog)
+        self.buttonBox = QDialogButtonBox(DeleteRequest)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
 
         self.verticalLayout.addWidget(self.buttonBox)
 
+        self.retranslateUi(DeleteRequest)
+        self.buttonBox.accepted.connect(DeleteRequest.accept)
+        self.buttonBox.rejected.connect(DeleteRequest.reject)
 
-        self.retranslateUi(Dialog)
-        self.buttonBox.accepted.connect(Dialog.accept)
-        self.buttonBox.rejected.connect(Dialog.reject)
-
-        QMetaObject.connectSlotsByName(Dialog)
+        QMetaObject.connectSlotsByName(DeleteRequest)
     # setupUi
 
-    def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"Folgende Vorgaben l\u00f6schen?", None))
-        self.check_box_recursion.setText(QCoreApplication.translate("Dialog", u"Auch die Kindelemente l\u00f6schen?", None))
+    def retranslateUi(self, DeleteRequest):
+        DeleteRequest.setWindowTitle(QCoreApplication.translate("DeleteRequest", u"Dialog", None))
+        self.label.setText(QCoreApplication.translate("DeleteRequest", u"delete the following entities?", None))
+        self.check_box_recursion.setText(
+            QCoreApplication.translate("DeleteRequest", u"Also delete child elements?", None))
     # retranslateUi
 

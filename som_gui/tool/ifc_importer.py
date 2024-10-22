@@ -11,13 +11,10 @@ import som_gui
 from som_gui import tool
 import som_gui.core.tool
 from som_gui.module.ifc_importer import ui
-from PySide6.QtCore import QThreadPool, QObject, Signal, QRunnable, QSize
-from PySide6.QtWidgets import QFileDialog, QPushButton, QSizePolicy, QLineEdit, QLabel
-from som_gui.module.util.constants import PATH_SEPERATOR
-
+from PySide6.QtCore import QThreadPool, QObject, Signal, QRunnable, QCoreApplication
 if TYPE_CHECKING:
     from som_gui.module.ifc_importer.prop import IfcImportProperties
-    from PySide6.QtWidgets import QLineEdit, QLabel
+    from PySide6.QtWidgets import QLabel
 
 
 class Signaller(QObject):
@@ -54,11 +51,14 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
                 return False
 
         if not main_pset:
-            tool.Popups.create_warning_popup(f"PropertySet Name ist nicht ausgefüllt")
+            text = QCoreApplication.translate("IfcImporter", "PropertySet Name is empty")
+            tool.Popups.create_warning_popup(text)
             return False
 
         if not main_attribute:
-            tool.Popups.create_warning_popup(f"Attribut Name ist nicht ausgefüllt")
+            text = QCoreApplication.translate("IfcImporter", "Attribute Name is empty")
+
+            tool.Popups.create_warning_popup(text)
             return False
         return True
 
