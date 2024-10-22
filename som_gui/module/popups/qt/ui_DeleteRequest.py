@@ -19,7 +19,6 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog
     QDialogButtonBox, QLabel, QListWidget, QListWidgetItem,
     QSizePolicy, QVBoxLayout, QWidget)
 
-
 class Ui_DeleteRequest(object):
     def setupUi(self, DeleteRequest):
         if not DeleteRequest.objectName():
@@ -48,6 +47,7 @@ class Ui_DeleteRequest(object):
         self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
 
         self.verticalLayout.addWidget(self.buttonBox)
+
 
         self.retranslateUi(DeleteRequest)
         self.buttonBox.accepted.connect(DeleteRequest.accept)

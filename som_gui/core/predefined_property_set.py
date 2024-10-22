@@ -3,18 +3,38 @@ from __future__ import annotations
 import SOMcreator
 from som_gui.core import property_set_window as property_set_window_core
 from typing import TextIO, Type, TYPE_CHECKING
+from PySide6.QtCore import QCoreApplication
 
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_set_window.ui import PropertySetWindow
 
 
-def open_window(predefined_pset: Type[tool.PredefinedPropertySet]):
+def create_main_menu_actions(predefined_pset: Type[tool.PredefinedPropertySet], main_window: Type[tool.MainWindow]):
+    from som_gui.module.predefined_property_set import trigger
+    open_window_action = main_window.add_action2(None, "PredefinedPset", trigger.open_window)
+    predefined_pset.set_action("open_window", open_window_action)
+
+
+def retranslate_ui(predefined_pset: Type[tool.PredefinedPropertySet], util: Type[tool.Util]):
+    open_window_action = predefined_pset.get_action("open_window")
+    open_window_action.setText(QCoreApplication.translate("PredefinedPset", "Predefined Pset"))
+    if not predefined_pset.get_window():
+        return
+    window = predefined_pset.get_window()
+    window.ui.retranslateUi(window)
+    title = f'{QCoreApplication.translate("PredefinedPset", "Predefined Pset")} | {util.get_status_text()}'
+    window.setWindowTitle(title)
+
+
+def open_window(predefined_pset: Type[tool.PredefinedPropertySet], util: Type[tool.Util]):
     if not predefined_pset.get_window():
         dialog = predefined_pset.create_window()
         predefined_pset.connect_triggers(dialog)
     window = predefined_pset.get_window()
     window.show()
+    retranslate_ui(predefined_pset, util)
+    window.activateWindow()
 
 
 def close_window(predefined_pset: Type[tool.PredefinedPropertySet]):
@@ -23,10 +43,14 @@ def close_window(predefined_pset: Type[tool.PredefinedPropertySet]):
 
 def pset_context_menu(pos, predefined_pset: Type[tool.PredefinedPropertySet],
                       property_set: Type[tool.PropertySet]):
+    delete = QCoreApplication.translate("PredefinedPset", "Delete")
+    rename = QCoreApplication.translate("PredefinedPset", "Rename")
+    add = QCoreApplication.translate("PredefinedPset", "Add")
+
     functions = [
-        ["Löschen", predefined_pset.delete_selected_property_set],
-        ["Umbenennen", predefined_pset.rename_selected_property_set],
-        ["Hinzufügen", predefined_pset.create_property_set],
+        [delete, predefined_pset.delete_selected_property_set],
+        [rename, predefined_pset.rename_selected_property_set],
+        [add, predefined_pset.create_property_set],
     ]
     list_widget = predefined_pset.get_pset_list_widget()
     property_set.create_context_menu(list_widget.mapToGlobal(pos), functions)
@@ -46,9 +70,11 @@ def pset_double_clicked(item, property_set: Type[tool.PropertySet],
 
 def object_context_menu(pos, predefined_pset: Type[tool.PredefinedPropertySet],
                         property_set: Type[tool.PropertySet]):
+    delete = QCoreApplication.translate("PredefinedPset", "Delete")
+    remove_link = QCoreApplication.translate("PredefinedPset", "Remove Link")
     functions = [
-        ["Löschen", predefined_pset.delete_selected_objects],
-        ["Verknüpfung entfernen", predefined_pset.remove_selected_links],
+        [delete, predefined_pset.delete_selected_objects],
+        [remove_link, predefined_pset.remove_selected_links],
     ]
     table_widget = predefined_pset.get_object_table_widget()
     property_set.create_context_menu(table_widget.mapToGlobal(pos), functions)
@@ -128,7 +154,8 @@ def repaint_pset_list(predefined_pset: Type[tool.PredefinedPropertySet]):
 def add_compare_widget(pset_compare: Type[tool.PredefinedPropertySetCompare],
                        attribute_compare: Type[tool.AttributeCompare],
                        compare_window: Type[tool.CompareWindow]):
-    compare_window.add_tab("Predefined Pset", pset_compare.get_widget,
+    name = QCoreApplication.translate("PredefinedPset", "Predefined Pset")
+    compare_window.add_tab(name, pset_compare.get_widget,
                            lambda p0, p1: init_compare_window(p0, p1, pset_compare, attribute_compare),
                            pset_compare,
                            lambda file: export_compare(file, pset_compare, attribute_compare))
@@ -150,12 +177,10 @@ def init_compare_window(project0: SOMcreator.Project, project1: SOMcreator.Proje
     for pset0, pset1 in [x for x in pset_list if not None in x]:
         attribute_compare.compare_property_sets(pset0, pset1)
 
-
     header_labels = [attribute_compare.get_header_name_from_project(project0),
                      attribute_compare.get_header_name_from_project(project1)]
     attribute_compare.set_header_labels([pset_tree], [value_table], header_labels)
     attribute_compare.set_header_labels([], [info_table], ["Name"] + header_labels)
-
 
     attribute_compare.fill_pset_tree(pset_tree, pset_compare.get_pset_lists(), True)
     attribute_compare.add_attributes_to_pset_tree(pset_tree, True)
@@ -166,5 +191,6 @@ def init_compare_window(project0: SOMcreator.Project, project1: SOMcreator.Proje
 
 def export_compare(file: TextIO, pset_compare: Type[tool.PredefinedPropertySetCompare],
                    attribute_compare: Type[tool.AttributeCompare]):
-    file.write("\nPREDEFINED PROPERTYSETS\n\n")
+    name = QCoreApplication.translate("PredefinedPset", "PREDEFINED PROPERTYSETS")
+    file.write(f"\n{name}\n\n")
     attribute_compare.export_pset_differences(file, pset_compare.get_pset_lists(), True)

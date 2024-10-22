@@ -13,11 +13,10 @@ class PredefinedPropertySetWindow(QDialog):
 
     def __init__(self):
         super().__init__()
-        self.widget = ui_Widget.Ui_Dialog()
-        self.widget.setupUi(self)
+        self.ui = ui_Widget.Ui_PredefinedPset()
+        self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(f"Vordefinierte PropertySets | {tool.Util.get_status_text()}")
-        self.widget.list_view_pset.setItemDelegate(LineEditDelegate(self))
+        self.ui.list_view_pset.setItemDelegate(LineEditDelegate(self))
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -33,9 +32,9 @@ class PredefinedPropertySetWindow(QDialog):
 class CompareWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.widget = ui_CompareWidget.Ui_Form()
-        self.widget.setupUi(self)
-        self.widget.tree_widget_propertysets.setColumnCount(2)
-        self.widget.table_widget_values.setColumnCount(2)
-        self.widget.table_infos.setColumnCount(3)
-        self.widget.table_infos.setVerticalHeaderLabels(["Name", "XXX", "XXX"])
+        self.ui = ui_CompareWidget.Ui_PredefinedPset()
+        self.ui.setupUi(self)
+        self.ui.tree_widget_propertysets.setColumnCount(2)
+        self.ui.table_widget_values.setColumnCount(2)
+        self.ui.table_infos.setColumnCount(3)
+        self.ui.table_infos.setVerticalHeaderLabels(["Name", "XXX", "XXX"])
