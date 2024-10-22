@@ -10,7 +10,7 @@ from PySide6.QtGui import QPalette
 import som_gui.module.object
 from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
 from som_gui import tool
-
+from PySide6.QtCore import QCoreApplication
 if TYPE_CHECKING:
     from som_gui.tool import Object, Project, Search, PropertySet, MainWindow
 
@@ -21,9 +21,12 @@ if TYPE_CHECKING:
 def init_main_window(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow]) -> None:
     tree = object_tool.get_object_tree()
     tree.setColumnCount(0)
-    object_tool.add_column_to_tree("Objekt", 0, lambda o: getattr(o, "name"))
-    object_tool.add_column_to_tree("Identifier", 1, lambda o: getattr(o, "ident_value"))
-    object_tool.add_column_to_tree("Optional", 2, lambda o: o.is_optional(ignore_hirarchy=True),
+    object_tool.add_column_to_tree(lambda: QCoreApplication.translate("Object", "Object"), 0,
+                                   lambda o: getattr(o, "name"))
+    object_tool.add_column_to_tree(lambda: QCoreApplication.translate("Object", "Identifier"), 1,
+                                   lambda o: getattr(o, "ident_value"))
+    object_tool.add_column_to_tree(lambda: QCoreApplication.translate("Object", "Optional"), 2,
+                                   lambda o: o.is_optional(ignore_hirarchy=True),
                                    object_tool.set_object_optional_by_tree_item_state)
 
     object_tool.add_object_activate_function(lambda o: main_window.get_object_name_line_edit().setText(o.name))
@@ -33,7 +36,7 @@ def init_main_window(object_tool: Type[tool.Object], main_window: Type[tool.Main
     object_tool.add_object_activate_function(lambda o: object_tool.fill_object_attribute_line_edit(attribute_e, o))
     object_tool.add_object_activate_function(lambda o: main_window.get_ident_value_line_edit().setText(o.ident_value))
 
-    object_tool.add_objects_infos_add_function("name", main_window.get_object_name_line_edit().text)
+    object_tool.add_objects_infos_add_function("name_getter", lambda: main_window.get_object_name_line_edit().text)
     object_tool.add_objects_infos_add_function("is_group", lambda: False)
     object_tool.add_objects_infos_add_function("ident_pset_name", main_window.get_ident_pset_name_line_edit().text)
     object_tool.add_object_creation_check("ident_pset_name", object_tool.check_if_ident_pset_is_valid)
@@ -45,6 +48,11 @@ def init_main_window(object_tool: Type[tool.Object], main_window: Type[tool.Main
     object_tool.add_object_creation_check("ident_value", object_tool.check_if_identifier_is_unique)
     object_tool.add_objects_infos_add_function("ifc_mappings", lambda: ["IfcBuildingElementProxy"])
 
+
+def retranslate_ui(object_tool: Type[tool.Object]) -> None:
+    header = object_tool.get_object_tree().headerItem()
+    for column, name in enumerate(object_tool.get_header_names()):
+        header.setText(column, name)
 
 def connect_object_input_widget(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
                                 predefined_pset: Type[tool.PredefinedPropertySet]):
@@ -138,17 +146,23 @@ def object_info_add_ifc(object_tool: Type[Object]):
 
 def load_context_menus(object_tool: Type[Object]):
     object_tool.clear_context_menu_list()
-    object_tool.add_context_menu_entry("Kopieren", lambda: create_object_info_widget(2, object_tool), True, False)
-    object_tool.add_context_menu_entry("Löschen", object_tool.delete_selection, True, True)
-    object_tool.add_context_menu_entry("Ausklappen", object_tool.expand_selection, True, True)
-    object_tool.add_context_menu_entry("Einklappen", object_tool.collapse_selection, True, True)
-    object_tool.add_context_menu_entry("Gruppieren", lambda: create_group(object_tool), True, True)
-    object_tool.add_context_menu_entry("Info", lambda: create_object_info_widget(1, object_tool), True, False)
+    object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Copy"),
+                                       lambda: create_object_info_widget(2, object_tool), True, False)
+    object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Delete"),
+                                       object_tool.delete_selection, True, True)
+    object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Extend"),
+                                       object_tool.expand_selection, True, True)
+    object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Collapse"),
+                                       object_tool.collapse_selection, True, True)
+    object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Group"),
+                                       lambda: create_group(object_tool), True, True)
+    object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Info"),
+                                       lambda: create_object_info_widget(1, object_tool), True, False)
 
 
 def create_group(object_tool: Type[Object]):
     d = {
-        "name":         "NeueGruppe",
+        "name": QCoreApplication.translate("Object", "NewGroup"),
         "is_group":     True,
         "ifc_mappings": ["IfcGroup"]
     }

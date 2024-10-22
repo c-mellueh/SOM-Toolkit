@@ -2,6 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="de_DE">
 <context>
+    <name>Aggregation</name>
+    <message>
+        <location filename="../plugins/aggregation_window/core/aggregation.py" line="13"/>
+        <source>Abbreviation</source>
+        <translation>Abkürzung</translation>
+    </message>
+</context>
+    <context>
     <name>AggregationWindow</name>
     <message>
         <location filename="../plugins/aggregation_window/module/window/ui.py" line="16"/>
@@ -46,41 +54,32 @@
         <name>AttributeImport</name>
         <message>
             <location filename="../core/attribute_import.py" line="27"/>
+            <location filename="../module/attribute_import/ui.py" line="14"/>
+            <location filename="../module/attribute_import/ui.py" line="26"/>
             <source>Import Values</source>
             <translation type="unfinished">Werte importieren</translation>
         </message>
-    </context>
-    <context>
-        <name>AttributeImportResultWindow</name>
         <message>
-            <location filename="../module/attribute_import/ui.py" line="23"/>
-            <source>Modellinformationen Einlesen | {tool.Util.get_status_text()}</source>
-            <translation type="unfinished"></translation>
-        </message>
-    </context>
-    <context>
-        <name>AttributeImportWindow</name>
-        <message>
-            <location filename="../module/attribute_import/ui.py" line="12"/>
-            <source>Modellinformationen Einlesen | {tool.Util.get_status_text()}</source>
+            <location filename="../module/attribute_import/ui.py" line="85"/>
+            <source>Settings v</source>
             <translation type="unfinished"></translation>
         </message>
     </context>
     <context>
         <name>AttributeTable</name>
         <message>
-            <location filename="../module/attribute_import/ui.py" line="55"/>
-            <source>Attribut</source>
+            <location filename="../module/attribute_import/ui.py" line="58"/>
+            <source>Attribute</source>
+            <translation type="unfinished">Attribut</translation>
+        </message>
+        <message>
+            <location filename="../module/attribute_import/ui.py" line="58"/>
+            <source>Count</source>
             <translation type="unfinished"></translation>
         </message>
         <message>
-            <location filename="../module/attribute_import/ui.py" line="55"/>
-            <source>Anzahl</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/attribute_import/ui.py" line="55"/>
-            <source>Eindeutig</source>
+            <location filename="../module/attribute_import/ui.py" line="58"/>
+            <source>Unique</source>
             <translation type="unfinished"></translation>
         </message>
     </context>
@@ -881,7 +880,7 @@
             <source>Path:&apos;{}&apos;
                 Warning: file will be overridden!
             </source>
-            <translation type="vanished">Pfad:&apos;{}&apos;
+            <translation type="obsolete">Pfad:&apos;{}&apos;
                 Achtung: Datei wird überschrieben!
             </translation>
         </message>
@@ -1159,6 +1158,77 @@
         </message>
     </context>
     <context>
+        <name>Object</name>
+        <message>
+            <location filename="../core/object.py" line="24"/>
+            <source>Object</source>
+            <translation>Objekt</translation>
+        </message>
+        <message>
+            <location filename="../core/object.py" line="25"/>
+            <source>Identifier</source>
+            <translation>Identifier</translation>
+        </message>
+        <message>
+            <location filename="../core/object.py" line="26"/>
+            <source>Optional</source>
+            <translation>Optional</translation>
+        </message>
+        <message>
+            <location filename="../core/object.py" line="145"/>
+            <source>Copy</source>
+            <translation>Kopieren</translation>
+        </message>
+        <message>
+            <location filename="../core/object.py" line="146"/>
+            <source>Delete</source>
+            <translation>Löschen</translation>
+        </message>
+        <message>
+            <location filename="../core/object.py" line="147"/>
+            <source>Extend</source>
+            <translation>Ausklappen</translation>
+        </message>
+        <message>
+            <location filename="../core/object.py" line="148"/>
+            <source>Collapse</source>
+            <translation>Einklappen</translation>
+        </message>
+        <message>
+            <location filename="../core/object.py" line="149"/>
+            <source>Group</source>
+            <translation>Gruppieren</translation>
+        </message>
+        <message>
+            <location filename="../core/object.py" line="150"/>
+            <source>Info</source>
+            <translation>Info</translation>
+        </message>
+        <message>
+            <location filename="../core/object.py" line="155"/>
+            <source>NewGroup</source>
+            <translation>NeueGruppe</translation>
+        </message>
+        <message>
+            <location filename="../tool/object.py" line="187"/>
+            <location filename="../tool/object.py" line="265"/>
+            <source>Identifier exists allready or is not allowed</source>
+            <translation>Identifier existiert bereits oder ist nicht erlaubt</translation>
+        </message>
+        <message>
+            <location filename="../tool/object.py" line="189"/>
+            <location filename="../tool/object.py" line="253"/>
+            <source>Name of Attribute is not allowed</source>
+            <translation>Name des Attributes ist nicht erlaubt</translation>
+        </message>
+        <message>
+            <location filename="../tool/object.py" line="191"/>
+            <location filename="../tool/object.py" line="240"/>
+            <source>Name of PropertySet is not allowed</source>
+            <translation>Name des PropertySets ist nicht erlaubt</translation>
+        </message>
+    </context>
+    <context>
         <name>ObjectInfo</name>
         <message>
             <location filename="../module/object/qt/InfoWidget.ui" line="20"/>
@@ -1215,13 +1285,13 @@
     <context>
         <name>PropertySetTable</name>
         <message>
-            <location filename="../module/attribute_import/ui.py" line="33"/>
+            <location filename="../module/attribute_import/ui.py" line="36"/>
             <source>PropertySet</source>
             <translation>PropertySet</translation>
         </message>
         <message>
-            <location filename="../module/attribute_import/ui.py" line="33"/>
-            <source>Anzahl</source>
+            <location filename="../module/attribute_import/ui.py" line="36"/>
+            <source>Count</source>
             <translation type="unfinished"></translation>
         </message>
     </context>
@@ -1292,18 +1362,18 @@
     <context>
         <name>ValueTable</name>
         <message>
-            <location filename="../module/attribute_import/ui.py" line="64"/>
-            <source>Übernehmen</source>
+            <location filename="../module/attribute_import/ui.py" line="67"/>
+            <source>Accept</source>
             <translation type="unfinished"></translation>
         </message>
         <message>
-            <location filename="../module/attribute_import/ui.py" line="64"/>
-            <source>Wert</source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/attribute_import/ui.py" line="67"/>
+            <source>Value</source>
+            <translation type="unfinished">Wert</translation>
         </message>
         <message>
-            <location filename="../module/attribute_import/ui.py" line="64"/>
-            <source>Anzahl</source>
+            <location filename="../module/attribute_import/ui.py" line="67"/>
+            <source>Count</source>
             <translation type="unfinished"></translation>
         </message>
     </context>
@@ -1311,8 +1381,8 @@
         <name>layout</name>
         <message>
             <location filename="../plugins/aggregation_window/core/aggregation.py" line="20"/>
-            <source>Abkürzung</source>
-            <translation type="unfinished"></translation>
+            <source>Abbreviation</source>
+            <translation type="unfinished">Abkürzung</translation>
         </message>
     </context>
     <context>

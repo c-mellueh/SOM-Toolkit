@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Type, TYPE_CHECKING
 from PySide6.QtWidgets import QLabel
 from som_gui.module.object import OK
-
+from PySide6.QtCore import QCoreApplication
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.plugins.aggregation_window import tool as aw_tool
@@ -10,7 +10,8 @@ if TYPE_CHECKING:
 
 def init_main_window(object_tool: Type[tool.Object], aggregation: Type[aw_tool.Aggregation],
                      main_window: Type[tool.MainWindow]):
-    object_tool.add_column_to_tree("Abkürzung", -1, lambda o: getattr(o, "abbreviation"))
+    object_tool.add_column_to_tree(lambda: QCoreApplication.translate("Aggregation", "Abbreviation"), -1,
+                                   lambda o: getattr(o, "abbreviation"))
 
     layout = main_window.get_object_name_horizontal_layout()
     line_edit = aggregation.create_abbreviation_line_edit(layout)
