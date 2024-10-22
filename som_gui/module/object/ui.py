@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QTreeWidget, QWidget, QDialog
 from som_gui import tool
 from .qt.ui_InfoWidget import Ui_ObjectInfo
 from som_gui.icons import get_icon
+from PySide6.QtCore import QCoreApplication
 class ObjectTreeWidget(QTreeWidget):
 
     def __init__(self, parent: QWidget):
@@ -23,7 +24,9 @@ class ObjectInfoWidget(QDialog):
         self.widget = Ui_ObjectInfo()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(f"Objektdetails | {tool.Util.get_status_text()}")
+        title = QCoreApplication.translate("ObjectInfo", "Object Info")
+        self.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
+
     def paintEvent(self, event):
         object.trigger.object_info_paint_event()
         super().paintEvent(event)

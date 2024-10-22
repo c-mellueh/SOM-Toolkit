@@ -875,15 +875,15 @@
             <source>Path:&apos;{}&apos;
                 Warning: file will be overridden!
             </source>
-            <translation>Pfad:&apos;{}&apos;
-                Achtung: Datei wird überschrieben!
-            </translation>
+            <translation type="unfinished"></translation>
         </message>
         <message>
             <source>Path:&apos;{}&apos;
                 Warning: file will be overridden!
             </source>
-            <translation type="vanished">Pfad:&apos;{}&apos; Achtung: Datei wird überschrieben!</translation>
+            <translation type="vanished">Pfad:&apos;{}&apos;
+                Achtung: Datei wird überschrieben!
+            </translation>
         </message>
         <message>
             <location filename="../core/modelcheck_window.py" line="56"/>
@@ -986,7 +986,7 @@
             <translation type="vanished">{} besitzt nicht das Propertyset &apos;{}&apos;</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="270"/>
+            <location filename="../tool/modelcheck.py" line="271"/>
             <source>{} has an empty Attribute</source>
             <translation>{} besitzt ein leeres Attribut</translation>
         </message>
@@ -1005,37 +1005,37 @@
             <translation>Wert &quot;{}&quot; ist nicht erlaubt</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="256"/>
+            <location filename="../tool/modelcheck.py" line="257"/>
             <source>Value &quot;{}&quot; is not in allowed range(s)</source>
             <translation>Wert &quot;{}&quot; befindet sich nicht in zugelassenen Wertebereich(en)</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="263"/>
+            <location filename="../tool/modelcheck.py" line="264"/>
             <source>{} doesn`t contain the Propertyset &quot;{}&quot;</source>
             <translation>{} besitzt nicht das Propertyset &quot;{}&quot;</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="278"/>
+            <location filename="../tool/modelcheck.py" line="279"/>
             <source>{} is missing the Attribute &quot;{}:{}&quot;</source>
             <translation>{} is missing the Attribute &quot;{}:{}&quot;</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="287"/>
+            <location filename="../tool/modelcheck.py" line="288"/>
             <source>{} is missing the identifier-Attribute</source>
             <translation>{} fehlt das identifier-Attribut</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="296"/>
+            <location filename="../tool/modelcheck.py" line="297"/>
             <source>{} is missing die identifier PropertySet</source>
             <translation>{} fehlt das identifier PropertySet</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="304"/>
+            <location filename="../tool/modelcheck.py" line="305"/>
             <source>{} Value of Identifier (&quot;{}&quot;) doesn&apos;t exist in SOM</source>
             <translation>{} Value of Identifier (&quot;{}&quot;) doesn&apos;t exist in SOM</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="312"/>
+            <location filename="../tool/modelcheck.py" line="313"/>
             <source>GUID exists in File &quot;{}&quot; and&quot;{}&quot;</source>
             <translation>GUID existiert in Datei &quot;{}&quot; und &quot;{}&quot;</translation>
         </message>
@@ -1163,40 +1163,45 @@
         <message>
             <location filename="../module/object/qt/InfoWidget.ui" line="20"/>
             <source>Dialog</source>
-            <translation type="unfinished">Dialog</translation>
+            <translation>Dialog</translation>
         </message>
         <message>
             <location filename="../module/object/qt/InfoWidget.ui" line="28"/>
             <source>Name</source>
-            <translation type="unfinished">Name</translation>
+            <translation>Name</translation>
         </message>
         <message>
             <location filename="../module/object/qt/InfoWidget.ui" line="42"/>
-            <source>Gruppe</source>
-            <translation type="unfinished"></translation>
+            <source>Group</source>
+            <translation>Gruppe</translation>
         </message>
         <message>
             <location filename="../module/object/qt/InfoWidget.ui" line="81"/>
             <source>IFC Mapping</source>
-            <translation type="unfinished"></translation>
+            <translation>IFC Mapping</translation>
         </message>
         <message>
             <location filename="../module/object/qt/InfoWidget.ui" line="107"/>
             <source>+</source>
-            <translation type="unfinished"></translation>
+            <translation>hinzufügen</translation>
+        </message>
+        <message>
+            <location filename="../module/object/ui.py" line="28"/>
+            <source>Object Info</source>
+            <translation>Objektdetails</translation>
         </message>
     </context>
     <context>
         <name>ObjectTreeWidget</name>
         <message>
             <location filename="../module/mapping/ui.py" line="21"/>
-            <source>Objekt</source>
+            <source>IfcMapping</source>
             <translation type="unfinished"></translation>
         </message>
         <message>
             <location filename="../module/mapping/ui.py" line="21"/>
-            <source>IfcMapping</source>
-            <translation type="unfinished"></translation>
+            <source>Object</source>
+            <translation type="unfinished">Objekt</translation>
         </message>
     </context>
     <context>
@@ -1212,7 +1217,7 @@
         <message>
             <location filename="../module/attribute_import/ui.py" line="33"/>
             <source>PropertySet</source>
-            <translation type="unfinished">PropertySet</translation>
+            <translation>PropertySet</translation>
         </message>
         <message>
             <location filename="../module/attribute_import/ui.py" line="33"/>
@@ -1224,13 +1229,13 @@
         <name>PropertySetTreeWidget</name>
         <message>
             <location filename="../module/mapping/ui.py" line="32"/>
-            <source>PropertySet/Attribut</source>
-            <translation type="unfinished"></translation>
+            <source>PropertySet/Attribute</source>
+            <translation>PropertySet/Attribut</translation>
         </message>
         <message>
             <location filename="../module/mapping/ui.py" line="32"/>
-            <source>Revit Mapping</source>
-            <translation type="unfinished"></translation>
+            <source>Revit-Mapping</source>
+            <translation>Revit-Mapping</translation>
         </message>
     </context>
     <context>
@@ -1315,102 +1320,72 @@
         <message>
             <location filename="../module/property_set_window/qt/Window.ui" line="14"/>
             <source>Form</source>
-            <translation type="unfinished">Form</translation>
+            <translation>Form</translation>
         </message>
         <message>
             <location filename="../module/property_set_window/qt/Window.ui" line="33"/>
-            <source>Werte</source>
-            <translation type="unfinished"></translation>
+            <source>Values</source>
+            <translation>Werte</translation>
         </message>
         <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="41"/>
-            <source>Liste</source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/property_set_window/qt/Window.ui" line="68"/>
+            <source>Add</source>
+            <translation>Hinzufügen</translation>
         </message>
         <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="46"/>
-            <source>Formatvorgabe</source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/property_set_window/qt/Window.ui" line="75"/>
+            <source>Splitter</source>
+            <translation>Trennzeichen</translation>
         </message>
         <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="51"/>
-            <source>Wertebereich</source>
-            <translation type="unfinished"></translation>
+            <location filename="../module/property_set_window/qt/Window.ui" line="85"/>
+            <source>Inherit Values</source>
+            <translation>Werte vererben</translation>
         </message>
         <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="77"/>
+            <location filename="../module/property_set_window/qt/Window.ui" line="187"/>
+            <source>Description</source>
+            <translation>Beschreibung</translation>
+        </message>
+        <message>
+            <location filename="../module/property_set_window/qt/Window.ui" line="282"/>
+            <source>Datatype</source>
+            <translation>Datentyp</translation>
+        </message>
+        <message>
+            <location filename="../module/property_set_window/qt/Window.ui" line="292"/>
+            <source>Value</source>
+            <translation>Wert</translation>
+        </message>
+        <message>
+            <location filename="../module/property_set_window/qt/Window.ui" line="61"/>
             <source>+</source>
-            <translation type="unfinished"></translation>
+            <translation>hinzufügen</translation>
         </message>
         <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="84"/>
-            <source>Hinzufügen</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="91"/>
-            <source>Trennzeichen:</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="101"/>
-            <source>Werte Vererben</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="109"/>
-            <source>xs:string</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="114"/>
-            <source>xs:int</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="119"/>
-            <source>xs:double</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="149"/>
-            <location filename="../module/property_set_window/qt/Window.ui" line="168"/>
-            <location filename="../module/property_set_window/qt/Window.ui" line="309"/>
+            <location filename="../module/property_set_window/qt/Window.ui" line="117"/>
+            <location filename="../module/property_set_window/qt/Window.ui" line="136"/>
+            <location filename="../module/property_set_window/qt/Window.ui" line="277"/>
             <source>Name</source>
-            <translation type="unfinished">Name</translation>
+            <translation>Name</translation>
         </message>
         <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="219"/>
-            <source>Beschreibung</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="314"/>
-            <source>Datentyp</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="319"/>
+            <location filename="../module/property_set_window/qt/Window.ui" line="287"/>
             <source>Format</source>
-            <translation type="unfinished">Format</translation>
+            <translation>Format</translation>
         </message>
         <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="324"/>
-            <source>Wert</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/property_set_window/qt/Window.ui" line="329"/>
+            <location filename="../module/property_set_window/qt/Window.ui" line="297"/>
             <source>Optional</source>
-            <translation type="unfinished">Optional</translation>
+            <translation>Optional</translation>
         </message>
     </context>
     <context>
         <name>le</name>
         <message>
             <location filename="../plugins/aggregation_window/tool/aggregation.py" line="26"/>
-            <source>Abkürzung</source>
-            <translation type="unfinished"></translation>
+            <source>Abbreviation</source>
+            <translation>Abkürzung</translation>
         </message>
     </context>
 </TS>

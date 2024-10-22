@@ -16,7 +16,7 @@ from som_gui.module.object.prop import PluginProperty
 if TYPE_CHECKING:
     from som_gui.module.object.prop import ObjectProperties, ContextMenuDict
     from som_gui.module.main_window.ui import MainWindow
-    from som_gui.module.object.ui import ObjectTreeWidget
+    from som_gui.module.object.ui import ObjectTreeWidget, ObjectInfoWidget
 
 
 class ObjectDataDict(TypedDict):
@@ -363,7 +363,7 @@ class Object(som_gui.core.tool.Object):
 
 
     @classmethod
-    def oi_create_dialog(cls) -> som_gui.module.object.ui.ObjectInfoWidget:
+    def oi_create_dialog(cls) -> ObjectInfoWidget:
         prop = cls.get_properties()
         prop.object_info_widget_properties = som_gui.module.object.prop.ObjectInfoWidgetProperties()
         dialog = som_gui.module.object.ui.ObjectInfoWidget()

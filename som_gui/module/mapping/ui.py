@@ -18,7 +18,7 @@ class ObjectTreeWidget(QTreeWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setColumnCount(2)
-        self.setHeaderLabels([self.tr("Objekt"), self.tr("IfcMapping")])
+        self.setHeaderLabels([self.tr("Object"), self.tr("IfcMapping")])
 
     def paintEvent(self, e):
         super().paintEvent(e)
@@ -29,7 +29,7 @@ class PropertySetTreeWidget(QTreeWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setColumnCount(2)
-        self.setHeaderLabels([self.tr("PropertySet/Attribut"), self.tr("Revit Mapping")])
+        self.setHeaderLabels([self.tr("PropertySet/Attribute"), self.tr("Revit-Mapping")])
 
     def paintEvent(self, e):
         super().paintEvent(e)

@@ -4,12 +4,14 @@ from ...icons import get_icon, get_settings_icon
 from . import trigger
 from som_gui import __version__ as version
 from som_gui import tool
+from PySide6.QtCore import QCoreApplication
 
 class AttributeImportWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setLayout(QVBoxLayout())
-        self.setWindowTitle(self.tr(f"Modellinformationen Einlesen | {tool.Util.get_status_text()}"))
+        title = QCoreApplication.translate("AttributeImport", "Import Values")
+        self.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
         self.setWindowIcon(get_icon())
 
 
@@ -20,7 +22,8 @@ class AttributeImportResultWindow(QWidget):
         self.widget = ui_Widget.Ui_Form()
         self.widget.setupUi(self)
         self.widget.button_settings.setIcon(get_settings_icon())
-        self.setWindowTitle(self.tr(f"Modellinformationen Einlesen | {tool.Util.get_status_text()}"))
+        title = QCoreApplication.translate("AttributeImport", "Import Values")
+        self.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
         self.setWindowIcon(get_icon())
 
 
@@ -30,7 +33,7 @@ class PropertySetTable(QTableWidget):
         self.clear()
         self.setColumnCount(2)
         self.setRowCount(2)
-        self.setHorizontalHeaderLabels([self.tr("PropertySet"), self.tr("Anzahl")])
+        self.setHorizontalHeaderLabels([self.tr("PropertySet"), self.tr("Count")])
 
 
 class IfcTypeComboBox(QComboBox):
@@ -52,7 +55,7 @@ class AttributeTable(QTableWidget):
         self.clear()
         self.setColumnCount(3)
         self.setRowCount(2)
-        self.setHorizontalHeaderLabels([self.tr("Attribut"), self.tr("Anzahl"), self.tr("Eindeutig")])
+        self.setHorizontalHeaderLabels([self.tr("Attribute"), self.tr("Count"), self.tr("Unique")])
 
 
 class ValueTable(QTableWidget):
@@ -61,7 +64,7 @@ class ValueTable(QTableWidget):
         self.clear()
         self.setColumnCount(3)
         self.setRowCount(2)
-        self.setHorizontalHeaderLabels([self.tr("Übernehmen"), self.tr("Wert"), self.tr("Anzahl")])
+        self.setHorizontalHeaderLabels([self.tr("Accept"), self.tr("Value"), self.tr("Count")])
 
 
 class ValueCheckBox(QCheckBox):
@@ -78,4 +81,5 @@ class SettingsDialog(QDialog):
         self.widget = ui_SettingsWidget.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(f"Einstellungen v{version}  | {tool.Util.get_status_text()}")
+        title = QCoreApplication.translate("AttributeImport", "Settings v")
+        self.setWindowTitle(f"{title}{version} | {tool.Util.get_status_text()}")

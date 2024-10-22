@@ -17,7 +17,7 @@ def init_main_window(object_tool: Type[tool.Object], aggregation: Type[aw_tool.A
     object_tool.add_object_activate_function(lambda o: line_edit.setText(o.abbreviation))
     object_tool.add_objects_infos_add_function("abbreviation", line_edit.text)
     object_tool.add_object_creation_check("abbreviation", aggregation.abbreviation_check)
-    object_tool.oi_add_plugin_entry("abbrev_text", "horizontal_layout_info", QLabel(layout.tr("Abkürzung")), -1,
+    object_tool.oi_add_plugin_entry("abbrev_text", "horizontal_layout_info", QLabel(layout.tr("Abbreviation")), -1,
                                     lambda *a: None, lambda *a: None, lambda *a: None, lambda *a: OK, lambda *a: None)
     object_info_line_edit = aggregation.create_oi_line_edit()
     object_tool.oi_add_plugin_entry("abbreviation",

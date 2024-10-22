@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'ObjectInfoWidget.ui'
+## Form generated from reading UI file 'InfoWidget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.1
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -53,6 +53,7 @@ class Ui_ObjectInfo(object):
         self.button_gruppe.setObjectName(u"button_gruppe")
 
         self.horizontal_layout_group.addWidget(self.button_gruppe)
+
 
         self.verticalLayout.addLayout(self.horizontal_layout_group)
 
@@ -109,6 +110,7 @@ class Ui_ObjectInfo(object):
 
         self.horizontal_layout_ifc.addWidget(self.button_add_ifc)
 
+
         self.vertical_layout_ifc_box.addLayout(self.horizontal_layout_ifc)
 
         self.vertical_layout_ifc = QVBoxLayout()
@@ -124,8 +126,8 @@ class Ui_ObjectInfo(object):
 
         self.button_box = QDialogButtonBox(ObjectInfo)
         self.button_box.setObjectName(u"button_box")
-        self.button_box.setOrientation(Qt.Horizontal)
-        self.button_box.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+        self.button_box.setOrientation(Qt.Orientation.Horizontal)
+        self.button_box.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
 
         self.verticalLayout.addWidget(self.button_box)
 
@@ -141,7 +143,7 @@ class Ui_ObjectInfo(object):
     def retranslateUi(self, ObjectInfo):
         ObjectInfo.setWindowTitle(QCoreApplication.translate("ObjectInfo", u"Dialog", None))
         self.label_name.setText(QCoreApplication.translate("ObjectInfo", u"Name", None))
-        self.button_gruppe.setText(QCoreApplication.translate("ObjectInfo", u"Gruppe", None))
+        self.button_gruppe.setText(QCoreApplication.translate("ObjectInfo", u"Group", None))
         self.label_ifc_mapping.setText(QCoreApplication.translate("ObjectInfo", u"IFC Mapping", None))
         self.button_add_ifc.setText(QCoreApplication.translate("ObjectInfo", u"+", None))
     # retranslateUi

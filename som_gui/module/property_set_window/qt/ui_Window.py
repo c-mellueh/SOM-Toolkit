@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'PropertySetWindow.ui'
+## Form generated from reading UI file 'Window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -32,7 +32,7 @@ class Ui_layout_main(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.splitter_2 = QSplitter(layout_main)
         self.splitter_2.setObjectName(u"splitter_2")
-        self.splitter_2.setOrientation(Qt.Horizontal)
+        self.splitter_2.setOrientation(Qt.Orientation.Horizontal)
         self.gridLayoutWidget = QWidget(self.splitter_2)
         self.gridLayoutWidget.setObjectName(u"gridLayoutWidget")
         self.gridLayout = QGridLayout(self.gridLayoutWidget)
@@ -45,9 +45,6 @@ class Ui_layout_main(object):
         self.gridLayout.addWidget(self.label_values, 1, 0, 1, 1)
 
         self.combo_type = QComboBox(self.gridLayoutWidget)
-        self.combo_type.addItem("")
-        self.combo_type.addItem("")
-        self.combo_type.addItem("")
         self.combo_type.setObjectName(u"combo_type")
 
         self.gridLayout.addWidget(self.combo_type, 0, 2, 1, 1)
@@ -81,9 +78,6 @@ class Ui_layout_main(object):
         self.gridLayout.addWidget(self.check_box_inherit, 1, 1, 1, 1)
 
         self.combo_data_type = QComboBox(self.gridLayoutWidget)
-        self.combo_data_type.addItem("")
-        self.combo_data_type.addItem("")
-        self.combo_data_type.addItem("")
         self.combo_data_type.setObjectName(u"combo_data_type")
 
         self.gridLayout.addWidget(self.combo_data_type, 0, 1, 1, 1)
@@ -119,7 +113,7 @@ class Ui_layout_main(object):
 
         self.splitter = QSplitter(self.gridLayoutWidget)
         self.splitter.setObjectName(u"splitter")
-        self.splitter.setOrientation(Qt.Vertical)
+        self.splitter.setOrientation(Qt.Orientation.Vertical)
         self.scroll_area = QScrollArea(self.splitter)
         self.scroll_area.setObjectName(u"scroll_area")
         sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -143,7 +137,7 @@ class Ui_layout_main(object):
         sizePolicy4.setHeightForWidth(self.description.sizePolicy().hasHeightForWidth())
         self.description.setSizePolicy(sizePolicy4)
         self.description.setMinimumSize(QSize(0, 28))
-        self.description.setAutoFormatting(QTextEdit.AutoAll)
+        self.description.setAutoFormatting(QTextEdit.AutoFormattingFlag.AutoAll)
         self.description.setReadOnly(False)
         self.splitter.addWidget(self.description)
 
@@ -180,11 +174,11 @@ class Ui_layout_main(object):
         sizePolicy5.setHeightForWidth(self.table_widget.sizePolicy().hasHeightForWidth())
         self.table_widget.setSizePolicy(sizePolicy5)
         self.table_widget.setMinimumSize(QSize(480, 0))
-        self.table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.table_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.table_widget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table_widget.setDragEnabled(True)
-        self.table_widget.setDragDropMode(QAbstractItemView.DragDrop)
-        self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table_widget.setDragDropMode(QAbstractItemView.DragDropMode.DragDrop)
+        self.table_widget.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.table_widget.setIconSize(QSize(10, 10))
         self.table_widget.setShowGrid(True)
         self.table_widget.setSortingEnabled(True)
@@ -195,11 +189,11 @@ class Ui_layout_main(object):
         self.table_widget.horizontalHeader().setCascadingSectionResizes(False)
         self.table_widget.horizontalHeader().setMinimumSectionSize(50)
         self.table_widget.horizontalHeader().setDefaultSectionSize(70)
-        self.table_widget.horizontalHeader().setProperty("showSortIndicator", True)
+        self.table_widget.horizontalHeader().setProperty(u"showSortIndicator", True)
         self.table_widget.horizontalHeader().setStretchLastSection(True)
         self.table_widget.verticalHeader().setVisible(True)
         self.table_widget.verticalHeader().setCascadingSectionResizes(False)
-        self.table_widget.verticalHeader().setProperty("showSortIndicator", False)
+        self.table_widget.verticalHeader().setProperty(u"showSortIndicator", False)
         self.table_widget.verticalHeader().setStretchLastSection(False)
 
         self.horizontalLayout.addWidget(self.splitter_2)
@@ -212,30 +206,22 @@ class Ui_layout_main(object):
 
     def retranslateUi(self, layout_main):
         layout_main.setWindowTitle(QCoreApplication.translate("layout_main", u"Form", None))
-        self.label_values.setText(QCoreApplication.translate("layout_main", u"Werte", None))
-        self.combo_type.setItemText(0, QCoreApplication.translate("layout_main", u"Liste", None))
-        self.combo_type.setItemText(1, QCoreApplication.translate("layout_main", u"Formatvorgabe", None))
-        self.combo_type.setItemText(2, QCoreApplication.translate("layout_main", u"Wertebereich", None))
-
+        self.label_values.setText(QCoreApplication.translate("layout_main", u"Values", None))
         self.button_add_line.setText(QCoreApplication.translate("layout_main", u"+", None))
-        self.button_add.setText(QCoreApplication.translate("layout_main", u"Hinzuf\u00fcgen", None))
-        self.check_box_seperator.setText(QCoreApplication.translate("layout_main", u"Trennzeichen:", None))
-        self.check_box_inherit.setText(QCoreApplication.translate("layout_main", u"Werte Vererben", None))
-        self.combo_data_type.setItemText(0, QCoreApplication.translate("layout_main", u"xs:string", None))
-        self.combo_data_type.setItemText(1, QCoreApplication.translate("layout_main", u"xs:int", None))
-        self.combo_data_type.setItemText(2, QCoreApplication.translate("layout_main", u"xs:double", None))
-
+        self.button_add.setText(QCoreApplication.translate("layout_main", u"Add", None))
+        self.check_box_seperator.setText(QCoreApplication.translate("layout_main", u"Splitter", None))
+        self.check_box_inherit.setText(QCoreApplication.translate("layout_main", u"Inherit Values", None))
         self.label_name.setText(QCoreApplication.translate("layout_main", u"Name", None))
         self.lineEdit_name.setPlaceholderText(QCoreApplication.translate("layout_main", u"Name", None))
-        self.description.setPlaceholderText(QCoreApplication.translate("layout_main", u"Beschreibung", None))
+        self.description.setPlaceholderText(QCoreApplication.translate("layout_main", u"Description", None))
         ___qtablewidgetitem = self.table_widget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("layout_main", u"Name", None));
         ___qtablewidgetitem1 = self.table_widget.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("layout_main", u"Datentyp", None));
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("layout_main", u"Datatype", None));
         ___qtablewidgetitem2 = self.table_widget.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("layout_main", u"Format", None));
         ___qtablewidgetitem3 = self.table_widget.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("layout_main", u"Wert", None));
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("layout_main", u"Value", None));
         ___qtablewidgetitem4 = self.table_widget.horizontalHeaderItem(4)
         ___qtablewidgetitem4.setText(QCoreApplication.translate("layout_main", u"Optional", None));
 
