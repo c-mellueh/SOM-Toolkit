@@ -5,6 +5,7 @@ from typing import TypedDict, Callable, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from . import ui
+    from PySide6.QtGui import QAction
 
 
 class ProjectProperties:
@@ -13,3 +14,4 @@ class ProjectProperties:
     plugin_save_functions: list[Callable] = list()
     settings_general_widget: ui.SettingsGeneral = None
     settings_path_widget: ui.SettingsPath = None
+    actions: dict[str, QAction] = dict()

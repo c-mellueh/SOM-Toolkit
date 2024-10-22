@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ProjectMerge.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -20,33 +20,33 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogBu
                                QVBoxLayout, QWidget)
 
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        if not Dialog.objectName():
-            Dialog.setObjectName(u"Dialog")
-        Dialog.resize(640, 480)
-        self.verticalLayout = QVBoxLayout(Dialog)
+class Ui_Project(object):
+    def setupUi(self, Project):
+        if not Project.objectName():
+            Project.setObjectName(u"Project")
+        Project.resize(640, 480)
+        self.verticalLayout = QVBoxLayout(Project)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.tableWidget = QTableWidget(Dialog)
+        self.tableWidget = QTableWidget(Project)
         self.tableWidget.setObjectName(u"tableWidget")
 
         self.verticalLayout.addWidget(self.tableWidget)
 
-        self.buttonBox = QDialogButtonBox(Dialog)
+        self.buttonBox = QDialogButtonBox(Project)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
 
         self.verticalLayout.addWidget(self.buttonBox)
 
-        self.retranslateUi(Dialog)
-        self.buttonBox.accepted.connect(Dialog.accept)
-        self.buttonBox.rejected.connect(Dialog.reject)
+        self.retranslateUi(Project)
+        self.buttonBox.accepted.connect(Project.accept)
+        self.buttonBox.rejected.connect(Project.reject)
 
-        QMetaObject.connectSlotsByName(Dialog)
-
+        QMetaObject.connectSlotsByName(Project)
     # setupUi
 
-    def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
+    def retranslateUi(self, Project):
+        Project.setWindowTitle(QCoreApplication.translate("Project", u"Dialog", None))
     # retranslateUi
+

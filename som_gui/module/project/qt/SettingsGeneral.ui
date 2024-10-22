@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>Form</class>
-    <widget class="QWidget" name="Form">
+    <class>Project</class>
+    <widget class="QWidget" name="Project">
         <property name="geometry">
             <rect>
                 <x>0</x>
@@ -17,7 +17,7 @@
             <item row="0" column="0">
                 <widget class="QLabel" name="label_2">
                     <property name="text">
-                        <string>Projekt Name:</string>
+                        <string>Project Name:</string>
                     </property>
                 </widget>
             </item>
@@ -47,7 +47,7 @@
             <item row="3" column="0">
                 <widget class="QLabel" name="label">
                     <property name="text">
-                        <string>Beschreibung:</string>
+                        <string>Description:</string>
                     </property>
                 </widget>
             </item>

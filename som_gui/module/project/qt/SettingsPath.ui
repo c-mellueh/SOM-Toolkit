@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>Form</class>
-    <widget class="QWidget" name="Form">
+    <class>Project</class>
+    <widget class="QWidget" name="Project">
         <property name="geometry">
             <rect>
                 <x>0</x>
@@ -17,7 +17,7 @@
             <item row="0" column="0">
                 <widget class="QLabel" name="la_project_path">
                     <property name="text">
-                        <string>Projekt Pfad:</string>
+                        <string>Project Path:</string>
                     </property>
                 </widget>
             </item>
@@ -30,7 +30,7 @@
             <item row="2" column="0">
                 <widget class="QLabel" name="la_save_path">
                     <property name="text">
-                        <string>Speicher Pfad:</string>
+                        <string>Save Path:</string>
                     </property>
                 </widget>
             </item>
@@ -40,7 +40,7 @@
             <item row="1" column="0">
                 <widget class="QLabel" name="la_open_path">
                     <property name="text">
-                        <string>Öffnen Pfad:</string>
+                        <string>Open Path:</string>
                     </property>
                 </widget>
             </item>

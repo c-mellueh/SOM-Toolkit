@@ -14,10 +14,23 @@ from typing import Callable, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from som_gui.module.project import ui
-
+    from PySide6.QtGui import QAction
 
 
 class Project(som_gui.core.tool.Project):
+
+    @classmethod
+    def get_properties(cls) -> ProjectProperties:
+        return som_gui.ProjectProperties
+
+    @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
+
 
     @classmethod
     def add_plugin_save_function(cls, func: Callable):
@@ -42,10 +55,6 @@ class Project(som_gui.core.tool.Project):
     @classmethod
     def get_phases(cls):
         return cls.get().get_phases()
-
-    @classmethod
-    def get_properties(cls) -> ProjectProperties:
-        return som_gui.ProjectProperties
 
     @classmethod
     def create_project(cls):

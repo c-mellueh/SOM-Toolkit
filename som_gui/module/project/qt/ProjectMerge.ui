@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>Dialog</class>
-    <widget class="QDialog" name="Dialog">
+    <class>Project</class>
+    <widget class="QDialog" name="Project">
         <property name="geometry">
             <rect>
                 <x>0</x>
@@ -20,10 +20,10 @@
             <item>
                 <widget class="QDialogButtonBox" name="buttonBox">
                     <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
+                        <enum>Qt::Orientation::Horizontal</enum>
                     </property>
                     <property name="standardButtons">
-                        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+                        <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
                     </property>
                 </widget>
             </item>
@@ -34,7 +34,7 @@
         <connection>
             <sender>buttonBox</sender>
             <signal>accepted()</signal>
-            <receiver>Dialog</receiver>
+            <receiver>Project</receiver>
             <slot>accept()</slot>
             <hints>
                 <hint type="sourcelabel">
@@ -50,7 +50,7 @@
         <connection>
             <sender>buttonBox</sender>
             <signal>rejected()</signal>
-            <receiver>Dialog</receiver>
+            <receiver>Project</receiver>
             <slot>reject()</slot>
             <hints>
                 <hint type="sourcelabel">
