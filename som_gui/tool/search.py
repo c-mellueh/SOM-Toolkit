@@ -5,9 +5,10 @@ from som_gui.module.project.constants import CLASS_REFERENCE, UMLAUT_DICT
 from som_gui.module import search
 from typing import TYPE_CHECKING
 from PySide6.QtWidgets import QTableWidgetItem, QTableWidget
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QCoreApplication
 from som_gui import tool
 from som_gui import __version__ as version
+
 if TYPE_CHECKING:
     from som_gui.module.search.prop import SearchProperties
     from som_gui.module.search.ui import SearchWindow
@@ -20,9 +21,13 @@ class Search(som_gui.core.tool.Search):
     def get_column_texts(cls):
         prop = cls.get_search_properties()
         if prop.search_mode == 1:
-            return ["Objekt", "Identifier", "Abkürzung"]
+            return [QCoreApplication.translate("Search", "Object"),
+                    QCoreApplication.translate("Search", "Identifier"),
+                    QCoreApplication.translate("Search", "Abbreviation"),
+                    ]
         if prop.search_mode == 2:
-            return ["PropertySet", "Attribut"]
+            return [QCoreApplication.translate("Search", "PropertySet"),
+                    QCoreApplication.translate("Search", "Attribute"), ]
 
     @classmethod
     def get_dialog(cls) -> SearchWindow:
@@ -33,13 +38,22 @@ class Search(som_gui.core.tool.Search):
         return cls.get_search_properties().search_mode
 
     @classmethod
+    def retranslate_title(cls, widget: SearchWindow, search_mode: int):
+        title = ""
+        if search_mode == 1:
+            title = QCoreApplication.translate('Search', 'Search Object')
+        elif search_mode == 2:
+            title = QCoreApplication.translate('Search', 'Search Attribute')
+        widget.setWindowTitle(f"{title} v{version}| {tool.Util.get_status_text()}")
+
+    @classmethod
     def search_object(cls) -> SOMcreator.Object | None:
         prop = cls.get_search_properties()
         prop.search_mode = 1
         prop.search_window = search.ui.SearchWindow()
-        prop.search_window.widget.tableWidget.itemDoubleClicked.connect(cls.activate_item)
+        prop.search_window.ui.tableWidget.itemDoubleClicked.connect(cls.activate_item)
         cls.fill_dialog()
-        prop.search_window.setWindowTitle(f"Objektsuche | {tool.Util.get_status_text()}")
+        cls.retranslate_title(prop.search_window, prop.search_mode)
         if not prop.search_window.exec():
             return None
         return prop.selected_info
@@ -49,18 +63,18 @@ class Search(som_gui.core.tool.Search):
         prop = cls.get_search_properties()
         prop.search_mode = 2
         prop.search_window = search.ui.SearchWindow()
-        prop.search_window.widget.tableWidget.itemDoubleClicked.connect(cls.activate_item)
+        prop.search_window.ui.tableWidget.itemDoubleClicked.connect(cls.activate_item)
         cls.fill_dialog()
-        prop.search_window.setWindowTitle(f"AttributSuche v{version} | {tool.Util.get_status_text()}")
+        cls.retranslate_title(prop.search_window, prop.search_mode)
+
         if not prop.search_window.exec():
             return None
         return prop.selected_info
 
-
     @classmethod
     def fill_dialog(cls):
         dialog = cls.get_dialog()
-        table = dialog.widget.tableWidget
+        table = dialog.ui.tableWidget
         header_texts = cls.get_column_texts()
         table.setColumnCount(len(header_texts) + 1)
         table.setHorizontalHeaderLabels(header_texts)
@@ -91,23 +105,22 @@ class Search(som_gui.core.tool.Search):
         return item_list
 
     @classmethod
-    def refresh_dialog(cls):
-        widget = cls.get_dialog().widget
-        threshold = cls.get_search_properties().filter_threshold
-        widget.tableWidget.setSortingEnabled(False)
-        search_text = widget.lineEdit.text()
+    def refresh_dialog(cls, widget: SearchWindow, threshold):
+        widget_ui = widget.ui
+        widget_ui.tableWidget.setSortingEnabled(False)
+        search_text = widget_ui.lineEdit.text()
         search_text = search_text.translate(UMLAUT_DICT)
         column_count = len(cls.get_column_texts())
-        widget.tableWidget.hideColumn(column_count)
-        for row in range(widget.tableWidget.rowCount()):
-            ration = cls.check_row(widget.tableWidget, search_text, row, column_count)
+        widget_ui.tableWidget.hideColumn(column_count)
+        for row in range(widget_ui.tableWidget.rowCount()):
+            ration = cls.check_row(widget_ui.tableWidget, search_text, row, column_count)
             if ration > threshold:
-                widget.tableWidget.showRow(row)
+                widget_ui.tableWidget.showRow(row)
             else:
-                widget.tableWidget.hideRow(row)
-        widget.tableWidget.setSortingEnabled(True)
-        widget.tableWidget.resizeColumnsToContents()
-        widget.tableWidget.sortByColumn(column_count, Qt.SortOrder.DescendingOrder)
+                widget_ui.tableWidget.hideRow(row)
+        widget_ui.tableWidget.setSortingEnabled(True)
+        widget_ui.tableWidget.resizeColumnsToContents()
+        widget_ui.tableWidget.sortByColumn(column_count, Qt.SortOrder.DescendingOrder)
 
     @classmethod
     def check_row(cls, table: QTableWidget, search_text: str, row: int, column_count: int) -> float:
@@ -123,7 +136,7 @@ class Search(som_gui.core.tool.Search):
 
     @classmethod
     def activate_item(cls):
-        item = cls.get_dialog().widget.tableWidget.selectedItems()[0]
+        item = cls.get_dialog().ui.tableWidget.selectedItems()[0]
         prop = cls.get_search_properties()
         prop.selected_info = item.data(CLASS_REFERENCE)
         cls.get_dialog().accept()

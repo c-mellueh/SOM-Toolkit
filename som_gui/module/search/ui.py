@@ -7,8 +7,8 @@ from som_gui.module.search import trigger
 class SearchWindow(QDialog):
     def __init__(self):
         super().__init__()
-        self.widget = ui_Widget.Ui_Dialog()
-        self.widget.setupUi(self)
+        self.ui = ui_Widget.Ui_Search()
+        self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
 
     def paintEvent(self, event):

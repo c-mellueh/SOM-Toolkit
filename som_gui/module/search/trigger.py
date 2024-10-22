@@ -13,4 +13,4 @@ def refresh_window():
 
 
 def retranslate_ui():
-    pass
+    core.retranslate_ui(tool.Search)

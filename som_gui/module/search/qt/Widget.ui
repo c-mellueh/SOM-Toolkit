@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+    <class>Search</class>
+    <widget class="QDialog" name="Search">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -26,7 +26,7 @@
       </sizepolicy>
      </property>
      <property name="selectionMode">
-      <enum>QAbstractItemView::ExtendedSelection</enum>
+         <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
      </property>
      <property name="sortingEnabled">
       <bool>true</bool>
@@ -37,26 +37,6 @@
      <attribute name="verticalHeaderVisible">
       <bool>false</bool>
      </attribute>
-     <column>
-      <property name="text">
-       <string>Name</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Identifier</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Abkürzung</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Match</string>
-      </property>
-     </column>
     </widget>
    </item>
   </layout>
