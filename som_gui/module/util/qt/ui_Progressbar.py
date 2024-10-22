@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'Progressbar.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.3
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -19,31 +19,31 @@ from PySide6.QtWidgets import (QApplication, QLabel, QProgressBar, QSizePolicy,
                                QVBoxLayout, QWidget)
 
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        if not Form.objectName():
-            Form.setObjectName(u"Form")
-        Form.resize(796, 64)
-        self.verticalLayout = QVBoxLayout(Form)
+class Ui_Util(object):
+    def setupUi(self, Util):
+        if not Util.objectName():
+            Util.setObjectName(u"Util")
+        Util.resize(796, 64)
+        self.verticalLayout = QVBoxLayout(Util)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.label = QLabel(Form)
+        self.label = QLabel(Util)
         self.label.setObjectName(u"label")
 
         self.verticalLayout.addWidget(self.label)
 
-        self.progressBar = QProgressBar(Form)
+        self.progressBar = QProgressBar(Util)
         self.progressBar.setObjectName(u"progressBar")
         self.progressBar.setValue(24)
 
         self.verticalLayout.addWidget(self.progressBar)
 
-        self.retranslateUi(Form)
+        self.retranslateUi(Util)
 
-        QMetaObject.connectSlotsByName(Form)
-
+        QMetaObject.connectSlotsByName(Util)
     # setupUi
 
-    def retranslateUi(self, Form):
-        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-        self.label.setText(QCoreApplication.translate("Form", u"TextLabel", None))
+    def retranslateUi(self, Util):
+        Util.setWindowTitle(QCoreApplication.translate("Util", u"Form", None))
+        self.label.setText(QCoreApplication.translate("Util", u"TextLabel", None))
     # retranslateUi
+

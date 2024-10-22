@@ -6,7 +6,7 @@ from . import trigger
 class FileSelector(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ui = ui_FileSelector.Ui_Form()
+        self.ui = ui_FileSelector.Ui_Util()
         self.ui.setupUi(self)
         self.request_folder = None
         self.extension = None
@@ -25,7 +25,7 @@ class FileSelector(QWidget):
 class AttributeSelector(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ui = ui_AttributeSelect.Ui_Form()
+        self.ui = ui_AttributeSelect.Ui_Util()
         self.ui.setupUi(self)
         trigger.main_attribute_selector_created(self)
 
@@ -33,5 +33,5 @@ class AttributeSelector(QWidget):
 class Progressbar(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ui = ui_Progressbar.Ui_Form()
+        self.ui = ui_Progressbar.Ui_Util()
         self.ui.setupUi(self)

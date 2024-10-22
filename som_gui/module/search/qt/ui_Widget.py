@@ -19,7 +19,6 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QDialog, QGridLa
                                QHeaderView, QLineEdit, QSizePolicy, QTableWidget,
                                QTableWidgetItem, QWidget)
 
-
 class Ui_Search(object):
     def setupUi(self, Search):
         if not Search.objectName():

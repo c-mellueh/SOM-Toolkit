@@ -18,25 +18,26 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QGridLayout, QLabel, QLineEdit,
                                QPushButton, QSizePolicy, QWidget)
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        if not Form.objectName():
-            Form.setObjectName(u"Form")
-        Form.resize(641, 64)
-        self.gridLayout = QGridLayout(Form)
+
+class Ui_Util(object):
+    def setupUi(self, Util):
+        if not Util.objectName():
+            Util.setObjectName(u"Util")
+        Util.resize(641, 64)
+        self.gridLayout = QGridLayout(Util)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.lineEdit = QLineEdit(Form)
+        self.lineEdit = QLineEdit(Util)
         self.lineEdit.setObjectName(u"lineEdit")
 
         self.gridLayout.addWidget(self.lineEdit, 1, 0, 1, 1)
 
-        self.label = QLabel(Form)
+        self.label = QLabel(Util)
         self.label.setObjectName(u"label")
 
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
 
-        self.pushButton = QPushButton(Form)
+        self.pushButton = QPushButton(Util)
         self.pushButton.setObjectName(u"pushButton")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -48,14 +49,14 @@ class Ui_Form(object):
 
         self.gridLayout.addWidget(self.pushButton, 1, 1, 1, 1)
 
-        self.retranslateUi(Form)
+        self.retranslateUi(Util)
 
-        QMetaObject.connectSlotsByName(Form)
+        QMetaObject.connectSlotsByName(Util)
     # setupUi
 
-    def retranslateUi(self, Form):
-        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-        self.label.setText(QCoreApplication.translate("Form", u"TextLabel", None))
-        self.pushButton.setText(QCoreApplication.translate("Form", u"...", None))
+    def retranslateUi(self, Util):
+        Util.setWindowTitle(QCoreApplication.translate("Util", u"Form", None))
+        self.label.setText(QCoreApplication.translate("Util", u"TextLabel", None))
+        self.pushButton.setText(QCoreApplication.translate("Util", u"...", None))
     # retranslateUi
 
