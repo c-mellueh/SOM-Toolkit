@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>MainWindow</class>
-    <widget class="QMainWindow" name="MainWindow">
+    <class>Modelcheck</class>
+    <widget class="QMainWindow" name="Modelcheck">
         <property name="geometry">
             <rect>
                 <x>0</x>
@@ -34,14 +34,14 @@
                             </sizepolicy>
                         </property>
                         <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
+                            <enum>Qt::Orientation::Horizontal</enum>
                         </property>
                         <widget class="ObjectTree" name="object_tree">
                             <property name="contextMenuPolicy">
-                                <enum>Qt::CustomContextMenu</enum>
+                                <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
                             </property>
                             <property name="selectionMode">
-                                <enum>QAbstractItemView::ExtendedSelection</enum>
+                                <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
                             </property>
                         </widget>
                         <widget class="QWidget" name="verticalLayoutWidget">
@@ -56,10 +56,10 @@
                                 <item>
                                     <widget class="PsetTree" name="property_set_tree">
                                         <property name="contextMenuPolicy">
-                                            <enum>Qt::CustomContextMenu</enum>
+                                            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
                                         </property>
                                         <property name="selectionMode">
-                                            <enum>QAbstractItemView::ExtendedSelection</enum>
+                                            <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
                                         </property>
                                     </widget>
                                 </item>
@@ -70,7 +70,7 @@
                 <item>
                     <widget class="QDialogButtonBox" name="buttonBox">
                         <property name="standardButtons">
-                            <set>QDialogButtonBox::Cancel</set>
+                            <set>QDialogButtonBox::StandardButton::Cancel</set>
                         </property>
                         <property name="centerButtons">
                             <bool>false</bool>
@@ -85,7 +85,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>1383</width>
-                    <height>22</height>
+                    <height>33</height>
                 </rect>
             </property>
         </widget>

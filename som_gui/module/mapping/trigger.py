@@ -15,7 +15,7 @@ def on_new_project():
 
 
 def retranslate_ui():
-    core.retranslate_ui(tool.Mapping)
+    core.retranslate_ui(tool.Mapping, tool.Util)
 
 
 def export_revit_ifc_mapping():

@@ -10,18 +10,16 @@ from . import qt
 class ModelcheckWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.ui = qt.ui_Widget.Ui_Form()
+        self.ui = qt.ui_Widget.Ui_Modelcheck()
         self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(f"Modellprüfung | {tool.Util.get_status_text()}")
-
 
 class ObjectTree(QTreeView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         model = QStandardItemModel()
         self.setModel(model)
-        model.setHorizontalHeaderLabels(["Objekt", "Identifier"])
+        model.setHorizontalHeaderLabels(["Object", "Identifier"])
         modelcheck_window.trigger.connect_object_check_tree(self)
 
     def paintEvent(self, event):
@@ -34,7 +32,7 @@ class PsetTree(QTreeView):
         super().__init__(*args, **kwargs)
         model = QStandardItemModel()
         self.setModel(model)
-        model.setHorizontalHeaderLabels(["PropertySet,Attribut"])
+        model.setHorizontalHeaderLabels(["PropertySet,Attribute"])
         modelcheck_window.trigger.connect_pset_check_tree(self)
 
     def paintEvent(self, event):

@@ -17,11 +17,11 @@ def create_main_menu_actions(mapping: Type[tool.Mapping], main_window: Type[tool
     mapping.set_action("open_window", open_window_action)
 
 
-def retranslate_ui(mapping: Type[tool.Mapping], ):
+def retranslate_ui(mapping: Type[tool.Mapping], util: Type[tool.Util]):
     open_window_action = mapping.get_action("open_window")
     open_window_action.setText(QCoreApplication.translate("Mapping", "Revit-Mapping"))
     window = mapping.get_window()
-    window.setWindowTitle(f'{QCoreApplication.translate("Mapping", "Revit-Mapping")} | {tool.Util.get_status_text()}')
+    window.setWindowTitle(f'{QCoreApplication.translate("Mapping", "Revit-Mapping")} | {util.get_status_text()}')
 
 
 def open_window(mapping: Type[tool.Mapping]):

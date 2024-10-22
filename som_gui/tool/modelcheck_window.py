@@ -19,6 +19,17 @@ if TYPE_CHECKING:
 
 
 class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
+    @classmethod
+    def get_properties(cls) -> ModelcheckWindowProperties:
+        return som_gui.ModelcheckWindowProperties
+
+    @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
 
     @classmethod
     def connect_object_tree(cls, tree_widget: ui.ObjectTree):
@@ -103,7 +114,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def reset_butons(cls):
         cls.show_buttons(QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)
-        cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Apply).setText("Run")
+        cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Apply)
 
 
 
@@ -223,10 +234,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         cs = True if cs == Qt.CheckState.Checked else False
         cd = cls.get_item_checkstate_dict()
         cd[item] = cs
-
-    @classmethod
-    def get_properties(cls) -> ModelcheckWindowProperties:
-        return som_gui.ModelcheckWindowProperties
 
     @classmethod
     def autofill_export_path(cls):
@@ -360,9 +367,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             item = root_item.child(row, 0)
             cls._update_pset_row(item, enabled)
 
-    @classmethod
-    def get_ifc_import_widget(cls) -> IfcImportWidget:
-        return cls.get_properties().ifc_import_widget
 
     @classmethod
     def set_progressbar_visible(cls, state: bool):

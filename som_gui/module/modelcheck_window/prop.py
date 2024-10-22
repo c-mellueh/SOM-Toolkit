@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from .ui import ModelcheckWindow
     from PySide6.QtCore import QThreadPool, QItemSelectionModel
     from PySide6.QtWidgets import QPushButton, QLineEdit, QLabel
-    from PySide6.QtGui import QStandardItemModel
+    from PySide6.QtGui import QStandardItemModel, QAction
     from som_gui.tool.ifc_importer import IfcImportRunner
 
 class ModelcheckWindowProperties:
@@ -27,3 +27,4 @@ class ModelcheckWindowProperties:
     object_tree_selection_model: QItemSelectionModel = None
     pset_tree_model: QStandardItemModel = None
     pset_tree_selection_model: QStandardItemModel = None
+    actions: dict[str, QAction] = dict()

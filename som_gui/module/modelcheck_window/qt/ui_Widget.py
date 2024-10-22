@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'Widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.3
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -22,25 +22,26 @@ from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication,
 from som_gui.module.modelcheck_window.ui import (ObjectTree, PsetTree)
 from som_gui.module.util.ui import (AttributeSelector, FileSelector, Progressbar)
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        if not Form.objectName():
-            Form.setObjectName(u"Form")
-        Form.resize(1037, 684)
-        self.verticalLayout = QVBoxLayout(Form)
+
+class Ui_Modelcheck(object):
+    def setupUi(self, Modelcheck):
+        if not Modelcheck.objectName():
+            Modelcheck.setObjectName(u"Modelcheck")
+        Modelcheck.resize(1037, 684)
+        self.verticalLayout = QVBoxLayout(Modelcheck)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.splitter = QSplitter(Form)
+        self.splitter = QSplitter(Modelcheck)
         self.splitter.setObjectName(u"splitter")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
         self.splitter.setSizePolicy(sizePolicy)
-        self.splitter.setOrientation(Qt.Horizontal)
+        self.splitter.setOrientation(Qt.Orientation.Horizontal)
         self.object_tree = ObjectTree(self.splitter)
         self.object_tree.setObjectName(u"object_tree")
-        self.object_tree.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.object_tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.object_tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.object_tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.splitter.addWidget(self.object_tree)
         self.verticalLayoutWidget = QWidget(self.splitter)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
@@ -54,8 +55,8 @@ class Ui_Form(object):
 
         self.property_set_tree = PsetTree(self.verticalLayoutWidget)
         self.property_set_tree.setObjectName(u"property_set_tree")
-        self.property_set_tree.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.property_set_tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.property_set_tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.property_set_tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
         self.verticalLayout_2.addWidget(self.property_set_tree)
 
@@ -63,42 +64,44 @@ class Ui_Form(object):
 
         self.verticalLayout.addWidget(self.splitter)
 
-        self.main_attribute_widget = AttributeSelector(Form)
+        self.main_attribute_widget = AttributeSelector(Modelcheck)
         self.main_attribute_widget.setObjectName(u"main_attribute_widget")
         self.main_attribute_widget.setMinimumSize(QSize(0, 10))
 
         self.verticalLayout.addWidget(self.main_attribute_widget)
 
-        self.widget_import = FileSelector(Form)
+        self.widget_import = FileSelector(Modelcheck)
         self.widget_import.setObjectName(u"widget_import")
         self.widget_import.setMinimumSize(QSize(0, 30))
 
         self.verticalLayout.addWidget(self.widget_import)
 
-        self.widget_export = FileSelector(Form)
+        self.widget_export = FileSelector(Modelcheck)
         self.widget_export.setObjectName(u"widget_export")
         self.widget_export.setMinimumSize(QSize(0, 50))
 
         self.verticalLayout.addWidget(self.widget_export)
 
-        self.widget_progress_bar = Progressbar(Form)
+        self.widget_progress_bar = Progressbar(Modelcheck)
         self.widget_progress_bar.setObjectName(u"widget_progress_bar")
 
         self.verticalLayout.addWidget(self.widget_progress_bar)
 
-        self.buttonBox = QDialogButtonBox(Form)
+        self.buttonBox = QDialogButtonBox(Modelcheck)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Apply | QDialogButtonBox.Cancel)
+        self.buttonBox.setStandardButtons(
+            QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)
         self.buttonBox.setCenterButtons(False)
 
         self.verticalLayout.addWidget(self.buttonBox)
 
-        self.retranslateUi(Form)
+        self.retranslateUi(Modelcheck)
 
-        QMetaObject.connectSlotsByName(Form)
+        QMetaObject.connectSlotsByName(Modelcheck)
     # setupUi
 
-    def retranslateUi(self, Form):
-        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-        self.label_object.setText(QCoreApplication.translate("Form", u"TextLabel", None))
+    def retranslateUi(self, Modelcheck):
+        Modelcheck.setWindowTitle(QCoreApplication.translate("Modelcheck", u"Form", None))
+        self.label_object.setText(QCoreApplication.translate("Modelcheck", u"TextLabel", None))
     # retranslateUi
+

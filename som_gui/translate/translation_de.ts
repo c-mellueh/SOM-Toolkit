@@ -412,7 +412,6 @@
             <location filename="../module/filter_window/qt/Settings.ui" line="14"/>
             <location filename="../module/filter_window/qt/Widget.ui" line="14"/>
             <location filename="../module/ifc_importer/qt/Widget.ui" line="20"/>
-            <location filename="../module/modelcheck_window/qt/Widget.ui" line="14"/>
             <location filename="../module/predefined_property_set/qt/CompareWidget.ui" line="14"/>
             <location filename="../module/project/qt/SettingsGeneral.ui" line="14"/>
             <location filename="../module/project/qt/SettingsPath.ui" line="14"/>
@@ -518,7 +517,6 @@
             <translation type="obsolete">Excel</translation>
         </message>
         <message>
-            <location filename="../module/modelcheck_window/qt/Widget.ui" line="41"/>
             <location filename="../module/util/qt/FileSelector.ui" line="35"/>
             <location filename="../module/util/qt/Progressbar.ui" line="20"/>
             <source>TextLabel</source>
@@ -645,9 +643,8 @@
     <context>
         <name>MainWindow</name>
         <message>
-            <location filename="../module/modelcheck_external/qt/widget.ui" line="14"/>
             <source>MainWindow</source>
-            <translation>SOM-Toolkit</translation>
+            <translation type="vanished">SOM-Toolkit</translation>
         </message>
         <message>
             <location filename="../module/main_window/qt/MainWindow.ui" line="66"/>
@@ -770,9 +767,8 @@
             <translation>Export</translation>
         </message>
         <message>
-            <location filename="../module/modelcheck_external/qt/widget.ui" line="52"/>
             <source>TextLabel</source>
-            <translation>Text</translation>
+            <translation type="vanished">Text</translation>
         </message>
         <message>
             <source>Import Values</source>
@@ -792,7 +788,7 @@
     <context>
         <name>Mapping</name>
         <message>
-            <location filename="../core/mapping.py" line="21"/>
+            <location filename="../core/mapping.py" line="22"/>
             <source>Revit-Mapping</source>
             <translation>Revit-Mapping</translation>
         </message>
@@ -817,44 +813,312 @@
             <translation>Export &apos;Shared Paramers&apos;</translation>
         </message>
         <message>
-            <location filename="../module/mapping/qt/Window.ui" line="104"/>
             <source>Export Attribute Excel</source>
-            <translation>Export Attribut-Excel</translation>
+            <translation type="vanished">Export Attribut-Excel</translation>
         </message>
         <message>
-            <location filename="../module/mapping/qt/Window.ui" line="109"/>
             <source>create mapping Script</source>
-            <translation>Erstelle Mapping Script</translation>
+            <translation type="vanished">Erstelle Mapping Script</translation>
         </message>
         <message>
-            <location filename="../module/mapping/qt/Window.ui" line="114"/>
-            <source>create .amrx</source>
-            <translation></translation>
-        </message>
-        <message>
-            <location filename="../module/mapping/qt/Window.ui" line="119"/>
-            <source>create abbreviation JSON</source>
-            <translation></translation>
-        </message>
-        <message>
-            <location filename="../module/mapping/qt/Window.ui" line="124"/>
             <source>Allplan</source>
-            <translation>Allplan</translation>
+            <translation type="vanished">Allplan</translation>
         </message>
         <message>
-            <location filename="../module/mapping/qt/Window.ui" line="129"/>
             <source>Vestra</source>
-            <translation>Vestra</translation>
+            <translation type="vanished">Vestra</translation>
         </message>
         <message>
-            <location filename="../module/mapping/qt/Window.ui" line="134"/>
             <source>CARD1</source>
-            <translation>CARD1</translation>
+            <translation type="vanished">CARD1</translation>
         </message>
         <message>
-            <location filename="../module/mapping/qt/Window.ui" line="139"/>
             <source>Excel</source>
-            <translation>Excel</translation>
+            <translation type="vanished">Excel</translation>
+        </message>
+    </context>
+    <context>
+        <name>Modelcheck</name>
+        <message>
+            <location filename="../core/modelcheck.py" line="45"/>
+            <source>Modelcheck Done!</source>
+            <translation>Modellprüfung abgeschlossen!</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_external.py" line="15"/>
+            <location filename="../core/modelcheck_window.py" line="50"/>
+            <source>Modelcheck</source>
+            <translation>Modellprüfung</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_results.py" line="12"/>
+            <source>{} Issues found!</source>
+            <translation>{} Fehler gefunden!</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_results.py" line="16"/>
+            <source>Model free of errors</source>
+            <translation>Modell fehlerfrei</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_results.py" line="32"/>
+            <source>Excel still open</source>
+            <translation>Excel ist bereits geöffnet</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_results.py" line="33"/>
+            <source>The output file is locked by another process</source>
+            <translation>Die Ausgabedatei ist durch ein anderes Programm gesperrt</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_results.py" line="33"/>
+            <source>Path:&apos;{}&apos;
+                Warning: file will be overridden!
+            </source>
+            <translation>Pfad:&apos;{}&apos; Achtung: Datei wird überschrieben!</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_window.py" line="56"/>
+            <source>Export Path</source>
+            <translation>Export Pfad</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_window.py" line="57"/>
+            <source>IFC Path</source>
+            <translation>IFC Pfad</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_window.py" line="60"/>
+            <source>Object</source>
+            <translation>Objekt</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_window.py" line="62"/>
+            <location filename="../tool/modelcheck_results.py" line="33"/>
+            <source>Identifier</source>
+            <translation>Identifier</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_window.py" line="66"/>
+            <source>PropertySet,Attribute</source>
+            <translation>PropertySet/Attribut</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_window.py" line="112"/>
+            <location filename="../core/modelcheck_window.py" line="121"/>
+            <source>Import &apos;{}&apos;</source>
+            <translation>Import &apos;{}&apos;</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_window.py" line="133"/>
+            <source>Import Done!</source>
+            <translation>Import Abgeschlossen!</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_window.py" line="206"/>
+            <source>Extend</source>
+            <translation>Ausklappen</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_window.py" line="207"/>
+            <source>Collapse</source>
+            <translation>Einklappen</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_window.py" line="208"/>
+            <source>Activate</source>
+            <translation>Aktivieren</translation>
+        </message>
+        <message>
+            <location filename="../core/modelcheck_window.py" line="209"/>
+            <source>Deactivate</source>
+            <translation>Deaktivieren</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="231"/>
+            <source>{} has the wrong Datatype ({} not allowed)</source>
+            <translation>{} hat den falschen Datentyp ({} ist nicht erlaubt)</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="239"/>
+            <source>&apos;{}&apos; doesn&apos;t match format Requirement: &apos;{}&apos;</source>
+            <translation>&apos;{}&apos; entspricht nicht den Formatforgaben: &apos;{}&apos;</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="246"/>
+            <source>Value &apos;{}&apos; is not allowed</source>
+            <translation>Wert &apos;{}&apos; ist nicht erlaubt</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="253"/>
+            <source>Value &apos;{}&apos; is not in allowed range(s)</source>
+            <translation>Wert &apos;{}&apos; befindet sich nicht in zugelassenen Wertebereich(en)</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="275"/>
+            <source>{} is missing the Attribute &apos;{}:{}&apos;</source>
+            <translation>{} besitzt nicht das Attribut &apos;{}:{}&apos;</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="301"/>
+            <source>{} Value of Identifier (&apos;{}&apos;) doesn&apos;t exist in SOM</source>
+            <translation>{} Wert von Identifier (&apos;{}&apos;) existiert nicht im SOM</translation>
+        </message>
+        <message>
+            <source>Value &apos;{}&apos; is not allowed)</source>
+            <translation type="vanished">Wert &apos;{}&apos; ist nicht erlaubt</translation>
+        </message>
+        <message>
+            <source>Value {} is not in allowed range(s)</source>
+            <translation type="vanished">Wert &apos;{}&apos; befindet sich nicht in zugelassenen Wertebereichen
+            </translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="260"/>
+            <source>{} doesn&apos;t contain the Propertyset &apos;{}&apos;</source>
+            <translation>{} besitzt nicht das Propertyset &apos;{}&apos;</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="267"/>
+            <source>{} has an empty Attribute</source>
+            <translation>{} besitzt ein leeres Attribut</translation>
+        </message>
+        <message>
+            <source>{} is missing the Attribute {}:{}</source>
+            <translation type="vanished">{} besitzt nicht das Attribut {}:{}</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="284"/>
+            <source>{} is missing the identifier-Attribute</source>
+            <translation>{} fehlt das identifier-Attribut</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="293"/>
+            <source>{} is missing die identifier PropertySet</source>
+            <translation>{} fehlt das identifier PropertySet</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="309"/>
+            <source>GUID exists in File &quot;{}&quot; and&quot;{}&quot;</source>
+            <translation>GUID existiert in Datei &quot;{}&quot; und &quot;{}&quot;</translation>
+        </message>
+        <message>
+            <location filename="../module/modelcheck_window/qt/Widget.ui" line="14"/>
+            <source>Form</source>
+            <translation>Form</translation>
+        </message>
+        <message>
+            <location filename="../module/modelcheck_window/qt/Widget.ui" line="41"/>
+            <source>TextLabel</source>
+            <translation>Text</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_external.py" line="53"/>
+            <source>Export Javascript Rules</source>
+            <translation>Export Javascript Regeln</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_external.py" line="54"/>
+            <source>Export Javascript (fast Check)</source>
+            <translation>Export Javascript Regeln (schnelle Prüfung)</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_external.py" line="55"/>
+            <source>Export Attribute Rules</source>
+            <translation>Export Attribut Regeln</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_external.py" line="57"/>
+            <source>Export Modelcheck-CSV</source>
+            <translation>Export Modellprüfungs-CSV</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_external.py" line="64"/>
+            <source>Desite MD Pro</source>
+            <translation>Desite MD Pro</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_external.py" line="67"/>
+            <source>Export SmartViews</source>
+            <translation>Export SmartViews</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_external.py" line="68"/>
+            <source>BIMcollab ZOOM</source>
+            <translation></translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_external.py" line="71"/>
+            <source>Export IDS</source>
+            <translation></translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_external.py" line="72"/>
+            <source>buildingSMART</source>
+            <translation></translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_results.py" line="27"/>
+            <source>Datum</source>
+            <translation>Datum</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_results.py" line="28"/>
+            <source>GUID</source>
+            <translation>GUID</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_results.py" line="29"/>
+            <source>IfcType</source>
+            <translation>IfcType</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_results.py" line="30"/>
+            <source>Decription</source>
+            <translation>Beschreibung</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_results.py" line="31"/>
+            <source>Issue-Type</source>
+            <translation>Issue-Typ</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_results.py" line="32"/>
+            <source>Name</source>
+            <translation>Name</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_results.py" line="34"/>
+            <source>PropertySet</source>
+            <translation>PropertySet</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_results.py" line="35"/>
+            <source>Attribute</source>
+            <translation>Attribut</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_results.py" line="36"/>
+            <source>Value</source>
+            <translation>Wert</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck_results.py" line="37"/>
+            <source>File</source>
+            <translation>Datei</translation>
+        </message>
+    </context>
+    <context>
+        <name>Modlecheck</name>
+        <message>
+            <location filename="../module/modelcheck_external/qt/widget.ui" line="14"/>
+            <source>MainWindow</source>
+            <translation type="unfinished"></translation>
+        </message>
+        <message>
+            <location filename="../module/modelcheck_external/qt/widget.ui" line="52"/>
+            <source>TextLabel</source>
+            <translation type="unfinished">Text</translation>
         </message>
     </context>
     <context>

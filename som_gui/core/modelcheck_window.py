@@ -12,26 +12,58 @@ from PySide6.QtCore import Qt
 
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.modelcheck.constants import ISSUE_PATH
+from PySide6.QtCore import QCoreApplication
 
 if TYPE_CHECKING:
     from som_gui import tool
-    from PySide6.QtGui import QStandardItem
+    from PySide6.QtGui import QStandardItem, QStandardItemModel
     from PySide6.QtCore import QItemSelectionModel, QModelIndex
     from som_gui.tool.ifc_importer import IfcImportRunner
     from som_gui.module.modelcheck_window import ui
+
+
+def create_main_menu_actions(modelcheck_window: Type[tool.ModelcheckWindow], main_window: Type[tool.MainWindow]):
+    from som_gui.module.modelcheck_window import trigger
+    open_window_action = main_window.add_action2("menuModels", "modelcheck", trigger.open_window)
+    modelcheck_window.set_action("open_window", open_window_action)
+
 
 def open_window(modelcheck_window: Type[tool.ModelcheckWindow], util: Type[tool.Util], project: Type[tool.Project]):
     proj = project.get()
     window = modelcheck_window.create_window()
     main_pset_name, main_attribute_name = proj.get_main_attribute()
     util.fill_main_attribute(window.ui.main_attribute_widget, main_pset_name, main_attribute_name)
-    util.fill_file_selector(window.ui.widget_import, "IFC Pfad", "IFC Files (*.ifc *.IFC);;", "modelcheck_files")
-    util.fill_file_selector(window.ui.widget_export, "Export Pfad", "Excel File (*.xlsx);;", "modelcheck_export",
+
+    util.fill_file_selector(window.ui.widget_import, "IfcPath", "IFC Files (*.ifc *.IFC);;", "modelcheck_files")
+    util.fill_file_selector(window.ui.widget_export, "ExportPfad", "Excel File (*.xlsx);;", "modelcheck_export",
                             request_save=True)
     modelcheck_window.connect_buttons()
     modelcheck_window.set_progressbar_visible(False)
     modelcheck_window.reset_butons()
+    retranslate_ui(modelcheck_window, util)
     window.show()
+
+
+def retranslate_ui(modelcheck_window: Type[tool.ModelcheckWindow], util: Type[tool.Util]):
+    action = modelcheck_window.get_action("open_window")
+    modelcheck_title = QCoreApplication.translate("Modelcheck", "Modelcheck")
+    action.setText(modelcheck_title)
+    window = modelcheck_window.get_window()
+
+    if not window:
+        return
+    window.ui.widget_export.name = QCoreApplication.translate("Modelcheck", "Export Path")
+    window.ui.widget_import.name = QCoreApplication.translate("Modelcheck", "IFC Path")
+    window.setWindowTitle(f"{modelcheck_title} | {util.get_status_text()}")
+
+    object_model: QStandardItemModel = modelcheck_window.get_object_tree().model()
+    headers = [QCoreApplication.translate("Modelcheck", "Object"),
+               QCoreApplication.translate("Modelcheck", "Identifier")]
+    object_model.setHorizontalHeaderLabels(headers)
+
+    pset_model: QStandardItemModel = modelcheck_window.get_pset_tree().model()
+    headers = [QCoreApplication.translate("Modelcheck", "PropertySet,Attribute")]
+    pset_model.setHorizontalHeaderLabels(headers)
 
 
 def cancel_clicked(modelcheck_window: Type[tool.ModelcheckWindow]):
@@ -77,7 +109,8 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
     modelcheck_window.set_progress(0)
     modelcheck_window.set_progressbar_visible(True)
     for path in ifc_paths:
-        modelcheck_window.set_status(f"Import '{os.path.basename(path)}'")
+        status = QCoreApplication.translate("Modelcheck", "Import '{}'").format(os.path.basename(path))
+        modelcheck_window.set_status(status)
         runner = modelcheck_window.create_import_runner(path)
         modelcheck_window.connect_ifc_import_runner(runner)
         pool.start(runner)
@@ -85,7 +118,8 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
 
 def ifc_import_started(runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow]):
     modelcheck_window.set_progressbar_visible(True)
-    modelcheck_window.set_status(f"Import '{os.path.basename(runner.path)}'")
+    status = QCoreApplication.translate("Modelcheck", "Import '{}'").format(os.path.basename(runner.path))
+    modelcheck_window.set_status(status)
     modelcheck_window.set_progress(0)
 
 
@@ -96,7 +130,7 @@ def ifc_import_finished(runner: IfcImportRunner, modelcheck_window: Type[tool.Mo
     """
 
     modelcheck_window.destroy_import_runner(runner)
-    modelcheck_window.set_status(f"Import Abgeschlossen")
+    modelcheck_window.set_status(QCoreApplication.translate("Modelcheck", "Import Done!"))
 
     modelcheck.set_ifc_name(os.path.basename(runner.path))
     modelcheck_runner = modelcheck.create_modelcheck_runner(runner.ifc)
@@ -117,8 +151,7 @@ def modelcheck_finished(modelcheck_window: Type[tool.ModelcheckWindow], modelche
         modelcheck_results.last_modelcheck_finished()
         modelcheck_window.reset_butons()
     else:
-        logging.info(f"Prüfung von Datei abgeschlossen, nächste Datei ist dran.")
-
+        logging.info(f"Modelcheck is Done, check next File")
 
 
 def paint_object_tree(modelcheck_window: Type[tool.ModelcheckWindow], project: Type[tool.Project]):
@@ -170,10 +203,10 @@ def paint_pset_tree(modelcheck_window: Type[tool.ModelcheckWindow]):
 
 def object_tree_context_menu_requested(pos, widget, modelcheck_window: Type[tool.ModelcheckWindow]):
     actions = [
-        ["Ausklappen", lambda: modelcheck_window.expand_selection(widget)],
-        ["Einklappen", lambda: modelcheck_window.collapse_selection(widget)],
-        ["Aktivieren", lambda: modelcheck_window.check_selection(widget)],
-        ["Deaktivieren", lambda: modelcheck_window.uncheck_selection(widget)]
+        [QCoreApplication.translate("Modelcheck", "Extend"), lambda: modelcheck_window.expand_selection(widget)],
+        [QCoreApplication.translate("Modelcheck", "Collapse"), lambda: modelcheck_window.collapse_selection(widget)],
+        [QCoreApplication.translate("Modelcheck", "Activate"), lambda: modelcheck_window.check_selection(widget)],
+        [QCoreApplication.translate("Modelcheck", "Deactivate"), lambda: modelcheck_window.uncheck_selection(widget)]
     ]
 
     modelcheck_window.create_context_menu(pos, actions, widget)

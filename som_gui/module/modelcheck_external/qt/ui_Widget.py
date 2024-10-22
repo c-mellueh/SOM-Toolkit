@@ -23,12 +23,13 @@ from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication,
 from som_gui.module.modelcheck_window.ui import (ObjectTree, PsetTree)
 from som_gui.module.util.ui import AttributeSelector
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        if not MainWindow.objectName():
-            MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1383, 868)
-        self.centralwidget = QWidget(MainWindow)
+
+class Ui_Modelcheck(object):
+    def setupUi(self, Modelcheck):
+        if not Modelcheck.objectName():
+            Modelcheck.setObjectName(u"Modelcheck")
+        Modelcheck.resize(1383, 868)
+        self.centralwidget = QWidget(Modelcheck)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -45,11 +46,11 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
         self.splitter.setSizePolicy(sizePolicy)
-        self.splitter.setOrientation(Qt.Horizontal)
+        self.splitter.setOrientation(Qt.Orientation.Horizontal)
         self.object_tree = ObjectTree(self.splitter)
         self.object_tree.setObjectName(u"object_tree")
-        self.object_tree.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.object_tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.object_tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.object_tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.splitter.addWidget(self.object_tree)
         self.verticalLayoutWidget = QWidget(self.splitter)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
@@ -63,8 +64,8 @@ class Ui_MainWindow(object):
 
         self.property_set_tree = PsetTree(self.verticalLayoutWidget)
         self.property_set_tree.setObjectName(u"property_set_tree")
-        self.property_set_tree.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.property_set_tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.property_set_tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.property_set_tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
         self.verticalLayout_2.addWidget(self.property_set_tree)
 
@@ -74,27 +75,27 @@ class Ui_MainWindow(object):
 
         self.buttonBox = QDialogButtonBox(self.centralwidget)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel)
         self.buttonBox.setCenterButtons(False)
 
         self.verticalLayout.addWidget(self.buttonBox)
 
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QMenuBar(MainWindow)
+        Modelcheck.setCentralWidget(self.centralwidget)
+        self.menubar = QMenuBar(Modelcheck)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1383, 22))
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QStatusBar(MainWindow)
+        self.menubar.setGeometry(QRect(0, 0, 1383, 33))
+        Modelcheck.setMenuBar(self.menubar)
+        self.statusbar = QStatusBar(Modelcheck)
         self.statusbar.setObjectName(u"statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        Modelcheck.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
+        self.retranslateUi(Modelcheck)
 
-        QMetaObject.connectSlotsByName(MainWindow)
+        QMetaObject.connectSlotsByName(Modelcheck)
     # setupUi
 
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.label_object.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+    def retranslateUi(self, Modelcheck):
+        Modelcheck.setWindowTitle(QCoreApplication.translate("Modelcheck", u"MainWindow", None))
+        self.label_object.setText(QCoreApplication.translate("Modelcheck", u"TextLabel", None))
     # retranslateUi
 

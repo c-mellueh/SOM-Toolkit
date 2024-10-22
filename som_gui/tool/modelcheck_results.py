@@ -7,7 +7,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 from openpyxl.utils import get_column_letter
-
+from PySide6.QtCore import QCoreApplication
 from openpyxl.cell.cell import Cell
 import openpyxl
 
@@ -19,12 +19,26 @@ from som_gui.module.modelcheck_results import trigger
 if TYPE_CHECKING:
     from som_gui.module.modelcheck_results.prop import ModelcheckResultProperties
 
-HEADER = ["Datum", "GUID", "IfcType", "Beschreibung", "Typ", "Name", "Bauteilklassifikation", "PropertySet", "Attribut",
-          "Wert",
-          "Datei", ]
-
 
 class ModelcheckResults(som_gui.core.tool.ModelcheckResults):
+    @classmethod
+    def get_header(cls) -> list[str]:
+        header = [
+            QCoreApplication.translate("Modelcheck", "Datum"),
+            QCoreApplication.translate("Modelcheck", "GUID"),
+            QCoreApplication.translate("Modelcheck", "IfcType"),
+            QCoreApplication.translate("Modelcheck", "Decription"),
+            QCoreApplication.translate("Modelcheck", "Issue-Type"),
+            QCoreApplication.translate("Modelcheck", "Name"),
+            QCoreApplication.translate("Modelcheck", "Identifier"),
+            QCoreApplication.translate("Modelcheck", "PropertySet"),
+            QCoreApplication.translate("Modelcheck", "Attribute"),
+            QCoreApplication.translate("Modelcheck", "Value"),
+            QCoreApplication.translate("Modelcheck", "File"),
+
+        ]
+        return header
+
     @classmethod
     def last_modelcheck_finished(cls, ):
         trigger.last_modelcheck_finished(tool.Modelcheck.get_database_path())
@@ -49,7 +63,7 @@ class ModelcheckResults(som_gui.core.tool.ModelcheckResults):
 
     @classmethod
     def fill_worksheet(cls, issues, ws: Worksheet):
-        last_cell = ws.cell(1, len(HEADER) - 1)
+        last_cell = ws.cell(1, len(cls.get_header()) - 1)
         for row_index, column in enumerate(issues, start=2):
             for column_index, value in enumerate(column, start=1):
                 last_cell = ws.cell(row_index, column_index, value)  # remove Whitespace
@@ -60,7 +74,7 @@ class ModelcheckResults(som_gui.core.tool.ModelcheckResults):
 
         workbook = openpyxl.Workbook()
         worksheet = workbook.active
-        for col_index, value in enumerate(HEADER, start=1):
+        for col_index, value in enumerate(cls.get_header(), start=1):
             worksheet.cell(1, col_index, value)
         return workbook, worksheet
 

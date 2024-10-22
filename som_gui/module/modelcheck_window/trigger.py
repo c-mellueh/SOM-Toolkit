@@ -14,9 +14,11 @@ if TYPE_CHECKING:
 
 
 def connect():
-    tool.MainWindow.add_action("Modelle/Modellprüfung",
-                               lambda: core.open_window(tool.ModelcheckWindow, tool.Util, tool.Project))
+    core.create_main_menu_actions(tool.ModelcheckWindow, tool.MainWindow)
 
+
+def open_window():
+    core.open_window(tool.ModelcheckWindow, tool.Util, tool.Project)
 
 def paint_object_tree():
     core.paint_object_tree(tool.ModelcheckWindow, tool.Project)
@@ -83,4 +85,4 @@ def on_new_project():
 
 
 def retranslate_ui():
-    pass
+    core.retranslate_ui(tool.ModelcheckWindow, tool.Util)
