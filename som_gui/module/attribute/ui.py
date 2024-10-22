@@ -6,7 +6,7 @@ from .qt import ui_CompareWidget
 class AttributeWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.widget = ui_CompareWidget.Ui_Form()
+        self.widget = ui_CompareWidget.Ui_AttributeCompare()
         self.widget.setupUi(self)
         self.widget.tree_widget_object.setColumnCount(2)
         self.widget.tree_widget_propertysets.setColumnCount(2)

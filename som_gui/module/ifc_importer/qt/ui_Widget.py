@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'Widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.3
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -19,48 +19,49 @@ from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QProgressBar,
                                QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout,
                                QWidget)
 
-from som_gui.module.util.ui import (FileSelector, AttributeSelector)
+from som_gui.module.util.ui import (FileSelector, MainAttributeSelector)
 
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        if not Form.objectName():
-            Form.setObjectName(u"Form")
-        Form.resize(955, 287)
+class Ui_IfcImporter(object):
+    def setupUi(self, IfcImporter):
+        if not IfcImporter.objectName():
+            IfcImporter.setObjectName(u"IfcImporter")
+        IfcImporter.resize(955, 287)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
-        Form.setSizePolicy(sizePolicy)
-        self.verticalLayout = QVBoxLayout(Form)
+        sizePolicy.setHeightForWidth(IfcImporter.sizePolicy().hasHeightForWidth())
+        IfcImporter.setSizePolicy(sizePolicy)
+        self.verticalLayout = QVBoxLayout(IfcImporter)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout_2 = QVBoxLayout()
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.main_attribute_widget = AttributeSelector(Form)
+        self.main_attribute_widget = MainAttributeSelector(IfcImporter)
         self.main_attribute_widget.setObjectName(u"main_attribute_widget")
 
         self.verticalLayout_2.addWidget(self.main_attribute_widget)
 
-        self.file_selector_widget = FileSelector(Form)
+        self.file_selector_widget = FileSelector(IfcImporter)
         self.file_selector_widget.setObjectName(u"file_selector_widget")
 
         self.verticalLayout_2.addWidget(self.file_selector_widget)
 
+
         self.verticalLayout.addLayout(self.verticalLayout_2)
 
-        self.label_status = QLabel(Form)
+        self.label_status = QLabel(IfcImporter)
         self.label_status.setObjectName(u"label_status")
 
         self.verticalLayout.addWidget(self.label_status)
 
-        self.progress_bar = QProgressBar(Form)
+        self.progress_bar = QProgressBar(IfcImporter)
         self.progress_bar.setObjectName(u"progress_bar")
         self.progress_bar.setValue(24)
         self.progress_bar.setTextVisible(True)
 
         self.verticalLayout.addWidget(self.progress_bar)
 
-        self.button_widget = QWidget(Form)
+        self.button_widget = QWidget(IfcImporter)
         self.button_widget.setObjectName(u"button_widget")
         self.horizontalLayout_2 = QHBoxLayout(self.button_widget)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
@@ -78,17 +79,18 @@ class Ui_Form(object):
 
         self.horizontalLayout_2.addWidget(self.button_run)
 
+
         self.verticalLayout.addWidget(self.button_widget)
 
-        self.retranslateUi(Form)
+        self.retranslateUi(IfcImporter)
 
-        QMetaObject.connectSlotsByName(Form)
-
+        QMetaObject.connectSlotsByName(IfcImporter)
     # setupUi
 
-    def retranslateUi(self, Form):
-        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-        self.label_status.setText(QCoreApplication.translate("Form", u"Status Label", None))
-        self.button_close.setText(QCoreApplication.translate("Form", u"Close", None))
-        self.button_run.setText(QCoreApplication.translate("Form", u"Run", None))
+    def retranslateUi(self, IfcImporter):
+        IfcImporter.setWindowTitle(QCoreApplication.translate("IfcImporter", u"Form", None))
+        self.label_status.setText(QCoreApplication.translate("IfcImporter", u"Status Label", None))
+        self.button_close.setText(QCoreApplication.translate("IfcImporter", u"Close", None))
+        self.button_run.setText(QCoreApplication.translate("IfcImporter", u"Run", None))
     # retranslateUi
+

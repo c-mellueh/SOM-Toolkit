@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>Form</class>
-    <widget class="QWidget" name="Form">
+    <class>FilterWindow</class>
+    <widget class="QWidget" name="FilterWindow">
         <property name="geometry">
             <rect>
                 <x>0</x>
@@ -17,21 +17,19 @@
             <item>
                 <widget class="QSplitter" name="splitter_2">
                     <property name="orientation">
-                        <enum>Qt::Vertical</enum>
+                        <enum>Qt::Orientation::Vertical</enum>
                     </property>
                     <widget class="ProjectView" name="project_table">
                         <property name="contextMenuPolicy">
-                            <enum>Qt::ActionsContextMenu</enum>
+                            <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
                         </property>
                         <property name="editTriggers">
-                            <set>
-                                QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked
-                            </set>
+                            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
                         </property>
                     </widget>
                     <widget class="QSplitter" name="splitter">
                         <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
+                            <enum>Qt::Orientation::Horizontal</enum>
                         </property>
                         <widget class="ObjectTreeView" name="object_tree"/>
                         <widget class="QWidget" name="verticalLayoutWidget">
@@ -39,7 +37,7 @@
                                 <item>
                                     <widget class="QLabel" name="label">
                                         <property name="text">
-                                            <string></string>
+                                            <string/>
                                         </property>
                                     </widget>
                                 </item>

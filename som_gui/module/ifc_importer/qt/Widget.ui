@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>Form</class>
-    <widget class="QWidget" name="Form">
+    <class>IfcImporter</class>
+    <widget class="QWidget" name="IfcImporter">
         <property name="geometry">
             <rect>
                 <x>0</x>
@@ -53,7 +53,7 @@
                         <item>
                             <spacer name="horizontalSpacer">
                                 <property name="orientation">
-                                    <enum>Qt::Horizontal</enum>
+                                    <enum>Qt::Orientation::Horizontal</enum>
                                 </property>
                                 <property name="sizeHint" stdset="0">
                                     <size>

@@ -1,1 +1,1 @@
-from .ui_Widget import Ui_Form
+from .ui_Widget import Ui_IfcImporter

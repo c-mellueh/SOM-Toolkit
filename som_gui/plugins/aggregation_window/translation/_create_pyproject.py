@@ -3,9 +3,6 @@ import os
 
 def list_files_in_directory(root_dir):
     for dirpath, dirnames, filenames in os.walk(root_dir):
-        if dirpath.startswith("..\plugins\\"):
-            continue
-
         for file in filenames:
             if (
                     file.endswith(".py")
@@ -25,7 +22,7 @@ root_directory = ".."
 list_files_in_directory(root_directory)
 import json
 
-with open("som_gui.pyproject", "w") as file:
+with open("aggregation_window.pyproject", "w") as file:
     json.dump(output_dict, file, indent=4)
 
 # call pyside6-project lupdate .

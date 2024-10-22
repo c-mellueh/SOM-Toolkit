@@ -15,7 +15,7 @@ class SettingsWidget(QWidget):
     def __init__(self):
         super().__init__()
         from .qt import ui_Settings
-        self.ui = ui_Settings.Ui_Form()
+        self.ui = ui_Settings.Ui_FilterWindow()
         self.ui.setupUi(self)
         trigger.settings_widget_created(self)
 
@@ -23,7 +23,7 @@ class FilterWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         from .qt import ui_Widget
-        self.ui = ui_Widget.Ui_Form()
+        self.ui = ui_Widget.Ui_FilterWindow()
         self.ui.setupUi(self)
         self.setWindowIcon(som_gui.get_icon())
 

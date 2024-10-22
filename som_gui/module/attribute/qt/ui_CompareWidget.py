@@ -21,16 +21,17 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QHeaderView, QSi
 
 from som_gui.module.compare.ui import EntityTreeWidget
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        if not Form.objectName():
-            Form.setObjectName(u"Form")
-        Form.resize(868, 576)
-        self.verticalLayout = QVBoxLayout(Form)
+
+class Ui_AttributeCompare(object):
+    def setupUi(self, AttributeCompare):
+        if not AttributeCompare.objectName():
+            AttributeCompare.setObjectName(u"AttributeCompare")
+        AttributeCompare.resize(868, 576)
+        self.verticalLayout = QVBoxLayout(AttributeCompare)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.splitter_3 = QSplitter(Form)
+        self.splitter_3 = QSplitter(AttributeCompare)
         self.splitter_3.setObjectName(u"splitter_3")
-        self.splitter_3.setOrientation(Qt.Horizontal)
+        self.splitter_3.setOrientation(Qt.Orientation.Horizontal)
         self.tree_widget_object = EntityTreeWidget(self.splitter_3)
         __qtreewidgetitem = QTreeWidgetItem()
         __qtreewidgetitem.setText(0, u"1");
@@ -44,7 +45,7 @@ class Ui_Form(object):
         self.splitter_3.addWidget(self.tree_widget_object)
         self.splitter_2 = QSplitter(self.splitter_3)
         self.splitter_2.setObjectName(u"splitter_2")
-        self.splitter_2.setOrientation(Qt.Horizontal)
+        self.splitter_2.setOrientation(Qt.Orientation.Horizontal)
         self.tree_widget_propertysets = EntityTreeWidget(self.splitter_2)
         __qtreewidgetitem1 = QTreeWidgetItem()
         __qtreewidgetitem1.setText(0, u"1");
@@ -55,7 +56,7 @@ class Ui_Form(object):
         self.splitter_2.addWidget(self.tree_widget_propertysets)
         self.splitter = QSplitter(self.splitter_2)
         self.splitter.setObjectName(u"splitter")
-        self.splitter.setOrientation(Qt.Vertical)
+        self.splitter.setOrientation(Qt.Orientation.Vertical)
         self.table_widget_values = QTableWidget(self.splitter)
         self.table_widget_values.setObjectName(u"table_widget_values")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding)
@@ -63,7 +64,7 @@ class Ui_Form(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.table_widget_values.sizePolicy().hasHeightForWidth())
         self.table_widget_values.setSizePolicy(sizePolicy1)
-        self.table_widget_values.setSelectionMode(QAbstractItemView.NoSelection)
+        self.table_widget_values.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         self.splitter.addWidget(self.table_widget_values)
         self.table_widget_values.horizontalHeader().setStretchLastSection(True)
         self.table_infos = QTableWidget(self.splitter)
@@ -77,13 +78,12 @@ class Ui_Form(object):
 
         self.verticalLayout.addWidget(self.splitter_3)
 
+        self.retranslateUi(AttributeCompare)
 
-        self.retranslateUi(Form)
-
-        QMetaObject.connectSlotsByName(Form)
+        QMetaObject.connectSlotsByName(AttributeCompare)
     # setupUi
 
-    def retranslateUi(self, Form):
-        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+    def retranslateUi(self, AttributeCompare):
+        AttributeCompare.setWindowTitle(QCoreApplication.translate("AttributeCompare", u"Form", None))
     # retranslateUi
 
