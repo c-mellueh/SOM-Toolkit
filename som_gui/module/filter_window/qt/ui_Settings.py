@@ -18,7 +18,6 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QSizePolicy,
                                QVBoxLayout, QWidget)
 
-
 class Ui_FilterWindow(object):
     def setupUi(self, FilterWindow):
         if not FilterWindow.objectName():

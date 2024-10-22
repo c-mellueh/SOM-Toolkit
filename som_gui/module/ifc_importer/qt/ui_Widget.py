@@ -19,8 +19,7 @@ from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QProgressBar,
                                QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout,
                                QWidget)
 
-from som_gui.module.util.ui import (FileSelector, MainAttributeSelector)
-
+from som_gui.module.util.ui import (AttributeSelector, FileSelector)
 
 class Ui_IfcImporter(object):
     def setupUi(self, IfcImporter):
@@ -36,7 +35,7 @@ class Ui_IfcImporter(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout_2 = QVBoxLayout()
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.main_attribute_widget = MainAttributeSelector(IfcImporter)
+        self.main_attribute_widget = AttributeSelector(IfcImporter)
         self.main_attribute_widget.setObjectName(u"main_attribute_widget")
 
         self.verticalLayout_2.addWidget(self.main_attribute_widget)

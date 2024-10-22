@@ -20,7 +20,6 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QHeaderView, QLa
 
 from som_gui.module.filter_window.ui import (ObjectTreeView, ProjectView, PsetTreeView)
 
-
 class Ui_FilterWindow(object):
     def setupUi(self, FilterWindow):
         if not FilterWindow.objectName():
