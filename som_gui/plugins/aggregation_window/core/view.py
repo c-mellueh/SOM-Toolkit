@@ -1,16 +1,15 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
-from PySide6.QtCore import Qt, QPoint, QPointF
+from PySide6.QtCore import Qt, QPoint, QPointF, QCoreApplication
 from SOMcreator import value_constants
 import SOMcreator
 from som_gui import tool
+
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window import tool as aw_tool
     from PySide6.QtGui import QWheelEvent, QKeyEvent
     from som_gui.plugins.aggregation_window.module.node import ui as node_ui
-
-
 
 
 def key_press_event(event: QKeyEvent, view: Type[aw_tool.View], connection: Type[aw_tool.Connection]) -> None:
@@ -33,7 +32,7 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
                 project: Type[tool.Project]) -> None:
     scene = view.get_active_scene()
     if scene is None:
-        scene, scene_name = view.create_scene("Undefined")
+        scene, scene_name = view.create_scene(QCoreApplication.translate("Aggregation", "Undefined"))
         view.activate_scene(scene)
     scene_id = view.get_scene_index(scene)
 
@@ -161,34 +160,58 @@ def context_menu_requested(pos: QPoint, view: Type[aw_tool.View], node: Type[aw_
                            util: Type[tool.Util]) -> None:
     menu_list = list()
     scene = view.get_active_scene()
-    menu_list.append(["Ansicht/Zoom zurücksetzen", view.autofit_view])
-    selected_nodes = scene.selectedItems()
-    if len(selected_nodes) > 1:
-        menu_list.append(["Layout/Horizontal zentrieren", lambda: node.center_nodes(selected_nodes, 0)])
-        menu_list.append(["Layout/Vertikal zentrieren", lambda: node.center_nodes(selected_nodes, 1)])
-        menu_list.append(["Layout/Horizontal verteilen", lambda: node.distribute_by_layer(selected_nodes, 0)])
-        menu_list.append(["Layout/Vertikal verteilen", lambda: node.distribute_nodes(selected_nodes, 1)])
 
-    menu_list.append(["Info anpassen", lambda: change_header_text(node, search)])
-    menu_list.append(["Info zurücksetzen", lambda: node.reset_title_settings()])
-    menu_list.append(["Ansicht/Ansicht Drucken", lambda: view.print_scene(scene)])
+    selected_nodes = scene.selectedItems()
+    view = QCoreApplication.translate("Aggregation", "View")
+    reset_zoom = QCoreApplication.translate("Aggregation", "Reset Zoom")
+    print_view = QCoreApplication.translate("Aggregation", "Print View")
+    menu_list.append([f"{view}/{reset_zoom}", view.autofit_view])
+    menu_list.append([f"{view}/{print_view}", lambda: view.print_scene(scene)])
+
+
+    if len(selected_nodes) > 1:
+        layout = QCoreApplication.translate("Aggregation", "Layout")
+        ch = QCoreApplication.translate("Aggregation", "Center horizontally")
+        cv = QCoreApplication.translate("Aggregation", "Center vertically")
+        dh = QCoreApplication.translate("Aggregation", "Distribute horizontally")
+        dv = QCoreApplication.translate("Aggregation", "Distribute vertically")
+        menu_list.append([f"{layout}/{ch}", lambda: node.center_nodes(selected_nodes, 0)])
+        menu_list.append([f"{layout}/{cv}", lambda: node.center_nodes(selected_nodes, 1)])
+        menu_list.append([f"{layout}/{dh}", lambda: node.distribute_by_layer(selected_nodes, 0)])
+        menu_list.append([f"{layout}/{dv}", lambda: node.distribute_nodes(selected_nodes, 1)])
+
+    menu_list.append(
+        [QCoreApplication.translate("Aggregation", "Modify Info"), lambda: change_header_text(node, search)])
+    menu_list.append([QCoreApplication.translate("Aggregation", "Reset Info"), lambda: node.reset_title_settings()])
 
     node_under_mouse = view.get_node_under_mouse()
     if node_under_mouse:
-        menu_list.append(["Node/Node hinzufügen", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
+        node_text = QCoreApplication.translate("Aggregation", "Node")
+        add = QCoreApplication.translate("Aggregation", "Add Node")
+        delete_node = QCoreApplication.translate("Aggregation", "Delete Node")
+        delete_nodes = QCoreApplication.translate("Aggregation", "Delete Nodes")
 
-        txt = "Node/Node Löschen" if len(selected_nodes) == 1 else "Nodes Löschen"
-        menu_list.append([txt, lambda: [view.remove_node_from_scene(n, scene) for n in selected_nodes]])
+        menu_list.append([f"{node_text}/{add}", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
+
+        txt = delete_node if len(selected_nodes) == 1 else delete_nodes
+        del_text = f"{node_text}/{txt}"
+        menu_list.append([del_text, lambda: [view.remove_node_from_scene(n, scene) for n in selected_nodes]])
+
+        connection_type = QCoreApplication.translate("Aggregation", "Connection Type")
+        aggregation = QCoreApplication.translate("Aggregation", "Aggregation")
+        inheritance = QCoreApplication.translate("Aggregation", "Inheritance")
         if not node.is_root(node_under_mouse):
-            menu_list.append(["Verbindungsart/Aggregation",
+            menu_list.append([f"{connection_type}/{aggregation}",
                               lambda: node.set_connect_type(node_under_mouse, value_constants.AGGREGATION)])
-            menu_list.append(["Verbindungsart/Vererbung",
+            menu_list.append([f"{connection_type}/{inheritance}",
                               lambda: node.set_connect_type(node_under_mouse, value_constants.INHERITANCE)])
-            menu_list.append(["Verbindungsart/Aggregation+Vererbung",
+            menu_list.append([f"{connection_type}/{aggregation}+{inheritance}",
                               lambda: node.set_connect_type(node_under_mouse,
                                                             value_constants.AGGREGATION + value_constants.INHERITANCE)])
     else:
-        menu_list.append(["Node hinzufügen", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
+        add = QCoreApplication.translate("Aggregation", "Add Node")
+
+        menu_list.append([add, lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
 
     menu = util.create_context_menu(menu_list)
     menu.exec(view.get_view().viewport().mapToGlobal(pos))

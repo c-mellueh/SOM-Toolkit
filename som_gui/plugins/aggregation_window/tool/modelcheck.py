@@ -8,7 +8,7 @@ from SOMcreator.constants import value_constants
 from som_gui import tool
 from ifcopenshell.util import element as ifc_el
 from som_gui.module.modelcheck.constants import *
-
+from PySide6.QtCore import QCoreApplication
 ABBREV_ISSUE = 2
 
 
@@ -112,32 +112,37 @@ class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
         main_attribute_name = tool.Modelcheck.get_main_attribute_name()
         element_type = tool.Modelcheck.get_active_element_type()
         ident_value = ifc_el.get_pset(parent_element, main_pset_name, main_attribute_name)
-        description = f"{element_type} besitzt die falsche Elternklasse ({ident_value} nicht erlaubt)"
+
+        description = QCoreApplication.translate("Aggregation", "{}: Parent '{}' is not allowed").format(element_type,
+                                                                                                         ident_value)
         issue_nr = PARENT_ISSUE
         tool.Modelcheck.add_issues(element.GlobalId, description, issue_nr, None)
 
     @classmethod
     def empty_group_issue(cls, element):
-        description = f"Gruppe besitzt keine Subelemente "
+        description = QCoreApplication.translate("Aggregation", "Group doesn't contain subelements")
         issue_nr = EMPTY_GROUP_ISSUE
         tool.Modelcheck.add_issues(element.GlobalId, description, issue_nr, None)
 
     @classmethod
     def repetetive_group_issue(cls, element):
-        description = f"Gruppe besitzt mehrere Subelemente mit der selben Bauteilklassifikation"
+        description = QCoreApplication.translate("Aggregation",
+                                                 "Group contains multiple Collector Groups with the same Identifier")
         issue_nr = REPETETIVE_GROUP_ISSUE
         tool.Modelcheck.add_issues(element.GlobalId, description, issue_nr, None)
 
     # GROUP ISSUES
     @classmethod
     def subgroup_issue(cls, child_ident):
-        description = f"Gruppensammler besitzt falsche Untergruppe ({child_ident} nicht erlaubt)"
+        description = QCoreApplication.translate("Aggregation",
+                                                 "Collector Group contains wrong subelements ('{}' not allowed)").format(
+            child_ident)
         issue_nr = SUBGROUP_ISSUE
         tool.Modelcheck.add_issues(tool.Modelcheck.get_active_guid(), description, issue_nr, None)
 
     @classmethod
     def no_group_issue(cls, element):
-        description = f"Element hat keine Gruppenzuweisung"
+        description = QCoreApplication.translate("Aggregation", "Element without group assertion")
         issue_nr = NO_GROUP_ISSUE
         tool.Modelcheck.add_issues(element.GlobalId, description, issue_nr, None)
 

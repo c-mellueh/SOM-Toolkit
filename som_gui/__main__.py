@@ -10,7 +10,7 @@ from som_gui import tool
 import ifcopenshell.guid
 import ifcopenshell.express
 from som_gui.translate import rc_som_gui
-
+from PySide6.QtCore import QCoreApplication
 def main(initial_file: str | None = None, log_level=None, open_last_project=False):
 
     print("START")
@@ -38,6 +38,8 @@ def main(initial_file: str | None = None, log_level=None, open_last_project=Fals
     som_gui.load_ui_triggers()
     core.project.create_project(tool.Project)
     core.main_window.create_menus(tool.MainWindow, tool.Util)
+    tool.Plugins.load_translations(app)
+    print(QCoreApplication.translate("Aggregation", "Create IfcGroups"))
     if initial_file is not None:
         core.project.open_project(initial_file, tool.Project)
     if open_last_project:

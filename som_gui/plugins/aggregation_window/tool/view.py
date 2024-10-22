@@ -88,8 +88,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
 
     @classmethod
-    def create_view(cls) -> ui_view.AggregationView:
-        view = ui_view.AggregationView()
+    def set_view(cls, view: ui_view.AggregationView):
         cls.get_properties().aggregation_view = view
         return view
 
@@ -182,7 +181,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
             vertical = view.verticalScrollBar().value()
             prop.scene_settings_list[old_index] = view.transform(), horizontal, vertical
 
-        prop.aggregation_view.setScene(scene)
+        cls.get_view().setScene(scene)
         prop.active_scene = scene
         new_scene_index = cls.get_scene_index(scene)
         value = prop.scene_settings_list[new_scene_index]
@@ -195,7 +194,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
     @classmethod
     def set_cursor_style(cls, cursor_style: Qt.CursorShape) -> None:
-        cls.get_properties().aggregation_view.viewport().setCursor(cursor_style)
+        cls.get_view().viewport().setCursor(cursor_style)
 
     @classmethod
     def add_node_to_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene) -> None:
@@ -294,7 +293,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
     @classmethod
     def map_to_scene(cls, pos: QPoint) -> QPointF:
-        return cls.get_properties().aggregation_view.mapToScene(pos)
+        return cls.get_view().mapToScene(pos)
 
     @classmethod
     def get_keyboard_modifier(cls) -> Qt.KeyboardModifiers:

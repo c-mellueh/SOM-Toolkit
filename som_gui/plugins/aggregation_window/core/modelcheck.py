@@ -6,7 +6,7 @@ import ifcopenshell
 from som_gui.core.modelcheck import ELEMENT, GROUP
 import logging
 import SOMcreator
-
+from PySide6.QtCore import QCoreApplication
 
 def add_modelcheck_plugin(modelcheck: Type[tool.Modelcheck], modelcheck_plugin: Type[aw_tool.Modelcheck]):
     modelcheck.add_file_check_plugin(lambda file: check_file(file, modelcheck, modelcheck_plugin))
@@ -21,7 +21,8 @@ def check_file(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck],
     modelcheck_plugin.build_group_structure(file)
 
     group_count = modelcheck_plugin.get_group_count()
-    modelcheck.set_status(f"{group_count} Gruppen werden geprüft")
+    status = QCoreApplication.translate("Aggregation", "{} Groups will be checked").format(group_count)
+    modelcheck.set_status(status)
     root_groups = modelcheck_plugin.get_root_groups(file)
     for entity in root_groups:
         if modelcheck.is_aborted():

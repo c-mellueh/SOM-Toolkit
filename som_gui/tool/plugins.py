@@ -33,6 +33,16 @@ class Plugins(som_gui.core.tool.Plugins):
         return modules
 
     @classmethod
+    def load_translations(cls, app):
+        for plugin_name in cls.get_available_plugins():
+            if not tool.Plugins.is_plugin_active(plugin_name):
+                continue
+            module_text = f"som_gui.plugins.{plugin_name}"
+            module = importlib.import_module(f"{module_text}.translation")
+            module.load_language(app)
+            print(app.translate("Aggregation", "Create IfcGroups"))
+
+    @classmethod
     def import_plugin(cls, plugin_name: str) -> list[tuple[str, Any]]:
         module_text = f"som_gui.plugins.{plugin_name}.module"
         logging.info(f"Import Plugin {plugin_name} -> {module_text}")

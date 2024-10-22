@@ -9,24 +9,50 @@ import logging
 import time
 import os
 from ..module.grouping_window.constants import GROUP_PSET, IFC_MOD, GROUP_ATTRIBUTE
-
+from PySide6.QtCore import QCoreApplication
 from som_gui.plugins.aggregation_window.module.grouping_window.constants import GROUP_FOLDER
 
 if TYPE_CHECKING:
     from som_gui.tool.ifc_importer import IfcImportRunner
 
 
+def create_main_menu_actions(grouping_window: Type[aw_tool.GroupingWindow], main_window: Type[tool.MainWindow]):
+    from som_gui.plugins.aggregation_window.module.grouping_window import trigger
+    action = main_window.add_action2("menuModels", "create_groups", trigger.open_window)
+    grouping_window.set_action("create_groups", action)
+
+
+def retranslate_ui(grouping_window: Type[aw_tool.GroupingWindow], util: Type[tool.Util]):
+    logging.info("Retranslate UI:{}".format(QCoreApplication.translate("Aggregation", "Create IfcGroups")))
+    action = grouping_window.get_action("create_groups")
+    action.setText(QCoreApplication.translate("Aggregation", "Create IfcGroups"))
+    window = grouping_window.get()
+
+    if window is None:
+        return
+    title = QCoreApplication.translate("Aggregation", "Create Groups")
+    window.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
+    window.ui.widget_export.name = QCoreApplication.translate("Aggregation", "Export Path")
+    window.ui.widget_import.name = QCoreApplication.translate("Aggregation", "IFC Path")
+
+    group_pset, group_attribute = util.get_attribute(window.ui.widget_group_attribute)
+    pset_placeholder = QCoreApplication.translate("Aggregation", "Grouping PropertySet")
+    attribute_placeholder = QCoreApplication.translate("Aggregation", "Grouping PropertySet")
+    util.fill_main_attribute(window.ui.widget_group_attribute, group_pset, group_attribute, pset_placeholder,
+                             attribute_placeholder)
+
+
 def open_window(grouping_window: Type[aw_tool.GroupingWindow], util: Type[tool.Util]):
     window = grouping_window.create_window()
-    util.fill_file_selector(window.ui.widget_export, "Export Pfad", "", GROUP_FOLDER, request_folder=True,
+    util.fill_file_selector(window.ui.widget_export, "_export", "", GROUP_FOLDER, request_folder=True,
                             request_save=True)
-    util.fill_file_selector(window.ui.widget_import, "IFC Pfad", "IFC Files (*.ifc *.IFC);;", "grouping_import")
+    util.fill_file_selector(window.ui.widget_import, "_ifc", "IFC Files (*.ifc *.IFC);;", "grouping_import")
     group_attribute = tool.Appdata.get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
     group_pset = tool.Appdata.get_string_setting(IFC_MOD, GROUP_PSET)
-    util.fill_main_attribute(window.ui.widget_group_attribute, group_pset, group_attribute, "Grouping PropertySet",
-                             "Grouping Attribute")
+    util.fill_main_attribute(window.ui.widget_group_attribute, group_pset, group_attribute, "_pset", "_")
     grouping_window.connect_buttons()
     grouping_window.set_progressbar_visible(False)
+    retranslate_ui(grouping_window, util)
     window.show()
 
 
@@ -56,7 +82,8 @@ def run_clicked(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Typ
     grouping_window.set_progress(0)
 
     for path in ifc_paths:
-        grouping_window.set_status(f"Import '{os.path.basename(path)}'")
+        status = QCoreApplication.translate("Aggregation", "Import '{}'".format(os.path.basename(path)))
+        grouping_window.set_status(status)
         runner = grouping_window.create_import_runner(path)
         grouping_window.connect_ifc_import_runner(runner)
         pool.start(runner)
@@ -80,7 +107,8 @@ def cancel_clicked(grouping_window: Type[aw_tool.GroupingWindow], ):
 
 def ifc_import_started(runner: IfcImportRunner, grouping_window: Type[aw_tool.GroupingWindow]):
     grouping_window.set_progressbar_visible(True)
-    grouping_window.set_status(f"Import '{os.path.basename(runner.path)}'")
+    status = QCoreApplication.translate("Aggregation", "Import '{}'".format(os.path.basename(runner.path)))
+    grouping_window.set_status(status)
     grouping_window.set_progress(0)
 
 
@@ -90,7 +118,8 @@ def ifc_import_finished(runner: IfcImportRunner, grouping_window: Type[aw_tool.G
     """
 
     grouping_window.destroy_import_runner(runner)
-    grouping_window.set_status(f"Import Abgeschlossen")
+    status = QCoreApplication.translate("Aggregation", "Import Done!")
+    grouping_window.set_status(status)
 
     grouping_window.set_ifc_name(os.path.basename(runner.path))
     grouping_runner = grouping_window.create_grouping_runner(runner.ifc)
@@ -104,7 +133,8 @@ def create_groups_in_file(ifc_file: ifcopenshell.file, grouping_window: Type[aw_
                           project: Type[tool.Project]):
     grouping_window.set_progress(0)
     start_time = time.time()
-    grouping_window.set_status("create Structure Dict")
+    status = QCoreApplication.translate("Aggregation", "create Structure Dict")
+    grouping_window.set_status(status)
     ifc_elements = list(ifc_file.by_type("IfcElement"))
     structure_dict = grouping_window.create_structure_dict(ifc_elements, project.get())
     logging.info(f"creating Structure dict took {time.time() - start_time} seconds")
@@ -113,8 +143,8 @@ def create_groups_in_file(ifc_file: ifcopenshell.file, grouping_window: Type[aw_
         return
 
     start_time = time.time()
-    grouping_window.set_progress(0)
-    grouping_window.set_status("fill existing Groups")
+    status = QCoreApplication.translate("Aggregation", "fill existing Groups")
+    grouping_window.set_status(status)
     grouping_window.fill_existing_groups(ifc_file, structure_dict)
 
     logging.info(f"fill existing Groups took {time.time() - start_time} seconds")
@@ -124,7 +154,8 @@ def create_groups_in_file(ifc_file: ifcopenshell.file, grouping_window: Type[aw_
 
     start_time = time.time()
     grouping_window.set_progress(0)
-    grouping_window.set_status("create Structure")
+    status = QCoreApplication.translate("Aggregation", "create Structure")
+    grouping_window.set_status(status)
     owner_history = grouping_window.get_first_owner_history(ifc_file)
     grouping_window.create_new_grouping_strictures(ifc_file, structure_dict, owner_history,
                                                    project.get().get_objects(filter=False))
@@ -136,7 +167,8 @@ def create_groups_in_file(ifc_file: ifcopenshell.file, grouping_window: Type[aw_
     start_time = time.time()
     export_name = os.path.join(grouping_window.get_export_path(), grouping_window.get_ifc_name())
     grouping_window.set_progress(0)
-    grouping_window.set_status(f"Write File to {export_name}")
+    status = QCoreApplication.translate("Aggregation", "Write file to '{}'").format(export_name)
+    grouping_window.set_status(status)
     if grouping_window.is_aborted():
         return
 
@@ -156,7 +188,8 @@ def grouping_finished(grouping_window: Type[aw_tool.GroupingWindow], popups: Typ
     time.sleep(0.2)
     if not grouping_window.get_grouping_threadpool().activeThreadCount() > 0:
         grouping_window.reset_buttons()
-        popups.create_info_popup(f"Gruppierung abgeschlossen")
+        status = QCoreApplication.translate("Aggregation", "Grouping Done!")
+        popups.create_info_popup(status)
         grouping_window.set_is_running(False)
     else:
-        logging.info(f"Gruppierung von Datei abgeschlossen, nächste Datei ist dran.")
+        logging.info(f"Grouping of File Done! Next file!")

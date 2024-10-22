@@ -6,8 +6,7 @@ from .qt import ui_Widget
 class GroupingWindow(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ui = ui_Widget.Ui_Form()
+        self.ui = ui_Widget.Ui_Aggregation()
         self.ui.setupUi(self)
         self.setLayout(QVBoxLayout())
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(self.tr(f"Gruppierung erzeugen | {tool.Util.get_status_text()}"))

@@ -5,6 +5,7 @@ import SOMcreator
 import ifcopenshell
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QFileDialog, QDialogButtonBox
 from PySide6.QtCore import Signal, QObject, QThreadPool, QRunnable
+from PySide6.QtGui import QAction
 from typing import TYPE_CHECKING, Iterator
 from ..module.grouping_window import ui as grouping_ui
 from ..module.grouping_window import trigger
@@ -42,6 +43,14 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
     @classmethod
     def get_properties(cls) -> GroupingWindowProperties:
         return som_gui.GroupingWindowProperties
+
+    @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
 
     @classmethod
     def get(cls) -> grouping_ui.GroupingWindow:

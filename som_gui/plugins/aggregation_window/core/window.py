@@ -8,6 +8,25 @@ from SOMcreator import Aggregation
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window import tool as aw_tool
     from som_gui import tool
+from PySide6.QtCore import QCoreApplication
+
+
+def create_main_menu_actions(window: Type[aw_tool.Window], main_window: Type[tool.MainWindow]):
+    from som_gui.plugins.aggregation_window.module.window import trigger
+    action = main_window.add_action2(None, "BSWindow", trigger.open_window)
+    window.set_action("open_window", action)
+
+
+def retranslate_ui(window: Type[aw_tool.Window], ):
+    action = window.get_action("open_window")
+    action.setText(QCoreApplication.translate("Aggregation", "Building Structure"))
+
+    aggregation_window = window.get_window()
+    if not aggregation_window:
+        return
+    title = QCoreApplication.translate("Aggregation", "Building Structure")
+    aggregation_window.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
+    aggregation_window.ui.retranslateUi(aggregation_window)
 
 
 def paint_event(window: Type[aw_tool.Window]) -> None:
@@ -18,41 +37,24 @@ def paint_event(window: Type[aw_tool.Window]) -> None:
         status_bar.showMessage(new_status_bar_text)
 
 
-def create_window(window: Type[aw_tool.Window], view: Type[aw_tool.View], util: Type[tool.Util],
-                  search: Type[tool.Search], popup: Type[tool.Popups]) -> None:
-    if window.get_aggregation_window() is not None:
-        aggregation_window = window.get_aggregation_window()
+def create_window(window: Type[aw_tool.Window], view: Type[aw_tool.View], util: Type[tool.Util]) -> None:
+    if window.get_window() is not None:
+        aggregation_window = window.get_window()
         aggregation_window.show()
         return
 
     aggregation_window = window.create_window()
-    combo_box = window.create_combo_box()
-    aggregation_view = view.create_view()
-    window.add_widget_to_layout(combo_box)
-    window.add_widget_to_layout(aggregation_view)
-    menu_list = window.get_menu_list()
-    menu_list.append(("Ansicht/Ansichtig hinzufügen", lambda: create_new_scene(window, view)))
-    menu_list.append(("Ansicht/Ansicht Umbenennen", window.request_scene_rename))
-    menu_list.append(("Ansicht/Aktuelle Ansicht löschen", lambda: delete_active_scene(window, view)))
-    menu_list.append(("Ansicht/Ansicht Filtern", lambda: filter_scenes(window, view, search, popup)))
-    menu_list.append(("Ansicht/Filter Zurücksetzen", window.remove_filter))
-
-    menu_list.append(("Aggregation/Aggregation finden", lambda: search_aggregation(view, search, popup)))
-    menu_bar = window.get_menu_bar()
-    menu_dict = window.get_menu_dict()
-    menu_dict["menu"] = menu_bar
-    for action, function in menu_list:
-        util.menu_bar_add_action(menu_bar, menu_dict, action, function)
-    util.menu_bar_create_actions(menu_dict, None)
+    view.set_view(aggregation_window.ui.graphicsView)
+    window.connect_menu(aggregation_window)
     aggregation_window.show()
 
-    util.add_shortcut("Ctrl+F", aggregation_window, lambda: search_aggregation(view, search, popup))
-    util.add_shortcut("Ctrl+C", aggregation_window, lambda: copy_selected_nodes(view))
-    util.add_shortcut("Ctrl+V", aggregation_window, lambda: paste_nodes(view))
 
+def remove_filter(window: Type[aw_tool.Window]):
+    window.remove_filter()
 
 def create_new_scene(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> None:
-    scene, scene_name = view.create_scene("Undefined")
+    name = QCoreApplication.translate("Aggregation", "Undefined")
+    scene, scene_name = view.create_scene(name)
     update_combo_box(window, view)
     window.set_combo_box(scene_name)
 
@@ -87,7 +89,8 @@ def combobox_changed(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> 
     scene = view.get_scene_by_name(text)
     logging.debug(f"Activate {scene}")
     if scene is None:
-        scene, scene_name = view.create_scene("Undefined")
+        name = QCoreApplication.translate("Aggregation", "Undefined")
+        scene, scene_name = view.create_scene(name)
     view.activate_scene(scene)
 
 
@@ -103,7 +106,10 @@ def filter_scenes(window: Type[aw_tool.Window], view: Type[aw_tool.View], search
         if filter_object not in objects_in_scene:
             allowed_scenes.remove(scene)
     if not allowed_scenes:
-        popup.create_warning_popup(f"Objekt existiert in keiner Ansicht", "Objekt DNF")
+        title = QCoreApplication.translate("Aggregation", "Object DNE")
+        text = QCoreApplication.translate("Aggregation", "Object doesn't exist in any View")
+
+        popup.create_warning_popup(text, title)
         return
     window.set_filter_object(filter_object)
     window.activate_filter()
@@ -118,7 +124,8 @@ def search_aggregation(view: Type[aw_tool.View], search: Type[tool.Search], popu
     scene = view.get_active_scene()
     nodes = {node for node in view.get_nodes_in_scene(scene) if node.aggregation.object == obj}
     if not nodes:
-        popup.create_warning_popup(f"Keine Aggregation mit diesem Objekt gefunden")
+        text = QCoreApplication.translate("Aggregation", "No Node linked to Object")
+        popup.create_warning_popup(text)
         return
     scene.clearSelection()
     [n.setSelected(True) for n in nodes]
@@ -156,8 +163,10 @@ def paste_nodes(view: Type[aw_tool.View]) -> None:
 def request_scene_rename(window: Type[aw_tool.Window], view: Type[aw_tool.View], popups: Type[tool.Popups]):
     scene = view.get_active_scene()
     scene_name = view.get_scene_name(scene)
-    new_name = popups._request_text_input("Ansicht umbenennen", "Neuer Name", scene_name,
-                                          window.get_aggregation_window())
+    title = QCoreApplication.translate("Aggregation", "Rename View")
+    text = QCoreApplication.translate("Aggregation", "New Name:")
+    new_name = popups._request_text_input(title, text, scene_name,
+                                          window.get_window())
     if new_name:
         view.set_scene_name(scene, new_name)
     update_combo_box(window, view)

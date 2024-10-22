@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QLineEdit
 if TYPE_CHECKING:
     from .ui import AggregationWindow, ComboBox
     from som_gui.module.util.prop import MenuDict
-
+    from PySide6.QtGui import QAction
 
 class WindowProperties:
     aggregation_window: AggregationWindow = None
@@ -24,3 +24,4 @@ class WindowProperties:
     filter_object: SOMcreator.Object | None = None
     object_info_line_edit: QLineEdit | None = None
     grouping_window = None
+    actions: dict[str, QAction] = dict()

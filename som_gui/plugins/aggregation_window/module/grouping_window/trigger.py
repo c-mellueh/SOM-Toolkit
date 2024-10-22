@@ -6,9 +6,11 @@ import ifcopenshell
 
 
 def connect():
-    tool.MainWindow.add_action("Modelle/Gruppen Generieren",
-                               lambda: core.open_window(aw_tool.GroupingWindow, tool.Util))
+    core.create_main_menu_actions(aw_tool.GroupingWindow, tool.MainWindow)
 
+
+def open_window():
+    core.open_window(aw_tool.GroupingWindow, tool.Util)
 
 def connect_ifc_import_runner(runner):
     runner.signaller.started.connect(lambda: core.ifc_import_started(runner, aw_tool.GroupingWindow))
@@ -41,4 +43,4 @@ def on_new_project():
 
 
 def retranslate_ui():
-    pass
+    core.retranslate_ui(aw_tool.GroupingWindow, tool.Util)

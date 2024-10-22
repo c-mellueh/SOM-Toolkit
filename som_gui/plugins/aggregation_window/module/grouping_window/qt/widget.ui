@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>Form</class>
-    <widget class="QWidget" name="Form">
+    <class>Aggregation</class>
+    <widget class="QWidget" name="Aggregation">
         <property name="geometry">
             <rect>
                 <x>0</x>
@@ -32,7 +32,7 @@
             <item>
                 <widget class="QDialogButtonBox" name="buttonBox">
                     <property name="standardButtons">
-                        <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel</set>
+                        <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel</set>
                     </property>
                 </widget>
             </item>

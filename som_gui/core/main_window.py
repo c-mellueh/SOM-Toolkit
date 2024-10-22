@@ -64,3 +64,7 @@ def refresh_main_window(main_window_tool: Type[MainWindow], project_tool: Type[P
 def toggle_console_clicked(main_window: Type[tool.MainWindow]):
     main_window.toggle_console()
     retranslate_ui(main_window)
+
+
+def set_language(main_window: Type[tool.MainWindow], plugings: Type[tool.Plugins]):
+    pass
