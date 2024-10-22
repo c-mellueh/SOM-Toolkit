@@ -18,7 +18,6 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QFormLayout, QLabel, QLineEdit,
                                QSizePolicy, QWidget)
 
-
 class Ui_Project(object):
     def setupUi(self, Project):
         if not Project.objectName():

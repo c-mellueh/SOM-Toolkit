@@ -70,8 +70,8 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         widget.table_widget_property_set.itemSelectionChanged.connect(trigger.pset_table_selection_changed)
         widget.table_widget_attribute.itemSelectionChanged.connect(trigger.attribute_table_selection_changed)
         cls.get_properties().all_checkbox.checkStateChanged.connect(trigger.all_checkbox_checkstate_changed)
-        widget.button_accept.clicked.connect(trigger.result_acccept_clicked)
-        widget.button_abort.clicked.connect(trigger.result_abort_clicked)
+        widget.buttonBox.accepted.connect(trigger.result_acccept_clicked)
+        widget.buttonBox.rejected.connect(trigger.result_abort_clicked)
         widget.button_settings.clicked.connect(trigger.settings_clicked)
         widget.combo_box_ifc_type.currentIndexChanged.connect(trigger.update_identifier_combobox)
 
@@ -286,7 +286,6 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
                 check_item.setCheckState(cs)
 
         cls.unlock_updating()
-
 
     @classmethod
     def find_checkbox_row_in_table(cls, table_widget: QTableWidget, checkbox: ui.ValueCheckBox):
@@ -812,7 +811,6 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                 JOIN filtered_som_attributes sa ON sa.identifier = e.identifier and a.PropertySet = sa.PropertySet and a.Attribut = sa.Attribut
             """
         return query
-
 
     @classmethod
     def get_wanted_ifc_types(cls):

@@ -19,7 +19,7 @@ class AttributeImportResultWindow(QWidget):
     def __init__(self):
         from .qt import ui_Widget
         super(AttributeImportResultWindow, self).__init__()
-        self.widget = ui_Widget.Ui_Form()
+        self.widget = ui_Widget.Ui_AttributeImport()
         self.widget.setupUi(self)
         self.widget.button_settings.setIcon(get_settings_icon())
         title = QCoreApplication.translate("AttributeImport", "Import Values")
@@ -78,7 +78,7 @@ class SettingsDialog(QDialog):
     def __init__(self):
         super(SettingsDialog, self).__init__()
         from .qt import ui_SettingsWidget
-        self.widget = ui_SettingsWidget.Ui_Dialog()
+        self.widget = ui_SettingsWidget.Ui_AttributeImport()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
         title = QCoreApplication.translate("AttributeImport", "Settings v")

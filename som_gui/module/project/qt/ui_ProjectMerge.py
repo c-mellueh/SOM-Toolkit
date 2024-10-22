@@ -19,7 +19,6 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogBu
                                QHeaderView, QSizePolicy, QTableWidget, QTableWidgetItem,
                                QVBoxLayout, QWidget)
 
-
 class Ui_Project(object):
     def setupUi(self, Project):
         if not Project.objectName():

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QListWidgetItem, QMenu
-from PySide6.QtCore import Qt, QModelIndex
+from PySide6.QtCore import Qt, QModelIndex, QCoreApplication
 from PySide6.QtGui import QAction, QIcon
 
 from SOMcreator.datastructure.som_json import INHERITED_TEXT
@@ -95,7 +95,8 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
         if obj:
             if name in {p.name for p in obj.get_property_sets(filter=False)}:
-                tool.Popups.create_warning_popup(f"PropertySet existiert bereits")
+                text = QCoreApplication.translate(f"PropertySet", "PropertySet '{}' exists allready").format(name)
+                tool.Popups.create_warning_popup(text)
                 return None
         if parent is not None:
             property_set = parent.create_child(name)

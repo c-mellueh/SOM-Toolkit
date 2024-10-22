@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+    <class>AttributeImport</class>
+    <widget class="QWidget" name="AttributeImport">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -27,12 +27,12 @@
   </property>
   <layout class="QVBoxLayout" name="main_layout">
    <property name="sizeConstraint">
-    <enum>QLayout::SetMinAndMaxSize</enum>
+       <enum>QLayout::SizeConstraint::SetMinAndMaxSize</enum>
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontal_layout_buttons">
      <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
+         <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
      </property>
      <item>
          <widget class="IfcTypeComboBox" name="combo_box_ifc_type"/>
@@ -55,10 +55,10 @@
         </size>
        </property>
        <property name="text">
-        <string>Anzahl</string>
+           <string>Count</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignCenter</set>
+           <set>Qt::AlignmentFlag::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -73,7 +73,7 @@
       </sizepolicy>
      </property>
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <widget class="QWidget" name="verticalLayoutWidget_3">
       <layout class="QVBoxLayout" name="vertival_layout_pset">
@@ -95,7 +95,7 @@
           <string>PropertySets</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+             <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -108,19 +108,19 @@
           </sizepolicy>
          </property>
          <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
+             <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
          </property>
          <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
+             <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+             <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
          </property>
                <property name="selectionMode">
-                   <enum>QAbstractItemView::SingleSelection</enum>
+                   <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
                </property>
          <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
+             <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
          </property>
          <attribute name="horizontalHeaderMinimumSectionSize">
              <number>1</number>
@@ -167,7 +167,7 @@
           <string>Attribute</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+             <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -183,13 +183,13 @@
           <bool>false</bool>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+             <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
          </property>
                <property name="selectionMode">
-                   <enum>QAbstractItemView::SingleSelection</enum>
+                   <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
                </property>
          <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
+             <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
          </property>
                <attribute name="horizontalHeaderCascadingSectionResizes">
                    <bool>true</bool>
@@ -221,7 +221,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="sizeConstraint">
-          <enum>QLayout::SetMinimumSize</enum>
+             <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
          </property>
          <item>
           <widget class="QCheckBox" name="check_box_values">
@@ -241,7 +241,7 @@
             </size>
            </property>
            <property name="text">
-            <string>Alle</string>
+               <string>All</string>
            </property>
            <property name="checked">
                <bool>false</bool>
@@ -272,7 +272,7 @@
             </size>
            </property>
            <property name="text">
-            <string>Werte</string>
+               <string>Values</string>
            </property>
           </widget>
          </item>
@@ -287,10 +287,10 @@
           </sizepolicy>
          </property>
          <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+             <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
          </property>
          <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
+             <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
          </property>
                <attribute name="horizontalHeaderMinimumSectionSize">
                    <number>1</number>
@@ -332,44 +332,9 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontal_spacer_action_buttons">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="button_abort">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>24</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Abbrechen</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="button_accept">
-       <property name="text">
-           <string>Übernehmen</string>
+         <widget class="QDialogButtonBox" name="buttonBox">
+             <property name="standardButtons">
+                 <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel</set>
        </property>
       </widget>
      </item>
