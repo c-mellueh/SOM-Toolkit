@@ -229,7 +229,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
         description = QCoreApplication.translate("Modelcheck",
                                                  "{} has the wrong Datatype ({} not allowed)")  # {} besitzt den falschen Datentype ({} nicht erlaubt)
-        description.format(element_type, datatype)
+        description = description.format(element_type, datatype)
         issue_nr = DATATYPE_ISSUE
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
@@ -237,45 +237,46 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def format_issue(cls, guid, attribute: SOMcreator.Attribute, value):
         element_type = cls.get_active_element_type()
         description = QCoreApplication.translate("Modelcheck",
-                                                 "'{}' doesn't match format Requirement: '{}'")  # f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
-        description.format(value, "||".join(attribute.value))
+                                                 '"{}" doesn`t match format Requirement: "{}"')  # f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
+        description = description.format(value, "||".join(attribute.value))
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
     def list_issue(cls, guid, attribute, element_type, value):
         description = QCoreApplication.translate("Modelcheck",
-                                                 "Value '{}' is not allowed")  # {element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
-        description.format(value)
+                                                 'Value "{}" is not allowed').format(
+            value)  # {element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
+
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
     def range_issue(cls, guid, attribute, element_type, value):
-        description = QCoreApplication.translate("Modelcheck", """Value '{}' is not in allowed range(s)""")
-        description.format(value)
+        description = QCoreApplication.translate("Modelcheck", 'Value "{}" is not in allowed range(s)')
+        description = description.format(value)
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
     def property_set_issue(cls, guid, pset_name, element_type):
-        description = QCoreApplication.translate("Modelcheck", "{} doesn't contain the Propertyset '{}'")
-        description.format(element_type, pset_name)
+        description = QCoreApplication.translate("Modelcheck", '{} doesn`t contain the Propertyset "{}"')
+        description = description.format(element_type, pset_name)
         issue_nr = PROPERTY_SET_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name)
 
     @classmethod
     def empty_value_issue(cls, guid, pset_name, attribute_name, element_type):
         description = QCoreApplication.translate("Modelcheck", "{} has an empty Attribute")
-        description.format(element_type)
+        description = description.format(element_type)
         issue_nr = ATTRIBUTE_EXIST_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
                        attribute_name=attribute_name)
 
     @classmethod
     def attribute_issue(cls, guid, pset_name, attribute_name, element_type):
-        description = QCoreApplication.translate("Modelcheck", "{} is missing the Attribute '{}:{}'")
-        description.format(element_type, pset_name, attribute_name)
+        description = QCoreApplication.translate("Modelcheck", '{} is missing the Attribute "{}:{}"')
+        description = description.format(element_type, pset_name, attribute_name)
         issue_nr = ATTRIBUTE_EXIST_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
                        attribute_name=attribute_name)
@@ -284,7 +285,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def ident_issue(cls, guid, pset_name, attribute_name):
         element_type = cls.get_active_element_type()
         description = QCoreApplication.translate("Modelcheck", "{} is missing the identifier-Attribute")
-        description.format(element_type)
+        description = description.format(element_type)
         issue_nr = IDENT_ATTRIBUTE_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
                        attribute_name=attribute_name)
@@ -293,15 +294,15 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def ident_pset_issue(cls, guid, pset_name):
         element_type = cls.get_active_element_type()
         description = QCoreApplication.translate("Modelcheck", "{} is missing die identifier PropertySet")
-        description.format(element_type)
+        description = description.format(element_type)
         issue_nr = IDENT_PROPERTY_SET_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name)
 
     @classmethod
     def ident_unknown(cls, guid, pset_name, attribute_name, value):
         element_type = cls.get_active_element_type()
-        description = QCoreApplication.translate("Modelcheck", """{} Value of Identifier ('{}') doesn't exist in SOM""")
-        description.format(element_type, value)
+        description = QCoreApplication.translate("Modelcheck", """{} Value of Identifier ("{}") doesn't exist in SOM""")
+        description = description.format(element_type, value)
         issue_nr = IDENT_ATTRIBUTE_UNKNOWN
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
                        attribute_name=attribute_name, value=value)
@@ -309,7 +310,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def guid_issue(cls, guid, file1, file2):
         description = QCoreApplication.translate('Modelcheck', 'GUID exists in File "{}" and"{}"')
-        description.format(file1, file2)
+        description = description.format(file1, file2)
         issue_nr = GUID_ISSUE
         cls.add_issues(guid, description, issue_nr, None)
 
@@ -373,11 +374,12 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         if attribute is not None:
             pset_name = attribute.property_set.name
             attribute_name = attribute.name
-        cursor.execute(f'''
+        request = f'''
               INSERT INTO issues (GUID_ZWC,creation_date,GUID,short_description,issue_type,PropertySet,Attribut,Value)
                     VALUES
                     ('{guid_zw}','{date}','{guid}','{description}',{issue_type},'{pset_name}','{attribute_name}','{value}')
-              ''')
+              '''
+        cursor.execute(request)
         cls.commit_sql()
 
     @classmethod

@@ -22,7 +22,6 @@ from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication,
 from som_gui.module.modelcheck_window.ui import (ObjectTree, PsetTree)
 from som_gui.module.util.ui import (AttributeSelector, FileSelector, Progressbar)
 
-
 class Ui_Modelcheck(object):
     def setupUi(self, Modelcheck):
         if not Modelcheck.objectName():

@@ -840,12 +840,12 @@
     <context>
         <name>Modelcheck</name>
         <message>
-            <location filename="../core/modelcheck.py" line="45"/>
+            <location filename="../core/modelcheck.py" line="44"/>
             <source>Modelcheck Done!</source>
             <translation>Modellprüfung abgeschlossen!</translation>
         </message>
         <message>
-            <location filename="../core/modelcheck_external.py" line="15"/>
+            <location filename="../core/modelcheck_external.py" line="18"/>
             <location filename="../core/modelcheck_window.py" line="50"/>
             <source>Modelcheck</source>
             <translation>Modellprüfung</translation>
@@ -875,7 +875,15 @@
             <source>Path:&apos;{}&apos;
                 Warning: file will be overridden!
             </source>
-            <translation>Pfad:&apos;{}&apos; Achtung: Datei wird überschrieben!</translation>
+            <translation>Pfad:&apos;{}&apos;
+                Achtung: Datei wird überschrieben!
+            </translation>
+        </message>
+        <message>
+            <source>Path:&apos;{}&apos;
+                Warning: file will be overridden!
+            </source>
+            <translation type="vanished">Pfad:&apos;{}&apos; Achtung: Datei wird überschrieben!</translation>
         </message>
         <message>
             <location filename="../core/modelcheck_window.py" line="56"/>
@@ -888,17 +896,20 @@
             <translation>IFC Pfad</translation>
         </message>
         <message>
+            <location filename="../core/modelcheck_external.py" line="24"/>
             <location filename="../core/modelcheck_window.py" line="60"/>
             <source>Object</source>
             <translation>Objekt</translation>
         </message>
         <message>
+            <location filename="../core/modelcheck_external.py" line="26"/>
             <location filename="../core/modelcheck_window.py" line="62"/>
             <location filename="../tool/modelcheck_results.py" line="33"/>
             <source>Identifier</source>
             <translation>Identifier</translation>
         </message>
         <message>
+            <location filename="../core/modelcheck_external.py" line="30"/>
             <location filename="../core/modelcheck_window.py" line="66"/>
             <source>PropertySet,Attribute</source>
             <translation>PropertySet/Attribut</translation>
@@ -935,34 +946,31 @@
             <translation>Deaktivieren</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="231"/>
+            <location filename="../tool/modelcheck.py" line="232"/>
             <source>{} has the wrong Datatype ({} not allowed)</source>
             <translation>{} hat den falschen Datentyp ({} ist nicht erlaubt)</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="239"/>
             <source>&apos;{}&apos; doesn&apos;t match format Requirement: &apos;{}&apos;</source>
-            <translation>&apos;{}&apos; entspricht nicht den Formatforgaben: &apos;{}&apos;</translation>
+            <translation type="vanished">&apos;{}&apos; entspricht nicht den Formatforgaben: &apos;{}&apos;
+            </translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="246"/>
             <source>Value &apos;{}&apos; is not allowed</source>
-            <translation>Wert &apos;{}&apos; ist nicht erlaubt</translation>
+            <translation type="vanished">Wert &apos;{}&apos; ist nicht erlaubt</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="253"/>
             <source>Value &apos;{}&apos; is not in allowed range(s)</source>
-            <translation>Wert &apos;{}&apos; befindet sich nicht in zugelassenen Wertebereich(en)</translation>
+            <translation type="vanished">Wert &apos;{}&apos; befindet sich nicht in zugelassenen Wertebereich(en)
+            </translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="275"/>
             <source>{} is missing the Attribute &apos;{}:{}&apos;</source>
-            <translation>{} besitzt nicht das Attribut &apos;{}:{}&apos;</translation>
+            <translation type="vanished">{} besitzt nicht das Attribut &apos;{}:{}&apos;</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="301"/>
             <source>{} Value of Identifier (&apos;{}&apos;) doesn&apos;t exist in SOM</source>
-            <translation>{} Wert von Identifier (&apos;{}&apos;) existiert nicht im SOM</translation>
+            <translation type="vanished">{} Wert von Identifier (&apos;{}&apos;) existiert nicht im SOM</translation>
         </message>
         <message>
             <source>Value &apos;{}&apos; is not allowed)</source>
@@ -974,12 +982,11 @@
             </translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="260"/>
             <source>{} doesn&apos;t contain the Propertyset &apos;{}&apos;</source>
-            <translation>{} besitzt nicht das Propertyset &apos;{}&apos;</translation>
+            <translation type="vanished">{} besitzt nicht das Propertyset &apos;{}&apos;</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="267"/>
+            <location filename="../tool/modelcheck.py" line="270"/>
             <source>{} has an empty Attribute</source>
             <translation>{} besitzt ein leeres Attribut</translation>
         </message>
@@ -988,17 +995,47 @@
             <translation type="vanished">{} besitzt nicht das Attribut {}:{}</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="284"/>
+            <location filename="../tool/modelcheck.py" line="241"/>
+            <source>&quot;{}&quot; doesn`t match format Requirement: &quot;{}&quot;</source>
+            <translation>&quot;{}&quot; entspricht nicht den Formatforgaben: &quot;{}&quot;</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="248"/>
+            <source>Value &quot;{}&quot; is not allowed</source>
+            <translation>Wert &quot;{}&quot; ist nicht erlaubt</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="256"/>
+            <source>Value &quot;{}&quot; is not in allowed range(s)</source>
+            <translation>Wert &quot;{}&quot; befindet sich nicht in zugelassenen Wertebereich(en)</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="263"/>
+            <source>{} doesn`t contain the Propertyset &quot;{}&quot;</source>
+            <translation>{} besitzt nicht das Propertyset &quot;{}&quot;</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="278"/>
+            <source>{} is missing the Attribute &quot;{}:{}&quot;</source>
+            <translation>{} is missing the Attribute &quot;{}:{}&quot;</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="287"/>
             <source>{} is missing the identifier-Attribute</source>
             <translation>{} fehlt das identifier-Attribut</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="293"/>
+            <location filename="../tool/modelcheck.py" line="296"/>
             <source>{} is missing die identifier PropertySet</source>
             <translation>{} fehlt das identifier PropertySet</translation>
         </message>
         <message>
-            <location filename="../tool/modelcheck.py" line="309"/>
+            <location filename="../tool/modelcheck.py" line="304"/>
+            <source>{} Value of Identifier (&quot;{}&quot;) doesn&apos;t exist in SOM</source>
+            <translation>{} Value of Identifier (&quot;{}&quot;) doesn&apos;t exist in SOM</translation>
+        </message>
+        <message>
+            <location filename="../tool/modelcheck.py" line="312"/>
             <source>GUID exists in File &quot;{}&quot; and&quot;{}&quot;</source>
             <translation>GUID existiert in Datei &quot;{}&quot; und &quot;{}&quot;</translation>
         </message>
@@ -1008,6 +1045,12 @@
             <translation>Form</translation>
         </message>
         <message>
+            <location filename="../module/modelcheck_external/qt/widget.ui" line="14"/>
+            <source>MainWindow</source>
+            <translation>MW</translation>
+        </message>
+        <message>
+            <location filename="../module/modelcheck_external/qt/widget.ui" line="52"/>
             <location filename="../module/modelcheck_window/qt/Widget.ui" line="41"/>
             <source>TextLabel</source>
             <translation>Text</translation>
@@ -1111,14 +1154,8 @@
     <context>
         <name>Modlecheck</name>
         <message>
-            <location filename="../module/modelcheck_external/qt/widget.ui" line="14"/>
-            <source>MainWindow</source>
-            <translation type="unfinished"></translation>
-        </message>
-        <message>
-            <location filename="../module/modelcheck_external/qt/widget.ui" line="52"/>
             <source>TextLabel</source>
-            <translation type="unfinished">Text</translation>
+            <translation type="obsolete">Text</translation>
         </message>
     </context>
     <context>
