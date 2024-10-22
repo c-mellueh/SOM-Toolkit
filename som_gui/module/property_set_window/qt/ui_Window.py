@@ -23,14 +23,15 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComb
 
 from som_gui.module.attribute_table.ui import AttributeTable
 
-class Ui_layout_main(object):
-    def setupUi(self, layout_main):
-        if not layout_main.objectName():
-            layout_main.setObjectName(u"layout_main")
-        layout_main.resize(996, 547)
-        self.horizontalLayout = QHBoxLayout(layout_main)
+
+class Ui_PropertySetWindow(object):
+    def setupUi(self, PropertySetWindow):
+        if not PropertySetWindow.objectName():
+            PropertySetWindow.setObjectName(u"PropertySetWindow")
+        PropertySetWindow.resize(996, 547)
+        self.horizontalLayout = QHBoxLayout(PropertySetWindow)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.splitter_2 = QSplitter(layout_main)
+        self.splitter_2 = QSplitter(PropertySetWindow)
         self.splitter_2.setObjectName(u"splitter_2")
         self.splitter_2.setOrientation(Qt.Orientation.Horizontal)
         self.gridLayoutWidget = QWidget(self.splitter_2)
@@ -198,32 +199,31 @@ class Ui_layout_main(object):
 
         self.horizontalLayout.addWidget(self.splitter_2)
 
+        self.retranslateUi(PropertySetWindow)
 
-        self.retranslateUi(layout_main)
-
-        QMetaObject.connectSlotsByName(layout_main)
+        QMetaObject.connectSlotsByName(PropertySetWindow)
     # setupUi
 
-    def retranslateUi(self, layout_main):
-        layout_main.setWindowTitle(QCoreApplication.translate("layout_main", u"Form", None))
-        self.label_values.setText(QCoreApplication.translate("layout_main", u"Values", None))
-        self.button_add_line.setText(QCoreApplication.translate("layout_main", u"+", None))
-        self.button_add.setText(QCoreApplication.translate("layout_main", u"Add", None))
-        self.check_box_seperator.setText(QCoreApplication.translate("layout_main", u"Splitter", None))
-        self.check_box_inherit.setText(QCoreApplication.translate("layout_main", u"Inherit Values", None))
-        self.label_name.setText(QCoreApplication.translate("layout_main", u"Name", None))
-        self.lineEdit_name.setPlaceholderText(QCoreApplication.translate("layout_main", u"Name", None))
-        self.description.setPlaceholderText(QCoreApplication.translate("layout_main", u"Description", None))
+    def retranslateUi(self, PropertySetWindow):
+        PropertySetWindow.setWindowTitle(QCoreApplication.translate("PropertySetWindow", u"Form", None))
+        self.label_values.setText(QCoreApplication.translate("PropertySetWindow", u"Values", None))
+        self.button_add_line.setText(QCoreApplication.translate("PropertySetWindow", u"+", None))
+        self.button_add.setText(QCoreApplication.translate("PropertySetWindow", u"Add", None))
+        self.check_box_seperator.setText(QCoreApplication.translate("PropertySetWindow", u"Splitter", None))
+        self.check_box_inherit.setText(QCoreApplication.translate("PropertySetWindow", u"Inherit Values", None))
+        self.label_name.setText(QCoreApplication.translate("PropertySetWindow", u"Name", None))
+        self.lineEdit_name.setPlaceholderText(QCoreApplication.translate("PropertySetWindow", u"Name", None))
+        self.description.setPlaceholderText(QCoreApplication.translate("PropertySetWindow", u"Description", None))
         ___qtablewidgetitem = self.table_widget.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("layout_main", u"Name", None));
+        ___qtablewidgetitem.setText(QCoreApplication.translate("PropertySetWindow", u"Name", None));
         ___qtablewidgetitem1 = self.table_widget.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("layout_main", u"Datatype", None));
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("PropertySetWindow", u"Datatype", None));
         ___qtablewidgetitem2 = self.table_widget.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("layout_main", u"Format", None));
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("PropertySetWindow", u"Format", None));
         ___qtablewidgetitem3 = self.table_widget.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("layout_main", u"Value", None));
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("PropertySetWindow", u"Value", None));
         ___qtablewidgetitem4 = self.table_widget.horizontalHeaderItem(4)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("layout_main", u"Optional", None));
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("PropertySetWindow", u"Optional", None));
 
         __sortingEnabled = self.table_widget.isSortingEnabled()
         self.table_widget.setSortingEnabled(False)

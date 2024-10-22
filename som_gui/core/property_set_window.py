@@ -5,10 +5,16 @@ import SOMcreator
 from som_gui.core import attribute_table as attribute_table_core
 from SOMcreator.constants.value_constants import RANGE
 from som_gui.module.property_set_window.constants import SEPERATOR_SECTION, SEPERATOR, SEPERATOR_STATUS
+
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_set_window.ui import PropertySetWindow
     from PySide6.QtWidgets import QTableWidgetItem
+
+
+def retranslate_ui(property_set_window: Type[tool.PropertySetWindow]):
+    for window in property_set_window.get_open_windows():
+        window.ui.retranslateUi(window)
 
 
 def inherit_checkbox_toggled(window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow],
@@ -34,7 +40,7 @@ def add_attribute_button_clicked(window: PropertySetWindow, property_set: Type[t
 
 
 def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[tool.PropertySetWindow]):
-    value_type = window.widget.combo_type.currentText()
+    value_type = window.ui.combo_type.currentText()
     if value_type == RANGE:
         property_set_tool.add_value_line(2, window)
     else:
@@ -120,7 +126,6 @@ def attribute_clicked(item: QTableWidgetItem, attribute: Type[tool.Attribute],
 
 def activate_attribute(active_attribute: SOMcreator.Attribute, window, attribute: Type[tool.Attribute],
                        property_set_window: Type[tool.PropertySetWindow]):
-
     name = attribute.get_attribute_name(active_attribute)
     data_type = attribute.get_attribute_data_type(active_attribute)
     value_type = attribute.get_attribute_value_type(active_attribute)

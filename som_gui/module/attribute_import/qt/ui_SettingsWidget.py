@@ -18,7 +18,6 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog,
                                QDialogButtonBox, QSizePolicy, QVBoxLayout, QWidget)
 
-
 class Ui_AttributeImport(object):
     def setupUi(self, AttributeImport):
         if not AttributeImport.objectName():
@@ -69,6 +68,7 @@ class Ui_AttributeImport(object):
         self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
 
         self.verticalLayout.addWidget(self.buttonBox)
+
 
         self.retranslateUi(AttributeImport)
         self.buttonBox.accepted.connect(AttributeImport.accept)

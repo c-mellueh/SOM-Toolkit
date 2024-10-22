@@ -23,7 +23,6 @@ from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication,
 from som_gui.module.attribute_import.ui import (AttributeTable, IfcTypeComboBox, PropertySetTable, SOMTypeComboBox,
                                                 ValueTable)
 
-
 class Ui_AttributeImport(object):
     def setupUi(self, AttributeImport):
         if not AttributeImport.objectName():
