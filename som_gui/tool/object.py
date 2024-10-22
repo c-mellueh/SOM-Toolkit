@@ -54,9 +54,7 @@ class Object(som_gui.core.tool.Object):
         header = tree.headerItem()
         header_texts = cls.get_header_names()
         tree.setColumnCount(tree.columnCount() + 1)
-        print()
         for col, name in enumerate(header_texts):
-            print(name)
             header.setText(col, name)
 
     @classmethod
