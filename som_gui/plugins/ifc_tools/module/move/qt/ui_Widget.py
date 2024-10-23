@@ -9,15 +9,15 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialogButtonBox, QDoubleSpinBox,
-                               QGridLayout, QLabel, QSizePolicy, QVBoxLayout,
-                               QWidget)
+    QGridLayout, QLabel, QSizePolicy, QVBoxLayout,
+    QWidget)
 
 from som_gui.module.util.ui import (FileSelector, Progressbar)
 
@@ -84,7 +84,7 @@ class Ui_Form(object):
 
         self.buttonBox = QDialogButtonBox(Form)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Close)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Close)
 
         self.verticalLayout.addWidget(self.buttonBox)
 
