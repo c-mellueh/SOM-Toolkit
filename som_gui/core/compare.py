@@ -1,9 +1,6 @@
 from __future__ import annotations
 import os.path
 from typing import TYPE_CHECKING, Type
-
-from jupyterlab.semver import compare
-
 from som_gui.module.compare.constants import COMPARE_SETTING, EXPORT_PATH
 import SOMcreator
 from PySide6.QtCore import Qt, QCoreApplication
@@ -130,38 +127,7 @@ def draw_tree_branch(tree: QTreeWidget, painter: QPainter, rect, index: QModelIn
     return painter, rect, index
 
 
-def object_tree_selection_changed(widget: ui.AttributeWidget,
-                                  attribute_compare: Type[tool.AttributeCompare]):
-    attribute_compare.clear_table(attribute_compare.get_info_table(widget))
-    attribute_compare.clear_table(attribute_compare.get_value_table(widget))
-    obj = attribute_compare.get_selected_entity(attribute_compare.get_object_tree(widget))
-    tree = attribute_compare.get_pset_tree(widget)
-    pset_list = attribute_compare.get_pset_list(obj)
-    attribute_compare.fill_pset_tree(tree, pset_list, add_missing=True)
-    attribute_compare.add_attributes_to_pset_tree(tree, True)
-    root = tree.invisibleRootItem()
 
-
-    for child_index in range(root.childCount()):
-        attribute_compare.style_tree_item(root.child(child_index))
-
-
-def pset_tree_selection_changed(widget: ui.AttributeWidget, attribute_compare: Type[tool.AttributeCompare]):
-    item = attribute_compare.get_selected_item(attribute_compare.get_pset_tree(widget))
-    entity0, entity1 = attribute_compare.get_entities_from_item(item)
-    attribute_compare.style_table(attribute_compare.get_value_table(widget))
-    table = attribute_compare.get_info_table(widget)
-    attribute_compare.clear_table(table)
-
-    if isinstance(entity0 or entity1, SOMcreator.PropertySet):
-        attribute_compare.fill_value_table_pset(widget)
-        attribute_compare.fill_table(table, attribute_compare.get_pset_info_list(), (entity0, entity1))
-    else:
-        attribute_compare.fill_value_table(attribute_compare.get_value_table(widget), entity0 or entity1)
-        attribute_compare.fill_table(table, attribute_compare.get_attribute_info_list(), (entity0, entity1))
-
-    attribute_compare.style_table(table, 1)
-    attribute_compare.style_table(attribute_compare.get_value_table(widget))
 
 
 def download_changelog(compare_window: Type[tool.CompareWindow], popups: Type[tool.Popups],

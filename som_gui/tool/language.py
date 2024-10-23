@@ -11,6 +11,8 @@ if TYPE_CHECKING:
     from som_gui.module.language.prop import LanguageProperties
     from som_gui.module.language import ui
 
+from som_gui.translation import load_language
+
 
 class Language(som_gui.core.tool.Language):
     @classmethod
@@ -39,7 +41,6 @@ class Language(som_gui.core.tool.Language):
 
     @classmethod
     def translate_main_ui(cls, app: QApplication, lang_code: str):
-        from som_gui.translation import load_language
         load_language(app, lang_code)
 
     @classmethod

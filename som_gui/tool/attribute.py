@@ -6,12 +6,11 @@ from PySide6.QtGui import QBrush, QPalette, QColor, QIcon
 from PySide6.QtCore import QModelIndex, Qt
 from som_gui import tool
 import SOMcreator
-from som_gui.module.attribute import ui
+from som_gui.module.attribute import ui,trigger
 import som_gui.core.tool
 import som_gui
 from PySide6.QtWidgets import QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QTableWidget
 from som_gui.module.project.constants import CLASS_REFERENCE
-from som_gui.module.compare import trigger
 from PySide6.QtCore import QCoreApplication
 
 style_list = [

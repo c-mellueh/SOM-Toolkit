@@ -6,7 +6,7 @@ from PySide6.QtCore import QCoreApplication
 
 if TYPE_CHECKING:
     from som_gui import tool
-
+    from som_gui.module.attribute import ui
 
 def add_basic_attribute_data(attribute_tool: Type[tool.Attribute]):
     attribute_tool.add_attribute_data_value("name", attribute_tool.get_attribute_name,
@@ -73,3 +73,36 @@ def init_attribute_compare(project0, project1, attribute_compare: Type[tool.Attr
     attribute_compare.set_header_labels([], [info_table], ["Name"] + header_labels)
 
     attribute_compare.create_tree_selection_trigger(widget)
+
+def object_tree_selection_changed(widget: ui.AttributeWidget,
+                                  attribute_compare: Type[tool.AttributeCompare]):
+    attribute_compare.clear_table(attribute_compare.get_info_table(widget))
+    attribute_compare.clear_table(attribute_compare.get_value_table(widget))
+    obj = attribute_compare.get_selected_entity(attribute_compare.get_object_tree(widget))
+    tree = attribute_compare.get_pset_tree(widget)
+    pset_list = attribute_compare.get_pset_list(obj)
+    attribute_compare.fill_pset_tree(tree, pset_list, add_missing=True)
+    attribute_compare.add_attributes_to_pset_tree(tree, True)
+    root = tree.invisibleRootItem()
+
+
+    for child_index in range(root.childCount()):
+        attribute_compare.style_tree_item(root.child(child_index))
+
+
+def pset_tree_selection_changed(widget: ui.AttributeWidget, attribute_compare: Type[tool.AttributeCompare]):
+    item = attribute_compare.get_selected_item(attribute_compare.get_pset_tree(widget))
+    entity0, entity1 = attribute_compare.get_entities_from_item(item)
+    attribute_compare.style_table(attribute_compare.get_value_table(widget))
+    table = attribute_compare.get_info_table(widget)
+    attribute_compare.clear_table(table)
+
+    if isinstance(entity0 or entity1, SOMcreator.PropertySet):
+        attribute_compare.fill_value_table_pset(widget)
+        attribute_compare.fill_table(table, attribute_compare.get_pset_info_list(), (entity0, entity1))
+    else:
+        attribute_compare.fill_value_table(attribute_compare.get_value_table(widget), entity0 or entity1)
+        attribute_compare.fill_table(table, attribute_compare.get_attribute_info_list(), (entity0, entity1))
+
+    attribute_compare.style_table(table, 1)
+    attribute_compare.style_table(attribute_compare.get_value_table(widget))

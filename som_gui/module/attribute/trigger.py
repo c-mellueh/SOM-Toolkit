@@ -16,6 +16,13 @@ def init_attribute_compare(project_0:SOMcreator.Project,project_1:SOMcreator.Pro
 def export_attribute_differences(file):
     core.export_attribute_differences(file,tool.AttributeCompare)
 
+def object_tree_selection_changed(widget, ):
+    core.object_tree_selection_changed(widget, tool.AttributeCompare)
+
+
+def pset_tree_selection_changed(widget):
+    core.pset_tree_selection_changed(widget, tool.AttributeCompare)
+
 def retranslate_ui():
     pass
 

@@ -30,12 +30,7 @@ def project_button_clicked():
     core.project_button_clicked(tool.CompareProjectSelector, tool.Popups, tool.Appdata)
 
 
-def object_tree_selection_changed(widget, ):
-    core.object_tree_selection_changed(widget, tool.AttributeCompare)
 
-
-def pset_tree_selection_changed(widget):
-    core.pset_tree_selection_changed(widget, tool.AttributeCompare)
 
 
 def draw_branches(tree, painter, rect, index):
