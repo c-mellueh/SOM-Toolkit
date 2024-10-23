@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from som_gui.module.language.prop import LanguageProperties
     from som_gui.module.language import ui
 
-from som_gui.ressources.translation import load_language
+from som_gui.resources.translation import load_language
 
 
 class Language(som_gui.core.tool.Language):

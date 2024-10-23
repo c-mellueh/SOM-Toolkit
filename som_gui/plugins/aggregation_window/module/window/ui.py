@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QMainWindow, QComboBox
 from PySide6.QtGui import QPaintEvent
-from som_gui.ressources.icons import get_icon
+from som_gui.resources.icons import get_icon
 from . import trigger
 from PySide6.QtCore import Qt
 

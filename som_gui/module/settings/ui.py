@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QDialog
-from som_gui.ressources.icons import get_icon
+from som_gui.resources.icons import get_icon
 
 
 class Dialog(QDialog):

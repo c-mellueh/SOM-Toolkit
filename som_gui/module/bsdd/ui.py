@@ -1,5 +1,5 @@
 from som_gui.module.bsdd.qt.ui_widget import Ui_BSDD
-from som_gui.ressources.icons import get_icon
+from som_gui.resources.icons import get_icon
 from PySide6.QtWidgets import QWidget
 from . import trigger
 

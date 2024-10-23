@@ -2,7 +2,7 @@ from som_gui.module import object
 from PySide6.QtWidgets import QTreeWidget, QWidget, QDialog
 from som_gui import tool
 from .qt.ui_InfoWidget import Ui_ObjectInfo
-from som_gui.ressources.icons import get_icon
+from som_gui.resources.icons import get_icon
 from PySide6.QtCore import QCoreApplication
 class ObjectTreeWidget(QTreeWidget):
 

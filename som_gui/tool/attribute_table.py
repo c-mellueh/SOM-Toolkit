@@ -11,7 +11,7 @@ from som_gui import tool
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.property_set_window.ui import PropertySetWindow
 from som_gui.module.main_window.ui import MainWindow
-from som_gui.ressources.icons import get_link_icon
+from som_gui.resources.icons import get_link_icon
 from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:

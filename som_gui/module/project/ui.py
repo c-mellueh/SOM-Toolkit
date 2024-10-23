@@ -1,6 +1,6 @@
 from __future__ import annotations  # make own class referencable
 from PySide6.QtWidgets import QDialog, QWidget
-from ...ressources import icons
+from ...resources import icons
 from som_gui.module import project
 from .qt import ui_SettingsGeneral, ui_SettingsPath, ui_ProjectMerge
 

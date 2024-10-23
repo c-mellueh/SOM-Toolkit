@@ -17,7 +17,7 @@ import ifcopenshell
 from som_gui.module.modelcheck.constants import *
 from ifcopenshell.util import element as ifc_el
 from SOMcreator import value_constants
-from som_gui.ressources.data import constants
+from som_gui.resources.data import constants
 from som_gui.module.modelcheck import trigger
 from PySide6.QtCore import QCoreApplication
 rev_datatype_dict = {

@@ -2,7 +2,7 @@ from __future__ import annotations
 from PySide6.QtWidgets import QWidget, QTreeView
 from PySide6.QtGui import QStandardItemModel
 from som_gui.module import modelcheck_window
-from som_gui.ressources.icons import get_icon
+from som_gui.resources.icons import get_icon
 from . import qt
 
 

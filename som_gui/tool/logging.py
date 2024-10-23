@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from som_gui.module.logging.prop import LoggingProperties
     from som_gui.module.logging import ui
 
-from som_gui.ressources.icons import get_icon
+from som_gui.resources.icons import get_icon
 from som_gui import tool
 from som_gui.module.logging.constants import LOG_PATH, LOG_SECTION, LOG_LEVEL
 

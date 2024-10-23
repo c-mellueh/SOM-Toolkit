@@ -1,6 +1,6 @@
 from __future__ import annotations
 from PySide6.QtWidgets import QWidget, QDialog, QTableWidget, QComboBox, QCheckBox
-from som_gui.ressources.icons import get_icon, get_settings_icon
+from som_gui.resources.icons import get_icon, get_settings_icon
 from . import trigger
 from som_gui import __version__ as version
 from som_gui import tool

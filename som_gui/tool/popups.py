@@ -1,7 +1,7 @@
 import os.path
 
 import som_gui.core.tool
-from som_gui.ressources.icons import get_icon
+from som_gui.resources.icons import get_icon
 from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QFileDialog, QListWidgetItem
 from PySide6.QtCore import Qt, QCoreApplication
 from som_gui import tool

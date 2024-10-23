@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QDialog
 from PySide6.QtCore import Signal, QModelIndex
 from som_gui.module import predefined_property_set
-from som_gui.ressources.icons import get_icon
+from som_gui.resources.icons import get_icon
 from som_gui.module.property_set.ui import LineEditDelegate
 from .qt import ui_CompareWidget, ui_Widget
 
