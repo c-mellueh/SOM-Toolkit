@@ -21,7 +21,6 @@ def connect():
         lambda: core.ident_pset_changed(tool.Object, tool.MainWindow, tool.PredefinedPropertySet))
     main_ui.lineEdit_ident_attribute.textChanged.connect(
         lambda: core.ident_attribute_changed(tool.Object, tool.MainWindow, tool.PredefinedPropertySet))
-    main_ui.button_search.setIcon(get_search_icon())
 
 
     core.load_context_menus(tool.Object)

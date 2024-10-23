@@ -32,14 +32,6 @@ class Plugins(som_gui.core.tool.Plugins):
         modules = sorted(m.name for m in pkgutil.iter_modules(module.__path__) if m.ispkg)
         return modules
 
-    @classmethod
-    def load_translations(cls, app, lang: str):
-        for plugin_name in cls.get_available_plugins():
-            if not tool.Plugins.is_plugin_active(plugin_name):
-                continue
-            module_text = f"som_gui.plugins.{plugin_name}"
-            module = importlib.import_module(f"{module_text}.translation")
-            module.load_language(app, lang)
 
     @classmethod
     def import_plugin(cls, plugin_name: str) -> list[tuple[str, Any]]:

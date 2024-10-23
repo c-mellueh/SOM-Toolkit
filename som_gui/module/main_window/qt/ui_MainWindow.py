@@ -112,6 +112,8 @@ class Ui_MainWindow(object):
         self.button_search.setSizePolicy(sizePolicy2)
         self.button_search.setMinimumSize(QSize(24, 0))
         self.button_search.setMaximumSize(QSize(24, 24))
+        icon = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.EditFind))
+        self.button_search.setIcon(icon)
         self.button_search.setIconSize(QSize(16, 16))
 
         self.gridLayout_objects.addWidget(self.button_search, 0, 0, 1, 1)

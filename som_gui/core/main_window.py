@@ -1,8 +1,5 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Type
-
-from ifcopenshell.express.rules.IFC4X1 import project
-
 import som_gui
 from som_gui.core import project as core_project
 from PySide6.QtWidgets import QApplication
@@ -67,10 +64,3 @@ def refresh_main_window(main_window_tool: Type[MainWindow], project_tool: Type[P
 def toggle_console_clicked(main_window: Type[tool.MainWindow]):
     main_window.toggle_console()
     retranslate_ui(main_window)
-
-
-def set_language(lang, main_window: Type[tool.MainWindow], plugings: Type[tool.Plugins]):
-    app = main_window.get_app()
-    from som_gui.translation import load_language
-    load_language(app, lang)
-    plugings.load_translations(app, lang)

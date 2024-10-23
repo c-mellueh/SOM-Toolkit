@@ -93,6 +93,7 @@
         "..\\module\\main_window\\trigger.py",
         "..\\module\\main_window\\ui.py",
         "..\\module\\main_window\\__init__.py",
+        "..\\module\\main_window\\qt\\LanguageWidget.ui",
         "..\\module\\main_window\\qt\\MainWindow.ui",
         "..\\module\\mapping\\prop.py",
         "..\\module\\mapping\\trigger.py",
