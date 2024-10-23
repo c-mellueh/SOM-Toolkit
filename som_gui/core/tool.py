@@ -230,7 +230,6 @@ class AttributeImport:
 
     def get_attribute_import_threadpool(self, ): pass
 
-    def get_ifc_import_widget(self, ): pass
 
     def get_ifc_import_window(self, ): pass
 

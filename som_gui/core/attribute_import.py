@@ -22,9 +22,22 @@ def create_main_menu_actions(attribute_import: Type[tool.AttributeImport], main_
     attribute_import.set_action("open_window", open_window_action)
 
 
-def retranslate_ui(attribute_import: Type[tool.AttributeImport], ):
+def retranslate_ui(attribute_import: Type[tool.AttributeImport],attribute_import_results:Type[tool.AttributeImportResults],util:Type[tool.Util] ):
     open_window_action = attribute_import.get_action("open_window")
     open_window_action.setText(QCoreApplication.translate("AttributeImport", "Import Values"))
+
+    ifc_window = attribute_import.get_ifc_import_window()
+    if ifc_window:
+        title = QCoreApplication.translate("AttributeImport", "Import Values")
+        ifc_window.widget.retranslateUi(ifc_window)
+        ifc_window.setWindowTitle(util.get_window_title(title))
+        ifc_window.widget.file_selector_widget.name = QCoreApplication.translate("AttributeImport", "IFC Path")
+
+    result_window = attribute_import_results.get_results_window()
+    if result_window:
+        result_window.ui.retranslateUi(result_window)
+        title = QCoreApplication.translate("AttributeImport", "Import Values")
+        result_window.setWindowTitle(util.get_window_title(title))
 
 def open_import_window(attribute_import: Type[tool.AttributeImport],
                        attribute_import_results: Type[tool.AttributeImportResults],
@@ -39,17 +52,16 @@ def open_import_window(attribute_import: Type[tool.AttributeImport],
         attribute_import_results.get_results_window().show()
         return
 
-    window = attribute_import.create_ifc_import_window()
-    ifc_import_widget = ifc_importer.create_importer()
-    attribute_import.add_ifc_importer_to_window(ifc_import_widget)
-    attribute_import.connect_import_buttons()
+    window = attribute_import.create_ifc_import_window(ifc_importer.create_importer())
+    from som_gui.module.attribute_import import trigger
+    trigger.retranslate_ui()
     window.show()
 
 
 def ifc_import_run_clicked(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter],
                            attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project],
                            util: Type[tool.Util]):
-    ifc_import_widget = attribute_import.get_ifc_import_widget()
+    ifc_import_widget = attribute_import.get_ifc_import_window()
     ifc_paths = ifc_importer.get_ifc_paths(ifc_import_widget)
     main_pset_name = ifc_importer.get_main_pset(ifc_import_widget)
     main_attribute_name = ifc_importer.get_main_attribute(ifc_import_widget)
@@ -113,7 +125,7 @@ def abort_clicked():
 
 def ifc_import_started(runner, attribute_import: Type[tool.AttributeImport],
                        ifc_importer: Type[tool.IfcImporter]):
-    widget = attribute_import.get_ifc_import_widget()
+    widget = attribute_import.get_ifc_import_window()
     ifc_importer.set_progressbar_visible(widget, True)
     ifc_importer.set_status(widget, f"Import '{os.path.basename(runner.path)}'")
     ifc_importer.set_progress(widget, 0)
@@ -126,7 +138,7 @@ def ifc_import_finished(runner: IfcImportRunner, attribute_import: Type[tool.Att
     """
 
     attribute_import.destroy_import_runner(runner)
-    ifc_import_widget = attribute_import.get_ifc_import_widget()
+    ifc_import_widget = attribute_import.get_ifc_import_window()
     ifc_importer.set_status(ifc_import_widget, f"Import Abgeschlossen")
     attribute_import_runner = attribute_import.create_attribute_import_runner(runner)
     attribute_import.connect_attribute_import_runner(attribute_import_runner)
@@ -152,7 +164,7 @@ def start_attribute_import(file: ifcopenshell.file, path, attribute_import: Type
     attribute_import_sql.disconnect_from_database()
 
 def attribute_import_finished(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
-    ifc_import_widget = attribute_import.get_ifc_import_widget()
+    ifc_import_widget = attribute_import.get_ifc_import_window()
 
     if attribute_import.is_aborted():
         ifc_importer.set_progressbar_visible(ifc_import_widget, False)

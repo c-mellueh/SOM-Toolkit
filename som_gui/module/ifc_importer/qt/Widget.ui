@@ -1,101 +1,101 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>IfcImporter</class>
-    <widget class="QWidget" name="IfcImporter">
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>955</width>
-                <height>287</height>
-            </rect>
-        </property>
-        <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-            </sizepolicy>
-        </property>
-        <property name="windowTitle">
-            <string>Form</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-                <layout class="QVBoxLayout" name="verticalLayout_2">
-                    <item>
-                        <widget class="AttributeSelector" name="main_attribute_widget" native="true"/>
-                    </item>
-                    <item>
-                        <widget class="FileSelector" name="file_selector_widget" native="true"/>
-                    </item>
-                </layout>
-            </item>
-            <item>
-                <widget class="QLabel" name="label_status">
-                    <property name="text">
-                        <string>Status Label</string>
-                    </property>
-                </widget>
-            </item>
-            <item>
-                <widget class="QProgressBar" name="progress_bar">
-                    <property name="value">
-                        <number>24</number>
-                    </property>
-                    <property name="textVisible">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-            </item>
-            <item>
-                <widget class="QWidget" name="button_widget" native="true">
-                    <layout class="QHBoxLayout" name="horizontalLayout_2">
-                        <item>
-                            <spacer name="horizontalSpacer">
-                                <property name="orientation">
-                                    <enum>Qt::Orientation::Horizontal</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                    <size>
-                                        <width>664</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </item>
-                        <item>
-                            <widget class="QPushButton" name="button_close">
-                                <property name="text">
-                                    <string>Close</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item>
-                            <widget class="QPushButton" name="button_run">
-                                <property name="text">
-                                    <string>Run</string>
-                                </property>
-                            </widget>
-                        </item>
-                    </layout>
-                </widget>
-            </item>
-        </layout>
+ <class>IfcImporter</class>
+ <widget class="QWidget" name="IfcImporter">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>955</width>
+    <height>126</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="AttributeSelector" name="main_attribute_widget" native="true"/>
+     </item>
+     <item>
+      <widget class="FileSelector" name="file_selector_widget" native="true"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_status">
+     <property name="text">
+      <string>Status Label</string>
+     </property>
     </widget>
-    <customwidgets>
-        <customwidget>
-            <class>FileSelector</class>
-            <extends>QWidget</extends>
-            <header>som_gui.module.util.ui</header>
-            <container>1</container>
-        </customwidget>
-        <customwidget>
-            <class>AttributeSelector</class>
-            <extends>QWidget</extends>
-            <header>som_gui.module.util.ui</header>
-            <container>1</container>
-        </customwidget>
-    </customwidgets>
-    <resources/>
-    <connections/>
+   </item>
+   <item>
+    <widget class="QProgressBar" name="progress_bar">
+     <property name="value">
+      <number>24</number>
+     </property>
+     <property name="textVisible">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="button_widget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>664</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="button_close">
+        <property name="text">
+         <string>Close</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="button_run">
+        <property name="text">
+         <string>Run</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FileSelector</class>
+   <extends>QWidget</extends>
+   <header>som_gui.module.util.ui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AttributeSelector</class>
+   <extends>QWidget</extends>
+   <header>som_gui.module.util.ui</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
 </ui>

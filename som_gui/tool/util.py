@@ -167,6 +167,10 @@ class Util(som_gui.core.tool.Util):
         return {model.data(index, Qt.ItemDataRole.DisplayRole): index for index in indexes}
 
     @classmethod
+    def get_window_title(cls,window_name:str):
+        return f"{window_name} | {cls.get_status_text()}"
+
+    @classmethod
     def get_status_text(cls):
         proj = tool.Project.get()
         if not proj:

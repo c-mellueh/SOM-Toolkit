@@ -9,15 +9,15 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QProgressBar,
-                               QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout,
-                               QWidget)
+    QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout,
+    QWidget)
 
 from som_gui.module.util.ui import (AttributeSelector, FileSelector)
 
@@ -25,7 +25,7 @@ class Ui_IfcImporter(object):
     def setupUi(self, IfcImporter):
         if not IfcImporter.objectName():
             IfcImporter.setObjectName(u"IfcImporter")
-        IfcImporter.resize(955, 287)
+        IfcImporter.resize(955, 126)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -80,6 +80,7 @@ class Ui_IfcImporter(object):
 
 
         self.verticalLayout.addWidget(self.button_widget)
+
 
         self.retranslateUi(IfcImporter)
 

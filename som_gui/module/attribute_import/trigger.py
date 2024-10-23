@@ -14,7 +14,7 @@ def open_window():
                             tool.AttributeImportSQL)
 
 def retranslate_ui():
-    core.retranslate_ui(tool.AttributeImport)
+    core.retranslate_ui(tool.AttributeImport,tool.AttributeImportResults,tool.Util)
 
 def connect_import_buttons(run_button: QPushButton, abort_button: QPushButton):
     run_button.clicked.connect(

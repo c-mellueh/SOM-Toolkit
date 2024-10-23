@@ -12,10 +12,8 @@ if TYPE_CHECKING:
     from sqlite3 import Connection
 
 class AttributeImportProperties:
-    ifc_import_window: AttributeImportWindow = None
-    attribute_import_window: AttributeImportResultWindow = None
-    ifc_importer: IfcImportWidget = None
-
+    ifc_import_window: IfcImportWidget = None
+    result_window: AttributeImportResultWindow = None
     main_pset: str = "Undefined"
     main_attribute: str = "Undefined"
     import_is_aborted = False

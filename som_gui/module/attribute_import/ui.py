@@ -6,22 +6,15 @@ from som_gui import __version__ as version
 from som_gui import tool
 from PySide6.QtCore import QCoreApplication
 
-class AttributeImportWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setLayout(QVBoxLayout())
-        title = QCoreApplication.translate("AttributeImport", "Import Values")
-        self.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
-        self.setWindowIcon(get_icon())
 
 
 class AttributeImportResultWindow(QWidget):
     def __init__(self):
         from .qt import ui_Widget
         super(AttributeImportResultWindow, self).__init__()
-        self.widget = ui_Widget.Ui_AttributeImport()
-        self.widget.setupUi(self)
-        self.widget.button_settings.setIcon(get_settings_icon())
+        self.ui = ui_Widget.Ui_AttributeImport()
+        self.ui.setupUi(self)
+        self.ui.button_settings.setIcon(get_settings_icon())
         title = QCoreApplication.translate("AttributeImport", "Import Values")
         self.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
         self.setWindowIcon(get_icon())
