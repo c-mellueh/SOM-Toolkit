@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QApplication
 if TYPE_CHECKING:
     from som_gui.tool import MainWindow, Appdata, Project, Popups
     from som_gui import tool
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QCoreApplication, QLocale
 
 
 def create_main_menu_actions(main_window: Type[tool.MainWindow]):
@@ -25,6 +25,9 @@ def retranslate_ui(main_window: Type[tool.MainWindow]):
         action.setText(QCoreApplication.translate("MainWindow", "Hide Console"))
     else:
         action.setText(QCoreApplication.translate("MainWindow", "Show Console"))
+    mw = main_window.get()
+    mw.ui.retranslateUi(mw)
+
 
 def create_main_window(application: QApplication, main_window: Type[tool.MainWindow]):
     mw = main_window.create(application)
@@ -66,5 +69,8 @@ def toggle_console_clicked(main_window: Type[tool.MainWindow]):
     retranslate_ui(main_window)
 
 
-def set_language(main_window: Type[tool.MainWindow], plugings: Type[tool.Plugins]):
-    pass
+def set_language(lang, main_window: Type[tool.MainWindow], plugings: Type[tool.Plugins]):
+    app = main_window.get_app()
+    from som_gui.translation import load_language
+    load_language(app, lang)
+    plugings.load_translations(app, lang)

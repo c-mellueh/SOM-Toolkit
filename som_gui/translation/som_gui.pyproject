@@ -209,10 +209,8 @@
         "..\\tool\\settings.py",
         "..\\tool\\util.py",
         "..\\tool\\__init__.py",
-        "..\\translate\\rc_som_gui.py",
-        "..\\translate\\som_gui.qrc",
-        "..\\translate\\translation_de.ts",
-        "..\\translate\\_create_pyproject.py",
-        "..\\translate\\__init__.py"
+        "..\\translation\\translation_de.ts",
+        "..\\translation\\_create_pyproject.py",
+        "..\\translation\\__init__.py"
     ]
 }
