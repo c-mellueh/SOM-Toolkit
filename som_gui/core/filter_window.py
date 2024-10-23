@@ -29,6 +29,8 @@ def retranslate_ui(filter_window: Type[tool.FilterWindow], ):
         filter_window.get_object_tree().model().retranslate_ui()
     if filter_window.get_pset_tree():
         filter_window.get_pset_tree().model().retranslate_ui()
+
+
 def open_window(filter_window: Type[tool.FilterWindow], project: Type[tool.Project], util: Type[tool.Util],
                 search: Type[tool.Search]):
     widget = filter_window.create_widget()
@@ -132,7 +134,7 @@ def tree_mouse_release_event(index: QModelIndex, filter_window: Type[tool.Filter
 def add_compare_widget(filter_compare: Type[tool.FilterCompare],
                        attribute_compare: Type[tool.AttributeCompare],
                        compare_window: Type[tool.CompareWindow]):
-    name_getter = lambda:QCoreApplication.translate("FilterWindow", "Project Filter")
+    name_getter = lambda: QCoreApplication.translate("FilterWindow", "Project Filter")
     compare_window.add_tab(name_getter, filter_compare.get_widget,
                            lambda p0, p1: init_compare_object_filter(p0, p1, filter_compare, attribute_compare),
                            filter_compare,
