@@ -35,7 +35,7 @@ class ProjectSelectDialog(QDialog):
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
         title = self.tr(f"Compare Projects")
-        self.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
+        self.setWindowTitle(tool.Util.get_window_title(title))
         button = self.widget.button_switch
         button.setText("")
         button.setIcon(get_switch_icon())
