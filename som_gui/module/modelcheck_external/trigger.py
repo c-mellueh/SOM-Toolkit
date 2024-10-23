@@ -16,4 +16,4 @@ def close_window():
 
 
 def retranslate_ui():
-    core.retranslate_ui(tool.ModelcheckExternal)
+    core.retranslate_ui(tool.ModelcheckExternal,tool.Util)

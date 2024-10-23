@@ -20,12 +20,12 @@ def connect():
 def open_window():
     core.open_window(tool.ModelcheckWindow, tool.Util, tool.Project)
 
-def paint_object_tree():
-    core.paint_object_tree(tool.ModelcheckWindow, tool.Project)
+def paint_object_tree(tree):
+    core.paint_object_tree(tree,tool.ModelcheckWindow, tool.Project)
 
 
-def paint_pset_tree():
-    core.paint_pset_tree(tool.ModelcheckWindow)
+def paint_pset_tree(tree):
+    core.paint_pset_tree(tree,tool.ModelcheckWindow)
 
 
 def button_box_clicked(button: QPushButton):

@@ -93,8 +93,8 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             widget.model().setData(index, Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole)
 
     @classmethod
-    def resize_object_tree(cls):
-        cls.get_object_tree().resizeColumnToContents(0)
+    def resize_object_tree(cls,tree):
+        tree.resizeColumnToContents(0)
 
     @classmethod
     def get_selected_items(cls, widget: ui.ObjectTree | ui.PsetTree):
@@ -177,11 +177,11 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def set_pset_tree_title(cls, text: str):
         prop = cls.get_properties()
-        cls.get_window().ui.label_object.setText(text)
+        prop.object_label.setText(text)
 
     @classmethod
     def show_pset_tree_title(cls, show: bool):
-        cls.get_window().ui.label_object.setVisible(show)
+        cls.get_properties().object_label.setVisible(show)
 
     @classmethod
     def set_selected_object(cls, obj: SOMcreator.Object):
@@ -194,12 +194,12 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def get_object_tree(cls):
-        return cls.get_window().ui.object_tree
+        return cls.get_properties().object_tree
 
     @classmethod
     def get_pset_tree(cls):
         prop = cls.get_properties()
-        return prop.active_window.ui.property_set_tree
+        return prop.property_set_tree
 
 
     @classmethod
@@ -254,7 +254,11 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def create_window(cls):
         prop = cls.get_properties()
-        prop.active_window = ui.ModelcheckWindow()
+        window = ui.ModelcheckWindow()
+        prop.active_window =window
+        prop.property_set_tree = window.ui.property_set_tree
+        prop.object_tree = window.ui.object_tree
+        prop.object_label = window.ui.label_object
         return prop.active_window
 
     @classmethod

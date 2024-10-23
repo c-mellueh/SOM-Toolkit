@@ -11,5 +11,4 @@ class ModelcheckExternalWindow(QMainWindow):
         self.ui.setupUi(self)
         self.vertical_layout = QVBoxLayout(self)
         self.setLayout(self.vertical_layout)
-        self.setWindowTitle(f"Modellprüfung exportieren | {tool.Util.get_status_text()}")
         self.setWindowIcon(get_icon())

@@ -13,28 +13,38 @@ def create_main_menu_actions(modelcheck_external: Type[tool.ModelcheckExternal],
     modelcheck_external.set_action("open_window", open_window_action)
 
 
-def retranslate_ui(modelcheck_external: Type[tool.ModelcheckExternal], ):
+def retranslate_ui(modelcheck_external: Type[tool.ModelcheckExternal], util: Type[tool.Util]):
     open_window_action = modelcheck_external.get_action("open_window")
-    open_window_action.setText(QCoreApplication.translate("Modelcheck", "Modelcheck"))
-    if not modelcheck_external.get_window():
+    title = QCoreApplication.translate("Modelcheck", "Modelcheck")
+
+    open_window_action.setText(title)
+    if modelcheck_external.get_window() is None:
         return
-    modelcheck_external.get_window().menuBar().clear()
-    modelcheck_external.create_menubar(modelcheck_external.get_window())
-    object_model: QStandardItemModel = modelcheck_external.get_window().ui.object_tree.model()
+
+    window = modelcheck_external.get_window()
+    window.ui.retranslateUi(window)
+    window.setWindowTitle(util.get_window_title(title))
+    window.menuBar().clear()
+    modelcheck_external.create_menubar(window)
+    object_model: QStandardItemModel = window.ui.object_tree.model()
     headers = [QCoreApplication.translate("Modelcheck", "Object"),
                QCoreApplication.translate("Modelcheck", "Identifier")]
     object_model.setHorizontalHeaderLabels(headers)
 
-    pset_model: QStandardItemModel = modelcheck_external.get_window().ui.property_set_tree.model()
+    pset_model: QStandardItemModel = window.ui.property_set_tree.model()
     headers = [QCoreApplication.translate("Modelcheck", "PropertySet,Attribute")]
     pset_model.setHorizontalHeaderLabels(headers)
 
 
 def open_window(modelcheck_external: Type[tool.ModelcheckExternal], modelcheck_window: Type[tool.ModelcheckWindow]):
     window = modelcheck_external.create_window()
-    modelcheck_window.get_properties().active_window = window
+    modelcheck_window.get_properties().property_set_tree = window.ui.property_set_tree
+    modelcheck_window.get_properties().object_tree = window.ui.object_tree
+    modelcheck_window.get_properties().object_label = window.ui.label_object
+
     modelcheck_external.create_menubar(window)
-    retranslate_ui(modelcheck_external)
+    from som_gui.module.modelcheck_external import trigger
+    trigger.retranslate_ui()
     window.show()
 
 

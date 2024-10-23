@@ -43,13 +43,19 @@
     <name>AttributeImport</name>
     <message>
         <location filename="../core/attribute_import.py" line="27"/>
-        <location filename="../module/attribute_import/ui.py" line="14"/>
-        <location filename="../module/attribute_import/ui.py" line="26"/>
+        <location filename="../core/attribute_import.py" line="32"/>
+        <location filename="../core/attribute_import.py" line="40"/>
+        <location filename="../module/attribute_import/ui.py" line="19"/>
         <source>Import Values</source>
         <translation>Werte importieren</translation>
     </message>
     <message>
-        <location filename="../module/attribute_import/ui.py" line="85"/>
+        <location filename="../core/attribute_import.py" line="36"/>
+        <source>IFC Path</source>
+        <translation>IFC Pfad</translation>
+    </message>
+    <message>
+        <location filename="../module/attribute_import/ui.py" line="78"/>
         <source>Settings v</source>
         <translation>Einstellungen v</translation>
     </message>
@@ -122,18 +128,18 @@
 <context>
     <name>AttributeTable</name>
     <message>
-        <location filename="../module/attribute_import/ui.py" line="58"/>
+        <location filename="../module/attribute_import/ui.py" line="51"/>
         <source>Attribute</source>
         <translation>Attribut</translation>
     </message>
     <message>
-        <location filename="../module/attribute_import/ui.py" line="58"/>
+        <location filename="../module/attribute_import/ui.py" line="51"/>
         <source>Count</source>
         <translatorcomment>Eindeutig</translatorcomment>
         <translation>Anzahl</translation>
     </message>
     <message>
-        <location filename="../module/attribute_import/ui.py" line="58"/>
+        <location filename="../module/attribute_import/ui.py" line="51"/>
         <source>Unique</source>
         <translation></translation>
     </message>
@@ -141,7 +147,7 @@
 <context>
     <name>BSDD</name>
     <message>
-        <location filename="../core/bsdd.py" line="21"/>
+        <location filename="../core/bsdd.py" line="22"/>
         <source>bsDD</source>
         <translation>bsDD</translation>
     </message>
@@ -336,43 +342,43 @@
     <name>FilterWindow</name>
     <message>
         <location filename="../core/filter_window.py" line="24"/>
-        <location filename="../core/filter_window.py" line="136"/>
+        <location filename="../core/filter_window.py" line="138"/>
         <location filename="../module/filter_window/ui.py" line="32"/>
         <source>Project Filter</source>
         <translation>Projekt Filter</translation>
     </message>
     <message>
-        <location filename="../core/filter_window.py" line="75"/>
+        <location filename="../core/filter_window.py" line="77"/>
         <source>Delete UseCase</source>
         <translation>Anwendungsfall Löschen</translation>
     </message>
     <message>
-        <location filename="../core/filter_window.py" line="76"/>
+        <location filename="../core/filter_window.py" line="78"/>
         <source>Rename UseCase</source>
         <translation>Anwendungsfall Umbenennen</translation>
     </message>
     <message>
-        <location filename="../core/filter_window.py" line="78"/>
+        <location filename="../core/filter_window.py" line="80"/>
         <source>Add UseCase</source>
         <translation>Anwendungsfall hinzufügen</translation>
     </message>
     <message>
-        <location filename="../core/filter_window.py" line="88"/>
+        <location filename="../core/filter_window.py" line="90"/>
         <source>Delete Phase</source>
         <translation>Leistungsphase Entfernen</translation>
     </message>
     <message>
-        <location filename="../core/filter_window.py" line="89"/>
+        <location filename="../core/filter_window.py" line="91"/>
         <source>Rename Phase</source>
         <translation>Leistungsphase Umbenennen</translation>
     </message>
     <message>
-        <location filename="../core/filter_window.py" line="91"/>
+        <location filename="../core/filter_window.py" line="93"/>
         <source>Add Phase</source>
         <translation>Leistungsphase hinzufügen</translation>
     </message>
     <message>
-        <location filename="../core/filter_window.py" line="195"/>
+        <location filename="../core/filter_window.py" line="197"/>
         <source>OBJECT FILTER</source>
         <translation>OBJEKT FILTER</translation>
     </message>
@@ -495,7 +501,7 @@
         <translation>Log Level:</translation>
     </message>
     <message>
-        <location filename="../core/logging.py" line="39"/>
+        <location filename="../core/logging.py" line="37"/>
         <source>Log Directory:</source>
         <translation>Log Pfad:</translation>
     </message>
@@ -646,17 +652,32 @@
         <translation>Title</translation>
     </message>
     <message>
-        <location filename="../module/mapping/qt/Window.ui" line="84"/>
+        <location filename="../module/mapping/qt/Window.ui" line="35"/>
+        <source>Object</source>
+        <translation>Objekt</translation>
+    </message>
+    <message>
+        <location filename="../module/mapping/qt/Window.ui" line="40"/>
+        <source>Ifc Mapping</source>
+        <translation>Ifc Mapping</translation>
+    </message>
+    <message>
+        <location filename="../module/mapping/qt/Window.ui" line="70"/>
+        <source>Revit Mapping</source>
+        <translation>Revit Mapping</translation>
+    </message>
+    <message>
+        <location filename="../module/mapping/qt/Window.ui" line="94"/>
         <source>Revit</source>
         <translation>Revit</translation>
     </message>
     <message>
-        <location filename="../module/mapping/qt/Window.ui" line="94"/>
+        <location filename="../module/mapping/qt/Window.ui" line="104"/>
         <source>Export IFC-Mapping</source>
         <translation>Export IFC-Mapping</translation>
     </message>
     <message>
-        <location filename="../module/mapping/qt/Window.ui" line="99"/>
+        <location filename="../module/mapping/qt/Window.ui" line="109"/>
         <source>Export Shared Parameters</source>
         <translation>Export &apos;Shared Paramers&apos;</translation>
     </message>
@@ -1345,12 +1366,12 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>PropertySetTable</name>
     <message>
-        <location filename="../module/attribute_import/ui.py" line="36"/>
+        <location filename="../module/attribute_import/ui.py" line="29"/>
         <source>PropertySet</source>
         <translation>PropertySet</translation>
     </message>
     <message>
-        <location filename="../module/attribute_import/ui.py" line="36"/>
+        <location filename="../module/attribute_import/ui.py" line="29"/>
         <source>Count</source>
         <translation>Anzahl</translation>
     </message>
@@ -1609,17 +1630,17 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>ValueTable</name>
     <message>
-        <location filename="../module/attribute_import/ui.py" line="67"/>
+        <location filename="../module/attribute_import/ui.py" line="60"/>
         <source>Accept</source>
         <translation>Akzeptieren</translation>
     </message>
     <message>
-        <location filename="../module/attribute_import/ui.py" line="67"/>
+        <location filename="../module/attribute_import/ui.py" line="60"/>
         <source>Value</source>
         <translation>Wert</translation>
     </message>
     <message>
-        <location filename="../module/attribute_import/ui.py" line="67"/>
+        <location filename="../module/attribute_import/ui.py" line="60"/>
         <source>Count</source>
         <translation>Anzahl</translation>
     </message>

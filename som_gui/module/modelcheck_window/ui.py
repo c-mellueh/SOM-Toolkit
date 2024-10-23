@@ -24,7 +24,7 @@ class ObjectTree(QTreeView):
 
     def paintEvent(self, event):
         super().paintEvent(event)
-        modelcheck_window.trigger.paint_object_tree()
+        modelcheck_window.trigger.paint_object_tree(self)
 
 
 class PsetTree(QTreeView):
@@ -37,4 +37,4 @@ class PsetTree(QTreeView):
 
     def paintEvent(self, event):
         super().paintEvent(event)
-        modelcheck_window.trigger.paint_pset_tree()
+        modelcheck_window.trigger.paint_pset_tree(self)

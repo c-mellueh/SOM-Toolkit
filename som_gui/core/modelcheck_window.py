@@ -154,14 +154,13 @@ def modelcheck_finished(modelcheck_window: Type[tool.ModelcheckWindow], modelche
         logging.info(f"Modelcheck is Done, check next File")
 
 
-def paint_object_tree(modelcheck_window: Type[tool.ModelcheckWindow], project: Type[tool.Project]):
+def paint_object_tree(tree:ui.ObjectTree,modelcheck_window: Type[tool.ModelcheckWindow], project: Type[tool.Project]):
     logging.debug(f"Repaint Modelcheck Object Tree")
     root_objects = set(project.get_root_objects(True))
-    tree = modelcheck_window.get_object_tree()
     invisible_root_entity = tree.model().invisibleRootItem()
     modelcheck_window.fill_object_tree(root_objects, invisible_root_entity, tree.model(), tree)
     if modelcheck_window.is_initial_paint:
-        modelcheck_window.resize_object_tree()
+        modelcheck_window.resize_object_tree(tree)
 
 
 def object_check_changed(item: QStandardItem, modelcheck_window: Type[tool.ModelcheckWindow]):
@@ -170,7 +169,8 @@ def object_check_changed(item: QStandardItem, modelcheck_window: Type[tool.Model
         return
 
     modelcheck_window.set_item_check_state(obj, item.checkState())
-    paint_pset_tree(modelcheck_window)
+
+    paint_pset_tree(modelcheck_window.get_pset_tree(),modelcheck_window)
 
 
 def object_selection_changed(selection_model: QItemSelectionModel, modelcheck_window: Type[tool.ModelcheckWindow]):
@@ -181,7 +181,7 @@ def object_selection_changed(selection_model: QItemSelectionModel, modelcheck_wi
     index: QModelIndex = selected_indexes[0]
     obj: SOMcreator.Object = index.data(CLASS_REFERENCE)
     modelcheck_window.set_selected_object(obj)
-    paint_pset_tree(modelcheck_window)
+    paint_pset_tree(modelcheck_window.get_pset_tree(),modelcheck_window)
     if obj.ident_value:
         text = f"{obj.name} [{obj.ident_value}]"
     else:
@@ -190,7 +190,7 @@ def object_selection_changed(selection_model: QItemSelectionModel, modelcheck_wi
     modelcheck_window.show_pset_tree_title(True)
 
 
-def paint_pset_tree(modelcheck_window: Type[tool.ModelcheckWindow]):
+def paint_pset_tree(tree:ui.PsetTree,modelcheck_window: Type[tool.ModelcheckWindow]):
     logging.debug(f"Repaint Modelcheck Pset Tree")
     obj = modelcheck_window.get_selected_object()
     if obj is None:
