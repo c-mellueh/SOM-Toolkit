@@ -1,0 +1,18 @@
+{
+    "files": [
+        "..\\__init__.py",
+        "..\\core\\move.py",
+        "..\\core\\__init__.py",
+        "..\\module\\__init__.py",
+        "..\\module\\move\\prop.py",
+        "..\\module\\move\\trigger.py",
+        "..\\module\\move\\ui.py",
+        "..\\module\\move\\__init__.py",
+        "..\\module\\move\\qt\\widget.ui",
+        "..\\tool\\move.py",
+        "..\\tool\\__init__.py",
+        "..\\translation\\translation_de.ts",
+        "..\\translation\\_create_pyproject.py",
+        "..\\translation\\__init__.py"
+    ]
+}

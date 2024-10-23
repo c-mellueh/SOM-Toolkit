@@ -2,7 +2,8 @@ from __future__ import annotations
 from som_gui import tool
 import logging
 from typing import TYPE_CHECKING
-from PySide6.QtCore import QRunnable, Signal, QObject, QThreadPool
+from PySide6.QtCore import QRunnable, Signal, QObject, QThreadPool, QCoreApplication
+from PySide6.QtGui import QAction
 import som_gui
 from som_gui.plugins.ifc_tools.module.move import ui, trigger
 import ifcopenshell
@@ -54,6 +55,14 @@ class Move:
     @classmethod
     def get_properties(cls) -> MoveProperties:
         return som_gui.MoveProperties
+
+    @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
 
     @classmethod
     def create_widget(cls):
@@ -114,16 +123,16 @@ class Move:
 
         projects = ifc.by_type("IfcProject")
         if len(projects) > 1:
-            logging.error(f"Projektanzahl in IFC > 1 -> Abbruch")
+            logging.error(f"IfcProject Count in IFC > 1 -> Abort")
             return
         project: ifcopenshell.entity_instance = projects[0]
         length_units = [u for u in project.UnitsInContext.Units if u.UnitType == "LENGTHUNIT"]
         if len(length_units) > 1:
-            logging.error(f"Anzahl definierter Längeneinheiten in IFC > 1 -> Abbruch")
+            logging.error(f"LengthUnit Count in IFC > 1 -> Abort")
             return
         length_unit = length_units[0]
         if length_unit.Name != "METRE":
-            logging.error(f"LenghtUnit is not METRE -> Abbruch")
+            logging.error(f"LenghtUnit is not METRE -> Abort")
             return
         factor = 1
         if length_unit.Prefix is not None:
@@ -143,6 +152,7 @@ class Move:
 
         folder, path = os.path.split(export_path)
         path = f"moved_{path}"
-        cls.set_status(f"Save IFC to '{path}'", 50)
+        status = QCoreApplication.translate("Move", "Save IFC to '{}'").format(path)
+        cls.set_status(status, 50)
 
         ifc.write(os.path.join(folder, path))

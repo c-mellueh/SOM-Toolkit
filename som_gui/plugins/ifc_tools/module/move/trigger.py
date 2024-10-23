@@ -10,8 +10,11 @@ from som_gui.plugins.ifc_tools.core import move as core
 from som_gui.plugins.ifc_tools import tool as ifc_tool
 
 def connect():
-    tool.MainWindow.add_action("IfcTools/Move", lambda: core.open_window(ifc_tool.Move, tool.Util, tool.Appdata))
+    core.create_main_menu_actions(ifc_tool.Move, tool.MainWindow)
 
+
+def open_window():
+    core.open_window(ifc_tool.Move, tool.Util, tool.Appdata)
 
 def button_box_clicked(button: QPushButton):
     bb = ifc_tool.Move.get_widget().ui.buttonBox
@@ -41,4 +44,4 @@ def move_finished():
 
 
 def retranslate_ui():
-    pass
+    core.retranslate_ui(ifc_tool.Move, tool.Util)

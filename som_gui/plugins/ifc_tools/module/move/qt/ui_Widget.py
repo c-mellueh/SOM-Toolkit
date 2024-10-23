@@ -53,19 +53,19 @@ class Ui_Form(object):
 
         self.label = QLabel(Form)
         self.label.setObjectName(u"label")
-        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
 
         self.label_2 = QLabel(Form)
         self.label_2.setObjectName(u"label_2")
-        self.label_2.setAlignment(Qt.AlignCenter)
+        self.label_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout.addWidget(self.label_2, 0, 1, 1, 1)
 
         self.label_3 = QLabel(Form)
         self.label_3.setObjectName(u"label_3")
-        self.label_3.setAlignment(Qt.AlignCenter)
+        self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout.addWidget(self.label_3, 0, 2, 1, 1)
 
@@ -84,9 +84,10 @@ class Ui_Form(object):
 
         self.buttonBox = QDialogButtonBox(Form)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Apply | QDialogButtonBox.Close)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Close)
 
         self.verticalLayout.addWidget(self.buttonBox)
+
 
         self.retranslateUi(Form)
 
@@ -95,8 +96,8 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
-        self.label.setText(QCoreApplication.translate("Form", u"X-Verschiebung [m]", None))
-        self.label_2.setText(QCoreApplication.translate("Form", u"Y-Verschiebung [m]", None))
-        self.label_3.setText(QCoreApplication.translate("Form", u"Z-Verschieben [m]", None))
+        self.label.setText(QCoreApplication.translate("Form", u"X-Movement [m]", None))
+        self.label_2.setText(QCoreApplication.translate("Form", u"Y-Movement [m]", None))
+        self.label_3.setText(QCoreApplication.translate("Form", u"Z-Movement [m]", None))
     # retranslateUi
 
