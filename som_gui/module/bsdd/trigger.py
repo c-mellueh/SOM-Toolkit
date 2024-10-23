@@ -9,7 +9,7 @@ def connect():
 def open_window():
     core.open_window(tool.Bsdd, tool.Appdata)
 def retranslate_ui():
-    core.retranslate_ui(tool.Bsdd)
+    core.retranslate_ui(tool.Bsdd,tool.Util)
 def on_new_project():
     core.reset(tool.Bsdd)
 

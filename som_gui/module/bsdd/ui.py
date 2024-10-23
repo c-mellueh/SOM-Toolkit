@@ -8,7 +8,6 @@ class Widget(QWidget):
         super().__init__()
         self.ui = Ui_BSDD()
         self.ui.setupUi(self)
-        self.setWindowTitle(f"bsDD erzeugen | {tool.Util.get_status_text()}")
         self.setWindowIcon(get_icon())
 
 class DictionaryWidget(QWidget):
