@@ -26,4 +26,4 @@ class MergeDialog(QDialog):
         self.widget.setupUi(self)
         self.setWindowIcon(icons.get_icon())
         self.widget.tableWidget.setColumnCount(2)
-        self.widget.tableWidget.setHorizontalHeaderLabels(["Importiert", "Bestand"])
+        self.widget.tableWidget.setHorizontalHeaderLabels([self.tr("Imported"), self.tr("Existing")])

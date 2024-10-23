@@ -52,4 +52,4 @@ def key_press_event(event, window: PropertySetWindow):
 
 
 def retranslate_ui():
-    pass
+    core.retranslate_ui(tool.PropertySetWindow)

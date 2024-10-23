@@ -13,8 +13,9 @@ if TYPE_CHECKING:
 
 
 def retranslate_ui(property_set_window: Type[tool.PropertySetWindow]):
-    for window in property_set_window.get_open_windows():
+    for window, pset in property_set_window.get_properties().property_set_windows.items():
         window.ui.retranslateUi(window)
+        property_set_window.fill_window_title(window, pset)
 
 
 def inherit_checkbox_toggled(window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow],

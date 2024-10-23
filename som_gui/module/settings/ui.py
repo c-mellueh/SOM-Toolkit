@@ -11,7 +11,3 @@ class Dialog(QDialog):
         self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
 
-    def retranslate_ui(self):
-        text = QCoreApplication.translate('Settings', "Settings")
-        self.setWindowTitle(f'{text} | {tool.Util.get_status_text()}')
-        self.setWindowIcon(get_icon())

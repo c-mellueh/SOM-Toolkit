@@ -22,7 +22,7 @@ def open_clicked():
 
 
 def add_clicked():
-    core.add_project(tool.Project, tool.Appdata, tool.Popups, tool.MainWindow)
+    core.add_project(tool.Project, tool.Appdata, tool.Popups, tool.MainWindow, tool.Util)
 
 
 def save_clicked():

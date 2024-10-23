@@ -23,7 +23,7 @@ def retranslate_ui(predefined_pset: Type[tool.PredefinedPropertySet], util: Type
         return
     window = predefined_pset.get_window()
     window.ui.retranslateUi(window)
-    title = f'{QCoreApplication.translate("PredefinedPset", "Predefined Pset")} | {util.get_status_text()}'
+    title = util.get_window_title(QCoreApplication.translate("PredefinedPset", "Predefined Pset"))
     window.setWindowTitle(title)
 
 

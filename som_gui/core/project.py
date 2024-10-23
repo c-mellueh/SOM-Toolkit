@@ -123,7 +123,7 @@ def open_project(path, project_tool: Type[Project]):
 
 
 def add_project(project_tool: Type[Project], appdata: Type[tool.Appdata], popups: Type[tool.Popups],
-                main_window: Type[tool.MainWindow]):
+                main_window: Type[tool.MainWindow], util: Type[tool.Util]):
     path = appdata.get_path(OPEN_PATH)
     title = QCoreApplication.translate("Project", "Open Project")
     path = popups.get_open_path(FILETYPE, main_window.get(), path, title)
@@ -131,7 +131,9 @@ def add_project(project_tool: Type[Project], appdata: Type[tool.Appdata], popups
         return
     p1 = project_tool.get()
     p2 = project_tool.load_project(path)
-    project_tool.merge_projects(p1, p2)
+    title = util.get_window_title(QCoreApplication.translate('MergeDialog', 'Merge Project'))
+
+    project_tool.merge_projects(title, p1, p2)
 
     logging.warning(f"Import of Buildingstructure is not supported")
 

@@ -15,4 +15,4 @@ def on_new_project():
     pass
 
 def retranslate_ui():
-    core.retranslate_ui(tool.Settings)
+    core.retranslate_ui(tool.Settings, tool.Util)

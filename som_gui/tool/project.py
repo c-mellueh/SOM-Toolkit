@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import logging
 
+from PySide6.QtCore import QCoreApplication
+
 import som_gui.core.tool
 import SOMcreator
 import SOMcreator.util.project
@@ -16,7 +18,7 @@ if TYPE_CHECKING:
     from som_gui.module.project import ui
     from PySide6.QtGui import QAction
 
-
+from som_gui import tool
 class Project(som_gui.core.tool.Project):
 
     @classmethod
@@ -123,9 +125,11 @@ class Project(som_gui.core.tool.Project):
         return mapping_dict
 
     @classmethod
-    def create_mapping_window(cls, filter_1: list[SOMcreator.UseCase | SOMcreator.Phase],
+    def create_mapping_window(cls, title, filter_1: list[SOMcreator.UseCase | SOMcreator.Phase],
                               filter_2: list[SOMcreator.UseCase | SOMcreator.Phase]):
         dialog = MergeDialog()
+
+        dialog.setWindowTitle(title)
         cls.fill_mapping_table(dialog.widget.tableWidget, filter_1, filter_2)
         if not dialog.exec():
             return None
@@ -133,19 +137,19 @@ class Project(som_gui.core.tool.Project):
             return cls.get_mapping_from_table(dialog.widget.tableWidget)
 
     @classmethod
-    def get_phase_mapping(cls, p1: SOMcreator.Project, p2: SOMcreator.Project):
-        return cls.create_mapping_window(p1.get_phases(), p2.get_phases())
+    def get_phase_mapping(cls, title, p1: SOMcreator.Project, p2: SOMcreator.Project):
+        return cls.create_mapping_window(title, p1.get_phases(), p2.get_phases())
 
     @classmethod
-    def get_use_case_mapping(cls, p1: SOMcreator.Project, p2: SOMcreator.Project):
-        return cls.create_mapping_window(p1.get_usecases(), p2.get_usecases())
+    def get_use_case_mapping(cls, title, p1: SOMcreator.Project, p2: SOMcreator.Project):
+        return cls.create_mapping_window(title, p1.get_usecases(), p2.get_usecases())
 
     @classmethod
-    def merge_projects(cls, project_1, project_2):
-        phase_mapping = cls.get_phase_mapping(project_1, project_2)
+    def merge_projects(cls, title, project_1: SOMcreator.Project, project_2: SOMcreator.Project):
+        phase_mapping = cls.get_phase_mapping(title, project_1, project_2)
         if phase_mapping is None:
             return
-        use_case_mapping = cls.get_use_case_mapping(project_1, project_2)
+        use_case_mapping = cls.get_use_case_mapping(title, project_1, project_2)
         if use_case_mapping is None:
             return
         SOMcreator.util.project.merge_projects(project_1, project_2, phase_mapping, use_case_mapping)
