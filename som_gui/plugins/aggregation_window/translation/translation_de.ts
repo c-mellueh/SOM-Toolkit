@@ -141,49 +141,49 @@
         <translation>Vertikal verteilen</translation>
     </message>
     <message>
-        <location filename="../core/view.py" line="183"/>
+        <location filename="../core/view.py" line="184"/>
         <source>Modify Info</source>
         <translation>Info anpassen</translation>
     </message>
     <message>
-        <location filename="../core/view.py" line="184"/>
+        <location filename="../core/view.py" line="185"/>
         <source>Reset Info</source>
         <translation>Info zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../core/view.py" line="189"/>
+        <location filename="../core/view.py" line="190"/>
         <source>Node</source>
         <translation>Node</translation>
     </message>
     <message>
-        <location filename="../core/view.py" line="190"/>
-        <location filename="../core/view.py" line="213"/>
+        <location filename="../core/view.py" line="191"/>
+        <location filename="../core/view.py" line="214"/>
         <source>Add Node</source>
         <translation>Node hinzufügen</translation>
     </message>
     <message>
-        <location filename="../core/view.py" line="191"/>
+        <location filename="../core/view.py" line="192"/>
         <source>Delete Node</source>
         <translation>Node löschen</translation>
     </message>
     <message>
-        <location filename="../core/view.py" line="193"/>
+        <location filename="../core/view.py" line="194"/>
         <source>Delete Nodes</source>
         <translation>Nodes löschen</translation>
     </message>
     <message>
-        <location filename="../core/view.py" line="200"/>
+        <location filename="../core/view.py" line="201"/>
         <source>Connection Type</source>
         <translation>Verbindungstyp</translation>
     </message>
     <message>
-        <location filename="../core/view.py" line="201"/>
+        <location filename="../core/view.py" line="202"/>
         <location filename="../module/window/qt/Window.ui" line="47"/>
         <source>Aggregation</source>
         <translation>Aggregation</translation>
     </message>
     <message>
-        <location filename="../core/view.py" line="202"/>
+        <location filename="../core/view.py" line="203"/>
         <source>Inheritance</source>
         <translation>Vererbung</translation>
     </message>
@@ -225,22 +225,22 @@
         <translation>{}: Elternelement &apos;{}&apos; ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../tool/modelcheck.py" line="123"/>
+        <location filename="../tool/modelcheck.py" line="124"/>
         <source>Group doesn&apos;t contain subelements</source>
         <translation>Gruppe besitzt keine Kindelemente</translation>
     </message>
     <message>
-        <location filename="../tool/modelcheck.py" line="129"/>
+        <location filename="../tool/modelcheck.py" line="131"/>
         <source>Group contains multiple Collector Groups with the same Identifier</source>
         <translation>Gruppe besitzt mehrere Kollektor-Gruppen mit dem selben Identifier</translation>
     </message>
     <message>
-        <location filename="../tool/modelcheck.py" line="135"/>
+        <location filename="../tool/modelcheck.py" line="138"/>
         <source>Collector Group contains wrong subelements (&apos;{}&apos; not allowed)</source>
         <translation>Kollektor-Gruppe besitzt die falschen Subelemente (&apos;{}&apos; ist nicht erlaubt)</translation>
     </message>
     <message>
-        <location filename="../tool/modelcheck.py" line="142"/>
+        <location filename="../tool/modelcheck.py" line="146"/>
         <source>Element without group assertion</source>
         <translation>Element ohne Gruppenzuweisung</translation>
     </message>
@@ -277,7 +277,7 @@
     <message>
         <location filename="../module/window/qt/Window.ui" line="79"/>
         <source>Reset Filter</source>
-        <translation type="unfinished">Filter zurücksetzen</translation>
+        <translation>Filter zurücksetzen</translation>
     </message>
     <message>
         <location filename="../module/window/qt/Window.ui" line="84"/>

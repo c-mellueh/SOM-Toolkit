@@ -476,30 +476,30 @@
     <name>MainWindow</name>
     <message>
         <location filename="../module/main_window/qt/MainWindow.ui" line="66"/>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="275"/>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="386"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="278"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="389"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
         <location filename="../module/main_window/qt/MainWindow.ui" line="93"/>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="357"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="360"/>
         <source>PropertySet</source>
         <translation>PropertySet</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="200"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="203"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="367"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="370"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
         <location filename="../module/main_window/qt/MainWindow.ui" line="39"/>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="298"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="301"/>
         <source>Create</source>
         <translation>Erstellen</translation>
     </message>
@@ -514,8 +514,8 @@
         <translation>Objekt</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="190"/>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="401"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="193"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="404"/>
         <source>Value</source>
         <translation>Wert</translation>
     </message>
@@ -540,67 +540,67 @@
         <translation>Attribut</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="178"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="181"/>
         <source>Needs to be unique!</source>
         <translation>Muss eindeutig sein!</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="197"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="200"/>
         <source>The Identifier defines which Object is selected it needs to be unique!</source>
         <translation>Der Identifier definiert welches Objekt gemeint ist. Er muss eindeutig sein!</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="362"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="365"/>
         <source>Inherited By</source>
         <translation>Geerbt Von</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="391"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="394"/>
         <source>Datatype</source>
         <translation>Datentyp</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="396"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="399"/>
         <source>Format</source>
         <translation>Format</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="424"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="427"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="435"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="438"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="440"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="443"/>
         <source>Desite</source>
         <translation>Desite</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="445"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="448"/>
         <source>Models</source>
         <translation>Modelle</translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="456"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="459"/>
         <source>dqwd</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../module/main_window/qt/MainWindow.ui" line="428"/>
+        <location filename="../module/main_window/qt/MainWindow.ui" line="431"/>
         <source>Export</source>
         <translation>Export</translation>
     </message>
     <message>
-        <location filename="../core/main_window.py" line="25"/>
+        <location filename="../core/main_window.py" line="22"/>
         <source>Hide Console</source>
         <translation>Konsole Ausblenden</translation>
     </message>
     <message>
-        <location filename="../core/main_window.py" line="27"/>
+        <location filename="../core/main_window.py" line="24"/>
         <source>Show Console</source>
         <translation>Konsole Einblenden</translation>
     </message>
@@ -953,20 +953,20 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>NeueGruppe</translation>
     </message>
     <message>
-        <location filename="../tool/object.py" line="186"/>
-        <location filename="../tool/object.py" line="264"/>
+        <location filename="../tool/object.py" line="184"/>
+        <location filename="../tool/object.py" line="262"/>
         <source>Identifier exists allready or is not allowed</source>
         <translation>Identifier existiert bereits oder ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../tool/object.py" line="188"/>
-        <location filename="../tool/object.py" line="252"/>
+        <location filename="../tool/object.py" line="186"/>
+        <location filename="../tool/object.py" line="250"/>
         <source>Name of Attribute is not allowed</source>
         <translation>Name des Attributes ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../tool/object.py" line="190"/>
-        <location filename="../tool/object.py" line="239"/>
+        <location filename="../tool/object.py" line="188"/>
+        <location filename="../tool/object.py" line="237"/>
         <source>Name of PropertySet is not allowed</source>
         <translation>Name des PropertySets ist nicht erlaubt</translation>
     </message>
@@ -1513,6 +1513,38 @@ Achtung: Datei wird überschrieben!</translation>
         <location filename="../module/settings/qt/Widget.ui" line="188"/>
         <source>Plugins</source>
         <translation>Plugins</translation>
+    </message>
+    <message>
+        <location filename="../core/language.py" line="56"/>
+        <source>German</source>
+        <translation>Deutsch</translation>
+    </message>
+    <message>
+        <location filename="../core/language.py" line="57"/>
+        <source>English</source>
+        <translation>Englisch</translation>
+    </message>
+    <message>
+        <location filename="../module/language/qt/Widget.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="../module/language/qt/Widget.ui" line="20"/>
+        <source>Language</source>
+        <translation>Sprache</translation>
+    </message>
+    <message>
+        <location filename="../module/language/qt/Widget.ui" line="28"/>
+        <source>German</source>
+        <comment>de</comment>
+        <translation>Deutsch</translation>
+    </message>
+    <message>
+        <location filename="../module/language/qt/Widget.ui" line="33"/>
+        <source>English</source>
+        <comment>en</comment>
+        <translation>Englisch</translation>
     </message>
 </context>
 <context>
