@@ -21,7 +21,7 @@ def list_files_in_directory(root_dir):
 
 # Example usage:
 output_dict = {"files": []}
-root_directory = ".."
+root_directory = "..\\.."
 list_files_in_directory(root_directory)
 import json
 

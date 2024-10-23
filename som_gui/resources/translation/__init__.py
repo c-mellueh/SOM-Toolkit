@@ -16,6 +16,7 @@ def load_language(application: QApplication, language="en"):
     if translator.load(locale, 'qtbase', '_', path):
         application.installTranslator(translator)
 
+
     path = os.path.join(base_path, f"translation_{language}.qm")
     translator = QTranslator(application)
     if translator.load(path):

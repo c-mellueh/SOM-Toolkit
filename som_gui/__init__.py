@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 __version__ = "2.13.3"
-
+from som_gui.resources.icons import get_icon
 
 def tr(*args, **kwargs):
     from PySide6.QtCore import QCoreApplication
