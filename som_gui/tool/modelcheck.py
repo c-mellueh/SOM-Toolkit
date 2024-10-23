@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-import os.path
 from typing import TYPE_CHECKING, Callable, Iterator
 from som_gui import tool
 from PySide6.QtCore import QRunnable, Signal, QObject
-from PySide6.QtWidgets import QLabel, QProgressBar
-import tempfile
 
 if TYPE_CHECKING:
     from som_gui.module.modelcheck.prop import ModelcheckProperties
@@ -20,7 +17,7 @@ import ifcopenshell
 from som_gui.module.modelcheck.constants import *
 from ifcopenshell.util import element as ifc_el
 from SOMcreator import value_constants
-from som_gui.data import constants
+from som_gui.ressources.data import constants
 from som_gui.module.modelcheck import trigger
 from PySide6.QtCore import QCoreApplication
 rev_datatype_dict = {
