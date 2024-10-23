@@ -1,5 +1,5 @@
 import os
-from PySide6.QtCore import QTranslator,QLocale
+from PySide6.QtCore import QTranslator,QLocale,QLibraryInfo
 from PySide6.QtWidgets import QApplication
 
 translator = QTranslator()
@@ -8,12 +8,15 @@ translator = QTranslator()
 def load_language(application: QApplication, language="en"):
     global translator
     base_path = os.path.dirname(__file__)
-    path = os.path.join(base_path, f"translation_{language}.qm")
     application.removeTranslator(translator)
-    locale = QLocale(language)
 
-    if translator.load(locale, 'qtbase', '_', 'PySide6/translations/'):
+    locale = QLocale(language)
+    path = QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
+    translator = QTranslator(application)
+    if translator.load(locale, 'qtbase', '_', path):
         application.installTranslator(translator)
+
+    path = os.path.join(base_path, f"translation_{language}.qm")
     translator = QTranslator(application)
     if translator.load(path):
         application.installTranslator(translator)
