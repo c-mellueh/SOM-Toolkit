@@ -683,6 +683,24 @@
     </message>
 </context>
 <context>
+    <name>MergeDialog</name>
+    <message>
+        <location filename="../core/project.py" line="134"/>
+        <source>Merge Project</source>
+        <translation>Projekt hinzufügen</translation>
+    </message>
+    <message>
+        <location filename="../module/project/ui.py" line="29"/>
+        <source>Imported</source>
+        <translation>Importiert</translation>
+    </message>
+    <message>
+        <location filename="../module/project/ui.py" line="29"/>
+        <source>Existing</source>
+        <translation>Bestand</translation>
+    </message>
+</context>
+<context>
     <name>Modelcheck</name>
     <message>
         <location filename="../core/modelcheck.py" line="44"/>
@@ -690,7 +708,7 @@
         <translation>Modellprüfung abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../core/modelcheck_external.py" line="18"/>
+        <location filename="../core/modelcheck_external.py" line="20"/>
         <location filename="../core/modelcheck_window.py" line="50"/>
         <source>Modelcheck</source>
         <translation>Modellprüfung</translation>
@@ -723,62 +741,62 @@ Warning: file will be overridden!</source>
 Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
-        <location filename="../core/modelcheck_window.py" line="56"/>
+        <location filename="../core/modelcheck_window.py" line="57"/>
         <source>Export Path</source>
         <translation>Export Pfad</translation>
     </message>
     <message>
-        <location filename="../core/modelcheck_window.py" line="57"/>
+        <location filename="../core/modelcheck_window.py" line="58"/>
         <source>IFC Path</source>
         <translation>IFC Pfad</translation>
     </message>
     <message>
-        <location filename="../core/modelcheck_external.py" line="24"/>
-        <location filename="../core/modelcheck_window.py" line="60"/>
+        <location filename="../core/modelcheck_external.py" line="30"/>
+        <location filename="../core/modelcheck_window.py" line="61"/>
         <source>Object</source>
         <translation>Objekt</translation>
     </message>
     <message>
-        <location filename="../core/modelcheck_external.py" line="26"/>
-        <location filename="../core/modelcheck_window.py" line="62"/>
+        <location filename="../core/modelcheck_external.py" line="32"/>
+        <location filename="../core/modelcheck_window.py" line="63"/>
         <location filename="../tool/modelcheck_results.py" line="33"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
-        <location filename="../core/modelcheck_external.py" line="30"/>
-        <location filename="../core/modelcheck_window.py" line="66"/>
+        <location filename="../core/modelcheck_external.py" line="36"/>
+        <location filename="../core/modelcheck_window.py" line="67"/>
         <source>PropertySet,Attribute</source>
         <translation>PropertySet/Attribut</translation>
     </message>
     <message>
-        <location filename="../core/modelcheck_window.py" line="112"/>
-        <location filename="../core/modelcheck_window.py" line="121"/>
+        <location filename="../core/modelcheck_window.py" line="113"/>
+        <location filename="../core/modelcheck_window.py" line="122"/>
         <source>Import &apos;{}&apos;</source>
         <translation>Import &apos;{}&apos;</translation>
     </message>
     <message>
-        <location filename="../core/modelcheck_window.py" line="133"/>
+        <location filename="../core/modelcheck_window.py" line="134"/>
         <source>Import Done!</source>
         <translation>Import Abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../core/modelcheck_window.py" line="206"/>
+        <location filename="../core/modelcheck_window.py" line="207"/>
         <source>Extend</source>
         <translation>Ausklappen</translation>
     </message>
     <message>
-        <location filename="../core/modelcheck_window.py" line="207"/>
+        <location filename="../core/modelcheck_window.py" line="208"/>
         <source>Collapse</source>
         <translation>Einklappen</translation>
     </message>
     <message>
-        <location filename="../core/modelcheck_window.py" line="208"/>
+        <location filename="../core/modelcheck_window.py" line="209"/>
         <source>Activate</source>
         <translation>Aktivieren</translation>
     </message>
     <message>
-        <location filename="../core/modelcheck_window.py" line="209"/>
+        <location filename="../core/modelcheck_window.py" line="210"/>
         <source>Deactivate</source>
         <translation>Deaktivieren</translation>
     </message>
@@ -1210,6 +1228,7 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
         <location filename="../core/predefined_property_set.py" line="21"/>
+        <location filename="../core/predefined_property_set.py" line="26"/>
         <location filename="../core/predefined_property_set.py" line="158"/>
         <source>Predefined Pset</source>
         <translation>Vordefiniertes PropertySet</translation>
@@ -1516,8 +1535,7 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>Settings</name>
     <message>
-        <location filename="../core/settings.py" line="20"/>
-        <location filename="../module/settings/ui.py" line="16"/>
+        <location filename="../core/settings.py" line="22"/>
         <source>Settings</source>
         <translation>Einstellungen</translation>
     </message>
