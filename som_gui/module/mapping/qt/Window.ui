@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>Mapping</class>
-    <widget class="QMainWindow" name="Mapping">
+ <class>Mapping</class>
+ <widget class="QMainWindow" name="Mapping">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>1194</width>
-       <height>549</height>
+    <width>1194</width>
+    <height>549</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,23 +18,28 @@
     <item row="0" column="0">
      <widget class="QSplitter" name="splitter">
       <property name="frameShape">
-          <enum>QFrame::Shape::Box</enum>
+       <enum>QFrame::Shape::Box</enum>
       </property>
       <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
-         <widget class="ObjectTreeWidget" name="object_tree">
+      <widget class="ObjectTreeWidget" name="object_tree">
        <property name="selectionMode">
-           <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
+        <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
        </property>
        <property name="sortingEnabled">
         <bool>true</bool>
        </property>
-             <column>
-                 <property name="text">
-                     <string notr="true">1</string>
-                 </property>
-             </column>
+       <column>
+        <property name="text">
+         <string>Object</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Ifc Mapping</string>
+        </property>
+       </column>
       </widget>
       <widget class="QWidget" name="gridLayoutWidget">
        <layout class="QGridLayout" name="right_layout">
@@ -51,15 +56,20 @@
            </widget>
           </item>
           <item>
-              <widget class="PropertySetTreeWidget" name="pset_tree">
+           <widget class="PropertySetTreeWidget" name="pset_tree">
             <property name="sortingEnabled">
              <bool>true</bool>
             </property>
-                  <column>
-                      <property name="text">
-                          <string notr="true">1</string>
-                      </property>
-                  </column>
+            <column>
+             <property name="text">
+              <string notr="true">PropertySet/Attribute</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Revit Mapping</string>
+             </property>
+            </column>
            </widget>
           </item>
          </layout>
@@ -75,8 +85,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-        <width>1194</width>
-        <height>33</height>
+     <width>1194</width>
+     <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_revit">
@@ -91,7 +101,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_ifc">
    <property name="text">
-       <string>Export IFC-Mapping</string>
+    <string>Export IFC-Mapping</string>
    </property>
   </action>
   <action name="action_shared_parameters">
@@ -100,18 +110,18 @@
    </property>
   </action>
  </widget>
-    <customwidgets>
-        <customwidget>
-            <class>ObjectTreeWidget</class>
-            <extends>QTreeWidget</extends>
-            <header>som_gui.module.object.ui</header>
-        </customwidget>
-        <customwidget>
-            <class>PropertySetTreeWidget</class>
-            <extends>QTreeWidget</extends>
-            <header>som_gui.module.mapping.ui</header>
-        </customwidget>
-    </customwidgets>
+ <customwidgets>
+  <customwidget>
+   <class>ObjectTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>som_gui.module.mapping.ui</header>
+  </customwidget>
+  <customwidget>
+   <class>PropertySetTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>som_gui.module.mapping.ui</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

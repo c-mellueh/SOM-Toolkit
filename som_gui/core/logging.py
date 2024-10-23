@@ -34,7 +34,7 @@ def retranslate_ui(logging_tool: Type[tool.Logging]):
     if not widget:
         return
     widget.ui.widget_export.name = QCoreApplication.translate("Logging", "Log Directory:")
-
+    widget.ui.retranslateUi(widget)
 
 def settings_accepted(logging_tool: Type[tool.Logging], util: Type[tool.Util]):
     log_levels: dict[str, int] = logging._nameToLevel

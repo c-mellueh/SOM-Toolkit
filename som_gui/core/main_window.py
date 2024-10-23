@@ -22,9 +22,7 @@ def retranslate_ui(main_window: Type[tool.MainWindow]):
         action.setText(QCoreApplication.translate("MainWindow", "Hide Console"))
     else:
         action.setText(QCoreApplication.translate("MainWindow", "Show Console"))
-    mw = main_window.get()
-    mw.ui.retranslateUi(mw)
-
+    main_window.get().ui.retranslateUi(main_window.get())
 
 def create_main_window(application: QApplication, main_window: Type[tool.MainWindow]):
     mw = main_window.create(application)

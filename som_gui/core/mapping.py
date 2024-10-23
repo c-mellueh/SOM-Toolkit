@@ -21,12 +21,16 @@ def retranslate_ui(mapping: Type[tool.Mapping], util: Type[tool.Util]):
     open_window_action = mapping.get_action("open_window")
     open_window_action.setText(QCoreApplication.translate("Mapping", "Revit-Mapping"))
     window = mapping.get_window()
-    window.setWindowTitle(f'{QCoreApplication.translate("Mapping", "Revit-Mapping")} | {util.get_status_text()}')
+    if window:
+        window.ui.retranslateUi(window)
+        window.setWindowTitle(f'{QCoreApplication.translate("Mapping", "Revit-Mapping")} | {util.get_status_text()}')
 
 
 def open_window(mapping: Type[tool.Mapping]):
-    window = mapping.get_window()
-    retranslate_ui(mapping)
+    if window:=mapping.get_window() is None:
+        window = mapping.create_window()
+    from som_gui.module.mapping import trigger
+    trigger.retranslate_ui()
     mapping.connect_window_triggers(window)
     window.show()
 
@@ -49,6 +53,7 @@ def export_revit_shared_parameters(mapping: Type[tool.Mapping], project: Type[to
 
 
 def update_object_tree(mapping: Type[tool.Mapping], project: Type[tool.Project]):
+    logging.debug(f"Update ObjectTree")
     root_objects = project.get_root_objects(filter_objects=False)
     mapping.fill_object_tree(root_objects)
 

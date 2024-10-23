@@ -28,13 +28,16 @@ class Mapping(som_gui.core.tool.Mapping):
         return cls.get_properties().actions[name]
 
     @classmethod
-    def get_window(cls):
+    def create_window(cls):
         prop = cls.get_properties()
-        if prop.window is None:
-            prop.window = ui.MappingWindow()
-            prop.object_tree = prop.window.ui.object_tree
-            prop.pset_tree = prop.window.ui.pset_tree
-        return prop.window
+        prop.window = ui.MappingWindow()
+        prop.object_tree = prop.window.ui.object_tree
+        prop.pset_tree = prop.window.ui.pset_tree
+        return cls.get_window()
+
+    @classmethod
+    def get_window(cls):
+        return cls.get_properties().window
 
     @classmethod
     def connect_window_triggers(cls, window: ui.MappingWindow) -> None:

@@ -9,21 +9,19 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
-                           QCursor, QFont, QFontDatabase, QGradient,
-                           QIcon, QImage, QKeySequence, QLinearGradient,
-                           QPainter, QPalette, QPixmap, QRadialGradient,
-                           QTransform)
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QGridLayout,
-                               QHeaderView, QLabel, QMainWindow, QMenu,
-                               QMenuBar, QSizePolicy, QSplitter, QStatusBar,
-                               QTreeWidgetItem, QVBoxLayout, QWidget)
+    QHeaderView, QLabel, QMainWindow, QMenu,
+    QMenuBar, QSizePolicy, QSplitter, QStatusBar,
+    QTreeWidgetItem, QVBoxLayout, QWidget)
 
-from som_gui.module.mapping.ui import PropertySetTreeWidget
-from som_gui.module.object.ui import ObjectTreeWidget
-
+from som_gui.module.mapping.ui import (ObjectTreeWidget, PropertySetTreeWidget)
 
 class Ui_Mapping(object):
     def setupUi(self, Mapping):
@@ -43,9 +41,6 @@ class Ui_Mapping(object):
         self.splitter.setFrameShape(QFrame.Shape.Box)
         self.splitter.setOrientation(Qt.Orientation.Horizontal)
         self.object_tree = ObjectTreeWidget(self.splitter)
-        __qtreewidgetitem = QTreeWidgetItem()
-        __qtreewidgetitem.setText(0, u"1");
-        self.object_tree.setHeaderItem(__qtreewidgetitem)
         self.object_tree.setObjectName(u"object_tree")
         self.object_tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.object_tree.setSortingEnabled(True)
@@ -64,9 +59,9 @@ class Ui_Mapping(object):
         self.verticalLayout.addWidget(self.label_object_name)
 
         self.pset_tree = PropertySetTreeWidget(self.gridLayoutWidget)
-        __qtreewidgetitem1 = QTreeWidgetItem()
-        __qtreewidgetitem1.setText(0, u"1");
-        self.pset_tree.setHeaderItem(__qtreewidgetitem1)
+        __qtreewidgetitem = QTreeWidgetItem()
+        __qtreewidgetitem.setText(0, u"PropertySet/Attribute");
+        self.pset_tree.setHeaderItem(__qtreewidgetitem)
         self.pset_tree.setObjectName(u"pset_tree")
         self.pset_tree.setSortingEnabled(True)
 
@@ -103,7 +98,12 @@ class Ui_Mapping(object):
         Mapping.setWindowTitle(QCoreApplication.translate("Mapping", u"MainWindow", None))
         self.action_ifc.setText(QCoreApplication.translate("Mapping", u"Export IFC-Mapping", None))
         self.action_shared_parameters.setText(QCoreApplication.translate("Mapping", u"Export Shared Parameters", None))
+        ___qtreewidgetitem = self.object_tree.headerItem()
+        ___qtreewidgetitem.setText(1, QCoreApplication.translate("Mapping", u"Ifc Mapping", None));
+        ___qtreewidgetitem.setText(0, QCoreApplication.translate("Mapping", u"Object", None));
         self.label_object_name.setText("")
+        ___qtreewidgetitem1 = self.pset_tree.headerItem()
+        ___qtreewidgetitem1.setText(1, QCoreApplication.translate("Mapping", u"Revit Mapping", None));
         self.menu_revit.setTitle(QCoreApplication.translate("Mapping", u"Revit", None))
     # retranslateUi
 
