@@ -132,8 +132,8 @@ def tree_mouse_release_event(index: QModelIndex, filter_window: Type[tool.Filter
 def add_compare_widget(filter_compare: Type[tool.FilterCompare],
                        attribute_compare: Type[tool.AttributeCompare],
                        compare_window: Type[tool.CompareWindow]):
-    name = QCoreApplication.translate("FilterWindow", "Project Filter")
-    compare_window.add_tab(name, filter_compare.get_widget,
+    name_getter = lambda:QCoreApplication.translate("FilterWindow", "Project Filter")
+    compare_window.add_tab(name_getter, filter_compare.get_widget,
                            lambda p0, p1: init_compare_object_filter(p0, p1, filter_compare, attribute_compare),
                            filter_compare,
                            lambda file: export_filter_differences(file, filter_compare, attribute_compare))
@@ -169,7 +169,7 @@ def init_compare_object_filter(project0: SOMcreator.Project, project1: SOMcreato
     for col in range(2, object_tree_widget.columnCount()):
         object_tree_widget.setColumnWidth(col, 58)
 
-    widget.widget.table_widget_values.hide()
+    widget.ui.table_widget_values.hide()
 
 
 def filter_tab_object_tree_selection_changed(widget: attribute_ui.AttributeWidget,

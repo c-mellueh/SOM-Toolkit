@@ -214,7 +214,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
     @classmethod
     def create_tree_selection_trigger(cls, widget: attribute_ui.AttributeWidget):
-        widget.widget.tree_widget_object.itemSelectionChanged.connect(
+        widget.ui.tree_widget_object.itemSelectionChanged.connect(
             lambda: trigger.filter_tab_object_tree_selection_changed(widget))
 
     @classmethod
@@ -440,13 +440,13 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
     def get_widget(cls) -> attribute_ui.AttributeWidget:
         if cls.get_properties().widget is None:
             cls.get_properties().widget = attribute_ui.AttributeWidget()
-            cls.get_properties().widget.widget.table_widget_values.hide()
-            cls.get_properties().widget.widget.table_infos.hide()
+            cls.get_properties().widget.ui.table_widget_values.hide()
+            cls.get_properties().widget.ui.table_infos.hide()
         return cls.get_properties().widget
 
     @classmethod
     def get_object_tree(cls):
-        return cls.get_widget().widget.tree_widget_object
+        return cls.get_widget().ui.tree_widget_object
 
     @classmethod
     def get_usecase_list(cls) -> list[SOMcreator.UseCase]:

@@ -1,6 +1,9 @@
 from __future__ import annotations
 import os.path
 from typing import TYPE_CHECKING, Type
+
+from jupyterlab.semver import compare
+
 from som_gui.module.compare.constants import COMPARE_SETTING, EXPORT_PATH
 import SOMcreator
 from PySide6.QtCore import Qt, QCoreApplication
@@ -25,7 +28,13 @@ def create_main_menu_actions(compare_window: Type[tool.CompareWindow], main_wind
 def retranslate_ui(compare_window: Type[tool.CompareWindow], ):
     open_window_action = compare_window.get_action("open_window")
     open_window_action.setText(QCoreApplication.translate("CompareWindow", "Compare Projects"))
-
+    window = compare_window.get_window()
+    if not window:
+        return
+    tab_widget = compare_window.get_tabwidget()
+    names = [ng() for ng in compare_window.get_properties().name_getter]
+    for name,i in zip(names,range(tab_widget.count())):
+        tab_widget.setTabText(i,name)
 
 def open_project_selection_window(compare_window: Type[tool.CompareWindow],
                                   project_selector: Type[tool.CompareProjectSelector],
@@ -80,7 +89,8 @@ def open_compare_window(compare_window: Type[tool.CompareWindow], project_select
                         popups: Type[tool.Popups]):
     other_file_path = project_selector.get_project_select_path()
     if not os.path.exists(other_file_path):
-        popups.create_warning_popup(f"File {other_file_path} does not exist!")
+        warning = QCoreApplication.translate("Compare","File '{}' doesn't exist").format(other_file_path)
+        popups.create_warning_popup(warning)
         return
 
     window = compare_window.create_window()
@@ -152,50 +162,6 @@ def pset_tree_selection_changed(widget: ui.AttributeWidget, attribute_compare: T
 
     attribute_compare.style_table(table, 1)
     attribute_compare.style_table(attribute_compare.get_value_table(widget))
-
-def add_attribute_compare_widget(attribute_compare: Type[tool.AttributeCompare],
-                                 compare_window: Type[tool.CompareWindow]):
-    compare_window.add_tab("Attributes", attribute_compare.get_widget,
-                           lambda p0, p1: init_attribute_compare(p0, p1, attribute_compare),
-                           attribute_compare, lambda file: export_attribute_differences(file, attribute_compare))
-
-
-def export_attribute_differences(file, attribute_compare: Type[tool.AttributeCompare]):
-    objects0: list[SOMcreator.Object] = attribute_compare.get_missing_objects(0)
-    objects1: list[SOMcreator.Object] = attribute_compare.get_missing_objects(1)
-    file.write("\nATTRIBUTE COMPARISON\n\n")
-
-    for obj in sorted(objects0, key=lambda x: x.name):
-        file.write(f"{obj.name} ({obj.ident_value}) was deleted\n")
-
-    for obj in sorted(objects1, key=lambda x: x.name):
-        file.write(f"{obj.name} ({obj.ident_value}) was added\n")
-
-    if objects0 or objects1:
-        file.write("\n\n")
-
-    attribute_compare.export_object_differences(file)
-
-
-def init_attribute_compare(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
-    attribute_compare.set_projects(project0, project1)
-    attribute_compare.create_object_lists()
-    widget = attribute_compare.get_widget()
-    object_tree_widget = attribute_compare.get_object_tree(widget)
-    pset_tree = attribute_compare.get_pset_tree(widget)
-    value_table = attribute_compare.get_value_table(widget)
-    info_table = attribute_compare.get_info_table(widget)
-    attribute_compare.fill_object_tree(object_tree_widget, add_missing=True)
-    root = object_tree_widget.invisibleRootItem()
-    for child_index in range(root.childCount()):
-        attribute_compare.style_tree_item(root.child(child_index))
-
-    header_labels = [attribute_compare.get_header_name_from_project(project0),
-                     attribute_compare.get_header_name_from_project(project1)]
-    attribute_compare.set_header_labels([object_tree_widget, pset_tree], [value_table], header_labels)
-    attribute_compare.set_header_labels([], [info_table], ["Name"] + header_labels)
-
-    attribute_compare.create_tree_selection_trigger(widget)
 
 
 def download_changelog(compare_window: Type[tool.CompareWindow], popups: Type[tool.Popups],

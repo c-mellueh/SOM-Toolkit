@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING,Callable
 
 if TYPE_CHECKING:
     import SOMcreator
@@ -20,7 +20,7 @@ class CompareProjectSelectProperties:
 
 class CompareWindowProperties:
     widgets = list()
-    names = list()
+    name_getter:list[Callable] = list()
     init_functions = list()
     tools = list()
     window: CompareDialog = None

@@ -95,9 +95,9 @@ class CompareWindow(som_gui.core.tool.CompareWindow):
         window.widget.button_download.clicked.connect(trigger.download_clicked)
 
     @classmethod
-    def add_tab(cls, name: str, widget, init_func, _tool, export_func):
+    def add_tab(cls, name_getter: Callable, widget, init_func, _tool, export_func):
         prop = cls.get_properties()
-        prop.names.append(name)
+        prop.name_getter.append(name_getter)
         prop.widgets.append(widget)
         prop.init_functions.append(init_func)
         prop.tools.append(_tool)
@@ -126,12 +126,12 @@ class CompareWindow(som_gui.core.tool.CompareWindow):
 
     @classmethod
     def init_tabs(cls, project0, project1):
-        names = cls.get_properties().names
+        names = cls.get_properties().name_getter
         widgets = cls.get_properties().widgets
         init_functions = cls.get_properties().init_functions
         tab_widget = cls.get_tabwidget()
-        for name, widget_getter, init_func in zip(names, widgets, init_functions):
-            tab_widget.addTab(widget_getter(), QIcon(), name)
+        for name_getter, widget_getter, init_func in zip(names, widgets, init_functions):
+            tab_widget.addTab(widget_getter(), QIcon(), name_getter())
             init_func(project0, project1)
 
     @classmethod

@@ -6,12 +6,12 @@ from .qt import ui_CompareWidget
 class AttributeWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.widget = ui_CompareWidget.Ui_AttributeCompare()
-        self.widget.setupUi(self)
-        self.widget.tree_widget_object.setColumnCount(2)
-        self.widget.tree_widget_propertysets.setColumnCount(2)
-        self.widget.table_widget_values.setColumnCount(2)
-        self.widget.table_infos.setColumnCount(3)
+        self.ui = ui_CompareWidget.Ui_AttributeCompare()
+        self.ui.setupUi(self)
+        self.ui.tree_widget_object.setColumnCount(2)
+        self.ui.tree_widget_propertysets.setColumnCount(2)
+        self.ui.table_widget_values.setColumnCount(2)
+        self.ui.table_infos.setColumnCount(3)
 
 
 class WordWrapHeaderView(QHeaderView):

@@ -154,8 +154,8 @@ def repaint_pset_list(predefined_pset: Type[tool.PredefinedPropertySet]):
 def add_compare_widget(pset_compare: Type[tool.PredefinedPropertySetCompare],
                        attribute_compare: Type[tool.AttributeCompare],
                        compare_window: Type[tool.CompareWindow]):
-    name = QCoreApplication.translate("PredefinedPset", "Predefined Pset")
-    compare_window.add_tab(name, pset_compare.get_widget,
+    name_getter = lambda:QCoreApplication.translate("PredefinedPset", "Predefined Pset")
+    compare_window.add_tab(name_getter, pset_compare.get_widget,
                            lambda p0, p1: init_compare_window(p0, p1, pset_compare, attribute_compare),
                            pset_compare,
                            lambda file: export_compare(file, pset_compare, attribute_compare))

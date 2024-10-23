@@ -251,8 +251,9 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
 
     @classmethod
     def get_widget(cls):
+        from som_gui.module.predefined_property_set import ui
         if cls.get_properties().widget is None:
-            cls.get_properties().widget = som_gui.module.predefined_property_set.ui.CompareWidget()
+            cls.get_properties().widget = ui.CompareWidget()
         return cls.get_properties().widget
 
     @classmethod

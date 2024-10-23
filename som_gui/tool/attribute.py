@@ -152,9 +152,9 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def create_tree_selection_trigger(cls, widget: ui.AttributeWidget):
-        widget.widget.tree_widget_object.itemSelectionChanged.connect(
+        widget.ui.tree_widget_object.itemSelectionChanged.connect(
             lambda: trigger.object_tree_selection_changed(widget))
-        widget.widget.tree_widget_propertysets.itemSelectionChanged.connect(
+        widget.ui.tree_widget_propertysets.itemSelectionChanged.connect(
             lambda: trigger.pset_tree_selection_changed(widget))
 
     @classmethod
@@ -739,20 +739,24 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def get_object_tree(cls, widget: ui.AttributeWidget):
-        return widget.widget.tree_widget_object
+        return widget.ui.tree_widget_object
 
     @classmethod
     def get_pset_tree(cls, widget: ui.AttributeWidget):
-        return widget.widget.tree_widget_propertysets
+        return widget.ui.tree_widget_propertysets
 
     @classmethod
     def get_value_table(cls, widget: ui.AttributeWidget):
-        return widget.widget.table_widget_values
+        return widget.ui.table_widget_values
+
+    @classmethod
+    def create_widget(cls):
+        if cls.get_properties().widget is None:
+            cls.get_properties().widget = ui.AttributeWidget()
+        return cls.get_properties().widget
 
     @classmethod
     def get_widget(cls):
-        if cls.get_properties().widget is None:
-            cls.get_properties().widget = ui.AttributeWidget()
         return cls.get_properties().widget
 
     @classmethod
@@ -892,4 +896,4 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def get_info_table(cls, widget: ui.AttributeWidget):
-        return widget.widget.table_infos
+        return widget.ui.table_infos

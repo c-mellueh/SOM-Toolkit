@@ -172,6 +172,34 @@
     </message>
 </context>
 <context>
+    <name>Compare</name>
+    <message>
+        <location filename="../core/attribute.py" line="32"/>
+        <source>Attributes</source>
+        <translation>Attribute</translation>
+    </message>
+    <message>
+        <location filename="../core/attribute.py" line="40"/>
+        <source>ATTRIBUTE COMPARISON</source>
+        <translation>ATTRIBUT VERGLEICH</translation>
+    </message>
+    <message>
+        <location filename="../core/attribute.py" line="43"/>
+        <source>{} ({}) was deleted</source>
+        <translation>{} ({}) wurde gelöscht</translation>
+    </message>
+    <message>
+        <location filename="../core/attribute.py" line="47"/>
+        <source>{} ({}) was added</source>
+        <translation>{} ({}) wurde hinzugefügt</translation>
+    </message>
+    <message>
+        <location filename="../core/compare.py" line="92"/>
+        <source>File &apos;{}&apos; doesn&apos;t exist</source>
+        <translation>Datei &apos;{}&apos; existiert nicht</translation>
+    </message>
+</context>
+<context>
     <name>CompareDialog</name>
     <message>
         <location filename="../module/compare/ui.py" line="23"/>
@@ -187,7 +215,7 @@
 <context>
     <name>CompareWindow</name>
     <message>
-        <location filename="../core/compare.py" line="27"/>
+        <location filename="../core/compare.py" line="30"/>
         <source>Compare Projects</source>
         <translation>Projekte vergleichen</translation>
     </message>

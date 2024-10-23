@@ -4,7 +4,6 @@ from som_gui import tool
 
 def connect():
     core.create_main_menu_actions(tool.CompareWindow, tool.MainWindow)
-    core.add_attribute_compare_widget(tool.AttributeCompare, tool.CompareWindow)
 
 
 def open_window():
