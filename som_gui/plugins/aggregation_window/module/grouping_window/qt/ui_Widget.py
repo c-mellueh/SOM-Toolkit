@@ -20,7 +20,6 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialogButtonBox, 
 
 from som_gui.module.util.ui import (AttributeSelector, FileSelector, Progressbar)
 
-
 class Ui_Aggregation(object):
     def setupUi(self, Aggregation):
         if not Aggregation.objectName():

@@ -22,7 +22,6 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QMenu, QMenuBar,
 from ...view.ui import AggregationView
 from ..ui import ComboBox
 
-
 class Ui_Aggregation(object):
     def setupUi(self, Aggregation):
         if not Aggregation.objectName():
@@ -85,7 +84,6 @@ class Ui_Aggregation(object):
         self.retranslateUi(Aggregation)
 
         QMetaObject.connectSlotsByName(Aggregation)
-
     # setupUi
 
     def retranslateUi(self, Aggregation):
@@ -98,15 +96,16 @@ class Ui_Aggregation(object):
         self.actionSearch_for_Node.setText(QCoreApplication.translate("Aggregation", u"Search for Node", None))
         # if QT_CONFIG(shortcut)
         self.actionSearch_for_Node.setShortcut(QCoreApplication.translate("Aggregation", u"Ctrl+F", None))
-        # endif // QT_CONFIG(shortcut)
+        #endif // QT_CONFIG(shortcut)
         self.actionCopy_selected_Nodes.setText(QCoreApplication.translate("Aggregation", u"Copy selected Nodes", None))
-        # if QT_CONFIG(shortcut)
+        #if QT_CONFIG(shortcut)
         self.actionCopy_selected_Nodes.setShortcut(QCoreApplication.translate("Aggregation", u"Ctrl+C", None))
-        # endif // QT_CONFIG(shortcut)
+        #endif // QT_CONFIG(shortcut)
         self.actionPaste_Nodes.setText(QCoreApplication.translate("Aggregation", u"Paste Nodes", None))
-        # if QT_CONFIG(shortcut)
+        #if QT_CONFIG(shortcut)
         self.actionPaste_Nodes.setShortcut(QCoreApplication.translate("Aggregation", u"Ctrl+V", None))
-        # endif // QT_CONFIG(shortcut)
+        #endif // QT_CONFIG(shortcut)
         self.menuView.setTitle(QCoreApplication.translate("Aggregation", u"View", None))
         self.menuAggregation.setTitle(QCoreApplication.translate("Aggregation", u"Aggregation", None))
     # retranslateUi
+

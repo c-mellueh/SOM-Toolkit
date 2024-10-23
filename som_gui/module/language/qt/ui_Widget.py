@@ -18,7 +18,6 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QComboBox, QFormLayout, QLabel,
                                QSizePolicy, QWidget)
 
-
 class Ui_Settings(object):
     def setupUi(self, Settings):
         if not Settings.objectName():
@@ -41,7 +40,6 @@ class Ui_Settings(object):
         self.retranslateUi(Settings)
 
         QMetaObject.connectSlotsByName(Settings)
-
     # setupUi
 
     def retranslateUi(self, Settings):
@@ -51,3 +49,4 @@ class Ui_Settings(object):
         self.comboBox.setItemText(1, QCoreApplication.translate("Settings", u"English", u"en"))
 
     # retranslateUi
+

@@ -53,8 +53,6 @@
         "..\\tool\\view.py",
         "..\\tool\\window.py",
         "..\\tool\\__init__.py",
-        "..\\translation\\aggregation_window.qrc",
-        "..\\translation\\rc_aggregation_window.py",
         "..\\translation\\translation_de.ts",
         "..\\translation\\_create_pyproject.py",
         "..\\translation\\__init__.py"
