@@ -1,6 +1,4 @@
 from __future__ import annotations
-from som_gui import __version__ as version
-from som_gui import tool
 from typing import TYPE_CHECKING
 from PySide6.QtCore import Signal, QObject
 from PySide6.QtWidgets import QMessageBox, QCheckBox
@@ -17,7 +15,7 @@ if TYPE_CHECKING:
     from som_gui.module.logging.prop import LoggingProperties
     from som_gui.module.logging import ui
 
-from som_gui.icons import get_icon
+from som_gui.ressources.icons import get_icon
 from som_gui import tool
 from som_gui.module.logging.constants import LOG_PATH, LOG_SECTION, LOG_LEVEL
 

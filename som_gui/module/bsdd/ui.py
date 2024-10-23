@@ -1,8 +1,9 @@
 from som_gui.module.bsdd.qt.ui_widget import Ui_BSDD
-from som_gui.icons import get_icon
+from som_gui.ressources.icons import get_icon
 from PySide6.QtWidgets import QWidget
 from . import trigger
-from som_gui import tool
+
+
 class Widget(QWidget):
     def __init__(self):
         super().__init__()

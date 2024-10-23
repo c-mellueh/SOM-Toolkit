@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget
-from som_gui.icons import get_icon
+from som_gui.ressources.icons import get_icon
 
 
 class SettingsWidget(QWidget):

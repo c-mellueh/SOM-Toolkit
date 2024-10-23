@@ -1,9 +1,9 @@
-from PySide6.QtWidgets import QMainWindow, QMenuBar, QStatusBar, QVBoxLayout, QWidget, QComboBox
+from PySide6.QtWidgets import QMainWindow, QComboBox
 from PySide6.QtGui import QPaintEvent
-from som_gui.icons import get_icon
+from som_gui.ressources.icons import get_icon
 from . import trigger
 from PySide6.QtCore import Qt
-from som_gui import tool
+
 
 class AggregationWindow(QMainWindow):
     def __init__(self, *args, **kwargs) -> None:

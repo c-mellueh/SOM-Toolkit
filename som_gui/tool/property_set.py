@@ -9,7 +9,7 @@ from SOMcreator.datastructure.som_json import INHERITED_TEXT
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
-from som_gui.icons import get_link_icon
+from som_gui.ressources.icons import get_link_icon
 from som_gui.module.project.constants import CLASS_REFERENCE
 
 import SOMcreator

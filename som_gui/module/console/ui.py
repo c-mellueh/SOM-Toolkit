@@ -1,4 +1,4 @@
-from som_gui.icons import get_icon
+from som_gui.ressources.icons import get_icon
 from pyqtconsole.console import PythonConsole
 from . import trigger
 from som_gui import tool

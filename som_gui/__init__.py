@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 import importlib
 import pkgutil
-from .icons import get_icon
+from som_gui.ressources.icons import get_icon
 
 module = importlib.import_module("som_gui.module")
 modules = [[m.name, None] for m in pkgutil.iter_modules(module.__path__) if m.ispkg]

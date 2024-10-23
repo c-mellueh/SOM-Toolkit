@@ -1,7 +1,6 @@
-from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QDialog, QDialogButtonBox
-from PySide6.QtCore import Qt, QCoreApplication
-from som_gui.icons import get_icon
-from som_gui import tool
+from PySide6.QtWidgets import QDialog
+from som_gui.ressources.icons import get_icon
+
 
 class Dialog(QDialog):
     def __init__(self):

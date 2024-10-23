@@ -1,8 +1,7 @@
 from PySide6.QtWidgets import QTreeWidget, QMainWindow
 
-from som_gui.icons import get_icon
+from som_gui.ressources.icons import get_icon
 from . import trigger
-from som_gui import tool
 
 
 class MappingWindow(QMainWindow):

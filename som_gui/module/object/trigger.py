@@ -1,8 +1,8 @@
-import som_gui
 from som_gui import tool
 from som_gui.core import object as core
 from PySide6.QtWidgets import QTreeWidget
-from som_gui.icons import get_search_icon
+
+
 def connect():
     widget: QTreeWidget = tool.Object.get_object_tree()
     widget.itemChanged.connect(lambda item: core.item_changed(item, tool.Object))

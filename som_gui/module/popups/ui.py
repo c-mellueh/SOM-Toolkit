@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QDialog
 from .qt.ui_DeleteRequest import Ui_DeleteRequest
-from som_gui.icons import get_icon
+from som_gui.ressources.icons import get_icon
 
 
 class DeleteRequestDialog(QDialog):

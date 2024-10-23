@@ -3,7 +3,7 @@ from PySide6.QtCore import Qt
 from PySide6 import QtGui
 from som_gui.module import property_set_window
 from .qt.ui_Window import Ui_PropertySetWindow
-from som_gui.icons import get_icon
+from som_gui.ressources.icons import get_icon
 
 
 class PropertySetWindow(QWidget):

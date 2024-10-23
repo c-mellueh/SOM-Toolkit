@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QMainWindow, QApplication
 from .qt import ui_MainWindow
 from . import trigger
-from som_gui.icons import get_icon
+from som_gui.ressources.icons import get_icon
 
 
 class MainWindow(QMainWindow):

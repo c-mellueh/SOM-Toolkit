@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QDialog, QTreeWidget, QPushButton
 from . import trigger
 from .qt import ui_ImportWidget, ui_Widget
-from som_gui.icons import get_icon, get_switch_icon, get_download_icon
+from som_gui.ressources.icons import get_icon, get_switch_icon, get_download_icon
 from PySide6.QtGui import QPalette
 from PySide6.QtCore import QModelIndex
 from som_gui import tool

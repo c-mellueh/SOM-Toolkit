@@ -1,9 +1,8 @@
 from __future__ import annotations
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeView
-from PySide6.QtGui import QStandardItemModel, QMouseEvent
+from PySide6.QtWidgets import QWidget, QTreeView
+from PySide6.QtGui import QStandardItemModel
 from som_gui.module import modelcheck_window
-from som_gui.icons import get_icon
-from som_gui import tool
+from som_gui.ressources.icons import get_icon
 from . import qt
 
 
