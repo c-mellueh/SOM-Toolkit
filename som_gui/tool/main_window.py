@@ -83,11 +83,6 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_ui().menubar
 
     @classmethod
-    def get_menu_dict(cls) -> MenuDict:
-        prop = cls.get_properties()
-        return prop.menu_dict
-
-    @classmethod
     def add_submenu(cls, parent_name: str, name) -> QMenu:
         if parent_name:
             menu: QMenuBar | QMenu = getattr(cls.get_ui(), parent_name)
@@ -104,15 +99,6 @@ class MainWindow(som_gui.core.tool.MainWindow):
         action = menu.addAction(name)
         action.triggered.connect(function)
         return action
-
-    @classmethod
-    def add_action(cls, menu_path: str | list[str], function: Callable):
-        menu_bar = cls.get_menu_bar()
-        menu_dict = cls.get_menu_dict()
-        if isinstance(menu_path, list):
-            menu_path = "/".join(menu_path)
-        tool.Util.menu_bar_add_action(menu_bar, menu_dict, menu_path, function)
-
 
     @classmethod
     def get_ui(cls) -> Ui_MainWindow:

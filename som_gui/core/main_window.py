@@ -24,6 +24,7 @@ def retranslate_ui(main_window: Type[tool.MainWindow]):
         action.setText(QCoreApplication.translate("MainWindow", "Show Console"))
     main_window.get().ui.retranslateUi(main_window.get())
 
+
 def create_main_window(application: QApplication, main_window: Type[tool.MainWindow]):
     mw = main_window.create(application)
     mw.show()
@@ -39,13 +40,6 @@ def close_event(project_tool: Type[Project], appdata: Type[Appdata],
         return True
     core_project.save_clicked(project_tool, popups_tool, appdata, main_window)
     return True
-
-
-def create_menus(main_window_tool: Type[MainWindow], util: Type[tool.Util]):
-    menu_dict = main_window_tool.get_menu_dict()
-    menu_bar = main_window_tool.get_menu_bar()
-    menu_dict["menu"] = menu_bar
-    util.menu_bar_create_actions(menu_dict, None)
 
 
 def refresh_main_window(main_window_tool: Type[MainWindow], project_tool: Type[Project]):

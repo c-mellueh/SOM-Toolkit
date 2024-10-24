@@ -18,12 +18,6 @@ class MenuDict(TypedDict):
 
 
 class MainWindowProperties:
-    menu_dict: MenuDict = {
-        "submenu": list(),
-        "actions": list(),
-        "menu":    None,
-        "name":    "menubar",
-    }
     ui: Ui_MainWindow | None = None
     window: MainWindow = None
     application: QApplication = None
