@@ -2,12 +2,6 @@ from __future__ import annotations
 
 __version__ = "2.13.4"
 from som_gui.resources.icons import get_icon
-
-def tr(*args, **kwargs):
-    from PySide6.QtCore import QCoreApplication
-    return QCoreApplication.translate(*args, **kwargs)
-
-
 import logging
 from typing import TYPE_CHECKING
 from som_gui import core, tool
