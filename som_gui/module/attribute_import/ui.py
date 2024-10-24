@@ -15,8 +15,6 @@ class AttributeImportResultWindow(QWidget):
         self.ui = ui_Widget.Ui_AttributeImport()
         self.ui.setupUi(self)
         self.ui.button_settings.setIcon(get_settings_icon())
-        title = QCoreApplication.translate("AttributeImport", "Import Values")
-        self.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
         self.setWindowIcon(get_icon())
 
 
@@ -74,5 +72,3 @@ class SettingsDialog(QDialog):
         self.widget = ui_SettingsWidget.Ui_AttributeImport()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        title = QCoreApplication.translate("AttributeImport", "Settings v")
-        self.setWindowTitle(f"{title}{version} | {tool.Util.get_status_text()}")

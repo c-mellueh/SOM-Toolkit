@@ -44,7 +44,8 @@ class Search(som_gui.core.tool.Search):
             title = QCoreApplication.translate('Search', 'Search Object')
         elif search_mode == 2:
             title = QCoreApplication.translate('Search', 'Search Attribute')
-        widget.setWindowTitle(f"{title} v{version}| {tool.Util.get_status_text()}")
+
+        widget.setWindowTitle(tool.Util.get_window_title(f"{title} v{version}"))
 
     @classmethod
     def search_object(cls) -> SOMcreator.Object | None:

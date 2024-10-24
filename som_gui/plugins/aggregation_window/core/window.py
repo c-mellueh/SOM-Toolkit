@@ -17,16 +17,16 @@ def create_main_menu_actions(window: Type[aw_tool.Window], main_window: Type[too
     window.set_action("open_window", action)
 
 
-def retranslate_ui(window: Type[aw_tool.Window], ):
+def retranslate_ui(window: Type[aw_tool.Window],util:Type[tool.Util] ):
     action = window.get_action("open_window")
     action.setText(QCoreApplication.translate("Aggregation", "Building Structure"))
 
     aggregation_window = window.get_window()
     if not aggregation_window:
         return
-    title = QCoreApplication.translate("Aggregation", "Building Structure")
-    aggregation_window.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
     aggregation_window.ui.retranslateUi(aggregation_window)
+    title = util.get_window_title(QCoreApplication.translate("Aggregation", "Building Structure"))
+    aggregation_window.setWindowTitle(title)
 
 
 def paint_event(window: Type[aw_tool.Window]) -> None:
@@ -37,7 +37,7 @@ def paint_event(window: Type[aw_tool.Window]) -> None:
         status_bar.showMessage(new_status_bar_text)
 
 
-def create_window(window: Type[aw_tool.Window], view: Type[aw_tool.View], util: Type[tool.Util]) -> None:
+def create_window(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> None:
     if window.get_window() is not None:
         aggregation_window = window.get_window()
         aggregation_window.show()
@@ -46,6 +46,8 @@ def create_window(window: Type[aw_tool.Window], view: Type[aw_tool.View], util: 
     aggregation_window = window.create_window()
     view.set_view(aggregation_window.ui.graphicsView)
     window.connect_menu(aggregation_window)
+    from ..module.window import trigger
+    trigger.retranslate_ui()
     aggregation_window.show()
 
 

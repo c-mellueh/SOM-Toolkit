@@ -38,7 +38,7 @@ def retranslate_ui(move: Type[ifc_tool.Move], util: Type[tool.Util]):
     widget.ui.retranslateUi(widget)
     title = QCoreApplication.translate("Move", "Move")
 
-    widget.setWindowTitle(f"{title} | {util.get_status_text()}")
+    widget.setWindowTitle(util.get_window_title(title))
 
 
 def open_window(move: Type[ifc_tool.Move], util: Type[tool.Util], appdata: Type[tool.Appdata]):

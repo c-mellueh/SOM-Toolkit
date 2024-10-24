@@ -99,8 +99,10 @@ def resize_columns(object_tool: Type[Object]):
     object_tool.resize_tree()
 
 
-def create_object_info_widget(mode: int, object_tool: Type[Object]):
+def create_object_info_widget(mode: int, object_tool: Type[Object],util:Type[tool.Util]):
     dialog = object_tool.oi_create_dialog()
+    title = QCoreApplication.translate("ObjectInfo", "Object Info")
+    dialog.setWindowTitle(util.get_window_title(title))
     widget = dialog.widget
     widget.button_add_ifc.pressed.connect(lambda: object_info_add_ifc(object_tool))
     widget.combo_box_pset.currentIndexChanged.connect(lambda: object_info_pset_changed(object_tool))
@@ -144,10 +146,10 @@ def object_info_add_ifc(object_tool: Type[Object]):
     object_tool.add_ifc_mapping("")
 
 
-def load_context_menus(object_tool: Type[Object]):
+def load_context_menus(object_tool: Type[Object],util:Type[tool.Util]):
     object_tool.clear_context_menu_list()
     object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Copy"),
-                                       lambda: create_object_info_widget(2, object_tool), True, False)
+                                       lambda: create_object_info_widget(2, object_tool,util), True, False)
     object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Delete"),
                                        object_tool.delete_selection, True, True)
     object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Extend"),
@@ -157,7 +159,7 @@ def load_context_menus(object_tool: Type[Object]):
     object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Group"),
                                        lambda: create_group(object_tool), True, True)
     object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Info"),
-                                       lambda: create_object_info_widget(1, object_tool), True, False)
+                                       lambda: create_object_info_widget(1, object_tool,util), True, False)
 
 
 def create_group(object_tool: Type[Object]):

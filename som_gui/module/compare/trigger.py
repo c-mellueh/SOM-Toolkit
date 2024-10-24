@@ -12,7 +12,7 @@ def open_window():
                                        tool.Appdata, tool.Project)
 
 def retranslate_ui():
-    core.retranslate_ui(tool.CompareWindow)
+    core.retranslate_ui(tool.CompareWindow,tool.Util)
 
 def on_new_project():
     pass

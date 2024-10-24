@@ -22,12 +22,15 @@ def create_main_menu_actions(compare_window: Type[tool.CompareWindow], main_wind
     compare_window.set_action("open_window", open_window_action)
 
 
-def retranslate_ui(compare_window: Type[tool.CompareWindow], ):
+def retranslate_ui(compare_window: Type[tool.CompareWindow],util:Type[tool.Util] ):
+    title = QCoreApplication.translate("CompareWindow", "Compare Projects")
     open_window_action = compare_window.get_action("open_window")
-    open_window_action.setText(QCoreApplication.translate("CompareWindow", "Compare Projects"))
+    open_window_action.setText(title)
     window = compare_window.get_window()
     if not window:
         return
+    window.setWindowTitle(util.get_window_title(title))
+
     tab_widget = compare_window.get_tabwidget()
     names = [ng() for ng in compare_window.get_properties().name_getter]
     for name,i in zip(names,range(tab_widget.count())):
@@ -91,6 +94,7 @@ def open_compare_window(compare_window: Type[tool.CompareWindow], project_select
         return
 
     window = compare_window.create_window()
+
     compare_window.connect_triggers()
 
     appdata.set_path(COMPARE_SETTING, other_file_path)

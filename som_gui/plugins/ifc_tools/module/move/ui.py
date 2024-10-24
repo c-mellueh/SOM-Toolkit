@@ -8,5 +8,4 @@ class MoveWidget(QWidget):
         super().__init__(*args, **kwargs)
         self.ui = ui_Widget.Ui_Form()
         self.ui.setupUi(self)
-        self.setWindowTitle(f"IFC Verschieben {som_gui.tool.Util.get_status_text()}")
         self.setWindowIcon(som_gui.get_icon())

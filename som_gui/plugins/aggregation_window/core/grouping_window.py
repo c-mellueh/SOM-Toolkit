@@ -31,7 +31,7 @@ def retranslate_ui(grouping_window: Type[aw_tool.GroupingWindow], util: Type[too
     if window is None:
         return
     title = QCoreApplication.translate("Aggregation", "Create Groups")
-    window.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
+    window.setWindowTitle(util.get_window_title(title))
     window.ui.widget_export.name = QCoreApplication.translate("Aggregation", "Export Path")
     window.ui.widget_import.name = QCoreApplication.translate("Aggregation", "IFC Path")
 

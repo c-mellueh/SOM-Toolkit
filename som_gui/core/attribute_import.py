@@ -22,7 +22,8 @@ def create_main_menu_actions(attribute_import: Type[tool.AttributeImport], main_
     attribute_import.set_action("open_window", open_window_action)
 
 
-def retranslate_ui(attribute_import: Type[tool.AttributeImport],attribute_import_results:Type[tool.AttributeImportResults],util:Type[tool.Util] ):
+def retranslate_ui(attribute_import: Type[tool.AttributeImport],
+                   attribute_import_results: Type[tool.AttributeImportResults], util: Type[tool.Util]):
     open_window_action = attribute_import.get_action("open_window")
     open_window_action.setText(QCoreApplication.translate("AttributeImport", "Import Values"))
 
@@ -38,6 +39,7 @@ def retranslate_ui(attribute_import: Type[tool.AttributeImport],attribute_import
         result_window.ui.retranslateUi(result_window)
         title = QCoreApplication.translate("AttributeImport", "Import Values")
         result_window.setWindowTitle(util.get_window_title(title))
+
 
 def open_import_window(attribute_import: Type[tool.AttributeImport],
                        attribute_import_results: Type[tool.AttributeImportResults],
@@ -163,6 +165,7 @@ def start_attribute_import(file: ifcopenshell.file, path, attribute_import: Type
         attribute_import_sql.import_entity_attributes(entity, file, identifier, attribute_dict)
     attribute_import_sql.disconnect_from_database()
 
+
 def attribute_import_finished(attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]):
     ifc_import_widget = attribute_import.get_ifc_import_window()
 
@@ -196,6 +199,8 @@ def open_results_window(attribute_import_results: Type[tool.AttributeImportResul
     attribute_import_results.update_results_window()
     attribute_import_results.get_ifctype_combo_box().setCurrentText(attribute_import_results.get_all_keyword())
     attribute_import_results.get_somtype_combo_box().setCurrentText(attribute_import_results.get_all_keyword())
+    from ..module.attribute_import import trigger
+    trigger.retranslate_ui()
 
 
 def update_results_window(attriubte_import_results: Type[tool.AttributeImportResults]):
@@ -345,8 +350,10 @@ def all_checkbox_checkstate_changed(attribute_import_results: Type[tool.Attribut
 
 
 def settings_clicked(attribute_import_results: Type[tool.AttributeImportResults],
-                     attriubte_import_sql: Type[tool.AttributeImportSQL]):
+                     attriubte_import_sql: Type[tool.AttributeImportSQL],util:Type[tool.Util]):
     settings_dialog = attriubte_import_sql.create_settings_window()
+    title = QCoreApplication.translate("AttributeImport", "Settings v")
+    settings_dialog.setWindowTitle(util.get_window_title(title))
     attriubte_import_sql.update_settins_dialog_checkstates(settings_dialog)
     if settings_dialog.exec():
         attriubte_import_sql.settings_dialog_accepted(settings_dialog)

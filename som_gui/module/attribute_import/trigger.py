@@ -107,4 +107,4 @@ def result_acccept_clicked():
 
 
 def settings_clicked():
-    core.settings_clicked(tool.AttributeImportResults, tool.AttributeImportSQL)
+    core.settings_clicked(tool.AttributeImportResults, tool.AttributeImportSQL,tool.Util)

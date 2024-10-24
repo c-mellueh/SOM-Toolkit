@@ -55,7 +55,8 @@ def retranslate_ui(modelcheck_window: Type[tool.ModelcheckWindow], util: Type[to
     window.ui.retranslateUi(window)
     window.ui.widget_export.name = QCoreApplication.translate("Modelcheck", "Export Path")
     window.ui.widget_import.name = QCoreApplication.translate("Modelcheck", "IFC Path")
-    window.setWindowTitle(f"{modelcheck_title} | {util.get_status_text()}")
+    title = util.get_window_title(modelcheck_title)
+    window.setWindowTitle(title)
 
     object_model: QStandardItemModel = modelcheck_window.get_object_tree().model()
     headers = [QCoreApplication.translate("Modelcheck", "Object"),

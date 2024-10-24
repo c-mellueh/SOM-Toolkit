@@ -79,7 +79,8 @@ class Logging(som_gui.core.tool.Logging):
         cb = QCheckBox("nicht erneut anzeigen")
         msg_box.setCheckBox(cb)
         msg_box.setWindowIcon(get_icon())
-        msg_box.setWindowTitle(f"{level} |{tool.Util.get_status_text()}")
+        title = tool.Util.get_window_title(str(level))
+        msg_box.setWindowTitle(title)
         msg_box.setText(f"An {level} occurred:")
         msg_box.setDetailedText(message)
         if msg_box.exec_() and cb.isChecked():

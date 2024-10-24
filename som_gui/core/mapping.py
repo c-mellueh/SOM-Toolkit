@@ -23,7 +23,8 @@ def retranslate_ui(mapping: Type[tool.Mapping], util: Type[tool.Util]):
     window = mapping.get_window()
     if window:
         window.ui.retranslateUi(window)
-        window.setWindowTitle(f'{QCoreApplication.translate("Mapping", "Revit-Mapping")} | {util.get_status_text()}')
+        title = util.get_window_title(QCoreApplication.translate("Mapping", "Revit-Mapping"))
+        window.setWindowTitle(title)
 
 
 def open_window(mapping: Type[tool.Mapping]):

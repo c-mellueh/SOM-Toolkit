@@ -24,8 +24,7 @@ class ObjectInfoWidget(QDialog):
         self.widget = Ui_ObjectInfo()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        title = QCoreApplication.translate("ObjectInfo", "Object Info")
-        self.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
+
 
     def paintEvent(self, event):
         object.trigger.object_info_paint_event()

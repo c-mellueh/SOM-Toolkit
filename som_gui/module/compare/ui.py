@@ -19,8 +19,6 @@ class CompareDialog(QDialog):
         self.widget = ui_Widget.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        title = self.tr(f"Compare Projects")
-        self.setWindowTitle(f"{title} | {tool.Util.get_status_text()}")
         self.widget.tabWidget.setTabText(0, self.tr("Attributes"))
         button = self.widget.button_download
         button.setIcon(get_download_icon())

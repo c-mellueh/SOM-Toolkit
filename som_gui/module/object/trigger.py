@@ -23,13 +23,13 @@ def connect():
         lambda: core.ident_attribute_changed(tool.Object, tool.MainWindow, tool.PredefinedPropertySet))
 
 
-    core.load_context_menus(tool.Object)
+    core.load_context_menus(tool.Object,tool.Util)
     core.add_shortcuts(tool.Object, tool.Util, tool.Search, tool.MainWindow)
     core.connect_object_input_widget(tool.Object, tool.MainWindow, tool.PredefinedPropertySet)
     core.init_main_window(tool.Object, tool.MainWindow)
 
 def item_double_clicked():
-    core.create_object_info_widget(mode=1, object_tool=tool.Object)
+    core.create_object_info_widget(mode=1, object_tool=tool.Object,util=tool.Util)
 
 
 def object_info_paint_event():

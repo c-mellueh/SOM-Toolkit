@@ -168,14 +168,13 @@ class Util(som_gui.core.tool.Util):
 
     @classmethod
     def get_window_title(cls,window_name:str):
-        return f"{window_name} | {cls.get_status_text()}"
-
-    @classmethod
-    def get_status_text(cls):
         proj = tool.Project.get()
         if not proj:
-            return ""
-        return f"{proj.name} v{proj.version}"
+            status_text =  ""
+        else:
+            status_text = f"{proj.name} v{proj.version}"
+
+        return f"{window_name} | {status_text}"
 
     @classmethod
     def create_file_selector(cls, name: str, file_extension: str, appdata_text: str, request_folder=False,

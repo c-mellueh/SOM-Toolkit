@@ -27,10 +27,6 @@ class FilterWidget(QWidget):
         self.ui.setupUi(self)
         self.setWindowIcon(som_gui.get_icon())
 
-    def retranslate_ui(self):
-        title = QCoreApplication.translate("FilterWindow", "Project Filter")
-        self.setWindowTitle(f"{title} {tool.Util.get_status_text()}")
-
 
 class ProjectView(QTableView):
     def __init__(self, parent):
