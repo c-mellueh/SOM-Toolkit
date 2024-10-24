@@ -1,9 +1,9 @@
 from __future__ import annotations
-import som_gui
+
 from som_gui import tool
 from som_gui.core import plugins as core
-from typing import TYPE_CHECKING
 from . import ui
+
 
 def connect():
     tool.Settings.add_page_to_toolbox(ui.SettingsWidget, "pagePlugins",

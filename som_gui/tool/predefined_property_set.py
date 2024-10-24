@@ -1,19 +1,22 @@
 from __future__ import annotations
-import som_gui.core.tool
-import som_gui.module.predefined_property_set
-import som_gui.module.compare
-import SOMcreator
-from som_gui.module.project.constants import CLASS_REFERENCE
-from PySide6.QtCore import Qt, QCoreApplication
-from PySide6.QtWidgets import QListWidget, QListWidgetItem, QTableWidget, QTableWidgetItem
-from PySide6.QtGui import QBrush, QColor
-from som_gui import tool
 
 from typing import TYPE_CHECKING
+
+from PySide6.QtCore import QCoreApplication, Qt
+from PySide6.QtWidgets import QListWidget, QListWidgetItem, QTableWidget, QTableWidgetItem
+
+import SOMcreator
+import som_gui.core.tool
+import som_gui.module.compare
+import som_gui.module.predefined_property_set
+from som_gui import tool
+from som_gui.module.project.constants import CLASS_REFERENCE
+
 if TYPE_CHECKING:
     from som_gui.module.predefined_property_set.prop import PredefinedPsetProperties, PredefinedPsetCompareProperties
     from som_gui.module.predefined_property_set import ui
     from PySide6.QtGui import QAction
+
 
 class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
 
@@ -28,7 +31,6 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
     @classmethod
     def get_action(cls, name):
         return cls.get_properties().actions[name]
-
 
     @classmethod
     def get_window(cls) -> ui.PredefinedPropertySetWindow:

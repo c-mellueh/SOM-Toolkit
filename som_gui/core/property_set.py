@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import som_gui
-from som_gui.core import property_set_window as property_set_window_core
-from som_gui.core import attribute_table as attribute_table_core
-from typing import Type, TYPE_CHECKING
 import logging
+from typing import TYPE_CHECKING, Type
+
+from som_gui.core import attribute_table as attribute_table_core
+from som_gui.core import property_set_window as property_set_window_core
 
 if TYPE_CHECKING:
     from som_gui import tool

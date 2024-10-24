@@ -1,9 +1,10 @@
+from PySide6.QtWidgets import QDialog, QTreeWidget, QWidget
+
 from som_gui.module import object
-from PySide6.QtWidgets import QTreeWidget, QWidget, QDialog
-from som_gui import tool
-from .qt.ui_InfoWidget import Ui_ObjectInfo
 from som_gui.resources.icons import get_icon
-from PySide6.QtCore import QCoreApplication
+from .qt.ui_InfoWidget import Ui_ObjectInfo
+
+
 class ObjectTreeWidget(QTreeWidget):
 
     def __init__(self, parent: QWidget):
@@ -25,8 +26,6 @@ class ObjectInfoWidget(QDialog):
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
 
-
     def paintEvent(self, event):
         object.trigger.object_info_paint_event()
         super().paintEvent(event)
-

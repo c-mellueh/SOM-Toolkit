@@ -1,12 +1,13 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Type
+
+from PySide6.QtCore import QPointF, Qt
+from PySide6.QtGui import QPainter, QPalette, QPen
+from PySide6.QtWidgets import QTreeWidgetItem
 
 import SOMcreator
 from som_gui.core import property_set_window as property_set_window_core
-
-from PySide6.QtCore import Qt, QPointF
-from PySide6.QtGui import QPen, QPainter, QPalette
-from PySide6.QtWidgets import QTreeWidgetItem
 
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.tool import View, Node

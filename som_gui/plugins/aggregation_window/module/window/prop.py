@@ -1,13 +1,16 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Callable
+
+from typing import Callable, TYPE_CHECKING
+
+from PySide6.QtWidgets import QLineEdit
 
 import SOMcreator
-from PySide6.QtWidgets import QLineEdit
 
 if TYPE_CHECKING:
     from .ui import AggregationWindow, ComboBox
     from som_gui.module.util.prop import MenuDict
     from PySide6.QtGui import QAction
+
 
 class WindowProperties:
     aggregation_window: AggregationWindow = None

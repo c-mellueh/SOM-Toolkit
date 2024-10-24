@@ -1,9 +1,10 @@
-from PySide6.QtWidgets import QWidget, QLineEdit
-from PySide6.QtCore import Qt
 from PySide6 import QtGui
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QLineEdit, QWidget
+
 from som_gui.module import property_set_window
-from .qt.ui_Window import Ui_PropertySetWindow
 from som_gui.resources.icons import get_icon
+from .qt.ui_Window import Ui_PropertySetWindow
 
 
 class PropertySetWindow(QWidget):

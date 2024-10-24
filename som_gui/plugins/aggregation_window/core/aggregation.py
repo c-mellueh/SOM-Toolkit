@@ -1,8 +1,11 @@
 from __future__ import annotations
-from typing import Type, TYPE_CHECKING
-from PySide6.QtWidgets import QLabel
-from som_gui.module.object import OK
+
+from typing import TYPE_CHECKING, Type
+
 from PySide6.QtCore import QCoreApplication
+from PySide6.QtWidgets import QLabel
+
+from som_gui.module.object import OK
 
 if TYPE_CHECKING:
     from som_gui import tool

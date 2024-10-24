@@ -1,7 +1,5 @@
 from som_gui import tool
 from som_gui.core import exports as core
-from . import ui
-from PySide6.QtCore import QCoreApplication
 
 
 def connect():

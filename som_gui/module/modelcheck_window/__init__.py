@@ -1,5 +1,5 @@
 import som_gui
-from . import qt, ui, prop, trigger
+from . import prop, qt, trigger, ui
 
 
 def register():

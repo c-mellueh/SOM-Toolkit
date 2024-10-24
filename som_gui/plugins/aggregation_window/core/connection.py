@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Type
-from PySide6.QtGui import QPalette
+
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window import tool
     from som_gui.plugins.aggregation_window.module.connection import ui as ui_connection

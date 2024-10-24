@@ -1,14 +1,15 @@
-import som_gui.plugins.aggregation_window.core.tool
-from som_gui.plugins.aggregation_window.module.modelcheck.prop import AggregationModelcheckProperties
-from ifcopenshell import entity_instance
 import ifcopenshell
+from PySide6.QtCore import QCoreApplication
+from ifcopenshell import entity_instance
+from ifcopenshell.util import element as ifc_el
 
 import SOMcreator
+import som_gui.plugins.aggregation_window.core.tool
 from SOMcreator.constants import value_constants
 from som_gui import tool
-from ifcopenshell.util import element as ifc_el
 from som_gui.module.modelcheck.constants import *
-from PySide6.QtCore import QCoreApplication
+from som_gui.plugins.aggregation_window.module.modelcheck.prop import AggregationModelcheckProperties
+
 ABBREV_ISSUE = 2
 
 

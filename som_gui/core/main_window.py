@@ -1,13 +1,16 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Type
+
+from PySide6.QtWidgets import QApplication
+
 import som_gui
 from som_gui.core import project as core_project
-from PySide6.QtWidgets import QApplication
 
 if TYPE_CHECKING:
     from som_gui.tool import MainWindow, Appdata, Project, Popups
     from som_gui import tool
-from PySide6.QtCore import QCoreApplication, QLocale
+from PySide6.QtCore import QCoreApplication
 
 
 def create_main_menu_actions(main_window: Type[tool.MainWindow]):

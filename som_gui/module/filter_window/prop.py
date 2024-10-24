@@ -1,12 +1,16 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction
+
 import SOMcreator
 
 if TYPE_CHECKING:
     from . import ui
     from som_gui.module.attribute.ui import AttributeWidget
+
 
 class FilterWindowProperties:
     widget: ui.FilterWidget = None
@@ -15,6 +19,7 @@ class FilterWindowProperties:
     active_check_state: Qt.CheckState = None
     settings_widget: ui.SettingsWidget = None
     actions: dict[str, QAction] = dict()
+
 
 class FilterCompareProperties:
     widget: AttributeWidget = None

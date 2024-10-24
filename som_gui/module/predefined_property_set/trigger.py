@@ -1,13 +1,13 @@
 from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from som_gui import tool
 from som_gui.core import predefined_property_set as core
 from som_gui.core import property_set as property_set_core
-from som_gui import tool
-from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
     from .ui import PredefinedPropertySetWindow
-    from PySide6.QtGui import QAction
-    from PySide6.QtCore import QPoint
 
 
 def connect():
@@ -17,6 +17,7 @@ def connect():
 
 def open_window():
     core.open_window(tool.PredefinedPropertySet, tool.Util)
+
 
 def connect_dialog(dialog: PredefinedPropertySetWindow):
     dialog.ui.list_view_pset.itemSelectionChanged.connect(

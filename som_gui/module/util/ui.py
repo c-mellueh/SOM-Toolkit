@@ -1,6 +1,7 @@
-from PySide6.QtWidgets import QWidget, QFileDialog
-from .qt import ui_FileSelector, ui_AttributeSelect, ui_Progressbar
+from PySide6.QtWidgets import QWidget
+
 from . import trigger
+from .qt import ui_AttributeSelect, ui_FileSelector, ui_Progressbar
 
 
 class FileSelector(QWidget):

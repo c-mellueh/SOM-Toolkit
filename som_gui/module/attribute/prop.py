@@ -1,9 +1,12 @@
 from __future__ import annotations
-from typing import TypedDict, Callable, TYPE_CHECKING
+
+from typing import Callable, TYPE_CHECKING, TypedDict
 
 if TYPE_CHECKING:
     import SOMcreator
     from .ui import AttributeWidget
+
+
 class AttributeData(TypedDict):
     getter: Callable
     setter: Callable

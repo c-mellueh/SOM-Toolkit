@@ -1,15 +1,18 @@
 from __future__ import annotations
+
+import logging
 from typing import TYPE_CHECKING
+
+from PySide6.QtWidgets import QPushButton, QTreeView
+
 from som_gui import tool
 from som_gui.core import modelcheck_window as core
-import logging
-from PySide6.QtWidgets import QTreeView, QPushButton, QDialogButtonBox
 
 if TYPE_CHECKING:
     from .ui import ModelcheckWindow, ObjectTree, PsetTree
     from PySide6.QtCore import QRunnable, QItemSelectionModel, QPoint
 
-    from PySide6.QtGui import QStandardItem, QStandardItemModel
+    from PySide6.QtGui import QStandardItem
     from som_gui.tool.modelcheck import ModelcheckRunner
 
 
@@ -20,12 +23,13 @@ def connect():
 def open_window():
     core.open_window(tool.ModelcheckWindow, tool.Util, tool.Project)
 
+
 def paint_object_tree(tree):
-    core.paint_object_tree(tree,tool.ModelcheckWindow, tool.Project)
+    core.paint_object_tree(tree, tool.ModelcheckWindow, tool.Project)
 
 
 def paint_pset_tree(tree):
-    core.paint_pset_tree(tree,tool.ModelcheckWindow)
+    core.paint_pset_tree(tree, tool.ModelcheckWindow)
 
 
 def button_box_clicked(button: QPushButton):
@@ -67,6 +71,7 @@ def pset_checkstate_changed(item: QStandardItem):
 
 def pset_context_menu_requested(pos, widget: PsetTree):
     core.object_tree_context_menu_requested(pos, widget, tool.ModelcheckWindow)
+
 
 def connect_modelcheck_runner(runner: ModelcheckRunner):
     runner.signaller.finished.connect(

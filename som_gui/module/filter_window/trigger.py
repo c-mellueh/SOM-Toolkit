@@ -1,8 +1,11 @@
 from __future__ import annotations
+
+from PySide6.QtCore import Qt
+
 from som_gui import tool
 from som_gui.core import filter_window as core
-from PySide6.QtCore import Qt
-from . import ui, constants
+from . import constants, ui
+
 
 def connect():
     core.create_main_menu_actions(tool.FilterWindow, tool.MainWindow)
@@ -14,8 +17,10 @@ def connect():
 def open_window():
     core.open_window(tool.FilterWindow, tool.Project, tool.Util, tool.Search)
 
+
 def retranslate_ui():
     core.retranslate_ui(tool.FilterWindow)
+
 
 def pt_horizontal_context_requested(pos):
     core.pt_context_menu(pos, Qt.Orientation.Horizontal, tool.FilterWindow, tool.Project)
@@ -25,8 +30,6 @@ def pt_horizontal_context_requested(pos):
 def pt_vertical_context_requested(pos):
     core.pt_context_menu(pos, Qt.Orientation.Vertical, tool.FilterWindow, tool.Project)
     pass
-
-
 
 
 def on_new_project():
@@ -39,6 +42,7 @@ def tree_mouse_move_event(index):
 
 def tree_mouse_release_event(index):
     core.tree_mouse_release_event(index, tool.FilterWindow)
+
 
 def update_object_tree():
     core.update_object_tree(tool.FilterWindow)

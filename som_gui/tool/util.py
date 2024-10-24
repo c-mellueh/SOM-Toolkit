@@ -1,18 +1,19 @@
 from __future__ import annotations
 
 import logging
+import os
+import re
+import tempfile
 from typing import Callable, TYPE_CHECKING
-import os, tempfile
-from PySide6.QtCore import Qt, QModelIndex
-from PySide6.QtGui import QAction, QShortcut, QKeySequence
-from PySide6.QtWidgets import QMenu, QMenuBar, QWidget, QComboBox, QFileDialog, QLineEdit
-from som_gui.module.util.constants import PATH_SEPERATOR
 
-import SOMcreator
+from PySide6.QtCore import QModelIndex, Qt
+from PySide6.QtGui import QAction, QKeySequence, QShortcut
+from PySide6.QtWidgets import QComboBox, QFileDialog, QLineEdit, QMenu, QMenuBar, QWidget
+
 import som_gui.core.tool
 from som_gui import tool
-import re
 from som_gui.module.util import ui
+from som_gui.module.util.constants import PATH_SEPERATOR
 
 if TYPE_CHECKING:
     from som_gui.module.util.prop import MenuDict, UtilProperties
@@ -167,10 +168,10 @@ class Util(som_gui.core.tool.Util):
         return {model.data(index, Qt.ItemDataRole.DisplayRole): index for index in indexes}
 
     @classmethod
-    def get_window_title(cls,window_name:str):
+    def get_window_title(cls, window_name: str):
         proj = tool.Project.get()
         if not proj:
-            status_text =  ""
+            status_text = ""
         else:
             status_text = f"{proj.name} v{proj.version}"
 

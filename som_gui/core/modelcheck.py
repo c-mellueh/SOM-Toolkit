@@ -8,9 +8,9 @@ import SOMcreator
 import ifcopenshell
 from datetime import datetime
 from PySide6.QtCore import QCoreApplication
+
 GROUP = "Gruppe"
 ELEMENT = "Element"
-
 
 rev_datatype_dict = {
     str:   "IfcText/IfcLabel",
@@ -22,7 +22,6 @@ rev_datatype_dict = {
 
 def check_file(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck],
                modelcheck_window: Type[tool.ModelcheckWindow]):
-
     modelcheck.connect_to_data_base(modelcheck.get_database_path())
     modelcheck.remove_existing_issues(datetime.today())
 

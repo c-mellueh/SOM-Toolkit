@@ -3,15 +3,16 @@ from __future__ import annotations
 import logging
 import os
 import time
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 import ifcopenshell
+from PySide6.QtCore import QCoreApplication, QObject, QRunnable, QThreadPool, Signal
 
 import som_gui
-from som_gui import tool
 import som_gui.core.tool
+from som_gui import tool
 from som_gui.module.ifc_importer import ui
-from PySide6.QtCore import QThreadPool, QObject, Signal, QRunnable, QCoreApplication
+
 if TYPE_CHECKING:
     from som_gui.module.ifc_importer.prop import IfcImportProperties
     from PySide6.QtWidgets import QLabel
@@ -41,6 +42,7 @@ class IfcImportRunner(QRunnable):
             self.signaller.finished.emit()
         else:
             logging.info("Import is aborted so Importer will notify noone")
+
 
 class IfcImporter(som_gui.core.tool.IfcImporter):
     @classmethod
@@ -119,8 +121,6 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         if not os.path.exists(path):
             return
         return IfcImportRunner(path, status_label)
-
-
 
     @classmethod
     def set_close_button_text(cls, widget: ui.IfcImportWidget, text: str):

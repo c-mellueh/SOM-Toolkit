@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import ifcopenshell
 from typing import TYPE_CHECKING
+
+import ifcopenshell
 
 if TYPE_CHECKING:
     from som_gui.tool.modelcheck import ModelcheckRunner

@@ -1,9 +1,11 @@
-from . import prop, trigger, ui
 import som_gui
+from . import prop, trigger, ui
+
 
 def register():
     som_gui.AttributeImportProperties = prop.AttributeImportProperties()
     som_gui.AttributeImportSQLProperties = prop.AttributeImportSQLProperties()
+
 
 def load_ui_triggers():
     trigger.connect()

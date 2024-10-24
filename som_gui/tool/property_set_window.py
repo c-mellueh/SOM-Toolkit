@@ -1,20 +1,21 @@
 from __future__ import annotations
-import logging
 
+import logging
+from typing import TYPE_CHECKING
+
+from PySide6.QtCore import QCoreApplication, Qt
+from PySide6.QtGui import QDoubleValidator, QGuiApplication, QIntValidator, QRegularExpressionValidator
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit
 
-from PySide6.QtGui import QIntValidator, QDoubleValidator, QRegularExpressionValidator, QGuiApplication
-from PySide6.QtCore import Qt, QCoreApplication
-from SOMcreator.constants.value_constants import VALUE_TYPE_LOOKUP, DATA_TYPES
-from SOMcreator.constants import value_constants
 import SOMcreator
 import som_gui
 import som_gui.core.tool
+from SOMcreator.constants import value_constants
+from SOMcreator.constants.value_constants import DATA_TYPES, VALUE_TYPE_LOOKUP
 from som_gui import tool
 from som_gui.module.property_set_window import ui
-
-from typing import TYPE_CHECKING
 from som_gui.module.property_set_window.constants import SEPERATOR, SEPERATOR_SECTION, SEPERATOR_STATUS
+
 if TYPE_CHECKING:
     from som_gui.module.property_set_window.prop import PropertySetWindowProperties
 
@@ -42,7 +43,6 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def set_inherit_checkbox_state(cls, state: bool, window: ui.PropertySetWindow):
         cs = Qt.CheckState.Checked if state else Qt.CheckState.Unchecked
         window.ui.check_box_inherit.setCheckState(cs)
-
 
     @classmethod
     def get_table(cls, window: ui.PropertySetWindow):
@@ -260,7 +260,6 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
             # If Value is Inherited by Parent set layout disabled
             enabled = False if inherits and value in parent_values else True
             line_edit.setEnabled(enabled)
-
 
     @classmethod
     def set_description(cls, description: str, window: ui.PropertySetWindow):

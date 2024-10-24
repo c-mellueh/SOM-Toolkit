@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from typing import Type, TYPE_CHECKING
 import os
-from som_gui import tool
+from typing import Type
+
 from PySide6.QtCore import QCoreApplication
+
+from som_gui import tool
 
 
 def create_results(data_base_path: os.PathLike | str, results: Type[tool.ModelcheckResults],

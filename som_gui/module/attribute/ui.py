@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QWidget, QHeaderView
-from PySide6.QtCore import Qt, QRect, QSize
+from PySide6.QtCore import QRect, QSize, Qt
+from PySide6.QtWidgets import QHeaderView, QWidget
+
 from .qt import ui_CompareWidget
 
 

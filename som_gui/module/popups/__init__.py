@@ -1,5 +1,4 @@
-from . import ui, prop, trigger
-import som_gui
+from . import prop, trigger, ui
 
 
 def register():

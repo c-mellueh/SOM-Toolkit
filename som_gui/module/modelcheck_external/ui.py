@@ -1,7 +1,10 @@
 from __future__ import annotations
-from PySide6.QtWidgets import QVBoxLayout, QMainWindow
+
+from PySide6.QtWidgets import QMainWindow, QVBoxLayout
+
 from som_gui.resources.icons import get_icon
 from .qt import ui_Widget
+
 
 class ModelcheckExternalWindow(QMainWindow):
     def __init__(self):

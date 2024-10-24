@@ -1,17 +1,18 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-import SOMcreator
-
-import som_gui.core.tool
-from som_gui.module.modelcheck_external import ui, trigger
-from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMainWindow, QMenuBar, QMenu
 from PySide6.QtCore import QCoreApplication
-from som_gui import tool
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QMainWindow, QMenu, QMenuBar
+
+import SOMcreator
+import som_gui.core.tool
 from SOMcreator.exporter.IDS import main
 from SOMcreator.exporter.bim_collab_zoom import modelcheck as bc_modelcheck
 from SOMcreator.exporter.desite import modelcheck
+from som_gui import tool
+from som_gui.module.modelcheck_external import trigger, ui
 
 if TYPE_CHECKING:
     from som_gui.module.modelcheck_external.prop import ModelcheckExternalProperties

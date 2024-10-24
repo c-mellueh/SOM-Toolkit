@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, TextIO, Type
+
+from PySide6.QtCore import QCoreApplication
+
 import SOMcreator
 from som_gui.core import property_set_window as property_set_window_core
-from typing import TextIO, Type, TYPE_CHECKING
-from PySide6.QtCore import QCoreApplication
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -154,7 +156,7 @@ def repaint_pset_list(predefined_pset: Type[tool.PredefinedPropertySet]):
 def add_compare_widget(pset_compare: Type[tool.PredefinedPropertySetCompare],
                        attribute_compare: Type[tool.AttributeCompare],
                        compare_window: Type[tool.CompareWindow]):
-    name_getter = lambda:QCoreApplication.translate("PredefinedPset", "Predefined Pset")
+    name_getter = lambda: QCoreApplication.translate("PredefinedPset", "Predefined Pset")
     compare_window.add_tab(name_getter, pset_compare.get_widget,
                            lambda p0, p1: init_compare_window(p0, p1, pset_compare, attribute_compare),
                            pset_compare,

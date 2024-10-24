@@ -1,7 +1,7 @@
-from PySide6.QtCore import QCoreApplication, QTranslator
-from PySide6.QtWidgets import QApplication
 import os
-import logging
+
+from PySide6.QtCore import QTranslator
+from PySide6.QtWidgets import QApplication
 
 translator = QTranslator()
 

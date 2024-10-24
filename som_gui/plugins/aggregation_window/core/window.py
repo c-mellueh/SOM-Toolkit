@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING, Type
+
 from PySide6.QtCore import Qt
+
 from SOMcreator import Aggregation
 
 if TYPE_CHECKING:
@@ -17,7 +19,7 @@ def create_main_menu_actions(window: Type[aw_tool.Window], main_window: Type[too
     window.set_action("open_window", action)
 
 
-def retranslate_ui(window: Type[aw_tool.Window],util:Type[tool.Util] ):
+def retranslate_ui(window: Type[aw_tool.Window], util: Type[tool.Util]):
     action = window.get_action("open_window")
     action.setText(QCoreApplication.translate("Aggregation", "Building Structure"))
 
@@ -53,6 +55,7 @@ def create_window(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> Non
 
 def remove_filter(window: Type[aw_tool.Window]):
     window.remove_filter()
+
 
 def create_new_scene(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> None:
     name = QCoreApplication.translate("Aggregation", "Undefined")

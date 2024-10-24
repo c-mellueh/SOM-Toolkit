@@ -1,5 +1,7 @@
-from som_gui.core import util as core
 from som_gui import tool
+from som_gui.core import util as core
+
+
 def connect():
     pass
 

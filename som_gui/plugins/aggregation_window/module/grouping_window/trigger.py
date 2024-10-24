@@ -1,8 +1,9 @@
+import ifcopenshell
+from PySide6.QtWidgets import QPushButton
+
 from som_gui import tool
 from ... import tool as aw_tool
 from ...core import grouping_window as core
-from PySide6.QtWidgets import QPushButton, QDialogButtonBox
-import ifcopenshell
 
 
 def connect():
@@ -11,6 +12,7 @@ def connect():
 
 def open_window():
     core.open_window(aw_tool.GroupingWindow, tool.Util)
+
 
 def connect_ifc_import_runner(runner):
     runner.signaller.started.connect(lambda: core.ifc_import_started(runner, aw_tool.GroupingWindow))

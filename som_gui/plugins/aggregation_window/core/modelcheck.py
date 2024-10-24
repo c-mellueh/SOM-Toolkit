@@ -1,12 +1,16 @@
 from __future__ import annotations
-from typing import Type
-from som_gui import tool
-from som_gui.plugins.aggregation_window import tool as aw_tool
-import ifcopenshell
-from som_gui.core.modelcheck import ELEMENT, GROUP
+
 import logging
-import SOMcreator
+from typing import Type
+
+import ifcopenshell
 from PySide6.QtCore import QCoreApplication
+
+import SOMcreator
+from som_gui import tool
+from som_gui.core.modelcheck import ELEMENT, GROUP
+from som_gui.plugins.aggregation_window import tool as aw_tool
+
 
 def add_modelcheck_plugin(modelcheck: Type[tool.Modelcheck], modelcheck_plugin: Type[aw_tool.Modelcheck]):
     modelcheck.add_file_check_plugin(lambda file: check_file(file, modelcheck, modelcheck_plugin))

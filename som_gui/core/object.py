@@ -1,16 +1,15 @@
 from __future__ import annotations
 
 import logging
-import uuid
-from typing import Type, TYPE_CHECKING
+from typing import TYPE_CHECKING, Type
 
-import SOMcreator
+from PySide6.QtCore import QCoreApplication
 from PySide6.QtGui import QPalette
 
-import som_gui.module.object
-from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
+import SOMcreator
 from som_gui import tool
-from PySide6.QtCore import QCoreApplication
+from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
+
 if TYPE_CHECKING:
     from som_gui.tool import Object, Project, Search, PropertySet, MainWindow
 
@@ -53,6 +52,7 @@ def retranslate_ui(object_tool: Type[tool.Object]) -> None:
     header = object_tool.get_object_tree().headerItem()
     for column, name in enumerate(object_tool.get_header_names()):
         header.setText(column, name)
+
 
 def connect_object_input_widget(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
                                 predefined_pset: Type[tool.PredefinedPropertySet]):
@@ -99,7 +99,7 @@ def resize_columns(object_tool: Type[Object]):
     object_tool.resize_tree()
 
 
-def create_object_info_widget(mode: int, object_tool: Type[Object],util:Type[tool.Util]):
+def create_object_info_widget(mode: int, object_tool: Type[Object], util: Type[tool.Util]):
     dialog = object_tool.oi_create_dialog()
     title = QCoreApplication.translate("ObjectInfo", "Object Info")
     dialog.setWindowTitle(util.get_window_title(title))
@@ -146,10 +146,10 @@ def object_info_add_ifc(object_tool: Type[Object]):
     object_tool.add_ifc_mapping("")
 
 
-def load_context_menus(object_tool: Type[Object],util:Type[tool.Util]):
+def load_context_menus(object_tool: Type[Object], util: Type[tool.Util]):
     object_tool.clear_context_menu_list()
     object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Copy"),
-                                       lambda: create_object_info_widget(2, object_tool,util), True, False)
+                                       lambda: create_object_info_widget(2, object_tool, util), True, False)
     object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Delete"),
                                        object_tool.delete_selection, True, True)
     object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Extend"),
@@ -159,12 +159,12 @@ def load_context_menus(object_tool: Type[Object],util:Type[tool.Util]):
     object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Group"),
                                        lambda: create_group(object_tool), True, True)
     object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Info"),
-                                       lambda: create_object_info_widget(1, object_tool,util), True, False)
+                                       lambda: create_object_info_widget(1, object_tool, util), True, False)
 
 
 def create_group(object_tool: Type[Object]):
     d = {
-        "name": QCoreApplication.translate("Object", "NewGroup"),
+        "name":         QCoreApplication.translate("Object", "NewGroup"),
         "is_group":     True,
         "ifc_mappings": ["IfcGroup"]
     }

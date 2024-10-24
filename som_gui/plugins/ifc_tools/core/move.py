@@ -1,10 +1,12 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Type
+
 import logging
 import os
+from typing import TYPE_CHECKING, Type
+
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtWidgets import QMenu
-from PySide6.QtGui import QAction
+
 SECTION_NAME = "IfcMove"
 X_PATH = "x"
 Y_PATH = "y"

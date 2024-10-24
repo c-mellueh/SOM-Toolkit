@@ -1,9 +1,10 @@
 from __future__ import annotations
-from typing import TypedDict
-from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMenu, QLabel, QApplication
 
 from typing import TYPE_CHECKING
+from typing import TypedDict
+
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QApplication, QMenu
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.ui import MainWindow

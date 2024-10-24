@@ -1,20 +1,20 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, TextIO, Type
+from typing import Callable, TYPE_CHECKING, TextIO, Type
+
 from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtGui import QAction, QColor
-from PySide6.QtWidgets import QMenu, QInputDialog, QLineEdit, QTreeWidget, QTreeWidgetItem, QWidget, QHBoxLayout, \
-    QCheckBox, QSizePolicy
-from som_gui.module.project.constants import CLASS_REFERENCE
+from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QInputDialog, QLineEdit, QMenu, QSizePolicy, QTreeWidget, \
+    QTreeWidgetItem, QWidget
 
 import SOMcreator
-import som_gui.core.tool
 import som_gui
+import som_gui.core.tool
 from som_gui import tool
 from som_gui.module.attribute import ui as attribute_ui
+from som_gui.module.project.constants import CLASS_REFERENCE
 
 YELLOW = "#897e00"
-
 
 if TYPE_CHECKING:
     from som_gui.module.filter_window.prop import FilterWindowProperties, FilterCompareProperties
@@ -81,7 +81,6 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         vertical_header = project_table.verticalHeader()
         vertical_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         vertical_header.customContextMenuRequested.connect(trigger.pt_vertical_context_requested)
-
 
     @classmethod
     def get(cls) -> ui.FilterWidget | None:

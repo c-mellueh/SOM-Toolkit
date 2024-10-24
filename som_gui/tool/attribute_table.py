@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-from PySide6.QtWidgets import QTableWidgetItem, QTableWidget
-from PySide6.QtCore import Qt, QPoint
+from typing import Callable, TYPE_CHECKING
+
+from PySide6.QtCore import QPoint, Qt
 from PySide6.QtGui import QIcon, QPalette
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
 
 import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
+from som_gui.module.main_window.ui import MainWindow
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.property_set_window.ui import PropertySetWindow
-from som_gui.module.main_window.ui import MainWindow
 from som_gui.resources.icons import get_link_icon
-from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
     from som_gui.module.attribute_table.prop import AttributeTableProperties

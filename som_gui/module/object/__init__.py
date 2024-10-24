@@ -1,6 +1,7 @@
 import logging
-from . import ui, trigger, prop
+
 import som_gui
+from . import prop, trigger, ui
 
 OK = 0
 IDENT_ISSUE = 1

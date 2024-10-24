@@ -9,6 +9,7 @@ import som_gui.plugins.aggregation_window.core.tool
 from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui.plugins.aggregation_window.module.window import ui as ui_window
 from som_gui.plugins.aggregation_window.module.window import trigger
+
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.module.window.prop import WindowProperties
     from PySide6.QtWidgets import QMenuBar, QStatusBar
@@ -16,7 +17,6 @@ if TYPE_CHECKING:
 
 
 class Window(som_gui.plugins.aggregation_window.core.tool.Window):
-
 
     @classmethod
     def get_properties(cls) -> WindowProperties:
@@ -29,7 +29,6 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
     @classmethod
     def get_action(cls, name):
         return cls.get_properties().actions[name]
-
 
     @classmethod
     def create_window(cls) -> ui_window.AggregationWindow:
@@ -48,6 +47,7 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
         window.ui.actionSearch_for_Node.triggered.connect(trigger.find_aggregation)
         window.ui.actionCopy_selected_Nodes.triggered.connect(trigger.copy_selected_nodes)
         window.ui.actionPaste_Nodes.triggered.connect(trigger.paste_nodes)
+
     @classmethod
     def create_combobox_context_menu(cls, pos):
         menu = QMenu()

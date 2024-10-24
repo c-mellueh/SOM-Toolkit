@@ -1,24 +1,23 @@
 from __future__ import annotations
 
 import logging
+from typing import Callable, TYPE_CHECKING
 
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtWidgets import QComboBox, QTableWidget, QTableWidgetItem
 
-import som_gui.core.tool
 import SOMcreator
 import SOMcreator.util.project
 import som_gui
-from som_gui.module.project.prop import ProjectProperties
+import som_gui.core.tool
 from som_gui.module.project.constants import CLASS_REFERENCE
+from som_gui.module.project.prop import ProjectProperties
 from som_gui.module.project.ui import MergeDialog
-from PySide6.QtWidgets import QComboBox, QTableWidgetItem, QTableWidget
-from typing import Callable, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from som_gui.module.project import ui
     from PySide6.QtGui import QAction
 
-from som_gui import tool
+
 class Project(som_gui.core.tool.Project):
 
     @classmethod
@@ -33,7 +32,6 @@ class Project(som_gui.core.tool.Project):
     def get_action(cls, name):
         return cls.get_properties().actions[name]
 
-
     @classmethod
     def add_plugin_save_function(cls, func: Callable):
         """
@@ -44,7 +42,6 @@ class Project(som_gui.core.tool.Project):
     @classmethod
     def get_plugin_functions(cls):
         return cls.get_properties().plugin_save_functions
-
 
     @classmethod
     def get_filter_matrix(cls):
@@ -65,7 +62,6 @@ class Project(som_gui.core.tool.Project):
         prop: ProjectProperties = cls.get_properties()
         prop.active_project = proj
         som_gui.on_new_project()
-
 
     @classmethod
     def load_project(cls, path: str):
@@ -89,7 +85,6 @@ class Project(som_gui.core.tool.Project):
         if proj is None:
             return []
         return list(proj.get_root_objects(filter=filter_objects))
-
 
     @classmethod
     def create_combobox(cls, filter_1):

@@ -1,11 +1,14 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
+import importlib
 import logging
+from typing import TYPE_CHECKING
+
 from PySide6.QtCore import QLocale
 from PySide6.QtWidgets import QApplication
-import som_gui.core.tool
+
 import som_gui
-import importlib
+import som_gui.core.tool
 
 if TYPE_CHECKING:
     from som_gui.module.language.prop import LanguageProperties

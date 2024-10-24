@@ -1,6 +1,8 @@
 from __future__ import annotations
-from PySide6.QtWidgets import QWidget, QTreeView
+
 from PySide6.QtGui import QStandardItemModel
+from PySide6.QtWidgets import QTreeView, QWidget
+
 from som_gui.module import modelcheck_window
 from som_gui.resources.icons import get_icon
 from . import qt
@@ -12,6 +14,7 @@ class ModelcheckWindow(QWidget):
         self.ui = qt.ui_Widget.Ui_Modelcheck()
         self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
+
 
 class ObjectTree(QTreeView):
     def __init__(self, *args, **kwargs):

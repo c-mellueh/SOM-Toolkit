@@ -1,8 +1,5 @@
-import sys
 import inspect
-import som_gui.tool
-
-
+import sys
 
 
 def get_class_methods_and_params(cls, file):

@@ -1,14 +1,17 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Callable
+
+from typing import Callable, TYPE_CHECKING
+
+from PySide6.QtGui import QAction
 from PySide6.QtGui import QIcon
 
-from som_gui.module.compare import ui
-import som_gui.core.tool
 import som_gui
+import som_gui.core.tool
 from som_gui.module.compare import trigger
-from PySide6.QtGui import QAction
+from som_gui.module.compare import ui
+
 if TYPE_CHECKING:
-    from som_gui.module.compare.prop import CompareAttributesProperties, CompareWindowProperties, \
+    from som_gui.module.compare.prop import CompareWindowProperties, \
         CompareProjectSelectProperties
 
 
@@ -89,6 +92,7 @@ class CompareWindow(som_gui.core.tool.CompareWindow):
     @classmethod
     def get_action(cls, name):
         return cls.get_properties().actions[name]
+
     @classmethod
     def connect_triggers(cls):
         window = cls.get_window()

@@ -1,4 +1,3 @@
-
 class Appdata:
     def _get_config(self, ): pass
 
@@ -229,7 +228,6 @@ class AttributeImport:
     def get_action(self, name): pass
 
     def get_attribute_import_threadpool(self, ): pass
-
 
     def get_ifc_import_window(self, ): pass
 
@@ -1376,6 +1374,7 @@ class Popups:
 class Language:
     pass
 
+
 class PredefinedPropertySet:
     def add_objects_to_table_widget(self, property_sets, table_widget): pass
 
@@ -1754,4 +1753,3 @@ class Util:
     def request_path(self, widget): pass
 
     def transform_guid(self, guid, add_zero_width): pass
-

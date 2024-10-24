@@ -1,6 +1,7 @@
 from som_gui import tool
 from som_gui.core import bsdd as core
-from PySide6.QtCore import QCoreApplication
+
+
 def connect():
     core.define_dictionary_widget(tool.Bsdd)
     core.create_main_menu_actions(tool.Bsdd, tool.MainWindow)
@@ -8,8 +9,12 @@ def connect():
 
 def open_window():
     core.open_window(tool.Bsdd, tool.Appdata)
+
+
 def retranslate_ui():
-    core.retranslate_ui(tool.Bsdd,tool.Util)
+    core.retranslate_ui(tool.Bsdd, tool.Util)
+
+
 def on_new_project():
     core.reset(tool.Bsdd)
 

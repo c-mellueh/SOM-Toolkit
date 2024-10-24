@@ -1,19 +1,20 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING
 import sqlite3
-from openpyxl.worksheet.worksheet import Worksheet
-from openpyxl.worksheet.table import Table, TableStyleInfo
-from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
-from openpyxl.utils import get_column_letter
+from typing import TYPE_CHECKING
+
+import openpyxl
 from PySide6.QtCore import QCoreApplication
 from openpyxl.cell.cell import Cell
-import openpyxl
+from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
+from openpyxl.worksheet.table import Table, TableStyleInfo
+from openpyxl.worksheet.worksheet import Worksheet
 
+import som_gui
 import som_gui.core.tool
 from som_gui import tool
-import som_gui
 from som_gui.module.modelcheck_results import trigger
 
 if TYPE_CHECKING:

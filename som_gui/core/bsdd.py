@@ -1,9 +1,12 @@
 from __future__ import annotations
-import os
+
 import logging
+import os
 from typing import TYPE_CHECKING, Type
+
+from PySide6.QtCore import QCoreApplication, Qt
 from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QLineEdit
-from PySide6.QtCore import Qt, QCoreApplication
+
 if TYPE_CHECKING:
     from som_gui import tool
 
@@ -16,7 +19,7 @@ def create_main_menu_actions(bsdd: Type[tool.Bsdd], main_window: Type[tool.MainW
     bsdd.set_action("open_window", open_window_action)
 
 
-def retranslate_ui(bsdd: Type[tool.Bsdd], util:Type[tool.Util]):
+def retranslate_ui(bsdd: Type[tool.Bsdd], util: Type[tool.Util]):
     open_window_action = bsdd.get_action("open_window")
     title = QCoreApplication.translate("BSDD", "bsDD")
     open_window_action.setText(title)
@@ -24,6 +27,7 @@ def retranslate_ui(bsdd: Type[tool.Bsdd], util:Type[tool.Util]):
     if window:
         window.ui.retranslateUi(window)
         window.setWindowTitle(util.get_window_title(title))
+
 
 def open_window(bsdd: Type[tool.Bsdd], settings: Type[tool.Appdata]) -> None:
     window = bsdd.get_window()
@@ -38,7 +42,6 @@ def open_window(bsdd: Type[tool.Bsdd], settings: Type[tool.Appdata]) -> None:
 
 def reset(bsdd: Type[tool.Bsdd]) -> None:
     bsdd.reset_dictionary()
-
 
 
 def define_dictionary_widget(bsdd: Type[tool.Bsdd]):

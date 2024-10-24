@@ -1,17 +1,19 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, TextIO, Any
-from PySide6.QtGui import QBrush, QPalette, QColor, QIcon
-from PySide6.QtCore import QModelIndex, Qt
-from som_gui import tool
-import SOMcreator
-from som_gui.module.attribute import ui,trigger
-import som_gui.core.tool
-import som_gui
-from PySide6.QtWidgets import QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QTableWidget
-from som_gui.module.project.constants import CLASS_REFERENCE
+from typing import Any, Callable, TYPE_CHECKING, TextIO
+
 from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QModelIndex, Qt
+from PySide6.QtGui import QBrush, QColor, QPalette
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QTreeWidget, QTreeWidgetItem
+
+import SOMcreator
+import som_gui
+import som_gui.core.tool
+from som_gui import tool
+from som_gui.module.attribute import trigger, ui
+from som_gui.module.project.constants import CLASS_REFERENCE
 
 style_list = [
     [None, [0, 1]],
@@ -20,10 +22,9 @@ style_list = [
     ["#840002", [0]]  # red
 ]
 
-
-
 if TYPE_CHECKING:
     from som_gui.module.attribute.prop import AttributeProperties, CompareAttributesProperties
+
 
 class Attribute(som_gui.core.tool.Attribute):
     @classmethod

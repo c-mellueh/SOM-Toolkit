@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 from typing import TypedDict
-from PySide6.QtWidgets import QMenu
+
 from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QMenu
 
 
 class MenuDict(TypedDict):

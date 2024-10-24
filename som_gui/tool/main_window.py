@@ -1,15 +1,17 @@
 from __future__ import annotations
-import som_gui.core.tool
-import som_gui
-from typing import TYPE_CHECKING, Callable
-from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLineEdit, QStatusBar, QMenu
-from PySide6.QtGui import QAction
-from som_gui import tool
-from som_gui.module.main_window import ui as ui_main_window
+
 import ctypes
+from typing import Callable, TYPE_CHECKING
+
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QLineEdit, QMenu, QMenuBar, QStatusBar
+
+import som_gui
+import som_gui.core.tool
+from som_gui.module.main_window import ui as ui_main_window
 
 if TYPE_CHECKING:
-    from som_gui.module.main_window.prop import MainWindowProperties, MenuDict
+    from som_gui.module.main_window.prop import MainWindowProperties
     from som_gui.module.main_window.qt.ui_MainWindow import Ui_MainWindow
 
 
@@ -25,7 +27,6 @@ class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
     def get_action(cls, name):
         return cls.get_properties().actions[name]
-
 
     @classmethod
     def create(cls, application: QApplication):
@@ -57,6 +58,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         if ctypes.windll.user32.IsWindowVisible(hWnd):
             return True
         return False
+
     @classmethod
     def toggle_console(cls):
         active_window = cls.get_app().activeWindow()

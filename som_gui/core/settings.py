@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING, Type
+
+from PySide6.QtCore import QCoreApplication
 
 from som_gui import tool
-from typing import TYPE_CHECKING, Type
-from PySide6.QtCore import QCoreApplication
+
 if TYPE_CHECKING:
     from som_gui import tool
 

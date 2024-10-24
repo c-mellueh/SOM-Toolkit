@@ -1,6 +1,8 @@
 from PySide6.QtWidgets import QVBoxLayout, QWidget
+
 from som_gui.resources.icons import get_icon
 from .qt import ui_Widget
+
 
 class GroupingWindow(QWidget):
     def __init__(self, *args, **kwargs):

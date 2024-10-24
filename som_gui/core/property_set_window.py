@@ -1,10 +1,11 @@
 from __future__ import annotations
-from typing import Type, TYPE_CHECKING
+
+from typing import TYPE_CHECKING, Type
 
 import SOMcreator
-from som_gui.core import attribute_table as attribute_table_core
 from SOMcreator.constants.value_constants import RANGE
-from som_gui.module.property_set_window.constants import SEPERATOR_SECTION, SEPERATOR, SEPERATOR_STATUS
+from som_gui.core import attribute_table as attribute_table_core
+from som_gui.module.property_set_window.constants import SEPERATOR, SEPERATOR_SECTION, SEPERATOR_STATUS
 
 if TYPE_CHECKING:
     from som_gui import tool

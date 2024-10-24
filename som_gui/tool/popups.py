@@ -1,11 +1,12 @@
 import os.path
 
+from PySide6.QtCore import QCoreApplication, Qt
+from PySide6.QtWidgets import QFileDialog, QInputDialog, QLineEdit, QListWidgetItem, QMessageBox
+
 import som_gui.core.tool
-from som_gui.resources.icons import get_icon
-from PySide6.QtWidgets import QMessageBox, QInputDialog, QLineEdit, QFileDialog, QListWidgetItem
-from PySide6.QtCore import Qt, QCoreApplication
 from som_gui import tool
 from som_gui.module.popups import ui
+from som_gui.resources.icons import get_icon
 
 FILETYPE = "SOM Project  (*.SOMjson);;all (*.*)"
 

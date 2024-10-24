@@ -1,10 +1,13 @@
 from __future__ import annotations
-from som_gui.core import property_set_window as core
-import som_gui
-from som_gui import tool
+
 from typing import TYPE_CHECKING
+
 from PySide6 import QtGui
-from .constants import SEPERATOR, SEPERATOR_SECTION, SEPERATOR_STATUS
+
+from som_gui import tool
+from som_gui.core import property_set_window as core
+from .constants import SEPERATOR_SECTION, SEPERATOR_STATUS
+
 if TYPE_CHECKING:
     from .ui import PropertySetWindow
 

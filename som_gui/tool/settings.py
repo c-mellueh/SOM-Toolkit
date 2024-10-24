@@ -1,11 +1,15 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Callable, Type
-from PySide6.QtWidgets import QVBoxLayout, QTabWidget, QWidget, QToolBox
-from PySide6.QtGui import QIcon, QAction
+
+from typing import Callable, TYPE_CHECKING, Type
+
 from PySide6.QtCore import QSize
-import som_gui.core.tool
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QTabWidget, QToolBox, QWidget
+
 import som_gui
+import som_gui.core.tool
 from som_gui.module.settings import ui
+
 if TYPE_CHECKING:
     from som_gui.module.settings.prop import SettingsProperties
 
@@ -64,8 +68,6 @@ class Settings(som_gui.core.tool.Settings):
         tab_widget.addTab(tb, tab_name)
         return tb
 
-
     @classmethod
     def get_accept_functions(cls) -> list[Callable]:
         return cls.get_properties().accept_functions
-

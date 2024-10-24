@@ -1,6 +1,8 @@
 from __future__ import annotations
-from PySide6.QtCore import QCoreApplication
+
 from typing import TYPE_CHECKING, Type
+
+from PySide6.QtCore import QCoreApplication
 
 if TYPE_CHECKING:
     from som_gui import tool

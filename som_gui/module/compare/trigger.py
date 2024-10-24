@@ -1,5 +1,5 @@
-from som_gui.core import compare as core
 from som_gui import tool
+from som_gui.core import compare as core
 
 
 def connect():
@@ -11,8 +11,10 @@ def open_window():
                                        tool.CompareProjectSelector,
                                        tool.Appdata, tool.Project)
 
+
 def retranslate_ui():
-    core.retranslate_ui(tool.CompareWindow,tool.Util)
+    core.retranslate_ui(tool.CompareWindow, tool.Util)
+
 
 def on_new_project():
     pass
@@ -28,9 +30,6 @@ def switch_button_clicked():
 
 def project_button_clicked():
     core.project_button_clicked(tool.CompareProjectSelector, tool.Popups, tool.Appdata)
-
-
-
 
 
 def draw_branches(tree, painter, rect, index):

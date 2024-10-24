@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Type
 from typing import TYPE_CHECKING
+from typing import Type
+
+from PySide6.QtCore import QCoreApplication
+
 import som_gui
 from som_gui.module.project.constants import FILETYPE, OPEN_PATH, SAVE_PATH
-from PySide6.QtCore import QCoreApplication
 
 if TYPE_CHECKING:
     from som_gui.tool import Project, Popups, Appdata
@@ -56,6 +58,7 @@ def retranslate_ui(project: Type[tool.Project]):
     widget = project.get_settings_general_widget()
     if widget:
         widget.ui.retranslateUi(widget)
+
 
 def save_clicked(project_tool: Type[Project], popup_tool: Type[Popups], appdata: Type[Appdata],
                  main_window: Type[tool.MainWindow]):

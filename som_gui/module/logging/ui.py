@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QFormLayout, QWidget
+from PySide6.QtWidgets import QWidget
+
 from som_gui.module import logging
 
 

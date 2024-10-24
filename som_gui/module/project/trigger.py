@@ -1,8 +1,6 @@
-from som_gui.module import project
-import som_gui
-from som_gui.module.project import ui
 import som_gui.core.project as core
 from som_gui import tool
+from som_gui.module.project import ui
 
 
 def connect():

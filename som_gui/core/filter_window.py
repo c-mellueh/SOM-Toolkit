@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING, Type
-import SOMcreator
-from PySide6.QtCore import Qt, QItemSelection, QModelIndex, QCoreApplication
-from PySide6.QtWidgets import QFormLayout, QLabel, QCheckBox
+
+from PySide6.QtCore import QCoreApplication, QItemSelection, QModelIndex, Qt
 from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QCheckBox, QFormLayout, QLabel
+
+import SOMcreator
 
 if TYPE_CHECKING:
     from som_gui import tool

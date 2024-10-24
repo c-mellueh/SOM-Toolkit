@@ -1,15 +1,18 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from PySide6.QtCore import Signal, QObject
-from PySide6.QtWidgets import QMessageBox, QCheckBox
-import appdirs
-import sys
-import som_gui.core.tool
-import os
-import som_gui
+
 import datetime
 import logging
+import os
+import sys
 import traceback
+from typing import TYPE_CHECKING
+
+import appdirs
+from PySide6.QtCore import QObject, Signal
+from PySide6.QtWidgets import QCheckBox, QMessageBox
+
+import som_gui
+import som_gui.core.tool
 
 if TYPE_CHECKING:
     from som_gui.module.logging.prop import LoggingProperties
@@ -18,6 +21,7 @@ if TYPE_CHECKING:
 from som_gui.resources.icons import get_icon
 from som_gui import tool
 from som_gui.module.logging.constants import LOG_PATH, LOG_SECTION, LOG_LEVEL
+
 
 class CustomFormatter(logging.Formatter):
     def __init__(self, fmt=None, datefmt=None, style='%'):
@@ -86,7 +90,6 @@ class Logging(som_gui.core.tool.Logging):
         if msg_box.exec_() and cb.isChecked():
             cls.get_properties().ignore_texts.append(identifier)
 
-
     @classmethod
     def get_signaller(cls):
         if cls.get_properties().signaller is None:
@@ -106,7 +109,6 @@ class Logging(som_gui.core.tool.Logging):
         for handler in cls.get_logger().handlers:
             handler.setLevel(log_level)
         logging.info(f"Set Loglevel {log_level}")
-
 
     @classmethod
     def get_logger(cls):

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
-from PySide6.QtCore import Qt, QPoint, QPointF, QCoreApplication
-from SOMcreator import value_constants
+
+from PySide6.QtCore import QCoreApplication, QPoint, QPointF, Qt
+
 import SOMcreator
+from SOMcreator import value_constants
 from som_gui import tool
 
 if TYPE_CHECKING:
@@ -167,7 +169,6 @@ def context_menu_requested(pos: QPoint, view: Type[aw_tool.View], node: Type[aw_
     print_view = QCoreApplication.translate("Aggregation", "Print View")
     menu_list.append([f"{view}/{reset_zoom}", view.autofit_view])
     menu_list.append([f"{view}/{print_view}", lambda: view.print_scene(scene)])
-
 
     if len(selected_nodes) > 1:
         layout = QCoreApplication.translate("Aggregation", "Layout")

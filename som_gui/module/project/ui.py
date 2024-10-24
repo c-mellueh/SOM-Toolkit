@@ -1,8 +1,11 @@
 from __future__ import annotations  # make own class referencable
+
 from PySide6.QtWidgets import QDialog, QWidget
-from ...resources import icons
+
 from som_gui.module import project
-from .qt import ui_SettingsGeneral, ui_SettingsPath, ui_ProjectMerge
+from .qt import ui_ProjectMerge, ui_SettingsGeneral, ui_SettingsPath
+from ...resources import icons
+
 
 class SettingsPath(QWidget):
     def __init__(self):
@@ -10,6 +13,7 @@ class SettingsPath(QWidget):
         self.ui = ui_SettingsPath.Ui_Project()
         self.ui.setupUi(self)
         project.trigger.settings_path_created(self)
+
 
 class SettingsGeneral(QWidget):
     def __init__(self):

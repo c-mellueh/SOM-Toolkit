@@ -1,19 +1,19 @@
 from __future__ import annotations
+
+import logging
 from typing import TYPE_CHECKING
 
-import SOMcreator
-
-import som_gui.core.tool
-import som_gui
-from som_gui.module.attribute_import import ui, trigger
-from som_gui import tool
-from PySide6.QtWidgets import QComboBox, QTableWidgetItem, QTableWidget, QCheckBox
-from PySide6.QtCore import QRunnable, QObject, Signal, QThreadPool, Qt
-from PySide6.QtGui import QBrush, QPalette, QAction
-
 import ifcopenshell
+from PySide6.QtCore import QObject, QRunnable, QThreadPool, Qt, Signal
+from PySide6.QtGui import QAction, QBrush, QPalette
+from PySide6.QtWidgets import QCheckBox, QComboBox, QTableWidget, QTableWidgetItem
 from ifcopenshell.util import element as ifc_element_util
-import logging
+
+import SOMcreator
+import som_gui
+import som_gui.core.tool
+from som_gui import tool
+from som_gui.module.attribute_import import trigger, ui
 
 if TYPE_CHECKING:
     from som_gui.module.attribute_import.prop import AttributeImportProperties, AttributeImportSQLProperties
@@ -394,10 +394,8 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     def get_action(cls, name) -> QAction:
         return cls.get_properties().actions[name]
 
-
-
     @classmethod
-    def create_ifc_import_window(cls,ifc_importer:IfcImportWidget) -> ui.AttributeImportWindow:
+    def create_ifc_import_window(cls, ifc_importer: IfcImportWidget) -> ui.AttributeImportWindow:
         prop = cls.get_properties()
         prop.ifc_import_window = ifc_importer
         prop.run_button = ifc_importer.widget.button_run
@@ -411,7 +409,6 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
     def get_ifc_import_window(cls) -> IfcImportWidget:
         return cls.get_properties().ifc_import_window
-
 
     @classmethod
     def set_main_pset(cls, main_pset_name: str) -> None:

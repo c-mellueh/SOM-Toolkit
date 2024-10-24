@@ -1,18 +1,19 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-import logging
 
-from SOMcreator import Aggregation
-from SOMcreator.constants import value_constants
-import som_gui
-import som_gui.plugins.aggregation_window.core.tool
-from som_gui.plugins.aggregation_window.module.connection import constants
-from som_gui.plugins.aggregation_window.module.connection import ui as connection_ui
-from som_gui.plugins.aggregation_window.module.connection import trigger as connection_trigger
+import logging
+from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QPointF
-from PySide6.QtWidgets import QGraphicsPathItem
 from PySide6.QtGui import QPainterPath, QPalette
+from PySide6.QtWidgets import QGraphicsPathItem
+
+import som_gui
+import som_gui.plugins.aggregation_window.core.tool
+from SOMcreator import Aggregation
+from SOMcreator.constants import value_constants
+from som_gui.plugins.aggregation_window.module.connection import constants
+from som_gui.plugins.aggregation_window.module.connection import trigger as connection_trigger
+from som_gui.plugins.aggregation_window.module.connection import ui as connection_ui
 
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.module.node import ui as node_ui

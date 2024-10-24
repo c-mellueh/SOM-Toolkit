@@ -1,6 +1,7 @@
-from .qt import ui_Widget
 from PySide6.QtWidgets import QWidget
+
 import som_gui
+from .qt import ui_Widget
 
 
 class MoveWidget(QWidget):

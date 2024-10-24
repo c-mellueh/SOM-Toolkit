@@ -1,6 +1,5 @@
 import logging
 import os
-import logging
 
 
 def to_camel_case(snake_str):

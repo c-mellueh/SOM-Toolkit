@@ -1,13 +1,16 @@
 from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from PySide6.QtCore import QCoreApplication, Qt
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
+
 import som_gui
 import som_gui.core.tool
-from som_gui.module.project.constants import CLASS_REFERENCE, UMLAUT_DICT
-from som_gui.module import search
-from typing import TYPE_CHECKING
-from PySide6.QtWidgets import QTableWidgetItem, QTableWidget
-from PySide6.QtCore import Qt, QCoreApplication
-from som_gui import tool
 from som_gui import __version__ as version
+from som_gui import tool
+from som_gui.module import search
+from som_gui.module.project.constants import CLASS_REFERENCE, UMLAUT_DICT
 
 if TYPE_CHECKING:
     from som_gui.module.search.prop import SearchProperties

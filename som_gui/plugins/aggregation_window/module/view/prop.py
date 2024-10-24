@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
-from SOMcreator import Aggregation
+
 from PySide6.QtCore import QPointF
+
+from SOMcreator import Aggregation
 
 if TYPE_CHECKING:
     from .ui import AggregationView, AggregationScene

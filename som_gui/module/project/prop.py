@@ -1,7 +1,8 @@
 from __future__ import annotations
+
+from typing import Callable, TYPE_CHECKING
+
 from SOMcreator import Project
-from PySide6.QtWidgets import QDialog
-from typing import TypedDict, Callable, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from . import ui

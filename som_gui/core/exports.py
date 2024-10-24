@@ -1,8 +1,11 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Type
-import os
+
 import json
+import os
+from typing import TYPE_CHECKING, Type
+
 from PySide6.QtCore import QCoreApplication
+
 if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtWidgets import QGridLayout, QLineEdit, QWidget
@@ -63,11 +66,6 @@ def retranslate_ui(exports: Type[tool.Exports], ):
 
     action = exports.get_action("mapping_script")
     action.setText(QCoreApplication.translate("Export", "Export Mapping Script"))
-
-
-
-
-
 
 
 def export_bookmarks(exports: Type[tool.Exports], main_window: Type[tool.MainWindow],

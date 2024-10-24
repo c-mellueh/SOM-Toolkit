@@ -1,14 +1,16 @@
 from __future__ import annotations
+
 import logging
-from PySide6.QtCore import QAbstractTableModel, QModelIndex, QAbstractItemModel, Qt, QCoreApplication
-from PySide6.QtWidgets import QTreeView, QWidget, QTableView
+from typing import Callable
+
+from PySide6.QtCore import QAbstractItemModel, QAbstractTableModel, QCoreApplication, QModelIndex, Qt
 from PySide6.QtGui import QMouseEvent
+from PySide6.QtWidgets import QTableView, QTreeView, QWidget
 
 import SOMcreator
-from som_gui import tool
 import som_gui
+from som_gui import tool
 from . import trigger
-from typing import Callable
 
 
 class SettingsWidget(QWidget):
@@ -18,6 +20,7 @@ class SettingsWidget(QWidget):
         self.ui = ui_Settings.Ui_FilterWindow()
         self.ui.setupUi(self)
         trigger.settings_widget_created(self)
+
 
 class FilterWidget(QWidget):
     def __init__(self, *args, **kwargs):
@@ -93,6 +96,7 @@ class PsetTreeView(QTreeView):
     def model(self) -> PsetModel:
         return super().model()
 
+
 class ProjectModel(QAbstractTableModel):
     def __init__(self, project: SOMcreator.Project):
         super().__init__()
@@ -158,7 +162,6 @@ class TreeModel(QAbstractItemModel):
         self.allowed_combinations = self.get_allowed_combinations()
         self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount()))
 
-
     def flags(self, index, parent_index):
         flags = super().flags(index)
         if index.column() < self.check_column_index:
@@ -180,7 +183,6 @@ class TreeModel(QAbstractItemModel):
                 if self.project.get_filter_state(phase, usecase):
                     allowed_combinations.append((phase, usecase))
         return allowed_combinations
-
 
     def columnCount(self, parent=QModelIndex()):
         return self.check_column_index + len(self.allowed_combinations)

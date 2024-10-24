@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING
+
 import som_gui.core.tool
 from som_gui.module.console import ui
 
 if TYPE_CHECKING:
     from som_gui.module.console.prop import ConsoleProperties
+
 
 class Console(som_gui.core.tool.Console):
     @classmethod

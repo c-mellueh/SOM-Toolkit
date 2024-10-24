@@ -7,6 +7,7 @@ def get_switch_icon() -> QIcon:
     icon_path = os.path.join(ICON_PATH, ICON_DICT["switch"])
     return QIcon(icon_path)
 
+
 def get_icon() -> QIcon:
     icon_path = os.path.join(ICON_PATH, ICON_DICT["icon"])
     return QIcon(icon_path)
@@ -49,7 +50,7 @@ ICON_DICT = {
     "reload":   "reload.svg",
     "search":   "search.png",
     "settings": "setting.png",
-    "add":    "add.png",
-    "switch": "switch.png",
+    "add":      "add.png",
+    "switch":   "switch.png",
     "download": "download.png"
 }

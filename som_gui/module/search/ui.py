@@ -1,7 +1,8 @@
-from som_gui.resources.icons import get_icon
 from PySide6.QtWidgets import QDialog
-from .qt import ui_Widget
+
 from som_gui.module.search import trigger
+from som_gui.resources.icons import get_icon
+from .qt import ui_Widget
 
 
 class SearchWindow(QDialog):

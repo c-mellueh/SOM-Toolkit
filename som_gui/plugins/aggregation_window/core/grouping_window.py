@@ -1,16 +1,18 @@
 from __future__ import annotations
+
+import logging
+import os
+import time
 from typing import TYPE_CHECKING, Type
 
-from PySide6.QtWidgets import QDialogButtonBox
-from som_gui import tool
 import ifcopenshell
-from .. import tool as aw_tool
-import logging
-import time
-import os
-from ..module.grouping_window.constants import GROUP_PSET, IFC_MOD, GROUP_ATTRIBUTE
 from PySide6.QtCore import QCoreApplication
+from PySide6.QtWidgets import QDialogButtonBox
+
+from som_gui import tool
 from som_gui.plugins.aggregation_window.module.grouping_window.constants import GROUP_FOLDER
+from .. import tool as aw_tool
+from ..module.grouping_window.constants import GROUP_ATTRIBUTE, GROUP_PSET, IFC_MOD
 
 if TYPE_CHECKING:
     from som_gui.tool.ifc_importer import IfcImportRunner

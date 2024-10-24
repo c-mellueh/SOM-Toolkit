@@ -1,16 +1,21 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any
-import logging
-from PySide6.QtWidgets import QFormLayout, QLabel, QCheckBox
-import som_gui.core.tool
-import som_gui
+
 import importlib
+import logging
 import pkgutil
+from typing import Any, TYPE_CHECKING
+
+from PySide6.QtWidgets import QCheckBox, QLabel
+
+import som_gui
+import som_gui.core.tool
 from som_gui import tool
 from som_gui.module.plugins import constants
+
 if TYPE_CHECKING:
     from som_gui.module.plugins.prop import PluginsProperties
     from som_gui.module.plugins import ui
+
 
 class Plugins(som_gui.core.tool.Plugins):
 
@@ -31,7 +36,6 @@ class Plugins(som_gui.core.tool.Plugins):
         module = importlib.import_module("som_gui.plugins")
         modules = sorted(m.name for m in pkgutil.iter_modules(module.__path__) if m.ispkg)
         return modules
-
 
     @classmethod
     def import_plugin(cls, plugin_name: str) -> list[tuple[str, Any]]:

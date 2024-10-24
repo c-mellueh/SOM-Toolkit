@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QTableWidget, QWidget, QStyledItemDelegate
-from PySide6.QtCore import Signal, QModelIndex, Qt
+from PySide6.QtCore import QModelIndex, Qt, Signal
+from PySide6.QtWidgets import QStyledItemDelegate, QTableWidget, QWidget
+
 from som_gui.module import property_set
 
 

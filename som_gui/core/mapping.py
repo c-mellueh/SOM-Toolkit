@@ -3,9 +3,11 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 
+from PySide6.QtCore import QCoreApplication
+
 import SOMcreator
 from SOMcreator.exporter import revit
-from PySide6.QtCore import QCoreApplication
+
 if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtWidgets import QTreeWidgetItem
@@ -28,7 +30,7 @@ def retranslate_ui(mapping: Type[tool.Mapping], util: Type[tool.Util]):
 
 
 def open_window(mapping: Type[tool.Mapping]):
-    if window:=mapping.get_window() is None:
+    if window := mapping.get_window() is None:
         window = mapping.create_window()
     from som_gui.module.mapping import trigger
     trigger.retranslate_ui()

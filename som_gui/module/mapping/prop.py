@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QTreeWidget
     from PySide6.QtGui import QAction
 
+
 class MappingProperties:
     window: MappingWindow = None
     check_state_dict: dict[SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute, bool] = dict()

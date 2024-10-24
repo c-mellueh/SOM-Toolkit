@@ -1,16 +1,16 @@
 from __future__ import annotations
+
 import os.path
 from typing import TYPE_CHECKING, Type
-from som_gui.module.compare.constants import COMPARE_SETTING, EXPORT_PATH
-import SOMcreator
-from PySide6.QtCore import Qt, QCoreApplication
-from som_gui.module.project.constants import FILETYPE
+
+from PySide6.QtCore import QCoreApplication, Qt
 
 from SOMcreator import Project
+from som_gui.module.compare.constants import COMPARE_SETTING, EXPORT_PATH
+from som_gui.module.project.constants import FILETYPE
 
 if TYPE_CHECKING:
     from som_gui import tool
-    from som_gui.module.compare import ui
     from PySide6.QtCore import QModelIndex
     from PySide6.QtGui import QPainter
     from PySide6.QtWidgets import QTreeWidget
@@ -22,7 +22,7 @@ def create_main_menu_actions(compare_window: Type[tool.CompareWindow], main_wind
     compare_window.set_action("open_window", open_window_action)
 
 
-def retranslate_ui(compare_window: Type[tool.CompareWindow],util:Type[tool.Util] ):
+def retranslate_ui(compare_window: Type[tool.CompareWindow], util: Type[tool.Util]):
     title = QCoreApplication.translate("CompareWindow", "Compare Projects")
     open_window_action = compare_window.get_action("open_window")
     open_window_action.setText(title)
@@ -33,8 +33,9 @@ def retranslate_ui(compare_window: Type[tool.CompareWindow],util:Type[tool.Util]
 
     tab_widget = compare_window.get_tabwidget()
     names = [ng() for ng in compare_window.get_properties().name_getter]
-    for name,i in zip(names,range(tab_widget.count())):
-        tab_widget.setTabText(i,name)
+    for name, i in zip(names, range(tab_widget.count())):
+        tab_widget.setTabText(i, name)
+
 
 def open_project_selection_window(compare_window: Type[tool.CompareWindow],
                                   project_selector: Type[tool.CompareProjectSelector],
@@ -89,7 +90,7 @@ def open_compare_window(compare_window: Type[tool.CompareWindow], project_select
                         popups: Type[tool.Popups]):
     other_file_path = project_selector.get_project_select_path()
     if not os.path.exists(other_file_path):
-        warning = QCoreApplication.translate("Compare","File '{}' doesn't exist").format(other_file_path)
+        warning = QCoreApplication.translate("Compare", "File '{}' doesn't exist").format(other_file_path)
         popups.create_warning_popup(warning)
         return
 
@@ -112,6 +113,7 @@ def open_compare_window(compare_window: Type[tool.CompareWindow], project_select
     window.activateWindow()
     window.accepted.connect(compare_window.reset)
 
+
 def draw_tree_branch(tree: QTreeWidget, painter: QPainter, rect, index: QModelIndex,
                      attribute_compare: Type[tool.AttributeCompare]):
     level = attribute_compare.get_level(index)
@@ -129,9 +131,6 @@ def draw_tree_branch(tree: QTreeWidget, painter: QPainter, rect, index: QModelIn
         rect.setRect(start_point, rect.y(), arrow_width, rect.height())
         painter.drawRect(rect)
     return painter, rect, index
-
-
-
 
 
 def download_changelog(compare_window: Type[tool.CompareWindow], popups: Type[tool.Popups],

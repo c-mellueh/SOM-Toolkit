@@ -1,11 +1,9 @@
 from __future__ import annotations
-from PySide6.QtWidgets import QWidget, QDialog, QTableWidget, QComboBox, QCheckBox
+
+from PySide6.QtWidgets import QCheckBox, QComboBox, QDialog, QTableWidget, QWidget
+
 from som_gui.resources.icons import get_icon, get_settings_icon
 from . import trigger
-from som_gui import __version__ as version
-from som_gui import tool
-from PySide6.QtCore import QCoreApplication
-
 
 
 class AttributeImportResultWindow(QWidget):

@@ -1,21 +1,21 @@
 from __future__ import annotations
+
+import os
+from typing import Callable, TYPE_CHECKING
+
+from PySide6.QtCore import QRunnable, QThreadPool, Qt
+from PySide6.QtGui import QAction, QStandardItem, QStandardItemModel
+from PySide6.QtWidgets import QDialogButtonBox, QLabel, QMenu, QTreeView
+
+import SOMcreator
 import som_gui.core.tool
 from som_gui import tool
 from som_gui.module.modelcheck.constants import ISSUE_PATH
-from som_gui.module.modelcheck_window import ui, trigger
+from som_gui.module.modelcheck_window import trigger, ui
 from som_gui.module.project.constants import CLASS_REFERENCE
-import SOMcreator
-from typing import TYPE_CHECKING, Callable
-from PySide6.QtCore import Qt, QThreadPool, QSize, QRunnable
-from PySide6.QtWidgets import QDialogButtonBox, QSplitter, QSizePolicy, QLayout, QWidget, QTreeView, QFileDialog, \
-    QLineEdit, QPushButton, \
-    QLabel, QMenu
-from PySide6.QtGui import QStandardItem, QStandardItemModel, QAction
-import os
 
 if TYPE_CHECKING:
     from som_gui.module.modelcheck_window.prop import ModelcheckWindowProperties
-    from som_gui.module.ifc_importer.ui import IfcImportWidget
 
 
 class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
@@ -93,7 +93,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             widget.model().setData(index, Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole)
 
     @classmethod
-    def resize_object_tree(cls,tree):
+    def resize_object_tree(cls, tree):
         tree.resizeColumnToContents(0)
 
     @classmethod
@@ -115,8 +115,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     def reset_butons(cls):
         cls.show_buttons(QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)
         cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Apply)
-
-
 
     @classmethod
     def modelcheck_is_running(cls):
@@ -156,7 +154,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def set_status(cls, text: str):
         cls.get_status_label().setText(text)
-
 
     @classmethod
     def read_inputs(cls):
@@ -201,7 +198,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         prop = cls.get_properties()
         return prop.property_set_tree
 
-
     @classmethod
     def get_item_checkstate_dict(cls):
         """
@@ -241,8 +237,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         if export_path:
             cls.get_properties().export_line_edit.setText(export_path)
 
-
-
     @classmethod
     def is_window_allready_build(cls):
         return bool(cls.get_properties().active_window)
@@ -255,7 +249,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     def create_window(cls):
         prop = cls.get_properties()
         window = ui.ModelcheckWindow()
-        prop.active_window =window
+        prop.active_window = window
         prop.property_set_tree = window.ui.property_set_tree
         prop.object_tree = window.ui.object_tree
         prop.object_label = window.ui.label_object
@@ -370,7 +364,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         for row in range(root_item.rowCount()):
             item = root_item.child(row, 0)
             cls._update_pset_row(item, enabled)
-
 
     @classmethod
     def set_progressbar_visible(cls, state: bool):

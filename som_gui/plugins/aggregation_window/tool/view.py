@@ -86,7 +86,6 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
             scene_index = scene
         cls.get_properties().scene_name_list[scene_index] = name
 
-
     @classmethod
     def set_view(cls, view: ui_view.AggregationView):
         cls.get_properties().aggregation_view = view
@@ -355,7 +354,6 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         scene_id = cls.get_scene_index(scene)
         cls.get_properties().import_list[scene_id].append((aggregation, pos))
 
-
     @classmethod
     def get_node_under_mouse(cls) -> ui_node.NodeProxy | None:
         nodes = cls.get_nodes_in_scene(cls.get_active_scene())
@@ -461,7 +459,6 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
             cls.remove_connection_from_scene(bottom_node.top_connection, scene)
         top_node.aggregation.add_child(bottom_node.aggregation, 1)
 
-
     @classmethod
     def reset_cursor(cls, position) -> None:
         cls.set_mouse_mode(0)
@@ -514,7 +511,6 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         for existing_node in list(nodes):
             if existing_node.aggregation not in existing_aggregations:
                 cls.remove_node_from_scene(existing_node, scene)
-
 
     @classmethod
     def create_child_node(cls, top_node: ui_node.NodeProxy,

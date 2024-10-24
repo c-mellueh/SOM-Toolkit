@@ -1,6 +1,7 @@
 from __future__ import annotations
-from som_gui.plugins.aggregation_window.core import connection as core
+
 from som_gui.plugins.aggregation_window import tool as aw_tool
+from som_gui.plugins.aggregation_window.core import connection as core
 
 
 def connect():

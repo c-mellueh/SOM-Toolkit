@@ -1,11 +1,13 @@
 from __future__ import annotations
-from typing import Type, TYPE_CHECKING
-import os
+
 import logging
+import os
+from typing import TYPE_CHECKING, Type
+
+import ifcopenshell
+from PySide6.QtCore import QCoreApplication, Qt
 
 import SOMcreator.constants.value_constants as value_constants
-import ifcopenshell
-from PySide6.QtCore import Qt, QCoreApplication
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -350,7 +352,7 @@ def all_checkbox_checkstate_changed(attribute_import_results: Type[tool.Attribut
 
 
 def settings_clicked(attribute_import_results: Type[tool.AttributeImportResults],
-                     attriubte_import_sql: Type[tool.AttributeImportSQL],util:Type[tool.Util]):
+                     attriubte_import_sql: Type[tool.AttributeImportSQL], util: Type[tool.Util]):
     settings_dialog = attriubte_import_sql.create_settings_window()
     title = QCoreApplication.translate("AttributeImport", "Settings v")
     settings_dialog.setWindowTitle(util.get_window_title(title))

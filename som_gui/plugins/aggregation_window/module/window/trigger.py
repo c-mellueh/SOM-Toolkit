@@ -1,6 +1,6 @@
-from som_gui.plugins.aggregation_window.core import window as core
-from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui import tool
+from som_gui.plugins.aggregation_window import tool as aw_tool
+from som_gui.plugins.aggregation_window.core import window as core
 
 
 def connect() -> None:
@@ -9,6 +9,7 @@ def connect() -> None:
 
 def open_window():
     core.create_window(aw_tool.Window, aw_tool.View)
+
 
 def on_new_project() -> None:
     pass
@@ -31,7 +32,7 @@ def request_scene_rename():
 
 
 def retranslate_ui():
-    core.retranslate_ui(aw_tool.Window,tool.Util)
+    core.retranslate_ui(aw_tool.Window, tool.Util)
 
 
 def create_new_scene():

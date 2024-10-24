@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Type
+
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtGui import QStandardItemModel
 

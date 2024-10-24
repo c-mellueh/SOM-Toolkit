@@ -1,5 +1,5 @@
-from . import prop, trigger
 import som_gui
+from . import prop, trigger
 
 
 def register():

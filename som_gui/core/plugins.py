@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 import logging
 from typing import TYPE_CHECKING, Type
-from PySide6.QtWidgets import QFormLayout, QCheckBox
+
+from PySide6.QtWidgets import QCheckBox, QFormLayout
 
 if TYPE_CHECKING:
     from som_gui import tool

@@ -1,21 +1,12 @@
-import som_gui
-
-import logging
-import os
 import sys
-from logging import config
 
 from som_gui import core
 from som_gui import tool
-import ifcopenshell.guid
-import ifcopenshell.express
 
-from PySide6.QtCore import QLocale
+
 def main(initial_file: str | None = None, log_level=None, open_last_project=False):
-
     print("START")
     from PySide6.QtWidgets import QApplication
-    from PySide6.QtCore import QTranslator, QLibraryInfo
     import som_gui.core.main_window
     import som_gui.core.project
     from som_gui.module.project.constants import OPEN_PATH

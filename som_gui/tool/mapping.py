@@ -1,12 +1,14 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
-import som_gui.core.tool
-import som_gui
-from som_gui.module.mapping import ui, trigger
-from PySide6.QtGui import QStandardItemModel
-from PySide6.QtWidgets import QTreeWidgetItem
+
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QTreeWidgetItem
+
 import SOMcreator
+import som_gui
+import som_gui.core.tool
+from som_gui.module.mapping import trigger, ui
 
 if TYPE_CHECKING:
     from som_gui.module.mapping.prop import MappingProperties

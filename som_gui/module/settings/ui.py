@@ -1,4 +1,5 @@
 from PySide6.QtWidgets import QDialog
+
 from som_gui.resources.icons import get_icon
 
 
@@ -9,4 +10,3 @@ class Dialog(QDialog):
         self.ui = Ui_Settings()
         self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
-

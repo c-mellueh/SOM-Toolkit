@@ -1,19 +1,21 @@
 from __future__ import annotations
 
-import logging
 import copy as cp
+import logging
 import uuid
+from typing import Callable, TYPE_CHECKING, TypedDict
 
+from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QPoint, Qt
+from PySide6.QtWidgets import QAbstractItemView, QCompleter, QLineEdit, QMenu, QTreeWidgetItem
+
+import SOMcreator
+import som_gui
 import som_gui.core.tool
 import som_gui.tool as tool
-import SOMcreator
-from PySide6.QtWidgets import QTreeWidgetItem, QAbstractItemView, QLineEdit, QCompleter, QMenu
-from PySide6.QtCore import Qt, QPoint
-import som_gui
-from typing import TYPE_CHECKING, TypedDict, Callable
 from SOMcreator.templates import IFC_4_1
 from som_gui.module.object.prop import PluginProperty
-from PySide6.QtCore import QCoreApplication
+
 if TYPE_CHECKING:
     from som_gui.module.object.prop import ObjectProperties, ContextMenuDict
     from som_gui.module.main_window.ui import MainWindow

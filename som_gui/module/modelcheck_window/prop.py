@@ -1,14 +1,16 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import SOMcreator
 
 if TYPE_CHECKING:
-    from .ui import ModelcheckWindow,PsetTree,ObjectTree
+    from .ui import ModelcheckWindow, PsetTree, ObjectTree
     from PySide6.QtCore import QThreadPool, QItemSelectionModel
     from PySide6.QtWidgets import QPushButton, QLineEdit, QLabel
     from PySide6.QtGui import QStandardItemModel, QAction
     from som_gui.tool.ifc_importer import IfcImportRunner
+
 
 class ModelcheckWindowProperties:
     active_window: ModelcheckWindow = None
@@ -26,7 +28,7 @@ class ModelcheckWindowProperties:
     object_tree: ObjectTree = None
     object_tree_model: QStandardItemModel = None
     object_tree_selection_model: QItemSelectionModel = None
-    property_set_tree:PsetTree = None
+    property_set_tree: PsetTree = None
     pset_tree_model: QStandardItemModel = None
     pset_tree_selection_model: QStandardItemModel = None
     actions: dict[str, QAction] = dict()

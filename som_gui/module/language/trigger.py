@@ -1,9 +1,8 @@
 from __future__ import annotations
-import som_gui
+
 from som_gui import tool
 from som_gui.core import language as core
 from som_gui.module.language import ui
-from typing import TYPE_CHECKING
 
 
 def connect():

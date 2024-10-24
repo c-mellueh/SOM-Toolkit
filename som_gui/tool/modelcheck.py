@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Iterator
+from typing import Callable, Iterator, TYPE_CHECKING
+
+from PySide6.QtCore import QObject, QRunnable, Signal
+
 from som_gui import tool
-from PySide6.QtCore import QRunnable, Signal, QObject
 
 if TYPE_CHECKING:
     from som_gui.module.modelcheck.prop import ModelcheckProperties
@@ -20,6 +22,7 @@ from SOMcreator import value_constants
 from som_gui.resources.data import constants
 from som_gui.module.modelcheck import trigger
 from PySide6.QtCore import QCoreApplication
+
 rev_datatype_dict = {
     str:   "IfcText/IfcLabel",
     bool:  "IfcBoolean",
@@ -83,7 +86,6 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def set_progress(cls, value: int):
         cls.get_properties().runner.signaller.progress.emit(value)
-
 
     @classmethod
     def get_element_count(cls) -> int:

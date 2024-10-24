@@ -1,13 +1,15 @@
 from __future__ import annotations
-from som_gui import tool
+
 import logging
-from typing import TYPE_CHECKING
-from PySide6.QtCore import QRunnable, Signal, QObject, QThreadPool, QCoreApplication
-from PySide6.QtGui import QAction
-import som_gui
-from som_gui.plugins.ifc_tools.module.move import ui, trigger
-import ifcopenshell
 import os
+from typing import TYPE_CHECKING
+
+import ifcopenshell
+from PySide6.QtCore import QCoreApplication, QObject, QRunnable, QThreadPool, Signal
+from PySide6.QtGui import QAction
+
+import som_gui
+from som_gui.plugins.ifc_tools.module.move import trigger, ui
 
 if TYPE_CHECKING:
     from som_gui.plugins.ifc_tools.module.move.prop import MoveProperties

@@ -1,10 +1,11 @@
 from __future__ import annotations
-from PySide6.QtWidgets import QGraphicsPathItem, QStyleOptionGraphicsItem
-from PySide6.QtCore import Qt, QPointF
-from PySide6.QtGui import QPen, QPainter, QPalette
-from . import trigger
 
 from typing import TYPE_CHECKING
+
+from PySide6.QtGui import QPainter, QPalette, QPen
+from PySide6.QtWidgets import QGraphicsPathItem, QStyleOptionGraphicsItem
+
+from . import trigger
 
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.module.node.ui import NodeProxy

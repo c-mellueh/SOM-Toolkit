@@ -1,10 +1,12 @@
-from PySide6.QtWidgets import QDialog, QTreeWidget, QPushButton
+from PySide6.QtCore import QModelIndex
+from PySide6.QtGui import QPalette
+from PySide6.QtWidgets import QDialog, QPushButton, QTreeWidget
+
+from som_gui import tool
+from som_gui.resources.icons import get_download_icon, get_icon, get_switch_icon
 from . import trigger
 from .qt import ui_ImportWidget, ui_Widget
-from som_gui.resources.icons import get_icon, get_switch_icon, get_download_icon
-from PySide6.QtGui import QPalette
-from PySide6.QtCore import QModelIndex
-from som_gui import tool
+
 
 def color_button(button: QPushButton) -> None:
     button.setAutoFillBackground(True)
@@ -38,9 +40,6 @@ class ProjectSelectDialog(QDialog):
         button.setText("")
         button.setIcon(get_switch_icon())
         color_button(button)
-
-
-
 
 
 class EntityTreeWidget(QTreeWidget):
