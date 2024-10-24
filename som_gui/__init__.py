@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__version__ = "2.13.3"
+__version__ = "2.13.4"
 from som_gui.resources.icons import get_icon
 
 def tr(*args, **kwargs):
