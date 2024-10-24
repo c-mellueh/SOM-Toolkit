@@ -1,10 +1,10 @@
-from PySide6.QtWidgets import QWidget, QDialog
-from PySide6.QtCore import Signal, QModelIndex
+from PySide6.QtCore import QModelIndex, Signal
+from PySide6.QtWidgets import QDialog, QWidget
+
 from som_gui.module import predefined_property_set
-from som_gui.icons import get_icon
 from som_gui.module.property_set.ui import LineEditDelegate
-from som_gui import tool
-from .qt import compare_widget, widget
+from som_gui.resources.icons import get_icon
+from .qt import ui_CompareWidget, ui_Widget
 
 
 class PredefinedPropertySetWindow(QDialog):
@@ -13,11 +13,10 @@ class PredefinedPropertySetWindow(QDialog):
 
     def __init__(self):
         super().__init__()
-        self.widget = widget.Ui_Dialog()
-        self.widget.setupUi(self)
+        self.ui = ui_Widget.Ui_PredefinedPset()
+        self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(f"Vordefinierte PropertySets | {tool.Util.get_status_text()}")
-        self.widget.list_view_pset.setItemDelegate(LineEditDelegate(self))
+        self.ui.list_view_pset.setItemDelegate(LineEditDelegate(self))
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -33,9 +32,9 @@ class PredefinedPropertySetWindow(QDialog):
 class CompareWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.widget = compare_widget.Ui_Form()
-        self.widget.setupUi(self)
-        self.widget.tree_widget_propertysets.setColumnCount(2)
-        self.widget.table_widget_values.setColumnCount(2)
-        self.widget.table_infos.setColumnCount(3)
-        self.widget.table_infos.setVerticalHeaderLabels(["Name", "XXX", "XXX"])
+        self.ui = ui_CompareWidget.Ui_PredefinedPset()
+        self.ui.setupUi(self)
+        self.ui.tree_widget_propertysets.setColumnCount(2)
+        self.ui.table_widget_values.setColumnCount(2)
+        self.ui.table_infos.setColumnCount(3)
+        self.ui.table_infos.setVerticalHeaderLabels(["Name", "XXX", "XXX"])

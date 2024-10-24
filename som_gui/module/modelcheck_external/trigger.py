@@ -1,8 +1,13 @@
-from som_gui.core import modelcheck_external as core
 from som_gui import tool
+from som_gui.core import modelcheck_external as core
+
+
 def connect():
-    tool.MainWindow.add_action("Datei/Export/Modellprüfung",
-                               lambda: core.open_window(tool.ModelcheckExternal, tool.ModelcheckWindow))
+    core.create_main_menu_actions(tool.ModelcheckExternal, tool.MainWindow)
+
+
+def open_window():
+    core.open_window(tool.ModelcheckExternal, tool.ModelcheckWindow)
 
 
 def on_new_project():
@@ -11,3 +16,7 @@ def on_new_project():
 
 def close_window():
     core.close_window(tool.ModelcheckExternal)
+
+
+def retranslate_ui():
+    core.retranslate_ui(tool.ModelcheckExternal, tool.Util)

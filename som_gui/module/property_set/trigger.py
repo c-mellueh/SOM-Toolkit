@@ -1,8 +1,9 @@
 from __future__ import annotations
-import som_gui
-from som_gui.core import property_set as core
-from som_gui import tool
+
 from typing import TYPE_CHECKING
+
+from som_gui import tool
+from som_gui.core import property_set as core
 
 if TYPE_CHECKING:
     from .ui import PsetTableWidget
@@ -21,6 +22,7 @@ def connect():
                                                      tool.PredefinedPropertySet))
     table.itemClicked.connect(lambda item: core.pset_clicked(item, tool.PropertySet))
 
+
 def edit_name(text, index):
     core.rename_pset_by_editor(text, index, tool.PropertySet)
 
@@ -35,3 +37,7 @@ def repaint_event():
 
 def pset_table_context_menu_requested(pos):
     core.pset_table_context_menu(pos, tool.PropertySet)
+
+
+def retranslate_ui():
+    pass

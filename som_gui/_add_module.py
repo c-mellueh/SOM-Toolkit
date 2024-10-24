@@ -1,6 +1,5 @@
 import logging
 import os
-import logging
 
 
 def to_camel_case(snake_str):
@@ -136,5 +135,5 @@ def main(name: str):
 
 
 if __name__ == "__main__":
-    module_name = "filter_window"
+    module_name = "language"
     main(module_name)

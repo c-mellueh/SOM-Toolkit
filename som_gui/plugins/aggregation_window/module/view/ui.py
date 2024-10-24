@@ -1,12 +1,16 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
-from PySide6.QtWidgets import QGraphicsView, QGraphicsScene
-from . import trigger
+
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QKeyEvent, QWheelEvent, QPaintEvent, QMouseEvent
+from PySide6.QtGui import QKeyEvent, QMouseEvent, QPaintEvent, QWheelEvent
+from PySide6.QtWidgets import QGraphicsScene, QGraphicsView
+
+from . import trigger
 
 if TYPE_CHECKING:
     from ..node import ui as node_ui
+
 
 class AggregationView(QGraphicsView):
     def __init__(self, *args, **kwargs) -> None:

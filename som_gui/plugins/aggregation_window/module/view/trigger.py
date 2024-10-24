@@ -1,6 +1,6 @@
-from som_gui.plugins.aggregation_window.core import view as core
-from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui import tool
+from som_gui.plugins.aggregation_window import tool as aw_tool
+from som_gui.plugins.aggregation_window.core import view as core
 
 
 def connect():
@@ -42,3 +42,7 @@ def key_press_event(event) -> None:
 
 def add_object_to_scene(obj, scene=None, parent_node=None, pos=None):
     return core.add_object_to_scene(obj, scene, parent_node, pos, aw_tool.View, aw_tool.Connection, aw_tool.Node)
+
+
+def retranslate_ui():
+    pass

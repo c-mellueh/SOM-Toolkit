@@ -1,13 +1,14 @@
 from __future__ import annotations
-from PySide6.QtCore import QSizeF, Qt
-from PySide6.QtGui import QPaintEvent, QPen, QPalette
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QGraphicsProxyWidget, QGraphicsRectItem, QGraphicsItem, \
-    QTreeWidget, QGraphicsEllipseItem, QGraphicsTextItem, QGraphicsSceneMouseEvent
-
-from . import trigger
-import SOMcreator
 from typing import TYPE_CHECKING
+
+from PySide6.QtCore import QSizeF, Qt
+from PySide6.QtGui import QPaintEvent, QPalette, QPen
+from PySide6.QtWidgets import QGraphicsEllipseItem, QGraphicsItem, QGraphicsProxyWidget, QGraphicsRectItem, \
+    QGraphicsSceneMouseEvent, QGraphicsTextItem, QTreeWidget, QVBoxLayout, QWidget
+
+import SOMcreator
+from . import trigger
 
 if TYPE_CHECKING:
     from ..connection.ui import Connection
@@ -84,6 +85,7 @@ class Frame(QGraphicsRectItem):
         self.setFlag(QGraphicsRectItem.GraphicsItemFlag.ItemIsSelectable, False)
         self.node: NodeProxy | None = None
         self.setAcceptHoverEvents(True)
+
 
 class ResizeRect(QGraphicsRectItem):
     def __init__(self, *args, **kwargs) -> None:

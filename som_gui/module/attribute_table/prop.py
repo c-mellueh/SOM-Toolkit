@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import TypedDict, Callable, TYPE_CHECKING
+
+from typing import Callable, TYPE_CHECKING, TypedDict
 
 import SOMcreator
 

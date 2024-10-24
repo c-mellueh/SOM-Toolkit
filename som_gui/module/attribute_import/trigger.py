@@ -1,13 +1,21 @@
-from PySide6.QtWidgets import QPushButton
 import ifcopenshell
+from PySide6.QtWidgets import QPushButton
+
 from som_gui import tool
 from som_gui.core import attribute_import as core
 
 
 def connect():
-    tool.MainWindow.add_action("Modelle/Informationen einlesen",
-                               lambda: core.open_import_window(tool.AttributeImport, tool.AttributeImportResults,
-                                                               tool.IfcImporter, tool.Project, tool.AttributeImportSQL))
+    core.create_main_menu_actions(tool.AttributeImport, tool.MainWindow)
+
+
+def open_window():
+    core.open_import_window(tool.AttributeImport, tool.AttributeImportResults, tool.IfcImporter, tool.Project,
+                            tool.AttributeImportSQL)
+
+
+def retranslate_ui():
+    core.retranslate_ui(tool.AttributeImport, tool.AttributeImportResults, tool.Util)
 
 
 def connect_import_buttons(run_button: QPushButton, abort_button: QPushButton):
@@ -101,4 +109,4 @@ def result_acccept_clicked():
 
 
 def settings_clicked():
-    core.settings_clicked(tool.AttributeImportResults, tool.AttributeImportSQL)
+    core.settings_clicked(tool.AttributeImportResults, tool.AttributeImportSQL, tool.Util)

@@ -1,6 +1,7 @@
 import logging
-from . import ui, trigger, prop
+
 import som_gui
+from . import prop, trigger, ui
 
 OK = 0
 IDENT_ISSUE = 1
@@ -19,3 +20,7 @@ def load_ui_triggers():
 
 def on_new_project():
     trigger.on_new_project()
+
+
+def retranslate_ui():
+    trigger.retranslate_ui()

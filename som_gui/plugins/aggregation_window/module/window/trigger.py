@@ -1,12 +1,16 @@
-from som_gui.plugins.aggregation_window.core import window as core
-from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui import tool
+from som_gui.plugins.aggregation_window import tool as aw_tool
+from som_gui.plugins.aggregation_window.core import window as core
 
 
 def connect() -> None:
-    tool.MainWindow.add_action("Bauwerksstruktur",
-                               lambda: core.create_window(aw_tool.Window, aw_tool.View, tool.Util, tool.Search,
-                                                          tool.Popups))
+    core.create_main_menu_actions(aw_tool.Window, tool.MainWindow)
+
+
+def open_window():
+    core.create_window(aw_tool.Window, aw_tool.View)
+
+
 def on_new_project() -> None:
     pass
 
@@ -25,3 +29,39 @@ def window_paint_event() -> None:
 
 def request_scene_rename():
     core.request_scene_rename(aw_tool.Window, aw_tool.View, tool.Popups, )
+
+
+def retranslate_ui():
+    core.retranslate_ui(aw_tool.Window, tool.Util)
+
+
+def create_new_scene():
+    core.create_new_scene(aw_tool.Window, aw_tool.View)
+
+
+def rename_view():
+    core.request_scene_rename(aw_tool.Window, aw_tool.View, tool.Popups)
+
+
+def delete_active_scene():
+    core.delete_active_scene(aw_tool.Window, aw_tool.View)
+
+
+def filter_scenes():
+    core.filter_scenes(aw_tool.Window, aw_tool.View, tool.Search, tool.Popups)
+
+
+def reset_filters():
+    core.remove_filter(aw_tool.Window)
+
+
+def find_aggregation():
+    core.search_aggregation(aw_tool.View, tool.Search, tool.Popups)
+
+
+def copy_selected_nodes():
+    core.copy_selected_nodes(aw_tool.View)
+
+
+def paste_nodes():
+    core.paste_nodes(aw_tool.View)

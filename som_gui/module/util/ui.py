@@ -1,12 +1,13 @@
-from PySide6.QtWidgets import QWidget, QFileDialog
-from .qt import file_selector, attribute_select, progressbar
+from PySide6.QtWidgets import QWidget
+
 from . import trigger
+from .qt import ui_AttributeSelect, ui_FileSelector, ui_Progressbar
 
 
 class FileSelector(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ui = file_selector.Ui_Form()
+        self.ui = ui_FileSelector.Ui_Util()
         self.ui.setupUi(self)
         self.request_folder = None
         self.extension = None
@@ -14,6 +15,7 @@ class FileSelector(QWidget):
         self.appdata_text = None
         self.request_save = None
         self.single_request = None
+        self.update_appdata = None
         self.ui.pushButton.clicked.connect(lambda: trigger.fileselector_clicked(self))
 
     def paintEvent(self, event):
@@ -24,7 +26,7 @@ class FileSelector(QWidget):
 class AttributeSelector(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ui = attribute_select.Ui_Form()
+        self.ui = ui_AttributeSelect.Ui_Util()
         self.ui.setupUi(self)
         trigger.main_attribute_selector_created(self)
 
@@ -32,5 +34,5 @@ class AttributeSelector(QWidget):
 class Progressbar(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ui = progressbar.Ui_Form()
+        self.ui = ui_Progressbar.Ui_Util()
         self.ui.setupUi(self)

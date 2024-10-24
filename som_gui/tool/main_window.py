@@ -1,18 +1,33 @@
 from __future__ import annotations
-import som_gui.core.tool
-import som_gui
-from typing import TYPE_CHECKING, Callable
-from PySide6.QtWidgets import QHBoxLayout, QMenuBar, QApplication, QLineEdit, QStatusBar
-from som_gui import tool
-from som_gui.module.main_window import ui as ui_main_window
+
 import ctypes
+from typing import Callable, TYPE_CHECKING
+
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QLineEdit, QMenu, QMenuBar, QStatusBar
+
+import som_gui
+import som_gui.core.tool
+from som_gui.module.main_window import ui as ui_main_window
 
 if TYPE_CHECKING:
-    from som_gui.module.main_window.prop import MainWindowProperties, MenuDict
-    from som_gui.module.main_window.qt.window import Ui_MainWindow
+    from som_gui.module.main_window.prop import MainWindowProperties
+    from som_gui.module.main_window.qt.ui_MainWindow import Ui_MainWindow
 
 
 class MainWindow(som_gui.core.tool.MainWindow):
+    @classmethod
+    def get_properties(cls) -> MainWindowProperties:
+        return som_gui.MainWindowProperties
+
+    @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
+
     @classmethod
     def create(cls, application: QApplication):
         if cls.get_properties().window is None:
@@ -36,14 +51,20 @@ class MainWindow(som_gui.core.tool.MainWindow):
             ctypes.windll.user32.ShowWindow(console_window, 5)  # Show the console
 
     @classmethod
-    def toggle_console(cls):
-        active_window = cls.get_app().activeWindow()
+    def is_console_visible(cls):
         hWnd = ctypes.windll.kernel32.GetConsoleWindow()
         if hWnd == 0:
-            return
+            return False
         if ctypes.windll.user32.IsWindowVisible(hWnd):
+            return True
+        return False
+
+    @classmethod
+    def toggle_console(cls):
+        active_window = cls.get_app().activeWindow()
+        if cls.is_console_visible():
             cls.hide_console()
-        else:
+        elif ctypes.windll.kernel32.GetConsoleWindow() != 0:
             cls.show_console()
         active_window.activateWindow()
 
@@ -64,19 +85,22 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_ui().menubar
 
     @classmethod
-    def get_menu_dict(cls) -> MenuDict:
-        prop = cls.get_properties()
-        return prop.menu_dict
+    def add_submenu(cls, parent_name: str, name) -> QMenu:
+        if parent_name:
+            menu: QMenuBar | QMenu = getattr(cls.get_ui(), parent_name)
+        else:
+            menu = cls.get_menu_bar()
+        return menu.addMenu(name)
 
     @classmethod
-    def add_action(cls, menu_path: str, function: Callable):
-        menu_bar = cls.get_menu_bar()
-        menu_dict = cls.get_menu_dict()
-        tool.Util.menu_bar_add_action(menu_bar, menu_dict, menu_path, function)
-
-    @classmethod
-    def get_properties(cls) -> MainWindowProperties:
-        return som_gui.MainWindowProperties
+    def add_action(cls, parent_name: str, name: str, function: Callable) -> QAction:
+        if parent_name:
+            menu: QMenuBar | QMenu = getattr(cls.get_ui(), parent_name)
+        else:
+            menu = cls.get_menu_bar()
+        action = menu.addAction(name)
+        action.triggered.connect(function)
+        return action
 
     @classmethod
     def get_ui(cls) -> Ui_MainWindow:

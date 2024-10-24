@@ -1,13 +1,17 @@
+import ifcopenshell
+from PySide6.QtWidgets import QPushButton
+
 from som_gui import tool
 from ... import tool as aw_tool
 from ...core import grouping_window as core
-from PySide6.QtWidgets import QPushButton, QDialogButtonBox
-import ifcopenshell
 
 
 def connect():
-    tool.MainWindow.add_action("Modelle/Gruppen Generieren",
-                               lambda: core.open_window(aw_tool.GroupingWindow, tool.Util))
+    core.create_main_menu_actions(aw_tool.GroupingWindow, tool.MainWindow)
+
+
+def open_window():
+    core.open_window(aw_tool.GroupingWindow, tool.Util)
 
 
 def connect_ifc_import_runner(runner):
@@ -38,3 +42,7 @@ def connect_grouping_runner(runner):
 
 def on_new_project():
     pass
+
+
+def retranslate_ui():
+    core.retranslate_ui(aw_tool.GroupingWindow, tool.Util)

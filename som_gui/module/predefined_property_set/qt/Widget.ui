@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+    <class>PredefinedPset</class>
+    <widget class="QDialog" name="PredefinedPset">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>480</height>
+       <width>659</width>
+       <height>492</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
-   <enum>Qt::CustomContextMenu</enum>
+      <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -20,23 +20,23 @@
    <item row="2" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Ok</set>
+         <set>QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>
    <item row="1" column="0">
     <widget class="QListWidget" name="list_view_pset">
      <property name="focusPolicy">
-      <enum>Qt::StrongFocus</enum>
+         <enum>Qt::FocusPolicy::StrongFocus</enum>
      </property>
      <property name="contextMenuPolicy">
-      <enum>Qt::CustomContextMenu</enum>
+         <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
      </property>
      <property name="editTriggers">
-      <set>QAbstractItemView::EditKeyPressed</set>
+         <set>QAbstractItemView::EditTrigger::EditKeyPressed</set>
      </property>
      <property name="sortingEnabled">
       <bool>false</bool>
@@ -53,20 +53,20 @@
    <item row="0" column="1">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Erbt an:</string>
+         <string>Inherits to:</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
     <widget class="QTableWidget" name="table_widgets_objects">
      <property name="contextMenuPolicy">
-      <enum>Qt::CustomContextMenu</enum>
+         <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
      </property>
      <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
+         <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
      </property>
      <property name="selectionMode">
-      <enum>QAbstractItemView::ExtendedSelection</enum>
+         <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
      </property>
      <property name="sortingEnabled">
       <bool>true</bool>
@@ -96,7 +96,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
+      <receiver>PredefinedPset</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -112,7 +112,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
+      <receiver>PredefinedPset</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -1,18 +1,19 @@
 from __future__ import annotations
 
 import logging
+import os
+import re
+import tempfile
 from typing import Callable, TYPE_CHECKING
-import os, tempfile
-from PySide6.QtCore import Qt, QModelIndex
-from PySide6.QtGui import QAction, QShortcut, QKeySequence
-from PySide6.QtWidgets import QMenu, QMenuBar, QWidget, QComboBox, QFileDialog, QLineEdit
-from som_gui.module.util.constants import PATH_SEPERATOR
 
-import SOMcreator
+from PySide6.QtCore import QModelIndex, Qt
+from PySide6.QtGui import QAction, QKeySequence, QShortcut
+from PySide6.QtWidgets import QComboBox, QFileDialog, QLineEdit, QMenu, QMenuBar, QWidget
+
 import som_gui.core.tool
 from som_gui import tool
-import re
 from som_gui.module.util import ui
+from som_gui.module.util.constants import PATH_SEPERATOR
 
 if TYPE_CHECKING:
     from som_gui.module.util.prop import MenuDict, UtilProperties
@@ -167,11 +168,14 @@ class Util(som_gui.core.tool.Util):
         return {model.data(index, Qt.ItemDataRole.DisplayRole): index for index in indexes}
 
     @classmethod
-    def get_status_text(cls):
+    def get_window_title(cls, window_name: str):
         proj = tool.Project.get()
         if not proj:
-            return ""
-        return f"{proj.name} v{proj.version}"
+            status_text = ""
+        else:
+            status_text = f"{proj.name} v{proj.version}"
+
+        return f"{window_name} | {status_text}"
 
     @classmethod
     def create_file_selector(cls, name: str, file_extension: str, appdata_text: str, request_folder=False,
@@ -194,7 +198,7 @@ class Util(som_gui.core.tool.Util):
     @classmethod
     def fill_file_selector(cls, widget: ui.FileSelector, name: str, file_extension: str, appdata_text: str,
                            request_folder=False, request_save=False,
-                           single_request=False):
+                           single_request=False, update_appdata=True):
         """
         if file selector is created as placeholder in QtDesiger it can befilled after creation
                 name: text that should be written in first row
@@ -211,6 +215,7 @@ class Util(som_gui.core.tool.Util):
         widget.request_folder = request_folder
         widget.request_save = request_save
         widget.single_request = single_request
+        widget.update_appdata = update_appdata
         widget.ui.label.setText(name)
 
         if appdata_text:
@@ -251,7 +256,7 @@ class Util(som_gui.core.tool.Util):
         if path is not None:
             paths = [path]
 
-        if widget.appdata_text:
+        if widget.appdata_text and widget.update_appdata:
             tool.Appdata.set_path(widget.appdata_text, paths)
         return paths
 

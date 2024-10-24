@@ -1,26 +1,18 @@
 from __future__ import annotations
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QDialog, QTableWidget, QComboBox, QCheckBox
-from ...icons import get_icon, get_settings_icon
-from . import trigger
-from som_gui import __version__ as version
-from som_gui import tool
 
-class AttributeImportWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setLayout(QVBoxLayout())
-        self.setWindowTitle(self.tr(f"Modellinformationen Einlesen | {tool.Util.get_status_text()}"))
-        self.setWindowIcon(get_icon())
+from PySide6.QtWidgets import QCheckBox, QComboBox, QDialog, QTableWidget, QWidget
+
+from som_gui.resources.icons import get_icon, get_settings_icon
+from . import trigger
 
 
 class AttributeImportResultWindow(QWidget):
     def __init__(self):
-        from .qt import widget
+        from .qt import ui_Widget
         super(AttributeImportResultWindow, self).__init__()
-        self.widget = widget.Ui_Form()
-        self.widget.setupUi(self)
-        self.widget.button_settings.setIcon(get_settings_icon())
-        self.setWindowTitle(self.tr(f"Modellinformationen Einlesen | {tool.Util.get_status_text()}"))
+        self.ui = ui_Widget.Ui_AttributeImport()
+        self.ui.setupUi(self)
+        self.ui.button_settings.setIcon(get_settings_icon())
         self.setWindowIcon(get_icon())
 
 
@@ -30,7 +22,7 @@ class PropertySetTable(QTableWidget):
         self.clear()
         self.setColumnCount(2)
         self.setRowCount(2)
-        self.setHorizontalHeaderLabels([self.tr("PropertySet"), self.tr("Anzahl")])
+        self.setHorizontalHeaderLabels([self.tr("PropertySet"), self.tr("Count")])
 
 
 class IfcTypeComboBox(QComboBox):
@@ -52,7 +44,7 @@ class AttributeTable(QTableWidget):
         self.clear()
         self.setColumnCount(3)
         self.setRowCount(2)
-        self.setHorizontalHeaderLabels([self.tr("Attribut"), self.tr("Anzahl"), self.tr("Eindeutig")])
+        self.setHorizontalHeaderLabels([self.tr("Attribute"), self.tr("Count"), self.tr("Unique")])
 
 
 class ValueTable(QTableWidget):
@@ -61,7 +53,7 @@ class ValueTable(QTableWidget):
         self.clear()
         self.setColumnCount(3)
         self.setRowCount(2)
-        self.setHorizontalHeaderLabels([self.tr("Übernehmen"), self.tr("Wert"), self.tr("Anzahl")])
+        self.setHorizontalHeaderLabels([self.tr("Accept"), self.tr("Value"), self.tr("Count")])
 
 
 class ValueCheckBox(QCheckBox):
@@ -74,8 +66,7 @@ class ValueCheckBox(QCheckBox):
 class SettingsDialog(QDialog):
     def __init__(self):
         super(SettingsDialog, self).__init__()
-        from .qt import settings_widget
-        self.widget = settings_widget.Ui_Dialog()
+        from .qt import ui_SettingsWidget
+        self.widget = ui_SettingsWidget.Ui_AttributeImport()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(f"Einstellungen v{version}  | {tool.Util.get_status_text()}")

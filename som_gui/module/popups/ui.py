@@ -1,11 +1,12 @@
 from PySide6.QtWidgets import QDialog
-from .qt.delete_request import Ui_Dialog
-from som_gui.icons import get_icon
+
+from som_gui.resources.icons import get_icon
+from .qt.ui_DeleteRequest import Ui_DeleteRequest
 
 
 class DeleteRequestDialog(QDialog):
     def __init__(self, ):
         super().__init__()
-        self.widget = Ui_Dialog()
+        self.widget = Ui_DeleteRequest()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())

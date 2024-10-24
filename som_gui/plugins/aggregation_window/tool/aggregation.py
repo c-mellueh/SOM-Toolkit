@@ -1,29 +1,43 @@
-import som_gui.plugins.aggregation_window.core.tool
-from PySide6.QtWidgets import QHBoxLayout, QLineEdit
+import logging
+
 from PySide6.QtGui import QPalette
-from som_gui.plugins.aggregation_window.module.aggregation.prop import AggregationProperties
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit
+
 import SOMcreator
+import som_gui.plugins.aggregation_window.core.tool
 from som_gui import tool
 from som_gui.module.object import OK
 from som_gui.plugins.aggregation_window.module.aggregation import ui as ui_aggregation
-import logging
+from som_gui.plugins.aggregation_window.module.aggregation.prop import AggregationProperties
+
 ABBREV_ISSUE = 2
 from SOMcreator.exporter.desite import building_structure
+from PySide6.QtGui import QAction
+from PySide6.QtCore import QCoreApplication
 
 
 class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
-    @classmethod
-    def export_building_structure(cls, project: SOMcreator.Project, path):
-        building_structure.export_bs(project, path)
-
     @classmethod
     def get_properties(cls) -> AggregationProperties:
         return som_gui.AggregationProperties
 
     @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
+
+    @classmethod
+    def export_building_structure(cls, project: SOMcreator.Project, path):
+        building_structure.export_bs(project, path)
+
+    @classmethod
     def create_abbreviation_line_edit(cls, layout: QHBoxLayout) -> QLineEdit:
         le = QLineEdit()
-        le.setPlaceholderText(le.tr("Abkürzung"))
+        text = QCoreApplication.translate("Aggregation", "Abbreviation")
+        le.setPlaceholderText(text)
         layout.insertWidget(-1, le)
         return le
 
@@ -41,7 +55,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
         if tool.Object.oi_get_mode() == 2:
             ignore_text = None
         if abbreviation is not None and not cls.is_abbreviation_allowed(abbreviation, ignore_text):
-            text = u"Abkürzung existiert bereits!"
+            text = QCoreApplication.translate("Aggregation", "Abbreviation exists already")
             tool.Popups.create_warning_popup(text)
             return ABBREV_ISSUE
         return OK
@@ -85,9 +99,8 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
         if value is None:
             return True
         if not cls.is_abbreviation_allowed(value):
-            text = "Abkürzung existiert bereits!"
+            text = QCoreApplication.translate("Aggregation", "Abbreviation exists already")
             logging.error(text)
             tool.Popups.create_warning_popup(text)
             return False
         return True
-

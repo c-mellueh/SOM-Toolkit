@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-import som_gui
-from som_gui.core import property_set_window as property_set_window_core
-from som_gui.core import attribute_table as attribute_table_core
-from typing import Type, TYPE_CHECKING
 import logging
+from typing import TYPE_CHECKING, Type
+
+from som_gui.core import attribute_table as attribute_table_core
+from som_gui.core import property_set_window as property_set_window_core
 
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_set_window.ui import PropertySetWindow
     from PySide6.QtWidgets import QTableWidgetItem
-from PySide6.QtCore import QModelIndex, Qt
+from PySide6.QtCore import QModelIndex, Qt, QCoreApplication
 
 
 def add_property_set_button_pressed(object_tool: Type[tool.Object], main_window_tool: Type[tool.MainWindow],
@@ -19,7 +19,8 @@ def add_property_set_button_pressed(object_tool: Type[tool.Object], main_window_
     obj = object_tool.get_active_object()
     pset_name = main_window_tool.get_pset_name()
     if property_set_tool.check_if_pset_allready_exists(pset_name, obj):
-        popup_tool.create_warning_popup(f"PropertySet '{pset_name}' existiert bereits")
+        text = QCoreApplication.translate(f"PropertySet", "PropertySet '{}' exists allready").format(pset_name)
+        popup_tool.create_warning_popup(text)
         return
 
     predefined_pset_dict = {p.name: p for p in predefined_psets.get_property_sets()}
@@ -67,11 +68,11 @@ def pset_table_context_menu(pos, property_set_tool: Type[tool.PropertySet]):
     pset = property_set_tool.get_pset_from_item(table.itemAt(pos))
     if pset.is_child:
 
-        actions = [["Löschen", property_set_tool.delete_table_pset], ]
+        actions = [[QCoreApplication.translate(f"PropertySet", "Delete"), property_set_tool.delete_table_pset], ]
     else:
 
-        actions = [["Umbenennen", property_set_tool.rename_table_pset],
-                   ["Löschen", property_set_tool.delete_table_pset], ]
+        actions = [[QCoreApplication.translate(f"PropertySet", "Rename"), property_set_tool.rename_table_pset],
+                   [QCoreApplication.translate(f"PropertySet", "Delete"), property_set_tool.delete_table_pset], ]
 
     property_set_tool.create_context_menu(table.mapToGlobal(pos), actions)
 

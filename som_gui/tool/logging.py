@@ -1,25 +1,27 @@
 from __future__ import annotations
-from som_gui import __version__ as version
-from som_gui import tool
-from typing import TYPE_CHECKING
-from PySide6.QtCore import Signal, QObject
-from PySide6.QtWidgets import QMessageBox, QCheckBox
-import appdirs
-import sys
-import som_gui.core.tool
-import os
-import som_gui
+
 import datetime
 import logging
+import os
+import sys
 import traceback
+from typing import TYPE_CHECKING
+
+import appdirs
+from PySide6.QtCore import QObject, Signal
+from PySide6.QtWidgets import QCheckBox, QMessageBox
+
+import som_gui
+import som_gui.core.tool
 
 if TYPE_CHECKING:
     from som_gui.module.logging.prop import LoggingProperties
     from som_gui.module.logging import ui
 
-from som_gui.icons import get_icon
+from som_gui.resources.icons import get_icon
 from som_gui import tool
 from som_gui.module.logging.constants import LOG_PATH, LOG_SECTION, LOG_LEVEL
+
 
 class CustomFormatter(logging.Formatter):
     def __init__(self, fmt=None, datefmt=None, style='%'):
@@ -81,12 +83,12 @@ class Logging(som_gui.core.tool.Logging):
         cb = QCheckBox("nicht erneut anzeigen")
         msg_box.setCheckBox(cb)
         msg_box.setWindowIcon(get_icon())
-        msg_box.setWindowTitle(f"{level} |{tool.Util.get_status_text()}")
+        title = tool.Util.get_window_title(str(level))
+        msg_box.setWindowTitle(title)
         msg_box.setText(f"An {level} occurred:")
         msg_box.setDetailedText(message)
         if msg_box.exec_() and cb.isChecked():
             cls.get_properties().ignore_texts.append(identifier)
-
 
     @classmethod
     def get_signaller(cls):
@@ -107,7 +109,6 @@ class Logging(som_gui.core.tool.Logging):
         for handler in cls.get_logger().handlers:
             handler.setLevel(log_level)
         logging.info(f"Set Loglevel {log_level}")
-
 
     @classmethod
     def get_logger(cls):

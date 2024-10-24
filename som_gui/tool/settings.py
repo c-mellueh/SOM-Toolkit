@@ -1,11 +1,15 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Callable, Type
-from PySide6.QtWidgets import QVBoxLayout, QTabWidget, QWidget, QToolBox
-from PySide6.QtGui import QIcon
+
+from typing import Callable, TYPE_CHECKING, Type
+
 from PySide6.QtCore import QSize
-import som_gui.core.tool
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QTabWidget, QToolBox, QWidget
+
 import som_gui
+import som_gui.core.tool
 from som_gui.module.settings import ui
+
 if TYPE_CHECKING:
     from som_gui.module.settings.prop import SettingsProperties
 
@@ -16,17 +20,22 @@ class Settings(som_gui.core.tool.Settings):
         return som_gui.SettingsProperties
 
     @classmethod
-    def close(cls):
-        cls.get_properties().tab_widget_dict = dict()
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
 
     @classmethod
-    def add_page_to_toolbox(cls, widget, tab_name: str, page_name: str, accept_function: Callable):
-        if tab_name not in cls.get_tab_dict():
-            cls.get_properties().tab_dict[tab_name] = dict()
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
 
-        if page_name not in cls.get_properties().tab_dict[tab_name]:
-            cls.get_properties().tab_dict[tab_name][page_name] = list()
-        cls.get_properties().tab_dict[tab_name][page_name].append(widget)
+    @classmethod
+    def close(cls):
+        pass
+
+    @classmethod
+    def add_page_to_toolbox(cls, widget_function, page_name: str, accept_function: Callable):
+        if page_name not in cls.get_page_dict():
+            cls.get_properties().page_dict[page_name] = list()
+        cls.get_properties().page_dict[page_name].append(widget_function)
 
         cls.get_properties().accept_functions.append(accept_function)
 
@@ -42,29 +51,16 @@ class Settings(som_gui.core.tool.Settings):
     def create_dialog(cls) -> ui.Dialog:
         settings_dialog = ui.Dialog()
         cls.set_widget(settings_dialog)
-        for name, toolbox_dict in cls.get_tab_dict().items():
-            tool_box = cls.create_tab(cls.get_tab_widget(), name)
-            page_dict = dict()
-            for page_name, widgets in toolbox_dict.items():
-                page = QWidget()
-                page_dict[page_name] = page
-                page.setLayout(QVBoxLayout())
-                page.layout().setContentsMargins(0, 0, 0, 0)
-                tool_box.addItem(page, page_name)
-                for widget in widgets:
-                    page.layout().addWidget(widget())
-            cls.get_properties().tab_widget_dict[name] = (tool_box, page_dict)
-
+        for name, widgets in cls.get_page_dict().items():
+            page = getattr(cls.get_widget().ui, name)
+            for widget in widgets:
+                page.layout().addWidget(widget())
         settings_dialog.resize(QSize(800, 500))
         return settings_dialog
 
     @classmethod
-    def get_tab_widget(cls) -> QTabWidget:
-        return cls.get_widget().tab_widget
-
-    @classmethod
-    def get_tab_dict(cls) -> dict[str, dict[str, list[Type[QWidget]]]]:
-        return cls.get_properties().tab_dict
+    def get_page_dict(cls) -> dict[str, list[Type[QWidget]]]:
+        return cls.get_properties().page_dict
 
     @classmethod
     def create_tab(cls, tab_widget: QTabWidget, tab_name: str) -> QToolBox:
@@ -72,17 +68,6 @@ class Settings(som_gui.core.tool.Settings):
         tab_widget.addTab(tb, tab_name)
         return tb
 
-
     @classmethod
     def get_accept_functions(cls) -> list[Callable]:
         return cls.get_properties().accept_functions
-
-    @classmethod
-    def set_icon(cls, tab_name: str, page_name: str, icon: QIcon):
-        if not tab_name in cls.get_properties().tab_widget_dict:
-            return
-        toolbox = cls.get_properties().tab_widget_dict[tab_name][0]
-        if not page_name in cls.get_properties().tab_widget_dict[tab_name][1]:
-            return
-        page = cls.get_properties().tab_widget_dict[tab_name][1][page_name]
-        toolbox.setItemIcon(toolbox.indexOf(page), icon)

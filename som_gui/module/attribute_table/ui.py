@@ -1,6 +1,7 @@
-from PySide6.QtWidgets import QTableWidget
-from som_gui.module import attribute_table
 from PySide6.QtGui import QDropEvent
+from PySide6.QtWidgets import QTableWidget
+
+from som_gui.module import attribute_table
 
 
 class AttributeTable(QTableWidget):

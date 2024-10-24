@@ -1,19 +1,19 @@
 from __future__ import annotations
+
+import logging
 from typing import TYPE_CHECKING
 
-import SOMcreator
-
-import som_gui.core.tool
-import som_gui
-from som_gui.module.attribute_import import ui, trigger
-from som_gui import tool
-from PySide6.QtWidgets import QComboBox, QTableWidgetItem, QTableWidget, QCheckBox
-from PySide6.QtCore import QRunnable, QObject, Signal, QThreadPool, Qt
-from PySide6.QtGui import QBrush, QPalette
-
 import ifcopenshell
+from PySide6.QtCore import QObject, QRunnable, QThreadPool, Qt, Signal
+from PySide6.QtGui import QAction, QBrush, QPalette
+from PySide6.QtWidgets import QCheckBox, QComboBox, QTableWidget, QTableWidgetItem
 from ifcopenshell.util import element as ifc_element_util
-import logging
+
+import SOMcreator
+import som_gui
+import som_gui.core.tool
+from som_gui import tool
+from som_gui.module.attribute_import import trigger, ui
 
 if TYPE_CHECKING:
     from som_gui.module.attribute_import.prop import AttributeImportProperties, AttributeImportSQLProperties
@@ -62,7 +62,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
     def connect_trigger(cls, attribute_widget: ui.AttributeImportResultWindow):
 
         prop = cls.get_properties()
-        widget = attribute_widget.widget
+        widget = attribute_widget.ui
         update_trigger = trigger.update_attribute_import_window
         prop.ifc_combobox.currentIndexChanged.connect(update_trigger)
         prop.som_combobox.currentIndexChanged.connect(update_trigger)
@@ -70,8 +70,8 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         widget.table_widget_property_set.itemSelectionChanged.connect(trigger.pset_table_selection_changed)
         widget.table_widget_attribute.itemSelectionChanged.connect(trigger.attribute_table_selection_changed)
         cls.get_properties().all_checkbox.checkStateChanged.connect(trigger.all_checkbox_checkstate_changed)
-        widget.button_accept.clicked.connect(trigger.result_acccept_clicked)
-        widget.button_abort.clicked.connect(trigger.result_abort_clicked)
+        widget.buttonBox.accepted.connect(trigger.result_acccept_clicked)
+        widget.buttonBox.rejected.connect(trigger.result_abort_clicked)
         widget.button_settings.clicked.connect(trigger.settings_clicked)
         widget.combo_box_ifc_type.currentIndexChanged.connect(trigger.update_identifier_combobox)
 
@@ -127,22 +127,22 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def get_results_window(cls) -> ui.AttributeImportResultWindow:
-        return cls.get_properties().attribute_import_window
+        return cls.get_properties().result_window
 
     @classmethod
     def remove_results_window(cls):
-        cls.get_properties().attribute_import_window = None
+        cls.get_properties().result_window = None
 
     @classmethod
     def create_attribute_import_window(cls) -> ui.AttributeImportResultWindow:
         prop = cls.get_properties()
         widget = ui.AttributeImportResultWindow()
-        prop.attribute_import_window = widget
-        prop.ifc_combobox = widget.widget.combo_box_ifc_type
-        prop.som_combobox = widget.widget.combo_box_identifier
-        prop.all_checkbox = widget.widget.check_box_values
+        prop.result_window = widget
+        prop.ifc_combobox = widget.ui.combo_box_ifc_type
+        prop.som_combobox = widget.ui.combo_box_identifier
+        prop.all_checkbox = widget.ui.check_box_values
 
-        return prop.attribute_import_window
+        return prop.result_window
 
     @classmethod
     def update_results_window(cls):
@@ -153,7 +153,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def get_pset_table(cls) -> ui.PropertySetTable:
-        return cls.get_results_window().widget.table_widget_property_set
+        return cls.get_results_window().ui.table_widget_property_set
 
     @classmethod
     def get_selected_property_set(cls) -> str | None:
@@ -164,7 +164,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def get_attribute_table(cls) -> ui.AttributeTable:
-        return cls.get_results_window().widget.table_widget_attribute
+        return cls.get_results_window().ui.table_widget_attribute
 
     @classmethod
     def disable_table(cls, table_widget: QTableWidget):
@@ -180,7 +180,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def get_value_table(cls) -> ui.ValueTable:
-        return cls.get_results_window().widget.table_widget_value
+        return cls.get_results_window().ui.table_widget_value
 
     @classmethod
     def get_value_from_table_row(cls, table_widget: QTableWidget, row: int, data_types: list):
@@ -287,7 +287,6 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
 
         cls.unlock_updating()
 
-
     @classmethod
     def find_checkbox_row_in_table(cls, table_widget: QTableWidget, checkbox: ui.ValueCheckBox):
         for row in range(table_widget.rowCount()):
@@ -317,7 +316,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def set_object_count_label_text(cls, text: str):
-        label = cls.get_results_window().widget.label_object_count
+        label = cls.get_results_window().ui.label_object_count
         label.setText(label.tr(text))
 
     @classmethod
@@ -388,31 +387,28 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         return som_gui.AttributeImportProperties
 
     @classmethod
-    def connect_import_buttons(cls):
-        trigger.connect_import_buttons(cls.get_properties().run_button, cls.get_properties().abort_button)
+    def set_action(cls, name, action: QAction):
+        cls.get_properties().actions[name] = action
 
     @classmethod
-    def create_ifc_import_window(cls) -> ui.AttributeImportWindow:
+    def get_action(cls, name) -> QAction:
+        return cls.get_properties().actions[name]
+
+    @classmethod
+    def create_ifc_import_window(cls, ifc_importer: IfcImportWidget) -> ui.AttributeImportWindow:
         prop = cls.get_properties()
-        prop.ifc_import_window = ui.AttributeImportWindow()
+        prop.ifc_import_window = ifc_importer
+        prop.run_button = ifc_importer.widget.button_run
+        prop.abort_button = ifc_importer.widget.button_close
+        prop.status_label = ifc_importer.widget.label_status
+        prop.progress_bar = ifc_importer.widget.progress_bar
+        ifc_importer.setWindowIcon(som_gui.get_icon())
+        trigger.connect_import_buttons(prop.run_button, prop.abort_button)
         return prop.ifc_import_window
 
     @classmethod
-    def get_ifc_import_window(cls):
+    def get_ifc_import_window(cls) -> IfcImportWidget:
         return cls.get_properties().ifc_import_window
-
-    @classmethod
-    def get_ifc_import_widget(cls):
-        return cls.get_properties().ifc_importer
-
-    @classmethod
-    def add_ifc_importer_to_window(cls, ifc_importer: IfcImportWidget):
-        cls.get_properties().ifc_importer = ifc_importer
-        cls.get_properties().run_button = ifc_importer.widget.button_run
-        cls.get_properties().abort_button = ifc_importer.widget.button_close
-        cls.get_properties().status_label = ifc_importer.widget.label_status
-        cls.get_properties().progress_bar = ifc_importer.widget.progress_bar
-        cls.get_ifc_import_window().layout().addWidget(ifc_importer)
 
     @classmethod
     def set_main_pset(cls, main_pset_name: str) -> None:
@@ -440,7 +436,7 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def create_import_runner(cls, ifc_import_path: str) -> QRunnable:
-        status_label = cls.get_ifc_import_widget().widget.label_status
+        status_label = cls.get_ifc_import_window().widget.label_status
         runner = tool.IfcImporter.create_runner(status_label, ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner
@@ -804,7 +800,6 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                 JOIN filtered_som_attributes sa ON sa.identifier = e.identifier and a.PropertySet = sa.PropertySet and a.Attribut = sa.Attribut
             """
         return query
-
 
     @classmethod
     def get_wanted_ifc_types(cls):

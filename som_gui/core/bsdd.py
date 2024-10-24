@@ -1,13 +1,32 @@
 from __future__ import annotations
-import os
+
 import logging
+import os
 from typing import TYPE_CHECKING, Type
+
+from PySide6.QtCore import QCoreApplication, Qt
 from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QLineEdit
-from PySide6.QtCore import Qt
+
 if TYPE_CHECKING:
     from som_gui import tool
 
 BSDD_PATH = "../../SOMcreator/exporter/bsdd"
+
+
+def create_main_menu_actions(bsdd: Type[tool.Bsdd], main_window: Type[tool.MainWindow]):
+    from som_gui.module.bsdd import trigger
+    open_window_action = main_window.add_action("menuExport", "BSDD", trigger.open_window)
+    bsdd.set_action("open_window", open_window_action)
+
+
+def retranslate_ui(bsdd: Type[tool.Bsdd], util: Type[tool.Util]):
+    open_window_action = bsdd.get_action("open_window")
+    title = QCoreApplication.translate("BSDD", "bsDD")
+    open_window_action.setText(title)
+    window = bsdd.get_window()
+    if window:
+        window.ui.retranslateUi(window)
+        window.setWindowTitle(util.get_window_title(title))
 
 
 def open_window(bsdd: Type[tool.Bsdd], settings: Type[tool.Appdata]) -> None:
@@ -16,12 +35,13 @@ def open_window(bsdd: Type[tool.Bsdd], settings: Type[tool.Appdata]) -> None:
         window = bsdd.create_window()
         bsdd.get_path_line_edit().setText(settings.get_path(BSDD_PATH))
         bsdd.set_tabs(bsdd.get_tab_list())
+    from som_gui.module.bsdd import trigger
+    trigger.retranslate_ui()
     window.show()
 
 
 def reset(bsdd: Type[tool.Bsdd]) -> None:
     bsdd.reset_dictionary()
-
 
 
 def define_dictionary_widget(bsdd: Type[tool.Bsdd]):

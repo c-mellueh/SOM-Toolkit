@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import os.path
-from typing import TYPE_CHECKING, Callable, Iterator
+from typing import Callable, Iterator, TYPE_CHECKING
+
+from PySide6.QtCore import QObject, QRunnable, Signal
+
 from som_gui import tool
-from PySide6.QtCore import QRunnable, Signal, QObject
-from PySide6.QtWidgets import QLabel, QProgressBar
-import tempfile
 
 if TYPE_CHECKING:
     from som_gui.module.modelcheck.prop import ModelcheckProperties
@@ -20,8 +19,9 @@ import ifcopenshell
 from som_gui.module.modelcheck.constants import *
 from ifcopenshell.util import element as ifc_el
 from SOMcreator import value_constants
-from som_gui.data import constants
+from som_gui.resources.data import constants
 from som_gui.module.modelcheck import trigger
+from PySide6.QtCore import QCoreApplication
 
 rev_datatype_dict = {
     str:   "IfcText/IfcLabel",
@@ -86,7 +86,6 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def set_progress(cls, value: int):
         cls.get_properties().runner.signaller.progress.emit(value)
-
 
     @classmethod
     def get_element_count(cls) -> int:
@@ -226,47 +225,57 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     @classmethod
     def datatype_issue(cls, guid, attribute, element_type, datatype: str, value):
-        description = f"{element_type} besitzt den falschen Datentype ({datatype} nicht erlaubt)" \
-                      f" {attribute.property_set.name}:{attribute.name}"
+
+        description = QCoreApplication.translate("Modelcheck",
+                                                 "{} has the wrong Datatype ({} not allowed)")  # {} besitzt den falschen Datentype ({} nicht erlaubt)
+        description = description.format(element_type, datatype)
         issue_nr = DATATYPE_ISSUE
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
-    def format_issue(cls, guid, attribute, value):
+    def format_issue(cls, guid, attribute: SOMcreator.Attribute, value):
         element_type = cls.get_active_element_type()
-        description = f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
+        description = QCoreApplication.translate("Modelcheck",
+                                                 '"{}" doesn`t match format Requirement: "{}"')  # f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
+        description = description.format(value, "||".join(attribute.value))
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
     def list_issue(cls, guid, attribute, element_type, value):
-        description = f"{element_type} besitzt nicht den richtigen Wert für {attribute.property_set.name}:{attribute.name}"
+        description = QCoreApplication.translate("Modelcheck",
+                                                 'Value "{}" is not allowed').format(
+            value)  # {element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
+
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
     def range_issue(cls, guid, attribute, element_type, value):
-        description = f"""{element_type}  {attribute.property_set.name}:{attribute.name} 
-                      ist nicht in den vorgegebenen Wertebereichen"""
+        description = QCoreApplication.translate("Modelcheck", 'Value "{}" is not in allowed range(s)')
+        description = description.format(value)
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
     def property_set_issue(cls, guid, pset_name, element_type):
-        description = f"{element_type} besitzt nicht das PropertySet {pset_name}"
+        description = QCoreApplication.translate("Modelcheck", '{} doesn`t contain the Propertyset "{}"')
+        description = description.format(element_type, pset_name)
         issue_nr = PROPERTY_SET_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name)
 
     @classmethod
     def empty_value_issue(cls, guid, pset_name, attribute_name, element_type):
-        description = f"{element_type} hat ein leeres Attribut {pset_name}:{attribute_name}"
+        description = QCoreApplication.translate("Modelcheck", "{} has an empty Attribute")
+        description = description.format(element_type)
         issue_nr = ATTRIBUTE_EXIST_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
                        attribute_name=attribute_name)
 
     @classmethod
     def attribute_issue(cls, guid, pset_name, attribute_name, element_type):
-        description = f"{element_type} besitzt nicht das Attribut {pset_name}:{attribute_name}"
+        description = QCoreApplication.translate("Modelcheck", '{} is missing the Attribute "{}:{}"')
+        description = description.format(element_type, pset_name, attribute_name)
         issue_nr = ATTRIBUTE_EXIST_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
                        attribute_name=attribute_name)
@@ -274,7 +283,8 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def ident_issue(cls, guid, pset_name, attribute_name):
         element_type = cls.get_active_element_type()
-        description = f"{element_type} besitzt nicht das Zuweisungsattribut {pset_name}:{attribute_name}"
+        description = QCoreApplication.translate("Modelcheck", "{} is missing the identifier-Attribute")
+        description = description.format(element_type)
         issue_nr = IDENT_ATTRIBUTE_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
                        attribute_name=attribute_name)
@@ -282,22 +292,24 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def ident_pset_issue(cls, guid, pset_name):
         element_type = cls.get_active_element_type()
-        description = f"{element_type}  besitzt nicht das PropertySet {pset_name}"
+        description = QCoreApplication.translate("Modelcheck", "{} is missing die identifier PropertySet")
+        description = description.format(element_type)
         issue_nr = IDENT_PROPERTY_SET_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name)
 
     @classmethod
     def ident_unknown(cls, guid, pset_name, attribute_name, value):
         element_type = cls.get_active_element_type()
-        description = f"""{element_type} Wert von Matchkey {pset_name}:{attribute_name}
-                      konnte nicht in SOM gefunden werden"""
+        description = QCoreApplication.translate("Modelcheck", """{} Value of Identifier ("{}") doesn't exist in SOM""")
+        description = description.format(element_type, value)
         issue_nr = IDENT_ATTRIBUTE_UNKNOWN
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
                        attribute_name=attribute_name, value=value)
 
     @classmethod
     def guid_issue(cls, guid, file1, file2):
-        description = f'GUID kommt in Datei "{file1}" und "{file2}" vor'
+        description = QCoreApplication.translate('Modelcheck', 'GUID exists in File "{}" and"{}"')
+        description = description.format(file1, file2)
         issue_nr = GUID_ISSUE
         cls.add_issues(guid, description, issue_nr, None)
 
@@ -361,11 +373,12 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         if attribute is not None:
             pset_name = attribute.property_set.name
             attribute_name = attribute.name
-        cursor.execute(f'''
+        request = f'''
               INSERT INTO issues (GUID_ZWC,creation_date,GUID,short_description,issue_type,PropertySet,Attribut,Value)
                     VALUES
                     ('{guid_zw}','{date}','{guid}','{description}',{issue_type},'{pset_name}','{attribute_name}','{value}')
-              ''')
+              '''
+        cursor.execute(request)
         cls.commit_sql()
 
     @classmethod

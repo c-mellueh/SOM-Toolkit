@@ -1,7 +1,7 @@
 import logging
 
 import som_gui
-from . import ui, trigger, prop
+from . import prop, trigger, ui
 
 
 def register():
@@ -15,3 +15,7 @@ def load_ui_triggers():
 
 def on_new_project():
     pass
+
+
+def retranslate_ui():
+    trigger.retranslate_ui()

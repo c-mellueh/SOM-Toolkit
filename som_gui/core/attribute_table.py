@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import copy
-
-import SOMcreator
-
-from som_gui.core import property_set_window as property_set_window_core
 import logging
 from typing import TYPE_CHECKING, Type
+
 from PySide6.QtCore import QMimeData, Qt
+
+import SOMcreator
+from som_gui.core import property_set_window as property_set_window_core
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -84,6 +84,7 @@ def context_menu(table: ui.AttributeTable, pos, attribute_table: Type[tool.Attri
 
     menu = util.create_context_menu(menu_list)
     menu.exec(table.viewport().mapToGlobal(pos))
+
 
 def add_basic_attribute_columns(attribute: Type[tool.Attribute], attribute_table: Type[tool.AttributeTable]):
     logging.info("Add Basic Attribute Columns")

@@ -1,1 +1,1 @@
-from . import widget
+from . import ui_Widget

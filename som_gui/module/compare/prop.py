@@ -1,10 +1,12 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
+from typing import Callable, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    import SOMcreator
     from PySide6.QtWidgets import QHBoxLayout, QLabel
-    from .ui import ProjectSelectDialog, CompareDialog, AttributeWidget
+    from .ui import ProjectSelectDialog, CompareDialog
+    from PySide6.QtGui import QAction
+
 
 class CompareProjectSelectProperties:
     proj_select_dialog: ProjectSelectDialog = None
@@ -16,12 +18,11 @@ class CompareProjectSelectProperties:
     pass
 
 
-
-
 class CompareWindowProperties:
     widgets = list()
-    names = list()
+    name_getter: list[Callable] = list()
     init_functions = list()
     tools = list()
     window: CompareDialog = None
     export_funcs = list()
+    actions: dict[str, QAction] = dict()

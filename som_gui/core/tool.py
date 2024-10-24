@@ -1,4 +1,3 @@
-
 class Appdata:
     def _get_config(self, ): pass
 
@@ -20,9 +19,6 @@ class Appdata:
 
     def set_setting(self, section, path, value): pass
 
-
-class FilterWindow:
-    pass
 
 class Attribute:
     def add_attribute_data_value(self, name, getter, setter): pass
@@ -229,9 +225,9 @@ class AttributeImport:
 
     def destroy_import_runner(self, runner): pass
 
-    def get_attribute_import_threadpool(self, ): pass
+    def get_action(self, name): pass
 
-    def get_ifc_import_widget(self, ): pass
+    def get_attribute_import_threadpool(self, ): pass
 
     def get_ifc_import_window(self, ): pass
 
@@ -246,6 +242,8 @@ class AttributeImport:
     def last_import_finished(self, ): pass
 
     def reset_abort(self, ): pass
+
+    def set_action(self, name, action): pass
 
     def set_current_runner(self, runner): pass
 
@@ -477,6 +475,8 @@ class Bsdd:
 
     def export_to_json(self, path): pass
 
+    def get_action(self, name): pass
+
     def get_dict_presets(self, ): pass
 
     def get_dictionary(self, ): pass
@@ -496,6 +496,8 @@ class Bsdd:
     def get_window(self, ): pass
 
     def reset_dictionary(self, ): pass
+
+    def set_action(self, name, action): pass
 
     def set_tabs(self, tab_list): pass
 
@@ -537,6 +539,8 @@ class CompareWindow:
 
     def create_window(self, ): pass
 
+    def get_action(self, name): pass
+
     def get_export_functions(self, ): pass
 
     def get_properties(self, ): pass
@@ -548,6 +552,8 @@ class CompareWindow:
     def init_tabs(self, project0, project1): pass
 
     def reset(self, ): pass
+
+    def set_action(self, name, action): pass
 
     def set_projects(self, project1, project2): pass
 
@@ -575,9 +581,133 @@ class Exports:
 
     def export_vestra(self, project, parent_window, path): pass
 
+    def get_action(self, name): pass
+
     def get_properties(self, ): pass
 
     def get_settings_widget(self, ): pass
+
+    def set_action(self, name, action): pass
+
+
+class FilterCompare:
+    def add_phase_index_tuple(self, value): pass
+
+    def add_use_case_index_tuple(self, value): pass
+
+    def append_collumns(self, object_tree_widget, pset_tree_widget): pass
+
+    def are_all_filters_identical(self, filter_list): pass
+
+    def are_attributes_identical(self, attribute0, attribute1): pass
+
+    def are_objects_identical(self, obj0, obj1): pass
+
+    def are_psets_identical(self, pset0, pset1): pass
+
+    def create_combobox_widget(self, checkstate0, checkstate1): pass
+
+    def create_tree_selection_trigger(self, widget): pass
+
+    def export_attribute_filter_differences(self, file, attribute_list): pass
+
+    def export_object_filter_differences(self, file, attribute_compare): pass
+
+    def export_pset_filter_differences(self, file, pset_list, attribute_compare): pass
+
+    def export_write_statechange(self, file, type_name, filter_list, indent): pass
+
+    def fill_tree_with_checkstates(self, item): pass
+
+    def find_matching_phases(self, proj0, proj1): pass
+
+    def find_matching_usecases(self, proj0, proj1): pass
+
+    def get_existing_header_texts(self, tree_widget): pass
+
+    def get_filter_list(self, entity0, entity1): pass
+
+    def get_match_list(self, ): pass
+
+    def get_object_tree(self, ): pass
+
+    def get_phase_list(self, ): pass
+
+    def get_project(self, index): pass
+
+    def get_properties(self, ): pass
+
+    def get_usecase_list(self, ): pass
+
+    def get_widget(self, ): pass
+
+    def make_header_wordwrap(self, tree): pass
+
+    def reset(self, ): pass
+
+    def set_phase_list(self, phase_list): pass
+
+    def set_projects(self, project1, project2): pass
+
+    def set_tree_item_column_color(self, item, column, color): pass
+
+    def set_usecase_list(self, usecase_list): pass
+
+    def style_object_tree(self, item): pass
+
+
+class FilterWindow:
+    def add_phase(self, project): pass
+
+    def add_usecase(self, project): pass
+
+    def connect_object_tree(self, project): pass
+
+    def connect_project_table(self, project): pass
+
+    def connect_pset_tree(self, project): pass
+
+    def create_context_menu(self, menu_list, pos): pass
+
+    def create_widget(self, ): pass
+
+    def get(self, ): pass
+
+    def get_action(self, name): pass
+
+    def get_active_object(self, ): pass
+
+    def get_object_tree(self, ): pass
+
+    def get_project_table(self, ): pass
+
+    def get_properties(self, ): pass
+
+    def get_pset_tree(self, ): pass
+
+    def get_settings_widget(self, ): pass
+
+    def is_tree_clicked(self, ): pass
+
+    def remove_phase(self, phase, project): pass
+
+    def remove_usecase(self, usecase, project): pass
+
+    def rename_filter(self, filter): pass
+
+    def set_action(self, name, action): pass
+
+    def set_active_object(self, obj): pass
+
+    def set_object_label(self, value): pass
+
+    def set_settings_widget(self, widget): pass
+
+    def tree_activate_click_drag(self, index): pass
+
+    def tree_move_click_drag(self, index): pass
+
+    def tree_release_click_drag(self, ): pass
 
 
 class IfcImporter:
@@ -651,9 +781,15 @@ class Logging:
 class MainWindow:
     def add_action(self, menu_path, function): pass
 
+    def add_action2(self, parent_name, name, function): pass
+
+    def add_submenu(self, parent_name, name): pass
+
     def create(self, application): pass
 
     def get(self, ): pass
+
+    def get_action(self, name): pass
 
     def get_app(self, ): pass
 
@@ -691,6 +827,10 @@ class MainWindow:
 
     def hide_console(self, ): pass
 
+    def is_console_visible(self, ): pass
+
+    def set_action(self, name, action): pass
+
     def set_status_bar_text(self, text): pass
 
     def set_window_title(self, title): pass
@@ -713,6 +853,8 @@ class Mapping:
 
     def fill_object_tree(self, root_objects): pass
 
+    def get_action(self, name): pass
+
     def get_checkstate(self, entity): pass
 
     def get_entity_from_item(self, item): pass
@@ -730,6 +872,8 @@ class Mapping:
     def get_window(self, ): pass
 
     def reset_export_dict(self, ): pass
+
+    def set_action(self, name, action): pass
 
     def set_checkstate(self, entity, checkstate): pass
 
@@ -899,6 +1043,8 @@ class ModelcheckExternal:
 
     def export_ids(self, ): pass
 
+    def get_action(self, name): pass
+
     def get_data_dict(self, ): pass
 
     def get_main_attribute(self, ): pass
@@ -908,6 +1054,8 @@ class ModelcheckExternal:
     def get_window(self, ): pass
 
     def is_window_allready_build(self, ): pass
+
+    def set_action(self, name, action): pass
 
 
 class ModelcheckResults:
@@ -920,6 +1068,8 @@ class ModelcheckResults:
     def fill_worksheet(self, issues, ws): pass
 
     def get_export_path(self, ): pass
+
+    def get_header(self, ): pass
 
     def get_max_width(self, worksheet): pass
 
@@ -973,7 +1123,7 @@ class ModelcheckWindow:
 
     def fill_pset_tree(self, property_sets, enabled, tree): pass
 
-    def get_ifc_import_widget(self, ): pass
+    def get_action(self, name): pass
 
     def get_item_check_state(self, item): pass
 
@@ -1007,6 +1157,8 @@ class ModelcheckWindow:
 
     def resize_object_tree(self, ): pass
 
+    def set_action(self, name, action): pass
+
     def set_item_check_state(self, item, cs): pass
 
     def set_progress(self, value): pass
@@ -1029,9 +1181,9 @@ class ModelcheckWindow:
 
 
 class Object:
-    def add_column_to_tree(self, name, index, getter_func, setter_func): pass
+    def add_column_to_tree(self, name_getter, index, getter_func, setter_func): pass
 
-    def add_context_menu_entry(self, name, function, single, multi): pass
+    def add_context_menu_entry(self, name_getter, function, single, multi): pass
 
     def add_ifc_mapping(self, mapping): pass
 
@@ -1090,6 +1242,8 @@ class Object:
     def get_active_object(self, ): pass
 
     def get_existing_ident_values(self, ): pass
+
+    def get_header_names(self, ): pass
 
     def get_ifc_mappings(self, ): pass
 
@@ -1157,180 +1311,6 @@ class Object:
     def update_item(self, item, obj): pass
 
 
-class ObjectFilter:
-    def create_header_data(self, filter_matrix): pass
-
-    def create_row(self, entity, filter_index_list): pass
-
-    def create_tree(self, entities, parent_item, filter_index_list, pre_header_text_length, model, tree): pass
-
-    def create_tree_models(self, ): pass
-
-    def create_window(self, ): pass
-
-    def delete_use_case_window(self, ): pass
-
-    def fill_object_tree(self, root_objects): pass
-
-    def format_object_tree_header(self, ): pass
-
-    def get_active_checkstate(self, ): pass
-
-    def get_active_object(self, ): pass
-
-    def get_attribute_dict(self, ): pass
-
-    def get_check_state(self, project_phase_index, use_case_index, entity): pass
-
-    def get_check_statuses(self, index): pass
-
-    def get_checkstate(self, index): pass
-
-    def get_enabled_statuses(self, index): pass
-
-    def get_filter_indexes(self, ): pass
-
-    def get_filter_matrix(self, ): pass
-
-    def get_filter_names(self, ): pass
-
-    def get_header_texts(self, ): pass
-
-    def get_index_by_object(self, obj): pass
-
-    def get_linked_data(self, index): pass
-
-    def get_object_dict(self, ): pass
-
-    def get_object_model(self, ): pass
-
-    def get_object_tree(self, ): pass
-
-    def get_properties(self, ): pass
-
-    def get_pset_dict(self, ): pass
-
-    def get_pset_model(self, ): pass
-
-    def get_pset_tree(self, ): pass
-
-    def get_settings_widget(self, ): pass
-
-    def get_title_count_by_index(self, index): pass
-
-    def get_title_lenght_by_model(self, model): pass
-
-    def get_widget(self, ): pass
-
-    def import_filter_matrixes(self, project): pass
-
-    def is_object_enabled(self, index): pass
-
-    def is_tree_clicked(self, ): pass
-
-    def resize_tree(self, tree): pass
-
-    def set_active_object(self, obj): pass
-
-    def set_header_data(self, header_data): pass
-
-    def set_header_labels(self, model, labels): pass
-
-    def set_settings_widget(self, widget): pass
-
-    def toggle_checkstate(self, index): pass
-
-    def tree_activate_click_drag(self, index): pass
-
-    def tree_move_click_drag(self, index): pass
-
-    def tree_release_click_drag(self, index): pass
-
-    def update_active_object_label(self, ): pass
-
-    def update_attribute_data(self, ): pass
-
-    def update_attribute_uses_cases(self, ): pass
-
-    def update_enable_status(self, item, model): pass
-
-    def update_object_data(self, obj): pass
-
-    def update_object_use_cases(self, ): pass
-
-    def update_pset_data(self, ): pass
-
-    def update_pset_tree(self, ): pass
-
-    def update_pset_use_cases(self, ): pass
-
-
-class FilterCompare:
-    def add_phase_index_tuple(self, value): pass
-
-    def add_use_case_index_tuple(self, value): pass
-
-    def append_collumns(self, object_tree_widget, pset_tree_widget): pass
-
-    def are_all_filters_identical(self, filter_list): pass
-
-    def are_attributes_identical(self, attribute0, attribute1): pass
-
-    def are_objects_identical(self, obj0, obj1): pass
-
-    def are_psets_identical(self, pset0, pset1): pass
-
-    def create_combobox_widget(self, checkstate0, checkstate1): pass
-
-    def create_tree_selection_trigger(self, widget): pass
-
-    def export_attribute_filter_differences(self, file, attribute_list): pass
-
-    def export_object_filter_differences(self, file, attribute_compare): pass
-
-    def export_pset_filter_differences(self, file, pset_list, attribute_compare): pass
-
-    def export_write_statechange(self, file, type_name, filter_list, indent): pass
-
-    def fill_tree_with_checkstates(self, item): pass
-
-    def find_matching_phases(self, proj0, proj1): pass
-
-    def find_matching_usecases(self, proj0, proj1): pass
-
-    def get_existing_header_texts(self, tree_widget): pass
-
-    def get_filter_list(self, entity0, entity1): pass
-
-    def get_match_list(self, ): pass
-
-    def get_object_tree(self, ): pass
-
-    def get_phase_list(self, ): pass
-
-    def get_project(self, index): pass
-
-    def get_properties(self, ): pass
-
-    def get_usecase_list(self, ): pass
-
-    def get_widget(self, ): pass
-
-    def make_header_wordwrap(self, tree): pass
-
-    def reset(self, ): pass
-
-    def set_phase_list(self, phase_list): pass
-
-    def set_projects(self, project1, project2): pass
-
-    def set_tree_item_column_color(self, item, column, color): pass
-
-    def set_usecase_list(self, usecase_list): pass
-
-    def style_object_tree(self, item): pass
-
-
 class Plugins:
     def create_settings_entry(self, plugin_name): pass
 
@@ -1347,6 +1327,8 @@ class Plugins:
     def import_plugin(self, plugin_name): pass
 
     def is_plugin_active(self, plugin_name): pass
+
+    def load_translations(self, app, lang): pass
 
     def set_plugin_active(self, plugin_name, state): pass
 
@@ -1370,11 +1352,7 @@ class Popups:
 
     def get_folder(self, window, path): pass
 
-    def get_new_use_case_name(self, old_name, parent): pass
-
     def get_open_path(self, file_format, window, path, title): pass
-
-    def get_phase_name(self, old_name, parent): pass
 
     def get_project_name(self, ): pass
 
@@ -1391,6 +1369,10 @@ class Popups:
     def request_property_set_merge(self, name, mode): pass
 
     def request_save_before_exit(self, ): pass
+
+
+class Language:
+    pass
 
 
 class PredefinedPropertySet:
@@ -1411,6 +1393,8 @@ class PredefinedPropertySet:
     def delete_selected_objects(self, ): pass
 
     def delete_selected_property_set(self, ): pass
+
+    def get_action(self, name): pass
 
     def get_active_property_set(self, ): pass
 
@@ -1441,6 +1425,8 @@ class PredefinedPropertySet:
     def remove_selected_links(self, ): pass
 
     def rename_selected_property_set(self, ): pass
+
+    def set_action(self, name, action): pass
 
     def set_active_property_set(self, property_set): pass
 
@@ -1484,6 +1470,8 @@ class Project:
 
     def get(self, ): pass
 
+    def get_action(self, name): pass
+
     def get_filter_matrix(self, ): pass
 
     def get_mapping_from_table(self, table): pass
@@ -1510,55 +1498,13 @@ class Project:
 
     def merge_projects(self, project_1, project_2): pass
 
+    def set_action(self, name, action): pass
+
     def set_active_project(self, proj): pass
 
     def set_settings_general_widget(self, widget): pass
 
     def set_settings_path_widget(self, widget): pass
-
-
-class ProjectFilter:
-    def add_phase(self, ): pass
-
-    def add_use_case(self, ): pass
-
-    def create_context_menu(self, value, menu_list, pos): pass
-
-    def create_dialog(self, ): pass
-
-    def create_header(self, ): pass
-
-    def delete_dialog(self, ): pass
-
-    def delete_filter(self, ): pass
-
-    def fill_filter_properties(self, ): pass
-
-    def get_filter_matrix(self, ): pass
-
-    def get_filter_state(self, phase, use_case): pass
-
-    def get_header_item(self, section, orientation): pass
-
-    def get_phase_list(self, ): pass
-
-    def get_properties(self, ): pass
-
-    def get_table(self, ): pass
-
-    def get_use_case_list(self, ): pass
-
-    def rename_filter(self, ): pass
-
-    def set_column(self, column, use_case): pass
-
-    def set_row(self, row, phase): pass
-
-    def set_selected_header(self, item): pass
-
-    def set_state(self, use_case, phase, state): pass
-
-    def update_item(self, row, column): pass
 
 
 class PropertySet:
@@ -1656,6 +1602,8 @@ class PropertySetWindow:
 
     def get_input_value_lines(self, window): pass
 
+    def get_open_windows(self, ): pass
+
     def get_paste_text_list(self, ): pass
 
     def get_properties(self, ): pass
@@ -1724,7 +1672,9 @@ class Search:
 
     def get_search_properties(self, ): pass
 
-    def refresh_dialog(self, ): pass
+    def refresh_dialog(self, widget, threshold): pass
+
+    def retranslate_title(self, widget, search_mode): pass
 
     def search_attribute(self, ): pass
 
@@ -1732,7 +1682,7 @@ class Search:
 
 
 class Settings:
-    def add_page_to_toolbox(self, widget, tab_name, page_name, accept_function): pass
+    def add_page_to_toolbox(self, widget_function, page_name, accept_function): pass
 
     def close(self, ): pass
 
@@ -1742,15 +1692,15 @@ class Settings:
 
     def get_accept_functions(self, ): pass
 
+    def get_action(self, name): pass
+
+    def get_page_dict(self, ): pass
+
     def get_properties(self, ): pass
-
-    def get_tab_dict(self, ): pass
-
-    def get_tab_widget(self, ): pass
 
     def get_widget(self, ): pass
 
-    def set_icon(self, tab_name, page_name, icon): pass
+    def set_action(self, name, action): pass
 
     def set_widget(self, widget): pass
 
@@ -1776,7 +1726,7 @@ class Util:
     def create_tempfile(self, suffix): pass
 
     def fill_file_selector(self, widget, name, file_extension, appdata_text, request_folder, request_save,
-                           single_request): pass
+                           single_request, update_appdata): pass
 
     def fill_main_attribute(self, widget, pset_name, attribute_name, pset_placeholder, attribute_placeholder): pass
 
@@ -1803,4 +1753,3 @@ class Util:
     def request_path(self, widget): pass
 
     def transform_guid(self, guid, add_zero_width): pass
-

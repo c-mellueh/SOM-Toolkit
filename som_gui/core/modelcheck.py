@@ -7,10 +7,10 @@ if TYPE_CHECKING:
 import SOMcreator
 import ifcopenshell
 from datetime import datetime
+from PySide6.QtCore import QCoreApplication
 
 GROUP = "Gruppe"
 ELEMENT = "Element"
-
 
 rev_datatype_dict = {
     str:   "IfcText/IfcLabel",
@@ -22,7 +22,6 @@ rev_datatype_dict = {
 
 def check_file(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck],
                modelcheck_window: Type[tool.ModelcheckWindow]):
-
     modelcheck.connect_to_data_base(modelcheck.get_database_path())
     modelcheck.remove_existing_issues(datetime.today())
 
@@ -41,13 +40,12 @@ def check_file(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck],
 
     modelcheck.disconnect_from_data_base()
 
-
-    modelcheck.set_status("Prüfung abgeschlossen")
+    modelcheck.set_status(QCoreApplication.translate("Modelcheck", "Modelcheck Done!"))
     modelcheck.set_progress(100)
 
 
 def check_entities(entities: list[ifcopenshell.entity_instance], modelcheck: Type[tool.Modelcheck]):
-    modelcheck.set_status(f"{len(entities)} Entitäten werden geprüft")
+    modelcheck.set_status(f'{len(entities)} {QCoreApplication.translate("Modelcheck", "Entities will be checked.")}')
     for entity in entities:
         modelcheck.increment_checked_items()
         if modelcheck.is_aborted():

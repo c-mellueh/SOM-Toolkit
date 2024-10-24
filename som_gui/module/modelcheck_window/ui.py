@@ -1,19 +1,19 @@
 from __future__ import annotations
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTreeView
-from PySide6.QtGui import QStandardItemModel, QMouseEvent
+
+from PySide6.QtGui import QStandardItemModel
+from PySide6.QtWidgets import QTreeView, QWidget
+
 from som_gui.module import modelcheck_window
-from som_gui.icons import get_icon
-from som_gui import tool
+from som_gui.resources.icons import get_icon
 from . import qt
 
 
 class ModelcheckWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.ui = qt.widget.Ui_Form()
+        self.ui = qt.ui_Widget.Ui_Modelcheck()
         self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.setWindowTitle(f"Modellprüfung | {tool.Util.get_status_text()}")
 
 
 class ObjectTree(QTreeView):
@@ -21,12 +21,12 @@ class ObjectTree(QTreeView):
         super().__init__(*args, **kwargs)
         model = QStandardItemModel()
         self.setModel(model)
-        model.setHorizontalHeaderLabels(["Objekt", "Identifier"])
+        model.setHorizontalHeaderLabels(["Object", "Identifier"])
         modelcheck_window.trigger.connect_object_check_tree(self)
 
     def paintEvent(self, event):
         super().paintEvent(event)
-        modelcheck_window.trigger.paint_object_tree()
+        modelcheck_window.trigger.paint_object_tree(self)
 
 
 class PsetTree(QTreeView):
@@ -34,9 +34,9 @@ class PsetTree(QTreeView):
         super().__init__(*args, **kwargs)
         model = QStandardItemModel()
         self.setModel(model)
-        model.setHorizontalHeaderLabels(["PropertySet,Attribut"])
+        model.setHorizontalHeaderLabels(["PropertySet,Attribute"])
         modelcheck_window.trigger.connect_pset_check_tree(self)
 
     def paintEvent(self, event):
         super().paintEvent(event)
-        modelcheck_window.trigger.paint_pset_tree()
+        modelcheck_window.trigger.paint_pset_tree(self)

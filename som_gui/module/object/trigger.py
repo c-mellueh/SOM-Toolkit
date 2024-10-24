@@ -1,8 +1,9 @@
-import som_gui
+from PySide6.QtWidgets import QTreeWidget
+
 from som_gui import tool
 from som_gui.core import object as core
-from PySide6.QtWidgets import QTreeWidget
-from som_gui.icons import get_search_icon
+
+
 def connect():
     widget: QTreeWidget = tool.Object.get_object_tree()
     widget.itemChanged.connect(lambda item: core.item_changed(item, tool.Object))
@@ -21,21 +22,21 @@ def connect():
         lambda: core.ident_pset_changed(tool.Object, tool.MainWindow, tool.PredefinedPropertySet))
     main_ui.lineEdit_ident_attribute.textChanged.connect(
         lambda: core.ident_attribute_changed(tool.Object, tool.MainWindow, tool.PredefinedPropertySet))
-    main_ui.button_search.setIcon(get_search_icon())
 
-
-    core.load_context_menus(tool.Object)
+    core.load_context_menus(tool.Object, tool.Util)
     core.add_shortcuts(tool.Object, tool.Util, tool.Search, tool.MainWindow)
     core.connect_object_input_widget(tool.Object, tool.MainWindow, tool.PredefinedPropertySet)
     core.init_main_window(tool.Object, tool.MainWindow)
 
+
 def item_double_clicked():
-    core.create_object_info_widget(mode=1, object_tool=tool.Object)
+    core.create_object_info_widget(mode=1, object_tool=tool.Object, util=tool.Util)
 
 
 def object_info_paint_event():
     core.object_info_refresh(tool.Object)
     pass
+
 
 def repaint_event():
     core.refresh_object_tree(tool.Object, tool.Project)
@@ -47,3 +48,7 @@ def drop_event(event):
 
 def on_new_project():
     core.reset_tree(tool.Object)
+
+
+def retranslate_ui():
+    core.retranslate_ui(tool.Object)

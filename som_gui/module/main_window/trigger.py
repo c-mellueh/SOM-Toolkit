@@ -1,13 +1,21 @@
-from som_gui.core import main_window as core
 from som_gui import tool
+from som_gui.core import main_window as core
 
 
 def connect():
-    tool.MainWindow.add_action("Bearbeiten/Toggle Console", lambda: core.toggle_console_clicked(tool.MainWindow))
+    core.create_main_menu_actions(tool.MainWindow)
 
 
 def on_new_project():
     pass
+
+
+def retranslate_ui():
+    core.retranslate_ui(tool.MainWindow)
+
+
+def toggle_console():
+    core.toggle_console_clicked(tool.MainWindow)
 
 
 def close_event():

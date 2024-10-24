@@ -1,17 +1,20 @@
 from __future__ import annotations
+
 import logging
 import os
-from typing import TYPE_CHECKING
-import SOMcreator
 from dataclasses import fields
+from typing import TYPE_CHECKING
+
+import SOMcreator
+
 if TYPE_CHECKING:
     from som_gui.module.bsdd.prop import BsddProperties
 import som_gui.core.tool
 import som_gui
 from som_gui.module.bsdd import ui
 from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QWidget, QToolBox, QLineEdit, QLabel
+from PySide6.QtGui import QAction
 from som_gui.module.bsdd import trigger
-from SOMcreator.exporter import bsdd
 import SOMcreator.exporter.bsdd.transformer
 
 LANGUAGE_ISO_CODES = ['EN', 'en-GB', 'nl-NL', 'nb-NO', 'nl-BE', 'fr-BE', 'de-DE', 'it-IT', 'sv-SE', 'fr-FR', 'es-ES',
@@ -25,6 +28,14 @@ class Bsdd(som_gui.core.tool.Bsdd):
     @classmethod
     def get_properties(cls) -> BsddProperties:
         return som_gui.BsddProperties
+
+    @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
 
     @classmethod
     def get_window(cls) -> ui.Widget:

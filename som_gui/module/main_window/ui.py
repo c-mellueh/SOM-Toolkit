@@ -1,13 +1,14 @@
-from PySide6.QtWidgets import QMainWindow, QApplication
-from .qt import window
+from PySide6.QtWidgets import QApplication, QMainWindow
+
+from som_gui.resources.icons import get_icon
 from . import trigger
-from som_gui.icons import get_icon
+from .qt import ui_MainWindow
 
 
 class MainWindow(QMainWindow):
     def __init__(self, application: QApplication):
         super(MainWindow, self).__init__()
-        self.ui = window.Ui_MainWindow()
+        self.ui = ui_MainWindow.Ui_MainWindow()
         self.ui.setupUi(self)
         self.app: QApplication = application
         self.setWindowIcon(get_icon())

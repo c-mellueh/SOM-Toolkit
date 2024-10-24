@@ -1,14 +1,15 @@
-from som_gui.icons import get_icon
 from PySide6.QtWidgets import QDialog
-from .qt import widget
+
 from som_gui.module.search import trigger
+from som_gui.resources.icons import get_icon
+from .qt import ui_Widget
 
 
 class SearchWindow(QDialog):
     def __init__(self):
         super().__init__()
-        self.widget = widget.Ui_Dialog()
-        self.widget.setupUi(self)
+        self.ui = ui_Widget.Ui_Search()
+        self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
 
     def paintEvent(self, event):

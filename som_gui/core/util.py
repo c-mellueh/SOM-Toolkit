@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING, Type
+
 from som_gui.module.util.constants import PATH_SEPERATOR
 
 if TYPE_CHECKING:

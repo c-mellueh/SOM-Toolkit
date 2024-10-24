@@ -1,19 +1,20 @@
-from PySide6.QtWidgets import QWidget, QLineEdit
-from PySide6.QtCore import Qt
 from PySide6 import QtGui
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QLineEdit, QWidget
+
 from som_gui.module import property_set_window
-from .qt.window import Ui_layout_main
-from som_gui.icons import get_icon
+from som_gui.resources.icons import get_icon
+from .qt.ui_Window import Ui_PropertySetWindow
 
 
 class PropertySetWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.widget = Ui_layout_main()
-        self.widget.setupUi(self)
-        self.widget.verticalLayout_2.setSpacing(2)
-        self.widget.verticalLayout_2.setContentsMargins(2, 2, 2, 2)
-        self.widget.verticalLayout_2.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.ui = Ui_PropertySetWindow()
+        self.ui.setupUi(self)
+        self.ui.verticalLayout_2.setSpacing(2)
+        self.ui.verticalLayout_2.setContentsMargins(2, 2, 2, 2)
+        self.ui.verticalLayout_2.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.setWindowIcon(get_icon())
 
     def closeEvent(self, event):

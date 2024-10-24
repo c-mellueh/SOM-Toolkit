@@ -1,24 +1,20 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, TextIO, Any
-from PySide6.QtGui import QBrush, QPalette, QColor, QIcon
-from PySide6.QtCore import QModelIndex, Qt
-from som_gui import tool
-import SOMcreator
-from som_gui.module.attribute import ui
-import som_gui.core.tool
-import som_gui
-from PySide6.QtWidgets import QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QTableWidget
-from som_gui.module.project.constants import CLASS_REFERENCE
-from som_gui.module.compare import trigger
+from typing import Any, Callable, TYPE_CHECKING, TextIO
 
-DELETE_TEXT = "was deleted."
-ADD_TEXT = "was added."
-RENAME_TEXT = "was renamed to"
-CHANGED_FROM = "was changed from"
-ADD_CHILD = "added child"
-REMOVE_CHILD = "removed child"
+from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QModelIndex, Qt
+from PySide6.QtGui import QBrush, QColor, QPalette
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QTreeWidget, QTreeWidgetItem
+
+import SOMcreator
+import som_gui
+import som_gui.core.tool
+from som_gui import tool
+from som_gui.module.attribute import trigger, ui
+from som_gui.module.project.constants import CLASS_REFERENCE
+
 style_list = [
     [None, [0, 1]],
     ["#897e00", [0, 1]],  # Yellow
@@ -26,10 +22,9 @@ style_list = [
     ["#840002", [0]]  # red
 ]
 
-
-
 if TYPE_CHECKING:
     from som_gui.module.attribute.prop import AttributeProperties, CompareAttributesProperties
+
 
 class Attribute(som_gui.core.tool.Attribute):
     @classmethod
@@ -157,9 +152,9 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def create_tree_selection_trigger(cls, widget: ui.AttributeWidget):
-        widget.widget.tree_widget_object.itemSelectionChanged.connect(
+        widget.ui.tree_widget_object.itemSelectionChanged.connect(
             lambda: trigger.object_tree_selection_changed(widget))
-        widget.widget.tree_widget_propertysets.itemSelectionChanged.connect(
+        widget.ui.tree_widget_propertysets.itemSelectionChanged.connect(
             lambda: trigger.pset_tree_selection_changed(widget))
 
     @classmethod
@@ -611,11 +606,13 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         """
         Writes to File if one of 2 entities doesn't exist
         """
+        was_deleted = QCoreApplication.translate("AttributeCompare", "was deleted.")
+        was_added = QCoreApplication.translate("AttributeCompare", "was added.")
         if entity0 and not entity1:
-            file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {DELETE_TEXT}\n")
+            file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {was_deleted}\n")
             return False
         elif entity1 and not entity0:
-            file.write(f"{'   ' * indent}{type_name} '{entity1.name}' {ADD_TEXT}\n")
+            file.write(f"{'   ' * indent}{type_name} '{entity1.name}' {was_added}\n")
             return False
         return True
 
@@ -624,8 +621,10 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         """
         Writes differences between Names of entities to File
         """
+        rename_text = QCoreApplication.translate("AttributeCompare", "was renamed to")
+
         if entity0.name != entity1.name:
-            file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {RENAME_TEXT} '{entity1.name}'\n")
+            file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {rename_text} '{entity1.name}'\n")
             return False
         return True
 
@@ -643,8 +642,11 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             change_list.append(['Datatype', attrib0.value_type, attrib1.value_type])
         if attrib0.child_inherits_values != attrib1.child_inherits_values:
             change_list.append(['Child Inheritance', attrib0.child_inherits_values, attrib1.child_inherits_values])
+
+        changed = QCoreApplication.translate("AttributeCompare", "was changed from")
+        print(changed)
         for t, v0, v1 in change_list:
-            file.write(f"{'   ' * indent}{type_name} '{attrib0.name}' {t} {CHANGED_FROM} '{v0}' to '{v1}'\n")
+            file.write(f"{'   ' * indent}{type_name} '{attrib0.name}' {t} {changed} '{v0}' to '{v1}'\n")
         return bool(change_list)
 
     @classmethod
@@ -673,15 +675,16 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def export_child_check(cls, file: TextIO, type_name, entity0, entity1, indent: int) -> bool:
         child_matchup = cls.create_child_matchup(entity0, entity1)
         identical = True
-
+        add_child = QCoreApplication.translate("AttributeCompare", "added child")
+        remove_child = QCoreApplication.translate("AttributeCompare", "removed child")
         for c0, c1 in child_matchup:  # ALT,NEU
             if c0 is None:
                 cn = cls.get_name_path(c1)
-                file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {ADD_CHILD} '{cn}'\n")
+                file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {add_child} '{cn}'\n")
                 identical = False
             elif c1 is None:
                 cn = cls.get_name_path(c0)
-                file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {REMOVE_CHILD} '{cn}'\n")
+                file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {remove_child} '{cn}'\n")
                 identical = False
         return identical
 
@@ -736,20 +739,24 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def get_object_tree(cls, widget: ui.AttributeWidget):
-        return widget.widget.tree_widget_object
+        return widget.ui.tree_widget_object
 
     @classmethod
     def get_pset_tree(cls, widget: ui.AttributeWidget):
-        return widget.widget.tree_widget_propertysets
+        return widget.ui.tree_widget_propertysets
 
     @classmethod
     def get_value_table(cls, widget: ui.AttributeWidget):
-        return widget.widget.table_widget_values
+        return widget.ui.table_widget_values
+
+    @classmethod
+    def create_widget(cls):
+        if cls.get_properties().widget is None:
+            cls.get_properties().widget = ui.AttributeWidget()
+        return cls.get_properties().widget
 
     @classmethod
     def get_widget(cls):
-        if cls.get_properties().widget is None:
-            cls.get_properties().widget = ui.AttributeWidget()
         return cls.get_properties().widget
 
     @classmethod
@@ -889,4 +896,4 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def get_info_table(cls, widget: ui.AttributeWidget):
-        return widget.widget.table_infos
+        return widget.ui.table_infos

@@ -1,17 +1,18 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-import SOMcreator
-
-import som_gui.core.tool
-from som_gui.module.modelcheck_external import ui, trigger
+from PySide6.QtCore import QCoreApplication
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMainWindow, QMenuBar, QMenu
+from PySide6.QtWidgets import QMainWindow, QMenu, QMenuBar
 
-from som_gui import tool
+import SOMcreator
+import som_gui.core.tool
 from SOMcreator.exporter.IDS import main
 from SOMcreator.exporter.bim_collab_zoom import modelcheck as bc_modelcheck
 from SOMcreator.exporter.desite import modelcheck
+from som_gui import tool
+from som_gui.module.modelcheck_external import trigger, ui
 
 if TYPE_CHECKING:
     from som_gui.module.modelcheck_external.prop import ModelcheckExternalProperties
@@ -21,6 +22,14 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
     @classmethod
     def get_properties(cls) -> ModelcheckExternalProperties:
         return som_gui.ModelcheckExternalProperties
+
+    @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
 
     @classmethod
     def is_window_allready_build(cls):
@@ -39,18 +48,29 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def create_menubar(cls, window: QMainWindow):
-        desite_menu = [["Export Javascript Regeln", cls.export_desite_js],
-                       ["Export Javascript (schnelle Prüfung)", cls.export_desite_fast],
-                       ["Export Attribut Regeln", cls.export_desite_attribute_table],
-                       ["Export Modelcheck-CSV", cls.export_desite_csv]
+
+        menu_bar = list()
+        js_text = QCoreApplication.translate("Modelcheck", "Export Javascript Rules")
+        jsf_text = QCoreApplication.translate("Modelcheck", "Export Javascript (fast Check)")
+        ar_text = QCoreApplication.translate("Modelcheck", "Export Attribute Rules")
+        csv_text = QCoreApplication.translate("Modelcheck", "Export Modelcheck-CSV")
+
+        desite_menu = [[js_text, cls.export_desite_js],
+                       [jsf_text, cls.export_desite_fast],
+                       [ar_text, cls.export_desite_attribute_table],
+                       [csv_text, cls.export_desite_csv]
                        ]
 
-        bim_collab_menu = [["SmartViews exportieren", cls.export_bimcollab]]
+        desite_text = QCoreApplication.translate("Modelcheck", "Desite MD Pro")
+        menu_bar.append([desite_text, desite_menu])
 
-        building_smart_menu = [["IDS exportieren", cls.export_ids]]
+        sm_text = QCoreApplication.translate("Modelcheck", "Export SmartViews")
+        bim_collab_text = QCoreApplication.translate("Modelcheck", "BIMcollab ZOOM")
+        menu_bar.append([bim_collab_text, [[sm_text, cls.export_bimcollab]]])
 
-        menu_bar = [["Desite MD Pro", desite_menu], ["BIMcollab ZOOM", bim_collab_menu],
-                    ["buildingSMART", building_smart_menu]]
+        ids_text = QCoreApplication.translate("Modelcheck", "Export IDS")
+        building_smart_text = QCoreApplication.translate("Modelcheck", "buildingSMART")
+        menu_bar.append([building_smart_text, [[ids_text, cls.export_ids]]])
 
         qt_menu_bar = QMenuBar()
         window.setMenuBar(qt_menu_bar)

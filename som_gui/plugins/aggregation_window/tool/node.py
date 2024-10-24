@@ -196,7 +196,6 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         iter_id(node.aggregation)
         return "_xxx_".join(reversed(abbrev_list)) + "_xxx"
 
-
     @classmethod
     def get_title(cls, node: node_ui.NodeProxy, pset_name: str, attribute_name: str) -> str:
         aggregation = cls.get_aggregation_from_node(node)
@@ -252,7 +251,6 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     @classmethod
     def item_is_resize_rect(cls, item: Any) -> bool:
         return isinstance(item, node_ui.ResizeRect)
-
 
     @classmethod
     def item_is_frame(cls, item: Any) -> bool:

@@ -1,14 +1,17 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Callable
+
+from typing import Callable, TYPE_CHECKING
+
+from PySide6.QtGui import QAction
 from PySide6.QtGui import QIcon
 
-from som_gui.module.compare import ui
-import som_gui.core.tool
 import som_gui
+import som_gui.core.tool
 from som_gui.module.compare import trigger
+from som_gui.module.compare import ui
 
 if TYPE_CHECKING:
-    from som_gui.module.compare.prop import CompareAttributesProperties, CompareWindowProperties, \
+    from som_gui.module.compare.prop import CompareWindowProperties, \
         CompareProjectSelectProperties
 
 
@@ -83,14 +86,22 @@ class CompareWindow(som_gui.core.tool.CompareWindow):
         return som_gui.CompareWindowProperties
 
     @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
+
+    @classmethod
     def connect_triggers(cls):
         window = cls.get_window()
         window.widget.button_download.clicked.connect(trigger.download_clicked)
 
     @classmethod
-    def add_tab(cls, name: str, widget, init_func, _tool, export_func):
+    def add_tab(cls, name_getter: Callable, widget, init_func, _tool, export_func):
         prop = cls.get_properties()
-        prop.names.append(name)
+        prop.name_getter.append(name_getter)
         prop.widgets.append(widget)
         prop.init_functions.append(init_func)
         prop.tools.append(_tool)
@@ -119,12 +130,12 @@ class CompareWindow(som_gui.core.tool.CompareWindow):
 
     @classmethod
     def init_tabs(cls, project0, project1):
-        names = cls.get_properties().names
+        names = cls.get_properties().name_getter
         widgets = cls.get_properties().widgets
         init_functions = cls.get_properties().init_functions
         tab_widget = cls.get_tabwidget()
-        for name, widget_getter, init_func in zip(names, widgets, init_functions):
-            tab_widget.addTab(widget_getter(), QIcon(), name)
+        for name_getter, widget_getter, init_func in zip(names, widgets, init_functions):
+            tab_widget.addTab(widget_getter(), QIcon(), name_getter())
             init_func(project0, project1)
 
     @classmethod

@@ -1,18 +1,20 @@
 from __future__ import annotations
-import som_gui.core.tool
-import som_gui
-from configparser import ConfigParser
+
+import logging
 import os
+from configparser import ConfigParser
+
 import appdirs
+
+import som_gui
+import som_gui.core.tool
 from som_gui import tool
 from som_gui.module.util.constants import PATH_SEPERATOR
-import logging
 
 PATHS_SECTION = "paths"
 
 
 class Appdata(som_gui.core.tool.Appdata):
-
 
     @classmethod
     def get_path(cls, value: str) -> str | list | set:
@@ -30,7 +32,6 @@ class Appdata(som_gui.core.tool.Appdata):
             value = PATH_SEPERATOR.join(value)
         cls.set_setting(PATHS_SECTION, path, value)
 
-
     @classmethod
     def set_setting(cls, section: str, path: str, value):
         config_parser = cls._get_config()
@@ -38,8 +39,6 @@ class Appdata(som_gui.core.tool.Appdata):
             config_parser.add_section(section)
         config_parser.set(section, path, str(value))
         cls._write_config(config_parser)
-
-
 
     @classmethod
     def get_settings_path(cls):

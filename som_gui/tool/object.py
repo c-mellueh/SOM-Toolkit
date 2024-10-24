@@ -1,22 +1,25 @@
 from __future__ import annotations
 
-import logging
 import copy as cp
+import logging
 import uuid
+from typing import Callable, TYPE_CHECKING, TypedDict
 
+from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QPoint, Qt
+from PySide6.QtWidgets import QAbstractItemView, QCompleter, QLineEdit, QMenu, QTreeWidgetItem
+
+import SOMcreator
+import som_gui
 import som_gui.core.tool
 import som_gui.tool as tool
-import SOMcreator
-from PySide6.QtWidgets import QTreeWidgetItem, QAbstractItemView, QLineEdit, QCompleter, QMenu
-from PySide6.QtCore import Qt, QPoint
-import som_gui
-from typing import TYPE_CHECKING, TypedDict, Callable
 from SOMcreator.templates import IFC_4_1
 from som_gui.module.object.prop import PluginProperty
+
 if TYPE_CHECKING:
     from som_gui.module.object.prop import ObjectProperties, ContextMenuDict
     from som_gui.module.main_window.ui import MainWindow
-    from som_gui.module.object.ui import ObjectTreeWidget
+    from som_gui.module.object.ui import ObjectTreeWidget, ObjectInfoWidget
 
 
 class ObjectDataDict(TypedDict):
@@ -46,14 +49,19 @@ class Object(som_gui.core.tool.Object):
         return d
 
     @classmethod
-    def add_column_to_tree(cls, name, index, getter_func, setter_func=None):
+    def add_column_to_tree(cls, name_getter, index, getter_func, setter_func=None):
         tree = cls.get_object_tree()
+        cls.get_properties().column_List.insert(index, (name_getter, getter_func, setter_func))
+
         header = tree.headerItem()
-        header_texts = [header.text(i) for i in range(header.columnCount())]
-        header_texts.insert(index, tree.tr(name))
+        header_texts = cls.get_header_names()
         tree.setColumnCount(tree.columnCount() + 1)
-        [header.setText(i, t) for i, t in enumerate(header_texts)]
-        cls.get_properties().column_List.insert(index, (name, getter_func, setter_func))
+        for col, name in enumerate(header_texts):
+            header.setText(col, name)
+
+    @classmethod
+    def get_header_names(cls) -> list[str]:
+        return [x[0]() for x in cls.get_properties().column_List]
 
     @classmethod
     def create_completer(cls, texts, lineedit: QLineEdit):
@@ -114,7 +122,7 @@ class Object(som_gui.core.tool.Object):
         if len(selected_items) > 1:
             menu_list = filter(lambda d: d["on_multi_select"], menu_list)
         for menu_entry in menu_list:
-            menu_entry["action"] = menu.addAction(menu_entry["display_name"])
+            menu_entry["action"] = menu.addAction(menu_entry["name_getter"]())
             menu_entry["action"].triggered.connect(menu_entry["function"])
         return menu
 
@@ -158,9 +166,10 @@ class Object(som_gui.core.tool.Object):
         prop.context_menu_list = list()
 
     @classmethod
-    def add_context_menu_entry(cls, name: str, function: Callable, single: bool, multi: bool) -> ContextMenuDict:
+    def add_context_menu_entry(cls, name_getter: Callable, function: Callable, single: bool,
+                               multi: bool) -> ContextMenuDict:
         d: ContextMenuDict = dict()
-        d["display_name"] = name
+        d["name_getter"] = name_getter
         d["function"] = function
         d["on_multi_select"] = multi
         d["on_single_select"] = single
@@ -172,16 +181,14 @@ class Object(som_gui.core.tool.Object):
     def handle_attribute_issue(cls, result: int):
         if result == som_gui.module.object.OK:
             return True
-        app = tool.MainWindow.get_app()
         if result == som_gui.module.object.IDENT_ISSUE:
-            text = "Identifier existiert bereits oder is nicht erlaubt!"
+            text = QCoreApplication.translate("Object", "Identifier exists allready or is not allowed")
         elif result == som_gui.module.object.IDENT_ATTRIBUTE_ISSUE:
-            text = u"Attribute Name is nicht erlaubt!"
+            text = QCoreApplication.translate("Object", "Name of Attribute is not allowed")
         elif result == som_gui.module.object.IDENT_PSET_ISSUE:
-            text = u"PropertySet Name is nicht erlaubt!"
+            text = QCoreApplication.translate("Object", "Name of PropertySet is not allowed")
         else:
             return False
-        text = app.translate("MainWindow", text)
         logging.error(text)
         tool.Popups.create_warning_popup(text)
         return False
@@ -228,7 +235,7 @@ class Object(som_gui.core.tool.Object):
             return True
         value = data_dict["ident_pset_name"]
         if not value:
-            text = u"PropertySet Name is nicht erlaubt!"
+            text = QCoreApplication.translate("Object", "Name of PropertySet is not allowed")
             logging.error(text)
             tool.Popups.create_warning_popup(text)
             return False
@@ -241,9 +248,8 @@ class Object(som_gui.core.tool.Object):
             return True
         value = data_dict["ident_attribute_name"]
         if not value:
-            text = u"Attribute Name is nicht erlaubt!"
+            text = QCoreApplication.translate("Object", "Name of Attribute is not allowed")
             logging.error(text)
-            tool.Popups.create_warning_popup(text)
             return False
         return True
 
@@ -254,9 +260,8 @@ class Object(som_gui.core.tool.Object):
             return True
         value = data_dict["ident_value"]
         if not cls.is_identifier_allowed(value):
-            text = "Identifier existiert bereits oder is nicht erlaubt!"
+            text = QCoreApplication.translate("Object", "Identifier exists allready or is not allowed")
             logging.error(text)
-            tool.Popups.create_warning_popup(text)
             return False
         return True
 
@@ -348,8 +353,6 @@ class Object(som_gui.core.tool.Object):
                 ident_values.add(obj.ident_value)
         return ident_values
 
-
-
     @classmethod
     def is_identifier_allowed(cls, identifier, ignore=None):
         identifiers = cls.get_existing_ident_values()
@@ -360,10 +363,8 @@ class Object(som_gui.core.tool.Object):
         else:
             return True
 
-
-
     @classmethod
-    def oi_create_dialog(cls):
+    def oi_create_dialog(cls) -> ObjectInfoWidget:
         prop = cls.get_properties()
         prop.object_info_widget_properties = som_gui.module.object.prop.ObjectInfoWidgetProperties()
         dialog = som_gui.module.object.ui.ObjectInfoWidget()
@@ -429,13 +430,10 @@ class Object(som_gui.core.tool.Object):
         for plugin_values in cls.get_properties().object_info_plugin_list:
             setattr(prop, plugin_values.key, data_dict.get(plugin_values.key))
 
-
     @classmethod
     def oi_set_ident_value_color(cls, color: str):
         widget = cls.get_properties().object_info_widget.widget
         widget.line_edit_attribute_value.setStyleSheet(f"color:{color}")
-
-
 
     @classmethod
     def oi_change_visibility_identifiers(cls, hide: bool):
@@ -505,7 +503,6 @@ class Object(som_gui.core.tool.Object):
 
         for plugin in prop.object_info_plugin_list:
             plugin.widget_value_setter(info_prop.plugin_infos.get(plugin.key))
-
 
     @classmethod
     def add_ifc_mapping(cls, mapping):
@@ -599,10 +596,6 @@ class Object(som_gui.core.tool.Object):
             if setter_func is not None:
                 setter_func(item, column)
 
-
-
-
-
     @classmethod
     def get_object_tree(cls) -> ObjectTreeWidget:
         return tool.MainWindow.get_object_tree_widget()
@@ -651,7 +644,6 @@ class Object(som_gui.core.tool.Object):
             obj: SOMcreator.Object = cls.get_object_from_item(item)
             cls.update_item(item, obj)
             cls.fill_object_tree(set(obj.get_children(filter=True)), item)
-
 
     @classmethod
     def add_object_creation_check(cls, key, check_function):

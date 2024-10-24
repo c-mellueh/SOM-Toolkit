@@ -1,19 +1,17 @@
-from PySide6.QtWidgets import QMainWindow, QMenuBar, QStatusBar, QVBoxLayout, QWidget, QComboBox
-from PySide6.QtGui import QPaintEvent
-from som_gui.icons import get_icon
-from . import trigger
 from PySide6.QtCore import Qt
-from som_gui import tool
+from PySide6.QtGui import QPaintEvent
+from PySide6.QtWidgets import QComboBox, QMainWindow
+
+from som_gui.resources.icons import get_icon
+from . import trigger
+
 
 class AggregationWindow(QMainWindow):
     def __init__(self, *args, **kwargs) -> None:
+        from .qt.ui_Window import Ui_Aggregation
         super().__init__(*args, **kwargs)
-        self.setCentralWidget(QWidget())
-        self.central_layout = QVBoxLayout(self.centralWidget())
-        self.setMenuBar(QMenuBar(self))
-        self.setStatusBar(QStatusBar(self))
-        self.resize(1245, 900)
-        self.setWindowTitle(self.tr(f"Bauwerksstruktur | {tool.Util.get_status_text()}"))
+        self.ui = Ui_Aggregation()
+        self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
 
     def paintEvent(self, event: QPaintEvent) -> None:

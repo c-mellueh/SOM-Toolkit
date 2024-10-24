@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>Form</class>
-    <widget class="QWidget" name="Form">
+    <class>FilterWindow</class>
+    <widget class="QWidget" name="FilterWindow">
         <property name="geometry">
             <rect>
                 <x>0</x>
@@ -19,7 +19,7 @@
                     <item>
                         <widget class="QLabel" name="label_phase">
                             <property name="text">
-                                <string>Leistungsphase</string>
+                                <string>Phase</string>
                             </property>
                         </widget>
                     </item>
@@ -40,7 +40,7 @@
                     <item>
                         <widget class="QLabel" name="label_usecase">
                             <property name="text">
-                                <string>Anwendungsfall</string>
+                                <string>Usecase</string>
                             </property>
                         </widget>
                     </item>

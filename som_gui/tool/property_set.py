@@ -1,21 +1,19 @@
 from __future__ import annotations
 
-from PySide6.QtWidgets import QTableWidgetItem, QCompleter, QTableWidget, QListWidgetItem, QMenu
-from PySide6.QtCore import Qt, QModelIndex
+import itertools
+from typing import Callable, TYPE_CHECKING
+
+from PySide6.QtCore import QCoreApplication, QModelIndex, Qt
 from PySide6.QtGui import QAction, QIcon
-
-from SOMcreator.datastructure.som_json import INHERITED_TEXT
-
-import som_gui
-import som_gui.core.tool
-from som_gui import tool
-from som_gui.icons import get_link_icon
-from som_gui.module.project.constants import CLASS_REFERENCE
+from PySide6.QtWidgets import QCompleter, QListWidgetItem, QMenu, QTableWidget, QTableWidgetItem
 
 import SOMcreator
-
-from typing import TYPE_CHECKING, Callable
-import itertools
+import som_gui
+import som_gui.core.tool
+from SOMcreator.datastructure.som_json import INHERITED_TEXT
+from som_gui import tool
+from som_gui.module.project.constants import CLASS_REFERENCE
+from som_gui.resources.icons import get_link_icon
 
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
@@ -95,7 +93,8 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
         if obj:
             if name in {p.name for p in obj.get_property_sets(filter=False)}:
-                tool.Popups.create_warning_popup(f"PropertySet existiert bereits")
+                text = QCoreApplication.translate(f"PropertySet", "PropertySet '{}' exists allready").format(name)
+                tool.Popups.create_warning_popup(text)
                 return None
         if parent is not None:
             property_set = parent.create_child(name)

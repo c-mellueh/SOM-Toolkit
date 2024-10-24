@@ -1,14 +1,19 @@
-from som_gui.core import compare as core
 from som_gui import tool
+from som_gui.core import compare as core
 
 
 def connect():
-    tool.MainWindow.add_action("Datei/Projekte Vergleichen",
-                               lambda: core.open_project_selection_window(tool.CompareWindow,
-                                                                          tool.CompareProjectSelector,
-                                                                          tool.Appdata, tool.Project))
+    core.create_main_menu_actions(tool.CompareWindow, tool.MainWindow)
 
-    core.add_attribute_compare_widget(tool.AttributeCompare, tool.CompareWindow)
+
+def open_window():
+    core.open_project_selection_window(tool.CompareWindow,
+                                       tool.CompareProjectSelector,
+                                       tool.Appdata, tool.Project)
+
+
+def retranslate_ui():
+    core.retranslate_ui(tool.CompareWindow, tool.Util)
 
 
 def on_new_project():
@@ -25,14 +30,6 @@ def switch_button_clicked():
 
 def project_button_clicked():
     core.project_button_clicked(tool.CompareProjectSelector, tool.Popups, tool.Appdata)
-
-
-def object_tree_selection_changed(widget, ):
-    core.object_tree_selection_changed(widget, tool.AttributeCompare)
-
-
-def pset_tree_selection_changed(widget):
-    core.pset_tree_selection_changed(widget, tool.AttributeCompare)
 
 
 def draw_branches(tree, painter, rect, index):

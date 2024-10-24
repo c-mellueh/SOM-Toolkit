@@ -49,30 +49,30 @@
                     <item row="0" column="0">
                         <widget class="QLabel" name="label">
                             <property name="text">
-                                <string>X-Verschiebung [m]</string>
+                                <string>X-Movement [m]</string>
                             </property>
                             <property name="alignment">
-                                <set>Qt::AlignCenter</set>
+                                <set>Qt::AlignmentFlag::AlignCenter</set>
                             </property>
                         </widget>
                     </item>
                     <item row="0" column="1">
                         <widget class="QLabel" name="label_2">
                             <property name="text">
-                                <string>Y-Verschiebung [m]</string>
+                                <string>Y-Movement [m]</string>
                             </property>
                             <property name="alignment">
-                                <set>Qt::AlignCenter</set>
+                                <set>Qt::AlignmentFlag::AlignCenter</set>
                             </property>
                         </widget>
                     </item>
                     <item row="0" column="2">
                         <widget class="QLabel" name="label_3">
                             <property name="text">
-                                <string>Z-Verschieben [m]</string>
+                                <string>Z-Movement [m]</string>
                             </property>
                             <property name="alignment">
-                                <set>Qt::AlignCenter</set>
+                                <set>Qt::AlignmentFlag::AlignCenter</set>
                             </property>
                         </widget>
                     </item>
@@ -87,7 +87,7 @@
             <item>
                 <widget class="QDialogButtonBox" name="buttonBox">
                     <property name="standardButtons">
-                        <set>QDialogButtonBox::Apply|QDialogButtonBox::Close</set>
+                        <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Close</set>
                     </property>
                 </widget>
             </item>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+    <class>DeleteRequest</class>
+    <widget class="QDialog" name="DeleteRequest">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Folgende Vorgaben löschen?</string>
+         <string>delete the following entities?</string>
      </property>
     </widget>
    </item>
@@ -27,17 +27,17 @@
    <item>
     <widget class="QCheckBox" name="check_box_recursion">
      <property name="text">
-      <string>Auch die Kindelemente löschen?</string>
+         <string>Also delete child elements?</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>
@@ -48,7 +48,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
+      <receiver>DeleteRequest</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -64,7 +64,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
+      <receiver>DeleteRequest</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

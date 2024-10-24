@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>Form</class>
-    <widget class="QWidget" name="Form">
+    <class>Modelcheck</class>
+    <widget class="QWidget" name="Modelcheck">
         <property name="geometry">
             <rect>
                 <x>0</x>
@@ -23,14 +23,14 @@
                         </sizepolicy>
                     </property>
                     <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
+                        <enum>Qt::Orientation::Horizontal</enum>
                     </property>
                     <widget class="ObjectTree" name="object_tree">
                         <property name="contextMenuPolicy">
-                            <enum>Qt::CustomContextMenu</enum>
+                            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
                         </property>
                         <property name="selectionMode">
-                            <enum>QAbstractItemView::ExtendedSelection</enum>
+                            <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
                         </property>
                     </widget>
                     <widget class="QWidget" name="verticalLayoutWidget">
@@ -45,10 +45,10 @@
                             <item>
                                 <widget class="PsetTree" name="property_set_tree">
                                     <property name="contextMenuPolicy">
-                                        <enum>Qt::CustomContextMenu</enum>
+                                        <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
                                     </property>
                                     <property name="selectionMode">
-                                        <enum>QAbstractItemView::ExtendedSelection</enum>
+                                        <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
                                     </property>
                                 </widget>
                             </item>
@@ -92,7 +92,7 @@
             <item>
                 <widget class="QDialogButtonBox" name="buttonBox">
                     <property name="standardButtons">
-                        <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel</set>
+                        <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel</set>
                     </property>
                     <property name="centerButtons">
                         <bool>false</bool>

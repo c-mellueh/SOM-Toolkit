@@ -5,10 +5,9 @@ added_files = [('SOMcreator','SOMcreator'),
                ('C:/Users/ChristophMellueh/AppData/Local/miniconda3/envs/SOM-Toolkit/Lib/site-packages/ifcopenshell/express','ifcopenshell/express'),
                ('som_gui/core','som_gui/core'),
                ('som_gui/tool','som_gui/tool'),
+               ('som_gui/resources','som_gui/resources'),
                ('som_gui/plugins','som_gui/plugins'),
                 ('som_gui/module','som_gui/module'),
-                ('som_gui/data','som_gui/data'),
-                ('som_gui/icons','som_gui/icons'),
                ]
 
 hi = ['ctypes','pyqtconsole.console','appdirs','jinja2', 'lxml', 'SOMcreator', 'tqdm', 'openpyxl','som_gui','thefuzz.fuzz','SOMcreator.external_software','ifcopenshell','ifcopenshell.util','ifcopenshell.util.element','som_gui.settings']
@@ -45,7 +44,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='som_gui/icons/icon.ico',
+    icon='som_gui/resources/icons/icon.ico',
 )
 coll = COLLECT(
     exe,

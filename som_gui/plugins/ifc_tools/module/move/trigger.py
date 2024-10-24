@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -9,8 +10,13 @@ from som_gui import tool
 from som_gui.plugins.ifc_tools.core import move as core
 from som_gui.plugins.ifc_tools import tool as ifc_tool
 
+
 def connect():
-    tool.MainWindow.add_action("IfcTools/Move", lambda: core.open_window(ifc_tool.Move, tool.Util, tool.Appdata))
+    core.create_main_menu_actions(ifc_tool.Move, tool.MainWindow)
+
+
+def open_window():
+    core.open_window(ifc_tool.Move, tool.Util, tool.Appdata)
 
 
 def button_box_clicked(button: QPushButton):
@@ -19,6 +25,7 @@ def button_box_clicked(button: QPushButton):
         core.apply_clicked(ifc_tool.Move, tool.Util, tool.Appdata, tool.IfcImporter)
     if button == bb.button(bb.StandardButton.Close):
         core.close_clicked(ifc_tool.Move)
+
 
 def on_new_project():
     pass
@@ -38,3 +45,7 @@ def move_started(ifc_file: ifcopenshell.file, path: str):
 
 def move_finished():
     core.move_finished(ifc_tool.Move)
+
+
+def retranslate_ui():
+    core.retranslate_ui(ifc_tool.Move, tool.Util)

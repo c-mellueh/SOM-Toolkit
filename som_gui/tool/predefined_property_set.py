@@ -1,19 +1,21 @@
 from __future__ import annotations
-import som_gui.core.tool
-import som_gui.module.predefined_property_set
-import som_gui.module.compare
-import SOMcreator
-from som_gui.module.project.constants import CLASS_REFERENCE
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QListWidget, QListWidgetItem, QTableWidget, QTableWidgetItem
-from PySide6.QtGui import QBrush, QColor
-from som_gui import tool
 
 from typing import TYPE_CHECKING
+
+from PySide6.QtCore import QCoreApplication, Qt
+from PySide6.QtWidgets import QListWidget, QListWidgetItem, QTableWidget, QTableWidgetItem
+
+import SOMcreator
+import som_gui.core.tool
+import som_gui.module.compare
+import som_gui.module.predefined_property_set
+from som_gui import tool
+from som_gui.module.project.constants import CLASS_REFERENCE
 
 if TYPE_CHECKING:
     from som_gui.module.predefined_property_set.prop import PredefinedPsetProperties, PredefinedPsetCompareProperties
     from som_gui.module.predefined_property_set import ui
+    from PySide6.QtGui import QAction
 
 
 class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
@@ -21,6 +23,14 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
     @classmethod
     def get_properties(cls) -> PredefinedPsetProperties:
         return som_gui.PredefinedPsetProperties
+
+    @classmethod
+    def set_action(cls, name: str, action: QAction):
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name):
+        return cls.get_properties().actions[name]
 
     @classmethod
     def get_window(cls) -> ui.PredefinedPropertySetWindow:
@@ -48,11 +58,11 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
 
     @classmethod
     def get_object_table_widget(cls) -> QTableWidget:
-        return cls.get_window().widget.table_widgets_objects
+        return cls.get_window().ui.table_widgets_objects
 
     @classmethod
     def get_pset_list_widget(cls):
-        return cls.get_window().widget.list_view_pset
+        return cls.get_window().ui.list_view_pset
 
     @classmethod
     def update_pset_widget(cls):
@@ -74,7 +84,7 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
     @classmethod
     def get_selected_property_set(cls):
         props = cls.get_properties()
-        return props.predefined_property_set_window.widget.list_view_pset.selectedItems()[0].data(CLASS_REFERENCE)
+        return props.predefined_property_set_window.ui.list_view_pset.selectedItems()[0].data(CLASS_REFERENCE)
 
     @classmethod
     def set_active_property_set(cls, property_set: SOMcreator.PropertySet):
@@ -165,8 +175,8 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
     @classmethod
     def create_property_set(cls):
         existing_names = [p.name for p in cls.get_property_sets()]
-        tool.PropertySet.create_property_set(
-            tool.Util.get_new_name("Neues PropertySet", existing_names))
+        name = QCoreApplication.translate("PredefinedPset", "New PropertySet")
+        tool.PropertySet.create_property_set(tool.Util.get_new_name(name, existing_names))
 
     @classmethod
     def get_property_sets(cls) -> set[SOMcreator.PropertySet]:
@@ -238,13 +248,14 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
 
     @classmethod
     def create_tree_selection_trigger(cls, widget: ui.CompareWidget):
-        widget.widget.tree_widget_propertysets.itemSelectionChanged.connect(
-            lambda: som_gui.module.compare.trigger.pset_tree_selection_changed(widget))
+        widget.ui.tree_widget_propertysets.itemSelectionChanged.connect(
+            lambda: som_gui.module.attribute.trigger.pset_tree_selection_changed(widget))
 
     @classmethod
     def get_widget(cls):
+        from som_gui.module.predefined_property_set import ui
         if cls.get_properties().widget is None:
-            cls.get_properties().widget = som_gui.module.predefined_property_set.ui.CompareWidget()
+            cls.get_properties().widget = ui.CompareWidget()
         return cls.get_properties().widget
 
     @classmethod

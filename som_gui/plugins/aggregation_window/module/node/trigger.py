@@ -1,10 +1,13 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
-from PySide6.QtWidgets import QTreeWidgetItem
-from som_gui.plugins.aggregation_window.core import node as core
-from som_gui import tool
-from ... import tool as aw_tool
+
 from PySide6.QtGui import QPainter
+from PySide6.QtWidgets import QTreeWidgetItem
+
+from som_gui import tool
+from som_gui.plugins.aggregation_window.core import node as core
+from ... import tool as aw_tool
 
 if TYPE_CHECKING:
     from . import ui
@@ -44,3 +47,7 @@ def paint_header(header, painter: QPainter) -> None:
 
 def paint_circle(circle: ui.Circle) -> None:
     core.paint_circle(circle, aw_tool.Node)
+
+
+def retranslate_ui():
+    pass

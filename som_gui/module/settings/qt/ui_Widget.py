@@ -1,0 +1,146 @@
+# -*- coding: utf-8 -*-
+
+################################################################################
+## Form generated from reading UI file 'Widget.ui'
+##
+## Created by: Qt User Interface Compiler version 6.8.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
+
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+                            QMetaObject, QObject, QPoint, QRect,
+                            QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+                           QFont, QFontDatabase, QGradient, QIcon,
+                           QImage, QKeySequence, QLinearGradient, QPainter,
+                           QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
+                               QSizePolicy, QTabWidget, QToolBox, QVBoxLayout,
+                               QWidget)
+
+class Ui_Settings(object):
+    def setupUi(self, Settings):
+        if not Settings.objectName():
+            Settings.setObjectName(u"Settings")
+        Settings.resize(889, 617)
+        self.verticalLayout = QVBoxLayout(Settings)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(1, 9, 1, -1)
+        self.tabWidget = QTabWidget(Settings)
+        self.tabWidget.setObjectName(u"tabWidget")
+        self.tabWidget.setTabPosition(QTabWidget.TabPosition.West)
+        self.tabGeneral = QWidget()
+        self.tabGeneral.setObjectName(u"tabGeneral")
+        self.verticalLayout_4 = QVBoxLayout(self.tabGeneral)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(1, 3, 1, 3)
+        self.toolBox = QToolBox(self.tabGeneral)
+        self.toolBox.setObjectName(u"toolBox")
+        self.pageGeneral = QWidget()
+        self.pageGeneral.setObjectName(u"pageGeneral")
+        self.pageGeneral.setGeometry(QRect(0, 0, 856, 467))
+        self.verticalLayout_9 = QVBoxLayout(self.pageGeneral)
+        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.toolBox.addItem(self.pageGeneral, u"General")
+        self.pageLogging = QWidget()
+        self.pageLogging.setObjectName(u"pageLogging")
+        self.pageLogging.setGeometry(QRect(0, 0, 98, 28))
+        self.verticalLayout_8 = QVBoxLayout(self.pageLogging)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.toolBox.addItem(self.pageLogging, u"Logging")
+        self.pageFilter = QWidget()
+        self.pageFilter.setObjectName(u"pageFilter")
+        self.pageFilter.setGeometry(QRect(0, 0, 98, 28))
+        self.verticalLayout_10 = QVBoxLayout(self.pageFilter)
+        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.toolBox.addItem(self.pageFilter, u"Filter")
+
+        self.verticalLayout_4.addWidget(self.toolBox)
+
+        self.tabWidget.addTab(self.tabGeneral, "")
+        self.tabPath = QWidget()
+        self.tabPath.setObjectName(u"tabPath")
+        self.verticalLayout_3 = QVBoxLayout(self.tabPath)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(1, 3, 1, 3)
+        self.tbPath = QToolBox(self.tabPath)
+        self.tbPath.setObjectName(u"tbPath")
+        self.pageProject = QWidget()
+        self.pageProject.setObjectName(u"pageProject")
+        self.pageProject.setGeometry(QRect(0, 0, 856, 497))
+        self.verticalLayout_6 = QVBoxLayout(self.pageProject)
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.tbPath.addItem(self.pageProject, u"Project")
+        self.pageExport = QWidget()
+        self.pageExport.setObjectName(u"pageExport")
+        self.pageExport.setGeometry(QRect(0, 0, 98, 28))
+        self.verticalLayout_7 = QVBoxLayout(self.pageExport)
+        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
+        self.tbPath.addItem(self.pageExport, u"Export")
+
+        self.verticalLayout_3.addWidget(self.tbPath)
+
+        self.tabWidget.addTab(self.tabPath, "")
+        self.tabPlugins = QWidget()
+        self.tabPlugins.setObjectName(u"tabPlugins")
+        self.verticalLayout_2 = QVBoxLayout(self.tabPlugins)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(1, 3, 1, 3)
+        self.tbPlugins = QToolBox(self.tabPlugins)
+        self.tbPlugins.setObjectName(u"tbPlugins")
+        self.pagePlugins = QWidget()
+        self.pagePlugins.setObjectName(u"pagePlugins")
+        self.pagePlugins.setGeometry(QRect(0, 0, 98, 28))
+        self.verticalLayout_5 = QVBoxLayout(self.pagePlugins)
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.tbPlugins.addItem(self.pagePlugins, u"Plugins")
+
+        self.verticalLayout_2.addWidget(self.tbPlugins)
+
+        self.tabWidget.addTab(self.tabPlugins, "")
+
+        self.verticalLayout.addWidget(self.tabWidget)
+
+        self.buttonBox = QDialogButtonBox(Settings)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
+
+        self.verticalLayout.addWidget(self.buttonBox)
+
+
+        self.retranslateUi(Settings)
+        self.buttonBox.accepted.connect(Settings.accept)
+        self.buttonBox.rejected.connect(Settings.reject)
+
+        self.tabWidget.setCurrentIndex(0)
+        self.toolBox.setCurrentIndex(0)
+        self.tbPath.setCurrentIndex(0)
+        self.tbPlugins.setCurrentIndex(0)
+
+        QMetaObject.connectSlotsByName(Settings)
+    # setupUi
+
+    def retranslateUi(self, Settings):
+        Settings.setWindowTitle(QCoreApplication.translate("Settings", u"Dialog", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.pageGeneral),
+                                 QCoreApplication.translate("Settings", u"General", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.pageLogging),
+                                 QCoreApplication.translate("Settings", u"Logging", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.pageFilter),
+                                 QCoreApplication.translate("Settings", u"Filter", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabGeneral),
+                                  QCoreApplication.translate("Settings", u"General", None))
+        self.tbPath.setItemText(self.tbPath.indexOf(self.pageProject),
+                                QCoreApplication.translate("Settings", u"Project", None))
+        self.tbPath.setItemText(self.tbPath.indexOf(self.pageExport),
+                                QCoreApplication.translate("Settings", u"Export", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPath),
+                                  QCoreApplication.translate("Settings", u"Path", None))
+        self.tbPlugins.setItemText(self.tbPlugins.indexOf(self.pagePlugins),
+                                   QCoreApplication.translate("Settings", u"Plugins", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabPlugins),
+                                  QCoreApplication.translate("Settings", u"Plugins", None))
+    # retranslateUi
+

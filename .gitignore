@@ -8,3 +8,5 @@
 **.ini
 test.*
 **.egg-info
+**.qm
+**/rc_som_gui.py
