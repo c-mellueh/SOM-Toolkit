@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 def create_main_menu_actions(predefined_pset: Type[tool.PredefinedPropertySet], main_window: Type[tool.MainWindow]):
     from som_gui.module.predefined_property_set import trigger
-    open_window_action = main_window.add_action2(None, "PredefinedPset", trigger.open_window)
+    open_window_action = main_window.add_action(None, "PredefinedPset", trigger.open_window)
     predefined_pset.set_action("open_window", open_window_action)
 
 

@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 def create_main_menu_actions(settings: Type[tool.Settings], main_window: Type[tool.MainWindow]) -> None:
     from som_gui.module.settings import trigger
-    action = main_window.add_action2("menuEdit", "Settings", trigger.open_window)
+    action = main_window.add_action("menuEdit", "Settings", trigger.open_window)
     settings.set_action("open_window", action)
 
 

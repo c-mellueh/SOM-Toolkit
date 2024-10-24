@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 def create_main_menu_actions(mapping: Type[tool.Mapping], main_window: Type[tool.MainWindow]):
     from som_gui.module.mapping import trigger
-    open_window_action = main_window.add_action2("menuExport", "Mapping", trigger.open_window)
+    open_window_action = main_window.add_action("menuExport", "Mapping", trigger.open_window)
     mapping.set_action("open_window", open_window_action)
 
 

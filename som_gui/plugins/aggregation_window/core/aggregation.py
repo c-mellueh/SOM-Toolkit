@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 def create_main_menu_actions(aggregation: Type[aw_tool.Aggregation], main_window: Type[tool.MainWindow]):
     from som_gui.plugins.aggregation_window.module.aggregation import trigger
-    open_window_action = main_window.add_action2("menuDesite", "Export BS", trigger.export_building_structure)
+    open_window_action = main_window.add_action("menuDesite", "Export BS", trigger.export_building_structure)
     aggregation.set_action("exportBS", open_window_action)
 
 

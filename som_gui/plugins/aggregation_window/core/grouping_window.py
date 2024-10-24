@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 def create_main_menu_actions(grouping_window: Type[aw_tool.GroupingWindow], main_window: Type[tool.MainWindow]):
     from som_gui.plugins.aggregation_window.module.grouping_window import trigger
-    action = main_window.add_action2("menuModels", "create_groups", trigger.open_window)
+    action = main_window.add_action("menuModels", "create_groups", trigger.open_window)
     grouping_window.set_action("create_groups", action)
 
 

@@ -18,7 +18,7 @@ import time
 
 def create_main_menu_actions(attribute_import: Type[tool.AttributeImport], main_window: Type[tool.MainWindow]):
     from som_gui.module.attribute_import import trigger
-    open_window_action = main_window.add_action2("menuModels", "IV", trigger.open_window)
+    open_window_action = main_window.add_action("menuModels", "IV", trigger.open_window)
     attribute_import.set_action("open_window", open_window_action)
 
 

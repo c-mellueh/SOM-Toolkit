@@ -91,7 +91,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return menu.addMenu(name)
 
     @classmethod
-    def add_action2(cls, parent_name: str, name: str, function: Callable) -> QAction:
+    def add_action(cls, parent_name: str, name: str, function: Callable) -> QAction:
         if parent_name:
             menu: QMenuBar | QMenu = getattr(cls.get_ui(), parent_name)
         else:

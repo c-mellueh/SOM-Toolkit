@@ -13,7 +13,7 @@ from PySide6.QtCore import QCoreApplication
 
 def create_main_menu_actions(window: Type[aw_tool.Window], main_window: Type[tool.MainWindow]):
     from som_gui.plugins.aggregation_window.module.window import trigger
-    action = main_window.add_action2(None, "BSWindow", trigger.open_window)
+    action = main_window.add_action(None, "BSWindow", trigger.open_window)
     window.set_action("open_window", action)
 
 

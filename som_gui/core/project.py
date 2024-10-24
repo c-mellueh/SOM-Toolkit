@@ -17,19 +17,19 @@ if TYPE_CHECKING:
 def create_main_menu_actions(project: Type[tool.Project], main_window: Type[tool.MainWindow]):
     from som_gui.module.project import trigger
 
-    action = main_window.add_action2("menuFile", "new", trigger.new_clicked)
+    action = main_window.add_action("menuFile", "new", trigger.new_clicked)
     project.set_action("new", action)
 
-    action = main_window.add_action2("menuFile", "open_project", trigger.open_clicked)
+    action = main_window.add_action("menuFile", "open_project", trigger.open_clicked)
     project.set_action("open_project", action)
 
-    action = main_window.add_action2("menuFile", "add_project", trigger.add_clicked)
+    action = main_window.add_action("menuFile", "add_project", trigger.add_clicked)
     project.set_action("add_project", action)
 
-    action = main_window.add_action2("menuFile", "save_project", trigger.save_clicked)
+    action = main_window.add_action("menuFile", "save_project", trigger.save_clicked)
     project.set_action("save_project", action)
 
-    action = main_window.add_action2("menuFile", "save_as_clicked", trigger.save_as_clicked)
+    action = main_window.add_action("menuFile", "save_as_clicked", trigger.save_as_clicked)
     project.set_action("save_as_clicked", action)
 
 

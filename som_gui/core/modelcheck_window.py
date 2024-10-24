@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 def create_main_menu_actions(modelcheck_window: Type[tool.ModelcheckWindow], main_window: Type[tool.MainWindow]):
     from som_gui.module.modelcheck_window import trigger
-    open_window_action = main_window.add_action2("menuModels", "modelcheck", trigger.open_window)
+    open_window_action = main_window.add_action("menuModels", "modelcheck", trigger.open_window)
     modelcheck_window.set_action("open_window", open_window_action)
 
 

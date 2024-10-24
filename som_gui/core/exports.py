@@ -20,25 +20,25 @@ names = [["Vestra", VESTRA_PATH, ],
 def create_main_menu_actions(exports: Type[tool.Exports], main_window: Type[tool.MainWindow]):
     from som_gui.module.exports import trigger
     name = "Vestra"
-    action = main_window.add_action2("menuExport", name, trigger.export_vestra)
+    action = main_window.add_action("menuExport", name, trigger.export_vestra)
     exports.set_action(name, action)
     name = "Card1"
-    action = main_window.add_action2("menuExport", name, trigger.export_card1)
+    action = main_window.add_action("menuExport", name, trigger.export_card1)
     exports.set_action(name, action)
     name = "Excel"
-    action = main_window.add_action2("menuExport", name, trigger.export_excel)
+    action = main_window.add_action("menuExport", name, trigger.export_excel)
     exports.set_action(name, action)
     name = "Allplan"
-    action = main_window.add_action2("menuExport", name, trigger.export_allplan)
+    action = main_window.add_action("menuExport", name, trigger.export_allplan)
     exports.set_action(name, action)
     name = "abbreviation"
-    action = main_window.add_action2("menuDesite", name, trigger.export_abbreviation)
+    action = main_window.add_action("menuDesite", name, trigger.export_abbreviation)
     exports.set_action(name, action)
     name = "bookmarks"
-    action = main_window.add_action2("menuDesite", name, trigger.export_bookmarks)
+    action = main_window.add_action("menuDesite", name, trigger.export_bookmarks)
     exports.set_action(name, action)
     name = "mapping_script"
-    action = main_window.add_action2("menuDesite", name, trigger.export_mapping_script)
+    action = main_window.add_action("menuDesite", name, trigger.export_mapping_script)
     exports.set_action(name, action)
 
 

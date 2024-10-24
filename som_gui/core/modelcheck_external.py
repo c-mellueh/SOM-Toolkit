@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 def create_main_menu_actions(modelcheck_external: Type[tool.ModelcheckExternal], main_window: Type[tool.MainWindow]):
     from som_gui.module.modelcheck_external import trigger
-    open_window_action = main_window.add_action2("menuExport", "modelcheck", trigger.open_window)
+    open_window_action = main_window.add_action("menuExport", "modelcheck", trigger.open_window)
     modelcheck_external.set_action("open_window", open_window_action)
 
 

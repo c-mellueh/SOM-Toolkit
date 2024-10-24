@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 def create_main_menu_actions(compare_window: Type[tool.CompareWindow], main_window: Type[tool.MainWindow]):
     from som_gui.module.compare import trigger
-    open_window_action = main_window.add_action2("menuFile", "Compare", trigger.open_window)
+    open_window_action = main_window.add_action("menuFile", "Compare", trigger.open_window)
     compare_window.set_action("open_window", open_window_action)
 
 

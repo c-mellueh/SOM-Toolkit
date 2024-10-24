@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 def create_main_menu_actions(filter_window: Type[tool.FilterWindow], main_window: Type[tool.MainWindow]):
     from som_gui.module.filter_window import trigger
-    action = main_window.add_action2("menuEdit", "FilterWindow", trigger.open_window)
+    action = main_window.add_action("menuEdit", "FilterWindow", trigger.open_window)
     filter_window.set_action("open_window", action)
 
 

@@ -12,7 +12,7 @@ from PySide6.QtCore import QCoreApplication, QLocale
 
 def create_main_menu_actions(main_window: Type[tool.MainWindow]):
     from som_gui.module.main_window import trigger
-    open_window_action = main_window.add_action2("menuEdit", "ToggleConsole", trigger.toggle_console)
+    open_window_action = main_window.add_action("menuEdit", "ToggleConsole", trigger.toggle_console)
     main_window.set_action("toggle_console", open_window_action)
 
 
