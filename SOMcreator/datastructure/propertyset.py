@@ -89,7 +89,7 @@ class PropertySet(Hirarchy):
             logging.error(f"Can't delete Propertyset {self.name} because it countains the identifier Attribute")
             return
 
-        super(PropertySet, self).delete()
+        super(PropertySet, self).delete(recursive)
         [attrib.delete(recursive) for attrib in list(self.get_attributes(filter=False)) if attrib]
         if self.object is not None:
             self.object.remove_property_set(self)

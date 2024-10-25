@@ -66,7 +66,9 @@ class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
     def delete_table_pset(cls):
         property_set = cls.get_selecte_property_set_from_table()
-        property_set.delete()
+        delete_request,delete_child= tool.Popups.req_delete_items([property_set.name],3)
+        if delete_request:
+            property_set.delete(recursive=delete_child)
 
     @classmethod
     def create_context_menu(cls, global_pos, function_list: list[list[str, Callable]]):

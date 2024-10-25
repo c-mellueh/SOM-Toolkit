@@ -236,7 +236,7 @@ class Hirarchy(object, metaclass=IterRegistry):
                 child.delete(recursive)
 
         else:
-            for child in self.get_children(filter=False):
+            for child in list(self.get_children(filter=False)):
                 child.remove_parent()
         self.project.remove_item(self)
         del self
