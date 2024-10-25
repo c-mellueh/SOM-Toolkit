@@ -38,7 +38,6 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
 
     @classmethod
     def connect_menu(cls, window: ui_window.AggregationWindow):
-        print("HIER")
         window.ui.actionAdd_View.triggered.connect(trigger.create_new_scene)
         window.ui.actionRename_View.triggered.connect(trigger.rename_view)
         window.ui.actionDelete_current_View.triggered.connect(trigger.delete_active_scene)

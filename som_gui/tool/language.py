@@ -52,7 +52,6 @@ class Language(som_gui.core.tool.Language):
             module_text = f"som_gui.plugins.{plugin_name}"
             try:
                 text = f"{module_text}.resources.translation"
-                print(text)
                 module = importlib.import_module(text)
                 module.load_language(app, lang_code)
             except ModuleNotFoundError:

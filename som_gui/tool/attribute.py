@@ -653,7 +653,6 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             change_list.append(['Child Inheritance', attrib0.child_inherits_values, attrib1.child_inherits_values])
 
         changed = QCoreApplication.translate("AttributeCompare", "was changed from")
-        print(changed)
         for t, v0, v1 in change_list:
             file.write(f"{'   ' * indent}{type_name} '{attrib0.name}' {t} {changed} '{v0}' to '{v1}'\n")
         return bool(change_list)

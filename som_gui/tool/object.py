@@ -602,7 +602,6 @@ class Object(som_gui.core.tool.Object):
 
     @classmethod
     def create_item(cls, obj: SOMcreator.Object):
-        print(obj)
         item = QTreeWidgetItem()
         item.object = obj  # item.setData(0,obj) leads to recursion bug so allocating directly
         item.setText(0, obj.name)

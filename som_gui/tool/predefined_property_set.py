@@ -236,7 +236,7 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
             if match:
                 pset_list.append((pset, match))
                 if match not in missing:
-                    print(match)
+                    pset_list.append((pset, None))
                 else:
                     missing.remove(match)
             else:
