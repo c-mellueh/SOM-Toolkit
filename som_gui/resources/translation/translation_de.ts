@@ -1926,7 +1926,7 @@ Achtung: Datei wird überschrieben!</translation>
         <location filename="../../module/property_set_window/qt/Window.ui" line="61"/>
         <location filename="../../module/property_set_window/qt/Window.ui" line="61"/>
         <source>+</source>
-        <translation>hinzufügen</translation>
+        <translation>+</translation>
     </message>
     <message>
         <location filename="../../tool/property_set_window.py" line="201"/>
