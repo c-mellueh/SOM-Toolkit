@@ -1,10 +1,11 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Type
 
-from SOMcreator.datastructure.som_json import ACTIVE_PHASES, ACTIVE_USECASES, AGGREGATION_ATTRIBUTE, \
-    AGGREGATION_PSET, AUTHOR, CURRENT_PR0JECT_PHASE, CURRENT_USE_CASE, FILTER_MATRIX, NAME, PROJECT, ProjectDict, \
-    MainDict, VERSION
 import SOMcreator
+from SOMcreator.datastructure.som_json import ACTIVE_PHASES, ACTIVE_USECASES, AGGREGATION_ATTRIBUTE, AGGREGATION_PSET, \
+    AUTHOR, CURRENT_PR0JECT_PHASE, CURRENT_USE_CASE, DESCRIPTION, FILTER_MATRIX, MainDict, NAME, PROJECT, ProjectDict, \
+    VERSION
 from . import core
 
 if TYPE_CHECKING:
@@ -75,7 +76,7 @@ def load(cls: Type[Project], main_dict: MainDict) -> tuple[Project, dict]:
     name: str = project_dict.get(NAME)
     author = project_dict.get(AUTHOR)
     version = project_dict.get(VERSION)
-
+    description = project_dict.get(DESCRIPTION) or ""
     aggregation_pset_name = project_dict.get(AGGREGATION_PSET)
     aggregation_attribute = project_dict.get(AGGREGATION_ATTRIBUTE)
 
@@ -85,6 +86,7 @@ def load(cls: Type[Project], main_dict: MainDict) -> tuple[Project, dict]:
 
     proj = cls(name, author, phase_list, use_case_list, filter_matrix)
     proj.version = version
+    proj.description = description
     if aggregation_pset_name is not None:
         proj.aggregation_pset = aggregation_pset_name
     if aggregation_attribute is not None:
