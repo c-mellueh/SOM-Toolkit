@@ -18,17 +18,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComboBox,
     QGridLayout, QHBoxLayout, QHeaderView, QLabel,
     QLineEdit, QPushButton, QScrollArea, QSizePolicy,
-                               QSplitter, QTableWidgetItem, QTextEdit, QVBoxLayout,
-                               QWidget)
+    QSplitter, QTableWidgetItem, QTextEdit, QVBoxLayout,
+    QWidget)
 
 from som_gui.module.attribute_table.ui import AttributeTable
-
 
 class Ui_PropertySetWindow(object):
     def setupUi(self, PropertySetWindow):
         if not PropertySetWindow.objectName():
             PropertySetWindow.setObjectName(u"PropertySetWindow")
-        PropertySetWindow.resize(996, 547)
+        PropertySetWindow.resize(994, 542)
         self.horizontalLayout = QHBoxLayout(PropertySetWindow)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.splitter_2 = QSplitter(PropertySetWindow)
@@ -58,7 +57,7 @@ class Ui_PropertySetWindow(object):
         sizePolicy.setHeightForWidth(self.button_add_line.sizePolicy().hasHeightForWidth())
         self.button_add_line.setSizePolicy(sizePolicy)
         self.button_add_line.setMinimumSize(QSize(15, 15))
-        self.button_add_line.setMaximumSize(QSize(15, 15))
+        self.button_add_line.setMaximumSize(QSize(24, 24))
 
         self.gridLayout.addWidget(self.button_add_line, 1, 4, 1, 1)
 
@@ -122,10 +121,11 @@ class Ui_PropertySetWindow(object):
         sizePolicy3.setVerticalStretch(1)
         sizePolicy3.setHeightForWidth(self.scroll_area.sizePolicy().hasHeightForWidth())
         self.scroll_area.setSizePolicy(sizePolicy3)
+        self.scroll_area.setMinimumSize(QSize(24, 24))
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area_content = QWidget()
         self.scroll_area_content.setObjectName(u"scroll_area_content")
-        self.scroll_area_content.setGeometry(QRect(0, 0, 489, 242))
+        self.scroll_area_content.setGeometry(QRect(0, 0, 487, 235))
         self.verticalLayout_2 = QVBoxLayout(self.scroll_area_content)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.scroll_area.setWidget(self.scroll_area_content)
@@ -198,6 +198,7 @@ class Ui_PropertySetWindow(object):
         self.table_widget.verticalHeader().setStretchLastSection(False)
 
         self.horizontalLayout.addWidget(self.splitter_2)
+
 
         self.retranslateUi(PropertySetWindow)
 

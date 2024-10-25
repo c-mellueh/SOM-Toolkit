@@ -9,14 +9,14 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialogButtonBox, QSizePolicy,
-                               QVBoxLayout, QWidget)
+    QVBoxLayout, QWidget)
 
 from som_gui.module.util.ui import (AttributeSelector, FileSelector, Progressbar)
 
@@ -54,10 +54,10 @@ class Ui_Aggregation(object):
 
         self.buttonBox = QDialogButtonBox(Aggregation)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setStandardButtons(
-            QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Cancel)
 
         self.verticalLayout.addWidget(self.buttonBox)
+
 
         self.retranslateUi(Aggregation)
 

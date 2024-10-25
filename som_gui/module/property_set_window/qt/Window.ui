@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>PropertySetWindow</class>
-    <widget class="QWidget" name="PropertySetWindow">
+ <class>PropertySetWindow</class>
+ <widget class="QWidget" name="PropertySetWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>996</width>
-    <height>547</height>
+    <width>994</width>
+    <height>542</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QSplitter" name="splitter_2">
      <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <widget class="QWidget" name="gridLayoutWidget">
       <layout class="QGridLayout" name="gridLayout">
@@ -30,12 +30,12 @@
           </size>
          </property>
          <property name="text">
-             <string>Values</string>
+          <string>Values</string>
          </property>
         </widget>
        </item>
        <item row="0" column="2">
-           <widget class="QComboBox" name="combo_type"/>
+        <widget class="QComboBox" name="combo_type"/>
        </item>
        <item row="1" column="4">
         <widget class="QPushButton" name="button_add_line">
@@ -53,8 +53,8 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>15</width>
-           <height>15</height>
+           <width>24</width>
+           <height>24</height>
           </size>
          </property>
          <property name="text">
@@ -65,14 +65,14 @@
        <item row="0" column="3" colspan="2">
         <widget class="QPushButton" name="button_add">
          <property name="text">
-             <string>Add</string>
+          <string>Add</string>
          </property>
         </widget>
        </item>
        <item row="1" column="2">
         <widget class="QCheckBox" name="check_box_seperator">
          <property name="text">
-             <string>Splitter</string>
+          <string>Splitter</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -82,12 +82,12 @@
        <item row="1" column="1">
         <widget class="QCheckBox" name="check_box_inherit">
          <property name="text">
-             <string>Inherit Values</string>
+          <string>Inherit Values</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-           <widget class="QComboBox" name="combo_data_type"/>
+        <widget class="QComboBox" name="combo_data_type"/>
        </item>
        <item row="1" column="3">
         <widget class="QLineEdit" name="line_edit_seperator">
@@ -140,7 +140,7 @@
        <item row="4" column="0" colspan="5">
         <widget class="QSplitter" name="splitter">
          <property name="orientation">
-             <enum>Qt::Orientation::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <widget class="QScrollArea" name="scroll_area">
           <property name="sizePolicy">
@@ -149,19 +149,25 @@
             <verstretch>1</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
-             <widget class="QWidget" name="scroll_area_content">
+          <widget class="QWidget" name="scroll_area_content">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-                <width>489</width>
-             <height>242</height>
+             <width>487</width>
+             <height>235</height>
             </rect>
            </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_2"/>
+           <layout class="QVBoxLayout" name="verticalLayout_2"/>
           </widget>
          </widget>
          <widget class="QTextEdit" name="description">
@@ -178,20 +184,20 @@
            </size>
           </property>
           <property name="autoFormatting">
-              <set>QTextEdit::AutoFormattingFlag::AutoAll</set>
+           <set>QTextEdit::AutoFormattingFlag::AutoAll</set>
           </property>
           <property name="readOnly">
            <bool>false</bool>
           </property>
           <property name="placeholderText">
-              <string>Description</string>
+           <string>Description</string>
           </property>
          </widget>
         </widget>
        </item>
       </layout>
      </widget>
-        <widget class="AttributeTable" name="table_widget">
+     <widget class="AttributeTable" name="table_widget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -204,20 +210,20 @@
         <height>0</height>
        </size>
       </property>
-            <property name="contextMenuPolicy">
-                <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
-            </property>
+      <property name="contextMenuPolicy">
+       <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
+      </property>
       <property name="editTriggers">
-          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+       <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
       </property>
       <property name="dragEnabled">
        <bool>true</bool>
       </property>
       <property name="dragDropMode">
-          <enum>QAbstractItemView::DragDropMode::DragDrop</enum>
+       <enum>QAbstractItemView::DragDropMode::DragDrop</enum>
       </property>
       <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+       <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
       </property>
       <property name="iconSize">
        <size>
@@ -279,7 +285,7 @@
       </column>
       <column>
        <property name="text">
-           <string>Datatype</string>
+        <string>Datatype</string>
        </property>
       </column>
       <column>
@@ -289,7 +295,7 @@
       </column>
       <column>
        <property name="text">
-           <string>Value</string>
+        <string>Value</string>
        </property>
       </column>
       <column>
@@ -322,13 +328,13 @@
    </item>
   </layout>
  </widget>
-    <customwidgets>
-        <customwidget>
-            <class>AttributeTable</class>
-            <extends>QTableWidget</extends>
-            <header>som_gui.module.attribute_table.ui</header>
-        </customwidget>
-    </customwidgets>
+ <customwidgets>
+  <customwidget>
+   <class>AttributeTable</class>
+   <extends>QTableWidget</extends>
+   <header>som_gui.module.attribute_table.ui</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

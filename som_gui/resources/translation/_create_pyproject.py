@@ -3,9 +3,9 @@ import os
 
 def list_files_in_directory(root_dir):
     for dirpath, dirnames, filenames in os.walk(root_dir):
-        if dirpath.startswith("..\plugins\\"):
+        if dirpath.startswith("..\\..\\plugins\\"):
+            print(f"Skipping {dirpath}")
             continue
-
         for file in filenames:
             if (
                     file.endswith(".py")
