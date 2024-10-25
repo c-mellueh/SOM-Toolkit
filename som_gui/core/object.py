@@ -35,7 +35,7 @@ def init_main_window(object_tool: Type[tool.Object], main_window: Type[tool.Main
     object_tool.add_object_activate_function(lambda o: object_tool.fill_object_attribute_line_edit(attribute_e, o))
     object_tool.add_object_activate_function(lambda o: main_window.get_ident_value_line_edit().setText(o.ident_value))
 
-    object_tool.add_objects_infos_add_function("name_getter", lambda: main_window.get_object_name_line_edit().text)
+    object_tool.add_objects_infos_add_function("name", main_window.get_object_name_line_edit().text)
     object_tool.add_objects_infos_add_function("is_group", lambda: False)
     object_tool.add_objects_infos_add_function("ident_pset_name", main_window.get_ident_pset_name_line_edit().text)
     object_tool.add_object_creation_check("ident_pset_name", object_tool.check_if_ident_pset_is_valid)

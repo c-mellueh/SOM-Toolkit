@@ -200,7 +200,12 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             for property_set0 in obj0.get_property_sets(filter=False):
                 match = cls.find_matching_entity(property_set0, property_set_uuid_dict1, property_set_name_dict1)
                 if match is not None:
-                    missing_property_sets1.remove(match)
+                    if match in missing_property_sets1:
+                        missing_property_sets1.remove(match)
+                    else:
+                        pset_list.append((property_set0, None))
+                        cls.compare_property_sets(property_set0, None)
+                        continue
                 cls.compare_property_sets(property_set0, match)
                 pset_list.append((property_set0, match))
 
@@ -477,7 +482,11 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             if match is None:
                 match = name_dict.get(name_path)
             if match is not None:
-                missing.remove(match)
+                if match in missing:
+                    missing.remove(match)
+                else:
+                    result_list.append((pset, None))
+                    continue
             result_list.append((pset, match))
         for pset in missing:
             result_list.append((None, pset))
