@@ -1,3 +1,5 @@
+import copy
+
 import SOMcreator
 from SOMcreator import Project, UseCase, Phase
 
@@ -66,7 +68,7 @@ def _add_item(existing_project: SOMcreator.Project, import_project: SOMcreator.P
                                  use_case_mapping)
     existing_project.add_item(item)
     item._project = existing_project
-    item._filter_matrix = new_filter_matrix
+    item._filter_matrix = copy.deepcopy(new_filter_matrix)
 
 
 def _import_object(existing_project: SOMcreator.Project, import_project: SOMcreator.Project, obj: SOMcreator.Object,

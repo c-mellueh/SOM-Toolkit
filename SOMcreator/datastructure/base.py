@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+import copy
+
 from SOMcreator.constants import value_constants
 import SOMcreator
 from typing import Iterator, Callable
@@ -51,9 +54,11 @@ class Hirarchy(object, metaclass=IterRegistry):
 
         self._project = project
         project.add_item(self)
-        self._filter_matrix = filter_matrix
-        if self._filter_matrix is None:
-            self._filter_matrix = project.create_filter_matrix(True)
+
+        if filter_matrix is None:
+            filter_matrix = project.create_filter_matrix(True)
+
+        self._filter_matrix = copy.deepcopy(filter_matrix)
         self._parent = None
         self._children = set()
         self._name = name
@@ -73,7 +78,7 @@ class Hirarchy(object, metaclass=IterRegistry):
         self._parent = None
 
     def get_filter_matrix(self):
-        return self._filter_matrix
+        return copy.deepcopy(self._filter_matrix)
 
     def get_filter_state(self, phase: SOMcreator.Phase, use_case: SOMcreator.UseCase) -> bool | None:
         if self.project:
@@ -90,7 +95,7 @@ class Hirarchy(object, metaclass=IterRegistry):
             use_case_index = self.project.get_use_case_index(use_case)
         if phase_index is None or use_case_index is None:
             return None
-        return self._filter_matrix[phase_index][use_case_index]
+        return bool(self._filter_matrix[phase_index][use_case_index])
 
     def set_filter_state(self, phase: SOMcreator.Phase, use_case: SOMcreator.UseCase, value: bool) -> None:
         phase_index = self.project.get_phase_index(phase)
