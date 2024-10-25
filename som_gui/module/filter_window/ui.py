@@ -6,6 +6,7 @@ from typing import Callable
 from PySide6.QtCore import QAbstractItemModel, QAbstractTableModel, QCoreApplication, QModelIndex, Qt
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTableView, QTreeView, QWidget
+from ifcopenshell.express.rules.IFC4X1 import project
 
 import SOMcreator
 import som_gui
@@ -229,6 +230,7 @@ class TreeModel(QAbstractItemModel):
             return False
 
         phase, usecase = self.get_allowed_combinations()[index.column() - self.check_column_index]
+        logging.debug(f"Set {node} {phase.name}:{usecase.name} to {bool(value)}")
         node.set_filter_state(phase, usecase, bool(value))
         trigger.update_object_tree()
         trigger.update_pset_tree()

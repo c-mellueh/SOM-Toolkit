@@ -9,39 +9,6 @@ if TYPE_CHECKING:
     from SOMcreator import Project
     from SOMcreator.datastructure.som_json import ObjectDict, MainDict
 
-
-### Import ###
-
-def _load_object(proj: SOMcreator.Project, object_dict: ObjectDict, identifier: str) -> SOMcreator.Object:
-    name, description, optional, parent, filter_matrix = core.get_basics(proj, object_dict, identifier)
-    ifc_mapping = object_dict[IFC_MAPPINGS]
-    if isinstance(ifc_mapping, list):
-        ifc_mapping = set(ifc_mapping)
-
-    abbreviation = object_dict.get(ABBREVIATION)
-
-    obj = SOMcreator.Object(name=name, ident_attrib=None, uuid=identifier, ifc_mapping=ifc_mapping,
-                         description=description, optional=optional, abbreviation=abbreviation, project=proj,
-                         filter_matrix=filter_matrix)
-    property_sets_dict = object_dict[PROPERTY_SETS]
-    for ident, pset_dict in property_sets_dict.items():
-        property_set.load(proj, pset_dict, ident, obj)
-    ident_attrib_id = object_dict[IDENT_ATTRIBUTE]
-    if ident_attrib_id is not None:
-        ident_attrib = SOMcreator.exporter.som_json.attribute_uuid_dict[ident_attrib_id]
-        obj.ident_attrib = ident_attrib
-    SOMcreator.exporter.som_json.parent_dict[obj] = parent
-    SOMcreator.exporter.som_json.object_uuid_dict[identifier] = obj
-
-def load(proj: Project, main_dict: dict):
-    objects_dict: dict[str, ObjectDict] = main_dict.get(OBJECTS)
-    core.remove_part_of_dict(OBJECTS)
-
-    objects_dict = dict() if core.check_dict(objects_dict, OBJECTS) else objects_dict
-
-    for uuid_ident, entity_dict in objects_dict.items():
-        _load_object(proj, entity_dict, uuid_ident)
-
 ### Export ###
 def _write_object(element: SOMcreator.Object) -> ObjectDict:
     object_dict: ObjectDict = dict()

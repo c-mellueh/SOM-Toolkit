@@ -26,7 +26,7 @@ def retranslate_ui(filter_window: Type[tool.FilterWindow], ):
     action.setText(QCoreApplication.translate("FilterWindow", "Project Filter"))
 
     if filter_window.get():
-        filter_window.get().retranslate_ui()
+        filter_window.get().ui.retranslateUi(filter_window.get())
     if filter_window.get_object_tree():
         filter_window.get_object_tree().model().retranslate_ui()
     if filter_window.get_pset_tree():
