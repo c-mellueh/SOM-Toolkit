@@ -75,6 +75,9 @@ class Hirarchy(object, metaclass=IterRegistry):
             self._optional = optional
 
     def remove_parent(self) -> None:
+        if self.parent is not None:
+            if self in self.parent._children:
+                self.parent.remove_child(self)
         self._parent = None
 
     def get_filter_matrix(self):

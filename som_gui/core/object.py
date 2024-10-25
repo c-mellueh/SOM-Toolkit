@@ -218,12 +218,17 @@ def item_selection_changed(object_tool: Type[Object], property_set_tool: Type[Pr
 def item_dropped_on(pos: QPoint, object_tool: Type[Object]):
     selected_items = object_tool.get_selected_items()
     dropped_on_item = object_tool.get_item_from_pos(pos)
+    dropped_objects = [object_tool.get_object_from_item(item) for item in selected_items]
+    dropped_objects = [o for o in dropped_objects if o.parent not in dropped_objects or o.parent is None]
     if dropped_on_item is None:
+        for obj in dropped_objects:
+            obj.remove_parent()
         return
     dropped_on_object = object_tool.get_object_from_item(dropped_on_item)
+
     if not object_tool.drop_indication_pos_is_on_item():
         dropped_on_object = dropped_on_object.parent
-    dropped_objects = [object_tool.get_object_from_item(item) for item in selected_items]
+
     for obj in dropped_objects:
         if dropped_on_object is None:
             obj.remove_parent()
