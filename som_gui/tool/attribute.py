@@ -42,13 +42,13 @@ class Attribute(som_gui.core.tool.Attribute):
 
     @classmethod
     def add_attribute_data_value(cls, name: str, getter: Callable, setter: Callable):
-        prop = cls.get_attribute_properties()
+        prop = cls.get_properties()
         prop.attribute_data_dict[name] = {"getter": getter,
                                           "setter": setter}
 
     @classmethod
     def get_attribute_data(cls, attribute: SOMcreator.Attribute) -> dict[str, Any]:
-        prop = cls.get_attribute_properties()
+        prop = cls.get_properties()
         d = dict()
         for name, data_dict in prop.attribute_data_dict.items():
             value = data_dict["getter"](attribute)
@@ -57,7 +57,7 @@ class Attribute(som_gui.core.tool.Attribute):
 
     @classmethod
     def set_attribute_data(cls, attribute: SOMcreator, data_dict: dict[str, str | list]):
-        prop = cls.get_attribute_properties()
+        prop = cls.get_properties()
         for name, value in data_dict.items():
             d = prop.attribute_data_dict.get(name)
             if not d:
@@ -114,7 +114,7 @@ class Attribute(som_gui.core.tool.Attribute):
         attribute.set_optional(optional)
 
     @classmethod
-    def get_attribute_properties(cls) -> AttributeProperties:
+    def get_properties(cls) -> AttributeProperties:
         return som_gui.AttributeProperties
 
     @classmethod
