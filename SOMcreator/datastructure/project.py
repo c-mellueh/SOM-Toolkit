@@ -29,14 +29,14 @@ class Project(object):
         self.import_dict = dict()
 
         if phases is None:
-            self._phases = [SOMcreator.Phase("Stand", "Standard", "Automatisch generiert. Bitte umbenennen")]
+            self._phases = [SOMcreator.Phase("Stand", "Standard", "Auto-Generated. Please Rename")]
         else:
             self._phases = phases
 
         self.active_phases = [0]
 
         if not use_case:
-            self._use_cases = [SOMcreator.UseCase("Stand", "Standard", "Automatisch generiert. Bitte umbenennen")]
+            self._use_cases = [SOMcreator.UseCase("Stand", "Standard", "Auto-Generated. Please Rename")]
         else:
             self._use_cases = use_case
         if filter_matrix is None:
