@@ -32,6 +32,8 @@ def add_basic_attribute_data(attribute_tool: Type[tool.Attribute]):
                                             attribute_tool.set_inherit_state)
 
 
+# Attribute Compare
+
 def add_attribute_compare_widget(attribute_compare: Type[tool.AttributeCompare],
                                  compare_window: Type[tool.CompareWindow]):
     """
@@ -43,7 +45,34 @@ def add_attribute_compare_widget(attribute_compare: Type[tool.AttributeCompare],
                            attribute_compare, trigger.export_attribute_differences)
 
 
+def init_attribute_compare(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
+    """
+    Sets up the Attribute Compare Widget to function propertly
+    """
+    attribute_compare.set_projects(project0, project1)  #defines which projects will be compared
+    attribute_compare.create_object_lists()
+    widget = attribute_compare.create_widget()
+    object_tree_widget = attribute_compare.get_object_tree(widget)
+    pset_tree = attribute_compare.get_pset_tree(widget)
+    value_table = attribute_compare.get_value_table(widget)
+    info_table = attribute_compare.get_info_table(widget)
+    attribute_compare.fill_object_tree(object_tree_widget, add_missing=True)
+    root = object_tree_widget.invisibleRootItem()
+    for child_index in range(root.childCount()):
+        attribute_compare.style_tree_item(root.child(child_index))
+
+    header_labels = [attribute_compare.get_header_name_from_project(project0),
+                     attribute_compare.get_header_name_from_project(project1)]
+    attribute_compare.set_header_labels([object_tree_widget, pset_tree], [value_table], header_labels)
+    attribute_compare.set_header_labels([], [info_table], ["Name"] + header_labels)
+
+    attribute_compare.create_tree_selection_trigger(widget)
+
+
 def export_attribute_differences(file, attribute_compare: Type[tool.AttributeCompare]):
+    """
+    Write All found differences between Attributes in file
+    """
     objects0: list[SOMcreator.Object] = attribute_compare.get_missing_objects(0)
     objects1: list[SOMcreator.Object] = attribute_compare.get_missing_objects(1)
     title = QCoreApplication.translate("Compare", "ATTRIBUTE COMPARISON")
@@ -64,29 +93,11 @@ def export_attribute_differences(file, attribute_compare: Type[tool.AttributeCom
     attribute_compare.export_object_differences(file)
 
 
-def init_attribute_compare(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
-    attribute_compare.set_projects(project0, project1)
-    attribute_compare.create_object_lists()
-    widget = attribute_compare.create_widget()
-    object_tree_widget = attribute_compare.get_object_tree(widget)
-    pset_tree = attribute_compare.get_pset_tree(widget)
-    value_table = attribute_compare.get_value_table(widget)
-    info_table = attribute_compare.get_info_table(widget)
-    attribute_compare.fill_object_tree(object_tree_widget, add_missing=True)
-    root = object_tree_widget.invisibleRootItem()
-    for child_index in range(root.childCount()):
-        attribute_compare.style_tree_item(root.child(child_index))
-
-    header_labels = [attribute_compare.get_header_name_from_project(project0),
-                     attribute_compare.get_header_name_from_project(project1)]
-    attribute_compare.set_header_labels([object_tree_widget, pset_tree], [value_table], header_labels)
-    attribute_compare.set_header_labels([], [info_table], ["Name"] + header_labels)
-
-    attribute_compare.create_tree_selection_trigger(widget)
-
-
 def object_tree_selection_changed(widget: ui.AttributeWidget,
                                   attribute_compare: Type[tool.AttributeCompare]):
+    """
+    Selection handling of Object Tree in Attribute Compare Widget
+    """
     attribute_compare.clear_table(attribute_compare.get_info_table(widget))
     attribute_compare.clear_table(attribute_compare.get_value_table(widget))
     obj = attribute_compare.get_selected_entity(attribute_compare.get_object_tree(widget))
@@ -101,6 +112,9 @@ def object_tree_selection_changed(widget: ui.AttributeWidget,
 
 
 def pset_tree_selection_changed(widget: ui.AttributeWidget, attribute_compare: Type[tool.AttributeCompare]):
+    """
+    Selection Handling of PSetTree in Attribute Compare Widget
+    """
     item = attribute_compare.get_selected_item(attribute_compare.get_pset_tree(widget))
     entity0, entity1 = attribute_compare.get_entities_from_item(item)
     attribute_compare.style_table(attribute_compare.get_value_table(widget))
