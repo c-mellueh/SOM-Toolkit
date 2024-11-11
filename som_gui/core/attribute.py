@@ -34,6 +34,9 @@ def add_basic_attribute_data(attribute_tool: Type[tool.Attribute]):
 
 def add_attribute_compare_widget(attribute_compare: Type[tool.AttributeCompare],
                                  compare_window: Type[tool.CompareWindow]):
+    """
+    add Attribute-Tab to CompareWidget
+    """
     from som_gui.module.attribute import trigger
     name_getter = lambda: QCoreApplication.translate("Compare", "Attributes")
     compare_window.add_tab(name_getter, attribute_compare.create_widget, trigger.init_attribute_compare,
