@@ -214,8 +214,8 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         return cls.get_properties().context_menu_builders
 
     @classmethod
-    def add_context_menu_builder(cls, callable: Callable):
-        cls.get_properties().context_menu_builders.append(callable)
+    def add_context_menu_builder(cls, c: Callable):
+        cls.get_properties().context_menu_builders.append(c)
 
     @classmethod
     def context_menu_rename_builder(cls, table: ui.AttributeTable):

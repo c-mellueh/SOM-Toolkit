@@ -1,3 +1,4 @@
+
 class Appdata:
     def _get_config(self, ): pass
 
@@ -94,6 +95,8 @@ class AttributeCompare:
     def create_object_lists(self, ): pass
 
     def create_tree_selection_trigger(self, widget): pass
+
+    def create_widget(self, ): pass
 
     def export_attribute_check(self, file, type_name, attrib0, attrib1, indent): pass
 
@@ -207,19 +210,15 @@ class AttributeCompare:
 
 
 class AttributeImport:
-    def add_ifc_importer_to_window(self, ifc_importer): pass
-
     def attribute_import_is_running(self, ): pass
 
     def connect_attribute_import_runner(self, runner): pass
 
     def connect_ifc_import_runner(self, runner): pass
 
-    def connect_import_buttons(self, ): pass
-
     def create_attribute_import_runner(self, runner): pass
 
-    def create_ifc_import_window(self, ): pass
+    def create_ifc_import_window(self, ifc_importer): pass
 
     def create_import_runner(self, ifc_import_path): pass
 
@@ -407,7 +406,7 @@ class AttributeTable:
 
     def add_column_to_table(self, name, get_function): pass
 
-    def add_context_menu_builder(self, callable): pass
+    def add_context_menu_builder(self, c): pass
 
     def add_parent_of_selected_attribute(self, table): pass
 
@@ -533,7 +532,7 @@ class CompareProjectSelector:
 
 
 class CompareWindow:
-    def add_tab(self, name, widget, init_func, _tool, export_func): pass
+    def add_tab(self, name_getter, widget, init_func, _tool, export_func): pass
 
     def connect_triggers(self, ): pass
 
@@ -693,7 +692,7 @@ class FilterWindow:
 
     def remove_usecase(self, usecase, project): pass
 
-    def rename_filter(self, filter): pass
+    def rename_filter(self, filter_): pass
 
     def set_action(self, name, action): pass
 
@@ -742,6 +741,24 @@ class IfcImporter:
     def set_status(self, widget, status): pass
 
 
+class Language:
+    def get_language(self, ): pass
+
+    def get_properties(self, ): pass
+
+    def get_system_language(self, ): pass
+
+    def get_widget(self, ): pass
+
+    def set_language(self, code): pass
+
+    def set_widget(self, widget): pass
+
+    def translate_main_ui(self, app, lang_code): pass
+
+    def translate_plugins(self, plugin_names, app, lang_code): pass
+
+
 class Logging:
     def create_console_handler(self, ): pass
 
@@ -779,9 +796,7 @@ class Logging:
 
 
 class MainWindow:
-    def add_action(self, menu_path, function): pass
-
-    def add_action2(self, parent_name, name, function): pass
+    def add_action(self, parent_name, name, function): pass
 
     def add_submenu(self, parent_name, name): pass
 
@@ -802,8 +817,6 @@ class MainWindow:
     def get_ident_value_line_edit(self, ): pass
 
     def get_menu_bar(self, ): pass
-
-    def get_menu_dict(self, ): pass
 
     def get_object_name_horizontal_layout(self, ): pass
 
@@ -848,6 +861,8 @@ class Mapping:
     def create_child(self, entity): pass
 
     def create_export_dict(self, root_objects): pass
+
+    def create_window(self, ): pass
 
     def disable_all_child_entities(self, item, disabled): pass
 
@@ -1155,7 +1170,7 @@ class ModelcheckWindow:
 
     def reset_butons(self, ): pass
 
-    def resize_object_tree(self, ): pass
+    def resize_object_tree(self, tree): pass
 
     def set_action(self, name, action): pass
 
@@ -1273,8 +1288,7 @@ class Object:
 
     def is_identifier_allowed(self, identifier, ignore): pass
 
-    def oi_add_plugin_entry(self, key, layout_name, widget, index, init_value_getter, widget_value_getter,
-                            widget_value_setter, test_function, value_setter): pass
+    def oi_add_plugin_entry(self, key, layout_name, widget, index, init_value_getter, widget_value_getter, widget_value_setter, test_function, value_setter): pass
 
     def oi_change_visibility_identifiers(self, hide): pass
 
@@ -1328,8 +1342,6 @@ class Plugins:
 
     def is_plugin_active(self, plugin_name): pass
 
-    def load_translations(self, app, lang): pass
-
     def set_plugin_active(self, plugin_name, state): pass
 
     def set_settings_widget(self, widget): pass
@@ -1369,10 +1381,6 @@ class Popups:
     def request_property_set_merge(self, name, mode): pass
 
     def request_save_before_exit(self, ): pass
-
-
-class Language:
-    pass
 
 
 class PredefinedPropertySet:
@@ -1454,7 +1462,7 @@ class PredefinedPropertySetCompare:
 
     def set_predefined_psets(self, psets0, psets1): pass
 
-    def set_pset_lists(self, list): pass
+    def set_pset_lists(self, pset_lists): pass
 
 
 class Project:
@@ -1462,7 +1470,7 @@ class Project:
 
     def create_combobox(self, filter_1): pass
 
-    def create_mapping_window(self, filter_1, filter_2): pass
+    def create_mapping_window(self, title, filter_1, filter_2): pass
 
     def create_project(self, ): pass
 
@@ -1476,7 +1484,7 @@ class Project:
 
     def get_mapping_from_table(self, table): pass
 
-    def get_phase_mapping(self, p1, p2): pass
+    def get_phase_mapping(self, title, p1, p2): pass
 
     def get_phases(self, ): pass
 
@@ -1490,13 +1498,13 @@ class Project:
 
     def get_settings_path_widget(self, ): pass
 
-    def get_use_case_mapping(self, p1, p2): pass
+    def get_use_case_mapping(self, title, p1, p2): pass
 
     def get_use_cases(self, ): pass
 
     def load_project(self, path): pass
 
-    def merge_projects(self, project_1, project_2): pass
+    def merge_projects(self, title, project_1, project_2): pass
 
     def set_action(self, name, action): pass
 
@@ -1720,13 +1728,11 @@ class Util:
 
     def create_directory(self, path): pass
 
-    def create_file_selector(self, name, file_extension, appdata_text, request_folder, request_save,
-                             single_request): pass
+    def create_file_selector(self, name, file_extension, appdata_text, request_folder, request_save, single_request): pass
 
     def create_tempfile(self, suffix): pass
 
-    def fill_file_selector(self, widget, name, file_extension, appdata_text, request_folder, request_save,
-                           single_request, update_appdata): pass
+    def fill_file_selector(self, widget, name, file_extension, appdata_text, request_folder, request_save, single_request, update_appdata): pass
 
     def fill_main_attribute(self, widget, pset_name, attribute_name, pset_placeholder, attribute_placeholder): pass
 
@@ -1740,9 +1746,9 @@ class Util:
 
     def get_properties(self, ): pass
 
-    def get_status_text(self, ): pass
-
     def get_text_from_combobox(self, combobox): pass
+
+    def get_window_title(self, window_name): pass
 
     def menu_bar_add_action(self, menu_bar, menu_dict, menu_path, function): pass
 
@@ -1753,3 +1759,4 @@ class Util:
     def request_path(self, widget): pass
 
     def transform_guid(self, guid, add_zero_width): pass
+

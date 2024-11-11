@@ -1,6 +1,6 @@
 import inspect
 import sys
-
+import som_gui.tool
 
 def get_class_methods_and_params(cls, file):
     methods = inspect.getmembers(cls, predicate=inspect.ismethod)
@@ -20,6 +20,5 @@ def main(file):
 
 if __name__ == "__main__":
     file_path = "core/tool.py"
-
     with open(file_path, "w") as f:
         main(f)

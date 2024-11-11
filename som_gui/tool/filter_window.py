@@ -128,13 +128,13 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         model.endRemoveRows()
 
     @classmethod
-    def rename_filter(cls, filter: SOMcreator.UseCase | SOMcreator.Phase):
+    def rename_filter(cls, filter_: SOMcreator.UseCase | SOMcreator.Phase):
         title = QCoreApplication.translate("FilterWindow", "Edit Header")
         text = QCoreApplication.translate("FilterWindow", "Enter new header title:")
 
-        new_name, ok = QInputDialog.getText(cls.get(), title, text, QLineEdit.EchoMode.Normal, filter.name)
+        new_name, ok = QInputDialog.getText(cls.get(), title, text, QLineEdit.EchoMode.Normal, filter_.name)
         if ok:
-            filter.name = new_name
+            filter_.name = new_name
 
     @classmethod
     def create_context_menu(cls, menu_list: list[tuple[str, Callable]], pos):

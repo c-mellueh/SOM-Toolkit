@@ -267,8 +267,8 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
         return cls.get_properties().predefined_psets[index]
 
     @classmethod
-    def set_pset_lists(cls, list: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]) -> None:
-        cls.get_properties().pset_lists = list
+    def set_pset_lists(cls, pset_lists: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]) -> None:
+        cls.get_properties().pset_lists = pset_lists
 
     @classmethod
     def get_pset_lists(cls) -> list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]:
