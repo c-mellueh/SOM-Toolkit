@@ -56,7 +56,7 @@ class Attribute(som_gui.core.tool.Attribute):
         return d
 
     @classmethod
-    def set_attribute_data(cls, attribute: SOMcreator, data_dict: dict[str, str | list]):
+    def set_attribute_data_by_dict(cls, attribute: SOMcreator, data_dict: dict[str, str | list]):
         prop = cls.get_properties()
         for name, value in data_dict.items():
             d = prop.attribute_data_dict.get(name)
@@ -126,7 +126,7 @@ class Attribute(som_gui.core.tool.Attribute):
         value_type = attribute_data["value_type"]
         inherit = attribute_data["inherit_value"]
         attribute = SOMcreator.Attribute(property_set, name, values, value_type, child_inherits_values=inherit)
-        cls.set_attribute_data(attribute, attribute_data)
+        cls.set_attribute_data_by_dict(attribute, attribute_data)
         return attribute
 
 

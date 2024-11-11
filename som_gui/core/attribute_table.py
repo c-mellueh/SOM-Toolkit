@@ -51,7 +51,7 @@ def drop_event(event: QDropEvent, table: ui.AttributeTable, property_set_window:
             existing_attribute = existing_attributes.get(attribute.name)
             if existing_attribute:
                 data = attribute_tool.get_attribute_data(attribute)
-                attribute_tool.set_attribute_data(existing_attribute, data)
+                attribute_tool.set_attribute_data_by_dict(existing_attribute, data)
             else:
                 attribute = copy.copy(attribute)
                 attribute.remove_parent()

@@ -12,6 +12,10 @@ if TYPE_CHECKING:
 
 
 def add_basic_attribute_data(attribute_tool: Type[tool.Attribute]):
+    """
+    defines Data which every Attribute needs. The Data is stored in a dictionary with getter and setter functions.
+    You can use set_attribute_data_by_dict to fill an Attribute with values like name, data_type,etc...
+    """
     attribute_tool.add_attribute_data_value("name", attribute_tool.get_attribute_name,
                                             attribute_tool.set_attribute_name)
     attribute_tool.add_attribute_data_value("data_type", attribute_tool.get_attribute_data_type,
