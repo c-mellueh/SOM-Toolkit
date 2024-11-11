@@ -52,9 +52,15 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             attribute.name = answer
 
     @classmethod
-    def delete_selected_attributes(cls, table: ui.AttributeTable, delete_subattributes=False):
+    def delete_selected_attributes(cls, table: ui.AttributeTable, with_child=False):
+        """
+        delete selected Attributes
+        :param with_child: recursive deletion of child elements
+        """
         attributes = cls.get_selected_attributes(table)
-        tool.Attribute.delete(attributes, delete_subattributes)
+        for attribute in attributes:
+            attribute.delete(with_child)
+        tool.Attribute.delete(attributes, with_child)
 
     @classmethod
     def remove_parent_of_selected_attribute(cls, table: ui.AttributeTable) -> None:
@@ -236,7 +242,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         if ident_attrib in selected_attributes:
             return None
 
-        return [name, lambda: cls.delete_selected_attributes(table, delete_subattributes=False)]
+        return [name, lambda: cls.delete_selected_attributes(table, with_child=False)]
 
     @classmethod
     def context_menu_delete_subattributes_builder(cls, table: ui.AttributeTable):
@@ -251,7 +257,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
         if not all(a.is_parent for a in selected_attributes):
             return None
-        return [name, lambda: cls.delete_selected_attributes(table, delete_subattributes=True)]
+        return [name, lambda: cls.delete_selected_attributes(table, with_child=True)]
 
     @classmethod
     def context_menu_remove_connection_builder(cls, table: ui.AttributeTable):

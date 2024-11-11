@@ -18,7 +18,6 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 if TYPE_CHECKING:
     from som_gui.module.attribute.prop import AttributeProperties, CompareAttributesProperties
 
-
 style_list = [
     [None, [0, 1]],
     ["#897e00", [0, 1]],  # Yellow  ->  Data changed
@@ -27,25 +26,10 @@ style_list = [
 ]
 
 
-
-
 class Attribute(som_gui.core.tool.Attribute):
     @classmethod
     def get_properties(cls) -> AttributeProperties:
         return som_gui.AttributeProperties
-
-    @classmethod
-    def set_inherit_state(cls, state: bool, attribute: SOMcreator.Attribute):
-        attribute.child_inherits_values = state
-
-    @classmethod
-    def get_inherit_state(cls, attribute: SOMcreator.Attribute):
-        return attribute.child_inherits_values
-
-    @classmethod
-    def delete(cls, attributes: set[SOMcreator.Attribute], with_subattributes=False):
-        for attribute in attributes:
-            attribute.delete(with_subattributes)
 
     @classmethod
     def add_attribute_data_value(cls, name: str, getter: Callable, setter: Callable):
@@ -55,6 +39,11 @@ class Attribute(som_gui.core.tool.Attribute):
 
     @classmethod
     def get_attribute_data(cls, attribute: SOMcreator.Attribute) -> dict[str, Any]:
+        """
+        creates dictionary of attribute with Data_name as Key and getter/setter as Value
+        :param attribute:
+        :return: AttributeData dictionary {Data_name:{'getter':Callable, 'setter':Callable},...}
+        """
         prop = cls.get_properties()
         d = dict()
         for name, data_dict in prop.attribute_data_dict.items():
@@ -63,7 +52,12 @@ class Attribute(som_gui.core.tool.Attribute):
         return d
 
     @classmethod
-    def set_attribute_data_by_dict(cls, attribute: SOMcreator, data_dict: dict[str, str | list]):
+    def set_attribute_data_by_dict(cls, attribute: SOMcreator.Attribute, data_dict: dict[str, str | list]) -> None:
+        """
+        fill Attribute Values by an Attribute Datadict
+        :param attribute: Attribute of class SOMcreator.Attribute
+        :param data_dict: AttributeData dictionary {Data_name:{'getter':Callable, 'setter':Callable},...}
+        """
         prop = cls.get_properties()
         for name, value in data_dict.items():
             d = prop.attribute_data_dict.get(name)
@@ -71,56 +65,6 @@ class Attribute(som_gui.core.tool.Attribute):
                 logging.warning(f"data {name} not found")
                 continue
             d["setter"](value, attribute)
-
-    @classmethod
-    def get_attribute_name(cls, attribute: SOMcreator.Attribute):
-        return attribute.name
-
-    @classmethod
-    def set_attribute_name(cls, value: str, attribute: SOMcreator.Attribute):
-        attribute.name = value
-
-    @classmethod
-    def get_attribute_data_type(cls, attribute: SOMcreator.Attribute):
-        return attribute.data_type
-
-    @classmethod
-    def set_attribute_data_type(cls, value: str, attribute: SOMcreator.Attribute):
-        attribute.data_type = value
-
-    @classmethod
-    def get_attribute_value_type(cls, attribute: SOMcreator.Attribute):
-        return attribute.value_type
-
-    @classmethod
-    def set_attribute_value_type(cls, value: str, attribute: SOMcreator.Attribute):
-        attribute.value_type = value
-
-    @classmethod
-    def get_attribute_values(cls, attribute: SOMcreator.Attribute):
-        return attribute.value
-
-    @classmethod
-    def set_attribute_values(cls, value: str, attribute: SOMcreator.Attribute):
-        attribute.value = value
-
-    @classmethod
-    def get_attribute_description(cls, attribute: SOMcreator.Attribute):
-        return attribute.description
-
-    @classmethod
-    def set_attribute_description(cls, value: str, attribute: SOMcreator.Attribute):
-        attribute.description = value
-
-    @classmethod
-    def is_attribute_optional(cls, attribute: SOMcreator.Attribute):
-        return attribute.is_optional(ignore_hirarchy=True)
-
-    @classmethod
-    def set_attribute_optional(cls, optional: bool, attribute: SOMcreator.Attribute):
-        attribute.set_optional(optional)
-
-
 
     @classmethod
     def create_attribute(cls, property_set: SOMcreator.PropertySet, attribute_data: dict[str, str | list | bool]):

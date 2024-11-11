@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Type,Callable
 
 from PySide6.QtCore import QCoreApplication
 
@@ -16,20 +16,13 @@ def add_basic_attribute_data(attribute_tool: Type[tool.Attribute]):
     defines Data which every Attribute needs. The Data is stored in a dictionary with getter and setter functions.
     You can use set_attribute_data_by_dict to fill an Attribute with values like name, data_type,etc...
     """
-    attribute_tool.add_attribute_data_value("name", attribute_tool.get_attribute_name,
-                                            attribute_tool.set_attribute_name)
-    attribute_tool.add_attribute_data_value("data_type", attribute_tool.get_attribute_data_type,
-                                            attribute_tool.set_attribute_data_type)
-    attribute_tool.add_attribute_data_value("value_type", attribute_tool.get_attribute_value_type,
-                                            attribute_tool.set_attribute_value_type)
-    attribute_tool.add_attribute_data_value("values", attribute_tool.get_attribute_values,
-                                            attribute_tool.set_attribute_values)
-    attribute_tool.add_attribute_data_value("description", attribute_tool.get_attribute_description,
-                                            attribute_tool.set_attribute_description)
-    attribute_tool.add_attribute_data_value("optional", attribute_tool.is_attribute_optional,
-                                            attribute_tool.set_attribute_optional)
-    attribute_tool.add_attribute_data_value("inherit_value", attribute_tool.get_inherit_state,
-                                            attribute_tool.set_inherit_state)
+    attribute_tool.add_attribute_data_value("name", lambda a: a.name,lambda v,a:setattr(a,"name",v))
+    attribute_tool.add_attribute_data_value("data_type", lambda a:a.data_type,lambda v,a:setattr(a,"data_type",v))
+    attribute_tool.add_attribute_data_value("value_type", lambda a:a.value_type,lambda v,a:setattr(a,"value_type",v))
+    attribute_tool.add_attribute_data_value("values", lambda a:a.value,lambda v,a:setattr(a,"value",v))
+    attribute_tool.add_attribute_data_value("description",lambda a:a.description,lambda v,a:setattr(a,"description",v))
+    attribute_tool.add_attribute_data_value("optional", lambda a:a.is_optional,lambda v,a:setattr(a,"is_optional",v))
+    attribute_tool.add_attribute_data_value("inherit_value", lambda a:a.child_inherits_values,lambda v,a:setattr(a,"child_inherits_values",v))
 
 
 # Attribute Compare
