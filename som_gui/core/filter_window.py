@@ -56,13 +56,17 @@ def search_object(filter_window: Type[tool.FilterWindow], search: Type[tool.Sear
         parent_list.append(parent)
         parent = parent.parent
 
+    #needs to happen top down. DataModel creates children only if parent is already created
+    #You can't combine the parent search with expanding the Tree it needs to happen in two steps
+
     for item in reversed(parent_list):
         index: QModelIndex = item.index
         object_tree.expand(index)
+
     index: QModelIndex = obj.index
     flags = object_tree.selectionModel().SelectionFlag.ClearAndSelect | object_tree.selectionModel().SelectionFlag.Rows
     object_tree.selectionModel().select(index, flags)
-    object_tree.scrollTo(index.sibling(index.row(), 0))
+    object_tree.scrollTo(index.sibling(index.row(), 0),object_tree.ScrollHint.EnsureVisible)
 
 
 def pt_context_menu(local_pos, orientation: Qt.Orientation, filter_window: Type[tool.FilterWindow],
