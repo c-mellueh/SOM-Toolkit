@@ -15,18 +15,25 @@ from som_gui import tool
 from som_gui.module.attribute import trigger, ui
 from som_gui.module.project.constants import CLASS_REFERENCE
 
-style_list = [
-    [None, [0, 1]],
-    ["#897e00", [0, 1]],  # Yellow
-    ["#006605", [1]],  # green
-    ["#840002", [0]]  # red
-]
-
 if TYPE_CHECKING:
     from som_gui.module.attribute.prop import AttributeProperties, CompareAttributesProperties
 
 
+style_list = [
+    [None, [0, 1]],
+    ["#897e00", [0, 1]],  # Yellow  ->  Data changed
+    ["#006605", [1]],  # green      ->  Data stayed The same
+    ["#840002", [0]]  # red         ->  Data was deleted
+]
+
+
+
+
 class Attribute(som_gui.core.tool.Attribute):
+    @classmethod
+    def get_properties(cls) -> AttributeProperties:
+        return som_gui.AttributeProperties
+
     @classmethod
     def set_inherit_state(cls, state: bool, attribute: SOMcreator.Attribute):
         attribute.child_inherits_values = state
@@ -113,9 +120,7 @@ class Attribute(som_gui.core.tool.Attribute):
     def set_attribute_optional(cls, optional: bool, attribute: SOMcreator.Attribute):
         attribute.set_optional(optional)
 
-    @classmethod
-    def get_properties(cls) -> AttributeProperties:
-        return som_gui.AttributeProperties
+
 
     @classmethod
     def create_attribute(cls, property_set: SOMcreator.PropertySet, attribute_data: dict[str, str | list | bool]):
