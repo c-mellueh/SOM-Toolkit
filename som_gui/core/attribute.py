@@ -21,7 +21,7 @@ def add_basic_attribute_data(attribute_tool: Type[tool.Attribute]):
     attribute_tool.add_attribute_data_value("value_type", lambda a:a.value_type,lambda v,a:setattr(a,"value_type",v))
     attribute_tool.add_attribute_data_value("values", lambda a:a.value,lambda v,a:setattr(a,"value",v))
     attribute_tool.add_attribute_data_value("description",lambda a:a.description,lambda v,a:setattr(a,"description",v))
-    attribute_tool.add_attribute_data_value("optional", lambda a:a.is_optional,lambda v,a:setattr(a,"is_optional",v))
+    attribute_tool.add_attribute_data_value("optional", lambda a:a.is_optional(True),lambda v,a:a.set_optional(v))
     attribute_tool.add_attribute_data_value("inherit_value", lambda a:a.child_inherits_values,lambda v,a:setattr(a,"child_inherits_values",v))
 
 

@@ -160,7 +160,9 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     def format_row(cls, row: list[QTableWidgetItem]):
         attribute = cls.get_attribute_from_item(row[0])
         palette = QPalette()
-        if not attribute.property_set.object:
+        if attribute.property_set is None:
+            brush = palette.base()
+        elif not attribute.property_set.object:
             brush = palette.base()
         elif attribute.property_set.object.ident_attrib == attribute:
             brush = palette.mid()

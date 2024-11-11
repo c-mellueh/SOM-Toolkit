@@ -35,7 +35,8 @@ def add_attribute_button_clicked(window: PropertySetWindow, property_set: Type[t
     old_attribute = property_set.get_attribute_by_name(pset, attribute_name)
     attribute_data = property_set_window.get_attribute_data(window)
     if old_attribute is None:
-        attribute.create_attribute(pset, attribute_data)
+        new_attribute = attribute.create_attribute_by_dict(attribute_data)
+        new_attribute.property_set = pset
     else:
         attribute.set_attribute_data_by_dict(old_attribute, attribute_data)
 

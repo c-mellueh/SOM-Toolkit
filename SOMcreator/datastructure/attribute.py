@@ -8,7 +8,7 @@ import copy as cp
 class Attribute(Hirarchy):
     _registry: set[Attribute] = set()
 
-    def __init__(self, property_set: SOMcreator.PropertySet | None, name: str, value: list, value_type: str,
+    def __init__(self, property_set: SOMcreator.PropertySet | None = None, name: str = "undef", value: list = None, value_type:str|None=None,
                  data_type: str = SOMcreator.value_constants.LABEL,
                  child_inherits_values: bool = False, uuid: str = None, description: None | str = None,
                  optional: None | bool = None, revit_mapping: None | str = None,
@@ -31,9 +31,12 @@ class Attribute(Hirarchy):
 
         if self.uuid is None:
             self.uuid = str(uuid4())
+        if value is None:
+            self.value = list()
+        if value_type is None:
+            self._value_type = SOMcreator.value_constants.LABEL
         if property_set is not None:
-            property_set.add_attribute(self)
-
+            self.property_set = property_set
     def __str__(self) -> str:
         text = f"{self.property_set.name} : {self.name} = {self.value}"
         return text
@@ -159,8 +162,14 @@ class Attribute(Hirarchy):
 
     @property_set.setter
     def property_set(self, value: SOMcreator.PropertySet) -> None:
+        if value is None:
+            if self._property_set is None:
+                return
+            self._property_set.remove_attribute(self)
+            return
+        if self not in value.get_attributes(filter=False):
+            value.add_attribute(self)
         self._property_set = value
-
     def is_equal(self, attribute: Attribute) -> bool:
         equal = True
 

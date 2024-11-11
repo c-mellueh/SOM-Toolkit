@@ -92,7 +92,7 @@ def add_basic_attribute_columns(attribute: Type[tool.Attribute], attribute_table
     attribute_table.add_column_to_table("Datentyp", lambda a:a.data_type)
     attribute_table.add_column_to_table("Werttyp", lambda a:a.value_type)
     attribute_table.add_column_to_table("Werte", lambda a:a.value)
-    attribute_table.add_column_to_table("Optional", lambda a: a.is_optional)
+    attribute_table.add_column_to_table("Optional", lambda a: a.is_optional(ignore_hirarchy=True))
 
 
 def attribute_double_clicked(item: QTableWidgetItem,

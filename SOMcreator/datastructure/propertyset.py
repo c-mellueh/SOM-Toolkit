@@ -108,10 +108,14 @@ class PropertySet(Hirarchy):
         return iter(self._attributes)
 
     def add_attribute(self, value: SOMcreator.Attribute) -> None:
+
         if value.property_set is not None and value.property_set != self:
             value.property_set.remove_attribute(value)
-        self._attributes.add(value)
 
+        if value not in self._attributes:
+            self._attributes.add(value)
+        else:
+            return
         value.property_set = self
         for child in self.get_children(filter=False):
             attrib: SOMcreator.Attribute = cp.copy(value)

@@ -32,7 +32,13 @@ class Attribute(som_gui.core.tool.Attribute):
         return som_gui.AttributeProperties
 
     @classmethod
-    def add_attribute_data_value(cls, name: str, getter: Callable, setter: Callable):
+    def add_attribute_data_value(cls, name: str, getter: Callable, setter: Callable) -> None:
+        """
+        Add value to AttributeDataDict
+        :param name: Key of Data
+        :param getter: getter func to get data
+        :param setter: setter funct to set Attribute Value
+        """
         prop = cls.get_properties()
         prop.attribute_data_dict[name] = {"getter": getter,
                                           "setter": setter}
@@ -67,14 +73,13 @@ class Attribute(som_gui.core.tool.Attribute):
             d["setter"](value, attribute)
 
     @classmethod
-    def create_attribute(cls, property_set: SOMcreator.PropertySet, attribute_data: dict[str, str | list | bool]):
-        name = attribute_data["name"]
-        if not name:
-            return
-        values = attribute_data["values"]
-        value_type = attribute_data["value_type"]
-        inherit = attribute_data["inherit_value"]
-        attribute = SOMcreator.Attribute(property_set, name, values, value_type, child_inherits_values=inherit)
+    def create_attribute_by_dict(cls, attribute_data: dict[str, str | list | bool]) -> SOMcreator.Attribute:
+        """
+        create SOMcreator.Attribute from Datadict
+        :param attribute_data: dictionary {Data_name:{'getter':Callable, 'setter':Callable},...}
+        :return:
+        """
+        attribute = SOMcreator.Attribute()
         cls.set_attribute_data_by_dict(attribute, attribute_data)
         return attribute
 
