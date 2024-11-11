@@ -3,9 +3,9 @@ from __future__ import annotations
 import logging
 from typing import Callable
 
-from PySide6.QtCore import QAbstractItemModel, QAbstractTableModel, QCoreApplication, QModelIndex, Qt
+from PySide6.QtCore import QAbstractItemModel, QAbstractTableModel, QCoreApplication, QModelIndex, Qt,QItemSelectionModel
 from PySide6.QtGui import QMouseEvent
-from PySide6.QtWidgets import QTableView, QTreeView, QWidget
+from PySide6.QtWidgets import QHeaderView, QTableView, QTreeView, QWidget
 from ifcopenshell.express.rules.IFC4X1 import project
 
 import SOMcreator
@@ -54,11 +54,71 @@ class ProjectView(QTableView):
         index = self.indexAt(event.pos())
         trigger.tree_mouse_release_event(index)
 
+class FrozeView(QTreeView):
+    def __init__(self, parent:ObjectTreeView):
+        super().__init__(parent)
+        self.frozen_cols = 2
+        # self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        # self.header().setSectionResizeMode(QHeaderView.Fixed)
+        # self.setSelectionModel(QTableView.selectionModel(self))
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setStyleSheet('''border: none''')
+
+    def update_selection(self,selected,deselected):
+        self.selectionModel().select(selected,QItemSelectionModel.SelectionFlag.Select)
+        self.selectionModel().select(deselected,QItemSelectionModel.SelectionFlag.Deselect)
 
 class ObjectTreeView(QTreeView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.frozen_view = FrozeView(self)
+        self.viewport().stackUnder(self.frozen_view)
 
+
+
+        self.header().sectionResized.connect(self.update_section_width)
+        self.frozen_view.verticalScrollBar().valueChanged.connect(self.verticalScrollBar().setValue)
+        self.verticalScrollBar().valueChanged.connect(self.frozen_view.verticalScrollBar().setValue)
+        self.frozen_view.expanded.connect(self.expand)
+        self.frozen_view.collapsed.connect(self.collapse)
+
+    def update_section_width(self,logical_index,old_size,new_size):
+        if logical_index <self.frozen_view.frozen_cols:
+            self.frozen_view.setColumnWidth(logical_index, new_size)
+            self.updateFrozenTableGeometry()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.updateFrozenTableGeometry()
+
+    def scrollTo(self, index, hint):
+        if index.column() > 2:
+            super().scrollTo(index, hint)
+
+    def updateFrozenTableGeometry(self):
+        x = self.frameWidth()-1
+        y = self.frameWidth()
+        width = sum([self.columnWidth(i) for i in range(self.frozen_view.frozen_cols)])
+        height = self.viewport().height()+self.header().height()
+        self.frozen_view.setGeometry(x,y,width,height)
+        fh = self.frozen_view.header()
+        fhg = fh.geometry()
+
+        fh.setGeometry(fhg.x(),fhg.y(),fhg.width(),self.header().height())
+
+    def update_selection(self,selected,deselected):
+        self.selectionModel().select(selected,QItemSelectionModel.SelectionFlag.Select)
+        self.selectionModel().select(deselected,QItemSelectionModel.SelectionFlag.Deselect)
+
+    def setModel(self, model: ObjectModel):
+        super().setModel(model)
+        self.frozen_view.setModel(model)
+        for i in range(model.columnCount()):
+            if i >=self.frozen_view.frozen_cols:
+                self.frozen_view.hideColumn(i)
+
+        self.updateFrozenTableGeometry()
     def mouseMoveEvent(self, event: QMouseEvent):
         super().mouseMoveEvent(event)
         trigger.tree_mouse_move_event(self.indexAt(event.pos()))
