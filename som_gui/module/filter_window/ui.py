@@ -3,10 +3,10 @@ from __future__ import annotations
 import logging
 from typing import Callable
 
-from PySide6.QtCore import QAbstractItemModel, QAbstractTableModel, QCoreApplication, QModelIndex, Qt
+from PySide6.QtCore import QAbstractItemModel, QAbstractTableModel, QCoreApplication, QItemSelectionModel, QModelIndex, \
+    Qt
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTableView, QTreeView, QWidget
-from ifcopenshell.express.rules.IFC4X1 import project
 
 import SOMcreator
 import som_gui
@@ -55,9 +55,69 @@ class ProjectView(QTableView):
         trigger.tree_mouse_release_event(index)
 
 
-class ObjectTreeView(QTreeView):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class FrozeView(QTreeView):
+    def __init__(self, parent: FilterTreeView, column_count=2):
+        super().__init__(parent)
+        self.frozen_cols = column_count
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setStyleSheet('''border: none''')
+
+    def update_selection(self, selected, deselected):
+        self.selectionModel().select(selected, QItemSelectionModel.SelectionFlag.Select)
+        self.selectionModel().select(deselected, QItemSelectionModel.SelectionFlag.Deselect)
+
+
+class FilterTreeView(QTreeView):
+    def __init__(self, parent, frozen_col_count):
+        super().__init__(parent)
+        self.frozen_view = FrozeView(self, frozen_col_count)
+        self.viewport().stackUnder(self.frozen_view)
+        self.header().sectionResized.connect(self.update_section_width)
+        self.frozen_view.verticalScrollBar().valueChanged.connect(self.verticalScrollBar().setValue)
+        self.verticalScrollBar().valueChanged.connect(self.frozen_view.verticalScrollBar().setValue)
+        self.frozen_view.expanded.connect(self.expand)
+        self.frozen_view.collapsed.connect(self.collapse)
+        self.expanded.connect(self.frozen_view.expand)
+        self.collapsed.connect(self.frozen_view.collapse)
+
+    def update_section_width(self, logical_index, old_size, new_size):
+        if logical_index < self.frozen_view.frozen_cols:
+            self.frozen_view.setColumnWidth(logical_index, new_size)
+            self.updateFrozenTableGeometry()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.updateFrozenTableGeometry()
+
+    def scrollTo(self, index, hint):
+        if index.column() >= self.frozen_view.frozen_cols:
+            super().scrollTo(index, hint)
+        else:
+            self.frozen_view.scrollTo(index,hint)
+    def updateFrozenTableGeometry(self):
+        x = self.frameWidth() - 1
+        y = self.frameWidth()
+        width = sum([self.columnWidth(i) for i in range(self.frozen_view.frozen_cols)])
+        height = self.viewport().height() + self.header().height()
+        self.frozen_view.setGeometry(x, y, width, height)
+        fh = self.frozen_view.header()
+        fhg = fh.geometry()
+
+        fh.setGeometry(fhg.x(), fhg.y(), fhg.width(), self.header().height())
+
+    def update_selection(self, selected, deselected):
+        self.selectionModel().select(selected, QItemSelectionModel.SelectionFlag.Select)
+        self.selectionModel().select(deselected, QItemSelectionModel.SelectionFlag.Deselect)
+
+    def setModel(self, model: ObjectModel|PsetModel):
+        super().setModel(model)
+        self.frozen_view.setModel(model)
+        for i in range(model.columnCount()):
+            if i >= self.frozen_view.frozen_cols:
+                self.frozen_view.hideColumn(i)
+
+        self.updateFrozenTableGeometry()
 
     def mouseMoveEvent(self, event: QMouseEvent):
         super().mouseMoveEvent(event)
@@ -67,6 +127,11 @@ class ObjectTreeView(QTreeView):
         super().mouseReleaseEvent(event)
         index = self.indexAt(event.pos())
         trigger.tree_mouse_release_event(index)
+
+
+class ObjectTreeView(FilterTreeView):
+    def __init__(self, parent):
+        super().__init__(parent, 2)
 
     def enterEvent(self, event):
         super().enterEvent(event)
@@ -76,23 +141,13 @@ class ObjectTreeView(QTreeView):
         return super().model()
 
 
-class PsetTreeView(QTreeView):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class PsetTreeView(FilterTreeView):
+    def __init__(self, parent):
+        super().__init__(parent, 1)
 
     def enterEvent(self, event):
         super().enterEvent(event)
         trigger.update_pset_tree()
-
-    def mouseMoveEvent(self, event: QMouseEvent):
-        super().mouseMoveEvent(event)
-        trigger.tree_mouse_move_event(self.indexAt(event.pos()))
-
-    #
-    def mouseReleaseEvent(self, event):
-        super().mouseReleaseEvent(event)
-        index = self.indexAt(event.pos())
-        trigger.tree_mouse_release_event(index)
 
     def model(self) -> PsetModel:
         return super().model()
