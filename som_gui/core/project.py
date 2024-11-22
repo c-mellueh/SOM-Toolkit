@@ -28,7 +28,7 @@ def create_main_menu_actions(project: Type[tool.Project], main_window: Type[tool
     action = main_window.add_action("menuFile", "add_project", trigger.add_clicked)
     project.set_action("add_project", action)
 
-    action = main_window.add_action("menuFile", "save_project", trigger.save_clicked)
+    action = main_window.add_action("menuFile", "save_project", trigger.save)
     project.set_action("save_project", action)
 
     action = main_window.add_action("menuFile", "save_as_clicked", trigger.save_as_clicked)
@@ -60,17 +60,17 @@ def retranslate_ui(project: Type[tool.Project]):
         widget.ui.retranslateUi(widget)
 
 
-def save_clicked(project_tool: Type[Project], popup_tool: Type[Popups], appdata: Type[Appdata],
-                 main_window: Type[tool.MainWindow]):
+def save(project_tool: Type[Project], popup_tool: Type[Popups], appdata: Type[Appdata],
+         main_window: Type[tool.MainWindow]):
     save_path = appdata.get_path(SAVE_PATH)
     if not os.path.exists(save_path) or not save_path.endswith("json"):
-        save_as_clicked(project_tool, popup_tool, appdata, main_window)
+        save_as(project_tool, popup_tool, appdata, main_window)
     else:
         save_project(save_path, project_tool, appdata)
 
 
-def save_as_clicked(project_tool: Type[Project], popup_tool: Type[Popups], appdata: Type[Appdata],
-                    main_window: Type[tool.MainWindow]):
+def save_as(project_tool: Type[Project], popup_tool: Type[Popups], appdata: Type[Appdata],
+            main_window: Type[tool.MainWindow]):
     path = appdata.get_path(SAVE_PATH)
     title = QCoreApplication.translate("Project", "Save Project")
     path = popup_tool.get_save_path(FILETYPE, main_window.get(), path, title)

@@ -22,14 +22,30 @@ class MainWindow(som_gui.core.tool.MainWindow):
 
     @classmethod
     def set_action(cls, name: str, action: QAction):
+        """
+        writes Action to prop.actions
+        :param name:
+        :param action:
+        :return:
+        """
         cls.get_properties().actions[name] = action
 
     @classmethod
     def get_action(cls, name):
+        """
+        gets action from prop.actions
+        :param name:
+        :return:
+        """
         return cls.get_properties().actions[name]
 
     @classmethod
     def create(cls, application: QApplication):
+        """
+        Create UI and save the Application to properties
+        :param application:
+        :return:
+        """
         if cls.get_properties().window is None:
             window = ui_main_window.MainWindow(application)
             cls.get_properties().window = window
@@ -39,6 +55,10 @@ class MainWindow(som_gui.core.tool.MainWindow):
 
     @classmethod
     def hide_console(cls):
+        """
+        hide Console Window (Works only for Windows so far)
+        :return:
+        """
         hWnd = ctypes.windll.kernel32.GetConsoleWindow()
         if hWnd != 0:
             ctypes.windll.user32.ShowWindow(hWnd, 0)

@@ -23,12 +23,12 @@ def add_clicked():
     core.add_project(tool.Project, tool.Appdata, tool.Popups, tool.MainWindow, tool.Util)
 
 
-def save_clicked():
-    core.save_clicked(tool.Project, tool.Popups, tool.Appdata, tool.MainWindow)
+def save():
+    core.save(tool.Project, tool.Popups, tool.Appdata, tool.MainWindow)
 
 
 def save_as_clicked():
-    core.save_as_clicked(tool.Project, tool.Popups, tool.Appdata, tool.MainWindow)
+    core.save_as(tool.Project, tool.Popups, tool.Appdata, tool.MainWindow)
 
 
 def settings_general_created(widget: ui.SettingsGeneral):

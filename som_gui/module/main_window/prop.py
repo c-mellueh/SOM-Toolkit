@@ -10,18 +10,10 @@ if TYPE_CHECKING:
     from som_gui.module.main_window.ui import MainWindow
     from som_gui.module.main_window.qt.ui_MainWindow import Ui_MainWindow
 
-
-class MenuDict(TypedDict):
-    submenu: list[MenuDict]
-    actions: list[QAction]
-    menu: QMenu
-    name: str
-
-
 class MainWindowProperties:
     ui: Ui_MainWindow | None = None
     window: MainWindow = None
     application: QApplication = None
-    mapping_window = None
-    grouping_window = None
     actions: dict[str, QAction] = dict()
+    #Most Modules have an Actions dict. In this dict The Actions of the MainMenubar are stored. and can be called by get/set action w/ their name
+    #This is Mostly used for translating the Actions on Language change
