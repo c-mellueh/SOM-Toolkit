@@ -30,6 +30,11 @@ class MainWindow(som_gui.core.tool.MainWindow):
 
     @classmethod
     def create(cls, application: QApplication):
+        """
+        Create UI and save the Application to properties
+        :param application:
+        :return:
+        """
         if cls.get_properties().window is None:
             window = ui_main_window.MainWindow(application)
             cls.get_properties().window = window
