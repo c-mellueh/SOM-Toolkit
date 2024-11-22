@@ -32,11 +32,11 @@ def connect_window(window: PropertySetWindow):
         lambda: core.update_seperator(window, tool.PropertySetWindow, tool.Appdata))
 
     window.ui.check_box_inherit.stateChanged.connect(
-        lambda: core.inherit_checkbox_toggled(window, tool.PropertySetWindow, tool.Attribute))
+        lambda: core.inherit_checkbox_toggled(window, tool.PropertySetWindow))
 
     table = window.ui.table_widget
     table.itemClicked.connect(
-        lambda item: core.attribute_clicked(item, tool.Attribute, tool.AttributeTable, tool.PropertySetWindow))
+        lambda item: core.attribute_clicked(item, tool.AttributeTable, tool.PropertySetWindow))
 
 
 def repaint_window(widget: PropertySetWindow):

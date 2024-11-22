@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 def pset_tree_double_clicked(item: QTreeWidgetItem, node: Type[Node], property_set_window: Type[tool.PropertySetWindow],
-                             attribute: Type[tool.Attribute], attribute_table: Type[tool.AttributeTable]) -> None:
+     attribute_table: Type[tool.AttributeTable]) -> None:
     linked_item = node.get_linked_item(item)
     active_attribute = None
     active_property_set = None
@@ -33,7 +33,7 @@ def pset_tree_double_clicked(item: QTreeWidgetItem, node: Type[Node], property_s
     window = property_set_window_core.open_pset_window(active_property_set, property_set_window, attribute_table)
     if active_attribute is None:
         return
-    property_set_window_core.activate_attribute(active_attribute, window, attribute, property_set_window)
+    property_set_window_core.activate_attribute(active_attribute, window, property_set_window)
 
 
 def node_clicked(selected_node: NodeProxy, node: Type[Node]) -> None:

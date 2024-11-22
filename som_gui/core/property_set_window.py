@@ -19,12 +19,11 @@ def retranslate_ui(property_set_window: Type[tool.PropertySetWindow]):
         property_set_window.fill_window_title(window, pset)
 
 
-def inherit_checkbox_toggled(window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow],
-                             attribute: Type[tool.Attribute]):
+def inherit_checkbox_toggled(window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow]):
     state = property_set_window.get_inherit_checkbox_state(window)
     active_attribute = property_set_window.get_active_attribute(window)
     if active_attribute:
-        attribute.set_inherit_state(state, active_attribute)
+        active_attribute.child_inherits_values = state
 
 
 def add_attribute_button_clicked(window: PropertySetWindow, property_set: Type[tool.PropertySet],
@@ -36,9 +35,10 @@ def add_attribute_button_clicked(window: PropertySetWindow, property_set: Type[t
     old_attribute = property_set.get_attribute_by_name(pset, attribute_name)
     attribute_data = property_set_window.get_attribute_data(window)
     if old_attribute is None:
-        attribute.create_attribute(pset, attribute_data)
+        new_attribute = attribute.create_attribute_by_dict(attribute_data)
+        new_attribute.property_set = pset
     else:
-        attribute.set_attribute_data(old_attribute, attribute_data)
+        attribute.set_attribute_data_by_dict(old_attribute, attribute_data)
 
 
 def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[tool.PropertySetWindow]):
@@ -118,34 +118,27 @@ def update_seperator(window: PropertySetWindow, property_set_window: Type[tool.P
     appdata.set_setting(SEPERATOR_SECTION, SEPERATOR, text)
 
 
-def attribute_clicked(item: QTableWidgetItem, attribute: Type[tool.Attribute],
+def attribute_clicked(item: QTableWidgetItem,
                       attribute_table: Type[tool.AttributeTable], property_set_window: Type[tool.PropertySetWindow]):
     active_attribute = attribute_table.get_attribute_from_item(item)
     attribute_table.set_active_attribute(active_attribute)
     window = item.tableWidget().window()
-    activate_attribute(active_attribute, window, attribute, property_set_window)
+    activate_attribute(active_attribute, window, property_set_window)
 
 
-def activate_attribute(active_attribute: SOMcreator.Attribute, window, attribute: Type[tool.Attribute],
+def activate_attribute(active_attribute: SOMcreator.Attribute, window,
                        property_set_window: Type[tool.PropertySetWindow]):
-    name = attribute.get_attribute_name(active_attribute)
-    data_type = attribute.get_attribute_data_type(active_attribute)
-    value_type = attribute.get_attribute_value_type(active_attribute)
-    values = attribute.get_attribute_values(active_attribute)
-    description = attribute.get_attribute_description(active_attribute)
-    inherit_state = attribute.get_inherit_state(active_attribute)
-
-    property_set_window.set_attribute_name(name, window)
-    property_set_window.set_data_type(data_type, window)
-    property_set_window.set_value_type(value_type, window)
-    property_set_window.set_description(description, window)
+    property_set_window.set_attribute_name(active_attribute.name, window)
+    property_set_window.set_data_type(active_attribute.data_type, window)
+    property_set_window.set_value_type(active_attribute.value_type, window)
+    property_set_window.set_description(active_attribute.description, window)
     property_set_window.toggle_comboboxes(active_attribute, window)
-    property_set_window.set_inherit_checkbox_state(inherit_state, window)
+    property_set_window.set_inherit_checkbox_state(active_attribute.child_inherits_values, window)
 
     property_set_window.clear_values(window)
     property_set_window.set_values(active_attribute, window)
-    if not values:
-        if value_type == RANGE:
+    if not active_attribute.value:
+        if active_attribute.value_type == RANGE:
             property_set_window.add_value_line(2, window)
         else:
             property_set_window.add_value_line(1, window)

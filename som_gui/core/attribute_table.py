@@ -51,7 +51,7 @@ def drop_event(event: QDropEvent, table: ui.AttributeTable, property_set_window:
             existing_attribute = existing_attributes.get(attribute.name)
             if existing_attribute:
                 data = attribute_tool.get_attribute_data(attribute)
-                attribute_tool.set_attribute_data(existing_attribute, data)
+                attribute_tool.set_attribute_data_by_dict(existing_attribute, data)
             else:
                 attribute = copy.copy(attribute)
                 attribute.remove_parent()
@@ -88,20 +88,20 @@ def context_menu(table: ui.AttributeTable, pos, attribute_table: Type[tool.Attri
 
 def add_basic_attribute_columns(attribute: Type[tool.Attribute], attribute_table: Type[tool.AttributeTable]):
     logging.info("Add Basic Attribute Columns")
-    attribute_table.add_column_to_table("Name", attribute.get_attribute_name)
-    attribute_table.add_column_to_table("Datentyp", attribute.get_attribute_data_type)
-    attribute_table.add_column_to_table("Werttyp", attribute.get_attribute_value_type)
-    attribute_table.add_column_to_table("Werte", attribute.get_attribute_values)
-    attribute_table.add_column_to_table("Optional", attribute.is_attribute_optional)
+    attribute_table.add_column_to_table("Name", lambda a:a.name)
+    attribute_table.add_column_to_table("Datentyp", lambda a:a.data_type)
+    attribute_table.add_column_to_table("Werttyp", lambda a:a.value_type)
+    attribute_table.add_column_to_table("Werte", lambda a:a.value)
+    attribute_table.add_column_to_table("Optional", lambda a: a.is_optional(ignore_hirarchy=True))
 
 
-def attribute_double_clicked(item: QTableWidgetItem, attribute: Type[tool.Attribute],
+def attribute_double_clicked(item: QTableWidgetItem,
                              attribute_table: Type[tool.AttributeTable],
                              property_set: Type[tool.PropertySet], property_set_window: Type[tool.PropertySetWindow]):
     active_attribute = attribute_table.get_attribute_from_item(item)
     active_property_set = property_set.get_active_property_set()
     window = property_set_window_core.open_pset_window(active_property_set, property_set_window, attribute_table)
-    property_set_window_core.activate_attribute(active_attribute, window, attribute, property_set_window)
+    property_set_window_core.activate_attribute(active_attribute, window, property_set_window)
 
 
 def paint_attribute_table(table: QTableWidget, attribute_table: Type[tool.AttributeTable]):

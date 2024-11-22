@@ -46,7 +46,7 @@ class Attribute:
 
     def is_attribute_optional(self, attribute): pass
 
-    def set_attribute_data(self, attribute, data_dict): pass
+    def set_attribute_data_by_dict(self, attribute, data_dict): pass
 
     def set_attribute_data_type(self, value, attribute): pass
 
