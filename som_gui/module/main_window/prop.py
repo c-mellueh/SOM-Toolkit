@@ -15,3 +15,5 @@ class MainWindowProperties:
     window: MainWindow = None
     application: QApplication = None
     actions: dict[str, QAction] = dict()
+    #Most Modules have an Actions dict. In this dict The Actions of the MainMenubar are stored. and can be called by get/set action w/ their name
+    #This is Mostly used for translating the Actions on Language change

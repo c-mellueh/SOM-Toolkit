@@ -15,12 +15,8 @@ class MainWindow(QMainWindow):
 
     # Open / Close windows
     def closeEvent(self, event):
-        result = trigger.close_event()
-        if result:
-            self.app.closeAllWindows()
-            event.accept()
-        else:
-            event.ignore()
+        result = trigger.close_event(event)
+
 
     def paintEvent(self, event):
         super().paintEvent(event)
