@@ -1,4 +1,6 @@
 from __future__ import annotations
+__version__ = "2.13.4" #needs to be on top of som_gui import statements else ImportError
+
 import logging
 from typing import TYPE_CHECKING
 from som_gui import core, tool
@@ -9,7 +11,6 @@ if TYPE_CHECKING:
     from som_gui.module.main_window.ui import MainWindow
     from types import ModuleType
 
-__version__ = "2.13.4"
 
 #list all modules which are defined in the modules folder
 module = importlib.import_module("som_gui.module")
