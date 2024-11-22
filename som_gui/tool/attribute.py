@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable, TYPE_CHECKING, TextIO
+from typing import Any, Callable, TYPE_CHECKING, TextIO, TypeAlias,Iterator
 
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtCore import QModelIndex, Qt
@@ -17,6 +17,8 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 
 if TYPE_CHECKING:
     from som_gui.module.attribute.prop import AttributeProperties, CompareAttributesProperties
+
+SOMType: TypeAlias = "SOMcreator.Attribute | SOMcreator.PropertySet"
 
 style_list = [
     [None, [0, 1]],
@@ -90,7 +92,11 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return som_gui.CompareAttributesProperties
 
     @classmethod
-    def reset(cls):
+    def reset(cls) -> None:
+        """
+        reset all saved settings and values for new Run
+        :return: None
+        """
         prop = cls.get_properties()
         prop.projects = [None, None]
         prop.uuid_dicts = [None, None]
@@ -106,6 +112,11 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def create_tree_selection_trigger(cls, widget: ui.AttributeWidget):
+        """
+        create trigger if Object Tree and PropertySet tree are selected
+        :param widget:
+        :return:
+        """
         widget.ui.tree_widget_object.itemSelectionChanged.connect(
             lambda: trigger.object_tree_selection_changed(widget))
         widget.ui.tree_widget_propertysets.itemSelectionChanged.connect(
@@ -113,6 +124,12 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def find_matching_object(cls, obj: SOMcreator.Object, index=1) -> SOMcreator.Object | None:
+        """
+        find object that matches to input. The function searches for the UUID and Identifier if not Object is found return None
+        :param obj: Object for which a match is to be found
+        :param index: defines if object should  be searched in Project 0 or Project 1
+        :return:
+        """
         uuid_dict = cls.get_uuid_dict(index)
         ident_dict = cls.get_ident_dict(index)
         uuid_match = uuid_dict.get(obj.uuid)
@@ -125,54 +142,94 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return None
 
     @classmethod
-    def find_matching_entity(cls, entity_0, uuid_dict1,
-                             name_dict1) -> SOMcreator.PropertySet | SOMcreator.Attribute | None:
-        if entity_0.uuid in uuid_dict1:
-            return uuid_dict1[entity_0.uuid]
-        if entity_0.name in name_dict1:
-            return name_dict1[entity_0.name]
+    def find_matching_entity(cls, search_element: SOMType, uuid_dict1: dict[str, SOMType],
+                             name_dict1: dict[str, SOMType]) -> SOMType | None:
+        """
+        find attribute/propertySet that mathches to input. The function searches for the UUID and Identifier if no Element is found return None
+        :param search_element: Attribute/PropertySet for which a match is to be found
+        :param uuid_dict1: Dictiorary of UUIDs to search for Element UUID
+        :param name_dict1: Dictiorary of UUIDs to search for Element Name
+        :return:
+        """
+        if search_element.uuid in uuid_dict1:
+            return uuid_dict1[search_element.uuid]
+        if search_element.name in name_dict1:
+            return name_dict1[search_element.name]
         return None
 
     @classmethod
-    def generate_uuid_dict(cls, entity_list):
-        return {p.uuid: p for p in entity_list}
+    def generate_uuid_dict(cls, element_list:list[SOMType | SOMcreator.Object])->dict[str, SOMType | SOMcreator.Object]:
+        """
+        create dictionary of UUIDs of all Elements in element_list
+        :param element_list: list of all Elements for which a UUID entry is needed
+        :return: Dictionary of UUIDs of all Elements in element_list
+        """
+        return {p.uuid: p for p in element_list if p.uuid}
 
     @classmethod
-    def generate_name_dict(cls, entity_list):
-        return {p.name: p for p in entity_list}
+    def generate_name_dict(cls, element_list:list[SOMType | SOMcreator.Object])->dict[str, SOMType | SOMcreator.Object]:
+        """
+        create dictionary of Names of all Elements in element_list
+        :param element_list: list of all Elements for which a Names entry is needed
+        :return: Dictionary of UUIDs of all Elements in element_list
+        """
+        return {p.name: p for p in element_list if p.name}
 
     @classmethod
-    def compare_objects(cls, obj0: None | SOMcreator.Object, obj1: None | SOMcreator.Object):
-        property_set_uuid_dict1 = cls.generate_uuid_dict(
-            obj1.get_property_sets(filter=False)) if obj1 is not None else dict()
-        property_set_name_dict1 = cls.generate_name_dict(
-            obj1.get_property_sets(filter=False)) if obj1 is not None else dict()
-        pset_list = list()
+    def compare_objects(cls, obj0: None | SOMcreator.Object, obj1: None | SOMcreator.Object) -> list[tuple[SOMcreator.PropertySet | None, SOMcreator.PropertySet | None]]:
+        """
+        Compare two SOMcreator objects by their property sets.
+        This method generates a list of matched and unmatched property sets (match_list)
+        for both objects and assigns it to them using the set_pset_list function
+        :param obj0: First object to compare, or None.
+        :param obj1: Second object to compare, or None.
+        :return:
+        """
+        #Create Match Dictionaries
+        psets_1 = list(obj1.get_property_sets(filter=False)) if obj1 is not None else []
+        property_set_uuid_dict1 = cls.generate_uuid_dict(psets_1)
+        property_set_name_dict1 = cls.generate_name_dict(psets_1)
 
-        missing_property_sets1 = list(obj1.get_property_sets(filter=False)) if obj1 is not None else []
+        match_list = list()
+        missing_property_sets_1 = list(psets_1) #copy list of Psets to substract every found Pset
+
         if obj0 is not None:
             for property_set0 in obj0.get_property_sets(filter=False):
+                #Search for Matching PropertySet
                 match = cls.find_matching_entity(property_set0, property_set_uuid_dict1, property_set_name_dict1)
                 if match is not None:
-                    if match in missing_property_sets1:
-                        missing_property_sets1.remove(match)
+                    if match in missing_property_sets_1:
+                        missing_property_sets_1.remove(match)
                     else:
-                        pset_list.append((property_set0, None))
+                        #This happens if for one Property in the Search-Project multiple Properties in the Start-Project exist
+                        #Because we're using a 1:1 Match the second time the same Pset is found it will be saved as an Empty Math
+                        match_list.append((property_set0, None))
                         cls.compare_property_sets(property_set0, None)
                         continue
-                cls.compare_property_sets(property_set0, match)
-                pset_list.append((property_set0, match))
+                cls.compare_property_sets(property_set0, match) #Compares Attributes in PropertySets
+                match_list.append((property_set0, match))
 
-        for property_set1 in missing_property_sets1:
-            pset_list.append((None, property_set1))
+        #Handle PropertySets in the Search-Project that doesn't match to any PropertySet in the Start-Project
+        for property_set1 in missing_property_sets_1:
+            match_list.append((None, property_set1))
         if obj0 is not None:
-            cls.set_pset_list(obj0, pset_list)
+            cls.set_pset_list(obj0, match_list)
         if obj1 is not None:
-            cls.set_pset_list(obj1, pset_list)
+            cls.set_pset_list(obj1, match_list)
+
+        return match_list
 
     @classmethod
-    def compare_property_sets(cls, pset0: SOMcreator.PropertySet, pset1: SOMcreator.PropertySet):
-        result_list = tool.AttributeCompare.create_child_matchup(pset0, pset1)
+    def compare_property_sets(cls, pset0: SOMcreator.PropertySet|None, pset1: SOMcreator.PropertySet|None) -> None:
+        """
+        Compare two SOMcreator PropertySets by their Attributes.
+        This method generates a list of matched and unmatched Attributes (match_list)
+        for both PropertySets and assigns it to them using the set_attribute_list function
+        :param pset0: First PropertySet to compare, or None.
+        :param pset1: Second PropertySet to compare, or None.
+        :return:
+        """
+        result_list = cls.create_child_matchup(pset0, pset1)
         if pset0 is not None:
             cls.set_value_list(pset0, result_list)
         if pset1 is not None:
@@ -180,29 +237,40 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
         if None in (pset0, pset1):
             return
-        attribute_uuid_dict1 = cls.generate_uuid_dict(pset1.get_attributes(filter=False))
-        attribute_name_dict1 = cls.generate_name_dict(pset1.get_attributes(filter=False))
-        missing_attributes1 = list(pset1.get_attributes(filter=False))
-        attributes_list = list()
+        #Generate Match Dicts
+        attributes_1 = list(pset1.get_attributes(filter=False))
+        attribute_uuid_dict1 = cls.generate_uuid_dict(attributes_1)
+        attribute_name_dict1 = cls.generate_name_dict(attributes_1)
+
+        missing_attributes1 = list(attributes_1)
+        match_list = list()
 
         for attribute0 in pset0.get_attributes(filter=False):
             match = cls.find_matching_entity(attribute0, attribute_uuid_dict1, attribute_name_dict1)
             if match is not None:
                 missing_attributes1.remove(match)
-                attributes_list.append((attribute0, match))
+                match_list.append((attribute0, match))
             else:
-                attributes_list.append((attribute0, None))
+                match_list.append((attribute0, None))
 
         for attribute1 in missing_attributes1:
-            attributes_list.append((None, attribute1))
+            match_list.append((None, attribute1))
 
-        for a1, a2 in attributes_list:
+        for a1, a2 in match_list:
             cls.compare_attributes(a1, a2)
-        cls.set_attribute_list(pset0, attributes_list)
-        cls.set_attribute_list(pset1, attributes_list)
+        cls.set_attribute_list(pset0, match_list)
+        cls.set_attribute_list(pset1, match_list)
+        return match_list
+
 
     @classmethod
     def compare_attributes(cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute):
+        """
+        compare two SOMcreator Attributes by their Values
+        :param attribute0:
+        :param attribute1:
+        :return:
+        """
         values0 = set(attribute0.get_own_values()) if attribute0 is not None else set()
         values1 = set(attribute1.get_own_values()) if attribute1 is not None else set()
 
@@ -750,13 +818,12 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         cls.get_properties().attributes_lists[property_set] = attribute_list
 
     @classmethod
-    def get_value_list(cls, attribute: SOMcreator.Attribute) -> list[tuple[str | None, str | None]] | None:
-        return cls.get_properties().values_lists.get(attribute)
+    def get_value_list(cls, entity: SOMType) -> list[tuple[str | None, str | None]] | None:
+        return cls.get_properties().values_lists.get(entity)
 
     @classmethod
-    def set_value_list(cls, attribute: SOMcreator.Attribute | SOMcreator.PropertySet,
-                       value_list: list[tuple[str | None, str | None]]):
-        cls.get_properties().values_lists[attribute] = value_list
+    def set_value_list(cls, entity: SOMType,  value_list: list[tuple[str | None, str | None]]):
+        cls.get_properties().values_lists[entity] = value_list
 
     @classmethod
     def get_branch_color(cls, index: QModelIndex):
