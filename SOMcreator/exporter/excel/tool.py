@@ -17,6 +17,8 @@ NAME = "name"
 OBJECTS = "objects"
 TABLE_STYLE = "TableStyleLight1"
 OPTIONAL_FONT = styles.Font(color="4e6ec0")
+HEADER_ROW_COUNT = 4
+HEADER_COLUMN_COUNT = 5
 
 if TYPE_CHECKING:
     from SOMcreator.exporter.excel import ExcelProperties
@@ -108,11 +110,10 @@ class ExportExcel:
         cls.autoadjust_column_widths(sheet)
 
     @classmethod
-    def filter_to_sheets(cls, ) -> dict:
-        project = cls.get_project()
-        d = {obj.ident_value: {NAME: obj.name, OBJECTS: []} for obj in project.get_objects(filter=True) if
+    def filter_to_sheets(cls,object_list:list[SOMcreator.Object] ) -> dict:
+        d = {obj.ident_value: {NAME: obj.name, OBJECTS: []} for obj in object_list if
              len(obj.ident_value.split(".")) == 1}
-        for obj in project.get_objects(filter=True):
+        for obj in object_list:
             group = obj.ident_value.split(".")[0]
             d[group][OBJECTS].append(obj)
         d["son"] = {NAME: "Sonstige", OBJECTS: []}
@@ -143,14 +144,15 @@ class ExportExcel:
         sheet.cell(start_row + 3, start_column + 1).value = "Propertyset"
         sheet.cell(start_row + 3, start_column + 2).value = "Beispiele / Beschreibung"
         sheet.cell(start_row + 3, start_column + 3).value = "Datentyp"
+        sheet.cell(start_row + 3, start_column + 4).value = "Werte"
 
-        for i in range(0, 4):
-            for k in range(0, 4):
+        for i in range(0, HEADER_ROW_COUNT):
+            for k in range(0, HEADER_COLUMN_COUNT):
                 sheet.cell(start_row + i, start_column + k).font = font_style
-        cls.draw_border(sheet, [start_row, start_row + 2], [start_column, start_column + 4])
-        cls.fill_grey(sheet, [start_row, start_row + 2], [start_column, start_column + 3])
+        cls.draw_border(sheet, [start_row, start_row + 2], [start_column, start_column + HEADER_COLUMN_COUNT-1])
+        cls.fill_grey(sheet, [start_row, start_row + 2], [start_column, start_column + HEADER_COLUMN_COUNT-1])
 
-        pset_start_row = start_row + 4
+        pset_start_row = start_row + HEADER_ROW_COUNT
         index = 0
         for property_set in sorted(obj.get_property_sets(filter=True)):
             for attribute in sorted(property_set.get_attributes(filter=True)):
@@ -158,14 +160,14 @@ class ExportExcel:
                 sheet.cell(pset_start_row + index, start_column + 1).value = property_set.name
                 sheet.cell(pset_start_row + index, start_column + 2).value = attribute.description
                 sheet.cell(pset_start_row + index, start_column + 3).value = attribute.data_type
+                sheet.cell(pset_start_row + index, start_column + 4).value = ";".join([str(v) for v in  attribute.value])
                 if attribute.is_optional(ignore_hirarchy=False):
-                    sheet.cell(pset_start_row + index, start_column).font = OPTIONAL_FONT
-                    sheet.cell(pset_start_row + index, start_column + 1).font = OPTIONAL_FONT
-                    sheet.cell(pset_start_row + index, start_column + 2).font = OPTIONAL_FONT
+                    for c in range(HEADER_COLUMN_COUNT):
+                        sheet.cell(pset_start_row + index, start_column+c).font = OPTIONAL_FONT
                 index += 1
 
         table_start = sheet.cell(pset_start_row - 1, start_column).coordinate
-        table_end = sheet.cell(pset_start_row + index - 1, start_column + 3).coordinate
+        table_end = sheet.cell(pset_start_row + index - 1, start_column + HEADER_COLUMN_COUNT-1).coordinate
         table_range = f"{table_start}:{table_end}"
         table = Table(displayName=f"Tabelle_{str(table_index).zfill(5)}", ref=table_range)
         style = TableStyleInfo(name=TABLE_STYLE, showFirstColumn=False,
