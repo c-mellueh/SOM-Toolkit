@@ -25,6 +25,8 @@ from . import ui, prop, trigger
 def register():
     som_gui.{to_camel_case(name)}Properties = prop.{to_camel_case(name)}Properties()
 
+def retranslate_ui():
+    trigger.retranslate_ui()
 
 def load_ui_triggers():
     trigger.connect()
@@ -61,6 +63,9 @@ from typing import TYPE_CHECKING
 
 
 def connect():
+    pass
+
+def retranslate_ui():
     pass
 
 def on_new_project():
@@ -135,5 +140,6 @@ def main(name: str):
 
 
 if __name__ == "__main__":
-    module_name = "language"
+    module_name = "test_module"
     main(module_name)
+    #you need to add module to tool.__init__.py by hand
