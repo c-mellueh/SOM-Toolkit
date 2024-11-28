@@ -227,7 +227,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def context_menu_rename_builder(cls, table: ui.AttributeTable):
-        name = "Umbenennen"
+        name = table.tr("Rename")
         selected_attributes = cls.get_selected_attributes(table)
         if len(selected_attributes) == 1:
             return [name, lambda: cls.edit_selected_attribute_name(table)]
@@ -235,7 +235,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def context_menu_delete_builder(cls, table: ui.AttributeTable):
-        name = "Löschen"
+        name = table.tr("Delete")
         selected_attributes = cls.get_selected_attributes(table)
         if len(selected_attributes) == 0:
             return None
@@ -248,7 +248,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def context_menu_delete_subattributes_builder(cls, table: ui.AttributeTable):
-        name = "Löschen (mit verknüpften Subattributen)"
+        name = table.tr("Delete (with subattributes)")
         selected_attributes = cls.get_selected_attributes(table)
         if len(selected_attributes) == 0:
             return None
@@ -263,7 +263,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def context_menu_remove_connection_builder(cls, table: ui.AttributeTable):
-        name = "Verknüpfung lösen"
+        name = table.tr("Remove Connection")
         selected_attributes = cls.get_selected_attributes(table)
         if len(selected_attributes) == 0:
             return None
@@ -274,7 +274,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def context_menu_add_connection_builder(cls, table: ui.AttributeTable):
-        name = "Verknüpfung hinzufügen"
+        name = table.tr("Connect to Parent")
         selected_attributes = cls.get_selected_attributes(table)
         if len(selected_attributes) == 0:
             return None

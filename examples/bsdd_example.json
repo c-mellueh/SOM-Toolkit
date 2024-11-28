@@ -1,0 +1,108 @@
+{
+  "OrganizationCode": "",
+  "DictionaryCode": "Example SOM",
+  "DictionaryName": "Example SOM",
+  "DictionaryVersion": "1.0.0",
+  "LanguageIsoCode": "de-DE",
+  "LanguageOnly": false,
+  "UseOwnUri": false,
+  "DictionaryUri": "",
+  "License": "MIT",
+  "LicenseUrl": "https://www.mit.edu/~amini/LICENSE.md",
+  "ModelVersion": "2.0",
+  "ReleaseDate": "2024-11-28T11:15:19",
+  "Classes": [
+    {
+      "Code": "w.100.100",
+      "Name": "MyWall",
+      "ClassType": "Class",
+      "Description": "",
+      "RelatedIfcEntityNamesList": [
+        "IfcBuildingElementProxy"
+      ],
+      "CountriesOfUse": [
+        "DE"
+      ],
+      "CountryOfOrigin": "DE",
+      "CreatorLanguageIsoCode": "de-DE",
+      "Status": "Active",
+      "ClassProperties": [
+        {
+          "Code": "identifier",
+          "PropertyCode": "identifier",
+          "PropertyUri": "",
+          "Description": "",
+          "PropertySet": "CustomMainPset",
+          "IsRequired": true,
+          "AllowedValues": [
+            {
+              "Code": "w.100.100",
+              "Value": "w.100.100"
+            }
+          ]
+        },
+        {
+          "Code": "FireRating",
+          "PropertyCode": "FireRating",
+          "PropertyUri": "",
+          "Description": "",
+          "PropertySet": "Pset_WallCommon",
+          "IsRequired": true,
+          "AllowedValues": [
+            {
+              "Code": "30",
+              "Value": "30"
+            },
+            {
+              "Code": "60",
+              "Value": "60"
+            },
+            {
+              "Code": "90",
+              "Value": "90"
+            }
+          ]
+        },
+        {
+          "Code": "LoadBearing",
+          "PropertyCode": "LoadBearing",
+          "PropertyUri": "",
+          "Description": "",
+          "PropertySet": "Pset_WallCommon",
+          "IsRequired": true,
+          "AllowedValues": []
+        }
+      ],
+      "ClassRelations": []
+    }
+  ],
+  "Properties": [
+    {
+      "Code": "identifier",
+      "Name": "identifier",
+      "Definition": "",
+      "DataType": "String",
+      "PropertyValueKind": "List",
+      "PropertyRelations": [],
+      "AllowedValues": []
+    },
+    {
+      "Code": "FireRating",
+      "Name": "FireRating",
+      "Definition": "",
+      "DataType": "Integer",
+      "PropertyValueKind": "List",
+      "PropertyRelations": [],
+      "AllowedValues": []
+    },
+    {
+      "Code": "LoadBearing",
+      "Name": "LoadBearing",
+      "Definition": "",
+      "DataType": "Boolean",
+      "PropertyValueKind": "List",
+      "PropertyRelations": [],
+      "AllowedValues": []
+    }
+  ]
+}
