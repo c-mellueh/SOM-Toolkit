@@ -267,3 +267,7 @@ class Project(object):
         for use_case_list in self._filter_matrix:
             use_case_list.pop(index)
         self.active_usecases = [self.get_use_case_index(uc) for uc in new_active_usecases]
+
+    def export_bSDD(self,path:os.PathLike|str):
+        from SOMcreator.exporter.bsdd import export
+        export(self,path)
