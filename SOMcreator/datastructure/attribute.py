@@ -34,7 +34,7 @@ class Attribute(Hirarchy):
         if value is None:
             self.value = list()
         if value_type is None:
-            self._value_type = SOMcreator.value_constants.LABEL
+            self._value_type = SOMcreator.value_constants.LIST
         if property_set is not None:
             self.property_set = property_set
     def __str__(self) -> str:
