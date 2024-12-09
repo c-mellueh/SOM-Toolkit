@@ -12,6 +12,7 @@ import som_gui.core.project
 from som_gui.module.project.constants import OPEN_PATH
 from som_gui.module.language.trigger import set_language
 
+print("HELLO WORLD")
 
 def main(initial_file: PathLike | None = None, log_level=None, open_last_project=False):
     """
