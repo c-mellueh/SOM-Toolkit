@@ -24,8 +24,8 @@ The `SOMcreator` library is the backbone of the SOM-Toolkit, offering an object-
 - **Programmatic Flexibility**: Designed for developers to integrate directly into Python projects.
 
 **Core Classes and Functions:**
-- `SOMProject`: Represents a project containing multiple objects and their relationships.
-- `SOMObject`: Defines an individual object within the project.
+- `Project`: Represents a project containing multiple objects and their relationships.
+- `Object`: Defines an individual object within the project.
 - `PropertySet` and `Attribute`: Define and attach detailed semantic data to objects.
 
 ---
