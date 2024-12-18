@@ -9,25 +9,25 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QCheckBox,
-                               QDialogButtonBox, QHBoxLayout, QHeaderView, QLabel,
-                               QLayout, QPushButton, QSizePolicy, QSplitter,
-                               QTableWidgetItem, QVBoxLayout, QWidget)
+    QDialogButtonBox, QHBoxLayout, QHeaderView, QLabel,
+    QLayout, QPushButton, QSizePolicy, QSplitter,
+    QTableWidgetItem, QVBoxLayout, QWidget)
 
 from som_gui.module.attribute_import.ui import (AttributeTable, IfcTypeComboBox, PropertySetTable, SOMTypeComboBox,
-                                                ValueTable)
+    ValueTable)
 
 class Ui_AttributeImport(object):
     def setupUi(self, AttributeImport):
         if not AttributeImport.objectName():
             AttributeImport.setObjectName(u"AttributeImport")
-        AttributeImport.resize(1303, 745)
+        AttributeImport.resize(1303, 734)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
@@ -199,15 +199,21 @@ class Ui_AttributeImport(object):
 
         self.horzontal_layout_action_buttons.addWidget(self.button_settings)
 
+        self.pushButton = QPushButton(AttributeImport)
+        self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setMaximumSize(QSize(24, 24))
+
+        self.horzontal_layout_action_buttons.addWidget(self.pushButton)
+
         self.buttonBox = QDialogButtonBox(AttributeImport)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setStandardButtons(
-            QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Cancel)
 
         self.horzontal_layout_action_buttons.addWidget(self.buttonBox)
 
 
         self.main_layout.addLayout(self.horzontal_layout_action_buttons)
+
 
         self.retranslateUi(AttributeImport)
 
@@ -222,5 +228,6 @@ class Ui_AttributeImport(object):
         self.check_box_values.setText(QCoreApplication.translate("AttributeImport", u"All", None))
         self.label_value.setText(QCoreApplication.translate("AttributeImport", u"Values", None))
         self.button_settings.setText("")
+        self.pushButton.setText(QCoreApplication.translate("AttributeImport", u"DL", None))
     # retranslateUi
 

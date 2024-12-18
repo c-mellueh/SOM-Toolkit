@@ -20,7 +20,7 @@ import time
 
 def create_main_menu_actions(attribute_import: Type[tool.AttributeImport], main_window: Type[tool.MainWindow]):
     from som_gui.module.attribute_import import trigger
-    open_window_action = main_window.add_action("menuModels", "IV", trigger.open_window)
+    open_window_action = main_window.add_action("menuModels", "IV", trigger.open_import_window)
     attribute_import.set_action("open_window", open_window_action)
 
 
@@ -187,11 +187,11 @@ def attribute_import_finished(attribute_import: Type[tool.AttributeImport], ifc_
 
 
 def last_import_finished(attribute_import: Type[tool.AttributeImport],
-                         attribute_import_results: Type[tool.AttributeImportResults],
                          attribute_import_sql: Type[tool.AttributeImportSQL]):
     attribute_import.get_ifc_import_window().close()
     attribute_import_sql.create_som_filter_table()
-    open_results_window(attribute_import_results)
+    from ..module.attribute_import import trigger
+    trigger.open_results_window()
 
 
 def open_results_window(attribute_import_results: Type[tool.AttributeImportResults]):

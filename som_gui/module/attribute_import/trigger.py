@@ -9,10 +9,12 @@ def connect():
     core.create_main_menu_actions(tool.AttributeImport, tool.MainWindow)
 
 
-def open_window():
+def open_import_window():
     core.open_import_window(tool.AttributeImport, tool.AttributeImportResults, tool.IfcImporter, tool.Project,
                             tool.AttributeImportSQL)
 
+def open_results_window():
+    core.open_results_window(tool.AttributeImportResults)
 
 def retranslate_ui():
     core.retranslate_ui(tool.AttributeImport, tool.AttributeImportResults, tool.Util)
@@ -38,18 +40,13 @@ def connect_attribute_import_runner(runner):
     runner.signaller.progress.connect(tool.ModelcheckWindow.set_progress)
 
 
-def on_new_project():
-    pass
-
-
 def last_import_finished():
-    core.last_import_finished(tool.AttributeImport, tool.AttributeImportResults, tool.AttributeImportSQL)
+    core.last_import_finished(tool.AttributeImport, tool.AttributeImportSQL)
 
 
 def start_attribute_import(file: ifcopenshell.file, path: str):
     core.start_attribute_import(file, path, tool.AttributeImport, tool.AttributeImportResults, tool.AttributeImportSQL,
                                 tool.Project)
-    pass
 
 
 def update_ifc_type_combobox():
@@ -110,3 +107,6 @@ def result_acccept_clicked():
 
 def settings_clicked():
     core.settings_clicked(tool.AttributeImportResults, tool.AttributeImportSQL, tool.Util)
+
+def on_new_project():
+    pass
