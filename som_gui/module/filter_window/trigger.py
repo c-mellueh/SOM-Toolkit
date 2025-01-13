@@ -19,7 +19,7 @@ def open_window():
 
 
 def retranslate_ui():
-    core.retranslate_ui(tool.FilterWindow)
+    core.retranslate_ui(tool.FilterWindow,tool.Util)
 
 
 def pt_horizontal_context_requested(pos):

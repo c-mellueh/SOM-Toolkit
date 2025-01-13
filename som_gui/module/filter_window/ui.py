@@ -160,6 +160,7 @@ class ProjectModel(QAbstractTableModel):
         self.check_column_index = 0
 
     def update(self):
+        logging.debug(f"Update FilterView rowCount: {self.rowCount()} columnCount: {self.columnCount()}")
         self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount()))
 
     def flags(self, index):
@@ -192,8 +193,12 @@ class ProjectModel(QAbstractTableModel):
         if role not in [Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole]:
             return
         if orientation == Qt.Orientation.Horizontal:
+            if section > len(self.project.get_usecases())-1:
+                return None
             return self.project.get_usecases()[section].name
         else:
+            if section > len(self.project.get_phases())-1:
+                return None
             return self.project.get_phases()[section].name
 
     def insertRows(self, row, count, parent=None):
@@ -217,6 +222,7 @@ class TreeModel(QAbstractItemModel):
     def update(self):
         self.allowed_combinations = self.get_allowed_combinations()
         self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount()))
+
 
     def flags(self, index, parent_index):
         flags = super().flags(index)
