@@ -46,7 +46,7 @@ def _calculate_new_filter_matrix(filter_matrix, existing_project: Project, impor
             if existing_use_case is None:
                 continue
             phase_index = existing_project.get_phase_index(existing_phase)
-            use_case_index = existing_project.get_use_case_index(existing_use_case)
+            use_case_index = existing_project.get_usecase_index(existing_use_case)
             import_state = item.get_filter_state(import_phase, import_use_case)
             filter_matrix[phase_index][use_case_index] = import_state
 

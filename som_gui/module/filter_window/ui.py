@@ -4,7 +4,7 @@ import logging
 from typing import Callable
 
 from PySide6.QtCore import QAbstractItemModel, QAbstractTableModel, QCoreApplication, QItemSelectionModel, QModelIndex, \
-    Qt
+    Qt, Signal
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTableView, QTreeView, QWidget
 
@@ -154,13 +154,23 @@ class PsetTreeView(FilterTreeView):
 
 
 class ProjectModel(QAbstractTableModel):
+    data_changed_externally = Signal()
     def __init__(self, project: SOMcreator.Project):
         super().__init__()
         self.project = project
         self.check_column_index = 0
+        self.last_col_count = self.columnCount()
+        self.last_row_count = self.rowCount()
 
     def update(self):
+        logging.debug(f"Update FilterView rowCount: {self.rowCount()} columnCount: {self.columnCount()}")
         self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount()))
+
+        if self.last_col_count != self.columnCount() or self.last_row_count != self.rowCount():
+            self.data_changed_externally.emit()
+
+        self.last_col_count = self.columnCount()
+        self.last_row_count = self.rowCount()
 
     def flags(self, index):
         flags = super().flags(index)
@@ -192,8 +202,12 @@ class ProjectModel(QAbstractTableModel):
         if role not in [Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole]:
             return
         if orientation == Qt.Orientation.Horizontal:
+            if section > len(self.project.get_usecases())-1:
+                return None
             return self.project.get_usecases()[section].name
         else:
+            if section > len(self.project.get_phases())-1:
+                return None
             return self.project.get_phases()[section].name
 
     def insertRows(self, row, count, parent=None):
@@ -202,7 +216,7 @@ class ProjectModel(QAbstractTableModel):
         new_name = tool.Util.get_new_name(text, [uc.name for uc in self.project.get_usecases()])
         self.beginInsertRows(QModelIndex(), row, row + count - 1)
         phase = SOMcreator.Phase(new_name, new_name, new_name)
-        self.project.add_project_phase(phase)
+        self.project.add_phase(phase)
         self.endInsertRows()
 
 
@@ -217,6 +231,7 @@ class TreeModel(QAbstractItemModel):
     def update(self):
         self.allowed_combinations = self.get_allowed_combinations()
         self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount()))
+
 
     def flags(self, index, parent_index):
         flags = super().flags(index)

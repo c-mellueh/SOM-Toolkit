@@ -19,8 +19,11 @@ def open_window():
 
 
 def retranslate_ui():
-    core.retranslate_ui(tool.FilterWindow)
+    core.retranslate_ui(tool.FilterWindow,tool.Util)
 
+
+def filter_changed_externally():
+    core.filter_changed_externally(tool.FilterWindow)
 
 def pt_horizontal_context_requested(pos):
     core.pt_context_menu(pos, Qt.Orientation.Horizontal, tool.FilterWindow, tool.Project)

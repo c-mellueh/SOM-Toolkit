@@ -21,12 +21,14 @@ def create_main_menu_actions(filter_window: Type[tool.FilterWindow], main_window
     filter_window.set_action("open_window", action)
 
 
-def retranslate_ui(filter_window: Type[tool.FilterWindow], ):
+def retranslate_ui(filter_window: Type[tool.FilterWindow], util:Type[tool.Util]):
     action = filter_window.get_action("open_window")
     action.setText(QCoreApplication.translate("FilterWindow", "Project Filter"))
 
     if filter_window.get():
+        title = QCoreApplication.translate("FilterWindow", "Project Filter")
         filter_window.get().ui.retranslateUi(filter_window.get())
+        filter_window.get().setWindowTitle(util.get_window_title(title))
     if filter_window.get_object_tree():
         filter_window.get_object_tree().model().retranslate_ui()
     if filter_window.get_pset_tree():
@@ -35,15 +37,49 @@ def retranslate_ui(filter_window: Type[tool.FilterWindow], ):
 
 def open_window(filter_window: Type[tool.FilterWindow], project: Type[tool.Project], util: Type[tool.Util],
                 search: Type[tool.Search]):
+
+    if filter_window.get():
+        filter_window.get().show()
+        filter_window.get().activateWindow()
+        return
+
     widget = filter_window.create_widget()
     util.add_shortcut("Ctrl+F", widget, lambda: search_object(filter_window, search))
-
     filter_window.connect_project_table(project.get())
     filter_window.connect_object_tree(project.get())
     filter_window.connect_pset_tree(project.get())
-    retranslate_ui(filter_window)
+    retranslate_ui(filter_window,util)
     widget.show()
 
+
+def filter_changed_externally(filter_window: Type[tool.FilterWindow]):
+    """
+    gets Called if Filters get Added or Removed externally. For example by Console Script.
+    :param filter_window:
+    :return:
+    """
+    model = filter_window.get_project_table().model()
+    logging.debug(f"Filter Changed Externally. rowCount: {model.last_row_count} -> {model.rowCount()} columnCount:{model.last_col_count} -> {model.columnCount()}")
+
+    #Remove Rows (Phases)
+    if model.last_row_count > model.rowCount():
+        model.beginRemoveRows(QModelIndex(), model.rowCount(),model.last_row_count-1)
+        model.endRemoveRows()
+
+    #Insert Rows (Phases)
+    if model.last_row_count < model.rowCount():
+        model.beginInsertRows(QModelIndex(),model.last_row_count+1, model.rowCount())
+        model.endInsertRows()
+
+    #Remove Colums (UseCases)
+    if model.last_col_count > model.columnCount():
+        model.beginRemoveColumns(QModelIndex(), model.columnCount(),model.last_col_count-1)
+        model.endRemoveColumns()
+
+    #Insert Colums (UseCases)
+    if model.last_col_count < model.columnCount():
+        model.beginInsertColumns(QModelIndex(),model.last_col_count+1, model.columnCount())
+        model.endInsertColumns()
 
 def search_object(filter_window: Type[tool.FilterWindow], search: Type[tool.Search]):
     obj = search.search_object()
@@ -224,7 +260,7 @@ def settings_widget_created(widget: ui.SettingsWidget, filter_window: Type[tool.
 
     for usecase in proj.get_usecases():
         cb = QCheckBox()
-        usecase_index = proj.get_use_case_index(usecase)
+        usecase_index = proj.get_usecase_index(usecase)
         cb.setChecked(bool(usecase_index in proj.active_usecases))
         usecase_layout.addRow(QLabel(usecase.name), cb)
 
@@ -262,12 +298,12 @@ def settings_combobox_changed(filter_window: Type[tool.FilterWindow], project: T
     if not all([usecase_name, phase_name]):
         return
     proj = project.get()
-    usecase = proj.get_use_case_by_name(usecase_name)
+    usecase = proj.get_usecase_by_name(usecase_name)
     phase = proj.get_phase_by_name(phase_name)
 
     # add warning icons to combobox
     for uc_name, index in util.get_text_from_combobox(combobox_usecase).items():
-        uc = proj.get_use_case_by_name(uc_name)
+        uc = proj.get_usecase_by_name(uc_name)
         if not proj.get_filter_state(phase, uc):
             warn_icon = widget.style().standardIcon(widget.style().StandardPixmap.SP_MessageBoxWarning)
             combobox_usecase.setItemIcon(index.row(), warn_icon)

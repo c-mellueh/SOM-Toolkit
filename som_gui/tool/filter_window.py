@@ -78,6 +78,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         project_table = cls.get_project_table()
         model = ui.ProjectModel(project)
         project_table.setModel(model)
+        model.data_changed_externally.connect(trigger.filter_changed_externally)
         horizontal_header = project_table.horizontalHeader()
         horizontal_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         horizontal_header.customContextMenuRequested.connect(trigger.pt_horizontal_context_requested)
@@ -97,15 +98,15 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         usecase = SOMcreator.UseCase(new_name, new_name, new_name)
         model = cls.get_project_table().model()
         model.beginInsertColumns(QModelIndex(), model.columnCount(), model.columnCount())
-        model.project.add_use_case(usecase)
+        model.project.add_usecase(usecase)
         model.endInsertColumns()
 
     @classmethod
     def remove_usecase(cls, usecase: SOMcreator.UseCase, project: SOMcreator.Project):
         model = cls.get_project_table().model()
-        usecase_index = project.get_use_case_index(usecase)
+        usecase_index = project.get_usecase_index(usecase)
         model.beginRemoveColumns(QModelIndex(), usecase_index, usecase_index)
-        project.remove_use_case(usecase)
+        project.remove_usecase(usecase)
         model.endRemoveColumns()
 
     @classmethod
@@ -116,7 +117,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         phase = SOMcreator.Phase(new_name, new_name, new_name)
         model = cls.get_project_table().model()
         model.beginInsertRows(QModelIndex(), model.rowCount(), model.rowCount())
-        model.project.add_project_phase(phase)
+        model.project.add_phase(phase)
         model.endInsertRows()
 
     @classmethod
@@ -229,8 +230,8 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
             usecases = set(proj0.get_usecases()).intersection(set(proj1.get_usecases()))
             cls.set_usecase_list(sorted(usecases, key=lambda x: x.name))
             for usecase in cls.get_usecase_list():
-                index0 = proj0.get_use_case_index(usecase)
-                index1 = proj1.get_use_case_index(usecase)
+                index0 = proj0.get_usecase_index(usecase)
+                index1 = proj1.get_usecase_index(usecase)
                 cls.add_use_case_index_tuple((index0, index1))
         return cls.get_usecase_list()
 
@@ -441,10 +442,10 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
     @classmethod
     def get_widget(cls) -> attribute_ui.AttributeWidget:
-        if cls.get_properties().widget is None:
-            cls.get_properties().widget = attribute_ui.AttributeWidget()
-            cls.get_properties().widget.ui.table_widget_values.hide()
-            cls.get_properties().widget.ui.table_infos.hide()
+        # if cls.get_properties().widget is None:
+        #     cls.get_properties().widget = attribute_ui.AttributeWidget()
+        #     cls.get_properties().widget.ui.table_widget_values.hide()
+        #     cls.get_properties().widget.ui.table_infos.hide()
         return cls.get_properties().widget
 
     @classmethod
