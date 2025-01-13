@@ -98,15 +98,15 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         usecase = SOMcreator.UseCase(new_name, new_name, new_name)
         model = cls.get_project_table().model()
         model.beginInsertColumns(QModelIndex(), model.columnCount(), model.columnCount())
-        model.project.add_use_case(usecase)
+        model.project.add_usecase(usecase)
         model.endInsertColumns()
 
     @classmethod
     def remove_usecase(cls, usecase: SOMcreator.UseCase, project: SOMcreator.Project):
         model = cls.get_project_table().model()
-        usecase_index = project.get_use_case_index(usecase)
+        usecase_index = project.get_usecase_index(usecase)
         model.beginRemoveColumns(QModelIndex(), usecase_index, usecase_index)
-        project.remove_use_case(usecase)
+        project.remove_usecase(usecase)
         model.endRemoveColumns()
 
     @classmethod
@@ -117,7 +117,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         phase = SOMcreator.Phase(new_name, new_name, new_name)
         model = cls.get_project_table().model()
         model.beginInsertRows(QModelIndex(), model.rowCount(), model.rowCount())
-        model.project.add_project_phase(phase)
+        model.project.add_phase(phase)
         model.endInsertRows()
 
     @classmethod
@@ -230,8 +230,8 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
             usecases = set(proj0.get_usecases()).intersection(set(proj1.get_usecases()))
             cls.set_usecase_list(sorted(usecases, key=lambda x: x.name))
             for usecase in cls.get_usecase_list():
-                index0 = proj0.get_use_case_index(usecase)
-                index1 = proj1.get_use_case_index(usecase)
+                index0 = proj0.get_usecase_index(usecase)
+                index1 = proj1.get_usecase_index(usecase)
                 cls.add_use_case_index_tuple((index0, index1))
         return cls.get_usecase_list()
 

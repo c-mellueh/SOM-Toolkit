@@ -216,7 +216,7 @@ class ProjectModel(QAbstractTableModel):
         new_name = tool.Util.get_new_name(text, [uc.name for uc in self.project.get_usecases()])
         self.beginInsertRows(QModelIndex(), row, row + count - 1)
         phase = SOMcreator.Phase(new_name, new_name, new_name)
-        self.project.add_project_phase(phase)
+        self.project.add_phase(phase)
         self.endInsertRows()
 
 

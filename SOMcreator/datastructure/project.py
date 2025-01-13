@@ -192,17 +192,17 @@ class Project(object):
             phase = self.get_phase_by_index(phase)
         if isinstance(use_case, int):
             use_case = self.get_usecase_by_index(use_case)
-        return self._filter_matrix[self.get_phase_index(phase)][self.get_use_case_index(use_case)]
+        return self._filter_matrix[self.get_phase_index(phase)][self.get_usecase_index(use_case)]
 
     def set_filter_state(self, phase: SOMcreator.Phase, use_case: SOMcreator.UseCase, value: bool):
-        self._filter_matrix[self.get_phase_index(phase)][self.get_use_case_index(use_case)] = value
+        self._filter_matrix[self.get_phase_index(phase)][self.get_usecase_index(use_case)] = value
 
     def get_phase_index(self, phase: SOMcreator.Phase) -> int | None:
         if phase in self._phases:
             return self._phases.index(phase)
         return None
 
-    def get_use_case_index(self, use_case: SOMcreator.UseCase) -> int | None:
+    def get_usecase_index(self, use_case: SOMcreator.UseCase) -> int | None:
         if use_case in self._use_cases:
             return self._use_cases.index(use_case)
         return None
@@ -213,19 +213,19 @@ class Project(object):
     def get_usecases(self) -> list[SOMcreator.UseCase]:
         return list(self._use_cases)
 
-    def add_project_phase(self, phase: SOMcreator.Phase):
+    def add_phase(self, phase: SOMcreator.Phase):
         if phase not in self._phases:
             self._phases.append(phase)
             for item in self.get_hirarchy_items(filter=False):
-                item.add_project_phase()
+                item.add_phase()
             self._filter_matrix.append([True for _ in self._use_cases])
         return self._phases.index(phase)
 
-    def add_use_case(self, use_case: SOMcreator.UseCase):
+    def add_usecase(self, use_case: SOMcreator.UseCase):
         if use_case not in self._use_cases:
             self._use_cases.append(use_case)
             for item in self.get_hirarchy_items(filter=False):
-                item.add_use_case()
+                item.add_usecase()
             for use_case_list in self._filter_matrix:
                 use_case_list.append(True)
         return self._use_cases.index(use_case)
@@ -235,7 +235,7 @@ class Project(object):
             if project_phase.name == name:
                 return project_phase
 
-    def get_use_case_by_name(self, name: str):
+    def get_usecase_by_name(self, name: str):
         for use_case in self._use_cases:
             if use_case.name == name:
                 return use_case
@@ -252,21 +252,21 @@ class Project(object):
         self.active_phases = [self.get_phase_index(ph) for ph in new_active_phases]
 
 
-    def remove_use_case(self, use_case: SOMcreator.UseCase) -> None:
+    def remove_usecase(self, use_case: SOMcreator.UseCase) -> None:
         if use_case is None:
             return
-        index = self.get_use_case_index(use_case)
+        index = self.get_usecase_index(use_case)
 
         new_active_usecases = [self.get_usecase_by_index(i) for i in self.active_usecases if i != index]
 
 
         for item in self.get_hirarchy_items(filter=False):
-            item.remove_use_case(use_case)
+            item.remove_usecase(use_case)
 
         self._use_cases.remove(use_case)
         for use_case_list in self._filter_matrix:
             use_case_list.pop(index)
-        self.active_usecases = [self.get_use_case_index(uc) for uc in new_active_usecases]
+        self.active_usecases = [self.get_usecase_index(uc) for uc in new_active_usecases]
 
     def export_bSDD(self,path:os.PathLike|str):
         from SOMcreator.exporter.bsdd import export

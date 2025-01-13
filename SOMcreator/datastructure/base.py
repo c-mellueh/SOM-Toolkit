@@ -12,7 +12,7 @@ FILTER_KEYWORD = "filter"
 
 
 def filterable(func: Callable):
-    """decorator function that filters list output of function by  phase and use_case"""
+    """decorator function that filters list output of function by  phase and usecase"""
 
     def inner(self, *args, **kwargs):
         filter_values = True
@@ -83,44 +83,44 @@ class Hirarchy(object, metaclass=IterRegistry):
     def get_filter_matrix(self):
         return copy.deepcopy(self._filter_matrix)
 
-    def get_filter_state(self, phase: SOMcreator.Phase, use_case: SOMcreator.UseCase) -> bool | None:
+    def get_filter_state(self, phase: SOMcreator.Phase, usecase: SOMcreator.UseCase) -> bool | None:
         if self.project:
-            if not self.project.get_filter_state(phase, use_case):
+            if not self.project.get_filter_state(phase, usecase):
                 return False
 
         if isinstance(phase, int):
             phase_index = phase
         else:
             phase_index = self.project.get_phase_index(phase)
-        if isinstance(use_case, int):
-            use_case_index = use_case
+        if isinstance(usecase, int):
+            usecase_index = usecase
         else:
-            use_case_index = self.project.get_use_case_index(use_case)
-        if phase_index is None or use_case_index is None:
+            usecase_index = self.project.get_usecase_index(usecase)
+        if phase_index is None or usecase_index is None:
             return None
-        return bool(self._filter_matrix[phase_index][use_case_index])
+        return bool(self._filter_matrix[phase_index][usecase_index])
 
-    def set_filter_state(self, phase: SOMcreator.Phase, use_case: SOMcreator.UseCase, value: bool) -> None:
+    def set_filter_state(self, phase: SOMcreator.Phase, usecase: SOMcreator.UseCase, value: bool) -> None:
         phase_index = self.project.get_phase_index(phase)
-        use_case_index = self.project.get_use_case_index(use_case)
-        self._filter_matrix[phase_index][use_case_index] = value
+        usecase_index = self.project.get_usecase_index(usecase)
+        self._filter_matrix[phase_index][usecase_index] = value
 
     def remove_phase(self, phase: SOMcreator.Phase) -> None:
         phase_index = self.project.get_phase_index(phase)
         self.get_filter_matrix().pop(phase_index)
 
-    def remove_use_case(self, use_case: SOMcreator.UseCase) -> None:
-        use_case_index = self.project.get_use_case_index(use_case)
-        for use_case_list in self._filter_matrix:
-            use_case_list.pop(use_case_index)
+    def remove_usecase(self, usecase: SOMcreator.UseCase) -> None:
+        usecase_index = self.project.get_usecase_index(usecase)
+        for usecase_list in self._filter_matrix:
+            usecase_list.pop(usecase_index)
 
     def add_project_phase(self) -> None:
-        use_cases = self.project.get_usecases()
-        self._filter_matrix.append([True for _ in use_cases])
+        usecases = self.project.get_usecases()
+        self._filter_matrix.append([True for _ in usecases])
 
-    def add_use_case(self) -> None:
-        for use_case_list in self._filter_matrix:
-            use_case_list.append(True)
+    def add_usecase(self) -> None:
+        for usecase_list in self._filter_matrix:
+            usecase_list.append(True)
 
     def is_active(self) -> bool:
         """

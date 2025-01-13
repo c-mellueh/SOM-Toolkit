@@ -260,7 +260,7 @@ def settings_widget_created(widget: ui.SettingsWidget, filter_window: Type[tool.
 
     for usecase in proj.get_usecases():
         cb = QCheckBox()
-        usecase_index = proj.get_use_case_index(usecase)
+        usecase_index = proj.get_usecase_index(usecase)
         cb.setChecked(bool(usecase_index in proj.active_usecases))
         usecase_layout.addRow(QLabel(usecase.name), cb)
 
@@ -298,12 +298,12 @@ def settings_combobox_changed(filter_window: Type[tool.FilterWindow], project: T
     if not all([usecase_name, phase_name]):
         return
     proj = project.get()
-    usecase = proj.get_use_case_by_name(usecase_name)
+    usecase = proj.get_usecase_by_name(usecase_name)
     phase = proj.get_phase_by_name(phase_name)
 
     # add warning icons to combobox
     for uc_name, index in util.get_text_from_combobox(combobox_usecase).items():
-        uc = proj.get_use_case_by_name(uc_name)
+        uc = proj.get_usecase_by_name(uc_name)
         if not proj.get_filter_state(phase, uc):
             warn_icon = widget.style().standardIcon(widget.style().StandardPixmap.SP_MessageBoxWarning)
             combobox_usecase.setItemIcon(index.row(), warn_icon)
