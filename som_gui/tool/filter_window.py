@@ -78,6 +78,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         project_table = cls.get_project_table()
         model = ui.ProjectModel(project)
         project_table.setModel(model)
+        model.data_changed_externally.connect(trigger.filter_changed_externally)
         horizontal_header = project_table.horizontalHeader()
         horizontal_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         horizontal_header.customContextMenuRequested.connect(trigger.pt_horizontal_context_requested)

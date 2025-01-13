@@ -4,7 +4,7 @@ import logging
 from typing import Callable
 
 from PySide6.QtCore import QAbstractItemModel, QAbstractTableModel, QCoreApplication, QItemSelectionModel, QModelIndex, \
-    Qt
+    Qt, Signal
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTableView, QTreeView, QWidget
 
@@ -154,14 +154,23 @@ class PsetTreeView(FilterTreeView):
 
 
 class ProjectModel(QAbstractTableModel):
+    data_changed_externally = Signal()
     def __init__(self, project: SOMcreator.Project):
         super().__init__()
         self.project = project
         self.check_column_index = 0
+        self.last_col_count = self.columnCount()
+        self.last_row_count = self.rowCount()
 
     def update(self):
         logging.debug(f"Update FilterView rowCount: {self.rowCount()} columnCount: {self.columnCount()}")
         self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount()))
+
+        if self.last_col_count != self.columnCount() or self.last_row_count != self.rowCount():
+            self.data_changed_externally.emit()
+
+        self.last_col_count = self.columnCount()
+        self.last_row_count = self.rowCount()
 
     def flags(self, index):
         flags = super().flags(index)
