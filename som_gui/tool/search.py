@@ -130,7 +130,7 @@ class Search(som_gui.core.tool.Search):
     def check_row(cls, table: QTableWidget, search_text: str, row: int, column_count: int) -> float:
         model = table.model()
         texts = [table.item(row, col).text().lower() for col in range(column_count)]
-        ratio = max(fuzz.ratio(search_text, text) for text in texts)
+        ratio = max(fuzz.ratio(search_text.lower(), text) for text in texts)
         model.setData(model.index(row, column_count), ratio, Qt.ItemDataRole.DisplayRole)
         return ratio
 
