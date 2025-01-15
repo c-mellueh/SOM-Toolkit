@@ -24,7 +24,7 @@ def mouse_press_event(position) -> None:
 
 
 def mouse_release_event(pos) -> None:
-    core.mouse_release_event(pos, aw_tool.View, aw_tool.Connection, tool.Search)
+    core.mouse_release_event(pos, aw_tool.View, aw_tool.Connection, tool.Search,tool.Project)
 
 
 def mouse_wheel_event(event) -> None:

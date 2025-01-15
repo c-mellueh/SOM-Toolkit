@@ -1680,7 +1680,7 @@ class Search:
 
     def get_search_properties(self, ): pass
 
-    def refresh_dialog(self, widget, threshold): pass
+    def update_table(self, widget, threshold): pass
 
     def retranslate_title(self, widget, search_mode): pass
 

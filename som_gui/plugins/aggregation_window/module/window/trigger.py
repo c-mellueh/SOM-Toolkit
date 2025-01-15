@@ -48,7 +48,7 @@ def delete_active_scene():
 
 
 def filter_scenes():
-    core.filter_scenes(aw_tool.Window, aw_tool.View, tool.Search, tool.Popups)
+    core.filter_scenes(aw_tool.Window, aw_tool.View, tool.Search, tool.Popups,tool.Project)
 
 
 def reset_filters():
@@ -56,7 +56,7 @@ def reset_filters():
 
 
 def find_aggregation():
-    core.search_aggregation(aw_tool.View, tool.Search, tool.Popups)
+    core.search_aggregation(aw_tool.View, tool.Search, tool.Popups,tool.Project)
 
 
 def copy_selected_nodes():

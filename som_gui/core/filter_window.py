@@ -44,7 +44,7 @@ def open_window(filter_window: Type[tool.FilterWindow], project: Type[tool.Proje
         return
 
     widget = filter_window.create_widget()
-    util.add_shortcut("Ctrl+F", widget, lambda: search_object(filter_window, search))
+    util.add_shortcut("Ctrl+F", widget, lambda: search_object(filter_window, search,project))
     filter_window.connect_project_table(project.get())
     filter_window.connect_object_tree(project.get())
     filter_window.connect_pset_tree(project.get())
@@ -81,8 +81,8 @@ def filter_changed_externally(filter_window: Type[tool.FilterWindow]):
         model.beginInsertColumns(QModelIndex(),model.last_col_count+1, model.columnCount())
         model.endInsertColumns()
 
-def search_object(filter_window: Type[tool.FilterWindow], search: Type[tool.Search]):
-    obj = search.search_object()
+def search_object(filter_window: Type[tool.FilterWindow], search: Type[tool.Search],project:Type[tool.Project]):
+    obj = search.search_object(list(project.get().get_objects(filter=True)))
     if obj is None:
         return
     object_tree = filter_window.get_object_tree()

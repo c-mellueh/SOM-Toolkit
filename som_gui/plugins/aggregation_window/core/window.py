@@ -100,10 +100,10 @@ def combobox_changed(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> 
 
 
 def filter_scenes(window: Type[aw_tool.Window], view: Type[aw_tool.View], search: Type[tool.Search],
-                  popup: Type[tool.Popups]) -> None:
+                  popup: Type[tool.Popups],project:Type[tool.Project]) -> None:
     allowed_scenes = window.get_allowed_scenes()
     scene_list = view.get_all_scenes()
-    filter_object = search.search_object()
+    filter_object = search.search_object(list(project.get().get_objects(filter=True)))
     if filter_object is None:
         return
     for scene in scene_list:
@@ -122,8 +122,8 @@ def filter_scenes(window: Type[aw_tool.Window], view: Type[aw_tool.View], search
     update_combo_box(window, view)
 
 
-def search_aggregation(view: Type[aw_tool.View], search: Type[tool.Search], popup: Type[tool.Popups]) -> None:
-    obj = search.search_object()
+def search_aggregation(view: Type[aw_tool.View], search: Type[tool.Search], popup: Type[tool.Popups],project:Type[tool.Project]) -> None:
+    obj = search.search_object(list(project.get().get_objects(filter=True)))
     if obj is None:
         return
     scene = view.get_active_scene()

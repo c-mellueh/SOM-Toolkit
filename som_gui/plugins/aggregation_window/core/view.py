@@ -123,14 +123,15 @@ def mouse_press_event(position: QPoint, view: Type[aw_tool.View], node: Type[aw_
 
 
 def mouse_release_event(position: QPoint, view: Type[aw_tool.View],
-                        connection: Type[aw_tool.Connection], search: Type[tool.Search]) -> None:
+                        connection: Type[aw_tool.Connection], search: Type[tool.Search],
+                        project: Type[tool.Project]) -> None:
     mouse_mode = view.get_mouse_mode()
     if mouse_mode == 5:  # Handle Connection Drawing
         if connection.is_drawing_started():
             view.create_connection_by_pos(connection.get_draw_node())
             connection.delete_draw_connection()
         else:
-            obj = search.search_object()
+            obj = search.search_object(list(project.get().get_objects(filter=True)))
             if obj is not None:
                 view.create_child_node(connection.get_draw_node(), obj)
 
@@ -182,7 +183,7 @@ def context_menu_requested(pos: QPoint, view: Type[aw_tool.View], node: Type[aw_
         menu_list.append([f"{layout}/{dv}", lambda: node.distribute_nodes(selected_nodes, 1)])
 
     menu_list.append(
-        [QCoreApplication.translate("Aggregation", "Modify Info"), lambda: change_header_text(node, search)])
+        [QCoreApplication.translate("Aggregation", "Modify Info"), lambda: change_header_text(node, search, project)])
     menu_list.append([QCoreApplication.translate("Aggregation", "Reset Info"), lambda: node.reset_title_settings()])
 
     node_under_mouse = view.get_node_under_mouse()
@@ -192,7 +193,7 @@ def context_menu_requested(pos: QPoint, view: Type[aw_tool.View], node: Type[aw_
         delete_node = QCoreApplication.translate("Aggregation", "Delete Node")
         delete_nodes = QCoreApplication.translate("Aggregation", "Delete Nodes")
 
-        menu_list.append([f"{node_text}/{add}", lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
+        menu_list.append([f"{node_text}/{add}", lambda: add_node_at_pos(view.map_to_scene(pos), view, search, project)])
 
         txt = delete_node if len(selected_nodes) == 1 else delete_nodes
         del_text = f"{node_text}/{txt}"
@@ -212,26 +213,33 @@ def context_menu_requested(pos: QPoint, view: Type[aw_tool.View], node: Type[aw_
     else:
         add = QCoreApplication.translate("Aggregation", "Add Node")
 
-        menu_list.append([add, lambda: add_node_at_pos(view.map_to_scene(pos), view, search)])
+        menu_list.append([add, lambda: add_node_at_pos(view.map_to_scene(pos), view, search, project)])
 
     menu = util.create_context_menu(menu_list)
     menu.exec(view.get_view().viewport().mapToGlobal(pos))
     paint_event(view, node, connection, project)
 
 
-def add_node_at_pos(pos, view: Type[aw_tool.View], search: Type[tool.Search]) -> None:
+def add_node_at_pos(pos, view: Type[aw_tool.View], search: Type[tool.Search], project: Type[tool.Project]) -> None:
     scene = view.get_active_scene()
-    obj = search.search_object()
+    obj = search.search_object(list(project.get().get_objects(filter=True)))
     if not obj:
         return
     aggregation = SOMcreator.Aggregation(obj)
     view.add_aggregation_to_import_list(scene, aggregation, pos)
 
 
-def change_header_text(node: Type[aw_tool.Node], search: Type[tool.Search]) -> None:
-    result = search.search_attribute()
-    if result:
-        node.set_title_settings(*result)
+def change_header_text(node: Type[aw_tool.Node], search: Type[tool.Search], project: Type[tool.Project]) -> None:
+    searchable_attributes = list()
+    search_values = list()
+    for attribute in project.get().get_attributes(filter=False):
+        value = [attribute.property_set.name, attribute.name]
+        if value not in search_values:
+            searchable_attributes.append(attribute)
+            search_values.append(value)
+    attribute = search.search_attribute(searchable_attributes)
+    if attribute:
+        node.set_title_settings(attribute.property_set.name, attribute.name)
 
 
 def add_object_to_scene(obj: SOMcreator.Object, scene, parent_node: node_ui.NodeProxy | None, pos: QPoint | None,

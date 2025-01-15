@@ -14,7 +14,7 @@ def connect():
 
     # Connect MainWindow
     main_ui = tool.MainWindow.get_ui()
-    main_ui.button_search.pressed.connect(lambda: core.search_object(tool.Search, tool.Object))
+    main_ui.button_search.pressed.connect(lambda: core.search_object(tool.Search, tool.Object,tool.Project))
     main_ui.button_objects_add.clicked.connect(
         lambda: core.add_object_clicked(tool.Object, tool.Project, tool.PropertySet,
                                         tool.PredefinedPropertySet, tool.Popups))
@@ -24,7 +24,7 @@ def connect():
         lambda: core.ident_attribute_changed(tool.Object, tool.MainWindow, tool.PredefinedPropertySet))
 
     core.load_context_menus(tool.Object, tool.Util)
-    core.add_shortcuts(tool.Object, tool.Util, tool.Search, tool.MainWindow)
+    core.add_shortcuts(tool.Object, tool.Util, tool.Search, tool.MainWindow,tool.Project)
     core.connect_object_input_widget(tool.Object, tool.MainWindow, tool.PredefinedPropertySet)
     core.init_main_window(tool.Object, tool.MainWindow)
 
