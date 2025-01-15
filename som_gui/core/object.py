@@ -80,14 +80,14 @@ def ident_attribute_changed(object_tool: Type[tool.Object], main_window: Type[to
 
 
 def add_shortcuts(object_tool: Type[Object], util: Type[tool.Util], search_tool: Type[Search],
-                  main_window: Type[tool.MainWindow]):
+                  main_window: Type[tool.MainWindow],project:Type[tool.Project]):
     util.add_shortcut("Ctrl+X", main_window.get(), object_tool.delete_selection)
     util.add_shortcut("Ctrl+G", main_window.get(), object_tool.group_selection)
-    util.add_shortcut("Ctrl+F", main_window.get(), lambda: search_object(search_tool, object_tool))
+    util.add_shortcut("Ctrl+F", main_window.get(), lambda: search_object(search_tool, object_tool,project))
 
 
-def search_object(search_tool: Type[Search], object_tool: Type[Object]):
-    obj = search_tool.search_object()
+def search_object(search_tool: Type[Search], object_tool: Type[Object],project:Type[tool.Project]):
+    obj = search_tool.search_object(list(project.get().get_objects(filter=True)))
     object_tool.select_object(obj)
 
 
