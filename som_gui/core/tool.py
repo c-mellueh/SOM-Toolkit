@@ -24,43 +24,13 @@ class Appdata:
 class Attribute:
     def add_attribute_data_value(self, name, getter, setter): pass
 
-    def create_attribute(self, property_set, attribute_data): pass
-
-    def delete(self, attributes, with_subattributes): pass
+    def create_attribute_by_dict(self, attribute_data): pass
 
     def get_attribute_data(self, attribute): pass
 
-    def get_attribute_data_type(self, attribute): pass
-
-    def get_attribute_description(self, attribute): pass
-
-    def get_attribute_name(self, attribute): pass
-
-    def get_attribute_properties(self, ): pass
-
-    def get_attribute_value_type(self, attribute): pass
-
-    def get_attribute_values(self, attribute): pass
-
-    def get_inherit_state(self, attribute): pass
-
-    def is_attribute_optional(self, attribute): pass
+    def get_properties(self, ): pass
 
     def set_attribute_data_by_dict(self, attribute, data_dict): pass
-
-    def set_attribute_data_type(self, value, attribute): pass
-
-    def set_attribute_description(self, value, attribute): pass
-
-    def set_attribute_name(self, value, attribute): pass
-
-    def set_attribute_optional(self, optional, attribute): pass
-
-    def set_attribute_value_type(self, value, attribute): pass
-
-    def set_attribute_values(self, value, attribute): pass
-
-    def set_inherit_state(self, state, attribute): pass
 
 
 class AttributeCompare:
@@ -126,13 +96,13 @@ class AttributeCompare:
 
     def find_existing_parent_item(self, obj): pass
 
-    def find_matching_entity(self, entity_0, uuid_dict1, name_dict1): pass
+    def find_matching_entity(self, search_element, uuid_dict1, name_dict1): pass
 
     def find_matching_object(self, obj, index): pass
 
-    def generate_name_dict(self, entity_list): pass
+    def generate_name_dict(self, element_list): pass
 
-    def generate_uuid_dict(self, entity_list): pass
+    def generate_uuid_dict(self, element_list): pass
 
     def get_attribute_info_list(self, ): pass
 
@@ -178,7 +148,7 @@ class AttributeCompare:
 
     def get_uuid_dict(self, index): pass
 
-    def get_value_list(self, attribute): pass
+    def get_value_list(self, entity): pass
 
     def get_value_table(self, widget): pass
 
@@ -200,7 +170,7 @@ class AttributeCompare:
 
     def set_tree_row_color(self, item, style_index): pass
 
-    def set_value_list(self, attribute, value_list): pass
+    def set_value_list(self, entity, value_list): pass
 
     def style_parent_item(self, item, style): pass
 
@@ -420,7 +390,7 @@ class AttributeTable:
 
     def context_menu_rename_builder(self, table): pass
 
-    def delete_selected_attributes(self, table, delete_subattributes): pass
+    def delete_selected_attributes(self, table, with_child): pass
 
     def edit_selected_attribute_name(self, table): pass
 
@@ -1664,29 +1634,39 @@ class PropertySetWindow:
 
 
 class Search:
-    def activate_item(self, ): pass
+    def _search(self, search_mode, search_items, data_getters): pass
 
-    def check_row(self, table, search_text, row, column_count): pass
+    def create_table_items(self, dialog, search_items, getter_methods): pass
 
-    def create_table_items(self, ): pass
+    def fill_table(self, dialog, search_items, data_getters): pass
 
-    def fill_dialog(self, ): pass
+    def get_column_texts(self, search_mode): pass
 
-    def get_column_texts(self, ): pass
+    def get_dialogues(self, ): pass
 
-    def get_dialog(self, ): pass
+    def get_info_from_item(self, item): pass
 
-    def get_search_mode(self, ): pass
+    def get_properties(self, ): pass
 
-    def get_search_properties(self, ): pass
+    def get_row_matchscore(self, table, search_text, row, column_count): pass
 
-    def update_table(self, widget, threshold): pass
+    def get_search_mode(self, dialog): pass
 
-    def retranslate_title(self, widget, search_mode): pass
+    def get_search_text(self, dialog): pass
 
-    def search_attribute(self, ): pass
+    def get_selected_item(self, dialog): pass
 
-    def search_object(self, ): pass
+    def get_table(self, dialog): pass
+
+    def get_threshold(self, ): pass
+
+    def retranslate_title(self, dialog, search_mode): pass
+
+    def search_attribute(self, searchable_attributes): pass
+
+    def search_object(self, searchable_objects): pass
+
+    def set_info_of_item(self, item, info): pass
 
 
 class Settings:
