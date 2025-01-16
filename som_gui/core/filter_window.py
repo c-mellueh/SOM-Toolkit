@@ -177,7 +177,7 @@ def add_compare_widget(filter_compare: Type[tool.FilterCompare],
                        attribute_compare: Type[tool.AttributeCompare],
                        compare_window: Type[tool.CompareWindow]):
     name_getter = lambda: QCoreApplication.translate("FilterWindow", "Project Filter")
-    compare_window.add_tab(name_getter, filter_compare.get_widget,
+    compare_window.add_tab(name_getter, filter_compare.create_widget,
                            lambda p0, p1: init_filter_compare(p0, p1, filter_compare, attribute_compare),
                            filter_compare,
                            lambda file: export_filter_differences(file, filter_compare, attribute_compare))
