@@ -252,7 +252,7 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
             lambda: som_gui.module.attribute.trigger.pset_tree_selection_changed(widget))
 
     @classmethod
-    def get_widget(cls):
+    def create_widget(cls):
         from som_gui.module.predefined_property_set import ui
         if cls.get_properties().widget is None:
             cls.get_properties().widget = ui.CompareWidget()

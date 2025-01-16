@@ -11,7 +11,7 @@ def connect():
 
 
 def init_attribute_compare(project_0: SOMcreator.Project, project_1: SOMcreator.Project):
-    core.init_attribute_compare(project_0, project_1, tool.AttributeCompare)
+    core.create_compare_widget(project_0, project_1, tool.AttributeCompare)
 
 
 def export_attribute_differences(file):

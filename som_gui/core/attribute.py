@@ -38,7 +38,7 @@ def add_attribute_compare_widget(attribute_compare: Type[tool.AttributeCompare],
                            attribute_compare, trigger.export_attribute_differences)
 
 
-def init_attribute_compare(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
+def create_compare_widget(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
     """
     Sets up the Attribute Compare Widget to function properly
     """
