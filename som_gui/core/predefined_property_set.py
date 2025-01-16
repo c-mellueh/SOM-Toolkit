@@ -158,14 +158,14 @@ def add_compare_widget(pset_compare: Type[tool.PredefinedPropertySetCompare],
                        compare_window: Type[tool.CompareWindow]):
     name_getter = lambda: QCoreApplication.translate("PredefinedPset", "Predefined Pset")
     compare_window.add_tab(name_getter, pset_compare.get_widget,
-                           lambda p0, p1: init_compare_window(p0, p1, pset_compare, attribute_compare),
+                           lambda p0, p1: init_predefined_pset_compare(p0, p1, pset_compare, attribute_compare),
                            pset_compare,
                            lambda file: export_compare(file, pset_compare, attribute_compare))
 
 
-def init_compare_window(project0: SOMcreator.Project, project1: SOMcreator.Project,
-                        pset_compare: Type[tool.PredefinedPropertySetCompare],
-                        attribute_compare: Type[tool.AttributeCompare]):
+def init_predefined_pset_compare(project0: SOMcreator.Project, project1: SOMcreator.Project,
+                                 pset_compare: Type[tool.PredefinedPropertySetCompare],
+                                 attribute_compare: Type[tool.AttributeCompare]):
     widget = pset_compare.get_widget()
     pset_tree = attribute_compare.get_pset_tree(widget)
     value_table = attribute_compare.get_value_table(widget)
