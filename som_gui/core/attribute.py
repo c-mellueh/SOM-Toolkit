@@ -40,25 +40,36 @@ def add_attribute_compare_widget(attribute_compare: Type[tool.AttributeCompare],
 
 def init_attribute_compare(project0, project1, attribute_compare: Type[tool.AttributeCompare]):
     """
-    Sets up the Attribute Compare Widget to function propertly
+    Sets up the Attribute Compare Widget to function properly
     """
+    #Define Projects
     attribute_compare.set_projects(project0, project1)  #defines which projects will be compared
-    attribute_compare.create_object_lists()
+
+    #Create widget
     widget = attribute_compare.create_widget()
+
+    #get UI-elements
     object_tree_widget = attribute_compare.get_object_tree(widget)
     pset_tree = attribute_compare.get_pset_tree(widget)
     value_table = attribute_compare.get_value_table(widget)
     info_table = attribute_compare.get_info_table(widget)
-    attribute_compare.fill_object_tree(object_tree_widget, add_missing=True)
-    root = object_tree_widget.invisibleRootItem()
-    for child_index in range(root.childCount()):
-        attribute_compare.style_tree_item(root.child(child_index))
 
+    #fill ObjectTree with objects
+    attribute_compare.create_object_lists()
+    attribute_compare.fill_object_tree(object_tree_widget, add_missing=True)
+
+    #define and set header labels
     header_labels = [attribute_compare.get_header_name_from_project(project0),
                      attribute_compare.get_header_name_from_project(project1)]
     attribute_compare.set_header_labels([object_tree_widget, pset_tree], [value_table], header_labels)
     attribute_compare.set_header_labels([], [info_table], ["Name"] + header_labels)
 
+    #Add Color
+    root = object_tree_widget.invisibleRootItem()
+    for child_index in range(root.childCount()):
+        attribute_compare.style_tree_item(root.child(child_index))
+
+    #Create Triggers
     attribute_compare.create_tree_selection_trigger(widget)
 
 

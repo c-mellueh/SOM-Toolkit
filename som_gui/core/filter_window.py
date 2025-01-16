@@ -186,23 +186,41 @@ def add_compare_widget(filter_compare: Type[tool.FilterCompare],
 def init_filter_compare(project0: SOMcreator.Project, project1: SOMcreator.Project,
                         filter_compare: Type[tool.FilterCompare],
                         attribute_compare: Type[tool.AttributeCompare]):
-    attribute_compare.set_projects(project0, project1)
+    """
+    Sets up the Filter Compare Widget to function properly
+    """
+    #Define Projects
+    attribute_compare.set_projects(project0, project1)  #defines which projects will be compared
     filter_compare.set_projects(project0, project1)
-    attribute_compare.create_object_lists()
 
-    widget = filter_compare.create_widget() if filter_compare.get_widget() is None else filter_compare.get_widget()
 
+
+    #Create widget
+    widget = filter_compare.create_widget()
+
+    #get UI-elements
     object_tree_widget = attribute_compare.get_object_tree(widget)
     pset_tree = attribute_compare.get_pset_tree(widget)
     value_table = attribute_compare.get_value_table(widget)
+
+    #Add Wordwrap to Header
+
+
+    #fill ObjectTree with objects
+    attribute_compare.create_object_lists()
+    attribute_compare.fill_object_tree(object_tree_widget, add_missing=False)
+
+
+    #define and set header labels & add wordwrap
     filter_compare.make_header_wordwrap(object_tree_widget)
     filter_compare.make_header_wordwrap(pset_tree)
-
-    attribute_compare.fill_object_tree(object_tree_widget, add_missing=False)
     header_labels = [attribute_compare.get_header_name_from_project(project0),
                      attribute_compare.get_header_name_from_project(project1)]
     attribute_compare.set_header_labels([object_tree_widget, pset_tree], [value_table], header_labels)
+
     filter_compare.create_tree_selection_trigger(widget)
+
+    #Search for matchups
     filter_compare.find_matching_phases(project0, project1)
     filter_compare.find_matching_usecases(project0, project1)
 
