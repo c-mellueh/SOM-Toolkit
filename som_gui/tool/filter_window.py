@@ -441,11 +441,14 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         return cls.get_properties().projects[index]
 
     @classmethod
+    def create_widget(cls):
+        cls.get_properties().widget = attribute_ui.AttributeWidget()
+        cls.get_properties().widget.ui.table_widget_values.hide()
+        cls.get_properties().widget.ui.table_infos.hide()
+        return cls.get_properties().widget
+
+    @classmethod
     def get_widget(cls) -> attribute_ui.AttributeWidget:
-        # if cls.get_properties().widget is None:
-        #     cls.get_properties().widget = attribute_ui.AttributeWidget()
-        #     cls.get_properties().widget.ui.table_widget_values.hide()
-        #     cls.get_properties().widget.ui.table_infos.hide()
         return cls.get_properties().widget
 
     @classmethod

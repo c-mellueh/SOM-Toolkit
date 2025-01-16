@@ -190,7 +190,8 @@ def init_compare_object_filter(project0: SOMcreator.Project, project1: SOMcreato
     filter_compare.set_projects(project0, project1)
     attribute_compare.create_object_lists()
 
-    widget = filter_compare.get_widget()
+    widget = filter_compare.create_widget() if filter_compare.get_widget() is None else filter_compare.get_widget()
+
     object_tree_widget = attribute_compare.get_object_tree(widget)
     pset_tree = attribute_compare.get_pset_tree(widget)
     value_table = attribute_compare.get_value_table(widget)
