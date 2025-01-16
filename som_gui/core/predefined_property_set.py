@@ -177,18 +177,20 @@ def create_compare_widget(project0: SOMcreator.Project, project1: SOMcreator.Pro
     value_table = attribute_compare.get_value_table(widget)
     info_table = attribute_compare.get_info_table(widget)
 
-    #Compare PropertySets
-    psets0, psets1 = project0.get_predefined_psets(filter=False), project1.get_predefined_psets(filter=False)
-    pset_compare.set_predefined_psets(psets0, psets1)
-    pset_list = pset_compare.create_pset_list()
-    for pset0, pset1 in [x for x in pset_list if not None in x]:
-        attribute_compare.compare_property_sets(pset0, pset1)
-
     #define and set header labels
     header_labels = [attribute_compare.get_header_name_from_project(project0),
                      attribute_compare.get_header_name_from_project(project1)]
     attribute_compare.set_header_labels([pset_tree], [value_table], header_labels)
     attribute_compare.set_header_labels([], [info_table], ["Name"] + header_labels)
+
+    #Compare PropertySets
+    psets0, psets1 = list(project0.get_predefined_psets(filter=False)), list(project1.get_predefined_psets(filter=False))
+    pset_compare.set_predefined_psets(psets0, psets1)
+    pset_list = pset_compare.create_pset_list(psets0,psets1)
+    for pset0, pset1 in [x for x in pset_list if not None in x]:
+        attribute_compare.compare_property_sets(pset0, pset1)
+
+
 
     #Fill TreeView with PropertySets
     attribute_compare.fill_pset_tree(pset_tree, pset_compare.get_pset_lists(), True)
