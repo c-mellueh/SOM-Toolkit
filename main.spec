@@ -10,7 +10,7 @@ added_files = [('SOMcreator','SOMcreator'),
                 ('som_gui/module','som_gui/module'),
                ]
 
-hi = ['ctypes','pyqtconsole.console','appdirs','jinja2', 'lxml', 'SOMcreator', 'tqdm', 'openpyxl','som_gui','thefuzz.fuzz','SOMcreator.external_software','ifcopenshell','ifcopenshell.util','ifcopenshell.util.element','som_gui.settings']
+hi = ['ctypes','pyqtconsole.console','appdirs','jinja2', 'lxml', 'SOMcreator', 'tqdm', 'openpyxl','som_gui','thefuzz.fuzz','ifcopenshell','ifcopenshell.util','ifcopenshell.util.element']
 a = Analysis(
     ['som_gui/__main__.py'],
     pathex=[],
