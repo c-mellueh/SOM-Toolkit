@@ -133,13 +133,13 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         :return:
         """
 
-        row_items = [table.item(index, col) for col in range(table.columnCount())]
+        row_items = [table.item(index, col) for col in range(cls.get_column_count())]
         attribute = cls.get_attribute_from_item(row_items[0])
         if attribute is None:
             return
 
         # update row values
-        for item, (column_name, column_getter) in zip(row_items, cls.get_properties().attribute_table_columns):
+        for item, (_, column_getter) in zip(row_items, cls.get_properties().attribute_table_columns):
             value = column_getter(attribute)
             cls.format_row_value(item, value)
         cls.format_row(row_items)
@@ -197,9 +197,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         :param get_function: getter function for cell value. SOMcreator.Attribute will be passed as argument
         :return:
         """
-        prop = cls.get_properties()
-        d = name, get_function
-        prop.attribute_table_columns.append(d)
+        cls.get_properties().attribute_table_columns.append((name, get_function))
 
     @classmethod
     def get_existing_attributes_in_table(cls, table: QTableWidget):
@@ -225,7 +223,9 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def get_attribute_table_header_names(cls):
         prop = cls.get_properties()
-        return [name for (name, getter) in prop.attribute_table_columns]
+        base_names = [name for (name, getter) in prop.attribute_table_columns]
+        translation = [QCoreApplication.translate("AttributeTable", name) for name in base_names]
+        return translation
 
     @classmethod
     def get_possible_parent(cls, attribute: SOMcreator.Attribute) -> None | SOMcreator.Attribute:
@@ -282,10 +282,6 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         obj = cls.get_property_set_by_table(table).object
         ident_attrib = None if obj is None else obj.ident_attrib
         if ident_attrib in cls.get_selected_attributes(table):
-            from som_gui.tool.popups import Popups
-            text = QCoreApplication.translate("AttributeTable", "It's forbidden to delete the identifier!")
-            title = QCoreApplication.translate("AttributeTable", "Delete attribute")
-            Popups.create_warning_popup(text, title)
             return None
 
         # don't show if any attribute is not a parent if deletion with child is requested

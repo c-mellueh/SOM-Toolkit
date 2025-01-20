@@ -19,8 +19,8 @@ def connect():
     core.init_context_menu(tool.AttributeTable)
 
 
-def retranslate_ui():
-    pass
+def retranslate_ui(table = None):
+    core.retranslate_ui(table,tool.AttributeTable,tool.MainWindow)
 
 
 def connect_table(table: AttributeTable):
@@ -41,5 +41,6 @@ def on_new_project():
     return
 
 
-def table_paint_event(table: QTableWidget):
+def table_paint_event(table: AttributeTable):
     core.update_attribute_table(table, tool.AttributeTable)
+    core.retranslate_ui(table, tool.AttributeTable,tool.MainWindow)

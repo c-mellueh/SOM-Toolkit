@@ -18,9 +18,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHBoxLayout,
     QHeaderView, QLabel, QLineEdit, QMainWindow,
-                               QMenu, QMenuBar, QPushButton, QSizePolicy,
-                               QSplitter, QStatusBar, QTableWidgetItem, QTreeWidgetItem,
-                               QVBoxLayout, QWidget)
+    QMenu, QMenuBar, QPushButton, QSizePolicy,
+    QSplitter, QStatusBar, QTableWidgetItem, QTreeWidgetItem,
+    QVBoxLayout, QWidget)
 
 from som_gui.module.attribute_table.ui import AttributeTable
 from som_gui.module.object.ui import ObjectTreeWidget
@@ -218,16 +218,6 @@ class Ui_MainWindow(object):
         self.table_pset.verticalHeader().setVisible(False)
         self.table_pset.verticalHeader().setCascadingSectionResizes(False)
         self.table_attribute = AttributeTable(self.splitter_2)
-        if (self.table_attribute.columnCount() < 4):
-            self.table_attribute.setColumnCount(4)
-        __qtablewidgetitem3 = QTableWidgetItem()
-        self.table_attribute.setHorizontalHeaderItem(0, __qtablewidgetitem3)
-        __qtablewidgetitem4 = QTableWidgetItem()
-        self.table_attribute.setHorizontalHeaderItem(1, __qtablewidgetitem4)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        self.table_attribute.setHorizontalHeaderItem(2, __qtablewidgetitem5)
-        __qtablewidgetitem6 = QTableWidgetItem()
-        self.table_attribute.setHorizontalHeaderItem(3, __qtablewidgetitem6)
         self.table_attribute.setObjectName(u"table_attribute")
         self.table_attribute.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.table_attribute.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
@@ -290,14 +280,12 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.line_edit_object_name.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Name", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_ident_pSet.setToolTip(
-            QCoreApplication.translate("MainWindow", u"Name of PropertySet which owns Identifier Attribute", None))
+        self.lineEdit_ident_pSet.setToolTip(QCoreApplication.translate("MainWindow", u"Name of PropertySet which owns Identifier Attribute", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_ident_pSet.setPlaceholderText(QCoreApplication.translate("MainWindow", u"PropertySet", None))
         self.label_object_name.setText(QCoreApplication.translate("MainWindow", u"Object", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_ident_attribute.setToolTip(
-            QCoreApplication.translate("MainWindow", u"Name of Attribute which owns the identifier value", None))
+        self.lineEdit_ident_attribute.setToolTip(QCoreApplication.translate("MainWindow", u"Name of Attribute which owns the identifier value", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
         self.button_search.setText("")
@@ -307,15 +295,13 @@ class Ui_MainWindow(object):
         self.lineEdit_ident_value.setText("")
         self.lineEdit_ident_value.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Value", None))
 #if QT_CONFIG(tooltip)
-        self.label_Ident.setToolTip(QCoreApplication.translate("MainWindow",
-                                                               u"The Identifier defines which Object is selected it needs to be unique!",
-                                                               None))
+        self.label_Ident.setToolTip(QCoreApplication.translate("MainWindow", u"The Identifier defines which Object is selected it needs to be unique!", None))
 #endif // QT_CONFIG(tooltip)
         self.label_Ident.setText(QCoreApplication.translate("MainWindow", u"Identifier", None))
         self.label_pSet_name.setText(QCoreApplication.translate("MainWindow", u"Name", None))
-        # if QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
         self.lineEdit_pSet_name.setToolTip("")
-        #endif // QT_CONFIG(tooltip)
+#endif // QT_CONFIG(tooltip)
         self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         ___qtablewidgetitem = self.table_pset.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"PropertySet", None));
@@ -323,14 +309,6 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Inherited By", None));
         ___qtablewidgetitem2 = self.table_pset.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Optional", None));
-        ___qtablewidgetitem3 = self.table_attribute.horizontalHeaderItem(0)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Name", None));
-        ___qtablewidgetitem4 = self.table_attribute.horizontalHeaderItem(1)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Datatype", None));
-        ___qtablewidgetitem5 = self.table_attribute.horizontalHeaderItem(2)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Format", None));
-        ___qtablewidgetitem6 = self.table_attribute.horizontalHeaderItem(3)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Value", None));
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuExport.setTitle(QCoreApplication.translate("MainWindow", u"Export", None))
         self.menuEdit.setTitle(QCoreApplication.translate("MainWindow", u"Edit", None))

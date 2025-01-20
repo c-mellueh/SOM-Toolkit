@@ -4,7 +4,7 @@ import copy
 import logging
 from typing import TYPE_CHECKING, Type
 
-from PySide6.QtCore import QMimeData, Qt
+from PySide6.QtCore import QCoreApplication, QMimeData, Qt
 
 import SOMcreator
 from som_gui.core import property_set_window as property_set_window_core
@@ -36,11 +36,26 @@ def init_attribute_columns(attribute_table: Type[tool.AttributeTable]):
     :return:
     """
     logging.info("Add Basic Attribute Columns")
+    # write translations so Qtlinguist knows them
+    name = QCoreApplication.translate("AttributeTable", "Name")
+    datatype = QCoreApplication.translate("AttributeTable", "Datatype")
+    valuetype = QCoreApplication.translate("AttributeTable", "Valuetype")
+    value = QCoreApplication.translate("AttributeTable", "Value")
+    optional = QCoreApplication.translate("AttributeTable", "Optional")
+
     attribute_table.add_column_to_table("Name", lambda a: a.name)
-    attribute_table.add_column_to_table("Datentyp", lambda a: a.data_type)
-    attribute_table.add_column_to_table("Werttyp", lambda a: a.value_type)
-    attribute_table.add_column_to_table("Werte", lambda a: a.value)
+    attribute_table.add_column_to_table("Datatype", lambda a: a.data_type)
+    attribute_table.add_column_to_table("Valuetype", lambda a: a.value_type)
+    attribute_table.add_column_to_table("Value", lambda a: a.value)
     attribute_table.add_column_to_table("Optional", lambda a: a.is_optional(ignore_hirarchy=True))
+
+
+def retranslate_ui(table: ui.AttributeTable, attribute_table: Type[tool.AttributeTable],
+                   main_window: Type[tool.MainWindow]):
+    if table is None:
+        table = main_window.get_attribute_table()
+    labels = attribute_table.get_attribute_table_header_names()
+    table.setHorizontalHeaderLabels(labels)
 
 
 def toggle_optionality(item: QTableWidgetItem, attribute_table: Type[tool.AttributeTable]):
@@ -159,6 +174,13 @@ def update_attribute_table(table: QTableWidget, attribute_table: Type[tool.Attri
         for row in reversed(range(table.rowCount())):
             table.removeRow(row)
         return
+
+    if attribute_table.get_column_count() > table.columnCount():
+        for _ in range(attribute_table.get_column_count() - table.columnCount()):
+            table.insertColumn(table.columnCount())
+    if attribute_table.get_column_count() < table.columnCount():
+        for _ in range(table.columnCount() - attribute_table.get_column_count()):
+            table.removeColumn(table.columnCount())
 
     # get Attributes which should be deleted and added
     delete_attributes = existing_attributes.difference(set(property_set.get_attributes(filter=True)))

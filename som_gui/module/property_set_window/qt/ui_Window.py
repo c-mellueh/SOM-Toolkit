@@ -146,28 +146,8 @@ class Ui_PropertySetWindow(object):
 
         self.splitter_2.addWidget(self.gridLayoutWidget)
         self.table_widget = AttributeTable(self.splitter_2)
-        if (self.table_widget.columnCount() < 5):
-            self.table_widget.setColumnCount(5)
-        __qtablewidgetitem = QTableWidgetItem()
-        self.table_widget.setHorizontalHeaderItem(0, __qtablewidgetitem)
-        __qtablewidgetitem1 = QTableWidgetItem()
-        self.table_widget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        __qtablewidgetitem2 = QTableWidgetItem()
-        self.table_widget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        __qtablewidgetitem3 = QTableWidgetItem()
-        self.table_widget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
-        __qtablewidgetitem4 = QTableWidgetItem()
-        self.table_widget.setHorizontalHeaderItem(4, __qtablewidgetitem4)
         if (self.table_widget.rowCount() < 5):
             self.table_widget.setRowCount(5)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        self.table_widget.setItem(0, 0, __qtablewidgetitem5)
-        __qtablewidgetitem6 = QTableWidgetItem()
-        self.table_widget.setItem(0, 1, __qtablewidgetitem6)
-        __qtablewidgetitem7 = QTableWidgetItem()
-        self.table_widget.setItem(0, 2, __qtablewidgetitem7)
-        __qtablewidgetitem8 = QTableWidgetItem()
-        self.table_widget.setItem(0, 3, __qtablewidgetitem8)
         self.table_widget.setObjectName(u"table_widget")
         sizePolicy5 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding)
         sizePolicy5.setHorizontalStretch(0)
@@ -215,20 +195,5 @@ class Ui_PropertySetWindow(object):
         self.label_name.setText(QCoreApplication.translate("PropertySetWindow", u"Name", None))
         self.lineEdit_name.setPlaceholderText(QCoreApplication.translate("PropertySetWindow", u"Name", None))
         self.description.setPlaceholderText(QCoreApplication.translate("PropertySetWindow", u"Description", None))
-        ___qtablewidgetitem = self.table_widget.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("PropertySetWindow", u"Name", None));
-        ___qtablewidgetitem1 = self.table_widget.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("PropertySetWindow", u"Datatype", None));
-        ___qtablewidgetitem2 = self.table_widget.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("PropertySetWindow", u"Format", None));
-        ___qtablewidgetitem3 = self.table_widget.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("PropertySetWindow", u"Value", None));
-        ___qtablewidgetitem4 = self.table_widget.horizontalHeaderItem(4)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("PropertySetWindow", u"Optional", None));
-
-        __sortingEnabled = self.table_widget.isSortingEnabled()
-        self.table_widget.setSortingEnabled(False)
-        self.table_widget.setSortingEnabled(__sortingEnabled)
-
     # retranslateUi
 
