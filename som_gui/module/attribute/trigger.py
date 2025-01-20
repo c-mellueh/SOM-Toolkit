@@ -11,7 +11,7 @@ def connect():
 
 
 def init_attribute_compare(project_0: SOMcreator.Project, project_1: SOMcreator.Project):
-    core.init_attribute_compare(project_0, project_1, tool.AttributeCompare)
+    core.create_compare_widget(project_0, project_1, tool.AttributeCompare)
 
 
 def export_attribute_differences(file):
@@ -19,7 +19,7 @@ def export_attribute_differences(file):
 
 
 def object_tree_selection_changed(widget, ):
-    core.object_tree_selection_changed(widget, tool.AttributeCompare)
+    core.activate_object_in_compare_tree(widget, tool.AttributeCompare)
 
 
 def pset_tree_selection_changed(widget):

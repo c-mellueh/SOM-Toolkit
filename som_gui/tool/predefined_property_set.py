@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QCoreApplication, Qt
@@ -225,24 +226,30 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
         cls.get_properties().value_dict = dict()
 
     @classmethod
-    def create_pset_list(cls):
-        psets0, psets1 = cls.get_predefined_psets(0), cls.get_predefined_psets(1)
+    def create_pset_list(cls,psets0:list[SOMcreator.PropertySet], psets1:list[SOMcreator.PropertySet]):
         uuid_dict = tool.AttributeCompare.generate_uuid_dict(psets1)
         name_dict = tool.AttributeCompare.generate_name_dict(psets1)
         pset_list = list()
         missing = list(psets1)
+        print(missing)
         for pset in psets0:
+            logging.debug(f"Search for Pset {pset}")
             match = tool.AttributeCompare.find_matching_entity(pset, uuid_dict, name_dict)
             if match:
-                pset_list.append((pset, match))
                 if match not in missing:
+                    logging.debug(f"Pset found: {match} Match not in missing -> append empty")
                     pset_list.append((pset, None))
                 else:
+                    logging.debug(f"Pset found: {match} Match is in missing -> append Entry")
+                    pset_list.append((pset, match))
                     missing.remove(match)
             else:
+                logging.debug(f"Pset NOT found: {match}")
                 pset_list.append((pset, None))
         for pset in missing:
             pset_list.append((None, pset))
+
+        print(pset_list)
         cls.set_pset_lists(pset_list)
         return pset_list
 
@@ -252,7 +259,7 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
             lambda: som_gui.module.attribute.trigger.pset_tree_selection_changed(widget))
 
     @classmethod
-    def get_widget(cls):
+    def create_widget(cls):
         from som_gui.module.predefined_property_set import ui
         if cls.get_properties().widget is None:
             cls.get_properties().widget = ui.CompareWidget()
@@ -261,10 +268,6 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
     @classmethod
     def set_predefined_psets(cls, psets0, psets1):
         cls.get_properties().predefined_psets = (psets0, psets1)
-
-    @classmethod
-    def get_predefined_psets(cls, index: int) -> set[SOMcreator.PropertySet]:
-        return cls.get_properties().predefined_psets[index]
 
     @classmethod
     def set_pset_lists(cls, pset_lists: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]) -> None:

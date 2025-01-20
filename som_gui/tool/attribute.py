@@ -443,12 +443,15 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def add_attributes_to_pset_tree(cls, tree: QTreeWidget, add_missing: bool):
         root = tree.invisibleRootItem()
+        logging.debug(f"{root.childCount()} items in pset tree")
         for index in range(root.childCount()):
+            logging.debug(f"Check index {index}")
             item = root.child(index)
             pset0, pset1 = cls.get_entities_from_item(item)
             attribute_list = cls.get_attribute_list(pset0) or cls.get_attribute_list(pset1)
             if attribute_list is None:
-                return
+                logging.debug(f"Attribute List is None for {pset0}")
+                continue
             for attribute0, attribute1 in attribute_list:
                 attribute_item = QTreeWidgetItem()
                 if attribute0 is not None:
@@ -556,13 +559,16 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def are_attributes_identical(cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute) -> bool:
+
+
         if attribute0 is None or attribute1 is None:
             return False
 
         checks = list()
         checks.append(set(attribute0.get_own_values()) == set(attribute1.get_own_values()))  # values_are_identical
-        checks.append(attribute0.data_type == attribute1.data_type)  # datatypes_are_identical
-        checks.append(attribute0.value_type == attribute1.value_type)  # valuetypes_are_identical
+        if not (attribute0.parent and attribute1.parent):   #If Datatype is changed by parent dont show in Table
+            checks.append(attribute0.data_type == attribute1.data_type)  # datatypes_are_identical
+            checks.append(attribute0.value_type == attribute1.value_type)  # valuetypes_are_identical
         checks.append(attribute0.name == attribute1.name)  # names_are_identical
         checks.append(attribute0.child_inherits_values == attribute1.child_inherits_values)  # Inherits Values
         return all(checks)
