@@ -291,7 +291,6 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         # don't show if any attribute is not a parent if deletion with child is requested
         logging.debug([a.is_parent for a in cls.get_selected_attributes(table)])
         if not all(a.is_parent for a in cls.get_selected_attributes(table)) and with_child:
-
             return None
 
         name = table.tr("Delete (with subattributes)") if with_child else table.tr("Delete")
