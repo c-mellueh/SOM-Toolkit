@@ -19,7 +19,7 @@ def export_attribute_differences(file):
 
 
 def object_tree_selection_changed(widget, ):
-    core.object_tree_selection_changed(widget, tool.AttributeCompare)
+    core.activate_object_in_compare_tree(widget, tool.AttributeCompare)
 
 
 def pset_tree_selection_changed(widget):

@@ -97,8 +97,8 @@ def export_attribute_differences(file, attribute_compare: Type[tool.AttributeCom
     attribute_compare.export_object_differences(file)
 
 
-def object_tree_selection_changed(widget: ui.AttributeWidget,
-                                  attribute_compare: Type[tool.AttributeCompare]):
+def activate_object_in_compare_tree(widget: ui.AttributeWidget,
+                                    attribute_compare: Type[tool.AttributeCompare]):
     """
     Selection handling of Object Tree in Attribute Compare Widget
     """
