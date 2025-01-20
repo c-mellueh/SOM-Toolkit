@@ -57,10 +57,7 @@ def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_tab
                attribute_tool: Type[tool.Attribute], ):
     """
     handling of dropping of attribute row from a property set window to another property set window
-    :param event:
     :param target_table: table on which the attribute is dropped on
-    :param property_set_window:
-    :param attribute_tool:
     :return:
     """
 
