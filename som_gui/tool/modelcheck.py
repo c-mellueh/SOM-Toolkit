@@ -366,7 +366,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         cls.commit_sql()
 
     @classmethod
-    def add_issues(cls, guid, description, issue_type, attribute, pset_name="", attribute_name="", value=""):
+    def add_issues(cls, guid, description, issue_type, attribute:SOMcreator.Attribute, pset_name="", attribute_name="", value=""):
         cursor = cls.get_cursor()
         guid_zw = tool.Util.transform_guid(guid, True)
         date = datetime.date.today()
