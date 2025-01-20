@@ -195,10 +195,7 @@ class Hirarchy(object, metaclass=IterRegistry):
 
     @property
     def is_parent(self) -> bool:
-        if self.get_children(filter=False):
-            return True
-        else:
-            return False
+        return bool(list(self.get_children(filter=False)))
 
     @property
     def is_child(self) -> bool:
