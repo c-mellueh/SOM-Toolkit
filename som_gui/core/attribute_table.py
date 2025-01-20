@@ -109,7 +109,7 @@ def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_tab
                 # replace Attribute
                 target_property_set.remove_attribute(existing_attribute)
             target_property_set.add_attribute(attribute)
-            attribute.remove_parent()
+            attribute.remove_parent() #remove ParentAttribute
     target_table.repaint()
     event.accept()
 
@@ -123,7 +123,6 @@ def create_context_menu(table: ui.AttributeTable, pos, attribute_table: Type[too
     # see tool.AttributeTable.add_context_menu_builder
 
     menu_list = list()
-    attribute_table.set_active_table(table)
 
     # Create list of context menu entries
     for context_menu_builder in attribute_table.get_context_menu_builders():
