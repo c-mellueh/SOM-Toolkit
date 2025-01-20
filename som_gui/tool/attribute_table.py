@@ -23,6 +23,7 @@ LINKSTATE = Qt.ItemDataRole.UserRole + 2
 
 
 class AttributeTable(som_gui.core.tool.AttributeTable):
+
     @classmethod
     def get_selected_attributes(cls, table: ui.AttributeTable):
         return {cls.get_attribute_from_item(item) for item in table.selectedItems()}
@@ -87,7 +88,12 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         return som_gui.AttributeTableProperties
 
     @classmethod
-    def get_attribute_from_item(cls, item: QTableWidgetItem):
+    def get_attribute_from_item(cls, item: QTableWidgetItem) -> SOMcreator.Attribute|None:
+        """
+        return the Attribute which is linked to a table entry
+        :param item:
+        :return:
+        """
         if item is None:
             return None
         entity = item.data(CLASS_REFERENCE)
@@ -187,7 +193,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         return attributes
 
     @classmethod
-    def get_property_set_by_table(cls, table: QTableWidget):
+    def get_property_set_by_table(cls, table: QTableWidget) -> SOMcreator.PropertySet:
         window = table.window()
         if isinstance(window, PropertySetWindow):
             return tool.PropertySetWindow.get_property_set_by_window(window)
@@ -222,15 +228,21 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         return cls.get_properties().context_menu_builders
 
     @classmethod
-    def add_context_menu_builder(cls, c: Callable):
-        cls.get_properties().context_menu_builders.append(c)
+    def add_context_menu_builder(cls, context_menu_builder: Callable):
+        """
+        :param context_menu_builder: Function which gets called on context menu creation.
+        should return tuple[name, function] of context should be shown or None if not shown.
+        The function gets passed the current table as a variable
+        :return:
+        """
+        cls.get_properties().context_menu_builders.append(context_menu_builder)
 
     @classmethod
-    def context_menu_rename_builder(cls, table: ui.AttributeTable):
+    def context_menu_rename_builder(cls, table: ui.AttributeTable) -> tuple[str, Callable] | None:
         name = table.tr("Rename")
         selected_attributes = cls.get_selected_attributes(table)
         if len(selected_attributes) == 1:
-            return [name, lambda: cls.edit_selected_attribute_name(table)]
+            return name, lambda: cls.edit_selected_attribute_name(table)
         return None
 
     @classmethod

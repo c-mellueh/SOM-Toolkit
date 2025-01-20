@@ -5,18 +5,23 @@ import logging
 from typing import TYPE_CHECKING, Type
 
 from PySide6.QtCore import QMimeData, Qt
+from bleach.callbacks import target_blank
 
 import SOMcreator
 from som_gui.core import property_set_window as property_set_window_core
+from som_gui.module.attribute_table.constants import MIME_DATA_KEY
 
 if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
     from PySide6.QtGui import QDropEvent
     from som_gui.module.attribute_table import ui
-
+    from som_gui.module.property_set_window.ui import PropertySetWindow
 
 def init_context_menu(attribute_table: Type[tool.AttributeTable]):
+    """
+    Defines all standard context menu actions associated with an attribute table.
+    """
     attribute_table.add_context_menu_builder(attribute_table.context_menu_rename_builder)
     attribute_table.add_context_menu_builder(attribute_table.context_menu_delete_builder)
     attribute_table.add_context_menu_builder(attribute_table.context_menu_delete_subattributes_builder)
@@ -24,7 +29,13 @@ def init_context_menu(attribute_table: Type[tool.AttributeTable]):
     attribute_table.add_context_menu_builder(attribute_table.context_menu_add_connection_builder)
 
 
-def item_changed(item: QTableWidgetItem, attribute_table: Type[tool.AttributeTable]):
+def toggle_optionality(item: QTableWidgetItem, attribute_table: Type[tool.AttributeTable]):
+    """
+    change the optionality of an attribute by their QTableWidgetItem
+    :param item:
+    :param attribute_table:
+    :return:
+    """
     attribute = attribute_table.get_attribute_from_item(item)
     if not item.column() == 4:
         return
@@ -32,45 +43,63 @@ def item_changed(item: QTableWidgetItem, attribute_table: Type[tool.AttributeTab
     attribute.set_optional(cs)
 
 
-def drop_event(event: QDropEvent, table: ui.AttributeTable, property_set_window: Type[tool.PropertySetWindow],
-               attribute_tool: Type[tool.Attribute]):
-    attributes: set[SOMcreator.Attribute] = event.mimeData().property("Objects")
-    window = table.window()
-    source_window = event.source().window()
-    if source_window == window:
+def create_mime_data(items: list[QTableWidgetItem], mime_data: QMimeData,
+                     attribute_table: Type[tool.AttributeTable]) -> QMimeData:
+    """
+    create MimeData used for Dropping Attributes into different Tables
+    """
+    objects = {attribute_table.get_attribute_from_item(item) for item in items}
+    mime_data.setProperty(MIME_DATA_KEY, objects)
+    return mime_data
+
+
+def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_table: Type[tool.AttributeTable],
+               attribute_tool: Type[tool.Attribute], ):
+    """
+    handling of dropping of attribute row from a property set window to another property set window
+    :param event:
+    :param target_table: table on which the attribute is dropped on
+    :param property_set_window:
+    :param attribute_tool:
+    :return:
+    """
+
+    # Check if move is inside the same window
+    source_table:ui.AttributeTable = event.source()
+    if source_table == target_table:
         event.accept()
         return
 
     proposed_action = event.proposedAction()
-    property_set = property_set_window.get_property_set_by_window(window)
-
-    existing_attributes = {a.name: a for a in property_set.get_attributes(filter=False)}
+    target_property_set = attribute_table.get_property_set_by_table(target_table)
+    existing_attributes = {a.name: a for a in target_property_set.get_attributes(filter=False)}
+    dropped_attributes: set[SOMcreator.Attribute] = event.mimeData().property(MIME_DATA_KEY) #get set of dropped Attributes
 
     if proposed_action == Qt.DropAction.CopyAction:
-        for attribute in attributes:
+        for attribute in dropped_attributes:
+            # check if Attribute with same name exists already
             existing_attribute = existing_attributes.get(attribute.name)
             if existing_attribute:
+                #overwrite date
                 data = attribute_tool.get_attribute_data(attribute)
                 attribute_tool.set_attribute_data_by_dict(existing_attribute, data)
             else:
+                #copy attribute to property_set
                 attribute = copy.copy(attribute)
                 attribute.remove_parent()
-                property_set.add_attribute(attribute)
+                target_property_set.add_attribute(attribute)
 
     elif proposed_action == Qt.DropAction.MoveAction:
-        for attribute in attributes:
+        for attribute in dropped_attributes:
+            # check if Attribute with same name exists already
             existing_attribute = existing_attributes.get(attribute.name)
             if existing_attribute:
-                property_set.remove_attribute(existing_attribute)
-            property_set.add_attribute(attribute)
-            attribute.remove_parent()
+                #replace Attribute
+                target_property_set.remove_attribute(existing_attribute)
+            target_property_set.add_attribute(attribute)
+
+    target_table.repaint()
     event.accept()
-
-
-def create_mime_data(items: list[QTableWidgetItem], mime_data: QMimeData, attribute_table: Type[tool.AttributeTable]):
-    objects = {attribute_table.get_attribute_from_item(item) for item in items}
-    mime_data.setProperty("Objects", objects)
-    return mime_data
 
 
 def context_menu(table: ui.AttributeTable, pos, attribute_table: Type[tool.AttributeTable], util: Type[tool.Util]):
@@ -88,10 +117,10 @@ def context_menu(table: ui.AttributeTable, pos, attribute_table: Type[tool.Attri
 
 def add_basic_attribute_columns(attribute: Type[tool.Attribute], attribute_table: Type[tool.AttributeTable]):
     logging.info("Add Basic Attribute Columns")
-    attribute_table.add_column_to_table("Name", lambda a:a.name)
-    attribute_table.add_column_to_table("Datentyp", lambda a:a.data_type)
-    attribute_table.add_column_to_table("Werttyp", lambda a:a.value_type)
-    attribute_table.add_column_to_table("Werte", lambda a:a.value)
+    attribute_table.add_column_to_table("Name", lambda a: a.name)
+    attribute_table.add_column_to_table("Datentyp", lambda a: a.data_type)
+    attribute_table.add_column_to_table("Werttyp", lambda a: a.value_type)
+    attribute_table.add_column_to_table("Werte", lambda a: a.value)
     attribute_table.add_column_to_table("Optional", lambda a: a.is_optional(ignore_hirarchy=True))
 
 

@@ -26,11 +26,11 @@ def retranslate_ui():
 def connect_table(table: AttributeTable):
     table.customContextMenuRequested.connect(
         lambda pos: core.context_menu(table, pos, tool.AttributeTable, tool.Util))
-    table.itemClicked.connect(lambda item: core.item_changed(item, tool.AttributeTable))
+    table.itemClicked.connect(lambda item: core.toggle_optionality(item, tool.AttributeTable))
 
 
 def drop_event(event, table):
-    core.drop_event(event, table, tool.PropertySetWindow, tool.Attribute)
+    core.drop_event(event, table, tool.AttributeTable, tool.Attribute)
 
 
 def create_mime_data(items: list[QTableWidgetItem], mime_data):
