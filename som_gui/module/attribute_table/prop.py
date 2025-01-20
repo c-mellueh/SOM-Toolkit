@@ -15,6 +15,5 @@ class ColumnDict(TypedDict):
 
 class AttributeTableProperties:
     attribute_table_columns: list[tuple[str,Callable]] = list() #list of columns list[Tuple[name,Getter]]
-    active_attribute: SOMcreator.Attribute = None
     active_table: AttributeTable = None
     context_menu_builders = list()

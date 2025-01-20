@@ -122,7 +122,6 @@ def update_seperator(window: PropertySetWindow, property_set_window: Type[tool.P
 def attribute_clicked(item: QTableWidgetItem,
                       attribute_table: Type[tool.AttributeTable], property_set_window: Type[tool.PropertySetWindow]):
     active_attribute = attribute_table.get_attribute_from_item(item)
-    attribute_table.set_active_attribute(active_attribute)
     window = item.tableWidget().window()
     activate_attribute(active_attribute, window, property_set_window)
 

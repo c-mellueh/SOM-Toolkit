@@ -22,11 +22,11 @@ def init_context_menu(attribute_table: Type[tool.AttributeTable]):
     """
     Defines all standard context menu actions associated with an attribute table.
     """
-    attribute_table.add_context_menu_builder(attribute_table.context_menu_rename_builder)
-    attribute_table.add_context_menu_builder(attribute_table.context_menu_delete_builder)
-    attribute_table.add_context_menu_builder(attribute_table.context_menu_delete_subattributes_builder)
-    attribute_table.add_context_menu_builder(attribute_table.context_menu_remove_connection_builder)
-    attribute_table.add_context_menu_builder(attribute_table.context_menu_add_connection_builder)
+    attribute_table.add_context_menu_builder(attribute_table.context_menu_builder_rename)
+    attribute_table.add_context_menu_builder(lambda t: attribute_table.context_menu_builder_delete(t, False))
+    attribute_table.add_context_menu_builder(lambda t: attribute_table.context_menu_builder_delete(t, True))
+    attribute_table.add_context_menu_builder(attribute_table.context_menu_builder_remove_connection)
+    attribute_table.add_context_menu_builder(attribute_table.context_menu_builder_add_connection)
 
 
 def init_attribute_columns(attribute_table: Type[tool.AttributeTable]):
@@ -109,7 +109,7 @@ def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_tab
                 # replace Attribute
                 target_property_set.remove_attribute(existing_attribute)
             target_property_set.add_attribute(attribute)
-            attribute.remove_parent() #remove ParentAttribute
+            attribute.remove_parent()  # remove ParentAttribute
     target_table.repaint()
     event.accept()
 
@@ -164,7 +164,7 @@ def update_attribute_table(table: QTableWidget, attribute_table: Type[tool.Attri
     delete_attributes = existing_attributes.difference(set(property_set.get_attributes(filter=True)))
     new_attributes = set(property_set.get_attributes(filter=True)).difference(existing_attributes)
     attribute_table.remove_attributes_from_table(delete_attributes, table)
-    attribute_table.add_attributes_to_table(sorted(new_attributes), table)
+    attribute_table.add_attributes_to_table(new_attributes, table)
 
     # update rows
     for row in range(table.rowCount()):
