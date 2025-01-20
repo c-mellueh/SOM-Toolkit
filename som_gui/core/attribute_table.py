@@ -109,7 +109,7 @@ def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_tab
                 # replace Attribute
                 target_property_set.remove_attribute(existing_attribute)
             target_property_set.add_attribute(attribute)
-
+            attribute.remove_parent()
     target_table.repaint()
     event.accept()
 
