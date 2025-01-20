@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import logging
 from typing import Callable, TYPE_CHECKING
 
-from PySide6.QtCore import QPoint, Qt
+from PySide6.QtCore import QCoreApplication, QPoint, Qt
 from PySide6.QtGui import QIcon, QPalette
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
 
@@ -23,25 +24,18 @@ LINKSTATE = Qt.ItemDataRole.UserRole + 2
 
 
 class AttributeTable(som_gui.core.tool.AttributeTable):
-    @classmethod
-    def get_selected_attributes(cls, table: ui.AttributeTable):
-        return {cls.get_attribute_from_item(item) for item in table.selectedItems()}
 
     @classmethod
-    def set_active_table(cls, table: ui.AttributeTable):
-        cls.get_properties().active_table = table
+    def get_properties(cls) -> AttributeTableProperties:
+        return som_gui.AttributeTableProperties
 
     @classmethod
-    def get_active_table(cls):
-        return cls.get_properties().active_table
-
-    @classmethod
-    def set_active_attribute(cls, attribute: SOMcreator.Attribute):
-        prop = cls.get_properties()
-        prop.active_attribute = attribute
-
-    @classmethod
-    def edit_selected_attribute_name(cls, table: ui.AttributeTable):
+    def edit_selected_attribute_name(cls, table: ui.AttributeTable) -> None:
+        """
+        create Popup for editing selected attribute Name
+        :param table:  Active AttributeTable
+        :return:
+        """
         attributes = cls.get_selected_attributes(table)
         if len(attributes) != 1:
             return
@@ -55,25 +49,36 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     def delete_selected_attributes(cls, table: ui.AttributeTable, with_child=False):
         """
         delete selected Attributes
+        param table: Active AttributeTable
         :param with_child: recursive deletion of child elements
         """
         attributes = cls.get_selected_attributes(table)
         for attribute in attributes:
             attribute.delete(with_child)
-        tool.Attribute.delete(attributes, with_child)
 
     @classmethod
     def remove_parent_of_selected_attribute(cls, table: ui.AttributeTable) -> None:
+        """
+        remove parent of selected attribute
+        :param table:
+        :return:
+        """
         attributes = cls.get_selected_attributes(table)
         for attribute in attributes:
             if not attribute.parent:
                 continue
             if not attribute in attribute.parent.get_children(filter=True):
+                attribute.parent = None
                 continue
             attribute.parent.remove_child(attribute)
 
     @classmethod
     def add_parent_of_selected_attribute(cls, table: ui.AttributeTable) -> None:
+        """
+        find possible parent of selected attribute if parent exists add parent to attribute
+        :param table: Active AttributeTable
+        :return:
+        """
         attributes = cls.get_selected_attributes(table)
         for attribute in attributes:
             parent = cls.get_possible_parent(attribute)
@@ -83,69 +88,77 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             parent.add_child(attribute)
 
     @classmethod
-    def get_properties(cls) -> AttributeTableProperties:
-        return som_gui.AttributeTableProperties
-
-    @classmethod
-    def get_attribute_from_item(cls, item: QTableWidgetItem):
-        if item is None:
-            return None
-        entity = item.data(CLASS_REFERENCE)
-        return entity if isinstance(entity, SOMcreator.Attribute) else None
-
-    @classmethod
     def remove_attributes_from_table(cls, attributes: set[SOMcreator.Attribute], table: QTableWidget):
-        rows = sorted([cls.get_row_from_attribute(a, table) for a in attributes])
-        for row in reversed(rows):
-            table.removeRow(row)
+        """
+        Remove set of attributes from table
+        :param attributes:
+        :param table:
+        :return:
+        """
+        row_indexes = sorted([cls.get_row_index_from_attribute(a, table) for a in attributes])
+        for row_index in reversed(row_indexes):
+            table.removeRow(row_index)
 
     @classmethod
-    def get_row_from_attribute(cls, attribute: SOMcreator.Attribute, table: QTableWidget):
-        for row in range(table.rowCount()):
-            item = table.item(row, 0)
-            if cls.get_attribute_from_item(item) == attribute:
-                return row
-
-    @classmethod
-    def add_attributes_to_table(cls, attributes: list[SOMcreator.Attribute], table: QTableWidget):
-        prop = cls.get_properties()
-        column_list = prop.attribute_table_columns
+    def add_attributes_to_table(cls, attributes: set[SOMcreator.Attribute], table: QTableWidget) -> None:
+        """
+        add list of Attributes to Table
+        :param attributes: Attributes which will be added to table
+        :param table: Table to whom attributes will be added
+        :return:
+        """
         for attribute in attributes:
-            table.setSortingEnabled(False)
-            items = [QTableWidgetItem() for _ in range(len(column_list))]
-            row = table.rowCount()
-            table.setRowCount(row + 1)
+            table.setSortingEnabled(False)  # disable sorting else bugs will appear
+            items = [QTableWidgetItem() for _ in range(cls.get_column_count())]  # create QTableWidgetItem for row
+            # add row
+            row_index = table.rowCount()
+            table.setRowCount(row_index + 1)
+            # fill row
             [item.setData(CLASS_REFERENCE, attribute) for item in items]
-            [table.setItem(row, col, item) for col, item in enumerate(items)]
+            [table.setItem(row_index, col, item) for col, item in enumerate(items)]
             [item.setFlags(item.flags() | item.flags().ItemIsUserCheckable) for item in items]
-            cls.update_row(table, row)
+            cls.update_row(table, row_index)
             table.setSortingEnabled(True)
 
     @classmethod
+    def get_column_count(cls) -> int:
+        return len(cls.get_properties().attribute_table_columns)
+
+    @classmethod
     def update_row(cls, table: QTableWidget, index: int):
-        items = [table.item(index, col) for col in range(table.columnCount())]
-        prop = cls.get_properties()
-        column_list = prop.attribute_table_columns
-        attribute = cls.get_attribute_from_item(items[0])
+        """
+        update row by getter functions. First column get link icon if attribute has parent
+        :param table:
+        :param index:
+        :return:
+        """
+
+        row_items = [table.item(index, col) for col in range(table.columnCount())]
+        attribute = cls.get_attribute_from_item(row_items[0])
         if attribute is None:
             return
 
-        if attribute.parent is not None:
-            if not items[0].data(LINKSTATE):
-                items[0].setIcon(get_link_icon())
-                items[0].setData(LINKSTATE, True)
-        else:
-            if items[0].data(LINKSTATE):
-                items[0].setIcon(QIcon())
-                items[0].setData(LINKSTATE, False)
+        # update row values
+        for item, (column_name, column_getter) in zip(row_items, cls.get_properties().attribute_table_columns):
+            value = column_getter(attribute)
+            cls.format_row_value(item, value)
+        cls.format_row(row_items)
 
-        for item, column_dict in zip(items, column_list):
-            value = column_dict["get_function"](attribute)
-            cls.format_attribute_table_value(item, value)
-        cls.format_row(items)
+        # Update Link Icon
+        attribute_has_parent = bool(attribute.parent is not None)
+        if not row_items[0].data(
+                LINKSTATE) == attribute_has_parent:  # only update if data changes else infinite update loop
+            row_items[0].setIcon(get_link_icon() if attribute_has_parent else QIcon())  # update Icon
+            row_items[0].setData(LINKSTATE, attribute_has_parent)
 
     @classmethod
-    def format_attribute_table_value(cls, item: QTableWidgetItem, value):
+    def format_row_value(cls, item: QTableWidgetItem, value: str | set | bool | list | float):
+        """
+        Formats value to match cell style based on datatype
+        :param item:
+        :param value:
+        :return:
+        """
         if isinstance(value, (list, set)):
             item.setText("; ".join([str(v) for v in value]))
             return
@@ -157,7 +170,12 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         item.setText(str(value))
 
     @classmethod
-    def format_row(cls, row: list[QTableWidgetItem]):
+    def format_row(cls, row: list[QTableWidgetItem]) -> None:
+        """
+        Highlights row if attribute is Ident Attribute
+        :param row:
+        :return:
+        """
         attribute = cls.get_attribute_from_item(row[0])
         palette = QPalette()
         if attribute.property_set is None:
@@ -172,10 +190,15 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             item.setBackground(brush)
 
     @classmethod
-    def add_column_to_table(cls, name: str, get_function: Callable):
+    def add_column_to_table(cls, name: str, get_function: Callable) -> None:
+        """
+        Define Column which should be shown in Table
+        :param name: Name of Column
+        :param get_function: getter function for cell value. SOMcreator.Attribute will be passed as argument
+        :return:
+        """
         prop = cls.get_properties()
-        d = {"display_name": name,
-             "get_function": get_function}
+        d = name, get_function
         prop.attribute_table_columns.append(d)
 
     @classmethod
@@ -187,7 +210,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         return attributes
 
     @classmethod
-    def get_property_set_by_table(cls, table: QTableWidget):
+    def get_property_set_by_table(cls, table: QTableWidget) -> SOMcreator.PropertySet:
         window = table.window()
         if isinstance(window, PropertySetWindow):
             return tool.PropertySetWindow.get_property_set_by_window(window)
@@ -202,7 +225,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def get_attribute_table_header_names(cls):
         prop = cls.get_properties()
-        return [d["display_name"] for d in prop.attribute_table_columns]
+        return [name for (name, getter) in prop.attribute_table_columns]
 
     @classmethod
     def get_possible_parent(cls, attribute: SOMcreator.Attribute) -> None | SOMcreator.Attribute:
@@ -222,65 +245,138 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         return cls.get_properties().context_menu_builders
 
     @classmethod
-    def add_context_menu_builder(cls, c: Callable):
-        cls.get_properties().context_menu_builders.append(c)
+    def add_context_menu_builder(cls, context_menu_builder: Callable):
+        """
+        :param context_menu_builder: Function which gets called on context menu creation.
+        should return tuple[name, function] of context should be shown or None if not shown.
+        The function gets passed the current table as a variable
+        :return:
+        """
+        cls.get_properties().context_menu_builders.append(context_menu_builder)
 
     @classmethod
-    def context_menu_rename_builder(cls, table: ui.AttributeTable):
-        name = table.tr("Rename")
-        selected_attributes = cls.get_selected_attributes(table)
-        if len(selected_attributes) == 1:
-            return [name, lambda: cls.edit_selected_attribute_name(table)]
-        return None
-
-    @classmethod
-    def context_menu_delete_builder(cls, table: ui.AttributeTable):
-        name = table.tr("Delete")
-        selected_attributes = cls.get_selected_attributes(table)
-        if len(selected_attributes) == 0:
+    def context_menu_builder_rename(cls, table: ui.AttributeTable) -> tuple[str, Callable] | None:
+        """
+        Contextmenu function for renaming an attribute.
+        :param table: Active Attribute Table
+        :return:
+        """
+        if len(cls.get_selected_attributes(table)) == 1:
+            return table.tr("Rename"), lambda: cls.edit_selected_attribute_name(table)
+        else:
             return None
+
+    @classmethod
+    def context_menu_builder_delete(cls, table: ui.AttributeTable, with_child=False) -> tuple[str, Callable] | None:
+        """
+        Contextmenu function for deleting an attribute.
+        :param table: Active Attribute Table
+        :return:
+        """
+
+        # return if no attribute is selected
+        if len(cls.get_selected_attributes(table)) == 0:
+            return None
+
+        # stop user from deleting identifier attribute
         obj = cls.get_property_set_by_table(table).object
         ident_attrib = None if obj is None else obj.ident_attrib
-        if ident_attrib in selected_attributes:
+        if ident_attrib in cls.get_selected_attributes(table):
+            from som_gui.tool.popups import Popups
+            text = QCoreApplication.translate("AttributeTable", "It's forbidden to delete the identifier!")
+            title = QCoreApplication.translate("AttributeTable", "Delete attribute")
+            Popups.create_warning_popup(text, title)
             return None
 
-        return [name, lambda: cls.delete_selected_attributes(table, with_child=False)]
+        # don't show if any attribute is not a parent if deletion with child is requested
+        logging.debug([a.is_parent for a in cls.get_selected_attributes(table)])
+        if not all(a.is_parent for a in cls.get_selected_attributes(table)) and with_child:
+            return None
+
+        name = table.tr("Delete (with subattributes)") if with_child else table.tr("Delete")
+        return name, lambda: cls.delete_selected_attributes(table, with_child=with_child)
 
     @classmethod
-    def context_menu_delete_subattributes_builder(cls, table: ui.AttributeTable):
-        name = table.tr("Delete (with subattributes)")
+    def context_menu_builder_remove_connection(cls, table: ui.AttributeTable) -> tuple[str, Callable] | None:
+        """
+        Contextmenu function for removing a parent connect of an attribute.
+        :param table: Active Attribute Table
+        :return:
+        """
+
+        # return if no attribute is selected
         selected_attributes = cls.get_selected_attributes(table)
         if len(selected_attributes) == 0:
             return None
-        obj = cls.get_property_set_by_table(table).object
-        ident_attrib = None if obj is None else obj.ident_attrib
-        if ident_attrib in selected_attributes:
-            return None
 
-        if not all(a.is_parent for a in selected_attributes):
-            return None
-        return [name, lambda: cls.delete_selected_attributes(table, with_child=True)]
-
-    @classmethod
-    def context_menu_remove_connection_builder(cls, table: ui.AttributeTable):
-        name = table.tr("Remove Connection")
-        selected_attributes = cls.get_selected_attributes(table)
-        if len(selected_attributes) == 0:
-            return None
-
+        # don't show if any attribute is not a child
         if not any(a.is_child for a in selected_attributes):
             return None
-        return [name, lambda: cls.remove_parent_of_selected_attribute(table)]
+        return table.tr("Remove Connection"), lambda: cls.remove_parent_of_selected_attribute(table)
 
     @classmethod
-    def context_menu_add_connection_builder(cls, table: ui.AttributeTable):
-        name = table.tr("Connect to Parent")
-        selected_attributes = cls.get_selected_attributes(table)
-        if len(selected_attributes) == 0:
+    def context_menu_builder_add_connection(cls, table: ui.AttributeTable) -> tuple[str, Callable] | None:
+        """
+        Contextmenu function for adding a parent connect of an attribute.
+        :param table: Active Attribute Table
+        :return:
+        """
+        # return if no attribute is selected
+        if len(cls.get_selected_attributes(table)) == 0:
             return None
 
-        possible_parents = [(a, cls.get_possible_parent(a)) for a in selected_attributes]
-
+        # don't show if no possible parent is found
+        possible_parents = [(a, cls.get_possible_parent(a)) for a in cls.get_selected_attributes(table)]
         if not any(parent is not None for a, parent in possible_parents if a.parent != parent):
             return None
-        return [name, lambda: cls.add_parent_of_selected_attribute(table)]
+
+        return table.tr("Connect to Parent"), lambda: cls.add_parent_of_selected_attribute(table)
+
+    @classmethod
+    def set_property_set_of_table(cls, table: ui.AttributeTable, property_set: SOMcreator.PropertySet) -> None:
+        """
+        define which property_set is shown in AttributeTable
+        :param table: active AttributeTable
+        :param property_set: PropertySet which will be linked
+        :return:
+        """
+        table.property_set = property_set
+
+    @classmethod
+    def get_property_set_of_table(cls, table: ui.AttributeTable) -> SOMcreator.PropertySet | None:
+        """
+        get property set of table
+        :param table: active AttributeTable
+        :return:
+        """
+        return table.property_set
+
+    @classmethod
+    def get_row_index_from_attribute(cls, attribute: SOMcreator.Attribute, table: QTableWidget) -> int:
+        """
+        :return: Row index
+        """
+        for row in range(table.rowCount()):
+            item = table.item(row, 0)
+            if cls.get_attribute_from_item(item) == attribute:
+                return row
+
+    @classmethod
+    def get_selected_attributes(cls, table: ui.AttributeTable) -> set[SOMcreator.Attribute]:
+        """
+        :param table: Active AttributeTable
+        :return: selected attributes in AttributeTable
+        """
+        return {cls.get_attribute_from_item(item) for item in table.selectedItems()}
+
+    @classmethod
+    def get_attribute_from_item(cls, item: QTableWidgetItem) -> SOMcreator.Attribute | None:
+        """
+        return the Attribute which is linked to a table entry
+        :param item:
+        :return:
+        """
+        if item is None:
+            return None
+        entity = item.data(CLASS_REFERENCE)
+        return entity if isinstance(entity, SOMcreator.Attribute) else None

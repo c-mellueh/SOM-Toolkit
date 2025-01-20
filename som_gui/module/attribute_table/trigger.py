@@ -12,10 +12,10 @@ if TYPE_CHECKING:
 
 
 def connect():
-    core.add_basic_attribute_columns(tool.Attribute, tool.AttributeTable)
+    core.init_attribute_columns(tool.AttributeTable)
     tool.MainWindow.get_attribute_table().itemDoubleClicked.connect(
-        lambda item: core.attribute_double_clicked(item, tool.AttributeTable, tool.PropertySet,
-                                                   tool.PropertySetWindow))
+        lambda item: core.activate_item(item, tool.AttributeTable, tool.PropertySet,
+                                        tool.PropertySetWindow))
     core.init_context_menu(tool.AttributeTable)
 
 
@@ -25,12 +25,12 @@ def retranslate_ui():
 
 def connect_table(table: AttributeTable):
     table.customContextMenuRequested.connect(
-        lambda pos: core.context_menu(table, pos, tool.AttributeTable, tool.Util))
-    table.itemClicked.connect(lambda item: core.item_changed(item, tool.AttributeTable))
+        lambda pos: core.create_context_menu(table, pos, tool.AttributeTable, tool.Util))
+    table.itemClicked.connect(lambda item: core.toggle_optionality(item, tool.AttributeTable))
 
 
 def drop_event(event, table):
-    core.drop_event(event, table, tool.PropertySetWindow, tool.Attribute)
+    core.drop_event(event, table, tool.AttributeTable, tool.Attribute)
 
 
 def create_mime_data(items: list[QTableWidgetItem], mime_data):
@@ -38,8 +38,8 @@ def create_mime_data(items: list[QTableWidgetItem], mime_data):
 
 
 def on_new_project():
-    core.setup_table_header(tool.MainWindow, tool.AttributeTable)
+    return
 
 
 def table_paint_event(table: QTableWidget):
-    core.paint_attribute_table(table, tool.AttributeTable)
+    core.update_attribute_table(table, tool.AttributeTable)
