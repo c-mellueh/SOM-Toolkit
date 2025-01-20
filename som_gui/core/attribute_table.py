@@ -170,11 +170,3 @@ def update_attribute_table(table: QTableWidget, attribute_table: Type[tool.Attri
     #update rows
     for row in range(table.rowCount()):
         attribute_table.update_row(table, row)
-
-
-def setup_table_header(main_window: Type[tool.MainWindow], attribute_table: Type[tool.AttributeTable]):
-    table = main_window.get_attribute_table()
-    logging.info(f"Setup Attribute Table Headers")
-    header_texts = attribute_table.get_attribute_table_header_names()
-    table.setColumnCount(len(header_texts))
-    table.setHorizontalHeaderLabels(header_texts)

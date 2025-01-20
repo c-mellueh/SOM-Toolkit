@@ -38,7 +38,7 @@ def create_mime_data(items: list[QTableWidgetItem], mime_data):
 
 
 def on_new_project():
-    core.setup_table_header(tool.MainWindow, tool.AttributeTable)
+    return
 
 
 def table_paint_event(table: QTableWidget):
