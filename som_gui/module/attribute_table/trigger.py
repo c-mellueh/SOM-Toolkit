@@ -25,7 +25,7 @@ def retranslate_ui():
 
 def connect_table(table: AttributeTable):
     table.customContextMenuRequested.connect(
-        lambda pos: core.context_menu(table, pos, tool.AttributeTable, tool.Util))
+        lambda pos: core.create_context_menu(table, pos, tool.AttributeTable, tool.Util))
     table.itemClicked.connect(lambda item: core.toggle_optionality(item, tool.AttributeTable))
 
 

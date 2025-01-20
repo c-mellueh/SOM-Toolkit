@@ -99,16 +99,24 @@ def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_tab
     event.accept()
 
 
-def context_menu(table: ui.AttributeTable, pos, attribute_table: Type[tool.AttributeTable], util: Type[tool.Util]):
+def create_context_menu(table: ui.AttributeTable, pos, attribute_table: Type[tool.AttributeTable], util: Type[tool.Util]):
+    """
+    Create Context Menu based on context menu builders
+    """
+
+    #see tool.AttributeTable.add_context_menu_builder
+
     menu_list = list()
     attribute_table.set_active_table(table)
 
+    #Create list of context menu entries
     for context_menu_builder in attribute_table.get_context_menu_builders():
         result = context_menu_builder(table)
         if result is not None:
             menu_list.append(result)
 
     menu = util.create_context_menu(menu_list)
+    #Run Context Menu
     menu.exec(table.viewport().mapToGlobal(pos))
 
 
