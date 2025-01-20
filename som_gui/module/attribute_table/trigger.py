@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 def connect():
     core.init_attribute_columns(tool.AttributeTable)
     tool.MainWindow.get_attribute_table().itemDoubleClicked.connect(
-        lambda item: core.attribute_double_clicked(item, tool.AttributeTable, tool.PropertySet,
-                                                   tool.PropertySetWindow))
+        lambda item: core.activate_item(item, tool.AttributeTable, tool.PropertySet,
+                                        tool.PropertySetWindow))
     core.init_context_menu(tool.AttributeTable)
 
 

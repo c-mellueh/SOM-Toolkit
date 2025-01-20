@@ -136,11 +136,16 @@ def create_context_menu(table: ui.AttributeTable, pos, attribute_table: Type[too
 
 
 
-def attribute_double_clicked(item: QTableWidgetItem,
-                             attribute_table: Type[tool.AttributeTable],
-                             property_set: Type[tool.PropertySet], property_set_window: Type[tool.PropertySetWindow]):
+def activate_item(item: QTableWidgetItem,
+                  attribute_table: Type[tool.AttributeTable],
+                  property_set: Type[tool.PropertySet], property_set_window: Type[tool.PropertySetWindow]):
+    """
+    Activate Attribute based on QTableWidgetItem
+    :return:
+    """
     active_attribute = attribute_table.get_attribute_from_item(item)
     active_property_set = property_set.get_active_property_set()
+    #create Window or activate it
     window = property_set_window_core.open_pset_window(active_property_set, property_set_window, attribute_table)
     property_set_window_core.activate_attribute(active_attribute, window, property_set_window)
 
