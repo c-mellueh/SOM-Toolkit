@@ -63,7 +63,7 @@ def open_pset_window(property_set: SOMcreator.PropertySet, property_set_window: 
     property_set_window.fill_window_title(window, property_set)
     table = property_set_window.get_table(window)
     attribute_table.set_property_set_of_table(table,property_set)
-    attribute_table_core.paint_attribute_table(table, attribute_table)
+    attribute_table_core.update_attribute_table(table, attribute_table)
     table.resizeColumnsToContents()
     window.show()
     return window
@@ -95,7 +95,7 @@ def handle_paste_event(window: PropertySetWindow, property_set_window: Type[tool
 def repaint_pset_window(window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow],
                         attribute_table: Type[tool.AttributeTable]):
     table = property_set_window.get_table(window)
-    attribute_table_core.paint_attribute_table(table, attribute_table)
+    attribute_table_core.update_attribute_table(table, attribute_table)
 
     property_set_window.update_add_button(window)
     property_set_window.update_line_validators(window)

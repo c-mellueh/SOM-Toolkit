@@ -42,4 +42,4 @@ def on_new_project():
 
 
 def table_paint_event(table: QTableWidget):
-    core.paint_attribute_table(table, tool.AttributeTable)
+    core.update_attribute_table(table, tool.AttributeTable)

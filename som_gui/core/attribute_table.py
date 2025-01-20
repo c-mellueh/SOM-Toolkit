@@ -150,20 +150,24 @@ def activate_item(item: QTableWidgetItem,
     property_set_window_core.activate_attribute(active_attribute, window, property_set_window)
 
 
-def paint_attribute_table(table: QTableWidget, attribute_table: Type[tool.AttributeTable]):
+def update_attribute_table(table: QTableWidget, attribute_table: Type[tool.AttributeTable]):
     logging.debug(f"Repaint Attribute Table")
 
     existing_attributes = attribute_table.get_existing_attributes_in_table(table)
     property_set = attribute_table.get_property_set_by_table(table)
     if property_set is None:
+        #clear Table
         for row in reversed(range(table.rowCount())):
             table.removeRow(row)
         return
-    property_set: SOMcreator.PropertySet
+
+    #get Attributes which should be deleted and added
     delete_attributes = existing_attributes.difference(set(property_set.get_attributes(filter=True)))
     new_attributes = set(property_set.get_attributes(filter=True)).difference(existing_attributes)
     attribute_table.remove_attributes_from_table(delete_attributes, table)
     attribute_table.add_attributes_to_table(sorted(new_attributes), table)
+
+    #update rows
     for row in range(table.rowCount()):
         attribute_table.update_row(table, row)
 
