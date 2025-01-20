@@ -5,7 +5,6 @@ import logging
 from typing import TYPE_CHECKING, Type
 
 from PySide6.QtCore import QMimeData, Qt
-from bleach.callbacks import target_blank
 
 import SOMcreator
 from som_gui.core import property_set_window as property_set_window_core
@@ -18,6 +17,7 @@ if TYPE_CHECKING:
     from som_gui.module.attribute_table import ui
     from som_gui.module.property_set_window.ui import PropertySetWindow
 
+
 def init_context_menu(attribute_table: Type[tool.AttributeTable]):
     """
     Defines all standard context menu actions associated with an attribute table.
@@ -28,7 +28,8 @@ def init_context_menu(attribute_table: Type[tool.AttributeTable]):
     attribute_table.add_context_menu_builder(attribute_table.context_menu_remove_connection_builder)
     attribute_table.add_context_menu_builder(attribute_table.context_menu_add_connection_builder)
 
-def init_attribute_columns( attribute_table: Type[tool.AttributeTable]):
+
+def init_attribute_columns(attribute_table: Type[tool.AttributeTable]):
     """
     Defines all attribute columns associated with an attribute table. This can be expanded by plugins
     :param attribute_table:
@@ -75,7 +76,7 @@ def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_tab
     """
 
     # Check if move is inside the same window
-    source_table:ui.AttributeTable = event.source()
+    source_table: ui.AttributeTable = event.source()
     if source_table == target_table:
         event.accept()
         return
@@ -83,18 +84,19 @@ def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_tab
     proposed_action = event.proposedAction()
     target_property_set = attribute_table.get_property_set_by_table(target_table)
     existing_attributes = {a.name: a for a in target_property_set.get_attributes(filter=False)}
-    dropped_attributes: set[SOMcreator.Attribute] = event.mimeData().property(MIME_DATA_KEY) #get set of dropped Attributes
+    dropped_attributes: set[SOMcreator.Attribute] = event.mimeData().property(
+        MIME_DATA_KEY)  # get set of dropped Attributes
 
     if proposed_action == Qt.DropAction.CopyAction:
         for attribute in dropped_attributes:
             # check if Attribute with same name exists already
             existing_attribute = existing_attributes.get(attribute.name)
             if existing_attribute:
-                #overwrite date
+                # overwrite date
                 data = attribute_tool.get_attribute_data(attribute)
                 attribute_tool.set_attribute_data_by_dict(existing_attribute, data)
             else:
-                #copy attribute to property_set
+                # copy attribute to property_set
                 attribute = copy.copy(attribute)
                 attribute.remove_parent()
                 target_property_set.add_attribute(attribute)
@@ -104,7 +106,7 @@ def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_tab
             # check if Attribute with same name exists already
             existing_attribute = existing_attributes.get(attribute.name)
             if existing_attribute:
-                #replace Attribute
+                # replace Attribute
                 target_property_set.remove_attribute(existing_attribute)
             target_property_set.add_attribute(attribute)
 
@@ -112,28 +114,26 @@ def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_tab
     event.accept()
 
 
-def create_context_menu(table: ui.AttributeTable, pos, attribute_table: Type[tool.AttributeTable], util: Type[tool.Util]):
+def create_context_menu(table: ui.AttributeTable, pos, attribute_table: Type[tool.AttributeTable],
+                        util: Type[tool.Util]):
     """
     Create Context Menu based on context menu builders
     """
 
-    #see tool.AttributeTable.add_context_menu_builder
+    # see tool.AttributeTable.add_context_menu_builder
 
     menu_list = list()
     attribute_table.set_active_table(table)
 
-    #Create list of context menu entries
+    # Create list of context menu entries
     for context_menu_builder in attribute_table.get_context_menu_builders():
         result = context_menu_builder(table)
         if result is not None:
             menu_list.append(result)
 
     menu = util.create_context_menu(menu_list)
-    #Run Context Menu
+    # Run Context Menu
     menu.exec(table.viewport().mapToGlobal(pos))
-
-
-
 
 
 def activate_item(item: QTableWidgetItem,
@@ -145,7 +145,7 @@ def activate_item(item: QTableWidgetItem,
     """
     active_attribute = attribute_table.get_attribute_from_item(item)
     active_property_set = property_set.get_active_property_set()
-    #create Window or activate it
+    # create Window or activate it
     window = property_set_window_core.open_pset_window(active_property_set, property_set_window, attribute_table)
     property_set_window_core.activate_attribute(active_attribute, window, property_set_window)
 
@@ -156,17 +156,17 @@ def update_attribute_table(table: QTableWidget, attribute_table: Type[tool.Attri
     existing_attributes = attribute_table.get_existing_attributes_in_table(table)
     property_set = attribute_table.get_property_set_by_table(table)
     if property_set is None:
-        #clear Table
+        # clear Table
         for row in reversed(range(table.rowCount())):
             table.removeRow(row)
         return
 
-    #get Attributes which should be deleted and added
+    # get Attributes which should be deleted and added
     delete_attributes = existing_attributes.difference(set(property_set.get_attributes(filter=True)))
     new_attributes = set(property_set.get_attributes(filter=True)).difference(existing_attributes)
     attribute_table.remove_attributes_from_table(delete_attributes, table)
     attribute_table.add_attributes_to_table(sorted(new_attributes), table)
 
-    #update rows
+    # update rows
     for row in range(table.rowCount()):
         attribute_table.update_row(table, row)
