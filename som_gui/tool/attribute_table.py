@@ -284,3 +284,10 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         if not any(parent is not None for a, parent in possible_parents if a.parent != parent):
             return None
         return [name, lambda: cls.add_parent_of_selected_attribute(table)]
+
+    @classmethod
+    def set_property_set_of_table(cls,table:ui.AttributeTable,property_set:SOMcreator.PropertySet):
+        table.property_set = property_set
+    @classmethod
+    def get_property_set_of_table(cls,table:ui.AttributeTable) -> SOMcreator.PropertySet|None:
+        return table.property_set

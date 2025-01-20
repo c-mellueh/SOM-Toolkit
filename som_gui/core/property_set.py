@@ -60,6 +60,7 @@ def pset_selection_changed(property_set_tool: Type[tool.PropertySet], attribute_
                            main_window: Type[tool.MainWindow]):
     property_set = property_set_tool.get_selecte_property_set_from_table()
     property_set_tool.set_active_property_set(property_set)
+    attribute_table.set_property_set_of_table(main_window.get_attribute_table(),property_set)
     attribute_table_core.paint_attribute_table(main_window.get_attribute_table(), attribute_table)
 
 
