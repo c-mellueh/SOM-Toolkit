@@ -114,11 +114,9 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def add_attributes_to_table(cls, attributes: list[SOMcreator.Attribute], table: QTableWidget):
-        prop = cls.get_properties()
-        column_list = prop.attribute_table_columns
         for attribute in attributes:
             table.setSortingEnabled(False)
-            items = [QTableWidgetItem() for _ in range(len(column_list))]
+            items = [QTableWidgetItem() for _ in range(cls.get_column_count())]
             row = table.rowCount()
             table.setRowCount(row + 1)
             [item.setData(CLASS_REFERENCE, attribute) for item in items]
@@ -128,10 +126,13 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             table.setSortingEnabled(True)
 
     @classmethod
+    def get_column_count(cls) -> int:
+        return len(cls.get_properties().attribute_table_columns)
+
+    @classmethod
     def update_row(cls, table: QTableWidget, index: int):
         items = [table.item(index, col) for col in range(table.columnCount())]
         prop = cls.get_properties()
-        column_list = prop.attribute_table_columns
         attribute = cls.get_attribute_from_item(items[0])
         if attribute is None:
             return
@@ -145,8 +146,8 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
                 items[0].setIcon(QIcon())
                 items[0].setData(LINKSTATE, False)
 
-        for item, column_dict in zip(items, column_list):
-            value = column_dict["get_function"](attribute)
+        for item, (column_name,column_getter) in zip(items, prop.attribute_table_columns):
+            value = column_getter(attribute)
             cls.format_attribute_table_value(item, value)
         cls.format_row(items)
 
@@ -180,8 +181,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def add_column_to_table(cls, name: str, get_function: Callable):
         prop = cls.get_properties()
-        d = {"display_name": name,
-             "get_function": get_function}
+        d =name,get_function
         prop.attribute_table_columns.append(d)
 
     @classmethod
@@ -208,7 +208,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def get_attribute_table_header_names(cls):
         prop = cls.get_properties()
-        return [d["display_name"] for d in prop.attribute_table_columns]
+        return [name for (name,getter) in prop.attribute_table_columns]
 
     @classmethod
     def get_possible_parent(cls, attribute: SOMcreator.Attribute) -> None | SOMcreator.Attribute:

@@ -28,6 +28,19 @@ def init_context_menu(attribute_table: Type[tool.AttributeTable]):
     attribute_table.add_context_menu_builder(attribute_table.context_menu_remove_connection_builder)
     attribute_table.add_context_menu_builder(attribute_table.context_menu_add_connection_builder)
 
+def init_attribute_columns( attribute_table: Type[tool.AttributeTable]):
+    """
+    Defines all attribute columns associated with an attribute table. This can be expanded by plugins
+    :param attribute_table:
+    :return:
+    """
+    logging.info("Add Basic Attribute Columns")
+    attribute_table.add_column_to_table("Name", lambda a: a.name)
+    attribute_table.add_column_to_table("Datentyp", lambda a: a.data_type)
+    attribute_table.add_column_to_table("Werttyp", lambda a: a.value_type)
+    attribute_table.add_column_to_table("Werte", lambda a: a.value)
+    attribute_table.add_column_to_table("Optional", lambda a: a.is_optional(ignore_hirarchy=True))
+
 
 def toggle_optionality(item: QTableWidgetItem, attribute_table: Type[tool.AttributeTable]):
     """
@@ -120,13 +133,7 @@ def create_context_menu(table: ui.AttributeTable, pos, attribute_table: Type[too
     menu.exec(table.viewport().mapToGlobal(pos))
 
 
-def add_basic_attribute_columns(attribute: Type[tool.Attribute], attribute_table: Type[tool.AttributeTable]):
-    logging.info("Add Basic Attribute Columns")
-    attribute_table.add_column_to_table("Name", lambda a: a.name)
-    attribute_table.add_column_to_table("Datentyp", lambda a: a.data_type)
-    attribute_table.add_column_to_table("Werttyp", lambda a: a.value_type)
-    attribute_table.add_column_to_table("Werte", lambda a: a.value)
-    attribute_table.add_column_to_table("Optional", lambda a: a.is_optional(ignore_hirarchy=True))
+
 
 
 def attribute_double_clicked(item: QTableWidgetItem,
