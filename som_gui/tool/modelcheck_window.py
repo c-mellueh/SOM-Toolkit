@@ -5,7 +5,7 @@ from typing import Callable, TYPE_CHECKING
 
 from PySide6.QtCore import QRunnable, QThreadPool, Qt
 from PySide6.QtGui import QAction, QStandardItem, QStandardItemModel
-from PySide6.QtWidgets import QDialogButtonBox, QLabel, QMenu, QTreeView,QVBoxLayout
+from PySide6.QtWidgets import QDialogButtonBox, QLabel, QMenu, QTreeView,QLayoutItem
 
 import SOMcreator
 import som_gui.core.tool
@@ -377,7 +377,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     def clear_progress_bars(cls):
         scroll_area = cls.get_window().ui.verticalLayout_3
         while scroll_area.count():
-            item = scroll_area.takeAt(0)
+            item:QLayoutItem = scroll_area.takeAt(0)
             widget = item.widget()
             if widget is not None:
                 widget.deleteLater()

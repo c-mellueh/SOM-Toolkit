@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>955</width>
-    <height>126</height>
+    <height>136</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,12 +26,40 @@
       <widget class="AttributeSelector" name="main_attribute_widget" native="true"/>
      </item>
      <item>
-      <widget class="FileSelector" name="file_selector_widget" native="true"/>
+      <widget class="FileSelector" name="file_selector_widget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="Progressbar" name="progress_bar" native="true"/>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>935</width>
+        <height>54</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="layout_progress_bar"/>
+     </widget>
+    </widget>
    </item>
    <item>
     <widget class="QWidget" name="button_widget" native="true">
@@ -77,12 +105,6 @@
   </customwidget>
   <customwidget>
    <class>AttributeSelector</class>
-   <extends>QWidget</extends>
-   <header>som_gui.module.util.ui</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>Progressbar</class>
    <extends>QWidget</extends>
    <header>som_gui.module.util.ui</header>
    <container>1</container>

@@ -74,19 +74,19 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
     @classmethod
     def get_main_pset(cls, widget: ui.IfcImportWidget) -> str:
-        return widget.widget.main_attribute_widget.ui.le_pset_name.text()
+        return widget.ui.main_attribute_widget.ui.le_pset_name.text()
 
     @classmethod
     def get_main_attribute(cls, widget: ui.IfcImportWidget) -> str:
-        return widget.widget.main_attribute_widget.ui.le_attribute_name.text()
+        return widget.ui.main_attribute_widget.ui.le_attribute_name.text()
 
     @classmethod
-    def set_status(cls, widget: ui.IfcImportWidget, status: str):
-        widget.widget.label_status.setText(status)
+    def set_status(cls, progress_bar:Progressbar, status: str):
+        progress_bar.ui.label.setText(status)
 
     @classmethod
-    def set_progress(cls, widget: ui.IfcImportWidget, value: int):
-        widget.widget.progress_bar.setValue(value)
+    def set_progress(cls, progress_bar:Progressbar, value: int):
+       progress_bar.ui.progressBar.setValue(value)
 
     @classmethod
     def create_thread_pool(cls) -> QThreadPool:
@@ -105,22 +105,21 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         return som_gui.IfcImportProperties
 
     @classmethod
-    def set_progressbar_visible(cls, widget: ui.IfcImportWidget, visible: bool):
-        widget.widget.progress_bar.setVisible(visible)
-        widget.widget.label_status.setVisible(visible)
+    def set_progressbars_visible(cls, widget: ui.IfcImportWidget, visible: bool):
+        widget.ui.scrollArea.setVisible(visible)
 
     @classmethod
     def get_ifc_paths(cls, widget: ui.IfcImportWidget) -> list[str]:
-        return tool.Util.get_path_from_fileselector(widget.widget.file_selector_widget)
+        return tool.Util.get_path_from_fileselector(widget.ui.file_selector_widget)
 
     @classmethod
     def create_importer(cls):
         widget = ui.IfcImportWidget()
         from som_gui.core.ifc_importer import IFC_PATH
         file_extension = "IFC Files (*.ifc *.IFC);;"
-        tool.Util.fill_file_selector(widget.widget.file_selector_widget, "Ifc File", file_extension, IFC_PATH)
+        tool.Util.fill_file_selector(widget.ui.file_selector_widget, "Ifc File", file_extension, IFC_PATH)
         prop = cls.get_properties()
-        cls.set_progressbar_visible(widget, False)
+        cls.set_progressbars_visible(widget, False)
         return widget
 
     @classmethod
@@ -131,8 +130,20 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
     @classmethod
     def set_close_button_text(cls, widget: ui.IfcImportWidget, text: str):
-        widget.widget.button_close.setText(widget.tr(text))
+        widget.ui.button_close.setText(widget.tr(text))
 
     @classmethod
     def set_run_button_enabled(cls, widget: ui.IfcImportWidget, enabled: bool):
-        widget.widget.button_run.setEnabled(enabled)
+        widget.ui.button_run.setEnabled(enabled)
+
+    @classmethod
+    def add_progress_bar(cls,widget:ui.IfcImportWidget,progress_bar:Progressbar):
+        widget.ui.layout_progress_bar.addWidget(progress_bar)
+
+    @classmethod
+    def clear_progress_bars(cls,widget:ui.IfcImportWidget):
+        layout = widget.ui.layout_progress_bar
+        while layout.count():
+            item = layout.takeAt(0)
+            if item.widget() is not None:
+                item.widget().deleteLater()

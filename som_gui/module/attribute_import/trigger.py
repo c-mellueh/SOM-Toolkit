@@ -35,7 +35,7 @@ def connect_import_buttons(run_button: QPushButton, abort_button: QPushButton):
 
 def connect_ifc_import_runner(runner):
     runner.signaller.started.connect(lambda: core.ifc_import_started(runner, tool.AttributeImport, tool.IfcImporter))
-    runner.signaller.finished.connect(lambda: core.ifc_import_finished(runner, tool.AttributeImport, tool.IfcImporter))
+    runner.signaller.finished.connect(lambda: core.ifc_import_finished(runner, tool.AttributeImport, tool.IfcImporter,tool.Util))
 
 
 def connect_attribute_import_runner(runner:AttributeImportRunner):
@@ -49,8 +49,8 @@ def last_import_finished():
     core.last_import_finished(tool.AttributeImport, tool.AttributeImportSQL)
 
 
-def start_attribute_import(file: ifcopenshell.file, path: str):
-    core.start_attribute_import(file, path, tool.AttributeImport, tool.AttributeImportResults, tool.AttributeImportSQL,
+def start_attribute_import(runner:AttributeImportRunner):
+    core.start_attribute_import(runner, tool.AttributeImport, tool.AttributeImportResults, tool.AttributeImportSQL,
                                 tool.Project)
 
 
