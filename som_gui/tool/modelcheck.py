@@ -240,7 +240,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def format_issue(cls, guid, attribute: SOMcreator.Attribute, value):
         element_type = cls.get_active_element_type()
         description = QCoreApplication.translate("Modelcheck",
-                                                 '"{}" doesn`t match format Requirement: "{}"')  # f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
+                                                 '"{}" does not match format Requirement: "{}"')  # f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
         description = description.format(value, "||".join(attribute.value))
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
@@ -263,7 +263,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     @classmethod
     def property_set_issue(cls, guid, pset_name, element_type):
-        description = QCoreApplication.translate("Modelcheck", '{} doesn`t contain the Propertyset "{}"')
+        description = QCoreApplication.translate("Modelcheck", '{} does not contain the Propertyset "{}"')
         description = description.format(element_type, pset_name)
         issue_nr = PROPERTY_SET_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name)
@@ -304,7 +304,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def ident_unknown(cls, guid, pset_name, attribute_name, value):
         element_type = cls.get_active_element_type()
-        description = QCoreApplication.translate("Modelcheck", """{} Value of Identifier ("{}") doesn't exist in SOM""")
+        description = QCoreApplication.translate("Modelcheck", """{} Value of Identifier ("{}") does not exist in SOM""")
         description = description.format(element_type, value)
         issue_nr = IDENT_ATTRIBUTE_UNKNOWN
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
