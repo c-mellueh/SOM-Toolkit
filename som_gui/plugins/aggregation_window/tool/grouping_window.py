@@ -136,7 +136,6 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def set_progress(cls, progress_bar:Progressbar,value: int):
-        logging.debug(f"SetProgress:{progress_bar} -> {value}")
         progress_bar.ui.progressBar.setValue(value)
 
     @classmethod
