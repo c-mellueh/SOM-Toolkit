@@ -157,12 +157,12 @@ def ifc_import_started(runner:IfcImportRunner, attribute_import: Type[tool.Attri
 def ifc_import_finished(runner: IfcImportRunner, attribute_import: Type[tool.AttributeImport],
                         ifc_importer: Type[tool.IfcImporter],util:Type[tool.Util]):
     """
-    creates and runs Modelcheck Runnable
+    creates and runs AttributeImport Runnable
     """
 
     attribute_import.destroy_import_runner(runner)
     progress_bar = util.create_progressbar()
-    ifc_importer.set_status(progress_bar, f"Import Abgeschlossen")
+    ifc_importer.set_status(progress_bar, QCoreApplication.translate("AttributeImport","Import Done!"))
     attribute_import_runner = attribute_import.create_attribute_import_runner(runner)
     attribute_import.connect_attribute_import_runner(attribute_import_runner)
     attribute_import.set_current_runner(attribute_import_runner)
@@ -180,14 +180,17 @@ def start_attribute_import(runner:AttributeImportRunner, attribute_import: Type[
     attribute_import_sql.connect_to_data_base(attribute_import_sql.get_database_path())
     entity_list = list(file.by_type("IfcObject"))
     entity_count = len(entity_list)
-    status_text = "Entität aus Datei importieren:"
+    status_text =  QCoreApplication.translate("AttributeImport","Import entity from file:")
     attribute_dict = attribute_import_results.build_attribute_dict(list(project.get().get_objects(filter=False)))
     for index, entity in enumerate(entity_list):
         if index % 100 == 0:
-            attribute_import.set_progress(runner.progress_bar,int(index / entity_count * 100))
-            attribute_import.set_status(runner.progress_bar,f"{status_text} {index}/{entity_count}")
+            runner.signaller.progress.emit(int(index / entity_count * 100))
+            runner.signaller.status.emit(f"{status_text} {index}/{entity_count}")
         identifier = attribute_import_sql.add_entity(entity, pset_name, attribute_name, os.path.basename(path))
         attribute_import_sql.import_entity_attributes(entity, file, identifier, attribute_dict)
+
+    runner.signaller.progress.emit(100)
+    runner.signaller.status.emit(QCoreApplication.translate("AttributeImport","import of entities done!"))
     attribute_import_sql.disconnect_from_database()
 
 
