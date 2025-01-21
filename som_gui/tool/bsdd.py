@@ -14,13 +14,10 @@ import som_gui
 from som_gui.module.bsdd import ui
 from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QWidget, QToolBox, QLineEdit, QLabel
 from PySide6.QtGui import QAction
-from som_gui.module.bsdd import trigger
-import SOMcreator.exporter.bsdd.transformer
+from som_gui.module.bsdd import trigger, constants
 
-LANGUAGE_ISO_CODES = ['EN', 'en-GB', 'nl-NL', 'nb-NO', 'nl-BE', 'fr-BE', 'de-DE', 'it-IT', 'sv-SE', 'fr-FR', 'es-ES',
-                      'en-AU', 'fa-IR', 'pl-PL', 'lv-LV', 'en-NZ', 'sr-SP', 'zh-CN', 'ru-RU', 'vi-VN', 'bg-BG', 'kr-KR',
-                      'ar-SA', 'el-GR', 'de-AT', 'mn-MN', 'en-CA', 'lt-LT', 'da-DK', 'de-CH', 'et-EE', 'cs-CZ', 'nn-NO',
-                      'en-US', 'pt-BR', 'fi-FI', 'ja-JP', 'no-NO', 'pt-PT']
+import SOMcreator.exporter.bsdd.transformer
+from SOMcreator.exporter.bsdd import Dictionary
 
 
 class Bsdd(som_gui.core.tool.Bsdd):
@@ -30,23 +27,10 @@ class Bsdd(som_gui.core.tool.Bsdd):
         return som_gui.BsddProperties
 
     @classmethod
-    def set_action(cls, name: str, action: QAction):
-        cls.get_properties().actions[name] = action
-
-    @classmethod
-    def get_action(cls, name):
-        return cls.get_properties().actions[name]
-
-    @classmethod
-    def get_window(cls) -> ui.Widget:
-        return cls.get_properties().widget
-
-    @classmethod
-    def get_ui(cls):
-        return cls.get_window().ui
-
-    @classmethod
     def create_window(cls):
+        """
+        :return: BsDD Window
+        """
         widget = ui.Widget()
         cls.get_properties().widget = widget
         widget.ui.bu_select_path.clicked.connect(trigger.path_button_clicked)
@@ -54,12 +38,14 @@ class Bsdd(som_gui.core.tool.Bsdd):
         cls.clear_toolbox()
         return widget
 
-    @classmethod
-    def get_toolbox(cls) -> QToolBox:
-        return cls.get_window().ui.toolBox
+
 
     @classmethod
     def clear_toolbox(cls):
+        """
+        remove all Widgets of Toolbox
+        :return:
+        """
         tb = cls.get_toolbox()
         for index in reversed(range(tb.count())):
             widget = tb.widget(index)
@@ -67,71 +53,99 @@ class Bsdd(som_gui.core.tool.Bsdd):
             widget.deleteLater()
 
     @classmethod
+    def create_dictionary_widget(cls) -> ui.DictionaryWidget:
+        """
+        Create Widget for Dictionary Settings and fills QFormLayout
+        Makes widget creation modular. If you add a field to the dictionary in its definition,
+        a line will be added to the widget. As far as the datatype is string bool oder datetime others need to be implemented.
+        :return: DictionaryWidget
+        """
+        #add Layout to Widget
+        widget = cls.get_properties().dictionary_widget = ui.DictionaryWidget()
+        widget.setLayout(QFormLayout())
+        layout: QFormLayout = widget.layout()
+
+        #list all Attributes which aren't lists of elements
+        presets = cls.get_dict_presets()
+        attributes = [(f.name, f.type, presets.get(f.name)) for f in fields(Dictionary) if
+                      f.name not in ["Classes", "Properties"]]
+
+        #Fill QFormLayout
+        for index, (name, datatype, preset) in enumerate(attributes): #Iterate over all attributes
+            if datatype == "str":
+                if preset is None:
+                    #create input line
+                    w = QLineEdit()
+                    w.textChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, name))
+                else:
+                    #create text dropdown
+                    w = QComboBox()
+                    w.addItems(preset)
+                    w.currentTextChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, name))
+
+            # create checkbox
+            elif datatype == "bool":
+                w = QCheckBox()
+                w.checkStateChanged.connect(lambda state, wid=w: trigger.dict_attribute_changed(state, name))
+
+            # create input line
+            elif datatype == "datetime":
+                w = QLineEdit()
+                w.textChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, name))
+
+            # handle exceptions
+            else:
+                logging.info(f"Datatype: '{datatype}' not supported")
+                w = QLineEdit()
+                w.textChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, name))
+
+            #fill line of QFormLayout
+            cls.set_linked_attribute_name(w, name)
+            layout.setWidget(index, QFormLayout.ItemRole.FieldRole, w)
+            layout.setWidget(index, QFormLayout.ItemRole.LabelRole, QLabel(name))
+        return widget
+
+    @classmethod
+    def add_widget_to_toolbox(cls, name, widget):
+        """
+        Adds widget to list which gets called on Toolbox creation. Needs to be called on Boot
+        :param name:
+        :param widget:
+        :return:
+        """
+        cls.get_properties().tab_list.append((name, widget))
+
+    @classmethod
+    def transform_project_to_dict(cls, proj: SOMcreator.Project):
+        """
+        Grabs Project Settings and writes them into the BsDD Dictionary
+        Won't write Object Classes or Attributes
+        :param proj:
+        :return:
+        """
+        d = SOMcreator.exporter.bsdd.transform_project_to_dict(proj)
+        cls.get_properties().dictionary = d
+        return d
+
+    # Getter & Setter
+
+    @classmethod
+    def get_path_line_edit(cls):
+        return cls.get_window().ui.le_export_path
+
+    @classmethod
     def set_tabs(cls, tab_list: list[tuple[str, QWidget]]):
+        """
+        adds tabs defined in tab_list to toolbox
+        :param tab_list:
+        :return:
+        """
         for name, widget in tab_list:
             cls.get_toolbox().addItem(widget, name)
 
     @classmethod
     def get_dictionary_widget(cls):
         return cls.get_properties().dictionary_widget
-
-    @classmethod
-    def create_dictionary_widget(cls):
-        from SOMcreator.exporter.bsdd import Dictionary
-
-        widget = cls.get_properties().dictionary_widget = ui.DictionaryWidget()
-        widget.setLayout(QFormLayout())
-        layout: QFormLayout = widget.layout()
-        presets = cls.get_dict_presets()
-        attributes = [(f.name, f.type, presets.get(f.name)) for f in fields(Dictionary) if
-                      f.name not in ["Classes", "Properties"]]
-
-        for index, (name, datatype, preset) in enumerate(attributes):
-            if datatype == "str":
-                if preset is None:
-                    w = QLineEdit()
-                    w.textChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, wid))
-                else:
-                    w = QComboBox()
-                    w.addItems(preset)
-                    w.currentTextChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, wid))
-            elif datatype == "bool":
-                w = QCheckBox()
-                w.checkStateChanged.connect(lambda state, wid=w: trigger.dict_attribute_changed(state, wid))
-            elif datatype == "datetime":
-                w = QLineEdit()
-                w.textChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, wid))
-            else:
-                logging.info(f"Datatype: '{datatype}' not supported")
-                w = QLineEdit()
-                w.textChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, wid))
-
-            w.setProperty("attribute_name", name)
-            layout.setWidget(index, QFormLayout.ItemRole.FieldRole, w)
-            layout.setWidget(index, QFormLayout.ItemRole.LabelRole, QLabel(name))
-        return widget
-
-    @classmethod
-    def get_path_line_edit(cls):
-        return cls.get_ui().le_export_path
-
-    @classmethod
-    def add_widget_to_toolbox(cls, name, widget):
-        cls.get_properties().tab_list.append((name, widget))
-
-    @classmethod
-    def get_tab_list(cls):
-        return cls.get_properties().tab_list
-
-    @classmethod
-    def transform_project_to_dict(cls, proj: SOMcreator.Project):
-        d = SOMcreator.exporter.bsdd.transform_project_to_dict(proj)
-        cls.get_properties().dictionary = d
-        return d
-
-    @classmethod
-    def get_dictionary(cls) -> SOMcreator.exporter.bsdd.Dictionary:
-        return cls.get_properties().dictionary
 
     @classmethod
     def reset_dictionary(cls):
@@ -150,13 +164,21 @@ class Bsdd(som_gui.core.tool.Bsdd):
         SOMcreator.exporter.bsdd.export_dict(dictionary, path)
 
     @classmethod
+    def get_tab_list(cls):
+        return cls.get_properties().tab_list
+
+    @classmethod
+    def get_dictionary(cls) -> Dictionary:
+        return cls.get_properties().dictionary
+
+    @classmethod
     def get_dict_presets(cls):
         return {
             'OrganizationCode':             None,
             'DictionaryCode':               None,
             'DictionaryName':               None,
             'DictionaryVersion':            None,
-            'LanguageIsoCode':              LANGUAGE_ISO_CODES,
+            'LanguageIsoCode':              constants.LANGUAGE_ISO_CODES,
             'LanguageOnly':                 None,
             'UseOwnUri':                    None,
             'DictionaryUri':                None,
@@ -170,3 +192,53 @@ class Bsdd(som_gui.core.tool.Bsdd):
             'ReleaseDate':                  None,
             'Status':                       ["Preview", "Active", "Inactive"],
         }
+
+    @classmethod
+    def get_linked_attribute_name(cls, item: QWidget):
+        return item.property(constants.POPERTY_KEY)
+
+    @classmethod
+    def set_linked_attribute_name(cls, item: QWidget, value):
+        return item.setProperty(constants.POPERTY_KEY, value)
+
+    @classmethod
+    def get_export_path(cls) -> str:
+        return cls.get_path_line_edit().text()
+
+    @classmethod
+    def trigger_retranslation(cls):
+        trigger.retranslate_ui()
+
+    @classmethod
+    def get_open_window_trigger(cls):
+        return trigger.open_window
+
+    @classmethod
+    def set_action(cls, name: str, action: QAction) -> None:
+        """
+        add QAction to list of actions That exist. Mostly used for retranslate_ui
+        """
+        cls.get_properties().actions[name] = action
+
+    @classmethod
+    def get_action(cls, name) -> QAction:
+        """
+        :param name: name of action
+        :return: QAction from list of actions That exist by name
+        """
+        return cls.get_properties().actions[name]
+
+    @classmethod
+    def get_window(cls) -> ui.Widget:
+        """
+        :return: BsDD Settings Window
+        """
+        return cls.get_properties().widget
+
+    @classmethod
+    def get_toolbox(cls) -> QToolBox:
+        """
+
+        :return: Toolbox of BsDD Window
+        """
+        return cls.get_window().ui.toolBox
