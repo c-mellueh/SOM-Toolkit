@@ -31,21 +31,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label_status">
-     <property name="text">
-      <string>Status Label</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QProgressBar" name="progress_bar">
-     <property name="value">
-      <number>24</number>
-     </property>
-     <property name="textVisible">
-      <bool>true</bool>
-     </property>
-    </widget>
+    <widget class="Progressbar" name="progress_bar" native="true"/>
    </item>
    <item>
     <widget class="QWidget" name="button_widget" native="true">
@@ -91,6 +77,12 @@
   </customwidget>
   <customwidget>
    <class>AttributeSelector</class>
+   <extends>QWidget</extends>
+   <header>som_gui.module.util.ui</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Progressbar</class>
    <extends>QWidget</extends>
    <header>som_gui.module.util.ui</header>
    <container>1</container>

@@ -16,7 +16,7 @@ from som_gui.module.ifc_importer import ui
 if TYPE_CHECKING:
     from som_gui.module.ifc_importer.prop import IfcImportProperties
     from PySide6.QtWidgets import QLabel
-
+    from som_gui.module.util.ui import Progressbar
 
 class Signaller(QObject):
     started = Signal()
@@ -24,13 +24,17 @@ class Signaller(QObject):
 
 
 class IfcImportRunner(QRunnable):
-    def __init__(self, path: os.PathLike | str, status_label: QLabel):
+    def __init__(self, path: os.PathLike | str,progress_bar = None):
         super(IfcImportRunner, self).__init__()
         self.path = path
         self.ifc: ifcopenshell.file | None = None
         self.signaller = Signaller()
-        self.status_label = status_label
         self.is_aborted = False
+        self.progress_bar:Progressbar|None = progress_bar
+
+    @property
+    def status_label(self):
+        return self.progress_bar.ui.label
 
     def run(self):
         self.signaller.started.emit()
@@ -120,10 +124,10 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         return widget
 
     @classmethod
-    def create_runner(cls, status_label: QLabel, path: os.PathLike | str):
+    def create_runner(cls, progress_bar: Progressbar, path: os.PathLike | str):
         if not os.path.exists(path):
             return
-        return IfcImportRunner(path, status_label)
+        return IfcImportRunner(path, progress_bar)
 
     @classmethod
     def set_close_button_text(cls, widget: ui.IfcImportWidget, text: str):

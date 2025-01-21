@@ -138,8 +138,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def create_import_runner(cls, ifc_import_path: str):
-        status_label = cls.get().ui.widget_progress_bar.ui.label
-        runner = tool.IfcImporter.create_runner(status_label, ifc_import_path)
+        runner = tool.IfcImporter.create_runner(cls.get().ui.widget_progress_bar, ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner
 

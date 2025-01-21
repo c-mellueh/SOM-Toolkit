@@ -9,24 +9,24 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QDialogButtonBox,
-                               QHeaderView, QLabel, QSizePolicy, QSplitter,
-                               QVBoxLayout, QWidget)
+    QHeaderView, QLabel, QScrollArea, QSizePolicy,
+    QSplitter, QVBoxLayout, QWidget)
 
 from som_gui.module.modelcheck_window.ui import (ObjectTree, PsetTree)
-from som_gui.module.util.ui import (AttributeSelector, FileSelector, Progressbar)
+from som_gui.module.util.ui import (AttributeSelector, FileSelector)
 
 class Ui_Modelcheck(object):
     def setupUi(self, Modelcheck):
         if not Modelcheck.objectName():
             Modelcheck.setObjectName(u"Modelcheck")
-        Modelcheck.resize(1037, 684)
+        Modelcheck.resize(1037, 839)
         self.verticalLayout = QVBoxLayout(Modelcheck)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.splitter = QSplitter(Modelcheck)
@@ -81,18 +81,38 @@ class Ui_Modelcheck(object):
 
         self.verticalLayout.addWidget(self.widget_export)
 
-        self.widget_progress_bar = Progressbar(Modelcheck)
-        self.widget_progress_bar.setObjectName(u"widget_progress_bar")
+        self.scroll_area_progress_bar = QScrollArea(Modelcheck)
+        self.scroll_area_progress_bar.setObjectName(u"scroll_area_progress_bar")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(1)
+        sizePolicy1.setHeightForWidth(self.scroll_area_progress_bar.sizePolicy().hasHeightForWidth())
+        self.scroll_area_progress_bar.setSizePolicy(sizePolicy1)
+        self.scroll_area_progress_bar.setMaximumSize(QSize(16777215, 300))
+        self.scroll_area_progress_bar.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.scroll_area_progress_bar.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scroll_area_progress_bar.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QWidget()
+        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 1017, 298))
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Preferred)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
+        self.scrollAreaWidgetContents.setSizePolicy(sizePolicy2)
+        self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.scroll_area_progress_bar.setWidget(self.scrollAreaWidgetContents)
 
-        self.verticalLayout.addWidget(self.widget_progress_bar)
+        self.verticalLayout.addWidget(self.scroll_area_progress_bar)
 
         self.buttonBox = QDialogButtonBox(Modelcheck)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setStandardButtons(
-            QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Cancel)
         self.buttonBox.setCenterButtons(False)
 
         self.verticalLayout.addWidget(self.buttonBox)
+
 
         self.retranslateUi(Modelcheck)
 

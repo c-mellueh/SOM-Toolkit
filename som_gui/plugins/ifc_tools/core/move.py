@@ -73,7 +73,7 @@ def apply_clicked(move: Type[ifc_tool.Move], util: Type[tool.Util], appdata: Typ
     pool.setMaxThreadCount(3)
     widget.ui.widget_progress_bar.show()
     for path in path_list:
-        runner = ifc_importer.create_runner(widget.ui.widget_progress_bar.ui.label, path)
+        runner = ifc_importer.create_runner(widget.ui.widget_progress_bar, path)
         move.connect_runner(runner)
         pool.start(runner)
 

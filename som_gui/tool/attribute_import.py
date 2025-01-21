@@ -23,11 +23,12 @@ import sqlite3
 
 
 class AttributeImportRunner(QRunnable):
-    def __init__(self, runner: IfcImportRunner):
+    def __init__(self, runner: IfcImportRunner,progress_bar = None):
         super().__init__()
         self.file = runner.ifc
         self.path = runner.path
         self.signaller = Signaller()
+        self.progress_bar = progress_bar
 
     def run(self):
         trigger.start_attribute_import(self.file, self.path)
@@ -437,7 +438,8 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     @classmethod
     def create_import_runner(cls, ifc_import_path: str) -> QRunnable:
         status_label = cls.get_ifc_import_window().widget.label_status
-        runner = tool.IfcImporter.create_runner(status_label, ifc_import_path)
+
+        runner = tool.IfcImporter.create_runner(cls.get_ifc_import_window().widget.progress_bar, ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner
 
@@ -451,7 +453,8 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def create_attribute_import_runner(cls, runner: IfcImportRunner) -> AttributeImportRunner:
-        return AttributeImportRunner(runner)
+        runner = AttributeImportRunner(runner,runner.progress_bar)
+        return
 
     @classmethod
     def connect_attribute_import_runner(cls, runner: AttributeImportRunner) -> None:

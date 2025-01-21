@@ -15,11 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QProgressBar,
-    QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QApplication, QHBoxLayout, QPushButton, QSizePolicy,
+    QSpacerItem, QVBoxLayout, QWidget)
 
-from som_gui.module.util.ui import (AttributeSelector, FileSelector)
+from som_gui.module.util.ui import (AttributeSelector, FileSelector, Progressbar)
 
 class Ui_IfcImporter(object):
     def setupUi(self, IfcImporter):
@@ -48,15 +47,8 @@ class Ui_IfcImporter(object):
 
         self.verticalLayout.addLayout(self.verticalLayout_2)
 
-        self.label_status = QLabel(IfcImporter)
-        self.label_status.setObjectName(u"label_status")
-
-        self.verticalLayout.addWidget(self.label_status)
-
-        self.progress_bar = QProgressBar(IfcImporter)
+        self.progress_bar = Progressbar(IfcImporter)
         self.progress_bar.setObjectName(u"progress_bar")
-        self.progress_bar.setValue(24)
-        self.progress_bar.setTextVisible(True)
 
         self.verticalLayout.addWidget(self.progress_bar)
 
@@ -89,7 +81,6 @@ class Ui_IfcImporter(object):
 
     def retranslateUi(self, IfcImporter):
         IfcImporter.setWindowTitle(QCoreApplication.translate("IfcImporter", u"Form", None))
-        self.label_status.setText(QCoreApplication.translate("IfcImporter", u"Status Label", None))
         self.button_close.setText(QCoreApplication.translate("IfcImporter", u"Close", None))
         self.button_run.setText(QCoreApplication.translate("IfcImporter", u"Run", None))
     # retranslateUi

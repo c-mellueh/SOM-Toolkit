@@ -5,7 +5,7 @@ from typing import Callable, TYPE_CHECKING
 
 from PySide6.QtCore import QRunnable, QThreadPool, Qt
 from PySide6.QtGui import QAction, QStandardItem, QStandardItemModel
-from PySide6.QtWidgets import QDialogButtonBox, QLabel, QMenu, QTreeView
+from PySide6.QtWidgets import QDialogButtonBox, QLabel, QMenu, QTreeView,QVBoxLayout
 
 import SOMcreator
 import som_gui.core.tool
@@ -13,10 +13,11 @@ from som_gui import tool
 from som_gui.module.modelcheck.constants import ISSUE_PATH
 from som_gui.module.modelcheck_window import trigger, ui
 from som_gui.module.project.constants import CLASS_REFERENCE
+from som_gui.tool.ifc_importer import IfcImportRunner
+from som_gui.module.util import ui as util_ui
 
 if TYPE_CHECKING:
     from som_gui.module.modelcheck_window.prop import ModelcheckWindowProperties
-
 
 class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
@@ -30,6 +31,8 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def get_action(cls, name):
         return cls.get_properties().actions[name]
+
+
 
     @classmethod
     def connect_object_tree(cls, tree_widget: ui.ObjectTree):
@@ -121,7 +124,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return cls.get_modelcheck_threadpool().activeThreadCount() > 0
 
     @classmethod
-    def connect_ifc_import_runner(cls, runner: QRunnable):
+    def connect_ifc_import_runner(cls, runner: IfcImportRunner):
         trigger.connect_ifc_import_runner(runner)
 
     @classmethod
@@ -129,11 +132,12 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         trigger.connect_modelcheck_runner(runner)
 
     @classmethod
-    def create_import_runner(cls, ifc_import_path: str):
-        status_label = cls.get_status_label()
-        runner = tool.IfcImporter.create_runner(status_label, ifc_import_path)
+    def create_import_runner(cls, progress_bar,ifc_import_path: str):
+        runner = tool.IfcImporter.create_runner(progress_bar, ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner
+
+
 
     @classmethod
     def destroy_import_runner(cls, runner: QRunnable):
@@ -148,12 +152,12 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return True
 
     @classmethod
-    def set_progress(cls, value: int):
-        cls.get_window().ui.widget_progress_bar.ui.progressBar.setValue(value)
+    def set_progress(cls,progress_bar:util_ui.Progressbar, value: int):
+        progress_bar.ui.progressBar.setValue(value)
 
     @classmethod
-    def set_status(cls, text: str):
-        cls.get_status_label().setText(text)
+    def set_status(cls,progress_bar:util_ui.Progressbar, text: str):
+        progress_bar.ui.label.setText(text)
 
     @classmethod
     def read_inputs(cls):
@@ -366,9 +370,23 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             cls._update_pset_row(item, enabled)
 
     @classmethod
-    def set_progressbar_visible(cls, state: bool):
-        cls.get_window().ui.widget_progress_bar.setVisible(state)
+    def set_progressbar_visible(cls, runner:IfcImportRunner,state: bool):
+        runner.progress_bar.setVisible(state)
 
     @classmethod
-    def get_status_label(cls) -> QLabel:
-        return cls.get_window().ui.widget_progress_bar.ui.label
+    def clear_progress_bars(cls):
+        scroll_area = cls.get_window().ui.verticalLayout_3
+        while scroll_area.count():
+            item = scroll_area.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+
+
+    @classmethod
+    def set_progress_bar_layout_visible(cls,state:bool):
+        cls.get_window().ui.scroll_area_progress_bar.setVisible(state)
+
+    @classmethod
+    def add_progress_bar(cls,progress_bar:util_ui.Progressbar):
+        cls.get_window().ui.verticalLayout_3.addWidget(progress_bar)

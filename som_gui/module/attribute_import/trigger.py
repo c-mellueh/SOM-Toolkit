@@ -1,8 +1,13 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import ifcopenshell
 from PySide6.QtWidgets import QPushButton
 
 from som_gui import tool
 from som_gui.core import attribute_import as core
+
+if TYPE_CHECKING:
+    from som_gui.tool.attribute_import import AttributeImportRunner
 
 
 def connect():
@@ -33,11 +38,11 @@ def connect_ifc_import_runner(runner):
     runner.signaller.finished.connect(lambda: core.ifc_import_finished(runner, tool.AttributeImport, tool.IfcImporter))
 
 
-def connect_attribute_import_runner(runner):
+def connect_attribute_import_runner(runner:AttributeImportRunner):
     runner.signaller.finished.connect(
         lambda: core.attribute_import_finished(tool.AttributeImport, tool.IfcImporter))
-    runner.signaller.status.connect(tool.ModelcheckWindow.set_status)
-    runner.signaller.progress.connect(tool.ModelcheckWindow.set_progress)
+    runner.signaller.status.connect(lambda s:tool.ModelcheckWindow.set_status(runner.progress_bar,s))
+    runner.signaller.progress.connect(lambda p:tool.ModelcheckWindow.set_progress(runner.progress_bar,p))
 
 
 def last_import_finished():

@@ -37,7 +37,8 @@ def open_window(modelcheck_window: Type[tool.ModelcheckWindow], util: Type[tool.
     util.fill_file_selector(window.ui.widget_export, "ExportPfad", "Excel File (*.xlsx);;", "modelcheck_export",
                             request_save=True)
     modelcheck_window.connect_buttons()
-    modelcheck_window.set_progressbar_visible(False)
+    modelcheck_window.clear_progress_bars()
+    modelcheck_window.set_progress_bar_layout_visible(False)
     modelcheck_window.reset_butons()
     retranslate_ui(modelcheck_window, util)
     window.show()
@@ -82,7 +83,8 @@ def abort_clicked(modelcheck_window: Type[tool.ModelcheckWindow], modelcheck: Ty
         for runner in modelcheck_window.get_properties().ifc_import_runners:
             runner.is_aborted = True
     if modelcheck_window.modelcheck_is_running() or ifc_importer.import_is_running():
-        modelcheck_window.set_progressbar_visible(False)
+        modelcheck_window.set_progress_bar_layout_visible(False)
+        modelcheck_window.clear_progress_bars()
         modelcheck.abort()
         modelcheck_window.reset_butons()
 
@@ -96,6 +98,8 @@ def run_modelcheck(modelcheck_window: Type[tool.ModelcheckWindow],
 
     if not inputs_are_valid or not export_path_is_valid:
         return
+
+    modelcheck_window.set_progress_bar_layout_visible(True)
     modelcheck_window.show_buttons(QDialogButtonBox.StandardButton.Abort)
     modelcheck.reset_abort()
     modelcheck.set_main_pset_name(main_pset)
@@ -103,26 +107,32 @@ def run_modelcheck(modelcheck_window: Type[tool.ModelcheckWindow],
     modelcheck_results.set_export_path(export_path)
 
     pool = ifc_importer.get_threadpool()
-    pool.setMaxThreadCount(1)
+    pool.setMaxThreadCount(3)
     modelcheck.init_sql_database(util.create_tempfile(".db"))
     modelcheck.reset_guids()
     modelcheck.build_ident_dict(set(project.get().get_objects(filter=True)))
-    modelcheck_window.set_progress(0)
-    modelcheck_window.set_progressbar_visible(True)
+
+
     for path in ifc_paths:
+        progress_bar = util.create_progressbar()
+        modelcheck_window.add_progress_bar(progress_bar)
+
         status = QCoreApplication.translate("Modelcheck", "Import '{}'").format(os.path.basename(path))
-        modelcheck_window.set_status(status)
-        runner = modelcheck_window.create_import_runner(path)
+        modelcheck_window.set_status(progress_bar,status)
+        modelcheck_window.set_progress(progress_bar,0)
+
+        runner = modelcheck_window.create_import_runner(progress_bar,path)
         modelcheck_window.connect_ifc_import_runner(runner)
         pool.start(runner)
 
 
 def ifc_import_started(runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow]):
     logging.debug(f"IFC Runner '{runner.path}' started.")
-    modelcheck_window.set_progressbar_visible(True)
+    modelcheck_window.set_progressbar_visible(runner,True)
+
     status = QCoreApplication.translate("Modelcheck", "Import '{}'").format(os.path.basename(runner.path))
-    modelcheck_window.set_status(status)
-    modelcheck_window.set_progress(0)
+    modelcheck_window.set_status(runner.progress_bar,status)
+    modelcheck_window.set_progress(runner.progress_bar,0)
 
 
 def ifc_import_finished(runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow],
@@ -132,11 +142,11 @@ def ifc_import_finished(runner: IfcImportRunner, modelcheck_window: Type[tool.Mo
     """
     logging.debug(f"IFC Runner '{runner.path}' finished.")
     modelcheck_window.destroy_import_runner(runner)
-    modelcheck_window.set_status(QCoreApplication.translate("Modelcheck", "Import of '{}' Done!").format(runner.path))
+    modelcheck_window.set_status(runner.progress_bar,QCoreApplication.translate("Modelcheck", "Import of '{}' Done!").format(runner.path))
     modelcheck.set_ifc_name(os.path.basename(runner.path))
 
     logging.debug(f"Create Modelcheck Runner '{runner.path}'")
-    modelcheck_runner = modelcheck.create_modelcheck_runner(runner.ifc,runner.path)
+    modelcheck_runner = modelcheck.create_modelcheck_runner(runner)
     modelcheck_window.connect_modelcheck_runner(modelcheck_runner)
 
     logging.debug(f"Start Threadpool for Modelcheck Runner '{modelcheck_runner.file.wrapped_data}'")

@@ -25,6 +25,10 @@ class Util(som_gui.core.tool.Util):
         return som_gui.UtilProperties
 
     @classmethod
+    def create_progressbar(cls,*args,**kwargs) ->ui.Progressbar:
+        return ui.Progressbar(*args,**kwargs)
+
+    @classmethod
     def menu_bar_add_menu(cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str) -> MenuDict:
         menu_steps = menu_path.split("/")
         focus_dict = menu_dict

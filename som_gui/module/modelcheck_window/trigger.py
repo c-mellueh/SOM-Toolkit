@@ -15,7 +15,6 @@ if TYPE_CHECKING:
     from PySide6.QtGui import QStandardItem
     from som_gui.tool.modelcheck import ModelcheckRunner
 
-
 def connect():
     core.create_main_menu_actions(tool.ModelcheckWindow, tool.MainWindow)
 
@@ -77,8 +76,8 @@ def pset_context_menu_requested(pos, widget: PsetTree):
 def connect_modelcheck_runner(runner: ModelcheckRunner):
     runner.signaller.finished.connect(
         lambda: core.modelcheck_finished(runner,tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,tool.IfcImporter))
-    runner.signaller.status.connect(tool.ModelcheckWindow.set_status)
-    runner.signaller.progress.connect(tool.ModelcheckWindow.set_progress)
+    runner.signaller.status.connect(lambda s: tool.ModelcheckWindow.set_status(runner.progress_bar,s))
+    runner.signaller.progress.connect(lambda p:tool.ModelcheckWindow.set_progress(runner.progress_bar,p))
 
 
 def connect_ifc_import_runner(runner: QRunnable):

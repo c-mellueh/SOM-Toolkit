@@ -5,9 +5,11 @@ from typing import Callable, Iterator, TYPE_CHECKING
 from PySide6.QtCore import QObject, QRunnable, Signal
 
 from som_gui import tool
+from som_gui.tool.ifc_importer import IfcImportRunner
 
 if TYPE_CHECKING:
     from som_gui.module.modelcheck.prop import ModelcheckProperties
+    from som_gui.module.util.ui import Progressbar
 import som_gui.core.tool
 import SOMcreator
 import datetime
@@ -32,11 +34,12 @@ rev_datatype_dict = {
 
 
 class ModelcheckRunner(QRunnable):
-    def __init__(self, ifc_file: ifcopenshell.file,path):
+    def __init__(self, ifc_file: ifcopenshell.file,path,progressbar: Progressbar = None):
         super().__init__()
         self.file = ifc_file
         self.path = path
         self.signaller = Signaller()
+        self.progress_bar:Progressbar|None = progressbar
 
     def run(self):
         trigger.start_modelcheck(self)
@@ -81,11 +84,11 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             cls.set_progress(runner,new_progress_value)
 
     @classmethod
-    def set_status(cls, runner,text: str):
+    def set_status(cls, runner:ModelcheckRunner,text: str):
         runner.signaller.status.emit(text)
 
     @classmethod
-    def set_progress(cls, runner,value: int):
+    def set_progress(cls, runner:ModelcheckRunner,value: int):
         runner.signaller.progress.emit(value)
 
     @classmethod
@@ -138,8 +141,8 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         return output_data_dict
 
     @classmethod
-    def create_modelcheck_runner(cls, ifc_file,path) -> ModelcheckRunner:
-        return ModelcheckRunner(ifc_file,path)
+    def create_modelcheck_runner(cls, runner:IfcImportRunner) -> ModelcheckRunner:
+        return ModelcheckRunner(runner.ifc,runner.path,runner.progress_bar)
 
     #######################################################################################
     ###############################Modelchecks#############################################

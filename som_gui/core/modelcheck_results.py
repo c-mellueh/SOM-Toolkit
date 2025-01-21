@@ -9,14 +9,20 @@ from som_gui import tool
 
 
 def create_results(data_base_path: os.PathLike | str, results: Type[tool.ModelcheckResults],
-                   modelcheck_window: Type[tool.ModelcheckWindow]):
+                   modelcheck_window: Type[tool.ModelcheckWindow], popups: Type[tool.Popups]):
     _issues = results.query_issues(data_base_path)
-    text = QCoreApplication.translate("Modelcheck", "{} Issues found!").format(len(_issues))
-    modelcheck_window.set_status(text)
+    issue_count = len(_issues)
+    if issue_count:
+        text = QCoreApplication.translate("Modelcheck", "{} Issues found!").format(issue_count)
+    else:
+        text = QCoreApplication.translate("Modelcheck", "Model free of errors")
 
-    if len(_issues) == 0:
-        modelcheck_window.set_status(QCoreApplication.translate("Modelcheck", "Model free of errors"))
+    popups.create_info_popup(text, QCoreApplication.translate("Modelcheck", "Modelcheck done!"))
+
+    if issue_count == 0:
         return
+    modelcheck_window.set_progress_bar_layout_visible(False)
+    modelcheck_window.clear_progress_bars()
     workbook, worksheet = results.create_workbook()
     last_cell = results.fill_worksheet(_issues, worksheet)
     results.create_table(worksheet, last_cell)
