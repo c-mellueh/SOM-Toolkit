@@ -170,10 +170,6 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         trigger.connect_grouping_runner(runner)
 
     @classmethod
-    def set_current_runner(cls, runner: QRunnable):
-        cls.get_properties().runner = runner
-
-    @classmethod
     def get_grouping_threadpool(cls):
         if cls.get_properties().thread_pool is None:
             tp = QThreadPool()
@@ -211,7 +207,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         for index, el in enumerate(ifc_elements):
             percentage = int(index / entity_count * 100)
             if percentage % 5 == 0 and percentage not in percentages:
-                cls.set_progress(runner.progress_bar,percentage)
+                runner.signaller.progress.emit(percentage)
                 percentages.append(percentage)
 
             if cls.is_aborted():

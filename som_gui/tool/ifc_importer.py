@@ -21,6 +21,8 @@ if TYPE_CHECKING:
 class Signaller(QObject):
     started = Signal()
     finished = Signal()
+    progress = Signal(int)
+    status = Signal(str)
 
 
 class IfcImportRunner(QRunnable):

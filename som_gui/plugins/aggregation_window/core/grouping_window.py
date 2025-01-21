@@ -85,6 +85,7 @@ def run_clicked(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: Typ
     grouping_window.set_progress_bars_visible(True)
     logging.debug(f"Group {len(ifc_paths)} files")
     for path in ifc_paths:
+        logging.debug(f"Create Progressbar for '{path}'")
         progress_bar = util.create_progressbar()
         grouping_window.add_progress_bar(progress_bar)
         grouping_window.set_progress(progress_bar,0)
@@ -101,21 +102,19 @@ def abort_clicked(grouping_window: Type[aw_tool.GroupingWindow], ifc_importer: T
         for runner in grouping_window.get_properties().ifc_import_runners:
             runner.is_aborted = True
     if grouping_window.is_running():
-        ifc_import_widget = grouping_window.get_ifc_importer()
         grouping_window.abort()
-        ifc_importer.set_close_button_text(ifc_import_widget, "Close")
         grouping_window.set_is_running(False)
 
 
-def cancel_clicked(grouping_window: Type[aw_tool.GroupingWindow], ):
+def close_window(grouping_window: Type[aw_tool.GroupingWindow], ):
     grouping_window.close_window()
 
 
-def ifc_import_started(runner: IfcImportRunner, grouping_window: Type[aw_tool.GroupingWindow]):
-    grouping_window.set_progress_bars_visible(True)
+def ifc_import_started(runner: IfcImportRunner):
+    logging.debug(f"Start Importing '{runner.path}'")
     status = QCoreApplication.translate("Aggregation", "Import '{}'".format(os.path.basename(runner.path)))
-    grouping_window.set_status(runner.progress_bar,status)
-    grouping_window.set_progress(runner.progress_bar,0)
+    runner.signaller.status.emit(status)
+    runner.signaller.progress.emit(0)
 
 
 def ifc_import_finished(runner: IfcImportRunner, grouping_window: Type[aw_tool.GroupingWindow]):
@@ -123,25 +122,30 @@ def ifc_import_finished(runner: IfcImportRunner, grouping_window: Type[aw_tool.G
     creates and runs Modelcheck Runnable
     """
 
+    logging.debug(f"Ifc Importing finished of'{runner.path}'")
+
     grouping_window.destroy_import_runner(runner)
     status = QCoreApplication.translate("Aggregation", "Import Done!")
-    grouping_window.set_status(runner.progress_bar,status)
+    runner.signaller.status.emit(status)
 
     grouping_window.set_ifc_name(os.path.basename(runner.path))
+    logging.debug(f"Create grouping Runner of'{runner.path}'")
+
     grouping_runner = grouping_window.create_grouping_runner(runner.ifc,runner.path,runner.progress_bar)
 
     grouping_window.connect_grouping_runner(grouping_runner)
-    grouping_window.set_current_runner(grouping_runner)
     grouping_window.get_grouping_threadpool().start(grouping_runner)
 
 
 def create_groups_in_file(runner:GroupingRunner, grouping_window: Type[aw_tool.GroupingWindow],
                           project: Type[tool.Project]):
+    logging.debug(f"Start grouping  of'{runner.file_path}'")
+
     ifc_file = runner.file
-    grouping_window.set_progress(runner.progress_bar,0)
+    runner.signaller.progress.emit(0)
     start_time = time.time()
     status = QCoreApplication.translate("Aggregation", "create Structure Dict")
-    grouping_window.set_status(runner.progress_bar,status)
+    runner.signaller.status.emit(status)
     ifc_elements = list(ifc_file.by_type("IfcElement"))
     structure_dict = grouping_window.create_structure_dict(runner,ifc_elements, project.get())
     logging.info(f"creating Structure dict took {time.time() - start_time} seconds")
@@ -151,7 +155,7 @@ def create_groups_in_file(runner:GroupingRunner, grouping_window: Type[aw_tool.G
 
     start_time = time.time()
     status = QCoreApplication.translate("Aggregation", "fill existing Groups")
-    grouping_window.set_status(runner.progress_bar,status)
+    runner.signaller.status.emit(status)
     grouping_window.fill_existing_groups(ifc_file, structure_dict)
 
     logging.info(f"fill existing Groups took {time.time() - start_time} seconds")
@@ -160,9 +164,10 @@ def create_groups_in_file(runner:GroupingRunner, grouping_window: Type[aw_tool.G
         return
 
     start_time = time.time()
-    grouping_window.set_progress(runner.progress_bar,0)
+    runner.signaller.progress.emit(0)
     status = QCoreApplication.translate("Aggregation", "create Structure")
-    grouping_window.set_status(runner.progress_bar,status)
+
+    runner.signaller.status.emit(status)
     owner_history = grouping_window.get_first_owner_history(ifc_file)
     grouping_window.create_new_grouping_strictures(ifc_file, structure_dict, owner_history,
                                                    project.get().get_objects(filter=False))
@@ -173,15 +178,16 @@ def create_groups_in_file(runner:GroupingRunner, grouping_window: Type[aw_tool.G
 
     start_time = time.time()
     export_name = os.path.join(grouping_window.get_export_path(), grouping_window.get_ifc_name())
-    grouping_window.set_progress(runner.progress_bar,0)
+    runner.signaller.progress.emit(0)
     status = QCoreApplication.translate("Aggregation", "Write file to '{}'").format(export_name)
-    grouping_window.set_status(runner.progress_bar,status)
+    runner.signaller.status.emit(status)
     if grouping_window.is_aborted():
         return
 
     time.sleep(0.1)
+    logging.debug(f"Write file '{export_name}'")
     ifc_file.write(str(export_name))
-    grouping_window.set_progress(runner.progress_bar,100)
+    runner.signaller.progress.emit(100)
     logging.info(f"Export took {time.time() - start_time} seconds")
 
 
@@ -191,9 +197,12 @@ def grouping_finished(runner:GroupingRunner,grouping_window: Type[aw_tool.Groupi
         grouping_window.reset_buttons()
         grouping_window.set_is_running(False)
         return
+    logging.debug(f"Grouping of '{runner.file_path}' finished")
+
+
     status = QCoreApplication.translate("Aggregation", "Grouping of file '{}' Done!").format(runner.file_path)
-    grouping_window.set_status(runner.progress_bar,status)
-    grouping_window.set_progress(runner.progress_bar,100)
+    runner.signaller.status.emit(status)
+    runner.signaller.progress.emit(100)
     time.sleep(0.2)
     if grouping_window.is_grouping_running() or ifc_importer.import_is_running():
         logging.info(f"Grouping of File Done! Next file!")

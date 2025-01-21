@@ -3,11 +3,12 @@ from typing import TYPE_CHECKING
 from PySide6.QtWidgets import QPushButton
 
 from som_gui import tool
+
 from ... import tool as aw_tool
 from ...core import grouping_window as core
 if TYPE_CHECKING:
     from ...tool.grouping_window import GroupingRunner
-
+    from som_gui.tool.ifc_importer import IfcImportRunner
 
 def connect():
     core.create_main_menu_actions(aw_tool.GroupingWindow, tool.MainWindow)
@@ -17,17 +18,18 @@ def open_window():
     core.open_window(aw_tool.GroupingWindow, tool.Util)
 
 
-def connect_ifc_import_runner(runner):
-    runner.signaller.started.connect(lambda: core.ifc_import_started(runner, aw_tool.GroupingWindow))
+def connect_ifc_import_runner(runner:IfcImportRunner):
+    runner.signaller.started.connect(lambda: core.ifc_import_started(runner))
     runner.signaller.finished.connect(lambda: core.ifc_import_finished(runner, aw_tool.GroupingWindow))
-
+    runner.signaller.status.connect(lambda s: aw_tool.GroupingWindow.set_status(runner.progress_bar,s))
+    runner.signaller.progress.connect(lambda p:aw_tool.GroupingWindow.set_progress(runner.progress_bar,p))
 
 def button_clicked(button: QPushButton):
     bb = aw_tool.GroupingWindow.get().ui.buttonBox
     if button == bb.button(bb.StandardButton.Apply):
         core.run_clicked(aw_tool.GroupingWindow, tool.IfcImporter, tool.Util)
     if button == bb.button(bb.StandardButton.Cancel):
-        core.cancel_clicked(aw_tool.GroupingWindow)
+        core.close_window(aw_tool.GroupingWindow)
     if button == bb.button(bb.StandardButton.Abort):
         core.abort_clicked(aw_tool.GroupingWindow, tool.IfcImporter)
 
