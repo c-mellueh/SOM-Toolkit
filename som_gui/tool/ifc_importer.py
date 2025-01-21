@@ -16,21 +16,27 @@ from som_gui.module.ifc_importer import ui
 if TYPE_CHECKING:
     from som_gui.module.ifc_importer.prop import IfcImportProperties
     from PySide6.QtWidgets import QLabel
-
+    from som_gui.module.util.ui import Progressbar
 
 class Signaller(QObject):
     started = Signal()
     finished = Signal()
+    progress = Signal(int)
+    status = Signal(str)
 
 
 class IfcImportRunner(QRunnable):
-    def __init__(self, path: os.PathLike | str, status_label: QLabel):
+    def __init__(self, path: os.PathLike | str,progress_bar = None):
         super(IfcImportRunner, self).__init__()
         self.path = path
         self.ifc: ifcopenshell.file | None = None
         self.signaller = Signaller()
-        self.status_label = status_label
         self.is_aborted = False
+        self.progress_bar:Progressbar|None = progress_bar
+
+    @property
+    def status_label(self):
+        return self.progress_bar.ui.label
 
     def run(self):
         self.signaller.started.emit()
@@ -70,19 +76,19 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
     @classmethod
     def get_main_pset(cls, widget: ui.IfcImportWidget) -> str:
-        return widget.widget.main_attribute_widget.ui.le_pset_name.text()
+        return widget.ui.main_attribute_widget.ui.le_pset_name.text()
 
     @classmethod
     def get_main_attribute(cls, widget: ui.IfcImportWidget) -> str:
-        return widget.widget.main_attribute_widget.ui.le_attribute_name.text()
+        return widget.ui.main_attribute_widget.ui.le_attribute_name.text()
 
     @classmethod
-    def set_status(cls, widget: ui.IfcImportWidget, status: str):
-        widget.widget.label_status.setText(status)
+    def set_status(cls, progress_bar:Progressbar, status: str):
+        progress_bar.ui.label.setText(status)
 
     @classmethod
-    def set_progress(cls, widget: ui.IfcImportWidget, value: int):
-        widget.widget.progress_bar.setValue(value)
+    def set_progress(cls, progress_bar:Progressbar, value: int):
+       progress_bar.ui.progressBar.setValue(value)
 
     @classmethod
     def create_thread_pool(cls) -> QThreadPool:
@@ -101,34 +107,45 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         return som_gui.IfcImportProperties
 
     @classmethod
-    def set_progressbar_visible(cls, widget: ui.IfcImportWidget, visible: bool):
-        widget.widget.progress_bar.setVisible(visible)
-        widget.widget.label_status.setVisible(visible)
+    def set_progressbars_visible(cls, widget: ui.IfcImportWidget, visible: bool):
+        widget.ui.scrollArea.setVisible(visible)
 
     @classmethod
     def get_ifc_paths(cls, widget: ui.IfcImportWidget) -> list[str]:
-        return tool.Util.get_path_from_fileselector(widget.widget.file_selector_widget)
+        return tool.Util.get_path_from_fileselector(widget.ui.file_selector_widget)
 
     @classmethod
     def create_importer(cls):
         widget = ui.IfcImportWidget()
         from som_gui.core.ifc_importer import IFC_PATH
         file_extension = "IFC Files (*.ifc *.IFC);;"
-        tool.Util.fill_file_selector(widget.widget.file_selector_widget, "Ifc File", file_extension, IFC_PATH)
+        tool.Util.fill_file_selector(widget.ui.file_selector_widget, "Ifc File", file_extension, IFC_PATH)
         prop = cls.get_properties()
-        cls.set_progressbar_visible(widget, False)
+        cls.set_progressbars_visible(widget, False)
         return widget
 
     @classmethod
-    def create_runner(cls, status_label: QLabel, path: os.PathLike | str):
+    def create_runner(cls, progress_bar: Progressbar, path: os.PathLike | str):
         if not os.path.exists(path):
             return
-        return IfcImportRunner(path, status_label)
+        return IfcImportRunner(path, progress_bar)
 
     @classmethod
     def set_close_button_text(cls, widget: ui.IfcImportWidget, text: str):
-        widget.widget.button_close.setText(widget.tr(text))
+        widget.ui.button_close.setText(widget.tr(text))
 
     @classmethod
     def set_run_button_enabled(cls, widget: ui.IfcImportWidget, enabled: bool):
-        widget.widget.button_run.setEnabled(enabled)
+        widget.ui.button_run.setEnabled(enabled)
+
+    @classmethod
+    def add_progress_bar(cls,widget:ui.IfcImportWidget,progress_bar:Progressbar):
+        widget.ui.layout_progress_bar.addWidget(progress_bar)
+
+    @classmethod
+    def clear_progress_bars(cls,widget:ui.IfcImportWidget):
+        layout = widget.ui.layout_progress_bar
+        while layout.count():
+            item = layout.takeAt(0)
+            if item.widget() is not None:
+                item.widget().deleteLater()

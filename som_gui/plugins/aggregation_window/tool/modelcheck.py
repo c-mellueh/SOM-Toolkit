@@ -114,14 +114,14 @@ class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
         element_type = tool.Modelcheck.get_active_element_type()
         ident_value = ifc_el.get_pset(parent_element, main_pset_name, main_attribute_name)
 
-        description = QCoreApplication.translate("Aggregation", "{}: Parent '{}' is not allowed").format(element_type,
+        description = QCoreApplication.translate("Aggregation", '{}: Parent "{}" is not allowed').format(element_type,
                                                                                                          ident_value)
         issue_nr = PARENT_ISSUE
         tool.Modelcheck.add_issues(element.GlobalId, description, issue_nr, None)
 
     @classmethod
     def empty_group_issue(cls, element):
-        description = QCoreApplication.translate("Aggregation", "Group doesn't contain subelements")
+        description = QCoreApplication.translate("Aggregation", "Group does n0t contain subelements")
         issue_nr = EMPTY_GROUP_ISSUE
         tool.Modelcheck.add_issues(element.GlobalId, description, issue_nr, None)
 
@@ -136,7 +136,7 @@ class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
     @classmethod
     def subgroup_issue(cls, child_ident):
         description = QCoreApplication.translate("Aggregation",
-                                                 "Collector Group contains wrong subelements ('{}' not allowed)").format(
+                                                 'Collector Group contains wrong subelements ("{}" not allowed)').format(
             child_ident)
         issue_nr = SUBGROUP_ISSUE
         tool.Modelcheck.add_issues(tool.Modelcheck.get_active_guid(), description, issue_nr, None)

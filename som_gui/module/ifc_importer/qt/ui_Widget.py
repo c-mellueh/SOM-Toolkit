@@ -15,9 +15,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QProgressBar,
-    QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QApplication, QHBoxLayout, QPushButton, QScrollArea,
+    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
 from som_gui.module.util.ui import (AttributeSelector, FileSelector)
 
@@ -25,7 +24,7 @@ class Ui_IfcImporter(object):
     def setupUi(self, IfcImporter):
         if not IfcImporter.objectName():
             IfcImporter.setObjectName(u"IfcImporter")
-        IfcImporter.resize(955, 126)
+        IfcImporter.resize(955, 136)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -42,23 +41,33 @@ class Ui_IfcImporter(object):
 
         self.file_selector_widget = FileSelector(IfcImporter)
         self.file_selector_widget.setObjectName(u"file_selector_widget")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.file_selector_widget.sizePolicy().hasHeightForWidth())
+        self.file_selector_widget.setSizePolicy(sizePolicy1)
 
         self.verticalLayout_2.addWidget(self.file_selector_widget)
 
 
         self.verticalLayout.addLayout(self.verticalLayout_2)
 
-        self.label_status = QLabel(IfcImporter)
-        self.label_status.setObjectName(u"label_status")
+        self.scrollArea = QScrollArea(IfcImporter)
+        self.scrollArea.setObjectName(u"scrollArea")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(1)
+        sizePolicy2.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
+        self.scrollArea.setSizePolicy(sizePolicy2)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QWidget()
+        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 935, 54))
+        self.layout_progress_bar = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.layout_progress_bar.setObjectName(u"layout_progress_bar")
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
-        self.verticalLayout.addWidget(self.label_status)
-
-        self.progress_bar = QProgressBar(IfcImporter)
-        self.progress_bar.setObjectName(u"progress_bar")
-        self.progress_bar.setValue(24)
-        self.progress_bar.setTextVisible(True)
-
-        self.verticalLayout.addWidget(self.progress_bar)
+        self.verticalLayout.addWidget(self.scrollArea)
 
         self.button_widget = QWidget(IfcImporter)
         self.button_widget.setObjectName(u"button_widget")
@@ -89,7 +98,6 @@ class Ui_IfcImporter(object):
 
     def retranslateUi(self, IfcImporter):
         IfcImporter.setWindowTitle(QCoreApplication.translate("IfcImporter", u"Form", None))
-        self.label_status.setText(QCoreApplication.translate("IfcImporter", u"Status Label", None))
         self.button_close.setText(QCoreApplication.translate("IfcImporter", u"Close", None))
         self.button_run.setText(QCoreApplication.translate("IfcImporter", u"Run", None))
     # retranslateUi

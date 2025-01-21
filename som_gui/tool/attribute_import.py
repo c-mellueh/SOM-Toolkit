@@ -19,18 +19,21 @@ if TYPE_CHECKING:
     from som_gui.module.attribute_import.prop import AttributeImportProperties, AttributeImportSQLProperties
     from som_gui.module.ifc_importer.ui import IfcImportWidget
     from som_gui.tool.ifc_importer import IfcImportRunner
+    from som_gui.module.util.ui import Progressbar
+
 import sqlite3
 
 
 class AttributeImportRunner(QRunnable):
-    def __init__(self, runner: IfcImportRunner):
+    def __init__(self, runner: IfcImportRunner,progress_bar = None):
         super().__init__()
         self.file = runner.ifc
         self.path = runner.path
         self.signaller = Signaller()
+        self.progress_bar:Progressbar = progress_bar
 
     def run(self):
-        trigger.start_attribute_import(self.file, self.path)
+        trigger.start_attribute_import(self)
         self.signaller.finished.emit()
 
 
@@ -398,10 +401,8 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
     def create_ifc_import_window(cls, ifc_importer: IfcImportWidget) -> ui.AttributeImportWindow:
         prop = cls.get_properties()
         prop.ifc_import_window = ifc_importer
-        prop.run_button = ifc_importer.widget.button_run
-        prop.abort_button = ifc_importer.widget.button_close
-        prop.status_label = ifc_importer.widget.label_status
-        prop.progress_bar = ifc_importer.widget.progress_bar
+        prop.run_button = ifc_importer.ui.button_run
+        prop.abort_button = ifc_importer.ui.button_close
         ifc_importer.setWindowIcon(som_gui.get_icon())
         trigger.connect_import_buttons(prop.run_button, prop.abort_button)
         return prop.ifc_import_window
@@ -435,9 +436,8 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         cls.get_properties().import_is_aborted = False
 
     @classmethod
-    def create_import_runner(cls, ifc_import_path: str) -> QRunnable:
-        status_label = cls.get_ifc_import_window().widget.label_status
-        runner = tool.IfcImporter.create_runner(status_label, ifc_import_path)
+    def create_import_runner(cls, ifc_import_path: str,progress_bar:Progressbar) -> QRunnable:
+        runner = tool.IfcImporter.create_runner(progress_bar, ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner
 
@@ -451,7 +451,8 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def create_attribute_import_runner(cls, runner: IfcImportRunner) -> AttributeImportRunner:
-        return AttributeImportRunner(runner)
+        runner = AttributeImportRunner(runner,runner.progress_bar)
+        return runner
 
     @classmethod
     def connect_attribute_import_runner(cls, runner: AttributeImportRunner) -> None:
@@ -478,12 +479,12 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         trigger.last_import_finished()
 
     @classmethod
-    def set_progress(cls, value: int):
-        cls.get_properties().progress_bar.setValue(value)
+    def set_progress(cls,progress_bar:Progressbar, value: int):
+        progress_bar.ui.progressBar.setValue(value)
 
     @classmethod
-    def set_status(cls, text: str):
-        cls.get_properties().status_label.setText(text)
+    def set_status(cls,progress_bar:Progressbar, text: str):
+        progress_bar.ui.label.setText(text)
 
 
 class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
@@ -691,7 +692,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         try:
             cursor.execute(text)
         except sqlite3.IntegrityError:
-            logging.warning(f"GUID '{entity_guid}' exists for multiple Entities! ")
+            logging.info(f"GUID '{entity_guid}' exists for multiple Entities! ")
         cls.commit_sql()
         return identifier
 

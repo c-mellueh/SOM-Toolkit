@@ -5,9 +5,11 @@ from typing import Callable, Iterator, TYPE_CHECKING
 from PySide6.QtCore import QObject, QRunnable, Signal
 
 from som_gui import tool
+from som_gui.tool.ifc_importer import IfcImportRunner
 
 if TYPE_CHECKING:
     from som_gui.module.modelcheck.prop import ModelcheckProperties
+    from som_gui.module.util.ui import Progressbar
 import som_gui.core.tool
 import SOMcreator
 import datetime
@@ -32,11 +34,12 @@ rev_datatype_dict = {
 
 
 class ModelcheckRunner(QRunnable):
-    def __init__(self, ifc_file: ifcopenshell.file,path):
+    def __init__(self, ifc_file: ifcopenshell.file,path,progressbar: Progressbar = None):
         super().__init__()
         self.file = ifc_file
         self.path = path
         self.signaller = Signaller()
+        self.progress_bar:Progressbar|None = progressbar
 
     def run(self):
         trigger.start_modelcheck(self)
@@ -81,11 +84,11 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             cls.set_progress(runner,new_progress_value)
 
     @classmethod
-    def set_status(cls, runner,text: str):
+    def set_status(cls, runner:ModelcheckRunner,text: str):
         runner.signaller.status.emit(text)
 
     @classmethod
-    def set_progress(cls, runner,value: int):
+    def set_progress(cls, runner:ModelcheckRunner,value: int):
         runner.signaller.progress.emit(value)
 
     @classmethod
@@ -138,8 +141,8 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         return output_data_dict
 
     @classmethod
-    def create_modelcheck_runner(cls, ifc_file,path) -> ModelcheckRunner:
-        return ModelcheckRunner(ifc_file,path)
+    def create_modelcheck_runner(cls, runner:IfcImportRunner) -> ModelcheckRunner:
+        return ModelcheckRunner(runner.ifc,runner.path,runner.progress_bar)
 
     #######################################################################################
     ###############################Modelchecks#############################################
@@ -237,7 +240,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def format_issue(cls, guid, attribute: SOMcreator.Attribute, value):
         element_type = cls.get_active_element_type()
         description = QCoreApplication.translate("Modelcheck",
-                                                 '"{}" doesn`t match format Requirement: "{}"')  # f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
+                                                 '"{}" does not match format Requirement: "{}"')  # f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
         description = description.format(value, "||".join(attribute.value))
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
@@ -260,7 +263,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     @classmethod
     def property_set_issue(cls, guid, pset_name, element_type):
-        description = QCoreApplication.translate("Modelcheck", '{} doesn`t contain the Propertyset "{}"')
+        description = QCoreApplication.translate("Modelcheck", '{} does not contain the Propertyset "{}"')
         description = description.format(element_type, pset_name)
         issue_nr = PROPERTY_SET_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name)
@@ -301,7 +304,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def ident_unknown(cls, guid, pset_name, attribute_name, value):
         element_type = cls.get_active_element_type()
-        description = QCoreApplication.translate("Modelcheck", """{} Value of Identifier ("{}") doesn't exist in SOM""")
+        description = QCoreApplication.translate("Modelcheck", """{} Value of Identifier ("{}") does not exist in SOM""")
         description = description.format(element_type, value)
         issue_nr = IDENT_ATTRIBUTE_UNKNOWN
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,

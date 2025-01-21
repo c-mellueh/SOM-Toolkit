@@ -13,6 +13,8 @@ if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.tool.ifc_importer import IfcImportRunner
     from som_gui.module.attribute_import.ui import ValueCheckBox
+    from som_gui.tool.attribute_import import AttributeImportRunner
+
 import time
 
 
@@ -32,9 +34,9 @@ def retranslate_ui(attribute_import: Type[tool.AttributeImport],
     ifc_window = attribute_import.get_ifc_import_window()
     if ifc_window:
         title = QCoreApplication.translate("AttributeImport", "Import Values")
-        ifc_window.widget.retranslateUi(ifc_window)
+        ifc_window.ui.retranslateUi(ifc_window)
         ifc_window.setWindowTitle(util.get_window_title(title))
-        ifc_window.widget.file_selector_widget.name = QCoreApplication.translate("AttributeImport", "IFC Path")
+        ifc_window.ui.file_selector_widget.name = QCoreApplication.translate("AttributeImport", "IFC Path")
 
     result_window = attribute_import_results.get_results_window()
     if result_window:
@@ -73,6 +75,7 @@ def ifc_import_run_clicked(attribute_import: Type[tool.AttributeImport], ifc_imp
     if not ifc_importer.check_inputs(ifc_paths, main_pset_name, main_attribute_name):
         return
 
+    ifc_importer.clear_progress_bars(ifc_import_widget)
     attribute_import.reset_abort()
 
     ifc_importer.set_run_button_enabled(ifc_import_widget, False)
@@ -81,17 +84,21 @@ def ifc_import_run_clicked(attribute_import: Type[tool.AttributeImport], ifc_imp
     attribute_import.set_main_attribute(main_attribute_name)
     pool = ifc_importer.create_thread_pool()
     pool.setMaxThreadCount(3)
-    ifc_importer.set_progressbar_visible(ifc_import_widget, True)
-    ifc_importer.set_progress(ifc_import_widget, 0)
-    init_database(attribute_import, attribute_import_sql, project, util)
+    progress_bar = util.create_progressbar()
+    ifc_importer.add_progress_bar(ifc_import_widget,progress_bar)
+
+    ifc_importer.set_progressbars_visible(ifc_import_widget, True)
+    init_database(progress_bar,attribute_import, attribute_import_sql, project, util)
     for path in ifc_paths:
-        ifc_importer.set_status(ifc_import_widget, f"Import '{os.path.basename(path)}'")
-        runner = attribute_import.create_import_runner(path)
+        progress_bar = util.create_progressbar()
+        ifc_importer.add_progress_bar(ifc_import_widget, progress_bar)
+        ifc_importer.set_status(progress_bar, f"Import '{os.path.basename(path)}'")
+        runner = attribute_import.create_import_runner(path,progress_bar)
         attribute_import.connect_ifc_import_runner(runner)
         pool.start(runner)
 
 
-def init_database(attribute_import: Type[tool.AttributeImport], attribute_import_sql: Type[tool.AttributeImportSQL],
+def init_database(progress_bar,attribute_import: Type[tool.AttributeImport], attribute_import_sql: Type[tool.AttributeImportSQL],
                   project: Type[tool.Project], util: Type[tool.Util]):
     proj = project.get()
     db_path = util.create_tempfile(".db")
@@ -106,8 +113,8 @@ def init_database(attribute_import: Type[tool.AttributeImport], attribute_import
     for index, attribute in enumerate(all_attributes):
 
         if index % 100 == 0:
-            attribute_import.set_progress(int(index / attribute_count * 100))
-            attribute_import.set_status(f"{status_text} {index}/{attribute_count}")
+            attribute_import.set_progress(progress_bar,int(index / attribute_count * 100))
+            attribute_import.set_status(progress_bar,f"{status_text} {index}/{attribute_count}")
 
         if not attribute.property_set.object:
             continue
@@ -119,40 +126,44 @@ def init_database(attribute_import: Type[tool.AttributeImport], attribute_import
             attribute_import_sql.add_attribute_with_value(attribute)
 
     attribute_import_sql.disconnect_from_database()
-    attribute_import.set_progress(100)
-    attribute_import.set_status(f"{status_text} {attribute_count}/{attribute_count}")
+    attribute_import.set_progress(progress_bar,100)
+    attribute_import.set_status(progress_bar,f"{status_text} {attribute_count}/{attribute_count}")
 
 
 def abort_clicked():
     pass
 
 
-def ifc_import_started(runner, attribute_import: Type[tool.AttributeImport],
+def ifc_import_started(runner:IfcImportRunner, attribute_import: Type[tool.AttributeImport],
                        ifc_importer: Type[tool.IfcImporter]):
     widget = attribute_import.get_ifc_import_window()
-    ifc_importer.set_progressbar_visible(widget, True)
-    ifc_importer.set_status(widget, f"Import '{os.path.basename(runner.path)}'")
-    ifc_importer.set_progress(widget, 0)
+    ifc_importer.set_progressbars_visible(widget, True)
+    ifc_importer.set_status(runner.progress_bar, f"Import '{os.path.basename(runner.path)}'")
+    ifc_importer.set_progress(runner.progress_bar, 0)
 
 
 def ifc_import_finished(runner: IfcImportRunner, attribute_import: Type[tool.AttributeImport],
-                        ifc_importer: Type[tool.IfcImporter]):
+                        ifc_importer: Type[tool.IfcImporter],util:Type[tool.Util]):
     """
     creates and runs Modelcheck Runnable
     """
 
     attribute_import.destroy_import_runner(runner)
-    ifc_import_widget = attribute_import.get_ifc_import_window()
-    ifc_importer.set_status(ifc_import_widget, f"Import Abgeschlossen")
+    progress_bar = util.create_progressbar()
+    ifc_importer.set_status(progress_bar, f"Import Abgeschlossen")
     attribute_import_runner = attribute_import.create_attribute_import_runner(runner)
     attribute_import.connect_attribute_import_runner(attribute_import_runner)
     attribute_import.set_current_runner(attribute_import_runner)
     attribute_import.get_attribute_import_threadpool().start(attribute_import_runner)
 
 
-def start_attribute_import(file: ifcopenshell.file, path, attribute_import: Type[tool.AttributeImport],
+def start_attribute_import(runner:AttributeImportRunner, attribute_import: Type[tool.AttributeImport],
                            attribute_import_results: Type[tool.AttributeImportResults],
                            attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
+    file = runner.file
+    path = runner.path
+
+
     pset_name, attribute_name = attribute_import.get_main_pset(), attribute_import.get_main_attribute()
     attribute_import_sql.connect_to_data_base(attribute_import_sql.get_database_path())
     entity_list = list(file.by_type("IfcObject"))
@@ -161,8 +172,8 @@ def start_attribute_import(file: ifcopenshell.file, path, attribute_import: Type
     attribute_dict = attribute_import_results.build_attribute_dict(list(project.get().get_objects(filter=False)))
     for index, entity in enumerate(entity_list):
         if index % 100 == 0:
-            attribute_import.set_progress(int(index / entity_count * 100))
-            attribute_import.set_status(f"{status_text} {index}/{entity_count}")
+            attribute_import.set_progress(runner.progress_bar,int(index / entity_count * 100))
+            attribute_import.set_status(runner.progress_bar,f"{status_text} {index}/{entity_count}")
         identifier = attribute_import_sql.add_entity(entity, pset_name, attribute_name, os.path.basename(path))
         attribute_import_sql.import_entity_attributes(entity, file, identifier, attribute_dict)
     attribute_import_sql.disconnect_from_database()
@@ -172,18 +183,19 @@ def attribute_import_finished(attribute_import: Type[tool.AttributeImport], ifc_
     ifc_import_widget = attribute_import.get_ifc_import_window()
 
     if attribute_import.is_aborted():
-        ifc_importer.set_progressbar_visible(ifc_import_widget, False)
+        ifc_importer.set_progressbars_visible(ifc_import_widget, False)
         ifc_importer.set_close_button_text(ifc_import_widget, "Close")
         ifc_importer.set_run_button_enabled(ifc_import_widget, True)
         return
 
     time.sleep(0.2)
-    if not attribute_import.attribute_import_is_running():
+    if attribute_import.attribute_import_is_running() or ifc_importer.import_is_running():
+        logging.info(f"Prüfung von Datei abgeschlossen, nächste Datei ist dran.")
+    else:
         ifc_importer.set_close_button_text(ifc_import_widget, f"Close")
         ifc_importer.set_run_button_enabled(ifc_import_widget, True)
         attribute_import.last_import_finished()
-    else:
-        logging.info(f"Prüfung von Datei abgeschlossen, nächste Datei ist dran.")
+
 
 
 def last_import_finished(attribute_import: Type[tool.AttributeImport],
