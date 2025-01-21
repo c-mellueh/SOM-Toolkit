@@ -617,21 +617,17 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def add_attribute_to_filter_table(cls, project: SOMcreator.Project, attribute: SOMcreator.Attribute):
+
+
         use_case_list = project.get_usecases()
         phase_list = project.get_phases()
-        cursor = cls.get_cursor()
-
+        table = []
         for use_case in use_case_list:
             for phase in phase_list:
                 state = attribute.get_filter_state(phase, use_case)
                 state = 1 if state is None else int(state)
-                text = f'''
-                    INSERT INTO attribute_filter (usecase,phase,AttributeGUID,Value)
-                    VALUES
-                    ('{use_case.name}','{phase.name}','{attribute.uuid}',{state})
-                        '''
-                cursor.execute(text)
-        cls.commit_sql()
+                table.append((str(use_case.name), str(phase.name), str(attribute.uuid), str(state)))
+        return table
 
     @classmethod
     def init_database(cls, db_path: str):
@@ -653,28 +649,17 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def add_attribute_without_value(cls, attribute: SOMcreator.Attribute):
-        cursor = cls.get_cursor()
         identifier, propertyset, attribute_name, valuetype, datatype = cls.get_attribute_data(attribute)
-        text = f'''
-                      INSERT INTO som_attributes (identifier,PropertySet,Attribut,Value,ValueType,DataType,GUID)
-                            VALUES
-                            ('{identifier}','{propertyset}','{attribute_name}','','{valuetype}','{datatype}','{attribute.uuid}')
-                      '''
-        cursor.execute(text)
-        cls.commit_sql()
+        return identifier,propertyset,attribute_name,None,valuetype,datatype,attribute.uuid
 
     @classmethod
     def add_attribute_with_value(cls, attribute: SOMcreator.Attribute):
-        cursor = cls.get_cursor()
+        # cursor = cls.get_cursor()
         identifier, propertyset, attribute_name, valuetype, datatype = cls.get_attribute_data(attribute)
+        table = list()
         for value in attribute.value:
-            text = f'''
-                          INSERT INTO som_attributes (identifier,PropertySet,Attribut,Value,ValueType,DataType,GUID)
-                                VALUES
-                                ('{identifier}','{propertyset}','{attribute_name}','{value}','{valuetype}','{datatype}','{attribute.uuid}')
-                                  '''
-            cursor.execute(text)
-            cls.commit_sql()
+            table.append( (identifier,propertyset,attribute_name,value,valuetype,datatype,attribute.uuid))
+        return table
 
     @classmethod
     def add_entity(cls, entity: ifcopenshell.entity_instance, main_pset: str, main_attribute: str, file_name):

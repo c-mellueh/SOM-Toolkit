@@ -110,20 +110,32 @@ def init_database(progress_bar,attribute_import: Type[tool.AttributeImport], att
 
     status_text = "Attribute aus SOM importieren:"
     attribute_import_sql.fill_filter_table(proj)
-    for index, attribute in enumerate(all_attributes):
+    attribute_table = list()
+    filter_table = []
 
+    for index, attribute in enumerate(all_attributes):
         if index % 100 == 0:
             attribute_import.set_progress(progress_bar,int(index / attribute_count * 100))
             attribute_import.set_status(progress_bar,f"{status_text} {index}/{attribute_count}")
 
         if not attribute.property_set.object:
             continue
-        attribute_import_sql.add_attribute_to_filter_table(proj, attribute)
+        filter_table+=attribute_import_sql.add_attribute_to_filter_table(proj, attribute)
 
         if not attribute.value:
-            attribute_import_sql.add_attribute_without_value(attribute)
+            attribute_table.append(attribute_import_sql.add_attribute_without_value(attribute))
         else:
-            attribute_import_sql.add_attribute_with_value(attribute)
+            attribute_table+=attribute_import_sql.add_attribute_with_value(attribute)
+
+    text = ''' INSERT INTO attribute_filter (usecase,phase,AttributeGUID,Value) VALUES (?,?,?,?)'''
+    cs = attribute_import_sql.get_cursor()
+    cs.executemany(text,filter_table)
+    attribute_import_sql.commit_sql()
+
+
+    text = '''INSERT INTO som_attributes (identifier,PropertySet,Attribut,Value,ValueType,DataType,GUID) VALUES (?,?,?,?,?,?,?)  '''
+    cs.executemany(text,attribute_table)
+    attribute_import_sql.commit_sql()
 
     attribute_import_sql.disconnect_from_database()
     attribute_import.set_progress(progress_bar,100)
