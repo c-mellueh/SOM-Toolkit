@@ -11,6 +11,7 @@ from PySide6.QtWidgets import QDialogButtonBox
 
 import SOMcreator
 from som_gui.module.project.constants import CLASS_REFERENCE
+from som_gui.tool.modelcheck import ModelcheckRunner
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -66,12 +67,13 @@ def retranslate_ui(modelcheck_window: Type[tool.ModelcheckWindow], util: Type[to
     pset_model.setHorizontalHeaderLabels(headers)
 
 
-def cancel_clicked(modelcheck_window: Type[tool.ModelcheckWindow]):
+def close_window(modelcheck_window: Type[tool.ModelcheckWindow]):
     modelcheck_window.close_window()
 
 
 def abort_clicked(modelcheck_window: Type[tool.ModelcheckWindow], modelcheck: Type[tool.Modelcheck],
                   ifc_importer: Type[tool.IfcImporter]):
+
     import_pool = ifc_importer.get_threadpool()
     check_pool = modelcheck_window.get_modelcheck_threadpool()
     logging.debug(f"Cancel clicked. Active threads: {import_pool.activeThreadCount()}|{check_pool.activeThreadCount()}")
@@ -85,24 +87,23 @@ def abort_clicked(modelcheck_window: Type[tool.ModelcheckWindow], modelcheck: Ty
         modelcheck_window.reset_butons()
 
 
-def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
-                modelcheck: Type[tool.Modelcheck], modelcheck_results: Type[tool.ModelcheckResults],
-                ifc_importer: Type[tool.IfcImporter], project: Type[tool.Project], util: Type[tool.Util]):
+def run_modelcheck(modelcheck_window: Type[tool.ModelcheckWindow],
+                   modelcheck: Type[tool.Modelcheck], modelcheck_results: Type[tool.ModelcheckResults],
+                   ifc_importer: Type[tool.IfcImporter], project: Type[tool.Project], util: Type[tool.Util]):
     ifc_paths, export_path, main_pset, main_attribute = modelcheck_window.read_inputs()
     inputs_are_valid = ifc_importer.check_inputs(ifc_paths, main_pset, main_attribute)
     export_path_is_valid = modelcheck_window.check_export_path(export_path)
 
     if not inputs_are_valid or not export_path_is_valid:
         return
-
     modelcheck_window.show_buttons(QDialogButtonBox.StandardButton.Abort)
     modelcheck.reset_abort()
     modelcheck.set_main_pset_name(main_pset)
     modelcheck.set_main_attribute_name(main_attribute)
     modelcheck_results.set_export_path(export_path)
 
-    pool = modelcheck_window.get_modelcheck_threadpool()
-    pool.setMaxThreadCount(3)
+    pool = ifc_importer.get_threadpool()
+    pool.setMaxThreadCount(1)
     modelcheck.init_sql_database(util.create_tempfile(".db"))
     modelcheck.reset_guids()
     modelcheck.build_ident_dict(set(project.get().get_objects(filter=True)))
@@ -117,6 +118,7 @@ def run_clicked(modelcheck_window: Type[tool.ModelcheckWindow],
 
 
 def ifc_import_started(runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow]):
+    logging.debug(f"IFC Runner '{runner.path}' started.")
     modelcheck_window.set_progressbar_visible(True)
     status = QCoreApplication.translate("Modelcheck", "Import '{}'").format(os.path.basename(runner.path))
     modelcheck_window.set_status(status)
@@ -128,30 +130,43 @@ def ifc_import_finished(runner: IfcImportRunner, modelcheck_window: Type[tool.Mo
     """
     creates and runs Modelcheck Runnable
     """
-
+    logging.debug(f"IFC Runner '{runner.path}' finished.")
     modelcheck_window.destroy_import_runner(runner)
-    modelcheck_window.set_status(QCoreApplication.translate("Modelcheck", "Import Done!"))
-
+    modelcheck_window.set_status(QCoreApplication.translate("Modelcheck", "Import of '{}' Done!").format(runner.path))
     modelcheck.set_ifc_name(os.path.basename(runner.path))
-    modelcheck_runner = modelcheck.create_modelcheck_runner(runner.ifc)
 
+    logging.debug(f"Create Modelcheck Runner '{runner.path}'")
+    modelcheck_runner = modelcheck.create_modelcheck_runner(runner.ifc,runner.path)
     modelcheck_window.connect_modelcheck_runner(modelcheck_runner)
-    modelcheck.set_current_runner(modelcheck_runner)
+
+    logging.debug(f"Start Threadpool for Modelcheck Runner '{modelcheck_runner.file.wrapped_data}'")
     modelcheck_window.get_modelcheck_threadpool().start(modelcheck_runner)
 
 
-def modelcheck_finished(modelcheck_window: Type[tool.ModelcheckWindow], modelcheck: Type[tool.Modelcheck],
-                        modelcheck_results: Type[tool.ModelcheckResults]):
+def modelcheck_finished(modelcheck_runner:ModelcheckRunner,modelcheck_window: Type[tool.ModelcheckWindow], modelcheck: Type[tool.Modelcheck],
+                        modelcheck_results: Type[tool.ModelcheckResults],ifc_importer: Type[tool.IfcImporter]):
+
+
     if modelcheck.is_aborted():
+        logging.debug(f"Modelcheck '{modelcheck_runner.path}' aborted.")
         modelcheck_window.reset_butons()
         return
+    else:
+        logging.debug(f"Modelcheck '{modelcheck_runner.path}' done.")
 
     time.sleep(0.2)
-    if not modelcheck_window.modelcheck_is_running():
+    if modelcheck_window.modelcheck_is_running():
+        logging.debug(f"Modelchecks are still running")
+    if ifc_importer.import_is_running():
+        logging.debug(f"Imports are still running")
+
+    if modelcheck_window.modelcheck_is_running() or ifc_importer.import_is_running():
+        logging.debug(f"Check next File")
+
+    else:
+        logging.debug(f"Finish Modelcheck")
         modelcheck_results.last_modelcheck_finished()
         modelcheck_window.reset_butons()
-    else:
-        logging.info(f"Modelcheck is Done, check next File")
 
 
 def paint_object_tree(tree: ui.ObjectTree, modelcheck_window: Type[tool.ModelcheckWindow], project: Type[tool.Project]):

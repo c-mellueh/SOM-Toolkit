@@ -32,13 +32,14 @@ rev_datatype_dict = {
 
 
 class ModelcheckRunner(QRunnable):
-    def __init__(self, ifc_file: ifcopenshell.file):
+    def __init__(self, ifc_file: ifcopenshell.file,path):
         super().__init__()
         self.file = ifc_file
+        self.path = path
         self.signaller = Signaller()
 
     def run(self):
-        trigger.start_modelcheck(self.file)
+        trigger.start_modelcheck(self)
         self.signaller.finished.emit()
 
 
@@ -70,22 +71,22 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         cls.get_properties().guids = dict()
 
     @classmethod
-    def increment_checked_items(cls):
+    def increment_checked_items(cls,runner:ModelcheckRunner):
         checked_count = cls.get_object_checked_count()
         object_count = tool.Modelcheck.get_object_count()
         old_progress_value = int(checked_count / object_count * 100)
         new_progress_value = int((checked_count + 1) / object_count * 100)
         cls.set_object_checked_count(checked_count + 1)
         if new_progress_value > old_progress_value:
-            cls.set_progress(new_progress_value)
+            cls.set_progress(runner,new_progress_value)
 
     @classmethod
-    def set_status(cls, text: str):
-        cls.get_properties().runner.signaller.status.emit(text)
+    def set_status(cls, runner,text: str):
+        runner.signaller.status.emit(text)
 
     @classmethod
-    def set_progress(cls, value: int):
-        cls.get_properties().runner.signaller.progress.emit(value)
+    def set_progress(cls, runner,value: int):
+        runner.signaller.progress.emit(value)
 
     @classmethod
     def get_element_count(cls) -> int:
@@ -137,8 +138,8 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         return output_data_dict
 
     @classmethod
-    def create_modelcheck_runner(cls, ifc_file) -> ModelcheckRunner:
-        return ModelcheckRunner(ifc_file)
+    def create_modelcheck_runner(cls, ifc_file,path) -> ModelcheckRunner:
+        return ModelcheckRunner(ifc_file,path)
 
     #######################################################################################
     ###############################Modelchecks#############################################
@@ -509,13 +510,6 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def set_database_path(cls, path: str):
         cls.get_properties().database_path = path
 
-    @classmethod
-    def get_current_runner(cls):
-        return cls.get_properties().runner
-
-    @classmethod
-    def set_current_runner(cls, runner: QRunnable):
-        cls.get_properties().runner = runner
 
     @classmethod
     def get_object_checked_count(cls) -> int:

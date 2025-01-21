@@ -33,13 +33,14 @@ def paint_pset_tree(tree):
 
 
 def button_box_clicked(button: QPushButton):
-    logging.debug(f"button_box_clicked: {button}")
     bb = tool.ModelcheckWindow.get_window().ui.buttonBox
     if button == bb.button(bb.StandardButton.Apply):
-        core.run_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
-                         tool.IfcImporter, tool.Project, tool.Util)
+        logging.debug(f"Run Clicked")
+        core.run_modelcheck(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,
+                            tool.IfcImporter, tool.Project, tool.Util)
     if button == bb.button(bb.StandardButton.Cancel):
-        core.cancel_clicked(tool.ModelcheckWindow)
+        logging.debug("Cancel Clicked")
+        core.close_window(tool.ModelcheckWindow)
 
     if button == bb.button(bb.StandardButton.Abort):
         core.abort_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.IfcImporter)
@@ -75,7 +76,7 @@ def pset_context_menu_requested(pos, widget: PsetTree):
 
 def connect_modelcheck_runner(runner: ModelcheckRunner):
     runner.signaller.finished.connect(
-        lambda: core.modelcheck_finished(tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults))
+        lambda: core.modelcheck_finished(runner,tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,tool.IfcImporter))
     runner.signaller.status.connect(tool.ModelcheckWindow.set_status)
     runner.signaller.progress.connect(tool.ModelcheckWindow.set_progress)
 

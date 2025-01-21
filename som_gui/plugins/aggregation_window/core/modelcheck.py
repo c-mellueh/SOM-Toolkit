@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import logging
-from typing import Type
+from typing import Type,TYPE_CHECKING
+
 
 import ifcopenshell
 from PySide6.QtCore import QCoreApplication
@@ -10,28 +11,30 @@ import SOMcreator
 from som_gui import tool
 from som_gui.core.modelcheck import ELEMENT, GROUP
 from som_gui.plugins.aggregation_window import tool as aw_tool
-
+if TYPE_CHECKING:
+    from som_gui.tool.modelcheck import ModelcheckRunner
 
 def add_modelcheck_plugin(modelcheck: Type[tool.Modelcheck], modelcheck_plugin: Type[aw_tool.Modelcheck]):
-    modelcheck.add_file_check_plugin(lambda file: check_file(file, modelcheck, modelcheck_plugin))
+    modelcheck.add_file_check_plugin(lambda runner: check_file(runner, modelcheck, modelcheck_plugin))
     modelcheck.add_entity_check_plugin(lambda e: check_entities(e, modelcheck, modelcheck_plugin))
 
 
-def check_file(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck],
+def check_file(runner:ModelcheckRunner, modelcheck: Type[tool.Modelcheck],
                modelcheck_plugin: Type[aw_tool.Modelcheck]):
+    file = runner.file
     modelcheck.set_object_checked_count(0)
     modelcheck.set_object_count(len(modelcheck_plugin.get_all_groups(file)))
-    modelcheck.set_progress(0)
+    modelcheck.set_progress(runner,0)
     modelcheck_plugin.build_group_structure(file)
 
     group_count = modelcheck_plugin.get_group_count()
     status = QCoreApplication.translate("Aggregation", "{} Groups will be checked").format(group_count)
-    modelcheck.set_status(status)
+    modelcheck.set_status(runner,status)
     root_groups = modelcheck_plugin.get_root_groups(file)
     for entity in root_groups:
         if modelcheck.is_aborted():
             return
-        check_group(entity, 0, modelcheck, modelcheck_plugin)
+        check_group(runner,entity, 0, modelcheck, modelcheck_plugin)
 
 
 def check_entities(entity, modelcheck: Type[tool.Modelcheck], modelcheck_plugin: Type[aw_tool.Modelcheck]):
@@ -42,9 +45,9 @@ def check_entities(entity, modelcheck: Type[tool.Modelcheck], modelcheck_plugin:
         modelcheck_plugin.no_group_issue(entity)
 
 
-def check_group(group_entity: ifcopenshell.entity_instance, layer_index, modelcheck: Type[tool.Modelcheck],
+def check_group(runner:ModelcheckRunner,group_entity: ifcopenshell.entity_instance, layer_index, modelcheck: Type[tool.Modelcheck],
                 modelcheck_plugin: Type[aw_tool.Modelcheck]):
-    modelcheck.increment_checked_items()
+    modelcheck.increment_checked_items(runner)
     if not modelcheck.entity_should_be_tested(group_entity):
         return
 
@@ -68,7 +71,7 @@ def check_group(group_entity: ifcopenshell.entity_instance, layer_index, modelch
     for sub_group in sub_groups:
         if modelcheck.is_aborted():
             return
-        check_group(sub_group, layer_index + 1, modelcheck, modelcheck_plugin)
+        check_group(runner,sub_group, layer_index + 1, modelcheck, modelcheck_plugin)
 
 
 def check_group_entity(entity: ifcopenshell.entity_instance, modelcheck: Type[tool.Modelcheck],

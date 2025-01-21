@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
 
+
 if TYPE_CHECKING:
     from som_gui import tool
+    from som_gui.tool.modelcheck import ModelcheckRunner
 import SOMcreator
 import ifcopenshell
 from datetime import datetime
@@ -20,8 +22,9 @@ rev_datatype_dict = {
 }
 
 
-def check_file(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck],
+def check_file(runner:ModelcheckRunner, modelcheck: Type[tool.Modelcheck],
                modelcheck_window: Type[tool.ModelcheckWindow]):
+    file = runner.file
     modelcheck.connect_to_data_base(modelcheck.get_database_path())
     modelcheck.remove_existing_issues(datetime.today())
 
@@ -29,29 +32,30 @@ def check_file(file: ifcopenshell.file, modelcheck: Type[tool.Modelcheck],
 
     modelcheck.set_object_checked_count(0)
     modelcheck.set_object_count(modelcheck.get_element_count())
-    modelcheck.set_progress(0)
+    modelcheck.set_progress(runner,0)
 
     entities = file.by_type("IfcElement")
     modelcheck.set_object_count(len(entities))
-    check_entities(entities, modelcheck)
+    check_entities(runner,entities, modelcheck)
 
     for plugin_func in modelcheck.get_file_check_plugins():
-        plugin_func(file)
+        plugin_func(runner)
 
     modelcheck.disconnect_from_data_base()
 
-    modelcheck.set_status(QCoreApplication.translate("Modelcheck", "Modelcheck Done!"))
-    modelcheck.set_progress(100)
+    modelcheck.set_status(runner,QCoreApplication.translate("Modelcheck", "Modelcheck '{}' Done!").format(runner.path))
+    modelcheck.set_progress(runner,100)
 
 
-def check_entities(entities: list[ifcopenshell.entity_instance], modelcheck: Type[tool.Modelcheck]):
-    modelcheck.set_status(f'{len(entities)} {QCoreApplication.translate("Modelcheck", "Entities will be checked.")}')
-    for entity in entities:
-        modelcheck.increment_checked_items()
+def check_entities(runner:ModelcheckRunner,entities: list[ifcopenshell.entity_instance], modelcheck: Type[tool.Modelcheck]):
+    modelcheck.set_status(runner,f'{len(entities)} {QCoreApplication.translate("Modelcheck", "Entities will be checked.")}')
+    entity_count = len(entities)
+    for index,entity in enumerate(entities):
+        modelcheck.increment_checked_items(runner)
         if modelcheck.is_aborted():
             return
         check_element(entity, modelcheck)
-
+        modelcheck.set_status(runner,f"{index}/{entity_count} checked!")
 
 def check_element(element: ifcopenshell.entity_instance, modelcheck: Type[tool.Modelcheck]):
     modelcheck.set_active_element_type(ELEMENT)

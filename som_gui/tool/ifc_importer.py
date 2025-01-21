@@ -91,6 +91,9 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
     @classmethod
     def get_threadpool(cls) -> QThreadPool:
+        if cls.get_properties().thread_pool is None:
+            tp = QThreadPool()
+            cls.get_properties().thread_pool = tp
         return cls.get_properties().thread_pool
 
     @classmethod

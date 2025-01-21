@@ -20,7 +20,6 @@ class ModelcheckProperties:
     data_dict: dict = dict()
     active_element: ifcopenshell.entity_instance = None
     active_element_type: str = None
-    runner: ModelcheckRunner = None
     status_label: QLabel = None
     progress_bar: QProgressBar = None
     object_checked_count: int = 0

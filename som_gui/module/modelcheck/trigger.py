@@ -6,8 +6,8 @@ def connect():
     pass
 
 
-def start_modelcheck(ifc_file):
-    core.check_file(ifc_file, tool.Modelcheck, tool.ModelcheckWindow)
+def start_modelcheck(runner):
+    core.check_file(runner, tool.Modelcheck, tool.ModelcheckWindow)
 
 
 def on_new_project():
