@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QPushButton
 
 from som_gui import tool
 from som_gui.core import attribute_import as core
+from som_gui.tool.ifc_importer import IfcImportRunner
 
 if TYPE_CHECKING:
     from som_gui.tool.attribute_import import AttributeImportRunner
@@ -33,16 +34,18 @@ def connect_import_buttons(run_button: QPushButton, abort_button: QPushButton):
     abort_button.clicked.connect(lambda: core.abort_clicked())
 
 
-def connect_ifc_import_runner(runner):
+def connect_ifc_import_runner(runner:IfcImportRunner):
     runner.signaller.started.connect(lambda: core.ifc_import_started(runner, tool.AttributeImport, tool.IfcImporter))
-    runner.signaller.finished.connect(lambda: core.ifc_import_finished(runner, tool.AttributeImport, tool.IfcImporter,tool.Util))
+    runner.signaller.finished.connect(lambda: core.ifc_import_finished(runner, tool.AttributeImport, tool.IfcImporter))
+    runner.signaller.status.connect(lambda s: tool.Util.set_status(runner.progress_bar,s))
+    runner.signaller.progress.connect(lambda p: tool.Util.set_progress(runner.progress_bar,p))
 
 
 def connect_attribute_import_runner(runner:AttributeImportRunner):
     runner.signaller.finished.connect(
         lambda: core.attribute_import_finished(tool.AttributeImport, tool.IfcImporter))
-    runner.signaller.status.connect(lambda s:tool.ModelcheckWindow.set_status(runner.progress_bar,s))
-    runner.signaller.progress.connect(lambda p:tool.ModelcheckWindow.set_progress(runner.progress_bar,p))
+    runner.signaller.status.connect(lambda s: tool.Util.set_status(runner.progress_bar,s))
+    runner.signaller.progress.connect(lambda p: tool.Util.set_progress(runner.progress_bar,p))
 
 
 def last_import_finished():

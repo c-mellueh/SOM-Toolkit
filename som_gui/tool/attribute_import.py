@@ -436,7 +436,7 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         cls.get_properties().import_is_aborted = False
 
     @classmethod
-    def create_import_runner(cls, ifc_import_path: str,progress_bar:Progressbar) -> QRunnable:
+    def create_import_runner(cls, ifc_import_path: str,progress_bar:Progressbar) -> IfcImportRunner:
         runner = tool.IfcImporter.create_runner(progress_bar, ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner
@@ -459,10 +459,6 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         trigger.connect_attribute_import_runner(runner)
 
     @classmethod
-    def set_current_runner(cls, runner: AttributeImportRunner) -> None:
-        cls.get_properties().runner = runner
-
-    @classmethod
     def get_attribute_import_threadpool(cls):
         if cls.get_properties().thread_pool is None:
             tp = QThreadPool()
@@ -479,12 +475,12 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         trigger.last_import_finished()
 
     @classmethod
-    def set_progress(cls,progress_bar:Progressbar, value: int):
-        progress_bar.ui.progressBar.setValue(value)
+    def set_progress(cls,runner:AttributeImportRunner, value: int):
+        runner.signaller.progress.emit(value)
 
     @classmethod
-    def set_status(cls,progress_bar:Progressbar, text: str):
-        progress_bar.ui.label.setText(text)
+    def set_status(cls,runner:AttributeImportRunner, status: str):
+        runner.signaller.status.emit(status)
 
 
 class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
