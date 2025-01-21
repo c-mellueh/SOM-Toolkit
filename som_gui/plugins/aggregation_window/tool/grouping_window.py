@@ -20,6 +20,8 @@ if TYPE_CHECKING:
     from ..module.grouping_window.prop import GroupingWindowProperties
     from som_gui.module.ifc_importer.ui import IfcImportWidget
     from som_gui.tool.ifc_importer import IfcImportRunner
+    from som_gui.module.util.ui import Progressbar
+    from ..module.grouping_window import ui
 from som_gui import tool
 from SOMcreator.util.group_ifc import GROUP, get_ifc_el_info, ELEMENT, IFC_REP, fill_existing_groups, \
     create_aggregation_structure
@@ -32,13 +34,15 @@ class Signaller(QObject):
 
 
 class GroupingRunner(QRunnable):
-    def __init__(self, ifc_file: ifcopenshell.file):
+    def __init__(self, ifc_file: ifcopenshell.file,file_path:str,progress_bar:Progressbar):
         super().__init__()
         self.file = ifc_file
         self.signaller = Signaller()
+        self.progress_bar = progress_bar
+        self.file_path = file_path
 
     def run(self):
-        trigger.start_grouping(self.file)
+        trigger.start_grouping(self)
         self.signaller.finished.emit()
 
 
@@ -127,18 +131,17 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         return cls.get_properties().ifc_importer
 
     @classmethod
-    def set_status(cls, text: str):
-        cls.get().ui.widget_progress_bar.ui.label.setText(text)
+    def set_status(cls, progress_bar:Progressbar,text: str):
+        progress_bar.ui.label.setText(text)
 
     @classmethod
-    def set_progress(cls, value: int):
-        widget = cls.get().ui.widget_progress_bar
-        widget.show()
-        widget.ui.progressBar.setVisible(value)
+    def set_progress(cls, progress_bar:Progressbar,value: int):
+        logging.debug(f"SetProgress:{progress_bar} -> {value}")
+        progress_bar.ui.progressBar.setValue(value)
 
     @classmethod
-    def create_import_runner(cls, ifc_import_path: str):
-        runner = tool.IfcImporter.create_runner(cls.get().ui.widget_progress_bar, ifc_import_path)
+    def create_import_runner(cls, ifc_import_path: str,progress_bar:Progressbar):
+        runner = tool.IfcImporter.create_runner(progress_bar, ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner
 
@@ -159,8 +162,8 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         return cls.get_properties().ifc_name
 
     @classmethod
-    def create_grouping_runner(cls, ifc_file) -> GroupingRunner:
-        return GroupingRunner(ifc_file)
+    def create_grouping_runner(cls, ifc_file,file_path:str,progress_bar:Progressbar) -> GroupingRunner:
+        return GroupingRunner(ifc_file,file_path,progress_bar)
 
     @classmethod
     def connect_grouping_runner(cls, runner: GroupingRunner):
@@ -196,7 +199,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     # Grouping Functions
     @classmethod
-    def create_structure_dict(cls, ifc_elements: list[ifcopenshell.entity_instance],
+    def create_structure_dict(cls, runner:GroupingRunner,ifc_elements: list[ifcopenshell.entity_instance],
                               project: SOMcreator.Project) -> dict:
         """Iterate over all Entities, build the targeted Datastructure"""
 
@@ -208,7 +211,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         for index, el in enumerate(ifc_elements):
             percentage = int(index / entity_count * 100)
             if percentage % 5 == 0 and percentage not in percentages:
-                cls.set_progress(percentage)
+                cls.set_progress(runner.progress_bar,percentage)
                 percentages.append(percentage)
 
             if cls.is_aborted():
@@ -267,10 +270,27 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
     def set_buttons(cls, buttons):
         cls.get().ui.buttonBox.setStandardButtons(buttons)
 
-    @classmethod
-    def set_progressbar_visible(cls, state: bool):
-        cls.get().ui.widget_progress_bar.setVisible(state)
 
     @classmethod
     def reset_buttons(cls):
         cls.set_buttons(QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)
+
+    @classmethod
+    def add_progress_bar(cls,progress_bar:Progressbar):
+        cls.get().ui.layout_progress_bar.addWidget(progress_bar)
+
+    @classmethod
+    def clear_progress_bars(cls,widget:ui.GroupingWindow):
+        layout = widget.ui.layout_progress_bar
+        while layout.count():
+            item = layout.takeAt(0)
+            if item.widget() is not None:
+                item.widget().deleteLater()
+
+    @classmethod
+    def set_progress_bars_visible(cls,state:bool):
+        cls.get().ui.scrollArea.setVisible(state)
+
+    @classmethod
+    def is_grouping_running(cls):
+        return cls.get_grouping_threadpool().activeThreadCount() > 0

@@ -1,9 +1,12 @@
-import ifcopenshell
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from PySide6.QtWidgets import QPushButton
 
 from som_gui import tool
 from ... import tool as aw_tool
 from ...core import grouping_window as core
+if TYPE_CHECKING:
+    from ...tool.grouping_window import GroupingRunner
 
 
 def connect():
@@ -29,15 +32,15 @@ def button_clicked(button: QPushButton):
         core.abort_clicked(aw_tool.GroupingWindow, tool.IfcImporter)
 
 
-def start_grouping(ifc_file: ifcopenshell.file):
-    core.create_groups_in_file(ifc_file, aw_tool.GroupingWindow, tool.Project)
+def start_grouping(runner:GroupingRunner):
+    core.create_groups_in_file(runner, aw_tool.GroupingWindow, tool.Project)
 
 
-def connect_grouping_runner(runner):
+def connect_grouping_runner(runner:GroupingRunner):
     runner.signaller.finished.connect(
-        lambda: core.grouping_finished(aw_tool.GroupingWindow, tool.Popups))
-    runner.signaller.status.connect(aw_tool.GroupingWindow.set_status)
-    runner.signaller.progress.connect(aw_tool.GroupingWindow.set_progress)
+        lambda: core.grouping_finished(runner,aw_tool.GroupingWindow,tool.IfcImporter, tool.Popups))
+    runner.signaller.status.connect(lambda s:aw_tool.GroupingWindow.set_status(runner.progress_bar,s))
+    runner.signaller.progress.connect(lambda p:aw_tool.GroupingWindow.set_progress(runner.progress_bar,p))
 
 
 def on_new_project():
