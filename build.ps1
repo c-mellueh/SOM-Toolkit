@@ -16,3 +16,10 @@ Write-Output ""
 Write-Output "BUILD"
 
 pyside6-project build .
+
+Write-Output ""
+
+Set-Location ../../..
+Write-Output "Build Executable"
+
+pyinstaller main.spec --noconfirm

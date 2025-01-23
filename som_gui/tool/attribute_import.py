@@ -1020,7 +1020,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         columns = cursor.fetchall()
         cls.disconnect_from_database()
         dyn_column_query = [
-            f"MAX(CASE WHEN a.{PROPERTY_SET} = '{p}' AND a.{NAME} = '{n}' THEN a.{VALUE} END) AS '{p}_{n}'" for [p, n]
+            f"MAX(CASE WHEN a.{PROPERTY_SET} = '{p}' AND a.{NAME} = '{n}' THEN a.{VALUE} END) AS '{p}:{n}'" for [p, n]
             in columns]
         query = f"""
         SELECT

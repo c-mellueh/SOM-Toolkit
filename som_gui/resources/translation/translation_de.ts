@@ -54,49 +54,49 @@
         <translation>IFC Pfad</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="84"/>
+        <location filename="../../core/attribute_import.py" line="83"/>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="99"/>
+        <location filename="../../core/attribute_import.py" line="98"/>
         <source>Import {}</source>
-        <translation type="unfinished"></translation>
+        <translation>Importiere {}</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="115"/>
+        <location filename="../../core/attribute_import.py" line="114"/>
         <source>Import Attributes from SOM</source>
-        <translation type="unfinished"></translation>
+        <translation>Importiere Attribute von SOM</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="161"/>
+        <location filename="../../core/attribute_import.py" line="160"/>
         <source>Import Done!</source>
-        <translation type="unfinished">Import Abgeschlossen!</translation>
+        <translation>Import Abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="179"/>
+        <location filename="../../core/attribute_import.py" line="178"/>
         <source>Import entity from file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Importiere Entität von Datei:</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="188"/>
+        <location filename="../../core/attribute_import.py" line="187"/>
         <source>import of &apos;{}&apos; entities done!</source>
-        <translation type="unfinished"></translation>
+        <translation>Import von &apos;{}&apos; Entitäten abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="380"/>
+        <location filename="../../core/attribute_import.py" line="379"/>
         <source>Settings v</source>
         <translation>Einstellungen v</translation>
     </message>
     <message>
         <location filename="../../core/attribute_import.py" line="425"/>
         <source>Export Attribute Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportere Attributdaten</translation>
     </message>
     <message>
         <location filename="../../core/attribute_import.py" line="432"/>
         <source>Export Done!</source>
-        <translation type="unfinished">Export abgeschlossen!</translation>
+        <translation>Export abgeschlossen!</translation>
     </message>
     <message>
         <location filename="../../module/attribute_import/qt/SettingsWidget.ui" line="14"/>
@@ -804,7 +804,7 @@
     <message>
         <location filename="../../core/modelcheck_results.py" line="20"/>
         <source>Modelcheck done!</source>
-        <translation type="unfinished"></translation>
+        <translation>Modellprüfung abgeschlossen!</translation>
     </message>
     <message>
         <location filename="../../core/modelcheck_results.py" line="40"/>
@@ -895,12 +895,12 @@ Achtung: Datei wird überschrieben!</translation>
     <message>
         <location filename="../../tool/modelcheck.py" line="244"/>
         <source>&quot;{}&quot; does not match format Requirement: &quot;{}&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;{}&quot; entspricht nicht den Formatanforderungen: &quot;{}&quot;</translation>
     </message>
     <message>
         <location filename="../../tool/modelcheck.py" line="267"/>
         <source>{} does not contain the Propertyset &quot;{}&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>{} besitzt nicht das PropertySet &quot;{}&quot;</translation>
     </message>
     <message>
         <location filename="../../tool/modelcheck.py" line="274"/>
@@ -910,7 +910,7 @@ Achtung: Datei wird überschrieben!</translation>
     <message>
         <location filename="../../tool/modelcheck.py" line="309"/>
         <source>{} Value of Identifier (&quot;{}&quot;) does not exist in SOM</source>
-        <translation type="unfinished"></translation>
+        <translation>{} Wert des Identifiers (&quot;{}&quot;) existiert nicht im SOM</translation>
     </message>
     <message>
         <source>&quot;{}&quot; doesn`t match format Requirement: &quot;{}&quot;</source>
@@ -1068,7 +1068,7 @@ Achtung: Datei wird überschrieben!</translation>
     <message>
         <location filename="../../core/modelcheck.py" line="46"/>
         <source>Modelcheck &apos;{}&apos; Done!</source>
-        <translation type="unfinished">Modellprüfung &apos;{}&apos; abgeschlossen!</translation>
+        <translation>Modellprüfung &apos;{}&apos; abgeschlossen!</translation>
     </message>
 </context>
 <context>
