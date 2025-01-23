@@ -74,7 +74,6 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         widget.table_widget_property_set.itemSelectionChanged.connect(trigger.pset_table_selection_changed)
         widget.table_widget_attribute.itemSelectionChanged.connect(trigger.attribute_table_selection_changed)
         cls.get_properties().all_checkbox.checkStateChanged.connect(trigger.all_checkbox_checkstate_changed)
-        print(widget.buttonBox.buttons())
         widget.buttonBox.accepted.connect(trigger.result_acccept_clicked)
         widget.buttonBox.rejected.connect(trigger.result_abort_clicked)
         widget.button_settings.clicked.connect(trigger.settings_clicked)
