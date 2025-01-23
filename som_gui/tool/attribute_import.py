@@ -634,7 +634,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             for phase in phase_list:
                 state = attribute.get_filter_state(phase, use_case)
                 state = 1 if state is None else int(state)
-                table.append((str(attribute.uuid),str(use_case.name), str(phase.name), str(state)))
+                table.append((str(attribute.uuid), str(use_case.name), str(phase.name), str(state)))
         return table
 
     @classmethod
@@ -696,7 +696,6 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         entity_guid = entity.GlobalId
         entity_guid_zw = tool.Util.transform_guid(entity_guid, True)
         existing_pset_dict = existing_object_dict.get(identifier)
-
         for pset_name, attribute_dict in pset_dict.items():
             existing_attribute_dict = existing_pset_dict.get(pset_name) if existing_pset_dict else None
             for attribute_name, value_dict in attribute_dict.items():
@@ -716,12 +715,6 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                     cs = 0
                 else:
                     cs = 1 if value in existing_attribute_dict[attribute_name].value else 0
-
-                # if not value:
-                #     value = 'NULL'
-                # else:
-                #     value = str(value).replace("'", "''")
-                #     value = f"'{value}'"
 
                 values = (entity_guid_zw, entity_guid, pset_name, attribute_name, value, data_type, cs, cs)
                 cursor.execute(query, values)
