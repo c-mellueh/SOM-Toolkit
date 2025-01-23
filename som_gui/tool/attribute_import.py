@@ -77,7 +77,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         widget.buttonBox.accepted.connect(trigger.result_acccept_clicked)
         widget.buttonBox.rejected.connect(trigger.result_abort_clicked)
         widget.button_settings.clicked.connect(trigger.settings_clicked)
-        widget.pushButton.clicked.connect(trigger.download_clicked)
+        widget.button_download.clicked.connect(trigger.download_clicked)
         widget.combo_box_ifc_type.currentIndexChanged.connect(trigger.update_identifier_combobox)
 
     @classmethod

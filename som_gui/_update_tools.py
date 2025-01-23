@@ -1,3 +1,4 @@
+import os
 import inspect
 import sys
 import som_gui.tool
@@ -19,6 +20,7 @@ def main(file):
 
 
 if __name__ == "__main__":
-    file_path = "core/tool.py"
+    file_path = "som_gui/core/tool.py"
     with open(file_path, "w") as f:
         main(f)
+    print("Done")

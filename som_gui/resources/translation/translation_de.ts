@@ -42,21 +42,61 @@
 <context>
     <name>AttributeImport</name>
     <message>
-        <location filename="../../core/attribute_import.py" line="30"/>
-        <location filename="../../core/attribute_import.py" line="35"/>
-        <location filename="../../core/attribute_import.py" line="43"/>
+        <location filename="../../core/attribute_import.py" line="32"/>
+        <location filename="../../core/attribute_import.py" line="37"/>
+        <location filename="../../core/attribute_import.py" line="45"/>
         <source>Import Values</source>
         <translation>Werte importieren</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="39"/>
+        <location filename="../../core/attribute_import.py" line="41"/>
         <source>IFC Path</source>
         <translation>IFC Pfad</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="358"/>
+        <location filename="../../core/attribute_import.py" line="84"/>
+        <source>Abort</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/attribute_import.py" line="99"/>
+        <source>Import {}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/attribute_import.py" line="115"/>
+        <source>Import Attributes from SOM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/attribute_import.py" line="161"/>
+        <source>Import Done!</source>
+        <translation type="unfinished">Import Abgeschlossen!</translation>
+    </message>
+    <message>
+        <location filename="../../core/attribute_import.py" line="179"/>
+        <source>Import entity from file:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/attribute_import.py" line="188"/>
+        <source>import of &apos;{}&apos; entities done!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/attribute_import.py" line="380"/>
         <source>Settings v</source>
         <translation>Einstellungen v</translation>
+    </message>
+    <message>
+        <location filename="../../core/attribute_import.py" line="425"/>
+        <source>Export Attribute Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/attribute_import.py" line="432"/>
+        <source>Export Done!</source>
+        <translation type="unfinished">Export abgeschlossen!</translation>
     </message>
     <message>
         <location filename="../../module/attribute_import/qt/SettingsWidget.ui" line="14"/>
@@ -506,12 +546,12 @@
 <context>
     <name>IfcImporter</name>
     <message>
-        <location filename="../../tool/ifc_importer.py" line="57"/>
+        <location filename="../../tool/ifc_importer.py" line="63"/>
         <source>PropertySet Name is empty</source>
         <translation>PropertySetname ist nicht befüllt</translation>
     </message>
     <message>
-        <location filename="../../tool/ifc_importer.py" line="63"/>
+        <location filename="../../tool/ifc_importer.py" line="69"/>
         <source>Attribute Name is empty</source>
         <translation>Attributname ist nicht befüllt</translation>
     </message>
@@ -521,17 +561,12 @@
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../module/ifc_importer/qt/Widget.ui" line="36"/>
-        <source>Status Label</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../../module/ifc_importer/qt/Widget.ui" line="69"/>
+        <location filename="../../module/ifc_importer/qt/Widget.ui" line="83"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
     <message>
-        <location filename="../../module/ifc_importer/qt/Widget.ui" line="76"/>
+        <location filename="../../module/ifc_importer/qt/Widget.ui" line="90"/>
         <source>Run</source>
         <translation>Ausführen</translation>
     </message>
@@ -753,69 +788,74 @@
     </message>
     <message>
         <location filename="../../core/modelcheck_external.py" line="22"/>
-        <location filename="../../core/modelcheck_window.py" line="49"/>
+        <location filename="../../core/modelcheck_window.py" line="50"/>
         <source>Modelcheck</source>
         <translation>Modellprüfung</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_results.py" line="14"/>
+        <location filename="../../core/modelcheck_results.py" line="16"/>
         <source>{} Issues found!</source>
         <translation>{} Fehler gefunden!</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_results.py" line="18"/>
+        <location filename="../../core/modelcheck_results.py" line="20"/>
         <source>Model free of errors</source>
         <translation>Modell fehlerfrei</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_results.py" line="34"/>
+        <location filename="../../core/modelcheck_results.py" line="20"/>
+        <source>Modelcheck done!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../core/modelcheck_results.py" line="40"/>
         <source>Excel still open</source>
         <translation>Excel ist bereits geöffnet</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_results.py" line="35"/>
+        <location filename="../../core/modelcheck_results.py" line="41"/>
         <source>The output file is locked by another process</source>
         <translation>Die Ausgabedatei ist durch ein anderes Programm gesperrt</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_results.py" line="35"/>
+        <location filename="../../core/modelcheck_results.py" line="41"/>
         <source>Path:&apos;{}&apos;
 Warning: file will be overridden!</source>
         <translation>Pfad:&apos;{}&apos;
 Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="56"/>
+        <location filename="../../core/modelcheck_window.py" line="57"/>
         <source>Export Path</source>
         <translation>Export Pfad</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="57"/>
+        <location filename="../../core/modelcheck_window.py" line="58"/>
         <source>IFC Path</source>
         <translation>IFC Pfad</translation>
     </message>
     <message>
         <location filename="../../core/modelcheck_external.py" line="32"/>
-        <location filename="../../core/modelcheck_window.py" line="61"/>
+        <location filename="../../core/modelcheck_window.py" line="62"/>
         <source>Object</source>
         <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../../core/modelcheck_external.py" line="34"/>
-        <location filename="../../core/modelcheck_window.py" line="63"/>
+        <location filename="../../core/modelcheck_window.py" line="64"/>
         <location filename="../../tool/modelcheck_results.py" line="34"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
         <location filename="../../core/modelcheck_external.py" line="38"/>
-        <location filename="../../core/modelcheck_window.py" line="67"/>
+        <location filename="../../core/modelcheck_window.py" line="68"/>
         <source>PropertySet,Attribute</source>
         <translation>PropertySet/Attribut</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="113"/>
-        <location filename="../../core/modelcheck_window.py" line="123"/>
+        <location filename="../../core/modelcheck_window.py" line="122"/>
+        <location filename="../../core/modelcheck_window.py" line="132"/>
         <source>Import &apos;{}&apos;</source>
         <translation>Import &apos;{}&apos;</translation>
     </message>
@@ -824,82 +864,94 @@ Achtung: Datei wird überschrieben!</translation>
         <translation type="vanished">Import Abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="135"/>
+        <location filename="../../core/modelcheck_window.py" line="145"/>
         <source>Import of &apos;{}&apos; Done!</source>
         <translation>Import von &apos;{}&apos; abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="221"/>
+        <location filename="../../core/modelcheck_window.py" line="231"/>
         <source>Extend</source>
         <translation>Ausklappen</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="222"/>
+        <location filename="../../core/modelcheck_window.py" line="232"/>
         <source>Collapse</source>
         <translation>Einklappen</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="223"/>
+        <location filename="../../core/modelcheck_window.py" line="233"/>
         <source>Activate</source>
         <translation>Aktivieren</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="224"/>
+        <location filename="../../core/modelcheck_window.py" line="234"/>
         <source>Deactivate</source>
         <translation>Deaktivieren</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="232"/>
+        <location filename="../../tool/modelcheck.py" line="235"/>
         <source>{} has the wrong Datatype ({} not allowed)</source>
         <translation>{} hat den falschen Datentyp ({} ist nicht erlaubt)</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="271"/>
+        <location filename="../../tool/modelcheck.py" line="244"/>
+        <source>&quot;{}&quot; does not match format Requirement: &quot;{}&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tool/modelcheck.py" line="267"/>
+        <source>{} does not contain the Propertyset &quot;{}&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tool/modelcheck.py" line="274"/>
         <source>{} has an empty Attribute</source>
         <translation>{} besitzt ein leeres Attribut</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="241"/>
-        <source>&quot;{}&quot; doesn`t match format Requirement: &quot;{}&quot;</source>
-        <translation>&quot;{}&quot; entspricht nicht den Formatforgaben: &quot;{}&quot;</translation>
+        <location filename="../../tool/modelcheck.py" line="309"/>
+        <source>{} Value of Identifier (&quot;{}&quot;) does not exist in SOM</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="248"/>
+        <source>&quot;{}&quot; doesn`t match format Requirement: &quot;{}&quot;</source>
+        <translation type="vanished">&quot;{}&quot; entspricht nicht den Formatforgaben: &quot;{}&quot;</translation>
+    </message>
+    <message>
+        <location filename="../../tool/modelcheck.py" line="251"/>
         <source>Value &quot;{}&quot; is not allowed</source>
         <translation>Wert &quot;{}&quot; ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="257"/>
+        <location filename="../../tool/modelcheck.py" line="260"/>
         <source>Value &quot;{}&quot; is not in allowed range(s)</source>
         <translation>Wert &quot;{}&quot; befindet sich nicht in zugelassenen Wertebereich(en)</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="264"/>
         <source>{} doesn`t contain the Propertyset &quot;{}&quot;</source>
-        <translation>{} besitzt nicht das Propertyset &quot;{}&quot;</translation>
+        <translation type="vanished">{} besitzt nicht das Propertyset &quot;{}&quot;</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="279"/>
+        <location filename="../../tool/modelcheck.py" line="282"/>
         <source>{} is missing the Attribute &quot;{}:{}&quot;</source>
         <translation>{} is missing the Attribute &quot;{}:{}&quot;</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="288"/>
+        <location filename="../../tool/modelcheck.py" line="291"/>
         <source>{} is missing the identifier-Attribute</source>
         <translation>{} fehlt das identifier-Attribut</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="297"/>
+        <location filename="../../tool/modelcheck.py" line="300"/>
         <source>{} is missing die identifier PropertySet</source>
         <translation>{} fehlt das identifier PropertySet</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="305"/>
         <source>{} Value of Identifier (&quot;{}&quot;) doesn&apos;t exist in SOM</source>
-        <translation>{} Value of Identifier (&quot;{}&quot;) doesn&apos;t exist in SOM</translation>
+        <translation type="vanished">{} Value of Identifier (&quot;{}&quot;) doesn&apos;t exist in SOM</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="313"/>
+        <location filename="../../tool/modelcheck.py" line="317"/>
         <source>GUID exists in File &quot;{}&quot; and&quot;{}&quot;</source>
         <translation>GUID existiert in Datei &quot;{}&quot; und &quot;{}&quot;</translation>
     </message>

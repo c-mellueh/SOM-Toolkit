@@ -27,7 +27,7 @@ class Ui_AttributeImport(object):
     def setupUi(self, AttributeImport):
         if not AttributeImport.objectName():
             AttributeImport.setObjectName(u"AttributeImport")
-        AttributeImport.resize(1303, 734)
+        AttributeImport.resize(1383, 831)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
@@ -199,11 +199,13 @@ class Ui_AttributeImport(object):
 
         self.horzontal_layout_action_buttons.addWidget(self.button_settings)
 
-        self.pushButton = QPushButton(AttributeImport)
-        self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setMaximumSize(QSize(24, 24))
+        self.button_download = QPushButton(AttributeImport)
+        self.button_download.setObjectName(u"button_download")
+        self.button_download.setMaximumSize(QSize(24, 24))
+        icon = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.DocumentSave))
+        self.button_download.setIcon(icon)
 
-        self.horzontal_layout_action_buttons.addWidget(self.pushButton)
+        self.horzontal_layout_action_buttons.addWidget(self.button_download)
 
         self.buttonBox = QDialogButtonBox(AttributeImport)
         self.buttonBox.setObjectName(u"buttonBox")
@@ -228,6 +230,6 @@ class Ui_AttributeImport(object):
         self.check_box_values.setText(QCoreApplication.translate("AttributeImport", u"All", None))
         self.label_value.setText(QCoreApplication.translate("AttributeImport", u"Values", None))
         self.button_settings.setText("")
-        self.pushButton.setText(QCoreApplication.translate("AttributeImport", u"DL", None))
+        self.button_download.setText(QCoreApplication.translate("AttributeImport", u"DL", None))
     # retranslateUi
 

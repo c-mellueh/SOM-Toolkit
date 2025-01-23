@@ -314,17 +314,25 @@ class AttributeImportSQL:
 
     def count_objects(self, ifc_type, identifier): pass
 
+    def create_export_query(self, ): pass
+
     def create_settings_filter(self, ): pass
 
     def create_settings_window(self, ): pass
 
     def create_som_filter_table(self, ): pass
 
+    def create_table_exection_query(self, table_name, row_names, row_datatypes): pass
+
     def create_tables(self, ): pass
 
     def disconnect_from_database(self, ): pass
 
+    def fill_attribute_filter_table(self, values): pass
+
     def fill_filter_table(self, project): pass
+
+    def fill_som_attribute(self, values): pass
 
     def get_attribute_data(self, attribute): pass
 
@@ -365,6 +373,8 @@ class AttributeImportSQL:
     def set_database_path(self, path): pass
 
     def settings_dialog_accepted(self, dialog): pass
+
+    def sql_to_excel(self, query, export_path): pass
 
     def update_settins_dialog_checkstates(self, dialog): pass
 
@@ -912,7 +922,7 @@ class Modelcheck:
 
     def datatype_issue(self, guid, attribute, element_type, datatype, value): pass
 
-    def db_create_entity(self, element, bauteil_klasse): pass
+    def db_create_entity(self, element, identifier): pass
 
     def disconnect_from_data_base(self, ): pass
 
