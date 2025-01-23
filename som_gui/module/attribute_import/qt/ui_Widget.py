@@ -230,6 +230,6 @@ class Ui_AttributeImport(object):
         self.check_box_values.setText(QCoreApplication.translate("AttributeImport", u"All", None))
         self.label_value.setText(QCoreApplication.translate("AttributeImport", u"Values", None))
         self.button_settings.setText("")
-        self.button_download.setText(QCoreApplication.translate("AttributeImport", u"DL", None))
+        self.button_download.setText("")
     # retranslateUi
 

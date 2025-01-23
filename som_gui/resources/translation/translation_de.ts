@@ -164,9 +164,8 @@
         <translation>Werte</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/Widget.ui" line="343"/>
         <source>DL</source>
-        <translation>DL</translation>
+        <translation type="vanished">DL</translation>
     </message>
 </context>
 <context>
@@ -561,12 +560,12 @@
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../module/ifc_importer/qt/Widget.ui" line="83"/>
+        <location filename="../../module/ifc_importer/qt/Widget.ui" line="89"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
     <message>
-        <location filename="../../module/ifc_importer/qt/Widget.ui" line="90"/>
+        <location filename="../../module/ifc_importer/qt/Widget.ui" line="96"/>
         <source>Run</source>
         <translation>Ausführen</translation>
     </message>

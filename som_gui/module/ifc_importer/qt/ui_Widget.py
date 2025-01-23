@@ -24,7 +24,7 @@ class Ui_IfcImporter(object):
     def setupUi(self, IfcImporter):
         if not IfcImporter.objectName():
             IfcImporter.setObjectName(u"IfcImporter")
-        IfcImporter.resize(952, 230)
+        IfcImporter.resize(944, 74)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -63,7 +63,7 @@ class Ui_IfcImporter(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 932, 148))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 924, 148))
         self.layout_progress_bar = QVBoxLayout(self.scrollAreaWidgetContents)
         self.layout_progress_bar.setObjectName(u"layout_progress_bar")
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)

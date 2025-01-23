@@ -340,7 +340,7 @@
         </size>
        </property>
        <property name="text">
-        <string>DL</string>
+        <string/>
        </property>
        <property name="icon">
         <iconset theme="QIcon::ThemeIcon::DocumentSave"/>
