@@ -79,7 +79,6 @@ def ifc_import_run_clicked(attribute_import: Type[tool.AttributeImport], ifc_imp
     attribute_import.reset_abort()
 
     ifc_importer.set_run_button_enabled(ifc_import_widget, False)
-
     button_text = QCoreApplication.translate("AttributeImport", "Abort")
     ifc_importer.set_close_button_text(ifc_import_widget, button_text)
     attribute_import.set_main_pset(main_pset_name)
@@ -391,8 +390,9 @@ def results_abort_clicked(attribute_import_results: Type[tool.AttributeImportRes
     attribute_import_results.remove_results_window()
 
 
-def results_accept_clicked(attribute_import_results: Type[tool.AttributeImportResults],
-                           attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
+def import_values_to_som(attribute_import_results: Type[tool.AttributeImportResults],
+                         attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
+    logging.debug("Start Import")
     proj = project.get()
     new_attribute_values = attribute_import_sql.get_new_attribute_values()
     attribute_dict = attribute_import_results.build_attribute_dict(list(proj.get_objects(filter=False)))

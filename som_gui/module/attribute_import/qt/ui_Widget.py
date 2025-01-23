@@ -209,7 +209,7 @@ class Ui_AttributeImport(object):
 
         self.buttonBox = QDialogButtonBox(AttributeImport)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Apply|QDialogButtonBox.StandardButton.Cancel)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
 
         self.horzontal_layout_action_buttons.addWidget(self.buttonBox)
 
