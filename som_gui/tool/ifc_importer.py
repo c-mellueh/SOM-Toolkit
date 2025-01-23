@@ -83,12 +83,12 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         return widget.ui.main_attribute_widget.ui.le_attribute_name.text()
 
     @classmethod
-    def set_status(cls, progress_bar:Progressbar, status: str):
-        progress_bar.ui.label.setText(status)
+    def set_status(cls, runner:IfcImportRunner, status: str):
+        runner.signaller.status.emit(status)
 
     @classmethod
-    def set_progress(cls, progress_bar:Progressbar, value: int):
-       progress_bar.ui.progressBar.setValue(value)
+    def set_progress(cls, runner:IfcImportRunner, value: int):
+       runner.signaller.progress.emit(value)
 
     @classmethod
     def create_thread_pool(cls) -> QThreadPool:

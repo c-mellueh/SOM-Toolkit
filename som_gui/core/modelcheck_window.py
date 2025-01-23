@@ -116,33 +116,33 @@ def run_modelcheck(modelcheck_window: Type[tool.ModelcheckWindow],
     for path in ifc_paths:
         progress_bar = util.create_progressbar()
         modelcheck_window.add_progress_bar(progress_bar)
-
-        status = QCoreApplication.translate("Modelcheck", "Import '{}'").format(os.path.basename(path))
-        modelcheck_window.set_status(progress_bar,status)
-        modelcheck_window.set_progress(progress_bar,0)
-
         runner = modelcheck_window.create_import_runner(progress_bar,path)
         modelcheck_window.connect_ifc_import_runner(runner)
+
+        status = QCoreApplication.translate("Modelcheck", "Import '{}'").format(os.path.basename(path))
+        modelcheck_window.set_status(runner,status)
+        modelcheck_window.set_progress(runner,0)
         pool.start(runner)
 
 
-def ifc_import_started(runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow]):
+def ifc_import_started(runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow],ifc_importer: Type[tool.IfcImporter]):
     logging.debug(f"IFC Runner '{runner.path}' started.")
     modelcheck_window.set_progressbar_visible(runner,True)
 
     status = QCoreApplication.translate("Modelcheck", "Import '{}'").format(os.path.basename(runner.path))
-    modelcheck_window.set_status(runner.progress_bar,status)
-    modelcheck_window.set_progress(runner.progress_bar,0)
+    ifc_importer.set_status(runner,status)
+    ifc_importer.set_progress(runner,0)
+
 
 
 def ifc_import_finished(runner: IfcImportRunner, modelcheck_window: Type[tool.ModelcheckWindow],
-                        modelcheck: Type[tool.Modelcheck]):
+                        modelcheck: Type[tool.Modelcheck],ifc_importer:Type[tool.IfcImporter]):
     """
     creates and runs Modelcheck Runnable
     """
     logging.debug(f"IFC Runner '{runner.path}' finished.")
     modelcheck_window.destroy_import_runner(runner)
-    modelcheck_window.set_status(runner.progress_bar,QCoreApplication.translate("Modelcheck", "Import of '{}' Done!").format(runner.path))
+    ifc_importer.set_status(runner,QCoreApplication.translate("Modelcheck", "Import of '{}' Done!").format(runner.path))
     modelcheck.set_ifc_name(os.path.basename(runner.path))
 
     logging.debug(f"Create Modelcheck Runner '{runner.path}'")
@@ -195,7 +195,7 @@ def object_check_changed(item: QStandardItem, modelcheck_window: Type[tool.Model
 
     modelcheck_window.set_item_check_state(obj, item.checkState())
 
-    paint_pset_tree(modelcheck_window.get_pset_tree(), modelcheck_window)
+    paint_pset_tree(modelcheck_window)
 
 
 def object_selection_changed(selection_model: QItemSelectionModel, modelcheck_window: Type[tool.ModelcheckWindow]):
@@ -206,7 +206,7 @@ def object_selection_changed(selection_model: QItemSelectionModel, modelcheck_wi
     index: QModelIndex = selected_indexes[0]
     obj: SOMcreator.Object = index.data(CLASS_REFERENCE)
     modelcheck_window.set_selected_object(obj)
-    paint_pset_tree(modelcheck_window.get_pset_tree(), modelcheck_window)
+    paint_pset_tree(modelcheck_window)
     if obj.ident_value:
         text = f"{obj.name} [{obj.ident_value}]"
     else:
@@ -215,7 +215,7 @@ def object_selection_changed(selection_model: QItemSelectionModel, modelcheck_wi
     modelcheck_window.show_pset_tree_title(True)
 
 
-def paint_pset_tree(tree: ui.PsetTree, modelcheck_window: Type[tool.ModelcheckWindow]):
+def paint_pset_tree(modelcheck_window: Type[tool.ModelcheckWindow]):
     logging.debug(f"Repaint Modelcheck Pset Tree")
     obj = modelcheck_window.get_selected_object()
     if obj is None:

@@ -20,7 +20,6 @@ class AttributeImportProperties:
     main_attribute: str = "Undefined"
     import_is_aborted = False
     ifc_import_runners = []
-    runner = None
     thread_pool = None
     run_button: QPushButton = None
     abort_button: QPushButton = None

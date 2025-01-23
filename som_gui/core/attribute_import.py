@@ -79,7 +79,9 @@ def ifc_import_run_clicked(attribute_import: Type[tool.AttributeImport], ifc_imp
     attribute_import.reset_abort()
 
     ifc_importer.set_run_button_enabled(ifc_import_widget, False)
-    ifc_importer.set_close_button_text(ifc_import_widget, "Abbrechen")
+
+    button_text = QCoreApplication.translate("AttributeImport", "Abort")
+    ifc_importer.set_close_button_text(ifc_import_widget, button_text)
     attribute_import.set_main_pset(main_pset_name)
     attribute_import.set_main_attribute(main_attribute_name)
     pool = ifc_importer.create_thread_pool()
@@ -92,9 +94,10 @@ def ifc_import_run_clicked(attribute_import: Type[tool.AttributeImport], ifc_imp
     for path in ifc_paths:
         progress_bar = util.create_progressbar()
         ifc_importer.add_progress_bar(ifc_import_widget, progress_bar)
-        ifc_importer.set_status(progress_bar, f"Import '{os.path.basename(path)}'")
         runner = attribute_import.create_import_runner(path,progress_bar)
         attribute_import.connect_ifc_import_runner(runner)
+        status = QCoreApplication.translate("AttributeImport", "Import {}").format(os.path.basename(path))
+        ifc_importer.set_status(runner, status)
         pool.start(runner)
 
 
@@ -108,26 +111,38 @@ def init_database(progress_bar,attribute_import: Type[tool.AttributeImport], att
     attribute_count = len(all_attributes)
     attribute_import_sql.connect_to_data_base(db_path)
 
-    status_text = "Attribute aus SOM importieren:"
+    status_text = QCoreApplication.translate("AttributeImport", "Import Attributes from SOM")
     attribute_import_sql.fill_filter_table(proj)
-    for index, attribute in enumerate(all_attributes):
+    attribute_table = list()
+    filter_table = []
 
+    for index, attribute in enumerate(all_attributes):
         if index % 100 == 0:
-            attribute_import.set_progress(progress_bar,int(index / attribute_count * 100))
-            attribute_import.set_status(progress_bar,f"{status_text} {index}/{attribute_count}")
+            util.set_progress(progress_bar,int(index / attribute_count * 100))
+            util.set_status(progress_bar,f"{status_text} {index}/{attribute_count}")
 
         if not attribute.property_set.object:
             continue
-        attribute_import_sql.add_attribute_to_filter_table(proj, attribute)
+        filter_table+=attribute_import_sql.add_attribute_to_filter_table(proj, attribute)
 
         if not attribute.value:
-            attribute_import_sql.add_attribute_without_value(attribute)
+            attribute_table.append(attribute_import_sql.add_attribute_without_value(attribute))
         else:
-            attribute_import_sql.add_attribute_with_value(attribute)
+            attribute_table+=attribute_import_sql.add_attribute_with_value(attribute)
+
+    text = ''' INSERT INTO attribute_filter (usecase,phase,AttributeGUID,Value) VALUES (?,?,?,?)'''
+    cs = attribute_import_sql.get_cursor()
+    cs.executemany(text,filter_table)
+    attribute_import_sql.commit_sql()
+
+
+    text = '''INSERT INTO som_attributes (identifier,PropertySet,Attribut,Value,ValueType,DataType,GUID) VALUES (?,?,?,?,?,?,?)  '''
+    cs.executemany(text,attribute_table)
+    attribute_import_sql.commit_sql()
 
     attribute_import_sql.disconnect_from_database()
-    attribute_import.set_progress(progress_bar,100)
-    attribute_import.set_status(progress_bar,f"{status_text} {attribute_count}/{attribute_count}")
+    util.set_progress(progress_bar,100)
+    util.set_status(progress_bar,f"{status_text} {attribute_count}/{attribute_count}")
 
 
 def abort_clicked():
@@ -138,22 +153,20 @@ def ifc_import_started(runner:IfcImportRunner, attribute_import: Type[tool.Attri
                        ifc_importer: Type[tool.IfcImporter]):
     widget = attribute_import.get_ifc_import_window()
     ifc_importer.set_progressbars_visible(widget, True)
-    ifc_importer.set_status(runner.progress_bar, f"Import '{os.path.basename(runner.path)}'")
-    ifc_importer.set_progress(runner.progress_bar, 0)
+    ifc_importer.set_status(runner, f"Import '{os.path.basename(runner.path)}'")
+    ifc_importer.set_progress(runner, 0)
 
 
 def ifc_import_finished(runner: IfcImportRunner, attribute_import: Type[tool.AttributeImport],
-                        ifc_importer: Type[tool.IfcImporter],util:Type[tool.Util]):
+                        ifc_importer: Type[tool.IfcImporter]):
     """
-    creates and runs Modelcheck Runnable
+    creates and runs AttributeImport Runnable
     """
 
     attribute_import.destroy_import_runner(runner)
-    progress_bar = util.create_progressbar()
-    ifc_importer.set_status(progress_bar, f"Import Abgeschlossen")
+    ifc_importer.set_status(runner, QCoreApplication.translate("AttributeImport","Import Done!"))
     attribute_import_runner = attribute_import.create_attribute_import_runner(runner)
     attribute_import.connect_attribute_import_runner(attribute_import_runner)
-    attribute_import.set_current_runner(attribute_import_runner)
     attribute_import.get_attribute_import_threadpool().start(attribute_import_runner)
 
 
@@ -168,14 +181,19 @@ def start_attribute_import(runner:AttributeImportRunner, attribute_import: Type[
     attribute_import_sql.connect_to_data_base(attribute_import_sql.get_database_path())
     entity_list = list(file.by_type("IfcObject"))
     entity_count = len(entity_list)
-    status_text = "Entität aus Datei importieren:"
+    status_text =  QCoreApplication.translate("AttributeImport","Import entity from file:")
     attribute_dict = attribute_import_results.build_attribute_dict(list(project.get().get_objects(filter=False)))
     for index, entity in enumerate(entity_list):
         if index % 100 == 0:
-            attribute_import.set_progress(runner.progress_bar,int(index / entity_count * 100))
-            attribute_import.set_status(runner.progress_bar,f"{status_text} {index}/{entity_count}")
+            attribute_import.set_status(runner,f"{status_text} {index}/{entity_count}")
+            attribute_import.set_progress(runner, int(index / entity_count * 100))
+
         identifier = attribute_import_sql.add_entity(entity, pset_name, attribute_name, os.path.basename(path))
         attribute_import_sql.import_entity_attributes(entity, file, identifier, attribute_dict)
+
+    status = QCoreApplication.translate("AttributeImport","import of '{}' entities done!").format(runner.path)
+    attribute_import.set_status(runner, status)
+    attribute_import.set_progress(runner, 100)
     attribute_import_sql.disconnect_from_database()
 
 

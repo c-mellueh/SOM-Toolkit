@@ -29,6 +29,14 @@ class Util(som_gui.core.tool.Util):
         return ui.Progressbar(*args,**kwargs)
 
     @classmethod
+    def set_progress(cls,progress_bar:ui.Progressbar,value):
+        progress_bar.ui.progressBar.setValue(value)
+
+    @classmethod
+    def set_status(cls,progress_bar:ui.Progressbar,value):
+        progress_bar.ui.label.setText(value)
+
+    @classmethod
     def menu_bar_add_menu(cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str) -> MenuDict:
         menu_steps = menu_path.split("/")
         focus_dict = menu_dict
