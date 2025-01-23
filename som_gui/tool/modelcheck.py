@@ -34,12 +34,12 @@ rev_datatype_dict = {
 
 
 class ModelcheckRunner(QRunnable):
-    def __init__(self, ifc_file: ifcopenshell.file,path,progressbar: Progressbar = None):
+    def __init__(self, ifc_file: ifcopenshell.file, path, progressbar: Progressbar = None):
         super().__init__()
         self.file = ifc_file
         self.path = path
         self.signaller = Signaller()
-        self.progress_bar:Progressbar|None = progressbar
+        self.progress_bar: Progressbar | None = progressbar
 
     def run(self):
         trigger.start_modelcheck(self)
@@ -74,21 +74,21 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         cls.get_properties().guids = dict()
 
     @classmethod
-    def increment_checked_items(cls,runner:ModelcheckRunner):
+    def increment_checked_items(cls, runner: ModelcheckRunner):
         checked_count = cls.get_object_checked_count()
         object_count = tool.Modelcheck.get_object_count()
         old_progress_value = int(checked_count / object_count * 100)
         new_progress_value = int((checked_count + 1) / object_count * 100)
         cls.set_object_checked_count(checked_count + 1)
         if new_progress_value > old_progress_value:
-            cls.set_progress(runner,new_progress_value)
+            cls.set_progress(runner, new_progress_value)
 
     @classmethod
-    def set_status(cls, runner:ModelcheckRunner,text: str):
+    def set_status(cls, runner: ModelcheckRunner, text: str):
         runner.signaller.status.emit(text)
 
     @classmethod
-    def set_progress(cls, runner:ModelcheckRunner,value: int):
+    def set_progress(cls, runner: ModelcheckRunner, value: int):
         runner.signaller.progress.emit(value)
 
     @classmethod
@@ -141,8 +141,8 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         return output_data_dict
 
     @classmethod
-    def create_modelcheck_runner(cls, runner:IfcImportRunner) -> ModelcheckRunner:
-        return ModelcheckRunner(runner.ifc,runner.path,runner.progress_bar)
+    def create_modelcheck_runner(cls, runner: IfcImportRunner) -> ModelcheckRunner:
+        return ModelcheckRunner(runner.ifc, runner.path, runner.progress_bar)
 
     #######################################################################################
     ###############################Modelchecks#############################################
@@ -304,7 +304,8 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def ident_unknown(cls, guid, pset_name, attribute_name, value):
         element_type = cls.get_active_element_type()
-        description = QCoreApplication.translate("Modelcheck", """{} Value of Identifier ("{}") does not exist in SOM""")
+        description = QCoreApplication.translate("Modelcheck",
+                                                 """{} Value of Identifier ("{}") does not exist in SOM""")
         description = description.format(element_type, value)
         issue_nr = IDENT_ATTRIBUTE_UNKNOWN
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
@@ -354,39 +355,36 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def create_tables(cls):
         cursor = cls.get_cursor()
         # entities
-        cursor.execute('''
-                  CREATE TABLE IF NOT EXISTS entities
-                  ([GUID_ZWC] CHAR(64) PRIMARY KEY,[GUID] CHAR(64),[Name] CHAR(64),[Project] TEXT, [ifc_type] TEXT,[x_pos] DOUBLE,
-                  [y_pos] DOUBLE,[z_pos] DOUBLE,[datei] TEXT,[bauteilKlassifikation] TEXT)
-                  ''')
+        header_command = ",".join([f"[{h}] {d}" for h, d in zip(ENTITY_TABLE_HEADER, ENTITY_TABLE_DATATYPES)])
+        logging.debug(header_command)
+        cursor.execute(f''' CREATE TABLE IF NOT EXISTS entities ({header_command})''')
         cls.commit_sql()
 
         # issues
-        cursor.execute('''
-                  CREATE TABLE IF NOT EXISTS issues
-                  ([GUID_ZWC] CHAR(64) ,[creation_date] TEXT,[GUID] CHAR(64), [short_description] TEXT,[issue_type] INT,
-                  [PropertySet] TEXT, [Attribut] TEXT, [Value] Text)
-                  ''')
+        header_command = ",".join([f"[{h}] {d}" for h, d in zip(ISSUE_TABLE_HEADER, ISSUE_TABLE_DATATYPES)])
+        logging.debug(header_command)
+        cursor.execute(f'''
+                  CREATE TABLE IF NOT EXISTS issues ({header_command})''')
         cls.commit_sql()
 
     @classmethod
-    def add_issues(cls, guid, description, issue_type, attribute:SOMcreator.Attribute, pset_name="", attribute_name="", value=""):
+    def add_issues(cls, guid, description, issue_type, attribute: SOMcreator.Attribute, pset_name="", attribute_name="",
+                   value=""):
         cursor = cls.get_cursor()
         guid_zw = tool.Util.transform_guid(guid, True)
         date = datetime.date.today()
         if attribute is not None:
             pset_name = attribute.property_set.name
             attribute_name = attribute.name
-        request = f'''
-              INSERT INTO issues (GUID_ZWC,creation_date,GUID,short_description,issue_type,PropertySet,Attribut,Value)
-                    VALUES
-                    ('{guid_zw}','{date}','{guid}','{description}',{issue_type},'{pset_name}','{attribute_name}','{value}')
-              '''
-        cursor.execute(request)
+
+        issue_headers = str()
+        request = f'''INSERT INTO issues {f'({",".join(ISSUE_TABLE_HEADER)})'} VALUES (?,?,?,?,?,?,?,?)'''
+        values = (guid_zw, guid, date, description, issue_type, pset_name, attribute_name, value)
+        cursor.execute(request, values)
         cls.commit_sql()
 
     @classmethod
-    def db_create_entity(cls, element: entity_instance, bauteil_klasse):
+    def db_create_entity(cls, element: entity_instance, identifier):
         cursor = cls.get_cursor()
         file_name = cls.get_ifc_name()
         project = tool.Project.get().name
@@ -403,11 +401,9 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         else:
             guids[guid] = file_name
         try:
-            cursor.execute(f'''
-                      INSERT INTO entities (GUID_ZWC,GUID,Name,Project,ifc_type,x_pos,y_pos,z_pos,datei,bauteilKlassifikation)
-                            VALUES
-                            ('{guid_zwc}','{guid}','{name}','{project}','{ifc_type}',{center[0]},{center[1]},{center[2]},'{file_name}','{bauteil_klasse}')
-                      ''')
+            values = (guid_zwc, guid, name, project, ifc_type, center[0], center[1], center[2], file_name, identifier)
+            query = f''' INSERT INTO entities ({",".join(ENTITY_TABLE_HEADER)}) VALUES (?,?,?,?,?,?,?,?,?,?)'''
+            cursor.execute(query, values)
             cls.commit_sql()
         except sqlite3.IntegrityError:
             logging.warning("Integrity Error -> Element allready exists")
@@ -512,7 +508,6 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def set_database_path(cls, path: str):
         cls.get_properties().database_path = path
-
 
     @classmethod
     def get_object_checked_count(cls) -> int:
