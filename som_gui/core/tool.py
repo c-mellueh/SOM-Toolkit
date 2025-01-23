@@ -190,7 +190,7 @@ class AttributeImport:
 
     def create_ifc_import_window(self, ifc_importer): pass
 
-    def create_import_runner(self, ifc_import_path): pass
+    def create_import_runner(self, ifc_import_path, progress_bar): pass
 
     def destroy_import_runner(self, runner): pass
 
@@ -214,15 +214,13 @@ class AttributeImport:
 
     def set_action(self, name, action): pass
 
-    def set_current_runner(self, runner): pass
-
     def set_main_attribute(self, main_attribute_name): pass
 
     def set_main_pset(self, main_pset_name): pass
 
-    def set_progress(self, value): pass
+    def set_progress(self, runner, value): pass
 
-    def set_status(self, text): pass
+    def set_status(self, runner, status): pass
 
 
 class AttributeImportResults:
@@ -376,33 +374,31 @@ class AttributeTable:
 
     def add_column_to_table(self, name, get_function): pass
 
-    def add_context_menu_builder(self, c): pass
+    def add_context_menu_builder(self, context_menu_builder): pass
 
     def add_parent_of_selected_attribute(self, table): pass
 
-    def context_menu_add_connection_builder(self, table): pass
+    def context_menu_builder_add_connection(self, table): pass
 
-    def context_menu_delete_builder(self, table): pass
+    def context_menu_builder_delete(self, table, with_child): pass
 
-    def context_menu_delete_subattributes_builder(self, table): pass
+    def context_menu_builder_remove_connection(self, table): pass
 
-    def context_menu_remove_connection_builder(self, table): pass
-
-    def context_menu_rename_builder(self, table): pass
+    def context_menu_builder_rename(self, table): pass
 
     def delete_selected_attributes(self, table, with_child): pass
 
     def edit_selected_attribute_name(self, table): pass
 
-    def format_attribute_table_value(self, item, value): pass
-
     def format_row(self, row): pass
 
-    def get_active_table(self, ): pass
+    def format_row_value(self, item, value): pass
 
     def get_attribute_from_item(self, item): pass
 
     def get_attribute_table_header_names(self, ): pass
+
+    def get_column_count(self, ): pass
 
     def get_context_menu_builders(self, ): pass
 
@@ -416,7 +412,9 @@ class AttributeTable:
 
     def get_property_set_by_table(self, table): pass
 
-    def get_row_from_attribute(self, attribute, table): pass
+    def get_property_set_of_table(self, table): pass
+
+    def get_row_index_from_attribute(self, attribute, table): pass
 
     def get_selected_attributes(self, table): pass
 
@@ -424,9 +422,7 @@ class AttributeTable:
 
     def remove_parent_of_selected_attribute(self, table): pass
 
-    def set_active_attribute(self, attribute): pass
-
-    def set_active_table(self, table): pass
+    def set_property_set_of_table(self, table, property_set): pass
 
     def update_row(self, table, index): pass
 
@@ -452,6 +448,12 @@ class Bsdd:
 
     def get_dictionary_widget(self, ): pass
 
+    def get_export_path(self, ): pass
+
+    def get_linked_attribute_name(self, item): pass
+
+    def get_open_window_trigger(self, ): pass
+
     def get_path_line_edit(self, ): pass
 
     def get_properties(self, ): pass
@@ -460,17 +462,19 @@ class Bsdd:
 
     def get_toolbox(self, ): pass
 
-    def get_ui(self, ): pass
-
     def get_window(self, ): pass
 
     def reset_dictionary(self, ): pass
 
     def set_action(self, name, action): pass
 
+    def set_linked_attribute_name(self, item, value): pass
+
     def set_tabs(self, tab_list): pass
 
     def transform_project_to_dict(self, proj): pass
+
+    def trigger_retranslation(self, ): pass
 
 
 class CompareProjectSelector:
@@ -578,6 +582,8 @@ class FilterCompare:
 
     def create_tree_selection_trigger(self, widget): pass
 
+    def create_widget(self, ): pass
+
     def export_attribute_filter_differences(self, file, attribute_list): pass
 
     def export_object_filter_differences(self, file, attribute_compare): pass
@@ -680,11 +686,15 @@ class FilterWindow:
 
 
 class IfcImporter:
+    def add_progress_bar(self, widget, progress_bar): pass
+
     def check_inputs(self, ifc_paths, main_pset, main_attribute): pass
+
+    def clear_progress_bars(self, widget): pass
 
     def create_importer(self, ): pass
 
-    def create_runner(self, status_label, path): pass
+    def create_runner(self, progress_bar, path): pass
 
     def create_thread_pool(self, ): pass
 
@@ -702,13 +712,13 @@ class IfcImporter:
 
     def set_close_button_text(self, widget, text): pass
 
-    def set_progress(self, widget, value): pass
+    def set_progress(self, runner, value): pass
 
-    def set_progressbar_visible(self, widget, visible): pass
+    def set_progressbars_visible(self, widget, visible): pass
 
     def set_run_button_enabled(self, widget, enabled): pass
 
-    def set_status(self, widget, status): pass
+    def set_status(self, runner, status): pass
 
 
 class Language:
@@ -896,7 +906,7 @@ class Modelcheck:
 
     def connect_to_data_base(self, path): pass
 
-    def create_modelcheck_runner(self, ifc_file): pass
+    def create_modelcheck_runner(self, runner): pass
 
     def create_tables(self, ): pass
 
@@ -919,8 +929,6 @@ class Modelcheck:
     def get_active_guid(self, ): pass
 
     def get_attribute_value(self, entity, pset_name, attribute_name): pass
-
-    def get_current_runner(self, ): pass
 
     def get_cursor(self, ): pass
 
@@ -962,7 +970,7 @@ class Modelcheck:
 
     def ident_unknown(self, guid, pset_name, attribute_name, value): pass
 
-    def increment_checked_items(self, ): pass
+    def increment_checked_items(self, runner): pass
 
     def init_sql_database(self, db_path): pass
 
@@ -988,8 +996,6 @@ class Modelcheck:
 
     def set_active_element_type(self, value): pass
 
-    def set_current_runner(self, runner): pass
-
     def set_data_dict(self, value): pass
 
     def set_database_path(self, path): pass
@@ -1004,9 +1010,9 @@ class Modelcheck:
 
     def set_object_count(self, value): pass
 
-    def set_progress(self, value): pass
+    def set_progress(self, runner, value): pass
 
-    def set_status(self, text): pass
+    def set_status(self, runner, text): pass
 
 
 class ModelcheckExternal:
@@ -1070,11 +1076,15 @@ class ModelcheckResults:
 class ModelcheckWindow:
     def _update_pset_row(self, item, enabled): pass
 
+    def add_progress_bar(self, progress_bar): pass
+
     def autofill_export_path(self, ): pass
 
     def check_export_path(self, export_path): pass
 
     def check_selection(self, widget): pass
+
+    def clear_progress_bars(self, ): pass
 
     def close_window(self, ): pass
 
@@ -1092,7 +1102,7 @@ class ModelcheckWindow:
 
     def create_context_menu(self, pos, funcion_list, widget): pass
 
-    def create_import_runner(self, ifc_import_path): pass
+    def create_import_runner(self, progress_bar, ifc_import_path): pass
 
     def create_object_tree_row(self, obj): pass
 
@@ -1126,8 +1136,6 @@ class ModelcheckWindow:
 
     def get_selected_object(self, ): pass
 
-    def get_status_label(self, ): pass
-
     def get_window(self, ): pass
 
     def is_initial_paint(self, ): pass
@@ -1146,15 +1154,17 @@ class ModelcheckWindow:
 
     def set_item_check_state(self, item, cs): pass
 
-    def set_progress(self, value): pass
+    def set_progress(self, runner, value): pass
 
-    def set_progressbar_visible(self, state): pass
+    def set_progress_bar_layout_visible(self, state): pass
+
+    def set_progressbar_visible(self, runner, state): pass
 
     def set_pset_tree_title(self, text): pass
 
     def set_selected_object(self, obj): pass
 
-    def set_status(self, text): pass
+    def set_status(self, runner, status): pass
 
     def show_buttons(self, buttons): pass
 
@@ -1416,17 +1426,15 @@ class PredefinedPropertySet:
 
 
 class PredefinedPropertySetCompare:
-    def create_pset_list(self, ): pass
+    def create_pset_list(self, psets0, psets1): pass
 
     def create_tree_selection_trigger(self, widget): pass
 
-    def get_predefined_psets(self, index): pass
+    def create_widget(self, ): pass
 
     def get_properties(self, ): pass
 
     def get_pset_lists(self, ): pass
-
-    def get_widget(self, ): pass
 
     def reset(self, ): pass
 
@@ -1710,6 +1718,8 @@ class Util:
 
     def create_file_selector(self, name, file_extension, appdata_text, request_folder, request_save, single_request): pass
 
+    def create_progressbar(self, args, kwargs): pass
+
     def create_tempfile(self, suffix): pass
 
     def fill_file_selector(self, widget, name, file_extension, appdata_text, request_folder, request_save, single_request, update_appdata): pass
@@ -1737,6 +1747,10 @@ class Util:
     def menu_bar_create_actions(self, menu_dict, parent): pass
 
     def request_path(self, widget): pass
+
+    def set_progress(self, progress_bar, value): pass
+
+    def set_status(self, progress_bar, value): pass
 
     def transform_guid(self, guid, add_zero_width): pass
 
