@@ -38,6 +38,7 @@
         "..\\..\\module\\attribute\\ui.py",
         "..\\..\\module\\attribute\\__init__.py",
         "..\\..\\module\\attribute\\qt\\CompareWidget.ui",
+        "..\\..\\module\\attribute_import\\constants.py",
         "..\\..\\module\\attribute_import\\prop.py",
         "..\\..\\module\\attribute_import\\trigger.py",
         "..\\..\\module\\attribute_import\\ui.py",

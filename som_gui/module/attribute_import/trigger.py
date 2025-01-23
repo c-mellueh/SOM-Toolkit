@@ -110,7 +110,7 @@ def result_abort_clicked():
 
 
 def result_acccept_clicked():
-    core.results_accept_clicked(tool.AttributeImportResults, tool.AttributeImportSQL, tool.Project)
+    core.import_values_to_som(tool.AttributeImportResults, tool.AttributeImportSQL, tool.Project)
 
 
 def settings_clicked():
@@ -118,3 +118,6 @@ def settings_clicked():
 
 def on_new_project():
     pass
+
+def download_clicked():
+    core.export_attributes(tool.AttributeImportResults,tool.AttributeImportSQL,tool.Appdata,tool.Popups)

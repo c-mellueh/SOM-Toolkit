@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>955</width>
-    <height>136</height>
+    <width>944</width>
+    <height>74</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -45,6 +45,12 @@
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>150</height>
+      </size>
+     </property>
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -53,8 +59,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>935</width>
-        <height>54</height>
+        <width>924</width>
+        <height>148</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="layout_progress_bar"/>

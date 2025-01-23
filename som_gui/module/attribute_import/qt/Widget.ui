@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1303</width>
-    <height>734</height>
+    <width>1383</width>
+    <height>831</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -332,7 +332,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="button_download">
        <property name="maximumSize">
         <size>
          <width>24</width>
@@ -340,14 +340,17 @@
         </size>
        </property>
        <property name="text">
-        <string>DL</string>
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset theme="QIcon::ThemeIcon::DocumentSave"/>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="standardButtons">
-        <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel</set>
+        <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
        </property>
       </widget>
      </item>

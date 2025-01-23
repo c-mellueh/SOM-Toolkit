@@ -10,3 +10,5 @@ test.*
 **.egg-info
 **.qm
 **/rc_som_gui.py
+/.project
+**.ps1

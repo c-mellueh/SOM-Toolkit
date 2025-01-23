@@ -8,7 +8,7 @@ import ifcopenshell
 from PySide6.QtCore import QCoreApplication, Qt
 
 import SOMcreator.constants.value_constants as value_constants
-
+from som_gui.module.attribute_import.constants import EXPORT_PATH,FILETYPE
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.tool.ifc_importer import IfcImportRunner
@@ -79,7 +79,6 @@ def ifc_import_run_clicked(attribute_import: Type[tool.AttributeImport], ifc_imp
     attribute_import.reset_abort()
 
     ifc_importer.set_run_button_enabled(ifc_import_widget, False)
-
     button_text = QCoreApplication.translate("AttributeImport", "Abort")
     ifc_importer.set_close_button_text(ifc_import_widget, button_text)
     attribute_import.set_main_pset(main_pset_name)
@@ -109,10 +108,9 @@ def init_database(progress_bar,attribute_import: Type[tool.AttributeImport], att
     all_attributes = list(proj.get_attributes(filter=False))
 
     attribute_count = len(all_attributes)
-    attribute_import_sql.connect_to_data_base(db_path)
+
 
     status_text = QCoreApplication.translate("AttributeImport", "Import Attributes from SOM")
-    attribute_import_sql.fill_filter_table(proj)
     attribute_table = list()
     filter_table = []
 
@@ -130,17 +128,12 @@ def init_database(progress_bar,attribute_import: Type[tool.AttributeImport], att
         else:
             attribute_table+=attribute_import_sql.add_attribute_with_value(attribute)
 
-    query = ''' INSERT INTO attribute_filter (usecase,phase,AttributeGUID,Value) VALUES (?,?,?,?)'''
-    cs = attribute_import_sql.get_cursor()
-    cs.executemany(query,filter_table)
-    attribute_import_sql.commit_sql()
-
-
-    query = '''INSERT INTO som_attributes (identifier,PropertySet,Attribut,Value,ValueType,DataType,GUID) VALUES (?,?,?,?,?,?,?)  '''
-    cs.executemany(query,attribute_table)
-    attribute_import_sql.commit_sql()
-
+    attribute_import_sql.connect_to_data_base(db_path)
+    attribute_import_sql.fill_filter_table(proj)
+    attribute_import_sql.fill_attribute_filter_table(filter_table)
+    attribute_import_sql.fill_som_attribute(attribute_table)
     attribute_import_sql.disconnect_from_database()
+
     util.set_progress(progress_bar,100)
     util.set_status(progress_bar,f"{status_text} {attribute_count}/{attribute_count}")
 
@@ -397,8 +390,9 @@ def results_abort_clicked(attribute_import_results: Type[tool.AttributeImportRes
     attribute_import_results.remove_results_window()
 
 
-def results_accept_clicked(attribute_import_results: Type[tool.AttributeImportResults],
-                           attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
+def import_values_to_som(attribute_import_results: Type[tool.AttributeImportResults],
+                         attribute_import_sql: Type[tool.AttributeImportSQL], project: Type[tool.Project]):
+    logging.debug("Start Import")
     proj = project.get()
     new_attribute_values = attribute_import_sql.get_new_attribute_values()
     attribute_dict = attribute_import_results.build_attribute_dict(list(proj.get_objects(filter=False)))
@@ -417,3 +411,22 @@ def results_accept_clicked(attribute_import_results: Type[tool.AttributeImportRe
     window = attribute_import_results.get_results_window()
     window.close()
     attribute_import_results.remove_results_window()
+
+def export_attributes(attribute_import_results:Type[tool.AttributeImportResults] ,attribute_import_sql: Type[tool.AttributeImportSQL],appdata:Type[tool.Appdata],popups:Type[tool.Popups]):
+    """
+    Create Table of all Entities with all attributes as Header
+    :param attribute_import_sql:
+    :param appdata:
+    :param popups:
+    :return:
+    """
+    old_path = appdata.get_path(EXPORT_PATH)
+    title = QCoreApplication.translate("AttributeImport","Export Attribute Data")
+    new_path = popups.get_save_path(FILETYPE,attribute_import_results.get_results_window(),old_path,title)
+    if not new_path:
+        return
+    appdata.set_path(EXPORT_PATH, new_path)
+    query = attribute_import_sql.create_export_query()
+    attribute_import_sql.sql_to_excel(query,new_path)
+    text = QCoreApplication.translate("AttributeImport","Export Done!")
+    popups.create_info_popup(text,text)
