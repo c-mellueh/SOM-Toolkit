@@ -130,14 +130,14 @@ def init_database(progress_bar,attribute_import: Type[tool.AttributeImport], att
         else:
             attribute_table+=attribute_import_sql.add_attribute_with_value(attribute)
 
-    text = ''' INSERT INTO attribute_filter (usecase,phase,AttributeGUID,Value) VALUES (?,?,?,?)'''
+    query = ''' INSERT INTO attribute_filter (usecase,phase,AttributeGUID,Value) VALUES (?,?,?,?)'''
     cs = attribute_import_sql.get_cursor()
-    cs.executemany(text,filter_table)
+    cs.executemany(query,filter_table)
     attribute_import_sql.commit_sql()
 
 
-    text = '''INSERT INTO som_attributes (identifier,PropertySet,Attribut,Value,ValueType,DataType,GUID) VALUES (?,?,?,?,?,?,?)  '''
-    cs.executemany(text,attribute_table)
+    query = '''INSERT INTO som_attributes (identifier,PropertySet,Attribut,Value,ValueType,DataType,GUID) VALUES (?,?,?,?,?,?,?)  '''
+    cs.executemany(query,attribute_table)
     attribute_import_sql.commit_sql()
 
     attribute_import_sql.disconnect_from_database()
@@ -233,6 +233,7 @@ def open_results_window(attribute_import_results: Type[tool.AttributeImportResul
     attribute_import_results.get_somtype_combo_box().setCurrentText(attribute_import_results.get_all_keyword())
     from ..module.attribute_import import trigger
     trigger.retranslate_ui()
+    attribute_import_results.update_results_window()
 
 
 def update_results_window(attriubte_import_results: Type[tool.AttributeImportResults]):
@@ -337,7 +338,7 @@ def value_checkstate_changed(checkbox: ValueCheckBox, attribute_import_results: 
 
     if value_table.item(row, 1) is None:
         return
-    value_text = value_table.item(row, 1).text()
+    sql_value_text = f"== '{value_table.item(row, 1).text()}'"
     ifc_type, identifier, property_set, attribute = attribute_import_results.get_input_variables()
 
     checkstate = attribute_import_results.checkstate_to_int(checkbox.checkState())
@@ -347,11 +348,8 @@ def value_checkstate_changed(checkbox: ValueCheckBox, attribute_import_results: 
         update_all_checkbox(attribute_import_results)
         return
 
-    sql_value_text = f"== '{value_text}'"
-
     attribute_import_sql.change_checkstate_of_values(ifc_type, identifier, property_set, attribute, sql_value_text,
                                                      checkstate)
-
     update_all_checkbox(attribute_import_results)
 
 
