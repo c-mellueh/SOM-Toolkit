@@ -11,4 +11,4 @@ test.*
 **.qm
 **/rc_som_gui.py
 /.project
-build.ps1
+**.ps1
