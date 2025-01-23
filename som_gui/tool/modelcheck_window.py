@@ -18,6 +18,8 @@ from som_gui.module.util import ui as util_ui
 
 if TYPE_CHECKING:
     from som_gui.module.modelcheck_window.prop import ModelcheckWindowProperties
+    from som_gui.tool.modelcheck import ModelcheckRunner
+
 
 class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
@@ -152,12 +154,12 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return True
 
     @classmethod
-    def set_progress(cls,progress_bar:util_ui.Progressbar, value: int):
-        progress_bar.ui.progressBar.setValue(value)
+    def set_progress(cls,runner:ModelcheckRunner, value: int):
+        runner.signaller.progress.emit(value)
 
     @classmethod
-    def set_status(cls,progress_bar:util_ui.Progressbar, text: str):
-        progress_bar.ui.label.setText(text)
+    def set_status(cls,runner:ModelcheckRunner, status: str):
+        runner.signaller.status.emit(status)
 
     @classmethod
     def read_inputs(cls):

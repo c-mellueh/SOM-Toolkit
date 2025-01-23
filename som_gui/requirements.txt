@@ -13,3 +13,4 @@ lark
 anytree
 appdirs
 pyqtconsole
+pandas

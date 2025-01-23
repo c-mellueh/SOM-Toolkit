@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
     from PySide6.QtGui import QStandardItem
     from som_gui.tool.modelcheck import ModelcheckRunner
+    from som_gui.tool.ifc_importer import IfcImportRunner
+
 
 def connect():
     core.create_main_menu_actions(tool.ModelcheckWindow, tool.MainWindow)
@@ -28,7 +30,7 @@ def paint_object_tree(tree):
 
 
 def paint_pset_tree(tree):
-    core.paint_pset_tree(tree, tool.ModelcheckWindow)
+    core.paint_pset_tree(tool.ModelcheckWindow)
 
 
 def button_box_clicked(button: QPushButton):
@@ -76,14 +78,15 @@ def pset_context_menu_requested(pos, widget: PsetTree):
 def connect_modelcheck_runner(runner: ModelcheckRunner):
     runner.signaller.finished.connect(
         lambda: core.modelcheck_finished(runner,tool.ModelcheckWindow, tool.Modelcheck, tool.ModelcheckResults,tool.IfcImporter))
-    runner.signaller.status.connect(lambda s: tool.ModelcheckWindow.set_status(runner.progress_bar,s))
-    runner.signaller.progress.connect(lambda p:tool.ModelcheckWindow.set_progress(runner.progress_bar,p))
+    runner.signaller.status.connect(lambda s: tool.Util.set_status(runner.progress_bar,s))
+    runner.signaller.progress.connect(lambda p: tool.Util.set_progress(runner.progress_bar,p))
 
 
-def connect_ifc_import_runner(runner: QRunnable):
-    runner.signaller.started.connect(lambda: core.ifc_import_started(runner, tool.ModelcheckWindow))
-    runner.signaller.finished.connect(lambda: core.ifc_import_finished(runner, tool.ModelcheckWindow, tool.Modelcheck))
-
+def connect_ifc_import_runner(runner: IfcImportRunner):
+    runner.signaller.started.connect(lambda: core.ifc_import_started(runner, tool.ModelcheckWindow,tool.IfcImporter))
+    runner.signaller.finished.connect(lambda: core.ifc_import_finished(runner, tool.ModelcheckWindow, tool.Modelcheck,tool.IfcImporter))
+    runner.signaller.status.connect(lambda s: tool.Util.set_status(runner.progress_bar,s))
+    runner.signaller.progress.connect(lambda p: tool.Util.set_progress(runner.progress_bar,p))
 
 def on_new_project():
     pass
