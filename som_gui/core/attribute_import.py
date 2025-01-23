@@ -109,10 +109,9 @@ def init_database(progress_bar,attribute_import: Type[tool.AttributeImport], att
     all_attributes = list(proj.get_attributes(filter=False))
 
     attribute_count = len(all_attributes)
-    attribute_import_sql.connect_to_data_base(db_path)
+
 
     status_text = QCoreApplication.translate("AttributeImport", "Import Attributes from SOM")
-    attribute_import_sql.fill_filter_table(proj)
     attribute_table = list()
     filter_table = []
 
@@ -130,17 +129,12 @@ def init_database(progress_bar,attribute_import: Type[tool.AttributeImport], att
         else:
             attribute_table+=attribute_import_sql.add_attribute_with_value(attribute)
 
-    query = ''' INSERT INTO attribute_filter (usecase,phase,AttributeGUID,Value) VALUES (?,?,?,?)'''
-    cs = attribute_import_sql.get_cursor()
-    cs.executemany(query,filter_table)
-    attribute_import_sql.commit_sql()
-
-
-    query = '''INSERT INTO som_attributes (identifier,PropertySet,Attribut,Value,ValueType,DataType,GUID) VALUES (?,?,?,?,?,?,?)  '''
-    cs.executemany(query,attribute_table)
-    attribute_import_sql.commit_sql()
-
+    attribute_import_sql.connect_to_data_base(db_path)
+    attribute_import_sql.fill_filter_table(proj)
+    attribute_import_sql.fill_attribute_filter_table(filter_table)
+    attribute_import_sql.fill_som_attribute(attribute_table)
     attribute_import_sql.disconnect_from_database()
+
     util.set_progress(progress_bar,100)
     util.set_status(progress_bar,f"{status_text} {attribute_count}/{attribute_count}")
 
