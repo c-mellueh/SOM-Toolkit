@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING
-
+import pandas as pd
 import ifcopenshell
 from PySide6.QtCore import QObject, QRunnable, QThreadPool, Qt, Signal
 from PySide6.QtGui import QAction, QBrush, QPalette
@@ -77,6 +77,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         widget.buttonBox.accepted.connect(trigger.result_acccept_clicked)
         widget.buttonBox.rejected.connect(trigger.result_abort_clicked)
         widget.button_settings.clicked.connect(trigger.settings_clicked)
+        widget.pushButton.clicked.connect(trigger.download_clicked)
         widget.combo_box_ifc_type.currentIndexChanged.connect(trigger.update_identifier_combobox)
 
     @classmethod
@@ -1007,28 +1008,49 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return value_list
 
     @classmethod
-    def export_data(cls, export_path: str):
+    def create_export_query(cls,) -> str:
         """
-        SELECT
-	e.guid,
-	e.identifier AS EntityIdentifier,
-    e.Name AS EntityName,
-    e.datei AS EntityFile,
-    MAX(CASE WHEN a.PropertySet = 'Allgemeine Eigenschaften' AND a.Attribut = 'bauteilName' THEN a.Value END) AS bauteilName,
-    MAX(CASE WHEN a.PropertySet = 'Allgemeine Eigenschaften' AND a.Attribut = 'bauteilKlassifikation' THEN a.Value END) AS bauteilKlassifikation,
-    MAX(CASE WHEN a.PropertySet = 'Allgemeine Eigenschaften' AND a.Attribut = 'bemerkung' THEN a.Value END) AS bemerkung,
-    MAX(CASE WHEN a.PropertySet = 'Allgemeine Eigenschaften' AND a.Attribut = 'identitaet' THEN a.Value END) AS identitaet
-FROM
-    entities e
-LEFT JOIN
-    attributes a
-ON
-    e.GUID = a.GUID
-GROUP BY
-    e.guid
-ORDER BY
-    e.Name;
-        :param export_path:
+        Create Query to List all Entities with all Attributes as Columns
         :return:
         """
-        pass
+        cls.connect_to_data_base(cls.get_database_path())
+        cursor = cls.get_cursor()
+        query = f"SELECT DISTINCT {PROPERTY_SET}, {NAME} FROM {ATTRIBUTE_TABLE_NAME}"
+        cursor.execute(query)
+        columns = cursor.fetchall()
+        cls.disconnect_from_database()
+        dyn_column_query = [
+            f"MAX(CASE WHEN a.{PROPERTY_SET} = '{p}' AND a.{NAME} = '{n}' THEN a.{VALUE} END) AS '{p}_{n}'" for [p, n]
+            in columns]
+        query = f"""
+        SELECT
+            e.{GUID},
+            e.{IFCTYPE},
+            e.{IDENTIFIER},
+            e.{NAME},
+            e.{FILE},
+            {",".join(dyn_column_query)}
+        FROM
+            entities e
+        LEFT JOIN
+            attributes a
+        ON
+            e.{GUID} = a.{GUID}
+        GROUP BY
+            e.{GUID}
+        ORDER BY
+            e.{NAME};
+        """
+        return query
+
+    @classmethod
+    def sql_to_excel(cls,query,export_path:str):
+        # Create a Pandas Excel writer
+        cls.connect_to_data_base(cls.get_database_path())
+        connection = cls.get_properties().connection
+        with pd.ExcelWriter(export_path, engine='openpyxl') as writer:
+            # Read the table into a DataFrame
+            df = pd.read_sql_query(query, connection)
+            # Write the DataFrame to an Excel sheet
+            df.to_excel(writer, sheet_name="EXPORT", index=False)
+        cls.disconnect_from_database()

@@ -118,3 +118,6 @@ def settings_clicked():
 
 def on_new_project():
     pass
+
+def download_clicked():
+    core.export_attributes(tool.AttributeImportResults,tool.AttributeImportSQL,tool.Appdata,tool.Popups)

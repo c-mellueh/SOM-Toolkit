@@ -422,10 +422,11 @@ def export_attributes(attribute_import_results:Type[tool.AttributeImportResults]
     """
     old_path = appdata.get_path(EXPORT_PATH)
     title = QCoreApplication.translate("AttributeImport","Export Attribute Data")
-    new_path = popups.get_save_path(FILETYPE,old_path,attribute_import_results.get_results_window(),title)
+    new_path = popups.get_save_path(FILETYPE,attribute_import_results.get_results_window(),old_path,title)
     if not new_path:
         return
     appdata.set_path(EXPORT_PATH, new_path)
-    attribute_import_sql.export_data(new_path)
+    query = attribute_import_sql.create_export_query()
+    attribute_import_sql.sql_to_excel(query,new_path)
     text = QCoreApplication.translate("AttributeImport","Export Done!")
     popups.create_info_popup(text,text)
