@@ -8,7 +8,7 @@ import ifcopenshell
 from PySide6.QtCore import QCoreApplication, Qt
 
 import SOMcreator.constants.value_constants as value_constants
-
+from som_gui.module.attribute_import.constants import EXPORT_PATH,FILETYPE
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.tool.ifc_importer import IfcImportRunner
@@ -417,3 +417,21 @@ def results_accept_clicked(attribute_import_results: Type[tool.AttributeImportRe
     window = attribute_import_results.get_results_window()
     window.close()
     attribute_import_results.remove_results_window()
+
+def export_attributes(attribute_import_results:Type[tool.AttributeImportResults] ,attribute_import_sql: Type[tool.AttributeImportSQL],appdata:Type[tool.Appdata],popups:Type[tool.Popups]):
+    """
+    Create Table of all Entities with all attributes as Header
+    :param attribute_import_sql:
+    :param appdata:
+    :param popups:
+    :return:
+    """
+    old_path = appdata.get_path(EXPORT_PATH)
+    title = QCoreApplication.translate("AttributeImport","Export Attribute Data")
+    new_path = popups.get_save_path(FILETYPE,old_path,attribute_import_results.get_results_window(),title)
+    if not new_path:
+        return
+    appdata.set_path(EXPORT_PATH, new_path)
+    attribute_import_sql.export_data(new_path)
+    text = QCoreApplication.translate("AttributeImport","Export Done!")
+    popups.create_info_popup(text,text)

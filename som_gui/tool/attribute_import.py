@@ -1000,3 +1000,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         value_list = cursor.fetchall()
         cls.disconnect_from_database()
         return value_list
+
+    @classmethod
+    def export_data(cls,export_path:str):
+        pass
