@@ -27,6 +27,9 @@ class NodeProxy(QGraphicsProxyWidget):
         self.setFlag(self.GraphicsItemFlag.ItemIsSelectable, True)
         self.setAcceptHoverEvents(True)
 
+    def __str__(self):
+        return self.aggregation.name
+
     def widget(self) -> QWidget | NodeWidget:
         return super().widget()
 
@@ -77,6 +80,9 @@ class Header(QGraphicsRectItem):
         super().mousePressEvent(event)
         trigger.header_clicked(self)
 
+    def mouseDoubleClickEvent(self, event):
+        trigger.header_double_clicked(self)
+        return super().mouseDoubleClickEvent(event)
 
 class Frame(QGraphicsRectItem):
     def __init__(self, *args, **kwargs) -> None:

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any
 from PySide6.QtCore import QSize, QPointF
 from PySide6.QtWidgets import QTreeWidgetItem
 from PySide6.QtCore import QRectF
-
+import logging
 import SOMcreator
 from SOMcreator import value_constants
 
@@ -179,34 +179,13 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         circle.text.setX(x + 4.5)
         circle.text.setY(y)
 
-    @classmethod
-    def get_id_group(cls, node: node_ui.NodeProxy) -> str:
-        abbrev_list = list()
-
-        def iter_id(element: SOMcreator.Aggregation):
-            if element.parent_connection in (value_constants.AGGREGATION,
-                                             value_constants.AGGREGATION + value_constants.INHERITANCE):
-                abbrev_list.append(element.parent.object.abbreviation)
-            if not element.is_root:
-                iter_id(element.parent)
-
-        if node.aggregation.is_root:
-            return ""
-
-        iter_id(node.aggregation)
-        return "_xxx_".join(reversed(abbrev_list)) + "_xxx"
 
     @classmethod
     def get_title(cls, node: node_ui.NodeProxy, pset_name: str, attribute_name: str) -> str:
         aggregation = cls.get_aggregation_from_node(node)
         if not (pset_name and attribute_name):
             base_text = f"{aggregation.name} ({aggregation.object.abbreviation})"
-
-            if aggregation.is_root:
-                title = base_text
-            else:
-                title = f"{base_text}\nidGruppe: {cls.get_id_group(node)}"
-            return title
+            return f"{base_text}\nid: {node.aggregation.identity()}"
         undef = f"{aggregation.name}\n{attribute_name}: undefined"
         obj = aggregation.object
         pset = obj.get_property_set_by_name(pset_name)
@@ -337,3 +316,17 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         if not tc:
             return None
         return tc.top_node
+    
+    @classmethod
+    def get_child_nodes(cls, node: node_ui.NodeProxy) -> set[node_ui.NodeProxy]:
+        """
+        Retrieve the child nodes of a given node.
+
+        Args:
+            node (node_ui.NodeProxy): The node for which to retrieve child nodes.
+
+        Returns:
+            set[node_ui.NodeProxy]: A set of child nodes connected to the given node.
+        """
+        return {connection.bottom_node for connection in node.bottom_connections}#
+

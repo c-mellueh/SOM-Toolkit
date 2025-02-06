@@ -13,7 +13,7 @@ class Aggregation(Hirarchy):
     def __init__(self, obj: SOMcreator.Object, parent_connection=SOMcreator.value_constants.AGGREGATION,
                  uuid: str | None = None,
                  description: None | str = None,
-                 optional: None | bool = None, filter_matrix: list[list[bool]] = None):
+                 optional: None | bool = None, filter_matrix: list[list[bool]] = None,identity_text = None):
 
         super(Aggregation, self).__init__(obj.name, description, optional, obj.project, filter_matrix)
         self._registry.add(self)
@@ -24,7 +24,9 @@ class Aggregation(Hirarchy):
         self.object = obj
         self._parent: Aggregation | None = None
         self._parent_connection = parent_connection
+        self._identity_text = "" if identity_text is None else identity_text
         self.object.add_aggregation(self)
+
 
     def delete(self, recursive: bool = False) -> None:
         super(Aggregation, self).delete(recursive)
@@ -88,21 +90,40 @@ class Aggregation(Hirarchy):
             return True
         return False
 
-    def id_group(self) -> str:
+    def identity(self) -> str:
+        """
+        Generate a unique identifier for the aggregation group.
+
+        This method constructs an identifier string by traversing the parent
+        hierarchy of the current aggregation object. It includes the abbreviation
+        of each parent object and its identity text, if available. The identifier
+        is built in a reversed order, starting from the root to the current object.
+
+        Returns:
+            str: A unique identifier string for the aggregation group.
+        """
+        
         abbrev_list = list()
 
         def iter_id(element: Aggregation):
             if element.parent_connection in (SOMcreator.value_constants.AGGREGATION,
-                                             SOMcreator.value_constants.AGGREGATION + SOMcreator.value_constants.INHERITANCE):
-                abbrev_list.append(element.parent.object.abbreviation)
+                                             SOMcreator.value_constants.AGGREGATION + SOMcreator.value_constants.INHERITANCE) or element.is_root:
+                abbrev_list.append((element.object.abbreviation,element.get_identity_text() or "xxx"))
             if not element.is_root:
                 iter_id(element.parent)
 
-        if self.is_root:
-            return ""
-
         iter_id(self)
-        return "_xxx_".join(reversed(abbrev_list)) + "_xxx"
+        return "_".join([f'{abbrev}_{{{txt}}}' for  abbrev,txt in reversed(abbrev_list)])
 
-    def identity(self) -> str:
-        return self.id_group() + "_" + self.object.abbreviation + "_xxx"
+    
+    def get_identity_text(self) -> str:
+        return str(self._identity_text)
+    
+    def set_identity_text(self, text:str):
+        """
+        Sets the identity text for the object.
+
+        Args:
+            text (str): The identity text to be set.
+        """
+        self._identity_text = text
