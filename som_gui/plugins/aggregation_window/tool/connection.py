@@ -28,7 +28,7 @@ class Connection(som_gui.plugins.aggregation_window.core.tool.Connection):
 
     @classmethod
     def create_connection(cls, top_node: node_ui.NodeProxy, bottom_node: node_ui.NodeProxy,
-                          connection_type: int) -> Connection:
+                          connection_type: int) -> connection_ui.Connection:
         top_node.aggregation.add_child(bottom_node.aggregation, connection_type)
         connection = connection_ui.Connection(top_node, bottom_node, connection_type)
         connection_trigger.paint_connection(connection)
