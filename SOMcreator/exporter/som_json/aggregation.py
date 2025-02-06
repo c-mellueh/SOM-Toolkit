@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import SOMcreator
 from SOMcreator.exporter.som_json import core
-from SOMcreator.datastructure.som_json import OBJECT, CONNECTION, AGGREGATIONS, PARENT, AggregationDict, MainDict
+from SOMcreator.datastructure.som_json import OBJECT, CONNECTION, AGGREGATIONS, PARENT,IDENTITY_TEXT, AggregationDict, MainDict
 
 from typing import TYPE_CHECKING
 
@@ -20,6 +20,8 @@ def _create_entry(element: SOMcreator.Aggregation) -> AggregationDict:
     else:
         aggregation_dict[PARENT] = str(element.parent)
     aggregation_dict[CONNECTION] = element.parent_connection
+    if element.get_identity_text():
+        aggregation_dict[IDENTITY_TEXT] = element.get_identity_text()
     return aggregation_dict
 
 

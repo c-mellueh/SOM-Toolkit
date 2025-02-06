@@ -2,17 +2,29 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
 
-from PySide6.QtCore import QPointF, Qt
+from PySide6.QtCore import QPointF, Qt,QCoreApplication
 from PySide6.QtGui import QPainter, QPalette, QPen
 from PySide6.QtWidgets import QTreeWidgetItem
-
+import logging
 import SOMcreator
 from som_gui.core import property_set_window as property_set_window_core
-
 if TYPE_CHECKING:
-    from som_gui.plugins.aggregation_window.tool import View, Node
+    from som_gui.plugins.aggregation_window.tool import View, Node,Window
     from som_gui import tool
     from som_gui.plugins.aggregation_window.module.node.ui import Header, NodeProxy, PropertySetTree, Circle
+
+def rename_identity_text(active_node:NodeProxy,  popups: Type[tool.Popups],window:Type[Window],node:Type[Node]) -> None:
+    if not active_node.bottom_connections:
+        return
+    prefill = active_node.aggregation.get_identity_text()
+    title = QCoreApplication.translate("Connection", "Change label")
+    request_text = QCoreApplication.translate("Connection", "Enter new label value:")
+    parent = window.get_window()
+    new_text =  popups._request_text_input(title,request_text,prefill,parent)
+    if new_text is None:
+        return
+    active_node.aggregation.set_identity_text(new_text)
+    active_node.update()
 
 
 def pset_tree_double_clicked(item: QTreeWidgetItem, node: Type[Node], property_set_window: Type[tool.PropertySetWindow],
@@ -50,9 +62,10 @@ def header_drag_move(header: Header, dif: QPointF, view: Type[View], node: Type[
 
 
 def paint_header(painter: QPainter, header: Header, node: Type[Node]) -> None:
+    logging.debug(f"Paint Header {node.get_node_from_header(header).aggregation.name}")
+
     painter.save()
     painter.restore()
-
     painter.setBrush(QPalette().base())
     rect = node.get_header_geometry(header, header.node)
     header.setRect(rect)
@@ -61,6 +74,10 @@ def paint_header(painter: QPainter, header: Header, node: Type[Node]) -> None:
     pset_name, attribute_name = node.get_title_settings()
     title_text = node.get_title(active_node, pset_name, attribute_name)
     painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, title_text)
+
+    for child_node in node.get_child_nodes(header.node):
+        child_node.header.update()
+        
 
 
 def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]) -> None:
@@ -102,15 +119,14 @@ def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]) -> None:
 
 
 def paint_node(active_node: NodeProxy, node: Type[Node]) -> None:
+    logging.debug(f"Paint Node {active_node.aggregation.name}")
     frame = active_node.frame
     frame.setRect(node.get_frame_geometry(frame, active_node))
     if active_node.isSelected():
         frame.setPen(QPalette().accent().color())
     else:
         frame.setPen(QPen(QPalette().text().color()))
-
     node.update_circle_rect(active_node.circle)
-
 
 def paint_circle(circle: Circle, node: Type[Node]) -> None:
     node.update_circle_rect(circle)

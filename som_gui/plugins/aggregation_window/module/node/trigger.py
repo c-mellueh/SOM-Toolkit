@@ -33,6 +33,10 @@ def header_clicked(header: ui.Header) -> None:
     core.node_clicked(header.node, aw_tool.Node)
 
 
+def header_double_clicked(header: ui.Header) -> None:
+    core.rename_identity_text(header.node, tool.Popups, aw_tool.Window,aw_tool.Node)
+
+
 def paint_propertyset_tree(tree: ui.PropertySetTree) -> None:
     core.paint_pset_tree(tree, aw_tool.Node)
 
