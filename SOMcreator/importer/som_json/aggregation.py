@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import SOMcreator
 from SOMcreator.importer.som_json import core
-from SOMcreator.datastructure.som_json import AGGREGATIONS, AggregationDict, CONNECTION, OBJECT
+from SOMcreator.datastructure.som_json import AGGREGATIONS, AggregationDict, CONNECTION, OBJECT,IDENTITY_TEXT
 
 from typing import TYPE_CHECKING
 
@@ -17,8 +17,9 @@ def _get_aggregation(proj: SOMcreator.Project, aggregation_dict: AggregationDict
     object_uuid = aggregation_dict[OBJECT]
     obj = SOMcreator.importer.som_json.object_uuid_dict[object_uuid]
     parent_connection = aggregation_dict[CONNECTION]
+    identity_text = aggregation_dict.get(IDENTITY_TEXT)
     aggregation = SOMcreator.Aggregation(obj=obj, parent_connection=parent_connection, uuid=identifier,
-                                         description=description, optional=optional, filter_matrix=filter_matrix)
+                                         description=description, optional=optional, filter_matrix=filter_matrix,identity_text=identity_text)
     SOMcreator.importer.som_json.aggregation_dict[aggregation] = (parent, parent_connection)
 
 
