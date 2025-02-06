@@ -93,6 +93,7 @@ class Object(som_gui.core.tool.Object):
             selected_item.setSelected(False)
         item.setSelected(True)
         cls.expand_to_item(item)
+        cls.get_object_tree().scrollToItem(item)
 
     @classmethod
     def expand_to_item(cls, item: QTreeWidgetItem):

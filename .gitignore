@@ -12,3 +12,4 @@ test.*
 **/rc_som_gui.py
 /.project
 **.ps1
+**__pycache__**
