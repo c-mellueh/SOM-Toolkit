@@ -77,26 +77,40 @@ def move_header(
 
 
 def paint_header(painter: QPainter, header: Header, node: Type[Node]) -> None:
-    logging.debug(f"Paint Header {node.get_node_from_header(header).aggregation.name} {header.rect()}")
+    """
+    Paints the header of a node in the aggregation window.
+    Resizes the header to fit the title text.
+
+    :param painter: The painter object used to draw the header.
+    :type painter: QPainter
+    :param header: The header object that needs to be painted.
+    :type header: Header
+    :param node: The node type that contains the header.
+    :type node: Type[Node]
+    :returns: None
+    :rtype: None
+    """
+    active_node = node.get_node_from_header(header)
+
+    logging.debug(f"Paint Header {active_node.aggregation.name} {header.rect()}")
     painter.save()
     painter.restore()
     painter.setBrush(QPalette().base())
-    rect = node.get_header_geometry(header, header.node)
-    pset_name, attribute_name = node.get_title_settings()
+    node.set_font_metric(painter.fontMetrics())
 
-    active_node = node.get_node_from_header(header)
-    title_rows = node.get_title_rows(painter,active_node,rect.width(),pset_name,attribute_name)
-    row_height = painter.fontMetrics().lineSpacing()
-    new_height = len(title_rows)*row_height
-    rect.setY(-new_height)
-    rect.setHeight(new_height)
+    #resize Header
+    rect = node.get_header_geometry(header, header.node)
     header.setRect(rect)
     painter.drawRect(rect)
-    node.draw_header_texts(painter,header,title_rows)
 
+    #write Text into Header
+    pset_name, attribute_name = node.get_title_settings()
+    rows = node.get_title_rows(active_node, rect.width(), pset_name, attribute_name)
+    node.draw_header_texts(painter, header, rows)
+
+    #update Children
     for child_node in node.get_child_nodes(header.node):
         child_node.header.update()
-        
 
 
 def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]) -> None:

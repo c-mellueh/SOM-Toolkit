@@ -1,15 +1,18 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
-from PySide6.QtCore import QSize, QPointF,QRectF,QCoreApplication,Qt
+from PySide6.QtCore import QSize, QPointF, QRectF, QCoreApplication, Qt
 from PySide6.QtWidgets import QTreeWidgetItem
-from PySide6.QtGui import QPainter
+from PySide6.QtGui import QPainter,QFontMetrics,QFont
 import logging
 import SOMcreator
 from SOMcreator import value_constants
 
 import som_gui.plugins.aggregation_window.core.tool
-from som_gui.plugins.aggregation_window.module.node import constants as node_constants, ui as node_ui
+from som_gui.plugins.aggregation_window.module.node import (
+    constants as node_constants,
+    ui as node_ui,
+)
 from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui.module.project.constants import CLASS_REFERENCE
 
@@ -95,11 +98,30 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def get_header_geometry(cls, header, node: node_ui.NodeProxy) -> QRectF:
-        line_width = header.pen().width()  # if ignore Line width: box of Node and Header won't match
-        x = line_width / 2
+        """
+        Get the geometry of a header for a node.
+
+        This method calculates and returns the geometry of the header based on the node's
+        widget size and the header's line width.
+
+        :param header: The header for which to get the geometry.
+        :type header: node_ui.Header
+        :param node: The node associated with the header.
+        :type node: node_ui.NodeProxy
+        :return: The calculated geometry of the header.
+        :rtype: QRectF
+        """
+        font_metric = cls.get_font_metric()
+        line_width = header.pen().width()
         width = node.widget().width() - line_width
-        height = node_constants.HEADER_HEIGHT
-        return QRectF(x, -height, width, height)
+        pset_name, attribute_name = cls.get_title_settings()
+        row_height = font_metric.lineSpacing()
+        rows = cls.get_title_rows(node, width, pset_name, attribute_name)
+        height = len(rows) * row_height
+        
+        x = line_width / 2
+        y = -height
+        return QRectF(x, y, width, height)
 
     @classmethod
     def get_frame_geometry(cls, frame: node_ui.Frame, node: node_ui.NodeProxy) -> QRectF:
@@ -181,8 +203,10 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         circle.text.setY(y)
 
     @classmethod
-    def split_text(cls,painter:QPainter,text:str,seperator:str,max_width:int)->list[str]:
-        font_metrics = painter.fontMetrics()
+    def split_text(
+        cls,  text: str, seperator: str, max_width: int
+    ) -> list[str]:
+        font_metrics = cls.get_font_metric()
         lines = []
         current_line = ""
         for word in text.split(seperator):
@@ -207,12 +231,20 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
             y_offset += line_height
 
     @classmethod
-    def get_title_rows(cls,painter:QPainter, node: node_ui.NodeProxy,max_width:float, pset_name: str|None = None, attribute_name: str|None = None) -> list[str]:
+    def get_title_rows(
+        cls,
+        node: node_ui.NodeProxy,
+        max_width: float,
+        pset_name: str | None = None,
+        attribute_name: str | None = None,
+    ) -> list[str]:
         aggregation = cls.get_aggregation_from_node(node)
         if not (pset_name and attribute_name):
             base_text = f"{aggregation.name} ({aggregation.object.abbreviation})"
-            id_text = QCoreApplication.translate("Aggregation Window","id: {}").format(node.aggregation.identity())
-            id_texts = cls.split_text(painter,id_text,"_",max_width)
+            id_text = QCoreApplication.translate("Aggregation Window", "id: {}").format(
+                node.aggregation.identity()
+            )
+            id_texts = cls.split_text(id_text, "_", max_width)
             return [base_text] + id_texts
         undef = [f"{aggregation.name}\n{attribute_name}: undefined"]
         obj = aggregation.object
