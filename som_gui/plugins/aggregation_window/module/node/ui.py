@@ -38,7 +38,11 @@ class NodeProxy(QGraphicsProxyWidget):
 
         self.thread = None# needed for buchheim algorithm
         self._lmost_sibling = None# needed for buchheim algorithm
-        
+        self.mod = 0# needed for buchheim algorithm
+        self.change = 0# needed for buchheim algorithm
+        self.shift = 0# needed for buchheim algorithm
+        self.ancestor = self# needed for buchheim algorithm
+        self.number = None# needed for buchheim algorithm
     def __str__(self):
         return self.aggregation.name
 

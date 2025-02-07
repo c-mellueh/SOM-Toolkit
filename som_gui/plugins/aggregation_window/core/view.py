@@ -321,16 +321,39 @@ def context_menu_requested(
             lambda: rearange(buchheim,view,node),
         ]
     )
+
+    menu_list.append(
+        [
+            QCoreApplication.translate("Aggregation", "PosInfo"),
+            lambda: show_pos(buchheim,view,node),
+        ]
+    )
+
+
     menu = util.create_context_menu(menu_list)
     menu.exec(view.get_view().viewport().mapToGlobal(pos))
 
     paint_event(view, node, connection, project)
 
+def show_pos(buchheim:Type[aw_tool.Buchheim],view:Type[aw_tool.View],node:Type[aw_tool.Node]):
+    selected_node = list(view.get_selected_nodes())[0]
+    print(f"Node: {selected_node} -> {buchheim.pos(selected_node)}")
 
 def rearange(buchheim:Type[aw_tool.Buchheim],view:Type[aw_tool.View],node:Type[aw_tool.Node]):
     scene = view.get_active_scene()
     all_nodes = view.get_nodes_in_scene(scene)
-    
+    root_node = [n for n in all_nodes if node.is_root(n)][0]
+    buchheim.assign_numbers(root_node)
+    buchheim.buchheim(root_node)
+
+    center = root_node.pos()
+    print(center)
+    for n in all_nodes:
+        x,y = buchheim.pos(n)
+        x = center.x()+x*n.geometry().width()*1.5
+        y = center.y()+y*n.geometry().height()*1.5
+        node.set_node_pos(n,QPointF(x,y))
+
 
 def add_node_at_pos(
     pos,

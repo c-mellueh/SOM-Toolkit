@@ -1,2 +1,2 @@
 class BuchheimProperties:
-    pass
+    position_dict = dict()
