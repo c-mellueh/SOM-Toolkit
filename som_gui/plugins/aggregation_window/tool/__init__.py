@@ -5,3 +5,4 @@ from .modelcheck import Modelcheck
 from .node import Node
 from .view import View
 from .window import Window
+from .buchheim import Buchheim

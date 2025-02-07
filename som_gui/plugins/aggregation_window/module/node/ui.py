@@ -36,6 +36,9 @@ class NodeProxy(QGraphicsProxyWidget):
         self.setFlag(self.GraphicsItemFlag.ItemIsSelectable, True)
         self.setAcceptHoverEvents(True)
 
+        self.thread = None# needed for buchheim algorithm
+        self._lmost_sibling = None# needed for buchheim algorithm
+        
     def __str__(self):
         return self.aggregation.name
 

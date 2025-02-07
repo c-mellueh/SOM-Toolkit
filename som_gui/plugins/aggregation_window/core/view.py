@@ -207,6 +207,7 @@ def context_menu_requested(
     node: Type[aw_tool.Node],
     search: Type[tool.Search],
     connection: Type[aw_tool.Connection],
+    buchheim:Type[aw_tool.Buchheim],
     project: Type[tool.Project],
     util: Type[tool.Util],
 ) -> None:
@@ -314,10 +315,22 @@ def context_menu_requested(
             ]
         )
 
+    menu_list.append(
+        [
+            QCoreApplication.translate("Aggregation", "Rearange"),
+            lambda: rearange(buchheim,view,node),
+        ]
+    )
     menu = util.create_context_menu(menu_list)
     menu.exec(view.get_view().viewport().mapToGlobal(pos))
+
     paint_event(view, node, connection, project)
 
+
+def rearange(buchheim:Type[aw_tool.Buchheim],view:Type[aw_tool.View],node:Type[aw_tool.Node]):
+    scene = view.get_active_scene()
+    all_nodes = view.get_nodes_in_scene(scene)
+    
 
 def add_node_at_pos(
     pos,

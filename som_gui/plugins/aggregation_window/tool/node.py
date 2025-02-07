@@ -622,7 +622,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         Returns:
             set[node_ui.NodeProxy]: A set of child nodes connected to the given node.
         """
-        return {connection.bottom_node for connection in node.bottom_connections}  #
+        return [connection.bottom_node for connection in node.bottom_connections]
 
     @classmethod
     def add_new_values_to_pset_tree(
