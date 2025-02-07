@@ -86,40 +86,9 @@ def paint_header(painter: QPainter, header: Header, node: Type[Node]) -> None:
 
 def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]) -> None:
     selected_node = node.get_node_from_tree_widget(tree_widget)
-    obj = selected_node.aggregation.object
-    ir = tree_widget.invisibleRootItem()
-    property_set_dict = node.get_pset_subelement_dict(ir)
-
-    # add new property_sets and attributes
-    for property_set in obj.get_property_sets(filter=True):
-        if property_set not in property_set_dict:
-            property_set_item = node.add_property_set_to_tree(property_set, tree_widget)
-            property_set_dict[property_set] = property_set_item
-
-        property_set_item = property_set_dict[property_set]
-        if property_set_item.text(0) != property_set.name:
-            property_set_item.setText(0, property_set.name)
-
-        attribute_dict = node.get_pset_subelement_dict(property_set_item)
-
-        for attribute in property_set.get_attributes(filter=True):
-            if attribute not in attribute_dict:
-                attribute_item = node.add_attribute_to_property_set_tree(attribute, property_set_item)
-                attribute_dict[attribute] = attribute_item
-            attribute_item = attribute_dict[attribute]
-            if attribute_item.text(0) != attribute.name:
-                attribute_item.setText(0, attribute.name)
-
-    # delete old property_sets and attributes
-    for property_set, pset_item in property_set_dict.items():
-        if property_set not in obj.get_property_sets(filter=True):
-            ir.removeChild(pset_item)
-            continue
-
-        attribute_dict = node.get_pset_subelement_dict(pset_item)
-        for attribute, attribute_item in attribute_dict.items():
-            if attribute not in property_set.get_attributes(filter=True):
-                pset_item.removeChild(attribute_item)
+    logging.debug(f"Paint Property Set Tree {selected_node.aggregation.name}")
+    pset_dict = node.add_new_values_to_pset_tree(tree_widget)
+    node.delete_old_values_from_pset_tree(tree_widget,pset_dict)
 
 
 def paint_node(active_node: NodeProxy, node: Type[Node]) -> None:

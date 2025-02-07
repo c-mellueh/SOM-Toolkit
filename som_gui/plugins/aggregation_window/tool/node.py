@@ -84,7 +84,8 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         node.setWidget(node_widget)
         node_widget.setMinimumSize(QSize(250, 150))
         node.aggregation = aggregation
-        node.widget().layout().insertWidget(0, cls.create_tree_widget(node))
+        tree_widget = cls.create_tree_widget(node)
+        node.widget().layout().insertWidget(0, tree_widget)
         cls.create_header(node)
         cls.create_frame(node)
         cls.create_resize_rect(node)
@@ -357,3 +358,44 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         """
         return {connection.bottom_node for connection in node.bottom_connections}#
 
+
+    @classmethod
+    def add_new_values_to_pset_tree(cls,tree_widget:node_ui.PropertySetTree) -> dict[SOMcreator.PropertySet|SOMcreator.Attribute,QTreeWidgetItem]:
+        selected_node=cls.get_node_from_tree_widget(tree_widget)
+        obj = selected_node.aggregation.object
+        ir = tree_widget.invisibleRootItem()
+        property_set_dict = cls.get_pset_subelement_dict(ir)
+        for property_set in obj.get_property_sets(filter=True):
+            if property_set not in property_set_dict:
+                property_set_item = cls.add_property_set_to_tree(property_set, tree_widget)
+                property_set_dict[property_set] = property_set_item
+
+            property_set_item = property_set_dict[property_set]
+            if property_set_item.text(0) != property_set.name:
+                property_set_item.setText(0, property_set.name)
+
+            attribute_dict = cls.get_pset_subelement_dict(property_set_item)
+
+            for attribute in property_set.get_attributes(filter=True):
+                if attribute not in attribute_dict:
+                    attribute_item = cls.add_attribute_to_property_set_tree(attribute, property_set_item)
+                    attribute_dict[attribute] = attribute_item
+                attribute_item = attribute_dict[attribute]
+                if attribute_item.text(0) != attribute.name:
+                    attribute_item.setText(0, attribute.name)
+        return property_set_dict
+
+    @classmethod
+    def delete_old_values_from_pset_tree(cls,tree_widget:node_ui.PropertySetTree,property_set_dict:dict[SOMcreator.PropertySet|SOMcreator.Attribute,QTreeWidgetItem]):
+        selected_node=cls.get_node_from_tree_widget(tree_widget)
+        obj = selected_node.aggregation.object
+        ir = tree_widget.invisibleRootItem()
+        for property_set, pset_item in property_set_dict.items():
+            if property_set not in obj.get_property_sets(filter=True):
+                ir.removeChild(pset_item)
+                continue
+
+            attribute_dict = cls.get_pset_subelement_dict(pset_item)
+            for attribute, attribute_item in attribute_dict.items():
+                if attribute not in property_set.get_attributes(filter=True):
+                    pset_item.removeChild(attribute_item)
