@@ -1,9 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
-from PySide6.QtCore import QSize, QPointF
+from PySide6.QtCore import QSize, QPointF,QRectF,QCoreApplication,Qt
 from PySide6.QtWidgets import QTreeWidgetItem
-from PySide6.QtCore import QRectF
+from PySide6.QtGui import QPainter
 import logging
 import SOMcreator
 from SOMcreator import value_constants
@@ -106,7 +106,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         rect = node.rect()
         rect.setWidth(rect.width() - line_width / 2)
         rect.setHeight(rect.height())
-        rect.setY(rect.y() - node_constants.HEADER_HEIGHT)
+        rect.setY(rect.y() - node.header.rect().height())
         rect.setX(rect.x() + frame.pen().width() / 2)
         return rect
 
@@ -179,14 +179,41 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         circle.text.setX(x + 4.5)
         circle.text.setY(y)
 
+    @classmethod
+    def split_text(cls,painter:QPainter,text:str,seperator:str,max_width:int)->list[str]:
+        font_metrics = painter.fontMetrics()
+        lines = []
+        current_line = ""
+        for word in text.split(seperator):
+            if font_metrics.horizontalAdvance(current_line + " " + word) <= max_width:
+                current_line += seperator + word
+            else:
+                lines.append(current_line.strip())
+                current_line = word
+        lines.append(current_line.strip())
+        lines[0] = lines[0][1:]
+        return lines
+    
+    @classmethod
+    def draw_header_texts(cls,painter:QPainter,header:node_ui.Header,lines:list[str]):
+        rect = header.rect()
+        y_offset = rect.y()
+
+        max_width = rect.width()
+        line_height = painter.fontMetrics().lineSpacing()
+        for line in lines:
+            painter.drawText(rect.x(), y_offset, max_width, line_height, Qt.AlignmentFlag.AlignCenter, line)
+            y_offset += line_height
 
     @classmethod
-    def get_title(cls, node: node_ui.NodeProxy, pset_name: str, attribute_name: str) -> str:
+    def get_title_rows(cls,painter:QPainter, node: node_ui.NodeProxy,max_width:float, pset_name: str|None = None, attribute_name: str|None = None) -> list[str]:
         aggregation = cls.get_aggregation_from_node(node)
         if not (pset_name and attribute_name):
             base_text = f"{aggregation.name} ({aggregation.object.abbreviation})"
-            return f"{base_text}\nid: {node.aggregation.identity()}"
-        undef = f"{aggregation.name}\n{attribute_name}: undefined"
+            id_text = QCoreApplication.translate("Aggregation Window","id: {}").format(node.aggregation.identity())
+            id_texts = cls.split_text(painter,id_text,"_",max_width)
+            return [base_text] + id_texts
+        undef = [f"{aggregation.name}\n{attribute_name}: undefined"]
         obj = aggregation.object
         pset = obj.get_property_set_by_name(pset_name)
         if pset is None:
@@ -197,7 +224,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
         if len(attribute.value) == 0:
             return undef
-        return f"{aggregation.name}\n{attribute_name}: {attribute.value[0]}"
+        return  [f"{aggregation.name}\n{attribute_name}: {attribute.value[0]}"]
 
     @classmethod
     def get_aggregation_from_node(cls, node: node_ui.NodeProxy) -> SOMcreator.Aggregation:

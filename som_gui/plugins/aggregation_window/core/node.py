@@ -62,18 +62,22 @@ def header_drag_move(header: Header, dif: QPointF, view: Type[View], node: Type[
 
 
 def paint_header(painter: QPainter, header: Header, node: Type[Node]) -> None:
-    logging.debug(f"Paint Header {node.get_node_from_header(header).aggregation.name}")
-
+    logging.debug(f"Paint Header {node.get_node_from_header(header).aggregation.name} {header.rect()}")
     painter.save()
     painter.restore()
     painter.setBrush(QPalette().base())
     rect = node.get_header_geometry(header, header.node)
+    pset_name, attribute_name = node.get_title_settings()
+
+    active_node = node.get_node_from_header(header)
+    title_rows = node.get_title_rows(painter,active_node,rect.width(),pset_name,attribute_name)
+    row_height = painter.fontMetrics().lineSpacing()
+    new_height = len(title_rows)*row_height
+    rect.setY(-new_height)
+    rect.setHeight(new_height)
     header.setRect(rect)
     painter.drawRect(rect)
-    active_node = node.get_node_from_header(header)
-    pset_name, attribute_name = node.get_title_settings()
-    title_text = node.get_title(active_node, pset_name, attribute_name)
-    painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, title_text)
+    node.draw_header_texts(painter,header,title_rows)
 
     for child_node in node.get_child_nodes(header.node):
         child_node.header.update()
