@@ -2,10 +2,19 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QSizeF, Qt
+from PySide6.QtCore import QSizeF, Qt, QPointF,QPoint
 from PySide6.QtGui import QPaintEvent, QPalette, QPen
-from PySide6.QtWidgets import QGraphicsEllipseItem, QGraphicsItem, QGraphicsProxyWidget, QGraphicsRectItem, \
-    QGraphicsSceneMouseEvent, QGraphicsTextItem, QTreeWidget, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (
+    QGraphicsEllipseItem,
+    QGraphicsItem,
+    QGraphicsProxyWidget,
+    QGraphicsRectItem,
+    QGraphicsSceneMouseEvent,
+    QGraphicsTextItem,
+    QTreeWidget,
+    QVBoxLayout,
+    QWidget,
+)
 
 import SOMcreator
 from . import trigger
@@ -70,19 +79,17 @@ class Header(QGraphicsRectItem):
         trigger.paint_header(self, painter)
 
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        last_pos = self.pos()
-        super().mouseMoveEvent(event)
-        new_pos = self.pos()
-        dif = new_pos - last_pos
-        trigger.drag_move(self, dif)
+        trigger.drag_move(self,event)
+        #super().mouseMoveEvent(event)
 
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         super().mousePressEvent(event)
-        trigger.header_clicked(self)
+        trigger.header_clicked(self,event)
 
     def mouseDoubleClickEvent(self, event):
         trigger.header_double_clicked(self)
         return super().mouseDoubleClickEvent(event)
+
 
 class Frame(QGraphicsRectItem):
     def __init__(self, *args, **kwargs) -> None:

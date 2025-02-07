@@ -688,3 +688,40 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     def get_font_metric(cls) -> Any:
         fm = cls.get_properties().font_metrics
         return QFontMetrics(QFont()) if fm is None else fm
+    
+    @classmethod
+    def set_last_move_direction(cls, move_delta: QPointF) -> None:
+        if move_delta is None:
+            cls.get_properties().last_move_direction = None
+            return
+        direction = 0
+        if move_delta.x() != 0:
+            direction +=1
+        if move_delta.y() != 0:
+            direction +=2 
+        cls.get_properties().last_move_direction = direction
+
+    @classmethod
+    def get_last_move_direction(cls) -> int:
+        """
+        0 = No move, 1 = horizontal, 2 = vertical, 3 = both
+
+        :param cls: Description
+        :type cls: 
+        :return: Description
+        :rtype: int"""
+        return cls.get_properties().last_move_direction
+    
+    @classmethod
+    def is_move_direction_locked(cls) -> bool:
+
+        return cls.get_properties().is_move_direction_locked
+    
+    @classmethod
+    def lock_move_direction(cls, lock: bool) -> None:
+        if lock:
+            logging.debug(f"Lock Move Direction")
+        else:
+            logging.debug(f"Unlock Move Direction")
+
+        cls.get_properties().is_move_direction_locked = lock

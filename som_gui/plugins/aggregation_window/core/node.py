@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Type
 
 from PySide6.QtCore import QPointF, Qt, QCoreApplication
 from PySide6.QtGui import QPainter, QPalette, QPen
-from PySide6.QtWidgets import QTreeWidgetItem
+from PySide6.QtWidgets import QTreeWidgetItem,QGraphicsSceneMouseEvent
 import logging
 import SOMcreator
 from som_gui.core import property_set_window as property_set_window_core
@@ -94,12 +94,15 @@ def pset_tree_double_clicked(
     )
 
 
-def increment_z_of_node(selected_node: NodeProxy, node: Type[Node]) -> None:
+def header_click(header:Header,event: QGraphicsSceneMouseEvent, node: Type[Node]) -> None:
+    selected_node = header.node
     node.set_z_level_of_node(selected_node, node.increment_z_level())
-
+    if event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+        node.lock_move_direction(True)
+        node.set_last_move_direction(None)
 
 def move_header(
-    header: Header, dif: QPointF, view: Type[View], node: Type[Node]
+    header: Header,event: QGraphicsSceneMouseEvent, view: Type[View], node: Type[Node]
 ) -> None:
     """
     Moves the header and subsequently the selected nodes by a given difference vector.
@@ -114,14 +117,26 @@ def move_header(
     :return: None
     :rtype: None
     """
+    if node.is_move_direction_locked():
+        direction = node.get_last_move_direction()
+        if direction is None:
+            node.set_last_move_direction(event.pos()-event.lastPos())
+        if direction == 1:
+            event.setPos(QPointF(event.pos().x(), event.lastPos().y()))
+        
+        if direction == 2:
+            event.setPos(QPointF(event.lastPos().x(), event.pos().y()))
+    else:
+        node.set_last_move_direction(event.pos()-event.lastPos())
+    dif = event.pos()-event.lastPos()
+    header.setPos(header.mapToParent(dif))
     selected_nodes = view.get_active_scene().selectedItems()
     active_node = node.get_node_from_header(header)
     for selected_node in selected_nodes:
         if active_node != selected_node:
             selected_node.header.moveBy(dif.x(), dif.y())
         node.move_node(selected_node, dif)
-
-
+    return event
 def paint_header(painter: QPainter, header: Header, node: Type[Node]) -> None:
     """
     Paints the header of a node in the aggregation window.

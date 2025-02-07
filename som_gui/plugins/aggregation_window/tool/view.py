@@ -279,14 +279,14 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
     @classmethod
     def set_mouse_mode(cls, mode: int) -> None:
         """
-        mode: 0= None 1= pan, 2= drag, 3 = resize 4 = selection_rect
+        mode: 0= None 1= pan, 2= drag, 3 = resize 4 = selection_rect 5=draw_connection
         """
         cls.get_properties().mouse_mode = mode
 
     @classmethod
     def get_mouse_mode(cls) -> int:
         """
-        mode: 0= None 1= pan, 2= drag 3 = resize
+        mode: 0= None 1= pan, 2= drag 3 = resize 4 = selection_rect 5=draw_connection
         """
         return cls.get_properties().mouse_mode
 

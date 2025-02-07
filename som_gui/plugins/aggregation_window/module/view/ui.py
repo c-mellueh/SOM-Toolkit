@@ -26,6 +26,10 @@ class AggregationView(QGraphicsView):
         trigger.key_press_event(event)
         super().keyPressEvent(event)
 
+    def keyReleaseEvent(self, event):
+        trigger.key_release_event(event)
+        return super().keyReleaseEvent(event)
+
     def paintEvent(self, event: QPaintEvent) -> None:
         super().paintEvent(event)
         trigger.view_paint_event()

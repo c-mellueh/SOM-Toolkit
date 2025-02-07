@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 
 from PySide6.QtCore import QCoreApplication, QPoint, QPointF, Qt
-
+import logging
 import SOMcreator
 from SOMcreator import value_constants
 from som_gui import tool
@@ -14,7 +14,8 @@ if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.module.node import ui as node_ui
 
 
-def key_press_event(event: QKeyEvent, view: Type[aw_tool.View], connection: Type[aw_tool.Connection]) -> None:
+def key_press_event(event: QKeyEvent, view: Type[aw_tool.View], connection: Type[aw_tool.Connection],node:Type[aw_tool.Node]) -> None:
+    logging.debug(f"Key pressed: {event.key()}")
     mouse_mode = view.get_mouse_mode()
     if mouse_mode == 5 and event.key() == Qt.Key.Key_Escape:
         connection.delete_draw_connection()
@@ -25,7 +26,15 @@ def key_press_event(event: QKeyEvent, view: Type[aw_tool.View], connection: Type
         for node in nodes:
             view.remove_node_from_scene(node, view.get_active_scene())
 
+    if mouse_mode == 2 and event.key() == Qt.Key.Key_Control:
+        node.lock_move_direction(True)
+        
 
+def key_release_event(event: QKeyEvent, view: Type[aw_tool.View], node: Type[aw_tool.Node]) -> None:
+    logging.debug(f"Key released: {event.key()}")
+    mouse_mode = view.get_mouse_mode()
+    if  event.key() == Qt.Key.Key_Control:
+        node.lock_move_direction(False)
 def import_pos_from_project(view: Type[aw_tool.View], project: Type[tool.Project]) -> None:
     view.import_aggregations_from_project(project.get())
 
@@ -74,9 +83,10 @@ def mouse_move_event(position: QPoint, view: Type[aw_tool.View], node: Type[aw_t
                      connection: Type[aw_tool.Connection], ):
     last_pos = view.get_last_mouse_pos()
     mouse_mode = view.get_mouse_mode()
-    if mouse_mode == 3:
+
+    if mouse_mode == 3: #resize
         node.resize_node(view.get_resize_node(), last_pos, view.map_to_scene(position))
-    if mouse_mode == 5:
+    if mouse_mode == 5: #draw connection
         connection.draw_connection(view.get_active_scene(), view.map_to_scene(position))
         connection.set_draw_started(True)
     view.set_last_mouse_pos(view.map_to_scene(position))

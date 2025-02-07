@@ -37,7 +37,10 @@ def context_menu_requested(pos) -> None:
 
 
 def key_press_event(event) -> None:
-    core.key_press_event(event, aw_tool.View, aw_tool.Connection)
+    core.key_press_event(event, aw_tool.View, aw_tool.Connection,aw_tool.Node)
+
+def key_release_event(event) -> None:
+    core.key_release_event(event,aw_tool.View,aw_tool.Node)
 
 
 def add_object_to_scene(obj, scene=None, parent_node=None, pos=None):
