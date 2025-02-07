@@ -45,3 +45,5 @@ DATATYPE_DICT = {
     INTEGER: int,
     REAL:    float
 }
+
+IDENTITY_PLACEHOLDER = "xxx"

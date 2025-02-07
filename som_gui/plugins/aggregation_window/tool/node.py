@@ -1,15 +1,18 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
-from PySide6.QtCore import QSize, QPointF
+from PySide6.QtCore import QSize, QPointF, QRectF, QCoreApplication, Qt
 from PySide6.QtWidgets import QTreeWidgetItem
-from PySide6.QtCore import QRectF
+from PySide6.QtGui import QPainter,QFontMetrics,QFont
 import logging
 import SOMcreator
 from SOMcreator import value_constants
 
 import som_gui.plugins.aggregation_window.core.tool
-from som_gui.plugins.aggregation_window.module.node import constants as node_constants, ui as node_ui
+from som_gui.plugins.aggregation_window.module.node import (
+    constants as node_constants,
+    ui as node_ui,
+)
 from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui.module.project.constants import CLASS_REFERENCE
 
@@ -24,6 +27,17 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def set_z_level_of_node(cls, node: node_ui.NodeProxy, z_level: int) -> None:
+        """
+        Set the Z level of the given node and its components.
+
+        This method updates the Z level (stacking order) of the specified node and its
+        associated graphical components (frame, header, resize rectangle, and circle).
+
+        :param node_ui.NodeProxy node: The node whose Z level is to be set.
+        :param int z_level: The Z level to set for the node and its components.
+        :returns: None
+        :rtype: None
+        """
         node.setZValue(z_level)
         node.frame.setZValue(z_level)
         node.header.setZValue(z_level)
@@ -32,6 +46,12 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def increment_z_level(cls) -> int:
+
+        """
+        Increments the z_level property of the class by 1.
+        :return: The updated z_level value.
+        :rtype: int
+        """
         cls.get_properties().z_level += 1
         return cls.get_properties().z_level
 
@@ -40,8 +60,23 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         return cls.get_properties().z_level
 
     @classmethod
-    def add_property_set_to_tree(cls, property_set: SOMcreator.PropertySet,
-                                 tree_widget: node_ui.PropertySetTree) -> QTreeWidgetItem:
+    def add_property_set_to_tree(
+        cls, property_set: SOMcreator.PropertySet, tree_widget: node_ui.PropertySetTree
+    ) -> QTreeWidgetItem:
+        """
+        Add a property set to the tree widget.
+
+        This method creates a new QTreeWidgetItem for the given property set and adds it 
+        to the specified tree widget. The item's text is set to the name of the property 
+        set, and its data is set to reference the property set.
+
+        :param property_set: The property set to add to the tree.
+        :type property_set: SOMcreator.PropertySet
+        :param tree_widget: The tree widget to which the property set item will be added.
+        :type tree_widget: node_ui.PropertySetTree
+        :return: The created QTreeWidgetItem representing the property set.
+        :rtype: QTreeWidgetItem
+        """
         item = QTreeWidgetItem()
         item.setText(0, property_set.name)
         item.setData(0, CLASS_REFERENCE, property_set)
@@ -49,13 +84,44 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         return item
 
     @classmethod
-    def get_pset_subelement_dict(cls, item: QTreeWidgetItem) -> dict[
-        SOMcreator.PropertySet | SOMcreator.Attribute, QTreeWidgetItem]:
-        return {cls.get_linked_item(item.child(i)): item.child(i) for i in range(item.childCount())}
+    def get_pset_subelement_dict(
+        cls, item: QTreeWidgetItem
+    ) -> dict[SOMcreator.PropertySet | SOMcreator.Attribute, QTreeWidgetItem]:
+        """
+        Generate a dictionary mapping property sets or attributes to their corresponding tree widget items.
+
+        This method iterates over the children of the given QTreeWidgetItem and creates a dictionary
+        where the keys are the linked property sets or attributes, and the values are the corresponding
+        QTreeWidgetItem instances.
+
+        :param item: The QTreeWidgetItem whose children are to be processed.
+        :type item: QTreeWidgetItem
+        :return: A dictionary mapping property sets or attributes to their corresponding tree widget items.
+        :rtype: dict[SOMcreator.PropertySet | SOMcreator.Attribute, QTreeWidgetItem]
+        """
+        return {
+            cls.get_linked_item(item.child(i)): item.child(i)
+            for i in range(item.childCount())
+        }
 
     @classmethod
-    def add_attribute_to_property_set_tree(cls, attribute: SOMcreator.Attribute,
-                                           property_set_item: QTreeWidgetItem) -> QTreeWidgetItem:
+    def add_attribute_to_property_set_tree(
+        cls, attribute: SOMcreator.Attribute, property_set_item: QTreeWidgetItem
+    ) -> QTreeWidgetItem:
+        """
+        Add an attribute to a property set tree item.
+
+        This method creates a new QTreeWidgetItem for the given attribute and adds it 
+        as a child to the specified property set item. The item's text is set to the 
+        name of the attribute, and its data is set to reference the attribute.
+
+        :param attribute: The attribute to add to the property set tree item.
+        :type attribute: SOMcreator.Attribute
+        :param property_set_item: The property set item to which the attribute item will be added.
+        :type property_set_item: QTreeWidgetItem
+        :return: The created QTreeWidgetItem representing the attribute.
+        :rtype: QTreeWidgetItem
+        """
         attribute_item = QTreeWidgetItem()
         attribute_item.setText(0, attribute.name)
         attribute_item.setData(0, CLASS_REFERENCE, attribute)
@@ -64,6 +130,17 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def create_tree_widget(cls, node: node_ui.NodeProxy) -> node_ui.PropertySetTree:
+        """
+        Create a tree widget for a node.
+
+        This method creates a new PropertySetTree widget, sets its header label to "Name",
+        and associates it with the given node.
+
+        :param node: The node for which to create the tree widget.
+        :type node: node_ui.NodeProxy
+        :return: The created PropertySetTree widget.
+        :rtype: node_ui.PropertySetTree
+        """
         widget = node_ui.PropertySetTree()
         widget.setHeaderLabel("Name")
         widget.node = node
@@ -71,6 +148,17 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def create_circle(cls, node: node_ui.NodeProxy) -> node_ui.Circle:
+        """
+        Create a circle for a node.
+
+        This method creates a new Circle instance, associates it with the given node,
+        and sets the node's circle attribute to the created circle. The Circle will contain the "+" sign.
+
+        :param node: The node for which to create the circle.
+        :type node: node_ui.NodeProxy
+        :return: The created Circle instance.
+        :rtype: node_ui.Circle
+        """
         circle = node_ui.Circle()
         circle.node = node
         circle.text.node = node
@@ -79,12 +167,24 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def create_node(cls, aggregation: SOMcreator.Aggregation) -> node_ui.NodeProxy:
+        """
+        Create a node for an aggregation.
+
+        This method creates a new NodeProxy instance, sets up its widget, header, frame,
+        resize rectangle, and circle, and sets its Z level.
+
+        :param aggregation: The aggregation for which to create the node.
+        :type aggregation: SOMcreator.Aggregation
+        :return: The created NodeProxy instance.
+        :rtype: node_ui.NodeProxy
+        """
         node = node_ui.NodeProxy()
         node_widget = node_ui.NodeWidget()
         node.setWidget(node_widget)
         node_widget.setMinimumSize(QSize(250, 150))
         node.aggregation = aggregation
-        node.widget().layout().insertWidget(0, cls.create_tree_widget(node))
+        tree_widget = cls.create_tree_widget(node)
+        node.widget().layout().insertWidget(0, tree_widget)
         cls.create_header(node)
         cls.create_frame(node)
         cls.create_resize_rect(node)
@@ -94,26 +194,70 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def get_header_geometry(cls, header, node: node_ui.NodeProxy) -> QRectF:
-        line_width = header.pen().width()  # if ignore Line width: box of Node and Header won't match
-        x = line_width / 2
+        """
+        Get the geometry of a header for a node.
+
+        This method calculates and returns the geometry of the header based on the node's
+        widget size and the header's line width.
+
+        :param header: The header for which to get the geometry.
+        :type header: node_ui.Header
+        :param node: The node associated with the header.
+        :type node: node_ui.NodeProxy
+        :return: The calculated geometry of the header.
+        :rtype: QRectF
+        """
+        font_metric = cls.get_font_metric()
+        line_width = header.pen().width()
         width = node.widget().width() - line_width
-        height = node_constants.HEADER_HEIGHT
-        return QRectF(x, -height, width, height)
+        pset_name, attribute_name = cls.get_title_settings()
+        row_height = font_metric.lineSpacing()
+        rows = cls.get_title_rows(node, width, pset_name, attribute_name)
+        height = len(rows) * row_height
+        
+        x = line_width / 2
+        y = -height
+        return QRectF(x, y, width, height)
 
     @classmethod
-    def get_frame_geometry(cls, frame: node_ui.Frame, node: node_ui.NodeProxy) -> QRectF:
+    def get_frame_geometry(
+        cls, frame: node_ui.Frame, node: node_ui.NodeProxy
+    ) -> QRectF:
+        """
+        Get the geometry of a frame for a node.
+
+        This method calculates and returns the geometry of the frame based on the node's
+        rectangle and the frame's line width.
+
+        :param frame: The frame for which to get the geometry.
+        :type frame: node_ui.Frame
+        :param node: The node associated with the frame.
+        :type node: node_ui.NodeProxy
+        :return: The calculated geometry of the frame.
+        :rtype: QRectF
+        """
         line_width = frame.pen().width()
         rect = node.rect()
         rect.setWidth(rect.width() - line_width / 2)
         rect.setHeight(rect.height())
-        rect.setY(rect.y() - node_constants.HEADER_HEIGHT)
+        rect.setY(rect.y() - node.header.rect().height())
         rect.setX(rect.x() + frame.pen().width() / 2)
         return rect
 
     @classmethod
     def create_header(cls, node: node_ui.NodeProxy) -> node_ui.Header:
-        header = node_ui.Header()
+        """
+        Create a header for a node.
 
+        This method creates a new Header instance, sets its geometry based on the node,
+        and associates it with the node.
+
+        :param node: The node for which to create the header.
+        :type node: node_ui.NodeProxy
+        :return: The created Header instance.
+        :rtype: node_ui.Header
+        """
+        header = node_ui.Header()
         header.setRect(cls.get_header_geometry(header, node))
         node.header = header
         header.node = node
@@ -121,9 +265,19 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def create_frame(cls, node: node_ui.NodeProxy) -> node_ui.Frame:
+        """
+        Create a frame for a node.
+
+        This method creates a new Frame instance, sets its geometry based on the node,
+        and associates it with the node.
+
+        :param node: The node for which to create the frame.
+        :type node: node_ui.NodeProxy
+        :return: The created Frame instance.
+        :rtype: node_ui.Frame
+        """
         frame = node_ui.Frame()
         rect = cls.get_frame_geometry(frame, node)
-
         frame.setRect(rect)
         node.frame = frame
         frame.node = node
@@ -131,6 +285,17 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def create_resize_rect(cls, node: node_ui.NodeProxy) -> node_ui.ResizeRect:
+        """
+        Create a resize rectangle for a node.
+
+        This method creates a new ResizeRect instance, sets its geometry based on the node,
+        and associates it with the node.
+
+        :param node: The node for which to create the resize rectangle.
+        :type node: node_ui.NodeProxy
+        :return: The created ResizeRect instance.
+        :rtype: node_ui.ResizeRect
+        """
         size = node_constants.RESIZE_RECT_SIZE
         frame_rect = node.rect()
         x, y = frame_rect.width() - size / 2, frame_rect.height() - size / 2
@@ -141,19 +306,64 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         return resize_rect
 
     @classmethod
-    def get_linked_item(cls, pset_tree_item: QTreeWidgetItem) -> SOMcreator.PropertySet | SOMcreator.Attribute:
+    def get_linked_item(
+        cls, pset_tree_item: QTreeWidgetItem
+    ) -> SOMcreator.PropertySet | SOMcreator.Attribute:
+        """
+        Get the linked item from a property set tree item.
+
+        This method retrieves the data associated with the given property set tree item,
+        which can be either a PropertySet or an Attribute.
+
+        :param pset_tree_item: The property set tree item from which to get the linked item.
+        :type pset_tree_item: QTreeWidgetItem
+        :return: The linked item, either a PropertySet or an Attribute.
+        :rtype: SOMcreator.PropertySet | SOMcreator.Attribute
+        """
         return pset_tree_item.data(0, CLASS_REFERENCE)
 
     @classmethod
     def get_node_from_header(cls, header: node_ui.Header) -> node_ui.NodeProxy:
+        """
+        Get the node associated with a header.
+
+        This method retrieves the node associated with the given header.
+
+        :param header: The header from which to get the associated node.
+        :type header: node_ui.Header
+        :return: The node associated with the header.
+        :rtype: node_ui.NodeProxy
+        """
         return header.node
 
     @classmethod
     def get_frame_from_node(cls, node: node_ui.NodeProxy) -> node_ui.Frame:
+        """
+        Get the frame associated with a node.
+
+        This method retrieves the frame associated with the given node.
+
+        :param node: The node from which to get the associated frame.
+        :type node: node_ui.NodeProxy
+        :return: The frame associated with the node.
+        :rtype: node_ui.Frame
+        """
         return node.frame
 
     @classmethod
     def move_node(cls, node: node_ui.NodeProxy, dif: QPointF) -> None:
+        """
+        Move a node by a given difference.
+
+        This method moves the node and its associated components (frame, resize rectangle, and circle)
+        by the specified difference in position.
+
+        :param node: The node to move.
+        :type node: node_ui.NodeProxy
+        :param dif: The difference in position by which to move the node.
+        :type dif: QPointF
+        :return: None
+        """
         node.moveBy(dif.x(), dif.y())
         frame = cls.get_frame_from_node(node)
         frame.moveBy(dif.x(), dif.y())
@@ -162,6 +372,17 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def set_node_pos(cls, node: node_ui.NodeProxy, pos: QPointF) -> None:
+        """
+        Set the position of a node.
+
+        This method sets the position of the node and its header to the specified position.
+
+        :param node: The node to set the position for.
+        :type node: node_ui.NodeProxy
+        :param pos: The position to set for the node.
+        :type pos: QPointF
+        :return: None
+        """
         dif = pos - node.header.scenePos()
         node.header.moveBy(dif.x(), dif.y())
         cls.move_node(node, dif)
@@ -173,20 +394,68 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         circle.setRect(QRectF(x, y, circle.DIAMETER, circle.DIAMETER))
         scene_pos = aw_tool.View.get_scene_cursor_pos()
         frame = circle.node.frame
-        margin = 1.
-        bounding_rect = frame.sceneBoundingRect().adjusted(-margin, -margin, margin, margin)
+        margin = 1.0
+        bounding_rect = frame.sceneBoundingRect().adjusted(
+            -margin, -margin, margin, margin
+        )
         circle.show() if bounding_rect.contains(scene_pos) else circle.hide()
         circle.text.setX(x + 4.5)
         circle.text.setY(y)
 
+    @classmethod
+    def split_text(
+        cls,  text: str, seperator: str, max_width: int
+    ) -> list[str]:
+        font_metrics = cls.get_font_metric()
+        lines = []
+        current_line = ""
+        for word in text.split(seperator):
+            if font_metrics.horizontalAdvance(current_line + " " + word) <= max_width:
+                current_line += seperator + word
+            else:
+                lines.append(current_line.strip())
+                current_line = word
+        lines.append(current_line.strip())
+        lines[0] = lines[0][1:]
+        return lines
 
     @classmethod
-    def get_title(cls, node: node_ui.NodeProxy, pset_name: str, attribute_name: str) -> str:
+    def draw_header_texts(
+        cls, painter: QPainter, header: node_ui.Header, lines: list[str]
+    ):
+        rect = header.rect()
+        y_offset = rect.y()
+
+        max_width = rect.width()
+        line_height = painter.fontMetrics().lineSpacing()
+        for line in lines:
+            painter.drawText(
+                rect.x(),
+                y_offset,
+                max_width,
+                line_height,
+                Qt.AlignmentFlag.AlignCenter,
+                line,
+            )
+            y_offset += line_height
+
+    @classmethod
+    def get_title_rows(
+        cls,
+        node: node_ui.NodeProxy,
+        max_width: float,
+        pset_name: str | None = None,
+        attribute_name: str | None = None,
+    ) -> list[str]:
         aggregation = cls.get_aggregation_from_node(node)
         if not (pset_name and attribute_name):
             base_text = f"{aggregation.name} ({aggregation.object.abbreviation})"
-            return f"{base_text}\nid: {node.aggregation.identity()}"
-        undef = f"{aggregation.name}\n{attribute_name}: undefined"
+            id_text = QCoreApplication.translate("Aggregation Window", "id: {}").format(
+                node.aggregation.identity()
+            )
+            id_texts = cls.split_text(id_text, "_", max_width)
+            return [base_text] + id_texts
+        undef = [f"{aggregation.name}\n{attribute_name}: undefined"]
         obj = aggregation.object
         pset = obj.get_property_set_by_name(pset_name)
         if pset is None:
@@ -197,10 +466,12 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
         if len(attribute.value) == 0:
             return undef
-        return f"{aggregation.name}\n{attribute_name}: {attribute.value[0]}"
+        return [f"{aggregation.name}\n{attribute_name}: {attribute.value[0]}"]
 
     @classmethod
-    def get_aggregation_from_node(cls, node: node_ui.NodeProxy) -> SOMcreator.Aggregation:
+    def get_aggregation_from_node(
+        cls, node: node_ui.NodeProxy
+    ) -> SOMcreator.Aggregation:
         return node.aggregation
 
     @classmethod
@@ -209,18 +480,28 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def set_title_settings(cls, pset_name: str, attribute_name: str) -> None:
-        cls.get_properties().title_pset, cls.get_properties().title_attribute = pset_name, attribute_name
+        cls.get_properties().title_pset, cls.get_properties().title_attribute = (
+            pset_name,
+            attribute_name,
+        )
 
     @classmethod
     def reset_title_settings(cls) -> None:
-        cls.get_properties().title_pset, cls.get_properties().title_attribute = None, None
+        cls.get_properties().title_pset, cls.get_properties().title_attribute = (
+            None,
+            None,
+        )
 
     @classmethod
-    def get_node_from_tree_widget(cls, tree_widget: node_ui.PropertySetTree) -> node_ui.NodeProxy:
+    def get_node_from_tree_widget(
+        cls, tree_widget: node_ui.PropertySetTree
+    ) -> node_ui.NodeProxy:
         return tree_widget.node
 
     @classmethod
-    def is_node_connected_to_node(cls, node1: node_ui.NodeProxy, node2: node_ui.NodeProxy) -> bool:
+    def is_node_connected_to_node(
+        cls, node1: node_ui.NodeProxy, node2: node_ui.NodeProxy
+    ) -> bool:
         if node1.top_connection and node1.top_connection.top_node == node2:
             return True
         if node2.top_connection and node2.top_connection.top_node == node1:
@@ -244,7 +525,9 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         return isinstance(item, node_ui.PlusText)
 
     @classmethod
-    def resize_node(cls, node: node_ui.NodeProxy, last_pos: QPointF, new_pos: QPointF) -> None:
+    def resize_node(
+        cls, node: node_ui.NodeProxy, last_pos: QPointF, new_pos: QPointF
+    ) -> None:
         dif = new_pos - last_pos
         dx, dy = dif.x(), dif.y()
         geom = node.geometry()
@@ -252,10 +535,10 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         width = geom.width() + dx
         if height >= node.minimumHeight():
             geom.setHeight(height)
-            node.resize_rect.moveBy(0., dy)
+            node.resize_rect.moveBy(0.0, dy)
         if width >= node.minimumWidth():
             geom.setWidth(width)
-            node.resize_rect.moveBy(dx, 0.)
+            node.resize_rect.moveBy(dx, 0.0)
         node.setGeometry(geom)
         node.circle.update()
 
@@ -274,12 +557,18 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         center = min(pos_list) + (max(pos_list) - min(pos_list)) / 2
         for node in nodes:
             node_pos = getattr(node.geometry(), func_name)()
-            dif = QPointF(center - node_pos, 0.) if orientation == 0 else QPointF(0., center - node_pos)
+            dif = (
+                QPointF(center - node_pos, 0.0)
+                if orientation == 0
+                else QPointF(0.0, center - node_pos)
+            )
             cls.move_node(node, dif)
             node.header.moveBy(dif.x(), dif.y())
 
     @classmethod
-    def distribute_by_layer(cls, nodes: set[node_ui.NodeProxy], orientation: int) -> None:
+    def distribute_by_layer(
+        cls, nodes: set[node_ui.NodeProxy], orientation: int
+    ) -> None:
         node_dict = {cls.get_node_level(node): set() for node in nodes}
         [node_dict[cls.get_node_level(node)].add(node) for node in nodes]
         for level, node_set in node_dict.items():
@@ -296,10 +585,18 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         full_length = border_2 - border_1
         distance_between_nodes = full_length / (len(nodes) - 1)
 
-        for index, node in enumerate(sorted(nodes, key=lambda node: getattr(node.geometry().center(), func_name)())):
+        for index, node in enumerate(
+            sorted(
+                nodes, key=lambda node: getattr(node.geometry().center(), func_name)()
+            )
+        ):
             new_pos = border_1 + index * distance_between_nodes
             old_pos = getattr(node.geometry().center(), func_name)()
-            dif = QPointF(new_pos - old_pos, 0.) if orientation == 0 else QPointF(0., new_pos - old_pos)
+            dif = (
+                QPointF(new_pos - old_pos, 0.0)
+                if orientation == 0
+                else QPointF(0.0, new_pos - old_pos)
+            )
             cls.move_node(node, dif)
             node.header.moveBy(dif.x(), dif.y())
 
@@ -316,7 +613,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         if not tc:
             return None
         return tc.top_node
-    
+
     @classmethod
     def get_child_nodes(cls, node: node_ui.NodeProxy) -> set[node_ui.NodeProxy]:
         """
@@ -328,5 +625,66 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         Returns:
             set[node_ui.NodeProxy]: A set of child nodes connected to the given node.
         """
-        return {connection.bottom_node for connection in node.bottom_connections}#
+        return {connection.bottom_node for connection in node.bottom_connections}  #
 
+    @classmethod
+    def add_new_values_to_pset_tree(
+        cls, tree_widget: node_ui.PropertySetTree
+    ) -> dict[SOMcreator.PropertySet | SOMcreator.Attribute, QTreeWidgetItem]:
+        selected_node = cls.get_node_from_tree_widget(tree_widget)
+        obj = selected_node.aggregation.object
+        ir = tree_widget.invisibleRootItem()
+        property_set_dict = cls.get_pset_subelement_dict(ir)
+        for property_set in obj.get_property_sets(filter=True):
+            if property_set not in property_set_dict:
+                property_set_item = cls.add_property_set_to_tree(
+                    property_set, tree_widget
+                )
+                property_set_dict[property_set] = property_set_item
+
+            property_set_item = property_set_dict[property_set]
+            if property_set_item.text(0) != property_set.name:
+                property_set_item.setText(0, property_set.name)
+
+            attribute_dict = cls.get_pset_subelement_dict(property_set_item)
+
+            for attribute in property_set.get_attributes(filter=True):
+                if attribute not in attribute_dict:
+                    attribute_item = cls.add_attribute_to_property_set_tree(
+                        attribute, property_set_item
+                    )
+                    attribute_dict[attribute] = attribute_item
+                attribute_item = attribute_dict[attribute]
+                if attribute_item.text(0) != attribute.name:
+                    attribute_item.setText(0, attribute.name)
+        return property_set_dict
+
+    @classmethod
+    def delete_old_values_from_pset_tree(
+        cls,
+        tree_widget: node_ui.PropertySetTree,
+        property_set_dict: dict[
+            SOMcreator.PropertySet | SOMcreator.Attribute, QTreeWidgetItem
+        ],
+    ):
+        selected_node = cls.get_node_from_tree_widget(tree_widget)
+        obj = selected_node.aggregation.object
+        ir = tree_widget.invisibleRootItem()
+        for property_set, pset_item in property_set_dict.items():
+            if property_set not in obj.get_property_sets(filter=True):
+                ir.removeChild(pset_item)
+                continue
+
+            attribute_dict = cls.get_pset_subelement_dict(pset_item)
+            for attribute, attribute_item in attribute_dict.items():
+                if attribute not in property_set.get_attributes(filter=True):
+                    pset_item.removeChild(attribute_item)
+
+    @classmethod
+    def set_font_metric(cls, font_metrics: Any) -> None:
+        cls.get_properties().font_metrics = font_metrics
+    
+    @classmethod
+    def get_font_metric(cls) -> Any:
+        fm = cls.get_properties().font_metrics
+        return QFontMetrics(QFont()) if fm is None else fm

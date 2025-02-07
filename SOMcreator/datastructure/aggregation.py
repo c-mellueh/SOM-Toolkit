@@ -102,18 +102,14 @@ class Aggregation(Hirarchy):
         Returns:
             str: A unique identifier string for the aggregation group.
         """
-        
-        abbrev_list = list()
 
-        def iter_id(element: Aggregation):
-            if element.parent_connection in (SOMcreator.value_constants.AGGREGATION,
-                                             SOMcreator.value_constants.AGGREGATION + SOMcreator.value_constants.INHERITANCE) or element.is_root:
-                abbrev_list.append((element.object.abbreviation,element.get_identity_text() or "xxx"))
-            if not element.is_root:
-                iter_id(element.parent)
+        element = self
+        while element.parent_connection == SOMcreator.value_constants.INHERITANCE:
+            element = element.parent
 
-        iter_id(self)
-        return "_".join([f'{abbrev}_{{{txt}}}' for  abbrev,txt in reversed(abbrev_list)])
+        identity_text = element.parent.identity() if not element.is_root else ""
+        own_text = f"{self.object.abbreviation}_{{{self.get_identity_text() or SOMcreator.value_constants.IDENTITY_PLACEHOLDER}}}"
+        return "_".join((identity_text, own_text)) if identity_text else own_text
 
     
     def get_identity_text(self) -> str:

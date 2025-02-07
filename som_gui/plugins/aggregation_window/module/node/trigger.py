@@ -26,11 +26,11 @@ def pset_tree_double_clicked(item: QTreeWidgetItem, _: int) -> None:
 
 
 def drag_move(header, dif) -> None:
-    core.header_drag_move(header, dif, aw_tool.View, aw_tool.Node)
+    core.move_header(header, dif, aw_tool.View, aw_tool.Node)
 
 
 def header_clicked(header: ui.Header) -> None:
-    core.node_clicked(header.node, aw_tool.Node)
+    core.increment_z_of_node(header.node, aw_tool.Node)
 
 
 def header_double_clicked(header: ui.Header) -> None:
