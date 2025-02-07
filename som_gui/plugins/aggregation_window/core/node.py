@@ -2,33 +2,75 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
 
-from PySide6.QtCore import QPointF, Qt,QCoreApplication
+from PySide6.QtCore import QPointF, Qt, QCoreApplication
 from PySide6.QtGui import QPainter, QPalette, QPen
 from PySide6.QtWidgets import QTreeWidgetItem
 import logging
 import SOMcreator
 from som_gui.core import property_set_window as property_set_window_core
-if TYPE_CHECKING:
-    from som_gui.plugins.aggregation_window.tool import View, Node,Window
-    from som_gui import tool
-    from som_gui.plugins.aggregation_window.module.node.ui import Header, NodeProxy, PropertySetTree, Circle
 
-def rename_identity_text(active_node:NodeProxy,  popups: Type[tool.Popups],window:Type[Window],node:Type[Node]) -> None:
-    if not active_node.bottom_connections:
-        return
+if TYPE_CHECKING:
+    from som_gui.plugins.aggregation_window.tool import View, Node, Window
+    from som_gui import tool
+    from som_gui.plugins.aggregation_window.module.node.ui import (
+        Header,
+        NodeProxy,
+        PropertySetTree,
+        Circle,
+    )
+
+
+def rename_identity_text(
+    active_node: NodeProxy,
+    popups: Type[tool.Popups],
+    window: Type[Window],
+    node: Type[Node],
+) -> None:
+    """It pre-fills the input dialog with the current identity text and updates the identity text
+    :param active_node: The active node whose identity text is to be renamed.
+    :type active_node: NodeProxy
+    :param popups: The popups utility for requesting text input from the user.
+    :type popups: Type[tool.Popups]
+    :param window: The window instance to use as the parent for the input dialog.
+    :type window: Type[Window]
+    :param node: The node type (not used in the function body).
+    :type node: Type[Node]
+    :returns: None
+    :rtype: None"""
+
     prefill = active_node.aggregation.get_identity_text()
     title = QCoreApplication.translate("Connection", "Change label")
     request_text = QCoreApplication.translate("Connection", "Enter new label value:")
     parent = window.get_window()
-    new_text =  popups._request_text_input(title,request_text,prefill,parent)
+    new_text = popups._request_text_input(title, request_text, prefill, parent)
     if new_text is None:
         return
     active_node.aggregation.set_identity_text(new_text)
     active_node.update()
 
 
-def pset_tree_double_clicked(item: QTreeWidgetItem, node: Type[Node], property_set_window: Type[tool.PropertySetWindow],
-     attribute_table: Type[tool.AttributeTable]) -> None:
+def pset_tree_double_clicked(
+    item: QTreeWidgetItem,
+    node: Type[Node],
+    property_set_window: Type[tool.PropertySetWindow],
+    attribute_table: Type[tool.AttributeTable],
+) -> None:
+    """
+    Handles the event when a tree item is double-clicked in the property set tree.
+    This function determines whether the clicked item is an Attribute or a PropertySet,
+    and then opens the corresponding property set window. If the item is an Attribute,
+    it also activates the attribute in the property set window.
+    :param item: The tree item that was double-clicked.
+    :type item: QTreeWidgetItem
+    :param node: The node associated with the tree item.
+    :type node: Type[Node]
+    :param property_set_window: The window class for displaying property sets.
+    :type property_set_window: Type[tool.PropertySetWindow]
+    :param attribute_table: The table class for displaying attributes.
+    :type attribute_table: Type[tool.AttributeTable]
+    :returns: None
+    """
+
     linked_item = node.get_linked_item(item)
     active_attribute = None
     active_property_set = None
@@ -42,10 +84,14 @@ def pset_tree_double_clicked(item: QTreeWidgetItem, node: Type[Node], property_s
     if active_property_set is None:
         return
 
-    window = property_set_window_core.open_pset_window(active_property_set, property_set_window, attribute_table)
+    window = property_set_window_core.open_pset_window(
+        active_property_set, property_set_window, attribute_table
+    )
     if active_attribute is None:
         return
-    property_set_window_core.activate_attribute(active_attribute, window, property_set_window)
+    property_set_window_core.activate_attribute(
+        active_attribute, window, property_set_window
+    )
 
 
 def increment_z_of_node(selected_node: NodeProxy, node: Type[Node]) -> None:
@@ -114,13 +160,43 @@ def paint_header(painter: QPainter, header: Header, node: Type[Node]) -> None:
 
 
 def paint_pset_tree(tree_widget: PropertySetTree, node: Type[Node]) -> None:
+    """
+    Updates the property set tree widget with the values from the given node.
+    This function performs the following steps:
+
+    1. Retrieves the selected node from the tree widget.
+    2. Logs the name of the aggregation associated with the selected node.
+    3. Adds new values to the property set tree from the node.
+    4. Deletes old values from the property set tree that are not present in the new values.
+
+    :param tree_widget: The tree widget representing the property set.
+    :type tree_widget: PropertySetTree
+    :param node: The node containing the values to be painted on the tree widget.
+    :type node: Type[Node]
+    :returns: None
+    :rtype: None
+    """
+
     selected_node = node.get_node_from_tree_widget(tree_widget)
     logging.debug(f"Paint Property Set Tree {selected_node.aggregation.name}")
     pset_dict = node.add_new_values_to_pset_tree(tree_widget)
-    node.delete_old_values_from_pset_tree(tree_widget,pset_dict)
+    node.delete_old_values_from_pset_tree(tree_widget, pset_dict)
 
 
 def paint_node(active_node: NodeProxy, node: Type[Node]) -> None:
+    """
+    Paints the given node on the GUI.
+
+    This function updates the visual representation of a node by setting its
+    frame geometry and pen color based on whether it is selected or not.
+
+    :param active_node: The proxy object representing the active node.
+    :type active_node: NodeProxy
+    :param node: The node class type to be painted.
+    :type node: Type[Node]
+    :returns: None
+    :rtype: None
+    """
     logging.debug(f"Paint Node {active_node.aggregation.name}")
     frame = active_node.frame
     frame.setRect(node.get_frame_geometry(frame, active_node))
@@ -129,6 +205,7 @@ def paint_node(active_node: NodeProxy, node: Type[Node]) -> None:
     else:
         frame.setPen(QPen(QPalette().text().color()))
     node.update_circle_rect(active_node.circle)
+
 
 def paint_circle(circle: Circle, node: Type[Node]) -> None:
     node.update_circle_rect(circle)
