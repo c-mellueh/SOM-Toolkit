@@ -14,7 +14,12 @@ if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.module.node import ui as node_ui
 
 
-def key_press_event(event: QKeyEvent, view: Type[aw_tool.View], connection: Type[aw_tool.Connection],node:Type[aw_tool.Node]) -> None:
+def key_press_event(
+    event: QKeyEvent,
+    view: Type[aw_tool.View],
+    connection: Type[aw_tool.Connection],
+    node: Type[aw_tool.Node],
+) -> None:
     logging.debug(f"Key pressed: {event.key()}")
     mouse_mode = view.get_mouse_mode()
     if mouse_mode == 5 and event.key() == Qt.Key.Key_Escape:
@@ -28,22 +33,34 @@ def key_press_event(event: QKeyEvent, view: Type[aw_tool.View], connection: Type
 
     if mouse_mode == 2 and event.key() == Qt.Key.Key_Control:
         node.lock_move_direction(True)
-        
 
-def key_release_event(event: QKeyEvent, view: Type[aw_tool.View], node: Type[aw_tool.Node]) -> None:
+
+def key_release_event(
+    event: QKeyEvent, view: Type[aw_tool.View], node: Type[aw_tool.Node]
+) -> None:
     logging.debug(f"Key released: {event.key()}")
     mouse_mode = view.get_mouse_mode()
-    if  event.key() == Qt.Key.Key_Control:
+    if event.key() == Qt.Key.Key_Control:
         node.lock_move_direction(False)
-def import_pos_from_project(view: Type[aw_tool.View], project: Type[tool.Project]) -> None:
+
+
+def import_pos_from_project(
+    view: Type[aw_tool.View], project: Type[tool.Project]
+) -> None:
     view.import_aggregations_from_project(project.get())
 
 
-def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: Type[aw_tool.Connection],
-                project: Type[tool.Project]) -> None:
+def paint_event(
+    view: Type[aw_tool.View],
+    node: Type[aw_tool.Node],
+    connection: Type[aw_tool.Connection],
+    project: Type[tool.Project],
+) -> None:
     scene = view.get_active_scene()
     if scene is None:
-        scene, scene_name = view.create_scene(QCoreApplication.translate("Aggregation", "Undefined"))
+        scene, scene_name = view.create_scene(
+            QCoreApplication.translate("Aggregation", "Undefined")
+        )
         view.activate_scene(scene)
     scene_id = view.get_scene_index(scene)
 
@@ -65,8 +82,9 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
             if sub_node is None:
                 continue
             if not node.is_node_connected_to_node(top_node, sub_node):
-                new_connection = connection.create_connection(top_node, sub_node,
-                                                              sub_node.aggregation.parent_connection)
+                new_connection = connection.create_connection(
+                    top_node, sub_node, sub_node.aggregation.parent_connection
+                )
                 view.add_connection_to_scene(new_connection, scene)
 
         if not top_node.top_connection:
@@ -79,14 +97,18 @@ def paint_event(view: Type[aw_tool.View], node: Type[aw_tool.Node], connection: 
         view.autofit_view()
 
 
-def mouse_move_event(position: QPoint, view: Type[aw_tool.View], node: Type[aw_tool.Node],
-                     connection: Type[aw_tool.Connection], ):
+def mouse_move_event(
+    position: QPoint,
+    view: Type[aw_tool.View],
+    node: Type[aw_tool.Node],
+    connection: Type[aw_tool.Connection],
+):
     last_pos = view.get_last_mouse_pos()
     mouse_mode = view.get_mouse_mode()
 
-    if mouse_mode == 3: #resize
+    if mouse_mode == 3:  # resize
         node.resize_node(view.get_resize_node(), last_pos, view.map_to_scene(position))
-    if mouse_mode == 5: #draw connection
+    if mouse_mode == 5:  # draw connection
         connection.draw_connection(view.get_active_scene(), view.map_to_scene(position))
         connection.set_draw_started(True)
     view.set_last_mouse_pos(view.map_to_scene(position))
@@ -95,8 +117,12 @@ def mouse_move_event(position: QPoint, view: Type[aw_tool.View], node: Type[aw_t
         view.set_cursor_style(cursor)
 
 
-def mouse_press_event(position: QPoint, view: Type[aw_tool.View], node: Type[aw_tool.Node],
-                      connection: Type[aw_tool.Connection]) -> None:
+def mouse_press_event(
+    position: QPoint,
+    view: Type[aw_tool.View],
+    node: Type[aw_tool.Node],
+    connection: Type[aw_tool.Connection],
+) -> None:
     modifier = view.get_keyboard_modifier()
     view.set_last_mouse_pos(view.map_to_scene(position))
     scene = view.get_active_scene()
@@ -104,7 +130,10 @@ def mouse_press_event(position: QPoint, view: Type[aw_tool.View], node: Type[aw_
 
     if node.item_is_frame(item_under_mouse):  # Mouse is on Node
         active_node: node_ui.NodeProxy = item_under_mouse.node
-        if modifier != Qt.KeyboardModifier.ControlModifier and active_node not in scene.selectedItems():
+        if (
+            modifier != Qt.KeyboardModifier.ControlModifier
+            and active_node not in scene.selectedItems()
+        ):
             scene.clearSelection()
         active_node.setSelected(True)
         header: node_ui.Header = active_node.header
@@ -132,9 +161,13 @@ def mouse_press_event(position: QPoint, view: Type[aw_tool.View], node: Type[aw_
         view.set_drag_mode(view.get_view().DragMode.NoDrag)
 
 
-def mouse_release_event(position: QPoint, view: Type[aw_tool.View],
-                        connection: Type[aw_tool.Connection], search: Type[tool.Search],
-                        project: Type[tool.Project]) -> None:
+def mouse_release_event(
+    position: QPoint,
+    view: Type[aw_tool.View],
+    connection: Type[aw_tool.Connection],
+    search: Type[tool.Search],
+    project: Type[tool.Project],
+) -> None:
     mouse_mode = view.get_mouse_mode()
     if mouse_mode == 5:  # Handle Connection Drawing
         if connection.is_drawing_started():
@@ -168,9 +201,15 @@ def mouse_wheel_event(wheel_event: QWheelEvent, view: Type[aw_tool.View]) -> Non
     view.scroll_view(x_angle, y_angle)
 
 
-def context_menu_requested(pos: QPoint, view: Type[aw_tool.View], node: Type[aw_tool.Node], search: Type[tool.Search],
-                           connection: Type[aw_tool.Connection], project: Type[tool.Project],
-                           util: Type[tool.Util]) -> None:
+def context_menu_requested(
+    pos: QPoint,
+    view: Type[aw_tool.View],
+    node: Type[aw_tool.Node],
+    search: Type[tool.Search],
+    connection: Type[aw_tool.Connection],
+    project: Type[tool.Project],
+    util: Type[tool.Util],
+) -> None:
     menu_list = list()
     scene = view.get_active_scene()
 
@@ -187,14 +226,31 @@ def context_menu_requested(pos: QPoint, view: Type[aw_tool.View], node: Type[aw_
         cv = QCoreApplication.translate("Aggregation", "Center vertically")
         dh = QCoreApplication.translate("Aggregation", "Distribute horizontally")
         dv = QCoreApplication.translate("Aggregation", "Distribute vertically")
-        menu_list.append([f"{layout}/{ch}", lambda: node.center_nodes(selected_nodes, 0)])
-        menu_list.append([f"{layout}/{cv}", lambda: node.center_nodes(selected_nodes, 1)])
-        menu_list.append([f"{layout}/{dh}", lambda: node.distribute_by_layer(selected_nodes, 0)])
-        menu_list.append([f"{layout}/{dv}", lambda: node.distribute_nodes(selected_nodes, 1)])
+        menu_list.append(
+            [f"{layout}/{ch}", lambda: node.center_nodes(selected_nodes, 0)]
+        )
+        menu_list.append(
+            [f"{layout}/{cv}", lambda: node.center_nodes(selected_nodes, 1)]
+        )
+        menu_list.append(
+            [f"{layout}/{dh}", lambda: node.distribute_by_layer(selected_nodes, 0)]
+        )
+        menu_list.append(
+            [f"{layout}/{dv}", lambda: node.distribute_nodes(selected_nodes, 1)]
+        )
 
     menu_list.append(
-        [QCoreApplication.translate("Aggregation", "Modify Info"), lambda: change_header_text(node, search, project)])
-    menu_list.append([QCoreApplication.translate("Aggregation", "Reset Info"), lambda: node.reset_title_settings()])
+        [
+            QCoreApplication.translate("Aggregation", "Modify Info"),
+            lambda: change_header_text(node, search, project),
+        ]
+    )
+    menu_list.append(
+        [
+            QCoreApplication.translate("Aggregation", "Reset Info"),
+            lambda: node.reset_title_settings(),
+        ]
+    )
 
     node_under_mouse = view.get_node_under_mouse()
     if node_under_mouse:
@@ -203,34 +259,72 @@ def context_menu_requested(pos: QPoint, view: Type[aw_tool.View], node: Type[aw_
         delete_node = QCoreApplication.translate("Aggregation", "Delete Node")
         delete_nodes = QCoreApplication.translate("Aggregation", "Delete Nodes")
 
-        menu_list.append([f"{node_text}/{add}", lambda: add_node_at_pos(view.map_to_scene(pos), view, search, project)])
+        menu_list.append(
+            [
+                f"{node_text}/{add}",
+                lambda: add_node_at_pos(view.map_to_scene(pos), view, search, project),
+            ]
+        )
 
         txt = delete_node if len(selected_nodes) == 1 else delete_nodes
         del_text = f"{node_text}/{txt}"
-        menu_list.append([del_text, lambda: [view.remove_node_from_scene(n, scene) for n in selected_nodes]])
+        menu_list.append(
+            [
+                del_text,
+                lambda: [view.remove_node_from_scene(n, scene) for n in selected_nodes],
+            ]
+        )
 
         connection_type = QCoreApplication.translate("Aggregation", "Connection Type")
         aggregation = QCoreApplication.translate("Aggregation", "Aggregation")
         inheritance = QCoreApplication.translate("Aggregation", "Inheritance")
         if not node.is_root(node_under_mouse):
-            menu_list.append([f"{connection_type}/{aggregation}",
-                              lambda: node.set_connect_type(node_under_mouse, value_constants.AGGREGATION)])
-            menu_list.append([f"{connection_type}/{inheritance}",
-                              lambda: node.set_connect_type(node_under_mouse, value_constants.INHERITANCE)])
-            menu_list.append([f"{connection_type}/{aggregation}+{inheritance}",
-                              lambda: node.set_connect_type(node_under_mouse,
-                                                            value_constants.AGGREGATION + value_constants.INHERITANCE)])
+            menu_list.append(
+                [
+                    f"{connection_type}/{aggregation}",
+                    lambda: node.set_connect_type(
+                        node_under_mouse, value_constants.AGGREGATION
+                    ),
+                ]
+            )
+            menu_list.append(
+                [
+                    f"{connection_type}/{inheritance}",
+                    lambda: node.set_connect_type(
+                        node_under_mouse, value_constants.INHERITANCE
+                    ),
+                ]
+            )
+            menu_list.append(
+                [
+                    f"{connection_type}/{aggregation}+{inheritance}",
+                    lambda: node.set_connect_type(
+                        node_under_mouse,
+                        value_constants.AGGREGATION + value_constants.INHERITANCE,
+                    ),
+                ]
+            )
     else:
         add = QCoreApplication.translate("Aggregation", "Add Node")
 
-        menu_list.append([add, lambda: add_node_at_pos(view.map_to_scene(pos), view, search, project)])
+        menu_list.append(
+            [
+                add,
+                lambda: add_node_at_pos(view.map_to_scene(pos), view, search, project),
+            ]
+        )
 
     menu = util.create_context_menu(menu_list)
     menu.exec(view.get_view().viewport().mapToGlobal(pos))
     paint_event(view, node, connection, project)
 
 
-def add_node_at_pos(pos, view: Type[aw_tool.View], search: Type[tool.Search], project: Type[tool.Project]) -> None:
+def add_node_at_pos(
+    pos,
+    view: Type[aw_tool.View],
+    search: Type[tool.Search],
+    project: Type[tool.Project],
+) -> None:
     scene = view.get_active_scene()
     obj = search.search_object(list(project.get().get_objects(filter=True)))
     if not obj:
@@ -239,7 +333,9 @@ def add_node_at_pos(pos, view: Type[aw_tool.View], search: Type[tool.Search], pr
     view.add_aggregation_to_import_list(scene, aggregation, pos)
 
 
-def change_header_text(node: Type[aw_tool.Node], search: Type[tool.Search], project: Type[tool.Project]) -> None:
+def change_header_text(
+    node: Type[aw_tool.Node], search: Type[tool.Search], project: Type[tool.Project]
+) -> None:
     searchable_attributes = list()
     search_values = list()
     for attribute in project.get().get_attributes(filter=False):
@@ -252,12 +348,19 @@ def change_header_text(node: Type[aw_tool.Node], search: Type[tool.Search], proj
         node.set_title_settings(attribute.property_set.name, attribute.name)
 
 
-def add_object_to_scene(obj: SOMcreator.Object, scene, parent_node: node_ui.NodeProxy | None, pos: QPoint | None,
-                        view: Type[aw_tool.View], connection: Type[aw_tool.Connection], node: Type[aw_tool.Node]):
+def add_object_to_scene(
+    obj: SOMcreator.Object,
+    scene,
+    parent_node: node_ui.NodeProxy | None,
+    pos: QPoint | None,
+    view: Type[aw_tool.View],
+    connection: Type[aw_tool.Connection],
+    node: Type[aw_tool.Node],
+):
     if scene is None:
         scene = view.get_active_scene()
     if pos is None:
-        pos = QPointF(100., 100.)
+        pos = QPointF(100.0, 100.0)
 
     aggregation = SOMcreator.Aggregation(obj)
     new_node = node.create_node(aggregation)

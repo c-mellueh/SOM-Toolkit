@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QSizeF, Qt, QPointF,QPoint
+from PySide6.QtCore import QSizeF, Qt, QPointF, QPoint
 from PySide6.QtGui import QPaintEvent, QPalette, QPen
 from PySide6.QtWidgets import (
     QGraphicsEllipseItem,
@@ -79,12 +79,12 @@ class Header(QGraphicsRectItem):
         trigger.paint_header(self, painter)
 
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        trigger.drag_move(self,event)
-        #super().mouseMoveEvent(event)
+        trigger.drag_move(self, event)
+        # super().mouseMoveEvent(event)
 
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         super().mousePressEvent(event)
-        trigger.header_clicked(self,event)
+        trigger.header_clicked(self, event)
 
     def mouseDoubleClickEvent(self, event):
         trigger.header_double_clicked(self)

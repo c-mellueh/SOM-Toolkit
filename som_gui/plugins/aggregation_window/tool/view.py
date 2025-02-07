@@ -10,7 +10,11 @@ from PySide6.QtWidgets import QApplication, QFileDialog, QGraphicsView
 
 import SOMcreator
 from SOMcreator.datastructure.som_json import NODES
-from som_gui.plugins.aggregation_window.module.view.constants import AGGREGATIONSCENES, SCENE_SIZE, SCENE_MARGIN
+from som_gui.plugins.aggregation_window.module.view.constants import (
+    AGGREGATIONSCENES,
+    SCENE_SIZE,
+    SCENE_MARGIN,
+)
 from som_gui.plugins.aggregation_window.module.node import ui as ui_node
 from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui.plugins.aggregation_window.module.view import ui as ui_view
@@ -63,7 +67,9 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
             return cls.get_properties().scene_name_list.index(scene)
         if isinstance(scene, ui_view.AggregationScene):
             return cls.get_properties().scene_list.index(scene)
-        raise TypeError(f"type {type(scene)} not supported for function 'get_scene_index'")
+        raise TypeError(
+            f"type {type(scene)} not supported for function 'get_scene_index'"
+        )
 
     @classmethod
     def get_scene_by_name(cls, scene_name: str) -> ui_view.AggregationScene | None:
@@ -116,8 +122,15 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         scene_index = cls.get_scene_index(scene)
         prop = cls.get_properties()
         scene = prop.scene_list[scene_index]
-        lists = [prop.scene_name_list, prop.node_list, prop.import_list, prop.connections_list, prop.focus_list,
-                 prop.scene_settings_list, prop.scene_list]
+        lists = [
+            prop.scene_name_list,
+            prop.node_list,
+            prop.import_list,
+            prop.connections_list,
+            prop.focus_list,
+            prop.scene_settings_list,
+            prop.scene_list,
+        ]
         [scene_list.pop(scene_index) for scene_list in lists]
         scene.deleteLater()
 
@@ -127,12 +140,16 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         if not plugin_dict:
             return
 
-        aggregation_ref = {aggregation.uuid: aggregation for aggregation in proj.get_aggregations(filter=False)}
+        aggregation_ref = {
+            aggregation.uuid: aggregation
+            for aggregation in proj.get_aggregations(filter=False)
+        }
         import_scene_dict = plugin_dict.get(AGGREGATIONSCENES)
 
         if import_scene_dict is None:
             logging.warning(
-                f"SOMJson was written in OLD version. Please open with SOM-Toolkit v2.11.3 and save it as new version.")
+                f"SOMJson was written in OLD version. Please open with SOM-Toolkit v2.11.3 and save it as new version."
+            )
             return
 
         existing_scene_names = cls.get_properties().scene_name_list
@@ -140,7 +157,8 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
             if isinstance(node_dict[NODES], list):
                 logging.warning(
                     f"SOMJson was written in OLD version. "
-                    f"Please open with SOM-Toolkit v2.11.3 and save it as new version.")
+                    f"Please open with SOM-Toolkit v2.11.3 and save it as new version."
+                )
                 return
             if scene_name not in existing_scene_names:
                 scene, scene_name = cls.create_scene(scene_name)
@@ -196,7 +214,9 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         cls.get_view().viewport().setCursor(cursor_style)
 
     @classmethod
-    def add_node_to_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene) -> None:
+    def add_node_to_scene(
+        cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene
+    ) -> None:
         scene.addItem(node)
         scene.addItem(node.header)
         scene.addItem(node.frame)
@@ -216,13 +236,19 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         bounding_rect = QRectF()
         for item in scene.items():
             bounding_rect = bounding_rect.united(item.sceneBoundingRect())
-        cls.get_view().fitInView(bounding_rect.adjusted(-SCENE_MARGIN, -SCENE_MARGIN, SCENE_MARGIN, SCENE_MARGIN),
-                                 aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio)
+        cls.get_view().fitInView(
+            bounding_rect.adjusted(
+                -SCENE_MARGIN, -SCENE_MARGIN, SCENE_MARGIN, SCENE_MARGIN
+            ),
+            aspectRadioMode=Qt.AspectRatioMode.KeepAspectRatio,
+        )
         scene_id = cls.get_scene_index(scene)
         cls.get_properties().focus_list[scene_id] = True
 
     @classmethod
-    def get_nodes_in_scene(cls, scene: ui_view.AggregationScene) -> set[ui_node.NodeProxy]:
+    def get_nodes_in_scene(
+        cls, scene: ui_view.AggregationScene
+    ) -> set[ui_node.NodeProxy]:
         scene_index = cls.get_scene_index(scene)
         return cls.get_properties().node_list[scene_index]
 
@@ -235,11 +261,16 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         return aggregation_list
 
     @classmethod
-    def remove_node_from_scene(cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene) -> None:
+    def remove_node_from_scene(
+        cls, node: ui_node.NodeProxy, scene: ui_view.AggregationScene
+    ) -> None:
         logging.debug(f"Delete Node {node.aggregation.name}")
         if node.top_connection:
             cls.remove_connection_from_scene(node.top_connection, scene)
-        [cls.remove_connection_from_scene(c, scene) for c in list(node.bottom_connections)]
+        [
+            cls.remove_connection_from_scene(c, scene)
+            for c in list(node.bottom_connections)
+        ]
         scene_index = cls.get_scene_index(scene)
         prop = cls.get_properties()
         prop.node_list[scene_index].remove(node)
@@ -253,15 +284,18 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
             node.aggregation.delete()
 
     @classmethod
-    def remove_connection_from_scene(cls, connection: ui_connection.Connection,
-                                     scene: ui_view.AggregationScene) -> None:
+    def remove_connection_from_scene(
+        cls, connection: ui_connection.Connection, scene: ui_view.AggregationScene
+    ) -> None:
         if connection is None:
             return
 
         scene.removeItem(connection)
         connection.top_node.bottom_connections.remove(connection)
         connection.bottom_node.top_connection = None
-        cls.get_properties().connections_list[cls.get_scene_index(scene)].remove(connection)
+        cls.get_properties().connections_list[cls.get_scene_index(scene)].remove(
+            connection
+        )
 
     @classmethod
     def get_last_mouse_pos(cls) -> QPointF | None:
@@ -304,20 +338,25 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         # qgraphicsview-zooming-in-and-out-under-mouse-position-using-mouse-wheel
 
         view = cls.get_view()
-        factor = 1.0015 ** agle
+        factor = 1.0015**agle
         target_scene_pos = cls.map_to_scene(target_viewport_pos)
 
         view.scale(factor, factor)
         view.centerOn(target_scene_pos)
-        delta_viewport_pos = target_viewport_pos.toPointF() - QPointF(view.viewport().width() / 2.0,
-                                                                      view.viewport().height() / 2.0)
-        viewport_center = view.mapFromScene(target_scene_pos).toPointF() - delta_viewport_pos
+        delta_viewport_pos = target_viewport_pos.toPointF() - QPointF(
+            view.viewport().width() / 2.0, view.viewport().height() / 2.0
+        )
+        viewport_center = (
+            view.mapFromScene(target_scene_pos).toPointF() - delta_viewport_pos
+        )
         view.centerOn(view.mapToScene(viewport_center.toPoint()))
 
     @classmethod
     def scroll_view(cls, x_angle, y_angle) -> None:
         view = cls.get_view()
-        view.horizontalScrollBar().setValue(view.horizontalScrollBar().value() - x_angle)
+        view.horizontalScrollBar().setValue(
+            view.horizontalScrollBar().value() - x_angle
+        )
         view.verticalScrollBar().setValue(view.verticalScrollBar().value() - y_angle)
 
     @classmethod
@@ -331,15 +370,15 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
     @classmethod
     def get_mouse_mode_by_subitem(cls, sub_item) -> int:
         """
-                return: 0= None 1= pan, 2= drag, 3 = resize 4 = selection_rect  5 = draw connection
+        return: 0= None 1= pan, 2= drag, 3 = resize 4 = selection_rect  5 = draw connection
         """
         sub_item_type = type(sub_item)
         cursor_dict = {
-            ui_node.Header:     2,
+            ui_node.Header: 2,
             ui_node.ResizeRect: 3,
-            type(None):         1,
-            ui_node.Circle:     5,
-            ui_node.PlusText:   5,
+            type(None): 1,
+            ui_node.Circle: 5,
+            ui_node.PlusText: 5,
         }
         val = cursor_dict.get(sub_item_type) or 1
         return val
@@ -363,11 +402,15 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         return None
 
     @classmethod
-    def print_scene(cls, scene: ui_view.AggregationScene, path: str | None = None) -> None:
+    def print_scene(
+        cls, scene: ui_view.AggregationScene, path: str | None = None
+    ) -> None:
         view = cls.get_view()
         if path is None:
             file_text = "png Files (*.png);;"
-            path = QFileDialog.getSaveFileName(view, "Aggregationsansicht speichern", "", file_text)[0]
+            path = QFileDialog.getSaveFileName(
+                view, "Aggregationsansicht speichern", "", file_text
+            )[0]
         cls.activate_scene(scene)
         rect = view.viewport().rect()
         image = QImage(rect.size() * 8, QImage.Format.Format_RGB32)
@@ -387,7 +430,9 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         return list(cls.get_properties().scene_list)
 
     @classmethod
-    def get_objects_in_scene(cls, scene: ui_view.AggregationScene) -> set[SOMcreator.Object]:
+    def get_objects_in_scene(
+        cls, scene: ui_view.AggregationScene
+    ) -> set[SOMcreator.Object]:
         nodes = cls.get_nodes_in_scene(scene)
         scene_index = cls.get_scene_index(scene)
         objects = {a.object for a, pos in cls.get_import_list()[scene_index]}
@@ -425,10 +470,16 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
     @classmethod
     def get_selected_nodes(cls) -> set[ui_node.NodeProxy]:
         scene = cls.get_active_scene()
-        return {node for node in scene.selectedItems() if isinstance(node, ui_node.NodeProxy)}
+        return {
+            node
+            for node in scene.selectedItems()
+            if isinstance(node, ui_node.NodeProxy)
+        }
 
     @classmethod
-    def set_copy_list(cls, copy_list: list[tuple[SOMcreator.Aggregation, QPointF]]) -> None:
+    def set_copy_list(
+        cls, copy_list: list[tuple[SOMcreator.Aggregation, QPointF]]
+    ) -> None:
         cls.get_properties().copy_list = copy_list
 
     @classmethod
@@ -442,9 +493,13 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         return cursor_pos
 
     @classmethod
-    def add_connection_to_scene(cls, connection: ui_connection.Connection, scene: ui_view.AggregationScene) -> None:
+    def add_connection_to_scene(
+        cls, connection: ui_connection.Connection, scene: ui_view.AggregationScene
+    ) -> None:
         scene.addItem(connection)
-        cls.get_properties().connections_list[cls.get_scene_index(scene)].add(connection)
+        cls.get_properties().connections_list[cls.get_scene_index(scene)].add(
+            connection
+        )
 
     @classmethod
     def create_connection_by_pos(cls, top_node: ui_node.NodeProxy):
@@ -505,7 +560,9 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         return Qt.CursorShape.ArrowCursor
 
     @classmethod
-    def remove_nodes_with_deleted_aggregations(cls, scene: ui_view.AggregationScene, proj: SOMcreator.Project) -> None:
+    def remove_nodes_with_deleted_aggregations(
+        cls, scene: ui_view.AggregationScene, proj: SOMcreator.Project
+    ) -> None:
         nodes = cls.get_nodes_in_scene(scene)
         existing_aggregations = list(proj.get_aggregations(filter=False))
         for existing_node in list(nodes):
@@ -513,8 +570,9 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
                 cls.remove_node_from_scene(existing_node, scene)
 
     @classmethod
-    def create_child_node(cls, top_node: ui_node.NodeProxy,
-                          obj: SOMcreator.Object) -> ui_node.NodeProxy | None:
+    def create_child_node(
+        cls, top_node: ui_node.NodeProxy, obj: SOMcreator.Object
+    ) -> ui_node.NodeProxy | None:
         scene = top_node.scene()
-        pos = top_node.sceneBoundingRect().bottomLeft() + QPointF(100., 60.)
+        pos = top_node.sceneBoundingRect().bottomLeft() + QPointF(100.0, 60.0)
         return trigger.add_object_to_scene(obj, scene, top_node, pos)

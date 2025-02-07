@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any
 
 from PySide6.QtCore import QSize, QPointF, QRectF, QCoreApplication, Qt
 from PySide6.QtWidgets import QTreeWidgetItem
-from PySide6.QtGui import QPainter,QFontMetrics,QFont
+from PySide6.QtGui import QPainter, QFontMetrics, QFont
 import logging
 import SOMcreator
 from SOMcreator import value_constants
@@ -46,7 +46,6 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def increment_z_level(cls) -> int:
-
         """
         Increments the z_level property of the class by 1.
         :return: The updated z_level value.
@@ -66,8 +65,8 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         """
         Add a property set to the tree widget.
 
-        This method creates a new QTreeWidgetItem for the given property set and adds it 
-        to the specified tree widget. The item's text is set to the name of the property 
+        This method creates a new QTreeWidgetItem for the given property set and adds it
+        to the specified tree widget. The item's text is set to the name of the property
         set, and its data is set to reference the property set.
 
         :param property_set: The property set to add to the tree.
@@ -111,8 +110,8 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         """
         Add an attribute to a property set tree item.
 
-        This method creates a new QTreeWidgetItem for the given attribute and adds it 
-        as a child to the specified property set item. The item's text is set to the 
+        This method creates a new QTreeWidgetItem for the given attribute and adds it
+        as a child to the specified property set item. The item's text is set to the
         name of the attribute, and its data is set to reference the attribute.
 
         :param attribute: The attribute to add to the property set tree item.
@@ -214,7 +213,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         row_height = font_metric.lineSpacing()
         rows = cls.get_title_rows(node, width, pset_name, attribute_name)
         height = len(rows) * row_height
-        
+
         x = line_width / 2
         y = -height
         return QRectF(x, y, width, height)
@@ -403,9 +402,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         circle.text.setY(y)
 
     @classmethod
-    def split_text(
-        cls,  text: str, seperator: str, max_width: int
-    ) -> list[str]:
+    def split_text(cls, text: str, seperator: str, max_width: int) -> list[str]:
         font_metrics = cls.get_font_metric()
         lines = []
         current_line = ""
@@ -683,12 +680,12 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     @classmethod
     def set_font_metric(cls, font_metrics: Any) -> None:
         cls.get_properties().font_metrics = font_metrics
-    
+
     @classmethod
     def get_font_metric(cls) -> Any:
         fm = cls.get_properties().font_metrics
         return QFontMetrics(QFont()) if fm is None else fm
-    
+
     @classmethod
     def set_last_move_direction(cls, move_delta: QPointF) -> None:
         if move_delta is None:
@@ -696,9 +693,9 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
             return
         direction = 0
         if move_delta.x() != 0:
-            direction +=1
+            direction += 1
         if move_delta.y() != 0:
-            direction +=2 
+            direction += 2
         cls.get_properties().last_move_direction = direction
 
     @classmethod
@@ -707,16 +704,16 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         0 = No move, 1 = horizontal, 2 = vertical, 3 = both
 
         :param cls: Description
-        :type cls: 
+        :type cls:
         :return: Description
         :rtype: int"""
         return cls.get_properties().last_move_direction
-    
+
     @classmethod
     def is_move_direction_locked(cls) -> bool:
 
         return cls.get_properties().is_move_direction_locked
-    
+
     @classmethod
     def lock_move_direction(cls, lock: bool) -> None:
         if lock:

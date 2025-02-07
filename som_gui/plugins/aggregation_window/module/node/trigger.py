@@ -31,10 +31,8 @@ def drag_move(header: ui.Header, event: QGraphicsSceneMouseEvent) -> None:
     return core.move_header(header, event, aw_tool.View, aw_tool.Node)
 
 
-
-
-def header_clicked(header:ui.Header,event: QGraphicsSceneMouseEvent) -> None:
-    core.header_click(header,event, aw_tool.Node)
+def header_clicked(header: ui.Header, event: QGraphicsSceneMouseEvent) -> None:
+    core.header_click(header, event, aw_tool.Node)
 
 
 def header_double_clicked(header: ui.Header) -> None:
