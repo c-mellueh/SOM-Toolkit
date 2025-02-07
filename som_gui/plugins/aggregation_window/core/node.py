@@ -48,11 +48,26 @@ def pset_tree_double_clicked(item: QTreeWidgetItem, node: Type[Node], property_s
     property_set_window_core.activate_attribute(active_attribute, window, property_set_window)
 
 
-def node_clicked(selected_node: NodeProxy, node: Type[Node]) -> None:
+def increment_z_of_node(selected_node: NodeProxy, node: Type[Node]) -> None:
     node.set_z_level_of_node(selected_node, node.increment_z_level())
 
 
-def header_drag_move(header: Header, dif: QPointF, view: Type[View], node: Type[Node]) -> None:
+def move_header(
+    header: Header, dif: QPointF, view: Type[View], node: Type[Node]
+) -> None:
+    """
+    Moves the header and subsequently the selected nodes by a given difference vector.
+    :param header: The header object to be moved.
+    :type header: Header
+    :param dif: The difference vector by which to move the header and nodes.
+    :type dif: QPointF
+    :param view: The view object containing the active scene.
+    :type view: Type[View]
+    :param node: The node object to retrieve nodes from headers and move nodes.
+    :type node: Type[Node]
+    :return: None
+    :rtype: None
+    """
     selected_nodes = view.get_active_scene().selectedItems()
     active_node = node.get_node_from_header(header)
     for selected_node in selected_nodes:
