@@ -219,7 +219,7 @@ def paint_node(active_node: NodeProxy, node: Type[Node]) -> None:
     """
     logging.debug(f"Paint Node {active_node.aggregation.name}")
     frame = active_node.frame
-    frame.setRect(node.get_frame_geometry(frame, active_node))
+    frame.setRect(node.get_frame_geometry(active_node))
     if active_node.isSelected():
         frame.setPen(QPalette().accent().color())
     else:

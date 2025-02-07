@@ -219,9 +219,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         return QRectF(x, y, width, height)
 
     @classmethod
-    def get_frame_geometry(
-        cls, frame: node_ui.Frame, node: node_ui.NodeProxy
-    ) -> QRectF:
+    def get_frame_geometry(cls, node: node_ui.NodeProxy) -> QRectF:
         """
         Get the geometry of a frame for a node.
 
@@ -235,6 +233,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         :return: The calculated geometry of the frame.
         :rtype: QRectF
         """
+        frame = cls.get_frame_from_node(node)
         line_width = frame.pen().width()
         rect = node.rect()
         rect.setWidth(rect.width() - line_width / 2)
@@ -276,10 +275,10 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         :rtype: node_ui.Frame
         """
         frame = node_ui.Frame()
-        rect = cls.get_frame_geometry(frame, node)
-        frame.setRect(rect)
         node.frame = frame
         frame.node = node
+        rect = cls.get_frame_geometry(node)
+        frame.setRect(rect)
         return frame
 
     @classmethod
