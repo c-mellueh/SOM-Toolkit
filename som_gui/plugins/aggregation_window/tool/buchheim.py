@@ -35,29 +35,16 @@ class Buchheim:
     @classmethod
     def buchheim(cls, v: node_ui.NodeProxy):
         tree = cls.firstwalk(v)
-        cls.print_pos(v)
-        print("_"*100)
-        print("_"*100)
-
         cls.second_walk(tree)
-        cls.print_pos(v)
-
         return tree
 
-    @classmethod
-    def print_pos(cls,root_node:node_ui.NodeProxy):
-        def ra(v):            
-            print(f"{v} -> {cls.pos(v)}")
-            for child in cls.children(v):
-                ra(child)
-        ra(root_node)
 
     @classmethod
-    def firstwalk(cls, v: node_ui.NodeProxy):
+    def firstwalk(cls, v: node_ui.NodeProxy,distance = 300.):
         if len(cls.children(v)) == 0: #no children exist
             if cls.get_lmost_sibling(v): #if sibling exist move next to sibling with X_MARGIN
                 lbrother = cls.lbrother(v)
-                cls.set_x(v, cls.x(lbrother) + cls.width(lbrother) + X_MARGIN)
+                cls.set_x(v, cls.x(lbrother) + cls.wid)
             else:
                 cls.set_x(v, 0.0)
 
@@ -65,7 +52,7 @@ class Buchheim:
             default_ancestor = cls.children(v)[0]#elektrotechnik
             for w in cls.children(v):
                 cls.firstwalk(w)
-                default_ancestor = cls.apportion(w, default_ancestor, X_MARGIN*2)
+                default_ancestor = cls.apportion(w, default_ancestor, distance)
             cls.execute_shifts(v)
             c1  = cls.x(cls.children(v)[0])
             c2 = cls.x(cls.children(v)[-1])
@@ -73,7 +60,7 @@ class Buchheim:
 
             w = cls.lbrother(v)
             if w:
-                cls.set_x(v, cls.x(w) + cls.width(w)+X_MARGIN)
+                cls.set_x(v, cls.x(w) + distance)
                 v.mod = cls.x(v) - midpoint
             else:
                 cls.set_x(v, midpoint)
@@ -81,13 +68,12 @@ class Buchheim:
 
     @classmethod
     def second_walk(cls, v: node_ui.NodeProxy, m=0, depth=0):
-        cls.set_y(v,depth)
-        for child in cls.children(v):
-            cls.second_walk(child,m,depth + cls.height(v) + Y_MARGIN)
-        # cls.set_x(v, cls.x(v) + m)
-        # cls.set_y(v, depth)
-        # for w in cls.children(v):
-        #     cls.second_walk(w, m + v.mod, depth + cls.height(v) + Y_MARGIN)
+        if v.aggregation.object.name == "Manometer":
+            print("HIER")
+        cls.set_x(v, cls.x(v) + m)
+        cls.set_y(v, depth)
+        for w in cls.children(v):
+            cls.second_walk(w, m + v.mod, depth + 1)
 
     @classmethod
     def apportion(
@@ -130,8 +116,9 @@ class Buchheim:
 
     @classmethod
     def execute_shifts(cls, v: node_ui.NodeProxy):
+        return
         shift = change = 0
-        for w in cls.children(v)[::-1]:
+        for w in reversed(cls.children(v)):
             cls.set_x(w, cls.x(w) + shift)
             w.mod += shift
             change += w.change
