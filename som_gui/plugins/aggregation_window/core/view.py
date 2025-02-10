@@ -322,25 +322,11 @@ def context_menu_requested(
         ]
     )
 
-    menu_list.append(
-        [
-            QCoreApplication.translate("Aggregation", "PosInfo"),
-            lambda: show_pos(buchheim, view, node),
-        ]
-    )
 
     menu = util.create_context_menu(menu_list)
     menu.exec(view.get_view().viewport().mapToGlobal(pos))
 
     paint_event(view, node, connection, project)
-
-
-def show_pos(
-    buchheim: Type[aw_tool.Buchheim], view: Type[aw_tool.View], node: Type[aw_tool.Node]
-):
-    selected_node = list(view.get_selected_nodes())[0]
-    print(f"Node: {selected_node} -> {buchheim.pos(selected_node)}")
-
 
 def rearange(
     buchheim: Type[aw_tool.Buchheim], view: Type[aw_tool.View], node: Type[aw_tool.Node]
@@ -351,11 +337,13 @@ def rearange(
     buchheim.intialize(root_node)
     buchheim.buchheim(root_node)
 
-    center = root_node.pos()
+    base_x =  min(n.pos().x() for n in all_nodes)
+    base_y =  min(n.pos().y()  for n in all_nodes)
+
     def ra(v):
         x, y = buchheim.pos(v)
-        x = center.x() + x
-        y = center.y() + y
+        x = base_x + x
+        y = base_y + y
         node.set_node_pos(v, QPointF(x, y))
         for child in buchheim.children(v):
             ra(child)
