@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 from som_gui.plugins.aggregation_window import tool as aw_tool
 
 X_MARGIN = 20
-Y_MARGIN = 40
+Y_MARGIN = 65
 
 class Buchheim:
     @classmethod
@@ -31,36 +31,41 @@ class Buchheim:
         v.number = number
         for index, w in enumerate(cls.children(v)):
             cls.intialize(w, depth + 1, index + 1)
-
+    
+   
     @classmethod
     def buchheim(cls, v: node_ui.NodeProxy):
-        tree = cls.firstwalk(v)
+        tree = cls.firstwalk(v,0)
         cls.second_walk(tree)
         return tree
 
 
     @classmethod
-    def firstwalk(cls, v: node_ui.NodeProxy,distance = 300.):
+    def firstwalk(cls, v: node_ui.NodeProxy,depth):
+        while depth >= len(cls.get_properties().height_list):
+            cls.get_properties().height_list.append(0.)
+        cls.get_properties().height_list[depth] = max(cls.get_properties().height_list[depth],cls.height(v))
+        
         if len(cls.children(v)) == 0: #no children exist
             if cls.get_lmost_sibling(v): #if sibling exist move next to sibling with X_MARGIN
                 lbrother = cls.lbrother(v)
-                cls.set_x(v, cls.x(lbrother) + cls.wid)
+                cls.set_x(v, cls.x(lbrother) + cls.width(lbrother)+X_MARGIN)
             else:
                 cls.set_x(v, 0.0)
 
         else:
             default_ancestor = cls.children(v)[0]#elektrotechnik
             for w in cls.children(v):
-                cls.firstwalk(w)
-                default_ancestor = cls.apportion(w, default_ancestor, distance)
-            cls.execute_shifts(v)
+                cls.firstwalk(w,depth+1)
+                default_ancestor = cls.apportion(w, default_ancestor)
             c1  = cls.x(cls.children(v)[0])
             c2 = cls.x(cls.children(v)[-1])
             midpoint = ( c1+ c2) / 2
 
             w = cls.lbrother(v)
             if w:
-                cls.set_x(v, cls.x(w) + distance)
+                cls.set_x(v, cls.x(w) + cls.width(w)+X_MARGIN)
+
                 v.mod = cls.x(v) - midpoint
             else:
                 cls.set_x(v, midpoint)
@@ -68,17 +73,15 @@ class Buchheim:
 
     @classmethod
     def second_walk(cls, v: node_ui.NodeProxy, m=0, depth=0):
-        if v.aggregation.object.name == "Manometer":
-            print("HIER")
         cls.set_x(v, cls.x(v) + m)
-        cls.set_y(v, depth)
+        height_list = cls.get_properties().height_list
+        cls.set_y(v, sum(height_list[:depth])+Y_MARGIN*depth)
         for w in cls.children(v):
             cls.second_walk(w, m + v.mod, depth + 1)
 
     @classmethod
     def apportion(
-        cls, v: node_ui.NodeProxy, default_ancestor: node_ui.NodeProxy, distance: float
-    ):
+        cls, v: node_ui.NodeProxy, default_ancestor: node_ui.NodeProxy):
         w = cls.lbrother(v)
         if w is None:
             return default_ancestor
@@ -96,7 +99,7 @@ class Buchheim:
             vol = cls.left(vol)
             vor = cls.right(vor)
             vor.ancestor = v
-            shift = cls.x(vil) + sil - (cls.x(vir) + sir) + distance
+            shift = cls.x(vil) + sil - (cls.x(vir) + sir) + cls.width(vil)+X_MARGIN
             if shift > 0:
                 cls.move_subtree(cls.ancestor(vil, v, default_ancestor), v, shift)
                 sir = sir + shift
@@ -113,16 +116,6 @@ class Buchheim:
             vol.mod += sir - sol
             default_ancestor = v
         return default_ancestor
-
-    @classmethod
-    def execute_shifts(cls, v: node_ui.NodeProxy):
-        return
-        shift = change = 0
-        for w in reversed(cls.children(v)):
-            cls.set_x(w, cls.x(w) + shift)
-            w.mod += shift
-            change += w.change
-            shift += w.shift + change
 
     @classmethod
     def move_subtree(cls, wl: node_ui.NodeProxy, wr: node_ui.NodeProxy, shift: float):

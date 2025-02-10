@@ -355,7 +355,7 @@ def rearange(
     def ra(v):
         x, y = buchheim.pos(v)
         x = center.x() + x
-        y = center.y() + y*250
+        y = center.y() + y
         node.set_node_pos(v, QPointF(x, y))
         for child in buchheim.children(v):
             ra(child)
