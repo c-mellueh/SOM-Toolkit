@@ -10,7 +10,7 @@ def list_files_in_directory(root_dir):
                     or file.endswith(".qrc")
                     or file.endswith(".ui")
             ):
-                if dirpath.endswith("\qt") and file.endswith(".py"):
+                if dirpath.endswith("\\qt") and file.endswith(".py"):
                     continue
                 path = os.path.join(dirpath, file)
                 output_dict["files"].append(path)
@@ -18,7 +18,7 @@ def list_files_in_directory(root_dir):
 
 # Example usage:
 output_dict = {"files": []}
-root_directory = ".."
+root_directory = "..\.."
 list_files_in_directory(root_directory)
 import json
 

@@ -1124,20 +1124,20 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>NeueGruppe</translation>
     </message>
     <message>
-        <location filename="../../tool/object.py" line="186"/>
-        <location filename="../../tool/object.py" line="264"/>
+        <location filename="../../tool/object.py" line="187"/>
+        <location filename="../../tool/object.py" line="265"/>
         <source>Identifier exists allready or is not allowed</source>
         <translation>Identifier existiert bereits oder ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/object.py" line="188"/>
-        <location filename="../../tool/object.py" line="252"/>
+        <location filename="../../tool/object.py" line="189"/>
+        <location filename="../../tool/object.py" line="253"/>
         <source>Name of Attribute is not allowed</source>
         <translation>Name des Attributes ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/object.py" line="190"/>
-        <location filename="../../tool/object.py" line="239"/>
+        <location filename="../../tool/object.py" line="191"/>
+        <location filename="../../tool/object.py" line="240"/>
         <source>Name of PropertySet is not allowed</source>
         <translation>Name des PropertySets ist nicht erlaubt</translation>
     </message>
