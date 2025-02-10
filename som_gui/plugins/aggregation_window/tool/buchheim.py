@@ -99,7 +99,7 @@ class Buchheim:
             vol = cls.left(vol)
             vor = cls.right(vor)
             vor.ancestor = v
-            shift = cls.x(vil) + sil - (cls.x(vir) + sir) + cls.width(vil)+X_MARGIN
+            shift = cls.x(vil) + sil - (cls.x(vir) + sir) + cls.width(vil)+X_MARGIN*2
             if shift > 0:
                 cls.move_subtree(cls.ancestor(vil, v, default_ancestor), v, shift)
                 sir = sir + shift
