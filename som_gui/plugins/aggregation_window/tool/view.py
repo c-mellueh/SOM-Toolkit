@@ -147,9 +147,6 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         import_scene_dict = plugin_dict.get(AGGREGATIONSCENES)
 
         if import_scene_dict is None:
-            logging.warning(
-                f"SOMJson was written in OLD version. Please open with SOM-Toolkit v2.11.3 and save it as new version."
-            )
             return
 
         existing_scene_names = cls.get_properties().scene_name_list

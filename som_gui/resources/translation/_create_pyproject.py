@@ -13,7 +13,7 @@ def list_files_in_directory(root_dir):
                     or file.endswith(".qrc")
                     or file.endswith(".ui")
             ):
-                if dirpath.endswith("\qt") and file.endswith(".py"):
+                if dirpath.endswith("\\qt") and file.endswith(".py"):
                     continue
                 path = os.path.join(dirpath, file)
                 output_dict["files"].append(path)

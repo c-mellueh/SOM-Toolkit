@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from PySide6.QtCore import QSize, QPointF, QRectF, QCoreApplication, Qt
-from PySide6.QtWidgets import QTreeWidgetItem
+from PySide6.QtWidgets import QTreeWidgetItem,QVBoxLayout
 from PySide6.QtGui import QPainter, QFontMetrics, QFont
 import logging
 import SOMcreator
@@ -183,7 +183,10 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         node_widget.setMinimumSize(QSize(250, 150))
         node.aggregation = aggregation
         tree_widget = cls.create_tree_widget(node)
-        node.widget().layout().insertWidget(0, tree_widget)
+        layout:QVBoxLayout = node.widget().layout()
+        layout.setContentsMargins(0,0,0,0)
+        layout.addItem(node.spacer)
+        layout.insertWidget(1, tree_widget)
         cls.create_header(node)
         cls.create_frame(node)
         cls.create_resize_rect(node)
@@ -215,13 +218,11 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         height = len(rows) * row_height
 
         x = line_width / 2
-        y = -height
+        y = 0
         return QRectF(x, y, width, height)
 
     @classmethod
-    def get_frame_geometry(
-        cls, frame: node_ui.Frame, node: node_ui.NodeProxy
-    ) -> QRectF:
+    def get_frame_geometry(cls, node: node_ui.NodeProxy) -> QRectF:
         """
         Get the geometry of a frame for a node.
 
@@ -235,11 +236,12 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         :return: The calculated geometry of the frame.
         :rtype: QRectF
         """
+        frame = cls.get_frame_from_node(node)
         line_width = frame.pen().width()
         rect = node.rect()
         rect.setWidth(rect.width() - line_width / 2)
         rect.setHeight(rect.height())
-        rect.setY(rect.y() - node.header.rect().height())
+        rect.setY(rect.y())
         rect.setX(rect.x() + frame.pen().width() / 2)
         return rect
 
@@ -276,10 +278,10 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         :rtype: node_ui.Frame
         """
         frame = node_ui.Frame()
-        rect = cls.get_frame_geometry(frame, node)
-        frame.setRect(rect)
         node.frame = frame
         frame.node = node
+        rect = cls.get_frame_geometry(node)
+        frame.setRect(rect)
         return frame
 
     @classmethod
@@ -363,6 +365,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         :type dif: QPointF
         :return: None
         """
+
         node.moveBy(dif.x(), dif.y())
         frame = cls.get_frame_from_node(node)
         frame.moveBy(dif.x(), dif.y())
@@ -622,7 +625,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         Returns:
             set[node_ui.NodeProxy]: A set of child nodes connected to the given node.
         """
-        return {connection.bottom_node for connection in node.bottom_connections}  #
+        return [connection.bottom_node for connection in node.bottom_connections]
 
     @classmethod
     def add_new_values_to_pset_tree(
