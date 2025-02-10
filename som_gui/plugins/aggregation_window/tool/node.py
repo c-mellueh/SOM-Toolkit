@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from PySide6.QtCore import QSize, QPointF, QRectF, QCoreApplication, Qt
-from PySide6.QtWidgets import QTreeWidgetItem
+from PySide6.QtWidgets import QTreeWidgetItem,QSpacerItem
 from PySide6.QtGui import QPainter, QFontMetrics, QFont
 import logging
 import SOMcreator
@@ -183,7 +183,8 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         node_widget.setMinimumSize(QSize(250, 150))
         node.aggregation = aggregation
         tree_widget = cls.create_tree_widget(node)
-        node.widget().layout().insertWidget(0, tree_widget)
+        node.widget().layout().addItem(node.spacer)
+        node.widget().layout().insertWidget(1, tree_widget)
         cls.create_header(node)
         cls.create_frame(node)
         cls.create_resize_rect(node)
@@ -215,7 +216,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         height = len(rows) * row_height
 
         x = line_width / 2
-        y = -height
+        y = 0
         return QRectF(x, y, width, height)
 
     @classmethod
@@ -238,7 +239,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         rect = node.rect()
         rect.setWidth(rect.width() - line_width / 2)
         rect.setHeight(rect.height())
-        rect.setY(rect.y() - node.header.rect().height())
+        rect.setY(rect.y())
         rect.setX(rect.x() + frame.pen().width() / 2)
         return rect
 
@@ -362,6 +363,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         :type dif: QPointF
         :return: None
         """
+
         node.moveBy(dif.x(), dif.y())
         frame = cls.get_frame_from_node(node)
         frame.moveBy(dif.x(), dif.y())

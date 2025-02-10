@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QTreeWidget,
     QVBoxLayout,
     QWidget,
+    QSpacerItem,
 )
 
 import SOMcreator
@@ -43,6 +44,8 @@ class NodeProxy(QGraphicsProxyWidget):
         self.shift = 0# needed for buchheim algorithm
         self.ancestor = self# needed for buchheim algorithm
         self.number = None# needed for buchheim algorithm
+
+        self.spacer = QSpacerItem(5,5) #used to create space in which the header can exist
 
     def __repr__(self):
         return str(self)
