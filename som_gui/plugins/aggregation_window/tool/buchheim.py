@@ -138,6 +138,18 @@ class Buchheim:
         else:
             return default_ancestor
 
+    @classmethod
+    def rearrange(cls,root_node:node_ui.NodeProxy,base_pos:QPointF):
+        def ra(v):
+            x, y = cls.pos(v)
+            x = base_pos.x() + x
+            y = base_pos.y() + y
+            aw_tool.Node.set_node_pos(v, QPointF(x, y))
+            for child in cls.children(v):
+                ra(child)
+        ra(root_node)
+    
+    
     # NodeProxy getter functions
 
     @classmethod
