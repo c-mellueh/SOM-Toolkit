@@ -434,7 +434,7 @@ class Object(som_gui.core.tool.Object):
     @classmethod
     def oi_set_ident_value_color(cls, color: str):
         widget = cls.get_properties().object_info_widget.widget
-        widget.line_edit_attribute_value.setStyleSheet(f"color:{color}")
+        widget.line_edit_attribute_value.setStyleSheet(f"QLineEdit {{color:{color};}}")
 
     @classmethod
     def oi_change_visibility_identifiers(cls, hide: bool):

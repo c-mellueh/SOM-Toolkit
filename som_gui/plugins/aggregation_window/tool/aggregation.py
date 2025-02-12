@@ -47,7 +47,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
         if not cls.is_abbreviation_allowed(abbreviation, abbrev_filter):
             cls.oi_set_abbrev_value_color("red")
         else:
-            cls.oi_set_abbrev_value_color(QPalette().text())
+            cls.oi_set_abbrev_value_color(QPalette().color(QPalette.Text).name())
 
     @classmethod
     def test_abbreviation(cls, abbreviation: str, obj: SOMcreator.Object) -> int:
@@ -73,7 +73,8 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     @classmethod
     def oi_set_abbrev_value_color(cls, color: str):
         widget = cls.get_properties().object_info_line_edit
-        widget.setStyleSheet(f"color:{color}")
+        style = widget.style()
+        widget.setStyleSheet(f"QLineEdit {{color:{color};}}")
 
     @classmethod
     def get_existing_abbriviations(cls) -> set[str]:

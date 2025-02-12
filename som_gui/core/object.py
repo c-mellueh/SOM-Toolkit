@@ -134,7 +134,7 @@ def object_info_refresh(object_tool: Type[Object]):
     if not object_tool.is_identifier_allowed(ident_value, ident_filter):
         object_tool.oi_set_ident_value_color("red")
     else:
-        object_tool.oi_set_ident_value_color(QPalette().text())
+        object_tool.oi_set_ident_value_color(QPalette().color(QPalette.Text).name())
     object_tool.oi_change_visibility_identifiers(group)
 
 
