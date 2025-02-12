@@ -136,7 +136,7 @@ def pt_context_menu(local_pos, orientation: Qt.Orientation, filter_window: Type[
             menu_list.append((del_ph, lambda: filter_window.remove_phase(phase, proj)))
         menu_list.append((rename_ph, lambda: filter_window.rename_filter(phase)))
         menu_list.append((add_ph, lambda: filter_window.add_phase(proj)))
-        pos = table.horizontalHeader().viewport().mapToGlobal(local_pos)
+        pos = table.verticalHeader().viewport().mapToGlobal(local_pos)
 
     filter_window.create_context_menu(menu_list, pos)
 

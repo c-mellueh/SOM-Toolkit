@@ -113,7 +113,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
     def add_phase(cls, project: SOMcreator.Project):
         text = QCoreApplication.translate("FilterWindow", "New Phase")
 
-        new_name = tool.Util.get_new_name(text, [uc.name for uc in project.get_usecases()])
+        new_name = tool.Util.get_new_name(text, [ph.name for ph in project.get_phases()])
         phase = SOMcreator.Phase(new_name, new_name, new_name)
         model = cls.get_project_table().model()
         model.beginInsertRows(QModelIndex(), model.rowCount(), model.rowCount())

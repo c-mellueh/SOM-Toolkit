@@ -114,7 +114,7 @@ class Hirarchy(object, metaclass=IterRegistry):
         for usecase_list in self._filter_matrix:
             usecase_list.pop(usecase_index)
 
-    def add_project_phase(self) -> None:
+    def add_phase(self) -> None:
         usecases = self.project.get_usecases()
         self._filter_matrix.append([True for _ in usecases])
 
