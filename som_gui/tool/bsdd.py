@@ -76,28 +76,28 @@ class Bsdd(som_gui.core.tool.Bsdd):
                 if preset is None:
                     #create input line
                     w = QLineEdit()
-                    w.textChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, name))
+                    w.textChanged.connect(lambda text, n=name: trigger.dict_attribute_changed(text, n))
                 else:
                     #create text dropdown
                     w = QComboBox()
                     w.addItems(preset)
-                    w.currentTextChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, name))
+                    w.currentTextChanged.connect(lambda text, n=name: trigger.dict_attribute_changed(text, n))
 
             # create checkbox
             elif datatype == "bool":
                 w = QCheckBox()
-                w.checkStateChanged.connect(lambda state, wid=w: trigger.dict_attribute_changed(state, name))
+                w.checkStateChanged.connect(lambda state, n=name: trigger.dict_attribute_changed(state, n))
 
             # create input line
             elif datatype == "datetime":
                 w = QLineEdit()
-                w.textChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, name))
+                w.textChanged.connect(lambda text, n=name: trigger.dict_attribute_changed(text, n))
 
             # handle exceptions
             else:
                 logging.info(f"Datatype: '{datatype}' not supported")
                 w = QLineEdit()
-                w.textChanged.connect(lambda text, wid=w: trigger.dict_attribute_changed(text, name))
+                w.textChanged.connect(lambda text, n=name: trigger.dict_attribute_changed(text, n))
 
             #fill line of QFormLayout
             cls.set_linked_attribute_name(w, name)
@@ -201,6 +201,18 @@ class Bsdd(som_gui.core.tool.Bsdd):
     def set_linked_attribute_name(cls, item: QWidget, value):
         return item.setProperty(constants.POPERTY_KEY, value)
 
+    @classmethod
+    def is_update_blocked(cls):
+        layout: QFormLayout = cls.get_dictionary_widget().layout()
+        for row in range(layout.rowCount()):
+            item = layout.itemAt(row * 2).widget() #get Value Widget "*2" is needed because QFormLayout item handling
+            if not isinstance(item,QLineEdit):
+                continue
+            if item.hasFocus():
+                logging.debug(f"{cls.get_linked_attribute_name(item)} has focus.")  
+                return True
+            
+        return False
     @classmethod
     def get_export_path(cls) -> str:
         return cls.get_path_line_edit().text()
