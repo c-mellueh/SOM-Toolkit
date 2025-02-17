@@ -3,21 +3,20 @@
 ################################################################################
 ## Form generated from reading UI file 'Widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLineEdit, QPushButton,
-                               QSizePolicy, QToolBox, QVBoxLayout, QWidget)
-
+    QSizePolicy, QToolBox, QVBoxLayout, QWidget)
 
 class Ui_BSDD(object):
     def setupUi(self, BSDD):
@@ -28,10 +27,6 @@ class Ui_BSDD(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.toolBox = QToolBox(BSDD)
         self.toolBox.setObjectName(u"toolBox")
-        self.page_2 = QWidget()
-        self.page_2.setObjectName(u"page_2")
-        self.page_2.setGeometry(QRect(0, 0, 622, 400))
-        self.toolBox.addItem(self.page_2, u"Page 2")
 
         self.verticalLayout.addWidget(self.toolBox)
 
@@ -56,16 +51,17 @@ class Ui_BSDD(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
+
         self.retranslateUi(BSDD)
 
-        self.toolBox.setCurrentIndex(0)
+        self.toolBox.setCurrentIndex(-1)
+
 
         QMetaObject.connectSlotsByName(BSDD)
     # setupUi
 
     def retranslateUi(self, BSDD):
         BSDD.setWindowTitle(QCoreApplication.translate("BSDD", u"Form", None))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.page_2), QCoreApplication.translate("BSDD", u"Page 2", None))
         self.le_export_path.setPlaceholderText(QCoreApplication.translate("BSDD", u"export path", None))
         self.bu_select_path.setText(QCoreApplication.translate("BSDD", u"...", None))
         self.bu_run.setText(QCoreApplication.translate("BSDD", u"Run", None))

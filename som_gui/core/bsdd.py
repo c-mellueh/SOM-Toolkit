@@ -52,6 +52,7 @@ def open_window(bsdd: Type[tool.Bsdd], appdata: Type[tool.Appdata]) -> None:
     # update Texts
     bsdd.trigger_retranslation()
     window.show()
+    window.activateWindow()
 
 
 def reset(bsdd: Type[tool.Bsdd]) -> None:
@@ -77,6 +78,9 @@ def update_dictionary(bsdd: Type[tool.Bsdd], project: Type[tool.Project]):
     """
     update Dictionary entries based on defined variables
     """
+    if bsdd.is_update_blocked():
+        return
+    logging.debug("update Dictionary")
     dictionary = bsdd.get_dictionary()
     if not dictionary:
         dictionary = bsdd.transform_project_to_dict(project.get())
@@ -100,6 +104,7 @@ def update_dictionary_attribute(value, attribute_name:str, bsdd: Type[tool.Bsdd]
     :param bsdd:
     :return:
     """
+    logging.debug(f"Update Attribute '{attribute_name}' -> {value}")
     dictionary = bsdd.get_dictionary()
     if not dictionary:
         return
