@@ -204,7 +204,7 @@ class Object(som_gui.core.tool.Object):
         ident_value = data_dict["ident_value"]
         pset = data_dict.get("ident_pset_name")
         attribute = data_dict.get("ident_attribute_name")
-
+        name = data_dict.get("name") or obj.name
         if not cls.is_identifier_allowed(ident_value):
             return som_gui.module.object.IDENT_ISSUE, None
 
@@ -216,6 +216,7 @@ class Object(som_gui.core.tool.Object):
         if pset and attribute:
             new_object.ident_attrib = cls.find_attribute(new_object, pset, attribute)
         new_object.ident_attrib.value = [ident_value]
+        new_object.name = name
         for plugin in cls.get_properties().object_info_plugin_list:  # call Setter Func
             plugin.value_setter(new_object, data_dict[plugin.key])
 
