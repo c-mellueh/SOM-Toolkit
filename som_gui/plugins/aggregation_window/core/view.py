@@ -334,7 +334,8 @@ def rearange(
     scene = view.get_active_scene()
     all_nodes = view.get_nodes_in_scene(scene)
     root_nodes = [n for n in all_nodes if node.is_root(n)]
-
+    if not root_nodes:
+        return
     #create helper to structure multiple root nodes
     helper_obj = SOMcreator.Object("INV",None)
     helper_aggregation = SOMcreator.Aggregation(helper_obj)
