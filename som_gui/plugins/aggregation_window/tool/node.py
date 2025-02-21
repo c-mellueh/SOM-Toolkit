@@ -449,7 +449,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     ) -> list[str]:
         aggregation = cls.get_aggregation_from_node(node)
         if not (pset_name and attribute_name):
-            base_text = f"{aggregation.name} ({aggregation.object.abbreviation})"
+            base_text = f"{aggregation.object.name} ({aggregation.object.abbreviation})"
             id_text = QCoreApplication.translate("Aggregation Window", "id: {}").format(
                 node.aggregation.identity()
             )
