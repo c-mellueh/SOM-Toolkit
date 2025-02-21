@@ -211,9 +211,9 @@ class ProjectModel(QAbstractTableModel):
             return self.project.get_phases()[section].name
 
     def insertRows(self, row, count, parent=None):
+        logging.debug("Insert Rows")
         text = QCoreApplication.translate("FilterWindow", "New Phase")
-
-        new_name = tool.Util.get_new_name(text, [uc.name for uc in self.project.get_usecases()])
+        new_name = tool.Util.get_new_name(text, [ph.name for ph in self.project.get_phases()])
         self.beginInsertRows(QModelIndex(), row, row + count - 1)
         phase = SOMcreator.Phase(new_name, new_name, new_name)
         self.project.add_phase(phase)

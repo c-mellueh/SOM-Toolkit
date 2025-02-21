@@ -214,6 +214,7 @@ class Project(object):
         return list(self._usecases)
 
     def add_phase(self, phase: SOMcreator.Phase):
+
         if phase not in self._phases:
             self._phases.append(phase)
             for item in self.get_hirarchy_items(filter=False):

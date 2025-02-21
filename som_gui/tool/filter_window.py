@@ -7,6 +7,7 @@ from PySide6.QtGui import QAction, QColor
 from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QInputDialog, QLineEdit, QMenu, QSizePolicy, QTreeWidget, \
     QTreeWidgetItem, QWidget
 
+import logging
 import SOMcreator
 import som_gui
 import som_gui.core.tool
@@ -93,8 +94,10 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
 
     @classmethod
     def add_usecase(cls, project: SOMcreator.Project):
+
         text = QCoreApplication.translate("FilterWindow", "New UseCase")
         new_name = tool.Util.get_new_name(text, [uc.name for uc in project.get_usecases()])
+        logging.debug(f"Add UseCase '{new_name}'")
         usecase = SOMcreator.UseCase(new_name, new_name, new_name)
         model = cls.get_project_table().model()
         model.beginInsertColumns(QModelIndex(), model.columnCount(), model.columnCount())
@@ -103,6 +106,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
 
     @classmethod
     def remove_usecase(cls, usecase: SOMcreator.UseCase, project: SOMcreator.Project):
+        logging.debug(f"remove UseCase '{usecase.name}'")
         model = cls.get_project_table().model()
         usecase_index = project.get_usecase_index(usecase)
         model.beginRemoveColumns(QModelIndex(), usecase_index, usecase_index)
@@ -112,8 +116,8 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
     @classmethod
     def add_phase(cls, project: SOMcreator.Project):
         text = QCoreApplication.translate("FilterWindow", "New Phase")
-
         new_name = tool.Util.get_new_name(text, [ph.name for ph in project.get_phases()])
+        logging.debug(f"Add Phase '{new_name}'")
         phase = SOMcreator.Phase(new_name, new_name, new_name)
         model = cls.get_project_table().model()
         model.beginInsertRows(QModelIndex(), model.rowCount(), model.rowCount())
@@ -122,6 +126,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
 
     @classmethod
     def remove_phase(cls, phase: SOMcreator.Phase, project: SOMcreator.Project):
+        logging.debug(f"remove Phase '{phase.name}'")
         model = cls.get_project_table().model()
         phase_index = project.get_phase_index(phase)
         model.beginRemoveRows(QModelIndex(), phase_index, phase_index)

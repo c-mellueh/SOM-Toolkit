@@ -132,8 +132,8 @@ def repaint_object_list(predefined_pset: Type[tool.PredefinedPropertySet]):
     add_property_sets = sorted(predefined_property_sets.difference(existing_property_sets), key=lambda p: p.name)
 
     predefined_pset.remove_property_sets_from_table_widget(delete_property_sets, table_widget)
-    predefined_pset.add_objects_to_table_widget(sorted(add_property_sets, key=lambda p: p.object.name),
-                                                table_widget)
+    predefined_pset.add_objects_to_table_widget(sorted(filter(lambda p: p.object is not None,add_property_sets), key=lambda p: p.object.name),
+                                                    table_widget)
 
     table_widget.resizeColumnToContents(0)
     predefined_pset.update_object_widget()
