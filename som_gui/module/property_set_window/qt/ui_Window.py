@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'Window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -27,7 +27,7 @@ class Ui_PropertySetWindow(object):
     def setupUi(self, PropertySetWindow):
         if not PropertySetWindow.objectName():
             PropertySetWindow.setObjectName(u"PropertySetWindow")
-        PropertySetWindow.resize(994, 542)
+        PropertySetWindow.resize(1266, 600)
         self.horizontalLayout = QHBoxLayout(PropertySetWindow)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.splitter_2 = QSplitter(PropertySetWindow)
@@ -38,49 +38,37 @@ class Ui_PropertySetWindow(object):
         self.gridLayout = QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.check_box_inherit = QCheckBox(self.gridLayoutWidget)
+        self.check_box_inherit.setObjectName(u"check_box_inherit")
+
+        self.gridLayout.addWidget(self.check_box_inherit, 1, 1, 1, 1)
+
         self.label_values = QLabel(self.gridLayoutWidget)
         self.label_values.setObjectName(u"label_values")
         self.label_values.setMinimumSize(QSize(0, 0))
 
         self.gridLayout.addWidget(self.label_values, 1, 0, 1, 1)
 
-        self.combo_type = QComboBox(self.gridLayoutWidget)
-        self.combo_type.setObjectName(u"combo_type")
-
-        self.gridLayout.addWidget(self.combo_type, 0, 2, 1, 1)
-
-        self.button_add_line = QPushButton(self.gridLayoutWidget)
-        self.button_add_line.setObjectName(u"button_add_line")
+        self.label_name = QLabel(self.gridLayoutWidget)
+        self.label_name.setObjectName(u"label_name")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.button_add_line.sizePolicy().hasHeightForWidth())
-        self.button_add_line.setSizePolicy(sizePolicy)
-        self.button_add_line.setMinimumSize(QSize(15, 15))
-        self.button_add_line.setMaximumSize(QSize(24, 24))
+        sizePolicy.setHeightForWidth(self.label_name.sizePolicy().hasHeightForWidth())
+        self.label_name.setSizePolicy(sizePolicy)
 
-        self.gridLayout.addWidget(self.button_add_line, 1, 4, 1, 1)
+        self.gridLayout.addWidget(self.label_name, 0, 0, 1, 1)
 
-        self.button_add = QPushButton(self.gridLayoutWidget)
-        self.button_add.setObjectName(u"button_add")
+        self.combo_value_type = QComboBox(self.gridLayoutWidget)
+        self.combo_value_type.setObjectName(u"combo_value_type")
 
-        self.gridLayout.addWidget(self.button_add, 0, 3, 1, 2)
+        self.gridLayout.addWidget(self.combo_value_type, 0, 2, 1, 1)
 
         self.check_box_seperator = QCheckBox(self.gridLayoutWidget)
         self.check_box_seperator.setObjectName(u"check_box_seperator")
         self.check_box_seperator.setChecked(True)
 
         self.gridLayout.addWidget(self.check_box_seperator, 1, 2, 1, 1)
-
-        self.check_box_inherit = QCheckBox(self.gridLayoutWidget)
-        self.check_box_inherit.setObjectName(u"check_box_inherit")
-
-        self.gridLayout.addWidget(self.check_box_inherit, 1, 1, 1, 1)
-
-        self.combo_data_type = QComboBox(self.gridLayoutWidget)
-        self.combo_data_type.setObjectName(u"combo_data_type")
-
-        self.gridLayout.addWidget(self.combo_data_type, 0, 1, 1, 1)
 
         self.line_edit_seperator = QLineEdit(self.gridLayoutWidget)
         self.line_edit_seperator.setObjectName(u"line_edit_seperator")
@@ -91,58 +79,75 @@ class Ui_PropertySetWindow(object):
         self.line_edit_seperator.setSizePolicy(sizePolicy1)
         self.line_edit_seperator.setMaximumSize(QSize(16777215, 16777215))
 
-        self.gridLayout.addWidget(self.line_edit_seperator, 1, 3, 1, 1)
+        self.gridLayout.addWidget(self.line_edit_seperator, 1, 4, 1, 1)
 
-        self.label_name = QLabel(self.gridLayoutWidget)
-        self.label_name.setObjectName(u"label_name")
-        sizePolicy.setHeightForWidth(self.label_name.sizePolicy().hasHeightForWidth())
-        self.label_name.setSizePolicy(sizePolicy)
+        self.combo_data_type = QComboBox(self.gridLayoutWidget)
+        self.combo_data_type.setObjectName(u"combo_data_type")
 
-        self.gridLayout.addWidget(self.label_name, 0, 0, 1, 1)
-
-        self.lineEdit_name = QLineEdit(self.gridLayoutWidget)
-        self.lineEdit_name.setObjectName(u"lineEdit_name")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.lineEdit_name.sizePolicy().hasHeightForWidth())
-        self.lineEdit_name.setSizePolicy(sizePolicy2)
-        self.lineEdit_name.setMinimumSize(QSize(350, 0))
-
-        self.gridLayout.addWidget(self.lineEdit_name, 3, 0, 1, 5)
+        self.gridLayout.addWidget(self.combo_data_type, 0, 1, 1, 1)
 
         self.splitter = QSplitter(self.gridLayoutWidget)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Orientation.Vertical)
         self.scroll_area = QScrollArea(self.splitter)
         self.scroll_area.setObjectName(u"scroll_area")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(1)
-        sizePolicy3.setHeightForWidth(self.scroll_area.sizePolicy().hasHeightForWidth())
-        self.scroll_area.setSizePolicy(sizePolicy3)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(1)
+        sizePolicy2.setHeightForWidth(self.scroll_area.sizePolicy().hasHeightForWidth())
+        self.scroll_area.setSizePolicy(sizePolicy2)
         self.scroll_area.setMinimumSize(QSize(24, 24))
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area_content = QWidget()
         self.scroll_area_content.setObjectName(u"scroll_area_content")
-        self.scroll_area_content.setGeometry(QRect(0, 0, 487, 235))
+        self.scroll_area_content.setGeometry(QRect(0, 0, 716, 293))
         self.verticalLayout_2 = QVBoxLayout(self.scroll_area_content)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.scroll_area.setWidget(self.scroll_area_content)
         self.splitter.addWidget(self.scroll_area)
         self.description = QTextEdit(self.splitter)
         self.description.setObjectName(u"description")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.description.sizePolicy().hasHeightForWidth())
-        self.description.setSizePolicy(sizePolicy4)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.description.sizePolicy().hasHeightForWidth())
+        self.description.setSizePolicy(sizePolicy3)
         self.description.setMinimumSize(QSize(0, 28))
         self.description.setAutoFormatting(QTextEdit.AutoFormattingFlag.AutoAll)
         self.description.setReadOnly(False)
         self.splitter.addWidget(self.description)
 
-        self.gridLayout.addWidget(self.splitter, 4, 0, 1, 5)
+        self.gridLayout.addWidget(self.splitter, 4, 0, 1, 6)
+
+        self.button_add = QPushButton(self.gridLayoutWidget)
+        self.button_add.setObjectName(u"button_add")
+
+        self.gridLayout.addWidget(self.button_add, 0, 4, 1, 2)
+
+        self.button_add_line = QPushButton(self.gridLayoutWidget)
+        self.button_add_line.setObjectName(u"button_add_line")
+        sizePolicy.setHeightForWidth(self.button_add_line.sizePolicy().hasHeightForWidth())
+        self.button_add_line.setSizePolicy(sizePolicy)
+        self.button_add_line.setMinimumSize(QSize(15, 15))
+        self.button_add_line.setMaximumSize(QSize(24, 24))
+
+        self.gridLayout.addWidget(self.button_add_line, 1, 5, 1, 1)
+
+        self.lineEdit_name = QLineEdit(self.gridLayoutWidget)
+        self.lineEdit_name.setObjectName(u"lineEdit_name")
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.lineEdit_name.sizePolicy().hasHeightForWidth())
+        self.lineEdit_name.setSizePolicy(sizePolicy4)
+        self.lineEdit_name.setMinimumSize(QSize(350, 0))
+
+        self.gridLayout.addWidget(self.lineEdit_name, 3, 0, 1, 6)
+
+        self.combo_unit = QComboBox(self.gridLayoutWidget)
+        self.combo_unit.setObjectName(u"combo_unit")
+
+        self.gridLayout.addWidget(self.combo_unit, 0, 3, 1, 1)
 
         self.splitter_2.addWidget(self.gridLayoutWidget)
         self.table_widget = AttributeTable(self.splitter_2)
@@ -187,13 +192,13 @@ class Ui_PropertySetWindow(object):
 
     def retranslateUi(self, PropertySetWindow):
         PropertySetWindow.setWindowTitle(QCoreApplication.translate("PropertySetWindow", u"Form", None))
-        self.label_values.setText(QCoreApplication.translate("PropertySetWindow", u"Values", None))
-        self.button_add_line.setText(QCoreApplication.translate("PropertySetWindow", u"+", None))
-        self.button_add.setText(QCoreApplication.translate("PropertySetWindow", u"Add", None))
-        self.check_box_seperator.setText(QCoreApplication.translate("PropertySetWindow", u"Splitter", None))
         self.check_box_inherit.setText(QCoreApplication.translate("PropertySetWindow", u"Inherit Values", None))
+        self.label_values.setText(QCoreApplication.translate("PropertySetWindow", u"Values", None))
         self.label_name.setText(QCoreApplication.translate("PropertySetWindow", u"Name", None))
-        self.lineEdit_name.setPlaceholderText(QCoreApplication.translate("PropertySetWindow", u"Name", None))
+        self.check_box_seperator.setText(QCoreApplication.translate("PropertySetWindow", u"Splitter", None))
         self.description.setPlaceholderText(QCoreApplication.translate("PropertySetWindow", u"Description", None))
+        self.button_add.setText(QCoreApplication.translate("PropertySetWindow", u"Add", None))
+        self.button_add_line.setText(QCoreApplication.translate("PropertySetWindow", u"+", None))
+        self.lineEdit_name.setPlaceholderText(QCoreApplication.translate("PropertySetWindow", u"Name", None))
     # retranslateUi
 

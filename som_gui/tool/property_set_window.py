@@ -67,10 +67,11 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         d = dict()
         d["name"] = cls.get_attribute_name_input(window)
         d["data_type"] = window.ui.combo_data_type.currentText()
-        d["value_type"] = window.ui.combo_type.currentText()
+        d["value_type"] = window.ui.combo_value_type.currentText()
         d["values"] = cls.get_values(window)
         d["description"] = window.ui.description.toPlainText()
         d["inherit_value"] = cls.get_inherit_checkbox_state(window)
+        d["unit"] = window.ui.combo_unit.currentText()
         return d
 
     @classmethod
@@ -115,7 +116,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
 
     @classmethod
     def get_value_type(cls, window: ui.PropertySetWindow):
-        return window.ui.combo_type.currentText()
+        return window.ui.combo_value_type.currentText()
 
     @classmethod
     def add_value_line(cls, column_count: int, window: ui.PropertySetWindow) -> QHBoxLayout:
@@ -175,11 +176,11 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
 
     @classmethod
     def fill_window_ui(cls, window: ui.PropertySetWindow):
-        window.ui.combo_type.clear()
-        window.ui.combo_type.addItems(cls.get_allowed_value_types())
+        window.ui.combo_value_type.clear()
+        window.ui.combo_value_type.addItems(cls.get_allowed_value_types())
         window.ui.combo_data_type.clear()
         window.ui.combo_data_type.addItems(cls.get_allowed_data_types())
-        window.ui.combo_type.setCurrentText(value_constants.LIST)
+        window.ui.combo_value_type.setCurrentText(value_constants.LIST)
         window.ui.combo_data_type.setCurrentText(value_constants.LABEL)
         cls.add_value_line(1, window)
 
@@ -208,13 +209,13 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def toggle_comboboxes(cls, attribute: SOMcreator.Attribute, window: ui.PropertySetWindow):
         is_child = attribute.is_child
-        window.ui.combo_type.setEnabled(not is_child)
+        window.ui.combo_value_type.setEnabled(not is_child)
         window.ui.combo_data_type.setEnabled(not is_child)
         t1 = QCoreApplication.translate("PropertySetWindow",
                                         "Attribute was inherited -> Type change not possible") if is_child else ""
         t2 = QCoreApplication.translate("PropertySetWindow",
                                         "Attribute was inherited -> DataType change not possible") if is_child else ""
-        window.ui.combo_type.setToolTip(t1)
+        window.ui.combo_value_type.setToolTip(t1)
         window.ui.combo_data_type.setToolTip(t2)
 
     @classmethod
@@ -227,7 +228,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
 
     @classmethod
     def set_value_type(cls, value_type: str, window: ui.PropertySetWindow):
-        window.ui.combo_type.setCurrentText(value_type)
+        window.ui.combo_value_type.setCurrentText(value_type)
 
     @classmethod
     def clear_values(cls, window: ui.PropertySetWindow):

@@ -42,7 +42,7 @@ def add_attribute_button_clicked(window: PropertySetWindow, property_set: Type[t
 
 
 def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[tool.PropertySetWindow]):
-    value_type = window.ui.combo_type.currentText()
+    value_type = window.ui.combo_value_type.currentText()
     if value_type == RANGE:
         property_set_tool.add_value_line(2, window)
     else:
