@@ -61,6 +61,7 @@ class Ui_PropertySetWindow(object):
 
         self.combo_value_type = QComboBox(self.gridLayoutWidget)
         self.combo_value_type.setObjectName(u"combo_value_type")
+        self.combo_value_type.setEditable(True)
 
         self.gridLayout.addWidget(self.combo_value_type, 0, 2, 1, 1)
 
@@ -83,6 +84,7 @@ class Ui_PropertySetWindow(object):
 
         self.combo_data_type = QComboBox(self.gridLayoutWidget)
         self.combo_data_type.setObjectName(u"combo_data_type")
+        self.combo_data_type.setEditable(True)
 
         self.gridLayout.addWidget(self.combo_data_type, 0, 1, 1, 1)
 
@@ -146,6 +148,7 @@ class Ui_PropertySetWindow(object):
 
         self.combo_unit = QComboBox(self.gridLayoutWidget)
         self.combo_unit.setObjectName(u"combo_unit")
+        self.combo_unit.setEditable(True)
 
         self.gridLayout.addWidget(self.combo_unit, 0, 3, 1, 1)
 

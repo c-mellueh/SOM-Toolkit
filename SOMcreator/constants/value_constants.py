@@ -1,4 +1,4 @@
-from .ifc_datatypes import LABEL, REAL, BOOLEAN, DATE, INTEGER
+from .ifc_datatypes import LABEL, REAL, BOOLEAN, DATE, INTEGER,IFC_DATATYPES
 
 AGGREGATION = 1
 INHERITANCE = 2
@@ -9,11 +9,10 @@ RANGE = "Range"
 LIST = "List"
 SHARED_PARAMETERS = "SharedParameters"
 EXISTS = "Exists"
-VALUE_TYPE_LOOKUP = {FORMAT: "Format", RANGE: "Range", LIST: "List", }  # VALUE: "Value",
-RANGE_STRINGS = ["Range", "range", "RANGE"]
+VALUE_TYPES= [FORMAT,RANGE, LIST] # VALUE: "Value",
 
 # DATATYPES
-DATA_TYPES = [LABEL, INTEGER, REAL, BOOLEAN, DATE]
+DATA_TYPES = IFC_DATATYPES
 NUMBER_DATATYPES = [REAL, INTEGER]
 
 # Datatype Mappings

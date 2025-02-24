@@ -5,13 +5,13 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QCoreApplication, Qt
 from PySide6.QtGui import QDoubleValidator, QGuiApplication, QIntValidator, QRegularExpressionValidator
-from PySide6.QtWidgets import QHBoxLayout, QLineEdit
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit,QCompleter,QComboBox
 
 import SOMcreator
 import som_gui
 import som_gui.core.tool
 from SOMcreator.constants import value_constants
-from SOMcreator.constants.value_constants import DATA_TYPES, VALUE_TYPE_LOOKUP
+from SOMcreator.constants.value_constants import DATA_TYPES, VALUE_TYPES
 from som_gui import tool
 from som_gui.module.property_set_window import ui
 from som_gui.module.property_set_window.constants import SEPERATOR, SEPERATOR_SECTION, SEPERATOR_STATUS
@@ -168,7 +168,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
 
     @classmethod
     def get_allowed_value_types(cls):
-        return VALUE_TYPE_LOOKUP.keys()
+        return VALUE_TYPES
 
     @classmethod
     def get_allowed_data_types(cls):
@@ -183,6 +183,21 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.ui.combo_value_type.setCurrentText(value_constants.LIST)
         window.ui.combo_data_type.setCurrentText(value_constants.LABEL)
         cls.add_value_line(1, window)
+
+    @classmethod
+    def update_datatype_completer(cls,window:ui.PropertySetWindow):
+        cb = window.ui.combo_data_type
+        cb.setCompleter(QCompleter( [cb.itemText(i) for i in range(cb.count())]))
+
+    @classmethod
+    def update_valuetype_completer(cls,window:ui.PropertySetWindow):
+        cb = window.ui.combo_value_type
+        cb.setCompleter(QCompleter( [cb.itemText(i) for i in range(cb.count())]))
+
+    @classmethod
+    def update_unit_completer(cls,window:ui.PropertySetWindow):
+        cb = window.ui.combo_unit
+        cb.setCompleter(QCompleter( [cb.itemText(i) for i in range(cb.count())]))
 
     @classmethod
     def connect_window_triggers(cls, window):
