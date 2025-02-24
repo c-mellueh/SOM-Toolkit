@@ -39,7 +39,7 @@ def add_attribute_button_clicked(window: PropertySetWindow, property_set: Type[t
         new_attribute.property_set = pset
     else:
         attribute.set_attribute_data_by_dict(old_attribute, attribute_data)
-
+    property_set_window.clear_values(window)
 
 def add_value_button_clicked(window: PropertySetWindow, property_set_tool: Type[tool.PropertySetWindow]):
     value_type = window.ui.combo_value_type.currentText()

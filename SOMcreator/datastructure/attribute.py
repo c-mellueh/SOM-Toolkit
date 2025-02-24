@@ -5,18 +5,30 @@ from .base import Hirarchy
 import copy as cp
 import logging
 
+
 class Attribute(Hirarchy):
     _registry: set[Attribute] = set()
 
-    def __init__(self, property_set: SOMcreator.PropertySet | None = None, name: str = "undef", value: list = None, value_type:str|None=None,
-                 data_type: str = SOMcreator.value_constants.LABEL,
-                 child_inherits_values: bool = False, uuid: str = None, description: None | str = None,
-                 optional: None | bool = None, revit_mapping: None | str = None,
-                 project: SOMcreator.Project | None = None,
-                 filter_matrix: list[list[bool]] = None,
-                 unit = None):
+    def __init__(
+        self,
+        property_set: SOMcreator.PropertySet | None = None,
+        name: str = "undef",
+        value: list = None,
+        value_type: str | None = None,
+        data_type: str = SOMcreator.value_constants.LABEL,
+        child_inherits_values: bool = False,
+        uuid: str = None,
+        description: None | str = None,
+        optional: None | bool = None,
+        revit_mapping: None | str = None,
+        project: SOMcreator.Project | None = None,
+        filter_matrix: list[list[bool]] = None,
+        unit=None,
+    ):
 
-        super(Attribute, self).__init__(name, description, optional, project, filter_matrix)
+        super(Attribute, self).__init__(
+            name, description, optional, project, filter_matrix
+        )
         self._value = value
         self._property_set = property_set
         self._value_type = value_type
@@ -39,6 +51,7 @@ class Attribute(Hirarchy):
             self._value_type = SOMcreator.value_constants.LIST
         if property_set is not None:
             self.property_set = property_set
+
     def __str__(self) -> str:
         text = f"{self.property_set.name} : {self.name} = {self.value}"
         return text
@@ -50,13 +63,20 @@ class Attribute(Hirarchy):
             return self.name < other
 
     def __copy__(self) -> Attribute:
-        new_attrib = Attribute(property_set=None, name=self.name, value=cp.copy(self.value),
-                               value_type=cp.copy(self.value_type),
-                               data_type=cp.copy(self.data_type), child_inherits_values=self.child_inherits_values,
-                               uuid=str(uuid4()),
-                               description=self.description, optional=self.is_optional(ignore_hirarchy=True),
-                               revit_mapping=self.revit_name,
-                               project=self.project, filter_matrix=self._filter_matrix)
+        new_attrib = Attribute(
+            property_set=None,
+            name=self.name,
+            value=cp.copy(self.value),
+            value_type=cp.copy(self.value_type),
+            data_type=cp.copy(self.data_type),
+            child_inherits_values=self.child_inherits_values,
+            uuid=str(uuid4()),
+            description=self.description,
+            optional=self.is_optional(ignore_hirarchy=True),
+            revit_mapping=self.revit_name,
+            project=self.project,
+            filter_matrix=self._filter_matrix,
+        )
 
         if self.parent is not None:
             self.parent.add_child(new_attrib)
@@ -70,11 +90,12 @@ class Attribute(Hirarchy):
 
     @property
     def unit(self) -> str:
-        return str(self._unit)
+        return str(self._unit) if self._unit else None
 
     @unit.setter
-    def unit(self,value:str) -> None:
+    def unit(self, value: str) -> None:
         from ifcopenshell.util.unit import get_unit_name_universal
+
         if not value:
             self._unit = None
             return
@@ -187,6 +208,7 @@ class Attribute(Hirarchy):
         if self not in value.get_attributes(filter=False):
             value.add_attribute(self)
         self._property_set = value
+
     def is_equal(self, attribute: Attribute) -> bool:
         equal = True
 

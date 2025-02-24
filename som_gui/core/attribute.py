@@ -23,6 +23,7 @@ def add_basic_attribute_data(attribute_tool: Type[tool.Attribute]):
     attribute_tool.add_attribute_data_value("description",lambda a:a.description,lambda v,a:setattr(a,"description",v))
     attribute_tool.add_attribute_data_value("optional", lambda a:a.is_optional(True),lambda v,a:a.set_optional(v))
     attribute_tool.add_attribute_data_value("inherit_value", lambda a:a.child_inherits_values,lambda v,a:setattr(a,"child_inherits_values",v))
+    attribute_tool.add_attribute_data_value("unit", lambda a:a.unit,lambda v,a:setattr(a,"unit",v))
 
 
 # Attribute Compare
