@@ -148,6 +148,15 @@ class Bsdd(som_gui.core.tool.Bsdd):
         return cls.get_properties().dictionary_widget
 
     @classmethod
+    def reset_classes(cls):
+        cls.get_properties().dictionary.Classes = list()
+
+    @classmethod
+    def reset_properties(cls):
+        cls.get_properties().dictionary.Properties = list()
+
+
+    @classmethod
     def reset_dictionary(cls):
         cls.get_properties().dictionary = None
 
