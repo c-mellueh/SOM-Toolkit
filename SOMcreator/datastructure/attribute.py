@@ -3,7 +3,7 @@ from uuid import uuid4
 import SOMcreator
 from .base import Hirarchy
 import copy as cp
-
+import logging
 
 class Attribute(Hirarchy):
     _registry: set[Attribute] = set()
@@ -13,13 +13,15 @@ class Attribute(Hirarchy):
                  child_inherits_values: bool = False, uuid: str = None, description: None | str = None,
                  optional: None | bool = None, revit_mapping: None | str = None,
                  project: SOMcreator.Project | None = None,
-                 filter_matrix: list[list[bool]] = None):
+                 filter_matrix: list[list[bool]] = None,
+                 unit = None):
 
         super(Attribute, self).__init__(name, description, optional, project, filter_matrix)
         self._value = value
         self._property_set = property_set
         self._value_type = value_type
         self._data_type = data_type
+        self._unit = unit
         self._registry.add(self)
         if revit_mapping is None:
             self._revit_name = name
@@ -65,6 +67,21 @@ class Attribute(Hirarchy):
         if parent is None:
             return []
         return parent.get_all_parents() + [parent]
+
+    @property
+    def unit(self) -> str:
+        return str(self._unit)
+
+    @unit.setter
+    def unit(self,value:str) -> None:
+        from ifcopenshell.util.unit import get_unit_name_universal
+        if not value:
+            self._unit = None
+            return
+        name = get_unit_name_universal(value)
+        if not name:
+            logging.warning(f"Unit '{value}' not found -> no unit asignment possible")
+        self._unit = value
 
     @property
     def revit_name(self) -> str:
