@@ -211,12 +211,19 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         is_child = attribute.is_child
         window.ui.combo_value_type.setEnabled(not is_child)
         window.ui.combo_data_type.setEnabled(not is_child)
-        t1 = QCoreApplication.translate("PropertySetWindow",
-                                        "Attribute was inherited -> Type change not possible") if is_child else ""
-        t2 = QCoreApplication.translate("PropertySetWindow",
-                                        "Attribute was inherited -> DataType change not possible") if is_child else ""
+        window.ui.combo_unit.setEnabled(not is_child)
+        if is_child:
+            t1 = QCoreApplication.translate("PropertySetWindow",
+                                            "Attribute was inherited -> Type change not possible")
+            t2 = QCoreApplication.translate("PropertySetWindow",
+                                            "Attribute was inherited -> DataType change not possible") 
+            t3 = QCoreApplication.translate("PropertySetWindow",
+                                            "Attribute was inherited -> Unit change not possible")
+        else:
+            t1=t2=t3=""
         window.ui.combo_value_type.setToolTip(t1)
         window.ui.combo_data_type.setToolTip(t2)
+        window.ui.combo_unit.setToolTip(t3)
 
     @classmethod
     def set_attribute_name(cls, name: str, window: ui.PropertySetWindow):
@@ -229,6 +236,10 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def set_value_type(cls, value_type: str, window: ui.PropertySetWindow):
         window.ui.combo_value_type.setCurrentText(value_type)
+
+    @classmethod
+    def set_unit(cls,unit:str,window:ui.PropertySetWindow):
+        window.ui.combo_unit.setCurrentText(unit or "")
 
     @classmethod
     def clear_values(cls, window: ui.PropertySetWindow):

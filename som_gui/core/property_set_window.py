@@ -134,6 +134,7 @@ def activate_attribute(active_attribute: SOMcreator.Attribute, window,
     property_set_window.set_description(active_attribute.description, window)
     property_set_window.toggle_comboboxes(active_attribute, window)
     property_set_window.set_inherit_checkbox_state(active_attribute.child_inherits_values, window)
+    property_set_window.set_unit(active_attribute.unit,window)
 
     property_set_window.clear_values(window)
     property_set_window.set_values(active_attribute, window)
