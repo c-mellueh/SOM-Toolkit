@@ -4,6 +4,7 @@ import SOMcreator
 from .base import Hirarchy
 import copy as cp
 import logging
+from ifcopenshell.util.unit import get_unit_name_universal
 
 
 class Attribute(Hirarchy):
@@ -89,22 +90,6 @@ class Attribute(Hirarchy):
         return parent.get_all_parents() + [parent]
 
     @property
-    def unit(self) -> str:
-        return str(self._unit) if self._unit else None
-
-    @unit.setter
-    def unit(self, value: str) -> None:
-        from ifcopenshell.util.unit import get_unit_name_universal
-
-        if not value:
-            self._unit = None
-            return
-        name = get_unit_name_universal(value)
-        if not name:
-            logging.warning(f"Unit '{value}' not found -> no unit asignment possible")
-        self._unit = value
-
-    @property
     def revit_name(self) -> str:
         return self._revit_name
 
@@ -168,10 +153,12 @@ class Attribute(Hirarchy):
 
     @value_type.setter
     def value_type(self, value: str):
-
-        if not self.is_child:
-            self._value_type = value
-
+        if self.is_child:
+            logging.info(
+                f"won't overwrite ValueType because Attribute '{self}' is child"
+            )
+            return
+        self._value_type = value
         if self.is_parent:
             for child in self.get_children(filter=False):
                 child._value_type = value
@@ -187,8 +174,34 @@ class Attribute(Hirarchy):
 
     @data_type.setter
     def data_type(self, value: str) -> None:
-        if not self.is_child:
-            self._data_type = value
+        if self.is_child:
+            logging.info(
+                f"won't overwrite Datatype because Attribute '{self}' is child"
+            )
+            return
+        self._data_type = value
+        if self.is_parent:
+            for child in self.get_children(filter=False):
+                child._data_type = value
+
+    @property
+    def unit(self) -> str:
+        return str(self._unit) if self._unit else None
+
+    @unit.setter
+    def unit(self, value: str) -> None:
+        if self.is_child:
+            logging.info(f"won't overwrite Unit because Attribute '{self}' is child")
+            return
+
+        if not value:
+            self._unit = None
+            return
+        name = get_unit_name_universal(value)
+        if not name:
+            logging.warning(f"Unit '{value}' not found -> no unit asignment possible")
+            return
+        self._unit = value
 
         if self.is_parent:
             for child in self.get_children(filter=False):
