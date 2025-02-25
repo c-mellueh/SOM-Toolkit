@@ -409,20 +409,6 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.ui.combo_data_type.addItems(data_type)
         window.ui.combo_data_type.setCurrentText(active_type)
 
-    @classmethod
-    def set_seperator(cls, window: ui.PropertySetWindow):
-        seperator = tool.Appdata.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
-        seperator_status = tool.Appdata.get_bool_setting(
-            SEPERATOR_SECTION, SEPERATOR_STATUS
-        )
-        window.ui.check_box_seperator.setChecked(seperator_status)
-        window.ui.line_edit_seperator.setText(seperator)
-
-    @classmethod
-    def get_seperator_state(cls, window: ui.PropertySetWindow) -> (str, bool):
-        seperator_text = window.ui.line_edit_seperator.text()
-        seperator_state = window.ui.check_box_seperator.isChecked()
-        return seperator_text, seperator_state
 
 ### Settings Window
     @classmethod

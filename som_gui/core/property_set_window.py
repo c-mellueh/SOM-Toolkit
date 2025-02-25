@@ -130,7 +130,6 @@ def repaint_pset_window(
 
     property_set_window.update_add_button(window)
     property_set_window.update_line_validators(window)
-    property_set_window.set_seperator(window)
 
 
 def value_type_changed(
@@ -144,15 +143,6 @@ def value_type_changed(
         property_set_window.set_value_columns(1, window)
         property_set_window.remove_data_type_restriction(window)
 
-
-def update_seperator(
-    window: ui.PropertySetWindow,
-    property_set_window: Type[tool.PropertySetWindow],
-    appdata: Type[tool.Appdata],
-):
-    text, state = property_set_window.get_seperator_state(window)
-    appdata.set_setting(SEPERATOR_SECTION, SEPERATOR_STATUS, state)
-    appdata.set_setting(SEPERATOR_SECTION, SEPERATOR, text)
 
 
 def attribute_clicked(

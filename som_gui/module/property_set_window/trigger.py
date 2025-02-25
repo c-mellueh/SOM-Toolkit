@@ -31,11 +31,6 @@ def connect_window(window: ui.PropertySetWindow):
         lambda: core.add_attribute_button_clicked(window, tool.PropertySet, tool.PropertySetWindow, tool.Attribute))
     window.ui.combo_value_type.currentIndexChanged.connect(
         lambda: core.value_type_changed(window, tool.PropertySetWindow))
-    window.ui.line_edit_seperator.textChanged.connect(
-        lambda: core.update_seperator(window, tool.PropertySetWindow, tool.Appdata))
-    window.ui.check_box_seperator.stateChanged.connect(
-        lambda: core.update_seperator(window, tool.PropertySetWindow, tool.Appdata))
-
     window.ui.check_box_inherit.stateChanged.connect(
         lambda: core.inherit_checkbox_toggled(window, tool.PropertySetWindow))
 
