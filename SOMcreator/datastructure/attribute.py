@@ -149,6 +149,8 @@ class Attribute(Hirarchy):
 
     @property
     def value_type(self) -> str:
+        if self.is_child:
+            return self.parent.value_type
         return self._value_type
 
     @value_type.setter
@@ -169,7 +171,8 @@ class Attribute(Hirarchy):
         IfcSimpleValue -> https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD2_TC1/HTML/
         :return:
         """
-
+        if self.is_child:
+            return self.parent.data_type
         return self._data_type
 
     @data_type.setter
@@ -186,6 +189,8 @@ class Attribute(Hirarchy):
 
     @property
     def unit(self) -> str:
+        if self.is_child:
+            return self.parent.unit
         return str(self._unit) if self._unit else None
 
     @unit.setter
