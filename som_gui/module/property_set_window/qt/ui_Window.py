@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComb
     QSplitter, QTableWidgetItem, QTextEdit, QVBoxLayout,
     QWidget)
 
+from som_gui.module.attribute.ui import UnitComboBox
 from som_gui.module.attribute_table.ui import AttributeTable
 
 class Ui_PropertySetWindow(object):
@@ -146,7 +147,7 @@ class Ui_PropertySetWindow(object):
 
         self.gridLayout.addWidget(self.lineEdit_name, 3, 0, 1, 6)
 
-        self.combo_unit = QComboBox(self.gridLayoutWidget)
+        self.combo_unit = UnitComboBox(self.gridLayoutWidget)
         self.combo_unit.setObjectName(u"combo_unit")
         self.combo_unit.setEditable(True)
 

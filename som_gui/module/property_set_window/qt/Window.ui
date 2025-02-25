@@ -204,7 +204,7 @@
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="QComboBox" name="combo_unit">
+        <widget class="UnitComboBox" name="combo_unit">
          <property name="editable">
           <bool>true</bool>
          </property>
@@ -303,6 +303,11 @@
    <class>AttributeTable</class>
    <extends>QTableWidget</extends>
    <header>som_gui.module.attribute_table.ui</header>
+  </customwidget>
+  <customwidget>
+   <class>UnitComboBox</class>
+   <extends>QComboBox</extends>
+   <header>som_gui.module.attribute.ui</header>
   </customwidget>
  </customwidgets>
  <resources/>

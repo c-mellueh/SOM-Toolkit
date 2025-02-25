@@ -212,8 +212,6 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.ui.combo_value_type.addItems(cls.get_allowed_value_types())
         window.ui.combo_data_type.clear()
         window.ui.combo_data_type.addItems(cls.get_allowed_data_types())
-        window.ui.combo_unit.clear()
-        window.ui.combo_unit.addItems([""] + cls.get_allowed_units())
         window.ui.combo_value_type.setCurrentText(value_constants.LIST)
         window.ui.combo_data_type.setCurrentText(value_constants.LABEL)
         cls.add_value_line(1, window)
