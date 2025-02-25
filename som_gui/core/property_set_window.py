@@ -13,9 +13,8 @@ from som_gui.module.property_set_window.constants import (
 
 if TYPE_CHECKING:
     from som_gui import tool
-    from som_gui.module.property_set_window.ui import PropertySetWindow
+    from som_gui.module.property_set_window import ui
     from PySide6.QtWidgets import QTableWidgetItem
-
 
 def retranslate_ui(property_set_window: Type[tool.PropertySetWindow]):
     for (
@@ -27,7 +26,7 @@ def retranslate_ui(property_set_window: Type[tool.PropertySetWindow]):
 
 
 def inherit_checkbox_toggled(
-    window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow]
+    window: ui.PropertySetWindow, property_set_window: Type[tool.PropertySetWindow]
 ):
     state = property_set_window.get_inherit_checkbox_state(window)
     active_attribute = property_set_window.get_active_attribute(window)
@@ -36,7 +35,7 @@ def inherit_checkbox_toggled(
 
 
 def add_attribute_button_clicked(
-    window: PropertySetWindow,
+    window: ui.PropertySetWindow,
     property_set: Type[tool.PropertySet],
     property_set_window: Type[tool.PropertySetWindow],
     attribute: Type[tool.Attribute],
@@ -55,7 +54,7 @@ def add_attribute_button_clicked(
 
 
 def add_value_button_clicked(
-    window: PropertySetWindow, property_set_tool: Type[tool.PropertySetWindow]
+    window: ui.PropertySetWindow, property_set_tool: Type[tool.PropertySetWindow]
 ):
     value_type = window.ui.combo_value_type.currentText()
     if value_type == RANGE:
@@ -92,13 +91,13 @@ def open_pset_window(
 
 
 def close_pset_window(
-    window: PropertySetWindow, property_set_tool: Type[tool.PropertySetWindow]
+    window: ui.PropertySetWindow, property_set_tool: Type[tool.PropertySetWindow]
 ):
     property_set_tool.close_property_set_window(window)
 
 
 def handle_paste_event(
-    window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow]
+    window: ui.PropertySetWindow, property_set_window: Type[tool.PropertySetWindow]
 ) -> bool:
     text_list = property_set_window.get_paste_text_list()
     if text_list is True:
@@ -121,7 +120,7 @@ def handle_paste_event(
 
 
 def repaint_pset_window(
-    window: PropertySetWindow,
+    window: ui.PropertySetWindow,
     property_set_window: Type[tool.PropertySetWindow],
     attribute_table: Type[tool.AttributeTable],
 ):
@@ -134,7 +133,7 @@ def repaint_pset_window(
 
 
 def value_type_changed(
-    window: PropertySetWindow, property_set_window: Type[tool.PropertySetWindow]
+    window: ui.PropertySetWindow, property_set_window: Type[tool.PropertySetWindow]
 ):
     value_type = property_set_window.get_value_type(window)
     if value_type == RANGE:
@@ -146,7 +145,7 @@ def value_type_changed(
 
 
 def update_seperator(
-    window: PropertySetWindow,
+    window: ui.PropertySetWindow,
     property_set_window: Type[tool.PropertySetWindow],
     appdata: Type[tool.Appdata],
 ):
@@ -190,6 +189,8 @@ def activate_attribute(
         
 #### Settings Window
  
+def fill_splitter_settings(widget:ui.)
+
 def splitter_settings_accepted(property_set:Type[tool.PropertySet],appdata:Type[tool.Appdata]):
     pass
 
