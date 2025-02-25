@@ -72,8 +72,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>856</width>
+            <height>467</height>
            </rect>
           </property>
           <attribute name="label">
@@ -86,8 +86,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>856</width>
+            <height>467</height>
            </rect>
           </property>
           <attribute name="label">
@@ -153,6 +153,46 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabPropertySet">
+      <attribute name="title">
+       <string>PropertySets</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_11">
+       <item>
+        <widget class="QToolBox" name="tb_property_set">
+         <property name="contextMenuPolicy">
+          <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
+         </property>
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="pagePropertySet">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>840</width>
+            <height>485</height>
+           </rect>
+          </property>
+          <attribute name="label">
+           <string>Splitter</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_12"/>
+         </widget>
+         <widget class="QWidget" name="page">
+          <property name="contextMenuPolicy">
+           <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
+          </property>
+          <attribute name="label">
+           <string>Units</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_13"/>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabPlugins">
       <attribute name="title">
        <string>Plugins</string>
@@ -180,8 +220,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>28</height>
+            <width>856</width>
+            <height>527</height>
            </rect>
           </property>
           <attribute name="label">

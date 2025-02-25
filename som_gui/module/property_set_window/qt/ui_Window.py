@@ -28,7 +28,7 @@ class Ui_PropertySetWindow(object):
     def setupUi(self, PropertySetWindow):
         if not PropertySetWindow.objectName():
             PropertySetWindow.setObjectName(u"PropertySetWindow")
-        PropertySetWindow.resize(1266, 600)
+        PropertySetWindow.resize(1265, 600)
         self.horizontalLayout = QHBoxLayout(PropertySetWindow)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.splitter_2 = QSplitter(PropertySetWindow)
@@ -103,7 +103,7 @@ class Ui_PropertySetWindow(object):
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area_content = QWidget()
         self.scroll_area_content.setObjectName(u"scroll_area_content")
-        self.scroll_area_content.setGeometry(QRect(0, 0, 716, 293))
+        self.scroll_area_content.setGeometry(QRect(0, 0, 715, 293))
         self.verticalLayout_2 = QVBoxLayout(self.scroll_area_content)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.scroll_area.setWidget(self.scroll_area_content)
