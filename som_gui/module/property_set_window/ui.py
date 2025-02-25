@@ -5,7 +5,9 @@ from PySide6.QtWidgets import QLineEdit, QWidget
 from som_gui.module import property_set_window
 from som_gui.resources.icons import get_icon
 from .qt.ui_Window import Ui_PropertySetWindow
-
+from .qt.ui_SplitterSettings import Ui_SplitterSettings
+from .qt.ui_UnitSettings import Ui_UnitSettings
+from som_gui.module import property_set_window
 
 class PropertySetWindow(QWidget):
     def __init__(self):
@@ -33,3 +35,17 @@ class LineInput(QLineEdit):
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
         if property_set_window.trigger.key_press_event(event, self.window()):
             super().keyPressEvent(event)
+
+class SplitterSettings(QWidget):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.ui = Ui_SplitterSettings()
+        self.ui.setupUi(self)
+        property_set_window.trigger.splitter_settings_created(self)
+
+class UnitSettings(QWidget):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.ui = Ui_UnitSettings()
+        self.ui.setupUi(self)
+        property_set_window.trigger.unit_settings_created(self)

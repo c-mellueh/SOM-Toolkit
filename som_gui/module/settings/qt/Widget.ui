@@ -29,7 +29,7 @@
       <enum>QTabWidget::TabPosition::West</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -164,9 +164,9 @@
           <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
-         <widget class="QWidget" name="pagePropertySet">
+         <widget class="QWidget" name="pageSplitter">
           <property name="geometry">
            <rect>
             <x>0</x>
@@ -180,7 +180,15 @@
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_12"/>
          </widget>
-         <widget class="QWidget" name="page">
+         <widget class="QWidget" name="pageUnits">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>840</width>
+            <height>485</height>
+           </rect>
+          </property>
           <property name="contextMenuPolicy">
            <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
           </property>

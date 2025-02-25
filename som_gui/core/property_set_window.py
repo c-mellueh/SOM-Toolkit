@@ -187,3 +187,11 @@ def activate_attribute(
             property_set_window.add_value_line(2, window)
         else:
             property_set_window.add_value_line(1, window)
+        
+#### Settings Window
+ 
+def splitter_settings_accepted(property_set:Type[tool.PropertySet],appdata:Type[tool.Appdata]):
+    pass
+
+def unit_settings_accepted(property_set:Type[tool.PropertySet],appdata:Type[tool.Appdata]):
+    pass
