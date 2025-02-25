@@ -15,8 +15,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout,
-    QLineEdit, QSizePolicy, QSpacerItem, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QGridLayout, QLineEdit,
+    QSizePolicy, QSpacerItem, QWidget)
 
 class Ui_SplitterSettings(object):
     def setupUi(self, SplitterSettings):
@@ -35,24 +35,17 @@ class Ui_SplitterSettings(object):
         self.line_edit_seperator.setSizePolicy(sizePolicy)
         self.line_edit_seperator.setMaximumSize(QSize(16777215, 16777215))
 
-        self.gridLayout.addWidget(self.line_edit_seperator, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.line_edit_seperator, 1, 1, 1, 1)
 
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.gridLayout.addItem(self.verticalSpacer, 3, 0, 1, 2)
-
-        self.line = QFrame(SplitterSettings)
-        self.line.setObjectName(u"line")
-        self.line.setFrameShadow(QFrame.Shadow.Raised)
-        self.line.setFrameShape(QFrame.Shape.HLine)
-
-        self.gridLayout.addWidget(self.line, 0, 0, 1, 2)
+        self.gridLayout.addItem(self.verticalSpacer, 2, 0, 1, 2)
 
         self.check_box_seperator = QCheckBox(SplitterSettings)
         self.check_box_seperator.setObjectName(u"check_box_seperator")
         self.check_box_seperator.setChecked(True)
 
-        self.gridLayout.addWidget(self.check_box_seperator, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.check_box_seperator, 1, 0, 1, 1)
 
 
         self.retranslateUi(SplitterSettings)

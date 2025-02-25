@@ -25,6 +25,9 @@ from som_gui.module.property_set_window.constants import (
     SEPERATOR_STATUS,
 )
 
+from som_gui.module.property_set_window import trigger
+
+
 if TYPE_CHECKING:
     from som_gui.module.property_set_window.prop import PropertySetWindowProperties
 
@@ -420,3 +423,31 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         seperator_text = window.ui.line_edit_seperator.text()
         seperator_state = window.ui.check_box_seperator.isChecked()
         return seperator_text, seperator_state
+
+### Settings Window
+    @classmethod
+    def set_splitter_settings_widget(cls,widget:ui.SplitterSettings):
+        cls.get_properties().splitter_settings = widget
+    @classmethod
+    
+    def get_splitter_settings_widget(cls) -> ui.SplitterSettings:
+        return cls.get_properties().splitter_settings
+    @classmethod
+    
+    def set_unit_settings_widget(cls,widget:ui.UnitSettings):
+        cls.get_properties().unit_settings = widget
+    @classmethod
+    
+    def get_unit_settings_widget(cls,) -> ui.UnitSettings:
+        return cls.get_properties().unit_settings
+    @classmethod
+    def connect_splitter_widget(cls,widget:ui.SplitterSettings):
+        widget.ui.check_box_seperator.checkStateChanged.connect(lambda:trigger.splitter_checkstate_changed(widget))
+    
+    @classmethod
+    def get_splitter_settings_checkstate(cls,widget:ui.SplitterSettings)->bool:
+        return widget.ui.check_box_seperator.isChecked()
+    
+    @classmethod
+    def get_splitter_settings_text(cls,widget:ui.SplitterSettings) ->str:
+        return widget.ui.line_edit_seperator.text()

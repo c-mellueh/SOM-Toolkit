@@ -14,10 +14,10 @@ if TYPE_CHECKING:
 
 def connect():
     tool.Settings.add_page_to_toolbox(ui.SplitterSettings, "pageSplitter",
-                                      lambda: core.splitter_settings_accepted(tool.PropertySet, tool.Appdata))
+                                      lambda: core.splitter_settings_accepted(tool.PropertySetWindow, tool.Appdata))
 
     tool.Settings.add_page_to_toolbox(ui.UnitSettings, "pageUnits",
-                                      lambda: core.unit_settings_accepted(tool.PropertySet, tool.Appdata))
+                                      lambda: core.unit_settings_accepted(tool.PropertySetWindow, tool.Appdata))
     pass
 
 
@@ -63,7 +63,10 @@ def retranslate_ui():
     core.retranslate_ui(tool.PropertySetWindow)
 
 def splitter_settings_created(widget:ui.SplitterSettings):
-    pass
+    core.fill_splitter_settings(widget,tool.PropertySetWindow,tool.Appdata)
 
 def unit_settings_created(widget:ui.UnitSettings):
-    pass
+    core.fill_unit_settings(widget,tool.PropertySetWindow,tool.Appdata)
+
+def splitter_checkstate_changed(widget:ui.SplitterSettings):
+    core.update_splitter_enabled_state(widget,tool.PropertySetWindow)

@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from som_gui.module.property_set_window import ui
     from PySide6.QtWidgets import QTableWidgetItem
 
+
 def retranslate_ui(property_set_window: Type[tool.PropertySetWindow]):
     for (
         window,
@@ -186,13 +187,54 @@ def activate_attribute(
             property_set_window.add_value_line(2, window)
         else:
             property_set_window.add_value_line(1, window)
-        
+
+
 #### Settings Window
- 
-def fill_splitter_settings(widget:ui.)
 
-def splitter_settings_accepted(property_set:Type[tool.PropertySet],appdata:Type[tool.Appdata]):
+
+def fill_splitter_settings(
+    widget: ui.SplitterSettings,
+    property_set_window: Type[tool.PropertySetWindow],
+    appdata: Type[tool.Appdata],
+):
+    property_set_window.set_splitter_settings_widget(widget)
+    seperator = appdata.get_string_setting(SEPERATOR_SECTION, SEPERATOR, ",")
+    is_sperator_activated = appdata.get_bool_setting(
+        SEPERATOR_SECTION, SEPERATOR_STATUS
+    )
+
+    widget.ui.line_edit_seperator.setText(seperator)
+    widget.ui.check_box_seperator.setChecked(is_sperator_activated)
+    property_set_window.connect_splitter_widget(widget)
+    update_splitter_enabled_state(widget,property_set_window)
     pass
 
-def unit_settings_accepted(property_set:Type[tool.PropertySet],appdata:Type[tool.Appdata]):
+
+def fill_unit_settings(
+    widget: ui.UnitSettings,
+    property_set_window: Type[tool.PropertySetWindow],
+    appdata: Type[tool.Appdata],
+):
+    property_set_window.set_unit_settings_widget(widget)
+
+
+
+def splitter_settings_accepted(
+    property_set_window: Type[tool.PropertySetWindow], appdata: Type[tool.Appdata]
+):
+    widget = property_set_window.get_splitter_settings_widget()
+    is_seperator_activated = property_set_window.get_splitter_settings_checkstate(widget)
+    text = property_set_window.get_splitter_settings_text(widget)
+    appdata.set_setting(SEPERATOR_SECTION,SEPERATOR,text)
+    appdata.set_setting(SEPERATOR_SECTION,SEPERATOR_STATUS,is_seperator_activated)
+
+
+def unit_settings_accepted(
+    property_set_window: Type[tool.PropertySetWindow], appdata: Type[tool.Appdata]
+):
     pass
+
+def update_splitter_enabled_state(widget: ui.SplitterSettings,property_set_window: Type[tool.PropertySetWindow],):
+    is_seperator_activated = property_set_window.get_splitter_settings_checkstate(widget)
+    widget.ui.line_edit_seperator.setEnabled(is_seperator_activated)
+    
