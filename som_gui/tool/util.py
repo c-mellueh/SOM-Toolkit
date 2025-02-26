@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
     QMenu,
     QMenuBar,
     QWidget,
+    QListWidget,
 )
 
 import som_gui.core.tool
@@ -350,3 +351,30 @@ class Util(som_gui.core.tool.Util):
     @classmethod
     def get_attribute(cls, widget: ui.AttributeSelector):
         return widget.ui.le_pset_name.text(), widget.ui.le_attribute_name.text()
+
+    @classmethod
+    def fill_list_widget_with_checkstate(
+        
+        cls, list_widget: QListWidget, allowed_labels: list[str], all_labels: list[str]
+    ):
+        """
+        Populate a QListWidget with items and set their check state based on allowed labels.
+
+        :param list_widget: The QListWidget to be populated.
+        :type list_widget: QListWidget
+        :param allowed_labels: List of labels that should be checked.
+        :type allowed_labels: list[str]
+        :param all_labels: List of all labels to be added to the widget.
+        :type all_labels: list[str]
+        :return: None
+        :rtype: None
+        """
+        list_widget.clear()
+        list_widget.insertItems(0, sorted(all_labels))
+
+        for index in range(list_widget.count()):
+            item = list_widget.item(index)
+            if item.text() in allowed_labels:
+                item.setCheckState(Qt.CheckState.Checked)
+            else:
+                item.setCheckState(Qt.CheckState.Unchecked)

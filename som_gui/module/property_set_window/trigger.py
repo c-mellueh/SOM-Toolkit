@@ -16,10 +16,7 @@ def connect():
     tool.Settings.add_page_to_toolbox(ui.SplitterSettings, "pageSplitter",
                                       lambda: core.splitter_settings_accepted(tool.PropertySetWindow, tool.Appdata))
 
-    tool.Settings.add_page_to_toolbox(ui.UnitSettings, "pageUnits",
-                                      lambda: core.unit_settings_accepted(tool.PropertySetWindow, tool.Appdata))
     pass
-
 
 def on_new_project():
     pass
@@ -41,7 +38,6 @@ def connect_window(window: ui.PropertySetWindow):
 
 def repaint_window(widget: ui.PropertySetWindow):
     core.repaint_pset_window(widget, tool.PropertySetWindow, tool.AttributeTable)
-    core.update_unit_combobox(widget,tool.PropertySetWindow,tool.Appdata)
 
 def close_window(window: ui.PropertySetWindow):
     core.close_pset_window(window, tool.PropertySetWindow)
@@ -60,8 +56,6 @@ def retranslate_ui():
 def splitter_settings_created(widget:ui.SplitterSettings):
     core.fill_splitter_settings(widget,tool.PropertySetWindow,tool.Appdata)
 
-def unit_settings_created(widget:ui.UnitSettings):
-    core.fill_unit_settings(widget,tool.PropertySetWindow,tool.Appdata)
 
 def splitter_checkstate_changed(widget:ui.SplitterSettings):
     core.update_splitter_enabled_state(widget,tool.PropertySetWindow)

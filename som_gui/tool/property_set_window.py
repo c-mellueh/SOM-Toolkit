@@ -30,9 +30,6 @@ from som_gui.module.property_set_window.constants import (
     SEPERATOR,
     SEPERATOR_SECTION,
     SEPERATOR_STATUS,
-    UNITS_SECTION,
-    ALLOWED_UNITS,
-    ALLOWED_PREFIXES,
 )
 
 from som_gui.module.property_set_window import trigger
@@ -428,15 +425,6 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def get_splitter_settings_widget(cls) -> ui.SplitterSettings:
         return cls.get_properties().splitter_settings
 
-    @classmethod
-    def set_unit_settings_widget(cls, widget: ui.UnitSettings):
-        cls.get_properties().unit_settings = widget
-
-    @classmethod
-    def get_unit_settings_widget(
-        cls,
-    ) -> ui.UnitSettings:
-        return cls.get_properties().unit_settings
 
     @classmethod
     def connect_splitter_widget(cls, widget: ui.SplitterSettings):
@@ -452,38 +440,9 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def get_splitter_settings_text(cls, widget: ui.SplitterSettings) -> str:
         return widget.ui.line_edit_seperator.text()
 
-    @classmethod
-    def fill_list_widget_with_checkstate(
-        cls, list_widget: QListWidget, allowed_labels: list[str], all_labels: list[str]
-    ):
-        list_widget.clear()
-        list_widget.insertItems(0, sorted(all_labels))
-
-        for index in range(list_widget.count()):
-            item = list_widget.item(index)
-            if item.text() in allowed_labels:
-                item.setCheckState(Qt.CheckState.Checked)
-            else:
-                item.setCheckState(Qt.CheckState.Unchecked)
-
-    @classmethod
-    def get_checked_texts_from_list_widget(cls, list_widget: QListWidget) -> list[str]:
-        items = [list_widget.item(i) for i in range(list_widget.count())]
-        return [i.text() for i in items if i.checkState() == Qt.CheckState.Checked]
 
 
-    @classmethod
-    def get_allowed_units(cls,appdata:Type[tool.Appdata]):
-        all_units = [un.capitalize() for un in unit_names]
-        allowed_units = appdata.get_list_setting(UNITS_SECTION, ALLOWED_UNITS, None)
-        if allowed_units is None:
-            allowed_units = list(all_units)
-        return allowed_units
+
+
     
-    @classmethod
-    def get_allowed_unit_prefixes(cls,appdata:Type[tool.Appdata]):
-        all_prefixes = [pf.capitalize() for pf in prefixes.keys()]
-        allowed_prefixes = appdata.get_list_setting(UNITS_SECTION, ALLOWED_PREFIXES, None)
-        if allowed_prefixes is None:
-            allowed_prefixes = list(all_prefixes)
-        return allowed_prefixes
+

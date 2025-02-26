@@ -1,8 +1,8 @@
 from PySide6.QtCore import QRect, QSize, Qt
 from PySide6.QtWidgets import QHeaderView, QWidget, QComboBox, QTreeView
 from PySide6.QtGui import QStandardItemModel, QStandardItem
-
-from .qt import ui_CompareWidget
+from som_gui.module import attribute as attribute_module
+from .qt import ui_CompareWidget, ui_UnitSettings
 
 
 class AttributeWidget(QWidget):
@@ -34,6 +34,13 @@ class WordWrapHeaderView(QHeaderView):
         text_margin_buffer = QSize(2, 2)
         return rect.size() + text_margin_buffer
 
+class UnitSettings(QWidget):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.ui = ui_UnitSettings.Ui_UnitSettings()
+        self.ui.setupUi(self)
+        attribute_module.trigger.unit_settings_created(self)
+
 
 class UnitComboBox(QComboBox):
     def __init__(self, *args, **kwargs):
@@ -55,6 +62,11 @@ class UnitComboBox(QComboBox):
         self.add_items()
         self.is_locked = False
         self.tree_view.setMinimumHeight(self.tree_view.sizeHintForRow(0)*5)
+
+    def paintEvent(self, e):
+        from . import trigger
+        trigger.repaint_unit_combobox(self)
+        return super().paintEvent(e)
 
     def add_items(self):
         from ifcopenshell.util import unit as ifc_unit
@@ -91,3 +103,4 @@ class UnitComboBox(QComboBox):
 
         [p1,p2] = parent_text.split("_")
         return "_".join((p1,text,p2))
+    
