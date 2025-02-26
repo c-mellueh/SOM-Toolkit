@@ -4,32 +4,32 @@
 <context>
     <name>AttributeCompare</name>
     <message>
-        <location filename="../../tool/attribute.py" line="647"/>
+        <location filename="../../tool/attribute.py" line="693"/>
         <source>was deleted.</source>
         <translation>wurde entfernt.</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="648"/>
+        <location filename="../../tool/attribute.py" line="694"/>
         <source>was added.</source>
         <translation>wurde hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="663"/>
+        <location filename="../../tool/attribute.py" line="709"/>
         <source>was renamed to</source>
         <translation>wurde umbenannt zu</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="684"/>
+        <location filename="../../tool/attribute.py" line="730"/>
         <source>was changed from</source>
         <translation>wurde geändert zu</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="715"/>
+        <location filename="../../tool/attribute.py" line="761"/>
         <source>added child</source>
         <translation>fügte Kindelement hinzu</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="716"/>
+        <location filename="../../tool/attribute.py" line="762"/>
         <source>removed child</source>
         <translation>entfernte Kindelement</translation>
     </message>
@@ -207,9 +207,14 @@
         <translation>Wert</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="46"/>
+        <location filename="../../core/attribute_table.py" line="45"/>
         <source>Optional</source>
         <translation>Optional</translation>
+    </message>
+    <message>
+        <location filename="../../core/attribute_table.py" line="47"/>
+        <source>Unit</source>
+        <translation>Einheit</translation>
     </message>
 </context>
 <context>
@@ -220,22 +225,22 @@
         <translation>bsDD</translation>
     </message>
     <message>
-        <location filename="../../core/bsdd.py" line="73"/>
+        <location filename="../../core/bsdd.py" line="74"/>
         <source>Dictionary</source>
         <translation>Dictionary</translation>
     </message>
     <message>
-        <location filename="../../core/bsdd.py" line="122"/>
+        <location filename="../../core/bsdd.py" line="127"/>
         <source>bsDD JSON Export</source>
         <translation>BsDD JSON Export</translation>
     </message>
     <message>
-        <location filename="../../core/bsdd.py" line="138"/>
+        <location filename="../../core/bsdd.py" line="143"/>
         <source>folder &apos;{}&apos; does not exist</source>
         <translation>Ordner &apos;{}&apos; existiert nicht</translation>
     </message>
     <message>
-        <location filename="../../core/bsdd.py" line="144"/>
+        <location filename="../../core/bsdd.py" line="151"/>
         <source>Export Done!</source>
         <translation>Export abgeschlossen!</translation>
     </message>
@@ -245,22 +250,21 @@
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../module/bsdd/qt/Widget.ui" line="32"/>
         <source>Page 2</source>
-        <translation>Seite 2</translation>
+        <translation type="vanished">Seite 2</translation>
     </message>
     <message>
-        <location filename="../../module/bsdd/qt/Widget.ui" line="42"/>
+        <location filename="../../module/bsdd/qt/Widget.ui" line="29"/>
         <source>export path</source>
         <translation>Export Pfad</translation>
     </message>
     <message>
-        <location filename="../../module/bsdd/qt/Widget.ui" line="55"/>
+        <location filename="../../module/bsdd/qt/Widget.ui" line="42"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../../module/bsdd/qt/Widget.ui" line="62"/>
+        <location filename="../../module/bsdd/qt/Widget.ui" line="49"/>
         <source>Run</source>
         <translation>Ausführen</translation>
     </message>
@@ -268,22 +272,22 @@
 <context>
     <name>Compare</name>
     <message>
-        <location filename="../../core/attribute.py" line="37"/>
+        <location filename="../../core/attribute.py" line="40"/>
         <source>Attributes</source>
         <translation>Attribute</translation>
     </message>
     <message>
-        <location filename="../../core/attribute.py" line="83"/>
+        <location filename="../../core/attribute.py" line="86"/>
         <source>ATTRIBUTE COMPARISON</source>
         <translation>ATTRIBUT VERGLEICH</translation>
     </message>
     <message>
-        <location filename="../../core/attribute.py" line="86"/>
+        <location filename="../../core/attribute.py" line="89"/>
         <source>{} ({}) was deleted</source>
         <translation>{} ({}) wurde gelöscht</translation>
     </message>
     <message>
-        <location filename="../../core/attribute.py" line="90"/>
+        <location filename="../../core/attribute.py" line="93"/>
         <source>{} ({}) was added</source>
         <translation>{} ({}) wurde hinzugefügt</translation>
     </message>
@@ -470,13 +474,13 @@
         <translation>OBJEKT FILTER</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="97"/>
+        <location filename="../../tool/filter_window.py" line="99"/>
         <source>New UseCase</source>
         <translation>Neuer Anwendungsfall</translation>
     </message>
     <message>
         <location filename="../../module/filter_window/ui.py" line="216"/>
-        <location filename="../../tool/filter_window.py" line="116"/>
+        <location filename="../../tool/filter_window.py" line="119"/>
         <source>New Phase</source>
         <translation>Neue Leistungsphase</translation>
     </message>
@@ -491,24 +495,24 @@
         <translation>PropertySet/Attribut</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="134"/>
+        <location filename="../../tool/filter_window.py" line="139"/>
         <source>Edit Header</source>
         <translation>Header Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="136"/>
+        <location filename="../../tool/filter_window.py" line="141"/>
         <source>Enter new header title:</source>
         <translation>Neuer Titel:</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="374"/>
+        <location filename="../../tool/filter_window.py" line="379"/>
         <source>{}{} [{}][{}] state changed from {} to {}
 </source>
         <translation>{}{} [{}][{}] Status änderte sich von {} zu {}
 </translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="430"/>
+        <location filename="../../tool/filter_window.py" line="435"/>
         <source>Attribut {0:30} {1:30} state changed from {2:5} to {3:5}
 </source>
         <translation>Attribut {0:30} {1:30} Status änderte sich von {2:5} zu {3:5}
@@ -516,12 +520,12 @@
     </message>
     <message>
         <location filename="../../module/filter_window/ui.py" line="317"/>
-        <location filename="../../tool/filter_window.py" line="389"/>
+        <location filename="../../tool/filter_window.py" line="394"/>
         <source>Object</source>
         <translation>Objekt</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="405"/>
+        <location filename="../../tool/filter_window.py" line="410"/>
         <source>PropertySet</source>
         <translation>PropertySet</translation>
     </message>
@@ -1125,19 +1129,19 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
         <location filename="../../tool/object.py" line="187"/>
-        <location filename="../../tool/object.py" line="265"/>
+        <location filename="../../tool/object.py" line="266"/>
         <source>Identifier exists allready or is not allowed</source>
         <translation>Identifier existiert bereits oder ist nicht erlaubt</translation>
     </message>
     <message>
         <location filename="../../tool/object.py" line="189"/>
-        <location filename="../../tool/object.py" line="253"/>
+        <location filename="../../tool/object.py" line="254"/>
         <source>Name of Attribute is not allowed</source>
         <translation>Name des Attributes ist nicht erlaubt</translation>
     </message>
     <message>
         <location filename="../../tool/object.py" line="191"/>
-        <location filename="../../tool/object.py" line="240"/>
+        <location filename="../../tool/object.py" line="241"/>
         <source>Name of PropertySet is not allowed</source>
         <translation>Name des PropertySets ist nicht erlaubt</translation>
     </message>
@@ -1520,54 +1524,81 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="33"/>
         <source>Values</source>
-        <translation>Werte</translation>
+        <translation type="vanished">Werte</translation>
     </message>
     <message>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="61"/>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="198"/>
         <source>+</source>
         <translation>+</translation>
     </message>
     <message>
-        <location filename="../../tool/property_set_window.py" line="201"/>
+        <location filename="../../tool/property_set_window.py" line="261"/>
         <source>Update</source>
         <translation>Update</translation>
     </message>
     <message>
-        <location filename="../../tool/property_set_window.py" line="204"/>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="68"/>
+        <location filename="../../tool/property_set_window.py" line="264"/>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="151"/>
         <source>Add</source>
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../tool/property_set_window.py" line="214"/>
+        <location filename="../../tool/property_set_window.py" line="281"/>
         <source>Attribute was inherited -&gt; Type change not possible</source>
         <translation>Attribut wurde vererbt -&gt; Änderung des Typen nicht möglich</translation>
     </message>
     <message>
-        <location filename="../../tool/property_set_window.py" line="216"/>
+        <location filename="../../tool/property_set_window.py" line="285"/>
         <source>Attribute was inherited -&gt; DataType change not possible</source>
         <translation>Attribut wurde vererbt -&gt; Änderung des Datentypen nicht möglich</translation>
     </message>
     <message>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="75"/>
-        <source>Splitter</source>
-        <translation>Trennzeichen</translation>
+        <location filename="../../tool/property_set_window.py" line="289"/>
+        <source>Attribute was inherited -&gt; Unit change not possible</source>
+        <translation>Attribut wurde vererbt -&gt; Änderung der Einheit nicht möglich</translation>
     </message>
     <message>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="85"/>
+        <source>Splitter</source>
+        <translation type="vanished">Trennzeichen</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="29"/>
+        <source>Valuetype:</source>
+        <translation>Werttyp:</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="36"/>
+        <source>Datatype:</source>
+        <translation>Datentyp:</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="43"/>
+        <source>Unit:</source>
+        <translation>Einheit:</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="137"/>
+        <source>Name:</source>
+        <translation>Name:</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="144"/>
         <source>Inherit Values</source>
         <translation>Werte vererben</translation>
     </message>
     <message>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="117"/>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="136"/>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="170"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="193"/>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="211"/>
+        <source>Allowed Values:</source>
+        <translation>Erlaubte Werte:</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="123"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
@@ -1676,7 +1707,22 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
         <location filename="../../module/settings/qt/Widget.ui" line="158"/>
-        <location filename="../../module/settings/qt/Widget.ui" line="188"/>
+        <source>PropertySets</source>
+        <translation>PropertySets</translation>
+    </message>
+    <message>
+        <location filename="../../module/settings/qt/Widget.ui" line="179"/>
+        <source>Splitter</source>
+        <translation>Trennzeichen</translation>
+    </message>
+    <message>
+        <location filename="../../module/settings/qt/Widget.ui" line="196"/>
+        <source>Units</source>
+        <translation>Einheiten</translation>
+    </message>
+    <message>
+        <location filename="../../module/settings/qt/Widget.ui" line="206"/>
+        <location filename="../../module/settings/qt/Widget.ui" line="236"/>
         <source>Plugins</source>
         <translation>Plugins</translation>
     </message>
@@ -1711,6 +1757,42 @@ Achtung: Datei wird überschrieben!</translation>
         <source>English</source>
         <comment>en</comment>
         <translation>Englisch</translation>
+    </message>
+</context>
+<context>
+    <name>SplitterSettings</name>
+    <message>
+        <location filename="../../module/property_set_window/qt/SplitterSettings.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_set_window/qt/SplitterSettings.ui" line="44"/>
+        <source>Splitter text</source>
+        <translation>Trennzeichen</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_set_window/qt/SplitterSettings.ui" line="64"/>
+        <source>Use Splitter</source>
+        <translation>Trennzeichen verwenden</translation>
+    </message>
+</context>
+<context>
+    <name>UnitSettings</name>
+    <message>
+        <location filename="../../module/attribute/qt/UnitSettings.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="../../module/attribute/qt/UnitSettings.ui" line="60"/>
+        <source>Units</source>
+        <translation>Einheiten</translation>
+    </message>
+    <message>
+        <location filename="../../module/attribute/qt/UnitSettings.ui" line="74"/>
+        <source>Unit Prefixes</source>
+        <translation>Einheiten Vorzeichen</translation>
     </message>
 </context>
 <context>
@@ -1772,27 +1854,27 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>table</name>
     <message>
-        <location filename="../../tool/attribute_table.py" line="265"/>
+        <location filename="../../tool/attribute_table.py" line="292"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute_table.py" line="292"/>
+        <location filename="../../tool/attribute_table.py" line="326"/>
         <source>Delete (with subattributes)</source>
         <translation>Löschen (mit Kindattributen)</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute_table.py" line="293"/>
+        <location filename="../../tool/attribute_table.py" line="328"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute_table.py" line="311"/>
+        <location filename="../../tool/attribute_table.py" line="353"/>
         <source>Remove Connection</source>
         <translation>Verbindung entfernen</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute_table.py" line="329"/>
+        <location filename="../../tool/attribute_table.py" line="379"/>
         <source>Connect to Parent</source>
         <translation>Mit Elternelement verbinden</translation>
     </message>
