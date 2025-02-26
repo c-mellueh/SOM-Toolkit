@@ -8,8 +8,9 @@ from som_gui.core import attribute_table as attribute_table_core
 from som_gui.module.property_set_window.constants import (
     SEPERATOR,
     SEPERATOR_SECTION,
-    SEPERATOR_STATUS,
+    SEPERATOR_STATUS,UNITS_SECTION,ALLOWED_UNITS,ALLOWED_PREFIXES
 )
+from ifcopenshell.util.unit import unit_names
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -124,13 +125,14 @@ def repaint_pset_window(
     window: ui.PropertySetWindow,
     property_set_window: Type[tool.PropertySetWindow],
     attribute_table: Type[tool.AttributeTable],
+    appdata:Type[tool.Appdata],
 ):
     table = property_set_window.get_table(window)
     attribute_table_core.update_attribute_table(table, attribute_table)
 
     property_set_window.update_add_button(window)
     property_set_window.update_line_validators(window)
-
+    
 
 def value_type_changed(
     window: ui.PropertySetWindow, property_set_window: Type[tool.PropertySetWindow]
@@ -205,7 +207,13 @@ def fill_unit_settings(
     property_set_window: Type[tool.PropertySetWindow],
     appdata: Type[tool.Appdata],
 ):
+    all_units = [un.capitalize() for un in unit_names]
     property_set_window.set_unit_settings_widget(widget)
+    allowed_units = appdata.get_list_setting(UNITS_SECTION,ALLOWED_UNITS,None)
+    if allowed_units is None:
+        allowed_units = list(all_units)
+    property_set_window.fill_unit_list(widget.ui.list_units,allowed_units,all_units)
+
 
 
 
@@ -222,6 +230,9 @@ def splitter_settings_accepted(
 def unit_settings_accepted(
     property_set_window: Type[tool.PropertySetWindow], appdata: Type[tool.Appdata]
 ):
+    widget = property_set_window.get_unit_settings_widget()
+    allowed_units = property_set_window.get_allowed_units_from_settings_widget(widget.ui.list_units)
+    appdata.set_setting(UNITS_SECTION,ALLOWED_UNITS,allowed_units)
     pass
 
 def update_splitter_enabled_state(widget: ui.SplitterSettings,property_set_window: Type[tool.PropertySetWindow],):

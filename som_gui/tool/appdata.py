@@ -92,7 +92,7 @@ class Appdata(som_gui.core.tool.Appdata):
         if config_parser.has_option(section, path):
             path = config_parser.get(section, path)
             if path is not None:
-                return eval(path)
+                return int(path)
         cls.set_setting(section, path, default)
         return default
 
@@ -102,7 +102,7 @@ class Appdata(som_gui.core.tool.Appdata):
         if config_parser.has_option(section, path):
             path = config_parser.get(section, path)
             if path is not None:
-                return eval(path)
+                return float(path)
         cls.set_setting(section, path, default)
         return default
     
@@ -110,8 +110,9 @@ class Appdata(som_gui.core.tool.Appdata):
     def get_list_setting(cls,section:str,path:str,default = []) -> list[str]:
         config_parser = cls._get_config()
         if config_parser.has_option(section, path):
-            path = config_parser.get(section, path)
-            if path is not None:
-                return PATH_SEPERATOR.split(eval(path))
+            value = config_parser.get(section, path)
+            value = None if value == "None" else value
+            if value is not None:
+                return value.split(PATH_SEPERATOR)        
         cls.set_setting(section, path, default)
         return default

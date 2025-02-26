@@ -10,7 +10,7 @@ from PySide6.QtGui import (
     QIntValidator,
     QRegularExpressionValidator,
 )
-from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QCompleter, QComboBox
+from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QCompleter, QComboBox,QListWidget,QListWidgetItem
 
 import SOMcreator
 import som_gui
@@ -437,3 +437,23 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def get_splitter_settings_text(cls,widget:ui.SplitterSettings) ->str:
         return widget.ui.line_edit_seperator.text()
+    
+    @classmethod
+    def fill_unit_list(cls,list_widget:QListWidget,allowed_units:list[str],all_units:list[str]):
+        list_widget.clear()
+        list_widget.insertItems(0,sorted(all_units))
+
+        for index in range(list_widget.count()):
+            item = list_widget.item(index)
+            if item.text() in allowed_units:
+                print(f"{item.text()} -> Allowed")
+                item.setCheckState(Qt.CheckState.Checked)
+            else:
+                print(f"{item.text()} ->Not Allowed")
+
+                item.setCheckState(Qt.CheckState.Unchecked)
+    
+    @classmethod
+    def get_allowed_units_from_settings_widget(cls,list_widget:QListWidget) -> list[str]:
+        items = [list_widget.item(i) for i in range(list_widget.count())]
+        return [i.text() for i in items if i.checkState() == Qt.CheckState.Checked]

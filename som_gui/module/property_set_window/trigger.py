@@ -40,7 +40,7 @@ def connect_window(window: ui.PropertySetWindow):
 
 
 def repaint_window(widget: ui.PropertySetWindow):
-    core.repaint_pset_window(widget, tool.PropertySetWindow, tool.AttributeTable)
+    core.repaint_pset_window(widget, tool.PropertySetWindow, tool.AttributeTable,tool.Appdata)
 
 
 def close_window(window: ui.PropertySetWindow):
