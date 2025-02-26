@@ -126,8 +126,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>856</width>
-            <height>497</height>
+            <width>98</width>
+            <height>28</height>
            </rect>
           </property>
           <attribute name="label">
@@ -148,6 +148,54 @@
            <string>Export</string>
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_7"/>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabPropertySet">
+      <attribute name="title">
+       <string>PropertySets</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_11">
+       <item>
+        <widget class="QToolBox" name="tb_property_set">
+         <property name="contextMenuPolicy">
+          <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="pageSplitter">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>840</width>
+            <height>485</height>
+           </rect>
+          </property>
+          <attribute name="label">
+           <string>Splitter</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_12"/>
+         </widget>
+         <widget class="QWidget" name="pageUnits">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>98</width>
+            <height>28</height>
+           </rect>
+          </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
+          </property>
+          <attribute name="label">
+           <string>Units</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_13"/>
          </widget>
         </widget>
        </item>

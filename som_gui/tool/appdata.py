@@ -37,8 +37,11 @@ class Appdata(som_gui.core.tool.Appdata):
         config_parser = cls._get_config()
         if not config_parser.has_section(section):
             config_parser.add_section(section)
+        if type(value) in (list,set,tuple):
+            value = PATH_SEPERATOR.join([str(v) for v in value])
         config_parser.set(section, path, str(value))
         cls._write_config(config_parser)
+
 
     @classmethod
     def get_settings_path(cls):
@@ -89,7 +92,7 @@ class Appdata(som_gui.core.tool.Appdata):
         if config_parser.has_option(section, path):
             path = config_parser.get(section, path)
             if path is not None:
-                return eval(path)
+                return int(path)
         cls.set_setting(section, path, default)
         return default
 
@@ -99,6 +102,17 @@ class Appdata(som_gui.core.tool.Appdata):
         if config_parser.has_option(section, path):
             path = config_parser.get(section, path)
             if path is not None:
-                return eval(path)
+                return float(path)
+        cls.set_setting(section, path, default)
+        return default
+    
+    @classmethod
+    def get_list_setting(cls,section:str,path:str,default = []) -> list[str]:
+        config_parser = cls._get_config()
+        if config_parser.has_option(section, path):
+            value = config_parser.get(section, path)
+            value = None if value == "None" else value
+            if value is not None:
+                return value.split(PATH_SEPERATOR)        
         cls.set_setting(section, path, default)
         return default

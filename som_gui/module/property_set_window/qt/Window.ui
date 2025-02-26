@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>994</width>
-    <height>542</height>
+    <width>1074</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,123 +21,53 @@
      </property>
      <widget class="QWidget" name="gridLayoutWidget">
       <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_values">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Values</string>
-         </property>
-        </widget>
+       <item row="1" column="1" colspan="5">
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Valuetype:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Datatype:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Unit:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QComboBox" name="combo_data_type">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="combo_value_type">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="UnitComboBox" name="combo_unit">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
-       <item row="0" column="2">
-        <widget class="QComboBox" name="combo_type"/>
-       </item>
-       <item row="1" column="4">
-        <widget class="QPushButton" name="button_add_line">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>15</width>
-           <height>15</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>+</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3" colspan="2">
-        <widget class="QPushButton" name="button_add">
-         <property name="text">
-          <string>Add</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QCheckBox" name="check_box_seperator">
-         <property name="text">
-          <string>Splitter</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="check_box_inherit">
-         <property name="text">
-          <string>Inherit Values</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="combo_data_type"/>
-       </item>
-       <item row="1" column="3">
-        <widget class="QLineEdit" name="line_edit_seperator">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_name">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Name</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" colspan="5">
-        <widget class="QLineEdit" name="lineEdit_name">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>350</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="placeholderText">
-          <string>Name</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="5">
+       <item row="7" column="1" colspan="5">
         <widget class="QSplitter" name="splitter">
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -163,8 +93,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>487</width>
-             <height>235</height>
+             <width>567</width>
+             <height>267</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2"/>
@@ -193,6 +123,93 @@
            <string>Description</string>
           </property>
          </widget>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="label_name">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="5">
+        <widget class="QCheckBox" name="check_box_inherit">
+         <property name="text">
+          <string>Inherit Values</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QPushButton" name="button_add">
+         <property name="text">
+          <string>Add</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2" colspan="3">
+        <widget class="QLineEdit" name="lineEdit_name">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>350</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="placeholderText">
+          <string>Name</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="3">
+        <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+       </item>
+       <item row="4" column="1">
+        <widget class="QPushButton" name="button_add_line">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>15</width>
+           <height>15</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>+</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2">
+        <widget class="QLabel" name="label_values">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Allowed Values:</string>
+         </property>
         </widget>
        </item>
       </layout>
@@ -288,6 +305,11 @@
    <class>AttributeTable</class>
    <extends>QTableWidget</extends>
    <header>som_gui.module.attribute_table.ui</header>
+  </customwidget>
+  <customwidget>
+   <class>UnitComboBox</class>
+   <extends>QComboBox</extends>
+   <header>som_gui.module.attribute.ui</header>
   </customwidget>
  </customwidgets>
  <resources/>

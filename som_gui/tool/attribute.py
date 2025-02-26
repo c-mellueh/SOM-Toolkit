@@ -1,19 +1,20 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable, TYPE_CHECKING, TextIO, TypeAlias,Iterator
+from typing import Any, Callable, TYPE_CHECKING, TextIO, TypeAlias,Type
 
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtGui import QBrush, QColor, QPalette
-from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QTreeWidget, QTreeWidgetItem
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QTreeWidget, QTreeWidgetItem,QListWidget
 
 import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
-from som_gui.module.attribute import trigger, ui
+from som_gui.module.attribute import trigger, ui,constants
 from som_gui.module.project.constants import CLASS_REFERENCE
+from ifcopenshell.util.unit import unit_names, prefixes
 
 if TYPE_CHECKING:
     from som_gui.module.attribute.prop import AttributeProperties, CompareAttributesProperties
@@ -85,6 +86,51 @@ class Attribute(som_gui.core.tool.Attribute):
         cls.set_attribute_data_by_dict(attribute, attribute_data)
         return attribute
 
+    @classmethod
+    def set_unit_settings_widget(cls, widget: ui.UnitSettings):
+        cls.get_properties().unit_settings_widget = widget
+
+    @classmethod
+    def get_unit_settings_widget(
+        cls,
+    ) -> ui.UnitSettings:
+        return cls.get_properties().unit_settings_widget
+
+    @classmethod
+    def get_allowed_units(cls,appdata:Type[tool.Appdata]):
+        """
+        Search Appdata for allowed units. If no allowed units are saved, return all existing units.
+
+        :param appdata: The application data instance to retrieve settings from.
+        :type appdata: Type[tool.Appdata]
+        :return: A list of allowed units.
+        :rtype: list[str]
+        """
+        all_units = [un.capitalize() for un in unit_names]
+        allowed_units = appdata.get_list_setting(constants.UNITS_SECTION, constants.ALLOWED_UNITS, None)
+        if allowed_units is None:
+            allowed_units = list(all_units)
+        return allowed_units
+
+    @classmethod
+    def get_allowed_unit_prefixes(cls,appdata:Type[tool.Appdata]):
+        """
+        Retrieve the list of allowed unit prefixes from the application data.
+        :param appdata: The application data instance to retrieve settings from.
+        :type appdata: Type[tool.Appdata]
+        :return: A list of allowed unit prefixes.
+        :rtype: list[str]
+        """
+        all_prefixes = [pf.capitalize() for pf in prefixes.keys()]
+        allowed_prefixes = appdata.get_list_setting(constants.UNITS_SECTION, constants.ALLOWED_PREFIXES, None)
+        if allowed_prefixes is None:
+            allowed_prefixes = list(all_prefixes)
+        return allowed_prefixes
+    
+    @classmethod
+    def get_checked_texts_from_list_widget(cls, list_widget: QListWidget) -> list[str]:
+        items = [list_widget.item(i) for i in range(list_widget.count())]
+        return [i.text() for i in items if i.checkState() == Qt.CheckState.Checked]
 
 class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod

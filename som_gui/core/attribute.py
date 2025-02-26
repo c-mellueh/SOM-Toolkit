@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type,Callable
-
+import logging
 from PySide6.QtCore import QCoreApplication
-
+from PySide6.QtGui import QStandardItemModel
+from ifcopenshell.util.unit import unit_names, prefixes
+from som_gui.module.attribute.constants import UNITS_SECTION,ALLOWED_UNITS,ALLOWED_PREFIXES
 import SOMcreator
 
 if TYPE_CHECKING:
@@ -23,6 +25,7 @@ def add_basic_attribute_data(attribute_tool: Type[tool.Attribute]):
     attribute_tool.add_attribute_data_value("description",lambda a:a.description,lambda v,a:setattr(a,"description",v))
     attribute_tool.add_attribute_data_value("optional", lambda a:a.is_optional(True),lambda v,a:a.set_optional(v))
     attribute_tool.add_attribute_data_value("inherit_value", lambda a:a.child_inherits_values,lambda v,a:setattr(a,"child_inherits_values",v))
+    attribute_tool.add_attribute_data_value("unit", lambda a:a.unit,lambda v,a:setattr(a,"unit",v))
 
 
 # Attribute Compare
@@ -134,3 +137,58 @@ def pset_tree_selection_changed(widget: ui.AttributeWidget, attribute_compare: T
 
     attribute_compare.style_table(table, 1)
     attribute_compare.style_table(attribute_compare.get_value_table(widget))
+
+#### Settings Window
+
+def fill_unit_settings(
+    widget: ui.UnitSettings,
+    attribute: Type[tool.Attribute],
+    appdata: Type[tool.Appdata],
+    util:Type[tool.Util]
+):
+    attribute.set_unit_settings_widget(widget)
+
+    all_units = [un.capitalize() for un in unit_names]
+    allowed_units = attribute.get_allowed_units(appdata)
+    util.fill_list_widget_with_checkstate(
+        widget.ui.list_units, allowed_units, all_units
+    )
+
+    all_prefixes = [pf.capitalize() for pf in prefixes.keys()]
+    allowed_prefixes = attribute.get_allowed_unit_prefixes(appdata)
+    
+    util.fill_list_widget_with_checkstate(
+        widget.ui.list_prefixes, allowed_prefixes, all_prefixes
+    )
+
+def unit_settings_accepted(
+    attribute: Type[tool.Attribute], appdata: Type[tool.Appdata]
+):
+    widget = attribute.get_unit_settings_widget()
+    allowed_units = attribute.get_checked_texts_from_list_widget(
+        widget.ui.list_units
+    )
+    appdata.set_setting(UNITS_SECTION, ALLOWED_UNITS, allowed_units)
+
+    allowed_prefixes = attribute.get_checked_texts_from_list_widget(
+        widget.ui.list_prefixes
+    )
+    appdata.set_setting(UNITS_SECTION, ALLOWED_PREFIXES, allowed_prefixes)
+
+
+def update_unit_combobox(cb:ui.UnitComboBox,attribute:Type[tool.Attribute],appdata:Type[tool.Appdata]):
+    logging.debug(f"Update unit combobox")
+    model:QStandardItemModel = cb.model()
+    tree_view = cb.tree_view
+    allowed_units = attribute.get_allowed_units(appdata)
+    allowed_prefixes = attribute.get_allowed_unit_prefixes(appdata)
+    for row in range(model.rowCount()):
+        item = model.item(row)
+        index = item.index()
+        hide_item = item.text() not in allowed_units
+        tree_view.setRowHidden(row,index.parent(),hide_item)
+
+        for child_row in range(item.rowCount()):
+            child_item = item.child(child_row)
+            hide_item = child_item.text() not in allowed_prefixes
+            tree_view.setRowHidden(child_row,index,hide_item)

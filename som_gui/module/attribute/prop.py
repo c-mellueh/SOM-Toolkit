@@ -4,7 +4,7 @@ from typing import Callable, TYPE_CHECKING, TypedDict
 
 if TYPE_CHECKING:
     import SOMcreator
-    from .ui import AttributeWidget
+    from .ui import AttributeWidget,UnitSettings
 
 
 class AttributeData(TypedDict):
@@ -14,7 +14,7 @@ class AttributeData(TypedDict):
 
 class AttributeProperties:
     attribute_data_dict: dict[str, AttributeData] = dict()
-
+    unit_settings_widget:UnitSettings = None
 
 class CompareAttributesProperties:
     projects = [None, None]

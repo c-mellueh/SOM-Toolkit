@@ -42,10 +42,12 @@ def init_attribute_columns(attribute_table: Type[tool.AttributeTable]):
     valuetype = QCoreApplication.translate("AttributeTable", "Valuetype")
     value = QCoreApplication.translate("AttributeTable", "Value")
     optional = QCoreApplication.translate("AttributeTable", "Optional")
+    unit = QCoreApplication.translate("AttributeTable", "Unit")
 
     attribute_table.add_column_to_table("Name", lambda a: a.name)
     attribute_table.add_column_to_table("Datatype", lambda a: a.data_type)
     attribute_table.add_column_to_table("Valuetype", lambda a: a.value_type)
+    attribute_table.add_column_to_table("Unit", lambda a: a.unit)
     attribute_table.add_column_to_table("Value", lambda a: a.value)
     attribute_table.add_column_to_table("Optional", lambda a: a.is_optional(ignore_hirarchy=True))
 

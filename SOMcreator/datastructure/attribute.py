@@ -3,23 +3,38 @@ from uuid import uuid4
 import SOMcreator
 from .base import Hirarchy
 import copy as cp
+import logging
+from ifcopenshell.util.unit import get_unit_name_universal
 
 
 class Attribute(Hirarchy):
     _registry: set[Attribute] = set()
 
-    def __init__(self, property_set: SOMcreator.PropertySet | None = None, name: str = "undef", value: list = None, value_type:str|None=None,
-                 data_type: str = SOMcreator.value_constants.LABEL,
-                 child_inherits_values: bool = False, uuid: str = None, description: None | str = None,
-                 optional: None | bool = None, revit_mapping: None | str = None,
-                 project: SOMcreator.Project | None = None,
-                 filter_matrix: list[list[bool]] = None):
+    def __init__(
+        self,
+        property_set: SOMcreator.PropertySet | None = None,
+        name: str = "undef",
+        value: list = None,
+        value_type: str | None = None,
+        data_type: str = SOMcreator.value_constants.LABEL,
+        child_inherits_values: bool = False,
+        uuid: str = None,
+        description: None | str = None,
+        optional: None | bool = None,
+        revit_mapping: None | str = None,
+        project: SOMcreator.Project | None = None,
+        filter_matrix: list[list[bool]] = None,
+        unit=None,
+    ):
 
-        super(Attribute, self).__init__(name, description, optional, project, filter_matrix)
+        super(Attribute, self).__init__(
+            name, description, optional, project, filter_matrix
+        )
         self._value = value
         self._property_set = property_set
         self._value_type = value_type
         self._data_type = data_type
+        self._unit = unit
         self._registry.add(self)
         if revit_mapping is None:
             self._revit_name = name
@@ -37,6 +52,7 @@ class Attribute(Hirarchy):
             self._value_type = SOMcreator.value_constants.LIST
         if property_set is not None:
             self.property_set = property_set
+
     def __str__(self) -> str:
         text = f"{self.property_set.name} : {self.name} = {self.value}"
         return text
@@ -48,13 +64,20 @@ class Attribute(Hirarchy):
             return self.name < other
 
     def __copy__(self) -> Attribute:
-        new_attrib = Attribute(property_set=None, name=self.name, value=cp.copy(self.value),
-                               value_type=cp.copy(self.value_type),
-                               data_type=cp.copy(self.data_type), child_inherits_values=self.child_inherits_values,
-                               uuid=str(uuid4()),
-                               description=self.description, optional=self.is_optional(ignore_hirarchy=True),
-                               revit_mapping=self.revit_name,
-                               project=self.project, filter_matrix=self._filter_matrix)
+        new_attrib = Attribute(
+            property_set=None,
+            name=self.name,
+            value=cp.copy(self.value),
+            value_type=cp.copy(self.value_type),
+            data_type=cp.copy(self.data_type),
+            child_inherits_values=self.child_inherits_values,
+            uuid=str(uuid4()),
+            description=self.description,
+            optional=self.is_optional(ignore_hirarchy=True),
+            revit_mapping=self.revit_name,
+            project=self.project,
+            filter_matrix=self._filter_matrix,
+        )
 
         if self.parent is not None:
             self.parent.add_child(new_attrib)
@@ -126,14 +149,18 @@ class Attribute(Hirarchy):
 
     @property
     def value_type(self) -> str:
+        if self.is_child:
+            return self.parent.value_type
         return self._value_type
 
     @value_type.setter
     def value_type(self, value: str):
-
-        if not self.is_child:
-            self._value_type = value
-
+        if self.is_child:
+            logging.info(
+                f"won't overwrite ValueType because Attribute '{self}' is child"
+            )
+            return
+        self._value_type = value
         if self.is_parent:
             for child in self.get_children(filter=False):
                 child._value_type = value
@@ -144,13 +171,42 @@ class Attribute(Hirarchy):
         IfcSimpleValue -> https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD2_TC1/HTML/
         :return:
         """
-
+        if self.is_child:
+            return self.parent.data_type
         return self._data_type
 
     @data_type.setter
     def data_type(self, value: str) -> None:
-        if not self.is_child:
-            self._data_type = value
+        if self.is_child:
+            logging.info(
+                f"won't overwrite Datatype because Attribute '{self}' is child"
+            )
+            return
+        self._data_type = value
+        if self.is_parent:
+            for child in self.get_children(filter=False):
+                child._data_type = value
+
+    @property
+    def unit(self) -> str:
+        if self.is_child:
+            return self.parent.unit
+        return str(self._unit) if self._unit else None
+
+    @unit.setter
+    def unit(self, value: str) -> None:
+        if self.is_child:
+            logging.info(f"won't overwrite Unit because Attribute '{self}' is child")
+            return
+
+        if not value:
+            self._unit = None
+            return
+        name = get_unit_name_universal(value)
+        if not name:
+            logging.warning(f"Unit '{value}' not found -> no unit asignment possible")
+            return
+        self._unit = value
 
         if self.is_parent:
             for child in self.get_children(filter=False):
@@ -170,6 +226,7 @@ class Attribute(Hirarchy):
         if self not in value.get_attributes(filter=False):
             value.add_attribute(self)
         self._property_set = value
+
     def is_equal(self, attribute: Attribute) -> bool:
         equal = True
 
