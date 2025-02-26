@@ -1,5 +1,5 @@
 from PySide6.QtCore import QRect, QSize, Qt
-from PySide6.QtWidgets import QHeaderView, QWidget,QComboBox,QTreeView
+from PySide6.QtWidgets import QHeaderView, QWidget, QComboBox, QTreeView
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 
 from .qt import ui_CompareWidget
@@ -21,7 +21,11 @@ class WordWrapHeaderView(QHeaderView):
         super().__init__(*args, **kwargs)
 
     def sectionSizeFromContents(self, logicalIndex):
-        text = str(self.model().headerData(logicalIndex, self.orientation(), Qt.ItemDataRole.DisplayRole))
+        text = str(
+            self.model().headerData(
+                logicalIndex, self.orientation(), Qt.ItemDataRole.DisplayRole
+            )
+        )
         max_width = self.sectionSize(logicalIndex)
         maxheight = 5000
         alignement = self.defaultAlignment()
@@ -30,44 +34,50 @@ class WordWrapHeaderView(QHeaderView):
         text_margin_buffer = QSize(2, 2)
         return rect.size() + text_margin_buffer
 
+
 class UnitComboBox(QComboBox):
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.tree_view = QTreeView()
         self.setView(self.tree_view)
-        self.model = QStandardItemModel()
-        self.setModel(self.model)
+        self.mod = QStandardItemModel()
+        self.setModel(self.mod)
         self.tree_view.header().setVisible(False)
-        self.tree_view.expanded.connect(lambda: setattr(self,"is_locked", True))
-        self.tree_view.collapsed.connect(lambda: setattr(self,"is_locked", True))
-        self.tree_view.selectionModel().selectionChanged.connect(lambda: setattr(self,"is_locked", False))
-        self.currentIndexChanged.connect(self.index_changed)        # Populate the model with hierarchical data
+        self.tree_view.expanded.connect(lambda: setattr(self, "is_locked", True))
+        self.tree_view.collapsed.connect(lambda: setattr(self, "is_locked", True))
+        self.tree_view.selectionModel().selectionChanged.connect(
+            lambda: setattr(self, "is_locked", False)
+        )
+        self.currentIndexChanged.connect(
+            self.index_changed
+        )  # Populate the model with hierarchical data
         self.setEditable(True)
         self.add_items()
         self.is_locked = False
 
     def add_items(self):
         from ifcopenshell.util import unit as ifc_unit
-        self.model.appendRow(QStandardItem())
+
+        self.mod.appendRow(QStandardItem())
         for unit_name in ifc_unit.unit_names:
             unit = QStandardItem(unit_name.capitalize())
             for prefix in ifc_unit.prefixes.keys():
                 unit.appendRow(QStandardItem(prefix.capitalize()))
-            self.model.appendRow(unit)
+            self.mod.appendRow(unit)
 
     def hidePopup(self):
         # Allow the popup to close if the combo box loses focus
         if not self.is_locked:
             super().hidePopup()
-    
-    def index_changed(self,_):
+
+    def index_changed(self, _):
         self.is_locked = False
         index = self.tree_view.selectionModel().selectedIndexes()[0]
-        item = self.model.itemFromIndex(index)
+        item = self.mod.itemFromIndex(index)
         if not item:
-            return 
+            return
         self.setCurrentText(self.get_full_text(item))
-    
+
     def get_full_text(self, item):
         text = item.text()
         parent = item.parent()

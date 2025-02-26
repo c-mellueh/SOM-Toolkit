@@ -13,8 +13,11 @@ if TYPE_CHECKING:
 from PySide6.QtCore import QCoreApplication
 
 
-def create_main_menu_actions(window: Type[aw_tool.Window], main_window: Type[tool.MainWindow]):
+def create_main_menu_actions(
+    window: Type[aw_tool.Window], main_window: Type[tool.MainWindow]
+):
     from som_gui.plugins.aggregation_window.module.window import trigger
+
     action = main_window.add_action(None, "BSWindow", trigger.open_window)
     window.set_action("open_window", action)
 
@@ -27,7 +30,9 @@ def retranslate_ui(window: Type[aw_tool.Window], util: Type[tool.Util]):
     if not aggregation_window:
         return
     aggregation_window.ui.retranslateUi(aggregation_window)
-    title = util.get_window_title(QCoreApplication.translate("Aggregation", "Building Structure"))
+    title = util.get_window_title(
+        QCoreApplication.translate("Aggregation", "Building Structure")
+    )
     aggregation_window.setWindowTitle(title)
 
 
@@ -49,6 +54,7 @@ def create_window(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> Non
     view.set_view(aggregation_window.ui.graphicsView)
     window.connect_menu(aggregation_window)
     from ..module.window import trigger
+
     trigger.retranslate_ui()
     aggregation_window.show()
 
@@ -75,12 +81,16 @@ def update_combo_box(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> 
         return
     existing_texts = window.get_combo_box_texts()
     allowed_scenes = window.get_allowed_scenes()
-    wanted_texts = [view.get_scene_name(scene) for scene in allowed_scenes if view.get_scene_name(scene) is not None]
+    wanted_texts = [
+        view.get_scene_name(scene)
+        for scene in allowed_scenes
+        if view.get_scene_name(scene) is not None
+    ]
     new_texts = set(wanted_texts).difference(set(existing_texts))
     delete_texts = set(existing_texts).difference(set(wanted_texts))
     if new_texts:
         combo_box.addItems(sorted(new_texts))
-        combo_box.model().sort(0, Qt.AscendingOrder)
+        combo_box.mod().sort(0, Qt.AscendingOrder)
     if delete_texts:
         for delete_text in delete_texts:
             index = combo_box.findText(delete_text)
@@ -99,8 +109,13 @@ def combobox_changed(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> 
     view.activate_scene(scene)
 
 
-def filter_scenes(window: Type[aw_tool.Window], view: Type[aw_tool.View], search: Type[tool.Search],
-                  popup: Type[tool.Popups],project:Type[tool.Project]) -> None:
+def filter_scenes(
+    window: Type[aw_tool.Window],
+    view: Type[aw_tool.View],
+    search: Type[tool.Search],
+    popup: Type[tool.Popups],
+    project: Type[tool.Project],
+) -> None:
     allowed_scenes = window.get_allowed_scenes()
     scene_list = view.get_all_scenes()
     filter_object = search.search_object(list(project.get().get_objects(filter=True)))
@@ -112,7 +127,9 @@ def filter_scenes(window: Type[aw_tool.Window], view: Type[aw_tool.View], search
             allowed_scenes.remove(scene)
     if not allowed_scenes:
         title = QCoreApplication.translate("Aggregation", "Object DNE")
-        text = QCoreApplication.translate("Aggregation", "Object doesn't exist in any View")
+        text = QCoreApplication.translate(
+            "Aggregation", "Object doesn't exist in any View"
+        )
 
         popup.create_warning_popup(text, title)
         return
@@ -122,12 +139,21 @@ def filter_scenes(window: Type[aw_tool.Window], view: Type[aw_tool.View], search
     update_combo_box(window, view)
 
 
-def search_aggregation(view: Type[aw_tool.View], search: Type[tool.Search], popup: Type[tool.Popups],project:Type[tool.Project]) -> None:
+def search_aggregation(
+    view: Type[aw_tool.View],
+    search: Type[tool.Search],
+    popup: Type[tool.Popups],
+    project: Type[tool.Project],
+) -> None:
     obj = search.search_object(list(project.get().get_objects(filter=True)))
     if obj is None:
         return
     scene = view.get_active_scene()
-    nodes = {node for node in view.get_nodes_in_scene(scene) if node.aggregation.object == obj}
+    nodes = {
+        node
+        for node in view.get_nodes_in_scene(scene)
+        if node.aggregation.object == obj
+    }
     if not nodes:
         text = QCoreApplication.translate("Aggregation", "No Node linked to Object")
         popup.create_warning_popup(text)
@@ -160,18 +186,24 @@ def paste_nodes(view: Type[aw_tool.View]) -> None:
 
     for old_aggregation, new_aggregation in aggregation_dict.items():
         if old_aggregation.parent in aggregation_dict:
-            aggregation_dict[old_aggregation.parent].add_child(new_aggregation, old_aggregation.parent_connection)
-            new_aggregation.set_parent(aggregation_dict[old_aggregation.parent], old_aggregation.parent_connection)
+            aggregation_dict[old_aggregation.parent].add_child(
+                new_aggregation, old_aggregation.parent_connection
+            )
+            new_aggregation.set_parent(
+                aggregation_dict[old_aggregation.parent],
+                old_aggregation.parent_connection,
+            )
     scene.update()
 
 
-def request_scene_rename(window: Type[aw_tool.Window], view: Type[aw_tool.View], popups: Type[tool.Popups]):
+def request_scene_rename(
+    window: Type[aw_tool.Window], view: Type[aw_tool.View], popups: Type[tool.Popups]
+):
     scene = view.get_active_scene()
     scene_name = view.get_scene_name(scene)
     title = QCoreApplication.translate("Aggregation", "Rename View")
     text = QCoreApplication.translate("Aggregation", "New Name:")
-    new_name = popups._request_text_input(title, text, scene_name,
-                                          window.get_window())
+    new_name = popups._request_text_input(title, text, scene_name, window.get_window())
     if new_name:
         view.set_scene_name(scene, new_name)
     update_combo_box(window, view)

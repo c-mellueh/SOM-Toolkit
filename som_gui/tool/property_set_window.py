@@ -37,6 +37,7 @@ from som_gui.module.property_set_window import trigger
 
 if TYPE_CHECKING:
     from som_gui.module.property_set_window.prop import PropertySetWindowProperties
+    from som_gui.module.attribute.ui import UnitComboBox
 
 
 class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
@@ -417,6 +418,10 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.ui.combo_data_type.addItems(data_type)
         window.ui.combo_data_type.setCurrentText(active_type)
 
+    @classmethod
+    def get_unit_combobox(window:ui.PropertySetWindow) -> UnitComboBox:
+        return window.ui.combo_unit
+
     ### Settings Window
     @classmethod
     def set_splitter_settings_widget(cls, widget: ui.SplitterSettings):
@@ -468,3 +473,4 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def get_checked_texts_from_list_widget(cls, list_widget: QListWidget) -> list[str]:
         items = [list_widget.item(i) for i in range(list_widget.count())]
         return [i.text() for i in items if i.checkState() == Qt.CheckState.Checked]
+

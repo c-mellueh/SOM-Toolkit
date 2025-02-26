@@ -8,7 +8,14 @@ from typing import Callable, TYPE_CHECKING
 
 from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtGui import QAction, QKeySequence, QShortcut
-from PySide6.QtWidgets import QComboBox, QFileDialog, QLineEdit, QMenu, QMenuBar, QWidget
+from PySide6.QtWidgets import (
+    QComboBox,
+    QFileDialog,
+    QLineEdit,
+    QMenu,
+    QMenuBar,
+    QWidget,
+)
 
 import som_gui.core.tool
 from som_gui import tool
@@ -25,19 +32,21 @@ class Util(som_gui.core.tool.Util):
         return som_gui.UtilProperties
 
     @classmethod
-    def create_progressbar(cls,*args,**kwargs) ->ui.Progressbar:
-        return ui.Progressbar(*args,**kwargs)
+    def create_progressbar(cls, *args, **kwargs) -> ui.Progressbar:
+        return ui.Progressbar(*args, **kwargs)
 
     @classmethod
-    def set_progress(cls,progress_bar:ui.Progressbar,value):
+    def set_progress(cls, progress_bar: ui.Progressbar, value):
         progress_bar.ui.progressBar.setValue(value)
 
     @classmethod
-    def set_status(cls,progress_bar:ui.Progressbar,value):
+    def set_status(cls, progress_bar: ui.Progressbar, value):
         progress_bar.ui.label.setText(value)
 
     @classmethod
-    def menu_bar_add_menu(cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str) -> MenuDict:
+    def menu_bar_add_menu(
+        cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str
+    ) -> MenuDict:
         menu_steps = menu_path.split("/")
         focus_dict = menu_dict
         parent = menu_bar
@@ -46,10 +55,10 @@ class Util(som_gui.core.tool.Util):
                 menu = QMenu(parent)
                 menu.setTitle(menu.tr(menu_name))
                 d = {
-                    "name":    menu_name,
+                    "name": menu_name,
                     "submenu": list(),
                     "actions": list(),
-                    "menu":    menu
+                    "menu": menu,
                 }
                 focus_dict["submenu"].append(d)
             sub_menus = {menu["name"]: menu for menu in focus_dict["submenu"]}
@@ -58,10 +67,14 @@ class Util(som_gui.core.tool.Util):
         return focus_dict
 
     @classmethod
-    def menu_bar_add_action(cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str, function: Callable):
+    def menu_bar_add_action(
+        cls, menu_bar: QMenuBar, menu_dict: MenuDict, menu_path: str, function: Callable
+    ):
         menu_steps = menu_path.split("/")
         if len(menu_steps) != 1:
-            menu_dict = cls.menu_bar_add_menu(menu_bar, menu_dict, "/".join(menu_steps[:-1]))
+            menu_dict = cls.menu_bar_add_menu(
+                menu_bar, menu_dict, "/".join(menu_steps[:-1])
+            )
             action = QAction(menu_dict["menu"])
             action.setText(action.tr(menu_steps[-1]))
             action.triggered.connect(function)
@@ -72,7 +85,9 @@ class Util(som_gui.core.tool.Util):
             action.triggered.connect(function)
 
     @classmethod
-    def menu_bar_create_actions(cls, menu_dict: MenuDict, parent: QMenu | QMenuBar | None):
+    def menu_bar_create_actions(
+        cls, menu_dict: MenuDict, parent: QMenu | QMenuBar | None
+    ):
         menu = menu_dict["menu"]
         if parent is not None:
             parent.addMenu(menu)
@@ -106,11 +121,18 @@ class Util(som_gui.core.tool.Util):
         return menu
 
     @classmethod
-    def context_menu_create_action(cls, menu_dict: dict[str, QAction | QMenu], name: str, action_func: None | Callable,
-                                   is_sub_menu: bool):
+    def context_menu_create_action(
+        cls,
+        menu_dict: dict[str, QAction | QMenu],
+        name: str,
+        action_func: None | Callable,
+        is_sub_menu: bool,
+    ):
         parent_structure = "/".join(name.split("/")[:-1])
         if parent_structure not in menu_dict:
-            parent: QMenu = cls.context_menu_create_action(menu_dict, parent_structure, None, True)
+            parent: QMenu = cls.context_menu_create_action(
+                menu_dict, parent_structure, None, True
+            )
         else:
             parent: QMenu = menu_dict[parent_structure]
 
@@ -134,7 +156,7 @@ class Util(som_gui.core.tool.Util):
     def transform_guid(cls, guid: str, add_zero_width: bool):
         """Fügt Zero Width Character ein weil PowerBI (WARUM AUCH IMMER FÜR EIN BI PROGRAMM?????) Case Insensitive ist"""
         if add_zero_width:
-            return re.sub(r"([A-Z])", lambda m: m.group(0) + u"\u200B", guid)
+            return re.sub(r"([A-Z])", lambda m: m.group(0) + "\u200B", guid)
         else:
             return guid
 
@@ -175,9 +197,11 @@ class Util(som_gui.core.tool.Util):
 
     @classmethod
     def get_text_from_combobox(cls, combobox: QComboBox) -> dict[str, QModelIndex]:
-        model = combobox.model()
+        model = combobox.mod()
         indexes = [model.index(r, 0) for r in range(model.rowCount())]
-        return {model.data(index, Qt.ItemDataRole.DisplayRole): index for index in indexes}
+        return {
+            model.data(index, Qt.ItemDataRole.DisplayRole): index for index in indexes
+        }
 
     @classmethod
     def get_window_title(cls, window_name: str):
@@ -190,9 +214,15 @@ class Util(som_gui.core.tool.Util):
         return f"{window_name} | {status_text}"
 
     @classmethod
-    def create_file_selector(cls, name: str, file_extension: str, appdata_text: str, request_folder=False,
-                             request_save=False,
-                             single_request=False) -> ui.FileSelector:
+    def create_file_selector(
+        cls,
+        name: str,
+        file_extension: str,
+        appdata_text: str,
+        request_folder=False,
+        request_save=False,
+        single_request=False,
+    ) -> ui.FileSelector:
         """
         name: text that should be written in first row
         file_extension: file extension(s) that are allowed to search
@@ -203,14 +233,29 @@ class Util(som_gui.core.tool.Util):
         single_request: True if want to open single file else multifile is allowed
         """
         selector = ui.FileSelector()
-        cls.fill_file_selector(selector, name, file_extension, appdata_text, request_folder, request_save,
-                               single_request)
+        cls.fill_file_selector(
+            selector,
+            name,
+            file_extension,
+            appdata_text,
+            request_folder,
+            request_save,
+            single_request,
+        )
         return selector
 
     @classmethod
-    def fill_file_selector(cls, widget: ui.FileSelector, name: str, file_extension: str, appdata_text: str,
-                           request_folder=False, request_save=False,
-                           single_request=False, update_appdata=True):
+    def fill_file_selector(
+        cls,
+        widget: ui.FileSelector,
+        name: str,
+        file_extension: str,
+        appdata_text: str,
+        request_folder=False,
+        request_save=False,
+        single_request=False,
+        update_appdata=True,
+    ):
         """
         if file selector is created as placeholder in QtDesiger it can befilled after creation
                 name: text that should be written in first row
@@ -254,13 +299,19 @@ class Util(som_gui.core.tool.Util):
             path = QFileDialog.getExistingDirectory(widget, widget.name, start_path)
 
         elif widget.request_save:
-            path = QFileDialog.getSaveFileName(widget, widget.name, start_path, widget.extension)[0]
+            path = QFileDialog.getSaveFileName(
+                widget, widget.name, start_path, widget.extension
+            )[0]
 
         elif widget.single_request:
-            path = QFileDialog.getOpenFileName(widget, widget.name, start_path, widget.extension)[0]
+            path = QFileDialog.getOpenFileName(
+                widget, widget.name, start_path, widget.extension
+            )[0]
 
         elif all([widget, widget.name, widget.extension]):
-            paths, _ = QFileDialog.getOpenFileNames(widget, widget.name, start_path, widget.extension)
+            paths, _ = QFileDialog.getOpenFileNames(
+                widget, widget.name, start_path, widget.extension
+            )
         else:
             logging.warning(f"inputs are missing. no path requestable")
             return []
@@ -281,8 +332,14 @@ class Util(som_gui.core.tool.Util):
             line_edit.setText(path)
 
     @classmethod
-    def fill_main_attribute(cls, widget: ui.AttributeSelector, pset_name: str, attribute_name: str,
-                            pset_placeholder: str = None, attribute_placeholder: str = None):
+    def fill_main_attribute(
+        cls,
+        widget: ui.AttributeSelector,
+        pset_name: str,
+        attribute_name: str,
+        pset_placeholder: str = None,
+        attribute_placeholder: str = None,
+    ):
         widget.ui.le_pset_name.setText(pset_name)
         widget.ui.le_attribute_name.setText(attribute_name)
         if pset_placeholder is not None:

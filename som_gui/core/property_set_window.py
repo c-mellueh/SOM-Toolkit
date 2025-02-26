@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_set_window import ui
     from PySide6.QtWidgets import QTableWidgetItem
+    from som_gui.module.attribute.ui import UnitComboBox
 
 
 def retranslate_ui(property_set_window: Type[tool.PropertySetWindow]):
@@ -128,7 +129,6 @@ def repaint_pset_window(
     window: ui.PropertySetWindow,
     property_set_window: Type[tool.PropertySetWindow],
     attribute_table: Type[tool.AttributeTable],
-    appdata: Type[tool.Appdata],
 ):
     table = property_set_window.get_table(window)
     attribute_table_core.update_attribute_table(table, attribute_table)
@@ -181,6 +181,12 @@ def activate_attribute(
             property_set_window.add_value_line(2, window)
         else:
             property_set_window.add_value_line(1, window)
+
+
+def update_unit_combobox(window:ui.PropertySetWindow,property_set_window:Type[tool.PropertySetWindow],appdata:Type[tool.Appdata]):
+    cb:UnitComboBox = property_set_window.get_unit_combobox(window)
+    model = cb.mod
+    model.
 
 
 #### Settings Window
