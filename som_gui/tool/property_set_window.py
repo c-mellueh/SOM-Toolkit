@@ -10,7 +10,14 @@ from PySide6.QtGui import (
     QIntValidator,
     QRegularExpressionValidator,
 )
-from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QCompleter, QComboBox,QListWidget,QListWidgetItem
+from PySide6.QtWidgets import (
+    QHBoxLayout,
+    QLineEdit,
+    QCompleter,
+    QComboBox,
+    QListWidget,
+    QListWidgetItem,
+)
 
 import SOMcreator
 import som_gui
@@ -207,6 +214,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def get_allowed_units(cls):
         from ifcopenshell.util.unit import unit_names
+
         return [un.capitalize() for un in unit_names]
 
     @classmethod
@@ -409,51 +417,54 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.ui.combo_data_type.addItems(data_type)
         window.ui.combo_data_type.setCurrentText(active_type)
 
-
-### Settings Window
+    ### Settings Window
     @classmethod
-    def set_splitter_settings_widget(cls,widget:ui.SplitterSettings):
+    def set_splitter_settings_widget(cls, widget: ui.SplitterSettings):
         cls.get_properties().splitter_settings = widget
+
     @classmethod
-    
     def get_splitter_settings_widget(cls) -> ui.SplitterSettings:
         return cls.get_properties().splitter_settings
+
     @classmethod
-    
-    def set_unit_settings_widget(cls,widget:ui.UnitSettings):
+    def set_unit_settings_widget(cls, widget: ui.UnitSettings):
         cls.get_properties().unit_settings = widget
+
     @classmethod
-    
-    def get_unit_settings_widget(cls,) -> ui.UnitSettings:
+    def get_unit_settings_widget(
+        cls,
+    ) -> ui.UnitSettings:
         return cls.get_properties().unit_settings
+
     @classmethod
-    def connect_splitter_widget(cls,widget:ui.SplitterSettings):
-        widget.ui.check_box_seperator.checkStateChanged.connect(lambda:trigger.splitter_checkstate_changed(widget))
-    
+    def connect_splitter_widget(cls, widget: ui.SplitterSettings):
+        widget.ui.check_box_seperator.checkStateChanged.connect(
+            lambda: trigger.splitter_checkstate_changed(widget)
+        )
+
     @classmethod
-    def get_splitter_settings_checkstate(cls,widget:ui.SplitterSettings)->bool:
+    def get_splitter_settings_checkstate(cls, widget: ui.SplitterSettings) -> bool:
         return widget.ui.check_box_seperator.isChecked()
-    
+
     @classmethod
-    def get_splitter_settings_text(cls,widget:ui.SplitterSettings) ->str:
+    def get_splitter_settings_text(cls, widget: ui.SplitterSettings) -> str:
         return widget.ui.line_edit_seperator.text()
-    
+
     @classmethod
-    def fill_unit_list(cls,list_widget:QListWidget,allowed_units:list[str],all_units:list[str]):
+    def fill_list_widget_with_checkstate(
+        cls, list_widget: QListWidget, allowed_labels: list[str], all_labels: list[str]
+    ):
         list_widget.clear()
-        list_widget.insertItems(0,sorted(all_units))
+        list_widget.insertItems(0, sorted(all_units))
 
         for index in range(list_widget.count()):
             item = list_widget.item(index)
-            if item.text() in allowed_units:
-                print(f"{item.text()} -> Allowed")
+            if item.text() in allowed_labels:
                 item.setCheckState(Qt.CheckState.Checked)
             else:
-                print(f"{item.text()} ->Not Allowed")
-
                 item.setCheckState(Qt.CheckState.Unchecked)
-    
+
     @classmethod
-    def get_allowed_units_from_settings_widget(cls,list_widget:QListWidget) -> list[str]:
+    def get_checked_texts_from_list_widget(cls, list_widget: QListWidget) -> list[str]:
         items = [list_widget.item(i) for i in range(list_widget.count())]
         return [i.text() for i in items if i.checkState() == Qt.CheckState.Checked]
