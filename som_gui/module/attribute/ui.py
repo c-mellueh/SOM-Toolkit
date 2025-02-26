@@ -54,6 +54,7 @@ class UnitComboBox(QComboBox):
         self.setEditable(True)
         self.add_items()
         self.is_locked = False
+        self.tree_view.setMinimumHeight(self.tree_view.sizeHintForRow(0)*5)
 
     def add_items(self):
         from ifcopenshell.util import unit as ifc_unit
@@ -81,7 +82,12 @@ class UnitComboBox(QComboBox):
     def get_full_text(self, item):
         text = item.text()
         parent = item.parent()
-        while parent:
-            text = f" {text}_{parent.text()}"
-            parent = parent.parent()
-        return text
+        if not parent:
+            return text
+        
+        parent_text = parent.text()
+        if not "_" in parent_text or parent_text == "DEGREE_CELSIUS":
+            return f"{text}_{parent.text()}"
+
+        [p1,p2] = parent_text.split("_")
+        return "_".join((p1,text,p2))
