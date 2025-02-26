@@ -41,7 +41,7 @@ def connect_window(window: ui.PropertySetWindow):
 
 def repaint_window(widget: ui.PropertySetWindow):
     core.repaint_pset_window(widget, tool.PropertySetWindow, tool.AttributeTable)
-    core.update_unit_combobox(widget,PropertySetWindow,tool.Appdata)
+    core.update_unit_combobox(widget,tool.PropertySetWindow,tool.Appdata)
 
 def close_window(window: ui.PropertySetWindow):
     core.close_pset_window(window, tool.PropertySetWindow)

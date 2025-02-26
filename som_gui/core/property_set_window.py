@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
-
+import logging
 import SOMcreator
 from SOMcreator.constants.value_constants import RANGE
 from som_gui.core import attribute_table as attribute_table_core
@@ -13,12 +13,14 @@ from som_gui.module.property_set_window.constants import (
     ALLOWED_UNITS,
     ALLOWED_PREFIXES,
 )
+from PySide6.QtCore import Qt
 from ifcopenshell.util.unit import unit_names, prefixes
 
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_set_window import ui
     from PySide6.QtWidgets import QTableWidgetItem
+    from pySide6.QtGui import QStandardItemModel
     from som_gui.module.attribute.ui import UnitComboBox
 
 
@@ -184,9 +186,23 @@ def activate_attribute(
 
 
 def update_unit_combobox(window:ui.PropertySetWindow,property_set_window:Type[tool.PropertySetWindow],appdata:Type[tool.Appdata]):
+    logging.debug(f"Update unit combobox")
     cb:UnitComboBox = property_set_window.get_unit_combobox(window)
-    model = cb.mod
-    model.
+    model:QStandardItemModel = cb.model()
+    tree_view = cb.tree_view
+    allowed_units = property_set_window.get_allowed_units(appdata)
+    allowed_prefixes = property_set_window.get_allowed_unit_prefixes(appdata)
+    for row in range(model.rowCount()):
+        item = model.item(row)
+        index = item.index()
+        hide_item = item.text() not in allowed_units
+        tree_view.setRowHidden(row,index.parent(),hide_item)
+
+        for child_row in range(item.rowCount()):
+            child_item = item.child(child_row)
+            hide_item = child_item.text() not in allowed_prefixes
+            tree_view.setRowHidden(child_row,index,hide_item)
+        
 
 
 #### Settings Window
@@ -218,18 +234,15 @@ def fill_unit_settings(
     property_set_window.set_unit_settings_widget(widget)
 
     all_units = [un.capitalize() for un in unit_names]
-    allowed_units = appdata.get_list_setting(UNITS_SECTION, ALLOWED_UNITS, None)
-    if allowed_units is None:
-        allowed_units = list(all_units)
-    property_set_window.fill_list_widget_with: checkstate(
+    allowed_units = property_set_window.get_allowed_units(appdata)
+    property_set_window.fill_list_widget_with_checkstate(
         widget.ui.list_units, allowed_units, all_units
     )
 
     all_prefixes = [pf.capitalize() for pf in prefixes.keys()]
-    allowed_prefixes = appdata.get_list_setting(UNITS_SECTION, ALLOWED_PREFIXES, None)
-    if allowed_prefixes is None:
-        allowed_prefixes = list(all_prefixes)
-    property_set_window.fill_list_widget_with: checkstate(
+    allowed_prefixes = property_set_window.get_allowed_unit_prefixes(appdata)
+    
+    property_set_window.fill_list_widget_with_checkstate(
         widget.ui.list_prefixes, allowed_prefixes, all_prefixes
     )
 

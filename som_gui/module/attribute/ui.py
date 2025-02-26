@@ -59,9 +59,9 @@ class UnitComboBox(QComboBox):
         from ifcopenshell.util import unit as ifc_unit
 
         self.mod.appendRow(QStandardItem())
-        for unit_name in ifc_unit.unit_names:
+        for unit_name in sorted(ifc_unit.unit_names):
             unit = QStandardItem(unit_name.capitalize())
-            for prefix in ifc_unit.prefixes.keys():
+            for prefix in reversed(list(ifc_unit.prefixes.keys())):
                 unit.appendRow(QStandardItem(prefix.capitalize()))
             self.mod.appendRow(unit)
 

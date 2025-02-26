@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING,Type
 
 from PySide6.QtCore import QCoreApplication, Qt
 from PySide6.QtGui import (
@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
 )
-
+from ifcopenshell.util.unit import unit_names, prefixes
 import SOMcreator
 import som_gui
 import som_gui.core.tool
@@ -30,6 +30,9 @@ from som_gui.module.property_set_window.constants import (
     SEPERATOR,
     SEPERATOR_SECTION,
     SEPERATOR_STATUS,
+    UNITS_SECTION,
+    ALLOWED_UNITS,
+    ALLOWED_PREFIXES,
 )
 
 from som_gui.module.property_set_window import trigger
@@ -211,12 +214,6 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def get_allowed_data_types(cls):
         return DATA_TYPES
-
-    @classmethod
-    def get_allowed_units(cls):
-        from ifcopenshell.util.unit import unit_names
-
-        return [un.capitalize() for un in unit_names]
 
     @classmethod
     def fill_window_ui(cls, window: ui.PropertySetWindow):
@@ -419,7 +416,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.ui.combo_data_type.setCurrentText(active_type)
 
     @classmethod
-    def get_unit_combobox(window:ui.PropertySetWindow) -> UnitComboBox:
+    def get_unit_combobox(cls,window:ui.PropertySetWindow) -> UnitComboBox:
         return window.ui.combo_unit
 
     ### Settings Window
@@ -460,7 +457,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         cls, list_widget: QListWidget, allowed_labels: list[str], all_labels: list[str]
     ):
         list_widget.clear()
-        list_widget.insertItems(0, sorted(all_units))
+        list_widget.insertItems(0, sorted(all_labels))
 
         for index in range(list_widget.count()):
             item = list_widget.item(index)
@@ -474,3 +471,19 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         items = [list_widget.item(i) for i in range(list_widget.count())]
         return [i.text() for i in items if i.checkState() == Qt.CheckState.Checked]
 
+
+    @classmethod
+    def get_allowed_units(cls,appdata:Type[tool.Appdata]):
+        all_units = [un.capitalize() for un in unit_names]
+        allowed_units = appdata.get_list_setting(UNITS_SECTION, ALLOWED_UNITS, None)
+        if allowed_units is None:
+            allowed_units = list(all_units)
+        return allowed_units
+    
+    @classmethod
+    def get_allowed_unit_prefixes(cls,appdata:Type[tool.Appdata]):
+        all_prefixes = [pf.capitalize() for pf in prefixes.keys()]
+        allowed_prefixes = appdata.get_list_setting(UNITS_SECTION, ALLOWED_PREFIXES, None)
+        if allowed_prefixes is None:
+            allowed_prefixes = list(all_prefixes)
+        return allowed_prefixes
