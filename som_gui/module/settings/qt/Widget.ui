@@ -29,7 +29,7 @@
       <enum>QTabWidget::TabPosition::West</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -72,8 +72,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>856</width>
-            <height>467</height>
+            <width>98</width>
+            <height>28</height>
            </rect>
           </property>
           <attribute name="label">
@@ -86,8 +86,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>856</width>
-            <height>467</height>
+            <width>98</width>
+            <height>28</height>
            </rect>
           </property>
           <attribute name="label">
@@ -126,8 +126,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>856</width>
-            <height>497</height>
+            <width>98</width>
+            <height>28</height>
            </rect>
           </property>
           <attribute name="label">
@@ -185,8 +185,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>840</width>
-            <height>485</height>
+            <width>98</width>
+            <height>28</height>
            </rect>
           </property>
           <property name="contextMenuPolicy">
@@ -228,8 +228,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>856</width>
-            <height>527</height>
+            <width>98</width>
+            <height>28</height>
            </rect>
           </property>
           <attribute name="label">
