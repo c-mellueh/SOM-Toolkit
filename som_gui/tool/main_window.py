@@ -11,7 +11,9 @@ from PySide6.QtWidgets import (
     QMenu,
     QMenuBar,
     QStatusBar,
+    QLabel,
 )
+
 
 import som_gui
 import som_gui.core.tool
@@ -170,8 +172,12 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_ui().lineEdit_ident_property
 
     @classmethod
-    def get_object_name_label(cls):
+    def get_object_name_label(cls)-> QLabel:
         return cls.get_ui().label_object_name
+
+    @classmethod
+    def get_pset_name_label(cls) -> QLabel:
+        return cls.get_ui().label_pset_name
 
     @classmethod
     def get_pset_name_line_edit(cls):

@@ -50,7 +50,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def pset_table_is_editing(cls):
-        props = cls.get_pset_properties()
+        props = cls.get_properties()
         return props.is_renaming_property_set
 
     @classmethod
@@ -251,29 +251,36 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return cls.get_pset_from_item(item)
 
     @classmethod
+    def get_completer(cls)-> QCompleter:
+        if not cls.get_properties().completer:
+            cls.get_properties().completer = QCompleter()
+        return cls.get_properties().completer
+
+
+
+    @classmethod
     def update_completer(cls, obj: SOMcreator.SOMClass = None):
         psets = list(tool.PredefinedPropertySet.get_property_sets())
         if obj is not None:
             psets += cls.get_inheritable_property_sets(obj)
         pset_names = sorted({p.name for p in psets})
-        completer = QCompleter(pset_names)
-        tool.MainWindow.get_ident_pset_name_line_edit().setCompleter(completer)
-        tool.MainWindow.get_pset_name_line_edit().setCompleter(completer)
+        cls.get_properties().completer = QCompleter(pset_names)
+
 
     @classmethod
     def set_enabled(cls, enabled: bool):
         tool.MainWindow.get_pset_layout().setEnabled(enabled)
 
     @classmethod
-    def get_pset_properties(cls) -> PropertySetProperties:
+    def get_properties(cls) -> PropertySetProperties:
         return som_gui.PropertySetProperties
 
     @classmethod
     def set_active_property_set(cls, property_set: SOMcreator.SOMPropertySet):
-        prop = cls.get_pset_properties()
+        prop = cls.get_properties()
         prop.active_pset = property_set
 
     @classmethod
     def get_active_property_set(cls) -> SOMcreator.SOMPropertySet:
-        prop = cls.get_pset_properties()
+        prop = cls.get_properties()
         return prop.active_pset

@@ -2872,7 +2872,7 @@ class PropertySet:
     def get_pset_from_item(self, item):
         pass
 
-    def get_pset_properties(
+    def get_properties(
         self,
     ):
         pass
