@@ -333,7 +333,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             "Modelcheck", "{} is missing the identifier-Attribute"
         )
         description = description.format(element_type)
-        issue_nr = IDENT_ATTRIBUTE_ISSUE
+        issue_nr = IDENT_PROPERTY_ISSUE
         cls.add_issues(
             guid,
             description,
@@ -360,7 +360,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             "Modelcheck", """{} Value of Identifier ("{}") does not exist in SOM"""
         )
         description = description.format(element_type, value)
-        issue_nr = IDENT_ATTRIBUTE_UNKNOWN
+        issue_nr = IDENT_PROPERTY_UNKNOWN
         cls.add_issues(
             guid,
             description,
