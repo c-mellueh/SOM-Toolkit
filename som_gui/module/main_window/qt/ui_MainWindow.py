@@ -106,6 +106,7 @@ class Ui_MainWindow(object):
         self.tree_object.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
         self.tree_object.setDefaultDropAction(Qt.DropAction.MoveAction)
         self.tree_object.setAlternatingRowColors(False)
+        self.tree_object.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.tree_object.setSortingEnabled(True)
         self.tree_object.setExpandsOnDoubleClick(False)
         self.tree_object.header().setProperty(u"showSortIndicator", True)
@@ -224,7 +225,7 @@ class Ui_MainWindow(object):
         self.label_object_name.setText("")
         self.label_pset.setText(QCoreApplication.translate("MainWindow", u"PropertySet:", None))
         self.label_pset_name.setText("")
-        self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"Create", None))
+        self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"New", None))
         ___qtablewidgetitem = self.table_pset.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"PropertySet", None));
         ___qtablewidgetitem1 = self.table_pset.horizontalHeaderItem(1)

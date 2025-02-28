@@ -4,32 +4,32 @@
 <context>
     <name>AttributeCompare</name>
     <message>
-        <location filename="../../tool/attribute.py" line="693"/>
+        <location filename="../../tool/attribute.py" line="810"/>
         <source>was deleted.</source>
         <translation>wurde entfernt.</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="694"/>
+        <location filename="../../tool/attribute.py" line="811"/>
         <source>was added.</source>
         <translation>wurde hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="709"/>
+        <location filename="../../tool/attribute.py" line="828"/>
         <source>was renamed to</source>
         <translation>wurde umbenannt zu</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="730"/>
+        <location filename="../../tool/attribute.py" line="861"/>
         <source>was changed from</source>
         <translation>wurde geändert zu</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="761"/>
+        <location filename="../../tool/attribute.py" line="901"/>
         <source>added child</source>
         <translation>fügte Kindelement hinzu</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="762"/>
+        <location filename="../../tool/attribute.py" line="902"/>
         <source>removed child</source>
         <translation>entfernte Kindelement</translation>
     </message>
@@ -42,59 +42,59 @@
 <context>
     <name>AttributeImport</name>
     <message>
-        <location filename="../../core/attribute_import.py" line="32"/>
-        <location filename="../../core/attribute_import.py" line="37"/>
-        <location filename="../../core/attribute_import.py" line="45"/>
+        <location filename="../../core/attribute_import.py" line="44"/>
+        <location filename="../../core/attribute_import.py" line="49"/>
+        <location filename="../../core/attribute_import.py" line="59"/>
         <source>Import Values</source>
         <translation>Werte importieren</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="41"/>
+        <location filename="../../core/attribute_import.py" line="55"/>
         <source>IFC Path</source>
         <translation>IFC Pfad</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="83"/>
+        <location filename="../../core/attribute_import.py" line="105"/>
         <source>Abort</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="98"/>
+        <location filename="../../core/attribute_import.py" line="120"/>
         <source>Import {}</source>
         <translation>Importiere {}</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="114"/>
+        <location filename="../../core/attribute_import.py" line="144"/>
         <source>Import Attributes from SOM</source>
         <translation>Importiere Attribute von SOM</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="160"/>
+        <location filename="../../core/attribute_import.py" line="202"/>
         <source>Import Done!</source>
         <translation>Import Abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="178"/>
+        <location filename="../../core/attribute_import.py" line="228"/>
         <source>Import entity from file:</source>
         <translation>Importiere Entität von Datei:</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="187"/>
+        <location filename="../../core/attribute_import.py" line="245"/>
         <source>import of &apos;{}&apos; entities done!</source>
         <translation>Import von &apos;{}&apos; Entitäten abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="379"/>
+        <location filename="../../core/attribute_import.py" line="509"/>
         <source>Settings v</source>
         <translation>Einstellungen v</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="425"/>
+        <location filename="../../core/attribute_import.py" line="566"/>
         <source>Export Attribute Data</source>
         <translation>Exportere Attributdaten</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="432"/>
+        <location filename="../../core/attribute_import.py" line="575"/>
         <source>Export Done!</source>
         <translation>Export abgeschlossen!</translation>
     </message>
@@ -187,32 +187,32 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="41"/>
+        <location filename="../../core/attribute_table.py" line="51"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="42"/>
+        <location filename="../../core/attribute_table.py" line="52"/>
         <source>Datatype</source>
         <translation>Datentyp</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="43"/>
+        <location filename="../../core/attribute_table.py" line="53"/>
         <source>Valuetype</source>
         <translation>Werttyp</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="44"/>
+        <location filename="../../core/attribute_table.py" line="54"/>
         <source>Value</source>
         <translation>Wert</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="45"/>
+        <location filename="../../core/attribute_table.py" line="55"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="47"/>
+        <location filename="../../core/attribute_table.py" line="57"/>
         <source>Unit</source>
         <translation>Einheit</translation>
     </message>
@@ -272,27 +272,27 @@
 <context>
     <name>Compare</name>
     <message>
-        <location filename="../../core/attribute.py" line="40"/>
+        <location filename="../../core/attribute.py" line="68"/>
         <source>Attributes</source>
         <translation>Attribute</translation>
     </message>
     <message>
-        <location filename="../../core/attribute.py" line="86"/>
+        <location filename="../../core/attribute.py" line="127"/>
         <source>ATTRIBUTE COMPARISON</source>
         <translation>ATTRIBUT VERGLEICH</translation>
     </message>
     <message>
-        <location filename="../../core/attribute.py" line="89"/>
+        <location filename="../../core/attribute.py" line="130"/>
         <source>{} ({}) was deleted</source>
         <translation>{} ({}) wurde gelöscht</translation>
     </message>
     <message>
-        <location filename="../../core/attribute.py" line="93"/>
+        <location filename="../../core/attribute.py" line="136"/>
         <source>{} ({}) was added</source>
         <translation>{} ({}) wurde hinzugefügt</translation>
     </message>
     <message>
-        <location filename="../../core/compare.py" line="93"/>
+        <location filename="../../core/compare.py" line="109"/>
         <source>File &apos;{}&apos; doesn&apos;t exist</source>
         <translation>Datei &apos;{}&apos; existiert nicht</translation>
     </message>
@@ -312,7 +312,7 @@
 <context>
     <name>CompareWindow</name>
     <message>
-        <location filename="../../core/compare.py" line="27"/>
+        <location filename="../../core/compare.py" line="32"/>
         <source>Compare Projects</source>
         <translation>Projekte vergleichen</translation>
     </message>
@@ -414,17 +414,17 @@
     </message>
     <message>
         <location filename="../../tool/exports.py" line="43"/>
-        <location filename="../../tool/exports.py" line="55"/>
+        <location filename="../../tool/exports.py" line="59"/>
         <source>Template Excel</source>
         <translation>Vorlage Excel</translation>
     </message>
     <message>
-        <location filename="../../tool/exports.py" line="46"/>
+        <location filename="../../tool/exports.py" line="48"/>
         <source>Export Folder</source>
         <translation>Ausgabeordner</translation>
     </message>
     <message>
-        <location filename="../../tool/exports.py" line="59"/>
+        <location filename="../../tool/exports.py" line="65"/>
         <source>CARD1 Excel</source>
         <translation>CARD1 Excel</translation>
     </message>
@@ -432,100 +432,100 @@
 <context>
     <name>FilterWindow</name>
     <message>
-        <location filename="../../core/filter_window.py" line="26"/>
-        <location filename="../../core/filter_window.py" line="30"/>
-        <location filename="../../core/filter_window.py" line="180"/>
+        <location filename="../../core/filter_window.py" line="29"/>
+        <location filename="../../core/filter_window.py" line="33"/>
+        <location filename="../../core/filter_window.py" line="217"/>
         <source>Project Filter</source>
         <translation>Projekt Filter</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="119"/>
+        <location filename="../../core/filter_window.py" line="148"/>
         <source>Delete UseCase</source>
         <translation>Anwendungsfall Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="120"/>
+        <location filename="../../core/filter_window.py" line="149"/>
         <source>Rename UseCase</source>
         <translation>Anwendungsfall Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="122"/>
+        <location filename="../../core/filter_window.py" line="151"/>
         <source>Add UseCase</source>
         <translation>Anwendungsfall hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="132"/>
+        <location filename="../../core/filter_window.py" line="163"/>
         <source>Delete Phase</source>
         <translation>Leistungsphase Entfernen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="133"/>
+        <location filename="../../core/filter_window.py" line="164"/>
         <source>Rename Phase</source>
         <translation>Leistungsphase Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="135"/>
+        <location filename="../../core/filter_window.py" line="166"/>
         <source>Add Phase</source>
         <translation>Leistungsphase hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="258"/>
+        <location filename="../../core/filter_window.py" line="310"/>
         <source>OBJECT FILTER</source>
         <translation>OBJEKT FILTER</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="99"/>
+        <location filename="../../tool/filter_window.py" line="125"/>
         <source>New UseCase</source>
         <translation>Neuer Anwendungsfall</translation>
     </message>
     <message>
-        <location filename="../../module/filter_window/ui.py" line="216"/>
-        <location filename="../../tool/filter_window.py" line="119"/>
+        <location filename="../../module/filter_window/ui.py" line="243"/>
+        <location filename="../../tool/filter_window.py" line="151"/>
         <source>New Phase</source>
         <translation>Neue Leistungsphase</translation>
     </message>
     <message>
-        <location filename="../../module/filter_window/ui.py" line="318"/>
+        <location filename="../../module/filter_window/ui.py" line="370"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
-        <location filename="../../module/filter_window/ui.py" line="385"/>
+        <location filename="../../module/filter_window/ui.py" line="444"/>
         <source>PropertySet/Attribute</source>
         <translation>PropertySet/Attribut</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="139"/>
+        <location filename="../../tool/filter_window.py" line="173"/>
         <source>Edit Header</source>
         <translation>Header Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="141"/>
+        <location filename="../../tool/filter_window.py" line="175"/>
         <source>Enter new header title:</source>
         <translation>Neuer Titel:</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="379"/>
+        <location filename="../../tool/filter_window.py" line="453"/>
         <source>{}{} [{}][{}] state changed from {} to {}
 </source>
         <translation>{}{} [{}][{}] Status änderte sich von {} zu {}
 </translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="435"/>
+        <location filename="../../tool/filter_window.py" line="521"/>
         <source>Attribut {0:30} {1:30} state changed from {2:5} to {3:5}
 </source>
         <translation>Attribut {0:30} {1:30} Status änderte sich von {2:5} zu {3:5}
 </translation>
     </message>
     <message>
-        <location filename="../../module/filter_window/ui.py" line="317"/>
-        <location filename="../../tool/filter_window.py" line="394"/>
+        <location filename="../../module/filter_window/ui.py" line="369"/>
+        <location filename="../../tool/filter_window.py" line="472"/>
         <source>Object</source>
         <translation>Objekt</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="410"/>
+        <location filename="../../tool/filter_window.py" line="492"/>
         <source>PropertySet</source>
         <translation>PropertySet</translation>
     </message>
@@ -549,12 +549,12 @@
 <context>
     <name>IfcImporter</name>
     <message>
-        <location filename="../../tool/ifc_importer.py" line="63"/>
+        <location filename="../../tool/ifc_importer.py" line="66"/>
         <source>PropertySet Name is empty</source>
         <translation>PropertySetname ist nicht befüllt</translation>
     </message>
     <message>
-        <location filename="../../tool/ifc_importer.py" line="69"/>
+        <location filename="../../tool/ifc_importer.py" line="72"/>
         <source>Attribute Name is empty</source>
         <translation>Attributname ist nicht befüllt</translation>
     </message>
@@ -595,52 +595,42 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="66"/>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="278"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="vanished">Name</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="93"/>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="360"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="243"/>
         <source>PropertySet</source>
         <translation>PropertySet</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="203"/>
         <source>Identifier</source>
-        <translation>Identifier</translation>
+        <translation type="vanished">Identifier</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="370"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="253"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="39"/>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="301"/>
         <source>Create</source>
-        <translation>Erstellen</translation>
+        <translation type="vanished">Erstellen</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="84"/>
         <source>Name of PropertySet which owns Identifier Attribute</source>
-        <translation>Name des PropertySets in dem sich das Identifier Attribut befindet</translation>
+        <translation type="vanished">Name des PropertySets in dem sich das Identifier Attribut befindet</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="115"/>
         <source>Object</source>
-        <translation>Objekt</translation>
+        <translation type="vanished">Objekt</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="193"/>
         <source>Value</source>
-        <translation>Wert</translation>
+        <translation type="vanished">Wert</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="128"/>
         <source>Name of Attribute which owns the identifier value</source>
-        <translation>Name des Attributes in dem sich der Identifier befindet</translation>
+        <translation type="vanished">Name des Attributes in dem sich der Identifier befindet</translation>
     </message>
     <message>
         <location filename="../../module/main_window/qt/MainWindow.ui" line="20"/>
@@ -648,27 +638,23 @@
         <translation>SOMToolkit</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="57"/>
         <source>Name of Object</source>
-        <translation>Name des Objektes</translation>
+        <translation type="vanished">Name des Objektes</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="137"/>
         <source>Attribute</source>
-        <translation>Attribut</translation>
+        <translation type="vanished">Attribut</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="181"/>
         <source>Needs to be unique!</source>
-        <translation>Muss eindeutig sein!</translation>
+        <translation type="vanished">Muss eindeutig sein!</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="200"/>
         <source>The Identifier defines which Object is selected it needs to be unique!</source>
-        <translation>Der Identifier definiert welches Objekt gemeint ist. Er muss eindeutig sein!</translation>
+        <translation type="vanished">Der Identifier definiert welches Objekt gemeint ist. Er muss eindeutig sein!</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="365"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="248"/>
         <source>Inherited By</source>
         <translation>Geerbt Von</translation>
     </message>
@@ -681,32 +667,48 @@
         <translation type="vanished">Format</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="407"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="54"/>
+        <source>Class:</source>
+        <translation>Klasse:</translation>
+    </message>
+    <message>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="61"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="200"/>
+        <source>New</source>
+        <translation>Neu</translation>
+    </message>
+    <message>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="174"/>
+        <source>PropertySet:</source>
+        <translation>PropertySet:</translation>
+    </message>
+    <message>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="289"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="418"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="300"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="423"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="305"/>
         <source>Desite</source>
         <translation>Desite</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="428"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="310"/>
         <source>Models</source>
         <translation>Modelle</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="439"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="321"/>
         <source>dqwd</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="411"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="293"/>
         <source>Export</source>
         <translation>Export</translation>
     </message>
@@ -724,8 +726,8 @@
 <context>
     <name>Mapping</name>
     <message>
-        <location filename="../../core/mapping.py" line="24"/>
-        <location filename="../../core/mapping.py" line="28"/>
+        <location filename="../../core/mapping.py" line="29"/>
+        <location filename="../../core/mapping.py" line="35"/>
         <source>Revit-Mapping</source>
         <translation>Revit-Mapping</translation>
     </message>
@@ -791,7 +793,7 @@
     </message>
     <message>
         <location filename="../../core/modelcheck_external.py" line="22"/>
-        <location filename="../../core/modelcheck_window.py" line="50"/>
+        <location filename="../../core/modelcheck_window.py" line="73"/>
         <source>Modelcheck</source>
         <translation>Modellprüfung</translation>
     </message>
@@ -828,37 +830,37 @@ Warning: file will be overridden!</source>
 Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="57"/>
+        <location filename="../../core/modelcheck_window.py" line="82"/>
         <source>Export Path</source>
         <translation>Export Pfad</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="58"/>
+        <location filename="../../core/modelcheck_window.py" line="83"/>
         <source>IFC Path</source>
         <translation>IFC Pfad</translation>
     </message>
     <message>
         <location filename="../../core/modelcheck_external.py" line="32"/>
-        <location filename="../../core/modelcheck_window.py" line="62"/>
+        <location filename="../../core/modelcheck_window.py" line="88"/>
         <source>Object</source>
         <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../../core/modelcheck_external.py" line="34"/>
-        <location filename="../../core/modelcheck_window.py" line="64"/>
+        <location filename="../../core/modelcheck_window.py" line="89"/>
         <location filename="../../tool/modelcheck_results.py" line="34"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
         <location filename="../../core/modelcheck_external.py" line="38"/>
-        <location filename="../../core/modelcheck_window.py" line="68"/>
+        <location filename="../../core/modelcheck_window.py" line="95"/>
         <source>PropertySet,Attribute</source>
         <translation>PropertySet/Attribut</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="122"/>
-        <location filename="../../core/modelcheck_window.py" line="132"/>
+        <location filename="../../core/modelcheck_window.py" line="158"/>
+        <location filename="../../core/modelcheck_window.py" line="174"/>
         <source>Import &apos;{}&apos;</source>
         <translation>Import &apos;{}&apos;</translation>
     </message>
@@ -867,52 +869,52 @@ Achtung: Datei wird überschrieben!</translation>
         <translation type="vanished">Import Abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="145"/>
+        <location filename="../../core/modelcheck_window.py" line="194"/>
         <source>Import of &apos;{}&apos; Done!</source>
         <translation>Import von &apos;{}&apos; abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="231"/>
+        <location filename="../../core/modelcheck_window.py" line="305"/>
         <source>Extend</source>
         <translation>Ausklappen</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="232"/>
+        <location filename="../../core/modelcheck_window.py" line="309"/>
         <source>Collapse</source>
         <translation>Einklappen</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="233"/>
+        <location filename="../../core/modelcheck_window.py" line="313"/>
         <source>Activate</source>
         <translation>Aktivieren</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_window.py" line="234"/>
+        <location filename="../../core/modelcheck_window.py" line="317"/>
         <source>Deactivate</source>
         <translation>Deaktivieren</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="235"/>
+        <location filename="../../tool/modelcheck.py" line="254"/>
         <source>{} has the wrong Datatype ({} not allowed)</source>
         <translation>{} hat den falschen Datentyp ({} ist nicht erlaubt)</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="244"/>
+        <location filename="../../tool/modelcheck.py" line="264"/>
         <source>&quot;{}&quot; does not match format Requirement: &quot;{}&quot;</source>
         <translation>&quot;{}&quot; entspricht nicht den Formatanforderungen: &quot;{}&quot;</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="267"/>
+        <location filename="../../tool/modelcheck.py" line="293"/>
         <source>{} does not contain the Propertyset &quot;{}&quot;</source>
         <translation>{} besitzt nicht das PropertySet &quot;{}&quot;</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="274"/>
+        <location filename="../../tool/modelcheck.py" line="302"/>
         <source>{} has an empty Attribute</source>
         <translation>{} besitzt ein leeres Attribut</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="309"/>
+        <location filename="../../tool/modelcheck.py" line="362"/>
         <source>{} Value of Identifier (&quot;{}&quot;) does not exist in SOM</source>
         <translation>{} Wert des Identifiers (&quot;{}&quot;) existiert nicht im SOM</translation>
     </message>
@@ -921,12 +923,12 @@ Achtung: Datei wird überschrieben!</translation>
         <translation type="vanished">&quot;{}&quot; entspricht nicht den Formatforgaben: &quot;{}&quot;</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="251"/>
+        <location filename="../../tool/modelcheck.py" line="272"/>
         <source>Value &quot;{}&quot; is not allowed</source>
         <translation>Wert &quot;{}&quot; ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="260"/>
+        <location filename="../../tool/modelcheck.py" line="284"/>
         <source>Value &quot;{}&quot; is not in allowed range(s)</source>
         <translation>Wert &quot;{}&quot; befindet sich nicht in zugelassenen Wertebereich(en)</translation>
     </message>
@@ -935,17 +937,17 @@ Achtung: Datei wird überschrieben!</translation>
         <translation type="vanished">{} besitzt nicht das Propertyset &quot;{}&quot;</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="282"/>
+        <location filename="../../tool/modelcheck.py" line="318"/>
         <source>{} is missing the Attribute &quot;{}:{}&quot;</source>
         <translation>{} is missing the Attribute &quot;{}:{}&quot;</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="291"/>
+        <location filename="../../tool/modelcheck.py" line="335"/>
         <source>{} is missing the identifier-Attribute</source>
         <translation>{} fehlt das identifier-Attribut</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="300"/>
+        <location filename="../../tool/modelcheck.py" line="352"/>
         <source>{} is missing die identifier PropertySet</source>
         <translation>{} fehlt das identifier PropertySet</translation>
     </message>
@@ -954,7 +956,7 @@ Achtung: Datei wird überschrieben!</translation>
         <translation type="vanished">{} Value of Identifier (&quot;{}&quot;) doesn&apos;t exist in SOM</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="317"/>
+        <location filename="../../tool/modelcheck.py" line="379"/>
         <source>GUID exists in File &quot;{}&quot; and&quot;{}&quot;</source>
         <translation>GUID existiert in Datei &quot;{}&quot; und &quot;{}&quot;</translation>
     </message>
@@ -980,42 +982,42 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Export Javascript Regeln</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck_external.py" line="55"/>
+        <location filename="../../tool/modelcheck_external.py" line="57"/>
         <source>Export Javascript (fast Check)</source>
         <translation>Export Javascript Regeln (schnelle Prüfung)</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck_external.py" line="56"/>
+        <location filename="../../tool/modelcheck_external.py" line="58"/>
         <source>Export Attribute Rules</source>
         <translation>Export Attribut Regeln</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck_external.py" line="58"/>
+        <location filename="../../tool/modelcheck_external.py" line="60"/>
         <source>Export Modelcheck-CSV</source>
         <translation>Export Modellprüfungs-CSV</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck_external.py" line="65"/>
+        <location filename="../../tool/modelcheck_external.py" line="68"/>
         <source>Desite MD Pro</source>
         <translation>Desite MD Pro</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck_external.py" line="68"/>
+        <location filename="../../tool/modelcheck_external.py" line="71"/>
         <source>Export SmartViews</source>
         <translation>Export SmartViews</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck_external.py" line="69"/>
+        <location filename="../../tool/modelcheck_external.py" line="72"/>
         <source>BIMcollab ZOOM</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck_external.py" line="72"/>
+        <location filename="../../tool/modelcheck_external.py" line="75"/>
         <source>Export IDS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck_external.py" line="73"/>
+        <location filename="../../tool/modelcheck_external.py" line="76"/>
         <source>buildingSMART</source>
         <translation></translation>
     </message>
@@ -1070,7 +1072,7 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck.py" line="46"/>
+        <location filename="../../core/modelcheck.py" line="51"/>
         <source>Modelcheck &apos;{}&apos; Done!</source>
         <translation>Modellprüfung &apos;{}&apos; abgeschlossen!</translation>
     </message>
@@ -1078,70 +1080,74 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>Object</name>
     <message>
-        <location filename="../../core/object.py" line="23"/>
         <source>Object</source>
-        <translation>Objekt</translation>
+        <translation type="vanished">Objekt</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="25"/>
+        <location filename="../../core/object.py" line="27"/>
+        <source>Class</source>
+        <translation>Klasse</translation>
+    </message>
+    <message>
+        <location filename="../../core/object.py" line="32"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="27"/>
+        <location filename="../../core/object.py" line="37"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="151"/>
+        <location filename="../../core/object.py" line="145"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="153"/>
+        <location filename="../../core/object.py" line="151"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="155"/>
+        <location filename="../../core/object.py" line="157"/>
         <source>Extend</source>
         <translation>Ausklappen</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="157"/>
+        <location filename="../../core/object.py" line="163"/>
         <source>Collapse</source>
         <translation>Einklappen</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="159"/>
+        <location filename="../../core/object.py" line="169"/>
         <source>Group</source>
         <translation>Gruppieren</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="161"/>
+        <location filename="../../core/object.py" line="175"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="167"/>
+        <location filename="../../core/object.py" line="184"/>
         <source>NewGroup</source>
         <translation>NeueGruppe</translation>
     </message>
     <message>
-        <location filename="../../tool/object.py" line="187"/>
-        <location filename="../../tool/object.py" line="266"/>
+        <location filename="../../tool/object.py" line="223"/>
+        <location filename="../../tool/object.py" line="318"/>
         <source>Identifier exists allready or is not allowed</source>
         <translation>Identifier existiert bereits oder ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/object.py" line="189"/>
-        <location filename="../../tool/object.py" line="254"/>
+        <location filename="../../tool/object.py" line="227"/>
+        <location filename="../../tool/object.py" line="304"/>
         <source>Name of Attribute is not allowed</source>
         <translation>Name des Attributes ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/object.py" line="191"/>
-        <location filename="../../tool/object.py" line="241"/>
+        <location filename="../../tool/object.py" line="231"/>
+        <location filename="../../tool/object.py" line="289"/>
         <source>Name of PropertySet is not allowed</source>
         <translation>Name des PropertySets ist nicht erlaubt</translation>
     </message>
@@ -1164,17 +1170,17 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Gruppe</translation>
     </message>
     <message>
-        <location filename="../../module/object/qt/InfoWidget.ui" line="81"/>
+        <location filename="../../module/object/qt/InfoWidget.ui" line="89"/>
         <source>IFC Mapping</source>
         <translation>IFC Mapping</translation>
     </message>
     <message>
-        <location filename="../../module/object/qt/InfoWidget.ui" line="107"/>
+        <location filename="../../module/object/qt/InfoWidget.ui" line="115"/>
         <source>+</source>
         <translation>hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="105"/>
+        <location filename="../../core/object.py" line="103"/>
         <source>Object Info</source>
         <translation>Objektdetails</translation>
     </message>
@@ -1314,40 +1320,40 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../core/predefined_property_set.py" line="49"/>
-        <location filename="../../core/predefined_property_set.py" line="76"/>
+        <location filename="../../core/predefined_property_set.py" line="66"/>
+        <location filename="../../core/predefined_property_set.py" line="102"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/predefined_property_set.py" line="50"/>
+        <location filename="../../core/predefined_property_set.py" line="67"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../core/predefined_property_set.py" line="52"/>
+        <location filename="../../core/predefined_property_set.py" line="69"/>
         <source>Add</source>
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/predefined_property_set.py" line="77"/>
+        <location filename="../../core/predefined_property_set.py" line="103"/>
         <source>Remove Link</source>
         <translation>Verknüpfung entfernen</translation>
     </message>
     <message>
-        <location filename="../../core/predefined_property_set.py" line="23"/>
-        <location filename="../../core/predefined_property_set.py" line="28"/>
-        <location filename="../../core/predefined_property_set.py" line="160"/>
+        <location filename="../../core/predefined_property_set.py" line="33"/>
+        <location filename="../../core/predefined_property_set.py" line="40"/>
+        <location filename="../../core/predefined_property_set.py" line="213"/>
         <source>Predefined Pset</source>
         <translation>Vordefiniertes PropertySet</translation>
     </message>
     <message>
-        <location filename="../../core/predefined_property_set.py" line="211"/>
+        <location filename="../../core/predefined_property_set.py" line="275"/>
         <source>PREDEFINED PROPERTYSETS</source>
         <translation>VORDEFINIERTE PROPERTYSETS</translation>
     </message>
     <message>
-        <location filename="../../tool/predefined_property_set.py" line="180"/>
+        <location filename="../../tool/predefined_property_set.py" line="204"/>
         <source>New PropertySet</source>
         <translation>Neues PropertySet</translation>
     </message>
@@ -1473,19 +1479,29 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>PropertySet</name>
     <message>
-        <location filename="../../core/property_set.py" line="22"/>
-        <location filename="../../tool/property_set.py" line="98"/>
+        <location filename="../../core/property_set.py" line="25"/>
+        <source>Add PropertySet</source>
+        <translation>PropertySet hinzufügen</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_set.py" line="26"/>
+        <source>PropertySet name?</source>
+        <translation>PropertySet Name?</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_set.py" line="32"/>
+        <location filename="../../tool/property_set.py" line="120"/>
         <source>PropertySet &apos;{}&apos; exists allready</source>
         <translation>PropertySet &apos;{}&apos; existiert bereits</translation>
     </message>
     <message>
-        <location filename="../../core/property_set.py" line="72"/>
-        <location filename="../../core/property_set.py" line="76"/>
+        <location filename="../../core/property_set.py" line="99"/>
+        <location filename="../../core/property_set.py" line="111"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/property_set.py" line="75"/>
+        <location filename="../../core/property_set.py" line="107"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
@@ -1622,37 +1638,37 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>Search</name>
     <message>
-        <location filename="../../tool/search.py" line="78"/>
+        <location filename="../../tool/search.py" line="92"/>
         <source>Object</source>
         <translation>Objekt</translation>
     </message>
     <message>
-        <location filename="../../tool/search.py" line="79"/>
+        <location filename="../../tool/search.py" line="93"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
-        <location filename="../../tool/search.py" line="80"/>
+        <location filename="../../tool/search.py" line="94"/>
         <source>Abbreviation</source>
         <translation>Abkürzung</translation>
     </message>
     <message>
-        <location filename="../../tool/search.py" line="83"/>
+        <location filename="../../tool/search.py" line="98"/>
         <source>PropertySet</source>
         <translation>PropertySet</translation>
     </message>
     <message>
-        <location filename="../../tool/search.py" line="84"/>
+        <location filename="../../tool/search.py" line="99"/>
         <source>Attribute</source>
         <translation>Attribut</translation>
     </message>
     <message>
-        <location filename="../../tool/search.py" line="99"/>
+        <location filename="../../tool/search.py" line="113"/>
         <source>Search Object</source>
         <translation>Objektsuche</translation>
     </message>
     <message>
-        <location filename="../../tool/search.py" line="102"/>
+        <location filename="../../tool/search.py" line="116"/>
         <source>Search Attribute</source>
         <translation>Attributsuche</translation>
     </message>
@@ -1854,27 +1870,27 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>table</name>
     <message>
-        <location filename="../../tool/attribute_table.py" line="292"/>
+        <location filename="../../tool/attribute_table.py" line="294"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute_table.py" line="326"/>
+        <location filename="../../tool/attribute_table.py" line="328"/>
         <source>Delete (with subattributes)</source>
         <translation>Löschen (mit Kindattributen)</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute_table.py" line="328"/>
+        <location filename="../../tool/attribute_table.py" line="330"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute_table.py" line="353"/>
+        <location filename="../../tool/attribute_table.py" line="355"/>
         <source>Remove Connection</source>
         <translation>Verbindung entfernen</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute_table.py" line="379"/>
+        <location filename="../../tool/attribute_table.py" line="381"/>
         <source>Connect to Parent</source>
         <translation>Mit Elternelement verbinden</translation>
     </message>
