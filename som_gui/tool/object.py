@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMenu,
     QTreeWidgetItem,
+    QComboBox,
 )
 
 import SOMcreator
@@ -92,9 +93,9 @@ class Object(som_gui.core.tool.Object):
         return [x[0]() for x in cls.get_properties().column_List]
 
     @classmethod
-    def create_completer(cls, texts, lineedit: QLineEdit):
+    def create_completer(cls, texts, widget: QLineEdit|QComboBox):
         completer = QCompleter(texts)
-        lineedit.setCompleter(completer)
+        widget.setCompleter(completer)
 
     @classmethod
     def get_item_from_object(cls, obj: SOMcreator.SOMClass) -> QTreeWidgetItem:
@@ -435,7 +436,7 @@ class Object(som_gui.core.tool.Object):
             return True
 
     @classmethod
-    def oi_create_dialog(cls) -> ObjectInfoWidget:
+    def oi_create_dialog(cls,title) -> ObjectInfoWidget:
         prop = cls.get_properties()
         prop.object_info_widget_properties = (
             som_gui.module.object.prop.ObjectInfoWidgetProperties()
@@ -449,7 +450,13 @@ class Object(som_gui.core.tool.Object):
                 prop.object_info_widget_properties, plugin.key, plugin.init_value_getter
             )
         prop.object_info_widget = dialog
+        prop.object_info_widget.setWindowTitle(title)
         return prop.object_info_widget
+
+    @classmethod
+    def oi_connect_dialog(cls,dialog:ObjectInfoWidget,predefined_psets:dict[str,SOMcreator.SOMPropertySet]):
+        dialog.widget.button_add_ifc.pressed.connect(lambda: cls.add_ifc_mapping(""))
+        dialog.widget.combo_box_pset.currentTextChanged.connect(lambda: cls.oi_update_attribute_combobox(predefined_psets))
 
     @classmethod
     def oi_get_focus_object(cls):
@@ -458,6 +465,7 @@ class Object(som_gui.core.tool.Object):
     @classmethod
     def oi_get_mode(cls):
         """
+        0 = Create
         1 = Info
         2 = Copy
         """
@@ -524,19 +532,27 @@ class Object(som_gui.core.tool.Object):
                 layout.itemAt(index).widget().show()
 
     @classmethod
-    def oi_update_attribute_combobox(cls):
+    def oi_update_attribute_combobox(cls,predefined_psets:list[SOMcreator.SOMPropertySet]):
         prop: ObjectProperties = cls.get_properties()
-        pset_name = prop.object_info_widget.widget.combo_box_pset.currentText()
-        active_object = prop.object_info_widget_properties.focus_object
-
-        property_set: SOMcreator.SOMPropertySet = {
-            p.name: p for p in active_object.get_property_sets(filter=False)
-        }.get(pset_name)
-        attribute_names = sorted(
-            [a.name for a in property_set.get_attributes(filter=False)]
-        )
-        prop.object_info_widget.widget.combo_box_attribute.clear()
-        prop.object_info_widget.widget.combo_box_attribute.addItems(attribute_names)
+        widget = prop.object_info_widget.widget
+        pset_name = widget.combo_box_pset.currentText()
+        mode = cls.oi_get_mode()
+    
+        if mode == 0:
+            property_set = {p.name:p for p in predefined_psets}.get(pset_name)
+            if property_set:
+                property_names = [pr.name for pr in property_set.get_attributes(filter = False)]
+                cls.create_completer(property_names,widget.combo_box_attribute)
+        else:
+            active_object = cls.oi_get_focus_object()
+            property_set: SOMcreator.SOMPropertySet = {
+                p.name: p for p in active_object.get_property_sets(filter=False)
+            }.get(pset_name)
+            attribute_names = sorted(
+                [a.name for a in property_set.get_attributes(filter=False)]
+            )
+            widget.combo_box_attribute.clear()
+            widget.combo_box_attribute.addItems(attribute_names)
 
     @classmethod
     def create_ifc_completer(cls):
@@ -565,29 +581,35 @@ class Object(som_gui.core.tool.Object):
             info_properties.attribute_name = obj.identifier_property.name
 
     @classmethod
-    def oi_update_dialog(cls):
+    def oi_update_dialog(cls,dialog:ObjectInfoWidget):
         prop: ObjectProperties = cls.get_properties()
-        dialog = prop.object_info_widget
         info_prop = prop.object_info_widget_properties
+        
+        #set Name
         dialog.widget.line_edit_name.setText(info_prop.name)
+        #set IsGroup
         dialog.widget.button_gruppe.setChecked(info_prop.is_group)
+        
+        for plugin in prop.object_info_plugin_list:
+            plugin.widget_value_setter(info_prop.plugin_infos.get(plugin.key))
+        
+        for mapping in info_prop.ifc_mappings:
+            cls.add_ifc_mapping(mapping)
+        
+        mode = cls.oi_get_mode()
+       
         active_object = prop.active_object
-        dialog.widget.combo_box_pset.clear()
-        if active_object:
+        if mode !=0:
+            dialog.widget.combo_box_pset.clear()
             [
                 dialog.widget.combo_box_pset.addItem(p.name)
                 for p in active_object.get_property_sets(filter=False)
             ]
-        if not info_prop.is_group and active_object:
+        if not info_prop.is_group:
             dialog.widget.combo_box_pset.setCurrentText(info_prop.pset_name)
             dialog.widget.combo_box_attribute.setCurrentText(info_prop.attribute_name)
             dialog.widget.line_edit_attribute_value.setText(info_prop.ident_value)
-        
-        for mapping in info_prop.ifc_mappings:
-            cls.add_ifc_mapping(mapping)
 
-        for plugin in prop.object_info_plugin_list:
-            plugin.widget_value_setter(info_prop.plugin_infos.get(plugin.key))
 
     @classmethod
     def add_ifc_mapping(cls, mapping):
@@ -734,6 +756,10 @@ class Object(som_gui.core.tool.Object):
         obj.set_optional(
             True if item.checkState(column_index) == Qt.CheckState.Checked else False
         )
+
+    @classmethod
+    def trigger_object_info_widget(mode:int):
+        trigger.create_object_info_widget(mode)
 
     @classmethod
     def trigger_object_creation(cls,):

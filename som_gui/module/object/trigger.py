@@ -22,7 +22,7 @@ def connect():
         lambda: core.search_object(tool.Search, tool.Object, tool.Project)
     )
     main_ui.button_objects_add.clicked.connect(
-        lambda: core.create_object_info_widget(0,tool.Object,tool.Util)
+        lambda: core.create_object_info_widget(0,tool.Object,tool.PredefinedPropertySet,tool.Util)
         )
 
     core.load_context_menus(tool.Object, tool.Util)
@@ -33,7 +33,7 @@ def connect():
 
 
 def item_double_clicked():
-    core.create_object_info_widget(mode=1, object_tool=tool.Object, util=tool.Util)
+    core.create_object_info_widget(mode=1, object_tool=tool.Object,predefined_property_set=tool.PredefinedPropertySet, util=tool.Util)
 
 
 def object_info_paint_event():
@@ -69,3 +69,6 @@ def copy_object_called():
 
 def modify_object_called():
     core.modify_object(tool.Object)
+
+def create_object_info_widget(mode:int):
+    core.create_object_info_widget(mode,tool.Object,tool.PredefinedPropertySet,tool.Util)

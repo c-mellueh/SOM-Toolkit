@@ -78,6 +78,7 @@ def add_shortcuts(
 def search_object(
     search_tool: Type[Search], object_tool: Type[Object], project: Type[tool.Project]
 ):
+    """Open Search Window and select Object afterwards"""
     obj = search_tool.search_object(list(project.get().get_objects(filter=True)))
     object_tool.select_object(obj)
 
@@ -87,28 +88,28 @@ def reset_tree(object_tool: Type[Object]):
 
 
 def resize_columns(object_tool: Type[Object]):
+    """
+    resizes Colums to Content
+    """
     object_tool.resize_tree()
 
 
 def create_object_info_widget(
-    mode: int, object_tool: Type[Object], util: Type[tool.Util]
+    mode: int, object_tool: Type[Object],predefined_property_set:Type[tool.PredefinedPropertySet], util: Type[tool.Util]
 ):
     """
-    mode 0 == create New
-    mode 1 == change
-    mode 2 == copy
-    
+    Opens Object Info Widget can be used for creation (mode 0), modification (mode 1) or copying (mode 2)   
     """
-    dialog = object_tool.oi_create_dialog()
-    title = QCoreApplication.translate("ObjectInfo", "Object Info")
-    dialog.setWindowTitle(util.get_window_title(title))
-    widget = dialog.widget
-    widget.button_add_ifc.pressed.connect(lambda: object_info_add_ifc(object_tool))
-    widget.combo_box_pset.currentIndexChanged.connect(
-        lambda: object_info_pset_changed(object_tool)
-    )
+    title = util.get_window_title(QCoreApplication.translate("ObjectInfo", "Object Info"))
+    dialog = object_tool.oi_create_dialog(title)
+
+    predefined_psets = predefined_property_set.get_property_sets()
+    object_tool.oi_connect_dialog(dialog,predefined_psets)
     object_tool.oi_fill_properties(mode=mode)
-    object_tool.oi_update_dialog()
+    object_tool.oi_update_dialog(dialog)
+    if mode == 0:
+        names = [p.name for p in predefined_psets]
+        object_tool.create_completer(names,dialog.widget.combo_box_pset)
     if dialog.exec():
         if mode == 0:
             object_tool.trigger_object_creation()
@@ -116,9 +117,6 @@ def create_object_info_widget(
             object_tool.trigger_object_modification()
         elif mode == 2:
             object_tool.trigger_object_copy()
-
-
-
 
 
 def object_info_refresh(object_tool: Type[Object]):
@@ -137,11 +135,6 @@ def object_info_refresh(object_tool: Type[Object]):
         object_tool.oi_set_ident_value_color(QPalette().color(QPalette.Text).name())
     object_tool.oi_change_visibility_identifiers(group)
 
-
-def object_info_pset_changed(object_tool: Type[Object]):
-    object_tool.oi_update_attribute_combobox()
-
-
 def object_info_add_ifc(object_tool: Type[Object]):
     object_tool.add_ifc_mapping("")
 
@@ -150,7 +143,7 @@ def load_context_menus(object_tool: Type[Object], util: Type[tool.Util]):
     object_tool.clear_context_menu_list()
     object_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Object", "Copy"),
-        lambda: create_object_info_widget(2, object_tool, util),
+        lambda: object_tool.trigger_object_info_widget(2),
         True,
         False,
     )
@@ -180,7 +173,7 @@ def load_context_menus(object_tool: Type[Object], util: Type[tool.Util]):
     )
     object_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Object", "Info"),
-        lambda: create_object_info_widget(1, object_tool, util),
+        lambda:object_tool.trigger_object_info_widget(1),
         True,
         False,
     )
