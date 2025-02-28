@@ -1,5 +1,5 @@
 from __future__ import annotations
-__version__ = "2.13.9" #needs to be on top of som_gui import statements else ImportError
+__version__ = "2.14.0" #needs to be on top of som_gui import statements else ImportError
 
 import logging
 from typing import TYPE_CHECKING
