@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'InfoWidget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -118,6 +118,7 @@ class Ui_ObjectInfo(object):
 
         self.vertical_layout_ifc_box.addLayout(self.vertical_layout_ifc)
 
+
         self.verticalLayout.addLayout(self.vertical_layout_ifc_box)
 
         self.vertical_spacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
@@ -127,7 +128,7 @@ class Ui_ObjectInfo(object):
         self.button_box = QDialogButtonBox(ObjectInfo)
         self.button_box.setObjectName(u"button_box")
         self.button_box.setOrientation(Qt.Orientation.Horizontal)
-        self.button_box.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
+        self.button_box.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
 
         self.verticalLayout.addWidget(self.button_box)
 
