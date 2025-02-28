@@ -10,12 +10,20 @@ class Aggregation(Hirarchy):
     def __str__(self):
         return self.name
 
-    def __init__(self, obj: SOMcreator.Object, parent_connection=SOMcreator.value_constants.AGGREGATION,
-                 uuid: str | None = None,
-                 description: None | str = None,
-                 optional: None | bool = None, filter_matrix: list[list[bool]] = None,identity_text = None):
+    def __init__(
+        self,
+        obj: SOMcreator.SOMClass,
+        parent_connection=SOMcreator.value_constants.AGGREGATION,
+        uuid: str | None = None,
+        description: None | str = None,
+        optional: None | bool = None,
+        filter_matrix: list[list[bool]] = None,
+        identity_text=None,
+    ):
 
-        super(Aggregation, self).__init__(obj.name, description, optional, obj.project, filter_matrix)
+        super(Aggregation, self).__init__(
+            obj.name, description, optional, obj.project, filter_matrix
+        )
         self._registry.add(self)
         if uuid is None:
             self.uuid = str(uuid4())
@@ -26,7 +34,6 @@ class Aggregation(Hirarchy):
         self._parent_connection = parent_connection
         self._identity_text = "" if identity_text is None else identity_text
         self.object.add_aggregation(self)
-
 
     def delete(self, recursive: bool = False) -> None:
         super(Aggregation, self).delete(recursive)
@@ -60,7 +67,11 @@ class Aggregation(Hirarchy):
         self._parent_connection = connection_type
         return True
 
-    def add_child(self, child: Aggregation, connection_type: int = SOMcreator.value_constants.AGGREGATION) -> bool:
+    def add_child(
+        self,
+        child: Aggregation,
+        connection_type: int = SOMcreator.value_constants.AGGREGATION,
+    ) -> bool:
         """returns if adding child is allowed"""
 
         def loop_parents(element, search_value):
@@ -111,11 +122,10 @@ class Aggregation(Hirarchy):
         own_text = f"{self.object.abbreviation}_{{{self.get_identity_text() or SOMcreator.value_constants.IDENTITY_PLACEHOLDER}}}"
         return "_".join((identity_text, own_text)) if identity_text else own_text
 
-    
     def get_identity_text(self) -> str:
         return str(self._identity_text)
-    
-    def set_identity_text(self, text:str):
+
+    def set_identity_text(self, text: str):
         """
         Sets the identity text for the object.
 

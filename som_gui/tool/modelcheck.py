@@ -26,15 +26,17 @@ from som_gui.module.modelcheck import trigger
 from PySide6.QtCore import QCoreApplication
 
 rev_datatype_dict = {
-    str:   "IfcText/IfcLabel",
-    bool:  "IfcBoolean",
-    int:   "IfcInteger",
-    float: "IfcReal"
+    str: "IfcText/IfcLabel",
+    bool: "IfcBoolean",
+    int: "IfcInteger",
+    float: "IfcReal",
 }
 
 
 class ModelcheckRunner(QRunnable):
-    def __init__(self, ifc_file: ifcopenshell.file, path, progressbar: Progressbar = None):
+    def __init__(
+        self, ifc_file: ifcopenshell.file, path, progressbar: Progressbar = None
+    ):
         super().__init__()
         self.file = ifc_file
         self.path = path
@@ -103,18 +105,24 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         return obj in cls.get_data_dict()
 
     @classmethod
-    def get_object_representation(cls, entity: ifcopenshell.entity_instance) -> SOMcreator.Object | None:
+    def get_object_representation(
+        cls, entity: ifcopenshell.entity_instance
+    ) -> SOMcreator.SOMClass | None:
         identifier = cls.get_ident_value(entity)
         return cls.get_ident_dict().get(identifier)
 
     @classmethod
-    def build_ident_dict(cls, objects: set[SOMcreator.Object]):
+    def build_ident_dict(cls, objects: set[SOMcreator.SOMClass]):
         cls.get_properties().ident_dict = {o.ident_value: o for o in objects}
 
     @classmethod
-    def build_data_dict(cls, check_state_dict: dict[
-        SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute, bool]):
-        def iter_objects(objects: Iterator[SOMcreator.Object]):
+    def build_data_dict(
+        cls,
+        check_state_dict: dict[
+            SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute, bool
+        ],
+    ):
+        def iter_objects(objects: Iterator[SOMcreator.SOMClass]):
             for obj in objects:
                 if not check_state_dict.get(obj):
                     continue
@@ -150,10 +158,15 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     @classmethod
     def check_values(cls, value, attribute: SOMcreator.Attribute):
-        check_dict = {value_constants.LIST:   cls.check_list, value_constants.RANGE: cls.check_range,
-                      value_constants.FORMAT: cls.check_format, constants.GER_LIST: cls.check_list,
-                      constants.GER_VALUE:    cls.check_values, constants.GER_FORMAT: cls.check_format,
-                      constants.GER_RANGE:    cls.check_range}
+        check_dict = {
+            value_constants.LIST: cls.check_list,
+            value_constants.RANGE: cls.check_range,
+            value_constants.FORMAT: cls.check_format,
+            constants.GER_LIST: cls.check_list,
+            constants.GER_VALUE: cls.check_values,
+            constants.GER_FORMAT: cls.check_format,
+            constants.GER_RANGE: cls.check_range,
+        }
         func = check_dict[attribute.value_type]
         func(value, attribute)
         cls.check_datatype(value, attribute)
@@ -164,7 +177,9 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         data_type = value_constants.DATATYPE_DICT[attribute.data_type]
         element_type = cls.get_active_element_type()
         if not isinstance(value, data_type):
-            cls.datatype_issue(guid, attribute, element_type, rev_datatype_dict[type(value)], value)
+            cls.datatype_issue(
+                guid, attribute, element_type, rev_datatype_dict[type(value)], value
+            )
 
     @classmethod
     def check_format(cls, value, attribute):
@@ -198,7 +213,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             cls.range_issue(guid, attribute, element_type, value)
 
     @classmethod
-    def check_for_attributes(cls, element, obj: SOMcreator.Object):
+    def check_for_attributes(cls, element, obj: SOMcreator.SOMClass):
 
         element_type = cls.get_active_element_type()
         guid = cls.get_active_guid()
@@ -214,7 +229,9 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             for attribute in data_dict[obj][property_set]:
                 attribute_name = attribute.name
                 if attribute.name not in pset_dict[pset_name]:
-                    cls.attribute_issue(element.GlobalId, pset_name, attribute_name, element_type)
+                    cls.attribute_issue(
+                        element.GlobalId, pset_name, attribute_name, element_type
+                    )
                     continue
 
                 value = pset_dict[pset_name][attribute_name]
@@ -230,8 +247,9 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def datatype_issue(cls, guid, attribute, element_type, datatype: str, value):
 
-        description = QCoreApplication.translate("Modelcheck",
-                                                 "{} has the wrong Datatype ({} not allowed)")  # {} besitzt den falschen Datentype ({} nicht erlaubt)
+        description = QCoreApplication.translate(
+            "Modelcheck", "{} has the wrong Datatype ({} not allowed)"
+        )  # {} besitzt den falschen Datentype ({} nicht erlaubt)
         description = description.format(element_type, datatype)
         issue_nr = DATATYPE_ISSUE
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
@@ -239,64 +257,97 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def format_issue(cls, guid, attribute: SOMcreator.Attribute, value):
         element_type = cls.get_active_element_type()
-        description = QCoreApplication.translate("Modelcheck",
-                                                 '"{}" does not match format Requirement: "{}"')  # f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
+        description = QCoreApplication.translate(
+            "Modelcheck", '"{}" does not match format Requirement: "{}"'
+        )  # f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
         description = description.format(value, "||".join(attribute.value))
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
     def list_issue(cls, guid, attribute, element_type, value):
-        description = QCoreApplication.translate("Modelcheck",
-                                                 'Value "{}" is not allowed').format(
-            value)  # {element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
+        description = QCoreApplication.translate(
+            "Modelcheck", 'Value "{}" is not allowed'
+        ).format(
+            value
+        )  # {element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
 
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
     def range_issue(cls, guid, attribute, element_type, value):
-        description = QCoreApplication.translate("Modelcheck", 'Value "{}" is not in allowed range(s)')
+        description = QCoreApplication.translate(
+            "Modelcheck", 'Value "{}" is not in allowed range(s)'
+        )
         description = description.format(value)
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
     def property_set_issue(cls, guid, pset_name, element_type):
-        description = QCoreApplication.translate("Modelcheck", '{} does not contain the Propertyset "{}"')
+        description = QCoreApplication.translate(
+            "Modelcheck", '{} does not contain the Propertyset "{}"'
+        )
         description = description.format(element_type, pset_name)
         issue_nr = PROPERTY_SET_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name)
 
     @classmethod
     def empty_value_issue(cls, guid, pset_name, attribute_name, element_type):
-        description = QCoreApplication.translate("Modelcheck", "{} has an empty Attribute")
+        description = QCoreApplication.translate(
+            "Modelcheck", "{} has an empty Attribute"
+        )
         description = description.format(element_type)
         issue_nr = ATTRIBUTE_EXIST_ISSUE
-        cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
-                       attribute_name=attribute_name)
+        cls.add_issues(
+            guid,
+            description,
+            issue_nr,
+            None,
+            pset_name=pset_name,
+            attribute_name=attribute_name,
+        )
 
     @classmethod
     def attribute_issue(cls, guid, pset_name, attribute_name, element_type):
-        description = QCoreApplication.translate("Modelcheck", '{} is missing the Attribute "{}:{}"')
+        description = QCoreApplication.translate(
+            "Modelcheck", '{} is missing the Attribute "{}:{}"'
+        )
         description = description.format(element_type, pset_name, attribute_name)
         issue_nr = ATTRIBUTE_EXIST_ISSUE
-        cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
-                       attribute_name=attribute_name)
+        cls.add_issues(
+            guid,
+            description,
+            issue_nr,
+            None,
+            pset_name=pset_name,
+            attribute_name=attribute_name,
+        )
 
     @classmethod
     def ident_issue(cls, guid, pset_name, attribute_name):
         element_type = cls.get_active_element_type()
-        description = QCoreApplication.translate("Modelcheck", "{} is missing the identifier-Attribute")
+        description = QCoreApplication.translate(
+            "Modelcheck", "{} is missing the identifier-Attribute"
+        )
         description = description.format(element_type)
         issue_nr = IDENT_ATTRIBUTE_ISSUE
-        cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
-                       attribute_name=attribute_name)
+        cls.add_issues(
+            guid,
+            description,
+            issue_nr,
+            None,
+            pset_name=pset_name,
+            attribute_name=attribute_name,
+        )
 
     @classmethod
     def ident_pset_issue(cls, guid, pset_name):
         element_type = cls.get_active_element_type()
-        description = QCoreApplication.translate("Modelcheck", "{} is missing die identifier PropertySet")
+        description = QCoreApplication.translate(
+            "Modelcheck", "{} is missing die identifier PropertySet"
+        )
         description = description.format(element_type)
         issue_nr = IDENT_PROPERTY_SET_ISSUE
         cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name)
@@ -304,16 +355,26 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     @classmethod
     def ident_unknown(cls, guid, pset_name, attribute_name, value):
         element_type = cls.get_active_element_type()
-        description = QCoreApplication.translate("Modelcheck",
-                                                 """{} Value of Identifier ("{}") does not exist in SOM""")
+        description = QCoreApplication.translate(
+            "Modelcheck", """{} Value of Identifier ("{}") does not exist in SOM"""
+        )
         description = description.format(element_type, value)
         issue_nr = IDENT_ATTRIBUTE_UNKNOWN
-        cls.add_issues(guid, description, issue_nr, None, pset_name=pset_name,
-                       attribute_name=attribute_name, value=value)
+        cls.add_issues(
+            guid,
+            description,
+            issue_nr,
+            None,
+            pset_name=pset_name,
+            attribute_name=attribute_name,
+            value=value,
+        )
 
     @classmethod
     def guid_issue(cls, guid, file1, file2):
-        description = QCoreApplication.translate('Modelcheck', 'GUID exists in File "{}" and"{}"')
+        description = QCoreApplication.translate(
+            "Modelcheck", 'GUID exists in File "{}" and"{}"'
+        )
         description = description.format(file1, file2)
         issue_nr = GUID_ISSUE
         cls.add_issues(guid, description, issue_nr, None)
@@ -355,21 +416,35 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def create_tables(cls):
         cursor = cls.get_cursor()
         # entities
-        header_command = ",".join([f"[{h}] {d}" for h, d in zip(ENTITY_TABLE_HEADER, ENTITY_TABLE_DATATYPES)])
+        header_command = ",".join(
+            [f"[{h}] {d}" for h, d in zip(ENTITY_TABLE_HEADER, ENTITY_TABLE_DATATYPES)]
+        )
         logging.debug(header_command)
-        cursor.execute(f''' CREATE TABLE IF NOT EXISTS entities ({header_command})''')
+        cursor.execute(f""" CREATE TABLE IF NOT EXISTS entities ({header_command})""")
         cls.commit_sql()
 
         # issues
-        header_command = ",".join([f"[{h}] {d}" for h, d in zip(ISSUE_TABLE_HEADER, ISSUE_TABLE_DATATYPES)])
+        header_command = ",".join(
+            [f"[{h}] {d}" for h, d in zip(ISSUE_TABLE_HEADER, ISSUE_TABLE_DATATYPES)]
+        )
         logging.debug(header_command)
-        cursor.execute(f'''
-                  CREATE TABLE IF NOT EXISTS issues ({header_command})''')
+        cursor.execute(
+            f"""
+                  CREATE TABLE IF NOT EXISTS issues ({header_command})"""
+        )
         cls.commit_sql()
 
     @classmethod
-    def add_issues(cls, guid, description, issue_type, attribute: SOMcreator.Attribute, pset_name="", attribute_name="",
-                   value=""):
+    def add_issues(
+        cls,
+        guid,
+        description,
+        issue_type,
+        attribute: SOMcreator.Attribute,
+        pset_name="",
+        attribute_name="",
+        value="",
+    ):
         cursor = cls.get_cursor()
         guid_zw = tool.Util.transform_guid(guid, True)
         date = datetime.date.today()
@@ -378,8 +453,17 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             attribute_name = attribute.name
 
         issue_headers = str()
-        request = f'''INSERT INTO issues {f'({",".join(ISSUE_TABLE_HEADER)})'} VALUES (?,?,?,?,?,?,?,?)'''
-        values = (guid_zw, guid, date, description, issue_type, pset_name, attribute_name, value)
+        request = f"""INSERT INTO issues {f'({",".join(ISSUE_TABLE_HEADER)})'} VALUES (?,?,?,?,?,?,?,?)"""
+        values = (
+            guid_zw,
+            guid,
+            date,
+            description,
+            issue_type,
+            pset_name,
+            attribute_name,
+            value,
+        )
         cursor.execute(request, values)
         cls.commit_sql()
 
@@ -401,8 +485,19 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         else:
             guids[guid] = file_name
         try:
-            values = (guid_zwc, guid, name, project, ifc_type, center[0], center[1], center[2], file_name, identifier)
-            query = f''' INSERT INTO entities ({",".join(ENTITY_TABLE_HEADER)}) VALUES (?,?,?,?,?,?,?,?,?,?)'''
+            values = (
+                guid_zwc,
+                guid,
+                name,
+                project,
+                ifc_type,
+                center[0],
+                center[1],
+                center[2],
+                file_name,
+                identifier,
+            )
+            query = f""" INSERT INTO entities ({",".join(ENTITY_TABLE_HEADER)}) VALUES (?,?,?,?,?,?,?,?,?,?)"""
             cursor.execute(query, values)
             cls.commit_sql()
         except sqlite3.IntegrityError:
@@ -411,13 +506,23 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     ## Getter and Setter
     @classmethod
-    def get_ident_value(cls, entity: entity_instance, main_pset_name=None, main_attribute_name=None):
-        pset_name = cls.get_main_pset_name() if main_pset_name is None else main_pset_name
-        attribute_name = cls.get_main_attribute_name() if main_attribute_name is None else main_attribute_name
+    def get_ident_value(
+        cls, entity: entity_instance, main_pset_name=None, main_attribute_name=None
+    ):
+        pset_name = (
+            cls.get_main_pset_name() if main_pset_name is None else main_pset_name
+        )
+        attribute_name = (
+            cls.get_main_attribute_name()
+            if main_attribute_name is None
+            else main_attribute_name
+        )
         return ifc_el.get_pset(entity, pset_name, attribute_name)
 
     @classmethod
-    def get_attribute_value(cls, entity: entity_instance, pset_name: str, attribute_name: str):
+    def get_attribute_value(
+        cls, entity: entity_instance, pset_name: str, attribute_name: str
+    ):
         psets = ifc_el.get_psets(entity)
         pset = psets.get(pset_name)
         if not pset:
@@ -430,7 +535,9 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         return psets.get(pset_name) is not None
 
     @classmethod
-    def is_attribute_existing(cls, entity: entity_instance, pset_name: str, attribute_name: str) -> bool:
+    def is_attribute_existing(
+        cls, entity: entity_instance, pset_name: str, attribute_name: str
+    ) -> bool:
         psets = ifc_el.get_psets(entity)
         pset = psets.get(pset_name)
         if not pset:

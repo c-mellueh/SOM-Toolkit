@@ -10,10 +10,19 @@ import logging
 class PropertySet(Hirarchy):
     _registry: set[PropertySet] = set()
 
-    def __init__(self, name: str, obj: SOMcreator.Object = None, uuid: str = None, description: None | str = None,
-                 optional: None | bool = None, project: None | SOMcreator.Project = None,
-                 filter_matrix: list[list[bool]] = None) -> None:
-        super(PropertySet, self).__init__(name, description, optional, project, filter_matrix)
+    def __init__(
+        self,
+        name: str,
+        obj: SOMcreator.SOMClass = None,
+        uuid: str = None,
+        description: None | str = None,
+        optional: None | bool = None,
+        project: None | SOMcreator.Project = None,
+        filter_matrix: list[list[bool]] = None,
+    ) -> None:
+        super(PropertySet, self).__init__(
+            name, description, optional, project, filter_matrix
+        )
         self._attributes = set()
         self._object = None
         if obj is not None:
@@ -33,9 +42,15 @@ class PropertySet(Hirarchy):
         return f"PropertySet: {self.name}"
 
     def __copy__(self) -> PropertySet:
-        new_pset = PropertySet(name=self.name, obj=None, uuid=str(uuid4()), description=self.description,
-                               optional=self.is_optional(ignore_hirarchy=True), project=self.project,
-                               filter_matrix=self._filter_matrix)
+        new_pset = PropertySet(
+            name=self.name,
+            obj=None,
+            uuid=str(uuid4()),
+            description=self.description,
+            optional=self.is_optional(ignore_hirarchy=True),
+            project=self.project,
+            filter_matrix=self._filter_matrix,
+        )
 
         for attribute in self.get_attributes(filter=False):
             new_attribute = cp.copy(attribute)
@@ -85,21 +100,30 @@ class PropertySet(Hirarchy):
         if self.object is not None:
             ident_attrib = self.object.ident_attrib
 
-        if ident_attrib in self.get_attributes(filter=False) and not override_ident_deletion:
-            logging.error(f"Can't delete Propertyset {self.name} because it countains the identifier Attribute")
+        if (
+            ident_attrib in self.get_attributes(filter=False)
+            and not override_ident_deletion
+        ):
+            logging.error(
+                f"Can't delete Propertyset {self.name} because it countains the identifier Attribute"
+            )
             return
 
         super(PropertySet, self).delete(recursive)
-        [attrib.delete(recursive) for attrib in list(self.get_attributes(filter=False)) if attrib]
+        [
+            attrib.delete(recursive)
+            for attrib in list(self.get_attributes(filter=False))
+            if attrib
+        ]
         if self.object is not None:
             self.object.remove_property_set(self)
 
     @property
-    def object(self) -> SOMcreator.Object:
+    def object(self) -> SOMcreator.SOMClass:
         return self._object
 
     @object.setter
-    def object(self, value: SOMcreator.Object):
+    def object(self, value: SOMcreator.SOMClass):
         self._object = value
 
     @filterable

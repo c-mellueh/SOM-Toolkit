@@ -20,7 +20,7 @@ aggregation_dict = dict()
 phase_list: list[Phase] = list()
 use_case_list: list[UseCase] = list()
 plugin_dict = dict()
-object_uuid_dict: dict[str, SOMcreator.Object] = dict()
+object_uuid_dict: dict[str, SOMcreator.SOMClass] = dict()
 property_set_uuid_dict: dict[str, SOMcreator.PropertySet] = dict()
 attribute_uuid_dict: dict[str, SOMcreator.Attribute] = dict()
 filter_matrixes = list()
@@ -28,7 +28,7 @@ filter_matrixes = list()
 
 def create_mapping_script(project: SOMcreator.Project, pset_name: str, path: str):
     attrib_dict = dict()
-    obj: SOMcreator.Object
+    obj: SOMcreator.SOMClass
     for obj in project.get_objects(filter=True):
         klass = obj.ident_attrib.value[0]
         obj_dict = dict()
@@ -57,6 +57,7 @@ def reset_uuid_dicts():
     SOMcreator.exporter.som_json.property_set_uuid_dict = dict()
     SOMcreator.exporter.som_json.attribute_uuid_dict = dict()
     SOMcreator.exporter.som_json.filter_matrixes = list()
+
 
 def export_json(proj: Project, path: str) -> dict:
     start_time = time.time()

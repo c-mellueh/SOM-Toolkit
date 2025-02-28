@@ -1,5 +1,5 @@
 from .constants import value_constants
-from .datastructure import Object
+from .datastructure import SOMClass
 from .datastructure import PropertySet, Attribute, Aggregation, UseCase, Phase, Project
 
 from .exporter import desite

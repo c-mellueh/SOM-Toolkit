@@ -6,12 +6,13 @@ from SOMcreator.templates import HOME_DIR, BOOKMARK_TEMPLATE
 import SOMcreator
 from SOMcreator.util import xml
 
+
 def _handle_bookmark_list(proj: SOMcreator.Project) -> etree.ElementTree:
     xml_bookmarks = etree.Element("bookmarks")
     xml_bookmarks.set("xmlnsxsi", "http://www.w3.org/2001/XMLSchema-instance")
     xml_bookmark_list = etree.SubElement(xml_bookmarks, "cBookmarkList")
 
-    obj: SOMcreator.Object
+    obj: SOMcreator.SOMClass
     for obj in sorted(proj.get_objects(filter=True), key=lambda o: o.ident_value):
         xml_bookmark = etree.SubElement(xml_bookmark_list, "cBookmark")
         xml_bookmark.set("ID", str(obj.uuid))
@@ -46,7 +47,9 @@ def _get_attribute_dict(proj: SOMcreator.Project) -> dict[str, str]:
     for obj in proj.get_objects(filter=True):
         for property_set in obj.get_property_sets(filter=True):
             for attribute in property_set.get_attributes(filter=True):
-                attribute_dict[f"{property_set.name}:{attribute.name}"] = xml.transform_data_format(attribute.data_type)
+                attribute_dict[f"{property_set.name}:{attribute.name}"] = (
+                    xml.transform_data_format(attribute.data_type)
+                )
 
     return attribute_dict
 
@@ -57,7 +60,9 @@ def export_bookmarks(proj: SOMcreator.Project, path: str) -> None:
 
     with open(os.path.join(path, "bookmarks.bkxml"), "wb") as f:
         tree = _handle_bookmark_list(proj)
-        tree.write(f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml")
+        tree.write(
+            f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml"
+        )
 
     attrib_dict = _get_attribute_dict(proj)
     file_loader = jinja2.FileSystemLoader(HOME_DIR)

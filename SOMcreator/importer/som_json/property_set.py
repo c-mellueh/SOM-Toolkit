@@ -10,10 +10,24 @@ if TYPE_CHECKING:
     from SOMcreator import Project
 
 
-def load(proj: Project, pset_dict: PropertySetDict, identifier: str, obj: SOMcreator.Object | None) -> None:
-    name, description, optional, parent, filter_matrix = core.get_basics(proj, pset_dict, identifier)
-    pset = SOMcreator.PropertySet(name=name, obj=obj, uuid=identifier, description=description, optional=optional,
-                                  project=proj, filter_matrix=filter_matrix)
+def load(
+    proj: Project,
+    pset_dict: PropertySetDict,
+    identifier: str,
+    obj: SOMcreator.SOMClass | None,
+) -> None:
+    name, description, optional, parent, filter_matrix = core.get_basics(
+        proj, pset_dict, identifier
+    )
+    pset = SOMcreator.PropertySet(
+        name=name,
+        obj=obj,
+        uuid=identifier,
+        description=description,
+        optional=optional,
+        project=proj,
+        filter_matrix=filter_matrix,
+    )
     attributes_dict = pset_dict[ATTRIBUTES]
     for ident, attribute_dict in attributes_dict.items():
         attribute.load(proj, attribute_dict, ident, pset)

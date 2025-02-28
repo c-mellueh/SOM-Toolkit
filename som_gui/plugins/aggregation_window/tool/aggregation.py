@@ -8,7 +8,9 @@ import som_gui.plugins.aggregation_window.core.tool
 from som_gui import tool
 from som_gui.module.object import OK
 from som_gui.plugins.aggregation_window.module.aggregation import ui as ui_aggregation
-from som_gui.plugins.aggregation_window.module.aggregation.prop import AggregationProperties
+from som_gui.plugins.aggregation_window.module.aggregation.prop import (
+    AggregationProperties,
+)
 
 ABBREV_ISSUE = 2
 from SOMcreator.exporter.desite import building_structure
@@ -50,12 +52,16 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
             cls.oi_set_abbrev_value_color(QPalette().color(QPalette.Text).name())
 
     @classmethod
-    def test_abbreviation(cls, abbreviation: str, obj: SOMcreator.Object) -> int:
+    def test_abbreviation(cls, abbreviation: str, obj: SOMcreator.SOMClass) -> int:
         ignore_text = obj.abbreviation if obj is not None else None
         if tool.Object.oi_get_mode() == 2:
             ignore_text = None
-        if abbreviation is not None and not cls.is_abbreviation_allowed(abbreviation, ignore_text):
-            text = QCoreApplication.translate("Aggregation", "Abbreviation exists already")
+        if abbreviation is not None and not cls.is_abbreviation_allowed(
+            abbreviation, ignore_text
+        ):
+            text = QCoreApplication.translate(
+                "Aggregation", "Abbreviation exists already"
+            )
             tool.Popups.create_warning_popup(text)
             return ABBREV_ISSUE
         return OK
@@ -86,7 +92,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
         return abbreviations
 
     @classmethod
-    def set_object_abbreviation(cls, obj: SOMcreator.Object, abbreviation: str):
+    def set_object_abbreviation(cls, obj: SOMcreator.SOMClass, abbreviation: str):
         obj.abbreviation = abbreviation
 
     @classmethod
@@ -100,7 +106,9 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
         if value is None:
             return True
         if not cls.is_abbreviation_allowed(value):
-            text = QCoreApplication.translate("Aggregation", "Abbreviation exists already")
+            text = QCoreApplication.translate(
+                "Aggregation", "Abbreviation exists already"
+            )
             logging.error(text)
             tool.Popups.create_warning_popup(text)
             return False

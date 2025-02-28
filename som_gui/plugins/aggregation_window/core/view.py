@@ -318,52 +318,56 @@ def context_menu_requested(
     menu_list.append(
         [
             QCoreApplication.translate("Aggregation", "Rearange"),
-            lambda: rearange(buchheim, view, node,connection),
+            lambda: rearange(buchheim, view, node, connection),
         ]
     )
-
 
     menu = util.create_context_menu(menu_list)
     menu.exec(view.get_view().viewport().mapToGlobal(pos))
 
     paint_event(view, node, connection, project)
 
+
 def rearange(
-    buchheim: Type[aw_tool.Buchheim], view: Type[aw_tool.View], node: Type[aw_tool.Node],connection:Type[aw_tool.Connection]
+    buchheim: Type[aw_tool.Buchheim],
+    view: Type[aw_tool.View],
+    node: Type[aw_tool.Node],
+    connection: Type[aw_tool.Connection],
 ):
     scene = view.get_active_scene()
     all_nodes = view.get_nodes_in_scene(scene)
     root_nodes = [n for n in all_nodes if node.is_root(n)]
     if not root_nodes:
         return
-    #create helper to structure multiple root nodes
-    helper_obj = SOMcreator.Object("INV",None)
+    # create helper to structure multiple root nodes
+    helper_obj = SOMcreator.SOMClass("INV", None)
     helper_aggregation = SOMcreator.Aggregation(helper_obj)
-    helper_node = node.create_node(helper_aggregation)    
+    helper_node = node.create_node(helper_aggregation)
     for root_node in root_nodes:
-        connection.create_connection(helper_node,root_node,1)
-    
-    #calculate extremes and midpoints
+        connection.create_connection(helper_node, root_node, 1)
+
+    # calculate extremes and midpoints
     root_x_pos = [n.pos().x() for n in root_nodes]
     root_y_pos = [n.pos().y() for n in root_nodes]
-    root_mid_x  = (min(root_x_pos)+max(root_x_pos))/2
-    root_mid_y  = (min(root_y_pos)+max(root_y_pos))/2
+    root_mid_x = (min(root_x_pos) + max(root_x_pos)) / 2
+    root_mid_y = (min(root_y_pos) + max(root_y_pos)) / 2
     min_x = min(n.pos().x() for n in all_nodes)
     min_y = min(n.pos().y() for n in all_nodes)
 
-    #position helper node in the center of all root_nodes
-    node.set_node_pos(helper_node,QPointF(root_mid_x,root_mid_y))
+    # position helper node in the center of all root_nodes
+    node.set_node_pos(helper_node, QPointF(root_mid_x, root_mid_y))
 
-    #run buchheim algorithm for restructuring hirarchical trees
-    #see https://github.com/llimllib/personal_code/blob/4006951b133305e1dd9bc12cf7a2cb4c7048213b/python/trees/buchheim.py
+    # run buchheim algorithm for restructuring hirarchical trees
+    # see https://github.com/llimllib/personal_code/blob/4006951b133305e1dd9bc12cf7a2cb4c7048213b/python/trees/buchheim.py
 
     buchheim.intialize(helper_node)
     buchheim.buchheim(helper_node)
-    buchheim.rearrange(helper_node,QPointF(min_x,min_y))
+    buchheim.rearrange(helper_node, QPointF(min_x, min_y))
 
-    #delete Helpers which won't be needed anymore
+    # delete Helpers which won't be needed anymore
     helper_node.deleteLater()
     helper_obj.delete()
+
 
 def add_node_at_pos(
     pos,
@@ -395,7 +399,7 @@ def change_header_text(
 
 
 def add_object_to_scene(
-    obj: SOMcreator.Object,
+    obj: SOMcreator.SOMClass,
     scene,
     parent_node: node_ui.NodeProxy | None,
     pos: QPoint | None,

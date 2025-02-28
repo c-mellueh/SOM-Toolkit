@@ -24,7 +24,9 @@ def filterable(func: Callable):
         if not filter_values:
             return result
 
-        proj: SOMcreator.Project = self if isinstance(self, SOMcreator.Project) else self.project
+        proj: SOMcreator.Project = (
+            self if isinstance(self, SOMcreator.Project) else self.project
+        )
         if proj is None:
             return result
         return filter(lambda e: e.is_active(), result)
@@ -36,8 +38,14 @@ class IterRegistry(type):
     _registry = set()
     """ Helper for Iteration"""
 
-    def __iter__(self) -> Iterator[
-        SOMcreator.PropertySet | SOMcreator.Object | SOMcreator.Attribute | SOMcreator.Aggregation]:
+    def __iter__(
+        self,
+    ) -> Iterator[
+        SOMcreator.PropertySet
+        | SOMcreator.SOMClass
+        | SOMcreator.Attribute
+        | SOMcreator.Aggregation
+    ]:
         return iter(sorted(list(self._registry), key=lambda x: x.name))
 
     def __len__(self) -> int:
@@ -46,9 +54,14 @@ class IterRegistry(type):
 
 class Hirarchy(object, metaclass=IterRegistry):
 
-    def __init__(self, name: str, description: str | None = None, optional: bool | None = None,
-                 project: SOMcreator.Project | None = None,
-                 filter_matrix: list[list[bool]] = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        description: str | None = None,
+        optional: bool | None = None,
+        project: SOMcreator.Project | None = None,
+        filter_matrix: list[list[bool]] = None,
+    ) -> None:
         if project is None:
             project = SOMcreator.active_project
 
@@ -63,8 +76,8 @@ class Hirarchy(object, metaclass=IterRegistry):
         self._children = set()
         self._name = name
         self._mapping_dict = {
-            value_constants.SHARED_PARAMETERS:  True,
-            SOMcreator.datastructure.som_json.IFC_MAPPING: True
+            value_constants.SHARED_PARAMETERS: True,
+            SOMcreator.datastructure.som_json.IFC_MAPPING: True,
         }
         self._description = ""
         if description is not None:
@@ -83,7 +96,9 @@ class Hirarchy(object, metaclass=IterRegistry):
     def get_filter_matrix(self):
         return copy.deepcopy(self._filter_matrix)
 
-    def get_filter_state(self, phase: SOMcreator.Phase, usecase: SOMcreator.UseCase) -> bool | None:
+    def get_filter_state(
+        self, phase: SOMcreator.Phase, usecase: SOMcreator.UseCase
+    ) -> bool | None:
         if self.project:
             if not self.project.get_filter_state(phase, usecase):
                 return False
@@ -100,7 +115,9 @@ class Hirarchy(object, metaclass=IterRegistry):
             return None
         return bool(self._filter_matrix[phase_index][usecase_index])
 
-    def set_filter_state(self, phase: SOMcreator.Phase, usecase: SOMcreator.UseCase, value: bool) -> None:
+    def set_filter_state(
+        self, phase: SOMcreator.Phase, usecase: SOMcreator.UseCase, value: bool
+    ) -> None:
         phase_index = self.project.get_phase_index(phase)
         usecase_index = self.project.get_usecase_index(usecase)
         self._filter_matrix[phase_index][usecase_index] = value
@@ -181,12 +198,26 @@ class Hirarchy(object, metaclass=IterRegistry):
             child.name = value
 
     @property
-    def parent(self) -> SOMcreator.PropertySet | SOMcreator.Object | SOMcreator.Attribute | SOMcreator.Aggregation:
+    def parent(
+        self,
+    ) -> (
+        SOMcreator.PropertySet
+        | SOMcreator.SOMClass
+        | SOMcreator.Attribute
+        | SOMcreator.Aggregation
+    ):
         return self._parent
 
     @parent.setter
-    def parent(self,
-               parent: SOMcreator.PropertySet | SOMcreator.Object | SOMcreator.Attribute | SOMcreator.Aggregation) -> None:
+    def parent(
+        self,
+        parent: (
+            SOMcreator.PropertySet
+            | SOMcreator.SOMClass
+            | SOMcreator.Attribute
+            | SOMcreator.Aggregation
+        ),
+    ) -> None:
         if self.parent is not None:
             self.parent._children.remove(self)
         self._parent = parent
@@ -205,23 +236,46 @@ class Hirarchy(object, metaclass=IterRegistry):
             return False
 
     @filterable
-    def get_children(self) -> Iterator[
-        SOMcreator.PropertySet | SOMcreator.Object | SOMcreator.Attribute | SOMcreator.Aggregation]:
+    def get_children(
+        self,
+    ) -> Iterator[
+        SOMcreator.PropertySet
+        | SOMcreator.SOMClass
+        | SOMcreator.Attribute
+        | SOMcreator.Aggregation
+    ]:
         return iter(self._children)
 
-    def add_child(self,
-                  child: SOMcreator.PropertySet | SOMcreator.Object | SOMcreator.Attribute | SOMcreator.Aggregation) -> None:
+    def add_child(
+        self,
+        child: (
+            SOMcreator.PropertySet
+            | SOMcreator.SOMClass
+            | SOMcreator.Attribute
+            | SOMcreator.Aggregation
+        ),
+    ) -> None:
         self._children.add(child)
         child.parent = self
 
-    def remove_child(self,
-                     child: SOMcreator.PropertySet | SOMcreator.Object | SOMcreator.Attribute | SOMcreator.Aggregation | Hirarchy) -> None:
+    def remove_child(
+        self,
+        child: (
+            SOMcreator.PropertySet
+            | SOMcreator.SOMClass
+            | SOMcreator.Attribute
+            | SOMcreator.Aggregation
+            | Hirarchy
+        ),
+    ) -> None:
         if child in self._children:
             self._children.remove(child)
             child.remove_parent()
 
     def delete(self, recursive: bool = False) -> None:
-        logging.info(f"Delete {self.__class__.__name__} {self.name} (recursive: {recursive})")
+        logging.info(
+            f"Delete {self.__class__.__name__} {self.name} (recursive: {recursive})"
+        )
         if self.parent is not None:
             self.parent.remove_child(self)
 

@@ -8,7 +8,10 @@ from SOMcreator.constants import value_constants
 from . import handle_header
 from SOMcreator.util import xml
 
-def _handle_section(id_dict, aggregation: SOMcreator.Aggregation, xml_item: Element) -> None:
+
+def _handle_section(
+    id_dict, aggregation: SOMcreator.Aggregation, xml_item: Element
+) -> None:
     xml_child = etree.SubElement(xml_item, "section")
     id_dict[aggregation] = aggregation.uuid
     xml_child.set("ID", aggregation.uuid)
@@ -34,8 +37,9 @@ def _handle_elementsection(xml_parent: Element):
     xml_root.set("type", "typeBsContainer")
     xml_root.set("takt", "")
 
-    root_objects: list[SOMcreator.Aggregation] = [aggreg for aggreg in SOMcreator.Aggregation if
-                                               aggreg.is_root]
+    root_objects: list[SOMcreator.Aggregation] = [
+        aggreg for aggreg in SOMcreator.Aggregation if aggreg.is_root
+    ]
 
     root_objects.sort(key=lambda x: x.name)
 
@@ -68,11 +72,13 @@ def _handle_property_type_section(xml_repo) -> dict[str, int]:
     return attribute_dict
 
 
-def _handle_property_section(xml_repo: etree.Element, id_dict: dict, attribute_dict: dict) -> None:
+def _handle_property_section(
+    xml_repo: etree.Element, id_dict: dict, attribute_dict: dict
+) -> None:
     xml_property_section = etree.SubElement(xml_repo, "propertySection")
 
     for node, ref_id in id_dict.items():
-        obj: SOMcreator.Object = node.object
+        obj: SOMcreator.SOMClass = node.object
         for property_set in obj.get_property_sets(filter=True):
             for attribute in property_set.get_attributes(filter=True):
                 attribute_text = f"{attribute.property_set.name}:{attribute.name}"
@@ -86,7 +92,9 @@ def _handle_property_section(xml_repo: etree.Element, id_dict: dict, attribute_d
                     xml_property.text = "füllen!"
 
 
-def _handle_repository(xml_parent: Element, id_dict: dict[SOMcreator.Aggregation, str]) -> None:
+def _handle_repository(
+    xml_parent: Element, id_dict: dict[SOMcreator.Aggregation, str]
+) -> None:
     xml_repo = etree.SubElement(xml_parent, "repository")
     xml_id_mapping = etree.SubElement(xml_repo, "IDMapping")
 
@@ -119,4 +127,6 @@ def export_bs(project: SOMcreator.Project, path: str) -> None:
     tree = etree.ElementTree(xml_boq_export)
 
     with open(path, "wb") as f:
-        tree.write(f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml")
+        tree.write(
+            f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml"
+        )

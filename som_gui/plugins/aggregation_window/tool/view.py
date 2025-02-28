@@ -429,7 +429,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
     @classmethod
     def get_objects_in_scene(
         cls, scene: ui_view.AggregationScene
-    ) -> set[SOMcreator.Object]:
+    ) -> set[SOMcreator.SOMClass]:
         nodes = cls.get_nodes_in_scene(scene)
         scene_index = cls.get_scene_index(scene)
         objects = {a.object for a, pos in cls.get_import_list()[scene_index]}
@@ -568,7 +568,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
     @classmethod
     def create_child_node(
-        cls, top_node: ui_node.NodeProxy, obj: SOMcreator.Object
+        cls, top_node: ui_node.NodeProxy, obj: SOMcreator.SOMClass
     ) -> ui_node.NodeProxy | None:
         scene = top_node.scene()
         pos = top_node.sceneBoundingRect().bottomLeft() + QPointF(100.0, 60.0)

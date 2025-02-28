@@ -9,7 +9,15 @@ import SOMcreator
 import SOMcreator.datastructure.som_json
 from SOMcreator.datastructure.som_json import FILTER_MATRIXES, MainDict
 from typing import Type, TYPE_CHECKING
-from . import core, project, predefined_pset, property_set, obj, aggregation, inheritance
+from . import (
+    core,
+    project,
+    predefined_pset,
+    property_set,
+    obj,
+    aggregation,
+    inheritance,
+)
 
 if TYPE_CHECKING:
     from SOMcreator import Project, UseCase, Phase
@@ -18,7 +26,7 @@ aggregation_dict = dict()
 phase_list: list[Phase] = list()
 use_case_list: list[UseCase] = list()
 plugin_dict = dict()
-object_uuid_dict: dict[str, SOMcreator.Object] = dict()
+object_uuid_dict: dict[str, SOMcreator.SOMClass] = dict()
 property_set_uuid_dict: dict[str, SOMcreator.PropertySet] = dict()
 attribute_uuid_dict: dict[str, SOMcreator.Attribute] = dict()
 filter_matrixes = list()
@@ -48,8 +56,10 @@ def open_json(cls: Type[Project], path: str):
 
     logging.debug(f"Filter Matrixes Read")
     project_dict = main_dict.get(SOMcreator.datastructure.som_json.PROJECT)
-    SOMcreator.importer.som_json.phase_list, SOMcreator.importer.som_json.use_case_list = core.get_filter_lists(
-        project_dict)
+    (
+        SOMcreator.importer.som_json.phase_list,
+        SOMcreator.importer.som_json.use_case_list,
+    ) = core.get_filter_lists(project_dict)
     logging.debug(f"Filter List Read")
 
     proj, project_dict = project.load(cls, main_dict)

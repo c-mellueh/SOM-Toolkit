@@ -79,7 +79,9 @@ class Project(som_gui.core.tool.Project):
         return cls.get_properties().active_project
 
     @classmethod
-    def get_root_objects(cls, filter_objects=True, proj: SOMcreator.Project = None) -> list[SOMcreator.Object]:
+    def get_root_objects(
+        cls, filter_objects=True, proj: SOMcreator.Project = None
+    ) -> list[SOMcreator.SOMClass]:
         if proj is None:
             proj: SOMcreator.Project = cls.get_properties().active_project
         if proj is None:
@@ -95,9 +97,12 @@ class Project(som_gui.core.tool.Project):
         return box
 
     @classmethod
-    def fill_mapping_table(cls, table: QTableWidget,
-                           filter_1: list[SOMcreator.UseCase | SOMcreator.Phase],
-                           filter_2: list[SOMcreator.UseCase | SOMcreator.Phase]):
+    def fill_mapping_table(
+        cls,
+        table: QTableWidget,
+        filter_1: list[SOMcreator.UseCase | SOMcreator.Phase],
+        filter_2: list[SOMcreator.UseCase | SOMcreator.Phase],
+    ):
 
         table.setRowCount(len(filter_2))
         for row, f in enumerate(filter_2):
@@ -120,8 +125,12 @@ class Project(som_gui.core.tool.Project):
         return mapping_dict
 
     @classmethod
-    def create_mapping_window(cls, title, filter_1: list[SOMcreator.UseCase | SOMcreator.Phase],
-                              filter_2: list[SOMcreator.UseCase | SOMcreator.Phase]):
+    def create_mapping_window(
+        cls,
+        title,
+        filter_1: list[SOMcreator.UseCase | SOMcreator.Phase],
+        filter_2: list[SOMcreator.UseCase | SOMcreator.Phase],
+    ):
         dialog = MergeDialog()
 
         dialog.setWindowTitle(title)
@@ -136,18 +145,24 @@ class Project(som_gui.core.tool.Project):
         return cls.create_mapping_window(title, p1.get_phases(), p2.get_phases())
 
     @classmethod
-    def get_use_case_mapping(cls, title, p1: SOMcreator.Project, p2: SOMcreator.Project):
+    def get_use_case_mapping(
+        cls, title, p1: SOMcreator.Project, p2: SOMcreator.Project
+    ):
         return cls.create_mapping_window(title, p1.get_usecases(), p2.get_usecases())
 
     @classmethod
-    def merge_projects(cls, title, project_1: SOMcreator.Project, project_2: SOMcreator.Project):
+    def merge_projects(
+        cls, title, project_1: SOMcreator.Project, project_2: SOMcreator.Project
+    ):
         phase_mapping = cls.get_phase_mapping(title, project_1, project_2)
         if phase_mapping is None:
             return
         use_case_mapping = cls.get_use_case_mapping(title, project_1, project_2)
         if use_case_mapping is None:
             return
-        SOMcreator.util.project.merge_projects(project_1, project_2, phase_mapping, use_case_mapping)
+        SOMcreator.util.project.merge_projects(
+            project_1, project_2, phase_mapping, use_case_mapping
+        )
 
     @classmethod
     def set_settings_general_widget(cls, widget: ui.SettingsGeneral):
@@ -162,5 +177,7 @@ class Project(som_gui.core.tool.Project):
         cls.get_properties().settings_path_widget = widget
 
     @classmethod
-    def get_settings_path_widget(cls, ) -> ui.SettingsPath:
+    def get_settings_path_widget(
+        cls,
+    ) -> ui.SettingsPath:
         return cls.get_properties().settings_path_widget

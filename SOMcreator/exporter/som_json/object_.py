@@ -1,6 +1,12 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from SOMcreator.datastructure.som_json import IFC_MAPPINGS, ABBREVIATION, PROPERTY_SETS, IDENT_ATTRIBUTE, OBJECTS
+from SOMcreator.datastructure.som_json import (
+    IFC_MAPPINGS,
+    ABBREVIATION,
+    PROPERTY_SETS,
+    IDENT_ATTRIBUTE,
+    OBJECTS,
+)
 from SOMcreator.exporter.som_json import property_set
 import SOMcreator
 from SOMcreator.exporter.som_json import core
@@ -9,8 +15,9 @@ if TYPE_CHECKING:
     from SOMcreator import Project
     from SOMcreator.datastructure.som_json import ObjectDict, MainDict
 
+
 ### Export ###
-def _write_object(element: SOMcreator.Object) -> ObjectDict:
+def _write_object(element: SOMcreator.SOMClass) -> ObjectDict:
     object_dict: ObjectDict = dict()
     core.write_basics(object_dict, element)
 

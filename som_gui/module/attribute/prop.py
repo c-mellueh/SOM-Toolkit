@@ -4,7 +4,7 @@ from typing import Callable, TYPE_CHECKING, TypedDict
 
 if TYPE_CHECKING:
     import SOMcreator
-    from .ui import AttributeWidget,UnitSettings
+    from .ui import AttributeWidget, UnitSettings
 
 
 class AttributeData(TypedDict):
@@ -14,17 +14,24 @@ class AttributeData(TypedDict):
 
 class AttributeProperties:
     attribute_data_dict: dict[str, AttributeData] = dict()
-    unit_settings_widget:UnitSettings = None
+    unit_settings_widget: UnitSettings = None
+
 
 class CompareAttributesProperties:
     projects = [None, None]
     uuid_dicts = [None, None]
     ident_dicts = [None, None]
-    object_dict: dict[SOMcreator.Object, SOMcreator.Object | None] = dict()
-    missing_objects: list[list[SOMcreator.Object]] = [None, None]
+    object_dict: dict[SOMcreator.SOMClass, SOMcreator.SOMClass | None] = dict()
+    missing_objects: list[list[SOMcreator.SOMClass]] = [None, None]
     object_tree_item_dict = dict()
-    object_lists: list[tuple[SOMcreator.Object | None, SOMcreator.Object | None]] = list()
-    pset_lists: dict[SOMcreator.Object, list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]] = dict()
-    attributes_lists: dict[SOMcreator.PropertySet, list[tuple[SOMcreator.Attribute, SOMcreator.Attribute]]] = dict()
+    object_lists: list[
+        tuple[SOMcreator.SOMClass | None, SOMcreator.SOMClass | None]
+    ] = list()
+    pset_lists: dict[
+        SOMcreator.SOMClass, list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]
+    ] = dict()
+    attributes_lists: dict[
+        SOMcreator.PropertySet, list[tuple[SOMcreator.Attribute, SOMcreator.Attribute]]
+    ] = dict()
     values_lists: dict[SOMcreator.Attribute, list[tuple[str, str]]] = dict()
     widget: AttributeWidget = None

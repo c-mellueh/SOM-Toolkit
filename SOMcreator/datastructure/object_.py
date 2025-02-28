@@ -6,15 +6,24 @@ from .base import filterable, Hirarchy
 import copy as cp
 
 
-class Object(Hirarchy):
-    _registry: set[Object] = set()
+class SOMClass(Hirarchy):
+    _registry: set[SOMClass] = set()
 
-    def __init__(self, name: str, ident_attrib: [SOMcreator.Attribute, str], uuid: str = None,
-                 ifc_mapping: set[str] | None = None, description: None | str = None,
-                 optional: None | bool = None, abbreviation: None | str = None,
-                 project: None | SOMcreator.Project = None,
-                 filter_matrix: list[list[bool]] = None) -> None:
-        super(Object, self).__init__(name, description, optional, project, filter_matrix)
+    def __init__(
+        self,
+        name: str,
+        ident_attrib: SOMcreator.Attribute| str,
+        uuid: str = None,
+        ifc_mapping: set[str] | None = None,
+        description: None | str = None,
+        optional: None | bool = None,
+        abbreviation: None | str = None,
+        project: None | SOMcreator.Project = None,
+        filter_matrix: list[list[bool]] = None,
+    ) -> None:
+        super(SOMClass, self).__init__(
+            name, description, optional, project, filter_matrix
+        )
         self._registry.add(self)
         self._property_sets: list[SOMcreator.PropertySet] = list()
         self._ident_attrib = ident_attrib
@@ -36,7 +45,7 @@ class Object(Hirarchy):
     def __str__(self):
         return f"Object {self.name}"
 
-    def __lt__(self, other: Object):
+    def __lt__(self, other: SOMClass):
         return self.ident_value < other.ident_value
 
     def __copy__(self):
@@ -52,16 +61,24 @@ class Object(Hirarchy):
             new_pset = cp.copy(pset)
             new_property_sets.add(new_pset)
             if pset == ident_pset:
-                new_ident_attribute = new_pset.get_attribute_by_name(self.ident_attrib.name)
+                new_ident_attribute = new_pset.get_attribute_by_name(
+                    self.ident_attrib.name
+                )
 
         if new_ident_attribute is None:
             raise ValueError(f"Identifier Attribute could'nt be found")
 
-        new_object = Object(name=self.name, ident_attrib=new_ident_attribute, uuid=str(uuid4()),
-                            ifc_mapping=self.ifc_mapping,
-                            description=self.description, optional=self.is_optional(ignore_hirarchy=True),
-                            abbreviation=self.abbreviation,
-                            project=self.project, filter_matrix=self._filter_matrix)
+        new_object = SOMClass(
+            name=self.name,
+            ident_attrib=new_ident_attribute,
+            uuid=str(uuid4()),
+            ifc_mapping=self.ifc_mapping,
+            description=self.description,
+            optional=self.is_optional(ignore_hirarchy=True),
+            abbreviation=self.abbreviation,
+            project=self.project,
+            filter_matrix=self._filter_matrix,
+        )
 
         for pset in new_property_sets:
             new_object.add_property_set(pset)
@@ -112,8 +129,8 @@ class Object(Hirarchy):
         self._aggregations.remove(node)
 
     @property
-    def inherited_property_sets(self) -> dict[Object, list[SOMcreator.PropertySet]]:
-        def recursion(recursion_property_sets, recursion_obj: Object):
+    def inherited_property_sets(self) -> dict[SOMClass, list[SOMcreator.PropertySet]]:
+        def recursion(recursion_property_sets, recursion_obj: SOMClass):
             psets = recursion_obj.get_property_sets(filter=False)
 
             if psets:
@@ -178,7 +195,7 @@ class Object(Hirarchy):
         return iter(attributes)
 
     def delete(self, recursive: bool = False) -> None:
-        super(Object, self).delete(recursive)
+        super(SOMClass, self).delete(recursive)
 
         for pset in self.get_property_sets(filter=False):
             pset.delete(recursive, override_ident_deletion=True)
@@ -186,7 +203,9 @@ class Object(Hirarchy):
         for aggregation in self.aggregations.copy():
             aggregation.delete(recursive)
 
-    def get_property_set_by_name(self, property_set_name: str) -> SOMcreator.PropertySet | None:
+    def get_property_set_by_name(
+        self, property_set_name: str
+    ) -> SOMcreator.PropertySet | None:
         for property_set in self.get_property_sets(filter=False):
             if property_set.name == property_set_name:
                 return property_set

@@ -22,7 +22,7 @@ TABLE_EXPORT = "TABLE"
 
 
 class ObjectStructureDict(TypedDict):
-    children: set[SOMcreator.Object]
+    children: set[SOMcreator.SOMClass]
 
 
 def _handle_template(path: str | os.PathLike) -> jinja2.Template:
@@ -68,7 +68,9 @@ def _handle_container(xml_element_section: Element, text) -> Element:
     return container
 
 
-def _handle_checkrun(xml_container: Element, name: str, author: str = "DesiteRuleCreator") -> Element:
+def _handle_checkrun(
+    xml_container: Element, name: str, author: str = "DesiteRuleCreator"
+) -> Element:
     checkrun = etree.SubElement(xml_container, "checkrun")
     _uuid = str(uuid.uuid4())
     checkrun.set("ID", _uuid)
@@ -111,7 +113,9 @@ def _handle_attribute_rule_list(xml_rule: Element) -> Element:
     return attribute_rule_list
 
 
-def _define_xml_elements(author: str, xml_container: Element, name: str) -> (Element, Element):
+def _define_xml_elements(
+    author: str, xml_container: Element, name: str
+) -> (Element, Element):
     xml_checkrun = _handle_checkrun(xml_container, name=name, author=author)
     xml_rule = _handle_rule(xml_checkrun, "Attributes")
     xml_attribute_rule_list = _handle_attribute_rule_list(xml_rule)
@@ -147,12 +151,17 @@ def _handle_attribute_rule_tree(xml_rule: Element) -> Element:
     return attribute_rule_tree
 
 
-def _handle_tree_structure(author: str, required_data_dict: dict, parent_xml_container,
-                           object_structure: dict[SOMcreator.Object, SOMcreator.Object],
-                           parent_obj: SOMcreator.Object,
-                           template,
-                           xml_object_dict, export_type: str) -> None:
-    def check_basics(obj: SOMcreator.Object):
+def _handle_tree_structure(
+    author: str,
+    required_data_dict: dict,
+    parent_xml_container,
+    object_structure: dict[SOMcreator.SOMClass, SOMcreator.SOMClass],
+    parent_obj: SOMcreator.SOMClass,
+    template,
+    xml_object_dict,
+    export_type: str,
+) -> None:
+    def check_basics(obj: SOMcreator.SOMClass):
         if obj.ident_attrib is None:
             return obj, None, True
 
@@ -169,9 +178,16 @@ def _handle_tree_structure(author: str, required_data_dict: dict, parent_xml_con
             create_table_object(new_xml_container)
 
         for child_obj in sorted(children, key=lambda x: x.name):
-            _handle_tree_structure(author, required_data_dict, new_xml_container, object_structure, child_obj, template,
-                                   xml_object_dict,
-                                   export_type)
+            _handle_tree_structure(
+                author,
+                required_data_dict,
+                new_xml_container,
+                object_structure,
+                child_obj,
+                template,
+                xml_object_dict,
+                export_type,
+            )
 
     def create_js_object(xml_container):
         obj, pset_dict, abort = check_basics(parent_obj)
@@ -182,8 +198,12 @@ def _handle_tree_structure(author: str, required_data_dict: dict, parent_xml_con
         xml_attribute_rule_list = _handle_attribute_rule_list(xml_rule)
         xml_rule_script = _handle_rule_script(xml_attribute_rule_list, name=obj.name)
         xml_code = _handle_code(xml_rule_script)
-        cdata_code = template.render(pset_dict=pset_dict, constants=value_constants,
-                                     ignore_pset="", xs_dict=xml.DATA_TYPE_MAPPING_DICT)
+        cdata_code = template.render(
+            pset_dict=pset_dict,
+            constants=value_constants,
+            ignore_pset="",
+            xs_dict=xml.DATA_TYPE_MAPPING_DICT,
+        )
         xml_code.text = cdata_code
         _handle_rule(xml_checkrun, "UniquePattern")
 
@@ -220,23 +240,31 @@ def _csv_value_in_list(attribute: SOMcreator.Attribute):
 
 
 def _csv_check_range(attribute: SOMcreator.Attribute) -> str:
-    sorted_range_list = sorted([[min(v1, v2), max(v1, v2)] for [v1, v2] in attribute.value])
+    sorted_range_list = sorted(
+        [[min(v1, v2), max(v1, v2)] for [v1, v2] in attribute.value]
+    )
     sorted_range_list = merge_list(sorted_range_list)
 
     pattern = "||".join(f">={v_min}&&<={v_max}" for v_min, v_max in sorted_range_list)
     return pattern
 
 
-def _build_basics_rule_item(xml_parent: etree.Element, attribute: SOMcreator.Attribute) -> etree.Element:
+def _build_basics_rule_item(
+    xml_parent: etree.Element, attribute: SOMcreator.Attribute
+) -> etree.Element:
     xml_attrib = etree.SubElement(xml_parent, "ruleItem")
     xml_attrib.set("ID", attribute.uuid)
     data_type = xml.transform_data_format(attribute.data_type)
-    xml_attrib.set("name", f"{attribute.property_set.name}:{attribute.name}##{data_type}")
+    xml_attrib.set(
+        "name", f"{attribute.property_set.name}:{attribute.name}##{data_type}"
+    )
     xml_attrib.set("type", "simple")
     return xml_attrib
 
 
-def _handle_rule_item_attribute(xml_parent: etree.Element, attribute: SOMcreator.Attribute):
+def _handle_rule_item_attribute(
+    xml_parent: etree.Element, attribute: SOMcreator.Attribute
+):
     xml_attrib = _build_basics_rule_item(xml_parent, attribute)
 
     if not attribute.value:
@@ -249,7 +277,9 @@ def _handle_rule_item_attribute(xml_parent: etree.Element, attribute: SOMcreator
         elif attribute.value_type == value_constants.RANGE:
             pattern = _csv_check_range(attribute)
         else:
-            logging.error(f"No Function defined for {attribute.name} ({attribute.value_type} x {attribute.data_type}")
+            logging.error(
+                f"No Function defined for {attribute.name} ({attribute.value_type} x {attribute.data_type}"
+            )
             pattern = "*"
 
     elif attribute.data_type == value_constants.LABEL:
@@ -261,13 +291,18 @@ def _handle_rule_item_attribute(xml_parent: etree.Element, attribute: SOMcreator
     elif attribute.data_type == value_constants.BOOLEAN:
         pattern = "*"
     else:
-        logging.error(f"No Function defined for {attribute.name} ({attribute.value_type} x {attribute.data_type}")
+        logging.error(
+            f"No Function defined for {attribute.name} ({attribute.value_type} x {attribute.data_type}"
+        )
 
     xml_attrib.set("pattern", pattern)
 
 
-def _handle_rule_item_pset(xml_parent: etree.Element, property_set: SOMcreator.PropertySet,
-                           attributes: list[SOMcreator.Attribute]):
+def _handle_rule_item_pset(
+    xml_parent: etree.Element,
+    property_set: SOMcreator.PropertySet,
+    attributes: list[SOMcreator.Attribute],
+):
     xml_pset = etree.SubElement(xml_parent, "ruleItem")
     xml_pset.set("ID", property_set.uuid)
     xml_pset.set("name", property_set.name)
@@ -276,30 +311,46 @@ def _handle_rule_item_pset(xml_parent: etree.Element, property_set: SOMcreator.P
         _handle_rule_item_attribute(xml_pset, attribute)
 
 
-def _handle_rule_items_by_pset_dict(pset_dict: dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]],
-                                    attribute_rule_tree: etree.Element):
+def _handle_rule_items_by_pset_dict(
+    pset_dict: dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]],
+    attribute_rule_tree: etree.Element,
+):
     for pset, attribute_list in pset_dict.items():
         _handle_rule_item_pset(attribute_rule_tree, pset, attribute_list)
 
 
-def _handle_object_rules(author: str, required_data_dict: dict,
-                         object_structure: dict[SOMcreator.Object, SOMcreator.Object],
-                         base_xml_container: Element,
-                         template: jinja2.Template, export_type: str) -> dict[Element, SOMcreator.Object]:
-    xml_object_dict: dict[Element, SOMcreator.Object] = dict()
+def _handle_object_rules(
+    author: str,
+    required_data_dict: dict,
+    object_structure: dict[SOMcreator.SOMClass, SOMcreator.SOMClass],
+    base_xml_container: Element,
+    template: jinja2.Template,
+    export_type: str,
+) -> dict[Element, SOMcreator.SOMClass]:
+    xml_object_dict: dict[Element, SOMcreator.SOMClass] = dict()
 
     root_nodes = {obj for obj, parent in object_structure.items() if parent is None}
 
     for root_node in sorted(root_nodes, key=lambda x: x.name):
-        _handle_tree_structure(author, required_data_dict, base_xml_container, object_structure, root_node, template,
-                               xml_object_dict,
-                               export_type)
+        _handle_tree_structure(
+            author,
+            required_data_dict,
+            base_xml_container,
+            object_structure,
+            root_node,
+            template,
+            xml_object_dict,
+            export_type,
+        )
     return xml_object_dict
 
 
-def _handle_data_section(xml_qa_export: Element, xml_checkrun_first: Element,
-                         xml_checkrun_obj: dict[Element, SOMcreator.Object | None],
-                         xml_checkrun_last: Element) -> None:
+def _handle_data_section(
+    xml_qa_export: Element,
+    xml_checkrun_first: Element,
+    xml_checkrun_obj: dict[Element, SOMcreator.SOMClass | None],
+    xml_checkrun_last: Element,
+) -> None:
     def get_name() -> str:
         """Transorms native IFC Attributes like IfcType into desite Attributes"""
 
@@ -352,7 +403,9 @@ def _handle_property_section(xml_qa_export: Element) -> None:
     etree.SubElement(repository, "propertySection")
 
 
-def _handle_untested(xml_attribute_rule_list: etree.Element, main_pset: str, main_attribute: str):
+def _handle_untested(
+    xml_attribute_rule_list: etree.Element, main_pset: str, main_attribute: str
+):
     template = _handle_template(templates.UNTESTED)
     rule_script = etree.SubElement(xml_attribute_rule_list, "ruleScript")
     name = "untested"
@@ -382,24 +435,37 @@ def _handle_attribute_rule(attribute: SOMcreator.Attribute) -> str:
     return ";".join(row)
 
 
-def _fast_object_check(main_pset: str, main_attrib: str, author: str, required_data_dict: dict,
-                       base_xml_container: Element,
-                       template: jinja2.Template) -> dict[Element, None]:
+def _fast_object_check(
+    main_pset: str,
+    main_attrib: str,
+    author: str,
+    required_data_dict: dict,
+    base_xml_container: Element,
+    template: jinja2.Template,
+) -> dict[Element, None]:
     xml_checkrun = _handle_checkrun(base_xml_container, "Main Check", author)
     xml_rule = _handle_rule(xml_checkrun, "Attributes")
     xml_attribute_rule_list = _handle_attribute_rule_list(xml_rule)
     xml_rule_script = _handle_rule_script(xml_attribute_rule_list, name="Main Check")
     xml_code = _handle_code(xml_rule_script)
-    cdata_code = template.render(object_dict=required_data_dict, main_pset=main_pset, main_attrib=main_attrib,
-                                 constants=value_constants,
-                                 ignore_pset="", xs_dict=xml.DATA_TYPE_MAPPING_DICT)
+    cdata_code = template.render(
+        object_dict=required_data_dict,
+        main_pset=main_pset,
+        main_attrib=main_attrib,
+        constants=value_constants,
+        ignore_pset="",
+        xs_dict=xml.DATA_TYPE_MAPPING_DICT,
+    )
     xml_code.text = cdata_code
     _handle_rule(xml_checkrun, "UniquePattern")
     return {xml_checkrun: None}
 
 
-def build_full_data_dict(proj: SOMcreator.Project) -> dict[
-    SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]]:
+def build_full_data_dict(
+    proj: SOMcreator.Project,
+) -> dict[
+    SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]
+]:
     d = dict()
     for obj in proj.get_objects(filter=True):
         d[obj] = dict()
@@ -410,34 +476,60 @@ def build_full_data_dict(proj: SOMcreator.Project) -> dict[
     return d
 
 
-def export(project: SOMcreator.Project,
-           required_data_dict: dict[SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]],
-           path: str, main_pset: str, main_attribute: str,
-           object_structure: dict[SOMcreator.Object, SOMcreator.Object] = None,
-           export_type: str = "JS") -> None:
+def export(
+    project: SOMcreator.Project,
+    required_data_dict: dict[
+        SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]
+    ],
+    path: str,
+    main_pset: str,
+    main_attribute: str,
+    object_structure: dict[SOMcreator.SOMClass, SOMcreator.SOMClass] = None,
+    export_type: str = "JS",
+) -> None:
     if not object_structure:
         object_structure = {o: o.parent for o in project.get_objects(filter=True)}
 
     template = _handle_template(templates.TEMPLATE)
-    xml_container, xml_qa_export = _init_xml(project.author, project.name, project.version)
-    xml_checkrun_first, xml_attribute_rule_list = _define_xml_elements(project.author, xml_container, "initial_tests")
+    xml_container, xml_qa_export = _init_xml(
+        project.author, project.name, project.version
+    )
+    xml_checkrun_first, xml_attribute_rule_list = _define_xml_elements(
+        project.author, xml_container, "initial_tests"
+    )
     _handle_js_rules(xml_attribute_rule_list, "start")
-    xml_checkrun_obj = _handle_object_rules(project.author, required_data_dict, object_structure, xml_container,
-                                            template,
-                                            export_type)
-    xml_checkrun_last, xml_attribute_rule_list = _define_xml_elements(project.author, xml_container, "untested")
+    xml_checkrun_obj = _handle_object_rules(
+        project.author,
+        required_data_dict,
+        object_structure,
+        xml_container,
+        template,
+        export_type,
+    )
+    xml_checkrun_last, xml_attribute_rule_list = _define_xml_elements(
+        project.author, xml_container, "untested"
+    )
     _handle_untested(xml_attribute_rule_list, main_pset, main_attribute)
-    _handle_data_section(xml_qa_export, xml_checkrun_first, xml_checkrun_obj, xml_checkrun_last)
+    _handle_data_section(
+        xml_qa_export, xml_checkrun_first, xml_checkrun_obj, xml_checkrun_last
+    )
     _handle_property_section(xml_qa_export)
 
     tree = etree.ElementTree(xml_qa_export)
     with open(path, "wb") as f:
-        tree.write(f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml")
+        tree.write(
+            f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml"
+        )
 
 
-def csv_export(required_data_dict: dict[SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]],
-               path):
+def csv_export(
+    required_data_dict: dict[
+        SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]
+    ],
+    path,
+):
     from ... import __version__
+
     lines = list()
     lines.append(";".join(["#", f"Created by SOMcreator v{__version__}"]))
     lines.append("H;Property Name;;Data Type;Rule;Comment")
@@ -447,8 +539,18 @@ def csv_export(required_data_dict: dict[SOMcreator.Object, dict[SOMcreator.Prope
             continue
         ident_attrib = f"{obj.ident_attrib.property_set.name}:{obj.ident_attrib.name}"
         data_type = xml.transform_data_format(obj.ident_attrib.data_type)
-        lines.append(";".join(
-            ["C", ident_attrib, "", data_type, f"'{obj.ident_value}'", f"Nach Objekt {obj.name} filtern"]))
+        lines.append(
+            ";".join(
+                [
+                    "C",
+                    ident_attrib,
+                    "",
+                    data_type,
+                    f"'{obj.ident_value}'",
+                    f"Nach Objekt {obj.name} filtern",
+                ]
+            )
+        )
 
         for pset, attribute_list in pset_dict.items():
             for attribute in attribute_list:
@@ -459,9 +561,15 @@ def csv_export(required_data_dict: dict[SOMcreator.Object, dict[SOMcreator.Prope
             file.write(line + "\n")
 
 
-def fast_check(project: SOMcreator.Project, main_pset: str, main_attrib: str,
-               required_data_dict: dict[SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]],
-               path: str) -> None:
+def fast_check(
+    project: SOMcreator.Project,
+    main_pset: str,
+    main_attrib: str,
+    required_data_dict: dict[
+        SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]
+    ],
+    path: str,
+) -> None:
     """
     creates a single rule for all elements -> no containers for checkruns
     :param project:
@@ -472,16 +580,32 @@ def fast_check(project: SOMcreator.Project, main_pset: str, main_attrib: str,
     :return:
     """
     template = _handle_template(templates.FAST_TEMPLATE)
-    xml_container, xml_qa_export = _init_xml(project.author, project.name, project.version)
-    xml_checkrun_first, xml_attribute_rule_list = _define_xml_elements(project.author, xml_container, "initial_tests")
+    xml_container, xml_qa_export = _init_xml(
+        project.author, project.name, project.version
+    )
+    xml_checkrun_first, xml_attribute_rule_list = _define_xml_elements(
+        project.author, xml_container, "initial_tests"
+    )
     _handle_js_rules(xml_attribute_rule_list, "start")
-    xml_checkrun_obj = _fast_object_check(main_pset, main_attrib, project.author, required_data_dict, xml_container,
-                                          template)
-    xml_checkrun_last, xml_attribute_rule_list = _define_xml_elements(project.author, xml_container, "untested")
+    xml_checkrun_obj = _fast_object_check(
+        main_pset,
+        main_attrib,
+        project.author,
+        required_data_dict,
+        xml_container,
+        template,
+    )
+    xml_checkrun_last, xml_attribute_rule_list = _define_xml_elements(
+        project.author, xml_container, "untested"
+    )
     _handle_untested(xml_attribute_rule_list, main_pset, main_attrib)
-    _handle_data_section(xml_qa_export, xml_checkrun_first, xml_checkrun_obj, xml_checkrun_last)
+    _handle_data_section(
+        xml_qa_export, xml_checkrun_first, xml_checkrun_obj, xml_checkrun_last
+    )
     _handle_property_section(xml_qa_export)
 
     tree = etree.ElementTree(xml_qa_export)
     with open(path, "wb") as f:
-        tree.write(f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml")
+        tree.write(
+            f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml"
+        )

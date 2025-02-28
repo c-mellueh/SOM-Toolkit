@@ -113,7 +113,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         cls,
         combobox: QComboBox,
         allowed_values: set[str],
-        object_list: list[SOMcreator.Object],
+        object_list: list[SOMcreator.SOMClass],
     ):
         cls.lock_updating("SOM ComboBox")
         all_keyword = cls.get_all_keyword()
@@ -394,7 +394,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def build_attribute_dict(
-        cls, objects: list[SOMcreator.Object]
+        cls, objects: list[SOMcreator.SOMClass]
     ) -> dict[str, dict[str, dict[str, SOMcreator.Attribute]]]:
         result_dict = dict()
         for obj in objects:
@@ -982,7 +982,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def get_property_sets(
-        cls, ifc_type: str, identifier: str | SOMcreator.Object
+        cls, ifc_type: str, identifier: str | SOMcreator.SOMClass
     ) -> list[tuple[str, int]]:
         logging.debug("Request PropertySets")
         cls.connect_to_data_base(cls.get_database_path())
@@ -1009,7 +1009,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def get_attributes(
-        cls, ifc_type: str, identifier: str | SOMcreator.Object, property_set: str
+        cls, ifc_type: str, identifier: str | SOMcreator.SOMClass, property_set: str
     ) -> list[tuple[str, int, int]]:
         logging.debug("Request Attributes")
 

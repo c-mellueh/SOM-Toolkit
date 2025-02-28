@@ -8,7 +8,9 @@ import som_gui.plugins.aggregation_window.core.tool
 from SOMcreator.constants import value_constants
 from som_gui import tool
 from som_gui.module.modelcheck.constants import *
-from som_gui.plugins.aggregation_window.module.modelcheck.prop import AggregationModelcheckProperties
+from som_gui.plugins.aggregation_window.module.modelcheck.prop import (
+    AggregationModelcheckProperties,
+)
 
 ABBREV_ISSUE = 2
 
@@ -23,17 +25,24 @@ class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
         return som_gui.AggregationModelcheckProperties
 
     @classmethod
-    def get_parent_entity(cls, entity: ifcopenshell.entity_instance) -> ifcopenshell.entity_instance | None:
+    def get_parent_entity(
+        cls, entity: ifcopenshell.entity_instance
+    ) -> ifcopenshell.entity_instance | None:
         return cls.get_properties().group_parent_dict.get(entity)
 
     @classmethod
     def subelements_have_doubling_identifier(cls, entity: ifcopenshell):
         """Checks if there are multiple classes of subelements in a Group that have the same Matchkey"""
-        sub_idents = [tool.Modelcheck.get_ident_value(sub_group) for sub_group in cls.get_sub_entities(entity)]
+        sub_idents = [
+            tool.Modelcheck.get_ident_value(sub_group)
+            for sub_group in cls.get_sub_entities(entity)
+        ]
         return len(set(sub_idents)) != len(sub_idents)
 
     @classmethod
-    def get_sub_entities(cls, entity: ifcopenshell.entity_instance) -> set[ifcopenshell.entity_instance]:
+    def get_sub_entities(
+        cls, entity: ifcopenshell.entity_instance
+    ) -> set[ifcopenshell.entity_instance]:
         group_dict = cls.get_properties().group_dict
         return group_dict.get(entity) if entity in group_dict else set()
 
@@ -47,14 +56,18 @@ class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
             cls.set_parent_entity(entity, None)
 
     @classmethod
-    def get_root_groups(cls, ifc: ifcopenshell.file) -> list[ifcopenshell.entity_instance]:
+    def get_root_groups(
+        cls, ifc: ifcopenshell.file
+    ) -> list[ifcopenshell.entity_instance]:
         return [group for group in ifc.by_type("IfcGroup") if cls.is_root_group(group)]
 
     @classmethod
     def iterate_group_structure(cls, entity: entity_instance):
         relationships = getattr(entity, "IsGroupedBy", [])
         for relationship in relationships:
-            sub_entities: set[ifcopenshell.entity_instance] = set(se for se in relationship.RelatedObjects)
+            sub_entities: set[ifcopenshell.entity_instance] = set(
+                se for se in relationship.RelatedObjects
+            )
             cls.set_sub_entities(entity, sub_entities)
             for sub_entity in sub_entities:  # IfcGroup or IfcElement
                 cls.set_parent_entity(sub_entity, entity)
@@ -74,27 +87,40 @@ class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
         return False
 
     @classmethod
-    def set_sub_entities(cls, entity: ifcopenshell.entity_instance, sub_entities: set[ifcopenshell.entity_instance]):
+    def set_sub_entities(
+        cls,
+        entity: ifcopenshell.entity_instance,
+        sub_entities: set[ifcopenshell.entity_instance],
+    ):
         cls.get_properties().group_dict[entity] = sub_entities
 
     @classmethod
-    def set_parent_entity(cls, entity: ifcopenshell.entity_instance,
-                          parent_entity: ifcopenshell.entity_instance | None):
+    def set_parent_entity(
+        cls,
+        entity: ifcopenshell.entity_instance,
+        parent_entity: ifcopenshell.entity_instance | None,
+    ):
         cls.get_properties().group_parent_dict[entity] = parent_entity
 
     @classmethod
-    def get_object_representation(cls, entity: ifcopenshell.entity_instance) -> SOMcreator.Object | None:
+    def get_object_representation(
+        cls, entity: ifcopenshell.entity_instance
+    ) -> SOMcreator.SOMClass | None:
         return tool.Modelcheck.get_object_representation(entity)
 
     @classmethod
-    def is_parent_allowed(cls, entity: ifcopenshell.entity_instance, parent_entity: ifcopenshell.entity_instance):
+    def is_parent_allowed(
+        cls,
+        entity: ifcopenshell.entity_instance,
+        parent_entity: ifcopenshell.entity_instance,
+    ):
         object_rep = cls.get_object_representation(entity)
         parent_object_rep = cls.get_object_representation(parent_entity)
         allowed_parents = cls.get_allowed_parents(object_rep)
         return bool(parent_object_rep.aggregations.intersection(allowed_parents))
 
     @classmethod
-    def get_allowed_parents(cls, obj: SOMcreator.Object):
+    def get_allowed_parents(cls, obj: SOMcreator.SOMClass):
         def _loop_parent(el: SOMcreator.Aggregation) -> SOMcreator.Aggregation:
             if el.parent_connection != value_constants.INHERITANCE:
                 return el.parent
@@ -112,42 +138,59 @@ class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
         main_pset_name = tool.Modelcheck.get_main_pset_name()
         main_attribute_name = tool.Modelcheck.get_main_attribute_name()
         element_type = tool.Modelcheck.get_active_element_type()
-        ident_value = ifc_el.get_pset(parent_element, main_pset_name, main_attribute_name)
+        ident_value = ifc_el.get_pset(
+            parent_element, main_pset_name, main_attribute_name
+        )
 
-        description = QCoreApplication.translate("Aggregation", '{}: Parent "{}" is not allowed').format(element_type,
-                                                                                                         ident_value)
+        description = QCoreApplication.translate(
+            "Aggregation", '{}: Parent "{}" is not allowed'
+        ).format(element_type, ident_value)
         issue_nr = PARENT_ISSUE
         tool.Modelcheck.add_issues(element.GlobalId, description, issue_nr, None)
 
     @classmethod
     def empty_group_issue(cls, element):
-        description = QCoreApplication.translate("Aggregation", "Group does n0t contain subelements")
+        description = QCoreApplication.translate(
+            "Aggregation", "Group does n0t contain subelements"
+        )
         issue_nr = EMPTY_GROUP_ISSUE
         tool.Modelcheck.add_issues(element.GlobalId, description, issue_nr, None)
 
     @classmethod
     def repetetive_group_issue(cls, element):
-        description = QCoreApplication.translate("Aggregation",
-                                                 "Group contains multiple Collector Groups with the same Identifier")
+        description = QCoreApplication.translate(
+            "Aggregation",
+            "Group contains multiple Collector Groups with the same Identifier",
+        )
         issue_nr = REPETETIVE_GROUP_ISSUE
         tool.Modelcheck.add_issues(element.GlobalId, description, issue_nr, None)
 
     # GROUP ISSUES
     @classmethod
     def subgroup_issue(cls, child_ident):
-        description = QCoreApplication.translate("Aggregation",
-                                                 'Collector Group contains wrong subelements ("{}" not allowed)').format(
-            child_ident)
+        description = QCoreApplication.translate(
+            "Aggregation",
+            'Collector Group contains wrong subelements ("{}" not allowed)',
+        ).format(child_ident)
         issue_nr = SUBGROUP_ISSUE
-        tool.Modelcheck.add_issues(tool.Modelcheck.get_active_guid(), description, issue_nr, None)
+        tool.Modelcheck.add_issues(
+            tool.Modelcheck.get_active_guid(), description, issue_nr, None
+        )
 
     @classmethod
     def no_group_issue(cls, element):
-        description = QCoreApplication.translate("Aggregation", "Element without group assertion")
+        description = QCoreApplication.translate(
+            "Aggregation", "Element without group assertion"
+        )
         issue_nr = NO_GROUP_ISSUE
         tool.Modelcheck.add_issues(element.GlobalId, description, issue_nr, None)
 
     @classmethod
     def entity_is_in_group(cls, entity: ifcopenshell.entity_instance):
-        return bool([assignment for assignment in getattr(entity, "HasAssignments", []) if
-                     assignment.is_a("IfcRelAssignsToGroup")])
+        return bool(
+            [
+                assignment
+                for assignment in getattr(entity, "HasAssignments", [])
+                if assignment.is_a("IfcRelAssignsToGroup")
+            ]
+        )
