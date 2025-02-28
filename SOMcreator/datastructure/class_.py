@@ -12,7 +12,7 @@ class SOMClass(Hirarchy):
     def __init__(
         self,
         name: str,
-        ident_attrib: SOMcreator.SOMProperty | str,
+        identifier_property: SOMcreator.SOMProperty | str,
         uuid: str = None,
         ifc_mapping: set[str] | None = None,
         description: None | str = None,
@@ -26,7 +26,7 @@ class SOMClass(Hirarchy):
         )
         self._registry.add(self)
         self._property_sets: list[SOMcreator.SOMPropertySet] = list()
-        self._ident_attrib = ident_attrib
+        self._ident_attrib = identifier_property
         self._aggregations: set[SOMcreator.SOMAggregation] = set()
         self.custom_attribues = {}
 
@@ -52,9 +52,9 @@ class SOMClass(Hirarchy):
         new_ident_attribute = None
         if self.is_concept:
             ident_pset = None
-            new_ident_attribute = str(self.ident_attrib)
+            new_ident_attribute = str(self.identifier_property)
         else:
-            ident_pset = self.ident_attrib.property_set
+            ident_pset = self.identifier_property.property_set
 
         new_property_sets = set()
         for pset in self.get_property_sets(filter=False):
@@ -62,7 +62,7 @@ class SOMClass(Hirarchy):
             new_property_sets.add(new_pset)
             if pset == ident_pset:
                 new_ident_attribute = new_pset.get_attribute_by_name(
-                    self.ident_attrib.name
+                    self.identifier_property.name
                 )
 
         if new_ident_attribute is None:
@@ -70,7 +70,7 @@ class SOMClass(Hirarchy):
 
         new_object = SOMClass(
             name=self.name,
-            ident_attrib=new_ident_attribute,
+            identifier_property=new_ident_attribute,
             uuid=str(uuid4()),
             ifc_mapping=self.ifc_mapping,
             description=self.description,
@@ -153,17 +153,17 @@ class SOMClass(Hirarchy):
 
     @property
     def is_concept(self) -> bool:
-        if isinstance(self.ident_attrib, SOMcreator.SOMProperty):
+        if isinstance(self.identifier_property, SOMcreator.SOMProperty):
             return False
         else:
             return True
 
     @property
-    def ident_attrib(self) -> SOMcreator.SOMProperty | str:
+    def identifier_property(self) -> SOMcreator.SOMProperty | str:
         return self._ident_attrib
 
-    @ident_attrib.setter
-    def ident_attrib(self, value: SOMcreator.SOMProperty) -> None:
+    @identifier_property.setter
+    def identifier_property(self, value: SOMcreator.SOMProperty) -> None:
         self._ident_attrib = value
 
     # override name setter because of intheritance
@@ -217,4 +217,4 @@ class SOMClass(Hirarchy):
     def ident_value(self) -> str:
         if self.is_concept:
             return str()
-        return ";".join(str(x) for x in self.ident_attrib.value)
+        return ";".join(str(x) for x in self.identifier_property.value)

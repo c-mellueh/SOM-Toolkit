@@ -162,7 +162,7 @@ def _handle_tree_structure(
     export_type: str,
 ) -> None:
     def check_basics(obj: SOMcreator.SOMClass):
-        if obj.ident_attrib is None:
+        if obj.identifier_property is None:
             return obj, None, True
 
         pset_dict = required_data_dict.get(obj)
@@ -354,12 +354,12 @@ def _handle_data_section(
     def get_name() -> str:
         """Transorms native IFC Attributes like IfcType into desite Attributes"""
 
-        pset_name = obj.ident_attrib.property_set.name
+        pset_name = obj.identifier_property.property_set.name
         if pset_name == "IFC":
-            return obj.ident_attrib.name
+            return obj.identifier_property.name
 
         else:
-            return f"{pset_name}:{obj.ident_attrib.name}"
+            return f"{pset_name}:{obj.identifier_property.name}"
 
     xml_data_section = etree.SubElement(xml_qa_export, "dataSection")
 
@@ -537,10 +537,10 @@ def csv_export(
     lines.append("H;Property Name;;Data Type;Rule;Comment")
 
     for obj, pset_dict in required_data_dict.items():
-        if obj.ident_attrib is None:
+        if obj.identifier_property is None:
             continue
-        ident_attrib = f"{obj.ident_attrib.property_set.name}:{obj.ident_attrib.name}"
-        data_type = xml.transform_data_format(obj.ident_attrib.data_type)
+        ident_attrib = f"{obj.identifier_property.property_set.name}:{obj.identifier_property.name}"
+        data_type = xml.transform_data_format(obj.identifier_property.data_type)
         lines.append(
             ";".join(
                 [

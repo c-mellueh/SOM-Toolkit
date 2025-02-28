@@ -66,10 +66,10 @@ def init_main_window(
     )
 
     object_tool.add_objects_infos_add_function(
-        "ident_attribute_name", main_window.get_attribute_name_line_edit().text
+        "ident_property_name", main_window.get_attribute_name_line_edit().text
     )
     object_tool.add_object_creation_check(
-        "ident_attribute_name", object_tool.check_if_ident_attribute_is_valid
+        "ident_property_name", object_tool.check_if_ident_property_is_valid
     )
 
     object_tool.add_objects_infos_add_function(
@@ -97,7 +97,7 @@ def connect_object_input_widget(
     main_window.get_ui().lineEdit_ident_pSet.textChanged.connect(
         lambda: ident_pset_changed(object_tool, main_window, predefined_pset)
     )
-    main_window.get_ui().lineEdit_ident_attribute.textChanged.connect(
+    main_window.get_ui().lineEdit_ident_property.textChanged.connect(
         lambda: ident_attribute_changed(object_tool, main_window, predefined_pset)
     )
 
@@ -124,7 +124,7 @@ def ident_attribute_changed(
     if predefined_pset:
         attribute_names = [a.name for a in predefined_pset.get_attributes(filter=True)]
     object_tool.create_completer(
-        attribute_names, main_window.get_ui().lineEdit_ident_attribute
+        attribute_names, main_window.get_ui().lineEdit_ident_property
     )
 
 
@@ -363,7 +363,7 @@ def add_object_clicked(
         parent = None
 
     pset = property_set.create_property_set(pset_name, None, parent)
-    attribute_name = object_infos["ident_attribute_name"]
+    attribute_name = object_infos["ident_property_name"]
     attribute: SOMcreator.SOMProperty = {
         a.name: a for a in pset.get_attributes(filter=True)
     }.get(attribute_name)

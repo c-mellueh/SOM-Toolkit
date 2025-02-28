@@ -50,7 +50,7 @@ def _write_smartview(
     xml_smart_view = write_smartview_basics()
     xml_rules = etree.SubElement(xml_smart_view, const.RULES)
     pset_name = property_set.name
-    ident_attrib = property_set.object.ident_attrib
+    ident_attrib = property_set.object.identifier_property
     rule_list: list[etree.Element] = list()
 
     for attribute in attribute_list:

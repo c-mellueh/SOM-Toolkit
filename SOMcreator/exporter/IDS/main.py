@@ -47,10 +47,12 @@ def _build_applicability(obj: SOMcreator.SOMClass, xml_parent: Element) -> None:
     xml_property.set(ids_xsd.ATTR_DATATYPE, ifc_datatypes.LABEL)
     xml_property_set = SubElement(xml_property, ids_xsd.PROPERTYSET, nsmap=NSMAP)
     SubElement(xml_property_set, ids_xsd.SIMPLEVALUE).text = (
-        obj.ident_attrib.property_set.name
+        obj.identifier_property.property_set.name
     )
     xml_name = SubElement(xml_property, ids_xsd.NAME, nsmap=NSMAP)
-    SubElement(xml_name, ids_xsd.SIMPLEVALUE, nsmap=NSMAP).text = obj.ident_attrib.name
+    SubElement(xml_name, ids_xsd.SIMPLEVALUE, nsmap=NSMAP).text = (
+        obj.identifier_property.name
+    )
     xml_value = SubElement(xml_property, ids_xsd.VALUE)
     SubElement(xml_value, ids_xsd.SIMPLEVALUE, nsmap=NSMAP).text = obj.ident_value
 

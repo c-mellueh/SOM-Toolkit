@@ -33,7 +33,7 @@ def _load_object(
 
     obj = SOMcreator.SOMClass(
         name=name,
-        ident_attrib=None,
+        identifier_property=None,
         uuid=identifier,
         ifc_mapping=ifc_mapping,
         description=description,
@@ -50,7 +50,7 @@ def _load_object(
         ident_attrib = SOMcreator.importer.som_json.attribute_uuid_dict.get(
             ident_attrib_id
         )
-        obj.ident_attrib = ident_attrib
+        obj.identifier_property = ident_attrib
     SOMcreator.importer.som_json.parent_dict[obj] = parent
     SOMcreator.importer.som_json.object_uuid_dict[identifier] = obj
 

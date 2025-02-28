@@ -79,7 +79,7 @@ identifier_attribute = Attribute(name="identifier")
 identifier_attribute.value = ["w.100.100"]
 
 #Create a Object representing a custom Wall Definition
-wall = Object(name="MyWall",ident_attrib=identifier_attribute,project = project)
+wall = SOMClass(name="MyWall",=identifier_attribute,project = project)
 
 #Define the PropertySet in which the Identity Attribute will be placed
 pset = PropertySet(name = "CustomMainPset")

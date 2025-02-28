@@ -54,7 +54,7 @@ def create_mapping(
                         xml_manipulation_base,
                         "Value",
                     )
-                    if attribut == obj.ident_attrib:
+                    if attribut == obj.identifier_property:
                         xml_value.text = attribut.value[0]
                     else:
                         xml_value.text = ""

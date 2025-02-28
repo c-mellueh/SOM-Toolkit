@@ -33,7 +33,7 @@ class ObjectDataDict(TypedDict):
     is_group: bool
     abbreviation: str
     ident_pset_name: str
-    ident_attribute_name: str
+    ident_property_name: str
     ident_value: str
     ifc_mappings: list[str]
 
@@ -239,11 +239,11 @@ class Object(som_gui.core.tool.Object):
         is_group = data_dict.get("is_group")
         if is_group:
             new_object = cp.copy(obj)
-            new_object.ident_attrib = uuid.uuid4()
+            new_object.identifier_property = uuid.uuid4()
             return som_gui.module.object.OK, new_object
         ident_value = data_dict["ident_value"]
         pset = data_dict.get("ident_pset_name")
-        attribute = data_dict.get("ident_attribute_name")
+        attribute = data_dict.get("ident_property_name")
         name = data_dict.get("name") or obj.name
         if not cls.is_identifier_allowed(ident_value):
             return som_gui.module.object.IDENT_ISSUE, None
@@ -254,8 +254,10 @@ class Object(som_gui.core.tool.Object):
                 return result, None
         new_object = cp.copy(obj)
         if pset and attribute:
-            new_object.ident_attrib = cls.find_attribute(new_object, pset, attribute)
-        new_object.ident_attrib.value = [ident_value]
+            new_object.identifier_property = cls.find_attribute(
+                new_object, pset, attribute
+            )
+        new_object.identifier_property.value = [ident_value]
         new_object.name = name
         for plugin in cls.get_properties().object_info_plugin_list:  # call Setter Func
             plugin.value_setter(new_object, data_dict[plugin.key])
@@ -286,11 +288,11 @@ class Object(som_gui.core.tool.Object):
         return True
 
     @classmethod
-    def check_if_ident_attribute_is_valid(cls, data_dict: ObjectDataDict):
+    def check_if_ident_property_is_valid(cls, data_dict: ObjectDataDict):
         is_group = data_dict["is_group"]
         if is_group:
             return True
-        value = data_dict["ident_attribute_name"]
+        value = data_dict["ident_property_name"]
         if not value:
             text = QCoreApplication.translate(
                 "Object", "Name of Attribute is not allowed"
@@ -346,7 +348,7 @@ class Object(som_gui.core.tool.Object):
         ifc_mappings = data_dict.get("ifc_mappings")
         identifer = data_dict.get("ident_value")
         pset_name = data_dict.get("ident_pset_name")
-        attribute_name = data_dict.get("ident_attribute_name")
+        attribute_name = data_dict.get("ident_property_name")
         is_group = data_dict.get("is_group")
 
         is_group = obj.is_concept if is_group is None else is_group
@@ -365,13 +367,15 @@ class Object(som_gui.core.tool.Object):
         obj.ifc_mapping = ifc_mappings if ifc_mappings is not None else obj.ifc_mapping
 
         if is_group and not obj.is_concept:
-            obj.ident_attrib = str(uuid.uuid4())
+            obj.identifier_property = str(uuid.uuid4())
             return som_gui.module.object.OK
 
         if pset_name and attribute_name:
             ident_attribute = cls.find_attribute(obj, pset_name, attribute_name)
-            obj.ident_attrib = (
-                ident_attribute if ident_attribute is not None else obj.ident_attrib
+            obj.identifier_property = (
+                ident_attribute
+                if ident_attribute is not None
+                else obj.identifier_property
             )
 
         if identifer is not None:
@@ -385,7 +389,7 @@ class Object(som_gui.core.tool.Object):
     def set_ident_value(cls, obj: SOMcreator.SOMClass, value: str):
         if obj.is_concept:
             return
-        obj.ident_attrib.value = [value]
+        obj.identifier_property.value = [value]
 
     @classmethod
     def find_attribute(cls, obj: SOMcreator.SOMClass, pset_name, attribute_name):
@@ -460,7 +464,7 @@ class Object(som_gui.core.tool.Object):
         d["is_group"] = widget.button_gruppe.isChecked()
         d["ident_value"] = widget.line_edit_attribute_value.text()
         d["ident_pset_name"] = widget.combo_box_pset.currentText()
-        d["ident_attribute_name"] = widget.combo_box_attribute.currentText()
+        d["ident_property_name"] = widget.combo_box_attribute.currentText()
         d["name"] = widget.line_edit_name.text()
         d["ifc_mappings"] = cls.get_ifc_mappings()
         for plugin in cls.get_properties().object_info_plugin_list:
@@ -486,8 +490,8 @@ class Object(som_gui.core.tool.Object):
             prop.is_group = data_dict.get("is_group")
         if data_dict.get("ident_pset_name"):
             prop.pset_name = data_dict.get("ident_pset_name")
-        if data_dict.get("ident_attribute_name"):
-            prop.attribute_name = data_dict.get("ident_attribute_name")
+        if data_dict.get("ident_property_name"):
+            prop.attribute_name = data_dict.get("ident_property_name")
         if data_dict.get("ident_value"):
             prop.ident_value = data_dict.get("ident_value")
         if data_dict.get("ifc_mappings"):
@@ -550,8 +554,8 @@ class Object(som_gui.core.tool.Object):
         info_properties.name = obj.name
         info_properties.ifc_mappings = list(obj.ifc_mapping)
         if not obj.is_concept:
-            info_properties.pset_name = obj.ident_attrib.property_set.name
-            info_properties.attribute_name = obj.ident_attrib.name
+            info_properties.pset_name = obj.identifier_property.property_set.name
+            info_properties.attribute_name = obj.identifier_property.name
 
     @classmethod
     def oi_update_dialog(cls):
@@ -626,13 +630,13 @@ class Object(som_gui.core.tool.Object):
         else:
             line_edit.setEnabled(True)
 
-        if not obj.ident_attrib:
+        if not obj.identifier_property:
             line_edit.setText("")
             return
-        if not obj.ident_attrib.property_set:
+        if not obj.identifier_property.property_set:
             line_edit.setText("")
             return
-        line_edit.setText(obj.ident_attrib.property_set.name)
+        line_edit.setText(obj.identifier_property.property_set.name)
 
     @classmethod
     def fill_object_attribute_line_edit(
@@ -645,10 +649,10 @@ class Object(som_gui.core.tool.Object):
         else:
             line_edit.setEnabled(True)
 
-        if not obj.ident_attrib:
+        if not obj.identifier_property:
             line_edit.setText("")
             return
-        line_edit.setText(obj.ident_attrib.name)
+        line_edit.setText(obj.identifier_property.name)
 
     @classmethod
     def add_object_activate_function(cls, func: Callable):

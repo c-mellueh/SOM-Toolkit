@@ -98,7 +98,7 @@ class SOMPropertySet(Hirarchy):
     def delete(self, recursive: bool = False, override_ident_deletion=False) -> None:
         ident_attrib = None
         if self.object is not None:
-            ident_attrib = self.object.ident_attrib
+            ident_attrib = self.object.identifier_property
 
         if (
             ident_attrib in self.get_attributes(filter=False)

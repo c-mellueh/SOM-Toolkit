@@ -30,7 +30,7 @@ def create_mapping_script(project: SOMcreator.Project, pset_name: str, path: str
     attrib_dict = dict()
     obj: SOMcreator.SOMClass
     for obj in project.get_objects(filter=True):
-        klass = obj.ident_attrib.value[0]
+        klass = obj.identifier_property.value[0]
         obj_dict = dict()
         for pset in obj.get_property_sets(filter=True):
             pset_dict = dict()

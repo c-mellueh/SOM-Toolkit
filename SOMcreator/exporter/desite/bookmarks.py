@@ -17,14 +17,14 @@ def _handle_bookmark_list(proj: SOMcreator.Project) -> etree.ElementTree:
         xml_bookmark = etree.SubElement(xml_bookmark_list, "cBookmark")
         xml_bookmark.set("ID", str(obj.uuid))
 
-        if isinstance(obj.ident_attrib, SOMcreator.SOMProperty):
-            xml_bookmark.set("name", str(obj.ident_attrib.value[0]))
+        if isinstance(obj.identifier_property, SOMcreator.SOMProperty):
+            xml_bookmark.set("name", str(obj.identifier_property.value[0]))
 
         xml_bookmark.set("bkmType", "2")
         xml_col = etree.SubElement(xml_bookmark, "col")
         xml_col.set("v", "Type##xs:string")
 
-        attribute = obj.ident_attrib
+        attribute = obj.identifier_property
         if attribute is None:
             continue
         xml_col = etree.SubElement(xml_bookmark, "col")
@@ -34,7 +34,7 @@ def _handle_bookmark_list(proj: SOMcreator.Project) -> etree.ElementTree:
 
         for property_set in obj.get_property_sets(filter=True):
             for attribute in property_set.get_attributes(filter=True):
-                if attribute != obj.ident_attrib:
+                if attribute != obj.identifier_property:
                     xml_col = etree.SubElement(xml_bookmark, "col")
                     data_type = xml.transform_data_format(attribute.data_type)
                     text = f"{property_set.name}:{attribute.name}##{data_type}"

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -93,15 +93,15 @@ class Ui_MainWindow(object):
 
         self.gridLayout_objects.addWidget(self.label_object_name, 0, 1, 1, 1)
 
-        self.lineEdit_ident_attribute = QLineEdit(self.layoutWidget)
-        self.lineEdit_ident_attribute.setObjectName(u"lineEdit_ident_attribute")
-        sizePolicy.setHeightForWidth(self.lineEdit_ident_attribute.sizePolicy().hasHeightForWidth())
-        self.lineEdit_ident_attribute.setSizePolicy(sizePolicy)
-        self.lineEdit_ident_attribute.setFrame(True)
-        self.lineEdit_ident_attribute.setEchoMode(QLineEdit.EchoMode.Normal)
-        self.lineEdit_ident_attribute.setCursorMoveStyle(Qt.CursorMoveStyle.LogicalMoveStyle)
+        self.lineEdit_ident_property = QLineEdit(self.layoutWidget)
+        self.lineEdit_ident_property.setObjectName(u"lineEdit_ident_property")
+        sizePolicy.setHeightForWidth(self.lineEdit_ident_property.sizePolicy().hasHeightForWidth())
+        self.lineEdit_ident_property.setSizePolicy(sizePolicy)
+        self.lineEdit_ident_property.setFrame(True)
+        self.lineEdit_ident_property.setEchoMode(QLineEdit.EchoMode.Normal)
+        self.lineEdit_ident_property.setCursorMoveStyle(Qt.CursorMoveStyle.LogicalMoveStyle)
 
-        self.gridLayout_objects.addWidget(self.lineEdit_ident_attribute, 1, 3, 1, 1)
+        self.gridLayout_objects.addWidget(self.lineEdit_ident_property, 1, 3, 1, 1)
 
         self.button_search = QPushButton(self.layoutWidget)
         self.button_search.setObjectName(u"button_search")
@@ -250,8 +250,8 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
         QWidget.setTabOrder(self.line_edit_object_name, self.lineEdit_ident_pSet)
-        QWidget.setTabOrder(self.lineEdit_ident_pSet, self.lineEdit_ident_attribute)
-        QWidget.setTabOrder(self.lineEdit_ident_attribute, self.lineEdit_ident_value)
+        QWidget.setTabOrder(self.lineEdit_ident_pSet, self.lineEdit_ident_property)
+        QWidget.setTabOrder(self.lineEdit_ident_property, self.lineEdit_ident_value)
         QWidget.setTabOrder(self.lineEdit_ident_value, self.button_objects_add)
         QWidget.setTabOrder(self.button_objects_add, self.tree_object)
         QWidget.setTabOrder(self.tree_object, self.button_search)
@@ -285,9 +285,9 @@ class Ui_MainWindow(object):
         self.lineEdit_ident_pSet.setPlaceholderText(QCoreApplication.translate("MainWindow", u"PropertySet", None))
         self.label_object_name.setText(QCoreApplication.translate("MainWindow", u"Object", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_ident_attribute.setToolTip(QCoreApplication.translate("MainWindow", u"Name of Attribute which owns the identifier value", None))
+        self.lineEdit_ident_property.setToolTip(QCoreApplication.translate("MainWindow", u"Name of Attribute which owns the identifier value", None))
 #endif // QT_CONFIG(tooltip)
-        self.lineEdit_ident_attribute.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
+        self.lineEdit_ident_property.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Attribute", None))
         self.button_search.setText("")
 #if QT_CONFIG(tooltip)
         self.lineEdit_ident_value.setToolTip(QCoreApplication.translate("MainWindow", u"Needs to be unique!", None))

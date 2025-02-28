@@ -202,7 +202,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             brush = palette.base()
         elif not attribute.property_set.object:
             brush = palette.base()
-        elif attribute.property_set.object.ident_attrib == attribute:
+        elif attribute.property_set.object.identifier_property == attribute:
             brush = palette.mid()
         else:
             brush = palette.base()
@@ -311,7 +311,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
         # stop user from deleting identifier attribute
         obj = cls.get_property_set_by_table(table).object
-        ident_attrib = None if obj is None else obj.ident_attrib
+        ident_attrib = None if obj is None else obj.identifier_property
         if ident_attrib in cls.get_selected_attributes(table):
             return None
 

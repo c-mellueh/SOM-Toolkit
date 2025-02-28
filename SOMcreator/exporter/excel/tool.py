@@ -40,7 +40,7 @@ class ExportExcel:
     @classmethod
     def set_ident_values(cls, pset_name: str, attribute_name: str):
         cls.get_properties().ident_pset_name = pset_name
-        cls.get_properties().ident_attribute_name = attribute_name
+        cls.get_properties().ident_property_name = attribute_name
 
     @classmethod
     def get_ident_pset_name(cls) -> str:
@@ -50,11 +50,11 @@ class ExportExcel:
         return cls.get_properties().ident_pset_name
 
     @classmethod
-    def get_ident_attribute_name(cls) -> str:
-        if cls.get_properties().ident_attribute_name is None:
+    def get_ident_property_name(cls) -> str:
+        if cls.get_properties().ident_property_name is None:
             pset_name, attribute_name = cls.get_project().get_main_attribute()
-            cls.get_properties().ident_attribute_name = attribute_name
-        return cls.get_properties().ident_attribute_name
+            cls.get_properties().ident_property_name = attribute_name
+        return cls.get_properties().ident_property_name
 
     @classmethod
     def get_object_data(cls, data_dict):
