@@ -4,6 +4,7 @@
 ## Form generated from reading UI file 'InfoWidget.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -57,17 +58,17 @@ class Ui_ObjectInfo(object):
 
         self.verticalLayout.addLayout(self.horizontal_layout_group)
 
-        self.layout_ident_attribute = QHBoxLayout()
-        self.layout_ident_attribute.setObjectName(u"layout_ident_attribute")
+        self.layout_ident_property = QHBoxLayout()
+        self.layout_ident_property.setObjectName(u"layout_ident_property")
         self.combo_box_pset = QComboBox(ObjectInfo)
         self.combo_box_pset.setObjectName(u"combo_box_pset")
 
-        self.layout_ident_attribute.addWidget(self.combo_box_pset)
+        self.layout_ident_property.addWidget(self.combo_box_pset)
 
         self.combo_box_attribute = QComboBox(ObjectInfo)
         self.combo_box_attribute.setObjectName(u"combo_box_attribute")
 
-        self.layout_ident_attribute.addWidget(self.combo_box_attribute)
+        self.layout_ident_property.addWidget(self.combo_box_attribute)
 
         self.line_edit_attribute_value = QLineEdit(ObjectInfo)
         self.line_edit_attribute_value.setObjectName(u"line_edit_attribute_value")
@@ -77,10 +78,10 @@ class Ui_ObjectInfo(object):
         sizePolicy1.setHeightForWidth(self.line_edit_attribute_value.sizePolicy().hasHeightForWidth())
         self.line_edit_attribute_value.setSizePolicy(sizePolicy1)
 
-        self.layout_ident_attribute.addWidget(self.line_edit_attribute_value)
+        self.layout_ident_property.addWidget(self.line_edit_attribute_value)
 
 
-        self.verticalLayout.addLayout(self.layout_ident_attribute)
+        self.verticalLayout.addLayout(self.layout_ident_property)
 
         self.vertical_layout_ifc_box = QVBoxLayout()
         self.vertical_layout_ifc_box.setObjectName(u"vertical_layout_ifc_box")
@@ -117,6 +118,7 @@ class Ui_ObjectInfo(object):
         self.vertical_layout_ifc.setObjectName(u"vertical_layout_ifc")
 
         self.vertical_layout_ifc_box.addLayout(self.vertical_layout_ifc)
+
 
 
         self.verticalLayout.addLayout(self.vertical_layout_ifc_box)

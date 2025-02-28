@@ -4,7 +4,14 @@ import ctypes
 from typing import Callable, TYPE_CHECKING
 
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QApplication, QHBoxLayout, QLineEdit, QMenu, QMenuBar, QStatusBar
+from PySide6.QtWidgets import (
+    QApplication,
+    QHBoxLayout,
+    QLineEdit,
+    QMenu,
+    QMenuBar,
+    QStatusBar,
+)
 
 import som_gui
 import som_gui.core.tool
@@ -160,7 +167,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
 
     @classmethod
     def get_attribute_name_line_edit(cls) -> QLineEdit:
-        return cls.get_ui().lineEdit_ident_attribute
+        return cls.get_ui().lineEdit_ident_property
 
     @classmethod
     def get_object_name_line_edit(cls):

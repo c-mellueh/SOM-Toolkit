@@ -17,35 +17,70 @@ if TYPE_CHECKING:
     from PySide6.QtCore import QPoint
 
 
-def init_main_window(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow]) -> None:
+def init_main_window(
+    object_tool: Type[tool.Object], main_window: Type[tool.MainWindow]
+) -> None:
     tree = object_tool.get_object_tree()
     tree.setColumnCount(0)
-    object_tool.add_column_to_tree(lambda: QCoreApplication.translate("Object", "Object"), 0,
-                                   lambda o: getattr(o, "name"))
-    object_tool.add_column_to_tree(lambda: QCoreApplication.translate("Object", "Identifier"), 1,
-                                   lambda o: getattr(o, "ident_value"))
-    object_tool.add_column_to_tree(lambda: QCoreApplication.translate("Object", "Optional"), 2,
-                                   lambda o: o.is_optional(ignore_hirarchy=True),
-                                   object_tool.set_object_optional_by_tree_item_state)
+    object_tool.add_column_to_tree(
+        lambda: QCoreApplication.translate("Object", "Object"),
+        0,
+        lambda o: getattr(o, "name"),
+    )
+    object_tool.add_column_to_tree(
+        lambda: QCoreApplication.translate("Object", "Identifier"),
+        1,
+        lambda o: getattr(o, "ident_value"),
+    )
+    object_tool.add_column_to_tree(
+        lambda: QCoreApplication.translate("Object", "Optional"),
+        2,
+        lambda o: o.is_optional(ignore_hirarchy=True),
+        object_tool.set_object_optional_by_tree_item_state,
+    )
 
-    object_tool.add_object_activate_function(lambda o: main_window.get_object_name_line_edit().setText(o.name))
+    object_tool.add_object_activate_function(
+        lambda o: main_window.get_object_name_line_edit().setText(o.name)
+    )
     pset_le = main_window.get_ident_pset_name_line_edit()
     attribute_e = main_window.get_attribute_name_line_edit()
-    object_tool.add_object_activate_function(lambda o: object_tool.fill_object_property_set_line_edit(pset_le, o))
-    object_tool.add_object_activate_function(lambda o: object_tool.fill_object_attribute_line_edit(attribute_e, o))
-    object_tool.add_object_activate_function(lambda o: main_window.get_ident_value_line_edit().setText(o.ident_value))
+    object_tool.add_object_activate_function(
+        lambda o: object_tool.fill_object_property_set_line_edit(pset_le, o)
+    )
+    object_tool.add_object_activate_function(
+        lambda o: object_tool.fill_object_attribute_line_edit(attribute_e, o)
+    )
+    object_tool.add_object_activate_function(
+        lambda o: main_window.get_ident_value_line_edit().setText(o.ident_value)
+    )
 
-    object_tool.add_objects_infos_add_function("name", main_window.get_object_name_line_edit().text)
+    object_tool.add_objects_infos_add_function(
+        "name", main_window.get_object_name_line_edit().text
+    )
     object_tool.add_objects_infos_add_function("is_group", lambda: False)
-    object_tool.add_objects_infos_add_function("ident_pset_name", main_window.get_ident_pset_name_line_edit().text)
-    object_tool.add_object_creation_check("ident_pset_name", object_tool.check_if_ident_pset_is_valid)
+    object_tool.add_objects_infos_add_function(
+        "ident_pset_name", main_window.get_ident_pset_name_line_edit().text
+    )
+    object_tool.add_object_creation_check(
+        "ident_pset_name", object_tool.check_if_ident_pset_is_valid
+    )
 
-    object_tool.add_objects_infos_add_function("ident_attribute_name", main_window.get_attribute_name_line_edit().text)
-    object_tool.add_object_creation_check("ident_attribute_name", object_tool.check_if_ident_attribute_is_valid)
+    object_tool.add_objects_infos_add_function(
+        "ident_property_name", main_window.get_attribute_name_line_edit().text
+    )
+    object_tool.add_object_creation_check(
+        "ident_property_name", object_tool.check_if_ident_property_is_valid
+    )
 
-    object_tool.add_objects_infos_add_function("ident_value", main_window.get_ident_value_line_edit().text)
-    object_tool.add_object_creation_check("ident_value", object_tool.check_if_identifier_is_unique)
-    object_tool.add_objects_infos_add_function("ifc_mappings", lambda: ["IfcBuildingElementProxy"])
+    object_tool.add_objects_infos_add_function(
+        "ident_value", main_window.get_ident_value_line_edit().text
+    )
+    object_tool.add_object_creation_check(
+        "ident_value", object_tool.check_if_identifier_is_unique
+    )
+    object_tool.add_objects_infos_add_function(
+        "ifc_mappings", lambda: ["IfcBuildingElementProxy"]
+    )
 
 
 def retranslate_ui(object_tool: Type[tool.Object]) -> None:
@@ -54,39 +89,64 @@ def retranslate_ui(object_tool: Type[tool.Object]) -> None:
         header.setText(column, name)
 
 
-def connect_object_input_widget(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
-                                predefined_pset: Type[tool.PredefinedPropertySet]):
+def connect_object_input_widget(
+    object_tool: Type[tool.Object],
+    main_window: Type[tool.MainWindow],
+    predefined_pset: Type[tool.PredefinedPropertySet],
+):
     main_window.get_ui().lineEdit_ident_pSet.textChanged.connect(
-        lambda: ident_pset_changed(object_tool, main_window, predefined_pset))
-    main_window.get_ui().lineEdit_ident_attribute.textChanged.connect(
-        lambda: ident_attribute_changed(object_tool, main_window, predefined_pset))
+        lambda: ident_pset_changed(object_tool, main_window, predefined_pset)
+    )
+    main_window.get_ui().lineEdit_ident_property.textChanged.connect(
+        lambda: ident_property_changed(object_tool, main_window, predefined_pset)
+    )
 
 
-def ident_pset_changed(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
-                       predefined_pset: Type[tool.PredefinedPropertySet]):
+def ident_pset_changed(
+    object_tool: Type[tool.Object],
+    main_window: Type[tool.MainWindow],
+    predefined_pset: Type[tool.PredefinedPropertySet],
+):
     pset_names = sorted([p.name for p in predefined_pset.get_property_sets()])
     object_tool.create_completer(pset_names, main_window.get_ui().lineEdit_ident_pSet)
 
 
-def ident_attribute_changed(object_tool: Type[tool.Object], main_window: Type[tool.MainWindow],
-                            predefined_pset: Type[tool.PredefinedPropertySet]):
+def ident_property_changed(
+    object_tool: Type[tool.Object],
+    main_window: Type[tool.MainWindow],
+    predefined_pset: Type[tool.PredefinedPropertySet],
+):
     ident_pset_name = object_tool.get_object_infos()["ident_pset_name"]
-    predefined_pset: SOMcreator.PropertySet = {p.name: p for p in predefined_pset.get_property_sets()}.get(
-        ident_pset_name)
+    predefined_pset: SOMcreator.SOMPropertySet = {
+        p.name: p for p in predefined_pset.get_property_sets()
+    }.get(ident_pset_name)
     attribute_names = list()
     if predefined_pset:
         attribute_names = [a.name for a in predefined_pset.get_attributes(filter=True)]
-    object_tool.create_completer(attribute_names, main_window.get_ui().lineEdit_ident_attribute)
+    object_tool.create_completer(
+        attribute_names, main_window.get_ui().lineEdit_ident_property
+    )
 
 
-def add_shortcuts(object_tool: Type[Object], util: Type[tool.Util], search_tool: Type[Search],
-                  main_window: Type[tool.MainWindow],project:Type[tool.Project]):
+def add_shortcuts(
+    object_tool: Type[Object],
+    util: Type[tool.Util],
+    search_tool: Type[Search],
+    main_window: Type[tool.MainWindow],
+    project: Type[tool.Project],
+):
     util.add_shortcut("Ctrl+X", main_window.get(), object_tool.delete_selection)
     util.add_shortcut("Ctrl+G", main_window.get(), object_tool.group_selection)
-    util.add_shortcut("Ctrl+F", main_window.get(), lambda: search_object(search_tool, object_tool,project))
+    util.add_shortcut(
+        "Ctrl+F",
+        main_window.get(),
+        lambda: search_object(search_tool, object_tool, project),
+    )
 
 
-def search_object(search_tool: Type[Search], object_tool: Type[Object],project:Type[tool.Project]):
+def search_object(
+    search_tool: Type[Search], object_tool: Type[Object], project: Type[tool.Project]
+):
     obj = search_tool.search_object(list(project.get().get_objects(filter=True)))
     object_tool.select_object(obj)
 
@@ -99,13 +159,17 @@ def resize_columns(object_tool: Type[Object]):
     object_tool.resize_tree()
 
 
-def create_object_info_widget(mode: int, object_tool: Type[Object], util: Type[tool.Util]):
+def create_object_info_widget(
+    mode: int, object_tool: Type[Object], util: Type[tool.Util]
+):
     dialog = object_tool.oi_create_dialog()
     title = QCoreApplication.translate("ObjectInfo", "Object Info")
     dialog.setWindowTitle(util.get_window_title(title))
     widget = dialog.widget
     widget.button_add_ifc.pressed.connect(lambda: object_info_add_ifc(object_tool))
-    widget.combo_box_pset.currentIndexChanged.connect(lambda: object_info_pset_changed(object_tool))
+    widget.combo_box_pset.currentIndexChanged.connect(
+        lambda: object_info_pset_changed(object_tool)
+    )
     object_tool.oi_fill_properties(mode=mode)
     object_tool.oi_update_dialog()
     if dialog.exec():
@@ -130,7 +194,11 @@ def object_info_refresh(object_tool: Type[Object]):
     object_tool.oi_set_values(data_dict)
     ident_value = data_dict["ident_value"]
     group = data_dict["is_group"]
-    ident_filter = object_tool.get_active_object().ident_value if object_tool.oi_get_mode() == 1 else None
+    ident_filter = (
+        object_tool.get_active_object().ident_value
+        if object_tool.oi_get_mode() == 1
+        else None
+    )
     if not object_tool.is_identifier_allowed(ident_value, ident_filter):
         object_tool.oi_set_ident_value_color("red")
     else:
@@ -148,25 +216,49 @@ def object_info_add_ifc(object_tool: Type[Object]):
 
 def load_context_menus(object_tool: Type[Object], util: Type[tool.Util]):
     object_tool.clear_context_menu_list()
-    object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Copy"),
-                                       lambda: create_object_info_widget(2, object_tool, util), True, False)
-    object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Delete"),
-                                       object_tool.delete_selection, True, True)
-    object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Extend"),
-                                       object_tool.expand_selection, True, True)
-    object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Collapse"),
-                                       object_tool.collapse_selection, True, True)
-    object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Group"),
-                                       lambda: create_group(object_tool), True, True)
-    object_tool.add_context_menu_entry(lambda: QCoreApplication.translate("Object", "Info"),
-                                       lambda: create_object_info_widget(1, object_tool, util), True, False)
+    object_tool.add_context_menu_entry(
+        lambda: QCoreApplication.translate("Object", "Copy"),
+        lambda: create_object_info_widget(2, object_tool, util),
+        True,
+        False,
+    )
+    object_tool.add_context_menu_entry(
+        lambda: QCoreApplication.translate("Object", "Delete"),
+        object_tool.delete_selection,
+        True,
+        True,
+    )
+    object_tool.add_context_menu_entry(
+        lambda: QCoreApplication.translate("Object", "Extend"),
+        object_tool.expand_selection,
+        True,
+        True,
+    )
+    object_tool.add_context_menu_entry(
+        lambda: QCoreApplication.translate("Object", "Collapse"),
+        object_tool.collapse_selection,
+        True,
+        True,
+    )
+    object_tool.add_context_menu_entry(
+        lambda: QCoreApplication.translate("Object", "Group"),
+        lambda: create_group(object_tool),
+        True,
+        True,
+    )
+    object_tool.add_context_menu_entry(
+        lambda: QCoreApplication.translate("Object", "Info"),
+        lambda: create_object_info_widget(1, object_tool, util),
+        True,
+        False,
+    )
 
 
 def create_group(object_tool: Type[Object]):
     d = {
-        "name":         QCoreApplication.translate("Object", "NewGroup"),
-        "is_group":     True,
-        "ifc_mappings": ["IfcGroup"]
+        "name": QCoreApplication.translate("Object", "NewGroup"),
+        "is_group": True,
+        "ifc_mappings": ["IfcGroup"],
     }
     is_allowed = object_tool.check_object_creation_input(d)
     if not is_allowed:
@@ -202,7 +294,9 @@ def item_changed(item: QTreeWidgetItem, object_tool: Type[Object]):
     pass
 
 
-def item_selection_changed(object_tool: Type[Object], property_set_tool: Type[PropertySet]):
+def item_selection_changed(
+    object_tool: Type[Object], property_set_tool: Type[PropertySet]
+):
     selected_items = object_tool.get_selected_items()
     if len(selected_items) == 1:
         obj = object_tool.get_object_from_item(selected_items[0])
@@ -218,8 +312,14 @@ def item_selection_changed(object_tool: Type[Object], property_set_tool: Type[Pr
 def item_dropped_on(pos: QPoint, object_tool: Type[Object]):
     selected_items = object_tool.get_selected_items()
     dropped_on_item = object_tool.get_item_from_pos(pos)
-    dropped_objects = [object_tool.get_object_from_item(item) for item in selected_items]
-    dropped_objects = [o for o in dropped_objects if o.parent not in dropped_objects or o.parent is None]
+    dropped_objects = [
+        object_tool.get_object_from_item(item) for item in selected_items
+    ]
+    dropped_objects = [
+        o
+        for o in dropped_objects
+        if o.parent not in dropped_objects or o.parent is None
+    ]
     if dropped_on_item is None:
         for obj in dropped_objects:
             obj.remove_parent()
@@ -236,9 +336,13 @@ def item_dropped_on(pos: QPoint, object_tool: Type[Object]):
             obj.parent = dropped_on_object
 
 
-def add_object_clicked(object_tool: Type[Object], project: Type[Project],
-                       property_set: Type[tool.PropertySet], predefined_property_set: Type[tool.PredefinedPropertySet],
-                       popup: Type[tool.Popups]):
+def add_object_clicked(
+    object_tool: Type[Object],
+    project: Type[Project],
+    property_set: Type[tool.PropertySet],
+    predefined_property_set: Type[tool.PredefinedPropertySet],
+    popup: Type[tool.Popups],
+):
     object_infos = object_tool.get_object_infos()
     is_allowed = object_tool.check_object_creation_input(object_infos)
     if not is_allowed:
@@ -259,12 +363,18 @@ def add_object_clicked(object_tool: Type[Object], project: Type[Project],
         parent = None
 
     pset = property_set.create_property_set(pset_name, None, parent)
-    attribute_name = object_infos["ident_attribute_name"]
-    attribute: SOMcreator.Attribute = {a.name: a for a in pset.get_attributes(filter=True)}.get(attribute_name)
+    attribute_name = object_infos["ident_property_name"]
+    attribute: SOMcreator.SOMProperty = {
+        a.name: a for a in pset.get_attributes(filter=True)
+    }.get(attribute_name)
 
     if not attribute:
-        attribute = SOMcreator.Attribute(pset, attribute_name, [object_infos["ident_value"]],
-                                         SOMcreator.value_constants.LIST)
+        attribute = SOMcreator.SOMProperty(
+            pset,
+            attribute_name,
+            [object_infos["ident_value"]],
+            SOMcreator.value_constants.LIST,
+        )
     else:
         attribute.value = [object_infos["ident_value"]]
 

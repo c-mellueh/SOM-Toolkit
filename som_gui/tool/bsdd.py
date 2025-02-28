@@ -12,7 +12,15 @@ if TYPE_CHECKING:
 import som_gui.core.tool
 import som_gui
 from som_gui.module.bsdd import ui
-from PySide6.QtWidgets import QCheckBox, QComboBox, QFormLayout, QWidget, QToolBox, QLineEdit, QLabel
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QFormLayout,
+    QWidget,
+    QToolBox,
+    QLineEdit,
+    QLabel,
+)
 from PySide6.QtGui import QAction
 from som_gui.module.bsdd import trigger, constants
 
@@ -38,8 +46,6 @@ class Bsdd(som_gui.core.tool.Bsdd):
         cls.clear_toolbox()
         return widget
 
-
-
     @classmethod
     def clear_toolbox(cls):
         """
@@ -60,46 +66,61 @@ class Bsdd(som_gui.core.tool.Bsdd):
         a line will be added to the widget. As far as the datatype is string bool oder datetime others need to be implemented.
         :return: DictionaryWidget
         """
-        #add Layout to Widget
+        # add Layout to Widget
         widget = cls.get_properties().dictionary_widget = ui.DictionaryWidget()
         widget.setLayout(QFormLayout())
         layout: QFormLayout = widget.layout()
 
-        #list all Attributes which aren't lists of elements
+        # list all Attributes which aren't lists of elements
         presets = cls.get_dict_presets()
-        attributes = [(f.name, f.type, presets.get(f.name)) for f in fields(Dictionary) if
-                      f.name not in ["Classes", "Properties"]]
+        attributes = [
+            (f.name, f.type, presets.get(f.name))
+            for f in fields(Dictionary)
+            if f.name not in ["Classes", "Properties"]
+        ]
 
-        #Fill QFormLayout
-        for index, (name, datatype, preset) in enumerate(attributes): #Iterate over all attributes
+        # Fill QFormLayout
+        for index, (name, datatype, preset) in enumerate(
+            attributes
+        ):  # Iterate over all attributes
             if datatype == "str":
                 if preset is None:
-                    #create input line
+                    # create input line
                     w = QLineEdit()
-                    w.textChanged.connect(lambda text, n=name: trigger.dict_attribute_changed(text, n))
+                    w.textChanged.connect(
+                        lambda text, n=name: trigger.dict_attribute_changed(text, n)
+                    )
                 else:
-                    #create text dropdown
+                    # create text dropdown
                     w = QComboBox()
                     w.addItems(preset)
-                    w.currentTextChanged.connect(lambda text, n=name: trigger.dict_attribute_changed(text, n))
+                    w.currentTextChanged.connect(
+                        lambda text, n=name: trigger.dict_attribute_changed(text, n)
+                    )
 
             # create checkbox
             elif datatype == "bool":
                 w = QCheckBox()
-                w.checkStateChanged.connect(lambda state, n=name: trigger.dict_attribute_changed(state, n))
+                w.checkStateChanged.connect(
+                    lambda state, n=name: trigger.dict_attribute_changed(state, n)
+                )
 
             # create input line
             elif datatype == "datetime":
                 w = QLineEdit()
-                w.textChanged.connect(lambda text, n=name: trigger.dict_attribute_changed(text, n))
+                w.textChanged.connect(
+                    lambda text, n=name: trigger.dict_attribute_changed(text, n)
+                )
 
             # handle exceptions
             else:
                 logging.info(f"Datatype: '{datatype}' not supported")
                 w = QLineEdit()
-                w.textChanged.connect(lambda text, n=name: trigger.dict_attribute_changed(text, n))
+                w.textChanged.connect(
+                    lambda text, n=name: trigger.dict_attribute_changed(text, n)
+                )
 
-            #fill line of QFormLayout
+            # fill line of QFormLayout
             cls.set_linked_attribute_name(w, name)
             layout.setWidget(index, QFormLayout.ItemRole.FieldRole, w)
             layout.setWidget(index, QFormLayout.ItemRole.LabelRole, QLabel(name))
@@ -116,7 +137,7 @@ class Bsdd(som_gui.core.tool.Bsdd):
         cls.get_properties().tab_list.append((name, widget))
 
     @classmethod
-    def transform_project_to_dict(cls, proj: SOMcreator.Project):
+    def transform_project_to_dict(cls, proj: SOMcreator.SOMProject):
         """
         Grabs Project Settings and writes them into the BsDD Dictionary
         Won't write Object Classes or Attributes
@@ -155,17 +176,18 @@ class Bsdd(som_gui.core.tool.Bsdd):
     def reset_properties(cls):
         cls.get_properties().dictionary.Properties = list()
 
-
     @classmethod
     def reset_dictionary(cls):
         cls.get_properties().dictionary = None
 
     @classmethod
-    def add_objects_to_dictionary(cls, project: SOMcreator.Project):
+    def add_objects_to_dictionary(cls, project: SOMcreator.SOMProject):
         dictionary = cls.get_dictionary()
         objects = list(project.get_objects(filter=True))
         predefined_psets = list(project.get_predefined_psets(filter=False))
-        SOMcreator.exporter.bsdd.transform_objects_to_classes(dictionary, objects, predefined_psets)
+        SOMcreator.exporter.bsdd.transform_objects_to_classes(
+            dictionary, objects, predefined_psets
+        )
 
     @classmethod
     def export_to_json(cls, path: str | os.PathLike):
@@ -183,23 +205,23 @@ class Bsdd(som_gui.core.tool.Bsdd):
     @classmethod
     def get_dict_presets(cls):
         return {
-            'OrganizationCode':             None,
-            'DictionaryCode':               None,
-            'DictionaryName':               None,
-            'DictionaryVersion':            None,
-            'LanguageIsoCode':              constants.LANGUAGE_ISO_CODES,
-            'LanguageOnly':                 None,
-            'UseOwnUri':                    None,
-            'DictionaryUri':                None,
-            'License':                      None,
-            'LicenseUrl':                   None,
-            'ChangeRequestEmailAddress':    None,
-            'ModelVersion':                 ["1.0", "2.0"],
-            'MoreInfoUrl':                  None,
-            'QualityAssuranceProcedure':    None,
-            'QualityAssuranceProcedureUrl': None,
-            'ReleaseDate':                  None,
-            'Status':                       ["Preview", "Active", "Inactive"],
+            "OrganizationCode": None,
+            "DictionaryCode": None,
+            "DictionaryName": None,
+            "DictionaryVersion": None,
+            "LanguageIsoCode": constants.LANGUAGE_ISO_CODES,
+            "LanguageOnly": None,
+            "UseOwnUri": None,
+            "DictionaryUri": None,
+            "License": None,
+            "LicenseUrl": None,
+            "ChangeRequestEmailAddress": None,
+            "ModelVersion": ["1.0", "2.0"],
+            "MoreInfoUrl": None,
+            "QualityAssuranceProcedure": None,
+            "QualityAssuranceProcedureUrl": None,
+            "ReleaseDate": None,
+            "Status": ["Preview", "Active", "Inactive"],
         }
 
     @classmethod
@@ -214,14 +236,17 @@ class Bsdd(som_gui.core.tool.Bsdd):
     def is_update_blocked(cls):
         layout: QFormLayout = cls.get_dictionary_widget().layout()
         for row in range(layout.rowCount()):
-            item = layout.itemAt(row * 2).widget() #get Value Widget "*2" is needed because QFormLayout item handling
-            if not isinstance(item,QLineEdit):
+            item = layout.itemAt(
+                row * 2
+            ).widget()  # get Value Widget "*2" is needed because QFormLayout item handling
+            if not isinstance(item, QLineEdit):
                 continue
             if item.hasFocus():
-                logging.debug(f"{cls.get_linked_attribute_name(item)} has focus.")  
+                logging.debug(f"{cls.get_linked_attribute_name(item)} has focus.")
                 return True
-            
+
         return False
+
     @classmethod
     def get_export_path(cls) -> str:
         return cls.get_path_line_edit().text()

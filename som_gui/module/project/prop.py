@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable, TYPE_CHECKING
 
-from SOMcreator import Project
+from SOMcreator import SOMProject
 
 if TYPE_CHECKING:
     from . import ui
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class ProjectProperties:
-    active_project: Project | None = None
+    active_project: SOMProject | None = None
     shourtcuts: list = list()
     plugin_save_functions: list[Callable] = list()
     settings_general_widget: ui.SettingsGeneral = None

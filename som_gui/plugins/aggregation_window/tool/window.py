@@ -40,11 +40,15 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
     def connect_menu(cls, window: ui_window.AggregationWindow):
         window.ui.actionAdd_View.triggered.connect(trigger.create_new_scene)
         window.ui.actionRename_View.triggered.connect(trigger.rename_view)
-        window.ui.actionDelete_current_View.triggered.connect(trigger.delete_active_scene)
+        window.ui.actionDelete_current_View.triggered.connect(
+            trigger.delete_active_scene
+        )
         window.ui.actionFilter_View.triggered.connect(trigger.filter_scenes)
         window.ui.actionReset_Filter.triggered.connect(trigger.reset_filters)
         window.ui.actionSearch_for_Node.triggered.connect(trigger.find_aggregation)
-        window.ui.actionCopy_selected_Nodes.triggered.connect(trigger.copy_selected_nodes)
+        window.ui.actionCopy_selected_Nodes.triggered.connect(
+            trigger.copy_selected_nodes
+        )
         window.ui.actionPaste_Nodes.triggered.connect(trigger.paste_nodes)
 
     @classmethod
@@ -109,7 +113,7 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
         cls.get_properties().allowed_scenes = scene_list
 
     @classmethod
-    def set_filter_object(cls, obj: SOMcreator.Object | None) -> None:
+    def set_filter_object(cls, obj: SOMcreator.SOMClass | None) -> None:
         cls.get_properties().filter_object = obj
 
     @classmethod
@@ -121,6 +125,8 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
         filter_object = cls.get_properties().filter_object
         texts = list()
         if filter_object is not None:
-            status_text = QCoreApplication.translate("Aggregation", "Filter by {}").format(filter_object.name)
+            status_text = QCoreApplication.translate(
+                "Aggregation", "Filter by {}"
+            ).format(filter_object.name)
             texts.append(status_text)
         return " | ".join(texts)

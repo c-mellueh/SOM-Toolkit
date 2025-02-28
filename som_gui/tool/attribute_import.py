@@ -113,7 +113,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         cls,
         combobox: QComboBox,
         allowed_values: set[str],
-        object_list: list[SOMcreator.Object],
+        object_list: list[SOMcreator.SOMClass],
     ):
         cls.lock_updating("SOM ComboBox")
         all_keyword = cls.get_all_keyword()
@@ -394,8 +394,8 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def build_attribute_dict(
-        cls, objects: list[SOMcreator.Object]
-    ) -> dict[str, dict[str, dict[str, SOMcreator.Attribute]]]:
+        cls, objects: list[SOMcreator.SOMClass]
+    ) -> dict[str, dict[str, dict[str, SOMcreator.SOMProperty]]]:
         result_dict = dict()
         for obj in objects:
             object_dict = dict()
@@ -477,7 +477,7 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         cls.get_properties().main_attribute = main_attribute_name
 
     @classmethod
-    def get_main_attribute(cls) -> str:
+    def get_main_property(cls) -> str:
         return cls.get_properties().main_attribute
 
     @classmethod
@@ -672,7 +672,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.commit_sql()
 
     @classmethod
-    def fill_filter_table(cls, project: SOMcreator.Project):
+    def fill_filter_table(cls, project: SOMcreator.SOMProject):
         def add_table_entry(entity: SOMcreator.UseCase | SOMcreator.Phase):
             cursor = cls.get_cursor()
             headers = ",".join(FILTER_TABLE_HEADER)
@@ -706,7 +706,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def add_attribute_to_filter_table(
-        cls, project: SOMcreator.Project, attribute: SOMcreator.Attribute
+        cls, project: SOMcreator.SOMProject, attribute: SOMcreator.SOMProperty
     ):
         use_case_list = project.get_usecases()
         phase_list = project.get_phases()
@@ -734,8 +734,8 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.disconnect_from_database()
 
     @classmethod
-    def get_attribute_data(cls, attribute: SOMcreator.Attribute):
-        identifier = attribute.property_set.object.ident_value
+    def get_attribute_data(cls, attribute: SOMcreator.SOMProperty):
+        identifier = attribute.property_set.som_class.ident_value
         propertyset = attribute.property_set.name
         attribute_name = attribute.name
         valuetype = attribute.value_type
@@ -743,7 +743,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return identifier, propertyset, attribute_name, valuetype, datatype
 
     @classmethod
-    def add_attribute_without_value(cls, attribute: SOMcreator.Attribute):
+    def add_attribute_without_value(cls, attribute: SOMcreator.SOMProperty):
         identifier, propertyset, attribute_name, valuetype, datatype = (
             cls.get_attribute_data(attribute)
         )
@@ -758,7 +758,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         )
 
     @classmethod
-    def add_attribute_with_value(cls, attribute: SOMcreator.Attribute):
+    def add_attribute_with_value(cls, attribute: SOMcreator.SOMProperty):
         identifier, propertyset, attribute_name, valuetype, datatype = (
             cls.get_attribute_data(attribute)
         )
@@ -982,7 +982,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def get_property_sets(
-        cls, ifc_type: str, identifier: str | SOMcreator.Object
+        cls, ifc_type: str, identifier: str | SOMcreator.SOMClass
     ) -> list[tuple[str, int]]:
         logging.debug("Request PropertySets")
         cls.connect_to_data_base(cls.get_database_path())
@@ -1009,7 +1009,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def get_attributes(
-        cls, ifc_type: str, identifier: str | SOMcreator.Object, property_set: str
+        cls, ifc_type: str, identifier: str | SOMcreator.SOMClass, property_set: str
     ) -> list[tuple[str, int, int]]:
         logging.debug("Request Attributes")
 

@@ -32,10 +32,10 @@ class Ui_Aggregation(object):
 
         self.layout_main.addWidget(self.widget_group_attribute)
 
-        self.widget_ident_attribute = AttributeSelector(Aggregation)
-        self.widget_ident_attribute.setObjectName(u"widget_ident_attribute")
+        self.widget_ident_property = AttributeSelector(Aggregation)
+        self.widget_ident_property.setObjectName(u"widget_ident_property")
 
-        self.layout_main.addWidget(self.widget_ident_attribute)
+        self.layout_main.addWidget(self.widget_ident_property)
 
         self.widget_import = FileSelector(Aggregation)
         self.widget_import.setObjectName(u"widget_import")

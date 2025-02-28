@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QLabel
     from som_gui.module.util.ui import Progressbar
 
+
 class Signaller(QObject):
     started = Signal()
     finished = Signal()
@@ -26,13 +27,13 @@ class Signaller(QObject):
 
 
 class IfcImportRunner(QRunnable):
-    def __init__(self, path: os.PathLike | str,progress_bar = None):
+    def __init__(self, path: os.PathLike | str, progress_bar=None):
         super(IfcImportRunner, self).__init__()
         self.path = path
         self.ifc: ifcopenshell.file | None = None
         self.signaller = Signaller()
         self.is_aborted = False
-        self.progress_bar:Progressbar|None = progress_bar
+        self.progress_bar: Progressbar | None = progress_bar
 
     @property
     def status_label(self):
@@ -59,7 +60,9 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
                 return False
 
         if not main_pset:
-            text = QCoreApplication.translate("IfcImporter", "PropertySet Name is empty")
+            text = QCoreApplication.translate(
+                "IfcImporter", "PropertySet Name is empty"
+            )
             tool.Popups.create_warning_popup(text)
             return False
 
@@ -79,16 +82,16 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         return widget.ui.main_attribute_widget.ui.le_pset_name.text()
 
     @classmethod
-    def get_main_attribute(cls, widget: ui.IfcImportWidget) -> str:
+    def get_main_property(cls, widget: ui.IfcImportWidget) -> str:
         return widget.ui.main_attribute_widget.ui.le_attribute_name.text()
 
     @classmethod
-    def set_status(cls, runner:IfcImportRunner, status: str):
+    def set_status(cls, runner: IfcImportRunner, status: str):
         runner.signaller.status.emit(status)
 
     @classmethod
-    def set_progress(cls, runner:IfcImportRunner, value: int):
-       runner.signaller.progress.emit(value)
+    def set_progress(cls, runner: IfcImportRunner, value: int):
+        runner.signaller.progress.emit(value)
 
     @classmethod
     def create_thread_pool(cls) -> QThreadPool:
@@ -118,8 +121,11 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
     def create_importer(cls):
         widget = ui.IfcImportWidget()
         from som_gui.core.ifc_importer import IFC_PATH
+
         file_extension = "IFC Files (*.ifc *.IFC);;"
-        tool.Util.fill_file_selector(widget.ui.file_selector_widget, "Ifc File", file_extension, IFC_PATH)
+        tool.Util.fill_file_selector(
+            widget.ui.file_selector_widget, "Ifc File", file_extension, IFC_PATH
+        )
         prop = cls.get_properties()
         cls.set_progressbars_visible(widget, False)
         return widget
@@ -139,11 +145,11 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
         widget.ui.button_run.setEnabled(enabled)
 
     @classmethod
-    def add_progress_bar(cls,widget:ui.IfcImportWidget,progress_bar:Progressbar):
+    def add_progress_bar(cls, widget: ui.IfcImportWidget, progress_bar: Progressbar):
         widget.ui.layout_progress_bar.addWidget(progress_bar)
 
     @classmethod
-    def clear_progress_bars(cls,widget:ui.IfcImportWidget):
+    def clear_progress_bars(cls, widget: ui.IfcImportWidget):
         layout = widget.ui.layout_progress_bar
         while layout.count():
             item = layout.takeAt(0)

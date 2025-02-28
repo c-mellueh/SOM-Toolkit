@@ -16,13 +16,13 @@ def _find_parent(uuid_dict, element):
         if test_el.name != element.name:
             continue
 
-        if isinstance(test_el, SOMcreator.Attribute):
+        if isinstance(test_el, SOMcreator.SOMProperty):
             if test_el.value == element.value:
                 return identifier
         return identifier
 
 
-def calculate(proj: SOMcreator.Project):
+def calculate(proj: SOMcreator.SOMProject):
     uuid_dict = proj.get_uuid_dict()
     for entity, uuid in SOMcreator.importer.som_json.parent_dict.items():
         if uuid is None:

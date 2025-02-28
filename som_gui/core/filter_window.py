@@ -15,13 +15,16 @@ if TYPE_CHECKING:
     from som_gui.module.filter_window import ui
 
 
-def create_main_menu_actions(filter_window: Type[tool.FilterWindow], main_window: Type[tool.MainWindow]):
+def create_main_menu_actions(
+    filter_window: Type[tool.FilterWindow], main_window: Type[tool.MainWindow]
+):
     from som_gui.module.filter_window import trigger
+
     action = main_window.add_action("menuEdit", "FilterWindow", trigger.open_window)
     filter_window.set_action("open_window", action)
 
 
-def retranslate_ui(filter_window: Type[tool.FilterWindow], util:Type[tool.Util]):
+def retranslate_ui(filter_window: Type[tool.FilterWindow], util: Type[tool.Util]):
     action = filter_window.get_action("open_window")
     action.setText(QCoreApplication.translate("FilterWindow", "Project Filter"))
 
@@ -35,8 +38,12 @@ def retranslate_ui(filter_window: Type[tool.FilterWindow], util:Type[tool.Util])
         filter_window.get_pset_tree().model().retranslate_ui()
 
 
-def open_window(filter_window: Type[tool.FilterWindow], project: Type[tool.Project], util: Type[tool.Util],
-                search: Type[tool.Search]):
+def open_window(
+    filter_window: Type[tool.FilterWindow],
+    project: Type[tool.Project],
+    util: Type[tool.Util],
+    search: Type[tool.Search],
+):
 
     if filter_window.get():
         filter_window.get().show()
@@ -44,11 +51,13 @@ def open_window(filter_window: Type[tool.FilterWindow], project: Type[tool.Proje
         return
 
     widget = filter_window.create_widget()
-    util.add_shortcut("Ctrl+F", widget, lambda: search_object(filter_window, search,project))
+    util.add_shortcut(
+        "Ctrl+F", widget, lambda: search_object(filter_window, search, project)
+    )
     filter_window.connect_project_table(project.get())
     filter_window.connect_object_tree(project.get())
     filter_window.connect_pset_tree(project.get())
-    retranslate_ui(filter_window,util)
+    retranslate_ui(filter_window, util)
     widget.show()
 
 
@@ -59,29 +68,40 @@ def filter_changed_externally(filter_window: Type[tool.FilterWindow]):
     :return:
     """
     model = filter_window.get_project_table().model()
-    logging.debug(f"Filter Changed Externally. rowCount: {model.last_row_count} -> {model.rowCount()} columnCount:{model.last_col_count} -> {model.columnCount()}")
+    logging.debug(
+        f"Filter Changed Externally. rowCount: {model.last_row_count} -> {model.rowCount()} columnCount:{model.last_col_count} -> {model.columnCount()}"
+    )
 
-    #Remove Rows (Phases)
+    # Remove Rows (Phases)
     if model.last_row_count > model.rowCount():
-        model.beginRemoveRows(QModelIndex(), model.rowCount(),model.last_row_count-1)
+        model.beginRemoveRows(QModelIndex(), model.rowCount(), model.last_row_count - 1)
         model.endRemoveRows()
 
-    #Insert Rows (Phases)
+    # Insert Rows (Phases)
     if model.last_row_count < model.rowCount():
-        model.beginInsertRows(QModelIndex(),model.last_row_count+1, model.rowCount())
+        model.beginInsertRows(QModelIndex(), model.last_row_count + 1, model.rowCount())
         model.endInsertRows()
 
-    #Remove Colums (UseCases)
+    # Remove Colums (UseCases)
     if model.last_col_count > model.columnCount():
-        model.beginRemoveColumns(QModelIndex(), model.columnCount(),model.last_col_count-1)
+        model.beginRemoveColumns(
+            QModelIndex(), model.columnCount(), model.last_col_count - 1
+        )
         model.endRemoveColumns()
 
-    #Insert Colums (UseCases)
+    # Insert Colums (UseCases)
     if model.last_col_count < model.columnCount():
-        model.beginInsertColumns(QModelIndex(),model.last_col_count+1, model.columnCount())
+        model.beginInsertColumns(
+            QModelIndex(), model.last_col_count + 1, model.columnCount()
+        )
         model.endInsertColumns()
 
-def search_object(filter_window: Type[tool.FilterWindow], search: Type[tool.Search],project:Type[tool.Project]):
+
+def search_object(
+    filter_window: Type[tool.FilterWindow],
+    search: Type[tool.Search],
+    project: Type[tool.Project],
+):
     obj = search.search_object(list(project.get().get_objects(filter=True)))
     if obj is None:
         return
@@ -92,21 +112,30 @@ def search_object(filter_window: Type[tool.FilterWindow], search: Type[tool.Sear
         parent_list.append(parent)
         parent = parent.parent
 
-    #needs to happen top down. DataModel creates children only if parent is already created
-    #You can't combine the parent search with expanding the Tree it needs to happen in two steps
+    # needs to happen top down. DataModel creates children only if parent is already created
+    # You can't combine the parent search with expanding the Tree it needs to happen in two steps
 
     for item in reversed(parent_list):
         index: QModelIndex = item.index
         object_tree.expand(index)
 
     index: QModelIndex = obj.index
-    flags = object_tree.selectionModel().SelectionFlag.ClearAndSelect | object_tree.selectionModel().SelectionFlag.Rows
+    flags = (
+        object_tree.selectionModel().SelectionFlag.ClearAndSelect
+        | object_tree.selectionModel().SelectionFlag.Rows
+    )
     object_tree.selectionModel().select(index, flags)
-    object_tree.scrollTo(index.sibling(index.row(), 0),object_tree.ScrollHint.EnsureVisible)
+    object_tree.scrollTo(
+        index.sibling(index.row(), 0), object_tree.ScrollHint.EnsureVisible
+    )
 
 
-def pt_context_menu(local_pos, orientation: Qt.Orientation, filter_window: Type[tool.FilterWindow],
-                    project: Type[tool.Project]):
+def pt_context_menu(
+    local_pos,
+    orientation: Qt.Orientation,
+    filter_window: Type[tool.FilterWindow],
+    project: Type[tool.Project],
+):
     proj = project.get()
 
     menu_list = list()
@@ -120,7 +149,9 @@ def pt_context_menu(local_pos, orientation: Qt.Orientation, filter_window: Type[
         add_uc = QCoreApplication.translate("FilterWindow", "Add UseCase")
 
         if len(proj.get_usecases()) > 1:
-            menu_list.append((del_uc, lambda: filter_window.remove_usecase(usecase, proj)))
+            menu_list.append(
+                (del_uc, lambda: filter_window.remove_usecase(usecase, proj))
+            )
         menu_list.append((rename_uc, lambda: filter_window.rename_filter(usecase)))
         menu_list.append((add_uc, lambda: filter_window.add_usecase(proj)))
         pos = table.horizontalHeader().viewport().mapToGlobal(local_pos)
@@ -145,12 +176,14 @@ def update_object_tree(filter_window: Type[tool.FilterWindow]):
     filter_window.get_object_tree().model().update()
 
 
-def object_tree_selection_changed(selected: QItemSelection, filter_window: Type[tool.FilterWindow]):
+def object_tree_selection_changed(
+    selected: QItemSelection, filter_window: Type[tool.FilterWindow]
+):
     indexes = selected.indexes()
     if len(indexes) == 0:
         return
     index = indexes[0]
-    obj: SOMcreator.Object = index.internalPointer()
+    obj: SOMcreator.SOMClass = index.internalPointer()
     filter_window.set_active_object(obj)
     filter_window.set_object_label(obj.name)
     update_pset_tree(filter_window)
@@ -167,60 +200,72 @@ def tree_mouse_move_event(index: QModelIndex, filter_window: Type[tool.FilterWin
     filter_window.tree_move_click_drag(index)
 
 
-def tree_mouse_release_event(index: QModelIndex, filter_window: Type[tool.FilterWindow]):
+def tree_mouse_release_event(
+    index: QModelIndex, filter_window: Type[tool.FilterWindow]
+):
     if index is None:
         return
     filter_window.tree_release_click_drag()
 
 
-def add_compare_widget(filter_compare: Type[tool.FilterCompare],
-                       attribute_compare: Type[tool.AttributeCompare],
-                       compare_window: Type[tool.CompareWindow]):
+def add_compare_widget(
+    filter_compare: Type[tool.FilterCompare],
+    attribute_compare: Type[tool.AttributeCompare],
+    compare_window: Type[tool.CompareWindow],
+):
     name_getter = lambda: QCoreApplication.translate("FilterWindow", "Project Filter")
-    compare_window.add_tab(name_getter, filter_compare.create_widget,
-                           lambda p0, p1: create_compare_widget(p0, p1, filter_compare, attribute_compare),
-                           filter_compare,
-                           lambda file: export_filter_differences(file, filter_compare, attribute_compare))
+    compare_window.add_tab(
+        name_getter,
+        filter_compare.create_widget,
+        lambda p0, p1: create_compare_widget(p0, p1, filter_compare, attribute_compare),
+        filter_compare,
+        lambda file: export_filter_differences(file, filter_compare, attribute_compare),
+    )
 
 
-def create_compare_widget(project0: SOMcreator.Project, project1: SOMcreator.Project,
-                          filter_compare: Type[tool.FilterCompare],
-                          attribute_compare: Type[tool.AttributeCompare]):
+def create_compare_widget(
+    project0: SOMcreator.SOMProject,
+    project1: SOMcreator.SOMProject,
+    filter_compare: Type[tool.FilterCompare],
+    attribute_compare: Type[tool.AttributeCompare],
+):
     """
     Sets up the Filter Compare Widget to function properly
     """
-    #Define Projects
-    attribute_compare.set_projects(project0, project1)  #defines which projects will be compared
+    # Define Projects
+    attribute_compare.set_projects(
+        project0, project1
+    )  # defines which projects will be compared
     filter_compare.set_projects(project0, project1)
 
-
-
-    #Create widget
+    # Create widget
     widget = filter_compare.create_widget()
 
-    #get UI-elements
+    # get UI-elements
     object_tree_widget = attribute_compare.get_object_tree(widget)
     pset_tree = attribute_compare.get_pset_tree(widget)
     value_table = attribute_compare.get_value_table(widget)
 
-    #Add Wordwrap to Header
+    # Add Wordwrap to Header
 
-
-    #fill ObjectTree with objects
+    # fill ObjectTree with objects
     attribute_compare.create_object_lists()
     attribute_compare.fill_object_tree(object_tree_widget, add_missing=False)
 
-
-    #define and set header labels & add wordwrap
+    # define and set header labels & add wordwrap
     filter_compare.make_header_wordwrap(object_tree_widget)
     filter_compare.make_header_wordwrap(pset_tree)
-    header_labels = [attribute_compare.get_header_name_from_project(project0),
-                     attribute_compare.get_header_name_from_project(project1)]
-    attribute_compare.set_header_labels([object_tree_widget, pset_tree], [value_table], header_labels)
+    header_labels = [
+        attribute_compare.get_header_name_from_project(project0),
+        attribute_compare.get_header_name_from_project(project1),
+    ]
+    attribute_compare.set_header_labels(
+        [object_tree_widget, pset_tree], [value_table], header_labels
+    )
 
     filter_compare.create_tree_selection_trigger(widget)
 
-    #Search for matchups
+    # Search for matchups
     filter_compare.find_matching_phases(project0, project1)
     filter_compare.find_matching_usecases(project0, project1)
 
@@ -235,10 +280,14 @@ def create_compare_widget(project0: SOMcreator.Project, project1: SOMcreator.Pro
     widget.ui.table_widget_values.hide()
 
 
-def filter_tab_object_tree_selection_changed(widget: attribute_ui.AttributeWidget,
-                                             attribute_compare: Type[tool.AttributeCompare],
-                                             filter_compare: Type[tool.FilterCompare]):
-    obj = attribute_compare.get_selected_entity(attribute_compare.get_object_tree(widget))
+def filter_tab_object_tree_selection_changed(
+    widget: attribute_ui.AttributeWidget,
+    attribute_compare: Type[tool.AttributeCompare],
+    filter_compare: Type[tool.FilterCompare],
+):
+    obj = attribute_compare.get_selected_entity(
+        attribute_compare.get_object_tree(widget)
+    )
     tree_widget = attribute_compare.get_pset_tree(widget)
     pset_list = attribute_compare.get_pset_list(obj)
 
@@ -252,8 +301,11 @@ def filter_tab_object_tree_selection_changed(widget: attribute_ui.AttributeWidge
         tree_widget.setColumnWidth(col, 58)
 
 
-def export_filter_differences(file, filter_compare: Type[tool.FilterCompare],
-                              attribute_compare: Type[tool.AttributeCompare]):
+def export_filter_differences(
+    file,
+    filter_compare: Type[tool.FilterCompare],
+    attribute_compare: Type[tool.AttributeCompare],
+):
     name = QCoreApplication.translate("FilterWindow", "OBJECT FILTER")
     file.write(f"\n{name:46s}\n\n")
     filter_compare.export_object_filter_differences(file, attribute_compare)
@@ -261,8 +313,11 @@ def export_filter_differences(file, filter_compare: Type[tool.FilterCompare],
 
 
 # Settings WIdget
-def settings_widget_created(widget: ui.SettingsWidget, filter_window: Type[tool.FilterWindow],
-                            project: Type[tool.Project]):
+def settings_widget_created(
+    widget: ui.SettingsWidget,
+    filter_window: Type[tool.FilterWindow],
+    project: Type[tool.Project],
+):
     filter_window.set_settings_widget(widget)
 
     proj = project.get()
@@ -284,7 +339,11 @@ def settings_widget_created(widget: ui.SettingsWidget, filter_window: Type[tool.
         usecase_layout.addRow(QLabel(usecase.name), cb)
 
 
-def settings_accepted(filter_window: Type[tool.FilterWindow], project: Type[tool.Project], popups: Type[tool.Popups]):
+def settings_accepted(
+    filter_window: Type[tool.FilterWindow],
+    project: Type[tool.Project],
+    popups: Type[tool.Popups],
+):
     proj = project.get()
     widget = filter_window.get_settings_widget()
     phase_layout: QFormLayout = widget.ui.widget_phase.layout()
@@ -292,23 +351,34 @@ def settings_accepted(filter_window: Type[tool.FilterWindow], project: Type[tool
 
     active_phases = list()
     for row in range(phase_layout.rowCount()):
-        cb: QCheckBox = phase_layout.itemAt(row, QFormLayout.ItemRole.FieldRole).widget()
+        cb: QCheckBox = phase_layout.itemAt(
+            row, QFormLayout.ItemRole.FieldRole
+        ).widget()
         if cb.isChecked():
             active_phases.append(row)
 
     active_usecases = list()
     for row in range(usecase_layout.rowCount()):
-        cb: QCheckBox = usecase_layout.itemAt(row, QFormLayout.ItemRole.FieldRole).widget()
+        cb: QCheckBox = usecase_layout.itemAt(
+            row, QFormLayout.ItemRole.FieldRole
+        ).widget()
         if cb.isChecked():
             active_usecases.append(row)
     proj.active_phases = active_phases
     proj.active_usecases = active_usecases
-    logging.info(f"Set Active Usecases {[proj.get_usecase_by_index(i).name for i in proj.active_usecases]}")
-    logging.info(f"Set Active Phases {[proj.get_phase_by_index(i).name for i in proj.active_phases]}")
+    logging.info(
+        f"Set Active Usecases {[proj.get_usecase_by_index(i).name for i in proj.active_usecases]}"
+    )
+    logging.info(
+        f"Set Active Phases {[proj.get_phase_by_index(i).name for i in proj.active_phases]}"
+    )
 
 
-def settings_combobox_changed(filter_window: Type[tool.FilterWindow], project: Type[tool.Project],
-                              util: Type[tool.Util]):
+def settings_combobox_changed(
+    filter_window: Type[tool.FilterWindow],
+    project: Type[tool.Project],
+    util: Type[tool.Util],
+):
     widget = filter_window.get_settings_widget()
     combobox_usecase = widget.ui.cb_usecase
     combobox_phase = widget.ui.cb_phase
@@ -324,7 +394,9 @@ def settings_combobox_changed(filter_window: Type[tool.FilterWindow], project: T
     for uc_name, index in util.get_text_from_combobox(combobox_usecase).items():
         uc = proj.get_usecase_by_name(uc_name)
         if not proj.get_filter_state(phase, uc):
-            warn_icon = widget.style().standardIcon(widget.style().StandardPixmap.SP_MessageBoxWarning)
+            warn_icon = widget.style().standardIcon(
+                widget.style().StandardPixmap.SP_MessageBoxWarning
+            )
             combobox_usecase.setItemIcon(index.row(), warn_icon)
         else:
             combobox_usecase.setItemIcon(index.row(), QIcon())
@@ -332,7 +404,9 @@ def settings_combobox_changed(filter_window: Type[tool.FilterWindow], project: T
     for ph_name, index in util.get_text_from_combobox(combobox_phase).items():
         ph = proj.get_phase_by_name(ph_name)
         if not proj.get_filter_state(ph, usecase):
-            warn_icon = widget.style().standardIcon(widget.style().StandardPixmap.SP_MessageBoxWarning)
+            warn_icon = widget.style().standardIcon(
+                widget.style().StandardPixmap.SP_MessageBoxWarning
+            )
             combobox_phase.setItemIcon(index.row(), warn_icon)
         else:
             combobox_phase.setItemIcon(index.row(), QIcon())

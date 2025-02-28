@@ -18,13 +18,15 @@ class WindowProperties:
     menu_dict: MenuDict = {
         "submenu": list(),
         "actions": list(),
-        "menu":    None,
-        "name":    "menubar",
+        "menu": None,
+        "name": "menubar",
     }
     menu_list: list[tuple[str, Callable]] = list()  # MenubarPath,Function
     filter_is_activated: bool = False
-    allowed_scenes: list = list()  # Scenes that will be displayed after filter is activated
-    filter_object: SOMcreator.Object | None = None
+    allowed_scenes: list = (
+        list()
+    )  # Scenes that will be displayed after filter is activated
+    filter_object: SOMcreator.SOMClass | None = None
     object_info_line_edit: QLineEdit | None = None
     grouping_window = None
     actions: dict[str, QAction] = dict()

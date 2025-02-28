@@ -135,7 +135,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         scene.deleteLater()
 
     @classmethod
-    def import_aggregations_from_project(cls, proj: SOMcreator.Project) -> None:
+    def import_aggregations_from_project(cls, proj: SOMcreator.SOMProject) -> None:
         plugin_dict = proj.import_dict
         if not plugin_dict:
             return
@@ -429,15 +429,15 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
     @classmethod
     def get_objects_in_scene(
         cls, scene: ui_view.AggregationScene
-    ) -> set[SOMcreator.Object]:
+    ) -> set[SOMcreator.SOMClass]:
         nodes = cls.get_nodes_in_scene(scene)
         scene_index = cls.get_scene_index(scene)
-        objects = {a.object for a, pos in cls.get_import_list()[scene_index]}
-        objects.update({n.aggregation.object for n in nodes})
+        objects = {a.som_class for a, pos in cls.get_import_list()[scene_index]}
+        objects.update({n.aggregation.som_class for n in nodes})
         return objects
 
     @classmethod
-    def get_import_list(cls) -> list[list[tuple[SOMcreator.Aggregation, QPointF]]]:
+    def get_import_list(cls) -> list[list[tuple[SOMcreator.SOMAggregation, QPointF]]]:
         return cls.get_properties().import_list
 
     @classmethod
@@ -475,12 +475,12 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
     @classmethod
     def set_copy_list(
-        cls, copy_list: list[tuple[SOMcreator.Aggregation, QPointF]]
+        cls, copy_list: list[tuple[SOMcreator.SOMAggregation, QPointF]]
     ) -> None:
         cls.get_properties().copy_list = copy_list
 
     @classmethod
-    def get_copy_list(cls) -> list[tuple[SOMcreator.Aggregation, QPointF]]:
+    def get_copy_list(cls) -> list[tuple[SOMcreator.SOMAggregation, QPointF]]:
         return list(cls.get_properties().copy_list)
 
     @classmethod
@@ -558,7 +558,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
     @classmethod
     def remove_nodes_with_deleted_aggregations(
-        cls, scene: ui_view.AggregationScene, proj: SOMcreator.Project
+        cls, scene: ui_view.AggregationScene, proj: SOMcreator.SOMProject
     ) -> None:
         nodes = cls.get_nodes_in_scene(scene)
         existing_aggregations = list(proj.get_aggregations(filter=False))
@@ -568,7 +568,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
     @classmethod
     def create_child_node(
-        cls, top_node: ui_node.NodeProxy, obj: SOMcreator.Object
+        cls, top_node: ui_node.NodeProxy, obj: SOMcreator.SOMClass
     ) -> ui_node.NodeProxy | None:
         scene = top_node.scene()
         pos = top_node.sceneBoundingRect().bottomLeft() + QPointF(100.0, 60.0)
