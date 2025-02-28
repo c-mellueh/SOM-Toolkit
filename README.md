@@ -24,9 +24,9 @@ The `SOMcreator` library is the backbone of the SOM-Toolkit, offering an object-
 - **Programmatic Flexibility**: Designed for developers to integrate directly into Python projects.
 
 **Core Classes and Functions:**
-- `Project`: Represents a project containing multiple objects and their relationships.
-- `Object`: Defines an individual object within the project.
-- `PropertySet` and `Attribute`: Define and attach detailed semantic data to objects.
+- `SOMProject`: Represents a project containing multiple objects and their relationships.
+- `SOMClass`: Defines an individual classes within the project.
+- `SOMPropertySet` and `SOMProperty`: Define and attach detailed semantic data to classes.
 
 ---
 
@@ -68,37 +68,37 @@ The `som_gui` is a graphical user interface for non-programmers or users seeking
 Import the library in your Python project to define and manage Semantic Object Models programmatically.
 Example Code:
    ```python
-from SOMcreator import Project,Object,PropertySet,Attribute
-from SOMcreator.constants.value_constants import BOOLEAN,INTEGER,LIST
+from SOMcreator import SOMProject, SOMClass, SOMProperty, SOMPropertySet
+from SOMcreator.constants.value_constants import BOOLEAN, INTEGER, LIST
 
-#Create a new Project
-project = Project(name="Example SOM")
+# Create a new Project
+project = SOMProject(name="Example SOM")
 
-#Create a new Identity Attribute
-identifier_attribute = Attribute(name="identifier")
-identifier_attribute.value = ["w.100.100"]
+# Create a new Identity Attribute
+ident_property = SOMProperty(name="identifier")
+ident_property.value = ["w.100.100"]
 
-#Create a Object representing a custom Wall Definition
-wall = SOMClass(name="MyWall",=identifier_attribute,project = project)
+# Create a Object representing a custom Wall Definition
+wall = SOMClass(name="MyWall", identifier_property=ident_property, project=project)
 
-#Define the PropertySet in which the Identity Attribute will be placed
-pset = PropertySet(name = "CustomMainPset")
-pset.add_attribute(identifier_attribute)
+# Define the PropertySet in which the Identity Attribute will be placed
+pset = SOMPropertySet(name="CustomMainPset")
+pset.add_property(ident_property)
 wall.add_property_set(pset)
 
-#Define a 2nd PropertySet
-common_pset = PropertySet(name="Pset_WallCommon")
-common_pset.add_attribute(Attribute(name="LoadBearing", data_type=BOOLEAN))
+# Define a 2nd PropertySet
+common_pset = SOMPropertySet(name="Pset_WallCommon")
+common_pset.add_property(SOMProperty(name="LoadBearing", data_type=BOOLEAN))
 
-#Define a Attribute with multiple allowed Values
-fire_rating = Attribute(name="FireRating", data_type=INTEGER,value_type=LIST)
-fire_rating.value = [30,60,90]
-common_pset.add_attribute(fire_rating)
+# Define a Attribute with multiple allowed Values
+fire_rating = SOMProperty(name="FireRating", data_type=INTEGER, value_type=LIST)
+fire_rating.value = [30, 60, 90]
+common_pset.add_property(fire_rating)
 
-#Add PropertySet to Object
+# Add PropertySet to Object
 wall.add_property_set(common_pset)
 
-#Export
+# Export
 project.export_bSDD("examples/bsdd_example.json")
 ```
 ## Using som_gui
