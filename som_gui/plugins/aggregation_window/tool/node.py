@@ -451,14 +451,16 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     ) -> list[str]:
         aggregation = cls.get_aggregation_from_node(node)
         if not (pset_name and attribute_name):
-            base_text = f"{aggregation.object.name} ({aggregation.object.abbreviation})"
+            base_text = (
+                f"{aggregation.som_class.name} ({aggregation.som_class.abbreviation})"
+            )
             id_text = QCoreApplication.translate("Aggregation Window", "id: {}").format(
                 node.aggregation.identity()
             )
             id_texts = cls.split_text(id_text, "_", max_width)
             return [base_text] + id_texts
         undef = [f"{aggregation.name}\n{attribute_name}: undefined"]
-        obj = aggregation.object
+        obj = aggregation.som_class
         pset = obj.get_property_set_by_name(pset_name)
         if pset is None:
             return undef
@@ -634,7 +636,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         cls, tree_widget: node_ui.PropertySetTree
     ) -> dict[SOMcreator.SOMPropertySet | SOMcreator.SOMProperty, QTreeWidgetItem]:
         selected_node = cls.get_node_from_tree_widget(tree_widget)
-        obj = selected_node.aggregation.object
+        obj = selected_node.aggregation.som_class
         ir = tree_widget.invisibleRootItem()
         property_set_dict = cls.get_pset_subelement_dict(ir)
         for property_set in obj.get_property_sets(filter=True):
@@ -670,7 +672,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         ],
     ):
         selected_node = cls.get_node_from_tree_widget(tree_widget)
-        obj = selected_node.aggregation.object
+        obj = selected_node.aggregation.som_class
         ir = tree_widget.invisibleRootItem()
         for property_set, pset_item in property_set_dict.items():
             if property_set not in obj.get_property_sets(filter=True):

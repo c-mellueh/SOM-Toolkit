@@ -31,7 +31,7 @@ def _get_aggregation(
     parent_connection = aggregation_dict[CONNECTION]
     identity_text = aggregation_dict.get(IDENTITY_TEXT)
     aggregation = SOMcreator.SOMAggregation(
-        obj=obj,
+        som_class=obj,
         parent_connection=parent_connection,
         uuid=identifier,
         description=description,

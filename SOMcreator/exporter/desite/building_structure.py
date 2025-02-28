@@ -15,7 +15,7 @@ def _handle_section(
     xml_child = etree.SubElement(xml_item, "section")
     id_dict[aggregation] = aggregation.uuid
     xml_child.set("ID", aggregation.uuid)
-    xml_child.set("name", aggregation.object.name)
+    xml_child.set("name", aggregation.som_class.name)
     xml_child.set("pre", "")
     xml_child.set("type", "typeBsGroup")
     xml_child.set("takt", "")

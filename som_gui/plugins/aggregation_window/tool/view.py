@@ -432,8 +432,8 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
     ) -> set[SOMcreator.SOMClass]:
         nodes = cls.get_nodes_in_scene(scene)
         scene_index = cls.get_scene_index(scene)
-        objects = {a.object for a, pos in cls.get_import_list()[scene_index]}
-        objects.update({n.aggregation.object for n in nodes})
+        objects = {a.som_class for a, pos in cls.get_import_list()[scene_index]}
+        objects.update({n.aggregation.som_class for n in nodes})
         return objects
 
     @classmethod
