@@ -236,7 +236,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def get_item_check_state(
-        cls, item: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute
+        cls, item: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty
     ) -> Qt.CheckState:
         cd = cls.get_item_checkstate_dict()
         if cd.get(item) is None:
@@ -247,7 +247,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def set_item_check_state(
         cls,
-        item: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute,
+        item: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
         cs: Qt.CheckState,
     ) -> None:
         cs = True if cs == Qt.CheckState.Checked else False
@@ -370,7 +370,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def create_pset_tree_row(
         cls,
-        entity: SOMcreator.PropertySet | SOMcreator.Attribute,
+        entity: SOMcreator.PropertySet | SOMcreator.SOMProperty,
         parent_item: QStandardItem,
     ):
         item = QStandardItem(entity.name)

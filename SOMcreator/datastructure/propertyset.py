@@ -127,11 +127,11 @@ class PropertySet(Hirarchy):
         self._object = value
 
     @filterable
-    def get_attributes(self) -> Iterator[SOMcreator.Attribute]:
+    def get_attributes(self) -> Iterator[SOMcreator.SOMProperty]:
         """returns all Attributes even if they don't fit the current Project Phase"""
         return iter(self._attributes)
 
-    def add_attribute(self, value: SOMcreator.Attribute) -> None:
+    def add_attribute(self, value: SOMcreator.SOMProperty) -> None:
 
         if value.property_set is not None and value.property_set != self:
             value.property_set.remove_attribute(value)
@@ -142,11 +142,11 @@ class PropertySet(Hirarchy):
             return
         value.property_set = self
         for child in self.get_children(filter=False):
-            attrib: SOMcreator.Attribute = cp.copy(value)
+            attrib: SOMcreator.SOMProperty = cp.copy(value)
             value.add_child(attrib)
             child.add_attribute(attrib)
 
-    def remove_attribute(self, value: SOMcreator.Attribute, recursive=False) -> None:
+    def remove_attribute(self, value: SOMcreator.SOMProperty, recursive=False) -> None:
         if value in self.get_attributes(filter=False):
             self._attributes.remove(value)
             if recursive:

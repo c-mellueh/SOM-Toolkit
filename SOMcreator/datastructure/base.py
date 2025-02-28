@@ -43,7 +43,7 @@ class IterRegistry(type):
     ) -> Iterator[
         SOMcreator.PropertySet
         | SOMcreator.SOMClass
-        | SOMcreator.Attribute
+        | SOMcreator.SOMProperty
         | SOMcreator.SOMAggregation
     ]:
         return iter(sorted(list(self._registry), key=lambda x: x.name))
@@ -203,7 +203,7 @@ class Hirarchy(object, metaclass=IterRegistry):
     ) -> (
         SOMcreator.PropertySet
         | SOMcreator.SOMClass
-        | SOMcreator.Attribute
+        | SOMcreator.SOMProperty
         | SOMcreator.SOMAggregation
     ):
         return self._parent
@@ -214,7 +214,7 @@ class Hirarchy(object, metaclass=IterRegistry):
         parent: (
             SOMcreator.PropertySet
             | SOMcreator.SOMClass
-            | SOMcreator.Attribute
+            | SOMcreator.SOMProperty
             | SOMcreator.SOMAggregation
         ),
     ) -> None:
@@ -241,7 +241,7 @@ class Hirarchy(object, metaclass=IterRegistry):
     ) -> Iterator[
         SOMcreator.PropertySet
         | SOMcreator.SOMClass
-        | SOMcreator.Attribute
+        | SOMcreator.SOMProperty
         | SOMcreator.SOMAggregation
     ]:
         return iter(self._children)
@@ -251,7 +251,7 @@ class Hirarchy(object, metaclass=IterRegistry):
         child: (
             SOMcreator.PropertySet
             | SOMcreator.SOMClass
-            | SOMcreator.Attribute
+            | SOMcreator.SOMProperty
             | SOMcreator.SOMAggregation
         ),
     ) -> None:
@@ -263,7 +263,7 @@ class Hirarchy(object, metaclass=IterRegistry):
         child: (
             SOMcreator.PropertySet
             | SOMcreator.SOMClass
-            | SOMcreator.Attribute
+            | SOMcreator.SOMProperty
             | SOMcreator.SOMAggregation
             | Hirarchy
         ),

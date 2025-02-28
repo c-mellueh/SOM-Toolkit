@@ -73,7 +73,7 @@ class Project(object):
     ) -> Iterator[
         SOMcreator.SOMClass,
         SOMcreator.PropertySet,
-        SOMcreator.Attribute,
+        SOMcreator.SOMProperty,
         SOMcreator.SOMAggregation,
         Hirarchy,
     ]:
@@ -83,7 +83,7 @@ class Project(object):
                 (
                     SOMcreator.SOMClass,
                     SOMcreator.PropertySet,
-                    SOMcreator.Attribute,
+                    SOMcreator.SOMProperty,
                     SOMcreator.SOMAggregation,
                 ),
             ),
@@ -101,8 +101,10 @@ class Project(object):
         )
 
     @filterable
-    def get_attributes(self) -> Iterator[SOMcreator.Attribute]:
-        return filter(lambda item: isinstance(item, SOMcreator.Attribute), self._items)
+    def get_attributes(self) -> Iterator[SOMcreator.SOMProperty]:
+        return filter(
+            lambda item: isinstance(item, SOMcreator.SOMProperty), self._items
+        )
 
     @filterable
     def get_aggregations(self) -> Iterator[SOMcreator.SOMAggregation]:
@@ -118,7 +120,7 @@ class Project(object):
         ident_attributes = dict()
         ident_psets = dict()
         for obj in self.get_objects(filter=False):
-            if not isinstance(obj.ident_attrib, SOMcreator.Attribute):
+            if not isinstance(obj.ident_attrib, SOMcreator.SOMProperty):
                 continue
             ident_pset = obj.ident_attrib.property_set.name
             ident_attribute = obj.ident_attrib.name
@@ -158,7 +160,7 @@ class Project(object):
     def get_element_by_uuid(
         self, uuid: str
     ) -> (
-        SOMcreator.Attribute
+        SOMcreator.SOMProperty
         | SOMcreator.PropertySet
         | SOMcreator.SOMClass
         | SOMcreator.SOMAggregation

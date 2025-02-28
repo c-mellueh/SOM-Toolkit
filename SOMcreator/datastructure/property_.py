@@ -7,8 +7,8 @@ import logging
 from ifcopenshell.util.unit import get_unit_name_universal
 
 
-class Attribute(Hirarchy):
-    _registry: set[Attribute] = set()
+class SOMProperty(Hirarchy):
+    _registry: set[SOMProperty] = set()
 
     def __init__(
         self,
@@ -27,7 +27,7 @@ class Attribute(Hirarchy):
         unit=None,
     ):
 
-        super(Attribute, self).__init__(
+        super(SOMProperty, self).__init__(
             name, description, optional, project, filter_matrix
         )
         self._value = value
@@ -58,13 +58,13 @@ class Attribute(Hirarchy):
         return text
 
     def __lt__(self, other):
-        if isinstance(other, Attribute):
+        if isinstance(other, SOMProperty):
             return self.name < other.name
         else:
             return self.name < other
 
-    def __copy__(self) -> Attribute:
-        new_attrib = Attribute(
+    def __copy__(self) -> SOMProperty:
+        new_attrib = SOMProperty(
             property_set=None,
             name=self.name,
             value=cp.copy(self.value),
@@ -83,7 +83,7 @@ class Attribute(Hirarchy):
             self.parent.add_child(new_attrib)
         return new_attrib
 
-    def get_all_parents(self) -> list[Attribute]:
+    def get_all_parents(self) -> list[SOMProperty]:
         parent = self.parent
         if parent is None:
             return []
@@ -107,7 +107,7 @@ class Attribute(Hirarchy):
 
     @property
     def name(self) -> str:
-        return super(Attribute, self).name
+        return super(SOMProperty, self).name
 
     @name.setter
     def name(self, value: str) -> None:
@@ -227,7 +227,7 @@ class Attribute(Hirarchy):
             value.add_attribute(self)
         self._property_set = value
 
-    def is_equal(self, attribute: Attribute) -> bool:
+    def is_equal(self, attribute: SOMProperty) -> bool:
         equal = True
 
         if self.name != attribute.name:
@@ -245,10 +245,10 @@ class Attribute(Hirarchy):
             return False
 
     def delete(self, recursive: bool = False) -> None:
-        super(Attribute, self).delete(recursive)
+        super(SOMProperty, self).delete(recursive)
         self.property_set.remove_attribute(self)
 
-    def create_child(self) -> Attribute:
+    def create_child(self) -> SOMProperty:
         child = cp.copy(self)
         self.add_child(child)
         return child

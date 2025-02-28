@@ -31,7 +31,8 @@ class CompareAttributesProperties:
         SOMcreator.SOMClass, list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]
     ] = dict()
     attributes_lists: dict[
-        SOMcreator.PropertySet, list[tuple[SOMcreator.Attribute, SOMcreator.Attribute]]
+        SOMcreator.PropertySet,
+        list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]],
     ] = dict()
-    values_lists: dict[SOMcreator.Attribute, list[tuple[str, str]]] = dict()
+    values_lists: dict[SOMcreator.SOMProperty, list[tuple[str, str]]] = dict()
     widget: AttributeWidget = None

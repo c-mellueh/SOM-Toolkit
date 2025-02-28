@@ -1,14 +1,20 @@
 from __future__ import annotations
 import SOMcreator
 from SOMcreator.exporter.som_json import core
-from SOMcreator.datastructure.som_json import VALUE, VALUE_TYPE, DATA_TYPE, CHILD_INHERITS_VALUE, REVIT_MAPPING
+from SOMcreator.datastructure.som_json import (
+    VALUE,
+    VALUE_TYPE,
+    DATA_TYPE,
+    CHILD_INHERITS_VALUE,
+    REVIT_MAPPING,
+)
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from SOMcreator.datastructure.som_json import AttributeDict
 
 
-def write(attribute: SOMcreator.Attribute) -> AttributeDict:
+def write(attribute: SOMcreator.SOMProperty) -> AttributeDict:
     attribute_dict: AttributeDict = dict()
     core.write_basics(attribute_dict, attribute)
     attribute_dict[DATA_TYPE] = attribute.data_type

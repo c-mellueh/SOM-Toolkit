@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING,Type
+from typing import TYPE_CHECKING, Type
 
 from PySide6.QtCore import QCoreApplication, Qt
 from PySide6.QtGui import (
@@ -52,7 +52,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def get_active_attribute(
         cls, window: ui.PropertySetWindow
-    ) -> None | SOMcreator.Attribute:
+    ) -> None | SOMcreator.SOMProperty:
         attribute_name = cls.get_attribute_name_input(window)
         pset = cls.get_property_set_by_window(window)
         return tool.PropertySet.get_attribute_by_name(pset, attribute_name)
@@ -267,7 +267,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
 
     @classmethod
     def toggle_comboboxes(
-        cls, attribute: SOMcreator.Attribute, window: ui.PropertySetWindow
+        cls, attribute: SOMcreator.SOMProperty, window: ui.PropertySetWindow
     ):
         is_child = attribute.is_child
         window.ui.combo_value_type.setEnabled(not is_child)
@@ -319,7 +319,9 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
             layout.removeItem(item)
 
     @classmethod
-    def set_values(cls, attribute: SOMcreator.Attribute, window: ui.PropertySetWindow):
+    def set_values(
+        cls, attribute: SOMcreator.SOMProperty, window: ui.PropertySetWindow
+    ):
         inherits = attribute.is_inheriting_values
         parent_values = attribute.parent.value if attribute.parent else []
         for value in attribute.value:
@@ -413,7 +415,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.ui.combo_data_type.setCurrentText(active_type)
 
     @classmethod
-    def get_unit_combobox(cls,window:ui.PropertySetWindow) -> UnitComboBox:
+    def get_unit_combobox(cls, window: ui.PropertySetWindow) -> UnitComboBox:
         return window.ui.combo_unit
 
     ### Settings Window
@@ -424,7 +426,6 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def get_splitter_settings_widget(cls) -> ui.SplitterSettings:
         return cls.get_properties().splitter_settings
-
 
     @classmethod
     def connect_splitter_widget(cls, widget: ui.SplitterSettings):
@@ -439,10 +440,3 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def get_splitter_settings_text(cls, widget: ui.SplitterSettings) -> str:
         return widget.ui.line_edit_seperator.text()
-
-
-
-
-
-    
-

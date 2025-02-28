@@ -74,7 +74,7 @@ def pset_tree_double_clicked(
     linked_item = node.get_linked_item(item)
     active_attribute = None
     active_property_set = None
-    if isinstance(linked_item, SOMcreator.Attribute):
+    if isinstance(linked_item, SOMcreator.SOMProperty):
         active_attribute = linked_item
         active_property_set = linked_item.property_set
 
@@ -174,7 +174,7 @@ def paint_header(painter: QPainter, header: Header, node: Type[Node]) -> None:
     rows = node.get_title_rows(active_node, rect.width(), pset_name, attribute_name)
     node.draw_header_texts(painter, header, rows)
     active_node.spacer.changeSize(header.rect().width(), header.rect().height())
-    active_node.widget().layout().invalidate() #refresh layout else spacer won't update height
+    active_node.widget().layout().invalidate()  # refresh layout else spacer won't update height
     # update Children
     for child_node in node.get_child_nodes(header.node):
         child_node.header.update()

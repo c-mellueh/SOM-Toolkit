@@ -17,7 +17,7 @@ def _handle_bookmark_list(proj: SOMcreator.Project) -> etree.ElementTree:
         xml_bookmark = etree.SubElement(xml_bookmark_list, "cBookmark")
         xml_bookmark.set("ID", str(obj.uuid))
 
-        if isinstance(obj.ident_attrib, SOMcreator.Attribute):
+        if isinstance(obj.ident_attrib, SOMcreator.SOMProperty):
             xml_bookmark.set("name", str(obj.ident_attrib.value[0]))
 
         xml_bookmark.set("bkmType", "2")

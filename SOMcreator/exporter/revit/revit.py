@@ -15,13 +15,17 @@ def _transform_datatype(data_type: str, data_type_dict: dict[str, str]) -> str:
     return data_type_dict[data_type]
 
 
-def export_ifc_template(path: str, pset_dict: dict[str, (list[SOMcreator.Attribute], set[str])]) -> None:
+def export_ifc_template(
+    path: str, pset_dict: dict[str, (list[SOMcreator.SOMProperty], set[str])]
+) -> None:
     with open(path, "w") as file:
         property_set: SOMcreator.PropertySet
         for pset_name, (attrib_list, ifc_mapping) in sorted(pset_dict.items()):
             file.write(f"PropertySet:   {pset_name} I  {','.join(ifc_mapping)} \n")
             for attribute in attrib_list:
-                revit_datatype = _transform_datatype(attribute.data_type, value_constants.REVIT_TEMPLATE_DATATYPE_DICT)
+                revit_datatype = _transform_datatype(
+                    attribute.data_type, value_constants.REVIT_TEMPLATE_DATATYPE_DICT
+                )
                 file.write(f"   {attribute.name}    {revit_datatype}\n")
             file.write("\n")
 
@@ -53,28 +57,38 @@ class SP_Item(metaclass=IterItem):
 
     def print(self, file: IO):
         file.write(
-            f"PARAM	{self.attribute.uuid}	{self.attribute.name}	{self.datatype()}		{self.pset_number}	1		1\n")
+            f"PARAM	{self.attribute.uuid}	{self.attribute.name}	{self.datatype()}		{self.pset_number}	1		1\n"
+        )
 
     def datatype(self) -> str:
-        return _transform_datatype(self.attribute.data_type, value_constants.REVIT_SHARED_PARAM_DATATYPE_DICT)
+        return _transform_datatype(
+            self.attribute.data_type, value_constants.REVIT_SHARED_PARAM_DATATYPE_DICT
+        )
 
 
-def export_shared_parameters(path: str, pset_dict: dict[str, (list[SOMcreator.Attribute], set[str])]) -> None:
+def export_shared_parameters(
+    path: str, pset_dict: dict[str, (list[SOMcreator.SOMProperty], set[str])]
+) -> None:
     with open(path, "w") as file:
-        file.write("# This is a Revit shared parameter file.\n"
-                   "# Do not edit manually.\n"
-                   "*META	VERSION	MINVERSION\n"
-                   "META	2	1\n"
-                   "*GROUP	ID	NAME\n")
+        file.write(
+            "# This is a Revit shared parameter file.\n"
+            "# Do not edit manually.\n"
+            "*META	VERSION	MINVERSION\n"
+            "META	2	1\n"
+            "*GROUP	ID	NAME\n"
+        )
 
         for i, pset_name in enumerate(sorted(pset_dict.keys())):
             file.write(f"GROUP	{i + 1}	{pset_name}\n")
 
         file.write(
-            "*PARAM	GUID	NAME	DATATYPE	DATACATEGORY	GROUP	VISIBLE	DESCRIPTION	USERMODIFIABLE\n")
+            "*PARAM	GUID	NAME	DATATYPE	DATACATEGORY	GROUP	VISIBLE	DESCRIPTION	USERMODIFIABLE\n"
+        )
 
         property_set: SOMcreator.PropertySet
-        for i, (pset_name, (attrib_list, ifc_mapping)) in enumerate(sorted(pset_dict.items())):
+        for i, (pset_name, (attrib_list, ifc_mapping)) in enumerate(
+            sorted(pset_dict.items())
+        ):
             for attrib in attrib_list:
                 t = SP_Item(pset_name, attrib, i)
 

@@ -56,7 +56,7 @@ def _build_applicability(obj: SOMcreator.SOMClass, xml_parent: Element) -> None:
 
 
 def _build_requirements(
-    property_set_dict: dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]],
+    property_set_dict: dict[SOMcreator.PropertySet, list[SOMcreator.SOMProperty]],
     xml_parent: Element,
 ) -> None:
     xml_requirement = SubElement(xml_parent, ids_xsd.REQUIREMENTS, nsmap=NSMAP)
@@ -66,7 +66,7 @@ def _build_requirements(
 
 
 def _build_attribute_requirement(
-    attribute: SOMcreator.Attribute, xml_parent: Element
+    attribute: SOMcreator.SOMProperty, xml_parent: Element
 ) -> None:
     xml_property = SubElement(xml_parent, ids_xsd.PROPERTY, nsmap=NSMAP)
     xml_property.set(ids_xsd.ATTR_DATATYPE, attribute.data_type)
@@ -117,7 +117,7 @@ def _build_attribute_requirement(
 
 def _build_specification(
     obj: SOMcreator.SOMClass,
-    property_set_dict: dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]],
+    property_set_dict: dict[SOMcreator.PropertySet, list[SOMcreator.SOMProperty]],
     xml_parent: Element,
 ) -> None:
     xml_specification = SubElement(xml_parent, ids_xsd.SPECIFICATION, nsmap=NSMAP)
@@ -137,7 +137,7 @@ def _build_specification(
 def export(
     proj: SOMcreator.Project,
     required_data: dict[
-        SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]
+        SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.SOMProperty]]
     ],
     path: str | os.PathLike,
     author=None,

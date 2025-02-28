@@ -318,7 +318,7 @@ class Object(som_gui.core.tool.Object):
         cls,
         data_dict: ObjectDataDict,
         property_set: SOMcreator.PropertySet,
-        attribute: SOMcreator.Attribute,
+        attribute: SOMcreator.SOMProperty,
     ):
         name = data_dict["name"]
         is_group = data_dict["is_group"]

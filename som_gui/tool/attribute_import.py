@@ -395,7 +395,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
     @classmethod
     def build_attribute_dict(
         cls, objects: list[SOMcreator.SOMClass]
-    ) -> dict[str, dict[str, dict[str, SOMcreator.Attribute]]]:
+    ) -> dict[str, dict[str, dict[str, SOMcreator.SOMProperty]]]:
         result_dict = dict()
         for obj in objects:
             object_dict = dict()
@@ -706,7 +706,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def add_attribute_to_filter_table(
-        cls, project: SOMcreator.Project, attribute: SOMcreator.Attribute
+        cls, project: SOMcreator.Project, attribute: SOMcreator.SOMProperty
     ):
         use_case_list = project.get_usecases()
         phase_list = project.get_phases()
@@ -734,7 +734,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.disconnect_from_database()
 
     @classmethod
-    def get_attribute_data(cls, attribute: SOMcreator.Attribute):
+    def get_attribute_data(cls, attribute: SOMcreator.SOMProperty):
         identifier = attribute.property_set.object.ident_value
         propertyset = attribute.property_set.name
         attribute_name = attribute.name
@@ -743,7 +743,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return identifier, propertyset, attribute_name, valuetype, datatype
 
     @classmethod
-    def add_attribute_without_value(cls, attribute: SOMcreator.Attribute):
+    def add_attribute_without_value(cls, attribute: SOMcreator.SOMProperty):
         identifier, propertyset, attribute_name, valuetype, datatype = (
             cls.get_attribute_data(attribute)
         )
@@ -758,7 +758,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         )
 
     @classmethod
-    def add_attribute_with_value(cls, attribute: SOMcreator.Attribute):
+    def add_attribute_with_value(cls, attribute: SOMcreator.SOMProperty):
         identifier, propertyset, attribute_name, valuetype, datatype = (
             cls.get_attribute_data(attribute)
         )

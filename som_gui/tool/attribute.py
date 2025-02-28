@@ -28,7 +28,7 @@ if TYPE_CHECKING:
         CompareAttributesProperties,
     )
 
-SOMType: TypeAlias = "SOMcreator.Attribute | SOMcreator.PropertySet"
+SOMType: TypeAlias = "SOMcreator.SOMProperty | SOMcreator.PropertySet"
 
 style_list = [
     [None, [0, 1]],
@@ -57,7 +57,7 @@ class Attribute(som_gui.core.tool.Attribute):
         prop.attribute_data_dict[name] = {"getter": getter, "setter": setter}
 
     @classmethod
-    def get_attribute_data(cls, attribute: SOMcreator.Attribute) -> dict[str, Any]:
+    def get_attribute_data(cls, attribute: SOMcreator.SOMProperty) -> dict[str, Any]:
         """
         creates dictionary of attribute with Data_name as Key and getter/setter as Value
         :param attribute:
@@ -72,7 +72,7 @@ class Attribute(som_gui.core.tool.Attribute):
 
     @classmethod
     def set_attribute_data_by_dict(
-        cls, attribute: SOMcreator.Attribute, data_dict: dict[str, str | list]
+        cls, attribute: SOMcreator.SOMProperty, data_dict: dict[str, str | list]
     ) -> None:
         """
         fill Attribute Values by an Attribute Datadict
@@ -90,13 +90,13 @@ class Attribute(som_gui.core.tool.Attribute):
     @classmethod
     def create_attribute_by_dict(
         cls, attribute_data: dict[str, str | list | bool]
-    ) -> SOMcreator.Attribute:
+    ) -> SOMcreator.SOMProperty:
         """
         create SOMcreator.Attribute from Datadict
         :param attribute_data: dictionary {Data_name:{'getter':Callable, 'setter':Callable},...}
         :return:
         """
-        attribute = SOMcreator.Attribute()
+        attribute = SOMcreator.SOMProperty()
         cls.set_attribute_data_by_dict(attribute, attribute_data)
         return attribute
 
@@ -353,7 +353,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def compare_attributes(
-        cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute
+        cls, attribute0: SOMcreator.SOMProperty, attribute1: SOMcreator.SOMProperty
     ):
         """
         compare two SOMcreator Attributes by their Values
@@ -589,7 +589,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                     item.addChild(attribute_item)
 
     @classmethod
-    def fill_value_table(cls, table: QTableWidget, attribute: SOMcreator.Attribute):
+    def fill_value_table(cls, table: QTableWidget, attribute: SOMcreator.SOMProperty):
         cls.clear_table(table)
         if attribute is None:
             return
@@ -613,8 +613,8 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def create_child_matchup(
         cls,
-        entity0: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute,
-        entity1: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute,
+        entity0: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
+        entity1: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
     ):
 
         if entity0 is None:
@@ -697,7 +697,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def are_attributes_identical(
-        cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute
+        cls, attribute0: SOMcreator.SOMProperty, attribute1: SOMcreator.SOMProperty
     ) -> bool:
 
         if attribute0 is None or attribute1 is None:
@@ -779,7 +779,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             cls.set_branch_color(item.treeWidget(), index, style_list[1][0])
 
         for child_index in range(item.childCount()):
-            if not isinstance(entity0, SOMcreator.Attribute):
+            if not isinstance(entity0, SOMcreator.SOMProperty):
                 cls.style_tree_item(item.child(child_index))
 
     @classmethod
@@ -858,7 +858,8 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def get_name_path(
-        cls, entity: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute
+        cls,
+        entity: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
     ) -> str:
         text = entity.name
         if isinstance(entity, SOMcreator.SOMClass):
@@ -868,7 +869,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             if obj is None:
                 return text
             return f"{obj.name}:{text}"
-        if isinstance(entity, SOMcreator.Attribute):
+        if isinstance(entity, SOMcreator.SOMProperty):
             pset = entity.property_set
             if pset is None:
                 return text
@@ -944,7 +945,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def export_attribute_differences(
         cls,
         file: TextIO,
-        attribute_list: list[tuple[SOMcreator.Attribute, SOMcreator.Attribute]],
+        attribute_list: list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]],
     ):
         at = "Attribute"
         for attrib0, attrib1 in sorted(
@@ -1009,14 +1010,14 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def get_attribute_list(
         cls, property_set: SOMcreator.PropertySet
-    ) -> list[tuple[SOMcreator.Attribute, SOMcreator.Attribute]] | None:
+    ) -> list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]] | None:
         return cls.get_properties().attributes_lists.get(property_set)
 
     @classmethod
     def set_attribute_list(
         cls,
         property_set: SOMcreator.PropertySet,
-        attribute_list: list[tuple[SOMcreator.Attribute, SOMcreator.Attribute]],
+        attribute_list: list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]],
     ):
         cls.get_properties().attributes_lists[property_set] = attribute_list
 
@@ -1113,7 +1114,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def get_selected_entity(
         cls, tree: QTreeWidget
-    ) -> SOMcreator.PropertySet | SOMcreator.Attribute | SOMcreator.SOMClass | None:
+    ) -> SOMcreator.PropertySet | SOMcreator.SOMProperty | SOMcreator.SOMClass | None:
         item = cls.get_selected_item(tree)
         d0, d1 = cls.get_entities_from_item(item)
         data = d0 or d1
@@ -1121,8 +1122,8 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def get_entities_from_item(cls, item: QTreeWidgetItem) -> tuple[
-        SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute,
-        SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute,
+        SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
+        SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
     ]:
         if item is None:
             return None, None

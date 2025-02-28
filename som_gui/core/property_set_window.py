@@ -156,7 +156,7 @@ def attribute_clicked(
 
 
 def activate_attribute(
-    active_attribute: SOMcreator.Attribute,
+    active_attribute: SOMcreator.SOMProperty,
     window,
     property_set_window: Type[tool.PropertySetWindow],
 ):

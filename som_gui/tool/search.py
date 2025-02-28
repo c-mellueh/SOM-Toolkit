@@ -67,8 +67,8 @@ class Search(som_gui.core.tool.Search):
 
     @classmethod
     def search_attribute(
-        cls, searchable_attributes: list[SOMcreator.Attribute]
-    ) -> SOMcreator.Attribute | None:
+        cls, searchable_attributes: list[SOMcreator.SOMProperty]
+    ) -> SOMcreator.SOMProperty | None:
         """
         Opens SearchWindow which searches for an Attribute
         :param searchable_attributes: Attributes which will be visible in Search Table
@@ -180,12 +180,12 @@ class Search(som_gui.core.tool.Search):
     @classmethod
     def get_info_from_item(
         cls, item: QTableWidgetItem
-    ) -> SOMcreator.SOMClass | SOMcreator.Attribute:
+    ) -> SOMcreator.SOMClass | SOMcreator.SOMProperty:
         return item.data(CLASS_REFERENCE)
 
     @classmethod
     def set_info_of_item(
-        cls, item: QTableWidgetItem, info: SOMcreator.SOMClass | SOMcreator.Attribute
+        cls, item: QTableWidgetItem, info: SOMcreator.SOMClass | SOMcreator.SOMProperty
     ):
         item.setData(CLASS_REFERENCE, info)
 

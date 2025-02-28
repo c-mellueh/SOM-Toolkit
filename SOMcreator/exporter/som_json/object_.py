@@ -33,7 +33,7 @@ def _write_object(element: SOMcreator.SOMClass) -> ObjectDict:
     object_dict[PROPERTY_SETS] = psets_dict
     object_dict[ABBREVIATION] = element.abbreviation
 
-    if isinstance(element.ident_attrib, SOMcreator.Attribute):
+    if isinstance(element.ident_attrib, SOMcreator.SOMProperty):
         object_dict[IDENT_ATTRIBUTE] = element.ident_attrib.uuid
     else:
         object_dict[IDENT_ATTRIBUTE] = element.ident_attrib

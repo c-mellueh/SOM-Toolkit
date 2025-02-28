@@ -373,7 +373,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
     @classmethod
     def are_attributes_identical(
-        cls, attribute0: SOMcreator.Attribute, attribute1: SOMcreator.Attribute
+        cls, attribute0: SOMcreator.SOMProperty, attribute1: SOMcreator.SOMProperty
     ):
         filter_list = cls.get_filter_list(attribute0, attribute1)
         return cls.are_all_filters_identical(filter_list)

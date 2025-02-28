@@ -52,13 +52,13 @@ def transform_project_to_dict(proj: SOMcreator.Project):
 
 
 def _check_for_existance(
-    attribute: SOMcreator.Attribute, properties: list[bsdd.Property]
+    attribute: SOMcreator.SOMProperty, properties: list[bsdd.Property]
 ) -> bsdd.Property | None:
     new_code = str(attribute.name).lower()
     return {p.Code.lower(): p for p in properties}.get(new_code)
 
 
-def _create_property(attribute: SOMcreator.Attribute) -> bsdd.Property:
+def _create_property(attribute: SOMcreator.SOMProperty) -> bsdd.Property:
     code = str(attribute.name)
     p = bsdd.Property(code, attribute.name)
     p.attribute = attribute
@@ -81,7 +81,7 @@ def _find_differences(obj_1: bsdd.Property, obj_2: bsdd.Property) -> dict:
 
 
 def _create_class_property(
-    attribute: SOMcreator.Attribute, existing_properties: list[bsdd.Property]
+    attribute: SOMcreator.SOMProperty, existing_properties: list[bsdd.Property]
 ):
     code = str(attribute.name)
     if parent_property := _check_for_existance(attribute, existing_properties):
@@ -117,8 +117,8 @@ def _create_class_property(
 
 
 def _create_properties(
-    predefined_attribute: list[SOMcreator.Attribute],
-    object_attributes: list[SOMcreator.Attribute],
+    predefined_attribute: list[SOMcreator.SOMProperty],
+    object_attributes: list[SOMcreator.SOMProperty],
 ):
     properties = list()
     for attribute in predefined_attribute:

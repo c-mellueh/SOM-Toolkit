@@ -22,11 +22,21 @@ def init_context_menu(attribute_table: Type[tool.AttributeTable]):
     """
     Defines all standard context menu actions associated with an attribute table.
     """
-    attribute_table.add_context_menu_builder(attribute_table.context_menu_builder_rename)
-    attribute_table.add_context_menu_builder(lambda t: attribute_table.context_menu_builder_delete(t, False))
-    attribute_table.add_context_menu_builder(lambda t: attribute_table.context_menu_builder_delete(t, True))
-    attribute_table.add_context_menu_builder(attribute_table.context_menu_builder_remove_connection)
-    attribute_table.add_context_menu_builder(attribute_table.context_menu_builder_add_connection)
+    attribute_table.add_context_menu_builder(
+        attribute_table.context_menu_builder_rename
+    )
+    attribute_table.add_context_menu_builder(
+        lambda t: attribute_table.context_menu_builder_delete(t, False)
+    )
+    attribute_table.add_context_menu_builder(
+        lambda t: attribute_table.context_menu_builder_delete(t, True)
+    )
+    attribute_table.add_context_menu_builder(
+        attribute_table.context_menu_builder_remove_connection
+    )
+    attribute_table.add_context_menu_builder(
+        attribute_table.context_menu_builder_add_connection
+    )
 
 
 def init_attribute_columns(attribute_table: Type[tool.AttributeTable]):
@@ -49,18 +59,25 @@ def init_attribute_columns(attribute_table: Type[tool.AttributeTable]):
     attribute_table.add_column_to_table("Valuetype", lambda a: a.value_type)
     attribute_table.add_column_to_table("Unit", lambda a: a.unit)
     attribute_table.add_column_to_table("Value", lambda a: a.value)
-    attribute_table.add_column_to_table("Optional", lambda a: a.is_optional(ignore_hirarchy=True))
+    attribute_table.add_column_to_table(
+        "Optional", lambda a: a.is_optional(ignore_hirarchy=True)
+    )
 
 
-def retranslate_ui(table: ui.AttributeTable, attribute_table: Type[tool.AttributeTable],
-                   main_window: Type[tool.MainWindow]):
+def retranslate_ui(
+    table: ui.AttributeTable,
+    attribute_table: Type[tool.AttributeTable],
+    main_window: Type[tool.MainWindow],
+):
     if table is None:
         table = main_window.get_attribute_table()
     labels = attribute_table.get_attribute_table_header_names()
     table.setHorizontalHeaderLabels(labels)
 
 
-def toggle_optionality(item: QTableWidgetItem, attribute_table: Type[tool.AttributeTable]):
+def toggle_optionality(
+    item: QTableWidgetItem, attribute_table: Type[tool.AttributeTable]
+):
     """
     change the optionality of an attribute by their QTableWidgetItem
     :param item:
@@ -74,8 +91,11 @@ def toggle_optionality(item: QTableWidgetItem, attribute_table: Type[tool.Attrib
     attribute.set_optional(cs)
 
 
-def create_mime_data(items: list[QTableWidgetItem], mime_data: QMimeData,
-                     attribute_table: Type[tool.AttributeTable]) -> QMimeData:
+def create_mime_data(
+    items: list[QTableWidgetItem],
+    mime_data: QMimeData,
+    attribute_table: Type[tool.AttributeTable],
+) -> QMimeData:
     """
     create MimeData used for Dropping Attributes into different Tables
     """
@@ -84,8 +104,12 @@ def create_mime_data(items: list[QTableWidgetItem], mime_data: QMimeData,
     return mime_data
 
 
-def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_table: Type[tool.AttributeTable],
-               attribute_tool: Type[tool.Attribute], ):
+def drop_event(
+    event: QDropEvent,
+    target_table: ui.AttributeTable,
+    attribute_table: Type[tool.AttributeTable],
+    attribute_tool: Type[tool.Attribute],
+):
     """
     handling of dropping of attribute row from a property set window to another property set window
     :param target_table: table on which the attribute is dropped on
@@ -100,9 +124,12 @@ def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_tab
 
     proposed_action = event.proposedAction()
     target_property_set = attribute_table.get_property_set_by_table(target_table)
-    existing_attributes = {a.name: a for a in target_property_set.get_attributes(filter=False)}
-    dropped_attributes: set[SOMcreator.Attribute] = event.mimeData().property(
-        MIME_DATA_KEY)  # get set of dropped Attributes
+    existing_attributes = {
+        a.name: a for a in target_property_set.get_attributes(filter=False)
+    }
+    dropped_attributes: set[SOMcreator.SOMProperty] = event.mimeData().property(
+        MIME_DATA_KEY
+    )  # get set of dropped Attributes
 
     if proposed_action == Qt.DropAction.CopyAction:
         for attribute in dropped_attributes:
@@ -131,8 +158,12 @@ def drop_event(event: QDropEvent, target_table: ui.AttributeTable, attribute_tab
     event.accept()
 
 
-def create_context_menu(table: ui.AttributeTable, pos, attribute_table: Type[tool.AttributeTable],
-                        util: Type[tool.Util]):
+def create_context_menu(
+    table: ui.AttributeTable,
+    pos,
+    attribute_table: Type[tool.AttributeTable],
+    util: Type[tool.Util],
+):
     """
     Create Context Menu based on context menu builders
     """
@@ -152,9 +183,12 @@ def create_context_menu(table: ui.AttributeTable, pos, attribute_table: Type[too
     menu.exec(table.viewport().mapToGlobal(pos))
 
 
-def activate_item(item: QTableWidgetItem,
-                  attribute_table: Type[tool.AttributeTable],
-                  property_set: Type[tool.PropertySet], property_set_window: Type[tool.PropertySetWindow]):
+def activate_item(
+    item: QTableWidgetItem,
+    attribute_table: Type[tool.AttributeTable],
+    property_set: Type[tool.PropertySet],
+    property_set_window: Type[tool.PropertySetWindow],
+):
     """
     Activate Attribute based on QTableWidgetItem
     :return:
@@ -162,11 +196,17 @@ def activate_item(item: QTableWidgetItem,
     active_attribute = attribute_table.get_attribute_from_item(item)
     active_property_set = property_set.get_active_property_set()
     # create Window or activate it
-    window = property_set_window_core.open_pset_window(active_property_set, property_set_window, attribute_table)
-    property_set_window_core.activate_attribute(active_attribute, window, property_set_window)
+    window = property_set_window_core.open_pset_window(
+        active_property_set, property_set_window, attribute_table
+    )
+    property_set_window_core.activate_attribute(
+        active_attribute, window, property_set_window
+    )
 
 
-def update_attribute_table(table: QTableWidget, attribute_table: Type[tool.AttributeTable]):
+def update_attribute_table(
+    table: QTableWidget, attribute_table: Type[tool.AttributeTable]
+):
     logging.debug(f"Repaint Attribute Table")
 
     existing_attributes = attribute_table.get_existing_attributes_in_table(table)
@@ -185,8 +225,12 @@ def update_attribute_table(table: QTableWidget, attribute_table: Type[tool.Attri
             table.removeColumn(table.columnCount())
 
     # get Attributes which should be deleted and added
-    delete_attributes = existing_attributes.difference(set(property_set.get_attributes(filter=True)))
-    new_attributes = set(property_set.get_attributes(filter=True)).difference(existing_attributes)
+    delete_attributes = existing_attributes.difference(
+        set(property_set.get_attributes(filter=True))
+    )
+    new_attributes = set(property_set.get_attributes(filter=True)).difference(
+        existing_attributes
+    )
     attribute_table.remove_attributes_from_table(delete_attributes, table)
     attribute_table.add_attributes_to_table(new_attributes, table)
 

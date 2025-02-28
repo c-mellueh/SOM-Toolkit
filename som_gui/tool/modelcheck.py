@@ -119,7 +119,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def build_data_dict(
         cls,
         check_state_dict: dict[
-            SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute, bool
+            SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty, bool
         ],
     ):
         def iter_objects(objects: Iterator[SOMcreator.SOMClass]):
@@ -157,7 +157,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     #######################################################################################
 
     @classmethod
-    def check_values(cls, value, attribute: SOMcreator.Attribute):
+    def check_values(cls, value, attribute: SOMcreator.SOMProperty):
         check_dict = {
             value_constants.LIST: cls.check_list,
             value_constants.RANGE: cls.check_range,
@@ -255,7 +255,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
     @classmethod
-    def format_issue(cls, guid, attribute: SOMcreator.Attribute, value):
+    def format_issue(cls, guid, attribute: SOMcreator.SOMProperty, value):
         element_type = cls.get_active_element_type()
         description = QCoreApplication.translate(
             "Modelcheck", '"{}" does not match format Requirement: "{}"'
@@ -440,7 +440,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         guid,
         description,
         issue_type,
-        attribute: SOMcreator.Attribute,
+        attribute: SOMcreator.SOMProperty,
         pset_name="",
         attribute_name="",
         value="",

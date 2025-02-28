@@ -39,7 +39,7 @@ def create_mapping(project: SOMcreator.Project, path: str, allplan_mapping_name:
 
         attribute_dict: dict[str, str] = dict()
 
-        for attribute in SOMcreator.Attribute:
+        for attribute in SOMcreator.SOMProperty:
             data_type = attribute.data_type
 
             if attribute.name in attribute_dict:

@@ -89,7 +89,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def remove_attributes_from_table(
-        cls, attributes: set[SOMcreator.Attribute], table: QTableWidget
+        cls, attributes: set[SOMcreator.SOMProperty], table: QTableWidget
     ):
         """
         Remove set of attributes from table
@@ -105,7 +105,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def add_attributes_to_table(
-        cls, attributes: set[SOMcreator.Attribute], table: QTableWidget
+        cls, attributes: set[SOMcreator.SOMProperty], table: QTableWidget
     ) -> None:
         """
         add list of Attributes to Table
@@ -251,8 +251,8 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def get_possible_parent(
-        cls, attribute: SOMcreator.Attribute
-    ) -> None | SOMcreator.Attribute:
+        cls, attribute: SOMcreator.SOMProperty
+    ) -> None | SOMcreator.SOMProperty:
         if not attribute.property_set:
             return None
         if not attribute.property_set.parent:
@@ -403,7 +403,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def get_row_index_from_attribute(
-        cls, attribute: SOMcreator.Attribute, table: QTableWidget
+        cls, attribute: SOMcreator.SOMProperty, table: QTableWidget
     ) -> int:
         """
         :return: Row index
@@ -416,7 +416,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def get_selected_attributes(
         cls, table: ui.AttributeTable
-    ) -> set[SOMcreator.Attribute]:
+    ) -> set[SOMcreator.SOMProperty]:
         """
         :param table: Active AttributeTable
         :return: selected attributes in AttributeTable
@@ -426,7 +426,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def get_attribute_from_item(
         cls, item: QTableWidgetItem
-    ) -> SOMcreator.Attribute | None:
+    ) -> SOMcreator.SOMProperty | None:
         """
         return the Attribute which is linked to a table entry
         :param item:
@@ -435,4 +435,4 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         if item is None:
             return None
         entity = item.data(CLASS_REFERENCE)
-        return entity if isinstance(entity, SOMcreator.Attribute) else None
+        return entity if isinstance(entity, SOMcreator.SOMProperty) else None

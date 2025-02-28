@@ -444,7 +444,7 @@ class PsetModel(TreeModel):
         self.column_titles = [h0]
 
     def flags(self, index: QModelIndex):
-        node: SOMcreator.PropertySet | SOMcreator.Attribute = index.internalPointer()
+        node: SOMcreator.PropertySet | SOMcreator.SOMProperty = index.internalPointer()
         if isinstance(node, SOMcreator.PropertySet):
             parent_index = node.object.index
             parent_index = parent_index.sibling(parent_index.row(), index.column() + 1)
@@ -470,7 +470,7 @@ class PsetModel(TreeModel):
         if not parent.isValid():
             return len(self.get_property_sets())  # Top-level items
         node: SOMcreator.PropertySet = parent.internalPointer()
-        if isinstance(node, SOMcreator.Attribute):
+        if isinstance(node, SOMcreator.SOMProperty):
             return 0
         count = len(
             list(node.get_attributes(filter=False))
@@ -504,7 +504,7 @@ class PsetModel(TreeModel):
     def parent(self, index: QModelIndex):
         if not index.isValid():
             return QModelIndex()
-        node: SOMcreator.PropertySet | SOMcreator.Attribute = index.internalPointer()
+        node: SOMcreator.PropertySet | SOMcreator.SOMProperty = index.internalPointer()
         if node is None or isinstance(node, SOMcreator.PropertySet):
             return QModelIndex()
         parent_index: QModelIndex = node.property_set.index

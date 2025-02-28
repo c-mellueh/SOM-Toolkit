@@ -1,11 +1,11 @@
-from SOMcreator import Project, SOMClass, PropertySet, Attribute
+from SOMcreator import Project, SOMClass, PropertySet, SOMProperty
 from SOMcreator.constants.value_constants import BOOLEAN, INTEGER, LIST
 
 # Create a new Project
 project = Project(name="Example SOM")
 
 # Create a new Identity Attribute
-identifier_attribute = Attribute(name="identifier")
+identifier_attribute = SOMProperty(name="identifier")
 identifier_attribute.value = ["w.100.100"]
 
 # Create a Object representing a custom Wall Definition
@@ -18,10 +18,10 @@ wall.add_property_set(pset)
 
 # Define a 2nd PropertySet
 common_pset = PropertySet(name="Pset_WallCommon")
-common_pset.add_attribute(Attribute(name="LoadBearing", data_type=BOOLEAN))
+common_pset.add_attribute(SOMProperty(name="LoadBearing", data_type=BOOLEAN))
 
 # Define a Attribute with multiple allowed Values
-fire_rating = Attribute(name="FireRating", data_type=INTEGER, value_type=LIST)
+fire_rating = SOMProperty(name="FireRating", data_type=INTEGER, value_type=LIST)
 fire_rating.value = [30, 60, 90]
 common_pset.add_attribute(fire_rating)
 

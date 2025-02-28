@@ -12,7 +12,7 @@ class SOMClass(Hirarchy):
     def __init__(
         self,
         name: str,
-        ident_attrib: SOMcreator.Attribute | str,
+        ident_attrib: SOMcreator.SOMProperty | str,
         uuid: str = None,
         ifc_mapping: set[str] | None = None,
         description: None | str = None,
@@ -151,17 +151,17 @@ class SOMClass(Hirarchy):
 
     @property
     def is_concept(self) -> bool:
-        if isinstance(self.ident_attrib, SOMcreator.Attribute):
+        if isinstance(self.ident_attrib, SOMcreator.SOMProperty):
             return False
         else:
             return True
 
     @property
-    def ident_attrib(self) -> SOMcreator.Attribute | str:
+    def ident_attrib(self) -> SOMcreator.SOMProperty | str:
         return self._ident_attrib
 
     @ident_attrib.setter
-    def ident_attrib(self, value: SOMcreator.Attribute) -> None:
+    def ident_attrib(self, value: SOMcreator.SOMProperty) -> None:
         self._ident_attrib = value
 
     # override name setter because of intheritance
@@ -186,7 +186,7 @@ class SOMClass(Hirarchy):
         return iter(self._property_sets)
 
     @filterable
-    def get_attributes(self, inherit: bool = False) -> Iterator[SOMcreator.Attribute]:
+    def get_attributes(self, inherit: bool = False) -> Iterator[SOMcreator.SOMProperty]:
         attributes = list()
         for property_set in self.get_property_sets(filter=False):
             attributes += property_set.get_attributes(filter=False)

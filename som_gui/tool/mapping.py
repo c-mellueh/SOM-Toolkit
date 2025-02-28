@@ -75,7 +75,7 @@ class Mapping(som_gui.core.tool.Mapping):
     @classmethod
     def update_tree(
         cls,
-        entities: set[SOMcreator.Attribute | SOMcreator.SOMClass],
+        entities: set[SOMcreator.SOMProperty | SOMcreator.SOMClass],
         parent_item: QTreeWidgetItem,
         tree: ui.ObjectTreeWidget,
     ):
@@ -117,7 +117,8 @@ class Mapping(som_gui.core.tool.Mapping):
 
     @classmethod
     def create_child(
-        cls, entity: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute
+        cls,
+        entity: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
     ) -> QTreeWidgetItem:
         entity_item = QTreeWidgetItem()
         entity_item.setData(0, CLASS_REFERENCE, entity)
@@ -142,7 +143,8 @@ class Mapping(som_gui.core.tool.Mapping):
 
     @classmethod
     def get_checkstate(
-        cls, entity: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute
+        cls,
+        entity: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
     ):
         if entity not in cls.get_properties().check_state_dict:
             cls.set_checkstate(entity, True)
@@ -151,7 +153,7 @@ class Mapping(som_gui.core.tool.Mapping):
     @classmethod
     def set_checkstate(
         cls,
-        entity: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute,
+        entity: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
         checkstate: bool,
     ) -> None:
         cls.get_properties().check_state_dict[entity] = checkstate

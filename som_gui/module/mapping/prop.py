@@ -12,9 +12,9 @@ if TYPE_CHECKING:
 class MappingProperties:
     window: MappingWindow = None
     check_state_dict: dict[
-        SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.Attribute, bool
+        SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty, bool
     ] = dict()
     object_tree: ObjectTreeWidget = None
     pset_tree: PropertySetTreeWidget = None
-    ifc_export_dict: dict[str, (list[SOMcreator.Attribute], set[str])] = dict()
+    ifc_export_dict: dict[str, (list[SOMcreator.SOMProperty], set[str])] = dict()
     actions: dict[str, QAction] = dict()

@@ -235,11 +235,11 @@ def _handle_tree_structure(
             create_table_object(parent_xml_container)
 
 
-def _csv_value_in_list(attribute: SOMcreator.Attribute):
+def _csv_value_in_list(attribute: SOMcreator.SOMProperty):
     return " ".join(f'"{str(val)}"' for val in attribute.value)
 
 
-def _csv_check_range(attribute: SOMcreator.Attribute) -> str:
+def _csv_check_range(attribute: SOMcreator.SOMProperty) -> str:
     sorted_range_list = sorted(
         [[min(v1, v2), max(v1, v2)] for [v1, v2] in attribute.value]
     )
@@ -250,7 +250,7 @@ def _csv_check_range(attribute: SOMcreator.Attribute) -> str:
 
 
 def _build_basics_rule_item(
-    xml_parent: etree.Element, attribute: SOMcreator.Attribute
+    xml_parent: etree.Element, attribute: SOMcreator.SOMProperty
 ) -> etree.Element:
     xml_attrib = etree.SubElement(xml_parent, "ruleItem")
     xml_attrib.set("ID", attribute.uuid)
@@ -263,7 +263,7 @@ def _build_basics_rule_item(
 
 
 def _handle_rule_item_attribute(
-    xml_parent: etree.Element, attribute: SOMcreator.Attribute
+    xml_parent: etree.Element, attribute: SOMcreator.SOMProperty
 ):
     xml_attrib = _build_basics_rule_item(xml_parent, attribute)
 
@@ -301,7 +301,7 @@ def _handle_rule_item_attribute(
 def _handle_rule_item_pset(
     xml_parent: etree.Element,
     property_set: SOMcreator.PropertySet,
-    attributes: list[SOMcreator.Attribute],
+    attributes: list[SOMcreator.SOMProperty],
 ):
     xml_pset = etree.SubElement(xml_parent, "ruleItem")
     xml_pset.set("ID", property_set.uuid)
@@ -312,7 +312,7 @@ def _handle_rule_item_pset(
 
 
 def _handle_rule_items_by_pset_dict(
-    pset_dict: dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]],
+    pset_dict: dict[SOMcreator.PropertySet, list[SOMcreator.SOMProperty]],
     attribute_rule_tree: etree.Element,
 ):
     for pset, attribute_list in pset_dict.items():
@@ -416,7 +416,7 @@ def _handle_untested(
     code.text = str(template.render(pset_name=main_pset, attribute_name=main_attribute))
 
 
-def _handle_attribute_rule(attribute: SOMcreator.Attribute) -> str:
+def _handle_attribute_rule(attribute: SOMcreator.SOMProperty) -> str:
     data_type = xml.transform_data_format(attribute.data_type)
     pset_name = attribute.property_set.name
 
@@ -464,7 +464,7 @@ def _fast_object_check(
 def build_full_data_dict(
     proj: SOMcreator.Project,
 ) -> dict[
-    SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]
+    SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.SOMProperty]]
 ]:
     d = dict()
     for obj in proj.get_objects(filter=True):
@@ -479,7 +479,7 @@ def build_full_data_dict(
 def export(
     project: SOMcreator.Project,
     required_data_dict: dict[
-        SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]
+        SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.SOMProperty]]
     ],
     path: str,
     main_pset: str,
@@ -524,7 +524,7 @@ def export(
 
 def csv_export(
     required_data_dict: dict[
-        SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]
+        SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.SOMProperty]]
     ],
     path,
 ):
@@ -566,7 +566,7 @@ def fast_check(
     main_pset: str,
     main_attrib: str,
     required_data_dict: dict[
-        SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]
+        SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.SOMProperty]]
     ],
     path: str,
 ) -> None:

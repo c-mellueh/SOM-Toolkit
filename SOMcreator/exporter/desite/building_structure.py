@@ -56,7 +56,7 @@ def _handle_property_type_section(xml_repo) -> dict[str, int]:
     attribute_dict = dict()
 
     i = 1
-    for attribute in SOMcreator.Attribute:
+    for attribute in SOMcreator.SOMProperty:
         # use attribute_text instead of attribute to remove duplicates
         attribute_text = f"{attribute.property_set.name}:{attribute.name}"
         if attribute_text not in attribute_dict:
