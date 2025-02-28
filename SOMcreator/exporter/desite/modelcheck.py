@@ -462,7 +462,7 @@ def _fast_object_check(
 
 
 def build_full_data_dict(
-    proj: SOMcreator.Project,
+    proj: SOMcreator.SOMProject,
 ) -> dict[
     SOMcreator.SOMClass, dict[SOMcreator.SOMPropertySet, list[SOMcreator.SOMProperty]]
 ]:
@@ -477,7 +477,7 @@ def build_full_data_dict(
 
 
 def export(
-    project: SOMcreator.Project,
+    project: SOMcreator.SOMProject,
     required_data_dict: dict[
         SOMcreator.SOMClass,
         dict[SOMcreator.SOMPropertySet, list[SOMcreator.SOMProperty]],
@@ -564,7 +564,7 @@ def csv_export(
 
 
 def fast_check(
-    project: SOMcreator.Project,
+    project: SOMcreator.SOMProject,
     main_pset: str,
     main_attrib: str,
     required_data_dict: dict[

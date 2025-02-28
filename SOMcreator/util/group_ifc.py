@@ -62,7 +62,7 @@ def get_ifc_el_info(
 
 def create_structure_dict(
     ifc_file: ifcopenshell.file,
-    project: SOMcreator.Project,
+    project: SOMcreator.SOMProject,
     attribute_bundle: tuple[str, str, str, str, str, str],
 ) -> dict:
     """Iterate over all Entities, build the targeted Datastructure"""
@@ -284,7 +284,7 @@ def create_aggregation_structure(
 def main(
     ifc_path: os.PathLike | str,
     export_path: os.PathLike | str,
-    project: SOMcreator.Project,
+    project: SOMcreator.SOMProject,
     main_pset: str,
     main_attribute: str,
     group_pset: str,

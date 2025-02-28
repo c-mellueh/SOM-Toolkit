@@ -114,7 +114,7 @@ def _handle_relation_section(xml_parent: Element) -> None:
     xml_relation.set("name", "default")
 
 
-def export_bs(project: SOMcreator.Project, path: str) -> None:
+def export_bs(project: SOMcreator.SOMProject, path: str) -> None:
     if not path:
         return
     xml_boq_export = handle_header(project.author, "bsExport")

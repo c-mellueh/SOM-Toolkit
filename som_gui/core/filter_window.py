@@ -224,8 +224,8 @@ def add_compare_widget(
 
 
 def create_compare_widget(
-    project0: SOMcreator.Project,
-    project1: SOMcreator.Project,
+    project0: SOMcreator.SOMProject,
+    project1: SOMcreator.SOMProject,
     filter_compare: Type[tool.FilterCompare],
     attribute_compare: Type[tool.AttributeCompare],
 ):

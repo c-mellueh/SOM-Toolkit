@@ -7,11 +7,11 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from SOMcreator.datastructure.som_json import PropertySetDict
-    from SOMcreator import Project
+    from SOMcreator import SOMProject
 
 
 def load(
-    proj: Project,
+    proj: SOMProject,
     pset_dict: PropertySetDict,
     identifier: str,
     obj: SOMcreator.SOMClass | None,

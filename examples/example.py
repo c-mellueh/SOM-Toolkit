@@ -1,8 +1,8 @@
-from SOMcreator import Project, SOMClass, SOMPropertySet, SOMProperty
+from SOMcreator import SOMProject, SOMClass, SOMPropertySet, SOMProperty
 from SOMcreator.constants.value_constants import BOOLEAN, INTEGER, LIST
 
 # Create a new Project
-project = Project(name="Example SOM")
+project = SOMProject(name="Example SOM")
 
 # Create a new Identity Attribute
 identifier_attribute = SOMProperty(name="identifier")

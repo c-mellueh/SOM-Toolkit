@@ -30,11 +30,11 @@ class ExportExcel:
         return SOMcreator.ExcelProperties
 
     @classmethod
-    def get_project(cls) -> SOMcreator.Project:
+    def get_project(cls) -> SOMcreator.SOMProject:
         return cls.get_properties().project
 
     @classmethod
-    def set_project(cls, project: SOMcreator.Project):
+    def set_project(cls, project: SOMcreator.SOMProject):
         cls.get_properties().project = project
 
     @classmethod

@@ -18,7 +18,7 @@ class SOMClass(Hirarchy):
         description: None | str = None,
         optional: None | bool = None,
         abbreviation: None | str = None,
-        project: None | SOMcreator.Project = None,
+        project: None | SOMcreator.SOMProject = None,
         filter_matrix: list[list[bool]] = None,
     ) -> None:
         super(SOMClass, self).__init__(
@@ -89,7 +89,7 @@ class SOMClass(Hirarchy):
         return new_object
 
     @property
-    def project(self) -> SOMcreator.Project | None:
+    def project(self) -> SOMcreator.SOMProject | None:
         return self._project
 
     @property

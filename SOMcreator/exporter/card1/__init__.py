@@ -4,7 +4,9 @@ from openpyxl import load_workbook, Workbook
 import SOMcreator
 
 
-def create_mapping(src_path: str, dest_path: str, project: SOMcreator.Project) -> None:
+def create_mapping(
+    src_path: str, dest_path: str, project: SOMcreator.SOMProject
+) -> None:
     def _create_sheet(obj: SOMcreator.SOMClass, workbook: Workbook, name):
         new_sheet = workbook.create_sheet(name)
         attributes = set()

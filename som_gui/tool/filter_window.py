@@ -70,7 +70,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         return cls.get_properties().widget
 
     @classmethod
-    def connect_pset_tree(cls, project: SOMcreator.Project):
+    def connect_pset_tree(cls, project: SOMcreator.SOMProject):
         pset_tree = cls.get_pset_tree()
         pset_tree.setModel(ui.PsetModel(project))
         pset_tree.frozen_view.selectionModel().selectionChanged.connect(
@@ -81,7 +81,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         )
 
     @classmethod
-    def connect_object_tree(cls, project: SOMcreator.Project):
+    def connect_object_tree(cls, project: SOMcreator.SOMProject):
         object_tree = cls.get_object_tree()
         object_tree.setModel(ui.ObjectModel(project))
         object_tree.setSelectionMode(object_tree.SelectionMode.SingleSelection)
@@ -97,7 +97,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         )
 
     @classmethod
-    def connect_project_table(cls, project: SOMcreator.Project):
+    def connect_project_table(cls, project: SOMcreator.SOMProject):
         project_table = cls.get_project_table()
         model = ui.ProjectModel(project)
         project_table.setModel(model)
@@ -119,7 +119,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         return cls.get_properties().widget
 
     @classmethod
-    def add_usecase(cls, project: SOMcreator.Project):
+    def add_usecase(cls, project: SOMcreator.SOMProject):
 
         text = QCoreApplication.translate("FilterWindow", "New UseCase")
         new_name = tool.Util.get_new_name(
@@ -135,7 +135,9 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         model.endInsertColumns()
 
     @classmethod
-    def remove_usecase(cls, usecase: SOMcreator.UseCase, project: SOMcreator.Project):
+    def remove_usecase(
+        cls, usecase: SOMcreator.UseCase, project: SOMcreator.SOMProject
+    ):
         logging.debug(f"remove UseCase '{usecase.name}'")
         model = cls.get_project_table().model()
         usecase_index = project.get_usecase_index(usecase)
@@ -144,7 +146,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         model.endRemoveColumns()
 
     @classmethod
-    def add_phase(cls, project: SOMcreator.Project):
+    def add_phase(cls, project: SOMcreator.SOMProject):
         text = QCoreApplication.translate("FilterWindow", "New Phase")
         new_name = tool.Util.get_new_name(
             text, [ph.name for ph in project.get_phases()]
@@ -157,7 +159,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         model.endInsertRows()
 
     @classmethod
-    def remove_phase(cls, phase: SOMcreator.Phase, project: SOMcreator.Project):
+    def remove_phase(cls, phase: SOMcreator.Phase, project: SOMcreator.SOMProject):
         logging.debug(f"remove Phase '{phase.name}'")
         model = cls.get_project_table().model()
         phase_index = project.get_phase_index(phase)
@@ -265,7 +267,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
     @classmethod
     def find_matching_usecases(
-        cls, proj0: SOMcreator.Project = None, proj1: SOMcreator.Project = None
+        cls, proj0: SOMcreator.SOMProject = None, proj1: SOMcreator.SOMProject = None
     ):
         proj0 = proj0 or cls.get_project(0)
         proj1 = proj1 or cls.get_project(1)
@@ -281,7 +283,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
     @classmethod
     def find_matching_phases(
-        cls, proj0: SOMcreator.Project = None, proj1: SOMcreator.Project = None
+        cls, proj0: SOMcreator.SOMProject = None, proj1: SOMcreator.SOMProject = None
     ):
         proj0 = proj0 or cls.get_project(0)
         proj1 = proj1 or cls.get_project(1)
@@ -528,7 +530,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         cls.get_properties().projects = [project1, project2]
 
     @classmethod
-    def get_project(cls, index=1) -> SOMcreator.Project:
+    def get_project(cls, index=1) -> SOMcreator.SOMProject:
         return cls.get_properties().projects[index]
 
     @classmethod

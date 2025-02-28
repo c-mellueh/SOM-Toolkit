@@ -43,7 +43,7 @@ class SOMAggregation(Hirarchy):
             self.parent.remove_child(self)
 
     @property
-    def project(self) -> SOMcreator.Project | None:
+    def project(self) -> SOMcreator.SOMProject | None:
         return self.som_class.project
 
     @property
@@ -74,7 +74,7 @@ class SOMAggregation(Hirarchy):
     ) -> bool:
         """returns if adding child is allowed"""
 
-        def loop_parents(element:SOMAggregation, search_value):
+        def loop_parents(element: SOMAggregation, search_value):
             if element.parent is None:
                 return True
             if element.parent.som_class == search_value:

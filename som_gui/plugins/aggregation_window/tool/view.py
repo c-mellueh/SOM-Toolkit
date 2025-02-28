@@ -135,7 +135,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         scene.deleteLater()
 
     @classmethod
-    def import_aggregations_from_project(cls, proj: SOMcreator.Project) -> None:
+    def import_aggregations_from_project(cls, proj: SOMcreator.SOMProject) -> None:
         plugin_dict = proj.import_dict
         if not plugin_dict:
             return
@@ -558,7 +558,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
     @classmethod
     def remove_nodes_with_deleted_aggregations(
-        cls, scene: ui_view.AggregationScene, proj: SOMcreator.Project
+        cls, scene: ui_view.AggregationScene, proj: SOMcreator.SOMProject
     ) -> None:
         nodes = cls.get_nodes_in_scene(scene)
         existing_aggregations = list(proj.get_aggregations(filter=False))

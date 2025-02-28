@@ -149,7 +149,7 @@ def export(
         file.write(etree.tostring(svs, pretty_print=True))
 
 
-def build_full_required_data_dict(project: SOMcreator.Project) -> REQUIRED_DATA_DICT:
+def build_full_required_data_dict(project: SOMcreator.SOMProject) -> REQUIRED_DATA_DICT:
     required_data = dict()
     for obj in list(project.get_objects(filter=True)):
         required_data[obj] = dict()

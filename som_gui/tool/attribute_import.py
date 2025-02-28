@@ -672,7 +672,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.commit_sql()
 
     @classmethod
-    def fill_filter_table(cls, project: SOMcreator.Project):
+    def fill_filter_table(cls, project: SOMcreator.SOMProject):
         def add_table_entry(entity: SOMcreator.UseCase | SOMcreator.Phase):
             cursor = cls.get_cursor()
             headers = ",".join(FILTER_TABLE_HEADER)
@@ -706,7 +706,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def add_attribute_to_filter_table(
-        cls, project: SOMcreator.Project, attribute: SOMcreator.SOMProperty
+        cls, project: SOMcreator.SOMProject, attribute: SOMcreator.SOMProperty
     ):
         use_case_list = project.get_usecases()
         phase_list = project.get_phases()

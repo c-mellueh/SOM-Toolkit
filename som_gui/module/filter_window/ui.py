@@ -174,7 +174,7 @@ class PsetTreeView(FilterTreeView):
 class ProjectModel(QAbstractTableModel):
     data_changed_externally = Signal()
 
-    def __init__(self, project: SOMcreator.Project):
+    def __init__(self, project: SOMcreator.SOMProject):
         super().__init__()
         self.project = project
         self.check_column_index = 0
@@ -252,7 +252,7 @@ class ProjectModel(QAbstractTableModel):
 class TreeModel(QAbstractItemModel):
     def __init__(
         self,
-        project: SOMcreator.Project,
+        project: SOMcreator.SOMProject,
         check_column_index: int,
         column_titles: list[str],
     ):
@@ -360,7 +360,7 @@ class TreeModel(QAbstractItemModel):
 
 
 class ObjectModel(TreeModel):
-    def __init__(self, project: SOMcreator.Project):
+    def __init__(self, project: SOMcreator.SOMProject):
         super().__init__(project, 2, ["h0", "h1"])
         self.root_objects = list(self.project.get_root_objects(filter=False))
 
@@ -435,7 +435,7 @@ class ObjectModel(TreeModel):
 
 
 class PsetModel(TreeModel):
-    def __init__(self, project: SOMcreator.Project):
+    def __init__(self, project: SOMcreator.SOMProject):
         super().__init__(project, 1, ["h1"])
         self.active_object = tool.FilterWindow.get_active_object()
 

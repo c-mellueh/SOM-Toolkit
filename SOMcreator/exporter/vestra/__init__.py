@@ -8,7 +8,7 @@ from SOMcreator.util import xml
 
 
 def create_mapping(
-    excel_path: str, folder_path: str, project: SOMcreator.Project
+    excel_path: str, folder_path: str, project: SOMcreator.SOMProject
 ) -> None:
     def create_xml(name: str, obj: SOMcreator.SOMClass):
         xsd = "http://www.w3.org/2001/XMLSchema"

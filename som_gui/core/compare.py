@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 
 from PySide6.QtCore import QCoreApplication, Qt
 
-from SOMcreator import Project
+from SOMcreator import SOMProject
 from som_gui.module.compare.constants import COMPARE_SETTING, EXPORT_PATH
 from som_gui.module.project.constants import FILETYPE
 
@@ -16,9 +16,14 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QTreeWidget
 
 
-def create_main_menu_actions(compare_window: Type[tool.CompareWindow], main_window: Type[tool.MainWindow]):
+def create_main_menu_actions(
+    compare_window: Type[tool.CompareWindow], main_window: Type[tool.MainWindow]
+):
     from som_gui.module.compare import trigger
-    open_window_action = main_window.add_action("menuFile", "Compare", trigger.open_window)
+
+    open_window_action = main_window.add_action(
+        "menuFile", "Compare", trigger.open_window
+    )
     compare_window.set_action("open_window", open_window_action)
 
 
@@ -37,10 +42,12 @@ def retranslate_ui(compare_window: Type[tool.CompareWindow], util: Type[tool.Uti
         tab_widget.setTabText(i, name)
 
 
-def open_project_selection_window(compare_window: Type[tool.CompareWindow],
-                                  project_selector: Type[tool.CompareProjectSelector],
-                                  appdata: Type[tool.Appdata],
-                                  project: Type[tool.Project], ):
+def open_project_selection_window(
+    compare_window: Type[tool.CompareWindow],
+    project_selector: Type[tool.CompareProjectSelector],
+    appdata: Type[tool.Appdata],
+    project: Type[tool.Project],
+):
     window = compare_window.get_window()
     if window is not None:
         if window.exec():
@@ -75,8 +82,11 @@ def switch_clicked(project_selector: Type[tool.CompareProjectSelector]):
     project_selector.toggle_current_project_as_input()
 
 
-def project_button_clicked(project_selector: Type[tool.CompareProjectSelector], popups: Type[tool.Popups],
-                           appdata: Type[tool.Appdata]):
+def project_button_clicked(
+    project_selector: Type[tool.CompareProjectSelector],
+    popups: Type[tool.Popups],
+    appdata: Type[tool.Appdata],
+):
     dialog = project_selector.get_project_select_dialog()
     path = appdata.get_path(COMPARE_SETTING)
     path = popups.get_open_path(FILETYPE, dialog, path)
@@ -85,12 +95,18 @@ def project_button_clicked(project_selector: Type[tool.CompareProjectSelector], 
     project_selector.set_project_select_path(path)
 
 
-def open_compare_window(compare_window: Type[tool.CompareWindow], project_selector: Type[tool.CompareProjectSelector],
-                        project: Type[tool.Project], appdata: Type[tool.Appdata],
-                        popups: Type[tool.Popups]):
+def open_compare_window(
+    compare_window: Type[tool.CompareWindow],
+    project_selector: Type[tool.CompareProjectSelector],
+    project: Type[tool.Project],
+    appdata: Type[tool.Appdata],
+    popups: Type[tool.Popups],
+):
     other_file_path = project_selector.get_project_select_path()
     if not os.path.exists(other_file_path):
-        warning = QCoreApplication.translate("Compare", "File '{}' doesn't exist").format(other_file_path)
+        warning = QCoreApplication.translate(
+            "Compare", "File '{}' doesn't exist"
+        ).format(other_file_path)
         popups.create_warning_popup(warning)
         return
 
@@ -100,7 +116,7 @@ def open_compare_window(compare_window: Type[tool.CompareWindow], project_select
 
     appdata.set_path(COMPARE_SETTING, other_file_path)
     project_0 = project.get()
-    project_1 = Project.open(other_file_path)
+    project_1 = SOMProject.open(other_file_path)
 
     if not project_selector.is_current_project_input():
         project_0, project_1 = project_1, project_0
@@ -114,8 +130,13 @@ def open_compare_window(compare_window: Type[tool.CompareWindow], project_select
     window.accepted.connect(compare_window.reset)
 
 
-def draw_tree_branch(tree: QTreeWidget, painter: QPainter, rect, index: QModelIndex,
-                     attribute_compare: Type[tool.AttributeCompare]):
+def draw_tree_branch(
+    tree: QTreeWidget,
+    painter: QPainter,
+    rect,
+    index: QModelIndex,
+    attribute_compare: Type[tool.AttributeCompare],
+):
     level = attribute_compare.get_level(index)
     item = tree.itemFromIndex(index)
 
@@ -133,10 +154,15 @@ def draw_tree_branch(tree: QTreeWidget, painter: QPainter, rect, index: QModelIn
     return painter, rect, index
 
 
-def download_changelog(compare_window: Type[tool.CompareWindow], popups: Type[tool.Popups],
-                       appdata: Type[tool.Appdata]):
+def download_changelog(
+    compare_window: Type[tool.CompareWindow],
+    popups: Type[tool.Popups],
+    appdata: Type[tool.Appdata],
+):
     path = appdata.get_path(EXPORT_PATH)
-    path = popups.get_save_path("txt Files (*.txt);;", compare_window.get_window(), path)
+    path = popups.get_save_path(
+        "txt Files (*.txt);;", compare_window.get_window(), path
+    )
     if not path:
         return
     appdata.set_path(EXPORT_PATH, path)

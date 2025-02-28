@@ -9,7 +9,7 @@ import SOMcreator.importer.som_json
 from .base import Hirarchy, filterable
 
 
-class Project(object):
+class SOMProject(object):
     def __init__(
         self,
         name: str = "",
@@ -123,18 +123,18 @@ class Project(object):
             if not isinstance(obj.ident_attrib, SOMcreator.SOMProperty):
                 continue
             ident_pset = obj.ident_attrib.property_set.name
-            ident_attribute = obj.ident_attrib.name
+            ident_property = obj.ident_attrib.name
             if ident_pset not in ident_psets:
                 ident_psets[ident_pset] = 0
-            if ident_attribute not in ident_properties:
-                ident_properties[ident_attribute] = 0
+            if ident_property not in ident_properties:
+                ident_properties[ident_property] = 0
             ident_psets[ident_pset] += 1
-            ident_properties[ident_attribute] += 1
+            ident_properties[ident_property] += 1
 
-        ident_attribute = sorted(ident_properties.items(), key=lambda x: x[1])
+        ident_property = sorted(ident_properties.items(), key=lambda x: x[1])
         ident_pset = sorted(ident_psets.items(), key=lambda x: x[1])
-        if ident_attribute and ident_pset:
-            return ident_pset[0][0], ident_attribute[0][0]
+        if ident_property and ident_pset:
+            return ident_pset[0][0], ident_property[0][0]
         else:
             return "", ""
 
@@ -172,7 +172,7 @@ class Project(object):
         return self.get_uuid_dict().get(uuid)
 
     @classmethod
-    def open(cls, path: str | os.PathLike) -> Project:
+    def open(cls, path: str | os.PathLike) -> SOMProject:
         return SOMcreator.importer.som_json.open_json(cls, path)
 
     def save(self, path: str | os.PathLike) -> dict:

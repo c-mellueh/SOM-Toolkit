@@ -15,7 +15,7 @@ from SOMcreator.datastructure.som_json import (
 
 
 def load(
-    proj: SOMcreator.Project,
+    proj: SOMcreator.SOMProject,
     attribute_dict: dict,
     identifier: str,
     property_set: SOMcreator.SOMPropertySet,

@@ -17,7 +17,7 @@ NSMAP = {
 }
 
 
-def _build_info(proj: SOMcreator.Project, author, xml_parent: Element) -> None:
+def _build_info(proj: SOMcreator.SOMProject, author, xml_parent: Element) -> None:
     xml_element = SubElement(xml_parent, ids_xsd.INFO, nsmap=NSMAP)
     SubElement(xml_element, ids_xsd.TITLE, nsmap=NSMAP).text = (
         f"Pruefregeln fuer Projekt '{proj.name}'"
@@ -137,7 +137,7 @@ def _build_specification(
 
 
 def export(
-    proj: SOMcreator.Project,
+    proj: SOMcreator.SOMProject,
     required_data: dict[
         SOMcreator.SOMClass,
         dict[SOMcreator.SOMPropertySet, list[SOMcreator.SOMProperty]],

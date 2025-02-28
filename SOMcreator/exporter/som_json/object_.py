@@ -12,7 +12,7 @@ import SOMcreator
 from SOMcreator.exporter.som_json import core
 
 if TYPE_CHECKING:
-    from SOMcreator import Project
+    from SOMcreator import SOMProject
     from SOMcreator.datastructure.som_json import ObjectDict, MainDict
 
 
@@ -41,7 +41,7 @@ def _write_object(element: SOMcreator.SOMClass) -> ObjectDict:
     return object_dict
 
 
-def write(proj: Project, main_dict: MainDict):
+def write(proj: SOMProject, main_dict: MainDict):
     main_dict[OBJECTS] = dict()
     for obj in sorted(proj.get_objects(filter=False), key=lambda o: o.uuid):
         main_dict[OBJECTS][obj.uuid] = _write_object(obj)

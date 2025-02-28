@@ -13,12 +13,12 @@ from SOMcreator.datastructure.som_json import (
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from SOMcreator import Project
+    from SOMcreator import SOMProject
 
 
 ### Import ###
 def _get_aggregation(
-    proj: SOMcreator.Project,
+    proj: SOMcreator.SOMProject,
     aggregation_dict: AggregationDict,
     identifier: str,
 ):
@@ -45,7 +45,7 @@ def _get_aggregation(
     )
 
 
-def load(proj: SOMcreator.Project, main_dict: dict):
+def load(proj: SOMcreator.SOMProject, main_dict: dict):
     aggregations_dict: dict[str, AggregationDict] = main_dict.get(AGGREGATIONS)
     core.remove_part_of_dict(AGGREGATIONS)
     aggregations_dict = (
@@ -58,7 +58,7 @@ def load(proj: SOMcreator.Project, main_dict: dict):
         _get_aggregation(proj, entity_dict, uuid_ident)
 
 
-def calculate(proj: SOMcreator.Project):
+def calculate(proj: SOMcreator.SOMProject):
     uuid_dict = proj.get_uuid_dict()
     for aggregation, (
         uuid,

@@ -2,7 +2,7 @@ from __future__ import annotations
 import os, tempfile
 from typing import Type, TYPE_CHECKING
 import logging
-from SOMcreator import Project
+from SOMcreator import SOMProject
 import ifcopenshell
 from ifcopenshell.util import element
 
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 def import_ifc_files(
-    proj: Project,
+    proj: SOMProject,
     main_pset_name,
     main_attribute_name,
     ifc_paths: list[os.PathLike],

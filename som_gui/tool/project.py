@@ -58,32 +58,32 @@ class Project(som_gui.core.tool.Project):
     @classmethod
     def create_project(cls):
         logging.info("Create new Project")
-        proj = SOMcreator.Project()
+        proj = SOMcreator.SOMProject()
         prop: ProjectProperties = cls.get_properties()
         prop.active_project = proj
         som_gui.on_new_project()
 
     @classmethod
     def load_project(cls, path: str):
-        proj = SOMcreator.Project.open(path)
+        proj = SOMcreator.SOMProject.open(path)
         proj.path = path
         return proj
 
     @classmethod
-    def set_active_project(cls, proj: SOMcreator.Project):
+    def set_active_project(cls, proj: SOMcreator.SOMProject):
         prop = cls.get_properties()
         prop.active_project = proj
 
     @classmethod
-    def get(cls) -> SOMcreator.Project:
+    def get(cls) -> SOMcreator.SOMProject:
         return cls.get_properties().active_project
 
     @classmethod
     def get_root_objects(
-        cls, filter_objects=True, proj: SOMcreator.Project = None
+        cls, filter_objects=True, proj: SOMcreator.SOMProject = None
     ) -> list[SOMcreator.SOMClass]:
         if proj is None:
-            proj: SOMcreator.Project = cls.get_properties().active_project
+            proj: SOMcreator.SOMProject = cls.get_properties().active_project
         if proj is None:
             return []
         return list(proj.get_root_objects(filter=filter_objects))
@@ -141,18 +141,20 @@ class Project(som_gui.core.tool.Project):
             return cls.get_mapping_from_table(dialog.widget.tableWidget)
 
     @classmethod
-    def get_phase_mapping(cls, title, p1: SOMcreator.Project, p2: SOMcreator.Project):
+    def get_phase_mapping(
+        cls, title, p1: SOMcreator.SOMProject, p2: SOMcreator.SOMProject
+    ):
         return cls.create_mapping_window(title, p1.get_phases(), p2.get_phases())
 
     @classmethod
     def get_use_case_mapping(
-        cls, title, p1: SOMcreator.Project, p2: SOMcreator.Project
+        cls, title, p1: SOMcreator.SOMProject, p2: SOMcreator.SOMProject
     ):
         return cls.create_mapping_window(title, p1.get_usecases(), p2.get_usecases())
 
     @classmethod
     def merge_projects(
-        cls, title, project_1: SOMcreator.Project, project_2: SOMcreator.Project
+        cls, title, project_1: SOMcreator.SOMProject, project_2: SOMcreator.SOMProject
     ):
         phase_mapping = cls.get_phase_mapping(title, project_1, project_2)
         if phase_mapping is None:

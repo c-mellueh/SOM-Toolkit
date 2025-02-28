@@ -12,7 +12,7 @@ import SOMcreator
 from SOMcreator.importer.som_json import core
 
 if TYPE_CHECKING:
-    from SOMcreator import Project
+    from SOMcreator import SOMProject
     from SOMcreator.datastructure.som_json import ObjectDict, MainDict
 
 
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 
 def _load_object(
-    proj: SOMcreator.Project, object_dict: ObjectDict, identifier: str
+    proj: SOMcreator.SOMProject, object_dict: ObjectDict, identifier: str
 ) -> SOMcreator.SOMClass:
     name, description, optional, parent, filter_matrix = core.get_basics(
         proj, object_dict, identifier
@@ -55,7 +55,7 @@ def _load_object(
     SOMcreator.importer.som_json.object_uuid_dict[identifier] = obj
 
 
-def load(proj: Project, main_dict: dict):
+def load(proj: SOMProject, main_dict: dict):
     objects_dict: dict[str, ObjectDict] = main_dict.get(OBJECTS)
     core.remove_part_of_dict(OBJECTS)
 

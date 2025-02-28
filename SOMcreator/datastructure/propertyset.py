@@ -17,7 +17,7 @@ class SOMPropertySet(Hirarchy):
         uuid: str = None,
         description: None | str = None,
         optional: None | bool = None,
-        project: None | SOMcreator.Project = None,
+        project: None | SOMcreator.SOMProject = None,
         filter_matrix: list[list[bool]] = None,
     ) -> None:
         super(SOMPropertySet, self).__init__(

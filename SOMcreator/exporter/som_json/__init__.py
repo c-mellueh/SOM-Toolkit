@@ -14,7 +14,7 @@ from SOMcreator.util import xml
 import jinja2
 
 if TYPE_CHECKING:
-    from SOMcreator import Project, UseCase, Phase
+    from SOMcreator import SOMProject, UseCase, Phase
 parent_dict = dict()
 aggregation_dict = dict()
 phase_list: list[Phase] = list()
@@ -26,7 +26,7 @@ attribute_uuid_dict: dict[str, SOMcreator.SOMProperty] = dict()
 filter_matrixes = list()
 
 
-def create_mapping_script(project: SOMcreator.Project, pset_name: str, path: str):
+def create_mapping_script(project: SOMcreator.SOMProject, pset_name: str, path: str):
     attrib_dict = dict()
     obj: SOMcreator.SOMClass
     for obj in project.get_objects(filter=True):
@@ -59,7 +59,7 @@ def reset_uuid_dicts():
     SOMcreator.exporter.som_json.filter_matrixes = list()
 
 
-def export_json(proj: Project, path: str) -> dict:
+def export_json(proj: SOMProject, path: str) -> dict:
     start_time = time.time()
     main_dict = create_export_dict(proj)
     with open(path, "w") as file:
@@ -70,7 +70,7 @@ def export_json(proj: Project, path: str) -> dict:
     return main_dict
 
 
-def create_export_dict(proj: Project):
+def create_export_dict(proj: SOMProject):
     main_dict: MainDict = dict()
     project.write(proj, main_dict)
     predefined_pset.write(proj, main_dict)

@@ -17,7 +17,7 @@ def get_distinct_attributes(property_sets: list[SOMcreator.SOMPropertySet]):
     return distinct_attribute_names
 
 
-def export_boq(project: SOMcreator.Project, path: str, pset_name: str) -> None:
+def export_boq(project: SOMcreator.SOMProject, path: str, pset_name: str) -> None:
     if not path:
         return
 

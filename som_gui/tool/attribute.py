@@ -996,7 +996,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return cls.get_properties().widget
 
     @classmethod
-    def get_project(cls, index=1) -> SOMcreator.Project:
+    def get_project(cls, index=1) -> SOMcreator.SOMProject:
         return cls.get_properties().projects[index]
 
     @classmethod
@@ -1144,7 +1144,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return entity0, entity1
 
     @classmethod
-    def get_header_name_from_project(cls, project: SOMcreator.Project):
+    def get_header_name_from_project(cls, project: SOMcreator.SOMProject):
         return f"{project.name} v{project.version}"
 
     @classmethod

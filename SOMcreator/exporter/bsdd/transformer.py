@@ -43,7 +43,7 @@ def transform_objects_to_classes(
     _iterate_aggregations(objects, class_dict)
 
 
-def transform_project_to_dict(proj: SOMcreator.Project):
+def transform_project_to_dict(proj: SOMcreator.SOMProject):
     d = bsdd.Dictionary("", proj.name, proj.name, proj.version, "de-DE", False, False)
     d.License = "MIT"
     d.LicenseUrl = "https://www.mit.edu/~amini/LICENSE.md"

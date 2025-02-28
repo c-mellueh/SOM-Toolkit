@@ -6,7 +6,7 @@ from .datastructure import (
     SOMAggregation,
     UseCase,
     Phase,
-    Project,
+    SOMProject,
 )
 
 from .exporter import desite

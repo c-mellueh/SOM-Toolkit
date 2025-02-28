@@ -20,12 +20,12 @@ def filterable(func: Callable):
             filter_values = kwargs[FILTER_KEYWORD]
             kwargs.pop(FILTER_KEYWORD)
 
-        result: list[Hirarchy | SOMcreator.Project] = func(self, *args, **kwargs)
+        result: list[Hirarchy | SOMcreator.SOMProject] = func(self, *args, **kwargs)
         if not filter_values:
             return result
 
-        proj: SOMcreator.Project = (
-            self if isinstance(self, SOMcreator.Project) else self.project
+        proj: SOMcreator.SOMProject = (
+            self if isinstance(self, SOMcreator.SOMProject) else self.project
         )
         if proj is None:
             return result
@@ -59,7 +59,7 @@ class Hirarchy(object, metaclass=IterRegistry):
         name: str,
         description: str | None = None,
         optional: bool | None = None,
-        project: SOMcreator.Project | None = None,
+        project: SOMcreator.SOMProject | None = None,
         filter_matrix: list[list[bool]] = None,
     ) -> None:
         if project is None:

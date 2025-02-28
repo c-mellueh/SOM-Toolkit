@@ -6,7 +6,7 @@ The **SOM-Toolkit** is an open-source project designed for the creation, managem
 
 ## Overview
 
-Semantic Object Models (SOMs) are crucial for defining the semantics of objects in BIM workflows. The SOM-Toolkit streamlines the process of defining objects, property sets, and attributes, making it easier to adhere to standards like buildingSMART Data Dictionary (bSDD) and Information Delivery Specification (IDS).
+Semantic Object Models (SOMs) are crucial for defining the semantics of objects in BIM workflows. The SOM-Toolkit streamlines the process of defining objects, property sets, and properties, making it easier to adhere to standards like buildingSMART Data Dictionary (bSDD) and Information Delivery Specification (IDS).
 
 ---
 
@@ -17,7 +17,7 @@ The `SOMcreator` library is the backbone of the SOM-Toolkit, offering an object-
 
 **Key Features:**
 - **Projects and Objects**: Define projects containing objects with detailed metadata.
-- **Property Sets and Attributes**: Link objects to property sets and their attributes to enhance semantic modeling.
+- **Property Sets and properties**: Link objects to property sets and their properties to enhance semantic modeling.
 - **Export Formats**:
   - **bSDD**: Export models to the buildingSMART Data Dictionary format for interoperability.
   - **IDS**: Export to the Information Delivery Specification format for compliance with BIM execution plans.
@@ -34,7 +34,7 @@ The `SOMcreator` library is the backbone of the SOM-Toolkit, offering an object-
 The `som_gui` is a graphical user interface for non-programmers or users seeking an interactive way to work with Semantic Object Models.
 
 **Key Features:**
-- **Interactive Editing**: Create, view, and modify objects, property sets, and attributes.
+- **Interactive Editing**: Create, view, and modify objects, property sets, and properties.
 - **Project Management**: Easily manage multiple projects and export data in the desired format.
 - **Responsive Interface**: Built with PySide6, offering a modern and intuitive design.
 
@@ -109,7 +109,7 @@ The `som_gui` provides a visual way to interact with Semantic Object Models.
    python -m som_gui
 ```
 Features:
-* **Create a Project**: Start a new project and define objects, properties, and attributes interactively.
+* **Create a Project**: Start a new project and define objects, properties, and properties interactively.
 * **Modify Existing Data**: Import existing models, modify data, and re-export.
 * **Export Options**: Save your project in bSDD or IDS formats for interoperability with other BIM tools.
 * **IFC-Modelcheck**: Check IFC-Files against specified SOM

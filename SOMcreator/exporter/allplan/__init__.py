@@ -24,7 +24,9 @@ COLUMNS = [
 INTERNAL_COLUMNS = ["Objekt", "AttributAllplan", "AttributIfc", "Pset", "Type"]
 
 
-def create_mapping(project: SOMcreator.Project, path: str, allplan_mapping_name: str):
+def create_mapping(
+    project: SOMcreator.SOMProject, path: str, allplan_mapping_name: str
+):
     def transform_datatype(data_type: str) -> str:
         if data_type == value_constants.INTEGER:
             return "Ganzzahl"

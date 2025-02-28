@@ -32,7 +32,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
         return cls.get_properties().actions[name]
 
     @classmethod
-    def export_building_structure(cls, project: SOMcreator.Project, path):
+    def export_building_structure(cls, project: SOMcreator.SOMProject, path):
         building_structure.export_bs(project, path)
 
     @classmethod

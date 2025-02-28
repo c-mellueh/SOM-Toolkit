@@ -22,7 +22,7 @@ class SOMProperty(Hirarchy):
         description: None | str = None,
         optional: None | bool = None,
         revit_mapping: None | str = None,
-        project: SOMcreator.Project | None = None,
+        project: SOMcreator.SOMProject | None = None,
         filter_matrix: list[list[bool]] = None,
         unit=None,
     ):

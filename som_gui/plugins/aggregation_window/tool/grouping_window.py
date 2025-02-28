@@ -232,7 +232,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         cls,
         runner: GroupingRunner,
         ifc_elements: list[ifcopenshell.entity_instance],
-        project: SOMcreator.Project,
+        project: SOMcreator.SOMProject,
     ) -> dict:
         """Iterate over all Entities, build the targeted Datastructure"""
 

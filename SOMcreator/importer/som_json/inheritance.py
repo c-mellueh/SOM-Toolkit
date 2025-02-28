@@ -22,7 +22,7 @@ def _find_parent(uuid_dict, element):
         return identifier
 
 
-def calculate(proj: SOMcreator.Project):
+def calculate(proj: SOMcreator.SOMProject):
     uuid_dict = proj.get_uuid_dict()
     for entity, uuid in SOMcreator.importer.som_json.parent_dict.items():
         if uuid is None:

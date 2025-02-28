@@ -6,7 +6,7 @@ import os
 
 
 def export(
-    project: SOMcreator.Project,
+    project: SOMcreator.SOMProject,
     path: str,
     export_excel: Type[ExportExcel],
     ident_pset_name: str = None,

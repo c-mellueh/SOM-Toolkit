@@ -1,12 +1,12 @@
 import copy
 
 import SOMcreator
-from SOMcreator import Project, UseCase, Phase
+from SOMcreator import SOMProject, UseCase, Phase
 
 
 def merge_projects(
-    existing_project: Project,
-    import_project: Project,
+    existing_project: SOMProject,
+    import_project: SOMProject,
     phase_mapping: dict[Phase, Phase],
     use_case_mapping: dict[UseCase, UseCase],
 ):
@@ -62,8 +62,8 @@ def merge_projects(
 
 def _calculate_new_filter_matrix(
     filter_matrix,
-    existing_project: Project,
-    import_project: Project,
+    existing_project: SOMProject,
+    import_project: SOMProject,
     item,
     phase_mapping,
     use_case_mapping,
@@ -94,8 +94,8 @@ def _merge_dicts(d1: dict, d2: dict):
 
 
 def _add_item(
-    existing_project: SOMcreator.Project,
-    import_project: SOMcreator.Project,
+    existing_project: SOMcreator.SOMProject,
+    import_project: SOMcreator.SOMProject,
     item,
     phase_mapping,
     use_case_mapping,
@@ -115,8 +115,8 @@ def _add_item(
 
 
 def _import_object(
-    existing_project: SOMcreator.Project,
-    import_project: SOMcreator.Project,
+    existing_project: SOMcreator.SOMProject,
+    import_project: SOMcreator.SOMProject,
     obj: SOMcreator.SOMClass,
     old_predefined_psets_mapping,
     phase_mapping,

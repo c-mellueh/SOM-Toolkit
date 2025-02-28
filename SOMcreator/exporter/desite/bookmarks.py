@@ -7,7 +7,7 @@ import SOMcreator
 from SOMcreator.util import xml
 
 
-def _handle_bookmark_list(proj: SOMcreator.Project) -> etree.ElementTree:
+def _handle_bookmark_list(proj: SOMcreator.SOMProject) -> etree.ElementTree:
     xml_bookmarks = etree.Element("bookmarks")
     xml_bookmarks.set("xmlnsxsi", "http://www.w3.org/2001/XMLSchema-instance")
     xml_bookmark_list = etree.SubElement(xml_bookmarks, "cBookmarkList")
@@ -42,7 +42,7 @@ def _handle_bookmark_list(proj: SOMcreator.Project) -> etree.ElementTree:
     return etree.ElementTree(xml_bookmarks)
 
 
-def _get_attribute_dict(proj: SOMcreator.Project) -> dict[str, str]:
+def _get_attribute_dict(proj: SOMcreator.SOMProject) -> dict[str, str]:
     attribute_dict = {}
     for obj in proj.get_objects(filter=True):
         for property_set in obj.get_property_sets(filter=True):
@@ -54,7 +54,7 @@ def _get_attribute_dict(proj: SOMcreator.Project) -> dict[str, str]:
     return attribute_dict
 
 
-def export_bookmarks(proj: SOMcreator.Project, path: str) -> None:
+def export_bookmarks(proj: SOMcreator.SOMProject, path: str) -> None:
     if not os.path.isdir(path):
         return
 
