@@ -1,4 +1,4 @@
-from .object_ import SOMClass
+from .class_ import SOMClass
 from .project import Project
 from .propertyset import PropertySet
 from .attribute import Attribute
