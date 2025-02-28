@@ -508,7 +508,7 @@ class Object(som_gui.core.tool.Object):
     @classmethod
     def oi_change_visibility_identifiers(cls, hide: bool):
         prop = cls.get_properties()
-        layout = prop.object_info_widget.widget.layout_ident_attribute
+        layout = prop.object_info_widget.widget.layout_ident_property
         if hide:
             for index in range(layout.count()):
                 layout.itemAt(index).widget().hide()
