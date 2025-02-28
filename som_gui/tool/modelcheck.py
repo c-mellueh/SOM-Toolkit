@@ -119,7 +119,8 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
     def build_data_dict(
         cls,
         check_state_dict: dict[
-            SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty, bool
+            SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
+            bool,
         ],
     ):
         def iter_objects(objects: Iterator[SOMcreator.SOMClass]):

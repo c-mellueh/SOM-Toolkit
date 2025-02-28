@@ -28,7 +28,7 @@ if TYPE_CHECKING:
         CompareAttributesProperties,
     )
 
-SOMType: TypeAlias = "SOMcreator.SOMProperty | SOMcreator.PropertySet"
+SOMType: TypeAlias = "SOMcreator.SOMProperty | SOMcreator.SOMPropertySet"
 
 style_list = [
     [None, [0, 1]],
@@ -255,7 +255,9 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def compare_objects(
         cls, obj0: None | SOMcreator.SOMClass, obj1: None | SOMcreator.SOMClass
-    ) -> list[tuple[SOMcreator.PropertySet | None, SOMcreator.PropertySet | None]]:
+    ) -> list[
+        tuple[SOMcreator.SOMPropertySet | None, SOMcreator.SOMPropertySet | None]
+    ]:
         """
         Compare two SOMcreator objects by their property sets.
         This method generates a list of matched and unmatched property sets (match_list)
@@ -306,7 +308,9 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def compare_property_sets(
-        cls, pset0: SOMcreator.PropertySet | None, pset1: SOMcreator.PropertySet | None
+        cls,
+        pset0: SOMcreator.SOMPropertySet | None,
+        pset1: SOMcreator.SOMPropertySet | None,
     ) -> None:
         """
         Compare two SOMcreator PropertySets by their Attributes.
@@ -545,7 +549,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def fill_pset_tree(
         cls,
         tree: QTreeWidget,
-        pset_list: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]],
+        pset_list: list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]],
         add_missing: bool = True,
     ) -> None:
         cls.clear_tree(tree)
@@ -613,8 +617,12 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def create_child_matchup(
         cls,
-        entity0: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
-        entity1: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
+        entity0: (
+            SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty
+        ),
+        entity1: (
+            SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty
+        ),
     ):
 
         if entity0 is None:
@@ -674,8 +682,8 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def are_property_sets_identical(
         cls,
-        property_set0: SOMcreator.PropertySet,
-        property_set1: SOMcreator.PropertySet,
+        property_set0: SOMcreator.SOMPropertySet,
+        property_set1: SOMcreator.SOMPropertySet,
         check_attributes=True,
     ) -> bool:
         if property_set0 is None or property_set1 is None:
@@ -764,7 +772,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         if style is None:
             if isinstance(entity0, SOMcreator.SOMClass):
                 compare_func = cls.are_objects_identical
-            elif isinstance(entity0, SOMcreator.PropertySet):
+            elif isinstance(entity0, SOMcreator.SOMPropertySet):
                 compare_func = lambda p1, p2: cls.are_property_sets_identical(
                     p1, p2, False
                 )
@@ -859,12 +867,14 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def get_name_path(
         cls,
-        entity: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
+        entity: (
+            SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty
+        ),
     ) -> str:
         text = entity.name
         if isinstance(entity, SOMcreator.SOMClass):
             return text
-        if isinstance(entity, SOMcreator.PropertySet):
+        if isinstance(entity, SOMcreator.SOMPropertySet):
             obj = entity.object
             if obj is None:
                 return text
@@ -920,7 +930,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def export_pset_differences(
         cls,
         file: TextIO,
-        pset_list: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]],
+        pset_list: list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]],
         lb: bool = False,
     ):
         ps = "PropertySet"
@@ -996,27 +1006,27 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def get_pset_list(
         cls, obj: SOMcreator.SOMClass
-    ) -> list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]] | None:
+    ) -> list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]] | None:
         return cls.get_properties().pset_lists.get(obj)
 
     @classmethod
     def set_pset_list(
         cls,
         obj: SOMcreator.SOMClass,
-        pset_list: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]],
+        pset_list: list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]],
     ):
         cls.get_properties().pset_lists[obj] = pset_list
 
     @classmethod
     def get_attribute_list(
-        cls, property_set: SOMcreator.PropertySet
+        cls, property_set: SOMcreator.SOMPropertySet
     ) -> list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]] | None:
         return cls.get_properties().attributes_lists.get(property_set)
 
     @classmethod
     def set_attribute_list(
         cls,
-        property_set: SOMcreator.PropertySet,
+        property_set: SOMcreator.SOMPropertySet,
         attribute_list: list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]],
     ):
         cls.get_properties().attributes_lists[property_set] = attribute_list
@@ -1114,7 +1124,9 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def get_selected_entity(
         cls, tree: QTreeWidget
-    ) -> SOMcreator.PropertySet | SOMcreator.SOMProperty | SOMcreator.SOMClass | None:
+    ) -> (
+        SOMcreator.SOMPropertySet | SOMcreator.SOMProperty | SOMcreator.SOMClass | None
+    ):
         item = cls.get_selected_item(tree)
         d0, d1 = cls.get_entities_from_item(item)
         data = d0 or d1
@@ -1122,8 +1134,8 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
 
     @classmethod
     def get_entities_from_item(cls, item: QTreeWidgetItem) -> tuple[
-        SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
-        SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
+        SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
+        SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
     ]:
         if item is None:
             return None, None

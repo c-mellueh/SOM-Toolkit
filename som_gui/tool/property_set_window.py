@@ -71,7 +71,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         return window.ui.table_widget
 
     @classmethod
-    def get_window_by_property_set(cls, property_set: SOMcreator.PropertySet):
+    def get_window_by_property_set(cls, property_set: SOMcreator.SOMPropertySet):
         prop = cls.get_properties()
         return {pset: window for window, pset in prop.property_set_windows.items()}.get(
             property_set
@@ -80,7 +80,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def get_property_set_by_window(
         cls, window: ui.PropertySetWindow
-    ) -> SOMcreator.PropertySet:
+    ) -> SOMcreator.SOMPropertySet:
         prop = cls.get_properties()
         return prop.property_set_windows.get(window)
 
@@ -198,7 +198,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.raise_()
 
     @classmethod
-    def create_window(cls, property_set: SOMcreator.PropertySet):
+    def create_window(cls, property_set: SOMcreator.SOMPropertySet):
         prop = cls.get_properties()
         window = ui.PropertySetWindow()
         prop.property_set_windows[window] = property_set
@@ -243,7 +243,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
 
     @classmethod
     def fill_window_title(
-        cls, window: ui.PropertySetWindow, property_set: SOMcreator.PropertySet
+        cls, window: ui.PropertySetWindow, property_set: SOMcreator.SOMPropertySet
     ):
         title = (
             f"{property_set.object.name}:{property_set.name}"

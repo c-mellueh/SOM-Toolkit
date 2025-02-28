@@ -41,7 +41,7 @@ class IterRegistry(type):
     def __iter__(
         self,
     ) -> Iterator[
-        SOMcreator.PropertySet
+        SOMcreator.SOMPropertySet
         | SOMcreator.SOMClass
         | SOMcreator.SOMProperty
         | SOMcreator.SOMAggregation
@@ -201,7 +201,7 @@ class Hirarchy(object, metaclass=IterRegistry):
     def parent(
         self,
     ) -> (
-        SOMcreator.PropertySet
+        SOMcreator.SOMPropertySet
         | SOMcreator.SOMClass
         | SOMcreator.SOMProperty
         | SOMcreator.SOMAggregation
@@ -212,7 +212,7 @@ class Hirarchy(object, metaclass=IterRegistry):
     def parent(
         self,
         parent: (
-            SOMcreator.PropertySet
+            SOMcreator.SOMPropertySet
             | SOMcreator.SOMClass
             | SOMcreator.SOMProperty
             | SOMcreator.SOMAggregation
@@ -239,7 +239,7 @@ class Hirarchy(object, metaclass=IterRegistry):
     def get_children(
         self,
     ) -> Iterator[
-        SOMcreator.PropertySet
+        SOMcreator.SOMPropertySet
         | SOMcreator.SOMClass
         | SOMcreator.SOMProperty
         | SOMcreator.SOMAggregation
@@ -249,7 +249,7 @@ class Hirarchy(object, metaclass=IterRegistry):
     def add_child(
         self,
         child: (
-            SOMcreator.PropertySet
+            SOMcreator.SOMPropertySet
             | SOMcreator.SOMClass
             | SOMcreator.SOMProperty
             | SOMcreator.SOMAggregation
@@ -261,7 +261,7 @@ class Hirarchy(object, metaclass=IterRegistry):
     def remove_child(
         self,
         child: (
-            SOMcreator.PropertySet
+            SOMcreator.SOMPropertySet
             | SOMcreator.SOMClass
             | SOMcreator.SOMProperty
             | SOMcreator.SOMAggregation

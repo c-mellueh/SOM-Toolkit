@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class PropertySetWindowProperties:
-    property_set_windows: dict[PropertySetWindow, SOMcreator.PropertySet] = dict()
+    property_set_windows: dict[PropertySetWindow, SOMcreator.SOMPropertySet] = dict()
     active_window: PropertySetWindow = None
     active_attribute: SOMcreator.SOMProperty = None
     splitter_settings: SplitterSettings = None

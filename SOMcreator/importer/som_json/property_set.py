@@ -19,7 +19,7 @@ def load(
     name, description, optional, parent, filter_matrix = core.get_basics(
         proj, pset_dict, identifier
     )
-    pset = SOMcreator.PropertySet(
+    pset = SOMcreator.SOMPropertySet(
         name=name,
         obj=obj,
         uuid=identifier,

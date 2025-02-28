@@ -110,7 +110,7 @@ class Mapping(som_gui.core.tool.Mapping):
                 cls.update_tree(
                     set(entity.get_children(filter=False)), class_item, tree
                 )
-            if isinstance(entity, SOMcreator.PropertySet):
+            if isinstance(entity, SOMcreator.SOMPropertySet):
                 cls.update_tree(
                     set(entity.get_attributes(filter=True)), class_item, tree
                 )
@@ -118,7 +118,9 @@ class Mapping(som_gui.core.tool.Mapping):
     @classmethod
     def create_child(
         cls,
-        entity: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
+        entity: (
+            SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty
+        ),
     ) -> QTreeWidgetItem:
         entity_item = QTreeWidgetItem()
         entity_item.setData(0, CLASS_REFERENCE, entity)
@@ -132,7 +134,7 @@ class Mapping(som_gui.core.tool.Mapping):
         if isinstance(entity, SOMcreator.SOMClass):
             mapping_text = "; ".join(entity.ifc_mapping)
 
-        elif isinstance(entity, SOMcreator.PropertySet):
+        elif isinstance(entity, SOMcreator.SOMPropertySet):
             mapping_text = ""
         else:
             disable_state = not cls.get_checkstate(entity.property_set)
@@ -144,7 +146,9 @@ class Mapping(som_gui.core.tool.Mapping):
     @classmethod
     def get_checkstate(
         cls,
-        entity: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
+        entity: (
+            SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty
+        ),
     ):
         if entity not in cls.get_properties().check_state_dict:
             cls.set_checkstate(entity, True)
@@ -153,7 +157,9 @@ class Mapping(som_gui.core.tool.Mapping):
     @classmethod
     def set_checkstate(
         cls,
-        entity: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
+        entity: (
+            SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty
+        ),
         checkstate: bool,
     ) -> None:
         cls.get_properties().check_state_dict[entity] = checkstate

@@ -5,10 +5,13 @@ import os
 import SOMcreator
 from SOMcreator.constants import value_constants
 from SOMcreator.util import xml
+
 DATA_TYPE = "data_type"
 VALUE_TYPE = "value_Type"
 VALUE = "value"
-def _iter_attributes(property_set: SOMcreator.PropertySet, pset_dict: dict) -> None:
+
+
+def _iter_attributes(property_set: SOMcreator.SOMPropertySet, pset_dict: dict) -> None:
     for attribute in property_set.get_attributes(filter=True):
         pset_dict[attribute.name] = dict()
         attribute_dict = pset_dict[attribute.name]

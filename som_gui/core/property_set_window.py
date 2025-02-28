@@ -67,7 +67,7 @@ def add_value_button_clicked(
 
 
 def open_pset_window(
-    property_set: SOMcreator.PropertySet,
+    property_set: SOMcreator.SOMPropertySet,
     property_set_window: Type[tool.PropertySetWindow],
     attribute_table: Type[tool.AttributeTable],
 ):

@@ -146,7 +146,7 @@ def _import_object(
 def _import_pset(
     existing_project,
     import_project,
-    property_set: SOMcreator.PropertySet,
+    property_set: SOMcreator.SOMPropertySet,
     old_predefined_psets_mapping,
     phase_mapping,
     use_case_mapping,
@@ -184,7 +184,7 @@ def _import_attribute(
     attribute,
     phase_mapping,
     use_case_mapping,
-    parent_pset: SOMcreator.PropertySet = None,
+    parent_pset: SOMcreator.SOMPropertySet = None,
 ):
     if parent_pset:
         parent_attribute = {

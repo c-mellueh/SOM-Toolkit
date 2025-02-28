@@ -72,7 +72,7 @@ class Project(object):
         self,
     ) -> Iterator[
         SOMcreator.SOMClass,
-        SOMcreator.PropertySet,
+        SOMcreator.SOMPropertySet,
         SOMcreator.SOMProperty,
         SOMcreator.SOMAggregation,
         Hirarchy,
@@ -82,7 +82,7 @@ class Project(object):
                 i,
                 (
                     SOMcreator.SOMClass,
-                    SOMcreator.PropertySet,
+                    SOMcreator.SOMPropertySet,
                     SOMcreator.SOMProperty,
                     SOMcreator.SOMAggregation,
                 ),
@@ -95,9 +95,9 @@ class Project(object):
         return filter(lambda item: isinstance(item, SOMcreator.SOMClass), self._items)
 
     @filterable
-    def get_property_sets(self) -> Iterator[SOMcreator.PropertySet]:
+    def get_property_sets(self) -> Iterator[SOMcreator.SOMPropertySet]:
         return filter(
-            lambda item: isinstance(item, SOMcreator.PropertySet), self._items
+            lambda item: isinstance(item, SOMcreator.SOMPropertySet), self._items
         )
 
     @filterable
@@ -113,7 +113,7 @@ class Project(object):
         )
 
     @filterable
-    def get_predefined_psets(self) -> Iterator[SOMcreator.PropertySet]:
+    def get_predefined_psets(self) -> Iterator[SOMcreator.SOMPropertySet]:
         return filter(lambda p: p.is_predefined, self.get_property_sets(filter=False))
 
     def get_main_attribute(self) -> tuple[str, str]:
@@ -161,7 +161,7 @@ class Project(object):
         self, uuid: str
     ) -> (
         SOMcreator.SOMProperty
-        | SOMcreator.PropertySet
+        | SOMcreator.SOMPropertySet
         | SOMcreator.SOMClass
         | SOMcreator.SOMAggregation
         | None

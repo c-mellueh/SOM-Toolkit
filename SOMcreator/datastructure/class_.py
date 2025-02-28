@@ -25,7 +25,7 @@ class SOMClass(Hirarchy):
             name, description, optional, project, filter_matrix
         )
         self._registry.add(self)
-        self._property_sets: list[SOMcreator.PropertySet] = list()
+        self._property_sets: list[SOMcreator.SOMPropertySet] = list()
         self._ident_attrib = ident_attrib
         self._aggregations: set[SOMcreator.SOMAggregation] = set()
         self.custom_attribues = {}
@@ -129,7 +129,9 @@ class SOMClass(Hirarchy):
         self._aggregations.remove(node)
 
     @property
-    def inherited_property_sets(self) -> dict[SOMClass, list[SOMcreator.PropertySet]]:
+    def inherited_property_sets(
+        self,
+    ) -> dict[SOMClass, list[SOMcreator.SOMPropertySet]]:
         def recursion(recursion_property_sets, recursion_obj: SOMClass):
             psets = recursion_obj.get_property_sets(filter=False)
 
@@ -173,16 +175,16 @@ class SOMClass(Hirarchy):
     def name(self, value: str):
         self._name = value
 
-    def add_property_set(self, property_set: SOMcreator.PropertySet) -> None:
+    def add_property_set(self, property_set: SOMcreator.SOMPropertySet) -> None:
         self._property_sets.append(property_set)
         property_set.object = self
 
-    def remove_property_set(self, property_set: SOMcreator.PropertySet) -> None:
+    def remove_property_set(self, property_set: SOMcreator.SOMPropertySet) -> None:
         if property_set in self._property_sets:
             self._property_sets.remove(property_set)
 
     @filterable
-    def get_property_sets(self) -> Iterator[SOMcreator.PropertySet]:
+    def get_property_sets(self) -> Iterator[SOMcreator.SOMPropertySet]:
         return iter(self._property_sets)
 
     @filterable
@@ -205,7 +207,7 @@ class SOMClass(Hirarchy):
 
     def get_property_set_by_name(
         self, property_set_name: str
-    ) -> SOMcreator.PropertySet | None:
+    ) -> SOMcreator.SOMPropertySet | None:
         for property_set in self.get_property_sets(filter=False):
             if property_set.name == property_set_name:
                 return property_set

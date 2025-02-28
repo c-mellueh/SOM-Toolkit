@@ -236,7 +236,8 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def get_item_check_state(
-        cls, item: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty
+        cls,
+        item: SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
     ) -> Qt.CheckState:
         cd = cls.get_item_checkstate_dict()
         if cd.get(item) is None:
@@ -247,7 +248,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def set_item_check_state(
         cls,
-        item: SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty,
+        item: SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
         cs: Qt.CheckState,
     ) -> None:
         cs = True if cs == Qt.CheckState.Checked else False
@@ -370,7 +371,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def create_pset_tree_row(
         cls,
-        entity: SOMcreator.PropertySet | SOMcreator.SOMProperty,
+        entity: SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
         parent_item: QStandardItem,
     ):
         item = QStandardItem(entity.name)
@@ -378,7 +379,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         item.setCheckable(True)
         item.setCheckState(Qt.CheckState.Checked)
         parent_item.appendRow(item)
-        if not isinstance(entity, SOMcreator.PropertySet):
+        if not isinstance(entity, SOMcreator.SOMPropertySet):
             return
         for attribute in entity.get_attributes(filter=True):
             cls.create_pset_tree_row(attribute, item)
@@ -391,7 +392,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         if new_check_state != check_state:
             item.setCheckState(new_check_state)
         item.setEnabled(enabled)
-        if not isinstance(pset, SOMcreator.PropertySet):
+        if not isinstance(pset, SOMcreator.SOMPropertySet):
             return
         enabled = (
             True if new_check_state == Qt.CheckState.Checked and enabled else False
@@ -402,7 +403,10 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def fill_pset_tree(
-        cls, property_sets: set[SOMcreator.PropertySet], enabled: bool, tree: QTreeView
+        cls,
+        property_sets: set[SOMcreator.SOMPropertySet],
+        enabled: bool,
+        tree: QTreeView,
     ):
         root_item: QStandardItem = tree.model().invisibleRootItem()
         existing_psets_dict = {

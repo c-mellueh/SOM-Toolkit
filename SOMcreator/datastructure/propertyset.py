@@ -7,8 +7,8 @@ from typing import Iterator
 import logging
 
 
-class PropertySet(Hirarchy):
-    _registry: set[PropertySet] = set()
+class SOMPropertySet(Hirarchy):
+    _registry: set[SOMPropertySet] = set()
 
     def __init__(
         self,
@@ -20,7 +20,7 @@ class PropertySet(Hirarchy):
         project: None | SOMcreator.Project = None,
         filter_matrix: list[list[bool]] = None,
     ) -> None:
-        super(PropertySet, self).__init__(
+        super(SOMPropertySet, self).__init__(
             name, description, optional, project, filter_matrix
         )
         self._attributes = set()
@@ -33,7 +33,7 @@ class PropertySet(Hirarchy):
             self.uuid = str(uuid4())
 
     def __lt__(self, other):
-        if isinstance(other, PropertySet):
+        if isinstance(other, SOMPropertySet):
             return self.name < other.name
         else:
             return self.name < other
@@ -41,8 +41,8 @@ class PropertySet(Hirarchy):
     def __str__(self):
         return f"PropertySet: {self.name}"
 
-    def __copy__(self) -> PropertySet:
-        new_pset = PropertySet(
+    def __copy__(self) -> SOMPropertySet:
+        new_pset = SOMPropertySet(
             name=self.name,
             obj=None,
             uuid=str(uuid4()),
@@ -66,12 +66,12 @@ class PropertySet(Hirarchy):
         return self.object is None
 
     @property
-    def parent(self) -> PropertySet:
-        parent = super(PropertySet, self).parent
+    def parent(self) -> SOMPropertySet:
+        parent = super(SOMPropertySet, self).parent
         return parent
 
     @parent.setter
-    def parent(self, parent: PropertySet) -> None:
+    def parent(self, parent: SOMPropertySet) -> None:
         """
         Use parent.add_child if you want to set the parent
 
@@ -83,13 +83,13 @@ class PropertySet(Hirarchy):
             return
         self._parent = parent
 
-    def remove_child(self, child: PropertySet) -> None:
+    def remove_child(self, child: SOMPropertySet) -> None:
         super().remove_child(child)
         child.remove_parent()
         for attribute in [a for a in child.get_attributes(filter=False) if a.parent]:
             attribute.parent.remove_child(attribute)
 
-    def change_parent(self, new_parent: PropertySet) -> None:
+    def change_parent(self, new_parent: SOMPropertySet) -> None:
         for attribute in self.get_attributes(filter=False):
             if attribute.parent.property_set == self._parent:
                 self.remove_attribute(attribute)
@@ -109,7 +109,7 @@ class PropertySet(Hirarchy):
             )
             return
 
-        super(PropertySet, self).delete(recursive)
+        super(SOMPropertySet, self).delete(recursive)
         [
             attrib.delete(recursive)
             for attrib in list(self.get_attributes(filter=False))
@@ -161,8 +161,8 @@ class PropertySet(Hirarchy):
                 return attribute
         return None
 
-    def create_child(self, name) -> PropertySet:
-        child = PropertySet(name=name, project=self.project)
+    def create_child(self, name) -> SOMPropertySet:
+        child = SOMPropertySet(name=name, project=self.project)
         self._children.add(child)
         child.parent = self
         for attribute in self.get_attributes(filter=False):

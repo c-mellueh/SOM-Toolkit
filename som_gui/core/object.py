@@ -117,7 +117,7 @@ def ident_attribute_changed(
     predefined_pset: Type[tool.PredefinedPropertySet],
 ):
     ident_pset_name = object_tool.get_object_infos()["ident_pset_name"]
-    predefined_pset: SOMcreator.PropertySet = {
+    predefined_pset: SOMcreator.SOMPropertySet = {
         p.name: p for p in predefined_pset.get_property_sets()
     }.get(ident_pset_name)
     attribute_names = list()

@@ -178,7 +178,7 @@ def pset_tree_selection_changed(
     table = attribute_compare.get_info_table(widget)
     attribute_compare.clear_table(table)
 
-    if isinstance(entity0 or entity1, SOMcreator.PropertySet):
+    if isinstance(entity0 or entity1, SOMcreator.SOMPropertySet):
         attribute_compare.fill_value_table_pset(widget)
         attribute_compare.fill_table(
             table, attribute_compare.get_pset_info_list(), (entity0, entity1)

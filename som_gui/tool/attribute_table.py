@@ -228,7 +228,9 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         return attributes
 
     @classmethod
-    def get_property_set_by_table(cls, table: QTableWidget) -> SOMcreator.PropertySet:
+    def get_property_set_by_table(
+        cls, table: QTableWidget
+    ) -> SOMcreator.SOMPropertySet:
         window = table.window()
         if isinstance(window, PropertySetWindow):
             return tool.PropertySetWindow.get_property_set_by_window(window)
@@ -380,7 +382,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def set_property_set_of_table(
-        cls, table: ui.AttributeTable, property_set: SOMcreator.PropertySet
+        cls, table: ui.AttributeTable, property_set: SOMcreator.SOMPropertySet
     ) -> None:
         """
         define which property_set is shown in AttributeTable
@@ -393,7 +395,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def get_property_set_of_table(
         cls, table: ui.AttributeTable
-    ) -> SOMcreator.PropertySet | None:
+    ) -> SOMcreator.SOMPropertySet | None:
         """
         get property set of table
         :param table: active AttributeTable

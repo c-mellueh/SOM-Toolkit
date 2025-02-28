@@ -19,7 +19,7 @@ class AttributeTable(QTableWidget):
         attribute_table.trigger.connect_table(self)
         self.setSelectionBehavior(self.SelectionBehavior.SelectRows)
         self.setSelectionMode(self.SelectionMode.ContiguousSelection)
-        self.property_set: SOMcreator.PropertySet | None = None
+        self.property_set: SOMcreator.SOMPropertySet | None = None
 
     def paintEvent(self, e):
         super().paintEvent(e)

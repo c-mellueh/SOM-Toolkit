@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class ModelcheckWindowProperties:
     active_window: ModelcheckWindow = None
     check_state_dict: dict[
-        SOMcreator.SOMClass | SOMcreator.PropertySet | SOMcreator.SOMProperty, bool
+        SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty, bool
     ] = None
     selected_object: SOMcreator.SOMClass = None
     thread_pool: QThreadPool = None

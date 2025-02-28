@@ -12,7 +12,7 @@ class SOMProperty(Hirarchy):
 
     def __init__(
         self,
-        property_set: SOMcreator.PropertySet | None = None,
+        property_set: SOMcreator.SOMPropertySet | None = None,
         name: str = "undef",
         value: list = None,
         value_type: str | None = None,
@@ -213,11 +213,11 @@ class SOMProperty(Hirarchy):
                 child._data_type = value
 
     @property
-    def property_set(self) -> SOMcreator.PropertySet:
+    def property_set(self) -> SOMcreator.SOMPropertySet:
         return self._property_set
 
     @property_set.setter
-    def property_set(self, value: SOMcreator.PropertySet) -> None:
+    def property_set(self, value: SOMcreator.SOMPropertySet) -> None:
         if value is None:
             if self._property_set is None:
                 return

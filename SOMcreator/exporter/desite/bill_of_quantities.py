@@ -3,7 +3,7 @@ import csv
 import SOMcreator
 
 
-def get_distinct_attributes(property_sets: list[SOMcreator.PropertySet]):
+def get_distinct_attributes(property_sets: list[SOMcreator.SOMPropertySet]):
     attribute_names = list()
 
     for property_set in property_sets:
@@ -28,7 +28,7 @@ def export_boq(project: SOMcreator.Project, path: str, pset_name: str) -> None:
         writer = csv.writer(file, delimiter=";")
         property_sets = [
             property_set
-            for property_set in SOMcreator.PropertySet
+            for property_set in SOMcreator.SOMPropertySet
             if property_set.name == pset_name
         ]
         distinct_attribute_names = get_distinct_attributes(property_sets)

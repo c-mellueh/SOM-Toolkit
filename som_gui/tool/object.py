@@ -317,7 +317,7 @@ class Object(som_gui.core.tool.Object):
     def create_object(
         cls,
         data_dict: ObjectDataDict,
-        property_set: SOMcreator.PropertySet,
+        property_set: SOMcreator.SOMPropertySet,
         attribute: SOMcreator.SOMProperty,
     ):
         name = data_dict["name"]
@@ -518,7 +518,7 @@ class Object(som_gui.core.tool.Object):
         pset_name = prop.object_info_widget.widget.combo_box_pset.currentText()
         active_object = prop.object_info_widget_properties.focus_object
 
-        property_set: SOMcreator.PropertySet = {
+        property_set: SOMcreator.SOMPropertySet = {
             p.name: p for p in active_object.get_property_sets(filter=False)
         }.get(pset_name)
         attribute_names = sorted(

@@ -27,7 +27,7 @@ phase_list: list[Phase] = list()
 use_case_list: list[UseCase] = list()
 plugin_dict = dict()
 object_uuid_dict: dict[str, SOMcreator.SOMClass] = dict()
-property_set_uuid_dict: dict[str, SOMcreator.PropertySet] = dict()
+property_set_uuid_dict: dict[str, SOMcreator.SOMPropertySet] = dict()
 attribute_uuid_dict: dict[str, SOMcreator.SOMProperty] = dict()
 filter_matrixes = list()
 

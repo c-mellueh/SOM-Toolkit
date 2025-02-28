@@ -28,10 +28,11 @@ class CompareAttributesProperties:
         tuple[SOMcreator.SOMClass | None, SOMcreator.SOMClass | None]
     ] = list()
     pset_lists: dict[
-        SOMcreator.SOMClass, list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]
+        SOMcreator.SOMClass,
+        list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]],
     ] = dict()
     attributes_lists: dict[
-        SOMcreator.PropertySet,
+        SOMcreator.SOMPropertySet,
         list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]],
     ] = dict()
     values_lists: dict[SOMcreator.SOMProperty, list[tuple[str, str]]] = dict()

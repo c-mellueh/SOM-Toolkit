@@ -78,7 +78,7 @@ def pset_tree_double_clicked(
         active_attribute = linked_item
         active_property_set = linked_item.property_set
 
-    elif isinstance(linked_item, SOMcreator.PropertySet):
+    elif isinstance(linked_item, SOMcreator.SOMPropertySet):
         active_property_set = linked_item
 
     if active_property_set is None:

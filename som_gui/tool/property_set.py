@@ -28,14 +28,14 @@ if TYPE_CHECKING:
 class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
-    def get_attribute_by_name(cls, property_set: SOMcreator.PropertySet, name: str):
+    def get_attribute_by_name(cls, property_set: SOMcreator.SOMPropertySet, name: str):
         attribute_dict = {a.name: a for a in property_set.get_attributes(filter=False)}
         return attribute_dict.get(name)
 
     @classmethod
     def get_inheritable_property_sets(
         cls, obj: SOMcreator.SOMClass
-    ) -> list[SOMcreator.PropertySet]:
+    ) -> list[SOMcreator.SOMPropertySet]:
         def loop(o: SOMcreator.SOMClass):
             psets = o.get_property_sets(filter=False)
             if o.parent:
@@ -45,7 +45,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return list(loop(obj))
 
     @classmethod
-    def get_pset_from_index(cls, index: QModelIndex) -> SOMcreator.PropertySet:
+    def get_pset_from_index(cls, index: QModelIndex) -> SOMcreator.SOMPropertySet:
         return index.data(CLASS_REFERENCE)
 
     @classmethod
@@ -94,7 +94,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
     def get_property_set_from_item(
         cls, item: QTableWidgetItem | QListWidgetItem
-    ) -> SOMcreator.PropertySet:
+    ) -> SOMcreator.SOMPropertySet:
         return item.data(CLASS_REFERENCE)
 
     @classmethod
@@ -110,8 +110,8 @@ class PropertySet(som_gui.core.tool.PropertySet):
         cls,
         name: str,
         obj: SOMcreator.SOMClass | None = None,
-        parent: SOMcreator.PropertySet | None = None,
-    ) -> SOMcreator.PropertySet | None:
+        parent: SOMcreator.SOMPropertySet | None = None,
+    ) -> SOMcreator.SOMPropertySet | None:
 
         if obj:
             if name in {p.name for p in obj.get_property_sets(filter=False)}:
@@ -125,11 +125,13 @@ class PropertySet(som_gui.core.tool.PropertySet):
             if obj:
                 obj.add_property_set(property_set)
         else:
-            property_set = SOMcreator.PropertySet(name, obj, project=tool.Project.get())
+            property_set = SOMcreator.SOMPropertySet(
+                name, obj, project=tool.Project.get()
+            )
         return property_set
 
     @classmethod
-    def get_pset_from_item(cls, item: QTableWidgetItem) -> SOMcreator.PropertySet:
+    def get_pset_from_item(cls, item: QTableWidgetItem) -> SOMcreator.SOMPropertySet:
         return item.data(CLASS_REFERENCE)
 
     @classmethod
@@ -147,7 +149,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
             table.removeRow(row)
 
     @classmethod
-    def get_property_sets(cls) -> set[SOMcreator.PropertySet]:
+    def get_property_sets(cls) -> set[SOMcreator.SOMPropertySet]:
         active_object = tool.Object.get_active_object()
         if active_object is None:
             return set()
@@ -158,7 +160,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return tool.MainWindow.get_property_set_table_widget()
 
     @classmethod
-    def get_row_from_pset(cls, property_set: SOMcreator.PropertySet):
+    def get_row_from_pset(cls, property_set: SOMcreator.SOMPropertySet):
         table = cls.get_table()
         for row in range(table.rowCount()):
             item = table.item(row, 0)
@@ -167,7 +169,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def remove_property_sets_from_table(
-        cls, property_sets: set[SOMcreator.PropertySet], table: QTableWidget
+        cls, property_sets: set[SOMcreator.SOMPropertySet], table: QTableWidget
     ):
         rows = sorted(cls.get_row_from_pset(p) for p in property_sets)
         for row in reversed(rows):
@@ -175,7 +177,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def add_property_sets_to_table(
-        cls, property_sets: set[SOMcreator.PropertySet], table: QTableWidget
+        cls, property_sets: set[SOMcreator.SOMPropertySet], table: QTableWidget
     ):
         for property_set in property_sets:
             table.setSortingEnabled(False)
@@ -231,7 +233,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
             cls.update_table_row(table, row)
 
     @classmethod
-    def select_property_set(cls, property_set: SOMcreator.PropertySet):
+    def select_property_set(cls, property_set: SOMcreator.SOMPropertySet):
         table = cls.get_table()
         table.setFocus()
         for row in range(table.rowCount()):
@@ -240,7 +242,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
                 table.setCurrentCell(row, 0)
 
     @classmethod
-    def get_selecte_property_set_from_table(cls) -> SOMcreator.PropertySet | None:
+    def get_selecte_property_set_from_table(cls) -> SOMcreator.SOMPropertySet | None:
         table = cls.get_table()
         items = table.selectedItems()
         if not items:
@@ -267,11 +269,11 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return som_gui.PropertySetProperties
 
     @classmethod
-    def set_active_property_set(cls, property_set: SOMcreator.PropertySet):
+    def set_active_property_set(cls, property_set: SOMcreator.SOMPropertySet):
         prop = cls.get_pset_properties()
         prop.active_pset = property_set
 
     @classmethod
-    def get_active_property_set(cls) -> SOMcreator.PropertySet:
+    def get_active_property_set(cls) -> SOMcreator.SOMPropertySet:
         prop = cls.get_pset_properties()
         return prop.active_pset

@@ -104,5 +104,5 @@ def tree_item_changed(
     if isinstance(entity, SOMcreator.SOMClass):
         update_pset_tree(mapping)
         mapping.disable_all_child_entities(item, not cs)
-    if isinstance(entity, SOMcreator.PropertySet):
+    if isinstance(entity, SOMcreator.SOMPropertySet):
         mapping.disable_all_child_entities(item, not cs)

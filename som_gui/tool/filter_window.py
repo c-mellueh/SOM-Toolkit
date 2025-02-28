@@ -357,7 +357,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
     @classmethod
     def are_psets_identical(
-        cls, pset0: SOMcreator.PropertySet, pset1: SOMcreator.PropertySet
+        cls, pset0: SOMcreator.SOMPropertySet, pset1: SOMcreator.SOMPropertySet
     ) -> bool:
         filter_list = cls.get_filter_list(pset0, pset1)
         all_psets_are_identical = cls.are_all_filters_identical(filter_list)

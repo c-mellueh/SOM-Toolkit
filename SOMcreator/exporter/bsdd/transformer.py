@@ -26,7 +26,7 @@ PROPERTY_KIND_MAPPING = {
 def transform_objects_to_classes(
     dictionary: bsdd.Dictionary,
     objects: list[SOMcreator.SOMClass],
-    predefined_psets: list[SOMcreator.PropertySet],
+    predefined_psets: list[SOMcreator.SOMPropertySet],
 ):
     """
     Adds objects and Properties to bsdd.Dictionary

@@ -18,7 +18,7 @@ def load(
     proj: SOMcreator.Project,
     attribute_dict: dict,
     identifier: str,
-    property_set: SOMcreator.PropertySet,
+    property_set: SOMcreator.SOMPropertySet,
 ) -> None:
     name, description, optional, parent, filter_matrix = core.get_basics(
         proj, attribute_dict, identifier

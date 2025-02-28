@@ -4,7 +4,12 @@ import logging
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QCoreApplication, Qt
-from PySide6.QtWidgets import QListWidget, QListWidgetItem, QTableWidget, QTableWidgetItem
+from PySide6.QtWidgets import (
+    QListWidget,
+    QListWidgetItem,
+    QTableWidget,
+    QTableWidgetItem,
+)
 
 import SOMcreator
 import som_gui.core.tool
@@ -14,7 +19,10 @@ from som_gui import tool
 from som_gui.module.project.constants import CLASS_REFERENCE
 
 if TYPE_CHECKING:
-    from som_gui.module.predefined_property_set.prop import PredefinedPsetProperties, PredefinedPsetCompareProperties
+    from som_gui.module.predefined_property_set.prop import (
+        PredefinedPsetProperties,
+        PredefinedPsetCompareProperties,
+    )
     from som_gui.module.predefined_property_set import ui
     from PySide6.QtGui import QAction
 
@@ -78,22 +86,26 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         table_widget = cls.get_object_table_widget()
         for row in range(table_widget.rowCount()):
             item = table_widget.item(row, 0)
-            property_set: SOMcreator.PropertySet = tool.PropertySet.get_property_set_from_item(item)
+            property_set: SOMcreator.SOMPropertySet = (
+                tool.PropertySet.get_property_set_from_item(item)
+            )
             item.setText(f"{property_set.object.name}")
             table_widget.item(row, 1).setText(f"{property_set.object.ident_value}")
 
     @classmethod
     def get_selected_property_set(cls):
         props = cls.get_properties()
-        return props.predefined_property_set_window.ui.list_view_pset.selectedItems()[0].data(CLASS_REFERENCE)
+        return props.predefined_property_set_window.ui.list_view_pset.selectedItems()[
+            0
+        ].data(CLASS_REFERENCE)
 
     @classmethod
-    def set_active_property_set(cls, property_set: SOMcreator.PropertySet):
+    def set_active_property_set(cls, property_set: SOMcreator.SOMPropertySet):
         props = cls.get_properties()
         props.active_predefined_pset = property_set
 
     @classmethod
-    def get_active_property_set(cls) -> SOMcreator.PropertySet:
+    def get_active_property_set(cls) -> SOMcreator.SOMPropertySet:
         props = cls.get_properties()
         return props.active_predefined_pset
 
@@ -103,16 +115,21 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         return props.is_renaming_predefined_pset
 
     @classmethod
-    def remove_property_sets_from_list_widget(cls, property_sets: list[SOMcreator.PropertySet],
-                                              list_widget: QListWidget):
-        rows = {row for row in range(list_widget.count()) if
-                list_widget.item(row).data(CLASS_REFERENCE) in property_sets}
+    def remove_property_sets_from_list_widget(
+        cls, property_sets: list[SOMcreator.SOMPropertySet], list_widget: QListWidget
+    ):
+        rows = {
+            row
+            for row in range(list_widget.count())
+            if list_widget.item(row).data(CLASS_REFERENCE) in property_sets
+        }
         for row in reversed(sorted(rows)):
             list_widget.takeItem(row)
 
     @classmethod
-    def remove_property_sets_from_table_widget(cls, property_sets: list[SOMcreator.PropertySet],
-                                               table_widget: QTableWidget):
+    def remove_property_sets_from_table_widget(
+        cls, property_sets: list[SOMcreator.SOMPropertySet], table_widget: QTableWidget
+    ):
         remove_rows = set()
         for row in range(table_widget.rowCount()):
             item = table_widget.item(row, 0)
@@ -122,7 +139,9 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
             table_widget.removeRow(row)
 
     @classmethod
-    def add_property_sets_to_widget(cls, property_sets: list[SOMcreator.PropertySet], list_widget: QListWidget):
+    def add_property_sets_to_widget(
+        cls, property_sets: list[SOMcreator.SOMPropertySet], list_widget: QListWidget
+    ):
         list_widget.setSortingEnabled(False)
 
         for property_set in property_sets:
@@ -132,7 +151,9 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         list_widget.setSortingEnabled(True)
 
     @classmethod
-    def add_objects_to_table_widget(cls, property_sets: list[SOMcreator.PropertySet], table_widget: QTableWidget):
+    def add_objects_to_table_widget(
+        cls, property_sets: list[SOMcreator.SOMPropertySet], table_widget: QTableWidget
+    ):
         for property_set in property_sets:
             row_count = table_widget.rowCount()
             table_widget.setRowCount(row_count + 1)
@@ -149,7 +170,10 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
 
     @classmethod
     def get_existing_psets_in_list_widget(cls, pset_list: QListWidget):
-        return {pset_list.item(row).data(CLASS_REFERENCE) for row in range(pset_list.count())}
+        return {
+            pset_list.item(row).data(CLASS_REFERENCE)
+            for row in range(pset_list.count())
+        }
 
     @classmethod
     def get_existing_psets_in_table_widget(cls, object_table: QTableWidget):
@@ -177,10 +201,12 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
     def create_property_set(cls):
         existing_names = [p.name for p in cls.get_property_sets()]
         name = QCoreApplication.translate("PredefinedPset", "New PropertySet")
-        tool.PropertySet.create_property_set(tool.Util.get_new_name(name, existing_names))
+        tool.PropertySet.create_property_set(
+            tool.Util.get_new_name(name, existing_names)
+        )
 
     @classmethod
-    def get_property_sets(cls) -> set[SOMcreator.PropertySet]:
+    def get_property_sets(cls) -> set[SOMcreator.SOMPropertySet]:
         """
         get all Predefined PropertySets
         """
@@ -188,9 +214,11 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         return set(proj.get_predefined_psets(filter=False))
 
     @classmethod
-    def get_selected_linked_psets(cls) -> set[SOMcreator.PropertySet]:
-        return {tool.PropertySet.get_property_set_from_item(item) for item in
-                cls.get_object_table_widget().selectedItems()}
+    def get_selected_linked_psets(cls) -> set[SOMcreator.SOMPropertySet]:
+        return {
+            tool.PropertySet.get_property_set_from_item(item)
+            for item in cls.get_object_table_widget().selectedItems()
+        }
 
     @classmethod
     def delete_selected_objects(cls):
@@ -226,7 +254,11 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
         cls.get_properties().value_dict = dict()
 
     @classmethod
-    def create_pset_list(cls,psets0:list[SOMcreator.PropertySet], psets1:list[SOMcreator.PropertySet]):
+    def create_pset_list(
+        cls,
+        psets0: list[SOMcreator.SOMPropertySet],
+        psets1: list[SOMcreator.SOMPropertySet],
+    ):
         uuid_dict = tool.AttributeCompare.generate_uuid_dict(psets1)
         name_dict = tool.AttributeCompare.generate_name_dict(psets1)
         pset_list = list()
@@ -234,13 +266,19 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
         print(missing)
         for pset in psets0:
             logging.debug(f"Search for Pset {pset}")
-            match = tool.AttributeCompare.find_matching_entity(pset, uuid_dict, name_dict)
+            match = tool.AttributeCompare.find_matching_entity(
+                pset, uuid_dict, name_dict
+            )
             if match:
                 if match not in missing:
-                    logging.debug(f"Pset found: {match} Match not in missing -> append empty")
+                    logging.debug(
+                        f"Pset found: {match} Match not in missing -> append empty"
+                    )
                     pset_list.append((pset, None))
                 else:
-                    logging.debug(f"Pset found: {match} Match is in missing -> append Entry")
+                    logging.debug(
+                        f"Pset found: {match} Match is in missing -> append Entry"
+                    )
                     pset_list.append((pset, match))
                     missing.remove(match)
             else:
@@ -256,11 +294,13 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
     @classmethod
     def create_tree_selection_trigger(cls, widget: ui.CompareWidget):
         widget.ui.tree_widget_propertysets.itemSelectionChanged.connect(
-            lambda: som_gui.module.attribute.trigger.pset_tree_selection_changed(widget))
+            lambda: som_gui.module.attribute.trigger.pset_tree_selection_changed(widget)
+        )
 
     @classmethod
     def create_widget(cls):
         from som_gui.module.predefined_property_set import ui
+
         if cls.get_properties().widget is None:
             cls.get_properties().widget = ui.CompareWidget()
         return cls.get_properties().widget
@@ -270,9 +310,14 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
         cls.get_properties().predefined_psets = (psets0, psets1)
 
     @classmethod
-    def set_pset_lists(cls, pset_lists: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]) -> None:
+    def set_pset_lists(
+        cls,
+        pset_lists: list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]],
+    ) -> None:
         cls.get_properties().pset_lists = pset_lists
 
     @classmethod
-    def get_pset_lists(cls) -> list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]]:
+    def get_pset_lists(
+        cls,
+    ) -> list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]]:
         return cls.get_properties().pset_lists

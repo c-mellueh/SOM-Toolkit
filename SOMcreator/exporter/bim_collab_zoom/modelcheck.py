@@ -14,7 +14,7 @@ from . import constants as const
 from . import rule
 
 REQUIRED_DATA_DICT = dict[
-    SOMcreator.SOMClass, dict[SOMcreator.PropertySet, list[SOMcreator.SOMProperty]]
+    SOMcreator.SOMClass, dict[SOMcreator.SOMPropertySet, list[SOMcreator.SOMProperty]]
 ]
 
 
@@ -26,7 +26,7 @@ def _write_header(xml_header: etree.Element) -> None:
 
 
 def _write_smartview(
-    property_set: SOMcreator.PropertySet,
+    property_set: SOMcreator.SOMPropertySet,
     attribute_list: list[SOMcreator.SOMProperty],
     author: str,
 ) -> etree.Element:
@@ -109,7 +109,7 @@ def _write_smartview(
 
 def _write_smartviewset(
     obj: SOMcreator.SOMClass,
-    pset_dict: dict[SOMcreator.PropertySet, list[SOMcreator.SOMProperty]],
+    pset_dict: dict[SOMcreator.SOMPropertySet, list[SOMcreator.SOMProperty]],
     author: str,
 ) -> etree.Element:
     smartview_set = etree.Element(const.SMVSET)

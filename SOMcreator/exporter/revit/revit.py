@@ -19,7 +19,7 @@ def export_ifc_template(
     path: str, pset_dict: dict[str, (list[SOMcreator.SOMProperty], set[str])]
 ) -> None:
     with open(path, "w") as file:
-        property_set: SOMcreator.PropertySet
+        property_set: SOMcreator.SOMPropertySet
         for pset_name, (attrib_list, ifc_mapping) in sorted(pset_dict.items()):
             file.write(f"PropertySet:   {pset_name} I  {','.join(ifc_mapping)} \n")
             for attribute in attrib_list:
@@ -85,7 +85,7 @@ def export_shared_parameters(
             "*PARAM	GUID	NAME	DATATYPE	DATACATEGORY	GROUP	VISIBLE	DESCRIPTION	USERMODIFIABLE\n"
         )
 
-        property_set: SOMcreator.PropertySet
+        property_set: SOMcreator.SOMPropertySet
         for i, (pset_name, (attrib_list, ifc_mapping)) in enumerate(
             sorted(pset_dict.items())
         ):

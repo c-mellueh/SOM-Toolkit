@@ -1,7 +1,7 @@
 from .constants import value_constants
 from .datastructure import SOMClass
 from .datastructure import (
-    PropertySet,
+    SOMPropertySet,
     SOMProperty,
     SOMAggregation,
     UseCase,

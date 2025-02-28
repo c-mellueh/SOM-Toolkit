@@ -60,7 +60,9 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def add_property_set_to_tree(
-        cls, property_set: SOMcreator.PropertySet, tree_widget: node_ui.PropertySetTree
+        cls,
+        property_set: SOMcreator.SOMPropertySet,
+        tree_widget: node_ui.PropertySetTree,
     ) -> QTreeWidgetItem:
         """
         Add a property set to the tree widget.
@@ -85,7 +87,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     @classmethod
     def get_pset_subelement_dict(
         cls, item: QTreeWidgetItem
-    ) -> dict[SOMcreator.PropertySet | SOMcreator.SOMProperty, QTreeWidgetItem]:
+    ) -> dict[SOMcreator.SOMPropertySet | SOMcreator.SOMProperty, QTreeWidgetItem]:
         """
         Generate a dictionary mapping property sets or attributes to their corresponding tree widget items.
 
@@ -309,7 +311,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     @classmethod
     def get_linked_item(
         cls, pset_tree_item: QTreeWidgetItem
-    ) -> SOMcreator.PropertySet | SOMcreator.SOMProperty:
+    ) -> SOMcreator.SOMPropertySet | SOMcreator.SOMProperty:
         """
         Get the linked item from a property set tree item.
 
@@ -630,7 +632,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     @classmethod
     def add_new_values_to_pset_tree(
         cls, tree_widget: node_ui.PropertySetTree
-    ) -> dict[SOMcreator.PropertySet | SOMcreator.SOMProperty, QTreeWidgetItem]:
+    ) -> dict[SOMcreator.SOMPropertySet | SOMcreator.SOMProperty, QTreeWidgetItem]:
         selected_node = cls.get_node_from_tree_widget(tree_widget)
         obj = selected_node.aggregation.object
         ir = tree_widget.invisibleRootItem()
@@ -664,7 +666,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         cls,
         tree_widget: node_ui.PropertySetTree,
         property_set_dict: dict[
-            SOMcreator.PropertySet | SOMcreator.SOMProperty, QTreeWidgetItem
+            SOMcreator.SOMPropertySet | SOMcreator.SOMProperty, QTreeWidgetItem
         ],
     ):
         selected_node = cls.get_node_from_tree_widget(tree_widget)
