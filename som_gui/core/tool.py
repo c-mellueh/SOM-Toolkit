@@ -1491,7 +1491,7 @@ class MainWindow:
     ):
         pass
 
-    def get_object_name_line_edit(
+    def get_object_name_label(
         self,
     ):
         pass
@@ -2872,7 +2872,7 @@ class PropertySet:
     def get_pset_from_item(self, item):
         pass
 
-    def get_pset_properties(
+    def get_properties(
         self,
     ):
         pass

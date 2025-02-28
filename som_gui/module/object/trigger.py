@@ -22,37 +22,18 @@ def connect():
         lambda: core.search_object(tool.Search, tool.Object, tool.Project)
     )
     main_ui.button_objects_add.clicked.connect(
-        lambda: core.add_object_clicked(
-            tool.Object,
-            tool.Project,
-            tool.PropertySet,
-            tool.PredefinedPropertySet,
-            tool.Popups,
+        lambda: core.create_object_info_widget(0,tool.Object,tool.PredefinedPropertySet,tool.Util)
         )
-    )
-    main_ui.lineEdit_ident_pSet.textChanged.connect(
-        lambda: core.ident_pset_changed(
-            tool.Object, tool.MainWindow, tool.PredefinedPropertySet
-        )
-    )
-    main_ui.lineEdit_ident_property.textChanged.connect(
-        lambda: core.ident_property_changed(
-            tool.Object, tool.MainWindow, tool.PredefinedPropertySet
-        )
-    )
 
     core.load_context_menus(tool.Object, tool.Util)
     core.add_shortcuts(
         tool.Object, tool.Util, tool.Search, tool.MainWindow, tool.Project
     )
-    core.connect_object_input_widget(
-        tool.Object, tool.MainWindow, tool.PredefinedPropertySet
-    )
     core.init_main_window(tool.Object, tool.MainWindow)
 
 
 def item_double_clicked():
-    core.create_object_info_widget(mode=1, object_tool=tool.Object, util=tool.Util)
+    core.create_object_info_widget(mode=1, object_tool=tool.Object,predefined_property_set=tool.PredefinedPropertySet, util=tool.Util)
 
 
 def object_info_paint_event():
@@ -74,3 +55,20 @@ def on_new_project():
 
 def retranslate_ui():
     core.retranslate_ui(tool.Object)
+
+def create_object_called():
+    core.create_object(tool.Object,
+            tool.Project,
+            tool.PropertySet,
+            tool.PredefinedPropertySet,
+            tool.Popups,
+            tool.Util,)
+
+def copy_object_called():
+    core.copy_object(tool.Object)
+
+def modify_object_called():
+    core.modify_object(tool.Object)
+
+def create_object_info_widget(mode:int):
+    core.create_object_info_widget(mode,tool.Object,tool.PredefinedPropertySet,tool.Util)

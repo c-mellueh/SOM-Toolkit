@@ -34,8 +34,8 @@ class ObjectInfoWidgetProperties:
 
 
 class ObjectProperties:
-    active_object: SOMcreator.SOMClass
-    object_info_widget_properties: ObjectInfoWidgetProperties
+    active_object: SOMcreator.SOMClass =None
+    object_info_widget_properties: ObjectInfoWidgetProperties =None
     context_menu_list: list[ContextMenuDict] = list()
     object_info_widget: ObjectInfoWidget = None
     first_paint = True

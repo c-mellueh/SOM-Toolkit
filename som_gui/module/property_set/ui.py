@@ -12,8 +12,6 @@ class PsetTableWidget(QTableWidget):
         super().__init__(parent)
         self.customContextMenuRequested.connect(property_set.trigger.pset_table_context_menu_requested)
         self.setItemDelegate(LineEditDelegate(self))
-        self.setSortingEnabled(True)
-        self.sortByColumn(0, Qt.AscendingOrder)
 
     def paintEvent(self, event):
         super().paintEvent(event)

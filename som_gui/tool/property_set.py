@@ -20,10 +20,10 @@ from SOMcreator.datastructure.som_json import INHERITED_TEXT
 from som_gui import tool
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.resources.icons import get_link_icon
-
+from som_gui.module.property_set import trigger
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
-
+    from som_gui.module.property_set.ui import PsetTableWidget
 
 class PropertySet(som_gui.core.tool.PropertySet):
 
@@ -50,7 +50,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def pset_table_is_editing(cls):
-        props = cls.get_pset_properties()
+        props = cls.get_properties()
         return props.is_renaming_property_set
 
     @classmethod
@@ -251,29 +251,49 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return cls.get_pset_from_item(item)
 
     @classmethod
+    def get_completer(cls)-> QCompleter:
+        if not cls.get_properties().completer:
+            cls.get_properties().completer = QCompleter()
+        return cls.get_properties().completer
+
+
+
+    @classmethod
     def update_completer(cls, obj: SOMcreator.SOMClass = None):
         psets = list(tool.PredefinedPropertySet.get_property_sets())
         if obj is not None:
             psets += cls.get_inheritable_property_sets(obj)
         pset_names = sorted({p.name for p in psets})
-        completer = QCompleter(pset_names)
-        tool.MainWindow.get_ident_pset_name_line_edit().setCompleter(completer)
-        tool.MainWindow.get_pset_name_line_edit().setCompleter(completer)
+        cls.get_properties().completer = QCompleter(pset_names)
+
 
     @classmethod
     def set_enabled(cls, enabled: bool):
-        tool.MainWindow.get_pset_layout().setEnabled(enabled)
+        tool.MainWindow.get_ui().table_attribute.setEnabled(enabled)
+        tool.MainWindow.get_ui().table_pset.setEnabled(enabled)
+        tool.MainWindow.get_ui().button_Pset_add.setEnabled(enabled)
 
     @classmethod
-    def get_pset_properties(cls) -> PropertySetProperties:
+    def get_properties(cls) -> PropertySetProperties:
         return som_gui.PropertySetProperties
 
     @classmethod
     def set_active_property_set(cls, property_set: SOMcreator.SOMPropertySet):
-        prop = cls.get_pset_properties()
+        prop = cls.get_properties()
         prop.active_pset = property_set
 
     @classmethod
     def get_active_property_set(cls) -> SOMcreator.SOMPropertySet:
-        prop = cls.get_pset_properties()
+        prop = cls.get_properties()
         return prop.active_pset
+
+    @classmethod
+    def set_sorting_indicator(cls,table_widget:PsetTableWidget,col_index:int) -> None:
+        table_widget.setSortingEnabled(True)
+        header = table_widget.horizontalHeader()
+        header.setSortIndicator(col_index, Qt.SortOrder.AscendingOrder)  # 0 for ascending order, 1 for descending order
+        header.setSortIndicatorShown(True)
+    
+    @classmethod
+    def trigger_table_repaint(cls):
+        trigger.repaint_event()
