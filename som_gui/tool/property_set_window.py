@@ -246,8 +246,8 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         cls, window: ui.PropertySetWindow, property_set: SOMcreator.SOMPropertySet
     ):
         title = (
-            f"{property_set.object.name}:{property_set.name}"
-            if property_set.object
+            f"{property_set.som_class.name}:{property_set.name}"
+            if property_set.som_class
             else f"{property_set.name}"
         )
         window.setWindowTitle(title)

@@ -875,7 +875,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         if isinstance(entity, SOMcreator.SOMClass):
             return text
         if isinstance(entity, SOMcreator.SOMPropertySet):
-            obj = entity.object
+            obj = entity.som_class
             if obj is None:
                 return text
             return f"{obj.name}:{text}"
@@ -884,7 +884,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             if pset is None:
                 return text
             text = f"{pset.name}:{text}"
-            obj = pset.object
+            obj = pset.som_class
             if obj is None:
                 return text
             return f"{obj.name}:{text}"

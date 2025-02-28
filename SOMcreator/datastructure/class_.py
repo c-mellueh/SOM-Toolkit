@@ -177,7 +177,7 @@ class SOMClass(Hirarchy):
 
     def add_property_set(self, property_set: SOMcreator.SOMPropertySet) -> None:
         self._property_sets.append(property_set)
-        property_set.object = self
+        property_set.som_class = self
 
     def remove_property_set(self, property_set: SOMcreator.SOMPropertySet) -> None:
         if property_set in self._property_sets:

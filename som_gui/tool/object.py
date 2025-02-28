@@ -22,6 +22,7 @@ import som_gui.tool as tool
 from SOMcreator.templates import IFC_4_1
 from som_gui.module.object.prop import PluginProperty
 import som_gui.module.object
+
 if TYPE_CHECKING:
     from som_gui.module.object.prop import ObjectProperties, ContextMenuDict
     from som_gui.module.main_window.ui import MainWindow
@@ -396,7 +397,7 @@ class Object(som_gui.core.tool.Object):
         pset = obj.get_property_set_by_name(pset_name)
         if pset is None:
             return None
-        return pset.get_attribute_by_name(attribute_name)
+        return pset.get_property_by_name(attribute_name)
 
     @classmethod
     def get_properties(cls) -> ObjectProperties:

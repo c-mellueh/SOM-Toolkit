@@ -200,9 +200,9 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         palette = QPalette()
         if attribute.property_set is None:
             brush = palette.base()
-        elif not attribute.property_set.object:
+        elif not attribute.property_set.som_class:
             brush = palette.base()
-        elif attribute.property_set.object.identifier_property == attribute:
+        elif attribute.property_set.som_class.identifier_property == attribute:
             brush = palette.mid()
         else:
             brush = palette.base()
@@ -310,7 +310,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             return None
 
         # stop user from deleting identifier attribute
-        obj = cls.get_property_set_by_table(table).object
+        obj = cls.get_property_set_by_table(table).som_class
         ident_attrib = None if obj is None else obj.identifier_property
         if ident_attrib in cls.get_selected_attributes(table):
             return None

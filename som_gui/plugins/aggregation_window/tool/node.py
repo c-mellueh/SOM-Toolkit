@@ -464,7 +464,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         pset = obj.get_property_set_by_name(pset_name)
         if pset is None:
             return undef
-        attribute = pset.get_attribute_by_name(attribute_name)
+        attribute = pset.get_property_by_name(attribute_name)
         if attribute is None:
             return undef
 

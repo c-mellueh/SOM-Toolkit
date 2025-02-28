@@ -89,8 +89,8 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
             property_set: SOMcreator.SOMPropertySet = (
                 tool.PropertySet.get_property_set_from_item(item)
             )
-            item.setText(f"{property_set.object.name}")
-            table_widget.item(row, 1).setText(f"{property_set.object.ident_value}")
+            item.setText(f"{property_set.som_class.name}")
+            table_widget.item(row, 1).setText(f"{property_set.som_class.ident_value}")
 
     @classmethod
     def get_selected_property_set(cls):
@@ -157,7 +157,7 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         for property_set in property_sets:
             row_count = table_widget.rowCount()
             table_widget.setRowCount(row_count + 1)
-            obj = property_set.object
+            obj = property_set.som_class
 
             item_1 = QTableWidgetItem(obj.name)
             item_2 = QTableWidgetItem(obj.ident_value)

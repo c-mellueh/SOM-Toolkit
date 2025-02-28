@@ -117,7 +117,7 @@ def object_double_clicked(
     pset = property_set.get_property_set_from_item(item)
     predefined_pset.close_window()
 
-    obj = pset.object
+    obj = pset.som_class
     obj_item = object_tool.get_item_from_object(obj)
     object_tool.select_object(obj)
     object_tool.expand_to_item(obj_item)
@@ -171,8 +171,8 @@ def repaint_object_list(predefined_pset: Type[tool.PredefinedPropertySet]):
     )
     predefined_pset.add_objects_to_table_widget(
         sorted(
-            filter(lambda p: p.object is not None, add_property_sets),
-            key=lambda p: p.object.name,
+            filter(lambda p: p.som_class is not None, add_property_sets),
+            key=lambda p: p.som_class.name,
         ),
         table_widget,
     )

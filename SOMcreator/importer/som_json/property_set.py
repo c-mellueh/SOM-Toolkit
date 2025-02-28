@@ -21,7 +21,7 @@ def load(
     )
     pset = SOMcreator.SOMPropertySet(
         name=name,
-        obj=obj,
+        som_class=obj,
         uuid=identifier,
         description=description,
         optional=optional,

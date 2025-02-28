@@ -735,7 +735,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def get_attribute_data(cls, attribute: SOMcreator.SOMProperty):
-        identifier = attribute.property_set.object.ident_value
+        identifier = attribute.property_set.som_class.ident_value
         propertyset = attribute.property_set.name
         attribute_name = attribute.name
         valuetype = attribute.value_type

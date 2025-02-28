@@ -151,7 +151,7 @@ def drop_event(
             existing_attribute = existing_attributes.get(attribute.name)
             if existing_attribute:
                 # replace Attribute
-                target_property_set.remove_attribute(existing_attribute)
+                target_property_set.remove_property(existing_attribute)
             target_property_set.add_property(attribute)
             attribute.remove_parent()  # remove ParentAttribute
     target_table.repaint()

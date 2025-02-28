@@ -47,7 +47,7 @@ def create_mapping(
             if attribute.name in attribute_dict:
                 if data_type != attribute_dict[attribute.name]:
                     logging.warning(
-                        f"Achtung bei {attribute.property_set.object.name} -> {attribute.property_set.name}"
+                        f"Achtung bei {attribute.property_set.som_class.name} -> {attribute.property_set.name}"
                         f":{attribute.name} neuer Datentyp: {data_type} "
                         f" alter Datentyp: {attribute_dict[attribute.name]}"
                     )

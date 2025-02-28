@@ -221,7 +221,7 @@ class SOMProperty(Hirarchy):
         if value is None:
             if self._property_set is None:
                 return
-            self._property_set.remove_attribute(self)
+            self._property_set.remove_property(self)
             return
         if self not in value.get_attributes(filter=False):
             value.add_property(self)
@@ -246,7 +246,7 @@ class SOMProperty(Hirarchy):
 
     def delete(self, recursive: bool = False) -> None:
         super(SOMProperty, self).delete(recursive)
-        self.property_set.remove_attribute(self)
+        self.property_set.remove_property(self)
 
     def create_child(self) -> SOMProperty:
         child = cp.copy(self)

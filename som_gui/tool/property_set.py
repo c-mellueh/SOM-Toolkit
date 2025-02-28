@@ -212,7 +212,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         if property_set.is_child:
             text = (
                 property_set.parent.name
-                if property_set.parent.object is not None
+                if property_set.parent.som_class is not None
                 else INHERITED_TEXT
             )
 

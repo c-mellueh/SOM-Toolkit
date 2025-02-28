@@ -448,7 +448,7 @@ class PsetModel(TreeModel):
             index.internalPointer()
         )
         if isinstance(node, SOMcreator.SOMPropertySet):
-            parent_index = node.object.index
+            parent_index = node.som_class.index
             parent_index = parent_index.sibling(parent_index.row(), index.column() + 1)
         else:
             parent_index = self.parent(index)
