@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'Widget.ui'
+## Form generated from reading UI file 'widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -32,10 +32,10 @@ class Ui_Aggregation(object):
 
         self.layout_main.addWidget(self.widget_group_attribute)
 
-        self.widget_ident_attribute = AttributeSelector(Aggregation)
-        self.widget_ident_attribute.setObjectName(u"widget_ident_attribute")
+        self.widget_ident_property = AttributeSelector(Aggregation)
+        self.widget_ident_property.setObjectName(u"widget_ident_property")
 
-        self.layout_main.addWidget(self.widget_ident_attribute)
+        self.layout_main.addWidget(self.widget_ident_property)
 
         self.widget_import = FileSelector(Aggregation)
         self.widget_import.setObjectName(u"widget_import")

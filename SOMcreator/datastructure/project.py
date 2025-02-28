@@ -117,7 +117,7 @@ class Project(object):
         return filter(lambda p: p.is_predefined, self.get_property_sets(filter=False))
 
     def get_main_attribute(self) -> tuple[str, str]:
-        ident_attributes = dict()
+        ident_properties = dict()
         ident_psets = dict()
         for obj in self.get_objects(filter=False):
             if not isinstance(obj.ident_attrib, SOMcreator.SOMProperty):
@@ -126,12 +126,12 @@ class Project(object):
             ident_attribute = obj.ident_attrib.name
             if ident_pset not in ident_psets:
                 ident_psets[ident_pset] = 0
-            if ident_attribute not in ident_attributes:
-                ident_attributes[ident_attribute] = 0
+            if ident_attribute not in ident_properties:
+                ident_properties[ident_attribute] = 0
             ident_psets[ident_pset] += 1
-            ident_attributes[ident_attribute] += 1
+            ident_properties[ident_attribute] += 1
 
-        ident_attribute = sorted(ident_attributes.items(), key=lambda x: x[1])
+        ident_attribute = sorted(ident_properties.items(), key=lambda x: x[1])
         ident_pset = sorted(ident_psets.items(), key=lambda x: x[1])
         if ident_attribute and ident_pset:
             return ident_pset[0][0], ident_attribute[0][0]

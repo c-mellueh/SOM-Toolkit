@@ -21,7 +21,7 @@ import som_gui.core.tool
 import som_gui.tool as tool
 from SOMcreator.templates import IFC_4_1
 from som_gui.module.object.prop import PluginProperty
-
+import som_gui.module.object
 if TYPE_CHECKING:
     from som_gui.module.object.prop import ObjectProperties, ContextMenuDict
     from som_gui.module.main_window.ui import MainWindow
@@ -218,7 +218,7 @@ class Object(som_gui.core.tool.Object):
             text = QCoreApplication.translate(
                 "Object", "Identifier exists allready or is not allowed"
             )
-        elif result == som_gui.module.object.IDENT_ATTRIBUTE_ISSUE:
+        elif result == som_gui.module.object.IDENT_PROPERTY_ISSUE:
             text = QCoreApplication.translate(
                 "Object", "Name of Attribute is not allowed"
             )
@@ -371,10 +371,10 @@ class Object(som_gui.core.tool.Object):
             return som_gui.module.object.OK
 
         if pset_name and attribute_name:
-            ident_attribute = cls.find_attribute(obj, pset_name, attribute_name)
+            ident_property = cls.find_attribute(obj, pset_name, attribute_name)
             obj.identifier_property = (
-                ident_attribute
-                if ident_attribute is not None
+                ident_property
+                if ident_property is not None
                 else obj.identifier_property
             )
 

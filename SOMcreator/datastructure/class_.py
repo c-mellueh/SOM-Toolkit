@@ -49,10 +49,10 @@ class SOMClass(Hirarchy):
         return self.ident_value < other.ident_value
 
     def __copy__(self):
-        new_ident_attribute = None
+        new_ident_property = None
         if self.is_concept:
             ident_pset = None
-            new_ident_attribute = str(self.identifier_property)
+            new_ident_property = str(self.identifier_property)
         else:
             ident_pset = self.identifier_property.property_set
 
@@ -61,16 +61,16 @@ class SOMClass(Hirarchy):
             new_pset = cp.copy(pset)
             new_property_sets.add(new_pset)
             if pset == ident_pset:
-                new_ident_attribute = new_pset.get_attribute_by_name(
+                new_ident_property = new_pset.get_attribute_by_name(
                     self.identifier_property.name
                 )
 
-        if new_ident_attribute is None:
+        if new_ident_property is None:
             raise ValueError(f"Identifier Attribute could'nt be found")
 
         new_object = SOMClass(
             name=self.name,
-            identifier_property=new_ident_attribute,
+            identifier_property=new_ident_property,
             uuid=str(uuid4()),
             ifc_mapping=self.ifc_mapping,
             description=self.description,
