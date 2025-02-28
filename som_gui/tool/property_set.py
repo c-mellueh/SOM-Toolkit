@@ -269,7 +269,9 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def set_enabled(cls, enabled: bool):
-        tool.MainWindow.get_pset_layout().setEnabled(enabled)
+        tool.MainWindow.get_ui().table_attribute.setEnabled(enabled)
+        tool.MainWindow.get_ui().table_pset.setEnabled(enabled)
+        tool.MainWindow.get_ui().button_Pset_add.setEnabled(enabled)
 
     @classmethod
     def get_properties(cls) -> PropertySetProperties:
