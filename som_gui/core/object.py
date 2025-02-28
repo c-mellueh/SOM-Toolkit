@@ -228,7 +228,7 @@ def item_selection_changed(
         object_tool.set_active_object(obj)
         property_set_tool.update_completer(obj)
         property_set_tool.set_enabled(True)
-        refresh_property_set_table(property_set_tool, object_tool)
+        property_set_tool.trigger_table_repaint()
     else:
         property_set_tool.clear_table()
         property_set_tool.set_enabled(False)

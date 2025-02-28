@@ -20,7 +20,7 @@ from SOMcreator.datastructure.som_json import INHERITED_TEXT
 from som_gui import tool
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.resources.icons import get_link_icon
-
+from som_gui.module.property_set import trigger
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
     from som_gui.module.property_set.ui import PsetTableWidget
@@ -293,3 +293,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         header = table_widget.horizontalHeader()
         header.setSortIndicator(col_index, Qt.SortOrder.AscendingOrder)  # 0 for ascending order, 1 for descending order
         header.setSortIndicatorShown(True)
+    
+    @classmethod
+    def trigger_table_repaint(cls):
+        trigger.repaint_event()

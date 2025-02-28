@@ -144,16 +144,18 @@ def repaint_pset_table(
 ):
     logging.debug(f"Repaint PropertySet Table")
 
-    if object_tool.get_active_object() is not None:
-        property_set_tool.set_enabled(True)
-    else:
+    if object_tool.get_active_object() is None:
         property_set_tool.set_enabled(False)
         return
 
-    if property_set_tool.pset_table_is_editing():
+    property_set_tool.set_enabled(True)
+    
+    #if pset_table is in rename mode this blocks overwrites
+    if property_set_tool.pset_table_is_editing(): 
         return
 
     new_property_sets = property_set_tool.get_property_sets()
+    selected_pset = property_set_tool.get_active_property_set()
     table = property_set_tool.get_table()
 
     existing_property_sets = property_set_tool.get_existing_psets_in_table(table)
@@ -163,7 +165,12 @@ def repaint_pset_table(
     property_set_tool.add_property_sets_to_table(add_property_sets, table)
     property_set_tool.update_property_set_table(table)
 
-
+    if not selected_pset:
+        return
+    pset = {p.name:p for p in new_property_sets}.get(selected_pset.name)
+    if pset:
+        property_set_tool.select_property_set(pset)
+        
 def table_double_clicked(
     property_set_tool: Type[tool.PropertySet],
     attribute_table: Type[tool.AttributeTable],
