@@ -36,7 +36,7 @@ def connect():
         )
     )
     main_ui.lineEdit_ident_property.textChanged.connect(
-        lambda: core.ident_attribute_changed(
+        lambda: core.ident_property_changed(
             tool.Object, tool.MainWindow, tool.PredefinedPropertySet
         )
     )

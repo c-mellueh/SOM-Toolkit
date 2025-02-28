@@ -98,7 +98,7 @@ def connect_object_input_widget(
         lambda: ident_pset_changed(object_tool, main_window, predefined_pset)
     )
     main_window.get_ui().lineEdit_ident_property.textChanged.connect(
-        lambda: ident_attribute_changed(object_tool, main_window, predefined_pset)
+        lambda: ident_property_changed(object_tool, main_window, predefined_pset)
     )
 
 
@@ -111,7 +111,7 @@ def ident_pset_changed(
     object_tool.create_completer(pset_names, main_window.get_ui().lineEdit_ident_pSet)
 
 
-def ident_attribute_changed(
+def ident_property_changed(
     object_tool: Type[tool.Object],
     main_window: Type[tool.MainWindow],
     predefined_pset: Type[tool.PredefinedPropertySet],
