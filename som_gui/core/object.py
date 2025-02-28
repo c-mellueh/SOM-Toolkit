@@ -20,10 +20,12 @@ if TYPE_CHECKING:
 def init_main_window(
     object_tool: Type[tool.Object], main_window: Type[tool.MainWindow]
 ) -> None:
+    
+    # Build Object Tree
     tree = object_tool.get_object_tree()
     tree.setColumnCount(0)
     object_tool.add_column_to_tree(
-        lambda: QCoreApplication.translate("Object", "Object"),
+        lambda: QCoreApplication.translate("Object", "Class"),
         0,
         lambda o: getattr(o, "name"),
     )
@@ -39,47 +41,15 @@ def init_main_window(
         object_tool.set_object_optional_by_tree_item_state,
     )
 
+    #Add Object Activate Functions
     object_tool.add_object_activate_function(
-        lambda o: main_window.get_object_name_line_edit().setText(o.name)
-    )
-    pset_le = main_window.get_ident_pset_name_line_edit()
-    attribute_e = main_window.get_attribute_name_line_edit()
-    object_tool.add_object_activate_function(
-        lambda o: object_tool.fill_object_property_set_line_edit(pset_le, o)
-    )
-    object_tool.add_object_activate_function(
-        lambda o: object_tool.fill_object_attribute_line_edit(attribute_e, o)
-    )
-    object_tool.add_object_activate_function(
-        lambda o: main_window.get_ident_value_line_edit().setText(o.ident_value)
-    )
-
-    object_tool.add_objects_infos_add_function(
-        "name", main_window.get_object_name_line_edit().text
-    )
-    object_tool.add_objects_infos_add_function("is_group", lambda: False)
-    object_tool.add_objects_infos_add_function(
-        "ident_pset_name", main_window.get_ident_pset_name_line_edit().text
-    )
-    object_tool.add_object_creation_check(
-        "ident_pset_name", object_tool.check_if_ident_pset_is_valid
-    )
-
-    object_tool.add_objects_infos_add_function(
-        "ident_property_name", main_window.get_attribute_name_line_edit().text
+        lambda o: main_window.get_object_name_label().setText(o.name)
     )
     object_tool.add_object_creation_check(
         "ident_property_name", object_tool.check_if_ident_property_is_valid
     )
-
-    object_tool.add_objects_infos_add_function(
-        "ident_value", main_window.get_ident_value_line_edit().text
-    )
     object_tool.add_object_creation_check(
         "ident_value", object_tool.check_if_identifier_is_unique
-    )
-    object_tool.add_objects_infos_add_function(
-        "ifc_mappings", lambda: ["IfcBuildingElementProxy"]
     )
 
 
@@ -87,45 +57,6 @@ def retranslate_ui(object_tool: Type[tool.Object]) -> None:
     header = object_tool.get_object_tree().headerItem()
     for column, name in enumerate(object_tool.get_header_names()):
         header.setText(column, name)
-
-
-def connect_object_input_widget(
-    object_tool: Type[tool.Object],
-    main_window: Type[tool.MainWindow],
-    predefined_pset: Type[tool.PredefinedPropertySet],
-):
-    main_window.get_ui().lineEdit_ident_pSet.textChanged.connect(
-        lambda: ident_pset_changed(object_tool, main_window, predefined_pset)
-    )
-    main_window.get_ui().lineEdit_ident_property.textChanged.connect(
-        lambda: ident_property_changed(object_tool, main_window, predefined_pset)
-    )
-
-
-def ident_pset_changed(
-    object_tool: Type[tool.Object],
-    main_window: Type[tool.MainWindow],
-    predefined_pset: Type[tool.PredefinedPropertySet],
-):
-    pset_names = sorted([p.name for p in predefined_pset.get_property_sets()])
-    object_tool.create_completer(pset_names, main_window.get_ui().lineEdit_ident_pSet)
-
-
-def ident_property_changed(
-    object_tool: Type[tool.Object],
-    main_window: Type[tool.MainWindow],
-    predefined_pset: Type[tool.PredefinedPropertySet],
-):
-    ident_pset_name = object_tool.get_object_infos()["ident_pset_name"]
-    predefined_pset: SOMcreator.SOMPropertySet = {
-        p.name: p for p in predefined_pset.get_property_sets()
-    }.get(ident_pset_name)
-    attribute_names = list()
-    if predefined_pset:
-        attribute_names = [a.name for a in predefined_pset.get_attributes(filter=True)]
-    object_tool.create_completer(
-        attribute_names, main_window.get_ui().lineEdit_ident_property
-    )
 
 
 def add_shortcuts(

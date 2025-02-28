@@ -170,8 +170,8 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_ui().lineEdit_ident_property
 
     @classmethod
-    def get_object_name_line_edit(cls):
-        return cls.get_ui().line_edit_object_name
+    def get_object_name_label(cls):
+        return cls.get_ui().label_object_name
 
     @classmethod
     def get_pset_name_line_edit(cls):

@@ -30,23 +30,10 @@ def connect():
             tool.Popups,
         )
     )
-    main_ui.lineEdit_ident_pSet.textChanged.connect(
-        lambda: core.ident_pset_changed(
-            tool.Object, tool.MainWindow, tool.PredefinedPropertySet
-        )
-    )
-    main_ui.lineEdit_ident_property.textChanged.connect(
-        lambda: core.ident_property_changed(
-            tool.Object, tool.MainWindow, tool.PredefinedPropertySet
-        )
-    )
 
     core.load_context_menus(tool.Object, tool.Util)
     core.add_shortcuts(
         tool.Object, tool.Util, tool.Search, tool.MainWindow, tool.Project
-    )
-    core.connect_object_input_widget(
-        tool.Object, tool.MainWindow, tool.PredefinedPropertySet
     )
     core.init_main_window(tool.Object, tool.MainWindow)
 

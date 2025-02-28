@@ -1491,7 +1491,7 @@ class MainWindow:
     ):
         pass
 
-    def get_object_name_line_edit(
+    def get_object_name_label(
         self,
     ):
         pass

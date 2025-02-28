@@ -28,12 +28,8 @@ def init_main_window(object_tool: Type[tool.Object], aggregation: Type[aw_tool.A
     object_tool.add_column_to_tree(lambda: QCoreApplication.translate("Aggregation", "Abbreviation"), -1,
                                    lambda o: getattr(o, "abbreviation"))
 
-    layout = main_window.get_object_name_horizontal_layout()
-    line_edit = aggregation.create_abbreviation_line_edit(layout)
-    object_tool.add_object_activate_function(lambda o: line_edit.setText(o.abbreviation))
-    object_tool.add_objects_infos_add_function("abbreviation", line_edit.text)
-    object_tool.add_object_creation_check("abbreviation", aggregation.abbreviation_check)
-    object_tool.oi_add_plugin_entry("abbrev_text", "horizontal_layout_info", QLabel(layout.tr("Abbreviation")), -1,
+    name =  QCoreApplication.translate("Aggregation", "Abbreviation")
+    object_tool.oi_add_plugin_entry("abbrev_text", "horizontal_layout_info", QLabel(name), -1,
                                     lambda *a: None, lambda *a: None, lambda *a: None, lambda *a: OK, lambda *a: None)
     object_info_line_edit = aggregation.create_oi_line_edit()
     object_tool.oi_add_plugin_entry("abbreviation",

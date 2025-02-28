@@ -619,43 +619,6 @@ class Object(som_gui.core.tool.Object):
         return item.object
 
     @classmethod
-    def fill_object_property_set_line_edit(
-        cls,
-        line_edit: QLineEdit,
-        obj: SOMcreator.SOMClass,
-    ):
-        if obj.is_concept:
-            line_edit.setText("")
-            line_edit.setEnabled(False)
-            return
-        else:
-            line_edit.setEnabled(True)
-
-        if not obj.identifier_property:
-            line_edit.setText("")
-            return
-        if not obj.identifier_property.property_set:
-            line_edit.setText("")
-            return
-        line_edit.setText(obj.identifier_property.property_set.name)
-
-    @classmethod
-    def fill_object_attribute_line_edit(
-        cls, line_edit: QLineEdit, obj: SOMcreator.SOMClass
-    ):
-        if obj.is_concept:
-            line_edit.setText("")
-            line_edit.setEnabled(False)
-            return
-        else:
-            line_edit.setEnabled(True)
-
-        if not obj.identifier_property:
-            line_edit.setText("")
-            return
-        line_edit.setText(obj.identifier_property.name)
-
-    @classmethod
     def add_object_activate_function(cls, func: Callable):
         cls.get_properties().object_activate_functions.append(func)
 
