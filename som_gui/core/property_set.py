@@ -21,7 +21,11 @@ def add_property_set_button_pressed(
     predefined_psets: Type[tool.PredefinedPropertySet],
 ):
     obj = object_tool.get_active_object()
-    pset_name = main_window_tool.get_pset_name()
+    title = QCoreApplication.translate("PropertySet", "Add PropertySet")
+    name = QCoreApplication.translate("PropertySet", "PropertySet name?")
+    if not name:
+        return
+    pset_name = popup_tool._request_text_input(title,name,prefill = "",parent = main_window_tool.get())
     if property_set_tool.check_if_pset_allready_exists(pset_name, obj):
         text = QCoreApplication.translate(
             f"PropertySet", "PropertySet '{}' exists allready"
