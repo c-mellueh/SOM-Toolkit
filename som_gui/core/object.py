@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
     from PySide6.QtCore import QPoint
 
+import uuid
 
 def init_main_window(
     object_tool: Type[tool.Object], main_window: Type[tool.MainWindow]
@@ -100,6 +101,7 @@ def create_object_info_widget(
     """
     Opens Object Info Widget can be used for creation (mode 0), modification (mode 1) or copying (mode 2)   
     """
+    logging.debug(f"Create Object Info Widget Mode= {mode}")
     title = util.get_window_title(QCoreApplication.translate("ObjectInfo", "Object Info"))
     dialog = object_tool.oi_create_dialog(title)
 
@@ -224,11 +226,19 @@ def item_selection_changed(
 ):
     selected_items = object_tool.get_selected_items()
     if len(selected_items) == 1:
+        selected_pset = property_set_tool.get_active_property_set()
         obj = object_tool.get_object_from_item(selected_items[0])
         object_tool.set_active_object(obj)
         property_set_tool.update_completer(obj)
         property_set_tool.set_enabled(True)
         property_set_tool.trigger_table_repaint()
+        
+        #reselect the same pset that is allready selected
+        if not selected_pset:
+            return
+        pset = {p.name: p for p in property_set_tool.get_property_sets()}.get(selected_pset.name)
+        if pset:
+            property_set_tool.select_property_set(pset)
     else:
         property_set_tool.clear_table()
         property_set_tool.set_enabled(False)
@@ -329,29 +339,3 @@ def create_object(
             ident_property.value = [identifier]
         object_tool.create_object(data_dict,pset,ident_property)
         refresh_object_tree(object_tool, project)
-
-    # object_infos = object_tool.get_object_infos()
-    # is_allowed = object_tool.check_object_creation_input(object_infos)
-    # if not is_allowed:
-    #     return
-
-    # pset_name = object_infos["ident_pset_name"]
-    # pset_dict = {p.name: p for p in predefined_property_set.get_property_sets()}
-
-    # connect_predefined_pset = False
-    # if pset_name in pset_dict:
-    #     connect_predefined_pset = popup.request_property_set_merge(pset_name, 1)
-    #     if connect_predefined_pset is None:
-    #         return
-
-    # if connect_predefined_pset:
-    #     parent = pset_dict.get(pset_name)
-    # else:
-    #     parent = None
-
-    # pset = property_set.create_property_set(pset_name, None, parent)
-    # attribute_name = object_infos["ident_property_name"]
-
-
-    # object_tool.create_object(object_infos, pset, attribute)
-    # refresh_object_tree(object_tool, project)

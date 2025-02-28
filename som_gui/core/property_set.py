@@ -20,12 +20,16 @@ def add_property_set_button_pressed(
     popup_tool: Type[tool.Popups],
     predefined_psets: Type[tool.PredefinedPropertySet],
 ):
+    logging.debug(f"Add PropertySet button clicked")
     obj = object_tool.get_active_object()
     title = QCoreApplication.translate("PropertySet", "Add PropertySet")
     name = QCoreApplication.translate("PropertySet", "PropertySet name?")
-    if not name:
+
+    pset_name = popup_tool._request_text_input(
+        title, name, prefill="", parent=main_window_tool.get()
+    )
+    if not pset_name:
         return
-    pset_name = popup_tool._request_text_input(title,name,prefill = "",parent = main_window_tool.get())
     if property_set_tool.check_if_pset_allready_exists(pset_name, obj):
         text = QCoreApplication.translate(
             f"PropertySet", "PropertySet '{}' exists allready"
@@ -71,9 +75,8 @@ def pset_selection_changed(
     attribute_table: Type[tool.AttributeTable],
     main_window: Type[tool.MainWindow],
 ):
-    property_set = property_set_tool.get_selecte_property_set_from_table()
-        
 
+    property_set = property_set_tool.get_selecte_property_set_from_table()
     property_set_tool.set_active_property_set(property_set)
     attribute_table.set_property_set_of_table(
         main_window.get_attribute_table(), property_set
@@ -149,13 +152,12 @@ def repaint_pset_table(
         return
 
     property_set_tool.set_enabled(True)
-    
-    #if pset_table is in rename mode this blocks overwrites
-    if property_set_tool.pset_table_is_editing(): 
+
+    # if pset_table is in rename mode this blocks overwrites
+    if property_set_tool.pset_table_is_editing():
         return
 
     new_property_sets = property_set_tool.get_property_sets()
-    selected_pset = property_set_tool.get_active_property_set()
     table = property_set_tool.get_table()
 
     existing_property_sets = property_set_tool.get_existing_psets_in_table(table)
@@ -165,12 +167,8 @@ def repaint_pset_table(
     property_set_tool.add_property_sets_to_table(add_property_sets, table)
     property_set_tool.update_property_set_table(table)
 
-    if not selected_pset:
-        return
-    pset = {p.name:p for p in new_property_sets}.get(selected_pset.name)
-    if pset:
-        property_set_tool.select_property_set(pset)
-        
+
+
 def table_double_clicked(
     property_set_tool: Type[tool.PropertySet],
     attribute_table: Type[tool.AttributeTable],
