@@ -224,7 +224,7 @@ class SOMProperty(Hirarchy):
             self._property_set.remove_attribute(self)
             return
         if self not in value.get_attributes(filter=False):
-            value.add_attribute(self)
+            value.add_property(self)
         self._property_set = value
 
     def is_equal(self, attribute: SOMProperty) -> bool:

@@ -143,7 +143,7 @@ def drop_event(
                 # copy attribute to property_set
                 attribute = copy.copy(attribute)
                 attribute.remove_parent()
-                target_property_set.add_attribute(attribute)
+                target_property_set.add_property(attribute)
 
     elif proposed_action == Qt.DropAction.MoveAction:
         for attribute in dropped_attributes:
@@ -152,7 +152,7 @@ def drop_event(
             if existing_attribute:
                 # replace Attribute
                 target_property_set.remove_attribute(existing_attribute)
-            target_property_set.add_attribute(attribute)
+            target_property_set.add_property(attribute)
             attribute.remove_parent()  # remove ParentAttribute
     target_table.repaint()
     event.accept()

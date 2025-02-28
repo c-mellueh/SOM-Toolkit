@@ -54,7 +54,7 @@ class SOMPropertySet(Hirarchy):
 
         for attribute in self.get_attributes(filter=False):
             new_attribute = cp.copy(attribute)
-            new_pset.add_attribute(new_attribute)
+            new_pset.add_property(new_attribute)
 
         if self.parent is not None:
             self.parent.add_child(new_pset)
@@ -131,7 +131,7 @@ class SOMPropertySet(Hirarchy):
         """returns all Attributes even if they don't fit the current Project Phase"""
         return iter(self._attributes)
 
-    def add_attribute(self, value: SOMcreator.SOMProperty) -> None:
+    def add_property(self, value: SOMcreator.SOMProperty) -> None:
 
         if value.property_set is not None and value.property_set != self:
             value.property_set.remove_attribute(value)
@@ -144,7 +144,7 @@ class SOMPropertySet(Hirarchy):
         for child in self.get_children(filter=False):
             attrib: SOMcreator.SOMProperty = cp.copy(value)
             value.add_child(attrib)
-            child.add_attribute(attrib)
+            child.add_property(attrib)
 
     def remove_attribute(self, value: SOMcreator.SOMProperty, recursive=False) -> None:
         if value in self.get_attributes(filter=False):
@@ -167,5 +167,5 @@ class SOMPropertySet(Hirarchy):
         child.parent = self
         for attribute in self.get_attributes(filter=False):
             new_attrib = attribute.create_child()
-            child.add_attribute(new_attrib)
+            child.add_property(new_attrib)
         return child
