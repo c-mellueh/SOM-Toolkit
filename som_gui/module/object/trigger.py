@@ -22,15 +22,8 @@ def connect():
         lambda: core.search_object(tool.Search, tool.Object, tool.Project)
     )
     main_ui.button_objects_add.clicked.connect(
-        lambda: core.add_object_clicked(
-            tool.Object,
-            tool.Project,
-            tool.PropertySet,
-            tool.PredefinedPropertySet,
-            tool.Popups,
-            tool.Util,
+        lambda: core.create_object_info_widget(0,tool.Object,tool.Util)
         )
-    )
 
     core.load_context_menus(tool.Object, tool.Util)
     core.add_shortcuts(
@@ -62,3 +55,17 @@ def on_new_project():
 
 def retranslate_ui():
     core.retranslate_ui(tool.Object)
+
+def create_object_called():
+    core.create_object(tool.Object,
+            tool.Project,
+            tool.PropertySet,
+            tool.PredefinedPropertySet,
+            tool.Popups,
+            tool.Util,)
+
+def copy_object_called():
+    core.copy_object(tool.Object)
+
+def modify_object_called():
+    core.modify_object(tool.Object)

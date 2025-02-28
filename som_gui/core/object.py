@@ -9,7 +9,6 @@ from PySide6.QtGui import QPalette
 import SOMcreator
 from som_gui import tool
 from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
-
 if TYPE_CHECKING:
     from som_gui.tool import Object, Project, Search, PropertySet, MainWindow
 
@@ -111,20 +110,15 @@ def create_object_info_widget(
     object_tool.oi_fill_properties(mode=mode)
     object_tool.oi_update_dialog()
     if dialog.exec():
-        object_info_accept(object_tool)
+        if mode == 0:
+            object_tool.trigger_object_creation()
+        elif mode ==1:
+            object_tool.trigger_object_modification()
+        elif mode == 2:
+            object_tool.trigger_object_copy()
 
 
-def object_info_accept(object_tool: Type[Object]):
-    data_dict = object_tool.oi_get_values()
-    focus_object = object_tool.oi_get_focus_object()
-    mode = object_tool.oi_get_mode()
-    result = 666
-    if mode == 1:
-        result = object_tool.change_object_info(focus_object, data_dict)
-    if mode == 2:
-        result, focus_object = object_tool.copy_object(focus_object, data_dict)
-    if object_tool.handle_attribute_issue(result):
-        object_tool.fill_object_entry(focus_object)
+
 
 
 def object_info_refresh(object_tool: Type[Object]):
@@ -137,7 +131,7 @@ def object_info_refresh(object_tool: Type[Object]):
         if object_tool.oi_get_mode() == 1
         else None
     )
-    if not object_tool.is_identifier_allowed(ident_value, ident_filter):
+    if not object_tool.is_identifier_allowed(ident_value, [ident_filter]):
         object_tool.oi_set_ident_value_color("red")
     else:
         object_tool.oi_set_ident_value_color(QPalette().color(QPalette.Text).name())
@@ -274,7 +268,21 @@ def item_dropped_on(pos: QPoint, object_tool: Type[Object]):
             obj.parent = dropped_on_object
 
 
-def add_object_clicked(
+def modify_object(object_tool:Type[tool.Object]):
+    data_dict = object_tool.oi_get_values()
+    focus_object = object_tool.oi_get_focus_object()
+    result = object_tool.change_object_info(focus_object, data_dict)
+    if object_tool.handle_attribute_issue(result):
+        object_tool.fill_object_entry(focus_object)
+
+def copy_object(object_tool:Type[tool.Object]):
+    data_dict = object_tool.oi_get_values()
+    focus_object = object_tool.oi_get_focus_object()
+    result, focus_object = object_tool.copy_object(focus_object, data_dict)
+    if object_tool.handle_attribute_issue(result):
+        object_tool.fill_object_entry(focus_object)
+
+def create_object(
     object_tool: Type[Object],
     project: Type[Project],
     property_set: Type[tool.PropertySet],
@@ -282,8 +290,52 @@ def add_object_clicked(
     popup: Type[tool.Popups],
     util:Type[tool.Util]
 ):
+    from som_gui.module.object import IDENT_ISSUE,IDENT_PROPERTY_ISSUE,IDENT_PSET_ISSUE
+
+    data_dict = object_tool.oi_get_values()
+    predefined_psets  = {p.name: p for p in predefined_property_set.get_property_sets()}
     
-    widget = create_object_info_widget(0,object_tool,util)
+    name = data_dict["name"]
+    is_group = data_dict["is_group"]
+    abbreviation = data_dict.get("abbreviation")
+    ifc_mappings = data_dict.get("ifc_mappings")
+    identifier = data_dict.get("ident_value")
+    pset_name = data_dict.get("ident_pset_name")
+    attribute_name = data_dict.get("ident_property_name")
+    
+    if is_group:
+        ident = str(uuid.uuid4())
+        som_class = SOMcreator.SOMClass(
+            name, ident, uuid=ident, project=tool.Project.get()
+        )
+    else:
+        if identifier is None or not object_tool.is_identifier_allowed(identifier):
+            return object_tool.handle_attribute_issue(IDENT_ISSUE)
+
+        parent = None
+        if pset_name in predefined_psets:
+            connect_result = popup.request_property_set_merge(pset_name,1)
+            if connect_result is None:
+                return
+            if connect_result:
+                parent = predefined_psets.get(pset_name)
+
+        pset = property_set.create_property_set(pset_name, None, parent)
+        ident_property: SOMcreator.SOMProperty = {
+            a.name: a for a in pset.get_attributes(filter=False)
+        }.get(attribute_name)
+
+        if not ident_property:
+            ident_property = SOMcreator.SOMProperty(
+                pset,
+                attribute_name,
+                [identifier],
+                SOMcreator.value_constants.LIST,
+            )
+        else:
+            ident_property.value = [identifier]
+        object_tool.create_object(data_dict,pset,ident_property)
+        refresh_object_tree(object_tool, project)
 
     # object_infos = object_tool.get_object_infos()
     # is_allowed = object_tool.check_object_creation_input(object_infos)
@@ -306,19 +358,7 @@ def add_object_clicked(
 
     # pset = property_set.create_property_set(pset_name, None, parent)
     # attribute_name = object_infos["ident_property_name"]
-    # attribute: SOMcreator.SOMProperty = {
-    #     a.name: a for a in pset.get_attributes(filter=True)
-    # }.get(attribute_name)
 
-    # if not attribute:
-    #     attribute = SOMcreator.SOMProperty(
-    #         pset,
-    #         attribute_name,
-    #         [object_infos["ident_value"]],
-    #         SOMcreator.value_constants.LIST,
-    #     )
-    # else:
-    #     attribute.value = [object_infos["ident_value"]]
 
     # object_tool.create_object(object_infos, pset, attribute)
     # refresh_object_tree(object_tool, project)

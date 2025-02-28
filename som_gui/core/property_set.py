@@ -68,6 +68,8 @@ def pset_selection_changed(
     main_window: Type[tool.MainWindow],
 ):
     property_set = property_set_tool.get_selecte_property_set_from_table()
+        
+
     property_set_tool.set_active_property_set(property_set)
     attribute_table.set_property_set_of_table(
         main_window.get_attribute_table(), property_set
@@ -75,7 +77,9 @@ def pset_selection_changed(
     attribute_table_core.update_attribute_table(
         main_window.get_attribute_table(), attribute_table
     )
-    main_window.get_pset_name_label().setText(property_set.name)
+    text = "" if not property_set else property_set.name
+
+    main_window.get_pset_name_label().setText(text)
 
 
 def pset_table_context_menu(pos, property_set_tool: Type[tool.PropertySet]):

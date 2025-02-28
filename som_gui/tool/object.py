@@ -22,7 +22,7 @@ import som_gui.tool as tool
 from SOMcreator.templates import IFC_4_1
 from som_gui.module.object.prop import PluginProperty
 import som_gui.module.object
-
+from som_gui.module.object import trigger
 if TYPE_CHECKING:
     from som_gui.module.object.prop import ObjectProperties, ContextMenuDict
     from som_gui.module.main_window.ui import MainWindow
@@ -233,6 +233,8 @@ class Object(som_gui.core.tool.Object):
         tool.Popups.create_warning_popup(text)
         return False
 
+
+
     @classmethod
     def copy_object(
         cls, obj: SOMcreator.SOMClass, data_dict: ObjectDataDict
@@ -419,10 +421,14 @@ class Object(som_gui.core.tool.Object):
         return ident_values
 
     @classmethod
-    def is_identifier_allowed(cls, identifier, ignore=None):
+    def is_identifier_allowed(cls, identifier, ignore:list[str]=None):
+        """
+        identifier: value which will be checked against all identifiers
+        ignore: list of values which will be ignored
+        """
         identifiers = cls.get_existing_ident_values()
         if ignore is not None:
-            identifiers = list(filter(lambda i: i != ignore, identifiers))
+            identifiers = list(filter(lambda i: i not in ignore, identifiers))
         if identifier in identifiers or not identifier:
             return False
         else:
@@ -728,3 +734,15 @@ class Object(som_gui.core.tool.Object):
         obj.set_optional(
             True if item.checkState(column_index) == Qt.CheckState.Checked else False
         )
+
+    @classmethod
+    def trigger_object_creation(cls,):
+        trigger.create_object_called()
+    
+    @classmethod
+    def trigger_object_copy(cls,):
+        trigger.copy_object_called()
+    
+    @classmethod
+    def trigger_object_modification(cls,):
+        trigger.modify_object_called()
