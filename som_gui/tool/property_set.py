@@ -23,7 +23,7 @@ from som_gui.resources.icons import get_link_icon
 
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
-
+    from som_gui.module.property_set.ui import PsetTableWidget
 
 class PropertySet(som_gui.core.tool.PropertySet):
 
@@ -286,3 +286,10 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def get_active_property_set(cls) -> SOMcreator.SOMPropertySet:
         prop = cls.get_properties()
         return prop.active_pset
+
+    @classmethod
+    def set_sorting_indicator(cls,table_widget:PsetTableWidget,col_index:int) -> None:
+        table_widget.setSortingEnabled(True)
+        header = table_widget.horizontalHeader()
+        header.setSortIndicator(col_index, Qt.SortOrder.AscendingOrder)  # 0 for ascending order, 1 for descending order
+        header.setSortIndicatorShown(True)

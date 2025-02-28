@@ -9,7 +9,7 @@ import som_gui
 if TYPE_CHECKING:
     from som_gui.tool import MainWindow, Project, Popups
     from som_gui import tool
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QCoreApplication,Qt
 from PySide6.QtGui import QCloseEvent
 
 
@@ -40,7 +40,7 @@ def retranslate_ui(main_window: Type[tool.MainWindow]):
     main_window.get().ui.retranslateUi(main_window.get())
 
 
-def create_main_window(application: QApplication, main_window: Type[tool.MainWindow]):
+def create_main_window(application: QApplication, main_window: Type[tool.MainWindow],property_set:Type[tool.PropertySet]):
     """
     Creates the main window from the given application and hides the console.
     :param application:
@@ -49,6 +49,8 @@ def create_main_window(application: QApplication, main_window: Type[tool.MainWin
     """
     mw = main_window.create(application)
     mw.show()
+    table = main_window.get_property_set_table_widget()
+    property_set.set_sorting_indicator(table,0)
     main_window.hide_console()
 
 

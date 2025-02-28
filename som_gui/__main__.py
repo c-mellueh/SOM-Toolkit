@@ -30,7 +30,7 @@ def main(initial_file: PathLike | None = None, log_level=None, open_last_project
 
     #Create UI
     app = QApplication(sys.argv)
-    core.main_window.create_main_window(app, tool.MainWindow)
+    core.main_window.create_main_window(app, tool.MainWindow,tool.PropertySet)
     som_gui.load_ui_triggers()
 
     #create Empty Project (calls som_gui.on_new_project)
