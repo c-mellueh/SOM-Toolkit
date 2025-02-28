@@ -45,6 +45,7 @@ def init_main_window(
     object_tool.add_object_activate_function(
         lambda o: main_window.get_object_name_label().setText(o.name)
     )
+    #Add Creation Checks
     object_tool.add_object_creation_check(
         "ident_property_name", object_tool.check_if_ident_property_is_valid
     )
@@ -93,6 +94,12 @@ def resize_columns(object_tool: Type[Object]):
 def create_object_info_widget(
     mode: int, object_tool: Type[Object], util: Type[tool.Util]
 ):
+    """
+    mode 0 == create New
+    mode 1 == change
+    mode 2 == copy
+    
+    """
     dialog = object_tool.oi_create_dialog()
     title = QCoreApplication.translate("ObjectInfo", "Object Info")
     dialog.setWindowTitle(util.get_window_title(title))
@@ -273,41 +280,45 @@ def add_object_clicked(
     property_set: Type[tool.PropertySet],
     predefined_property_set: Type[tool.PredefinedPropertySet],
     popup: Type[tool.Popups],
+    util:Type[tool.Util]
 ):
-    object_infos = object_tool.get_object_infos()
-    is_allowed = object_tool.check_object_creation_input(object_infos)
-    if not is_allowed:
-        return
+    
+    widget = create_object_info_widget(0,object_tool,util)
 
-    pset_name = object_infos["ident_pset_name"]
-    pset_dict = {p.name: p for p in predefined_property_set.get_property_sets()}
+    # object_infos = object_tool.get_object_infos()
+    # is_allowed = object_tool.check_object_creation_input(object_infos)
+    # if not is_allowed:
+    #     return
 
-    connect_predefined_pset = False
-    if pset_name in pset_dict:
-        connect_predefined_pset = popup.request_property_set_merge(pset_name, 1)
-        if connect_predefined_pset is None:
-            return
+    # pset_name = object_infos["ident_pset_name"]
+    # pset_dict = {p.name: p for p in predefined_property_set.get_property_sets()}
 
-    if connect_predefined_pset:
-        parent = pset_dict.get(pset_name)
-    else:
-        parent = None
+    # connect_predefined_pset = False
+    # if pset_name in pset_dict:
+    #     connect_predefined_pset = popup.request_property_set_merge(pset_name, 1)
+    #     if connect_predefined_pset is None:
+    #         return
 
-    pset = property_set.create_property_set(pset_name, None, parent)
-    attribute_name = object_infos["ident_property_name"]
-    attribute: SOMcreator.SOMProperty = {
-        a.name: a for a in pset.get_attributes(filter=True)
-    }.get(attribute_name)
+    # if connect_predefined_pset:
+    #     parent = pset_dict.get(pset_name)
+    # else:
+    #     parent = None
 
-    if not attribute:
-        attribute = SOMcreator.SOMProperty(
-            pset,
-            attribute_name,
-            [object_infos["ident_value"]],
-            SOMcreator.value_constants.LIST,
-        )
-    else:
-        attribute.value = [object_infos["ident_value"]]
+    # pset = property_set.create_property_set(pset_name, None, parent)
+    # attribute_name = object_infos["ident_property_name"]
+    # attribute: SOMcreator.SOMProperty = {
+    #     a.name: a for a in pset.get_attributes(filter=True)
+    # }.get(attribute_name)
 
-    object_tool.create_object(object_infos, pset, attribute)
-    refresh_object_tree(object_tool, project)
+    # if not attribute:
+    #     attribute = SOMcreator.SOMProperty(
+    #         pset,
+    #         attribute_name,
+    #         [object_infos["ident_value"]],
+    #         SOMcreator.value_constants.LIST,
+    #     )
+    # else:
+    #     attribute.value = [object_infos["ident_value"]]
+
+    # object_tool.create_object(object_infos, pset, attribute)
+    # refresh_object_tree(object_tool, project)

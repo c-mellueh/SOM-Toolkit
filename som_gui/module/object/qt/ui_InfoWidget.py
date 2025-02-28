@@ -4,7 +4,6 @@
 ## Form generated from reading UI file 'InfoWidget.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.8.2
-## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -25,7 +24,7 @@ class Ui_ObjectInfo(object):
     def setupUi(self, ObjectInfo):
         if not ObjectInfo.objectName():
             ObjectInfo.setObjectName(u"ObjectInfo")
-        ObjectInfo.resize(881, 178)
+        ObjectInfo.resize(881, 180)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -62,11 +61,13 @@ class Ui_ObjectInfo(object):
         self.layout_ident_property.setObjectName(u"layout_ident_property")
         self.combo_box_pset = QComboBox(ObjectInfo)
         self.combo_box_pset.setObjectName(u"combo_box_pset")
+        self.combo_box_pset.setEditable(True)
 
         self.layout_ident_property.addWidget(self.combo_box_pset)
 
         self.combo_box_attribute = QComboBox(ObjectInfo)
         self.combo_box_attribute.setObjectName(u"combo_box_attribute")
+        self.combo_box_attribute.setEditable(True)
 
         self.layout_ident_property.addWidget(self.combo_box_attribute)
 
@@ -118,7 +119,6 @@ class Ui_ObjectInfo(object):
         self.vertical_layout_ifc.setObjectName(u"vertical_layout_ifc")
 
         self.vertical_layout_ifc_box.addLayout(self.vertical_layout_ifc)
-
 
 
         self.verticalLayout.addLayout(self.vertical_layout_ifc_box)

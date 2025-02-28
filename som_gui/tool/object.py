@@ -545,16 +545,16 @@ class Object(som_gui.core.tool.Object):
         prop: ObjectProperties = cls.get_properties()
         info_properties = prop.object_info_widget_properties
         obj = prop.active_object
-        info_properties.focus_object = prop.active_object
-        info_properties.ident_value = obj.ident_value
+        info_properties.focus_object = obj
+        info_properties.ident_value = obj.ident_value if obj else None
         info_properties.mode = mode
 
         for plugin in prop.object_info_plugin_list:
             info_properties.plugin_infos[plugin.key] = plugin.init_value_getter(obj)
-        info_properties.is_group = obj.is_concept
-        info_properties.name = obj.name
-        info_properties.ifc_mappings = list(obj.ifc_mapping)
-        if not obj.is_concept:
+        info_properties.is_group = obj.is_concept if obj else False
+        info_properties.name = obj.name if obj else ""
+        info_properties.ifc_mappings = list(obj.ifc_mapping) if obj else ["IfcBuildingElementProxy"]
+        if obj and not obj.is_concept:
             info_properties.pset_name = obj.identifier_property.property_set.name
             info_properties.attribute_name = obj.identifier_property.name
 
@@ -567,14 +567,16 @@ class Object(som_gui.core.tool.Object):
         dialog.widget.button_gruppe.setChecked(info_prop.is_group)
         active_object = prop.active_object
         dialog.widget.combo_box_pset.clear()
-        [
-            dialog.widget.combo_box_pset.addItem(p.name)
-            for p in active_object.get_property_sets(filter=False)
-        ]
-        if not info_prop.is_group:
+        if active_object:
+            [
+                dialog.widget.combo_box_pset.addItem(p.name)
+                for p in active_object.get_property_sets(filter=False)
+            ]
+        if not info_prop.is_group and active_object:
             dialog.widget.combo_box_pset.setCurrentText(info_prop.pset_name)
             dialog.widget.combo_box_attribute.setCurrentText(info_prop.attribute_name)
             dialog.widget.line_edit_attribute_value.setText(info_prop.ident_value)
+        
         for mapping in info_prop.ifc_mappings:
             cls.add_ifc_mapping(mapping)
 

@@ -36,7 +36,7 @@ def init_main_window(object_tool: Type[tool.Object], aggregation: Type[aw_tool.A
                                     "horizontal_layout_info",
                                     object_info_line_edit,
                                     -1,
-                                    lambda o: o.abbreviation,
+                                    lambda o: o.abbreviation if o else "",
                                     object_info_line_edit.text,
                                     object_info_line_edit.setText,
                                     aggregation.test_abbreviation,

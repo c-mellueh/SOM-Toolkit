@@ -28,6 +28,7 @@ def connect():
             tool.PropertySet,
             tool.PredefinedPropertySet,
             tool.Popups,
+            tool.Util,
         )
     )
 
