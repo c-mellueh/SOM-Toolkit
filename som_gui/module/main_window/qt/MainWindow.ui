@@ -33,69 +33,8 @@
         </property>
         <item>
          <layout class="QGridLayout" name="gridLayout_objects">
-          <item row="0" column="5">
-           <widget class="QPushButton" name="button_objects_add">
-            <property name="text">
-             <string>Create</string>
-            </property>
-            <property name="autoDefault">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2" colspan="3">
-           <layout class="QHBoxLayout" name="horizontalLayout_object_button">
-            <item>
-             <widget class="QLineEdit" name="line_edit_object_name">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>Name of Object</string>
-              </property>
-              <property name="frame">
-               <bool>true</bool>
-              </property>
-              <property name="echoMode">
-               <enum>QLineEdit::EchoMode::Normal</enum>
-              </property>
-              <property name="placeholderText">
-               <string>Name</string>
-              </property>
-              <property name="clearButtonEnabled">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="2">
-           <widget class="QLineEdit" name="lineEdit_ident_pSet">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Name of PropertySet which owns Identifier Attribute</string>
-            </property>
-            <property name="frame">
-             <bool>true</bool>
-            </property>
-            <property name="echoMode">
-             <enum>QLineEdit::EchoMode::Normal</enum>
-            </property>
-            <property name="placeholderText">
-             <string>PropertySet</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="label_object_name">
+           <widget class="QLabel" name="label_object">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -112,32 +51,17 @@
              <number>1</number>
             </property>
             <property name="text">
-             <string>Object</string>
+             <string>Class:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="3">
-           <widget class="QLineEdit" name="lineEdit_ident_property">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="button_objects_add">
+            <property name="text">
+             <string>New</string>
             </property>
-            <property name="toolTip">
-             <string>Name of Attribute which owns the identifier value</string>
-            </property>
-            <property name="frame">
+            <property name="autoDefault">
              <bool>true</bool>
-            </property>
-            <property name="echoMode">
-             <enum>QLineEdit::EchoMode::Normal</enum>
-            </property>
-            <property name="placeholderText">
-             <string>Attribute</string>
-            </property>
-            <property name="cursorMoveStyle">
-             <enum>Qt::CursorMoveStyle::LogicalMoveStyle</enum>
             </property>
            </widget>
           </item>
@@ -175,32 +99,16 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="4" colspan="2">
-           <widget class="QLineEdit" name="lineEdit_ident_value">
-            <property name="toolTip">
-             <string>Needs to be unique!</string>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_object_name">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
             <property name="text">
              <string/>
-            </property>
-            <property name="frame">
-             <bool>true</bool>
-            </property>
-            <property name="echoMode">
-             <enum>QLineEdit::EchoMode::Normal</enum>
-            </property>
-            <property name="placeholderText">
-             <string>Value</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="label_Ident">
-            <property name="toolTip">
-             <string>The Identifier defines which Object is selected it needs to be unique!</string>
-            </property>
-            <property name="text">
-             <string>Identifier</string>
             </property>
            </widget>
           </item>
@@ -267,7 +175,7 @@
         <item row="2" column="0" colspan="2">
          <layout class="QHBoxLayout" name="horizontalLayout_pSet_button">
           <item>
-           <widget class="QLabel" name="label_pSet_name">
+           <widget class="QLabel" name="label_pset">
             <property name="minimumSize">
              <size>
               <width>30</width>
@@ -275,17 +183,20 @@
              </size>
             </property>
             <property name="text">
-             <string>Name</string>
+             <string>PropertySet:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_pSet_name">
-            <property name="toolTip">
-             <string/>
+           <widget class="QLabel" name="label_pset_name">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="frame">
-             <bool>true</bool>
+            <property name="text">
+             <string>TextLabel</string>
             </property>
            </widget>
           </item>
@@ -458,14 +369,9 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>line_edit_object_name</tabstop>
-  <tabstop>lineEdit_ident_pSet</tabstop>
-  <tabstop>lineEdit_ident_property</tabstop>
-  <tabstop>lineEdit_ident_value</tabstop>
   <tabstop>button_objects_add</tabstop>
   <tabstop>tree_object</tabstop>
   <tabstop>button_search</tabstop>
-  <tabstop>lineEdit_pSet_name</tabstop>
   <tabstop>button_Pset_add</tabstop>
   <tabstop>table_pset</tabstop>
   <tabstop>table_attribute</tabstop>
