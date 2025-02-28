@@ -1,6 +1,13 @@
 from .constants import value_constants
 from .datastructure import SOMClass
-from .datastructure import PropertySet, Attribute, Aggregation, UseCase, Phase, Project
+from .datastructure import (
+    PropertySet,
+    Attribute,
+    SOMAggregation,
+    UseCase,
+    Phase,
+    Project,
+)
 
 from .exporter import desite
 from .util.project import merge_projects

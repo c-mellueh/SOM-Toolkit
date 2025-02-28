@@ -12,7 +12,7 @@ class SOMClass(Hirarchy):
     def __init__(
         self,
         name: str,
-        ident_attrib: SOMcreator.Attribute| str,
+        ident_attrib: SOMcreator.Attribute | str,
         uuid: str = None,
         ifc_mapping: set[str] | None = None,
         description: None | str = None,
@@ -27,7 +27,7 @@ class SOMClass(Hirarchy):
         self._registry.add(self)
         self._property_sets: list[SOMcreator.PropertySet] = list()
         self._ident_attrib = ident_attrib
-        self._aggregations: set[SOMcreator.Aggregation] = set()
+        self._aggregations: set[SOMcreator.SOMAggregation] = set()
         self.custom_attribues = {}
 
         self._abbreviation = abbreviation
@@ -119,13 +119,13 @@ class SOMClass(Hirarchy):
         self._ifc_mapping.remove(value)
 
     @property
-    def aggregations(self) -> set[SOMcreator.Aggregation]:
+    def aggregations(self) -> set[SOMcreator.SOMAggregation]:
         return self._aggregations
 
-    def add_aggregation(self, node: SOMcreator.Aggregation) -> None:
+    def add_aggregation(self, node: SOMcreator.SOMAggregation) -> None:
         self._aggregations.add(node)
 
-    def remove_aggregation(self, node: SOMcreator.Aggregation) -> None:
+    def remove_aggregation(self, node: SOMcreator.SOMAggregation) -> None:
         self._aggregations.remove(node)
 
     @property

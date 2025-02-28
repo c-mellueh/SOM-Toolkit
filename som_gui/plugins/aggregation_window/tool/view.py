@@ -437,7 +437,7 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         return objects
 
     @classmethod
-    def get_import_list(cls) -> list[list[tuple[SOMcreator.Aggregation, QPointF]]]:
+    def get_import_list(cls) -> list[list[tuple[SOMcreator.SOMAggregation, QPointF]]]:
         return cls.get_properties().import_list
 
     @classmethod
@@ -475,12 +475,12 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
     @classmethod
     def set_copy_list(
-        cls, copy_list: list[tuple[SOMcreator.Aggregation, QPointF]]
+        cls, copy_list: list[tuple[SOMcreator.SOMAggregation, QPointF]]
     ) -> None:
         cls.get_properties().copy_list = copy_list
 
     @classmethod
-    def get_copy_list(cls) -> list[tuple[SOMcreator.Aggregation, QPointF]]:
+    def get_copy_list(cls) -> list[tuple[SOMcreator.SOMAggregation, QPointF]]:
         return list(cls.get_properties().copy_list)
 
     @classmethod

@@ -121,7 +121,7 @@ class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
 
     @classmethod
     def get_allowed_parents(cls, obj: SOMcreator.SOMClass):
-        def _loop_parent(el: SOMcreator.Aggregation) -> SOMcreator.Aggregation:
+        def _loop_parent(el: SOMcreator.SOMAggregation) -> SOMcreator.SOMAggregation:
             if el.parent_connection != value_constants.INHERITANCE:
                 return el.parent
             else:

@@ -341,7 +341,7 @@ def rearange(
         return
     # create helper to structure multiple root nodes
     helper_obj = SOMcreator.SOMClass("INV", None)
-    helper_aggregation = SOMcreator.Aggregation(helper_obj)
+    helper_aggregation = SOMcreator.SOMAggregation(helper_obj)
     helper_node = node.create_node(helper_aggregation)
     for root_node in root_nodes:
         connection.create_connection(helper_node, root_node, 1)
@@ -379,7 +379,7 @@ def add_node_at_pos(
     obj = search.search_object(list(project.get().get_objects(filter=True)))
     if not obj:
         return
-    aggregation = SOMcreator.Aggregation(obj)
+    aggregation = SOMcreator.SOMAggregation(obj)
     view.add_aggregation_to_import_list(scene, aggregation, pos)
 
 
@@ -412,7 +412,7 @@ def add_object_to_scene(
     if pos is None:
         pos = QPointF(100.0, 100.0)
 
-    aggregation = SOMcreator.Aggregation(obj)
+    aggregation = SOMcreator.SOMAggregation(obj)
     new_node = node.create_node(aggregation)
     view.add_node_to_scene(new_node, scene)
     node.set_node_pos(new_node, pos)

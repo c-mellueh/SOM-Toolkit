@@ -4,8 +4,8 @@ import SOMcreator
 from .base import Hirarchy
 
 
-class Aggregation(Hirarchy):
-    _registry: set[Aggregation] = set()
+class SOMAggregation(Hirarchy):
+    _registry: set[SOMAggregation] = set()
 
     def __str__(self):
         return self.name
@@ -21,7 +21,7 @@ class Aggregation(Hirarchy):
         identity_text=None,
     ):
 
-        super(Aggregation, self).__init__(
+        super(SOMAggregation, self).__init__(
             obj.name, description, optional, obj.project, filter_matrix
         )
         self._registry.add(self)
@@ -30,13 +30,13 @@ class Aggregation(Hirarchy):
         else:
             self.uuid = str(uuid)
         self.object = obj
-        self._parent: Aggregation | None = None
+        self._parent: SOMAggregation | None = None
         self._parent_connection = parent_connection
         self._identity_text = "" if identity_text is None else identity_text
         self.object.add_aggregation(self)
 
     def delete(self, recursive: bool = False) -> None:
-        super(Aggregation, self).delete(recursive)
+        super(SOMAggregation, self).delete(recursive)
 
         self.object.remove_aggregation(self)
         if not self.is_root:
@@ -57,7 +57,7 @@ class Aggregation(Hirarchy):
         self._parent_connection = value
 
     @property
-    def parent(self) -> Aggregation:
+    def parent(self) -> SOMAggregation:
         return self._parent
 
     def set_parent(self, value, connection_type):
@@ -69,7 +69,7 @@ class Aggregation(Hirarchy):
 
     def add_child(
         self,
-        child: Aggregation,
+        child: SOMAggregation,
         connection_type: int = SOMcreator.value_constants.AGGREGATION,
     ) -> bool:
         """returns if adding child is allowed"""

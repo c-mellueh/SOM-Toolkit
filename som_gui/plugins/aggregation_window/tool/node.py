@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from PySide6.QtCore import QSize, QPointF, QRectF, QCoreApplication, Qt
-from PySide6.QtWidgets import QTreeWidgetItem,QVBoxLayout
+from PySide6.QtWidgets import QTreeWidgetItem, QVBoxLayout
 from PySide6.QtGui import QPainter, QFontMetrics, QFont
 import logging
 import SOMcreator
@@ -165,7 +165,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         return circle
 
     @classmethod
-    def create_node(cls, aggregation: SOMcreator.Aggregation) -> node_ui.NodeProxy:
+    def create_node(cls, aggregation: SOMcreator.SOMAggregation) -> node_ui.NodeProxy:
         """
         Create a node for an aggregation.
 
@@ -183,8 +183,8 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         node_widget.setMinimumSize(QSize(250, 150))
         node.aggregation = aggregation
         tree_widget = cls.create_tree_widget(node)
-        layout:QVBoxLayout = node.widget().layout()
-        layout.setContentsMargins(0,0,0,0)
+        layout: QVBoxLayout = node.widget().layout()
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.addItem(node.spacer)
         layout.insertWidget(1, tree_widget)
         cls.create_header(node)
@@ -471,7 +471,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     @classmethod
     def get_aggregation_from_node(
         cls, node: node_ui.NodeProxy
-    ) -> SOMcreator.Aggregation:
+    ) -> SOMcreator.SOMAggregation:
         return node.aggregation
 
     @classmethod

@@ -10,7 +10,7 @@ from SOMcreator.util import xml
 
 
 def _handle_section(
-    id_dict, aggregation: SOMcreator.Aggregation, xml_item: Element
+    id_dict, aggregation: SOMcreator.SOMAggregation, xml_item: Element
 ) -> None:
     xml_child = etree.SubElement(xml_item, "section")
     id_dict[aggregation] = aggregation.uuid
@@ -37,8 +37,8 @@ def _handle_elementsection(xml_parent: Element):
     xml_root.set("type", "typeBsContainer")
     xml_root.set("takt", "")
 
-    root_objects: list[SOMcreator.Aggregation] = [
-        aggreg for aggreg in SOMcreator.Aggregation if aggreg.is_root
+    root_objects: list[SOMcreator.SOMAggregation] = [
+        aggreg for aggreg in SOMcreator.SOMAggregation if aggreg.is_root
     ]
 
     root_objects.sort(key=lambda x: x.name)
@@ -93,7 +93,7 @@ def _handle_property_section(
 
 
 def _handle_repository(
-    xml_parent: Element, id_dict: dict[SOMcreator.Aggregation, str]
+    xml_parent: Element, id_dict: dict[SOMcreator.SOMAggregation, str]
 ) -> None:
     xml_repo = etree.SubElement(xml_parent, "repository")
     xml_id_mapping = etree.SubElement(xml_repo, "IDMapping")

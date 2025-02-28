@@ -74,7 +74,7 @@ class Project(object):
         SOMcreator.SOMClass,
         SOMcreator.PropertySet,
         SOMcreator.Attribute,
-        SOMcreator.Aggregation,
+        SOMcreator.SOMAggregation,
         Hirarchy,
     ]:
         return filter(
@@ -84,7 +84,7 @@ class Project(object):
                     SOMcreator.SOMClass,
                     SOMcreator.PropertySet,
                     SOMcreator.Attribute,
-                    SOMcreator.Aggregation,
+                    SOMcreator.SOMAggregation,
                 ),
             ),
             self._items,
@@ -105,9 +105,9 @@ class Project(object):
         return filter(lambda item: isinstance(item, SOMcreator.Attribute), self._items)
 
     @filterable
-    def get_aggregations(self) -> Iterator[SOMcreator.Aggregation]:
+    def get_aggregations(self) -> Iterator[SOMcreator.SOMAggregation]:
         return filter(
-            lambda item: isinstance(item, SOMcreator.Aggregation), self._items
+            lambda item: isinstance(item, SOMcreator.SOMAggregation), self._items
         )
 
     @filterable
@@ -161,7 +161,7 @@ class Project(object):
         SOMcreator.Attribute
         | SOMcreator.PropertySet
         | SOMcreator.SOMClass
-        | SOMcreator.Aggregation
+        | SOMcreator.SOMAggregation
         | None
     ):
         """warnging: don't use in iterations will slow down code substantially"""

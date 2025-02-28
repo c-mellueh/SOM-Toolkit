@@ -2,7 +2,15 @@ from __future__ import annotations
 
 import SOMcreator
 from SOMcreator.exporter.som_json import core
-from SOMcreator.datastructure.som_json import OBJECT, CONNECTION, AGGREGATIONS, PARENT,IDENTITY_TEXT, AggregationDict, MainDict
+from SOMcreator.datastructure.som_json import (
+    OBJECT,
+    CONNECTION,
+    AGGREGATIONS,
+    PARENT,
+    IDENTITY_TEXT,
+    AggregationDict,
+    MainDict,
+)
 
 from typing import TYPE_CHECKING
 
@@ -11,7 +19,7 @@ if TYPE_CHECKING:
 
 
 ### Export ###
-def _create_entry(element: SOMcreator.Aggregation) -> AggregationDict:
+def _create_entry(element: SOMcreator.SOMAggregation) -> AggregationDict:
     aggregation_dict: AggregationDict = dict()
     core.write_basics(aggregation_dict, element)
     aggregation_dict[OBJECT] = element.object.uuid

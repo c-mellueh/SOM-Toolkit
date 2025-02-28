@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 
 from PySide6.QtCore import Qt
 
-from SOMcreator import Aggregation
+from SOMcreator import SOMAggregation
 
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window import tool as aw_tool
@@ -176,10 +176,10 @@ def copy_selected_nodes(view: Type[aw_tool.View]) -> None:
 def paste_nodes(view: Type[aw_tool.View]) -> None:
     scene = view.get_active_scene()
     cursor_pos = view.get_scene_cursor_pos()
-    aggregation_dict: dict[Aggregation, Aggregation] = dict()
+    aggregation_dict: dict[SOMAggregation, SOMAggregation] = dict()
 
     for old_aggregation, local_pos in view.get_copy_list():
-        new_aggregation = Aggregation(old_aggregation.object)
+        new_aggregation = SOMAggregation(old_aggregation.object)
         aggregation_dict[old_aggregation] = new_aggregation
         node_pos = cursor_pos + local_pos
         view.add_aggregation_to_import_list(scene, new_aggregation, node_pos)
