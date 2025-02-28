@@ -44,7 +44,9 @@ class Mapping(som_gui.core.tool.Mapping):
     @classmethod
     def connect_window_triggers(cls, window: ui.MappingWindow) -> None:
         window.ui.action_ifc.triggered.connect(trigger.export_revit_ifc_mapping)
-        window.ui.action_shared_parameters.triggered.connect(trigger.export_revit_shared_parameters)
+        window.ui.action_shared_parameters.triggered.connect(
+            trigger.export_revit_shared_parameters
+        )
         window.ui.object_tree.itemSelectionChanged.connect(trigger.update_pset_tree)
         cls.get_object_tree().itemChanged.connect(trigger.tree_item_changed)
         cls.get_pset_tree().itemChanged.connect(trigger.tree_item_changed)
@@ -58,7 +60,7 @@ class Mapping(som_gui.core.tool.Mapping):
         return cls.get_properties().pset_tree
 
     @classmethod
-    def get_selected_object(cls) -> SOMcreator.Object | None:
+    def get_selected_object(cls) -> SOMcreator.SOMClass | None:
         tree = cls.get_object_tree()
         selected_items = tree.selectedItems()
         if not selected_items:
@@ -66,22 +68,30 @@ class Mapping(som_gui.core.tool.Mapping):
         return selected_items[0].data(0, CLASS_REFERENCE)
 
     @classmethod
-    def fill_object_tree(cls, root_objects: list[SOMcreator.Object]) -> None:
+    def fill_object_tree(cls, root_objects: list[SOMcreator.SOMClass]) -> None:
         tree = cls.get_object_tree()
         cls.update_tree(set(root_objects), tree.invisibleRootItem(), tree)
 
     @classmethod
-    def update_tree(cls, entities: set[SOMcreator.Attribute | SOMcreator.Object], parent_item: QTreeWidgetItem,
-                    tree: ui.ObjectTreeWidget):
+    def update_tree(
+        cls,
+        entities: set[SOMcreator.SOMProperty | SOMcreator.SOMClass],
+        parent_item: QTreeWidgetItem,
+        tree: ui.ObjectTreeWidget,
+    ):
 
-        existing_entities_dict = {parent_item.child(index).data(0, CLASS_REFERENCE): index for index in
-                                  range(parent_item.childCount())}
+        existing_entities_dict = {
+            parent_item.child(index).data(0, CLASS_REFERENCE): index
+            for index in range(parent_item.childCount())
+        }
 
         old_entities = set(existing_entities_dict.keys())
         new_entities = entities.difference(old_entities)
         delete_entities = old_entities.difference(entities)
 
-        for entity in reversed(sorted(delete_entities, key=lambda o: existing_entities_dict[o])):
+        for entity in reversed(
+            sorted(delete_entities, key=lambda o: existing_entities_dict[o])
+        ):
             row_index = existing_entities_dict[entity]
             parent_item.removeChild(parent_item.child(row_index))
 
@@ -92,24 +102,39 @@ class Mapping(som_gui.core.tool.Mapping):
         for child_row in range(parent_item.childCount()):
             class_item = parent_item.child(child_row)
             entity = cls.get_entity_from_item(class_item)
-            if not (parent_item.isExpanded() or parent_item == tree.invisibleRootItem()):
+            if not (
+                parent_item.isExpanded() or parent_item == tree.invisibleRootItem()
+            ):
                 continue
-            if isinstance(entity, SOMcreator.Object):
-                cls.update_tree(set(entity.get_children(filter=False)), class_item, tree)
-            if isinstance(entity, SOMcreator.PropertySet):
-                cls.update_tree(set(entity.get_attributes(filter=True)), class_item, tree)
+            if isinstance(entity, SOMcreator.SOMClass):
+                cls.update_tree(
+                    set(entity.get_children(filter=False)), class_item, tree
+                )
+            if isinstance(entity, SOMcreator.SOMPropertySet):
+                cls.update_tree(
+                    set(entity.get_attributes(filter=True)), class_item, tree
+                )
 
     @classmethod
-    def create_child(cls, entity: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute) -> QTreeWidgetItem:
+    def create_child(
+        cls,
+        entity: (
+            SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty
+        ),
+    ) -> QTreeWidgetItem:
         entity_item = QTreeWidgetItem()
         entity_item.setData(0, CLASS_REFERENCE, entity)
         entity_item.setText(0, entity.name)
-        cs = Qt.CheckState.Checked if cls.get_checkstate(entity) else Qt.CheckState.Unchecked
+        cs = (
+            Qt.CheckState.Checked
+            if cls.get_checkstate(entity)
+            else Qt.CheckState.Unchecked
+        )
         entity_item.setCheckState(0, cs)
-        if isinstance(entity, SOMcreator.Object):
+        if isinstance(entity, SOMcreator.SOMClass):
             mapping_text = "; ".join(entity.ifc_mapping)
 
-        elif isinstance(entity, SOMcreator.PropertySet):
+        elif isinstance(entity, SOMcreator.SOMPropertySet):
             mapping_text = ""
         else:
             disable_state = not cls.get_checkstate(entity.property_set)
@@ -119,14 +144,24 @@ class Mapping(som_gui.core.tool.Mapping):
         return entity_item
 
     @classmethod
-    def get_checkstate(cls, entity: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute):
+    def get_checkstate(
+        cls,
+        entity: (
+            SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty
+        ),
+    ):
         if entity not in cls.get_properties().check_state_dict:
             cls.set_checkstate(entity, True)
         return cls.get_properties().check_state_dict[entity]
 
     @classmethod
-    def set_checkstate(cls, entity: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute,
-                       checkstate: bool) -> None:
+    def set_checkstate(
+        cls,
+        entity: (
+            SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty
+        ),
+        checkstate: bool,
+    ) -> None:
         cls.get_properties().check_state_dict[entity] = checkstate
 
     @classmethod
@@ -143,8 +178,8 @@ class Mapping(som_gui.core.tool.Mapping):
             cls.disable_all_child_entities(child_item, disabled)
 
     @classmethod
-    def create_export_dict(cls, root_objects: list[SOMcreator.Object]) -> dict:
-        def _loop_objects(o: SOMcreator.Object):
+    def create_export_dict(cls, root_objects: list[SOMcreator.SOMClass]) -> dict:
+        def _loop_objects(o: SOMcreator.SOMClass):
             cs = cls.get_checkstate(o)
             if not cs:
                 return
@@ -158,7 +193,7 @@ class Mapping(som_gui.core.tool.Mapping):
         return cls.get_ifc_export_dict()
 
     @classmethod
-    def add_object_to_ifc_export_data(cls, obj: SOMcreator.Object) -> None:
+    def add_object_to_ifc_export_data(cls, obj: SOMcreator.SOMClass) -> None:
         export_dict = cls.get_properties().ifc_export_dict
         for property_set in obj.get_property_sets(filter=False):
             if not cls.get_checkstate(property_set):

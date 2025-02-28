@@ -11,13 +11,17 @@ if TYPE_CHECKING:
 
 class PredefinedPsetProperties:
     predefined_property_set_window: PredefinedPropertySetWindow = None
-    active_predefined_pset: SOMcreator.PropertySet = None
+    active_predefined_pset: SOMcreator.SOMPropertySet = None
     is_renaming_predefined_pset = False
     actions: dict[str, QAction] = dict()
 
 
 class PredefinedPsetCompareProperties:
     widget = None
-    predefined_psets: tuple[set[SOMcreator.PropertySet], set[SOMcreator.PropertySet]] = None
-    pset_lists: list[tuple[SOMcreator.PropertySet, SOMcreator.PropertySet]] = list()
+    predefined_psets: tuple[
+        set[SOMcreator.SOMPropertySet], set[SOMcreator.SOMPropertySet]
+    ] = None
+    pset_lists: list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]] = (
+        list()
+    )
     value_dict = dict()

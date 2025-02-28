@@ -89,7 +89,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def remove_attributes_from_table(
-        cls, attributes: set[SOMcreator.Attribute], table: QTableWidget
+        cls, attributes: set[SOMcreator.SOMProperty], table: QTableWidget
     ):
         """
         Remove set of attributes from table
@@ -105,7 +105,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def add_attributes_to_table(
-        cls, attributes: set[SOMcreator.Attribute], table: QTableWidget
+        cls, attributes: set[SOMcreator.SOMProperty], table: QTableWidget
     ) -> None:
         """
         add list of Attributes to Table
@@ -200,9 +200,9 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         palette = QPalette()
         if attribute.property_set is None:
             brush = palette.base()
-        elif not attribute.property_set.object:
+        elif not attribute.property_set.som_class:
             brush = palette.base()
-        elif attribute.property_set.object.ident_attrib == attribute:
+        elif attribute.property_set.som_class.identifier_property == attribute:
             brush = palette.mid()
         else:
             brush = palette.base()
@@ -228,7 +228,9 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         return attributes
 
     @classmethod
-    def get_property_set_by_table(cls, table: QTableWidget) -> SOMcreator.PropertySet:
+    def get_property_set_by_table(
+        cls, table: QTableWidget
+    ) -> SOMcreator.SOMPropertySet:
         window = table.window()
         if isinstance(window, PropertySetWindow):
             return tool.PropertySetWindow.get_property_set_by_window(window)
@@ -251,8 +253,8 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def get_possible_parent(
-        cls, attribute: SOMcreator.Attribute
-    ) -> None | SOMcreator.Attribute:
+        cls, attribute: SOMcreator.SOMProperty
+    ) -> None | SOMcreator.SOMProperty:
         if not attribute.property_set:
             return None
         if not attribute.property_set.parent:
@@ -308,8 +310,8 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
             return None
 
         # stop user from deleting identifier attribute
-        obj = cls.get_property_set_by_table(table).object
-        ident_attrib = None if obj is None else obj.ident_attrib
+        obj = cls.get_property_set_by_table(table).som_class
+        ident_attrib = None if obj is None else obj.identifier_property
         if ident_attrib in cls.get_selected_attributes(table):
             return None
 
@@ -380,7 +382,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def set_property_set_of_table(
-        cls, table: ui.AttributeTable, property_set: SOMcreator.PropertySet
+        cls, table: ui.AttributeTable, property_set: SOMcreator.SOMPropertySet
     ) -> None:
         """
         define which property_set is shown in AttributeTable
@@ -393,7 +395,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def get_property_set_of_table(
         cls, table: ui.AttributeTable
-    ) -> SOMcreator.PropertySet | None:
+    ) -> SOMcreator.SOMPropertySet | None:
         """
         get property set of table
         :param table: active AttributeTable
@@ -403,7 +405,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
 
     @classmethod
     def get_row_index_from_attribute(
-        cls, attribute: SOMcreator.Attribute, table: QTableWidget
+        cls, attribute: SOMcreator.SOMProperty, table: QTableWidget
     ) -> int:
         """
         :return: Row index
@@ -416,7 +418,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def get_selected_attributes(
         cls, table: ui.AttributeTable
-    ) -> set[SOMcreator.Attribute]:
+    ) -> set[SOMcreator.SOMProperty]:
         """
         :param table: Active AttributeTable
         :return: selected attributes in AttributeTable
@@ -426,7 +428,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def get_attribute_from_item(
         cls, item: QTableWidgetItem
-    ) -> SOMcreator.Attribute | None:
+    ) -> SOMcreator.SOMProperty | None:
         """
         return the Attribute which is linked to a table entry
         :param item:
@@ -435,4 +437,4 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         if item is None:
             return None
         entity = item.data(CLASS_REFERENCE)
-        return entity if isinstance(entity, SOMcreator.Attribute) else None
+        return entity if isinstance(entity, SOMcreator.SOMProperty) else None

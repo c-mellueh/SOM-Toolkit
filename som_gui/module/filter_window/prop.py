@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 class FilterWindowProperties:
     widget: ui.FilterWidget = None
-    active_object: SOMcreator.Object = None
+    active_object: SOMcreator.SOMClass = None
     tree_is_clicked = False
     active_check_state: Qt.CheckState = None
     settings_widget: ui.SettingsWidget = None

@@ -11,7 +11,8 @@ if TYPE_CHECKING:
 
 #### Export ####
 
-def write_entry(pset: SOMcreator.PropertySet) -> PropertySetDict:
+
+def write_entry(pset: SOMcreator.SOMPropertySet) -> PropertySetDict:
     pset_dict: PropertySetDict = dict()
     core.write_basics(pset_dict, pset)
     attributes_dict = dict()

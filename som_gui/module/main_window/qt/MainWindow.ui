@@ -117,7 +117,7 @@
            </widget>
           </item>
           <item row="1" column="3">
-           <widget class="QLineEdit" name="lineEdit_ident_attribute">
+           <widget class="QLineEdit" name="lineEdit_ident_property">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -460,7 +460,7 @@
  <tabstops>
   <tabstop>line_edit_object_name</tabstop>
   <tabstop>lineEdit_ident_pSet</tabstop>
-  <tabstop>lineEdit_ident_attribute</tabstop>
+  <tabstop>lineEdit_ident_property</tabstop>
   <tabstop>lineEdit_ident_value</tabstop>
   <tabstop>button_objects_add</tabstop>
   <tabstop>tree_object</tabstop>

@@ -5,7 +5,13 @@ from typing import Callable, TYPE_CHECKING
 
 from PySide6.QtCore import QCoreApplication, QModelIndex, Qt
 from PySide6.QtGui import QAction, QIcon
-from PySide6.QtWidgets import QCompleter, QListWidgetItem, QMenu, QTableWidget, QTableWidgetItem
+from PySide6.QtWidgets import (
+    QCompleter,
+    QListWidgetItem,
+    QMenu,
+    QTableWidget,
+    QTableWidgetItem,
+)
 
 import SOMcreator
 import som_gui
@@ -22,13 +28,15 @@ if TYPE_CHECKING:
 class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
-    def get_attribute_by_name(cls, property_set: SOMcreator.PropertySet, name: str):
+    def get_attribute_by_name(cls, property_set: SOMcreator.SOMPropertySet, name: str):
         attribute_dict = {a.name: a for a in property_set.get_attributes(filter=False)}
         return attribute_dict.get(name)
 
     @classmethod
-    def get_inheritable_property_sets(cls, obj: SOMcreator.Object) -> list[SOMcreator.PropertySet]:
-        def loop(o: SOMcreator.Object):
+    def get_inheritable_property_sets(
+        cls, obj: SOMcreator.SOMClass
+    ) -> list[SOMcreator.SOMPropertySet]:
+        def loop(o: SOMcreator.SOMClass):
             psets = o.get_property_sets(filter=False)
             if o.parent:
                 psets = itertools.chain(psets, loop(o.parent))
@@ -37,7 +45,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return list(loop(obj))
 
     @classmethod
-    def get_pset_from_index(cls, index: QModelIndex) -> SOMcreator.PropertySet:
+    def get_pset_from_index(cls, index: QModelIndex) -> SOMcreator.SOMPropertySet:
         return index.data(CLASS_REFERENCE)
 
     @classmethod
@@ -66,7 +74,9 @@ class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
     def delete_table_pset(cls):
         property_set = cls.get_selecte_property_set_from_table()
-        delete_request,delete_child= tool.Popups.req_delete_items([property_set.name],3)
+        delete_request, delete_child = tool.Popups.req_delete_items(
+            [property_set.name], 3
+        )
         if delete_request:
             property_set.delete(recursive=delete_child)
 
@@ -82,20 +92,32 @@ class PropertySet(som_gui.core.tool.PropertySet):
         menu.exec(global_pos)
 
     @classmethod
-    def get_property_set_from_item(cls, item: QTableWidgetItem | QListWidgetItem) -> SOMcreator.PropertySet:
+    def get_property_set_from_item(
+        cls, item: QTableWidgetItem | QListWidgetItem
+    ) -> SOMcreator.SOMPropertySet:
         return item.data(CLASS_REFERENCE)
 
     @classmethod
-    def check_if_pset_allready_exists(cls, pset_name: str, active_object: SOMcreator.Object):
-        return bool(pset_name in {p.name for p in active_object.get_property_sets(filter=False)})
+    def check_if_pset_allready_exists(
+        cls, pset_name: str, active_object: SOMcreator.SOMClass
+    ):
+        return bool(
+            pset_name in {p.name for p in active_object.get_property_sets(filter=False)}
+        )
 
     @classmethod
-    def create_property_set(cls, name: str, obj: SOMcreator.Object | None = None,
-                            parent: SOMcreator.PropertySet | None = None) -> SOMcreator.PropertySet | None:
+    def create_property_set(
+        cls,
+        name: str,
+        obj: SOMcreator.SOMClass | None = None,
+        parent: SOMcreator.SOMPropertySet | None = None,
+    ) -> SOMcreator.SOMPropertySet | None:
 
         if obj:
             if name in {p.name for p in obj.get_property_sets(filter=False)}:
-                text = QCoreApplication.translate(f"PropertySet", "PropertySet '{}' exists allready").format(name)
+                text = QCoreApplication.translate(
+                    f"PropertySet", "PropertySet '{}' exists allready"
+                ).format(name)
                 tool.Popups.create_warning_popup(text)
                 return None
         if parent is not None:
@@ -103,11 +125,13 @@ class PropertySet(som_gui.core.tool.PropertySet):
             if obj:
                 obj.add_property_set(property_set)
         else:
-            property_set = SOMcreator.PropertySet(name, obj, project=tool.Project.get())
+            property_set = SOMcreator.SOMPropertySet(
+                name, obj, project=tool.Project.get()
+            )
         return property_set
 
     @classmethod
-    def get_pset_from_item(cls, item: QTableWidgetItem) -> SOMcreator.PropertySet:
+    def get_pset_from_item(cls, item: QTableWidgetItem) -> SOMcreator.SOMPropertySet:
         return item.data(CLASS_REFERENCE)
 
     @classmethod
@@ -125,7 +149,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
             table.removeRow(row)
 
     @classmethod
-    def get_property_sets(cls) -> set[SOMcreator.PropertySet]:
+    def get_property_sets(cls) -> set[SOMcreator.SOMPropertySet]:
         active_object = tool.Object.get_active_object()
         if active_object is None:
             return set()
@@ -136,7 +160,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return tool.MainWindow.get_property_set_table_widget()
 
     @classmethod
-    def get_row_from_pset(cls, property_set: SOMcreator.PropertySet):
+    def get_row_from_pset(cls, property_set: SOMcreator.SOMPropertySet):
         table = cls.get_table()
         for row in range(table.rowCount()):
             item = table.item(row, 0)
@@ -144,21 +168,31 @@ class PropertySet(som_gui.core.tool.PropertySet):
                 return row
 
     @classmethod
-    def remove_property_sets_from_table(cls, property_sets: set[SOMcreator.PropertySet], table: QTableWidget):
+    def remove_property_sets_from_table(
+        cls, property_sets: set[SOMcreator.SOMPropertySet], table: QTableWidget
+    ):
         rows = sorted(cls.get_row_from_pset(p) for p in property_sets)
         for row in reversed(rows):
             table.removeRow(row)
 
     @classmethod
-    def add_property_sets_to_table(cls, property_sets: set[SOMcreator.PropertySet], table: QTableWidget):
+    def add_property_sets_to_table(
+        cls, property_sets: set[SOMcreator.SOMPropertySet], table: QTableWidget
+    ):
         for property_set in property_sets:
             table.setSortingEnabled(False)
             items = [QTableWidgetItem() for _ in range(3)]
             row = table.rowCount()
             table.setRowCount(row + 1)
             [item.setData(CLASS_REFERENCE, property_set) for item in items]
-            [item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsUserCheckable) for item in
-             items]
+            [
+                item.setFlags(
+                    item.flags()
+                    | Qt.ItemFlag.ItemIsEditable
+                    | Qt.ItemFlag.ItemIsUserCheckable
+                )
+                for item in items
+            ]
             [table.setItem(row, col, item) for col, item in enumerate(items)]
             items[2].setCheckState(Qt.CheckState.Unchecked)
             table.setSortingEnabled(True)
@@ -167,13 +201,20 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def update_table_row(cls, table, row):
         items = [table.item(row, col) for col in range(table.columnCount())]
         property_set = cls.get_property_set_from_item(items[0])
-        check_state = Qt.CheckState.Checked if property_set.is_optional(
-            ignore_hirarchy=True) else Qt.CheckState.Unchecked
+        check_state = (
+            Qt.CheckState.Checked
+            if property_set.is_optional(ignore_hirarchy=True)
+            else Qt.CheckState.Unchecked
+        )
 
         if items[0].text() != property_set.name:
             items[0].setText(f"{property_set.name}")
         if property_set.is_child:
-            text = property_set.parent.name if property_set.parent.object is not None else INHERITED_TEXT
+            text = (
+                property_set.parent.name
+                if property_set.parent.som_class is not None
+                else INHERITED_TEXT
+            )
 
             if items[1].text() != text:
                 items[1].setText(text)
@@ -192,7 +233,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
             cls.update_table_row(table, row)
 
     @classmethod
-    def select_property_set(cls, property_set: SOMcreator.PropertySet):
+    def select_property_set(cls, property_set: SOMcreator.SOMPropertySet):
         table = cls.get_table()
         table.setFocus()
         for row in range(table.rowCount()):
@@ -201,7 +242,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
                 table.setCurrentCell(row, 0)
 
     @classmethod
-    def get_selecte_property_set_from_table(cls) -> SOMcreator.PropertySet | None:
+    def get_selecte_property_set_from_table(cls) -> SOMcreator.SOMPropertySet | None:
         table = cls.get_table()
         items = table.selectedItems()
         if not items:
@@ -210,7 +251,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return cls.get_pset_from_item(item)
 
     @classmethod
-    def update_completer(cls, obj: SOMcreator.Object = None):
+    def update_completer(cls, obj: SOMcreator.SOMClass = None):
         psets = list(tool.PredefinedPropertySet.get_property_sets())
         if obj is not None:
             psets += cls.get_inheritable_property_sets(obj)
@@ -228,11 +269,11 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return som_gui.PropertySetProperties
 
     @classmethod
-    def set_active_property_set(cls, property_set: SOMcreator.PropertySet):
+    def set_active_property_set(cls, property_set: SOMcreator.SOMPropertySet):
         prop = cls.get_pset_properties()
         prop.active_pset = property_set
 
     @classmethod
-    def get_active_property_set(cls) -> SOMcreator.PropertySet:
+    def get_active_property_set(cls) -> SOMcreator.SOMPropertySet:
         prop = cls.get_pset_properties()
         return prop.active_pset

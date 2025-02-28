@@ -13,9 +13,14 @@ if TYPE_CHECKING:
     from PySide6.QtWidgets import QTreeWidgetItem
 
 
-def create_main_menu_actions(mapping: Type[tool.Mapping], main_window: Type[tool.MainWindow]):
+def create_main_menu_actions(
+    mapping: Type[tool.Mapping], main_window: Type[tool.MainWindow]
+):
     from som_gui.module.mapping import trigger
-    open_window_action = main_window.add_action("menuExport", "Mapping", trigger.open_window)
+
+    open_window_action = main_window.add_action(
+        "menuExport", "Mapping", trigger.open_window
+    )
     mapping.set_action("open_window", open_window_action)
 
 
@@ -25,7 +30,9 @@ def retranslate_ui(mapping: Type[tool.Mapping], util: Type[tool.Util]):
     window = mapping.get_window()
     if window:
         window.ui.retranslateUi(window)
-        title = util.get_window_title(QCoreApplication.translate("Mapping", "Revit-Mapping"))
+        title = util.get_window_title(
+            QCoreApplication.translate("Mapping", "Revit-Mapping")
+        )
         window.setWindowTitle(title)
 
 
@@ -33,21 +40,28 @@ def open_window(mapping: Type[tool.Mapping]):
     if window := mapping.get_window() is None:
         window = mapping.create_window()
     from som_gui.module.mapping import trigger
+
     trigger.retranslate_ui()
     mapping.connect_window_triggers(window)
     window.show()
 
 
-def export_revit_ifc_mapping(mapping: Type[tool.Mapping], project: Type[tool.Project], popups: Type[tool.Popups]):
+def export_revit_ifc_mapping(
+    mapping: Type[tool.Mapping], project: Type[tool.Project], popups: Type[tool.Popups]
+):
     path = popups.get_save_path("txt Files (*.txt);;", mapping.get_window())
     if not path:
         return
 
-    export_dict = mapping.create_export_dict(list(project.get().get_root_objects(filter=False)))
+    export_dict = mapping.create_export_dict(
+        list(project.get().get_root_objects(filter=False))
+    )
     revit.export_ifc_template(path, export_dict)
 
 
-def export_revit_shared_parameters(mapping: Type[tool.Mapping], project: Type[tool.Project], popups: Type[tool.Popups]):
+def export_revit_shared_parameters(
+    mapping: Type[tool.Mapping], project: Type[tool.Project], popups: Type[tool.Popups]
+):
     path = popups.get_save_path("txt Files (*.txt);;", mapping.get_window())
     if not path:
         return
@@ -70,7 +84,9 @@ def update_pset_tree(mapping: Type[tool.Mapping]):
     else:
         property_sets = set(selected_object.get_property_sets(filter=True))
 
-    enable_state = True if mapping.get_checkstate(selected_object) and property_sets else False
+    enable_state = (
+        True if mapping.get_checkstate(selected_object) and property_sets else False
+    )
     tree = mapping.get_pset_tree()
     if enable_state != tree.isEnabled():
         tree.setEnabled(enable_state)
@@ -78,13 +94,15 @@ def update_pset_tree(mapping: Type[tool.Mapping]):
     mapping.update_tree(property_sets, tree.invisibleRootItem(), tree)
 
 
-def tree_item_changed(item: QTreeWidgetItem, mapping: Type[tool.Mapping], util: Type[tool.Util]):
+def tree_item_changed(
+    item: QTreeWidgetItem, mapping: Type[tool.Mapping], util: Type[tool.Util]
+):
     logging.debug(f"Tree Item Changed {item}")
     entity = mapping.get_entity_from_item(item)
     cs = util.checkstate_to_bool(item.checkState(0))
     mapping.set_checkstate(entity, cs)
-    if isinstance(entity, SOMcreator.Object):
+    if isinstance(entity, SOMcreator.SOMClass):
         update_pset_tree(mapping)
         mapping.disable_all_child_entities(item, not cs)
-    if isinstance(entity, SOMcreator.PropertySet):
+    if isinstance(entity, SOMcreator.SOMPropertySet):
         mapping.disable_all_child_entities(item, not cs)

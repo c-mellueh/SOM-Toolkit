@@ -18,7 +18,7 @@
     <widget class="AttributeSelector" name="widget_group_attribute" native="true"/>
    </item>
    <item>
-    <widget class="AttributeSelector" name="widget_ident_attribute" native="true"/>
+    <widget class="AttributeSelector" name="widget_ident_property" native="true"/>
    </item>
    <item>
     <widget class="FileSelector" name="widget_import" native="true"/>

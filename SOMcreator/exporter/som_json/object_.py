@@ -1,16 +1,23 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from SOMcreator.datastructure.som_json import IFC_MAPPINGS, ABBREVIATION, PROPERTY_SETS, IDENT_ATTRIBUTE, OBJECTS
+from SOMcreator.datastructure.som_json import (
+    IFC_MAPPINGS,
+    ABBREVIATION,
+    PROPERTY_SETS,
+    IDENT_ATTRIBUTE,
+    OBJECTS,
+)
 from SOMcreator.exporter.som_json import property_set
 import SOMcreator
 from SOMcreator.exporter.som_json import core
 
 if TYPE_CHECKING:
-    from SOMcreator import Project
+    from SOMcreator import SOMProject
     from SOMcreator.datastructure.som_json import ObjectDict, MainDict
 
+
 ### Export ###
-def _write_object(element: SOMcreator.Object) -> ObjectDict:
+def _write_object(element: SOMcreator.SOMClass) -> ObjectDict:
     object_dict: ObjectDict = dict()
     core.write_basics(object_dict, element)
 
@@ -26,15 +33,15 @@ def _write_object(element: SOMcreator.Object) -> ObjectDict:
     object_dict[PROPERTY_SETS] = psets_dict
     object_dict[ABBREVIATION] = element.abbreviation
 
-    if isinstance(element.ident_attrib, SOMcreator.Attribute):
-        object_dict[IDENT_ATTRIBUTE] = element.ident_attrib.uuid
+    if isinstance(element.identifier_property, SOMcreator.SOMProperty):
+        object_dict[IDENT_ATTRIBUTE] = element.identifier_property.uuid
     else:
-        object_dict[IDENT_ATTRIBUTE] = element.ident_attrib
+        object_dict[IDENT_ATTRIBUTE] = element.identifier_property
 
     return object_dict
 
 
-def write(proj: Project, main_dict: MainDict):
+def write(proj: SOMProject, main_dict: MainDict):
     main_dict[OBJECTS] = dict()
     for obj in sorted(proj.get_objects(filter=False), key=lambda o: o.uuid):
         main_dict[OBJECTS][obj.uuid] = _write_object(obj)

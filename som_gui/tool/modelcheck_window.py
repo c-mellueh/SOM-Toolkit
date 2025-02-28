@@ -5,7 +5,7 @@ from typing import Callable, TYPE_CHECKING
 
 from PySide6.QtCore import QRunnable, QThreadPool, Qt
 from PySide6.QtGui import QAction, QStandardItem, QStandardItemModel
-from PySide6.QtWidgets import QDialogButtonBox, QLabel, QMenu, QTreeView,QLayoutItem
+from PySide6.QtWidgets import QDialogButtonBox, QLabel, QMenu, QTreeView, QLayoutItem
 
 import SOMcreator
 import som_gui.core.tool
@@ -34,8 +34,6 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     def get_action(cls, name):
         return cls.get_properties().actions[name]
 
-
-
     @classmethod
     def connect_object_tree(cls, tree_widget: ui.ObjectTree):
         prop = cls.get_properties()
@@ -47,19 +45,27 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         model: QStandardItemModel = tree_widget.model()
         model.itemChanged.connect(lambda item: trigger.object_checkstate_changed(item))
         tree_widget.selectionModel().selectionChanged.connect(
-            lambda: trigger.object_selection_changed(tree_widget.selectionModel()))
+            lambda: trigger.object_selection_changed(tree_widget.selectionModel())
+        )
         tree_widget.customContextMenuRequested.connect(
-            lambda pos: trigger.object_tree_context_menu_requested(pos, tree_widget))
+            lambda pos: trigger.object_tree_context_menu_requested(pos, tree_widget)
+        )
 
     @classmethod
     def connect_pset_tree(self, tree_widget: ui.PsetTree):
 
         tree_widget.model().itemChanged.connect(trigger.pset_checkstate_changed)
         tree_widget.customContextMenuRequested.connect(
-            lambda pos: trigger.pset_context_menu_requested(pos, tree_widget))
+            lambda pos: trigger.pset_context_menu_requested(pos, tree_widget)
+        )
 
     @classmethod
-    def create_context_menu(cls, pos, funcion_list: list[list[str, Callable]], widget: ui.ObjectTree | ui.PsetTree):
+    def create_context_menu(
+        cls,
+        pos,
+        funcion_list: list[list[str, Callable]],
+        widget: ui.ObjectTree | ui.PsetTree,
+    ):
         global_pos = widget.viewport().mapToGlobal(pos)
         menu = QMenu()
         actions = list()
@@ -87,7 +93,9 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         for index in indexes:
             if index.column() != 0:
                 continue
-            widget.model().setData(index, Qt.CheckState.Checked, Qt.ItemDataRole.CheckStateRole)
+            widget.model().setData(
+                index, Qt.CheckState.Checked, Qt.ItemDataRole.CheckStateRole
+            )
 
     @classmethod
     def uncheck_selection(cls, widget: ui.ObjectTree | ui.PsetTree):
@@ -95,7 +103,9 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         for index in indexes:
             if index.column() != 0:
                 continue
-            widget.model().setData(index, Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole)
+            widget.model().setData(
+                index, Qt.CheckState.Unchecked, Qt.ItemDataRole.CheckStateRole
+            )
 
     @classmethod
     def resize_object_tree(cls, tree):
@@ -118,7 +128,10 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def reset_butons(cls):
-        cls.show_buttons(QDialogButtonBox.StandardButton.Apply | QDialogButtonBox.StandardButton.Cancel)
+        cls.show_buttons(
+            QDialogButtonBox.StandardButton.Apply
+            | QDialogButtonBox.StandardButton.Cancel
+        )
         cls.get_window().ui.buttonBox.button(QDialogButtonBox.StandardButton.Apply)
 
     @classmethod
@@ -134,12 +147,10 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         trigger.connect_modelcheck_runner(runner)
 
     @classmethod
-    def create_import_runner(cls, progress_bar,ifc_import_path: str):
+    def create_import_runner(cls, progress_bar, ifc_import_path: str):
         runner = tool.IfcImporter.create_runner(progress_bar, ifc_import_path)
         cls.get_properties().ifc_import_runners.append(runner)
         return runner
-
-
 
     @classmethod
     def destroy_import_runner(cls, runner: QRunnable):
@@ -154,11 +165,11 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return True
 
     @classmethod
-    def set_progress(cls,runner:ModelcheckRunner, value: int):
+    def set_progress(cls, runner: ModelcheckRunner, value: int):
         runner.signaller.progress.emit(value)
 
     @classmethod
-    def set_status(cls,runner:ModelcheckRunner, status: str):
+    def set_status(cls, runner: ModelcheckRunner, status: str):
         runner.signaller.status.emit(status)
 
     @classmethod
@@ -166,7 +177,9 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         window = cls.get_window()
         ifc_paths = tool.Util.get_path_from_fileselector(window.ui.widget_import)
         export_path = tool.Util.get_path_from_fileselector(window.ui.widget_export)[0]
-        main_pset, main_attribute = tool.Util.get_attribute(window.ui.main_attribute_widget)
+        main_pset, main_attribute = tool.Util.get_attribute(
+            window.ui.main_attribute_widget
+        )
         return ifc_paths, export_path, main_pset, main_attribute
 
     @classmethod
@@ -187,12 +200,12 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         cls.get_properties().object_label.setVisible(show)
 
     @classmethod
-    def set_selected_object(cls, obj: SOMcreator.Object):
+    def set_selected_object(cls, obj: SOMcreator.SOMClass):
         prop = cls.get_properties()
         prop.selected_object = obj
 
     @classmethod
-    def get_selected_object(cls) -> SOMcreator.Object | None:
+    def get_selected_object(cls) -> SOMcreator.SOMClass | None:
         return cls.get_properties().selected_object
 
     @classmethod
@@ -222,8 +235,10 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return prop.check_state_dict
 
     @classmethod
-    def get_item_check_state(cls,
-                             item: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute) -> Qt.CheckState:
+    def get_item_check_state(
+        cls,
+        item: SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
+    ) -> Qt.CheckState:
         cd = cls.get_item_checkstate_dict()
         if cd.get(item) is None:
             cd[item] = True
@@ -231,8 +246,11 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return check_state
 
     @classmethod
-    def set_item_check_state(cls, item: SOMcreator.Object | SOMcreator.PropertySet | SOMcreator.Attribute,
-                             cs: Qt.CheckState) -> None:
+    def set_item_check_state(
+        cls,
+        item: SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
+        cs: Qt.CheckState,
+    ) -> None:
         cs = True if cs == Qt.CheckState.Checked else False
         cd = cls.get_item_checkstate_dict()
         cd[item] = cs
@@ -271,9 +289,13 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         bb.clicked.connect(trigger.button_box_clicked)
 
     @classmethod
-    def create_object_tree_row(cls, obj: SOMcreator.Object):
+    def create_object_tree_row(cls, obj: SOMcreator.SOMClass):
         item_list = [QStandardItem(obj.name), QStandardItem(obj.ident_value)]
-        item_list[0].setFlags(item_list[0].flags() | Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsSelectable)
+        item_list[0].setFlags(
+            item_list[0].flags()
+            | Qt.ItemFlag.ItemIsUserCheckable
+            | Qt.ItemFlag.ItemIsSelectable
+        )
         item_list[0].setCheckable(True)
         item_list[0].setCheckState(Qt.CheckState.Checked)
         [i.setData(obj, CLASS_REFERENCE) for i in item_list]
@@ -281,7 +303,10 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
     @classmethod
     def update_object_tree_row(cls, parent_item: QStandardItem, row_index):
-        items = [parent_item.child(row_index, col) for col in range(parent_item.columnCount())]
+        items = [
+            parent_item.child(row_index, col)
+            for col in range(parent_item.columnCount())
+        ]
         obj = items[0].data(CLASS_REFERENCE)
         texts = [obj.name, obj.ident_value]
 
@@ -293,7 +318,12 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         if items[0].checkState() != cs:
             items[0].setCheckState(cs)
 
-        enabled = True if parent_item.isEnabled() and parent_item.checkState() == Qt.CheckState.Checked else False
+        enabled = (
+            True
+            if parent_item.isEnabled()
+            and parent_item.checkState() == Qt.CheckState.Checked
+            else False
+        )
         if parent_item == parent_item.model().invisibleRootItem():
             enabled = True
 
@@ -302,15 +332,24 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return items[0], obj
 
     @classmethod
-    def fill_object_tree(cls, entities: set[SOMcreator.Object], parent_item: QStandardItem, model: QStandardItemModel,
-                         tree: QTreeView):
-        existing_entities_dict = {parent_item.child(index, 0).data(CLASS_REFERENCE): index for index in
-                                  range(parent_item.rowCount())}
+    def fill_object_tree(
+        cls,
+        entities: set[SOMcreator.SOMClass],
+        parent_item: QStandardItem,
+        model: QStandardItemModel,
+        tree: QTreeView,
+    ):
+        existing_entities_dict = {
+            parent_item.child(index, 0).data(CLASS_REFERENCE): index
+            for index in range(parent_item.rowCount())
+        }
 
         old_entities = set(existing_entities_dict.keys())
         new_entities = entities.difference(old_entities)
         delete_entities = old_entities.difference(entities)
-        for entity in reversed(sorted(delete_entities, key=lambda o: existing_entities_dict[o])):
+        for entity in reversed(
+            sorted(delete_entities, key=lambda o: existing_entities_dict[o])
+        ):
             row_index = existing_entities_dict[entity]
             parent_item.removeRow(row_index)
 
@@ -320,18 +359,27 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
         for child_row in range(parent_item.rowCount()):
             class_item, obj = cls.update_object_tree_row(parent_item, child_row)
-            obj: SOMcreator.Object
-            if tree.isExpanded(parent_item.index()) or parent_item == model.invisibleRootItem():
-                cls.fill_object_tree(set(obj.get_children(filter=False)), class_item, model, tree)
+            obj: SOMcreator.SOMClass
+            if (
+                tree.isExpanded(parent_item.index())
+                or parent_item == model.invisibleRootItem()
+            ):
+                cls.fill_object_tree(
+                    set(obj.get_children(filter=False)), class_item, model, tree
+                )
 
     @classmethod
-    def create_pset_tree_row(cls, entity: SOMcreator.PropertySet | SOMcreator.Attribute, parent_item: QStandardItem):
+    def create_pset_tree_row(
+        cls,
+        entity: SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
+        parent_item: QStandardItem,
+    ):
         item = QStandardItem(entity.name)
         item.setData(entity, CLASS_REFERENCE)
         item.setCheckable(True)
         item.setCheckState(Qt.CheckState.Checked)
         parent_item.appendRow(item)
-        if not isinstance(entity, SOMcreator.PropertySet):
+        if not isinstance(entity, SOMcreator.SOMPropertySet):
             return
         for attribute in entity.get_attributes(filter=True):
             cls.create_pset_tree_row(attribute, item)
@@ -344,23 +392,34 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         if new_check_state != check_state:
             item.setCheckState(new_check_state)
         item.setEnabled(enabled)
-        if not isinstance(pset, SOMcreator.PropertySet):
+        if not isinstance(pset, SOMcreator.SOMPropertySet):
             return
-        enabled = True if new_check_state == Qt.CheckState.Checked and enabled else False
+        enabled = (
+            True if new_check_state == Qt.CheckState.Checked and enabled else False
+        )
         for row in range(item.rowCount()):
             attribute_item = item.child(row, 0)
             cls._update_pset_row(attribute_item, enabled)
 
     @classmethod
-    def fill_pset_tree(cls, property_sets: set[SOMcreator.PropertySet], enabled: bool, tree: QTreeView):
+    def fill_pset_tree(
+        cls,
+        property_sets: set[SOMcreator.SOMPropertySet],
+        enabled: bool,
+        tree: QTreeView,
+    ):
         root_item: QStandardItem = tree.model().invisibleRootItem()
-        existing_psets_dict = {root_item.child(row, 0).data(CLASS_REFERENCE): row for row in
-                               range(root_item.rowCount())}
+        existing_psets_dict = {
+            root_item.child(row, 0).data(CLASS_REFERENCE): row
+            for row in range(root_item.rowCount())
+        }
         old_psets = set(existing_psets_dict.keys())
         new_psets = property_sets.difference(old_psets)
         delete_entities = old_psets.difference(property_sets)
 
-        for entity in reversed(sorted(delete_entities, key=lambda o: existing_psets_dict[o])):
+        for entity in reversed(
+            sorted(delete_entities, key=lambda o: existing_psets_dict[o])
+        ):
             row_index = existing_psets_dict[entity]
             root_item.removeRow(row_index)
 
@@ -372,23 +431,22 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             cls._update_pset_row(item, enabled)
 
     @classmethod
-    def set_progressbar_visible(cls, runner:IfcImportRunner,state: bool):
+    def set_progressbar_visible(cls, runner: IfcImportRunner, state: bool):
         runner.progress_bar.setVisible(state)
 
     @classmethod
     def clear_progress_bars(cls):
         scroll_area = cls.get_window().ui.verticalLayout_3
         while scroll_area.count():
-            item:QLayoutItem = scroll_area.takeAt(0)
+            item: QLayoutItem = scroll_area.takeAt(0)
             widget = item.widget()
             if widget is not None:
                 widget.deleteLater()
 
-
     @classmethod
-    def set_progress_bar_layout_visible(cls,state:bool):
+    def set_progress_bar_layout_visible(cls, state: bool):
         cls.get_window().ui.scroll_area_progress_bar.setVisible(state)
 
     @classmethod
-    def add_progress_bar(cls,progress_bar:util_ui.Progressbar):
+    def add_progress_bar(cls, progress_bar: util_ui.Progressbar):
         cls.get_window().ui.verticalLayout_3.addWidget(progress_bar)

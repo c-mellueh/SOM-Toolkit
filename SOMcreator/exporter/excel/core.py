@@ -1,20 +1,26 @@
 from __future__ import annotations
 import SOMcreator
-from .tool import ExportExcel,HEADER_COLUMN_COUNT
+from .tool import ExportExcel, HEADER_COLUMN_COUNT
 from typing import Type
 import os
 
 
-def export(project: SOMcreator.Project, path: str, export_excel: Type[ExportExcel], ident_pset_name: str = None,
-           ident_attribute_name: str = None,object_list = None) -> None:
+def export(
+    project: SOMcreator.SOMProject,
+    path: str,
+    export_excel: Type[ExportExcel],
+    ident_pset_name: str = None,
+    ident_property_name: str = None,
+    object_list=None,
+) -> None:
     if not export_excel.directory_of_path_exists(path):
         raise FileNotFoundError(f"path {os.path.dirname(path)} DNE")
 
     if object_list is None:
         object_list = list(project.get_objects(filter=True))
 
-    if None not in (ident_pset_name, ident_attribute_name):
-        export_excel.set_ident_values(ident_pset_name, ident_attribute_name)
+    if None not in (ident_pset_name, ident_property_name):
+        export_excel.set_ident_values(ident_pset_name, ident_property_name)
 
     export_excel.set_project(project)
     workbook = export_excel.create_workbook()
@@ -27,7 +33,7 @@ def export(project: SOMcreator.Project, path: str, export_excel: Type[ExportExce
         obj_name, objects = export_excel.get_object_data(data_dict)
         work_sheet = workbook.create_sheet(f"{obj_name} ({ident})")
         for counter, obj in enumerate(sorted(objects)):
-            column = 1 + counter * (HEADER_COLUMN_COUNT+1)
+            column = 1 + counter * (HEADER_COLUMN_COUNT + 1)
             export_excel.create_object_entry(obj, work_sheet, 1, column, table_counter)
             table_counter += 1
         export_excel.autoadjust_column_widths(work_sheet)

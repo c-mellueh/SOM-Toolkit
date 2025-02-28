@@ -14,23 +14,23 @@ from SOMcreator.util import xml
 import jinja2
 
 if TYPE_CHECKING:
-    from SOMcreator import Project, UseCase, Phase
+    from SOMcreator import SOMProject, UseCase, Phase
 parent_dict = dict()
 aggregation_dict = dict()
 phase_list: list[Phase] = list()
 use_case_list: list[UseCase] = list()
 plugin_dict = dict()
-object_uuid_dict: dict[str, SOMcreator.Object] = dict()
-property_set_uuid_dict: dict[str, SOMcreator.PropertySet] = dict()
-attribute_uuid_dict: dict[str, SOMcreator.Attribute] = dict()
+object_uuid_dict: dict[str, SOMcreator.SOMClass] = dict()
+property_set_uuid_dict: dict[str, SOMcreator.SOMPropertySet] = dict()
+attribute_uuid_dict: dict[str, SOMcreator.SOMProperty] = dict()
 filter_matrixes = list()
 
 
-def create_mapping_script(project: SOMcreator.Project, pset_name: str, path: str):
+def create_mapping_script(project: SOMcreator.SOMProject, pset_name: str, path: str):
     attrib_dict = dict()
-    obj: SOMcreator.Object
+    obj: SOMcreator.SOMClass
     for obj in project.get_objects(filter=True):
-        klass = obj.ident_attrib.value[0]
+        klass = obj.identifier_property.value[0]
         obj_dict = dict()
         for pset in obj.get_property_sets(filter=True):
             pset_dict = dict()
@@ -58,7 +58,8 @@ def reset_uuid_dicts():
     SOMcreator.exporter.som_json.attribute_uuid_dict = dict()
     SOMcreator.exporter.som_json.filter_matrixes = list()
 
-def export_json(proj: Project, path: str) -> dict:
+
+def export_json(proj: SOMProject, path: str) -> dict:
     start_time = time.time()
     main_dict = create_export_dict(proj)
     with open(path, "w") as file:
@@ -69,7 +70,7 @@ def export_json(proj: Project, path: str) -> dict:
     return main_dict
 
 
-def create_export_dict(proj: Project):
+def create_export_dict(proj: SOMProject):
     main_dict: MainDict = dict()
     project.write(proj, main_dict)
     predefined_pset.write(proj, main_dict)

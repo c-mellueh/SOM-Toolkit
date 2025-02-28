@@ -9,15 +9,19 @@ from PySide6.QtWidgets import QGraphicsPathItem
 
 import som_gui
 import som_gui.plugins.aggregation_window.core.tool
-from SOMcreator import Aggregation
+from SOMcreator import SOMAggregation
 from SOMcreator.constants import value_constants
 from som_gui.plugins.aggregation_window.module.connection import constants
-from som_gui.plugins.aggregation_window.module.connection import trigger as connection_trigger
+from som_gui.plugins.aggregation_window.module.connection import (
+    trigger as connection_trigger,
+)
 from som_gui.plugins.aggregation_window.module.connection import ui as connection_ui
 
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.module.node import ui as node_ui
-    from som_gui.plugins.aggregation_window.module.connection.prop import ConnectionProperties
+    from som_gui.plugins.aggregation_window.module.connection.prop import (
+        ConnectionProperties,
+    )
     from som_gui.plugins.aggregation_window.module.view import ui as view_ui
 
 
@@ -27,21 +31,29 @@ class Connection(som_gui.plugins.aggregation_window.core.tool.Connection):
         return som_gui.ConnectionProperties
 
     @classmethod
-    def create_connection(cls, top_node: node_ui.NodeProxy, bottom_node: node_ui.NodeProxy,
-                          connection_type: int) -> connection_ui.Connection:
+    def create_connection(
+        cls,
+        top_node: node_ui.NodeProxy,
+        bottom_node: node_ui.NodeProxy,
+        connection_type: int,
+    ) -> connection_ui.Connection:
         top_node.aggregation.add_child(bottom_node.aggregation, connection_type)
         connection = connection_ui.Connection(top_node, bottom_node, connection_type)
         connection_trigger.paint_connection(connection)
         top_node.bottom_connections.add(connection)
         bottom_node.top_connection = connection
         connection.setZValue(0)
-        logging.debug(f"Add Con : {connection.bottom_node.aggregation.name} -> {connection.top_node.aggregation.name}")
+        logging.debug(
+            f"Add Con : {connection.bottom_node.aggregation.name} -> {connection.top_node.aggregation.name}"
+        )
         return connection
 
     @classmethod
-    def _get_base_points(cls, point_bottom: QPointF, point_top: QPointF) -> list[QPointF]:
+    def _get_base_points(
+        cls, point_bottom: QPointF, point_top: QPointF
+    ) -> list[QPointF]:
         points = [QPointF() for _ in range(8)]
-        mid_y = (point_top.y() + constants.BOX_BOTTOM_DISTANCE)
+        mid_y = point_top.y() + constants.BOX_BOTTOM_DISTANCE
 
         points[0] = point_bottom
         points[1].setX(point_bottom.x())
@@ -57,7 +69,9 @@ class Connection(som_gui.plugins.aggregation_window.core.tool.Connection):
         return points
 
     @classmethod
-    def get_aggregation_point_list(cls, point_bottom: QPointF, point_top: QPointF) -> list[QPointF]:
+    def get_aggregation_point_list(
+        cls, point_bottom: QPointF, point_top: QPointF
+    ) -> list[QPointF]:
         points = cls._get_base_points(point_bottom, point_top)
         points[3].setY(point_top.y() + constants.ARROW_HEIGHT)
         points[4].setY(point_top.y() + constants.ARROW_HEIGHT / 2)
@@ -80,7 +94,7 @@ class Connection(som_gui.plugins.aggregation_window.core.tool.Connection):
     @classmethod
     def get_combo_point_list(cls, point_bottom, point_top) -> list[QPointF]:
         points = [QPointF() for _ in range(14)]
-        mid_y = (point_top.y() + constants.BOX_BOTTOM_DISTANCE)
+        mid_y = point_top.y() + constants.BOX_BOTTOM_DISTANCE
         points[0] = point_bottom
 
         points[1].setX(point_bottom.x())
@@ -126,8 +140,11 @@ class Connection(som_gui.plugins.aggregation_window.core.tool.Connection):
 
     @classmethod
     def get_connection_displacement(cls, connection: connection_ui.Connection) -> float:
-        aggreg: Aggregation
-        connections = {aggreg.parent_connection for aggreg in connection.top_node.aggregation.get_children(filter=True)}
+        aggreg: SOMAggregation
+        connections = {
+            aggreg.parent_connection
+            for aggreg in connection.top_node.aggregation.get_children(filter=True)
+        }
         disp_dict = dict()
         agg = value_constants.AGGREGATION
         inh = value_constants.INHERITANCE
@@ -137,18 +154,43 @@ class Connection(som_gui.plugins.aggregation_window.core.tool.Connection):
             disp_dict = {agg: 0, inh: 0, agg + inh: 0}
 
         if len(connections) == 2:
-            if {value_constants.AGGREGATION, value_constants.INHERITANCE} == connections:
-                disp_dict = {inh: -constants.ARROW_WIDTH * factor, agg: +constants.ARROW_WIDTH * factor, agg + inh: 0}
+            if {
+                value_constants.AGGREGATION,
+                value_constants.INHERITANCE,
+            } == connections:
+                disp_dict = {
+                    inh: -constants.ARROW_WIDTH * factor,
+                    agg: +constants.ARROW_WIDTH * factor,
+                    agg + inh: 0,
+                }
 
-            if {value_constants.AGGREGATION, value_constants.INHERITANCE + value_constants.AGGREGATION} == connections:
-                disp_dict = {agg: -constants.ARROW_WIDTH * factor, inh: 0, agg + inh: +constants.ARROW_WIDTH * factor}
+            if {
+                value_constants.AGGREGATION,
+                value_constants.INHERITANCE + value_constants.AGGREGATION,
+            } == connections:
+                disp_dict = {
+                    agg: -constants.ARROW_WIDTH * factor,
+                    inh: 0,
+                    agg + inh: +constants.ARROW_WIDTH * factor,
+                }
 
-            if {value_constants.INHERITANCE, value_constants.INHERITANCE + value_constants.AGGREGATION} == connections:
-                disp_dict = {agg: 0, inh: +constants.ARROW_WIDTH * factor, agg + inh: -constants.ARROW_WIDTH * factor}
+            if {
+                value_constants.INHERITANCE,
+                value_constants.INHERITANCE + value_constants.AGGREGATION,
+            } == connections:
+                disp_dict = {
+                    agg: 0,
+                    inh: +constants.ARROW_WIDTH * factor,
+                    agg + inh: -constants.ARROW_WIDTH * factor,
+                }
 
         if len(connections) == 3:
-            disp_dict = {inh: -constants.ARROW_WIDTH * factor, agg: 0, agg + inh: +constants.ARROW_WIDTH * factor}
-        return disp_dict.get(connection.connection_type) or 0.
+            disp_dict = {
+                inh: -constants.ARROW_WIDTH * factor,
+                agg: 0,
+                agg + inh: +constants.ARROW_WIDTH * factor,
+            }
+        return disp_dict.get(connection.connection_type) or 0.0
 
     @classmethod
     def set_draw_node(cls, node: node_ui.NodeProxy) -> None:
@@ -159,8 +201,13 @@ class Connection(som_gui.plugins.aggregation_window.core.tool.Connection):
         return cls.get_properties().draw_node
 
     @classmethod
-    def calculate_painter_path(cls, point_top: QPointF, point_bottom: QPointF, displacement: float,
-                               connection_type: int) -> QPainterPath:
+    def calculate_painter_path(
+        cls,
+        point_top: QPointF,
+        point_bottom: QPointF,
+        displacement: float,
+        connection_type: int,
+    ) -> QPainterPath:
         path = QPainterPath()
 
         point_top.setX(point_top.x() + displacement)
@@ -178,14 +225,16 @@ class Connection(som_gui.plugins.aggregation_window.core.tool.Connection):
         return path
 
     @classmethod
-    def draw_connection(cls, scene: view_ui.AggregationScene, mouse_pos: QPointF) -> None:
+    def draw_connection(
+        cls, scene: view_ui.AggregationScene, mouse_pos: QPointF
+    ) -> None:
         connection = cls.get_properties().draw_connection
         if connection is None:
             connection = QGraphicsPathItem()
             scene.addItem(connection)
         point_top = cls.get_node_bottom_anchor(cls.get_draw_node())
         point_bottom = mouse_pos
-        displacement = 0.
+        displacement = 0.0
         path = cls.calculate_painter_path(point_top, point_bottom, displacement, 1)
         connection.setPath(path)
         connection.setPen(QPalette().accent().color())

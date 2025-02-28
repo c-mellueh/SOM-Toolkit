@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from PySide6.QtCore import QSize, QPointF, QRectF, QCoreApplication, Qt
-from PySide6.QtWidgets import QTreeWidgetItem,QVBoxLayout
+from PySide6.QtWidgets import QTreeWidgetItem, QVBoxLayout
 from PySide6.QtGui import QPainter, QFontMetrics, QFont
 import logging
 import SOMcreator
@@ -60,7 +60,9 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def add_property_set_to_tree(
-        cls, property_set: SOMcreator.PropertySet, tree_widget: node_ui.PropertySetTree
+        cls,
+        property_set: SOMcreator.SOMPropertySet,
+        tree_widget: node_ui.PropertySetTree,
     ) -> QTreeWidgetItem:
         """
         Add a property set to the tree widget.
@@ -85,7 +87,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     @classmethod
     def get_pset_subelement_dict(
         cls, item: QTreeWidgetItem
-    ) -> dict[SOMcreator.PropertySet | SOMcreator.Attribute, QTreeWidgetItem]:
+    ) -> dict[SOMcreator.SOMPropertySet | SOMcreator.SOMProperty, QTreeWidgetItem]:
         """
         Generate a dictionary mapping property sets or attributes to their corresponding tree widget items.
 
@@ -105,7 +107,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def add_attribute_to_property_set_tree(
-        cls, attribute: SOMcreator.Attribute, property_set_item: QTreeWidgetItem
+        cls, attribute: SOMcreator.SOMProperty, property_set_item: QTreeWidgetItem
     ) -> QTreeWidgetItem:
         """
         Add an attribute to a property set tree item.
@@ -165,7 +167,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         return circle
 
     @classmethod
-    def create_node(cls, aggregation: SOMcreator.Aggregation) -> node_ui.NodeProxy:
+    def create_node(cls, aggregation: SOMcreator.SOMAggregation) -> node_ui.NodeProxy:
         """
         Create a node for an aggregation.
 
@@ -183,8 +185,8 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         node_widget.setMinimumSize(QSize(250, 150))
         node.aggregation = aggregation
         tree_widget = cls.create_tree_widget(node)
-        layout:QVBoxLayout = node.widget().layout()
-        layout.setContentsMargins(0,0,0,0)
+        layout: QVBoxLayout = node.widget().layout()
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.addItem(node.spacer)
         layout.insertWidget(1, tree_widget)
         cls.create_header(node)
@@ -309,7 +311,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     @classmethod
     def get_linked_item(
         cls, pset_tree_item: QTreeWidgetItem
-    ) -> SOMcreator.PropertySet | SOMcreator.Attribute:
+    ) -> SOMcreator.SOMPropertySet | SOMcreator.SOMProperty:
         """
         Get the linked item from a property set tree item.
 
@@ -449,18 +451,20 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     ) -> list[str]:
         aggregation = cls.get_aggregation_from_node(node)
         if not (pset_name and attribute_name):
-            base_text = f"{aggregation.object.name} ({aggregation.object.abbreviation})"
+            base_text = (
+                f"{aggregation.som_class.name} ({aggregation.som_class.abbreviation})"
+            )
             id_text = QCoreApplication.translate("Aggregation Window", "id: {}").format(
                 node.aggregation.identity()
             )
             id_texts = cls.split_text(id_text, "_", max_width)
             return [base_text] + id_texts
         undef = [f"{aggregation.name}\n{attribute_name}: undefined"]
-        obj = aggregation.object
+        obj = aggregation.som_class
         pset = obj.get_property_set_by_name(pset_name)
         if pset is None:
             return undef
-        attribute = pset.get_attribute_by_name(attribute_name)
+        attribute = pset.get_property_by_name(attribute_name)
         if attribute is None:
             return undef
 
@@ -471,7 +475,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     @classmethod
     def get_aggregation_from_node(
         cls, node: node_ui.NodeProxy
-    ) -> SOMcreator.Aggregation:
+    ) -> SOMcreator.SOMAggregation:
         return node.aggregation
 
     @classmethod
@@ -630,9 +634,9 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
     @classmethod
     def add_new_values_to_pset_tree(
         cls, tree_widget: node_ui.PropertySetTree
-    ) -> dict[SOMcreator.PropertySet | SOMcreator.Attribute, QTreeWidgetItem]:
+    ) -> dict[SOMcreator.SOMPropertySet | SOMcreator.SOMProperty, QTreeWidgetItem]:
         selected_node = cls.get_node_from_tree_widget(tree_widget)
-        obj = selected_node.aggregation.object
+        obj = selected_node.aggregation.som_class
         ir = tree_widget.invisibleRootItem()
         property_set_dict = cls.get_pset_subelement_dict(ir)
         for property_set in obj.get_property_sets(filter=True):
@@ -664,11 +668,11 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         cls,
         tree_widget: node_ui.PropertySetTree,
         property_set_dict: dict[
-            SOMcreator.PropertySet | SOMcreator.Attribute, QTreeWidgetItem
+            SOMcreator.SOMPropertySet | SOMcreator.SOMProperty, QTreeWidgetItem
         ],
     ):
         selected_node = cls.get_node_from_tree_widget(tree_widget)
-        obj = selected_node.aggregation.object
+        obj = selected_node.aggregation.som_class
         ir = tree_widget.invisibleRootItem()
         for property_set, pset_item in property_set_dict.items():
             if property_set not in obj.get_property_sets(filter=True):

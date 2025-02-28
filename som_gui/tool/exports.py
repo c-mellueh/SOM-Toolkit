@@ -33,26 +33,32 @@ class Exports(som_gui.core.tool.Exports):
         return cls.get_properties().actions[name]
 
     @classmethod
-    def export_bookmarks(cls, project: SOMcreator.Project, path: str):
+    def export_bookmarks(cls, project: SOMcreator.SOMProject, path: str):
         bookmarks.export_bookmarks(project, path)
 
     @classmethod
-    def export_vestra(cls, project: SOMcreator.Project, parent_window, path):
+    def export_vestra(cls, project: SOMcreator.SOMProject, parent_window, path):
         file_text = "Excel Files (*.xlsx);;"
         caption = QCoreApplication.translate("Export", "Template Excel")
-        excel_path, answer = QFileDialog.getOpenFileName(parent_window, caption, path, file_text)
+        excel_path, answer = QFileDialog.getOpenFileName(
+            parent_window, caption, path, file_text
+        )
         if answer:
             caption = QCoreApplication.translate("Export", "Export Folder")
-            export_folder = QFileDialog.getExistingDirectory(parent_window, caption, path)
+            export_folder = QFileDialog.getExistingDirectory(
+                parent_window, caption, path
+            )
             if export_folder:
                 vestra.create_mapping(excel_path, export_folder, project)
                 return export_folder
 
     @classmethod
-    def export_card_1(cls, project: SOMcreator.Project, parent_window, path):
+    def export_card_1(cls, project: SOMcreator.SOMProject, parent_window, path):
         file_text = "Excel Files (*.xlsx);;"
         caption = QCoreApplication.translate("Export", "Template Excel")
-        src, answer = QFileDialog.getOpenFileName(parent_window, caption, path, file_text)
+        src, answer = QFileDialog.getOpenFileName(
+            parent_window, caption, path, file_text
+        )
         if not answer:
             return
         caption = QCoreApplication.translate("Export", "CARD1 Excel")
@@ -63,11 +69,13 @@ class Exports(som_gui.core.tool.Exports):
             return path
 
     @classmethod
-    def export_excel(cls, project: SOMcreator.Project, path: str):
+    def export_excel(cls, project: SOMcreator.SOMProject, path: str):
         excel_core.export(project, path, ExportExcel)
 
     @classmethod
-    def create_mapping_script(cls, project: SOMcreator.Project, name: str, path: str):
+    def create_mapping_script(
+        cls, project: SOMcreator.SOMProject, name: str, path: str
+    ):
         SOMcreator.exporter.som_json.create_mapping_script(project, name, path)
 
     @classmethod

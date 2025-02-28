@@ -13,31 +13,44 @@ from . import condition as c
 from . import constants as const
 from . import rule
 
-REQUIRED_DATA_DICT = dict[SOMcreator.Object, dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]]]
+REQUIRED_DATA_DICT = dict[
+    SOMcreator.SOMClass, dict[SOMcreator.SOMPropertySet, list[SOMcreator.SOMProperty]]
+]
 
 
 def _write_header(xml_header: etree.Element) -> None:
     etree.SubElement(xml_header, const.VERSION).text = "6"
-    etree.SubElement(xml_header, const.APPVER).text = "Win - Version: 6.8 (build 6.8.26.0)"
+    etree.SubElement(xml_header, const.APPVER).text = (
+        "Win - Version: 6.8 (build 6.8.26.0)"
+    )
 
 
-def _write_smartview(property_set: SOMcreator.PropertySet, attribute_list: list[SOMcreator.Attribute],
-                     author: str) -> etree.Element:
+def _write_smartview(
+    property_set: SOMcreator.SOMPropertySet,
+    attribute_list: list[SOMcreator.SOMProperty],
+    author: str,
+) -> etree.Element:
     def write_smartview_basics():
         sv = etree.Element(const.SVIEW)
         etree.SubElement(sv, const.TITLE).text = property_set.name
-        etree.SubElement(sv, const.DESCRIPTION).text = f"Checks {property_set.name} for correct Values"
+        etree.SubElement(sv, const.DESCRIPTION).text = (
+            f"Checks {property_set.name} for correct Values"
+        )
         etree.SubElement(sv, const.CREATOR).text = "christoph.mellueh@deutschebahn.com"
-        etree.SubElement(sv, const.CREATIONDATE).text = str(datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
+        etree.SubElement(sv, const.CREATIONDATE).text = str(
+            datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        )
         etree.SubElement(sv, const.MODIFIER).text = author
-        etree.SubElement(sv, const.MODIFICATIONDATE).text = str(datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
+        etree.SubElement(sv, const.MODIFICATIONDATE).text = str(
+            datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        )
         etree.SubElement(sv, const.GUID).text = str(uuid.uuid4())
         return sv
 
     xml_smart_view = write_smartview_basics()
     xml_rules = etree.SubElement(xml_smart_view, const.RULES)
     pset_name = property_set.name
-    ident_attrib = property_set.object.ident_attrib
+    ident_attrib = property_set.som_class.identifier_property
     rule_list: list[etree.Element] = list()
 
     for attribute in attribute_list:
@@ -45,44 +58,67 @@ def _write_smartview(property_set: SOMcreator.PropertySet, attribute_list: list[
             continue
         if attribute.data_type in (value_constants.INTEGER, value_constants.REAL):
             if not attribute.value:
-                rule_list += rule.add_if_not_existing(attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type])
+                rule_list += rule.add_if_not_existing(
+                    attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type]
+                )
             elif attribute.value_type == value_constants.LIST:
-                rule_list += rule.numeric_list(attribute.name, pset_name, attribute.value)
+                rule_list += rule.numeric_list(
+                    attribute.name, pset_name, attribute.value
+                )
             elif attribute.value_type == value_constants.RANGE:
-                rule_list += rule.numeric_range(attribute.name, pset_name, attribute.value)
+                rule_list += rule.numeric_range(
+                    attribute.name, pset_name, attribute.value
+                )
             else:
-                logging.error(f"No Function defined for {attribute.name} ({attribute.value_type}x{attribute.data_type}")
+                logging.error(
+                    f"No Function defined for {attribute.name} ({attribute.value_type}x{attribute.data_type}"
+                )
 
         elif attribute.data_type == value_constants.LABEL:
             if attribute.value_type == value_constants.FORMAT:
-                rule_list += rule.add_if_not_existing(attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type])
+                rule_list += rule.add_if_not_existing(
+                    attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type]
+                )
                 continue
 
             if attribute.value:
-                rule_list += rule.add_if_not_in_string_list(attribute.name, pset_name, attribute.value)
+                rule_list += rule.add_if_not_in_string_list(
+                    attribute.name, pset_name, attribute.value
+                )
             else:
-                rule_list += rule.add_if_not_existing(attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type])
+                rule_list += rule.add_if_not_existing(
+                    attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type]
+                )
 
         elif attribute.data_type == value_constants.BOOLEAN:
-            rule_list += rule.add_if_not_existing(attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type])
+            rule_list += rule.add_if_not_existing(
+                attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type]
+            )
         else:
-            logging.error(f"No Function defined for {attribute.name} ({attribute.value_type}x{attribute.data_type}")
+            logging.error(
+                f"No Function defined for {attribute.name} ({attribute.value_type}x{attribute.data_type}"
+            )
 
-    rule_list += rule.remove_if_not_in_string_list(ident_attrib.name, ident_attrib.property_set.name,
-                                                   ident_attrib.value)
+    rule_list += rule.remove_if_not_in_string_list(
+        ident_attrib.name, ident_attrib.property_set.name, ident_attrib.value
+    )
     for xml_rule in rule_list:
         xml_rules.append(xml_rule)
     return xml_smart_view
 
 
-def _write_smartviewset(obj: SOMcreator.Object, pset_dict: dict[SOMcreator.PropertySet, list[SOMcreator.Attribute]],
-                        author: str) -> etree.Element:
+def _write_smartviewset(
+    obj: SOMcreator.SOMClass,
+    pset_dict: dict[SOMcreator.SOMPropertySet, list[SOMcreator.SOMProperty]],
+    author: str,
+) -> etree.Element:
     smartview_set = etree.Element(const.SMVSET)
     etree.SubElement(smartview_set, const.TITLE).text = obj.name
     etree.SubElement(smartview_set, const.DESCRIPTION).text = "generated by SOMcreator"
     etree.SubElement(smartview_set, const.GUID).text = str(uuid.uuid4())
     etree.SubElement(smartview_set, const.MODIFICATIONDATE).text = str(
-        datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
+        datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    )
     smartviews = etree.SubElement(smartview_set, const.SVIEWS)
 
     for property_set, attribute_list in pset_dict.items():
@@ -90,8 +126,9 @@ def _write_smartviewset(obj: SOMcreator.Object, pset_dict: dict[SOMcreator.Prope
     return smartview_set
 
 
-def _write_smartviewsets(required_data_dict: REQUIRED_DATA_DICT,
-                         author: str) -> etree.Element:
+def _write_smartviewsets(
+    required_data_dict: REQUIRED_DATA_DICT, author: str
+) -> etree.Element:
     smartviewsets = etree.Element(const.SMVSETS)
     for obj, pset_dict in required_data_dict.items():
         if obj.is_concept:
@@ -100,8 +137,9 @@ def _write_smartviewsets(required_data_dict: REQUIRED_DATA_DICT,
     return smartviewsets
 
 
-def export(required_data_dict: REQUIRED_DATA_DICT,
-           save_path: os.PathLike | str, author="") -> None:
+def export(
+    required_data_dict: REQUIRED_DATA_DICT, save_path: os.PathLike | str, author=""
+) -> None:
     header = etree.Element(const.BCSVF)
     _write_header(header)
     svs = _write_smartviewsets(required_data_dict, author)
@@ -111,10 +149,12 @@ def export(required_data_dict: REQUIRED_DATA_DICT,
         file.write(etree.tostring(svs, pretty_print=True))
 
 
-def build_full_required_data_dict(project: SOMcreator.Project) -> REQUIRED_DATA_DICT:
+def build_full_required_data_dict(project: SOMcreator.SOMProject) -> REQUIRED_DATA_DICT:
     required_data = dict()
     for obj in list(project.get_objects(filter=True)):
         required_data[obj] = dict()
         for pset in obj.get_property_sets(filter=True):
-            required_data[obj][pset] = [attribute for attribute in pset.get_attributes(filter=True)]
+            required_data[obj][pset] = [
+                attribute for attribute in pset.get_attributes(filter=True)
+            ]
     return required_data

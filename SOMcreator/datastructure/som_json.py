@@ -47,7 +47,7 @@ class AttributeDict(StandardDict):
     value_type: str
     child_inherits_value: bool
     revit_mapping: str
-    Value: list[str] | list[float] | list[[float, float]]
+    Value: list[str] | list[float] | list[tuple[float, float]]
 
 
 class AggregationDict(StandardDict):

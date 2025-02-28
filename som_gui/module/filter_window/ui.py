@@ -3,8 +3,15 @@ from __future__ import annotations
 import logging
 from typing import Callable
 
-from PySide6.QtCore import QAbstractItemModel, QAbstractTableModel, QCoreApplication, QItemSelectionModel, QModelIndex, \
-    Qt, Signal
+from PySide6.QtCore import (
+    QAbstractItemModel,
+    QAbstractTableModel,
+    QCoreApplication,
+    QItemSelectionModel,
+    QModelIndex,
+    Qt,
+    Signal,
+)
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTableView, QTreeView, QWidget
 
@@ -18,6 +25,7 @@ class SettingsWidget(QWidget):
     def __init__(self):
         super().__init__()
         from .qt import ui_Settings
+
         self.ui = ui_Settings.Ui_FilterWindow()
         self.ui.setupUi(self)
         trigger.settings_widget_created(self)
@@ -27,6 +35,7 @@ class FilterWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         from .qt import ui_Widget
+
         self.ui = ui_Widget.Ui_FilterWindow()
         self.ui.setupUi(self)
         self.setWindowIcon(som_gui.get_icon())
@@ -61,11 +70,13 @@ class FrozeView(QTreeView):
         self.frozen_cols = column_count
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.setStyleSheet('''border: none''')
+        self.setStyleSheet("""border: none""")
 
     def update_selection(self, selected, deselected):
         self.selectionModel().select(selected, QItemSelectionModel.SelectionFlag.Select)
-        self.selectionModel().select(deselected, QItemSelectionModel.SelectionFlag.Deselect)
+        self.selectionModel().select(
+            deselected, QItemSelectionModel.SelectionFlag.Deselect
+        )
 
 
 class FilterTreeView(QTreeView):
@@ -74,8 +85,12 @@ class FilterTreeView(QTreeView):
         self.frozen_view = FrozeView(self, frozen_col_count)
         self.viewport().stackUnder(self.frozen_view)
         self.header().sectionResized.connect(self.update_section_width)
-        self.frozen_view.verticalScrollBar().valueChanged.connect(self.verticalScrollBar().setValue)
-        self.verticalScrollBar().valueChanged.connect(self.frozen_view.verticalScrollBar().setValue)
+        self.frozen_view.verticalScrollBar().valueChanged.connect(
+            self.verticalScrollBar().setValue
+        )
+        self.verticalScrollBar().valueChanged.connect(
+            self.frozen_view.verticalScrollBar().setValue
+        )
         self.frozen_view.expanded.connect(self.expand)
         self.frozen_view.collapsed.connect(self.collapse)
         self.expanded.connect(self.frozen_view.expand)
@@ -94,7 +109,8 @@ class FilterTreeView(QTreeView):
         if index.column() >= self.frozen_view.frozen_cols:
             super().scrollTo(index, hint)
         else:
-            self.frozen_view.scrollTo(index,hint)
+            self.frozen_view.scrollTo(index, hint)
+
     def updateFrozenTableGeometry(self):
         x = self.frameWidth() - 1
         y = self.frameWidth()
@@ -108,9 +124,11 @@ class FilterTreeView(QTreeView):
 
     def update_selection(self, selected, deselected):
         self.selectionModel().select(selected, QItemSelectionModel.SelectionFlag.Select)
-        self.selectionModel().select(deselected, QItemSelectionModel.SelectionFlag.Deselect)
+        self.selectionModel().select(
+            deselected, QItemSelectionModel.SelectionFlag.Deselect
+        )
 
-    def setModel(self, model: ObjectModel|PsetModel):
+    def setModel(self, model: ObjectModel | PsetModel):
         super().setModel(model)
         self.frozen_view.setModel(model)
         for i in range(model.columnCount()):
@@ -155,7 +173,8 @@ class PsetTreeView(FilterTreeView):
 
 class ProjectModel(QAbstractTableModel):
     data_changed_externally = Signal()
-    def __init__(self, project: SOMcreator.Project):
+
+    def __init__(self, project: SOMcreator.SOMProject):
         super().__init__()
         self.project = project
         self.check_column_index = 0
@@ -163,10 +182,18 @@ class ProjectModel(QAbstractTableModel):
         self.last_row_count = self.rowCount()
 
     def update(self):
-        logging.debug(f"Update FilterView rowCount: {self.rowCount()} columnCount: {self.columnCount()}")
-        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount()))
+        logging.debug(
+            f"Update FilterView rowCount: {self.rowCount()} columnCount: {self.columnCount()}"
+        )
+        self.dataChanged.emit(
+            self.createIndex(0, 0),
+            self.createIndex(self.rowCount(), self.columnCount()),
+        )
 
-        if self.last_col_count != self.columnCount() or self.last_row_count != self.rowCount():
+        if (
+            self.last_col_count != self.columnCount()
+            or self.last_row_count != self.rowCount()
+        ):
             self.data_changed_externally.emit()
 
         self.last_col_count = self.columnCount()
@@ -202,18 +229,20 @@ class ProjectModel(QAbstractTableModel):
         if role not in [Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole]:
             return
         if orientation == Qt.Orientation.Horizontal:
-            if section > len(self.project.get_usecases())-1:
+            if section > len(self.project.get_usecases()) - 1:
                 return None
             return self.project.get_usecases()[section].name
         else:
-            if section > len(self.project.get_phases())-1:
+            if section > len(self.project.get_phases()) - 1:
                 return None
             return self.project.get_phases()[section].name
 
     def insertRows(self, row, count, parent=None):
         logging.debug("Insert Rows")
         text = QCoreApplication.translate("FilterWindow", "New Phase")
-        new_name = tool.Util.get_new_name(text, [ph.name for ph in self.project.get_phases()])
+        new_name = tool.Util.get_new_name(
+            text, [ph.name for ph in self.project.get_phases()]
+        )
         self.beginInsertRows(QModelIndex(), row, row + count - 1)
         phase = SOMcreator.Phase(new_name, new_name, new_name)
         self.project.add_phase(phase)
@@ -221,17 +250,26 @@ class ProjectModel(QAbstractTableModel):
 
 
 class TreeModel(QAbstractItemModel):
-    def __init__(self, project: SOMcreator.Project, check_column_index: int, column_titles: list[str]):
+    def __init__(
+        self,
+        project: SOMcreator.SOMProject,
+        check_column_index: int,
+        column_titles: list[str],
+    ):
         super().__init__()
         self.project = project
         self.allowed_combinations = self.get_allowed_combinations()
-        self.check_column_index = check_column_index  # index of first column with checkdata
+        self.check_column_index = (
+            check_column_index  # index of first column with checkdata
+        )
         self.column_titles = column_titles
 
     def update(self):
         self.allowed_combinations = self.get_allowed_combinations()
-        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(self.rowCount(), self.columnCount()))
-
+        self.dataChanged.emit(
+            self.createIndex(0, 0),
+            self.createIndex(self.rowCount(), self.columnCount()),
+        )
 
     def flags(self, index, parent_index):
         flags = super().flags(index)
@@ -242,9 +280,11 @@ class TreeModel(QAbstractItemModel):
         if not parent_index.isValid():
             return flags
         is_parent_enabled = Qt.ItemFlag.ItemIsEnabled in parent_index.flags()
-        is_parent_checked = tool.Util.checkstate_to_bool(parent_index.data(Qt.ItemDataRole.CheckStateRole))
+        is_parent_checked = tool.Util.checkstate_to_bool(
+            parent_index.data(Qt.ItemDataRole.CheckStateRole)
+        )
         if not (is_parent_enabled and is_parent_checked):
-            flags = flags & ~ Qt.ItemFlag.ItemIsEnabled
+            flags = flags & ~Qt.ItemFlag.ItemIsEnabled
         return flags
 
     def get_allowed_combinations(self):
@@ -259,7 +299,10 @@ class TreeModel(QAbstractItemModel):
         return self.check_column_index + len(self.allowed_combinations)
 
     def headerData(self, section, orientation, role=...):
-        if orientation != Qt.Orientation.Horizontal or role != Qt.ItemDataRole.DisplayRole:
+        if (
+            orientation != Qt.Orientation.Horizontal
+            or role != Qt.ItemDataRole.DisplayRole
+        ):
             return
 
         for col, text in zip(range(self.check_column_index), self.column_titles):
@@ -272,12 +315,17 @@ class TreeModel(QAbstractItemModel):
         return f"{phase.name}-{usecase.name}"
 
     # Returns the data to be displayed for each cell
-    def data(self, index, role=Qt.ItemDataRole.DisplayRole, getter_functions: list[Callable] = None):
+    def data(
+        self,
+        index,
+        role=Qt.ItemDataRole.DisplayRole,
+        getter_functions: list[Callable] = None,
+    ):
         if getter_functions is None:
             return None
         if not index.isValid():
             return None
-        node: SOMcreator.Object = index.internalPointer()
+        node: SOMcreator.SOMClass = index.internalPointer()
         if role == Qt.ItemDataRole.DisplayRole:
             for col, getter_function in enumerate(getter_functions):
                 if index.column() == col:
@@ -289,17 +337,21 @@ class TreeModel(QAbstractItemModel):
                 if pos >= len(self.allowed_combinations):
                     return None
                 phase, usecase = self.allowed_combinations[pos]
-                return tool.Util.bool_to_checkstate(node.get_filter_state(phase, usecase))
+                return tool.Util.bool_to_checkstate(
+                    node.get_filter_state(phase, usecase)
+                )
         return None
 
     def setData(self, index: QModelIndex, value, role: Qt.ItemDataRole):
         if not index.isValid() or role != Qt.ItemDataRole.CheckStateRole:
             return False
-        node: SOMcreator.Object = index.internalPointer()
+        node: SOMcreator.SOMClass = index.internalPointer()
         if index.column() - self.check_column_index >= len(self.allowed_combinations):
             return False
 
-        phase, usecase = self.get_allowed_combinations()[index.column() - self.check_column_index]
+        phase, usecase = self.get_allowed_combinations()[
+            index.column() - self.check_column_index
+        ]
         logging.debug(f"Set {node} {phase.name}:{usecase.name} to {bool(value)}")
         node.set_filter_state(phase, usecase, bool(value))
         trigger.update_object_tree()
@@ -308,7 +360,7 @@ class TreeModel(QAbstractItemModel):
 
 
 class ObjectModel(TreeModel):
-    def __init__(self, project: SOMcreator.Project):
+    def __init__(self, project: SOMcreator.SOMProject):
         super().__init__(project, 2, ["h0", "h1"])
         self.root_objects = list(self.project.get_root_objects(filter=False))
 
@@ -334,8 +386,10 @@ class ObjectModel(TreeModel):
     def rowCount(self, parent=QModelIndex()):
         if not parent.isValid():
             return len(self.get_root())  # Top-level items
-        node: SOMcreator.Object = parent.internalPointer()
-        count = len(list(node.get_children(filter=False)))  # Use get_children() to access children
+        node: SOMcreator.SOMClass = parent.internalPointer()
+        count = len(
+            list(node.get_children(filter=False))
+        )  # Use get_children() to access children
         return count
 
     # Creates an index for a given row and column
@@ -350,8 +404,10 @@ class ObjectModel(TreeModel):
             item.index = self.createIndex(row, column, item)
             return item.index
 
-        node: SOMcreator.Object = parent.internalPointer()
-        children = list(node.get_children(filter=False))  # Use get_children() to access children
+        node: SOMcreator.SOMClass = parent.internalPointer()
+        children = list(
+            node.get_children(filter=False)
+        )  # Use get_children() to access children
 
         if 0 <= row < len(children):
             child = children[row]
@@ -363,7 +419,7 @@ class ObjectModel(TreeModel):
     def parent(self, index: QModelIndex):
         if not index.isValid():
             return QModelIndex()
-        node: SOMcreator.Object = index.internalPointer()
+        node: SOMcreator.SOMClass = index.internalPointer()
         if node is None or not node.parent:
             return QModelIndex()
         parent_index: QModelIndex = node.parent.index
@@ -371,12 +427,15 @@ class ObjectModel(TreeModel):
 
     # Returns the data to be displayed for each cell
     def data(self, index, role=Qt.DisplayRole):
-        getter_funcs = [lambda o: getattr(o, "name"), lambda o: getattr(o, "ident_value")]
+        getter_funcs = [
+            lambda o: getattr(o, "name"),
+            lambda o: getattr(o, "ident_value"),
+        ]
         return super().data(index, role, getter_funcs)
 
 
 class PsetModel(TreeModel):
-    def __init__(self, project: SOMcreator.Project):
+    def __init__(self, project: SOMcreator.SOMProject):
         super().__init__(project, 1, ["h1"])
         self.active_object = tool.FilterWindow.get_active_object()
 
@@ -385,9 +444,11 @@ class PsetModel(TreeModel):
         self.column_titles = [h0]
 
     def flags(self, index: QModelIndex):
-        node: SOMcreator.PropertySet | SOMcreator.Attribute = index.internalPointer()
-        if isinstance(node, SOMcreator.PropertySet):
-            parent_index = node.object.index
+        node: SOMcreator.SOMPropertySet | SOMcreator.SOMProperty = (
+            index.internalPointer()
+        )
+        if isinstance(node, SOMcreator.SOMPropertySet):
+            parent_index = node.som_class.index
             parent_index = parent_index.sibling(parent_index.row(), index.column() + 1)
         else:
             parent_index = self.parent(index)
@@ -399,19 +460,23 @@ class PsetModel(TreeModel):
         self.active_object = tool.FilterWindow.get_active_object()
         super().update()
 
-    def get_property_sets(self) -> list[SOMcreator.PropertySet]:
+    def get_property_sets(self) -> list[SOMcreator.SOMPropertySet]:
         if tool.FilterWindow.get_active_object() is None:
             return []
-        return list(tool.FilterWindow.get_active_object().get_property_sets(filter=False))
+        return list(
+            tool.FilterWindow.get_active_object().get_property_sets(filter=False)
+        )
 
     # Returns the number of children (rows) under the given index
     def rowCount(self, parent=QModelIndex()):
         if not parent.isValid():
             return len(self.get_property_sets())  # Top-level items
-        node: SOMcreator.PropertySet = parent.internalPointer()
-        if isinstance(node, SOMcreator.Attribute):
+        node: SOMcreator.SOMPropertySet = parent.internalPointer()
+        if isinstance(node, SOMcreator.SOMProperty):
             return 0
-        count = len(list(node.get_attributes(filter=False)))  # Use get_children() to access children
+        count = len(
+            list(node.get_attributes(filter=False))
+        )  # Use get_children() to access children
         return count
 
     # Creates an index for a given row and column
@@ -422,12 +487,14 @@ class PsetModel(TreeModel):
                 self.beginRemoveRows(QModelIndex(), row, row)
                 self.endRemoveRows()
                 return QModelIndex()
-            item: SOMcreator.PropertySet = self.get_property_sets()[row]
+            item: SOMcreator.SOMPropertySet = self.get_property_sets()[row]
             item.index = self.createIndex(row, column, item)
             return item.index
 
-        node: SOMcreator.PropertySet = parent.internalPointer()
-        children = list(node.get_attributes(filter=False))  # Use get_children() to access children
+        node: SOMcreator.SOMPropertySet = parent.internalPointer()
+        children = list(
+            node.get_attributes(filter=False)
+        )  # Use get_children() to access children
 
         if 0 <= row < len(children):
             child = children[row]
@@ -439,8 +506,10 @@ class PsetModel(TreeModel):
     def parent(self, index: QModelIndex):
         if not index.isValid():
             return QModelIndex()
-        node: SOMcreator.PropertySet | SOMcreator.Attribute = index.internalPointer()
-        if node is None or isinstance(node, SOMcreator.PropertySet):
+        node: SOMcreator.SOMPropertySet | SOMcreator.SOMProperty = (
+            index.internalPointer()
+        )
+        if node is None or isinstance(node, SOMcreator.SOMPropertySet):
             return QModelIndex()
         parent_index: QModelIndex = node.property_set.index
         return parent_index.sibling(parent_index.row(), 0)

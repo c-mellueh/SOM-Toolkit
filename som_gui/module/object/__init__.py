@@ -6,7 +6,7 @@ from . import prop, trigger, ui
 OK = 0
 IDENT_ISSUE = 1
 IDENT_PSET_ISSUE = 3
-IDENT_ATTRIBUTE_ISSUE = 4
+IDENT_PROPERTY_ISSUE = 4
 
 
 def register():

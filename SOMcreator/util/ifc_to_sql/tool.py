@@ -12,14 +12,16 @@ import logging
 import datetime
 
 
-class IfcToSQL():
+class IfcToSQL:
 
     @classmethod
     def set_ifc(cls, ifc: ifcopenshell.file):
         cls.get_properties().ifc = ifc
 
     @classmethod
-    def get_ifc(cls, ) -> ifcopenshell.file:
+    def get_ifc(
+        cls,
+    ) -> ifcopenshell.file:
         return cls.get_properties().ifc
 
     @classmethod
@@ -27,7 +29,7 @@ class IfcToSQL():
         cls.get_properties().main_attribute = (pset_name, attribute_name)
 
     @classmethod
-    def get_main_attribute(cls):
+    def get_main_property(cls):
         return cls.get_properties().main_attribute
 
     @classmethod
@@ -46,18 +48,22 @@ class IfcToSQL():
     def create_tables(cls):
         cursor = tool.ParseSQL.get_cursor()
         # entities
-        cursor.execute('''
+        cursor.execute(
+            """
                   CREATE TABLE IF NOT EXISTS entities
                   ([GUID_ZWC] CHAR(64) PRIMARY KEY,[GUID] CHAR(64),[Name] CHAR(64),[Project] TEXT, [ifc_type] TEXT,[x_pos] DOUBLE,
                   [y_pos] DOUBLE,[z_pos] DOUBLE,[datei] TEXT,[bauteilKlassifikation] TEXT)
-                  ''')
+                  """
+        )
         tool.ParseSQL.commit_sql()
         # issues
-        cursor.execute('''
+        cursor.execute(
+            """
                   CREATE TABLE IF NOT EXISTS attribute
                   ([creation_date] TEXT,[GUID] CHAR(64), [PropertySet] TEXT,[Attribut] TEXT,
                   [Value] TEXT, [Type] TEXT)
-                  ''')
+                  """
+        )
         tool.ParseSQL.commit_sql()
 
     @classmethod
@@ -76,11 +82,13 @@ class IfcToSQL():
         else:
             guids[guid] = file_name
         try:
-            cursor.execute(f'''
+            cursor.execute(
+                f"""
                       INSERT INTO entities (GUID_ZWC,GUID,Name,Project,ifc_type,x_pos,y_pos,z_pos,datei,bauteilKlassifikation)
                             VALUES
                             ('{guid_zwc}','{guid}','{name}','{project}','{ifc_type}',{center[0]},{center[1]},{center[2]},'{file_name}','{bauteil_klasse}')
-                      ''')
+                      """
+            )
             tool.ParseSQL.commit_sql()
         except sqlite3.IntegrityError:
             logging.warning("Integrity Error -> Element allready exists")
@@ -92,9 +100,11 @@ class IfcToSQL():
         cursor = tool.ParseSQL.get_cursor()
         date = datetime.date.today()
 
-        cursor.execute(f'''
+        cursor.execute(
+            f"""
                           INSERT INTO attribute (creation_date, GUID, PropertySet, Attribut, Value, Type)
                                 VALUES
                                 ('{date}','{guid}','{pset_name}','{attribute_name}','{value}','{data_type}')
-                          ''')
+                          """
+        )
         tool.ParseSQL.commit_sql()

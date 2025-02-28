@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 
 from PySide6.QtCore import Qt
 
-from SOMcreator import Aggregation
+from SOMcreator import SOMAggregation
 
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window import tool as aw_tool
@@ -90,7 +90,7 @@ def update_combo_box(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> 
     delete_texts = set(existing_texts).difference(set(wanted_texts))
     if new_texts:
         combo_box.addItems(sorted(new_texts))
-        combo_box.mod().sort(0, Qt.AscendingOrder)
+        combo_box.model().sort(0, Qt.AscendingOrder)
     if delete_texts:
         for delete_text in delete_texts:
             index = combo_box.findText(delete_text)
@@ -152,7 +152,7 @@ def search_aggregation(
     nodes = {
         node
         for node in view.get_nodes_in_scene(scene)
-        if node.aggregation.object == obj
+        if node.aggregation.som_class == obj
     }
     if not nodes:
         text = QCoreApplication.translate("Aggregation", "No Node linked to Object")
@@ -176,10 +176,10 @@ def copy_selected_nodes(view: Type[aw_tool.View]) -> None:
 def paste_nodes(view: Type[aw_tool.View]) -> None:
     scene = view.get_active_scene()
     cursor_pos = view.get_scene_cursor_pos()
-    aggregation_dict: dict[Aggregation, Aggregation] = dict()
+    aggregation_dict: dict[SOMAggregation, SOMAggregation] = dict()
 
     for old_aggregation, local_pos in view.get_copy_list():
-        new_aggregation = Aggregation(old_aggregation.object)
+        new_aggregation = SOMAggregation(old_aggregation.som_class)
         aggregation_dict[old_aggregation] = new_aggregation
         node_pos = cursor_pos + local_pos
         view.add_aggregation_to_import_list(scene, new_aggregation, node_pos)

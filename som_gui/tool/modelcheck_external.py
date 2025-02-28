@@ -51,15 +51,18 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
         menu_bar = list()
         js_text = QCoreApplication.translate("Modelcheck", "Export Javascript Rules")
-        jsf_text = QCoreApplication.translate("Modelcheck", "Export Javascript (fast Check)")
+        jsf_text = QCoreApplication.translate(
+            "Modelcheck", "Export Javascript (fast Check)"
+        )
         ar_text = QCoreApplication.translate("Modelcheck", "Export Attribute Rules")
         csv_text = QCoreApplication.translate("Modelcheck", "Export Modelcheck-CSV")
 
-        desite_menu = [[js_text, cls.export_desite_js],
-                       [jsf_text, cls.export_desite_fast],
-                       [ar_text, cls.export_desite_attribute_table],
-                       [csv_text, cls.export_desite_csv]
-                       ]
+        desite_menu = [
+            [js_text, cls.export_desite_js],
+            [jsf_text, cls.export_desite_fast],
+            [ar_text, cls.export_desite_attribute_table],
+            [csv_text, cls.export_desite_csv],
+        ]
 
         desite_text = QCoreApplication.translate("Modelcheck", "Desite MD Pro")
         menu_bar.append([desite_text, desite_menu])
@@ -86,7 +89,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
                 action.triggered.connect(action_function)
 
     @classmethod
-    def get_main_attribute(cls) -> tuple[str, str]:
+    def get_main_property(cls) -> tuple[str, str]:
         widget = cls.get_window().ui.main_attribute_widget
         return widget.ui.le_pset_name.text(), widget.ui.le_attribute_name.text()
 
@@ -116,14 +119,16 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_desite_fast(cls):
-        pset_name, attribute_name = cls.get_main_attribute()
+        pset_name, attribute_name = cls.get_main_property()
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
         path = tool.Popups.get_save_path(file_format, cls.get_window())
         if not path:
             return
 
         data_dict = cls.get_data_dict()
-        modelcheck.fast_check(tool.Project.get(), pset_name, attribute_name, data_dict, path)
+        modelcheck.fast_check(
+            tool.Project.get(), pset_name, attribute_name, data_dict, path
+        )
 
     @classmethod
     def export_desite_csv(cls):
@@ -136,7 +141,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_desite_js(cls):
-        pset_name, attribute_name = cls.get_main_attribute()
+        pset_name, attribute_name = cls.get_main_property()
 
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
         path = tool.Popups.get_save_path(file_format, cls.get_window())
@@ -144,12 +149,18 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
             return
         data_dict = cls.get_data_dict()
         object_structure = cls._build_tree()
-        modelcheck.export(tool.Project.get(), data_dict, path, main_pset=pset_name,
-                          main_attribute=attribute_name, object_structure=object_structure)
+        modelcheck.export(
+            tool.Project.get(),
+            data_dict,
+            path,
+            main_pset=pset_name,
+            main_attribute=attribute_name,
+            object_structure=object_structure,
+        )
 
     @classmethod
     def export_desite_attribute_table(cls):
-        pset_name, attribute_name = cls.get_main_attribute()
+        pset_name, attribute_name = cls.get_main_property()
 
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
         path = tool.Popups.get_save_path(file_format, cls.get_window())
@@ -158,10 +169,16 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
         data_dict = cls.get_data_dict()
         project = tool.Project.get()
-        modelcheck.export(project, data_dict, path, main_pset=pset_name, main_attribute=attribute_name,
-                          object_structure=cls._build_tree(),
-                          export_type=modelcheck.TABLE_EXPORT)
+        modelcheck.export(
+            project,
+            data_dict,
+            path,
+            main_pset=pset_name,
+            main_attribute=attribute_name,
+            object_structure=cls._build_tree(),
+            export_type=modelcheck.TABLE_EXPORT,
+        )
 
     @classmethod
-    def _build_tree(cls) -> dict[SOMcreator.Object, SOMcreator.Object]:
+    def _build_tree(cls) -> dict[SOMcreator.SOMClass, SOMcreator.SOMClass]:
         return {obj: obj.parent for obj in tool.Project.get().get_objects(filter=False)}

@@ -21,7 +21,7 @@ class ContextMenuDict(TypedDict):
 
 
 class ObjectInfoWidgetProperties:
-    focus_object: SOMcreator.Object = None
+    focus_object: SOMcreator.SOMClass = None
     mode: int = 0  # 1= Info 2 =Copy
     ifc_mappings: list[str] = list()
     name: str = ""
@@ -34,7 +34,7 @@ class ObjectInfoWidgetProperties:
 
 
 class ObjectProperties:
-    active_object: SOMcreator.Object
+    active_object: SOMcreator.SOMClass
     object_info_widget_properties: ObjectInfoWidgetProperties
     context_menu_list: list[ContextMenuDict] = list()
     object_info_widget: ObjectInfoWidget = None

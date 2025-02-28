@@ -6,19 +6,28 @@ from .base import filterable, Hirarchy
 import copy as cp
 
 
-class Object(Hirarchy):
-    _registry: set[Object] = set()
+class SOMClass(Hirarchy):
+    _registry: set[SOMClass] = set()
 
-    def __init__(self, name: str, ident_attrib: [SOMcreator.Attribute, str], uuid: str = None,
-                 ifc_mapping: set[str] | None = None, description: None | str = None,
-                 optional: None | bool = None, abbreviation: None | str = None,
-                 project: None | SOMcreator.Project = None,
-                 filter_matrix: list[list[bool]] = None) -> None:
-        super(Object, self).__init__(name, description, optional, project, filter_matrix)
+    def __init__(
+        self,
+        name: str,
+        identifier_property: SOMcreator.SOMProperty | str,
+        uuid: str = None,
+        ifc_mapping: set[str] | None = None,
+        description: None | str = None,
+        optional: None | bool = None,
+        abbreviation: None | str = None,
+        project: None | SOMcreator.SOMProject = None,
+        filter_matrix: list[list[bool]] = None,
+    ) -> None:
+        super(SOMClass, self).__init__(
+            name, description, optional, project, filter_matrix
+        )
         self._registry.add(self)
-        self._property_sets: list[SOMcreator.PropertySet] = list()
-        self._ident_attrib = ident_attrib
-        self._aggregations: set[SOMcreator.Aggregation] = set()
+        self._property_sets: list[SOMcreator.SOMPropertySet] = list()
+        self._ident_attrib = identifier_property
+        self._aggregations: set[SOMcreator.SOMAggregation] = set()
         self.custom_attribues = {}
 
         self._abbreviation = abbreviation
@@ -36,32 +45,40 @@ class Object(Hirarchy):
     def __str__(self):
         return f"Object {self.name}"
 
-    def __lt__(self, other: Object):
+    def __lt__(self, other: SOMClass):
         return self.ident_value < other.ident_value
 
     def __copy__(self):
-        new_ident_attribute = None
+        new_ident_property = None
         if self.is_concept:
             ident_pset = None
-            new_ident_attribute = str(self.ident_attrib)
+            new_ident_property = str(self.identifier_property)
         else:
-            ident_pset = self.ident_attrib.property_set
+            ident_pset = self.identifier_property.property_set
 
         new_property_sets = set()
         for pset in self.get_property_sets(filter=False):
             new_pset = cp.copy(pset)
             new_property_sets.add(new_pset)
             if pset == ident_pset:
-                new_ident_attribute = new_pset.get_attribute_by_name(self.ident_attrib.name)
+                new_ident_property = new_pset.get_attribute_by_name(
+                    self.identifier_property.name
+                )
 
-        if new_ident_attribute is None:
+        if new_ident_property is None:
             raise ValueError(f"Identifier Attribute could'nt be found")
 
-        new_object = Object(name=self.name, ident_attrib=new_ident_attribute, uuid=str(uuid4()),
-                            ifc_mapping=self.ifc_mapping,
-                            description=self.description, optional=self.is_optional(ignore_hirarchy=True),
-                            abbreviation=self.abbreviation,
-                            project=self.project, filter_matrix=self._filter_matrix)
+        new_object = SOMClass(
+            name=self.name,
+            identifier_property=new_ident_property,
+            uuid=str(uuid4()),
+            ifc_mapping=self.ifc_mapping,
+            description=self.description,
+            optional=self.is_optional(ignore_hirarchy=True),
+            abbreviation=self.abbreviation,
+            project=self.project,
+            filter_matrix=self._filter_matrix,
+        )
 
         for pset in new_property_sets:
             new_object.add_property_set(pset)
@@ -72,7 +89,7 @@ class Object(Hirarchy):
         return new_object
 
     @property
-    def project(self) -> SOMcreator.Project | None:
+    def project(self) -> SOMcreator.SOMProject | None:
         return self._project
 
     @property
@@ -102,18 +119,20 @@ class Object(Hirarchy):
         self._ifc_mapping.remove(value)
 
     @property
-    def aggregations(self) -> set[SOMcreator.Aggregation]:
+    def aggregations(self) -> set[SOMcreator.SOMAggregation]:
         return self._aggregations
 
-    def add_aggregation(self, node: SOMcreator.Aggregation) -> None:
+    def add_aggregation(self, node: SOMcreator.SOMAggregation) -> None:
         self._aggregations.add(node)
 
-    def remove_aggregation(self, node: SOMcreator.Aggregation) -> None:
+    def remove_aggregation(self, node: SOMcreator.SOMAggregation) -> None:
         self._aggregations.remove(node)
 
     @property
-    def inherited_property_sets(self) -> dict[Object, list[SOMcreator.PropertySet]]:
-        def recursion(recursion_property_sets, recursion_obj: Object):
+    def inherited_property_sets(
+        self,
+    ) -> dict[SOMClass, list[SOMcreator.SOMPropertySet]]:
+        def recursion(recursion_property_sets, recursion_obj: SOMClass):
             psets = recursion_obj.get_property_sets(filter=False)
 
             if psets:
@@ -134,17 +153,17 @@ class Object(Hirarchy):
 
     @property
     def is_concept(self) -> bool:
-        if isinstance(self.ident_attrib, SOMcreator.Attribute):
+        if isinstance(self.identifier_property, SOMcreator.SOMProperty):
             return False
         else:
             return True
 
     @property
-    def ident_attrib(self) -> SOMcreator.Attribute | str:
+    def identifier_property(self) -> SOMcreator.SOMProperty | str:
         return self._ident_attrib
 
-    @ident_attrib.setter
-    def ident_attrib(self, value: SOMcreator.Attribute) -> None:
+    @identifier_property.setter
+    def identifier_property(self, value: SOMcreator.SOMProperty) -> None:
         self._ident_attrib = value
 
     # override name setter because of intheritance
@@ -156,20 +175,20 @@ class Object(Hirarchy):
     def name(self, value: str):
         self._name = value
 
-    def add_property_set(self, property_set: SOMcreator.PropertySet) -> None:
+    def add_property_set(self, property_set: SOMcreator.SOMPropertySet) -> None:
         self._property_sets.append(property_set)
-        property_set.object = self
+        property_set.som_class = self
 
-    def remove_property_set(self, property_set: SOMcreator.PropertySet) -> None:
+    def remove_property_set(self, property_set: SOMcreator.SOMPropertySet) -> None:
         if property_set in self._property_sets:
             self._property_sets.remove(property_set)
 
     @filterable
-    def get_property_sets(self) -> Iterator[SOMcreator.PropertySet]:
+    def get_property_sets(self) -> Iterator[SOMcreator.SOMPropertySet]:
         return iter(self._property_sets)
 
     @filterable
-    def get_attributes(self, inherit: bool = False) -> Iterator[SOMcreator.Attribute]:
+    def get_attributes(self, inherit: bool = False) -> Iterator[SOMcreator.SOMProperty]:
         attributes = list()
         for property_set in self.get_property_sets(filter=False):
             attributes += property_set.get_attributes(filter=False)
@@ -178,7 +197,7 @@ class Object(Hirarchy):
         return iter(attributes)
 
     def delete(self, recursive: bool = False) -> None:
-        super(Object, self).delete(recursive)
+        super(SOMClass, self).delete(recursive)
 
         for pset in self.get_property_sets(filter=False):
             pset.delete(recursive, override_ident_deletion=True)
@@ -186,7 +205,9 @@ class Object(Hirarchy):
         for aggregation in self.aggregations.copy():
             aggregation.delete(recursive)
 
-    def get_property_set_by_name(self, property_set_name: str) -> SOMcreator.PropertySet | None:
+    def get_property_set_by_name(
+        self, property_set_name: str
+    ) -> SOMcreator.SOMPropertySet | None:
         for property_set in self.get_property_sets(filter=False):
             if property_set.name == property_set_name:
                 return property_set
@@ -196,4 +217,4 @@ class Object(Hirarchy):
     def ident_value(self) -> str:
         if self.is_concept:
             return str()
-        return ";".join(str(x) for x in self.ident_attrib.value)
+        return ";".join(str(x) for x in self.identifier_property.value)
