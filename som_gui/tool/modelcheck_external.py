@@ -89,7 +89,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
                 action.triggered.connect(action_function)
 
     @classmethod
-    def get_main_attribute(cls) -> tuple[str, str]:
+    def get_main_property(cls) -> tuple[str, str]:
         widget = cls.get_window().ui.main_attribute_widget
         return widget.ui.le_pset_name.text(), widget.ui.le_attribute_name.text()
 
@@ -119,7 +119,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_desite_fast(cls):
-        pset_name, attribute_name = cls.get_main_attribute()
+        pset_name, attribute_name = cls.get_main_property()
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
         path = tool.Popups.get_save_path(file_format, cls.get_window())
         if not path:
@@ -141,7 +141,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_desite_js(cls):
-        pset_name, attribute_name = cls.get_main_attribute()
+        pset_name, attribute_name = cls.get_main_property()
 
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
         path = tool.Popups.get_save_path(file_format, cls.get_window())
@@ -160,7 +160,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_desite_attribute_table(cls):
-        pset_name, attribute_name = cls.get_main_attribute()
+        pset_name, attribute_name = cls.get_main_property()
 
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
         path = tool.Popups.get_save_path(file_format, cls.get_window())

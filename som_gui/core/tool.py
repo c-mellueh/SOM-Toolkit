@@ -330,7 +330,7 @@ class AttributeImport:
     ):
         pass
 
-    def get_main_attribute(
+    def get_main_property(
         self,
     ):
         pass
@@ -1294,7 +1294,7 @@ class IfcImporter:
     def get_ifc_paths(self, widget):
         pass
 
-    def get_main_attribute(self, widget):
+    def get_main_property(self, widget):
         pass
 
     def get_main_pset(self, widget):
@@ -1790,7 +1790,7 @@ class Modelcheck:
     ):
         pass
 
-    def get_main_attribute_name(
+    def get_main_property_name(
         self,
     ):
         pass
@@ -1955,7 +1955,7 @@ class ModelcheckExternal:
     ):
         pass
 
-    def get_main_attribute(
+    def get_main_property(
         self,
     ):
         pass

@@ -82,7 +82,7 @@ def check_element(
     data_dict = modelcheck.get_data_dict()
     main_pset_name, main_attribute_name = (
         modelcheck.get_main_pset_name(),
-        modelcheck.get_main_attribute_name(),
+        modelcheck.get_main_property_name(),
     )
     main_attribute_value = modelcheck.get_ident_value(element)
     main_attribute_value = "" if main_attribute_value is None else main_attribute_value

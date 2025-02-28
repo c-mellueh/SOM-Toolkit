@@ -45,14 +45,14 @@ class ExportExcel:
     @classmethod
     def get_ident_pset_name(cls) -> str:
         if cls.get_properties().ident_pset_name is None:
-            pset_name, attribute_name = cls.get_project().get_main_attribute()
+            pset_name, attribute_name = cls.get_project().get_main_property()
             cls.get_properties().ident_pset_name = pset_name
         return cls.get_properties().ident_pset_name
 
     @classmethod
     def get_ident_property_name(cls) -> str:
         if cls.get_properties().ident_property_name is None:
-            pset_name, attribute_name = cls.get_project().get_main_attribute()
+            pset_name, attribute_name = cls.get_project().get_main_property()
             cls.get_properties().ident_property_name = attribute_name
         return cls.get_properties().ident_property_name
 

@@ -11,8 +11,15 @@ if TYPE_CHECKING:
     from SOMcreator.util.ifc_to_sql.tool import IfcToSQL
 
 
-def import_ifc_files(proj: Project, main_pset_name, main_attribute_name, ifc_paths: list[os.PathLike], db_path,
-                     parse_sql: Type[ParseSQL], ifctosql: Type[IfcToSQL]):
+def import_ifc_files(
+    proj: Project,
+    main_pset_name,
+    main_attribute_name,
+    ifc_paths: list[os.PathLike],
+    db_path,
+    parse_sql: Type[ParseSQL],
+    ifctosql: Type[IfcToSQL],
+):
     db_path = parse_sql.create_database(db_path, ifctosql.create_tables)
     ifctosql.set_project_name(proj.name)
     parse_sql.connect_to_data_base(db_path)
@@ -28,7 +35,7 @@ def import_ifc_files(proj: Project, main_pset_name, main_attribute_name, ifc_pat
 
 def _import_entities(ifctosql: Type[IfcToSQL]):
     ifc = ifctosql.get_ifc()
-    pset_name, attribute_name = ifctosql.get_main_attribute()
+    pset_name, attribute_name = ifctosql.get_main_property()
     for entity in ifc.by_type("IfcObject"):
         identifier = element.get_pset(entity, pset_name, attribute_name)
         if not identifier:
@@ -43,4 +50,6 @@ def _import_attributes(entity: ifcopenshell.entity_instance, ifctosql: Type[IfcT
         if pset_name == "Identity Data":
             continue
         for attribute_name, value in attribute_dict.items():
-            ifctosql.db_create_attribute(entity, pset_name, attribute_name, value, "Test")
+            ifctosql.db_create_attribute(
+                entity, pset_name, attribute_name, value, "Test"
+            )

@@ -116,7 +116,7 @@ class Project(object):
     def get_predefined_psets(self) -> Iterator[SOMcreator.SOMPropertySet]:
         return filter(lambda p: p.is_predefined, self.get_property_sets(filter=False))
 
-    def get_main_attribute(self) -> tuple[str, str]:
+    def get_main_property(self) -> tuple[str, str]:
         ident_properties = dict()
         ident_psets = dict()
         for obj in self.get_objects(filter=False):

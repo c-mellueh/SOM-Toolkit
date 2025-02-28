@@ -39,7 +39,7 @@ def open_window(
 ):
     proj = project.get()
     window = modelcheck_window.create_window()
-    main_pset_name, main_attribute_name = proj.get_main_attribute()
+    main_pset_name, main_attribute_name = proj.get_main_property()
     util.fill_main_attribute(
         window.ui.main_attribute_widget, main_pset_name, main_attribute_name
     )

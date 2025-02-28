@@ -477,7 +477,7 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         cls.get_properties().main_attribute = main_attribute_name
 
     @classmethod
-    def get_main_attribute(cls) -> str:
+    def get_main_property(cls) -> str:
         return cls.get_properties().main_attribute
 
     @classmethod

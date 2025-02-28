@@ -514,7 +514,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             cls.get_main_pset_name() if main_pset_name is None else main_pset_name
         )
         attribute_name = (
-            cls.get_main_attribute_name()
+            cls.get_main_property_name()
             if main_attribute_name is None
             else main_attribute_name
         )
@@ -586,7 +586,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         cls.get_properties().ifc_name = value
 
     @classmethod
-    def get_main_attribute_name(cls):
+    def get_main_property_name(cls):
         return cls.get_properties().main_attribute_name
 
     @classmethod
