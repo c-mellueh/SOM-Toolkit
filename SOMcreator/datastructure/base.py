@@ -4,23 +4,27 @@ import copy
 
 from SOMcreator.constants import value_constants
 import SOMcreator
-from typing import Iterator, Callable
+from typing import Iterator, Callable,TypeVar, TYPE_CHECKING  	
 import logging
 import SOMcreator.datastructure.som_json
+from functools import wraps
+if TYPE_CHECKING:
+    import SOMcreator
+    HIRARCHY_TYPE = TypeVar('T',SOMcreator.SOMProject,SOMcreator.SOMClass,SOMcreator.SOMAggregation,SOMcreator.SOMProperty,SOMcreator.SOMPropertySet)
 
 FILTER_KEYWORD = "filter"
 
-
-def filterable(func: Callable):
+def filterable(func: Callable[..., Iterator[HIRARCHY_TYPE]]) -> Callable[...,Iterator[HIRARCHY_TYPE]]:
     """decorator function that filters list output of function by  phase and usecase"""
 
-    def inner(self, *args, **kwargs):
+    @wraps(func)
+    def inner(self, *args, **kwargs) ->Iterator[HIRARCHY_TYPE]:
         filter_values = True
         if FILTER_KEYWORD in kwargs:
             filter_values = kwargs[FILTER_KEYWORD]
             kwargs.pop(FILTER_KEYWORD)
 
-        result: list[Hirarchy | SOMcreator.SOMProject] = func(self, *args, **kwargs)
+        result = func(self, *args, **kwargs)
         if not filter_values:
             return result
 
