@@ -70,6 +70,6 @@ def calculate(proj: SOMcreator.SOMProject):
             continue
         parent = uuid_dict.get(uuid)
         if parent is None or not isinstance(parent,SOMcreator.SOMAggregation):
-            logging.warning(f"Aggregation parent with uuid '{uuid}' not found")
+            logging.warning(f"Aggregation '{aggregation.name}'parent with uuid '{uuid}' not found")
             continue
         parent.add_child(aggregation, connection_type)

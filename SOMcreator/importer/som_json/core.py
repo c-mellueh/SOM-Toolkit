@@ -96,6 +96,7 @@ def get_basics(
     description = element_dict[DESCRIPTION]
     optional = element_dict[OPTIONAL]
     parent = element_dict[PARENT]
+    parent = None if parent == "None" else parent
     matrix = load_filter_matrix(proj, element_dict, guid)
     return name, description, optional, parent, matrix
 
