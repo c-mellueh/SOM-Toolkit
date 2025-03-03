@@ -1,6 +1,6 @@
 from __future__ import annotations
 import SOMcreator
-
+import SOMcreator.importer.som_json
 
 def _find_parent(uuid_dict, element):
     for test_el, identifier in SOMcreator.importer.som_json.parent_dict.items():

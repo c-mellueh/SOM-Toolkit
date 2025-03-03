@@ -4,19 +4,19 @@ from SOMcreator.importer.som_json import core
 from SOMcreator.constants.value_constants import OLD_DATATYPE_DICT
 from SOMcreator.importer import som_json
 from typing import TYPE_CHECKING
-
 from SOMcreator.datastructure.som_json import (
     CHILD_INHERITS_VALUE,
     DATA_TYPE,
     REVIT_MAPPING,
     VALUE,
     VALUE_TYPE,
+    AttributeDict
 )
 
 
 def load(
     proj: SOMcreator.SOMProject,
-    attribute_dict: dict,
+    attribute_dict: AttributeDict,
     identifier: str,
     property_set: SOMcreator.SOMPropertySet,
 ) -> None:
@@ -48,4 +48,4 @@ def load(
         filter_matrix=filter_matrix,
     )
     som_json.parent_dict[attribute] = parent
-    SOMcreator.importer.som_json.attribute_uuid_dict[identifier] = attribute
+    som_json.attribute_uuid_dict[identifier] = attribute

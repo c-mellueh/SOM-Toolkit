@@ -10,6 +10,7 @@ from .base import BaseClass, filterable
 
 if TYPE_CHECKING:
     from .base import BASE_CLASSES, BASE_TYPE
+    from .som_json import MainDict
 
 
 class SOMProject(object):
@@ -34,7 +35,7 @@ class SOMProject(object):
         self.aggregation_pset = ""
         self._description = ""
         self.plugin_dict = dict()
-        self.import_dict = dict()
+        self.import_dict:MainDict|dict = dict()
 
         if phases is None:
             self._phases = [

@@ -8,7 +8,6 @@ from .datastructure import (
     Phase,
     SOMProject,
 )
-
 from .exporter import desite
 from .util.project import merge_projects
 from .exporter.excel.core import export as export_excel

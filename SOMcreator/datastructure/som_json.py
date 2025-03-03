@@ -51,7 +51,7 @@ class AttributeDict(StandardDict):
 
 
 class AggregationDict(StandardDict):
-    Object: str | None
+    Object: str
     connection: int
 
 

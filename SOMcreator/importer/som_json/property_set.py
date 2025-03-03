@@ -4,7 +4,7 @@ from SOMcreator.importer.som_json import core
 from SOMcreator.datastructure.som_json import ATTRIBUTES
 from SOMcreator.importer.som_json import attribute
 from typing import TYPE_CHECKING
-
+import SOMcreator.importer.som_json
 if TYPE_CHECKING:
     from SOMcreator.datastructure.som_json import PropertySetDict
     from SOMcreator import SOMProject

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Type,TypeVar
 
 import SOMcreator
+import SOMcreator.importer.som_json
 from SOMcreator.datastructure.som_json import (
     ACTIVE_PHASES,
     ACTIVE_USECASES,
@@ -44,20 +45,23 @@ def _load_filter_matrix(
 
     return filter_matrix
 
-
 def _load_single_filter(
     current_state: str | int | None,
-    value_list: list[SOMcreator.UseCase] | list[SOMcreator.Phase],
-):
+    value_list: list,
+) -> tuple:
     # deprecated usecases were defined by name not int
+    current_filter = None
     if isinstance(current_state, str):
-        current_state = {value.name: value for value in value_list}.get(current_state)
+        filter_dict = {value.name: value for value in value_list}
+        current_filter = filter_dict.get(current_state)
     elif isinstance(current_state, int):
-        current_state = value_list[current_state]
-    if current_state is None:
-        current_state = value_list[0]
+        current_filter = value_list[current_state]
+    elif isinstance(current_state,SOMcreator.UseCase|SOMcreator.Phase):
+        current_filter = current_state
+    if current_filter is None:
+        current_filter = value_list[0]
 
-    return current_state, value_list
+    return current_filter, value_list
 
 
 def _load_usecases(
@@ -89,7 +93,7 @@ def _load_phases(project_dict: ProjectDict) -> tuple[list[int], list[SOMcreator.
     return [phase_list.index(phase)], phase_list
 
 
-def load(cls: Type[SOMProject], main_dict: MainDict) -> tuple[SOMProject, dict]:
+def load(cls: Type[SOMProject], main_dict: MainDict) -> tuple[SOMProject, ProjectDict]:
     project_dict: ProjectDict = main_dict.get(PROJECT)
     core.remove_part_of_dict(PROJECT)
 

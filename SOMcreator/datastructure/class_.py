@@ -160,11 +160,11 @@ class SOMClass(BaseClass):
             return True
 
     @property
-    def identifier_property(self) -> SOMcreator.SOMProperty | str:
+    def identifier_property(self) -> SOMcreator.SOMProperty | str|None:
         return self._ident_attrib
 
     @identifier_property.setter
-    def identifier_property(self, value: SOMcreator.SOMProperty|str) -> None:
+    def identifier_property(self, value: SOMcreator.SOMProperty|str|None) -> None:
         self._ident_attrib = value
 
     # override name setter because of intheritance
