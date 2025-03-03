@@ -150,12 +150,12 @@ def attribute_clicked(
     attribute_table: Type[tool.AttributeTable],
     property_set_window: Type[tool.PropertySetWindow],
 ):
-    active_attribute = attribute_table.get_attribute_from_item(item)
+    active_attribute = attribute_table.get_property_from_item(item)
     window = item.tableWidget().window()
-    activate_attribute(active_attribute, window, property_set_window)
+    activate_property(active_attribute, window, property_set_window)
 
 
-def activate_attribute(
+def activate_property(
     active_attribute: SOMcreator.SOMProperty,
     window,
     property_set_window: Type[tool.PropertySetWindow],

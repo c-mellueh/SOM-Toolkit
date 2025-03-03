@@ -721,7 +721,7 @@ class AttributeTable:
     def format_row_value(self, item, value):
         pass
 
-    def get_attribute_from_item(self, item):
+    def get_property_from_item(self, item):
         pass
 
     def get_attribute_table_header_names(

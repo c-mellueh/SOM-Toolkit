@@ -84,11 +84,13 @@ def toggle_optionality(
     :param attribute_table:
     :return:
     """
-    attribute = attribute_table.get_attribute_from_item(item)
+    som_property = attribute_table.get_property_from_item(item)
+    if not som_property:
+        return
     if not item.column() == 4:
         return
     cs = True if item.checkState() == Qt.CheckState.Checked else False
-    attribute.set_optional(cs)
+    som_property.set_optional(cs)
 
 
 def create_mime_data(
@@ -99,7 +101,7 @@ def create_mime_data(
     """
     create MimeData used for Dropping Attributes into different Tables
     """
-    objects = {attribute_table.get_attribute_from_item(item) for item in items}
+    objects = {attribute_table.get_property_from_item(item) for item in items}
     mime_data.setProperty(MIME_DATA_KEY, objects)
     return mime_data
 
@@ -117,7 +119,7 @@ def drop_event(
     """
 
     # Check if move is inside the same window
-    source_table: ui.AttributeTable = event.source()
+    source_table: ui.AttributeTable = event.source()  # type: ignore
     if source_table == target_table:
         event.accept()
         return
@@ -193,14 +195,16 @@ def activate_item(
     Activate Attribute based on QTableWidgetItem
     :return:
     """
-    active_attribute = attribute_table.get_attribute_from_item(item)
+    active_property = attribute_table.get_property_from_item(item)
+    if not active_property:
+        return
     active_property_set = property_set.get_active_property_set()
     # create Window or activate it
     window = property_set_window_core.open_pset_window(
         active_property_set, property_set_window, attribute_table
     )
-    property_set_window_core.activate_attribute(
-        active_attribute, window, property_set_window
+    property_set_window_core.activate_property(
+        active_property, window, property_set_window
     )
 
 
