@@ -153,11 +153,13 @@ def activate_object_in_compare_tree(
     """
     attribute_compare.clear_table(attribute_compare.get_info_table(widget))
     attribute_compare.clear_table(attribute_compare.get_value_table(widget))
-    obj = attribute_compare.get_selected_entity(
+    cls = attribute_compare.get_selected_entity(
         attribute_compare.get_object_tree(widget)
     )
+    if not isinstance(cls,SOMcreator.SOMClass):
+        return
     tree = attribute_compare.get_pset_tree(widget)
-    pset_list = attribute_compare.get_pset_list(obj)
+    pset_list = attribute_compare.get_pset_list(cls)
     attribute_compare.fill_pset_tree(tree, pset_list, add_missing=True)
     attribute_compare.add_attributes_to_pset_tree(tree, True)
     root = tree.invisibleRootItem()
@@ -177,15 +179,16 @@ def pset_tree_selection_changed(
     attribute_compare.style_table(attribute_compare.get_value_table(widget))
     table = attribute_compare.get_info_table(widget)
     attribute_compare.clear_table(table)
+    target = entity0 or entity1
 
-    if isinstance(entity0 or entity1, SOMcreator.SOMPropertySet):
+    if isinstance(target, SOMcreator.SOMPropertySet):
         attribute_compare.fill_value_table_pset(widget)
         attribute_compare.fill_table(
             table, attribute_compare.get_pset_info_list(), (entity0, entity1)
         )
-    else:
+    elif isinstance(target,SOMcreator.SOMProperty):
         attribute_compare.fill_value_table(
-            attribute_compare.get_value_table(widget), entity0 or entity1
+            attribute_compare.get_value_table(widget), target
         )
         attribute_compare.fill_table(
             table, attribute_compare.get_attribute_info_list(), (entity0, entity1)
@@ -237,7 +240,7 @@ def update_unit_combobox(
     cb: ui.UnitComboBox, attribute: Type[tool.Attribute], appdata: Type[tool.Appdata]
 ):
     logging.debug(f"Update unit combobox")
-    model: QStandardItemModel = cb.model()
+    model: QStandardItemModel = cb.mod
     tree_view = cb.tree_view
     allowed_units = attribute.get_allowed_units(appdata)
     allowed_prefixes = attribute.get_allowed_unit_prefixes(appdata)

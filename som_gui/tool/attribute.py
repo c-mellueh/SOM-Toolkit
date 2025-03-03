@@ -549,7 +549,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def fill_pset_tree(
         cls,
         tree: QTreeWidget,
-        pset_list: list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]],
+        pset_list: list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]]|None,
         add_missing: bool = True,
     ) -> None:
         cls.clear_tree(tree)
@@ -593,7 +593,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                     item.addChild(attribute_item)
 
     @classmethod
-    def fill_value_table(cls, table: QTableWidget, attribute: SOMcreator.SOMProperty):
+    def fill_value_table(cls, table: QTableWidget, attribute: SOMcreator.SOMProperty|None):
         cls.clear_table(table)
         if attribute is None:
             return
@@ -1133,7 +1133,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return data
 
     @classmethod
-    def get_entities_from_item(cls, item: QTreeWidgetItem) -> tuple[
+    def get_entities_from_item(cls, item: QTreeWidgetItem|None) -> tuple[
         SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
         SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
     ]:

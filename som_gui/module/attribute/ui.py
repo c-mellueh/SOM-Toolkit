@@ -47,7 +47,7 @@ class UnitComboBox(QComboBox):
         super().__init__(*args, **kwargs)
         self.tree_view = QTreeView()
         self.setView(self.tree_view)
-        self.mod = QStandardItemModel()
+        self.mod:QStandardItemModel = QStandardItemModel()
         self.setModel(self.mod)
         self.tree_view.header().setVisible(False)
         self.tree_view.expanded.connect(lambda: setattr(self, "is_locked", True))
