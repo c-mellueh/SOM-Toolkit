@@ -99,7 +99,7 @@ class ExportExcel:
             sheet.cell(1, column).value = text
 
         row = 1
-        for row, obj in enumerate(sorted(project.get_objects(filter=True)), start=2):
+        for row, obj in enumerate(sorted(project.get_classes(filter=True)), start=2):
             for column, getter_function in enumerate(getter_functions, start=1):
                 sheet.cell(row, column).value = getter_function(obj)
                 if obj.is_optional(ignore_hirarchy=False):
@@ -252,53 +252,58 @@ class ExportExcel:
                 sheet.cell(row, column).fill = fill
 
     @classmethod
-    def autoadjust_column_widths(cls, sheet: Worksheet,extra_width = 0) -> None:
+    def autoadjust_column_widths(cls, sheet: Worksheet, extra_width=0) -> None:
         for i in range(len(list(sheet.columns))):
             column_letter = get_column_letter(i + 1)
             column = sheet[column_letter]
-            width = max(
-                [len(cell.value) for cell in column if cell.value is not None],
-                default=2,
-            )+extra_width
+            width = (
+                max(
+                    [len(cell.value) for cell in column if cell.value is not None],
+                    default=2,
+                )
+                + extra_width
+            )
             sheet.column_dimensions[column_letter].width = width
 
     @classmethod
-    def create_attribute_table(cls,classes:list[SOMcreator.SOMClass],sheet:Worksheet):
-        property_sets:dict[str,dict[str,int]]  = dict()
-        sheet.cell(1,1).value = "PropertySet"
-        sheet.cell(1,2).value = "Property"
+    def create_attribute_table(
+        cls, classes: list[SOMcreator.SOMClass], sheet: Worksheet
+    ):
+        property_sets: dict[str, dict[str, int]] = dict()
+        sheet.cell(1, 1).value = "PropertySet"
+        sheet.cell(1, 2).value = "Property"
 
         for som_class in classes:
             for pset in som_class.get_property_sets(filter=True):
                 if pset.name not in property_sets:
-                    property_sets[pset.name]= dict()
+                    property_sets[pset.name] = dict()
                 for som_property in pset.get_attributes(filter=True):
                     if som_property.name not in property_sets[pset.name]:
                         property_sets[pset.name][som_property.name] = None
-        
+
         row_index = 2
-        for  pset_name,property_list in sorted(property_sets.items()):
+        for pset_name, property_list in sorted(property_sets.items()):
             for property_name in sorted(property_list.keys()):
-                sheet.cell(row_index,1).value = pset_name
-                sheet.cell(row_index,2).value = property_name
+                sheet.cell(row_index, 1).value = pset_name
+                sheet.cell(row_index, 2).value = property_name
                 property_sets[pset_name][property_name] = row_index
-                row_index+=1
-        
+                row_index += 1
+
         col_index = 3
-        for row in range(2,row_index-1):
+        for row in range(2, row_index - 1):
             for col in range(len(classes)):
-                sheet.cell(row+1,col+3).value = "✖️"
-        
-        for col_index,som_class in enumerate(sorted(classes,key=lambda o:o.name),start=3):
-            sheet.cell(1,col_index).value =som_class.name
+                sheet.cell(row + 1, col + 3).value = "✖️"
+
+        for col_index, som_class in enumerate(
+            sorted(classes, key=lambda o: o.name), start=3
+        ):
+            sheet.cell(1, col_index).value = som_class.name
             for pset in som_class.get_property_sets(filter=True):
                 for som_property in pset.get_attributes(filter=True):
                     row = property_sets[pset.name][som_property.name]
-                    sheet.cell(row,col_index).value = "✔️"
-        
+                    sheet.cell(row, col_index).value = "✔️"
 
-        table_range = (
-            f"{sheet.cell(1, 1).coordinate}:{sheet.cell(row_index-1, col_index).coordinate}" )
+        table_range = f"{sheet.cell(1, 1).coordinate}:{sheet.cell(row_index-1, col_index).coordinate}"
         table = Table(displayName="Attribute_Mapping", ref=table_range)
         style = TableStyleInfo(
             name=TABLE_STYLE,
@@ -309,5 +314,4 @@ class ExportExcel:
         )
         table.tableStyleInfo = style
         sheet.add_table(table)
-        cls.autoadjust_column_widths(sheet,5)        
-        
+        cls.autoadjust_column_widths(sheet, 5)

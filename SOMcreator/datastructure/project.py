@@ -63,8 +63,8 @@ class SOMProject(object):
             self._items.remove(item)
 
     @filterable
-    def get_root_objects(self) -> Iterator[SOMcreator.SOMClass]:
-        return filter(lambda o: o.parent is None, self.get_objects(filter=False))
+    def get_root_classes(self) -> Iterator[SOMcreator.SOMClass]:
+        return filter(lambda o: o.parent is None, self.get_classes(filter=False))
 
     # Item Getter Methods
     @filterable
@@ -91,7 +91,7 @@ class SOMProject(object):
         )
 
     @filterable
-    def get_objects(self) -> Iterator[SOMcreator.SOMClass]:
+    def get_classes(self) -> Iterator[SOMcreator.SOMClass]:
         return filter(lambda item: isinstance(item, SOMcreator.SOMClass), self._items)
 
     @filterable
@@ -101,7 +101,7 @@ class SOMProject(object):
         )
 
     @filterable
-    def get_attributes(self) -> Iterator[SOMcreator.SOMProperty]:
+    def get_properties(self) -> Iterator[SOMcreator.SOMProperty]:
         return filter(
             lambda item: isinstance(item, SOMcreator.SOMProperty), self._items
         )
@@ -119,7 +119,7 @@ class SOMProject(object):
     def get_main_property(self) -> tuple[str, str]:
         ident_properties = dict()
         ident_psets = dict()
-        for obj in self.get_objects(filter=False):
+        for obj in self.get_classes(filter=False):
             if not isinstance(obj.ident_attrib, SOMcreator.SOMProperty):
                 continue
             ident_pset = obj.ident_attrib.property_set.name
@@ -139,15 +139,15 @@ class SOMProject(object):
             return "", ""
 
     def get_object_by_identifier(self, identifier: str) -> SOMcreator.SOMClass | None:
-        return {obj.ident_value: obj for obj in self.get_objects(filter=False)}.get(
+        return {obj.ident_value: obj for obj in self.get_classes(filter=False)}.get(
             identifier
         )
 
     def get_uuid_dict(self):
         pset_dict = {pset.uuid: pset for pset in self.get_property_sets(filter=False)}
-        object_dict = {obj.uuid: obj for obj in self.get_objects(filter=False)}
+        object_dict = {obj.uuid: obj for obj in self.get_classes(filter=False)}
         attribute_dict = {
-            attribute.uuid: attribute for attribute in self.get_attributes(filter=False)
+            attribute.uuid: attribute for attribute in self.get_properties(filter=False)
         }
         aggregation_dict = {
             aggreg.uuid: aggreg for aggreg in self.get_aggregations(filter=False)

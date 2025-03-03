@@ -112,7 +112,7 @@ class Mapping(som_gui.core.tool.Mapping):
                 )
             if isinstance(entity, SOMcreator.SOMPropertySet):
                 cls.update_tree(
-                    set(entity.get_attributes(filter=True)), class_item, tree
+                    set(entity.get_properties(filter=True)), class_item, tree
                 )
 
     @classmethod

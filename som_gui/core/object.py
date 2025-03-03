@@ -9,6 +9,7 @@ from PySide6.QtGui import QPalette
 import SOMcreator
 from som_gui import tool
 from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
+
 if TYPE_CHECKING:
     from som_gui.tool import Object, Project, Search, PropertySet, MainWindow
 
@@ -17,10 +18,11 @@ if TYPE_CHECKING:
 
 import uuid
 
+
 def init_main_window(
     object_tool: Type[tool.Object], main_window: Type[tool.MainWindow]
 ) -> None:
-    
+
     # Build Object Tree
     tree = object_tool.get_object_tree()
     tree.setColumnCount(0)
@@ -41,11 +43,11 @@ def init_main_window(
         object_tool.set_object_optional_by_tree_item_state,
     )
 
-    #Add Object Activate Functions
+    # Add Object Activate Functions
     object_tool.add_object_activate_function(
         lambda o: main_window.get_object_name_label().setText(o.name)
     )
-    #Add Creation Checks
+    # Add Creation Checks
     object_tool.add_object_creation_check(
         "ident_property_name", object_tool.check_if_ident_property_is_valid
     )
@@ -80,7 +82,7 @@ def search_object(
     search_tool: Type[Search], object_tool: Type[Object], project: Type[tool.Project]
 ):
     """Open Search Window and select Object afterwards"""
-    obj = search_tool.search_object(list(project.get().get_objects(filter=True)))
+    obj = search_tool.search_object(list(project.get().get_classes(filter=True)))
     object_tool.select_object(obj)
 
 
@@ -96,26 +98,31 @@ def resize_columns(object_tool: Type[Object]):
 
 
 def create_object_info_widget(
-    mode: int, object_tool: Type[Object],predefined_property_set:Type[tool.PredefinedPropertySet], util: Type[tool.Util]
+    mode: int,
+    object_tool: Type[Object],
+    predefined_property_set: Type[tool.PredefinedPropertySet],
+    util: Type[tool.Util],
 ):
     """
-    Opens Object Info Widget can be used for creation (mode 0), modification (mode 1) or copying (mode 2)   
+    Opens Object Info Widget can be used for creation (mode 0), modification (mode 1) or copying (mode 2)
     """
     logging.debug(f"Create Object Info Widget Mode= {mode}")
-    title = util.get_window_title(QCoreApplication.translate("ObjectInfo", "Object Info"))
+    title = util.get_window_title(
+        QCoreApplication.translate("ObjectInfo", "Object Info")
+    )
     dialog = object_tool.oi_create_dialog(title)
 
     predefined_psets = predefined_property_set.get_property_sets()
-    object_tool.oi_connect_dialog(dialog,predefined_psets)
+    object_tool.oi_connect_dialog(dialog, predefined_psets)
     object_tool.oi_fill_properties(mode=mode)
     object_tool.oi_update_dialog(dialog)
     if mode == 0:
         names = [p.name for p in predefined_psets]
-        object_tool.create_completer(names,dialog.widget.combo_box_pset)
+        object_tool.create_completer(names, dialog.widget.combo_box_pset)
     if dialog.exec():
         if mode == 0:
             object_tool.trigger_object_creation()
-        elif mode ==1:
+        elif mode == 1:
             object_tool.trigger_object_modification()
         elif mode == 2:
             object_tool.trigger_object_copy()
@@ -136,6 +143,7 @@ def object_info_refresh(object_tool: Type[Object]):
     else:
         object_tool.oi_set_ident_value_color(QPalette().color(QPalette.Text).name())
     object_tool.oi_change_visibility_identifiers(group)
+
 
 def object_info_add_ifc(object_tool: Type[Object]):
     object_tool.add_ifc_mapping("")
@@ -175,7 +183,7 @@ def load_context_menus(object_tool: Type[Object], util: Type[tool.Util]):
     )
     object_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Object", "Info"),
-        lambda:object_tool.trigger_object_info_widget(1),
+        lambda: object_tool.trigger_object_info_widget(1),
         True,
         False,
     )
@@ -232,11 +240,13 @@ def item_selection_changed(
         property_set_tool.update_completer(obj)
         property_set_tool.set_enabled(True)
         property_set_tool.trigger_table_repaint()
-        
-        #reselect the same pset that is allready selected
+
+        # reselect the same pset that is allready selected
         if not selected_pset:
             return
-        pset = {p.name: p for p in property_set_tool.get_property_sets()}.get(selected_pset.name)
+        pset = {p.name: p for p in property_set_tool.get_property_sets()}.get(
+            selected_pset.name
+        )
         if pset:
             property_set_tool.select_property_set(pset)
     else:
@@ -271,19 +281,21 @@ def item_dropped_on(pos: QPoint, object_tool: Type[Object]):
             obj.parent = dropped_on_object
 
 
-def modify_object(object_tool:Type[tool.Object]):
+def modify_object(object_tool: Type[tool.Object]):
     data_dict = object_tool.oi_get_values()
     focus_object = object_tool.oi_get_focus_object()
     result = object_tool.change_object_info(focus_object, data_dict)
     if object_tool.handle_attribute_issue(result):
         object_tool.fill_object_entry(focus_object)
 
-def copy_object(object_tool:Type[tool.Object]):
+
+def copy_object(object_tool: Type[tool.Object]):
     data_dict = object_tool.oi_get_values()
     focus_object = object_tool.oi_get_focus_object()
     result, focus_object = object_tool.copy_object(focus_object, data_dict)
     if object_tool.handle_attribute_issue(result):
         object_tool.fill_object_entry(focus_object)
+
 
 def create_object(
     object_tool: Type[Object],
@@ -291,13 +303,17 @@ def create_object(
     property_set: Type[tool.PropertySet],
     predefined_property_set: Type[tool.PredefinedPropertySet],
     popup: Type[tool.Popups],
-    util:Type[tool.Util]
+    util: Type[tool.Util],
 ):
-    from som_gui.module.object import IDENT_ISSUE,IDENT_PROPERTY_ISSUE,IDENT_PSET_ISSUE
+    from som_gui.module.object import (
+        IDENT_ISSUE,
+        IDENT_PROPERTY_ISSUE,
+        IDENT_PSET_ISSUE,
+    )
 
     data_dict = object_tool.oi_get_values()
-    predefined_psets  = {p.name: p for p in predefined_property_set.get_property_sets()}
-    
+    predefined_psets = {p.name: p for p in predefined_property_set.get_property_sets()}
+
     name = data_dict["name"]
     is_group = data_dict["is_group"]
     abbreviation = data_dict.get("abbreviation")
@@ -305,7 +321,7 @@ def create_object(
     identifier = data_dict.get("ident_value")
     pset_name = data_dict.get("ident_pset_name")
     attribute_name = data_dict.get("ident_property_name")
-    
+
     if is_group:
         ident = str(uuid.uuid4())
         som_class = SOMcreator.SOMClass(
@@ -317,7 +333,7 @@ def create_object(
 
         parent = None
         if pset_name in predefined_psets:
-            connect_result = popup.request_property_set_merge(pset_name,1)
+            connect_result = popup.request_property_set_merge(pset_name, 1)
             if connect_result is None:
                 return
             if connect_result:
@@ -325,7 +341,7 @@ def create_object(
 
         pset = property_set.create_property_set(pset_name, None, parent)
         ident_property: SOMcreator.SOMProperty = {
-            a.name: a for a in pset.get_attributes(filter=False)
+            a.name: a for a in pset.get_properties(filter=False)
         }.get(attribute_name)
 
         if not ident_property:
@@ -337,5 +353,5 @@ def create_object(
             )
         else:
             ident_property.value = [identifier]
-        object_tool.create_object(data_dict,pset,ident_property)
+        object_tool.create_object(data_dict, pset, ident_property)
         refresh_object_tree(object_tool, project)

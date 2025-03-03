@@ -32,7 +32,7 @@ def transform_objects_to_classes(
     Adds objects and Properties to bsdd.Dictionary
     """
     predefined_attributes = [
-        a for p in predefined_psets for a in p.get_attributes(filter=True)
+        a for p in predefined_psets for a in p.get_properties(filter=True)
     ]
     attributes = _get_all_attributes(objects)
     dictionary.Properties, all_class_properties = _create_properties(

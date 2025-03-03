@@ -19,7 +19,7 @@ def merge_projects(
     :return:
     """
     existing_identifiers = {
-        o.ident_value for o in existing_project.get_objects(filter=False)
+        o.ident_value for o in existing_project.get_classes(filter=False)
     }
     import_predef_pset_dict = {
         p: p for p in import_project.get_predefined_psets(filter=False)
@@ -41,7 +41,7 @@ def merge_projects(
         else:
             import_predef_pset_dict[import_predef_pset] = new_pset
 
-    for obj in import_project.get_objects(filter=False):
+    for obj in import_project.get_classes(filter=False):
         if obj.ident_value not in existing_identifiers:
             _import_object(
                 existing_project,
@@ -158,7 +158,7 @@ def _import_pset(
 
     if parent is not None:
         property_set.parent = parent
-        for attribute in property_set.get_attributes(filter=False):
+        for attribute in property_set.get_properties(filter=False):
             _import_attribute(
                 existing_project,
                 import_project,
@@ -168,7 +168,7 @@ def _import_pset(
                 parent,
             )
     else:
-        for attribute in property_set.get_attributes(filter=False):
+        for attribute in property_set.get_properties(filter=False):
             _import_attribute(
                 existing_project,
                 import_project,
@@ -188,7 +188,7 @@ def _import_attribute(
 ):
     if parent_pset:
         parent_attribute = {
-            a.name: a for a in parent_pset.get_attributes(filter=False)
+            a.name: a for a in parent_pset.get_properties(filter=False)
         }.get(attribute.name)
         if parent_attribute:
             attribute.parent = parent_attribute

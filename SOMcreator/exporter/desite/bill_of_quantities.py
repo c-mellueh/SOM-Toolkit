@@ -9,7 +9,7 @@ def get_distinct_attributes(property_sets: list[SOMcreator.SOMPropertySet]):
     for property_set in property_sets:
         attribute: SOMcreator.SOMProperty
         attribute_names += [
-            attribute.name for attribute in property_set.get_attributes(filter=True)
+            attribute.name for attribute in property_set.get_properties(filter=True)
         ]
 
     distinct_attribute_names = list(dict.fromkeys(attribute_names))
@@ -37,7 +37,7 @@ def export_boq(project: SOMcreator.SOMProject, path: str, pset_name: str) -> Non
         ]
         writer.writerow(header)
 
-        for obj in project.get_objects(filter=True):
+        for obj in project.get_classes(filter=True):
             if pset_name not in [
                 pset.name for pset in obj.get_property_sets(filter=True)
             ]:

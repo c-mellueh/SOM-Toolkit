@@ -54,7 +54,7 @@ def export_revit_ifc_mapping(
         return
 
     export_dict = mapping.create_export_dict(
-        list(project.get().get_root_objects(filter=False))
+        list(project.get().get_root_classes(filter=False))
     )
     revit.export_ifc_template(path, export_dict)
 

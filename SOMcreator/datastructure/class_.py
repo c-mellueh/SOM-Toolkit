@@ -12,7 +12,7 @@ class SOMClass(Hirarchy):
     def __init__(
         self,
         name: str,
-        identifier_property: SOMcreator.SOMProperty | str,
+        identifier_property: SOMcreator.SOMProperty | str = None,
         uuid: str = None,
         ifc_mapping: set[str] | None = None,
         description: None | str = None,
@@ -188,12 +188,12 @@ class SOMClass(Hirarchy):
         return iter(self._property_sets)
 
     @filterable
-    def get_attributes(self, inherit: bool = False) -> Iterator[SOMcreator.SOMProperty]:
+    def get_properties(self, inherit: bool = False) -> Iterator[SOMcreator.SOMProperty]:
         attributes = list()
         for property_set in self.get_property_sets(filter=False):
             attributes += property_set.get_attributes(filter=False)
         if inherit:
-            attributes += self.parent.get_attributes(inherit=True, filter=False)
+            attributes += self.parent.get_properties(inherit=True, filter=False)
         return iter(attributes)
 
     def delete(self, recursive: bool = False) -> None:

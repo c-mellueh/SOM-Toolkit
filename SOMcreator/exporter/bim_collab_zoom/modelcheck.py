@@ -151,7 +151,7 @@ def export(
 
 def build_full_required_data_dict(project: SOMcreator.SOMProject) -> REQUIRED_DATA_DICT:
     required_data = dict()
-    for obj in list(project.get_objects(filter=True)):
+    for obj in list(project.get_classes(filter=True)):
         required_data[obj] = dict()
         for pset in obj.get_property_sets(filter=True):
             required_data[obj][pset] = [

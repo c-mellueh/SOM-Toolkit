@@ -67,7 +67,7 @@ def create_structure_dict(
 ) -> dict:
     """Iterate over all Entities, build the targeted Datastructure"""
     targeted_group_structure = {GROUP: {}, ELEMENT: {}, IFC_REP: None}
-    bk_dict = {obj.ident_value: obj for obj in project.get_objects(filter=True)}
+    bk_dict = {obj.ident_value: obj for obj in project.get_classes(filter=True)}
 
     for index, el in enumerate(list(ifc_file.by_type("IfcElement"))):
         attrib, gruppe, identity = get_ifc_el_info(el, attribute_bundle)
@@ -309,7 +309,7 @@ def main(
     )
     fill_existing_groups(ifc_file, targeted_group_structure, attribute_bundle)
     kuerzel_dict = {
-        obj.abbreviation.upper(): obj for obj in project.get_objects(filter=True)
+        obj.abbreviation.upper(): obj for obj in project.get_classes(filter=True)
     }
     create_aggregation_structure(
         ifc_file,

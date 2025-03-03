@@ -21,15 +21,17 @@ from som_gui import tool
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.resources.icons import get_link_icon
 from som_gui.module.property_set import trigger
+
 if TYPE_CHECKING:
     from som_gui.module.property_set.prop import PropertySetProperties
     from som_gui.module.property_set.ui import PsetTableWidget
+
 
 class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def get_attribute_by_name(cls, property_set: SOMcreator.SOMPropertySet, name: str):
-        attribute_dict = {a.name: a for a in property_set.get_attributes(filter=False)}
+        attribute_dict = {a.name: a for a in property_set.get_properties(filter=False)}
         return attribute_dict.get(name)
 
     @classmethod
@@ -251,12 +253,10 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return cls.get_pset_from_item(item)
 
     @classmethod
-    def get_completer(cls)-> QCompleter:
+    def get_completer(cls) -> QCompleter:
         if not cls.get_properties().completer:
             cls.get_properties().completer = QCompleter()
         return cls.get_properties().completer
-
-
 
     @classmethod
     def update_completer(cls, obj: SOMcreator.SOMClass = None):
@@ -265,7 +265,6 @@ class PropertySet(som_gui.core.tool.PropertySet):
             psets += cls.get_inheritable_property_sets(obj)
         pset_names = sorted({p.name for p in psets})
         cls.get_properties().completer = QCompleter(pset_names)
-
 
     @classmethod
     def set_enabled(cls, enabled: bool):
@@ -288,12 +287,16 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return prop.active_pset
 
     @classmethod
-    def set_sorting_indicator(cls,table_widget:PsetTableWidget,col_index:int) -> None:
+    def set_sorting_indicator(
+        cls, table_widget: PsetTableWidget, col_index: int
+    ) -> None:
         table_widget.setSortingEnabled(True)
         header = table_widget.horizontalHeader()
-        header.setSortIndicator(col_index, Qt.SortOrder.AscendingOrder)  # 0 for ascending order, 1 for descending order
+        header.setSortIndicator(
+            col_index, Qt.SortOrder.AscendingOrder
+        )  # 0 for ascending order, 1 for descending order
         header.setSortIndicatorShown(True)
-    
+
     @classmethod
     def trigger_table_repaint(cls):
         trigger.repaint_event()

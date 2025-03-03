@@ -226,7 +226,7 @@ def create_groups_in_file(
     runner.signaller.status.emit(status)
     owner_history = grouping_window.get_first_owner_history(ifc_file)
     grouping_window.create_new_grouping_strictures(
-        ifc_file, structure_dict, owner_history, project.get().get_objects(filter=False)
+        ifc_file, structure_dict, owner_history, project.get().get_classes(filter=False)
     )
     logging.info(f"Create Structure took {time.time() - start_time} seconds")
 

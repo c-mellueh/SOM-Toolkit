@@ -147,7 +147,7 @@ def run_modelcheck(
     pool.setMaxThreadCount(3)
     modelcheck.init_sql_database(util.create_tempfile(".db"))
     modelcheck.reset_guids()
-    modelcheck.build_ident_dict(set(project.get().get_objects(filter=True)))
+    modelcheck.build_ident_dict(set(project.get().get_classes(filter=True)))
 
     for path in ifc_paths:
         progress_bar = util.create_progressbar()

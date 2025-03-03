@@ -256,7 +256,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def update_add_button(cls, window: ui.PropertySetWindow):
         attribute_name = cls.get_attribute_name_input(window)
         pset = cls.get_property_set_by_window(window)
-        if attribute_name in [a.name for a in pset.get_attributes(filter=False)]:
+        if attribute_name in [a.name for a in pset.get_properties(filter=False)]:
             text = QCoreApplication.translate("PropertySetWindow", "Update")
             cls.set_add_button_text(text, window)
         else:

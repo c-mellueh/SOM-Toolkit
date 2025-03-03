@@ -13,7 +13,7 @@ def _handle_bookmark_list(proj: SOMcreator.SOMProject) -> etree.ElementTree:
     xml_bookmark_list = etree.SubElement(xml_bookmarks, "cBookmarkList")
 
     obj: SOMcreator.SOMClass
-    for obj in sorted(proj.get_objects(filter=True), key=lambda o: o.ident_value):
+    for obj in sorted(proj.get_classes(filter=True), key=lambda o: o.ident_value):
         xml_bookmark = etree.SubElement(xml_bookmark_list, "cBookmark")
         xml_bookmark.set("ID", str(obj.uuid))
 
@@ -44,7 +44,7 @@ def _handle_bookmark_list(proj: SOMcreator.SOMProject) -> etree.ElementTree:
 
 def _get_attribute_dict(proj: SOMcreator.SOMProject) -> dict[str, str]:
     attribute_dict = {}
-    for obj in proj.get_objects(filter=True):
+    for obj in proj.get_classes(filter=True):
         for property_set in obj.get_property_sets(filter=True):
             for attribute in property_set.get_attributes(filter=True):
                 attribute_dict[f"{property_set.name}:{attribute.name}"] = (

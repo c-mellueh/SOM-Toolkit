@@ -23,7 +23,7 @@ class SOMPropertySet(Hirarchy):
         super(SOMPropertySet, self).__init__(
             name, description, optional, project, filter_matrix
         )
-        self._attributes = set()
+        self._properties = set()
         self._som_class = None
         if som_class is not None:
             som_class.add_property_set(
@@ -54,7 +54,7 @@ class SOMPropertySet(Hirarchy):
             filter_matrix=self._filter_matrix,
         )
 
-        for attribute in self.get_attributes(filter=False):
+        for attribute in self.get_properties(filter=False):
             new_attribute = cp.copy(attribute)
             new_pset.add_property(new_attribute)
 
@@ -88,11 +88,11 @@ class SOMPropertySet(Hirarchy):
     def remove_child(self, child: SOMPropertySet) -> None:
         super().remove_child(child)
         child.remove_parent()
-        for attribute in [a for a in child.get_attributes(filter=False) if a.parent]:
+        for attribute in [a for a in child.get_properties(filter=False) if a.parent]:
             attribute.parent.remove_child(attribute)
 
     def change_parent(self, new_parent: SOMPropertySet) -> None:
-        for attribute in self.get_attributes(filter=False):
+        for attribute in self.get_properties(filter=False):
             if attribute.parent.property_set == self._parent:
                 self.remove_property(attribute)
         self.parent = new_parent
@@ -103,7 +103,7 @@ class SOMPropertySet(Hirarchy):
             ident_attrib = self.som_class.identifier_property
 
         if (
-            ident_attrib in self.get_attributes(filter=False)
+            ident_attrib in self.get_properties(filter=False)
             and not override_ident_deletion
         ):
             logging.error(
@@ -114,7 +114,7 @@ class SOMPropertySet(Hirarchy):
         super(SOMPropertySet, self).delete(recursive)
         [
             attrib.delete(recursive)
-            for attrib in list(self.get_attributes(filter=False))
+            for attrib in list(self.get_properties(filter=False))
             if attrib
         ]
         if self.som_class is not None:
@@ -129,17 +129,17 @@ class SOMPropertySet(Hirarchy):
         self._som_class = value
 
     @filterable
-    def get_attributes(self) -> Iterator[SOMcreator.SOMProperty]:
-        """returns all Attributes even if they don't fit the current Project Phase"""
-        return iter(self._attributes)
+    def get_properties(self) -> Iterator[SOMcreator.SOMProperty]:
+        """returns all Properties"""
+        return iter(self._properties)
 
     def add_property(self, value: SOMcreator.SOMProperty) -> None:
 
         if value.property_set is not None and value.property_set != self:
             value.property_set.remove_property(value)
 
-        if value not in self._attributes:
-            self._attributes.add(value)
+        if value not in self._properties:
+            self._properties.add(value)
         else:
             return
         value.property_set = self
@@ -149,8 +149,8 @@ class SOMPropertySet(Hirarchy):
             child.add_property(attrib)
 
     def remove_property(self, value: SOMcreator.SOMProperty, recursive=False) -> None:
-        if value in self.get_attributes(filter=False):
-            self._attributes.remove(value)
+        if value in self.get_properties(filter=False):
+            self._properties.remove(value)
             if recursive:
                 for child in value.get_children(filter=False):
                     child.property_set.remove_attribute(child)
@@ -158,17 +158,17 @@ class SOMPropertySet(Hirarchy):
             logging.warning(f"{self.name} -> {value} not in SOMcreator.Attributes")
 
     def get_property_by_name(self, name: str):
-        for attribute in self.get_attributes(filter=False):
+        for attribute in self.get_properties(filter=False):
             if attribute.name.lower() == name.lower():
                 return attribute
         return None
 
-    def create_child(self, name =None) -> SOMPropertySet:
+    def create_child(self, name=None) -> SOMPropertySet:
         name = self.name if not name else name
         child = SOMPropertySet(name=name, project=self.project)
         self._children.add(child)
         child.parent = self
-        for attribute in self.get_attributes(filter=False):
+        for attribute in self.get_properties(filter=False):
             new_attrib = attribute.create_child()
             child.add_property(new_attrib)
         return child
