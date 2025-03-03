@@ -130,7 +130,7 @@ class SOMPropertySet(Hirarchy):
 
     @filterable
     def get_properties(self) -> Iterator[SOMcreator.SOMProperty]:
-        """returns all Attributes even if they don't fit the current Project Phase"""
+        """returns all Properties"""
         return iter(self._properties)
 
     def add_property(self, value: SOMcreator.SOMProperty) -> None:

@@ -12,7 +12,7 @@ class SOMClass(Hirarchy):
     def __init__(
         self,
         name: str,
-        identifier_property: SOMcreator.SOMProperty | str,
+        identifier_property: SOMcreator.SOMProperty | str = None,
         uuid: str = None,
         ifc_mapping: set[str] | None = None,
         description: None | str = None,
