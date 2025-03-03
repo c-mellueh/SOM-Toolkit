@@ -388,7 +388,7 @@ def change_header_text(
 ) -> None:
     searchable_attributes = list()
     search_values = list()
-    for attribute in project.get().get_attributes(filter=False):
+    for attribute in project.get().get_properties(filter=False):
         value = [attribute.property_set.name, attribute.name]
         if value not in search_values:
             searchable_attributes.append(attribute)

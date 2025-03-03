@@ -101,7 +101,7 @@ class SOMProject(object):
         )
 
     @filterable
-    def get_attributes(self) -> Iterator[SOMcreator.SOMProperty]:
+    def get_properties(self) -> Iterator[SOMcreator.SOMProperty]:
         return filter(
             lambda item: isinstance(item, SOMcreator.SOMProperty), self._items
         )
@@ -147,7 +147,7 @@ class SOMProject(object):
         pset_dict = {pset.uuid: pset for pset in self.get_property_sets(filter=False)}
         object_dict = {obj.uuid: obj for obj in self.get_classes(filter=False)}
         attribute_dict = {
-            attribute.uuid: attribute for attribute in self.get_attributes(filter=False)
+            attribute.uuid: attribute for attribute in self.get_properties(filter=False)
         }
         aggregation_dict = {
             aggreg.uuid: aggreg for aggreg in self.get_aggregations(filter=False)
