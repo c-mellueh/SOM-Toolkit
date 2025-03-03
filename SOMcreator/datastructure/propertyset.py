@@ -81,10 +81,10 @@ class SOMPropertySet(Hirarchy):
         if parent is None:
             self.remove_parent()
             return
-        self._parent = parent
+        self._parent = parent # type: ignore
 
     def remove_child(self, child: SOMPropertySet) -> None:
-        super().remove_child(child)
+        super().remove_child(child) # type: ignore
         child.remove_parent()
         for som_property in child.get_properties(filter=False):
             if som_property.parent is None:

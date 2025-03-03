@@ -91,7 +91,7 @@ class Hirarchy(ABC, metaclass=IterRegistry):
                 filter_matrix = []
 
         self._filter_matrix:list[list[bool]] = copy.deepcopy(filter_matrix)
-        self._parent = None
+        self._parent:HIRARCHY_TYPE|None = None
         self._children:set = set()
         self._name = name
         self._mapping_dict = {
@@ -240,8 +240,8 @@ class Hirarchy(ABC, metaclass=IterRegistry):
             child.name = value
 
     @property
-    def parent(self:HIRARCHY_TYPE) -> HIRARCHY_TYPE | None:  # type: ignore
-        return self._parent
+    def parent(self:HIRARCHY_TYPE) -> HIRARCHY_TYPE | None:  
+        return self._parent # type: ignore
 
     @parent.setter
     def parent(
@@ -276,7 +276,7 @@ class Hirarchy(ABC, metaclass=IterRegistry):
         child:HIRARCHY_TYPE,
     ) -> None:
         self._children.add(child)
-        child.parent = self
+        child.parent = self # type: ignore
 
     def remove_child(
         self:HIRARCHY_TYPE,
