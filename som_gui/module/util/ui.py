@@ -11,7 +11,7 @@ class FileSelector(QWidget):
         self.ui.setupUi(self)
         self.request_folder = None
         self.extension = None
-        self.name = None
+        self.name:str|None = None
         self.appdata_text = None
         self.request_save = None
         self.single_request = None
@@ -23,7 +23,7 @@ class FileSelector(QWidget):
         trigger.paint_file_selector(self)
 
 
-class AttributeSelector(QWidget):
+class PropertySelector(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.ui = ui_AttributeSelect.Ui_Util()

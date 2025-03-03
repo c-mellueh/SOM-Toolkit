@@ -198,7 +198,7 @@ class Mapping(som_gui.core.tool.Mapping):
         for property_set in obj.get_property_sets(filter=False):
             if not cls.get_checkstate(property_set):
                 continue
-            for attribute in property_set.get_attributes(filter=False):
+            for attribute in property_set.get_properties(filter=False):
                 if not cls.get_checkstate(attribute):
                     continue
                 if property_set.name not in export_dict:

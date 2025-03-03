@@ -177,7 +177,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         window = cls.get_window()
         ifc_paths = tool.Util.get_path_from_fileselector(window.ui.widget_import)
         export_path = tool.Util.get_path_from_fileselector(window.ui.widget_export)[0]
-        main_pset, main_attribute = tool.Util.get_attribute(
+        main_pset, main_attribute = tool.Util.get_property(
             window.ui.main_attribute_widget
         )
         return ifc_paths, export_path, main_pset, main_attribute
@@ -229,7 +229,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
                 data_dict[obj] = True
                 for property_set in obj.get_property_sets(filter=True):
                     data_dict[property_set] = True
-                    for attribute in property_set.get_attributes(filter=True):
+                    for attribute in property_set.get_properties(filter=True):
                         data_dict[attribute] = True
             prop.check_state_dict = data_dict
         return prop.check_state_dict

@@ -40,7 +40,7 @@ def create_mapping(
         def create_manipulations() -> None:
             xml_manipulations = etree.SubElement(xml_manipulation_rule, "Manipulations")
             for property_set in obj.get_property_sets(filter=True):
-                for attribut in property_set.get_attributes(filter=True):
+                for attribut in property_set.get_properties(filter=True):
                     xml_manipulation_base = etree.SubElement(
                         xml_manipulations, "ManipulationBase"
                     )

@@ -34,7 +34,7 @@ def create_mapping_script(project: SOMcreator.SOMProject, pset_name: str, path: 
         obj_dict = dict()
         for pset in obj.get_property_sets(filter=True):
             pset_dict = dict()
-            for attribute in pset.get_attributes(filter=True):
+            for attribute in pset.get_properties(filter=True):
                 name = attribute.name
                 data_format = xml.transform_data_format(attribute.data_type)
                 pset_dict[name] = data_format

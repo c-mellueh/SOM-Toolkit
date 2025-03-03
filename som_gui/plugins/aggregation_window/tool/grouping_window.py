@@ -96,10 +96,10 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def read_inputs(cls):
-        group_pset_name, group_attribute_name = tool.Util.get_attribute(
-            cls.get().ui.widget_group_attribute
+        group_pset_name, group_attribute_name = tool.Util.get_property(
+            cls.get().ui.widget_group_property
         )
-        main_pset_name, main_attribute_name = tool.Util.get_attribute(
+        main_pset_name, main_attribute_name = tool.Util.get_property(
             cls.get().ui.widget_ident_property
         )
         export_path = tool.Util.get_path_from_fileselector(cls.get().ui.widget_export)

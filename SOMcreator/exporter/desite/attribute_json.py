@@ -34,7 +34,7 @@ def export(project: SOMcreator.SOMProject, path: str | os.PathLike) -> None:
         json_dict[obj.ident_value] = dict()
         obj_dict = json_dict[obj.ident_value]
         for property_set in obj.get_property_sets(filter=True):
-            if not property_set.get_attributes(filter=True):
+            if not property_set.get_properties(filter=True):
                 continue
             obj_dict[property_set.name] = dict()
             pset_dict = obj_dict[property_set.name]

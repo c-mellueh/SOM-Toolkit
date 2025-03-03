@@ -7,8 +7,8 @@ import SOMcreator
 if TYPE_CHECKING:
     from .ui import AttributeImportResultWindow, SettingsDialog
     from som_gui.module.ifc_importer.ui import IfcImportWidget
-    from PySide6.QtWidgets import QComboBox, QPushButton, QLabel, QCheckBox
-    from PySide6.QtWidgets import QLabel, QProgressBar
+    from PySide6.QtCore import QThreadPool
+    from PySide6.QtWidgets import QComboBox, QPushButton, QLabel, QCheckBox,QLabel, QProgressBar
     from PySide6.QtGui import QAction
     from sqlite3 import Connection
 
@@ -20,7 +20,7 @@ class AttributeImportProperties:
     main_attribute: str = "Undefined"
     import_is_aborted = False
     ifc_import_runners = []
-    thread_pool = None
+    thread_pool:QThreadPool= None
     run_button: QPushButton = None
     abort_button: QPushButton = None
     status_label: QLabel = None

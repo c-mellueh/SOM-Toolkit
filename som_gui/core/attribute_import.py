@@ -149,7 +149,7 @@ def init_database(
             util.set_progress(progress_bar, int(index / attribute_count * 100))
             util.set_status(progress_bar, f"{status_text} {index}/{attribute_count}")
 
-        if not attribute.property_set.object:
+        if not attribute.property_set.som_class:
             continue
         filter_table += attribute_import_sql.add_attribute_to_filter_table(
             proj, attribute
@@ -389,7 +389,7 @@ def update_attribute_table(
         attribute_import_results.disable_table(table_widget)
     else:
         table_widget.setDisabled(False)
-        attribute_list = attribute_import_sql.get_attributes(
+        attribute_list = attribute_import_sql.get_properties(
             ifc_type, identifier, property_set
         )
         attribute_import_results.update_table_widget(
@@ -444,7 +444,10 @@ def value_checkstate_changed(
 
     if value_table.item(row, 1) is None:
         return
-    sql_value_text = f"== '{value_table.item(row, 1).text()}'"
+    item = value_table.item(row, 1)
+    if not item:
+        return
+    sql_value_text = f"== '{item.text()}'"
     ifc_type, identifier, property_set, attribute = (
         attribute_import_results.get_input_variables()
     )

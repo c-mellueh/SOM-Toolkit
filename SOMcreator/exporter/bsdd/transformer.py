@@ -161,7 +161,7 @@ def _create_classes(
         c.ClassProperties = [
             class_property_dict[a]
             for p in obj.get_property_sets(filter=True)
-            for a in p.get_attributes(filter=True)
+            for a in p.get_properties(filter=True)
         ]
     return class_dict
 
@@ -227,5 +227,5 @@ def _get_all_attributes(object_list: list[SOMcreator.SOMClass]):
         a
         for o in object_list
         for p in o.get_property_sets(filter=True)
-        for a in p.get_attributes(filter=True)
+        for a in p.get_properties(filter=True)
     ]

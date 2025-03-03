@@ -41,7 +41,7 @@ class SOMProject(object):
         else:
             self._phases = phases
 
-        self.active_phases = [0]
+        self.active_phases:list[int] = [0]
 
         if not usecase:
             self._usecases = [
@@ -52,7 +52,7 @@ class SOMProject(object):
         if filter_matrix is None:
             self._filter_matrix = self.create_filter_matrix(True)
 
-        self.active_usecases = [0]
+        self.active_usecases:list[int] = [0]
         self.change_log = list()
 
     def add_item(self, item: Hirarchy):

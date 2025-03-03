@@ -31,7 +31,7 @@ import sqlite3
 class AttributeImportRunner(QRunnable):
     def __init__(self, runner: IfcImportRunner, progress_bar=None):
         super().__init__()
-        self.file = runner.ifc
+        self.file:ifcopenshell.file = runner.ifc
         self.path = runner.path
         self.signaller = Signaller()
         self.progress_bar: Progressbar = progress_bar
@@ -335,10 +335,11 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
     @classmethod
     def find_checkbox_row_in_table(
         cls, table_widget: QTableWidget, checkbox: ui.ValueCheckBox
-    ):
+    ) ->int:
         for row in range(table_widget.rowCount()):
             if table_widget.cellWidget(row, 0) == checkbox:
                 return row
+        return -1
 
     @classmethod
     def get_input_variables(cls):
@@ -401,7 +402,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
             object_dict = dict()
             for pset in obj.get_property_sets(filter=True):
                 object_dict[pset.name] = {
-                    a.name: a for a in pset.get_attributes(filter=True)
+                    a.name: a for a in pset.get_properties(filter=True)
                 }
             result_dict[obj.ident_value] = object_dict
         return result_dict
@@ -516,7 +517,7 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         trigger.connect_attribute_import_runner(runner)
 
     @classmethod
-    def get_attribute_import_threadpool(cls):
+    def get_attribute_import_threadpool(cls) ->QThreadPool:
         if cls.get_properties().thread_pool is None:
             tp = QThreadPool()
             cls.get_properties().thread_pool = tp
@@ -1008,7 +1009,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return pset_list
 
     @classmethod
-    def get_attributes(
+    def get_properties(
         cls, ifc_type: str, identifier: str | SOMcreator.SOMClass, property_set: str
     ) -> list[tuple[str, int, int]]:
         logging.debug("Request Attributes")

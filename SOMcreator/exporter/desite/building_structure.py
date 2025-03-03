@@ -80,7 +80,7 @@ def _handle_property_section(
     for node, ref_id in id_dict.items():
         obj: SOMcreator.SOMClass = node.object
         for property_set in obj.get_property_sets(filter=True):
-            for attribute in property_set.get_attributes(filter=True):
+            for attribute in property_set.get_properties(filter=True):
                 attribute_text = f"{attribute.property_set.name}:{attribute.name}"
                 ref_type = attribute_dict[attribute_text]
                 xml_property = etree.SubElement(xml_property_section, "property")

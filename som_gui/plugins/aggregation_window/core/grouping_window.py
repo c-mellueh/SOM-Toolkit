@@ -51,13 +51,13 @@ def retranslate_ui(
     )
     window.ui.widget_import.name = QCoreApplication.translate("Aggregation", "IFC Path")
 
-    group_pset, group_attribute = util.get_attribute(window.ui.widget_group_attribute)
+    group_pset, group_attribute = util.get_property(window.ui.widget_group_property)
     pset_placeholder = QCoreApplication.translate("Aggregation", "Grouping PropertySet")
     attribute_placeholder = QCoreApplication.translate(
         "Aggregation", "Grouping PropertySet"
     )
     util.fill_main_attribute(
-        window.ui.widget_group_attribute,
+        window.ui.widget_group_property,
         group_pset,
         group_attribute,
         pset_placeholder,
@@ -81,7 +81,7 @@ def open_window(grouping_window: Type[aw_tool.GroupingWindow], util: Type[tool.U
     group_attribute = tool.Appdata.get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
     group_pset = tool.Appdata.get_string_setting(IFC_MOD, GROUP_PSET)
     util.fill_main_attribute(
-        window.ui.widget_group_attribute, group_pset, group_attribute, "_pset", "_"
+        window.ui.widget_group_property, group_pset, group_attribute, "_pset", "_"
     )
     grouping_window.connect_buttons()
     grouping_window.set_progress_bars_visible(False)
@@ -95,10 +95,10 @@ def run_clicked(
     util: Type[tool.Util],
 ):
     widget = grouping_window.get()
-    group_pset_name, group_attribute_name = util.get_attribute(
-        widget.ui.widget_group_attribute
+    group_pset_name, group_attribute_name = util.get_property(
+        widget.ui.widget_group_property
     )
-    main_pset_name, main_attribute_name = util.get_attribute(
+    main_pset_name, main_attribute_name = util.get_property(
         widget.ui.widget_ident_property
     )
     export_path = util.get_path_from_fileselector(widget.ui.widget_export)[0]
