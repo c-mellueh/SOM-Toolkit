@@ -1,10 +1,10 @@
 from __future__ import annotations
 from uuid import uuid4
 import SOMcreator
-from .base import Hirarchy
+from .base import BaseClass
 
 
-class SOMAggregation(Hirarchy):
+class SOMAggregation(BaseClass):
     _registry: set[SOMAggregation] = set()
 
     def __str__(self):

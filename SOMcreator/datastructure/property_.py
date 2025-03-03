@@ -1,13 +1,13 @@
 from __future__ import annotations
 from uuid import uuid4
 import SOMcreator
-from .base import Hirarchy
+from .base import BaseClass
 import copy as cp
 import logging
 from ifcopenshell.util.unit import get_unit_name_universal
 
 
-class SOMProperty(Hirarchy):
+class SOMProperty(BaseClass):
     _registry: set[SOMProperty] = set()
 
     def __init__(

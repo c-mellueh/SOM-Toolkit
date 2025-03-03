@@ -1,37 +1,38 @@
 from __future__ import annotations
 import SOMcreator
 from uuid import uuid4
-from .base import filterable, Hirarchy
+from .base import filterable, BaseClass
 import copy as cp
-from typing import Iterator,TYPE_CHECKING,Self
+from typing import Iterator, TYPE_CHECKING, Self
 import logging
+
 if TYPE_CHECKING:
-    from .base import HIRARCHY_TYPE
+    from .base import BASE_TYPE
 
 
-class SOMPropertySet(Hirarchy):
+class SOMPropertySet(BaseClass):
     def __init__(
         self,
         name: str,
-        som_class: SOMcreator.SOMClass|None = None,
-        uuid: str|None = None,
+        som_class: SOMcreator.SOMClass | None = None,
+        uuid: str | None = None,
         description: None | str = None,
         optional: None | bool = None,
         project: None | SOMcreator.SOMProject = None,
-        filter_matrix: list[list[bool]]|None = None,
+        filter_matrix: list[list[bool]] | None = None,
     ) -> None:
-        
+
         super(SOMPropertySet, self).__init__(
             name, description, optional, project, filter_matrix
         )
-        self._properties:set[SOMcreator.SOMProperty] = set()
-        self._som_class:SOMcreator.SOMClass|None = som_class
+        self._properties: set[SOMcreator.SOMProperty] = set()
+        self._som_class: SOMcreator.SOMClass | None = som_class
         if som_class is not None:
             som_class.add_property_set(
                 self
             )  # adds Pset to Object and sets pset.object = obj
         self.uuid = str(uuid4()) if uuid is None else uuid
-           
+
     def __lt__(self, other):
         if isinstance(other, SOMPropertySet):
             return self.name < other.name
@@ -66,7 +67,7 @@ class SOMPropertySet(Hirarchy):
         return self.som_class is None
 
     @property
-    def parent(self) -> SOMPropertySet|None:
+    def parent(self) -> SOMPropertySet | None:
         parent = super(SOMPropertySet, self).parent
         return parent
 
@@ -81,10 +82,10 @@ class SOMPropertySet(Hirarchy):
         if parent is None:
             self.remove_parent()
             return
-        self._parent = parent # type: ignore
+        self._parent = parent  # type: ignore
 
     def remove_child(self, child: SOMPropertySet) -> None:
-        super().remove_child(child) # type: ignore
+        super().remove_child(child)  # type: ignore
         child.remove_parent()
         for som_property in child.get_properties(filter=False):
             if som_property.parent is None:
@@ -123,7 +124,7 @@ class SOMPropertySet(Hirarchy):
             self.som_class.remove_property_set(self)
 
     @property
-    def som_class(self) -> SOMcreator.SOMClass|None:
+    def som_class(self) -> SOMcreator.SOMClass | None:
         return self._som_class
 
     @som_class.setter

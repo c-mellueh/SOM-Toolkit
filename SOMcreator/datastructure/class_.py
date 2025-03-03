@@ -2,11 +2,11 @@ from __future__ import annotations
 import SOMcreator
 from uuid import uuid4
 from typing import Iterator
-from .base import filterable, Hirarchy
+from .base import filterable, BaseClass
 import copy as cp
 
 
-class SOMClass(Hirarchy):
+class SOMClass(BaseClass):
     _registry: set[SOMClass] = set()
 
     def __init__(

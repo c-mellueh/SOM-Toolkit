@@ -6,7 +6,7 @@ from typing import Iterator
 import SOMcreator
 import SOMcreator.exporter.som_json
 import SOMcreator.importer.som_json
-from .base import Hirarchy, filterable
+from .base import BaseClass, filterable
 
 
 class SOMProject(object):
@@ -41,7 +41,7 @@ class SOMProject(object):
         else:
             self._phases = phases
 
-        self.active_phases:list[int] = [0]
+        self.active_phases: list[int] = [0]
 
         if not usecase:
             self._usecases = [
@@ -52,16 +52,16 @@ class SOMProject(object):
         if filter_matrix is None:
             self._filter_matrix = self.create_filter_matrix(True)
 
-        self.active_usecases:list[int] = [0]
+        self.active_usecases: list[int] = [0]
         self.change_log = list()
 
-    def add_item(self, item: Hirarchy,overwrite_filter_matrix = True):
+    def add_item(self, item: BaseClass, overwrite_filter_matrix=True):
         self._items.add(item)
         item._project = self
         if overwrite_filter_matrix:
             item._filter_matrix = self.create_filter_matrix()
 
-    def remove_item(self, item: Hirarchy):
+    def remove_item(self, item: BaseClass):
         if item in self._items:
             self._items.remove(item)
 
@@ -78,7 +78,7 @@ class SOMProject(object):
         SOMcreator.SOMPropertySet,
         SOMcreator.SOMProperty,
         SOMcreator.SOMAggregation,
-        Hirarchy,
+        BaseClass,
     ]:
         return filter(
             lambda i: isinstance(
@@ -260,7 +260,7 @@ class SOMProject(object):
             return self._phases.index(phase)
         raise ValueError(f"phase '{phase.name}' is not defined in Project {self}")
 
-    def get_usecase_index(self, usecase: SOMcreator.UseCase) -> int :
+    def get_usecase_index(self, usecase: SOMcreator.UseCase) -> int:
         if usecase in self._usecases:
             return self._usecases.index(usecase)
         raise ValueError(f"usecase '{usecase.name}' is not defined in Project {self}")
