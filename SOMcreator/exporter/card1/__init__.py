@@ -26,7 +26,7 @@ def create_mapping(
     ]
     object_dict = {
         obj.ident_attrib.value[0]: obj
-        for obj in project.get_objects(filter=True)
+        for obj in project.get_classes(filter=True)
         if not obj.is_concept
     }
 

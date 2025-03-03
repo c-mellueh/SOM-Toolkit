@@ -43,5 +43,5 @@ def _write_object(element: SOMcreator.SOMClass) -> ObjectDict:
 
 def write(proj: SOMProject, main_dict: MainDict):
     main_dict[OBJECTS] = dict()
-    for obj in sorted(proj.get_objects(filter=False), key=lambda o: o.uuid):
+    for obj in sorted(proj.get_classes(filter=False), key=lambda o: o.uuid):
         main_dict[OBJECTS][obj.uuid] = _write_object(obj)

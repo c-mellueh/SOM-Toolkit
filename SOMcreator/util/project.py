@@ -19,7 +19,7 @@ def merge_projects(
     :return:
     """
     existing_identifiers = {
-        o.ident_value for o in existing_project.get_objects(filter=False)
+        o.ident_value for o in existing_project.get_classes(filter=False)
     }
     import_predef_pset_dict = {
         p: p for p in import_project.get_predefined_psets(filter=False)
@@ -41,7 +41,7 @@ def merge_projects(
         else:
             import_predef_pset_dict[import_predef_pset] = new_pset
 
-    for obj in import_project.get_objects(filter=False):
+    for obj in import_project.get_classes(filter=False):
         if obj.ident_value not in existing_identifiers:
             _import_object(
                 existing_project,

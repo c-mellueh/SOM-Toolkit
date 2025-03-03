@@ -37,7 +37,7 @@ def export_boq(project: SOMcreator.SOMProject, path: str, pset_name: str) -> Non
         ]
         writer.writerow(header)
 
-        for obj in project.get_objects(filter=True):
+        for obj in project.get_classes(filter=True):
             if pset_name not in [
                 pset.name for pset in obj.get_property_sets(filter=True)
             ]:

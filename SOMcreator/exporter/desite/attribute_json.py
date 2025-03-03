@@ -26,7 +26,7 @@ def _iter_attributes(property_set: SOMcreator.SOMPropertySet, pset_dict: dict) -
 
 def export(project: SOMcreator.SOMProject, path: str | os.PathLike) -> None:
     json_dict = dict()
-    for obj in sorted(project.get_objects(filter=True), key=lambda x: x.ident_value):
+    for obj in sorted(project.get_classes(filter=True), key=lambda x: x.ident_value):
         if not obj.get_property_sets(filter=True):
             continue
         if obj.ident_value is None:

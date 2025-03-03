@@ -29,7 +29,7 @@ filter_matrixes = list()
 def create_mapping_script(project: SOMcreator.SOMProject, pset_name: str, path: str):
     attrib_dict = dict()
     obj: SOMcreator.SOMClass
-    for obj in project.get_objects(filter=True):
+    for obj in project.get_classes(filter=True):
         klass = obj.identifier_property.value[0]
         obj_dict = dict()
         for pset in obj.get_property_sets(filter=True):

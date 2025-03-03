@@ -174,7 +174,7 @@ def mouse_release_event(
             view.create_connection_by_pos(connection.get_draw_node())
             connection.delete_draw_connection()
         else:
-            obj = search.search_object(list(project.get().get_objects(filter=True)))
+            obj = search.search_object(list(project.get().get_classes(filter=True)))
             if obj is not None:
                 view.create_child_node(connection.get_draw_node(), obj)
 
@@ -376,7 +376,7 @@ def add_node_at_pos(
     project: Type[tool.Project],
 ) -> None:
     scene = view.get_active_scene()
-    obj = search.search_object(list(project.get().get_objects(filter=True)))
+    obj = search.search_object(list(project.get().get_classes(filter=True)))
     if not obj:
         return
     aggregation = SOMcreator.SOMAggregation(obj)

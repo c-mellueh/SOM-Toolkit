@@ -17,7 +17,7 @@ def export(
         raise FileNotFoundError(f"path {os.path.dirname(path)} DNE")
 
     if object_list is None:
-        object_list = list(project.get_objects(filter=True))
+        object_list = list(project.get_classes(filter=True))
 
     if None not in (ident_pset_name, ident_property_name):
         export_excel.set_ident_values(ident_pset_name, ident_property_name)
@@ -37,7 +37,7 @@ def export(
             export_excel.create_object_entry(obj, work_sheet, 1, column, table_counter)
             table_counter += 1
         export_excel.autoadjust_column_widths(work_sheet)
-    
+
     work_sheet = workbook.create_sheet("Attribute Mapping")
-    export_excel.create_attribute_table(object_list,work_sheet)
+    export_excel.create_attribute_table(object_list, work_sheet)
     workbook.save(path)

@@ -183,7 +183,7 @@ class Bsdd(som_gui.core.tool.Bsdd):
     @classmethod
     def add_objects_to_dictionary(cls, project: SOMcreator.SOMProject):
         dictionary = cls.get_dictionary()
-        objects = list(project.get_objects(filter=True))
+        objects = list(project.get_classes(filter=True))
         predefined_psets = list(project.get_predefined_psets(filter=False))
         SOMcreator.exporter.bsdd.transform_objects_to_classes(
             dictionary, objects, predefined_psets

@@ -226,7 +226,7 @@ def start_attribute_import(
         "AttributeImport", "Import entity from file:"
     )
     attribute_dict = attribute_import_results.build_attribute_dict(
-        list(project.get().get_objects(filter=False))
+        list(project.get().get_classes(filter=False))
     )
     for index, entity in enumerate(entity_list):
         if index % 100 == 0:
@@ -332,7 +332,7 @@ def update_identifier_combobox(
         return
     combobox = attribute_import_results.get_somtype_combo_box()
     ifc_type = attribute_import_results.get_ifctype_combo_box().currentText()
-    object_list = list(project.get().get_objects(filter=False))
+    object_list = list(project.get().get_classes(filter=False))
 
     wanted_som_types = set(
         attribute_import_sql.get_identifier_types(
@@ -529,7 +529,7 @@ def import_values_to_som(
     proj = project.get()
     new_attribute_values = attribute_import_sql.get_new_attribute_values()
     attribute_dict = attribute_import_results.build_attribute_dict(
-        list(proj.get_objects(filter=False))
+        list(proj.get_classes(filter=False))
     )
 
     for identifier, property_set_name, attribute_name, value in new_attribute_values:

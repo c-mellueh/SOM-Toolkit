@@ -237,7 +237,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         """Iterate over all Entities, build the targeted Datastructure"""
 
         targeted_group_structure = {GROUP: {}, ELEMENT: {}, IFC_REP: None}
-        bk_dict = {obj.ident_value: obj for obj in project.get_objects(filter=True)}
+        bk_dict = {obj.ident_value: obj for obj in project.get_classes(filter=True)}
         entity_count = len(ifc_elements)
 
         percentages = list()

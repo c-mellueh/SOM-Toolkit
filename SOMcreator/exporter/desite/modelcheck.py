@@ -467,7 +467,7 @@ def build_full_data_dict(
     SOMcreator.SOMClass, dict[SOMcreator.SOMPropertySet, list[SOMcreator.SOMProperty]]
 ]:
     d = dict()
-    for obj in proj.get_objects(filter=True):
+    for obj in proj.get_classes(filter=True):
         d[obj] = dict()
         for pset in obj.get_property_sets(filter=True):
             d[obj][pset] = list()
@@ -489,7 +489,7 @@ def export(
     export_type: str = "JS",
 ) -> None:
     if not object_structure:
-        object_structure = {o: o.parent for o in project.get_objects(filter=True)}
+        object_structure = {o: o.parent for o in project.get_classes(filter=True)}
 
     template = _handle_template(templates.TEMPLATE)
     xml_container, xml_qa_export = _init_xml(

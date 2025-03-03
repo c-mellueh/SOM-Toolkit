@@ -460,7 +460,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
     ):
         project_0 = cls.get_project(0)
         object_dict = attribute_compare.get_object_dict()
-        for obj0 in sorted(project_0.get_objects(filter=False), key=lambda x: x.name):
+        for obj0 in sorted(project_0.get_classes(filter=False), key=lambda x: x.name):
             obj1 = object_dict[obj0]
             if obj1 is None:
                 continue

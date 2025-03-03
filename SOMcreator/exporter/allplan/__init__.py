@@ -71,7 +71,7 @@ def create_mapping(
             )
 
         max_attribs = max(
-            get_attrib_count(obj) for obj in project.get_objects(filter=True)
+            get_attrib_count(obj) for obj in project.get_classes(filter=True)
         )
         header = ["Kenner"] + ["Wert", "Name"] * max_attribs
         [
@@ -79,7 +79,7 @@ def create_mapping(
         ]  # print Header
         worksheet.cell(2, 1, kenner)
         row_index = 2
-        for obj in project.get_objects(filter=True):
+        for obj in project.get_classes(filter=True):
             worksheet.cell(row_index, 2, obj.ident_value)
             col_index = 3
             for propery_set in obj.get_property_sets(filter=True):

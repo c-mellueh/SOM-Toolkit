@@ -24,6 +24,7 @@ from SOMcreator.templates import IFC_4_1
 from som_gui.module.object.prop import PluginProperty
 import som_gui.module.object
 from som_gui.module.object import trigger
+
 if TYPE_CHECKING:
     from som_gui.module.object.prop import ObjectProperties, ContextMenuDict
     from som_gui.module.main_window.ui import MainWindow
@@ -93,7 +94,7 @@ class Object(som_gui.core.tool.Object):
         return [x[0]() for x in cls.get_properties().column_List]
 
     @classmethod
-    def create_completer(cls, texts, widget: QLineEdit|QComboBox):
+    def create_completer(cls, texts, widget: QLineEdit | QComboBox):
         completer = QCompleter(texts)
         widget.setCompleter(completer)
 
@@ -233,8 +234,6 @@ class Object(som_gui.core.tool.Object):
         logging.error(text)
         tool.Popups.create_warning_popup(text)
         return False
-
-
 
     @classmethod
     def copy_object(
@@ -416,13 +415,13 @@ class Object(som_gui.core.tool.Object):
     def get_existing_ident_values(cls) -> set[str]:
         proj = tool.Project.get()
         ident_values = set()
-        for obj in proj.get_objects(filter=False):
+        for obj in proj.get_classes(filter=False):
             if obj.ident_value:
                 ident_values.add(obj.ident_value)
         return ident_values
 
     @classmethod
-    def is_identifier_allowed(cls, identifier, ignore:list[str]=None):
+    def is_identifier_allowed(cls, identifier, ignore: list[str] = None):
         """
         identifier: value which will be checked against all identifiers
         ignore: list of values which will be ignored
@@ -436,7 +435,7 @@ class Object(som_gui.core.tool.Object):
             return True
 
     @classmethod
-    def oi_create_dialog(cls,title) -> ObjectInfoWidget:
+    def oi_create_dialog(cls, title) -> ObjectInfoWidget:
         prop = cls.get_properties()
         prop.object_info_widget_properties = (
             som_gui.module.object.prop.ObjectInfoWidgetProperties()
@@ -454,9 +453,15 @@ class Object(som_gui.core.tool.Object):
         return prop.object_info_widget
 
     @classmethod
-    def oi_connect_dialog(cls,dialog:ObjectInfoWidget,predefined_psets:dict[str,SOMcreator.SOMPropertySet]):
+    def oi_connect_dialog(
+        cls,
+        dialog: ObjectInfoWidget,
+        predefined_psets: dict[str, SOMcreator.SOMPropertySet],
+    ):
         dialog.widget.button_add_ifc.pressed.connect(lambda: cls.add_ifc_mapping(""))
-        dialog.widget.combo_box_pset.currentTextChanged.connect(lambda: cls.oi_update_attribute_combobox(predefined_psets))
+        dialog.widget.combo_box_pset.currentTextChanged.connect(
+            lambda: cls.oi_update_attribute_combobox(predefined_psets)
+        )
 
     @classmethod
     def oi_get_focus_object(cls):
@@ -532,17 +537,21 @@ class Object(som_gui.core.tool.Object):
                 layout.itemAt(index).widget().show()
 
     @classmethod
-    def oi_update_attribute_combobox(cls,predefined_psets:list[SOMcreator.SOMPropertySet]):
+    def oi_update_attribute_combobox(
+        cls, predefined_psets: list[SOMcreator.SOMPropertySet]
+    ):
         prop: ObjectProperties = cls.get_properties()
         widget = prop.object_info_widget.widget
         pset_name = widget.combo_box_pset.currentText()
         mode = cls.oi_get_mode()
-    
+
         if mode == 0:
-            property_set = {p.name:p for p in predefined_psets}.get(pset_name)
+            property_set = {p.name: p for p in predefined_psets}.get(pset_name)
             if property_set:
-                property_names = [pr.name for pr in property_set.get_attributes(filter = False)]
-                cls.create_completer(property_names,widget.combo_box_attribute)
+                property_names = [
+                    pr.name for pr in property_set.get_attributes(filter=False)
+                ]
+                cls.create_completer(property_names, widget.combo_box_attribute)
         else:
             active_object = cls.oi_get_focus_object()
             property_set: SOMcreator.SOMPropertySet = {
@@ -575,31 +584,33 @@ class Object(som_gui.core.tool.Object):
             info_properties.plugin_infos[plugin.key] = plugin.init_value_getter(obj)
         info_properties.is_group = obj.is_concept if obj else False
         info_properties.name = obj.name if obj else ""
-        info_properties.ifc_mappings = list(obj.ifc_mapping) if obj else ["IfcBuildingElementProxy"]
+        info_properties.ifc_mappings = (
+            list(obj.ifc_mapping) if obj else ["IfcBuildingElementProxy"]
+        )
         if obj and not obj.is_concept:
             info_properties.pset_name = obj.identifier_property.property_set.name
             info_properties.attribute_name = obj.identifier_property.name
 
     @classmethod
-    def oi_update_dialog(cls,dialog:ObjectInfoWidget):
+    def oi_update_dialog(cls, dialog: ObjectInfoWidget):
         prop: ObjectProperties = cls.get_properties()
         info_prop = prop.object_info_widget_properties
-        
-        #set Name
+
+        # set Name
         dialog.widget.line_edit_name.setText(info_prop.name)
-        #set IsGroup
+        # set IsGroup
         dialog.widget.button_gruppe.setChecked(info_prop.is_group)
-        
+
         for plugin in prop.object_info_plugin_list:
             plugin.widget_value_setter(info_prop.plugin_infos.get(plugin.key))
-        
+
         for mapping in info_prop.ifc_mappings:
             cls.add_ifc_mapping(mapping)
-        
+
         mode = cls.oi_get_mode()
-       
+
         active_object = prop.active_object
-        if mode !=0:
+        if mode != 0:
             dialog.widget.combo_box_pset.clear()
             [
                 dialog.widget.combo_box_pset.addItem(p.name)
@@ -609,7 +620,6 @@ class Object(som_gui.core.tool.Object):
             dialog.widget.combo_box_pset.setCurrentText(info_prop.pset_name)
             dialog.widget.combo_box_attribute.setCurrentText(info_prop.attribute_name)
             dialog.widget.line_edit_attribute_value.setText(info_prop.ident_value)
-
 
     @classmethod
     def add_ifc_mapping(cls, mapping):
@@ -758,17 +768,23 @@ class Object(som_gui.core.tool.Object):
         )
 
     @classmethod
-    def trigger_object_info_widget(mode:int):
+    def trigger_object_info_widget(mode: int):
         trigger.create_object_info_widget(mode)
 
     @classmethod
-    def trigger_object_creation(cls,):
+    def trigger_object_creation(
+        cls,
+    ):
         trigger.create_object_called()
-    
+
     @classmethod
-    def trigger_object_copy(cls,):
+    def trigger_object_copy(
+        cls,
+    ):
         trigger.copy_object_called()
-    
+
     @classmethod
-    def trigger_object_modification(cls,):
+    def trigger_object_modification(
+        cls,
+    ):
         trigger.modify_object_called()
