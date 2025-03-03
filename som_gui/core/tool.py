@@ -607,7 +607,7 @@ class AttributeImportSQL:
     ):
         pass
 
-    def get_attributes(self, ifc_type, identifier, property_set):
+    def get_properties(self, ifc_type, identifier, property_set):
         pass
 
     def get_current_object_filter(
@@ -3229,7 +3229,7 @@ class Util:
     ):
         pass
 
-    def get_attribute(self, widget):
+    def get_property(self, widget):
         pass
 
     def get_combobox_values(self, combo_box):

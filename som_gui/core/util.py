@@ -28,7 +28,7 @@ def update_file_selector(widget: ui.FileSelector):
 
 
 def fill_main_attribute_selector(
-    widget: ui.AttributeSelector, util: Type[tool.Util], project: Type[tool.Project]
+    widget: ui.PropertySelector, util: Type[tool.Util], project: Type[tool.Project]
 ):
     pset, attribute = project.get().get_main_property()
     util.fill_main_attribute(widget, pset, attribute)

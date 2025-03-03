@@ -11,7 +11,7 @@ def create_mapping(
         new_sheet = workbook.create_sheet(name)
         attributes = set()
         for property_set in obj.get_property_sets(filter=True):
-            for attribute in property_set.get_attributes(filter=True):
+            for attribute in property_set.get_properties(filter=True):
                 attributes.add(attribute.name)
 
         for i, attrib_name in enumerate(sorted(attributes), start=1):

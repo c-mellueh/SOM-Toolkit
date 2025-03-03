@@ -389,7 +389,7 @@ def update_attribute_table(
         attribute_import_results.disable_table(table_widget)
     else:
         table_widget.setDisabled(False)
-        attribute_list = attribute_import_sql.get_attributes(
+        attribute_list = attribute_import_sql.get_properties(
             ifc_type, identifier, property_set
         )
         attribute_import_results.update_table_widget(

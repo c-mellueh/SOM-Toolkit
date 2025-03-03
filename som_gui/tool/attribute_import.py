@@ -401,7 +401,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
             object_dict = dict()
             for pset in obj.get_property_sets(filter=True):
                 object_dict[pset.name] = {
-                    a.name: a for a in pset.get_attributes(filter=True)
+                    a.name: a for a in pset.get_properties(filter=True)
                 }
             result_dict[obj.ident_value] = object_dict
         return result_dict
@@ -1008,7 +1008,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return pset_list
 
     @classmethod
-    def get_attributes(
+    def get_properties(
         cls, ifc_type: str, identifier: str | SOMcreator.SOMClass, property_set: str
     ) -> list[tuple[str, int, int]]:
         logging.debug("Request Attributes")

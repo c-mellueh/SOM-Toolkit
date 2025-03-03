@@ -66,7 +66,7 @@ def create_mapping(
 
         def get_attrib_count(obj: SOMcreator.SOMClass):
             return sum(
-                len([attrib for attrib in pset.get_attributes(filter=True)])
+                len([attrib for attrib in pset.get_properties(filter=True)])
                 for pset in obj.get_property_sets(filter=True)
             )
 
@@ -83,7 +83,7 @@ def create_mapping(
             worksheet.cell(row_index, 2, obj.ident_value)
             col_index = 3
             for propery_set in obj.get_property_sets(filter=True):
-                for attribute in propery_set.get_attributes(filter=True):
+                for attribute in propery_set.get_properties(filter=True):
                     if attribute.name != kenner:
                         worksheet.cell(row_index, col_index, attribute.name)
                         col_index += 2

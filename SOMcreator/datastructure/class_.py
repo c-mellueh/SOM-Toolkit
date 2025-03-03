@@ -191,7 +191,7 @@ class SOMClass(Hirarchy):
     def get_properties(self, inherit: bool = False) -> Iterator[SOMcreator.SOMProperty]:
         attributes = list()
         for property_set in self.get_property_sets(filter=False):
-            attributes += property_set.get_attributes(filter=False)
+            attributes += property_set.get_properties(filter=False)
         if inherit:
             attributes += self.parent.get_properties(inherit=True, filter=False)
         return iter(attributes)

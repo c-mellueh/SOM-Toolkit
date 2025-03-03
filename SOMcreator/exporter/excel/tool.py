@@ -179,7 +179,7 @@ class ExportExcel:
         pset_start_row = start_row + HEADER_ROW_COUNT
         index = 0
         for property_set in sorted(obj.get_property_sets(filter=True)):
-            for attribute in sorted(property_set.get_attributes(filter=True)):
+            for attribute in sorted(property_set.get_properties(filter=True)):
                 sheet.cell(pset_start_row + index, start_column).value = attribute.name
                 sheet.cell(pset_start_row + index, start_column + 1).value = (
                     property_set.name
@@ -277,7 +277,7 @@ class ExportExcel:
             for pset in som_class.get_property_sets(filter=True):
                 if pset.name not in property_sets:
                     property_sets[pset.name] = dict()
-                for som_property in pset.get_attributes(filter=True):
+                for som_property in pset.get_properties(filter=True):
                     if som_property.name not in property_sets[pset.name]:
                         property_sets[pset.name][som_property.name] = None
 
@@ -299,7 +299,7 @@ class ExportExcel:
         ):
             sheet.cell(1, col_index).value = som_class.name
             for pset in som_class.get_property_sets(filter=True):
-                for som_property in pset.get_attributes(filter=True):
+                for som_property in pset.get_properties(filter=True):
                     row = property_sets[pset.name][som_property.name]
                     sheet.cell(row, col_index).value = "✔️"
 

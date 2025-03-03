@@ -335,7 +335,7 @@ class Util(som_gui.core.tool.Util):
     @classmethod
     def fill_main_attribute(
         cls,
-        widget: ui.AttributeSelector,
+        widget: ui.PropertySelector,
         pset_name: str,
         attribute_name: str,
         pset_placeholder: str = None,
@@ -349,12 +349,11 @@ class Util(som_gui.core.tool.Util):
             widget.ui.le_attribute_name.setPlaceholderText(attribute_placeholder)
 
     @classmethod
-    def get_attribute(cls, widget: ui.AttributeSelector):
+    def get_property(cls, widget: ui.PropertySelector):
         return widget.ui.le_pset_name.text(), widget.ui.le_attribute_name.text()
 
     @classmethod
     def fill_list_widget_with_checkstate(
-        
         cls, list_widget: QListWidget, allowed_labels: list[str], all_labels: list[str]
     ):
         """

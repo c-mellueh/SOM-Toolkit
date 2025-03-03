@@ -155,6 +155,6 @@ def build_full_required_data_dict(project: SOMcreator.SOMProject) -> REQUIRED_DA
         required_data[obj] = dict()
         for pset in obj.get_property_sets(filter=True):
             required_data[obj][pset] = [
-                attribute for attribute in pset.get_attributes(filter=True)
+                attribute for attribute in pset.get_properties(filter=True)
             ]
     return required_data

@@ -33,7 +33,7 @@ def _handle_bookmark_list(proj: SOMcreator.SOMProject) -> etree.ElementTree:
         xml_col.set("v", text)
 
         for property_set in obj.get_property_sets(filter=True):
-            for attribute in property_set.get_attributes(filter=True):
+            for attribute in property_set.get_properties(filter=True):
                 if attribute != obj.identifier_property:
                     xml_col = etree.SubElement(xml_bookmark, "col")
                     data_type = xml.transform_data_format(attribute.data_type)
@@ -46,7 +46,7 @@ def _get_attribute_dict(proj: SOMcreator.SOMProject) -> dict[str, str]:
     attribute_dict = {}
     for obj in proj.get_classes(filter=True):
         for property_set in obj.get_property_sets(filter=True):
-            for attribute in property_set.get_attributes(filter=True):
+            for attribute in property_set.get_properties(filter=True):
                 attribute_dict[f"{property_set.name}:{attribute.name}"] = (
                     xml.transform_data_format(attribute.data_type)
                 )

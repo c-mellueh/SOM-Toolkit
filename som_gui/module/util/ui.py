@@ -23,7 +23,7 @@ class FileSelector(QWidget):
         trigger.paint_file_selector(self)
 
 
-class AttributeSelector(QWidget):
+class PropertySelector(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.ui = ui_AttributeSelect.Ui_Util()

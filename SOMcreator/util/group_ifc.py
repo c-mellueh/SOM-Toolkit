@@ -187,7 +187,7 @@ def create_aggregation_structure(
     ):
         for pset in group_obj.get_property_sets(filter=True):
             attributes = {
-                attribute.name: None for attribute in pset.get_attributes(filter=True)
+                attribute.name: None for attribute in pset.get_properties(filter=True)
             }
             if pset.name == main_pset:
                 attributes[main_attribute] = group_obj.ident_value
