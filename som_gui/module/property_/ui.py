@@ -1,14 +1,14 @@
 from PySide6.QtCore import QRect, QSize, Qt
 from PySide6.QtWidgets import QHeaderView, QWidget, QComboBox, QTreeView
 from PySide6.QtGui import QStandardItemModel, QStandardItem
-from som_gui.module import attribute as attribute_module
+from som_gui.module import property_ as attribute_module
 from .qt import ui_CompareWidget, ui_UnitSettings
 
 
-class AttributeWidget(QWidget):
+class PropertyWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ui = ui_CompareWidget.Ui_AttributeCompare()
+        self.ui = ui_CompareWidget.Ui_PropertyCompare()
         self.ui.setupUi(self)
         self.ui.tree_widget_object.setColumnCount(2)
         self.ui.tree_widget_propertysets.setColumnCount(2)
@@ -34,9 +34,10 @@ class WordWrapHeaderView(QHeaderView):
         text_margin_buffer = QSize(2, 2)
         return rect.size() + text_margin_buffer
 
+
 class UnitSettings(QWidget):
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.ui = ui_UnitSettings.Ui_UnitSettings()
         self.ui.setupUi(self)
         attribute_module.trigger.unit_settings_created(self)
@@ -47,7 +48,7 @@ class UnitComboBox(QComboBox):
         super().__init__(*args, **kwargs)
         self.tree_view = QTreeView()
         self.setView(self.tree_view)
-        self.mod:QStandardItemModel = QStandardItemModel()
+        self.mod: QStandardItemModel = QStandardItemModel()
         self.setModel(self.mod)
         self.tree_view.header().setVisible(False)
         self.tree_view.expanded.connect(lambda: setattr(self, "is_locked", True))
@@ -61,10 +62,11 @@ class UnitComboBox(QComboBox):
         self.setEditable(True)
         self.add_items()
         self.is_locked = False
-        self.tree_view.setMinimumHeight(self.tree_view.sizeHintForRow(0)*5)
+        self.tree_view.setMinimumHeight(self.tree_view.sizeHintForRow(0) * 5)
 
     def paintEvent(self, e):
         from . import trigger
+
         trigger.repaint_unit_combobox(self)
         return super().paintEvent(e)
 
@@ -96,11 +98,10 @@ class UnitComboBox(QComboBox):
         parent = item.parent()
         if not parent:
             return text
-        
+
         parent_text = parent.text()
         if not "_" in parent_text or parent_text == "DEGREE_CELSIUS":
             return f"{text}_{parent.text()}"
 
-        [p1,p2] = parent_text.split("_")
-        return "_".join((p1,text,p2))
-    
+        [p1, p2] = parent_text.split("_")
+        return "_".join((p1, text, p2))

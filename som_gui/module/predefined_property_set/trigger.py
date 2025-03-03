@@ -12,7 +12,9 @@ if TYPE_CHECKING:
 
 def connect():
     core.create_main_menu_actions(tool.PredefinedPropertySet, tool.MainWindow)
-    core.add_compare_widget(tool.PredefinedPropertySetCompare, tool.AttributeCompare, tool.CompareWindow)
+    core.add_compare_widget(
+        tool.PredefinedPropertySetCompare, tool.PropertyCompare, tool.CompareWindow
+    )
 
 
 def open_window():
@@ -21,26 +23,44 @@ def open_window():
 
 def connect_dialog(dialog: PredefinedPropertySetWindow):
     dialog.ui.list_view_pset.itemSelectionChanged.connect(
-        lambda: core.pset_selection_changed(tool.PredefinedPropertySet))
+        lambda: core.pset_selection_changed(tool.PredefinedPropertySet)
+    )
 
     dialog.ui.table_widgets_objects.itemDoubleClicked.connect(
-        lambda: core.object_double_clicked(tool.PredefinedPropertySet, tool.PropertySet, tool.Object))
+        lambda: core.object_double_clicked(
+            tool.PredefinedPropertySet, tool.PropertySet, tool.Object
+        )
+    )
 
     dialog.ui.list_view_pset.customContextMenuRequested.connect(
-        lambda pos: core.pset_context_menu(pos, tool.PredefinedPropertySet, tool.PropertySet))
+        lambda pos: core.pset_context_menu(
+            pos, tool.PredefinedPropertySet, tool.PropertySet
+        )
+    )
 
     dialog.ui.list_view_pset.itemChanged.connect(
-        lambda item: core.pset_data_changed(item, tool.PropertySet))
+        lambda item: core.pset_data_changed(item, tool.PropertySet)
+    )
 
     dialog.ui.list_view_pset.itemDoubleClicked.connect(
-        lambda item: core.pset_double_clicked(item, tool.PropertySet, tool.PropertySetWindow, tool.AttributeTable))
+        lambda item: core.pset_double_clicked(
+            item, tool.PropertySet, tool.PropertySetWindow, tool.AttributeTable
+        )
+    )
 
     dialog.ui.table_widgets_objects.customContextMenuRequested.connect(
-        lambda pos: core.object_context_menu(pos, tool.PredefinedPropertySet, tool.PropertySet))
+        lambda pos: core.object_context_menu(
+            pos, tool.PredefinedPropertySet, tool.PropertySet
+        )
+    )
 
-    dialog.edit_started.connect(lambda: core.name_edit_started(tool.PredefinedPropertySet))
+    dialog.edit_started.connect(
+        lambda: core.name_edit_started(tool.PredefinedPropertySet)
+    )
 
-    dialog.edit_stopped.connect(lambda: core.name_edit_stopped(tool.PredefinedPropertySet))
+    dialog.edit_stopped.connect(
+        lambda: core.name_edit_stopped(tool.PredefinedPropertySet)
+    )
 
 
 def edit_name(text, index):

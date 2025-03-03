@@ -9,9 +9,14 @@ from . import constants, ui
 
 def connect():
     core.create_main_menu_actions(tool.FilterWindow, tool.MainWindow)
-    core.add_compare_widget(tool.FilterCompare, tool.AttributeCompare, tool.CompareWindow)
-    tool.Settings.add_page_to_toolbox(ui.SettingsWidget, constants.SETTINGS_PAGE_NAME,
-                                      lambda: core.settings_accepted(tool.FilterWindow, tool.Project, tool.Popups))
+    core.add_compare_widget(
+        tool.FilterCompare, tool.PropertyCompare, tool.CompareWindow
+    )
+    tool.Settings.add_page_to_toolbox(
+        ui.SettingsWidget,
+        constants.SETTINGS_PAGE_NAME,
+        lambda: core.settings_accepted(tool.FilterWindow, tool.Project, tool.Popups),
+    )
 
 
 def open_window():
@@ -19,14 +24,17 @@ def open_window():
 
 
 def retranslate_ui():
-    core.retranslate_ui(tool.FilterWindow,tool.Util)
+    core.retranslate_ui(tool.FilterWindow, tool.Util)
 
 
 def filter_changed_externally():
     core.filter_changed_externally(tool.FilterWindow)
 
+
 def pt_horizontal_context_requested(pos):
-    core.pt_context_menu(pos, Qt.Orientation.Horizontal, tool.FilterWindow, tool.Project)
+    core.pt_context_menu(
+        pos, Qt.Orientation.Horizontal, tool.FilterWindow, tool.Project
+    )
     pass
 
 
@@ -62,6 +70,7 @@ def update_pset_tree():
 
 # Settings
 
+
 def settings_widget_created(widget: ui.SettingsWidget):
     core.settings_widget_created(widget, tool.FilterWindow, tool.Project)
 
@@ -71,4 +80,6 @@ def settings_combobox_changed():
 
 
 def filter_tab_object_tree_selection_changed(widget):
-    core.filter_tab_object_tree_selection_changed(widget, tool.AttributeCompare, tool.FilterCompare)
+    core.filter_tab_object_tree_selection_changed(
+        widget, tool.PropertyCompare, tool.FilterCompare
+    )

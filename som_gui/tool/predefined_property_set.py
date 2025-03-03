@@ -259,14 +259,14 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
         psets0: list[SOMcreator.SOMPropertySet],
         psets1: list[SOMcreator.SOMPropertySet],
     ):
-        uuid_dict = tool.AttributeCompare.generate_uuid_dict(psets1)
-        name_dict = tool.AttributeCompare.generate_name_dict(psets1)
+        uuid_dict = tool.PropertyCompare.generate_uuid_dict(psets1)
+        name_dict = tool.PropertyCompare.generate_name_dict(psets1)
         pset_list = list()
         missing = list(psets1)
         print(missing)
         for pset in psets0:
             logging.debug(f"Search for Pset {pset}")
-            match = tool.AttributeCompare.find_matching_entity(
+            match = tool.PropertyCompare.find_matching_entity(
                 pset, uuid_dict, name_dict
             )
             if match:

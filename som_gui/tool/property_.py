@@ -18,14 +18,14 @@ import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
-from som_gui.module.attribute import trigger, ui, constants
+from som_gui.module.property_ import trigger, ui, constants
 from som_gui.module.project.constants import CLASS_REFERENCE
 from ifcopenshell.util.unit import unit_names, prefixes
 
 if TYPE_CHECKING:
-    from som_gui.module.attribute.prop import (
-        AttributeProperties,
-        CompareAttributesProperties,
+    from som_gui.module.property_.prop import (
+        PropertyProperties,
+        ComparePropertyProperties,
     )
 
 SOMType: TypeAlias = "SOMcreator.SOMProperty | SOMcreator.SOMPropertySet"
@@ -38,13 +38,13 @@ style_list = [
 ]
 
 
-class Attribute(som_gui.core.tool.Attribute):
+class Property(som_gui.core.tool.Property):
     @classmethod
-    def get_properties(cls) -> AttributeProperties:
-        return som_gui.AttributeProperties
+    def get_properties(cls) -> PropertyProperties:
+        return som_gui.PropertyProperties
 
     @classmethod
-    def add_attribute_data_value(
+    def add_property_data_value(
         cls, name: str, getter: Callable, setter: Callable
     ) -> None:
         """
@@ -151,10 +151,10 @@ class Attribute(som_gui.core.tool.Attribute):
         return [i.text() for i in items if i.checkState() == Qt.CheckState.Checked]
 
 
-class AttributeCompare(som_gui.core.tool.AttributeCompare):
+class PropertyCompare(som_gui.core.tool.PropertyCompare):
     @classmethod
-    def get_properties(cls) -> CompareAttributesProperties:
-        return som_gui.CompareAttributesProperties
+    def get_properties(cls) -> ComparePropertyProperties:
+        return som_gui.ComparePropertyProperties
 
     @classmethod
     def reset(cls) -> None:
@@ -176,7 +176,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         prop.widget = None
 
     @classmethod
-    def create_tree_selection_trigger(cls, widget: ui.AttributeWidget):
+    def create_tree_selection_trigger(cls, widget: ui.PropertyWidget):
         """
         create trigger if Object Tree and PropertySet tree are selected
         :param widget:
@@ -462,7 +462,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             )
 
     @classmethod
-    def fill_value_table_pset(cls, widget: ui.AttributeWidget):
+    def fill_value_table_pset(cls, widget: ui.PropertyWidget):
         pset_tree = cls.get_pset_tree(widget)
         item = cls.get_selected_item(pset_tree)
         table = cls.get_value_table(widget)
@@ -499,7 +499,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return info_list
 
     @classmethod
-    def get_attribute_info_list(cls):
+    def get_property_info_list(cls):
         info_list = list()
         info_list.append(("Name", lambda a: getattr(a, "name")))
         info_list.append(
@@ -549,7 +549,9 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def fill_pset_tree(
         cls,
         tree: QTreeWidget,
-        pset_list: list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]]|None,
+        pset_list: (
+            list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]] | None
+        ),
         add_missing: bool = True,
     ) -> None:
         cls.clear_tree(tree)
@@ -567,7 +569,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                 tree.invisibleRootItem().addChild(item)
 
     @classmethod
-    def add_attributes_to_pset_tree(cls, tree: QTreeWidget, add_missing: bool):
+    def add_properties_to_pset_tree(cls, tree: QTreeWidget, add_missing: bool):
         root = tree.invisibleRootItem()
         logging.debug(f"{root.childCount()} items in pset tree")
         for index in range(root.childCount()):
@@ -593,7 +595,9 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                     item.addChild(attribute_item)
 
     @classmethod
-    def fill_value_table(cls, table: QTableWidget, attribute: SOMcreator.SOMProperty|None):
+    def fill_value_table(
+        cls, table: QTableWidget, attribute: SOMcreator.SOMProperty | None
+    ):
         cls.clear_table(table)
         if attribute is None:
             return
@@ -974,21 +978,21 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     # GETTER & SETTER
 
     @classmethod
-    def get_object_tree(cls, widget: ui.AttributeWidget):
+    def get_object_tree(cls, widget: ui.PropertyWidget):
         return widget.ui.tree_widget_object
 
     @classmethod
-    def get_pset_tree(cls, widget: ui.AttributeWidget):
+    def get_pset_tree(cls, widget: ui.PropertyWidget):
         return widget.ui.tree_widget_propertysets
 
     @classmethod
-    def get_value_table(cls, widget: ui.AttributeWidget):
+    def get_value_table(cls, widget: ui.PropertyWidget):
         return widget.ui.table_widget_values
 
     @classmethod
     def create_widget(cls):
         if cls.get_properties().widget is None:
-            cls.get_properties().widget = ui.AttributeWidget()
+            cls.get_properties().widget = ui.PropertyWidget()
         return cls.get_properties().widget
 
     @classmethod
@@ -1133,7 +1137,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return data
 
     @classmethod
-    def get_entities_from_item(cls, item: QTreeWidgetItem|None) -> tuple[
+    def get_entities_from_item(cls, item: QTreeWidgetItem | None) -> tuple[
         SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
         SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
     ]:
@@ -1148,5 +1152,5 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return f"{project.name} v{project.version}"
 
     @classmethod
-    def get_info_table(cls, widget: ui.AttributeWidget):
+    def get_info_table(cls, widget: ui.PropertyWidget):
         return widget.ui.table_infos

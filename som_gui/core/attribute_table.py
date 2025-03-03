@@ -110,7 +110,7 @@ def drop_event(
     event: QDropEvent,
     target_table: ui.AttributeTable,
     attribute_table: Type[tool.AttributeTable],
-    attribute_tool: Type[tool.Attribute],
+    attribute_tool: Type[tool.Property],
 ):
     """
     handling of dropping of attribute row from a property set window to another property set window

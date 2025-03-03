@@ -135,7 +135,7 @@ def draw_tree_branch(
     painter: QPainter,
     rect,
     index: QModelIndex,
-    attribute_compare: Type[tool.AttributeCompare],
+    attribute_compare: Type[tool.PropertyCompare],
 ):
     level = attribute_compare.get_level(index)
     item = tree.itemFromIndex(index)

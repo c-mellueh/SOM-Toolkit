@@ -3,33 +3,32 @@
 ################################################################################
 ## Form generated from reading UI file 'CompareWidget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QHeaderView, QSizePolicy,
-                               QSplitter, QTableWidget, QTableWidgetItem, QTreeWidgetItem,
-                               QVBoxLayout, QWidget)
+    QSplitter, QTableWidget, QTableWidgetItem, QTreeWidgetItem,
+    QVBoxLayout, QWidget)
 
 from som_gui.module.compare.ui import EntityTreeWidget
 
-
-class Ui_AttributeCompare(object):
-    def setupUi(self, AttributeCompare):
-        if not AttributeCompare.objectName():
-            AttributeCompare.setObjectName(u"AttributeCompare")
-        AttributeCompare.resize(868, 576)
-        self.verticalLayout = QVBoxLayout(AttributeCompare)
+class Ui_PropertyCompare(object):
+    def setupUi(self, PropertyCompare):
+        if not PropertyCompare.objectName():
+            PropertyCompare.setObjectName(u"PropertyCompare")
+        PropertyCompare.resize(868, 576)
+        self.verticalLayout = QVBoxLayout(PropertyCompare)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.splitter_3 = QSplitter(AttributeCompare)
+        self.splitter_3 = QSplitter(PropertyCompare)
         self.splitter_3.setObjectName(u"splitter_3")
         self.splitter_3.setOrientation(Qt.Orientation.Horizontal)
         self.tree_widget_object = EntityTreeWidget(self.splitter_3)
@@ -78,12 +77,13 @@ class Ui_AttributeCompare(object):
 
         self.verticalLayout.addWidget(self.splitter_3)
 
-        self.retranslateUi(AttributeCompare)
 
-        QMetaObject.connectSlotsByName(AttributeCompare)
+        self.retranslateUi(PropertyCompare)
+
+        QMetaObject.connectSlotsByName(PropertyCompare)
     # setupUi
 
-    def retranslateUi(self, AttributeCompare):
-        AttributeCompare.setWindowTitle(QCoreApplication.translate("AttributeCompare", u"Form", None))
+    def retranslateUi(self, PropertyCompare):
+        PropertyCompare.setWindowTitle(QCoreApplication.translate("PropertyCompare", u"Form", None))
     # retranslateUi
 

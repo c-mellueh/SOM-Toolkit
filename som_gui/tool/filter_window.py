@@ -21,7 +21,7 @@ import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
-from som_gui.module.attribute import ui as attribute_ui
+from som_gui.module.property_ import ui as attribute_ui
 from som_gui.module.project.constants import CLASS_REFERENCE
 
 YELLOW = "#897e00"
@@ -260,7 +260,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         prop.widget = None
 
     @classmethod
-    def create_tree_selection_trigger(cls, widget: attribute_ui.AttributeWidget):
+    def create_tree_selection_trigger(cls, widget: attribute_ui.PropertyWidget):
         widget.ui.tree_widget_object.itemSelectionChanged.connect(
             lambda: trigger.filter_tab_object_tree_selection_changed(widget)
         )
@@ -349,7 +349,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         objects_are_identical = cls.are_all_filters_identical(filter_list)
         if not objects_are_identical:
             return False
-        pset_lists = tool.AttributeCompare.get_pset_list(obj0)
+        pset_lists = tool.PropertyCompare.get_pset_list(obj0)
         if pset_lists is None:
             return True
         for p0, p1 in pset_lists:
@@ -365,7 +365,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         all_psets_are_identical = cls.are_all_filters_identical(filter_list)
         if not all_psets_are_identical:
             return False
-        attribute_lists = tool.AttributeCompare.get_attribute_list(pset0)
+        attribute_lists = tool.PropertyCompare.get_attribute_list(pset0)
         if attribute_lists is None:
             return True
         for a0, a1 in attribute_lists:
@@ -384,7 +384,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
     def fill_tree_with_checkstates(cls, item: QTreeWidgetItem) -> None:
 
         tree = item.treeWidget()
-        entity_0, entity_1 = tool.AttributeCompare.get_entities_from_item(item)
+        entity_0, entity_1 = tool.PropertyCompare.get_entities_from_item(item)
         filter_list = cls.get_filter_list(entity_0, entity_1)
         for column, filter_state in enumerate(filter_list, start=2):
             widget = cls.create_combobox_widget(filter_state[0], filter_state[1])
@@ -456,7 +456,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
     @classmethod
     def export_object_filter_differences(
-        cls, file: TextIO, attribute_compare: Type[tool.AttributeCompare]
+        cls, file: TextIO, attribute_compare: Type[tool.PropertyCompare]
     ):
         project_0 = cls.get_project(0)
         object_dict = attribute_compare.get_object_dict()
@@ -476,7 +476,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
     @classmethod
     def export_pset_filter_differences(
-        cls, file, pset_list, attribute_compare: Type[tool.AttributeCompare]
+        cls, file, pset_list, attribute_compare: Type[tool.PropertyCompare]
     ):
         if pset_list is None:
             return
@@ -536,13 +536,13 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
     @classmethod
     def create_widget(cls):
         if cls.get_properties().widget is None:
-            cls.get_properties().widget = attribute_ui.AttributeWidget()
+            cls.get_properties().widget = attribute_ui.PropertyWidget()
             cls.get_properties().widget.ui.table_widget_values.hide()
             cls.get_properties().widget.ui.table_infos.hide()
         return cls.get_properties().widget
 
     @classmethod
-    def get_widget(cls) -> attribute_ui.AttributeWidget:
+    def get_widget(cls) -> attribute_ui.PropertyWidget:
         return cls.get_properties().widget
 
     @classmethod
@@ -592,7 +592,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
     def set_tree_item_column_color(cls, item: QTreeWidgetItem, column: int, color: str):
         tree = item.treeWidget()
         index = tree.indexFromItem(item, 0)
-        tool.AttributeCompare.set_branch_color(tree, index, color)
+        tool.PropertyCompare.set_branch_color(tree, index, color)
         color = QColor(color)
         item.setBackground(column, color)
         item.setData(CLASS_REFERENCE + 1, column, 1)

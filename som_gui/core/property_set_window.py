@@ -40,7 +40,7 @@ def add_attribute_button_clicked(
     window: ui.PropertySetWindow,
     property_set: Type[tool.PropertySet],
     property_set_window: Type[tool.PropertySetWindow],
-    attribute: Type[tool.Attribute],
+    attribute: Type[tool.Property],
 ):
     pset = property_set_window.get_property_set_by_window(window)
     attribute_name = property_set_window.get_attribute_name_input(window)

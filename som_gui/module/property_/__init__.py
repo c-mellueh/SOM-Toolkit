@@ -3,8 +3,8 @@ from . import prop, trigger, ui
 
 
 def register():
-    som_gui.AttributeProperties = prop.AttributeProperties()
-    som_gui.CompareAttributesProperties = prop.CompareAttributesProperties()
+    som_gui.PropertyProperties = prop.PropertyProperties()
+    som_gui.ComparePropertyProperties = prop.ComparePropertyProperties()
 
 
 def load_ui_triggers():

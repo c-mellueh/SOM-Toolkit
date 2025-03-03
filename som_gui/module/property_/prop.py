@@ -4,7 +4,7 @@ from typing import Callable, TYPE_CHECKING, TypedDict
 
 if TYPE_CHECKING:
     import SOMcreator
-    from .ui import AttributeWidget, UnitSettings
+    from .ui import PropertyWidget, UnitSettings
 
 
 class AttributeData(TypedDict):
@@ -12,12 +12,12 @@ class AttributeData(TypedDict):
     setter: Callable
 
 
-class AttributeProperties:
+class PropertyProperties:
     attribute_data_dict: dict[str, AttributeData] = dict()
     unit_settings_widget: UnitSettings = None
 
 
-class CompareAttributesProperties:
+class ComparePropertyProperties:
     projects = [None, None]
     uuid_dicts = [None, None]
     ident_dicts = [None, None]
@@ -36,4 +36,4 @@ class CompareAttributesProperties:
         list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]],
     ] = dict()
     values_lists: dict[SOMcreator.SOMProperty, list[tuple[str, str]]] = dict()
-    widget: AttributeWidget = None
+    widget: PropertyWidget = None

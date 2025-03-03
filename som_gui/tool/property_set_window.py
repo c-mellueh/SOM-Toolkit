@@ -37,7 +37,7 @@ from som_gui.module.property_set_window import trigger
 
 if TYPE_CHECKING:
     from som_gui.module.property_set_window.prop import PropertySetWindowProperties
-    from som_gui.module.attribute.ui import UnitComboBox
+    from som_gui.module.property_.ui import UnitComboBox
 
 
 class PropertySetWindow(som_gui.core.tool.PropertySetWindow):

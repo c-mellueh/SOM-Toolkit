@@ -9,7 +9,7 @@ import SOMcreator
 
 if TYPE_CHECKING:
     from . import ui
-    from som_gui.module.attribute.ui import AttributeWidget
+    from som_gui.module.property_.ui import PropertyWidget
 
 
 class FilterWindowProperties:
@@ -22,7 +22,7 @@ class FilterWindowProperties:
 
 
 class FilterCompareProperties:
-    widget: AttributeWidget = None
+    widget: PropertyWidget = None
     usecase_list = list()
     use_case_indexes = list()
     phase_list = list()
