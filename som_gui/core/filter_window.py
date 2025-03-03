@@ -156,7 +156,7 @@ def pt_context_menu(
         menu_list.append((add_uc, lambda: filter_window.add_usecase(proj)))
         pos = table.horizontalHeader().viewport().mapToGlobal(local_pos)
 
-    else:
+    elif orientation == Qt.Orientation.Vertical:
         index = table.verticalHeader().logicalIndexAt(local_pos)
         phase = proj.get_phase_by_index(index)
         del_ph = QCoreApplication.translate("FilterWindow", "Delete Phase")

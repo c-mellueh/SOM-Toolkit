@@ -124,7 +124,7 @@ class Hirarchy(object, metaclass=IterRegistry):
 
     def remove_phase(self, phase: SOMcreator.Phase) -> None:
         phase_index = self.project.get_phase_index(phase)
-        self.get_filter_matrix().pop(phase_index)
+        self._filter_matrix.pop(phase_index)
 
     def remove_usecase(self, usecase: SOMcreator.UseCase) -> None:
         usecase_index = self.project.get_usecase_index(usecase)
