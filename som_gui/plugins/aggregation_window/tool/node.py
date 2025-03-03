@@ -652,7 +652,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
             attribute_dict = cls.get_pset_subelement_dict(property_set_item)
 
-            for attribute in property_set.get_attributes(filter=True):
+            for attribute in property_set.get_properties(filter=True):
                 if attribute not in attribute_dict:
                     attribute_item = cls.add_attribute_to_property_set_tree(
                         attribute, property_set_item
@@ -681,7 +681,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
             attribute_dict = cls.get_pset_subelement_dict(pset_item)
             for attribute, attribute_item in attribute_dict.items():
-                if attribute not in property_set.get_attributes(filter=True):
+                if attribute not in property_set.get_properties(filter=True):
                     pset_item.removeChild(attribute_item)
 
     @classmethod

@@ -12,7 +12,7 @@ VALUE = "value"
 
 
 def _iter_attributes(property_set: SOMcreator.SOMPropertySet, pset_dict: dict) -> None:
-    for attribute in property_set.get_attributes(filter=True):
+    for attribute in property_set.get_properties(filter=True):
         pset_dict[attribute.name] = dict()
         attribute_dict = pset_dict[attribute.name]
 

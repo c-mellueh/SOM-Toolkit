@@ -223,7 +223,7 @@ class SOMProperty(Hirarchy):
                 return
             self._property_set.remove_property(self)
             return
-        if self not in value.get_attributes(filter=False):
+        if self not in value.get_properties(filter=False):
             value.add_property(self)
         self._property_set = value
 

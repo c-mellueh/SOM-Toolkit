@@ -125,7 +125,7 @@ def drop_event(
     proposed_action = event.proposedAction()
     target_property_set = attribute_table.get_property_set_by_table(target_table)
     existing_attributes = {
-        a.name: a for a in target_property_set.get_attributes(filter=False)
+        a.name: a for a in target_property_set.get_properties(filter=False)
     }
     dropped_attributes: set[SOMcreator.SOMProperty] = event.mimeData().property(
         MIME_DATA_KEY
@@ -226,9 +226,9 @@ def update_attribute_table(
 
     # get Attributes which should be deleted and added
     delete_attributes = existing_attributes.difference(
-        set(property_set.get_attributes(filter=True))
+        set(property_set.get_properties(filter=True))
     )
-    new_attributes = set(property_set.get_attributes(filter=True)).difference(
+    new_attributes = set(property_set.get_properties(filter=True)).difference(
         existing_attributes
     )
     attribute_table.remove_attributes_from_table(delete_attributes, table)

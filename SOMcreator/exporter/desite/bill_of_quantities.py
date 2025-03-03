@@ -9,7 +9,7 @@ def get_distinct_attributes(property_sets: list[SOMcreator.SOMPropertySet]):
     for property_set in property_sets:
         attribute: SOMcreator.SOMProperty
         attribute_names += [
-            attribute.name for attribute in property_set.get_attributes(filter=True)
+            attribute.name for attribute in property_set.get_properties(filter=True)
         ]
 
     distinct_attribute_names = list(dict.fromkeys(attribute_names))

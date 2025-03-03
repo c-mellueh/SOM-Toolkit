@@ -329,14 +329,14 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         if None in (pset0, pset1):
             return
         # Generate Match Dicts
-        attributes_1 = list(pset1.get_attributes(filter=False))
+        attributes_1 = list(pset1.get_properties(filter=False))
         attribute_uuid_dict1 = cls.generate_uuid_dict(attributes_1)
         attribute_name_dict1 = cls.generate_name_dict(attributes_1)
 
         missing_attributes1 = list(attributes_1)
         match_list = list()
 
-        for attribute0 in pset0.get_attributes(filter=False):
+        for attribute0 in pset0.get_properties(filter=False):
             match = cls.find_matching_entity(
                 attribute0, attribute_uuid_dict1, attribute_name_dict1
             )

@@ -475,7 +475,7 @@ class PsetModel(TreeModel):
         if isinstance(node, SOMcreator.SOMProperty):
             return 0
         count = len(
-            list(node.get_attributes(filter=False))
+            list(node.get_properties(filter=False))
         )  # Use get_children() to access children
         return count
 
@@ -493,7 +493,7 @@ class PsetModel(TreeModel):
 
         node: SOMcreator.SOMPropertySet = parent.internalPointer()
         children = list(
-            node.get_attributes(filter=False)
+            node.get_properties(filter=False)
         )  # Use get_children() to access children
 
         if 0 <= row < len(children):

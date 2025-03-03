@@ -549,7 +549,7 @@ class Object(som_gui.core.tool.Object):
             property_set = {p.name: p for p in predefined_psets}.get(pset_name)
             if property_set:
                 property_names = [
-                    pr.name for pr in property_set.get_attributes(filter=False)
+                    pr.name for pr in property_set.get_properties(filter=False)
                 ]
                 cls.create_completer(property_names, widget.combo_box_attribute)
         else:
@@ -558,7 +558,7 @@ class Object(som_gui.core.tool.Object):
                 p.name: p for p in active_object.get_property_sets(filter=False)
             }.get(pset_name)
             attribute_names = sorted(
-                [a.name for a in property_set.get_attributes(filter=False)]
+                [a.name for a in property_set.get_properties(filter=False)]
             )
             widget.combo_box_attribute.clear()
             widget.combo_box_attribute.addItems(attribute_names)

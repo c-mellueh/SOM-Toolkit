@@ -341,7 +341,7 @@ def create_object(
 
         pset = property_set.create_property_set(pset_name, None, parent)
         ident_property: SOMcreator.SOMProperty = {
-            a.name: a for a in pset.get_attributes(filter=False)
+            a.name: a for a in pset.get_properties(filter=False)
         }.get(attribute_name)
 
         if not ident_property:
