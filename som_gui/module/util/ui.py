@@ -11,7 +11,7 @@ class FileSelector(QWidget):
         self.ui.setupUi(self)
         self.request_folder = None
         self.extension = None
-        self.name = None
+        self.name:str|None = None
         self.appdata_text = None
         self.request_save = None
         self.single_request = None

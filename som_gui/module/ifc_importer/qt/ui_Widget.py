@@ -72,7 +72,6 @@ class Ui_IfcImporter(object):
         self.main_attribute_widget.setObjectName("main_attribute_widget")
 
         self.verticalLayout_2.addWidget(self.main_attribute_widget)
-
         self.file_selector_widget = FileSelector(IfcImporter)
         self.file_selector_widget.setObjectName("file_selector_widget")
         sizePolicy1 = QSizePolicy(

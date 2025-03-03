@@ -13,3 +13,4 @@ test.*
 /.project
 **.ps1
 **__pycache__**
+**/.vscode
