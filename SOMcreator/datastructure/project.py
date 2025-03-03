@@ -63,7 +63,7 @@ class SOMProject(object):
             self._items.remove(item)
 
     @filterable
-    def get_root_objects(self) -> Iterator[SOMcreator.SOMClass]:
+    def get_root_classes(self) -> Iterator[SOMcreator.SOMClass]:
         return filter(lambda o: o.parent is None, self.get_objects(filter=False))
 
     # Item Getter Methods

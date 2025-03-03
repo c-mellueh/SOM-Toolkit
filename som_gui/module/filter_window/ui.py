@@ -362,7 +362,7 @@ class TreeModel(QAbstractItemModel):
 class ObjectModel(TreeModel):
     def __init__(self, project: SOMcreator.SOMProject):
         super().__init__(project, 2, ["h0", "h1"])
-        self.root_objects = list(self.project.get_root_objects(filter=False))
+        self.root_objects = list(self.project.get_root_classes(filter=False))
 
     def retranslate_ui(self):
         h0 = QCoreApplication.translate("FilterWindow", "Object")
@@ -376,7 +376,7 @@ class ObjectModel(TreeModel):
 
     def update(self):
         logging.debug("Update")
-        self.root_objects = list(self.project.get_root_objects(filter=False))
+        self.root_objects = list(self.project.get_root_classes(filter=False))
         super().update()
 
     def get_root(self):
