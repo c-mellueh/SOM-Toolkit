@@ -30,7 +30,7 @@ class SOMAggregation(Hirarchy):
         else:
             self.uuid = str(uuid)
         self.som_class = som_class
-        self._parent: SOMAggregation | None = None
+        self._parent = None
         self._parent_connection = parent_connection
         self._identity_text = "" if identity_text is None else identity_text
         self.som_class.add_aggregation(self)
@@ -55,10 +55,6 @@ class SOMAggregation(Hirarchy):
     @parent_connection.setter
     def parent_connection(self, value):
         self._parent_connection = value
-
-    @property
-    def parent(self) -> SOMAggregation:
-        return self._parent
 
     def set_parent(self, value, connection_type):
         if self.parent is not None and value != self.parent:

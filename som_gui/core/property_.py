@@ -227,6 +227,8 @@ def unit_settings_accepted(
     property_tool: Type[tool.Property], appdata: Type[tool.Appdata]
 ):
     widget = property_tool.get_unit_settings_widget()
+    if not widget:
+        return
     allowed_units = property_tool.get_checked_texts_from_list_widget(
         widget.ui.list_units
     )

@@ -492,7 +492,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
             file.write(f"   {text} '{p0.name}':\n")
             filter_list = cls.get_filter_list(p0, p1)
             cls.export_write_statechange(file, text, filter_list, 2)
-            attribute_list = attribute_compare.get_properties().attributes_lists.get(p0)
+            attribute_list = attribute_compare.get_properties().properties_lists.get(p0)
             cls.export_attribute_filter_differences(file, attribute_list)
 
     @classmethod

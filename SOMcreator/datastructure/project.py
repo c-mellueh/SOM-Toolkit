@@ -55,8 +55,11 @@ class SOMProject(object):
         self.active_usecases:list[int] = [0]
         self.change_log = list()
 
-    def add_item(self, item: Hirarchy):
+    def add_item(self, item: Hirarchy,overwrite_filter_matrix = True):
         self._items.add(item)
+        item._project = self
+        if overwrite_filter_matrix:
+            item._filter_matrix = self.create_filter_matrix()
 
     def remove_item(self, item: Hirarchy):
         if item in self._items:
@@ -252,15 +255,15 @@ class SOMProject(object):
             self.get_usecase_index(usecase)
         ] = value
 
-    def get_phase_index(self, phase: SOMcreator.Phase) -> int | None:
+    def get_phase_index(self, phase: SOMcreator.Phase) -> int:
         if phase in self._phases:
             return self._phases.index(phase)
-        return None
+        raise ValueError(f"phase '{phase.name}' is not defined in Project {self}")
 
-    def get_usecase_index(self, usecase: SOMcreator.UseCase) -> int | None:
+    def get_usecase_index(self, usecase: SOMcreator.UseCase) -> int :
         if usecase in self._usecases:
             return self._usecases.index(usecase)
-        return None
+        raise ValueError(f"usecase '{usecase.name}' is not defined in Project {self}")
 
     def get_phases(self) -> list[SOMcreator.Phase]:
         return list(self._phases)

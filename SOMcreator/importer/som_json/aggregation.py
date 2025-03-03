@@ -39,6 +39,7 @@ def _get_aggregation(
         filter_matrix=filter_matrix,
         identity_text=identity_text,
     )
+    proj.add_item(aggregation,overwrite_filter_matrix=False)
     SOMcreator.importer.som_json.aggregation_dict[aggregation] = (
         parent,
         parent_connection,
