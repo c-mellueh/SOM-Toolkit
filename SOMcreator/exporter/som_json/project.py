@@ -78,7 +78,7 @@ def _write_filter_dict(
 
 def create_existing_filter_states(proj: SOMProject):
     filter_matrixes = set()
-    for entity in proj.get_hirarchy_items(filter=False):
+    for entity in proj.get_items(filter=False):
         hashable = tuple(
             tuple(use_case_list) for use_case_list in entity.get_filter_matrix()
         )

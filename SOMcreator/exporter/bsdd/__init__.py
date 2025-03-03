@@ -12,9 +12,9 @@ from .datastructure import (
 from .transformer import transform_project_to_dict, transform_objects_to_classes
 from dataclasses import asdict
 import json
+import os
 
-
-def export(project: SOMcreator.SOMProject, path: str):
+def export(project: SOMcreator.SOMProject, path: str|os.PathLike):
     dictionary = transform_project_to_dict(project)
     objects = list(project.get_classes(filter=True))
     predefined_psets = list(project.get_predefined_psets(filter=False))

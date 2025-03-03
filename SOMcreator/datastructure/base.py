@@ -4,7 +4,7 @@ import copy
 
 from SOMcreator.constants import value_constants
 import SOMcreator
-from typing import Iterator, Callable, TypeVar, TYPE_CHECKING
+from typing import Iterator, Callable, TypeVar, TYPE_CHECKING,Union
 import logging
 import SOMcreator.datastructure.som_json
 from functools import wraps
@@ -13,14 +13,19 @@ from abc import ABC, abstractmethod, ABCMeta
 if TYPE_CHECKING:
     import SOMcreator
 
+    
     BASE_TYPE = TypeVar(
-        "HIRARCHY_TYPE",
+        "BASE_TYPE",
         SOMcreator.SOMClass,
         SOMcreator.SOMAggregation,
         SOMcreator.SOMProperty,
         SOMcreator.SOMPropertySet,
-        Hirarchy,
+        BaseClass,
     )
+    BASE_CLASSES = Union[ SOMcreator.SOMClass,
+    SOMcreator.SOMAggregation,
+    SOMcreator.SOMProperty,
+    SOMcreator.SOMPropertySet,]
 
 FILTER_KEYWORD = "filter"
 

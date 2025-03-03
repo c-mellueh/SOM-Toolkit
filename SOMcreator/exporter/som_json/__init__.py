@@ -59,7 +59,7 @@ def reset_uuid_dicts():
     SOMcreator.exporter.som_json.filter_matrixes = list()
 
 
-def export_json(proj: SOMProject, path: str) -> dict:
+def export_json(proj: SOMProject, path: str|os.PathLike) -> dict:
     start_time = time.time()
     main_dict = create_export_dict(proj)
     with open(path, "w") as file:

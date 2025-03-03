@@ -39,7 +39,7 @@ def reset_uuid_dicts():
     SOMcreator.importer.som_json.filter_matrixes = list()
 
 
-def open_json(cls: Type[SOMProject], path: str):
+def open_json(cls: Type[SOMProject], path: str|os.PathLike):
     start_time = time.time()
 
     SOMcreator.importer.som_json.parent_dict = dict()

@@ -17,7 +17,7 @@ class SOMAggregation(BaseClass):
         uuid: str | None = None,
         description: None | str = None,
         optional: None | bool = None,
-        filter_matrix: list[list[bool]] = None,
+        filter_matrix: list[list[bool]]|None = None,
         identity_text=None,
     ):
 
@@ -39,7 +39,7 @@ class SOMAggregation(BaseClass):
         super(SOMAggregation, self).delete(recursive)
 
         self.som_class.remove_aggregation(self)
-        if not self.is_root:
+        if self.parent is not None:
             self.parent.remove_child(self)
 
     @property
@@ -111,10 +111,10 @@ class SOMAggregation(BaseClass):
         """
 
         element = self
-        while element.parent_connection == SOMcreator.value_constants.INHERITANCE:
+        while element.parent is not None and element.parent_connection == SOMcreator.value_constants.INHERITANCE:
             element = element.parent
-
-        identity_text = element.parent.identity() if not element.is_root else ""
+            
+        identity_text = element.parent.identity() if not element.parent is None else ""
         own_text = f"{self.som_class.abbreviation}_{{{self.get_identity_text() or SOMcreator.value_constants.IDENTITY_PLACEHOLDER}}}"
         return "_".join((identity_text, own_text)) if identity_text else own_text
 

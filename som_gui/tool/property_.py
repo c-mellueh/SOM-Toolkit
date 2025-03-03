@@ -310,7 +310,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         cls,
         pset0: SOMcreator.SOMPropertySet | None,
         pset1: SOMcreator.SOMPropertySet | None,
-    ) -> Sequence[tuple[SOMcreator.SOMProperty,SOMcreator.SOMProperty]]:
+    ) -> Sequence[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]]:
         """
         Compare two SOMcreator PropertySets by their Attributes.
         This method generates a list of matched and unmatched Attributes (match_list)
@@ -325,7 +325,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         if pset1 is not None:
             cls.set_value_list(pset1, result_list)
 
-        if pset0  is None or pset1 is None:
+        if pset0 is None or pset1 is None:
             return []
         # Generate Match Dicts
         attributes_1 = list(pset1.get_properties(filter=False))
@@ -466,11 +466,11 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         item = cls.get_selected_item(pset_tree)
         table = cls.get_value_table(widget)
         cls.clear_table(table)
-        pset0,pset1= cls.get_entities_from_item(item)
-        if not isinstance(pset0,SOMcreator.SOMPropertySet|None):
+        pset0, pset1 = cls.get_entities_from_item(item)
+        if not isinstance(pset0, SOMcreator.SOMPropertySet | None):
             return
-        if not isinstance(pset1,SOMcreator.SOMPropertySet|None):
-            return    
+        if not isinstance(pset1, SOMcreator.SOMPropertySet | None):
+            return
         target = pset0 or pset1
         if target is None:
             return
@@ -496,7 +496,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     @classmethod
     def get_pset_info_list(cls):
         info_list = list()
-        name_text = QCoreApplication.translate("AttributeCompare","Name")
+        name_text = QCoreApplication.translate("AttributeCompare", "Name")
         c_count_text = QCoreApplication.translate("AttributeCompare", "Child Count")
         info_list.append((name_text, lambda p: getattr(p, "name")))
         info_list.append(
@@ -510,15 +510,13 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     @classmethod
     def get_property_info_list(cls):
         info_list = list()
-        name_text = QCoreApplication.translate("AttributeCompare","Name")
-        iv_text = QCoreApplication.translate("AttributeCompare","Inheriting values")
-        datatype_text = QCoreApplication.translate("AttributeCompare","Datatype")
-        value_type_text = QCoreApplication.translate("AttributeCompare","Valuetype")
+        name_text = QCoreApplication.translate("AttributeCompare", "Name")
+        iv_text = QCoreApplication.translate("AttributeCompare", "Inheriting values")
+        datatype_text = QCoreApplication.translate("AttributeCompare", "Datatype")
+        value_type_text = QCoreApplication.translate("AttributeCompare", "Valuetype")
 
         info_list.append((name_text, lambda a: getattr(a, "name")))
-        info_list.append(
-            (iv_text, lambda a: getattr(a, "child_inherits_values"))
-        )
+        info_list.append((iv_text, lambda a: getattr(a, "child_inherits_values")))
         info_list.append((datatype_text, lambda a: getattr(a, "data_type")))
         info_list.append((value_type_text, lambda a: getattr(a, "value_type")))
         return info_list
@@ -635,18 +633,18 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     @classmethod
     def create_child_matchup(
         cls,
-        entity0: T|None,
-        entity1: T|None,
-    ) -> Sequence[tuple[T|None,T|None]]:
+        entity0: T | None,
+        entity1: T | None,
+    ) -> Sequence[tuple[T | None, T | None]]:
 
         if entity0 is None and entity1 is not None:
-                return [(None, p) for p in entity1.get_children(filter=False)]
+            return [(None, p) for p in entity1.get_children(filter=False)]
         elif entity1 is None and entity0 is not None:
-                return [(p, None) for p in entity0.get_children(filter=False)]
-        
+            return [(p, None) for p in entity0.get_children(filter=False)]
+
         if entity0 is None or entity1 is None:
             return []
-        
+
         children0 = list(entity0.get_children(filter=False))
         children1 = list(entity1.get_children(filter=False))
         missing = list(children1)
@@ -1050,15 +1048,13 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         cls.get_properties().properties_lists[property_set] = attribute_list
 
     @classmethod
-    def get_value_list(
-        cls, entity: T
-    ) -> Sequence[tuple[T | None, T | None]]:
+    def get_value_list(cls, entity: T) -> Sequence[tuple[T | None, T | None]]:
         v = cls.get_properties().values_lists.get(entity)
-        return list() if v is None else v # type: ignore
+        return list() if v is None else v  # type: ignore
 
     @classmethod
     def set_value_list(
-        cls, entity: SOMType, value_list: Sequence[tuple[T | None,T | None]]
+        cls, entity: SOMType, value_list: Sequence[tuple[T | None, T | None]]
     ):
         cls.get_properties().values_lists[entity] = value_list
 
@@ -1095,7 +1091,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     def get_uuid_dict(cls, index=1) -> dict:
         if cls.get_properties().uuid_dicts[index] is None:
             project = cls.get_project(index)
-            d = {hi.uuid: hi for hi in project.get_hirarchy_items(filter=False)}
+            d = {hi.uuid: hi for hi in project.get_items(filter=False)}
             cls.get_properties().uuid_dicts[index] = d
         return cls.get_properties().uuid_dicts[index]
 

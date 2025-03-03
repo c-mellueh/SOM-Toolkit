@@ -14,25 +14,25 @@ class SOMProperty(BaseClass):
         self,
         property_set: SOMcreator.SOMPropertySet | None = None,
         name: str = "undef",
-        value: list = None,
+        value: list|None = None,
         value_type: str | None = None,
         data_type: str = SOMcreator.value_constants.LABEL,
         child_inherits_values: bool = False,
-        uuid: str = None,
+        uuid: str|None = None,
         description: None | str = None,
         optional: None | bool = None,
         revit_mapping: None | str = None,
         project: SOMcreator.SOMProject | None = None,
-        filter_matrix: list[list[bool]] = None,
+        filter_matrix: list[list[bool]]|None = None,
         unit=None,
     ):
 
         super(SOMProperty, self).__init__(
             name, description, optional, project, filter_matrix
         )
-        self._value = value
+        self._value = value if value is not None else []
         self._property_set = property_set
-        self._value_type = value_type
+        self._value_type = value_type if value_type is not None else SOMcreator.constants.value_constants.LIST
         self._data_type = data_type
         self._unit = unit
         self._registry.add(self)
@@ -54,7 +54,10 @@ class SOMProperty(BaseClass):
             self.property_set = property_set
 
     def __str__(self) -> str:
-        text = f"{self.property_set.name} : {self.name} = {self.value}"
+        if self.property_set is not None:
+            text = f"Property {self.property_set.name} : {self.name} = {self.value}"
+        else:
+            text = f"Property <empty>:{self.name} = {self.value}"
         return text
 
     def __lt__(self, other):
@@ -80,7 +83,7 @@ class SOMProperty(BaseClass):
         )
 
         if self.parent is not None:
-            self.parent.add_child(new_attrib)
+            self.parent.add_child(new_attrib) #type:ignore
         return new_attrib
 
     def get_all_parents(self) -> list[SOMProperty]:
@@ -133,12 +136,17 @@ class SOMProperty(BaseClass):
     @property
     def value(self) -> list:
         if self.is_inheriting_values:
-            return self.parent.value + self.get_own_values()
+            if self.parent is not None:
+                return self.parent.value + self.get_own_values()
+            else:
+                raise ValueError ("Parent is expected but dne")
         return self._value
 
     @value.setter
     def value(self, values: list) -> None:
         if self.is_inheriting_values:
+            if self.parent is None:
+                raise ValueError ("Parent is expected but dne")
             own_values = list()
             for value in values:
                 if value not in self.parent.value:
@@ -149,7 +157,7 @@ class SOMProperty(BaseClass):
 
     @property
     def value_type(self) -> str:
-        if self.is_child:
+        if self.parent is not None:
             return self.parent.value_type
         return self._value_type
 
@@ -171,7 +179,7 @@ class SOMProperty(BaseClass):
         IfcSimpleValue -> https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD2_TC1/HTML/
         :return:
         """
-        if self.is_child:
+        if self.is_child and self.parent is not None:
             return self.parent.data_type
         return self._data_type
 
@@ -188,8 +196,8 @@ class SOMProperty(BaseClass):
                 child._data_type = value
 
     @property
-    def unit(self) -> str:
-        if self.is_child:
+    def unit(self) -> str|None:
+        if self.is_child and self.parent is not None:
             return self.parent.unit
         return str(self._unit) if self._unit else None
 
@@ -213,7 +221,7 @@ class SOMProperty(BaseClass):
                 child._data_type = value
 
     @property
-    def property_set(self) -> SOMcreator.SOMPropertySet:
+    def property_set(self) -> SOMcreator.SOMPropertySet|None:
         return self._property_set
 
     @property_set.setter
@@ -236,8 +244,9 @@ class SOMProperty(BaseClass):
         if self.value != attribute.value:
             equal = False
 
-        if self.property_set.name != attribute.property_set.name:
-            equal = False
+        if self.property_set is not None and attribute.property_set is not None:
+            if self.property_set.name != attribute.property_set.name:
+                equal = False
 
         if equal:
             return True
@@ -246,7 +255,8 @@ class SOMProperty(BaseClass):
 
     def delete(self, recursive: bool = False) -> None:
         super(SOMProperty, self).delete(recursive)
-        self.property_set.remove_property(self)
+        if self.property_set is not None:
+            self.property_set.remove_property(self)
 
     def create_child(self) -> SOMProperty:
         child = cp.copy(self)

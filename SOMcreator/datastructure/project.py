@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import os
-from typing import Iterator
+from typing import Iterator, TYPE_CHECKING
 
 import SOMcreator
 import SOMcreator.exporter.som_json
 import SOMcreator.importer.som_json
 from .base import BaseClass, filterable
+
+if TYPE_CHECKING:
+    from .base import BASE_CLASSES, BASE_TYPE
 
 
 class SOMProject(object):
@@ -14,9 +17,9 @@ class SOMProject(object):
         self,
         name: str = "",
         author: str | None = None,
-        phases: list[SOMcreator.Phase] = None,
-        usecase: list[SOMcreator.UseCase] = None,
-        filter_matrix: list[list[bool]] = None,
+        phases: list[SOMcreator.Phase] | None = None,
+        usecase: list[SOMcreator.UseCase] | None = None,
+        filter_matrix: list[list[bool]] | None = None,
     ) -> None:
         """
         filter_matrix: list[phase_index][usecase_index] = bool
@@ -29,7 +32,6 @@ class SOMProject(object):
         self.name = name
         self.aggregation_attribute = ""
         self.aggregation_pset = ""
-        self._filter_matrix = filter_matrix
         self._description = ""
         self.plugin_dict = dict()
         self.import_dict = dict()
@@ -49,8 +51,9 @@ class SOMProject(object):
             ]
         else:
             self._usecases = usecase
-        if filter_matrix is None:
-            self._filter_matrix = self.create_filter_matrix(True)
+        self._filter_matrix = (
+            self.create_filter_matrix(True) if filter_matrix is None else filter_matrix
+        )
 
         self.active_usecases: list[int] = [0]
         self.change_log = list()
@@ -71,27 +74,10 @@ class SOMProject(object):
 
     # Item Getter Methods
     @filterable
-    def get_hirarchy_items(
+    def get_items(
         self,
-    ) -> Iterator[
-        SOMcreator.SOMClass,
-        SOMcreator.SOMPropertySet,
-        SOMcreator.SOMProperty,
-        SOMcreator.SOMAggregation,
-        BaseClass,
-    ]:
-        return filter(
-            lambda i: isinstance(
-                i,
-                (
-                    SOMcreator.SOMClass,
-                    SOMcreator.SOMPropertySet,
-                    SOMcreator.SOMProperty,
-                    SOMcreator.SOMAggregation,
-                ),
-            ),
-            self._items,
-        )
+    ) -> Iterator[BASE_CLASSES]:
+        return iter(self._items)
 
     @filterable
     def get_classes(self) -> Iterator[SOMcreator.SOMClass]:
@@ -122,11 +108,11 @@ class SOMProject(object):
     def get_main_property(self) -> tuple[str, str]:
         ident_properties = dict()
         ident_psets = dict()
-        for obj in self.get_classes(filter=False):
-            if not isinstance(obj.ident_attrib, SOMcreator.SOMProperty):
+        for som_class in self.get_classes(filter=False):
+            if not isinstance(som_class.identifier_property, SOMcreator.SOMProperty):
                 continue
-            ident_pset = obj.ident_attrib.property_set.name
-            ident_property = obj.ident_attrib.name
+            ident_pset = som_class.identifier_property.property_set.name #type: ignore
+            ident_property = som_class.identifier_property.name
             if ident_pset not in ident_psets:
                 ident_psets[ident_pset] = 0
             if ident_property not in ident_properties:
@@ -147,17 +133,27 @@ class SOMProject(object):
         )
 
     def get_uuid_dict(self):
-        pset_dict = {pset.uuid: pset for pset in self.get_property_sets(filter=False)}
-        object_dict = {obj.uuid: obj for obj in self.get_classes(filter=False)}
+        pset_dict = {
+            pset.uuid: pset
+            for pset in self.get_property_sets(filter=False)
+            if pset.uuid is not None
+        }
+        object_dict = {
+            cls.uuid: cls
+            for cls in self.get_classes(filter=False)
+            if cls.uuid is not None
+        }
         attribute_dict = {
-            attribute.uuid: attribute for attribute in self.get_properties(filter=False)
+            prop.uuid: prop
+            for prop in self.get_properties(filter=False)
+            if prop.uuid is not None
         }
         aggregation_dict = {
-            aggreg.uuid: aggreg for aggreg in self.get_aggregations(filter=False)
+            aggreg.uuid: aggreg
+            for aggreg in self.get_aggregations(filter=False)
+            if aggreg.uuid is not None
         }
         full_dict = pset_dict | object_dict | attribute_dict | aggregation_dict
-        if None in full_dict:
-            full_dict.pop(None)
         return full_dict
 
     def get_element_by_uuid(
@@ -191,7 +187,7 @@ class SOMProject(object):
         self._name = value
 
     @property
-    def author(self) -> str:
+    def author(self) -> str | None:
         return self._author
 
     @author.setter
@@ -275,7 +271,7 @@ class SOMProject(object):
 
         if phase not in self._phases:
             self._phases.append(phase)
-            for item in self.get_hirarchy_items(filter=False):
+            for item in self.get_items(filter=False):
                 item.add_phase()
             self._filter_matrix.append([True for _ in self._usecases])
         return self._phases.index(phase)
@@ -283,7 +279,7 @@ class SOMProject(object):
     def add_usecase(self, usecase: SOMcreator.UseCase):
         if usecase not in self._usecases:
             self._usecases.append(usecase)
-            for item in self.get_hirarchy_items(filter=False):
+            for item in self.get_items(filter=False):
                 item.add_usecase()
             for usecase_list in self._filter_matrix:
                 usecase_list.append(True)
@@ -306,7 +302,7 @@ class SOMProject(object):
         new_active_phases = [
             self.get_phase_by_index(i) for i in self.active_phases if i != index
         ]
-        for item in self.get_hirarchy_items(filter=False):
+        for item in self.get_items(filter=False):
             item.remove_phase(phase)
         self._phases.remove(phase)
         self._filter_matrix.pop(index)
@@ -321,7 +317,7 @@ class SOMProject(object):
             self.get_usecase_by_index(i) for i in self.active_usecases if i != index
         ]
 
-        for item in self.get_hirarchy_items(filter=False):
+        for item in self.get_items(filter=False):
             item.remove_usecase(usecase)
 
         self._usecases.remove(usecase)
