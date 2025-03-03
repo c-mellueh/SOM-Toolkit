@@ -37,4 +37,7 @@ def export(
             export_excel.create_object_entry(obj, work_sheet, 1, column, table_counter)
             table_counter += 1
         export_excel.autoadjust_column_widths(work_sheet)
+    
+    work_sheet = workbook.create_sheet("Attribute Mapping")
+    export_excel.create_attribute_table(object_list,work_sheet)
     workbook.save(path)
