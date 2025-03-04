@@ -79,14 +79,14 @@ class Project(som_gui.core.tool.Project):
         return cls.get_properties().active_project
 
     @classmethod
-    def get_root_objects(
-        cls, filter_objects=True, proj: SOMcreator.SOMProject = None
+    def get_root_classes(
+        cls, filter_classes=True, proj: SOMcreator.SOMProject = None
     ) -> list[SOMcreator.SOMClass]:
         if proj is None:
             proj: SOMcreator.SOMProject = cls.get_properties().active_project
         if proj is None:
             return []
-        return list(proj.get_root_classes(filter=filter_objects))
+        return list(proj.get_root_classes(filter=filter_classes))
 
     @classmethod
     def create_combobox(cls, filter_1):

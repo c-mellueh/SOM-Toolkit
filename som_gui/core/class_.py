@@ -20,224 +20,222 @@ import uuid
 
 
 def init_main_window(
-    object_tool: Type[tool.Class], main_window: Type[tool.MainWindow]
+    class_tool: Type[tool.Class], main_window: Type[tool.MainWindow]
 ) -> None:
 
-    # Build Object Tree
-    tree = object_tool.get_class_tree()
+    # Build Ckass Tree
+    tree = class_tool.get_class_tree()
     tree.setColumnCount(0)
-    object_tool.add_column_to_tree(
-        lambda: QCoreApplication.translate("Object", "Class"),
+    class_tool.add_column_to_tree(
+        lambda: QCoreApplication.translate("Class", "Class"),
         0,
         lambda o: getattr(o, "name"),
     )
-    object_tool.add_column_to_tree(
-        lambda: QCoreApplication.translate("Object", "Identifier"),
+    class_tool.add_column_to_tree(
+        lambda: QCoreApplication.translate("Class", "Identifier"),
         1,
         lambda o: getattr(o, "ident_value"),
     )
-    object_tool.add_column_to_tree(
-        lambda: QCoreApplication.translate("Object", "Optional"),
+    class_tool.add_column_to_tree(
+        lambda: QCoreApplication.translate("Class", "Optional"),
         2,
         lambda o: o.is_optional(ignore_hirarchy=True),
-        object_tool.set_object_optional_by_tree_item_state,
+        class_tool.set_class_optional_by_tree_item_state,
     )
 
-    # Add Object Activate Functions
-    object_tool.add_object_activate_function(
-        lambda o: main_window.get_object_name_label().setText(o.name)
+    # Add Class Activate Functions
+    class_tool.add_class_activate_function(
+        lambda o: main_window.get_class_name_label().setText(o.name)
     )
     # Add Creation Checks
-    object_tool.add_object_creation_check(
-        "ident_property_name", object_tool.is_ident_property_valid
+    class_tool.add_class_creation_check(
+        "ident_property_name", class_tool.is_ident_property_valid
     )
-    object_tool.add_object_creation_check(
-        "ident_value", object_tool.is_identifier_unique
-    )
+    class_tool.add_class_creation_check("ident_value", class_tool.is_identifier_unique)
 
 
-def retranslate_ui(object_tool: Type[tool.Class]) -> None:
-    header = object_tool.get_class_tree().headerItem()
-    for column, name in enumerate(object_tool.get_header_names()):
+def retranslate_ui(class_tool: Type[tool.Class]) -> None:
+    header = class_tool.get_class_tree().headerItem()
+    for column, name in enumerate(class_tool.get_header_names()):
         header.setText(column, name)
 
 
 def add_shortcuts(
-    object_tool: Type[Class],
+    class_tool: Type[Class],
     util: Type[tool.Util],
     search_tool: Type[Search],
     main_window: Type[tool.MainWindow],
     project: Type[tool.Project],
 ):
-    util.add_shortcut("Ctrl+X", main_window.get(), object_tool.delete_selection)
-    util.add_shortcut("Ctrl+G", main_window.get(), object_tool.group_selection)
+    util.add_shortcut("Ctrl+X", main_window.get(), class_tool.delete_selection)
+    util.add_shortcut("Ctrl+G", main_window.get(), class_tool.group_selection)
     util.add_shortcut(
         "Ctrl+F",
         main_window.get(),
-        lambda: search_object(search_tool, object_tool, project),
+        lambda: search_class(search_tool, class_tool, project),
     )
 
 
-def search_object(
-    search_tool: Type[Search], object_tool: Type[Class], project: Type[tool.Project]
+def search_class(
+    search_tool: Type[Search], class_tool: Type[Class], project: Type[tool.Project]
 ):
-    """Open Search Window and select Object afterwards"""
-    obj = search_tool.search_object(list(project.get().get_classes(filter=True)))
-    object_tool.select_class(obj)
+    """Open Search Window and select Class afterwards"""
+    som_class = search_tool.search_class(list(project.get().get_classes(filter=True)))
+    class_tool.select_class(som_class)
 
 
-def reset_tree(object_tool: Type[Class]):
-    object_tool.get_properties().first_paint = True
+def reset_tree(class_tool: Type[Class]):
+    class_tool.get_properties().first_paint = True
 
 
-def resize_columns(object_tool: Type[Class]):
+def resize_columns(class_tool: Type[Class]):
     """
     resizes Colums to Content
     """
-    object_tool.resize_tree()
+    class_tool.resize_tree()
 
 
-def create_object_info_widget(
+def create_class_info_widget(
     mode: int,
-    object_tool: Type[Class],
+    class_tool: Type[Class],
     predefined_property_set: Type[tool.PredefinedPropertySet],
     util: Type[tool.Util],
 ):
     """
-    Opens Object Info Widget can be used for creation (mode 0), modification (mode 1) or copying (mode 2)
+    Opens Class Info Widget can be used for creation (mode 0), modification (mode 1) or copying (mode 2)
     """
-    logging.debug(f"Create Object Info Widget Mode= {mode}")
+    logging.debug(f"Create Class Info Widget Mode= {mode}")
     title = util.get_window_title(
-        QCoreApplication.translate("ObjectInfo", "Object Info")
+        QCoreApplication.translate("Class Info", "Class Info")
     )
-    dialog = object_tool.oi_create_dialog(title)
+    dialog = class_tool.oi_create_dialog(title)
 
     predefined_psets = predefined_property_set.get_property_sets()
-    object_tool.oi_connect_dialog(dialog, predefined_psets)
-    object_tool.oi_fill_properties(mode=mode)
-    object_tool.oi_update_dialog(dialog)
+    class_tool.oi_connect_dialog(dialog, predefined_psets)
+    class_tool.oi_fill_properties(mode=mode)
+    class_tool.oi_update_dialog(dialog)
     if mode == 0:
         names = [p.name for p in predefined_psets]
-        object_tool.create_completer(names, dialog.widget.combo_box_pset)
+        class_tool.create_completer(names, dialog.widget.combo_box_pset)
     if dialog.exec():
         if mode == 0:
-            object_tool.trigger_object_creation()
+            class_tool.trigger_class_creation()
         elif mode == 1:
-            object_tool.trigger_object_modification()
+            class_tool.trigger_class_modification()
         elif mode == 2:
-            object_tool.trigger_object_copy()
+            class_tool.trigger_class_copy()
 
 
-def object_info_refresh(object_tool: Type[Class]):
-    data_dict = object_tool.oi_get_values()
-    object_tool.oi_set_values(data_dict)
+def class_info_refresh(class_tool: Type[Class]):
+    data_dict = class_tool.oi_get_values()
+    class_tool.oi_set_values(data_dict)
     ident_value = data_dict["ident_value"]
     group = data_dict["is_group"]
     ident_filter = (
-        object_tool.get_active_class().ident_value
-        if object_tool.oi_get_mode() == 1
+        class_tool.get_active_class().ident_value
+        if class_tool.oi_get_mode() == 1
         else None
     )
-    if not object_tool.is_identifier_allowed(ident_value, [ident_filter]):
-        object_tool.oi_set_ident_value_color("red")
+    if not class_tool.is_identifier_allowed(ident_value, [ident_filter]):
+        class_tool.oi_set_ident_value_color("red")
     else:
-        object_tool.oi_set_ident_value_color(QPalette().color(QPalette.Text).name())
-    object_tool.oi_change_visibility_identifiers(group)
+        class_tool.oi_set_ident_value_color(QPalette().color(QPalette.Text).name())
+    class_tool.oi_change_visibility_identifiers(group)
 
 
-def object_info_add_ifc(object_tool: Type[Class]):
-    object_tool.add_ifc_mapping("")
+def class_info_add_ifc(class_tool: Type[Class]):
+    class_tool.add_ifc_mapping("")
 
 
-def load_context_menus(object_tool: Type[Class], util: Type[tool.Util]):
-    object_tool.clear_context_menu_list()
-    object_tool.add_context_menu_entry(
-        lambda: QCoreApplication.translate("Object", "Copy"),
-        lambda: object_tool.trigger_object_info_widget(2),
+def load_context_menus(class_tool: Type[Class], util: Type[tool.Util]):
+    class_tool.clear_context_menu_list()
+    class_tool.add_context_menu_entry(
+        lambda: QCoreApplication.translate("Class", "Copy"),
+        lambda: class_tool.trigger_class_info_widget(2),
         True,
         False,
     )
-    object_tool.add_context_menu_entry(
-        lambda: QCoreApplication.translate("Object", "Delete"),
-        object_tool.delete_selection,
+    class_tool.add_context_menu_entry(
+        lambda: QCoreApplication.translate("Class", "Delete"),
+        class_tool.delete_selection,
         True,
         True,
     )
-    object_tool.add_context_menu_entry(
-        lambda: QCoreApplication.translate("Object", "Extend"),
-        object_tool.expand_selection,
+    class_tool.add_context_menu_entry(
+        lambda: QCoreApplication.translate("Class", "Extend"),
+        class_tool.expand_selection,
         True,
         True,
     )
-    object_tool.add_context_menu_entry(
-        lambda: QCoreApplication.translate("Object", "Collapse"),
-        object_tool.collapse_selection,
+    class_tool.add_context_menu_entry(
+        lambda: QCoreApplication.translate("Class", "Collapse"),
+        class_tool.collapse_selection,
         True,
         True,
     )
-    object_tool.add_context_menu_entry(
-        lambda: QCoreApplication.translate("Object", "Group"),
-        lambda: create_group(object_tool),
+    class_tool.add_context_menu_entry(
+        lambda: QCoreApplication.translate("Class", "Group"),
+        lambda: create_group(class_tool),
         True,
         True,
     )
-    object_tool.add_context_menu_entry(
-        lambda: QCoreApplication.translate("Object", "Info"),
-        lambda: object_tool.trigger_object_info_widget(1),
+    class_tool.add_context_menu_entry(
+        lambda: QCoreApplication.translate("Class", "Info"),
+        lambda: class_tool.trigger_class_info_widget(1),
         True,
         False,
     )
 
 
-def create_group(object_tool: Type[Class]):
+def create_group(class_tool: Type[Class]):
     d = {
-        "name": QCoreApplication.translate("Object", "NewGroup"),
+        "name": QCoreApplication.translate("Class", "NewGroup"),
         "is_group": True,
         "ifc_mappings": ["IfcGroup"],
     }
-    is_allowed = object_tool.check_class_creation_input(d)
+    is_allowed = class_tool.check_class_creation_input(d)
     if not is_allowed:
         return
-    obj = object_tool.create_class(d, None, None)
-    selected_objects = set(object_tool.get_selected_classes())
-    object_tool.group_classes(obj, selected_objects)
+    som_class = class_tool.create_class(d, None, None)
+    selected_classes = set(class_tool.get_selected_classes())
+    class_tool.group_classes(som_class, selected_classes)
 
 
-def create_context_menu(pos: QPoint, object_tool: Type[Class]):
-    menu = object_tool.create_context_menu()
-    menu_pos = object_tool.get_class_tree().viewport().mapToGlobal(pos)
+def create_context_menu(pos: QPoint, class_tool: Type[Class]):
+    menu = class_tool.create_context_menu()
+    menu_pos = class_tool.get_class_tree().viewport().mapToGlobal(pos)
     menu.exec(menu_pos)
 
 
-def refresh_object_tree(object_tool: Type[Class], project_tool: Type[Project]):
+def refresh_class_tree(class_tool: Type[Class], project_tool: Type[Project]):
     """
     gets called on Paint Event
     """
-    logging.debug(f"Repaint Object Widget")
-    load_objects(object_tool, project_tool)
-    # object_tool.autofit_tree()
+    logging.debug(f"Repaint Class Widget")
+    load_classes(class_tool, project_tool)
+    # class_tool.autofit_tree()
 
 
-def load_objects(object_tool: Type[Class], project_tool: Type[Project]):
-    root_objects = project_tool.get_root_objects(filter_objects=True)
-    object_tree: QTreeWidget = object_tool.get_class_tree()
-    object_tool.fill_object_tree(set(root_objects), object_tree.invisibleRootItem())
+def load_classes(class_tool: Type[Class], project_tool: Type[Project]):
+    root_classes = project_tool.get_root_classes(filter_classes=True)
+    class_tree: QTreeWidget = class_tool.get_class_tree()
+    class_tool.fill_class_tree(set(root_classes), class_tree.invisibleRootItem())
 
 
-def item_changed(item: QTreeWidgetItem, object_tool: Type[Class]):
-    object_tool.update_check_state(item)
+def item_changed(item: QTreeWidgetItem, class_tool: Type[Class]):
+    class_tool.update_check_state(item)
     pass
 
 
 def item_selection_changed(
-    object_tool: Type[Class], property_set_tool: Type[PropertySet]
+    class_tool: Type[Class], property_set_tool: Type[PropertySet]
 ):
-    selected_items = object_tool.get_selected_items()
+    selected_items = class_tool.get_selected_items()
     if len(selected_items) == 1:
         selected_pset = property_set_tool.get_active_property_set()
-        obj = object_tool.get_object_from_item(selected_items[0])
-        object_tool.set_active_object(obj)
-        property_set_tool.update_completer(obj)
+        som_class = class_tool.get_class_from_item(selected_items[0])
+        class_tool.set_active_class(som_class)
+        property_set_tool.update_completer(som_class)
         property_set_tool.set_enabled(True)
         property_set_tool.trigger_table_repaint()
 
@@ -254,64 +252,62 @@ def item_selection_changed(
         property_set_tool.set_enabled(False)
 
 
-def item_dropped_on(pos: QPoint, object_tool: Type[Class]):
-    selected_items = object_tool.get_selected_items()
-    dropped_on_item = object_tool.get_item_from_pos(pos)
-    dropped_objects = [
-        object_tool.get_object_from_item(item) for item in selected_items
-    ]
-    dropped_objects = [
+def item_dropped_on(pos: QPoint, class_tool: Type[Class]):
+    selected_items = class_tool.get_selected_items()
+    dropped_on_item = class_tool.get_item_from_pos(pos)
+    dropped_classes = [class_tool.get_class_from_item(item) for item in selected_items]
+    dropped_classes = [
         o
-        for o in dropped_objects
-        if o.parent not in dropped_objects or o.parent is None
+        for o in dropped_classes
+        if o.parent not in dropped_classes or o.parent is None
     ]
     if dropped_on_item is None:
-        for obj in dropped_objects:
-            obj.remove_parent()
+        for som_class in dropped_classes:
+            som_class.remove_parent()
         return
-    dropped_on_object = object_tool.get_object_from_item(dropped_on_item)
+    dropped_on_class = class_tool.get_class_from_item(dropped_on_item)
 
-    if not object_tool.drop_indication_pos_is_on_item():
-        dropped_on_object = dropped_on_object.parent
+    if not class_tool.drop_indication_pos_is_on_item():
+        dropped_on_class = dropped_on_class.parent
 
-    for obj in dropped_objects:
-        if dropped_on_object is None:
-            obj.remove_parent()
+    for som_class in dropped_classes:
+        if dropped_on_class is None:
+            som_class.remove_parent()
         else:
-            obj.parent = dropped_on_object
+            som_class.parent = dropped_on_class
 
 
-def modify_object(object_tool: Type[tool.Class]):
-    data_dict = object_tool.oi_get_values()
-    focus_object = object_tool.oi_get_focus_object()
-    result = object_tool.change_class_info(focus_object, data_dict)
-    if object_tool.handle_property_issue(result):
-        object_tool.fill_object_entry(focus_object)
+def modify_class(class_tool: Type[tool.Class]):
+    data_dict = class_tool.oi_get_values()
+    focus_class = class_tool.oi_get_focus_class()
+    result = class_tool.change_class_info(focus_class, data_dict)
+    if class_tool.handle_property_issue(result):
+        class_tool.fill_class_entry(focus_class)
 
 
-def copy_object(object_tool: Type[tool.Class]):
-    data_dict = object_tool.oi_get_values()
-    focus_object = object_tool.oi_get_focus_object()
-    result, focus_object = object_tool.copy_class(focus_object, data_dict)
-    if object_tool.handle_property_issue(result):
-        object_tool.fill_object_entry(focus_object)
+def copy_class(class_tool: Type[tool.Class]):
+    data_dict = class_tool.oi_get_values()
+    focus_class = class_tool.oi_get_focus_class()
+    result, focus_class = class_tool.copy_class(focus_class, data_dict)
+    if class_tool.handle_property_issue(result):
+        class_tool.fill_class_entry(focus_class)
 
 
-def create_object(
-    object_tool: Type[Class],
+def create_class(
+    class_tool: Type[Class],
     project: Type[Project],
     property_set: Type[tool.PropertySet],
     predefined_property_set: Type[tool.PredefinedPropertySet],
     popup: Type[tool.Popups],
     util: Type[tool.Util],
 ):
-    from som_gui.module.object import (
+    from som_gui.module.class_ import (
         IDENT_ISSUE,
         IDENT_PROPERTY_ISSUE,
         IDENT_PSET_ISSUE,
     )
 
-    data_dict = object_tool.oi_get_values()
+    data_dict = class_tool.oi_get_values()
     predefined_psets = {p.name: p for p in predefined_property_set.get_property_sets()}
 
     name = data_dict["name"]
@@ -328,8 +324,8 @@ def create_object(
             name, ident, uuid=ident, project=tool.Project.get()
         )
     else:
-        if identifier is None or not object_tool.is_identifier_allowed(identifier):
-            return object_tool.handle_property_issue(IDENT_ISSUE)
+        if identifier is None or not class_tool.is_identifier_allowed(identifier):
+            return class_tool.handle_property_issue(IDENT_ISSUE)
 
         parent = None
         if pset_name in predefined_psets:
@@ -353,5 +349,5 @@ def create_object(
             )
         else:
             ident_property.value = [identifier]
-        object_tool.create_class(data_dict, pset, ident_property)
-        refresh_object_tree(object_tool, project)
+        class_tool.create_class(data_dict, pset, ident_property)
+        refresh_class_tree(class_tool, project)

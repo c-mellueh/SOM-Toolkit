@@ -14,7 +14,7 @@ def register():
 
 
 def load_ui_triggers():
-    logging.info(f"Load Objects UI Triggers")
+    logging.info(f"Load Class UI Triggers")
     trigger.connect()
 
 

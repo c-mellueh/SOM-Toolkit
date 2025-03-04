@@ -19,10 +19,10 @@ def connect():
     # Connect MainWindow
     main_ui = tool.MainWindow.get_ui()
     main_ui.button_search.pressed.connect(
-        lambda: core.search_object(tool.Search, tool.Class, tool.Project)
+        lambda: core.search_class(tool.Search, tool.Class, tool.Project)
     )
     main_ui.button_objects_add.clicked.connect(
-        lambda: core.create_object_info_widget(
+        lambda: core.create_class_info_widget(
             0, tool.Class, tool.PredefinedPropertySet, tool.Util
         )
     )
@@ -35,21 +35,21 @@ def connect():
 
 
 def item_double_clicked():
-    core.create_object_info_widget(
+    core.create_class_info_widget(
         mode=1,
-        object_tool=tool.Class,
+        class_tool=tool.Class,
         predefined_property_set=tool.PredefinedPropertySet,
         util=tool.Util,
     )
 
 
 def object_info_paint_event():
-    core.object_info_refresh(tool.Class)
+    core.class_info_refresh(tool.Class)
     pass
 
 
 def repaint_event():
-    core.refresh_object_tree(tool.Class, tool.Project)
+    core.refresh_class_tree(tool.Class, tool.Project)
 
 
 def drop_event(event):
@@ -65,7 +65,7 @@ def retranslate_ui():
 
 
 def create_object_called():
-    core.create_object(
+    core.create_class(
         tool.Class,
         tool.Project,
         tool.PropertySet,
@@ -76,14 +76,14 @@ def create_object_called():
 
 
 def copy_object_called():
-    core.copy_object(tool.Class)
+    core.copy_class(tool.Class)
 
 
 def modify_object_called():
-    core.modify_object(tool.Class)
+    core.modify_class(tool.Class)
 
 
 def create_object_info_widget(mode: int):
-    core.create_object_info_widget(
+    core.create_class_info_widget(
         mode, tool.Class, tool.PredefinedPropertySet, tool.Util
     )

@@ -118,7 +118,7 @@ def filter_scenes(
 ) -> None:
     allowed_scenes = window.get_allowed_scenes()
     scene_list = view.get_all_scenes()
-    filter_object = search.search_object(list(project.get().get_classes(filter=True)))
+    filter_object = search.search_class(list(project.get().get_classes(filter=True)))
     if filter_object is None:
         return
     for scene in scene_list:
@@ -145,7 +145,7 @@ def search_aggregation(
     popup: Type[tool.Popups],
     project: Type[tool.Project],
 ) -> None:
-    obj = search.search_object(list(project.get().get_classes(filter=True)))
+    obj = search.search_class(list(project.get().get_classes(filter=True)))
     if obj is None:
         return
     scene = view.get_active_scene()

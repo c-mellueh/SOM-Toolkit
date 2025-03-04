@@ -102,7 +102,7 @@ def search_object(
     search: Type[tool.Search],
     project: Type[tool.Project],
 ):
-    obj = search.search_object(list(project.get().get_classes(filter=True)))
+    obj = search.search_class(list(project.get().get_classes(filter=True)))
     if obj is None:
         return
     object_tree = filter_window.get_object_tree()

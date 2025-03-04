@@ -48,7 +48,7 @@ class Search(som_gui.core.tool.Search):
         return search_dialog.return_value
 
     @classmethod
-    def search_object(
+    def search_class(
         cls, searchable_objects: list[SOMcreator.SOMClass]
     ) -> SOMcreator.SOMClass | None:
         """

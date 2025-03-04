@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QWidget
 import SOMcreator
 
 if TYPE_CHECKING:
-    from .ui import ObjectInfoWidget
+    from .ui import ClassInfoWidget
 
 
 class ContextMenuDict(TypedDict):
@@ -37,13 +37,13 @@ class ClassProperties:
     active_class: SOMcreator.SOMClass = None
     object_info_widget_properties: ObjectInfoWidgetProperties = None
     context_menu_list: list[ContextMenuDict] = list()
-    object_info_widget: ObjectInfoWidget = None
+    object_info_widget: ClassInfoWidget = None
     first_paint = True
     column_List: list[tuple[Callable, Callable, Callable]] = list()
-    object_activate_functions = list()
-    object_add_infos_functions = list()
-    object_info_plugin_list: list[PluginProperty] = list()
-    object_add_checks = list()
+    class_activate_functions = list()
+    class_add_infos_functions = list()
+    class_info_plugin_list: list[PluginProperty] = list()
+    class_add_checks = list()
 
 
 @dataclass

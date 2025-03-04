@@ -65,13 +65,13 @@ def export_revit_shared_parameters(
     path = popups.get_save_path("txt Files (*.txt);;", mapping.get_window())
     if not path:
         return
-    export_dict = mapping.create_export_dict(project.get_root_objects())
+    export_dict = mapping.create_export_dict(project.get_root_classes())
     revit.export_shared_parameters(path, export_dict)
 
 
 def update_object_tree(mapping: Type[tool.Mapping], project: Type[tool.Project]):
     logging.debug(f"Update ObjectTree")
-    root_objects = project.get_root_objects(filter_objects=False)
+    root_objects = project.get_root_classes(filter_classes=False)
     mapping.fill_object_tree(root_objects)
 
 

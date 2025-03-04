@@ -145,7 +145,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
                 iter_objects(obj.get_children(filter=True))
 
         output_data_dict = dict()
-        iter_objects(tool.Project.get_root_objects())
+        iter_objects(tool.Project.get_root_classes())
         cls.set_data_dict(output_data_dict)
         return output_data_dict
 

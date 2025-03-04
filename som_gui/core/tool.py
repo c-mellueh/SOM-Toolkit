@@ -1491,7 +1491,7 @@ class MainWindow:
     ):
         pass
 
-    def get_object_name_label(
+    def get_class_name_label(
         self,
     ):
         pass
@@ -2220,10 +2220,10 @@ class Class:
     def add_ifc_mapping(self, mapping):
         pass
 
-    def add_object_activate_function(self, func):
+    def add_class_activate_function(self, func):
         pass
 
-    def add_object_creation_check(self, key, check_function):
+    def add_class_creation_check(self, key, check_function):
         pass
 
     def add_objects_infos_add_function(self, key, getter_function):
@@ -2300,13 +2300,13 @@ class Class:
     def fill_object_attribute_line_edit(self, line_edit, obj):
         pass
 
-    def fill_object_entry(self, obj):
+    def fill_class_entry(self, obj):
         pass
 
     def fill_object_property_set_line_edit(self, line_edit, obj):
         pass
 
-    def fill_object_tree(self, objects, parent_item):
+    def fill_class_tree(self, objects, parent_item):
         pass
 
     def find_property(self, obj, pset_name, attribute_name):
@@ -2338,7 +2338,7 @@ class Class:
     def get_item_from_pos(self, pos):
         pass
 
-    def get_object_from_item(self, item):
+    def get_class_from_item(self, item):
         pass
 
     def get_object_info_properties(
@@ -2410,7 +2410,7 @@ class Class:
     def oi_fill_properties(self, mode):
         pass
 
-    def oi_get_focus_object(
+    def oi_get_focus_class(
         self,
     ):
         pass
@@ -2449,13 +2449,13 @@ class Class:
     def select_class(self, obj):
         pass
 
-    def set_active_object(self, obj):
+    def set_active_class(self, obj):
         pass
 
     def set_ident_value(self, obj, value):
         pass
 
-    def set_object_optional_by_tree_item_state(self, item, column_index):
+    def set_class_optional_by_tree_item_state(self, item, column_index):
         pass
 
     def update_check_state(self, item):
@@ -2778,7 +2778,7 @@ class Project:
     ):
         pass
 
-    def get_root_objects(self, filter_objects, proj):
+    def get_root_classes(self, filter_objects, proj):
         pass
 
     def get_settings_general_widget(
@@ -3118,7 +3118,7 @@ class Search:
     def search_attribute(self, searchable_attributes):
         pass
 
-    def search_object(self, searchable_objects):
+    def search_class(self, searchable_objects):
         pass
 
     def set_info_of_item(self, item, info):

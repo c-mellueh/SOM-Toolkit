@@ -453,11 +453,11 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     def fill_object_tree(cls, tree: QTreeWidget, add_missing: bool = True):
         proj0, proj1 = cls.get_project(0), cls.get_project(1)
         tree_root = tree.invisibleRootItem()
-        root_objects = tool.Project.get_root_objects(False, proj0)
+        root_objects = tool.Project.get_root_classes(False, proj0)
         cls.fill_object_tree_layer(root_objects, tree_root, add_missing)
         if add_missing:
             cls.add_missing_objects_to_tree(
-                tree, tool.Project.get_root_objects(False, proj1)
+                tree, tool.Project.get_root_classes(False, proj1)
             )
 
     @classmethod

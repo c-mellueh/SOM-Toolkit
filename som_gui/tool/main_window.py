@@ -172,7 +172,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_ui().lineEdit_ident_property
 
     @classmethod
-    def get_object_name_label(cls)-> QLabel:
+    def get_class_name_label(cls) -> QLabel:
         return cls.get_ui().label_object_name
 
     @classmethod

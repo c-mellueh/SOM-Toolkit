@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QHBoxLayout, QLineEdit
 import SOMcreator
 import som_gui.plugins.aggregation_window.core.tool
 from som_gui import tool
-from som_gui.module.object import OK
+from som_gui.module.class_ import OK
 from som_gui.plugins.aggregation_window.module.aggregation import ui as ui_aggregation
 from som_gui.plugins.aggregation_window.module.aggregation.prop import (
     AggregationProperties,
