@@ -33,15 +33,15 @@ class PluginProperty:
 
 class ClassInfoProperties:
     dialog: ClassInfoDialog = None
-    focus_class: SOMcreator.SOMClass = None
+    active_class: SOMcreator.SOMClass = None
     mode: int = 0  # 0= create 1= Info 2 =Copy
     ifc_mappings: list[str] = list()
-    name: str = ""
+    class_name: str = ""
     plugin_infos: dict[str, Any] = dict()
     is_group: bool = False
     pset_name: str = ""
-    attribute_name: str = ""
+    ident_property_name: str = ""
     ident_value: str = ""
-    ifc_lines: list = list()
+    ifc_line_edits: list = list()
     class_add_infos_functions = list()
     class_info_plugin_list: list[PluginProperty] = list()

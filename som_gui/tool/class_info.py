@@ -132,11 +132,11 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
 
     @classmethod
     def get_active_class(cls) -> SOMcreator.SOMClass:
-        return cls.get_properties().focus_class
+        return cls.get_properties().active_class
 
     @classmethod
     def set_active_class(cls, value: SOMcreator.SOMClass):
-        cls.get_properties().focus_class = value
+        cls.get_properties().active_class = value
 
     @classmethod
     def get_mode(cls) -> int:
@@ -176,14 +176,14 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
     def oi_set_values(cls, data_dict: ClassDataDict):
         prop = cls.get_properties()
         if data_dict.get("name"):
-            prop.name = data_dict.get("name")
+            prop.class_name = data_dict.get("name")
 
         if data_dict.get("is_group") is not None:
             prop.is_group = data_dict.get("is_group")
         if data_dict.get("ident_pset_name"):
             prop.pset_name = data_dict.get("ident_pset_name")
         if data_dict.get("ident_property_name"):
-            prop.attribute_name = data_dict.get("ident_property_name")
+            prop.ident_property_name = data_dict.get("ident_property_name")
         if data_dict.get("ident_value"):
             prop.ident_value = data_dict.get("ident_value")
         if data_dict.get("ifc_mappings"):
@@ -223,7 +223,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         for plugin in prop.class_info_plugin_list:
             prop.plugin_infos[plugin.key] = plugin.init_value_getter(active_class)
         prop.is_group = active_class.is_concept if active_class else False
-        prop.name = active_class.name if active_class else ""
+        prop.class_name = active_class.name if active_class else ""
         prop.ifc_mappings = (
             list(active_class.ifc_mapping)
             if active_class
@@ -231,14 +231,14 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         )
         if active_class and not active_class.is_concept:
             prop.pset_name = active_class.identifier_property.property_set.name
-            prop.attribute_name = active_class.identifier_property.name
+            prop.ident_property_name = active_class.identifier_property.name
 
     @classmethod
     def update_dialog(cls, dialog: ClassInfoDialog):
         prop = cls.get_properties()
 
         # set Name
-        dialog.ui.line_edit_name.setText(prop.name)
+        dialog.ui.line_edit_name.setText(prop.class_name)
         # set IsGroup
         dialog.ui.button_gruppe.setChecked(prop.is_group)
 
@@ -250,7 +250,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
 
         mode = cls.get_mode()
 
-        active_class = prop.focus_class
+        active_class = cls.get_active_class()
         if mode != 0:
             dialog.ui.combo_box_pset.clear()
             [
@@ -259,7 +259,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
             ]
         if not prop.is_group:
             dialog.ui.combo_box_pset.setCurrentText(prop.pset_name)
-            dialog.ui.combo_box_attribute.setCurrentText(prop.attribute_name)
+            dialog.ui.combo_box_attribute.setCurrentText(prop.ident_property_name)
             dialog.ui.line_edit_attribute_value.setText(prop.ident_value)
 
     @classmethod
@@ -268,7 +268,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         line_edit.setCompleter(cls.create_ifc_completer())
         line_edit.setText(mapping)
         prop = cls.get_properties()
-        prop.ifc_lines.append(line_edit)
+        prop.ifc_line_edits.append(line_edit)
         cls.get_ui().vertical_layout_ifc.addWidget(line_edit)
 
     @classmethod

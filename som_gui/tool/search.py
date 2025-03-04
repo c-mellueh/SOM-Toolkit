@@ -61,7 +61,7 @@ class Search(som_gui.core.tool.Search):
         getter_methods = [
             lambda o: getattr(o, "name"),
             lambda o: getattr(o, "ident_value"),
-            lambda o: getattr(o, "abbreviation"),
+            lambda o: getattr(o, "abbreviation"), #TODO: Add plugin function
         ]
         return cls._search(1, searchable_objects, getter_methods)
 
