@@ -1,14 +1,16 @@
-from PySide6.QtWidgets import QDialog, QTreeWidget, QWidget
+from PySide6.QtWidgets import QDialog
 
 from som_gui.module import class_
 from som_gui.resources.icons import get_icon
 from .qt.ui_InfoWidget import Ui_ObjectInfo
 from . import trigger
-class ClassInfoWidget(QDialog):
+
+
+class ClassInfoDialog(QDialog):
     def __init__(self):
-        super(ClassInfoWidget, self).__init__()
-        self.widget = Ui_ObjectInfo()
-        self.widget.setupUi(self)
+        super(ClassInfoDialog, self).__init__()
+        self.ui = Ui_ObjectInfo()
+        self.ui.setupUi(self)
         self.setWindowIcon(get_icon())
 
     def paintEvent(self, event):

@@ -54,7 +54,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     @classmethod
     def test_abbreviation(cls, abbreviation: str, obj: SOMcreator.SOMClass) -> int:
         ignore_text = obj.abbreviation if obj is not None else None
-        if tool.ClassInfo.oi_get_mode() == 2:
+        if tool.ClassInfo.get_mode() == 2:
             ignore_text = None
         if abbreviation is not None and not cls.is_abbreviation_allowed(
             abbreviation, ignore_text
@@ -99,6 +99,14 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     def create_ci_line_edit(cls):
         cls.get_properties().object_info_line_edit = ui_aggregation.ObjectInfoLineEdit()
         return cls.get_properties().object_info_line_edit
+
+    @classmethod
+    def get_ci_text(cls):
+        return cls.get_properties().object_info_line_edit.text()
+
+    @classmethod
+    def set_ci_text(cls,value):
+        cls.get_properties().object_info_line_edit.setText(value)
 
     @classmethod
     def abbreviation_check(cls, data_dict: dict):

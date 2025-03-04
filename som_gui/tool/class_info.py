@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 import som_gui.core.tool
 from som_gui import tool
 import SOMcreator
-from som_gui.module.class_info.ui import ClassInfoWidget
+from som_gui.module.class_info.ui import ClassInfoDialog, Ui_ObjectInfo
 from SOMcreator.templates import IFC_4_1
 from som_gui.module.class_info import trigger
 import som_gui.module.class_.constants
@@ -24,11 +24,21 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         return som_gui.ClassInfoProperties
 
     @classmethod
+    def get_dialog(cls) -> ClassInfoDialog | None:
+        return cls.get_properties().dialog
+
+    @classmethod
+    def get_ui(cls) -> Ui_ObjectInfo | None:
+        if cls.get_dialog() is None:
+            return None
+        return cls.get_dialog().ui
+
+    @classmethod
     def add_plugin_entry(
         cls,
         key: str,
         layout_name: str,
-        widget: QWidget,
+        widget_creator: Callable,
         index: int,
         init_value_getter: Callable,
         widget_value_getter: Callable,
@@ -49,7 +59,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         prop = PluginProperty(
             key,
             layout_name,
-            widget,
+            widget_creator,
             index,
             init_value_getter,
             widget_value_getter,
@@ -68,13 +78,12 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         return d
 
     @classmethod
-    def oi_update_attribute_combobox(
+    def update_property_combobox(
         cls, predefined_psets: list[SOMcreator.SOMPropertySet]
     ):
-        prop = cls.get_properties()
-        widget = prop.widget.widget
-        pset_name = widget.combo_box_pset.currentText()
-        mode = cls.oi_get_mode()
+        ui = cls.get_ui()
+        pset_name = ui.combo_box_pset.currentText()
+        mode = cls.get_mode()
 
         if mode == 0:
             property_set = {p.name: p for p in predefined_psets}.get(pset_name)
@@ -82,43 +91,47 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
                 property_names = [
                     pr.name for pr in property_set.get_properties(filter=False)
                 ]
-                tool.Util.create_completer(property_names, widget.combo_box_attribute)
+                tool.Util.create_completer(property_names, ui.combo_box_attribute)
         else:
-            active_object = cls.oi_get_focus_class()
+            active_object = cls.get_active_class()
             property_set: SOMcreator.SOMPropertySet = {
                 p.name: p for p in active_object.get_property_sets(filter=False)
             }.get(pset_name)
             attribute_names = sorted(
                 [a.name for a in property_set.get_properties(filter=False)]
             )
-            widget.combo_box_attribute.clear()
-            widget.combo_box_attribute.addItems(attribute_names)
+            ui.combo_box_attribute.clear()
+            ui.combo_box_attribute.addItems(attribute_names)
 
     @classmethod
-    def oi_create_dialog(cls, title) -> ClassInfoWidget:
+    def create_dialog(cls, title) -> ClassInfoDialog:
         prop = cls.get_properties()
-        dialog = ClassInfoWidget()
+        prop.dialog = ClassInfoDialog()
         for plugin in prop.class_info_plugin_list:
-            layout: QLayout = getattr(dialog.widget, plugin.layout_name)
-            layout.insertWidget(plugin.index, plugin.widget)
+            layout: QLayout = getattr(cls.get_ui(), plugin.layout_name)
+            layout.insertWidget(plugin.index, plugin.widget())
             setattr(prop, plugin.key, plugin.init_value_getter)
-        prop.widget = dialog
-        prop.widget.setWindowTitle(title)
-        return prop.widget
+        cls.get_dialog().setWindowTitle(title)
+        return cls.get_dialog()
 
     @classmethod
-    def oi_connect_dialog(
+    def reset(cls):
+        cls.get_properties().dialog = None
+        cls.set_active_class(None)
+
+    @classmethod
+    def connect_dialog(
         cls,
-        dialog: ClassInfoWidget,
+        dialog: ClassInfoDialog,
         predefined_psets: dict[str, SOMcreator.SOMPropertySet],
     ):
-        dialog.widget.button_add_ifc.pressed.connect(lambda: cls.add_ifc_mapping(""))
-        dialog.widget.combo_box_pset.currentTextChanged.connect(
-            lambda: cls.oi_update_attribute_combobox(predefined_psets)
+        dialog.ui.button_add_ifc.pressed.connect(lambda: cls.add_ifc_mapping(""))
+        dialog.ui.combo_box_pset.currentTextChanged.connect(
+            lambda: cls.update_property_combobox(predefined_psets)
         )
 
     @classmethod
-    def oi_get_focus_class(cls) -> SOMcreator.SOMClass:
+    def get_active_class(cls) -> SOMcreator.SOMClass:
         return cls.get_properties().focus_class
 
     @classmethod
@@ -126,7 +139,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         cls.get_properties().focus_class = value
 
     @classmethod
-    def oi_get_mode(cls) -> int:
+    def get_mode(cls) -> int:
         """
         0 = Create
         1 = Info
@@ -135,15 +148,16 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         return cls.get_properties().mode
 
     @classmethod
-    def oi_get_values(cls) -> ClassDataDict:
-        widget = cls.get_properties().widget.widget
+    def generate_datadict(cls) -> ClassDataDict:
+        ui = cls.get_ui()
+        if ui is None:
+            return {}
         d: ClassDataDict = dict()
-
-        d["is_group"] = widget.button_gruppe.isChecked()
-        d["ident_value"] = widget.line_edit_attribute_value.text()
-        d["ident_pset_name"] = widget.combo_box_pset.currentText()
-        d["ident_property_name"] = widget.combo_box_attribute.currentText()
-        d["name"] = widget.line_edit_name.text()
+        d["is_group"] = ui.button_gruppe.isChecked()
+        d["ident_value"] = ui.line_edit_attribute_value.text()
+        d["ident_pset_name"] = ui.combo_box_pset.currentText()
+        d["ident_property_name"] = ui.combo_box_attribute.currentText()
+        d["name"] = ui.line_edit_name.text()
         d["ifc_mappings"] = cls.get_ifc_mappings()
         for plugin in cls.get_properties().class_info_plugin_list:
             d[plugin.key] = plugin.widget_value_getter()
@@ -151,10 +165,10 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
 
     @classmethod
     def get_ifc_mappings(cls):
-        widget = cls.get_properties().widget.widget
+        ui = cls.get_ui()
         values = list()
-        for index in range(widget.vertical_layout_ifc.count()):
-            item: QLineEdit = widget.vertical_layout_ifc.itemAt(index).widget()
+        for index in range(ui.vertical_layout_ifc.count()):
+            item: QLineEdit = ui.vertical_layout_ifc.itemAt(index).widget()
             values.append(item.text())
         return values
 
@@ -180,13 +194,14 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
 
     @classmethod
     def oi_set_ident_value_color(cls, color: str):
-        widget = cls.get_properties().widget.widget
-        widget.line_edit_attribute_value.setStyleSheet(f"QLineEdit {{color:{color};}}")
+        cls.get_ui().line_edit_attribute_value.setStyleSheet(
+            f"QLineEdit {{color:{color};}}"
+        )
 
     @classmethod
     def oi_change_visibility_identifiers(cls, hide: bool):
         prop = cls.get_properties()
-        layout = prop.widget.widget.layout_ident_property
+        layout = cls.get_ui().layout_ident_property
         if hide:
             for index in range(layout.count()):
                 layout.itemAt(index).widget().hide()
@@ -201,7 +216,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
     @classmethod
     def oi_fill_properties(cls, mode: int, selected_class=None):
         prop = cls.get_properties()
-        active_class = cls.oi_get_focus_class()
+        active_class = cls.get_active_class()
         prop.ident_value = active_class.ident_value if active_class else None
         prop.mode = mode
 
@@ -219,13 +234,13 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
             prop.attribute_name = active_class.identifier_property.name
 
     @classmethod
-    def oi_update_dialog(cls, dialog: ClassInfoWidget):
+    def update_dialog(cls, dialog: ClassInfoDialog):
         prop = cls.get_properties()
 
         # set Name
-        dialog.widget.line_edit_name.setText(prop.name)
+        dialog.ui.line_edit_name.setText(prop.name)
         # set IsGroup
-        dialog.widget.button_gruppe.setChecked(prop.is_group)
+        dialog.ui.button_gruppe.setChecked(prop.is_group)
 
         for plugin in prop.class_info_plugin_list:
             plugin.widget_value_setter(prop.plugin_infos.get(plugin.key))
@@ -233,19 +248,19 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         for mapping in prop.ifc_mappings:
             cls.add_ifc_mapping(mapping)
 
-        mode = cls.oi_get_mode()
+        mode = cls.get_mode()
 
         active_class = prop.focus_class
         if mode != 0:
-            dialog.widget.combo_box_pset.clear()
+            dialog.ui.combo_box_pset.clear()
             [
-                dialog.widget.combo_box_pset.addItem(p.name)
+                dialog.ui.combo_box_pset.addItem(p.name)
                 for p in active_class.get_property_sets(filter=False)
             ]
         if not prop.is_group:
-            dialog.widget.combo_box_pset.setCurrentText(prop.pset_name)
-            dialog.widget.combo_box_attribute.setCurrentText(prop.attribute_name)
-            dialog.widget.line_edit_attribute_value.setText(prop.ident_value)
+            dialog.ui.combo_box_pset.setCurrentText(prop.pset_name)
+            dialog.ui.combo_box_attribute.setCurrentText(prop.attribute_name)
+            dialog.ui.line_edit_attribute_value.setText(prop.ident_value)
 
     @classmethod
     def add_ifc_mapping(cls, mapping):
@@ -254,14 +269,14 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         line_edit.setText(mapping)
         prop = cls.get_properties()
         prop.ifc_lines.append(line_edit)
-        prop.widget.widget.vertical_layout_ifc.addWidget(line_edit)
+        cls.get_ui().vertical_layout_ifc.addWidget(line_edit)
 
     @classmethod
     def add_objects_infos_add_function(cls, key: str, getter_function: Callable):
         cls.get_properties().class_add_infos_functions.append((key, getter_function))
 
     @classmethod
-    def trigger_class_info_widget(cls,mode: int):
+    def trigger_class_info_widget(cls, mode: int):
         trigger.create_object_info_widget(mode)
 
     @classmethod

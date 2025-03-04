@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QWidget
 import SOMcreator
 
 if TYPE_CHECKING:
-    from .ui import ClassInfoWidget
+    from .ui import ClassInfoDialog
 
 
 class ClassDataDict(TypedDict):
@@ -32,7 +32,7 @@ class PluginProperty:
 
 
 class ClassInfoProperties:
-    widget: ClassInfoWidget = None
+    dialog: ClassInfoDialog = None
     focus_class: SOMcreator.SOMClass = None
     mode: int = 0  # 0= create 1= Info 2 =Copy
     ifc_mappings: list[str] = list()

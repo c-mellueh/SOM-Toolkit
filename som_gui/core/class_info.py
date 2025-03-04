@@ -4,8 +4,10 @@ from typing import TYPE_CHECKING, Type
 from som_gui import tool
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtGui import QPalette
+
 if TYPE_CHECKING:
     from som_gui import tool
+
 
 def retranslate_ui(class_info: Type[tool.ClassInfo]) -> None:
     pass
@@ -25,35 +27,35 @@ def create_class_info_widget(
     title = util.get_window_title(
         QCoreApplication.translate("Class Info", "Class Info")
     )
-    dialog = class_info.oi_create_dialog(title)
+    dialog = class_info.create_dialog(title)
     class_info.set_active_class(class_tool.get_active_class())
-
     predefined_psets = predefined_property_set.get_property_sets()
-    class_info.oi_connect_dialog(dialog, predefined_psets)
+    class_info.connect_dialog(dialog, predefined_psets)
     class_info.oi_fill_properties(mode=mode)
-    class_info.oi_update_dialog(dialog)
+    class_info.update_dialog(dialog)
     if mode == 0:
         names = [p.name for p in predefined_psets]
-        util.create_completer(names, dialog.widget.combo_box_pset)
+        util.create_completer(names, dialog.ui.combo_box_pset)
     if dialog.exec():
-        active_class = class_info.oi_get_focus_class()
-        data_dict = class_info.oi_get_values()
+        active_class = class_info.get_active_class()
+        data_dict = class_info.generate_datadict()
         if mode == 0:
             class_tool.trigger_class_creation(data_dict)
         elif mode == 1:
-            class_tool.trigger_class_modification(active_class,data_dict)
+            class_tool.trigger_class_modification(active_class, data_dict)
         elif mode == 2:
-            class_tool.trigger_class_copy(active_class,data_dict)
-    class_info.set_active_class(None)
+            class_tool.trigger_class_copy(active_class, data_dict)
+    class_info.reset()
 
-def class_info_refresh(class_tool:Type[tool.Class],class_info: Type[tool.ClassInfo]):
-    data_dict = class_info.oi_get_values()
+
+def class_info_refresh(class_tool: Type[tool.Class], class_info: Type[tool.ClassInfo]):
+    data_dict = class_info.generate_datadict()
     class_info.oi_set_values(data_dict)
     ident_value = data_dict["ident_value"]
     group = data_dict["is_group"]
     ident_filter = (
-        class_info.oi_get_focus_class().ident_value
-        if class_info.oi_get_mode() == 1
+        class_info.get_active_class().ident_value
+        if class_info.get_mode() == 1
         else None
     )
     if not class_tool.is_identifier_allowed(ident_value, [ident_filter]):

@@ -95,7 +95,9 @@ def resize_columns(class_tool: Type[Class]):
     class_tool.resize_tree()
 
 
-def load_context_menus(class_tool: Type[Class],class_info:Type[tool.ClassInfo], util: Type[tool.Util]):
+def load_context_menus(
+    class_tool: Type[Class], class_info: Type[tool.ClassInfo], util: Type[tool.Util]
+):
     class_tool.clear_context_menu_list()
     class_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Class", "Copy"),
@@ -232,8 +234,8 @@ def modify_class(
     class_info: Type[tool.ClassInfo],
 ):
 
-    data_dict = class_info.oi_get_values()
-    som_class = class_info.oi_get_focus_class()
+    data_dict = class_info.generate_datadict()
+    som_class = class_info.get_active_class()
     identifer = data_dict.get("ident_value")
     is_group = (
         som_class.is_concept
@@ -299,7 +301,6 @@ def create_class(
     pset_name = data_dict.get("ident_pset_name")
     attribute_name = data_dict.get("ident_property_name")
 
-
     # handle group
     if is_group:
         som_class = SOMcreator.SOMClass(name, project=project.get())
@@ -310,7 +311,7 @@ def create_class(
     if not class_tool.is_identifier_allowed(identifier):
         class_tool.handle_property_issue(constants.IDENT_ISSUE)
         return
-    
+
     # handle plugin checks
     result = class_info.are_plugin_requirements_met(None, data_dict)
     if result != constants.OK:

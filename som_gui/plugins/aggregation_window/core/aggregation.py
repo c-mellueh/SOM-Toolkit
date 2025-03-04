@@ -42,11 +42,11 @@ def init_main_window(
         lambda o: getattr(o, "abbreviation"),
     )
 
-    name = QCoreApplication.translate("Aggregation", "Abbreviation")
+    name = QCoreApplication.translate("Aggregation", "Abbreviation:")
     class_info_tool.add_plugin_entry(
         "abbrev_text",
         "horizontal_layout_info",
-        QLabel(name),
+        lambda:QLabel(name),
         -1,
         lambda *a: None,
         lambda *a: None,
@@ -54,15 +54,15 @@ def init_main_window(
         lambda *a: OK,
         lambda *a: None,
     )
-    object_info_line_edit = aggregation.create_ci_line_edit()
+
     class_info_tool.add_plugin_entry(
         "abbreviation",
         "horizontal_layout_info",
-        object_info_line_edit,
+        aggregation.create_ci_line_edit,
         -1,
         lambda o: o.abbreviation if o else "",
-        object_info_line_edit.text,
-        object_info_line_edit.setText,
+        aggregation.get_ci_text,
+        aggregation.set_ci_text,
         aggregation.test_abbreviation,
         aggregation.set_object_abbreviation,
     )
@@ -87,10 +87,10 @@ def refresh_object_info_line_edit(
     class_info: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
 ):
-    data_dict = class_info.oi_get_values()
+    data_dict = class_info.generate_datadict()
     abbrev_filter = (
         class_tool.get_active_class().abbreviation
-        if class_info.oi_get_mode() == 1
+        if class_info.get_mode() == 1
         else None
     )
     aggregation.object_info_line_edit_paint(data_dict, abbrev_filter)
