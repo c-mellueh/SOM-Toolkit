@@ -204,7 +204,7 @@ def repaint_pset_list(predefined_pset: Type[tool.PredefinedPropertySet]):
 
 def add_compare_widget(
     pset_compare: Type[tool.PredefinedPropertySetCompare],
-    attribute_compare: Type[tool.AttributeCompare],
+    attribute_compare: Type[tool.PropertyCompare],
     compare_window: Type[tool.CompareWindow],
 ):
     name_getter = lambda: QCoreApplication.translate(
@@ -223,7 +223,7 @@ def create_compare_widget(
     project0: SOMcreator.SOMProject,
     project1: SOMcreator.SOMProject,
     pset_compare: Type[tool.PredefinedPropertySetCompare],
-    attribute_compare: Type[tool.AttributeCompare],
+    attribute_compare: Type[tool.PropertyCompare],
 ):
     """
     add Predefined-Pset-Tab to CompareWidget
@@ -255,7 +255,7 @@ def create_compare_widget(
 
     # Fill TreeView with PropertySets
     attribute_compare.fill_pset_tree(pset_tree, pset_compare.get_pset_lists(), True)
-    attribute_compare.add_attributes_to_pset_tree(pset_tree, True)
+    attribute_compare.add_properties_to_pset_tree(pset_tree, True)
 
     # Add Color
     root = pset_tree.invisibleRootItem()
@@ -269,7 +269,7 @@ def create_compare_widget(
 def export_compare(
     file: TextIO,
     pset_compare: Type[tool.PredefinedPropertySetCompare],
-    attribute_compare: Type[tool.AttributeCompare],
+    attribute_compare: Type[tool.PropertyCompare],
 ):
     name = QCoreApplication.translate("PredefinedPset", "PREDEFINED PROPERTYSETS")
     file.write(f"\n{name}\n\n")

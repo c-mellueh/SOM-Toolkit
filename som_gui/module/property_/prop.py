@@ -1,28 +1,28 @@
 from __future__ import annotations
 
-from typing import Callable, TYPE_CHECKING, TypedDict
+from typing import Callable, TYPE_CHECKING, TypedDict,Union,Sequence
 
 if TYPE_CHECKING:
     import SOMcreator
-    from .ui import AttributeWidget, UnitSettings
+    from .ui import PropertyWidget, UnitSettings
 
-
-class AttributeData(TypedDict):
+    PP = SOMcreator.SOMClass|SOMcreator.SOMProperty| SOMcreator.SOMPropertySet
+class PropertyData(TypedDict):
     getter: Callable
     setter: Callable
 
 
-class AttributeProperties:
-    attribute_data_dict: dict[str, AttributeData] = dict()
-    unit_settings_widget: UnitSettings = None
+class PropertyProperties:
+    attribute_data_dict: dict[str, PropertyData] = dict()
+    unit_settings_widget: UnitSettings|None = None
 
 
-class CompareAttributesProperties:
+class ComparePropertyProperties:
     projects = [None, None]
     uuid_dicts = [None, None]
     ident_dicts = [None, None]
     object_dict: dict[SOMcreator.SOMClass, SOMcreator.SOMClass | None] = dict()
-    missing_objects: list[list[SOMcreator.SOMClass]] = [None, None]
+    missing_objects: list[list[SOMcreator.SOMClass]]|list[None] = [None, None]
     object_tree_item_dict = dict()
     object_lists: list[
         tuple[SOMcreator.SOMClass | None, SOMcreator.SOMClass | None]
@@ -31,9 +31,10 @@ class CompareAttributesProperties:
         SOMcreator.SOMClass,
         list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]],
     ] = dict()
-    attributes_lists: dict[
+    properties_lists: dict[
         SOMcreator.SOMPropertySet,
         list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]],
     ] = dict()
-    values_lists: dict[SOMcreator.SOMProperty, list[tuple[str, str]]] = dict()
-    widget: AttributeWidget = None
+    values_lists: dict[PP, Sequence[tuple[PP|None, PP|None]]] = dict()
+    widget: PropertyWidget|None = None
+

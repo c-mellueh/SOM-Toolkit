@@ -1,10 +1,10 @@
 from __future__ import annotations
 from uuid import uuid4
 import SOMcreator
-from .base import Hirarchy
+from .base import BaseClass
 
 
-class SOMAggregation(Hirarchy):
+class SOMAggregation(BaseClass):
     _registry: set[SOMAggregation] = set()
 
     def __str__(self):
@@ -17,7 +17,7 @@ class SOMAggregation(Hirarchy):
         uuid: str | None = None,
         description: None | str = None,
         optional: None | bool = None,
-        filter_matrix: list[list[bool]] = None,
+        filter_matrix: list[list[bool]]|None = None,
         identity_text=None,
     ):
 
@@ -30,7 +30,7 @@ class SOMAggregation(Hirarchy):
         else:
             self.uuid = str(uuid)
         self.som_class = som_class
-        self._parent: SOMAggregation | None = None
+        self._parent = None
         self._parent_connection = parent_connection
         self._identity_text = "" if identity_text is None else identity_text
         self.som_class.add_aggregation(self)
@@ -39,7 +39,7 @@ class SOMAggregation(Hirarchy):
         super(SOMAggregation, self).delete(recursive)
 
         self.som_class.remove_aggregation(self)
-        if not self.is_root:
+        if self.parent is not None:
             self.parent.remove_child(self)
 
     @property
@@ -55,10 +55,6 @@ class SOMAggregation(Hirarchy):
     @parent_connection.setter
     def parent_connection(self, value):
         self._parent_connection = value
-
-    @property
-    def parent(self) -> SOMAggregation:
-        return self._parent
 
     def set_parent(self, value, connection_type):
         if self.parent is not None and value != self.parent:
@@ -115,10 +111,10 @@ class SOMAggregation(Hirarchy):
         """
 
         element = self
-        while element.parent_connection == SOMcreator.value_constants.INHERITANCE:
+        while element.parent is not None and element.parent_connection == SOMcreator.value_constants.INHERITANCE:
             element = element.parent
-
-        identity_text = element.parent.identity() if not element.is_root else ""
+            
+        identity_text = element.parent.identity() if not element.parent is None else ""
         own_text = f"{self.som_class.abbreviation}_{{{self.get_identity_text() or SOMcreator.value_constants.IDENTITY_PLACEHOLDER}}}"
         return "_".join((identity_text, own_text)) if identity_text else own_text
 

@@ -10,7 +10,7 @@ from SOMcreator.datastructure.som_json import (
 from SOMcreator.importer.som_json import property_set
 import SOMcreator
 from SOMcreator.importer.som_json import core
-
+import SOMcreator.importer.som_json
 if TYPE_CHECKING:
     from SOMcreator import SOMProject
     from SOMcreator.datastructure.som_json import ObjectDict, MainDict
@@ -31,7 +31,7 @@ def _load_object(
 
     abbreviation = object_dict.get(ABBREVIATION)
 
-    obj = SOMcreator.SOMClass(
+    som_class = SOMcreator.SOMClass(
         name=name,
         identifier_property=None,
         uuid=identifier,
@@ -44,18 +44,18 @@ def _load_object(
     )
     property_sets_dict = object_dict[PROPERTY_SETS]
     for ident, pset_dict in property_sets_dict.items():
-        property_set.load(proj, pset_dict, ident, obj)
+        property_set.load(proj, pset_dict, ident, som_class)
     ident_attrib_id = object_dict[IDENT_ATTRIBUTE]
     if ident_attrib_id is not None:
-        ident_attrib = SOMcreator.importer.som_json.attribute_uuid_dict.get(
+        identifier_property = SOMcreator.importer.som_json.attribute_uuid_dict.get(
             ident_attrib_id
         )
-        obj.identifier_property = ident_attrib
-    SOMcreator.importer.som_json.parent_dict[obj] = parent
-    SOMcreator.importer.som_json.object_uuid_dict[identifier] = obj
+        som_class.identifier_property = identifier_property
+    SOMcreator.importer.som_json.parent_dict[som_class] = parent
+    SOMcreator.importer.som_json.object_uuid_dict[identifier] = som_class
+    return som_class
 
-
-def load(proj: SOMProject, main_dict: dict):
+def load(proj: SOMProject, main_dict: MainDict):
     objects_dict: dict[str, ObjectDict] = main_dict.get(OBJECTS)
     core.remove_part_of_dict(OBJECTS)
 

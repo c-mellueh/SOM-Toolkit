@@ -6,7 +6,7 @@ from som_gui.module import property_set_window
 from som_gui.resources.icons import get_icon
 from .qt.ui_Window import Ui_PropertySetWindow
 from .qt.ui_SplitterSettings import Ui_SplitterSettings
-from ..attribute.qt.ui_UnitSettings import Ui_UnitSettings
+from ..property_.qt.ui_UnitSettings import Ui_UnitSettings
 from som_gui.module import property_set_window
 
 class PropertySetWindow(QWidget):

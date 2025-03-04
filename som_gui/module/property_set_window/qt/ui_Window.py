@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComb
     QSplitter, QTableWidgetItem, QTextEdit, QVBoxLayout,
     QWidget)
 
-from som_gui.module.attribute.ui import UnitComboBox
+from som_gui.module.property_.ui import UnitComboBox
 from som_gui.module.attribute_table.ui import AttributeTable
 
 class Ui_PropertySetWindow(object):

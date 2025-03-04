@@ -41,18 +41,20 @@ def create_mapping(
 
         attribute_dict: dict[str, str] = dict()
 
-        for attribute in SOMcreator.SOMProperty:
-            data_type = attribute.data_type
+        for som_property in project.get_properties(filter=True):
+            data_type = som_property.data_type
 
-            if attribute.name in attribute_dict:
-                if data_type != attribute_dict[attribute.name]:
-                    logging.warning(
-                        f"Achtung bei {attribute.property_set.som_class.name} -> {attribute.property_set.name}"
-                        f":{attribute.name} neuer Datentyp: {data_type} "
-                        f" alter Datentyp: {attribute_dict[attribute.name]}"
+            if som_property.name in attribute_dict:
+                if data_type != attribute_dict[som_property.name]:
+                    if not som_property.property_set or not som_property.property_set.som_class:
+                        continue
+                    logging.info(
+                        f"Achtung bei {som_property.property_set.som_class.name} -> {som_property.property_set.name}"
+                        f":{som_property.name} neuer Datentyp: {data_type} "
+                        f" alter Datentyp: {attribute_dict[som_property.name]}"
                     )
             else:
-                attribute_dict[attribute.name] = data_type
+                attribute_dict[som_property.name] = data_type
 
         for row_index, [name, data_type] in enumerate(attribute_dict.items()):
             row = 2 + row_index
@@ -112,8 +114,9 @@ def create_mapping(
 
     wb = Workbook()
     ws = wb.active
+    if ws is None:
+        return
     ws.title = TITLES[0]
-
     ad = create_definition(ws)
     create_zuweisung(
         "bauteilKlassifikation", wb.create_sheet(TITLES[1])

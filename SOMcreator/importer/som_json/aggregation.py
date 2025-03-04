@@ -1,6 +1,7 @@
 from __future__ import annotations
-
+import logging
 import SOMcreator
+import SOMcreator.importer.som_json
 from SOMcreator.importer.som_json import core
 from SOMcreator.datastructure.som_json import (
     AGGREGATIONS,
@@ -14,7 +15,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from SOMcreator import SOMProject
-
+    from SOMcreator.datastructure.som_json import MainDict
 
 ### Import ###
 def _get_aggregation(
@@ -26,7 +27,7 @@ def _get_aggregation(
         proj, aggregation_dict, identifier
     )
 
-    object_uuid = aggregation_dict[OBJECT]
+    object_uuid:str = aggregation_dict[OBJECT]
     obj = SOMcreator.importer.som_json.object_uuid_dict[object_uuid]
     parent_connection = aggregation_dict[CONNECTION]
     identity_text = aggregation_dict.get(IDENTITY_TEXT)
@@ -39,13 +40,14 @@ def _get_aggregation(
         filter_matrix=filter_matrix,
         identity_text=identity_text,
     )
+    proj.add_item(aggregation,overwrite_filter_matrix=False)
     SOMcreator.importer.som_json.aggregation_dict[aggregation] = (
         parent,
         parent_connection,
     )
 
 
-def load(proj: SOMcreator.SOMProject, main_dict: dict):
+def load(proj: SOMcreator.SOMProject, main_dict: MainDict):
     aggregations_dict: dict[str, AggregationDict] = main_dict.get(AGGREGATIONS)
     core.remove_part_of_dict(AGGREGATIONS)
     aggregations_dict = (
@@ -64,7 +66,10 @@ def calculate(proj: SOMcreator.SOMProject):
         uuid,
         connection_type,
     ) in SOMcreator.importer.som_json.aggregation_dict.items():
+        if uuid is None:
+            continue
         parent = uuid_dict.get(uuid)
-        if parent is None:
+        if parent is None or not isinstance(parent,SOMcreator.SOMAggregation):
+            logging.warning(f"Aggregation '{aggregation.name}'parent with uuid '{uuid}' not found")
             continue
         parent.add_child(aggregation, connection_type)

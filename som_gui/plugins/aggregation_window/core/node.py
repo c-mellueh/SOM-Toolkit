@@ -89,7 +89,7 @@ def pset_tree_double_clicked(
     )
     if active_attribute is None:
         return
-    property_set_window_core.activate_attribute(
+    property_set_window_core.activate_property(
         active_attribute, window, property_set_window
     )
 

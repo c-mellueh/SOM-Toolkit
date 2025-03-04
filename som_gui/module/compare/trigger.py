@@ -7,9 +7,9 @@ def connect():
 
 
 def open_window():
-    core.open_project_selection_window(tool.CompareWindow,
-                                       tool.CompareProjectSelector,
-                                       tool.Appdata, tool.Project)
+    core.open_project_selection_window(
+        tool.CompareWindow, tool.CompareProjectSelector, tool.Appdata, tool.Project
+    )
 
 
 def retranslate_ui():
@@ -21,7 +21,13 @@ def on_new_project():
 
 
 def accept_clicked():
-    core.open_compare_window(tool.CompareWindow, tool.CompareProjectSelector, tool.Project, tool.Appdata, tool.Popups)
+    core.open_compare_window(
+        tool.CompareWindow,
+        tool.CompareProjectSelector,
+        tool.Project,
+        tool.Appdata,
+        tool.Popups,
+    )
 
 
 def switch_button_clicked():
@@ -33,7 +39,7 @@ def project_button_clicked():
 
 
 def draw_branches(tree, painter, rect, index):
-    return core.draw_tree_branch(tree, painter, rect, index, tool.AttributeCompare)
+    return core.draw_tree_branch(tree, painter, rect, index, tool.PropertyCompare)
 
 
 def download_clicked():

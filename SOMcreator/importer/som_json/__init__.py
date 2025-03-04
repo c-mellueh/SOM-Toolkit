@@ -4,7 +4,7 @@ import logging
 import os
 import json
 import time
-
+import SOMcreator.importer.som_json
 import SOMcreator
 import SOMcreator.datastructure.som_json
 from SOMcreator.datastructure.som_json import FILTER_MATRIXES, MainDict
@@ -22,7 +22,7 @@ from . import (
 if TYPE_CHECKING:
     from SOMcreator import SOMProject, UseCase, Phase
 parent_dict = dict()
-aggregation_dict = dict()
+aggregation_dict:dict[SOMcreator.SOMAggregation,tuple[str|None,int]] = dict()
 phase_list: list[Phase] = list()
 use_case_list: list[UseCase] = list()
 plugin_dict = dict()
@@ -39,7 +39,7 @@ def reset_uuid_dicts():
     SOMcreator.importer.som_json.filter_matrixes = list()
 
 
-def open_json(cls: Type[SOMProject], path: str):
+def open_json(cls: Type[SOMProject], path: str|os.PathLike):
     start_time = time.time()
 
     SOMcreator.importer.som_json.parent_dict = dict()

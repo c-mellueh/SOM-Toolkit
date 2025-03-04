@@ -145,7 +145,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         """
 
         row_items = [table.item(index, col) for col in range(cls.get_column_count())]
-        attribute = cls.get_attribute_from_item(row_items[0])
+        attribute = cls.get_property_from_item(row_items[0])
         if attribute is None:
             return
 
@@ -196,7 +196,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         :param row:
         :return:
         """
-        attribute = cls.get_attribute_from_item(row[0])
+        attribute = cls.get_property_from_item(row[0])
         palette = QPalette()
         if attribute.property_set is None:
             brush = palette.base()
@@ -224,7 +224,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         attributes = set()
         for row in range(table.rowCount()):
             item = table.item(row, 0)
-            attributes.add(cls.get_attribute_from_item(item))
+            attributes.add(cls.get_property_from_item(item))
         return attributes
 
     @classmethod
@@ -240,7 +240,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
     @classmethod
     def get_item_from_pos(cls, table: QTableWidget, pos: QPoint):
         item = table.itemAt(pos)
-        return cls.get_attribute_from_item(item)
+        return cls.get_property_from_item(item)
 
     @classmethod
     def get_attribute_table_header_names(cls):
@@ -412,7 +412,7 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         """
         for row in range(table.rowCount()):
             item = table.item(row, 0)
-            if cls.get_attribute_from_item(item) == attribute:
+            if cls.get_property_from_item(item) == attribute:
                 return row
 
     @classmethod
@@ -423,10 +423,10 @@ class AttributeTable(som_gui.core.tool.AttributeTable):
         :param table: Active AttributeTable
         :return: selected attributes in AttributeTable
         """
-        return {cls.get_attribute_from_item(item) for item in table.selectedItems()}
+        return {cls.get_property_from_item(item) for item in table.selectedItems()}
 
     @classmethod
-    def get_attribute_from_item(
+    def get_property_from_item(
         cls, item: QTableWidgetItem
     ) -> SOMcreator.SOMProperty | None:
         """

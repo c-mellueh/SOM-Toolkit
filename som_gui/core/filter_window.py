@@ -11,7 +11,7 @@ import SOMcreator
 
 if TYPE_CHECKING:
     from som_gui import tool
-    from som_gui.module.attribute import ui as attribute_ui
+    from som_gui.module.property_ import ui as attribute_ui
     from som_gui.module.filter_window import ui
 
 
@@ -210,7 +210,7 @@ def tree_mouse_release_event(
 
 def add_compare_widget(
     filter_compare: Type[tool.FilterCompare],
-    attribute_compare: Type[tool.AttributeCompare],
+    attribute_compare: Type[tool.PropertyCompare],
     compare_window: Type[tool.CompareWindow],
 ):
     name_getter = lambda: QCoreApplication.translate("FilterWindow", "Project Filter")
@@ -227,7 +227,7 @@ def create_compare_widget(
     project0: SOMcreator.SOMProject,
     project1: SOMcreator.SOMProject,
     filter_compare: Type[tool.FilterCompare],
-    attribute_compare: Type[tool.AttributeCompare],
+    attribute_compare: Type[tool.PropertyCompare],
 ):
     """
     Sets up the Filter Compare Widget to function properly
@@ -281,8 +281,8 @@ def create_compare_widget(
 
 
 def filter_tab_object_tree_selection_changed(
-    widget: attribute_ui.AttributeWidget,
-    attribute_compare: Type[tool.AttributeCompare],
+    widget: attribute_ui.PropertyWidget,
+    attribute_compare: Type[tool.PropertyCompare],
     filter_compare: Type[tool.FilterCompare],
 ):
     obj = attribute_compare.get_selected_entity(
@@ -292,7 +292,7 @@ def filter_tab_object_tree_selection_changed(
     pset_list = attribute_compare.get_pset_list(obj)
 
     attribute_compare.fill_pset_tree(tree_widget, pset_list, add_missing=False)
-    attribute_compare.add_attributes_to_pset_tree(tree_widget, False)
+    attribute_compare.add_properties_to_pset_tree(tree_widget, False)
     for child_index in range(tree_widget.invisibleRootItem().childCount()):
         child = tree_widget.invisibleRootItem().child(child_index)
         filter_compare.fill_tree_with_checkstates(child)
@@ -304,7 +304,7 @@ def filter_tab_object_tree_selection_changed(
 def export_filter_differences(
     file,
     filter_compare: Type[tool.FilterCompare],
-    attribute_compare: Type[tool.AttributeCompare],
+    attribute_compare: Type[tool.PropertyCompare],
 ):
     name = QCoreApplication.translate("FilterWindow", "OBJECT FILTER")
     file.write(f"\n{name:46s}\n\n")

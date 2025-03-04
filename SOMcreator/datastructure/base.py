@@ -4,21 +4,39 @@ import copy
 
 from SOMcreator.constants import value_constants
 import SOMcreator
-from typing import Iterator, Callable,TypeVar, TYPE_CHECKING  	
+from typing import Iterator, Callable, TypeVar, TYPE_CHECKING,Union
 import logging
 import SOMcreator.datastructure.som_json
 from functools import wraps
+from abc import ABC, abstractmethod, ABCMeta
+
 if TYPE_CHECKING:
     import SOMcreator
-    HIRARCHY_TYPE = TypeVar('T',SOMcreator.SOMProject,SOMcreator.SOMClass,SOMcreator.SOMAggregation,SOMcreator.SOMProperty,SOMcreator.SOMPropertySet)
+
+    
+    BASE_TYPE = TypeVar(
+        "BASE_TYPE",
+        SOMcreator.SOMClass,
+        SOMcreator.SOMAggregation,
+        SOMcreator.SOMProperty,
+        SOMcreator.SOMPropertySet,
+        BaseClass,
+    )
+    BASE_CLASSES = Union[ SOMcreator.SOMClass,
+    SOMcreator.SOMAggregation,
+    SOMcreator.SOMProperty,
+    SOMcreator.SOMPropertySet,]
 
 FILTER_KEYWORD = "filter"
 
-def filterable(func: Callable[..., Iterator[HIRARCHY_TYPE]]) -> Callable[...,Iterator[HIRARCHY_TYPE]]:
+
+def filterable(
+    func: Callable[..., Iterator[BASE_TYPE]]
+) -> Callable[..., Iterator[BASE_TYPE]]:
     """decorator function that filters list output of function by  phase and usecase"""
 
     @wraps(func)
-    def inner(self, *args, **kwargs) ->Iterator[HIRARCHY_TYPE]:
+    def inner(self, *args, **kwargs) -> Iterator[BASE_TYPE]:
         filter_values = True
         if FILTER_KEYWORD in kwargs:
             filter_values = kwargs[FILTER_KEYWORD]
@@ -38,7 +56,7 @@ def filterable(func: Callable[..., Iterator[HIRARCHY_TYPE]]) -> Callable[...,Ite
     return inner
 
 
-class IterRegistry(type):
+class IterRegistry(ABCMeta):
     _registry = set()
     """ Helper for Iteration"""
 
@@ -56,28 +74,30 @@ class IterRegistry(type):
         return len(self._registry)
 
 
-class Hirarchy(object, metaclass=IterRegistry):
+class BaseClass(ABC, metaclass=IterRegistry):
 
     def __init__(
-        self,
+        self: BASE_TYPE,
         name: str,
         description: str | None = None,
         optional: bool | None = None,
         project: SOMcreator.SOMProject | None = None,
-        filter_matrix: list[list[bool]] = None,
+        filter_matrix: list[list[bool]] | None = None,
     ) -> None:
-        if project is None:
-            project = SOMcreator.active_project
 
-        self._project = project
-        project.add_item(self)
+        self._project: None | SOMcreator.SOMProject = None
+        if project is not None:
+            project.add_item(self)
 
         if filter_matrix is None:
-            filter_matrix = project.create_filter_matrix(True)
+            if project is not None:
+                filter_matrix = project.create_filter_matrix(True)
+            else:
+                filter_matrix = []
 
-        self._filter_matrix = copy.deepcopy(filter_matrix)
-        self._parent = None
-        self._children = set()
+        self._filter_matrix: list[list[bool]] = copy.deepcopy(filter_matrix)
+        self._parent: BASE_TYPE | None = None  # type: ignore
+        self._children: set = set()
         self._name = name
         self._mapping_dict = {
             value_constants.SHARED_PARAMETERS: True,
@@ -91,7 +111,7 @@ class Hirarchy(object, metaclass=IterRegistry):
         if optional is not None:
             self._optional = optional
 
-    def remove_parent(self) -> None:
+    def remove_parent(self: BASE_TYPE) -> None:
         if self.parent is not None:
             if self in self.parent._children:
                 self.parent.remove_child(self)
@@ -101,41 +121,62 @@ class Hirarchy(object, metaclass=IterRegistry):
         return copy.deepcopy(self._filter_matrix)
 
     def get_filter_state(
-        self, phase: SOMcreator.Phase, usecase: SOMcreator.UseCase
+        self, phase: SOMcreator.Phase | int, usecase: SOMcreator.UseCase | int
     ) -> bool | None:
-        if self.project:
-            if not self.project.get_filter_state(phase, usecase):
-                return False
+        if self.project is None:
+            raise ValueError(f"Entity {self} is not linked to a project")
 
         if isinstance(phase, int):
             phase_index = phase
         else:
             phase_index = self.project.get_phase_index(phase)
+
         if isinstance(usecase, int):
             usecase_index = usecase
         else:
             usecase_index = self.project.get_usecase_index(usecase)
-        if phase_index is None or usecase_index is None:
-            return None
+
+        phase = self.project.get_phase_by_index(phase_index)
+        usecase = self.project.get_usecase_by_index(usecase_index)
+
+        if phase_index is None:
+            raise ValueError(f"phase '{phase.name}' doesn't exist for {self}")
+        if usecase_index is None:
+            raise ValueError(f"usecase '{usecase.name}' doesn't exist for {self}")
+
         return bool(self._filter_matrix[phase_index][usecase_index])
 
     def set_filter_state(
         self, phase: SOMcreator.Phase, usecase: SOMcreator.UseCase, value: bool
     ) -> None:
+        if self.project is None:
+            raise ValueError(f"Entity {self} is not linked to a project")
         phase_index = self.project.get_phase_index(phase)
         usecase_index = self.project.get_usecase_index(usecase)
+        if phase_index is None or usecase_index is None:
+            return
         self._filter_matrix[phase_index][usecase_index] = value
 
     def remove_phase(self, phase: SOMcreator.Phase) -> None:
+        if self.project is None:
+            raise ValueError(f"Entity {self} is not linked to a project")
         phase_index = self.project.get_phase_index(phase)
+        if phase_index is None:
+            raise ValueError(f"phase '{phase.name}' doesn't exist for {self}")
         self._filter_matrix.pop(phase_index)
 
     def remove_usecase(self, usecase: SOMcreator.UseCase) -> None:
+        if self.project is None:
+            raise ValueError(f"Entity {self} is not linked to a project")
         usecase_index = self.project.get_usecase_index(usecase)
+        if usecase_index is None:
+            raise ValueError(f"usecase '{usecase.name}' doesn't exist for {self}")
         for usecase_list in self._filter_matrix:
             usecase_list.pop(usecase_index)
 
     def add_phase(self) -> None:
+        if self.project is None:
+            raise ValueError(f"Entity {self} is not linked to a project")
         usecases = self.project.get_usecases()
         self._filter_matrix.append([True for _ in usecases])
 
@@ -150,14 +191,16 @@ class Hirarchy(object, metaclass=IterRegistry):
         """
         if not self.project:
             return True
-        for phase in self.project.active_phases:
-            for usecase in self.project.active_usecases:
+        for phase_index in self.project.active_phases:
+            phase = self.project.get_phase_by_index(phase_index)
+            for usecase_index in self.project.active_usecases:
+                usecase = self.project.get_usecase_by_index(usecase_index)
                 if self.get_filter_state(phase, usecase):
                     return True
         return False
 
     @property
-    def project(self):
+    def project(self) -> SOMcreator.SOMProject | None:
         return self._project
 
     def is_optional(self, ignore_hirarchy=False) -> bool:
@@ -202,25 +245,13 @@ class Hirarchy(object, metaclass=IterRegistry):
             child.name = value
 
     @property
-    def parent(
-        self,
-    ) -> (
-        SOMcreator.SOMPropertySet
-        | SOMcreator.SOMClass
-        | SOMcreator.SOMProperty
-        | SOMcreator.SOMAggregation
-    ):
-        return self._parent
+    def parent(self: BASE_TYPE) -> BASE_TYPE | None:
+        return self._parent  # type: ignore
 
     @parent.setter
     def parent(
-        self,
-        parent: (
-            SOMcreator.SOMPropertySet
-            | SOMcreator.SOMClass
-            | SOMcreator.SOMProperty
-            | SOMcreator.SOMAggregation
-        ),
+        self: BASE_TYPE,
+        parent,
     ) -> None:
         if self.parent is not None:
             self.parent._children.remove(self)
@@ -241,36 +272,20 @@ class Hirarchy(object, metaclass=IterRegistry):
 
     @filterable
     def get_children(
-        self,
-    ) -> Iterator[
-        SOMcreator.SOMPropertySet
-        | SOMcreator.SOMClass
-        | SOMcreator.SOMProperty
-        | SOMcreator.SOMAggregation
-    ]:
+        self: BASE_TYPE,
+    ) -> Iterator[BASE_TYPE]:
         return iter(self._children)
 
     def add_child(
-        self,
-        child: (
-            SOMcreator.SOMPropertySet
-            | SOMcreator.SOMClass
-            | SOMcreator.SOMProperty
-            | SOMcreator.SOMAggregation
-        ),
+        self: BASE_TYPE,
+        child: BASE_TYPE,
     ) -> None:
         self._children.add(child)
-        child.parent = self
+        child.parent = self  # type: ignore
 
     def remove_child(
-        self,
-        child: (
-            SOMcreator.SOMPropertySet
-            | SOMcreator.SOMClass
-            | SOMcreator.SOMProperty
-            | SOMcreator.SOMAggregation
-            | Hirarchy
-        ),
+        self: BASE_TYPE,
+        child: BASE_TYPE,
     ) -> None:
         if child in self._children:
             self._children.remove(child)
@@ -283,9 +298,6 @@ class Hirarchy(object, metaclass=IterRegistry):
         if self.parent is not None:
             self.parent.remove_child(self)
 
-        if self in self._registry:
-            self._registry.remove(self)
-
         if recursive:
             for child in list(self.get_children(filter=False)):
                 child.delete(recursive)
@@ -293,5 +305,6 @@ class Hirarchy(object, metaclass=IterRegistry):
         else:
             for child in list(self.get_children(filter=False)):
                 child.remove_parent()
-        self.project.remove_item(self)
+        if self.project is not None:
+            self.project.remove_item(self)
         del self

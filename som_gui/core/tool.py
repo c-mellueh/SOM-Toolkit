@@ -34,8 +34,8 @@ class Appdata:
         pass
 
 
-class Attribute:
-    def add_attribute_data_value(self, name, getter, setter):
+class Property:
+    def add_property_data_value(self, name, getter, setter):
         pass
 
     def create_attribute_by_dict(self, attribute_data):
@@ -53,8 +53,8 @@ class Attribute:
         pass
 
 
-class AttributeCompare:
-    def add_attributes_to_pset_tree(self, tree, add_missing):
+class PropertyCompare:
+    def add_properties_to_pset_tree(self, tree, add_missing):
         pass
 
     def add_missing_objects_to_tree(self, tree, root_objects):
@@ -167,7 +167,7 @@ class AttributeCompare:
     def generate_uuid_dict(self, element_list):
         pass
 
-    def get_attribute_info_list(
+    def get_property_info_list(
         self,
     ):
         pass
@@ -721,7 +721,7 @@ class AttributeTable:
     def format_row_value(self, item, value):
         pass
 
-    def get_attribute_from_item(self, item):
+    def get_property_from_item(self, item):
         pass
 
     def get_attribute_table_header_names(

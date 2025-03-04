@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable, TYPE_CHECKING, TextIO, TypeAlias, Type
+from typing import Any, Callable, TYPE_CHECKING, TextIO, Union, Type, Sequence, TypeVar
 
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtCore import QModelIndex, Qt
@@ -18,17 +18,20 @@ import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
-from som_gui.module.attribute import trigger, ui, constants
+from som_gui.module.property_ import trigger, ui, constants
 from som_gui.module.project.constants import CLASS_REFERENCE
 from ifcopenshell.util.unit import unit_names, prefixes
 
 if TYPE_CHECKING:
-    from som_gui.module.attribute.prop import (
-        AttributeProperties,
-        CompareAttributesProperties,
+    from som_gui.module.property_.prop import (
+        PropertyProperties,
+        ComparePropertyProperties,
     )
 
-SOMType: TypeAlias = "SOMcreator.SOMProperty | SOMcreator.SOMPropertySet"
+SOMType = Union[SOMcreator.SOMProperty, SOMcreator.SOMPropertySet]
+
+T = TypeVar("T", SOMcreator.SOMProperty, SOMcreator.SOMPropertySet, SOMcreator.SOMClass)
+
 
 style_list = [
     [None, [0, 1]],
@@ -38,13 +41,13 @@ style_list = [
 ]
 
 
-class Attribute(som_gui.core.tool.Attribute):
+class Property(som_gui.core.tool.Property):
     @classmethod
-    def get_properties(cls) -> AttributeProperties:
-        return som_gui.AttributeProperties
+    def get_properties(cls) -> PropertyProperties:
+        return som_gui.PropertyProperties  # type: ignore
 
     @classmethod
-    def add_attribute_data_value(
+    def add_property_data_value(
         cls, name: str, getter: Callable, setter: Callable
     ) -> None:
         """
@@ -89,7 +92,7 @@ class Attribute(som_gui.core.tool.Attribute):
 
     @classmethod
     def create_attribute_by_dict(
-        cls, attribute_data: dict[str, str | list | bool]
+        cls, attribute_data: dict[str, str | list]
     ) -> SOMcreator.SOMProperty:
         """
         create SOMcreator.Attribute from Datadict
@@ -107,7 +110,7 @@ class Attribute(som_gui.core.tool.Attribute):
     @classmethod
     def get_unit_settings_widget(
         cls,
-    ) -> ui.UnitSettings:
+    ) -> ui.UnitSettings | None:
         return cls.get_properties().unit_settings_widget
 
     @classmethod
@@ -151,10 +154,10 @@ class Attribute(som_gui.core.tool.Attribute):
         return [i.text() for i in items if i.checkState() == Qt.CheckState.Checked]
 
 
-class AttributeCompare(som_gui.core.tool.AttributeCompare):
+class PropertyCompare(som_gui.core.tool.PropertyCompare):
     @classmethod
-    def get_properties(cls) -> CompareAttributesProperties:
-        return som_gui.CompareAttributesProperties
+    def get_properties(cls) -> ComparePropertyProperties:
+        return som_gui.ComparePropertyProperties  # type: ignore
 
     @classmethod
     def reset(cls) -> None:
@@ -171,12 +174,12 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         prop.missing_objects = [None, None]
         prop.object_tree_item_dict = dict()
         prop.pset_lists = dict()
-        prop.attributes_lists = dict()
+        prop.properties_lists = dict()
         prop.values_lists = dict()
         prop.widget = None
 
     @classmethod
-    def create_tree_selection_trigger(cls, widget: ui.AttributeWidget):
+    def create_tree_selection_trigger(cls, widget: ui.PropertyWidget):
         """
         create trigger if Object Tree and PropertySet tree are selected
         :param widget:
@@ -213,10 +216,10 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def find_matching_entity(
         cls,
-        search_element: SOMType,
-        uuid_dict1: dict[str, SOMType],
-        name_dict1: dict[str, SOMType],
-    ) -> SOMType | None:
+        search_element: T,
+        uuid_dict1: dict[str, T],
+        name_dict1: dict[str, T],
+    ) -> T | None:
         """
         find attribute/propertySet that mathches to input. The function searches for the UUID and Identifier if no Element is found return None
         :param search_element: Attribute/PropertySet for which a match is to be found
@@ -231,9 +234,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return None
 
     @classmethod
-    def generate_uuid_dict(
-        cls, element_list: list[SOMType | SOMcreator.SOMClass]
-    ) -> dict[str, SOMType | SOMcreator.SOMClass]:
+    def generate_uuid_dict(cls, element_list: Sequence[T]) -> dict[str, T]:
         """
         create dictionary of UUIDs of all Elements in element_list
         :param element_list: list of all Elements for which a UUID entry is needed
@@ -242,9 +243,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return {p.uuid: p for p in element_list if p.uuid}
 
     @classmethod
-    def generate_name_dict(
-        cls, element_list: list[SOMType | SOMcreator.SOMClass]
-    ) -> dict[str, SOMType | SOMcreator.SOMClass]:
+    def generate_name_dict(cls, element_list: Sequence[T]) -> dict[str, T]:
         """
         create dictionary of Names of all Elements in element_list
         :param element_list: list of all Elements for which a Names entry is needed
@@ -311,7 +310,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         cls,
         pset0: SOMcreator.SOMPropertySet | None,
         pset1: SOMcreator.SOMPropertySet | None,
-    ) -> None:
+    ) -> Sequence[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]]:
         """
         Compare two SOMcreator PropertySets by their Attributes.
         This method generates a list of matched and unmatched Attributes (match_list)
@@ -326,8 +325,8 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         if pset1 is not None:
             cls.set_value_list(pset1, result_list)
 
-        if None in (pset0, pset1):
-            return
+        if pset0 is None or pset1 is None:
+            return []
         # Generate Match Dicts
         attributes_1 = list(pset1.get_properties(filter=False))
         attribute_uuid_dict1 = cls.generate_uuid_dict(attributes_1)
@@ -462,16 +461,24 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             )
 
     @classmethod
-    def fill_value_table_pset(cls, widget: ui.AttributeWidget):
+    def fill_value_table_pset(cls, widget: ui.PropertyWidget):
         pset_tree = cls.get_pset_tree(widget)
         item = cls.get_selected_item(pset_tree)
         table = cls.get_value_table(widget)
         cls.clear_table(table)
         pset0, pset1 = cls.get_entities_from_item(item)
-        for property_sets in cls.get_value_list(pset0 or pset1):
+        if not isinstance(pset0, SOMcreator.SOMPropertySet | None):
+            return
+        if not isinstance(pset1, SOMcreator.SOMPropertySet | None):
+            return
+        target = pset0 or pset1
+        if target is None:
+            return
+        val = cls.get_value_list(target)
+        for property_sets in val:
             table.insertRow(table.rowCount())
             for index, p in enumerate(property_sets):
-                item = QTableWidgetItem(p.object.name if p else "")
+                item = QTableWidgetItem(p.som_class.name if p else "")
                 table.setItem(table.rowCount() - 1, index, item)
 
     @classmethod
@@ -489,31 +496,36 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def get_pset_info_list(cls):
         info_list = list()
-        info_list.append(("Name", lambda p: getattr(p, "name")))
+        name_text = QCoreApplication.translate("AttributeCompare", "Name")
+        c_count_text = QCoreApplication.translate("AttributeCompare", "Child Count")
+        info_list.append((name_text, lambda p: getattr(p, "name")))
         info_list.append(
             (
-                "Child Count",
+                c_count_text,
                 lambda p: len(list(p.get_children(filter=True))) if p else "",
             )
         )
         return info_list
 
     @classmethod
-    def get_attribute_info_list(cls):
+    def get_property_info_list(cls):
         info_list = list()
-        info_list.append(("Name", lambda a: getattr(a, "name")))
-        info_list.append(
-            ("Vererbt Werte", lambda a: getattr(a, "child_inherits_values"))
-        )
-        info_list.append(("Datentyp", lambda a: getattr(a, "data_type")))
-        info_list.append(("Werttyp", lambda a: getattr(a, "value_type")))
+        name_text = QCoreApplication.translate("AttributeCompare", "Name")
+        iv_text = QCoreApplication.translate("AttributeCompare", "Inheriting values")
+        datatype_text = QCoreApplication.translate("AttributeCompare", "Datatype")
+        value_type_text = QCoreApplication.translate("AttributeCompare", "Valuetype")
+
+        info_list.append((name_text, lambda a: getattr(a, "name")))
+        info_list.append((iv_text, lambda a: getattr(a, "child_inherits_values")))
+        info_list.append((datatype_text, lambda a: getattr(a, "data_type")))
+        info_list.append((value_type_text, lambda a: getattr(a, "value_type")))
         return info_list
 
     @classmethod
     def find_existing_parent_item(
-        cls, obj: SOMcreator.SOMClass
+        cls, som_class: SOMcreator.SOMClass
     ) -> QTreeWidgetItem | None:
-        parent = obj.parent
+        parent = som_class.parent
         while parent is not None:
             parent_item = cls.get_item_from_object(parent)
             if parent_item is not None:
@@ -549,7 +561,9 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def fill_pset_tree(
         cls,
         tree: QTreeWidget,
-        pset_list: list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]],
+        pset_list: (
+            list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]] | None
+        ),
         add_missing: bool = True,
     ) -> None:
         cls.clear_tree(tree)
@@ -567,7 +581,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                 tree.invisibleRootItem().addChild(item)
 
     @classmethod
-    def add_attributes_to_pset_tree(cls, tree: QTreeWidget, add_missing: bool):
+    def add_properties_to_pset_tree(cls, tree: QTreeWidget, add_missing: bool):
         root = tree.invisibleRootItem()
         logging.debug(f"{root.childCount()} items in pset tree")
         for index in range(root.childCount()):
@@ -593,7 +607,9 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
                     item.addChild(attribute_item)
 
     @classmethod
-    def fill_value_table(cls, table: QTableWidget, attribute: SOMcreator.SOMProperty):
+    def fill_value_table(
+        cls, table: QTableWidget, attribute: SOMcreator.SOMProperty | None
+    ):
         cls.clear_table(table)
         if attribute is None:
             return
@@ -617,18 +633,18 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     @classmethod
     def create_child_matchup(
         cls,
-        entity0: (
-            SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty
-        ),
-        entity1: (
-            SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty
-        ),
-    ):
+        entity0: T | None,
+        entity1: T | None,
+    ) -> Sequence[tuple[T | None, T | None]]:
 
-        if entity0 is None:
+        if entity0 is None and entity1 is not None:
             return [(None, p) for p in entity1.get_children(filter=False)]
-        if entity1 is None:
+        elif entity1 is None and entity0 is not None:
             return [(p, None) for p in entity0.get_children(filter=False)]
+
+        if entity0 is None or entity1 is None:
+            return []
+
         children0 = list(entity0.get_children(filter=False))
         children1 = list(entity1.get_children(filter=False))
         missing = list(children1)
@@ -948,7 +964,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
             cls.export_name_check(file, ps, pset0, pset1, 2)
             cls.export_child_check(file, ps, pset0, pset1, 2)
 
-            attribute_list = cls.get_properties().attributes_lists[pset0]
+            attribute_list = cls.get_properties().properties_lists[pset0]
             cls.export_attribute_differences(file, attribute_list)
 
     @classmethod
@@ -974,21 +990,21 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     # GETTER & SETTER
 
     @classmethod
-    def get_object_tree(cls, widget: ui.AttributeWidget):
+    def get_object_tree(cls, widget: ui.PropertyWidget):
         return widget.ui.tree_widget_object
 
     @classmethod
-    def get_pset_tree(cls, widget: ui.AttributeWidget):
+    def get_pset_tree(cls, widget: ui.PropertyWidget):
         return widget.ui.tree_widget_propertysets
 
     @classmethod
-    def get_value_table(cls, widget: ui.AttributeWidget):
+    def get_value_table(cls, widget: ui.PropertyWidget):
         return widget.ui.table_widget_values
 
     @classmethod
     def create_widget(cls):
         if cls.get_properties().widget is None:
-            cls.get_properties().widget = ui.AttributeWidget()
+            cls.get_properties().widget = ui.PropertyWidget()
         return cls.get_properties().widget
 
     @classmethod
@@ -1021,7 +1037,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def get_attribute_list(
         cls, property_set: SOMcreator.SOMPropertySet
     ) -> list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]] | None:
-        return cls.get_properties().attributes_lists.get(property_set)
+        return cls.get_properties().properties_lists.get(property_set)
 
     @classmethod
     def set_attribute_list(
@@ -1029,17 +1045,16 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         property_set: SOMcreator.SOMPropertySet,
         attribute_list: list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]],
     ):
-        cls.get_properties().attributes_lists[property_set] = attribute_list
+        cls.get_properties().properties_lists[property_set] = attribute_list
 
     @classmethod
-    def get_value_list(
-        cls, entity: SOMType
-    ) -> list[tuple[str | None, str | None]] | None:
-        return cls.get_properties().values_lists.get(entity)
+    def get_value_list(cls, entity: T) -> Sequence[tuple[T | None, T | None]]:
+        v = cls.get_properties().values_lists.get(entity)
+        return list() if v is None else v  # type: ignore
 
     @classmethod
     def set_value_list(
-        cls, entity: SOMType, value_list: list[tuple[str | None, str | None]]
+        cls, entity: SOMType, value_list: Sequence[tuple[T | None, T | None]]
     ):
         cls.get_properties().values_lists[entity] = value_list
 
@@ -1076,7 +1091,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
     def get_uuid_dict(cls, index=1) -> dict:
         if cls.get_properties().uuid_dicts[index] is None:
             project = cls.get_project(index)
-            d = {hi.uuid: hi for hi in project.get_hirarchy_items(filter=False)}
+            d = {hi.uuid: hi for hi in project.get_items(filter=False)}
             cls.get_properties().uuid_dicts[index] = d
         return cls.get_properties().uuid_dicts[index]
 
@@ -1133,7 +1148,7 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return data
 
     @classmethod
-    def get_entities_from_item(cls, item: QTreeWidgetItem) -> tuple[
+    def get_entities_from_item(cls, item: QTreeWidgetItem | None) -> tuple[
         SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
         SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty,
     ]:
@@ -1148,5 +1163,5 @@ class AttributeCompare(som_gui.core.tool.AttributeCompare):
         return f"{project.name} v{project.version}"
 
     @classmethod
-    def get_info_table(cls, widget: ui.AttributeWidget):
+    def get_info_table(cls, widget: ui.PropertyWidget):
         return widget.ui.table_infos
