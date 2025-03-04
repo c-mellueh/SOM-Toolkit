@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QTreeWidget
 
 from som_gui import tool
-from som_gui.core import object as core
+from som_gui.core import class_ as core
 
 
 def connect():
