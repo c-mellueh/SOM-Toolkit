@@ -25,7 +25,7 @@ def export(project: SOMcreator.SOMProject, path: str|os.PathLike):
     return
 
 
-def export_dict(dictionary: Dictionary, path: str):
+def export_dict(dictionary: Dictionary, path: str|os.PathLike):
     with open(path, "w") as file:
         d = asdict(
             dictionary, dict_factory=lambda x: {k: v for (k, v) in x if v is not None}
