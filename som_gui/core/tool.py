@@ -2210,7 +2210,7 @@ class ModelcheckWindow:
         pass
 
 
-class Object:
+class Class:
     def add_column_to_tree(self, name_getter, index, getter_func, setter_func):
         pass
 
@@ -2229,19 +2229,19 @@ class Object:
     def add_objects_infos_add_function(self, key, getter_function):
         pass
 
-    def change_object_info(self, obj, data_dict):
+    def change_class_info(self, obj, data_dict):
         pass
 
-    def check_if_ident_property_is_valid(self, data_dict):
+    def is_ident_property_valid(self, data_dict):
         pass
 
-    def check_if_ident_pset_is_valid(self, data_dict):
+    def is_ident_pset_valid(self, data_dict):
         pass
 
-    def check_if_identifier_is_unique(self, data_dict):
+    def is_identifier_unique(self, data_dict):
         pass
 
-    def check_object_creation_input(self, data_dict):
+    def check_class_creation_input(self, data_dict):
         pass
 
     def clear_context_menu_list(
@@ -2254,7 +2254,7 @@ class Object:
     ):
         pass
 
-    def copy_object(self, obj, data_dict):
+    def copy_class(self, obj, data_dict):
         pass
 
     def create_completer(self, texts, lineedit):
@@ -2273,10 +2273,10 @@ class Object:
     def create_item(self, obj):
         pass
 
-    def create_object(self, data_dict, property_set, attribute):
+    def create_class(self, data_dict, property_set, attribute):
         pass
 
-    def delete_object(self, obj, recursive):
+    def delete_class(self, obj, recursive):
         pass
 
     def delete_selection(
@@ -2309,10 +2309,10 @@ class Object:
     def fill_object_tree(self, objects, parent_item):
         pass
 
-    def find_attribute(self, obj, pset_name, attribute_name):
+    def find_property(self, obj, pset_name, attribute_name):
         pass
 
-    def get_active_object(
+    def get_active_class(
         self,
     ):
         pass
@@ -2332,7 +2332,7 @@ class Object:
     ):
         pass
 
-    def get_item_from_object(self, obj):
+    def get_item_from_class(self, obj):
         pass
 
     def get_item_from_pos(self, pos):
@@ -2346,12 +2346,12 @@ class Object:
     ):
         pass
 
-    def get_object_infos(
+    def get_class_infos(
         self,
     ):
         pass
 
-    def get_object_tree(
+    def get_class_tree(
         self,
     ):
         pass
@@ -2366,12 +2366,12 @@ class Object:
     ):
         pass
 
-    def get_selected_objects(
+    def get_selected_classes(
         self,
     ):
         pass
 
-    def group_objects(self, parent, children):
+    def group_classes(self, parent, children):
         pass
 
     def group_selection(
@@ -2379,7 +2379,7 @@ class Object:
     ):
         pass
 
-    def handle_attribute_issue(self, result):
+    def handle_property_issue(self, result):
         pass
 
     def is_identifier_allowed(self, identifier, ignore):
@@ -2446,7 +2446,7 @@ class Object:
     ):
         pass
 
-    def select_object(self, obj):
+    def select_class(self, obj):
         pass
 
     def set_active_object(self, obj):

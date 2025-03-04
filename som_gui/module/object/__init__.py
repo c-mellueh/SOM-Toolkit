@@ -10,7 +10,7 @@ IDENT_PROPERTY_ISSUE = 4
 
 
 def register():
-    som_gui.ObjectProperties = prop.ObjectProperties
+    som_gui.ClassProperties = prop.ClassProperties
 
 
 def load_ui_triggers():

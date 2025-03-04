@@ -54,7 +54,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     @classmethod
     def test_abbreviation(cls, abbreviation: str, obj: SOMcreator.SOMClass) -> int:
         ignore_text = obj.abbreviation if obj is not None else None
-        if tool.Object.oi_get_mode() == 2:
+        if tool.Class.oi_get_mode() == 2:
             ignore_text = None
         if abbreviation is not None and not cls.is_abbreviation_allowed(
             abbreviation, ignore_text

@@ -14,14 +14,14 @@ from PySide6.QtCore import QModelIndex, Qt, QCoreApplication
 
 
 def add_property_set_button_pressed(
-    object_tool: Type[tool.Object],
+    object_tool: Type[tool.Class],
     main_window_tool: Type[tool.MainWindow],
     property_set_tool: Type[tool.PropertySet],
     popup_tool: Type[tool.Popups],
     predefined_psets: Type[tool.PredefinedPropertySet],
 ):
     logging.debug(f"Add PropertySet button clicked")
-    obj = object_tool.get_active_object()
+    obj = object_tool.get_active_class()
     title = QCoreApplication.translate("PropertySet", "Add PropertySet")
     name = QCoreApplication.translate("PropertySet", "PropertySet name?")
 
@@ -143,11 +143,11 @@ def rename_pset_by_editor(
 
 
 def repaint_pset_table(
-    property_set_tool: Type[tool.PropertySet], object_tool: Type[tool.Object]
+    property_set_tool: Type[tool.PropertySet], object_tool: Type[tool.Class]
 ):
     logging.debug(f"Repaint PropertySet Table")
 
-    if object_tool.get_active_object() is None:
+    if object_tool.get_active_class() is None:
         property_set_tool.set_enabled(False)
         return
 
@@ -166,7 +166,6 @@ def repaint_pset_table(
     property_set_tool.remove_property_sets_from_table(delete_property_sets, table)
     property_set_tool.add_property_sets_to_table(add_property_sets, table)
     property_set_tool.update_property_set_table(table)
-
 
 
 def table_double_clicked(

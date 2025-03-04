@@ -33,9 +33,9 @@ class ObjectInfoWidgetProperties:
     ifc_lines: list = list()
 
 
-class ObjectProperties:
-    active_object: SOMcreator.SOMClass =None
-    object_info_widget_properties: ObjectInfoWidgetProperties =None
+class ClassProperties:
+    active_class: SOMcreator.SOMClass = None
+    object_info_widget_properties: ObjectInfoWidgetProperties = None
     context_menu_list: list[ContextMenuDict] = list()
     object_info_widget: ObjectInfoWidget = None
     first_paint = True

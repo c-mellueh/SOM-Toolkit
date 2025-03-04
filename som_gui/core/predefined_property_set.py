@@ -111,15 +111,15 @@ def object_context_menu(
 def object_double_clicked(
     predefined_pset: Type[tool.PredefinedPropertySet],
     property_set: Type[tool.PropertySet],
-    object_tool: Type[tool.Object],
+    object_tool: Type[tool.Class],
 ):
     item = predefined_pset.get_object_table_widget().selectedItems()[0]
     pset = property_set.get_property_set_from_item(item)
     predefined_pset.close_window()
 
     obj = pset.som_class
-    obj_item = object_tool.get_item_from_object(obj)
-    object_tool.select_object(obj)
+    obj_item = object_tool.get_item_from_class(obj)
+    object_tool.select_class(obj)
     object_tool.expand_to_item(obj_item)
     property_set.select_property_set(pset)
 

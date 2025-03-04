@@ -12,14 +12,26 @@ if TYPE_CHECKING:
 def connect():
     table: PsetTableWidget = tool.MainWindow.get_property_set_table_widget()
     table.itemSelectionChanged.connect(
-        lambda: core.pset_selection_changed(tool.PropertySet, tool.AttributeTable, tool.MainWindow))
+        lambda: core.pset_selection_changed(
+            tool.PropertySet, tool.AttributeTable, tool.MainWindow
+        )
+    )
     table.itemDoubleClicked.connect(
-        lambda: core.table_double_clicked(tool.PropertySet, tool.AttributeTable, tool.PropertySetWindow))
+        lambda: core.table_double_clicked(
+            tool.PropertySet, tool.AttributeTable, tool.PropertySetWindow
+        )
+    )
     table.edit_started.connect(lambda: core.pset_table_edit_started(tool.PropertySet))
     table.edit_stopped.connect(lambda: core.pset_table_edit_stopped(tool.PropertySet))
     tool.MainWindow.get_ui().button_Pset_add.clicked.connect(
-        lambda: core.add_property_set_button_pressed(tool.Object, tool.MainWindow, tool.PropertySet, tool.Popups,
-                                                     tool.PredefinedPropertySet))
+        lambda: core.add_property_set_button_pressed(
+            tool.Class,
+            tool.MainWindow,
+            tool.PropertySet,
+            tool.Popups,
+            tool.PredefinedPropertySet,
+        )
+    )
     table.itemClicked.connect(lambda item: core.pset_clicked(item, tool.PropertySet))
 
 
@@ -32,7 +44,7 @@ def on_new_project():
 
 
 def repaint_event():
-    core.repaint_pset_table(tool.PropertySet, tool.Object)
+    core.repaint_pset_table(tool.PropertySet, tool.Class)
 
 
 def pset_table_context_menu_requested(pos):
