@@ -14,14 +14,14 @@ from PySide6.QtCore import QModelIndex, Qt, QCoreApplication
 
 
 def add_property_set_button_pressed(
-    object_tool: Type[tool.Object],
+    object_tool: Type[tool.Class],
     main_window_tool: Type[tool.MainWindow],
     property_set_tool: Type[tool.PropertySet],
     popup_tool: Type[tool.Popups],
     predefined_psets: Type[tool.PredefinedPropertySet],
 ):
     logging.debug(f"Add PropertySet button clicked")
-    obj = object_tool.get_active_object()
+    obj = object_tool.get_active_class()
     title = QCoreApplication.translate("PropertySet", "Add PropertySet")
     name = QCoreApplication.translate("PropertySet", "PropertySet name?")
 
@@ -37,27 +37,13 @@ def add_property_set_button_pressed(
         popup_tool.create_warning_popup(text)
         return
 
-    predefined_pset_dict = {p.name: p for p in predefined_psets.get_property_sets()}
-    connect_predefined_pset = False
-    if pset_name in predefined_pset_dict:
-        connect_predefined_pset = popup_tool.request_property_set_merge(pset_name, 1)
-        if connect_predefined_pset is None:
-            return
-
-    parent_property_sets = property_set_tool.get_inheritable_property_sets(obj)
-    parent_pset_dict = {p.name: p for p in parent_property_sets}
-    connect_parent_pset = False
-    if pset_name in parent_pset_dict and not connect_predefined_pset:
-        connect_parent_pset = popup_tool.request_property_set_merge(pset_name, 2)
-        if connect_parent_pset is None:
-            return
-
-    if connect_predefined_pset:
-        parent = predefined_pset_dict.get(pset_name)
-    elif connect_parent_pset:
-        parent = parent_pset_dict.get(pset_name)
-    else:
-        parent = None
+    parent = property_set_tool.search_for_parent(
+        pset_name,
+        predefined_psets.get_property_sets(),
+        property_set_tool.get_inheritable_property_sets(obj),
+    )
+    if parent is False:
+        return
     property_set_tool.create_property_set(pset_name, obj, parent)
     repaint_pset_table(property_set_tool, object_tool)
 
@@ -143,11 +129,11 @@ def rename_pset_by_editor(
 
 
 def repaint_pset_table(
-    property_set_tool: Type[tool.PropertySet], object_tool: Type[tool.Object]
+    property_set_tool: Type[tool.PropertySet], object_tool: Type[tool.Class]
 ):
     logging.debug(f"Repaint PropertySet Table")
 
-    if object_tool.get_active_object() is None:
+    if object_tool.get_active_class() is None:
         property_set_tool.set_enabled(False)
         return
 
@@ -166,7 +152,6 @@ def repaint_pset_table(
     property_set_tool.remove_property_sets_from_table(delete_property_sets, table)
     property_set_tool.add_property_sets_to_table(add_property_sets, table)
     property_set_tool.update_property_set_table(table)
-
 
 
 def table_double_clicked(

@@ -53,7 +53,7 @@ class SOMClass(BaseClass):
                 ident_pset = self.identifier_property.property_set
                 if ident_pset is None:
                     raise ValueError(f"Identifier PropertySet dne")
-                ident_property_name = ident_pset.name
+                ident_property_name = self.identifier_property.name
             else:
                 raise ValueError(f"Identifier Property dne")
 

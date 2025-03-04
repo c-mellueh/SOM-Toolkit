@@ -243,7 +243,7 @@ def paint_object_tree(
     project: Type[tool.Project],
 ):
     logging.debug(f"Repaint Modelcheck Object Tree")
-    root_objects = set(project.get_root_objects(True))
+    root_objects = set(project.get_root_classes(True))
     invisible_root_entity = tree.model().invisibleRootItem()
     modelcheck_window.fill_object_tree(
         root_objects, invisible_root_entity, tree.model(), tree

@@ -1491,7 +1491,7 @@ class MainWindow:
     ):
         pass
 
-    def get_object_name_label(
+    def get_class_name_label(
         self,
     ):
         pass
@@ -2210,7 +2210,7 @@ class ModelcheckWindow:
         pass
 
 
-class Object:
+class Class:
     def add_column_to_tree(self, name_getter, index, getter_func, setter_func):
         pass
 
@@ -2220,28 +2220,25 @@ class Object:
     def add_ifc_mapping(self, mapping):
         pass
 
-    def add_object_activate_function(self, func):
+    def add_class_activate_function(self, func):
         pass
 
-    def add_object_creation_check(self, key, check_function):
+    def add_class_creation_check(self, key, check_function):
         pass
 
     def add_objects_infos_add_function(self, key, getter_function):
         pass
 
-    def change_object_info(self, obj, data_dict):
+    def is_ident_property_valid(self, data_dict):
         pass
 
-    def check_if_ident_property_is_valid(self, data_dict):
+    def is_ident_pset_valid(self, data_dict):
         pass
 
-    def check_if_ident_pset_is_valid(self, data_dict):
+    def is_identifier_unique(self, data_dict):
         pass
 
-    def check_if_identifier_is_unique(self, data_dict):
-        pass
-
-    def check_object_creation_input(self, data_dict):
+    def check_class_creation_input(self, data_dict):
         pass
 
     def clear_context_menu_list(
@@ -2254,7 +2251,7 @@ class Object:
     ):
         pass
 
-    def copy_object(self, obj, data_dict):
+    def copy_class(self, obj, data_dict):
         pass
 
     def create_completer(self, texts, lineedit):
@@ -2273,10 +2270,8 @@ class Object:
     def create_item(self, obj):
         pass
 
-    def create_object(self, data_dict, property_set, attribute):
-        pass
 
-    def delete_object(self, obj, recursive):
+    def delete_class(self, obj, recursive):
         pass
 
     def delete_selection(
@@ -2300,19 +2295,19 @@ class Object:
     def fill_object_attribute_line_edit(self, line_edit, obj):
         pass
 
-    def fill_object_entry(self, obj):
+    def fill_class_entry(self, obj):
         pass
 
     def fill_object_property_set_line_edit(self, line_edit, obj):
         pass
 
-    def fill_object_tree(self, objects, parent_item):
+    def fill_class_tree(self, objects, parent_item):
         pass
 
-    def find_attribute(self, obj, pset_name, attribute_name):
+    def find_property(self, obj, pset_name, attribute_name):
         pass
 
-    def get_active_object(
+    def get_active_class(
         self,
     ):
         pass
@@ -2332,13 +2327,13 @@ class Object:
     ):
         pass
 
-    def get_item_from_object(self, obj):
+    def get_item_from_class(self, obj):
         pass
 
     def get_item_from_pos(self, pos):
         pass
 
-    def get_object_from_item(self, item):
+    def get_class_from_item(self, item):
         pass
 
     def get_object_info_properties(
@@ -2346,12 +2341,12 @@ class Object:
     ):
         pass
 
-    def get_object_infos(
+    def get_class_infos(
         self,
     ):
         pass
 
-    def get_object_tree(
+    def get_class_tree(
         self,
     ):
         pass
@@ -2366,12 +2361,12 @@ class Object:
     ):
         pass
 
-    def get_selected_objects(
+    def get_selected_classes(
         self,
     ):
         pass
 
-    def group_objects(self, parent, children):
+    def group_classes(self, parent, children):
         pass
 
     def group_selection(
@@ -2379,7 +2374,7 @@ class Object:
     ):
         pass
 
-    def handle_attribute_issue(self, result):
+    def handle_property_issue(self, result):
         pass
 
     def is_identifier_allowed(self, identifier, ignore):
@@ -2410,7 +2405,7 @@ class Object:
     def oi_fill_properties(self, mode):
         pass
 
-    def oi_get_focus_object(
+    def oi_get_focus_class(
         self,
     ):
         pass
@@ -2446,16 +2441,16 @@ class Object:
     ):
         pass
 
-    def select_object(self, obj):
+    def select_class(self, obj):
         pass
 
-    def set_active_object(self, obj):
+    def set_active_class(self, obj):
         pass
 
     def set_ident_value(self, obj, value):
         pass
 
-    def set_object_optional_by_tree_item_state(self, item, column_index):
+    def set_class_optional_by_tree_item_state(self, item, column_index):
         pass
 
     def update_check_state(self, item):
@@ -2778,7 +2773,7 @@ class Project:
     ):
         pass
 
-    def get_root_objects(self, filter_objects, proj):
+    def get_root_classes(self, filter_objects, proj):
         pass
 
     def get_settings_general_widget(
@@ -3118,7 +3113,7 @@ class Search:
     def search_attribute(self, searchable_attributes):
         pass
 
-    def search_object(self, searchable_objects):
+    def search_class(self, searchable_objects):
         pass
 
     def set_info_of_item(self, item, info):
@@ -3171,7 +3166,8 @@ class Settings:
     def set_widget(self, widget):
         pass
 
-
+class ClassInfo:
+    pass
 class Util:
     def add_shortcut(self, sequence, window, function):
         pass

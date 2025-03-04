@@ -28,7 +28,7 @@ def connect_dialog(dialog: PredefinedPropertySetWindow):
 
     dialog.ui.table_widgets_objects.itemDoubleClicked.connect(
         lambda: core.object_double_clicked(
-            tool.PredefinedPropertySet, tool.PropertySet, tool.Object
+            tool.PredefinedPropertySet, tool.PropertySet, tool.Class
         )
     )
 
