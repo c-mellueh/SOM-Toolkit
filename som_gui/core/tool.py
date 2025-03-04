@@ -3171,7 +3171,8 @@ class Settings:
     def set_widget(self, widget):
         pass
 
-
+class ClassInfo:
+    pass
 class Util:
     def add_shortcut(self, sequence, window, function):
         pass
