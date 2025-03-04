@@ -4,7 +4,6 @@ import logging
 from typing import TYPE_CHECKING, Type
 
 from PySide6.QtCore import QCoreApplication
-from PySide6.QtGui import QPalette
 
 import SOMcreator
 from som_gui import tool
@@ -95,56 +94,6 @@ def resize_columns(class_tool: Type[Class]):
     class_tool.resize_tree()
 
 
-def create_class_info_widget(
-    mode: int,
-    class_tool: Type[Class],
-    predefined_property_set: Type[tool.PredefinedPropertySet],
-    util: Type[tool.Util],
-):
-    """
-    Opens Class Info Widget can be used for creation (mode 0), modification (mode 1) or copying (mode 2)
-    """
-    logging.debug(f"Create Class Info Widget Mode= {mode}")
-    title = util.get_window_title(
-        QCoreApplication.translate("Class Info", "Class Info")
-    )
-    dialog = class_tool.oi_create_dialog(title)
-
-    predefined_psets = predefined_property_set.get_property_sets()
-    class_tool.oi_connect_dialog(dialog, predefined_psets)
-    class_tool.oi_fill_properties(mode=mode)
-    class_tool.oi_update_dialog(dialog)
-    if mode == 0:
-        names = [p.name for p in predefined_psets]
-        class_tool.create_completer(names, dialog.widget.combo_box_pset)
-    if dialog.exec():
-        if mode == 0:
-            class_tool.trigger_class_creation()
-        elif mode == 1:
-            class_tool.trigger_class_modification()
-        elif mode == 2:
-            class_tool.trigger_class_copy()
-
-
-def class_info_refresh(class_tool: Type[Class]):
-    data_dict = class_tool.oi_get_values()
-    class_tool.oi_set_values(data_dict)
-    ident_value = data_dict["ident_value"]
-    group = data_dict["is_group"]
-    ident_filter = (
-        class_tool.get_active_class().ident_value
-        if class_tool.oi_get_mode() == 1
-        else None
-    )
-    if not class_tool.is_identifier_allowed(ident_value, [ident_filter]):
-        class_tool.oi_set_ident_value_color("red")
-    else:
-        class_tool.oi_set_ident_value_color(QPalette().color(QPalette.Text).name())
-    class_tool.oi_change_visibility_identifiers(group)
-
-
-def class_info_add_ifc(class_tool: Type[Class]):
-    class_tool.add_ifc_mapping("")
 
 
 def load_context_menus(class_tool: Type[Class], util: Type[tool.Util]):
@@ -277,24 +226,25 @@ def item_dropped_on(pos: QPoint, class_tool: Type[Class]):
             som_class.parent = dropped_on_class
 
 
-def modify_class(class_tool: Type[tool.Class]):
-    data_dict = class_tool.oi_get_values()
-    focus_class = class_tool.oi_get_focus_class()
+def modify_class(class_tool: Type[tool.Class],class_info:Type[tool.ClassInfo]):
+    data_dict = class_info.oi_get_values()
+    focus_class = class_info.oi_get_focus_class()
     result = class_tool.change_class_info(focus_class, data_dict)
     if class_tool.handle_property_issue(result):
         class_tool.fill_class_entry(focus_class)
 
 
-def copy_class(class_tool: Type[tool.Class]):
-    data_dict = class_tool.oi_get_values()
-    focus_class = class_tool.oi_get_focus_class()
+def copy_class(class_tool: Type[tool.Class],class_info:Type[tool.ClassInfo]):
+    data_dict = class_info.oi_get_values()
+    focus_class = class_info.oi_get_focus_class()
     result, focus_class = class_tool.copy_class(focus_class, data_dict)
     if class_tool.handle_property_issue(result):
         class_tool.fill_class_entry(focus_class)
 
 
 def create_class(
-    class_tool: Type[Class],
+    class_tool: Type[tool.Class],
+    class_info:Type[tool.ClassInfo],
     project: Type[Project],
     property_set: Type[tool.PropertySet],
     predefined_property_set: Type[tool.PredefinedPropertySet],
@@ -307,7 +257,7 @@ def create_class(
         IDENT_PSET_ISSUE,
     )
 
-    data_dict = class_tool.oi_get_values()
+    data_dict = class_info.oi_get_values()
     predefined_psets = {p.name: p for p in predefined_property_set.get_property_sets()}
 
     name = data_dict["name"]

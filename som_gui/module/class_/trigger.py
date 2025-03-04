@@ -48,6 +48,7 @@ def retranslate_ui():
 def create_object_called():
     core.create_class(
         tool.Class,
+        tool.ClassInfo,
         tool.Project,
         tool.PropertySet,
         tool.PredefinedPropertySet,
@@ -57,8 +58,8 @@ def create_object_called():
 
 
 def copy_object_called():
-    core.copy_class(tool.Class)
+    core.copy_class(tool.Class,tool.ClassInfo)
 
 
 def modify_object_called():
-    core.modify_class(tool.Class)
+    core.modify_class(tool.Class,tool.ClassInfo)

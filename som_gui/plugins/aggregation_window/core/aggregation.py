@@ -31,18 +31,19 @@ def retranslate_ui(aggregation: Type[aw_tool.Aggregation]):
 
 
 def init_main_window(
-    object_tool: Type[tool.Class],
+    class_tool: Type[tool.Class],
+    class_info_tool: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
     main_window: Type[tool.MainWindow],
 ):
-    object_tool.add_column_to_tree(
+    class_tool.add_column_to_tree(
         lambda: QCoreApplication.translate("Aggregation", "Abbreviation"),
         -1,
         lambda o: getattr(o, "abbreviation"),
     )
 
     name = QCoreApplication.translate("Aggregation", "Abbreviation")
-    object_tool.oi_add_plugin_entry(
+    class_info_tool.add_plugin_entry(
         "abbrev_text",
         "horizontal_layout_info",
         QLabel(name),
@@ -53,8 +54,8 @@ def init_main_window(
         lambda *a: OK,
         lambda *a: None,
     )
-    object_info_line_edit = aggregation.create_oi_line_edit()
-    object_tool.oi_add_plugin_entry(
+    object_info_line_edit = aggregation.create_ci_line_edit()
+    class_info_tool.add_plugin_entry(
         "abbreviation",
         "horizontal_layout_info",
         object_info_line_edit,
@@ -82,12 +83,14 @@ def export_building_structure(
 
 
 def refresh_object_info_line_edit(
-    object_tool: Type[tool.Class], aggregation: Type[aw_tool.Aggregation]
+    class_tool: Type[tool.Class],
+    class_info: Type[tool.ClassInfo],
+    aggregation: Type[aw_tool.Aggregation],
 ):
-    data_dict = object_tool.oi_get_values()
+    data_dict = class_info.oi_get_values()
     abbrev_filter = (
-        object_tool.get_active_class().abbreviation
-        if object_tool.oi_get_mode() == 1
+        class_tool.get_active_class().abbreviation
+        if class_info.oi_get_mode() == 1
         else None
     )
     aggregation.object_info_line_edit_paint(data_dict, abbrev_filter)

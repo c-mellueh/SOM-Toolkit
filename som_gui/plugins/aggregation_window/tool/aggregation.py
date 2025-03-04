@@ -96,7 +96,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
         obj.abbreviation = abbreviation
 
     @classmethod
-    def create_oi_line_edit(cls):
+    def create_ci_line_edit(cls):
         cls.get_properties().object_info_line_edit = ui_aggregation.ObjectInfoLineEdit()
         return cls.get_properties().object_info_line_edit
 

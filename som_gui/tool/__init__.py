@@ -33,3 +33,4 @@ from som_gui.tool.property_set_window import PropertySetWindow
 from som_gui.tool.search import Search
 from som_gui.tool.settings import Settings
 from som_gui.tool.util import Util
+from som_gui.tool.class_info import ClassInfo
