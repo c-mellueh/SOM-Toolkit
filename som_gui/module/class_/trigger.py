@@ -1,7 +1,13 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from som_gui.module.class_info.prop import ClassDataDict
 from PySide6.QtWidgets import QTreeWidget
 
 from som_gui import tool
 from som_gui.core import class_ as core
+import SOMcreator
 
 
 def connect():
@@ -21,8 +27,7 @@ def connect():
         lambda: core.search_class(tool.Search, tool.Class, tool.Project)
     )
 
-
-    core.load_context_menus(tool.Class, tool.Util)
+    core.load_context_menus(tool.Class, tool.ClassInfo, tool.Util)
     core.add_shortcuts(
         tool.Class, tool.Util, tool.Search, tool.MainWindow, tool.Project
     )
@@ -45,21 +50,20 @@ def retranslate_ui():
     core.retranslate_ui(tool.Class)
 
 
-def create_object_called():
+def create_object_called(data_dict: ClassDataDict):
     core.create_class(
+        data_dict,
         tool.Class,
         tool.ClassInfo,
         tool.Project,
         tool.PropertySet,
         tool.PredefinedPropertySet,
-        tool.Popups,
-        tool.Util,
     )
 
 
-def copy_object_called():
-    core.copy_class(tool.Class,tool.ClassInfo)
+def copy_object_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
+    core.copy_class(som_class, data_dict, tool.Class, tool.ClassInfo)
 
 
-def modify_object_called():
-    core.modify_class(tool.Class,tool.ClassInfo)
+def modify_object_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
+    core.modify_class(som_class, data_dict, tool.Class, tool.ClassInfo)

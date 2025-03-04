@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QHBoxLayout, QLineEdit
 import SOMcreator
 import som_gui.plugins.aggregation_window.core.tool
 from som_gui import tool
-from som_gui.module.class_ import OK
+from som_gui.module.class_.constants import OK
 from som_gui.plugins.aggregation_window.module.aggregation import ui as ui_aggregation
 from som_gui.plugins.aggregation_window.module.aggregation.prop import (
     AggregationProperties,
@@ -54,15 +54,15 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     @classmethod
     def test_abbreviation(cls, abbreviation: str, obj: SOMcreator.SOMClass) -> int:
         ignore_text = obj.abbreviation if obj is not None else None
-        if tool.Class.oi_get_mode() == 2:
+        if tool.ClassInfo.oi_get_mode() == 2:
             ignore_text = None
         if abbreviation is not None and not cls.is_abbreviation_allowed(
             abbreviation, ignore_text
         ):
             text = QCoreApplication.translate(
-                "Aggregation", "Abbreviation exists already"
+                "Aggregation", "Abbreviation '{}' exists already"
             )
-            tool.Popups.create_warning_popup(text)
+            tool.Popups.create_warning_popup(text.format(abbreviation))
             return ABBREV_ISSUE
         return OK
 

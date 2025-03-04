@@ -12,13 +12,13 @@ def on_new_project():
 
 
 def connect():
-    widget: ObjectTreeWidget = tool.ClassInfo.get_class_tree()
+    widget: ObjectTreeWidget = tool.Class.get_class_tree()
     widget.itemDoubleClicked.connect(item_double_clicked)
 
     main_ui = tool.MainWindow.get_ui()
     main_ui.button_objects_add.clicked.connect(
         lambda: core.create_class_info_widget(
-            0, tool.ClassInfo, tool.PredefinedPropertySet, tool.Util
+            0,tool.Class, tool.ClassInfo, tool.PredefinedPropertySet, tool.Util
         )
     )
 
@@ -26,6 +26,7 @@ def connect():
 def item_double_clicked():
     core.create_class_info_widget(
         mode=1,
+        class_tool= tool.Class,
         class_info=tool.ClassInfo,
         predefined_property_set=tool.PredefinedPropertySet,
         util=tool.Util,
@@ -33,7 +34,7 @@ def item_double_clicked():
 
 
 def object_info_paint_event():
-    core.class_info_refresh(tool.ClassInfo)
+    core.class_info_refresh(tool.Class,tool.ClassInfo)
     pass
 
 
@@ -43,5 +44,5 @@ def retranslate_ui():
 
 def create_object_info_widget(mode: int):
     core.create_class_info_widget(
-        mode, tool.ClassInfo, tool.PredefinedPropertySet, tool.Util
+        mode,tool.Class,  tool.ClassInfo, tool.PredefinedPropertySet, tool.Util
     )

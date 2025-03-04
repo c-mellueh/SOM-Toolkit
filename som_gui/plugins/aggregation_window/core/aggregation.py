@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtWidgets import QLabel
 
-from som_gui.module.class_ import OK
+from som_gui.module.class_.constants import OK
 
 if TYPE_CHECKING:
     from som_gui import tool

@@ -2229,9 +2229,6 @@ class Class:
     def add_objects_infos_add_function(self, key, getter_function):
         pass
 
-    def change_class_info(self, obj, data_dict):
-        pass
-
     def is_ident_property_valid(self, data_dict):
         pass
 
@@ -2273,8 +2270,6 @@ class Class:
     def create_item(self, obj):
         pass
 
-    def create_class(self, data_dict, property_set, attribute):
-        pass
 
     def delete_class(self, obj, recursive):
         pass

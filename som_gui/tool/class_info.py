@@ -1,7 +1,11 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
-from som_gui.module.class_info.prop import PluginProperty, ClasstDataDict
-from PySide6.QtWidgets import QWidget, QLineEdit, QCompleter
+from som_gui.module.class_info.prop import PluginProperty, ClassDataDict
+from PySide6.QtWidgets import QWidget, QLineEdit, QCompleter, QLayout
+from PySide6.QtCore import QCoreApplication
+import copy as cp
+import uuid
+import logging
 
 if TYPE_CHECKING:
     from som_gui.module.class_info.prop import ClassInfoProperties
@@ -11,9 +15,10 @@ import SOMcreator
 from som_gui.module.class_info.ui import ClassInfoWidget
 from SOMcreator.templates import IFC_4_1
 from som_gui.module.class_info import trigger
+import som_gui.module.class_.constants
 
 
-class ClassInfo(som_gui.core.tool):
+class ClassInfo(som_gui.core.tool.ClassInfo):
     @classmethod
     def get_properties(cls) -> ClassInfoProperties:
         return som_gui.ClassInfoProperties
@@ -56,7 +61,7 @@ class ClassInfo(som_gui.core.tool):
         cls.get_properties().class_info_plugin_list.append(prop)
 
     @classmethod
-    def get_class_infos(cls) -> ClasstDataDict:
+    def get_class_infos(cls) -> ClassDataDict:
         d = dict()
         for key, func in cls.get_properties().class_add_infos_functions:
             d[key] = func()
@@ -92,17 +97,11 @@ class ClassInfo(som_gui.core.tool):
     @classmethod
     def oi_create_dialog(cls, title) -> ClassInfoWidget:
         prop = cls.get_properties()
-        prop.object_info_widget_properties = (
-            som_gui.module.class_.prop.ObjectInfoWidgetProperties()
-        )
-        dialog = som_gui.module.class_.ui.ClassInfoWidget()
+        dialog = ClassInfoWidget()
         for plugin in prop.class_info_plugin_list:
-            getattr(dialog.widget, plugin.layout_name).insertWidget(
-                plugin.index, plugin.widget
-            )
-            setattr(
-                prop.object_info_widget_properties, plugin.key, plugin.init_value_getter
-            )
+            layout: QLayout = getattr(dialog.widget, plugin.layout_name)
+            layout.insertWidget(plugin.index, plugin.widget)
+            setattr(prop, plugin.key, plugin.init_value_getter)
         prop.widget = dialog
         prop.widget.setWindowTitle(title)
         return prop.widget
@@ -119,22 +118,26 @@ class ClassInfo(som_gui.core.tool):
         )
 
     @classmethod
-    def oi_get_focus_class(cls):
-        return cls.get_object_info_properties().focus_object
+    def oi_get_focus_class(cls) -> SOMcreator.SOMClass:
+        return cls.get_properties().focus_class
 
     @classmethod
-    def oi_get_mode(cls):
+    def set_active_class(cls, value: SOMcreator.SOMClass):
+        cls.get_properties().focus_class = value
+
+    @classmethod
+    def oi_get_mode(cls) -> int:
         """
         0 = Create
         1 = Info
         2 = Copy
         """
-        return cls.get_object_info_properties().mode
+        return cls.get_properties().mode
 
     @classmethod
-    def oi_get_values(cls) -> ClasstDataDict:
+    def oi_get_values(cls) -> ClassDataDict:
         widget = cls.get_properties().widget.widget
-        d: ClasstDataDict = dict()
+        d: ClassDataDict = dict()
 
         d["is_group"] = widget.button_gruppe.isChecked()
         d["ident_value"] = widget.line_edit_attribute_value.text()
@@ -156,8 +159,8 @@ class ClassInfo(som_gui.core.tool):
         return values
 
     @classmethod
-    def oi_set_values(cls, data_dict: ClasstDataDict):
-        prop = cls.get_object_info_properties()
+    def oi_set_values(cls, data_dict: ClassDataDict):
+        prop = cls.get_properties()
         if data_dict.get("name"):
             prop.name = data_dict.get("name")
 
@@ -196,54 +199,53 @@ class ClassInfo(som_gui.core.tool):
         return QCompleter(IFC_4_1)
 
     @classmethod
-    def oi_fill_properties(cls, mode: int):
+    def oi_fill_properties(cls, mode: int, selected_class=None):
         prop = cls.get_properties()
-        info_properties = prop.object_info_widget_properties
-        obj = prop.active_class
-        info_properties.focus_object = obj
-        info_properties.ident_value = obj.ident_value if obj else None
-        info_properties.mode = mode
+        active_class = cls.oi_get_focus_class()
+        prop.ident_value = active_class.ident_value if active_class else None
+        prop.mode = mode
 
         for plugin in prop.class_info_plugin_list:
-            info_properties.plugin_infos[plugin.key] = plugin.init_value_getter(obj)
-        info_properties.is_group = obj.is_concept if obj else False
-        info_properties.name = obj.name if obj else ""
-        info_properties.ifc_mappings = (
-            list(obj.ifc_mapping) if obj else ["IfcBuildingElementProxy"]
+            prop.plugin_infos[plugin.key] = plugin.init_value_getter(active_class)
+        prop.is_group = active_class.is_concept if active_class else False
+        prop.name = active_class.name if active_class else ""
+        prop.ifc_mappings = (
+            list(active_class.ifc_mapping)
+            if active_class
+            else ["IfcBuildingElementProxy"]
         )
-        if obj and not obj.is_concept:
-            info_properties.pset_name = obj.identifier_property.property_set.name
-            info_properties.attribute_name = obj.identifier_property.name
+        if active_class and not active_class.is_concept:
+            prop.pset_name = active_class.identifier_property.property_set.name
+            prop.attribute_name = active_class.identifier_property.name
 
     @classmethod
     def oi_update_dialog(cls, dialog: ClassInfoWidget):
         prop = cls.get_properties()
-        info_prop = prop.object_info_widget_properties
 
         # set Name
-        dialog.widget.line_edit_name.setText(info_prop.name)
+        dialog.widget.line_edit_name.setText(prop.name)
         # set IsGroup
-        dialog.widget.button_gruppe.setChecked(info_prop.is_group)
+        dialog.widget.button_gruppe.setChecked(prop.is_group)
 
         for plugin in prop.class_info_plugin_list:
-            plugin.widget_value_setter(info_prop.plugin_infos.get(plugin.key))
+            plugin.widget_value_setter(prop.plugin_infos.get(plugin.key))
 
-        for mapping in info_prop.ifc_mappings:
+        for mapping in prop.ifc_mappings:
             cls.add_ifc_mapping(mapping)
 
         mode = cls.oi_get_mode()
 
-        active_object = prop.active_class
+        active_class = prop.focus_class
         if mode != 0:
             dialog.widget.combo_box_pset.clear()
             [
                 dialog.widget.combo_box_pset.addItem(p.name)
-                for p in active_object.get_property_sets(filter=False)
+                for p in active_class.get_property_sets(filter=False)
             ]
-        if not info_prop.is_group:
-            dialog.widget.combo_box_pset.setCurrentText(info_prop.pset_name)
-            dialog.widget.combo_box_attribute.setCurrentText(info_prop.attribute_name)
-            dialog.widget.line_edit_attribute_value.setText(info_prop.ident_value)
+        if not prop.is_group:
+            dialog.widget.combo_box_pset.setCurrentText(prop.pset_name)
+            dialog.widget.combo_box_attribute.setCurrentText(prop.attribute_name)
+            dialog.widget.line_edit_attribute_value.setText(prop.ident_value)
 
     @classmethod
     def add_ifc_mapping(cls, mapping):
@@ -251,8 +253,7 @@ class ClassInfo(som_gui.core.tool):
         line_edit.setCompleter(cls.create_ifc_completer())
         line_edit.setText(mapping)
         prop = cls.get_properties()
-        info_prop = prop.object_info_widget_properties
-        info_prop.ifc_lines.append(line_edit)
+        prop.ifc_lines.append(line_edit)
         prop.widget.widget.vertical_layout_ifc.addWidget(line_edit)
 
     @classmethod
@@ -260,5 +261,68 @@ class ClassInfo(som_gui.core.tool):
         cls.get_properties().class_add_infos_functions.append((key, getter_function))
 
     @classmethod
-    def trigger_class_info_widget(mode: int):
+    def trigger_class_info_widget(cls,mode: int):
         trigger.create_object_info_widget(mode)
+
+    @classmethod
+    def are_plugin_requirements_met(
+        cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
+    ):
+        """
+        set som_class to None if no som_class exists (creation of new class) this will skip ignore
+        """
+        for plugin in cls.get_properties().class_info_plugin_list:  # Call Test Func
+            result = plugin.value_test(data_dict[plugin.key], som_class)
+            if result != som_gui.module.class_.constants.OK:
+                return result
+        return som_gui.module.class_.constants.OK
+
+    @classmethod
+    def is_ident_pset_valid(cls, data_dict: ClassDataDict):
+        is_group = data_dict["is_group"]
+        if is_group:
+            return True
+        value = data_dict["ident_pset_name"]
+        if not value:
+            text = QCoreApplication.translate(
+                "Object", "Name of PropertySet is not allowed"
+            )
+            logging.error(text)
+            tool.Popups.create_warning_popup(text)
+            return False
+        return True
+
+    @classmethod
+    def is_ident_property_valid(cls, data_dict: ClassDataDict):
+        is_group = data_dict["is_group"]
+        if is_group:
+            return True
+        value = data_dict["ident_property_name"]
+        if not value:
+            text = QCoreApplication.translate(
+                "Object", "Name of Attribute is not allowed"
+            )
+            logging.error(text)
+            return False
+        return True
+
+    @classmethod
+    def is_identifier_unique(cls, data_dict: ClassDataDict):
+        is_group = data_dict["is_group"]
+        if is_group:
+            return True
+        value = data_dict["ident_value"]
+        if not cls.is_identifier_allowed(value):
+            text = QCoreApplication.translate(
+                "Object", "Identifier exists allready or is not allowed"
+            )
+            logging.error(text)
+            return False
+        return True
+
+    @classmethod
+    def add_plugin_infos_to_class(
+        cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
+    ):
+        for plugin in cls.get_properties().class_info_plugin_list:  # call Setter Func
+            plugin.value_setter(som_class, data_dict[plugin.key])

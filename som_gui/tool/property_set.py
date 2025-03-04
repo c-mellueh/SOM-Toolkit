@@ -300,3 +300,32 @@ class PropertySet(som_gui.core.tool.PropertySet):
     @classmethod
     def trigger_table_repaint(cls):
         trigger.repaint_event()
+
+    @classmethod
+    def search_for_parent(
+        cls,
+        pset_name,
+        predefined_psets: list[SOMcreator.SOMPropertySet] = [],
+        parent_psets: list[SOMcreator.SOMPropertySet] = [],
+    ) -> SOMcreator.SOMPropertySet|None|bool:
+        """
+        return None if not accepted return False if aborted
+        """
+        pset_dict = {p.name: p for p in list(predefined_psets)}
+        if pset_name in pset_dict:
+            connect_result = tool.Popups.request_property_set_merge(pset_name, 1)
+            if connect_result is None:
+                return False
+            if connect_result:
+                parent = pset_dict.get(pset_name)
+                return parent
+
+        pset_dict = {p.name: p for p in list(parent_psets)}
+        if pset_name in pset_dict:
+            connect_result = tool.Popups.request_property_set_merge(pset_name, 2)
+            if connect_result is None:
+                return False
+            if connect_result:
+                parent = pset_dict.get(pset_name)
+                return parent
+        return None

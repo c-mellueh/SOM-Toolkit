@@ -8,10 +8,11 @@ from PySide6.QtCore import QCoreApplication
 import SOMcreator
 from som_gui import tool
 from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
+import som_gui.module.class_.constants as constants
 
 if TYPE_CHECKING:
     from som_gui.tool import Class, Project, Search, PropertySet, MainWindow
-
+    from som_gui.module.class_info.prop import ClassDataDict
     from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
     from PySide6.QtCore import QPoint
 
@@ -94,13 +95,11 @@ def resize_columns(class_tool: Type[Class]):
     class_tool.resize_tree()
 
 
-
-
-def load_context_menus(class_tool: Type[Class], util: Type[tool.Util]):
+def load_context_menus(class_tool: Type[Class],class_info:Type[tool.ClassInfo], util: Type[tool.Util]):
     class_tool.clear_context_menu_list()
     class_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Class", "Copy"),
-        lambda: class_tool.trigger_class_info_widget(2),
+        lambda: class_info.trigger_class_info_widget(2),
         True,
         False,
     )
@@ -226,78 +225,122 @@ def item_dropped_on(pos: QPoint, class_tool: Type[Class]):
             som_class.parent = dropped_on_class
 
 
-def modify_class(class_tool: Type[tool.Class],class_info:Type[tool.ClassInfo]):
+def modify_class(
+    som_class: SOMcreator.SOMClass,
+    data_dict: ClassDataDict,
+    class_tool: Type[tool.Class],
+    class_info: Type[tool.ClassInfo],
+):
+
     data_dict = class_info.oi_get_values()
-    focus_class = class_info.oi_get_focus_class()
-    result = class_tool.change_class_info(focus_class, data_dict)
-    if class_tool.handle_property_issue(result):
-        class_tool.fill_class_entry(focus_class)
+    som_class = class_info.oi_get_focus_class()
+    identifer = data_dict.get("ident_value")
+    is_group = (
+        som_class.is_concept
+        if data_dict.get("is_group") is None
+        else data_dict.get("is_group")
+    )
+
+    # check if identifier is allowed
+    if not class_tool.is_identifier_allowed(identifer, som_class.ident_value, is_group):
+        class_tool.handle_property_issue(constants.IDENT_ISSUE)
+        return
+
+    # handle Plugin checks
+    result = class_info.are_plugin_requirements_met(som_class, data_dict)
+    if result != constants.OK:
+        class_tool.handle_property_issue(result)
+        return
+
+    class_tool.modify_class(som_class, data_dict)
+    class_info.add_plugin_infos_to_class(som_class, data_dict)
+    class_tool.fill_class_entry(som_class)
 
 
-def copy_class(class_tool: Type[tool.Class],class_info:Type[tool.ClassInfo]):
-    data_dict = class_info.oi_get_values()
-    focus_class = class_info.oi_get_focus_class()
-    result, focus_class = class_tool.copy_class(focus_class, data_dict)
-    if class_tool.handle_property_issue(result):
-        class_tool.fill_class_entry(focus_class)
+def copy_class(
+    som_class: SOMcreator.SOMClass,
+    data_dict: ClassDataDict,
+    class_tool: Type[tool.Class],
+    class_info: Type[tool.ClassInfo],
+):
+
+    # handle Group
+    if data_dict.get("is_group"):
+        class_tool.copy_group(som_class)
+        return
+
+    # handle Identifier Value
+    ident_value = data_dict.get("ident_value")
+    if not class_tool.is_identifier_allowed(ident_value):
+        class_tool.handle_property_issue(constants.IDENT_ISSUE)
+        return
+
+    # handle plugin checks
+    result = class_info.are_plugin_requirements_met(som_class, data_dict)
+    if result != constants.OK:
+        class_tool.handle_property_issue(result)
+        return
+
+    new_class = class_tool.copy_class(som_class, data_dict)
+    class_info.add_plugin_infos_to_class(new_class, data_dict)
 
 
 def create_class(
+    data_dict: ClassDataDict,
     class_tool: Type[tool.Class],
-    class_info:Type[tool.ClassInfo],
+    class_info: Type[tool.ClassInfo],
     project: Type[Project],
     property_set: Type[tool.PropertySet],
     predefined_property_set: Type[tool.PredefinedPropertySet],
-    popup: Type[tool.Popups],
-    util: Type[tool.Util],
 ):
-    from som_gui.module.class_ import (
-        IDENT_ISSUE,
-        IDENT_PROPERTY_ISSUE,
-        IDENT_PSET_ISSUE,
-    )
-
-    data_dict = class_info.oi_get_values()
-    predefined_psets = {p.name: p for p in predefined_property_set.get_property_sets()}
-
     name = data_dict["name"]
     is_group = data_dict["is_group"]
-    abbreviation = data_dict.get("abbreviation")
-    ifc_mappings = data_dict.get("ifc_mappings")
     identifier = data_dict.get("ident_value")
     pset_name = data_dict.get("ident_pset_name")
     attribute_name = data_dict.get("ident_property_name")
 
+
+    # handle group
     if is_group:
-        ident = str(uuid.uuid4())
-        som_class = SOMcreator.SOMClass(
-            name, ident, uuid=ident, project=tool.Project.get()
+        som_class = SOMcreator.SOMClass(name, project=project.get())
+        som_class.ident_value = str(som_class.uuid)
+        return
+
+    # handle identifier
+    if not class_tool.is_identifier_allowed(identifier):
+        class_tool.handle_property_issue(constants.IDENT_ISSUE)
+        return
+    
+    # handle plugin checks
+    result = class_info.are_plugin_requirements_met(None, data_dict)
+    if result != constants.OK:
+        class_tool.handle_property_issue(result)
+        return
+    som_class = SOMcreator.SOMClass(name, project=project.get())
+
+    # create identifier property_set
+    parent_pset = property_set.search_for_parent(
+        pset_name,
+        predefined_property_set.get_property_sets(),
+    )
+    pset = property_set.create_property_set(pset_name, None, parent_pset)
+    som_class.add_property_set(pset)
+
+    # create identifier property
+    ident_property: SOMcreator.SOMProperty = {
+        a.name: a for a in pset.get_properties(filter=False)
+    }.get(attribute_name)
+
+    if not ident_property:
+        ident_property = SOMcreator.SOMProperty(
+            pset,
+            attribute_name,
+            [identifier],
+            SOMcreator.value_constants.LIST,
         )
     else:
-        if identifier is None or not class_tool.is_identifier_allowed(identifier):
-            return class_tool.handle_property_issue(IDENT_ISSUE)
+        ident_property.value = [identifier]
 
-        parent = None
-        if pset_name in predefined_psets:
-            connect_result = popup.request_property_set_merge(pset_name, 1)
-            if connect_result is None:
-                return
-            if connect_result:
-                parent = predefined_psets.get(pset_name)
-
-        pset = property_set.create_property_set(pset_name, None, parent)
-        ident_property: SOMcreator.SOMProperty = {
-            a.name: a for a in pset.get_properties(filter=False)
-        }.get(attribute_name)
-
-        if not ident_property:
-            ident_property = SOMcreator.SOMProperty(
-                pset,
-                attribute_name,
-                [identifier],
-                SOMcreator.value_constants.LIST,
-            )
-        else:
-            ident_property.value = [identifier]
-        class_tool.create_class(data_dict, pset, ident_property)
-        refresh_class_tree(class_tool, project)
+    class_info.add_plugin_infos_to_class(som_class, data_dict)
+    class_tool.modify_class(som_class, data_dict)
+    refresh_class_tree(class_tool, project)

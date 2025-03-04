@@ -20,17 +20,13 @@ import SOMcreator
 import som_gui
 import som_gui.core.tool
 import som_gui.tool as tool
-from som_gui.module.class_.prop import PluginProperty
 import som_gui.module.class_
-from som_gui.module.class_ import trigger
+from som_gui.module.class_ import trigger,constants
 
 if TYPE_CHECKING:
     from som_gui.module.class_.prop import ClassProperties, ContextMenuDict
-    from som_gui.module.main_window.ui import MainWindow
-    from som_gui.module.class_.ui import ObjectTreeWidget, ClassInfoWidget
-
-
-
+    from som_gui.module.class_.ui import ObjectTreeWidget
+    from som_gui.module.class_info.prop import ClassDataDict
 
 
 class Class(som_gui.core.tool.Class):
@@ -177,182 +173,25 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def handle_property_issue(cls, result: int):
-        if result == som_gui.module.class_.OK:
+        if result ==constants.OK:
             return True
-        if result == som_gui.module.class_.IDENT_ISSUE:
+        if result == constants.IDENT_ISSUE:
             text = QCoreApplication.translate(
                 "Object", "Identifier exists allready or is not allowed"
             )
-        elif result == som_gui.module.class_.IDENT_PROPERTY_ISSUE:
+        elif result == constants.IDENT_PROPERTY_ISSUE:
             text = QCoreApplication.translate(
                 "Object", "Name of Property is not allowed"
             )
-        elif result == som_gui.module.class_.IDENT_PSET_ISSUE:
+        elif result == constants.IDENT_PSET_ISSUE:
             text = QCoreApplication.translate(
                 "Object", "Name of PropertySet is not allowed"
             )
         else:
             return False
-        logging.error(text)
+        logging.debug(text)
         tool.Popups.create_warning_popup(text)
         return False
-
-    @classmethod
-    def copy_class(
-        cls, som_class: SOMcreator.SOMClass, data_dict: ClasstDataDict
-    ) -> tuple[int, SOMcreator.SOMClass | None]:
-        is_group = data_dict.get("is_group")
-        if is_group:
-            new_class = cp.copy(som_class)
-            new_class.identifier_property = uuid.uuid4()
-            return som_gui.module.class_.OK, new_class
-        ident_value = data_dict["ident_value"]
-        pset = data_dict.get("ident_pset_name")
-        ident_property = data_dict.get("ident_property_name")
-        name = data_dict.get("name") or som_class.name
-        if not cls.is_identifier_allowed(ident_value):
-            return som_gui.module.class_.IDENT_ISSUE, None
-
-        for plugin in cls.get_properties().class_info_plugin_list:  # Call Test Func
-            result = plugin.value_test(data_dict[plugin.key], som_class)
-            if result != som_gui.module.class_.OK:
-                return result, None
-        new_class = cp.copy(som_class)
-        if pset and ident_property:
-            new_class.identifier_property = cls.find_property(
-                new_class, pset, ident_property
-            )
-        new_class.identifier_property.value = [ident_value]
-        new_class.name = name
-        for plugin in cls.get_properties().class_info_plugin_list:  # call Setter Func
-            plugin.value_setter(new_class, data_dict[plugin.key])
-
-        return som_gui.module.class_.OK, new_class
-
-    @classmethod
-    def check_class_creation_input(cls, data_dict: ClasstDataDict) -> bool:
-        prop = cls.get_properties()
-        for key, check_function in prop.class_add_checks:
-            if not check_function(data_dict):
-                return False
-        return True
-
-    @classmethod
-    def is_ident_pset_valid(cls, data_dict: ClasstDataDict):
-        is_group = data_dict["is_group"]
-        if is_group:
-            return True
-        value = data_dict["ident_pset_name"]
-        if not value:
-            text = QCoreApplication.translate(
-                "Object", "Name of PropertySet is not allowed"
-            )
-            logging.error(text)
-            tool.Popups.create_warning_popup(text)
-            return False
-        return True
-
-    @classmethod
-    def is_ident_property_valid(cls, data_dict: ClasstDataDict):
-        is_group = data_dict["is_group"]
-        if is_group:
-            return True
-        value = data_dict["ident_property_name"]
-        if not value:
-            text = QCoreApplication.translate(
-                "Object", "Name of Attribute is not allowed"
-            )
-            logging.error(text)
-            return False
-        return True
-
-    @classmethod
-    def is_identifier_unique(cls, data_dict: ClasstDataDict):
-        is_group = data_dict["is_group"]
-        if is_group:
-            return True
-        value = data_dict["ident_value"]
-        if not cls.is_identifier_allowed(value):
-            text = QCoreApplication.translate(
-                "Object", "Identifier exists allready or is not allowed"
-            )
-            logging.error(text)
-            return False
-        return True
-
-    @classmethod
-    def create_class(
-        cls,
-        data_dict: ClasstDataDict,
-        property_set: SOMcreator.SOMPropertySet,
-        identifier_property: SOMcreator.SOMProperty,
-    ):
-        name = data_dict["name"]
-        is_group = data_dict["is_group"]
-        abbreviation = data_dict.get("abbreviation")
-        ifc_mappings = data_dict.get("ifc_mappings")
-        if is_group:
-            ident = str(uuid.uuid4())
-            new_class = SOMcreator.SOMClass(
-                name, ident, uuid=ident, project=tool.Project.get()
-            )
-        else:
-            new_class = SOMcreator.SOMClass(
-                name, identifier_property, project=tool.Project.get()
-            )
-            new_class.add_property_set(property_set)
-        if ifc_mappings:
-            new_class.ifc_mapping = ifc_mappings
-        if abbreviation:
-            new_class.abbreviation = abbreviation
-        return new_class
-
-    @classmethod
-    def change_class_info(
-        cls, som_class: SOMcreator.SOMClass, data_dict: ClasstDataDict
-    ) -> int:
-        name = data_dict.get("name")
-        ifc_mappings = data_dict.get("ifc_mappings")
-        identifer = data_dict.get("ident_value")
-        pset_name = data_dict.get("ident_pset_name")
-        identifier_name = data_dict.get("ident_property_name")
-        is_group = data_dict.get("is_group")
-
-        is_group = som_class.is_concept if is_group is None else is_group
-        if not is_group:
-            if identifer is not None and not cls.is_identifier_allowed(
-                identifer, som_class.ident_value
-            ):
-                return som_gui.module.class_.IDENT_ISSUE
-
-        for plugin in cls.get_properties().class_info_plugin_list:  # Call Test Func
-            result = plugin.value_test(data_dict[plugin.key], som_class)
-            if result != som_gui.module.class_.OK:
-                return result
-
-        som_class.name = name if name else som_class.name
-        som_class.ifc_mapping = (
-            ifc_mappings if ifc_mappings is not None else som_class.ifc_mapping
-        )
-
-        if is_group and not som_class.is_concept:
-            som_class.identifier_property = str(uuid.uuid4())
-            return som_gui.module.class_.OK
-
-        if pset_name and identifier_name:
-            ident_property = cls.find_property(som_class, pset_name, identifier_name)
-            som_class.identifier_property = (
-                ident_property
-                if ident_property is not None
-                else som_class.identifier_property
-            )
-
-        if identifer is not None:
-            cls.set_ident_value(som_class, identifer)
-        for plugin in cls.get_properties().class_info_plugin_list:  # call Setter Func
-            plugin.value_setter(som_class, data_dict[plugin.key])
-
-        return som_gui.module.class_.OK
 
     @classmethod
     def set_ident_value(cls, obj: SOMcreator.SOMClass, value: str):
@@ -383,11 +222,17 @@ class Class(som_gui.core.tool.Class):
         return ident_values
 
     @classmethod
-    def is_identifier_allowed(cls, identifier, ignore: list[str] = None):
+    def is_identifier_allowed(
+        cls, identifier, ignore: list[str] = None, is_group=False
+    ):
         """
         identifier: value which will be checked against all identifiers
         ignore: list of values which will be ignored
         """
+        if is_group:
+            return True
+        if identifier is None:
+            return False
         identifiers = cls.get_existing_ident_values()
         if ignore is not None:
             identifiers = list(filter(lambda i: i not in ignore, identifiers))
@@ -395,9 +240,6 @@ class Class(som_gui.core.tool.Class):
             return False
         else:
             return True
-
-
-    
 
     @classmethod
     def drop_indication_pos_is_on_item(cls):
@@ -430,7 +272,6 @@ class Class(som_gui.core.tool.Class):
     def add_class_activate_function(cls, func: Callable):
         cls.get_properties().class_activate_functions.append(func)
 
-   
     @classmethod
     def fill_class_entry(cls, obj: SOMcreator.SOMClass):
         for func in cls.get_properties().class_activate_functions:
@@ -532,22 +373,106 @@ class Class(som_gui.core.tool.Class):
             True if item.checkState(column_index) == Qt.CheckState.Checked else False
         )
 
-
-
     @classmethod
     def trigger_class_creation(
         cls,
+        data_dict: ClassDataDict,
     ):
-        trigger.create_object_called()
+        trigger.create_object_called(data_dict)
 
     @classmethod
     def trigger_class_copy(
-        cls,
+        cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
     ):
-        trigger.copy_object_called()
+        trigger.copy_object_called(som_class,data_dict)
 
     @classmethod
     def trigger_class_modification(
-        cls,
+        cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
     ):
-        trigger.modify_object_called()
+        trigger.modify_object_called(som_class,data_dict)
+
+    @classmethod
+    def copy_group(cls, som_class: SOMcreator.SOMClass) -> SOMcreator.SOMClass:
+        new_class = cp.copy(som_class)
+        new_class.identifier_property = uuid.uuid4()
+        return new_class
+
+    @classmethod
+    def copy_class(cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
+        ident_value = data_dict["ident_value"]
+        pset = data_dict.get("ident_pset_name")
+        ident_property = data_dict.get("ident_property_name")
+        name = data_dict.get("name") or som_class.name
+
+        new_class = cp.copy(som_class)
+        if pset and ident_property:
+            new_class.identifier_property = cls.find_property(
+                new_class, pset, ident_property
+            )
+        new_class.identifier_property.value = [ident_value]
+        new_class.name = name
+        return new_class
+
+    @classmethod
+    def modify_class(
+        cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
+    ) -> int:
+        name = data_dict.get("name")
+        ifc_mappings = data_dict.get("ifc_mappings")
+        identifer = data_dict.get("ident_value")
+        pset_name = data_dict.get("ident_pset_name")
+        identifier_name = data_dict.get("ident_property_name")
+        is_group = data_dict.get("is_group")
+
+        som_class.name = name if name else som_class.name
+        som_class.ifc_mapping = (
+            ifc_mappings if ifc_mappings is not None else som_class.ifc_mapping
+        )
+
+        if is_group and not som_class.is_concept:
+            som_class.identifier_property = str(uuid.uuid4())
+            return
+
+        if pset_name and identifier_name:
+            ident_property = cls.find_property(som_class, pset_name, identifier_name)
+            som_class.identifier_property = (
+                ident_property
+                if ident_property is not None
+                else som_class.identifier_property
+            )
+
+        if identifer is not None:
+            cls.set_ident_value(som_class, identifer)
+
+    @classmethod
+    def create_class(
+        cls,
+        data_dict: ClassDataDict,
+        property_set: SOMcreator.SOMPropertySet,
+        identifier_property: SOMcreator.SOMProperty,
+    ):
+        name = data_dict["name"]
+        is_group = data_dict["is_group"]
+        ifc_mappings = data_dict.get("ifc_mappings")
+        if is_group:
+            ident = str(uuid.uuid4())
+            new_class = SOMcreator.SOMClass(
+                name, ident, uuid=ident, project=tool.Project.get()
+            )
+        else:
+            new_class = SOMcreator.SOMClass(
+                name, identifier_property, project=tool.Project.get()
+            )
+            new_class.add_property_set(property_set)
+        if ifc_mappings:
+            new_class.ifc_mapping = ifc_mappings
+        return new_class
+
+    @classmethod
+    def check_class_creation_input(cls, data_dict: ClassDataDict) -> bool:
+        prop = cls.get_properties()
+        for key, check_function in prop.class_add_checks:
+            if not check_function(data_dict):
+                return False
+        return True

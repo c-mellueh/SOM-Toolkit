@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from .ui import ClassInfoWidget
 
 
-class ClasstDataDict(TypedDict):
+class ClassDataDict(TypedDict):
     name: str
     is_group: bool
     abbreviation: str
@@ -33,7 +33,7 @@ class PluginProperty:
 
 class ClassInfoProperties:
     widget: ClassInfoWidget = None
-    focus_object: SOMcreator.SOMClass = None
+    focus_class: SOMcreator.SOMClass = None
     mode: int = 0  # 0= create 1= Info 2 =Copy
     ifc_mappings: list[str] = list()
     name: str = ""
