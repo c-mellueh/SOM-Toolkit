@@ -55,6 +55,7 @@ class Class(som_gui.core.tool.Class):
         column_index = header_texts.index(column_name)
         cls.get_properties().column_List.pop(column_index)
         tree.setColumnCount(tree.columnCount() - 1)
+        header_texts.pop(column_index)
         for col, name in enumerate(header_texts):
             header.setText(col,name)
 

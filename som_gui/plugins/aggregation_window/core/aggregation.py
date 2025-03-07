@@ -11,6 +11,8 @@ if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.plugins.aggregation_window import tool as aw_tool
 
+LABEL_KEY = "abbrev_text"
+LINE_EDIT_KEY = "abbreviation"
 
 def create_main_menu_actions(
     aggregation: Type[aw_tool.Aggregation], main_window: Type[tool.MainWindow]
@@ -29,12 +31,20 @@ def retranslate_ui(aggregation: Type[aw_tool.Aggregation]):
         QCoreApplication.translate("Aggregation", "Export Building Structure")
     )
 
-def deactivate(class_tool:Type[tool.Class],aggregation:Type[aw_tool.Aggregation],main_window:Type[tool.MainWindow]):
-    class_tool.remove_column_from_tree(QCoreApplication.translate("Aggregation", "Abbreviation"))
 
+def deactivate(
+    class_tool: Type[tool.Class],
+    class_info_tool: Type[tool.ClassInfo],
+    aggregation: Type[aw_tool.Aggregation],
+    main_window: Type[tool.MainWindow],
+):
+    class_tool.remove_column_from_tree(
+        QCoreApplication.translate("Aggregation", "Abbreviation")
+    )
+    class_info_tool.remove_plugin_entry(LABEL_KEY)
+    class_info_tool.remove_plugin_entry(LINE_EDIT_KEY)
 
-
-def init_main_window(
+def activate(
     class_tool: Type[tool.Class],
     class_info_tool: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
@@ -48,7 +58,7 @@ def init_main_window(
 
     name = QCoreApplication.translate("Aggregation", "Abbreviation:")
     class_info_tool.add_plugin_entry(
-        "abbrev_text",
+        LABEL_KEY,
         "horizontal_layout_info",
         lambda:QLabel(name),
         -1,
@@ -60,7 +70,7 @@ def init_main_window(
     )
 
     class_info_tool.add_plugin_entry(
-        "abbreviation",
+        LINE_EDIT_KEY,
         "horizontal_layout_info",
         aggregation.create_ci_line_edit,
         -1,

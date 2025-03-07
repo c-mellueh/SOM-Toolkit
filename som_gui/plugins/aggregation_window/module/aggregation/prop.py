@@ -9,3 +9,4 @@ class AggregationProperties:
     object_info_line_edit:ObjectInfoLineEdit = None
     grouping_window = None
     actions: dict[str, QAction] = dict()
+    class_info_indexes = list()
