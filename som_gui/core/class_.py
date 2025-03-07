@@ -20,7 +20,7 @@ import uuid
 
 
 def init_main_window(
-    class_tool: Type[tool.Class], main_window: Type[tool.MainWindow]
+    class_tool: Type[tool.Class],class_info:Type[tool.ClassInfo], main_window: Type[tool.MainWindow]
 ) -> None:
 
     # Build Ckass Tree
@@ -49,9 +49,9 @@ def init_main_window(
     )
     # Add Creation Checks
     class_tool.add_class_creation_check(
-        "ident_property_name", class_tool.is_ident_property_valid
+        "ident_property_name", class_info.is_ident_property_valid
     )
-    class_tool.add_class_creation_check("ident_value", class_tool.is_identifier_unique)
+    class_tool.add_class_creation_check("ident_value", class_info.is_identifier_unique)
 
 
 def retranslate_ui(class_tool: Type[tool.Class]) -> None:

@@ -31,7 +31,7 @@ def connect():
     core.add_shortcuts(
         tool.Class, tool.Util, tool.Search, tool.MainWindow, tool.Project
     )
-    core.init_main_window(tool.Class, tool.MainWindow)
+    core.init_main_window(tool.Class,tool.ClassInfo, tool.MainWindow)
 
 
 def repaint_event():
