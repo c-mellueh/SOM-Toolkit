@@ -12,32 +12,32 @@ if TYPE_CHECKING:
     from som_gui import tool
 from PySide6.QtCore import QCoreApplication
 
+
 def remove_main_menu_actions(
     window: Type[aw_tool.Window], main_window: Type[tool.MainWindow]
-):  
-    action = window.get_action("open_window")
-    main_window.remove_action(None,action)
-
-def create_main_menu_actions(
-    window: Type[aw_tool.Window], main_window: Type[tool.MainWindow]
 ):
-    from som_gui.plugins.aggregation_window.module.window import trigger
+    action = window.get_action("open_window")
+    main_window.remove_action(None, action)
 
-    action = main_window.add_action(None, "BSWindow", trigger.open_window)
+
+def activate(window: Type[aw_tool.Window], main_window: Type[tool.MainWindow]):
+
+    action = main_window.add_action(None, "BSWindow", window.trigger_open_window)
     window.set_action("open_window", action)
     window.trigger_retranslate_ui()
 
+
 def retranslate_ui(window: Type[aw_tool.Window], util: Type[tool.Util]):
+    logging.debug(f"Retranslate Aggregation Window")
     action = window.get_action("open_window")
-    action.setText(QCoreApplication.translate("Aggregation", "Building Structure"))
+    name = QCoreApplication.translate("Aggregation", "Building Structure")
+    action.setText(name)
 
     aggregation_window = window.get_window()
     if not aggregation_window:
         return
     aggregation_window.ui.retranslateUi(aggregation_window)
-    title = util.get_window_title(
-        QCoreApplication.translate("Aggregation", "Building Structure")
-    )
+    title = util.get_window_title(name)
     aggregation_window.setWindowTitle(title)
 
 

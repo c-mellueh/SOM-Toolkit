@@ -134,3 +134,7 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
     @classmethod
     def trigger_retranslate_ui(cls):
         trigger.retranslate_ui()
+    
+    @classmethod
+    def trigger_open_window(cls):
+        trigger.open_window()
