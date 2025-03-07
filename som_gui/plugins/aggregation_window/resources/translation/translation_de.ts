@@ -4,86 +4,96 @@
 <context>
     <name>Aggregation</name>
     <message>
-        <location filename="../../core/aggregation.py" line="23"/>
+        <location filename="../../core/aggregation.py" line="37"/>
         <source>Export Building Structure</source>
         <translation>Bauwerksstruktur Exportieren</translation>
     </message>
     <message>
-        <location filename="../../core/aggregation.py" line="28"/>
-        <location filename="../../tool/aggregation.py" line="40"/>
+        <location filename="../../core/aggregation.py" line="48"/>
+        <location filename="../../core/aggregation.py" line="60"/>
+        <location filename="../../tool/aggregation.py" line="41"/>
         <source>Abbreviation</source>
         <translation>Abkürzung</translation>
     </message>
     <message>
-        <location filename="../../core/aggregation.py" line="56"/>
+        <location filename="../../core/aggregation.py" line="66"/>
+        <source>Abbreviation:</source>
+        <translation>Abkürzung:</translation>
+    </message>
+    <message>
+        <location filename="../../core/aggregation.py" line="102"/>
         <source>Building Structure-XML</source>
         <translation>Bauwerksstruktur-XML</translation>
     </message>
     <message>
-        <location filename="../../core/grouping_window.py" line="29"/>
-        <location filename="../../core/grouping_window.py" line="31"/>
+        <location filename="../../core/grouping_window.py" line="43"/>
+        <location filename="../../core/grouping_window.py" line="46"/>
         <source>Create IfcGroups</source>
         <translation>IfcGroups erstellen</translation>
     </message>
     <message>
-        <location filename="../../core/grouping_window.py" line="37"/>
+        <location filename="../../core/grouping_window.py" line="52"/>
         <source>Create Groups</source>
         <translation>Gruppen erstellen</translation>
     </message>
     <message>
-        <location filename="../../core/grouping_window.py" line="39"/>
+        <location filename="../../core/grouping_window.py" line="56"/>
         <source>Export Path</source>
         <translation>Export Pfad</translation>
     </message>
     <message>
-        <location filename="../../core/grouping_window.py" line="41"/>
+        <location filename="../../core/grouping_window.py" line="58"/>
         <source>IFC Path</source>
         <translation>IFC Pfad</translation>
     </message>
     <message>
-        <location filename="../../core/grouping_window.py" line="43"/>
-        <location filename="../../core/grouping_window.py" line="44"/>
+        <location filename="../../core/grouping_window.py" line="60"/>
+        <location filename="../../core/grouping_window.py" line="63"/>
         <source>Grouping PropertySet</source>
         <translation>Gruppierungs PropertySet</translation>
     </message>
     <message>
-        <location filename="../../core/grouping_window.py" line="129"/>
+        <location filename="../../core/grouping_window.py" line="182"/>
         <source>Import Done!</source>
         <translation>Import Abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/grouping_window.py" line="148"/>
+        <location filename="../../core/grouping_window.py" line="206"/>
         <source>create Structure Dict</source>
         <translation>Bauwerksstruktur Dictionary erstellen</translation>
     </message>
     <message>
-        <location filename="../../core/grouping_window.py" line="158"/>
+        <location filename="../../core/grouping_window.py" line="218"/>
         <source>fill existing Groups</source>
         <translation>existierende IfcGroups befüllen</translation>
     </message>
     <message>
-        <location filename="../../core/grouping_window.py" line="170"/>
+        <location filename="../../core/grouping_window.py" line="230"/>
         <source>create Structure</source>
         <translation>Bauwerksstruktur erstellen</translation>
     </message>
     <message>
-        <location filename="../../core/grouping_window.py" line="182"/>
+        <location filename="../../core/grouping_window.py" line="245"/>
         <source>Write file to &apos;{}&apos;</source>
         <translation>Schreibe Datei in &apos;{}&apos;</translation>
     </message>
     <message>
-        <location filename="../../core/grouping_window.py" line="203"/>
+        <location filename="../../core/grouping_window.py" line="273"/>
         <source>Grouping of file &apos;{}&apos; Done!</source>
         <translation>Gruppierung von Datei &apos;{}&apos; abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/grouping_window.py" line="212"/>
+        <location filename="../../core/grouping_window.py" line="282"/>
         <source>Grouping Done!</source>
         <translation>Gruppierung abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../tool/aggregation.py" line="59"/>
-        <location filename="../../tool/aggregation.py" line="103"/>
+        <location filename="../../tool/aggregation.py" line="64"/>
+        <source>Abbreviation &apos;{}&apos; exists already</source>
+        <translation>Abkürzung &apos;{}&apos; existiert bereits</translation>
+    </message>
+    <message>
+        <location filename="../../tool/aggregation.py" line="119"/>
         <source>Abbreviation exists already</source>
         <translation>Abkürzung existiert bereits</translation>
     </message>
@@ -93,139 +103,138 @@
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck.py" line="31"/>
+        <location filename="../../core/modelcheck.py" line="44"/>
         <source>{} Groups will be checked</source>
         <translation>{} Gruppen werden geprüft</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="63"/>
-        <location filename="../../core/window.py" line="62"/>
-        <location filename="../../core/window.py" line="98"/>
+        <location filename="../../core/view.py" line="103"/>
+        <location filename="../../core/window.py" line="73"/>
+        <location filename="../../core/window.py" line="113"/>
         <source>Undefined</source>
         <translation>Undefiniert</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="219"/>
+        <location filename="../../core/view.py" line="259"/>
         <location filename="../../module/window/qt/Window.ui" line="37"/>
         <source>View</source>
         <translation>Ansicht</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="220"/>
+        <location filename="../../core/view.py" line="260"/>
         <source>Reset Zoom</source>
         <translation>Zoom zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="221"/>
+        <location filename="../../core/view.py" line="261"/>
         <source>Print View</source>
         <translation>Ansicht exportieren</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="226"/>
+        <location filename="../../core/view.py" line="266"/>
         <source>Layout</source>
         <translation>Layout</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="227"/>
+        <location filename="../../core/view.py" line="267"/>
         <source>Center horizontally</source>
         <translation>Horizontal zentrieren</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="228"/>
+        <location filename="../../core/view.py" line="268"/>
         <source>Center vertically</source>
         <translation>vertikal zentrieren</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="229"/>
+        <location filename="../../core/view.py" line="269"/>
         <source>Distribute horizontally</source>
         <translation>Horizontal verteilen</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="230"/>
+        <location filename="../../core/view.py" line="270"/>
         <source>Distribute vertically</source>
         <translation>Vertikal verteilen</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="245"/>
+        <location filename="../../core/view.py" line="285"/>
         <source>Modify Info</source>
         <translation>Info anpassen</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="251"/>
+        <location filename="../../core/view.py" line="291"/>
         <source>Reset Info</source>
         <translation>Info zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="259"/>
+        <location filename="../../core/view.py" line="299"/>
         <source>Node</source>
         <translation>Node</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="260"/>
-        <location filename="../../core/view.py" line="311"/>
+        <location filename="../../core/view.py" line="300"/>
+        <location filename="../../core/view.py" line="351"/>
         <source>Add Node</source>
         <translation>Node hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="261"/>
+        <location filename="../../core/view.py" line="301"/>
         <source>Delete Node</source>
         <translation>Node löschen</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="263"/>
+        <location filename="../../core/view.py" line="303"/>
         <source>Delete Nodes</source>
         <translation>Nodes löschen</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="280"/>
+        <location filename="../../core/view.py" line="320"/>
         <source>Connection Type</source>
         <translation>Verbindungstyp</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="281"/>
+        <location filename="../../core/view.py" line="321"/>
         <location filename="../../module/window/qt/Window.ui" line="47"/>
         <source>Aggregation</source>
         <translation>Aggregation</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="282"/>
+        <location filename="../../core/view.py" line="322"/>
         <source>Inheritance</source>
         <translation>Vererbung</translation>
     </message>
     <message>
-        <location filename="../../core/view.py" line="320"/>
+        <location filename="../../core/view.py" line="360"/>
         <source>Rearange</source>
         <translation>Neu anordnen</translation>
     </message>
     <message>
-        <location filename="../../core/window.py" line="24"/>
-        <location filename="../../core/window.py" line="30"/>
+        <location filename="../../core/window.py" line="34"/>
         <source>Building Structure</source>
         <translation>Bauwerksstruktur</translation>
     </message>
     <message>
-        <location filename="../../core/window.py" line="115"/>
+        <location filename="../../core/window.py" line="135"/>
         <source>Object DNE</source>
         <translation>Objekt Existiert nicht</translation>
     </message>
     <message>
-        <location filename="../../core/window.py" line="117"/>
+        <location filename="../../core/window.py" line="139"/>
         <source>Object doesn&apos;t exist in any View</source>
         <translation>Objekt existiert in keiner Ansicht</translation>
     </message>
     <message>
-        <location filename="../../core/window.py" line="133"/>
+        <location filename="../../core/window.py" line="164"/>
         <source>No Node linked to Object</source>
         <translation>Es sind keine Nodes mit diesem Objekt verknüpft</translation>
     </message>
     <message>
-        <location filename="../../core/window.py" line="172"/>
+        <location filename="../../core/window.py" line="210"/>
         <location filename="../../module/window/qt/Window.ui" line="64"/>
         <source>Rename View</source>
         <translation>Ansicht umbenennen</translation>
     </message>
     <message>
-        <location filename="../../core/window.py" line="173"/>
+        <location filename="../../core/window.py" line="211"/>
         <source>New Name:</source>
         <translation>Neuer Name:</translation>
     </message>
@@ -238,22 +247,22 @@
         <translation type="vanished">Gruppe besitzt keine Kindelemente</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="117"/>
+        <location filename="../../tool/modelcheck.py" line="147"/>
         <source>{}: Parent &quot;{}&quot; is not allowed</source>
         <translation>{}: Eleternelement &quot;{}&quot;ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="125"/>
+        <location filename="../../tool/modelcheck.py" line="156"/>
         <source>Group does n0t contain subelements</source>
         <translation>Gruppe besitzt keine Subelemente</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="132"/>
+        <location filename="../../tool/modelcheck.py" line="165"/>
         <source>Group contains multiple Collector Groups with the same Identifier</source>
         <translation>Gruppe besitzt mehrere Kollektor-Gruppen mit dem selben Identifier</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="139"/>
+        <location filename="../../tool/modelcheck.py" line="174"/>
         <source>Collector Group contains wrong subelements (&quot;{}&quot; not allowed)</source>
         <translation>Sammlergruppe besitzt die falschen Subelemente (&quot;{}&quot; ist nicht erlaubt)</translation>
     </message>
@@ -262,17 +271,17 @@
         <translation type="vanished">Kollektor-Gruppe besitzt die falschen Subelemente (&apos;{}&apos; ist nicht erlaubt)</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="147"/>
+        <location filename="../../tool/modelcheck.py" line="185"/>
         <source>Element without group assertion</source>
         <translation>Element ohne Gruppenzuweisung</translation>
     </message>
     <message>
-        <location filename="../../tool/window.py" line="53"/>
+        <location filename="../../tool/window.py" line="57"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../tool/window.py" line="124"/>
+        <location filename="../../tool/window.py" line="130"/>
         <source>Filter by {}</source>
         <translation>Gefiltert durch {}</translation>
     </message>
@@ -335,7 +344,7 @@
 <context>
     <name>Aggregation Window</name>
     <message>
-        <location filename="../../tool/node.py" line="453"/>
+        <location filename="../../tool/node.py" line="457"/>
         <source>id: {}</source>
         <translation>id: {}</translation>
     </message>
@@ -356,9 +365,8 @@
 <context>
     <name>layout</name>
     <message>
-        <location filename="../../core/aggregation.py" line="36"/>
         <source>Abbreviation</source>
-        <translation>Abkürzung</translation>
+        <translation type="vanished">Abkürzung</translation>
     </message>
 </context>
 </TS>
