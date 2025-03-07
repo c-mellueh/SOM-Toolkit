@@ -15,7 +15,14 @@ def activate():
         module.activate()
 
 def deactivate():
-    pass
-
+    from som_gui import tool
+    submodules = tool.Plugins.get_submodules("ifc_tools")
+    logging.info("Deactivate IFCTools")
+    
+    for name, module in submodules:
+        module.register()
+    for name, module in submodules:
+        module.deactivate()
+        
 if __name__ == "__main__":
     pass
