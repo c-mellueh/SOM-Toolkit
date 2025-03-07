@@ -381,9 +381,13 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         return val
 
     @classmethod
-    def scene_was_alleady_focused(cls, scene: ui_view.AggregationScene) -> bool:
+    def scene_was_drawn(cls, scene: ui_view.AggregationScene) -> bool:
         scene_id = cls.get_scene_index(scene)
         return cls.get_properties().focus_list[scene_id]
+
+    @classmethod
+    def reset_drawn_scenes(cls):
+        cls.get_properties().focus_list = [False for _ in cls.get_properties().focus_list]
 
     @classmethod
     def add_aggregation_to_import_list(cls, scene, aggregation, pos: QPointF) -> None:

@@ -4,10 +4,10 @@ from som_gui.plugins.aggregation_window.core import view as core
 
 
 def activate():
-    pass
+    core.import_pos_from_project(aw_tool.View, tool.Project)
 
 def deactivate():
-    pass
+    core.reset(aw_tool.View)
 
 def on_new_project() -> None:
     core.import_pos_from_project(aw_tool.View, tool.Project)

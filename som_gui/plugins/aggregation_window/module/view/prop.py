@@ -29,3 +29,4 @@ class ViewProperties:
     mouse_mode: int = 0
     resize_node: NodeProxy | None = None
     copy_list: list[tuple[SOMAggregation, QPointF]] = list()
+    drawn_scenes:set[AggregationScene] = set()

@@ -48,7 +48,7 @@ def import_pos_from_project(
     view: Type[aw_tool.View], project: Type[tool.Project]
 ) -> None:
     view.import_aggregations_from_project(project.get())
-
+    view.reset_drawn_scenes()
 
 def paint_event(
     view: Type[aw_tool.View],
@@ -93,7 +93,7 @@ def paint_event(
             top_node.top_connection.connection_type = aggregation.parent_connection
             top_node.top_connection.update()
 
-    if not view.scene_was_alleady_focused(scene):
+    if not view.scene_was_drawn(scene):
         view.autofit_view()
 
 
@@ -421,3 +421,8 @@ def add_object_to_scene(
         con = connection.create_connection(parent_node, new_node, 1)
         view.add_connection_to_scene(con, view.get_active_scene())
     return new_node
+
+def reset(view:aw_tool.View):
+    import som_gui
+    from som_gui.plugins.aggregation_window.module.view import prop
+    som_gui.ViewProperties = prop.ViewProperties()
