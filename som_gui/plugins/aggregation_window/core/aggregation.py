@@ -6,6 +6,7 @@ from PySide6.QtCore import QCoreApplication
 from PySide6.QtWidgets import QLabel
 
 from som_gui.module.class_.constants import OK
+import logging
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -40,19 +41,20 @@ def deactivate(
     class_tool: Type[tool.Class],
     class_info_tool: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
-    main_window: Type[tool.MainWindow],
+    project: Type[tool.Project],
 ):
     class_tool.remove_column_from_tree(
         QCoreApplication.translate("Aggregation", "Abbreviation")
     )
     class_info_tool.remove_plugin_entry(LABEL_KEY)
     class_info_tool.remove_plugin_entry(LINE_EDIT_KEY)
-
+    project.remove_plugin_save_function(aggregation.get_save_function_index())
+    
 def activate(
     class_tool: Type[tool.Class],
     class_info_tool: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
-    main_window: Type[tool.MainWindow],
+    project: Type[tool.Project],
 ):
     class_tool.add_column_to_tree(
         lambda: QCoreApplication.translate("Aggregation", "Abbreviation"),
@@ -85,6 +87,9 @@ def activate(
         aggregation.set_object_abbreviation,
     )
 
+    index = project.add_plugin_save_function(aggregation.trigger_save)
+    print(index)
+    aggregation.set_save_function_index(index)
 
 def export_building_structure(
     aggregation: Type[aw_tool.Aggregation],
@@ -115,6 +120,7 @@ def refresh_object_info_line_edit(
 
 
 def save_aggregations(view: Type[aw_tool.View], project: Type[tool.Project]):
+    logging.info("Save Aggregations")
     proj = project.get()
     aggregations = sorted(proj.get_aggregations(filter=False), key=lambda x: x.name)
     uuid_dict = view.create_aggregation_scenes_dict(

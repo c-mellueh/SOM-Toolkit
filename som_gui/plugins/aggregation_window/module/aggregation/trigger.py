@@ -4,15 +4,12 @@ from som_gui.plugins.aggregation_window.core import aggregation as core
 
 
 def activate():
-    core.activate(tool.Class, tool.ClassInfo, aw_tool.Aggregation, tool.MainWindow)
-    tool.Project.add_plugin_save_function(
-        lambda: core.save_aggregations(aw_tool.View, tool.Project)
-    )
+    core.activate(tool.Class, tool.ClassInfo, aw_tool.Aggregation, tool.Project)
     core.create_main_menu_actions(aw_tool.Aggregation, tool.MainWindow)
 
 
 def deactivate():
-    core.deactivate(tool.Class,tool.ClassInfo, aw_tool.Aggregation, tool.MainWindow)
+    core.deactivate(tool.Class,tool.ClassInfo, aw_tool.Aggregation, tool.Project)
     core.remove_main_menu_actions(aw_tool.Aggregation,tool.MainWindow)
 
 def export_building_structure():
@@ -31,3 +28,6 @@ def refresh_object_info_line_edit() -> None:
 
 def retranslate_ui():
     core.retranslate_ui(aw_tool.Aggregation)
+
+def save_aggregations():
+    core.save_aggregations(aw_tool.View,tool.Project)

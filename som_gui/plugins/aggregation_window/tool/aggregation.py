@@ -11,12 +11,11 @@ from som_gui.plugins.aggregation_window.module.aggregation import ui as ui_aggre
 from som_gui.plugins.aggregation_window.module.aggregation.prop import (
     AggregationProperties,
 )
-
+from som_gui.plugins.aggregation_window.module.aggregation import trigger
 ABBREV_ISSUE = 2
 from SOMcreator.exporter.desite import building_structure
 from PySide6.QtGui import QAction
 from PySide6.QtCore import QCoreApplication
-
 
 class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     @classmethod
@@ -122,3 +121,14 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
             return False
         return True
     
+    @classmethod
+    def trigger_save(cls):
+        trigger.save_aggregations()
+
+    @classmethod
+    def set_save_function_index(cls, index):
+        cls.get_properties().save_function_index = index
+    
+    @classmethod
+    def get_save_function_index(cls) -> int|None:
+        return cls.get_properties().save_function_index

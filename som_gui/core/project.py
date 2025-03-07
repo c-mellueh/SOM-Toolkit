@@ -105,6 +105,8 @@ def new_file_clicked(project_tool: Type[Project], popup_tool: Type[Popups]):
 
 def save_project(path: str, project_tool: Type[Project], appdata: Type[Appdata]):
     for plugin_function in project_tool.get_plugin_functions():
+        if plugin_function is None:
+            continue
         plugin_function()
     project = project_tool.get()
     project.save(path)
