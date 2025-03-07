@@ -1358,10 +1358,10 @@ class Language:
     def set_widget(self, widget):
         pass
 
-    def translate_main_ui(self, app, lang_code):
+    def load_main_translations(self, app, lang_code):
         pass
 
-    def translate_plugins(self, plugin_names, app, lang_code):
+    def load_plugin_translations(self, plugin_names, app, lang_code):
         pass
 
 

@@ -43,11 +43,13 @@ class Language(som_gui.core.tool.Language):
         return QLocale.system().countryToCode(QLocale.system().country()).lower()
 
     @classmethod
-    def translate_main_ui(cls, app: QApplication, lang_code: str):
+    def load_main_translations(cls, app: QApplication, lang_code: str):
         load_language(app, lang_code)
 
     @classmethod
-    def translate_plugins(cls, plugin_names: list[str], app: QApplication, lang_code: str):
+    def load_plugin_translations(
+        cls, plugin_names: list[str], app: QApplication, lang_code: str
+    ):
         for plugin_name in plugin_names:
             module_text = f"som_gui.plugins.{plugin_name}"
             try:
@@ -56,3 +58,13 @@ class Language(som_gui.core.tool.Language):
                 module.load_language(app, lang_code)
             except ModuleNotFoundError:
                 logging.warning(f"Plugin '{plugin_name}' has no translation")
+
+    @classmethod
+    def retranslate_main_ui(cls):
+        som_gui.retranslate_ui()
+
+    @classmethod
+    def retranslate_plugins(cls,plugin_names:list[str]):
+        for plugin_names in plugin_names:
+            module = importlib.import_module(f"som_gui.plugins.{plugin_names}")
+            module.retranslate_ui()

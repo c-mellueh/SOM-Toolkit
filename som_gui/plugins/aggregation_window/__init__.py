@@ -22,5 +22,12 @@ def deactivate():
     for name, module in submodules:
         module.deactivate()
 
+def retranslate_ui():
+    logging.info("Retranslate Aggregation Window")
+    from som_gui import tool
+    submodules = tool.Plugins.get_submodules("aggregation_window")
+    for name, module in submodules:
+        module.retranslate_ui()
+
 if __name__ == "__main__":
     pass
