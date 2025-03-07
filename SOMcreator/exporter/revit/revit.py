@@ -55,7 +55,7 @@ class SP_Item(metaclass=IterItem):
         self.attribute = attribute
         self.pset_number = pset_number
 
-    def print(self, file: IO):
+    def output(self, file: IO):
         file.write(
             f"PARAM	{self.attribute.uuid}	{self.attribute.name}	{self.datatype()}		{self.pset_number}	1		1\n"
         )
@@ -93,5 +93,5 @@ def export_shared_parameters(
                 t = SP_Item(pset_name, attrib, i)
 
         for item in sorted(SP_Item, key=lambda x: x.attribute.name):
-            item.print(file)
+            item.output(file)
             pass

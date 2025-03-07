@@ -2,7 +2,7 @@ import os
 import inspect
 import sys
 import som_gui.tool
-
+import logging
 def get_class_methods_and_params(cls, file):
     methods = inspect.getmembers(cls, predicate=inspect.ismethod)
 
@@ -23,4 +23,4 @@ if __name__ == "__main__":
     file_path = "som_gui/core/tool.py"
     with open(file_path, "w") as f:
         main(f)
-    print("Done")
+    logging.info("Done")

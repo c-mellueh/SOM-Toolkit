@@ -1,10 +1,10 @@
 import os
-
+import logging
 
 def list_files_in_directory(root_dir):
     for dirpath, dirnames, filenames in os.walk(root_dir):
         if dirpath.startswith("..\\..\\plugins\\"):
-            print(f"Skipping {dirpath}")
+            logging.info(f"Skipping {dirpath}")
             continue
         for file in filenames:
             if (

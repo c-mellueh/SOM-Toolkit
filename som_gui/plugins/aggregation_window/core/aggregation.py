@@ -88,7 +88,6 @@ def activate(
     )
 
     index = project.add_plugin_save_function(aggregation.trigger_save)
-    print(index)
     aggregation.set_save_function_index(index)
 
 def export_building_structure(
