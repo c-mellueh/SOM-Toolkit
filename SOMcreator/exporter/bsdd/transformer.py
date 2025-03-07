@@ -64,8 +64,8 @@ def _create_property(attribute: SOMcreator.SOMProperty) -> bsdd.Property:
     p.attribute = attribute
     p.Definition = attribute.description
     p.DataType = DATATYPE_MAPPING[attribute.data_type]
-    if attribute.value_type == value_constants.FORMAT and attribute.value:
-        p.Pattern = "|".join(attribute.value)
+    if attribute.value_type == value_constants.FORMAT and attribute.allowed_values:
+        p.Pattern = "|".join(attribute.allowed_values)
     p.PropertyValueKind = PROPERTY_KIND_MAPPING[attribute.value_type]
     return p
 
@@ -103,15 +103,15 @@ def _create_class_property(
         not attribute.is_optional(ignore_hirarchy=True),
     )
 
-    if not attribute.value:
+    if not attribute.allowed_values:
         return class_property
     if attribute.value_type == value_constants.FORMAT:
-        class_property.Pattern = attribute.value[0]
+        class_property.Pattern = attribute.allowed_values[0]
     elif attribute.value_type == value_constants.RANGE:
-        class_property.MinInclusive = attribute.value[0][0]
-        class_property.MaxInclusive = attribute.value[0][1]
+        class_property.MinInclusive = attribute.allowed_values[0][0]
+        class_property.MaxInclusive = attribute.allowed_values[0][1]
     elif attribute.value_type == value_constants.LIST:
-        for val in attribute.value:
+        for val in attribute.allowed_values:
             class_property.AllowedValues.append(bsdd.AllowedValue(str(val), str(val)))
     return class_property
 

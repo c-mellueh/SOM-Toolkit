@@ -21,7 +21,7 @@ import som_gui
 import som_gui.core.tool
 import som_gui.tool as tool
 import som_gui.module.class_
-from som_gui.module.class_ import trigger,constants
+from som_gui.module.class_ import trigger, constants
 
 if TYPE_CHECKING:
     from som_gui.module.class_.prop import ClassProperties, ContextMenuDict
@@ -55,7 +55,7 @@ class Class(som_gui.core.tool.Class):
         trigger.on_new_project()
 
     @classmethod
-    def remove_column_from_tree(cls,column_name:str):
+    def remove_column_from_tree(cls, column_name: str):
         tree = cls.get_class_tree()
         header = tree.headerItem()
         header_texts = cls.get_header_names()
@@ -64,7 +64,7 @@ class Class(som_gui.core.tool.Class):
         tree.setColumnCount(tree.columnCount() - 1)
         header_texts.pop(column_index)
         for col, name in enumerate(header_texts):
-            header.setText(col,name)
+            header.setText(col, name)
         trigger.on_new_project()
 
     @classmethod
@@ -193,7 +193,7 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def handle_property_issue(cls, result: int):
-        if result ==constants.OK:
+        if result == constants.OK:
             return True
         if result == constants.IDENT_ISSUE:
             text = QCoreApplication.translate(
@@ -217,7 +217,7 @@ class Class(som_gui.core.tool.Class):
     def set_ident_value(cls, obj: SOMcreator.SOMClass, value: str):
         if obj.is_concept:
             return
-        obj.identifier_property.value = [value]
+        obj.identifier_property.allowed_values = [value]
 
     @classmethod
     def find_property(
@@ -404,13 +404,13 @@ class Class(som_gui.core.tool.Class):
     def trigger_class_copy(
         cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
     ):
-        trigger.copy_object_called(som_class,data_dict)
+        trigger.copy_object_called(som_class, data_dict)
 
     @classmethod
     def trigger_class_modification(
         cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
     ):
-        trigger.modify_object_called(som_class,data_dict)
+        trigger.modify_object_called(som_class, data_dict)
 
     @classmethod
     def copy_group(cls, som_class: SOMcreator.SOMClass) -> SOMcreator.SOMClass:
@@ -430,7 +430,7 @@ class Class(som_gui.core.tool.Class):
             new_class.identifier_property = cls.find_property(
                 new_class, pset, ident_property
             )
-        new_class.identifier_property.value = [ident_value]
+        new_class.identifier_property.allowed_values = [ident_value]
         new_class.name = name
         return new_class
 

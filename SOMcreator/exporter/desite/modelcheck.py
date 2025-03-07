@@ -236,12 +236,12 @@ def _handle_tree_structure(
 
 
 def _csv_value_in_list(attribute: SOMcreator.SOMProperty):
-    return " ".join(f'"{str(val)}"' for val in attribute.value)
+    return " ".join(f'"{str(val)}"' for val in attribute.allowed_values)
 
 
 def _csv_check_range(attribute: SOMcreator.SOMProperty) -> str:
     sorted_range_list = sorted(
-        [[min(v1, v2), max(v1, v2)] for [v1, v2] in attribute.value]
+        [[min(v1, v2), max(v1, v2)] for [v1, v2] in attribute.allowed_values]
     )
     sorted_range_list = merge_list(sorted_range_list)
 
@@ -267,7 +267,7 @@ def _handle_rule_item_attribute(
 ):
     xml_attrib = _build_basics_rule_item(xml_parent, attribute)
 
-    if not attribute.value:
+    if not attribute.allowed_values:
         xml_attrib.set("pattern", "*")
         return
     pattern = "*"
@@ -284,9 +284,9 @@ def _handle_rule_item_attribute(
 
     elif attribute.data_type == value_constants.LABEL:
         if attribute.value_type == value_constants.FORMAT:
-            pattern = " || ".join(attribute.value)
+            pattern = " || ".join(attribute.allowed_values)
         elif attribute.value_type == value_constants.LIST:
-            pattern = " ".join([f'"{v}"' for v in attribute.value])
+            pattern = " ".join([f'"{v}"' for v in attribute.allowed_values])
 
     elif attribute.data_type == value_constants.BOOLEAN:
         pattern = "*"
@@ -424,12 +424,12 @@ def _handle_attribute_rule(attribute: SOMcreator.SOMProperty) -> str:
         row = ["R", "", f"{pset_name}:{attribute.name}", data_type, "*", f"Pruefung"]
         return ";".join(row)
 
-    if not attribute.value:
+    if not attribute.allowed_values:
         row = ["R", "", f"{pset_name}:{attribute.name}", data_type, "*", f"Pruefung"]
         return ";".join(row)
 
     ident_text = f"{pset_name}:{attribute.name}"
-    allowed_values = " ".join([f"'{str(v)}'" for v in attribute.value])
+    allowed_values = " ".join([f"'{str(v)}'" for v in attribute.allowed_values])
     row = ["R", "", ident_text, data_type, allowed_values, f"Pruefung"]
 
     return ";".join(row)

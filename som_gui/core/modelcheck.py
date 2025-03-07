@@ -92,7 +92,7 @@ def check_element(
         modelcheck.ident_pset_issue(element.GlobalId, main_pset_name)
         return
 
-    elif not modelcheck.is_attribute_existing(
+    elif not modelcheck.is_property_existing(
         element, main_pset_name, main_attribute_name
     ):
         modelcheck.ident_issue(element.GlobalId, main_pset_name, main_attribute_name)
@@ -112,4 +112,4 @@ def check_element(
     for plugin_func in modelcheck.get_entity_check_plugins():
         plugin_func(element)
 
-    modelcheck.check_for_attributes(element, obj_rep)
+    modelcheck.check_for_properties(element, obj_rep)

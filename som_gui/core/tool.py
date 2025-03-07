@@ -1732,7 +1732,7 @@ class Modelcheck:
     ):
         pass
 
-    def attribute_issue(self, guid, pset_name, attribute_name, element_type):
+    def property_issue(self, guid, pset_name, attribute_name, element_type):
         pass
 
     def build_data_dict(self, check_state_dict):
@@ -1744,7 +1744,7 @@ class Modelcheck:
     def check_datatype(self, value, attribute):
         pass
 
-    def check_for_attributes(self, element, obj):
+    def check_for_properties(self, element, obj):
         pass
 
     def check_format(self, value, attribute):
@@ -1810,7 +1810,7 @@ class Modelcheck:
     ):
         pass
 
-    def get_attribute_value(self, entity, pset_name, attribute_name):
+    def get_property_value(self, entity, pset_name, attribute_name):
         pass
 
     def get_cursor(
@@ -1912,7 +1912,7 @@ class Modelcheck:
     ):
         pass
 
-    def is_attribute_existing(self, entity, pset_name, attribute_name):
+    def is_property_existing(self, entity, pset_name, attribute_name):
         pass
 
     def is_pset_existing(self, entity, pset_name):
@@ -1955,7 +1955,7 @@ class Modelcheck:
     def set_ifc_name(self, value):
         pass
 
-    def set_main_attribute_name(self, value):
+    def set_main_property_name(self, value):
         pass
 
     def set_main_pset_name(self, value):

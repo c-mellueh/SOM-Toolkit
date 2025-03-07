@@ -140,7 +140,7 @@ def run_modelcheck(
     modelcheck_window.show_buttons(QDialogButtonBox.StandardButton.Abort)
     modelcheck.reset_abort()
     modelcheck.set_main_pset_name(main_pset)
-    modelcheck.set_main_attribute_name(main_attribute)
+    modelcheck.set_main_property_name(main_attribute)
     modelcheck_results.set_export_path(export_path)
 
     pool = ifc_importer.get_threadpool()

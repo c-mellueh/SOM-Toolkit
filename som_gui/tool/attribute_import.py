@@ -31,7 +31,7 @@ import sqlite3
 class AttributeImportRunner(QRunnable):
     def __init__(self, runner: IfcImportRunner, progress_bar=None):
         super().__init__()
-        self.file:ifcopenshell.file = runner.ifc
+        self.file: ifcopenshell.file = runner.ifc
         self.path = runner.path
         self.signaller = Signaller()
         self.progress_bar: Progressbar = progress_bar
@@ -335,7 +335,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
     @classmethod
     def find_checkbox_row_in_table(
         cls, table_widget: QTableWidget, checkbox: ui.ValueCheckBox
-    ) ->int:
+    ) -> int:
         for row in range(table_widget.rowCount()):
             if table_widget.cellWidget(row, 0) == checkbox:
                 return row
@@ -517,7 +517,7 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         trigger.connect_attribute_import_runner(runner)
 
     @classmethod
-    def get_attribute_import_threadpool(cls) ->QThreadPool:
+    def get_attribute_import_threadpool(cls) -> QThreadPool:
         if cls.get_properties().thread_pool is None:
             tp = QThreadPool()
             cls.get_properties().thread_pool = tp
@@ -773,7 +773,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                 datatype,
                 identifier,
             )
-            for value in attribute.value
+            for value in attribute.allowed_values
         ]
         return table
 
@@ -849,7 +849,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                 else:
                     cs = (
                         1
-                        if value in existing_attribute_dict[attribute_name].value
+                        if value in existing_attribute_dict[attribute_name].allowed_values
                         else 0
                     )
 

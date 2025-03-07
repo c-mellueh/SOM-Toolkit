@@ -30,7 +30,7 @@ def create_mapping_script(project: SOMcreator.SOMProject, pset_name: str, path: 
     attrib_dict = dict()
     obj: SOMcreator.SOMClass
     for obj in project.get_classes(filter=True):
-        klass = obj.identifier_property.value[0]
+        klass = obj.identifier_property.allowed_values[0]
         obj_dict = dict()
         for pset in obj.get_property_sets(filter=True):
             pset_dict = dict()
@@ -59,7 +59,7 @@ def reset_uuid_dicts():
     SOMcreator.exporter.som_json.filter_matrixes = list()
 
 
-def export_json(proj: SOMProject, path: str|os.PathLike) -> dict:
+def export_json(proj: SOMProject, path: str | os.PathLike) -> dict:
     start_time = time.time()
     main_dict = create_export_dict(proj)
     with open(path, "w") as file:

@@ -55,7 +55,7 @@ def create_mapping(
                         "Value",
                     )
                     if attribut == obj.identifier_property:
-                        xml_value.text = attribut.value[0]
+                        xml_value.text = attribut.allowed_values[0]
                     else:
                         xml_value.text = ""
                     xml_data_type = xml.transform_data_format(attribut.data_type)
@@ -91,9 +91,9 @@ def create_mapping(
         row for i, row in enumerate(sheet.rows) if row[2].value is not None and i != 0
     ]
     object_dict = {
-        obj.ident_attrib.value[0]: obj
-        for obj in project.get_classes(filter=True)
-        if not obj.is_concept
+        som_class.identifier_property.allowed_values[0]: som_class
+        for som_class in project.get_classes(filter=True)
+        if not som_class.is_concept
     }
 
     for row in important_rows:

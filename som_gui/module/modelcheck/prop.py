@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class ModelcheckProperties:
     guids: dict[str, str] = dict()
     database_path: str = None
-    main_attribute_name: str = None
+    main_property_name: str = None
     main_pset_name: str = None
     ifc_name: str = None
     ident_dict: dict = dict()

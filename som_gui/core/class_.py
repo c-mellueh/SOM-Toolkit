@@ -20,7 +20,9 @@ import uuid
 
 
 def init_main_window(
-    class_tool: Type[tool.Class],class_info:Type[tool.ClassInfo], main_window: Type[tool.MainWindow]
+    class_tool: Type[tool.Class],
+    class_info: Type[tool.ClassInfo],
+    main_window: Type[tool.MainWindow],
 ) -> None:
 
     # Build Ckass Tree
@@ -34,7 +36,11 @@ def init_main_window(
     class_tool.add_column_to_tree(
         lambda: QCoreApplication.translate("Class", "Identifier"),
         1,
-        lambda o: getattr(o, "ident_value") if isinstance(o.identifier_property,SOMcreator.SOMProperty) else "",
+        lambda o: (
+            getattr(o, "ident_value")
+            if isinstance(o.identifier_property, SOMcreator.SOMProperty)
+            else ""
+        ),
     )
     class_tool.add_column_to_tree(
         lambda: QCoreApplication.translate("Class", "Optional"),
@@ -167,7 +173,7 @@ def refresh_class_tree(class_tool: Type[Class], project_tool: Type[Project]):
 
 
 def load_classes(class_tool: Type[Class], project_tool: Type[Project]):
-        
+
     root_classes = project_tool.get_root_classes(filter_classes=True)
     class_tree: QTreeWidget = class_tool.get_class_tree()
     if class_tool.get_properties().first_paint:
@@ -345,7 +351,7 @@ def create_class(
             SOMcreator.value_constants.LIST,
         )
     else:
-        ident_property.value = [identifier]
+        ident_property.allowed_values = [identifier]
 
     class_info.add_plugin_infos_to_class(som_class, data_dict)
     class_tool.modify_class(som_class, data_dict)

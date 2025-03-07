@@ -87,7 +87,7 @@ def _handle_property_section(
                 xml_property.set("refID", str(ref_id))
                 xml_property.set("refType", str(ref_type))
                 if attribute == obj.identifier_property:
-                    xml_property.text = attribute.value[0]
+                    xml_property.text = attribute.allowed_values[0]
                 else:
                     xml_property.text = "füllen!"
 

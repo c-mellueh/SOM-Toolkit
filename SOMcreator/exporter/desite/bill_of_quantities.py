@@ -37,15 +37,17 @@ def export_boq(project: SOMcreator.SOMProject, path: str, pset_name: str) -> Non
         ]
         writer.writerow(header)
 
-        for obj in project.get_classes(filter=True):
+        for som_class in project.get_classes(filter=True):
             if pset_name not in [
-                pset.name for pset in obj.get_property_sets(filter=True)
+                pset.name for pset in som_class.get_property_sets(filter=True)
             ]:
                 continue
 
-            property_set = obj.get_property_set_by_name(pset_name)
-            ident = obj.ident_attrib
-            line = [f"{ident.property_set.name}:{ident.name}", ident.value[0]]
+            property_set = som_class.get_property_set_by_name(pset_name)
+            ident = som_class.identifier_property
+            if not isinstance(ident,SOMcreator.SOMProperty):
+                continue
+            line = [f"{ident.property_set.name}:{ident.name}", ident.allowed_values[0]]
 
             for attribute_name in distinct_attribute_names:
                 attribute: SOMcreator.SOMProperty = property_set.get_attribute_by_name(
@@ -53,7 +55,7 @@ def export_boq(project: SOMcreator.SOMProject, path: str, pset_name: str) -> Non
                 )
 
                 if attribute is not None:
-                    line.append("|".join(attribute.value))
+                    line.append("|".join(attribute.allowed_values))
                 else:
                     line.append("")
             writer.writerow(line)

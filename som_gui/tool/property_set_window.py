@@ -323,8 +323,8 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         cls, attribute: SOMcreator.SOMProperty, window: ui.PropertySetWindow
     ):
         inherits = attribute.is_inheriting_values
-        parent_values = attribute.parent.value if attribute.parent else []
-        for value in attribute.value:
+        parent_values = attribute.parent.allowed_values if attribute.parent else []
+        for value in attribute.allowed_values:
 
             value = "" if value is None else value
             if isinstance(value, (list, set)):

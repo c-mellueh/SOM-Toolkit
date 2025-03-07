@@ -140,21 +140,21 @@ class ExportExcel:
 
     @classmethod
     def create_object_entry(
-        cls, obj: SOMcreator.SOMClass, sheet, start_row, start_column, table_index
+        cls, som_class: SOMcreator.SOMClass, sheet, start_row, start_column, table_index
     ):
-        if obj.is_optional(ignore_hirarchy=False):
+        if som_class.is_optional(ignore_hirarchy=False):
             font_style = OPTIONAL_FONT
         else:
             font_style = styles.Font()
 
         sheet.cell(start_row, start_column).value = "bauteilName"
-        sheet.cell(start_row, start_column + 1).value = obj.name
+        sheet.cell(start_row, start_column + 1).value = som_class.name
 
         sheet.cell(start_row + 1, start_column).value = "bauteilKlassifikation"
-        sheet.cell(start_row + 1, start_column + 1).value = obj.ident_value
+        sheet.cell(start_row + 1, start_column + 1).value = som_class.ident_value
 
         sheet.cell(start_row + 2, start_column).value = "Kürzel"
-        sheet.cell(start_row + 2, start_column + 1).value = str(obj.abbreviation)
+        sheet.cell(start_row + 2, start_column + 1).value = str(som_class.abbreviation)
 
         sheet.cell(start_row + 3, start_column).value = "Property"
         sheet.cell(start_row + 3, start_column + 1).value = "Propertyset"
@@ -178,22 +178,22 @@ class ExportExcel:
 
         pset_start_row = start_row + HEADER_ROW_COUNT
         index = 0
-        for property_set in sorted(obj.get_property_sets(filter=True)):
-            for attribute in sorted(property_set.get_properties(filter=True)):
-                sheet.cell(pset_start_row + index, start_column).value = attribute.name
+        for property_set in sorted(som_class.get_property_sets(filter=True)):
+            for som_property in sorted(property_set.get_properties(filter=True)):
+                sheet.cell(pset_start_row + index, start_column).value = som_property.name
                 sheet.cell(pset_start_row + index, start_column + 1).value = (
                     property_set.name
                 )
                 sheet.cell(pset_start_row + index, start_column + 2).value = (
-                    attribute.description
+                    som_property.description
                 )
                 sheet.cell(pset_start_row + index, start_column + 3).value = (
-                    attribute.data_type
+                    som_property.data_type
                 )
                 sheet.cell(pset_start_row + index, start_column + 4).value = ";".join(
-                    [str(v) for v in attribute.value]
+                    [str(v) for v in som_property.allowed_values]
                 )
-                if attribute.is_optional(ignore_hirarchy=False):
+                if som_property.is_optional(ignore_hirarchy=False):
                     for c in range(HEADER_COLUMN_COUNT):
                         sheet.cell(pset_start_row + index, start_column + c).font = (
                             OPTIONAL_FONT

@@ -10,7 +10,7 @@ from SOMcreator.datastructure.som_json import (
     REVIT_MAPPING,
     VALUE,
     VALUE_TYPE,
-    AttributeDict
+    AttributeDict,
 )
 
 
@@ -36,7 +36,7 @@ def load(
     attribute = SOMcreator.SOMProperty(
         property_set=property_set,
         name=name,
-        value=value,
+        allowed_values=value,
         value_type=value_type,
         data_type=data_type,
         child_inherits_values=child_inherits_value,

@@ -58,7 +58,7 @@ def init_attribute_columns(attribute_table: Type[tool.AttributeTable]):
     attribute_table.add_column_to_table("Datatype", lambda a: a.data_type)
     attribute_table.add_column_to_table("Valuetype", lambda a: a.value_type)
     attribute_table.add_column_to_table("Unit", lambda a: a.unit)
-    attribute_table.add_column_to_table("Value", lambda a: a.value)
+    attribute_table.add_column_to_table("Value", lambda a: a.allowed_values)
     attribute_table.add_column_to_table(
         "Optional", lambda a: a.is_optional(ignore_hirarchy=True)
     )

@@ -32,7 +32,9 @@ def _build_info(proj: SOMcreator.SOMProject, author, xml_parent: Element) -> Non
     SubElement(xml_element, ids_xsd.PURPOSE, nsmap=NSMAP).text = "Modelcheck"
 
 
-def _build_specifications(required_data:dict[SOMcreator.SOMClass,dict], xml_parent: Element) -> None:
+def _build_specifications(
+    required_data: dict[SOMcreator.SOMClass, dict], xml_parent: Element
+) -> None:
     xml_specifications = SubElement(xml_parent, ids_xsd.SPECIFICATIONS, nsmap=NSMAP)
 
     for som_class, property_set_dict in required_data.items():
@@ -84,24 +86,26 @@ def _build_attribute_requirement(
     )
     xml_name = SubElement(xml_property, ids_xsd.NAME)
     SubElement(xml_name, ids_xsd.SIMPLEVALUE, nsmap=NSMAP).text = attribute.name
-    if not attribute.value:
+    if not attribute.allowed_values:
         return
     xml_value = SubElement(xml_property, ids_xsd.VALUE, nsmap=NSMAP)
     xml_restriction = SubElement(xml_value, xml_xsd.RESTRICTION, nsmap=NSMAP)
     xml_restriction.set(xml_xsd.BASE, transform_data_format(attribute.data_type))
 
     if attribute.value_type == value_constants.LIST:
-        for value in attribute.value:
+        for value in attribute.allowed_values:
             SubElement(xml_restriction, xml_xsd.ENUMERATION, nsmap=NSMAP).set(
                 xml_xsd.VALUE, str(value)
             )
 
     if attribute.value_type == value_constants.RANGE:
         min_value = min(
-            min(v[0] for v in attribute.value), min(v[1] for v in attribute.value)
+            min(v[0] for v in attribute.allowed_values),
+            min(v[1] for v in attribute.allowed_values),
         )
         max_value = max(
-            max(v[0] for v in attribute.value), max(v[1] for v in attribute.value)
+            max(v[0] for v in attribute.allowed_values),
+            max(v[1] for v in attribute.allowed_values),
         )
         SubElement(xml_restriction, xml_xsd.MININCLUSIVE, nsmap=NSMAP).set(
             xml_xsd.VALUE, str(min_value)
@@ -111,7 +115,7 @@ def _build_attribute_requirement(
         )
 
     if attribute.value_type == value_constants.FORMAT:
-        pattern = "|".join(attribute.value)
+        pattern = "|".join(attribute.allowed_values)
         SubElement(xml_restriction, xml_xsd.PATTERN, nsmap=NSMAP).set(
             xml_xsd.VALUE, pattern
         )
