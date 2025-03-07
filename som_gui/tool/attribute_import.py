@@ -849,7 +849,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                 else:
                     cs = (
                         1
-                        if value in existing_attribute_dict[attribute_name].value
+                        if value in existing_attribute_dict[attribute_name].allowed_values
                         else 0
                     )
 

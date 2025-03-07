@@ -32,7 +32,7 @@ def add_basic_property_data(property_tool: Type[tool.Property]):
         "value_type", lambda a: a.value_type, lambda v, a: setattr(a, "value_type", v)
     )
     property_tool.add_property_data_value(
-        "values", lambda a: a.value, lambda v, a: setattr(a, "value", v)
+        "values", lambda a: a.allowed_values, lambda v, a: setattr(a, "allowed_values", v)
     )
     property_tool.add_property_data_value(
         "description",

@@ -9,13 +9,13 @@ def create_mapping(
 ) -> None:
     def _create_sheet(obj: SOMcreator.SOMClass, workbook: Workbook, name):
         new_sheet = workbook.create_sheet(name)
-        attributes = set()
+        properties = set()
         for property_set in obj.get_property_sets(filter=True):
-            for attribute in property_set.get_properties(filter=True):
-                attributes.add(attribute.name)
+            for som_property in property_set.get_properties(filter=True):
+                properties.add(som_property.name)
 
-        for i, attrib_name in enumerate(sorted(attributes), start=1):
-            new_sheet.cell(1, i).value = attrib_name
+        for i, property_name in enumerate(sorted(properties), start=1):
+            new_sheet.cell(1, i).value = property_name
 
     export_wb = Workbook()
     export_wb.active.title = "Hilfe"
@@ -25,9 +25,9 @@ def create_mapping(
         row for i, row in enumerate(sheet.rows) if row[2].value is not None and i != 0
     ]
     object_dict = {
-        obj.ident_attrib.value[0]: obj
-        for obj in project.get_classes(filter=True)
-        if not obj.is_concept
+        som_class.identifier_property.allowed_values[0]: som_class
+        for som_class in project.get_classes(filter=True)
+        if not som_class.is_concept
     }
 
     for row in important_rows:

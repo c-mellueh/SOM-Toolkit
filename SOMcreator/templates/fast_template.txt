@@ -37,27 +37,27 @@ case "{{ obj.ident_value}}":
         returnFormat= '{{xs_dict[attribute.data_type]}}';
         existingData = pset_dict[propertySetName][attributeName]
         {%if attribute.value_type == constants.LIST%}
-        var list = {{attribute.value}};
-        {%if attribute.value ==[]%}
+        var list = {{attribute.allowed_values}};
+        {%if attribute.allowed_values ==[]%}
         //Kontrolliert ob Attribut "{{attribute.property_set.name}}:{{attribute.name}}" existiert
         checkfailed +=check_exist(attributeName, propertySetName, returnFormat, existingData)
         {%else%}
-        //Kontrolliert ob Attribut "{{attribute.property_set.name}}:{{attribute.name}}" einen dieser Werte entspricht: {{attribute.value}}
+        //Kontrolliert ob Attribut "{{attribute.property_set.name}}:{{attribute.name}}" einen dieser Werte entspricht: {{attribute.allowed_values}}
         checkfailed +=check_for_value(attributeName, propertySetName, returnFormat, list, existingData);
         {%endif-%}
         {%-elif attribute.value_type == constants.RANGE %}
-        range = {{attribute.value}};
-        //Kontrolliert ob Attribut "{{attribute.property_set.name}}:{{attribute.name}}" einen in einem der folgenden Wertebereiche liegt: {{attribute.value}}
+        range = {{attribute.allowed_values}};
+        //Kontrolliert ob Attribut "{{attribute.property_set.name}}:{{attribute.name}}" einen in einem der folgenden Wertebereiche liegt: {{attribute.allowed_values}}
         checkfailed+= check_range(attributeName, propertySetName, returnFormat, range, existingData);
         {%elif attribute.value_type == constants.FORMAT %}
         format = [
-        {%-for value in attribute.value -%}
+        {%-for value in attribute.allowed_values -%}
         {%-if not loop.index==1-%} ,'{{value.replace('\\','\\\\')}}'
         {%-else-%}
         '{{value.replace('\\','\\\\')}}'
         {%-endif-%}
         {%-endfor-%}]
-        //Kontrolliert ob Attribut "{{attribute.property_set.name}}:{{attribute.name}}" einen der folgenden RegExp entspricht: {{attribute.value}}
+        //Kontrolliert ob Attribut "{{attribute.property_set.name}}:{{attribute.name}}" einen der folgenden RegExp entspricht: {{attribute.allowed_values}}
         checkfailed +=check_format(attributeName, propertySetName, returnFormat, format, existingData);
         {%-endif%}
         attrib_count+=1;

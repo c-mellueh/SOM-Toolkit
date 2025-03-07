@@ -76,7 +76,7 @@ project = SOMProject(name="Example SOM")
 
 # Create a new Identity Attribute
 ident_property = SOMProperty(name="identifier")
-ident_property.value = ["w.100.100"]
+ident_property.allowed_values = ["w.100.100"]
 
 # Create a Object representing a custom Wall Definition
 wall = SOMClass(name="MyWall", identifier_property=ident_property, project=project)
@@ -92,7 +92,7 @@ common_pset.add_property(SOMProperty(name="LoadBearing", data_type=BOOLEAN))
 
 # Define a Attribute with multiple allowed Values
 fire_rating = SOMProperty(name="FireRating", data_type=INTEGER, value_type=LIST)
-fire_rating.value = [30, 60, 90]
+fire_rating.allowed_values = [30, 60, 90]
 common_pset.add_property(fire_rating)
 
 # Add PropertySet to Object

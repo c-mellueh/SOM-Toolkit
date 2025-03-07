@@ -18,7 +18,7 @@ def _find_parent(uuid_dict, element):
             continue
 
         if isinstance(test_el, SOMcreator.SOMProperty):
-            if test_el.allowed_values == element.value:
+            if test_el.allowed_values == element.allowed_values:
                 return identifier
         return identifier
 
