@@ -167,8 +167,13 @@ def refresh_class_tree(class_tool: Type[Class], project_tool: Type[Project]):
 
 
 def load_classes(class_tool: Type[Class], project_tool: Type[Project]):
+        
     root_classes = project_tool.get_root_classes(filter_classes=True)
     class_tree: QTreeWidget = class_tool.get_class_tree()
+    if class_tool.get_properties().first_paint:
+        class_tool.clear_tree()
+        class_tool.get_properties().first_paint = False
+        retranslate_ui(class_tool)
     class_tool.fill_class_tree(set(root_classes), class_tree.invisibleRootItem())
 
 
