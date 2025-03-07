@@ -48,6 +48,17 @@ class Class(som_gui.core.tool.Class):
             header.setText(col, name)
 
     @classmethod
+    def remove_column_from_tree(cls,column_name:str):
+        tree = cls.get_class_tree()
+        header = tree.headerItem()
+        header_texts = cls.get_header_names()
+        column_index = header_texts.index(column_name)
+        cls.get_properties().column_List.pop(column_index)
+        tree.setColumnCount(tree.columnCount() - 1)
+        for col, name in enumerate(header_texts):
+            header.setText(col,name)
+
+    @classmethod
     def get_header_names(cls) -> list[str]:
         return [x[0]() for x in cls.get_properties().column_List]
 

@@ -29,6 +29,10 @@ def retranslate_ui(aggregation: Type[aw_tool.Aggregation]):
         QCoreApplication.translate("Aggregation", "Export Building Structure")
     )
 
+def deactivate(class_tool:Type[tool.Class],aggregation:Type[aw_tool.Aggregation],main_window:Type[tool.MainWindow]):
+    class_tool.remove_column_from_tree(QCoreApplication.translate("Aggregation", "Abbreviation"))
+
+
 
 def init_main_window(
     class_tool: Type[tool.Class],

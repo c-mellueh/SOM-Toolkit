@@ -27,3 +27,6 @@ def refresh_object_info_line_edit() -> None:
 
 def retranslate_ui():
     core.retranslate_ui(aw_tool.Aggregation)
+
+def on_deactivation():
+    core.deactivate(tool.Class,aw_tool.Aggregation,tool.MainWindow)

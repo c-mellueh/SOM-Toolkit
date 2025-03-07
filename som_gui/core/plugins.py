@@ -19,13 +19,10 @@ def settings_accepted(plugins: Type[tool.Plugins], popups: Type[tool.Popups]):
         friendly_name = plugins.get_friendly_name(plugin_name)
         if new_checkstate == old_checkstate:
             continue
-        plugins.set_plugin_active(plugin_name, new_checkstate)
-        state = "activated" if new_checkstate else "deactivated"
-        logging.info(f"{state[:-1]} Plugin '{friendly_name}'")
-
-        info_text = f"The plugin '{friendly_name}' has been successfully {state}. \nPlease restart the program for the changes to take effect."
-        popups.create_info_popup(info_text, f"Plugin {state.title()}: Restart Required")
-
+        if new_checkstate:
+            plugins.activate_plugin(plugin_name)
+        else:
+            plugins.deactivate_plugin(plugin_name)
 
 def settings_widget_created(widget: ui.SettingsWidget, plugins: Type[tool.Plugins]):
     layout: QFormLayout = widget.layout()

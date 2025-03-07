@@ -2270,7 +2270,6 @@ class Class:
     def create_item(self, obj):
         pass
 
-
     def delete_class(self, obj, recursive):
         pass
 
@@ -2485,7 +2484,7 @@ class Plugins:
     ):
         pass
 
-    def import_plugin(self, plugin_name):
+    def get_submodules(self, plugin_name):
         pass
 
     def is_plugin_active(self, plugin_name):
@@ -3166,8 +3165,11 @@ class Settings:
     def set_widget(self, widget):
         pass
 
+
 class ClassInfo:
     pass
+
+
 class Util:
     def add_shortcut(self, sequence, window, function):
         pass
