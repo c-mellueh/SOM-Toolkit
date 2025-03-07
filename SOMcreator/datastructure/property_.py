@@ -51,7 +51,7 @@ class SOMProperty(BaseClass):
         if self.uuid is None:
             self.uuid = str(uuid4())
         if allowed_values is None:
-            self.value = list()
+            self.allowed_values = list()
         if value_type is None:
             self._value_type = SOMcreator.value_constants.LIST
         if property_set is not None:
@@ -59,9 +59,9 @@ class SOMProperty(BaseClass):
 
     def __str__(self) -> str:
         if self.property_set is not None:
-            text = f"Property {self.property_set.name} : {self.name} = {self.value}"
+            text = f"Property {self.property_set.name} : {self.name} = {self.allowed_values}"
         else:
-            text = f"Property <empty>:{self.name} = {self.value}"
+            text = f"Property <empty>:{self.name} = {self.allowed_values}"
         return text
 
     def __lt__(self, other):
@@ -74,7 +74,7 @@ class SOMProperty(BaseClass):
         new_attrib = SOMProperty(
             property_set=None,
             name=self.name,
-            allowed_values=cp.copy(self.value),
+            allowed_values=cp.copy(self.allowed_values),
             value_type=cp.copy(self.value_type),
             data_type=cp.copy(self.data_type),
             child_inherits_values=self.child_inherits_values,
@@ -135,25 +135,25 @@ class SOMProperty(BaseClass):
         """returns values without inherited values"""
         if not self.parent:
             return self._allowed_values
-        return [v for v in self._allowed_values if v not in self.parent.value]
+        return [v for v in self._allowed_values if v not in self.parent.allowed_values]
 
     @property
-    def value(self) -> list:
+    def allowed_values(self) -> list:
         if self.is_inheriting_values:
             if self.parent is not None:
-                return self.parent.value + self.get_own_values()
+                return self.parent.allowed_values + self.get_own_values()
             else:
                 raise ValueError("Parent is expected but dne")
         return self._allowed_values
 
-    @value.setter
-    def value(self, values: list) -> None:
+    @allowed_values.setter
+    def allowed_values(self, values: list) -> None:
         if self.is_inheriting_values:
             if self.parent is None:
                 raise ValueError("Parent is expected but dne")
             own_values = list()
             for value in values:
-                if value not in self.parent.value:
+                if value not in self.parent.allowed_values:
                     own_values.append(value)
             self._allowed_values = own_values
         else:
@@ -245,7 +245,7 @@ class SOMProperty(BaseClass):
         if self.name != attribute.name:
             equal = False
 
-        if self.value != attribute.value:
+        if self.allowed_values != attribute.allowed_values:
             equal = False
 
         if self.property_set is not None and attribute.property_set is not None:

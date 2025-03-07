@@ -30,10 +30,13 @@ class SOMClass(BaseClass):
         self.custom_attribues = {}
 
         self._abbreviation = "" if abbreviation is None else abbreviation
-        self._ifc_mapping:set[str] = {"IfcBuildingElementProxy"} if ifc_mapping is None else ifc_mapping
+        self._ifc_mapping: set[str] = (
+            {"IfcBuildingElementProxy"} if ifc_mapping is None else ifc_mapping
+        )
         self.uuid = str(uuid4()) if uuid is None else uuid
-        self._ident_attrib = str(self.uuid) if identifier_property is None else identifier_property
-
+        self._ident_attrib = (
+            str(self.uuid) if identifier_property is None else identifier_property
+        )
 
     def __str__(self):
         return f"Object {self.name}"
@@ -49,7 +52,7 @@ class SOMClass(BaseClass):
             new_ident_property = str(self.identifier_property)
             ident_property_name = new_ident_property
         else:
-            if isinstance(self.identifier_property,SOMcreator.SOMProperty):
+            if isinstance(self.identifier_property, SOMcreator.SOMProperty):
                 ident_pset = self.identifier_property.property_set
                 if ident_pset is None:
                     raise ValueError(f"Identifier PropertySet dne")
@@ -62,9 +65,7 @@ class SOMClass(BaseClass):
             new_pset = cp.copy(pset)
             new_property_sets.add(new_pset)
             if pset == ident_pset:
-                new_ident_property = new_pset.get_property_by_name(
-                    ident_property_name
-                )
+                new_ident_property = new_pset.get_property_by_name(ident_property_name)
 
         if new_ident_property is None:
             raise ValueError(f"Identifier Attribute could'nt be found")
@@ -85,7 +86,7 @@ class SOMClass(BaseClass):
             new_object.add_property_set(pset)
 
         if self.parent is not None:
-            self.parent.add_child(new_object) #type: ignore
+            self.parent.add_child(new_object)  # type: ignore
 
         return new_object
 
@@ -160,11 +161,11 @@ class SOMClass(BaseClass):
             return True
 
     @property
-    def identifier_property(self) -> SOMcreator.SOMProperty | str|None:
+    def identifier_property(self) -> SOMcreator.SOMProperty | str | None:
         return self._ident_attrib
 
     @identifier_property.setter
-    def identifier_property(self, value: SOMcreator.SOMProperty|str|None) -> None:
+    def identifier_property(self, value: SOMcreator.SOMProperty | str | None) -> None:
         self._ident_attrib = value
 
     # override name setter because of intheritance
@@ -217,8 +218,7 @@ class SOMClass(BaseClass):
 
     @property
     def ident_value(self) -> str:
-        if isinstance(self.identifier_property,SOMcreator.SOMProperty):
-            return ";".join(str(x) for x in self.identifier_property.value)
+        if isinstance(self.identifier_property, SOMcreator.SOMProperty):
+            return ";".join(str(x) for x in self.identifier_property.allowed_values)
         else:
             return str(self.identifier_property)
-

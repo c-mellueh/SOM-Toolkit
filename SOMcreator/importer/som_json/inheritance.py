@@ -2,6 +2,7 @@ from __future__ import annotations
 import SOMcreator
 import SOMcreator.importer.som_json
 
+
 def _find_parent(uuid_dict, element):
     for test_el, identifier in SOMcreator.importer.som_json.parent_dict.items():
         if type(test_el) is not type(element):
@@ -17,7 +18,7 @@ def _find_parent(uuid_dict, element):
             continue
 
         if isinstance(test_el, SOMcreator.SOMProperty):
-            if test_el.value == element.value:
+            if test_el.allowed_values == element.value:
                 return identifier
         return identifier
 

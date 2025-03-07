@@ -53,7 +53,7 @@ def export_boq(project: SOMcreator.SOMProject, path: str, pset_name: str) -> Non
                 )
 
                 if attribute is not None:
-                    line.append("|".join(attribute.value))
+                    line.append("|".join(attribute.allowed_values))
                 else:
                     line.append("")
             writer.writerow(line)

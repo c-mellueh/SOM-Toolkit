@@ -172,7 +172,7 @@ def activate_property(
 
     property_set_window.clear_values(window)
     property_set_window.set_values(active_attribute, window)
-    if not active_attribute.value:
+    if not active_attribute.allowed_values:
         if active_attribute.value_type == RANGE:
             property_set_window.add_value_line(2, window)
         else:

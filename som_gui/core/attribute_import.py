@@ -155,7 +155,7 @@ def init_database(
             proj, attribute
         )
 
-        if not attribute.value:
+        if not attribute.allowed_values:
             attribute_table.append(
                 attribute_import_sql.add_attribute_without_value(attribute)
             )
@@ -539,13 +539,13 @@ def import_values_to_som(
         attribute = attribute_dict[identifier][property_set_name][attribute_name]
         if attribute.value_type in [value_constants.FORMAT, value_constants.RANGE]:
             continue
-        if value not in attribute.value:
-            attribute.value.append(value)
+        if value not in attribute.allowed_values:
+            attribute.allowed_values.append(value)
 
     removed_values = attribute_import_sql.get_removed_attribute_values()
     for identifier, property_set_name, attribute_name, value in removed_values:
         attribute = attribute_dict[identifier][property_set_name][attribute_name]
-        attribute.value.remove(value)
+        attribute.allowed_values.remove(value)
     window = attribute_import_results.get_results_window()
     window.close()
     attribute_import_results.remove_results_window()

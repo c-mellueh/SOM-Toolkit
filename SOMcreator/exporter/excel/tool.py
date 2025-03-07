@@ -191,7 +191,7 @@ class ExportExcel:
                     attribute.data_type
                 )
                 sheet.cell(pset_start_row + index, start_column + 4).value = ";".join(
-                    [str(v) for v in attribute.value]
+                    [str(v) for v in attribute.allowed_values]
                 )
                 if attribute.is_optional(ignore_hirarchy=False):
                     for c in range(HEADER_COLUMN_COUNT):

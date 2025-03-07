@@ -17,11 +17,11 @@ def _iter_attributes(property_set: SOMcreator.SOMPropertySet, pset_dict: dict) -
         attribute_dict = pset_dict[attribute.name]
 
         attribute_dict[DATA_TYPE] = xml.transform_data_format(attribute.data_type)
-        if not attribute.value:
+        if not attribute.allowed_values:
             attribute_dict[VALUE_TYPE] = value_constants.EXISTS
         else:
             attribute_dict[VALUE_TYPE] = attribute.value_type
-        attribute_dict[VALUE] = attribute.value
+        attribute_dict[VALUE] = attribute.allowed_values
 
 
 def export(project: SOMcreator.SOMProject, path: str | os.PathLike) -> None:

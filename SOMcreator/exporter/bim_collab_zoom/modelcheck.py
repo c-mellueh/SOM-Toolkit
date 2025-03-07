@@ -57,17 +57,17 @@ def _write_smartview(
         if attribute == ident_attrib:
             continue
         if attribute.data_type in (value_constants.INTEGER, value_constants.REAL):
-            if not attribute.value:
+            if not attribute.allowed_values:
                 rule_list += rule.add_if_not_existing(
                     attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type]
                 )
             elif attribute.value_type == value_constants.LIST:
                 rule_list += rule.numeric_list(
-                    attribute.name, pset_name, attribute.value
+                    attribute.name, pset_name, attribute.allowed_values
                 )
             elif attribute.value_type == value_constants.RANGE:
                 rule_list += rule.numeric_range(
-                    attribute.name, pset_name, attribute.value
+                    attribute.name, pset_name, attribute.allowed_values
                 )
             else:
                 logging.error(
@@ -81,9 +81,9 @@ def _write_smartview(
                 )
                 continue
 
-            if attribute.value:
+            if attribute.allowed_values:
                 rule_list += rule.add_if_not_in_string_list(
-                    attribute.name, pset_name, attribute.value
+                    attribute.name, pset_name, attribute.allowed_values
                 )
             else:
                 rule_list += rule.add_if_not_existing(
@@ -100,7 +100,7 @@ def _write_smartview(
             )
 
     rule_list += rule.remove_if_not_in_string_list(
-        ident_attrib.name, ident_attrib.property_set.name, ident_attrib.value
+        ident_attrib.name, ident_attrib.property_set.name, ident_attrib.allowed_values
     )
     for xml_rule in rule_list:
         xml_rules.append(xml_rule)

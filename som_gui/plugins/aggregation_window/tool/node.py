@@ -468,9 +468,9 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         if attribute is None:
             return undef
 
-        if len(attribute.value) == 0:
+        if len(attribute.allowed_values) == 0:
             return undef
-        return [f"{aggregation.name}\n{attribute_name}: {attribute.value[0]}"]
+        return [f"{aggregation.name}\n{attribute_name}: {attribute.allowed_values[0]}"]
 
     @classmethod
     def get_aggregation_from_node(

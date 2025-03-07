@@ -55,7 +55,7 @@ def create_mapping(
                         "Value",
                     )
                     if attribut == obj.identifier_property:
-                        xml_value.text = attribut.value[0]
+                        xml_value.text = attribut.allowed_values[0]
                     else:
                         xml_value.text = ""
                     xml_data_type = xml.transform_data_format(attribut.data_type)

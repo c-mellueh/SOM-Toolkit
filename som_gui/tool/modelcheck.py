@@ -261,7 +261,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         description = QCoreApplication.translate(
             "Modelcheck", '"{}" does not match format Requirement: "{}"'
         )  # f"{element_type} besitzt nicht das richtige Format für {attribute.property_set.name}:{attribute.name}"
-        description = description.format(value, "||".join(attribute.value))
+        description = description.format(value, "||".join(attribute.allowed_values))
         issue_nr = ATTRIBUTE_VALUE_ISSUES
         cls.add_issues(guid, description, issue_nr, attribute, value=value)
 
