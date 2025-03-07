@@ -35,6 +35,11 @@ class Class(som_gui.core.tool.Class):
         return som_gui.ClassProperties
 
     @classmethod
+    def clear_tree(cls):
+        tree = cls.get_class_tree()
+        tree.clear()
+
+    @classmethod
     def add_column_to_tree(cls, name_getter, index, getter_func, setter_func=None):
         tree = cls.get_class_tree()
         cls.get_properties().column_List.insert(
@@ -46,6 +51,21 @@ class Class(som_gui.core.tool.Class):
         tree.setColumnCount(tree.columnCount() + 1)
         for col, name in enumerate(header_texts):
             header.setText(col, name)
+
+        trigger.on_new_project()
+
+    @classmethod
+    def remove_column_from_tree(cls,column_name:str):
+        tree = cls.get_class_tree()
+        header = tree.headerItem()
+        header_texts = cls.get_header_names()
+        column_index = header_texts.index(column_name)
+        cls.get_properties().column_List.pop(column_index)
+        tree.setColumnCount(tree.columnCount() - 1)
+        header_texts.pop(column_index)
+        for col, name in enumerate(header_texts):
+            header.setText(col,name)
+        trigger.on_new_project()
 
     @classmethod
     def get_header_names(cls) -> list[str]:

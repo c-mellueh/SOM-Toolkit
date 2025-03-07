@@ -33,11 +33,16 @@ class Project(som_gui.core.tool.Project):
         return cls.get_properties().actions[name]
 
     @classmethod
-    def add_plugin_save_function(cls, func: Callable):
+    def add_plugin_save_function(cls, func: Callable) ->int:
         """
         add Function that gets called before Project is saved to JSON
         """
         cls.get_properties().plugin_save_functions.append(func)
+        return len(cls.get_properties().plugin_save_functions) - 1
+
+    @classmethod
+    def remove_plugin_save_function(cls,index:int):
+        cls.get_properties().plugin_save_functions[index] = None
 
     @classmethod
     def get_plugin_functions(cls):

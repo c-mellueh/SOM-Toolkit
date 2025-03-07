@@ -3,12 +3,16 @@ from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui.plugins.aggregation_window.core import view as core
 
 
-def connect():
-    pass
+def activate():
+    core.activate(aw_tool.View, tool.Project)
+
+
+def deactivate():
+    core.reset(aw_tool.View)
 
 
 def on_new_project() -> None:
-    core.import_pos_from_project(aw_tool.View, tool.Project)
+    core.activate(aw_tool.View, tool.Project)
 
 
 def view_paint_event() -> None:
@@ -24,7 +28,9 @@ def mouse_press_event(position) -> None:
 
 
 def mouse_release_event(pos) -> None:
-    core.mouse_release_event(pos, aw_tool.View, aw_tool.Connection, tool.Search,tool.Project)
+    core.mouse_release_event(
+        pos, aw_tool.View, aw_tool.Connection, tool.Search, tool.Project
+    )
 
 
 def mouse_wheel_event(event) -> None:
@@ -32,19 +38,30 @@ def mouse_wheel_event(event) -> None:
 
 
 def context_menu_requested(pos) -> None:
-    core.context_menu_requested(pos, aw_tool.View, aw_tool.Node, tool.Search, aw_tool.Connection,aw_tool.Buchheim, tool.Project,
-                                tool.Util)
+    core.context_menu_requested(
+        pos,
+        aw_tool.View,
+        aw_tool.Node,
+        tool.Search,
+        aw_tool.Connection,
+        aw_tool.Buchheim,
+        tool.Project,
+        tool.Util,
+    )
 
 
 def key_press_event(event) -> None:
-    core.key_press_event(event, aw_tool.View, aw_tool.Connection,aw_tool.Node)
+    core.key_press_event(event, aw_tool.View, aw_tool.Connection, aw_tool.Node)
+
 
 def key_release_event(event) -> None:
-    core.key_release_event(event,aw_tool.View,aw_tool.Node)
+    core.key_release_event(event, aw_tool.View, aw_tool.Node)
 
 
 def add_object_to_scene(obj, scene=None, parent_node=None, pos=None):
-    return core.add_object_to_scene(obj, scene, parent_node, pos, aw_tool.View, aw_tool.Connection, aw_tool.Node)
+    return core.add_object_to_scene(
+        obj, scene, parent_node, pos, aw_tool.View, aw_tool.Connection, aw_tool.Node
+    )
 
 
 def retranslate_ui():

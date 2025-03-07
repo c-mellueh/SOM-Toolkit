@@ -3,6 +3,8 @@ import sys
 from typing import TYPE_CHECKING
 from PySide6.QtWidgets import QApplication
 
+import som_gui.plugins
+
 if TYPE_CHECKING:
     from os import PathLike
 
@@ -11,7 +13,7 @@ import som_gui.core.main_window
 import som_gui.core.project
 from som_gui.module.project.constants import OPEN_PATH
 from som_gui.module.language.trigger import set_language
-
+import importlib
 
 def main(initial_file: PathLike | None = None, log_level=None, open_last_project=False):
     """
@@ -28,6 +30,7 @@ def main(initial_file: PathLike | None = None, log_level=None, open_last_project
 
     som_gui.register()
 
+
     #Create UI
     app = QApplication(sys.argv)
     core.main_window.create_main_window(app, tool.MainWindow,tool.PropertySet)
@@ -41,6 +44,11 @@ def main(initial_file: PathLike | None = None, log_level=None, open_last_project
 
     elif open_last_project:
         core.project.open_project(tool.Appdata.get_path(OPEN_PATH), tool.Project)
+
+    for plugin_names in tool.Plugins.get_available_plugins():
+        if tool.Plugins.is_plugin_active(plugin_names):
+            module = importlib.import_module(f"som_gui.plugins.{plugin_names}")
+            module.activate()
 
     set_language(None)
     sys.exit(app.exec())

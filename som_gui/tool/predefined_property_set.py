@@ -263,7 +263,6 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
         name_dict = tool.PropertyCompare.generate_name_dict(psets1)
         pset_list = list()
         missing = list(psets1)
-        print(missing)
         for pset in psets0:
             logging.debug(f"Search for Pset {pset}")
             match = tool.PropertyCompare.find_matching_entity(
@@ -287,7 +286,6 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
         for pset in missing:
             pset_list.append((None, pset))
 
-        print(pset_list)
         cls.set_pset_lists(pset_list)
         return pset_list
 

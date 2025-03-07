@@ -16,6 +16,9 @@ class Appdata:
     def get_int_setting(self, section, path, default):
         pass
 
+    def get_list_setting(self, section, path, default):
+        pass
+
     def get_path(self, value):
         pass
 
@@ -31,265 +34,6 @@ class Appdata:
         pass
 
     def set_setting(self, section, path, value):
-        pass
-
-
-class Property:
-    def add_property_data_value(self, name, getter, setter):
-        pass
-
-    def create_attribute_by_dict(self, attribute_data):
-        pass
-
-    def get_attribute_data(self, attribute):
-        pass
-
-    def get_properties(
-        self,
-    ):
-        pass
-
-    def set_attribute_data_by_dict(self, attribute, data_dict):
-        pass
-
-
-class PropertyCompare:
-    def add_properties_to_pset_tree(self, tree, add_missing):
-        pass
-
-    def add_missing_objects_to_tree(self, tree, root_objects):
-        pass
-
-    def add_object_to_item(self, obj, item, index):
-        pass
-
-    def are_attributes_identical(self, attribute0, attribute1):
-        pass
-
-    def are_objects_identical(self, object0, object1, check_pset):
-        pass
-
-    def are_property_sets_identical(
-        self, property_set0, property_set1, check_attributes
-    ):
-        pass
-
-    def children_are_identical(self, entity0, entity1):
-        pass
-
-    def clear_table(self, table):
-        pass
-
-    def clear_tree(self, tree):
-        pass
-
-    def compare_attributes(self, attribute0, attribute1):
-        pass
-
-    def compare_objects(self, obj0, obj1):
-        pass
-
-    def compare_property_sets(self, pset0, pset1):
-        pass
-
-    def create_child_matchup(self, entity0, entity1):
-        pass
-
-    def create_object_dicts(
-        self,
-    ):
-        pass
-
-    def create_object_lists(
-        self,
-    ):
-        pass
-
-    def create_tree_selection_trigger(self, widget):
-        pass
-
-    def create_widget(
-        self,
-    ):
-        pass
-
-    def export_attribute_check(self, file, type_name, attrib0, attrib1, indent):
-        pass
-
-    def export_attribute_differences(self, file, attribute_list):
-        pass
-
-    def export_child_check(self, file, type_name, entity0, entity1, indent):
-        pass
-
-    def export_existance_check(self, file, type_name, entity0, entity1, indent):
-        pass
-
-    def export_name_check(self, file, type_name, entity0, entity1, indent):
-        pass
-
-    def export_object_differences(self, file):
-        pass
-
-    def export_pset_differences(self, file, pset_list, lb):
-        pass
-
-    def fill_object_tree(self, tree, add_missing):
-        pass
-
-    def fill_object_tree_layer(self, objects, parent_item, add_missing):
-        pass
-
-    def fill_pset_tree(self, tree, pset_list, add_missing):
-        pass
-
-    def fill_table(self, table, info_list, entities):
-        pass
-
-    def fill_value_table(self, table, attribute):
-        pass
-
-    def fill_value_table_pset(self, widget):
-        pass
-
-    def find_existing_parent_item(self, obj):
-        pass
-
-    def find_matching_entity(self, search_element, uuid_dict1, name_dict1):
-        pass
-
-    def find_matching_object(self, obj, index):
-        pass
-
-    def generate_name_dict(self, element_list):
-        pass
-
-    def generate_uuid_dict(self, element_list):
-        pass
-
-    def get_property_info_list(
-        self,
-    ):
-        pass
-
-    def get_attribute_list(self, property_set):
-        pass
-
-    def get_branch_color(self, index):
-        pass
-
-    def get_entities_from_item(self, item):
-        pass
-
-    def get_header_name_from_project(self, project):
-        pass
-
-    def get_ident_dict(self, index):
-        pass
-
-    def get_info_table(self, widget):
-        pass
-
-    def get_item_from_object(self, obj):
-        pass
-
-    def get_level(self, index):
-        pass
-
-    def get_missing_objects(self, index):
-        pass
-
-    def get_name_path(self, entity):
-        pass
-
-    def get_object_dict(
-        self,
-    ):
-        pass
-
-    def get_object_lists(
-        self,
-    ):
-        pass
-
-    def get_object_tree(self, widget):
-        pass
-
-    def get_project(self, index):
-        pass
-
-    def get_properties(
-        self,
-    ):
-        pass
-
-    def get_pset_info_list(
-        self,
-    ):
-        pass
-
-    def get_pset_list(self, obj):
-        pass
-
-    def get_pset_tree(self, widget):
-        pass
-
-    def get_selected_entity(self, tree):
-        pass
-
-    def get_selected_item(self, tree):
-        pass
-
-    def get_uuid_dict(self, index):
-        pass
-
-    def get_value_list(self, entity):
-        pass
-
-    def get_value_table(self, widget):
-        pass
-
-    def get_widget(
-        self,
-    ):
-        pass
-
-    def reset(
-        self,
-    ):
-        pass
-
-    def set_attribute_list(self, property_set, attribute_list):
-        pass
-
-    def set_branch_color(self, tree, index, color):
-        pass
-
-    def set_header_labels(self, trees, tables, labels):
-        pass
-
-    def set_object_item_relation(self, obj, item):
-        pass
-
-    def set_projects(self, project1, project2):
-        pass
-
-    def set_pset_list(self, obj, pset_list):
-        pass
-
-    def set_tree_row_color(self, item, style_index):
-        pass
-
-    def set_value_list(self, entity, value_list):
-        pass
-
-    def style_parent_item(self, item, style):
-        pass
-
-    def style_table(self, table, shift):
-        pass
-
-    def style_tree_item(self, item):
         pass
 
 
@@ -607,9 +351,6 @@ class AttributeImportSQL:
     ):
         pass
 
-    def get_properties(self, ifc_type, identifier, property_set):
-        pass
-
     def get_current_object_filter(
         self,
     ):
@@ -636,9 +377,7 @@ class AttributeImportSQL:
     ):
         pass
 
-    def get_properties(
-        self,
-    ):
+    def get_properties(self, ifc_type, identifier, property_set):
         pass
 
     def get_property_sets(self, ifc_type, identifier):
@@ -721,9 +460,6 @@ class AttributeTable:
     def format_row_value(self, item, value):
         pass
 
-    def get_property_from_item(self, item):
-        pass
-
     def get_attribute_table_header_names(
         self,
     ):
@@ -751,6 +487,9 @@ class AttributeTable:
     def get_properties(
         self,
     ):
+        pass
+
+    def get_property_from_item(self, item):
         pass
 
     def get_property_set_by_table(self, table):
@@ -859,7 +598,22 @@ class Bsdd:
     ):
         pass
 
+    def is_update_blocked(
+        self,
+    ):
+        pass
+
+    def reset_classes(
+        self,
+    ):
+        pass
+
     def reset_dictionary(
+        self,
+    ):
+        pass
+
+    def reset_properties(
         self,
     ):
         pass
@@ -879,6 +633,304 @@ class Bsdd:
     def trigger_retranslation(
         self,
     ):
+        pass
+
+
+class Class:
+    def add_class_activate_function(self, func):
+        pass
+
+    def add_class_creation_check(self, key, check_function):
+        pass
+
+    def add_column_to_tree(self, name_getter, index, getter_func, setter_func):
+        pass
+
+    def add_context_menu_entry(self, name_getter, function, single, multi):
+        pass
+
+    def check_class_creation_input(self, data_dict):
+        pass
+
+    def clear_context_menu_list(
+        self,
+    ):
+        pass
+
+    def clear_tree(
+        self,
+    ):
+        pass
+
+    def collapse_selection(
+        self,
+    ):
+        pass
+
+    def copy_class(self, som_class, data_dict):
+        pass
+
+    def copy_group(self, som_class):
+        pass
+
+    def create_class(self, data_dict, property_set, identifier_property):
+        pass
+
+    def create_completer(self, texts, widget):
+        pass
+
+    def create_context_menu(
+        self,
+    ):
+        pass
+
+    def create_item(self, obj):
+        pass
+
+    def delete_class(self, obj, recursive):
+        pass
+
+    def delete_selection(
+        self,
+    ):
+        pass
+
+    def drop_indication_pos_is_on_item(
+        self,
+    ):
+        pass
+
+    def expand_selection(
+        self,
+    ):
+        pass
+
+    def expand_to_item(self, item):
+        pass
+
+    def fill_class_entry(self, obj):
+        pass
+
+    def fill_class_tree(self, objects, parent_item):
+        pass
+
+    def find_property(self, obj, pset_name, attribute_name):
+        pass
+
+    def get_active_class(
+        self,
+    ):
+        pass
+
+    def get_class_from_item(self, item):
+        pass
+
+    def get_class_tree(
+        self,
+    ):
+        pass
+
+    def get_existing_ident_values(
+        self,
+    ):
+        pass
+
+    def get_header_names(
+        self,
+    ):
+        pass
+
+    def get_item_from_class(self, obj):
+        pass
+
+    def get_item_from_pos(self, pos):
+        pass
+
+    def get_properties(
+        self,
+    ):
+        pass
+
+    def get_selected_classes(
+        self,
+    ):
+        pass
+
+    def get_selected_items(
+        self,
+    ):
+        pass
+
+    def group_classes(self, parent, children):
+        pass
+
+    def group_selection(
+        self,
+    ):
+        pass
+
+    def handle_property_issue(self, result):
+        pass
+
+    def is_identifier_allowed(self, identifier, ignore, is_group):
+        pass
+
+    def modify_class(self, som_class, data_dict):
+        pass
+
+    def remove_column_from_tree(self, column_name):
+        pass
+
+    def resize_tree(
+        self,
+    ):
+        pass
+
+    def select_class(self, obj):
+        pass
+
+    def set_active_class(self, obj):
+        pass
+
+    def set_class_optional_by_tree_item_state(self, item, column_index):
+        pass
+
+    def set_ident_value(self, obj, value):
+        pass
+
+    def trigger_class_copy(self, som_class, data_dict):
+        pass
+
+    def trigger_class_creation(self, data_dict):
+        pass
+
+    def trigger_class_modification(self, som_class, data_dict):
+        pass
+
+    def update_check_state(self, item):
+        pass
+
+    def update_item(self, item, obj):
+        pass
+
+
+class ClassInfo:
+    def add_ifc_mapping(self, mapping):
+        pass
+
+    def add_objects_infos_add_function(self, key, getter_function):
+        pass
+
+    def add_plugin_entry(
+        self,
+        key,
+        layout_name,
+        widget_creator,
+        index,
+        init_value_getter,
+        widget_value_getter,
+        widget_value_setter,
+        test_function,
+        value_setter,
+    ):
+        pass
+
+    def add_plugin_infos_to_class(self, som_class, data_dict):
+        pass
+
+    def are_plugin_requirements_met(self, som_class, data_dict):
+        pass
+
+    def connect_dialog(self, dialog, predefined_psets):
+        pass
+
+    def create_dialog(self, title):
+        pass
+
+    def create_ifc_completer(
+        self,
+    ):
+        pass
+
+    def generate_datadict(
+        self,
+    ):
+        pass
+
+    def get_active_class(
+        self,
+    ):
+        pass
+
+    def get_class_infos(
+        self,
+    ):
+        pass
+
+    def get_dialog(
+        self,
+    ):
+        pass
+
+    def get_ifc_mappings(
+        self,
+    ):
+        pass
+
+    def get_mode(
+        self,
+    ):
+        pass
+
+    def get_properties(
+        self,
+    ):
+        pass
+
+    def get_ui(
+        self,
+    ):
+        pass
+
+    def is_ident_property_valid(self, data_dict):
+        pass
+
+    def is_ident_pset_valid(self, data_dict):
+        pass
+
+    def is_identifier_unique(self, data_dict):
+        pass
+
+    def oi_change_visibility_identifiers(self, hide):
+        pass
+
+    def oi_fill_properties(self, mode, selected_class):
+        pass
+
+    def oi_set_ident_value_color(self, color):
+        pass
+
+    def oi_set_values(self, data_dict):
+        pass
+
+    def remove_plugin_entry(self, key):
+        pass
+
+    def reset(
+        self,
+    ):
+        pass
+
+    def set_active_class(self, value):
+        pass
+
+    def trigger_class_info_widget(self, mode):
+        pass
+
+    def update_dialog(self, dialog):
+        pass
+
+    def update_property_combobox(self, predefined_psets):
         pass
 
 
@@ -1352,16 +1404,24 @@ class Language:
     ):
         pass
 
+    def load_main_translations(self, app, lang_code):
+        pass
+
+    def load_plugin_translations(self, plugin_names, app, lang_code):
+        pass
+
+    def retranslate_main_ui(
+        self,
+    ):
+        pass
+
+    def retranslate_plugins(self, plugin_names):
+        pass
+
     def set_language(self, code):
         pass
 
     def set_widget(self, widget):
-        pass
-
-    def translate_main_ui(self, app, lang_code):
-        pass
-
-    def translate_plugins(self, plugin_names, app, lang_code):
         pass
 
 
@@ -1471,6 +1531,11 @@ class MainWindow:
     ):
         pass
 
+    def get_class_name_label(
+        self,
+    ):
+        pass
+
     def get_ident_pset_name_line_edit(
         self,
     ):
@@ -1487,11 +1552,6 @@ class MainWindow:
         pass
 
     def get_object_name_horizontal_layout(
-        self,
-    ):
-        pass
-
-    def get_class_name_label(
         self,
     ):
         pass
@@ -1521,6 +1581,11 @@ class MainWindow:
     ):
         pass
 
+    def get_pset_name_label(
+        self,
+    ):
+        pass
+
     def get_pset_name_line_edit(
         self,
     ):
@@ -1544,6 +1609,12 @@ class MainWindow:
     def is_console_visible(
         self,
     ):
+        pass
+
+    def remove_action(self, parent_name, action):
+        pass
+
+    def remove_submenu(self, parent_name, sub_menu):
         pass
 
     def set_action(self, name, action):
@@ -2210,258 +2281,14 @@ class ModelcheckWindow:
         pass
 
 
-class Class:
-    def add_column_to_tree(self, name_getter, index, getter_func, setter_func):
-        pass
-
-    def add_context_menu_entry(self, name_getter, function, single, multi):
-        pass
-
-    def add_ifc_mapping(self, mapping):
-        pass
-
-    def add_class_activate_function(self, func):
-        pass
-
-    def add_class_creation_check(self, key, check_function):
-        pass
-
-    def add_objects_infos_add_function(self, key, getter_function):
-        pass
-
-    def is_ident_property_valid(self, data_dict):
-        pass
-
-    def is_ident_pset_valid(self, data_dict):
-        pass
-
-    def is_identifier_unique(self, data_dict):
-        pass
-
-    def check_class_creation_input(self, data_dict):
-        pass
-
-    def clear_context_menu_list(
-        self,
-    ):
-        pass
-
-    def collapse_selection(
-        self,
-    ):
-        pass
-
-    def copy_class(self, obj, data_dict):
-        pass
-
-    def create_completer(self, texts, lineedit):
-        pass
-
-    def create_context_menu(
-        self,
-    ):
-        pass
-
-    def create_ifc_completer(
-        self,
-    ):
-        pass
-
-    def create_item(self, obj):
-        pass
-
-
-    def delete_class(self, obj, recursive):
-        pass
-
-    def delete_selection(
-        self,
-    ):
-        pass
-
-    def drop_indication_pos_is_on_item(
-        self,
-    ):
-        pass
-
-    def expand_selection(
-        self,
-    ):
-        pass
-
-    def expand_to_item(self, item):
-        pass
-
-    def fill_object_attribute_line_edit(self, line_edit, obj):
-        pass
-
-    def fill_class_entry(self, obj):
-        pass
-
-    def fill_object_property_set_line_edit(self, line_edit, obj):
-        pass
-
-    def fill_class_tree(self, objects, parent_item):
-        pass
-
-    def find_property(self, obj, pset_name, attribute_name):
-        pass
-
-    def get_active_class(
-        self,
-    ):
-        pass
-
-    def get_existing_ident_values(
-        self,
-    ):
-        pass
-
-    def get_header_names(
-        self,
-    ):
-        pass
-
-    def get_ifc_mappings(
-        self,
-    ):
-        pass
-
-    def get_item_from_class(self, obj):
-        pass
-
-    def get_item_from_pos(self, pos):
-        pass
-
-    def get_class_from_item(self, item):
-        pass
-
-    def get_object_info_properties(
-        self,
-    ):
-        pass
-
-    def get_class_infos(
-        self,
-    ):
-        pass
-
-    def get_class_tree(
-        self,
-    ):
-        pass
-
-    def get_properties(
-        self,
-    ):
-        pass
-
-    def get_selected_items(
-        self,
-    ):
-        pass
-
-    def get_selected_classes(
-        self,
-    ):
-        pass
-
-    def group_classes(self, parent, children):
-        pass
-
-    def group_selection(
-        self,
-    ):
-        pass
-
-    def handle_property_issue(self, result):
-        pass
-
-    def is_identifier_allowed(self, identifier, ignore):
-        pass
-
-    def oi_add_plugin_entry(
-        self,
-        key,
-        layout_name,
-        widget,
-        index,
-        init_value_getter,
-        widget_value_getter,
-        widget_value_setter,
-        test_function,
-        value_setter,
-    ):
-        pass
-
-    def oi_change_visibility_identifiers(self, hide):
-        pass
-
-    def oi_create_dialog(
-        self,
-    ):
-        pass
-
-    def oi_fill_properties(self, mode):
-        pass
-
-    def oi_get_focus_class(
-        self,
-    ):
-        pass
-
-    def oi_get_mode(
-        self,
-    ):
-        pass
-
-    def oi_get_values(
-        self,
-    ):
-        pass
-
-    def oi_set_ident_value_color(self, color):
-        pass
-
-    def oi_set_values(self, data_dict):
-        pass
-
-    def oi_update_attribute_combobox(
-        self,
-    ):
-        pass
-
-    def oi_update_dialog(
-        self,
-    ):
-        pass
-
-    def resize_tree(
-        self,
-    ):
-        pass
-
-    def select_class(self, obj):
-        pass
-
-    def set_active_class(self, obj):
-        pass
-
-    def set_ident_value(self, obj, value):
-        pass
-
-    def set_class_optional_by_tree_item_state(self, item, column_index):
-        pass
-
-    def update_check_state(self, item):
-        pass
-
-    def update_item(self, item, obj):
-        pass
-
-
 class Plugins:
+    def activate_plugin(self, plugin_name):
+        pass
+
     def create_settings_entry(self, plugin_name):
+        pass
+
+    def deactivate_plugin(self, plugin_name):
         pass
 
     def get_available_plugins(
@@ -2485,7 +2312,7 @@ class Plugins:
     ):
         pass
 
-    def import_plugin(self, plugin_name):
+    def get_submodules(self, plugin_name):
         pass
 
     def is_plugin_active(self, plugin_name):
@@ -2773,7 +2600,7 @@ class Project:
     ):
         pass
 
-    def get_root_classes(self, filter_objects, proj):
+    def get_root_classes(self, filter_classes, proj):
         pass
 
     def get_settings_general_widget(
@@ -2800,6 +2627,9 @@ class Project:
     def merge_projects(self, title, project_1, project_2):
         pass
 
+    def remove_plugin_save_function(self, index):
+        pass
+
     def set_action(self, name, action):
         pass
 
@@ -2810,6 +2640,282 @@ class Project:
         pass
 
     def set_settings_path_widget(self, widget):
+        pass
+
+
+class Property:
+    def add_property_data_value(self, name, getter, setter):
+        pass
+
+    def create_attribute_by_dict(self, attribute_data):
+        pass
+
+    def get_allowed_unit_prefixes(self, appdata):
+        pass
+
+    def get_allowed_units(self, appdata):
+        pass
+
+    def get_attribute_data(self, attribute):
+        pass
+
+    def get_checked_texts_from_list_widget(self, list_widget):
+        pass
+
+    def get_properties(
+        self,
+    ):
+        pass
+
+    def get_unit_settings_widget(
+        self,
+    ):
+        pass
+
+    def set_attribute_data_by_dict(self, attribute, data_dict):
+        pass
+
+    def set_unit_settings_widget(self, widget):
+        pass
+
+
+class PropertyCompare:
+    def add_missing_objects_to_tree(self, tree, root_objects):
+        pass
+
+    def add_object_to_item(self, obj, item, index):
+        pass
+
+    def add_properties_to_pset_tree(self, tree, add_missing):
+        pass
+
+    def are_attributes_identical(self, attribute0, attribute1):
+        pass
+
+    def are_objects_identical(self, object0, object1, check_pset):
+        pass
+
+    def are_property_sets_identical(
+        self, property_set0, property_set1, check_attributes
+    ):
+        pass
+
+    def children_are_identical(self, entity0, entity1):
+        pass
+
+    def clear_table(self, table):
+        pass
+
+    def clear_tree(self, tree):
+        pass
+
+    def compare_attributes(self, attribute0, attribute1):
+        pass
+
+    def compare_objects(self, obj0, obj1):
+        pass
+
+    def compare_property_sets(self, pset0, pset1):
+        pass
+
+    def create_child_matchup(self, entity0, entity1):
+        pass
+
+    def create_object_dicts(
+        self,
+    ):
+        pass
+
+    def create_object_lists(
+        self,
+    ):
+        pass
+
+    def create_tree_selection_trigger(self, widget):
+        pass
+
+    def create_widget(
+        self,
+    ):
+        pass
+
+    def export_attribute_check(self, file, type_name, attrib0, attrib1, indent):
+        pass
+
+    def export_attribute_differences(self, file, attribute_list):
+        pass
+
+    def export_child_check(self, file, type_name, entity0, entity1, indent):
+        pass
+
+    def export_existance_check(self, file, type_name, entity0, entity1, indent):
+        pass
+
+    def export_name_check(self, file, type_name, entity0, entity1, indent):
+        pass
+
+    def export_object_differences(self, file):
+        pass
+
+    def export_pset_differences(self, file, pset_list, lb):
+        pass
+
+    def fill_object_tree(self, tree, add_missing):
+        pass
+
+    def fill_object_tree_layer(self, objects, parent_item, add_missing):
+        pass
+
+    def fill_pset_tree(self, tree, pset_list, add_missing):
+        pass
+
+    def fill_table(self, table, info_list, entities):
+        pass
+
+    def fill_value_table(self, table, attribute):
+        pass
+
+    def fill_value_table_pset(self, widget):
+        pass
+
+    def find_existing_parent_item(self, som_class):
+        pass
+
+    def find_matching_entity(self, search_element, uuid_dict1, name_dict1):
+        pass
+
+    def find_matching_object(self, obj, index):
+        pass
+
+    def generate_name_dict(self, element_list):
+        pass
+
+    def generate_uuid_dict(self, element_list):
+        pass
+
+    def get_attribute_list(self, property_set):
+        pass
+
+    def get_branch_color(self, index):
+        pass
+
+    def get_entities_from_item(self, item):
+        pass
+
+    def get_header_name_from_project(self, project):
+        pass
+
+    def get_ident_dict(self, index):
+        pass
+
+    def get_info_table(self, widget):
+        pass
+
+    def get_item_from_object(self, obj):
+        pass
+
+    def get_level(self, index):
+        pass
+
+    def get_missing_objects(self, index):
+        pass
+
+    def get_name_path(self, entity):
+        pass
+
+    def get_object_dict(
+        self,
+    ):
+        pass
+
+    def get_object_lists(
+        self,
+    ):
+        pass
+
+    def get_object_tree(self, widget):
+        pass
+
+    def get_project(self, index):
+        pass
+
+    def get_properties(
+        self,
+    ):
+        pass
+
+    def get_property_info_list(
+        self,
+    ):
+        pass
+
+    def get_pset_info_list(
+        self,
+    ):
+        pass
+
+    def get_pset_list(self, obj):
+        pass
+
+    def get_pset_tree(self, widget):
+        pass
+
+    def get_selected_entity(self, tree):
+        pass
+
+    def get_selected_item(self, tree):
+        pass
+
+    def get_uuid_dict(self, index):
+        pass
+
+    def get_value_list(self, entity):
+        pass
+
+    def get_value_table(self, widget):
+        pass
+
+    def get_widget(
+        self,
+    ):
+        pass
+
+    def reset(
+        self,
+    ):
+        pass
+
+    def set_attribute_list(self, property_set, attribute_list):
+        pass
+
+    def set_branch_color(self, tree, index, color):
+        pass
+
+    def set_header_labels(self, trees, tables, labels):
+        pass
+
+    def set_object_item_relation(self, obj, item):
+        pass
+
+    def set_projects(self, project1, project2):
+        pass
+
+    def set_pset_list(self, obj, pset_list):
+        pass
+
+    def set_tree_row_color(self, item, style_index):
+        pass
+
+    def set_value_list(self, entity, value_list):
+        pass
+
+    def style_parent_item(self, item, style):
+        pass
+
+    def style_table(self, table, shift):
+        pass
+
+    def style_tree_item(self, item):
         pass
 
 
@@ -2844,10 +2950,20 @@ class PropertySet:
     def get_attribute_by_name(self, property_set, name):
         pass
 
+    def get_completer(
+        self,
+    ):
+        pass
+
     def get_existing_psets_in_table(self, table):
         pass
 
     def get_inheritable_property_sets(self, obj):
+        pass
+
+    def get_properties(
+        self,
+    ):
         pass
 
     def get_property_set_from_item(self, item):
@@ -2865,11 +2981,6 @@ class PropertySet:
         pass
 
     def get_pset_from_item(self, item):
-        pass
-
-    def get_properties(
-        self,
-    ):
         pass
 
     def get_row_from_pset(self, property_set):
@@ -2898,6 +3009,9 @@ class PropertySet:
     ):
         pass
 
+    def search_for_parent(self, pset_name, predefined_psets, parent_psets):
+        pass
+
     def select_property_set(self, property_set):
         pass
 
@@ -2908,6 +3022,14 @@ class PropertySet:
         pass
 
     def set_pset_name_by_row(self, pset, row, table):
+        pass
+
+    def set_sorting_indicator(self, table_widget, col_index):
+        pass
+
+    def trigger_table_repaint(
+        self,
+    ):
         pass
 
     def update_completer(self, obj):
@@ -2931,6 +3053,9 @@ class PropertySetWindow:
         pass
 
     def close_property_set_window(self, window):
+        pass
+
+    def connect_splitter_widget(self, widget):
         pass
 
     def connect_window_triggers(self, window):
@@ -2997,10 +3122,21 @@ class PropertySetWindow:
     def get_required_column_count(self, window):
         pass
 
-    def get_seperator_state(self, window):
+    def get_splitter_settings_checkstate(self, widget):
+        pass
+
+    def get_splitter_settings_text(self, widget):
+        pass
+
+    def get_splitter_settings_widget(
+        self,
+    ):
         pass
 
     def get_table(self, window):
+        pass
+
+    def get_unit_combobox(self, window):
         pass
 
     def get_value_type(self, window):
@@ -3036,7 +3172,10 @@ class PropertySetWindow:
     def set_inherit_checkbox_state(self, state, window):
         pass
 
-    def set_seperator(self, window):
+    def set_splitter_settings_widget(self, widget):
+        pass
+
+    def set_unit(self, unit, window):
         pass
 
     def set_value_columns(self, column_count, window):
@@ -3054,7 +3193,16 @@ class PropertySetWindow:
     def update_add_button(self, window):
         pass
 
+    def update_datatype_completer(self, window):
+        pass
+
     def update_line_validators(self, window):
+        pass
+
+    def update_unit_completer(self, window):
+        pass
+
+    def update_valuetype_completer(self, window):
         pass
 
     def value_to_string(self, value):
@@ -3166,8 +3314,7 @@ class Settings:
     def set_widget(self, widget):
         pass
 
-class ClassInfo:
-    pass
+
 class Util:
     def add_shortcut(self, sequence, window, function):
         pass
@@ -3182,6 +3329,9 @@ class Util:
         pass
 
     def context_menu_create_action(self, menu_dict, name, action_func, is_sub_menu):
+        pass
+
+    def create_completer(self, texts, widget):
         pass
 
     def create_context_menu(self, menu_list):
@@ -3220,12 +3370,12 @@ class Util:
     ):
         pass
 
+    def fill_list_widget_with_checkstate(self, list_widget, allowed_labels, all_labels):
+        pass
+
     def fill_main_attribute(
         self, widget, pset_name, attribute_name, pset_placeholder, attribute_placeholder
     ):
-        pass
-
-    def get_property(self, widget):
         pass
 
     def get_combobox_values(self, combo_box):
@@ -3240,6 +3390,9 @@ class Util:
     def get_properties(
         self,
     ):
+        pass
+
+    def get_property(self, widget):
         pass
 
     def get_text_from_combobox(self, combobox):

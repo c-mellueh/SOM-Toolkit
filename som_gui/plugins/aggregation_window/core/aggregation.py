@@ -6,11 +6,18 @@ from PySide6.QtCore import QCoreApplication
 from PySide6.QtWidgets import QLabel
 
 from som_gui.module.class_.constants import OK
+import logging
 
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.plugins.aggregation_window import tool as aw_tool
 
+LABEL_KEY = "abbrev_text"
+LINE_EDIT_KEY = "abbreviation"
+
+def remove_main_menu_actions(aggregation: Type[aw_tool.Aggregation], main_window: Type[tool.MainWindow]
+):
+    main_window.remove_action("menuDesite",aggregation.get_action("exportBS"))
 
 def create_main_menu_actions(
     aggregation: Type[aw_tool.Aggregation], main_window: Type[tool.MainWindow]
@@ -21,7 +28,7 @@ def create_main_menu_actions(
         "menuDesite", "Export BS", trigger.export_building_structure
     )
     aggregation.set_action("exportBS", open_window_action)
-
+    retranslate_ui(aggregation)
 
 def retranslate_ui(aggregation: Type[aw_tool.Aggregation]):
     action = aggregation.get_action("exportBS")
@@ -30,11 +37,24 @@ def retranslate_ui(aggregation: Type[aw_tool.Aggregation]):
     )
 
 
-def init_main_window(
+def deactivate(
     class_tool: Type[tool.Class],
     class_info_tool: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
-    main_window: Type[tool.MainWindow],
+    project: Type[tool.Project],
+):
+    class_tool.remove_column_from_tree(
+        QCoreApplication.translate("Aggregation", "Abbreviation")
+    )
+    class_info_tool.remove_plugin_entry(LABEL_KEY)
+    class_info_tool.remove_plugin_entry(LINE_EDIT_KEY)
+    project.remove_plugin_save_function(aggregation.get_save_function_index())
+    
+def activate(
+    class_tool: Type[tool.Class],
+    class_info_tool: Type[tool.ClassInfo],
+    aggregation: Type[aw_tool.Aggregation],
+    project: Type[tool.Project],
 ):
     class_tool.add_column_to_tree(
         lambda: QCoreApplication.translate("Aggregation", "Abbreviation"),
@@ -44,7 +64,7 @@ def init_main_window(
 
     name = QCoreApplication.translate("Aggregation", "Abbreviation:")
     class_info_tool.add_plugin_entry(
-        "abbrev_text",
+        LABEL_KEY,
         "horizontal_layout_info",
         lambda:QLabel(name),
         -1,
@@ -56,7 +76,7 @@ def init_main_window(
     )
 
     class_info_tool.add_plugin_entry(
-        "abbreviation",
+        LINE_EDIT_KEY,
         "horizontal_layout_info",
         aggregation.create_ci_line_edit,
         -1,
@@ -67,6 +87,8 @@ def init_main_window(
         aggregation.set_object_abbreviation,
     )
 
+    index = project.add_plugin_save_function(aggregation.trigger_save)
+    aggregation.set_save_function_index(index)
 
 def export_building_structure(
     aggregation: Type[aw_tool.Aggregation],
@@ -97,6 +119,7 @@ def refresh_object_info_line_edit(
 
 
 def save_aggregations(view: Type[aw_tool.View], project: Type[tool.Project]):
+    logging.info("Save Aggregations")
     proj = project.get()
     aggregations = sorted(proj.get_aggregations(filter=False), key=lambda x: x.name)
     uuid_dict = view.create_aggregation_scenes_dict(

@@ -351,3 +351,16 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
     @classmethod
     def is_grouping_running(cls):
         return cls.get_grouping_threadpool().activeThreadCount() > 0
+
+    @classmethod
+    def trigger_open_window(cls):
+        trigger.open_window()
+
+    @classmethod
+    def trigger_retranslate_ui(cls):
+        trigger.retranslate_ui()
+
+    @classmethod
+    def reset(cls):
+        from som_gui.plugins.aggregation_window.module.grouping_window import prop
+        som_gui.GroupingWindowProperties = prop.GroupingWindowProperties()

@@ -34,6 +34,13 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         return cls.get_dialog().ui
 
     @classmethod
+    def remove_plugin_entry(cls,key:str):
+        for plugin in reversed(cls.get_properties().class_info_plugin_list):
+            if plugin.key == key:
+                cls.get_properties().class_info_plugin_list.remove(plugin)
+                break
+
+    @classmethod
     def add_plugin_entry(
         cls,
         key: str,
@@ -45,7 +52,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         widget_value_setter: Callable,
         test_function: Callable,
         value_setter: Callable,
-    ):
+    ) ->int:
         """
         Create entry of QWidget that will be added to Class Info Dialog
         layout_name: name of layout in which QWidget will be placed
@@ -55,6 +62,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         widget_value_setter: function that will set a given value in the widget
         test_function: function that get's called to check if value written in widget is valid for object
         value_setter: function thats sets value of class after ClassInfoWidget is accepted
+        return: index of plugin in list
         """
         prop = PluginProperty(
             key,
@@ -69,6 +77,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         )
 
         cls.get_properties().class_info_plugin_list.append(prop)
+        return len(cls.get_properties().class_info_plugin_list)-1
 
     @classmethod
     def get_class_infos(cls) -> ClassDataDict:

@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.language import ui
 import som_gui
+import importlib
 
 SECTION = "langugage"
 PATH = "current_language"
@@ -20,15 +21,20 @@ def settings_widget_created(widget: ui.SettingsWidget, language: Type[tool.Langu
 
 def settings_accepted(language: Type[tool.Language]):
     from som_gui.module.language import trigger
+
     widget = language.get_widget()
     cb = widget.ui.comboBox
     code = cb.currentData()
     trigger.set_language(code)
 
 
-def set_language(code: str | None, language: Type[tool.Language], appdata: Type[tool.Appdata],
-                 main_window: Type[tool.MainWindow],
-                 plugings: Type[tool.Plugins]):
+def set_language(
+    code: str | None,
+    language: Type[tool.Language],
+    appdata: Type[tool.Appdata],
+    main_window: Type[tool.MainWindow],
+    plugings: Type[tool.Plugins],
+):
     """
     Sets UI Language
     if code is None checks last unsed language or System-Language
@@ -41,11 +47,15 @@ def set_language(code: str | None, language: Type[tool.Language], appdata: Type[
     appdata.set_setting(SECTION, PATH, code)
 
     app = main_window.get_app()
-    language.translate_main_ui(app, code)
+    language.load_main_translations(app, code)
+    language.retranslate_main_ui()
+    
+    active_plugins = [
+        n for n in plugings.get_available_plugins() if plugings.is_plugin_active(n)
+    ]
+    language.load_plugin_translations(active_plugins, app, code)
+    language.retranslate_plugins(active_plugins)
 
-    plugin_names = [n for n in plugings.get_available_plugins() if plugings.is_plugin_active(n)]
-    language.translate_plugins(plugin_names, app, code)
-    som_gui.retranslate_ui()
 
 
 def retranslate_ui(language: Type[tool.Language]):

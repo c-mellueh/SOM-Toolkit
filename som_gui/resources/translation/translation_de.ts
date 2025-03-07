@@ -4,39 +4,64 @@
 <context>
     <name>AttributeCompare</name>
     <message>
-        <location filename="../../tool/attribute.py" line="810"/>
+        <location filename="../../tool/property_.py" line="500"/>
+        <location filename="../../tool/property_.py" line="514"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="../../tool/property_.py" line="501"/>
+        <source>Child Count</source>
+        <translation>Kinder Anzahl</translation>
+    </message>
+    <message>
+        <location filename="../../tool/property_.py" line="515"/>
+        <source>Inheriting values</source>
+        <translation>Erbt Werte</translation>
+    </message>
+    <message>
+        <location filename="../../tool/property_.py" line="516"/>
+        <source>Datatype</source>
+        <translation>Datentyp</translation>
+    </message>
+    <message>
+        <location filename="../../tool/property_.py" line="518"/>
+        <source>Valuetype</source>
+        <translation>Werttyp</translation>
+    </message>
+    <message>
+        <location filename="../../tool/property_.py" line="826"/>
         <source>was deleted.</source>
         <translation>wurde entfernt.</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="811"/>
+        <location filename="../../tool/property_.py" line="827"/>
         <source>was added.</source>
         <translation>wurde hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="828"/>
+        <location filename="../../tool/property_.py" line="844"/>
         <source>was renamed to</source>
         <translation>wurde umbenannt zu</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="861"/>
+        <location filename="../../tool/property_.py" line="877"/>
         <source>was changed from</source>
         <translation>wurde geändert zu</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="901"/>
+        <location filename="../../tool/property_.py" line="917"/>
         <source>added child</source>
         <translation>fügte Kindelement hinzu</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute.py" line="902"/>
+        <location filename="../../tool/property_.py" line="918"/>
         <source>removed child</source>
         <translation>entfernte Kindelement</translation>
     </message>
     <message>
-        <location filename="../../module/attribute/qt/CompareWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation type="vanished">Form</translation>
     </message>
 </context>
 <context>
@@ -84,17 +109,17 @@
         <translation>Import von &apos;{}&apos; Entitäten abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="509"/>
+        <location filename="../../core/attribute_import.py" line="512"/>
         <source>Settings v</source>
         <translation>Einstellungen v</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="566"/>
+        <location filename="../../core/attribute_import.py" line="569"/>
         <source>Export Attribute Data</source>
         <translation>Exportere Attributdaten</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="575"/>
+        <location filename="../../core/attribute_import.py" line="578"/>
         <source>Export Done!</source>
         <translation>Export abgeschlossen!</translation>
     </message>
@@ -270,24 +295,93 @@
     </message>
 </context>
 <context>
+    <name>Class</name>
+    <message>
+        <location filename="../../core/class_.py" line="30"/>
+        <source>Class</source>
+        <translation>Klasse</translation>
+    </message>
+    <message>
+        <location filename="../../core/class_.py" line="35"/>
+        <source>Identifier</source>
+        <translation>Identifier</translation>
+    </message>
+    <message>
+        <location filename="../../core/class_.py" line="40"/>
+        <source>Optional</source>
+        <translation>Optional</translation>
+    </message>
+    <message>
+        <location filename="../../core/class_.py" line="105"/>
+        <source>Copy</source>
+        <translation>Kopieren</translation>
+    </message>
+    <message>
+        <location filename="../../core/class_.py" line="111"/>
+        <source>Delete</source>
+        <translation>Löschen</translation>
+    </message>
+    <message>
+        <location filename="../../core/class_.py" line="117"/>
+        <source>Extend</source>
+        <translation>Ausklappen</translation>
+    </message>
+    <message>
+        <location filename="../../core/class_.py" line="123"/>
+        <source>Collapse</source>
+        <translation>Einklappen</translation>
+    </message>
+    <message>
+        <location filename="../../core/class_.py" line="129"/>
+        <source>Group</source>
+        <translation>Gruppieren</translation>
+    </message>
+    <message>
+        <location filename="../../core/class_.py" line="135"/>
+        <source>Info</source>
+        <translation>Info</translation>
+    </message>
+    <message>
+        <location filename="../../core/class_.py" line="144"/>
+        <source>NewGroup</source>
+        <translation>NeueGruppe</translation>
+    </message>
+</context>
+<context>
+    <name>Class Info</name>
+    <message>
+        <location filename="../../core/class_info.py" line="29"/>
+        <source>Class Info</source>
+        <translation>Klassen Information</translation>
+    </message>
+</context>
+<context>
     <name>Compare</name>
     <message>
-        <location filename="../../core/attribute.py" line="68"/>
         <source>Attributes</source>
-        <translation>Attribute</translation>
+        <translation type="vanished">Attribute</translation>
     </message>
     <message>
-        <location filename="../../core/attribute.py" line="127"/>
         <source>ATTRIBUTE COMPARISON</source>
-        <translation>ATTRIBUT VERGLEICH</translation>
+        <translation type="vanished">ATTRIBUT VERGLEICH</translation>
     </message>
     <message>
-        <location filename="../../core/attribute.py" line="130"/>
+        <location filename="../../core/property_.py" line="68"/>
+        <source>Properties</source>
+        <translation>Eigenschaften</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_.py" line="129"/>
+        <source>PROPERTY COMPARISON</source>
+        <translation>EIGENSCHAFTS VERGLEICH</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_.py" line="132"/>
         <source>{} ({}) was deleted</source>
         <translation>{} ({}) wurde gelöscht</translation>
     </message>
     <message>
-        <location filename="../../core/attribute.py" line="136"/>
+        <location filename="../../core/property_.py" line="138"/>
         <source>{} ({}) was added</source>
         <translation>{} ({}) wurde hinzugefügt</translation>
     </message>
@@ -367,38 +461,38 @@
 <context>
     <name>Export</name>
     <message>
-        <location filename="../../core/exports.py" line="50"/>
+        <location filename="../../core/exports.py" line="78"/>
         <source>Vestra</source>
         <translation>Vestra</translation>
     </message>
     <message>
-        <location filename="../../core/exports.py" line="53"/>
+        <location filename="../../core/exports.py" line="81"/>
         <source>Card1</source>
         <translation>Card1</translation>
     </message>
     <message>
-        <location filename="../../core/exports.py" line="56"/>
+        <location filename="../../core/exports.py" line="84"/>
         <source>Excel</source>
         <translation>Excel</translation>
     </message>
     <message>
-        <location filename="../../core/exports.py" line="59"/>
+        <location filename="../../core/exports.py" line="87"/>
         <source>Allplan</source>
         <translation>Allplan</translation>
     </message>
     <message>
-        <location filename="../../core/exports.py" line="62"/>
+        <location filename="../../core/exports.py" line="90"/>
         <source>Export Abbreviation</source>
         <translation>Abkürzungen Exportieren</translation>
     </message>
     <message>
-        <location filename="../../core/exports.py" line="65"/>
+        <location filename="../../core/exports.py" line="93"/>
         <source>Export Bookmarks</source>
         <translation>Lesezeichen Exportieren</translation>
     </message>
     <message>
-        <location filename="../../core/exports.py" line="68"/>
-        <location filename="../../core/exports.py" line="121"/>
+        <location filename="../../core/exports.py" line="96"/>
+        <location filename="../../core/exports.py" line="176"/>
         <source>Export Mapping Script</source>
         <translation>Mapping Script Exportieren</translation>
     </message>
@@ -1084,70 +1178,64 @@ Achtung: Datei wird überschrieben!</translation>
         <translation type="vanished">Objekt</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="27"/>
         <source>Class</source>
-        <translation>Klasse</translation>
+        <translation type="vanished">Klasse</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="32"/>
         <source>Identifier</source>
-        <translation>Identifier</translation>
+        <translation type="vanished">Identifier</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="37"/>
         <source>Optional</source>
-        <translation>Optional</translation>
+        <translation type="vanished">Optional</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="145"/>
         <source>Copy</source>
-        <translation>Kopieren</translation>
+        <translation type="vanished">Kopieren</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="151"/>
         <source>Delete</source>
-        <translation>Löschen</translation>
+        <translation type="vanished">Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="157"/>
         <source>Extend</source>
-        <translation>Ausklappen</translation>
+        <translation type="vanished">Ausklappen</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="163"/>
         <source>Collapse</source>
-        <translation>Einklappen</translation>
+        <translation type="vanished">Einklappen</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="169"/>
         <source>Group</source>
-        <translation>Gruppieren</translation>
+        <translation type="vanished">Gruppieren</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="175"/>
         <source>Info</source>
-        <translation>Info</translation>
+        <translation type="vanished">Info</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="184"/>
         <source>NewGroup</source>
-        <translation>NeueGruppe</translation>
+        <translation type="vanished">NeueGruppe</translation>
     </message>
     <message>
-        <location filename="../../tool/object.py" line="223"/>
-        <location filename="../../tool/object.py" line="318"/>
+        <location filename="../../tool/class_.py" line="202"/>
+        <location filename="../../tool/class_info.py" line="343"/>
         <source>Identifier exists allready or is not allowed</source>
         <translation>Identifier existiert bereits oder ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/object.py" line="227"/>
-        <location filename="../../tool/object.py" line="304"/>
+        <location filename="../../tool/class_.py" line="206"/>
+        <source>Name of Property is not allowed</source>
+        <translation>Name der Eigenschaft ist nicht zugelassen</translation>
+    </message>
+    <message>
+        <location filename="../../tool/class_info.py" line="329"/>
         <source>Name of Attribute is not allowed</source>
         <translation>Name des Attributes ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/object.py" line="231"/>
-        <location filename="../../tool/object.py" line="289"/>
+        <location filename="../../tool/class_.py" line="210"/>
+        <location filename="../../tool/class_info.py" line="314"/>
         <source>Name of PropertySet is not allowed</source>
         <translation>Name des PropertySets ist nicht erlaubt</translation>
     </message>
@@ -1155,34 +1243,33 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>ObjectInfo</name>
     <message>
-        <location filename="../../module/object/qt/InfoWidget.ui" line="20"/>
+        <location filename="../../module/class_info/qt/InfoWidget.ui" line="20"/>
         <source>Dialog</source>
         <translation>Dialog</translation>
     </message>
     <message>
-        <location filename="../../module/object/qt/InfoWidget.ui" line="28"/>
+        <location filename="../../module/class_info/qt/InfoWidget.ui" line="28"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../module/object/qt/InfoWidget.ui" line="42"/>
+        <location filename="../../module/class_info/qt/InfoWidget.ui" line="42"/>
         <source>Group</source>
         <translation>Gruppe</translation>
     </message>
     <message>
-        <location filename="../../module/object/qt/InfoWidget.ui" line="89"/>
+        <location filename="../../module/class_info/qt/InfoWidget.ui" line="89"/>
         <source>IFC Mapping</source>
         <translation>IFC Mapping</translation>
     </message>
     <message>
-        <location filename="../../module/object/qt/InfoWidget.ui" line="115"/>
+        <location filename="../../module/class_info/qt/InfoWidget.ui" line="115"/>
         <source>+</source>
         <translation>hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/object.py" line="103"/>
         <source>Object Info</source>
-        <translation>Objektdetails</translation>
+        <translation type="vanished">Objektdetails</translation>
     </message>
 </context>
 <context>
@@ -1477,31 +1564,39 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
 </context>
 <context>
+    <name>PropertyCompare</name>
+    <message>
+        <location filename="../../module/property_/qt/CompareWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+</context>
+<context>
     <name>PropertySet</name>
     <message>
-        <location filename="../../core/property_set.py" line="25"/>
+        <location filename="../../core/property_set.py" line="26"/>
         <source>Add PropertySet</source>
         <translation>PropertySet hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/property_set.py" line="26"/>
+        <location filename="../../core/property_set.py" line="28"/>
         <source>PropertySet name?</source>
         <translation>PropertySet Name?</translation>
     </message>
     <message>
-        <location filename="../../core/property_set.py" line="32"/>
-        <location filename="../../tool/property_set.py" line="120"/>
+        <location filename="../../core/property_set.py" line="36"/>
+        <location filename="../../tool/property_set.py" line="122"/>
         <source>PropertySet &apos;{}&apos; exists allready</source>
         <translation>PropertySet &apos;{}&apos; existiert bereits</translation>
     </message>
     <message>
-        <location filename="../../core/property_set.py" line="99"/>
-        <location filename="../../core/property_set.py" line="111"/>
+        <location filename="../../core/property_set.py" line="88"/>
+        <location filename="../../core/property_set.py" line="100"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/property_set.py" line="107"/>
+        <location filename="../../core/property_set.py" line="96"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
@@ -1796,17 +1891,17 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>UnitSettings</name>
     <message>
-        <location filename="../../module/attribute/qt/UnitSettings.ui" line="14"/>
+        <location filename="../../module/property_/qt/UnitSettings.ui" line="14"/>
         <source>Form</source>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../module/attribute/qt/UnitSettings.ui" line="60"/>
+        <location filename="../../module/property_/qt/UnitSettings.ui" line="60"/>
         <source>Units</source>
         <translation>Einheiten</translation>
     </message>
     <message>
-        <location filename="../../module/attribute/qt/UnitSettings.ui" line="74"/>
+        <location filename="../../module/property_/qt/UnitSettings.ui" line="74"/>
         <source>Unit Prefixes</source>
         <translation>Einheiten Vorzeichen</translation>
     </message>

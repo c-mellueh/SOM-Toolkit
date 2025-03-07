@@ -6,8 +6,11 @@ def register():
     som_gui.BuchheimProperties = prop.BuchheimProperties()
 
 
-def load_ui_triggers():
-    trigger.connect()
+def activate():
+    trigger.activate()
+
+def deactivate():
+    trigger.deactivate()
 
 
 def on_new_project():

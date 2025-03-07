@@ -130,3 +130,11 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
             ).format(filter_object.name)
             texts.append(status_text)
         return " | ".join(texts)
+
+    @classmethod
+    def trigger_retranslate_ui(cls):
+        trigger.retranslate_ui()
+    
+    @classmethod
+    def trigger_open_window(cls):
+        trigger.open_window()

@@ -7,9 +7,11 @@ if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.module.connection import ui as ui_connection
     from som_gui.plugins.aggregation_window.module.node import ui as ui_node
 
-def connect():
+def activate():
     pass
 
+def deactivate():
+    pass
 
 def on_new_project():
     pass
