@@ -11,9 +11,12 @@ from som_gui.plugins.ifc_tools.core import move as core
 from som_gui.plugins.ifc_tools import tool as ifc_tool
 
 
-def connect():
+def activate():
     core.create_main_menu_actions(ifc_tool.Move, tool.MainWindow)
 
+
+def deactivate():
+    pass
 
 def open_window():
     core.open_window(ifc_tool.Move, tool.Util, tool.Appdata)

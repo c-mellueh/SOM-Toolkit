@@ -10,8 +10,11 @@ if TYPE_CHECKING:
     from ...tool.grouping_window import GroupingRunner
     from som_gui.tool.ifc_importer import IfcImportRunner
 
-def connect():
+def activate():
     core.create_main_menu_actions(aw_tool.GroupingWindow, tool.MainWindow)
+
+def deactivate():
+    pass
 
 
 def open_window():

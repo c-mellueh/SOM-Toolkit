@@ -12,7 +12,7 @@ def activate():
     for name, module in submodules:
         module.register()
     for name, module in submodules:
-        module.load_ui_triggers()
+        module.activate()
 
 def deactivate():
     pass

@@ -3,9 +3,11 @@ from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui.plugins.aggregation_window.core import window as core
 
 
-def connect() -> None:
+def activate() -> None:
     core.create_main_menu_actions(aw_tool.Window, tool.MainWindow)
 
+def deactivate() -> None:
+    pass
 
 def open_window():
     core.create_window(aw_tool.Window, aw_tool.View)

@@ -3,9 +3,11 @@ from som_gui.plugins.aggregation_window import tool as aw_tool
 from som_gui.plugins.aggregation_window.core import view as core
 
 
-def connect():
+def activate():
     pass
 
+def deactivate():
+    pass
 
 def on_new_project() -> None:
     core.import_pos_from_project(aw_tool.View, tool.Project)

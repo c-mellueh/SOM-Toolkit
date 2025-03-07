@@ -13,7 +13,10 @@ if TYPE_CHECKING:
     from . import ui
 
 
-def connect() -> None:
+def activate() -> None:
+    pass
+
+def deactivate() -> None:
     pass
 
 
