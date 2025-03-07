@@ -122,6 +122,14 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return menu.addMenu(name)
 
     @classmethod
+    def remove_submenu(cls, parent_name: str, sub_menu:QMenu):
+        if parent_name:
+            menu: QMenuBar | QMenu = getattr(cls.get_ui(), parent_name)
+        else:
+            menu = cls.get_menu_bar()
+        menu.removeAction(sub_menu.menuAction())
+
+    @classmethod
     def add_action(cls, parent_name: str, name: str, function: Callable) -> QAction:
         if parent_name:
             menu: QMenuBar | QMenu = getattr(cls.get_ui(), parent_name)

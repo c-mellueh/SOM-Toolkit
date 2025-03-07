@@ -26,6 +26,11 @@ def create_main_menu_actions(move: Type[ifc_tool.Move], main_window: Type[tool.M
     move.set_action("open_window", action)
     move.set_action("menu", move_menu)
 
+def remove_main_menu_actions(move: Type[ifc_tool.Move], main_window: Type[tool.MainWindow]):
+    menu = move.get_action("menu")
+    main_window.remove_submenu(None, menu)
+
+
 
 def retranslate_ui(move: Type[ifc_tool.Move], util: Type[tool.Util]):
     action = move.get_action("open_window")
