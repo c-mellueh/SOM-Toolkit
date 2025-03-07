@@ -34,7 +34,7 @@ def init_main_window(
     class_tool.add_column_to_tree(
         lambda: QCoreApplication.translate("Class", "Identifier"),
         1,
-        lambda o: getattr(o, "ident_value"),
+        lambda o: getattr(o, "ident_value") if isinstance(o.identifier_property,SOMcreator.SOMProperty) else "",
     )
     class_tool.add_column_to_tree(
         lambda: QCoreApplication.translate("Class", "Optional"),
