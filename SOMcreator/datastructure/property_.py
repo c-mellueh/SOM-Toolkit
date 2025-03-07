@@ -30,7 +30,7 @@ class SOMProperty(BaseClass):
         super(SOMProperty, self).__init__(
             name, description, optional, project, filter_matrix
         )
-        self._value = allowed_values if allowed_values is not None else []
+        self._allowed_values = allowed_values if allowed_values is not None else []
         self._property_set = property_set
         self._value_type = (
             value_type
@@ -134,8 +134,8 @@ class SOMProperty(BaseClass):
     def get_own_values(self):
         """returns values without inherited values"""
         if not self.parent:
-            return self._value
-        return [v for v in self._value if v not in self.parent.value]
+            return self._allowed_values
+        return [v for v in self._allowed_values if v not in self.parent.value]
 
     @property
     def value(self) -> list:
@@ -144,7 +144,7 @@ class SOMProperty(BaseClass):
                 return self.parent.value + self.get_own_values()
             else:
                 raise ValueError("Parent is expected but dne")
-        return self._value
+        return self._allowed_values
 
     @value.setter
     def value(self, values: list) -> None:
@@ -155,9 +155,9 @@ class SOMProperty(BaseClass):
             for value in values:
                 if value not in self.parent.value:
                     own_values.append(value)
-            self._value = own_values
+            self._allowed_values = own_values
         else:
-            self._value = values
+            self._allowed_values = values
 
     @property
     def value_type(self) -> str:
