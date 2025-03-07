@@ -140,6 +140,10 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return action
 
     @classmethod
+    def remove_action(action:QAction):
+        action.menu().removeAction(action)
+
+    @classmethod
     def get_ui(cls) -> Ui_MainWindow:
         return cls.get_properties().ui
 
