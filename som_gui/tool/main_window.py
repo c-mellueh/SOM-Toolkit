@@ -140,8 +140,12 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return action
 
     @classmethod
-    def remove_action(action:QAction):
-        action.menu().removeAction(action)
+    def remove_action(cls,parent_name:str,action:QAction):
+        if parent_name:
+            menu: QMenuBar | QMenu = getattr(cls.get_ui(), parent_name)
+        else:
+            menu = cls.get_menu_bar()
+        menu.removeAction(action)
 
     @classmethod
     def get_ui(cls) -> Ui_MainWindow:

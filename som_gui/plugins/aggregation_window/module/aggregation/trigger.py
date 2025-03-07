@@ -13,7 +13,7 @@ def activate():
 
 def deactivate():
     core.deactivate(tool.Class,tool.ClassInfo, aw_tool.Aggregation, tool.MainWindow)
-
+    core.remove_main_menu_actions(aw_tool.Aggregation,tool.MainWindow)
 
 def export_building_structure():
     core.export_building_structure(

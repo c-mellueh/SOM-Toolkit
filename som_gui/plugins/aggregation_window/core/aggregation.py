@@ -14,6 +14,10 @@ if TYPE_CHECKING:
 LABEL_KEY = "abbrev_text"
 LINE_EDIT_KEY = "abbreviation"
 
+def remove_main_menu_actions(aggregation: Type[aw_tool.Aggregation], main_window: Type[tool.MainWindow]
+):
+    main_window.remove_action("menuDesite",aggregation.get_action("exportBS"))
+
 def create_main_menu_actions(
     aggregation: Type[aw_tool.Aggregation], main_window: Type[tool.MainWindow]
 ):
@@ -23,7 +27,7 @@ def create_main_menu_actions(
         "menuDesite", "Export BS", trigger.export_building_structure
     )
     aggregation.set_action("exportBS", open_window_action)
-
+    retranslate_ui(aggregation)
 
 def retranslate_ui(aggregation: Type[aw_tool.Aggregation]):
     action = aggregation.get_action("exportBS")
