@@ -32,13 +32,13 @@ def _build_info(proj: SOMcreator.SOMProject, author, xml_parent: Element) -> Non
     SubElement(xml_element, ids_xsd.PURPOSE, nsmap=NSMAP).text = "Modelcheck"
 
 
-def _build_specifications(required_data, xml_parent: Element) -> None:
+def _build_specifications(required_data:dict[SOMcreator.SOMClass,dict], xml_parent: Element) -> None:
     xml_specifications = SubElement(xml_parent, ids_xsd.SPECIFICATIONS, nsmap=NSMAP)
 
-    for obj, property_set_dict in required_data.items():
-        if obj.ident_attrib is None:
+    for som_class, property_set_dict in required_data.items():
+        if som_class.identifier_property is None:
             continue
-        _build_specification(obj, property_set_dict, xml_specifications)
+        _build_specification(som_class, property_set_dict, xml_specifications)
 
 
 def _build_applicability(obj: SOMcreator.SOMClass, xml_parent: Element) -> None:
