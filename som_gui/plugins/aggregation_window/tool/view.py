@@ -26,7 +26,6 @@ if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window.module.view.prop import ViewProperties
     from som_gui.plugins.aggregation_window.module.connection import ui as ui_connection
 
-
 def loop_name(name, names, index: int) -> str:
     new_name = f"{name}_{str(index).zfill(2)}"
     if new_name in names:
@@ -133,44 +132,6 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         ]
         [scene_list.pop(scene_index) for scene_list in lists]
         scene.deleteLater()
-
-    @classmethod
-    def import_aggregations_from_project(cls, proj: SOMcreator.SOMProject) -> None:
-        plugin_dict = proj.import_dict
-        if not plugin_dict:
-            return
-
-        aggregation_ref = {
-            aggregation.uuid: aggregation
-            for aggregation in proj.get_aggregations(filter=False)
-        }
-        import_scene_dict = plugin_dict.get(AGGREGATIONSCENES)
-
-        if import_scene_dict is None:
-            return
-
-        existing_scene_names = cls.get_properties().scene_name_list
-        for scene_name, node_dict in import_scene_dict.items():
-            if isinstance(node_dict[NODES], list):
-                logging.warning(
-                    f"SOMJson was written in OLD version. "
-                    f"Please open with SOM-Toolkit v2.11.3 and save it as new version."
-                )
-                return
-            if scene_name not in existing_scene_names:
-                scene, scene_name = cls.create_scene(scene_name)
-
-            scene_id = cls.get_scene_index(scene_name)
-            position_values = node_dict["Nodes"].values()
-            if not position_values:
-                continue
-            x_values, y_values = zip(*position_values)
-            x_min, y_min = min(x_values), min(y_values)
-            for aggregation_uuid, pos in node_dict["Nodes"].items():
-                x = SCENE_SIZE[0] / 2 + pos[0] - x_min
-                y = SCENE_SIZE[1] / 2 + pos[1] - y_min
-                aggregation_tuple = (aggregation_ref[aggregation_uuid], QPointF(x, y))
-                cls.get_properties().import_list[scene_id].append(aggregation_tuple)
 
     @classmethod
     def get_scene_names(cls) -> list[str]:
@@ -387,7 +348,9 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
     @classmethod
     def reset_drawn_scenes(cls):
-        cls.get_properties().focus_list = [False for _ in cls.get_properties().focus_list]
+        cls.get_properties().focus_list = [
+            False for _ in cls.get_properties().focus_list
+        ]
 
     @classmethod
     def add_aggregation_to_import_list(cls, scene, aggregation, pos: QPointF) -> None:
@@ -577,3 +540,21 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
         scene = top_node.scene()
         pos = top_node.sceneBoundingRect().bottomLeft() + QPointF(100.0, 60.0)
         return trigger.add_object_to_scene(obj, scene, top_node, pos)
+
+    @classmethod
+    def set_project_scene_dict(cls, d: dict) -> None:
+        cls.get_properties().project_scene_dict = d
+
+    @classmethod
+    def get_project_scene_dict(
+        cls,
+    ) -> dict:
+        return cls.get_properties().project_scene_dict
+
+    @classmethod
+    def get_existing_scene_names(cls) ->list[str]:
+        return cls.get_properties().scene_name_list
+
+    @classmethod
+    def add_aggregation_to_import_list(cls,scene_id:int,aggregation:SOMcreator.SOMAggregation,position:QPointF):
+        cls.get_properties().import_list[scene_id].append((aggregation,position))

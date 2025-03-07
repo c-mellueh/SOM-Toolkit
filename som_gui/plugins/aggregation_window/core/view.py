@@ -7,6 +7,12 @@ import logging
 import SOMcreator
 from SOMcreator import value_constants
 from som_gui import tool
+from som_gui.plugins.aggregation_window.module.view.constants import (
+    AGGREGATIONSCENES,
+    SCENE_SIZE,
+    SCENE_MARGIN,
+)
+from SOMcreator.datastructure.som_json import NODES
 
 if TYPE_CHECKING:
     from som_gui.plugins.aggregation_window import tool as aw_tool
@@ -44,10 +50,44 @@ def key_release_event(
         node.lock_move_direction(False)
 
 
-def import_pos_from_project(
-    view: Type[aw_tool.View], project: Type[tool.Project]
-) -> None:
-    view.import_aggregations_from_project(project.get())
+def activate(view: Type[aw_tool.View], project: Type[tool.Project]) -> None:
+    proj = project.get()
+    plugin_dict = proj.import_dict or dict()
+    if not plugin_dict:
+        view.set_project_scene_dict(dict())
+        return
+
+    scene_dict = plugin_dict.get(AGGREGATIONSCENES)
+    if scene_dict is None:
+        view.set_project_scene_dict(dict())
+        return
+    view.set_project_scene_dict(scene_dict)
+    aggregation_ref = {
+        aggregation.uuid: aggregation
+        for aggregation in proj.get_aggregations(filter=False)
+    }
+
+    for scene_name, node_dict in scene_dict.items():
+        if isinstance(node_dict[NODES], list):
+            logging.warning(
+                f"SOMJson was written in OLD version. "
+                f"Please open with SOM-Toolkit v2.11.3 and save it as new version."
+            )
+            return
+        if scene_name not in view.get_existing_scene_names():
+            scene, scene_name = view.create_scene(scene_name)
+
+        scene_id = view.get_scene_index(scene_name)
+        position_values = node_dict["Nodes"].values()
+        if not position_values:
+            continue
+        x_values, y_values = zip(*position_values)
+        x_min, y_min = min(x_values), min(y_values)
+        for aggregation_uuid, pos in node_dict["Nodes"].items():
+            x = SCENE_SIZE[0] / 2 + pos[0] - x_min
+            y = SCENE_SIZE[1] / 2 + pos[1] - y_min
+            aggregation = aggregation_ref[aggregation_uuid]
+            view.add_aggregation_to_import_list(scene_id,aggregation,QPointF(x, y))
     view.reset_drawn_scenes()
 
 def paint_event(
@@ -422,7 +462,11 @@ def add_object_to_scene(
         view.add_connection_to_scene(con, view.get_active_scene())
     return new_node
 
-def reset(view:aw_tool.View):
+
+def reset(view: aw_tool.View):
     import som_gui
     from som_gui.plugins.aggregation_window.module.view import prop
+    logging.info(f"Reset View Module")
     som_gui.ViewProperties = prop.ViewProperties()
+    prop = view.get_properties()
+    prop
