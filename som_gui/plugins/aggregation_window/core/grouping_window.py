@@ -20,15 +20,19 @@ if TYPE_CHECKING:
     from som_gui.tool.ifc_importer import IfcImportRunner
     from ..tool.grouping_window import GroupingRunner
 
+def remove_main_menu_actions(
+    grouping_window: Type[aw_tool.GroupingWindow], main_window: Type[tool.MainWindow]
+):
+    action = grouping_window.get_action("create_groups")
+    main_window.remove_action("menuModels", action)
+    grouping_window.reset()
 
 def create_main_menu_actions(
     grouping_window: Type[aw_tool.GroupingWindow], main_window: Type[tool.MainWindow]
 ):
-    from som_gui.plugins.aggregation_window.module.grouping_window import trigger
-
-    action = main_window.add_action("menuModels", "create_groups", trigger.open_window)
+    action = main_window.add_action("menuModels", "create_groups", grouping_window.trigger_open_window)
     grouping_window.set_action("create_groups", action)
-
+    grouping_window.trigger_retranslate_ui()
 
 def retranslate_ui(
     grouping_window: Type[aw_tool.GroupingWindow], util: Type[tool.Util]

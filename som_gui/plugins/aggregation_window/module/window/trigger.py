@@ -7,7 +7,7 @@ def activate() -> None:
     core.create_main_menu_actions(aw_tool.Window, tool.MainWindow)
 
 def deactivate() -> None:
-    pass
+     core.remove_main_menu_actions(aw_tool.Window, tool.MainWindow)
 
 def open_window():
     core.create_window(aw_tool.Window, aw_tool.View)

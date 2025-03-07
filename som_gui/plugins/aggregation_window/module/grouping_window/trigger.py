@@ -14,7 +14,7 @@ def activate():
     core.create_main_menu_actions(aw_tool.GroupingWindow, tool.MainWindow)
 
 def deactivate():
-    pass
+    core.remove_main_menu_actions(aw_tool.GroupingWindow, tool.MainWindow)
 
 
 def open_window():

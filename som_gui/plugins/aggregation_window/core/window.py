@@ -12,6 +12,11 @@ if TYPE_CHECKING:
     from som_gui import tool
 from PySide6.QtCore import QCoreApplication
 
+def remove_main_menu_actions(
+    window: Type[aw_tool.Window], main_window: Type[tool.MainWindow]
+):  
+    action = window.get_action("open_window")
+    main_window.remove_action(None,action)
 
 def create_main_menu_actions(
     window: Type[aw_tool.Window], main_window: Type[tool.MainWindow]
@@ -20,7 +25,7 @@ def create_main_menu_actions(
 
     action = main_window.add_action(None, "BSWindow", trigger.open_window)
     window.set_action("open_window", action)
-
+    window.trigger_retranslate_ui()
 
 def retranslate_ui(window: Type[aw_tool.Window], util: Type[tool.Util]):
     action = window.get_action("open_window")
