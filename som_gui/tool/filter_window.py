@@ -365,7 +365,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         all_psets_are_identical = cls.are_all_filters_identical(filter_list)
         if not all_psets_are_identical:
             return False
-        attribute_lists = tool.PropertyCompare.get_attribute_list(pset0)
+        attribute_lists = tool.PropertyCompare.get_property_list(pset0)
         if attribute_lists is None:
             return True
         for a0, a1 in attribute_lists:

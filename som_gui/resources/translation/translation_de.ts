@@ -2,7 +2,7 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="de_DE">
 <context>
-    <name>AttributeCompare</name>
+    <name>PropertyCompare</name>
     <message>
         <location filename="../../tool/property_.py" line="500"/>
         <location filename="../../tool/property_.py" line="514"/>

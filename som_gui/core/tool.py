@@ -2181,7 +2181,7 @@ class PropertyCompare:
     def add_properties_to_pset_tree(self, tree, add_missing):
         pass
 
-    def are_attributes_identical(self, attribute0, attribute1):
+    def are_properties_identical(self, attribute0, attribute1):
         pass
 
     def are_objects_identical(self, object0, object1, check_pset):
@@ -2201,7 +2201,7 @@ class PropertyCompare:
     def clear_tree(self, tree):
         pass
 
-    def compare_attributes(self, attribute0, attribute1):
+    def compare_properties(self, attribute0, attribute1):
         pass
 
     def compare_objects(self, obj0, obj1):
@@ -2231,10 +2231,10 @@ class PropertyCompare:
     ):
         pass
 
-    def export_attribute_check(self, file, type_name, attrib0, attrib1, indent):
+    def export_property_check(self, file, type_name, attrib0, attrib1, indent):
         pass
 
-    def export_attribute_differences(self, file, attribute_list):
+    def export_property_differences(self, file, attribute_list):
         pass
 
     def export_child_check(self, file, type_name, entity0, entity1, indent):
@@ -2285,7 +2285,7 @@ class PropertyCompare:
     def generate_uuid_dict(self, element_list):
         pass
 
-    def get_attribute_list(self, property_set):
+    def get_property_list(self, property_set):
         pass
 
     def get_branch_color(self, index):
@@ -2377,7 +2377,7 @@ class PropertyCompare:
     ):
         pass
 
-    def set_attribute_list(self, property_set, attribute_list):
+    def set_property_list(self, property_set, attribute_list):
         pass
 
     def set_branch_color(self, tree, index, color):

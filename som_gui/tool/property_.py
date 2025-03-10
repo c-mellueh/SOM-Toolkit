@@ -51,57 +51,57 @@ class Property(som_gui.core.tool.Property):
         cls, name: str, getter: Callable, setter: Callable
     ) -> None:
         """
-        Add value to AttributeDataDict
+        Add value to PropertyDataDict
         :param name: Key of Data
         :param getter: getter func to get data
-        :param setter: setter funct to set Attribute Value
+        :param setter: setter funct to set Property Value
         """
         prop = cls.get_properties()
-        prop.attribute_data_dict[name] = {"getter": getter, "setter": setter}
+        prop.property_data_dict[name] = {"getter": getter, "setter": setter}
 
     @classmethod
-    def get_property_data(cls, attribute: SOMcreator.SOMProperty) -> dict[str, Any]:
+    def get_property_data(cls, som_property: SOMcreator.SOMProperty) -> dict[str, Any]:
         """
-        creates dictionary of attribute with Data_name as Key and getter/setter as Value
-        :param attribute:
-        :return: AttributeData dictionary {Data_name:{'getter':Callable, 'setter':Callable},...}
+        creates dictionary of property with Data_name as Key and getter/setter as Value
+        :param som_property:
+        :return: PropertyData dictionary {Data_name:{'getter':Callable, 'setter':Callable},...}
         """
         prop = cls.get_properties()
         d = dict()
-        for name, data_dict in prop.attribute_data_dict.items():
-            value = data_dict["getter"](attribute)
+        for name, data_dict in prop.property_data_dict.items():
+            value = data_dict["getter"](som_property)
             d[name] = value
         return d
 
     @classmethod
     def set_data_by_dict(
-        cls, attribute: SOMcreator.SOMProperty, data_dict: dict[str, str | list]
+        cls, som_property: SOMcreator.SOMProperty, data_dict: dict[str, str | list]
     ) -> None:
         """
-        fill Attribute Values by an Attribute Datadict
-        :param attribute: Attribute of class SOMcreator.Attribute
-        :param data_dict: AttributeData dictionary {Data_name:{'getter':Callable, 'setter':Callable},...}
+        fill Property Values by an Property Datadict
+        :param som_property: Property of class SOMcreator.SOMProperty
+        :param data_dict: PropertyData dictionary {Data_name:{'getter':Callable, 'setter':Callable},...}
         """
         prop = cls.get_properties()
         for name, value in data_dict.items():
-            d = prop.attribute_data_dict.get(name)
+            d = prop.property_data_dict.get(name)
             if not d:
                 logging.warning(f"data {name} not found")
                 continue
-            d["setter"](value, attribute)
+            d["setter"](value, som_property)
 
     @classmethod
     def create_by_dict(
-        cls, attribute_data: dict[str, str | list]
+        cls, property_data: dict[str, str | list]
     ) -> SOMcreator.SOMProperty:
         """
-        create SOMcreator.Attribute from Datadict
-        :param attribute_data: dictionary {Data_name:{'getter':Callable, 'setter':Callable},...}
+        create SOMcreator.SOMProperty from Datadict
+        :param property_data: dictionary {Data_name:{'getter':Callable, 'setter':Callable},...}
         :return:
         """
-        attribute = SOMcreator.SOMProperty()
-        cls.set_data_by_dict(attribute, attribute_data)
-        return attribute
+        som_property = SOMcreator.SOMProperty()
+        cls.set_data_by_dict(som_property, property_data)
+        return som_property
 
     @classmethod
     def set_unit_settings_widget(cls, widget: ui.UnitSettings):
@@ -221,8 +221,8 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         name_dict1: dict[str, T],
     ) -> T | None:
         """
-        find attribute/propertySet that mathches to input. The function searches for the UUID and Identifier if no Element is found return None
-        :param search_element: Attribute/PropertySet for which a match is to be found
+        find property/propertySet that mathches to input. The function searches for the UUID and Identifier if no Element is found return None
+        :param search_element: Property/PropertySet for which a match is to be found
         :param uuid_dict1: Dictiorary of UUIDs to search for Element UUID
         :param name_dict1: Dictiorary of UUIDs to search for Element Name
         :return:
@@ -292,7 +292,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
                         continue
                 cls.compare_property_sets(
                     property_set0, match
-                )  # Compares Attributes in PropertySets
+                )  # Compares Properties in PropertySets
                 match_list.append((property_set0, match))
 
         # Handle PropertySets in the Search-Project that doesn't match to any PropertySet in the Start-Project
@@ -308,64 +308,64 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     @classmethod
     def compare_property_sets(
         cls,
-        pset0: SOMcreator.SOMPropertySet | None,
-        pset1: SOMcreator.SOMPropertySet | None,
+        pset_0: SOMcreator.SOMPropertySet | None,
+        pset_1: SOMcreator.SOMPropertySet | None,
     ) -> Sequence[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]]:
         """
-        Compare two SOMcreator PropertySets by their Attributes.
-        This method generates a list of matched and unmatched Attributes (match_list)
-        for both PropertySets and assigns it to them using the set_attribute_list function
+        Compare two SOMcreator PropertySets by their Properties.
+        This method generates a list of matched and unmatched Properties (match_list)
+        for both PropertySets and assigns it to them using the set_property_list function
         :param pset0: First PropertySet to compare, or None.
         :param pset1: Second PropertySet to compare, or None.
         :return:
         """
-        result_list = cls.create_child_matchup(pset0, pset1)
-        if pset0 is not None:
-            cls.set_value_list(pset0, result_list)
-        if pset1 is not None:
-            cls.set_value_list(pset1, result_list)
+        result_list = cls.create_child_matchup(pset_0, pset_1)
+        if pset_0 is not None:
+            cls.set_value_list(pset_0, result_list)
+        if pset_1 is not None:
+            cls.set_value_list(pset_1, result_list)
 
-        if pset0 is None or pset1 is None:
+        if pset_0 is None or pset_1 is None:
             return []
         # Generate Match Dicts
-        attributes_1 = list(pset1.get_properties(filter=False))
-        attribute_uuid_dict1 = cls.generate_uuid_dict(attributes_1)
-        attribute_name_dict1 = cls.generate_name_dict(attributes_1)
+        properties_1 = list(pset_1.get_properties(filter=False))
+        property_uuid_dict_1 = cls.generate_uuid_dict(properties_1)
+        property_name_dict_1 = cls.generate_name_dict(properties_1)
 
-        missing_attributes1 = list(attributes_1)
+        missing_properties_1 = list(properties_1)
         match_list = list()
 
-        for attribute0 in pset0.get_properties(filter=False):
+        for property_0 in pset_0.get_properties(filter=False):
             match = cls.find_matching_entity(
-                attribute0, attribute_uuid_dict1, attribute_name_dict1
+                property_0, property_uuid_dict_1, property_name_dict_1
             )
             if match is not None:
-                missing_attributes1.remove(match)
-                match_list.append((attribute0, match))
+                missing_properties_1.remove(match)
+                match_list.append((property_0, match))
             else:
-                match_list.append((attribute0, None))
+                match_list.append((property_0, None))
 
-        for attribute1 in missing_attributes1:
-            match_list.append((None, attribute1))
+        for property_1 in missing_properties_1:
+            match_list.append((None, property_1))
 
         for a1, a2 in match_list:
-            cls.compare_attributes(a1, a2)
-        cls.set_attribute_list(pset0, match_list)
-        cls.set_attribute_list(pset1, match_list)
+            cls.compare_properties(a1, a2)
+        cls.set_property_list(pset_0, match_list)
+        cls.set_property_list(pset_1, match_list)
         return match_list
 
     @classmethod
-    def compare_attributes(
-        cls, attribute0: SOMcreator.SOMProperty, attribute1: SOMcreator.SOMProperty
+    def compare_properties(
+        cls, property_0: SOMcreator.SOMProperty, property_1: SOMcreator.SOMProperty
     ):
         """
-        compare two SOMcreator Attributes by their Values
-        :param attribute0:
-        :param attribute1:
+        compare two SOMcreator Properties by their Values
+        :param property_0:
+        :param property_1:
         :return:
         """
-        values0 = set(attribute0.get_own_values()) if attribute0 is not None else set()
-        values1 = set(attribute1.get_own_values()) if attribute1 is not None else set()
+        values0 = set(property_0.get_own_values()) if property_0 is not None else set()
+        values1 = set(property_1.get_own_values()) if property_1 is not None else set()
 
         unique0 = values0.difference(values1)
         main = values0.intersection(values1)
@@ -376,10 +376,10 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
             + [(v, None) for v in unique0]
             + [(None, v) for v in unique1]
         )
-        if attribute0 is not None:
-            cls.set_value_list(attribute0, value_list)
-        if attribute1 is not None:
-            cls.set_value_list(attribute1, value_list)
+        if property_0 is not None:
+            cls.set_value_list(property_0, value_list)
+        if property_1 is not None:
+            cls.set_value_list(property_1, value_list)
 
     @classmethod
     def create_object_lists(cls) -> None:
@@ -496,8 +496,8 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     @classmethod
     def get_pset_info_list(cls):
         info_list = list()
-        name_text = QCoreApplication.translate("AttributeCompare", "Name")
-        c_count_text = QCoreApplication.translate("AttributeCompare", "Child Count")
+        name_text = QCoreApplication.translate("PropertyCompare", "Name")
+        c_count_text = QCoreApplication.translate("PropertyCompare", "Child Count")
         info_list.append((name_text, lambda p: getattr(p, "name")))
         info_list.append(
             (
@@ -510,10 +510,10 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     @classmethod
     def get_property_info_list(cls):
         info_list = list()
-        name_text = QCoreApplication.translate("AttributeCompare", "Name")
-        iv_text = QCoreApplication.translate("AttributeCompare", "Inheriting values")
-        datatype_text = QCoreApplication.translate("AttributeCompare", "Datatype")
-        value_type_text = QCoreApplication.translate("AttributeCompare", "Valuetype")
+        name_text = QCoreApplication.translate("PropertyCompare", "Name")
+        iv_text = QCoreApplication.translate("PropertyCompare", "Inheriting values")
+        datatype_text = QCoreApplication.translate("PropertyCompare", "Datatype")
+        value_type_text = QCoreApplication.translate("PropertyCompare", "Valuetype")
 
         info_list.append((name_text, lambda a: getattr(a, "name")))
         info_list.append((iv_text, lambda a: getattr(a, "child_inherits_values")))
@@ -588,35 +588,33 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
             logging.debug(f"Check index {index}")
             item = root.child(index)
             pset0, pset1 = cls.get_entities_from_item(item)
-            attribute_list = cls.get_attribute_list(pset0) or cls.get_attribute_list(
-                pset1
-            )
-            if attribute_list is None:
-                logging.debug(f"Attribute List is None for {pset0}")
+            property_list = cls.get_property_list(pset0) or cls.get_property_list(pset1)
+            if property_list is None:
+                logging.debug(f"Property List is None for {pset0}")
                 continue
-            for attribute0, attribute1 in attribute_list:
-                attribute_item = QTreeWidgetItem()
-                if attribute0 is not None:
-                    attribute_item.setText(0, attribute0.name)
-                    attribute_item.setData(0, CLASS_REFERENCE, attribute0)
-                if attribute1 is not None:
-                    attribute_item.setText(1, attribute1.name)
-                    attribute_item.setData(1, CLASS_REFERENCE, attribute1)
+            for property_0, property_1 in property_list:
+                property_item = QTreeWidgetItem()
+                if property_0 is not None:
+                    property_item.setText(0, property_0.name)
+                    property_item.setData(0, CLASS_REFERENCE, property_0)
+                if property_1 is not None:
+                    property_item.setText(1, property_1.name)
+                    property_item.setData(1, CLASS_REFERENCE, property_1)
 
-                if (attribute0 and attribute1) or add_missing:
-                    item.addChild(attribute_item)
+                if (property_0 and property_1) or add_missing:
+                    item.addChild(property_item)
 
     @classmethod
     def fill_value_table(
-        cls, table: QTableWidget, attribute: SOMcreator.SOMProperty | None
+        cls, table: QTableWidget, som_property: SOMcreator.SOMProperty | None
     ):
         cls.clear_table(table)
-        if attribute is None:
+        if som_property is None:
             return
-        if cls.get_value_list(attribute) is None:
+        if cls.get_value_list(som_property) is None:
             return
 
-        for value0, value1 in cls.get_value_list(attribute):
+        for value0, value1 in cls.get_value_list(som_property):
             item0 = QTableWidgetItem()
             item1 = QTableWidgetItem()
 
@@ -700,49 +698,49 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         cls,
         property_set0: SOMcreator.SOMPropertySet,
         property_set1: SOMcreator.SOMPropertySet,
-        check_attributes=True,
+        check_properties=True,
     ) -> bool:
         if property_set0 is None or property_set1 is None:
             return False
-        attribute_list = cls.get_attribute_list(property_set0)
-        if not attribute_list:
+        property_list = cls.get_property_list(property_set0)
+        if not property_list:
             return False
 
         checks = list()
 
         checks.append(property_set0.name == property_set1.name)  # names_are_identical
 
-        if check_attributes:
+        if check_properties:
             checks.append(
-                all(cls.are_attributes_identical(a0, a1) for a0, a1 in attribute_list)
-            )  # are attributes identical
+                all(cls.are_properties_identical(a0, a1) for a0, a1 in property_list)
+            )  # are properties identical
         checks.append(cls.children_are_identical(property_set0, property_set1))
         return all(checks)
 
     @classmethod
-    def are_attributes_identical(
-        cls, attribute0: SOMcreator.SOMProperty, attribute1: SOMcreator.SOMProperty
+    def are_properties_identical(
+        cls, property_0: SOMcreator.SOMProperty, property_1: SOMcreator.SOMProperty
     ) -> bool:
 
-        if attribute0 is None or attribute1 is None:
+        if property_0 is None or property_1 is None:
             return False
 
         checks = list()
         checks.append(
-            set(attribute0.get_own_values()) == set(attribute1.get_own_values())
+            set(property_0.get_own_values()) == set(property_1.get_own_values())
         )  # values_are_identical
         if not (
-            attribute0.parent and attribute1.parent
+            property_0.parent and property_1.parent
         ):  # If Datatype is changed by parent dont show in Table
             checks.append(
-                attribute0.data_type == attribute1.data_type
+                property_0.data_type == property_1.data_type
             )  # datatypes_are_identical
             checks.append(
-                attribute0.value_type == attribute1.value_type
+                property_0.value_type == property_1.value_type
             )  # valuetypes_are_identical
-        checks.append(attribute0.name == attribute1.name)  # names_are_identical
+        checks.append(property_0.name == property_1.name)  # names_are_identical
         checks.append(
-            attribute0.child_inherits_values == attribute1.child_inherits_values
+            property_0.child_inherits_values == property_1.child_inherits_values
         )  # Inherits Values
         return all(checks)
 
@@ -793,7 +791,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
                     p1, p2, False
                 )
             else:
-                compare_func = cls.are_attributes_identical
+                compare_func = cls.are_properties_identical
 
             style = 0 if compare_func(entity0, entity1) else 1
         cls.set_tree_row_color(item, style)
@@ -822,8 +820,8 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         """
         Writes to File if one of 2 entities doesn't exist
         """
-        was_deleted = QCoreApplication.translate("AttributeCompare", "was deleted.")
-        was_added = QCoreApplication.translate("AttributeCompare", "was added.")
+        was_deleted = QCoreApplication.translate("PropertyCompare", "was deleted.")
+        was_added = QCoreApplication.translate("PropertyCompare", "was added.")
         if entity0 and not entity1:
             file.write(f"{'   ' * indent}{type_name} '{entity0.name}' {was_deleted}\n")
             return False
@@ -839,7 +837,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         """
         Writes differences between Names of entities to File
         """
-        rename_text = QCoreApplication.translate("AttributeCompare", "was renamed to")
+        rename_text = QCoreApplication.translate("PropertyCompare", "was renamed to")
 
         if entity0.name != entity1.name:
             file.write(
@@ -849,11 +847,11 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         return True
 
     @classmethod
-    def export_attribute_check(
+    def export_property_check(
         cls, file: TextIO, type_name: str, attrib0, attrib1, indent: int
     ) -> bool:
         """
-        Writes differences between Attributes to File
+        Writes differences between Properties to File
         """
         change_list = list()
         if attrib0.get_own_values() != attrib1.get_own_values():
@@ -873,7 +871,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
                 ]
             )
 
-        changed = QCoreApplication.translate("AttributeCompare", "was changed from")
+        changed = QCoreApplication.translate("PropertyCompare", "was changed from")
         for t, v0, v1 in change_list:
             file.write(
                 f"{'   ' * indent}{type_name} '{attrib0.name}' {t} {changed} '{v0}' to '{v1}'\n"
@@ -913,8 +911,8 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     ) -> bool:
         child_matchup = cls.create_child_matchup(entity0, entity1)
         identical = True
-        add_child = QCoreApplication.translate("AttributeCompare", "added child")
-        remove_child = QCoreApplication.translate("AttributeCompare", "removed child")
+        add_child = QCoreApplication.translate("PropertyCompare", "added child")
+        remove_child = QCoreApplication.translate("PropertyCompare", "removed child")
         for c0, c1 in child_matchup:  # ALT,NEU
             if c0 is None:
                 cn = cls.get_name_path(c1)
@@ -964,20 +962,20 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
             cls.export_name_check(file, ps, pset0, pset1, 2)
             cls.export_child_check(file, ps, pset0, pset1, 2)
 
-            attribute_list = cls.get_properties().properties_lists[pset0]
-            cls.export_attribute_differences(file, attribute_list)
+            property_list = cls.get_properties().properties_lists[pset0]
+            cls.export_property_differences(file, property_list)
 
     @classmethod
-    def export_attribute_differences(
+    def export_property_differences(
         cls,
         file: TextIO,
-        attribute_list: list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]],
+        property_list: list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]],
     ):
-        at = "Attribute"
+        at = "Property"
         for attrib0, attrib1 in sorted(
-            attribute_list, key=lambda x: x[0].name if x[0] is not None else "aaa"
+            property_list, key=lambda x: x[0].name if x[0] is not None else "aaa"
         ):
-            if cls.are_attributes_identical(attrib0, attrib1):
+            if cls.are_properties_identical(attrib0, attrib1):
                 continue
 
             both_exist = cls.export_existance_check(file, at, attrib0, attrib1, 2)
@@ -985,7 +983,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
                 continue
             cls.export_child_check(file, at, attrib0, attrib1, 2)
             cls.export_name_check(file, at, attrib0, attrib1, 2)
-            cls.export_attribute_check(file, at, attrib0, attrib1, 2)
+            cls.export_property_check(file, at, attrib0, attrib1, 2)
 
     # GETTER & SETTER
 
@@ -1034,18 +1032,18 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         cls.get_properties().pset_lists[obj] = pset_list
 
     @classmethod
-    def get_attribute_list(
+    def get_property_list(
         cls, property_set: SOMcreator.SOMPropertySet
     ) -> list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]] | None:
         return cls.get_properties().properties_lists.get(property_set)
 
     @classmethod
-    def set_attribute_list(
+    def set_property_list(
         cls,
         property_set: SOMcreator.SOMPropertySet,
-        attribute_list: list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]],
+        property_list: list[tuple[SOMcreator.SOMProperty, SOMcreator.SOMProperty]],
     ):
-        cls.get_properties().properties_lists[property_set] = attribute_list
+        cls.get_properties().properties_lists[property_set] = property_list
 
     @classmethod
     def get_value_list(cls, entity: T) -> Sequence[tuple[T | None, T | None]]:
