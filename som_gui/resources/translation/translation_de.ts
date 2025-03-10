@@ -212,32 +212,32 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="51"/>
+        <location filename="../../core/property_table.py" line="51"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="52"/>
+        <location filename="../../core/property_table.py" line="52"/>
         <source>Datatype</source>
         <translation>Datentyp</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="53"/>
+        <location filename="../../core/property_table.py" line="53"/>
         <source>Valuetype</source>
         <translation>Werttyp</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="54"/>
+        <location filename="../../core/property_table.py" line="54"/>
         <source>Value</source>
         <translation>Wert</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="55"/>
+        <location filename="../../core/property_table.py" line="55"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_table.py" line="57"/>
+        <location filename="../../core/property_table.py" line="57"/>
         <source>Unit</source>
         <translation>Einheit</translation>
     </message>
@@ -1965,27 +1965,27 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>table</name>
     <message>
-        <location filename="../../tool/attribute_table.py" line="294"/>
+        <location filename="../../tool/property_table.py" line="294"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute_table.py" line="328"/>
+        <location filename="../../tool/property_table.py" line="328"/>
         <source>Delete (with subattributes)</source>
         <translation>Löschen (mit Kindattributen)</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute_table.py" line="330"/>
+        <location filename="../../tool/property_table.py" line="330"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute_table.py" line="355"/>
+        <location filename="../../tool/property_table.py" line="355"/>
         <source>Remove Connection</source>
         <translation>Verbindung entfernen</translation>
     </message>
     <message>
-        <location filename="../../tool/attribute_table.py" line="381"/>
+        <location filename="../../tool/property_table.py" line="381"/>
         <source>Connect to Parent</source>
         <translation>Mit Elternelement verbinden</translation>
     </message>

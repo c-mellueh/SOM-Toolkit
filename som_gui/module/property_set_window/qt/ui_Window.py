@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComb
     QWidget)
 
 from som_gui.module.property_.ui import UnitComboBox
-from som_gui.module.attribute_table.ui import AttributeTable
+from som_gui.module.property_table.ui import PropertyTable
 
 class Ui_PropertySetWindow(object):
     def setupUi(self, PropertySetWindow):
@@ -162,7 +162,7 @@ class Ui_PropertySetWindow(object):
         self.gridLayout.addWidget(self.label_values, 4, 2, 1, 1)
 
         self.splitter_2.addWidget(self.gridLayoutWidget)
-        self.table_widget = AttributeTable(self.splitter_2)
+        self.table_widget = PropertyTable(self.splitter_2)
         if (self.table_widget.rowCount() < 5):
             self.table_widget.setRowCount(5)
         self.table_widget.setObjectName(u"table_widget")

@@ -39,5 +39,5 @@ def export(
         export_excel.autoadjust_column_widths(work_sheet)
 
     work_sheet = workbook.create_sheet("Attribute Mapping")
-    export_excel.create_attribute_table(object_list, work_sheet)
+    export_excel.create_property_table(object_list, work_sheet)
     workbook.save(path)

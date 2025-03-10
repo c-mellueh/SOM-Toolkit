@@ -5,7 +5,7 @@ from som_gui.tool.attribute_import import (
     AttributeImportResults,
     AttributeImportSQL,
 )
-from som_gui.tool.attribute_table import AttributeTable
+from som_gui.tool.property_table import PropertyTable
 from som_gui.tool.bsdd import Bsdd
 from som_gui.tool.compare import CompareProjectSelector, CompareWindow
 from som_gui.tool.console import Console

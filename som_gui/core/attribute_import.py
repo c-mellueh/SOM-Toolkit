@@ -141,7 +141,7 @@ def init_database(
     status_text = QCoreApplication.translate(
         "AttributeImport", "Import Attributes from SOM"
     )
-    attribute_table = list()
+    property_table = list()
     filter_table = []
 
     for index, attribute in enumerate(all_attributes):
@@ -156,16 +156,16 @@ def init_database(
         )
 
         if not attribute.allowed_values:
-            attribute_table.append(
+            property_table.append(
                 attribute_import_sql.add_attribute_without_value(attribute)
             )
         else:
-            attribute_table += attribute_import_sql.add_attribute_with_value(attribute)
+            property_table += attribute_import_sql.add_attribute_with_value(attribute)
 
     attribute_import_sql.connect_to_data_base(db_path)
     attribute_import_sql.fill_filter_table(proj)
     attribute_import_sql.fill_attribute_filter_table(filter_table)
-    attribute_import_sql.fill_som_attribute(attribute_table)
+    attribute_import_sql.fill_som_attribute(property_table)
     attribute_import_sql.disconnect_from_database()
 
     util.set_progress(progress_bar, 100)
@@ -371,16 +371,16 @@ def update_property_set_table(
         attribute_import_results.update_table_widget(
             set(property_set_list), table_widget, [str, int]
         )
-    update_attribute_table(attribute_import_results, attribute_import_sql)
+    update_property_table(attribute_import_results, attribute_import_sql)
 
 
-def update_attribute_table(
+def update_property_table(
     attribute_import_results: Type[tool.AttributeImportResults],
     attribute_import_sql: Type[tool.AttributeImportSQL],
 ):
     logging.debug("Update Attribute table")
 
-    table_widget = attribute_import_results.get_attribute_table()
+    table_widget = attribute_import_results.get_property_table()
     ifc_type, identifier, property_set, attribute = (
         attribute_import_results.get_input_variables()
     )
@@ -396,7 +396,7 @@ def update_attribute_table(
             set(attribute_list), table_widget, [str, int, int]
         )
 
-    attribute_import_results.update_attribute_table_styling()
+    attribute_import_results.update_property_table_styling()
     update_value_table(attribute_import_results, attribute_import_sql)
 
 

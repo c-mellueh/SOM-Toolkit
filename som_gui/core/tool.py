@@ -159,7 +159,7 @@ class AttributeImportResults:
     def get_attribute_item_text_color(self, row):
         pass
 
-    def get_attribute_table(
+    def get_property_table(
         self,
     ):
         pass
@@ -249,7 +249,7 @@ class AttributeImportResults:
     ):
         pass
 
-    def update_attribute_table_styling(
+    def update_property_table_styling(
         self,
     ):
         pass
@@ -423,7 +423,7 @@ class AttributeImportSQL:
         pass
 
 
-class AttributeTable:
+class PropertyTable:
     def add_attributes_to_table(self, attributes, table):
         pass
 
@@ -460,7 +460,7 @@ class AttributeTable:
     def format_row_value(self, item, value):
         pass
 
-    def get_attribute_table_header_names(
+    def get_header_labels(
         self,
     ):
         pass
@@ -1526,7 +1526,7 @@ class MainWindow:
     ):
         pass
 
-    def get_attribute_table(
+    def get_property_table(
         self,
     ):
         pass
@@ -1993,7 +1993,7 @@ class ModelcheckExternal:
     ):
         pass
 
-    def export_desite_attribute_table(
+    def export_desite_property_table(
         self,
     ):
         pass

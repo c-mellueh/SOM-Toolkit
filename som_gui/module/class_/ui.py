@@ -4,7 +4,7 @@ from som_gui.module import class_
 from som_gui.resources.icons import get_icon
 
 
-class ObjectTreeWidget(QTreeWidget):
+class ClassTreeWidget(QTreeWidget):
 
     def __init__(self, parent: QWidget):
         super().__init__(parent)

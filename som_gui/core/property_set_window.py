@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Type
 import logging
 import SOMcreator
 from SOMcreator.constants.value_constants import RANGE
-from som_gui.core import attribute_table as attribute_table_core
+from som_gui.core import property_table as property_table_core
 from som_gui.module.property_set_window.constants import (
     SEPERATOR,
     SEPERATOR_SECTION,
@@ -69,7 +69,7 @@ def add_value_button_clicked(
 def open_pset_window(
     property_set: SOMcreator.SOMPropertySet,
     property_set_window: Type[tool.PropertySetWindow],
-    attribute_table: Type[tool.AttributeTable],
+    property_table: Type[tool.PropertyTable],
 ):
     existing_window = property_set_window.get_window_by_property_set(property_set)
     if existing_window is not None:
@@ -81,8 +81,8 @@ def open_pset_window(
     property_set_window.connect_window_triggers(window)
     property_set_window.fill_window_title(window, property_set)
     table = property_set_window.get_table(window)
-    attribute_table.set_property_set_of_table(table, property_set)
-    attribute_table_core.update_attribute_table(table, attribute_table)
+    property_table.set_property_set_of_table(table, property_set)
+    property_table_core.update_table(table, property_table)
     table.resizeColumnsToContents()
     property_set_window.update_datatype_completer(window)
     property_set_window.update_valuetype_completer(window)
@@ -124,10 +124,10 @@ def handle_paste_event(
 def repaint_pset_window(
     window: ui.PropertySetWindow,
     property_set_window: Type[tool.PropertySetWindow],
-    attribute_table: Type[tool.AttributeTable],
+    property_table: Type[tool.PropertyTable],
 ):
     table = property_set_window.get_table(window)
-    attribute_table_core.update_attribute_table(table, attribute_table)
+    property_table_core.update_table(table, property_table)
 
     property_set_window.update_add_button(window)
     property_set_window.update_line_validators(window)
@@ -147,10 +147,10 @@ def value_type_changed(
 
 def attribute_clicked(
     item: QTableWidgetItem,
-    attribute_table: Type[tool.AttributeTable],
+    property_table: Type[tool.PropertyTable],
     property_set_window: Type[tool.PropertySetWindow],
 ):
-    active_attribute = attribute_table.get_property_from_item(item)
+    active_attribute = property_table.get_property_from_item(item)
     window = item.tableWidget().window()
     activate_property(active_attribute, window, property_set_window)
 

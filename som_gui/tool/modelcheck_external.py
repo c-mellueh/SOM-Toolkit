@@ -60,7 +60,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
         desite_menu = [
             [js_text, cls.export_desite_js],
             [jsf_text, cls.export_desite_fast],
-            [ar_text, cls.export_desite_attribute_table],
+            [ar_text, cls.export_desite_property_table],
             [csv_text, cls.export_desite_csv],
         ]
 
@@ -159,7 +159,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
         )
 
     @classmethod
-    def export_desite_attribute_table(cls):
+    def export_desite_property_table(cls):
         pset_name, attribute_name = cls.get_main_property()
 
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"

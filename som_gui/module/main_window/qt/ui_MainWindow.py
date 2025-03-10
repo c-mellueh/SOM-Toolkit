@@ -22,9 +22,9 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHB
     QStatusBar, QTableWidgetItem, QTreeWidgetItem, QVBoxLayout,
     QWidget)
 
-from som_gui.module.attribute_table.ui import AttributeTable
-from som_gui.module.class_.ui import ObjectTreeWidget
+from som_gui.module.class_.ui import ClassTreeWidget
 from som_gui.module.property_set.ui import PsetTableWidget
+from som_gui.module.property_table.ui import PropertyTable
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -43,28 +43,28 @@ class Ui_MainWindow(object):
         self.splitter.setOrientation(Qt.Orientation.Horizontal)
         self.layoutWidget = QWidget(self.splitter)
         self.layoutWidget.setObjectName(u"layoutWidget")
-        self.verticalLayout_objects = QVBoxLayout(self.layoutWidget)
-        self.verticalLayout_objects.setObjectName(u"verticalLayout_objects")
-        self.verticalLayout_objects.setContentsMargins(0, 0, 5, 0)
-        self.gridLayout_objects = QGridLayout()
-        self.gridLayout_objects.setObjectName(u"gridLayout_objects")
-        self.label_object = QLabel(self.layoutWidget)
-        self.label_object.setObjectName(u"label_object")
+        self.verticalLayout_classes = QVBoxLayout(self.layoutWidget)
+        self.verticalLayout_classes.setObjectName(u"verticalLayout_classes")
+        self.verticalLayout_classes.setContentsMargins(0, 0, 5, 0)
+        self.gridLayout_classes = QGridLayout()
+        self.gridLayout_classes.setObjectName(u"gridLayout_classes")
+        self.label_class = QLabel(self.layoutWidget)
+        self.label_class.setObjectName(u"label_class")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_object.sizePolicy().hasHeightForWidth())
-        self.label_object.setSizePolicy(sizePolicy)
-        self.label_object.setMinimumSize(QSize(30, 0))
-        self.label_object.setLineWidth(1)
+        sizePolicy.setHeightForWidth(self.label_class.sizePolicy().hasHeightForWidth())
+        self.label_class.setSizePolicy(sizePolicy)
+        self.label_class.setMinimumSize(QSize(30, 0))
+        self.label_class.setLineWidth(1)
 
-        self.gridLayout_objects.addWidget(self.label_object, 0, 1, 1, 1)
+        self.gridLayout_classes.addWidget(self.label_class, 0, 1, 1, 1)
 
-        self.button_objects_add = QPushButton(self.layoutWidget)
-        self.button_objects_add.setObjectName(u"button_objects_add")
-        self.button_objects_add.setAutoDefault(True)
+        self.button_classes_add = QPushButton(self.layoutWidget)
+        self.button_classes_add.setObjectName(u"button_classes_add")
+        self.button_classes_add.setAutoDefault(True)
 
-        self.gridLayout_objects.addWidget(self.button_objects_add, 0, 3, 1, 1)
+        self.gridLayout_classes.addWidget(self.button_classes_add, 0, 3, 1, 1)
 
         self.button_search = QPushButton(self.layoutWidget)
         self.button_search.setObjectName(u"button_search")
@@ -79,39 +79,38 @@ class Ui_MainWindow(object):
         self.button_search.setIcon(icon)
         self.button_search.setIconSize(QSize(16, 16))
 
-        self.gridLayout_objects.addWidget(self.button_search, 0, 0, 1, 1)
+        self.gridLayout_classes.addWidget(self.button_search, 0, 0, 1, 1)
 
-        self.label_object_name = QLabel(self.layoutWidget)
-        self.label_object_name.setObjectName(u"label_object_name")
+        self.label_class_name = QLabel(self.layoutWidget)
+        self.label_class_name.setObjectName(u"label_class_name")
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy2.setHorizontalStretch(1)
         sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.label_object_name.sizePolicy().hasHeightForWidth())
-        self.label_object_name.setSizePolicy(sizePolicy2)
+        sizePolicy2.setHeightForWidth(self.label_class_name.sizePolicy().hasHeightForWidth())
+        self.label_class_name.setSizePolicy(sizePolicy2)
 
-        self.gridLayout_objects.addWidget(self.label_object_name, 0, 2, 1, 1)
+        self.gridLayout_classes.addWidget(self.label_class_name, 0, 2, 1, 1)
 
 
-        self.verticalLayout_objects.addLayout(self.gridLayout_objects)
+        self.verticalLayout_classes.addLayout(self.gridLayout_classes)
 
-        self.tree_object = ObjectTreeWidget(self.layoutWidget)
+        self.tree_class = ClassTreeWidget(self.layoutWidget)
         __qtreewidgetitem = QTreeWidgetItem()
         __qtreewidgetitem.setText(0, u"1");
-        self.tree_object.setHeaderItem(__qtreewidgetitem)
-        self.tree_object.setObjectName(u"tree_object")
-        self.tree_object.setEnabled(True)
-        self.tree_object.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.tree_object.setDragEnabled(True)
-        self.tree_object.setDragDropOverwriteMode(False)
-        self.tree_object.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
-        self.tree_object.setDefaultDropAction(Qt.DropAction.MoveAction)
-        self.tree_object.setAlternatingRowColors(False)
-        self.tree_object.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        self.tree_object.setSortingEnabled(True)
-        self.tree_object.setExpandsOnDoubleClick(False)
-        self.tree_object.header().setProperty(u"showSortIndicator", True)
+        self.tree_class.setHeaderItem(__qtreewidgetitem)
+        self.tree_class.setObjectName(u"tree_class")
+        self.tree_class.setEnabled(True)
+        self.tree_class.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.tree_class.setDragEnabled(True)
+        self.tree_class.setDragDropOverwriteMode(False)
+        self.tree_class.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+        self.tree_class.setDefaultDropAction(Qt.DropAction.MoveAction)
+        self.tree_class.setAlternatingRowColors(False)
+        self.tree_class.setSortingEnabled(True)
+        self.tree_class.setExpandsOnDoubleClick(False)
+        self.tree_class.header().setProperty(u"showSortIndicator", True)
 
-        self.verticalLayout_objects.addWidget(self.tree_object)
+        self.verticalLayout_classes.addWidget(self.tree_class)
 
         self.splitter.addWidget(self.layoutWidget)
         self.verticalLayoutWidget = QWidget(self.splitter)
@@ -172,7 +171,7 @@ class Ui_MainWindow(object):
         self.vertical_layout_pset.addWidget(self.table_pset)
 
         self.splitter.addWidget(self.verticalLayoutWidget)
-        self.table_attribute = AttributeTable(self.splitter)
+        self.table_attribute = PropertyTable(self.splitter)
         self.table_attribute.setObjectName(u"table_attribute")
         self.table_attribute.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.table_attribute.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
@@ -200,8 +199,8 @@ class Ui_MainWindow(object):
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
-        QWidget.setTabOrder(self.button_objects_add, self.tree_object)
-        QWidget.setTabOrder(self.tree_object, self.button_search)
+        QWidget.setTabOrder(self.button_classes_add, self.tree_class)
+        QWidget.setTabOrder(self.tree_class, self.button_search)
         QWidget.setTabOrder(self.button_search, self.button_Pset_add)
         QWidget.setTabOrder(self.button_Pset_add, self.table_attribute)
 
@@ -219,10 +218,10 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"SOMToolkit", None))
         self.actiondqwd.setText(QCoreApplication.translate("MainWindow", u"dqwd", None))
-        self.label_object.setText(QCoreApplication.translate("MainWindow", u"Class:", None))
-        self.button_objects_add.setText(QCoreApplication.translate("MainWindow", u"New", None))
+        self.label_class.setText(QCoreApplication.translate("MainWindow", u"Class:", None))
+        self.button_classes_add.setText(QCoreApplication.translate("MainWindow", u"New", None))
         self.button_search.setText("")
-        self.label_object_name.setText("")
+        self.label_class_name.setText("")
         self.label_pset.setText(QCoreApplication.translate("MainWindow", u"PropertySet:", None))
         self.label_pset_name.setText("")
         self.button_Pset_add.setText(QCoreApplication.translate("MainWindow", u"New", None))

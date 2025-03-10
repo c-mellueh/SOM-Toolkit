@@ -25,7 +25,7 @@ from som_gui.module.class_ import trigger, constants
 
 if TYPE_CHECKING:
     from som_gui.module.class_.prop import ClassProperties, ContextMenuDict
-    from som_gui.module.class_.ui import ObjectTreeWidget
+    from som_gui.module.class_.ui import ClassTreeWidget
     from som_gui.module.class_info.prop import ClassDataDict
 
 
@@ -315,7 +315,7 @@ class Class(som_gui.core.tool.Class):
                 setter_func(item, column)
 
     @classmethod
-    def get_class_tree(cls) -> ObjectTreeWidget:
+    def get_class_tree(cls) -> ClassTreeWidget:
         return tool.MainWindow.get_object_tree_widget()
 
     @classmethod
