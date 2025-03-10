@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication,
     QLayout, QPushButton, QSizePolicy, QSplitter,
     QTableWidgetItem, QVBoxLayout, QWidget)
 
-from som_gui.module.attribute_import.ui import (AttributeTable, IfcTypeComboBox, PropertySetTable, SOMTypeComboBox,
+from som_gui.module.property_import.ui import (AttributeTable, IfcTypeComboBox, PropertySetTable, SOMTypeComboBox,
     ValueTable)
 
 class Ui_PropertyImport(object):
@@ -209,7 +209,6 @@ class Ui_PropertyImport(object):
 
         self.buttonBox = QDialogButtonBox(PropertyImport)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
 
         self.horzontal_layout_action_buttons.addWidget(self.buttonBox)
 

@@ -63,7 +63,7 @@ def connect_ifc_import_runner(runner: IfcImportRunner):
 
 def connect_property_import_runner(runner: PropertyImportRunner):
     runner.signaller.finished.connect(
-        lambda: core.attribute_import_finished(tool.PropertyImport, tool.IfcImporter)
+        lambda: core.property_import_finished(tool.PropertyImport, tool.IfcImporter)
     )
     runner.signaller.status.connect(
         lambda s: tool.Util.set_status(runner.progress_bar, s)
@@ -77,8 +77,8 @@ def last_import_finished():
     core.last_import_finished(tool.PropertyImport, tool.PropertyImportSQL)
 
 
-def start_attribute_import(runner: PropertyImportRunner):
-    core.start_attribute_import(
+def start_property_import(runner: PropertyImportRunner):
+    core.start_property_import(
         runner,
         tool.PropertyImport,
         tool.PropertyImportResults,
@@ -162,6 +162,6 @@ def on_new_project():
 
 
 def download_clicked():
-    core.export_attributes(
+    core.export_properties(
         tool.PropertyImportResults, tool.PropertyImportSQL, tool.Appdata, tool.Popups
     )

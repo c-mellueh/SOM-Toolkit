@@ -37,7 +37,7 @@ class PropertyImportRunner(QRunnable):
         self.progress_bar: Progressbar = progress_bar
 
     def run(self):
-        trigger.start_attribute_import(self)
+        trigger.start_property_import(self)
         self.signaller.finished.emit()
 
 

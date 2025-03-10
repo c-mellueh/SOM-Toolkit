@@ -67,124 +67,124 @@
 <context>
     <name>AttributeImport</name>
     <message>
-        <location filename="../../core/attribute_import.py" line="44"/>
-        <location filename="../../core/attribute_import.py" line="49"/>
-        <location filename="../../core/attribute_import.py" line="59"/>
+        <location filename="../../core/property_import.py" line="44"/>
+        <location filename="../../core/property_import.py" line="49"/>
+        <location filename="../../core/property_import.py" line="59"/>
         <source>Import Values</source>
         <translation>Werte importieren</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="55"/>
+        <location filename="../../core/property_import.py" line="55"/>
         <source>IFC Path</source>
         <translation>IFC Pfad</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="105"/>
+        <location filename="../../core/property_import.py" line="105"/>
         <source>Abort</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="120"/>
+        <location filename="../../core/property_import.py" line="120"/>
         <source>Import {}</source>
         <translation>Importiere {}</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="144"/>
+        <location filename="../../core/property_import.py" line="144"/>
         <source>Import Attributes from SOM</source>
         <translation>Importiere Attribute von SOM</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="202"/>
+        <location filename="../../core/property_import.py" line="202"/>
         <source>Import Done!</source>
         <translation>Import Abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="228"/>
+        <location filename="../../core/property_import.py" line="228"/>
         <source>Import entity from file:</source>
         <translation>Importiere Entität von Datei:</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="245"/>
+        <location filename="../../core/property_import.py" line="245"/>
         <source>import of &apos;{}&apos; entities done!</source>
         <translation>Import von &apos;{}&apos; Entitäten abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="512"/>
+        <location filename="../../core/property_import.py" line="512"/>
         <source>Settings v</source>
         <translation>Einstellungen v</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="569"/>
+        <location filename="../../core/property_import.py" line="569"/>
         <source>Export Attribute Data</source>
         <translation>Exportere Attributdaten</translation>
     </message>
     <message>
-        <location filename="../../core/attribute_import.py" line="578"/>
+        <location filename="../../core/property_import.py" line="578"/>
         <source>Export Done!</source>
         <translation>Export abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/SettingsWidget.ui" line="14"/>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="14"/>
         <source>Dialog</source>
         <translation>Dialog</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/SettingsWidget.ui" line="23"/>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="23"/>
         <source>show IfcBoolean</source>
         <translation>IFCBoolean anzeigen</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/SettingsWidget.ui" line="33"/>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="33"/>
         <source>show RegEx</source>
         <translation>RegEx Expressions anzeigen</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/SettingsWidget.ui" line="43"/>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="43"/>
         <source>show Range</source>
         <translation>Wertebereich anzeigen</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/SettingsWidget.ui" line="53"/>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="53"/>
         <source>show allready Existing</source>
         <translation>Bereits existierende Werte anzeigen</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/SettingsWidget.ui" line="66"/>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="66"/>
         <source>color Data</source>
         <translation>Daten einfärben</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/SettingsWidget.ui" line="76"/>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="76"/>
         <source>filter by Usecase/Phase</source>
         <translation>durch Anwedungsfall/Phase filtern</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/Widget.ui" line="26"/>
+        <location filename="../../module/property_import/qt/Widget.ui" line="26"/>
         <source>Form</source>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/Widget.ui" line="58"/>
+        <location filename="../../module/property_import/qt/Widget.ui" line="58"/>
         <source>Count</source>
         <translation>Anzahl</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/Widget.ui" line="95"/>
+        <location filename="../../module/property_import/qt/Widget.ui" line="95"/>
         <source>PropertySets</source>
         <translation>PropertySets</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/Widget.ui" line="167"/>
+        <location filename="../../module/property_import/qt/Widget.ui" line="167"/>
         <source>Attribute</source>
         <translation>Attribut</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/Widget.ui" line="244"/>
+        <location filename="../../module/property_import/qt/Widget.ui" line="244"/>
         <source>All</source>
         <translation>Alles</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/qt/Widget.ui" line="275"/>
+        <location filename="../../module/property_import/qt/Widget.ui" line="275"/>
         <source>Values</source>
         <translation>Werte</translation>
     </message>
@@ -196,18 +196,18 @@
 <context>
     <name>AttributeTable</name>
     <message>
-        <location filename="../../module/attribute_import/ui.py" line="47"/>
+        <location filename="../../module/property_import/ui.py" line="47"/>
         <source>Attribute</source>
         <translation>Attribut</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/ui.py" line="47"/>
+        <location filename="../../module/property_import/ui.py" line="47"/>
         <source>Count</source>
         <translatorcomment>Eindeutig</translatorcomment>
         <translation>Anzahl</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/ui.py" line="47"/>
+        <location filename="../../module/property_import/ui.py" line="47"/>
         <source>Unique</source>
         <translation></translation>
     </message>
@@ -1604,12 +1604,12 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>PropertySetTable</name>
     <message>
-        <location filename="../../module/attribute_import/ui.py" line="25"/>
+        <location filename="../../module/property_import/ui.py" line="25"/>
         <source>PropertySet</source>
         <translation>PropertySet</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/ui.py" line="25"/>
+        <location filename="../../module/property_import/ui.py" line="25"/>
         <source>Count</source>
         <translation>Anzahl</translation>
     </message>
@@ -1940,17 +1940,17 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>ValueTable</name>
     <message>
-        <location filename="../../module/attribute_import/ui.py" line="56"/>
+        <location filename="../../module/property_import/ui.py" line="56"/>
         <source>Accept</source>
         <translation>Akzeptieren</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/ui.py" line="56"/>
+        <location filename="../../module/property_import/ui.py" line="56"/>
         <source>Value</source>
         <translation>Wert</translation>
     </message>
     <message>
-        <location filename="../../module/attribute_import/ui.py" line="56"/>
+        <location filename="../../module/property_import/ui.py" line="56"/>
         <source>Count</source>
         <translation>Anzahl</translation>
     </message>
