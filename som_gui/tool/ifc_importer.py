@@ -53,7 +53,7 @@ class IfcImportRunner(QRunnable):
 
 class IfcImporter(som_gui.core.tool.IfcImporter):
     @classmethod
-    def check_inputs(cls, ifc_paths, main_pset, main_attribute):
+    def check_inputs(cls, ifc_paths, main_pset, main_property):
         for path in ifc_paths:
             if not os.path.isfile(path):
                 tool.Popups.create_file_dne_warning(path)
@@ -66,8 +66,8 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
             tool.Popups.create_warning_popup(text)
             return False
 
-        if not main_attribute:
-            text = QCoreApplication.translate("IfcImporter", "Attribute Name is empty")
+        if not main_property:
+            text = QCoreApplication.translate("IfcImporter", "Property Name is empty")
 
             tool.Popups.create_warning_popup(text)
             return False
@@ -79,11 +79,11 @@ class IfcImporter(som_gui.core.tool.IfcImporter):
 
     @classmethod
     def get_main_pset(cls, widget: ui.IfcImportWidget) -> str:
-        return widget.ui.main_attribute_widget.ui.le_pset_name.text()
+        return widget.ui.main_property_widget.ui.le_pset_name.text()
 
     @classmethod
     def get_main_property(cls, widget: ui.IfcImportWidget) -> str:
-        return widget.ui.main_attribute_widget.ui.le_attribute_name.text()
+        return widget.ui.main_property_widget.ui.le_property_name.text()
 
     @classmethod
     def set_status(cls, runner: IfcImportRunner, status: str):

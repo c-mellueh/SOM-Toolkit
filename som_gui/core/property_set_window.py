@@ -31,27 +31,27 @@ def inherit_checkbox_toggled(
     window: ui.PropertySetWindow, property_set_window: Type[tool.PropertySetWindow]
 ):
     state = property_set_window.get_inherit_checkbox_state(window)
-    active_attribute = property_set_window.get_active_attribute(window)
-    if active_attribute:
-        active_attribute.child_inherits_values = state
+    active_property = property_set_window.get_active_property(window)
+    if active_property:
+        active_property.child_inherits_values = state
 
 
-def add_attribute_button_clicked(
+def add_property_button_clicked(
     window: ui.PropertySetWindow,
     property_set: Type[tool.PropertySet],
     property_set_window: Type[tool.PropertySetWindow],
-    attribute: Type[tool.Property],
+    property_: Type[tool.Property],
 ):
     pset = property_set_window.get_property_set_by_window(window)
-    attribute_name = property_set_window.get_property_name_input(window)
+    property_name = property_set_window.get_property_name_input(window)
 
-    old_attribute = property_set.get_attribute_by_name(pset, attribute_name)
-    attribute_data = property_set_window.get_attribute_data(window)
-    if old_attribute is None:
-        new_attribute = attribute.create_attribute_by_dict(attribute_data)
-        new_attribute.property_set = pset
+    old_property = property_set.get_property_by_name(pset, property_name)
+    property_data = property_set_window.get_property_data(window)
+    if old_property is None:
+        new_property = property_.create_by_dict(property_data)
+        new_property.property_set = pset
     else:
-        attribute.set_attribute_data_by_dict(old_attribute, attribute_data)
+        property_.set_data_by_dict(old_property, property_data)
     property_set_window.clear_values(window)
 
 
@@ -133,13 +133,13 @@ def repaint_pset_window(
     property_set_window.update_add_button(window)
     property_name = property_set_window.get_property_name_input(window)
     pset = property_set_window.get_property_set_by_window(window)
-    som_property: SOMcreator.SOMProperty = property_set.get_attribute_by_name(
+    som_property: SOMcreator.SOMProperty = property_set.get_property_by_name(
         pset, property_name
     )
     if som_property is not None and som_property.is_child:
-        property_set_window.set_comboboxes_enabled(False,window)
+        property_set_window.set_comboboxes_enabled(False, window)
     else:
-        property_set_window.set_comboboxes_enabled(True,window)
+        property_set_window.set_comboboxes_enabled(True, window)
     property_set_window.update_line_validators(window)
 
 
@@ -155,35 +155,35 @@ def value_type_changed(
         property_set_window.remove_data_type_restriction(window)
 
 
-def attribute_clicked(
+def property_clicked(
     item: QTableWidgetItem,
     property_table: Type[tool.PropertyTable],
     property_set_window: Type[tool.PropertySetWindow],
 ):
-    active_attribute = property_table.get_property_from_item(item)
+    active_property = property_table.get_property_from_item(item)
     window = item.tableWidget().window()
-    activate_property(active_attribute, window, property_set_window)
+    activate_property(active_property, window, property_set_window)
 
 
 def activate_property(
-    active_attribute: SOMcreator.SOMProperty,
+    active_property: SOMcreator.SOMProperty,
     window,
     property_set_window: Type[tool.PropertySetWindow],
 ):
-    property_set_window.set_attribute_name(active_attribute.name, window)
-    property_set_window.set_data_type(active_attribute.data_type, window)
-    property_set_window.set_value_type(active_attribute.value_type, window)
-    property_set_window.set_description(active_attribute.description, window)
-    property_set_window.set_comboboxes_enabled(active_attribute.is_child, window)
+    property_set_window.set_property_name(active_property.name, window)
+    property_set_window.set_data_type(active_property.data_type, window)
+    property_set_window.set_value_type(active_property.value_type, window)
+    property_set_window.set_description(active_property.description, window)
+    property_set_window.set_comboboxes_enabled(active_property.is_child, window)
     property_set_window.set_inherit_checkbox_state(
-        active_attribute.child_inherits_values, window
+        active_property.child_inherits_values, window
     )
-    property_set_window.set_unit(active_attribute.unit, window)
+    property_set_window.set_unit(active_property.unit, window)
 
     property_set_window.clear_values(window)
-    property_set_window.set_values(active_attribute, window)
-    if not active_attribute.allowed_values:
-        if active_attribute.value_type == RANGE:
+    property_set_window.set_values(active_property, window)
+    if not active_property.allowed_values:
+        if active_property.value_type == RANGE:
             property_set_window.add_value_line(2, window)
         else:
             property_set_window.add_value_line(1, window)

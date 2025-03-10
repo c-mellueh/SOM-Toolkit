@@ -16,13 +16,13 @@ class GroupingWindowProperties:
     export_button: QPushButton | None = None
     export_line_edit: QLineEdit | None = None
     abort: bool = False
-    main_attribute: tuple[str, str] = ("", "")
-    grouping_attribute: tuple[str, str] = ("", "")
+    main_property: tuple[str, str] = ("", "")
+    group_property: tuple[str, str] = ("", "")
     export_path: str = ""
     ifc_import_runners: list[IfcImportRunner] = list()
     ifc_name: str = ""
     thread_pool = None
-    identity_attribute = "identitaet"
+    identity_property = "identitaet"
     create_empty_attribues: bool = True
     is_running = False
     actions: dict[str, QAction] = dict()

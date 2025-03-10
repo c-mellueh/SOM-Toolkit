@@ -15,7 +15,7 @@ import som_gui.plugins.aggregation_window.core.tool
 from ..module.grouping_window import trigger
 from ..module.grouping_window import ui as grouping_ui
 from ..module.grouping_window.constants import (
-    GROUP_ATTRIBUTE,
+    GROUP_PROPERTY,
     GROUP_FOLDER,
     GROUP_PSET,
     IFC_MOD,
@@ -96,19 +96,19 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def read_inputs(cls):
-        group_pset_name, group_attribute_name = tool.Util.get_property(
+        group_pset_name, group_property_name = tool.Util.get_property(
             cls.get().ui.widget_group_property
         )
-        main_pset_name, main_attribute_name = tool.Util.get_property(
+        main_pset_name, main_property_name = tool.Util.get_property(
             cls.get().ui.widget_ident_property
         )
         export_path = tool.Util.get_path_from_fileselector(cls.get().ui.widget_export)
         ifc_paths = tool.Util.get_path_from_fileselector(cls.get().ui.widget_import)
         return (
             group_pset_name,
-            group_attribute_name,
+            group_property_name,
             main_pset_name,
-            main_attribute_name,
+            main_property_name,
             ifc_paths,
             export_path,
         )
@@ -134,14 +134,14 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         cls.get_properties().abort = True
 
     @classmethod
-    def set_main_attribute(cls, pset_name, attribute_name):
-        cls.get_properties().main_attribute = pset_name, attribute_name
+    def set_main_property(cls, pset_name, property_name):
+        cls.get_properties().main_property = pset_name, property_name
 
     @classmethod
-    def set_grouping_attribute(cls, pset_name, attribute_name):
-        cls.get_properties().grouping_attribute = pset_name, attribute_name
+    def set_grouping_property(cls, pset_name, property_name):
+        cls.get_properties().group_property = pset_name, property_name
         tool.Appdata.set_setting(IFC_MOD, GROUP_PSET, pset_name)
-        tool.Appdata.set_setting(IFC_MOD, GROUP_ATTRIBUTE, attribute_name)
+        tool.Appdata.set_setting(IFC_MOD, GROUP_PROPERTY, property_name)
 
     @classmethod
     def set_export_path(cls, path):
@@ -213,17 +213,17 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         cls.get_properties().is_running = value
 
     @classmethod
-    def get_attribute_bundle(cls):
-        main_pset_name, main_attribute_name = cls.get_properties().main_attribute
-        group_pset_name, group_attribute_name = cls.get_properties().grouping_attribute
-        identity_attribute = cls.get_properties().identity_attribute
+    def get_property_bundle(cls):
+        main_pset_name, main_property_name = cls.get_properties().main_property
+        group_pset_name, group_property_name = cls.get_properties().group_property
+        identity_property = cls.get_properties().identity_property
         return (
             main_pset_name,
-            main_attribute_name,
+            main_property_name,
             group_pset_name,
-            group_attribute_name,
+            group_property_name,
             main_pset_name,
-            identity_attribute,
+            identity_property,
         )
 
     # Grouping Functions
@@ -249,7 +249,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
             if cls.is_aborted():
                 return dict()
-            attrib, gruppe, identity = get_ifc_el_info(el, cls.get_attribute_bundle())
+            attrib, gruppe, identity = get_ifc_el_info(el, cls.get_property_bundle())
             if attrib is None or gruppe is None:
                 continue
 
@@ -278,7 +278,7 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
 
     @classmethod
     def fill_existing_groups(cls, ifc_file: ifcopenshell.file, structure_dict):
-        fill_existing_groups(ifc_file, structure_dict, cls.get_attribute_bundle())
+        fill_existing_groups(ifc_file, structure_dict, cls.get_property_bundle())
 
     @classmethod
     def get_first_owner_history(cls, ifc_file):
@@ -300,8 +300,8 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         owner_history,
         objects_list: Iterator[SOMcreator.SOMClass],
     ):
-        attribute_bundle = cls.get_attribute_bundle()
-        kuerzel_dict = {obj.abbreviation.upper(): obj for obj in objects_list}
+        property_bundle = cls.get_property_bundle()
+        abbrev_dict = {obj.abbreviation.upper(): obj for obj in objects_list}
         create_empty = cls.get_properties().create_empty_attribues
         create_aggregation_structure(
             ifc_file,
@@ -309,9 +309,9 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
             [],
             None,
             True,
-            attribute_bundle,
+            property_bundle,
             owner_history,
-            kuerzel_dict,
+            abbrev_dict,
             create_empty,
             None,
         )
@@ -363,4 +363,5 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
     @classmethod
     def reset(cls):
         from som_gui.plugins.aggregation_window.module.grouping_window import prop
+
         som_gui.GroupingWindowProperties = prop.GroupingWindowProperties()

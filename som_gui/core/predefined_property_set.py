@@ -204,7 +204,7 @@ def repaint_pset_list(predefined_pset: Type[tool.PredefinedPropertySet]):
 
 def add_compare_widget(
     pset_compare: Type[tool.PredefinedPropertySetCompare],
-    attribute_compare: Type[tool.PropertyCompare],
+    property_compare: Type[tool.PropertyCompare],
     compare_window: Type[tool.CompareWindow],
 ):
     name_getter = lambda: QCoreApplication.translate(
@@ -213,9 +213,9 @@ def add_compare_widget(
     compare_window.add_tab(
         name_getter,
         pset_compare.create_widget,
-        lambda p0, p1: create_compare_widget(p0, p1, pset_compare, attribute_compare),
+        lambda p0, p1: create_compare_widget(p0, p1, pset_compare, property_compare),
         pset_compare,
-        lambda file: export_compare(file, pset_compare, attribute_compare),
+        lambda file: export_compare(file, pset_compare, property_compare),
     )
 
 
@@ -223,7 +223,7 @@ def create_compare_widget(
     project0: SOMcreator.SOMProject,
     project1: SOMcreator.SOMProject,
     pset_compare: Type[tool.PredefinedPropertySetCompare],
-    attribute_compare: Type[tool.PropertyCompare],
+    property_compare: Type[tool.PropertyCompare],
 ):
     """
     add Predefined-Pset-Tab to CompareWidget
@@ -232,17 +232,17 @@ def create_compare_widget(
     widget = pset_compare.create_widget()
 
     # get UI-elements
-    pset_tree = attribute_compare.get_pset_tree(widget)
-    value_table = attribute_compare.get_value_table(widget)
-    info_table = attribute_compare.get_info_table(widget)
+    pset_tree = property_compare.get_pset_tree(widget)
+    value_table = property_compare.get_value_table(widget)
+    info_table = property_compare.get_info_table(widget)
 
     # define and set header labels
     header_labels = [
-        attribute_compare.get_header_name_from_project(project0),
-        attribute_compare.get_header_name_from_project(project1),
+        property_compare.get_header_name_from_project(project0),
+        property_compare.get_header_name_from_project(project1),
     ]
-    attribute_compare.set_header_labels([pset_tree], [value_table], header_labels)
-    attribute_compare.set_header_labels([], [info_table], ["Name"] + header_labels)
+    property_compare.set_header_labels([pset_tree], [value_table], header_labels)
+    property_compare.set_header_labels([], [info_table], ["Name"] + header_labels)
 
     # Compare PropertySets
     psets0, psets1 = list(project0.get_predefined_psets(filter=False)), list(
@@ -251,16 +251,16 @@ def create_compare_widget(
     pset_compare.set_predefined_psets(psets0, psets1)
     pset_list = pset_compare.create_pset_list(psets0, psets1)
     for pset0, pset1 in [x for x in pset_list if not None in x]:
-        attribute_compare.compare_property_sets(pset0, pset1)
+        property_compare.compare_property_sets(pset0, pset1)
 
     # Fill TreeView with PropertySets
-    attribute_compare.fill_pset_tree(pset_tree, pset_compare.get_pset_lists(), True)
-    attribute_compare.add_properties_to_pset_tree(pset_tree, True)
+    property_compare.fill_pset_tree(pset_tree, pset_compare.get_pset_lists(), True)
+    property_compare.add_properties_to_pset_tree(pset_tree, True)
 
     # Add Color
     root = pset_tree.invisibleRootItem()
     for child_index in range(root.childCount()):
-        attribute_compare.style_tree_item(root.child(child_index))
+        property_compare.style_tree_item(root.child(child_index))
 
     # Create triggers
     pset_compare.create_tree_selection_trigger(widget)
@@ -269,8 +269,8 @@ def create_compare_widget(
 def export_compare(
     file: TextIO,
     pset_compare: Type[tool.PredefinedPropertySetCompare],
-    attribute_compare: Type[tool.PropertyCompare],
+    property_compare: Type[tool.PropertyCompare],
 ):
     name = QCoreApplication.translate("PredefinedPset", "PREDEFINED PROPERTYSETS")
     file.write(f"\n{name}\n\n")
-    attribute_compare.export_pset_differences(file, pset_compare.get_pset_lists(), True)
+    property_compare.export_pset_differences(file, pset_compare.get_pset_lists(), True)

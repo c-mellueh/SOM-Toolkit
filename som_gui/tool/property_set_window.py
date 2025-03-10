@@ -50,12 +50,12 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         return list(cls.get_properties().property_set_windows.keys())
 
     @classmethod
-    def get_active_attribute(
+    def get_active_property(
         cls, window: ui.PropertySetWindow
     ) -> None | SOMcreator.SOMProperty:
-        attribute_name = cls.get_property_name_input(window)
+        property_name = cls.get_property_name_input(window)
         pset = cls.get_property_set_by_window(window)
-        return tool.PropertySet.get_attribute_by_name(pset, attribute_name)
+        return tool.PropertySet.get_property_by_name(pset, property_name)
 
     @classmethod
     def get_inherit_checkbox_state(cls, window: ui.PropertySetWindow) -> bool:
@@ -89,7 +89,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         return window.ui.lineEdit_name.text()
 
     @classmethod
-    def get_attribute_data(cls, window: ui.PropertySetWindow):
+    def get_property_data(cls, window: ui.PropertySetWindow):
         d = dict()
         d["name"] = cls.get_property_name_input(window)
         d["data_type"] = window.ui.combo_data_type.currentText()
@@ -259,16 +259,16 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
 
     @classmethod
     def update_add_button(cls, window: ui.PropertySetWindow):
-        attribute_name = cls.get_property_name_input(window)
+        property_name = cls.get_property_name_input(window)
 
-        if cls.is_name_existing(attribute_name, window):
+        if cls.is_name_existing(property_name, window):
             text = QCoreApplication.translate("PropertySetWindow", "Update")
             cls.set_add_button_text(text, window)
         else:
             text = QCoreApplication.translate("PropertySetWindow", "Add")
             cls.set_add_button_text(text, window)
 
-        cls.set_add_button_enabled(bool(attribute_name), window)
+        cls.set_add_button_enabled(bool(property_name), window)
 
     @classmethod
     def set_comboboxes_enabled(cls, enabled_state: bool, window: ui.PropertySetWindow):
@@ -278,15 +278,15 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         if enabled_state:
             t1 = QCoreApplication.translate(
                 "PropertySetWindow",
-                "Attribute was inherited -> Type change not possible",
+                "Property was inherited -> Type change not possible",
             )
             t2 = QCoreApplication.translate(
                 "PropertySetWindow",
-                "Attribute was inherited -> DataType change not possible",
+                "Property was inherited -> DataType change not possible",
             )
             t3 = QCoreApplication.translate(
                 "PropertySetWindow",
-                "Attribute was inherited -> Unit change not possible",
+                "Property was inherited -> Unit change not possible",
             )
         else:
             t1 = t2 = t3 = ""
@@ -295,7 +295,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.ui.combo_unit.setToolTip(t3)
 
     @classmethod
-    def set_attribute_name(cls, name: str, window: ui.PropertySetWindow):
+    def set_property_name(cls, name: str, window: ui.PropertySetWindow):
         window.ui.lineEdit_name.setText(name)
 
     @classmethod
@@ -322,11 +322,11 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
 
     @classmethod
     def set_values(
-        cls, attribute: SOMcreator.SOMProperty, window: ui.PropertySetWindow
+        cls, som_property: SOMcreator.SOMProperty, window: ui.PropertySetWindow
     ):
-        inherits = attribute.is_inheriting_values
-        parent_values = attribute.parent.allowed_values if attribute.parent else []
-        for value in attribute.allowed_values:
+        inherits = som_property.is_inheriting_values
+        parent_values = som_property.parent.allowed_values if som_property.parent else []
+        for value in som_property.allowed_values:
 
             value = "" if value is None else value
             if isinstance(value, (list, set)):

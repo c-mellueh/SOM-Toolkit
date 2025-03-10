@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 def connect():
-    core.init_attribute_columns(tool.PropertyTable)
+    core.init_property_columns(tool.PropertyTable)
     tool.MainWindow.get_property_table().itemDoubleClicked.connect(
         lambda item: core.activate_item(
             item, tool.PropertyTable, tool.PropertySet, tool.PropertySetWindow

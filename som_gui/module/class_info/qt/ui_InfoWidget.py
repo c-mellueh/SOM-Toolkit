@@ -65,21 +65,21 @@ class Ui_ObjectInfo(object):
 
         self.layout_ident_property.addWidget(self.combo_box_pset)
 
-        self.combo_box_attribute = QComboBox(ObjectInfo)
-        self.combo_box_attribute.setObjectName(u"combo_box_attribute")
-        self.combo_box_attribute.setEditable(True)
+        self.combo_box_property = QComboBox(ObjectInfo)
+        self.combo_box_property.setObjectName(u"combo_box_property")
+        self.combo_box_property.setEditable(True)
 
-        self.layout_ident_property.addWidget(self.combo_box_attribute)
+        self.layout_ident_property.addWidget(self.combo_box_property)
 
-        self.line_edit_attribute_value = QLineEdit(ObjectInfo)
-        self.line_edit_attribute_value.setObjectName(u"line_edit_attribute_value")
+        self.line_edit_property_value = QLineEdit(ObjectInfo)
+        self.line_edit_property_value.setObjectName(u"line_edit_property_value")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.line_edit_attribute_value.sizePolicy().hasHeightForWidth())
-        self.line_edit_attribute_value.setSizePolicy(sizePolicy1)
+        sizePolicy1.setHeightForWidth(self.line_edit_property_value.sizePolicy().hasHeightForWidth())
+        self.line_edit_property_value.setSizePolicy(sizePolicy1)
 
-        self.layout_ident_property.addWidget(self.line_edit_attribute_value)
+        self.layout_ident_property.addWidget(self.line_edit_property_value)
 
 
         self.verticalLayout.addLayout(self.layout_ident_property)
@@ -130,7 +130,6 @@ class Ui_ObjectInfo(object):
         self.button_box = QDialogButtonBox(ObjectInfo)
         self.button_box.setObjectName(u"button_box")
         self.button_box.setOrientation(Qt.Orientation.Horizontal)
-        self.button_box.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
 
         self.verticalLayout.addWidget(self.button_box)
 

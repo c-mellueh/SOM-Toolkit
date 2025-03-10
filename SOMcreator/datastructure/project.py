@@ -31,11 +31,11 @@ class SOMProject(object):
         self._author = author
         self._version = "1.0.0"
         self.name = name
-        self.aggregation_attribute = ""
+        self.aggregation_property = ""
         self.aggregation_pset = ""
         self._description = ""
         self.plugin_dict = dict()
-        self.import_dict:MainDict|dict = dict()
+        self.import_dict: MainDict | dict = dict()
 
         if phases is None:
             self._phases = [
@@ -112,7 +112,7 @@ class SOMProject(object):
         for som_class in self.get_classes(filter=False):
             if not isinstance(som_class.identifier_property, SOMcreator.SOMProperty):
                 continue
-            ident_pset = som_class.identifier_property.property_set.name #type: ignore
+            ident_pset = som_class.identifier_property.property_set.name  # type: ignore
             ident_property = som_class.identifier_property.name
             if ident_pset not in ident_psets:
                 ident_psets[ident_pset] = 0
@@ -144,7 +144,7 @@ class SOMProject(object):
             for cls in self.get_classes(filter=False)
             if cls.uuid is not None
         }
-        attribute_dict = {
+        property_dict = {
             prop.uuid: prop
             for prop in self.get_properties(filter=False)
             if prop.uuid is not None
@@ -154,7 +154,7 @@ class SOMProject(object):
             for aggreg in self.get_aggregations(filter=False)
             if aggreg.uuid is not None
         }
-        full_dict = pset_dict | object_dict | attribute_dict | aggregation_dict
+        full_dict = pset_dict | object_dict | property_dict | aggregation_dict
         return full_dict
 
     def get_element_by_uuid(

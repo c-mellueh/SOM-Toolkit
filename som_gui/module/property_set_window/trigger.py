@@ -32,7 +32,7 @@ def connect_window(window: ui.PropertySetWindow):
         lambda: core.add_value_button_clicked(window, tool.PropertySetWindow)
     )
     window.ui.button_add.clicked.connect(
-        lambda: core.add_attribute_button_clicked(
+        lambda: core.add_property_button_clicked(
             window, tool.PropertySet, tool.PropertySetWindow, tool.Property
         )
     )
@@ -45,14 +45,16 @@ def connect_window(window: ui.PropertySetWindow):
 
     table = window.ui.table_widget
     table.itemClicked.connect(
-        lambda item: core.attribute_clicked(
+        lambda item: core.property_clicked(
             item, tool.PropertyTable, tool.PropertySetWindow
         )
     )
 
 
 def repaint_window(widget: ui.PropertySetWindow):
-    core.repaint_pset_window(widget, tool.PropertySetWindow,tool.PropertySet, tool.PropertyTable)
+    core.repaint_pset_window(
+        widget, tool.PropertySetWindow, tool.PropertySet, tool.PropertyTable
+    )
 
 
 def close_window(window: ui.PropertySetWindow):

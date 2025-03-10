@@ -85,7 +85,7 @@ class Bsdd:
     ):
         pass
 
-    def get_linked_attribute_name(self, item):
+    def get_linked_property_name(self, item):
         pass
 
     def get_open_window_trigger(
@@ -141,7 +141,7 @@ class Bsdd:
     def set_action(self, name, action):
         pass
 
-    def set_linked_attribute_name(self, item, value):
+    def set_linked_property_name(self, item, value):
         pass
 
     def set_tabs(self, tab_list):
@@ -636,7 +636,7 @@ class FilterCompare:
     def are_all_filters_identical(self, filter_list):
         pass
 
-    def are_attributes_identical(self, attribute0, attribute1):
+    def are_properties_identical(self, attribute0, attribute1):
         pass
 
     def are_objects_identical(self, obj0, obj1):
@@ -656,7 +656,7 @@ class FilterCompare:
     ):
         pass
 
-    def export_attribute_filter_differences(self, file, attribute_list):
+    def export_property_filter_differnces(self, file, attribute_list):
         pass
 
     def export_object_filter_differences(self, file, attribute_compare):
@@ -1864,7 +1864,7 @@ class Popups:
     def req_export_pset_name(self, parent_window):
         pass
 
-    def request_attribute_name(self, old_name, parent):
+    def request_property_name(self, old_name, parent):
         pass
 
     def request_property_set_merge(self, name, mode):
@@ -2139,7 +2139,7 @@ class Property:
     def add_property_data_value(self, name, getter, setter):
         pass
 
-    def create_attribute_by_dict(self, attribute_data):
+    def create_by_dict(self, attribute_data):
         pass
 
     def get_allowed_unit_prefixes(self, appdata):
@@ -2148,7 +2148,7 @@ class Property:
     def get_allowed_units(self, appdata):
         pass
 
-    def get_attribute_data(self, attribute):
+    def get_property_data(self, attribute):
         pass
 
     def get_checked_texts_from_list_widget(self, list_widget):
@@ -2164,7 +2164,7 @@ class Property:
     ):
         pass
 
-    def set_attribute_data_by_dict(self, attribute, data_dict):
+    def set_data_by_dict(self, attribute, data_dict):
         pass
 
     def set_unit_settings_widget(self, widget):
@@ -2181,7 +2181,7 @@ class PropertyCompare:
     def add_properties_to_pset_tree(self, tree, add_missing):
         pass
 
-    def are_attributes_identical(self, attribute0, attribute1):
+    def are_properties_identical(self, attribute0, attribute1):
         pass
 
     def are_objects_identical(self, object0, object1, check_pset):
@@ -2201,7 +2201,7 @@ class PropertyCompare:
     def clear_tree(self, tree):
         pass
 
-    def compare_attributes(self, attribute0, attribute1):
+    def compare_properties(self, attribute0, attribute1):
         pass
 
     def compare_objects(self, obj0, obj1):
@@ -2231,10 +2231,10 @@ class PropertyCompare:
     ):
         pass
 
-    def export_attribute_check(self, file, type_name, attrib0, attrib1, indent):
+    def export_property_check(self, file, type_name, attrib0, attrib1, indent):
         pass
 
-    def export_attribute_differences(self, file, attribute_list):
+    def export_property_differences(self, file, attribute_list):
         pass
 
     def export_child_check(self, file, type_name, entity0, entity1, indent):
@@ -2285,7 +2285,7 @@ class PropertyCompare:
     def generate_uuid_dict(self, element_list):
         pass
 
-    def get_attribute_list(self, property_set):
+    def get_property_list(self, property_set):
         pass
 
     def get_branch_color(self, index):
@@ -2377,7 +2377,7 @@ class PropertyCompare:
     ):
         pass
 
-    def set_attribute_list(self, property_set, attribute_list):
+    def set_property_list(self, property_set, attribute_list):
         pass
 
     def set_branch_color(self, tree, index, color):
@@ -2830,7 +2830,7 @@ class PropertySet:
     ):
         pass
 
-    def get_attribute_by_name(self, property_set, name):
+    def get_property_by_name(self, property_set, name):
         pass
 
     def get_completer(
@@ -2956,7 +2956,7 @@ class PropertySetWindow:
     def format_values(self, value_list, window):
         pass
 
-    def get_active_attribute(self, window):
+    def get_active_property(self, window):
         pass
 
     def get_allowed_data_types(
@@ -2969,7 +2969,7 @@ class PropertySetWindow:
     ):
         pass
 
-    def get_attribute_data(self, window):
+    def get_property_data(self, window):
         pass
 
     def get_property_name_input(self, window):
@@ -3043,7 +3043,7 @@ class PropertySetWindow:
     def set_add_button_text(self, text, window):
         pass
 
-    def set_attribute_name(self, name, window):
+    def set_property_name(self, name, window):
         pass
 
     def set_data_type(self, data_type, window):
@@ -3093,7 +3093,7 @@ class PropertySetWindow:
 
 
 class PropertyTable:
-    def add_attributes_to_table(self, attributes, table):
+    def add_properties_to_table(self, attributes, table):
         pass
 
     def add_column_to_table(self, name, get_function):
@@ -3102,7 +3102,7 @@ class PropertyTable:
     def add_context_menu_builder(self, context_menu_builder):
         pass
 
-    def add_parent_of_selected_attribute(self, table):
+    def add_parent_of_selected_properties(self, table):
         pass
 
     def context_menu_builder_add_connection(self, table):
@@ -3117,10 +3117,10 @@ class PropertyTable:
     def context_menu_builder_rename(self, table):
         pass
 
-    def delete_selected_attributes(self, table, with_child):
+    def delete_selected_properties(self, table, with_child):
         pass
 
-    def edit_selected_attribute_name(self, table):
+    def edit_selected_property_name(self, table):
         pass
 
     def format_row(self, row):
@@ -3139,7 +3139,7 @@ class PropertyTable:
     ):
         pass
 
-    def get_existing_attributes_in_table(self, table):
+    def get_existing_properties(self, table):
         pass
 
     def get_header_labels(
@@ -3167,16 +3167,16 @@ class PropertyTable:
     def get_property_set_of_table(self, table):
         pass
 
-    def get_row_index_from_attribute(self, attribute, table):
+    def get_row_index_from_property(self, attribute, table):
         pass
 
-    def get_selected_attributes(self, table):
+    def get_selected_properties(self, table):
         pass
 
-    def remove_attributes_from_table(self, attributes, table):
+    def remove_properties_from_table(self, attributes, table):
         pass
 
-    def remove_parent_of_selected_attribute(self, table):
+    def remove_parent_of_selected_properties(self, table):
         pass
 
     def set_property_set_of_table(self, table, property_set):
@@ -3235,7 +3235,7 @@ class Search:
     def retranslate_title(self, dialog, search_mode):
         pass
 
-    def search_attribute(self, searchable_attributes):
+    def search_property(self, searchable_attributes):
         pass
 
     def search_class(self, searchable_objects):
@@ -3350,7 +3350,7 @@ class Util:
     def fill_list_widget_with_checkstate(self, list_widget, allowed_labels, all_labels):
         pass
 
-    def fill_main_attribute(
+    def fill_main_property(
         self, widget, pset_name, attribute_name, pset_placeholder, attribute_placeholder
     ):
         pass

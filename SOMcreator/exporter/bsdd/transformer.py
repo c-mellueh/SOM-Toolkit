@@ -31,12 +31,12 @@ def transform_objects_to_classes(
     """
     Adds objects and Properties to bsdd.Dictionary
     """
-    predefined_attributes = [
+    predefined_properties = [
         a for p in predefined_psets for a in p.get_properties(filter=True)
     ]
-    attributes = _get_all_attributes(objects)
+    properties = _get_all_properties(objects)
     dictionary.Properties, all_class_properties = _create_properties(
-        predefined_attributes, attributes
+        predefined_properties, properties
     )
     class_dict = _create_classes(objects, all_class_properties, dictionary)
     _iterate_parent_relations(objects, class_dict)
@@ -52,78 +52,78 @@ def transform_project_to_dict(proj: SOMcreator.SOMProject):
 
 
 def _check_for_existance(
-    attribute: SOMcreator.SOMProperty, properties: list[bsdd.Property]
+    som_property: SOMcreator.SOMProperty, properties: list[bsdd.Property]
 ) -> bsdd.Property | None:
-    new_code = str(attribute.name).lower()
+    new_code = str(som_property.name).lower()
     return {p.Code.lower(): p for p in properties}.get(new_code)
 
 
-def _create_property(attribute: SOMcreator.SOMProperty) -> bsdd.Property:
-    code = str(attribute.name)
-    p = bsdd.Property(code, attribute.name)
-    p.attribute = attribute
-    p.Definition = attribute.description
-    p.DataType = DATATYPE_MAPPING[attribute.data_type]
-    if attribute.value_type == value_constants.FORMAT and attribute.allowed_values:
-        p.Pattern = "|".join(attribute.allowed_values)
-    p.PropertyValueKind = PROPERTY_KIND_MAPPING[attribute.value_type]
+def _create_property(som_property: SOMcreator.SOMProperty) -> bsdd.Property:
+    code = str(som_property.name)
+    p = bsdd.Property(code, som_property.name)
+    p.property = som_property
+    p.Definition = som_property.description
+    p.DataType = DATATYPE_MAPPING[som_property.data_type]
+    if som_property.value_type == value_constants.FORMAT and som_property.allowed_values:
+        p.Pattern = "|".join(som_property.allowed_values)
+    p.PropertyValueKind = PROPERTY_KIND_MAPPING[som_property.value_type]
     return p
 
 
 def _find_differences(obj_1: bsdd.Property, obj_2: bsdd.Property) -> dict:
     difference_dict = dict()
-    for attribute_name in obj_1.__annotations__.keys():
-        value_1 = getattr(obj_1, attribute_name)
-        value_2 = getattr(obj_2, attribute_name)
+    for property_name in obj_1.__annotations__.keys():
+        value_1 = getattr(obj_1, property_name)
+        value_2 = getattr(obj_2, property_name)
         if value_1 != value_2:
-            difference_dict[attribute_name] = [value_1, value_2]
+            difference_dict[property_name] = [value_1, value_2]
     return difference_dict
 
 
 def _create_class_property(
-    attribute: SOMcreator.SOMProperty, existing_properties: list[bsdd.Property]
+    som_property: SOMcreator.SOMProperty, existing_properties: list[bsdd.Property]
 ):
-    code = str(attribute.name)
-    if parent_property := _check_for_existance(attribute, existing_properties):
+    code = str(som_property.name)
+    if parent_property := _check_for_existance(som_property, existing_properties):
         pass
     else:
-        parent_property = _create_property(attribute)
+        parent_property = _create_property(som_property)
         existing_properties.append(parent_property)
 
     class_property = bsdd.ClassProperty(code, parent_property.Code, "")
     (
-        class_property.attribute,
+        class_property.property,
         class_property.Description,
         class_property.PropertySet,
         class_property.IsRequired,
     ) = (
-        attribute,
-        attribute.description,
-        str(attribute.property_set.name),
-        not attribute.is_optional(ignore_hirarchy=True),
+        som_property,
+        som_property.description,
+        str(som_property.property_set.name),
+        not som_property.is_optional(ignore_hirarchy=True),
     )
 
-    if not attribute.allowed_values:
+    if not som_property.allowed_values:
         return class_property
-    if attribute.value_type == value_constants.FORMAT:
-        class_property.Pattern = attribute.allowed_values[0]
-    elif attribute.value_type == value_constants.RANGE:
-        class_property.MinInclusive = attribute.allowed_values[0][0]
-        class_property.MaxInclusive = attribute.allowed_values[0][1]
-    elif attribute.value_type == value_constants.LIST:
-        for val in attribute.allowed_values:
+    if som_property.value_type == value_constants.FORMAT:
+        class_property.Pattern = som_property.allowed_values[0]
+    elif som_property.value_type == value_constants.RANGE:
+        class_property.MinInclusive = som_property.allowed_values[0][0]
+        class_property.MaxInclusive = som_property.allowed_values[0][1]
+    elif som_property.value_type == value_constants.LIST:
+        for val in som_property.allowed_values:
             class_property.AllowedValues.append(bsdd.AllowedValue(str(val), str(val)))
     return class_property
 
 
 def _create_properties(
-    predefined_attribute: list[SOMcreator.SOMProperty],
-    object_attributes: list[SOMcreator.SOMProperty],
+    predefined_properties: list[SOMcreator.SOMProperty],
+    class_properties: list[SOMcreator.SOMProperty],
 ):
     properties = list()
-    for attribute in predefined_attribute:
-        if old_property := _check_for_existance(attribute, properties):
-            new_property = _create_property(attribute)
+    for som_property in predefined_properties:
+        if old_property := _check_for_existance(som_property, properties):
+            new_property = _create_property(som_property)
             if old_property != new_property:
                 difference = _find_differences(new_property, old_property)
                 logging.warning(
@@ -131,10 +131,10 @@ def _create_properties(
                 )
                 continue
         else:
-            new_property = _create_property(attribute)
+            new_property = _create_property(som_property)
             properties.append(new_property)
     class_properties = [
-        _create_class_property(p, properties) for p in object_attributes
+        _create_class_property(p, properties) for p in class_properties
     ]
     return properties, class_properties
 
@@ -153,7 +153,7 @@ def _create_class(obj: SOMcreator.SOMClass, d: bsdd.Dictionary):
 def _create_classes(
     objects: list[SOMcreator.SOMClass], class_properties, dictionary: bsdd.Dictionary
 ) -> dict[SOMcreator.SOMClass, bsdd.Class]:
-    class_property_dict = {p.attribute: p for p in class_properties}
+    class_property_dict = {p.property: p for p in class_properties}
     class_dict = dict()
     for obj in objects:
         c = _create_class(obj, dictionary)
@@ -222,7 +222,7 @@ def _iterate_aggregations(
                 _create_aggregation(obj, child_obj, class_dict)
 
 
-def _get_all_attributes(object_list: list[SOMcreator.SOMClass]):
+def _get_all_properties(object_list: list[SOMcreator.SOMClass]):
     return [
         a
         for o in object_list

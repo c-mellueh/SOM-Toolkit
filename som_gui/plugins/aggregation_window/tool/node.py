@@ -89,16 +89,16 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         cls, item: QTreeWidgetItem
     ) -> dict[SOMcreator.SOMPropertySet | SOMcreator.SOMProperty, QTreeWidgetItem]:
         """
-        Generate a dictionary mapping property sets or attributes to their corresponding tree widget items.
+        Generate a dictionary mapping property sets or properties to their corresponding tree widget items.
 
         This method iterates over the children of the given QTreeWidgetItem and creates a dictionary
-        where the keys are the linked property sets or attributes, and the values are the corresponding
+        where the keys are the linked property sets or properties, and the values are the corresponding
         QTreeWidgetItem instances.
 
         :param item: The QTreeWidgetItem whose children are to be processed.
         :type item: QTreeWidgetItem
-        :return: A dictionary mapping property sets or attributes to their corresponding tree widget items.
-        :rtype: dict[SOMcreator.PropertySet | SOMcreator.Attribute, QTreeWidgetItem]
+        :return: A dictionary mapping property sets or properties to their corresponding tree widget items.
+        :rtype: dict[SOMcreator.PropertySet | SOMcreator.SOMProperty, QTreeWidgetItem]
         """
         return {
             cls.get_linked_item(item.child(i)): item.child(i)
@@ -106,28 +106,28 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         }
 
     @classmethod
-    def add_attribute_to_property_set_tree(
-        cls, attribute: SOMcreator.SOMProperty, property_set_item: QTreeWidgetItem
+    def add_property_to_property_set_tree(
+        cls, som_property: SOMcreator.SOMProperty, property_set_item: QTreeWidgetItem
     ) -> QTreeWidgetItem:
         """
-        Add an attribute to a property set tree item.
+        Add an property to a property set tree item.
 
-        This method creates a new QTreeWidgetItem for the given attribute and adds it
+        This method creates a new QTreeWidgetItem for the given property and adds it
         as a child to the specified property set item. The item's text is set to the
-        name of the attribute, and its data is set to reference the attribute.
+        name of the property, and its data is set to reference the property.
 
-        :param attribute: The attribute to add to the property set tree item.
-        :type attribute: SOMcreator.Attribute
-        :param property_set_item: The property set item to which the attribute item will be added.
+        :param property: The property to add to the property set tree item.
+        :type property: SOMcreator.SOMProperty
+        :param property_set_item: The property set item to which the property item will be added.
         :type property_set_item: QTreeWidgetItem
-        :return: The created QTreeWidgetItem representing the attribute.
+        :return: The created QTreeWidgetItem representing the property.
         :rtype: QTreeWidgetItem
         """
-        attribute_item = QTreeWidgetItem()
-        attribute_item.setText(0, attribute.name)
-        attribute_item.setData(0, CLASS_REFERENCE, attribute)
-        property_set_item.addChild(attribute_item)
-        return attribute_item
+        item = QTreeWidgetItem()
+        item.setText(0, som_property.name)
+        item.setData(0, CLASS_REFERENCE, som_property)
+        property_set_item.addChild(item)
+        return item
 
     @classmethod
     def create_tree_widget(cls, node: node_ui.NodeProxy) -> node_ui.PropertySetTree:
@@ -153,7 +153,7 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         Create a circle for a node.
 
         This method creates a new Circle instance, associates it with the given node,
-        and sets the node's circle attribute to the created circle. The Circle will contain the "+" sign.
+        and sets the node's circle property to the created circle. The Circle will contain the "+" sign.
 
         :param node: The node for which to create the circle.
         :type node: node_ui.NodeProxy
@@ -214,9 +214,9 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         font_metric = cls.get_font_metric()
         line_width = header.pen().width()
         width = node.widget().width() - line_width
-        pset_name, attribute_name = cls.get_title_settings()
+        pset_name, property_name = cls.get_title_settings()
         row_height = font_metric.lineSpacing()
-        rows = cls.get_title_rows(node, width, pset_name, attribute_name)
+        rows = cls.get_title_rows(node, width, pset_name, property_name)
         height = len(rows) * row_height
 
         x = line_width / 2
@@ -316,12 +316,12 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         Get the linked item from a property set tree item.
 
         This method retrieves the data associated with the given property set tree item,
-        which can be either a PropertySet or an Attribute.
+        which can be either a PropertySet or a Property.
 
         :param pset_tree_item: The property set tree item from which to get the linked item.
         :type pset_tree_item: QTreeWidgetItem
-        :return: The linked item, either a PropertySet or an Attribute.
-        :rtype: SOMcreator.PropertySet | SOMcreator.Attribute
+        :return: The linked item, either a PropertySet or a Propert.
+        :rtype: SOMcreator.PropertySet | SOMcreator.SOMProperty
         """
         return pset_tree_item.data(0, CLASS_REFERENCE)
 
@@ -447,10 +447,10 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
         node: node_ui.NodeProxy,
         max_width: float,
         pset_name: str | None = None,
-        attribute_name: str | None = None,
+        property_name: str | None = None,
     ) -> list[str]:
         aggregation = cls.get_aggregation_from_node(node)
-        if not (pset_name and attribute_name):
+        if not (pset_name and property_name):
             base_text = (
                 f"{aggregation.som_class.name} ({aggregation.som_class.abbreviation})"
             )
@@ -459,18 +459,18 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
             )
             id_texts = cls.split_text(id_text, "_", max_width)
             return [base_text] + id_texts
-        undef = [f"{aggregation.name}\n{attribute_name}: undefined"]
+        undef = [f"{aggregation.name}\n{property_name}: undefined"]
         obj = aggregation.som_class
         pset = obj.get_property_set_by_name(pset_name)
         if pset is None:
             return undef
-        attribute = pset.get_property_by_name(attribute_name)
-        if attribute is None:
+        som_property = pset.get_property_by_name(property_name)
+        if som_property is None:
             return undef
 
-        if len(attribute.allowed_values) == 0:
+        if len(som_property.allowed_values) == 0:
             return undef
-        return [f"{aggregation.name}\n{attribute_name}: {attribute.allowed_values[0]}"]
+        return [f"{aggregation.name}\n{property_name}: {som_property.allowed_values[0]}"]
 
     @classmethod
     def get_aggregation_from_node(
@@ -480,18 +480,18 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
 
     @classmethod
     def get_title_settings(cls) -> tuple[str, str]:
-        return cls.get_properties().title_pset, cls.get_properties().title_attribute
+        return cls.get_properties().title_pset, cls.get_properties().title_property
 
     @classmethod
-    def set_title_settings(cls, pset_name: str, attribute_name: str) -> None:
-        cls.get_properties().title_pset, cls.get_properties().title_attribute = (
+    def set_title_settings(cls, pset_name: str, property_name: str) -> None:
+        cls.get_properties().title_pset, cls.get_properties().title_property = (
             pset_name,
-            attribute_name,
+            property_name,
         )
 
     @classmethod
     def reset_title_settings(cls) -> None:
-        cls.get_properties().title_pset, cls.get_properties().title_attribute = (
+        cls.get_properties().title_pset, cls.get_properties().title_property = (
             None,
             None,
         )
@@ -650,17 +650,17 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
             if property_set_item.text(0) != property_set.name:
                 property_set_item.setText(0, property_set.name)
 
-            attribute_dict = cls.get_pset_subelement_dict(property_set_item)
+            property_dict = cls.get_pset_subelement_dict(property_set_item)
 
-            for attribute in property_set.get_properties(filter=True):
-                if attribute not in attribute_dict:
-                    attribute_item = cls.add_attribute_to_property_set_tree(
-                        attribute, property_set_item
+            for som_property in property_set.get_properties(filter=True):
+                if som_property not in property_dict:
+                    property_item = cls.add_property_to_property_set_tree(
+                        som_property, property_set_item
                     )
-                    attribute_dict[attribute] = attribute_item
-                attribute_item = attribute_dict[attribute]
-                if attribute_item.text(0) != attribute.name:
-                    attribute_item.setText(0, attribute.name)
+                    property_dict[som_property] = property_item
+                property_item = property_dict[som_property]
+                if property_item.text(0) != som_property.name:
+                    property_item.setText(0, som_property.name)
         return property_set_dict
 
     @classmethod
@@ -679,10 +679,10 @@ class Node(som_gui.plugins.aggregation_window.core.tool.Node):
                 ir.removeChild(pset_item)
                 continue
 
-            attribute_dict = cls.get_pset_subelement_dict(pset_item)
-            for attribute, attribute_item in attribute_dict.items():
-                if attribute not in property_set.get_properties(filter=True):
-                    pset_item.removeChild(attribute_item)
+            property_dict = cls.get_pset_subelement_dict(pset_item)
+            for som_property, property_item in property_dict.items():
+                if som_property not in property_set.get_properties(filter=True):
+                    pset_item.removeChild(property_item)
 
     @classmethod
     def set_font_metric(cls, font_metrics: Any) -> None:

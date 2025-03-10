@@ -171,13 +171,13 @@ class Ui_MainWindow(object):
         self.vertical_layout_pset.addWidget(self.table_pset)
 
         self.splitter.addWidget(self.verticalLayoutWidget)
-        self.table_attribute = PropertyTable(self.splitter)
-        self.table_attribute.setObjectName(u"table_attribute")
-        self.table_attribute.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.table_attribute.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.table_attribute.setSortingEnabled(True)
-        self.splitter.addWidget(self.table_attribute)
-        self.table_attribute.horizontalHeader().setStretchLastSection(True)
+        self.table_property = PropertyTable(self.splitter)
+        self.table_property.setObjectName(u"table_property")
+        self.table_property.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.table_property.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.table_property.setSortingEnabled(True)
+        self.splitter.addWidget(self.table_property)
+        self.table_property.horizontalHeader().setStretchLastSection(True)
 
         self.verticalLayout.addWidget(self.splitter)
 
@@ -202,7 +202,7 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.button_classes_add, self.tree_class)
         QWidget.setTabOrder(self.tree_class, self.button_search)
         QWidget.setTabOrder(self.button_search, self.button_Pset_add)
-        QWidget.setTabOrder(self.button_Pset_add, self.table_attribute)
+        QWidget.setTabOrder(self.button_Pset_add, self.table_property)
 
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())

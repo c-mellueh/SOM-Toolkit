@@ -30,90 +30,90 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         return som_gui.PropertyTableProperties
 
     @classmethod
-    def edit_selected_attribute_name(cls, table: ui.PropertyTable) -> None:
+    def edit_selected_property_name(cls, table: ui.PropertyTable) -> None:
         """
-        create Popup for editing selected attribute Name
-        :param table:  Active AttributeTable
+        create Popup for editing selected property Name
+        :param table:  Active PropertyTable
         :return:
         """
-        attributes = cls.get_selected_attributes(table)
-        if len(attributes) != 1:
+        selected_properties = cls.get_selected_properties(table)
+        if len(selected_properties) != 1:
             return
-        attribute = list(attributes)[0]
+        som_property = list(selected_properties)[0]
         window = table.window()
-        answer = tool.Popups.request_attribute_name(attribute.name, window)
+        answer = tool.Popups.request_property_name(som_property.name, window)
         if answer:
-            attribute.name = answer
+            som_property.name = answer
 
     @classmethod
-    def delete_selected_attributes(cls, table: ui.PropertyTable, with_child=False):
+    def delete_selected_properties(cls, table: ui.PropertyTable, with_child=False):
         """
-        delete selected Attributes
-        param table: Active AttributeTable
+        delete selected Properties
+        param table: Active PropertyTable
         :param with_child: recursive deletion of child elements
         """
-        attributes = cls.get_selected_attributes(table)
-        for attribute in attributes:
-            attribute.delete(with_child)
+        selected_properties = cls.get_selected_properties(table)
+        for som_property in selected_properties:
+            som_property.delete(with_child)
 
     @classmethod
-    def remove_parent_of_selected_attribute(cls, table: ui.PropertyTable) -> None:
+    def remove_parent_of_selected_properties(cls, table: ui.PropertyTable) -> None:
         """
-        remove parent of selected attribute
+        remove parent of selected property
         :param table:
         :return:
         """
-        attributes = cls.get_selected_attributes(table)
-        for attribute in attributes:
-            if not attribute.parent:
+        selected_properties = cls.get_selected_properties(table)
+        for som_property in selected_properties:
+            if not som_property.parent:
                 continue
-            if not attribute in attribute.parent.get_children(filter=True):
-                attribute.parent = None
+            if not som_property in som_property.parent.get_children(filter=True):
+                som_property.parent = None
                 continue
-            attribute.parent.remove_child(attribute)
+            som_property.parent.remove_child(som_property)
 
     @classmethod
-    def add_parent_of_selected_attribute(cls, table: ui.PropertyTable) -> None:
+    def add_parent_of_selected_properties(cls, table: ui.PropertyTable) -> None:
         """
-        find possible parent of selected attribute if parent exists add parent to attribute
-        :param table: Active AttributeTable
+        find possible parent of selected property if parent exists add parent to property
+        :param table: Active PropertyTable
         :return:
         """
-        attributes = cls.get_selected_attributes(table)
-        for attribute in attributes:
-            parent = cls.get_possible_parent(attribute)
+        selected_properties = cls.get_selected_properties(table)
+        for som_property in selected_properties:
+            parent = cls.get_possible_parent(som_property)
             if not parent:
                 continue
 
-            parent.add_child(attribute)
+            parent.add_child(som_property)
 
     @classmethod
-    def remove_attributes_from_table(
-        cls, attributes: set[SOMcreator.SOMProperty], table: QTableWidget
+    def remove_properties_from_table(
+        cls, properties: set[SOMcreator.SOMProperty], table: QTableWidget
     ):
         """
-        Remove set of attributes from table
-        :param attributes:
+        Remove set of properties from table
+        :param properties:
         :param table:
         :return:
         """
         row_indexes = sorted(
-            [cls.get_row_index_from_attribute(a, table) for a in attributes]
+            [cls.get_row_index_from_property(a, table) for a in properties]
         )
         for row_index in reversed(row_indexes):
             table.removeRow(row_index)
 
     @classmethod
-    def add_attributes_to_table(
-        cls, attributes: set[SOMcreator.SOMProperty], table: QTableWidget
+    def add_properties_to_table(
+        cls, properties: set[SOMcreator.SOMProperty], table: QTableWidget
     ) -> None:
         """
-        add list of Attributes to Table
-        :param attributes: Attributes which will be added to table
-        :param table: Table to whom attributes will be added
+        add list of Properties to Table
+        :param properties: Properties which will be added to table
+        :param table: Table to whom properties will be added
         :return:
         """
-        for attribute in attributes:
+        for som_property in properties:
             table.setSortingEnabled(False)  # disable sorting else bugs will appear
             items = [
                 QTableWidgetItem() for _ in range(cls.get_column_count())
@@ -122,7 +122,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             row_index = table.rowCount()
             table.setRowCount(row_index + 1)
             # fill row
-            [item.setData(CLASS_REFERENCE, attribute) for item in items]
+            [item.setData(CLASS_REFERENCE, som_property) for item in items]
             [table.setItem(row_index, col, item) for col, item in enumerate(items)]
             [
                 item.setFlags(item.flags() | item.flags().ItemIsUserCheckable)
@@ -138,34 +138,33 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
     @classmethod
     def update_row(cls, table: QTableWidget, index: int):
         """
-        update row by getter functions. First column get link icon if attribute has parent
+        update row by getter functions. First column get link icon if property has parent
         :param table:
         :param index:
         :return:
         """
 
         row_items = [table.item(index, col) for col in range(cls.get_column_count())]
-        attribute = cls.get_property_from_item(row_items[0])
-        if attribute is None:
+        som_property = cls.get_property_from_item(row_items[0])
+        if som_property is None:
             return
 
         # update row values
         for item, (_, column_getter) in zip(
             row_items, cls.get_properties().property_table_columns
         ):
-            value = column_getter(attribute)
+            value = column_getter(som_property)
             cls.format_row_value(item, value)
         cls.format_row(row_items)
 
         # Update Link Icon
-        attribute_has_parent = bool(attribute.parent is not None)
         if (
-            not row_items[0].data(LINKSTATE) == attribute_has_parent
+            not row_items[0].data(LINKSTATE) == som_property.is_child
         ):  # only update if data changes else infinite update loop
             row_items[0].setIcon(
-                get_link_icon() if attribute_has_parent else QIcon()
+                get_link_icon() if som_property.is_child else QIcon()
             )  # update Icon
-            row_items[0].setData(LINKSTATE, attribute_has_parent)
+            row_items[0].setData(LINKSTATE, som_property.is_child)
 
     @classmethod
     def format_row_value(
@@ -192,17 +191,17 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
     @classmethod
     def format_row(cls, row: list[QTableWidgetItem]) -> None:
         """
-        Highlights row if attribute is Ident Attribute
+        Highlights row if property is Ident Property
         :param row:
         :return:
         """
-        attribute = cls.get_property_from_item(row[0])
+        som_property = cls.get_property_from_item(row[0])
         palette = QPalette()
-        if attribute.property_set is None:
+        if som_property.property_set is None:
             brush = palette.base()
-        elif not attribute.property_set.som_class:
+        elif not som_property.property_set.som_class:
             brush = palette.base()
-        elif attribute.property_set.som_class.identifier_property == attribute:
+        elif som_property.property_set.som_class.identifier_property == som_property:
             brush = palette.mid()
         else:
             brush = palette.base()
@@ -214,18 +213,18 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         """
         Define Column which should be shown in Table
         :param name: Name of Column
-        :param get_function: getter function for cell value. SOMcreator.Attribute will be passed as argument
+        :param get_function: getter function for cell value. SOMcreator.SOMProperty will be passed as argument
         :return:
         """
         cls.get_properties().property_table_columns.append((name, get_function))
 
     @classmethod
-    def get_existing_attributes_in_table(cls, table: QTableWidget):
-        attributes = set()
+    def get_existing_properties(cls, table: QTableWidget):
+        properties = set()
         for row in range(table.rowCount()):
             item = table.item(row, 0)
-            attributes.add(cls.get_property_from_item(item))
-        return attributes
+            properties.add(cls.get_property_from_item(item))
+        return properties
 
     @classmethod
     def get_property_set_by_table(
@@ -247,21 +246,21 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         prop = cls.get_properties()
         base_names = [name for (name, getter) in prop.property_table_columns]
         translation = [
-            QCoreApplication.translate("AttributeTable", name) for name in base_names
+            QCoreApplication.translate("PropertyTyble", name) for name in base_names
         ]
         return translation
 
     @classmethod
     def get_possible_parent(
-        cls, attribute: SOMcreator.SOMProperty
+        cls, som_property: SOMcreator.SOMProperty
     ) -> None | SOMcreator.SOMProperty:
-        if not attribute.property_set:
+        if not som_property.property_set:
             return None
-        if not attribute.property_set.parent:
+        if not som_property.property_set.parent:
             return None
         possible_parents = {
-            a.name: a for a in attribute.property_set.parent.get_properties(filter=True)
-        }.get(attribute.name)
+            a.name: a for a in som_property.property_set.parent.get_properties(filter=True)
+        }.get(som_property.name)
         return possible_parents if possible_parents else None
 
     @classmethod
@@ -286,12 +285,12 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         cls, table: ui.PropertyTable
     ) -> tuple[str, Callable] | None:
         """
-        Contextmenu function for renaming an attribute.
-        :param table: Active Attribute Table
+        Contextmenu function for renaming an property.
+        :param table: Active Property Table
         :return:
         """
-        if len(cls.get_selected_attributes(table)) == 1:
-            return table.tr("Rename"), lambda: cls.edit_selected_attribute_name(table)
+        if len(cls.get_selected_properties(table)) == 1:
+            return table.tr("Rename"), lambda: cls.edit_selected_property_name(table)
         else:
             return None
 
@@ -300,35 +299,35 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         cls, table: ui.PropertyTable, with_child=False
     ) -> tuple[str, Callable] | None:
         """
-        Contextmenu function for deleting an attribute.
-        :param table: Active Attribute Table
+        Contextmenu function for deleting an property.
+        :param table: Active Property Table
         :return:
         """
 
-        # return if no attribute is selected
-        if len(cls.get_selected_attributes(table)) == 0:
+        # return if no property is selected
+        if len(cls.get_selected_properties(table)) == 0:
             return None
 
-        # stop user from deleting identifier attribute
+        # stop user from deleting identifier property
         obj = cls.get_property_set_by_table(table).som_class
         ident_attrib = None if obj is None else obj.identifier_property
-        if ident_attrib in cls.get_selected_attributes(table):
+        if ident_attrib in cls.get_selected_properties(table):
             return None
 
-        # don't show if any attribute is not a parent if deletion with child is requested
-        logging.debug([a.is_parent for a in cls.get_selected_attributes(table)])
+        # don't show if any property is not a parent if deletion with child is requested
+        logging.debug([a.is_parent for a in cls.get_selected_properties(table)])
         if (
-            not all(a.is_parent for a in cls.get_selected_attributes(table))
+            not all(a.is_parent for a in cls.get_selected_properties(table))
             and with_child
         ):
             return None
 
         name = (
-            table.tr("Delete (with subattributes)")
+            table.tr("Delete (with subproperties)")
             if with_child
             else table.tr("Delete")
         )
-        return name, lambda: cls.delete_selected_attributes(
+        return name, lambda: cls.delete_selected_properties(
             table, with_child=with_child
         )
 
@@ -337,39 +336,39 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         cls, table: ui.PropertyTable
     ) -> tuple[str, Callable] | None:
         """
-        Contextmenu function for removing a parent connect of an attribute.
-        :param table: Active Attribute Table
+        Contextmenu function for removing a parent connect of an property.
+        :param table: Active Property Table
         :return:
         """
 
-        # return if no attribute is selected
-        selected_attributes = cls.get_selected_attributes(table)
-        if len(selected_attributes) == 0:
+        # return if no property is selected
+        selected_properties = cls.get_selected_properties(table)
+        if len(selected_properties) == 0:
             return None
 
-        # don't show if any attribute is not a child
-        if not any(a.is_child for a in selected_attributes):
+        # don't show if any property is not a child
+        if not any(a.is_child for a in selected_properties):
             return None
         return table.tr(
             "Remove Connection"
-        ), lambda: cls.remove_parent_of_selected_attribute(table)
+        ), lambda: cls.remove_parent_of_selected_properties(table)
 
     @classmethod
     def context_menu_builder_add_connection(
         cls, table: ui.PropertyTable
     ) -> tuple[str, Callable] | None:
         """
-        Contextmenu function for adding a parent connect of an attribute.
-        :param table: Active Attribute Table
+        Contextmenu function for adding a parent connect of an property.
+        :param table: Active Property Table
         :return:
         """
-        # return if no attribute is selected
-        if len(cls.get_selected_attributes(table)) == 0:
+        # return if no property is selected
+        if len(cls.get_selected_properties(table)) == 0:
             return None
 
         # don't show if no possible parent is found
         possible_parents = [
-            (a, cls.get_possible_parent(a)) for a in cls.get_selected_attributes(table)
+            (a, cls.get_possible_parent(a)) for a in cls.get_selected_properties(table)
         ]
         if not any(
             parent is not None for a, parent in possible_parents if a.parent != parent
@@ -378,15 +377,15 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
         return table.tr(
             "Connect to Parent"
-        ), lambda: cls.add_parent_of_selected_attribute(table)
+        ), lambda: cls.add_parent_of_selected_properties(table)
 
     @classmethod
     def set_property_set_of_table(
         cls, table: ui.PropertyTable, property_set: SOMcreator.SOMPropertySet
     ) -> None:
         """
-        define which property_set is shown in AttributeTable
-        :param table: active AttributeTable
+        define which property_set is shown in PropertyTable
+        :param table: active PropertyTable
         :param property_set: PropertySet which will be linked
         :return:
         """
@@ -398,30 +397,30 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
     ) -> SOMcreator.SOMPropertySet | None:
         """
         get property set of table
-        :param table: active AttributeTable
+        :param table: active PropertyTable
         :return:
         """
         return table.property_set
 
     @classmethod
-    def get_row_index_from_attribute(
-        cls, attribute: SOMcreator.SOMProperty, table: QTableWidget
+    def get_row_index_from_property(
+        cls, som_property: SOMcreator.SOMProperty, table: QTableWidget
     ) -> int:
         """
         :return: Row index
         """
         for row in range(table.rowCount()):
             item = table.item(row, 0)
-            if cls.get_property_from_item(item) == attribute:
+            if cls.get_property_from_item(item) == som_property:
                 return row
 
     @classmethod
-    def get_selected_attributes(
+    def get_selected_properties(
         cls, table: ui.PropertyTable
     ) -> set[SOMcreator.SOMProperty]:
         """
-        :param table: Active AttributeTable
-        :return: selected attributes in AttributeTable
+        :param table: Active PropertyTable
+        :return: selected properties in PropertyTable
         """
         return {cls.get_property_from_item(item) for item in table.selectedItems()}
 
@@ -430,7 +429,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         cls, item: QTableWidgetItem
     ) -> SOMcreator.SOMProperty | None:
         """
-        return the Attribute which is linked to a table entry
+        return the Property which is linked to a table entry
         :param item:
         :return:
         """

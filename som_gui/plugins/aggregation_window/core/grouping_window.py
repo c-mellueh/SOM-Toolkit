@@ -14,11 +14,12 @@ from som_gui.plugins.aggregation_window.module.grouping_window.constants import 
     GROUP_FOLDER,
 )
 from .. import tool as aw_tool
-from ..module.grouping_window.constants import GROUP_ATTRIBUTE, GROUP_PSET, IFC_MOD
+from ..module.grouping_window.constants import GROUP_PROPERTY, GROUP_PSET, IFC_MOD
 
 if TYPE_CHECKING:
     from som_gui.tool.ifc_importer import IfcImportRunner
     from ..tool.grouping_window import GroupingRunner
+
 
 def remove_main_menu_actions(
     grouping_window: Type[aw_tool.GroupingWindow], main_window: Type[tool.MainWindow]
@@ -27,12 +28,16 @@ def remove_main_menu_actions(
     main_window.remove_action("menuModels", action)
     grouping_window.reset()
 
+
 def create_main_menu_actions(
     grouping_window: Type[aw_tool.GroupingWindow], main_window: Type[tool.MainWindow]
 ):
-    action = main_window.add_action("menuModels", "create_groups", grouping_window.trigger_open_window)
+    action = main_window.add_action(
+        "menuModels", "create_groups", grouping_window.trigger_open_window
+    )
     grouping_window.set_action("create_groups", action)
     grouping_window.trigger_retranslate_ui()
+
 
 def retranslate_ui(
     grouping_window: Type[aw_tool.GroupingWindow], util: Type[tool.Util]
@@ -55,17 +60,17 @@ def retranslate_ui(
     )
     window.ui.widget_import.name = QCoreApplication.translate("Aggregation", "IFC Path")
 
-    group_pset, group_attribute = util.get_property(window.ui.widget_group_property)
+    group_pset, group_property = util.get_property(window.ui.widget_group_property)
     pset_placeholder = QCoreApplication.translate("Aggregation", "Grouping PropertySet")
-    attribute_placeholder = QCoreApplication.translate(
+    property_placeholder = QCoreApplication.translate(
         "Aggregation", "Grouping PropertySet"
     )
-    util.fill_main_attribute(
+    util.fill_main_property(
         window.ui.widget_group_property,
         group_pset,
-        group_attribute,
+        group_property,
         pset_placeholder,
-        attribute_placeholder,
+        property_placeholder,
     )
 
 
@@ -82,10 +87,10 @@ def open_window(grouping_window: Type[aw_tool.GroupingWindow], util: Type[tool.U
     util.fill_file_selector(
         window.ui.widget_import, "_ifc", "IFC Files (*.ifc *.IFC);;", "grouping_import"
     )
-    group_attribute = tool.Appdata.get_string_setting(IFC_MOD, GROUP_ATTRIBUTE)
+    group_property = tool.Appdata.get_string_setting(IFC_MOD, GROUP_PROPERTY)
     group_pset = tool.Appdata.get_string_setting(IFC_MOD, GROUP_PSET)
-    util.fill_main_attribute(
-        window.ui.widget_group_property, group_pset, group_attribute, "_pset", "_"
+    util.fill_main_property(
+        window.ui.widget_group_property, group_pset, group_property, "_pset", "_"
     )
     grouping_window.connect_buttons()
     grouping_window.set_progress_bars_visible(False)
@@ -99,17 +104,15 @@ def run_clicked(
     util: Type[tool.Util],
 ):
     widget = grouping_window.get()
-    group_pset_name, group_attribute_name = util.get_property(
-        widget.ui.widget_group_property
-    )
-    main_pset_name, main_attribute_name = util.get_property(
+    group_pset_name, group_name = util.get_property(widget.ui.widget_group_property)
+    main_pset_name, main_property_name = util.get_property(
         widget.ui.widget_ident_property
     )
     export_path = util.get_path_from_fileselector(widget.ui.widget_export)[0]
     ifc_paths = util.get_path_from_fileselector(widget.ui.widget_import)
 
     ifc_inputs_are_valid = ifc_importer.check_inputs(
-        ifc_paths, main_pset_name, main_attribute_name
+        ifc_paths, main_pset_name, main_property_name
     )
     export_path_is_valid = grouping_window.check_export_path(export_path)
     if not ifc_inputs_are_valid or not export_path_is_valid:
@@ -118,8 +121,8 @@ def run_clicked(
     grouping_window.clear_progress_bars(widget)
     grouping_window.set_buttons(QDialogButtonBox.StandardButton.Abort)
     grouping_window.reset_abort()
-    grouping_window.set_main_attribute(main_pset_name, main_attribute_name)
-    grouping_window.set_grouping_attribute(group_pset_name, group_attribute_name)
+    grouping_window.set_main_property(main_pset_name, main_property_name)
+    grouping_window.set_grouping_property(group_pset_name, group_name)
     grouping_window.set_export_path(export_path)
 
     grouping_window.set_is_running(True)

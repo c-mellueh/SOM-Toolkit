@@ -80,29 +80,29 @@ def check_element(
     modelcheck.set_active_element(element)
 
     data_dict = modelcheck.get_data_dict()
-    main_pset_name, main_attribute_name = (
+    main_pset_name, main_property_name = (
         modelcheck.get_main_pset_name(),
         modelcheck.get_main_property_name(),
     )
-    main_attribute_value = modelcheck.get_ident_value(element)
-    main_attribute_value = "" if main_attribute_value is None else main_attribute_value
-    modelcheck.db_create_entity(element, main_attribute_value)
+    main_property_value = modelcheck.get_ident_value(element)
+    main_property_value = "" if main_property_value is None else main_property_value
+    modelcheck.db_create_entity(element, main_property_value)
 
     if not modelcheck.is_pset_existing(element, main_pset_name):
         modelcheck.ident_pset_issue(element.GlobalId, main_pset_name)
         return
 
     elif not modelcheck.is_property_existing(
-        element, main_pset_name, main_attribute_name
+        element, main_pset_name, main_property_name
     ):
-        modelcheck.ident_issue(element.GlobalId, main_pset_name, main_attribute_name)
+        modelcheck.ident_issue(element.GlobalId, main_pset_name, main_property_name)
         return
 
-    obj_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(main_attribute_value)
+    obj_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(main_property_value)
 
     if obj_rep is None:
         modelcheck.ident_unknown(
-            element.GlobalId, main_pset_name, main_attribute_name, main_attribute_value
+            element.GlobalId, main_pset_name, main_property_name, main_property_value
         )
         return
 

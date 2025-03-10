@@ -263,7 +263,7 @@
                                 </item>
                             </layout>
                         </widget>
-                        <widget class="PropertyTable" name="table_attribute">
+                        <widget class="PropertyTable" name="table_property">
                             <property name="contextMenuPolicy">
                                 <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
                             </property>
@@ -350,7 +350,7 @@
         <tabstop>tree_class</tabstop>
         <tabstop>button_search</tabstop>
         <tabstop>button_Pset_add</tabstop>
-        <tabstop>table_attribute</tabstop>
+        <tabstop>table_property</tabstop>
     </tabstops>
     <resources />
     <connections />

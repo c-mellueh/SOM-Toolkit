@@ -22,24 +22,24 @@ from . import (
 if TYPE_CHECKING:
     from SOMcreator import SOMProject, UseCase, Phase
 parent_dict = dict()
-aggregation_dict:dict[SOMcreator.SOMAggregation,tuple[str|None,int]] = dict()
+aggregation_dict: dict[SOMcreator.SOMAggregation, tuple[str | None, int]] = dict()
 phase_list: list[Phase] = list()
 use_case_list: list[UseCase] = list()
 plugin_dict = dict()
 object_uuid_dict: dict[str, SOMcreator.SOMClass] = dict()
 property_set_uuid_dict: dict[str, SOMcreator.SOMPropertySet] = dict()
-attribute_uuid_dict: dict[str, SOMcreator.SOMProperty] = dict()
+property_uuid_dict: dict[str, SOMcreator.SOMProperty] = dict()
 filter_matrixes = list()
 
 
 def reset_uuid_dicts():
     SOMcreator.importer.som_json.object_uuid_dict = dict()
     SOMcreator.importer.som_json.property_set_uuid_dict = dict()
-    SOMcreator.importer.som_json.attribute_uuid_dict = dict()
+    SOMcreator.importer.som_json.property_uuid_dict = dict()
     SOMcreator.importer.som_json.filter_matrixes = list()
 
 
-def open_json(cls: Type[SOMProject], path: str|os.PathLike):
+def open_json(cls: Type[SOMProject], path: str | os.PathLike):
     start_time = time.time()
 
     SOMcreator.importer.som_json.parent_dict = dict()

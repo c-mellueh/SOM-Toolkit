@@ -54,7 +54,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
         jsf_text = QCoreApplication.translate(
             "Modelcheck", "Export Javascript (fast Check)"
         )
-        ar_text = QCoreApplication.translate("Modelcheck", "Export Attribute Rules")
+        ar_text = QCoreApplication.translate("Modelcheck", "Export Property Rules")
         csv_text = QCoreApplication.translate("Modelcheck", "Export Modelcheck-CSV")
 
         desite_menu = [
@@ -90,8 +90,8 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def get_main_property(cls) -> tuple[str, str]:
-        widget = cls.get_window().ui.main_attribute_widget
-        return widget.ui.le_pset_name.text(), widget.ui.le_attribute_name.text()
+        widget = cls.get_window().ui.main_property_widget
+        return widget.ui.le_pset_name.text(), widget.ui.le_property_name.text()
 
     @classmethod
     def get_data_dict(cls):
@@ -119,7 +119,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_desite_fast(cls):
-        pset_name, attribute_name = cls.get_main_property()
+        pset_name, property_name = cls.get_main_property()
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
         path = tool.Popups.get_save_path(file_format, cls.get_window())
         if not path:
@@ -127,7 +127,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
         data_dict = cls.get_data_dict()
         modelcheck.fast_check(
-            tool.Project.get(), pset_name, attribute_name, data_dict, path
+            tool.Project.get(), pset_name, property_name, data_dict, path
         )
 
     @classmethod
@@ -141,7 +141,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
 
     @classmethod
     def export_desite_js(cls):
-        pset_name, attribute_name = cls.get_main_property()
+        pset_name, property_name = cls.get_main_property()
 
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
         path = tool.Popups.get_save_path(file_format, cls.get_window())
@@ -154,13 +154,13 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
             data_dict,
             path,
             main_pset=pset_name,
-            main_attribute=attribute_name,
+            main_property=property_name,
             object_structure=object_structure,
         )
 
     @classmethod
     def export_desite_property_table(cls):
-        pset_name, attribute_name = cls.get_main_property()
+        pset_name, property_name = cls.get_main_property()
 
         file_format = "Desite QA-XML (*.qa.xml);;all (*.*)"
         path = tool.Popups.get_save_path(file_format, cls.get_window())
@@ -174,7 +174,7 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
             data_dict,
             path,
             main_pset=pset_name,
-            main_attribute=attribute_name,
+            main_property=property_name,
             object_structure=cls._build_tree(),
             export_type=modelcheck.TABLE_EXPORT,
         )

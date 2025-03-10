@@ -24,34 +24,34 @@ def _handle_bookmark_list(proj: SOMcreator.SOMProject) -> etree.ElementTree:
         xml_col = etree.SubElement(xml_bookmark, "col")
         xml_col.set("v", "Type##xs:string")
 
-        attribute = obj.identifier_property
-        if attribute is None:
+        som_property = obj.identifier_property
+        if som_property is None:
             continue
         xml_col = etree.SubElement(xml_bookmark, "col")
-        data_type = xml.transform_data_format(attribute.data_type)
-        text = f"{attribute.property_set.name}:{attribute.name}##{data_type}"
+        data_type = xml.transform_data_format(som_property.data_type)
+        text = f"{som_property.property_set.name}:{som_property.name}##{data_type}"
         xml_col.set("v", text)
 
         for property_set in obj.get_property_sets(filter=True):
-            for attribute in property_set.get_properties(filter=True):
-                if attribute != obj.identifier_property:
+            for som_property in property_set.get_properties(filter=True):
+                if som_property != obj.identifier_property:
                     xml_col = etree.SubElement(xml_bookmark, "col")
-                    data_type = xml.transform_data_format(attribute.data_type)
-                    text = f"{property_set.name}:{attribute.name}##{data_type}"
+                    data_type = xml.transform_data_format(som_property.data_type)
+                    text = f"{property_set.name}:{som_property.name}##{data_type}"
                     xml_col.set("v", text)
     return etree.ElementTree(xml_bookmarks)
 
 
-def _get_attribute_dict(proj: SOMcreator.SOMProject) -> dict[str, str]:
-    attribute_dict = {}
+def _get_property_dict(proj: SOMcreator.SOMProject) -> dict[str, str]:
+    property_dict = {}
     for obj in proj.get_classes(filter=True):
         for property_set in obj.get_property_sets(filter=True):
-            for attribute in property_set.get_properties(filter=True):
-                attribute_dict[f"{property_set.name}:{attribute.name}"] = (
-                    xml.transform_data_format(attribute.data_type)
+            for som_property in property_set.get_properties(filter=True):
+                property_dict[f"{property_set.name}:{som_property.name}"] = (
+                    xml.transform_data_format(som_property.data_type)
                 )
 
-    return attribute_dict
+    return property_dict
 
 
 def export_bookmarks(proj: SOMcreator.SOMProject, path: str) -> None:
@@ -64,12 +64,12 @@ def export_bookmarks(proj: SOMcreator.SOMProject, path: str) -> None:
             f, xml_declaration=True, pretty_print=True, encoding="utf-8", method="xml"
         )
 
-    attrib_dict = _get_attribute_dict(proj)
+    property_dict = _get_property_dict(proj)
     file_loader = jinja2.FileSystemLoader(HOME_DIR)
     env = jinja2.Environment(loader=file_loader)
     env.trim_blocks = True
     env.lstrip_blocks = True
     template = env.get_template(BOOKMARK_TEMPLATE)
-    code = template.render(attribute_dict=attrib_dict)
+    code = template.render(attribute_dict=property_dict)
     with open(os.path.join(path, "bookmark_script.js"), "w") as f:
         f.write(code)

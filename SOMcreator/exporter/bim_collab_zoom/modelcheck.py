@@ -27,7 +27,7 @@ def _write_header(xml_header: etree.Element) -> None:
 
 def _write_smartview(
     property_set: SOMcreator.SOMPropertySet,
-    attribute_list: list[SOMcreator.SOMProperty],
+    property_list: list[SOMcreator.SOMProperty],
     author: str,
 ) -> etree.Element:
     def write_smartview_basics():
@@ -53,50 +53,50 @@ def _write_smartview(
     ident_attrib = property_set.som_class.identifier_property
     rule_list: list[etree.Element] = list()
 
-    for attribute in attribute_list:
-        if attribute == ident_attrib:
+    for som_property in property_list:
+        if som_property == ident_attrib:
             continue
-        if attribute.data_type in (value_constants.INTEGER, value_constants.REAL):
-            if not attribute.allowed_values:
+        if som_property.data_type in (value_constants.INTEGER, value_constants.REAL):
+            if not som_property.allowed_values:
                 rule_list += rule.add_if_not_existing(
-                    attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type]
+                    som_property.name, pset_name, c.DATATYPE_DICT[som_property.data_type]
                 )
-            elif attribute.value_type == value_constants.LIST:
+            elif som_property.value_type == value_constants.LIST:
                 rule_list += rule.numeric_list(
-                    attribute.name, pset_name, attribute.allowed_values
+                    som_property.name, pset_name, som_property.allowed_values
                 )
-            elif attribute.value_type == value_constants.RANGE:
+            elif som_property.value_type == value_constants.RANGE:
                 rule_list += rule.numeric_range(
-                    attribute.name, pset_name, attribute.allowed_values
+                    som_property.name, pset_name, som_property.allowed_values
                 )
             else:
                 logging.error(
-                    f"No Function defined for {attribute.name} ({attribute.value_type}x{attribute.data_type}"
+                    f"No Function defined for {som_property.name} ({som_property.value_type}x{som_property.data_type}"
                 )
 
-        elif attribute.data_type == value_constants.LABEL:
-            if attribute.value_type == value_constants.FORMAT:
+        elif som_property.data_type == value_constants.LABEL:
+            if som_property.value_type == value_constants.FORMAT:
                 rule_list += rule.add_if_not_existing(
-                    attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type]
+                    som_property.name, pset_name, c.DATATYPE_DICT[som_property.data_type]
                 )
                 continue
 
-            if attribute.allowed_values:
+            if som_property.allowed_values:
                 rule_list += rule.add_if_not_in_string_list(
-                    attribute.name, pset_name, attribute.allowed_values
+                    som_property.name, pset_name, som_property.allowed_values
                 )
             else:
                 rule_list += rule.add_if_not_existing(
-                    attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type]
+                    som_property.name, pset_name, c.DATATYPE_DICT[som_property.data_type]
                 )
 
-        elif attribute.data_type == value_constants.BOOLEAN:
+        elif som_property.data_type == value_constants.BOOLEAN:
             rule_list += rule.add_if_not_existing(
-                attribute.name, pset_name, c.DATATYPE_DICT[attribute.data_type]
+                som_property.name, pset_name, c.DATATYPE_DICT[som_property.data_type]
             )
         else:
             logging.error(
-                f"No Function defined for {attribute.name} ({attribute.value_type}x{attribute.data_type}"
+                f"No Function defined for {som_property.name} ({som_property.value_type}x{som_property.data_type}"
             )
 
     rule_list += rule.remove_if_not_in_string_list(
@@ -121,8 +121,8 @@ def _write_smartviewset(
     )
     smartviews = etree.SubElement(smartview_set, const.SVIEWS)
 
-    for property_set, attribute_list in pset_dict.items():
-        smartviews.append(_write_smartview(property_set, attribute_list, author))
+    for property_set, property_list in pset_dict.items():
+        smartviews.append(_write_smartview(property_set, property_list, author))
     return smartview_set
 
 
@@ -155,6 +155,6 @@ def build_full_required_data_dict(project: SOMcreator.SOMProject) -> REQUIRED_DA
         required_data[obj] = dict()
         for pset in obj.get_property_sets(filter=True):
             required_data[obj][pset] = [
-                attribute for attribute in pset.get_properties(filter=True)
+                som_property for som_property in pset.get_properties(filter=True)
             ]
     return required_data

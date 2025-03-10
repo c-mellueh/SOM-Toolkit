@@ -198,14 +198,14 @@ class Mapping(som_gui.core.tool.Mapping):
         for property_set in obj.get_property_sets(filter=False):
             if not cls.get_checkstate(property_set):
                 continue
-            for attribute in property_set.get_properties(filter=False):
-                if not cls.get_checkstate(attribute):
+            for som_property in property_set.get_properties(filter=False):
+                if not cls.get_checkstate(som_property):
                     continue
                 if property_set.name not in export_dict:
                     export_dict[property_set.name] = (list(), set())
                 property_set_list = export_dict[property_set.name]
-                if attribute.name not in set(a.name for a in property_set_list[0]):
-                    property_set_list[0].append(attribute)
+                if som_property.name not in set(a.name for a in property_set_list[0]):
+                    property_set_list[0].append(som_property)
                 property_set_list[1].update(obj.ifc_mapping)
         cls.get_properties().ifc_export_dict = export_dict
 

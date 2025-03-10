@@ -16,17 +16,17 @@ def _transform_datatype(data_type: str, data_type_dict: dict[str, str]) -> str:
 
 
 def export_ifc_template(
-    path: str, pset_dict: dict[str, (list[SOMcreator.SOMProperty], set[str])]
+    path: str, pset_dict: dict[str, tuple[list[SOMcreator.SOMProperty], set[str]]]
 ) -> None:
     with open(path, "w") as file:
         property_set: SOMcreator.SOMPropertySet
         for pset_name, (attrib_list, ifc_mapping) in sorted(pset_dict.items()):
             file.write(f"PropertySet:   {pset_name} I  {','.join(ifc_mapping)} \n")
-            for attribute in attrib_list:
+            for som_property in attrib_list:
                 revit_datatype = _transform_datatype(
-                    attribute.data_type, value_constants.REVIT_TEMPLATE_DATATYPE_DICT
+                    som_property.data_type, value_constants.REVIT_TEMPLATE_DATATYPE_DICT
                 )
-                file.write(f"   {attribute.name}    {revit_datatype}\n")
+                file.write(f"   {som_property.name}    {revit_datatype}\n")
             file.write("\n")
 
 
@@ -49,20 +49,20 @@ class IterItem(type):
 
 class SP_Item(metaclass=IterItem):
 
-    def __init__(self, property_set_name, attribute, pset_number):
+    def __init__(self, property_set_name:str, som_property:SOMcreator.SOMProperty, pset_number):
         self.__class__.add_item(self)
-        self.property_set_name = property_set_name
-        self.attribute = attribute
-        self.pset_number = pset_number
+        self.property_set_name:str = property_set_name
+        self.som_property:SOMcreator.SOMProperty = som_property
+        self.pset_number:int = pset_number
 
     def output(self, file: IO):
         file.write(
-            f"PARAM	{self.attribute.uuid}	{self.attribute.name}	{self.datatype()}		{self.pset_number}	1		1\n"
+            f"PARAM	{self.som_property.uuid}	{self.som_property.name}	{self.datatype()}		{self.pset_number}	1		1\n"
         )
 
     def datatype(self) -> str:
         return _transform_datatype(
-            self.attribute.data_type, value_constants.REVIT_SHARED_PARAM_DATATYPE_DICT
+            self.som_property.data_type, value_constants.REVIT_SHARED_PARAM_DATATYPE_DICT
         )
 
 
@@ -92,6 +92,6 @@ def export_shared_parameters(
             for attrib in attrib_list:
                 t = SP_Item(pset_name, attrib, i)
 
-        for item in sorted(SP_Item, key=lambda x: x.attribute.name):
+        for item in sorted(SP_Item, key=lambda x: x.som_property.name):
             item.output(file)
             pass

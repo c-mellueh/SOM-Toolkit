@@ -1,127 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Mapping</class>
- <widget class="QMainWindow" name="Mapping">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1194</width>
-    <height>549</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
-  </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QSplitter" name="splitter">
-      <property name="frameShape">
-       <enum>QFrame::Shape::Box</enum>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Orientation::Horizontal</enum>
-      </property>
-      <widget class="ObjectTreeWidget" name="object_tree">
-       <property name="selectionMode">
-        <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
-       </property>
-       <property name="sortingEnabled">
-        <bool>true</bool>
-       </property>
-       <column>
-        <property name="text">
-         <string>Object</string>
+    <class>Mapping</class>
+    <widget class="QMainWindow" name="Mapping">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>1194</width>
+                <height>549</height>
+            </rect>
         </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Ifc Mapping</string>
+        <property name="windowTitle">
+            <string>MainWindow</string>
         </property>
-       </column>
-      </widget>
-      <widget class="QWidget" name="gridLayoutWidget">
-       <layout class="QGridLayout" name="right_layout">
-        <item row="0" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QLabel" name="label_object_name">
-            <property name="enabled">
-             <bool>true</bool>
+        <widget class="QWidget" name="centralwidget">
+            <layout class="QGridLayout" name="gridLayout">
+                <item row="0" column="0">
+                    <widget class="QSplitter" name="splitter">
+                        <property name="frameShape">
+                            <enum>QFrame::Shape::Box</enum>
+                        </property>
+                        <property name="orientation">
+                            <enum>Qt::Orientation::Horizontal</enum>
+                        </property>
+                        <widget class="ObjectTreeWidget" name="object_tree">
+                            <property name="selectionMode">
+                                <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
+                            </property>
+                            <property name="sortingEnabled">
+                                <bool>true</bool>
+                            </property>
+                            <column>
+                                <property name="text">
+                                    <string>Object</string>
+                                </property>
+                            </column>
+                            <column>
+                                <property name="text">
+                                    <string>Ifc Mapping</string>
+                                </property>
+                            </column>
+                        </widget>
+                        <widget class="QWidget" name="gridLayoutWidget">
+                            <layout class="QGridLayout" name="right_layout">
+                                <item row="0" column="0">
+                                    <layout class="QVBoxLayout" name="verticalLayout">
+                                        <item>
+                                            <widget class="QLabel" name="label_object_name">
+                                                <property name="enabled">
+                                                    <bool>true</bool>
+                                                </property>
+                                                <property name="text">
+                                                    <string />
+                                                </property>
+                                            </widget>
+                                        </item>
+                                        <item>
+                                            <widget class="PropertySetTreeWidget" name="pset_tree">
+                                                <property name="sortingEnabled">
+                                                    <bool>true</bool>
+                                                </property>
+                                                <column>
+                                                    <property name="text">
+                                                        <string notr="true">PropertySet/Property</string>
+                                                    </property>
+                                                </column>
+                                                <column>
+                                                    <property name="text">
+                                                        <string>Revit Mapping</string>
+                                                    </property>
+                                                </column>
+                                            </widget>
+                                        </item>
+                                    </layout>
+                                </item>
+                            </layout>
+                        </widget>
+                    </widget>
+                </item>
+            </layout>
+        </widget>
+        <widget class="QMenuBar" name="menubar">
+            <property name="geometry">
+                <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>1194</width>
+                    <height>33</height>
+                </rect>
             </property>
+            <widget class="QMenu" name="menu_revit">
+                <property name="title">
+                    <string>Revit</string>
+                </property>
+                <addaction name="action_ifc" />
+                <addaction name="action_shared_parameters" />
+            </widget>
+            <addaction name="menu_revit" />
+        </widget>
+        <widget class="QStatusBar" name="statusbar" />
+        <action name="action_ifc">
             <property name="text">
-             <string/>
+                <string>Export IFC-Mapping</string>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="PropertySetTreeWidget" name="pset_tree">
-            <property name="sortingEnabled">
-             <bool>true</bool>
+        </action>
+        <action name="action_shared_parameters">
+            <property name="text">
+                <string>Export Shared Parameters</string>
             </property>
-            <column>
-             <property name="text">
-              <string notr="true">PropertySet/Attribute</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Revit Mapping</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1194</width>
-     <height>33</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu_revit">
-    <property name="title">
-     <string>Revit</string>
-    </property>
-    <addaction name="action_ifc"/>
-    <addaction name="action_shared_parameters"/>
-   </widget>
-   <addaction name="menu_revit"/>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
-  <action name="action_ifc">
-   <property name="text">
-    <string>Export IFC-Mapping</string>
-   </property>
-  </action>
-  <action name="action_shared_parameters">
-   <property name="text">
-    <string>Export Shared Parameters</string>
-   </property>
-  </action>
- </widget>
- <customwidgets>
-  <customwidget>
-   <class>ObjectTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>som_gui.module.mapping.ui</header>
-  </customwidget>
-  <customwidget>
-   <class>PropertySetTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>som_gui.module.mapping.ui</header>
-  </customwidget>
- </customwidgets>
- <resources/>
- <connections/>
+        </action>
+    </widget>
+    <customwidgets>
+        <customwidget>
+            <class>ObjectTreeWidget</class>
+            <extends>QTreeWidget</extends>
+            <header>som_gui.module.mapping.ui</header>
+        </customwidget>
+        <customwidget>
+            <class>PropertySetTreeWidget</class>
+            <extends>QTreeWidget</extends>
+            <header>som_gui.module.mapping.ui</header>
+        </customwidget>
+    </customwidgets>
+    <resources />
+    <connections />
 </ui>

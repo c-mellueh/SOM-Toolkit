@@ -37,7 +37,7 @@ class CustomFormatter(logging.Formatter):
         else:
             module_func = module_func.ljust(50)
 
-        # Set the custom attribute
+        # Set the custom property
         record.module_func = module_func
 
         return super().format(record)

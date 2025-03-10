@@ -53,41 +53,41 @@ def _handle_elementsection(xml_parent: Element):
 def _handle_property_type_section(xml_repo) -> dict[str, int]:
     xml_property_type_section = etree.SubElement(xml_repo, "propertyTypeSection")
 
-    attribute_dict = dict()
+    property_dict = dict()
 
     i = 1
-    for attribute in SOMcreator.SOMProperty:
-        # use attribute_text instead of attribute to remove duplicates
-        attribute_text = f"{attribute.property_set.name}:{attribute.name}"
-        if attribute_text not in attribute_dict:
+    for som_property in SOMcreator.SOMProperty:
+        # use property_text instead of property to remove duplicates
+        property_text = f"{som_property.property_set.name}:{som_property.name}"
+        if property_text not in property_dict:
             xml_ptype = etree.SubElement(xml_property_type_section, "ptype")
             xml_ptype.set("key", str(i))
-            xml_ptype.set("name", attribute_text)
-            xml_ptype.set("datatype", xml.transform_data_format(attribute.data_type))
+            xml_ptype.set("name", property_text)
+            xml_ptype.set("datatype", xml.transform_data_format(som_property.data_type))
             xml_ptype.set("unit", "")
             xml_ptype.set("inh", "false")
-            attribute_dict[attribute_text] = i
+            property_dict[property_text] = i
             i += 1
 
-    return attribute_dict
+    return property_dict
 
 
 def _handle_property_section(
-    xml_repo: etree.Element, id_dict: dict, attribute_dict: dict
+    xml_repo: etree.Element, id_dict: dict, property_dict: dict
 ) -> None:
     xml_property_section = etree.SubElement(xml_repo, "propertySection")
 
     for node, ref_id in id_dict.items():
         obj: SOMcreator.SOMClass = node.object
         for property_set in obj.get_property_sets(filter=True):
-            for attribute in property_set.get_properties(filter=True):
-                attribute_text = f"{attribute.property_set.name}:{attribute.name}"
-                ref_type = attribute_dict[attribute_text]
+            for som_property in property_set.get_properties(filter=True):
+                property_text = f"{som_property.property_set.name}:{som_property.name}"
+                ref_type = property_dict[property_text]
                 xml_property = etree.SubElement(xml_property_section, "property")
                 xml_property.set("refID", str(ref_id))
                 xml_property.set("refType", str(ref_type))
-                if attribute == obj.identifier_property:
-                    xml_property.text = attribute.allowed_values[0]
+                if som_property == obj.identifier_property:
+                    xml_property.text = som_property.allowed_values[0]
                 else:
                     xml_property.text = "füllen!"
 
@@ -103,8 +103,8 @@ def _handle_repository(
         xml_id.set("k", str(i + 1))
         xml_id.set("v", str(id_value))
 
-    attribute_dict = _handle_property_type_section(xml_repo)
-    _handle_property_section(xml_repo, id_dict, attribute_dict)
+    property_dict = _handle_property_type_section(xml_repo)
+    _handle_property_section(xml_repo, id_dict, property_dict)
 
 
 def _handle_relation_section(xml_parent: Element) -> None:

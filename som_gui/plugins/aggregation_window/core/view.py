@@ -87,8 +87,9 @@ def activate(view: Type[aw_tool.View], project: Type[tool.Project]) -> None:
             x = SCENE_SIZE[0] / 2 + pos[0] - x_min
             y = SCENE_SIZE[1] / 2 + pos[1] - y_min
             aggregation = aggregation_ref[aggregation_uuid]
-            view.add_aggregation_to_import_list(scene_id,aggregation,QPointF(x, y))
+            view.add_aggregation_to_import_list(scene_id, aggregation, QPointF(x, y))
     view.reset_drawn_scenes()
+
 
 def paint_event(
     view: Type[aw_tool.View],
@@ -426,16 +427,16 @@ def add_node_at_pos(
 def change_header_text(
     node: Type[aw_tool.Node], search: Type[tool.Search], project: Type[tool.Project]
 ) -> None:
-    searchable_attributes = list()
+    searchable_properties = list()
     search_values = list()
-    for attribute in project.get().get_properties(filter=False):
-        value = [attribute.property_set.name, attribute.name]
+    for som_property in project.get().get_properties(filter=False):
+        value = [som_property.property_set.name, som_property.name]
         if value not in search_values:
-            searchable_attributes.append(attribute)
+            searchable_properties.append(som_property)
             search_values.append(value)
-    attribute = search.search_attribute(searchable_attributes)
-    if attribute:
-        node.set_title_settings(attribute.property_set.name, attribute.name)
+    som_property = search.search_property(searchable_properties)
+    if som_property:
+        node.set_title_settings(som_property.property_set.name, som_property.name)
 
 
 def add_object_to_scene(
@@ -466,6 +467,7 @@ def add_object_to_scene(
 def reset(view: aw_tool.View):
     import som_gui
     from som_gui.plugins.aggregation_window.module.view import prop
+
     logging.info(f"Reset View Module")
     som_gui.ViewProperties = prop.ViewProperties()
     prop = view.get_properties()

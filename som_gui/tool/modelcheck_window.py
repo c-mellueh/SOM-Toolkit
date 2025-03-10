@@ -177,10 +177,10 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         window = cls.get_window()
         ifc_paths = tool.Util.get_path_from_fileselector(window.ui.widget_import)
         export_path = tool.Util.get_path_from_fileselector(window.ui.widget_export)[0]
-        main_pset, main_attribute = tool.Util.get_property(
-            window.ui.main_attribute_widget
+        main_pset, main_property = tool.Util.get_property(
+            window.ui.main_property_widget
         )
-        return ifc_paths, export_path, main_pset, main_attribute
+        return ifc_paths, export_path, main_pset, main_property
 
     @classmethod
     def get_modelcheck_threadpool(cls):
@@ -229,8 +229,8 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
                 data_dict[obj] = True
                 for property_set in obj.get_property_sets(filter=True):
                     data_dict[property_set] = True
-                    for attribute in property_set.get_properties(filter=True):
-                        data_dict[attribute] = True
+                    for som_property in property_set.get_properties(filter=True):
+                        data_dict[som_property] = True
             prop.check_state_dict = data_dict
         return prop.check_state_dict
 
@@ -381,8 +381,8 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         parent_item.appendRow(item)
         if not isinstance(entity, SOMcreator.SOMPropertySet):
             return
-        for attribute in entity.get_properties(filter=True):
-            cls.create_pset_tree_row(attribute, item)
+        for som_property in entity.get_properties(filter=True):
+            cls.create_pset_tree_row(som_property, item)
 
     @classmethod
     def _update_pset_row(cls, item: QStandardItem, enabled: bool):
@@ -398,8 +398,8 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             True if new_check_state == Qt.CheckState.Checked and enabled else False
         )
         for row in range(item.rowCount()):
-            attribute_item = item.child(row, 0)
-            cls._update_pset_row(attribute_item, enabled)
+            property_item = item.child(row, 0)
+            cls._update_pset_row(property_item, enabled)
 
     @classmethod
     def fill_pset_tree(

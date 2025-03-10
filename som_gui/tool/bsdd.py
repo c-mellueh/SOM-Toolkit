@@ -71,9 +71,9 @@ class Bsdd(som_gui.core.tool.Bsdd):
         widget.setLayout(QFormLayout())
         layout: QFormLayout = widget.layout()
 
-        # list all Attributes which aren't lists of elements
+        # list all Properties which aren't lists of elements
         presets = cls.get_dict_presets()
-        attributes = [
+        properties = [
             (f.name, f.type, presets.get(f.name))
             for f in fields(Dictionary)
             if f.name not in ["Classes", "Properties"]
@@ -81,35 +81,35 @@ class Bsdd(som_gui.core.tool.Bsdd):
 
         # Fill QFormLayout
         for index, (name, datatype, preset) in enumerate(
-            attributes
-        ):  # Iterate over all attributes
+            properties
+        ):  # Iterate over all proeprties
             if datatype == "str":
                 if preset is None:
                     # create input line
                     w = QLineEdit()
                     w.textChanged.connect(
-                        lambda text, n=name: trigger.dict_attribute_changed(text, n)
+                        lambda text, n=name: trigger.dict_property_changed(text, n)
                     )
                 else:
                     # create text dropdown
                     w = QComboBox()
                     w.addItems(preset)
                     w.currentTextChanged.connect(
-                        lambda text, n=name: trigger.dict_attribute_changed(text, n)
+                        lambda text, n=name: trigger.dict_property_changed(text, n)
                     )
 
             # create checkbox
             elif datatype == "bool":
                 w = QCheckBox()
                 w.checkStateChanged.connect(
-                    lambda state, n=name: trigger.dict_attribute_changed(state, n)
+                    lambda state, n=name: trigger.dict_property_changed(state, n)
                 )
 
             # create input line
             elif datatype == "datetime":
                 w = QLineEdit()
                 w.textChanged.connect(
-                    lambda text, n=name: trigger.dict_attribute_changed(text, n)
+                    lambda text, n=name: trigger.dict_property_changed(text, n)
                 )
 
             # handle exceptions
@@ -117,11 +117,11 @@ class Bsdd(som_gui.core.tool.Bsdd):
                 logging.info(f"Datatype: '{datatype}' not supported")
                 w = QLineEdit()
                 w.textChanged.connect(
-                    lambda text, n=name: trigger.dict_attribute_changed(text, n)
+                    lambda text, n=name: trigger.dict_property_changed(text, n)
                 )
 
             # fill line of QFormLayout
-            cls.set_linked_attribute_name(w, name)
+            cls.set_linked_property_name(w, name)
             layout.setWidget(index, QFormLayout.ItemRole.FieldRole, w)
             layout.setWidget(index, QFormLayout.ItemRole.LabelRole, QLabel(name))
         return widget
@@ -140,7 +140,7 @@ class Bsdd(som_gui.core.tool.Bsdd):
     def transform_project_to_dict(cls, proj: SOMcreator.SOMProject):
         """
         Grabs Project Settings and writes them into the BsDD Dictionary
-        Won't write Object Classes or Attributes
+        Won't write Object Classes or Properties
         :param proj:
         :return:
         """
@@ -225,11 +225,11 @@ class Bsdd(som_gui.core.tool.Bsdd):
         }
 
     @classmethod
-    def get_linked_attribute_name(cls, item: QWidget):
+    def get_linked_property_name(cls, item: QWidget):
         return item.property(constants.POPERTY_KEY)
 
     @classmethod
-    def set_linked_attribute_name(cls, item: QWidget, value):
+    def set_linked_property_name(cls, item: QWidget, value):
         return item.setProperty(constants.POPERTY_KEY, value)
 
     @classmethod
@@ -242,7 +242,7 @@ class Bsdd(som_gui.core.tool.Bsdd):
             if not isinstance(item, QLineEdit):
                 continue
             if item.hasFocus():
-                logging.debug(f"{cls.get_linked_attribute_name(item)} has focus.")
+                logging.debug(f"{cls.get_linked_property_name(item)} has focus.")
                 return True
 
         return False

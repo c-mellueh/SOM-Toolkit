@@ -55,9 +55,9 @@ def check_entities(
     modelcheck: Type[tool.Modelcheck],
     modelcheck_plugin: Type[aw_tool.Modelcheck],
 ):
-    main_attribute_value = modelcheck.get_ident_value(entity)
-    main_attribute_value = "" if main_attribute_value is None else main_attribute_value
-    obj_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(main_attribute_value)
+    main_property_value = modelcheck.get_ident_value(entity)
+    main_property_value = "" if main_property_value is None else main_property_value
+    obj_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(main_property_value)
     if not modelcheck_plugin.entity_is_in_group(entity) and obj_rep.aggregations:
         modelcheck_plugin.no_group_issue(entity)
 

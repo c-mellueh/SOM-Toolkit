@@ -30,11 +30,13 @@ if TYPE_CHECKING:
 class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
-    def get_attribute_by_name(cls, property_set: SOMcreator.SOMPropertySet, name: str) -> SOMcreator.SOMProperty|None:
+    def get_property_by_name(
+        cls, property_set: SOMcreator.SOMPropertySet, name: str
+    ) -> SOMcreator.SOMProperty | None:
         if property_set is None:
             return None
-        attribute_dict = {a.name: a for a in property_set.get_properties(filter=False)}
-        return attribute_dict.get(name)
+        property_dict = {a.name: a for a in property_set.get_properties(filter=False)}
+        return property_dict.get(name)
 
     @classmethod
     def get_inheritable_property_sets(
@@ -270,7 +272,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def set_enabled(cls, enabled: bool):
-        tool.MainWindow.get_ui().table_attribute.setEnabled(enabled)
+        tool.MainWindow.get_ui().table_property.setEnabled(enabled)
         tool.MainWindow.get_ui().table_pset.setEnabled(enabled)
         tool.MainWindow.get_ui().button_Pset_add.setEnabled(enabled)
 
@@ -309,7 +311,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         pset_name,
         predefined_psets: list[SOMcreator.SOMPropertySet] = [],
         parent_psets: list[SOMcreator.SOMPropertySet] = [],
-    ) -> SOMcreator.SOMPropertySet|None|bool:
+    ) -> SOMcreator.SOMPropertySet | None | bool:
         """
         return None if not accepted return False if aborted
         """

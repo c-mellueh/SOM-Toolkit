@@ -34,7 +34,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         return cls.get_dialog().ui
 
     @classmethod
-    def remove_plugin_entry(cls,key:str):
+    def remove_plugin_entry(cls, key: str):
         for plugin in reversed(cls.get_properties().class_info_plugin_list):
             if plugin.key == key:
                 cls.get_properties().class_info_plugin_list.remove(plugin)
@@ -52,7 +52,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         widget_value_setter: Callable,
         test_function: Callable,
         value_setter: Callable,
-    ) ->int:
+    ) -> int:
         """
         Create entry of QWidget that will be added to Class Info Dialog
         layout_name: name of layout in which QWidget will be placed
@@ -77,7 +77,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         )
 
         cls.get_properties().class_info_plugin_list.append(prop)
-        return len(cls.get_properties().class_info_plugin_list)-1
+        return len(cls.get_properties().class_info_plugin_list) - 1
 
     @classmethod
     def get_class_infos(cls) -> ClassDataDict:
@@ -100,17 +100,17 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
                 property_names = [
                     pr.name for pr in property_set.get_properties(filter=False)
                 ]
-                tool.Util.create_completer(property_names, ui.combo_box_attribute)
+                tool.Util.create_completer(property_names, ui.combo_box_property)
         else:
             active_object = cls.get_active_class()
             property_set: SOMcreator.SOMPropertySet = {
                 p.name: p for p in active_object.get_property_sets(filter=False)
             }.get(pset_name)
-            attribute_names = sorted(
+            property_names = sorted(
                 [a.name for a in property_set.get_properties(filter=False)]
             )
-            ui.combo_box_attribute.clear()
-            ui.combo_box_attribute.addItems(attribute_names)
+            ui.combo_box_property.clear()
+            ui.combo_box_property.addItems(property_names)
 
     @classmethod
     def create_dialog(cls, title) -> ClassInfoDialog:
@@ -163,9 +163,9 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
             return {}
         d: ClassDataDict = dict()
         d["is_group"] = ui.button_gruppe.isChecked()
-        d["ident_value"] = ui.line_edit_attribute_value.text()
+        d["ident_value"] = ui.line_edit_property_value.text()
         d["ident_pset_name"] = ui.combo_box_pset.currentText()
-        d["ident_property_name"] = ui.combo_box_attribute.currentText()
+        d["ident_property_name"] = ui.combo_box_property.currentText()
         d["name"] = ui.line_edit_name.text()
         d["ifc_mappings"] = cls.get_ifc_mappings()
         for plugin in cls.get_properties().class_info_plugin_list:
@@ -203,7 +203,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
 
     @classmethod
     def oi_set_ident_value_color(cls, color: str):
-        cls.get_ui().line_edit_attribute_value.setStyleSheet(
+        cls.get_ui().line_edit_property_value.setStyleSheet(
             f"QLineEdit {{color:{color};}}"
         )
 
@@ -268,8 +268,8 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
             ]
         if not prop.is_group:
             dialog.ui.combo_box_pset.setCurrentText(prop.pset_name)
-            dialog.ui.combo_box_attribute.setCurrentText(prop.ident_property_name)
-            dialog.ui.line_edit_attribute_value.setText(prop.ident_value)
+            dialog.ui.combo_box_property.setCurrentText(prop.ident_property_name)
+            dialog.ui.line_edit_property_value.setText(prop.ident_value)
 
     @classmethod
     def add_ifc_mapping(cls, mapping):
@@ -309,7 +309,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         value = data_dict["ident_pset_name"]
         if not value:
             text = QCoreApplication.translate(
-                "Object", "Name of PropertySet is not allowed"
+                "Class", "Name of PropertySet is not allowed"
             )
             logging.error(text)
             tool.Popups.create_warning_popup(text)
@@ -324,7 +324,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         value = data_dict["ident_property_name"]
         if not value:
             text = QCoreApplication.translate(
-                "Object", "Name of Attribute is not allowed"
+                "Class", "Name of Property is not allowed"
             )
             logging.error(text)
             return False
@@ -338,7 +338,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         value = data_dict["ident_value"]
         if not cls.is_identifier_allowed(value):
             text = QCoreApplication.translate(
-                "Object", "Identifier exists allready or is not allowed"
+                "Class", "Identifier exists allready or is not allowed"
             )
             logging.error(text)
             return False

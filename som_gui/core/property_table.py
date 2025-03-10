@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 def init_context_menu(property_table: Type[tool.PropertyTable]):
     """
-    Defines all standard context menu actions associated with an attribute table.
+    Defines all standard context menu actions associated with an property table.
     """
     property_table.add_context_menu_builder(property_table.context_menu_builder_rename)
     property_table.add_context_menu_builder(
@@ -37,20 +37,20 @@ def init_context_menu(property_table: Type[tool.PropertyTable]):
     )
 
 
-def init_attribute_columns(property_table: Type[tool.PropertyTable]):
+def init_property_columns(property_table: Type[tool.PropertyTable]):
     """
-    Defines all attribute columns associated with an attribute table. This can be expanded by plugins
+    Defines all property columns associated with an property table. This can be expanded by plugins
     :param property_table:
     :return:
     """
-    logging.info("Add Basic Attribute Columns")
+    logging.info("Add Basic Property Columns")
     # write translations so Qtlinguist knows them
-    name = QCoreApplication.translate("AttributeTable", "Name")
-    datatype = QCoreApplication.translate("AttributeTable", "Datatype")
-    valuetype = QCoreApplication.translate("AttributeTable", "Valuetype")
-    value = QCoreApplication.translate("AttributeTable", "Value")
-    optional = QCoreApplication.translate("AttributeTable", "Optional")
-    unit = QCoreApplication.translate("AttributeTable", "Unit")
+    name = QCoreApplication.translate("PropertyTable", "Name")
+    datatype = QCoreApplication.translate("PropertyTable", "Datatype")
+    valuetype = QCoreApplication.translate("PropertyTable", "Valuetype")
+    value = QCoreApplication.translate("PropertyTable", "Value")
+    optional = QCoreApplication.translate("PropertyTable", "Optional")
+    unit = QCoreApplication.translate("PropertyTable", "Unit")
 
     property_table.add_column_to_table("Name", lambda a: a.name)
     property_table.add_column_to_table("Datatype", lambda a: a.data_type)
@@ -77,7 +77,7 @@ def toggle_optionality(
     item: QTableWidgetItem, property_table: Type[tool.PropertyTable]
 ):
     """
-    change the optionality of an attribute by their QTableWidgetItem
+    change the optionality of an property by their QTableWidgetItem
     :param item:
     :param property_table:
     :return:
@@ -97,7 +97,7 @@ def create_mime_data(
     property_table: Type[tool.PropertyTable],
 ) -> QMimeData:
     """
-    create MimeData used for Dropping Attributes into different Tables
+    create MimeData used for Dropping Properties into different Tables
     """
     objects = {property_table.get_property_from_item(item) for item in items}
     mime_data.setProperty(MIME_DATA_KEY, objects)
@@ -108,11 +108,11 @@ def drop_event(
     event: QDropEvent,
     target_table: ui.PropertyTable,
     property_table: Type[tool.PropertyTable],
-    attribute_tool: Type[tool.Property],
+    property_tool: Type[tool.Property],
 ):
     """
-    handling of dropping of attribute row from a property set window to another property set window
-    :param target_table: table on which the attribute is dropped on
+    handling of dropping of property row from a property set window to another property set window
+    :param target_table: table on which the property is dropped on
     :return:
     """
 
@@ -124,36 +124,36 @@ def drop_event(
 
     proposed_action = event.proposedAction()
     target_property_set = property_table.get_property_set_by_table(target_table)
-    existing_attributes = {
+    existing_properties = {
         a.name: a for a in target_property_set.get_properties(filter=False)
     }
-    dropped_attributes: set[SOMcreator.SOMProperty] = event.mimeData().property(
+    dropped_properties: set[SOMcreator.SOMProperty] = event.mimeData().property(
         MIME_DATA_KEY
-    )  # get set of dropped Attributes
+    )  # get set of dropped Properties
 
     if proposed_action == Qt.DropAction.CopyAction:
-        for attribute in dropped_attributes:
-            # check if Attribute with same name exists already
-            existing_attribute = existing_attributes.get(attribute.name)
-            if existing_attribute:
+        for som_property in dropped_properties:
+            # check if Property with same name exists already
+            existing_property = existing_properties.get(som_property.name)
+            if existing_property:
                 # overwrite date
-                data = attribute_tool.get_attribute_data(attribute)
-                attribute_tool.set_attribute_data_by_dict(existing_attribute, data)
+                data = property_tool.get_property_data(som_property)
+                property_tool.set_data_by_dict(existing_property, data)
             else:
-                # copy attribute to property_set
-                attribute = copy.copy(attribute)
-                attribute.remove_parent()
-                target_property_set.add_property(attribute)
+                # copy property to property_set
+                som_property = copy.copy(som_property)
+                som_property.remove_parent()
+                target_property_set.add_property(som_property)
 
     elif proposed_action == Qt.DropAction.MoveAction:
-        for attribute in dropped_attributes:
-            # check if Attribute with same name exists already
-            existing_attribute = existing_attributes.get(attribute.name)
-            if existing_attribute:
-                # replace Attribute
-                target_property_set.remove_property(existing_attribute)
-            target_property_set.add_property(attribute)
-            attribute.remove_parent()  # remove ParentAttribute
+        for som_property in dropped_properties:
+            # check if Property with same name exists already
+            existing_property = existing_properties.get(som_property.name)
+            if existing_property:
+                # replace Property
+                target_property_set.remove_property(existing_property)
+            target_property_set.add_property(som_property)
+            som_property.remove_parent()  # remove ParentProperty
     target_table.repaint()
     event.accept()
 
@@ -168,7 +168,7 @@ def create_context_menu(
     Create Context Menu based on context menu builders
     """
 
-    # see tool.AttributeTable.add_context_menu_builder
+    # see tool.PropertyTable.add_context_menu_builder
 
     menu_list = list()
 
@@ -190,7 +190,7 @@ def activate_item(
     property_set_window: Type[tool.PropertySetWindow],
 ):
     """
-    Activate Attribute based on QTableWidgetItem
+    Activate Property based on QTableWidgetItem
     :return:
     """
     active_property = property_table.get_property_from_item(item)
@@ -207,9 +207,9 @@ def activate_item(
 
 
 def update_table(table: QTableWidget, property_table: Type[tool.PropertyTable]):
-    logging.debug(f"Repaint Attribute Table")
+    logging.debug(f"Repaint Property Table")
 
-    existing_attributes = property_table.get_existing_attributes_in_table(table)
+    existing_properties = property_table.get_existing_properties(table)
     property_set = property_table.get_property_set_by_table(table)
     if property_set is None:
         # clear Table
@@ -224,15 +224,15 @@ def update_table(table: QTableWidget, property_table: Type[tool.PropertyTable]):
         for _ in range(table.columnCount() - property_table.get_column_count()):
             table.removeColumn(table.columnCount())
 
-    # get Attributes which should be deleted and added
-    delete_attributes = existing_attributes.difference(
+    # get Properties which should be deleted and added
+    delete_properties = existing_properties.difference(
         set(property_set.get_properties(filter=True))
     )
-    new_attributes = set(property_set.get_properties(filter=True)).difference(
-        existing_attributes
+    new_properties = set(property_set.get_properties(filter=True)).difference(
+        existing_properties
     )
-    property_table.remove_attributes_from_table(delete_attributes, table)
-    property_table.add_attributes_to_table(new_attributes, table)
+    property_table.remove_properties_from_table(delete_properties, table)
+    property_table.add_properties_to_table(new_properties, table)
 
     # update rows
     for row in range(table.rowCount()):

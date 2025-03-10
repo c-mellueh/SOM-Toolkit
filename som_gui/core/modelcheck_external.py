@@ -34,7 +34,7 @@ def retranslate_ui(modelcheck_external: Type[tool.ModelcheckExternal], util: Typ
     object_model.setHorizontalHeaderLabels(headers)
 
     pset_model: QStandardItemModel = window.ui.property_set_tree.model()
-    headers = [QCoreApplication.translate("Modelcheck", "PropertySet,Attribute")]
+    headers = [QCoreApplication.translate("Modelcheck", "PropertySet,Property")]
     pset_model.setHorizontalHeaderLabels(headers)
 
 

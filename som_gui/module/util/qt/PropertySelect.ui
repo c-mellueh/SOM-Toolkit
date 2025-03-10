@@ -28,14 +28,14 @@
                 </widget>
             </item>
             <item>
-                <widget class="QLineEdit" name="le_attribute_name">
+                <widget class="QLineEdit" name="le_property_name">
                     <property name="placeholderText">
-                        <string>Ident Attribute</string>
+                        <string>Ident Property</string>
                     </property>
                 </widget>
             </item>
         </layout>
     </widget>
-    <resources/>
-    <connections/>
+    <resources />
+    <connections />
 </ui>

@@ -61,17 +61,17 @@ class Search(som_gui.core.tool.Search):
         getter_methods = [
             lambda o: getattr(o, "name"),
             lambda o: getattr(o, "ident_value"),
-            lambda o: getattr(o, "abbreviation"), #TODO: Add plugin function
+            lambda o: getattr(o, "abbreviation"),  # TODO: Add plugin function
         ]
         return cls._search(1, searchable_objects, getter_methods)
 
     @classmethod
-    def search_attribute(
-        cls, searchable_attributes: list[SOMcreator.SOMProperty]
+    def search_property(
+        cls, searchable_properties: list[SOMcreator.SOMProperty]
     ) -> SOMcreator.SOMProperty | None:
         """
-        Opens SearchWindow which searches for an Attribute
-        :param searchable_attributes: Attributes which will be visible in Search Table
+        Opens SearchWindow which searches for a Property
+        :param searchable_properties: Properties which will be visible in Search Table
 
         :return:
         """
@@ -79,7 +79,7 @@ class Search(som_gui.core.tool.Search):
             lambda a: getattr(a, "property_set").name,
             lambda a: getattr(a, "name"),
         ]
-        return cls._search(2, searchable_attributes, getter_methods)
+        return cls._search(2, searchable_properties, getter_methods)
 
     @classmethod
     def get_column_texts(cls, search_mode: int) -> list[str]:
@@ -96,7 +96,7 @@ class Search(som_gui.core.tool.Search):
         if search_mode == 2:
             return [
                 QCoreApplication.translate("Search", "PropertySet"),
-                QCoreApplication.translate("Search", "Attribute"),
+                QCoreApplication.translate("Search", "Property"),
             ]
 
     @classmethod
@@ -111,7 +111,7 @@ class Search(som_gui.core.tool.Search):
         if search_mode == 1:
             title = QCoreApplication.translate("Search", "Search Object")
         elif search_mode == 2:
-            title = QCoreApplication.translate("Search", "Search Attribute")
+            title = QCoreApplication.translate("Search", "Search Property")
 
         dialog.setWindowTitle(tool.Util.get_window_title(f"{title} v{version}"))
 
@@ -144,7 +144,7 @@ class Search(som_gui.core.tool.Search):
         :return:
         """
         item_list = list()
-        for entity in search_items:  # Iterate over Objects or Attributes
+        for entity in search_items:  # Iterate over Objects or Properties
             row_data = [
                 m(entity) for m in getter_methods
             ]  # use getter Methods for Row Values
@@ -193,7 +193,7 @@ class Search(som_gui.core.tool.Search):
     def get_search_mode(cls, dialog: SearchDialog) -> int:
         """
         :param dialog:
-        :return: 1 = Object 2= Attribute
+        :return: 1 = Object 2= Property
         """
         return dialog.search_mode
 

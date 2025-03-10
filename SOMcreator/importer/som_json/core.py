@@ -13,6 +13,7 @@ from SOMcreator.datastructure.som_json import (
 )
 import SOMcreator.util.misc
 import SOMcreator.importer.som_json
+
 if TYPE_CHECKING:
     from SOMcreator import SOMProject
     from SOMcreator.datastructure.som_json import (
@@ -20,7 +21,7 @@ if TYPE_CHECKING:
         StandardDict,
         ObjectDict,
         PropertySetDict,
-        AttributeDict,
+        PropertyDict,
         AggregationDict,
     )
 
@@ -73,7 +74,7 @@ def get_filter_lists(project_dict: ProjectDict):
 def load_filter_matrix(
     proj: SOMcreator.SOMProject, element_dict: StandardDict, guid: str
 ):
-    matrix: list[list[bool]]|int = element_dict.get(FILTER_MATRIX)
+    matrix: list[list[bool]] | int = element_dict.get(FILTER_MATRIX)
     if matrix is None:
         logging.warning(
             f"Achtung! Filtermatrix für Element '{guid}' liegt nicht vor. Eventuell verwenden Sie eine alte Dateiversion. Bitte mit SOM-Toolkit 2.11.3 Öffnen und neu speichern!"
@@ -91,7 +92,7 @@ def load_filter_matrix(
 
 def get_basics(
     proj: SOMcreator.SOMProject, element_dict: StandardDict, guid: str
-) -> tuple[str, str, bool, str|None, list[list[bool]]]:
+) -> tuple[str, str, bool, str | None, list[list[bool]]]:
     name = element_dict[NAME]
     description = element_dict[DESCRIPTION]
     optional = element_dict[OPTIONAL]

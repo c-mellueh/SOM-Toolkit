@@ -135,15 +135,15 @@ def draw_tree_branch(
     painter: QPainter,
     rect,
     index: QModelIndex,
-    attribute_compare: Type[tool.PropertyCompare],
+    property_compare: Type[tool.PropertyCompare],
 ):
-    level = attribute_compare.get_level(index)
+    level = property_compare.get_level(index)
     item = tree.itemFromIndex(index)
 
     width = rect.width()
     arrow_width = width / level
     start_point = width - arrow_width
-    color = attribute_compare.get_branch_color(index)
+    color = property_compare.get_branch_color(index)
 
     if item.childCount() and color is not None:
         painter.setBackground(Qt.GlobalColor.red)

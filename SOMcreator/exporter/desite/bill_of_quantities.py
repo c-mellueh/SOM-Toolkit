@@ -3,18 +3,17 @@ import csv
 import SOMcreator
 
 
-def get_distinct_attributes(property_sets: list[SOMcreator.SOMPropertySet]):
-    attribute_names = list()
+def get_distinct_property_names(property_sets: list[SOMcreator.SOMPropertySet]) ->list[str]:
+    property_names = list()
 
     for property_set in property_sets:
-        attribute: SOMcreator.SOMProperty
-        attribute_names += [
-            attribute.name for attribute in property_set.get_properties(filter=True)
+        property_names += [
+            som_property.name for som_property in property_set.get_properties(filter=True)
         ]
 
-    distinct_attribute_names = list(dict.fromkeys(attribute_names))
+    distinct_names = list(dict.fromkeys(property_names))
 
-    return distinct_attribute_names
+    return distinct_names
 
 
 def export_boq(project: SOMcreator.SOMProject, path: str, pset_name: str) -> None:
@@ -31,9 +30,9 @@ def export_boq(project: SOMcreator.SOMProject, path: str, pset_name: str) -> Non
             for property_set in SOMcreator.SOMPropertySet
             if property_set.name == pset_name
         ]
-        distinct_attribute_names = get_distinct_attributes(property_sets)
+        distinct_property_names = get_distinct_property_names(property_sets)
         header = ["Ident", "Object"] + [
-            f"{pset_name}:{name}" for name in distinct_attribute_names
+            f"{pset_name}:{name}" for name in distinct_property_names
         ]
         writer.writerow(header)
 
@@ -49,13 +48,13 @@ def export_boq(project: SOMcreator.SOMProject, path: str, pset_name: str) -> Non
                 continue
             line = [f"{ident.property_set.name}:{ident.name}", ident.allowed_values[0]]
 
-            for attribute_name in distinct_attribute_names:
-                attribute: SOMcreator.SOMProperty = property_set.get_attribute_by_name(
-                    attribute_name
+            for property_name in distinct_property_names:
+                som_property: SOMcreator.SOMProperty = property_set.get_property_by_name(
+                    property_name
                 )
 
-                if attribute is not None:
-                    line.append("|".join(attribute.allowed_values))
+                if som_property is not None:
+                    line.append("|".join(som_property.allowed_values))
                 else:
                     line.append("")
             writer.writerow(line)

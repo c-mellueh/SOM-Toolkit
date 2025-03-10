@@ -18,6 +18,7 @@ class MainDict(TypedDict):
     AggregationScenes: dict[str, AggregationScene]
     FilterMatrixes: list[tuple[tuple[bool]]]
 
+
 class ProjectDict(TypedDict):
     name: str
     author: str
@@ -39,10 +40,10 @@ class ObjectDict(StandardDict):
 
 
 class PropertySetDict(StandardDict):
-    Attributes: dict[str, AttributeDict]
+    Attributes: dict[str, PropertyDict]
 
 
-class AttributeDict(StandardDict):
+class PropertyDict(StandardDict):
     data_type: str
     value_type: str
     child_inherits_value: bool
@@ -74,12 +75,12 @@ USE_CASES = "UseCases"
 FILTER_MATRIX = "filter_matrix"
 FILTER_MATRIXES = "FilterMatrixes"
 AGGREGATION_PSET = "AggregationPsetName"
-AGGREGATION_ATTRIBUTE = "AggregationAttributeName"
+AGGREGATION_PROPERTY = "AggregationAttributeName"
 IDENTITY_TEXT = "identity_text"
 PREDEFINED_PSETS = "PredefinedPropertySets"
 PROPERTY_SETS = "PropertySets"
-IDENT_ATTRIBUTE = "ident_attribute"
-ATTRIBUTES = "Attributes"
+IDENT_PROPERTY = "ident_attribute"
+PROPERTIES = "Attributes"
 OBJECT = "Object"
 OBJECTS = "Objects"
 AGGREGATIONS = "Aggregations"

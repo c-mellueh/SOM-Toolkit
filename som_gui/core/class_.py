@@ -310,7 +310,7 @@ def create_class(
     is_group = data_dict["is_group"]
     identifier = data_dict.get("ident_value")
     pset_name = data_dict.get("ident_pset_name")
-    attribute_name = data_dict.get("ident_property_name")
+    property_name = data_dict.get("ident_property_name")
 
     # handle group
     if is_group:
@@ -341,12 +341,12 @@ def create_class(
     # create identifier property
     ident_property: SOMcreator.SOMProperty = {
         a.name: a for a in pset.get_properties(filter=False)
-    }.get(attribute_name)
+    }.get(property_name)
 
     if not ident_property:
         ident_property = SOMcreator.SOMProperty(
             pset,
-            attribute_name,
+            property_name,
             [identifier],
             SOMcreator.value_constants.LIST,
         )

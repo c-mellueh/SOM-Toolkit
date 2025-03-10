@@ -11,17 +11,17 @@ VALUE_TYPE = "value_Type"
 VALUE = "value"
 
 
-def _iter_attributes(property_set: SOMcreator.SOMPropertySet, pset_dict: dict) -> None:
-    for attribute in property_set.get_properties(filter=True):
-        pset_dict[attribute.name] = dict()
-        attribute_dict = pset_dict[attribute.name]
+def _iter_properties(property_set: SOMcreator.SOMPropertySet, pset_dict: dict) -> None:
+    for som_property in property_set.get_properties(filter=True):
+        pset_dict[som_property.name] = dict()
+        property_dict = pset_dict[som_property.name]
 
-        attribute_dict[DATA_TYPE] = xml.transform_data_format(attribute.data_type)
-        if not attribute.allowed_values:
-            attribute_dict[VALUE_TYPE] = value_constants.EXISTS
+        property_dict[DATA_TYPE] = xml.transform_data_format(som_property.data_type)
+        if not som_property.allowed_values:
+            property_dict[VALUE_TYPE] = value_constants.EXISTS
         else:
-            attribute_dict[VALUE_TYPE] = attribute.value_type
-        attribute_dict[VALUE] = attribute.allowed_values
+            property_dict[VALUE_TYPE] = som_property.value_type
+        property_dict[VALUE] = som_property.allowed_values
 
 
 def export(project: SOMcreator.SOMProject, path: str | os.PathLike) -> None:
@@ -38,6 +38,6 @@ def export(project: SOMcreator.SOMProject, path: str | os.PathLike) -> None:
                 continue
             obj_dict[property_set.name] = dict()
             pset_dict = obj_dict[property_set.name]
-            _iter_attributes(property_set, pset_dict)
+            _iter_properties(property_set, pset_dict)
     with open(path, "w") as file:
         json.dump(json_dict, file, indent=1)

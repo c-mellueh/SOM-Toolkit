@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type,TypeVar
+from typing import TYPE_CHECKING, Type, TypeVar
 
 import SOMcreator
 import SOMcreator.importer.som_json
 from SOMcreator.datastructure.som_json import (
     ACTIVE_PHASES,
     ACTIVE_USECASES,
-    AGGREGATION_ATTRIBUTE,
+    AGGREGATION_PROPERTY,
     AGGREGATION_PSET,
     AUTHOR,
     CURRENT_PR0JECT_PHASE,
@@ -45,6 +45,7 @@ def _load_filter_matrix(
 
     return filter_matrix
 
+
 def _load_single_filter(
     current_state: str | int | None,
     value_list: list,
@@ -56,7 +57,7 @@ def _load_single_filter(
         current_filter = filter_dict.get(current_state)
     elif isinstance(current_state, int):
         current_filter = value_list[current_state]
-    elif isinstance(current_state,SOMcreator.UseCase|SOMcreator.Phase):
+    elif isinstance(current_state, SOMcreator.UseCase | SOMcreator.Phase):
         current_filter = current_state
     if current_filter is None:
         current_filter = value_list[0]
@@ -102,7 +103,7 @@ def load(cls: Type[SOMProject], main_dict: MainDict) -> tuple[SOMProject, Projec
     version = project_dict.get(VERSION)
     description = project_dict.get(DESCRIPTION) or ""
     aggregation_pset_name = project_dict.get(AGGREGATION_PSET)
-    aggregation_attribute = project_dict.get(AGGREGATION_ATTRIBUTE)
+    aggregation_property = project_dict.get(AGGREGATION_PROPERTY)
 
     active_use_cases, use_case_list = _load_usecases(project_dict)
     active_phases, phase_list = _load_phases(project_dict)
@@ -113,8 +114,8 @@ def load(cls: Type[SOMProject], main_dict: MainDict) -> tuple[SOMProject, Projec
     proj.description = description
     if aggregation_pset_name is not None:
         proj.aggregation_pset = aggregation_pset_name
-    if aggregation_attribute is not None:
-        proj.aggregation_attribute = aggregation_attribute
+    if aggregation_property is not None:
+        proj.aggregation_property = aggregation_property
 
     proj.active_usecases = active_use_cases
     proj.active_phases = active_phases

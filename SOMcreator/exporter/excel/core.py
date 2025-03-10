@@ -38,6 +38,6 @@ def export(
             table_counter += 1
         export_excel.autoadjust_column_widths(work_sheet)
 
-    work_sheet = workbook.create_sheet("Attribute Mapping")
+    work_sheet = workbook.create_sheet("Property Mapping")
     export_excel.create_property_table(object_list, work_sheet)
     workbook.save(path)

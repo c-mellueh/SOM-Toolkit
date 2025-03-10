@@ -1,169 +1,170 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Modelcheck</class>
- <widget class="QWidget" name="Modelcheck">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1037</width>
-    <height>839</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <widget class="QSplitter" name="splitter">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-     <widget class="ObjectTree" name="object_tree">
-      <property name="contextMenuPolicy">
-       <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
-      </property>
-      <property name="selectionMode">
-       <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
-      </property>
-     </widget>
-     <widget class="QWidget" name="verticalLayoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QLabel" name="label_object">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="PsetTree" name="property_set_tree">
-         <property name="contextMenuPolicy">
-          <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+    <class>Modelcheck</class>
+    <widget class="QWidget" name="Modelcheck">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>1037</width>
+                <height>839</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Form</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+                <widget class="QSplitter" name="splitter">
+                    <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                            <horstretch>0</horstretch>
+                            <verstretch>1</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="orientation">
+                        <enum>Qt::Orientation::Horizontal</enum>
+                    </property>
+                    <widget class="ObjectTree" name="object_tree">
+                        <property name="contextMenuPolicy">
+                            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
+                        </property>
+                        <property name="selectionMode">
+                            <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
+                        </property>
+                    </widget>
+                    <widget class="QWidget" name="verticalLayoutWidget">
+                        <layout class="QVBoxLayout" name="verticalLayout_2">
+                            <item>
+                                <widget class="QLabel" name="label_object">
+                                    <property name="text">
+                                        <string>TextLabel</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item>
+                                <widget class="PsetTree" name="property_set_tree">
+                                    <property name="contextMenuPolicy">
+                                        <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
+                                    </property>
+                                    <property name="selectionMode">
+                                        <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
+                                    </property>
+                                </widget>
+                            </item>
+                        </layout>
+                    </widget>
+                </widget>
+            </item>
+            <item>
+                <widget class="PropertySelector" name="main_property_widget" native="true">
+                    <property name="minimumSize">
+                        <size>
+                            <width>0</width>
+                            <height>10</height>
+                        </size>
+                    </property>
+                </widget>
+            </item>
+            <item>
+                <widget class="FileSelector" name="widget_import" native="true">
+                    <property name="minimumSize">
+                        <size>
+                            <width>0</width>
+                            <height>30</height>
+                        </size>
+                    </property>
+                </widget>
+            </item>
+            <item>
+                <widget class="FileSelector" name="widget_export" native="true">
+                    <property name="minimumSize">
+                        <size>
+                            <width>0</width>
+                            <height>50</height>
+                        </size>
+                    </property>
+                </widget>
+            </item>
+            <item>
+                <widget class="QScrollArea" name="scroll_area_progress_bar">
+                    <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                            <horstretch>0</horstretch>
+                            <verstretch>1</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>16777215</width>
+                            <height>300</height>
+                        </size>
+                    </property>
+                    <property name="verticalScrollBarPolicy">
+                        <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
+                    </property>
+                    <property name="horizontalScrollBarPolicy">
+                        <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+                    </property>
+                    <property name="widgetResizable">
+                        <bool>true</bool>
+                    </property>
+                    <widget class="QWidget" name="scrollAreaWidgetContents">
+                        <property name="geometry">
+                            <rect>
+                                <x>0</x>
+                                <y>0</y>
+                                <width>1017</width>
+                                <height>298</height>
+                            </rect>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <layout class="QVBoxLayout" name="verticalLayout_3" />
+                    </widget>
+                </widget>
+            </item>
+            <item>
+                <widget class="QDialogButtonBox" name="buttonBox">
+                    <property name="standardButtons">
+                        <set>
+                            QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel</set>
+                    </property>
+                    <property name="centerButtons">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+            </item>
+        </layout>
     </widget>
-   </item>
-   <item>
-    <widget class="AttributeSelector" name="main_attribute_widget" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>10</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="FileSelector" name="widget_import" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>30</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="FileSelector" name="widget_export" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>50</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QScrollArea" name="scroll_area_progress_bar">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>300</height>
-      </size>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>1017</width>
-        <height>298</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3"/>
-     </widget>
-    </widget>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel</set>
-     </property>
-     <property name="centerButtons">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-  </layout>
- </widget>
- <customwidgets>
-  <customwidget>
-   <class>FileSelector</class>
-   <extends>QWidget</extends>
-   <header>som_gui.module.util.ui</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ObjectTree</class>
-   <extends>QTreeView</extends>
-   <header>som_gui.module.modelcheck_window.ui</header>
-  </customwidget>
-  <customwidget>
-   <class>PsetTree</class>
-   <extends>QTreeView</extends>
-   <header>som_gui.module.modelcheck_window.ui</header>
-  </customwidget>
-  <customwidget>
-   <class>AttributeSelector</class>
-   <extends>QWidget</extends>
-   <header>som_gui.module.util.ui</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
- <resources/>
- <connections/>
+    <customwidgets>
+        <customwidget>
+            <class>FileSelector</class>
+            <extends>QWidget</extends>
+            <header>som_gui.module.util.ui</header>
+            <container>1</container>
+        </customwidget>
+        <customwidget>
+            <class>ObjectTree</class>
+            <extends>QTreeView</extends>
+            <header>som_gui.module.modelcheck_window.ui</header>
+        </customwidget>
+        <customwidget>
+            <class>PsetTree</class>
+            <extends>QTreeView</extends>
+            <header>som_gui.module.modelcheck_window.ui</header>
+        </customwidget>
+        <customwidget>
+            <class>PropertySelector</class>
+            <extends>QWidget</extends>
+            <header>som_gui.module.util.ui</header>
+            <container>1</container>
+        </customwidget>
+    </customwidgets>
+    <resources />
+    <connections />
 </ui>
