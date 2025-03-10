@@ -33,7 +33,7 @@ class ModelcheckResults(som_gui.core.tool.ModelcheckResults):
             QCoreApplication.translate("Modelcheck", "Name"),
             QCoreApplication.translate("Modelcheck", "Identifier"),
             QCoreApplication.translate("Modelcheck", "PropertySet"),
-            QCoreApplication.translate("Modelcheck", "Attribute"),
+            QCoreApplication.translate("Modelcheck", "Property"),
             QCoreApplication.translate("Modelcheck", "Value"),
             QCoreApplication.translate("Modelcheck", "File"),
 

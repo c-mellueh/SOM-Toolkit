@@ -192,7 +192,7 @@
         "..\\..\\module\\util\\trigger.py",
         "..\\..\\module\\util\\ui.py",
         "..\\..\\module\\util\\__init__.py",
-        "..\\..\\module\\util\\qt\\AttributeSelect.ui",
+        "..\\..\\module\\util\\qt\\PropertySelect.ui",
         "..\\..\\module\\util\\qt\\FileSelector.ui",
         "..\\..\\module\\util\\qt\\Progressbar.ui",
         "..\\..\\plugins\\__init__.py",

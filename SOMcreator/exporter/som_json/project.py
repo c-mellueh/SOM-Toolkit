@@ -39,7 +39,7 @@ def write(project: SOMProject, main_dict: MainDict) -> None:
     project_dict[AUTHOR] = project.author
     project_dict[VERSION] = project.version
     project_dict[DESCRIPTION] = project.description
-    project_dict[AGGREGATION_ATTRIBUTE] = project.aggregation_attribute
+    project_dict[AGGREGATION_ATTRIBUTE] = project.aggregation_property
     project_dict[AGGREGATION_PSET] = project.aggregation_pset
     project_dict[ACTIVE_PHASES] = (
         project.active_phases

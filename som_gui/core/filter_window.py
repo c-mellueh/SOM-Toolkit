@@ -11,7 +11,7 @@ import SOMcreator
 
 if TYPE_CHECKING:
     from som_gui import tool
-    from som_gui.module.property_ import ui as attribute_ui
+    from som_gui.module.property_ import ui as property_ui
     from som_gui.module.filter_window import ui
 
 
@@ -210,16 +210,16 @@ def tree_mouse_release_event(
 
 def add_compare_widget(
     filter_compare: Type[tool.FilterCompare],
-    attribute_compare: Type[tool.PropertyCompare],
+    property_compare: Type[tool.PropertyCompare],
     compare_window: Type[tool.CompareWindow],
 ):
     name_getter = lambda: QCoreApplication.translate("FilterWindow", "Project Filter")
     compare_window.add_tab(
         name_getter,
         filter_compare.create_widget,
-        lambda p0, p1: create_compare_widget(p0, p1, filter_compare, attribute_compare),
+        lambda p0, p1: create_compare_widget(p0, p1, filter_compare, property_compare),
         filter_compare,
-        lambda file: export_filter_differences(file, filter_compare, attribute_compare),
+        lambda file: export_filter_differences(file, filter_compare, property_compare),
     )
 
 
@@ -227,13 +227,13 @@ def create_compare_widget(
     project0: SOMcreator.SOMProject,
     project1: SOMcreator.SOMProject,
     filter_compare: Type[tool.FilterCompare],
-    attribute_compare: Type[tool.PropertyCompare],
+    property_compare: Type[tool.PropertyCompare],
 ):
     """
     Sets up the Filter Compare Widget to function properly
     """
     # Define Projects
-    attribute_compare.set_projects(
+    property_compare.set_projects(
         project0, project1
     )  # defines which projects will be compared
     filter_compare.set_projects(project0, project1)
@@ -242,24 +242,24 @@ def create_compare_widget(
     widget = filter_compare.create_widget()
 
     # get UI-elements
-    object_tree_widget = attribute_compare.get_object_tree(widget)
-    pset_tree = attribute_compare.get_pset_tree(widget)
-    value_table = attribute_compare.get_value_table(widget)
+    object_tree_widget = property_compare.get_object_tree(widget)
+    pset_tree = property_compare.get_pset_tree(widget)
+    value_table = property_compare.get_value_table(widget)
 
     # Add Wordwrap to Header
 
     # fill ObjectTree with objects
-    attribute_compare.create_object_lists()
-    attribute_compare.fill_object_tree(object_tree_widget, add_missing=False)
+    property_compare.create_object_lists()
+    property_compare.fill_object_tree(object_tree_widget, add_missing=False)
 
     # define and set header labels & add wordwrap
     filter_compare.make_header_wordwrap(object_tree_widget)
     filter_compare.make_header_wordwrap(pset_tree)
     header_labels = [
-        attribute_compare.get_header_name_from_project(project0),
-        attribute_compare.get_header_name_from_project(project1),
+        property_compare.get_header_name_from_project(project0),
+        property_compare.get_header_name_from_project(project1),
     ]
-    attribute_compare.set_header_labels(
+    property_compare.set_header_labels(
         [object_tree_widget, pset_tree], [value_table], header_labels
     )
 
@@ -281,18 +281,18 @@ def create_compare_widget(
 
 
 def filter_tab_object_tree_selection_changed(
-    widget: attribute_ui.PropertyWidget,
-    attribute_compare: Type[tool.PropertyCompare],
+    widget: property_ui.PropertyWidget,
+    property_compare: Type[tool.PropertyCompare],
     filter_compare: Type[tool.FilterCompare],
 ):
-    obj = attribute_compare.get_selected_entity(
-        attribute_compare.get_object_tree(widget)
+    obj = property_compare.get_selected_entity(
+        property_compare.get_object_tree(widget)
     )
-    tree_widget = attribute_compare.get_pset_tree(widget)
-    pset_list = attribute_compare.get_pset_list(obj)
+    tree_widget = property_compare.get_pset_tree(widget)
+    pset_list = property_compare.get_pset_list(obj)
 
-    attribute_compare.fill_pset_tree(tree_widget, pset_list, add_missing=False)
-    attribute_compare.add_properties_to_pset_tree(tree_widget, False)
+    property_compare.fill_pset_tree(tree_widget, pset_list, add_missing=False)
+    property_compare.add_properties_to_pset_tree(tree_widget, False)
     for child_index in range(tree_widget.invisibleRootItem().childCount()):
         child = tree_widget.invisibleRootItem().child(child_index)
         filter_compare.fill_tree_with_checkstates(child)
@@ -304,11 +304,11 @@ def filter_tab_object_tree_selection_changed(
 def export_filter_differences(
     file,
     filter_compare: Type[tool.FilterCompare],
-    attribute_compare: Type[tool.PropertyCompare],
+    property_compare: Type[tool.PropertyCompare],
 ):
     name = QCoreApplication.translate("FilterWindow", "OBJECT FILTER")
     file.write(f"\n{name:46s}\n\n")
-    filter_compare.export_object_filter_differences(file, attribute_compare)
+    filter_compare.export_object_filter_differences(file, property_compare)
     file.write("\n")
 
 

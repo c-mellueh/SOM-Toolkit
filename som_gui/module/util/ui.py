@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget
 
 from . import trigger
-from .qt import ui_AttributeSelect, ui_FileSelector, ui_Progressbar
+from .qt import ui_PropertySelect, ui_FileSelector, ui_Progressbar
 
 
 class FileSelector(QWidget):
@@ -11,7 +11,7 @@ class FileSelector(QWidget):
         self.ui.setupUi(self)
         self.request_folder = None
         self.extension = None
-        self.name:str|None = None
+        self.name: str | None = None
         self.appdata_text = None
         self.request_save = None
         self.single_request = None
@@ -26,9 +26,9 @@ class FileSelector(QWidget):
 class PropertySelector(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ui = ui_AttributeSelect.Ui_Util()
+        self.ui = ui_PropertySelect.Ui_Util()
         self.ui.setupUi(self)
-        trigger.main_attribute_selector_created(self)
+        trigger.main_property_selector_created(self)
 
 
 class Progressbar(QWidget):

@@ -136,10 +136,10 @@ class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
     @classmethod
     def parent_issue(cls, element: entity_instance, parent_element: entity_instance):
         main_pset_name = tool.Modelcheck.get_main_pset_name()
-        main_attribute_name = tool.Modelcheck.get_main_property_name()
+        main_property_name = tool.Modelcheck.get_main_property_name()
         element_type = tool.Modelcheck.get_active_element_type()
         ident_value = ifc_el.get_pset(
-            parent_element, main_pset_name, main_attribute_name
+            parent_element, main_pset_name, main_property_name
         )
 
         description = QCoreApplication.translate(

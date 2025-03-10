@@ -21,7 +21,7 @@ class CompareDialog(QDialog):
         self.widget = ui_Widget.Ui_Dialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
-        self.widget.tabWidget.setTabText(0, self.tr("Attributes"))
+        self.widget.tabWidget.setTabText(0, self.tr("Properties"))
         button = self.widget.button_download
         button.setIcon(get_download_icon())
         color_button(button)

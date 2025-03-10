@@ -21,7 +21,7 @@ import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
-from som_gui.module.property_ import ui as attribute_ui
+from som_gui.module.property_ import ui as property_ui
 from som_gui.module.project.constants import CLASS_REFERENCE
 
 YELLOW = "#897e00"
@@ -260,7 +260,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         prop.widget = None
 
     @classmethod
-    def create_tree_selection_trigger(cls, widget: attribute_ui.PropertyWidget):
+    def create_tree_selection_trigger(cls, widget: property_ui.PropertyWidget):
         widget.ui.tree_widget_object.itemSelectionChanged.connect(
             lambda: trigger.filter_tab_object_tree_selection_changed(widget)
         )
@@ -365,19 +365,19 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         all_psets_are_identical = cls.are_all_filters_identical(filter_list)
         if not all_psets_are_identical:
             return False
-        attribute_lists = tool.PropertyCompare.get_property_list(pset0)
-        if attribute_lists is None:
+        property_list = tool.PropertyCompare.get_property_list(pset0)
+        if property_list is None:
             return True
-        for a0, a1 in attribute_lists:
-            if not cls.are_attributes_identical(a0, a1):
+        for a0, a1 in property_list:
+            if not cls.are_properties_identical(a0, a1):
                 return False
         return True
 
     @classmethod
-    def are_attributes_identical(
-        cls, attribute0: SOMcreator.SOMProperty, attribute1: SOMcreator.SOMProperty
+    def are_properties_identical(
+        cls, property_0: SOMcreator.SOMProperty, property_1: SOMcreator.SOMProperty
     ):
-        filter_list = cls.get_filter_list(attribute0, attribute1)
+        filter_list = cls.get_filter_list(property_0, property_1)
         return cls.are_all_filters_identical(filter_list)
 
     @classmethod
@@ -398,7 +398,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
     @classmethod
     def make_header_wordwrap(cls, tree: QTreeWidget) -> None:
         """because of long header texts make header wordwrap"""
-        header = attribute_ui.WordWrapHeaderView(Qt.Orientation.Horizontal)
+        header = property_ui.WordWrapHeaderView(Qt.Orientation.Horizontal)
         tree.setHeader(header)
         header.setDefaultAlignment(
             Qt.AlignmentFlag.AlignCenter | Qt.TextFlag.TextWordWrap
@@ -456,10 +456,10 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
     @classmethod
     def export_object_filter_differences(
-        cls, file: TextIO, attribute_compare: Type[tool.PropertyCompare]
+        cls, file: TextIO, property_compare: Type[tool.PropertyCompare]
     ):
         project_0 = cls.get_project(0)
-        object_dict = attribute_compare.get_object_dict()
+        object_dict = property_compare.get_object_dict()
         for obj0 in sorted(project_0.get_classes(filter=False), key=lambda x: x.name):
             obj1 = object_dict[obj0]
             if obj1 is None:
@@ -471,12 +471,12 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
             file.write(f"\n{text} '{obj0.name}' ({obj0.ident_value}):\n")
             cls.export_write_statechange(file, text, filter_list, 1)
-            pset_list = attribute_compare.get_properties().pset_lists.get(obj0)
-            cls.export_pset_filter_differences(file, pset_list, attribute_compare)
+            pset_list = property_compare.get_properties().pset_lists.get(obj0)
+            cls.export_pset_filter_differences(file, pset_list, property_compare)
 
     @classmethod
     def export_pset_filter_differences(
-        cls, file, pset_list, attribute_compare: Type[tool.PropertyCompare]
+        cls, file, pset_list, property_compare: Type[tool.PropertyCompare]
     ):
         if pset_list is None:
             return
@@ -492,23 +492,23 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
             file.write(f"   {text} '{p0.name}':\n")
             filter_list = cls.get_filter_list(p0, p1)
             cls.export_write_statechange(file, text, filter_list, 2)
-            attribute_list = attribute_compare.get_properties().properties_lists.get(p0)
-            cls.export_attribute_filter_differences(file, attribute_list)
+            property_list = property_compare.get_properties().properties_lists.get(p0)
+            cls.export_property_filter_differnces(file, property_list)
 
     @classmethod
-    def export_attribute_filter_differences(cls, file, attribute_list):
+    def export_property_filter_differnces(cls, file, property_list:list[tuple[SOMcreator.SOMProperty|None, SOMcreator.SOMProperty|None]]):
         matches = cls.get_match_list()
 
-        if attribute_list is None:
+        if property_list is None:
             return
-        for a0, a1 in sorted(
-            attribute_list, key=lambda x: x[0].name if x[0] is not None else "aaa"
+        for p_0, p_1 in sorted(
+            property_list, key=lambda x: x[0].name if x[0] is not None else "aaa"
         ):
-            if a0 is None or a1 is None:
+            if p_0 is None or p_1 is None:
                 continue
-            if cls.are_attributes_identical(a0, a1):
+            if cls.are_properties_identical(p_0, p_1):
                 continue
-            filter_list = cls.get_filter_list(a0, a1)
+            filter_list = cls.get_filter_list(p_0, p_1)
             for index, (f0, f1) in enumerate(filter_list):
                 if f0 == f1:
                     continue
@@ -516,11 +516,11 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
                 use_case_phase_text = f"[{usecase.name}][{phase.name}]"
                 text = QCoreApplication.translate(
                     "FilterWindow",
-                    "Attribut {0:30} {1:30} state changed from {2:5} to {3:5}\n",
+                    "Property {0:30} {1:30} state changed from {2:5} to {3:5}\n",
                 )
                 text = f"      {text}"
                 file.write(
-                    text.format(f"'{a0.name}'", use_case_phase_text, str(f0), str(f1))
+                    text.format(f"'{p_0.name}'", use_case_phase_text, str(f0), str(f1))
                 )
 
     # GETTER & SETTER
@@ -536,13 +536,13 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
     @classmethod
     def create_widget(cls):
         if cls.get_properties().widget is None:
-            cls.get_properties().widget = attribute_ui.PropertyWidget()
+            cls.get_properties().widget = property_ui.PropertyWidget()
             cls.get_properties().widget.ui.table_widget_values.hide()
             cls.get_properties().widget.ui.table_infos.hide()
         return cls.get_properties().widget
 
     @classmethod
-    def get_widget(cls) -> attribute_ui.PropertyWidget:
+    def get_widget(cls) -> property_ui.PropertyWidget:
         return cls.get_properties().widget
 
     @classmethod

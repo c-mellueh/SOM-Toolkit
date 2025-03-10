@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type,TypeVar
+from typing import TYPE_CHECKING, Type, TypeVar
 
 import SOMcreator
 import SOMcreator.importer.som_json
@@ -45,6 +45,7 @@ def _load_filter_matrix(
 
     return filter_matrix
 
+
 def _load_single_filter(
     current_state: str | int | None,
     value_list: list,
@@ -56,7 +57,7 @@ def _load_single_filter(
         current_filter = filter_dict.get(current_state)
     elif isinstance(current_state, int):
         current_filter = value_list[current_state]
-    elif isinstance(current_state,SOMcreator.UseCase|SOMcreator.Phase):
+    elif isinstance(current_state, SOMcreator.UseCase | SOMcreator.Phase):
         current_filter = current_state
     if current_filter is None:
         current_filter = value_list[0]
@@ -114,7 +115,7 @@ def load(cls: Type[SOMProject], main_dict: MainDict) -> tuple[SOMProject, Projec
     if aggregation_pset_name is not None:
         proj.aggregation_pset = aggregation_pset_name
     if aggregation_attribute is not None:
-        proj.aggregation_attribute = aggregation_attribute
+        proj.aggregation_property = aggregation_attribute
 
     proj.active_usecases = active_use_cases
     proj.active_phases = active_phases

@@ -21,7 +21,7 @@ class ObjectTree(QTreeView):
         super().__init__(*args, **kwargs)
         model = QStandardItemModel()
         self.setModel(model)
-        model.setHorizontalHeaderLabels(["Object", "Identifier"])
+        model.setHorizontalHeaderLabels([self.tr("Class"), self.tr("Identifier")])
         modelcheck_window.trigger.connect_object_check_tree(self)
 
     def paintEvent(self, event):
@@ -34,7 +34,7 @@ class PsetTree(QTreeView):
         super().__init__(*args, **kwargs)
         model = QStandardItemModel()
         self.setModel(model)
-        model.setHorizontalHeaderLabels(["PropertySet,Attribute"])
+        model.setHorizontalHeaderLabels([self.tr("PropertySet,Property")])
         modelcheck_window.trigger.connect_pset_check_tree(self)
 
     def paintEvent(self, event):

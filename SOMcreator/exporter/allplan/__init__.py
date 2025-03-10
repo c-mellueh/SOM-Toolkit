@@ -39,30 +39,30 @@ def create_mapping(
         for x, text in enumerate(COLUMNS):
             worksheet.cell(row=1, column=x + 1, value=text)
 
-        attribute_dict: dict[str, str] = dict()
+        property_dict: dict[str, str] = dict()
 
         for som_property in project.get_properties(filter=True):
             data_type = som_property.data_type
 
-            if som_property.name in attribute_dict:
-                if data_type != attribute_dict[som_property.name]:
+            if som_property.name in property_dict:
+                if data_type != property_dict[som_property.name]:
                     if not som_property.property_set or not som_property.property_set.som_class:
                         continue
                     logging.info(
                         f"Achtung bei {som_property.property_set.som_class.name} -> {som_property.property_set.name}"
                         f":{som_property.name} neuer Datentyp: {data_type} "
-                        f" alter Datentyp: {attribute_dict[som_property.name]}"
+                        f" alter Datentyp: {property_dict[som_property.name]}"
                     )
             else:
-                attribute_dict[som_property.name] = data_type
+                property_dict[som_property.name] = data_type
 
-        for row_index, [name, data_type] in enumerate(attribute_dict.items()):
+        for row_index, [name, data_type] in enumerate(property_dict.items()):
             row = 2 + row_index
             worksheet.cell(row=row, column=1, value=name)
             worksheet.cell(row=row, column=2, value=transform_datatype(data_type))
             if data_type == value_constants.BOOLEAN:
                 worksheet.cell(row=row, column=7, value="CheckBox")
-        return attribute_dict
+        return property_dict
 
     def create_zuweisung(kenner: str, worksheet: Worksheet):
 
@@ -85,14 +85,14 @@ def create_mapping(
             worksheet.cell(row_index, 2, obj.ident_value)
             col_index = 3
             for propery_set in obj.get_property_sets(filter=True):
-                for attribute in propery_set.get_properties(filter=True):
-                    if attribute.name != kenner:
-                        worksheet.cell(row_index, col_index, attribute.name)
+                for som_property in propery_set.get_properties(filter=True):
+                    if som_property.name != kenner:
+                        worksheet.cell(row_index, col_index, som_property.name)
                         col_index += 2
 
             row_index += 1
 
-    def create_internal_mapping(attribute_dict: dict[str, str], worksheet: Worksheet):
+    def create_internal_mapping(property_dict: dict[str, str], worksheet: Worksheet):
         def transform_type(t: str) -> str:
             if t == value_constants.INTEGER:
                 return "IfcInteger"
@@ -105,12 +105,12 @@ def create_mapping(
         for x, text in enumerate(INTERNAL_COLUMNS):
             worksheet.cell(row=1, column=x + 1, value=text)
         worksheet.cell(2, 1, "All")
-        for row_index, (attribute_name, attribute_datatype) in enumerate(
-            sorted(attribute_dict.items())
+        for row_index, (property_name, property_datatype) in enumerate(
+            sorted(property_dict.items())
         ):
-            worksheet.cell(2 + row_index, 2, attribute_name)
+            worksheet.cell(2 + row_index, 2, property_name)
             worksheet.cell(2 + row_index, 4, allplan_mapping_name)
-            worksheet.cell(2 + row_index, 5, transform_type(attribute_datatype))
+            worksheet.cell(2 + row_index, 5, transform_type(property_datatype))
 
     wb = Workbook()
     ws = wb.active

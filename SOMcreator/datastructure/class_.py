@@ -68,7 +68,7 @@ class SOMClass(BaseClass):
                 new_ident_property = new_pset.get_property_by_name(ident_property_name)
 
         if new_ident_property is None:
-            raise ValueError(f"Identifier Attribute could'nt be found")
+            raise ValueError(f"Identifier Property could'nt be found")
 
         new_object = SOMClass(
             name=self.name,
@@ -191,13 +191,13 @@ class SOMClass(BaseClass):
 
     @filterable
     def get_properties(self, inherit: bool = False) -> Iterator[SOMcreator.SOMProperty]:
-        attributes = list()
+        properties = list()
         for property_set in self.get_property_sets(filter=False):
-            attributes += property_set.get_properties(filter=False)
+            properties += property_set.get_properties(filter=False)
         if inherit:
             if self.parent is not None:
-                attributes += self.parent.get_properties(inherit=True, filter=False)
-        return iter(attributes)
+                properties += self.parent.get_properties(inherit=True, filter=False)
+        return iter(properties)
 
     def delete(self, recursive: bool = False) -> None:
         super(SOMClass, self).delete(recursive)

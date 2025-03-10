@@ -73,7 +73,7 @@ class Popups(som_gui.core.tool.Popups):
 
     @classmethod
     def request_property_name(cls, old_name, parent):
-        title = QCoreApplication.translate("Popups", "Rename Attribute")
+        title = QCoreApplication.translate("Popups", "Rename Property")
         text = QCoreApplication.translate("Popups", "New name:")
 
         return cls._request_text_input(title, text, old_name, parent)
@@ -237,7 +237,7 @@ class Popups(som_gui.core.tool.Popups):
     @classmethod
     def req_delete_items(cls, string_list, item_type=1) -> (bool, bool):
         """
-        item_type 1= Object,2= Node, 3 = PropertySet, 4 = Attribute
+        item_type 1= Object,2= Node, 3 = PropertySet, 4 = Property
         """
         dialog = ui.DeleteRequestDialog()
         widget = dialog.widget
@@ -256,7 +256,7 @@ class Popups(som_gui.core.tool.Popups):
                 )
             if item_type == 4:
                 widget.label.setText(
-                    QCoreApplication.translate("Popups", "Delete Attribute?")
+                    QCoreApplication.translate("Popups", "Delete Property?")
                 )
         else:
             if item_type == 1:
@@ -273,7 +273,7 @@ class Popups(som_gui.core.tool.Popups):
                 )
             if item_type == 4:
                 widget.label.setText(
-                    QCoreApplication.translate("Popups", "Delete Attributes?")
+                    QCoreApplication.translate("Popups", "Delete Properties?")
                 )
 
         for text in string_list:

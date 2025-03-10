@@ -158,7 +158,7 @@ class Util(som_gui.core.tool.Util):
     def transform_guid(cls, guid: str, add_zero_width: bool):
         """Fügt Zero Width Character ein weil PowerBI (WARUM AUCH IMMER FÜR EIN BI PROGRAMM?????) Case Insensitive ist"""
         if add_zero_width:
-            return re.sub(r"([A-Z])", lambda m: m.group(0) + "\u200B", guid)
+            return re.sub(r"([A-Z])", lambda m: m.group(0) + "\u200b", guid)
         else:
             return guid
 
@@ -334,24 +334,24 @@ class Util(som_gui.core.tool.Util):
             line_edit.setText(path)
 
     @classmethod
-    def fill_main_attribute(
+    def fill_main_property(
         cls,
         widget: ui.PropertySelector,
         pset_name: str,
-        attribute_name: str,
+        property_name: str,
         pset_placeholder: str = None,
-        attribute_placeholder: str = None,
+        property_placeholder: str = None,
     ):
         widget.ui.le_pset_name.setText(pset_name)
-        widget.ui.le_attribute_name.setText(attribute_name)
+        widget.ui.le_property_name.setText(property_name)
         if pset_placeholder is not None:
             widget.ui.le_pset_name.setPlaceholderText(pset_placeholder)
-        if attribute_placeholder is not None:
-            widget.ui.le_attribute_name.setPlaceholderText(attribute_placeholder)
+        if property_placeholder is not None:
+            widget.ui.le_property_name.setPlaceholderText(property_placeholder)
 
     @classmethod
     def get_property(cls, widget: ui.PropertySelector):
-        return widget.ui.le_pset_name.text(), widget.ui.le_attribute_name.text()
+        return widget.ui.le_pset_name.text(), widget.ui.le_property_name.text()
 
     @classmethod
     def fill_list_widget_with_checkstate(
@@ -378,6 +378,7 @@ class Util(som_gui.core.tool.Util):
                 item.setCheckState(Qt.CheckState.Checked)
             else:
                 item.setCheckState(Qt.CheckState.Unchecked)
+
     @classmethod
     def create_completer(cls, texts, widget: QLineEdit | QComboBox):
         completer = QCompleter(texts)

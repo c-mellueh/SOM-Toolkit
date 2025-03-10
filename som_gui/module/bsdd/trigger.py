@@ -23,8 +23,8 @@ def paint_dictionary():
     core.update_dictionary(tool.Bsdd, tool.Project)
 
 
-def dict_attribute_changed(value, attribute_name):
-    core.update_dictionary_attribute(value, attribute_name, tool.Bsdd)
+def dict_property_changed(value, property_name:str):
+    core.update_dictionary_property(value, property_name, tool.Bsdd)
 
 
 def path_button_clicked():

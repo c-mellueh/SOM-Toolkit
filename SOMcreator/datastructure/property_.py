@@ -169,7 +169,7 @@ class SOMProperty(BaseClass):
     def value_type(self, value: str):
         if self.is_child:
             logging.info(
-                f"won't overwrite ValueType because Attribute '{self}' is child"
+                f"won't overwrite ValueType because Property '{self}' is child"
             )
             return
         self._value_type = value
@@ -191,7 +191,7 @@ class SOMProperty(BaseClass):
     def data_type(self, value: str) -> None:
         if self.is_child:
             logging.info(
-                f"won't overwrite Datatype because Attribute '{self}' is child"
+                f"won't overwrite Datatype because Property '{self}' is child"
             )
             return
         self._data_type = value
@@ -208,7 +208,7 @@ class SOMProperty(BaseClass):
     @unit.setter
     def unit(self, value: str) -> None:
         if self.is_child:
-            logging.info(f"won't overwrite Unit because Attribute '{self}' is child")
+            logging.info(f"won't overwrite Unit because Property '{self}' is child")
             return
 
         if not value:
@@ -239,17 +239,17 @@ class SOMProperty(BaseClass):
             value.add_property(self)
         self._property_set = value
 
-    def is_equal(self, attribute: SOMProperty) -> bool:
+    def is_equal(self, som_property: SOMProperty) -> bool:
         equal = True
 
-        if self.name != attribute.name:
+        if self.name != som_property.name:
             equal = False
 
-        if self.allowed_values != attribute.allowed_values:
+        if self.allowed_values != som_property.allowed_values:
             equal = False
 
-        if self.property_set is not None and attribute.property_set is not None:
-            if self.property_set.name != attribute.property_set.name:
+        if self.property_set is not None and som_property.property_set is not None:
+            if self.property_set.name != som_property.property_set.name:
                 equal = False
 
         if equal:

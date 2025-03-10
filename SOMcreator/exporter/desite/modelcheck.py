@@ -108,9 +108,9 @@ def _handle_rule(xml_checkrun: Element, rule_type: str) -> Element:
     return rule
 
 
-def _handle_attribute_rule_list(xml_rule: Element) -> Element:
-    attribute_rule_list = etree.SubElement(xml_rule, "attributeRuleList")
-    return attribute_rule_list
+def _handle_property_rule_list(xml_rule: Element) -> Element:
+    property_rule_list = etree.SubElement(xml_rule, "attributeRuleList")
+    return property_rule_list
 
 
 def _define_xml_elements(
@@ -118,23 +118,23 @@ def _define_xml_elements(
 ) -> (Element, Element):
     xml_checkrun = _handle_checkrun(xml_container, name=name, author=author)
     xml_rule = _handle_rule(xml_checkrun, "Attributes")
-    xml_attribute_rule_list = _handle_attribute_rule_list(xml_rule)
+    xml_property_rule_list = _handle_property_rule_list(xml_rule)
     _handle_rule(xml_checkrun, "UniquePattern")
 
-    return xml_checkrun, xml_attribute_rule_list
+    return xml_checkrun, xml_property_rule_list
 
 
-def _handle_js_rules(xml_attribute_rule_list: Element, starts_with: str) -> None:
+def _handle_js_rules(xml_property_rule_list: Element, starts_with: str) -> None:
     folder = os.path.join(templates.HOME_DIR, constants.FILEPATH_JS)
 
     for fn in os.listdir(folder):
         if str(fn).startswith(starts_with):
             file = codecs.open(f"{folder}/{fn}", encoding="utf-8")
-            _add_js_rule(xml_attribute_rule_list, file)
+            _add_js_rule(xml_property_rule_list, file)
 
 
-def _handle_rule_script(xml_attribute_rule_list: Element, name: str) -> Element:
-    rule_script = etree.SubElement(xml_attribute_rule_list, "ruleScript")
+def _handle_rule_script(xml_property_rule_list: Element, name: str) -> Element:
+    rule_script = etree.SubElement(xml_property_rule_list, "ruleScript")
     rule_script.set("name", name)
     rule_script.set("active", "true")
     rule_script.set("resume", "true")
@@ -195,7 +195,7 @@ def _handle_tree_structure(
             return
         xml_checkrun = _handle_checkrun(xml_container, obj.name, author)
         xml_rule = _handle_rule(xml_checkrun, "Attributes")
-        xml_attribute_rule_list = _handle_attribute_rule_list(xml_rule)
+        xml_attribute_rule_list = _handle_property_rule_list(xml_rule)
         xml_rule_script = _handle_rule_script(xml_attribute_rule_list, name=obj.name)
         xml_code = _handle_code(xml_rule_script)
         cdata_code = template.render(
@@ -445,7 +445,7 @@ def _fast_object_check(
 ) -> dict[Element, None]:
     xml_checkrun = _handle_checkrun(base_xml_container, "Main Check", author)
     xml_rule = _handle_rule(xml_checkrun, "Attributes")
-    xml_attribute_rule_list = _handle_attribute_rule_list(xml_rule)
+    xml_attribute_rule_list = _handle_property_rule_list(xml_rule)
     xml_rule_script = _handle_rule_script(xml_attribute_rule_list, name="Main Check")
     xml_code = _handle_code(xml_rule_script)
     cdata_code = template.render(
@@ -484,7 +484,7 @@ def export(
     ],
     path: str,
     main_pset: str,
-    main_attribute: str,
+    main_property: str,
     object_structure: dict[SOMcreator.SOMClass, SOMcreator.SOMClass] = None,
     export_type: str = "JS",
 ) -> None:
@@ -510,7 +510,7 @@ def export(
     xml_checkrun_last, xml_attribute_rule_list = _define_xml_elements(
         project.author, xml_container, "untested"
     )
-    _handle_untested(xml_attribute_rule_list, main_pset, main_attribute)
+    _handle_untested(xml_attribute_rule_list, main_pset, main_property)
     _handle_data_section(
         xml_qa_export, xml_checkrun_first, xml_checkrun_obj, xml_checkrun_last
     )

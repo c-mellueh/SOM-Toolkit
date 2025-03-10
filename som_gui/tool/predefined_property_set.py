@@ -292,7 +292,7 @@ class PredefinedPropertySetCompare(som_gui.core.tool.PredefinedPropertySetCompar
     @classmethod
     def create_tree_selection_trigger(cls, widget: ui.CompareWidget):
         widget.ui.tree_widget_propertysets.itemSelectionChanged.connect(
-            lambda: som_gui.module.attribute.trigger.pset_tree_selection_changed(widget)
+            lambda: som_gui.module.property_.trigger.pset_tree_selection_changed(widget)
         )
 
     @classmethod

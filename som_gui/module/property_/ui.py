@@ -1,7 +1,7 @@
 from PySide6.QtCore import QRect, QSize, Qt
 from PySide6.QtWidgets import QHeaderView, QWidget, QComboBox, QTreeView
 from PySide6.QtGui import QStandardItemModel, QStandardItem
-from som_gui.module import property_ as attribute_module
+from som_gui.module import property_ as property_module
 from .qt import ui_CompareWidget, ui_UnitSettings
 
 
@@ -40,7 +40,7 @@ class UnitSettings(QWidget):
         super().__init__(*args, **kwargs)
         self.ui = ui_UnitSettings.Ui_UnitSettings()
         self.ui.setupUi(self)
-        attribute_module.trigger.unit_settings_created(self)
+        property_module.trigger.unit_settings_created(self)
 
 
 class UnitComboBox(QComboBox):

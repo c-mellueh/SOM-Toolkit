@@ -10,5 +10,5 @@ from PySide6.QtWidgets import QDialog
 class SearchProperties:
     search_dialogues: set[QDialog] = set()
     filter_threshold: int = 65
-    search_mode = 1  # 1 = Object 2= Attribute
+    search_mode = 1  # 1 = Object 2= Property
     selected_info = None

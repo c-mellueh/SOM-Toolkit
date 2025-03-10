@@ -112,9 +112,9 @@ class Ui_PropertyImport(object):
         self.splitter_tables.addWidget(self.verticalLayoutWidget_3)
         self.verticalLayoutWidget_2 = QWidget(self.splitter_tables)
         self.verticalLayoutWidget_2.setObjectName(u"verticalLayoutWidget_2")
-        self.vertical_layout_attribute = QVBoxLayout(self.verticalLayoutWidget_2)
-        self.vertical_layout_attribute.setObjectName(u"vertical_layout_attribute")
-        self.vertical_layout_attribute.setContentsMargins(0, 0, 0, 0)
+        self.vertical_layout_property = QVBoxLayout(self.verticalLayoutWidget_2)
+        self.vertical_layout_property.setObjectName(u"vertical_layout_property")
+        self.vertical_layout_property.setContentsMargins(0, 0, 0, 0)
         self.label_properties = QLabel(self.verticalLayoutWidget_2)
         self.label_properties.setObjectName(u"label_properties")
         sizePolicy1.setHeightForWidth(self.label_properties.sizePolicy().hasHeightForWidth())
@@ -122,7 +122,7 @@ class Ui_PropertyImport(object):
         self.label_properties.setMinimumSize(QSize(0, 24))
         self.label_properties.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.vertical_layout_attribute.addWidget(self.label_properties)
+        self.vertical_layout_property.addWidget(self.label_properties)
 
         self.table_widget_property = PropertyTable(self.verticalLayoutWidget_2)
         self.table_widget_property.setObjectName(u"table_widget_property")
@@ -140,7 +140,7 @@ class Ui_PropertyImport(object):
         self.table_widget_property.horizontalHeader().setStretchLastSection(True)
         self.table_widget_property.verticalHeader().setVisible(False)
 
-        self.vertical_layout_attribute.addWidget(self.table_widget_property)
+        self.vertical_layout_property.addWidget(self.table_widget_property)
 
         self.splitter_tables.addWidget(self.verticalLayoutWidget_2)
         self.verticalLayoutWidget = QWidget(self.splitter_tables)

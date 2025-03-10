@@ -1,4 +1,4 @@
-POPERTY_KEY = "attribute_name"
+POPERTY_KEY = "property_name"
 OPEN_WINDOW_ACTION = "open_window"
 FILE_FORMAT = "JSON (*.json);;"
 BSDD_PATH = "bsdd_export"

@@ -27,8 +27,8 @@ def update_file_selector(widget: ui.FileSelector):
         widget.ui.label.hide()
 
 
-def fill_main_attribute_selector(
+def fill_main_property_selector(
     widget: ui.PropertySelector, util: Type[tool.Util], project: Type[tool.Project]
 ):
-    pset, attribute = project.get().get_main_property()
-    util.fill_main_attribute(widget, pset, attribute)
+    pset, som_property = project.get().get_main_property()
+    util.fill_main_property(widget, pset, som_property)

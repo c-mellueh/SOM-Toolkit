@@ -57,25 +57,25 @@ def pset_tree_double_clicked(
 ) -> None:
     """
     Handles the event when a tree item is double-clicked in the property set tree.
-    This function determines whether the clicked item is an Attribute or a PropertySet,
-    and then opens the corresponding property set window. If the item is an Attribute,
-    it also activates the attribute in the property set window.
+    This function determines whether the clicked item is an Property or a PropertySet,
+    and then opens the corresponding property set window. If the item is an Property,
+    it also activates the property in the property set window.
     :param item: The tree item that was double-clicked.
     :type item: QTreeWidgetItem
     :param node: The node associated with the tree item.
     :type node: Type[Node]
     :param property_set_window: The window class for displaying property sets.
     :type property_set_window: Type[tool.PropertySetWindow]
-    :param property_table: The table class for displaying attributes.
-    :type property_table: Type[tool.AttributeTable]
+    :param property_table: The table class for displaying properties.
+    :type property_table: Type[tool.PropertyTable]
     :returns: None
     """
 
     linked_item = node.get_linked_item(item)
-    active_attribute = None
+    active_property = None
     active_property_set = None
     if isinstance(linked_item, SOMcreator.SOMProperty):
-        active_attribute = linked_item
+        active_property = linked_item
         active_property_set = linked_item.property_set
 
     elif isinstance(linked_item, SOMcreator.SOMPropertySet):
@@ -87,10 +87,10 @@ def pset_tree_double_clicked(
     window = property_set_window_core.open_pset_window(
         active_property_set, property_set_window, property_table
     )
-    if active_attribute is None:
+    if active_property is None:
         return
     property_set_window_core.activate_property(
-        active_attribute, window, property_set_window
+        active_property, window, property_set_window
     )
 
 
@@ -170,8 +170,8 @@ def paint_header(painter: QPainter, header: Header, node: Type[Node]) -> None:
     painter.drawRect(rect)
 
     # write Text into Header
-    pset_name, attribute_name = node.get_title_settings()
-    rows = node.get_title_rows(active_node, rect.width(), pset_name, attribute_name)
+    pset_name, property_name = node.get_title_settings()
+    rows = node.get_title_rows(active_node, rect.width(), pset_name, property_name)
     node.draw_header_texts(painter, header, rows)
     active_node.spacer.changeSize(header.rect().width(), header.rect().height())
     active_node.widget().layout().invalidate()  # refresh layout else spacer won't update height

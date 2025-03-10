@@ -16,7 +16,7 @@
         <widget class="QWidget" name="centralwidget">
             <layout class="QVBoxLayout" name="verticalLayout">
                 <item>
-                    <widget class="AttributeSelector" name="main_attribute_widget" native="true">
+                    <widget class="PropertySelector" name="main_property_widget" native="true">
                         <property name="minimumSize">
                             <size>
                                 <width>0</width>
@@ -59,7 +59,8 @@
                                             <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
                                         </property>
                                         <property name="selectionMode">
-                                            <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
+                                            <enum>
+                                                QAbstractItemView::SelectionMode::ExtendedSelection</enum>
                                         </property>
                                     </widget>
                                 </item>
@@ -89,7 +90,7 @@
                 </rect>
             </property>
         </widget>
-        <widget class="QStatusBar" name="statusbar"/>
+        <widget class="QStatusBar" name="statusbar" />
     </widget>
     <customwidgets>
         <customwidget>
@@ -103,12 +104,12 @@
             <header>som_gui.module.modelcheck_window.ui</header>
         </customwidget>
         <customwidget>
-            <class>AttributeSelector</class>
+            <class>PropertySelector</class>
             <extends>QWidget</extends>
             <header>som_gui.module.util.ui</header>
             <container>1</container>
         </customwidget>
     </customwidgets>
-    <resources/>
-    <connections/>
+    <resources />
+    <connections />
 </ui>

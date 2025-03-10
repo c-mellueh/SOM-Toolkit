@@ -148,7 +148,7 @@
                         </layout>
                     </widget>
                     <widget class="QWidget" name="verticalLayoutWidget_2">
-                        <layout class="QVBoxLayout" name="vertical_layout_attribute">
+                        <layout class="QVBoxLayout" name="vertical_layout_property">
                             <item>
                                 <widget class="QLabel" name="label_properties">
                                     <property name="sizePolicy">

@@ -39,9 +39,9 @@ def open_window(
 ):
     proj = project.get()
     window = modelcheck_window.create_window()
-    main_pset_name, main_attribute_name = proj.get_main_property()
-    util.fill_main_attribute(
-        window.ui.main_attribute_widget, main_pset_name, main_attribute_name
+    main_pset_name, main_property_name = proj.get_main_property()
+    util.fill_main_property(
+        window.ui.main_property_widget, main_pset_name, main_property_name
     )
 
     util.fill_file_selector(
@@ -91,7 +91,7 @@ def retranslate_ui(
     object_model.setHorizontalHeaderLabels(headers)
 
     pset_model: QStandardItemModel = modelcheck_window.get_pset_tree().model()
-    headers = [QCoreApplication.translate("Modelcheck", "PropertySet,Attribute")]
+    headers = [QCoreApplication.translate("Modelcheck", "PropertySet,Property")]
     pset_model.setHorizontalHeaderLabels(headers)
 
 
@@ -129,8 +129,8 @@ def run_modelcheck(
     project: Type[tool.Project],
     util: Type[tool.Util],
 ):
-    ifc_paths, export_path, main_pset, main_attribute = modelcheck_window.read_inputs()
-    inputs_are_valid = ifc_importer.check_inputs(ifc_paths, main_pset, main_attribute)
+    ifc_paths, export_path, main_pset, main_property = modelcheck_window.read_inputs()
+    inputs_are_valid = ifc_importer.check_inputs(ifc_paths, main_pset, main_property)
     export_path_is_valid = modelcheck_window.check_export_path(export_path)
 
     if not inputs_are_valid or not export_path_is_valid:
@@ -140,7 +140,7 @@ def run_modelcheck(
     modelcheck_window.show_buttons(QDialogButtonBox.StandardButton.Abort)
     modelcheck.reset_abort()
     modelcheck.set_main_pset_name(main_pset)
-    modelcheck.set_main_property_name(main_attribute)
+    modelcheck.set_main_property_name(main_property)
     modelcheck_results.set_export_path(export_path)
 
     pool = ifc_importer.get_threadpool()

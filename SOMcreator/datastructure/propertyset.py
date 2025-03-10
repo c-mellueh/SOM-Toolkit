@@ -53,9 +53,9 @@ class SOMPropertySet(BaseClass):
             filter_matrix=self._filter_matrix,
         )
 
-        for attribute in self.get_properties(filter=False):
-            new_attribute = cp.copy(attribute)
-            new_pset.add_property(new_attribute)
+        for som_property in self.get_properties(filter=False):
+            new_property = cp.copy(som_property)
+            new_pset.add_property(new_property)
 
         if self.parent is not None:
             self.parent.add_child(new_pset)
@@ -110,7 +110,7 @@ class SOMPropertySet(BaseClass):
             and not override_ident_deletion
         ):
             logging.error(
-                f"Can't delete Propertyset {self.name} because it countains the identifier Attribute"
+                f"Can't delete Propertyset {self.name} because it countains the identifier Property"
             )
             return
 
@@ -156,14 +156,15 @@ class SOMPropertySet(BaseClass):
             self._properties.remove(value)
             if recursive:
                 for child in value.get_children(filter=False):
-                    child.property_set.remove_attribute(child)
+                    child:SOMcreator.SOMProperty
+                    child.property_set.remove_property(child)
         else:
-            logging.warning(f"{self.name} -> {value} not in SOMcreator.Attributes")
+            logging.warning(f"{self.name} -> {value} not in SOMcreator.SOMPropertys")
 
     def get_property_by_name(self, name: str):
-        for attribute in self.get_properties(filter=False):
-            if attribute.name.lower() == name.lower():
-                return attribute
+        for som_property in self.get_properties(filter=False):
+            if som_property.name.lower() == name.lower():
+                return som_property
         return None
 
     def create_child(self, name=None) -> SOMPropertySet:
@@ -171,7 +172,7 @@ class SOMPropertySet(BaseClass):
         child = SOMPropertySet(name=name, project=self.project)
         self._children.add(child)
         child.parent = self
-        for attribute in self.get_properties(filter=False):
-            new_attrib = attribute.create_child()
-            child.add_property(new_attrib)
+        for som_property in self.get_properties(filter=False):
+            new_property = som_property.create_child()
+            child.add_property(new_property)
         return child

@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'AttributeSelect.ui'
+## Form generated from reading UI file 'PropertySelect.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QLineEdit, QSizePolicy,
-                               QWidget)
-
+    QWidget)
 
 class Ui_Util(object):
     def setupUi(self, Util):
@@ -32,10 +31,11 @@ class Ui_Util(object):
 
         self.horizontalLayout.addWidget(self.le_pset_name)
 
-        self.le_attribute_name = QLineEdit(Util)
-        self.le_attribute_name.setObjectName(u"le_attribute_name")
+        self.le_property_name = QLineEdit(Util)
+        self.le_property_name.setObjectName(u"le_property_name")
 
-        self.horizontalLayout.addWidget(self.le_attribute_name)
+        self.horizontalLayout.addWidget(self.le_property_name)
+
 
         self.retranslateUi(Util)
 
@@ -45,6 +45,6 @@ class Ui_Util(object):
     def retranslateUi(self, Util):
         Util.setWindowTitle(QCoreApplication.translate("Util", u"Form", None))
         self.le_pset_name.setPlaceholderText(QCoreApplication.translate("Util", u"Ident PropertySet", None))
-        self.le_attribute_name.setPlaceholderText(QCoreApplication.translate("Util", u"Ident Attribute", None))
+        self.le_property_name.setPlaceholderText(QCoreApplication.translate("Util", u"Ident Property", None))
     # retranslateUi
 

@@ -440,7 +440,7 @@ class PsetModel(TreeModel):
         self.active_object = tool.FilterWindow.get_active_object()
 
     def retranslate_ui(self):
-        h0 = QCoreApplication.translate("FilterWindow", "PropertySet/Attribute")
+        h0 = QCoreApplication.translate("FilterWindow", "PropertySet/Property")
         self.column_titles = [h0]
 
     def flags(self, index: QModelIndex):

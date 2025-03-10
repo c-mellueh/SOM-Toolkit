@@ -85,7 +85,7 @@ class Bsdd:
     ):
         pass
 
-    def get_linked_attribute_name(self, item):
+    def get_linked_property_name(self, item):
         pass
 
     def get_open_window_trigger(
@@ -141,7 +141,7 @@ class Bsdd:
     def set_action(self, name, action):
         pass
 
-    def set_linked_attribute_name(self, item, value):
+    def set_linked_property_name(self, item, value):
         pass
 
     def set_tabs(self, tab_list):
@@ -636,7 +636,7 @@ class FilterCompare:
     def are_all_filters_identical(self, filter_list):
         pass
 
-    def are_attributes_identical(self, attribute0, attribute1):
+    def are_properties_identical(self, attribute0, attribute1):
         pass
 
     def are_objects_identical(self, obj0, obj1):
@@ -656,7 +656,7 @@ class FilterCompare:
     ):
         pass
 
-    def export_attribute_filter_differences(self, file, attribute_list):
+    def export_property_filter_differnces(self, file, attribute_list):
         pass
 
     def export_object_filter_differences(self, file, attribute_compare):
@@ -3235,7 +3235,7 @@ class Search:
     def retranslate_title(self, dialog, search_mode):
         pass
 
-    def search_attribute(self, searchable_attributes):
+    def search_property(self, searchable_attributes):
         pass
 
     def search_class(self, searchable_objects):
@@ -3350,7 +3350,7 @@ class Util:
     def fill_list_widget_with_checkstate(self, list_widget, allowed_labels, all_labels):
         pass
 
-    def fill_main_attribute(
+    def fill_main_property(
         self, widget, pset_name, attribute_name, pset_placeholder, attribute_placeholder
     ):
         pass

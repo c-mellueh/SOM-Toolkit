@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'Window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -60,7 +60,7 @@ class Ui_Mapping(object):
 
         self.pset_tree = PropertySetTreeWidget(self.gridLayoutWidget)
         __qtreewidgetitem = QTreeWidgetItem()
-        __qtreewidgetitem.setText(0, u"PropertySet/Attribute");
+        __qtreewidgetitem.setText(0, u"PropertySet/Property");
         self.pset_tree.setHeaderItem(__qtreewidgetitem)
         self.pset_tree.setObjectName(u"pset_tree")
         self.pset_tree.setSortingEnabled(True)

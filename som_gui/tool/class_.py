@@ -221,12 +221,12 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def find_property(
-        cls, obj: SOMcreator.SOMClass, pset_name: str, attribute_name: str
+        cls, obj: SOMcreator.SOMClass, pset_name: str, property_name: str
     ):
         pset = obj.get_property_set_by_name(pset_name)
         if pset is None:
             return None
-        return pset.get_property_by_name(attribute_name)
+        return pset.get_property_by_name(property_name)
 
     @classmethod
     def get_active_class(cls) -> SOMcreator.SOMClass | None:
