@@ -4,7 +4,7 @@ import ifcopenshell
 from PySide6.QtWidgets import QPushButton
 
 from som_gui import tool
-from som_gui.core import attribute_import as core
+from som_gui.core import property_import as core
 from som_gui.tool.ifc_importer import IfcImportRunner
 
 if TYPE_CHECKING:

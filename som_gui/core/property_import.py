@@ -23,59 +23,59 @@ import time
 
 
 def create_main_menu_actions(
-    attribute_import: Type[tool.AttributeImport], main_window: Type[tool.MainWindow]
+    property_import: Type[tool.AttributeImport], main_window: Type[tool.MainWindow]
 ):
     from som_gui.module.attribute_import import trigger
 
     open_window_action = main_window.add_action(
         "menuModels", "IV", trigger.open_import_window
     )
-    attribute_import.set_action("open_window", open_window_action)
+    property_import.set_action("open_window", open_window_action)
 
 
 def retranslate_ui(
-    attribute_import: Type[tool.AttributeImport],
-    attribute_import_results: Type[tool.AttributeImportResults],
+    property_import: Type[tool.AttributeImport],
+    property_import_results: Type[tool.AttributeImportResults],
     util: Type[tool.Util],
 ):
-    open_window_action = attribute_import.get_action("open_window")
+    open_window_action = property_import.get_action("open_window")
     open_window_action.setText(
-        QCoreApplication.translate("AttributeImport", "Import Values")
+        QCoreApplication.translate("PropertyImport", "Import Values")
     )
 
-    ifc_window = attribute_import.get_ifc_import_window()
+    ifc_window = property_import.get_ifc_import_window()
     if ifc_window:
-        title = QCoreApplication.translate("AttributeImport", "Import Values")
+        title = QCoreApplication.translate("PropertyImport", "Import Values")
         ifc_window.ui.retranslateUi(ifc_window)
         ifc_window.setWindowTitle(util.get_window_title(title))
         ifc_window.ui.file_selector_widget.name = QCoreApplication.translate(
-            "AttributeImport", "IFC Path"
+            "PropertyImport", "IFC Path"
         )
 
-    result_window = attribute_import_results.get_results_window()
+    result_window = property_import_results.get_results_window()
     if result_window:
         result_window.ui.retranslateUi(result_window)
-        title = QCoreApplication.translate("AttributeImport", "Import Values")
+        title = QCoreApplication.translate("PropertyImport", "Import Values")
         result_window.setWindowTitle(util.get_window_title(title))
 
 
 def open_import_window(
-    attribute_import: Type[tool.AttributeImport],
-    attribute_import_results: Type[tool.AttributeImportResults],
+    property_import: Type[tool.AttributeImport],
+    property_import_results: Type[tool.AttributeImportResults],
     ifc_importer: Type[tool.IfcImporter],
     project: Type[tool.Project],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    property_import_sql: Type[tool.AttributeImportSQL],
 ):
     proj = project.get()
     usecases = [proj.get_usecase_by_index(i) for i in proj.active_usecases]
     phases = [proj.get_phase_by_index(i) for i in proj.active_phases]
-    attribute_import_sql.set_current_object_filter(usecases, phases)
-    if attribute_import_results.is_window_allready_build():
-        attribute_import_sql.create_som_filter_table()
-        attribute_import_results.get_results_window().show()
+    property_import_sql.set_current_object_filter(usecases, phases)
+    if property_import_results.is_window_allready_build():
+        property_import_sql.create_som_filter_table()
+        property_import_results.get_results_window().show()
         return
 
-    window = attribute_import.create_ifc_import_window(ifc_importer.create_importer())
+    window = property_import.create_ifc_import_window(ifc_importer.create_importer())
     from som_gui.module.attribute_import import trigger
 
     trigger.retranslate_ui()
@@ -101,7 +101,7 @@ def ifc_import_run_clicked(
     attribute_import.reset_abort()
 
     ifc_importer.set_run_button_enabled(ifc_import_widget, False)
-    button_text = QCoreApplication.translate("AttributeImport", "Abort")
+    button_text = QCoreApplication.translate("PropertyImport", "Abort")
     ifc_importer.set_close_button_text(ifc_import_widget, button_text)
     attribute_import.set_main_pset(main_pset_name)
     attribute_import.set_main_attribute(main_attribute_name)
@@ -117,7 +117,7 @@ def ifc_import_run_clicked(
         ifc_importer.add_progress_bar(ifc_import_widget, progress_bar)
         runner = attribute_import.create_import_runner(path, progress_bar)
         attribute_import.connect_ifc_import_runner(runner)
-        status = QCoreApplication.translate("AttributeImport", "Import {}").format(
+        status = QCoreApplication.translate("PropertyImport", "Import {}").format(
             os.path.basename(path)
         )
         ifc_importer.set_status(runner, status)
@@ -139,7 +139,7 @@ def init_database(
     attribute_count = len(all_attributes)
 
     status_text = QCoreApplication.translate(
-        "AttributeImport", "Import Attributes from SOM"
+        "PropertyImport", "Import Attributes from SOM"
     )
     property_table = list()
     filter_table = []
@@ -198,7 +198,7 @@ def ifc_import_finished(
 
     attribute_import.destroy_import_runner(runner)
     ifc_importer.set_status(
-        runner, QCoreApplication.translate("AttributeImport", "Import Done!")
+        runner, QCoreApplication.translate("PropertyImport", "Import Done!")
     )
     attribute_import_runner = attribute_import.create_attribute_import_runner(runner)
     attribute_import.connect_attribute_import_runner(attribute_import_runner)
@@ -223,7 +223,7 @@ def start_attribute_import(
     entity_list = list(file.by_type("IfcObject"))
     entity_count = len(entity_list)
     status_text = QCoreApplication.translate(
-        "AttributeImport", "Import entity from file:"
+        "PropertyImport", "Import entity from file:"
     )
     attribute_dict = attribute_import_results.build_attribute_dict(
         list(project.get().get_classes(filter=False))
@@ -241,7 +241,7 @@ def start_attribute_import(
         )
 
     status = QCoreApplication.translate(
-        "AttributeImport", "import of '{}' entities done!"
+        "PropertyImport", "import of '{}' entities done!"
     ).format(runner.path)
     attribute_import.set_status(runner, status)
     attribute_import.set_progress(runner, 100)
@@ -508,7 +508,7 @@ def settings_clicked(
     util: Type[tool.Util],
 ):
     settings_dialog = attriubte_import_sql.create_settings_window()
-    title = QCoreApplication.translate("AttributeImport", "Settings v")
+    title = QCoreApplication.translate("PropertyImport", "Settings v")
     settings_dialog.setWindowTitle(util.get_window_title(title))
     attriubte_import_sql.update_settins_dialog_checkstates(settings_dialog)
     if settings_dialog.exec():
@@ -565,7 +565,7 @@ def export_attributes(
     :return:
     """
     old_path = appdata.get_path(EXPORT_PATH)
-    title = QCoreApplication.translate("AttributeImport", "Export Attribute Data")
+    title = QCoreApplication.translate("PropertyImport", "Export Attribute Data")
     new_path = popups.get_save_path(
         FILETYPE, attribute_import_results.get_results_window(), old_path, title
     )
@@ -574,5 +574,5 @@ def export_attributes(
     appdata.set_path(EXPORT_PATH, new_path)
     query = attribute_import_sql.create_export_query()
     attribute_import_sql.sql_to_excel(query, new_path)
-    text = QCoreApplication.translate("AttributeImport", "Export Done!")
+    text = QCoreApplication.translate("PropertyImport", "Export Done!")
     popups.create_info_popup(text, text)
