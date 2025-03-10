@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>AttributeImport</class>
-    <widget class="QDialog" name="AttributeImport">
+ <class>SettingsDialog</class>
+ <widget class="QDialog" name="SettingsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-       <width>281</width>
-       <height>203</height>
+    <width>281</width>
+    <height>203</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,75 +15,75 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-       <widget class="QCheckBox" name="check_box_boolean_values">
+    <widget class="QCheckBox" name="check_box_boolean_values">
      <property name="layoutDirection">
-         <enum>Qt::LayoutDirection::RightToLeft</enum>
+      <enum>Qt::LayoutDirection::RightToLeft</enum>
      </property>
      <property name="text">
-         <string>show IfcBoolean</string>
+      <string>show IfcBoolean</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QCheckBox" name="check_box_regex">
      <property name="layoutDirection">
-         <enum>Qt::LayoutDirection::RightToLeft</enum>
+      <enum>Qt::LayoutDirection::RightToLeft</enum>
      </property>
      <property name="text">
-         <string>show RegEx</string>
+      <string>show RegEx</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QCheckBox" name="check_box_range">
      <property name="layoutDirection">
-         <enum>Qt::LayoutDirection::RightToLeft</enum>
+      <enum>Qt::LayoutDirection::RightToLeft</enum>
      </property>
      <property name="text">
-         <string>show Range</string>
+      <string>show Range</string>
      </property>
     </widget>
    </item>
-      <item>
-          <widget class="QCheckBox" name="check_box_existing_attributes">
-              <property name="layoutDirection">
-                  <enum>Qt::LayoutDirection::RightToLeft</enum>
-              </property>
-              <property name="text">
-                  <string>show allready Existing</string>
+   <item>
+    <widget class="QCheckBox" name="check_box_existing_properties">
+     <property name="layoutDirection">
+      <enum>Qt::LayoutDirection::RightToLeft</enum>
+     </property>
+     <property name="text">
+      <string>show allready Existing</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QCheckBox" name="check_box_color">
      <property name="layoutDirection">
-         <enum>Qt::LayoutDirection::RightToLeft</enum>
+      <enum>Qt::LayoutDirection::RightToLeft</enum>
      </property>
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>
      <property name="text">
-         <string>color Data</string>
+      <string>color Data</string>
      </property>
     </widget>
    </item>
-      <item>
-          <widget class="QCheckBox" name="check_box_object_filter">
-              <property name="layoutDirection">
-                  <enum>Qt::LayoutDirection::RightToLeft</enum>
-              </property>
-              <property name="text">
-                  <string>filter by Usecase/Phase</string>
+   <item>
+    <widget class="QCheckBox" name="check_box_object_filter">
+     <property name="layoutDirection">
+      <enum>Qt::LayoutDirection::RightToLeft</enum>
+     </property>
+     <property name="text">
+      <string>filter by Usecase/Phase</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-         <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>
@@ -94,7 +94,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-      <receiver>AttributeImport</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -110,7 +110,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-      <receiver>AttributeImport</receiver>
+   <receiver>SettingsDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

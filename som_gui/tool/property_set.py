@@ -30,7 +30,9 @@ if TYPE_CHECKING:
 class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
-    def get_attribute_by_name(cls, property_set: SOMcreator.SOMPropertySet, name: str):
+    def get_attribute_by_name(cls, property_set: SOMcreator.SOMPropertySet, name: str) -> SOMcreator.SOMProperty|None:
+        if property_set is None:
+            return None
         attribute_dict = {a.name: a for a in property_set.get_properties(filter=False)}
         return attribute_dict.get(name)
 

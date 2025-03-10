@@ -43,7 +43,7 @@ def add_attribute_button_clicked(
     attribute: Type[tool.Property],
 ):
     pset = property_set_window.get_property_set_by_window(window)
-    attribute_name = property_set_window.get_attribute_name_input(window)
+    attribute_name = property_set_window.get_property_name_input(window)
 
     old_attribute = property_set.get_attribute_by_name(pset, attribute_name)
     attribute_data = property_set_window.get_attribute_data(window)
@@ -124,12 +124,22 @@ def handle_paste_event(
 def repaint_pset_window(
     window: ui.PropertySetWindow,
     property_set_window: Type[tool.PropertySetWindow],
+    property_set: Type[tool.PropertySet],
     property_table: Type[tool.PropertyTable],
 ):
     table = property_set_window.get_table(window)
     property_table_core.update_table(table, property_table)
 
     property_set_window.update_add_button(window)
+    property_name = property_set_window.get_property_name_input(window)
+    pset = property_set_window.get_property_set_by_window(window)
+    som_property: SOMcreator.SOMProperty = property_set.get_attribute_by_name(
+        pset, property_name
+    )
+    if som_property is not None and som_property.is_child:
+        property_set_window.set_comboboxes_enabled(False,window)
+    else:
+        property_set_window.set_comboboxes_enabled(True,window)
     property_set_window.update_line_validators(window)
 
 
@@ -164,7 +174,7 @@ def activate_property(
     property_set_window.set_data_type(active_attribute.data_type, window)
     property_set_window.set_value_type(active_attribute.value_type, window)
     property_set_window.set_description(active_attribute.description, window)
-    property_set_window.toggle_comboboxes(active_attribute, window)
+    property_set_window.set_comboboxes_enabled(active_attribute.is_child, window)
     property_set_window.set_inherit_checkbox_state(
         active_attribute.child_inherits_values, window
     )

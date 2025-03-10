@@ -13,13 +13,13 @@ import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
-from som_gui.module.attribute_import import trigger, ui
-from som_gui.module.attribute_import.constants import *
+from som_gui.module.property_import import trigger, ui
+from som_gui.module.property_import.constants import *
 
 if TYPE_CHECKING:
-    from som_gui.module.attribute_import.prop import (
-        AttributeImportProperties,
-        AttributeImportSQLProperties,
+    from som_gui.module.property_import.prop import (
+        PropertyImportProperties,
+        PropertyImportSQLProperties,
     )
     from som_gui.module.ifc_importer.ui import IfcImportWidget
     from som_gui.tool.ifc_importer import IfcImportRunner
@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 import sqlite3
 
 
-class AttributeImportRunner(QRunnable):
+class PropertyImportRunner(QRunnable):
     def __init__(self, runner: IfcImportRunner, progress_bar=None):
         super().__init__()
         self.file: ifcopenshell.file = runner.ifc
@@ -37,7 +37,7 @@ class AttributeImportRunner(QRunnable):
         self.progress_bar: Progressbar = progress_bar
 
     def run(self):
-        trigger.start_attribute_import(self)
+        trigger.start_property_import(self)
         self.signaller.finished.emit()
 
 
@@ -47,11 +47,11 @@ class Signaller(QObject):
     progress = Signal(int)
 
 
-class AttributeImportResults(som_gui.core.tool.AttributeImport):
+class PropertyImportResults(som_gui.core.tool.PropertyImportResults):
 
     @classmethod
-    def get_properties(cls) -> AttributeImportProperties:
-        return som_gui.AttributeImportProperties
+    def get_properties(cls) -> PropertyImportProperties:
+        return som_gui.PropertyImportProperties
 
     @classmethod
     def checkstate_to_int(cls, checkstate: Qt.CheckState) -> int:
@@ -70,28 +70,28 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         return cls.get_properties().som_combobox
 
     @classmethod
-    def connect_trigger(cls, attribute_widget: ui.AttributeImportResultWindow):
+    def connect_trigger(cls, property_widget: ui.PropertyImportResultWindow):
 
         prop = cls.get_properties()
-        widget = attribute_widget.ui
-        update_trigger = trigger.update_attribute_import_window
+        ui = property_widget.ui
+        update_trigger = trigger.update_import_window
         prop.ifc_combobox.currentIndexChanged.connect(update_trigger)
         prop.som_combobox.currentIndexChanged.connect(update_trigger)
 
-        widget.table_widget_property_set.itemSelectionChanged.connect(
+        ui.table_widget_property_set.itemSelectionChanged.connect(
             trigger.pset_table_selection_changed
         )
-        widget.table_widget_attribute.itemSelectionChanged.connect(
+        ui.table_widget_property.itemSelectionChanged.connect(
             trigger.property_table_selection_changed
         )
         cls.get_properties().all_checkbox.checkStateChanged.connect(
             trigger.all_checkbox_checkstate_changed
         )
-        widget.buttonBox.accepted.connect(trigger.result_acccept_clicked)
-        widget.buttonBox.rejected.connect(trigger.result_abort_clicked)
-        widget.button_settings.clicked.connect(trigger.settings_clicked)
-        widget.button_download.clicked.connect(trigger.download_clicked)
-        widget.combo_box_ifc_type.currentIndexChanged.connect(
+        ui.buttonBox.accepted.connect(trigger.result_acccept_clicked)
+        ui.buttonBox.rejected.connect(trigger.result_abort_clicked)
+        ui.button_settings.clicked.connect(trigger.settings_clicked)
+        ui.button_download.clicked.connect(trigger.download_clicked)
+        ui.combo_box_ifc_type.currentIndexChanged.connect(
             trigger.update_identifier_combobox
         )
 
@@ -105,7 +105,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         for item in delete_items:
             combobox.removeItem(combobox.findText(item))
         if add_items or delete_items:
-            combobox.mod().sort(0)
+            combobox.model().sort(0)
         cls.unlock_updating()
 
     @classmethod
@@ -154,7 +154,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         return cls.get_results_window() is not None
 
     @classmethod
-    def get_results_window(cls) -> ui.AttributeImportResultWindow:
+    def get_results_window(cls) -> ui.PropertyImportResultWindow:
         return cls.get_properties().result_window
 
     @classmethod
@@ -162,9 +162,9 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         cls.get_properties().result_window = None
 
     @classmethod
-    def create_attribute_import_window(cls) -> ui.AttributeImportResultWindow:
+    def create_import_window(cls) -> ui.PropertyImportResultWindow:
         prop = cls.get_properties()
-        widget = ui.AttributeImportResultWindow()
+        widget = ui.PropertyImportResultWindow()
         prop.result_window = widget
         prop.ifc_combobox = widget.ui.combo_box_ifc_type
         prop.som_combobox = widget.ui.combo_box_identifier
@@ -191,8 +191,8 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         return items[0].text()
 
     @classmethod
-    def get_property_table(cls) -> ui.AttributeTable:
-        return cls.get_results_window().ui.table_widget_attribute
+    def get_property_table(cls) -> ui.PropertyTable:
+        return cls.get_results_window().ui.table_widget_property
 
     @classmethod
     def disable_table(cls, table_widget: QTableWidget):
@@ -200,7 +200,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         table_widget.setDisabled(True)
 
     @classmethod
-    def get_selected_attribute(cls) -> str | None:
+    def get_selected_property(cls) -> str | None:
         items = cls.get_property_table().selectedItems()
         if not items:
             return None
@@ -351,9 +351,9 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
                 som_object.ident_value if som_object != all_keyword else all_keyword
             )
         property_set = cls.get_selected_property_set()
-        attribute = cls.get_selected_attribute()
+        som_property = cls.get_selected_property()
 
-        values = [ifc_type, som_object, property_set, attribute]
+        values = [ifc_type, som_object, property_set, som_property]
         outputs = list()
         for value in values:
             if value is None:
@@ -394,7 +394,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         return cls.get_properties().all_checkbox
 
     @classmethod
-    def build_attribute_dict(
+    def build_property_dict(
         cls, objects: list[SOMcreator.SOMClass]
     ) -> dict[str, dict[str, dict[str, SOMcreator.SOMProperty]]]:
         result_dict = dict()
@@ -402,15 +402,15 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
             object_dict = dict()
             for pset in obj.get_property_sets(filter=True):
                 object_dict[pset.name] = {
-                    a.name: a for a in pset.get_properties(filter=True)
+                    p.name: p for p in pset.get_properties(filter=True)
                 }
             result_dict[obj.ident_value] = object_dict
         return result_dict
 
     @classmethod
-    def get_attribute_item_text_color(cls, row: int):
+    def get_property_item_text_color(cls, row: int):
         palette = QPalette()
-        if not tool.AttributeImportSQL.get_properties().color_values:
+        if not tool.PropertyImportSQL.get_properties().color_values:
             return palette.base(), palette.text()
 
         table_widget = cls.get_property_table()
@@ -430,16 +430,16 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         table_widget = cls.get_property_table()
         column_count = table_widget.columnCount()
         for row in range(table_widget.rowCount()):
-            brush_col, text_col = cls.get_attribute_item_text_color(row)
+            brush_col, text_col = cls.get_property_item_text_color(row)
             for column in range(column_count):
                 brush = QBrush(brush_col)
                 table_widget.item(row, column).setBackground(brush)
 
 
-class AttributeImport(som_gui.core.tool.AttributeImport):
+class PropertyImport(som_gui.core.tool.PropertyImport):
     @classmethod
-    def get_properties(cls) -> AttributeImportProperties:
-        return som_gui.AttributeImportProperties
+    def get_properties(cls) -> PropertyImportProperties:
+        return som_gui.PropertyImportProperties
 
     @classmethod
     def set_action(cls, name, action: QAction):
@@ -450,9 +450,7 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         return cls.get_properties().actions[name]
 
     @classmethod
-    def create_ifc_import_window(
-        cls, ifc_importer: IfcImportWidget
-    ) -> ui.AttributeImportWindow:
+    def create_ifc_import_window(cls, ifc_importer: IfcImportWidget) -> IfcImportWidget:
         prop = cls.get_properties()
         prop.ifc_import_window = ifc_importer
         prop.run_button = ifc_importer.ui.button_run
@@ -474,12 +472,12 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         return cls.get_properties().main_pset
 
     @classmethod
-    def set_main_attribute(cls, main_attribute_name: str) -> None:
-        cls.get_properties().main_attribute = main_attribute_name
+    def set_main_property(cls, main_property_name: str) -> None:
+        cls.get_properties().main_property = main_property_name
 
     @classmethod
     def get_main_property(cls) -> str:
-        return cls.get_properties().main_attribute
+        return cls.get_properties().main_property
 
     @classmethod
     def is_aborted(cls) -> bool:
@@ -506,18 +504,18 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         cls.get_properties().ifc_import_runners.remove(runner)
 
     @classmethod
-    def create_attribute_import_runner(
+    def create_property_import_runner(
         cls, runner: IfcImportRunner
-    ) -> AttributeImportRunner:
-        runner = AttributeImportRunner(runner, runner.progress_bar)
+    ) -> PropertyImportRunner:
+        runner = PropertyImportRunner(runner, runner.progress_bar)
         return runner
 
     @classmethod
-    def connect_attribute_import_runner(cls, runner: AttributeImportRunner) -> None:
-        trigger.connect_attribute_import_runner(runner)
+    def connect_property_import_runner(cls, runner: PropertyImportRunner) -> None:
+        trigger.connect_property_import_runner(runner)
 
     @classmethod
-    def get_attribute_import_threadpool(cls) -> QThreadPool:
+    def get_threadpool(cls) -> QThreadPool:
         if cls.get_properties().thread_pool is None:
             tp = QThreadPool()
             cls.get_properties().thread_pool = tp
@@ -525,26 +523,26 @@ class AttributeImport(som_gui.core.tool.AttributeImport):
         return cls.get_properties().thread_pool
 
     @classmethod
-    def attribute_import_is_running(cls):
-        return cls.get_attribute_import_threadpool().activeThreadCount() > 0
+    def import_is_running(cls):
+        return cls.get_threadpool().activeThreadCount() > 0
 
     @classmethod
     def last_import_finished(cls):
         trigger.last_import_finished()
 
     @classmethod
-    def set_progress(cls, runner: AttributeImportRunner, value: int):
+    def set_progress(cls, runner: PropertyImportRunner, value: int):
         runner.signaller.progress.emit(value)
 
     @classmethod
-    def set_status(cls, runner: AttributeImportRunner, status: str):
+    def set_status(cls, runner: PropertyImportRunner, status: str):
         runner.signaller.status.emit(status)
 
 
-class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
+class PropertyImportSQL(som_gui.core.tool.PropertyImportSQL):
     @classmethod
-    def get_properties(cls) -> AttributeImportSQLProperties:
-        return som_gui.AttributeImportSQLProperties
+    def get_properties(cls) -> PropertyImportSQLProperties:
+        return som_gui.PropertyImportSQLProperties
 
     @classmethod
     def create_settings_window(
@@ -560,7 +558,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         widget = dialog.widget
         checkbox_list = [
             (widget.check_box_regex, "show_regex_values"),
-            (widget.check_box_existing_attributes, "show_existing_values"),
+            (widget.check_box_existing_properties, "show_existing_values"),
             (widget.check_box_color, "color_values"),
             (widget.check_box_range, "show_range_values"),
             (widget.check_box_boolean_values, "show_boolean_values"),
@@ -572,14 +570,14 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
     def update_settins_dialog_checkstates(cls, dialog: ui.SettingsDialog):
         checkbox_list = cls.get_settings_dialog_checkbox_list(dialog)
         prop = cls.get_properties()
-        for checkbox, attribute_name in checkbox_list:
-            checkbox.setChecked(getattr(prop, attribute_name))
+        for checkbox, property_name in checkbox_list:
+            checkbox.setChecked(getattr(prop, property_name))
 
     @classmethod
     def settings_dialog_accepted(cls, dialog: ui.SettingsDialog):
         prop = cls.get_properties()
-        for widget, attribute_name in cls.get_settings_dialog_checkbox_list(dialog):
-            setattr(prop, attribute_name, widget.isChecked())
+        for widget, property_name in cls.get_settings_dialog_checkbox_list(dialog):
+            setattr(prop, property_name, widget.isChecked())
 
     @classmethod
     def get_cursor(cls):
@@ -644,7 +642,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cursor.execute(query)
         cls.commit_sql()
 
-        # imported_attributes
+        # imported_properties
 
         query = cls.create_table_exection_query(
             PROPERTY_TABLE_NAME, PROPERTY_TABLE_HEADER, PROPERTY_TABLE_DATATYPES
@@ -665,9 +663,9 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.commit_sql()
 
         query = cls.create_table_exection_query(
-            ATTRIBUTE_FILTER_TABLE_NAME,
-            ATTRIBUTE_FILTER_TABLE_HEADER,
-            ATTRIBUTE_FILTER_TABLE_DATATYPES,
+            PROPERTY_FILTER_TABLE_NAME,
+            PROPERTY_FILTER_TABLE_HEADER,
+            PROPERTY_FILTER_TABLE_DATATYPES,
         )
         cursor.execute(query)
         cls.commit_sql()
@@ -688,17 +686,19 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             add_table_entry(phase)
 
     @classmethod
-    def fill_attribute_filter_table(cls, values: list[tuple[str, str, str, str]]):
-        headers = ",".join(ATTRIBUTE_FILTER_TABLE_HEADER)
+    def fill_property_filter_table(cls, values: list[tuple[str, str, str, str]]):
+        headers = ",".join(PROPERTY_FILTER_TABLE_HEADER)
         query = (
-            f"INSERT INTO {ATTRIBUTE_FILTER_TABLE_NAME} ({headers})  VALUES (?,?,?,?)"
+            f"INSERT INTO {PROPERTY_FILTER_TABLE_NAME} ({headers})  VALUES (?,?,?,?)"
         )
         cursor = cls.get_cursor()
         cursor.executemany(query, values)
         cls.commit_sql()
 
     @classmethod
-    def fill_som_attribute(cls, values: list[tuple[str, str, str, str, str, str, str]]):
+    def fill_som_properties(
+        cls, values: list[tuple[str, str, str, str, str, str, str]]
+    ):
         headers = ",".join(SOM_TABLE_HEADER)
         query = f"INSERT INTO {SOM_TABLE_NAME} ({headers})  VALUES (?,?,?,?,?,?,?)"
         cursor = cls.get_cursor()
@@ -706,19 +706,19 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.commit_sql()
 
     @classmethod
-    def add_attribute_to_filter_table(
-        cls, project: SOMcreator.SOMProject, attribute: SOMcreator.SOMProperty
+    def add_properties_to_filter_table(
+        cls, project: SOMcreator.SOMProject, som_property: SOMcreator.SOMProperty
     ):
         use_case_list = project.get_usecases()
         phase_list = project.get_phases()
         table = []
         for use_case in use_case_list:
             for phase in phase_list:
-                state = attribute.get_filter_state(phase, use_case)
+                state = som_property.get_filter_state(phase, use_case)
                 state = 1 if state is None else int(state)
                 table.append(
                     (
-                        str(attribute.uuid),
+                        str(som_property.uuid),
                         str(use_case.name),
                         str(phase.name),
                         str(state),
@@ -735,23 +735,23 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls.disconnect_from_database()
 
     @classmethod
-    def get_attribute_data(cls, attribute: SOMcreator.SOMProperty):
-        identifier = attribute.property_set.som_class.ident_value
-        propertyset = attribute.property_set.name
-        attribute_name = attribute.name
-        valuetype = attribute.value_type
-        datatype = attribute.data_type
-        return identifier, propertyset, attribute_name, valuetype, datatype
+    def get_property_data(cls, som_property: SOMcreator.SOMProperty):
+        identifier = som_property.property_set.som_class.ident_value
+        propertyset = som_property.property_set.name
+        prop_name = som_property.name
+        valuetype = som_property.value_type
+        datatype = som_property.data_type
+        return identifier, propertyset, prop_name, valuetype, datatype
 
     @classmethod
-    def add_attribute_without_value(cls, attribute: SOMcreator.SOMProperty):
-        identifier, propertyset, attribute_name, valuetype, datatype = (
-            cls.get_attribute_data(attribute)
+    def add_property_without_value(cls, som_property: SOMcreator.SOMProperty):
+        identifier, propertyset, prop_name, valuetype, datatype = cls.get_property_data(
+            som_property
         )
         return (
-            attribute.uuid,
+            som_property.uuid,
             propertyset,
-            attribute_name,
+            prop_name,
             None,
             valuetype,
             datatype,
@@ -759,21 +759,21 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         )
 
     @classmethod
-    def add_attribute_with_value(cls, attribute: SOMcreator.SOMProperty):
-        identifier, propertyset, attribute_name, valuetype, datatype = (
-            cls.get_attribute_data(attribute)
+    def add_property_with_value(cls, som_property: SOMcreator.SOMProperty):
+        identifier, propertyset, prop_name, valuetype, datatype = cls.get_property_data(
+            som_property
         )
         table = [
             (
-                attribute.uuid,
+                som_property.uuid,
                 propertyset,
-                attribute_name,
+                prop_name,
                 value,
                 valuetype,
                 datatype,
                 identifier,
             )
-            for value in attribute.allowed_values
+            for value in som_property.allowed_values
         ]
         return table
 
@@ -782,11 +782,11 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls,
         entity: ifcopenshell.entity_instance,
         main_pset: str,
-        main_attribute: str,
+        main_property: str,
         file_name,
     ):
         cursor = cls.get_cursor()
-        identifier = ifc_element_util.get_pset(entity, main_pset, main_attribute) or ""
+        identifier = ifc_element_util.get_pset(entity, main_pset, main_property) or ""
         entity_guid = entity.GlobalId
         entity_guid_zw = tool.Util.transform_guid(entity_guid, True)
 
@@ -808,7 +808,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return identifier
 
     @classmethod
-    def import_entity_attributes(
+    def import_entity_properties(
         cls,
         entity: ifcopenshell.entity_instance,
         ifc_file: ifcopenshell.file,
@@ -827,11 +827,11 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         entity_guid = entity.GlobalId
         entity_guid_zw = tool.Util.transform_guid(entity_guid, True)
         existing_pset_dict = existing_object_dict.get(identifier)
-        for pset_name, attribute_dict in pset_dict.items():
-            existing_attribute_dict = (
+        for pset_name, property_dict in pset_dict.items():
+            existing_property_dict = (
                 existing_pset_dict.get(pset_name) if existing_pset_dict else None
             )
-            for attribute_name, value_dict in attribute_dict.items():
+            for property_name, value_dict in property_dict.items():
 
                 if not isinstance(value_dict, dict):
                     continue
@@ -842,15 +842,14 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                 if data_type is None:
                     continue
 
-                if existing_attribute_dict is None:
+                if existing_property_dict is None:
                     cs = 0
-                elif existing_attribute_dict.get(attribute_name) is None:
+                elif existing_property_dict.get(property_name) is None:
                     cs = 0
                 else:
                     cs = (
                         1
-                        if value
-                        in existing_attribute_dict[attribute_name].allowed_values
+                        if value in existing_property_dict[property_name].allowed_values
                         else 0
                     )
 
@@ -858,7 +857,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                     entity_guid_zw,
                     entity_guid,
                     pset_name,
-                    attribute_name,
+                    property_name,
                     value,
                     data_type,
                     cs,
@@ -883,9 +882,9 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         query = ""
         prop = cls.get_properties()
         if not prop.show_existing_values:
-            query += f"AND a.{IS_DEFINED} == 0 \n"
+            query += f"AND p.{IS_DEFINED} == 0 \n"
         if not prop.show_boolean_values:
-            query += f"AND a.{DATATYPE} is not 'IfcBoolean' \n"
+            query += f"AND p.{DATATYPE} is not 'IfcBoolean' \n"
         return query
 
     @classmethod
@@ -893,14 +892,14 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
-        cursor.execute(f"DROP TABLE IF EXISTS {FILTERED_SOM_ATTRIBUTES_TABLE_NAME};")
+        cursor.execute(f"DROP TABLE IF EXISTS {FILTERED_SOM_PROPERTIES_TABLE_NAME};")
         prop = cls.get_properties()
 
-        # JOIN on af.ATTRIBUTE_GUID = sa.GUID
+        # JOIN on af.PROPERTY_GUID = sp.GUID
         query = f"""
-            CREATE TABLE {FILTERED_SOM_ATTRIBUTES_TABLE_NAME} AS
-            SELECT sa.* from {SOM_TABLE_NAME} as sa
-            JOIN {ATTRIBUTE_FILTER_TABLE_NAME} af ON af.{GUID} = sa.{GUID}"""
+            CREATE TABLE {FILTERED_SOM_PROPERTIES_TABLE_NAME} AS
+            SELECT sp.* from {SOM_TABLE_NAME} as sp
+            JOIN {PROPERTY_FILTER_TABLE_NAME} af ON af.{GUID} = sp.{GUID}"""
 
         filters = list()
         if cls.get_properties().activate_object_filter:
@@ -916,11 +915,11 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
         if not prop.show_regex_values:
             filters.append(
-                f"sa.{VALUE_TYPE} is not '{SOMcreator.value_constants.FORMAT}'"
+                f"sp.{VALUE_TYPE} is not '{SOMcreator.value_constants.FORMAT}'"
             )
         if not prop.show_range_values:
             filters.append(
-                f"sa.{VALUE_TYPE} is not '{SOMcreator.value_constants.RANGE}'"
+                f"sp.{VALUE_TYPE} is not '{SOMcreator.value_constants.RANGE}'"
             )
         if filters:
             filter_query = "\nAND ".join(filters)
@@ -932,15 +931,15 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return query
 
     @classmethod
-    def get_attribute_query(cls) -> str:
-        identifier_match = f"sa.{IDENTIFIER} = e.{IDENTIFIER}"
-        property_set_match = f"a.{PROPERTY_SET} = sa.{PROPERTY_SET}"
-        attribute_match = f"a.{NAME} = sa.{NAME}"
+    def get_property_query(cls) -> str:
+        identifier_match = f"sp.{IDENTIFIER} = e.{IDENTIFIER}"
+        property_set_match = f"p.{PROPERTY_SET} = sp.{PROPERTY_SET}"
+        property_match = f"p.{NAME} = sp.{NAME}"
         query = f"""
-                FROM {PROPERTY_TABLE_NAME} a
-                JOIN {ENTITY_TABLE_NAME} e ON e.{GUID} = a.{GUID}
-                JOIN {FILTERED_SOM_ATTRIBUTES_TABLE_NAME} sa 
-                ON {identifier_match} AND {property_set_match} AND {attribute_match}
+                FROM {PROPERTY_TABLE_NAME} p
+                JOIN {ENTITY_TABLE_NAME} e ON e.{GUID} = p.{GUID}
+                JOIN {FILTERED_SOM_PROPERTIES_TABLE_NAME} sp 
+                ON {identifier_match} AND {property_set_match} AND {property_match}
                 """
         return query
 
@@ -989,17 +988,17 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         logging.debug("Request PropertySets")
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
-        attribute_query = cls.get_attribute_query()
+        property_query = cls.get_property_query()
         filter_query = cls.create_settings_filter()
         query = f"""
-            SELECT DISTINCT a.{PROPERTY_SET}, COUNT(DISTINCT a.{GUID})
-            {attribute_query}
+            SELECT DISTINCT p.{PROPERTY_SET}, COUNT(DISTINCT p.{GUID})
+            {property_query}
             WHERE e.{IDENTIFIER} {identifier}
             AND e.{IFCTYPE} {ifc_type}
-            AND a.{VALUE} iS NOT NULL
+            AND p.{VALUE} iS NOT NULL
         
             {filter_query}
-            GROUP BY a.{PROPERTY_SET};
+            GROUP BY p.{PROPERTY_SET};
             """
         logging.debug(f"get property_sets: \n{query}")
         cursor.execute(query)
@@ -1010,51 +1009,51 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return pset_list
 
     @classmethod
-    def get_properties(
+    def get_property_list(
         cls, ifc_type: str, identifier: str | SOMcreator.SOMClass, property_set: str
     ) -> list[tuple[str, int, int]]:
-        logging.debug("Request Attributes")
+        logging.debug("Request Properties")
 
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
-        attribute_query = cls.get_attribute_query()
+        property_query = cls.get_property_query()
         filter_query = cls.create_settings_filter()
         query = f"""
-            SELECT  DISTINCT a.{NAME}, COUNT(DISTINCT e.{GUID}),COUNT(DISTINCT a.{VALUE})
-            {attribute_query}
+            SELECT  DISTINCT p.{NAME}, COUNT(DISTINCT e.{GUID}),COUNT(DISTINCT p.{VALUE})
+            {property_query}
             WHERE e.{IDENTIFIER} {identifier}
             AND e.{IFCTYPE} {ifc_type}
-            AND a.{PROPERTY_SET} {property_set}
-            AND a.{VALUE} iS NOT NULL
+            AND p.{PROPERTY_SET} {property_set}
+            AND p.{VALUE} iS NOT NULL
             {filter_query}
-            GROUP BY a.{NAME} ;
+            GROUP BY p.{NAME} ;
             """
-        logging.debug(f"get Attributes: \n{query}")
+        logging.debug(f"get Properties: \n{query}")
         cursor.execute(query)
-        attribute_list = cursor.fetchall()
+        property_list = cursor.fetchall()
         cls.disconnect_from_database()
         logging.debug("Request Done")
 
-        return attribute_list
+        return property_list
 
     @classmethod
-    def get_values(cls, ifc_type, identifier, property_set, attribute):
+    def get_values(cls, ifc_type, identifier, property_set, property_query: str):
         logging.debug("Request Values")
 
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
         filter_query = cls.create_settings_filter()
-        attribute_query = cls.get_attribute_query()
+        property_query = cls.get_property_query()
         query = f"""
-                SELECT  DISTINCT a.{VALUE}, COUNT(DISTINCT e.{GUID}), a.{CHECKED}, COUNT (DISTINCT a.{CHECKED})
-                {attribute_query}
+                SELECT  DISTINCT p.{VALUE}, COUNT(DISTINCT e.{GUID}), p.{CHECKED}, COUNT (DISTINCT p.{CHECKED})
+                {property_query}
                 WHERE e.{IDENTIFIER} {identifier}
                 AND e.{IFCTYPE} {ifc_type}
-                AND a.{PROPERTY_SET} {property_set}
-                AND a.{NAME} {attribute}
-                AND a.{VALUE} IS NOT NULL
+                AND p.{PROPERTY_SET} {property_set}
+                AND p.{NAME} {property_query}
+                AND p.{VALUE} IS NOT NULL
                 {filter_query}
-                GROUP BY a.{VALUE} ;
+                GROUP BY p.{VALUE} ;
                 """
 
         logging.debug(f"get Values: \n{query}")
@@ -1079,7 +1078,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
 
     @classmethod
     def change_checkstate_of_values(
-        cls, ifc_type, identifier, property_set, attribute, value_text, checkstate
+        cls, ifc_type, identifier, property_set, property_query, value_text, checkstate
     ):
         logging.debug("Request Checkstate")
 
@@ -1090,14 +1089,14 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                 UPDATE {PROPERTY_TABLE_NAME}
                 SET {CHECKED} = {checkstate}
                 WHERE {GUID} IN (
-                    SELECT a.{GUID}
-                    from {PROPERTY_TABLE_NAME} a
-                    JOIN {ENTITY_TABLE_NAME}  e on a.{GUID} = e.{GUID}
+                    SELECT p.{GUID}
+                    from {PROPERTY_TABLE_NAME} p
+                    JOIN {ENTITY_TABLE_NAME}  e on p.{GUID} = p.{GUID}
                     WHERE e.{IDENTIFIER} {identifier}
                     AND e.{IFCTYPE} {ifc_type}
                     )        
                 AND {PROPERTY_SET} {property_set}
-                AND {NAME}  {attribute}
+                AND {NAME}  {property_query}
                 AND {VALUE} {value_text}
             """
         cursor.execute(query)
@@ -1114,7 +1113,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         query = f"""
             SELECT count(distinct(e.guid))
             FROM {ENTITY_TABLE_NAME} e
-            JOIN {PROPERTY_TABLE_NAME} a ON a.{GUID} = e.{GUID}
+            JOIN {PROPERTY_TABLE_NAME} p ON p.{GUID} = e.{GUID}
             WHERE e.{IDENTIFIER} {identifier}
             AND e.{IFCTYPE} {ifc_type}
             
@@ -1127,18 +1126,18 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return value_list[0][0]
 
     @classmethod
-    def get_new_attribute_values(cls):
+    def get_new_property_values(cls):
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
         query = f"""
             
-            SELECT DISTINCT sa.{IDENTIFIER},sa.{PROPERTY_SET},sa.{NAME}, a.{VALUE}
-            from som_attributes sa
-            JOIN {ENTITY_TABLE_NAME} e ON sa.{IDENTIFIER} = e.{IDENTIFIER}
-            JOIN {PROPERTY_TABLE_NAME} a ON e.{GUID} = a.{GUID}
-            WHERE a.{CHECKED} = 1
-            AND a.{NAME} = sa.{NAME}
-            AND a.{PROPERTY_SET} = sa.{PROPERTY_SET}
+            SELECT DISTINCT sp.{IDENTIFIER},sp.{PROPERTY_SET},sp.{NAME}, p.{VALUE}
+            from {SOM_TABLE_NAME} sp
+            JOIN {ENTITY_TABLE_NAME} e ON sp.{IDENTIFIER} = e.{IDENTIFIER}
+            JOIN {PROPERTY_TABLE_NAME} p ON e.{GUID} = p.{GUID}
+            WHERE p.{CHECKED} = 1
+            AND p.{NAME} = sp.{NAME}
+            AND p.{PROPERTY_SET} = sp.{PROPERTY_SET}
             """
 
         cursor.execute(query)
@@ -1147,19 +1146,19 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         return value_list
 
     @classmethod
-    def get_removed_attribute_values(cls):
+    def get_removed_property_values(cls):
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
         query = f"""
         
-            SELECT DISTINCT sa.{IDENTIFIER},sa.{PROPERTY_SET},sa.{NAME}, a.{VALUE}
-            from {SOM_TABLE_NAME} sa
-            JOIN {ENTITY_TABLE_NAME} e ON sa.{IDENTIFIER} = e.{IDENTIFIER}
-            JOIN {PROPERTY_TABLE_NAME} a ON e.{GUID} = a.{GUID}
-            WHERE a.{CHECKED} = 0
-            AND a.{IS_DEFINED} = 1
-            AND a.{NAME} = sa.{NAME}
-            AND a.{PROPERTY_SET} = sa.{PROPERTY_SET}
+            SELECT DISTINCT sp.{IDENTIFIER},sp.{PROPERTY_SET},sp.{NAME}, p.{VALUE}
+            from {SOM_TABLE_NAME} sp
+            JOIN {ENTITY_TABLE_NAME} e ON sp.{IDENTIFIER} = e.{IDENTIFIER}
+            JOIN {PROPERTY_TABLE_NAME} p ON e.{GUID} = p.{GUID}
+            WHERE p.{CHECKED} = 0
+            AND p.{IS_DEFINED} = 1
+            AND p.{NAME} = sp.{NAME}
+            AND p.{PROPERTY_SET} = sp.{PROPERTY_SET}
             
             """
 
@@ -1173,7 +1172,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cls,
     ) -> str:
         """
-        Create Query to List all Entities with all Attributes as Columns
+        Create Query to List all Entities with all Properties as Columns
         :return:
         """
         cls.connect_to_data_base(cls.get_database_path())
@@ -1183,7 +1182,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         columns = cursor.fetchall()
         cls.disconnect_from_database()
         dyn_column_query = [
-            f"MAX(CASE WHEN a.{PROPERTY_SET} = '{p}' AND a.{NAME} = '{n}' THEN a.{VALUE} END) AS '{p}:{n}'"
+            f"MAX(CASE WHEN p.{PROPERTY_SET} = '{p}' AND p.{NAME} = '{n}' THEN p.{VALUE} END) AS '{p}:{n}'"
             for [p, n] in columns
         ]
         query = f"""
@@ -1195,11 +1194,11 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             e.{FILE},
             {",".join(dyn_column_query)}
         FROM
-            entities e
+            {ENTITY_TABLE_NAME} e
         LEFT JOIN
-            attributes a
+            {PROPERTY_TABLE_NAME} p
         ON
-            e.{GUID} = a.{GUID}
+            e.{GUID} = p.{GUID}
         GROUP BY
             e.{GUID}
         ORDER BY

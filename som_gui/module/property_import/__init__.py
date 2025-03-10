@@ -3,8 +3,8 @@ from . import prop, trigger, ui
 
 
 def register():
-    som_gui.AttributeImportProperties = prop.AttributeImportProperties()
-    som_gui.AttributeImportSQLProperties = prop.AttributeImportSQLProperties()
+    som_gui.PropertyImportProperties = prop.PropertyImportProperties()
+    som_gui.PropertyImportSQLProperties = prop.PropertyImportSQLProperties()
 
 
 def load_ui_triggers():

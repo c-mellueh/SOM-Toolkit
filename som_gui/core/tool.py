@@ -37,486 +37,6 @@ class Appdata:
         pass
 
 
-class AttributeImport:
-    def attribute_import_is_running(
-        self,
-    ):
-        pass
-
-    def connect_attribute_import_runner(self, runner):
-        pass
-
-    def connect_ifc_import_runner(self, runner):
-        pass
-
-    def create_attribute_import_runner(self, runner):
-        pass
-
-    def create_ifc_import_window(self, ifc_importer):
-        pass
-
-    def create_import_runner(self, ifc_import_path, progress_bar):
-        pass
-
-    def destroy_import_runner(self, runner):
-        pass
-
-    def get_action(self, name):
-        pass
-
-    def get_attribute_import_threadpool(
-        self,
-    ):
-        pass
-
-    def get_ifc_import_window(
-        self,
-    ):
-        pass
-
-    def get_main_property(
-        self,
-    ):
-        pass
-
-    def get_main_pset(
-        self,
-    ):
-        pass
-
-    def get_properties(
-        self,
-    ):
-        pass
-
-    def is_aborted(
-        self,
-    ):
-        pass
-
-    def last_import_finished(
-        self,
-    ):
-        pass
-
-    def reset_abort(
-        self,
-    ):
-        pass
-
-    def set_action(self, name, action):
-        pass
-
-    def set_main_attribute(self, main_attribute_name):
-        pass
-
-    def set_main_pset(self, main_pset_name):
-        pass
-
-    def set_progress(self, runner, value):
-        pass
-
-    def set_status(self, runner, status):
-        pass
-
-
-class AttributeImportResults:
-    def build_attribute_dict(self, objects):
-        pass
-
-    def calculate_all_checkbox_state(
-        self,
-    ):
-        pass
-
-    def checkstate_to_int(self, checkstate):
-        pass
-
-    def connect_trigger(self, attribute_widget):
-        pass
-
-    def create_attribute_import_window(
-        self,
-    ):
-        pass
-
-    def disable_table(self, table_widget):
-        pass
-
-    def find_checkbox_row_in_table(self, table_widget, checkbox):
-        pass
-
-    def get_all_checkbox(
-        self,
-    ):
-        pass
-
-    def get_all_keyword(
-        self,
-    ):
-        pass
-
-    def get_attribute_item_text_color(self, row):
-        pass
-
-    def get_property_table(
-        self,
-    ):
-        pass
-
-    def get_existing_values_in_table(self, table_widget, datatypes):
-        pass
-
-    def get_ifctype_combo_box(
-        self,
-    ):
-        pass
-
-    def get_input_variables(
-        self,
-    ):
-        pass
-
-    def get_properties(
-        self,
-    ):
-        pass
-
-    def get_pset_table(
-        self,
-    ):
-        pass
-
-    def get_results_window(
-        self,
-    ):
-        pass
-
-    def get_selected_attribute(
-        self,
-    ):
-        pass
-
-    def get_selected_property_set(
-        self,
-    ):
-        pass
-
-    def get_somtype_combo_box(
-        self,
-    ):
-        pass
-
-    def get_update_lock_reason(
-        self,
-    ):
-        pass
-
-    def get_value_from_table_row(self, table_widget, row, data_types):
-        pass
-
-    def get_value_table(
-        self,
-    ):
-        pass
-
-    def is_updating_locked(
-        self,
-    ):
-        pass
-
-    def is_window_allready_build(
-        self,
-    ):
-        pass
-
-    def lock_updating(self, reason):
-        pass
-
-    def remove_results_window(
-        self,
-    ):
-        pass
-
-    def set_all_checkbox_state(self, state):
-        pass
-
-    def set_object_count_label_text(self, text):
-        pass
-
-    def unlock_updating(
-        self,
-    ):
-        pass
-
-    def update_property_table_styling(
-        self,
-    ):
-        pass
-
-    def update_combobox(self, combobox, allowed_values):
-        pass
-
-    def update_results_window(
-        self,
-    ):
-        pass
-
-    def update_som_combobox(self, combobox, allowed_values, object_list):
-        pass
-
-    def update_table_widget(self, allowed_values, table_widget, datatypes):
-        pass
-
-    def update_valuetable_checkstate(self, checkstate_dict):
-        pass
-
-
-class AttributeImportSQL:
-    def add_attribute_to_filter_table(self, project, attribute):
-        pass
-
-    def add_attribute_with_value(self, attribute):
-        pass
-
-    def add_attribute_without_value(self, attribute):
-        pass
-
-    def add_entity(self, entity, main_pset, main_attribute, file_name):
-        pass
-
-    def change_checkstate_of_values(
-        self, ifc_type, identifier, property_set, attribute, value_text, checkstate
-    ):
-        pass
-
-    def commit_sql(
-        self,
-    ):
-        pass
-
-    def connect_to_data_base(self, path):
-        pass
-
-    def count_objects(self, ifc_type, identifier):
-        pass
-
-    def create_export_query(
-        self,
-    ):
-        pass
-
-    def create_settings_filter(
-        self,
-    ):
-        pass
-
-    def create_settings_window(
-        self,
-    ):
-        pass
-
-    def create_som_filter_table(
-        self,
-    ):
-        pass
-
-    def create_table_exection_query(self, table_name, row_names, row_datatypes):
-        pass
-
-    def create_tables(
-        self,
-    ):
-        pass
-
-    def disconnect_from_database(
-        self,
-    ):
-        pass
-
-    def fill_attribute_filter_table(self, values):
-        pass
-
-    def fill_filter_table(self, project):
-        pass
-
-    def fill_som_attribute(self, values):
-        pass
-
-    def get_attribute_data(self, attribute):
-        pass
-
-    def get_attribute_query(
-        self,
-    ):
-        pass
-
-    def get_current_object_filter(
-        self,
-    ):
-        pass
-
-    def get_cursor(
-        self,
-    ):
-        pass
-
-    def get_database_path(
-        self,
-    ):
-        pass
-
-    def get_datatype_from_value(self, value):
-        pass
-
-    def get_identifier_types(self, ifc_type, all_keyword):
-        pass
-
-    def get_new_attribute_values(
-        self,
-    ):
-        pass
-
-    def get_properties(self, ifc_type, identifier, property_set):
-        pass
-
-    def get_property_sets(self, ifc_type, identifier):
-        pass
-
-    def get_removed_attribute_values(
-        self,
-    ):
-        pass
-
-    def get_settings_dialog_checkbox_list(self, dialog):
-        pass
-
-    def get_values(self, ifc_type, identifier, property_set, attribute):
-        pass
-
-    def get_wanted_ifc_types(
-        self,
-    ):
-        pass
-
-    def import_entity_attributes(
-        self, entity, ifc_file, identifier, existing_object_dict
-    ):
-        pass
-
-    def init_database(self, db_path):
-        pass
-
-    def set_current_object_filter(self, usecases, phases):
-        pass
-
-    def set_database_path(self, path):
-        pass
-
-    def settings_dialog_accepted(self, dialog):
-        pass
-
-    def sql_to_excel(self, query, export_path):
-        pass
-
-    def update_settins_dialog_checkstates(self, dialog):
-        pass
-
-
-class PropertyTable:
-    def add_attributes_to_table(self, attributes, table):
-        pass
-
-    def add_column_to_table(self, name, get_function):
-        pass
-
-    def add_context_menu_builder(self, context_menu_builder):
-        pass
-
-    def add_parent_of_selected_attribute(self, table):
-        pass
-
-    def context_menu_builder_add_connection(self, table):
-        pass
-
-    def context_menu_builder_delete(self, table, with_child):
-        pass
-
-    def context_menu_builder_remove_connection(self, table):
-        pass
-
-    def context_menu_builder_rename(self, table):
-        pass
-
-    def delete_selected_attributes(self, table, with_child):
-        pass
-
-    def edit_selected_attribute_name(self, table):
-        pass
-
-    def format_row(self, row):
-        pass
-
-    def format_row_value(self, item, value):
-        pass
-
-    def get_header_labels(
-        self,
-    ):
-        pass
-
-    def get_column_count(
-        self,
-    ):
-        pass
-
-    def get_context_menu_builders(
-        self,
-    ):
-        pass
-
-    def get_existing_attributes_in_table(self, table):
-        pass
-
-    def get_item_from_pos(self, table, pos):
-        pass
-
-    def get_possible_parent(self, attribute):
-        pass
-
-    def get_properties(
-        self,
-    ):
-        pass
-
-    def get_property_from_item(self, item):
-        pass
-
-    def get_property_set_by_table(self, table):
-        pass
-
-    def get_property_set_of_table(self, table):
-        pass
-
-    def get_row_index_from_attribute(self, attribute, table):
-        pass
-
-    def get_selected_attributes(self, table):
-        pass
-
-    def remove_attributes_from_table(self, attributes, table):
-        pass
-
-    def remove_parent_of_selected_attribute(self, table):
-        pass
-
-    def set_property_set_of_table(self, table, property_set):
-        pass
-
-    def update_row(self, table, index):
-        pass
-
-
 class Bsdd:
     def add_objects_to_dictionary(self, project):
         pass
@@ -1521,37 +1041,12 @@ class MainWindow:
     ):
         pass
 
-    def get_attribute_name_line_edit(
-        self,
-    ):
-        pass
-
-    def get_property_table(
-        self,
-    ):
-        pass
-
     def get_class_name_label(
         self,
     ):
         pass
 
-    def get_ident_pset_name_line_edit(
-        self,
-    ):
-        pass
-
-    def get_ident_value_line_edit(
-        self,
-    ):
-        pass
-
     def get_menu_bar(
-        self,
-    ):
-        pass
-
-    def get_object_name_horizontal_layout(
         self,
     ):
         pass
@@ -1571,22 +1066,12 @@ class MainWindow:
     ):
         pass
 
-    def get_pset_layout(
-        self,
-    ):
-        pass
-
-    def get_pset_name(
+    def get_property_table(
         self,
     ):
         pass
 
     def get_pset_name_label(
-        self,
-    ):
-        pass
-
-    def get_pset_name_line_edit(
         self,
     ):
         pass
@@ -1728,11 +1213,15 @@ class Modelcheck:
         pass
 
     def add_issues(
-        self, guid, description, issue_type, attribute, pset_name, attribute_name, value
+        self,
+        guid,
+        description,
+        issue_type,
+        som_property,
+        pset_name,
+        property_name,
+        value,
     ):
-        pass
-
-    def property_issue(self, guid, pset_name, attribute_name, element_type):
         pass
 
     def build_data_dict(self, check_state_dict):
@@ -1741,22 +1230,22 @@ class Modelcheck:
     def build_ident_dict(self, objects):
         pass
 
-    def check_datatype(self, value, attribute):
+    def check_datatype(self, value, som_property):
         pass
 
-    def check_for_properties(self, element, obj):
+    def check_for_properties(self, element, som_class):
         pass
 
-    def check_format(self, value, attribute):
+    def check_format(self, value, som_property):
         pass
 
-    def check_list(self, value, attribute):
+    def check_list(self, value, som_property):
         pass
 
-    def check_range(self, value, attribute):
+    def check_range(self, value, som_property):
         pass
 
-    def check_values(self, value, attribute):
+    def check_values(self, value, som_property):
         pass
 
     def commit_sql(
@@ -1775,7 +1264,7 @@ class Modelcheck:
     ):
         pass
 
-    def datatype_issue(self, guid, attribute, element_type, datatype, value):
+    def datatype_issue(self, guid, som_property, element_type, datatype, value):
         pass
 
     def db_create_entity(self, element, identifier):
@@ -1786,13 +1275,13 @@ class Modelcheck:
     ):
         pass
 
-    def empty_value_issue(self, guid, pset_name, attribute_name, element_type):
+    def empty_value_issue(self, guid, pset_name, property_name, element_type):
         pass
 
     def entity_should_be_tested(self, entity):
         pass
 
-    def format_issue(self, guid, attribute, value):
+    def format_issue(self, guid, som_property, value):
         pass
 
     def get_active_element(
@@ -1808,9 +1297,6 @@ class Modelcheck:
     def get_active_guid(
         self,
     ):
-        pass
-
-    def get_property_value(self, entity, pset_name, attribute_name):
         pass
 
     def get_cursor(
@@ -1853,7 +1339,7 @@ class Modelcheck:
     ):
         pass
 
-    def get_ident_value(self, entity, main_pset_name, main_attribute_name):
+    def get_ident_value(self, entity, main_pset_name, main_prop_name):
         pass
 
     def get_ifc_name(
@@ -1889,16 +1375,19 @@ class Modelcheck:
     ):
         pass
 
+    def get_property_value(self, entity, pset_name, property_name):
+        pass
+
     def guid_issue(self, guid, file1, file2):
         pass
 
-    def ident_issue(self, guid, pset_name, attribute_name):
+    def ident_issue(self, guid, pset_name, property_name):
         pass
 
     def ident_pset_issue(self, guid, pset_name):
         pass
 
-    def ident_unknown(self, guid, pset_name, attribute_name, value):
+    def ident_unknown(self, guid, pset_name, property_name, value):
         pass
 
     def increment_checked_items(self, runner):
@@ -1912,19 +1401,22 @@ class Modelcheck:
     ):
         pass
 
-    def is_property_existing(self, entity, pset_name, attribute_name):
+    def is_property_existing(self, entity, pset_name, property_name):
         pass
 
     def is_pset_existing(self, entity, pset_name):
         pass
 
-    def list_issue(self, guid, attribute, element_type, value):
+    def list_issue(self, guid, som_property, element_type, value):
+        pass
+
+    def property_issue(self, guid, pset_name, property_name, element_type):
         pass
 
     def property_set_issue(self, guid, pset_name, element_type):
         pass
 
-    def range_issue(self, guid, attribute, element_type, value):
+    def range_issue(self, guid, som_property, element_type, value):
         pass
 
     def remove_existing_issues(self, creation_date):
@@ -1993,11 +1485,6 @@ class ModelcheckExternal:
     ):
         pass
 
-    def export_desite_property_table(
-        self,
-    ):
-        pass
-
     def export_desite_csv(
         self,
     ):
@@ -2009,6 +1496,11 @@ class ModelcheckExternal:
         pass
 
     def export_desite_js(
+        self,
+    ):
+        pass
+
+    def export_desite_property_table(
         self,
     ):
         pass
@@ -2919,6 +2411,397 @@ class PropertyCompare:
         pass
 
 
+class PropertyImport:
+    def connect_ifc_import_runner(self, runner):
+        pass
+
+    def connect_property_import_runner(self, runner):
+        pass
+
+    def create_ifc_import_window(self, ifc_importer):
+        pass
+
+    def create_import_runner(self, ifc_import_path, progress_bar):
+        pass
+
+    def create_property_import_runner(self, runner):
+        pass
+
+    def destroy_import_runner(self, runner):
+        pass
+
+    def get_action(self, name):
+        pass
+
+    def get_ifc_import_window(
+        self,
+    ):
+        pass
+
+    def get_main_property(
+        self,
+    ):
+        pass
+
+    def get_main_pset(
+        self,
+    ):
+        pass
+
+    def get_properties(
+        self,
+    ):
+        pass
+
+    def get_threadpool(
+        self,
+    ):
+        pass
+
+    def import_is_running(
+        self,
+    ):
+        pass
+
+    def is_aborted(
+        self,
+    ):
+        pass
+
+    def last_import_finished(
+        self,
+    ):
+        pass
+
+    def reset_abort(
+        self,
+    ):
+        pass
+
+    def set_action(self, name, action):
+        pass
+
+    def set_main_property(self, main_property_name):
+        pass
+
+    def set_main_pset(self, main_pset_name):
+        pass
+
+    def set_progress(self, runner, value):
+        pass
+
+    def set_status(self, runner, status):
+        pass
+
+
+class PropertyImportResults:
+    def build_property_dict(self, objects):
+        pass
+
+    def calculate_all_checkbox_state(
+        self,
+    ):
+        pass
+
+    def checkstate_to_int(self, checkstate):
+        pass
+
+    def connect_trigger(self, property_widget):
+        pass
+
+    def create_import_window(
+        self,
+    ):
+        pass
+
+    def disable_table(self, table_widget):
+        pass
+
+    def find_checkbox_row_in_table(self, table_widget, checkbox):
+        pass
+
+    def get_all_checkbox(
+        self,
+    ):
+        pass
+
+    def get_all_keyword(
+        self,
+    ):
+        pass
+
+    def get_existing_values_in_table(self, table_widget, datatypes):
+        pass
+
+    def get_ifctype_combo_box(
+        self,
+    ):
+        pass
+
+    def get_input_variables(
+        self,
+    ):
+        pass
+
+    def get_properties(
+        self,
+    ):
+        pass
+
+    def get_property_item_text_color(self, row):
+        pass
+
+    def get_property_table(
+        self,
+    ):
+        pass
+
+    def get_pset_table(
+        self,
+    ):
+        pass
+
+    def get_results_window(
+        self,
+    ):
+        pass
+
+    def get_selected_property(
+        self,
+    ):
+        pass
+
+    def get_selected_property_set(
+        self,
+    ):
+        pass
+
+    def get_somtype_combo_box(
+        self,
+    ):
+        pass
+
+    def get_update_lock_reason(
+        self,
+    ):
+        pass
+
+    def get_value_from_table_row(self, table_widget, row, data_types):
+        pass
+
+    def get_value_table(
+        self,
+    ):
+        pass
+
+    def is_updating_locked(
+        self,
+    ):
+        pass
+
+    def is_window_allready_build(
+        self,
+    ):
+        pass
+
+    def lock_updating(self, reason):
+        pass
+
+    def remove_results_window(
+        self,
+    ):
+        pass
+
+    def set_all_checkbox_state(self, state):
+        pass
+
+    def set_object_count_label_text(self, text):
+        pass
+
+    def unlock_updating(
+        self,
+    ):
+        pass
+
+    def update_combobox(self, combobox, allowed_values):
+        pass
+
+    def update_property_table_styling(
+        self,
+    ):
+        pass
+
+    def update_results_window(
+        self,
+    ):
+        pass
+
+    def update_som_combobox(self, combobox, allowed_values, object_list):
+        pass
+
+    def update_table_widget(self, allowed_values, table_widget, datatypes):
+        pass
+
+    def update_valuetable_checkstate(self, checkstate_dict):
+        pass
+
+
+class PropertyImportSQL:
+    def add_entity(self, entity, main_pset, main_property, file_name):
+        pass
+
+    def add_properties_to_filter_table(self, project, som_property):
+        pass
+
+    def add_property_with_value(self, som_property):
+        pass
+
+    def add_property_without_value(self, som_property):
+        pass
+
+    def change_checkstate_of_values(
+        self, ifc_type, identifier, property_set, property_query, value_text, checkstate
+    ):
+        pass
+
+    def commit_sql(
+        self,
+    ):
+        pass
+
+    def connect_to_data_base(self, path):
+        pass
+
+    def count_objects(self, ifc_type, identifier):
+        pass
+
+    def create_export_query(
+        self,
+    ):
+        pass
+
+    def create_settings_filter(
+        self,
+    ):
+        pass
+
+    def create_settings_window(
+        self,
+    ):
+        pass
+
+    def create_som_filter_table(
+        self,
+    ):
+        pass
+
+    def create_table_exection_query(self, table_name, row_names, row_datatypes):
+        pass
+
+    def create_tables(
+        self,
+    ):
+        pass
+
+    def disconnect_from_database(
+        self,
+    ):
+        pass
+
+    def fill_filter_table(self, project):
+        pass
+
+    def fill_property_filter_table(self, values):
+        pass
+
+    def fill_som_properties(self, values):
+        pass
+
+    def get_current_object_filter(
+        self,
+    ):
+        pass
+
+    def get_cursor(
+        self,
+    ):
+        pass
+
+    def get_database_path(
+        self,
+    ):
+        pass
+
+    def get_datatype_from_value(self, value):
+        pass
+
+    def get_identifier_types(self, ifc_type, all_keyword):
+        pass
+
+    def get_new_property_values(
+        self,
+    ):
+        pass
+
+    def get_properties(
+        self,
+    ):
+        pass
+
+    def get_property_data(self, som_property):
+        pass
+
+    def get_property_list(self, ifc_type, identifier, property_set):
+        pass
+
+    def get_property_query(
+        self,
+    ):
+        pass
+
+    def get_property_sets(self, ifc_type, identifier):
+        pass
+
+    def get_removed_property_values(
+        self,
+    ):
+        pass
+
+    def get_settings_dialog_checkbox_list(self, dialog):
+        pass
+
+    def get_values(self, ifc_type, identifier, property_set, property_query):
+        pass
+
+    def get_wanted_ifc_types(
+        self,
+    ):
+        pass
+
+    def import_entity_properties(
+        self, entity, ifc_file, identifier, existing_object_dict
+    ):
+        pass
+
+    def init_database(self, db_path):
+        pass
+
+    def set_current_object_filter(self, usecases, phases):
+        pass
+
+    def set_database_path(self, path):
+        pass
+
+    def settings_dialog_accepted(self, dialog):
+        pass
+
+    def sql_to_excel(self, query, export_path):
+        pass
+
+    def update_settins_dialog_checkstates(self, dialog):
+        pass
+
+
 class PropertySet:
     def add_property_sets_to_table(self, property_sets, table):
         pass
@@ -3089,7 +2972,7 @@ class PropertySetWindow:
     def get_attribute_data(self, window):
         pass
 
-    def get_attribute_name_input(self, window):
+    def get_property_name_input(self, window):
         pass
 
     def get_data_type(self, window):
@@ -3187,7 +3070,7 @@ class PropertySetWindow:
     def set_values(self, attribute, window):
         pass
 
-    def toggle_comboboxes(self, attribute, window):
+    def set_comboboxes_enabled(self, attribute, window):
         pass
 
     def update_add_button(self, window):
@@ -3206,6 +3089,100 @@ class PropertySetWindow:
         pass
 
     def value_to_string(self, value):
+        pass
+
+
+class PropertyTable:
+    def add_attributes_to_table(self, attributes, table):
+        pass
+
+    def add_column_to_table(self, name, get_function):
+        pass
+
+    def add_context_menu_builder(self, context_menu_builder):
+        pass
+
+    def add_parent_of_selected_attribute(self, table):
+        pass
+
+    def context_menu_builder_add_connection(self, table):
+        pass
+
+    def context_menu_builder_delete(self, table, with_child):
+        pass
+
+    def context_menu_builder_remove_connection(self, table):
+        pass
+
+    def context_menu_builder_rename(self, table):
+        pass
+
+    def delete_selected_attributes(self, table, with_child):
+        pass
+
+    def edit_selected_attribute_name(self, table):
+        pass
+
+    def format_row(self, row):
+        pass
+
+    def format_row_value(self, item, value):
+        pass
+
+    def get_column_count(
+        self,
+    ):
+        pass
+
+    def get_context_menu_builders(
+        self,
+    ):
+        pass
+
+    def get_existing_attributes_in_table(self, table):
+        pass
+
+    def get_header_labels(
+        self,
+    ):
+        pass
+
+    def get_item_from_pos(self, table, pos):
+        pass
+
+    def get_possible_parent(self, attribute):
+        pass
+
+    def get_properties(
+        self,
+    ):
+        pass
+
+    def get_property_from_item(self, item):
+        pass
+
+    def get_property_set_by_table(self, table):
+        pass
+
+    def get_property_set_of_table(self, table):
+        pass
+
+    def get_row_index_from_attribute(self, attribute, table):
+        pass
+
+    def get_selected_attributes(self, table):
+        pass
+
+    def remove_attributes_from_table(self, attributes, table):
+        pass
+
+    def remove_parent_of_selected_attribute(self, table):
+        pass
+
+    def set_property_set_of_table(self, table, property_set):
+        pass
+
+    def update_row(self, table, index):
         pass
 
 
