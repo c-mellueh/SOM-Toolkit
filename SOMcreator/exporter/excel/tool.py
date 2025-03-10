@@ -180,7 +180,9 @@ class ExportExcel:
         index = 0
         for property_set in sorted(som_class.get_property_sets(filter=True)):
             for som_property in sorted(property_set.get_properties(filter=True)):
-                sheet.cell(pset_start_row + index, start_column).value = som_property.name
+                sheet.cell(pset_start_row + index, start_column).value = (
+                    som_property.name
+                )
                 sheet.cell(pset_start_row + index, start_column + 1).value = (
                     property_set.name
                 )
@@ -266,7 +268,7 @@ class ExportExcel:
             sheet.column_dimensions[column_letter].width = width
 
     @classmethod
-    def create_attribute_table(
+    def create_property_table(
         cls, classes: list[SOMcreator.SOMClass], sheet: Worksheet
     ):
         property_sets: dict[str, dict[str, int]] = dict()

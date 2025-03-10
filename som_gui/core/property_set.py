@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 
-from som_gui.core import property_table as attribute_table_core
+from som_gui.core import property_table as property_table_core
 from som_gui.core import property_set_window as property_set_window_core
 
 if TYPE_CHECKING:
@@ -58,18 +58,16 @@ def pset_clicked(item: QTableWidgetItem, property_set: Type[tool.PropertySet]):
 
 def pset_selection_changed(
     property_set_tool: Type[tool.PropertySet],
-    attribute_table: Type[tool.PropertyTable],
+    property_table: Type[tool.PropertyTable],
     main_window: Type[tool.MainWindow],
 ):
 
     property_set = property_set_tool.get_selecte_property_set_from_table()
     property_set_tool.set_active_property_set(property_set)
-    attribute_table.set_property_set_of_table(
-        main_window.get_attribute_table(), property_set
+    property_table.set_property_set_of_table(
+        main_window.get_property_table(), property_set
     )
-    attribute_table_core.update_attribute_table(
-        main_window.get_attribute_table(), attribute_table
-    )
+    property_table_core.update_table(main_window.get_property_table(), property_table)
     text = "" if not property_set else property_set.name
 
     main_window.get_pset_name_label().setText(text)
@@ -156,10 +154,10 @@ def repaint_pset_table(
 
 def table_double_clicked(
     property_set_tool: Type[tool.PropertySet],
-    attribute_table: Type[tool.PropertyTable],
+    property_table: Type[tool.PropertyTable],
     property_set_window: Type[tool.PropertySetWindow],
 ):
     property_set = property_set_tool.get_selecte_property_set_from_table()
     property_set_window_core.open_pset_window(
-        property_set, property_set_window, attribute_table
+        property_set, property_set_window, property_table
     )

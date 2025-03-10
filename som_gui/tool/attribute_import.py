@@ -82,7 +82,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
             trigger.pset_table_selection_changed
         )
         widget.table_widget_attribute.itemSelectionChanged.connect(
-            trigger.attribute_table_selection_changed
+            trigger.property_table_selection_changed
         )
         cls.get_properties().all_checkbox.checkStateChanged.connect(
             trigger.all_checkbox_checkstate_changed
@@ -191,7 +191,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         return items[0].text()
 
     @classmethod
-    def get_attribute_table(cls) -> ui.AttributeTable:
+    def get_property_table(cls) -> ui.AttributeTable:
         return cls.get_results_window().ui.table_widget_attribute
 
     @classmethod
@@ -201,7 +201,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
 
     @classmethod
     def get_selected_attribute(cls) -> str | None:
-        items = cls.get_attribute_table().selectedItems()
+        items = cls.get_property_table().selectedItems()
         if not items:
             return None
         return items[0].text()
@@ -413,7 +413,7 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         if not tool.AttributeImportSQL.get_properties().color_values:
             return palette.base(), palette.text()
 
-        table_widget = cls.get_attribute_table()
+        table_widget = cls.get_property_table()
         count_item = table_widget.item(row, 1)
         distinct_count_item = table_widget.item(row, 2)
         count = int(count_item.text())
@@ -426,8 +426,8 @@ class AttributeImportResults(som_gui.core.tool.AttributeImport):
         return palette.base(), palette.text()
 
     @classmethod
-    def update_attribute_table_styling(cls):
-        table_widget = cls.get_attribute_table()
+    def update_property_table_styling(cls):
+        table_widget = cls.get_property_table()
         column_count = table_widget.columnCount()
         for row in range(table_widget.rowCount()):
             brush_col, text_col = cls.get_attribute_item_text_color(row)
@@ -647,7 +647,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         # imported_attributes
 
         query = cls.create_table_exection_query(
-            ATTRIBUTE_TABLE_NAME, ATTRIBUTE_TABLE_HEADER, ATTRIBUTE_TABLE_DATATYPES
+            PROPERTY_TABLE_NAME, PROPERTY_TABLE_HEADER, PROPERTY_TABLE_DATATYPES
         )
         cursor.execute(query)
         cls.commit_sql()
@@ -817,10 +817,10 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
     ):
         # build query
         cursor = cls.get_cursor()
-        headers = ",".join(ATTRIBUTE_TABLE_HEADER)
-        value_requests = ",".join("?" for _ in ATTRIBUTE_TABLE_HEADER)
+        headers = ",".join(PROPERTY_TABLE_HEADER)
+        value_requests = ",".join("?" for _ in PROPERTY_TABLE_HEADER)
         query = (
-            f"INSERT INTO {ATTRIBUTE_TABLE_NAME} ({headers}) VALUES ({value_requests})"
+            f"INSERT INTO {PROPERTY_TABLE_NAME} ({headers}) VALUES ({value_requests})"
         )
         # iterate over all properties of entity
         pset_dict = ifc_element_util.get_psets(entity, verbose=True)
@@ -849,7 +849,8 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
                 else:
                     cs = (
                         1
-                        if value in existing_attribute_dict[attribute_name].allowed_values
+                        if value
+                        in existing_attribute_dict[attribute_name].allowed_values
                         else 0
                     )
 
@@ -936,7 +937,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         property_set_match = f"a.{PROPERTY_SET} = sa.{PROPERTY_SET}"
         attribute_match = f"a.{NAME} = sa.{NAME}"
         query = f"""
-                FROM {ATTRIBUTE_TABLE_NAME} a
+                FROM {PROPERTY_TABLE_NAME} a
                 JOIN {ENTITY_TABLE_NAME} e ON e.{GUID} = a.{GUID}
                 JOIN {FILTERED_SOM_ATTRIBUTES_TABLE_NAME} sa 
                 ON {identifier_match} AND {property_set_match} AND {attribute_match}
@@ -1086,11 +1087,11 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         cursor = cls.get_cursor()
 
         query = f"""
-                UPDATE {ATTRIBUTE_TABLE_NAME}
+                UPDATE {PROPERTY_TABLE_NAME}
                 SET {CHECKED} = {checkstate}
                 WHERE {GUID} IN (
                     SELECT a.{GUID}
-                    from {ATTRIBUTE_TABLE_NAME} a
+                    from {PROPERTY_TABLE_NAME} a
                     JOIN {ENTITY_TABLE_NAME}  e on a.{GUID} = e.{GUID}
                     WHERE e.{IDENTIFIER} {identifier}
                     AND e.{IFCTYPE} {ifc_type}
@@ -1113,7 +1114,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         query = f"""
             SELECT count(distinct(e.guid))
             FROM {ENTITY_TABLE_NAME} e
-            JOIN {ATTRIBUTE_TABLE_NAME} a ON a.{GUID} = e.{GUID}
+            JOIN {PROPERTY_TABLE_NAME} a ON a.{GUID} = e.{GUID}
             WHERE e.{IDENTIFIER} {identifier}
             AND e.{IFCTYPE} {ifc_type}
             
@@ -1134,7 +1135,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             SELECT DISTINCT sa.{IDENTIFIER},sa.{PROPERTY_SET},sa.{NAME}, a.{VALUE}
             from som_attributes sa
             JOIN {ENTITY_TABLE_NAME} e ON sa.{IDENTIFIER} = e.{IDENTIFIER}
-            JOIN {ATTRIBUTE_TABLE_NAME} a ON e.{GUID} = a.{GUID}
+            JOIN {PROPERTY_TABLE_NAME} a ON e.{GUID} = a.{GUID}
             WHERE a.{CHECKED} = 1
             AND a.{NAME} = sa.{NAME}
             AND a.{PROPERTY_SET} = sa.{PROPERTY_SET}
@@ -1154,7 +1155,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
             SELECT DISTINCT sa.{IDENTIFIER},sa.{PROPERTY_SET},sa.{NAME}, a.{VALUE}
             from {SOM_TABLE_NAME} sa
             JOIN {ENTITY_TABLE_NAME} e ON sa.{IDENTIFIER} = e.{IDENTIFIER}
-            JOIN {ATTRIBUTE_TABLE_NAME} a ON e.{GUID} = a.{GUID}
+            JOIN {PROPERTY_TABLE_NAME} a ON e.{GUID} = a.{GUID}
             WHERE a.{CHECKED} = 0
             AND a.{IS_DEFINED} = 1
             AND a.{NAME} = sa.{NAME}
@@ -1177,7 +1178,7 @@ class AttributeImportSQL(som_gui.core.tool.AttributeImportSQL):
         """
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()
-        query = f"SELECT DISTINCT {PROPERTY_SET}, {NAME} FROM {ATTRIBUTE_TABLE_NAME}"
+        query = f"SELECT DISTINCT {PROPERTY_SET}, {NAME} FROM {PROPERTY_TABLE_NAME}"
         cursor.execute(query)
         columns = cursor.fetchall()
         cls.disconnect_from_database()

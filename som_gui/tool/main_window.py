@@ -122,7 +122,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return menu.addMenu(name)
 
     @classmethod
-    def remove_submenu(cls, parent_name: str, sub_menu:QMenu):
+    def remove_submenu(cls, parent_name: str, sub_menu: QMenu):
         if parent_name:
             menu: QMenuBar | QMenu = getattr(cls.get_ui(), parent_name)
         else:
@@ -140,7 +140,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return action
 
     @classmethod
-    def remove_action(cls,parent_name:str,action:QAction):
+    def remove_action(cls, parent_name: str, action: QAction):
         if parent_name:
             menu: QMenuBar | QMenu = getattr(cls.get_ui(), parent_name)
         else:
@@ -160,49 +160,21 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_properties().application
 
     @classmethod
-    def get_pset_name(cls):
-        return cls.get_ui().lineEdit_pSet_name.text()
-
-    @classmethod
-    def get_attribute_table(cls):
+    def get_property_table(cls):
         return cls.get_ui().table_attribute
 
     @classmethod
     def get_object_tree_widget(cls):
-        return cls.get_ui().tree_object
+        return cls.get_ui().tree_class
 
     @classmethod
     def get_property_set_table_widget(cls):
         return cls.get_ui().table_pset
 
     @classmethod
-    def get_ident_pset_name_line_edit(cls):
-        return cls.get_ui().lineEdit_ident_pSet
-
-    @classmethod
-    def get_ident_value_line_edit(cls):
-        return cls.get_ui().lineEdit_ident_value
-
-    @classmethod
-    def get_attribute_name_line_edit(cls) -> QLineEdit:
-        return cls.get_ui().lineEdit_ident_property
-
-    @classmethod
     def get_class_name_label(cls) -> QLabel:
-        return cls.get_ui().label_object_name
+        return cls.get_ui().label_class_name
 
     @classmethod
     def get_pset_name_label(cls) -> QLabel:
         return cls.get_ui().label_pset_name
-
-    @classmethod
-    def get_pset_name_line_edit(cls):
-        return cls.get_ui().lineEdit_pSet_name
-
-    @classmethod
-    def get_pset_layout(cls):
-        return cls.get_ui().box_layout_pset
-
-    @classmethod
-    def get_object_name_horizontal_layout(cls) -> QHBoxLayout:
-        return cls.get_ui().horizontalLayout_object_button

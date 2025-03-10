@@ -18,31 +18,29 @@ if TYPE_CHECKING:
     from som_gui.module.property_set_window.ui import PropertySetWindow
 
 
-def init_context_menu(attribute_table: Type[tool.PropertyTable]):
+def init_context_menu(property_table: Type[tool.PropertyTable]):
     """
     Defines all standard context menu actions associated with an attribute table.
     """
-    attribute_table.add_context_menu_builder(
-        attribute_table.context_menu_builder_rename
+    property_table.add_context_menu_builder(property_table.context_menu_builder_rename)
+    property_table.add_context_menu_builder(
+        lambda t: property_table.context_menu_builder_delete(t, False)
     )
-    attribute_table.add_context_menu_builder(
-        lambda t: attribute_table.context_menu_builder_delete(t, False)
+    property_table.add_context_menu_builder(
+        lambda t: property_table.context_menu_builder_delete(t, True)
     )
-    attribute_table.add_context_menu_builder(
-        lambda t: attribute_table.context_menu_builder_delete(t, True)
+    property_table.add_context_menu_builder(
+        property_table.context_menu_builder_remove_connection
     )
-    attribute_table.add_context_menu_builder(
-        attribute_table.context_menu_builder_remove_connection
-    )
-    attribute_table.add_context_menu_builder(
-        attribute_table.context_menu_builder_add_connection
+    property_table.add_context_menu_builder(
+        property_table.context_menu_builder_add_connection
     )
 
 
-def init_attribute_columns(attribute_table: Type[tool.PropertyTable]):
+def init_attribute_columns(property_table: Type[tool.PropertyTable]):
     """
     Defines all attribute columns associated with an attribute table. This can be expanded by plugins
-    :param attribute_table:
+    :param property_table:
     :return:
     """
     logging.info("Add Basic Attribute Columns")
@@ -54,37 +52,37 @@ def init_attribute_columns(attribute_table: Type[tool.PropertyTable]):
     optional = QCoreApplication.translate("AttributeTable", "Optional")
     unit = QCoreApplication.translate("AttributeTable", "Unit")
 
-    attribute_table.add_column_to_table("Name", lambda a: a.name)
-    attribute_table.add_column_to_table("Datatype", lambda a: a.data_type)
-    attribute_table.add_column_to_table("Valuetype", lambda a: a.value_type)
-    attribute_table.add_column_to_table("Unit", lambda a: a.unit)
-    attribute_table.add_column_to_table("Value", lambda a: a.allowed_values)
-    attribute_table.add_column_to_table(
+    property_table.add_column_to_table("Name", lambda a: a.name)
+    property_table.add_column_to_table("Datatype", lambda a: a.data_type)
+    property_table.add_column_to_table("Valuetype", lambda a: a.value_type)
+    property_table.add_column_to_table("Unit", lambda a: a.unit)
+    property_table.add_column_to_table("Value", lambda a: a.allowed_values)
+    property_table.add_column_to_table(
         "Optional", lambda a: a.is_optional(ignore_hirarchy=True)
     )
 
 
 def retranslate_ui(
     table: ui.PropertyTable,
-    attribute_table: Type[tool.PropertyTable],
+    property_table: Type[tool.PropertyTable],
     main_window: Type[tool.MainWindow],
 ):
     if table is None:
-        table = main_window.get_attribute_table()
-    labels = attribute_table.get_attribute_table_header_names()
+        table = main_window.get_property_table()
+    labels = property_table.get_header_labels()
     table.setHorizontalHeaderLabels(labels)
 
 
 def toggle_optionality(
-    item: QTableWidgetItem, attribute_table: Type[tool.PropertyTable]
+    item: QTableWidgetItem, property_table: Type[tool.PropertyTable]
 ):
     """
     change the optionality of an attribute by their QTableWidgetItem
     :param item:
-    :param attribute_table:
+    :param property_table:
     :return:
     """
-    som_property = attribute_table.get_property_from_item(item)
+    som_property = property_table.get_property_from_item(item)
     if not som_property:
         return
     if not item.column() == 4:
@@ -96,12 +94,12 @@ def toggle_optionality(
 def create_mime_data(
     items: list[QTableWidgetItem],
     mime_data: QMimeData,
-    attribute_table: Type[tool.PropertyTable],
+    property_table: Type[tool.PropertyTable],
 ) -> QMimeData:
     """
     create MimeData used for Dropping Attributes into different Tables
     """
-    objects = {attribute_table.get_property_from_item(item) for item in items}
+    objects = {property_table.get_property_from_item(item) for item in items}
     mime_data.setProperty(MIME_DATA_KEY, objects)
     return mime_data
 
@@ -109,7 +107,7 @@ def create_mime_data(
 def drop_event(
     event: QDropEvent,
     target_table: ui.PropertyTable,
-    attribute_table: Type[tool.PropertyTable],
+    property_table: Type[tool.PropertyTable],
     attribute_tool: Type[tool.Property],
 ):
     """
@@ -125,7 +123,7 @@ def drop_event(
         return
 
     proposed_action = event.proposedAction()
-    target_property_set = attribute_table.get_property_set_by_table(target_table)
+    target_property_set = property_table.get_property_set_by_table(target_table)
     existing_attributes = {
         a.name: a for a in target_property_set.get_properties(filter=False)
     }
@@ -163,7 +161,7 @@ def drop_event(
 def create_context_menu(
     table: ui.PropertyTable,
     pos,
-    attribute_table: Type[tool.PropertyTable],
+    property_table: Type[tool.PropertyTable],
     util: Type[tool.Util],
 ):
     """
@@ -175,7 +173,7 @@ def create_context_menu(
     menu_list = list()
 
     # Create list of context menu entries
-    for context_menu_builder in attribute_table.get_context_menu_builders():
+    for context_menu_builder in property_table.get_context_menu_builders():
         result = context_menu_builder(table)
         if result is not None:
             menu_list.append(result)
@@ -187,7 +185,7 @@ def create_context_menu(
 
 def activate_item(
     item: QTableWidgetItem,
-    attribute_table: Type[tool.PropertyTable],
+    property_table: Type[tool.PropertyTable],
     property_set: Type[tool.PropertySet],
     property_set_window: Type[tool.PropertySetWindow],
 ):
@@ -195,37 +193,35 @@ def activate_item(
     Activate Attribute based on QTableWidgetItem
     :return:
     """
-    active_property = attribute_table.get_property_from_item(item)
+    active_property = property_table.get_property_from_item(item)
     if not active_property:
         return
     active_property_set = property_set.get_active_property_set()
     # create Window or activate it
     window = property_set_window_core.open_pset_window(
-        active_property_set, property_set_window, attribute_table
+        active_property_set, property_set_window, property_table
     )
     property_set_window_core.activate_property(
         active_property, window, property_set_window
     )
 
 
-def update_attribute_table(
-    table: QTableWidget, attribute_table: Type[tool.PropertyTable]
-):
+def update_table(table: QTableWidget, property_table: Type[tool.PropertyTable]):
     logging.debug(f"Repaint Attribute Table")
 
-    existing_attributes = attribute_table.get_existing_attributes_in_table(table)
-    property_set = attribute_table.get_property_set_by_table(table)
+    existing_attributes = property_table.get_existing_attributes_in_table(table)
+    property_set = property_table.get_property_set_by_table(table)
     if property_set is None:
         # clear Table
         for row in reversed(range(table.rowCount())):
             table.removeRow(row)
         return
 
-    if attribute_table.get_column_count() > table.columnCount():
-        for _ in range(attribute_table.get_column_count() - table.columnCount()):
+    if property_table.get_column_count() > table.columnCount():
+        for _ in range(property_table.get_column_count() - table.columnCount()):
             table.insertColumn(table.columnCount())
-    if attribute_table.get_column_count() < table.columnCount():
-        for _ in range(table.columnCount() - attribute_table.get_column_count()):
+    if property_table.get_column_count() < table.columnCount():
+        for _ in range(table.columnCount() - property_table.get_column_count()):
             table.removeColumn(table.columnCount())
 
     # get Attributes which should be deleted and added
@@ -235,9 +231,9 @@ def update_attribute_table(
     new_attributes = set(property_set.get_properties(filter=True)).difference(
         existing_attributes
     )
-    attribute_table.remove_attributes_from_table(delete_attributes, table)
-    attribute_table.add_attributes_to_table(new_attributes, table)
+    property_table.remove_attributes_from_table(delete_attributes, table)
+    property_table.add_attributes_to_table(new_attributes, table)
 
     # update rows
     for row in range(table.rowCount()):
-        attribute_table.update_row(table, row)
+        property_table.update_row(table, row)

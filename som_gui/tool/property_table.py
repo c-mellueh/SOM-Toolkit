@@ -133,7 +133,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
     def get_column_count(cls) -> int:
-        return len(cls.get_properties().attribute_table_columns)
+        return len(cls.get_properties().property_table_columns)
 
     @classmethod
     def update_row(cls, table: QTableWidget, index: int):
@@ -151,7 +151,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
         # update row values
         for item, (_, column_getter) in zip(
-            row_items, cls.get_properties().attribute_table_columns
+            row_items, cls.get_properties().property_table_columns
         ):
             value = column_getter(attribute)
             cls.format_row_value(item, value)
@@ -217,7 +217,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         :param get_function: getter function for cell value. SOMcreator.Attribute will be passed as argument
         :return:
         """
-        cls.get_properties().attribute_table_columns.append((name, get_function))
+        cls.get_properties().property_table_columns.append((name, get_function))
 
     @classmethod
     def get_existing_attributes_in_table(cls, table: QTableWidget):
@@ -243,9 +243,9 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         return cls.get_property_from_item(item)
 
     @classmethod
-    def get_attribute_table_header_names(cls):
+    def get_header_labels(cls):
         prop = cls.get_properties()
-        base_names = [name for (name, getter) in prop.attribute_table_columns]
+        base_names = [name for (name, getter) in prop.property_table_columns]
         translation = [
             QCoreApplication.translate("AttributeTable", name) for name in base_names
         ]

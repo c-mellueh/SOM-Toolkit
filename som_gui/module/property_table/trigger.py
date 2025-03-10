@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 def connect():
     core.init_attribute_columns(tool.PropertyTable)
-    tool.MainWindow.get_attribute_table().itemDoubleClicked.connect(
+    tool.MainWindow.get_property_table().itemDoubleClicked.connect(
         lambda item: core.activate_item(
             item, tool.PropertyTable, tool.PropertySet, tool.PropertySetWindow
         )
@@ -47,5 +47,5 @@ def on_new_project():
 
 
 def table_paint_event(table: PropertyTable):
-    core.update_attribute_table(table, tool.PropertyTable)
+    core.update_table(table, tool.PropertyTable)
     core.retranslate_ui(table, tool.PropertyTable, tool.MainWindow)

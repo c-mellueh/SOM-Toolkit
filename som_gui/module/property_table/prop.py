@@ -4,7 +4,7 @@ import SOMcreator
 
 
 class PropertyTableProperties:
-    attribute_table_columns: list[tuple[str, Callable]] = (
+    property_table_columns: list[tuple[str, Callable]] = (
         list()
     )  # list of columns list[Tuple[name,Getter]]
     context_menu_builders: list[Callable] = list()
