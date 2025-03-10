@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
 
 from som_gui import tool
-from som_gui.core import attribute_table as core
+from som_gui.core import property_table as core
 
 if TYPE_CHECKING:
     from .ui import AttributeTable

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Type
 import logging
 import SOMcreator
 from SOMcreator.constants.value_constants import RANGE
-from som_gui.core import attribute_table as attribute_table_core
+from som_gui.core import property_table as attribute_table_core
 from som_gui.module.property_set_window.constants import (
     SEPERATOR,
     SEPERATOR_SECTION,
