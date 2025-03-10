@@ -13,8 +13,8 @@ if TYPE_CHECKING:
 
 def import_ifc_files(
     proj: SOMProject,
-    main_pset_name,
-    main_attribute_name,
+    main_pset_name: str,
+    main_property_name: str,
     ifc_paths: list[os.PathLike],
     db_path,
     parse_sql: Type[ParseSQL],
@@ -23,7 +23,7 @@ def import_ifc_files(
     db_path = parse_sql.create_database(db_path, ifctosql.create_tables)
     ifctosql.set_project_name(proj.name)
     parse_sql.connect_to_data_base(db_path)
-    ifctosql.set_main_attribute(main_pset_name, main_attribute_name)
+    ifctosql.set_main_property(main_pset_name, main_property_name)
     for ifc_path in ifc_paths:
         ifctosql.set_ifc_file_name(os.path.basename(ifc_path))
         logging.debug(f"Import {os.path.basename(ifc_path)}")
@@ -35,21 +35,21 @@ def import_ifc_files(
 
 def _import_entities(ifctosql: Type[IfcToSQL]):
     ifc = ifctosql.get_ifc()
-    pset_name, attribute_name = ifctosql.get_main_property()
+    pset_name, property_name = ifctosql.get_main_property()
     for entity in ifc.by_type("IfcObject"):
-        identifier = element.get_pset(entity, pset_name, attribute_name)
+        identifier = element.get_pset(entity, pset_name, property_name)
         if not identifier:
             continue
         ifctosql.db_create_entity(entity, identifier)
-        _import_attributes(entity, ifctosql)
+        _import_properties(entity, ifctosql)
 
 
-def _import_attributes(entity: ifcopenshell.entity_instance, ifctosql: Type[IfcToSQL]):
+def _import_properties(entity: ifcopenshell.entity_instance, ifctosql: Type[IfcToSQL]):
     properties = element.get_psets(entity)
-    for pset_name, attribute_dict in properties.items():
+    for pset_name, property_dict in properties.items():
         if pset_name == "Identity Data":
             continue
-        for attribute_name, value in attribute_dict.items():
-            ifctosql.db_create_attribute(
-                entity, pset_name, attribute_name, value, "Test"
+        for property_name, value in property_dict.items():
+            ifctosql.db_create_property(
+                entity, pset_name, property_name, value, "Test"
             )

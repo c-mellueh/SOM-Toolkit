@@ -4,7 +4,7 @@ from SOMcreator.datastructure.som_json import (
     IFC_MAPPINGS,
     ABBREVIATION,
     PROPERTY_SETS,
-    IDENT_ATTRIBUTE,
+    IDENT_PROPERTY,
     OBJECTS,
 )
 from SOMcreator.exporter.som_json import property_set
@@ -34,9 +34,9 @@ def _write_object(element: SOMcreator.SOMClass) -> ObjectDict:
     object_dict[ABBREVIATION] = element.abbreviation
 
     if isinstance(element.identifier_property, SOMcreator.SOMProperty):
-        object_dict[IDENT_ATTRIBUTE] = element.identifier_property.uuid
+        object_dict[IDENT_PROPERTY] = element.identifier_property.uuid
     else:
-        object_dict[IDENT_ATTRIBUTE] = element.identifier_property
+        object_dict[IDENT_PROPERTY] = element.identifier_property
 
     return object_dict
 

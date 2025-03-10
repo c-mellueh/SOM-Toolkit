@@ -64,17 +64,17 @@ def _build_requirements(
     xml_parent: Element,
 ) -> None:
     xml_requirement = SubElement(xml_parent, ids_xsd.REQUIREMENTS, nsmap=NSMAP)
-    for property_set, attribute_list in property_set_dict.items():
-        for attribute in attribute_list:
-            _build_attribute_requirement(attribute, xml_requirement)
+    for property_set, property_list in property_set_dict.items():
+        for som_property in property_list:
+            _build_property_requirement(som_property, xml_requirement)
 
 
-def _build_attribute_requirement(
-    attribute: SOMcreator.SOMProperty, xml_parent: Element
+def _build_property_requirement(
+    som_property: SOMcreator.SOMProperty, xml_parent: Element
 ) -> None:
     xml_property = SubElement(xml_parent, ids_xsd.PROPERTY, nsmap=NSMAP)
-    xml_property.set(ids_xsd.ATTR_DATATYPE, attribute.data_type)
-    if attribute.is_optional(ignore_hirarchy=False):
+    xml_property.set(ids_xsd.ATTR_DATATYPE, som_property.data_type)
+    if som_property.is_optional(ignore_hirarchy=False):
         xml_property.set(xml_xsd.MINOCCURS, "0")
     else:
         xml_property.set(xml_xsd.MINOCCURS, "1")
@@ -82,30 +82,30 @@ def _build_attribute_requirement(
 
     xml_property_set = SubElement(xml_property, ids_xsd.PROPERTYSET)
     SubElement(xml_property_set, ids_xsd.SIMPLEVALUE, nsmap=NSMAP).text = (
-        attribute.property_set.name
+        som_property.property_set.name
     )
     xml_name = SubElement(xml_property, ids_xsd.NAME)
-    SubElement(xml_name, ids_xsd.SIMPLEVALUE, nsmap=NSMAP).text = attribute.name
-    if not attribute.allowed_values:
+    SubElement(xml_name, ids_xsd.SIMPLEVALUE, nsmap=NSMAP).text = som_property.name
+    if not som_property.allowed_values:
         return
     xml_value = SubElement(xml_property, ids_xsd.VALUE, nsmap=NSMAP)
     xml_restriction = SubElement(xml_value, xml_xsd.RESTRICTION, nsmap=NSMAP)
-    xml_restriction.set(xml_xsd.BASE, transform_data_format(attribute.data_type))
+    xml_restriction.set(xml_xsd.BASE, transform_data_format(som_property.data_type))
 
-    if attribute.value_type == value_constants.LIST:
-        for value in attribute.allowed_values:
+    if som_property.value_type == value_constants.LIST:
+        for value in som_property.allowed_values:
             SubElement(xml_restriction, xml_xsd.ENUMERATION, nsmap=NSMAP).set(
                 xml_xsd.VALUE, str(value)
             )
 
-    if attribute.value_type == value_constants.RANGE:
+    if som_property.value_type == value_constants.RANGE:
         min_value = min(
-            min(v[0] for v in attribute.allowed_values),
-            min(v[1] for v in attribute.allowed_values),
+            min(v[0] for v in som_property.allowed_values),
+            min(v[1] for v in som_property.allowed_values),
         )
         max_value = max(
-            max(v[0] for v in attribute.allowed_values),
-            max(v[1] for v in attribute.allowed_values),
+            max(v[0] for v in som_property.allowed_values),
+            max(v[1] for v in som_property.allowed_values),
         )
         SubElement(xml_restriction, xml_xsd.MININCLUSIVE, nsmap=NSMAP).set(
             xml_xsd.VALUE, str(min_value)
@@ -114,8 +114,8 @@ def _build_attribute_requirement(
             xml_xsd.VALUE, str(max_value)
         )
 
-    if attribute.value_type == value_constants.FORMAT:
-        pattern = "|".join(attribute.allowed_values)
+    if som_property.value_type == value_constants.FORMAT:
+        pattern = "|".join(som_property.allowed_values)
         SubElement(xml_restriction, xml_xsd.PATTERN, nsmap=NSMAP).set(
             xml_xsd.VALUE, pattern
         )

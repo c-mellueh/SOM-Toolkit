@@ -25,12 +25,12 @@ class IfcToSQL:
         return cls.get_properties().ifc
 
     @classmethod
-    def set_main_attribute(cls, pset_name, attribute_name):
-        cls.get_properties().main_attribute = (pset_name, attribute_name)
+    def set_main_property(cls, pset_name, property_name):
+        cls.get_properties().main_property = (pset_name, property_name)
 
     @classmethod
     def get_main_property(cls):
-        return cls.get_properties().main_attribute
+        return cls.get_properties().main_property
 
     @classmethod
     def set_project_name(cls, name: str):
@@ -59,7 +59,7 @@ class IfcToSQL:
         # issues
         cursor.execute(
             """
-                  CREATE TABLE IF NOT EXISTS attribute
+                  CREATE TABLE IF NOT EXISTS property
                   ([creation_date] TEXT,[GUID] CHAR(64), [PropertySet] TEXT,[Attribut] TEXT,
                   [Value] TEXT, [Type] TEXT)
                   """
@@ -95,16 +95,16 @@ class IfcToSQL:
             pass
 
     @classmethod
-    def db_create_attribute(cls, entity, pset_name, attribute_name, value, data_type):
+    def db_create_property(cls, entity, pset_name, property_name, value, data_type):
         guid = entity.GlobalId
         cursor = tool.ParseSQL.get_cursor()
         date = datetime.date.today()
 
         cursor.execute(
             f"""
-                          INSERT INTO attribute (creation_date, GUID, PropertySet, Attribut, Value, Type)
+                          INSERT INTO property (creation_date, GUID, PropertySet, Attribut, Value, Type)
                                 VALUES
-                                ('{date}','{guid}','{pset_name}','{attribute_name}','{value}','{data_type}')
+                                ('{date}','{guid}','{pset_name}','{property_name}','{value}','{data_type}')
                           """
         )
         tool.ParseSQL.commit_sql()

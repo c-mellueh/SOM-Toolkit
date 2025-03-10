@@ -22,7 +22,7 @@ use_case_list: list[UseCase] = list()
 plugin_dict = dict()
 object_uuid_dict: dict[str, SOMcreator.SOMClass] = dict()
 property_set_uuid_dict: dict[str, SOMcreator.SOMPropertySet] = dict()
-attribute_uuid_dict: dict[str, SOMcreator.SOMProperty] = dict()
+property_uuid_dict: dict[str, SOMcreator.SOMProperty] = dict()
 filter_matrixes = list()
 
 
@@ -34,9 +34,9 @@ def create_mapping_script(project: SOMcreator.SOMProject, pset_name: str, path: 
         obj_dict = dict()
         for pset in obj.get_property_sets(filter=True):
             pset_dict = dict()
-            for attribute in pset.get_properties(filter=True):
-                name = attribute.name
-                data_format = xml.transform_data_format(attribute.data_type)
+            for som_property in pset.get_properties(filter=True):
+                name = som_property.name
+                data_format = xml.transform_data_format(som_property.data_type)
                 pset_dict[name] = data_format
             obj_dict[pset.name] = pset_dict
         attrib_dict[klass] = obj_dict
@@ -55,7 +55,7 @@ def create_mapping_script(project: SOMcreator.SOMProject, pset_name: str, path: 
 def reset_uuid_dicts():
     SOMcreator.exporter.som_json.object_uuid_dict = dict()
     SOMcreator.exporter.som_json.property_set_uuid_dict = dict()
-    SOMcreator.exporter.som_json.attribute_uuid_dict = dict()
+    SOMcreator.exporter.som_json.property_uuid_dict = dict()
     SOMcreator.exporter.som_json.filter_matrixes = list()
 
 

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from SOMcreator.datastructure.som_json import (
         ObjectDict,
         PropertySetDict,
-        AttributeDict,
+        PropertyDict,
         AggregationDict,
     )
 
@@ -37,7 +37,7 @@ def write_filter_matrix(element: SOMcreator.datastructure.base.BaseClass):
 
 
 def write_basics(
-    entity_dict: ObjectDict | PropertySetDict | AttributeDict | AggregationDict,
+    entity_dict: ObjectDict | PropertySetDict | PropertyDict | AggregationDict,
     element: SOMcreator.datastructure.base.BaseClass,
 ) -> None:
     """function gets called from all Entities"""

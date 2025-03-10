@@ -18,9 +18,9 @@ NAME = "bauteilName"
 
 def get_ifc_el_info(
     entity: ifcopenshell.entity_instance,
-    attribute_bundle: tuple[str, str, str, str, str, str],
+    property_bundle: tuple[str, str, str, str, str, str],
 ) -> tuple[str | None, str | None, str | None]:
-    def check_for_existence(pset_name: str, attribute_name: str):
+    def check_for_existence(pset_name: str, property_name: str):
         pset_dict = psets.get(pset_name)
         if pset_dict is None:
             logging.warning(
@@ -28,31 +28,31 @@ def get_ifc_el_info(
                 f"'{pset_name}' nicht gefunden werden konnte"
             )
             return False, None
-        value = pset_dict.get(attribute_name)
+        value = pset_dict.get(property_name)
 
         if value is None:
             logging.warning(
                 f"Für Entität '{entity.GlobalId}' konnte keine Gruppe erstellt werden da das Attribut "
-                f"'{pset_name}:{attribute_name}' nicht gefunden werden konnte"
+                f"'{pset_name}:{property_name}' nicht gefunden werden konnte"
             )
             return False, None
         return True, value
 
     (
         main_pset,
-        main_attribute,
+        main_property,
         group_pset,
-        group_attribute,
+        group_property,
         identity_pset,
-        identity_attribute,
-    ) = attribute_bundle
-    identity_attribute: str
+        identity_property,
+    ) = property_bundle
+    identity_property: str
     """-> Bauteilklassifikation, idGruppe"""
     psets = element.get_psets(entity)
 
-    check_1, attrib = check_for_existence(main_pset, main_attribute)
-    check_2, gruppe = check_for_existence(group_pset, group_attribute)
-    check_3, identity = check_for_existence(identity_pset, identity_attribute)
+    check_1, attrib = check_for_existence(main_pset, main_property)
+    check_2, gruppe = check_for_existence(group_pset, group_property)
+    check_3, identity = check_for_existence(identity_pset, identity_property)
 
     if all((check_1, check_2, check_3)):
         return attrib, gruppe, identity
@@ -63,14 +63,14 @@ def get_ifc_el_info(
 def create_structure_dict(
     ifc_file: ifcopenshell.file,
     project: SOMcreator.SOMProject,
-    attribute_bundle: tuple[str, str, str, str, str, str],
+    property_bundle: tuple[str, str, str, str, str, str],
 ) -> dict:
     """Iterate over all Entities, build the targeted Datastructure"""
     targeted_group_structure = {GROUP: {}, ELEMENT: {}, IFC_REP: None}
     bk_dict = {obj.ident_value: obj for obj in project.get_classes(filter=True)}
 
     for index, el in enumerate(list(ifc_file.by_type("IfcElement"))):
-        attrib, gruppe, identity = get_ifc_el_info(el, attribute_bundle)
+        attrib, gruppe, identity = get_ifc_el_info(el, property_bundle)
         if attrib is None or gruppe is None:
             continue
 
@@ -92,12 +92,12 @@ def create_structure_dict(
 def fill_existing_groups(
     ifc_file: ifcopenshell.file,
     structure_dict: dict,
-    attribute_bundle: tuple[str, str, str, str, str, str],
+    property_bundle: tuple[str, str, str, str, str, str],
 ) -> None:
-    """Take existing Groups by identity attribute and sort them into the Datastructure"""
+    """Take existing Groups by identity property and sort them into the Datastructure"""
 
     for group in ifc_file.by_type("IfcGroup"):
-        attrib, gruppe, identity = get_ifc_el_info(group, attribute_bundle)
+        attrib, gruppe, identity = get_ifc_el_info(group, property_bundle)
         if identity is None:
             continue
         parts = identity.upper().split("_")
@@ -120,7 +120,7 @@ def create_aggregation_structure(
     id_gruppe: list[str],
     parent_group,
     is_sammler: bool,
-    attribute_bundle,
+    property_bundle,
     owner_history,
     kuerzel_dict,
     fill_with_empty_values: bool,
@@ -130,12 +130,12 @@ def create_aggregation_structure(
 
     (
         main_pset,
-        main_attribute,
+        main_property,
         group_pset,
-        group_attribute,
+        group_property,
         identity_pset,
-        identity_attribute,
-    ) = attribute_bundle
+        identity_property,
+    ) = property_bundle
 
     def create_ifc_property(property_name: str, value: str):
         if value is None:
@@ -154,11 +154,11 @@ def create_aggregation_structure(
 
     def create_ifc_pset(
         pset_name,
-        attribute_dict: dict[str, str],
+        property_dict: dict[str, str],
         relating_entity: ifcopenshell.entity_instance | None = None,
     ):
         properties = list()
-        for property_name, value in attribute_dict.items():
+        for property_name, value in property_dict.items():
             properties.append(create_ifc_property(property_name, value))
         pset = ifc_file.create_entity(
             "IfcPropertySet",
@@ -186,17 +186,17 @@ def create_aggregation_structure(
         identity,
     ):
         for pset in group_obj.get_property_sets(filter=True):
-            attributes = {
-                attribute.name: None for attribute in pset.get_properties(filter=True)
+            proeprties = {
+                som_property.name: None for som_property in pset.get_properties(filter=True)
             }
             if pset.name == main_pset:
-                attributes[main_attribute] = group_obj.ident_value
-                attributes[NAME] = group_obj.name
-                attributes[identity_attribute] = "_".join(identity)
+                proeprties[main_property] = group_obj.ident_value
+                proeprties[NAME] = group_obj.name
+                proeprties[identity_property] = "_".join(identity)
 
             if pset.name == group_pset:
-                attributes[group_attribute] = "_".join(identity[:-2])
-            create_ifc_pset(pset.name, attributes, ifc_group)
+                proeprties[group_property] = "_".join(identity[:-2])
+            create_ifc_pset(pset.name, proeprties, ifc_group)
 
     def create_ifc_group(
         group_obj: SOMcreator.SOMClass,
@@ -222,20 +222,20 @@ def create_aggregation_structure(
         if not is_sammler and fill_with_empty_values:
             fill_group_with_empty_values(ifc_group, group_obj, identity)
         else:
-            attributes = dict()
-            attributes[main_attribute] = group_obj.ident_value
-            attributes[NAME] = group_obj.name
-            attributes[identity_attribute] = "_".join(identity)
-            create_ifc_pset(main_pset, attributes, ifc_group)
-            attributes = dict()
+            properties = dict()
+            properties[main_property] = group_obj.ident_value
+            properties[NAME] = group_obj.name
+            properties[identity_property] = "_".join(identity)
+            create_ifc_pset(main_pset, properties, ifc_group)
+            properties = dict()
             if is_sammler:
-                attributes[group_attribute] = "_".join(identity[:-1])
+                properties[group_property] = "_".join(identity[:-1])
             else:
-                attributes[group_attribute] = "_".join(identity[:-2])
+                properties[group_property] = "_".join(identity[:-2])
             if group_pset in [
                 pset.name for pset in group_obj.get_property_sets(filter=True)
             ]:
-                create_ifc_pset(group_pset, attributes, ifc_group)
+                create_ifc_pset(group_pset, properties, ifc_group)
 
         if parent is not None:
             for is_grouped_relation_ship in parent.IsGroupedBy:
@@ -266,7 +266,7 @@ def create_aggregation_structure(
             new_id_gruppe,
             group,
             not is_sammler,
-            attribute_bundle,
+            property_bundle,
             owner_history,
             kuerzel_dict,
             fill_with_empty_values,
@@ -286,28 +286,28 @@ def main(
     export_path: os.PathLike | str,
     project: SOMcreator.SOMProject,
     main_pset: str,
-    main_attribute: str,
+    main_property: str,
     group_pset: str,
-    group_attribute: str,
+    group_property: str,
     identity_pset: str,
-    identity_attribute: str,
+    identity_property: str,
     fill_with_empty_values=False,
 ):
     ifc_file = ifcopenshell.open(ifc_path)
     owner_history = list(ifc_file.by_type("IfcOwnerHistory"))[0]
-    attribute_bundle = (
+    property_bundle = (
         main_pset,
-        main_attribute,
+        main_property,
         group_pset,
-        group_attribute,
+        group_property,
         identity_pset,
-        identity_attribute,
+        identity_property,
     )
 
     targeted_group_structure = create_structure_dict(
-        ifc_file, project, attribute_bundle
+        ifc_file, project, property_bundle
     )
-    fill_existing_groups(ifc_file, targeted_group_structure, attribute_bundle)
+    fill_existing_groups(ifc_file, targeted_group_structure, property_bundle)
     kuerzel_dict = {
         obj.abbreviation.upper(): obj for obj in project.get_classes(filter=True)
     }
@@ -317,7 +317,7 @@ def main(
         [],
         None,
         True,
-        attribute_bundle,
+        property_bundle,
         owner_history,
         kuerzel_dict,
         fill_with_empty_values,

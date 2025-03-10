@@ -1,4 +1,4 @@
-// Attribute für Bauteilstruktur erstellen
+// Properties für Bauteilstruktur erstellen
 
 var attribute_dict = get_attribute_dict();
 

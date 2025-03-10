@@ -115,7 +115,7 @@ def _handle_property_rule_list(xml_rule: Element) -> Element:
 
 def _define_xml_elements(
     author: str, xml_container: Element, name: str
-) -> (Element, Element):
+) -> tuple[Element, Element]:
     xml_checkrun = _handle_checkrun(xml_container, name=name, author=author)
     xml_rule = _handle_rule(xml_checkrun, "Attributes")
     xml_property_rule_list = _handle_property_rule_list(xml_rule)

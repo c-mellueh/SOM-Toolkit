@@ -1,10 +1,11 @@
 from __future__ import annotations
 import SOMcreator
 from SOMcreator.importer.som_json import core
-from SOMcreator.datastructure.som_json import ATTRIBUTES
-from SOMcreator.importer.som_json import attribute
+from SOMcreator.datastructure.som_json import PROPERTIES
+from SOMcreator.importer.som_json import property_
 from typing import TYPE_CHECKING
 import SOMcreator.importer.som_json
+
 if TYPE_CHECKING:
     from SOMcreator.datastructure.som_json import PropertySetDict
     from SOMcreator import SOMProject
@@ -28,8 +29,8 @@ def load(
         project=proj,
         filter_matrix=filter_matrix,
     )
-    attributes_dict = pset_dict[ATTRIBUTES]
-    for ident, attribute_dict in attributes_dict.items():
-        attribute.load(proj, attribute_dict, ident, pset)
+    properties_dict = pset_dict[PROPERTIES]
+    for ident, property_dict in properties_dict.items():
+        property_.load(proj, property_dict, ident, pset)
     SOMcreator.importer.som_json.parent_dict[pset] = parent
     SOMcreator.importer.som_json.property_set_uuid_dict[identifier] = pset

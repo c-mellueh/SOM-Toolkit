@@ -158,40 +158,40 @@ def _import_pset(
 
     if parent is not None:
         property_set.parent = parent
-        for attribute in property_set.get_properties(filter=False):
-            _import_attribute(
+        for som_property in property_set.get_properties(filter=False):
+            _import_property(
                 existing_project,
                 import_project,
-                attribute,
+                som_property,
                 phase_mapping,
                 use_case_mapping,
                 parent,
             )
     else:
-        for attribute in property_set.get_properties(filter=False):
-            _import_attribute(
+        for som_property in property_set.get_properties(filter=False):
+            _import_property(
                 existing_project,
                 import_project,
-                attribute,
+                som_property,
                 phase_mapping,
                 use_case_mapping,
             )
 
 
-def _import_attribute(
+def _import_property(
     existing_project,
     import_project,
-    attribute,
+    som_property:SOMcreator.SOMProperty,
     phase_mapping,
     use_case_mapping,
     parent_pset: SOMcreator.SOMPropertySet = None,
 ):
     if parent_pset:
-        parent_attribute = {
+        parent_property = {
             a.name: a for a in parent_pset.get_properties(filter=False)
-        }.get(attribute.name)
-        if parent_attribute:
-            attribute.parent = parent_attribute
+        }.get(som_property.name)
+        if parent_property:
+            som_property.parent = parent_property
     _add_item(
-        existing_project, import_project, attribute, phase_mapping, use_case_mapping
+        existing_project, import_project, som_property, phase_mapping, use_case_mapping
     )

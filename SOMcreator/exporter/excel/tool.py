@@ -38,22 +38,22 @@ class ExportExcel:
         cls.get_properties().project = project
 
     @classmethod
-    def set_ident_values(cls, pset_name: str, attribute_name: str):
+    def set_ident_values(cls, pset_name: str, property_name: str):
         cls.get_properties().ident_pset_name = pset_name
-        cls.get_properties().ident_property_name = attribute_name
+        cls.get_properties().ident_property_name = property_name
 
     @classmethod
     def get_ident_pset_name(cls) -> str:
         if cls.get_properties().ident_pset_name is None:
-            pset_name, attribute_name = cls.get_project().get_main_property()
+            pset_name, _ = cls.get_project().get_main_property()
             cls.get_properties().ident_pset_name = pset_name
         return cls.get_properties().ident_pset_name
 
     @classmethod
     def get_ident_property_name(cls) -> str:
         if cls.get_properties().ident_property_name is None:
-            pset_name, attribute_name = cls.get_project().get_main_property()
-            cls.get_properties().ident_property_name = attribute_name
+            _, property_name = cls.get_project().get_main_property()
+            cls.get_properties().ident_property_name = property_name
         return cls.get_properties().ident_property_name
 
     @classmethod
@@ -306,7 +306,7 @@ class ExportExcel:
                     sheet.cell(row, col_index).value = "✔️"
 
         table_range = f"{sheet.cell(1, 1).coordinate}:{sheet.cell(row_index-1, col_index).coordinate}"
-        table = Table(displayName="Attribute_Mapping", ref=table_range)
+        table = Table(displayName="Property_Mapping", ref=table_range)
         style = TableStyleInfo(
             name=TABLE_STYLE,
             showFirstColumn=False,
