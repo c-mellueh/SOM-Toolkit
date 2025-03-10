@@ -8,12 +8,12 @@ import ifcopenshell
 from PySide6.QtCore import QCoreApplication, Qt
 
 import SOMcreator.constants.value_constants as value_constants
-from som_gui.module.attribute_import.constants import EXPORT_PATH, FILETYPE
+from som_gui.module.property_import.constants import EXPORT_PATH, FILETYPE
 
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.tool.ifc_importer import IfcImportRunner
-    from som_gui.module.attribute_import.ui import ValueCheckBox
+    from som_gui.module.property_import.ui import ValueCheckBox
     from som_gui.tool.property_import import PropertyImportRunner
 
 import time
@@ -25,7 +25,7 @@ import time
 def create_main_menu_actions(
     property_import: Type[tool.PropertyImport], main_window: Type[tool.MainWindow]
 ):
-    from som_gui.module.attribute_import import trigger
+    from som_gui.module.property_import import trigger
 
     open_window_action = main_window.add_action(
         "menuModels", "IV", trigger.open_import_window
@@ -76,7 +76,7 @@ def open_import_window(
         return
 
     window = property_import.create_ifc_import_window(ifc_importer.create_importer())
-    from som_gui.module.attribute_import import trigger
+    from som_gui.module.property_import import trigger
 
     trigger.retranslate_ui()
     window.show()
@@ -274,7 +274,7 @@ def last_import_finished(
 ):
     attribute_import.get_ifc_import_window().close()
     attribute_import_sql.create_som_filter_table()
-    from ..module.attribute_import import trigger
+    from ..module.property_import import trigger
 
     trigger.open_results_window()
 
@@ -290,7 +290,7 @@ def open_results_window(attribute_import_results: Type[tool.PropertyImportResult
     attribute_import_results.get_somtype_combo_box().setCurrentText(
         attribute_import_results.get_all_keyword()
     )
-    from ..module.attribute_import import trigger
+    from ..module.property_import import trigger
 
     trigger.retranslate_ui()
     attribute_import_results.update_results_window()

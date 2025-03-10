@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AttributeImport</class>
- <widget class="QWidget" name="AttributeImport">
+ <class>PropertyImport</class>
+ <widget class="QWidget" name="PropertyImport">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -76,7 +76,7 @@
       <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <widget class="QWidget" name="verticalLayoutWidget_3">
-      <layout class="QVBoxLayout" name="vertival_layout_pset">
+      <layout class="QVBoxLayout" name="vertical_layout_pset">
        <item>
         <widget class="QLabel" name="label_proeprty_sets">
          <property name="sizePolicy">
@@ -150,7 +150,7 @@
      <widget class="QWidget" name="verticalLayoutWidget_2">
       <layout class="QVBoxLayout" name="vertical_layout_attribute">
        <item>
-        <widget class="QLabel" name="label_attributes">
+        <widget class="QLabel" name="label_properties">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -164,7 +164,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Attribute</string>
+          <string>Properties</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -172,7 +172,7 @@
         </widget>
        </item>
        <item>
-        <widget class="AttributeTable" name="table_widget_attribute">
+        <widget class="AttributeTable" name="table_widget_property">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>

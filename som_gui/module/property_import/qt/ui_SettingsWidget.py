@@ -18,71 +18,72 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog,
     QDialogButtonBox, QSizePolicy, QVBoxLayout, QWidget)
 
-class Ui_AttributeImport(object):
-    def setupUi(self, AttributeImport):
-        if not AttributeImport.objectName():
-            AttributeImport.setObjectName(u"AttributeImport")
-        AttributeImport.resize(281, 203)
-        self.verticalLayout = QVBoxLayout(AttributeImport)
+class Ui_SettingsDialog(object):
+    def setupUi(self, SettingsDialog):
+        if not SettingsDialog.objectName():
+            SettingsDialog.setObjectName(u"SettingsDialog")
+        SettingsDialog.resize(281, 203)
+        self.verticalLayout = QVBoxLayout(SettingsDialog)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.check_box_boolean_values = QCheckBox(AttributeImport)
+        self.check_box_boolean_values = QCheckBox(SettingsDialog)
         self.check_box_boolean_values.setObjectName(u"check_box_boolean_values")
         self.check_box_boolean_values.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
         self.verticalLayout.addWidget(self.check_box_boolean_values)
 
-        self.check_box_regex = QCheckBox(AttributeImport)
+        self.check_box_regex = QCheckBox(SettingsDialog)
         self.check_box_regex.setObjectName(u"check_box_regex")
         self.check_box_regex.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
         self.verticalLayout.addWidget(self.check_box_regex)
 
-        self.check_box_range = QCheckBox(AttributeImport)
+        self.check_box_range = QCheckBox(SettingsDialog)
         self.check_box_range.setObjectName(u"check_box_range")
         self.check_box_range.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
         self.verticalLayout.addWidget(self.check_box_range)
 
-        self.check_box_existing_properties = QCheckBox(AttributeImport)
+        self.check_box_existing_properties = QCheckBox(SettingsDialog)
         self.check_box_existing_properties.setObjectName(u"check_box_existing_properties")
         self.check_box_existing_properties.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
         self.verticalLayout.addWidget(self.check_box_existing_properties)
 
-        self.check_box_color = QCheckBox(AttributeImport)
+        self.check_box_color = QCheckBox(SettingsDialog)
         self.check_box_color.setObjectName(u"check_box_color")
         self.check_box_color.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         self.check_box_color.setAutoFillBackground(False)
 
         self.verticalLayout.addWidget(self.check_box_color)
 
-        self.check_box_object_filter = QCheckBox(AttributeImport)
+        self.check_box_object_filter = QCheckBox(SettingsDialog)
         self.check_box_object_filter.setObjectName(u"check_box_object_filter")
         self.check_box_object_filter.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
         self.verticalLayout.addWidget(self.check_box_object_filter)
 
-        self.buttonBox = QDialogButtonBox(AttributeImport)
+        self.buttonBox = QDialogButtonBox(SettingsDialog)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
 
         self.verticalLayout.addWidget(self.buttonBox)
 
 
-        self.retranslateUi(AttributeImport)
-        self.buttonBox.accepted.connect(AttributeImport.accept)
-        self.buttonBox.rejected.connect(AttributeImport.reject)
+        self.retranslateUi(SettingsDialog)
+        self.buttonBox.accepted.connect(SettingsDialog.accept)
+        self.buttonBox.rejected.connect(SettingsDialog.reject)
 
-        QMetaObject.connectSlotsByName(AttributeImport)
+        QMetaObject.connectSlotsByName(SettingsDialog)
     # setupUi
 
-    def retranslateUi(self, AttributeImport):
-        AttributeImport.setWindowTitle(QCoreApplication.translate("AttributeImport", u"Dialog", None))
-        self.check_box_boolean_values.setText(QCoreApplication.translate("AttributeImport", u"show IfcBoolean", None))
-        self.check_box_regex.setText(QCoreApplication.translate("AttributeImport", u"show RegEx", None))
-        self.check_box_range.setText(QCoreApplication.translate("AttributeImport", u"show Range", None))
-        self.check_box_existing_properties.setText(QCoreApplication.translate("AttributeImport", u"show allready Existing", None))
-        self.check_box_color.setText(QCoreApplication.translate("AttributeImport", u"color Data", None))
-        self.check_box_object_filter.setText(QCoreApplication.translate("AttributeImport", u"filter by Usecase/Phase", None))
+    def retranslateUi(self, SettingsDialog):
+        SettingsDialog.setWindowTitle(QCoreApplication.translate("SettingsDialog", u"Dialog", None))
+        self.check_box_boolean_values.setText(QCoreApplication.translate("SettingsDialog", u"show IfcBoolean", None))
+        self.check_box_regex.setText(QCoreApplication.translate("SettingsDialog", u"show RegEx", None))
+        self.check_box_range.setText(QCoreApplication.translate("SettingsDialog", u"show Range", None))
+        self.check_box_existing_properties.setText(QCoreApplication.translate("SettingsDialog", u"show allready Existing", None))
+        self.check_box_color.setText(QCoreApplication.translate("SettingsDialog", u"color Data", None))
+        self.check_box_object_filter.setText(QCoreApplication.translate("SettingsDialog", u"filter by Usecase/Phase", None))
     # retranslateUi
 

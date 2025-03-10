@@ -13,11 +13,11 @@ import SOMcreator
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
-from som_gui.module.attribute_import import trigger, ui
-from som_gui.module.attribute_import.constants import *
+from som_gui.module.property_import import trigger, ui
+from som_gui.module.property_import.constants import *
 
 if TYPE_CHECKING:
-    from som_gui.module.attribute_import.prop import (
+    from som_gui.module.property_import.prop import (
         PropertyImportProperties,
         PropertyImportSQLProperties,
     )

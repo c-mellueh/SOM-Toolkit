@@ -11,7 +11,7 @@ class PropertyImportResultWindow(QWidget):
         from .qt import ui_Widget
 
         super(PropertyImportResultWindow, self).__init__()
-        self.ui = ui_Widget.Ui_AttributeImport()
+        self.ui = ui_Widget.Ui_PropertyImport()
         self.ui.setupUi(self)
         self.ui.button_settings.setIcon(get_settings_icon())
         self.setWindowIcon(get_icon())
@@ -46,7 +46,7 @@ class PropertyTable(QTableWidget):
         self.setColumnCount(3)
         self.setRowCount(2)
         self.setHorizontalHeaderLabels(
-            [self.tr("Attribute"), self.tr("Count"), self.tr("Unique")]
+            [self.tr("Property"), self.tr("Count"), self.tr("Unique")]
         )
 
 
@@ -73,6 +73,6 @@ class SettingsDialog(QDialog):
         super(SettingsDialog, self).__init__()
         from .qt import ui_SettingsWidget
 
-        self.widget = ui_SettingsWidget.Ui_AttributeImport()
+        self.widget = ui_SettingsWidget.Ui_SettingsDialog()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())
