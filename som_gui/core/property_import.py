@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.tool.ifc_importer import IfcImportRunner
     from som_gui.module.attribute_import.ui import ValueCheckBox
-    from som_gui.tool.attribute_import import AttributeImportRunner
+    from som_gui.tool.property_import import PropertyImportRunner
 
 import time
 
@@ -23,7 +23,7 @@ import time
 
 
 def create_main_menu_actions(
-    property_import: Type[tool.AttributeImport], main_window: Type[tool.MainWindow]
+    property_import: Type[tool.PropertyImport], main_window: Type[tool.MainWindow]
 ):
     from som_gui.module.attribute_import import trigger
 
@@ -34,8 +34,8 @@ def create_main_menu_actions(
 
 
 def retranslate_ui(
-    property_import: Type[tool.AttributeImport],
-    property_import_results: Type[tool.AttributeImportResults],
+    property_import: Type[tool.PropertyImport],
+    property_import_results: Type[tool.PropertyImportResults],
     util: Type[tool.Util],
 ):
     open_window_action = property_import.get_action("open_window")
@@ -60,11 +60,11 @@ def retranslate_ui(
 
 
 def open_import_window(
-    property_import: Type[tool.AttributeImport],
-    property_import_results: Type[tool.AttributeImportResults],
+    property_import: Type[tool.PropertyImport],
+    property_import_results: Type[tool.PropertyImportResults],
     ifc_importer: Type[tool.IfcImporter],
     project: Type[tool.Project],
-    property_import_sql: Type[tool.AttributeImportSQL],
+    property_import_sql: Type[tool.PropertyImportSQL],
 ):
     proj = project.get()
     usecases = [proj.get_usecase_by_index(i) for i in proj.active_usecases]
@@ -83,9 +83,9 @@ def open_import_window(
 
 
 def ifc_import_run_clicked(
-    attribute_import: Type[tool.AttributeImport],
+    attribute_import: Type[tool.PropertyImport],
     ifc_importer: Type[tool.IfcImporter],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
     project: Type[tool.Project],
     util: Type[tool.Util],
 ):
@@ -104,7 +104,7 @@ def ifc_import_run_clicked(
     button_text = QCoreApplication.translate("PropertyImport", "Abort")
     ifc_importer.set_close_button_text(ifc_import_widget, button_text)
     attribute_import.set_main_pset(main_pset_name)
-    attribute_import.set_main_attribute(main_attribute_name)
+    attribute_import.set_main_property(main_attribute_name)
     pool = ifc_importer.create_thread_pool()
     pool.setMaxThreadCount(3)
     progress_bar = util.create_progressbar()
@@ -126,8 +126,8 @@ def ifc_import_run_clicked(
 
 def init_database(
     progress_bar,
-    attribute_import: Type[tool.AttributeImport],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import: Type[tool.PropertyImport],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
     project: Type[tool.Project],
     util: Type[tool.Util],
 ):
@@ -151,21 +151,21 @@ def init_database(
 
         if not attribute.property_set.som_class:
             continue
-        filter_table += attribute_import_sql.add_attribute_to_filter_table(
+        filter_table += attribute_import_sql.add_properties_to_filter_table(
             proj, attribute
         )
 
         if not attribute.allowed_values:
             property_table.append(
-                attribute_import_sql.add_attribute_without_value(attribute)
+                attribute_import_sql.add_property_without_value(attribute)
             )
         else:
-            property_table += attribute_import_sql.add_attribute_with_value(attribute)
+            property_table += attribute_import_sql.add_property_with_value(attribute)
 
     attribute_import_sql.connect_to_data_base(db_path)
     attribute_import_sql.fill_filter_table(proj)
-    attribute_import_sql.fill_attribute_filter_table(filter_table)
-    attribute_import_sql.fill_som_attribute(property_table)
+    attribute_import_sql.fill_property_filter_table(filter_table)
+    attribute_import_sql.fill_som_properties(property_table)
     attribute_import_sql.disconnect_from_database()
 
     util.set_progress(progress_bar, 100)
@@ -178,7 +178,7 @@ def abort_clicked():
 
 def ifc_import_started(
     runner: IfcImportRunner,
-    attribute_import: Type[tool.AttributeImport],
+    attribute_import: Type[tool.PropertyImport],
     ifc_importer: Type[tool.IfcImporter],
 ):
     widget = attribute_import.get_ifc_import_window()
@@ -189,7 +189,7 @@ def ifc_import_started(
 
 def ifc_import_finished(
     runner: IfcImportRunner,
-    attribute_import: Type[tool.AttributeImport],
+    attribute_import: Type[tool.PropertyImport],
     ifc_importer: Type[tool.IfcImporter],
 ):
     """
@@ -200,16 +200,16 @@ def ifc_import_finished(
     ifc_importer.set_status(
         runner, QCoreApplication.translate("PropertyImport", "Import Done!")
     )
-    attribute_import_runner = attribute_import.create_attribute_import_runner(runner)
-    attribute_import.connect_attribute_import_runner(attribute_import_runner)
-    attribute_import.get_attribute_import_threadpool().start(attribute_import_runner)
+    attribute_import_runner = attribute_import.create_property_import_runner(runner)
+    attribute_import.connect_property_import_runner(attribute_import_runner)
+    attribute_import.get_threadpool().start(attribute_import_runner)
 
 
 def start_attribute_import(
-    runner: AttributeImportRunner,
-    attribute_import: Type[tool.AttributeImport],
-    attribute_import_results: Type[tool.AttributeImportResults],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    runner: PropertyImportRunner,
+    attribute_import: Type[tool.PropertyImport],
+    attribute_import_results: Type[tool.PropertyImportResults],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
     project: Type[tool.Project],
 ):
     file = runner.file
@@ -225,7 +225,7 @@ def start_attribute_import(
     status_text = QCoreApplication.translate(
         "PropertyImport", "Import entity from file:"
     )
-    attribute_dict = attribute_import_results.build_attribute_dict(
+    attribute_dict = attribute_import_results.build_property_dict(
         list(project.get().get_classes(filter=False))
     )
     for index, entity in enumerate(entity_list):
@@ -236,7 +236,7 @@ def start_attribute_import(
         identifier = attribute_import_sql.add_entity(
             entity, pset_name, attribute_name, os.path.basename(path)
         )
-        attribute_import_sql.import_entity_attributes(
+        attribute_import_sql.import_entity_properties(
             entity, file, identifier, attribute_dict
         )
 
@@ -249,7 +249,7 @@ def start_attribute_import(
 
 
 def attribute_import_finished(
-    attribute_import: Type[tool.AttributeImport], ifc_importer: Type[tool.IfcImporter]
+    attribute_import: Type[tool.PropertyImport], ifc_importer: Type[tool.IfcImporter]
 ):
     ifc_import_widget = attribute_import.get_ifc_import_window()
 
@@ -260,10 +260,7 @@ def attribute_import_finished(
         return
 
     time.sleep(0.2)
-    if (
-        attribute_import.attribute_import_is_running()
-        or ifc_importer.import_is_running()
-    ):
+    if attribute_import.import_is_running() or ifc_importer.import_is_running():
         logging.info(f"Prüfung von Datei abgeschlossen, nächste Datei ist dran.")
     else:
         ifc_importer.set_close_button_text(ifc_import_widget, f"Close")
@@ -272,8 +269,8 @@ def attribute_import_finished(
 
 
 def last_import_finished(
-    attribute_import: Type[tool.AttributeImport],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import: Type[tool.PropertyImport],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
 ):
     attribute_import.get_ifc_import_window().close()
     attribute_import_sql.create_som_filter_table()
@@ -282,8 +279,8 @@ def last_import_finished(
     trigger.open_results_window()
 
 
-def open_results_window(attribute_import_results: Type[tool.AttributeImportResults]):
-    attribute_import_widget = attribute_import_results.create_attribute_import_window()
+def open_results_window(attribute_import_results: Type[tool.PropertyImportResults]):
+    attribute_import_widget = attribute_import_results.create_import_window()
     attribute_import_results.connect_trigger(attribute_import_widget)
     attribute_import_widget.show()
     attribute_import_results.update_results_window()
@@ -299,13 +296,13 @@ def open_results_window(attribute_import_results: Type[tool.AttributeImportResul
     attribute_import_results.update_results_window()
 
 
-def update_results_window(attriubte_import_results: Type[tool.AttributeImportResults]):
+def update_results_window(attriubte_import_results: Type[tool.PropertyImportResults]):
     attriubte_import_results.update_results_window()
 
 
 def update_ifctype_combobox(
-    attribute_import_results: Type[tool.AttributeImportResults],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import_results: Type[tool.PropertyImportResults],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
     project: Type[tool.Project],
 ):
     if attribute_import_results.is_updating_locked():
@@ -321,8 +318,8 @@ def update_ifctype_combobox(
 
 
 def update_identifier_combobox(
-    attribute_import_results: Type[tool.AttributeImportResults],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import_results: Type[tool.PropertyImportResults],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
     project: Type[tool.Project],
 ):
     if attribute_import_results.is_updating_locked():
@@ -345,8 +342,8 @@ def update_identifier_combobox(
 
 
 def update_object_count(
-    attribute_import_results: Type[tool.AttributeImportResults],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import_results: Type[tool.PropertyImportResults],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
 ):
     ifc_type, identifier, property_set, attribute = (
         attribute_import_results.get_input_variables()
@@ -358,8 +355,8 @@ def update_object_count(
 
 
 def update_property_set_table(
-    attribute_import_results: Type[tool.AttributeImportResults],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import_results: Type[tool.PropertyImportResults],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
 ):
     logging.debug("Update propertyset table")
     ifc_type, identifier, property_set, attribute = (
@@ -375,8 +372,8 @@ def update_property_set_table(
 
 
 def update_property_table(
-    attribute_import_results: Type[tool.AttributeImportResults],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import_results: Type[tool.PropertyImportResults],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
 ):
     logging.debug("Update Attribute table")
 
@@ -401,8 +398,8 @@ def update_property_table(
 
 
 def update_value_table(
-    attribute_import_results: Type[tool.AttributeImportResults],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import_results: Type[tool.PropertyImportResults],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
 ):
     logging.debug("Update Value table")
 
@@ -433,8 +430,8 @@ def update_value_table(
 
 def value_checkstate_changed(
     checkbox: ValueCheckBox,
-    attribute_import_results: Type[tool.AttributeImportResults],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import_results: Type[tool.PropertyImportResults],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
 ):
     logging.debug("Update Value Checkstates")
     if attribute_import_results.is_updating_locked():
@@ -469,7 +466,7 @@ def value_checkstate_changed(
     update_all_checkbox(attribute_import_results)
 
 
-def update_all_checkbox(attribute_import_results: Type[tool.AttributeImportResults]):
+def update_all_checkbox(attribute_import_results: Type[tool.PropertyImportResults]):
     logging.debug(f"Update All Checkbox")
     checkstate = attribute_import_results.calculate_all_checkbox_state()
     if checkstate == attribute_import_results.get_all_checkbox().checkState():
@@ -480,8 +477,8 @@ def update_all_checkbox(attribute_import_results: Type[tool.AttributeImportResul
 
 
 def all_checkbox_checkstate_changed(
-    attribute_import_results: Type[tool.AttributeImportResults],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import_results: Type[tool.PropertyImportResults],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
 ):
     if attribute_import_results.is_updating_locked():
         logging.debug(
@@ -503,8 +500,8 @@ def all_checkbox_checkstate_changed(
 
 
 def settings_clicked(
-    attribute_import_results: Type[tool.AttributeImportResults],
-    attriubte_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import_results: Type[tool.PropertyImportResults],
+    attriubte_import_sql: Type[tool.PropertyImportSQL],
     util: Type[tool.Util],
 ):
     settings_dialog = attriubte_import_sql.create_settings_window()
@@ -517,21 +514,21 @@ def settings_clicked(
         attribute_import_results.update_results_window()
 
 
-def results_abort_clicked(attribute_import_results: Type[tool.AttributeImportResults]):
+def results_abort_clicked(attribute_import_results: Type[tool.PropertyImportResults]):
     window = attribute_import_results.get_results_window()
     window.close()
     attribute_import_results.remove_results_window()
 
 
 def import_values_to_som(
-    attribute_import_results: Type[tool.AttributeImportResults],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import_results: Type[tool.PropertyImportResults],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
     project: Type[tool.Project],
 ):
     logging.debug("Start Import")
     proj = project.get()
-    new_attribute_values = attribute_import_sql.get_new_attribute_values()
-    attribute_dict = attribute_import_results.build_attribute_dict(
+    new_attribute_values = attribute_import_sql.get_new_property_values()
+    attribute_dict = attribute_import_results.build_property_dict(
         list(proj.get_classes(filter=False))
     )
 
@@ -542,7 +539,7 @@ def import_values_to_som(
         if value not in attribute.allowed_values:
             attribute.allowed_values.append(value)
 
-    removed_values = attribute_import_sql.get_removed_attribute_values()
+    removed_values = attribute_import_sql.get_removed_property_values()
     for identifier, property_set_name, attribute_name, value in removed_values:
         attribute = attribute_dict[identifier][property_set_name][attribute_name]
         attribute.allowed_values.remove(value)
@@ -552,8 +549,8 @@ def import_values_to_som(
 
 
 def export_attributes(
-    attribute_import_results: Type[tool.AttributeImportResults],
-    attribute_import_sql: Type[tool.AttributeImportSQL],
+    attribute_import_results: Type[tool.PropertyImportResults],
+    attribute_import_sql: Type[tool.PropertyImportSQL],
     appdata: Type[tool.Appdata],
     popups: Type[tool.Popups],
 ):

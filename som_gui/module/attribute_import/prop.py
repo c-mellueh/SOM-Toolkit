@@ -5,22 +5,29 @@ from typing import TYPE_CHECKING
 import SOMcreator
 
 if TYPE_CHECKING:
-    from .ui import AttributeImportResultWindow, SettingsDialog
+    from .ui import PropertyImportResultWindow, SettingsDialog
     from som_gui.module.ifc_importer.ui import IfcImportWidget
     from PySide6.QtCore import QThreadPool
-    from PySide6.QtWidgets import QComboBox, QPushButton, QLabel, QCheckBox,QLabel, QProgressBar
+    from PySide6.QtWidgets import (
+        QComboBox,
+        QPushButton,
+        QLabel,
+        QCheckBox,
+        QLabel,
+        QProgressBar,
+    )
     from PySide6.QtGui import QAction
     from sqlite3 import Connection
 
 
-class AttributeImportProperties:
+class PropertyImportProperties:
     ifc_import_window: IfcImportWidget = None
-    result_window: AttributeImportResultWindow = None
+    result_window: PropertyImportResultWindow = None
     main_pset: str = "Undefined"
-    main_attribute: str = "Undefined"
+    main_property: str = "Undefined"
     import_is_aborted = False
     ifc_import_runners = []
-    thread_pool:QThreadPool= None
+    thread_pool: QThreadPool = None
     run_button: QPushButton = None
     abort_button: QPushButton = None
     status_label: QLabel = None
@@ -34,7 +41,7 @@ class AttributeImportProperties:
     actions: dict[str, QAction] = dict()
 
 
-class AttributeImportSQLProperties:
+class PropertyImportSQLProperties:
     database_path: str = None
     connection: Connection = None
     settings_dialog: SettingsDialog = None

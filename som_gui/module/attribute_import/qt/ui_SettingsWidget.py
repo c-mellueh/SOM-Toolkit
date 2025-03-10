@@ -3,20 +3,20 @@
 ################################################################################
 ## Form generated from reading UI file 'SettingsWidget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog,
-                               QDialogButtonBox, QSizePolicy, QVBoxLayout, QWidget)
+    QDialogButtonBox, QSizePolicy, QVBoxLayout, QWidget)
 
 class Ui_AttributeImport(object):
     def setupUi(self, AttributeImport):
@@ -43,11 +43,11 @@ class Ui_AttributeImport(object):
 
         self.verticalLayout.addWidget(self.check_box_range)
 
-        self.check_box_existing_attributes = QCheckBox(AttributeImport)
-        self.check_box_existing_attributes.setObjectName(u"check_box_existing_attributes")
-        self.check_box_existing_attributes.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        self.check_box_existing_properties = QCheckBox(AttributeImport)
+        self.check_box_existing_properties.setObjectName(u"check_box_existing_properties")
+        self.check_box_existing_properties.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
-        self.verticalLayout.addWidget(self.check_box_existing_attributes)
+        self.verticalLayout.addWidget(self.check_box_existing_properties)
 
         self.check_box_color = QCheckBox(AttributeImport)
         self.check_box_color.setObjectName(u"check_box_color")
@@ -65,7 +65,6 @@ class Ui_AttributeImport(object):
         self.buttonBox = QDialogButtonBox(AttributeImport)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel | QDialogButtonBox.StandardButton.Ok)
 
         self.verticalLayout.addWidget(self.buttonBox)
 
@@ -82,10 +81,8 @@ class Ui_AttributeImport(object):
         self.check_box_boolean_values.setText(QCoreApplication.translate("AttributeImport", u"show IfcBoolean", None))
         self.check_box_regex.setText(QCoreApplication.translate("AttributeImport", u"show RegEx", None))
         self.check_box_range.setText(QCoreApplication.translate("AttributeImport", u"show Range", None))
-        self.check_box_existing_attributes.setText(
-            QCoreApplication.translate("AttributeImport", u"show allready Existing", None))
+        self.check_box_existing_properties.setText(QCoreApplication.translate("AttributeImport", u"show allready Existing", None))
         self.check_box_color.setText(QCoreApplication.translate("AttributeImport", u"color Data", None))
-        self.check_box_object_filter.setText(
-            QCoreApplication.translate("AttributeImport", u"filter by Usecase/Phase", None))
+        self.check_box_object_filter.setText(QCoreApplication.translate("AttributeImport", u"filter by Usecase/Phase", None))
     # retranslateUi
 

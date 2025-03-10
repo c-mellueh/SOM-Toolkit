@@ -6,10 +6,11 @@ from som_gui.resources.icons import get_icon, get_settings_icon
 from . import trigger
 
 
-class AttributeImportResultWindow(QWidget):
+class PropertyImportResultWindow(QWidget):
     def __init__(self):
         from .qt import ui_Widget
-        super(AttributeImportResultWindow, self).__init__()
+
+        super(PropertyImportResultWindow, self).__init__()
         self.ui = ui_Widget.Ui_AttributeImport()
         self.ui.setupUi(self)
         self.ui.button_settings.setIcon(get_settings_icon())
@@ -38,13 +39,15 @@ class SOMTypeComboBox(QComboBox):
         super().__init__(*args, **kwargs)
 
 
-class AttributeTable(QTableWidget):
+class PropertyTable(QTableWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.clear()
         self.setColumnCount(3)
         self.setRowCount(2)
-        self.setHorizontalHeaderLabels([self.tr("Attribute"), self.tr("Count"), self.tr("Unique")])
+        self.setHorizontalHeaderLabels(
+            [self.tr("Attribute"), self.tr("Count"), self.tr("Unique")]
+        )
 
 
 class ValueTable(QTableWidget):
@@ -53,7 +56,9 @@ class ValueTable(QTableWidget):
         self.clear()
         self.setColumnCount(3)
         self.setRowCount(2)
-        self.setHorizontalHeaderLabels([self.tr("Accept"), self.tr("Value"), self.tr("Count")])
+        self.setHorizontalHeaderLabels(
+            [self.tr("Accept"), self.tr("Value"), self.tr("Count")]
+        )
 
 
 class ValueCheckBox(QCheckBox):
@@ -67,6 +72,7 @@ class SettingsDialog(QDialog):
     def __init__(self):
         super(SettingsDialog, self).__init__()
         from .qt import ui_SettingsWidget
+
         self.widget = ui_SettingsWidget.Ui_AttributeImport()
         self.widget.setupUi(self)
         self.setWindowIcon(get_icon())

@@ -1,9 +1,9 @@
 from som_gui.tool.appdata import Appdata
 from som_gui.tool.property_ import Property, PropertyCompare
-from som_gui.tool.attribute_import import (
-    AttributeImport,
-    AttributeImportResults,
-    AttributeImportSQL,
+from som_gui.tool.property_import import (
+    PropertyImport,
+    PropertyImportResults,
+    PropertyImportSQL,
 )
 from som_gui.tool.property_table import PropertyTable
 from som_gui.tool.bsdd import Bsdd

@@ -37,19 +37,19 @@ class Appdata:
         pass
 
 
-class AttributeImport:
-    def attribute_import_is_running(
+class PropertyImport:
+    def import_is_running(
         self,
     ):
         pass
 
-    def connect_attribute_import_runner(self, runner):
+    def connect_property_import_runner(self, runner):
         pass
 
     def connect_ifc_import_runner(self, runner):
         pass
 
-    def create_attribute_import_runner(self, runner):
+    def create_property_import_runner(self, runner):
         pass
 
     def create_ifc_import_window(self, ifc_importer):
@@ -64,7 +64,7 @@ class AttributeImport:
     def get_action(self, name):
         pass
 
-    def get_attribute_import_threadpool(
+    def get_threadpool(
         self,
     ):
         pass
@@ -107,7 +107,7 @@ class AttributeImport:
     def set_action(self, name, action):
         pass
 
-    def set_main_attribute(self, main_attribute_name):
+    def set_main_property(self, main_attribute_name):
         pass
 
     def set_main_pset(self, main_pset_name):
@@ -120,8 +120,8 @@ class AttributeImport:
         pass
 
 
-class AttributeImportResults:
-    def build_attribute_dict(self, objects):
+class PropertyImportResults:
+    def build_property_dict(self, objects):
         pass
 
     def calculate_all_checkbox_state(
@@ -135,7 +135,7 @@ class AttributeImportResults:
     def connect_trigger(self, attribute_widget):
         pass
 
-    def create_attribute_import_window(
+    def create_import_window(
         self,
     ):
         pass
@@ -156,7 +156,7 @@ class AttributeImportResults:
     ):
         pass
 
-    def get_attribute_item_text_color(self, row):
+    def get_property_item_text_color(self, row):
         pass
 
     def get_property_table(
@@ -192,7 +192,7 @@ class AttributeImportResults:
     ):
         pass
 
-    def get_selected_attribute(
+    def get_selected_property(
         self,
     ):
         pass
@@ -272,14 +272,14 @@ class AttributeImportResults:
         pass
 
 
-class AttributeImportSQL:
-    def add_attribute_to_filter_table(self, project, attribute):
+class PropertyImportSQL:
+    def add_properties_to_filter_table(self, project, attribute):
         pass
 
-    def add_attribute_with_value(self, attribute):
+    def add_property_with_value(self, attribute):
         pass
 
-    def add_attribute_without_value(self, attribute):
+    def add_property_without_value(self, attribute):
         pass
 
     def add_entity(self, entity, main_pset, main_attribute, file_name):
@@ -334,19 +334,19 @@ class AttributeImportSQL:
     ):
         pass
 
-    def fill_attribute_filter_table(self, values):
+    def fill_property_filter_table(self, values):
         pass
 
     def fill_filter_table(self, project):
         pass
 
-    def fill_som_attribute(self, values):
+    def fill_som_properties(self, values):
         pass
 
-    def get_attribute_data(self, attribute):
+    def get_property_data(self, attribute):
         pass
 
-    def get_attribute_query(
+    def get_property_query(
         self,
     ):
         pass
@@ -372,7 +372,7 @@ class AttributeImportSQL:
     def get_identifier_types(self, ifc_type, all_keyword):
         pass
 
-    def get_new_attribute_values(
+    def get_new_property_values(
         self,
     ):
         pass
@@ -383,7 +383,7 @@ class AttributeImportSQL:
     def get_property_sets(self, ifc_type, identifier):
         pass
 
-    def get_removed_attribute_values(
+    def get_removed_property_values(
         self,
     ):
         pass
@@ -399,7 +399,7 @@ class AttributeImportSQL:
     ):
         pass
 
-    def import_entity_attributes(
+    def import_entity_properties(
         self, entity, ifc_file, identifier, existing_object_dict
     ):
         pass
