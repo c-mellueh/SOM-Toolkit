@@ -8,7 +8,7 @@ from som_gui import tool
 from som_gui.core import property_table as core
 
 if TYPE_CHECKING:
-    from .ui import AttributeTable
+    from .ui import PropertyTable
 
 
 def connect():
@@ -25,7 +25,7 @@ def retranslate_ui(table=None):
     core.retranslate_ui(table, tool.PropertyTable, tool.MainWindow)
 
 
-def connect_table(table: AttributeTable):
+def connect_table(table: PropertyTable):
     table.customContextMenuRequested.connect(
         lambda pos: core.create_context_menu(table, pos, tool.PropertyTable, tool.Util)
     )
@@ -46,6 +46,6 @@ def on_new_project():
     return
 
 
-def table_paint_event(table: AttributeTable):
+def table_paint_event(table: PropertyTable):
     core.update_attribute_table(table, tool.PropertyTable)
     core.retranslate_ui(table, tool.PropertyTable, tool.MainWindow)

@@ -17,8 +17,8 @@ from som_gui.module.property_set_window.ui import PropertySetWindow
 from som_gui.resources.icons import get_link_icon
 
 if TYPE_CHECKING:
-    from som_gui.module.attribute_table.prop import AttributeTableProperties
-    from som_gui.module.attribute_table import ui
+    from som_gui.module.property_table.prop import PropertyTableProperties
+    from som_gui.module.property_table import ui
 
 LINKSTATE = Qt.ItemDataRole.UserRole + 2
 
@@ -26,11 +26,11 @@ LINKSTATE = Qt.ItemDataRole.UserRole + 2
 class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
-    def get_properties(cls) -> AttributeTableProperties:
-        return som_gui.AttributeTableProperties
+    def get_properties(cls) -> PropertyTableProperties:
+        return som_gui.PropertyTableProperties
 
     @classmethod
-    def edit_selected_attribute_name(cls, table: ui.AttributeTable) -> None:
+    def edit_selected_attribute_name(cls, table: ui.PropertyTable) -> None:
         """
         create Popup for editing selected attribute Name
         :param table:  Active AttributeTable
@@ -46,7 +46,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             attribute.name = answer
 
     @classmethod
-    def delete_selected_attributes(cls, table: ui.AttributeTable, with_child=False):
+    def delete_selected_attributes(cls, table: ui.PropertyTable, with_child=False):
         """
         delete selected Attributes
         param table: Active AttributeTable
@@ -57,7 +57,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             attribute.delete(with_child)
 
     @classmethod
-    def remove_parent_of_selected_attribute(cls, table: ui.AttributeTable) -> None:
+    def remove_parent_of_selected_attribute(cls, table: ui.PropertyTable) -> None:
         """
         remove parent of selected attribute
         :param table:
@@ -73,7 +73,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             attribute.parent.remove_child(attribute)
 
     @classmethod
-    def add_parent_of_selected_attribute(cls, table: ui.AttributeTable) -> None:
+    def add_parent_of_selected_attribute(cls, table: ui.PropertyTable) -> None:
         """
         find possible parent of selected attribute if parent exists add parent to attribute
         :param table: Active AttributeTable
@@ -283,7 +283,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
     def context_menu_builder_rename(
-        cls, table: ui.AttributeTable
+        cls, table: ui.PropertyTable
     ) -> tuple[str, Callable] | None:
         """
         Contextmenu function for renaming an attribute.
@@ -297,7 +297,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
     def context_menu_builder_delete(
-        cls, table: ui.AttributeTable, with_child=False
+        cls, table: ui.PropertyTable, with_child=False
     ) -> tuple[str, Callable] | None:
         """
         Contextmenu function for deleting an attribute.
@@ -334,7 +334,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
     def context_menu_builder_remove_connection(
-        cls, table: ui.AttributeTable
+        cls, table: ui.PropertyTable
     ) -> tuple[str, Callable] | None:
         """
         Contextmenu function for removing a parent connect of an attribute.
@@ -356,7 +356,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
     def context_menu_builder_add_connection(
-        cls, table: ui.AttributeTable
+        cls, table: ui.PropertyTable
     ) -> tuple[str, Callable] | None:
         """
         Contextmenu function for adding a parent connect of an attribute.
@@ -382,7 +382,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
     def set_property_set_of_table(
-        cls, table: ui.AttributeTable, property_set: SOMcreator.SOMPropertySet
+        cls, table: ui.PropertyTable, property_set: SOMcreator.SOMPropertySet
     ) -> None:
         """
         define which property_set is shown in AttributeTable
@@ -394,7 +394,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
     def get_property_set_of_table(
-        cls, table: ui.AttributeTable
+        cls, table: ui.PropertyTable
     ) -> SOMcreator.SOMPropertySet | None:
         """
         get property set of table
@@ -417,7 +417,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
     def get_selected_attributes(
-        cls, table: ui.AttributeTable
+        cls, table: ui.PropertyTable
     ) -> set[SOMcreator.SOMProperty]:
         """
         :param table: Active AttributeTable

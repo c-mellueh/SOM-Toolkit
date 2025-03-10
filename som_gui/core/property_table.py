@@ -8,13 +8,13 @@ from PySide6.QtCore import QCoreApplication, QMimeData, Qt
 
 import SOMcreator
 from som_gui.core import property_set_window as property_set_window_core
-from som_gui.module.attribute_table.constants import MIME_DATA_KEY
+from som_gui.module.property_table.constants import MIME_DATA_KEY
 
 if TYPE_CHECKING:
     from som_gui import tool
     from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
     from PySide6.QtGui import QDropEvent
-    from som_gui.module.attribute_table import ui
+    from som_gui.module.property_table import ui
     from som_gui.module.property_set_window.ui import PropertySetWindow
 
 
@@ -65,7 +65,7 @@ def init_attribute_columns(attribute_table: Type[tool.PropertyTable]):
 
 
 def retranslate_ui(
-    table: ui.AttributeTable,
+    table: ui.PropertyTable,
     attribute_table: Type[tool.PropertyTable],
     main_window: Type[tool.MainWindow],
 ):
@@ -108,7 +108,7 @@ def create_mime_data(
 
 def drop_event(
     event: QDropEvent,
-    target_table: ui.AttributeTable,
+    target_table: ui.PropertyTable,
     attribute_table: Type[tool.PropertyTable],
     attribute_tool: Type[tool.Property],
 ):
@@ -119,7 +119,7 @@ def drop_event(
     """
 
     # Check if move is inside the same window
-    source_table: ui.AttributeTable = event.source()  # type: ignore
+    source_table: ui.PropertyTable = event.source()  # type: ignore
     if source_table == target_table:
         event.accept()
         return
@@ -161,7 +161,7 @@ def drop_event(
 
 
 def create_context_menu(
-    table: ui.AttributeTable,
+    table: ui.PropertyTable,
     pos,
     attribute_table: Type[tool.PropertyTable],
     util: Type[tool.Util],
