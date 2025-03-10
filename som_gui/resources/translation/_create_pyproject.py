@@ -27,5 +27,5 @@ import json
 
 with open("som_gui.pyproject", "w") as file:
     json.dump(output_dict, file, indent=4)
-# call pyside6-project lupdate .
-# call pyside6-project build .
+# pyside6-project lupdate .
+# pyside6-project build .

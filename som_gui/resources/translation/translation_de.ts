@@ -67,126 +67,100 @@
 <context>
     <name>AttributeImport</name>
     <message>
-        <location filename="../../core/property_import.py" line="44"/>
-        <location filename="../../core/property_import.py" line="49"/>
-        <location filename="../../core/property_import.py" line="59"/>
         <source>Import Values</source>
-        <translation>Werte importieren</translation>
+        <translation type="vanished">Werte importieren</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="55"/>
         <source>IFC Path</source>
-        <translation>IFC Pfad</translation>
+        <translation type="vanished">IFC Pfad</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="105"/>
         <source>Abort</source>
-        <translation>Abbrechen</translation>
+        <translation type="vanished">Abbrechen</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="120"/>
         <source>Import {}</source>
-        <translation>Importiere {}</translation>
+        <translation type="vanished">Importiere {}</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="144"/>
         <source>Import Attributes from SOM</source>
-        <translation>Importiere Attribute von SOM</translation>
+        <translation type="vanished">Importiere Attribute von SOM</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="202"/>
         <source>Import Done!</source>
-        <translation>Import Abgeschlossen!</translation>
+        <translation type="vanished">Import Abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="228"/>
         <source>Import entity from file:</source>
-        <translation>Importiere Entität von Datei:</translation>
+        <translation type="vanished">Importiere Entität von Datei:</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="245"/>
         <source>import of &apos;{}&apos; entities done!</source>
-        <translation>Import von &apos;{}&apos; Entitäten abgeschlossen!</translation>
+        <translation type="vanished">Import von &apos;{}&apos; Entitäten abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="512"/>
         <source>Settings v</source>
-        <translation>Einstellungen v</translation>
+        <translation type="vanished">Einstellungen v</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="569"/>
         <source>Export Attribute Data</source>
-        <translation>Exportere Attributdaten</translation>
+        <translation type="vanished">Exportere Attributdaten</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="578"/>
         <source>Export Done!</source>
-        <translation>Export abgeschlossen!</translation>
+        <translation type="vanished">Export abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="14"/>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="23"/>
         <source>show IfcBoolean</source>
-        <translation>IFCBoolean anzeigen</translation>
+        <translation type="vanished">IFCBoolean anzeigen</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="33"/>
         <source>show RegEx</source>
-        <translation>RegEx Expressions anzeigen</translation>
+        <translation type="vanished">RegEx Expressions anzeigen</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="43"/>
         <source>show Range</source>
-        <translation>Wertebereich anzeigen</translation>
+        <translation type="vanished">Wertebereich anzeigen</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="53"/>
         <source>show allready Existing</source>
-        <translation>Bereits existierende Werte anzeigen</translation>
+        <translation type="vanished">Bereits existierende Werte anzeigen</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="66"/>
         <source>color Data</source>
-        <translation>Daten einfärben</translation>
+        <translation type="vanished">Daten einfärben</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="76"/>
         <source>filter by Usecase/Phase</source>
-        <translation>durch Anwedungsfall/Phase filtern</translation>
+        <translation type="vanished">durch Anwedungsfall/Phase filtern</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/Widget.ui" line="26"/>
         <source>Form</source>
-        <translation>Form</translation>
+        <translation type="vanished">Form</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/Widget.ui" line="58"/>
         <source>Count</source>
-        <translation>Anzahl</translation>
+        <translation type="vanished">Anzahl</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/Widget.ui" line="95"/>
         <source>PropertySets</source>
-        <translation>PropertySets</translation>
+        <translation type="vanished">PropertySets</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/Widget.ui" line="167"/>
         <source>Attribute</source>
-        <translation>Attribut</translation>
+        <translation type="vanished">Attribut</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/Widget.ui" line="244"/>
         <source>All</source>
-        <translation>Alles</translation>
+        <translation type="vanished">Alles</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/qt/Widget.ui" line="275"/>
         <source>Values</source>
-        <translation>Werte</translation>
+        <translation type="vanished">Werte</translation>
     </message>
     <message>
         <source>DL</source>
@@ -196,48 +170,41 @@
 <context>
     <name>AttributeTable</name>
     <message>
-        <location filename="../../module/property_import/ui.py" line="47"/>
         <source>Attribute</source>
-        <translation>Attribut</translation>
+        <translation type="vanished">Attribut</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/ui.py" line="47"/>
         <source>Count</source>
         <translatorcomment>Eindeutig</translatorcomment>
-        <translation>Anzahl</translation>
+        <translation type="vanished">Anzahl</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/ui.py" line="47"/>
-        <source>Unique</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../../core/property_table.py" line="51"/>
+        <location filename="../../core/property_table.py" line="49"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../core/property_table.py" line="52"/>
+        <location filename="../../core/property_table.py" line="50"/>
         <source>Datatype</source>
         <translation>Datentyp</translation>
     </message>
     <message>
-        <location filename="../../core/property_table.py" line="53"/>
+        <location filename="../../core/property_table.py" line="51"/>
         <source>Valuetype</source>
         <translation>Werttyp</translation>
     </message>
     <message>
-        <location filename="../../core/property_table.py" line="54"/>
+        <location filename="../../core/property_table.py" line="52"/>
         <source>Value</source>
         <translation>Wert</translation>
     </message>
     <message>
-        <location filename="../../core/property_table.py" line="55"/>
+        <location filename="../../core/property_table.py" line="53"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="../../core/property_table.py" line="57"/>
+        <location filename="../../core/property_table.py" line="55"/>
         <source>Unit</source>
         <translation>Einheit</translation>
     </message>
@@ -297,52 +264,52 @@
 <context>
     <name>Class</name>
     <message>
-        <location filename="../../core/class_.py" line="30"/>
+        <location filename="../../core/class_.py" line="32"/>
         <source>Class</source>
         <translation>Klasse</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="35"/>
+        <location filename="../../core/class_.py" line="37"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="40"/>
+        <location filename="../../core/class_.py" line="46"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="105"/>
+        <location filename="../../core/class_.py" line="109"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="111"/>
+        <location filename="../../core/class_.py" line="115"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="117"/>
+        <location filename="../../core/class_.py" line="121"/>
         <source>Extend</source>
         <translation>Ausklappen</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="123"/>
+        <location filename="../../core/class_.py" line="127"/>
         <source>Collapse</source>
         <translation>Einklappen</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="129"/>
+        <location filename="../../core/class_.py" line="133"/>
         <source>Group</source>
         <translation>Gruppieren</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="135"/>
+        <location filename="../../core/class_.py" line="139"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="144"/>
+        <location filename="../../core/class_.py" line="148"/>
         <source>NewGroup</source>
         <translation>NeueGruppe</translation>
     </message>
@@ -693,7 +660,7 @@
         <translation type="vanished">Name</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="243"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="249"/>
         <source>PropertySet</source>
         <translation>PropertySet</translation>
     </message>
@@ -702,7 +669,7 @@
         <translation type="vanished">Identifier</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="253"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="259"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
@@ -748,7 +715,7 @@
         <translation type="vanished">Der Identifier definiert welches Objekt gemeint ist. Er muss eindeutig sein!</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="248"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="254"/>
         <source>Inherited By</source>
         <translation>Geerbt Von</translation>
     </message>
@@ -761,48 +728,48 @@
         <translation type="vanished">Format</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="54"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="55"/>
         <source>Class:</source>
         <translation>Klasse:</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="61"/>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="200"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="62"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="206"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="174"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="178"/>
         <source>PropertySet:</source>
         <translation>PropertySet:</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="289"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="295"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="300"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="306"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="305"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="311"/>
         <source>Desite</source>
         <translation>Desite</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="310"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="316"/>
         <source>Models</source>
         <translation>Modelle</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="321"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="327"/>
         <source>dqwd</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="293"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="299"/>
         <source>Export</source>
         <translation>Export</translation>
     </message>
@@ -864,7 +831,7 @@
 <context>
     <name>MergeDialog</name>
     <message>
-        <location filename="../../core/project.py" line="137"/>
+        <location filename="../../core/project.py" line="139"/>
         <source>Merge Project</source>
         <translation>Projekt hinzufügen</translation>
     </message>
@@ -988,27 +955,41 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Deaktivieren</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="254"/>
+        <location filename="../../tool/modelcheck.py" line="263"/>
         <source>{} has the wrong Datatype ({} not allowed)</source>
         <translation>{} hat den falschen Datentyp ({} ist nicht erlaubt)</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="264"/>
+        <location filename="../../tool/modelcheck.py" line="273"/>
         <source>&quot;{}&quot; does not match format Requirement: &quot;{}&quot;</source>
         <translation>&quot;{}&quot; entspricht nicht den Formatanforderungen: &quot;{}&quot;</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="293"/>
+        <location filename="../../tool/modelcheck.py" line="306"/>
         <source>{} does not contain the Propertyset &quot;{}&quot;</source>
         <translation>{} besitzt nicht das PropertySet &quot;{}&quot;</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="302"/>
-        <source>{} has an empty Attribute</source>
-        <translation>{} besitzt ein leeres Attribut</translation>
+        <location filename="../../tool/modelcheck.py" line="315"/>
+        <source>{} has an empty Property</source>
+        <translation>{} hat eine leere Eigenschaft</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="362"/>
+        <location filename="../../tool/modelcheck.py" line="331"/>
+        <source>{} is missing the Property &quot;{}:{}&quot;</source>
+        <translation>{} fehlt die Eingeschaft &quot;{}:{}&quot;</translation>
+    </message>
+    <message>
+        <location filename="../../tool/modelcheck.py" line="348"/>
+        <source>{} is missing the identifier-Property</source>
+        <translation>{} fehld die identifier Eigenschaft</translation>
+    </message>
+    <message>
+        <source>{} has an empty Attribute</source>
+        <translation type="vanished">{} besitzt ein leeres Attribut</translation>
+    </message>
+    <message>
+        <location filename="../../tool/modelcheck.py" line="375"/>
         <source>{} Value of Identifier (&quot;{}&quot;) does not exist in SOM</source>
         <translation>{} Wert des Identifiers (&quot;{}&quot;) existiert nicht im SOM</translation>
     </message>
@@ -1017,12 +998,12 @@ Achtung: Datei wird überschrieben!</translation>
         <translation type="vanished">&quot;{}&quot; entspricht nicht den Formatforgaben: &quot;{}&quot;</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="272"/>
+        <location filename="../../tool/modelcheck.py" line="283"/>
         <source>Value &quot;{}&quot; is not allowed</source>
         <translation>Wert &quot;{}&quot; ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="284"/>
+        <location filename="../../tool/modelcheck.py" line="297"/>
         <source>Value &quot;{}&quot; is not in allowed range(s)</source>
         <translation>Wert &quot;{}&quot; befindet sich nicht in zugelassenen Wertebereich(en)</translation>
     </message>
@@ -1031,17 +1012,15 @@ Achtung: Datei wird überschrieben!</translation>
         <translation type="vanished">{} besitzt nicht das Propertyset &quot;{}&quot;</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="318"/>
         <source>{} is missing the Attribute &quot;{}:{}&quot;</source>
-        <translation>{} is missing the Attribute &quot;{}:{}&quot;</translation>
+        <translation type="vanished">{} is missing the Attribute &quot;{}:{}&quot;</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="335"/>
         <source>{} is missing the identifier-Attribute</source>
-        <translation>{} fehlt das identifier-Attribut</translation>
+        <translation type="vanished">{} fehlt das identifier-Attribut</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="352"/>
+        <location filename="../../tool/modelcheck.py" line="365"/>
         <source>{} is missing die identifier PropertySet</source>
         <translation>{} fehlt das identifier PropertySet</translation>
     </message>
@@ -1050,7 +1029,7 @@ Achtung: Datei wird überschrieben!</translation>
         <translation type="vanished">{} Value of Identifier (&quot;{}&quot;) doesn&apos;t exist in SOM</translation>
     </message>
     <message>
-        <location filename="../../tool/modelcheck.py" line="379"/>
+        <location filename="../../tool/modelcheck.py" line="392"/>
         <source>GUID exists in File &quot;{}&quot; and&quot;{}&quot;</source>
         <translation>GUID existiert in Datei &quot;{}&quot; und &quot;{}&quot;</translation>
     </message>
@@ -1504,7 +1483,7 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
         <location filename="../../core/project.py" line="85"/>
-        <location filename="../../core/project.py" line="132"/>
+        <location filename="../../core/project.py" line="134"/>
         <source>Open Project</source>
         <translation>Projekt Öffnen</translation>
     </message>
@@ -1572,6 +1551,96 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
 </context>
 <context>
+    <name>PropertyImport</name>
+    <message>
+        <location filename="../../core/property_import.py" line="44"/>
+        <location filename="../../core/property_import.py" line="49"/>
+        <location filename="../../core/property_import.py" line="59"/>
+        <source>Import Values</source>
+        <translation>Werte importieren</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_import.py" line="55"/>
+        <source>IFC Path</source>
+        <translation>IFC Pfad</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_import.py" line="105"/>
+        <source>Abort</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_import.py" line="120"/>
+        <source>Import {}</source>
+        <translation>Importiere {}</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_import.py" line="144"/>
+        <source>Import properties from SOM</source>
+        <translation>Importiere Merkmale von SOM</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_import.py" line="202"/>
+        <source>Import Done!</source>
+        <translation>Import Abgeschlossen!</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_import.py" line="228"/>
+        <source>Import entity from file:</source>
+        <translation>Importiere Entität von Datei:</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_import.py" line="245"/>
+        <source>import of &apos;{}&apos; entities done!</source>
+        <translation>Import von &apos;{}&apos; Entitäten abgeschlossen!</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_import.py" line="509"/>
+        <source>Settings v</source>
+        <translation>Einstellungen v</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_import.py" line="566"/>
+        <source>Export Property Data</source>
+        <translation>Exportiere Merkmalsdaten</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_import.py" line="575"/>
+        <source>Export Done!</source>
+        <translation>Export abgeschlossen!</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/qt/Widget.ui" line="26"/>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/qt/Widget.ui" line="58"/>
+        <source>Count</source>
+        <translation>Anzahl</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/qt/Widget.ui" line="95"/>
+        <source>PropertySets</source>
+        <translation>PropertySets</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/qt/Widget.ui" line="167"/>
+        <source>Properties</source>
+        <translation>Eigenschaften</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/qt/Widget.ui" line="244"/>
+        <source>All</source>
+        <translation>Alles</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/qt/Widget.ui" line="275"/>
+        <source>Values</source>
+        <translation>Werte</translation>
+    </message>
+</context>
+<context>
     <name>PropertySet</name>
     <message>
         <location filename="../../core/property_set.py" line="26"/>
@@ -1590,13 +1659,13 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>PropertySet &apos;{}&apos; existiert bereits</translation>
     </message>
     <message>
-        <location filename="../../core/property_set.py" line="88"/>
-        <location filename="../../core/property_set.py" line="100"/>
+        <location filename="../../core/property_set.py" line="86"/>
+        <location filename="../../core/property_set.py" line="98"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/property_set.py" line="96"/>
+        <location filename="../../core/property_set.py" line="94"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
@@ -1604,12 +1673,12 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>PropertySetTable</name>
     <message>
-        <location filename="../../module/property_import/ui.py" line="25"/>
+        <location filename="../../module/property_import/ui.py" line="26"/>
         <source>PropertySet</source>
         <translation>PropertySet</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/ui.py" line="25"/>
+        <location filename="../../module/property_import/ui.py" line="26"/>
         <source>Count</source>
         <translation>Anzahl</translation>
     </message>
@@ -1639,7 +1708,7 @@ Achtung: Datei wird überschrieben!</translation>
         <translation type="vanished">Werte</translation>
     </message>
     <message>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="198"/>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="199"/>
         <source>+</source>
         <translation>+</translation>
     </message>
@@ -1650,7 +1719,7 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
         <location filename="../../tool/property_set_window.py" line="264"/>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="151"/>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="152"/>
         <source>Add</source>
         <translation>Hinzufügen</translation>
     </message>
@@ -1689,27 +1758,27 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Einheit:</translation>
     </message>
     <message>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="137"/>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="138"/>
         <source>Name:</source>
         <translation>Name:</translation>
     </message>
     <message>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="144"/>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="145"/>
         <source>Inherit Values</source>
         <translation>Werte vererben</translation>
     </message>
     <message>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="170"/>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="171"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="211"/>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="212"/>
         <source>Allowed Values:</source>
         <translation>Erlaubte Werte:</translation>
     </message>
     <message>
-        <location filename="../../module/property_set_window/qt/Window.ui" line="123"/>
+        <location filename="../../module/property_set_window/qt/Window.ui" line="124"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
@@ -1728,6 +1797,24 @@ Achtung: Datei wird überschrieben!</translation>
     <message>
         <source>Optional</source>
         <translation type="vanished">Optional</translation>
+    </message>
+</context>
+<context>
+    <name>PropertyTable</name>
+    <message>
+        <location filename="../../module/property_import/ui.py" line="49"/>
+        <source>Property</source>
+        <translation>Merkmal</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/ui.py" line="49"/>
+        <source>Count</source>
+        <translation>Anzahl</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/ui.py" line="50"/>
+        <source>Unique</source>
+        <translation>Eindeutig</translation>
     </message>
 </context>
 <context>
@@ -1838,12 +1925,12 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Plugins</translation>
     </message>
     <message>
-        <location filename="../../core/language.py" line="58"/>
+        <location filename="../../core/language.py" line="68"/>
         <source>German</source>
         <translation>Deutsch</translation>
     </message>
     <message>
-        <location filename="../../core/language.py" line="59"/>
+        <location filename="../../core/language.py" line="69"/>
         <source>English</source>
         <translation>Englisch</translation>
     </message>
@@ -1868,6 +1955,44 @@ Achtung: Datei wird überschrieben!</translation>
         <source>English</source>
         <comment>en</comment>
         <translation>Englisch</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="14"/>
+        <source>Dialog</source>
+        <translation>Dialog</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="23"/>
+        <source>show IfcBoolean</source>
+        <translation>IFCBoolean anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="33"/>
+        <source>show RegEx</source>
+        <translation>RegEx Expressions anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="43"/>
+        <source>show Range</source>
+        <translation>Wertebereich anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="53"/>
+        <source>show allready Existing</source>
+        <translation>Bereits existierende Werte anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="66"/>
+        <source>color Data</source>
+        <translation>Daten einfärben</translation>
+    </message>
+    <message>
+        <location filename="../../module/property_import/qt/SettingsWidget.ui" line="76"/>
+        <source>filter by Usecase/Phase</source>
+        <translation>durch Anwedungsfall/Phase filtern</translation>
     </message>
 </context>
 <context>
@@ -1940,17 +2065,17 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>ValueTable</name>
     <message>
-        <location filename="../../module/property_import/ui.py" line="56"/>
+        <location filename="../../module/property_import/ui.py" line="60"/>
         <source>Accept</source>
         <translation>Akzeptieren</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/ui.py" line="56"/>
+        <location filename="../../module/property_import/ui.py" line="60"/>
         <source>Value</source>
         <translation>Wert</translation>
     </message>
     <message>
-        <location filename="../../module/property_import/ui.py" line="56"/>
+        <location filename="../../module/property_import/ui.py" line="61"/>
         <source>Count</source>
         <translation>Anzahl</translation>
     </message>
