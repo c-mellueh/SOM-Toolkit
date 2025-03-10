@@ -172,7 +172,7 @@
                                 </widget>
                             </item>
                             <item>
-                                <widget class="AttributeTable" name="table_widget_property">
+                                <widget class="PropertyTable" name="table_widget_property">
                                     <property name="sizePolicy">
                                         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                                             <horstretch>0</horstretch>
@@ -367,7 +367,7 @@
             <header>som_gui.module.property_import.ui</header>
         </customwidget>
         <customwidget>
-            <class>AttributeTable</class>
+            <class>PropertyTable</class>
             <extends>QTableWidget</extends>
             <header>som_gui.module.property_import.ui</header>
         </customwidget>

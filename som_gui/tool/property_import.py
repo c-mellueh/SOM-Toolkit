@@ -105,7 +105,7 @@ class PropertyImportResults(som_gui.core.tool.PropertyImportResults):
         for item in delete_items:
             combobox.removeItem(combobox.findText(item))
         if add_items or delete_items:
-            combobox.mod().sort(0)
+            combobox.model().sort(0)
         cls.unlock_updating()
 
     @classmethod

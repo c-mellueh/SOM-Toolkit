@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication,
     QLayout, QPushButton, QSizePolicy, QSplitter,
     QTableWidgetItem, QVBoxLayout, QWidget)
 
-from som_gui.module.property_import.ui import (AttributeTable, IfcTypeComboBox, PropertySetTable, SOMTypeComboBox,
+from som_gui.module.property_import.ui import (IfcTypeComboBox, PropertySetTable, PropertyTable, SOMTypeComboBox,
     ValueTable)
 
 class Ui_PropertyImport(object):
@@ -124,7 +124,7 @@ class Ui_PropertyImport(object):
 
         self.vertical_layout_attribute.addWidget(self.label_properties)
 
-        self.table_widget_property = AttributeTable(self.verticalLayoutWidget_2)
+        self.table_widget_property = PropertyTable(self.verticalLayoutWidget_2)
         self.table_widget_property.setObjectName(u"table_widget_property")
         sizePolicy3.setHeightForWidth(self.table_widget_property.sizePolicy().hasHeightForWidth())
         self.table_widget_property.setSizePolicy(sizePolicy3)

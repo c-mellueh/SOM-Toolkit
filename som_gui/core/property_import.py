@@ -40,12 +40,12 @@ def retranslate_ui(
 ):
     open_window_action = property_import.get_action("open_window")
     open_window_action.setText(
-        QCoreApplication.translate("PropertyImport", "Import Values")
+        QCoreApplication.translate("PropertyImport", "Import Properties")
     )
 
     ifc_window = property_import.get_ifc_import_window()
     if ifc_window:
-        title = QCoreApplication.translate("PropertyImport", "Import Values")
+        title = QCoreApplication.translate("PropertyImport", "Import Properties")
         ifc_window.ui.retranslateUi(ifc_window)
         ifc_window.setWindowTitle(util.get_window_title(title))
         ifc_window.ui.file_selector_widget.name = QCoreApplication.translate(
@@ -55,7 +55,7 @@ def retranslate_ui(
     result_window = property_import_results.get_results_window()
     if result_window:
         result_window.ui.retranslateUi(result_window)
-        title = QCoreApplication.translate("PropertyImport", "Import Values")
+        title = QCoreApplication.translate("PropertyImport", "Import Properties")
         result_window.setWindowTitle(util.get_window_title(title))
 
 

@@ -67,8 +67,8 @@
 <context>
     <name>AttributeImport</name>
     <message>
-        <source>Import Values</source>
-        <translation type="vanished">Werte importieren</translation>
+        <source>Import Properties</source>
+        <translation type="vanished">Merkmale importieren</translation>
     </message>
     <message>
         <source>IFC Path</source>
@@ -1556,8 +1556,8 @@ Achtung: Datei wird überschrieben!</translation>
         <location filename="../../core/property_import.py" line="44"/>
         <location filename="../../core/property_import.py" line="49"/>
         <location filename="../../core/property_import.py" line="59"/>
-        <source>Import Values</source>
-        <translation>Werte importieren</translation>
+        <source>Import Properties</source>
+        <translation>Merkmale importieren</translation>
     </message>
     <message>
         <location filename="../../core/property_import.py" line="55"/>
