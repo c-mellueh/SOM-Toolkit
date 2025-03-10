@@ -30,7 +30,9 @@ if TYPE_CHECKING:
 class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
-    def get_attribute_by_name(cls, property_set: SOMcreator.SOMPropertySet, name: str) -> SOMcreator.SOMProperty|None:
+    def get_property_by_name(
+        cls, property_set: SOMcreator.SOMPropertySet, name: str
+    ) -> SOMcreator.SOMProperty | None:
         if property_set is None:
             return None
         attribute_dict = {a.name: a for a in property_set.get_properties(filter=False)}
@@ -309,7 +311,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         pset_name,
         predefined_psets: list[SOMcreator.SOMPropertySet] = [],
         parent_psets: list[SOMcreator.SOMPropertySet] = [],
-    ) -> SOMcreator.SOMPropertySet|None|bool:
+    ) -> SOMcreator.SOMPropertySet | None | bool:
         """
         return None if not accepted return False if aborted
         """

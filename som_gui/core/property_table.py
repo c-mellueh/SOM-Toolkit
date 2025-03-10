@@ -138,7 +138,7 @@ def drop_event(
             if existing_attribute:
                 # overwrite date
                 data = attribute_tool.get_attribute_data(attribute)
-                attribute_tool.set_attribute_data_by_dict(existing_attribute, data)
+                attribute_tool.set_data_by_dict(existing_attribute, data)
             else:
                 # copy attribute to property_set
                 attribute = copy.copy(attribute)

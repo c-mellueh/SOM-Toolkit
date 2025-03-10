@@ -2139,7 +2139,7 @@ class Property:
     def add_property_data_value(self, name, getter, setter):
         pass
 
-    def create_attribute_by_dict(self, attribute_data):
+    def create_by_dict(self, attribute_data):
         pass
 
     def get_allowed_unit_prefixes(self, appdata):
@@ -2164,7 +2164,7 @@ class Property:
     ):
         pass
 
-    def set_attribute_data_by_dict(self, attribute, data_dict):
+    def set_data_by_dict(self, attribute, data_dict):
         pass
 
     def set_unit_settings_widget(self, widget):
@@ -2830,7 +2830,7 @@ class PropertySet:
     ):
         pass
 
-    def get_attribute_by_name(self, property_set, name):
+    def get_property_by_name(self, property_set, name):
         pass
 
     def get_completer(
@@ -2956,7 +2956,7 @@ class PropertySetWindow:
     def format_values(self, value_list, window):
         pass
 
-    def get_active_attribute(self, window):
+    def get_active_property(self, window):
         pass
 
     def get_allowed_data_types(
@@ -2969,7 +2969,7 @@ class PropertySetWindow:
     ):
         pass
 
-    def get_attribute_data(self, window):
+    def get_property_data(self, window):
         pass
 
     def get_property_name_input(self, window):
@@ -3043,7 +3043,7 @@ class PropertySetWindow:
     def set_add_button_text(self, text, window):
         pass
 
-    def set_attribute_name(self, name, window):
+    def set_property_name(self, name, window):
         pass
 
     def set_data_type(self, data_type, window):

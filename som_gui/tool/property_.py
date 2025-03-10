@@ -74,7 +74,7 @@ class Property(som_gui.core.tool.Property):
         return d
 
     @classmethod
-    def set_attribute_data_by_dict(
+    def set_data_by_dict(
         cls, attribute: SOMcreator.SOMProperty, data_dict: dict[str, str | list]
     ) -> None:
         """
@@ -91,7 +91,7 @@ class Property(som_gui.core.tool.Property):
             d["setter"](value, attribute)
 
     @classmethod
-    def create_attribute_by_dict(
+    def create_by_dict(
         cls, attribute_data: dict[str, str | list]
     ) -> SOMcreator.SOMProperty:
         """
@@ -100,7 +100,7 @@ class Property(som_gui.core.tool.Property):
         :return:
         """
         attribute = SOMcreator.SOMProperty()
-        cls.set_attribute_data_by_dict(attribute, attribute_data)
+        cls.set_data_by_dict(attribute, attribute_data)
         return attribute
 
     @classmethod

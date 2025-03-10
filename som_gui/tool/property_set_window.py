@@ -50,12 +50,12 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         return list(cls.get_properties().property_set_windows.keys())
 
     @classmethod
-    def get_active_attribute(
+    def get_active_property(
         cls, window: ui.PropertySetWindow
     ) -> None | SOMcreator.SOMProperty:
         attribute_name = cls.get_property_name_input(window)
         pset = cls.get_property_set_by_window(window)
-        return tool.PropertySet.get_attribute_by_name(pset, attribute_name)
+        return tool.PropertySet.get_property_by_name(pset, attribute_name)
 
     @classmethod
     def get_inherit_checkbox_state(cls, window: ui.PropertySetWindow) -> bool:
@@ -89,7 +89,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         return window.ui.lineEdit_name.text()
 
     @classmethod
-    def get_attribute_data(cls, window: ui.PropertySetWindow):
+    def get_property_data(cls, window: ui.PropertySetWindow):
         d = dict()
         d["name"] = cls.get_property_name_input(window)
         d["data_type"] = window.ui.combo_data_type.currentText()
@@ -295,7 +295,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.ui.combo_unit.setToolTip(t3)
 
     @classmethod
-    def set_attribute_name(cls, name: str, window: ui.PropertySetWindow):
+    def set_property_name(cls, name: str, window: ui.PropertySetWindow):
         window.ui.lineEdit_name.setText(name)
 
     @classmethod
