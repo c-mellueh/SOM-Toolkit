@@ -60,7 +60,7 @@ class Property(som_gui.core.tool.Property):
         prop.attribute_data_dict[name] = {"getter": getter, "setter": setter}
 
     @classmethod
-    def get_attribute_data(cls, attribute: SOMcreator.SOMProperty) -> dict[str, Any]:
+    def get_property_data(cls, attribute: SOMcreator.SOMProperty) -> dict[str, Any]:
         """
         creates dictionary of attribute with Data_name as Key and getter/setter as Value
         :param attribute:

@@ -88,7 +88,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             parent.add_child(attribute)
 
     @classmethod
-    def remove_attributes_from_table(
+    def remove_properties_from_table(
         cls, attributes: set[SOMcreator.SOMProperty], table: QTableWidget
     ):
         """
@@ -104,7 +104,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             table.removeRow(row_index)
 
     @classmethod
-    def add_attributes_to_table(
+    def add_properties_to_table(
         cls, attributes: set[SOMcreator.SOMProperty], table: QTableWidget
     ) -> None:
         """
@@ -220,7 +220,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         cls.get_properties().property_table_columns.append((name, get_function))
 
     @classmethod
-    def get_existing_attributes_in_table(cls, table: QTableWidget):
+    def get_existing_properties(cls, table: QTableWidget):
         attributes = set()
         for row in range(table.rowCount()):
             item = table.item(row, 0)

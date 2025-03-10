@@ -2148,7 +2148,7 @@ class Property:
     def get_allowed_units(self, appdata):
         pass
 
-    def get_attribute_data(self, attribute):
+    def get_property_data(self, attribute):
         pass
 
     def get_checked_texts_from_list_widget(self, list_widget):
@@ -3093,7 +3093,7 @@ class PropertySetWindow:
 
 
 class PropertyTable:
-    def add_attributes_to_table(self, attributes, table):
+    def add_properties_to_table(self, attributes, table):
         pass
 
     def add_column_to_table(self, name, get_function):
@@ -3139,7 +3139,7 @@ class PropertyTable:
     ):
         pass
 
-    def get_existing_attributes_in_table(self, table):
+    def get_existing_properties(self, table):
         pass
 
     def get_header_labels(
@@ -3173,7 +3173,7 @@ class PropertyTable:
     def get_selected_attributes(self, table):
         pass
 
-    def remove_attributes_from_table(self, attributes, table):
+    def remove_properties_from_table(self, attributes, table):
         pass
 
     def remove_parent_of_selected_attribute(self, table):
