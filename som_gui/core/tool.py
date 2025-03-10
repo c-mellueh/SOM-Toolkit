@@ -1864,7 +1864,7 @@ class Popups:
     def req_export_pset_name(self, parent_window):
         pass
 
-    def request_attribute_name(self, old_name, parent):
+    def request_property_name(self, old_name, parent):
         pass
 
     def request_property_set_merge(self, name, mode):
@@ -3102,7 +3102,7 @@ class PropertyTable:
     def add_context_menu_builder(self, context_menu_builder):
         pass
 
-    def add_parent_of_selected_attribute(self, table):
+    def add_parent_of_selected_properties(self, table):
         pass
 
     def context_menu_builder_add_connection(self, table):
@@ -3117,10 +3117,10 @@ class PropertyTable:
     def context_menu_builder_rename(self, table):
         pass
 
-    def delete_selected_attributes(self, table, with_child):
+    def delete_selected_properties(self, table, with_child):
         pass
 
-    def edit_selected_attribute_name(self, table):
+    def edit_selected_property_name(self, table):
         pass
 
     def format_row(self, row):
@@ -3167,16 +3167,16 @@ class PropertyTable:
     def get_property_set_of_table(self, table):
         pass
 
-    def get_row_index_from_attribute(self, attribute, table):
+    def get_row_index_from_property(self, attribute, table):
         pass
 
-    def get_selected_attributes(self, table):
+    def get_selected_properties(self, table):
         pass
 
     def remove_properties_from_table(self, attributes, table):
         pass
 
-    def remove_parent_of_selected_attribute(self, table):
+    def remove_parent_of_selected_properties(self, table):
         pass
 
     def set_property_set_of_table(self, table, property_set):

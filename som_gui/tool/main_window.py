@@ -161,7 +161,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
 
     @classmethod
     def get_property_table(cls):
-        return cls.get_ui().table_attribute
+        return cls.get_ui().table_property
 
     @classmethod
     def get_object_tree_widget(cls):
