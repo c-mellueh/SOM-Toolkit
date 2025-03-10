@@ -53,7 +53,7 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def get_active_attribute(
         cls, window: ui.PropertySetWindow
     ) -> None | SOMcreator.SOMProperty:
-        attribute_name = cls.get_attribute_name_input(window)
+        attribute_name = cls.get_property_name_input(window)
         pset = cls.get_property_set_by_window(window)
         return tool.PropertySet.get_attribute_by_name(pset, attribute_name)
 
@@ -85,13 +85,13 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         return prop.property_set_windows.get(window)
 
     @classmethod
-    def get_attribute_name_input(cls, window: ui.PropertySetWindow):
+    def get_property_name_input(cls, window: ui.PropertySetWindow):
         return window.ui.lineEdit_name.text()
 
     @classmethod
     def get_attribute_data(cls, window: ui.PropertySetWindow):
         d = dict()
-        d["name"] = cls.get_attribute_name_input(window)
+        d["name"] = cls.get_property_name_input(window)
         d["data_type"] = window.ui.combo_data_type.currentText()
         d["value_type"] = window.ui.combo_value_type.currentText()
         d["values"] = cls.get_values(window)
@@ -253,10 +253,15 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         window.setWindowTitle(title)
 
     @classmethod
-    def update_add_button(cls, window: ui.PropertySetWindow):
-        attribute_name = cls.get_attribute_name_input(window)
+    def is_name_existing(cls, name: str, window: ui.PropertySetWindow):
         pset = cls.get_property_set_by_window(window)
-        if attribute_name in [a.name for a in pset.get_properties(filter=False)]:
+        return name in [a.name for a in pset.get_properties(filter=False)]
+
+    @classmethod
+    def update_add_button(cls, window: ui.PropertySetWindow):
+        attribute_name = cls.get_property_name_input(window)
+
+        if cls.is_name_existing(attribute_name, window):
             text = QCoreApplication.translate("PropertySetWindow", "Update")
             cls.set_add_button_text(text, window)
         else:
@@ -266,14 +271,11 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
         cls.set_add_button_enabled(bool(attribute_name), window)
 
     @classmethod
-    def toggle_comboboxes(
-        cls, attribute: SOMcreator.SOMProperty, window: ui.PropertySetWindow
-    ):
-        is_child = attribute.is_child
-        window.ui.combo_value_type.setEnabled(not is_child)
-        window.ui.combo_data_type.setEnabled(not is_child)
-        window.ui.combo_unit.setEnabled(not is_child)
-        if is_child:
+    def set_comboboxes_enabled(cls, enabled_state: bool, window: ui.PropertySetWindow):
+        window.ui.combo_value_type.setEnabled(enabled_state)
+        window.ui.combo_data_type.setEnabled(enabled_state)
+        window.ui.combo_unit.setEnabled(enabled_state)
+        if enabled_state:
             t1 = QCoreApplication.translate(
                 "PropertySetWindow",
                 "Attribute was inherited -> Type change not possible",
