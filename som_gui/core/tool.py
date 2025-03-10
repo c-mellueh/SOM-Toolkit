@@ -423,7 +423,7 @@ class AttributeImportSQL:
         pass
 
 
-class AttributeTable:
+class PropertyTable:
     def add_attributes_to_table(self, attributes, table):
         pass
 

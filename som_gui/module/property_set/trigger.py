@@ -13,12 +13,12 @@ def connect():
     table: PsetTableWidget = tool.MainWindow.get_property_set_table_widget()
     table.itemSelectionChanged.connect(
         lambda: core.pset_selection_changed(
-            tool.PropertySet, tool.AttributeTable, tool.MainWindow
+            tool.PropertySet, tool.PropertyTable, tool.MainWindow
         )
     )
     table.itemDoubleClicked.connect(
         lambda: core.table_double_clicked(
-            tool.PropertySet, tool.AttributeTable, tool.PropertySetWindow
+            tool.PropertySet, tool.PropertyTable, tool.PropertySetWindow
         )
     )
     table.edit_started.connect(lambda: core.pset_table_edit_started(tool.PropertySet))

@@ -53,7 +53,7 @@ def pset_tree_double_clicked(
     item: QTreeWidgetItem,
     node: Type[Node],
     property_set_window: Type[tool.PropertySetWindow],
-    attribute_table: Type[tool.AttributeTable],
+    attribute_table: Type[tool.PropertyTable],
 ) -> None:
     """
     Handles the event when a tree item is double-clicked in the property set tree.

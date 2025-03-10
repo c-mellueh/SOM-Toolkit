@@ -69,7 +69,7 @@ def add_value_button_clicked(
 def open_pset_window(
     property_set: SOMcreator.SOMPropertySet,
     property_set_window: Type[tool.PropertySetWindow],
-    attribute_table: Type[tool.AttributeTable],
+    attribute_table: Type[tool.PropertyTable],
 ):
     existing_window = property_set_window.get_window_by_property_set(property_set)
     if existing_window is not None:
@@ -124,7 +124,7 @@ def handle_paste_event(
 def repaint_pset_window(
     window: ui.PropertySetWindow,
     property_set_window: Type[tool.PropertySetWindow],
-    attribute_table: Type[tool.AttributeTable],
+    attribute_table: Type[tool.PropertyTable],
 ):
     table = property_set_window.get_table(window)
     attribute_table_core.update_attribute_table(table, attribute_table)
@@ -147,7 +147,7 @@ def value_type_changed(
 
 def attribute_clicked(
     item: QTableWidgetItem,
-    attribute_table: Type[tool.AttributeTable],
+    attribute_table: Type[tool.PropertyTable],
     property_set_window: Type[tool.PropertySetWindow],
 ):
     active_attribute = attribute_table.get_property_from_item(item)

@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 LINKSTATE = Qt.ItemDataRole.UserRole + 2
 
 
-class AttributeTable(som_gui.core.tool.AttributeTable):
+class PropertyTable(som_gui.core.tool.PropertyTable):
 
     @classmethod
     def get_properties(cls) -> AttributeTableProperties:

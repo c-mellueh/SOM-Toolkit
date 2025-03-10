@@ -58,7 +58,7 @@ def pset_clicked(item: QTableWidgetItem, property_set: Type[tool.PropertySet]):
 
 def pset_selection_changed(
     property_set_tool: Type[tool.PropertySet],
-    attribute_table: Type[tool.AttributeTable],
+    attribute_table: Type[tool.PropertyTable],
     main_window: Type[tool.MainWindow],
 ):
 
@@ -156,7 +156,7 @@ def repaint_pset_table(
 
 def table_double_clicked(
     property_set_tool: Type[tool.PropertySet],
-    attribute_table: Type[tool.AttributeTable],
+    attribute_table: Type[tool.PropertyTable],
     property_set_window: Type[tool.PropertySetWindow],
 ):
     property_set = property_set_tool.get_selecte_property_set_from_table()

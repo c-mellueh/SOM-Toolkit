@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from som_gui.module.property_set_window.ui import PropertySetWindow
 
 
-def init_context_menu(attribute_table: Type[tool.AttributeTable]):
+def init_context_menu(attribute_table: Type[tool.PropertyTable]):
     """
     Defines all standard context menu actions associated with an attribute table.
     """
@@ -39,7 +39,7 @@ def init_context_menu(attribute_table: Type[tool.AttributeTable]):
     )
 
 
-def init_attribute_columns(attribute_table: Type[tool.AttributeTable]):
+def init_attribute_columns(attribute_table: Type[tool.PropertyTable]):
     """
     Defines all attribute columns associated with an attribute table. This can be expanded by plugins
     :param attribute_table:
@@ -66,7 +66,7 @@ def init_attribute_columns(attribute_table: Type[tool.AttributeTable]):
 
 def retranslate_ui(
     table: ui.AttributeTable,
-    attribute_table: Type[tool.AttributeTable],
+    attribute_table: Type[tool.PropertyTable],
     main_window: Type[tool.MainWindow],
 ):
     if table is None:
@@ -76,7 +76,7 @@ def retranslate_ui(
 
 
 def toggle_optionality(
-    item: QTableWidgetItem, attribute_table: Type[tool.AttributeTable]
+    item: QTableWidgetItem, attribute_table: Type[tool.PropertyTable]
 ):
     """
     change the optionality of an attribute by their QTableWidgetItem
@@ -96,7 +96,7 @@ def toggle_optionality(
 def create_mime_data(
     items: list[QTableWidgetItem],
     mime_data: QMimeData,
-    attribute_table: Type[tool.AttributeTable],
+    attribute_table: Type[tool.PropertyTable],
 ) -> QMimeData:
     """
     create MimeData used for Dropping Attributes into different Tables
@@ -109,7 +109,7 @@ def create_mime_data(
 def drop_event(
     event: QDropEvent,
     target_table: ui.AttributeTable,
-    attribute_table: Type[tool.AttributeTable],
+    attribute_table: Type[tool.PropertyTable],
     attribute_tool: Type[tool.Property],
 ):
     """
@@ -163,7 +163,7 @@ def drop_event(
 def create_context_menu(
     table: ui.AttributeTable,
     pos,
-    attribute_table: Type[tool.AttributeTable],
+    attribute_table: Type[tool.PropertyTable],
     util: Type[tool.Util],
 ):
     """
@@ -187,7 +187,7 @@ def create_context_menu(
 
 def activate_item(
     item: QTableWidgetItem,
-    attribute_table: Type[tool.AttributeTable],
+    attribute_table: Type[tool.PropertyTable],
     property_set: Type[tool.PropertySet],
     property_set_window: Type[tool.PropertySetWindow],
 ):
@@ -209,7 +209,7 @@ def activate_item(
 
 
 def update_attribute_table(
-    table: QTableWidget, attribute_table: Type[tool.AttributeTable]
+    table: QTableWidget, attribute_table: Type[tool.PropertyTable]
 ):
     logging.debug(f"Repaint Attribute Table")
 
