@@ -45,3 +45,4 @@ class ClassInfoProperties:
     ifc_line_edits: list = list()
     class_add_infos_functions = list()
     class_info_plugin_list: list[PluginProperty] = list()
+    description: str = ""

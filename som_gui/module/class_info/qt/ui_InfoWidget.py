@@ -18,13 +18,13 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QComboBox, QDialog,
     QDialogButtonBox, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+    QTextEdit, QVBoxLayout, QWidget)
 
 class Ui_ObjectInfo(object):
     def setupUi(self, ObjectInfo):
         if not ObjectInfo.objectName():
             ObjectInfo.setObjectName(u"ObjectInfo")
-        ObjectInfo.resize(881, 180)
+        ObjectInfo.resize(881, 236)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -123,13 +123,15 @@ class Ui_ObjectInfo(object):
 
         self.verticalLayout.addLayout(self.vertical_layout_ifc_box)
 
-        self.vertical_spacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.text_edit_description = QTextEdit(ObjectInfo)
+        self.text_edit_description.setObjectName(u"text_edit_description")
 
-        self.verticalLayout.addItem(self.vertical_spacer)
+        self.verticalLayout.addWidget(self.text_edit_description)
 
         self.button_box = QDialogButtonBox(ObjectInfo)
         self.button_box.setObjectName(u"button_box")
         self.button_box.setOrientation(Qt.Orientation.Horizontal)
+        self.button_box.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
 
         self.verticalLayout.addWidget(self.button_box)
 
@@ -148,5 +150,6 @@ class Ui_ObjectInfo(object):
         self.button_gruppe.setText(QCoreApplication.translate("ObjectInfo", u"Group", None))
         self.label_ifc_mapping.setText(QCoreApplication.translate("ObjectInfo", u"IFC Mapping", None))
         self.button_add_ifc.setText(QCoreApplication.translate("ObjectInfo", u"+", None))
+        self.text_edit_description.setPlaceholderText(QCoreApplication.translate("ObjectInfo", u"Description", None))
     # retranslateUi
 

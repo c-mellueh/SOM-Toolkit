@@ -444,12 +444,13 @@ class Class(som_gui.core.tool.Class):
         pset_name = data_dict.get("ident_pset_name")
         identifier_name = data_dict.get("ident_property_name")
         is_group = data_dict.get("is_group")
+        description = data_dict.get("description") or ""
 
         som_class.name = name if name else som_class.name
         som_class.ifc_mapping = (
             ifc_mappings if ifc_mappings is not None else som_class.ifc_mapping
         )
-
+        som_class.description = description
         if is_group and not som_class.is_concept:
             som_class.identifier_property = str(uuid.uuid4())
             return
