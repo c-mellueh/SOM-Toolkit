@@ -102,9 +102,9 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
                 ]
                 tool.Util.create_completer(property_names, ui.combo_box_property)
         else:
-            active_object = cls.get_active_class()
+            active_class = cls.get_active_class()
             property_set: SOMcreator.SOMPropertySet = {
-                p.name: p for p in active_object.get_property_sets(filter=False)
+                p.name: p for p in active_class.get_property_sets(filter=False)
             }.get(pset_name)
             property_names = sorted(
                 [a.name for a in property_set.get_properties(filter=False)]
@@ -245,6 +245,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
 
         if active_class:
             prop.description = active_class.description
+
     @classmethod
     def update_dialog(cls, dialog: ClassInfoDialog):
         prop = cls.get_properties()
@@ -289,7 +290,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
 
     @classmethod
     def trigger_class_info_widget(cls, mode: int):
-        trigger.create_object_info_widget(mode)
+        trigger.create_class_info_widget(mode)
 
     @classmethod
     def are_plugin_requirements_met(

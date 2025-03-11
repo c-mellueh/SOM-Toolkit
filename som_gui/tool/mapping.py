@@ -60,7 +60,7 @@ class Mapping(som_gui.core.tool.Mapping):
         return cls.get_properties().pset_tree
 
     @classmethod
-    def get_selected_object(cls) -> SOMcreator.SOMClass | None:
+    def get_selected_class(cls) -> SOMcreator.SOMClass | None:
         tree = cls.get_object_tree()
         selected_items = tree.selectedItems()
         if not selected_items:
@@ -68,7 +68,7 @@ class Mapping(som_gui.core.tool.Mapping):
         return selected_items[0].data(0, CLASS_REFERENCE)
 
     @classmethod
-    def fill_object_tree(cls, root_objects: list[SOMcreator.SOMClass]) -> None:
+    def fill_class_tree(cls, root_objects: list[SOMcreator.SOMClass]) -> None:
         tree = cls.get_object_tree()
         cls.update_tree(set(root_objects), tree.invisibleRootItem(), tree)
 

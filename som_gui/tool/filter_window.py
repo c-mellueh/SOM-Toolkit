@@ -53,10 +53,10 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         return cls.get().ui.project_table
 
     @classmethod
-    def get_object_tree(cls) -> ui.ObjectTreeView | None:
+    def get_class_tree(cls) -> ui.ClassTreeView | None:
         if not cls.get():
             return None
-        return cls.get().ui.object_tree
+        return cls.get().ui.class_tree
 
     @classmethod
     def get_pset_tree(cls) -> ui.PsetTreeView:
@@ -81,13 +81,13 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         )
 
     @classmethod
-    def connect_object_tree(cls, project: SOMcreator.SOMProject):
-        object_tree = cls.get_object_tree()
-        object_tree.setModel(ui.ObjectModel(project))
+    def connect_class_tree(cls, project: SOMcreator.SOMProject):
+        object_tree = cls.get_class_tree()
+        object_tree.setModel(ui.ClassModel(project))
         object_tree.setSelectionMode(object_tree.SelectionMode.SingleSelection)
         object_tree.setSelectionBehavior(object_tree.SelectionBehavior.SelectRows)
         object_tree.frozen_view.selectionModel().selectionChanged.connect(
-            trigger.object_tree_clicked
+            trigger.class_tree_clicked
         )
         object_tree.frozen_view.selectionModel().selectionChanged.connect(
             object_tree.update_selection
@@ -190,15 +190,15 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         menu.exec(pos)
 
     @classmethod
-    def set_active_object(cls, obj: SOMcreator.SOMClass):
-        cls.get_properties().active_object = obj
+    def set_active_class(cls, obj: SOMcreator.SOMClass):
+        cls.get_properties().active_class = obj
 
     @classmethod
-    def get_active_object(cls) -> SOMcreator.SOMClass:
-        return cls.get_properties().active_object
+    def get_active_class(cls) -> SOMcreator.SOMClass:
+        return cls.get_properties().active_class
 
     @classmethod
-    def set_object_label(cls, value: str):
+    def set_class_label(cls, value: str):
         cls.get().ui.label.setText(value)
 
     @classmethod
@@ -262,7 +262,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
     @classmethod
     def create_tree_selection_trigger(cls, widget: property_ui.PropertyWidget):
         widget.ui.tree_widget_object.itemSelectionChanged.connect(
-            lambda: trigger.filter_tab_object_tree_selection_changed(widget)
+            lambda: trigger.filter_tab_class_tree_selection_changed(widget)
         )
 
     @classmethod
@@ -405,7 +405,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         )
 
     @classmethod
-    def style_object_tree(cls, item: QTreeWidgetItem):
+    def style_class_tree(cls, item: QTreeWidgetItem):
         entity_0: SOMcreator.SOMClass = item.data(0, CLASS_REFERENCE)
         entity_1: SOMcreator.SOMClass = item.data(1, CLASS_REFERENCE)
         for column, filter_state in enumerate(
@@ -418,7 +418,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
             cls.set_tree_item_column_color(item, 0, YELLOW)
 
         for child_index in range(item.childCount()):
-            cls.style_object_tree(item.child(child_index))
+            cls.style_class_tree(item.child(child_index))
 
     @classmethod
     def create_combobox_widget(cls, checkstate0: bool | None, checkstate1: bool | None):
@@ -455,7 +455,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
             )
 
     @classmethod
-    def export_object_filter_differences(
+    def export_class_filter_differences(
         cls, file: TextIO, property_compare: Type[tool.PropertyCompare]
     ):
         project_0 = cls.get_project(0)
@@ -496,7 +496,13 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
             cls.export_property_filter_differnces(file, property_list)
 
     @classmethod
-    def export_property_filter_differnces(cls, file, property_list:list[tuple[SOMcreator.SOMProperty|None, SOMcreator.SOMProperty|None]]):
+    def export_property_filter_differnces(
+        cls,
+        file,
+        property_list: list[
+            tuple[SOMcreator.SOMProperty | None, SOMcreator.SOMProperty | None]
+        ],
+    ):
         matches = cls.get_match_list()
 
         if property_list is None:

@@ -33,12 +33,12 @@ def check_file(
 
     modelcheck.build_data_dict(modelcheck_window.get_item_checkstate_dict())
 
-    modelcheck.set_object_checked_count(0)
-    modelcheck.set_object_count(modelcheck.get_element_count())
+    modelcheck.set_class_checked_count(0)
+    modelcheck.set_class_count(modelcheck.get_element_count())
     modelcheck.set_progress(runner, 0)
 
     entities = file.by_type("IfcElement")
-    modelcheck.set_object_count(len(entities))
+    modelcheck.set_class_count(len(entities))
     check_entities(runner, entities, modelcheck)
 
     for plugin_func in modelcheck.get_file_check_plugins():
@@ -98,18 +98,18 @@ def check_element(
         modelcheck.ident_issue(element.GlobalId, main_pset_name, main_property_name)
         return
 
-    obj_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(main_property_value)
+    class_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(main_property_value)
 
-    if obj_rep is None:
+    if class_rep is None:
         modelcheck.ident_unknown(
             element.GlobalId, main_pset_name, main_property_name, main_property_value
         )
         return
 
-    if obj_rep not in data_dict:  # Object Type shouldn't be tested
+    if class_rep not in data_dict:  # Class Type shouldn't be tested
         return
 
     for plugin_func in modelcheck.get_entity_check_plugins():
         plugin_func(element)
 
-    modelcheck.check_for_properties(element, obj_rep)
+    modelcheck.check_for_properties(element, class_rep)

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import SOMcreator
 
 if TYPE_CHECKING:
-    from .ui import ModelcheckWindow, PsetTree, ObjectTree
+    from .ui import ModelcheckWindow, PsetTree, ClassTree
     from PySide6.QtCore import QThreadPool, QItemSelectionModel
     from PySide6.QtWidgets import QPushButton, QLineEdit, QLabel
     from PySide6.QtGui import QStandardItemModel, QAction
@@ -27,11 +27,11 @@ class ModelcheckWindowProperties:
     status_label: QLabel = None
     ifc_import_runners: list[IfcImportRunner] = list()
     initial_paint = True
-    object_tree: ObjectTree = None
+    class_tree: ClassTree = None
     object_tree_model: QStandardItemModel = None
     object_tree_selection_model: QItemSelectionModel = None
     property_set_tree: PsetTree = None
     pset_tree_model: QStandardItemModel = None
     pset_tree_selection_model: QStandardItemModel = None
     actions: dict[str, QAction] = dict()
-    object_label = None
+    class_label = None

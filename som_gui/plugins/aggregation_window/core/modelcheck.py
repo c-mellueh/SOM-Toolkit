@@ -33,8 +33,8 @@ def check_file(
     modelcheck_plugin: Type[aw_tool.Modelcheck],
 ):
     file = runner.file
-    modelcheck.set_object_checked_count(0)
-    modelcheck.set_object_count(len(modelcheck_plugin.get_all_groups(file)))
+    modelcheck.set_class_checked_count(0)
+    modelcheck.set_class_count(len(modelcheck_plugin.get_all_groups(file)))
     modelcheck.set_progress(runner, 0)
     modelcheck_plugin.build_group_structure(file)
 

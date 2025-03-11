@@ -23,7 +23,7 @@ PROPERTY_KIND_MAPPING = {
 }
 
 
-def transform_objects_to_classes(
+def transform_som_class_to_bsdd_class(
     dictionary: bsdd.Dictionary,
     objects: list[SOMcreator.SOMClass],
     predefined_psets: list[SOMcreator.SOMPropertySet],
@@ -64,7 +64,10 @@ def _create_property(som_property: SOMcreator.SOMProperty) -> bsdd.Property:
     p.property = som_property
     p.Definition = som_property.description
     p.DataType = DATATYPE_MAPPING[som_property.data_type]
-    if som_property.value_type == value_constants.FORMAT and som_property.allowed_values:
+    if (
+        som_property.value_type == value_constants.FORMAT
+        and som_property.allowed_values
+    ):
         p.Pattern = "|".join(som_property.allowed_values)
     p.PropertyValueKind = PROPERTY_KIND_MAPPING[som_property.value_type]
     return p
@@ -133,9 +136,7 @@ def _create_properties(
         else:
             new_property = _create_property(som_property)
             properties.append(new_property)
-    class_properties = [
-        _create_class_property(p, properties) for p in class_properties
-    ]
+    class_properties = [_create_class_property(p, properties) for p in class_properties]
     return properties, class_properties
 
 

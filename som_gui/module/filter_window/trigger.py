@@ -55,12 +55,12 @@ def tree_mouse_release_event(index):
     core.tree_mouse_release_event(index, tool.FilterWindow)
 
 
-def update_object_tree():
-    core.update_object_tree(tool.FilterWindow)
+def update_class_tree():
+    core.update_class_tree(tool.FilterWindow)
 
 
-def object_tree_clicked(selected, deselected):
-    core.object_tree_selection_changed(selected, tool.FilterWindow)
+def class_tree_clicked(selected, deselected):
+    core.class_tree_selection_changed(selected, tool.FilterWindow)
     pass
 
 
@@ -79,7 +79,7 @@ def settings_combobox_changed():
     core.settings_combobox_changed(tool.FilterWindow, tool.Project, tool.Util)
 
 
-def filter_tab_object_tree_selection_changed(widget):
-    core.filter_tab_object_tree_selection_changed(
+def filter_tab_class_tree_selection_changed(widget):
+    core.filter_tab_class_tree_selection_changed(
         widget, tool.PropertyCompare, tool.FilterCompare
     )

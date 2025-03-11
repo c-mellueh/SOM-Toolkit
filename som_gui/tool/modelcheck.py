@@ -81,7 +81,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         object_count = tool.Modelcheck.get_object_count()
         old_progress_value = int(checked_count / object_count * 100)
         new_progress_value = int((checked_count + 1) / object_count * 100)
-        cls.set_object_checked_count(checked_count + 1)
+        cls.set_class_checked_count(checked_count + 1)
         if new_progress_value > old_progress_value:
             cls.set_progress(runner, new_progress_value)
 
@@ -638,7 +638,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         return cls.get_properties().object_checked_count
 
     @classmethod
-    def set_object_checked_count(cls, value: int):
+    def set_class_checked_count(cls, value: int):
         cls.get_properties().object_checked_count = value
 
     @classmethod
@@ -646,7 +646,7 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         return cls.get_properties().object_count
 
     @classmethod
-    def set_object_count(cls, value: int):
+    def set_class_count(cls, value: int):
         cls.get_properties().object_count = value
 
     @classmethod

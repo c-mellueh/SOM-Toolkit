@@ -31,7 +31,7 @@ def connect():
     core.add_shortcuts(
         tool.Class, tool.Util, tool.Search, tool.MainWindow, tool.Project
     )
-    core.init_main_window(tool.Class,tool.ClassInfo, tool.MainWindow)
+    core.init_main_window(tool.Class, tool.ClassInfo, tool.MainWindow)
 
 
 def repaint_event():
@@ -50,7 +50,7 @@ def retranslate_ui():
     core.retranslate_ui(tool.Class)
 
 
-def create_object_called(data_dict: ClassDataDict):
+def create_class_called(data_dict: ClassDataDict):
     core.create_class(
         data_dict,
         tool.Class,
@@ -61,9 +61,9 @@ def create_object_called(data_dict: ClassDataDict):
     )
 
 
-def copy_object_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
+def copy_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
     core.copy_class(som_class, data_dict, tool.Class, tool.ClassInfo)
 
 
-def modify_object_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
+def modify_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
     core.modify_class(som_class, data_dict, tool.Class, tool.ClassInfo)

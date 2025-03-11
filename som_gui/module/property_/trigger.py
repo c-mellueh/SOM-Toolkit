@@ -30,7 +30,7 @@ def export_property_differences(file):
 def object_tree_selection_changed(
     widget,
 ):
-    core.activate_object_in_compare_tree(widget, tool.PropertyCompare)
+    core.activate_class_in_compare_tree(widget, tool.PropertyCompare)
 
 
 def pset_tree_selection_changed(widget):

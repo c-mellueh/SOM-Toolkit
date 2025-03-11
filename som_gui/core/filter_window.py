@@ -32,8 +32,8 @@ def retranslate_ui(filter_window: Type[tool.FilterWindow], util: Type[tool.Util]
         title = QCoreApplication.translate("FilterWindow", "Project Filter")
         filter_window.get().ui.retranslateUi(filter_window.get())
         filter_window.get().setWindowTitle(util.get_window_title(title))
-    if filter_window.get_object_tree():
-        filter_window.get_object_tree().model().retranslate_ui()
+    if filter_window.get_class_tree():
+        filter_window.get_class_tree().model().retranslate_ui()
     if filter_window.get_pset_tree():
         filter_window.get_pset_tree().model().retranslate_ui()
 
@@ -52,10 +52,10 @@ def open_window(
 
     widget = filter_window.create_widget()
     util.add_shortcut(
-        "Ctrl+F", widget, lambda: search_object(filter_window, search, project)
+        "Ctrl+F", widget, lambda: search_class(filter_window, search, project)
     )
     filter_window.connect_project_table(project.get())
-    filter_window.connect_object_tree(project.get())
+    filter_window.connect_class_tree(project.get())
     filter_window.connect_pset_tree(project.get())
     retranslate_ui(filter_window, util)
     widget.show()
@@ -97,7 +97,7 @@ def filter_changed_externally(filter_window: Type[tool.FilterWindow]):
         model.endInsertColumns()
 
 
-def search_object(
+def search_class(
     filter_window: Type[tool.FilterWindow],
     search: Type[tool.Search],
     project: Type[tool.Project],
@@ -105,7 +105,7 @@ def search_object(
     obj = search.search_class(list(project.get().get_classes(filter=True)))
     if obj is None:
         return
-    object_tree = filter_window.get_object_tree()
+    class_tree = filter_window.get_class_tree()
     parent_list = list()
     parent = obj.parent
     while parent is not None:
@@ -117,16 +117,16 @@ def search_object(
 
     for item in reversed(parent_list):
         index: QModelIndex = item.index
-        object_tree.expand(index)
+        class_tree.expand(index)
 
     index: QModelIndex = obj.index
     flags = (
-        object_tree.selectionModel().SelectionFlag.ClearAndSelect
-        | object_tree.selectionModel().SelectionFlag.Rows
+        class_tree.selectionModel().SelectionFlag.ClearAndSelect
+        | class_tree.selectionModel().SelectionFlag.Rows
     )
-    object_tree.selectionModel().select(index, flags)
-    object_tree.scrollTo(
-        index.sibling(index.row(), 0), object_tree.ScrollHint.EnsureVisible
+    class_tree.selectionModel().select(index, flags)
+    class_tree.scrollTo(
+        index.sibling(index.row(), 0), class_tree.ScrollHint.EnsureVisible
     )
 
 
@@ -172,11 +172,11 @@ def pt_context_menu(
     filter_window.create_context_menu(menu_list, pos)
 
 
-def update_object_tree(filter_window: Type[tool.FilterWindow]):
-    filter_window.get_object_tree().model().update()
+def update_class_tree(filter_window: Type[tool.FilterWindow]):
+    filter_window.get_class_tree().model().update()
 
 
-def object_tree_selection_changed(
+def class_tree_selection_changed(
     selected: QItemSelection, filter_window: Type[tool.FilterWindow]
 ):
     indexes = selected.indexes()
@@ -184,8 +184,8 @@ def object_tree_selection_changed(
         return
     index = indexes[0]
     obj: SOMcreator.SOMClass = index.internalPointer()
-    filter_window.set_active_object(obj)
-    filter_window.set_object_label(obj.name)
+    filter_window.set_active_class(obj)
+    filter_window.set_class_label(obj.name)
     update_pset_tree(filter_window)
 
 
@@ -242,25 +242,25 @@ def create_compare_widget(
     widget = filter_compare.create_widget()
 
     # get UI-elements
-    object_tree_widget = property_compare.get_object_tree(widget)
+    class_tree_widget = property_compare.get_class_tree(widget)
     pset_tree = property_compare.get_pset_tree(widget)
     value_table = property_compare.get_value_table(widget)
 
     # Add Wordwrap to Header
 
-    # fill ObjectTree with objects
-    property_compare.create_object_lists()
-    property_compare.fill_object_tree(object_tree_widget, add_missing=False)
+    # fill ClassTree with classes
+    property_compare.create_class_lists()
+    property_compare.fill_class_tree(class_tree_widget, add_missing=False)
 
     # define and set header labels & add wordwrap
-    filter_compare.make_header_wordwrap(object_tree_widget)
+    filter_compare.make_header_wordwrap(class_tree_widget)
     filter_compare.make_header_wordwrap(pset_tree)
     header_labels = [
         property_compare.get_header_name_from_project(project0),
         property_compare.get_header_name_from_project(project1),
     ]
     property_compare.set_header_labels(
-        [object_tree_widget, pset_tree], [value_table], header_labels
+        [class_tree_widget, pset_tree], [value_table], header_labels
     )
 
     filter_compare.create_tree_selection_trigger(widget)
@@ -269,25 +269,23 @@ def create_compare_widget(
     filter_compare.find_matching_phases(project0, project1)
     filter_compare.find_matching_usecases(project0, project1)
 
-    filter_compare.append_collumns(object_tree_widget, pset_tree)
-    for child_index in range(object_tree_widget.invisibleRootItem().childCount()):
-        child = object_tree_widget.invisibleRootItem().child(child_index)
+    filter_compare.append_collumns(class_tree_widget, pset_tree)
+    for child_index in range(class_tree_widget.invisibleRootItem().childCount()):
+        child = class_tree_widget.invisibleRootItem().child(child_index)
         filter_compare.fill_tree_with_checkstates(child)
-        filter_compare.style_object_tree(child)
-    for col in range(2, object_tree_widget.columnCount()):
-        object_tree_widget.setColumnWidth(col, 58)
+        filter_compare.style_class_tree(child)
+    for col in range(2, class_tree_widget.columnCount()):
+        class_tree_widget.setColumnWidth(col, 58)
 
     widget.ui.table_widget_values.hide()
 
 
-def filter_tab_object_tree_selection_changed(
+def filter_tab_class_tree_selection_changed(
     widget: property_ui.PropertyWidget,
     property_compare: Type[tool.PropertyCompare],
     filter_compare: Type[tool.FilterCompare],
 ):
-    obj = property_compare.get_selected_entity(
-        property_compare.get_object_tree(widget)
-    )
+    obj = property_compare.get_selected_entity(property_compare.get_class_tree(widget))
     tree_widget = property_compare.get_pset_tree(widget)
     pset_list = property_compare.get_pset_list(obj)
 
@@ -306,9 +304,9 @@ def export_filter_differences(
     filter_compare: Type[tool.FilterCompare],
     property_compare: Type[tool.PropertyCompare],
 ):
-    name = QCoreApplication.translate("FilterWindow", "OBJECT FILTER")
+    name = QCoreApplication.translate("FilterWindow", "CLASS FILTER")
     file.write(f"\n{name:46s}\n\n")
-    filter_compare.export_object_filter_differences(file, property_compare)
+    filter_compare.export_class_filter_differences(file, property_compare)
     file.write("\n")
 
 

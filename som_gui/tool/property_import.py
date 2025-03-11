@@ -365,7 +365,7 @@ class PropertyImportResults(som_gui.core.tool.PropertyImportResults):
         return tuple(outputs)
 
     @classmethod
-    def set_object_count_label_text(cls, text: str):
+    def set_class_count_label_text(cls, text: str):
         label = cls.get_results_window().ui.label_object_count
         label.setText(label.tr(text))
 
@@ -584,7 +584,7 @@ class PropertyImportSQL(som_gui.core.tool.PropertyImportSQL):
         return cls.get_properties().connection.cursor()
 
     @classmethod
-    def set_current_object_filter(
+    def set_current_class_filter(
         cls, usecases: list[SOMcreator.UseCase], phases: list[SOMcreator.Phase]
     ):
         cls.get_properties().active_usecases = usecases
@@ -1105,7 +1105,7 @@ class PropertyImportSQL(som_gui.core.tool.PropertyImportSQL):
         cls.disconnect_from_database()
 
     @classmethod
-    def count_objects(cls, ifc_type, identifier) -> int:
+    def count_classes(cls, ifc_type, identifier) -> int:
         logging.debug("Request ObjectCount")
 
         cls.connect_to_data_base(cls.get_database_path())

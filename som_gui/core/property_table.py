@@ -99,8 +99,8 @@ def create_mime_data(
     """
     create MimeData used for Dropping Properties into different Tables
     """
-    objects = {property_table.get_property_from_item(item) for item in items}
-    mime_data.setProperty(MIME_DATA_KEY, objects)
+    classes = {property_table.get_property_from_item(item) for item in items}
+    mime_data.setProperty(MIME_DATA_KEY, classes)
     return mime_data
 
 

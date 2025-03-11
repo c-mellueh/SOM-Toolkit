@@ -398,19 +398,19 @@ class Class(som_gui.core.tool.Class):
         cls,
         data_dict: ClassDataDict,
     ):
-        trigger.create_object_called(data_dict)
+        trigger.create_class_called(data_dict)
 
     @classmethod
     def trigger_class_copy(
         cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
     ):
-        trigger.copy_object_called(som_class, data_dict)
+        trigger.copy_class_called(som_class, data_dict)
 
     @classmethod
     def trigger_class_modification(
         cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
     ):
-        trigger.modify_object_called(som_class, data_dict)
+        trigger.modify_class_called(som_class, data_dict)
 
     @classmethod
     def copy_group(cls, som_class: SOMcreator.SOMClass) -> SOMcreator.SOMClass:

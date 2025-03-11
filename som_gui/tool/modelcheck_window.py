@@ -35,7 +35,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return cls.get_properties().actions[name]
 
     @classmethod
-    def connect_object_tree(cls, tree_widget: ui.ObjectTree):
+    def connect_class_tree(cls, tree_widget: ui.ClassTree):
         prop = cls.get_properties()
         if prop.object_tree_model is None:
             prop.object_tree_model = tree_widget.model()
@@ -64,7 +64,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         cls,
         pos,
         funcion_list: list[list[str, Callable]],
-        widget: ui.ObjectTree | ui.PsetTree,
+        widget: ui.ClassTree | ui.PsetTree,
     ):
         global_pos = widget.viewport().mapToGlobal(pos)
         menu = QMenu()
@@ -76,19 +76,19 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         menu.exec(global_pos)
 
     @classmethod
-    def expand_selection(cls, widget: ui.ObjectTree | ui.PsetTree):
+    def expand_selection(cls, widget: ui.ClassTree | ui.PsetTree):
         indexes = [i for i in widget.selectedIndexes()]
         for index in indexes:
             widget.expand(index)
 
     @classmethod
-    def collapse_selection(cls, widget: ui.ObjectTree | ui.PsetTree):
+    def collapse_selection(cls, widget: ui.ClassTree | ui.PsetTree):
         indexes = [i for i in widget.selectedIndexes()]
         for index in indexes:
             widget.collapse(index)
 
     @classmethod
-    def check_selection(cls, widget: ui.ObjectTree | ui.PsetTree):
+    def check_selection(cls, widget: ui.ClassTree | ui.PsetTree):
         indexes = [i for i in widget.selectedIndexes()]
         for index in indexes:
             if index.column() != 0:
@@ -98,7 +98,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             )
 
     @classmethod
-    def uncheck_selection(cls, widget: ui.ObjectTree | ui.PsetTree):
+    def uncheck_selection(cls, widget: ui.ClassTree | ui.PsetTree):
         indexes = [i for i in widget.selectedIndexes()]
         for index in indexes:
             if index.column() != 0:
@@ -108,11 +108,11 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             )
 
     @classmethod
-    def resize_object_tree(cls, tree):
+    def resize_class_tree(cls, tree):
         tree.resizeColumnToContents(0)
 
     @classmethod
-    def get_selected_items(cls, widget: ui.ObjectTree | ui.PsetTree):
+    def get_selected_items(cls, widget: ui.ClassTree | ui.PsetTree):
         return [i.data(CLASS_REFERENCE) for i in widget.selectedIndexes()]
 
     @classmethod
@@ -193,24 +193,24 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def set_pset_tree_title(cls, text: str):
         prop = cls.get_properties()
-        prop.object_label.setText(text)
+        prop.class_label.setText(text)
 
     @classmethod
     def show_pset_tree_title(cls, show: bool):
-        cls.get_properties().object_label.setVisible(show)
+        cls.get_properties().class_label.setVisible(show)
 
     @classmethod
-    def set_selected_object(cls, obj: SOMcreator.SOMClass):
+    def set_selected_class(cls, obj: SOMcreator.SOMClass):
         prop = cls.get_properties()
         prop.selected_object = obj
 
     @classmethod
-    def get_selected_object(cls) -> SOMcreator.SOMClass | None:
+    def get_selected_class(cls) -> SOMcreator.SOMClass | None:
         return cls.get_properties().selected_object
 
     @classmethod
-    def get_object_tree(cls):
-        return cls.get_properties().object_tree
+    def get_class_tree(cls):
+        return cls.get_properties().class_tree
 
     @classmethod
     def get_pset_tree(cls):
@@ -275,8 +275,8 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         window = ui.ModelcheckWindow()
         prop.active_window = window
         prop.property_set_tree = window.ui.property_set_tree
-        prop.object_tree = window.ui.object_tree
-        prop.object_label = window.ui.label_object
+        prop.class_tree = window.ui.object_tree
+        prop.class_label = window.ui.label_object
         return prop.active_window
 
     @classmethod
@@ -332,7 +332,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         return items[0], obj
 
     @classmethod
-    def fill_object_tree(
+    def fill_class_tree(
         cls,
         entities: set[SOMcreator.SOMClass],
         parent_item: QStandardItem,
@@ -364,7 +364,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
                 tree.isExpanded(parent_item.index())
                 or parent_item == model.invisibleRootItem()
             ):
-                cls.fill_object_tree(
+                cls.fill_class_tree(
                     set(obj.get_children(filter=False)), class_item, model, tree
                 )
 

@@ -16,7 +16,7 @@ class ModelcheckWindow(QWidget):
         self.setWindowIcon(get_icon())
 
 
-class ObjectTree(QTreeView):
+class ClassTree(QTreeView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         model = QStandardItemModel()

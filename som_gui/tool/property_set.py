@@ -105,10 +105,10 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def check_if_pset_allready_exists(
-        cls, pset_name: str, active_object: SOMcreator.SOMClass
+        cls, pset_name: str, active_class: SOMcreator.SOMClass
     ):
         return bool(
-            pset_name in {p.name for p in active_object.get_property_sets(filter=False)}
+            pset_name in {p.name for p in active_class.get_property_sets(filter=False)}
         )
 
     @classmethod
@@ -156,10 +156,10 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def get_property_sets(cls) -> set[SOMcreator.SOMPropertySet]:
-        active_object = tool.Class.get_active_class()
-        if active_object is None:
+        active_class = tool.Class.get_active_class()
+        if active_class is None:
             return set()
-        return set(active_object.get_property_sets(filter=True))
+        return set(active_class.get_property_sets(filter=True))
 
     @classmethod
     def get_table(cls):

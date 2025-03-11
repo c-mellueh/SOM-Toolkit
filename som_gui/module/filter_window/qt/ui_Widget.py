@@ -3,22 +3,22 @@
 ################################################################################
 ## Form generated from reading UI file 'Widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-                            QMetaObject, QObject, QPoint, QRect,
-                            QSize, QTime, QUrl, Qt)
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-                           QFont, QFontDatabase, QGradient, QIcon,
-                           QImage, QKeySequence, QLinearGradient, QPainter,
-                           QPalette, QPixmap, QRadialGradient, QTransform)
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QHeaderView, QLabel,
-                               QSizePolicy, QSplitter, QVBoxLayout, QWidget)
+    QSizePolicy, QSplitter, QVBoxLayout, QWidget)
 
-from som_gui.module.filter_window.ui import (ObjectTreeView, ProjectView, PsetTreeView)
+from som_gui.module.filter_window.ui import (ClassTreeView, ProjectView, PsetTreeView)
 
 class Ui_FilterWindow(object):
     def setupUi(self, FilterWindow):
@@ -38,9 +38,9 @@ class Ui_FilterWindow(object):
         self.splitter = QSplitter(self.splitter_2)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Orientation.Horizontal)
-        self.object_tree = ObjectTreeView(self.splitter)
-        self.object_tree.setObjectName(u"object_tree")
-        self.splitter.addWidget(self.object_tree)
+        self.class_tree = ClassTreeView(self.splitter)
+        self.class_tree.setObjectName(u"class_tree")
+        self.splitter.addWidget(self.class_tree)
         self.verticalLayoutWidget = QWidget(self.splitter)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
         self.verticalLayout = QVBoxLayout(self.verticalLayoutWidget)
@@ -60,6 +60,7 @@ class Ui_FilterWindow(object):
         self.splitter_2.addWidget(self.splitter)
 
         self.verticalLayout_2.addWidget(self.splitter_2)
+
 
         self.retranslateUi(FilterWindow)
 

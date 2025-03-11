@@ -382,7 +382,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
             cls.set_value_list(property_1, value_list)
 
     @classmethod
-    def create_object_lists(cls) -> None:
+    def create_class_lists(cls) -> None:
         object_list = cls.get_object_lists()
         if object_list:
             return
@@ -450,7 +450,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
             )
 
     @classmethod
-    def fill_object_tree(cls, tree: QTreeWidget, add_missing: bool = True):
+    def fill_class_tree(cls, tree: QTreeWidget, add_missing: bool = True):
         proj0, proj1 = cls.get_project(0), cls.get_project(1)
         tree_root = tree.invisibleRootItem()
         root_objects = tool.Project.get_root_classes(False, proj0)
@@ -537,7 +537,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     def add_missing_objects_to_tree(
         cls, tree: QTreeWidget, root_objects: list[SOMcreator.SOMClass]
     ):
-        missing_objects = cls.get_missing_objects(1)
+        missing_objects = cls.get_missing_classes(1)
         for obj in root_objects:
             if obj in missing_objects:
                 parent = cls.find_existing_parent_item(obj)
@@ -929,7 +929,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         return identical
 
     @classmethod
-    def export_object_differences(cls, file: TextIO):
+    def export_class_differences(cls, file: TextIO):
         project0 = cls.get_project(0)
         object_dict = cls.get_object_dict()
 
@@ -988,7 +988,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     # GETTER & SETTER
 
     @classmethod
-    def get_object_tree(cls, widget: ui.PropertyWidget):
+    def get_class_tree(cls, widget: ui.PropertyWidget):
         return widget.ui.tree_widget_object
 
     @classmethod
@@ -1108,7 +1108,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         return cls.get_properties().object_lists
 
     @classmethod
-    def get_missing_objects(cls, index: int) -> list[SOMcreator.SOMClass]:
+    def get_missing_classes(cls, index: int) -> list[SOMcreator.SOMClass]:
         ol = cls.get_object_lists()
         if cls.get_properties().missing_objects[index] is None:
             missing = [o[index] for o in ol if o[index - 1] is None]

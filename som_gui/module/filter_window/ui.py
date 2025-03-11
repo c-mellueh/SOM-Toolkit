@@ -128,7 +128,7 @@ class FilterTreeView(QTreeView):
             deselected, QItemSelectionModel.SelectionFlag.Deselect
         )
 
-    def setModel(self, model: ObjectModel | PsetModel):
+    def setModel(self, model: ClassModel | PsetModel):
         super().setModel(model)
         self.frozen_view.setModel(model)
         for i in range(model.columnCount()):
@@ -147,15 +147,15 @@ class FilterTreeView(QTreeView):
         trigger.tree_mouse_release_event(index)
 
 
-class ObjectTreeView(FilterTreeView):
+class ClassTreeView(FilterTreeView):
     def __init__(self, parent):
         super().__init__(parent, 2)
 
     def enterEvent(self, event):
         super().enterEvent(event)
-        trigger.update_object_tree()
+        trigger.update_class_tree()
 
-    def model(self) -> ObjectModel:
+    def model(self) -> ClassModel:
         return super().model()
 
 
@@ -221,7 +221,7 @@ class ProjectModel(QAbstractTableModel):
         phase = self.project.get_phase_by_index(index.row())
         usecase = self.project.get_usecase_by_index(index.column())
         self.project.set_filter_state(phase, usecase, bool(value))
-        trigger.update_object_tree()
+        trigger.update_class_tree()
         trigger.update_pset_tree()
         return True
 
@@ -354,18 +354,18 @@ class TreeModel(QAbstractItemModel):
         ]
         logging.debug(f"Set {node} {phase.name}:{usecase.name} to {bool(value)}")
         node.set_filter_state(phase, usecase, bool(value))
-        trigger.update_object_tree()
+        trigger.update_class_tree()
         trigger.update_pset_tree()
         return True
 
 
-class ObjectModel(TreeModel):
+class ClassModel(TreeModel):
     def __init__(self, project: SOMcreator.SOMProject):
         super().__init__(project, 2, ["h0", "h1"])
-        self.root_objects = list(self.project.get_root_classes(filter=False))
+        self.root_classes = list(self.project.get_root_classes(filter=False))
 
     def retranslate_ui(self):
-        h0 = QCoreApplication.translate("FilterWindow", "Object")
+        h0 = QCoreApplication.translate("FilterWindow", "Class")
         h1 = QCoreApplication.translate("FilterWindow", "Identifier")
         self.column_titles = [h0, h1]
 
@@ -376,11 +376,11 @@ class ObjectModel(TreeModel):
 
     def update(self):
         logging.debug("Update")
-        self.root_objects = list(self.project.get_root_classes(filter=False))
+        self.root_classes = list(self.project.get_root_classes(filter=False))
         super().update()
 
     def get_root(self):
-        return self.root_objects
+        return self.root_classes
 
     # Returns the number of children (rows) under the given index
     def rowCount(self, parent=QModelIndex()):
@@ -437,7 +437,7 @@ class ObjectModel(TreeModel):
 class PsetModel(TreeModel):
     def __init__(self, project: SOMcreator.SOMProject):
         super().__init__(project, 1, ["h1"])
-        self.active_object = tool.FilterWindow.get_active_object()
+        self.active_class = tool.FilterWindow.get_active_class()
 
     def retranslate_ui(self):
         h0 = QCoreApplication.translate("FilterWindow", "PropertySet/Property")
@@ -457,14 +457,14 @@ class PsetModel(TreeModel):
 
     def update(self):
         logging.debug("Update")
-        self.active_object = tool.FilterWindow.get_active_object()
+        self.active_class = tool.FilterWindow.get_active_class()
         super().update()
 
     def get_property_sets(self) -> list[SOMcreator.SOMPropertySet]:
-        if tool.FilterWindow.get_active_object() is None:
+        if tool.FilterWindow.get_active_class() is None:
             return []
         return list(
-            tool.FilterWindow.get_active_object().get_property_sets(filter=False)
+            tool.FilterWindow.get_active_class().get_property_sets(filter=False)
         )
 
     # Returns the number of children (rows) under the given index
