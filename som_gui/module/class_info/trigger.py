@@ -33,7 +33,7 @@ def item_double_clicked():
     )
 
 
-def object_info_paint_event():
+def class_info_paint_event():
     core.class_info_refresh(tool.Class, tool.ClassInfo)
     pass
 
@@ -42,7 +42,7 @@ def retranslate_ui():
     core.retranslate_ui(tool.ClassInfo)
 
 
-def create_object_info_widget(mode: int):
+def create_class_info_widget(mode: int):
     core.create_class_info_widget(
         mode, tool.Class, tool.ClassInfo, tool.PredefinedPropertySet, tool.Util
     )

@@ -33,8 +33,8 @@ def check_file(
     modelcheck_plugin: Type[aw_tool.Modelcheck],
 ):
     file = runner.file
-    modelcheck.set_object_checked_count(0)
-    modelcheck.set_object_count(len(modelcheck_plugin.get_all_groups(file)))
+    modelcheck.set_class_checked_count(0)
+    modelcheck.set_class_count(len(modelcheck_plugin.get_all_groups(file)))
     modelcheck.set_progress(runner, 0)
     modelcheck_plugin.build_group_structure(file)
 
@@ -57,8 +57,8 @@ def check_entities(
 ):
     main_property_value = modelcheck.get_ident_value(entity)
     main_property_value = "" if main_property_value is None else main_property_value
-    obj_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(main_property_value)
-    if not modelcheck_plugin.entity_is_in_group(entity) and obj_rep.aggregations:
+    class_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(main_property_value)
+    if not modelcheck_plugin.entity_is_in_group(entity) and class_rep.aggregations:
         modelcheck_plugin.no_group_issue(entity)
 
 
@@ -133,20 +133,20 @@ def check_correct_parent(
     """
     Checks if an Entity or Group has an allowed Parent Group
     """
-    object_rep = modelcheck.get_object_representation(entity)
+    class_rep = modelcheck.get_class_representation(entity)
     parent_entity: ifcopenshell.entity_instance = modelcheck_plugin.get_parent_entity(
         modelcheck_plugin.get_parent_entity(entity)
     )
-    allowed_parents = modelcheck_plugin.get_allowed_parents(object_rep)
+    allowed_parents = modelcheck_plugin.get_allowed_parents(class_rep)
     if parent_entity is None:
         if None not in allowed_parents:
             logging.warning(f"Group {entity.GlobalId} -> no parent group")
         return
 
-    parent_object_rep = modelcheck.get_object_representation(parent_entity)
+    parent_class_rep = modelcheck.get_class_representation(parent_entity)
 
-    if parent_object_rep is None:
-        logging.warning(f"Group {entity.GlobalId} -> no parent obj")
+    if parent_class_rep is None:
+        logging.warning(f"Group {entity.GlobalId} -> no parent class")
         return
 
     if not modelcheck_plugin.is_parent_allowed(entity, parent_entity):

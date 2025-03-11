@@ -20,9 +20,9 @@ def export_ifc_template(
 ) -> None:
     with open(path, "w") as file:
         property_set: SOMcreator.SOMPropertySet
-        for pset_name, (attrib_list, ifc_mapping) in sorted(pset_dict.items()):
+        for pset_name, (property_list, ifc_mapping) in sorted(pset_dict.items()):
             file.write(f"PropertySet:   {pset_name} I  {','.join(ifc_mapping)} \n")
-            for som_property in attrib_list:
+            for som_property in property_list:
                 revit_datatype = _transform_datatype(
                     som_property.data_type, value_constants.REVIT_TEMPLATE_DATATYPE_DICT
                 )
@@ -86,10 +86,10 @@ def export_shared_parameters(
         )
 
         property_set: SOMcreator.SOMPropertySet
-        for i, (pset_name, (attrib_list, ifc_mapping)) in enumerate(
+        for i, (pset_name, (property_list, ifc_mapping)) in enumerate(
             sorted(pset_dict.items())
         ):
-            for attrib in attrib_list:
+            for attrib in property_list:
                 t = SP_Item(pset_name, attrib, i)
 
         for item in sorted(SP_Item, key=lambda x: x.som_property.name):

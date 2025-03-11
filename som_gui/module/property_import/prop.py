@@ -52,4 +52,4 @@ class PropertyImportSQLProperties:
     show_boolean_values: bool = False
     active_usecases: list[SOMcreator.UseCase] = list()
     active_phases: list[SOMcreator.Phase] = list()
-    activate_object_filter = True
+    activate_class_filter = True

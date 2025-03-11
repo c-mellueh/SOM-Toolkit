@@ -77,11 +77,11 @@ class Class(som_gui.core.tool.Class):
         widget.setCompleter(completer)
 
     @classmethod
-    def get_item_from_class(cls, obj: SOMcreator.SOMClass) -> QTreeWidgetItem:
+    def get_item_from_class(cls, som_class: SOMcreator.SOMClass) -> QTreeWidgetItem:
         def iter_tree(item: QTreeWidgetItem):
             for child_index in range(item.childCount()):
                 child = item.child(child_index)
-                if cls.get_class_from_item(child) == obj:
+                if cls.get_class_from_item(child) == som_class:
                     return child
                 result = iter_tree(child)
                 if result is not None:
@@ -92,8 +92,8 @@ class Class(som_gui.core.tool.Class):
         return iter_tree(tree.invisibleRootItem())
 
     @classmethod
-    def select_class(cls, obj: SOMcreator.SOMClass) -> None:
-        item = cls.get_item_from_class(obj)
+    def select_class(cls, som_class: SOMcreator.SOMClass) -> None:
+        item = cls.get_item_from_class(som_class)
         if item is None:
             return
         tree = cls.get_class_tree()
@@ -143,19 +143,19 @@ class Class(som_gui.core.tool.Class):
         return [cls.get_class_from_item(item) for item in selected_items]
 
     @classmethod
-    def delete_class(cls, obj: SOMcreator.SOMClass, recursive: bool = False):
-        obj.delete(recursive)
+    def delete_class(cls, som_class: SOMcreator.SOMClass, recursive: bool = False):
+        som_class.delete(recursive)
 
     @classmethod
     def delete_selection(cls):
-        objects = cls.get_selected_classes()
+        som_classes = cls.get_selected_classes()
         delete_request, recursive_deletion = tool.Popups.req_delete_items(
-            [o.name for o in objects], item_type=1
+            [som_class.name for som_class in som_classes], item_type=1
         )
         if not delete_request:
             return
-        for o in objects:
-            cls.delete_class(o, recursive_deletion)
+        for som_class in som_classes:
+            cls.delete_class(som_class, recursive_deletion)
 
     @classmethod
     def expand_selection(cls):
@@ -197,15 +197,15 @@ class Class(som_gui.core.tool.Class):
             return True
         if result == constants.IDENT_ISSUE:
             text = QCoreApplication.translate(
-                "Object", "Identifier exists allready or is not allowed"
+                "Class", "Identifier exists allready or is not allowed"
             )
         elif result == constants.IDENT_PROPERTY_ISSUE:
             text = QCoreApplication.translate(
-                "Object", "Name of Property is not allowed"
+                "Class", "Name of Property is not allowed"
             )
         elif result == constants.IDENT_PSET_ISSUE:
             text = QCoreApplication.translate(
-                "Object", "Name of PropertySet is not allowed"
+                "Class", "Name of PropertySet is not allowed"
             )
         else:
             return False
@@ -214,16 +214,16 @@ class Class(som_gui.core.tool.Class):
         return False
 
     @classmethod
-    def set_ident_value(cls, obj: SOMcreator.SOMClass, value: str):
-        if obj.is_concept:
+    def set_ident_value(cls, som_class: SOMcreator.SOMClass, value: str):
+        if som_class.is_concept:
             return
-        obj.identifier_property.allowed_values = [value]
+        som_class.identifier_property.allowed_values = [value]
 
     @classmethod
     def find_property(
-        cls, obj: SOMcreator.SOMClass, pset_name: str, property_name: str
+        cls, som_class: SOMcreator.SOMClass, pset_name: str, property_name: str
     ):
-        pset = obj.get_property_set_by_name(pset_name)
+        pset = som_class.get_property_set_by_name(pset_name)
         if pset is None:
             return None
         return pset.get_property_by_name(property_name)
@@ -286,28 +286,28 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def get_class_from_item(cls, item: QTreeWidgetItem) -> SOMcreator.SOMClass:
-        return item.object
+        return item.som_class
 
     @classmethod
     def add_class_activate_function(cls, func: Callable):
         cls.get_properties().class_activate_functions.append(func)
 
     @classmethod
-    def fill_class_entry(cls, obj: SOMcreator.SOMClass):
+    def fill_class_entry(cls, som_class: SOMcreator.SOMClass):
         for func in cls.get_properties().class_activate_functions:
-            func(obj)
+            func(som_class)
 
     @classmethod
-    def set_active_class(cls, obj: SOMcreator.SOMClass):
+    def set_active_class(cls, som_class: SOMcreator.SOMClass):
         prop: ClassProperties = cls.get_properties()
-        prop.active_class = obj
-        cls.fill_class_entry(obj)
+        prop.active_class = som_class
+        cls.fill_class_entry(som_class)
 
     @classmethod
     def update_check_state(cls, item: QTreeWidgetItem):
-        obj: SOMcreator.SOMClass = cls.get_class_from_item(item)
+        som_class: SOMcreator.SOMClass = cls.get_class_from_item(item)
         values = [
-            [getter_func(obj), setter_func]
+            [getter_func(som_class), setter_func]
             for n, getter_func, setter_func in cls.get_properties().column_List
         ]
         for column, [value, setter_func] in enumerate(values):
@@ -316,22 +316,22 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def get_class_tree(cls) -> ClassTreeWidget:
-        return tool.MainWindow.get_object_tree_widget()
+        return tool.MainWindow.get_class_tree_widget()
 
     @classmethod
-    def create_item(cls, obj: SOMcreator.SOMClass):
+    def create_item(cls, som_class: SOMcreator.SOMClass):
         item = QTreeWidgetItem()
-        item.object = (
-            obj  # item.setData(0,obj) leads to recursion bug so allocating directly
+        item.som_class = (
+            som_class  # item.setData(0,som_class) leads to recursion bug so allocating directly
         )
-        item.setText(0, obj.name)
+        item.setText(0, som_class.name)
         item.setFlags(
             item.flags()
             | Qt.ItemFlag.ItemIsUserCheckable
             | Qt.ItemFlag.ItemIsSelectable
         )
         values = [
-            getter_func(obj)
+            getter_func(som_class)
             for n, getter_func, setter_func in cls.get_properties().column_List
         ]
         for column, value in enumerate(values):
@@ -340,9 +340,9 @@ class Class(som_gui.core.tool.Class):
         return item
 
     @classmethod
-    def update_item(cls, item: QTreeWidgetItem, obj: SOMcreator.SOMClass):
+    def update_item(cls, item: QTreeWidgetItem, som_class: SOMcreator.SOMClass):
         values = [
-            getter_func(obj)
+            getter_func(som_class)
             for n, getter_func, setter_func in cls.get_properties().column_List
         ]
 
@@ -357,28 +357,28 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def fill_class_tree(
-        cls, objects: set[SOMcreator.SOMClass], parent_item: QTreeWidgetItem
+        cls, classes: set[SOMcreator.SOMClass], parent_item: QTreeWidgetItem
     ) -> None:
-        old_objects_dict = {
+        old_classes_dict = {
             cls.get_class_from_item(parent_item.child(i)): i
             for i in range(parent_item.childCount())
         }
-        old_objects = set(old_objects_dict.keys())
-        new_objects = objects.difference(old_objects)
-        delete_objects = old_objects.difference(objects)
-        for obj in reversed(sorted(delete_objects, key=lambda o: old_objects_dict[o])):
-            row_index = old_objects_dict[obj]
+        old_classes = set(old_classes_dict.keys())
+        new_classes = classes.difference(old_classes)
+        delete_classes = old_classes.difference(classes)
+        for som_class in reversed(sorted(delete_classes, key=lambda o: old_classes_dict[o])):
+            row_index = old_classes_dict[som_class]
             parent_item.removeChild(parent_item.child(row_index))
 
-        for new_object in sorted(new_objects, key=lambda o: o.name):
-            item = cls.create_item(new_object)
+        for new_classes in sorted(new_classes, key=lambda o: o.name):
+            item = cls.create_item(new_classes)
             parent_item.addChild(item)
 
         for index in range(parent_item.childCount()):
             item = parent_item.child(index)
-            obj: SOMcreator.SOMClass = cls.get_class_from_item(item)
-            cls.update_item(item, obj)
-            cls.fill_class_tree(set(obj.get_children(filter=True)), item)
+            som_class: SOMcreator.SOMClass = cls.get_class_from_item(item)
+            cls.update_item(item, som_class)
+            cls.fill_class_tree(set(som_class.get_children(filter=True)), item)
 
     @classmethod
     def add_class_creation_check(cls, key, check_function):
@@ -388,8 +388,8 @@ class Class(som_gui.core.tool.Class):
     def set_class_optional_by_tree_item_state(
         cls, item: QTreeWidgetItem, column_index: int
     ):
-        obj = cls.get_class_from_item(item)
-        obj.set_optional(
+        som_class = cls.get_class_from_item(item)
+        som_class.set_optional(
             True if item.checkState(column_index) == Qt.CheckState.Checked else False
         )
 
@@ -398,19 +398,19 @@ class Class(som_gui.core.tool.Class):
         cls,
         data_dict: ClassDataDict,
     ):
-        trigger.create_object_called(data_dict)
+        trigger.create_class_called(data_dict)
 
     @classmethod
     def trigger_class_copy(
         cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
     ):
-        trigger.copy_object_called(som_class, data_dict)
+        trigger.copy_class_called(som_class, data_dict)
 
     @classmethod
     def trigger_class_modification(
         cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
     ):
-        trigger.modify_object_called(som_class, data_dict)
+        trigger.modify_class_called(som_class, data_dict)
 
     @classmethod
     def copy_group(cls, som_class: SOMcreator.SOMClass) -> SOMcreator.SOMClass:

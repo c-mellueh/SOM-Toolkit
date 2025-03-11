@@ -67,7 +67,7 @@ def create_structure_dict(
 ) -> dict:
     """Iterate over all Entities, build the targeted Datastructure"""
     targeted_group_structure = {GROUP: {}, ELEMENT: {}, IFC_REP: None}
-    bk_dict = {obj.ident_value: obj for obj in project.get_classes(filter=True)}
+    bk_dict = {som_class.ident_value: som_class for som_class in project.get_classes(filter=True)}
 
     for index, el in enumerate(list(ifc_file.by_type("IfcElement"))):
         attrib, gruppe, identity = get_ifc_el_info(el, property_bundle)
@@ -81,8 +81,8 @@ def create_structure_dict(
                 focus_dict[GROUP][part] = {GROUP: {}, ELEMENT: list(), IFC_REP: None}
             focus_dict = focus_dict[GROUP][part]
 
-        obj: SOMcreator.SOMClass = bk_dict.get(attrib)
-        abbrev = obj.abbreviation
+        som_class: SOMcreator.SOMClass = bk_dict.get(attrib)
+        abbrev = som_class.abbreviation
         if abbrev.upper() not in focus_dict[GROUP]:
             focus_dict[GROUP][abbrev] = {GROUP: {}, ELEMENT: list(), IFC_REP: None}
         focus_dict[GROUP][abbrev][ELEMENT].append(el)
@@ -122,9 +122,9 @@ def create_aggregation_structure(
     is_sammler: bool,
     property_bundle,
     owner_history,
-    kuerzel_dict,
+    abbreviation_dict:dict[str, SOMcreator.SOMClass],
     fill_with_empty_values: bool,
-    obj=None,
+    som_class=None,
 ):
     """Take targeted group structure and build it in IFC-File"""
 
@@ -182,16 +182,16 @@ def create_aggregation_structure(
 
     def fill_group_with_empty_values(
         ifc_group: ifcopenshell.entity_instance,
-        group_obj: SOMcreator.SOMClass,
+        group_class: SOMcreator.SOMClass,
         identity,
     ):
-        for pset in group_obj.get_property_sets(filter=True):
+        for pset in group_class.get_property_sets(filter=True):
             proeprties = {
                 som_property.name: None for som_property in pset.get_properties(filter=True)
             }
             if pset.name == main_pset:
-                proeprties[main_property] = group_obj.ident_value
-                proeprties[NAME] = group_obj.name
+                proeprties[main_property] = group_class.ident_value
+                proeprties[NAME] = group_class.name
                 proeprties[identity_property] = "_".join(identity)
 
             if pset.name == group_pset:
@@ -199,7 +199,7 @@ def create_aggregation_structure(
             create_ifc_pset(pset.name, proeprties, ifc_group)
 
     def create_ifc_group(
-        group_obj: SOMcreator.SOMClass,
+        group_class: SOMcreator.SOMClass,
         group_name: str,
         identity: list[str],
         parent: ifcopenshell.entity_instance = None,
@@ -212,7 +212,7 @@ def create_aggregation_structure(
             "IfcRelAssignsToGroup",
             ifcopenshell.guid.new(),
             owner_history,
-            group_obj.name,
+            group_class.name,
             DESCRIPTION,
             [],
             None,
@@ -220,11 +220,11 @@ def create_aggregation_structure(
         )
 
         if not is_sammler and fill_with_empty_values:
-            fill_group_with_empty_values(ifc_group, group_obj, identity)
+            fill_group_with_empty_values(ifc_group, group_class, identity)
         else:
             properties = dict()
-            properties[main_property] = group_obj.ident_value
-            properties[NAME] = group_obj.name
+            properties[main_property] = group_class.ident_value
+            properties[NAME] = group_class.name
             properties[identity_property] = "_".join(identity)
             create_ifc_pset(main_pset, properties, ifc_group)
             properties = dict()
@@ -233,7 +233,7 @@ def create_aggregation_structure(
             else:
                 properties[group_property] = "_".join(identity[:-2])
             if group_pset in [
-                pset.name for pset in group_obj.get_property_sets(filter=True)
+                pset.name for pset in group_class.get_property_sets(filter=True)
             ]:
                 create_ifc_pset(group_pset, properties, ifc_group)
 
@@ -249,14 +249,14 @@ def create_aggregation_structure(
         ifc_rep = structure[GROUP][abbreviation][IFC_REP]
         new_id_gruppe = id_gruppe + [abbreviation]
         if is_sammler:
-            obj = kuerzel_dict.get(abbreviation.upper())
-            if obj is None:
+            som_class = abbreviation_dict.get(abbreviation.upper())
+            if som_class is None:
                 continue
-            name = obj.name
+            name = som_class.name
         else:
-            name = f"{obj.name}_{abbreviation}"
+            name = f"{som_class.name}_{abbreviation}"
         if ifc_rep is None:
-            group = create_ifc_group(obj, name, new_id_gruppe, parent_group)
+            group = create_ifc_group(som_class, name, new_id_gruppe, parent_group)
             structure[GROUP][abbreviation][IFC_REP] = group
         else:
             group = ifc_rep
@@ -268,9 +268,9 @@ def create_aggregation_structure(
             not is_sammler,
             property_bundle,
             owner_history,
-            kuerzel_dict,
+            abbreviation_dict,
             fill_with_empty_values,
-            obj,
+            som_class,
         )
 
     if not is_sammler:
@@ -309,7 +309,7 @@ def main(
     )
     fill_existing_groups(ifc_file, targeted_group_structure, property_bundle)
     kuerzel_dict = {
-        obj.abbreviation.upper(): obj for obj in project.get_classes(filter=True)
+        som_class.abbreviation.upper(): som_class for som_class in project.get_classes(filter=True)
     }
     create_aggregation_structure(
         ifc_file,

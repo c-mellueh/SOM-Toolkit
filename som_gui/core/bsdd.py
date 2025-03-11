@@ -156,7 +156,7 @@ def export_dictionary(
 
     bsdd.reset_classes()
     bsdd.reset_properties()
-    bsdd.add_objects_to_dictionary(project.get())
+    bsdd.add_classes_to_dictionary(project.get())
     bsdd.export_to_json(path)
     text = QCoreApplication.translate("BSDD", "Export Done!")
     popups.create_info_popup(text, text)

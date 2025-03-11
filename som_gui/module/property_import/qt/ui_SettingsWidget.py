@@ -56,16 +56,15 @@ class Ui_SettingsDialog(object):
 
         self.verticalLayout.addWidget(self.check_box_color)
 
-        self.check_box_object_filter = QCheckBox(SettingsDialog)
-        self.check_box_object_filter.setObjectName(u"check_box_object_filter")
-        self.check_box_object_filter.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        self.check_box_class_filter = QCheckBox(SettingsDialog)
+        self.check_box_class_filter.setObjectName(u"check_box_class_filter")
+        self.check_box_class_filter.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
 
-        self.verticalLayout.addWidget(self.check_box_object_filter)
+        self.verticalLayout.addWidget(self.check_box_class_filter)
 
         self.buttonBox = QDialogButtonBox(SettingsDialog)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Ok)
 
         self.verticalLayout.addWidget(self.buttonBox)
 
@@ -84,6 +83,6 @@ class Ui_SettingsDialog(object):
         self.check_box_range.setText(QCoreApplication.translate("SettingsDialog", u"show Range", None))
         self.check_box_existing_properties.setText(QCoreApplication.translate("SettingsDialog", u"show allready Existing", None))
         self.check_box_color.setText(QCoreApplication.translate("SettingsDialog", u"color Data", None))
-        self.check_box_object_filter.setText(QCoreApplication.translate("SettingsDialog", u"filter by Usecase/Phase", None))
+        self.check_box_class_filter.setText(QCoreApplication.translate("SettingsDialog", u"filter by Usecase/Phase", None))
     # retranslateUi
 

@@ -10,11 +10,11 @@ import SOMcreator.datastructure.som_json
 from SOMcreator.datastructure.som_json import FILTER_MATRIXES, MainDict
 from typing import Type, TYPE_CHECKING
 from . import (
+    class_,
     core,
     project,
     predefined_pset,
     property_set,
-    obj,
     aggregation,
     inheritance,
 )
@@ -26,14 +26,14 @@ aggregation_dict: dict[SOMcreator.SOMAggregation, tuple[str | None, int]] = dict
 phase_list: list[Phase] = list()
 use_case_list: list[UseCase] = list()
 plugin_dict = dict()
-object_uuid_dict: dict[str, SOMcreator.SOMClass] = dict()
+class_uuid_dict: dict[str, SOMcreator.SOMClass] = dict()
 property_set_uuid_dict: dict[str, SOMcreator.SOMPropertySet] = dict()
 property_uuid_dict: dict[str, SOMcreator.SOMProperty] = dict()
 filter_matrixes = list()
 
 
 def reset_uuid_dicts():
-    SOMcreator.importer.som_json.object_uuid_dict = dict()
+    SOMcreator.importer.som_json.class_uuid_dict = dict()
     SOMcreator.importer.som_json.property_set_uuid_dict = dict()
     SOMcreator.importer.som_json.property_uuid_dict = dict()
     SOMcreator.importer.som_json.filter_matrixes = list()
@@ -68,8 +68,8 @@ def open_json(cls: Type[SOMProject], path: str | os.PathLike):
     predefined_pset.load(proj, main_dict)
     logging.debug(f"Predefined Pset Read")
 
-    obj.load(proj, main_dict)
-    logging.debug(f"Objects Read")
+    class_.load(proj, main_dict)
+    logging.debug(f"Classes Read")
 
     aggregation.load(proj, main_dict)
     logging.debug(f"Aggregations Read")

@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication,
     QHeaderView, QLabel, QScrollArea, QSizePolicy,
     QSplitter, QVBoxLayout, QWidget)
 
-from som_gui.module.modelcheck_window.ui import (ObjectTree, PsetTree)
+from som_gui.module.modelcheck_window.ui import (ClassTree, PsetTree)
 from som_gui.module.util.ui import (FileSelector, PropertySelector)
 
 class Ui_Modelcheck(object):
@@ -37,20 +37,20 @@ class Ui_Modelcheck(object):
         sizePolicy.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
         self.splitter.setSizePolicy(sizePolicy)
         self.splitter.setOrientation(Qt.Orientation.Horizontal)
-        self.object_tree = ObjectTree(self.splitter)
-        self.object_tree.setObjectName(u"object_tree")
-        self.object_tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.object_tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        self.splitter.addWidget(self.object_tree)
+        self.class_tree = ClassTree(self.splitter)
+        self.class_tree.setObjectName(u"class_tree")
+        self.class_tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.class_tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.splitter.addWidget(self.class_tree)
         self.verticalLayoutWidget = QWidget(self.splitter)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
         self.verticalLayout_2 = QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.label_object = QLabel(self.verticalLayoutWidget)
-        self.label_object.setObjectName(u"label_object")
+        self.label_class = QLabel(self.verticalLayoutWidget)
+        self.label_class.setObjectName(u"label_class")
 
-        self.verticalLayout_2.addWidget(self.label_object)
+        self.verticalLayout_2.addWidget(self.label_class)
 
         self.property_set_tree = PsetTree(self.verticalLayoutWidget)
         self.property_set_tree.setObjectName(u"property_set_tree")
@@ -120,6 +120,6 @@ class Ui_Modelcheck(object):
 
     def retranslateUi(self, Modelcheck):
         Modelcheck.setWindowTitle(QCoreApplication.translate("Modelcheck", u"Form", None))
-        self.label_object.setText(QCoreApplication.translate("Modelcheck", u"TextLabel", None))
+        self.label_class.setText(QCoreApplication.translate("Modelcheck", u"TextLabel", None))
     # retranslateUi
 

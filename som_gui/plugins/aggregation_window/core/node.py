@@ -109,13 +109,13 @@ def move_header(
 ) -> None:
     """
     Moves the header and subsequently the selected nodes by a given difference vector.
-    :param header: The header object to be moved.
+    :param header: The header class to be moved.
     :type header: Header
     :param dif: The difference vector by which to move the header and nodes.
     :type dif: QPointF
-    :param view: The view object containing the active scene.
+    :param view: The view class containing the active scene.
     :type view: Type[View]
-    :param node: The node object to retrieve nodes from headers and move nodes.
+    :param node: The node class to retrieve nodes from headers and move nodes.
     :type node: Type[Node]
     :return: None
     :rtype: None

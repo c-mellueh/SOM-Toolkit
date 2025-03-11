@@ -10,7 +10,7 @@ from SOMcreator.util import xml
 def create_mapping(
     excel_path: str, folder_path: str, project: SOMcreator.SOMProject
 ) -> None:
-    def create_xml(name: str, obj: SOMcreator.SOMClass):
+    def create_xml(name: str, som_class: SOMcreator.SOMClass):
         xsd = "http://www.w3.org/2001/XMLSchema"
         xsi = "http://www.w3.org/2001/XMLSchema-instance"
 
@@ -39,7 +39,7 @@ def create_mapping(
 
         def create_manipulations() -> None:
             xml_manipulations = etree.SubElement(xml_manipulation_rule, "Manipulations")
-            for property_set in obj.get_property_sets(filter=True):
+            for property_set in som_class.get_property_sets(filter=True):
                 for attribut in property_set.get_properties(filter=True):
                     xml_manipulation_base = etree.SubElement(
                         xml_manipulations, "ManipulationBase"
@@ -54,7 +54,7 @@ def create_mapping(
                         xml_manipulation_base,
                         "Value",
                     )
-                    if attribut == obj.identifier_property:
+                    if attribut == som_class.identifier_property:
                         xml_value.text = attribut.allowed_values[0]
                     else:
                         xml_value.text = ""
@@ -90,7 +90,7 @@ def create_mapping(
     important_rows = [
         row for i, row in enumerate(sheet.rows) if row[2].value is not None and i != 0
     ]
-    object_dict = {
+    class_dict = {
         som_class.identifier_property.allowed_values[0]: som_class
         for som_class in project.get_classes(filter=True)
         if not som_class.is_concept
@@ -101,4 +101,4 @@ def create_mapping(
         if len(values) != 4:
             raise ValueError("Spaltenkonfiguration nicht korrekt!")
         hz_nummer, hz_name, bauteil_name, bauteilklass = values
-        create_xml(hz_name, object_dict[bauteilklass])
+        create_xml(hz_name, class_dict[bauteilklass])

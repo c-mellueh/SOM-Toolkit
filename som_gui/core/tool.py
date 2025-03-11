@@ -38,7 +38,7 @@ class Appdata:
 
 
 class Bsdd:
-    def add_objects_to_dictionary(self, project):
+    def add_classes_to_dictionary(self, project):
         pass
 
     def add_widget_to_toolbox(self, name, widget):
@@ -338,7 +338,7 @@ class ClassInfo:
     def add_ifc_mapping(self, mapping):
         pass
 
-    def add_objects_infos_add_function(self, key, getter_function):
+    def add_classes_infos_add_function(self, key, getter_function):
         pass
 
     def add_plugin_entry(
@@ -639,7 +639,7 @@ class FilterCompare:
     def are_properties_identical(self, attribute0, attribute1):
         pass
 
-    def are_objects_identical(self, obj0, obj1):
+    def are_classes_identical(self, obj0, obj1):
         pass
 
     def are_psets_identical(self, pset0, pset1):
@@ -659,7 +659,7 @@ class FilterCompare:
     def export_property_filter_differnces(self, file, attribute_list):
         pass
 
-    def export_object_filter_differences(self, file, attribute_compare):
+    def export_class_filter_differences(self, file, attribute_compare):
         pass
 
     def export_pset_filter_differences(self, file, pset_list, attribute_compare):
@@ -688,7 +688,7 @@ class FilterCompare:
     ):
         pass
 
-    def get_object_tree(
+    def get_class_tree(
         self,
     ):
         pass
@@ -736,7 +736,7 @@ class FilterCompare:
     def set_usecase_list(self, usecase_list):
         pass
 
-    def style_object_tree(self, item):
+    def style_class_tree(self, item):
         pass
 
 
@@ -747,7 +747,7 @@ class FilterWindow:
     def add_usecase(self, project):
         pass
 
-    def connect_object_tree(self, project):
+    def connect_class_tree(self, project):
         pass
 
     def connect_project_table(self, project):
@@ -772,12 +772,12 @@ class FilterWindow:
     def get_action(self, name):
         pass
 
-    def get_active_object(
+    def get_active_class(
         self,
     ):
         pass
 
-    def get_object_tree(
+    def get_class_tree(
         self,
     ):
         pass
@@ -819,10 +819,10 @@ class FilterWindow:
     def set_action(self, name, action):
         pass
 
-    def set_active_object(self, obj):
+    def set_active_class(self, obj):
         pass
 
-    def set_object_label(self, value):
+    def set_class_label(self, value):
         pass
 
     def set_settings_widget(self, widget):
@@ -1051,7 +1051,7 @@ class MainWindow:
     ):
         pass
 
-    def get_object_tree_widget(
+    def get_class_tree_widget(
         self,
     ):
         pass
@@ -1123,7 +1123,7 @@ class MainWindow:
 
 
 class Mapping:
-    def add_object_to_ifc_export_data(self, obj):
+    def add_class_to_ifc_export_data(self, obj):
         pass
 
     def connect_window_triggers(self, window):
@@ -1143,7 +1143,7 @@ class Mapping:
     def disable_all_child_entities(self, item, disabled):
         pass
 
-    def fill_object_tree(self, root_objects):
+    def fill_class_tree(self, root_objects):
         pass
 
     def get_action(self, name):
@@ -1160,7 +1160,7 @@ class Mapping:
     ):
         pass
 
-    def get_object_tree(
+    def get_class_tree(
         self,
     ):
         pass
@@ -1175,7 +1175,7 @@ class Mapping:
     ):
         pass
 
-    def get_selected_object(
+    def get_selected_class(
         self,
     ):
         pass
@@ -1357,17 +1357,17 @@ class Modelcheck:
     ):
         pass
 
-    def get_object_checked_count(
+    def get_class_checked_count(
         self,
     ):
         pass
 
-    def get_object_count(
+    def get_class_count(
         self,
     ):
         pass
 
-    def get_object_representation(self, entity):
+    def get_class_representation(self, entity):
         pass
 
     def get_properties(
@@ -1453,10 +1453,10 @@ class Modelcheck:
     def set_main_pset_name(self, value):
         pass
 
-    def set_object_checked_count(self, value):
+    def set_class_checked_count(self, value):
         pass
 
-    def set_object_count(self, value):
+    def set_class_count(self, value):
         pass
 
     def set_progress(self, runner, value):
@@ -1629,7 +1629,7 @@ class ModelcheckWindow:
     def connect_modelcheck_runner(self, runner):
         pass
 
-    def connect_object_tree(self, tree_widget):
+    def connect_class_tree(self, tree_widget):
         pass
 
     def connect_pset_tree(self, tree_widget):
@@ -1641,7 +1641,7 @@ class ModelcheckWindow:
     def create_import_runner(self, progress_bar, ifc_import_path):
         pass
 
-    def create_object_tree_row(self, obj):
+    def create_class_tree_row(self, obj):
         pass
 
     def create_pset_tree_row(self, entity, parent_item):
@@ -1658,7 +1658,7 @@ class ModelcheckWindow:
     def expand_selection(self, widget):
         pass
 
-    def fill_object_tree(self, entities, parent_item, model, tree):
+    def fill_class_tree(self, entities, parent_item, model, tree):
         pass
 
     def fill_pset_tree(self, property_sets, enabled, tree):
@@ -1680,7 +1680,7 @@ class ModelcheckWindow:
     ):
         pass
 
-    def get_object_tree(
+    def get_class_tree(
         self,
     ):
         pass
@@ -1698,7 +1698,7 @@ class ModelcheckWindow:
     def get_selected_items(self, widget):
         pass
 
-    def get_selected_object(
+    def get_selected_class(
         self,
     ):
         pass
@@ -1733,7 +1733,7 @@ class ModelcheckWindow:
     ):
         pass
 
-    def resize_object_tree(self, tree):
+    def resize_class_tree(self, tree):
         pass
 
     def set_action(self, name, action):
@@ -1754,7 +1754,7 @@ class ModelcheckWindow:
     def set_pset_tree_title(self, text):
         pass
 
-    def set_selected_object(self, obj):
+    def set_selected_class(self, obj):
         pass
 
     def set_status(self, runner, status):
@@ -1769,7 +1769,7 @@ class ModelcheckWindow:
     def uncheck_selection(self, widget):
         pass
 
-    def update_object_tree_row(self, parent_item, row_index):
+    def update_class_tree_row(self, parent_item, row_index):
         pass
 
 
@@ -1877,13 +1877,13 @@ class Popups:
 
 
 class PredefinedPropertySet:
-    def add_objects_to_table_widget(self, property_sets, table_widget):
+    def add_classes_to_table_widget(self, property_sets, table_widget):
         pass
 
     def add_property_sets_to_widget(self, property_sets, list_widget):
         pass
 
-    def clear_object_table(
+    def clear_class_table(
         self,
     ):
         pass
@@ -1906,7 +1906,7 @@ class PredefinedPropertySet:
     ):
         pass
 
-    def delete_selected_objects(
+    def delete_selected_classes(
         self,
     ):
         pass
@@ -1930,7 +1930,7 @@ class PredefinedPropertySet:
     def get_existing_psets_in_table_widget(self, object_table):
         pass
 
-    def get_object_table_widget(
+    def get_class_table_widget(
         self,
     ):
         pass
@@ -1995,7 +1995,7 @@ class PredefinedPropertySet:
     def set_window(self, window):
         pass
 
-    def update_object_widget(
+    def update_class_widget(
         self,
     ):
         pass
@@ -2172,10 +2172,10 @@ class Property:
 
 
 class PropertyCompare:
-    def add_missing_objects_to_tree(self, tree, root_objects):
+    def add_missing_classes_to_tree(self, tree, root_objects):
         pass
 
-    def add_object_to_item(self, obj, item, index):
+    def add_class_to_item(self, obj, item, index):
         pass
 
     def add_properties_to_pset_tree(self, tree, add_missing):
@@ -2184,7 +2184,7 @@ class PropertyCompare:
     def are_properties_identical(self, attribute0, attribute1):
         pass
 
-    def are_objects_identical(self, object0, object1, check_pset):
+    def are_classes_identical(self, object0, object1, check_pset):
         pass
 
     def are_property_sets_identical(
@@ -2204,7 +2204,7 @@ class PropertyCompare:
     def compare_properties(self, attribute0, attribute1):
         pass
 
-    def compare_objects(self, obj0, obj1):
+    def compare_classes(self, obj0, obj1):
         pass
 
     def compare_property_sets(self, pset0, pset1):
@@ -2213,12 +2213,12 @@ class PropertyCompare:
     def create_child_matchup(self, entity0, entity1):
         pass
 
-    def create_object_dicts(
+    def create_class_dicts(
         self,
     ):
         pass
 
-    def create_object_lists(
+    def create_class_lists(
         self,
     ):
         pass
@@ -2246,16 +2246,16 @@ class PropertyCompare:
     def export_name_check(self, file, type_name, entity0, entity1, indent):
         pass
 
-    def export_object_differences(self, file):
+    def export_class_differences(self, file):
         pass
 
     def export_pset_differences(self, file, pset_list, lb):
         pass
 
-    def fill_object_tree(self, tree, add_missing):
+    def fill_class_tree(self, tree, add_missing):
         pass
 
-    def fill_object_tree_layer(self, objects, parent_item, add_missing):
+    def fill_class_tree_layer(self, objects, parent_item, add_missing):
         pass
 
     def fill_pset_tree(self, tree, pset_list, add_missing):
@@ -2276,7 +2276,7 @@ class PropertyCompare:
     def find_matching_entity(self, search_element, uuid_dict1, name_dict1):
         pass
 
-    def find_matching_object(self, obj, index):
+    def find_matching_class(self, obj, index):
         pass
 
     def generate_name_dict(self, element_list):
@@ -2303,29 +2303,29 @@ class PropertyCompare:
     def get_info_table(self, widget):
         pass
 
-    def get_item_from_object(self, obj):
+    def get_item_from_class(self, obj):
         pass
 
     def get_level(self, index):
         pass
 
-    def get_missing_objects(self, index):
+    def get_missing_classes(self, index):
         pass
 
     def get_name_path(self, entity):
         pass
 
-    def get_object_dict(
+    def get_class_dict(
         self,
     ):
         pass
 
-    def get_object_lists(
+    def get_class_list(
         self,
     ):
         pass
 
-    def get_object_tree(self, widget):
+    def get_class_tree(self, widget):
         pass
 
     def get_project(self, index):
@@ -2386,7 +2386,7 @@ class PropertyCompare:
     def set_header_labels(self, trees, tables, labels):
         pass
 
-    def set_object_item_relation(self, obj, item):
+    def set_class_item_relation(self, obj, item):
         pass
 
     def set_projects(self, project1, project2):
@@ -2615,7 +2615,7 @@ class PropertyImportResults:
     def set_all_checkbox_state(self, state):
         pass
 
-    def set_object_count_label_text(self, text):
+    def set_class_count_label_text(self, text):
         pass
 
     def unlock_updating(
@@ -2672,7 +2672,7 @@ class PropertyImportSQL:
     def connect_to_data_base(self, path):
         pass
 
-    def count_objects(self, ifc_type, identifier):
+    def count_classes(self, ifc_type, identifier):
         pass
 
     def create_export_query(
@@ -2717,7 +2717,7 @@ class PropertyImportSQL:
     def fill_som_properties(self, values):
         pass
 
-    def get_current_object_filter(
+    def get_current_class_filter(
         self,
     ):
         pass
@@ -2786,7 +2786,7 @@ class PropertyImportSQL:
     def init_database(self, db_path):
         pass
 
-    def set_current_object_filter(self, usecases, phases):
+    def set_current_class_filter(self, usecases, phases):
         pass
 
     def set_database_path(self, path):
@@ -2806,7 +2806,7 @@ class PropertySet:
     def add_property_sets_to_table(self, property_sets, table):
         pass
 
-    def check_if_pset_allready_exists(self, pset_name, active_object):
+    def check_if_pset_allready_exists(self, pset_name, active_class):
         pass
 
     def clear_table(

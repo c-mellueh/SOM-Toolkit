@@ -3,7 +3,7 @@ from __future__ import annotations
 import SOMcreator
 from SOMcreator.exporter.som_json import core
 from SOMcreator.datastructure.som_json import (
-    OBJECT,
+    CLASS,
     CONNECTION,
     AGGREGATIONS,
     PARENT,
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 def _create_entry(element: SOMcreator.SOMAggregation) -> AggregationDict:
     aggregation_dict: AggregationDict = dict()
     core.write_basics(aggregation_dict, element)
-    aggregation_dict[OBJECT] = element.som_class.uuid
+    aggregation_dict[CLASS] = element.som_class.uuid
     if element.parent is not None:
         aggregation_dict[PARENT] = element.parent.uuid
     else:

@@ -23,7 +23,7 @@
                         <property name="orientation">
                             <enum>Qt::Orientation::Horizontal</enum>
                         </property>
-                        <widget class="ObjectTreeWidget" name="object_tree">
+                        <widget class="ClassTreeWidget" name="class_tree">
                             <property name="selectionMode">
                                 <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
                             </property>
@@ -32,7 +32,7 @@
                             </property>
                             <column>
                                 <property name="text">
-                                    <string>Object</string>
+                                    <string>Class</string>
                                 </property>
                             </column>
                             <column>
@@ -46,7 +46,7 @@
                                 <item row="0" column="0">
                                     <layout class="QVBoxLayout" name="verticalLayout">
                                         <item>
-                                            <widget class="QLabel" name="label_object_name">
+                                            <widget class="QLabel" name="label_class_name">
                                                 <property name="enabled">
                                                     <bool>true</bool>
                                                 </property>
@@ -112,7 +112,7 @@
     </widget>
     <customwidgets>
         <customwidget>
-            <class>ObjectTreeWidget</class>
+            <class>ClassTreeWidget</class>
             <extends>QTreeWidget</extends>
             <header>som_gui.module.mapping.ui</header>
         </customwidget>

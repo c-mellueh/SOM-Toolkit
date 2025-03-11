@@ -113,31 +113,31 @@ class PropertyImportResults(som_gui.core.tool.PropertyImportResults):
         cls,
         combobox: QComboBox,
         allowed_values: set[str],
-        object_list: list[SOMcreator.SOMClass],
+        class_list: list[SOMcreator.SOMClass],
     ):
         cls.lock_updating("SOM ComboBox")
         all_keyword = cls.get_all_keyword()
-        object_dict = {obj.ident_value: obj for obj in object_list}
-        allowed_objects = set(object_dict.get(v) for v in allowed_values)
-        existing_objects = {
+        class_dict = {som_class.ident_value: som_class for som_class in class_list}
+        allowed_classes = set(class_dict.get(v) for v in allowed_values)
+        existing_classes = {
             combobox.itemData(index, Qt.ItemDataRole.UserRole)
             for index in range(combobox.count())
             if combobox.itemText(index) != all_keyword
         }
 
-        add_items = allowed_objects.difference(existing_objects)
-        delete_items = existing_objects.difference(allowed_objects)
+        add_items = allowed_classes.difference(existing_classes)
+        delete_items = existing_classes.difference(allowed_classes)
         if None in add_items:
             add_items.remove(None)
         if not (add_items or delete_items):
             cls.unlock_updating()
             return
 
-        for obj in delete_items:
-            combobox.removeItem(combobox.findData(obj, Qt.ItemDataRole.UserRole))
+        for som_class in delete_items:
+            combobox.removeItem(combobox.findData(som_class, Qt.ItemDataRole.UserRole))
 
-        for obj in add_items:
-            combobox.addItem(f"{obj.name} ({obj.ident_value})", userData=obj)
+        for som_class in add_items:
+            combobox.addItem(f"{som_class.name} ({som_class.ident_value})", userData=som_class)
 
         if combobox.findText(all_keyword) == -1:
             combobox.addItem(all_keyword, userData=all_keyword)
@@ -175,7 +175,7 @@ class PropertyImportResults(som_gui.core.tool.PropertyImportResults):
     @classmethod
     def update_results_window(cls):
         trigger.update_ifc_type_combobox()
-        trigger.update_object_count()
+        trigger.update_class_count()
         trigger.update_property_set_table()
         trigger.update_all_checkbox()
 
@@ -345,15 +345,17 @@ class PropertyImportResults(som_gui.core.tool.PropertyImportResults):
     def get_input_variables(cls):
         all_keyword = cls.get_all_keyword()
         ifc_type = cls.get_ifctype_combo_box().currentText()
-        som_object = cls.get_somtype_combo_box().currentData(Qt.ItemDataRole.UserRole)
-        if som_object is not None:
-            som_object = (
-                som_object.ident_value if som_object != all_keyword else all_keyword
+        som_class: SOMcreator.SOMClass | None = cls.get_somtype_combo_box().currentData(
+            Qt.ItemDataRole.UserRole
+        )
+        if som_class is not None:
+            som_class = (
+                som_class.ident_value if som_class != all_keyword else all_keyword
             )
         property_set = cls.get_selected_property_set()
         som_property = cls.get_selected_property()
 
-        values = [ifc_type, som_object, property_set, som_property]
+        values = [ifc_type, som_class, property_set, som_property]
         outputs = list()
         for value in values:
             if value is None:
@@ -365,8 +367,8 @@ class PropertyImportResults(som_gui.core.tool.PropertyImportResults):
         return tuple(outputs)
 
     @classmethod
-    def set_object_count_label_text(cls, text: str):
-        label = cls.get_results_window().ui.label_object_count
+    def set_class_count_label_text(cls, text: str):
+        label = cls.get_results_window().ui.label_class_count
         label.setText(label.tr(text))
 
     @classmethod
@@ -395,16 +397,16 @@ class PropertyImportResults(som_gui.core.tool.PropertyImportResults):
 
     @classmethod
     def build_property_dict(
-        cls, objects: list[SOMcreator.SOMClass]
+        cls, classes: list[SOMcreator.SOMClass]
     ) -> dict[str, dict[str, dict[str, SOMcreator.SOMProperty]]]:
         result_dict = dict()
-        for obj in objects:
-            object_dict = dict()
-            for pset in obj.get_property_sets(filter=True):
-                object_dict[pset.name] = {
+        for som_class in classes:
+            class_dict = dict()
+            for pset in som_class.get_property_sets(filter=True):
+                class_dict[pset.name] = {
                     p.name: p for p in pset.get_properties(filter=True)
                 }
-            result_dict[obj.ident_value] = object_dict
+            result_dict[som_class.ident_value] = class_dict
         return result_dict
 
     @classmethod
@@ -562,7 +564,7 @@ class PropertyImportSQL(som_gui.core.tool.PropertyImportSQL):
             (widget.check_box_color, "color_values"),
             (widget.check_box_range, "show_range_values"),
             (widget.check_box_boolean_values, "show_boolean_values"),
-            (widget.check_box_object_filter, "activate_object_filter"),
+            (widget.check_box_class_filter, "activate_class_filter"),
         ]
         return checkbox_list
 
@@ -584,14 +586,14 @@ class PropertyImportSQL(som_gui.core.tool.PropertyImportSQL):
         return cls.get_properties().connection.cursor()
 
     @classmethod
-    def set_current_object_filter(
+    def set_current_class_filter(
         cls, usecases: list[SOMcreator.UseCase], phases: list[SOMcreator.Phase]
     ):
         cls.get_properties().active_usecases = usecases
         cls.get_properties().active_phases = phases
 
     @classmethod
-    def get_current_object_filter(
+    def get_current_class_filter(
         cls,
     ) -> tuple[list[SOMcreator.UseCase], list[SOMcreator.Phase]]:
         return cls.get_properties().active_usecases, cls.get_properties().active_phases
@@ -813,7 +815,7 @@ class PropertyImportSQL(som_gui.core.tool.PropertyImportSQL):
         entity: ifcopenshell.entity_instance,
         ifc_file: ifcopenshell.file,
         identifier,
-        existing_object_dict,
+        existing_class_dict,
     ):
         # build query
         cursor = cls.get_cursor()
@@ -826,7 +828,7 @@ class PropertyImportSQL(som_gui.core.tool.PropertyImportSQL):
         pset_dict = ifc_element_util.get_psets(entity, verbose=True)
         entity_guid = entity.GlobalId
         entity_guid_zw = tool.Util.transform_guid(entity_guid, True)
-        existing_pset_dict = existing_object_dict.get(identifier)
+        existing_pset_dict = existing_class_dict.get(identifier)
         for pset_name, property_dict in pset_dict.items():
             existing_property_dict = (
                 existing_pset_dict.get(pset_name) if existing_pset_dict else None
@@ -902,8 +904,8 @@ class PropertyImportSQL(som_gui.core.tool.PropertyImportSQL):
             JOIN {PROPERTY_FILTER_TABLE_NAME} af ON af.{GUID} = sp.{GUID}"""
 
         filters = list()
-        if cls.get_properties().activate_object_filter:
-            usecases, phases = cls.get_current_object_filter()
+        if cls.get_properties().activate_class_filter:
+            usecases, phases = cls.get_current_class_filter()
             phase_names = ",".join(f"'{p.name}'" for p in phases)
             usecase_names = ",".join(
                 f"'{u.name}'" for u in usecases
@@ -1105,8 +1107,8 @@ class PropertyImportSQL(som_gui.core.tool.PropertyImportSQL):
         cls.disconnect_from_database()
 
     @classmethod
-    def count_objects(cls, ifc_type, identifier) -> int:
-        logging.debug("Request ObjectCount")
+    def count_classes(cls, ifc_type, identifier) -> int:
+        logging.debug("Request ClassCount")
 
         cls.connect_to_data_base(cls.get_database_path())
         cursor = cls.get_cursor()

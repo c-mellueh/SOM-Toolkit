@@ -203,9 +203,9 @@ class Popups(som_gui.core.tool.Popups):
         elif mode == 2:
             text = QCoreApplication.translate(
                 "Popups",
-                "A PropertySet with the name '{}' allready exists in a parent object. Do you want to create a link?",
+                "A PropertySet with the name '{}' allready exists in a parent class. Do you want to create a link?",
             )
-            # text = f"Es existiert ein PropertySet mit dem Namen '{name}' in einem übergeordneten Objekt. Soll eine Verknüpfung hergestellt werden?"
+            # text = f"Es existiert ein PropertySet mit dem Namen '{name}' in einem übergeordneten Klasse. Soll eine Verknüpfung hergestellt werden?"
         else:
             text = "{}"
         msg_box.setText(text.format(name))
@@ -237,14 +237,14 @@ class Popups(som_gui.core.tool.Popups):
     @classmethod
     def req_delete_items(cls, string_list, item_type=1) -> (bool, bool):
         """
-        item_type 1= Object,2= Node, 3 = PropertySet, 4 = Property
+        item_type 1= Class,2= Node, 3 = PropertySet, 4 = Property
         """
         dialog = ui.DeleteRequestDialog()
         widget = dialog.widget
         if len(string_list) <= 1:
             if item_type == 1:
                 widget.label.setText(
-                    QCoreApplication.translate("Popups", "Delete Object?")
+                    QCoreApplication.translate("Popups", "Delete Class?")
                 )
             if item_type == 2:
                 widget.label.setText(
@@ -261,7 +261,7 @@ class Popups(som_gui.core.tool.Popups):
         else:
             if item_type == 1:
                 widget.label.setText(
-                    QCoreApplication.translate("Popups", "Delete Objects?")
+                    QCoreApplication.translate("Popups", "Delete Classes?")
                 )
             if item_type == 2:
                 widget.label.setText(

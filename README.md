@@ -6,7 +6,7 @@ The **SOM-Toolkit** is an open-source project designed for the creation, managem
 
 ## Overview
 
-Semantic Object Models (SOMs) are crucial for defining the semantics of objects in BIM workflows. The SOM-Toolkit streamlines the process of defining objects, property sets, and properties, making it easier to adhere to standards like buildingSMART Data Dictionary (bSDD) and Information Delivery Specification (IDS).
+Semantic Object Models (SOMs) are crucial for defining the semantics of objects in BIM workflows. The SOM-Toolkit streamlines the process of defining classes, property sets, and properties, making it easier to adhere to standards like buildingSMART Data Dictionary (bSDD) and Information Delivery Specification (IDS).
 
 ---
 
@@ -16,15 +16,15 @@ Semantic Object Models (SOMs) are crucial for defining the semantics of objects 
 The `SOMcreator` library is the backbone of the SOM-Toolkit, offering an object-oriented data structure for managing the core components of Semantic Object Models.
 
 **Key Features:**
-- **Projects and Objects**: Define projects containing objects with detailed metadata.
-- **Property Sets and properties**: Link objects to property sets and their properties to enhance semantic modeling.
+- **Projects and Classes**: Define projects containing classes with detailed metadata.
+- **Property Sets and properties**: Link classes to property sets and their properties to enhance semantic modeling.
 - **Export Formats**:
   - **bSDD**: Export models to the buildingSMART Data Dictionary format for interoperability.
   - **IDS**: Export to the Information Delivery Specification format for compliance with BIM execution plans.
 - **Programmatic Flexibility**: Designed for developers to integrate directly into Python projects.
 
 **Core Classes and Functions:**
-- `SOMProject`: Represents a project containing multiple objects and their relationships.
+- `SOMProject`: Represents a project containing multiple classes and their relationships.
 - `SOMClass`: Defines an individual classes within the project.
 - `SOMPropertySet` and `SOMProperty`: Define and attach detailed semantic data to classes.
 
@@ -34,7 +34,7 @@ The `SOMcreator` library is the backbone of the SOM-Toolkit, offering an object-
 The `som_gui` is a graphical user interface for non-programmers or users seeking an interactive way to work with Semantic Object Models.
 
 **Key Features:**
-- **Interactive Editing**: Create, view, and modify objects, property sets, and properties.
+- **Interactive Editing**: Create, view, and modify classes, property sets, and properties.
 - **Project Management**: Easily manage multiple projects and export data in the desired format.
 - **Responsive Interface**: Built with PySide6, offering a modern and intuitive design.
 
@@ -78,7 +78,7 @@ project = SOMProject(name="Example SOM")
 ident_property = SOMProperty(name="identifier")
 ident_property.allowed_values = ["w.100.100"]
 
-# Create a Object representing a custom Wall Definition
+# Create a Class representing a custom Wall Definition
 wall = SOMClass(name="MyWall", identifier_property=ident_property, project=project)
 
 # Define the PropertySet in which the Identity Property will be placed
@@ -95,7 +95,7 @@ fire_rating = SOMProperty(name="FireRating", data_type=INTEGER, value_type=LIST)
 fire_rating.allowed_values = [30, 60, 90]
 common_pset.add_property(fire_rating)
 
-# Add PropertySet to Object
+# Add PropertySet to Class definition
 wall.add_property_set(common_pset)
 
 # Export
@@ -109,7 +109,7 @@ The `som_gui` provides a visual way to interact with Semantic Object Models.
    python -m som_gui
 ```
 Features:
-* **Create a Project**: Start a new project and define objects, properties, and properties interactively.
+* **Create a Project**: Start a new project and define classes, properties, and properties interactively.
 * **Modify Existing Data**: Import existing models, modify data, and re-export.
 * **Export Options**: Save your project in bSDD or IDS formats for interoperability with other BIM tools.
 * **IFC-Modelcheck**: Check IFC-Files against specified SOM

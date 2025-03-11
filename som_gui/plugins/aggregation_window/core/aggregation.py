@@ -15,9 +15,12 @@ if TYPE_CHECKING:
 LABEL_KEY = "abbrev_text"
 LINE_EDIT_KEY = "abbreviation"
 
-def remove_main_menu_actions(aggregation: Type[aw_tool.Aggregation], main_window: Type[tool.MainWindow]
+
+def remove_main_menu_actions(
+    aggregation: Type[aw_tool.Aggregation], main_window: Type[tool.MainWindow]
 ):
-    main_window.remove_action("menuDesite",aggregation.get_action("exportBS"))
+    main_window.remove_action("menuDesite", aggregation.get_action("exportBS"))
+
 
 def create_main_menu_actions(
     aggregation: Type[aw_tool.Aggregation], main_window: Type[tool.MainWindow]
@@ -29,6 +32,7 @@ def create_main_menu_actions(
     )
     aggregation.set_action("exportBS", open_window_action)
     retranslate_ui(aggregation)
+
 
 def retranslate_ui(aggregation: Type[aw_tool.Aggregation]):
     action = aggregation.get_action("exportBS")
@@ -49,7 +53,8 @@ def deactivate(
     class_info_tool.remove_plugin_entry(LABEL_KEY)
     class_info_tool.remove_plugin_entry(LINE_EDIT_KEY)
     project.remove_plugin_save_function(aggregation.get_save_function_index())
-    
+
+
 def activate(
     class_tool: Type[tool.Class],
     class_info_tool: Type[tool.ClassInfo],
@@ -66,7 +71,7 @@ def activate(
     class_info_tool.add_plugin_entry(
         LABEL_KEY,
         "horizontal_layout_info",
-        lambda:QLabel(name),
+        lambda: QLabel(name),
         -1,
         lambda *a: None,
         lambda *a: None,
@@ -84,11 +89,12 @@ def activate(
         aggregation.get_ci_text,
         aggregation.set_ci_text,
         aggregation.test_abbreviation,
-        aggregation.set_object_abbreviation,
+        aggregation.set_class_abbreviation,
     )
 
     index = project.add_plugin_save_function(aggregation.trigger_save)
     aggregation.set_save_function_index(index)
+
 
 def export_building_structure(
     aggregation: Type[aw_tool.Aggregation],
@@ -104,7 +110,7 @@ def export_building_structure(
         aggregation.export_building_structure(project.get(), path)
 
 
-def refresh_object_info_line_edit(
+def refresh_class_info_line_edit(
     class_tool: Type[tool.Class],
     class_info: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
@@ -115,7 +121,7 @@ def refresh_object_info_line_edit(
         if class_info.get_mode() == 1
         else None
     )
-    aggregation.object_info_line_edit_paint(data_dict, abbrev_filter)
+    aggregation.class_info_line_edit_paint(data_dict, abbrev_filter)
 
 
 def save_aggregations(view: Type[aw_tool.View], project: Type[tool.Project]):

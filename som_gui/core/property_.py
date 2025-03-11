@@ -32,7 +32,9 @@ def add_basic_property_data(property_tool: Type[tool.Property]):
         "value_type", lambda a: a.value_type, lambda v, a: setattr(a, "value_type", v)
     )
     property_tool.add_property_data_value(
-        "values", lambda a: a.allowed_values, lambda v, a: setattr(a, "allowed_values", v)
+        "values",
+        lambda a: a.allowed_values,
+        lambda v, a: setattr(a, "allowed_values", v),
     )
     property_tool.add_property_data_value(
         "description",
@@ -91,14 +93,14 @@ def create_compare_widget(
     widget = property_compare.create_widget()
 
     # get UI-elements
-    object_tree_widget = property_compare.get_object_tree(widget)
+    class_tree_widget = property_compare.get_class_tree(widget)
     pset_tree = property_compare.get_pset_tree(widget)
     value_table = property_compare.get_value_table(widget)
     info_table = property_compare.get_info_table(widget)
 
-    # fill ObjectTree with objects
-    property_compare.create_object_lists()
-    property_compare.fill_object_tree(object_tree_widget, add_missing=True)
+    # fill ClassTree with classes
+    property_compare.create_class_lists()
+    property_compare.fill_class_tree(class_tree_widget, add_missing=True)
 
     # define and set header labels
     header_labels = [
@@ -106,12 +108,12 @@ def create_compare_widget(
         property_compare.get_header_name_from_project(project1),
     ]
     property_compare.set_header_labels(
-        [object_tree_widget, pset_tree], [value_table], header_labels
+        [class_tree_widget, pset_tree], [value_table], header_labels
     )
     property_compare.set_header_labels([], [info_table], ["Name"] + header_labels)
 
     # Add Color
-    root = object_tree_widget.invisibleRootItem()
+    root = class_tree_widget.invisibleRootItem()
     for child_index in range(root.childCount()):
         property_compare.style_tree_item(root.child(child_index))
 
@@ -123,39 +125,39 @@ def export_differences(file, property_compare: Type[tool.PropertyCompare]):
     """
     Write All found differences between Properties in file
     """
-    objects0: list[SOMcreator.SOMClass] = property_compare.get_missing_objects(0)
-    objects1: list[SOMcreator.SOMClass] = property_compare.get_missing_objects(1)
+    Classes_0: list[SOMcreator.SOMClass] = property_compare.get_missing_classes(0)
+    classes_1: list[SOMcreator.SOMClass] = property_compare.get_missing_classes(1)
     title = QCoreApplication.translate("Compare", "PROPERTY COMPARISON")
     file.write(f"\n{title}\n\n")
 
-    for obj in sorted(objects0, key=lambda x: x.name):
+    for som_class in sorted(Classes_0, key=lambda x: x.name):
         text = QCoreApplication.translate("Compare", "{} ({}) was deleted").format(
-            obj, obj.ident_value
+            som_class, som_class.ident_value
         )
         file.write(f"{text}\n")
 
-    for obj in sorted(objects1, key=lambda x: x.name):
+    for som_class in sorted(classes_1, key=lambda x: x.name):
         text = QCoreApplication.translate("Compare", "{} ({}) was added").format(
-            obj, obj.ident_value
+            som_class, som_class.ident_value
         )
 
         file.write(f"{text}\n")
 
-    if objects0 or objects1:
+    if Classes_0 or classes_1:
         file.write("\n\n")
 
-    property_compare.export_object_differences(file)
+    property_compare.export_class_differences(file)
 
 
-def activate_object_in_compare_tree(
+def activate_class_in_compare_tree(
     widget: ui.PropertyWidget, property_compare: Type[tool.PropertyCompare]
 ):
     """
-    Selection handling of Object Tree in Property Compare Widget
+    Selection handling of Class Tree in Property Compare Widget
     """
     property_compare.clear_table(property_compare.get_info_table(widget))
     property_compare.clear_table(property_compare.get_value_table(widget))
-    cls = property_compare.get_selected_entity(property_compare.get_object_tree(widget))
+    cls = property_compare.get_selected_entity(property_compare.get_class_tree(widget))
     if not isinstance(cls, SOMcreator.SOMClass):
         return
     tree = property_compare.get_pset_tree(widget)

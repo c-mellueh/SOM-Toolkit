@@ -103,10 +103,10 @@ class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
         cls.get_properties().group_parent_dict[entity] = parent_entity
 
     @classmethod
-    def get_object_representation(
+    def get_class_representation(
         cls, entity: ifcopenshell.entity_instance
     ) -> SOMcreator.SOMClass | None:
-        return tool.Modelcheck.get_object_representation(entity)
+        return tool.Modelcheck.get_class_representation(entity)
 
     @classmethod
     def is_parent_allowed(
@@ -114,20 +114,20 @@ class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
         entity: ifcopenshell.entity_instance,
         parent_entity: ifcopenshell.entity_instance,
     ):
-        object_rep = cls.get_object_representation(entity)
-        parent_object_rep = cls.get_object_representation(parent_entity)
-        allowed_parents = cls.get_allowed_parents(object_rep)
-        return bool(parent_object_rep.aggregations.intersection(allowed_parents))
+        class_rep = cls.get_class_representation(entity)
+        parent_class_rep = cls.get_class_representation(parent_entity)
+        allowed_parents = cls.get_allowed_parents(class_rep)
+        return bool(parent_class_rep.aggregations.intersection(allowed_parents))
 
     @classmethod
-    def get_allowed_parents(cls, obj: SOMcreator.SOMClass):
+    def get_allowed_parents(cls, som_class: SOMcreator.SOMClass):
         def _loop_parent(el: SOMcreator.SOMAggregation) -> SOMcreator.SOMAggregation:
             if el.parent_connection != value_constants.INHERITANCE:
                 return el.parent
             else:
                 return _loop_parent(el.parent)
 
-        return set(_loop_parent(aggreg) for aggreg in obj.aggregations)
+        return set(_loop_parent(aggreg) for aggreg in som_class.aggregations)
 
     @classmethod
     def get_group_count(cls) -> int:

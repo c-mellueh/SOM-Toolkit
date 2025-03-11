@@ -23,12 +23,12 @@ class ComparePropertyProperties:
     projects = [None, None]
     uuid_dicts = [None, None]
     ident_dicts = [None, None]
-    object_dict: dict[SOMcreator.SOMClass, SOMcreator.SOMClass | None] = dict()
-    missing_objects: list[list[SOMcreator.SOMClass]] | list[None] = [None, None]
-    object_tree_item_dict = dict()
-    object_lists: list[
-        tuple[SOMcreator.SOMClass | None, SOMcreator.SOMClass | None]
-    ] = list()
+    class_dict: dict[SOMcreator.SOMClass, SOMcreator.SOMClass | None] = dict()
+    missing_classes: list[list[SOMcreator.SOMClass]] | list[None] = [None, None]
+    class_tree_item_dict = dict()
+    class_lists: list[tuple[SOMcreator.SOMClass | None, SOMcreator.SOMClass | None]] = (
+        list()
+    )
     pset_lists: dict[
         SOMcreator.SOMClass,
         list[tuple[SOMcreator.SOMPropertySet, SOMcreator.SOMPropertySet]],

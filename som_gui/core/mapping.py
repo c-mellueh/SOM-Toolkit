@@ -69,23 +69,23 @@ def export_revit_shared_parameters(
     revit.export_shared_parameters(path, export_dict)
 
 
-def update_object_tree(mapping: Type[tool.Mapping], project: Type[tool.Project]):
-    logging.debug(f"Update ObjectTree")
-    root_objects = project.get_root_classes(filter_classes=False)
-    mapping.fill_object_tree(root_objects)
+def update_class_tree(mapping: Type[tool.Mapping], project: Type[tool.Project]):
+    logging.debug(f"Update ClassTree")
+    root_classes = project.get_root_classes(filter_classes=False)
+    mapping.fill_class_tree(root_classes)
 
 
 def update_pset_tree(mapping: Type[tool.Mapping]):
     logging.debug("Update Pset Tree")
-    selected_object = mapping.get_selected_object()
+    selected_class = mapping.get_selected_class()
 
-    if selected_object is None:
+    if selected_class is None:
         property_sets = set()
     else:
-        property_sets = set(selected_object.get_property_sets(filter=True))
+        property_sets = set(selected_class.get_property_sets(filter=True))
 
     enable_state = (
-        True if mapping.get_checkstate(selected_object) and property_sets else False
+        True if mapping.get_checkstate(selected_class) and property_sets else False
     )
     tree = mapping.get_pset_tree()
     if enable_state != tree.isEnabled():

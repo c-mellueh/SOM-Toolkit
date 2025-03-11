@@ -27,19 +27,17 @@ class SOMClass(BaseClass):
         self._registry.add(self)
         self._property_sets: list[SOMcreator.SOMPropertySet] = list()
         self._aggregations: set[SOMcreator.SOMAggregation] = set()
-        self.custom_attribues = {}
-
         self._abbreviation = "" if abbreviation is None else abbreviation
         self._ifc_mapping: set[str] = (
             {"IfcBuildingElementProxy"} if ifc_mapping is None else ifc_mapping
         )
         self.uuid = str(uuid4()) if uuid is None else uuid
-        self._ident_attrib = (
+        self._ident_property = (
             str(self.uuid) if identifier_property is None else identifier_property
         )
 
     def __str__(self):
-        return f"Object {self.name}"
+        return f"Class: {self.name}"
 
     def __lt__(self, other: SOMClass):
         return self.ident_value < other.ident_value
@@ -70,7 +68,7 @@ class SOMClass(BaseClass):
         if new_ident_property is None:
             raise ValueError(f"Identifier Property could'nt be found")
 
-        new_object = SOMClass(
+        new_class = SOMClass(
             name=self.name,
             identifier_property=new_ident_property,
             uuid=str(uuid4()),
@@ -83,12 +81,12 @@ class SOMClass(BaseClass):
         )
 
         for pset in new_property_sets:
-            new_object.add_property_set(pset)
+            new_class.add_property_set(pset)
 
         if self.parent is not None:
-            self.parent.add_child(new_object)  # type: ignore
+            self.parent.add_child(new_class)  # type: ignore
 
-        return new_object
+        return new_class
 
     @property
     def project(self) -> SOMcreator.SOMProject | None:
@@ -134,13 +132,13 @@ class SOMClass(BaseClass):
     def inherited_property_sets(
         self,
     ) -> dict[SOMClass, list[SOMcreator.SOMPropertySet]]:
-        def recursion(recursion_property_sets, recursion_obj: SOMClass):
-            psets = recursion_obj.get_property_sets(filter=False)
+        def recursion(recursion_property_sets, recursion_class: SOMClass):
+            psets = recursion_class.get_property_sets(filter=False)
 
             if psets:
-                recursion_property_sets[recursion_obj] = psets
+                recursion_property_sets[recursion_class] = psets
 
-            parent = recursion_obj.parent
+            parent = recursion_class.parent
             if parent is not None:
                 recursion_property_sets = recursion(recursion_property_sets, parent)
             return recursion_property_sets
@@ -162,11 +160,11 @@ class SOMClass(BaseClass):
 
     @property
     def identifier_property(self) -> SOMcreator.SOMProperty | str | None:
-        return self._ident_attrib
+        return self._ident_property
 
     @identifier_property.setter
     def identifier_property(self, value: SOMcreator.SOMProperty | str | None) -> None:
-        self._ident_attrib = value
+        self._ident_property = value
 
     # override name setter because of intheritance
     @property

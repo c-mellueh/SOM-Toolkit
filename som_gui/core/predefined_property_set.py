@@ -78,7 +78,7 @@ def pset_context_menu(
 def pset_selection_changed(predefined_pset: Type[tool.PredefinedPropertySet]):
     property_set = predefined_pset.get_selected_property_set()
     predefined_pset.set_active_property_set(property_set)
-    repaint_object_list(predefined_pset)
+    repaint_class_list(predefined_pset)
 
 
 def pset_double_clicked(
@@ -88,12 +88,10 @@ def pset_double_clicked(
     property_table: Type[tool.PropertyTable],
 ):
     pset = property_set.get_property_set_from_item(item)
-    property_set_window_core.open_pset_window(
-        pset, property_set_window, property_table
-    )
+    property_set_window_core.open_pset_window(pset, property_set_window, property_table)
 
 
-def object_context_menu(
+def class_context_menu(
     pos,
     predefined_pset: Type[tool.PredefinedPropertySet],
     property_set: Type[tool.PropertySet],
@@ -101,26 +99,26 @@ def object_context_menu(
     delete = QCoreApplication.translate("PredefinedPset", "Delete")
     remove_link = QCoreApplication.translate("PredefinedPset", "Remove Link")
     functions = [
-        [delete, predefined_pset.delete_selected_objects],
+        [delete, predefined_pset.delete_selected_classes],
         [remove_link, predefined_pset.remove_selected_links],
     ]
-    table_widget = predefined_pset.get_object_table_widget()
+    table_widget = predefined_pset.get_class_table_widget()
     property_set.create_context_menu(table_widget.mapToGlobal(pos), functions)
 
 
-def object_double_clicked(
+def class_double_clicked(
     predefined_pset: Type[tool.PredefinedPropertySet],
     property_set: Type[tool.PropertySet],
-    object_tool: Type[tool.Class],
+    class_tool: Type[tool.Class],
 ):
-    item = predefined_pset.get_object_table_widget().selectedItems()[0]
+    item = predefined_pset.get_class_table_widget().selectedItems()[0]
     pset = property_set.get_property_set_from_item(item)
     predefined_pset.close_window()
 
-    obj = pset.som_class
-    obj_item = object_tool.get_item_from_class(obj)
-    object_tool.select_class(obj)
-    object_tool.expand_to_item(obj_item)
+    som_class = pset.som_class
+    class_item = class_tool.get_item_from_class(som_class)
+    class_tool.select_class(som_class)
+    class_tool.expand_to_item(class_item)
     property_set.select_property_set(pset)
 
 
@@ -145,16 +143,16 @@ def pset_data_changed(item, property_set: Type[tool.PropertySet]):
 
 def repaint_window(predefined_pset: Type[tool.PredefinedPropertySet]):
     repaint_pset_list(predefined_pset)
-    repaint_object_list(predefined_pset)
+    repaint_class_list(predefined_pset)
     pass
 
 
-def repaint_object_list(predefined_pset: Type[tool.PredefinedPropertySet]):
+def repaint_class_list(predefined_pset: Type[tool.PredefinedPropertySet]):
     property_set = predefined_pset.get_active_property_set()
-    table_widget = predefined_pset.get_object_table_widget()
+    table_widget = predefined_pset.get_class_table_widget()
 
     if property_set is None:
-        predefined_pset.clear_object_table()
+        predefined_pset.clear_class_table()
         return
     predefined_property_sets = set(property_set.get_children(filter=True))
     existing_property_sets = predefined_pset.get_existing_psets_in_table_widget(
@@ -169,7 +167,7 @@ def repaint_object_list(predefined_pset: Type[tool.PredefinedPropertySet]):
     predefined_pset.remove_property_sets_from_table_widget(
         delete_property_sets, table_widget
     )
-    predefined_pset.add_objects_to_table_widget(
+    predefined_pset.add_classes_to_table_widget(
         sorted(
             filter(lambda p: p.som_class is not None, add_property_sets),
             key=lambda p: p.som_class.name,
@@ -178,7 +176,7 @@ def repaint_object_list(predefined_pset: Type[tool.PredefinedPropertySet]):
     )
 
     table_widget.resizeColumnToContents(0)
-    predefined_pset.update_object_widget()
+    predefined_pset.update_class_widget()
 
 
 def repaint_pset_list(predefined_pset: Type[tool.PredefinedPropertySet]):

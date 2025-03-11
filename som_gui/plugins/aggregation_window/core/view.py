@@ -215,9 +215,9 @@ def mouse_release_event(
             view.create_connection_by_pos(connection.get_draw_node())
             connection.delete_draw_connection()
         else:
-            obj = search.search_class(list(project.get().get_classes(filter=True)))
-            if obj is not None:
-                view.create_child_node(connection.get_draw_node(), obj)
+            som_class = search.search_class(list(project.get().get_classes(filter=True)))
+            if som_class is not None:
+                view.create_child_node(connection.get_draw_node(), som_class)
 
     view.reset_cursor(view.map_to_scene(position))
     new_cursor = view.get_hover_cursor(view.map_to_scene(position))
@@ -381,8 +381,8 @@ def rearange(
     if not root_nodes:
         return
     # create helper to structure multiple root nodes
-    helper_obj = SOMcreator.SOMClass("INV", None)
-    helper_aggregation = SOMcreator.SOMAggregation(helper_obj)
+    helper_class = SOMcreator.SOMClass("INV", None)
+    helper_aggregation = SOMcreator.SOMAggregation(helper_class)
     helper_node = node.create_node(helper_aggregation)
     for root_node in root_nodes:
         connection.create_connection(helper_node, root_node, 1)
@@ -407,7 +407,7 @@ def rearange(
 
     # delete Helpers which won't be needed anymore
     helper_node.deleteLater()
-    helper_obj.delete()
+    helper_class.delete()
 
 
 def add_node_at_pos(
@@ -417,10 +417,10 @@ def add_node_at_pos(
     project: Type[tool.Project],
 ) -> None:
     scene = view.get_active_scene()
-    obj = search.search_class(list(project.get().get_classes(filter=True)))
-    if not obj:
+    som_class = search.search_class(list(project.get().get_classes(filter=True)))
+    if not som_class:
         return
-    aggregation = SOMcreator.SOMAggregation(obj)
+    aggregation = SOMcreator.SOMAggregation(som_class)
     view.add_aggregation_to_import_list(scene, aggregation, pos)
 
 
@@ -439,8 +439,8 @@ def change_header_text(
         node.set_title_settings(som_property.property_set.name, som_property.name)
 
 
-def add_object_to_scene(
-    obj: SOMcreator.SOMClass,
+def add_class_to_scene(
+    som_class: SOMcreator.SOMClass,
     scene,
     parent_node: node_ui.NodeProxy | None,
     pos: QPoint | None,
@@ -453,7 +453,7 @@ def add_object_to_scene(
     if pos is None:
         pos = QPointF(100.0, 100.0)
 
-    aggregation = SOMcreator.SOMAggregation(obj)
+    aggregation = SOMcreator.SOMAggregation(som_class)
     new_node = node.create_node(aggregation)
     view.add_node_to_scene(new_node, scene)
     node.set_node_pos(new_node, pos)

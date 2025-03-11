@@ -69,7 +69,7 @@ def open_import_window(
     proj = project.get()
     usecases = [proj.get_usecase_by_index(i) for i in proj.active_usecases]
     phases = [proj.get_phase_by_index(i) for i in proj.active_phases]
-    property_import_sql.set_current_object_filter(usecases, phases)
+    property_import_sql.set_current_class_filter(usecases, phases)
     if property_import_results.is_window_allready_build():
         property_import_sql.create_som_filter_table()
         property_import_results.get_results_window().show()
@@ -329,19 +329,17 @@ def update_identifier_combobox(
         return
     combobox = property_import_results.get_somtype_combo_box()
     ifc_type = property_import_results.get_ifctype_combo_box().currentText()
-    object_list = list(project.get().get_classes(filter=False))
+    class_list = list(project.get().get_classes(filter=False))
 
     wanted_som_types = set(
         property_import_sql.get_identifier_types(
             ifc_type, property_import_results.get_all_keyword()
         )
     )
-    property_import_results.update_som_combobox(
-        combobox, wanted_som_types, object_list
-    )
+    property_import_results.update_som_combobox(combobox, wanted_som_types, class_list)
 
 
-def update_object_count(
+def update_class_count(
     property_import_results: Type[tool.PropertyImportResults],
     property_import_sql: Type[tool.PropertyImportSQL],
 ):
@@ -350,8 +348,9 @@ def update_object_count(
     )
     if None in (ifc_type, identifier):
         return
-    object_count = property_import_sql.count_objects(ifc_type, identifier)
-    property_import_results.set_object_count_label_text(f"Anzahl: {object_count}")
+    class_count = property_import_sql.count_classes(ifc_type, identifier)
+    text = QCoreApplication.translate("PropertyImport", "Count: {}").format(class_count)
+    property_import_results.set_class_count_label_text(text)
 
 
 def update_property_set_table(

@@ -237,7 +237,10 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         """Iterate over all Entities, build the targeted Datastructure"""
 
         targeted_group_structure = {GROUP: {}, ELEMENT: {}, IFC_REP: None}
-        bk_dict = {obj.ident_value: obj for obj in project.get_classes(filter=True)}
+        bk_dict = {
+            som_class.ident_value: som_class
+            for som_class in project.get_classes(filter=True)
+        }
         entity_count = len(ifc_elements)
 
         percentages = list()
@@ -264,13 +267,13 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
                     }
                 focus_dict = focus_dict[GROUP][part]
 
-            obj: SOMcreator.SOMClass = bk_dict.get(attrib)
-            if obj is None:
+            som_class: SOMcreator.SOMClass = bk_dict.get(attrib)
+            if som_class is None:
                 logging.warning(
                     f"Die Entität '{el.GlobalId}' besitzt einen unbekannten identifier ({attrib}) und kann dadurch nicht ausgewertet werden!"
                 )
                 continue
-            abbrev = obj.abbreviation
+            abbrev = som_class.abbreviation
             if abbrev.upper() not in focus_dict[GROUP]:
                 focus_dict[GROUP][abbrev] = {GROUP: {}, ELEMENT: list(), IFC_REP: None}
             focus_dict[GROUP][abbrev][ELEMENT].append(el)
@@ -298,11 +301,13 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         ifc_file,
         structure_dict,
         owner_history,
-        objects_list: Iterator[SOMcreator.SOMClass],
+        classes_list: Iterator[SOMcreator.SOMClass],
     ):
         property_bundle = cls.get_property_bundle()
-        abbrev_dict = {obj.abbreviation.upper(): obj for obj in objects_list}
-        create_empty = cls.get_properties().create_empty_attribues
+        abbrev_dict = {
+            som_class.abbreviation.upper(): som_class for som_class in classes_list
+        }
+        create_empty = cls.get_properties().create_empty_properties
         create_aggregation_structure(
             ifc_file,
             structure_dict,

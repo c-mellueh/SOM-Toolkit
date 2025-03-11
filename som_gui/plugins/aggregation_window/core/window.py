@@ -123,22 +123,22 @@ def filter_scenes(
 ) -> None:
     allowed_scenes = window.get_allowed_scenes()
     scene_list = view.get_all_scenes()
-    filter_object = search.search_class(list(project.get().get_classes(filter=True)))
-    if filter_object is None:
+    filter_class = search.search_class(list(project.get().get_classes(filter=True)))
+    if filter_class is None:
         return
     for scene in scene_list:
-        objects_in_scene = view.get_objects_in_scene(scene)
-        if filter_object not in objects_in_scene:
+        classes_in_scene = view.get_classes_in_scene(scene)
+        if filter_class not in classes_in_scene:
             allowed_scenes.remove(scene)
     if not allowed_scenes:
-        title = QCoreApplication.translate("Aggregation", "Object DNE")
+        title = QCoreApplication.translate("Aggregation", "Class DNE")
         text = QCoreApplication.translate(
-            "Aggregation", "Object doesn't exist in any View"
+            "Aggregation", "Class doesn't exist in any View"
         )
 
         popup.create_warning_popup(text, title)
         return
-    window.set_filter_object(filter_object)
+    window.set_filter_class(filter_class)
     window.activate_filter()
     window.set_allowed_scenes(allowed_scenes)
     update_combo_box(window, view)
@@ -150,17 +150,17 @@ def search_aggregation(
     popup: Type[tool.Popups],
     project: Type[tool.Project],
 ) -> None:
-    obj = search.search_class(list(project.get().get_classes(filter=True)))
-    if obj is None:
+    som_class = search.search_class(list(project.get().get_classes(filter=True)))
+    if som_class is None:
         return
     scene = view.get_active_scene()
     nodes = {
         node
         for node in view.get_nodes_in_scene(scene)
-        if node.aggregation.som_class == obj
+        if node.aggregation.som_class == som_class
     }
     if not nodes:
-        text = QCoreApplication.translate("Aggregation", "No Node linked to Object")
+        text = QCoreApplication.translate("Aggregation", "No Node linked to Class")
         popup.create_warning_popup(text)
         return
     scene.clearSelection()

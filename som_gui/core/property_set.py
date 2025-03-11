@@ -14,14 +14,14 @@ from PySide6.QtCore import QModelIndex, Qt, QCoreApplication
 
 
 def add_property_set_button_pressed(
-    object_tool: Type[tool.Class],
+    class_tool: Type[tool.Class],
     main_window_tool: Type[tool.MainWindow],
     property_set_tool: Type[tool.PropertySet],
     popup_tool: Type[tool.Popups],
     predefined_psets: Type[tool.PredefinedPropertySet],
 ):
     logging.debug(f"Add PropertySet button clicked")
-    obj = object_tool.get_active_class()
+    som_class = class_tool.get_active_class()
     title = QCoreApplication.translate("PropertySet", "Add PropertySet")
     name = QCoreApplication.translate("PropertySet", "PropertySet name?")
 
@@ -30,7 +30,7 @@ def add_property_set_button_pressed(
     )
     if not pset_name:
         return
-    if property_set_tool.check_if_pset_allready_exists(pset_name, obj):
+    if property_set_tool.check_if_pset_allready_exists(pset_name, som_class):
         text = QCoreApplication.translate(
             f"PropertySet", "PropertySet '{}' exists allready"
         ).format(pset_name)
@@ -40,12 +40,12 @@ def add_property_set_button_pressed(
     parent = property_set_tool.search_for_parent(
         pset_name,
         predefined_psets.get_property_sets(),
-        property_set_tool.get_inheritable_property_sets(obj),
+        property_set_tool.get_inheritable_property_sets(som_class),
     )
     if parent is False:
         return
-    property_set_tool.create_property_set(pset_name, obj, parent)
-    repaint_pset_table(property_set_tool, object_tool)
+    property_set_tool.create_property_set(pset_name, som_class, parent)
+    repaint_pset_table(property_set_tool, class_tool)
 
 
 def pset_clicked(item: QTableWidgetItem, property_set: Type[tool.PropertySet]):
@@ -127,11 +127,11 @@ def rename_pset_by_editor(
 
 
 def repaint_pset_table(
-    property_set_tool: Type[tool.PropertySet], object_tool: Type[tool.Class]
+    property_set_tool: Type[tool.PropertySet], class_tool: Type[tool.Class]
 ):
     logging.debug(f"Repaint PropertySet Table")
 
-    if object_tool.get_active_class() is None:
+    if class_tool.get_active_class() is None:
         property_set_tool.set_enabled(False)
         return
 

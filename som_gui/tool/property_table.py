@@ -309,9 +309,9 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             return None
 
         # stop user from deleting identifier property
-        obj = cls.get_property_set_by_table(table).som_class
-        ident_attrib = None if obj is None else obj.identifier_property
-        if ident_attrib in cls.get_selected_properties(table):
+        som_class = cls.get_property_set_by_table(table).som_class
+        ident_property = None if som_class is None else som_class.identifier_property
+        if ident_property in cls.get_selected_properties(table):
             return None
 
         # don't show if any property is not a parent if deletion with child is requested

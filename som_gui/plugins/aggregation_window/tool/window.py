@@ -100,7 +100,7 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
     @classmethod
     def remove_filter(cls) -> None:
         cls.get_properties().filter_is_activated = False
-        cls.set_filter_object(None)
+        cls.set_filter_class(None)
 
     @classmethod
     def get_allowed_scenes(cls) -> list:
@@ -113,8 +113,8 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
         cls.get_properties().allowed_scenes = scene_list
 
     @classmethod
-    def set_filter_object(cls, obj: SOMcreator.SOMClass | None) -> None:
-        cls.get_properties().filter_object = obj
+    def set_filter_class(cls, som_class: SOMcreator.SOMClass | None) -> None:
+        cls.get_properties().filter_class = som_class
 
     @classmethod
     def get_status_bar(cls) -> QStatusBar:
@@ -122,19 +122,19 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
 
     @classmethod
     def calculate_statusbar_text(cls) -> str:
-        filter_object = cls.get_properties().filter_object
+        filter_class = cls.get_properties().filter_class
         texts = list()
-        if filter_object is not None:
+        if filter_class is not None:
             status_text = QCoreApplication.translate(
                 "Aggregation", "Filter by {}"
-            ).format(filter_object.name)
+            ).format(filter_class.name)
             texts.append(status_text)
         return " | ".join(texts)
 
     @classmethod
     def trigger_retranslate_ui(cls):
         trigger.retranslate_ui()
-    
+
     @classmethod
     def trigger_open_window(cls):
         trigger.open_window()

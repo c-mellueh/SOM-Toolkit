@@ -148,14 +148,14 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
         if not path:
             return
         data_dict = cls.get_data_dict()
-        object_structure = cls._build_tree()
+        class_structure = cls._build_tree()
         modelcheck.export(
             tool.Project.get(),
             data_dict,
             path,
             main_pset=pset_name,
             main_property=property_name,
-            object_structure=object_structure,
+            class_structure=class_structure,
         )
 
     @classmethod
@@ -175,10 +175,10 @@ class ModelcheckExternal(som_gui.core.tool.ModelcheckExternal):
             path,
             main_pset=pset_name,
             main_property=property_name,
-            object_structure=cls._build_tree(),
+            class_structure=cls._build_tree(),
             export_type=modelcheck.TABLE_EXPORT,
         )
 
     @classmethod
     def _build_tree(cls) -> dict[SOMcreator.SOMClass, SOMcreator.SOMClass]:
-        return {obj: obj.parent for obj in tool.Project.get().get_classes(filter=False)}
+        return {som_class: som_class.parent for som_class in tool.Project.get().get_classes(filter=False)}

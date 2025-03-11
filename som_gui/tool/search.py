@@ -49,11 +49,11 @@ class Search(som_gui.core.tool.Search):
 
     @classmethod
     def search_class(
-        cls, searchable_objects: list[SOMcreator.SOMClass]
+        cls, searchable_classes: list[SOMcreator.SOMClass]
     ) -> SOMcreator.SOMClass | None:
         """
-        Opens SearchWindow which searches for an object
-        :param searchable_objects: Objects which will be visible in Search Table
+        Opens SearchWindow which searches for a class
+        :param searchable_classes: Classes which will be visible in Search Table
         :return:
 
         """
@@ -63,7 +63,7 @@ class Search(som_gui.core.tool.Search):
             lambda o: getattr(o, "ident_value"),
             lambda o: getattr(o, "abbreviation"),  # TODO: Add plugin function
         ]
-        return cls._search(1, searchable_objects, getter_methods)
+        return cls._search(1, searchable_classes, getter_methods)
 
     @classmethod
     def search_property(
@@ -89,7 +89,7 @@ class Search(som_gui.core.tool.Search):
         """
         if search_mode == 1:
             return [
-                QCoreApplication.translate("Search", "Object"),
+                QCoreApplication.translate("Search", "Class"),
                 QCoreApplication.translate("Search", "Identifier"),
                 QCoreApplication.translate("Search", "Abbreviation"),
             ]
@@ -109,7 +109,7 @@ class Search(som_gui.core.tool.Search):
         """
         title = ""
         if search_mode == 1:
-            title = QCoreApplication.translate("Search", "Search Object")
+            title = QCoreApplication.translate("Search", "Search Class")
         elif search_mode == 2:
             title = QCoreApplication.translate("Search", "Search Property")
 
@@ -144,7 +144,7 @@ class Search(som_gui.core.tool.Search):
         :return:
         """
         item_list = list()
-        for entity in search_items:  # Iterate over Objects or Properties
+        for entity in search_items:  # Iterate over Classes or Properties
             row_data = [
                 m(entity) for m in getter_methods
             ]  # use getter Methods for Row Values
@@ -193,7 +193,7 @@ class Search(som_gui.core.tool.Search):
     def get_search_mode(cls, dialog: SearchDialog) -> int:
         """
         :param dialog:
-        :return: 1 = Object 2= Property
+        :return: 1 = Class 2= Property
         """
         return dialog.search_mode
 

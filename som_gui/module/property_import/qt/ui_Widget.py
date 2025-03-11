@@ -50,17 +50,17 @@ class Ui_PropertyImport(object):
 
         self.horizontal_layout_buttons.addWidget(self.combo_box_identifier)
 
-        self.label_object_count = QLabel(PropertyImport)
-        self.label_object_count.setObjectName(u"label_object_count")
+        self.label_class_count = QLabel(PropertyImport)
+        self.label_class_count.setObjectName(u"label_class_count")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.label_object_count.sizePolicy().hasHeightForWidth())
-        self.label_object_count.setSizePolicy(sizePolicy1)
-        self.label_object_count.setMinimumSize(QSize(0, 24))
-        self.label_object_count.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        sizePolicy1.setHeightForWidth(self.label_class_count.sizePolicy().hasHeightForWidth())
+        self.label_class_count.setSizePolicy(sizePolicy1)
+        self.label_class_count.setMinimumSize(QSize(0, 24))
+        self.label_class_count.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.horizontal_layout_buttons.addWidget(self.label_object_count)
+        self.horizontal_layout_buttons.addWidget(self.label_class_count)
 
 
         self.main_layout.addLayout(self.horizontal_layout_buttons)
@@ -223,7 +223,7 @@ class Ui_PropertyImport(object):
 
     def retranslateUi(self, PropertyImport):
         PropertyImport.setWindowTitle(QCoreApplication.translate("PropertyImport", u"Form", None))
-        self.label_object_count.setText(QCoreApplication.translate("PropertyImport", u"Count", None))
+        self.label_class_count.setText(QCoreApplication.translate("PropertyImport", u"Count", None))
         self.label_proeprty_sets.setText(QCoreApplication.translate("PropertyImport", u"PropertySets", None))
         self.label_properties.setText(QCoreApplication.translate("PropertyImport", u"Properties", None))
         self.check_box_values.setText(QCoreApplication.translate("PropertyImport", u"All", None))

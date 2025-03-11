@@ -36,7 +36,7 @@
                         <property name="orientation">
                             <enum>Qt::Orientation::Horizontal</enum>
                         </property>
-                        <widget class="ObjectTree" name="object_tree">
+                        <widget class="ClassTree" name="class_tree">
                             <property name="contextMenuPolicy">
                                 <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
                             </property>
@@ -47,7 +47,7 @@
                         <widget class="QWidget" name="verticalLayoutWidget">
                             <layout class="QVBoxLayout" name="verticalLayout_2">
                                 <item>
-                                    <widget class="QLabel" name="label_object">
+                                    <widget class="QLabel" name="label_class">
                                         <property name="text">
                                             <string>TextLabel</string>
                                         </property>
@@ -94,7 +94,7 @@
     </widget>
     <customwidgets>
         <customwidget>
-            <class>ObjectTree</class>
+            <class>ClassTree</class>
             <extends>QTreeView</extends>
             <header>som_gui.module.modelcheck_window.ui</header>
         </customwidget>

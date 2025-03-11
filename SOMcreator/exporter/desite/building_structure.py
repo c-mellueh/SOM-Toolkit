@@ -37,14 +37,14 @@ def _handle_elementsection(xml_parent: Element):
     xml_root.set("type", "typeBsContainer")
     xml_root.set("takt", "")
 
-    root_objects: list[SOMcreator.SOMAggregation] = [
+    root_classes: list[SOMcreator.SOMAggregation] = [
         aggreg for aggreg in SOMcreator.SOMAggregation if aggreg.is_root
     ]
 
-    root_objects.sort(key=lambda x: x.name)
+    root_classes.sort(key=lambda x: x.name)
 
     id_dict = dict()
-    for aggreg in root_objects:
+    for aggreg in root_classes:
         _handle_section(id_dict, aggreg, xml_root)
 
     return xml_elementsection, id_dict
@@ -73,20 +73,20 @@ def _handle_property_type_section(xml_repo) -> dict[str, int]:
 
 
 def _handle_property_section(
-    xml_repo: etree.Element, id_dict: dict, property_dict: dict
+    xml_repo: etree.Element, id_dict: dict[SOMcreator.SOMAggregation,str], property_dict: dict
 ) -> None:
     xml_property_section = etree.SubElement(xml_repo, "propertySection")
 
-    for node, ref_id in id_dict.items():
-        obj: SOMcreator.SOMClass = node.object
-        for property_set in obj.get_property_sets(filter=True):
+    for aggregation, ref_id in id_dict.items():
+        som_class: SOMcreator.SOMClass = aggregation.som_class
+        for property_set in som_class.get_property_sets(filter=True):
             for som_property in property_set.get_properties(filter=True):
                 property_text = f"{som_property.property_set.name}:{som_property.name}"
                 ref_type = property_dict[property_text]
                 xml_property = etree.SubElement(xml_property_section, "property")
                 xml_property.set("refID", str(ref_id))
                 xml_property.set("refType", str(ref_type))
-                if som_property == obj.identifier_property:
+                if som_property == som_class.identifier_property:
                     xml_property.text = som_property.allowed_values[0]
                 else:
                     xml_property.text = "füllen!"

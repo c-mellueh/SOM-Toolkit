@@ -83,12 +83,12 @@ def retranslate_ui(
     title = util.get_window_title(modelcheck_title)
     window.setWindowTitle(title)
 
-    object_model: QStandardItemModel = modelcheck_window.get_object_tree().model()
+    class_model: QStandardItemModel = modelcheck_window.get_class_tree().model()
     headers = [
-        QCoreApplication.translate("Modelcheck", "Object"),
+        QCoreApplication.translate("Modelcheck", "Class"),
         QCoreApplication.translate("Modelcheck", "Identifier"),
     ]
-    object_model.setHorizontalHeaderLabels(headers)
+    class_model.setHorizontalHeaderLabels(headers)
 
     pset_model: QStandardItemModel = modelcheck_window.get_pset_tree().model()
     headers = [QCoreApplication.translate("Modelcheck", "PropertySet,Property")]
@@ -237,67 +237,67 @@ def modelcheck_finished(
         modelcheck_window.reset_butons()
 
 
-def paint_object_tree(
-    tree: ui.ObjectTree,
+def paint_class_tree(
+    tree: ui.ClassTree,
     modelcheck_window: Type[tool.ModelcheckWindow],
     project: Type[tool.Project],
 ):
-    logging.debug(f"Repaint Modelcheck Object Tree")
-    root_objects = set(project.get_root_classes(True))
+    logging.debug(f"Repaint Modelcheck Class Tree")
+    root_classes = set(project.get_root_classes(True))
     invisible_root_entity = tree.model().invisibleRootItem()
-    modelcheck_window.fill_object_tree(
-        root_objects, invisible_root_entity, tree.model(), tree
+    modelcheck_window.fill_class_tree(
+        root_classes, invisible_root_entity, tree.model(), tree
     )
     if modelcheck_window.is_initial_paint:
-        modelcheck_window.resize_object_tree(tree)
+        modelcheck_window.resize_class_tree(tree)
 
 
-def object_check_changed(
+def class_check_changed(
     item: QStandardItem, modelcheck_window: Type[tool.ModelcheckWindow]
 ):
-    obj = item.data(CLASS_REFERENCE)
+    som_class = item.data(CLASS_REFERENCE)
     if item.column() != 0:
         return
 
-    modelcheck_window.set_item_check_state(obj, item.checkState())
+    modelcheck_window.set_item_check_state(som_class, item.checkState())
 
     paint_pset_tree(modelcheck_window)
 
 
-def object_selection_changed(
+def class_selection_changed(
     selection_model: QItemSelectionModel, modelcheck_window: Type[tool.ModelcheckWindow]
 ):
-    logging.debug(f"ObjectSelectionChanged: {selection_model.selectedIndexes()}")
+    logging.debug(f"Class selection changed: {selection_model.selectedIndexes()}")
     selected_indexes = selection_model.selectedIndexes()
     if not selected_indexes:
         return
     index: QModelIndex = selected_indexes[0]
-    obj: SOMcreator.SOMClass = index.data(CLASS_REFERENCE)
-    modelcheck_window.set_selected_object(obj)
+    som_class: SOMcreator.SOMClass = index.data(CLASS_REFERENCE)
+    modelcheck_window.set_selected_class(som_class)
     paint_pset_tree(modelcheck_window)
-    if obj.ident_value:
-        text = f"{obj.name} [{obj.ident_value}]"
+    if som_class.ident_value:
+        text = f"{som_class.name} [{som_class.ident_value}]"
     else:
-        text = obj.name
+        text = som_class.name
     modelcheck_window.set_pset_tree_title(text)
     modelcheck_window.show_pset_tree_title(True)
 
 
 def paint_pset_tree(modelcheck_window: Type[tool.ModelcheckWindow]):
     logging.debug(f"Repaint Modelcheck Pset Tree")
-    obj = modelcheck_window.get_selected_object()
-    if obj is None:
+    som_cls = modelcheck_window.get_selected_class()
+    if som_cls is None:
         return
-    cs = modelcheck_window.get_item_check_state(obj)
+    cs = modelcheck_window.get_item_check_state(som_cls)
     enabled = True if cs == Qt.CheckState.Checked else False
     modelcheck_window.fill_pset_tree(
-        set(obj.get_property_sets(filter=True)),
+        set(som_cls.get_property_sets(filter=True)),
         enabled,
         modelcheck_window.get_pset_tree(),
     )
 
 
-def object_tree_context_menu_requested(
+def class_tree_context_menu_requested(
     pos, widget, modelcheck_window: Type[tool.ModelcheckWindow]
 ):
     actions = [
@@ -322,10 +322,10 @@ def object_tree_context_menu_requested(
     modelcheck_window.create_context_menu(pos, actions, widget)
 
 
-def connect_object_tree(
-    tree: ui.ObjectTree, modelcheck_window: Type[tool.ModelcheckWindow]
+def connect_class_tree(
+    tree: ui.ClassTree, modelcheck_window: Type[tool.ModelcheckWindow]
 ):
-    modelcheck_window.connect_object_tree(tree)
+    modelcheck_window.connect_class_tree(tree)
 
 
 def connect_pset_tree(

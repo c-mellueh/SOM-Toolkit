@@ -23,24 +23,24 @@ PROPERTY_KIND_MAPPING = {
 }
 
 
-def transform_objects_to_classes(
+def transform_som_class_to_bsdd_class(
     dictionary: bsdd.Dictionary,
-    objects: list[SOMcreator.SOMClass],
+    classes: list[SOMcreator.SOMClass],
     predefined_psets: list[SOMcreator.SOMPropertySet],
 ):
     """
-    Adds objects and Properties to bsdd.Dictionary
+    Adds classes and Properties to bsdd.Dictionary
     """
     predefined_properties = [
         a for p in predefined_psets for a in p.get_properties(filter=True)
     ]
-    properties = _get_all_properties(objects)
+    properties = _get_all_properties(classes)
     dictionary.Properties, all_class_properties = _create_properties(
         predefined_properties, properties
     )
-    class_dict = _create_classes(objects, all_class_properties, dictionary)
-    _iterate_parent_relations(objects, class_dict)
-    _iterate_aggregations(objects, class_dict)
+    class_dict = _create_classes(classes, all_class_properties, dictionary)
+    _iterate_parent_relations(classes, class_dict)
+    _iterate_aggregations(classes, class_dict)
 
 
 def transform_project_to_dict(proj: SOMcreator.SOMProject):
@@ -64,17 +64,20 @@ def _create_property(som_property: SOMcreator.SOMProperty) -> bsdd.Property:
     p.property = som_property
     p.Definition = som_property.description
     p.DataType = DATATYPE_MAPPING[som_property.data_type]
-    if som_property.value_type == value_constants.FORMAT and som_property.allowed_values:
+    if (
+        som_property.value_type == value_constants.FORMAT
+        and som_property.allowed_values
+    ):
         p.Pattern = "|".join(som_property.allowed_values)
     p.PropertyValueKind = PROPERTY_KIND_MAPPING[som_property.value_type]
     return p
 
 
-def _find_differences(obj_1: bsdd.Property, obj_2: bsdd.Property) -> dict:
+def _find_differences(prop_0: bsdd.Property, prop_1: bsdd.Property) -> dict:
     difference_dict = dict()
-    for property_name in obj_1.__annotations__.keys():
-        value_1 = getattr(obj_1, property_name)
-        value_2 = getattr(obj_2, property_name)
+    for property_name in prop_0.__annotations__.keys():
+        value_1 = getattr(prop_0, property_name)
+        value_2 = getattr(prop_1, property_name)
         if value_1 != value_2:
             difference_dict[property_name] = [value_1, value_2]
     return difference_dict
@@ -133,16 +136,14 @@ def _create_properties(
         else:
             new_property = _create_property(som_property)
             properties.append(new_property)
-    class_properties = [
-        _create_class_property(p, properties) for p in class_properties
-    ]
+    class_properties = [_create_class_property(p, properties) for p in class_properties]
     return properties, class_properties
 
 
-def _create_class(obj: SOMcreator.SOMClass, d: bsdd.Dictionary):
-    c = bsdd.Class(d, str(obj.ident_value), obj.name, "Class")
-    c.Description = obj.description
-    c.RelatedIfcEntityNamesList = list(obj.ifc_mapping)
+def _create_class(som_class: SOMcreator.SOMClass, d: bsdd.Dictionary):
+    c = bsdd.Class(d, str(som_class.ident_value), som_class.name, "Class")
+    c.Description = som_class.description
+    c.RelatedIfcEntityNamesList = list(som_class.ifc_mapping)
     c.CountriesOfUse = ["DE"]
     c.CountryOfOrigin = "DE"
     c.CreatorLanguageIsoCode = "de-DE"
@@ -151,52 +152,52 @@ def _create_class(obj: SOMcreator.SOMClass, d: bsdd.Dictionary):
 
 
 def _create_classes(
-    objects: list[SOMcreator.SOMClass], class_properties, dictionary: bsdd.Dictionary
+    classes: list[SOMcreator.SOMClass], class_properties, dictionary: bsdd.Dictionary
 ) -> dict[SOMcreator.SOMClass, bsdd.Class]:
     class_property_dict = {p.property: p for p in class_properties}
     class_dict = dict()
-    for obj in objects:
-        c = _create_class(obj, dictionary)
-        class_dict[obj] = c
+    for som_class in classes:
+        c = _create_class(som_class, dictionary)
+        class_dict[som_class] = c
         c.ClassProperties = [
-            class_property_dict[a]
-            for p in obj.get_property_sets(filter=True)
-            for a in p.get_properties(filter=True)
+            class_property_dict[p]
+            for pset in som_class.get_property_sets(filter=True)
+            for p in pset.get_properties(filter=True)
         ]
     return class_dict
 
 
 def _create_parent_reference(
-    child_obj: SOMcreator.SOMClass,
-    parent_obj: SOMcreator.SOMClass,
+    child_class: SOMcreator.SOMClass,
+    parent_class: SOMcreator.SOMClass,
     class_dict: dict[SOMcreator.SOMClass, bsdd.Class],
 ):
-    parent_class = class_dict[parent_obj]
-    child_class = class_dict[child_obj]
+    parent_class = class_dict[parent_class]
+    child_class = class_dict[child_class]
     child_class.ParentClassCode = parent_class.Code
 
 
 def _iterate_parent_relations(
-    objects: list[SOMcreator.SOMClass],
+    classes: list[SOMcreator.SOMClass],
     class_dict: dict[SOMcreator.SOMClass, bsdd.Class],
 ):
-    def _iterate(obj: SOMcreator.SOMClass):
-        for child in obj.get_children(filter=True):
-            _create_parent_reference(child, obj, class_dict)
+    def _iterate(som_class: SOMcreator.SOMClass):
+        for child in som_class.get_children(filter=True):
+            _create_parent_reference(child, som_class, class_dict)
             _iterate(child)
 
-    root_objects = [o for o in objects if o.parent is None]
-    for root in root_objects:
+    root_classes = [o for o in classes if o.parent is None]
+    for root in root_classes:
         _iterate(root)
 
 
 def _create_aggregation(
-    parent_obj: SOMcreator.SOMClass,
-    child_obj: SOMcreator.SOMClass,
+    parent_class: SOMcreator.SOMClass,
+    child_class: SOMcreator.SOMClass,
     class_dict: dict[SOMcreator.SOMClass, bsdd.Class],
 ):
-    parent_class = class_dict[parent_obj]
-    child_class = class_dict[child_obj]
+    parent_class = class_dict[parent_class]
+    child_class = class_dict[child_class]
 
     part_of_relation = bsdd.ClassRelation("IsPartOf", parent_class.uri())
     part_of_relation.RelatedClassName = parent_class.Name
@@ -208,24 +209,25 @@ def _create_aggregation(
 
 
 def _iterate_aggregations(
-    objects: list[SOMcreator.SOMClass],
+    classes: list[SOMcreator.SOMClass],
     class_dict: dict[SOMcreator.SOMClass, bsdd.Class],
 ):
-    for obj in objects:
+    for som_class in classes:
         children = list()
-        for aggregation in obj.aggregations:
+        for aggregation in som_class.aggregations:
             for child_aggregation in aggregation.get_children(filter=True):
-                child_obj = child_aggregation.object
-                if child_obj in children:
+                child_aggregation:SOMcreator.SOMAggregation
+                child_class = child_aggregation.som_class
+                if child_class in children:
                     continue
-                children.append(child_obj)
-                _create_aggregation(obj, child_obj, class_dict)
+                children.append(child_class)
+                _create_aggregation(som_class, child_class, class_dict)
 
 
-def _get_all_properties(object_list: list[SOMcreator.SOMClass]):
+def _get_all_properties(classes: list[SOMcreator.SOMClass]):
     return [
-        a
-        for o in object_list
-        for p in o.get_property_sets(filter=True)
-        for a in p.get_properties(filter=True)
+        p
+        for c in classes
+        for pset in c.get_property_sets(filter=True)
+        for p in pset.get_properties(filter=True)
     ]
