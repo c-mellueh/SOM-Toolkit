@@ -134,13 +134,13 @@ class SOMClass(BaseClass):
     def inherited_property_sets(
         self,
     ) -> dict[SOMClass, list[SOMcreator.SOMPropertySet]]:
-        def recursion(recursion_property_sets, recursion_obj: SOMClass):
-            psets = recursion_obj.get_property_sets(filter=False)
+        def recursion(recursion_property_sets, recursion_class: SOMClass):
+            psets = recursion_class.get_property_sets(filter=False)
 
             if psets:
-                recursion_property_sets[recursion_obj] = psets
+                recursion_property_sets[recursion_class] = psets
 
-            parent = recursion_obj.parent
+            parent = recursion_class.parent
             if parent is not None:
                 recursion_property_sets = recursion(recursion_property_sets, parent)
             return recursion_property_sets

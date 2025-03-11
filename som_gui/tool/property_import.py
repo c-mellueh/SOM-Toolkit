@@ -117,7 +117,7 @@ class PropertyImportResults(som_gui.core.tool.PropertyImportResults):
     ):
         cls.lock_updating("SOM ComboBox")
         all_keyword = cls.get_all_keyword()
-        class_dict = {obj.ident_value: obj for obj in class_list}
+        class_dict = {som_class.ident_value: som_class for som_class in class_list}
         allowed_classes = set(class_dict.get(v) for v in allowed_values)
         existing_classes = {
             combobox.itemData(index, Qt.ItemDataRole.UserRole)
@@ -133,11 +133,11 @@ class PropertyImportResults(som_gui.core.tool.PropertyImportResults):
             cls.unlock_updating()
             return
 
-        for obj in delete_items:
-            combobox.removeItem(combobox.findData(obj, Qt.ItemDataRole.UserRole))
+        for som_class in delete_items:
+            combobox.removeItem(combobox.findData(som_class, Qt.ItemDataRole.UserRole))
 
-        for obj in add_items:
-            combobox.addItem(f"{obj.name} ({obj.ident_value})", userData=obj)
+        for som_class in add_items:
+            combobox.addItem(f"{som_class.name} ({som_class.ident_value})", userData=som_class)
 
         if combobox.findText(all_keyword) == -1:
             combobox.addItem(all_keyword, userData=all_keyword)

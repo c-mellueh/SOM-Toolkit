@@ -12,19 +12,19 @@ def _handle_bookmark_list(proj: SOMcreator.SOMProject) -> etree.ElementTree:
     xml_bookmarks.set("xmlnsxsi", "http://www.w3.org/2001/XMLSchema-instance")
     xml_bookmark_list = etree.SubElement(xml_bookmarks, "cBookmarkList")
 
-    obj: SOMcreator.SOMClass
-    for obj in sorted(proj.get_classes(filter=True), key=lambda o: o.ident_value):
+    som_class: SOMcreator.SOMClass
+    for som_class in sorted(proj.get_classes(filter=True), key=lambda o: o.ident_value):
         xml_bookmark = etree.SubElement(xml_bookmark_list, "cBookmark")
-        xml_bookmark.set("ID", str(obj.uuid))
+        xml_bookmark.set("ID", str(som_class.uuid))
 
-        if isinstance(obj.identifier_property, SOMcreator.SOMProperty):
-            xml_bookmark.set("name", str(obj.identifier_property.allowed_values[0]))
+        if isinstance(som_class.identifier_property, SOMcreator.SOMProperty):
+            xml_bookmark.set("name", str(som_class.identifier_property.allowed_values[0]))
 
         xml_bookmark.set("bkmType", "2")
         xml_col = etree.SubElement(xml_bookmark, "col")
         xml_col.set("v", "Type##xs:string")
 
-        som_property = obj.identifier_property
+        som_property = som_class.identifier_property
         if som_property is None:
             continue
         xml_col = etree.SubElement(xml_bookmark, "col")
@@ -32,9 +32,9 @@ def _handle_bookmark_list(proj: SOMcreator.SOMProject) -> etree.ElementTree:
         text = f"{som_property.property_set.name}:{som_property.name}##{data_type}"
         xml_col.set("v", text)
 
-        for property_set in obj.get_property_sets(filter=True):
+        for property_set in som_class.get_property_sets(filter=True):
             for som_property in property_set.get_properties(filter=True):
-                if som_property != obj.identifier_property:
+                if som_property != som_class.identifier_property:
                     xml_col = etree.SubElement(xml_bookmark, "col")
                     data_type = xml.transform_data_format(som_property.data_type)
                     text = f"{property_set.name}:{som_property.name}##{data_type}"
@@ -44,8 +44,8 @@ def _handle_bookmark_list(proj: SOMcreator.SOMProject) -> etree.ElementTree:
 
 def _get_property_dict(proj: SOMcreator.SOMProject) -> dict[str, str]:
     property_dict = {}
-    for obj in proj.get_classes(filter=True):
-        for property_set in obj.get_property_sets(filter=True):
+    for som_class in proj.get_classes(filter=True):
+        for property_set in som_class.get_property_sets(filter=True):
             for som_property in property_set.get_properties(filter=True):
                 property_dict[f"{property_set.name}:{som_property.name}"] = (
                     xml.transform_data_format(som_property.data_type)

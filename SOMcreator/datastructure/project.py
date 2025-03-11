@@ -129,7 +129,7 @@ class SOMProject(object):
             return "", ""
 
     def get_class_by_identifier(self, identifier: str) -> SOMcreator.SOMClass | None:
-        return {obj.ident_value: obj for obj in self.get_classes(filter=False)}.get(
+        return {som_class.ident_value: som_class for som_class in self.get_classes(filter=False)}.get(
             identifier
         )
 

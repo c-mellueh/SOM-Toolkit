@@ -53,8 +53,8 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
             cls.oi_set_abbrev_value_color(QPalette().color(QPalette.Text).name())
 
     @classmethod
-    def test_abbreviation(cls, abbreviation: str, obj: SOMcreator.SOMClass) -> int:
-        ignore_text = obj.abbreviation if obj is not None else None
+    def test_abbreviation(cls, abbreviation: str, som_class: SOMcreator.SOMClass) -> int:
+        ignore_text = som_class.abbreviation if som_class is not None else None
         if tool.ClassInfo.get_mode() == 2:
             ignore_text = None
         if abbreviation is not None and not cls.is_abbreviation_allowed(
@@ -87,14 +87,14 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     def get_existing_abbriviations(cls) -> set[str]:
         proj = tool.Project.get()
         abbreviations = set()
-        for obj in proj.get_classes(filter=False):
-            if obj.abbreviation:
-                abbreviations.add(obj.abbreviation)
+        for som_class in proj.get_classes(filter=False):
+            if som_class.abbreviation:
+                abbreviations.add(som_class.abbreviation)
         return abbreviations
 
     @classmethod
-    def set_class_abbreviation(cls, obj: SOMcreator.SOMClass, abbreviation: str):
-        obj.abbreviation = abbreviation
+    def set_class_abbreviation(cls, som_class: SOMcreator.SOMClass, abbreviation: str):
+        som_class.abbreviation = abbreviation
 
     @classmethod
     def create_ci_line_edit(cls):

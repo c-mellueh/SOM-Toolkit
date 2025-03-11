@@ -188,14 +188,14 @@ class Mapping(som_gui.core.tool.Mapping):
                 _loop_classes(child)
 
         cls.reset_export_dict()
-        for obj in root_classes:
-            _loop_classes(obj)
+        for som_class in root_classes:
+            _loop_classes(som_class)
         return cls.get_ifc_export_dict()
 
     @classmethod
-    def add_class_to_ifc_export_data(cls, obj: SOMcreator.SOMClass) -> None:
+    def add_class_to_ifc_export_data(cls, som_class: SOMcreator.SOMClass) -> None:
         export_dict = cls.get_properties().ifc_export_dict
-        for property_set in obj.get_property_sets(filter=False):
+        for property_set in som_class.get_property_sets(filter=False):
             if not cls.get_checkstate(property_set):
                 continue
             for som_property in property_set.get_properties(filter=False):
@@ -206,7 +206,7 @@ class Mapping(som_gui.core.tool.Mapping):
                 property_set_list = export_dict[property_set.name]
                 if som_property.name not in set(a.name for a in property_set_list[0]):
                     property_set_list[0].append(som_property)
-                property_set_list[1].update(obj.ifc_mapping)
+                property_set_list[1].update(som_class.ifc_mapping)
         cls.get_properties().ifc_export_dict = export_dict
 
     @classmethod

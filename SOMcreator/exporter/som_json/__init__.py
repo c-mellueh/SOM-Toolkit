@@ -28,18 +28,18 @@ filter_matrixes = list()
 
 def create_mapping_script(project: SOMcreator.SOMProject, pset_name: str, path: str):
     attrib_dict = dict()
-    obj: SOMcreator.SOMClass
-    for obj in project.get_classes(filter=True):
-        klass = obj.identifier_property.allowed_values[0]
-        obj_dict = dict()
-        for pset in obj.get_property_sets(filter=True):
+    som_class: SOMcreator.SOMClass
+    for som_class in project.get_classes(filter=True):
+        klass = som_class.identifier_property.allowed_values[0]
+        class_dict = dict()
+        for pset in som_class.get_property_sets(filter=True):
             pset_dict = dict()
             for som_property in pset.get_properties(filter=True):
                 name = som_property.name
                 data_format = xml.transform_data_format(som_property.data_type)
                 pset_dict[name] = data_format
-            obj_dict[pset.name] = pset_dict
-        attrib_dict[klass] = obj_dict
+            class_dict[pset.name] = pset_dict
+        attrib_dict[klass] = class_dict
     file_loader = jinja2.FileSystemLoader(HOME_DIR)
     env = jinja2.Environment(loader=file_loader)
     env.trim_blocks = True

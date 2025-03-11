@@ -26,18 +26,18 @@ def _iter_properties(property_set: SOMcreator.SOMPropertySet, pset_dict: dict) -
 
 def export(project: SOMcreator.SOMProject, path: str | os.PathLike) -> None:
     json_dict = dict()
-    for obj in sorted(project.get_classes(filter=True), key=lambda x: x.ident_value):
-        if not obj.get_property_sets(filter=True):
+    for som_class in sorted(project.get_classes(filter=True), key=lambda x: x.ident_value):
+        if not som_class.get_property_sets(filter=True):
             continue
-        if obj.ident_value is None:
+        if som_class.ident_value is None:
             continue
-        json_dict[obj.ident_value] = dict()
-        obj_dict = json_dict[obj.ident_value]
-        for property_set in obj.get_property_sets(filter=True):
+        json_dict[som_class.ident_value] = dict()
+        class_dict = json_dict[som_class.ident_value]
+        for property_set in som_class.get_property_sets(filter=True):
             if not property_set.get_properties(filter=True):
                 continue
-            obj_dict[property_set.name] = dict()
-            pset_dict = obj_dict[property_set.name]
+            class_dict[property_set.name] = dict()
+            pset_dict = class_dict[property_set.name]
             _iter_properties(property_set, pset_dict)
     with open(path, "w") as file:
         json.dump(json_dict, file, indent=1)

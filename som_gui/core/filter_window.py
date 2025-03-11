@@ -102,12 +102,12 @@ def search_class(
     search: Type[tool.Search],
     project: Type[tool.Project],
 ):
-    obj = search.search_class(list(project.get().get_classes(filter=True)))
-    if obj is None:
+    som_class = search.search_class(list(project.get().get_classes(filter=True)))
+    if som_class is None:
         return
     class_tree = filter_window.get_class_tree()
     parent_list = list()
-    parent = obj.parent
+    parent = som_class.parent
     while parent is not None:
         parent_list.append(parent)
         parent = parent.parent
@@ -119,7 +119,7 @@ def search_class(
         index: QModelIndex = item.index
         class_tree.expand(index)
 
-    index: QModelIndex = obj.index
+    index: QModelIndex = som_class.index
     flags = (
         class_tree.selectionModel().SelectionFlag.ClearAndSelect
         | class_tree.selectionModel().SelectionFlag.Rows
@@ -183,9 +183,9 @@ def class_tree_selection_changed(
     if len(indexes) == 0:
         return
     index = indexes[0]
-    obj: SOMcreator.SOMClass = index.internalPointer()
-    filter_window.set_active_class(obj)
-    filter_window.set_class_label(obj.name)
+    som_class: SOMcreator.SOMClass = index.internalPointer()
+    filter_window.set_active_class(som_class)
+    filter_window.set_class_label(som_class.name)
     update_pset_tree(filter_window)
 
 
@@ -285,9 +285,9 @@ def filter_tab_class_tree_selection_changed(
     property_compare: Type[tool.PropertyCompare],
     filter_compare: Type[tool.FilterCompare],
 ):
-    obj = property_compare.get_selected_entity(property_compare.get_class_tree(widget))
+    som_class = property_compare.get_selected_entity(property_compare.get_class_tree(widget))
     tree_widget = property_compare.get_pset_tree(widget)
-    pset_list = property_compare.get_pset_list(obj)
+    pset_list = property_compare.get_pset_list(som_class)
 
     property_compare.fill_pset_tree(tree_widget, pset_list, add_missing=False)
     property_compare.add_properties_to_pset_tree(tree_widget, False)

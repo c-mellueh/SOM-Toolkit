@@ -117,13 +117,13 @@ def _add_item(
 def _import_class(
     existing_project: SOMcreator.SOMProject,
     import_project: SOMcreator.SOMProject,
-    obj: SOMcreator.SOMClass,
+    som_class: SOMcreator.SOMClass,
     old_predefined_psets_mapping,
     phase_mapping,
     use_case_mapping,
 ):
-    _add_item(existing_project, import_project, obj, phase_mapping, use_case_mapping)
-    for property_set in obj.get_property_sets(filter=False):
+    _add_item(existing_project, import_project, som_class, phase_mapping, use_case_mapping)
+    for property_set in som_class.get_property_sets(filter=False):
         _import_pset(
             existing_project,
             import_project,
@@ -133,7 +133,7 @@ def _import_class(
             use_case_mapping,
         )
 
-    for aggregation in obj.aggregations:
+    for aggregation in som_class.aggregations:
         _add_item(
             existing_project,
             import_project,

@@ -255,11 +255,11 @@ def paint_class_tree(
 def class_check_changed(
     item: QStandardItem, modelcheck_window: Type[tool.ModelcheckWindow]
 ):
-    obj = item.data(CLASS_REFERENCE)
+    som_class = item.data(CLASS_REFERENCE)
     if item.column() != 0:
         return
 
-    modelcheck_window.set_item_check_state(obj, item.checkState())
+    modelcheck_window.set_item_check_state(som_class, item.checkState())
 
     paint_pset_tree(modelcheck_window)
 

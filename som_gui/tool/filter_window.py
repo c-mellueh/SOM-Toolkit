@@ -190,8 +190,8 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         menu.exec(pos)
 
     @classmethod
-    def set_active_class(cls, obj: SOMcreator.SOMClass):
-        cls.get_properties().active_class = obj
+    def set_active_class(cls, som_class: SOMcreator.SOMClass):
+        cls.get_properties().active_class = som_class
 
     @classmethod
     def get_active_class(cls) -> SOMcreator.SOMClass:
@@ -341,13 +341,13 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
     @classmethod
     def are_classes_identical(
-        cls, obj0: SOMcreator.SOMClass, obj1: SOMcreator.SOMClass
+        cls, class_0: SOMcreator.SOMClass, class_1: SOMcreator.SOMClass
     ) -> bool:
-        filter_list = cls.get_filter_list(obj0, obj1)
+        filter_list = cls.get_filter_list(class_0, class_1)
         classes_are_identical = cls.are_all_filters_identical(filter_list)
         if not classes_are_identical:
             return False
-        pset_lists = tool.PropertyCompare.get_pset_list(obj0)
+        pset_lists = tool.PropertyCompare.get_pset_list(class_0)
         if pset_lists is None:
             return True
         for p0, p1 in pset_lists:

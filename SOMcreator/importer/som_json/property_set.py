@@ -15,14 +15,14 @@ def load(
     proj: SOMProject,
     pset_dict: PropertySetDict,
     identifier: str,
-    obj: SOMcreator.SOMClass | None,
+    som_class: SOMcreator.SOMClass | None,
 ) -> None:
     name, description, optional, parent, filter_matrix = core.get_basics(
         proj, pset_dict, identifier
     )
     pset = SOMcreator.SOMPropertySet(
         name=name,
-        som_class=obj,
+        som_class=som_class,
         uuid=identifier,
         description=description,
         optional=optional,

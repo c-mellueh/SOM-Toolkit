@@ -536,11 +536,11 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
 
     @classmethod
     def create_child_node(
-        cls, top_node: ui_node.NodeProxy, obj: SOMcreator.SOMClass
+        cls, top_node: ui_node.NodeProxy, som:_class: SOMcreator.SOMClass
     ) -> ui_node.NodeProxy | None:
         scene = top_node.scene()
         pos = top_node.sceneBoundingRect().bottomLeft() + QPointF(100.0, 60.0)
-        return trigger.add_class_to_scene(obj, scene, top_node, pos)
+        return trigger.add_class_to_scene(som:_class, scene, top_node, pos)
 
     @classmethod
     def set_project_scene_dict(cls, d: dict) -> None:

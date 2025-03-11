@@ -10,7 +10,7 @@ from SOMcreator.util import xml
 def create_mapping(
     excel_path: str, folder_path: str, project: SOMcreator.SOMProject
 ) -> None:
-    def create_xml(name: str, obj: SOMcreator.SOMClass):
+    def create_xml(name: str, som_class: SOMcreator.SOMClass):
         xsd = "http://www.w3.org/2001/XMLSchema"
         xsi = "http://www.w3.org/2001/XMLSchema-instance"
 
@@ -39,7 +39,7 @@ def create_mapping(
 
         def create_manipulations() -> None:
             xml_manipulations = etree.SubElement(xml_manipulation_rule, "Manipulations")
-            for property_set in obj.get_property_sets(filter=True):
+            for property_set in som_class.get_property_sets(filter=True):
                 for attribut in property_set.get_properties(filter=True):
                     xml_manipulation_base = etree.SubElement(
                         xml_manipulations, "ManipulationBase"
@@ -54,7 +54,7 @@ def create_mapping(
                         xml_manipulation_base,
                         "Value",
                     )
-                    if attribut == obj.identifier_property:
+                    if attribut == som_class.identifier_property:
                         xml_value.text = attribut.allowed_values[0]
                     else:
                         xml_value.text = ""

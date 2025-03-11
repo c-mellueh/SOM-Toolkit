@@ -200,9 +200,9 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         cls.get_properties().class_label.setVisible(show)
 
     @classmethod
-    def set_selected_class(cls, obj: SOMcreator.SOMClass):
+    def set_selected_class(cls, som_class: SOMcreator.SOMClass):
         prop = cls.get_properties()
-        prop.selected_class = obj
+        prop.selected_class = som_class
 
     @classmethod
     def get_selected_class(cls) -> SOMcreator.SOMClass | None:
@@ -225,9 +225,9 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         prop = cls.get_properties()
         data_dict = dict()
         if not prop.check_state_dict:
-            for obj in tool.Project.get().get_classes(filter=True):
-                data_dict[obj] = True
-                for property_set in obj.get_property_sets(filter=True):
+            for som_class in tool.Project.get().get_classes(filter=True):
+                data_dict[som_class] = True
+                for property_set in som_class.get_property_sets(filter=True):
                     data_dict[property_set] = True
                     for som_property in property_set.get_properties(filter=True):
                         data_dict[som_property] = True
@@ -361,14 +361,14 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             parent_item.appendRow(row)
 
         for child_row in range(parent_item.rowCount()):
-            class_item, obj = cls.update_class_tree_row(parent_item, child_row)
-            obj: SOMcreator.SOMClass
+            class_item, som_class = cls.update_class_tree_row(parent_item, child_row)
+            som_class: SOMcreator.SOMClass
             if (
                 tree.isExpanded(parent_item.index())
                 or parent_item == model.invisibleRootItem()
             ):
                 cls.fill_class_tree(
-                    set(obj.get_children(filter=False)), class_item, model, tree
+                    set(som_class.get_children(filter=False)), class_item, model, tree
                 )
 
     @classmethod

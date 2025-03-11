@@ -69,20 +69,20 @@ class ExportExcel:
         return os.path.exists(os.path.dirname(path))
 
     @classmethod
-    def _get_name(cls, obj: SOMcreator.SOMClass):
-        return obj.name
+    def _get_name(cls, som_class: SOMcreator.SOMClass):
+        return som_class.name
 
     @classmethod
-    def _get_identifier(cls, obj: SOMcreator.SOMClass):
-        return obj.ident_value or ""
+    def _get_identifier(cls, som_class: SOMcreator.SOMClass):
+        return som_class.ident_value or ""
 
     @classmethod
-    def _get_abbreviation(cls, obj: SOMcreator.SOMClass):
-        return obj.abbreviation or ""
+    def _get_abbreviation(cls, som_class: SOMcreator.SOMClass):
+        return som_class.abbreviation or ""
 
     @classmethod
-    def _get_ifc_mapping(cls, obj: SOMcreator.SOMClass):
-        return ";".join(obj.ifc_mapping) or ""
+    def _get_ifc_mapping(cls, som_class: SOMcreator.SOMClass):
+        return ";".join(som_class.ifc_mapping) or ""
 
     @classmethod
     def fill_main_sheet(cls, sheet: Worksheet) -> None:
@@ -99,10 +99,10 @@ class ExportExcel:
             sheet.cell(1, column).value = text
 
         row = 1
-        for row, obj in enumerate(sorted(project.get_classes(filter=True)), start=2):
+        for row, som_class in enumerate(sorted(project.get_classes(filter=True)), start=2):
             for column, getter_function in enumerate(getter_functions, start=1):
-                sheet.cell(row, column).value = getter_function(obj)
-                if obj.is_optional(ignore_hirarchy=False):
+                sheet.cell(row, column).value = getter_function(som_class)
+                if som_class.is_optional(ignore_hirarchy=False):
                     sheet.cell(row, column).font = OPTIONAL_FONT
 
         table_range = (

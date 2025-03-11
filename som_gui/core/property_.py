@@ -130,15 +130,15 @@ def export_differences(file, property_compare: Type[tool.PropertyCompare]):
     title = QCoreApplication.translate("Compare", "PROPERTY COMPARISON")
     file.write(f"\n{title}\n\n")
 
-    for obj in sorted(Classes_0, key=lambda x: x.name):
+    for som_class in sorted(Classes_0, key=lambda x: x.name):
         text = QCoreApplication.translate("Compare", "{} ({}) was deleted").format(
-            obj, obj.ident_value
+            som_class, som_class.ident_value
         )
         file.write(f"{text}\n")
 
-    for obj in sorted(classes_1, key=lambda x: x.name):
+    for som_class in sorted(classes_1, key=lambda x: x.name):
         text = QCoreApplication.translate("Compare", "{} ({}) was added").format(
-            obj, obj.ident_value
+            som_class, som_class.ident_value
         )
 
         file.write(f"{text}\n")

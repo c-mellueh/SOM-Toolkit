@@ -115,10 +115,10 @@ def class_double_clicked(
     pset = property_set.get_property_set_from_item(item)
     predefined_pset.close_window()
 
-    obj = pset.som_class
-    obj_item = class_tool.get_item_from_class(obj)
-    class_tool.select_class(obj)
-    class_tool.expand_to_item(obj_item)
+    som_class = pset.som_class
+    class_item = class_tool.get_item_from_class(som_class)
+    class_tool.select_class(som_class)
+    class_tool.expand_to_item(class_item)
     property_set.select_property_set(pset)
 
 

@@ -150,14 +150,14 @@ def search_aggregation(
     popup: Type[tool.Popups],
     project: Type[tool.Project],
 ) -> None:
-    obj = search.search_class(list(project.get().get_classes(filter=True)))
-    if obj is None:
+    som_class = search.search_class(list(project.get().get_classes(filter=True)))
+    if som_class is None:
         return
     scene = view.get_active_scene()
     nodes = {
         node
         for node in view.get_nodes_in_scene(scene)
-        if node.aggregation.som_class == obj
+        if node.aggregation.som_class == som_class
     }
     if not nodes:
         text = QCoreApplication.translate("Aggregation", "No Node linked to Class")

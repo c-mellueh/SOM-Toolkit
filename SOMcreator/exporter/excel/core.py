@@ -32,9 +32,9 @@ def export(
     for ident, data_dict in sheet_dict.items():
         class_name, classes = export_excel.get_class_data(data_dict)
         work_sheet = workbook.create_sheet(f"{class_name} ({ident})")
-        for counter, obj in enumerate(sorted(classes)):
+        for counter, som_class in enumerate(sorted(classes)):
             column = 1 + counter * (HEADER_COLUMN_COUNT + 1)
-            export_excel.create_class_entry(obj, work_sheet, 1, column, table_counter)
+            export_excel.create_class_entry(som_class, work_sheet, 1, column, table_counter)
             table_counter += 1
         export_excel.autoadjust_column_widths(work_sheet)
 

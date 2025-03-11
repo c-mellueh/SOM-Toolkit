@@ -156,47 +156,47 @@ def _handle_tree_structure(
     required_data_dict: dict,
     parent_xml_container,
     class_structure: dict[SOMcreator.SOMClass, SOMcreator.SOMClass],
-    parent_obj: SOMcreator.SOMClass,
+    parent_class: SOMcreator.SOMClass,
     template,
     xml_class_dict,
     export_type: str,
 ) -> None:
-    def check_basics(obj: SOMcreator.SOMClass):
-        if obj.identifier_property is None:
-            return obj, None, True
+    def check_basics(som_class: SOMcreator.SOMClass):
+        if som_class.identifier_property is None:
+            return som_class, None, True
 
-        pset_dict = required_data_dict.get(obj)
+        pset_dict = required_data_dict.get(som_class)
         if pset_dict is None:
-            return obj, None, True
-        return obj, pset_dict, False
+            return som_class, None, True
+        return som_class, pset_dict, False
 
     def create_container(xml_container):
-        new_xml_container = _handle_container(xml_container, parent_obj.name)
+        new_xml_container = _handle_container(xml_container, parent_class.name)
         if export_type == JS_EXPORT:
             create_js_object(new_xml_container)
         elif export_type == TABLE_EXPORT:
             create_table_object(new_xml_container)
 
-        for child_obj in sorted(children, key=lambda x: x.name):
+        for child_class in sorted(children, key=lambda x: x.name):
             _handle_tree_structure(
                 author,
                 required_data_dict,
                 new_xml_container,
                 class_structure,
-                child_obj,
+                child_class,
                 template,
                 xml_class_dict,
                 export_type,
             )
 
     def create_js_object(xml_container):
-        obj, pset_dict, abort = check_basics(parent_obj)
+        som_class, pset_dict, abort = check_basics(parent_class)
         if abort:
             return
-        xml_checkrun = _handle_checkrun(xml_container, obj.name, author)
+        xml_checkrun = _handle_checkrun(xml_container, som_class.name, author)
         xml_rule = _handle_rule(xml_checkrun, "Attributes")
         xml_attribute_rule_list = _handle_property_rule_list(xml_rule)
-        xml_rule_script = _handle_rule_script(xml_attribute_rule_list, name=obj.name)
+        xml_rule_script = _handle_rule_script(xml_attribute_rule_list, name=som_class.name)
         xml_code = _handle_code(xml_rule_script)
         cdata_code = template.render(
             pset_dict=pset_dict,
@@ -207,13 +207,13 @@ def _handle_tree_structure(
         xml_code.text = cdata_code
         _handle_rule(xml_checkrun, "UniquePattern")
 
-        xml_class_dict[xml_checkrun] = obj
+        xml_class_dict[xml_checkrun] = som_class
 
     def create_table_object(xml_container):
-        obj, pset_dict, abort = check_basics(parent_obj)
+        som_class, pset_dict, abort = check_basics(parent_class)
         if abort:
             return
-        xml_checkrun = _handle_checkrun(xml_container, obj.name, author)
+        xml_checkrun = _handle_checkrun(xml_container, som_class.name, author)
         xml_rule = _handle_rule(xml_checkrun, "Attributes")
         xml_attribute_rule_tree = _handle_attribute_rule_tree(xml_rule)
         xml_code = _handle_code(xml_container)
@@ -222,11 +222,11 @@ def _handle_tree_structure(
         xml_code.text = "<![CDATA[]]>"
         _handle_rule(xml_checkrun, "UniquePattern")
 
-        xml_class_dict[xml_checkrun] = obj
+        xml_class_dict[xml_checkrun] = som_class
 
-    children = {o for o, parent in class_structure.items() if parent == parent_obj}
+    children = {o for o, parent in class_structure.items() if parent == parent_class}
 
-    if children and required_data_dict.get(parent_obj):
+    if children and required_data_dict.get(parent_class):
         create_container(parent_xml_container)
     else:
         if export_type == JS_EXPORT:
@@ -329,7 +329,7 @@ def _handle_class_rules(
 ) -> dict[Element, SOMcreator.SOMClass]:
     xml_class_dict: dict[Element, SOMcreator.SOMClass] = dict()
 
-    root_nodes = {obj for obj, parent in class_structure.items() if parent is None}
+    root_nodes = {som_class for som_class, parent in class_structure.items() if parent is None}
 
     for root_node in sorted(root_nodes, key=lambda x: x.name):
         _handle_tree_structure(
@@ -348,18 +348,18 @@ def _handle_class_rules(
 def _handle_data_section(
     xml_qa_export: Element,
     xml_checkrun_first: Element,
-    xml_checkrun_obj: dict[Element, SOMcreator.SOMClass | None],
+    xml_checkrun_class: dict[Element, SOMcreator.SOMClass | None],
     xml_checkrun_last: Element,
 ) -> None:
     def get_name() -> str:
         """Transorms native IFC Attributes like IfcType into desite Attributes"""
 
-        pset_name = obj.identifier_property.property_set.name
+        pset_name = som_class.identifier_property.property_set.name
         if pset_name == "IFC":
-            return obj.identifier_property.name
+            return som_class.identifier_property.name
 
         else:
-            return f"{pset_name}:{obj.identifier_property.name}"
+            return f"{pset_name}:{som_class.identifier_property.name}"
 
     xml_data_section = etree.SubElement(xml_qa_export, "dataSection")
 
@@ -367,10 +367,10 @@ def _handle_data_section(
     check_run_data.set("refID", str(xml_checkrun_first.attrib.get("ID")))
     etree.SubElement(check_run_data, "checkSet")
 
-    for xml_checkrun, obj in xml_checkrun_obj.items():
+    for xml_checkrun, som_class in xml_checkrun_class.items():
         check_run_data = etree.SubElement(xml_data_section, "checkRunData")
         check_run_data.set("refID", str(xml_checkrun.attrib.get("ID")))
-        if obj is None:
+        if som_class is None:
             etree.SubElement(check_run_data, "checkSet")
             continue
         filter_list = etree.SubElement(check_run_data, "filterList")
@@ -378,7 +378,7 @@ def _handle_data_section(
 
         xml_filter.set("name", get_name())
         xml_filter.set("dt", "xs:string")
-        pattern = f'"{obj.ident_value}"'
+        pattern = f'"{som_class.ident_value}"'
         xml_filter.set("pattern", pattern)
 
     check_run_data = etree.SubElement(xml_data_section, "checkRunData")
@@ -467,12 +467,12 @@ def build_full_data_dict(
     SOMcreator.SOMClass, dict[SOMcreator.SOMPropertySet, list[SOMcreator.SOMProperty]]
 ]:
     d = dict()
-    for obj in proj.get_classes(filter=True):
-        d[obj] = dict()
-        for pset in obj.get_property_sets(filter=True):
-            d[obj][pset] = list()
+    for som_class in proj.get_classes(filter=True):
+        d[som_class] = dict()
+        for pset in som_class.get_property_sets(filter=True):
+            d[som_class][pset] = list()
             for attribute in pset.get_properties(filter=True):
-                d[obj][pset].append(attribute)
+                d[som_class][pset].append(attribute)
     return d
 
 
@@ -499,7 +499,7 @@ def export(
         project.author, xml_container, "initial_tests"
     )
     _handle_js_rules(xml_attribute_rule_list, "start")
-    xml_checkrun_obj = _handle_class_rules(
+    xml_checkrun_class = _handle_class_rules(
         project.author,
         required_data_dict,
         class_structure,
@@ -512,7 +512,7 @@ def export(
     )
     _handle_untested(xml_attribute_rule_list, main_pset, main_property)
     _handle_data_section(
-        xml_qa_export, xml_checkrun_first, xml_checkrun_obj, xml_checkrun_last
+        xml_qa_export, xml_checkrun_first, xml_checkrun_class, xml_checkrun_last
     )
     _handle_property_section(xml_qa_export)
 
@@ -536,11 +536,11 @@ def csv_export(
     lines.append(";".join(["#", f"Created by SOMcreator v{__version__}"]))
     lines.append("H;Property Name;;Data Type;Rule;Comment")
 
-    for obj, pset_dict in required_data_dict.items():
-        if obj.identifier_property is None:
+    for som_class, pset_dict in required_data_dict.items():
+        if som_class.identifier_property is None:
             continue
-        ident_attrib = f"{obj.identifier_property.property_set.name}:{obj.identifier_property.name}"
-        data_type = xml.transform_data_format(obj.identifier_property.data_type)
+        ident_attrib = f"{som_class.identifier_property.property_set.name}:{som_class.identifier_property.name}"
+        data_type = xml.transform_data_format(som_class.identifier_property.data_type)
         lines.append(
             ";".join(
                 [
@@ -548,8 +548,8 @@ def csv_export(
                     ident_attrib,
                     "",
                     data_type,
-                    f"'{obj.ident_value}'",
-                    f"Nach Objekt {obj.name} filtern",
+                    f"'{som_class.ident_value}'",
+                    f"Nach Klasse {som_class.name} filtern",
                 ]
             )
         )
@@ -578,7 +578,7 @@ def fast_check(
     :param project:
     :param main_pset: name of main propertyset which is used as matchkey
     :param main_attrib: name of main Attribute wihich is used as matchkey
-    :param required_data_dict: Dictionary of all required Objects, Propertysets and Attributes
+    :param required_data_dict: Dictionary of all required Classes, Propertysets and Attributes
     :param path: Export Path
     :return:
     """
@@ -590,7 +590,7 @@ def fast_check(
         project.author, xml_container, "initial_tests"
     )
     _handle_js_rules(xml_attribute_rule_list, "start")
-    xml_checkrun_obj = _fast_class_check(
+    xml_checkrun_class = _fast_class_check(
         main_pset,
         main_attrib,
         project.author,
@@ -603,7 +603,7 @@ def fast_check(
     )
     _handle_untested(xml_attribute_rule_list, main_pset, main_attrib)
     _handle_data_section(
-        xml_qa_export, xml_checkrun_first, xml_checkrun_obj, xml_checkrun_last
+        xml_qa_export, xml_checkrun_first, xml_checkrun_class, xml_checkrun_last
     )
     _handle_property_section(xml_qa_export)
 

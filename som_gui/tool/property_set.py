@@ -40,15 +40,15 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def get_inheritable_property_sets(
-        cls, obj: SOMcreator.SOMClass
+        cls, som_class: SOMcreator.SOMClass
     ) -> list[SOMcreator.SOMPropertySet]:
-        def loop(o: SOMcreator.SOMClass):
-            psets = o.get_property_sets(filter=False)
-            if o.parent:
-                psets = itertools.chain(psets, loop(o.parent))
+        def loop(c: SOMcreator.SOMClass):
+            psets = c.get_property_sets(filter=False)
+            if c.parent:
+                psets = itertools.chain(psets, loop(c.parent))
             return psets
 
-        return list(loop(obj))
+        return list(loop(som_class))
 
     @classmethod
     def get_pset_from_index(cls, index: QModelIndex) -> SOMcreator.SOMPropertySet:
@@ -115,12 +115,12 @@ class PropertySet(som_gui.core.tool.PropertySet):
     def create_property_set(
         cls,
         name: str,
-        obj: SOMcreator.SOMClass | None = None,
+        som_class: SOMcreator.SOMClass | None = None,
         parent: SOMcreator.SOMPropertySet | None = None,
     ) -> SOMcreator.SOMPropertySet | None:
 
-        if obj:
-            if name in {p.name for p in obj.get_property_sets(filter=False)}:
+        if som_class:
+            if name in {p.name for p in som_class.get_property_sets(filter=False)}:
                 text = QCoreApplication.translate(
                     f"PropertySet", "PropertySet '{}' exists allready"
                 ).format(name)
@@ -128,11 +128,11 @@ class PropertySet(som_gui.core.tool.PropertySet):
                 return None
         if parent is not None:
             property_set = parent.create_child(name)
-            if obj:
-                obj.add_property_set(property_set)
+            if som_class:
+                som_class.add_property_set(property_set)
         else:
             property_set = SOMcreator.SOMPropertySet(
-                name, obj, project=tool.Project.get()
+                name, som_class, project=tool.Project.get()
             )
         return property_set
 
@@ -263,10 +263,10 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return cls.get_properties().completer
 
     @classmethod
-    def update_completer(cls, obj: SOMcreator.SOMClass = None):
+    def update_completer(cls, som_class: SOMcreator.SOMClass = None):
         psets = list(tool.PredefinedPropertySet.get_property_sets())
-        if obj is not None:
-            psets += cls.get_inheritable_property_sets(obj)
+        if som_class is not None:
+            psets += cls.get_inheritable_property_sets(som_class)
         pset_names = sorted({p.name for p in psets})
         cls.get_properties().completer = QCompleter(pset_names)
 

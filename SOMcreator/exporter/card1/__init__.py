@@ -7,10 +7,10 @@ import SOMcreator
 def create_mapping(
     src_path: str, dest_path: str, project: SOMcreator.SOMProject
 ) -> None:
-    def _create_sheet(obj: SOMcreator.SOMClass, workbook: Workbook, name):
+    def _create_sheet(som_class: SOMcreator.SOMClass, workbook: Workbook, name):
         new_sheet = workbook.create_sheet(name)
         properties = set()
-        for property_set in obj.get_property_sets(filter=True):
+        for property_set in som_class.get_property_sets(filter=True):
             for som_property in property_set.get_properties(filter=True):
                 properties.add(som_property.name)
 

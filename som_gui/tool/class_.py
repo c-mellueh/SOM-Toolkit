@@ -77,11 +77,11 @@ class Class(som_gui.core.tool.Class):
         widget.setCompleter(completer)
 
     @classmethod
-    def get_item_from_class(cls, obj: SOMcreator.SOMClass) -> QTreeWidgetItem:
+    def get_item_from_class(cls, som_class: SOMcreator.SOMClass) -> QTreeWidgetItem:
         def iter_tree(item: QTreeWidgetItem):
             for child_index in range(item.childCount()):
                 child = item.child(child_index)
-                if cls.get_class_from_item(child) == obj:
+                if cls.get_class_from_item(child) == som_class:
                     return child
                 result = iter_tree(child)
                 if result is not None:
@@ -92,8 +92,8 @@ class Class(som_gui.core.tool.Class):
         return iter_tree(tree.invisibleRootItem())
 
     @classmethod
-    def select_class(cls, obj: SOMcreator.SOMClass) -> None:
-        item = cls.get_item_from_class(obj)
+    def select_class(cls, som_class: SOMcreator.SOMClass) -> None:
+        item = cls.get_item_from_class(som_class)
         if item is None:
             return
         tree = cls.get_class_tree()
@@ -143,8 +143,8 @@ class Class(som_gui.core.tool.Class):
         return [cls.get_class_from_item(item) for item in selected_items]
 
     @classmethod
-    def delete_class(cls, obj: SOMcreator.SOMClass, recursive: bool = False):
-        obj.delete(recursive)
+    def delete_class(cls, som_class: SOMcreator.SOMClass, recursive: bool = False):
+        som_class.delete(recursive)
 
     @classmethod
     def delete_selection(cls):
@@ -214,16 +214,16 @@ class Class(som_gui.core.tool.Class):
         return False
 
     @classmethod
-    def set_ident_value(cls, obj: SOMcreator.SOMClass, value: str):
-        if obj.is_concept:
+    def set_ident_value(cls, som_class: SOMcreator.SOMClass, value: str):
+        if som_class.is_concept:
             return
-        obj.identifier_property.allowed_values = [value]
+        som_class.identifier_property.allowed_values = [value]
 
     @classmethod
     def find_property(
-        cls, obj: SOMcreator.SOMClass, pset_name: str, property_name: str
+        cls, som_class: SOMcreator.SOMClass, pset_name: str, property_name: str
     ):
-        pset = obj.get_property_set_by_name(pset_name)
+        pset = som_class.get_property_set_by_name(pset_name)
         if pset is None:
             return None
         return pset.get_property_by_name(property_name)
@@ -293,21 +293,21 @@ class Class(som_gui.core.tool.Class):
         cls.get_properties().class_activate_functions.append(func)
 
     @classmethod
-    def fill_class_entry(cls, obj: SOMcreator.SOMClass):
+    def fill_class_entry(cls, som_class: SOMcreator.SOMClass):
         for func in cls.get_properties().class_activate_functions:
-            func(obj)
+            func(som_class)
 
     @classmethod
-    def set_active_class(cls, obj: SOMcreator.SOMClass):
+    def set_active_class(cls, som_class: SOMcreator.SOMClass):
         prop: ClassProperties = cls.get_properties()
-        prop.active_class = obj
-        cls.fill_class_entry(obj)
+        prop.active_class = som_class
+        cls.fill_class_entry(som_class)
 
     @classmethod
     def update_check_state(cls, item: QTreeWidgetItem):
-        obj: SOMcreator.SOMClass = cls.get_class_from_item(item)
+        som_class: SOMcreator.SOMClass = cls.get_class_from_item(item)
         values = [
-            [getter_func(obj), setter_func]
+            [getter_func(som_class), setter_func]
             for n, getter_func, setter_func in cls.get_properties().column_List
         ]
         for column, [value, setter_func] in enumerate(values):
@@ -322,7 +322,7 @@ class Class(som_gui.core.tool.Class):
     def create_item(cls, som_class: SOMcreator.SOMClass):
         item = QTreeWidgetItem()
         item.som_class = (
-            som_class  # item.setData(0,obj) leads to recursion bug so allocating directly
+            som_class  # item.setData(0,som_class) leads to recursion bug so allocating directly
         )
         item.setText(0, som_class.name)
         item.setFlags(
@@ -340,9 +340,9 @@ class Class(som_gui.core.tool.Class):
         return item
 
     @classmethod
-    def update_item(cls, item: QTreeWidgetItem, obj: SOMcreator.SOMClass):
+    def update_item(cls, item: QTreeWidgetItem, som_class: SOMcreator.SOMClass):
         values = [
-            getter_func(obj)
+            getter_func(som_class)
             for n, getter_func, setter_func in cls.get_properties().column_List
         ]
 
@@ -366,8 +366,8 @@ class Class(som_gui.core.tool.Class):
         old_classes = set(old_classes_dict.keys())
         new_classes = classes.difference(old_classes)
         delete_classes = old_classes.difference(classes)
-        for obj in reversed(sorted(delete_classes, key=lambda o: old_classes_dict[o])):
-            row_index = old_classes_dict[obj]
+        for som_class in reversed(sorted(delete_classes, key=lambda o: old_classes_dict[o])):
+            row_index = old_classes_dict[som_class]
             parent_item.removeChild(parent_item.child(row_index))
 
         for new_classes in sorted(new_classes, key=lambda o: o.name):
@@ -376,9 +376,9 @@ class Class(som_gui.core.tool.Class):
 
         for index in range(parent_item.childCount()):
             item = parent_item.child(index)
-            obj: SOMcreator.SOMClass = cls.get_class_from_item(item)
-            cls.update_item(item, obj)
-            cls.fill_class_tree(set(obj.get_children(filter=True)), item)
+            som_class: SOMcreator.SOMClass = cls.get_class_from_item(item)
+            cls.update_item(item, som_class)
+            cls.fill_class_tree(set(som_class.get_children(filter=True)), item)
 
     @classmethod
     def add_class_creation_check(cls, key, check_function):
@@ -388,8 +388,8 @@ class Class(som_gui.core.tool.Class):
     def set_class_optional_by_tree_item_state(
         cls, item: QTreeWidgetItem, column_index: int
     ):
-        obj = cls.get_class_from_item(item)
-        obj.set_optional(
+        som_class = cls.get_class_from_item(item)
+        som_class.set_optional(
             True if item.checkState(column_index) == Qt.CheckState.Checked else False
         )
 

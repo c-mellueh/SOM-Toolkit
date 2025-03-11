@@ -120,14 +120,14 @@ class Modelcheck(som_gui.plugins.aggregation_window.core.tool.Modelcheck):
         return bool(parent_class_rep.aggregations.intersection(allowed_parents))
 
     @classmethod
-    def get_allowed_parents(cls, obj: SOMcreator.SOMClass):
+    def get_allowed_parents(cls, som_class: SOMcreator.SOMClass):
         def _loop_parent(el: SOMcreator.SOMAggregation) -> SOMcreator.SOMAggregation:
             if el.parent_connection != value_constants.INHERITANCE:
                 return el.parent
             else:
                 return _loop_parent(el.parent)
 
-        return set(_loop_parent(aggreg) for aggreg in obj.aggregations)
+        return set(_loop_parent(aggreg) for aggreg in som_class.aggregations)
 
     @classmethod
     def get_group_count(cls) -> int:

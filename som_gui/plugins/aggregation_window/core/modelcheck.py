@@ -57,8 +57,8 @@ def check_entities(
 ):
     main_property_value = modelcheck.get_ident_value(entity)
     main_property_value = "" if main_property_value is None else main_property_value
-    obj_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(main_property_value)
-    if not modelcheck_plugin.entity_is_in_group(entity) and obj_rep.aggregations:
+    class_rep: SOMcreator.SOMClass = modelcheck.get_ident_dict().get(main_property_value)
+    if not modelcheck_plugin.entity_is_in_group(entity) and class_rep.aggregations:
         modelcheck_plugin.no_group_issue(entity)
 
 
@@ -146,7 +146,7 @@ def check_correct_parent(
     parent_class_rep = modelcheck.get_class_representation(parent_entity)
 
     if parent_class_rep is None:
-        logging.warning(f"Group {entity.GlobalId} -> no parent obj")
+        logging.warning(f"Group {entity.GlobalId} -> no parent class")
         return
 
     if not modelcheck_plugin.is_parent_allowed(entity, parent_entity):

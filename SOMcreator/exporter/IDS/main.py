@@ -43,20 +43,20 @@ def _build_specifications(
         _build_specification(som_class, property_set_dict, xml_specifications)
 
 
-def _build_applicability(obj: SOMcreator.SOMClass, xml_parent: Element) -> None:
+def _build_applicability(som_class: SOMcreator.SOMClass, xml_parent: Element) -> None:
     xml_applicability = SubElement(xml_parent, ids_xsd.APPLICABILITY, nsmap=NSMAP)
     xml_property = SubElement(xml_applicability, ids_xsd.PROPERTY, nsmap=NSMAP)
     xml_property.set(ids_xsd.ATTR_DATATYPE, ifc_datatypes.LABEL)
     xml_property_set = SubElement(xml_property, ids_xsd.PROPERTYSET, nsmap=NSMAP)
     SubElement(xml_property_set, ids_xsd.SIMPLEVALUE).text = (
-        obj.identifier_property.property_set.name
+        som_class.identifier_property.property_set.name
     )
     xml_name = SubElement(xml_property, ids_xsd.NAME, nsmap=NSMAP)
     SubElement(xml_name, ids_xsd.SIMPLEVALUE, nsmap=NSMAP).text = (
-        obj.identifier_property.name
+        som_class.identifier_property.name
     )
     xml_value = SubElement(xml_property, ids_xsd.VALUE)
-    SubElement(xml_value, ids_xsd.SIMPLEVALUE, nsmap=NSMAP).text = obj.ident_value
+    SubElement(xml_value, ids_xsd.SIMPLEVALUE, nsmap=NSMAP).text = som_class.ident_value
 
 
 def _build_requirements(
@@ -122,13 +122,13 @@ def _build_property_requirement(
 
 
 def _build_specification(
-    obj: SOMcreator.SOMClass,
+    som_class: SOMcreator.SOMClass,
     property_set_dict: dict[SOMcreator.SOMPropertySet, list[SOMcreator.SOMProperty]],
     xml_parent: Element,
 ) -> None:
     xml_specification = SubElement(xml_parent, ids_xsd.SPECIFICATION, nsmap=NSMAP)
     xml_specification.set(
-        ids_xsd.ATTR_NAME, f"Pruefregel {obj.name} ({obj.ident_value})"
+        ids_xsd.ATTR_NAME, f"Pruefregel {som_class.name} ({som_class.ident_value})"
     )
     xml_specification.set(ids_xsd.ATTR_IFCVERSION, ids_xsd.VAL_IFC4)
     xml_specification.set(
@@ -136,7 +136,7 @@ def _build_specification(
     )
     xml_specification.set(xml_xsd.MINOCCURS, "0")
     xml_specification.set(xml_xsd.MAXOCCURS, "unbounded")
-    _build_applicability(obj, xml_specification)
+    _build_applicability(som_class, xml_specification)
     _build_requirements(property_set_dict, xml_specification)
 
 

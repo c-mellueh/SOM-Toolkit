@@ -157,10 +157,10 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         for property_set in property_sets:
             row_count = table_widget.rowCount()
             table_widget.setRowCount(row_count + 1)
-            obj = property_set.som_class
+            som_class = property_set.som_class
 
-            item_1 = QTableWidgetItem(obj.name)
-            item_2 = QTableWidgetItem(obj.ident_value)
+            item_1 = QTableWidgetItem(som_class.name)
+            item_2 = QTableWidgetItem(som_class.ident_value)
 
             item_1.setData(CLASS_REFERENCE, property_set)
             item_2.setData(CLASS_REFERENCE, property_set)

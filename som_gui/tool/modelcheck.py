@@ -99,10 +99,10 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     @classmethod
     def entity_should_be_tested(cls, entity: ifcopenshell.entity_instance) -> bool:
-        obj = cls.get_class_representation(entity)
-        if obj is None:
+        som_class = cls.get_class_representation(entity)
+        if som_class is None:
             return False
-        return obj in cls.get_data_dict()
+        return som_class in cls.get_data_dict()
 
     @classmethod
     def get_class_representation(

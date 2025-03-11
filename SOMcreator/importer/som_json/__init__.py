@@ -10,11 +10,11 @@ import SOMcreator.datastructure.som_json
 from SOMcreator.datastructure.som_json import FILTER_MATRIXES, MainDict
 from typing import Type, TYPE_CHECKING
 from . import (
+    class_,
     core,
     project,
     predefined_pset,
     property_set,
-    obj,
     aggregation,
     inheritance,
 )
@@ -68,7 +68,7 @@ def open_json(cls: Type[SOMProject], path: str | os.PathLike):
     predefined_pset.load(proj, main_dict)
     logging.debug(f"Predefined Pset Read")
 
-    obj.load(proj, main_dict)
+    class_.load(proj, main_dict)
     logging.debug(f"Classes Read")
 
     aggregation.load(proj, main_dict)

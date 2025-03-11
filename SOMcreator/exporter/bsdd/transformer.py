@@ -73,11 +73,11 @@ def _create_property(som_property: SOMcreator.SOMProperty) -> bsdd.Property:
     return p
 
 
-def _find_differences(obj_1: bsdd.Property, obj_2: bsdd.Property) -> dict:
+def _find_differences(prop_0: bsdd.Property, prop_1: bsdd.Property) -> dict:
     difference_dict = dict()
-    for property_name in obj_1.__annotations__.keys():
-        value_1 = getattr(obj_1, property_name)
-        value_2 = getattr(obj_2, property_name)
+    for property_name in prop_0.__annotations__.keys():
+        value_1 = getattr(prop_0, property_name)
+        value_2 = getattr(prop_1, property_name)
         if value_1 != value_2:
             difference_dict[property_name] = [value_1, value_2]
     return difference_dict
@@ -140,10 +140,10 @@ def _create_properties(
     return properties, class_properties
 
 
-def _create_class(obj: SOMcreator.SOMClass, d: bsdd.Dictionary):
-    c = bsdd.Class(d, str(obj.ident_value), obj.name, "Class")
-    c.Description = obj.description
-    c.RelatedIfcEntityNamesList = list(obj.ifc_mapping)
+def _create_class(som_class: SOMcreator.SOMClass, d: bsdd.Dictionary):
+    c = bsdd.Class(d, str(som_class.ident_value), som_class.name, "Class")
+    c.Description = som_class.description
+    c.RelatedIfcEntityNamesList = list(som_class.ifc_mapping)
     c.CountriesOfUse = ["DE"]
     c.CountryOfOrigin = "DE"
     c.CreatorLanguageIsoCode = "de-DE"
@@ -168,12 +168,12 @@ def _create_classes(
 
 
 def _create_parent_reference(
-    child_obj: SOMcreator.SOMClass,
-    parent_obj: SOMcreator.SOMClass,
+    child_class: SOMcreator.SOMClass,
+    parent_class: SOMcreator.SOMClass,
     class_dict: dict[SOMcreator.SOMClass, bsdd.Class],
 ):
-    parent_class = class_dict[parent_obj]
-    child_class = class_dict[child_obj]
+    parent_class = class_dict[parent_class]
+    child_class = class_dict[child_class]
     child_class.ParentClassCode = parent_class.Code
 
 
@@ -181,9 +181,9 @@ def _iterate_parent_relations(
     classes: list[SOMcreator.SOMClass],
     class_dict: dict[SOMcreator.SOMClass, bsdd.Class],
 ):
-    def _iterate(obj: SOMcreator.SOMClass):
-        for child in obj.get_children(filter=True):
-            _create_parent_reference(child, obj, class_dict)
+    def _iterate(som_class: SOMcreator.SOMClass):
+        for child in som_class.get_children(filter=True):
+            _create_parent_reference(child, som_class, class_dict)
             _iterate(child)
 
     root_classes = [o for o in classes if o.parent is None]

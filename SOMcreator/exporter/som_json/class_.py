@@ -17,31 +17,31 @@ if TYPE_CHECKING:
 
 
 ### Export ###
-def _write_object(element: SOMcreator.SOMClass) -> ClassDict:
-    object_dict: ClassDict = dict()
-    core.write_basics(object_dict, element)
+def _write_class(element: SOMcreator.SOMClass) -> ClassDict:
+    class_dict: ClassDict = dict()
+    core.write_basics(class_dict, element)
 
     if isinstance(element.ifc_mapping, set):
-        object_dict[IFC_MAPPINGS] = list(element.ifc_mapping)
+        class_dict[IFC_MAPPINGS] = list(element.ifc_mapping)
     else:
-        object_dict[IFC_MAPPINGS] = list(element.ifc_mapping)
+        class_dict[IFC_MAPPINGS] = list(element.ifc_mapping)
 
     psets_dict = dict()
     for pset in element.get_property_sets(filter=False):
         psets_dict[pset.uuid] = property_set.write_entry(pset)
 
-    object_dict[PROPERTY_SETS] = psets_dict
-    object_dict[ABBREVIATION] = element.abbreviation
+    class_dict[PROPERTY_SETS] = psets_dict
+    class_dict[ABBREVIATION] = element.abbreviation
 
     if isinstance(element.identifier_property, SOMcreator.SOMProperty):
-        object_dict[IDENT_PROPERTY] = element.identifier_property.uuid
+        class_dict[IDENT_PROPERTY] = element.identifier_property.uuid
     else:
-        object_dict[IDENT_PROPERTY] = element.identifier_property
+        class_dict[IDENT_PROPERTY] = element.identifier_property
 
-    return object_dict
+    return class_dict
 
 
 def write(proj: SOMProject, main_dict: MainDict):
     main_dict[CLASSES] = dict()
-    for obj in sorted(proj.get_classes(filter=False), key=lambda o: o.uuid):
-        main_dict[CLASSES][obj.uuid] = _write_object(obj)
+    for som_class in sorted(proj.get_classes(filter=False), key=lambda o: o.uuid):
+        main_dict[CLASSES][som_class.uuid] = _write_class(som_class)

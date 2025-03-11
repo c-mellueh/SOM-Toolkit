@@ -216,8 +216,8 @@ def export_desite_abbreviation(
     )
     if path is not None:
         abbrev = {
-            obj.abbreviation: [obj.ident_value, obj.name]
-            for obj in project.get().get_classes(filter=False)
+            som_class.abbreviation: [som_class.ident_value, som_class.name]
+            for som_class in project.get().get_classes(filter=False)
         }
         with open(path, "w") as file:
             json.dump(abbrev, file, indent=2)

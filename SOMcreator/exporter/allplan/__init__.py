@@ -66,14 +66,14 @@ def create_mapping(
 
     def create_zuweisung(kenner: str, worksheet: Worksheet):
 
-        def get_attrib_count(obj: SOMcreator.SOMClass):
+        def get_attrib_count(som_class: SOMcreator.SOMClass):
             return sum(
                 len([attrib for attrib in pset.get_properties(filter=True)])
-                for pset in obj.get_property_sets(filter=True)
+                for pset in som_class.get_property_sets(filter=True)
             )
 
         max_attribs = max(
-            get_attrib_count(obj) for obj in project.get_classes(filter=True)
+            get_attrib_count(som_class) for som_class in project.get_classes(filter=True)
         )
         header = ["Kenner"] + ["Wert", "Name"] * max_attribs
         [
@@ -81,10 +81,10 @@ def create_mapping(
         ]  # print Header
         worksheet.cell(2, 1, kenner)
         row_index = 2
-        for obj in project.get_classes(filter=True):
-            worksheet.cell(row_index, 2, obj.ident_value)
+        for som_class in project.get_classes(filter=True):
+            worksheet.cell(row_index, 2, som_class.ident_value)
             col_index = 3
-            for propery_set in obj.get_property_sets(filter=True):
+            for propery_set in som_class.get_property_sets(filter=True):
                 for som_property in propery_set.get_properties(filter=True):
                     if som_property.name != kenner:
                         worksheet.cell(row_index, col_index, som_property.name)

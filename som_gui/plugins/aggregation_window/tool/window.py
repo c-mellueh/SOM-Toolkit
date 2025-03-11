@@ -113,8 +113,8 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
         cls.get_properties().allowed_scenes = scene_list
 
     @classmethod
-    def set_filter_class(cls, obj: SOMcreator.SOMClass | None) -> None:
-        cls.get_properties().filter_class = obj
+    def set_filter_class(cls, som_class: SOMcreator.SOMClass | None) -> None:
+        cls.get_properties().filter_class = som_class
 
     @classmethod
     def get_status_bar(cls) -> QStatusBar:
