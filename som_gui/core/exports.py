@@ -29,15 +29,15 @@ names = [
         ALLPLAN_PATH,
     ],
     [
-        "Desite Abkürzungen",
+        "abbreviation",
         ABBREV_PATH,
     ],
     [
-        "Desite Lesezeichen",
+        "bookmarks",
         BOOKMARK_PATH,
     ],
     [
-        "Desite Mapping",
+        "mapping_script",
         MAPPING_PATH,
     ],
 ]
@@ -227,6 +227,7 @@ def export_desite_abbreviation(
 def create_settings_ui(
     exports: Type[tool.Exports], appdata: Type[tool.Appdata]
 ) -> QWidget:
+    
     widget = exports.create_settings_widget([n[0] for n in names])
     for row, (name, path_name) in enumerate(names):
         layout: QGridLayout = widget.layout()

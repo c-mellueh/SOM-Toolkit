@@ -83,12 +83,13 @@ class Exports(som_gui.core.tool.Exports):
         allplan.create_mapping(project, path, name)
 
     @classmethod
-    def create_settings_widget(cls, names):
+    def create_settings_widget(cls, names:list[str]):
         widget = QWidget()
         cls.get_properties().settings_widget = widget
         widget.setLayout(QGridLayout())
         layout: QGridLayout = widget.layout()
         for row, name in enumerate(names):
+            name = QCoreApplication.translate("Export", name)
             layout.addWidget(QLabel(name), row, 0)
             layout.addWidget(QLineEdit(), row, 1)
         layout.setRowStretch(len(names), 1)
