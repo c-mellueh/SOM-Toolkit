@@ -10,7 +10,7 @@ class PropertyWidget(QWidget):
         super().__init__(*args, **kwargs)
         self.ui = ui_CompareWidget.Ui_PropertyCompare()
         self.ui.setupUi(self)
-        self.ui.tree_widget_object.setColumnCount(2)
+        self.ui.tree_widget_class.setColumnCount(2)
         self.ui.tree_widget_propertysets.setColumnCount(2)
         self.ui.table_widget_values.setColumnCount(2)
         self.ui.table_infos.setColumnCount(3)

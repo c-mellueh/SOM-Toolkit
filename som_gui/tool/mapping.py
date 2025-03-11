@@ -33,7 +33,7 @@ class Mapping(som_gui.core.tool.Mapping):
     def create_window(cls):
         prop = cls.get_properties()
         prop.window = ui.MappingWindow()
-        prop.object_tree = prop.window.ui.object_tree
+        prop.class_tree = prop.window.ui.class_tree
         prop.pset_tree = prop.window.ui.pset_tree
         return cls.get_window()
 
@@ -47,13 +47,13 @@ class Mapping(som_gui.core.tool.Mapping):
         window.ui.action_shared_parameters.triggered.connect(
             trigger.export_revit_shared_parameters
         )
-        window.ui.object_tree.itemSelectionChanged.connect(trigger.update_pset_tree)
-        cls.get_object_tree().itemChanged.connect(trigger.tree_item_changed)
+        window.ui.class_tree.itemSelectionChanged.connect(trigger.update_pset_tree)
+        cls.get_class_tree().itemChanged.connect(trigger.tree_item_changed)
         cls.get_pset_tree().itemChanged.connect(trigger.tree_item_changed)
 
     @classmethod
-    def get_object_tree(cls) -> ui.ObjectTreeWidget:
-        return cls.get_properties().object_tree
+    def get_class_tree(cls) -> ui.ClassTreeWidget:
+        return cls.get_properties().class_tree
 
     @classmethod
     def get_pset_tree(cls) -> ui.PropertySetTreeWidget:
@@ -61,23 +61,23 @@ class Mapping(som_gui.core.tool.Mapping):
 
     @classmethod
     def get_selected_class(cls) -> SOMcreator.SOMClass | None:
-        tree = cls.get_object_tree()
+        tree = cls.get_class_tree()
         selected_items = tree.selectedItems()
         if not selected_items:
             return None
         return selected_items[0].data(0, CLASS_REFERENCE)
 
     @classmethod
-    def fill_class_tree(cls, root_objects: list[SOMcreator.SOMClass]) -> None:
-        tree = cls.get_object_tree()
-        cls.update_tree(set(root_objects), tree.invisibleRootItem(), tree)
+    def fill_class_tree(cls, root_classes: list[SOMcreator.SOMClass]) -> None:
+        tree = cls.get_class_tree()
+        cls.update_tree(set(root_classes), tree.invisibleRootItem(), tree)
 
     @classmethod
     def update_tree(
         cls,
         entities: set[SOMcreator.SOMProperty | SOMcreator.SOMClass],
         parent_item: QTreeWidgetItem,
-        tree: ui.ObjectTreeWidget,
+        tree: ui.ClassTreeWidget,
     ):
 
         existing_entities_dict = {
@@ -178,22 +178,22 @@ class Mapping(som_gui.core.tool.Mapping):
             cls.disable_all_child_entities(child_item, disabled)
 
     @classmethod
-    def create_export_dict(cls, root_objects: list[SOMcreator.SOMClass]) -> dict:
-        def _loop_objects(o: SOMcreator.SOMClass):
+    def create_export_dict(cls, root_classes: list[SOMcreator.SOMClass]) -> dict:
+        def _loop_classes(o: SOMcreator.SOMClass):
             cs = cls.get_checkstate(o)
             if not cs:
                 return
-            cls.add_object_to_ifc_export_data(o)
+            cls.add_class_to_ifc_export_data(o)
             for child in o.get_children(filter=True):
-                _loop_objects(child)
+                _loop_classes(child)
 
         cls.reset_export_dict()
-        for obj in root_objects:
-            _loop_objects(obj)
+        for obj in root_classes:
+            _loop_classes(obj)
         return cls.get_ifc_export_dict()
 
     @classmethod
-    def add_object_to_ifc_export_data(cls, obj: SOMcreator.SOMClass) -> None:
+    def add_class_to_ifc_export_data(cls, obj: SOMcreator.SOMClass) -> None:
         export_dict = cls.get_properties().ifc_export_dict
         for property_set in obj.get_property_sets(filter=False):
             if not cls.get_checkstate(property_set):

@@ -338,7 +338,7 @@ class ClassInfo:
     def add_ifc_mapping(self, mapping):
         pass
 
-    def add_objects_infos_add_function(self, key, getter_function):
+    def add_classes_infos_add_function(self, key, getter_function):
         pass
 
     def add_plugin_entry(
@@ -639,7 +639,7 @@ class FilterCompare:
     def are_properties_identical(self, attribute0, attribute1):
         pass
 
-    def are_objects_identical(self, obj0, obj1):
+    def are_classes_identical(self, obj0, obj1):
         pass
 
     def are_psets_identical(self, pset0, pset1):
@@ -688,7 +688,7 @@ class FilterCompare:
     ):
         pass
 
-    def get_object_tree(
+    def get_class_tree(
         self,
     ):
         pass
@@ -1051,7 +1051,7 @@ class MainWindow:
     ):
         pass
 
-    def get_object_tree_widget(
+    def get_class_tree_widget(
         self,
     ):
         pass
@@ -1123,7 +1123,7 @@ class MainWindow:
 
 
 class Mapping:
-    def add_object_to_ifc_export_data(self, obj):
+    def add_class_to_ifc_export_data(self, obj):
         pass
 
     def connect_window_triggers(self, window):
@@ -1160,7 +1160,7 @@ class Mapping:
     ):
         pass
 
-    def get_object_tree(
+    def get_class_tree(
         self,
     ):
         pass
@@ -1357,17 +1357,17 @@ class Modelcheck:
     ):
         pass
 
-    def get_object_checked_count(
+    def get_class_checked_count(
         self,
     ):
         pass
 
-    def get_object_count(
+    def get_class_count(
         self,
     ):
         pass
 
-    def get_object_representation(self, entity):
+    def get_class_representation(self, entity):
         pass
 
     def get_properties(
@@ -1641,7 +1641,7 @@ class ModelcheckWindow:
     def create_import_runner(self, progress_bar, ifc_import_path):
         pass
 
-    def create_object_tree_row(self, obj):
+    def create_class_tree_row(self, obj):
         pass
 
     def create_pset_tree_row(self, entity, parent_item):
@@ -1769,7 +1769,7 @@ class ModelcheckWindow:
     def uncheck_selection(self, widget):
         pass
 
-    def update_object_tree_row(self, parent_item, row_index):
+    def update_class_tree_row(self, parent_item, row_index):
         pass
 
 
@@ -2172,10 +2172,10 @@ class Property:
 
 
 class PropertyCompare:
-    def add_missing_objects_to_tree(self, tree, root_objects):
+    def add_missing_classes_to_tree(self, tree, root_objects):
         pass
 
-    def add_object_to_item(self, obj, item, index):
+    def add_class_to_item(self, obj, item, index):
         pass
 
     def add_properties_to_pset_tree(self, tree, add_missing):
@@ -2184,7 +2184,7 @@ class PropertyCompare:
     def are_properties_identical(self, attribute0, attribute1):
         pass
 
-    def are_objects_identical(self, object0, object1, check_pset):
+    def are_classes_identical(self, object0, object1, check_pset):
         pass
 
     def are_property_sets_identical(
@@ -2204,7 +2204,7 @@ class PropertyCompare:
     def compare_properties(self, attribute0, attribute1):
         pass
 
-    def compare_objects(self, obj0, obj1):
+    def compare_classes(self, obj0, obj1):
         pass
 
     def compare_property_sets(self, pset0, pset1):
@@ -2213,7 +2213,7 @@ class PropertyCompare:
     def create_child_matchup(self, entity0, entity1):
         pass
 
-    def create_object_dicts(
+    def create_class_dicts(
         self,
     ):
         pass
@@ -2255,7 +2255,7 @@ class PropertyCompare:
     def fill_class_tree(self, tree, add_missing):
         pass
 
-    def fill_object_tree_layer(self, objects, parent_item, add_missing):
+    def fill_class_tree_layer(self, objects, parent_item, add_missing):
         pass
 
     def fill_pset_tree(self, tree, pset_list, add_missing):
@@ -2276,7 +2276,7 @@ class PropertyCompare:
     def find_matching_entity(self, search_element, uuid_dict1, name_dict1):
         pass
 
-    def find_matching_object(self, obj, index):
+    def find_matching_class(self, obj, index):
         pass
 
     def generate_name_dict(self, element_list):
@@ -2303,7 +2303,7 @@ class PropertyCompare:
     def get_info_table(self, widget):
         pass
 
-    def get_item_from_object(self, obj):
+    def get_item_from_class(self, obj):
         pass
 
     def get_level(self, index):
@@ -2315,12 +2315,12 @@ class PropertyCompare:
     def get_name_path(self, entity):
         pass
 
-    def get_object_dict(
+    def get_class_dict(
         self,
     ):
         pass
 
-    def get_object_lists(
+    def get_class_list(
         self,
     ):
         pass
@@ -2386,7 +2386,7 @@ class PropertyCompare:
     def set_header_labels(self, trees, tables, labels):
         pass
 
-    def set_object_item_relation(self, obj, item):
+    def set_class_item_relation(self, obj, item):
         pass
 
     def set_projects(self, project1, project2):
@@ -2717,7 +2717,7 @@ class PropertyImportSQL:
     def fill_som_properties(self, values):
         pass
 
-    def get_current_object_filter(
+    def get_current_class_filter(
         self,
     ):
         pass

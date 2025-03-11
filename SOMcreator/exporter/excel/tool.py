@@ -14,7 +14,7 @@ import SOMcreator
 IDENT_PSET_NAME = "Allgemeine Eigenschaften"
 IDENT_ATTRIB_NAME = "bauteilKlassifikation"
 NAME = "name"
-OBJECTS = "objects"
+CLASSES = "classes"
 TABLE_STYLE = "TableStyleLight1"
 OPTIONAL_FONT = styles.Font(color="4e6ec0")
 HEADER_ROW_COUNT = 4
@@ -57,8 +57,8 @@ class ExportExcel:
         return cls.get_properties().ident_property_name
 
     @classmethod
-    def get_object_data(cls, data_dict):
-        return data_dict[NAME], data_dict[OBJECTS]
+    def get_class_data(cls, data_dict):
+        return data_dict[NAME], data_dict[CLASSES]
 
     @classmethod
     def create_workbook(cls):
@@ -121,25 +121,25 @@ class ExportExcel:
         cls.autoadjust_column_widths(sheet)
 
     @classmethod
-    def filter_to_sheets(cls, object_list: list[SOMcreator.SOMClass]) -> dict:
+    def filter_to_sheets(cls, class_list: list[SOMcreator.SOMClass]) -> dict:
         d = {
-            obj.ident_value: {NAME: obj.name, OBJECTS: []}
-            for obj in object_list
-            if len(obj.ident_value.split(".")) == 1
+            som_class.ident_value: {NAME: som_class.name, CLASSES: []}
+            for som_class in class_list
+            if len(som_class.ident_value.split(".")) == 1
         }
-        for obj in object_list:
-            group = obj.ident_value.split(".")[0]
-            d[group][OBJECTS].append(obj)
-        d["son"] = {NAME: "Sonstige", OBJECTS: []}
+        for som_class in class_list:
+            group = som_class.ident_value.split(".")[0]
+            d[group][CLASSES].append(som_class)
+        d["son"] = {NAME: "Sonstige", CLASSES: []}
         for group_name, group in list(d.items()):
-            objects = group[OBJECTS]
-            if len(objects) < 3:
-                d["son"][OBJECTS] += objects
+            classes = group[CLASSES]
+            if len(classes) < 3:
+                d["son"][CLASSES] += classes
                 del d[group_name]
         return d
 
     @classmethod
-    def create_object_entry(
+    def create_class_entry(
         cls, som_class: SOMcreator.SOMClass, sheet, start_row, start_column, table_index
     ):
         if som_class.is_optional(ignore_hirarchy=False):

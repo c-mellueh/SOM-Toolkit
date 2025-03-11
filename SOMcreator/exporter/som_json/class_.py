@@ -5,7 +5,7 @@ from SOMcreator.datastructure.som_json import (
     ABBREVIATION,
     PROPERTY_SETS,
     IDENT_PROPERTY,
-    OBJECTS,
+    CLASSES,
 )
 from SOMcreator.exporter.som_json import property_set
 import SOMcreator
@@ -13,12 +13,12 @@ from SOMcreator.exporter.som_json import core
 
 if TYPE_CHECKING:
     from SOMcreator import SOMProject
-    from SOMcreator.datastructure.som_json import ObjectDict, MainDict
+    from SOMcreator.datastructure.som_json import ClassDict, MainDict
 
 
 ### Export ###
-def _write_object(element: SOMcreator.SOMClass) -> ObjectDict:
-    object_dict: ObjectDict = dict()
+def _write_object(element: SOMcreator.SOMClass) -> ClassDict:
+    object_dict: ClassDict = dict()
     core.write_basics(object_dict, element)
 
     if isinstance(element.ifc_mapping, set):
@@ -42,6 +42,6 @@ def _write_object(element: SOMcreator.SOMClass) -> ObjectDict:
 
 
 def write(proj: SOMProject, main_dict: MainDict):
-    main_dict[OBJECTS] = dict()
+    main_dict[CLASSES] = dict()
     for obj in sorted(proj.get_classes(filter=False), key=lambda o: o.uuid):
-        main_dict[OBJECTS][obj.uuid] = _write_object(obj)
+        main_dict[CLASSES][obj.uuid] = _write_object(obj)

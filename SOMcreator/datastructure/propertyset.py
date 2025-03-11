@@ -30,7 +30,7 @@ class SOMPropertySet(BaseClass):
         if som_class is not None:
             som_class.add_property_set(
                 self
-            )  # adds Pset to Object and sets pset.object = obj
+            )  # adds Pset to Class and sets pset.class = cls
         self.uuid = str(uuid4()) if uuid is None else uuid
 
     def __lt__(self, other):

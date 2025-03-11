@@ -169,10 +169,10 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         prop.projects = [None, None]
         prop.uuid_dicts = [None, None]
         prop.ident_dicts = [None, None]
-        prop.object_dict = dict()
-        prop.object_lists = list()
-        prop.missing_objects = [None, None]
-        prop.object_tree_item_dict = dict()
+        prop.class_dict = dict()
+        prop.class_lists = list()
+        prop.missing_classes = [None, None]
+        prop.class_tree_item_dict = dict()
         prop.pset_lists = dict()
         prop.properties_lists = dict()
         prop.values_lists = dict()
@@ -181,25 +181,25 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     @classmethod
     def create_tree_selection_trigger(cls, widget: ui.PropertyWidget):
         """
-        create trigger if Object Tree and PropertySet tree are selected
+        create trigger if ClassTree and PropertySetTree are selected
         :param widget:
         :return:
         """
-        widget.ui.tree_widget_object.itemSelectionChanged.connect(
-            lambda: trigger.object_tree_selection_changed(widget)
+        widget.ui.tree_widget_class.itemSelectionChanged.connect(
+            lambda: trigger.class_tree_selection_changed(widget)
         )
         widget.ui.tree_widget_propertysets.itemSelectionChanged.connect(
             lambda: trigger.pset_tree_selection_changed(widget)
         )
 
     @classmethod
-    def find_matching_object(
+    def find_matching_class(
         cls, obj: SOMcreator.SOMClass, index=1
     ) -> SOMcreator.SOMClass | None:
         """
-        find object that matches to input. The function searches for the UUID and Identifier if not Object is found return None
-        :param obj: Object for which a match is to be found
-        :param index: defines if object should  be searched in Project 0 or Project 1
+        find class that matches to input. The function searches for the UUID and Identifier if not class is found return None
+        :param obj: class for which a match is to be found
+        :param index: defines if class should  be searched in Project 0 or Project 1
         :return:
         """
         uuid_dict = cls.get_uuid_dict(index)
@@ -252,17 +252,17 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         return {p.name: p for p in element_list if p.name}
 
     @classmethod
-    def compare_objects(
+    def compare_classes(
         cls, obj0: None | SOMcreator.SOMClass, obj1: None | SOMcreator.SOMClass
     ) -> list[
         tuple[SOMcreator.SOMPropertySet | None, SOMcreator.SOMPropertySet | None]
     ]:
         """
-        Compare two SOMcreator objects by their property sets.
+        Compare two SOMcreator classes by their property sets.
         This method generates a list of matched and unmatched property sets (match_list)
-        for both objects and assigns it to them using the set_pset_list function
-        :param obj0: First object to compare, or None.
-        :param obj1: Second object to compare, or None.
+        for both classes and assigns it to them using the set_pset_list function
+        :param obj0: First class to compare, or None.
+        :param obj1: Second class to compare, or None.
         :return:
         """
         # Create Match Dictionaries
@@ -383,41 +383,41 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
 
     @classmethod
     def create_class_lists(cls) -> None:
-        object_list = cls.get_object_lists()
-        if object_list:
+        class_list = cls.get_class_list()
+        if class_list:
             return
         project_0, project_1 = cls.get_project(0), cls.get_project(1)
-        found_objects = list()
+        found_classes = list()
         for obj0 in project_0.get_classes(filter=False):
-            match = cls.find_matching_object(obj0, 1)
+            match = cls.find_matching_class(obj0, 1)
             if match is None:
-                object_list.append((obj0, None))
-                cls.compare_objects(obj0, None)
+                class_list.append((obj0, None))
+                cls.compare_classes(obj0, None)
             else:
-                object_list.append((obj0, match))
-                found_objects.append(match)
-                cls.compare_objects(obj0, match)
+                class_list.append((obj0, match))
+                found_classes.append(match)
+                cls.compare_classes(obj0, match)
 
         for obj1 in [
-            o for o in project_1.get_classes(filter=False) if o not in found_objects
+            o for o in project_1.get_classes(filter=False) if o not in found_classes
         ]:
-            object_list.append((None, obj1))
-            cls.compare_objects(None, obj1)
+            class_list.append((None, obj1))
+            cls.compare_classes(None, obj1)
 
-        cls.create_object_dicts()
+        cls.create_class_dicts()
 
     @classmethod
-    def create_object_dicts(cls) -> None:
+    def create_class_dicts(cls) -> None:
         od = dict()
-        for o0, o1 in cls.get_object_lists():
+        for o0, o1 in cls.get_class_list():
             if o0 is not None:
                 od[o0] = o1
             if o1 is not None:
                 od[o1] = o1
-        cls.get_properties().object_dict = od
+        cls.get_properties().class_dict = od
 
     @classmethod
-    def add_object_to_item(
+    def add_class_to_item(
         cls, obj: SOMcreator.SOMClass, item: QTreeWidgetItem, index: int
     ):
         start_index = index
@@ -425,38 +425,38 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         text = f"{obj.name} {ident_text}"
         item.setText(start_index, text)
         item.setData(start_index, CLASS_REFERENCE, obj)
-        cls.set_object_item_relation(obj, item)
+        cls.set_class_item_relation(obj, item)
 
     @classmethod
-    def fill_object_tree_layer(
+    def fill_class_tree_layer(
         cls,
-        objects: list[SOMcreator.SOMClass],
+        classes: list[SOMcreator.SOMClass],
         parent_item: QTreeWidgetItem,
         add_missing: bool,
     ):
-        object_dict = cls.get_object_dict()
+        class_dict = cls.get_class_dict()
 
-        for obj in objects:
-            match_obj = object_dict.get(obj)
+        for som_class in classes:
+            match_class = class_dict.get(som_class)
             item = QTreeWidgetItem()
-            cls.add_object_to_item(obj, item, 0)
-            if match_obj:
-                cls.add_object_to_item(match_obj, item, 1)
+            cls.add_class_to_item(som_class, item, 0)
+            if match_class:
+                cls.add_class_to_item(match_class, item, 1)
 
-            if match_obj is not None or add_missing:
+            if match_class is not None or add_missing:
                 parent_item.addChild(item)
-            cls.fill_object_tree_layer(
-                list(obj.get_children(filter=False)), item, add_missing
+            cls.fill_class_tree_layer(
+                list(som_class.get_children(filter=False)), item, add_missing
             )
 
     @classmethod
     def fill_class_tree(cls, tree: QTreeWidget, add_missing: bool = True):
         proj0, proj1 = cls.get_project(0), cls.get_project(1)
         tree_root = tree.invisibleRootItem()
-        root_objects = tool.Project.get_root_classes(False, proj0)
-        cls.fill_object_tree_layer(root_objects, tree_root, add_missing)
+        root_classes = tool.Project.get_root_classes(False, proj0)
+        cls.fill_class_tree_layer(root_classes, tree_root, add_missing)
         if add_missing:
-            cls.add_missing_objects_to_tree(
+            cls.add_missing_classes_to_tree(
                 tree, tool.Project.get_root_classes(False, proj1)
             )
 
@@ -527,25 +527,25 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
     ) -> QTreeWidgetItem | None:
         parent = som_class.parent
         while parent is not None:
-            parent_item = cls.get_item_from_object(parent)
+            parent_item = cls.get_item_from_class(parent)
             if parent_item is not None:
                 return parent_item
             parent = parent.parent
         return None
 
     @classmethod
-    def add_missing_objects_to_tree(
-        cls, tree: QTreeWidget, root_objects: list[SOMcreator.SOMClass]
+    def add_missing_classes_to_tree(
+        cls, tree: QTreeWidget, root_classes: list[SOMcreator.SOMClass]
     ):
-        missing_objects = cls.get_missing_classes(1)
-        for obj in root_objects:
-            if obj in missing_objects:
-                parent = cls.find_existing_parent_item(obj)
+        missing_classes = cls.get_missing_classes(1)
+        for som_class in root_classes:
+            if som_class in missing_classes:
+                parent = cls.find_existing_parent_item(som_class)
                 parent = parent if parent is not None else tree.invisibleRootItem()
                 item = QTreeWidgetItem()
-                cls.add_object_to_item(obj, item, 1)
+                cls.add_class_to_item(som_class, item, 1)
                 parent.addChild(item)
-            cls.add_missing_objects_to_tree(tree, list(obj.get_children(filter=False)))
+            cls.add_missing_classes_to_tree(tree, list(som_class.get_children(filter=False)))
 
     @classmethod
     def clear_tree(cls, tree: QTreeWidget):
@@ -672,14 +672,14 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         return all(None not in x for x in child_matchup)
 
     @classmethod
-    def are_objects_identical(
-        cls, object0: SOMcreator.SOMClass, object1: SOMcreator.SOMClass, check_pset=True
+    def are_classes_identical(
+        cls, class_0: SOMcreator.SOMClass, class_1: SOMcreator.SOMClass, check_pset=True
     ) -> bool:
-        if object0 is None or object1 is None:
+        if class_0 is None or class_1 is None:
             return False
-        names_are_identical = object0.name == object1.name
-        identifiers_are_identical = object0.ident_value == object1.ident_value
-        property_set_list = cls.get_pset_list(object0)
+        names_are_identical = class_0.name == class_1.name
+        identifiers_are_identical = class_0.ident_value == class_1.ident_value
+        property_set_list = cls.get_pset_list(class_0)
         if not property_set_list:
             return False
 
@@ -785,7 +785,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         style = 2 if entity0 is None else 3 if entity1 is None else None
         if style is None:
             if isinstance(entity0, SOMcreator.SOMClass):
-                compare_func = cls.are_objects_identical
+                compare_func = cls.are_classes_identical
             elif isinstance(entity0, SOMcreator.SOMPropertySet):
                 compare_func = lambda p1, p2: cls.are_property_sets_identical(
                     p1, p2, False
@@ -930,15 +930,15 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
 
     @classmethod
     def export_class_differences(cls, file: TextIO):
-        project0 = cls.get_project(0)
-        object_dict = cls.get_object_dict()
+        project_0 = cls.get_project(0)
+        class_dict = cls.get_class_dict()
 
-        for obj0 in sorted(project0.get_classes(filter=False), key=lambda x: x.name):
-            obj1 = object_dict[obj0]
-            if cls.are_objects_identical(obj0, obj1):
+        for class_0 in sorted(project_0.get_classes(filter=False), key=lambda x: x.name):
+            class_1 = class_dict[class_0]
+            if cls.are_classes_identical(class_0, class_1):
                 continue
-            file.write(f"\n{obj0.name} ({obj0.ident_value}):\n")
-            cls.export_pset_differences(file, cls.get_pset_list(obj0))
+            file.write(f"\n{class_0.name} ({class_0.ident_value}):\n")
+            cls.export_pset_differences(file, cls.get_pset_list(class_0))
 
     @classmethod
     def export_pset_differences(
@@ -989,7 +989,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
 
     @classmethod
     def get_class_tree(cls, widget: ui.PropertyWidget):
-        return widget.ui.tree_widget_object
+        return widget.ui.tree_widget_class
 
     @classmethod
     def get_pset_tree(cls, widget: ui.PropertyWidget):
@@ -1102,30 +1102,30 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         return cls.get_properties().ident_dicts[index]
 
     @classmethod
-    def get_object_lists(
+    def get_class_list(
         cls,
     ) -> list[tuple[SOMcreator.SOMClass | None, SOMcreator.SOMClass | None]]:
-        return cls.get_properties().object_lists
+        return cls.get_properties().class_lists
 
     @classmethod
     def get_missing_classes(cls, index: int) -> list[SOMcreator.SOMClass]:
-        ol = cls.get_object_lists()
-        if cls.get_properties().missing_objects[index] is None:
+        ol = cls.get_class_list()
+        if cls.get_properties().missing_classes[index] is None:
             missing = [o[index] for o in ol if o[index - 1] is None]
-            cls.get_properties().missing_objects[index] = missing
-        return cls.get_properties().missing_objects[index]
+            cls.get_properties().missing_classes[index] = missing
+        return cls.get_properties().missing_classes[index]
 
     @classmethod
-    def get_object_dict(cls) -> dict:
-        return cls.get_properties().object_dict
+    def get_class_dict(cls) -> dict:
+        return cls.get_properties().class_dict
 
     @classmethod
-    def set_object_item_relation(cls, obj: SOMcreator.SOMClass, item: QTreeWidgetItem):
-        cls.get_properties().object_tree_item_dict[obj] = item
+    def set_class_item_relation(cls, obj: SOMcreator.SOMClass, item: QTreeWidgetItem):
+        cls.get_properties().class_tree_item_dict[obj] = item
 
     @classmethod
-    def get_item_from_object(cls, obj: SOMcreator.SOMClass) -> QTreeWidgetItem | None:
-        return cls.get_properties().object_tree_item_dict.get(obj)
+    def get_item_from_class(cls, obj: SOMcreator.SOMClass) -> QTreeWidgetItem | None:
+        return cls.get_properties().class_tree_item_dict.get(obj)
 
     @classmethod
     def get_selected_item(cls, tree: QTreeWidget):

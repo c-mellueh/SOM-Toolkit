@@ -439,8 +439,8 @@ def change_header_text(
         node.set_title_settings(som_property.property_set.name, som_property.name)
 
 
-def add_object_to_scene(
-    obj: SOMcreator.SOMClass,
+def add_class_to_scene(
+    som_class: SOMcreator.SOMClass,
     scene,
     parent_node: node_ui.NodeProxy | None,
     pos: QPoint | None,
@@ -453,7 +453,7 @@ def add_object_to_scene(
     if pos is None:
         pos = QPointF(100.0, 100.0)
 
-    aggregation = SOMcreator.SOMAggregation(obj)
+    aggregation = SOMcreator.SOMAggregation(som_class)
     new_node = node.create_node(aggregation)
     view.add_node_to_scene(new_node, scene)
     node.set_node_pos(new_node, pos)

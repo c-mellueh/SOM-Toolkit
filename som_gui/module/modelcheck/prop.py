@@ -22,8 +22,8 @@ class ModelcheckProperties:
     active_element_type: str = None
     status_label: QLabel = None
     progress_bar: QProgressBar = None
-    object_checked_count: int = 0
-    object_count: int = 0
+    class_checked_count: int = 0
+    class_count: int = 0
     abort_modelcheck: bool = False
     group_parent_dict: dict = dict()
     group_dict: dict = dict()

@@ -102,9 +102,9 @@ class SOMAggregation(BaseClass):
         Generate a unique identifier for the aggregation group.
 
         This method constructs an identifier string by traversing the parent
-        hierarchy of the current aggregation object. It includes the abbreviation
-        of each parent object and its identity text, if available. The identifier
-        is built in a reversed order, starting from the root to the current object.
+        hierarchy of the current aggregation class. It includes the abbreviation
+        of each parent class and its identity text, if available. The identifier
+        is built in a reversed order, starting from the root to the current class.
 
         Returns:
             str: A unique identifier string for the aggregation group.
@@ -123,7 +123,7 @@ class SOMAggregation(BaseClass):
 
     def set_identity_text(self, text: str):
         """
-        Sets the identity text for the object.
+        Sets the identity text for the class.
 
         Args:
             text (str): The identity text to be set.

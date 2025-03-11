@@ -12,10 +12,12 @@ from som_gui.plugins.aggregation_window.module.aggregation.prop import (
     AggregationProperties,
 )
 from som_gui.plugins.aggregation_window.module.aggregation import trigger
+
 ABBREV_ISSUE = 2
 from SOMcreator.exporter.desite import building_structure
 from PySide6.QtGui import QAction
 from PySide6.QtCore import QCoreApplication
+
 
 class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     @classmethod
@@ -43,7 +45,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
         return le
 
     @classmethod
-    def object_info_line_edit_paint(cls, data_dict, abbrev_filter):
+    def class_info_line_edit_paint(cls, data_dict, abbrev_filter):
         abbreviation = data_dict["abbreviation"]
         if not cls.is_abbreviation_allowed(abbreviation, abbrev_filter):
             cls.oi_set_abbrev_value_color("red")
@@ -77,7 +79,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
 
     @classmethod
     def oi_set_abbrev_value_color(cls, color: str):
-        widget = cls.get_properties().object_info_line_edit
+        widget = cls.get_properties().class_info_line_edit
         style = widget.style()
         widget.setStyleSheet(f"QLineEdit {{color:{color};}}")
 
@@ -91,21 +93,21 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
         return abbreviations
 
     @classmethod
-    def set_object_abbreviation(cls, obj: SOMcreator.SOMClass, abbreviation: str):
+    def set_class_abbreviation(cls, obj: SOMcreator.SOMClass, abbreviation: str):
         obj.abbreviation = abbreviation
 
     @classmethod
     def create_ci_line_edit(cls):
-        cls.get_properties().object_info_line_edit = ui_aggregation.ObjectInfoLineEdit()
-        return cls.get_properties().object_info_line_edit
+        cls.get_properties().class_info_line_edit = ui_aggregation.ClassInfoLineEdit()
+        return cls.get_properties().class_info_line_edit
 
     @classmethod
     def get_ci_text(cls):
-        return cls.get_properties().object_info_line_edit.text()
+        return cls.get_properties().class_info_line_edit.text()
 
     @classmethod
-    def set_ci_text(cls,value):
-        cls.get_properties().object_info_line_edit.setText(value)
+    def set_ci_text(cls, value):
+        cls.get_properties().class_info_line_edit.setText(value)
 
     @classmethod
     def abbreviation_check(cls, data_dict: dict):
@@ -120,7 +122,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
             tool.Popups.create_warning_popup(text)
             return False
         return True
-    
+
     @classmethod
     def trigger_save(cls):
         trigger.save_aggregations()
@@ -128,7 +130,7 @@ class Aggregation(som_gui.plugins.aggregation_window.core.tool.Aggregation):
     @classmethod
     def set_save_function_index(cls, index):
         cls.get_properties().save_function_index = index
-    
+
     @classmethod
-    def get_save_function_index(cls) -> int|None:
+    def get_save_function_index(cls) -> int | None:
         return cls.get_properties().save_function_index

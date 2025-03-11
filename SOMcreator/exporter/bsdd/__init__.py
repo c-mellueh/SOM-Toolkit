@@ -17,10 +17,10 @@ import os
 
 def export(project: SOMcreator.SOMProject, path: str | os.PathLike):
     dictionary = transform_project_to_dict(project)
-    objects = list(project.get_classes(filter=True))
+    classes = list(project.get_classes(filter=True))
     predefined_psets = list(project.get_predefined_psets(filter=False))
     SOMcreator.exporter.bsdd.transformer.transform_som_class_to_bsdd_class(
-        dictionary, objects, predefined_psets
+        dictionary, classes, predefined_psets
     )
     export_dict(dictionary, path)
     return

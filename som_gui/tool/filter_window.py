@@ -82,18 +82,18 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
 
     @classmethod
     def connect_class_tree(cls, project: SOMcreator.SOMProject):
-        object_tree = cls.get_class_tree()
-        object_tree.setModel(ui.ClassModel(project))
-        object_tree.setSelectionMode(object_tree.SelectionMode.SingleSelection)
-        object_tree.setSelectionBehavior(object_tree.SelectionBehavior.SelectRows)
-        object_tree.frozen_view.selectionModel().selectionChanged.connect(
+        class_tree = cls.get_class_tree()
+        class_tree.setModel(ui.ClassModel(project))
+        class_tree.setSelectionMode(class_tree.SelectionMode.SingleSelection)
+        class_tree.setSelectionBehavior(class_tree.SelectionBehavior.SelectRows)
+        class_tree.frozen_view.selectionModel().selectionChanged.connect(
             trigger.class_tree_clicked
         )
-        object_tree.frozen_view.selectionModel().selectionChanged.connect(
-            object_tree.update_selection
+        class_tree.frozen_view.selectionModel().selectionChanged.connect(
+            class_tree.update_selection
         )
-        object_tree.selectionModel().selectionChanged.connect(
-            object_tree.frozen_view.update_selection
+        class_tree.selectionModel().selectionChanged.connect(
+            class_tree.frozen_view.update_selection
         )
 
     @classmethod
@@ -261,7 +261,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
     @classmethod
     def create_tree_selection_trigger(cls, widget: property_ui.PropertyWidget):
-        widget.ui.tree_widget_object.itemSelectionChanged.connect(
+        widget.ui.tree_widget_class.itemSelectionChanged.connect(
             lambda: trigger.filter_tab_class_tree_selection_changed(widget)
         )
 
@@ -298,19 +298,17 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         return cls.get_phase_list()
 
     @classmethod
-    def append_collumns(
-        cls, object_tree_widget: QTreeWidget, pset_tree_widget: QTreeWidget
-    ):
-        object_header_text = cls.get_existing_header_texts(object_tree_widget)
+    def append_collumns(cls, class_tree: QTreeWidget, pset_tree_widget: QTreeWidget):
+        class_header_text = cls.get_existing_header_texts(class_tree)
         pset_header_text = cls.get_existing_header_texts(pset_tree_widget)
 
         match_list = cls.get_match_list()
         extra_header_texts = [f"{pp.name} - {uc.name}" for uc, pp in match_list]
         count = len(extra_header_texts)
 
-        object_tree_widget.setColumnCount(object_tree_widget.columnCount() + count)
+        class_tree.setColumnCount(class_tree.columnCount() + count)
         pset_tree_widget.setColumnCount(pset_tree_widget.columnCount() + count)
-        object_tree_widget.setHeaderLabels(object_header_text + extra_header_texts)
+        class_tree.setHeaderLabels(class_header_text + extra_header_texts)
         pset_tree_widget.setHeaderLabels(pset_header_text + extra_header_texts)
 
     @classmethod
@@ -342,12 +340,12 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         )
 
     @classmethod
-    def are_objects_identical(
+    def are_classes_identical(
         cls, obj0: SOMcreator.SOMClass, obj1: SOMcreator.SOMClass
     ) -> bool:
         filter_list = cls.get_filter_list(obj0, obj1)
-        objects_are_identical = cls.are_all_filters_identical(filter_list)
-        if not objects_are_identical:
+        classes_are_identical = cls.are_all_filters_identical(filter_list)
+        if not classes_are_identical:
             return False
         pset_lists = tool.PropertyCompare.get_pset_list(obj0)
         if pset_lists is None:
@@ -414,7 +412,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
             if filter_state[0] != filter_state[1]:
                 cls.set_tree_item_column_color(item, column, YELLOW)
 
-        if not cls.are_objects_identical(entity_0, entity_1):
+        if not cls.are_classes_identical(entity_0, entity_1):
             cls.set_tree_item_column_color(item, 0, YELLOW)
 
         for child_index in range(item.childCount()):
@@ -459,19 +457,21 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         cls, file: TextIO, property_compare: Type[tool.PropertyCompare]
     ):
         project_0 = cls.get_project(0)
-        object_dict = property_compare.get_object_dict()
-        for obj0 in sorted(project_0.get_classes(filter=False), key=lambda x: x.name):
-            obj1 = object_dict[obj0]
-            if obj1 is None:
+        class_dict = property_compare.get_class_dict()
+        for class_0 in sorted(
+            project_0.get_classes(filter=False), key=lambda x: x.name
+        ):
+            class_1 = class_dict[class_0]
+            if class_1 is None:
                 continue
-            if cls.are_objects_identical(obj0, obj1):
+            if cls.are_classes_identical(class_0, class_1):
                 continue
-            filter_list = cls.get_filter_list(obj0, obj1)
-            text = QCoreApplication.translate("FilterWindow", "Object")
+            filter_list = cls.get_filter_list(class_0, class_1)
+            text = QCoreApplication.translate("FilterWindow", "Class")
 
-            file.write(f"\n{text} '{obj0.name}' ({obj0.ident_value}):\n")
+            file.write(f"\n{text} '{class_0.name}' ({class_0.ident_value}):\n")
             cls.export_write_statechange(file, text, filter_list, 1)
-            pset_list = property_compare.get_properties().pset_lists.get(obj0)
+            pset_list = property_compare.get_properties().pset_lists.get(class_0)
             cls.export_pset_filter_differences(file, pset_list, property_compare)
 
     @classmethod
@@ -552,8 +552,8 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
         return cls.get_properties().widget
 
     @classmethod
-    def get_object_tree(cls):
-        return cls.get_widget().ui.tree_widget_object
+    def get_class_tree(cls):
+        return cls.get_widget().ui.tree_widget_class
 
     @classmethod
     def get_usecase_list(cls) -> list[SOMcreator.UseCase]:

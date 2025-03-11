@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from SOMcreator.datastructure.som_json import (
         ProjectDict,
         StandardDict,
-        ObjectDict,
+        ClassDict,
         PropertySetDict,
         PropertyDict,
         AggregationDict,

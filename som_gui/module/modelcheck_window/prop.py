@@ -17,7 +17,7 @@ class ModelcheckWindowProperties:
     check_state_dict: dict[
         SOMcreator.SOMClass | SOMcreator.SOMPropertySet | SOMcreator.SOMProperty, bool
     ] = None
-    selected_object: SOMcreator.SOMClass = None
+    selected_class: SOMcreator.SOMClass = None
     thread_pool: QThreadPool = None
     export_button: QPushButton = None
     export_line_edit: QLineEdit = None
@@ -28,8 +28,8 @@ class ModelcheckWindowProperties:
     ifc_import_runners: list[IfcImportRunner] = list()
     initial_paint = True
     class_tree: ClassTree = None
-    object_tree_model: QStandardItemModel = None
-    object_tree_selection_model: QItemSelectionModel = None
+    class_tree_model: QStandardItemModel|None = None
+    class_tree_selection_model: QItemSelectionModel = None
     property_set_tree: PsetTree = None
     pset_tree_model: QStandardItemModel = None
     pset_tree_selection_model: QStandardItemModel = None

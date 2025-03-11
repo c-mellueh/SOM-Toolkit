@@ -8,7 +8,7 @@ import time
 import SOMcreator
 from SOMcreator.datastructure.som_json import MainDict
 from typing import TYPE_CHECKING
-from . import core, project, predefined_pset, property_set, object_, aggregation
+from . import class_, core, project, predefined_pset, property_set, aggregation
 from SOMcreator.templates import HOME_DIR, MAPPING_TEMPLATE
 from SOMcreator.util import xml
 import jinja2
@@ -20,7 +20,7 @@ aggregation_dict = dict()
 phase_list: list[Phase] = list()
 use_case_list: list[UseCase] = list()
 plugin_dict = dict()
-object_uuid_dict: dict[str, SOMcreator.SOMClass] = dict()
+class_uuid_dict: dict[str, SOMcreator.SOMClass] = dict()
 property_set_uuid_dict: dict[str, SOMcreator.SOMPropertySet] = dict()
 property_uuid_dict: dict[str, SOMcreator.SOMProperty] = dict()
 filter_matrixes = list()
@@ -53,7 +53,7 @@ def create_mapping_script(project: SOMcreator.SOMProject, pset_name: str, path: 
 
 
 def reset_uuid_dicts():
-    SOMcreator.exporter.som_json.object_uuid_dict = dict()
+    SOMcreator.exporter.som_json.class_uuid_dict = dict()
     SOMcreator.exporter.som_json.property_set_uuid_dict = dict()
     SOMcreator.exporter.som_json.property_uuid_dict = dict()
     SOMcreator.exporter.som_json.filter_matrixes = list()
@@ -74,7 +74,7 @@ def create_export_dict(proj: SOMProject):
     main_dict: MainDict = dict()
     project.write(proj, main_dict)
     predefined_pset.write(proj, main_dict)
-    object_.write(proj, main_dict)
+    class_.write(proj, main_dict)
     aggregation.write(proj, main_dict)
     main_dict.update(proj.plugin_dict)
     return main_dict

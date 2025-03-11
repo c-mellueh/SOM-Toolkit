@@ -26,7 +26,7 @@ def connect_dialog(dialog: PredefinedPropertySetWindow):
         lambda: core.pset_selection_changed(tool.PredefinedPropertySet)
     )
 
-    dialog.ui.table_widgets_objects.itemDoubleClicked.connect(
+    dialog.ui.table_widgets_classes.itemDoubleClicked.connect(
         lambda: core.class_double_clicked(
             tool.PredefinedPropertySet, tool.PropertySet, tool.Class
         )
@@ -48,7 +48,7 @@ def connect_dialog(dialog: PredefinedPropertySetWindow):
         )
     )
 
-    dialog.ui.table_widgets_objects.customContextMenuRequested.connect(
+    dialog.ui.table_widgets_classes.customContextMenuRequested.connect(
         lambda pos: core.class_context_menu(
             pos, tool.PredefinedPropertySet, tool.PropertySet
         )

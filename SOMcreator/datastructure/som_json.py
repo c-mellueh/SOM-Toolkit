@@ -13,7 +13,7 @@ class StandardDict(TypedDict):
 class MainDict(TypedDict):
     Project: ProjectDict
     PredefinedPropertySets: dict[str, PropertySetDict]
-    Objects: dict[str, ObjectDict]
+    Objects: dict[str, ClassDict]
     Aggregations: dict[str, AggregationDict]
     AggregationScenes: dict[str, AggregationScene]
     FilterMatrixes: list[tuple[tuple[bool]]]
@@ -32,7 +32,7 @@ class ProjectDict(TypedDict):
     filter_matrix: list[list[bool]]
 
 
-class ObjectDict(StandardDict):
+class ClassDict(StandardDict):
     IfcMappings: list[str]
     abbreviation: str
     ident_attribute: str
@@ -81,8 +81,8 @@ PREDEFINED_PSETS = "PredefinedPropertySets"
 PROPERTY_SETS = "PropertySets"
 IDENT_PROPERTY = "ident_attribute"
 PROPERTIES = "Attributes"
-OBJECT = "Object"
-OBJECTS = "Objects"
+CLASS = "Object"
+CLASSES = "Objects"
 AGGREGATIONS = "Aggregations"
 NAME = "name"
 PARENT = "parent"

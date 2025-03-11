@@ -90,7 +90,7 @@ def create_mapping(
     important_rows = [
         row for i, row in enumerate(sheet.rows) if row[2].value is not None and i != 0
     ]
-    object_dict = {
+    class_dict = {
         som_class.identifier_property.allowed_values[0]: som_class
         for som_class in project.get_classes(filter=True)
         if not som_class.is_concept
@@ -101,4 +101,4 @@ def create_mapping(
         if len(values) != 4:
             raise ValueError("Spaltenkonfiguration nicht korrekt!")
         hz_nummer, hz_name, bauteil_name, bauteilklass = values
-        create_xml(hz_name, object_dict[bauteilklass])
+        create_xml(hz_name, class_dict[bauteilklass])

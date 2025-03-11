@@ -41,12 +41,12 @@ def merge_projects(
         else:
             import_predef_pset_dict[import_predef_pset] = new_pset
 
-    for obj in import_project.get_classes(filter=False):
-        if obj.ident_value not in existing_identifiers:
-            _import_object(
+    for som_class in import_project.get_classes(filter=False):
+        if som_class.ident_value not in existing_identifiers:
+            _import_class(
                 existing_project,
                 import_project,
-                obj,
+                som_class,
                 import_predef_pset_dict,
                 phase_mapping,
                 use_case_mapping,
@@ -114,7 +114,7 @@ def _add_item(
     item._filter_matrix = copy.deepcopy(new_filter_matrix)
 
 
-def _import_object(
+def _import_class(
     existing_project: SOMcreator.SOMProject,
     import_project: SOMcreator.SOMProject,
     obj: SOMcreator.SOMClass,

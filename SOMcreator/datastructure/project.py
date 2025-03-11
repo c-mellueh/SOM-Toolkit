@@ -128,7 +128,7 @@ class SOMProject(object):
         else:
             return "", ""
 
-    def get_object_by_identifier(self, identifier: str) -> SOMcreator.SOMClass | None:
+    def get_class_by_identifier(self, identifier: str) -> SOMcreator.SOMClass | None:
         return {obj.ident_value: obj for obj in self.get_classes(filter=False)}.get(
             identifier
         )
@@ -139,7 +139,7 @@ class SOMProject(object):
             for pset in self.get_property_sets(filter=False)
             if pset.uuid is not None
         }
-        object_dict = {
+        class_dict = {
             cls.uuid: cls
             for cls in self.get_classes(filter=False)
             if cls.uuid is not None
@@ -154,7 +154,7 @@ class SOMProject(object):
             for aggreg in self.get_aggregations(filter=False)
             if aggreg.uuid is not None
         }
-        full_dict = pset_dict | object_dict | property_dict | aggregation_dict
+        full_dict = pset_dict | class_dict | property_dict | aggregation_dict
         return full_dict
 
     def get_element_by_uuid(

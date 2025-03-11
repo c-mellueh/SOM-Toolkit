@@ -18,7 +18,7 @@ from SOMcreator.datastructure.som_json import (
     PROJECT_PHASES,
     USE_CASES,
     PREDEFINED_PSETS,
-    OBJECTS,
+    CLASSES,
     AGGREGATIONS,
 )
 from SOMcreator.datastructure.som_json import ProjectDict, FilterDict, MainDict
@@ -53,7 +53,7 @@ def write(project: SOMProject, main_dict: MainDict) -> None:
 
 
 def order_dict(main_dict: MainDict):
-    order = [PROJECT, PREDEFINED_PSETS, OBJECTS, AGGREGATIONS, FILTER_MATRIXES]
+    order = [PROJECT, PREDEFINED_PSETS, CLASSES, AGGREGATIONS, FILTER_MATRIXES]
     ordered_data = [(name, main_dict.get(name)) for name in order]
     for key, data in main_dict.items():
         if key not in order:

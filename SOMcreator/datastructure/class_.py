@@ -39,7 +39,7 @@ class SOMClass(BaseClass):
         )
 
     def __str__(self):
-        return f"Object {self.name}"
+        return f"Class: {self.name}"
 
     def __lt__(self, other: SOMClass):
         return self.ident_value < other.ident_value
@@ -70,7 +70,7 @@ class SOMClass(BaseClass):
         if new_ident_property is None:
             raise ValueError(f"Identifier Property could'nt be found")
 
-        new_object = SOMClass(
+        new_class = SOMClass(
             name=self.name,
             identifier_property=new_ident_property,
             uuid=str(uuid4()),
@@ -83,12 +83,12 @@ class SOMClass(BaseClass):
         )
 
         for pset in new_property_sets:
-            new_object.add_property_set(pset)
+            new_class.add_property_set(pset)
 
         if self.parent is not None:
-            self.parent.add_child(new_object)  # type: ignore
+            self.parent.add_child(new_class)  # type: ignore
 
-        return new_object
+        return new_class
 
     @property
     def project(self) -> SOMcreator.SOMProject | None:

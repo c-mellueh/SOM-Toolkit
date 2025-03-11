@@ -25,7 +25,7 @@ def open_window():
     core.open_window(tool.ModelcheckWindow, tool.Util, tool.Project)
 
 
-def paint_object_tree(tree):
+def paint_class_tree(tree):
     core.paint_class_tree(tree, tool.ModelcheckWindow, tool.Project)
 
 
@@ -53,19 +53,19 @@ def button_box_clicked(button: QPushButton):
         core.abort_clicked(tool.ModelcheckWindow, tool.Modelcheck, tool.IfcImporter)
 
 
-def connect_object_check_tree(widget: ClassTree):
+def connect_class_check_tree(widget: ClassTree):
     core.connect_class_tree(widget, tool.ModelcheckWindow)
 
 
-def object_checkstate_changed(item: QStandardItem):
+def class_checkstate_changed(item: QStandardItem):
     core.class_check_changed(item, tool.ModelcheckWindow)
 
 
-def object_selection_changed(selection_model: QItemSelectionModel):
+def class_selection_changed(selection_model: QItemSelectionModel):
     core.class_selection_changed(selection_model, tool.ModelcheckWindow)
 
 
-def object_tree_context_menu_requested(pos: QPoint, tree_widget: ClassTree):
+def class_tree_context_menu_requested(pos: QPoint, tree_widget: ClassTree):
     core.class_tree_context_menu_requested(pos, tree_widget, tool.ModelcheckWindow)
 
 

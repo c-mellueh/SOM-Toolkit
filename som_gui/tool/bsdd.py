@@ -140,7 +140,7 @@ class Bsdd(som_gui.core.tool.Bsdd):
     def transform_project_to_dict(cls, proj: SOMcreator.SOMProject):
         """
         Grabs Project Settings and writes them into the BsDD Dictionary
-        Won't write Object Classes or Properties
+        Won't write SOMClass Classes or Properties
         :param proj:
         :return:
         """

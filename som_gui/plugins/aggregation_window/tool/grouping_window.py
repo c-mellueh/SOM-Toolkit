@@ -298,10 +298,10 @@ class GroupingWindow(som_gui.plugins.aggregation_window.core.tool.GroupingWindow
         ifc_file,
         structure_dict,
         owner_history,
-        objects_list: Iterator[SOMcreator.SOMClass],
+        classes_list: Iterator[SOMcreator.SOMClass],
     ):
         property_bundle = cls.get_property_bundle()
-        abbrev_dict = {obj.abbreviation.upper(): obj for obj in objects_list}
+        abbrev_dict = {obj.abbreviation.upper(): obj for obj in classes_list}
         create_empty = cls.get_properties().create_empty_attribues
         create_aggregation_structure(
             ifc_file,

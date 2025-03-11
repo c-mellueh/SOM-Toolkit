@@ -133,19 +133,19 @@ def check_correct_parent(
     """
     Checks if an Entity or Group has an allowed Parent Group
     """
-    object_rep = modelcheck.get_object_representation(entity)
+    class_rep = modelcheck.get_class_representation(entity)
     parent_entity: ifcopenshell.entity_instance = modelcheck_plugin.get_parent_entity(
         modelcheck_plugin.get_parent_entity(entity)
     )
-    allowed_parents = modelcheck_plugin.get_allowed_parents(object_rep)
+    allowed_parents = modelcheck_plugin.get_allowed_parents(class_rep)
     if parent_entity is None:
         if None not in allowed_parents:
             logging.warning(f"Group {entity.GlobalId} -> no parent group")
         return
 
-    parent_object_rep = modelcheck.get_object_representation(parent_entity)
+    parent_class_rep = modelcheck.get_class_representation(parent_entity)
 
-    if parent_object_rep is None:
+    if parent_class_rep is None:
         logging.warning(f"Group {entity.GlobalId} -> no parent obj")
         return
 

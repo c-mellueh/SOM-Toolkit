@@ -22,11 +22,11 @@ class ClassTree(QTreeView):
         model = QStandardItemModel()
         self.setModel(model)
         model.setHorizontalHeaderLabels([self.tr("Class"), self.tr("Identifier")])
-        modelcheck_window.trigger.connect_object_check_tree(self)
+        modelcheck_window.trigger.connect_class_check_tree(self)
 
     def paintEvent(self, event):
         super().paintEvent(event)
-        modelcheck_window.trigger.paint_object_tree(self)
+        modelcheck_window.trigger.paint_class_tree(self)
 
 
 class PsetTree(QTreeView):

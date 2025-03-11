@@ -21,7 +21,7 @@ JS_EXPORT = "JS"
 TABLE_EXPORT = "TABLE"
 
 
-class ObjectStructureDict(TypedDict):
+class ClassStructureDict(TypedDict):
     children: set[SOMcreator.SOMClass]
 
 
@@ -155,10 +155,10 @@ def _handle_tree_structure(
     author: str,
     required_data_dict: dict,
     parent_xml_container,
-    object_structure: dict[SOMcreator.SOMClass, SOMcreator.SOMClass],
+    class_structure: dict[SOMcreator.SOMClass, SOMcreator.SOMClass],
     parent_obj: SOMcreator.SOMClass,
     template,
-    xml_object_dict,
+    xml_class_dict,
     export_type: str,
 ) -> None:
     def check_basics(obj: SOMcreator.SOMClass):
@@ -182,10 +182,10 @@ def _handle_tree_structure(
                 author,
                 required_data_dict,
                 new_xml_container,
-                object_structure,
+                class_structure,
                 child_obj,
                 template,
-                xml_object_dict,
+                xml_class_dict,
                 export_type,
             )
 
@@ -207,7 +207,7 @@ def _handle_tree_structure(
         xml_code.text = cdata_code
         _handle_rule(xml_checkrun, "UniquePattern")
 
-        xml_object_dict[xml_checkrun] = obj
+        xml_class_dict[xml_checkrun] = obj
 
     def create_table_object(xml_container):
         obj, pset_dict, abort = check_basics(parent_obj)
@@ -222,9 +222,9 @@ def _handle_tree_structure(
         xml_code.text = "<![CDATA[]]>"
         _handle_rule(xml_checkrun, "UniquePattern")
 
-        xml_object_dict[xml_checkrun] = obj
+        xml_class_dict[xml_checkrun] = obj
 
-    children = {o for o, parent in object_structure.items() if parent == parent_obj}
+    children = {o for o, parent in class_structure.items() if parent == parent_obj}
 
     if children and required_data_dict.get(parent_obj):
         create_container(parent_xml_container)
@@ -319,30 +319,30 @@ def _handle_rule_items_by_pset_dict(
         _handle_rule_item_pset(attribute_rule_tree, pset, attribute_list)
 
 
-def _handle_object_rules(
+def _handle_class_rules(
     author: str,
     required_data_dict: dict,
-    object_structure: dict[SOMcreator.SOMClass, SOMcreator.SOMClass],
+    class_structure: dict[SOMcreator.SOMClass, SOMcreator.SOMClass],
     base_xml_container: Element,
     template: jinja2.Template,
     export_type: str,
 ) -> dict[Element, SOMcreator.SOMClass]:
-    xml_object_dict: dict[Element, SOMcreator.SOMClass] = dict()
+    xml_class_dict: dict[Element, SOMcreator.SOMClass] = dict()
 
-    root_nodes = {obj for obj, parent in object_structure.items() if parent is None}
+    root_nodes = {obj for obj, parent in class_structure.items() if parent is None}
 
     for root_node in sorted(root_nodes, key=lambda x: x.name):
         _handle_tree_structure(
             author,
             required_data_dict,
             base_xml_container,
-            object_structure,
+            class_structure,
             root_node,
             template,
-            xml_object_dict,
+            xml_class_dict,
             export_type,
         )
-    return xml_object_dict
+    return xml_class_dict
 
 
 def _handle_data_section(
@@ -435,7 +435,7 @@ def _handle_attribute_rule(attribute: SOMcreator.SOMProperty) -> str:
     return ";".join(row)
 
 
-def _fast_object_check(
+def _fast_class_check(
     main_pset: str,
     main_attrib: str,
     author: str,
@@ -485,11 +485,11 @@ def export(
     path: str,
     main_pset: str,
     main_property: str,
-    object_structure: dict[SOMcreator.SOMClass, SOMcreator.SOMClass] = None,
+    class_structure: dict[SOMcreator.SOMClass, SOMcreator.SOMClass] = None,
     export_type: str = "JS",
 ) -> None:
-    if not object_structure:
-        object_structure = {o: o.parent for o in project.get_classes(filter=True)}
+    if not class_structure:
+        class_structure = {o: o.parent for o in project.get_classes(filter=True)}
 
     template = _handle_template(templates.TEMPLATE)
     xml_container, xml_qa_export = _init_xml(
@@ -499,10 +499,10 @@ def export(
         project.author, xml_container, "initial_tests"
     )
     _handle_js_rules(xml_attribute_rule_list, "start")
-    xml_checkrun_obj = _handle_object_rules(
+    xml_checkrun_obj = _handle_class_rules(
         project.author,
         required_data_dict,
-        object_structure,
+        class_structure,
         xml_container,
         template,
         export_type,
@@ -590,7 +590,7 @@ def fast_check(
         project.author, xml_container, "initial_tests"
     )
     _handle_js_rules(xml_attribute_rule_list, "start")
-    xml_checkrun_obj = _fast_object_check(
+    xml_checkrun_obj = _fast_class_check(
         main_pset,
         main_attrib,
         project.author,

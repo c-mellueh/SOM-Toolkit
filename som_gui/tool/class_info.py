@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 import som_gui.core.tool
 from som_gui import tool
 import SOMcreator
-from som_gui.module.class_info.ui import ClassInfoDialog, Ui_ObjectInfo
+from som_gui.module.class_info.ui import ClassInfoDialog, Ui_ClassInfo
 from SOMcreator.templates import IFC_4_1
 from som_gui.module.class_info import trigger
 import som_gui.module.class_.constants
@@ -28,7 +28,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         return cls.get_properties().dialog
 
     @classmethod
-    def get_ui(cls) -> Ui_ObjectInfo | None:
+    def get_ui(cls) -> Ui_ClassInfo | None:
         if cls.get_dialog() is None:
             return None
         return cls.get_dialog().ui
@@ -60,7 +60,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         index: index of position in layout where widget will be placed
         init_value_getter: function that gets the initial value that will be displayed in the widget
         widget_value_setter: function that will set a given value in the widget
-        test_function: function that get's called to check if value written in widget is valid for object
+        test_function: function that get's called to check if value written in widget is valid for class
         value_setter: function thats sets value of class after ClassInfoWidget is accepted
         return: index of plugin in list
         """
@@ -285,7 +285,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         cls.get_ui().vertical_layout_ifc.addWidget(line_edit)
 
     @classmethod
-    def add_objects_infos_add_function(cls, key: str, getter_function: Callable):
+    def add_classes_infos_add_function(cls, key: str, getter_function: Callable):
         cls.get_properties().class_add_infos_functions.append((key, getter_function))
 
     @classmethod

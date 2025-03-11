@@ -37,18 +37,18 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def connect_class_tree(cls, tree_widget: ui.ClassTree):
         prop = cls.get_properties()
-        if prop.object_tree_model is None:
-            prop.object_tree_model = tree_widget.model()
-            prop.object_tree_selection_model = tree_widget.selectionModel()
+        if prop.class_tree_model is None:
+            prop.class_tree_model = tree_widget.model()
+            prop.class_tree_selection_model = tree_widget.selectionModel()
         else:
-            tree_widget.setModel(prop.object_tree_model)
+            tree_widget.setModel(prop.class_tree_model)
         model: QStandardItemModel = tree_widget.model()
-        model.itemChanged.connect(lambda item: trigger.object_checkstate_changed(item))
+        model.itemChanged.connect(lambda item: trigger.class_checkstate_changed(item))
         tree_widget.selectionModel().selectionChanged.connect(
-            lambda: trigger.object_selection_changed(tree_widget.selectionModel())
+            lambda: trigger.class_selection_changed(tree_widget.selectionModel())
         )
         tree_widget.customContextMenuRequested.connect(
-            lambda pos: trigger.object_tree_context_menu_requested(pos, tree_widget)
+            lambda pos: trigger.class_tree_context_menu_requested(pos, tree_widget)
         )
 
     @classmethod
@@ -202,11 +202,11 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
     @classmethod
     def set_selected_class(cls, obj: SOMcreator.SOMClass):
         prop = cls.get_properties()
-        prop.selected_object = obj
+        prop.selected_class = obj
 
     @classmethod
     def get_selected_class(cls) -> SOMcreator.SOMClass | None:
-        return cls.get_properties().selected_object
+        return cls.get_properties().selected_class
 
     @classmethod
     def get_class_tree(cls):
@@ -275,8 +275,8 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         window = ui.ModelcheckWindow()
         prop.active_window = window
         prop.property_set_tree = window.ui.property_set_tree
-        prop.class_tree = window.ui.object_tree
-        prop.class_label = window.ui.label_object
+        prop.class_tree = window.ui.class_tree
+        prop.class_label = window.ui.label_class
         return prop.active_window
 
     @classmethod
@@ -289,8 +289,11 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         bb.clicked.connect(trigger.button_box_clicked)
 
     @classmethod
-    def create_object_tree_row(cls, obj: SOMcreator.SOMClass):
-        item_list = [QStandardItem(obj.name), QStandardItem(obj.ident_value)]
+    def create_class_tree_row(cls, som_class: SOMcreator.SOMClass):
+        item_list = [
+            QStandardItem(som_class.name),
+            QStandardItem(som_class.ident_value),
+        ]
         item_list[0].setFlags(
             item_list[0].flags()
             | Qt.ItemFlag.ItemIsUserCheckable
@@ -298,17 +301,17 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
         )
         item_list[0].setCheckable(True)
         item_list[0].setCheckState(Qt.CheckState.Checked)
-        [i.setData(obj, CLASS_REFERENCE) for i in item_list]
+        [i.setData(som_class, CLASS_REFERENCE) for i in item_list]
         return item_list
 
     @classmethod
-    def update_object_tree_row(cls, parent_item: QStandardItem, row_index):
+    def update_class_tree_row(cls, parent_item: QStandardItem, row_index):
         items = [
             parent_item.child(row_index, col)
             for col in range(parent_item.columnCount())
         ]
-        obj = items[0].data(CLASS_REFERENCE)
-        texts = [obj.name, obj.ident_value]
+        som_class:SOMcreator.SOMClass = items[0].data(CLASS_REFERENCE)
+        texts = [som_class.name, som_class.ident_value]
 
         for column, text in enumerate(texts):
             if items[column].text() != text:
@@ -329,7 +332,7 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
 
         for item in items:
             item.setEnabled(enabled)
-        return items[0], obj
+        return items[0], som_class
 
     @classmethod
     def fill_class_tree(
@@ -354,11 +357,11 @@ class ModelcheckWindow(som_gui.core.tool.ModelcheckWindow):
             parent_item.removeRow(row_index)
 
         for new_entity in sorted(new_entities, key=lambda x: x.name):
-            row = cls.create_object_tree_row(new_entity)
+            row = cls.create_class_tree_row(new_entity)
             parent_item.appendRow(row)
 
         for child_row in range(parent_item.rowCount()):
-            class_item, obj = cls.update_object_tree_row(parent_item, child_row)
+            class_item, obj = cls.update_class_tree_row(parent_item, child_row)
             obj: SOMcreator.SOMClass
             if (
                 tree.isExpanded(parent_item.index())

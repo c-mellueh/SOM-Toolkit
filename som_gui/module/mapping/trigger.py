@@ -26,7 +26,7 @@ def export_revit_shared_parameters():
     core.export_revit_shared_parameters(tool.Mapping, tool.Project, tool.Popups)
 
 
-def update_object_tree():
+def update_class_tree():
     core.update_class_tree(tool.Mapping, tool.Project)
 
 

@@ -922,7 +922,7 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
 </context>
 <context>
-    <name>ObjectTreeWidget</name>
+    <name>ClassTreeWidget</name>
     <message>
         <location filename="../../module/mapping/ui.py" line="20"/>
         <source>IfcMapping</source>

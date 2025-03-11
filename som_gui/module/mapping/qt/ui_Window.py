@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QGridLay
     QMenuBar, QSizePolicy, QSplitter, QStatusBar,
     QTreeWidgetItem, QVBoxLayout, QWidget)
 
-from som_gui.module.mapping.ui import (ObjectTreeWidget, PropertySetTreeWidget)
+from som_gui.module.mapping.ui import (ClassTreeWidget, PropertySetTreeWidget)
 
 class Ui_Mapping(object):
     def setupUi(self, Mapping):
@@ -40,11 +40,11 @@ class Ui_Mapping(object):
         self.splitter.setObjectName(u"splitter")
         self.splitter.setFrameShape(QFrame.Shape.Box)
         self.splitter.setOrientation(Qt.Orientation.Horizontal)
-        self.object_tree = ObjectTreeWidget(self.splitter)
-        self.object_tree.setObjectName(u"object_tree")
-        self.object_tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        self.object_tree.setSortingEnabled(True)
-        self.splitter.addWidget(self.object_tree)
+        self.class_tree = ClassTreeWidget(self.splitter)
+        self.class_tree.setObjectName(u"class_tree")
+        self.class_tree.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.class_tree.setSortingEnabled(True)
+        self.splitter.addWidget(self.class_tree)
         self.gridLayoutWidget = QWidget(self.splitter)
         self.gridLayoutWidget.setObjectName(u"gridLayoutWidget")
         self.right_layout = QGridLayout(self.gridLayoutWidget)
@@ -52,11 +52,11 @@ class Ui_Mapping(object):
         self.right_layout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.label_object_name = QLabel(self.gridLayoutWidget)
-        self.label_object_name.setObjectName(u"label_object_name")
-        self.label_object_name.setEnabled(True)
+        self.label_class_name = QLabel(self.gridLayoutWidget)
+        self.label_class_name.setObjectName(u"label_class_name")
+        self.label_class_name.setEnabled(True)
 
-        self.verticalLayout.addWidget(self.label_object_name)
+        self.verticalLayout.addWidget(self.label_class_name)
 
         self.pset_tree = PropertySetTreeWidget(self.gridLayoutWidget)
         __qtreewidgetitem = QTreeWidgetItem()
@@ -98,10 +98,10 @@ class Ui_Mapping(object):
         Mapping.setWindowTitle(QCoreApplication.translate("Mapping", u"MainWindow", None))
         self.action_ifc.setText(QCoreApplication.translate("Mapping", u"Export IFC-Mapping", None))
         self.action_shared_parameters.setText(QCoreApplication.translate("Mapping", u"Export Shared Parameters", None))
-        ___qtreewidgetitem = self.object_tree.headerItem()
+        ___qtreewidgetitem = self.class_tree.headerItem()
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("Mapping", u"Ifc Mapping", None));
-        ___qtreewidgetitem.setText(0, QCoreApplication.translate("Mapping", u"Object", None));
-        self.label_object_name.setText("")
+        ___qtreewidgetitem.setText(0, QCoreApplication.translate("Mapping", u"Class", None));
+        self.label_class_name.setText("")
         ___qtreewidgetitem1 = self.pset_tree.headerItem()
         ___qtreewidgetitem1.setText(1, QCoreApplication.translate("Mapping", u"Revit Mapping", None));
         self.menu_revit.setTitle(QCoreApplication.translate("Mapping", u"Revit", None))

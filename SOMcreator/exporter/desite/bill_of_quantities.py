@@ -31,7 +31,7 @@ def export_boq(project: SOMcreator.SOMProject, path: str, pset_name: str) -> Non
             if property_set.name == pset_name
         ]
         distinct_property_names = get_distinct_property_names(property_sets)
-        header = ["Ident", "Object"] + [
+        header = ["Ident", "Class"] + [
             f"{pset_name}:{name}" for name in distinct_property_names
         ]
         writer.writerow(header)

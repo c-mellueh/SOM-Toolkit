@@ -99,7 +99,7 @@ def update_identifier_combobox():
     )
 
 
-def update_object_count():
+def update_class_count():
     core.update_class_count(tool.PropertyImportResults, tool.PropertyImportSQL)
 
 

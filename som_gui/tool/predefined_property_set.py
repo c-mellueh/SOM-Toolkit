@@ -67,7 +67,7 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
 
     @classmethod
     def get_class_table_widget(cls) -> QTableWidget:
-        return cls.get_window().ui.table_widgets_objects
+        return cls.get_window().ui.table_widgets_classes
 
     @classmethod
     def get_pset_list_widget(cls):
@@ -176,10 +176,10 @@ class PredefinedPropertySet(som_gui.core.tool.PredefinedPropertySet):
         }
 
     @classmethod
-    def get_existing_psets_in_table_widget(cls, object_table: QTableWidget):
+    def get_existing_psets_in_table_widget(cls, class_table: QTableWidget):
         psets = set()
-        for row in range(object_table.rowCount()):
-            item = object_table.item(row, 0)
+        for row in range(class_table.rowCount()):
+            item = class_table.item(row, 0)
             psets.add(tool.PropertySet.get_property_set_from_item(item))
         return psets
 

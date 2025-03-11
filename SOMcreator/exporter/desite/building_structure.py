@@ -37,14 +37,14 @@ def _handle_elementsection(xml_parent: Element):
     xml_root.set("type", "typeBsContainer")
     xml_root.set("takt", "")
 
-    root_objects: list[SOMcreator.SOMAggregation] = [
+    root_classes: list[SOMcreator.SOMAggregation] = [
         aggreg for aggreg in SOMcreator.SOMAggregation if aggreg.is_root
     ]
 
-    root_objects.sort(key=lambda x: x.name)
+    root_classes.sort(key=lambda x: x.name)
 
     id_dict = dict()
-    for aggreg in root_objects:
+    for aggreg in root_classes:
         _handle_section(id_dict, aggreg, xml_root)
 
     return xml_elementsection, id_dict

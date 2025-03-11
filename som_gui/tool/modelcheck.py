@@ -77,10 +77,10 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     @classmethod
     def increment_checked_items(cls, runner: ModelcheckRunner):
-        checked_count = cls.get_object_checked_count()
-        object_count = tool.Modelcheck.get_object_count()
-        old_progress_value = int(checked_count / object_count * 100)
-        new_progress_value = int((checked_count + 1) / object_count * 100)
+        checked_count = cls.get_class_checked_count()
+        class_count = tool.Modelcheck.get_class_count()
+        old_progress_value = int(checked_count / class_count * 100)
+        new_progress_value = int((checked_count + 1) / class_count * 100)
         cls.set_class_checked_count(checked_count + 1)
         if new_progress_value > old_progress_value:
             cls.set_progress(runner, new_progress_value)
@@ -99,21 +99,21 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
     @classmethod
     def entity_should_be_tested(cls, entity: ifcopenshell.entity_instance) -> bool:
-        obj = cls.get_object_representation(entity)
+        obj = cls.get_class_representation(entity)
         if obj is None:
             return False
         return obj in cls.get_data_dict()
 
     @classmethod
-    def get_object_representation(
+    def get_class_representation(
         cls, entity: ifcopenshell.entity_instance
     ) -> SOMcreator.SOMClass | None:
         identifier = cls.get_ident_value(entity)
         return cls.get_ident_dict().get(identifier)
 
     @classmethod
-    def build_ident_dict(cls, objects: set[SOMcreator.SOMClass]):
-        cls.get_properties().ident_dict = {o.ident_value: o for o in objects}
+    def build_ident_dict(cls, classes: set[SOMcreator.SOMClass]):
+        cls.get_properties().ident_dict = {c.ident_value: c for c in classes}
 
     @classmethod
     def build_data_dict(
@@ -123,11 +123,11 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
             bool,
         ],
     ):
-        def iter_objects(objects: Iterator[SOMcreator.SOMClass]):
-            for obj in objects:
-                if not check_state_dict.get(obj):
+        def iter_classes(classes: Iterator[SOMcreator.SOMClass]):
+            for som_class in classes:
+                if not check_state_dict.get(som_class):
                     continue
-                for property_set in obj.get_property_sets(filter=False):
+                for property_set in som_class.get_property_sets(filter=False):
                     if not check_state_dict.get(property_set):
                         continue
                     property_liset = list()
@@ -138,14 +138,14 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
 
                     if not property_liset:
                         continue
-                    if obj not in output_data_dict:
-                        output_data_dict[obj] = {property_set: property_liset}
+                    if som_class not in output_data_dict:
+                        output_data_dict[som_class] = {property_set: property_liset}
                     else:
-                        output_data_dict[obj][property_set] = property_liset
-                iter_objects(obj.get_children(filter=True))
+                        output_data_dict[som_class][property_set] = property_liset
+                iter_classes(som_class.get_children(filter=True))
 
         output_data_dict = dict()
-        iter_objects(tool.Project.get_root_classes())
+        iter_classes(tool.Project.get_root_classes())
         cls.set_data_dict(output_data_dict)
         return output_data_dict
 
@@ -634,20 +634,20 @@ class Modelcheck(som_gui.core.tool.Modelcheck):
         cls.get_properties().database_path = path
 
     @classmethod
-    def get_object_checked_count(cls) -> int:
-        return cls.get_properties().object_checked_count
+    def get_class_checked_count(cls) -> int:
+        return cls.get_properties().class_checked_count
 
     @classmethod
     def set_class_checked_count(cls, value: int):
-        cls.get_properties().object_checked_count = value
+        cls.get_properties().class_checked_count = value
 
     @classmethod
-    def get_object_count(cls) -> int:
-        return cls.get_properties().object_count
+    def get_class_count(cls) -> int:
+        return cls.get_properties().class_count
 
     @classmethod
     def set_class_count(cls, value: int):
-        cls.get_properties().object_count = value
+        cls.get_properties().class_count = value
 
     @classmethod
     def is_aborted(cls):

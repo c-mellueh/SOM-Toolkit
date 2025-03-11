@@ -27,7 +27,7 @@ def export_property_differences(file):
     core.export_differences(file, tool.PropertyCompare)
 
 
-def object_tree_selection_changed(
+def class_tree_selection_changed(
     widget,
 ):
     core.activate_class_in_compare_tree(widget, tool.PropertyCompare)

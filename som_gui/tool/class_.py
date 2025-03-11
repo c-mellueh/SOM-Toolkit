@@ -148,14 +148,14 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def delete_selection(cls):
-        objects = cls.get_selected_classes()
+        som_classes = cls.get_selected_classes()
         delete_request, recursive_deletion = tool.Popups.req_delete_items(
-            [o.name for o in objects], item_type=1
+            [som_class.name for som_class in som_classes], item_type=1
         )
         if not delete_request:
             return
-        for o in objects:
-            cls.delete_class(o, recursive_deletion)
+        for som_class in som_classes:
+            cls.delete_class(som_class, recursive_deletion)
 
     @classmethod
     def expand_selection(cls):
@@ -197,15 +197,15 @@ class Class(som_gui.core.tool.Class):
             return True
         if result == constants.IDENT_ISSUE:
             text = QCoreApplication.translate(
-                "Object", "Identifier exists allready or is not allowed"
+                "Class", "Identifier exists allready or is not allowed"
             )
         elif result == constants.IDENT_PROPERTY_ISSUE:
             text = QCoreApplication.translate(
-                "Object", "Name of Property is not allowed"
+                "Class", "Name of Property is not allowed"
             )
         elif result == constants.IDENT_PSET_ISSUE:
             text = QCoreApplication.translate(
-                "Object", "Name of PropertySet is not allowed"
+                "Class", "Name of PropertySet is not allowed"
             )
         else:
             return False
@@ -286,7 +286,7 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def get_class_from_item(cls, item: QTreeWidgetItem) -> SOMcreator.SOMClass:
-        return item.object
+        return item.som_class
 
     @classmethod
     def add_class_activate_function(cls, func: Callable):
@@ -316,22 +316,22 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def get_class_tree(cls) -> ClassTreeWidget:
-        return tool.MainWindow.get_object_tree_widget()
+        return tool.MainWindow.get_class_tree_widget()
 
     @classmethod
-    def create_item(cls, obj: SOMcreator.SOMClass):
+    def create_item(cls, som_class: SOMcreator.SOMClass):
         item = QTreeWidgetItem()
-        item.object = (
-            obj  # item.setData(0,obj) leads to recursion bug so allocating directly
+        item.som_class = (
+            som_class  # item.setData(0,obj) leads to recursion bug so allocating directly
         )
-        item.setText(0, obj.name)
+        item.setText(0, som_class.name)
         item.setFlags(
             item.flags()
             | Qt.ItemFlag.ItemIsUserCheckable
             | Qt.ItemFlag.ItemIsSelectable
         )
         values = [
-            getter_func(obj)
+            getter_func(som_class)
             for n, getter_func, setter_func in cls.get_properties().column_List
         ]
         for column, value in enumerate(values):
@@ -357,21 +357,21 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def fill_class_tree(
-        cls, objects: set[SOMcreator.SOMClass], parent_item: QTreeWidgetItem
+        cls, classes: set[SOMcreator.SOMClass], parent_item: QTreeWidgetItem
     ) -> None:
-        old_objects_dict = {
+        old_classes_dict = {
             cls.get_class_from_item(parent_item.child(i)): i
             for i in range(parent_item.childCount())
         }
-        old_objects = set(old_objects_dict.keys())
-        new_objects = objects.difference(old_objects)
-        delete_objects = old_objects.difference(objects)
-        for obj in reversed(sorted(delete_objects, key=lambda o: old_objects_dict[o])):
-            row_index = old_objects_dict[obj]
+        old_classes = set(old_classes_dict.keys())
+        new_classes = classes.difference(old_classes)
+        delete_classes = old_classes.difference(classes)
+        for obj in reversed(sorted(delete_classes, key=lambda o: old_classes_dict[o])):
+            row_index = old_classes_dict[obj]
             parent_item.removeChild(parent_item.child(row_index))
 
-        for new_object in sorted(new_objects, key=lambda o: o.name):
-            item = cls.create_item(new_object)
+        for new_classes in sorted(new_classes, key=lambda o: o.name):
+            item = cls.create_item(new_classes)
             parent_item.addChild(item)
 
         for index in range(parent_item.childCount()):
