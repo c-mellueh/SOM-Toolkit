@@ -116,9 +116,9 @@ class SOMPropertySet(BaseClass):
 
         super(SOMPropertySet, self).delete(recursive)
         [
-            attrib.delete(recursive)
-            for attrib in list(self.get_properties(filter=False))
-            if attrib is not None
+            prop.delete(recursive)
+            for prop in list(self.get_properties(filter=False))
+            if prop is not None
         ]
         if self.som_class is not None:
             self.som_class.remove_property_set(self)
@@ -147,9 +147,10 @@ class SOMPropertySet(BaseClass):
             return
         value.property_set = self
         for child in self.get_children(filter=False):
-            attrib: SOMcreator.SOMProperty = cp.copy(value)
-            value.add_child(attrib)
-            child.add_property(attrib)
+            child:SOMPropertySet
+            som_property: SOMcreator.SOMProperty = cp.copy(value)
+            value.add_child(som_property)
+            child.add_property(som_property)
 
     def remove_property(self, value: SOMcreator.SOMProperty, recursive=False) -> None:
         if value in self.get_properties(filter=False):

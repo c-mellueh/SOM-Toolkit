@@ -23,6 +23,6 @@ class GroupingWindowProperties:
     ifc_name: str = ""
     thread_pool = None
     identity_property = "identitaet"
-    create_empty_attribues: bool = True
+    create_empty_properties: bool = True
     is_running = False
     actions: dict[str, QAction] = dict()

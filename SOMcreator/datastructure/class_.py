@@ -27,14 +27,12 @@ class SOMClass(BaseClass):
         self._registry.add(self)
         self._property_sets: list[SOMcreator.SOMPropertySet] = list()
         self._aggregations: set[SOMcreator.SOMAggregation] = set()
-        self.custom_attribues = {}
-
         self._abbreviation = "" if abbreviation is None else abbreviation
         self._ifc_mapping: set[str] = (
             {"IfcBuildingElementProxy"} if ifc_mapping is None else ifc_mapping
         )
         self.uuid = str(uuid4()) if uuid is None else uuid
-        self._ident_attrib = (
+        self._ident_property = (
             str(self.uuid) if identifier_property is None else identifier_property
         )
 
@@ -162,11 +160,11 @@ class SOMClass(BaseClass):
 
     @property
     def identifier_property(self) -> SOMcreator.SOMProperty | str | None:
-        return self._ident_attrib
+        return self._ident_property
 
     @identifier_property.setter
     def identifier_property(self, value: SOMcreator.SOMProperty | str | None) -> None:
-        self._ident_attrib = value
+        self._ident_property = value
 
     # override name setter because of intheritance
     @property

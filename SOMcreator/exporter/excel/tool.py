@@ -12,7 +12,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 import SOMcreator
 
 IDENT_PSET_NAME = "Allgemeine Eigenschaften"
-IDENT_ATTRIB_NAME = "bauteilKlassifikation"
+IDENT_PROPERTY_NAME = "bauteilKlassifikation"
 NAME = "name"
 CLASSES = "classes"
 TABLE_STYLE = "TableStyleLight1"

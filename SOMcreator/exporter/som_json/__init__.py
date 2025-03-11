@@ -27,7 +27,7 @@ filter_matrixes = list()
 
 
 def create_mapping_script(project: SOMcreator.SOMProject, pset_name: str, path: str):
-    attrib_dict = dict()
+    property_dict = dict()
     som_class: SOMcreator.SOMClass
     for som_class in project.get_classes(filter=True):
         klass = som_class.identifier_property.allowed_values[0]
@@ -39,14 +39,14 @@ def create_mapping_script(project: SOMcreator.SOMProject, pset_name: str, path: 
                 data_format = xml.transform_data_format(som_property.data_type)
                 pset_dict[name] = data_format
             class_dict[pset.name] = pset_dict
-        attrib_dict[klass] = class_dict
+        property_dict[klass] = class_dict
     file_loader = jinja2.FileSystemLoader(HOME_DIR)
     env = jinja2.Environment(loader=file_loader)
     env.trim_blocks = True
     env.lstrip_blocks = True
 
     template = env.get_template(MAPPING_TEMPLATE)
-    code = template.render(attribute_dict=attrib_dict, pset_name=pset_name)
+    code = template.render(attribute_dict=property_dict, pset_name=pset_name)
     with open(path, "w") as file:
         file.write(code)
     pass

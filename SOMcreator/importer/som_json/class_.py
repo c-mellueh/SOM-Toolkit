@@ -46,10 +46,10 @@ def _load_class(
     property_sets_dict = class_dict[PROPERTY_SETS]
     for ident, pset_dict in property_sets_dict.items():
         property_set.load(proj, pset_dict, ident, som_class)
-    ident_attrib_id = class_dict[IDENT_PROPERTY]
-    if ident_attrib_id is not None:
+    ident_prop_id = class_dict[IDENT_PROPERTY]
+    if ident_prop_id is not None:
         identifier_property = SOMcreator.importer.som_json.property_uuid_dict.get(
-            ident_attrib_id
+            ident_prop_id
         )
         som_class.identifier_property = identifier_property
     SOMcreator.importer.som_json.parent_dict[som_class] = parent

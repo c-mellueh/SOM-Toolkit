@@ -50,11 +50,11 @@ def _write_smartview(
     xml_smart_view = write_smartview_basics()
     xml_rules = etree.SubElement(xml_smart_view, const.RULES)
     pset_name = property_set.name
-    ident_attrib = property_set.som_class.identifier_property
+    ident_prop = property_set.som_class.identifier_property
     rule_list: list[etree.Element] = list()
 
     for som_property in property_list:
-        if som_property == ident_attrib:
+        if som_property == ident_prop:
             continue
         if som_property.data_type in (value_constants.INTEGER, value_constants.REAL):
             if not som_property.allowed_values:
@@ -100,7 +100,7 @@ def _write_smartview(
             )
 
     rule_list += rule.remove_if_not_in_string_list(
-        ident_attrib.name, ident_attrib.property_set.name, ident_attrib.allowed_values
+        ident_prop.name, ident_prop.property_set.name, ident_prop.allowed_values
     )
     for xml_rule in rule_list:
         xml_rules.append(xml_rule)

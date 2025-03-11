@@ -66,16 +66,16 @@ def create_mapping(
 
     def create_zuweisung(kenner: str, worksheet: Worksheet):
 
-        def get_attrib_count(som_class: SOMcreator.SOMClass):
+        def get_property_count(som_class: SOMcreator.SOMClass):
             return sum(
                 len([attrib for attrib in pset.get_properties(filter=True)])
                 for pset in som_class.get_property_sets(filter=True)
             )
 
-        max_attribs = max(
-            get_attrib_count(som_class) for som_class in project.get_classes(filter=True)
+        max_properties = max(
+            get_property_count(som_class) for som_class in project.get_classes(filter=True)
         )
-        header = ["Kenner"] + ["Wert", "Name"] * max_attribs
+        header = ["Kenner"] + ["Wert", "Name"] * max_properties
         [
             worksheet.cell(1, i + 1, text) for i, text in enumerate(header)
         ]  # print Header

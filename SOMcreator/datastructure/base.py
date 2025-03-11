@@ -97,7 +97,7 @@ class BaseClass(ABC, metaclass=IterRegistry):
 
         self._filter_matrix: list[list[bool]] = copy.deepcopy(filter_matrix)
         self._parent: BASE_TYPE | None = None  # type: ignore
-        self._children: set = set()
+        self._children: set[BASE_TYPE] = set()
         self._name = name
         self._mapping_dict = {
             value_constants.SHARED_PARAMETERS: True,

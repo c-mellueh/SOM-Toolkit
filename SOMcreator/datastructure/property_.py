@@ -71,7 +71,7 @@ class SOMProperty(BaseClass):
             return self.name < other
 
     def __copy__(self) -> SOMProperty:
-        new_attrib = SOMProperty(
+        new_property = SOMProperty(
             property_set=None,
             name=self.name,
             allowed_values=cp.copy(self.allowed_values),
@@ -87,8 +87,8 @@ class SOMProperty(BaseClass):
         )
 
         if self.parent is not None:
-            self.parent.add_child(new_attrib)  # type:ignore
-        return new_attrib
+            self.parent.add_child(new_property)  # type:ignore
+        return new_property
 
     def get_all_parents(self) -> list[SOMProperty]:
         parent = self.parent
