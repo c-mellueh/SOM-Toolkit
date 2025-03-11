@@ -168,6 +168,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         d["ident_property_name"] = ui.combo_box_property.currentText()
         d["name"] = ui.line_edit_name.text()
         d["ifc_mappings"] = cls.get_ifc_mappings()
+        d["description"] = ui.text_edit_description.toPlainText()
         for plugin in cls.get_properties().class_info_plugin_list:
             d[plugin.key] = plugin.widget_value_getter()
         return d
@@ -223,7 +224,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         return QCompleter(IFC_4_1)
 
     @classmethod
-    def oi_fill_properties(cls, mode: int, selected_class=None):
+    def oi_fill_properties(cls, mode: int):
         prop = cls.get_properties()
         active_class = cls.get_active_class()
         prop.ident_value = active_class.ident_value if active_class else None
@@ -242,6 +243,8 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
             prop.pset_name = active_class.identifier_property.property_set.name
             prop.ident_property_name = active_class.identifier_property.name
 
+        if active_class:
+            prop.description = active_class.description
     @classmethod
     def update_dialog(cls, dialog: ClassInfoDialog):
         prop = cls.get_properties()
@@ -258,7 +261,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
             cls.add_ifc_mapping(mapping)
 
         mode = cls.get_mode()
-
+        dialog.ui.text_edit_description.setPlainText(prop.description or "")
         active_class = cls.get_active_class()
         if mode != 0:
             dialog.ui.combo_box_pset.clear()

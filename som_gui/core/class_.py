@@ -279,7 +279,8 @@ def copy_class(
 
     # handle Group
     if data_dict.get("is_group"):
-        class_tool.copy_group(som_class)
+        group = class_tool.copy_group(som_class)
+        group.description = data_dict.get("description") or ""
         return
 
     # handle Identifier Value
@@ -295,6 +296,7 @@ def copy_class(
         return
 
     new_class = class_tool.copy_class(som_class, data_dict)
+    new_class.description = data_dict.get("description") or ""
     class_info.add_plugin_infos_to_class(new_class, data_dict)
 
 
@@ -311,11 +313,12 @@ def create_class(
     identifier = data_dict.get("ident_value")
     pset_name = data_dict.get("ident_pset_name")
     property_name = data_dict.get("ident_property_name")
-
+    description = data_dict.get("description") or ""
     # handle group
     if is_group:
         som_class = SOMcreator.SOMClass(name, project=project.get())
         som_class.ident_value = str(som_class.uuid)
+        som_class.description = description
         return
 
     # handle identifier
@@ -329,6 +332,7 @@ def create_class(
         class_tool.handle_property_issue(result)
         return
     som_class = SOMcreator.SOMClass(name, project=project.get())
+    som_class.description = description
 
     # create identifier property_set
     parent_pset = property_set.search_for_parent(
