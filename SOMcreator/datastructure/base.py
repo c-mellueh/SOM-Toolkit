@@ -4,7 +4,7 @@ import copy
 
 from SOMcreator.constants import value_constants
 import SOMcreator
-from typing import Iterator, Callable, TypeVar, TYPE_CHECKING,Union
+from typing import Iterator, Callable, TypeVar, TYPE_CHECKING, Union
 import logging
 import SOMcreator.datastructure.som_json
 from functools import wraps
@@ -13,7 +13,6 @@ from abc import ABC, abstractmethod, ABCMeta
 if TYPE_CHECKING:
     import SOMcreator
 
-    
     BASE_TYPE = TypeVar(
         "BASE_TYPE",
         SOMcreator.SOMClass,
@@ -22,16 +21,18 @@ if TYPE_CHECKING:
         SOMcreator.SOMPropertySet,
         BaseClass,
     )
-    BASE_CLASSES = Union[ SOMcreator.SOMClass,
-    SOMcreator.SOMAggregation,
-    SOMcreator.SOMProperty,
-    SOMcreator.SOMPropertySet,]
+    BASE_CLASSES = Union[
+        SOMcreator.SOMClass,
+        SOMcreator.SOMAggregation,
+        SOMcreator.SOMProperty,
+        SOMcreator.SOMPropertySet,
+    ]
 
 FILTER_KEYWORD = "filter"
 
 
 def filterable(
-    func: Callable[..., Iterator[BASE_TYPE]]
+    func: Callable[..., Iterator[BASE_TYPE]],
 ) -> Callable[..., Iterator[BASE_TYPE]]:
     """decorator function that filters list output of function by  phase and usecase"""
 
@@ -202,6 +203,22 @@ class BaseClass(ABC, metaclass=IterRegistry):
     @property
     def project(self) -> SOMcreator.SOMProject | None:
         return self._project
+
+    @project.setter
+    def project(self, value: SOMcreator.SOMProject) -> None:
+        self._project = value
+        value.add_item(self, overwrite_filter_matrix=False)
+        if not self._filter_matrix and value.get_filter_matrix():
+            self._filter_matrix = value.create_filter_matrix(True)
+            return
+
+        phase_count = len(self._filter_matrix)
+        usecase_count = len(self._filter_matrix[0])
+
+        if phase_count != len(value.get_phases()) or usecase_count != len(
+            value.get_usecases()
+        ):
+            self._filter_matrix = value.create_filter_matrix(True)
 
     def is_optional(self, ignore_hirarchy=False) -> bool:
         if ignore_hirarchy:

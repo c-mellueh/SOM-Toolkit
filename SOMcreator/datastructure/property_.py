@@ -266,3 +266,14 @@ class SOMProperty(BaseClass):
         child = cp.copy(self)
         self.add_child(child)
         return child
+
+    @property
+    def project(self) -> SOMcreator.SOMProject|None:
+        if self._project:
+            return self._project
+        if self.property_set:
+            return self.property_set.project
+    
+    @project.setter
+    def project(self, value: SOMcreator.SOMProject) -> None:
+        super(SOMProperty, self.__class__).project.__set__(self, value)

@@ -178,6 +178,7 @@ class SOMClass(BaseClass):
     def add_property_set(self, property_set: SOMcreator.SOMPropertySet) -> None:
         self._property_sets.append(property_set)
         property_set.som_class = self
+        property_set.project = self.project
 
     def remove_property_set(self, property_set: SOMcreator.SOMPropertySet) -> None:
         if property_set in self._property_sets:

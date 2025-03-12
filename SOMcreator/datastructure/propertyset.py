@@ -177,3 +177,15 @@ class SOMPropertySet(BaseClass):
             new_property = som_property.create_child()
             child.add_property(new_property)
         return child
+    
+    @property
+    def project(self) -> SOMcreator.SOMProject | None:
+        if self._project:
+            return self._project
+        if self.som_class:
+            return self.som_class.project  
+        return None
+
+    @project.setter
+    def project(self, value: SOMcreator.SOMProject) -> None:
+        super(SOMPropertySet, self.__class__).project.__set__(self, value)

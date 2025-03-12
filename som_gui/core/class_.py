@@ -314,9 +314,10 @@ def create_class(
     pset_name = data_dict.get("ident_pset_name")
     property_name = data_dict.get("ident_property_name")
     description = data_dict.get("description") or ""
+    proj = project.get()
     # handle group
     if is_group:
-        som_class = SOMcreator.SOMClass(name, project=project.get())
+        som_class = SOMcreator.SOMClass(name, project=proj)
         som_class.ident_value = str(som_class.uuid)
         som_class.description = description
         return
@@ -331,7 +332,7 @@ def create_class(
     if result != constants.OK:
         class_tool.handle_property_issue(result)
         return
-    som_class = SOMcreator.SOMClass(name, project=project.get())
+    som_class = SOMcreator.SOMClass(name, project=proj)
     som_class.description = description
 
     # create identifier property_set
@@ -356,7 +357,7 @@ def create_class(
         )
     else:
         ident_property.allowed_values = [identifier]
-
+    ident_property.project = proj
     class_info.add_plugin_infos_to_class(som_class, data_dict)
     class_tool.modify_class(som_class, data_dict)
     refresh_class_tree(class_tool, project)
