@@ -3,7 +3,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from som_gui.module.class_info.prop import ClassDataDict
-from PySide6.QtWidgets import QTreeWidget
+    from . import ui
+from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
 
 from som_gui import tool
 from som_gui.core import class_ as core
@@ -38,8 +39,8 @@ def repaint_event():
     core.refresh_class_tree(tool.Class, tool.Project)
 
 
-def drop_event(event):
-    core.item_dropped_on(event.pos(), tool.Class)
+def drop_event(event, target: ui.ClassTreeWidget):
+    core.drop_event(event, target, tool.Class,tool.Project)
 
 
 def on_new_project():
@@ -67,3 +68,7 @@ def copy_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
 
 def modify_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
     core.modify_class(som_class, data_dict, tool.Class, tool.ClassInfo)
+
+
+def create_mime_data(items: list[QTreeWidgetItem], mime_data):
+    return core.create_mime_data(items, mime_data, tool.Class)

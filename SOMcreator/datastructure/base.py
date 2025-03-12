@@ -85,7 +85,7 @@ class BaseClass(ABC, metaclass=IterRegistry):
         project: SOMcreator.SOMProject | None = None,
         filter_matrix: list[list[bool]] | None = None,
     ) -> None:
-
+        self._children: set[BASE_TYPE] = set()
         self._project: None | SOMcreator.SOMProject = None
         if project is not None:
             project.add_item(self)
@@ -98,7 +98,6 @@ class BaseClass(ABC, metaclass=IterRegistry):
 
         self._filter_matrix: list[list[bool]] = copy.deepcopy(filter_matrix)
         self._parent: BASE_TYPE | None = None  # type: ignore
-        self._children: set[BASE_TYPE] = set()
         self._name = name
         self._mapping_dict = {
             value_constants.SHARED_PARAMETERS: True,
@@ -208,17 +207,6 @@ class BaseClass(ABC, metaclass=IterRegistry):
     def project(self, value: SOMcreator.SOMProject) -> None:
         self._project = value
         value.add_item(self, overwrite_filter_matrix=False)
-        if not self._filter_matrix and value.get_filter_matrix():
-            self._filter_matrix = value.create_filter_matrix(True)
-            return
-
-        phase_count = len(self._filter_matrix)
-        usecase_count = len(self._filter_matrix[0])
-
-        if phase_count != len(value.get_phases()) or usecase_count != len(
-            value.get_usecases()
-        ):
-            self._filter_matrix = value.create_filter_matrix(True)
 
     def is_optional(self, ignore_hirarchy=False) -> bool:
         if ignore_hirarchy:

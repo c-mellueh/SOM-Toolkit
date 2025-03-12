@@ -7,8 +7,6 @@ import copy as cp
 
 
 class SOMClass(BaseClass):
-    _registry: set[SOMClass] = set()
-
     def __init__(
         self,
         name: str,
@@ -21,11 +19,10 @@ class SOMClass(BaseClass):
         project: None | SOMcreator.SOMProject = None,
         filter_matrix: list[list[bool]] | None = None,
     ) -> None:
+        self._property_sets: list[SOMcreator.SOMPropertySet] = list()
         super(SOMClass, self).__init__(
             name, description, optional, project, filter_matrix
         )
-        self._registry.add(self)
-        self._property_sets: list[SOMcreator.SOMPropertySet] = list()
         self._aggregations: set[SOMcreator.SOMAggregation] = set()
         self._abbreviation = "" if abbreviation is None else abbreviation
         self._ifc_mapping: set[str] = (

@@ -14,5 +14,9 @@ class ClassTreeWidget(QTreeWidget):
         class_.trigger.repaint_event()
 
     def dropEvent(self, event):
-        class_.trigger.drop_event(event)
+        class_.trigger.drop_event(event,self)
         super().dropEvent(event)
+
+    def mimeData(self, items):
+        mime_data = super().mimeData(items)
+        return class_.trigger.create_mime_data(list(items), mime_data)

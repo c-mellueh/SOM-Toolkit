@@ -3,7 +3,8 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QCoreApplication, QMimeData
+from PySide6.QtGui import QDropEvent
 
 import SOMcreator
 from som_gui import tool
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
     from som_gui.module.class_info.prop import ClassDataDict
     from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
     from PySide6.QtCore import QPoint
+    from som_gui.module.class_ import ui
 
 import uuid
 
@@ -31,7 +33,7 @@ def init_main_window(
     class_tool.add_column_to_tree(
         lambda: QCoreApplication.translate("Class", "Class"),
         0,
-        lambda o: getattr(o, "name"),
+        lambda c: getattr(c, "name"),
     )
     class_tool.add_column_to_tree(
         lambda: QCoreApplication.translate("Class", "Identifier"),
@@ -64,6 +66,14 @@ def retranslate_ui(class_tool: Type[tool.Class]) -> None:
     header = class_tool.get_class_tree().headerItem()
     for column, name in enumerate(class_tool.get_header_names()):
         header.setText(column, name)
+
+
+def create_mime_data(
+    items: QTreeWidgetItem, mime_data: QMimeData, class_tool: Type[tool.Class]
+):
+    classes = {class_tool.get_class_from_item(i) for i in items}
+    class_tool.write_classes_to_mimedata(classes, mime_data)
+    return mime_data
 
 
 def add_shortcuts(
@@ -213,30 +223,18 @@ def item_selection_changed(
         property_set_tool.set_enabled(False)
 
 
-def item_dropped_on(pos: QPoint, class_tool: Type[Class]):
-    selected_items = class_tool.get_selected_items()
-    dropped_on_item = class_tool.get_item_from_pos(pos)
-    dropped_classes = [class_tool.get_class_from_item(item) for item in selected_items]
-    dropped_classes = [
-        o
-        for o in dropped_classes
-        if o.parent not in dropped_classes or o.parent is None
-    ]
-    if dropped_on_item is None:
-        for som_class in dropped_classes:
-            som_class.remove_parent()
+def drop_event(event: QDropEvent, target: ui.ClassTreeWidget, class_tool: Type[Class],project:Type[tool.Project]):
+    pos = event.pos()
+    source_table = event.source()
+    if source_table == target:
+        dropped_on_item = class_tool.get_item_from_pos(pos)
+        class_tool.handle_class_move(dropped_on_item)
         return
-    dropped_on_class = class_tool.get_class_from_item(dropped_on_item)
-
-    if not class_tool.drop_indication_pos_is_on_item():
-        dropped_on_class = dropped_on_class.parent
-
-    for som_class in dropped_classes:
-        if dropped_on_class is None:
-            som_class.remove_parent()
-        else:
-            som_class.parent = dropped_on_class
-
+    classes = class_tool.get_classes_from_mimedata(event.mimeData())
+    if not classes:
+        return
+    for som_class in classes:
+        project.get().add_item(som_class)
 
 def modify_class(
     som_class: SOMcreator.SOMClass,

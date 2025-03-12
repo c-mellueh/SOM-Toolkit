@@ -5,8 +5,7 @@ import logging
 import uuid
 from typing import Callable, TYPE_CHECKING, TypedDict
 
-from PySide6.QtCore import QCoreApplication
-from PySide6.QtCore import QPoint, Qt
+from PySide6.QtCore import QPoint, Qt,QMimeData,QByteArray,QCoreApplication
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QCompleter,
@@ -15,7 +14,7 @@ from PySide6.QtWidgets import (
     QTreeWidgetItem,
     QComboBox,
 )
-
+import pickle
 import SOMcreator
 import som_gui
 import som_gui.core.tool
@@ -286,8 +285,7 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def get_class_from_item(cls, item: QTreeWidgetItem) -> SOMcreator.SOMClass:
-        return item.som_class
-
+        return item.data(0,constants.CLASS_REFERENCE)
     @classmethod
     def add_class_activate_function(cls, func: Callable):
         cls.get_properties().class_activate_functions.append(func)
@@ -306,6 +304,8 @@ class Class(som_gui.core.tool.Class):
     @classmethod
     def update_check_state(cls, item: QTreeWidgetItem):
         som_class: SOMcreator.SOMClass = cls.get_class_from_item(item)
+        if not som_class:
+            return
         values = [
             [getter_func(som_class), setter_func]
             for n, getter_func, setter_func in cls.get_properties().column_List
@@ -321,9 +321,7 @@ class Class(som_gui.core.tool.Class):
     @classmethod
     def create_item(cls, som_class: SOMcreator.SOMClass):
         item = QTreeWidgetItem()
-        item.som_class = (
-            som_class  # item.setData(0,som_class) leads to recursion bug so allocating directly
-        )
+        item.setData(0,constants.CLASS_REFERENCE,som_class)
         item.setText(0, som_class.name)
         item.setFlags(
             item.flags()
@@ -497,3 +495,39 @@ class Class(som_gui.core.tool.Class):
             if not check_function(data_dict):
                 return False
         return True
+
+    @classmethod
+    def write_classes_to_mimedata(cls,classes:list[SOMcreator.SOMClass],mime_data:QMimeData):
+        serialized = pickle.dumps(classes) 
+        mime_data.setData(constants.MIME_DATA_KEY, QByteArray(serialized))
+
+    @classmethod
+    def get_classes_from_mimedata(cls,mime_data:QMimeData) ->list[SOMcreator.SOMClass]:
+        serialized = mime_data.data(constants.MIME_DATA_KEY)
+        if not serialized:
+            return None
+        return pickle.loads(serialized)
+
+    @classmethod
+    def handle_class_move(cls,dropped_on_item:QTreeWidgetItem):
+        selected_items = cls.get_selected_items()
+        dropped_classes = [cls.get_class_from_item(item) for item in selected_items]
+        dropped_classes = [
+            o
+            for o in dropped_classes
+            if o.parent not in dropped_classes or o.parent is None
+        ]
+        if dropped_on_item is None:
+            for som_class in dropped_classes:
+                som_class.remove_parent()
+            return
+        dropped_on_class = cls.get_class_from_item(dropped_on_item)
+
+        if not cls.drop_indication_pos_is_on_item():
+            dropped_on_class = dropped_on_class.parent
+
+        for som_class in dropped_classes:
+            if dropped_on_class is None:
+                som_class.remove_parent()
+            else:
+                som_class.parent = dropped_on_class

@@ -21,11 +21,10 @@ class SOMPropertySet(BaseClass):
         project: None | SOMcreator.SOMProject = None,
         filter_matrix: list[list[bool]] | None = None,
     ) -> None:
-
+        self._properties: set[SOMcreator.SOMProperty] = set()
         super(SOMPropertySet, self).__init__(
             name, description, optional, project, filter_matrix
         )
-        self._properties: set[SOMcreator.SOMProperty] = set()
         self._som_class: SOMcreator.SOMClass | None = som_class
         if som_class is not None:
             som_class.add_property_set(

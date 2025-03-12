@@ -106,6 +106,8 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
             property_set: SOMcreator.SOMPropertySet = {
                 p.name: p for p in active_class.get_property_sets(filter=False)
             }.get(pset_name)
+            if property_set is None:
+                return
             property_names = sorted(
                 [a.name for a in property_set.get_properties(filter=False)]
             )

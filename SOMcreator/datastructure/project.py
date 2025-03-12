@@ -64,6 +64,30 @@ class SOMProject(object):
         if overwrite_filter_matrix:
             item._filter_matrix = self.create_filter_matrix()
 
+        for child in item.get_children(filter = False):
+            self.add_item(child)
+            
+        if isinstance(item,SOMcreator.SOMClass):
+            for property_set in item.get_property_sets(filter = False):
+                self.add_item(property_set)
+
+        if isinstance(item,SOMcreator.SOMPropertySet):
+            for som_property in item.get_properties(filter = False):
+                self.add_item(som_property)
+
+        if not item._filter_matrix and self.get_filter_matrix():
+            item._filter_matrix = self.create_filter_matrix(True)
+            return
+
+        phase_count = len(item._filter_matrix)
+        usecase_count = len(item._filter_matrix[0])
+
+        if phase_count != len(self.get_phases()) or usecase_count != len(
+            self.get_usecases()
+        ):
+            item._filter_matrix = self.create_filter_matrix(True)
+
+
     def remove_item(self, item: BaseClass):
         if item in self._items:
             self._items.remove(item)

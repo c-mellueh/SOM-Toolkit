@@ -467,7 +467,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         :return:
         """
         serialized = pickle.dumps(property_dicts)
-        mime_data.setData("application/properties", QByteArray(serialized))
+        mime_data.setData(MIME_DATA_KEY, QByteArray(serialized))
         return mime_data
 
     @classmethod
