@@ -10,7 +10,6 @@ ifcopenshell
 tqdm
 pypi-latest
 lark
-anytree
 appdirs
 pyqtconsole
 pandas
