@@ -473,4 +473,3 @@ def reset(view: aw_tool.View):
     logging.info(f"Reset View Module")
     som_gui.ViewProperties = prop.ViewProperties()
     prop = view.get_properties()
-    prop

@@ -81,6 +81,10 @@ class Window(som_gui.plugins.aggregation_window.core.tool.Window):
         return cls.get_properties().aggregation_window
 
     @classmethod
+    def set_window(cls, value: ui_window.AggregationWindow) -> None:
+        cls.get_properties().aggregation_window = value
+
+    @classmethod
     def get_menu_list(cls) -> list[tuple[str, Callable]]:
         return cls.get_properties().menu_list
 

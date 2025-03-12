@@ -53,6 +53,7 @@ def create_window(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> Non
     if window.get_window() is not None:
         aggregation_window = window.get_window()
         aggregation_window.show()
+        aggregation_window.activateWindow()
         return
 
     aggregation_window = window.create_window()
@@ -111,6 +112,7 @@ def combobox_changed(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> 
     if scene is None:
         name = QCoreApplication.translate("Aggregation", "Undefined")
         scene, scene_name = view.create_scene(name)
+    print(scene)
     view.activate_scene(scene)
 
 
@@ -213,3 +215,10 @@ def request_scene_rename(
         view.set_scene_name(scene, new_name)
     update_combo_box(window, view)
     window.get_combo_box().setCurrentText(new_name)
+
+def reset(window:Type[aw_tool.Window]):
+    logging.info("Reset Aggregation Window")
+    active_window = window.get_window()
+    if active_window:
+        active_window.close()
+    window.set_window(None)    

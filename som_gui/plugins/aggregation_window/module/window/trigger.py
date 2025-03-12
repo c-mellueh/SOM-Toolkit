@@ -16,7 +16,7 @@ def open_window():
 
 
 def on_new_project() -> None:
-    pass
+    core.reset(aw_tool.Window)
 
 
 def update_combo_box() -> None:

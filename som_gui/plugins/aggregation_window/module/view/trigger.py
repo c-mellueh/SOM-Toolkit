@@ -12,6 +12,7 @@ def deactivate():
 
 
 def on_new_project() -> None:
+    core.reset(aw_tool.View)
     core.activate(aw_tool.View, tool.Project)
 
 
