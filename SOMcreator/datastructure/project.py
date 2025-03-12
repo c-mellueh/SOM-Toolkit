@@ -25,7 +25,6 @@ class SOMProject(object):
         """
         filter_matrix: list[phase_index][usecase_index] = bool
         """
-        SOMcreator.active_project = self
         self._items = set()
         self._name = ""
         self._author = author

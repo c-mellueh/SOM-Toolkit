@@ -1,7 +1,7 @@
 # pyproject.toml
 
 [build-system]
-requires = ["setuptools", "wheel", "lxml"]
+requires = ["setuptools", "wheel","lxml"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -17,7 +17,6 @@ dependencies = [
     "lxml",
     "jinja2",
     "openpyxl",
-    "anytree",
     "ifcopenshell",
 ]
 dynamic = ["version"]
