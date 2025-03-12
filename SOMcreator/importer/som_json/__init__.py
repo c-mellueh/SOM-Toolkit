@@ -37,6 +37,7 @@ def reset_uuid_dicts():
     SOMcreator.importer.som_json.property_set_uuid_dict = dict()
     SOMcreator.importer.som_json.property_uuid_dict = dict()
     SOMcreator.importer.som_json.filter_matrixes = list()
+    SOMcreator.importer.som_json.aggregation_dict = dict()
 
 
 def open_json(cls: Type[SOMProject], path: str | os.PathLike):
