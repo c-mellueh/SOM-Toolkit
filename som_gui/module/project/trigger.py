@@ -16,7 +16,7 @@ def new_clicked():
 
 
 def open_clicked():
-    core.open_file_clicked(tool.Project, tool.Appdata, tool.MainWindow, tool.Popups)
+    core.open_file_clicked(tool.Project, tool.Appdata, tool.MainWindow, tool.Popups,tool.Plugins)
 
 
 def add_clicked():

@@ -33,22 +33,23 @@ def main(initial_file: PathLike | None = None, log_level=None, open_last_project
 
     #Create UI
     app = QApplication(sys.argv)
-    core.main_window.create_main_window(app, tool.MainWindow,tool.PropertySet)
+    som_gui.core.main_window.create_main_window(app, tool.MainWindow,tool.PropertySet)
     som_gui.load_ui_triggers()
-
-    #create Empty Project (calls som_gui.on_new_project)
-    core.project.create_project(tool.Project)
-
-    if initial_file is not None:
-        core.project.open_project(initial_file, tool.Project)
-
-    elif open_last_project:
-        core.project.open_project(tool.Appdata.get_path(OPEN_PATH), tool.Project)
-
     for plugin_names in tool.Plugins.get_available_plugins():
         if tool.Plugins.is_plugin_active(plugin_names):
             module = importlib.import_module(f"som_gui.plugins.{plugin_names}")
-            module.activate()
+            module.activate()    
+    
+    som_gui.core.project.create_project(tool.Project)
+
+    if initial_file is not None:
+        som_gui.core.project.open_project(initial_file, tool.Project,tool.Plugins)
+
+    elif open_last_project:
+        som_gui.core.project.open_project(tool.Appdata.get_path(OPEN_PATH), tool.Project,tool.Plugins)
+
+
+
 
     set_language(None)
     sys.exit(app.exec())

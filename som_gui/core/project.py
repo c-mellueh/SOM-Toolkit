@@ -79,7 +79,7 @@ def save_as(project_tool: Type[Project], popup_tool: Type[Popups], appdata: Type
 
 
 def open_file_clicked(project_tool: Type[Project], appdata: Type[Appdata], main_window: Type[tool.MainWindow],
-                      popups: Type[tool.Popups]):
+                      popups: Type[tool.Popups],plugins:Type[tool.Plugins]):
     path = appdata.get_path(OPEN_PATH)
     title = QCoreApplication.translate("Project", "Open Project")
     path = popups.get_open_path(FILETYPE, main_window.get(), path, title)
@@ -92,6 +92,8 @@ def open_file_clicked(project_tool: Type[Project], appdata: Type[Appdata], main_
     proj = project_tool.load_project(path)
     project_tool.set_active_project(proj)
     som_gui.on_new_project()
+    for plugin in plugins.get_available_plugins():
+        plugins.on_new_project(plugin)
 
 
 def new_file_clicked(project_tool: Type[Project], popup_tool: Type[Popups]):
@@ -120,10 +122,12 @@ def create_project(project_tool: Type[Project]):
     project_tool.create_project()
 
 
-def open_project(path, project_tool: Type[Project]):
+def open_project(path, project_tool: Type[Project],plugins:Type[tool.Plugins]):
     proj = project_tool.load_project(path)
     project_tool.set_active_project(proj)
     som_gui.on_new_project()
+    for plugin in plugins.get_available_plugins():
+        plugins.on_new_project(plugin)
     return proj
 
 

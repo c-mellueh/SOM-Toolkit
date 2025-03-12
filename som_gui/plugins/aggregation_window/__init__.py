@@ -18,9 +18,15 @@ def deactivate():
     logging.info("Deactivate Aggregation Window")
     from som_gui import tool
     submodules = tool.Plugins.get_submodules("aggregation_window")
-    logging.info("Activate Aggregation Window")
     for name, module in submodules:
         module.deactivate()
+
+def on_new_project():
+    logging.info("New Project handling Aggregation")
+    from som_gui import tool
+    submodules = tool.Plugins.get_submodules("aggregation_window")
+    for _, module in submodules:
+        module.on_new_project()
 
 def retranslate_ui():
     logging.info("Retranslate Aggregation Window")

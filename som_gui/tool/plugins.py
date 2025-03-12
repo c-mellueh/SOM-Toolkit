@@ -95,6 +95,8 @@ class Plugins(som_gui.core.tool.Plugins):
         module.activate()
         cls.set_plugin_active(plugin_name, True)
 
+
+
     @classmethod
     def deactivate_plugin(cls, plugin_name: str):
         module = importlib.import_module(f"som_gui.plugins.{plugin_name}")
@@ -102,3 +104,12 @@ class Plugins(som_gui.core.tool.Plugins):
             return None
         module.deactivate()
         cls.set_plugin_active(plugin_name, False)
+
+    @classmethod
+    def on_new_project(cls,plugin_name:str):
+        if not cls.is_plugin_active(plugin_name):
+            return
+        module = importlib.import_module(f"som_gui.plugins.{plugin_name}")
+        if not "on_new_project" in dir(module):
+            return None
+        module.on_new_project()

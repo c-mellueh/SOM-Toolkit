@@ -30,6 +30,13 @@ def deactivate():
         module.deactivate()
 
 
+def on_new_project():
+    logging.info("New Project handling IfcTools")
+    from som_gui import tool
+    submodules = tool.Plugins.get_submodules("ifc_tools")
+    for _, module in submodules:
+        module.on_new_project()
+
 def retranslate_ui():
     logging.info("Retranslate IFCTools")
     from som_gui import tool

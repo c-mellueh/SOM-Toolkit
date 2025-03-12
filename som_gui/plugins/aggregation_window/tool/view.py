@@ -556,8 +556,3 @@ class View(som_gui.plugins.aggregation_window.core.tool.View):
     def get_existing_scene_names(cls) -> list[str]:
         return cls.get_properties().scene_name_list
 
-    @classmethod
-    def add_aggregation_to_import_list(
-        cls, scene_id: int, aggregation: SOMcreator.SOMAggregation, position: QPointF
-    ):
-        cls.get_properties().import_list[scene_id].append((aggregation, position))

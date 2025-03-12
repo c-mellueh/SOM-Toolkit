@@ -52,6 +52,8 @@ def key_release_event(
 
 def activate(view: Type[aw_tool.View], project: Type[tool.Project]) -> None:
     proj = project.get()
+    if proj is None:
+        return
     plugin_dict = proj.import_dict or dict()
     if not plugin_dict:
         view.set_project_scene_dict(dict())
@@ -77,7 +79,7 @@ def activate(view: Type[aw_tool.View], project: Type[tool.Project]) -> None:
         if scene_name not in view.get_existing_scene_names():
             scene, scene_name = view.create_scene(scene_name)
 
-        scene_id = view.get_scene_index(scene_name)
+        scene = view.get_scene_by_name(scene_name)
         position_values = node_dict["Nodes"].values()
         if not position_values:
             continue
@@ -87,7 +89,7 @@ def activate(view: Type[aw_tool.View], project: Type[tool.Project]) -> None:
             x = SCENE_SIZE[0] / 2 + pos[0] - x_min
             y = SCENE_SIZE[1] / 2 + pos[1] - y_min
             aggregation = aggregation_ref[aggregation_uuid]
-            view.add_aggregation_to_import_list(scene_id, aggregation, QPointF(x, y))
+            view.add_aggregation_to_import_list(scene, aggregation, QPointF(x, y))
     view.reset_drawn_scenes()
 
 

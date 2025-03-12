@@ -25,6 +25,7 @@ if TYPE_CHECKING:
 
 
 def write_filter_matrix(element: SOMcreator.datastructure.base.BaseClass):
+    print(element)
     proj = element.project
     filter_matrix = element.get_filter_matrix()
     if not check_size_eq(filter_matrix, proj.get_filter_matrix()):
