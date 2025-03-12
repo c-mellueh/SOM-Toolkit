@@ -93,26 +93,16 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         ui = cls.get_ui()
         pset_name = ui.combo_box_pset.currentText()
         mode = cls.get_mode()
-
-        if mode == 0:
-            property_set = {p.name: p for p in predefined_psets}.get(pset_name)
-            if property_set:
-                property_names = [
-                    pr.name for pr in property_set.get_properties(filter=False)
-                ]
-                tool.Util.create_completer(property_names, ui.combo_box_property)
-        else:
-            active_class = cls.get_active_class()
-            property_set: SOMcreator.SOMPropertySet = {
-                p.name: p for p in active_class.get_property_sets(filter=False)
-            }.get(pset_name)
-            if property_set is None:
-                return
-            property_names = sorted(
-                [a.name for a in property_set.get_properties(filter=False)]
-            )
-            ui.combo_box_property.clear()
-            ui.combo_box_property.addItems(property_names)
+        search_psets = predefined_psets
+        if mode != 0:
+            search_psets += list(cls.get_active_class().get_property_sets())
+        property_set = {p.name: p for p in search_psets}.get(pset_name)
+        if not property_set:
+            return
+        pr_names = [pr.name for pr in property_set.get_properties(filter=False)]
+        ui.combo_box_property.clear()
+        ui.combo_box_property.addItems(pr_names)
+        tool.Util.create_completer(pr_names, ui.combo_box_property)
 
     @classmethod
     def create_dialog(cls, title) -> ClassInfoDialog:
@@ -134,7 +124,7 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
     def connect_dialog(
         cls,
         dialog: ClassInfoDialog,
-        predefined_psets: dict[str, SOMcreator.SOMPropertySet],
+        predefined_psets: list[SOMcreator.SOMPropertySet],
     ):
         dialog.ui.button_add_ifc.pressed.connect(lambda: cls.add_ifc_mapping(""))
         dialog.ui.combo_box_pset.currentTextChanged.connect(
