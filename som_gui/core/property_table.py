@@ -4,11 +4,11 @@ import copy
 import logging
 from typing import TYPE_CHECKING, Type
 
-from PySide6.QtCore import QCoreApplication, QMimeData, Qt
-
+from PySide6.QtCore import QCoreApplication, QMimeData, Qt, QByteArray
+from PySide6.QtWidgets import QApplication
 import SOMcreator
 from som_gui.core import property_set_window as property_set_window_core
-from som_gui.module.property_table.constants import MIME_DATA_KEY
+import pickle
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -95,12 +95,16 @@ def create_mime_data(
     items: list[QTableWidgetItem],
     mime_data: QMimeData,
     property_table: Type[tool.PropertyTable],
+    property_tool: Type[tool.Property],
 ) -> QMimeData:
     """
     create MimeData used for Dropping Properties into different Tables
     """
-    classes = {property_table.get_property_from_item(item) for item in items}
-    mime_data.setProperty(MIME_DATA_KEY, classes)
+    properties = {property_table.get_property_from_item(item) for item in items}
+    if not properties:
+        return mime_data
+    property_dicts = [property_tool.get_property_data(p) for p in properties]
+    property_table.write_property_dicts_to_mime_data(property_dicts, mime_data)
     return mime_data
 
 
@@ -109,6 +113,7 @@ def drop_event(
     target_table: ui.PropertyTable,
     property_table: Type[tool.PropertyTable],
     property_tool: Type[tool.Property],
+    property_set: Type[tool.PropertySet],
 ):
     """
     handling of dropping of property row from a property set window to another property set window
@@ -116,44 +121,29 @@ def drop_event(
     :return:
     """
 
-    # Check if move is inside the same window
-    source_table: ui.PropertyTable = event.source()  # type: ignore
-    if source_table == target_table:
-        event.accept()
+    # Check if move is allowed
+    if not property_table.is_drop_allowed(event, target_table):
         return
 
-    proposed_action = event.proposedAction()
+    source_property_set = property_table.get_property_set_by_table(event.source())
     target_property_set = property_table.get_property_set_by_table(target_table)
-    existing_properties = {
-        a.name: a for a in target_property_set.get_properties(filter=False)
-    }
-    dropped_properties: set[SOMcreator.SOMProperty] = event.mimeData().property(
-        MIME_DATA_KEY
-    )  # get set of dropped Properties
+    property_dicts = property_table.get_property_dict_from_mime_data(event.mimeData())
 
-    if proposed_action == Qt.DropAction.CopyAction:
-        for som_property in dropped_properties:
-            # check if Property with same name exists already
-            existing_property = existing_properties.get(som_property.name)
-            if existing_property:
-                # overwrite date
-                data = property_tool.get_property_data(som_property)
-                property_tool.set_data_by_dict(existing_property, data)
-            else:
-                # copy property to property_set
-                som_property = copy.copy(som_property)
-                som_property.remove_parent()
-                target_property_set.add_property(som_property)
-
-    elif proposed_action == Qt.DropAction.MoveAction:
-        for som_property in dropped_properties:
-            # check if Property with same name exists already
-            existing_property = existing_properties.get(som_property.name)
-            if existing_property:
-                # replace Property
-                target_property_set.remove_property(existing_property)
-            target_property_set.add_property(som_property)
-            som_property.remove_parent()  # remove ParentProperty
+    for property_dict in property_dicts:
+        # check if Property with same name exists already
+        property_name = property_dict.get("name")
+        existing_property = property_set.get_property_by_name(
+            target_property_set, property_name
+        )
+        if existing_property:
+            # overwrite data
+            property_tool.set_data_by_dict(existing_property, property_dict)
+        else:
+            # copy property to property_set
+            new_property = property_tool.create_by_dict(property_dict)
+            target_property_set.add_property(new_property)
+        if event.proposedAction() == Qt.DropAction.MoveAction:
+            property_set.remove_property_by_name(source_property_set, property_name)
     target_table.repaint()
     event.accept()
 

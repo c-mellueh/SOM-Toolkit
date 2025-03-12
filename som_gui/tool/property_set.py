@@ -333,3 +333,16 @@ class PropertySet(som_gui.core.tool.PropertySet):
                 parent = pset_dict.get(pset_name)
                 return parent
         return None
+
+    @classmethod
+    def remove_property_by_name(cls,property_set:SOMcreator.SOMPropertySet,property_name:str):
+        """
+        checks if propertyset has property with given name. if so it will be removed
+        """
+        if property_set is None:
+            return 
+        property = cls.get_property_by_name(property_set,property_name)
+        if property is None:
+            return
+        property_set.remove_property(property,recursive=True)
+        

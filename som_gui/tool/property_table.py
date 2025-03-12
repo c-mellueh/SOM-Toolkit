@@ -3,8 +3,8 @@ from __future__ import annotations
 import logging
 from typing import Callable, TYPE_CHECKING
 
-from PySide6.QtCore import QCoreApplication, QPoint, Qt
-from PySide6.QtGui import QIcon, QPalette
+from PySide6.QtCore import QCoreApplication, QPoint, Qt,QMimeData,QByteArray
+from PySide6.QtGui import QIcon, QPalette, QDropEvent
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
 
 import SOMcreator
@@ -15,12 +15,14 @@ from som_gui.module.main_window.ui import MainWindow
 from som_gui.module.project.constants import CLASS_REFERENCE
 from som_gui.module.property_set_window.ui import PropertySetWindow
 from som_gui.resources.icons import get_link_icon
+from som_gui.module.property_table.constants import MIME_DATA_KEY
 
 if TYPE_CHECKING:
     from som_gui.module.property_table.prop import PropertyTableProperties
-    from som_gui.module.property_table import ui
+from som_gui.module.property_table import ui
 
 LINKSTATE = Qt.ItemDataRole.UserRole + 2
+import pickle
 
 
 class PropertyTable(som_gui.core.tool.PropertyTable):
@@ -227,16 +229,6 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         return properties
 
     @classmethod
-    def get_property_set_by_table(
-        cls, table: QTableWidget
-    ) -> SOMcreator.SOMPropertySet:
-        window = table.window()
-        if isinstance(window, PropertySetWindow):
-            return tool.PropertySetWindow.get_property_set_by_window(window)
-        if isinstance(window, MainWindow):
-            return tool.PropertySet.get_active_property_set()
-
-    @classmethod
     def get_item_from_pos(cls, table: QTableWidget, pos: QPoint):
         item = table.itemAt(pos)
         return cls.get_property_from_item(item)
@@ -259,7 +251,8 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         if not som_property.property_set.parent:
             return None
         possible_parents = {
-            a.name: a for a in som_property.property_set.parent.get_properties(filter=True)
+            a.name: a
+            for a in som_property.property_set.parent.get_properties(filter=True)
         }.get(som_property.name)
         return possible_parents if possible_parents else None
 
@@ -403,6 +396,18 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         return table.property_set
 
     @classmethod
+    def get_property_set_by_table(
+        cls, table: QTableWidget
+    ) -> SOMcreator.SOMPropertySet | None:
+        if table is None:
+            return None
+        window = table.window()
+        if isinstance(window, PropertySetWindow):
+            return tool.PropertySetWindow.get_property_set_by_window(window)
+        if isinstance(window, MainWindow):
+            return tool.PropertySet.get_active_property_set()
+
+    @classmethod
     def get_row_index_from_property(
         cls, som_property: SOMcreator.SOMProperty, table: QTableWidget
     ) -> int:
@@ -437,3 +442,47 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             return None
         entity = item.data(CLASS_REFERENCE)
         return entity if isinstance(entity, SOMcreator.SOMProperty) else None
+
+    @classmethod
+    def is_drop_allowed(cls, event: QDropEvent, target_table: QTableWidget):
+        if event.proposedAction() not in [
+            Qt.DropAction.MoveAction,
+            Qt.DropAction.CopyAction,
+        ]:
+            return False
+        source_table: ui.PropertyTable = event.source()  # type: ignore
+        if source_table == target_table:
+            event.accept()
+            return False
+        if not isinstance(source_table, ui.PropertyTable|None):
+            return False
+        return True
+
+    @classmethod
+    def write_property_dicts_to_mime_data(cls,property_dicts:list[dict],mime_data:QMimeData):
+        """
+        write properties to MimeData
+        :param properties:
+        :param mime_data:
+        :return:
+        """
+        serialized = pickle.dumps(property_dicts)
+        mime_data.setData("application/properties", QByteArray(serialized))
+        return mime_data
+
+    @classmethod
+    def get_property_dict_from_mime_data(
+        cls,
+        mime_data:QMimeData,
+    ) -> list[dict]:
+        """
+        get PropertyDict from MimeData
+        :param mime_data:
+        :param property_tool:
+        :return:
+        """
+        pickled_data = mime_data.data(MIME_DATA_KEY)
+        if not pickled_data:
+            return
+        property_dicts = pickle.loads(pickled_data)
+        return property_dicts

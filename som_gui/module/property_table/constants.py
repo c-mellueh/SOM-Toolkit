@@ -1,1 +1,1 @@
-MIME_DATA_KEY = "Properties"
+MIME_DATA_KEY = "application/properties"

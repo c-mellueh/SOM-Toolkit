@@ -35,11 +35,11 @@ def connect_table(table: PropertyTable):
 
 
 def drop_event(event, table):
-    core.drop_event(event, table, tool.PropertyTable, tool.Property)
+    core.drop_event(event, table, tool.PropertyTable, tool.Property,tool.PropertySet)
 
 
 def create_mime_data(items: list[QTableWidgetItem], mime_data):
-    return core.create_mime_data(items, mime_data, tool.PropertyTable)
+    return core.create_mime_data(items, mime_data, tool.PropertyTable,tool.Property)
 
 
 def on_new_project():
