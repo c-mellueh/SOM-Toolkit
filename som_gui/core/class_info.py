@@ -27,15 +27,19 @@ def create_class_info_widget(
     title = util.get_window_title(
         QCoreApplication.translate("Class Info", "Class Info")
     )
+    if mode != 0 and not class_tool.get_active_class():
+        return
     dialog = class_info.create_dialog(title)
     class_info.set_active_class(class_tool.get_active_class())
-    predefined_psets = predefined_property_set.get_property_sets()
+    predefined_psets = list(predefined_property_set.get_property_sets())
     class_info.connect_dialog(dialog, predefined_psets)
     class_info.oi_fill_properties(mode=mode)
     class_info.update_dialog(dialog)
-    if mode == 0:
-        names = [p.name for p in predefined_psets]
-        util.create_completer(names, dialog.ui.combo_box_pset)
+    pset_names = [p.name for p in predefined_psets]
+    if mode != 0:
+        pset_names +=list(class_info.get_active_class().get_properties())
+    util.create_completer(pset_names, dialog.ui.combo_box_pset)
+    
     if dialog.exec():
         active_class = class_info.get_active_class()
         data_dict = class_info.generate_datadict()

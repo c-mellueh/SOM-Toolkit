@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
 )
-
+import logging
 import SOMcreator
 import som_gui
 import som_gui.core.tool
@@ -104,7 +104,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return item.data(CLASS_REFERENCE)
 
     @classmethod
-    def check_if_pset_allready_exists(
+    def is_pset_allready_existing(
         cls, pset_name: str, active_class: SOMcreator.SOMClass
     ):
         return bool(
@@ -120,20 +120,19 @@ class PropertySet(som_gui.core.tool.PropertySet):
     ) -> SOMcreator.SOMPropertySet | None:
 
         if som_class:
-            if name in {p.name for p in som_class.get_property_sets(filter=False)}:
+            pset_dict = {p.name: p for p in som_class.get_property_sets(filter=False)}
+            if name in pset_dict:
                 text = QCoreApplication.translate(
                     f"PropertySet", "PropertySet '{}' exists allready"
                 ).format(name)
-                tool.Popups.create_warning_popup(text)
-                return None
+                logging.info(text)
+                return pset_dict.get(name)
         if parent is not None:
             property_set = parent.create_child(name)
             if som_class:
                 som_class.add_property_set(property_set)
         else:
-            property_set = SOMcreator.SOMPropertySet(
-                name, som_class, project=tool.Project.get()
-            )
+            property_set = SOMcreator.SOMPropertySet(name, som_class)
         return property_set
 
     @classmethod
@@ -335,14 +334,15 @@ class PropertySet(som_gui.core.tool.PropertySet):
         return None
 
     @classmethod
-    def remove_property_by_name(cls,property_set:SOMcreator.SOMPropertySet,property_name:str):
+    def remove_property_by_name(
+        cls, property_set: SOMcreator.SOMPropertySet, property_name: str
+    ):
         """
         checks if propertyset has property with given name. if so it will be removed
         """
         if property_set is None:
-            return 
-        property = cls.get_property_by_name(property_set,property_name)
+            return
+        property = cls.get_property_by_name(property_set, property_name)
         if property is None:
             return
-        property_set.remove_property(property,recursive=True)
-        
+        property_set.remove_property(property, recursive=True)

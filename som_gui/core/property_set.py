@@ -30,7 +30,7 @@ def add_property_set_button_pressed(
     )
     if not pset_name:
         return
-    if property_set_tool.check_if_pset_allready_exists(pset_name, som_class):
+    if property_set_tool.is_pset_allready_existing(pset_name, som_class):
         text = QCoreApplication.translate(
             f"PropertySet", "PropertySet '{}' exists allready"
         ).format(pset_name)

@@ -5,8 +5,7 @@ import logging
 import uuid
 from typing import Callable, TYPE_CHECKING, TypedDict
 
-from PySide6.QtCore import QCoreApplication
-from PySide6.QtCore import QPoint, Qt
+from PySide6.QtCore import QPoint, Qt, QMimeData, QByteArray, QCoreApplication
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QCompleter,
@@ -15,7 +14,7 @@ from PySide6.QtWidgets import (
     QTreeWidgetItem,
     QComboBox,
 )
-
+import pickle
 import SOMcreator
 import som_gui
 import som_gui.core.tool
@@ -128,9 +127,11 @@ class Class(som_gui.core.tool.Class):
         prop = cls.get_properties()
         selected_items = cls.get_selected_items()
         menu_list = prop.context_menu_list
-        if len(selected_items) == 1:
+        if len(selected_items) <1:
+            menu_list = filter(lambda d: not d["on_selection"], menu_list)
+        elif len(selected_items) == 1:
             menu_list = filter(lambda d: d["on_single_select"], menu_list)
-        if len(selected_items) > 1:
+        elif len(selected_items) > 1:
             menu_list = filter(lambda d: d["on_multi_select"], menu_list)
         for menu_entry in menu_list:
             menu_entry["action"] = menu.addAction(menu_entry["name_getter"]())
@@ -171,7 +172,7 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def group_selection(cls):
-        pass
+        trigger.group_selection()
 
     @classmethod
     def clear_context_menu_list(cls):
@@ -179,14 +180,24 @@ class Class(som_gui.core.tool.Class):
         prop.context_menu_list = list()
 
     @classmethod
-    def add_context_menu_entry(
-        cls, name_getter: Callable, function: Callable, single: bool, multi: bool
-    ) -> ContextMenuDict:
+    def add_context_menu_entry(cls, name_getter: Callable, function: Callable,on_selection:bool, single: bool, multi: bool) -> ContextMenuDict:
+        """
+        Adds an entry to the context menu.
+
+        :param name_getter: A callable that returns the name for the context menu entry.
+        :param function: A callable that defines the function to be executed when the context menu entry is selected.
+        :param on_selection: A boolean indicating if the entry shold be only availible if class is selected
+        :param single: A boolean indicating if the entry should be available for single selection.
+        :param multi: A boolean indicating if the entry should be available for multi-selection.
+        :return: A dictionary representing the context menu entry.
+        :rtype: ContextMenuDict
+        """
         d: ContextMenuDict = dict()
         d["name_getter"] = name_getter
         d["function"] = function
         d["on_multi_select"] = multi
         d["on_single_select"] = single
+        d["on_selection"] = on_selection
         prop = cls.get_properties()
         prop.context_menu_list.append(d)
         return d
@@ -286,7 +297,7 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def get_class_from_item(cls, item: QTreeWidgetItem) -> SOMcreator.SOMClass:
-        return item.som_class
+        return item.data(0, constants.CLASS_REFERENCE)
 
     @classmethod
     def add_class_activate_function(cls, func: Callable):
@@ -306,6 +317,8 @@ class Class(som_gui.core.tool.Class):
     @classmethod
     def update_check_state(cls, item: QTreeWidgetItem):
         som_class: SOMcreator.SOMClass = cls.get_class_from_item(item)
+        if not som_class:
+            return
         values = [
             [getter_func(som_class), setter_func]
             for n, getter_func, setter_func in cls.get_properties().column_List
@@ -321,9 +334,7 @@ class Class(som_gui.core.tool.Class):
     @classmethod
     def create_item(cls, som_class: SOMcreator.SOMClass):
         item = QTreeWidgetItem()
-        item.som_class = (
-            som_class  # item.setData(0,som_class) leads to recursion bug so allocating directly
-        )
+        item.setData(0, constants.CLASS_REFERENCE, som_class)
         item.setText(0, som_class.name)
         item.setFlags(
             item.flags()
@@ -366,7 +377,9 @@ class Class(som_gui.core.tool.Class):
         old_classes = set(old_classes_dict.keys())
         new_classes = classes.difference(old_classes)
         delete_classes = old_classes.difference(classes)
-        for som_class in reversed(sorted(delete_classes, key=lambda o: old_classes_dict[o])):
+        for som_class in reversed(
+            sorted(delete_classes, key=lambda o: old_classes_dict[o])
+        ):
             row_index = old_classes_dict[som_class]
             parent_item.removeChild(parent_item.child(row_index))
 
@@ -413,58 +426,29 @@ class Class(som_gui.core.tool.Class):
         trigger.modify_class_called(som_class, data_dict)
 
     @classmethod
-    def copy_group(cls, som_class: SOMcreator.SOMClass) -> SOMcreator.SOMClass:
-        new_class = cp.copy(som_class)
-        new_class.identifier_property = uuid.uuid4()
-        return new_class
-
-    @classmethod
-    def copy_class(cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
-        ident_value = data_dict["ident_value"]
-        pset = data_dict.get("ident_pset_name")
-        ident_property = data_dict.get("ident_property_name")
-        name = data_dict.get("name") or som_class.name
-
-        new_class = cp.copy(som_class)
-        if pset and ident_property:
-            new_class.identifier_property = cls.find_property(
-                new_class, pset, ident_property
-            )
-        new_class.identifier_property.allowed_values = [ident_value]
-        new_class.name = name
-        return new_class
-
-    @classmethod
     def modify_class(
         cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
     ) -> int:
-        name = data_dict.get("name")
-        ifc_mappings = data_dict.get("ifc_mappings")
-        identifer = data_dict.get("ident_value")
-        pset_name = data_dict.get("ident_pset_name")
-        identifier_name = data_dict.get("ident_property_name")
-        is_group = data_dict.get("is_group")
-        description = data_dict.get("description") or ""
+        som_class.name = data_dict.get("name", som_class.name)
+        som_class.ifc_mapping = data_dict.get("ifc_mappings", som_class.ifc_mapping)
+        som_class.description = data_dict.get("description", "")
 
-        som_class.name = name if name else som_class.name
-        som_class.ifc_mapping = (
-            ifc_mappings if ifc_mappings is not None else som_class.ifc_mapping
-        )
-        som_class.description = description
-        if is_group and not som_class.is_concept:
-            som_class.identifier_property = str(uuid.uuid4())
+        if data_dict.get("is_group"):
+            if not som_class.is_concept:
+                som_class.identifier_property = str(uuid.uuid4())
             return
 
+        pset_name = data_dict.get("ident_pset_name")
+        identifier_name = data_dict.get("ident_property_name")
         if pset_name and identifier_name:
             ident_property = cls.find_property(som_class, pset_name, identifier_name)
             som_class.identifier_property = (
-                ident_property
-                if ident_property is not None
-                else som_class.identifier_property
+                ident_property or som_class.identifier_property
             )
 
-        if identifer is not None:
-            cls.set_ident_value(som_class, identifer)
+        ident_value = data_dict.get("ident_value")
+        if ident_value is not None:
+            cls.set_ident_value(som_class, ident_value)
 
     @classmethod
     def create_class(
@@ -473,21 +457,14 @@ class Class(som_gui.core.tool.Class):
         property_set: SOMcreator.SOMPropertySet,
         identifier_property: SOMcreator.SOMProperty,
     ):
-        name = data_dict["name"]
-        is_group = data_dict["is_group"]
-        ifc_mappings = data_dict.get("ifc_mappings")
-        if is_group:
+        if data_dict.get("is_group", False):
             ident = str(uuid.uuid4())
-            new_class = SOMcreator.SOMClass(
-                name, ident, uuid=ident, project=tool.Project.get()
-            )
+            new_class = SOMcreator.SOMClass(data_dict["name"], ident, uuid=ident)
         else:
-            new_class = SOMcreator.SOMClass(
-                name, identifier_property, project=tool.Project.get()
-            )
+            new_class = SOMcreator.SOMClass(data_dict["name"], identifier_property)
             new_class.add_property_set(property_set)
-        if ifc_mappings:
-            new_class.ifc_mapping = ifc_mappings
+
+        new_class.ifc_mapping = data_dict.get("ifc_mappings") or new_class.ifc_mapping
         return new_class
 
     @classmethod
@@ -497,3 +474,43 @@ class Class(som_gui.core.tool.Class):
             if not check_function(data_dict):
                 return False
         return True
+
+    @classmethod
+    def write_classes_to_mimedata(
+        cls, classes: list[SOMcreator.SOMClass], mime_data: QMimeData
+    ):
+        serialized = pickle.dumps(classes)
+        mime_data.setData(constants.MIME_DATA_KEY, QByteArray(serialized))
+
+    @classmethod
+    def get_classes_from_mimedata(
+        cls, mime_data: QMimeData
+    ) -> list[SOMcreator.SOMClass]:
+        serialized = mime_data.data(constants.MIME_DATA_KEY)
+        if not serialized:
+            return None
+        return pickle.loads(serialized)
+
+    @classmethod
+    def handle_class_move(cls, dropped_on_item: QTreeWidgetItem):
+        selected_items = cls.get_selected_items()
+        dropped_classes = [cls.get_class_from_item(item) for item in selected_items]
+        dropped_classes = [
+            o
+            for o in dropped_classes
+            if o.parent not in dropped_classes or o.parent is None
+        ]
+        if dropped_on_item is None:
+            for som_class in dropped_classes:
+                som_class.remove_parent()
+            return
+        dropped_on_class = cls.get_class_from_item(dropped_on_item)
+
+        if not cls.drop_indication_pos_is_on_item():
+            dropped_on_class = dropped_on_class.parent
+
+        for som_class in dropped_classes:
+            if dropped_on_class is None:
+                som_class.remove_parent()
+            else:
+                som_class.parent = dropped_on_class

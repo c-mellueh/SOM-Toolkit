@@ -3,7 +3,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from som_gui.module.class_info.prop import ClassDataDict
-from PySide6.QtWidgets import QTreeWidget
+    from . import ui
+from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
 
 from som_gui import tool
 from som_gui.core import class_ as core
@@ -27,9 +28,9 @@ def connect():
         lambda: core.search_class(tool.Search, tool.Class, tool.Project)
     )
 
-    core.load_context_menus(tool.Class, tool.ClassInfo, tool.Util)
+    core.load_context_menus(tool.Class, tool.ClassInfo, tool.Project)
     core.add_shortcuts(
-        tool.Class, tool.Util, tool.Search, tool.MainWindow, tool.Project
+        tool.Class, tool.Util, tool.Search, tool.MainWindow, tool.Project,tool.ClassInfo
     )
     core.init_main_window(tool.Class, tool.ClassInfo, tool.MainWindow)
 
@@ -38,8 +39,8 @@ def repaint_event():
     core.refresh_class_tree(tool.Class, tool.Project)
 
 
-def drop_event(event):
-    core.item_dropped_on(event.pos(), tool.Class)
+def drop_event(event, target: ui.ClassTreeWidget):
+    core.drop_event(event, target, tool.Class,tool.Project)
 
 
 def on_new_project():
@@ -66,4 +67,11 @@ def copy_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
 
 
 def modify_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
-    core.modify_class(som_class, data_dict, tool.Class, tool.ClassInfo)
+    core.modify_class(som_class, data_dict, tool.Class, tool.ClassInfo,tool.PropertySet,tool.PredefinedPropertySet)
+
+
+def create_mime_data(items: list[QTreeWidgetItem], mime_data):
+    return core.create_mime_data(items, mime_data, tool.Class)
+
+def group_selection():
+    core.create_group(tool.Class,tool.Project)

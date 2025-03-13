@@ -3,18 +3,21 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QCoreApplication, QMimeData
+from PySide6.QtGui import QDropEvent
 
 import SOMcreator
 from som_gui import tool
 from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
 import som_gui.module.class_.constants as constants
+import copy as cp
 
 if TYPE_CHECKING:
     from som_gui.tool import Class, Project, Search, PropertySet, MainWindow
     from som_gui.module.class_info.prop import ClassDataDict
     from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
     from PySide6.QtCore import QPoint
+    from som_gui.module.class_ import ui
 
 import uuid
 
@@ -31,7 +34,7 @@ def init_main_window(
     class_tool.add_column_to_tree(
         lambda: QCoreApplication.translate("Class", "Class"),
         0,
-        lambda o: getattr(o, "name"),
+        lambda c: getattr(c, "name"),
     )
     class_tool.add_column_to_tree(
         lambda: QCoreApplication.translate("Class", "Identifier"),
@@ -66,12 +69,21 @@ def retranslate_ui(class_tool: Type[tool.Class]) -> None:
         header.setText(column, name)
 
 
+def create_mime_data(
+    items: QTreeWidgetItem, mime_data: QMimeData, class_tool: Type[tool.Class]
+):
+    classes = {class_tool.get_class_from_item(i) for i in items}
+    class_tool.write_classes_to_mimedata(classes, mime_data)
+    return mime_data
+
+
 def add_shortcuts(
     class_tool: Type[Class],
     util: Type[tool.Util],
     search_tool: Type[Search],
     main_window: Type[tool.MainWindow],
     project: Type[tool.Project],
+    class_info: Type[tool.ClassInfo],
 ):
     util.add_shortcut("Ctrl+X", main_window.get(), class_tool.delete_selection)
     util.add_shortcut("Ctrl+G", main_window.get(), class_tool.group_selection)
@@ -79,6 +91,9 @@ def add_shortcuts(
         "Ctrl+F",
         main_window.get(),
         lambda: search_class(search_tool, class_tool, project),
+    )
+    util.add_shortcut(
+        "Ctrl+C", main_window.get(), lambda: class_info.trigger_class_info_widget(2)
     )
 
 
@@ -102,12 +117,15 @@ def resize_columns(class_tool: Type[Class]):
 
 
 def load_context_menus(
-    class_tool: Type[Class], class_info: Type[tool.ClassInfo], util: Type[tool.Util]
+    class_tool: Type[Class],
+    class_info: Type[tool.ClassInfo],
+    project: Type[tool.Project],
 ):
     class_tool.clear_context_menu_list()
     class_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Class", "Copy"),
         lambda: class_info.trigger_class_info_widget(2),
+        True,
         True,
         False,
     )
@@ -116,10 +134,12 @@ def load_context_menus(
         class_tool.delete_selection,
         True,
         True,
+        True,
     )
     class_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Class", "Extend"),
         class_tool.expand_selection,
+        True,
         True,
         True,
     )
@@ -128,22 +148,25 @@ def load_context_menus(
         class_tool.collapse_selection,
         True,
         True,
+        True,
     )
     class_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Class", "Group"),
-        lambda: create_group(class_tool),
+        class_tool.group_selection,
+        True,
         True,
         True,
     )
     class_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Class", "Info"),
-        lambda: class_tool.trigger_class_info_widget(1),
+        lambda: class_info.trigger_class_info_widget(1),
+        True,
         True,
         False,
     )
 
 
-def create_group(class_tool: Type[Class]):
+def create_group(class_tool: Type[Class], project: Type[tool.Project]):
     d = {
         "name": QCoreApplication.translate("Class", "NewGroup"),
         "is_group": True,
@@ -153,6 +176,7 @@ def create_group(class_tool: Type[Class]):
     if not is_allowed:
         return
     som_class = class_tool.create_class(d, None, None)
+    som_class.project = project.get()
     selected_classes = set(class_tool.get_selected_classes())
     class_tool.group_classes(som_class, selected_classes)
 
@@ -213,29 +237,23 @@ def item_selection_changed(
         property_set_tool.set_enabled(False)
 
 
-def item_dropped_on(pos: QPoint, class_tool: Type[Class]):
-    selected_items = class_tool.get_selected_items()
-    dropped_on_item = class_tool.get_item_from_pos(pos)
-    dropped_classes = [class_tool.get_class_from_item(item) for item in selected_items]
-    dropped_classes = [
-        o
-        for o in dropped_classes
-        if o.parent not in dropped_classes or o.parent is None
-    ]
-    if dropped_on_item is None:
-        for som_class in dropped_classes:
-            som_class.remove_parent()
+def drop_event(
+    event: QDropEvent,
+    target: ui.ClassTreeWidget,
+    class_tool: Type[Class],
+    project: Type[tool.Project],
+):
+    pos = event.pos()
+    source_table = event.source()
+    if source_table == target:
+        dropped_on_item = class_tool.get_item_from_pos(pos)
+        class_tool.handle_class_move(dropped_on_item)
         return
-    dropped_on_class = class_tool.get_class_from_item(dropped_on_item)
-
-    if not class_tool.drop_indication_pos_is_on_item():
-        dropped_on_class = dropped_on_class.parent
-
-    for som_class in dropped_classes:
-        if dropped_on_class is None:
-            som_class.remove_parent()
-        else:
-            som_class.parent = dropped_on_class
+    classes = class_tool.get_classes_from_mimedata(event.mimeData())
+    if not classes:
+        return
+    for som_class in classes:
+        project.get().add_item(som_class)
 
 
 def modify_class(
@@ -243,11 +261,15 @@ def modify_class(
     data_dict: ClassDataDict,
     class_tool: Type[tool.Class],
     class_info: Type[tool.ClassInfo],
+    property_set: Type[tool.PropertySet],
+    predefined_psets: Type[tool.PredefinedPropertySet],
 ):
 
     data_dict = class_info.generate_datadict()
-    som_class = class_info.get_active_class()
     identifer = data_dict.get("ident_value")
+    pset_name = data_dict.get("ident_pset_name")
+    property_name = data_dict.get("ident_property_name")
+    ident_value = data_dict.get("ident_value")
     is_group = (
         som_class.is_concept
         if data_dict.get("is_group") is None
@@ -264,6 +286,27 @@ def modify_class(
     if result != constants.OK:
         class_tool.handle_property_issue(result)
         return
+    if not is_group and property_name and pset_name:
+        pset = som_class.get_property_set_by_name(pset_name)
+        if not pset:
+            # create identifier property_set
+            parent = property_set.search_for_parent(
+                pset_name,
+                predefined_psets.get_property_sets(),
+                property_set.get_inheritable_property_sets(som_class),
+            )
+            if parent == False:
+                # action aborted
+                return
+            pset = property_set.create_property_set(pset_name, som_class, parent)
+        ident_property = pset.get_property_by_name(property_name)
+        if not ident_property:
+            # create ident property
+            ident_property = SOMcreator.SOMProperty(
+                name=property_name,
+            )
+            pset.add_property(ident_property)
+        ident_property.allowed_values = [ident_value]
 
     class_tool.modify_class(som_class, data_dict)
     class_info.add_plugin_infos_to_class(som_class, data_dict)
@@ -279,10 +322,11 @@ def copy_class(
 
     # handle Group
     if data_dict.get("is_group"):
-        group = class_tool.copy_group(som_class)
+        group = cp.copy(som_class)
+        group.identifier_property = uuid.uuid4()
         group.description = data_dict.get("description") or ""
+        class_tool.trigger_class_modification(group, data_dict)
         return
-
     # handle Identifier Value
     ident_value = data_dict.get("ident_value")
     if not class_tool.is_identifier_allowed(ident_value):
@@ -295,9 +339,8 @@ def copy_class(
         class_tool.handle_property_issue(result)
         return
 
-    new_class = class_tool.copy_class(som_class, data_dict)
-    new_class.description = data_dict.get("description") or ""
-    class_info.add_plugin_infos_to_class(new_class, data_dict)
+    new_class = cp.copy(som_class)
+    class_tool.trigger_class_modification(new_class, data_dict)
 
 
 def create_class(
@@ -340,23 +383,16 @@ def create_class(
         pset_name,
         predefined_property_set.get_property_sets(),
     )
-    pset = property_set.create_property_set(pset_name, None, parent_pset)
-    som_class.add_property_set(pset)
+    pset = property_set.create_property_set(pset_name, som_class, parent_pset)
 
     # create identifier property
-    ident_property: SOMcreator.SOMProperty = {
-        a.name: a for a in pset.get_properties(filter=False)
-    }.get(property_name)
-
+    ident_property = pset.get_property_by_name(property_name)
     if not ident_property:
         ident_property = SOMcreator.SOMProperty(
             pset,
             property_name,
-            [identifier],
-            SOMcreator.value_constants.LIST,
         )
-    else:
-        ident_property.allowed_values = [identifier]
+    ident_property.allowed_values = [identifier]
     ident_property.project = proj
     class_info.add_plugin_infos_to_class(som_class, data_dict)
     class_tool.modify_class(som_class, data_dict)
