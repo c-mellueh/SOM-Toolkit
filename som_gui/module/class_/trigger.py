@@ -28,7 +28,7 @@ def connect():
         lambda: core.search_class(tool.Search, tool.Class, tool.Project)
     )
 
-    core.load_context_menus(tool.Class, tool.ClassInfo, tool.Util)
+    core.load_context_menus(tool.Class, tool.ClassInfo, tool.Project)
     core.add_shortcuts(
         tool.Class, tool.Util, tool.Search, tool.MainWindow, tool.Project
     )

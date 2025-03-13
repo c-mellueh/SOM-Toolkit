@@ -10,6 +10,7 @@ import SOMcreator
 from som_gui import tool
 from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
 import som_gui.module.class_.constants as constants
+import copy as cp
 
 if TYPE_CHECKING:
     from som_gui.tool import Class, Project, Search, PropertySet, MainWindow
@@ -112,7 +113,7 @@ def resize_columns(class_tool: Type[Class]):
 
 
 def load_context_menus(
-    class_tool: Type[Class], class_info: Type[tool.ClassInfo], util: Type[tool.Util]
+    class_tool: Type[Class], class_info: Type[tool.ClassInfo], project: Type[tool.Project]
 ):
     class_tool.clear_context_menu_list()
     class_tool.add_context_menu_entry(
@@ -141,7 +142,7 @@ def load_context_menus(
     )
     class_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Class", "Group"),
-        lambda: create_group(class_tool),
+        lambda: create_group(class_tool,project),
         True,
         True,
     )
@@ -153,7 +154,7 @@ def load_context_menus(
     )
 
 
-def create_group(class_tool: Type[Class]):
+def create_group(class_tool: Type[Class],project:Type[tool.Project]):
     d = {
         "name": QCoreApplication.translate("Class", "NewGroup"),
         "is_group": True,
@@ -163,6 +164,7 @@ def create_group(class_tool: Type[Class]):
     if not is_allowed:
         return
     som_class = class_tool.create_class(d, None, None)
+    som_class.project = project.get()
     selected_classes = set(class_tool.get_selected_classes())
     class_tool.group_classes(som_class, selected_classes)
 
@@ -252,11 +254,10 @@ def modify_class(
 ):
 
     data_dict = class_info.generate_datadict()
-    som_class = class_info.get_active_class()
     identifer = data_dict.get("ident_value")
     pset_name = data_dict.get("ident_pset_name")
     property_name = data_dict.get("ident_property_name")
-    identifier = data_dict.get("ident_value")
+    ident_value = data_dict.get("ident_value")
     is_group = (
         som_class.is_concept
         if data_dict.get("is_group") is None
@@ -273,27 +274,27 @@ def modify_class(
     if result != constants.OK:
         class_tool.handle_property_issue(result)
         return
-
-        # create identifier property_set
-    pset = som_class.get_property_set_by_name(pset_name)
-    if not pset:
-        parent = property_set.search_for_parent(
-            pset_name,
-            predefined_psets.get_property_sets(),
-            property_set.get_inheritable_property_sets(som_class),
-        )
-        if parent == False:
-            return
-
-        pset = property_set.create_property_set(pset_name, som_class, parent)
-
-    ident_property = pset.get_property_by_name(property_name)
-    if not ident_property:
-        ident_property = SOMcreator.SOMProperty(
-            name=property_name,
-        )
-        pset.add_property(ident_property)
-    ident_property.allowed_values = [identifier]
+    if not is_group and property_name and pset_name:
+        pset = som_class.get_property_set_by_name(pset_name)
+        if not pset:
+            # create identifier property_set
+            parent = property_set.search_for_parent(
+                pset_name,
+                predefined_psets.get_property_sets(),
+                property_set.get_inheritable_property_sets(som_class),
+            )
+            if parent == False:
+                # action aborted
+                return
+            pset = property_set.create_property_set(pset_name, som_class, parent)
+        ident_property = pset.get_property_by_name(property_name)
+        if not ident_property:
+            # create ident property
+            ident_property = SOMcreator.SOMProperty(
+                name=property_name,
+            )
+            pset.add_property(ident_property)
+        ident_property.allowed_values = [ident_value]
 
     class_tool.modify_class(som_class, data_dict)
     class_info.add_plugin_infos_to_class(som_class, data_dict)
@@ -309,10 +310,11 @@ def copy_class(
 
     # handle Group
     if data_dict.get("is_group"):
-        group = class_tool.copy_group(som_class)
+        group = cp.copy(som_class)
+        group.identifier_property = uuid.uuid4()
         group.description = data_dict.get("description") or ""
+        class_tool.trigger_class_modification(group, data_dict)
         return
-
     # handle Identifier Value
     ident_value = data_dict.get("ident_value")
     if not class_tool.is_identifier_allowed(ident_value):
@@ -325,9 +327,8 @@ def copy_class(
         class_tool.handle_property_issue(result)
         return
 
-    new_class = class_tool.copy_class(som_class, data_dict)
-    new_class.description = data_dict.get("description") or ""
-    class_info.add_plugin_infos_to_class(new_class, data_dict)
+    new_class = cp.copy(som_class)
+    class_tool.trigger_class_modification(new_class, data_dict)
 
 
 def create_class(
