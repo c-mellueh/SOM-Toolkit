@@ -27,7 +27,7 @@ def create_class_info_widget(
     title = util.get_window_title(
         QCoreApplication.translate("Class Info", "Class Info")
     )
-    if mode != 0 and not class_info.get_active_class():
+    if mode != 0 and not class_tool.get_active_class():
         return
     dialog = class_info.create_dialog(title)
     class_info.set_active_class(class_tool.get_active_class())
