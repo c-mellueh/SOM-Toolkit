@@ -223,7 +223,12 @@ def item_selection_changed(
         property_set_tool.set_enabled(False)
 
 
-def drop_event(event: QDropEvent, target: ui.ClassTreeWidget, class_tool: Type[Class],project:Type[tool.Project]):
+def drop_event(
+    event: QDropEvent,
+    target: ui.ClassTreeWidget,
+    class_tool: Type[Class],
+    project: Type[tool.Project],
+):
     pos = event.pos()
     source_table = event.source()
     if source_table == target:
@@ -236,16 +241,22 @@ def drop_event(event: QDropEvent, target: ui.ClassTreeWidget, class_tool: Type[C
     for som_class in classes:
         project.get().add_item(som_class)
 
+
 def modify_class(
     som_class: SOMcreator.SOMClass,
     data_dict: ClassDataDict,
     class_tool: Type[tool.Class],
     class_info: Type[tool.ClassInfo],
+    property_set: Type[tool.PropertySet],
+    predefined_psets: Type[tool.PredefinedPropertySet],
 ):
 
     data_dict = class_info.generate_datadict()
     som_class = class_info.get_active_class()
     identifer = data_dict.get("ident_value")
+    pset_name = data_dict.get("ident_pset_name")
+    property_name = data_dict.get("ident_property_name")
+    identifier = data_dict.get("ident_value")
     is_group = (
         som_class.is_concept
         if data_dict.get("is_group") is None
@@ -262,6 +273,27 @@ def modify_class(
     if result != constants.OK:
         class_tool.handle_property_issue(result)
         return
+
+        # create identifier property_set
+    pset = som_class.get_property_set_by_name(pset_name)
+    if not pset:
+        parent = property_set.search_for_parent(
+            pset_name,
+            predefined_psets.get_property_sets(),
+            property_set.get_inheritable_property_sets(som_class),
+        )
+        if parent == False:
+            return
+
+        pset = property_set.create_property_set(pset_name, som_class, parent)
+
+    ident_property = pset.get_property_by_name(property_name)
+    if not ident_property:
+        ident_property = SOMcreator.SOMProperty(
+            name=property_name,
+        )
+        pset.add_property(ident_property)
+    ident_property.allowed_values = [identifier]
 
     class_tool.modify_class(som_class, data_dict)
     class_info.add_plugin_infos_to_class(som_class, data_dict)
@@ -338,23 +370,16 @@ def create_class(
         pset_name,
         predefined_property_set.get_property_sets(),
     )
-    pset = property_set.create_property_set(pset_name, None, parent_pset)
-    som_class.add_property_set(pset)
+    pset = property_set.create_property_set(pset_name, som_class, parent_pset)
 
     # create identifier property
-    ident_property: SOMcreator.SOMProperty = {
-        a.name: a for a in pset.get_properties(filter=False)
-    }.get(property_name)
-
+    ident_property = pset.get_property_by_name(property_name)
     if not ident_property:
         ident_property = SOMcreator.SOMProperty(
             pset,
             property_name,
-            [identifier],
-            SOMcreator.value_constants.LIST,
         )
-    else:
-        ident_property.allowed_values = [identifier]
+    ident_property.allowed_values = [identifier]
     ident_property.project = proj
     class_info.add_plugin_infos_to_class(som_class, data_dict)
     class_tool.modify_class(som_class, data_dict)

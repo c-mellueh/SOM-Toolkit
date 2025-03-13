@@ -145,6 +145,7 @@ class SOMPropertySet(BaseClass):
         else:
             return
         value.property_set = self
+        value.project = self.project
         for child in self.get_children(filter=False):
             child:SOMPropertySet
             som_property: SOMcreator.SOMProperty = cp.copy(value)

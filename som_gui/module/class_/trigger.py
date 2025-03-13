@@ -67,7 +67,7 @@ def copy_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
 
 
 def modify_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
-    core.modify_class(som_class, data_dict, tool.Class, tool.ClassInfo)
+    core.modify_class(som_class, data_dict, tool.Class, tool.ClassInfo,tool.PropertySet,tool.PredefinedPropertySet)
 
 
 def create_mime_data(items: list[QTreeWidgetItem], mime_data):

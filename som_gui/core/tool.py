@@ -2806,7 +2806,7 @@ class PropertySet:
     def add_property_sets_to_table(self, property_sets, table):
         pass
 
-    def check_if_pset_allready_exists(self, pset_name, active_class):
+    def is_pset_allready_existing(self, pset_name, active_class):
         pass
 
     def clear_table(
