@@ -62,6 +62,10 @@ The `som_gui` is a graphical user interface for non-programmers or users seeking
    ```bash
    python -m som_gui
 
+### Alternative:
+just use the [compiled Version](https://github.com/c-mellueh/SOM-Toolkit/releases)
+
+
 # Usage
 
 ## Using SOMcreator
@@ -109,7 +113,7 @@ The `som_gui` provides a visual way to interact with Semantic Object Models.
    python -m som_gui
 ```
 Features:
-* **Create a Project**: Start a new project and define classes, properties, and properties interactively.
+* **Create a Project**: Start a new project and define classes, propertysets, and properties interactively.
 * **Modify Existing Data**: Import existing models, modify data, and re-export.
 * **Export Options**: Save your project in bSDD or IDS formats for interoperability with other BIM tools.
 * **IFC-Modelcheck**: Check IFC-Files against specified SOM
