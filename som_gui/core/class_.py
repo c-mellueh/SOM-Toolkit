@@ -83,6 +83,7 @@ def add_shortcuts(
     search_tool: Type[Search],
     main_window: Type[tool.MainWindow],
     project: Type[tool.Project],
+    class_info:Type[tool.ClassInfo]
 ):
     util.add_shortcut("Ctrl+X", main_window.get(), class_tool.delete_selection)
     util.add_shortcut("Ctrl+G", main_window.get(), class_tool.group_selection)
@@ -91,7 +92,7 @@ def add_shortcuts(
         main_window.get(),
         lambda: search_class(search_tool, class_tool, project),
     )
-
+    util.add_shortcut("Ctrl+C", main_window.get(), lambda:class_info.trigger_class_info_widget(2))
 
 def search_class(
     search_tool: Type[Search], class_tool: Type[Class], project: Type[tool.Project]

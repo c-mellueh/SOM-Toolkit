@@ -30,7 +30,7 @@ def connect():
 
     core.load_context_menus(tool.Class, tool.ClassInfo, tool.Project)
     core.add_shortcuts(
-        tool.Class, tool.Util, tool.Search, tool.MainWindow, tool.Project
+        tool.Class, tool.Util, tool.Search, tool.MainWindow, tool.Project,tool.ClassInfo
     )
     core.init_main_window(tool.Class, tool.ClassInfo, tool.MainWindow)
 
