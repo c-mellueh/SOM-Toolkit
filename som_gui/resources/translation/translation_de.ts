@@ -52,67 +52,70 @@
 <context>
     <name>Class</name>
     <message>
-        <location filename="../../core/class_.py" line="32"/>
+        <location filename="../../core/class_.py" line="35"/>
         <source>Class</source>
         <translation>Klasse</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="37"/>
+        <location filename="../../core/class_.py" line="40"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="46"/>
+        <location filename="../../core/class_.py" line="49"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="109"/>
+        <location filename="../../core/class_.py" line="126"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="115"/>
+        <location filename="../../core/class_.py" line="133"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="121"/>
+        <location filename="../../core/class_.py" line="140"/>
         <source>Extend</source>
         <translation>Ausklappen</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="127"/>
+        <location filename="../../core/class_.py" line="147"/>
         <source>Collapse</source>
         <translation>Einklappen</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="133"/>
+        <location filename="../../core/class_.py" line="154"/>
         <source>Group</source>
         <translation>Gruppieren</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="139"/>
+        <location filename="../../core/class_.py" line="161"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="148"/>
+        <location filename="../../core/class_.py" line="171"/>
         <source>NewGroup</source>
         <translation>NeueGruppe</translation>
     </message>
     <message>
-        <location filename="../../tool/class_info.py" line="314"/>
+        <location filename="../../tool/class_.py" line="221"/>
+        <location filename="../../tool/class_info.py" line="310"/>
         <source>Name of PropertySet is not allowed</source>
         <translation>Name des PropertySets ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/class_info.py" line="329"/>
+        <location filename="../../tool/class_.py" line="217"/>
+        <location filename="../../tool/class_info.py" line="325"/>
         <source>Name of Property is not allowed</source>
         <translation>Name des Merkmals ist nicht zugelassen</translation>
     </message>
     <message>
-        <location filename="../../tool/class_info.py" line="343"/>
+        <location filename="../../tool/class_.py" line="213"/>
+        <location filename="../../tool/class_info.py" line="339"/>
         <source>Identifier exists allready or is not allowed</source>
         <translation>Identifier existiert bereits oder ist nicht erlaubt</translation>
     </message>
@@ -126,24 +129,87 @@
     </message>
 </context>
 <context>
+    <name>ClassInfo</name>
+    <message>
+        <location filename="../../module/class_info/qt/InfoWidget.ui" line="20"/>
+        <source>Dialog</source>
+        <translation>Dialog</translation>
+    </message>
+    <message>
+        <location filename="../../module/class_info/qt/InfoWidget.ui" line="28"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="../../module/class_info/qt/InfoWidget.ui" line="42"/>
+        <source>Group</source>
+        <translation>Gruppe</translation>
+    </message>
+    <message>
+        <location filename="../../module/class_info/qt/InfoWidget.ui" line="89"/>
+        <source>IFC Mapping</source>
+        <translation>IFC Mapping</translation>
+    </message>
+    <message>
+        <location filename="../../module/class_info/qt/InfoWidget.ui" line="115"/>
+        <source>+</source>
+        <translation>+</translation>
+    </message>
+    <message>
+        <location filename="../../module/class_info/qt/InfoWidget.ui" line="129"/>
+        <source>Description</source>
+        <translation>Beschreibung</translation>
+    </message>
+</context>
+<context>
+    <name>ClassTree</name>
+    <message>
+        <location filename="../../module/modelcheck_window/ui.py" line="24"/>
+        <source>Class</source>
+        <translation>Klasse</translation>
+    </message>
+    <message>
+        <location filename="../../module/modelcheck_window/ui.py" line="24"/>
+        <source>Identifier</source>
+        <translation>Identifier</translation>
+    </message>
+</context>
+<context>
+    <name>ClassTreeWidget</name>
+    <message>
+        <location filename="../../module/mapping/ui.py" line="21"/>
+        <source>IfcMapping</source>
+        <translation>IfcMapping</translation>
+    </message>
+    <message>
+        <location filename="../../module/mapping/ui.py" line="21"/>
+        <source>Class</source>
+        <translation>Klasse</translation>
+    </message>
+    <message>
+        <source>Object</source>
+        <translation type="vanished">Objekt</translation>
+    </message>
+</context>
+<context>
     <name>Compare</name>
     <message>
-        <location filename="../../core/property_.py" line="68"/>
+        <location filename="../../core/property_.py" line="70"/>
         <source>Properties</source>
         <translation>Eigenschaften</translation>
     </message>
     <message>
-        <location filename="../../core/property_.py" line="129"/>
+        <location filename="../../core/property_.py" line="131"/>
         <source>PROPERTY COMPARISON</source>
         <translation>EIGENSCHAFTS VERGLEICH</translation>
     </message>
     <message>
-        <location filename="../../core/property_.py" line="132"/>
+        <location filename="../../core/property_.py" line="134"/>
         <source>{} ({}) was deleted</source>
         <translation>{} ({}) wurde gelöscht</translation>
     </message>
     <message>
-        <location filename="../../core/property_.py" line="138"/>
+        <location filename="../../core/property_.py" line="140"/>
         <source>{} ({}) was added</source>
         <translation>{} ({}) wurde hinzugefügt</translation>
     </message>
@@ -321,9 +387,13 @@
         <translation>Leistungsphase hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="310"/>
+        <location filename="../../core/filter_window.py" line="308"/>
+        <source>CLASS FILTER</source>
+        <translation>KLASSEN FILTER</translation>
+    </message>
+    <message>
         <source>OBJECT FILTER</source>
-        <translation>OBJEKT FILTER</translation>
+        <translation type="vanished">OBJEKT FILTER</translation>
     </message>
     <message>
         <location filename="../../tool/filter_window.py" line="125"/>
@@ -335,6 +405,12 @@
         <location filename="../../tool/filter_window.py" line="151"/>
         <source>New Phase</source>
         <translation>Neue Leistungsphase</translation>
+    </message>
+    <message>
+        <location filename="../../module/filter_window/ui.py" line="369"/>
+        <location filename="../../tool/filter_window.py" line="472"/>
+        <source>Class</source>
+        <translation>Klasse</translation>
     </message>
     <message>
         <location filename="../../module/filter_window/ui.py" line="370"/>
@@ -357,24 +433,22 @@
         <translation>Neuer Titel:</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="453"/>
+        <location filename="../../tool/filter_window.py" line="451"/>
         <source>{}{} [{}][{}] state changed from {} to {}
 </source>
         <translation>{}{} [{}][{}] Status änderte sich von {} zu {}
 </translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="521"/>
+        <location filename="../../tool/filter_window.py" line="527"/>
         <source>Property {0:30} {1:30} state changed from {2:5} to {3:5}
 </source>
         <translation>Merkmal {0:30} {1:30} status ändert sich von {2:5} zu {3:5}
 </translation>
     </message>
     <message>
-        <location filename="../../module/filter_window/ui.py" line="369"/>
-        <location filename="../../tool/filter_window.py" line="472"/>
         <source>Object</source>
-        <translation>Objekt</translation>
+        <translation type="vanished">Objekt</translation>
     </message>
     <message>
         <location filename="../../tool/filter_window.py" line="492"/>
@@ -447,12 +521,12 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="249"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="246"/>
         <source>PropertySet</source>
         <translation>PropertySet</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="259"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="256"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
@@ -462,53 +536,53 @@
         <translation>SOMToolkit</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="254"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="251"/>
         <source>Inherited By</source>
         <translation>Geerbt Von</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="55"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="54"/>
         <source>Class:</source>
         <translation>Klasse:</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="62"/>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="206"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="61"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="203"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="178"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="177"/>
         <source>PropertySet:</source>
         <translation>PropertySet:</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="295"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="292"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="306"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="303"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="311"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="308"/>
         <source>Desite</source>
         <translation>Desite</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="316"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="313"/>
         <source>Models</source>
         <translation>Modelle</translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="327"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="324"/>
         <source>dqwd</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../module/main_window/qt/MainWindow.ui" line="299"/>
+        <location filename="../../module/main_window/qt/MainWindow.ui" line="296"/>
         <source>Export</source>
         <translation>Export</translation>
     </message>
@@ -523,9 +597,8 @@
         <translation>Konsole Einblenden</translation>
     </message>
     <message>
-        <location filename="test/mainwindow.ui" line="14"/>
         <source>MainWindow</source>
-        <translation>Hauptfenster</translation>
+        <translation type="vanished">Hauptfenster</translation>
     </message>
 </context>
 <context>
@@ -542,9 +615,13 @@
         <translation>Title</translation>
     </message>
     <message>
-        <location filename="../../module/mapping/qt/Window.ui" line="35"/>
         <source>Object</source>
-        <translation>Objekt</translation>
+        <translation type="vanished">Objekt</translation>
+    </message>
+    <message>
+        <location filename="../../module/mapping/qt/Window.ui" line="35"/>
+        <source>Class</source>
+        <translation>Klasse</translation>
     </message>
     <message>
         <location filename="../../module/mapping/qt/Window.ui" line="40"/>
@@ -575,7 +652,7 @@
 <context>
     <name>MergeDialog</name>
     <message>
-        <location filename="../../core/project.py" line="139"/>
+        <location filename="../../core/project.py" line="143"/>
         <source>Merge Project</source>
         <translation>Projekt hinzufügen</translation>
     </message>
@@ -593,7 +670,7 @@
 <context>
     <name>Modelcheck</name>
     <message>
-        <location filename="../../core/modelcheck_external.py" line="22"/>
+        <location filename="../../core/modelcheck_external.py" line="30"/>
         <location filename="../../core/modelcheck_window.py" line="73"/>
         <source>Modelcheck</source>
         <translation>Modellprüfung</translation>
@@ -641,20 +718,24 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>IFC Pfad</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_external.py" line="32"/>
-        <location filename="../../core/modelcheck_window.py" line="88"/>
         <source>Object</source>
-        <translation>Objekt</translation>
+        <translation type="vanished">Objekt</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_external.py" line="34"/>
+        <location filename="../../core/modelcheck_external.py" line="41"/>
+        <location filename="../../core/modelcheck_window.py" line="88"/>
+        <source>Class</source>
+        <translation>Klasse</translation>
+    </message>
+    <message>
+        <location filename="../../core/modelcheck_external.py" line="42"/>
         <location filename="../../core/modelcheck_window.py" line="89"/>
         <location filename="../../tool/modelcheck_results.py" line="34"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
-        <location filename="../../core/modelcheck_external.py" line="38"/>
+        <location filename="../../core/modelcheck_external.py" line="48"/>
         <location filename="../../core/modelcheck_window.py" line="95"/>
         <source>PropertySet,Property</source>
         <translation>PropertySet,Merkmal</translation>
@@ -865,73 +946,50 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>Object</name>
     <message>
-        <location filename="../../tool/class_.py" line="202"/>
         <source>Identifier exists allready or is not allowed</source>
-        <translation>Identifier existiert bereits oder ist nicht erlaubt</translation>
+        <translation type="vanished">Identifier existiert bereits oder ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/class_.py" line="206"/>
         <source>Name of Property is not allowed</source>
-        <translation>Name der Eigenschaft ist nicht zugelassen</translation>
+        <translation type="vanished">Name der Eigenschaft ist nicht zugelassen</translation>
     </message>
     <message>
-        <location filename="../../tool/class_.py" line="210"/>
         <source>Name of PropertySet is not allowed</source>
-        <translation>Name des PropertySets ist nicht erlaubt</translation>
+        <translation type="vanished">Name des PropertySets ist nicht erlaubt</translation>
     </message>
 </context>
 <context>
     <name>ObjectInfo</name>
     <message>
-        <location filename="../../module/class_info/qt/InfoWidget.ui" line="20"/>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="vanished">Dialog</translation>
     </message>
     <message>
-        <location filename="../../module/class_info/qt/InfoWidget.ui" line="28"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="vanished">Name</translation>
     </message>
     <message>
-        <location filename="../../module/class_info/qt/InfoWidget.ui" line="42"/>
         <source>Group</source>
-        <translation>Gruppe</translation>
+        <translation type="vanished">Gruppe</translation>
     </message>
     <message>
-        <location filename="../../module/class_info/qt/InfoWidget.ui" line="89"/>
         <source>IFC Mapping</source>
-        <translation>IFC Mapping</translation>
+        <translation type="vanished">IFC Mapping</translation>
     </message>
     <message>
-        <location filename="../../module/class_info/qt/InfoWidget.ui" line="115"/>
         <source>+</source>
-        <translation>hinzufügen</translation>
+        <translation type="vanished">hinzufügen</translation>
     </message>
 </context>
 <context>
     <name>ObjectTree</name>
     <message>
-        <location filename="../../module/modelcheck_window/ui.py" line="24"/>
         <source>Class</source>
-        <translation>Klasse</translation>
+        <translation type="vanished">Klasse</translation>
     </message>
     <message>
-        <location filename="../../module/modelcheck_window/ui.py" line="24"/>
         <source>Identifier</source>
-        <translation>Identifier</translation>
-    </message>
-</context>
-<context>
-    <name>ClassTreeWidget</name>
-    <message>
-        <location filename="../../module/mapping/ui.py" line="20"/>
-        <source>IfcMapping</source>
-        <translation>IfcMapping</translation>
-    </message>
-    <message>
-        <location filename="../../module/mapping/ui.py" line="20"/>
-        <source>Object</source>
-        <translation>Objekt</translation>
+        <translation type="vanished">Identifier</translation>
     </message>
 </context>
 <context>
@@ -1004,13 +1062,21 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
         <location filename="../../tool/popups.py" line="209"/>
-        <source>A PropertySet with the name &apos;{}&apos; allready exists in a parent object. Do you want to create a link?</source>
-        <translation>Ein PropertySet mit dem Namen &apos;{}&apos; existiert bereits in einem Elternelement. Wollen Sie eine Verknüpfung erstellen?</translation>
+        <source>A PropertySet with the name &apos;{}&apos; allready exists in a parent class. Do you want to create a link?</source>
+        <translation>Ein PropertySet mit dem Namen &apos;{}&apos; existiert bereits als Elternelement. Wollen Sie eine Verknüpfung erstellen?</translation>
     </message>
     <message>
         <location filename="../../tool/popups.py" line="248"/>
+        <source>Delete Class?</source>
+        <translation>Klasse löschen?</translation>
+    </message>
+    <message>
+        <source>A PropertySet with the name &apos;{}&apos; allready exists in a parent object. Do you want to create a link?</source>
+        <translation type="vanished">Ein PropertySet mit dem Namen &apos;{}&apos; existiert bereits in einem Elternelement. Wollen Sie eine Verknüpfung erstellen?</translation>
+    </message>
+    <message>
         <source>Delete Object?</source>
-        <translation>Objekt Löschen?</translation>
+        <translation type="vanished">Objekt Löschen?</translation>
     </message>
     <message>
         <location filename="../../tool/popups.py" line="252"/>
@@ -1028,14 +1094,18 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Merkmal löschen?</translation>
     </message>
     <message>
+        <location filename="../../tool/popups.py" line="265"/>
+        <source>Delete Classes?</source>
+        <translation>Klassen löschen?</translation>
+    </message>
+    <message>
         <location filename="../../tool/popups.py" line="277"/>
         <source>Delete Properties?</source>
         <translation>Merkmale löschen?</translation>
     </message>
     <message>
-        <location filename="../../tool/popups.py" line="265"/>
         <source>Delete Objects?</source>
-        <translation>Objekte Löschen?</translation>
+        <translation type="vanished">Objekte Löschen?</translation>
     </message>
     <message>
         <location filename="../../tool/popups.py" line="269"/>
@@ -1057,7 +1127,7 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
         <location filename="../../core/predefined_property_set.py" line="66"/>
-        <location filename="../../core/predefined_property_set.py" line="102"/>
+        <location filename="../../core/predefined_property_set.py" line="100"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
@@ -1072,19 +1142,19 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/predefined_property_set.py" line="103"/>
+        <location filename="../../core/predefined_property_set.py" line="101"/>
         <source>Remove Link</source>
         <translation>Verknüpfung entfernen</translation>
     </message>
     <message>
         <location filename="../../core/predefined_property_set.py" line="33"/>
         <location filename="../../core/predefined_property_set.py" line="40"/>
-        <location filename="../../core/predefined_property_set.py" line="213"/>
+        <location filename="../../core/predefined_property_set.py" line="211"/>
         <source>Predefined Pset</source>
         <translation>Vordefiniertes PropertySet</translation>
     </message>
     <message>
-        <location filename="../../core/predefined_property_set.py" line="275"/>
+        <location filename="../../core/predefined_property_set.py" line="273"/>
         <source>PREDEFINED PROPERTYSETS</source>
         <translation>VORDEFINIERTE PROPERTYSETS</translation>
     </message>
@@ -1153,7 +1223,7 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
         <location filename="../../core/project.py" line="85"/>
-        <location filename="../../core/project.py" line="134"/>
+        <location filename="../../core/project.py" line="138"/>
         <source>Open Project</source>
         <translation>Projekt Öffnen</translation>
     </message>
@@ -1321,17 +1391,22 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Import von &apos;{}&apos; Entitäten abgeschlossen!</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="509"/>
+        <location filename="../../core/property_import.py" line="352"/>
+        <source>Count: {}</source>
+        <translation>Anzahl: {}</translation>
+    </message>
+    <message>
+        <location filename="../../core/property_import.py" line="508"/>
         <source>Settings v</source>
         <translation>Einstellungen v</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="566"/>
+        <location filename="../../core/property_import.py" line="565"/>
         <source>Export Property Data</source>
         <translation>Exportiere Merkmalsdaten</translation>
     </message>
     <message>
-        <location filename="../../core/property_import.py" line="575"/>
+        <location filename="../../core/property_import.py" line="574"/>
         <source>Export Done!</source>
         <translation>Export abgeschlossen!</translation>
     </message>
@@ -1380,7 +1455,7 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
         <location filename="../../core/property_set.py" line="36"/>
-        <location filename="../../tool/property_set.py" line="126"/>
+        <location filename="../../tool/property_set.py" line="127"/>
         <source>PropertySet &apos;{}&apos; exists allready</source>
         <translation>PropertySet &apos;{}&apos; existiert bereits</translation>
     </message>
@@ -1412,12 +1487,12 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>PropertySetTreeWidget</name>
     <message>
-        <location filename="../../module/mapping/ui.py" line="31"/>
+        <location filename="../../module/mapping/ui.py" line="34"/>
         <source>Revit-Mapping</source>
         <translation>Revit-Mapping</translation>
     </message>
     <message>
-        <location filename="../../module/mapping/ui.py" line="31"/>
+        <location filename="../../module/mapping/ui.py" line="33"/>
         <source>PropertySet/Property</source>
         <translation>PropertySet/Merkmal</translation>
     </message>
@@ -1560,9 +1635,13 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>Search</name>
     <message>
-        <location filename="../../tool/search.py" line="92"/>
         <source>Object</source>
-        <translation>Objekt</translation>
+        <translation type="vanished">Objekt</translation>
+    </message>
+    <message>
+        <location filename="../../tool/search.py" line="92"/>
+        <source>Class</source>
+        <translation>Klasse</translation>
     </message>
     <message>
         <location filename="../../tool/search.py" line="93"/>
@@ -1585,14 +1664,18 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Merkmal</translation>
     </message>
     <message>
+        <location filename="../../tool/search.py" line="113"/>
+        <source>Search Class</source>
+        <translation>Klasse suchen</translation>
+    </message>
+    <message>
         <location filename="../../tool/search.py" line="116"/>
         <source>Search Property</source>
         <translation>Merkmal suchen</translation>
     </message>
     <message>
-        <location filename="../../tool/search.py" line="113"/>
         <source>Search Object</source>
-        <translation>Objektsuche</translation>
+        <translation type="vanished">Objektsuche</translation>
     </message>
     <message>
         <location filename="../../module/search/qt/Widget.ui" line="14"/>
@@ -1823,27 +1906,27 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>table</name>
     <message>
-        <location filename="../../tool/property_table.py" line="293"/>
+        <location filename="../../tool/property_table.py" line="286"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../tool/property_table.py" line="327"/>
+        <location filename="../../tool/property_table.py" line="320"/>
         <source>Delete (with subproperties)</source>
         <translation>Löschen (mit Kindmerkmalen)</translation>
     </message>
     <message>
-        <location filename="../../tool/property_table.py" line="329"/>
+        <location filename="../../tool/property_table.py" line="322"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../tool/property_table.py" line="354"/>
+        <location filename="../../tool/property_table.py" line="347"/>
         <source>Remove Connection</source>
         <translation>Verbindung entfernen</translation>
     </message>
     <message>
-        <location filename="../../tool/property_table.py" line="380"/>
+        <location filename="../../tool/property_table.py" line="373"/>
         <source>Connect to Parent</source>
         <translation>Mit Elternelement verbinden</translation>
     </message>
