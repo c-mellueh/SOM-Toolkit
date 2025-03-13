@@ -72,3 +72,6 @@ def modify_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
 
 def create_mime_data(items: list[QTreeWidgetItem], mime_data):
     return core.create_mime_data(items, mime_data, tool.Class)
+
+def group_selection():
+    core.create_group(tool.Class,tool.Project)

@@ -83,7 +83,7 @@ def add_shortcuts(
     search_tool: Type[Search],
     main_window: Type[tool.MainWindow],
     project: Type[tool.Project],
-    class_info:Type[tool.ClassInfo]
+    class_info: Type[tool.ClassInfo],
 ):
     util.add_shortcut("Ctrl+X", main_window.get(), class_tool.delete_selection)
     util.add_shortcut("Ctrl+G", main_window.get(), class_tool.group_selection)
@@ -92,7 +92,10 @@ def add_shortcuts(
         main_window.get(),
         lambda: search_class(search_tool, class_tool, project),
     )
-    util.add_shortcut("Ctrl+C", main_window.get(), lambda:class_info.trigger_class_info_widget(2))
+    util.add_shortcut(
+        "Ctrl+C", main_window.get(), lambda: class_info.trigger_class_info_widget(2)
+    )
+
 
 def search_class(
     search_tool: Type[Search], class_tool: Type[Class], project: Type[tool.Project]
@@ -114,12 +117,15 @@ def resize_columns(class_tool: Type[Class]):
 
 
 def load_context_menus(
-    class_tool: Type[Class], class_info: Type[tool.ClassInfo], project: Type[tool.Project]
+    class_tool: Type[Class],
+    class_info: Type[tool.ClassInfo],
+    project: Type[tool.Project],
 ):
     class_tool.clear_context_menu_list()
     class_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Class", "Copy"),
         lambda: class_info.trigger_class_info_widget(2),
+        True,
         True,
         False,
     )
@@ -128,10 +134,12 @@ def load_context_menus(
         class_tool.delete_selection,
         True,
         True,
+        True,
     )
     class_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Class", "Extend"),
         class_tool.expand_selection,
+        True,
         True,
         True,
     )
@@ -140,22 +148,25 @@ def load_context_menus(
         class_tool.collapse_selection,
         True,
         True,
+        True,
     )
     class_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Class", "Group"),
-        lambda: create_group(class_tool,project),
+        class_tool.group_selection,
+        True,
         True,
         True,
     )
     class_tool.add_context_menu_entry(
         lambda: QCoreApplication.translate("Class", "Info"),
-        lambda: class_tool.trigger_class_info_widget(1),
+        lambda: class_info.trigger_class_info_widget(1),
+        True,
         True,
         False,
     )
 
 
-def create_group(class_tool: Type[Class],project:Type[tool.Project]):
+def create_group(class_tool: Type[Class], project: Type[tool.Project]):
     d = {
         "name": QCoreApplication.translate("Class", "NewGroup"),
         "is_group": True,

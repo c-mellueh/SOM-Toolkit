@@ -127,9 +127,11 @@ class Class(som_gui.core.tool.Class):
         prop = cls.get_properties()
         selected_items = cls.get_selected_items()
         menu_list = prop.context_menu_list
-        if len(selected_items) == 1:
+        if len(selected_items) <1:
+            menu_list = filter(lambda d: not d["on_selection"], menu_list)
+        elif len(selected_items) == 1:
             menu_list = filter(lambda d: d["on_single_select"], menu_list)
-        if len(selected_items) > 1:
+        elif len(selected_items) > 1:
             menu_list = filter(lambda d: d["on_multi_select"], menu_list)
         for menu_entry in menu_list:
             menu_entry["action"] = menu.addAction(menu_entry["name_getter"]())
@@ -170,7 +172,7 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def group_selection(cls):
-        pass
+        trigger.group_selection()
 
     @classmethod
     def clear_context_menu_list(cls):
@@ -178,14 +180,24 @@ class Class(som_gui.core.tool.Class):
         prop.context_menu_list = list()
 
     @classmethod
-    def add_context_menu_entry(
-        cls, name_getter: Callable, function: Callable, single: bool, multi: bool
-    ) -> ContextMenuDict:
+    def add_context_menu_entry(cls, name_getter: Callable, function: Callable,on_selection:bool, single: bool, multi: bool) -> ContextMenuDict:
+        """
+        Adds an entry to the context menu.
+
+        :param name_getter: A callable that returns the name for the context menu entry.
+        :param function: A callable that defines the function to be executed when the context menu entry is selected.
+        :param on_selection: A boolean indicating if the entry shold be only availible if class is selected
+        :param single: A boolean indicating if the entry should be available for single selection.
+        :param multi: A boolean indicating if the entry should be available for multi-selection.
+        :return: A dictionary representing the context menu entry.
+        :rtype: ContextMenuDict
+        """
         d: ContextMenuDict = dict()
         d["name_getter"] = name_getter
         d["function"] = function
         d["on_multi_select"] = multi
         d["on_single_select"] = single
+        d["on_selection"] = on_selection
         prop = cls.get_properties()
         prop.context_menu_list.append(d)
         return d

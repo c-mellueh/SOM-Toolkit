@@ -89,6 +89,10 @@ class SOMClass(BaseClass):
     def project(self) -> SOMcreator.SOMProject | None:
         return self._project
 
+    @project.setter
+    def project(self, value: SOMcreator.SOMProject) -> None:
+        super(SOMClass, self.__class__).project.__set__(self, value)
+
     @property
     def abbreviation(self) -> str:
         return self._abbreviation
