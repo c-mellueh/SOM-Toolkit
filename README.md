@@ -54,7 +54,7 @@ The `som_gui` is a graphical user interface for non-programmers or users seeking
    
 2. Install dependencies
    ```bash
-   pip install -r requirements.txt
+   pip install -r ./som_gui/requirements.txt
 
 3. Test the installation:
 * for SOMcreator: Run the example script in examples/.
