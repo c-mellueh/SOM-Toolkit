@@ -9,6 +9,7 @@ class ClassDataDict(TypedDict):
     ident_property_name: str
     ident_value: str
     ifc_mappings: list[str]
+    parent_uuid:str
 
 class ClassProperties:
     class_activate_functions = list()

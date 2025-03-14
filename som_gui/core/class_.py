@@ -130,9 +130,9 @@ def create_class(
     proj = project.get()
     # handle group
     if is_group:
-        som_class = SOMcreator.SOMClass(name, project=proj)
-        som_class.ident_value = str(som_class.uuid)
-        som_class.description = description
+        new_class = SOMcreator.SOMClass(name, project=proj)
+        new_class.ident_value = str(new_class.uuid)
+        new_class.description = description
         return
 
     # handle identifier
@@ -145,15 +145,15 @@ def create_class(
     if result != constants.OK:
         class_tool.handle_property_issue(result)
         return
-    som_class = SOMcreator.SOMClass(name, project=proj)
-    som_class.description = description
+    new_class = SOMcreator.SOMClass(name, project=proj)
+    new_class.description = description
 
     # create identifier property_set
     parent_pset = property_set.search_for_parent(
         pset_name,
         predefined_property_set.get_property_sets(),
     )
-    pset = property_set.create_property_set(pset_name, som_class, parent_pset)
+    pset = property_set.create_property_set(pset_name, new_class, parent_pset)
 
     # create identifier property
     ident_property = pset.get_property_by_name(property_name)
@@ -164,5 +164,9 @@ def create_class(
         )
     ident_property.allowed_values = [identifier]
     ident_property.project = proj
-    class_info.add_plugin_infos_to_class(som_class, data_dict)
-    class_tool.modify_class(som_class, data_dict)
+    class_info.add_plugin_infos_to_class(new_class, data_dict)
+    class_tool.modify_class(new_class, data_dict)
+    parent_uuid= data_dict.get("parent_uuid")
+    if parent_uuid:
+        parent_class = proj.get_element_by_uuid(parent_uuid)
+        parent_class.add_child(new_class)
