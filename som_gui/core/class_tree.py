@@ -8,7 +8,6 @@ from PySide6.QtGui import QDropEvent
 
 import SOMcreator
 from som_gui import tool
-from som_gui.core.property_set import repaint_pset_table as refresh_property_set_table
 import som_gui.module.class_tree.constants as constants
 import copy as cp
 
@@ -52,8 +51,9 @@ def init_tree(
     )
 
     tree.customContextMenuRequested.connect(
-        lambda p: create_context_menu(tree,p, tool.ClassTree)
+        lambda p: create_context_menu(tree, p, tool.ClassTree)
     )
+
 
 def retranslate_ui(class_tree: Type[tool.ClassTree]) -> None:
     return
@@ -67,7 +67,8 @@ def create_mime_data(
     return mime_data
 
 
-def search_class(tree:ui.ClassTreeWidget,
+def search_class(
+    tree: ui.ClassTreeWidget,
     search_tool: Type[Search],
     class_tree: Type[tool.ClassTree],
     project: Type[tool.Project],
@@ -77,10 +78,11 @@ def search_class(tree:ui.ClassTreeWidget,
     class_tree.select_class(tree, som_class)
 
 
-
-
-
-def create_group(tree:ui.ClassTreeWidget,class_tree: Type[tool.ClassTree], project: Type[tool.Project]):
+def create_group(
+    tree: ui.ClassTreeWidget,
+    class_tree: Type[tool.ClassTree],
+    project: Type[tool.Project],
+):
     d = {
         "name": QCoreApplication.translate("Class", "NewGroup"),
         "is_group": True,
@@ -95,20 +97,27 @@ def create_group(tree:ui.ClassTreeWidget,class_tree: Type[tool.ClassTree], proje
     class_tree.group_classes(som_class, selected_classes)
 
 
-def create_context_menu(tree:ui.ClassTreeWidget,pos: QPoint, class_tree: Type[tool.ClassTree]):
+def create_context_menu(
+    tree: ui.ClassTreeWidget, pos: QPoint, class_tree: Type[tool.ClassTree]
+):
     menu = class_tree.create_context_menu(tree)
     menu_pos = tree.viewport().mapToGlobal(pos)
     menu.exec(menu_pos)
 
 
-def refresh_class_tree(tree:ui.ClassTreeWidget,class_tree: Type[tool.ClassTree], project_tool: Type[Project]):
+def refresh_class_tree(
+    tree: ui.ClassTreeWidget,
+    class_tree: Type[tool.ClassTree],
+    project_tool: Type[Project],
+):
 
     root_classes = project_tool.get_root_classes(filter_classes=True)
     if class_tree.get_properties().first_paint:
         tree.clear()
-        class_tree.set_first_paint(tree,False)
+        class_tree.set_first_paint(tree, False)
         retranslate_ui(class_tree)
-    class_tree.fill_class_tree(set(root_classes), tree.invisibleRootItem())
+    class_tree.fill_class_tree(tree, set(root_classes), tree.invisibleRootItem())
+
 
 def drop_event(
     event: QDropEvent,
@@ -119,13 +128,11 @@ def drop_event(
     pos = event.pos()
     source_table = event.source()
     if source_table == target:
-        dropped_on_item = class_tree.get_item_from_pos(target,pos)
-        class_tree.handle_class_move(target,dropped_on_item)
+        dropped_on_item = class_tree.get_item_from_pos(target, pos)
+        class_tree.handle_class_move(target, dropped_on_item)
         return
     classes = class_tree.get_classes_from_mimedata(event.mimeData())
     if not classes:
         return
     for som_class in classes:
         project.get().add_item(som_class)
-
-

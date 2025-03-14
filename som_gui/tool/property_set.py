@@ -154,8 +154,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
             table.removeRow(row)
 
     @classmethod
-    def get_property_sets(cls) -> set[SOMcreator.SOMPropertySet]:
-        active_class = tool.ClassTree.get_active_class()
+    def get_property_sets(cls,active_class:SOMcreator.SOMClass) -> set[SOMcreator.SOMPropertySet]:
         if active_class is None:
             return set()
         return set(active_class.get_property_sets(filter=True))

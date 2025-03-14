@@ -44,7 +44,7 @@ def on_new_project():
 
 
 def repaint_event():
-    core.repaint_pset_table(tool.PropertySet, tool.ClassTree)
+    core.repaint_pset_table(tool.PropertySet, tool.MainWindow)
 
 
 def pset_table_context_menu_requested(pos):

@@ -192,9 +192,10 @@ def class_selection_changed(
         # reselect the same pset that is allready selected
         if not selected_pset:
             return
-        pset = {p.name: p for p in property_set_tool.get_property_sets()}.get(
-            selected_pset.name
-        )
+        pset = {
+            p.name: p
+            for p in property_set_tool.get_property_sets(main_window.get_active_class())
+        }.get(selected_pset.name)
         if pset:
             property_set_tool.select_property_set(pset)
     else:

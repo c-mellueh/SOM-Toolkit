@@ -181,7 +181,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_ui().label_pset_name
 
     @classmethod
-    def trigger_class_changed():
+    def trigger_class_changed(cls):
         trigger.class_item_selection_changed()
 
     @classmethod
