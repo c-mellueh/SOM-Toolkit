@@ -11,7 +11,7 @@ class ClassTreeWidget(QTreeWidget):
 
     def paintEvent(self, event):
         super().paintEvent(event)
-        class_tree.trigger.repaint_event()
+        class_tree.trigger.repaint_event(self)
 
     def dropEvent(self, event):
         class_tree.trigger.drop_event(event,self)

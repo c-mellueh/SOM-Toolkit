@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import ctypes
 from typing import Callable, TYPE_CHECKING
-
+import SOMcreator
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QApplication,
@@ -13,11 +13,12 @@ from PySide6.QtWidgets import (
     QStatusBar,
     QLabel,
 )
-
+from som_gui import tool
 
 import som_gui
 import som_gui.core.tool
 from som_gui.module.main_window import ui as ui_main_window
+from som_gui.module.main_window import trigger
 
 if TYPE_CHECKING:
     from som_gui.module.main_window.prop import MainWindowProperties
@@ -178,3 +179,17 @@ class MainWindow(som_gui.core.tool.MainWindow):
     @classmethod
     def get_pset_name_label(cls) -> QLabel:
         return cls.get_ui().label_pset_name
+
+    @classmethod
+    def trigger_class_changed():
+        trigger.class_item_selection_changed()
+
+    @classmethod
+    def get_active_class(cls) -> SOMcreator.SOMClass | None:
+        return cls.get_properties().active_class
+
+    
+    @classmethod
+    def set_active_class(cls, som_class: SOMcreator.SOMClass):
+        cls.get_properties().active_class = som_class
+        tool.Class.fill_class_entry(som_class)

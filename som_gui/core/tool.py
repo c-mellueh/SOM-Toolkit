@@ -211,7 +211,7 @@ class ClassTree:
     ):
         pass
 
-    def drop_indication_pos_is_on_item(
+    def is_drop_indication_pos_on_item(
         self,
     ):
         pass
@@ -241,10 +241,6 @@ class ClassTree:
     def get_class_from_item(self, item):
         pass
 
-    def get_class_tree(
-        self,
-    ):
-        pass
 
     def get_classes_from_mimedata(self, mime_data):
         pass
@@ -275,7 +271,7 @@ class ClassTree:
     ):
         pass
 
-    def get_selected_items(
+    def get_selected(
         self,
     ):
         pass
@@ -3421,6 +3417,7 @@ class Util:
 
     def transform_guid(self, guid, add_zero_width):
         pass
+
 
 class Class:
     pass

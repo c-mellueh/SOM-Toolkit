@@ -25,7 +25,8 @@ from som_gui.module.class_tree import trigger, constants
 if TYPE_CHECKING:
     from som_gui.module.class_tree.prop import ClassTreeProperties, ContextMenuDict
     from som_gui.module.class_tree.ui import ClassTreeWidget
-    from som_gui.module.class_info.prop import ClassDataDict
+    from som_gui.module.class_.prop import ClassDataDict
+    from som_gui.module.class_tree import ui
 
 
 class ClassTree(som_gui.core.tool.ClassTree):
@@ -34,41 +35,68 @@ class ClassTree(som_gui.core.tool.ClassTree):
         return som_gui.ClassTreeProperties
 
     @classmethod
-    def clear_tree(cls):
-        tree = cls.get_class_tree()
-        tree.clear()
+    def reset_tree(cls,tree: ui.ClassTreeWidget):
+        cls.set_first_paint(tree,False)
+    @classmethod
+    def get_trees(cls) -> set[ui.ClassTreeWidget]:
+        return cls.get_properties().existing_trees
 
     @classmethod
-    def add_column_to_tree(cls, name_getter, index, getter_func, setter_func=None):
-        tree = cls.get_class_tree()
-        cls.get_properties().column_List.insert(
-            index, (name_getter, getter_func, setter_func)
-        )
+    def add_tree(cls, tree: ui.ClassTreeWidget):
+        cls.get_properties().existing_trees.add(tree)
+        cls.get_properties().active_class[tree] = None
+        cls.get_properties().context_menu_list[tree] = list()
+        cls.get_properties().first_paint[tree] = True
+        cls.get_properties().column_List[tree] = list()
 
-        header = tree.headerItem()
-        header_texts = cls.get_header_names()
+    @classmethod
+    def remove_tree(cls, tree: ui.ClassTreeWidget):
+        cls.get_properties().existing_trees.remove(tree)
+        cls.get_properties().active_class.pop(tree)
+        cls.get_properties().context_menu_list.pop(tree)
+        cls.get_properties().first_paint.pop(tree)
+        cls.get_properties().column_List.pop(tree)
+
+    @classmethod
+    def is_first_paint(cls, tree: ui.ClassTreeWidget):
+        return cls.get_properties().first_paint[tree]
+
+    @classmethod
+    def set_first_paint(cls, tree: ui.ClassTreeWidget, value: bool):
+        cls.get_properties().first_paint[tree] = value
+
+    @classmethod
+    def add_column_to_tree(
+        cls, tree: ui.ClassTreeWidget, name_getter, index, getter_func, setter_func=None
+    ):
+        if tree not in cls.get_trees():
+            return
+
+        cl = cls.get_properties().column_List
+        cl.get(tree).insert(index, (name_getter, getter_func, setter_func))
+        cls.get_properties().column_List = cl
+
+        header_texts = cls.get_header_names(tree)
         tree.setColumnCount(tree.columnCount() + 1)
         for col, name in enumerate(header_texts):
-            header.setText(col, name)
-
-        trigger.on_new_project()
+            tree.headerItem().setText(col, name)
+        cls.reset_tree(tree)
 
     @classmethod
-    def remove_column_from_tree(cls, column_name: str):
-        tree = cls.get_class_tree()
+    def remove_column_from_tree(cls, tree: ui.ClassTreeWidget, column_name: str):
         header = tree.headerItem()
-        header_texts = cls.get_header_names()
+        header_texts = cls.get_header_names(tree)
         column_index = header_texts.index(column_name)
         cls.get_properties().column_List.pop(column_index)
         tree.setColumnCount(tree.columnCount() - 1)
         header_texts.pop(column_index)
         for col, name in enumerate(header_texts):
             header.setText(col, name)
-        trigger.on_new_project()
+        cls.reset_tree(tree)
 
     @classmethod
-    def get_header_names(cls) -> list[str]:
-        return [x[0]() for x in cls.get_properties().column_List]
+    def get_header_names(cls, tree: ui.ClassTreeWidget) -> list[str]:
+        return [x[0]() for x in cls.get_properties().column_List.get(tree) or []]
 
     @classmethod
     def create_completer(cls, texts, widget: QLineEdit | QComboBox):
@@ -76,7 +104,9 @@ class ClassTree(som_gui.core.tool.ClassTree):
         widget.setCompleter(completer)
 
     @classmethod
-    def get_item_from_class(cls, som_class: SOMcreator.SOMClass) -> QTreeWidgetItem:
+    def get_item_from_class(
+        cls, tree: ui.ClassTreeWidget, som_class: SOMcreator.SOMClass
+    ) -> QTreeWidgetItem:
         def iter_tree(item: QTreeWidgetItem):
             for child_index in range(item.childCount()):
                 child = item.child(child_index)
@@ -87,20 +117,20 @@ class ClassTree(som_gui.core.tool.ClassTree):
                     return result
             return None
 
-        tree = cls.get_class_tree()
         return iter_tree(tree.invisibleRootItem())
 
     @classmethod
-    def select_class(cls, som_class: SOMcreator.SOMClass) -> None:
-        item = cls.get_item_from_class(som_class)
+    def select_class(
+        cls, tree: ui.ClassTreeWidget, som_class: SOMcreator.SOMClass
+    ) -> None:
+        item = cls.get_item_from_class(tree, som_class)
         if item is None:
             return
-        tree = cls.get_class_tree()
-        for selected_item in tree.selectedItems():
+        for selected_item in cls.get_selected(tree):
             selected_item.setSelected(False)
         item.setSelected(True)
         cls.expand_to_item(item)
-        cls.get_class_tree().scrollToItem(item)
+        tree.scrollToItem(item)
 
     @classmethod
     def expand_to_item(cls, item: QTreeWidgetItem):
@@ -109,8 +139,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
             cls.expand_to_item(item.parent())
 
     @classmethod
-    def resize_tree(cls):
-        tree = cls.get_class_tree()
+    def resize_tree(cls, tree: ui.ClassTreeWidget):
         for col in reversed(range(tree.columnCount())):
             tree.resizeColumnToContents(col)
 
@@ -122,10 +151,10 @@ class ClassTree(som_gui.core.tool.ClassTree):
             parent.add_child(child)
 
     @classmethod
-    def create_context_menu(cls):
+    def create_context_menu(cls, tree: ui.ClassTreeWidget):
         menu = QMenu()
         prop = cls.get_properties()
-        selected_items = cls.get_selected_items()
+        selected_items = cls.get_selected(tree)
         menu_list = prop.context_menu_list
         if len(selected_items) < 1:
             menu_list = filter(lambda d: not d["on_selection"], menu_list)
@@ -139,8 +168,10 @@ class ClassTree(som_gui.core.tool.ClassTree):
         return menu
 
     @classmethod
-    def get_selected_classes(cls) -> list[SOMcreator.SOMClass]:
-        selected_items = cls.get_selected_items()
+    def get_selected_classes(
+        cls, tree: ui.ClassTreeWidget
+    ) -> list[SOMcreator.SOMClass]:
+        selected_items = cls.get_selected(tree)
         return [cls.get_class_from_item(item) for item in selected_items]
 
     @classmethod
@@ -148,8 +179,8 @@ class ClassTree(som_gui.core.tool.ClassTree):
         som_class.delete(recursive)
 
     @classmethod
-    def delete_selection(cls):
-        som_classes = cls.get_selected_classes()
+    def delete_selection(cls, tree: ui.ClassTreeWidget):
+        som_classes = cls.get_selected_classes(tree)
         delete_request, recursive_deletion = tool.Popups.req_delete_items(
             [som_class.name for som_class in som_classes], item_type=1
         )
@@ -159,29 +190,28 @@ class ClassTree(som_gui.core.tool.ClassTree):
             cls.delete_class(som_class, recursive_deletion)
 
     @classmethod
-    def expand_selection(cls):
-        tree = cls.get_class_tree()
+    def expand_selection(cls, tree: ui.ClassTreeWidget):
         for index in tree.selectedIndexes():
             tree.expandRecursively(index)
 
     @classmethod
-    def collapse_selection(cls):
-        tree = cls.get_class_tree()
-        for item in tree.selectedItems():
+    def collapse_selection(cls, tree: ui.ClassTreeWidget):
+        for item in cls.get_selected(tree):
             tree.collapseItem(item)
 
     @classmethod
-    def group_selection(cls):
-        trigger.group_selection()
+    def group_selection(cls, tree: ui.ClassTreeWidget):
+        trigger.group_selection(tree)
 
     @classmethod
-    def clear_context_menu_list(cls):
+    def clear_context_menu_list(cls, tree: ui.ClassTreeWidget):
         prop = cls.get_properties()
-        prop.context_menu_list = list()
+        prop.context_menu_list[tree] = list()
 
     @classmethod
     def add_context_menu_entry(
         cls,
+        tree: ui.ClassTreeWidget,
         name_getter: Callable,
         function: Callable,
         on_selection: bool,
@@ -206,49 +236,8 @@ class ClassTree(som_gui.core.tool.ClassTree):
         d["on_single_select"] = single
         d["on_selection"] = on_selection
         prop = cls.get_properties()
-        prop.context_menu_list.append(d)
+        prop.context_menu_list[tree].append(d)
         return d
-
-    @classmethod
-    def handle_property_issue(cls, result: int):
-        if result == constants.OK:
-            return True
-        if result == constants.IDENT_ISSUE:
-            text = QCoreApplication.translate(
-                "Class", "Identifier exists allready or is not allowed"
-            )
-        elif result == constants.IDENT_PROPERTY_ISSUE:
-            text = QCoreApplication.translate(
-                "Class", "Name of Property is not allowed"
-            )
-        elif result == constants.IDENT_PSET_ISSUE:
-            text = QCoreApplication.translate(
-                "Class", "Name of PropertySet is not allowed"
-            )
-        else:
-            return False
-        logging.debug(text)
-        tool.Popups.create_warning_popup(text)
-        return False
-
-    @classmethod
-    def set_ident_value(cls, som_class: SOMcreator.SOMClass, value: str):
-        if som_class.is_concept:
-            return
-        som_class.identifier_property.allowed_values = [value]
-
-    @classmethod
-    def find_property(
-        cls, som_class: SOMcreator.SOMClass, pset_name: str, property_name: str
-    ):
-        pset = som_class.get_property_set_by_name(pset_name)
-        if pset is None:
-            return None
-        return pset.get_property_by_name(property_name)
-
-    @classmethod
-    def get_active_class(cls) -> SOMcreator.SOMClass | None:
-        return cls.get_properties().active_class
 
     @classmethod
     def get_existing_ident_values(cls) -> set[str]:
@@ -260,31 +249,10 @@ class ClassTree(som_gui.core.tool.ClassTree):
         return ident_values
 
     @classmethod
-    def is_identifier_allowed(
-        cls, identifier, ignore: list[str] = None, is_group=False
-    ):
-        """
-        identifier: value which will be checked against all identifiers
-        ignore: list of values which will be ignored
-        """
-        if is_group:
-            return True
-        if identifier is None:
-            return False
-        identifiers = cls.get_existing_ident_values()
-        if ignore is not None:
-            identifiers = list(filter(lambda i: i not in ignore, identifiers))
-        if identifier in identifiers or not identifier:
-            return False
-        else:
-            return True
+    def is_drop_indication_pos_on_item(cls, tree: ui.ClassTreeWidget):
 
-    @classmethod
-    def drop_indication_pos_is_on_item(cls):
-
-        widget = cls.get_class_tree()
         if (
-            widget.dropIndicatorPosition()
+            tree.dropIndicatorPosition()
             == QAbstractItemView.DropIndicatorPosition.OnItem
         ):
             return True
@@ -292,51 +260,29 @@ class ClassTree(som_gui.core.tool.ClassTree):
             return False
 
     @classmethod
-    def get_item_from_pos(cls, pos: QPoint):
-
-        widget = cls.get_class_tree()
-        return widget.itemFromIndex(widget.indexAt(pos))
+    def get_item_from_pos(cls, tree: ui.ClassTreeWidget, pos: QPoint):
+        return tree.itemFromIndex(tree.indexAt(pos))
 
     @classmethod
-    def get_selected_items(cls) -> list[QTreeWidgetItem]:
-        widget = cls.get_class_tree()
-        return widget.selectedItems()
+    def get_selected(cls, tree: ui.ClassTreeWidget) -> list[QTreeWidgetItem]:
+        return tree.selectedItems()
 
     @classmethod
     def get_class_from_item(cls, item: QTreeWidgetItem) -> SOMcreator.SOMClass:
         return item.data(0, constants.CLASS_REFERENCE)
 
     @classmethod
-    def add_class_activate_function(cls, func: Callable):
-        cls.get_properties().class_activate_functions.append(func)
-
-    @classmethod
-    def fill_class_entry(cls, som_class: SOMcreator.SOMClass):
-        for func in cls.get_properties().class_activate_functions:
-            func(som_class)
-
-    @classmethod
-    def set_active_class(cls, som_class: SOMcreator.SOMClass):
-        prop: ClassTreeProperties = cls.get_properties()
-        prop.active_class = som_class
-        cls.fill_class_entry(som_class)
-
-    @classmethod
-    def update_check_state(cls, item: QTreeWidgetItem):
+    def update_check_state(cls, tree: ui.ClassTreeWidget, item: QTreeWidgetItem):
         som_class: SOMcreator.SOMClass = cls.get_class_from_item(item)
         if not som_class:
             return
         values = [
             [getter_func(som_class), setter_func]
-            for n, getter_func, setter_func in cls.get_properties().column_List
+            for n, getter_func, setter_func in cls.get_properties().column_List[tree]
         ]
         for column, [value, setter_func] in enumerate(values):
             if setter_func is not None:
                 setter_func(item, column)
-
-    @classmethod
-    def get_class_tree(cls) -> ClassTreeWidget:
-        return tool.MainWindow.get_class_tree_widget()
 
     @classmethod
     def create_item(cls, som_class: SOMcreator.SOMClass):
@@ -401,10 +347,6 @@ class ClassTree(som_gui.core.tool.ClassTree):
             cls.fill_class_tree(set(som_class.get_children(filter=True)), item)
 
     @classmethod
-    def add_class_creation_check(cls, key, check_function):
-        cls.get_properties().class_add_checks.append((key, check_function))
-
-    @classmethod
     def set_class_optional_by_tree_item_state(
         cls, item: QTreeWidgetItem, column_index: int
     ):
@@ -412,75 +354,6 @@ class ClassTree(som_gui.core.tool.ClassTree):
         som_class.set_optional(
             True if item.checkState(column_index) == Qt.CheckState.Checked else False
         )
-
-    @classmethod
-    def trigger_class_creation(
-        cls,
-        data_dict: ClassDataDict,
-    ):
-        trigger.create_class_called(data_dict)
-
-    @classmethod
-    def trigger_class_copy(
-        cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
-    ):
-        trigger.copy_class_called(som_class, data_dict)
-
-    @classmethod
-    def trigger_class_modification(
-        cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
-    ):
-        trigger.modify_class_called(som_class, data_dict)
-
-    @classmethod
-    def modify_class(
-        cls, som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
-    ) -> int:
-        som_class.name = data_dict.get("name", som_class.name)
-        som_class.ifc_mapping = data_dict.get("ifc_mappings", som_class.ifc_mapping)
-        som_class.description = data_dict.get("description", "")
-
-        if data_dict.get("is_group"):
-            if not som_class.is_concept:
-                som_class.identifier_property = str(uuid.uuid4())
-            return
-
-        pset_name = data_dict.get("ident_pset_name")
-        identifier_name = data_dict.get("ident_property_name")
-        if pset_name and identifier_name:
-            ident_property = cls.find_property(som_class, pset_name, identifier_name)
-            som_class.identifier_property = (
-                ident_property or som_class.identifier_property
-            )
-
-        ident_value = data_dict.get("ident_value")
-        if ident_value is not None:
-            cls.set_ident_value(som_class, ident_value)
-
-    @classmethod
-    def create_class(
-        cls,
-        data_dict: ClassDataDict,
-        property_set: SOMcreator.SOMPropertySet,
-        identifier_property: SOMcreator.SOMProperty,
-    ):
-        if data_dict.get("is_group", False):
-            ident = str(uuid.uuid4())
-            new_class = SOMcreator.SOMClass(data_dict["name"], ident, uuid=ident)
-        else:
-            new_class = SOMcreator.SOMClass(data_dict["name"], identifier_property)
-            new_class.add_property_set(property_set)
-
-        new_class.ifc_mapping = data_dict.get("ifc_mappings") or new_class.ifc_mapping
-        return new_class
-
-    @classmethod
-    def check_class_creation_input(cls, data_dict: ClassDataDict) -> bool:
-        prop = cls.get_properties()
-        for key, check_function in prop.class_add_checks:
-            if not check_function(data_dict):
-                return False
-        return True
 
     @classmethod
     def write_classes_to_mimedata(
@@ -499,8 +372,10 @@ class ClassTree(som_gui.core.tool.ClassTree):
         return pickle.loads(serialized)
 
     @classmethod
-    def handle_class_move(cls, dropped_on_item: QTreeWidgetItem):
-        selected_items = cls.get_selected_items()
+    def handle_class_move(
+        cls, tree: ui.ClassTreeWidget, dropped_on_item: QTreeWidgetItem
+    ):
+        selected_items = cls.get_selected(tree)
         dropped_classes = [cls.get_class_from_item(item) for item in selected_items]
         dropped_classes = [
             o
@@ -513,7 +388,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
             return
         dropped_on_class = cls.get_class_from_item(dropped_on_item)
 
-        if not cls.drop_indication_pos_is_on_item():
+        if not cls.is_drop_indication_pos_on_item(tree):
             dropped_on_class = dropped_on_class.parent
 
         for som_class in dropped_classes:
@@ -521,3 +396,9 @@ class ClassTree(som_gui.core.tool.ClassTree):
                 som_class.remove_parent()
             else:
                 som_class.parent = dropped_on_class
+
+    def trigger_tree_init(tree: ui.ClassTreeWidget):
+        trigger.init_tree(tree)
+
+    def trigger_search(tree: ui.ClassTreeWidget):
+        trigger.search_class(tree)

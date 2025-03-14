@@ -4,12 +4,12 @@ from som_gui.plugins.aggregation_window.core import aggregation as core
 
 
 def activate():
-    core.activate(tool.ClassTree, tool.ClassInfo, aw_tool.Aggregation, tool.Project)
+    core.activate(tool.ClassTree, tool.ClassInfo, aw_tool.Aggregation, tool.Project,tool.MainWindow)
     core.create_main_menu_actions(aw_tool.Aggregation, tool.MainWindow)
 
 
 def deactivate():
-    core.deactivate(tool.ClassTree, tool.ClassInfo, aw_tool.Aggregation, tool.Project)
+    core.deactivate(tool.ClassTree, tool.ClassInfo, aw_tool.Aggregation, tool.Project,tool.MainWindow)
     core.remove_main_menu_actions(aw_tool.Aggregation, tool.MainWindow)
 
 

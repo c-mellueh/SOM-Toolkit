@@ -7,6 +7,7 @@ from PySide6.QtGui import QPalette
 
 if TYPE_CHECKING:
     from som_gui import tool
+    import SOMcreator
 
 
 def retranslate_ui(class_info: Type[tool.ClassInfo]) -> None:
@@ -15,6 +16,7 @@ def retranslate_ui(class_info: Type[tool.ClassInfo]) -> None:
 
 def create_class_info_widget(
     mode: int,
+    som_class: SOMcreator.SOMClass,
     class_tool: Type[tool.ClassTree],
     class_info: Type[tool.ClassInfo],
     predefined_property_set: Type[tool.PredefinedPropertySet],
@@ -27,21 +29,21 @@ def create_class_info_widget(
     title = util.get_window_title(
         QCoreApplication.translate("Class Info", "Class Info")
     )
-    if mode != 0 and not class_tool.get_active_class():
+    if mode != 0 and not som_class:
         return
     dialog = class_info.create_dialog(title)
-    class_info.set_active_class(class_tool.get_active_class())
+    class_info.set_active_class(som_class)
     predefined_psets = list(predefined_property_set.get_property_sets())
     class_info.connect_dialog(dialog, predefined_psets)
     class_info.oi_fill_properties(mode=mode)
     class_info.update_dialog(dialog)
     pset_names = [p.name for p in predefined_psets]
     if mode != 0:
-        pset_names += list(class_info.get_active_class().get_properties())
+        pset_names += list(som_class.get_properties())
     util.create_completer(pset_names, dialog.ui.combo_box_pset)
 
     if dialog.exec():
-        active_class = class_info.get_active_class()
+        active_class = som_class
         data_dict = class_info.generate_datadict()
         if mode == 0:
             class_tool.trigger_class_creation(data_dict)
