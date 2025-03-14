@@ -17,7 +17,7 @@ def connect():
     pass
 
 def class_info_paint_event():
-    core.class_info_refresh(tool.ClassTree, tool.ClassInfo)
+    core.class_info_refresh(tool.Class, tool.ClassInfo)
     pass
 
 
@@ -27,5 +27,5 @@ def retranslate_ui():
 
 def create_class_info_widget(mode: int,som_class:SOMcreator.SOMClass|None):
     core.create_class_info_widget(
-        mode,som_class, tool.ClassTree, tool.ClassInfo, tool.PredefinedPropertySet, tool.Util
+        mode,som_class, tool.Class, tool.ClassInfo, tool.PredefinedPropertySet, tool.Util
     )

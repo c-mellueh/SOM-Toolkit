@@ -155,7 +155,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
         menu = QMenu()
         prop = cls.get_properties()
         selected_items = cls.get_selected(tree)
-        menu_list = prop.context_menu_list
+        menu_list = prop.context_menu_list[tree]
         if len(selected_items) < 1:
             menu_list = filter(lambda d: not d["on_selection"], menu_list)
         elif len(selected_items) == 1:
@@ -239,14 +239,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
         prop.context_menu_list[tree].append(d)
         return d
 
-    @classmethod
-    def get_existing_ident_values(cls) -> set[str]:
-        proj = tool.Project.get()
-        ident_values = set()
-        for som_class in proj.get_classes(filter=False):
-            if som_class.ident_value:
-                ident_values.add(som_class.ident_value)
-        return ident_values
+
 
     @classmethod
     def is_drop_indication_pos_on_item(cls, tree: ui.ClassTreeWidget):

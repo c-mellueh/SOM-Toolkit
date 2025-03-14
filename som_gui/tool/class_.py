@@ -164,3 +164,12 @@ class Class(som_gui.core.tool.Class):
     @classmethod
     def add_class_creation_check(cls, key, check_function):
         cls.get_properties().class_add_checks.append((key, check_function))
+
+    @classmethod
+    def get_existing_ident_values(cls) -> set[str]:
+        proj = tool.Project.get()
+        ident_values = set()
+        for som_class in proj.get_classes(filter=False):
+            if som_class.ident_value:
+                ident_values.add(som_class.ident_value)
+        return ident_values

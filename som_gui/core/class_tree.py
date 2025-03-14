@@ -110,9 +110,9 @@ def refresh_class_tree(
     class_tree: Type[tool.ClassTree],
     project_tool: Type[Project],
 ):
-
+    logging.debug(f"refresh ClassTree {tree}")
     root_classes = project_tool.get_root_classes(filter_classes=True)
-    if class_tree.get_properties().first_paint:
+    if class_tree.is_first_paint(tree):
         tree.clear()
         class_tree.set_first_paint(tree, False)
         retranslate_ui(class_tree)

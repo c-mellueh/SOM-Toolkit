@@ -113,13 +113,13 @@ def export_building_structure(
 
 
 def refresh_class_info_line_edit(
-    class_tool: Type[tool.ClassTree],
+    main_window: Type[tool.MainWindow],
     class_info: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
 ):
     data_dict = class_info.generate_datadict()
     abbrev_filter = (
-        class_tool.get_active_class().abbreviation
+        main_window.get_active_class().abbreviation
         if class_info.get_mode() == 1
         else None
     )

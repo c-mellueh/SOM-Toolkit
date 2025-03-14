@@ -22,14 +22,14 @@ def on_new_project():
 
 
 def copy_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
-    core.copy_class(som_class, data_dict, tool.ClassTree, tool.ClassInfo)
+    core.copy_class(som_class, data_dict, tool.Class, tool.ClassInfo)
 
 
 def modify_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict):
     core.modify_class(
         som_class,
         data_dict,
-        tool.ClassTree,
+        tool.Class,
         tool.ClassInfo,
         tool.PropertySet,
         tool.PredefinedPropertySet,
@@ -39,7 +39,7 @@ def modify_class_called(som_class: SOMcreator.SOMClass, data_dict: ClassDataDict
 def create_class_called(data_dict: ClassDataDict):
     core.create_class(
         data_dict,
-        tool.ClassTree,
+        tool.Class,
         tool.ClassInfo,
         tool.Project,
         tool.PropertySet,

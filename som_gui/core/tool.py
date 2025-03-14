@@ -290,9 +290,6 @@ class ClassTree:
     def handle_property_issue(self, result):
         pass
 
-    def is_identifier_allowed(self, identifier, ignore, is_group):
-        pass
-
     def modify_class(self, som_class, data_dict):
         pass
 

@@ -25,7 +25,7 @@ def on_new_project():
 
 def refresh_class_info_line_edit() -> None:
     core.refresh_class_info_line_edit(
-        tool.ClassTree, tool.ClassInfo, aw_tool.Aggregation
+        tool.MainWindow, tool.ClassInfo, aw_tool.Aggregation
     )
 
 

@@ -17,7 +17,7 @@ def retranslate_ui(class_info: Type[tool.ClassInfo]) -> None:
 def create_class_info_widget(
     mode: int,
     som_class: SOMcreator.SOMClass,
-    class_tool: Type[tool.ClassTree],
+    class_tool: Type[tool.Class],
     class_info: Type[tool.ClassInfo],
     predefined_property_set: Type[tool.PredefinedPropertySet],
     util: Type[tool.Util],
@@ -55,7 +55,7 @@ def create_class_info_widget(
 
 
 def class_info_refresh(
-    class_tool: Type[tool.ClassTree], class_info: Type[tool.ClassInfo]
+    class_tool: Type[tool.Class], class_info: Type[tool.ClassInfo]
 ):
     data_dict = class_info.generate_datadict()
     class_info.oi_set_values(data_dict)
