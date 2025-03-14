@@ -13,7 +13,7 @@ import som_gui.module.class_tree.constants as constants
 import copy as cp
 
 if TYPE_CHECKING:
-    from som_gui.tool import Class, Project, Search, PropertySet, MainWindow
+    from som_gui.tool import Project, Search, PropertySet, MainWindow
     from som_gui.module.class_info.prop import ClassDataDict
     from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
     from PySide6.QtCore import QPoint
@@ -78,7 +78,7 @@ def create_mime_data(
 
 
 def add_shortcuts(
-    class_tree: Type[Class],
+    class_tree: Type[tool.ClassTree],
     util: Type[tool.Util],
     search_tool: Type[Search],
     main_window: Type[tool.MainWindow],
@@ -98,18 +98,18 @@ def add_shortcuts(
 
 
 def search_class(
-    search_tool: Type[Search], class_tree: Type[Class], project: Type[tool.Project]
+    search_tool: Type[Search], class_tree: Type[tool.ClassTree], project: Type[tool.Project]
 ):
     """Open Search Window and select Class afterwards"""
     som_class = search_tool.search_class(list(project.get().get_classes(filter=True)))
     class_tree.select_class(som_class)
 
 
-def reset_tree(class_tree: Type[Class]):
+def reset_tree(class_tree: Type[tool.ClassTree]):
     class_tree.get_properties().first_paint = True
 
 
-def resize_columns(class_tree: Type[Class]):
+def resize_columns(class_tree: Type[tool.ClassTree]):
     """
     resizes Colums to Content
     """
@@ -117,7 +117,7 @@ def resize_columns(class_tree: Type[Class]):
 
 
 def load_context_menus(
-    class_tree: Type[Class],
+    class_tree: Type[tool.ClassTree],
     class_info: Type[tool.ClassInfo],
     project: Type[tool.Project],
 ):
@@ -166,7 +166,7 @@ def load_context_menus(
     )
 
 
-def create_group(class_tree: Type[Class], project: Type[tool.Project]):
+def create_group(class_tree: Type[tool.ClassTree], project: Type[tool.Project]):
     d = {
         "name": QCoreApplication.translate("Class", "NewGroup"),
         "is_group": True,
@@ -181,13 +181,13 @@ def create_group(class_tree: Type[Class], project: Type[tool.Project]):
     class_tree.group_classes(som_class, selected_classes)
 
 
-def create_context_menu(pos: QPoint, class_tree: Type[Class]):
+def create_context_menu(pos: QPoint, class_tree: Type[tool.ClassTree]):
     menu = class_tree.create_context_menu()
     menu_pos = class_tree.get_class_tree().viewport().mapToGlobal(pos)
     menu.exec(menu_pos)
 
 
-def refresh_class_tree(class_tree: Type[Class], project_tool: Type[Project]):
+def refresh_class_tree(class_tree: Type[tool.ClassTree], project_tool: Type[Project]):
     """
     gets called on Paint Event
     """
@@ -196,7 +196,7 @@ def refresh_class_tree(class_tree: Type[Class], project_tool: Type[Project]):
     # class_tree.autofit_tree()
 
 
-def load_classes(class_tree: Type[Class], project_tool: Type[Project]):
+def load_classes(class_tree: Type[tool.ClassTree], project_tool: Type[Project]):
 
     root_classes = project_tool.get_root_classes(filter_classes=True)
     tree: QTreeWidget = class_tree.get_class_tree()
@@ -207,13 +207,13 @@ def load_classes(class_tree: Type[Class], project_tool: Type[Project]):
     class_tree.fill_class_tree(set(root_classes), tree.invisibleRootItem())
 
 
-def item_changed(item: QTreeWidgetItem, class_tree: Type[Class]):
+def item_changed(item: QTreeWidgetItem, class_tree: Type[tool.ClassTree]):
     class_tree.update_check_state(item)
     pass
 
 
 def item_selection_changed(
-    class_tree: Type[Class], property_set_tool: Type[PropertySet]
+    class_tree: Type[tool.ClassTree], property_set_tool: Type[PropertySet]
 ):
     selected_items = class_tree.get_selected_items()
     if len(selected_items) == 1:
@@ -240,7 +240,7 @@ def item_selection_changed(
 def drop_event(
     event: QDropEvent,
     target: ui.ClassTreeWidget,
-    class_tree: Type[Class],
+    class_tree: Type[tool.ClassTree],
     project: Type[tool.Project],
 ):
     pos = event.pos()
