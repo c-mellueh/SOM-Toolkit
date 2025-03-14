@@ -60,14 +60,14 @@ class Popups(som_gui.core.tool.Popups):
         return path
 
     @classmethod
-    def _request_text_input(cls, title: str, request_text, prefill, parent=None):
-        if parent is None:
-            parent = tool.MainWindow.get()
-        answer = QInputDialog.getText(
-            parent, title, request_text, QLineEdit.EchoMode.Normal, prefill
+    def _request_text_input(
+        cls, title: str, request_text, prefill, parent=None, completer=None
+    ):
+        answer = ui.CompleterDialog(
+            parent or tool.MainWindow.get(), title, request_text, prefill, completer
         )
-        if answer[1]:
-            return answer[0]
+        if answer.exec():
+            return answer.getText()
         else:
             return None
 

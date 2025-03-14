@@ -25,11 +25,11 @@ def connect():
     table.edit_stopped.connect(lambda: core.pset_table_edit_stopped(tool.PropertySet))
     tool.MainWindow.get_ui().button_Pset_add.clicked.connect(
         lambda: core.add_property_set_button_pressed(
-            tool.ClassTree,
             tool.MainWindow,
             tool.PropertySet,
             tool.Popups,
             tool.PredefinedPropertySet,
+            tool.Util
         )
     )
     table.itemClicked.connect(lambda item: core.pset_clicked(item, tool.PropertySet))
