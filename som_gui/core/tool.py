@@ -3421,3 +3421,6 @@ class Util:
 
     def transform_guid(self, guid, add_zero_width):
         pass
+
+class Class:
+    pass
