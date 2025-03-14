@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtWidgets import QLabel
 
-from som_gui.module.class_.constants import OK
+from som_gui.module.class_tree.constants import OK
 import logging
 
 if TYPE_CHECKING:
@@ -42,7 +42,7 @@ def retranslate_ui(aggregation: Type[aw_tool.Aggregation]):
 
 
 def deactivate(
-    class_tool: Type[tool.Class],
+    class_tool: Type[tool.ClassTree],
     class_info_tool: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
     project: Type[tool.Project],
@@ -56,7 +56,7 @@ def deactivate(
 
 
 def activate(
-    class_tool: Type[tool.Class],
+    class_tool: Type[tool.ClassTree],
     class_info_tool: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
     project: Type[tool.Project],
@@ -111,7 +111,7 @@ def export_building_structure(
 
 
 def refresh_class_info_line_edit(
-    class_tool: Type[tool.Class],
+    class_tool: Type[tool.ClassTree],
     class_info: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
 ):

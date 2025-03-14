@@ -155,7 +155,7 @@ class PropertySet(som_gui.core.tool.PropertySet):
 
     @classmethod
     def get_property_sets(cls) -> set[SOMcreator.SOMPropertySet]:
-        active_class = tool.Class.get_active_class()
+        active_class = tool.ClassTree.get_active_class()
         if active_class is None:
             return set()
         return set(active_class.get_property_sets(filter=True))

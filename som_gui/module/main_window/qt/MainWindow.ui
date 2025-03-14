@@ -334,7 +334,7 @@
   <customwidget>
    <class>ClassTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>som_gui.module.class_.ui</header>
+   <header>som_gui.module.class_tree.ui</header>
   </customwidget>
   <customwidget>
    <class>PsetTableWidget</class>

@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QDialog, QTreeWidget, QWidget
 
-from som_gui.module import class_
+from som_gui.module import class_tree
 from som_gui.resources.icons import get_icon
 
 
@@ -11,12 +11,12 @@ class ClassTreeWidget(QTreeWidget):
 
     def paintEvent(self, event):
         super().paintEvent(event)
-        class_.trigger.repaint_event()
+        class_tree.trigger.repaint_event()
 
     def dropEvent(self, event):
-        class_.trigger.drop_event(event,self)
+        class_tree.trigger.drop_event(event,self)
         super().dropEvent(event)
 
     def mimeData(self, items):
         mime_data = super().mimeData(items)
-        return class_.trigger.create_mime_data(list(items), mime_data)
+        return class_tree.trigger.create_mime_data(list(items), mime_data)

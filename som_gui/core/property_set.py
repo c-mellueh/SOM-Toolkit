@@ -14,7 +14,7 @@ from PySide6.QtCore import QModelIndex, Qt, QCoreApplication
 
 
 def add_property_set_button_pressed(
-    class_tool: Type[tool.Class],
+    class_tool: Type[tool.ClassTree],
     main_window_tool: Type[tool.MainWindow],
     property_set_tool: Type[tool.PropertySet],
     popup_tool: Type[tool.Popups],
@@ -127,7 +127,7 @@ def rename_pset_by_editor(
 
 
 def repaint_pset_table(
-    property_set_tool: Type[tool.PropertySet], class_tool: Type[tool.Class]
+    property_set_tool: Type[tool.PropertySet], class_tool: Type[tool.ClassTree]
 ):
     logging.debug(f"Repaint PropertySet Table")
 

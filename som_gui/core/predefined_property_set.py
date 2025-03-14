@@ -109,7 +109,7 @@ def class_context_menu(
 def class_double_clicked(
     predefined_pset: Type[tool.PredefinedPropertySet],
     property_set: Type[tool.PropertySet],
-    class_tool: Type[tool.Class],
+    class_tool: Type[tool.ClassTree],
 ):
     item = predefined_pset.get_class_table_widget().selectedItems()[0]
     pset = property_set.get_property_set_from_item(item)

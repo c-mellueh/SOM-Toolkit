@@ -4,10 +4,8 @@ import som_gui
 from . import prop, trigger, ui
 
 
-
-
 def register():
-    som_gui.ClassProperties = prop.ClassProperties
+    som_gui.ClassTreeProperties = prop.ClassTreeProperties
 
 
 def load_ui_triggers():

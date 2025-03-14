@@ -19,19 +19,19 @@ import SOMcreator
 import som_gui
 import som_gui.core.tool
 import som_gui.tool as tool
-import som_gui.module.class_
-from som_gui.module.class_ import trigger, constants
+import som_gui.module.class_tree
+from som_gui.module.class_tree import trigger, constants
 
 if TYPE_CHECKING:
-    from som_gui.module.class_.prop import ClassProperties, ContextMenuDict
-    from som_gui.module.class_.ui import ClassTreeWidget
+    from som_gui.module.class_tree.prop import ClassTreeProperties, ContextMenuDict
+    from som_gui.module.class_tree.ui import ClassTreeWidget
     from som_gui.module.class_info.prop import ClassDataDict
 
 
-class Class(som_gui.core.tool.Class):
+class ClassTree(som_gui.core.tool.ClassTree):
     @classmethod
-    def get_properties(cls) -> ClassProperties:
-        return som_gui.ClassProperties
+    def get_properties(cls) -> ClassTreeProperties:
+        return som_gui.ClassTreeProperties
 
     @classmethod
     def clear_tree(cls):
@@ -127,7 +127,7 @@ class Class(som_gui.core.tool.Class):
         prop = cls.get_properties()
         selected_items = cls.get_selected_items()
         menu_list = prop.context_menu_list
-        if len(selected_items) <1:
+        if len(selected_items) < 1:
             menu_list = filter(lambda d: not d["on_selection"], menu_list)
         elif len(selected_items) == 1:
             menu_list = filter(lambda d: d["on_single_select"], menu_list)
@@ -180,7 +180,14 @@ class Class(som_gui.core.tool.Class):
         prop.context_menu_list = list()
 
     @classmethod
-    def add_context_menu_entry(cls, name_getter: Callable, function: Callable,on_selection:bool, single: bool, multi: bool) -> ContextMenuDict:
+    def add_context_menu_entry(
+        cls,
+        name_getter: Callable,
+        function: Callable,
+        on_selection: bool,
+        single: bool,
+        multi: bool,
+    ) -> ContextMenuDict:
         """
         Adds an entry to the context menu.
 
@@ -310,7 +317,7 @@ class Class(som_gui.core.tool.Class):
 
     @classmethod
     def set_active_class(cls, som_class: SOMcreator.SOMClass):
-        prop: ClassProperties = cls.get_properties()
+        prop: ClassTreeProperties = cls.get_properties()
         prop.active_class = som_class
         cls.fill_class_entry(som_class)
 

@@ -15,7 +15,7 @@ def retranslate_ui(class_info: Type[tool.ClassInfo]) -> None:
 
 def create_class_info_widget(
     mode: int,
-    class_tool: Type[tool.Class],
+    class_tool: Type[tool.ClassTree],
     class_info: Type[tool.ClassInfo],
     predefined_property_set: Type[tool.PredefinedPropertySet],
     util: Type[tool.Util],
@@ -37,9 +37,9 @@ def create_class_info_widget(
     class_info.update_dialog(dialog)
     pset_names = [p.name for p in predefined_psets]
     if mode != 0:
-        pset_names +=list(class_info.get_active_class().get_properties())
+        pset_names += list(class_info.get_active_class().get_properties())
     util.create_completer(pset_names, dialog.ui.combo_box_pset)
-    
+
     if dialog.exec():
         active_class = class_info.get_active_class()
         data_dict = class_info.generate_datadict()
@@ -52,7 +52,9 @@ def create_class_info_widget(
     class_info.reset()
 
 
-def class_info_refresh(class_tool: Type[tool.Class], class_info: Type[tool.ClassInfo]):
+def class_info_refresh(
+    class_tool: Type[tool.ClassTree], class_info: Type[tool.ClassInfo]
+):
     data_dict = class_info.generate_datadict()
     class_info.oi_set_values(data_dict)
     ident_value = data_dict["ident_value"]

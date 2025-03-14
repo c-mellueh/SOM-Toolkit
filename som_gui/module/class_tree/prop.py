@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import  Callable, TypedDict
+from typing import Callable, TypedDict
 from PySide6.QtGui import QAction
 import SOMcreator
 
@@ -11,7 +11,8 @@ class ContextMenuDict(TypedDict):
     on_multi_select: bool
     action: QAction
 
-class ClassProperties:
+
+class ClassTreeProperties:
     active_class: SOMcreator.SOMClass = None
     context_menu_list: list[ContextMenuDict] = list()
     first_paint = True

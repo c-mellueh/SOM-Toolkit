@@ -156,7 +156,7 @@ class Bsdd:
         pass
 
 
-class Class:
+class ClassTree:
     def add_class_activate_function(self, func):
         pass
 

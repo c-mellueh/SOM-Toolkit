@@ -25,7 +25,7 @@ def connect():
     table.edit_stopped.connect(lambda: core.pset_table_edit_stopped(tool.PropertySet))
     tool.MainWindow.get_ui().button_Pset_add.clicked.connect(
         lambda: core.add_property_set_button_pressed(
-            tool.Class,
+            tool.ClassTree,
             tool.MainWindow,
             tool.PropertySet,
             tool.Popups,
@@ -44,7 +44,7 @@ def on_new_project():
 
 
 def repaint_event():
-    core.repaint_pset_table(tool.PropertySet, tool.Class)
+    core.repaint_pset_table(tool.PropertySet, tool.ClassTree)
 
 
 def pset_table_context_menu_requested(pos):
