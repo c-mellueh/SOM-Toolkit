@@ -156,7 +156,7 @@ class Bsdd:
         pass
 
 
-class Class:
+class ClassTree:
     def add_class_activate_function(self, func):
         pass
 
@@ -211,7 +211,7 @@ class Class:
     ):
         pass
 
-    def drop_indication_pos_is_on_item(
+    def is_drop_indication_pos_on_item(
         self,
     ):
         pass
@@ -241,10 +241,6 @@ class Class:
     def get_class_from_item(self, item):
         pass
 
-    def get_class_tree(
-        self,
-    ):
-        pass
 
     def get_classes_from_mimedata(self, mime_data):
         pass
@@ -275,7 +271,7 @@ class Class:
     ):
         pass
 
-    def get_selected_items(
+    def get_selected(
         self,
     ):
         pass
@@ -292,9 +288,6 @@ class Class:
         pass
 
     def handle_property_issue(self, result):
-        pass
-
-    def is_identifier_allowed(self, identifier, ignore, is_group):
         pass
 
     def modify_class(self, som_class, data_dict):
@@ -3421,3 +3414,7 @@ class Util:
 
     def transform_guid(self, guid, add_zero_width):
         pass
+
+
+class Class:
+    pass

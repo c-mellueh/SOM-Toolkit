@@ -7,6 +7,7 @@ from PySide6.QtGui import QPalette
 
 if TYPE_CHECKING:
     from som_gui import tool
+    import SOMcreator
 
 
 def retranslate_ui(class_info: Type[tool.ClassInfo]) -> None:
@@ -15,6 +16,7 @@ def retranslate_ui(class_info: Type[tool.ClassInfo]) -> None:
 
 def create_class_info_widget(
     mode: int,
+    som_class: SOMcreator.SOMClass,
     class_tool: Type[tool.Class],
     class_info: Type[tool.ClassInfo],
     predefined_property_set: Type[tool.PredefinedPropertySet],
@@ -27,23 +29,24 @@ def create_class_info_widget(
     title = util.get_window_title(
         QCoreApplication.translate("Class Info", "Class Info")
     )
-    if mode != 0 and not class_tool.get_active_class():
+    if mode != 0 and not som_class:
         return
     dialog = class_info.create_dialog(title)
-    class_info.set_active_class(class_tool.get_active_class())
+    class_info.set_active_class(som_class)
     predefined_psets = list(predefined_property_set.get_property_sets())
     class_info.connect_dialog(dialog, predefined_psets)
     class_info.oi_fill_properties(mode=mode)
     class_info.update_dialog(dialog)
     pset_names = [p.name for p in predefined_psets]
     if mode != 0:
-        pset_names +=list(class_info.get_active_class().get_properties())
+        pset_names += list(som_class.get_properties())
     util.create_completer(pset_names, dialog.ui.combo_box_pset)
-    
+
     if dialog.exec():
-        active_class = class_info.get_active_class()
+        active_class = som_class
         data_dict = class_info.generate_datadict()
         if mode == 0:
+            data_dict["parent_uuid"] =som_class.uuid
             class_tool.trigger_class_creation(data_dict)
         elif mode == 1:
             class_tool.trigger_class_modification(active_class, data_dict)
@@ -52,7 +55,9 @@ def create_class_info_widget(
     class_info.reset()
 
 
-def class_info_refresh(class_tool: Type[tool.Class], class_info: Type[tool.ClassInfo]):
+def class_info_refresh(
+    class_tool: Type[tool.Class], class_info: Type[tool.ClassInfo]
+):
     data_dict = class_info.generate_datadict()
     class_info.oi_set_values(data_dict)
     ident_value = data_dict["ident_value"]
