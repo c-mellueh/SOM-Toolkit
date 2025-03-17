@@ -381,7 +381,7 @@ class Util(som_gui.core.tool.Util):
 
     @classmethod
     def create_completer(cls, texts, widget: QLineEdit | QComboBox|None=None):
-        completer = QCompleter(texts)
+        completer = QCompleter(set(texts))
         if widget is not None:
             widget.setCompleter(completer)
         return completer

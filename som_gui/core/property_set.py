@@ -24,9 +24,9 @@ def add_property_set_button_pressed(
     title = QCoreApplication.translate("PropertySet", "Add PropertySet")
     name = QCoreApplication.translate("PropertySet", "PropertySet name?")
     som_class = main_window_tool.get_active_class()
-    predef_pset_list = predefined_psets.get_property_sets()
+    possible_pset_names = list(predefined_psets.get_property_sets())+property_set_tool.get_inheritable_property_sets(som_class)
     existing_property_sets = [p.name for p in som_class.get_property_sets(filter = False)]
-    completer = util.create_completer([p.name for p in predef_pset_list if p.name not in existing_property_sets])
+    completer = util.create_completer([p.name for p in possible_pset_names if p.name not in existing_property_sets])
     pset_name = popup_tool._request_text_input(
         title, name, prefill="", parent=main_window_tool.get(),completer = completer
     )
