@@ -18,3 +18,4 @@ class PropertySetWindowProperties:
     active_property: SOMcreator.SOMProperty = None
     splitter_settings: SplitterSettings = None
     unit_settings: UnitSettings = None
+    context_menu_builders = list()

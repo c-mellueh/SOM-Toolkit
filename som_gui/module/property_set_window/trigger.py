@@ -20,6 +20,9 @@ def connect():
         lambda: core.splitter_settings_accepted(tool.PropertySetWindow, tool.Appdata),
     )
 
+
+    core.create_context_menu_builders(tool.PropertySetWindow)
+
     pass
 
 
@@ -78,3 +81,6 @@ def splitter_settings_created(widget: ui.SplitterSettings):
 
 def splitter_checkstate_changed(widget: ui.SplitterSettings):
     core.update_splitter_enabled_state(widget, tool.PropertySetWindow)
+
+def value_context_menu_request(pos,line_edit):
+    core.value_context_menu_request(pos,line_edit,tool.PropertySetWindow,tool.Util)

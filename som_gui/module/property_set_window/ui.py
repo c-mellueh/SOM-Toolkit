@@ -8,6 +8,7 @@ from .qt.ui_Window import Ui_PropertySetWindow
 from .qt.ui_SplitterSettings import Ui_SplitterSettings
 from ..property_.qt.ui_UnitSettings import Ui_UnitSettings
 from som_gui.module import property_set_window
+from . import trigger
 
 class PropertySetWindow(QWidget):
     def __init__(self):
@@ -31,6 +32,8 @@ class PropertySetWindow(QWidget):
 class LineInput(QLineEdit):
     def __init__(self) -> None:
         super(LineInput, self).__init__()
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(lambda pos:trigger.value_context_menu_request(pos,self))
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
         if property_set_window.trigger.key_press_event(event, self.window()):

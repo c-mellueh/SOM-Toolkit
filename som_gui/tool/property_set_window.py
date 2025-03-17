@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Type,Callable
 
 from PySide6.QtCore import QCoreApplication, Qt
 from PySide6.QtGui import (
@@ -442,3 +442,30 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def get_splitter_settings_text(cls, widget: ui.SplitterSettings) -> str:
         return widget.ui.line_edit_seperator.text()
+
+    @classmethod
+    def get_context_menu_builders(cls) -> list:
+        """
+        Functions that are getting called if context menu is requested. Return tuple with name and function or None # Each builder gets passed the current table
+        """
+        return cls.get_properties().context_menu_builders
+
+    @classmethod
+    def add_context_menu_builder(cls, context_menu_builder: Callable):
+        """
+        :param context_menu_builder: Function which gets called on context menu creation.
+        should return tuple[name, function] of context should be shown or None if not shown.
+        The function gets passed the current table as a variable
+        :return:
+        """
+        cls.get_properties().context_menu_builders.append(context_menu_builder)
+    
+    @classmethod
+    def ignore_selected_values(cls):
+        pass
+
+    @classmethod
+    def ignore_builder(cls):
+        name = QCoreApplication.translate("PropertySetWindow","Ignore")
+        action = lambda:cls.ignore_selected_values()
+        return name,action
