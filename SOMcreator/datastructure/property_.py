@@ -134,12 +134,15 @@ class SOMProperty(BaseClass):
             return True
         return False
     
+    def is_value_ignored(self,value) -> bool:
+        return value in self._ignored_values
+
     def ignore_parent_value(self,value):
         self._ignored_values.add(value)
 
     def unignore_parent_value(self,value):
         if value in self._ignored_values:
-            self._ignored_values.pop(value)
+            self._ignored_values.remove(value)
 
     @property
     def ignored_values(self) -> list:
@@ -148,7 +151,16 @@ class SOMProperty(BaseClass):
     @ignored_values.setter
     def ignored_values(self,value:set) -> None:
         self._ignored_values = value
-        
+    
+    @property
+    def all_values(self):
+        """returns all values even if they are ignored"""
+        if self.is_inheriting_values:
+            if self.parent is not None:
+                return self.parent.allowed_values 
+            else:
+                raise ValueError("Parent is expected but dne")
+        return self._allowed_values
     @property
     def allowed_values(self) -> list:
         if self.is_inheriting_values:
@@ -157,7 +169,7 @@ class SOMProperty(BaseClass):
             else:
                 raise ValueError("Parent is expected but dne")
         return self._allowed_values
-
+    
     @allowed_values.setter
     def allowed_values(self, values: list) -> None:
         if self.is_inheriting_values:
@@ -293,3 +305,4 @@ class SOMProperty(BaseClass):
     @project.setter
     def project(self, value: SOMcreator.SOMProject) -> None:
         super(SOMProperty, self.__class__).project.__set__(self, value)
+    

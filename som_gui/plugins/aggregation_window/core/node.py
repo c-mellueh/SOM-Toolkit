@@ -83,14 +83,13 @@ def pset_tree_double_clicked(
 
     if active_property_set is None:
         return
-
-    window = property_set_window_core.open_pset_window(
-        active_property_set, property_set_window, property_table
-    )
+    property_set_window.trigger_window_open(active_property_set)
+    window = property_set_window.get_window_by_property_set(active_property_set)
     if active_property is None:
         return
-    property_set_window_core.activate_property(
-        active_property, window, property_set_window
+    property_set_window.trigger_property_activation(
+        active_property,
+        window,
     )
 
 

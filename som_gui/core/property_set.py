@@ -160,6 +160,4 @@ def table_double_clicked(
     property_set_window: Type[tool.PropertySetWindow],
 ):
     property_set = property_set_tool.get_selecte_property_set_from_table()
-    property_set_window_core.open_pset_window(
-        property_set, property_set_window, property_table
-    )
+    property_set_window.trigger_window_open(property_set)

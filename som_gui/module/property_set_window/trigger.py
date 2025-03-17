@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from PySide6 import QtGui
-
+import SOMcreator
 from som_gui import tool
 from som_gui.core import property_set_window as core
 from .constants import SEPERATOR_SECTION, SEPERATOR_STATUS
@@ -24,7 +24,6 @@ def connect():
     core.create_context_menu_builders(tool.PropertySetWindow)
 
     pass
-
 
 def on_new_project():
     pass
@@ -84,3 +83,10 @@ def splitter_checkstate_changed(widget: ui.SplitterSettings):
 
 def value_context_menu_request(pos,line_edit):
     core.value_context_menu_request(pos,line_edit,tool.PropertySetWindow,tool.Util)
+
+
+def activate_property(som_property:SOMcreator.SOMProperty,window:ui.PropertySetWindow):
+    core.activate_property(som_property,window,tool.PropertySetWindow)
+
+def open_property_set(property_set:SOMcreator.SOMPropertySet):
+    core.open_pset_window(property_set,tool.PropertySetWindow,tool.PropertyTable)
