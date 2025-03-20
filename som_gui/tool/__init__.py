@@ -20,7 +20,6 @@ from som_gui.tool.modelcheck import Modelcheck
 from som_gui.tool.modelcheck_external import ModelcheckExternal
 from som_gui.tool.modelcheck_results import ModelcheckResults
 from som_gui.tool.modelcheck_window import ModelcheckWindow
-from som_gui.tool.class_ import Class
 from som_gui.tool.plugins import Plugins
 from som_gui.tool.popups import Popups
 from som_gui.tool.predefined_property_set import (
@@ -34,3 +33,5 @@ from som_gui.tool.search import Search
 from som_gui.tool.settings import Settings
 from som_gui.tool.util import Util
 from som_gui.tool.class_info import ClassInfo
+from som_gui.tool.class_ import Class
+from som_gui.tool.class_tree import ClassTree

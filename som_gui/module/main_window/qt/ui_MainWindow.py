@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHB
     QStatusBar, QTableWidgetItem, QTreeWidgetItem, QVBoxLayout,
     QWidget)
 
-from som_gui.module.class_.ui import ClassTreeWidget
+from som_gui.module.class_tree.ui import ClassTreeWidget
 from som_gui.module.property_set.ui import PsetTableWidget
 from som_gui.module.property_table.ui import PropertyTable
 

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtWidgets import QLabel
 
-from som_gui.module.class_.constants import OK
+from som_gui.module.class_tree.constants import OK
 import logging
 
 if TYPE_CHECKING:
@@ -42,12 +42,13 @@ def retranslate_ui(aggregation: Type[aw_tool.Aggregation]):
 
 
 def deactivate(
-    class_tool: Type[tool.Class],
+    class_tool: Type[tool.ClassTree],
     class_info_tool: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
     project: Type[tool.Project],
+    main_window:Type[tool.MainWindow],
 ):
-    class_tool.remove_column_from_tree(
+    class_tool.remove_column_from_tree(main_window.get_class_tree_widget(),
         QCoreApplication.translate("Aggregation", "Abbreviation")
     )
     class_info_tool.remove_plugin_entry(LABEL_KEY)
@@ -56,12 +57,13 @@ def deactivate(
 
 
 def activate(
-    class_tool: Type[tool.Class],
+    class_tool: Type[tool.ClassTree],
     class_info_tool: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
     project: Type[tool.Project],
+    main_window:Type[tool.MainWindow]
 ):
-    class_tool.add_column_to_tree(
+    class_tool.add_column_to_tree(main_window.get_class_tree_widget(),
         lambda: QCoreApplication.translate("Aggregation", "Abbreviation"),
         -1,
         lambda o: getattr(o, "abbreviation"),
@@ -111,13 +113,13 @@ def export_building_structure(
 
 
 def refresh_class_info_line_edit(
-    class_tool: Type[tool.Class],
+    main_window: Type[tool.MainWindow],
     class_info: Type[tool.ClassInfo],
     aggregation: Type[aw_tool.Aggregation],
 ):
     data_dict = class_info.generate_datadict()
     abbrev_filter = (
-        class_tool.get_active_class().abbreviation
+        main_window.get_active_class().abbreviation
         if class_info.get_mode() == 1
         else None
     )

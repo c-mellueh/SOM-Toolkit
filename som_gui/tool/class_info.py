@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Callable
-from som_gui.module.class_info.prop import PluginProperty, ClassDataDict
+from som_gui.module.class_info.prop import PluginProperty
+from som_gui.module.class_.prop import ClassDataDict
 from PySide6.QtWidgets import QWidget, QLineEdit, QCompleter, QLayout
 from PySide6.QtCore import QCoreApplication
 import copy as cp
@@ -15,7 +16,7 @@ import SOMcreator
 from som_gui.module.class_info.ui import ClassInfoDialog, Ui_ClassInfo
 from SOMcreator.templates import IFC_4_1
 from som_gui.module.class_info import trigger
-import som_gui.module.class_.constants
+import som_gui.module.class_tree.constants
 
 
 class ClassInfo(som_gui.core.tool.ClassInfo):
@@ -281,8 +282,8 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         cls.get_properties().class_add_infos_functions.append((key, getter_function))
 
     @classmethod
-    def trigger_class_info_widget(cls, mode: int):
-        trigger.create_class_info_widget(mode)
+    def trigger_class_info_widget(cls, mode: int,som_class:SOMcreator.SOMClass = None):
+        trigger.create_class_info_widget(mode,som_class)
 
     @classmethod
     def are_plugin_requirements_met(
@@ -293,9 +294,9 @@ class ClassInfo(som_gui.core.tool.ClassInfo):
         """
         for plugin in cls.get_properties().class_info_plugin_list:  # Call Test Func
             result = plugin.value_test(data_dict[plugin.key], som_class)
-            if result != som_gui.module.class_.constants.OK:
+            if result != som_gui.module.class_tree.constants.OK:
                 return result
-        return som_gui.module.class_.constants.OK
+        return som_gui.module.class_tree.constants.OK
 
     @classmethod
     def is_ident_pset_valid(cls, data_dict: ClassDataDict):
