@@ -14,19 +14,21 @@ from PySide6.QtCore import QModelIndex, Qt, QCoreApplication
 
 
 def add_property_set_button_pressed(
-    class_tool: Type[tool.ClassTree],
     main_window_tool: Type[tool.MainWindow],
     property_set_tool: Type[tool.PropertySet],
     popup_tool: Type[tool.Popups],
     predefined_psets: Type[tool.PredefinedPropertySet],
+    util:Type[tool.Util]
 ):
     logging.debug(f"Add PropertySet button clicked")
-    som_class = class_tool.get_active_class()
     title = QCoreApplication.translate("PropertySet", "Add PropertySet")
     name = QCoreApplication.translate("PropertySet", "PropertySet name?")
-
+    som_class = main_window_tool.get_active_class()
+    possible_pset_names = list(predefined_psets.get_property_sets())+property_set_tool.get_inheritable_property_sets(som_class)
+    existing_property_sets = [p.name for p in som_class.get_property_sets(filter = False)]
+    completer = util.create_completer([p.name for p in possible_pset_names if p.name not in existing_property_sets])
     pset_name = popup_tool._request_text_input(
-        title, name, prefill="", parent=main_window_tool.get()
+        title, name, prefill="", parent=main_window_tool.get(),completer = completer
     )
     if not pset_name:
         return
@@ -45,7 +47,7 @@ def add_property_set_button_pressed(
     if parent is False:
         return
     property_set_tool.create_property_set(pset_name, som_class, parent)
-    repaint_pset_table(property_set_tool, class_tool)
+    repaint_pset_table(property_set_tool, main_window_tool)
 
 
 def pset_clicked(item: QTableWidgetItem, property_set: Type[tool.PropertySet]):
@@ -158,6 +160,4 @@ def table_double_clicked(
     property_set_window: Type[tool.PropertySetWindow],
 ):
     property_set = property_set_tool.get_selecte_property_set_from_table()
-    property_set_window_core.open_pset_window(
-        property_set, property_set_window, property_table
-    )
+    property_set_window.trigger_window_open(property_set)

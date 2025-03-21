@@ -10,7 +10,7 @@ from som_gui.module.property_set_window.constants import (
     SEPERATOR_SECTION,
     SEPERATOR_STATUS,
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt,QPoint,QCoreApplication
 
 if TYPE_CHECKING:
     from som_gui import tool
@@ -162,7 +162,7 @@ def property_clicked(
 ):
     active_property = property_table.get_property_from_item(item)
     window = item.tableWidget().window()
-    activate_property(active_property, window, property_set_window)
+    property_set_window.trigger_property_activation(active_property, window)
 
 
 def activate_property(
@@ -230,3 +230,18 @@ def update_splitter_enabled_state(
         widget
     )
     widget.ui.line_edit_seperator.setEnabled(is_seperator_activated)
+
+
+def create_context_menu_builders(property_set_window:Type[tool.PropertySetWindow]):
+    property_set_window.add_context_menu_builder(property_set_window.ignore_builder)
+    property_set_window.add_context_menu_builder(property_set_window.unignore_builder)
+
+def value_context_menu_request(pos:QPoint,line_edit:ui.LineInput,property_set_window: Type[tool.PropertySetWindow],util:Type[tool.Util]):
+    menu_builders = property_set_window.get_context_menu_builders()
+    menu_list = []
+    for builder in menu_builders:
+        result = builder(line_edit)
+        if result is not None:
+            menu_list.append(result)
+    menu = util.create_context_menu(menu_list)
+    menu.exec(line_edit.mapToGlobal(pos))

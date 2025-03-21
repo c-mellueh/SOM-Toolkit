@@ -44,8 +44,7 @@ def connect_dialog(dialog: PredefinedPropertySetWindow):
 
     dialog.ui.list_view_pset.itemDoubleClicked.connect(
         lambda item: core.pset_double_clicked(
-            item, tool.PropertySet, tool.PropertySetWindow, tool.PropertyTable
-        )
+            item, tool.PropertySet, tool.PropertySetWindow,     )
     )
 
     dialog.ui.table_widgets_classes.customContextMenuRequested.connect(

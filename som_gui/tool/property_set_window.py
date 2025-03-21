@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Type,Callable
 
 from PySide6.QtCore import QCoreApplication, Qt
 from PySide6.QtGui import (
@@ -324,10 +324,8 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     def set_values(
         cls, som_property: SOMcreator.SOMProperty, window: ui.PropertySetWindow
     ):
-        inherits = som_property.is_inheriting_values
         parent_values = som_property.parent.allowed_values if som_property.parent else []
-        for value in som_property.allowed_values:
-
+        for value in som_property.all_values:
             value = "" if value is None else value
             if isinstance(value, (list, set)):
                 line_layout = cls.add_value_line(len(value), window)
@@ -341,9 +339,12 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
                 line_edit.setText(cls.value_to_string(value))
 
             # If Value is Inherited by Parent set layout disabled
-            enabled = False if inherits and value in parent_values else True
-            line_edit.setEnabled(enabled)
-
+            is_editable = som_property.is_inheriting_values
+            line_edit.setReadOnly(is_editable)
+            if  som_property.is_value_ignored(value):
+                line_edit.setStyleSheet("QLineEdit { color: grey; }")
+            else:
+                line_edit.setStyleSheet("QLineEdit {}")
     @classmethod
     def set_description(cls, description: str, window: ui.PropertySetWindow):
         window.ui.description.setText(description)
@@ -442,3 +443,78 @@ class PropertySetWindow(som_gui.core.tool.PropertySetWindow):
     @classmethod
     def get_splitter_settings_text(cls, widget: ui.SplitterSettings) -> str:
         return widget.ui.line_edit_seperator.text()
+
+    @classmethod
+    def get_context_menu_builders(cls) -> list:
+        """
+        Functions that are getting called if context menu is requested. Return tuple with name and function or None # Each builder gets passed the current table
+        """
+        return cls.get_properties().context_menu_builders
+
+    @classmethod
+    def add_context_menu_builder(cls, context_menu_builder: Callable):
+        """
+        :param context_menu_builder: Function which gets called on context menu creation.
+        should return tuple[name, function] of context should be shown or None if not shown.
+        The function gets passed the current table as a variable
+        :return:
+        """
+        cls.get_properties().context_menu_builders.append(context_menu_builder)
+    
+    @classmethod
+    def get_window_by_lineedit(cls,line_edit:ui.LineInput):
+        parent = line_edit.parent()
+        while parent.parent() is not None:
+            parent = parent.parent()
+        return parent if isinstance(parent,ui.PropertySetWindow) else None
+    
+    @classmethod
+    def set_selecteded_values_ignored(cls,line_edit:ui.LineInput,ignore_state:bool):
+        value = line_edit.text()
+        window = cls.get_window_by_lineedit(line_edit)
+        if not window:
+            return
+        prop = cls.get_active_property(window)
+        if not prop:
+            return
+        if ignore_state:
+            prop.ignore_parent_value(value)
+        else:
+            prop.unignore_parent_value(value)
+        cls.trigger_property_activation(prop,window)
+
+    @classmethod
+    def ignore_builder(cls,line_edit:ui.LineInput):
+        window = cls.get_window_by_lineedit(line_edit)
+        if not window:
+            return None
+        prop = cls.get_active_property(window)
+        if prop is None:
+            return
+        if prop.is_value_ignored(line_edit.text()):
+            return None
+        name = QCoreApplication.translate("PropertySetWindow","Ignore")
+        action = lambda:cls.set_selecteded_values_ignored(line_edit,True)
+        return name,action
+    
+    @classmethod
+    def unignore_builder(cls,line_edit:ui.LineInput):
+        window = cls.get_window_by_lineedit(line_edit)
+        if not window:
+            return None
+        prop = cls.get_active_property(window)
+        if prop is None:
+            return
+        if not prop.is_value_ignored(line_edit.text()):
+            return
+        name = QCoreApplication.translate("PropertySetWindow","Unignore")
+        action = lambda:cls.set_selecteded_values_ignored(line_edit,False)
+        return name,action
+
+    @classmethod
+    def trigger_property_activation(cls,som_property:SOMcreator.SOMProperty,window:ui.PropertySetWindow):
+        trigger.activate_property(som_property,window)
+    
+    @classmethod
+    def trigger_window_open(cls,property_set:SOMcreator.SOMPropertySet):
+        trigger.open_property_set(property_set)

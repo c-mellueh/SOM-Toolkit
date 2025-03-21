@@ -57,6 +57,9 @@ class SOMProperty(BaseClass):
         if property_set is not None:
             self.property_set = property_set
 
+        #Values which the parent inherits but the user choses to ignore
+        self._ignored_values = set()
+
     def __str__(self) -> str:
         if self.property_set is not None:
             text = f"Property {self.property_set.name} : {self.name} = {self.allowed_values}"
@@ -130,32 +133,57 @@ class SOMProperty(BaseClass):
         if self.parent.is_inheriting_values or self.parent.child_inherits_values:
             return True
         return False
+    
+    def is_value_ignored(self,value) -> bool:
+        return value in self._ignored_values
 
-    def get_own_values(self):
-        """returns values without inherited values"""
-        if not self.parent:
-            return self._allowed_values
-        return [v for v in self._allowed_values if v not in self.parent.allowed_values]
+    def ignore_parent_value(self,value):
+        self._ignored_values.add(value)
 
+    def unignore_parent_value(self,value):
+        if value in self._ignored_values:
+            self._ignored_values.remove(value)
+
+    @property
+    def ignored_values(self) -> list:
+        return list(self._ignored_values)
+    
+    @ignored_values.setter
+    def ignored_values(self,value:set) -> None:
+        self._ignored_values = value
+    
+    @property
+    def all_values(self):
+        """returns all values even if they are ignored"""
+        if self.is_inheriting_values:
+            if self.parent is not None:
+                return self.parent.allowed_values 
+            else:
+                raise ValueError("Parent is expected but dne")
+        return self._allowed_values
     @property
     def allowed_values(self) -> list:
         if self.is_inheriting_values:
             if self.parent is not None:
-                return self.parent.allowed_values + self.get_own_values()
+                return [v for v in self.parent.allowed_values if v not in self._ignored_values]
             else:
                 raise ValueError("Parent is expected but dne")
         return self._allowed_values
-
+    
     @allowed_values.setter
     def allowed_values(self, values: list) -> None:
         if self.is_inheriting_values:
             if self.parent is None:
                 raise ValueError("Parent is expected but dne")
-            own_values = list()
-            for value in values:
-                if value not in self.parent.allowed_values:
-                    own_values.append(value)
-            self._allowed_values = own_values
+            own_values = set(values)
+            for value in self.parent.allowed_values:
+                if value in values:
+                    self.unignore_parent_value(value)
+                else:
+                    self.ignore_parent_value(value)
+                own_values.remove(value)
+            if own_values:
+                raise ValueError("Value input doesn't match Parent Values")
         else:
             self._allowed_values = values
 
@@ -277,3 +305,4 @@ class SOMProperty(BaseClass):
     @project.setter
     def project(self, value: SOMcreator.SOMProject) -> None:
         super(SOMProperty, self.__class__).project.__set__(self, value)
+    

@@ -85,10 +85,9 @@ def pset_double_clicked(
     item,
     property_set: Type[tool.PropertySet],
     property_set_window: Type[tool.PropertySetWindow],
-    property_table: Type[tool.PropertyTable],
 ):
     pset = property_set.get_property_set_from_item(item)
-    property_set_window_core.open_pset_window(pset, property_set_window, property_table)
+    property_set_window.trigger_window_open(pset)
 
 
 def class_context_menu(

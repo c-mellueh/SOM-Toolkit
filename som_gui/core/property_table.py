@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, Type
 from PySide6.QtCore import QCoreApplication, QMimeData, Qt, QByteArray
 from PySide6.QtWidgets import QApplication
 import SOMcreator
-from som_gui.core import property_set_window as property_set_window_core
 import pickle
 
 if TYPE_CHECKING:
@@ -188,12 +187,9 @@ def activate_item(
         return
     active_property_set = property_set.get_active_property_set()
     # create Window or activate it
-    window = property_set_window_core.open_pset_window(
-        active_property_set, property_set_window, property_table
-    )
-    property_set_window_core.activate_property(
-        active_property, window, property_set_window
-    )
+    property_set_window.trigger_window_open(active_property_set)
+    window = property_set_window.get_window_by_property_set(active_property_set)
+    property_set_window.trigger_property_activation(active_property, window)
 
 
 def update_table(table: QTableWidget, property_table: Type[tool.PropertyTable]):

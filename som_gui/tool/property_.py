@@ -364,8 +364,8 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
         :param property_1:
         :return:
         """
-        values0 = set(property_0.get_own_values()) if property_0 is not None else set()
-        values1 = set(property_1.get_own_values()) if property_1 is not None else set()
+        values0 = set(property_0.allowed_values) if property_0 is not None else set()
+        values1 = set(property_1.allowed_values) if property_1 is not None else set()
 
         unique0 = values0.difference(values1)
         main = values0.intersection(values1)
@@ -727,7 +727,7 @@ class PropertyCompare(som_gui.core.tool.PropertyCompare):
 
         checks = list()
         checks.append(
-            set(property_0.get_own_values()) == set(property_1.get_own_values())
+            set(property_0.allowed_values) == set(property_1.allowed_values)
         )  # values_are_identical
         if not (
             property_0.parent and property_1.parent

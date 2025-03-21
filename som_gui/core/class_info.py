@@ -46,7 +46,8 @@ def create_class_info_widget(
         active_class = som_class
         data_dict = class_info.generate_datadict()
         if mode == 0:
-            data_dict["parent_uuid"] =som_class.uuid
+            if som_class:
+                data_dict["parent_uuid"] =som_class.uuid
             class_tool.trigger_class_creation(data_dict)
         elif mode == 1:
             class_tool.trigger_class_modification(active_class, data_dict)

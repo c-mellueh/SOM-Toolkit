@@ -49,7 +49,7 @@ class PropertyDict(StandardDict):
     child_inherits_value: bool
     revit_mapping: str
     Value: list[str] | list[float] | list[tuple[float, float]]
-
+    IgnoredValues:list[str] | list[float] | list[tuple[float, float]]
 
 class AggregationDict(StandardDict):
     Object: str
@@ -105,3 +105,4 @@ ACTIVE_PHASES = "active_phases"
 ACTIVE_USECASES = "active_usecases"
 NODES = "Nodes"
 INHERITED_TEXT = "Predefined Pset"
+IGNORED_VALUES = "IgnoredValues"

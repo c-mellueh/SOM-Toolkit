@@ -380,6 +380,8 @@ class Util(som_gui.core.tool.Util):
                 item.setCheckState(Qt.CheckState.Unchecked)
 
     @classmethod
-    def create_completer(cls, texts, widget: QLineEdit | QComboBox):
-        completer = QCompleter(texts)
-        widget.setCompleter(completer)
+    def create_completer(cls, texts, widget: QLineEdit | QComboBox|None=None):
+        completer = QCompleter(set(texts))
+        if widget is not None:
+            widget.setCompleter(completer)
+        return completer
