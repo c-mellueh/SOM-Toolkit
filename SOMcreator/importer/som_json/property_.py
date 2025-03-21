@@ -11,6 +11,7 @@ from SOMcreator.datastructure.som_json import (
     VALUE,
     VALUE_TYPE,
     PropertyDict,
+    IGNORED_VALUES
 )
 
 
@@ -26,7 +27,7 @@ def load(
     value = property_dict[VALUE]
     value_type = property_dict[VALUE_TYPE]
     data_type = property_dict[DATA_TYPE]
-
+    
     # compatibility for Datatype import that uses XML-Datatypes such as xs:string
     if data_type in OLD_DATATYPE_DICT:
         data_type = OLD_DATATYPE_DICT[data_type]
@@ -47,5 +48,11 @@ def load(
         project=proj,
         filter_matrix=filter_matrix,
     )
+
+    #added on v.1.9.1
+    ignored_values = property_dict.get(IGNORED_VALUES,list())
+    for value in ignored_values:
+        som_property.ignore_parent_value(value)
+
     som_json.parent_dict[som_property] = parent
     som_json.property_uuid_dict[identifier] = som_property

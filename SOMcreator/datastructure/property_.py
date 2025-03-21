@@ -181,7 +181,7 @@ class SOMProperty(BaseClass):
                     self.unignore_parent_value(value)
                 else:
                     self.ignore_parent_value(value)
-                own_values.pop(value)
+                own_values.remove(value)
             if own_values:
                 raise ValueError("Value input doesn't match Parent Values")
         else:
