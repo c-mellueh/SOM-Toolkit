@@ -14,7 +14,9 @@ from PySide6.QtWidgets import (
     QTreeWidget,
     QTreeWidgetItem,
     QWidget,
-)
+    QSplitter,
+    QHeaderView)
+
 
 import logging
 import SOMcreator
@@ -31,7 +33,7 @@ if TYPE_CHECKING:
         FilterWindowProperties,
         FilterCompareProperties,
     )
-from som_gui.module.filter_window import ui, trigger
+from som_gui.module.filter_window import ui, trigger, ui_header
 from PySide6.QtCore import QCoreApplication
 
 
@@ -53,49 +55,99 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         return cls.get().ui.project_table
 
     @classmethod
-    def get_class_tree(cls) -> ui.ClassTreeView | None:
-        if not cls.get():
-            return None
-        return cls.get().ui.class_tree
+    def get_class_trees(cls) -> list[ui.ClassTreeView]:
+        return cls.get_properties().class_views
 
     @classmethod
-    def get_pset_tree(cls) -> ui.PsetTreeView:
-        if not cls.get():
-            return None
-        return cls.get().ui.pset_tree
+    def get_pset_trees(cls) -> list[ui.PsetTreeView]:
+        return cls.get_properties().pset_views
 
     @classmethod
-    def create_widget(cls) -> ui.FilterWidget:
-        cls.get_properties().widget = ui.FilterWidget()
+    def create_widget(cls, project: SOMcreator.SOMProject) -> ui.FilterWidget:
+        widget = ui.FilterWidget()
+        cls.get_properties().widget = widget
+        class_view_tree = ui.ClassTreeView()
+        class_view_items = ui.ClassTreeView()
+        cls.get_properties().class_views = [class_view_tree, class_view_items]
+        class_model = ui.ClassModel(project)
+        names = [QCoreApplication.translate("FilterWidget","Class"),
+                 QCoreApplication.translate("FilterWidget","Identifier")]
+        cls.connect_views(
+            project,
+            class_model,
+            widget.ui.class_splitter,
+            class_view_tree,
+            class_view_items,
+            names,
+        )
+
+        pset_view_tree = ui.PsetTreeView()
+        pset_view_items = ui.PsetTreeView()
+        cls.get_properties().pset_views = [pset_view_tree, pset_view_items]
+
+        pset_model = ui.PsetModel(project)
+        cls.connect_views(
+            project,
+            pset_model,
+            widget.ui.property_splitter,
+            pset_view_tree,
+            pset_view_items,
+            [QCoreApplication.translate("FilterWidget","PropertySet\nProperty")],
+        )
+
+        cls.get_properties().widget = widget
         return cls.get_properties().widget
 
     @classmethod
-    def connect_pset_tree(cls, project: SOMcreator.SOMProject):
-        pset_tree = cls.get_pset_tree()
-        pset_tree.setModel(ui.PsetModel(project))
-        pset_tree.setHeader(ui.CustomHeaderView(project))
-        pset_tree.frozen_view.selectionModel().selectionChanged.connect(
-            pset_tree.update_selection
+    def connect_views(
+        cls,
+        project: SOMcreator.SOMProject,
+        tree_model: ui.TreeModel,
+        splitter: QSplitter,
+        view_1: ui.FilterTreeView,
+        view_2: ui.FilterTreeView,
+        first_columns: list[str],
+    ):
+        splitter.addWidget(view_1)
+        splitter.addWidget(view_2)
+        splitter.setHandleWidth(0)
+        splitter.setChildrenCollapsible(False)
+
+        view_1.setModel(tree_model)
+        view_2.setModel(tree_model)
+        column_overlap = len(first_columns)
+        view_1.setHeader(ui_header.CustomHeaderView(project,first_columns))
+        view_2.setHeader(ui_header.CustomHeaderView(project,first_columns))
+        view_1.header().setStretchLastSection(True)
+        view_2.header().setStretchLastSection(True)
+
+        sp = QSizePolicy(
+            QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Minimum
         )
-        pset_tree.selectionModel().selectionChanged.connect(
-            pset_tree.frozen_view.update_selection
+        sp.setHorizontalStretch(1)
+
+        view_2.setSizePolicy(sp)
+        view_2.setSelectionModel(view_1.selectionModel())
+        view_1.verticalScrollBar().valueChanged.connect(
+            view_2.verticalScrollBar().setValue
         )
+        view_2.verticalScrollBar().valueChanged.connect(
+            view_1.verticalScrollBar().setValue
+        )
+        view_1.expanded.connect(view_2.expand)
+        view_1.collapsed.connect(view_2.collapse)
+        view_2.expanded.connect(view_1.expand)
+        view_2.collapsed.connect(view_1.collapse)
+        view_2.setSelectionModel(view_1.selectionModel())
+        for i in range(tree_model.columnCount()):
+            view = view_2 if i < column_overlap else view_1
+            view.hideColumn(i)
 
     @classmethod
     def connect_class_tree(cls, project: SOMcreator.SOMProject):
-        class_tree = cls.get_class_tree()
-        class_tree.setModel(ui.ClassModel(project))
-        class_tree.setHeader(ui.CustomHeaderView(project))
-        class_tree.setSelectionMode(class_tree.SelectionMode.SingleSelection)
-        class_tree.setSelectionBehavior(class_tree.SelectionBehavior.SelectRows)
-        class_tree.frozen_view.selectionModel().selectionChanged.connect(
-            trigger.class_tree_clicked
-        )
-        class_tree.frozen_view.selectionModel().selectionChanged.connect(
-            class_tree.update_selection
-        )
+        class_tree = cls.get_class_trees()[0]
         class_tree.selectionModel().selectionChanged.connect(
-            class_tree.frozen_view.update_selection
+            trigger.class_tree_clicked
         )
 
     @classmethod
@@ -201,6 +253,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
 
     @classmethod
     def set_class_label(cls, value: str):
+        return
         cls.get().ui.label.setText(value)
 
     @classmethod
@@ -310,6 +363,7 @@ class FilterCompare(som_gui.core.tool.FilterCompare):
 
         class_tree.setColumnCount(class_tree.columnCount() + count)
         pset_tree_widget.setColumnCount(pset_tree_widget.columnCount() + count)
+        return
         class_tree.setHeaderLabels(class_header_text + extra_header_texts)
         pset_tree_widget.setHeaderLabels(pset_header_text + extra_header_texts)
 

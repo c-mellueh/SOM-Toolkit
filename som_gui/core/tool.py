@@ -241,7 +241,6 @@ class ClassTree:
     def get_class_from_item(self, item):
         pass
 
-
     def get_classes_from_mimedata(self, mime_data):
         pass
 
@@ -775,7 +774,7 @@ class FilterWindow:
     ):
         pass
 
-    def get_class_tree(
+    def get_class_trees(
         self,
     ):
         pass
@@ -790,7 +789,7 @@ class FilterWindow:
     ):
         pass
 
-    def get_pset_tree(
+    def get_pset_trees(
         self,
     ):
         pass

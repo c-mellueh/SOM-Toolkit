@@ -1,73 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>FilterWindow</class>
-    <widget class="QWidget" name="FilterWindow">
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>1263</width>
-                <height>853</height>
-            </rect>
-        </property>
-        <property name="windowTitle">
-            <string>Form</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-            <item>
-                <widget class="QSplitter" name="splitter_2">
-                    <property name="orientation">
-                        <enum>Qt::Orientation::Vertical</enum>
-                    </property>
-                    <widget class="ProjectView" name="project_table">
-                        <property name="contextMenuPolicy">
-                            <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
-                        </property>
-                        <property name="editTriggers">
-                            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
-                        </property>
-                    </widget>
-                    <widget class="QSplitter" name="splitter">
-                        <property name="orientation">
-                            <enum>Qt::Orientation::Horizontal</enum>
-                        </property>
-                        <widget class="ClassTreeView" name="class_tree" />
-                        <widget class="QWidget" name="verticalLayoutWidget">
-                            <layout class="QVBoxLayout" name="verticalLayout">
-                                <item>
-                                    <widget class="QLabel" name="label">
-                                        <property name="text">
-                                            <string />
-                                        </property>
-                                    </widget>
-                                </item>
-                                <item>
-                                    <widget class="PsetTreeView" name="pset_tree" />
-                                </item>
-                            </layout>
-                        </widget>
-                    </widget>
-                </widget>
-            </item>
-        </layout>
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>633</width>
+    <height>516</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QSplitter" name="vertical_splitter">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <widget class="ProjectView" name="project_table">
+      <property name="contextMenuPolicy">
+       <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+      </property>
+     </widget>
+     <widget class="QSplitter" name="splitter_3">
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+      <widget class="QSplitter" name="class_splitter">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QSplitter" name="property_splitter">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+      </widget>
+     </widget>
     </widget>
-    <customwidgets>
-        <customwidget>
-            <class>ClassTreeView</class>
-            <extends>QTreeView</extends>
-            <header>som_gui.module.filter_window.ui</header>
-        </customwidget>
-        <customwidget>
-            <class>PsetTreeView</class>
-            <extends>QTreeView</extends>
-            <header>som_gui.module.filter_window.ui</header>
-        </customwidget>
-        <customwidget>
-            <class>ProjectView</class>
-            <extends>QTableView</extends>
-            <header>som_gui.module.filter_window.ui</header>
-        </customwidget>
-    </customwidgets>
-    <resources />
-    <connections />
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ProjectView</class>
+   <extends>QTableView</extends>
+   <header>som_gui.module.filter_window.ui</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
 </ui>
