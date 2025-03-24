@@ -73,6 +73,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
     def connect_pset_tree(cls, project: SOMcreator.SOMProject):
         pset_tree = cls.get_pset_tree()
         pset_tree.setModel(ui.PsetModel(project))
+        pset_tree.setHeader(ui.CustomHeaderView(project))
         pset_tree.frozen_view.selectionModel().selectionChanged.connect(
             pset_tree.update_selection
         )
@@ -84,6 +85,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
     def connect_class_tree(cls, project: SOMcreator.SOMProject):
         class_tree = cls.get_class_tree()
         class_tree.setModel(ui.ClassModel(project))
+        class_tree.setHeader(ui.CustomHeaderView(project))
         class_tree.setSelectionMode(class_tree.SelectionMode.SingleSelection)
         class_tree.setSelectionBehavior(class_tree.SelectionBehavior.SelectRows)
         class_tree.frozen_view.selectionModel().selectionChanged.connect(
