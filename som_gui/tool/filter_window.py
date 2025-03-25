@@ -118,10 +118,6 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         splitter.addWidget(view_2)
         splitter.setHandleWidth(0)
         splitter.setChildrenCollapsible(False)
-        fm_1 = ui.FilterModel(0,len(first_columns))
-        fm_2 = ui.FilterModel(1,len(first_columns))
-        fm_1.setSourceModel(tree_model)
-        fm_2.setSourceModel(tree_model)
         view_1.setModel(tree_model)
         view_2.setModel(tree_model)
         view_2.setSelectionModel(view_1.selectionModel())
@@ -164,6 +160,8 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         header_view_2.setModel(header_model)
         view_1.setHeader(header_view_1)
         view_2.setHeader(header_view_2)
+        header_view_1.update()
+        header_view_2.update()
 
 
 
