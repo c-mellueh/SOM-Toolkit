@@ -105,7 +105,8 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
             pset_view_items,
             [QCoreApplication.translate("FilterWidget","PropertySet\nProperty")],
         )
-
+        trigger.update_class_tree()
+        trigger.update_pset_tree()
         cls.get_properties().widget = widget
         return cls.get_properties().widget
 
