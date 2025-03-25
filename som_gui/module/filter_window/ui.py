@@ -78,8 +78,9 @@ class ProjectView(QTableView):
 
 
 class FilterTreeView(QTreeView):
-    def __init__(self, parent, frozen_col_count):
+    def __init__(self, parent, mode):
         super().__init__(parent)
+        self.mode = mode
 
     def mouseMoveEvent(self, event: QMouseEvent):
         super().mouseMoveEvent(event)
@@ -92,8 +93,8 @@ class FilterTreeView(QTreeView):
 
 
 class ClassTreeView(FilterTreeView):
-    def __init__(self, parent=None):
-        super().__init__(parent, 2)
+    def __init__(self, mode,parent=None):
+        super().__init__(parent, mode)
 
     def enterEvent(self, event):
         super().enterEvent(event)
@@ -107,8 +108,8 @@ class ClassTreeView(FilterTreeView):
 
 
 class PsetTreeView(FilterTreeView):
-    def __init__(self, parent=None):
-        super().__init__(parent, 1)
+    def __init__(self,mode, parent=None):
+        super().__init__(parent, mode)
 
     def enterEvent(self, event):
         super().enterEvent(event)

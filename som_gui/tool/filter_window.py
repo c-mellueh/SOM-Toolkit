@@ -67,11 +67,16 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         return cls.get_properties().pset_views
 
     @classmethod
+    def get_pset_model(cls) -> ui.PsetModel:
+        return cls.get_properties().pset_model
+
+    @classmethod
     def create_widget(cls, project: SOMcreator.SOMProject) -> ui.FilterWidget:
         widget = ui.FilterWidget()
         cls.get_properties().widget = widget
-        class_view_tree = ui.ClassTreeView()
-        class_view_items = ui.ClassTreeView()
+        
+        class_view_tree = ui.ClassTreeView(0)
+        class_view_items = ui.ClassTreeView(1)
         cls.get_properties().class_views = [class_view_tree, class_view_items]
         class_model = ui.ClassModel(project)
         cls.get_properties().class_model = class_model
@@ -86,8 +91,8 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
             names,
         )
 
-        pset_view_tree = ui.PsetTreeView()
-        pset_view_items = ui.PsetTreeView()
+        pset_view_tree = ui.PsetTreeView(0)
+        pset_view_items = ui.PsetTreeView(1)
         cls.get_properties().pset_views = [pset_view_tree, pset_view_items]
 
         pset_model = ui.PsetModel(project)
@@ -145,7 +150,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         view_2.collapsed.connect(view_1.collapse)
 
     @classmethod
-    def create_header_views(cls,view_1:ui.ClassTreeView|ui.PsetTreeView,view_2:ui.ClassTreeView|ui.PsetTreeView,project:SOMcreator.SOMProject,first_columns):
+    def create_header_views(cls,view_1:ui.ClassTreeView|ui.PsetTreeView,view_2:ui.ClassTreeView|ui.PsetTreeView,project:SOMcreator.SOMProject,first_columns:list[str]):
         header_model =  ui_header.CustomHeaderModel(project, first_columns)
         header_view_1 = ui_header.CustomHeaderView(first_columns)
         header_view_2 = ui_header.CustomHeaderView(first_columns)
@@ -160,8 +165,6 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         header_view_2.setModel(header_model)
         view_1.setHeader(header_view_1)
         view_2.setHeader(header_view_2)
-
-
 
 
     @classmethod

@@ -168,9 +168,22 @@ def pt_context_menu(
 
 
 def update_class_tree(filter_window: Type[tool.FilterWindow]):
+    model = filter_window.get_class_model()
     for tree in filter_window.get_class_trees():
         tree.model().update()
+        for i in range(model.columnCount()):
+            if tree.mode == 0:
+                if i <len(tree.model().column_titles):
+                    tree.showColumn(i)
+                else:
+                    tree.hideColumn(i)
+            else:
+                if i >=len(tree.model().column_titles):
+                    tree.showColumn(i)
+                else:
+                    tree.hideColumn(i)
 
+        tree.sectionResized()
 
 def class_tree_selection_changed(
     selected: QItemSelection, filter_window: Type[tool.FilterWindow]
@@ -186,8 +199,20 @@ def class_tree_selection_changed(
 
 
 def update_pset_tree(filter_window: Type[tool.FilterWindow]):
+    model = filter_window.get_pset_model()
     for tree in filter_window.get_pset_trees():
         tree.model().update()
+        for i in range(model.columnCount()):
+            if tree.mode == 0:
+                if i <len(tree.model().column_titles):
+                    tree.showColumn(i)
+                else:
+                    tree.hideColumn(i)
+            else:
+                if i >=len(tree.model().column_titles):
+                    tree.showColumn(i)
+                else:
+                    tree.hideColumn(i)
 
 
 def tree_mouse_move_event(index: QModelIndex, filter_window: Type[tool.FilterWindow]):
