@@ -15,39 +15,45 @@ from PySide6.QtCore import (
     QRect,
     QPoint,
 )
-from PySide6.QtGui import QMouseEvent,QColor,QPainter,QPalette,QBrush
-from PySide6.QtWidgets import QTableView, QTreeView, QWidget,QHeaderView,QStyleOptionHeader,QStyle
+from PySide6.QtGui import QMouseEvent, QColor, QPainter, QPalette, QBrush
+from PySide6.QtWidgets import (
+    QTableView,
+    QTreeView,
+    QWidget,
+    QHeaderView,
+    QStyleOptionHeader,
+    QStyle,
+)
 import SOMcreator
 import som_gui
 from som_gui import tool
 from . import trigger
 
+
 class CustomHeaderView(QHeaderView):
-    sectionPressed = Signal(int,int)
+    sectionPressed = Signal(int, int)
+
     def __init__(
-        self, proj:SOMcreator.SOMProject,first_columns:list[str], parent=None
+        self, proj: SOMcreator.SOMProject, first_columns: list[str], parent=None
     ):
-        super().__init__(Qt.Orientation.Horizontal,parent)
+        super().__init__(Qt.Orientation.Horizontal, parent)
         self.first_columns = first_columns
         baseSectionSize = QSize()
         baseSectionSize.setWidth(self.defaultSectionSize())
         baseSectionSize.setHeight(20)
-        model = CustomHeaderModel(proj,first_columns)
+        model = CustomHeaderModel(proj, first_columns)
         for row in range(model.rowCount()):
             for col in range(model.columnCount()):
-                index = model.index(row,col)
+                index = model.index(row, col)
                 model.setData(index, baseSectionSize, Qt.ItemDataRole.SizeHintRole)
         self.setModel(model)
         self.sectionResized.connect(self.onSectionResized)
-
 
     @property
     def column_overlap(self):
         return len(self.first_columns)
 
-
-
-    def setModel(self,model):
+    def setModel(self, model):
         super().setModel(model)
 
     def setCellLabel(self, row: int, column: int, label: str):
@@ -86,7 +92,7 @@ class CustomHeaderView(QHeaderView):
         return QModelIndex()
 
     def paintSection(self, painter: QPainter, rect: QRect, logicalIndex: int):
-        tblModel:CustomHeaderModel = self.model()
+        tblModel: CustomHeaderModel = self.model()
         for i in range(tblModel.rowCount()):
             cellIndex = tblModel.index(i, logicalIndex)
             cellSize: QSize = cellIndex.data(Qt.ItemDataRole.SizeHintRole)
@@ -112,7 +118,7 @@ class CustomHeaderView(QHeaderView):
                     subRowSpan = self.rowSpanSize(
                         colSpanFrom, subRowSpanFrom, subRowSpanCnt
                     )
-                    sectionRect.setTop(                        self.rowSpanSize(colSpanFrom, 0, subRowSpanFrom)                    )
+                    sectionRect.setTop(self.rowSpanSize(colSpanFrom, 0, subRowSpanFrom))
                     i = subRowSpanTo
                     sectionRect.setHeight(subRowSpan)
                 cellIndex = colSpanIdx
@@ -136,10 +142,8 @@ class CustomHeaderView(QHeaderView):
                     subColSpan = self.columnSpanSize(
                         rowSpanFrom, subColSpanFrom, subColSpanCnt
                     )
-                    sectionRect.setLeft(
-                        self.sectionViewportPosition(subColSpanFrom)
-                    )
-                   
+                    sectionRect.setLeft(self.sectionViewportPosition(subColSpanFrom))
+
                     sectionRect.setWidth(subColSpan)
                 cellIndex = rowSpanIdx
 
@@ -149,12 +153,11 @@ class CustomHeaderView(QHeaderView):
             opt.iconAlignment = Qt.AlignmentFlag.AlignVCenter
             opt.section = logicalIndex
             text = cellIndex.data(Qt.ItemDataRole.DisplayRole)
-            print(text)
             opt.text = text
-            if i>0:
+            if i > 0:
                 pass
                 sectionRect.setTop(sectionRect.top())
-                sectionRect.setBottom(sectionRect.bottom())#-30)
+                sectionRect.setBottom(sectionRect.bottom())  # -30)
             opt.rect = sectionRect
 
             bg = cellIndex.data(Qt.ItemDataRole.BackgroundRole)
@@ -189,7 +192,7 @@ class CustomHeaderView(QHeaderView):
                     self.columnSpanSize(colSpanIdx.row(), colSpanFrom, colSpanCnt)
                 )
 
-            height+= cellIndex.data(Qt.ItemDataRole.SizeHintRole).height()
+            height += cellIndex.data(Qt.ItemDataRole.SizeHintRole).height()
         size.setHeight(height)
         return size
 
@@ -222,9 +225,9 @@ class CustomHeaderView(QHeaderView):
     ):
         md = self.model()
         if rowSpanCount is None:
-            rowSpanCount = md.rowCount() 
-        if  columnSpanCount is None:
-            columnSpanCount =              1
+            rowSpanCount = md.rowCount()
+        if columnSpanCount is None:
+            columnSpanCount = 1
         idx = md.index(row, column)
         if rowSpanCount > 0:
             md.setData(idx, rowSpanCount, CustomHeaderModel.RowSpanRole)
@@ -260,7 +263,7 @@ class CustomHeaderView(QHeaderView):
     def columnSpanSize(self, row: int, from_: int, spanCount: int) -> int:
         tblModel = self.model()
         span = 0
-        for i in range(from_,from_ + spanCount):
+        for i in range(from_, from_ + spanCount):
             cellSize = tblModel.index(row, i).data(Qt.ItemDataRole.SizeHintRole)
             span += cellSize.width() if cellSize else 200
         return span
@@ -268,7 +271,7 @@ class CustomHeaderView(QHeaderView):
     def rowSpanSize(self, column, from_, spanCount) -> int:
         tblModel = self.model()
         span = 0
-        for i in range(from_,from_ + spanCount):
+        for i in range(from_, from_ + spanCount):
             cellSize = tblModel.index(i, column).data(Qt.ItemDataRole.SizeHintRole)
             span += cellSize.height()
         return span
@@ -286,7 +289,7 @@ class CustomHeaderView(QHeaderView):
                 beginSection = colSpanFrom
                 endSection = colSpanTo
                 index = colSpanIdx
-                return colSpanCnt,beginSection,endSection
+                return colSpanCnt, beginSection, endSection
             else:
                 subRowSpanData = colSpanIdx.data(CustomHeaderModel.RowSpanRole)
                 if subRowSpanData is not None:
@@ -296,7 +299,7 @@ class CustomHeaderView(QHeaderView):
                     beginSection = subRowSpanFrom
                     endSection = subRowSpanTo
                     index = colSpanIdx
-                    return subRowSpanCnt,beginSection,endSection
+                    return subRowSpanCnt, beginSection, endSection
         if rowSpanIdx.isValid():
             rowSpanFrom = rowSpanIdx.row()
             rowSpanCnt = int(rowSpanIdx.data(CustomHeaderModel.RowSpanRole))
@@ -309,128 +312,139 @@ class CustomHeaderView(QHeaderView):
                 beginSection = subColSpanFrom
                 endSection = subColSpanTo
                 index = rowSpanIdx
-                return subColSpanCnt,beginSection,endSection
+                return subColSpanCnt, beginSection, endSection
         return 0, beginSection, endSection
 
-    def mousePressEvent(self, event:QMouseEvent):
+    def mousePressEvent(self, event: QMouseEvent):
         super().mousePressEvent(event)
         index = self.indexAt(event.pos())
         if index.isValid():
             beginSection = index.column()
             endSection = beginSection
-            result,beginSection,endSection = self.getSectionRange(index,beginSection,endSection)
-            if result >0:
-                self.sectionPressed.emit(beginSection,endSection)
+            result, beginSection, endSection = self.getSectionRange(
+                index, beginSection, endSection
+            )
+            if result > 0:
+                self.sectionPressed.emit(beginSection, endSection)
             else:
-                self.sectionPressed.emit(beginSection,endSection)
+                self.sectionPressed.emit(beginSection, endSection)
 
-    def onSectionResized(self,logicalIndex:int,oldSize:int,newSize:int):
-        tblModel:CustomHeaderModel = self.model()
-        level =             tblModel.rowCount()   
+    def onSectionResized(self, logicalIndex: int, oldSize: int, newSize: int):
+        tblModel: CustomHeaderModel = self.model()
+        level = tblModel.rowCount()
         pos = self.sectionViewportPosition(logicalIndex)
         xx = pos
         yy = 0
-        sectionRect = QRect(xx,yy,0,0)
+        sectionRect = QRect(xx, yy, 0, 0)
         for i in range(level):
-            cellIndex = tblModel.index(i,logicalIndex)
-            cellSize:QSize = cellIndex.data(Qt.ItemDataRole.SizeHintRole)
-            sectionRect.setTop(self.rowSpanSize(logicalIndex,0,i))
+            cellIndex = tblModel.index(i, logicalIndex)
+            cellSize: QSize = cellIndex.data(Qt.ItemDataRole.SizeHintRole)
+            sectionRect.setTop(self.rowSpanSize(logicalIndex, 0, i))
             cellSize.setWidth(newSize)
-           
-            tblModel.setData(cellIndex,cellSize,Qt.ItemDataRole.SizeHintRole)
+
+            tblModel.setData(cellIndex, cellSize, Qt.ItemDataRole.SizeHintRole)
             colSpanIdx = self.columnSpanIndex(cellIndex)
             rowSpanIdx = self.rowSpanIndex(cellIndex)
             if colSpanIdx.isValid():
                 colSpanFrom = colSpanIdx.column()
                 sectionRect.setLeft(self.sectionViewportPosition(colSpanFrom))
-                
+
             if rowSpanIdx.isValid():
                 rowSpanFrom = rowSpanIdx.row()
-                sectionRect.setTop(self.rowSpanSize(logicalIndex,0,rowSpanFrom))  
+                sectionRect.setTop(self.rowSpanSize(logicalIndex, 0, rowSpanFrom))
             rToUpdate = QRect(sectionRect)
             rToUpdate.setWidth(self.viewport().width() - sectionRect.left())
             rToUpdate.setHeight(self.viewport().height() - sectionRect.top())
-            print(rToUpdate,rToUpdate.normalized())
             self.viewport().update(rToUpdate.normalized())
+
 
 class CustomHeaderModel(QAbstractTableModel):
     ColumnSpanRole = Qt.ItemDataRole.UserRole + 1
-    RowSpanRole  = Qt.ItemDataRole.UserRole+2
-    def __init__(self,proj:SOMcreator.SOMProject,first_columns:list[str],parent = None):
+    RowSpanRole = Qt.ItemDataRole.UserRole + 2
+
+    def __init__(
+        self, proj: SOMcreator.SOMProject, first_columns: list[str], parent=None
+    ):
         super().__init__(parent)
         self.first_columns = first_columns
         self.proj = proj
         self.data_dict = dict()
         self.size_hint_dict = dict()
-    
+
     @property
     def column_overlap(self):
         return len(self.first_columns)
-    
-    def get_active_phases(self,usecase:SOMcreator.UseCase):
+
+    def get_active_phases(self, usecase: SOMcreator.UseCase):
         phases = self.proj.get_phases()
-        return [phase for phase in phases if self.proj.get_filter_state(phase,usecase)]
+        return [phase for phase in phases if self.proj.get_filter_state(phase, usecase)]
 
     def get_usecase_matrix(self):
         matrix = list()
         for usecase in self.proj.get_usecases():
             active_phases = self.get_active_phases(usecase)
             if active_phases:
-                matrix.append((usecase,active_phases))
+                matrix.append((usecase, active_phases))
         return matrix
 
-    def get_usecase_by_column(self,column:int):
-        column-=self.column_overlap
+    def get_usecase_by_column(self, column: int):
+        column -= self.column_overlap
         matrix = self.get_usecase_matrix()
-        for use_case,phase_list in matrix:
-            column -=len(phase_list)
-            if column <0:
+        for use_case, phase_list in matrix:
+            column -= len(phase_list)
+            if column < 0:
                 return use_case
-    def get_phase_by_column(self,column:int):
-        column-=self.column_overlap
-        matrix = self.get_usecase_matrix()
-        for use_case,phase_list in matrix:
-            if 0<=column < len(phase_list):
-                return phase_list[column]
-            column-=len(phase_list)
 
-    def index(self,row:int,column:int,parent:QModelIndex = QModelIndex()):
-        if column <self.column_overlap:
-            return self.createIndex(row,column,None)
-        if row == 0:
-            return self.createIndex(row,column,self.get_usecase_by_column(column))
-        if row == 1:
-            return self.createIndex(row,column,self.get_phase_by_column(column))
-        return self.createIndex(row,column,None)
-    
-    def rowCount(self,parent = None):
-        return 2
-    
-    def columnCount(self, parent = None):
+    def get_phase_by_column(self, column: int):
+        column -= self.column_overlap
         matrix = self.get_usecase_matrix()
-        return sum(len(p) for (u,p) in matrix)+self.column_overlap
-    
-    def flags(self,index:QModelIndex):
+        for use_case, phase_list in matrix:
+            if 0 <= column < len(phase_list):
+                return phase_list[column]
+            column -= len(phase_list)
+
+    def index(self, row: int, column: int, parent: QModelIndex = QModelIndex()):
+        if column < self.column_overlap:
+            return self.createIndex(row, column, None)
+        if row == 0:
+            return self.createIndex(row, column, self.get_usecase_by_column(column))
+        if row == 1:
+            return self.createIndex(row, column, self.get_phase_by_column(column))
+        return self.createIndex(row, column, None)
+
+    def rowCount(self, parent=None):
+        return 2
+
+    def columnCount(self, parent=None):
+        matrix = self.get_usecase_matrix()
+        return sum(len(p) for (u, p) in matrix) + self.column_overlap
+
+    def flags(self, index: QModelIndex):
         if not index.isValid():
             return Qt.ItemFlag.NoItemFlags
         return super().flags(index)
-    
-    def data(self,index:QModelIndex,role:int):
+
+    def data(self, index: QModelIndex, role: int):
         if not index.isValid():
             return None
-        if index.row() >= self.rowCount() or index.row() < 0 or index.column() >= self.columnCount() or         index.column() < 0:
+        if (
+            index.row() >= self.rowCount()
+            or index.row() < 0
+            or index.column() >= self.columnCount()
+            or index.column() < 0
+        ):
             return None
         if role == Qt.ItemDataRole.SizeHintRole:
-            sh = self.size_hint_dict.get((index.row(),index.column()))
+            sh = self.size_hint_dict.get((index.row(), index.column()))
             if not sh:
                 baseSectionSize = QSize()
                 baseSectionSize.setWidth(50)
                 baseSectionSize.setHeight(20)
-                self.setData(index,Qt.ItemDataRole.SizeHintRole,baseSectionSize)
+                self.setData(index, Qt.ItemDataRole.SizeHintRole, baseSectionSize)
                 return baseSectionSize
-            return self.size_hint_dict[(index.row(),index.column())]
+            return self.size_hint_dict[(index.row(), index.column())]
 
-        if index.column() <self.column_overlap:
+        if index.column() < self.column_overlap:
             if role == self.ColumnSpanRole:
                 return 1
             if role == self.RowSpanRole and index.row() == 0:
@@ -439,8 +453,8 @@ class CustomHeaderModel(QAbstractTableModel):
                 return self.first_columns[index.column()]
             return None
 
-        item:SOMcreator.UseCase|SOMcreator.Phase = index.internalPointer()
-        sibling = index.siblingAtColumn(index.column()-1) or QModelIndex()
+        item: SOMcreator.UseCase | SOMcreator.Phase = index.internalPointer()
+        sibling = index.siblingAtColumn(index.column() - 1) or QModelIndex()
         if role == self.ColumnSpanRole:
             if sibling.internalPointer() == item:
                 return None
@@ -453,18 +467,17 @@ class CustomHeaderModel(QAbstractTableModel):
         if role == Qt.ItemDataRole.DisplayRole:
             return str(item.name)
 
-
         if not self.data_dict.get(item):
-                self.data_dict[item] = dict()
+            self.data_dict[item] = dict()
         return self.data_dict[item].get(role)
 
-    def setData(self, index:QModelIndex, value, role):
+    def setData(self, index: QModelIndex, value, role):
         if index is not None:
-            item:SOMcreator.UseCase|SOMcreator.Phase = index.internalPointer()
+            item: SOMcreator.UseCase | SOMcreator.Phase = index.internalPointer()
             if role == self.ColumnSpanRole:
                 pass
             if role == Qt.ItemDataRole.SizeHintRole:
-                self.size_hint_dict[(index.row(),index.column())] = value
+                self.size_hint_dict[(index.row(), index.column())] = value
             else:
                 if not self.data_dict.get(item):
                     self.data_dict[item] = dict()
