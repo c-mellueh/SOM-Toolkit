@@ -314,6 +314,9 @@ class ClassModel(TreeModel):
         return super().flags(index, parent_index)
 
     def update(self):
+        """
+        updates root_classes so that you dont need to call get_root_classes on every instance between paint events
+        """
         logging.debug("Update")
         self.root_classes = list(self.project.get_root_classes(filter=False))
         super().update()
