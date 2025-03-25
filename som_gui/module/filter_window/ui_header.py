@@ -170,11 +170,13 @@ class CustomHeaderView(QHeaderView):
 
         size = super().sectionSizeFromContents(logicalIndex)
         height = 0
+        if logicalIndex >= self.model().columnCount():
+            return QSize()
         for i in range(level):
             cellIndex = tblModel.index(i, logicalIndex)
             colSpanIdx: QModelIndex = self.columnSpanIndex(cellIndex)
-            rowSpanIdx: QModelIndex = self.rowSpanIndex(cellIndex)
-            size: QSize = cellIndex.data(Qt.ItemDataRole.SizeHintRole)
+            size: QSize =cellIndex.data(Qt.ItemDataRole.SizeHintRole)
+
             if colSpanIdx.isValid():
                 colSpanFrom = colSpanIdx.column()
                 colSpanCnt = int(colSpanIdx.data(CustomHeaderModel.ColumnSpanRole))
@@ -182,7 +184,6 @@ class CustomHeaderView(QHeaderView):
                 size.setWidth(
                     self.columnSpanSize(colSpanIdx.row(), colSpanFrom, colSpanCnt)
                 )
-
             height += cellIndex.data(Qt.ItemDataRole.SizeHintRole).height()
         size.setHeight(height)
         return size
@@ -383,9 +384,8 @@ class CustomHeaderModel(QAbstractTableModel):
         matrix = self.get_usecase_matrix()
         for use_case, phase_list in matrix:
             column -= len(phase_list)
-            if column < 0:
+            if column <0:
                 return use_case
-
     def get_phase_by_column(self, column: int):
         column -= self.column_overlap
         matrix = self.get_usecase_matrix()

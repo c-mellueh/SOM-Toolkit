@@ -160,8 +160,6 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         header_view_2.setModel(header_model)
         view_1.setHeader(header_view_1)
         view_2.setHeader(header_view_2)
-        header_view_1.update()
-        header_view_2.update()
 
 
 

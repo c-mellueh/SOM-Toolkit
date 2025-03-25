@@ -167,7 +167,7 @@ class ProjectModel(QAbstractTableModel):
             return False
         phase = self.project.get_phase_by_index(index.row())
         usecase = self.project.get_usecase_by_index(index.column())
-        trigger.change_filter_state(usecase, phase,bool(value))
+        self.project.set_filter_state(phase,usecase,bool(value))
         trigger.update_class_tree()
         trigger.update_pset_tree()
         return True
