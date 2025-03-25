@@ -40,9 +40,12 @@ class CustomHeaderView(QHeaderView):
         self.setModel(model)
         self.sectionResized.connect(self.onSectionResized)
 
+
     @property
     def column_overlap(self):
         return len(self.first_columns)
+
+
 
     def setModel(self,model):
         super().setModel(model)
@@ -166,7 +169,6 @@ class CustomHeaderView(QHeaderView):
             painter.save()
             self.style().drawControl(QStyle.CE_Header, opt, painter, self)
             painter.restore()
-
 
     def sectionSizeFromContents(self, logicalIndex: int):
         tblModel = self.model()
@@ -365,7 +367,7 @@ class CustomHeaderModel(QAbstractTableModel):
     def column_overlap(self):
         return len(self.first_columns)
     
-    def get_active_phases(self,usecase):
+    def get_active_phases(self,usecase:SOMcreator.UseCase):
         phases = self.proj.get_phases()
         return [phase for phase in phases if self.proj.get_filter_state(phase,usecase)]
 
@@ -419,7 +421,15 @@ class CustomHeaderModel(QAbstractTableModel):
         if index.row() >= self.rowCount() or index.row() < 0 or index.column() >= self.columnCount() or         index.column() < 0:
             return None
         if role == Qt.ItemDataRole.SizeHintRole:
+            sh = self.size_hint_dict.get((index.row(),index.column()))
+            if not sh:
+                baseSectionSize = QSize()
+                baseSectionSize.setWidth(50)
+                baseSectionSize.setHeight(20)
+                self.setData(index,Qt.ItemDataRole.SizeHintRole,baseSectionSize)
+                return baseSectionSize
             return self.size_hint_dict[(index.row(),index.column())]
+
         if index.column() <self.column_overlap:
             if role == self.ColumnSpanRole:
                 return 1
@@ -446,7 +456,7 @@ class CustomHeaderModel(QAbstractTableModel):
 
         if not self.data_dict.get(item):
                 self.data_dict[item] = dict()
-        return self.data_dict.get(item).get(role)
+        return self.data_dict[item].get(role)
 
     def setData(self, index:QModelIndex, value, role):
         if index is not None:
