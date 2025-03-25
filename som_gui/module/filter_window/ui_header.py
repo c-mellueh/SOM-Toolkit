@@ -34,19 +34,10 @@ class CustomHeaderView(QHeaderView):
     sectionPressed = Signal(int, int)
 
     def __init__(
-        self, proj: SOMcreator.SOMProject, first_columns: list[str], parent=None
+        self, first_columns: list[str], parent=None
     ):
         super().__init__(Qt.Orientation.Horizontal, parent)
         self.first_columns = first_columns
-        baseSectionSize = QSize()
-        baseSectionSize.setWidth(self.defaultSectionSize())
-        baseSectionSize.setHeight(20)
-        model = CustomHeaderModel(proj, first_columns)
-        for row in range(model.rowCount()):
-            for col in range(model.columnCount()):
-                index = model.index(row, col)
-                model.setData(index, baseSectionSize, Qt.ItemDataRole.SizeHintRole)
-        self.setModel(model)
         self.sectionResized.connect(self.onSectionResized)
 
     @property

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable, TYPE_CHECKING, TextIO, Type
 
-from PySide6.QtCore import QModelIndex, Qt
+from PySide6.QtCore import QModelIndex, Qt,QSize
 from PySide6.QtGui import QAction, QColor
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -59,6 +59,10 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         return cls.get_properties().class_views
 
     @classmethod
+    def get_class_model(cls) -> ui.ClassModel:
+        return cls.get_properties().class_model
+
+    @classmethod
     def get_pset_trees(cls) -> list[ui.PsetTreeView]:
         return cls.get_properties().pset_views
 
@@ -70,6 +74,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         class_view_items = ui.ClassTreeView()
         cls.get_properties().class_views = [class_view_tree, class_view_items]
         class_model = ui.ClassModel(project)
+        cls.get_properties().class_model = class_model
         names = [QCoreApplication.translate("FilterWidget","Class"),
                  QCoreApplication.translate("FilterWidget","Identifier")]
         cls.connect_views(
@@ -86,6 +91,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         cls.get_properties().pset_views = [pset_view_tree, pset_view_items]
 
         pset_model = ui.PsetModel(project)
+        cls.get_properties().pset_model = pset_model
         cls.connect_views(
             project,
             pset_model,
@@ -112,12 +118,16 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         splitter.addWidget(view_2)
         splitter.setHandleWidth(0)
         splitter.setChildrenCollapsible(False)
-
+        fm_1 = ui.FilterModel(0,len(first_columns))
+        fm_2 = ui.FilterModel(1,len(first_columns))
+        fm_1.setSourceModel(tree_model)
+        fm_2.setSourceModel(tree_model)
         view_1.setModel(tree_model)
         view_2.setModel(tree_model)
-        column_overlap = len(first_columns)
-        view_1.setHeader(ui_header.CustomHeaderView(project,first_columns))
-        view_2.setHeader(ui_header.CustomHeaderView(project,first_columns))
+        view_2.setSelectionModel(view_1.selectionModel())
+        cls.create_header_views(view_1,view_2,project,first_columns)
+        
+
         view_1.header().setStretchLastSection(True)
         view_2.header().setStretchLastSection(True)
 
@@ -127,7 +137,6 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         sp.setHorizontalStretch(1)
 
         view_2.setSizePolicy(sp)
-        view_2.setSelectionModel(view_1.selectionModel())
         view_1.verticalScrollBar().valueChanged.connect(
             view_2.verticalScrollBar().setValue
         )
@@ -138,10 +147,26 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         view_1.collapsed.connect(view_2.collapse)
         view_2.expanded.connect(view_1.expand)
         view_2.collapsed.connect(view_1.collapse)
-        view_2.setSelectionModel(view_1.selectionModel())
-        for i in range(tree_model.columnCount()):
-            view = view_2 if i < column_overlap else view_1
-            view.hideColumn(i)
+
+    @classmethod
+    def create_header_views(cls,view_1:ui.ClassTreeView|ui.PsetTreeView,view_2:ui.ClassTreeView|ui.PsetTreeView,project:SOMcreator.SOMProject,first_columns):
+        header_model =  ui_header.CustomHeaderModel(project, first_columns)
+        header_view_1 = ui_header.CustomHeaderView(first_columns)
+        header_view_2 = ui_header.CustomHeaderView(first_columns)
+        baseSectionSize = QSize()
+        baseSectionSize.setWidth(header_view_1.defaultSectionSize())
+        baseSectionSize.setHeight(20)
+        for row in range(header_model.rowCount()):
+            for col in range(header_model.columnCount()):
+                index = header_model.index(row, col)
+                header_model.setData(index, baseSectionSize, Qt.ItemDataRole.SizeHintRole)
+        header_view_1.setModel(header_model)
+        header_view_2.setModel(header_model)
+        view_1.setHeader(header_view_1)
+        view_2.setHeader(header_view_2)
+
+
+
 
     @classmethod
     def connect_class_tree(cls, project: SOMcreator.SOMProject):
