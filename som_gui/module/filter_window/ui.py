@@ -261,7 +261,7 @@ class TreeModel(QAbstractItemModel):
                 pos = index.column() - self.check_column_index
                 if pos >= len(self.allowed_combinations):
                     return None
-                phase, usecase = self.allowed_combinations[pos]
+                usecase, phase = self.allowed_combinations[pos]
                 return tool.Util.bool_to_checkstate(
                     node.get_filter_state(phase, usecase)
                 )
