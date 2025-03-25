@@ -205,6 +205,8 @@ def tree_mouse_release_event(
     filter_window.tree_release_click_drag()
 
 
+### Compare Widget
+
 def add_compare_widget(
     filter_compare: Type[tool.FilterCompare],
     property_compare: Type[tool.PropertyCompare],
