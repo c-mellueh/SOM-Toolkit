@@ -169,6 +169,7 @@ def pt_context_menu(
 
 def update_class_tree(filter_window: Type[tool.FilterWindow]):
     model = filter_window.get_class_model()
+    logging.debug(f"Update Class Tree")
     for tree in filter_window.get_class_trees():
         tree.model().update()
         for i in range(model.columnCount()):
@@ -182,8 +183,6 @@ def update_class_tree(filter_window: Type[tool.FilterWindow]):
                     tree.showColumn(i)
                 else:
                     tree.hideColumn(i)
-
-        tree.sectionResized()
 
 def class_tree_selection_changed(
     selected: QItemSelection, filter_window: Type[tool.FilterWindow]

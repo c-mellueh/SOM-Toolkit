@@ -83,6 +83,7 @@ class CustomHeaderView(QHeaderView):
         return QModelIndex()
 
     def paintSection(self, painter: QPainter, rect: QRect, logicalIndex: int):
+        logging.debug(f"Paint Section {logicalIndex}")
         tblModel: CustomHeaderModel = self.model()
         for i in range(tblModel.rowCount()):
             cellIndex = tblModel.index(i, logicalIndex)
