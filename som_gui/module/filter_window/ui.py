@@ -16,7 +16,8 @@ from PySide6.QtCore import (
     QRect,
     QPoint,
 )
-from PySide6.QtGui import QMouseEvent, QColor, QPainter, QPalette, QBrush
+    
+from PySide6.QtGui import QMouseEvent, QColor, QPainter, QPalette, QBrush,QPaintEvent
 from PySide6.QtWidgets import (
     QTableView,
     QTreeView,
@@ -91,14 +92,16 @@ class FilterTreeView(QTreeView):
         index = self.indexAt(event.pos())
         trigger.tree_mouse_release_event(index)
 
-
+    def paintEvent(self, event:QPaintEvent):
+        return super().paintEvent(event)
+    
 class ClassTreeView(FilterTreeView):
     def __init__(self, mode,parent=None):
         super().__init__(parent, mode)
 
     def enterEvent(self, event):
-        super().enterEvent(event)
         trigger.update_class_tree()
+        super().enterEvent(event)
 
     def model(self) -> ClassModel:
         return super().model()
@@ -212,12 +215,14 @@ class TreeModel(QAbstractItemModel):
         )
         self.column_titles = column_titles
 
+
     def update(self):
         self.allowed_combinations = self.get_allowed_combinations()
         self.dataChanged.emit(
             self.createIndex(0, 0),
             self.createIndex(self.rowCount(), self.columnCount()),
         )
+
 
     def flags(self, index, parent_index):
         flags = super().flags(index)

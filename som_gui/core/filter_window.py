@@ -167,22 +167,20 @@ def pt_context_menu(
     filter_window.create_context_menu(menu_list, pos)
 
 
-def update_class_tree(filter_window: Type[tool.FilterWindow]):
+def update_class_tree(filter_window: Type[tool.FilterWindow]): 
     model = filter_window.get_class_model()
     logging.debug(f"Update Class Tree")
     for tree in filter_window.get_class_trees():
         tree.model().update()
+        tree.repaint()
+
         for i in range(model.columnCount()):
-            if tree.mode == 0:
-                if i <len(tree.model().column_titles):
-                    tree.showColumn(i)
-                else:
-                    tree.hideColumn(i)
+            if tree.mode != 0:
+                tree.setColumnHidden(i,i <len(tree.model().column_titles))
             else:
-                if i >=len(tree.model().column_titles):
-                    tree.showColumn(i)
-                else:
-                    tree.hideColumn(i)
+                hide = i >=len(tree.model().column_titles)
+                if hide and not tree.isColumnHidden(i):
+                    tree.setColumnHidden(i,hide)
 
 def class_tree_selection_changed(
     selected: QItemSelection, filter_window: Type[tool.FilterWindow]
@@ -202,17 +200,10 @@ def update_pset_tree(filter_window: Type[tool.FilterWindow]):
     for tree in filter_window.get_pset_trees():
         tree.model().update()
         for i in range(model.columnCount()):
-            if tree.mode == 0:
-                if i <len(tree.model().column_titles):
-                    tree.showColumn(i)
-                else:
-                    tree.hideColumn(i)
+            if tree.mode != 0:
+                tree.setColumnHidden(i,i <len(tree.model().column_titles))
             else:
-                if i >=len(tree.model().column_titles):
-                    tree.showColumn(i)
-                else:
-                    tree.hideColumn(i)
-
+                tree.setColumnHidden(i,i >=len(tree.model().column_titles))
 
 def tree_mouse_move_event(index: QModelIndex, filter_window: Type[tool.FilterWindow]):
     if not filter_window.is_tree_clicked():
@@ -230,6 +221,7 @@ def tree_mouse_release_event(
 
 
 ### Compare Widget
+
 
 def add_compare_widget(
     filter_compare: Type[tool.FilterCompare],

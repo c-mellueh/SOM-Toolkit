@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable
+from typing import Callable,TYPE_CHECKING
+if TYPE_CHECKING:
+    from . import ui
 
 from PySide6.QtCore import (
     QAbstractItemModel,
@@ -40,9 +42,14 @@ class CustomHeaderView(QHeaderView):
         self.first_columns = first_columns
         self.sectionResized.connect(self.onSectionResized)
 
+
+
     @property
     def column_overlap(self):
         return len(self.first_columns)
+
+    def parentWidget(self) ->ui.FilterTreeView:
+        return super().parentWidget()
 
     def setModel(self, model):
         super().setModel(model)
@@ -84,7 +91,7 @@ class CustomHeaderView(QHeaderView):
 
     def paintSection(self, painter: QPainter, rect: QRect, logicalIndex: int):
         logging.debug(f"Paint Section {logicalIndex}")
-        tblModel: CustomHeaderModel = self.model()
+        tblModel: CustomHeaderModel = self.model() 
         for i in range(tblModel.rowCount()):
             cellIndex = tblModel.index(i, logicalIndex)
             cellSize: QSize = cellIndex.data(Qt.ItemDataRole.SizeHintRole)
@@ -97,7 +104,7 @@ class CustomHeaderView(QHeaderView):
             rowSpanIdx: QModelIndex = self.rowSpanIndex(cellIndex)
             if colSpanIdx.isValid():
                 colSpanFrom: int = colSpanIdx.column()
-                colSpanCnt = int(colSpanIdx.data(CustomHeaderModel.ColumnSpanRole))
+                colSpanCnt = colSpanIdx.data(CustomHeaderModel.ColumnSpanRole)
                 colSpanTo = colSpanFrom + colSpanCnt - 1
                 colSpan = self.columnSpanSize(cellIndex.row(), colSpanFrom, colSpanCnt)
                 sectionRect.setLeft(self.sectionViewportPosition(colSpanFrom))
@@ -142,25 +149,9 @@ class CustomHeaderView(QHeaderView):
             opt = QStyleOptionHeader()
             self.initStyleOption(opt)
             opt.textAlignment = Qt.AlignmentFlag.AlignCenter
-            opt.iconAlignment = Qt.AlignmentFlag.AlignVCenter
             opt.section = logicalIndex
-            text = cellIndex.data(Qt.ItemDataRole.DisplayRole)
-            opt.text = text
-            if i > 0:
-                pass
-                sectionRect.setTop(sectionRect.top())
-                sectionRect.setBottom(sectionRect.bottom())  # -30)
+            opt.text = cellIndex.data(Qt.ItemDataRole.DisplayRole)
             opt.rect = sectionRect
-
-            bg = cellIndex.data(Qt.ItemDataRole.BackgroundRole)
-            fg = cellIndex.data(Qt.ItemDataRole.ForegroundRole)
-            if bg is not None:
-                opt.palette.setBrush(QPalette.ColorRole.Button, QBrush(bg))
-                opt.palette.setBrush(QPalette.ColorRole.Window, QBrush(bg))
-
-            if fg is not None:
-                opt.palette.setBrush(QPalette.ButtonText, QBrush(fg))
-
             painter.save()
             self.style().drawControl(QStyle.CE_Header, opt, painter, self)
             painter.restore()
@@ -258,7 +249,7 @@ class CustomHeaderView(QHeaderView):
         span = 0
         for i in range(from_, from_ + spanCount):
             cellSize = tblModel.index(row, i).data(Qt.ItemDataRole.SizeHintRole)
-            span += cellSize.width() if cellSize else 200
+            span += self.get_tree_column_width(i)
         return span
 
     def rowSpanSize(self, column, from_, spanCount) -> int:
@@ -350,6 +341,9 @@ class CustomHeaderView(QHeaderView):
             rToUpdate.setHeight(self.viewport().height() - sectionRect.top())
             self.viewport().update(rToUpdate.normalized())
 
+    def get_tree_column_width(self,logicalIndex:int):
+        parent:ui.FilterTreeView = self.parent()
+        return parent.columnWidth(logicalIndex)
 
 class CustomHeaderModel(QAbstractTableModel):
     ColumnSpanRole = Qt.ItemDataRole.UserRole + 1
