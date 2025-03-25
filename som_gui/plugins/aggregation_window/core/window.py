@@ -112,7 +112,6 @@ def combobox_changed(window: Type[aw_tool.Window], view: Type[aw_tool.View]) -> 
     if scene is None:
         name = QCoreApplication.translate("Aggregation", "Undefined")
         scene, scene_name = view.create_scene(name)
-    print(scene)
     view.activate_scene(scene)
 
 
