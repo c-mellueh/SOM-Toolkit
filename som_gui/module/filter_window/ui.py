@@ -228,30 +228,16 @@ class TreeModel(QAbstractItemModel):
 
     def get_allowed_combinations(self):
         allowed_combinations = list()
-        for phase in self.project.get_phases():
-            for usecase in self.project.get_usecases():
-                if self.project.get_filter_state(phase, usecase):
-                    allowed_combinations.append((phase, usecase))
+        for use_case in self.project.get_usecases():
+            for phase in self.project.get_phases():
+                for usecase in self.project.get_usecases():
+                    if self.project.get_filter_state(phase, usecase):
+                        allowed_combinations.append((usecase,phase ))
         return allowed_combinations
 
     def columnCount(self, parent=QModelIndex()):
         return self.check_column_index + len(self.allowed_combinations)
 
-    def headerData(self, section, orientation, role=...):
-        if (
-            orientation != Qt.Orientation.Horizontal
-            or role != Qt.ItemDataRole.DisplayRole
-        ):
-            return
-
-        for col, text in zip(range(self.check_column_index), self.column_titles):
-            if section == col:
-                return text
-
-        if section - self.check_column_index >= len(self.allowed_combinations):
-            return None
-        phase, usecase = self.allowed_combinations[section - self.check_column_index]
-        return f"{phase.name}-{usecase.name}"
 
     # Returns the data to be displayed for each cell
     def data(
@@ -288,7 +274,7 @@ class TreeModel(QAbstractItemModel):
         if index.column() - self.check_column_index >= len(self.allowed_combinations):
             return False
 
-        phase, usecase = self.get_allowed_combinations()[
+        usecase, phase = self.get_allowed_combinations()[
             index.column() - self.check_column_index
         ]
         logging.debug(f"Set {node} {phase.name}:{usecase.name} to {bool(value)}")
