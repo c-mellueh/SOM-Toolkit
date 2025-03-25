@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable,TYPE_CHECKING
+from typing import Callable, TYPE_CHECKING
 
 
 from PySide6.QtCore import (
     QAbstractItemModel,
     QAbstractTableModel,
     QCoreApplication,
-    QItemSelectionModel,
+    QSortFilterProxyModel,
     QModelIndex,
     Qt,
     Signal,
@@ -16,14 +16,23 @@ from PySide6.QtCore import (
     QRect,
     QPoint,
 )
-from PySide6.QtGui import QMouseEvent,QColor,QPainter,QPalette,QBrush
-from PySide6.QtWidgets import QTableView, QTreeView, QWidget,QHeaderView,QStyleOptionHeader,QStyle
+from PySide6.QtGui import QMouseEvent, QColor, QPainter, QPalette, QBrush
+from PySide6.QtWidgets import (
+    QTableView,
+    QTreeView,
+    QWidget,
+    QHeaderView,
+    QStyleOptionHeader,
+    QStyle,
+)
 import SOMcreator
 import som_gui
 from som_gui import tool
 from . import trigger
+
 if TYPE_CHECKING:
     from .ui_header import CustomHeaderView
+
 
 class SettingsWidget(QWidget):
     def __init__(self):
@@ -68,8 +77,6 @@ class ProjectView(QTableView):
         trigger.tree_mouse_release_event(index)
 
 
-
-
 class FilterTreeView(QTreeView):
     def __init__(self, parent, frozen_col_count):
         super().__init__(parent)
@@ -95,9 +102,10 @@ class ClassTreeView(FilterTreeView):
     def model(self) -> ClassModel:
         return super().model()
 
-    def header(self) ->CustomHeaderView:
+    def header(self) -> CustomHeaderView:
         return super().header()
-    
+
+
 class PsetTreeView(FilterTreeView):
     def __init__(self, parent=None):
         super().__init__(parent, 1)
@@ -159,7 +167,7 @@ class ProjectModel(QAbstractTableModel):
             return False
         phase = self.project.get_phase_by_index(index.row())
         usecase = self.project.get_usecase_by_index(index.column())
-        self.project.set_filter_state(phase, usecase, bool(value))
+        trigger.change_filter_state(usecase, phase,bool(value))
         trigger.update_class_tree()
         trigger.update_pset_tree()
         return True
@@ -226,18 +234,20 @@ class TreeModel(QAbstractItemModel):
             flags = flags & ~Qt.ItemFlag.ItemIsEnabled
         return flags
 
+    def column_index_from_ucph(self,usecase:SOMcreator.UseCase,phase:SOMcreator.Phase):
+        return self.allowed_combinations.index((usecase,phase))
+
+
     def get_allowed_combinations(self):
         allowed_combinations = list()
         for use_case in self.project.get_usecases():
             for phase in self.project.get_phases():
-                for usecase in self.project.get_usecases():
-                    if self.project.get_filter_state(phase, usecase):
-                        allowed_combinations.append((usecase,phase ))
+                if self.project.get_filter_state(phase, use_case):
+                    allowed_combinations.append((use_case, phase))
         return allowed_combinations
 
     def columnCount(self, parent=QModelIndex()):
         return self.check_column_index + len(self.allowed_combinations)
-
 
     # Returns the data to be displayed for each cell
     def data(
