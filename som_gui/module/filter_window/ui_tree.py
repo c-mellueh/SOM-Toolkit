@@ -91,10 +91,8 @@ class TreeModel(QAbstractItemModel):
         if index.column() < self.check_column_index:
             return flags
         is_parent_enabled = Qt.ItemFlag.ItemIsEnabled in parent_index.flags()
-        print(parent_index.data(Qt.ItemDataRole.CheckStateRole))
-        is_parent_checked = (
-            parent_index.data(Qt.ItemDataRole.CheckStateRole) == Qt.CheckState.Checked
-        )
+        cs = parent_index.data(Qt.ItemDataRole.CheckStateRole)
+        is_parent_checked = tool.Util.checkstate_to_bool(cs)
         if not (is_parent_enabled and is_parent_checked):
             flags &= ~Qt.ItemFlag.ItemIsEnabled
         return flags
