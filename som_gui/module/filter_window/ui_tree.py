@@ -7,7 +7,7 @@ from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTreeView
 
 import SOMcreator
-from som_gui.tool import Util as tool_util
+from som_gui import tool
 from . import trigger
 
 if TYPE_CHECKING:
@@ -129,7 +129,7 @@ class TreeModel(QAbstractItemModel):
                 if pos >= len(self.allowed_combinations):
                     return None
                 usecase, phase = self.allowed_combinations[pos]
-                return tool_util.bool_to_checkstate(
+                return tool.Util.bool_to_checkstate(
                     node.get_filter_state(phase, usecase)
                 )
         return None

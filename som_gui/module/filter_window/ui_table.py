@@ -11,7 +11,7 @@ from PySide6.QtCore import (
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTableView
 import SOMcreator
-from som_gui.tool import Util as tool_util
+from som_gui import tool
 from . import trigger
 
 
@@ -75,7 +75,7 @@ class ProjectModel(QAbstractTableModel):
     def data(self, index: QModelIndex, role: Qt.ItemDataRole):
         if role == Qt.ItemDataRole.CheckStateRole:
             state = self.project.get_filter_matrix()[index.row()][index.column()]
-            return tool_util.bool_to_checkstate(state)
+            return tool.Util.bool_to_checkstate(state)
         return None
 
     def setData(self, index: QModelIndex, value, role=...):
@@ -103,7 +103,7 @@ class ProjectModel(QAbstractTableModel):
     def insertRows(self, row, count, parent=None):
         logging.debug("Insert Rows")
         text = QCoreApplication.translate("FilterWindow", "New Phase")
-        new_name = tool_util.get_new_name(
+        new_name = tool.Util.get_new_name(
             text, [ph.name for ph in self.project.get_phases()]
         )
         self.beginInsertRows(QModelIndex(), row, row + count - 1)
