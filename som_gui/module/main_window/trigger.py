@@ -24,7 +24,7 @@ def retranslate_ui():
 
 
 def toggle_console():
-    core.toggle_console_clicked(tool.MainWindow)
+    core.toggle_console_clicked(tool.MainWindow,tool.ClassTree)
 
 
 def close_event(event):
