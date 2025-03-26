@@ -149,11 +149,17 @@ class TreeModel(QAbstractItemModel):
         return True
 
 
+def ident_getter_func(som_class:SOMcreator.SOMClass):
+    return "" if som_class.is_concept else som_class.ident_value 
+    
+
 class ClassModel(TreeModel):
     def __init__(self, project: SOMcreator.SOMProject):
+        
+        
         getter_funcs = [
             lambda o: getattr(o, "name"),
-            lambda o: getattr(o, "ident_value"),
+            ident_getter_func,
         ]
         super().__init__(project, getter_funcs)
         self.root_classes = list(self.project.get_root_classes(filter=False))
