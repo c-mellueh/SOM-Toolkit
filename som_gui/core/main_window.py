@@ -119,14 +119,14 @@ def refresh_main_window(
     main_window_tool.set_window_title(f"SOM-Toolkit v{som_gui.__version__}")
 
 
-def toggle_console_clicked(main_window: Type[tool.MainWindow]):
+def toggle_console_clicked(main_window: Type[tool.MainWindow],class_tree:Type[tool.ClassTree]):
     """
     TOggles if Console is Shown
     :param main_window:
     :return:
     """
     main_window.toggle_console()
-    retranslate_ui(main_window)  # Changes Text from Show to Hide / from Hide to Show
+    retranslate_ui(main_window,class_tree)  # Changes Text from Show to Hide / from Hide to Show
 
 
 def add_class_tree_shortcuts(

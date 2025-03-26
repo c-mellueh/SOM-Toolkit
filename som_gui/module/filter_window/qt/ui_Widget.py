@@ -15,60 +15,48 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QHeaderView, QLabel,
-    QSizePolicy, QSplitter, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QHeaderView, QSizePolicy,
+    QSplitter, QVBoxLayout, QWidget)
 
-from som_gui.module.filter_window.ui import (ClassTreeView, ProjectView, PsetTreeView)
+from som_gui.module.filter_window.ui import ProjectView
 
-class Ui_FilterWindow(object):
-    def setupUi(self, FilterWindow):
-        if not FilterWindow.objectName():
-            FilterWindow.setObjectName(u"FilterWindow")
-        FilterWindow.resize(1263, 853)
-        self.verticalLayout_2 = QVBoxLayout(FilterWindow)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.splitter_2 = QSplitter(FilterWindow)
-        self.splitter_2.setObjectName(u"splitter_2")
-        self.splitter_2.setOrientation(Qt.Orientation.Vertical)
-        self.project_table = ProjectView(self.splitter_2)
+class Ui_Form(object):
+    def setupUi(self, Form):
+        if not Form.objectName():
+            Form.setObjectName(u"Form")
+        Form.resize(1456, 892)
+        self.verticalLayout = QVBoxLayout(Form)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.vertical_splitter = QSplitter(Form)
+        self.vertical_splitter.setObjectName(u"vertical_splitter")
+        self.vertical_splitter.setOrientation(Qt.Orientation.Vertical)
+        self.project_table = ProjectView(self.vertical_splitter)
         self.project_table.setObjectName(u"project_table")
         self.project_table.setContextMenuPolicy(Qt.ContextMenuPolicy.ActionsContextMenu)
         self.project_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.splitter_2.addWidget(self.project_table)
-        self.splitter = QSplitter(self.splitter_2)
-        self.splitter.setObjectName(u"splitter")
-        self.splitter.setOrientation(Qt.Orientation.Horizontal)
-        self.class_tree = ClassTreeView(self.splitter)
-        self.class_tree.setObjectName(u"class_tree")
-        self.splitter.addWidget(self.class_tree)
-        self.verticalLayoutWidget = QWidget(self.splitter)
-        self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayout = QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.label = QLabel(self.verticalLayoutWidget)
-        self.label.setObjectName(u"label")
+        self.vertical_splitter.addWidget(self.project_table)
+        self.splitter_3 = QSplitter(self.vertical_splitter)
+        self.splitter_3.setObjectName(u"splitter_3")
+        self.splitter_3.setOrientation(Qt.Orientation.Horizontal)
+        self.class_splitter = QSplitter(self.splitter_3)
+        self.class_splitter.setObjectName(u"class_splitter")
+        self.class_splitter.setOrientation(Qt.Orientation.Horizontal)
+        self.splitter_3.addWidget(self.class_splitter)
+        self.property_splitter = QSplitter(self.splitter_3)
+        self.property_splitter.setObjectName(u"property_splitter")
+        self.property_splitter.setOrientation(Qt.Orientation.Horizontal)
+        self.splitter_3.addWidget(self.property_splitter)
+        self.vertical_splitter.addWidget(self.splitter_3)
 
-        self.verticalLayout.addWidget(self.label)
-
-        self.pset_tree = PsetTreeView(self.verticalLayoutWidget)
-        self.pset_tree.setObjectName(u"pset_tree")
-
-        self.verticalLayout.addWidget(self.pset_tree)
-
-        self.splitter.addWidget(self.verticalLayoutWidget)
-        self.splitter_2.addWidget(self.splitter)
-
-        self.verticalLayout_2.addWidget(self.splitter_2)
+        self.verticalLayout.addWidget(self.vertical_splitter)
 
 
-        self.retranslateUi(FilterWindow)
+        self.retranslateUi(Form)
 
-        QMetaObject.connectSlotsByName(FilterWindow)
+        QMetaObject.connectSlotsByName(Form)
     # setupUi
 
-    def retranslateUi(self, FilterWindow):
-        FilterWindow.setWindowTitle(QCoreApplication.translate("FilterWindow", u"Form", None))
-        self.label.setText("")
+    def retranslateUi(self, Form):
+        Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
     # retranslateUi
 

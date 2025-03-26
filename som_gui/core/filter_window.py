@@ -32,10 +32,6 @@ def retranslate_ui(filter_window: Type[tool.FilterWindow], util: Type[tool.Util]
         title = QCoreApplication.translate("FilterWindow", "Project Filter")
         filter_window.get().ui.retranslateUi(filter_window.get())
         filter_window.get().setWindowTitle(util.get_window_title(title))
-    if filter_window.get_class_tree():
-        filter_window.get_class_tree().model().retranslate_ui()
-    if filter_window.get_pset_tree():
-        filter_window.get_pset_tree().model().retranslate_ui()
 
 
 def open_window(
@@ -50,13 +46,12 @@ def open_window(
         filter_window.get().activateWindow()
         return
 
-    widget = filter_window.create_widget()
+    widget = filter_window.create_widget(project.get())
     util.add_shortcut(
         "Ctrl+F", widget, lambda: search_class(filter_window, search, project)
     )
     filter_window.connect_project_table(project.get())
     filter_window.connect_class_tree(project.get())
-    filter_window.connect_pset_tree(project.get())
     retranslate_ui(filter_window, util)
     widget.show()
 
@@ -105,7 +100,7 @@ def search_class(
     som_class = search.search_class(list(project.get().get_classes(filter=True)))
     if som_class is None:
         return
-    class_tree = filter_window.get_class_tree()
+    class_tree = filter_window.get_class_trees()
     parent_list = list()
     parent = som_class.parent
     while parent is not None:
@@ -173,7 +168,19 @@ def pt_context_menu(
 
 
 def update_class_tree(filter_window: Type[tool.FilterWindow]):
-    filter_window.get_class_tree().model().update()
+    model = filter_window.get_class_model()
+    logging.debug(f"Update Class Tree")
+    for tree in filter_window.get_class_trees():
+        tree.model().update_data()
+        tree.repaint()
+
+        for i in range(model.columnCount()):
+            if tree.mode != 0:
+                tree.setColumnHidden(i, i < tree.model().check_column_index)
+            else:
+                hide = i >= tree.model().check_column_index
+                if hide and not tree.isColumnHidden(i):
+                    tree.setColumnHidden(i, hide)
 
 
 def class_tree_selection_changed(
@@ -190,7 +197,15 @@ def class_tree_selection_changed(
 
 
 def update_pset_tree(filter_window: Type[tool.FilterWindow]):
-    filter_window.get_pset_tree().model().update()
+    model = filter_window.get_pset_model()
+    for tree in filter_window.get_pset_trees():
+        model.active_class = filter_window.get_active_class()
+        model.update_data()
+        for i in range(model.columnCount()):
+            if tree.mode != 0:
+                tree.setColumnHidden(i, i < model.check_column_index)
+            else:
+                tree.setColumnHidden(i, i >= model.check_column_index)
 
 
 def tree_mouse_move_event(index: QModelIndex, filter_window: Type[tool.FilterWindow]):
@@ -206,6 +221,9 @@ def tree_mouse_release_event(
     if index is None:
         return
     filter_window.tree_release_click_drag()
+
+
+### Compare Widget
 
 
 def add_compare_widget(
@@ -285,7 +303,9 @@ def filter_tab_class_tree_selection_changed(
     property_compare: Type[tool.PropertyCompare],
     filter_compare: Type[tool.FilterCompare],
 ):
-    som_class = property_compare.get_selected_entity(property_compare.get_class_tree(widget))
+    som_class = property_compare.get_selected_entity(
+        property_compare.get_class_tree(widget)
+    )
     tree_widget = property_compare.get_pset_tree(widget)
     pset_list = property_compare.get_pset_list(som_class)
 

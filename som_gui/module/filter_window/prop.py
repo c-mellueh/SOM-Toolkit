@@ -19,8 +19,11 @@ class FilterWindowProperties:
     active_check_state: Qt.CheckState = None
     settings_widget: ui.SettingsWidget = None
     actions: dict[str, QAction] = dict()
-
-
+    class_views:list[ui.ClassTreeView] = list()
+    pset_views:list[ui.PsetTreeView] = list()
+    class_model:ui.ClassModel = None
+    pset_model:ui.PsetModel = None
+    
 class FilterCompareProperties:
     widget: PropertyWidget = None
     usecase_list = list()
