@@ -1,16 +1,13 @@
 from __future__ import annotations
-
 import logging
-from typing import Callable, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-
-from PySide6.QtCore import QAbstractItemModel, QCoreApplication, QModelIndex, Qt
-
-from PySide6.QtGui import QMouseEvent, QPaintEvent
+from PySide6.QtCore import QAbstractItemModel, QModelIndex, Qt
+from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTreeView
 
 import SOMcreator
-from som_gui import tool
+from som_gui.tool import Util as tool_util
 from . import trigger
 
 if TYPE_CHECKING:
@@ -59,11 +56,7 @@ class PsetTreeView(FilterTreeView):
 
 
 class TreeModel(QAbstractItemModel):
-    def __init__(
-        self,
-        project: SOMcreator.SOMProject,
-        first_column_functions
-    ):
+    def __init__(self, project: SOMcreator.SOMProject, first_column_functions):
         """
         :param: check_column_index = Index of the first column which will contain checkData
         """
@@ -84,7 +77,7 @@ class TreeModel(QAbstractItemModel):
             self.createIndex(self.rowCount(), self.columnCount()),
         )
 
-    def flags(self, index:QModelIndex, parent_index:QModelIndex):
+    def flags(self, index: QModelIndex, parent_index: QModelIndex):
         """
         make Item Checkable if Column > check_column_index
         Disable Item if Parent is not checked or parent is disabled
@@ -92,13 +85,16 @@ class TreeModel(QAbstractItemModel):
         flags = super().flags(index)
         if index.column() >= self.check_column_index:
             flags |= Qt.ItemFlag.ItemIsUserCheckable
-        
+
         if not parent_index.isValid():
             return flags
         if index.column() < self.check_column_index:
             return flags
         is_parent_enabled = Qt.ItemFlag.ItemIsEnabled in parent_index.flags()
-        is_parent_checked =  parent_index.data(Qt.ItemDataRole.CheckStateRole) == Qt.CheckState.Checked
+        print(parent_index.data(Qt.ItemDataRole.CheckStateRole))
+        is_parent_checked = (
+            parent_index.data(Qt.ItemDataRole.CheckStateRole) == Qt.CheckState.Checked
+        )
         if not (is_parent_enabled and is_parent_checked):
             flags &= ~Qt.ItemFlag.ItemIsEnabled
         return flags
@@ -133,7 +129,7 @@ class TreeModel(QAbstractItemModel):
                 if pos >= len(self.allowed_combinations):
                     return None
                 usecase, phase = self.allowed_combinations[pos]
-                return tool.Util.bool_to_checkstate(
+                return tool_util.bool_to_checkstate(
                     node.get_filter_state(phase, usecase)
                 )
         return None
@@ -141,9 +137,11 @@ class TreeModel(QAbstractItemModel):
     def setData(self, index: QModelIndex, value, role: Qt.ItemDataRole):
         if not index.isValid() or role != Qt.ItemDataRole.CheckStateRole:
             return False
-        node: SOMcreator.SOMClass|SOMcreator.SOMProperty|SOMcreator.SOMPropertySet = index.internalPointer()
+        node: (
+            SOMcreator.SOMClass | SOMcreator.SOMProperty | SOMcreator.SOMPropertySet
+        ) = index.internalPointer()
         logical_position = index.column() - self.check_column_index
-        if  logical_position>= len(self.allowed_combinations):
+        if logical_position >= len(self.allowed_combinations):
             return False
         usecase, phase = self.allowed_combinations[logical_position]
         logging.debug(f"Set {node} {phase.name}:{usecase.name} to {bool(value)}")
@@ -185,7 +183,7 @@ class ClassModel(TreeModel):
         return count
 
     # Creates an index for a given row and column
-    def index(self, row:int, column:int, parent=QModelIndex()):
+    def index(self, row: int, column: int, parent=QModelIndex()):
 
         if not parent.isValid():
             if row >= len(self.root_classes):
@@ -217,13 +215,13 @@ class ClassModel(TreeModel):
         parent_index: QModelIndex = node.parent.index
         return parent_index.sibling(parent_index.row(), 0)
 
+
 class PsetModel(TreeModel):
     def __init__(self, project: SOMcreator.SOMProject):
-        self.active_class:SOMcreator.SOMClass = None
-        self.property_sets:list[SOMcreator.SOMPropertySet] = list()
+        self.active_class: SOMcreator.SOMClass = None
+        self.property_sets: list[SOMcreator.SOMPropertySet] = list()
         getter_funcs = [lambda p: getattr(p, "name")]
         super().__init__(project, getter_funcs)
-
 
     def flags(self, index: QModelIndex):
         node: SOMcreator.SOMPropertySet | SOMcreator.SOMProperty = (
@@ -238,7 +236,11 @@ class PsetModel(TreeModel):
         return super().flags(index, parent_index)
 
     def update_data(self):
-        self.property_sets = list(self.active_class.get_property_sets(filter=False)) if self.active_class else []
+        self.property_sets = (
+            list(self.active_class.get_property_sets(filter=False))
+            if self.active_class
+            else []
+        )
         super().update_data()
 
     # Returns the number of children (rows) under the given index
@@ -265,9 +267,7 @@ class PsetModel(TreeModel):
             return item.index
 
         node: SOMcreator.SOMPropertySet = parent.internalPointer()
-        children = list(
-            node.get_properties(filter=False)
-        ) 
+        children = list(node.get_properties(filter=False))
         if 0 <= row < len(children):
             child = children[row]
             child.index = self.createIndex(row, column, child)
