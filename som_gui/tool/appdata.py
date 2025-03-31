@@ -23,8 +23,12 @@ class CustomConfigParser(ConfigParser):
     def setstring(self,section,option,value):
         self.set(section,option)
 
-    def get(self,*args,**kwargs):
-        res = super().get(*args,**kwargs)
+    def get(self,section,option,*args,**kargs):
+        if not self.has_section(section):
+            return None
+        if not self.has_option(section,option):
+            return None
+        res = super().get(section,option,*args,**kargs)
         if not isinstance(res,str):
             return res
         if res.startswith("'") and res.endswith("'"):
