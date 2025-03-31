@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (
 import som_gui.core.tool
 from som_gui import tool
 from som_gui.module.util import ui
-from som_gui.module.util.constants import PATH_SEPERATOR
+from som_gui.module.util.constants import OPTION_SEPERATOR
 
 if TYPE_CHECKING:
     from som_gui.module.util.prop import MenuDict, UtilProperties
@@ -282,7 +282,7 @@ class Util(som_gui.core.tool.Util):
 
     @classmethod
     def get_path_from_fileselector(cls, file_selector: ui.FileSelector) -> list[str]:
-        return file_selector.ui.lineEdit.text().split(PATH_SEPERATOR)
+        return file_selector.ui.lineEdit.text().split(OPTION_SEPERATOR)
 
     @classmethod
     def request_path(cls, widget: ui.FileSelector):
@@ -330,7 +330,7 @@ class Util(som_gui.core.tool.Util):
         path = tool.Appdata.get_path(appdata)
         if path:
             if isinstance(path, list):
-                path = PATH_SEPERATOR.join(path)
+                path = OPTION_SEPERATOR.join(path)
             line_edit.setText(path)
 
     @classmethod
@@ -380,7 +380,7 @@ class Util(som_gui.core.tool.Util):
                 item.setCheckState(Qt.CheckState.Unchecked)
 
     @classmethod
-    def create_completer(cls, texts, widget: QLineEdit | QComboBox|None=None):
+    def create_completer(cls, texts, widget: QLineEdit | QComboBox | None = None):
         completer = QCompleter(set(texts))
         if widget is not None:
             widget.setCompleter(completer)

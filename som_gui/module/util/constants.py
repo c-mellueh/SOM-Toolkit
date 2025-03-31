@@ -1,1 +1,1 @@
-PATH_SEPERATOR = " ;"
+OPTION_SEPERATOR = " ;"

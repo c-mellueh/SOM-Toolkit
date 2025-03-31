@@ -9,110 +9,125 @@ import appdirs
 import som_gui
 import som_gui.core.tool
 from som_gui import tool
-from som_gui.module.util.constants import PATH_SEPERATOR
+from som_gui.module.util.constants import OPTION_SEPERATOR
 
 PATHS_SECTION = "paths"
+class CustomConfigParser(ConfigParser):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
 
+    def getlist(self,section,option):
+        value = self.get(section, option)
+        return value.split(OPTION_SEPERATOR)
+
+    def setstring(self,section,option,value):
+        self.set(section,option)
+
+    def get(self,*args,**kwargs):
+        res = super().get(*args,**kwargs)
+        if not isinstance(res,str):
+            return res
+        if res.startswith("'") and res.endswith("'"):
+            res = res.strip("'")
+        return res
+
+    def set(self,section,option,value):
+        if not self.has_section(section):
+            self.add_section(section)
+        if type(value) in (list,set,tuple):
+            value = OPTION_SEPERATOR.join([str(v) for v in value])
+        if isinstance(value,str):
+            value = f"'{value}'"
+        super().set(section,option,str(value))
 
 class Appdata(som_gui.core.tool.Appdata):
-
-    @classmethod
-    def get_path(cls, value: str) -> str | list | set:
-        logging.info(f"Appdata Path '{value}' requested")
-        path = cls.get_string_setting(PATHS_SECTION, value)
-        if not path:
-            return ""
-        if PATH_SEPERATOR in path:
-            return path.split(PATH_SEPERATOR)
-        return path
-
-    @classmethod
-    def set_path(cls, path, value: str | list | set) -> None:
-        if isinstance(value, (list, set)):
-            value = PATH_SEPERATOR.join(value)
-        cls.set_setting(PATHS_SECTION, path, value)
-
-    @classmethod
-    def set_setting(cls, section: str, path: str, value):
-        config_parser = cls._get_config()
-        if not config_parser.has_section(section):
-            config_parser.add_section(section)
-        if type(value) in (list,set,tuple):
-            value = PATH_SEPERATOR.join([str(v) for v in value])
-        config_parser.set(section, path, str(value))
-        cls._write_config(config_parser)
-
-
-    @classmethod
-    def get_settings_path(cls):
-        return os.path.join(appdirs.user_config_dir(som_gui.__name__), "config.ini")
-
     @classmethod
     def _write_config(cls, config_parser) -> None:
-        with open(cls.get_settings_path(), "w") as f:
+        with open(cls.get_ini_path(), "w") as f:
             config_parser.write(f)
 
     @classmethod
-    def _get_config(cls, ) -> ConfigParser:
-        config = ConfigParser()
-        config_path = cls.get_settings_path()
+    def _get_config(cls, ) -> CustomConfigParser:
+        ConfigParser()
+        config = CustomConfigParser()
+        config_path = cls.get_ini_path()
         parent_folder = os.path.dirname(config_path)
         if not os.path.exists(parent_folder):
             tool.Util.create_directory(parent_folder)
             return config
         if not os.path.exists(config_path):
             return config
-        with open(config_path, "r") as f:
-            config.read_file(f)
+        config.read(config_path)
         return config
+    
+    @classmethod
+    def get_ini_path(cls):
+        return os.path.join(appdirs.user_config_dir(som_gui.__name__), "config.ini")
 
     @classmethod
-    def get_bool_setting(cls, section: str, path: str, default=False) -> bool:
+    def get_path(cls, value: str) -> str | list | set:
+        logging.info(f"Appdata Path '{value}' requested")
+        config = cls._get_config()
+        path = config.get(PATHS_SECTION,value)
+        if not path:
+            return ""
+        if OPTION_SEPERATOR in path:
+            return path.split(OPTION_SEPERATOR)
+        return path
+
+    @classmethod
+    def set_path(cls, path, value: str | list | set) -> None:
+        if isinstance(value, (list, set)):
+            value = OPTION_SEPERATOR.join(value)
+        cls.set_setting(PATHS_SECTION, path, value)
+
+    @classmethod
+    def set_setting(cls, section: str, option: str, value):
         config_parser = cls._get_config()
-        if config_parser.has_option(section, path):
-            path = config_parser.get(section, path)
-            if path is not None:
-                return eval(path)
-        cls.set_setting(section, path, default)
+        config_parser.set(section,option,value)
+        cls._write_config(config_parser)
+
+    @classmethod
+    def get_bool_setting(cls, section: str, option: str, default=False) -> bool:
+        config_parser = cls._get_config()
+        if config_parser.has_option(section, option):
+            return config_parser.getboolean(section, option)
+        cls.set_setting(section, option, default)
         return default
 
     @classmethod
-    def get_string_setting(cls, section: str, path: str, default="") -> str:
+    def get_string_setting(cls, section: str, option: str, default="") -> str:
         config_parser = cls._get_config()
-        if config_parser.has_option(section, path):
-            value = config_parser.get(section, path)
+        if config_parser.has_option(section, option):
+            value = config_parser.get(section,option)
             if value is not None:
                 return value
-        cls.set_setting(section, path, default)
+        cls.set_setting(section, option, default)
         return default
 
     @classmethod
-    def get_int_setting(cls, section: str, path: str, default=0) -> int:
+    def get_int_setting(cls, section: str, option: str, default=0) -> int:
         config_parser = cls._get_config()
-        if config_parser.has_option(section, path):
-            path = config_parser.get(section, path)
-            if path is not None:
-                return int(path)
-        cls.set_setting(section, path, default)
+        if config_parser.has_option(section, option):
+            return config_parser.getint(section, option)
+        cls.set_setting(section, option, default)
         return default
 
     @classmethod
-    def get_float_setting(cls, section: str, path: str, default=0) -> float:
+    def get_float_setting(cls, section: str, option: str, default=0) -> float:
         config_parser = cls._get_config()
-        if config_parser.has_option(section, path):
-            path = config_parser.get(section, path)
-            if path is not None:
-                return float(path)
-        cls.set_setting(section, path, default)
+        if config_parser.has_option(section, option):
+            return config_parser.getfloat(section, option)
+        cls.set_setting(section, option, default)
         return default
     
     @classmethod
-    def get_list_setting(cls,section:str,path:str,default = []) -> list[str]:
+    def get_list_setting(cls,section:str,option:str,default = []) -> list[str]:
         config_parser = cls._get_config()
-        if config_parser.has_option(section, path):
-            value = config_parser.get(section, path)
+        if config_parser.has_option(section, option):
+            value = config_parser.getlist(section, option)
             value = None if value == "None" else value
             if value is not None:
-                return value.split(PATH_SEPERATOR)        
-        cls.set_setting(section, path, default)
+                return value
+        cls.set_setting(section, option, default)
         return default
