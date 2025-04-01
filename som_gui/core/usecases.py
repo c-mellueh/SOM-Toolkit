@@ -20,3 +20,26 @@ def retranslate_ui(usecases: Type[tool.Usecases], util: Type[tool.Util]):
         title = QCoreApplication.translate("UsecaseWindow", "Project Filter")
         window.ui.retranslateUi(window)
         window.setWindowTitle(util.get_window_title(title))
+
+def open_window(
+    usecases: Type[tool.Usecases],
+    project: Type[tool.Project],
+    util: Type[tool.Util],
+    search: Type[tool.Search],
+):
+
+    window = usecases.get_window()
+    if window:
+        window.show()
+        window.activateWindow()
+        return
+
+    window = usecases.create_window()
+    #ToDo: Add Shortcut FUnction
+    # util.add_shortcut(
+    #     "Ctrl+F", widget, lambda: search_class(filter_window, search, project)
+    # )
+    # filter_window.connect_project_table(project.get())
+    # filter_window.connect_class_tree(project.get())
+    usecases.signaller.retranslate_ui.emit()
+    window.show()

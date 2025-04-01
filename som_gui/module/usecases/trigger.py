@@ -16,4 +16,4 @@ def on_new_project():
     pass
 
 def open_window():
-    print("HIER")
+    core.open_window(tool.Usecases,tool.Project,tool.Util,tool.Search)
