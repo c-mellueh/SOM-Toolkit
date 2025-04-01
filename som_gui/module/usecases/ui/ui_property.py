@@ -17,3 +17,7 @@ class PropertyView(QTableView):
         super().__init__(*args,**kwargs)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setSelectionMode(QTableView.SelectionMode.SingleSelection)
+
+class PropertyModel(QAbstractTableModel):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)

@@ -14,10 +14,15 @@ import SOMcreator
 from som_gui import tool
 
 class ProjectView(QTableView):
+    update_requested = Signal()
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setSelectionMode(QTableView.SelectionMode.SingleSelection)
+
+    def enterEvent(self, event):
+        self.update_requested.emit()
+        return super().enterEvent(event)
 
 class ProjectModel(QAbstractTableModel):
     data_changed_externally = Signal()

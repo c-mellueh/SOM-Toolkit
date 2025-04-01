@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import QWidget
 import som_gui
 from .ui_project import ProjectView,ProjectModel
-from .ui_class import ClassView
-from .ui_property import PropertyView
+from .ui_class import ClassView,ClassModel
+from .ui_property import PropertyView,PropertyModel
 
 class Widget(QWidget):
     def __init__(self, *args, **kwargs):

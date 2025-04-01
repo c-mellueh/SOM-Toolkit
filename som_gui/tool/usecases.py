@@ -48,9 +48,23 @@ class Usecases(som_gui.core.tool.Usecases):
         return window
 
     @classmethod
-    def add_models_to_window(cls,window:ui.Widget,project:SOMcreator.SOMProject):
+    def add_models_to_window(cls,project:SOMcreator.SOMProject):
         project_model = ui.ProjectModel(project)
-        window.ui.project_tableView.setModel(project_model)
+        project_view = cls.get_project_view()
+        project_view.setModel(project_model)
+        project_view.update_requested.connect(project_model.update_data)
+
+        class_model = ui.ClassModel(project)
+        class_view_1,class_view_2 = cls.get_class_views()
+        class_view_2.setModel(class_model)
+        class_view_2.update_requested.connect(class_model.update_data)
+
+    @classmethod
+    def get_project_view(cls) -> ui.ProjectView:
+        window = cls.get_window()
+        if window is None:
+            return None
+        return window.ui.project_tableView
 
     @classmethod
     def get_project_model(cls) ->ui.ProjectModel:
@@ -59,10 +73,32 @@ class Usecases(som_gui.core.tool.Usecases):
             return None
         return pv.model()
     
+
+    
     @classmethod
-    def get_project_view(cls):
+    def get_class_views(cls) -> tuple[ui.ClassView,ui.ClassView]:
         window = cls.get_window()
         if window is None:
+            return None,None
+        return window.ui.class_treeView_fixed,window.ui.class_treeView_extendable
+
+    @classmethod
+    def get_class_model(cls) -> ui.ClassModel|None:
+        view1,view2 = cls.get_class_views()
+        if view2 is None:
             return None
-        return window.ui.project_tableView
-    
+        return view2.model()
+
+    @classmethod
+    def get_property_views(cls) -> tuple[ui.PropertyView,ui.PropertyView]:
+        window = cls.get_window()
+        if window is None:
+            return None,None
+        return window.ui.property_table_view_fixed,window.ui.property_table_view_extendable
+
+    @classmethod
+    def get_class_model(cls) -> ui.PropertyModel|None:
+        view1,view2 = cls.get_property_views()
+        if view2 is None:
+            return None
+        return view2.model()
