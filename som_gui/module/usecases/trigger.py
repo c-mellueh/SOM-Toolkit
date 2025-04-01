@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 
 def connect():
+    core.create_main_menu_actions(tool.Usecases,tool.MainWindow)
     pass
 
 def retranslate_ui():
@@ -13,3 +14,6 @@ def retranslate_ui():
 
 def on_new_project():
     pass
+
+def open_window():
+    print("HIER")

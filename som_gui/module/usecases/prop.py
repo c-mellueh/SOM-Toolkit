@@ -1,5 +1,7 @@
 from __future__ import annotations
-
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from PySide6.QtGui import QAction
 class UsecasesProperties:
-    pass
+    actions:dict[str,QAction] = dict()
 

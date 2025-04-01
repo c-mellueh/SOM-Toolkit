@@ -1842,7 +1842,7 @@ class Settings:
 
     def set_widget(self, widget): pass
 
-class UseCases:
+class Usecases:
     pass
 
 class Util:
