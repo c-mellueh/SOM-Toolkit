@@ -1,6 +1,7 @@
 from __future__ import annotations
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QCoreApplication,QModelIndex
 from typing import TYPE_CHECKING, Type
+import logging
 if TYPE_CHECKING:
     from som_gui import tool
 
@@ -44,3 +45,38 @@ def open_window(
     # filter_window.connect_class_tree(project.get())
     usecases.signaller.retranslate_ui.emit()
     window.show()
+
+def filter_changed_externally(usecases: Type[tool.Usecases]):
+    """
+    gets Called if Filters get Added or Removed externally. For example by Console Script.
+    :param filter_window:
+    :return:
+    """
+    model = usecases.get_project_model()
+    logging.debug(
+        f"Filter Changed Externally. rowCount: {model.last_row_count} -> {model.rowCount()} columnCount:{model.last_col_count} -> {model.columnCount()}"
+    )
+
+    # Remove Rows (Phases)
+    if model.last_row_count > model.rowCount():
+        model.beginRemoveRows(QModelIndex(), model.rowCount(), model.last_row_count - 1)
+        model.endRemoveRows()
+
+    # Insert Rows (Phases)
+    if model.last_row_count < model.rowCount():
+        model.beginInsertRows(QModelIndex(), model.last_row_count + 1, model.rowCount())
+        model.endInsertRows()
+
+    # Remove Colums (UseCases)
+    if model.last_col_count > model.columnCount():
+        model.beginRemoveColumns(
+            QModelIndex(), model.columnCount(), model.last_col_count - 1
+        )
+        model.endRemoveColumns()
+
+    # Insert Colums (UseCases)
+    if model.last_col_count < model.columnCount():
+        model.beginInsertColumns(
+            QModelIndex(), model.last_col_count + 1, model.columnCount()
+        )
+        model.endInsertColumns()

@@ -51,3 +51,18 @@ class Usecases(som_gui.core.tool.Usecases):
     def add_models_to_window(cls,window:ui.Widget,project:SOMcreator.SOMProject):
         project_model = ui.ProjectModel(project)
         window.ui.project_tableView.setModel(project_model)
+
+    @classmethod
+    def get_project_model(cls) ->ui.ProjectModel:
+        pv = cls.get_project_view()
+        if pv is None:
+            return None
+        return pv.model()
+    
+    @classmethod
+    def get_project_view(cls):
+        window = cls.get_window()
+        if window is None:
+            return None
+        return window.ui.project_tableView
+    
