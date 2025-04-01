@@ -24,19 +24,26 @@ def export(
 
     export_excel.set_project(project)
     workbook = export_excel.create_workbook()
-    sheet_main = workbook.active
-    export_excel.fill_main_sheet(sheet_main)
-    sheet_dict = export_excel.filter_to_sheets(class_list)
 
+    cell_dict = dict()
     table_counter = 1
+    sheet_dict = export_excel.filter_to_sheets(class_list)
     for ident, data_dict in sheet_dict.items():
         class_name, classes = export_excel.get_class_data(data_dict)
-        work_sheet = workbook.create_sheet(f"{class_name} ({ident})")
+        work_sheet = workbook.create_sheet(f"{class_name}")
         for counter, som_class in enumerate(sorted(classes)):
             column = 1 + counter * (HEADER_COLUMN_COUNT + 1)
-            export_excel.create_class_entry(som_class, work_sheet, 1, column, table_counter)
+            row = 1
+            table_range = export_excel.create_class_entry(
+                som_class, work_sheet, row, column, table_counter
+            )
+            cell_dict[som_class] = (work_sheet, table_range)
+
             table_counter += 1
         export_excel.autoadjust_column_widths(work_sheet)
+
+    sheet_main = workbook.active
+    export_excel.fill_main_sheet(sheet_main, class_list, cell_dict)
 
     work_sheet = workbook.create_sheet("Property Mapping")
     export_excel.create_property_table(class_list, work_sheet)

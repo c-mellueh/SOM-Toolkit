@@ -8,7 +8,6 @@ from openpyxl import styles
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.worksheet.worksheet import Worksheet
-
 import SOMcreator
 
 IDENT_PSET_NAME = "Allgemeine Eigenschaften"
@@ -85,11 +84,20 @@ class ExportExcel:
         return ";".join(som_class.ifc_mapping) or ""
 
     @classmethod
-    def fill_main_sheet(cls, sheet: Worksheet) -> None:
-        project = cls.get_project()
+    def get_root_parent(cls,som_class:SOMcreator.SOMClass) ->SOMcreator.SOMClass:
+        if not som_class.is_child:
+            return som_class
+        parent = som_class.parent
+        while parent.is_child:
+            parent = parent.parent
+        return parent
+
+    @classmethod
+    def fill_main_sheet(cls, sheet: Worksheet,class_list:list[SOMcreator.SOMClass],cell_dict:dict) -> None:
         sheet.title = "Uebersicht"
-        titles = ["bauteilName", "bauteilKlassifikation", "abkuerzung", "IfcMapping"]
+        titles = ["Kategorie","Name", "Identifier", "Abkürzung", "IfcMapping"]
         getter_functions: list[Callable] = [
+            lambda c:cls.get_root_parent(c).name,
             cls._get_name,
             cls._get_identifier,
             cls._get_abbreviation,
@@ -97,13 +105,16 @@ class ExportExcel:
         ]
         for column, text in enumerate(titles, start=1):
             sheet.cell(1, column).value = text
-
         row = 1
-        for row, som_class in enumerate(sorted(project.get_classes(filter=True)), start=2):
+        for row, som_class in enumerate(class_list, start=2):
             for column, getter_function in enumerate(getter_functions, start=1):
                 sheet.cell(row, column).value = getter_function(som_class)
                 if som_class.is_optional(ignore_hirarchy=False):
                     sheet.cell(row, column).font = OPTIONAL_FONT
+            class_ws,table_range = cell_dict[som_class]
+            hyperlink_text = f"#'{class_ws.title}'!{table_range}"
+            sheet.cell(row,2).hyperlink = hyperlink_text
+            sheet.cell(row,2).style = "Hyperlink"
 
         table_range = (
             f"{sheet.cell(1, 1).coordinate}:{sheet.cell(row, len(titles)).coordinate}"
@@ -122,20 +133,32 @@ class ExportExcel:
 
     @classmethod
     def filter_to_sheets(cls, class_list: list[SOMcreator.SOMClass]) -> dict:
-        d = {
-            som_class.ident_value: {NAME: som_class.name, CLASSES: []}
-            for som_class in class_list
-            if len(som_class.ident_value.split(".")) == 1
-        }
+        
+        root_classes = [c for c in class_list if not c.is_child]
+        d = {c.name:{NAME:c.name,CLASSES:[c]} for c in root_classes}
         for som_class in class_list:
-            group = som_class.ident_value.split(".")[0]
-            d[group][CLASSES].append(som_class)
-        d["son"] = {NAME: "Sonstige", CLASSES: []}
-        for group_name, group in list(d.items()):
-            classes = group[CLASSES]
-            if len(classes) < 3:
-                d["son"][CLASSES] += classes
-                del d[group_name]
+            if som_class in root_classes:
+                continue
+            parent = cls.get_root_parent(som_class)
+            d[parent.name][CLASSES].append(som_class)
+
+
+        
+        # d = {
+        #     som_class.ident_value: {NAME: som_class.name, CLASSES: []}
+        #     for som_class in class_list
+        #     if len(som_class.ident_value.split(".")) == 1
+        # }
+
+        # for som_class in class_list:
+        #     group = som_class.ident_value.split(".")[0]
+        #     d[group][CLASSES].append(som_class)
+        # d["son"] = {NAME: "Sonstige", CLASSES: []}
+        # for group_name, group in list(d.items()):
+        #     classes = group[CLASSES]
+        #     if len(classes) < 3:
+        #         d["son"][CLASSES] += classes
+        #         del d[group_name]
         return d
 
     @classmethod
@@ -146,7 +169,6 @@ class ExportExcel:
             font_style = OPTIONAL_FONT
         else:
             font_style = styles.Font()
-
         sheet.cell(start_row, start_column).value = "bauteilName"
         sheet.cell(start_row, start_column + 1).value = som_class.name
 
@@ -219,7 +241,7 @@ class ExportExcel:
         )
         table.tableStyleInfo = style
         sheet.add_table(table)
-
+        return table_range
     @classmethod
     def draw_border(
         cls, sheet: Worksheet, row_range: [int, int], column_range: [int, int]
