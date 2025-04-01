@@ -110,3 +110,104 @@ class ProjectModel(QAbstractTableModel):
         phase = SOMcreator.Phase(new_name, new_name, new_name)
         self.project.add_phase(phase)
         self.endInsertRows()
+
+class PropertyView(QTableView):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+    def enterEvent(self, event):
+        super().enterEvent(event)
+        from .ui import SortFilterModel
+        model = self.model()
+        if isinstance(model,SortFilterModel):
+            model = model.sourceModel()
+        model.update_data()
+
+    def model(self) -> PropertyModel:
+        return super().model()
+
+    def mouseMoveEvent(self, event: QMouseEvent):
+        super().mouseMoveEvent(event)
+        trigger.tree_mouse_move_event(self.indexAt(event.pos()))
+
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+        index = self.indexAt(event.pos())
+        trigger.tree_mouse_release_event(index)
+
+
+class PropertyModel(QAbstractTableModel):
+
+    def __init__(self,):
+        super().__init__()
+        self.som_class:SOMcreator.SOMClass = None
+        self.row_count = 0
+        self.column_count = 2
+        self.allowed_combinations = list()
+        self.fixed_column_index = 2
+        self.properties = list()
+    def update_allowed_combinations(self):
+        ac = list()
+        if self.som_class is None:
+            return
+        project = self.som_class.project
+        for use_case in project.get_usecases():
+            for phase in project.get_phases():
+                if project.get_filter_state(phase, use_case):
+                    ac.append((use_case, phase))
+        self.allowed_combinations = ac
+
+    def update_data(self):
+        if self.som_class is None:
+            return
+        self.update_allowed_combinations()
+        self.row_count = len(self.som_class.get_properties(filter = False))
+        self.column_count = len(self.allowed_combinations)
+        self.dataChanged.emit(
+            self.createIndex(0, 0),
+            self.createIndex(self.rowCount(), self.columnCount()),
+        )
+
+    def set_class(self,som_class:SOMcreator.SOMClass):
+        self.som_class = som_class
+        self.properties = list(som_class.get_properties(filter = False))
+        self.update_data()
+
+    def flags(self, index:QModelIndex):
+        flags = super().flags(index)
+        if index.column() <self.fixed_column_index:
+            return flags
+        return flags | Qt.ItemFlag.ItemIsUserCheckable
+
+    def rowCount(self, parent=None):
+        return self.row_count
+
+    def columnCount(self, parent=None):
+        return self.column_count
+
+    def data(self, index: QModelIndex, role: Qt.ItemDataRole):
+        if self.som_class is None:
+            return None
+        som_property = self.properties[index.row()]
+        if index.column() == 0:
+            if role == Qt.ItemDataRole.DisplayRole:
+                return som_property.property_set.name
+        elif index.column() == 1:
+            if role == Qt.ItemDataRole.DisplayRole:
+                return som_property.name
+        else:
+            usecase,phase = self.allowed_combinations[index.column()]
+            if role == Qt.ItemDataRole.CheckStateRole:
+                state = som_property.get_filter_state(phase,usecase)
+                return tool.Util.bool_to_checkstate(state)
+        return None
+
+    def setData(self, index: QModelIndex, value, role=...):
+        if self.som_class is None:
+            return False
+        if role != Qt.ItemDataRole.CheckStateRole:
+            return False
+        usecase,phase = self.allowed_combinations[index.column()]
+        som_property = self.properties[index.row()]
+        som_property.set_filter_state(phase, usecase, bool(value))
+        return True

@@ -53,3 +53,13 @@ class FilterWidget(QWidget):
         self.ui = ui_Widget.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowIcon(som_gui.get_icon())
+
+class SortFilterModel(QSortFilterProxyModel):
+    def __init__(self,fixed_column_count:int,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.fixed_column_count = fixed_column_count
+
+    def filterAcceptsColumn(self, source_column, source_parent):
+        if source_column <self.fixed_column_count:
+            return True
+        return False

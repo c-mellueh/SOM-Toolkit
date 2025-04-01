@@ -35,3 +35,4 @@ from som_gui.tool.util import Util
 from som_gui.tool.class_info import ClassInfo
 from som_gui.tool.class_ import Class
 from som_gui.tool.class_tree import ClassTree
+from som_gui.tool.usecases import Usecases

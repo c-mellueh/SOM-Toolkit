@@ -170,18 +170,9 @@ def pt_context_menu(
 def update_class_tree(filter_window: Type[tool.FilterWindow]):
     model = filter_window.get_class_model()
     logging.debug(f"Update Class Tree")
+    model.update_data()
     for tree in filter_window.get_class_trees():
-        tree.model().update_data()
         tree.repaint()
-
-        for i in range(model.columnCount()):
-            if tree.mode != 0:
-                tree.setColumnHidden(i, i < tree.model().check_column_index)
-            else:
-                hide = i >= tree.model().check_column_index
-                if hide and not tree.isColumnHidden(i):
-                    tree.setColumnHidden(i, hide)
-
 
 def class_tree_selection_changed(
     selected: QItemSelection, filter_window: Type[tool.FilterWindow]
@@ -190,6 +181,9 @@ def class_tree_selection_changed(
     if len(indexes) == 0:
         return
     index = indexes[0]
+    from som_gui.module.filter_window.ui import SortFilterModel
+    if isinstance(index.model(),SortFilterModel):
+        index = index.model().mapToSource(index)
     som_class: SOMcreator.SOMClass = index.internalPointer()
     filter_window.set_active_class(som_class)
     filter_window.set_class_label(som_class.name)
@@ -198,15 +192,10 @@ def class_tree_selection_changed(
 
 def update_pset_tree(filter_window: Type[tool.FilterWindow]):
     model = filter_window.get_pset_model()
-    for tree in filter_window.get_pset_trees():
-        model.active_class = filter_window.get_active_class()
-        model.update_data()
-        for i in range(model.columnCount()):
-            if tree.mode != 0:
-                tree.setColumnHidden(i, i < model.check_column_index)
-            else:
-                tree.setColumnHidden(i, i >= model.check_column_index)
-
+    model.active_class = filter_window.get_active_class()
+    model.update_data()
+    for table in filter_window.get_pset_tables():
+        table.repaint()
 
 def tree_mouse_move_event(index: QModelIndex, filter_window: Type[tool.FilterWindow]):
     if not filter_window.is_tree_clicked():

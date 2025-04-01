@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable, TYPE_CHECKING, TextIO, Type
 
-from PySide6.QtCore import QModelIndex, Qt,QSize
+from PySide6.QtCore import QModelIndex, Qt, QSize
 from PySide6.QtGui import QAction, QColor
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -15,7 +15,8 @@ from PySide6.QtWidgets import (
     QTreeWidgetItem,
     QWidget,
     QSplitter,
-    QHeaderView)
+    QHeaderView,
+)
 
 
 import logging
@@ -33,7 +34,7 @@ if TYPE_CHECKING:
         FilterWindowProperties,
         FilterCompareProperties,
     )
-from som_gui.module.filter_window import ui, trigger, ui_header
+from som_gui.module.filter_window import ui, trigger, ui_header, ui_table, ui_tree
 from PySide6.QtCore import QCoreApplication
 
 
@@ -63,7 +64,7 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         return cls.get_properties().class_model
 
     @classmethod
-    def get_pset_trees(cls) -> list[ui.PsetTreeView]:
+    def get_pset_tables(cls) -> list[ui_table.PropertyView]:
         return cls.get_properties().pset_views
 
     @classmethod
@@ -74,37 +75,51 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
     def create_widget(cls, project: SOMcreator.SOMProject) -> ui.FilterWidget:
         widget = ui.FilterWidget()
         cls.get_properties().widget = widget
-        
+
         class_view_tree = ui.ClassTreeView(0)
         class_view_items = ui.ClassTreeView(1)
         cls.get_properties().class_views = [class_view_tree, class_view_items]
         class_model = ui.ClassModel(project)
         cls.get_properties().class_model = class_model
-        names = [QCoreApplication.translate("FilterWidget","Class"),
-                 QCoreApplication.translate("FilterWidget","Identifier")]
+        titles = [
+            QCoreApplication.translate("FilterWidget", "Class"),
+            QCoreApplication.translate("FilterWidget", "Identifier"),
+        ]
         cls.connect_views(
             project,
             class_model,
             widget.ui.class_splitter,
             class_view_tree,
             class_view_items,
-            names,
+            titles,
         )
+        hv1, hv2 = cls.create_header_views(project, titles)
 
-        pset_view_tree = ui.PsetTreeView(0)
-        pset_view_items = ui.PsetTreeView(1)
+        class_view_tree.setHeader(hv1)
+        class_view_items.setHeader(hv2)
+        pset_model = ui_table.PropertyModel()
+        pset_view_tree = ui_table.PropertyView(widget)
+        pset_view_items = ui_table.PropertyView(widget)
         cls.get_properties().pset_views = [pset_view_tree, pset_view_items]
 
-        pset_model = ui.PsetModel(project)
         cls.get_properties().pset_model = pset_model
+        titles = [
+            QCoreApplication.translate("FilterWidget", "PropertySet"),
+            QCoreApplication.translate("FilterWidget", "Property"),
+        ]
         cls.connect_views(
             project,
             pset_model,
             widget.ui.property_splitter,
             pset_view_tree,
             pset_view_items,
-            [QCoreApplication.translate("FilterWidget","PropertySet\nProperty")],
+            titles,
         )
+        hv1, hv2 = cls.create_header_views(project, titles)
+        pset_view_items.setHorizontalHeader(hv1)
+        pset_view_tree.setHorizontalHeader(hv2)
+        pset_view_items.horizontalHeader().setStretchLastSection(True)
+
         trigger.update_class_tree()
         trigger.update_pset_tree()
         cls.get_properties().widget = widget
@@ -114,24 +129,21 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
     def connect_views(
         cls,
         project: SOMcreator.SOMProject,
-        tree_model: ui.TreeModel,
+        tree_model: ui_tree.ClassModel | ui_table.PropertyModel,
         splitter: QSplitter,
-        view_1: ui.FilterTreeView,
-        view_2: ui.FilterTreeView,
+        view_1: ui_tree.ClassTreeView | ui_table.PropertyView,
+        view_2: ui_tree.ClassTreeView | ui_table.PropertyView,
         first_columns: list[str],
     ):
         splitter.addWidget(view_1)
         splitter.addWidget(view_2)
         splitter.setHandleWidth(0)
         splitter.setChildrenCollapsible(False)
-        view_1.setModel(tree_model)
+        filter_model = ui.SortFilterModel(len(first_columns))
+        filter_model.setSourceModel(tree_model)
+        view_1.setModel(filter_model)
         view_2.setModel(tree_model)
-        view_2.setSelectionModel(view_1.selectionModel())
-        cls.create_header_views(view_1,view_2,project,first_columns)
-        
-
-        view_1.header().setStretchLastSection(True)
-        view_2.header().setStretchLastSection(True)
+        #view_2.setSelectionModel(view_1.selectionModel())
 
         sp = QSizePolicy(
             QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Minimum
@@ -139,20 +151,22 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         sp.setHorizontalStretch(1)
 
         view_2.setSizePolicy(sp)
-        view_1.verticalScrollBar().valueChanged.connect(
-            view_2.verticalScrollBar().setValue
-        )
-        view_2.verticalScrollBar().valueChanged.connect(
-            view_1.verticalScrollBar().setValue
-        )
-        view_1.expanded.connect(view_2.expand)
-        view_1.collapsed.connect(view_2.collapse)
-        view_2.expanded.connect(view_1.expand)
-        view_2.collapsed.connect(view_1.collapse)
+        # view_1.verticalScrollBar().valueChanged.connect(
+        #     view_2.verticalScrollBar().setValue
+        # )
+        # view_2.verticalScrollBar().valueChanged.connect(
+        #     view_1.verticalScrollBar().setValue
+        # )
+        # view_1.expanded.connect(view_2.expand)
+        # view_1.collapsed.connect(view_2.collapse)
+        # view_2.expanded.connect(view_1.expand)
+        # view_2.collapsed.connect(view_1.collapse)
 
     @classmethod
-    def create_header_views(cls,view_1:ui.ClassTreeView|ui.PsetTreeView,view_2:ui.ClassTreeView|ui.PsetTreeView,project:SOMcreator.SOMProject,first_columns:list[str]):
-        header_model =  ui_header.CustomHeaderModel(project, first_columns)
+    def create_header_views(
+        cls, project: SOMcreator.SOMProject, first_columns: list[str]
+    ):
+        header_model = ui_header.CustomHeaderModel(project, first_columns)
         header_view_1 = ui_header.CustomHeaderView(first_columns)
         header_view_2 = ui_header.CustomHeaderView(first_columns)
         baseSectionSize = QSize()
@@ -161,19 +175,20 @@ class FilterWindow(som_gui.core.tool.FilterWindow):
         for row in range(header_model.rowCount()):
             for col in range(header_model.columnCount()):
                 index = header_model.index(row, col)
-                header_model.setData(index, baseSectionSize, Qt.ItemDataRole.SizeHintRole)
+                header_model.setData(
+                    index, baseSectionSize, Qt.ItemDataRole.SizeHintRole
+                )
         header_view_1.setModel(header_model)
         header_view_2.setModel(header_model)
-        view_1.setHeader(header_view_1)
-        view_2.setHeader(header_view_2)
+        header_view_1.setStretchLastSection(True)
+        header_view_2.setStretchLastSection(True)
 
+        return header_view_1, header_view_2
 
     @classmethod
     def connect_class_tree(cls, project: SOMcreator.SOMProject):
         class_tree = cls.get_class_trees()[0]
-        class_tree.selectionModel().selectionChanged.connect(
-            trigger.class_tree_clicked
-        )
+        class_tree.selectionModel().selectionChanged.connect(trigger.class_tree_clicked)
 
     @classmethod
     def connect_project_table(cls, project: SOMcreator.SOMProject):
