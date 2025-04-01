@@ -10,7 +10,7 @@ from som_gui.module.usecases import ui
 
 if TYPE_CHECKING:
     from som_gui.module.usecases.prop import UsecasesProperties
-
+    import SOMcreator
 
 class Signaller(QObject):
     open_window = Signal()
@@ -46,3 +46,8 @@ class Usecases(som_gui.core.tool.Usecases):
         window = ui.Widget()
         cls.get_properties().window = window
         return window
+
+    @classmethod
+    def add_models_to_window(cls,window:ui.Widget,project:SOMcreator.SOMProject):
+        project_model = ui.ProjectModel(project)
+        window.ui.project_tableView.setModel(project_model)

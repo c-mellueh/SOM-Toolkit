@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget
 import som_gui
-from .ui_project import ProjectView
+from .ui_project import ProjectView,ProjectModel
 from .ui_class import ClassView
 from .ui_property import PropertyView
 

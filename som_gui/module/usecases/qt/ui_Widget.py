@@ -33,6 +33,8 @@ class Ui_Form(object):
         self.project_tableView = ProjectView(self.vertical_splitter)
         self.project_tableView.setObjectName(u"project_tableView")
         self.vertical_splitter.addWidget(self.project_tableView)
+        self.project_tableView.horizontalHeader().setStretchLastSection(True)
+        self.project_tableView.verticalHeader().setStretchLastSection(True)
         self.horizontal_splitter = QSplitter(self.vertical_splitter)
         self.horizontal_splitter.setObjectName(u"horizontal_splitter")
         self.horizontal_splitter.setOrientation(Qt.Orientation.Horizontal)

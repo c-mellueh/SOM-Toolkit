@@ -10,7 +10,7 @@ def connect():
     pass
 
 def retranslate_ui():
-    pass
+    core.retranslate_ui(tool.Usecases,tool.Util)
 
 def on_new_project():
     pass
