@@ -31,3 +31,7 @@ class Usecases(som_gui.core.tool.Usecases):
     def connect_signals(cls):
         from som_gui.module.usecases import trigger
         cls.signaller.open_window.connect(trigger.open_window)
+
+    @classmethod
+    def get_window(cls):
+        return cls.get_properties.window

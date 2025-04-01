@@ -4,4 +4,4 @@ if TYPE_CHECKING:
     from PySide6.QtGui import QAction
 class UsecasesProperties:
     actions:dict[str,QAction] = dict()
-
+    window = None
