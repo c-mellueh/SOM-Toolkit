@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1456</width>
-    <height>892</height>
+    <width>830</width>
+    <height>583</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,15 +19,8 @@
      <property name="orientation">
       <enum>Qt::Orientation::Vertical</enum>
      </property>
-     <widget class="ProjectView" name="project_table">
-      <property name="contextMenuPolicy">
-       <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
-      </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
-      </property>
-     </widget>
-     <widget class="QSplitter" name="splitter_3">
+     <widget class="ProjectView" name="project_tableView"/>
+     <widget class="QSplitter" name="horizontal_splitter">
       <property name="orientation">
        <enum>Qt::Orientation::Horizontal</enum>
       </property>
@@ -35,11 +28,15 @@
        <property name="orientation">
         <enum>Qt::Orientation::Horizontal</enum>
        </property>
+       <widget class="ClassView" name="class_treeView_fixed"/>
+       <widget class="ClassView" name="class_treeView_extendable"/>
       </widget>
       <widget class="QSplitter" name="property_splitter">
        <property name="orientation">
         <enum>Qt::Orientation::Horizontal</enum>
        </property>
+       <widget class="PropertyView" name="property_table_view_fixed"/>
+       <widget class="PropertyView" name="property_table_view_extendable"/>
       </widget>
      </widget>
     </widget>
@@ -50,7 +47,17 @@
   <customwidget>
    <class>ProjectView</class>
    <extends>QTableView</extends>
-   <header>som_gui.module.filter_window.ui</header>
+   <header>som_gui.module.usecases.ui</header>
+  </customwidget>
+  <customwidget>
+   <class>ClassView</class>
+   <extends>QTreeView</extends>
+   <header>som_gui.module.usecases.ui</header>
+  </customwidget>
+  <customwidget>
+   <class>PropertyView</class>
+   <extends>QTableView</extends>
+   <header>som_gui.module.usecases.ui</header>
   </customwidget>
  </customwidgets>
  <resources/>
