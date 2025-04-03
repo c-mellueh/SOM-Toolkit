@@ -131,7 +131,6 @@ def create_class(
     # handle group
     if is_group:
         new_class = SOMcreator.SOMClass(name, project=proj)
-        new_class.ident_value = str(new_class.uuid)
         new_class.description = description
         return
 

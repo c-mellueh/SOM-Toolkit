@@ -5,9 +5,9 @@ import logging
 import som_gui.core.tool
 import som_gui
 from PySide6.QtGui import QAction
-from PySide6.QtCore import Signal, QObject
+from PySide6.QtCore import Signal, QObject,QModelIndex
 from som_gui.module.usecases import ui
-
+from som_gui.module.usecases import trigger
 if TYPE_CHECKING:
     from som_gui.module.usecases.prop import UsecasesProperties
     import SOMcreator
@@ -45,6 +45,7 @@ class Usecases(som_gui.core.tool.Usecases):
     def create_window(cls):
         window = ui.Widget()
         cls.get_properties().window = window
+        cls.get_class_views()[0].hide()
         return window
 
     @classmethod
@@ -58,7 +59,15 @@ class Usecases(som_gui.core.tool.Usecases):
         class_view_1,class_view_2 = cls.get_class_views()
         class_view_2.setModel(class_model)
         class_view_2.update_requested.connect(class_model.update_data)
-
+        
+    @classmethod
+    def connect_models(cls):
+        project_model = cls.get_project_model()
+        class_model = cls.get_class_model()
+        project_model.checkstate_changed.connect(lambda:class_model.resize_required.emit(QModelIndex()))
+        class_model.resize_required.connect(trigger.resize_class_model)
+        class_model.resize_required.emit(QModelIndex())
+        
     @classmethod
     def get_project_view(cls) -> ui.ProjectView:
         window = cls.get_window()
@@ -97,7 +106,7 @@ class Usecases(som_gui.core.tool.Usecases):
         return window.ui.property_table_view_fixed,window.ui.property_table_view_extendable
 
     @classmethod
-    def get_class_model(cls) -> ui.PropertyModel|None:
+    def get_property_model(cls) -> ui.PropertyModel|None:
         view1,view2 = cls.get_property_views()
         if view2 is None:
             return None

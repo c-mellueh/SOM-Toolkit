@@ -3,7 +3,7 @@ import som_gui
 from som_gui import tool
 from som_gui.core import usecases as core
 from typing import TYPE_CHECKING
-
+from PySide6.QtCore import QModelIndex
 
 def connect():
     core.create_main_menu_actions(tool.Usecases,tool.MainWindow)
@@ -17,3 +17,6 @@ def on_new_project():
 
 def open_window():
     core.open_window(tool.Usecases,tool.Project,tool.Util,tool.Search)
+
+def resize_class_model(index = QModelIndex()):
+    core.update_class_tree_size(index,tool.Usecases)

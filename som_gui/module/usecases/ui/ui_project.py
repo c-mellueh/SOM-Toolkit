@@ -13,10 +13,12 @@ from PySide6.QtWidgets import QTableView
 import SOMcreator
 from som_gui import tool
 
+
 class ProjectView(QTableView):
     update_requested = Signal()
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setSelectionMode(QTableView.SelectionMode.SingleSelection)
 
@@ -24,31 +26,34 @@ class ProjectView(QTableView):
         self.update_requested.emit()
         return super().enterEvent(event)
 
+
 class ProjectModel(QAbstractTableModel):
     data_changed_externally = Signal()
     checkstate_changed = Signal()
-    def __init__(self,project:SOMcreator.SOMProject,*args,**kwargs):
+
+    def __init__(self, project: SOMcreator.SOMProject, *args, **kwargs):
         self.project = project
         self.old_column_count = self.columnCount()
         self.old_row_count = self.rowCount()
-        super().__init__(*args,**kwargs)
+        super().__init__(*args, **kwargs)
 
     def update_data(self):
         self.dataChanged.emit(
-        self.createIndex(0, 0),
-        self.createIndex(self.rowCount(), self.columnCount()),
+            self.createIndex(0, 0),
+            self.createIndex(self.rowCount(), self.columnCount()),
         )
         if self.was_data_changed_externally():
             self.data_changed_externally.emit()
 
     def was_data_changed_externally(self):
         changed_externally = False
-        if (            self.last_col_count != self.columnCount()
-            or self.last_row_count != self.rowCount()
+        if (
+            self.old_column_count != self.columnCount()
+            or self.old_row_count != self.rowCount()
         ):
             changed_externally = True
-        self.last_col_count = self.columnCount()
-        self.last_row_count = self.rowCount()
+        self.old_column_count = self.columnCount()
+        self.old_row_count = self.rowCount()
         return changed_externally
 
     def flags(self, index):
@@ -60,7 +65,7 @@ class ProjectModel(QAbstractTableModel):
 
     def columnCount(self, parent=None):
         return len(self.project.get_usecases())
-    
+
     def data(self, index: QModelIndex, role: Qt.ItemDataRole):
         if role == Qt.ItemDataRole.CheckStateRole:
             state = self.project.get_filter_matrix()[index.row()][index.column()]
@@ -75,9 +80,9 @@ class ProjectModel(QAbstractTableModel):
         self.project.set_filter_state(phase, usecase, bool(value))
         self.checkstate_changed.emit()
         return True
-        #TODO write connector for update class tree and psettable
-    
-    def headerData(self, section:int, orientation:Qt.Orientation, role=...):
+        # TODO write connector for update class tree and psettable
+
+    def headerData(self, section: int, orientation: Qt.Orientation, role=...):
         if role not in [Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole]:
             return
         if orientation == Qt.Orientation.Horizontal:

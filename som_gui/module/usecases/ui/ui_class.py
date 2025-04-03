@@ -11,20 +11,169 @@ from PySide6.QtCore import (
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTreeView
 import SOMcreator
+from som_gui import tool
+
 
 class ClassView(QTreeView):
     update_requested = Signal()
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setSelectionMode(QTreeView.SelectionMode.SingleSelection)
 
-    
+    def enterEvent(self, event):
+        self.update_requested.emit()
+        return super().enterEvent(event)
+
+    # for Typehints
+    def model(self) -> ClassModel:
+        return super().model()
+
 
 class ClassModel(QAbstractItemModel):
-    def __init__(self,project:SOMcreator.SOMProject,*args,**kwargs):
+    updated_required = Signal()
+    resize_required = Signal(QModelIndex)
+    def __init__(self, project: SOMcreator.SOMProject, *args, **kwargs):
         self.project = project
-        super().__init__(*args,**kwargs)
-    
+        self.root_classes = list()
+        self.columns: list[tuple[SOMcreator.UseCase, SOMcreator.Phase]] = list()
+        self.fixed_column_index = 2
+        self.class_index_dict:dict[SOMcreator.SOMClass,QModelIndex] = dict()
+        self.old_column_count =  0
+        self.row_count_dict : dict[QModelIndex,int] = dict()
+        super().__init__(*args, **kwargs)
+        self.update_data()
+
     def update_data(self):
-        pass
+        columns = list()
+        for use_case in self.project.get_usecases():
+            for phase in self.project.get_phases():
+                if self.project.get_filter_state(phase, use_case):
+                    columns.append((use_case, phase))
+        self.columns = columns
+        self.column_count = len(self.columns) + self.fixed_column_index
+        self.root_classes = list(self.project.get_root_classes(filter = False))
+
+
+    def flags(self, index: QModelIndex, parent_index= QModelIndex()):
+        """
+        make Item Checkable if Column > check_column_index
+        Disable Item if Parent is not checked or parent is disabled
+        """
+        flags = super().flags(index)
+        if index.column() >= self.fixed_column_index:
+            flags |= Qt.ItemFlag.ItemIsUserCheckable
+
+        if not parent_index.isValid():
+            return flags
+        is_parent_enabled = Qt.ItemFlag.ItemIsEnabled in parent_index.flags()
+        parent_cs = parent_index.data(Qt.ItemDataRole.CheckStateRole)
+        is_parent_checked = tool.Util.checkstate_to_bool(parent_cs)
+        if not (is_parent_enabled and is_parent_checked):
+            flags &= ~Qt.ItemFlag.ItemIsEnabled
+        return flags
+
+    def columnCount(self, parent =QModelIndex()):
+        return self.column_count
+
+    def get_row_count(self,parent = QModelIndex()):
+        if not parent.isValid():
+            result = len(self.root_classes)
+        else:
+            som_class:SOMcreator.SOMClass = parent.internalPointer()
+            result = len(som_class._children)
+        return result
+
+
+    def rowCount(self, parent =QModelIndex()):
+        result = self.get_row_count(parent)
+        old_result = self.row_count_dict.get(parent)
+        if old_result != result and old_result is not None:
+            self.resize_required.emit(parent)
+        if old_result is None:
+            self.row_count_dict[parent] = result
+        return result
+
+    def data(self, index: QModelIndex, role: Qt.ItemDataRole):
+        logging.info(f"Request Data {index.row()}:{index.column()}")
+        
+        if not index.isValid():
+            return None
+
+        som_class: SOMcreator.SOMClass = index.internalPointer()
+        if role in (Qt.ItemDataRole.DisplayRole,Qt.ItemDataRole.EditRole):
+            result =  self.get_text(index.column(), som_class)
+            return result
+        elif role == Qt.ItemDataRole.CheckStateRole:
+            return self.get_checkstate(index.column(), som_class)
+        return None
+
+    def get_checkstate(self, column: int, som_class: SOMcreator.SOMClass):
+        if column < self.fixed_column_index:
+            return None
+        usecase, phase = self.columns[column - self.fixed_column_index]
+        return tool.Util.bool_to_checkstate(som_class.get_filter_state(phase, usecase))
+
+    def get_text(self, column: int, som_class: SOMcreator.SOMClass):
+        if column == 0:
+            return som_class.name
+        elif column == 1:
+            return som_class.ident_value if not som_class.is_concept else ""
+        else:
+            return None
+    
+    def setData(self, index:QModelIndex, value,  role:Qt.ItemDataRole):
+        if not index.isValid():
+            return False
+        if role != Qt.ItemDataRole.CheckStateRole:
+            return False
+        if index.column() < self.fixed_column_index:
+            return False
+        som_class:SOMcreator.SOMClass = index.internalPointer()
+        usecase, phase = self.columns[index.column() - self.fixed_column_index]
+        som_class.set_filter_state(phase,usecase,bool(value))
+        return True
+
+    def index(self,row:int,column:int,parent:QModelIndex):       
+        logging.info(f"Request Index {row}:{column}")
+        if not parent.isValid():
+            if row >= len(self.root_classes):
+                self.resize_required.emit(parent)
+                return QModelIndex()
+            som_class = self.root_classes[row]
+            index =  self.createIndex(row,column,som_class)
+            logging.debug(f"Index: {row}:{column} -> BASE -> {som_class.name}")
+            return index
+        else:
+            parent = parent.siblingAtColumn(0)
+            som_class:SOMcreator.SOMClass = parent.internalPointer()
+            logging.debug(f"Index: {row}:{column} -> {som_class.name}")
+
+            children = list(som_class.get_children(filter=False))
+            if 0 <= row < len(children):
+                child_class = children[row]
+                index =  self.createIndex(row, column, child_class)
+                return index
+            else:
+                self.resize_required.emit(parent)
+
+        return QModelIndex()
+
+    def createIndex(self,row,column,pointer = None):
+        index = super().createIndex(row,column,pointer)
+        if pointer is not None:
+            self.class_index_dict[pointer] =index
+        return index 
+
+    def parent(self,index:QModelIndex):
+        if not index.isValid():
+            return QModelIndex()
+        som_class:SOMcreator.SOMClass = index.internalPointer()
+        if som_class is None or not som_class.is_child:
+            return QModelIndex()
+        parent_class = som_class.parent
+        parent_index = self.class_index_dict.get(parent_class) 
+        if parent_index is None or not parent_index.isValid():
+            return QModelIndex()
+        return parent_index
