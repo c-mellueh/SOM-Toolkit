@@ -46,6 +46,7 @@ def open_window(
     usecases.add_models_to_window(project.get())
     usecases.connect_models()
     usecases.connect_class_views()
+    usecases.connect_property_views()
     # ToDo: Add Shortcut FUnction
     # util.add_shortcut(
     #     "Ctrl+F", widget, lambda: search_class(filter_window, search, project)

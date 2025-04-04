@@ -103,12 +103,11 @@ class Usecases(som_gui.core.tool.Usecases):
         property_model.resize_required.connect(trigger.resize_property_model)
         property_model.resize_required.emit()
 
-
     @classmethod
     def connect_class_views(cls):
 
         proxy_class_view, class_view = cls.get_class_views()
-        proxyModel: QSortFilterProxyModel = proxy_class_view.model()
+        proxy_model: QSortFilterProxyModel = proxy_class_view.model()
         proxy_selection_model = proxy_class_view.selectionModel()
         selection_model = class_view.selectionModel()
 
@@ -121,31 +120,33 @@ class Usecases(som_gui.core.tool.Usecases):
 
         def syncSelectionFromProxyToSource(selected, deselected):
             for index in selected.indexes():
-                selection_model.select(proxyModel.mapToSource(index), flags)
+                selection_model.select(proxy_model.mapToSource(index), flags)
                 return
 
         def syncSelectionFromSourceToProxy(selected, deselected):
             for index in selected.indexes():
-                proxy_selection_model.select(proxyModel.mapFromSource(index), flags)
+                proxy_selection_model.select(proxy_model.mapFromSource(index), flags)
                 return
 
         proxy_selection_model.selectionChanged.connect(syncSelectionFromProxyToSource)
         selection_model.selectionChanged.connect(syncSelectionFromSourceToProxy)
-        selection_model.selectionChanged.connect(lambda x,y:cls.signaller.class_selection_changed.emit())
+        selection_model.selectionChanged.connect(
+            lambda x, y: cls.signaller.class_selection_changed.emit()
+        )
         cls.signaller.class_selection_changed.connect(trigger.class_selection_changed)
         # expand
         class_view.expanded.connect(
-            lambda index: proxy_class_view.expand(proxyModel.mapFromSource(index))
+            lambda index: proxy_class_view.expand(proxy_model.mapFromSource(index))
         )
         proxy_class_view.expanded.connect(
-            lambda index: class_view.expand(proxyModel.mapToSource(index))
+            lambda index: class_view.expand(proxy_model.mapToSource(index))
         )
         # collapsed
         class_view.collapsed.connect(
-            lambda index: proxy_class_view.collapse(proxyModel.mapFromSource(index))
+            lambda index: proxy_class_view.collapse(proxy_model.mapFromSource(index))
         )
         proxy_class_view.collapsed.connect(
-            lambda index: class_view.collapse(proxyModel.mapToSource(index))
+            lambda index: class_view.collapse(proxy_model.mapToSource(index))
         )
         # Scrollbar
         class_view.verticalScrollBar().valueChanged.connect(
@@ -153,6 +154,37 @@ class Usecases(som_gui.core.tool.Usecases):
         )
         proxy_class_view.verticalScrollBar().valueChanged.connect(
             class_view.verticalScrollBar().setValue
+        )
+
+    @classmethod
+    def connect_property_views(cls):
+        proxy_view, view = cls.get_property_views()
+        proxy_model: QSortFilterProxyModel = proxy_view.model()
+        model = view.model()
+        proxy_selection_model = proxy_view.selectionModel()
+        selection_model = view.selectionModel()
+        flags = (
+            QItemSelectionModel.SelectionFlag.Rows
+            | QItemSelectionModel.SelectionFlag.ClearAndSelect
+        )
+
+        def syncSelectionFromProxyToSource(selected, deselected):
+            for index in selected.indexes():
+                selection_model.select(proxy_model.mapToSource(index), flags)
+                return
+
+        def syncSelectionFromSourceToProxy(selected, deselected):
+            for index in selected.indexes():
+                proxy_selection_model.select(proxy_model.mapFromSource(index), flags)
+                return
+
+        proxy_selection_model.selectionChanged.connect(syncSelectionFromProxyToSource)
+        selection_model.selectionChanged.connect(syncSelectionFromSourceToProxy)
+        view.verticalScrollBar().valueChanged.connect(
+            proxy_view.verticalScrollBar().setValue
+        )
+        proxy_view.verticalScrollBar().valueChanged.connect(
+            view.verticalScrollBar().setValue
         )
 
     @classmethod
@@ -215,4 +247,4 @@ class Usecases(som_gui.core.tool.Usecases):
         indexes = view1.selectedIndexes()
         if not indexes:
             return None
-        return  view1.model().mapToSource(indexes[0]).internalPointer()
+        return view1.model().mapToSource(indexes[0]).internalPointer()
