@@ -21,5 +21,8 @@ def open_window():
 def resize_class_model(index = QModelIndex()):
     core.update_class_tree_size(index,tool.Usecases)
 
+def resize_property_model(index = QModelIndex()):
+    core.update_property_table_size(tool.Usecases)
+
 def class_selection_changed():
     core.update_class_selection(tool.Usecases)

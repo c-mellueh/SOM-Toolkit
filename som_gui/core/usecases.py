@@ -3,6 +3,7 @@ from PySide6.QtCore import QCoreApplication, QModelIndex
 from typing import TYPE_CHECKING, Type
 import logging
 import SOMcreator
+
 if TYPE_CHECKING:
     from som_gui import tool
 
@@ -114,28 +115,21 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
     # Remove Rows (Phases)
     if old_row_count > new_row_count:
         model.beginRemoveRows(index, new_row_count, old_row_count - 1)
-        print("Remove Rows")
         model.endRemoveRows()
 
     # Insert Rows (Phases)
     if old_row_count < new_row_count:
         model.beginInsertRows(index, old_row_count, new_row_count + 1)
-        print("Insert Rows")
-
         model.endInsertRows()
 
     # Remove Colums (UseCases)
     if old_column_count > new_column_count:
         model.beginRemoveColumns(index, new_column_count, old_column_count - 1)
-        print("Remove Columns")
-
         model.endRemoveColumns()
 
     # Insert Colums (UseCases)
     if old_column_count < new_column_count:
         model.beginInsertColumns(index, old_column_count + 1, new_column_count)
-        print("Insert Columns")
-
         model.endInsertColumns()
 
     model.row_count_dict[index] = new_row_count
@@ -147,6 +141,62 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
         model.createIndex(model.rowCount(), model.columnCount()),
     )
 
+
+def update_property_table_size(usecases: Type[tool.Usecases]):
+    """
+    gets Called if Filters get Added or Removed externally. For example by Console Script.
+    :param filter_window:
+    :return:
+    """
+    model = usecases.get_property_model()
+    logging.debug(
+        f"Filter Changed Externally. rowCount: {model.old_row_count} -> {model.rowCount()} columnCount:{model.old_column_count} -> {model.columnCount()}"
+    )
+    model.update_data()
+    usecases.get_class_views()[0].selectedIndexes()
+    old_row_count = model.old_row_count
+    old_column_count = model.old_column_count
+    new_row_count = model.rowCount()
+    new_column_count = model.columnCount()
+
+    if old_row_count == 0:
+        model.beginResetModel()
+        model.endResetModel()
+    else:
+        # Remove Rows (Phases)
+        if old_row_count > new_row_count:
+            model.beginRemoveRows(QModelIndex(), new_row_count, model.old_row_count - 1)
+            model.endRemoveRows()
+
+        # Insert Rows (Phases)
+        if old_row_count < new_row_count:
+            model.beginInsertRows(QModelIndex(), model.old_row_count, new_row_count-1)
+            model.endInsertRows()
+
+        # Remove Colums (UseCases)
+        if old_column_count > new_column_count:
+            model.beginRemoveColumns(
+                QModelIndex(), new_column_count, model.old_column_count - 1
+            )
+            model.endRemoveColumns()
+
+        # Insert Colums (UseCases)
+        if old_column_count < new_column_count:
+            model.beginInsertColumns(
+                QModelIndex(), model.old_column_count + 1, new_column_count
+            )
+            model.endInsertColumns()
+
+    model.old_row_count = new_row_count
+    model.old_column_count = new_column_count
+    model.dataChanged.emit(
+        model.createIndex(0, 0),
+        model.createIndex(model.rowCount(), model.columnCount()),
+    )
 def update_class_selection(usecases: Type[tool.Usecases]):
     som_class = usecases.get_active_class()
     usecases.get_property_label().setText(som_class.name if som_class else "")
+    property_model = usecases.get_property_model()
+    property_model.som_class = som_class
+    property_model.update_data()    
+    property_model.resize_required.emit()

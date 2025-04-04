@@ -7,4 +7,3 @@ if TYPE_CHECKING:
 class UsecasesProperties:
     actions:dict[str,QAction] = dict()
     window:ui.Widget = None
-    active_class:SOMcreator.Class = None    

@@ -11,9 +11,10 @@ from PySide6.QtCore import (
     QModelIndex,
     QItemSelectionModel,
     QSortFilterProxyModel,
-    QItemSelection
+    QItemSelection,
+    QCoreApplication,
 )
-from PySide6.QtWidgets import QLabel
+from PySide6.QtWidgets import QLabel, QApplication
 from som_gui.module.usecases import ui
 from som_gui.module.usecases import trigger
 import SOMcreator
@@ -26,6 +27,7 @@ class Signaller(QObject):
     open_window = Signal()
     retranslate_ui = Signal()
     class_selection_changed = Signal()
+
 
 class Usecases(som_gui.core.tool.Usecases):
     signaller = Signaller()
@@ -66,15 +68,26 @@ class Usecases(som_gui.core.tool.Usecases):
         project_view.setModel(project_model)
         project_view.update_requested.connect(project_model.update_data)
 
-        class_model = ui.ClassModel(project)
-        filter_model = ui.ClassFilterModel(class_model.fixed_column_count)
-        filter_model.setSourceModel(class_model)
         class_view_1, class_view_2 = cls.get_class_views()
-        class_view_1.setModel(filter_model)
+        class_model = ui.ClassModel(project)
+        class_filter_model = ui.ClassFilterModel(class_model.fixed_column_count)
+        class_filter_model.setSourceModel(class_model)
+        class_view_1.setModel(class_filter_model)
         class_view_2.setModel(class_model)
         class_view_2.hideColumn(0)
         class_view_2.hideColumn(1)
         class_view_2.update_requested.connect(class_model.update_data)
+
+        property_view_1, property_view_2 = cls.get_property_views()
+        property_model = ui.PropertyModel()
+        property_filter_model = ui.ClassFilterModel(property_model.fixed_column_count)
+        property_filter_model.setSourceModel(property_model)
+        property_view_1.setModel(property_filter_model)
+        property_view_2.setModel(property_model)
+        property_view_2.hideColumn(0)
+        property_view_2.hideColumn(1)
+
+        property_view_2.update_requested.connect(property_model.update_data)
 
     @classmethod
     def connect_models(cls):
@@ -85,17 +98,11 @@ class Usecases(som_gui.core.tool.Usecases):
         )
         class_model.resize_required.connect(trigger.resize_class_model)
         class_model.resize_required.emit(QModelIndex())
+        property_model = cls.get_property_model()
+        project_model.checkstate_changed.connect(property_model.resize_required.emit)
+        property_model.resize_required.connect(trigger.resize_property_model)
+        property_model.resize_required.emit()
 
-    @classmethod
-    def update_class_selection(cls,selected:QItemSelection,deselected):
-        indexes = selected.indexes()
-        if not indexes:
-            cls.get_properties().active_class = None
-            cls.signaller.class_selection_changed.emit()
-        else:
-            cls.get_properties().active_class = indexes[0].internalPointer()
-
-            cls.signaller.class_selection_changed.emit()
 
     @classmethod
     def connect_class_views(cls):
@@ -124,7 +131,7 @@ class Usecases(som_gui.core.tool.Usecases):
 
         proxy_selection_model.selectionChanged.connect(syncSelectionFromProxyToSource)
         selection_model.selectionChanged.connect(syncSelectionFromSourceToProxy)
-        selection_model.selectionChanged.connect(cls.update_class_selection)
+        selection_model.selectionChanged.connect(lambda x,y:cls.signaller.class_selection_changed.emit())
         cls.signaller.class_selection_changed.connect(trigger.class_selection_changed)
         # expand
         class_view.expanded.connect(
@@ -182,8 +189,8 @@ class Usecases(som_gui.core.tool.Usecases):
         if window is None:
             return None, None
         return (
-            window.ui.property_table_view_fixed,
-            window.ui.property_table_view_extendable,
+            window.ui.property_TableView_fixed,
+            window.ui.property_TableView_extendable,
         )
 
     @classmethod
@@ -192,7 +199,7 @@ class Usecases(som_gui.core.tool.Usecases):
         if view2 is None:
             return None
         return view2.model()
-    
+
     @classmethod
     def get_property_label(cls) -> QLabel:
         window = cls.get_window()
@@ -201,5 +208,11 @@ class Usecases(som_gui.core.tool.Usecases):
         return window.ui.property_label
 
     @classmethod
-    def get_active_class(cls) -> SOMcreator.SOMClass|None:
-        return cls.get_properties().active_class    
+    def get_active_class(cls) -> SOMcreator.SOMClass | None:
+        view1, view2 = cls.get_class_views()
+        if not view1:
+            return None
+        indexes = view1.selectedIndexes()
+        if not indexes:
+            return None
+        return  view1.model().mapToSource(indexes[0]).internalPointer()
