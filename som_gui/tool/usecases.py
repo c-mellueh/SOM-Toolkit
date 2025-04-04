@@ -80,33 +80,37 @@ class Usecases(som_gui.core.tool.Usecases):
 
     @classmethod
     def connect_views(cls):
+
         proxy_class_view,class_view = cls.get_class_views()
         proxyModel:QSortFilterProxyModel = proxy_class_view.model()
         proxy_selection_model = proxy_class_view.selectionModel()
         selection_model = class_view.selectionModel()
-        class_view.setSelectionBehavior(class_view.SelectionBehavior.SelectRows)
-        proxy_class_view.setSelectionBehavior(class_view.SelectionBehavior.SelectRows)
-        class_view.setSelectionMode(class_view.SelectionMode.SingleSelection)
-        proxy_class_view.setSelectionMode(class_view.SelectionMode.SingleSelection)
+        
+        #Selection
 
-        def syncSelectionFromProxyToSource(sel_mod ,selected, deselected):
+        flags = QItemSelectionModel.SelectionFlag.Rows|QItemSelectionModel.SelectionFlag.ClearAndSelect
+        
+        def syncSelectionFromProxyToSource(selected, deselected):
             for index in selected.indexes():
-                sourceIndex = proxyModel.mapToSource(index)
-                print(f"{index} -> From Proxy {sourceIndex}")
-                sel_mod.select(sourceIndex, QItemSelectionModel.SelectionFlag.Select)
+                selection_model.select(proxyModel.mapToSource(index), flags)
                 return
 
         def syncSelectionFromSourceToProxy(selected, deselected):
             for index in selected.indexes():
-                proxyIndex = proxyModel.mapFromSource(index)
-                print(f"{index}From Source {proxyIndex}")
-                proxy_selection_model.select(proxyIndex, QItemSelectionModel.SelectionFlag.Select)
+                proxy_selection_model.select( proxyModel.mapFromSource(index), flags)
                 return
+        proxy_selection_model.selectionChanged.connect(syncSelectionFromProxyToSource)
+        selection_model.selectionChanged.connect(syncSelectionFromSourceToProxy)
 
-        def test(sm,selection,deselected):
-            print(selection)
-        proxy_selection_model.selectionChanged.connect(lambda s,d,sm = selection_model:syncSelectionFromProxyToSource(sm,s,d))
-        selection_model.selectionChanged.connect(lambda s,d,sm = selection_model:test(sm,s,d))
+        #expand
+        class_view.expanded.connect(lambda index: proxy_class_view.expand(proxyModel.mapFromSource(index)))
+        proxy_class_view.expanded.connect(lambda index: class_view.expand(proxyModel.mapToSource(index)))
+        #collapsed
+        class_view.collapsed.connect(lambda index: proxy_class_view.collapse(proxyModel.mapFromSource(index)))
+        proxy_class_view.collapsed.connect(lambda index: class_view.collapse(proxyModel.mapToSource(index)))
+        #Scrollbar
+        class_view.verticalScrollBar().valueChanged.connect(proxy_class_view.verticalScrollBar().setValue)
+        proxy_class_view.verticalScrollBar().valueChanged.connect(class_view.verticalScrollBar().setValue)
 
     @classmethod
     def get_project_view(cls) -> ui.ProjectView:
