@@ -15,8 +15,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHeaderView, QSizePolicy, QSplitter,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QHeaderView, QLabel, QSizePolicy,
+    QSplitter, QVBoxLayout, QWidget)
 
 from som_gui.module.usecases.ui import (ClassView, ProjectView, PropertyView)
 
@@ -24,21 +24,21 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(830, 583)
+        Form.resize(1445, 1004)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.vertical_splitter = QSplitter(Form)
-        self.vertical_splitter.setObjectName(u"vertical_splitter")
-        self.vertical_splitter.setOrientation(Qt.Orientation.Vertical)
-        self.project_tableView = ProjectView(self.vertical_splitter)
+        self.splitter_2 = QSplitter(Form)
+        self.splitter_2.setObjectName(u"splitter_2")
+        self.splitter_2.setOrientation(Qt.Orientation.Vertical)
+        self.project_tableView = ProjectView(self.splitter_2)
         self.project_tableView.setObjectName(u"project_tableView")
-        self.vertical_splitter.addWidget(self.project_tableView)
+        self.splitter_2.addWidget(self.project_tableView)
         self.project_tableView.horizontalHeader().setStretchLastSection(True)
         self.project_tableView.verticalHeader().setStretchLastSection(True)
-        self.horizontal_splitter = QSplitter(self.vertical_splitter)
-        self.horizontal_splitter.setObjectName(u"horizontal_splitter")
-        self.horizontal_splitter.setOrientation(Qt.Orientation.Horizontal)
-        self.class_splitter = QSplitter(self.horizontal_splitter)
+        self.splitter = QSplitter(self.splitter_2)
+        self.splitter.setObjectName(u"splitter")
+        self.splitter.setOrientation(Qt.Orientation.Horizontal)
+        self.class_splitter = QSplitter(self.splitter)
         self.class_splitter.setObjectName(u"class_splitter")
         self.class_splitter.setLineWidth(0)
         self.class_splitter.setOrientation(Qt.Orientation.Horizontal)
@@ -50,21 +50,26 @@ class Ui_Form(object):
         self.class_treeView_extendable = ClassView(self.class_splitter)
         self.class_treeView_extendable.setObjectName(u"class_treeView_extendable")
         self.class_splitter.addWidget(self.class_treeView_extendable)
-        self.horizontal_splitter.addWidget(self.class_splitter)
-        self.property_splitter = QSplitter(self.horizontal_splitter)
-        self.property_splitter.setObjectName(u"property_splitter")
-        self.property_splitter.setOrientation(Qt.Orientation.Horizontal)
-        self.property_splitter.setHandleWidth(0)
-        self.property_table_view_fixed = PropertyView(self.property_splitter)
-        self.property_table_view_fixed.setObjectName(u"property_table_view_fixed")
-        self.property_splitter.addWidget(self.property_table_view_fixed)
-        self.property_table_view_extendable = PropertyView(self.property_splitter)
-        self.property_table_view_extendable.setObjectName(u"property_table_view_extendable")
-        self.property_splitter.addWidget(self.property_table_view_extendable)
-        self.horizontal_splitter.addWidget(self.property_splitter)
-        self.vertical_splitter.addWidget(self.horizontal_splitter)
+        self.splitter.addWidget(self.class_splitter)
+        self.verticalLayoutWidget = QWidget(self.splitter)
+        self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
+        self.property_layout = QVBoxLayout(self.verticalLayoutWidget)
+        self.property_layout.setObjectName(u"property_layout")
+        self.property_layout.setContentsMargins(0, 0, 0, 0)
+        self.property_label = QLabel(self.verticalLayoutWidget)
+        self.property_label.setObjectName(u"property_label")
 
-        self.verticalLayout.addWidget(self.vertical_splitter)
+        self.property_layout.addWidget(self.property_label)
+
+        self.property_table_view = PropertyView(self.verticalLayoutWidget)
+        self.property_table_view.setObjectName(u"property_table_view")
+
+        self.property_layout.addWidget(self.property_table_view)
+
+        self.splitter.addWidget(self.verticalLayoutWidget)
+        self.splitter_2.addWidget(self.splitter)
+
+        self.verticalLayout.addWidget(self.splitter_2)
 
 
         self.retranslateUi(Form)
@@ -74,5 +79,6 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+        self.property_label.setText(QCoreApplication.translate("Form", u"TextLabel", None))
     # retranslateUi
 
