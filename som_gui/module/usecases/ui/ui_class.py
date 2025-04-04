@@ -184,7 +184,6 @@ class ClassFilterModel(QSortFilterProxyModel):
     
     def filterAcceptsColumn(self, source_column, source_parent):
         res = source_column < self.fixed_column_count
-        print(f"{source_column} < {self.fixed_column_count} = {res}")
         return res
         
         
