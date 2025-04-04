@@ -3,7 +3,7 @@ import logging
 
 from PySide6.QtCore import (
     QAbstractItemModel,
-    QCoreApplication,
+    QSortFilterProxyModel,
     QModelIndex,
     Qt,
     Signal,
@@ -37,10 +37,12 @@ class ClassModel(QAbstractItemModel):
     def __init__(self, project: SOMcreator.SOMProject, *args, **kwargs):
         self.project = project
         self.root_classes = list()
+        self.fixed_column_count = 2
         self.columns: list[tuple[SOMcreator.UseCase, SOMcreator.Phase]] = list()
-        self.fixed_column_index = 2
+        self.column_count = len(self.columns) + self.fixed_column_count
+
         self.class_index_dict:dict[SOMcreator.SOMClass,QModelIndex] = dict()
-        self.old_column_count =  0
+        self.old_column_count =  self.column_count
         self.row_count_dict : dict[QModelIndex,int] = dict()
         super().__init__(*args, **kwargs)
         self.update_data()
@@ -52,7 +54,7 @@ class ClassModel(QAbstractItemModel):
                 if self.project.get_filter_state(phase, use_case):
                     columns.append((use_case, phase))
         self.columns = columns
-        self.column_count = len(self.columns) + self.fixed_column_index
+        self.column_count = len(self.columns) + self.fixed_column_count
         self.root_classes = list(self.project.get_root_classes(filter = False))
 
 
@@ -62,7 +64,7 @@ class ClassModel(QAbstractItemModel):
         Disable Item if Parent is not checked or parent is disabled
         """
         flags = super().flags(index)
-        if index.column() >= self.fixed_column_index:
+        if index.column() >= self.fixed_column_count:
             flags |= Qt.ItemFlag.ItemIsUserCheckable
 
         if not parent_index.isValid():
@@ -95,9 +97,7 @@ class ClassModel(QAbstractItemModel):
             self.row_count_dict[parent] = result
         return result
 
-    def data(self, index: QModelIndex, role: Qt.ItemDataRole):
-        logging.info(f"Request Data {index.row()}:{index.column()}")
-        
+    def data(self, index: QModelIndex, role: Qt.ItemDataRole):        
         if not index.isValid():
             return None
 
@@ -110,9 +110,9 @@ class ClassModel(QAbstractItemModel):
         return None
 
     def get_checkstate(self, column: int, som_class: SOMcreator.SOMClass):
-        if column < self.fixed_column_index:
+        if column < self.fixed_column_count:
             return None
-        usecase, phase = self.columns[column - self.fixed_column_index]
+        usecase, phase = self.columns[column - self.fixed_column_count]
         return tool.Util.bool_to_checkstate(som_class.get_filter_state(phase, usecase))
 
     def get_text(self, column: int, som_class: SOMcreator.SOMClass):
@@ -128,15 +128,14 @@ class ClassModel(QAbstractItemModel):
             return False
         if role != Qt.ItemDataRole.CheckStateRole:
             return False
-        if index.column() < self.fixed_column_index:
+        if index.column() < self.fixed_column_count:
             return False
         som_class:SOMcreator.SOMClass = index.internalPointer()
-        usecase, phase = self.columns[index.column() - self.fixed_column_index]
+        usecase, phase = self.columns[index.column() - self.fixed_column_count]
         som_class.set_filter_state(phase,usecase,bool(value))
         return True
 
     def index(self,row:int,column:int,parent:QModelIndex):       
-        logging.info(f"Request Index {row}:{column}")
         if not parent.isValid():
             if row >= len(self.root_classes):
                 self.resize_required.emit(parent)
@@ -177,3 +176,15 @@ class ClassModel(QAbstractItemModel):
         if parent_index is None or not parent_index.isValid():
             return QModelIndex()
         return parent_index
+
+class ClassFilterModel(QSortFilterProxyModel):
+    def __init__(self,fixed_column_count:int,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.fixed_column_count = fixed_column_count
+    
+    def filterAcceptsColumn(self, source_column, source_parent):
+        res = source_column < self.fixed_column_count
+        print(f"{source_column} < {self.fixed_column_count} = {res}")
+        return res
+        
+        

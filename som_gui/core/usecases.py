@@ -44,6 +44,7 @@ def open_window(
     window = usecases.create_window()
     usecases.add_models_to_window(project.get())
     usecases.connect_models()
+    usecases.connect_views()
     # ToDo: Add Shortcut FUnction
     # util.add_shortcut(
     #     "Ctrl+F", widget, lambda: search_class(filter_window, search, project)
@@ -115,6 +116,7 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
         model.beginRemoveRows(
             index, new_row_count, old_row_count - 1
         )
+        print("Remove Rows")
         model.endRemoveRows()
 
     # Insert Rows (Phases)
@@ -122,6 +124,8 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
         model.beginInsertRows(
             index, old_row_count, new_row_count +1
         )
+        print("Insert Rows")
+
         model.endInsertRows()
 
     # Remove Colums (UseCases)
@@ -129,6 +133,8 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
         model.beginRemoveColumns(
             index, new_column_count, old_column_count - 1
         )
+        print("Remove Columns")
+
         model.endRemoveColumns()
 
     # Insert Colums (UseCases)
@@ -136,6 +142,8 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
         model.beginInsertColumns(
             index, old_column_count + 1, new_column_count 
         )
+        print("Insert Columns")
+
         model.endInsertColumns()
 
     model.row_count_dict[index] = new_row_count

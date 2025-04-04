@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget
 import som_gui
 from .ui_project import ProjectView,ProjectModel
-from .ui_class import ClassView,ClassModel
+from .ui_class import ClassView,ClassModel,ClassFilterModel
 from .ui_property import PropertyView,PropertyModel
 
 class Widget(QWidget):
