@@ -32,15 +32,28 @@
        <enum>Qt::Orientation::Horizontal</enum>
       </property>
       <widget class="QSplitter" name="class_splitter">
+       <property name="lineWidth">
+        <number>0</number>
+       </property>
        <property name="orientation">
         <enum>Qt::Orientation::Horizontal</enum>
        </property>
-       <widget class="ClassView" name="class_treeView_fixed"/>
+       <property name="handleWidth">
+        <number>0</number>
+       </property>
+       <widget class="ClassView" name="class_treeView_fixed">
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+        </property>
+       </widget>
        <widget class="ClassView" name="class_treeView_extendable"/>
       </widget>
       <widget class="QSplitter" name="property_splitter">
        <property name="orientation">
         <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="handleWidth">
+        <number>0</number>
        </property>
        <widget class="PropertyView" name="property_table_view_fixed"/>
        <widget class="PropertyView" name="property_table_view_extendable"/>
