@@ -50,6 +50,7 @@ class Usecases(som_gui.core.tool.Usecases):
 
         cls.signaller.open_window.connect(trigger.open_window)
         cls.signaller.retranslate_ui.connect(trigger.retranslate_ui)
+        cls.signaller.class_selection_changed.connect(trigger.class_selection_changed)
 
     @classmethod
     def get_window(cls) -> ui.Widget | None:
@@ -106,61 +107,34 @@ class Usecases(som_gui.core.tool.Usecases):
     @classmethod
     def connect_class_views(cls):
 
-        proxy_class_view, class_view = cls.get_class_views()
-        proxy_model: QSortFilterProxyModel = proxy_class_view.model()
-        proxy_selection_model = proxy_class_view.selectionModel()
-        selection_model = class_view.selectionModel()
-
-        # Selection
-
-        flags = (
-            QItemSelectionModel.SelectionFlag.Rows
-            | QItemSelectionModel.SelectionFlag.ClearAndSelect
-        )
-
-        def syncSelectionFromProxyToSource(selected, deselected):
-            for index in selected.indexes():
-                selection_model.select(proxy_model.mapToSource(index), flags)
-                return
-
-        def syncSelectionFromSourceToProxy(selected, deselected):
-            for index in selected.indexes():
-                proxy_selection_model.select(proxy_model.mapFromSource(index), flags)
-                return
-
-        proxy_selection_model.selectionChanged.connect(syncSelectionFromProxyToSource)
-        selection_model.selectionChanged.connect(syncSelectionFromSourceToProxy)
-        selection_model.selectionChanged.connect(
+        proxy_view, view = cls.get_class_views()
+        cls._connect_views(proxy_view,view)
+        proxy_model: QSortFilterProxyModel = proxy_view.model()
+        view.selectionModel().selectionChanged.connect(
             lambda x, y: cls.signaller.class_selection_changed.emit()
         )
-        cls.signaller.class_selection_changed.connect(trigger.class_selection_changed)
         # expand
-        class_view.expanded.connect(
-            lambda index: proxy_class_view.expand(proxy_model.mapFromSource(index))
+        view.expanded.connect(
+            lambda index: proxy_view.expand(proxy_model.mapFromSource(index))
         )
-        proxy_class_view.expanded.connect(
-            lambda index: class_view.expand(proxy_model.mapToSource(index))
+        proxy_view.expanded.connect(
+            lambda index: view.expand(proxy_model.mapToSource(index))
         )
         # collapsed
-        class_view.collapsed.connect(
-            lambda index: proxy_class_view.collapse(proxy_model.mapFromSource(index))
+        view.collapsed.connect(
+            lambda index: proxy_view.collapse(proxy_model.mapFromSource(index))
         )
-        proxy_class_view.collapsed.connect(
-            lambda index: class_view.collapse(proxy_model.mapToSource(index))
-        )
-        # Scrollbar
-        class_view.verticalScrollBar().valueChanged.connect(
-            proxy_class_view.verticalScrollBar().setValue
-        )
-        proxy_class_view.verticalScrollBar().valueChanged.connect(
-            class_view.verticalScrollBar().setValue
-        )
+        proxy_view.collapsed.connect(
+            lambda index: view.collapse(proxy_model.mapToSource(index)))
 
     @classmethod
     def connect_property_views(cls):
-        proxy_view, view = cls.get_property_views()
-        proxy_model: QSortFilterProxyModel = proxy_view.model()
-        model = view.model()
+        cls._connect_views(*cls.get_property_views())
+
+
+    @classmethod
+    def _connect_views(cls, proxy_view:ui.ClassView|ui.PropertyView, view:ui.ClassView|ui.PropertyView):
+        proxy_model = proxy_view.model()
         proxy_selection_model = proxy_view.selectionModel()
         selection_model = view.selectionModel()
         flags = (
