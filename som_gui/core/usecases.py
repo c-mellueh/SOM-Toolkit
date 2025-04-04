@@ -2,7 +2,7 @@ from __future__ import annotations
 from PySide6.QtCore import QCoreApplication, QModelIndex
 from typing import TYPE_CHECKING, Type
 import logging
-
+import SOMcreator
 if TYPE_CHECKING:
     from som_gui import tool
 
@@ -44,7 +44,7 @@ def open_window(
     window = usecases.create_window()
     usecases.add_models_to_window(project.get())
     usecases.connect_models()
-    usecases.connect_views()
+    usecases.connect_class_views()
     # ToDo: Add Shortcut FUnction
     # util.add_shortcut(
     #     "Ctrl+F", widget, lambda: search_class(filter_window, search, project)
@@ -104,7 +104,7 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
     new_row_count = model.get_row_count(index)
     new_column_count = model.columnCount()
 
-    if new_row_count==old_row_count and new_column_count == old_column_count:
+    if new_row_count == old_row_count and new_column_count == old_column_count:
         logging.info(f"No Change Required")
         return
     logging.info(
@@ -113,35 +113,27 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
 
     # Remove Rows (Phases)
     if old_row_count > new_row_count:
-        model.beginRemoveRows(
-            index, new_row_count, old_row_count - 1
-        )
+        model.beginRemoveRows(index, new_row_count, old_row_count - 1)
         print("Remove Rows")
         model.endRemoveRows()
 
     # Insert Rows (Phases)
     if old_row_count < new_row_count:
-        model.beginInsertRows(
-            index, old_row_count, new_row_count +1
-        )
+        model.beginInsertRows(index, old_row_count, new_row_count + 1)
         print("Insert Rows")
 
         model.endInsertRows()
 
     # Remove Colums (UseCases)
     if old_column_count > new_column_count:
-        model.beginRemoveColumns(
-            index, new_column_count, old_column_count - 1
-        )
+        model.beginRemoveColumns(index, new_column_count, old_column_count - 1)
         print("Remove Columns")
 
         model.endRemoveColumns()
 
     # Insert Colums (UseCases)
     if old_column_count < new_column_count:
-        model.beginInsertColumns(
-            index, old_column_count + 1, new_column_count 
-        )
+        model.beginInsertColumns(index, old_column_count + 1, new_column_count)
         print("Insert Columns")
 
         model.endInsertColumns()
@@ -151,6 +143,10 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
 
     logging.info("Update Done")
     model.dataChanged.emit(
-            model.createIndex(0, 0),
-            model.createIndex(model.rowCount(), model.columnCount()),
-        )
+        model.createIndex(0, 0),
+        model.createIndex(model.rowCount(), model.columnCount()),
+    )
+
+def update_class_selection(usecases: Type[tool.Usecases]):
+    som_class = usecases.get_active_class()
+    usecases.get_property_label().setText(som_class.name if som_class else "")
