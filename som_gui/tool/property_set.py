@@ -132,7 +132,9 @@ class PropertySet(som_gui.core.tool.PropertySet):
             if som_class:
                 som_class.add_property_set(property_set)
         else:
-            property_set = SOMcreator.SOMPropertySet(name, som_class)
+            property_set = SOMcreator.SOMPropertySet(
+                name, som_class, project=tool.Project.get()
+            )
         return property_set
 
     @classmethod
@@ -154,7 +156,9 @@ class PropertySet(som_gui.core.tool.PropertySet):
             table.removeRow(row)
 
     @classmethod
-    def get_property_sets(cls,active_class:SOMcreator.SOMClass) -> set[SOMcreator.SOMPropertySet]:
+    def get_property_sets(
+        cls, active_class: SOMcreator.SOMClass
+    ) -> set[SOMcreator.SOMPropertySet]:
         if active_class is None:
             return set()
         return set(active_class.get_property_sets(filter=True))
