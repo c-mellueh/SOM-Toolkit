@@ -100,6 +100,7 @@ class ClassModel(QAbstractItemModel):
         result = self.get_row_count(parent)
         old_result = self.row_count_dict.get(parent)
         if old_result != result and old_result is not None:
+            logging.debug(f"RowCount emits Resize Required")
             self.resize_required.emit(parent)
         if old_result is None:
             self.row_count_dict[parent] = result
@@ -146,6 +147,7 @@ class ClassModel(QAbstractItemModel):
     def index(self,row:int,column:int,parent:QModelIndex):       
         if not parent.isValid():
             if row >= len(self.root_classes):
+                logging.debug("Index Exmits resize Required")
                 self.resize_required.emit(parent)
                 return QModelIndex()
             som_class = self.root_classes[row]
@@ -163,6 +165,7 @@ class ClassModel(QAbstractItemModel):
                 index =  self.createIndex(row, column, child_class)
                 return index
             else:
+                logging.debug("Index Exmits resize Required")
                 self.resize_required.emit(parent)
 
         return QModelIndex()
