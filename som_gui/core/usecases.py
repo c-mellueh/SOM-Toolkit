@@ -116,7 +116,7 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
 
     # Insert Rows (Phases)
     if old_row_count < new_row_count:
-        model.beginInsertRows(index, old_row_count, new_row_count + 1)
+        model.beginInsertRows(index, old_row_count, new_row_count - 1)
         model.endInsertRows()
 
     # Remove Colums (UseCases)
@@ -130,10 +130,10 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
 
     # Insert Colums (UseCases)
     if old_column_count < new_column_count:
-        model.beginInsertColumns(index, old_column_count + 1, new_column_count)
+        model.beginInsertColumns(index, old_column_count, new_column_count - 1)
         model.endInsertColumns()
         header_model.beginInsertColumns(
-            QModelIndex(), old_column_count + 1, new_column_count
+            QModelIndex(), old_column_count, new_column_count - 1
         )
         header_model.endInsertColumns()
     usecases.get_class_views()[1].update_requested.emit()
@@ -163,7 +163,7 @@ def update_property_table_size(usecases: Type[tool.Usecases]):
         model.endResetModel()
         header_model.beginResetModel()
         header_model.endResetModel()
-    
+
     else:
         index = QModelIndex()
         # Remove Rows (Phases)
@@ -188,11 +188,7 @@ def update_property_table_size(usecases: Type[tool.Usecases]):
             model.endInsertColumns()
             header_model.beginInsertColumns(index, old_column_count, new_col_count - 1)
             header_model.endInsertColumns()
-
-    model.dataChanged.emit(
-        model.createIndex(0, 0),
-        model.createIndex(model.rowCount(), model.columnCount()),
-    )
+    usecases.get_property_views()[1].update_requested.emit()
 
 
 def update_class_selection(usecases: Type[tool.Usecases]):
