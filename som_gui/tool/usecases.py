@@ -144,12 +144,18 @@ class Usecases(som_gui.core.tool.Usecases):
 
         def syncSelectionFromProxyToSource(selected, deselected):
             for index in selected.indexes():
-                selection_model.select(proxy_model.mapToSource(index), flags)
+                source_index = proxy_model.mapToSource(index)
+                if source_index in selection_model.selectedIndexes():
+                    return
+                selection_model.select(source_index, flags)
                 return
 
         def syncSelectionFromSourceToProxy(selected, deselected):
             for index in selected.indexes():
-                proxy_selection_model.select(proxy_model.mapFromSource(index), flags)
+                proxy_index = proxy_model.mapFromSource(index)
+                if proxy_index in proxy_selection_model.selectedIndexes():
+                    return
+                proxy_selection_model.select(proxy_index, flags)
                 return
 
         proxy_selection_model.selectionChanged.connect(syncSelectionFromProxyToSource)

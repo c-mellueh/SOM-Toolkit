@@ -98,17 +98,21 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
     gets Called if Filters get Added or Removed externally. For example by Console Script.
     :param filter_window:
     :return:
-    """
+    """    
     model = usecases.get_class_model()
     model.update_data()
     old_row_count = model.row_count_dict.get(index) or 0
     old_column_count = model.old_column_count
     new_row_count = model.get_row_count(index)
     new_column_count = model.columnCount()
+    model.row_count_dict[index] = new_row_count
+    model.old_column_count = new_column_count
     logging.info(
         f"ClassModel Update Size rowCount: {old_row_count} -> {new_row_count} columnCount:{old_column_count} -> {new_column_count} {index}"
     )
-
+    if old_row_count == new_row_count and old_column_count == new_column_count:
+        return
+    
     # Remove Rows (Phases)
     if old_row_count > new_row_count:
         model.beginRemoveRows(index, new_row_count, old_row_count - 1)
@@ -129,14 +133,8 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
         model.beginInsertColumns(index, old_column_count + 1, new_column_count)
         model.endInsertColumns()
 
-    model.row_count_dict[index] = new_row_count
-    model.old_column_count = new_column_count
+    usecases.get_class_views()[1].update_requested.emit()
 
-    logging.info("Update Done")
-    model.dataChanged.emit(
-        model.createIndex(0, 0),
-        model.createIndex(model.rowCount(), model.columnCount()),
-    )
 
 
 def update_property_table_size(usecases: Type[tool.Usecases]):
