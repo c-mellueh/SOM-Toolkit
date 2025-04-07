@@ -6,7 +6,7 @@ import SOMcreator
 
 if TYPE_CHECKING:
     from som_gui import tool
-
+    from som_gui.module.usecases import ui
 
 def create_main_menu_actions(
     usecases: Type[tool.Usecases], main_window: Type[tool.MainWindow]
@@ -357,6 +357,6 @@ def rename_filter(
     orientation: Qt.Orientation, logical_index: int, usecases: Type[tool.Usecases]
 ):
     project_view = usecases.get_project_view()
-    header = project_view.horizontalHeader() if orientation == Qt.Orientation.Horizontal else project_view.verticalHeader()
+    header:ui.EditableHeader = project_view.horizontalHeader() if orientation == Qt.Orientation.Horizontal else project_view.verticalHeader()
     header.edit_header_text(logical_index)
 
