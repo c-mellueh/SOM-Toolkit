@@ -183,6 +183,8 @@ class ClassModel(QAbstractItemModel):
         parent_index = self.class_index_dict.get(parent_class) 
         if parent_index is None or not parent_index.isValid():
             return QModelIndex()
+        if parent_index.column() > self.fixed_column_count:
+            return parent_index.siblingAtColumn(0)
         return parent_index
 
 class ClassFilterModel(QSortFilterProxyModel):
