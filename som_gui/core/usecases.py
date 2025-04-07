@@ -1,5 +1,5 @@
 from __future__ import annotations
-from PySide6.QtCore import QCoreApplication, QModelIndex
+from PySide6.QtCore import QCoreApplication, QModelIndex, Qt, QPoint
 from typing import TYPE_CHECKING, Type
 import logging
 import SOMcreator
@@ -38,10 +38,13 @@ def open_window(
     window = usecases.create_window()
     usecases.add_models_to_window(project.get())
     usecases.connect_models()
+    usecases.connect_project_views()
     usecases.connect_class_views()
     usecases.connect_property_views()
     usecases.add_header_view(project.get())
     util.add_shortcut("Ctrl+F", window, usecases.signaller.search_class.emit)
+    util.add_shortcut("Ctrl+U", window, usecases.signaller.add_usecase.emit)
+
     usecases.signaller.retranslate_ui.emit()
     window.show()
 
@@ -229,3 +232,129 @@ def update_class_selection(usecases: Type[tool.Usecases]):
     property_model.som_class = som_class
     property_model.update_data()
     property_model.resize_required.emit()
+
+
+def add_usecase(
+    usecases: Type[tool.Usecases],
+    util: Type[tool.Util],
+):
+
+    model = usecases.get_project_model()
+    project = model.project
+    text = QCoreApplication.translate("Usecases", "New UseCase")
+    new_name = util.get_new_name(text, [uc.name for uc in project.get_usecases()])
+    logging.debug(f"Add UseCase '{new_name}'")
+    usecase = SOMcreator.UseCase(new_name, new_name, new_name)
+    model.beginInsertColumns(QModelIndex(), model.columnCount(), model.columnCount())
+    project.add_usecase(usecase)
+    model.endInsertColumns()
+
+
+def remove_usecase(
+    usecase_index: int,
+    usecases: Type[tool.Usecases],
+):
+    model = usecases.get_project_model()
+    project = model.project
+    usecase = project.get_usecase_by_index(usecase_index)
+    logging.debug(f"remove UseCase '{usecase.name}'")
+    model.beginRemoveColumns(QModelIndex(), usecase_index, usecase_index)
+    project.remove_usecase(usecase)
+    model.endRemoveColumns()
+
+
+def add_phase(
+    usecases: Type[tool.Usecases],
+    util: Type[tool.Util],
+):
+
+    text = QCoreApplication.translate("FilterWindow", "New Phase")
+    model = usecases.get_project_model()
+    project = model.project
+    new_name = util.get_new_name(text, [ph.name for ph in project.get_phases()])
+    logging.debug(f"Add Phase '{new_name}'")
+    phase = SOMcreator.Phase(new_name, new_name, new_name)
+    model.beginInsertRows(QModelIndex(), model.rowCount(), model.rowCount())
+    project.add_phase(phase)
+    model.endInsertRows()
+
+
+def remove_phase(
+    phase_index: int,
+    usecases: Type[tool.Usecases],
+):
+    model = usecases.get_project_model()
+    project = model.project
+    phase = model.project.get_phase_by_index(phase_index)
+    logging.debug(f"remove Phase '{phase.name}'")
+    phase_index = project.get_phase_index(phase)
+    model.beginRemoveRows(QModelIndex(), phase_index, phase_index)
+    model.project.remove_phase(phase)
+    model.endRemoveRows()
+
+
+def create_context_menu(
+    local_pos: QPoint,
+    orientation: Qt.Orientation,
+    usecases: Type[tool.Usecases],
+    project: Type[tool.Project],
+):
+    proj = project.get()
+
+    menu_list = list()
+    project_view = usecases.get_project_view()
+    header = (
+        project_view.horizontalHeader()
+        if orientation == Qt.Orientation.Horizontal
+        else project_view.verticalHeader()
+    )
+    if orientation == Qt.Orientation.Horizontal:  # use_case
+        index = header.logicalIndexAt(local_pos)
+
+        del_uc = QCoreApplication.translate("FilterWindow", "Delete UseCase")
+        rename_uc = QCoreApplication.translate("FilterWindow", "Rename UseCase")
+        add_uc = QCoreApplication.translate("FilterWindow", "Add UseCase")
+
+        if len(proj.get_usecases()) > 1:
+            menu_list.append(
+                (del_uc, lambda: usecases.signaller.remove_usecase.emit(index))
+            )
+        menu_list.append(
+            (
+                rename_uc,
+                lambda: usecases.signaller.rename_filter.emit(
+                    Qt.Orientation.Horizontal, index
+                ),
+            )
+        )
+        menu_list.append((add_uc, lambda: usecases.signaller.add_usecase.emit()))
+        pos = header.viewport().mapToGlobal(local_pos)
+
+    elif orientation == Qt.Orientation.Vertical:
+        index = header.logicalIndexAt(local_pos)
+        del_ph = QCoreApplication.translate("FilterWindow", "Delete Phase")
+        rename_ph = QCoreApplication.translate("FilterWindow", "Rename Phase")
+        add_ph = QCoreApplication.translate("FilterWindow", "Add Phase")
+
+        if len(proj.get_phases()) > 1:
+            menu_list.append(
+                (del_ph, lambda: usecases.signaller.remove_phase.emit(index))
+            )
+        menu_list.append(
+            (
+                rename_ph,
+                lambda: usecases.signaller.rename_filter.emit(
+                    Qt.Orientation.Vertical, index
+                ),
+            )
+        )
+        menu_list.append((add_ph, lambda: usecases.signaller.add_phase.emit()))
+        pos = header.viewport().mapToGlobal(local_pos)
+
+    usecases.create_context_menu(menu_list, pos)
+
+
+def rename_filter(
+    orientation: Qt.Orientation, logical_index: int, usecases: Type[tool.Usecases]
+):
+    print(orientation)
