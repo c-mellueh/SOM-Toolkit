@@ -11,8 +11,8 @@ from PySide6.QtCore import (
     QModelIndex,
     QItemSelectionModel,
     QSortFilterProxyModel,
-    QItemSelection,
-    QCoreApplication,
+    QSize,
+    Qt,
 )
 from PySide6.QtWidgets import QLabel, QApplication
 from som_gui.module.usecases import ui
@@ -228,3 +228,37 @@ class Usecases(som_gui.core.tool.Usecases):
         if not indexes:
             return None
         return view1.model().mapToSource(indexes[0]).internalPointer()
+
+    @classmethod
+    def add_header_view(cls,project:SOMcreator.SOMProject):
+        cv1,cv2 = cls.get_class_views()
+        hv1,hv2 = cls.create_header_views(project,["Class","Identifier"])
+        cv1.setHeader(hv1)
+        cv2.setHeader(hv2)
+        cv2.hideColumn(0)
+        cv2.hideColumn(1)
+
+    @classmethod
+    def create_header_views(
+        cls, project: SOMcreator.SOMProject, first_columns: list[str]
+    ):
+        header_model = ui.CustomHeaderModel(project, first_columns)
+        header_view_1 = ui.CustomHeaderView(first_columns)
+        header_view_2 = ui.CustomHeaderView(first_columns)
+        baseSectionSize = QSize()
+        baseSectionSize.setWidth(header_view_1.defaultSectionSize())
+        baseSectionSize.setHeight(20)
+        for row in range(header_model.rowCount()):
+            for col in range(header_model.columnCount()):
+                index = header_model.index(row, col)
+                header_model.setData(
+                    index, baseSectionSize, Qt.ItemDataRole.SizeHintRole
+                )
+        filter_model = ui.ClassFilterModel(len(first_columns))
+        filter_model.setSourceModel(header_model)
+        header_view_1.setModel(filter_model)
+        header_view_2.setModel(header_model)
+        header_view_1.setStretchLastSection(True)
+        header_view_2.setStretchLastSection(True)
+
+        return header_view_1, header_view_2

@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable,TYPE_CHECKING
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from . import ClassView
 
 from PySide6.QtCore import (
-    QAbstractItemModel,
     QAbstractTableModel,
-    QCoreApplication,
-    QItemSelectionModel,
     QModelIndex,
     Qt,
     Signal,
@@ -17,36 +14,30 @@ from PySide6.QtCore import (
     QRect,
     QPoint,
 )
-from PySide6.QtGui import QMouseEvent, QColor, QPainter, QPalette, QBrush
+from PySide6.QtGui import QMouseEvent, QColor, QPainter
 from PySide6.QtWidgets import (
-    QTableView,
-    QTreeView,
-    QWidget,
     QHeaderView,
     QStyleOptionHeader,
     QStyle,
 )
 import SOMcreator
-import som_gui
-from som_gui import tool
-from . import trigger
 
 
 class CustomHeaderView(QHeaderView):
     sectionPressed = Signal(int, int)
 
     def __init__(
-        self, first_columns: list[str], parent=None
+        self, fixed_column_texts: list[str], parent=None
     ):
         super().__init__(Qt.Orientation.Horizontal, parent)
-        self.first_columns = first_columns
+        self.fixed_column_text = fixed_column_texts
         self.sectionResized.connect(self.onSectionResized)
 
 
 
     @property
-    def column_overlap(self):
-        return len(self.first_columns)
+    def fixed_column_count(self):
+        return len(self.fixed_column_text)
 
     def parentWidget(self) ->ClassView:
         return super().parentWidget()
