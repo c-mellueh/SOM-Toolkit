@@ -254,14 +254,14 @@ class Usecases(som_gui.core.tool.Usecases):
         return view2.model()
 
     @classmethod
-    def get_class_header_model(cls):
+    def get_class_header_model(cls) -> ui.CustomHeaderModel | None:
         view1, view2 = cls.get_class_views()
         if view2 is None:
             return None
         return view2.header().model()
 
     @classmethod
-    def get_property_header_model(cls):
+    def get_property_header_model(cls) -> ui.CustomHeaderModel | None:
         view1, view2 = cls.get_property_views()
         if view2 is None:
             return None

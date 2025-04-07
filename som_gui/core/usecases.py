@@ -25,11 +25,19 @@ def retranslate_ui(usecases: Type[tool.Usecases], util: Type[tool.Util]):
     action.setText(QCoreApplication.translate("UsecaseWindow", "Usecases"))
 
     window = usecases.get_window()
-    if window:
-        title = QCoreApplication.translate("UsecaseWindow", "Project Filter")
-        window.ui.retranslateUi(window)
-        window.setWindowTitle(util.get_window_title(title))
+    if not window:
+        return
+    title = QCoreApplication.translate("UsecaseWindow", "Usecases")
+    window.ui.retranslateUi(window)
+    window.setWindowTitle(util.get_window_title(title))
 
+    t1 = QCoreApplication.translate("UsecaseWindow", "Class")
+    t2 = QCoreApplication.translate("UsecaseWindow", "Identifier")
+    usecases.get_class_header_model().first_columns = [t1,t2]
+
+    t1 = QCoreApplication.translate("UsecaseWindow", "PropertySet")
+    t2 = QCoreApplication.translate("UsecaseWindow", "Property")
+    usecases.get_property_header_model().first_columns = [t1,t2]
 
 def open_window(
     usecases: Type[tool.Usecases],
