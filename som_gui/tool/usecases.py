@@ -67,7 +67,8 @@ class Usecases(som_gui.core.tool.Usecases):
         project_model = ui.ProjectModel(project)
         project_view = cls.get_project_view()
         project_view.setModel(project_model)
-        project_view.update_requested.connect(project_model.update_data)
+        project_view.update_requested.connect(project_model.update_view)
+        project_model.data_changed_externally.connect(trigger.resize_project_model)
 
         class_view_1, class_view_2 = cls.get_class_views()
         class_model = ui.ClassModel(project)
@@ -223,14 +224,14 @@ class Usecases(som_gui.core.tool.Usecases):
         if view2 is None:
             return None
         return view2.header().model()
-    
+
     @classmethod
     def get_property_header_model(cls):
         view1, view2 = cls.get_property_views()
         if view2 is None:
             return None
         return view2.horizontalHeader().model()
-    
+
     @classmethod
     def get_property_label(cls) -> QLabel:
         window = cls.get_window()

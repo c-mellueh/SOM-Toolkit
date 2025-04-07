@@ -37,7 +37,7 @@ class ProjectModel(QAbstractTableModel):
         self.old_row_count = self.rowCount()
         super().__init__(*args, **kwargs)
 
-    def update_data(self):
+    def update_view(self):
         self.dataChanged.emit(
             self.createIndex(0, 0),
             self.createIndex(self.rowCount(), self.columnCount()),
@@ -52,8 +52,7 @@ class ProjectModel(QAbstractTableModel):
             or self.old_row_count != self.rowCount()
         ):
             changed_externally = True
-        self.old_column_count = self.columnCount()
-        self.old_row_count = self.rowCount()
+
         return changed_externally
 
     def flags(self, index):

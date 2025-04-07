@@ -18,6 +18,9 @@ def on_new_project():
 def open_window():
     core.open_window(tool.Usecases,tool.Project,tool.Util,tool.Search)
 
+def resize_project_model():
+    core.update_project_table_size(tool.Usecases)
+
 def resize_class_model(index = QModelIndex()):
     core.update_class_tree_size(index,tool.Usecases)
 

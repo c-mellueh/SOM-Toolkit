@@ -83,34 +83,40 @@ def update_project_table_size(usecases: Type[tool.Usecases]):
     :return:
     """
     model = usecases.get_project_model()
+    old_row_count = model.old_row_count
+    old_column_count = model.old_column_count
+    new_row_count = model.rowCount()
+    new_col_count = model.columnCount()
+    model.old_row_count = new_row_count
+    model.old_column_count = new_col_count
     logging.debug(
         f"Filter Changed Externally. rowCount: {model.old_row_count} -> {model.rowCount()} columnCount:{model.old_column_count} -> {model.columnCount()}"
     )
 
-    # Remove Rows (Phases)
-    if model.old_row_count > model.rowCount():
-        model.beginRemoveRows(QModelIndex(), model.rowCount(), model.old_row_count - 1)
-        model.endRemoveRows()
+    if old_row_count == 0:
+        model.beginResetModel()
+        model.endResetModel()
+    else:
+        index = QModelIndex()
+        # Remove Rows (Phases)
+        if old_row_count > new_row_count:
+            model.beginRemoveRows(index, new_row_count, old_row_count - 1)
+            model.endRemoveRows()
 
-    # Insert Rows (Phases)
-    if model.old_row_count < model.rowCount():
-        print("Insert Project Rows")
-        model.beginInsertRows(QModelIndex(), model.old_row_count + 1, model.rowCount())
-        model.endInsertRows()
+        # Insert Rows (Phases)
+        if old_row_count < new_row_count:
+            model.beginInsertRows(index, old_row_count, new_row_count - 1)
+            model.endInsertRows()
 
-    # Remove Colums (UseCases)
-    if model.old_column_count > model.columnCount():
-        model.beginRemoveColumns(
-            QModelIndex(), model.columnCount(), model.old_column_count - 1
-        )
-        model.endRemoveColumns()
-
-    # Insert Colums (UseCases)
-    if model.old_column_count < model.columnCount():
-        model.beginInsertColumns(
-            QModelIndex(), model.old_column_count + 1, model.columnCount()
-        )
-        model.endInsertColumns()
+        # Remove Colums (UseCases)
+        if old_column_count > new_col_count:
+            model.beginRemoveColumns(index, new_col_count, old_column_count - 1)
+            model.endRemoveColumns()
+        # Insert Colums (UseCases)
+        if old_column_count < new_col_count:
+            model.beginInsertColumns(index, old_column_count, new_col_count - 1)
+            model.endInsertColumns()
+    usecases.get_project_view().update_requested.emit()
 
 
 def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
