@@ -92,7 +92,7 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
     gets Called if Filters get Added or Removed externally. For example by Console Script.
     :param filter_window:
     :return:
-    """    
+    """
     model = usecases.get_class_model()
     model.update_data()
     old_row_count = model.row_count_dict.get(index) or 0
@@ -101,12 +101,13 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
     new_column_count = model.columnCount()
     model.row_count_dict[index] = new_row_count
     model.old_column_count = new_column_count
+    header_model = usecases.get_class_header_model()
     logging.info(
         f"ClassModel Update Size rowCount: {old_row_count} -> {new_row_count} columnCount:{old_column_count} -> {new_column_count} {index}"
     )
     if old_row_count == new_row_count and old_column_count == new_column_count:
         return
-    
+
     # Remove Rows (Phases)
     if old_row_count > new_row_count:
         model.beginRemoveRows(index, new_row_count, old_row_count - 1)
@@ -121,14 +122,20 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
     if old_column_count > new_column_count:
         model.beginRemoveColumns(index, new_column_count, old_column_count - 1)
         model.endRemoveColumns()
+        header_model.beginRemoveColumns(
+            QModelIndex(), new_column_count, old_column_count - 1
+        )
+        header_model.endRemoveColumns()
 
     # Insert Colums (UseCases)
     if old_column_count < new_column_count:
         model.beginInsertColumns(index, old_column_count + 1, new_column_count)
         model.endInsertColumns()
-
+        header_model.beginInsertColumns(
+            QModelIndex(), old_column_count + 1, new_column_count
+        )
+        header_model.endInsertColumns()
     usecases.get_class_views()[1].update_requested.emit()
-
 
 
 def update_property_table_size(usecases: Type[tool.Usecases]):
@@ -147,10 +154,12 @@ def update_property_table_size(usecases: Type[tool.Usecases]):
     old_column_count = model.old_column_count
     new_row_count = model.rowCount()
     new_column_count = model.columnCount()
-
+    header_model = usecases.get_property_header_model()
     if old_row_count == 0:
         model.beginResetModel()
         model.endResetModel()
+        header_model.beginResetModel()
+        header_model.endResetModel()
     else:
         # Remove Rows (Phases)
         if old_row_count > new_row_count:
@@ -159,7 +168,7 @@ def update_property_table_size(usecases: Type[tool.Usecases]):
 
         # Insert Rows (Phases)
         if old_row_count < new_row_count:
-            model.beginInsertRows(QModelIndex(), model.old_row_count, new_row_count-1)
+            model.beginInsertRows(QModelIndex(), model.old_row_count, new_row_count - 1)
             model.endInsertRows()
 
         # Remove Colums (UseCases)
@@ -168,13 +177,20 @@ def update_property_table_size(usecases: Type[tool.Usecases]):
                 QModelIndex(), new_column_count, model.old_column_count - 1
             )
             model.endRemoveColumns()
-
+            header_model.beginRemoveColumns(
+                QModelIndex(), new_column_count, model.old_column_count - 1
+            )
+            header_model.endRemoveColumns()
         # Insert Colums (UseCases)
         if old_column_count < new_column_count:
             model.beginInsertColumns(
                 QModelIndex(), model.old_column_count + 1, new_column_count
             )
             model.endInsertColumns()
+            header_model.beginInsertColumns(
+                QModelIndex(), model.old_column_count + 1, new_column_count
+            )
+            header_model.endInsertColumns()
 
     model.old_row_count = new_row_count
     model.old_column_count = new_column_count
@@ -182,10 +198,12 @@ def update_property_table_size(usecases: Type[tool.Usecases]):
         model.createIndex(0, 0),
         model.createIndex(model.rowCount(), model.columnCount()),
     )
+
+
 def update_class_selection(usecases: Type[tool.Usecases]):
     som_class = usecases.get_active_class()
     usecases.get_property_label().setText(som_class.name if som_class else "")
     property_model = usecases.get_property_model()
     property_model.som_class = som_class
-    property_model.update_data()    
+    property_model.update_data()
     property_model.resize_required.emit()

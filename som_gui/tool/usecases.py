@@ -108,7 +108,7 @@ class Usecases(som_gui.core.tool.Usecases):
     def connect_class_views(cls):
 
         proxy_view, view = cls.get_class_views()
-        cls._connect_views(proxy_view,view)
+        cls._connect_views(proxy_view, view)
         proxy_model: QSortFilterProxyModel = proxy_view.model()
         view.selectionModel().selectionChanged.connect(
             lambda x, y: cls.signaller.class_selection_changed.emit()
@@ -125,16 +125,21 @@ class Usecases(som_gui.core.tool.Usecases):
             lambda index: proxy_view.collapse(proxy_model.mapFromSource(index))
         )
         proxy_view.collapsed.connect(
-            lambda index: view.collapse(proxy_model.mapToSource(index)))
-        view.clicked.connect(lambda x:view.update_requested.emit())
+            lambda index: view.collapse(proxy_model.mapToSource(index))
+        )
+        view.clicked.connect(lambda x: view.update_requested.emit())
+
     @classmethod
     def connect_property_views(cls):
         cls._connect_views(*cls.get_property_views())
 
-
     @classmethod
-    def _connect_views(cls, proxy_view:ui.ClassView|ui.PropertyView, view:ui.ClassView|ui.PropertyView):
-        proxy_model:QSortFilterProxyModel = proxy_view.model()
+    def _connect_views(
+        cls,
+        proxy_view: ui.ClassView | ui.PropertyView,
+        view: ui.ClassView | ui.PropertyView,
+    ):
+        proxy_model: QSortFilterProxyModel = proxy_view.model()
         proxy_selection_model = proxy_view.selectionModel()
         selection_model = view.selectionModel()
         flags = (
@@ -213,6 +218,20 @@ class Usecases(som_gui.core.tool.Usecases):
         return view2.model()
 
     @classmethod
+    def get_class_header_model(cls):
+        view1, view2 = cls.get_class_views()
+        if view2 is None:
+            return None
+        return view2.header().model()
+    
+    @classmethod
+    def get_property_header_model(cls):
+        view1, view2 = cls.get_property_views()
+        if view2 is None:
+            return None
+        return view2.horizontalHeader().model()
+    
+    @classmethod
     def get_property_label(cls) -> QLabel:
         window = cls.get_window()
         if window is None:
@@ -230,13 +249,19 @@ class Usecases(som_gui.core.tool.Usecases):
         return view1.model().mapToSource(indexes[0]).internalPointer()
 
     @classmethod
-    def add_header_view(cls,project:SOMcreator.SOMProject):
-        cv1,cv2 = cls.get_class_views()
-        hv1,hv2 = cls.create_header_views(project,["Class","Identifier"])
+    def add_header_view(cls, project: SOMcreator.SOMProject):
+        cv1, cv2 = cls.get_class_views()
+        hv1, hv2 = cls.create_header_views(project, ["Class", "Identifier"])
         cv1.setHeader(hv1)
         cv2.setHeader(hv2)
         cv2.hideColumn(0)
         cv2.hideColumn(1)
+        pv1, pv2 = cls.get_property_views()
+        hv1, hv2 = cls.create_header_views(project, ["PropertySet", "Property"])
+        pv1.setHorizontalHeader(hv1)
+        pv2.setHorizontalHeader(hv2)
+        pv2.hideColumn(0)
+        pv2.hideColumn(1)
 
     @classmethod
     def create_header_views(
@@ -260,5 +285,4 @@ class Usecases(som_gui.core.tool.Usecases):
         header_view_2.setModel(header_model)
         header_view_1.setStretchLastSection(True)
         header_view_2.setStretchLastSection(True)
-
         return header_view_1, header_view_2
