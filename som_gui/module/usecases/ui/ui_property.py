@@ -3,7 +3,7 @@ import logging
 
 from PySide6.QtCore import (
     QAbstractTableModel,
-    QCoreApplication,
+    QObject,
     QModelIndex,
     Qt,
     Signal,
@@ -16,6 +16,8 @@ from som_gui import tool
 
 class PropertyView(QTableView):
     update_requested = Signal()
+    mouse_moved = Signal(QMouseEvent,QObject)
+    mouse_released = Signal(QMouseEvent,QObject)
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -33,6 +35,13 @@ class PropertyView(QTableView):
             model.createIndex(0, 0),
             model.createIndex(model.rowCount(), model.columnCount()),
         )
+    def mouseMoveEvent(self, event: QMouseEvent):
+        super().mouseMoveEvent(event)
+        self.mouse_moved.emit(event,self)
+
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+        self.mouse_released.emit(event,self)
 
 class PropertyModel(QAbstractTableModel):
     updated_required = Signal()
@@ -66,9 +75,10 @@ class PropertyModel(QAbstractTableModel):
 
     def flags(self, index):
         flags = super().flags(index)
-        if index.column() >= self.fixed_column_count:
+        if index.column() < self.fixed_column_count:
             return flags
-        return flags | Qt.ItemFlag.ItemIsUserCheckable
+        flags |= Qt.ItemFlag.ItemIsUserCheckable
+        return flags
     
     def columnCount(self, parent =QModelIndex()):
         return self.column_count
@@ -110,7 +120,7 @@ class PropertyModel(QAbstractTableModel):
             return False
         if index.column() < self.fixed_column_count:
             return False
-        som_property:SOMcreator.SOMProperty = index.internalPointer()
+        som_property:SOMcreator.SOMProperty = self.properties[index.row()]
         usecase, phase = self.columns[index.column() - self.fixed_column_count]
         som_property.set_filter_state(phase,usecase,bool(value))
         return True

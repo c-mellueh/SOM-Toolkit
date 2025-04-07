@@ -158,8 +158,7 @@ class Usecases(som_gui.core.tool.Usecases):
             lambda index: view.collapse(proxy_model.mapToSource(index))
         )
         view.clicked.connect(lambda x: view.update_requested.emit())
-        view.mouse_moved.connect(trigger.mouse_move_event)
-        view.mouse_released.connect(trigger.mouse_release_event)
+
     @classmethod
     def connect_property_views(cls):
         cls._connect_views(*cls.get_property_views())
@@ -202,6 +201,9 @@ class Usecases(som_gui.core.tool.Usecases):
         proxy_view.verticalScrollBar().valueChanged.connect(
             view.verticalScrollBar().setValue
         )
+
+        view.mouse_moved.connect(trigger.mouse_move_event)
+        view.mouse_released.connect(trigger.mouse_release_event)
 
     @classmethod
     def get_project_view(cls) -> ui.ProjectView:
