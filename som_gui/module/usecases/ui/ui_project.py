@@ -35,6 +35,9 @@ class ProjectModel(QAbstractTableModel):
         self.project = project
         self.old_column_count = self.columnCount()
         self.old_row_count = self.rowCount()
+        self.edit_header_index = None
+        self.edit_header_orientation = None
+        self.header_data_is_editing = False
         super().__init__(*args, **kwargs)
 
     def update_view(self):
@@ -82,6 +85,8 @@ class ProjectModel(QAbstractTableModel):
         # TODO write connector for update class tree and psettable
 
     def headerData(self, section: int, orientation: Qt.Orientation, role=...):
+        if self.header_data_is_editing and section == self.edit_header_index and orientation == self.edit_header_orientation:
+            return None
         if role not in [Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole]:
             return
         if orientation == Qt.Orientation.Horizontal:
@@ -92,3 +97,15 @@ class ProjectModel(QAbstractTableModel):
             if section > len(self.project.get_phases()) - 1:
                 return None
             return self.project.get_phases()[section].name
+
+    def setHeaderData(self, section, orientation, value, /, role = ...):
+        if not self.header_data_is_editing:
+            return False
+
+        if role == Qt.ItemDataRole.DisplayRole:
+            if orientation == Qt.Orientation.Horizontal:
+                self.project.get_usecases()[section].name = value
+            else:
+                self.project.get_phases()[section].name = value
+            self.checkstate_changed.emit()
+            return True

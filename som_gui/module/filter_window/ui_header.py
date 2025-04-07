@@ -19,7 +19,7 @@ from PySide6.QtCore import (
 )
 from PySide6.QtGui import QMouseEvent, QColor, QPainter, QPalette, QBrush
 from PySide6.QtWidgets import (
-    QTableView,
+    QLineEdit,
     QTreeView,
     QWidget,
     QHeaderView,
@@ -470,3 +470,4 @@ class CustomHeaderModel(QAbstractTableModel):
                 self.data_dict[item][role] = value
             return True
         return False
+

@@ -117,6 +117,9 @@ class Usecases(som_gui.core.tool.Usecases):
     @classmethod
     def connect_project_views(cls):
         view = cls.get_project_view()
+        view.setHorizontalHeader(ui.EditableHeader(Qt.Orientation.Horizontal))
+        view.setVerticalHeader(ui.EditableHeader(Qt.Orientation.Vertical))
+
         vertical_header = view.verticalHeader()
         vertical_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         vertical_header.customContextMenuRequested.connect(lambda pos: trigger.header_context_requested(pos,Qt.Orientation.Vertical))

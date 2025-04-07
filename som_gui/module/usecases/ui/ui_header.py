@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (
     QHeaderView,
     QStyleOptionHeader,
     QStyle,
+    QLineEdit
 )
 import SOMcreator
 
@@ -461,3 +462,33 @@ class CustomHeaderModel(QAbstractTableModel):
                 self.data_dict[item][role] = value
             return True
         return False
+
+class EditableHeader(QHeaderView):
+    headerDoubleClicked = Signal(int)
+
+    def __init__(self, orientation, parent=None):
+        super().__init__(orientation, parent)
+        self.setSectionsClickable(True)
+        self.sectionDoubleClicked.connect(self.edit_header_text)
+        self.editor = None
+
+    def edit_header_text(self, logicalIndex):
+        if self.editor:
+            self.editor.deleteLater()
+        self.model().header_data_is_editing =True
+        self.model().edit_header_index = logicalIndex
+        self.model().edit_header_orientation = self.orientation()
+        self.editor = QLineEdit(self)
+        self.editor.setText(self.model().headerData(logicalIndex, self.orientation(), Qt.DisplayRole))
+        self.editor.setGeometry(self.sectionViewportPosition(logicalIndex), 0, self.sectionSize(logicalIndex), self.height())
+        self.editor.setFocus()
+        self.editor.selectAll()
+        self.editor.show()
+        self.editor.editingFinished.connect(lambda: self.renameHeader(logicalIndex))
+
+    def renameHeader(self, logicalIndex):
+        newText = self.editor.text()
+        self.model().setHeaderData(logicalIndex, self.orientation(), newText, Qt.DisplayRole)
+        self.editor.deleteLater()
+        self.editor = None
+        self.model().header_data_is_editing =False

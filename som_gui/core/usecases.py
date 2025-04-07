@@ -350,11 +350,13 @@ def create_context_menu(
         )
         menu_list.append((add_ph, lambda: usecases.signaller.add_phase.emit()))
         pos = header.viewport().mapToGlobal(local_pos)
-
     usecases.create_context_menu(menu_list, pos)
 
 
 def rename_filter(
     orientation: Qt.Orientation, logical_index: int, usecases: Type[tool.Usecases]
 ):
-    print(orientation)
+    project_view = usecases.get_project_view()
+    header = project_view.horizontalHeader() if orientation == Qt.Orientation.Horizontal else project_view.verticalHeader()
+    header.edit_header_text(logical_index)
+
