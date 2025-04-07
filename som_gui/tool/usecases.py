@@ -161,6 +161,7 @@ class Usecases(som_gui.core.tool.Usecases):
             lambda index: view.collapse(proxy_model.mapToSource(index))
         )
         view.clicked.connect(lambda x: view.update_requested.emit())
+        view.clicked.connect(lambda x:cls.get_property_views()[1].repaint())
 
     @classmethod
     def connect_property_views(cls):
