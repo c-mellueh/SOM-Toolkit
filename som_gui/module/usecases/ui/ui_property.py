@@ -77,7 +77,15 @@ class PropertyModel(QAbstractTableModel):
         flags = super().flags(index)
         if index.column() < self.fixed_column_count:
             return flags
+        property = self.get_property_from_index(index)
         flags |= Qt.ItemFlag.ItemIsUserCheckable
+        som_class = property.property_set.som_class
+        usecase, phase = self.columns[index.column() - self.fixed_column_count]
+        while som_class is not None:
+            if not som_class.get_filter_state(phase, usecase):
+                flags &= ~Qt.ItemFlag.ItemIsEnabled
+                return flags
+            som_class = som_class.parent         
         return flags
     
     def columnCount(self, parent =QModelIndex()):
@@ -85,6 +93,9 @@ class PropertyModel(QAbstractTableModel):
     
     def rowCount(self, parent = QModelIndex()):
         return len(self.properties)
+    
+    def get_property_from_index(self, index: QModelIndex) -> SOMcreator.SOMProperty:
+        return self.properties[index.row()]
     
     def data(self, index: QModelIndex, role: Qt.ItemDataRole):        
         def get_checkstate(column: int, som_property: SOMcreator.SOMProperty):
@@ -120,7 +131,7 @@ class PropertyModel(QAbstractTableModel):
             return False
         if index.column() < self.fixed_column_count:
             return False
-        som_property:SOMcreator.SOMProperty = self.properties[index.row()]
+        som_property = self.get_property_from_index(index)
         usecase, phase = self.columns[index.column() - self.fixed_column_count]
         som_property.set_filter_state(phase,usecase,bool(value))
         return True
