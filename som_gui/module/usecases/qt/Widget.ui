@@ -28,6 +28,12 @@
       </attribute>
      </widget>
      <widget class="QSplitter" name="splitter_2">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
       <property name="orientation">
        <enum>Qt::Orientation::Horizontal</enum>
       </property>
@@ -42,6 +48,12 @@
         <number>0</number>
        </property>
        <widget class="ClassView" name="class_treeView_fixed">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
         <property name="verticalScrollBarPolicy">
          <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
         </property>
@@ -75,7 +87,14 @@
           <property name="orientation">
            <enum>Qt::Orientation::Horizontal</enum>
           </property>
-          <widget class="PropertyView" name="property_TableView_fixed"/>
+          <property name="handleWidth">
+           <number>1</number>
+          </property>
+          <widget class="PropertyView" name="property_TableView_fixed">
+           <property name="horizontalScrollMode">
+            <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+           </property>
+          </widget>
           <widget class="PropertyView" name="property_TableView_extendable">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -83,6 +102,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="horizontalScrollMode">
+            <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+           </property>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
           </widget>
          </widget>
         </item>
