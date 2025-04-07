@@ -41,14 +41,39 @@ def open_window(
     usecases.connect_class_views()
     usecases.connect_property_views()
     usecases.add_header_view(project.get())
-    # ToDo: Add Shortcut FUnction
-    # util.add_shortcut(
-    #     "Ctrl+F", widget, lambda: search_class(filter_window, search, project)
-    # )
-    # filter_window.connect_project_table(project.get())
-    # filter_window.connect_class_tree(project.get())
+    util.add_shortcut("Ctrl+F", window, usecases.signaller.search_class.emit)
     usecases.signaller.retranslate_ui.emit()
     window.show()
+
+
+def search_class(
+    usecases: Type[tool.Usecases],
+    search: Type[tool.Search],
+    project: Type[tool.Project],
+):
+    som_class = search.search_class(list(project.get().get_classes(filter=True)))
+    if som_class is None:
+        return
+    class_view = usecases.get_class_views()[1]
+    class_model = usecases.get_class_model()
+    parent_list = [som_class]
+    parent = som_class.parent
+    while parent is not None:
+        parent_list.append(parent)
+        parent = parent.parent
+    # needs to happen top down. DataModel creates children only if parent is already created
+    # You can't combine the parent search with expanding the Tree it needs to happen in two steps
+    for item in reversed(parent_list):
+        index: QModelIndex = class_model.class_index_dict.get(item)
+        class_view.expand(index)
+    flags = (
+        class_view.selectionModel().SelectionFlag.ClearAndSelect
+        | class_view.selectionModel().SelectionFlag.Rows
+    )
+    class_view.selectionModel().select(index, flags)
+    class_view.scrollTo(
+        index.sibling(index.row(), 0), class_view.ScrollHint.EnsureVisible
+    )
 
 
 def update_project_table_size(usecases: Type[tool.Usecases]):

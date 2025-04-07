@@ -26,3 +26,6 @@ def resize_property_model(index = QModelIndex()):
 
 def class_selection_changed():
     core.update_class_selection(tool.Usecases)
+
+def search_class():
+    core.search_class(tool.Usecases,tool.Search,tool.Project)

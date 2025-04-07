@@ -27,7 +27,7 @@ class Signaller(QObject):
     open_window = Signal()
     retranslate_ui = Signal()
     class_selection_changed = Signal()
-
+    search_class = Signal()
 
 class Usecases(som_gui.core.tool.Usecases):
     signaller = Signaller()
@@ -51,7 +51,7 @@ class Usecases(som_gui.core.tool.Usecases):
         cls.signaller.open_window.connect(trigger.open_window)
         cls.signaller.retranslate_ui.connect(trigger.retranslate_ui)
         cls.signaller.class_selection_changed.connect(trigger.class_selection_changed)
-
+        cls.signaller.search_class.connect(trigger.search_class)
     @classmethod
     def get_window(cls) -> ui.Widget | None:
         return cls.get_properties().window
