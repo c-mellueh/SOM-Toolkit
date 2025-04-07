@@ -38,21 +38,6 @@ class CustomHeaderView(QHeaderView):
     def setModel(self, model):
         super().setModel(model)
 
-    def setCellLabel(self, row: int, column: int, label: str):
-        self.model().setData(
-            self.model().index(row, column), label, Qt.ItemDataRole.DisplayRole
-        )
-
-    def setCellBackgroundColor(self, row: int, column: int, color: QColor):
-        self.model().setData(
-            self.model().index(row, column), color, Qt.ItemDataRole.BackgroundRole
-        )
-
-    def setCellForegroundColor(self, row: int, column: int, color: QColor):
-        self.model().setData(
-            self.model().index(row, column), color, Qt.ItemDataRole.ForegroundRole
-        )
-
     def indexAt(self, pos: QPoint):
         tblModel = self.model()
         rows = tblModel.rowCount()

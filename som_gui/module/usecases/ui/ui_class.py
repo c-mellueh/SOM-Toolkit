@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-
+from typing import TYPE_CHECKING
 from PySide6.QtCore import (
     QAbstractItemModel,
     QSortFilterProxyModel,
@@ -13,8 +13,8 @@ from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTreeView
 import SOMcreator
 from som_gui import tool
-
-
+if TYPE_CHECKING:
+    from .ui_header import CustomHeaderView
 class ClassView(QTreeView):
     update_requested = Signal()
     mouse_moved = Signal(QMouseEvent,QObject)
@@ -49,7 +49,8 @@ class ClassView(QTreeView):
         super().mouseReleaseEvent(event)
         self.mouse_released.emit(event,self)
 
-
+    def header(self) -> CustomHeaderView:
+        return super().header()
 
 class ClassModel(QAbstractItemModel):
     updated_required = Signal()
@@ -200,6 +201,7 @@ class ClassModel(QAbstractItemModel):
         if parent_index.column() > self.fixed_column_count:
             return parent_index.siblingAtColumn(0)
         return parent_index
+
 
 
 class ClassFilterModel(QSortFilterProxyModel):
