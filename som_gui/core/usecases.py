@@ -54,6 +54,8 @@ def open_window(
     usecases.add_header_view(project.get())
     util.add_shortcut("Ctrl+F", window, usecases.signaller.search_class.emit)
     util.add_shortcut("Ctrl+U", window, usecases.signaller.add_usecase.emit)
+    util.add_shortcut("Ctrl+P", window, usecases.signaller.add_phase.emit)
+
 
     usecases.signaller.retranslate_ui.emit()
     window.show()
@@ -256,8 +258,9 @@ def add_usecase(
     logging.debug(f"Add UseCase '{new_name}'")
     usecase = SOMcreator.UseCase(new_name, new_name, new_name)
     model.beginInsertColumns(QModelIndex(), model.columnCount(), model.columnCount())
-    project.add_usecase(usecase)
+    usecase_index = project.add_usecase(usecase)
     model.endInsertColumns()
+    usecases.signaller.rename_filter.emit(Qt.Orientation.Horizontal, usecase_index)
 
 
 def remove_usecase(
@@ -285,8 +288,9 @@ def add_phase(
     logging.debug(f"Add Phase '{new_name}'")
     phase = SOMcreator.Phase(new_name, new_name, new_name)
     model.beginInsertRows(QModelIndex(), model.rowCount(), model.rowCount())
-    project.add_phase(phase)
+    phase_index = project.add_phase(phase)
     model.endInsertRows()
+    usecases.signaller.rename_filter.emit(Qt.Orientation.Vertical, phase_index)
 
 
 def remove_phase(

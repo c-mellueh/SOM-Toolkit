@@ -283,6 +283,7 @@ class CustomHeaderView(QHeaderView):
                 self.sectionPressed.emit(beginSection, endSection)
 
     def onSectionResized(self, logicalIndex: int, oldSize: int, newSize: int):
+        print(newSize)
         tblModel: CustomHeaderModel = self.model()
         level = tblModel.rowCount()
         pos = self.sectionViewportPosition(logicalIndex)
@@ -318,7 +319,8 @@ class CustomHeaderView(QHeaderView):
 class CustomHeaderModel(QAbstractTableModel):
     ColumnSpanRole = Qt.ItemDataRole.UserRole + 1
     RowSpanRole = Qt.ItemDataRole.UserRole + 2
-
+    base_height = 25
+    base_width = 25
     def __init__(
         self, proj: SOMcreator.SOMProject, first_columns: list[str], parent=None
     ):
@@ -327,7 +329,7 @@ class CustomHeaderModel(QAbstractTableModel):
         self.proj = proj
         self.data_dict = dict()
         self.size_hint_dict = dict()
-
+    
     @property
     def column_overlap(self):
         return len(self.first_columns)
@@ -395,8 +397,8 @@ class CustomHeaderModel(QAbstractTableModel):
             sh = self.size_hint_dict.get((index.row(), index.column()))
             if not sh:
                 baseSectionSize = QSize()
-                baseSectionSize.setWidth(50)
-                baseSectionSize.setHeight(20)
+                baseSectionSize.setWidth(self.base_width)
+                baseSectionSize.setHeight(self.base_height)
                 self.setData(index, Qt.ItemDataRole.SizeHintRole, baseSectionSize)
                 return baseSectionSize
             return self.size_hint_dict[(index.row(), index.column())]
