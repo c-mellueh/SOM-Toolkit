@@ -30,6 +30,14 @@ class ClassView(QTreeView):
     def model(self) -> ClassModel:
         return super().model()
 
+    def update_view(self):
+        model = self.model()
+        if model is None:
+            return
+        model.dataChanged.emit(
+        model.createIndex(0, 0),
+        model.createIndex(model.rowCount(), model.columnCount()),
+    )
 
 class ClassModel(QAbstractItemModel):
     updated_required = Signal()
@@ -58,15 +66,15 @@ class ClassModel(QAbstractItemModel):
         self.root_classes = list(self.project.get_root_classes(filter = False))
 
 
-    def flags(self, index: QModelIndex, parent_index= QModelIndex()):
+    def flags(self, index: QModelIndex):
         """
         make Item Checkable if Column > check_column_index
         Disable Item if Parent is not checked or parent is disabled
         """
         flags = super().flags(index)
+        parent_index = self.parent(index).siblingAtColumn(index.column())
         if index.column() >= self.fixed_column_count:
             flags |= Qt.ItemFlag.ItemIsUserCheckable
-
         if not parent_index.isValid():
             return flags
         is_parent_enabled = Qt.ItemFlag.ItemIsEnabled in parent_index.flags()

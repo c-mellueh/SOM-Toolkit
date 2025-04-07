@@ -25,6 +25,15 @@ class PropertyView(QTableView):
         self.update_requested.emit()    
         return super().enterEvent(event)
 
+    def update_view(self):
+        model = self.model()
+        if model is None:
+            return
+        model.dataChanged.emit(
+            model.createIndex(0, 0),
+            model.createIndex(model.rowCount(), model.columnCount()),
+        )
+
 class PropertyModel(QAbstractTableModel):
     updated_required = Signal()
     resize_required = Signal()

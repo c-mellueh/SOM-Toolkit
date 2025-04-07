@@ -105,10 +105,6 @@ def update_class_tree_size(index: QModelIndex, usecases: Type[tool.Usecases]):
     old_column_count = model.old_column_count
     new_row_count = model.get_row_count(index)
     new_column_count = model.columnCount()
-
-    if new_row_count == old_row_count and new_column_count == old_column_count:
-        logging.info(f"No Change Required")
-        return
     logging.info(
         f"ClassModel Update Size rowCount: {old_row_count} -> {new_row_count} columnCount:{old_column_count} -> {new_column_count} {index}"
     )

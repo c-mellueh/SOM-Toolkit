@@ -77,7 +77,7 @@ class Usecases(som_gui.core.tool.Usecases):
         class_view_2.setModel(class_model)
         class_view_2.hideColumn(0)
         class_view_2.hideColumn(1)
-        class_view_2.update_requested.connect(class_model.update_data)
+        class_view_2.update_requested.connect(class_view_2.update_view)
 
         property_view_1, property_view_2 = cls.get_property_views()
         property_model = ui.PropertyModel()
@@ -88,7 +88,7 @@ class Usecases(som_gui.core.tool.Usecases):
         property_view_2.hideColumn(0)
         property_view_2.hideColumn(1)
 
-        property_view_2.update_requested.connect(property_model.update_data)
+        property_view_2.update_requested.connect(property_view_2.update_view)
 
     @classmethod
     def connect_models(cls):
@@ -126,7 +126,7 @@ class Usecases(som_gui.core.tool.Usecases):
         )
         proxy_view.collapsed.connect(
             lambda index: view.collapse(proxy_model.mapToSource(index)))
-
+        view.clicked.connect(lambda x:view.update_requested.emit())
     @classmethod
     def connect_property_views(cls):
         cls._connect_views(*cls.get_property_views())
@@ -134,7 +134,7 @@ class Usecases(som_gui.core.tool.Usecases):
 
     @classmethod
     def _connect_views(cls, proxy_view:ui.ClassView|ui.PropertyView, view:ui.ClassView|ui.PropertyView):
-        proxy_model = proxy_view.model()
+        proxy_model:QSortFilterProxyModel = proxy_view.model()
         proxy_selection_model = proxy_view.selectionModel()
         selection_model = view.selectionModel()
         flags = (
