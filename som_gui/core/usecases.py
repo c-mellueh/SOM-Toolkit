@@ -35,13 +35,6 @@ def open_window(
     util: Type[tool.Util],
     search: Type[tool.Search],
 ):
-
-    window = usecases.get_window()
-    if window:
-        window.show()
-        window.activateWindow()
-        return
-
     window = usecases.create_window()
     usecases.add_models_to_window(project.get())
     usecases.connect_models()
