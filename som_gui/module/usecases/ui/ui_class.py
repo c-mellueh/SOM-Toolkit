@@ -7,6 +7,7 @@ from PySide6.QtCore import (
     QModelIndex,
     Qt,
     Signal,
+    QObject
 )
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTreeView
@@ -16,7 +17,8 @@ from som_gui import tool
 
 class ClassView(QTreeView):
     update_requested = Signal()
-
+    mouse_moved = Signal(QMouseEvent,QObject)
+    mouse_released = Signal(QMouseEvent,QObject)
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -38,6 +40,15 @@ class ClassView(QTreeView):
             model.createIndex(0, 0),
             model.createIndex(model.rowCount(), model.columnCount()),
         )
+
+    def mouseMoveEvent(self, event: QMouseEvent):
+        super().mouseMoveEvent(event)
+        self.mouse_moved.emit(event,self)
+
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+        self.mouse_released.emit(event,self)
+
 
 
 class ClassModel(QAbstractItemModel):

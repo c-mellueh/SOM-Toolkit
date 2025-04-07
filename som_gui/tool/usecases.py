@@ -158,7 +158,8 @@ class Usecases(som_gui.core.tool.Usecases):
             lambda index: view.collapse(proxy_model.mapToSource(index))
         )
         view.clicked.connect(lambda x: view.update_requested.emit())
-
+        view.mouse_moved.connect(trigger.mouse_move_event)
+        view.mouse_released.connect(trigger.mouse_release_event)
     @classmethod
     def connect_property_views(cls):
         cls._connect_views(*cls.get_property_views())
@@ -327,3 +328,46 @@ class Usecases(som_gui.core.tool.Usecases):
             action.triggered.connect(action_func)
         menu.addActions(actions)
         menu.exec(pos)
+
+    @classmethod
+    def is_mouse_pressed(cls) -> bool:
+        return cls.get_properties().mouse_is_pressed
+
+    @classmethod
+    def set_mouse_pressed(cls, pressed: bool):
+        cls.get_properties().mouse_is_pressed = pressed
+
+    @classmethod
+    def set_mouse_press_checkstate(cls,checkstate: bool):
+        cls.get_properties().mouse_press_checkstate = checkstate
+    
+    @classmethod
+    def get_mouse_press_checkstate(cls) -> bool:
+        return cls.get_properties().mouse_press_checkstate
+    
+    @classmethod
+    def tree_move_click_drag(cls, index: QModelIndex):
+        active_checkstate = cls.get_mouse_press_checkstate()
+        if active_checkstate is None:
+            return
+        model = index.model()
+        if not index.isValid():
+            return
+
+        if isinstance(model,ui.ClassModel):
+            fixed_column_count = model.fixed_column_count
+        elif isinstance(model,ui.PropertyModel):
+            fixed_column_count = model.fixed_column_count
+        else:
+            fixed_column_count = 0
+
+        if index.column() < fixed_column_count:
+            return
+
+        if not Qt.ItemFlag.ItemIsEnabled in index.flags():
+            return
+        model.setData(index, active_checkstate, Qt.ItemDataRole.CheckStateRole)
+        model.dataChanged.emit(
+            model.createIndex(0, 0),
+            model.createIndex(model.rowCount(), model.columnCount()),
+        )

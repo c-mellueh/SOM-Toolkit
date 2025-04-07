@@ -1,12 +1,13 @@
 from __future__ import annotations
 from PySide6.QtCore import QCoreApplication, QModelIndex, Qt, QPoint
+from PySide6.QtGui import QMouseEvent
 from typing import TYPE_CHECKING, Type
 import logging
 import SOMcreator
 
 if TYPE_CHECKING:
     from som_gui import tool
-    from som_gui.module.usecases import ui
+from som_gui.module.usecases import ui
 
 
 def create_main_menu_actions(
@@ -364,3 +365,30 @@ def rename_filter(
         else project_view.verticalHeader()
     )
     header.edit_header_text(logical_index)
+
+def mouse_move_event(
+    event: QMouseEvent,
+    source,
+    usecases: Type[tool.Usecases],
+    util:Type[tool.Util]
+):
+    view = source
+    index:QModelIndex = view.indexAt(event.pos())
+    if not usecases.is_mouse_pressed():
+        usecases.set_mouse_pressed(True)
+        checkstate = not util.checkstate_to_bool(index.data(Qt.ItemDataRole.CheckStateRole))
+        usecases.set_mouse_press_checkstate(checkstate)
+    usecases.tree_move_click_drag(index)
+
+
+def mouse_release_event(view:ui.ClassView|ui.PropertyView|ui.ProjectView,
+    usecases: Type[tool.Usecases],
+):
+    usecases.set_mouse_pressed(False)
+    usecases.set_mouse_press_checkstate(None)
+    if isinstance(view, ui.ClassView):
+        view.update_requested.emit()
+    elif isinstance(view, ui.PropertyView):
+        view.update_requested.emit()
+    else:
+        view.update_requested.emit()

@@ -4,6 +4,7 @@ from som_gui import tool
 from som_gui.core import usecases as core
 from typing import TYPE_CHECKING
 from PySide6.QtCore import QModelIndex, Qt, QPoint
+from PySide6.QtGui import QMouseEvent
 import SOMcreator
 
 
@@ -66,3 +67,9 @@ def rename_filter(orientation: Qt.Orientation, index: QModelIndex):
 
 def header_context_requested(pos: QPoint, orientation: Qt.Orientation):
     core.create_context_menu(pos, orientation, tool.Usecases, tool.Project)
+
+def mouse_move_event(event: QMouseEvent,source):
+    core.mouse_move_event(event,source, tool.Usecases,tool.Util)
+
+def mouse_release_event(event: QMouseEvent,source,):
+    core.mouse_release_event(source, tool.Usecases)

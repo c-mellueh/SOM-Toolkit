@@ -7,3 +7,5 @@ if TYPE_CHECKING:
 class UsecasesProperties:
     actions:dict[str,QAction] = dict()
     window:ui.Widget = None
+    mouse_is_pressed = False
+    mouse_press_checkstate:bool = None
