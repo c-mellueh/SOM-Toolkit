@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable,TYPE_CHECKING
+from typing import Callable, TYPE_CHECKING
+
 if TYPE_CHECKING:
     from . import ui
 
@@ -35,20 +36,16 @@ from . import trigger
 class CustomHeaderView(QHeaderView):
     sectionPressed = Signal(int, int)
 
-    def __init__(
-        self, first_columns: list[str], parent=None
-    ):
+    def __init__(self, first_columns: list[str], parent=None):
         super().__init__(Qt.Orientation.Horizontal, parent)
         self.first_columns = first_columns
         self.sectionResized.connect(self.onSectionResized)
-
-
 
     @property
     def column_overlap(self):
         return len(self.first_columns)
 
-    def parentWidget(self) ->ui.FilterTreeView:
+    def parentWidget(self) -> ui.FilterTreeView:
         return super().parentWidget()
 
     def setModel(self, model):
@@ -91,7 +88,7 @@ class CustomHeaderView(QHeaderView):
 
     def paintSection(self, painter: QPainter, rect: QRect, logicalIndex: int):
         logging.debug(f"Paint Section {logicalIndex}")
-        tblModel: CustomHeaderModel = self.model() 
+        tblModel: CustomHeaderModel = self.model()
         for i in range(tblModel.rowCount()):
             cellIndex = tblModel.index(i, logicalIndex)
             cellSize: QSize = cellIndex.data(Qt.ItemDataRole.SizeHintRole)
@@ -167,7 +164,7 @@ class CustomHeaderView(QHeaderView):
         for i in range(level):
             cellIndex = tblModel.index(i, logicalIndex)
             colSpanIdx: QModelIndex = self.columnSpanIndex(cellIndex)
-            size: QSize =cellIndex.data(Qt.ItemDataRole.SizeHintRole)
+            size: QSize = cellIndex.data(Qt.ItemDataRole.SizeHintRole)
 
             if colSpanIdx.isValid():
                 colSpanFrom = colSpanIdx.column()
@@ -341,9 +338,10 @@ class CustomHeaderView(QHeaderView):
             rToUpdate.setHeight(self.viewport().height() - sectionRect.top())
             self.viewport().update(rToUpdate.normalized())
 
-    def get_tree_column_width(self,logicalIndex:int):
-        parent:ui.FilterTreeView = self.parent()
+    def get_tree_column_width(self, logicalIndex: int):
+        parent: ui.FilterTreeView = self.parent()
         return parent.columnWidth(logicalIndex)
+
 
 class CustomHeaderModel(QAbstractTableModel):
     ColumnSpanRole = Qt.ItemDataRole.UserRole + 1
@@ -379,8 +377,9 @@ class CustomHeaderModel(QAbstractTableModel):
         matrix = self.get_usecase_matrix()
         for use_case, phase_list in matrix:
             column -= len(phase_list)
-            if column <0:
+            if column < 0:
                 return use_case
+
     def get_phase_by_column(self, column: int):
         column -= self.column_overlap
         matrix = self.get_usecase_matrix()
@@ -470,4 +469,3 @@ class CustomHeaderModel(QAbstractTableModel):
                 self.data_dict[item][role] = value
             return True
         return False
-

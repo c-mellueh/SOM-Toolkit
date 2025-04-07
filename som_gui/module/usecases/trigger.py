@@ -63,5 +63,6 @@ def remove_phase(logical_index: int):
 def rename_filter(orientation: Qt.Orientation, index: QModelIndex):
     core.rename_filter(orientation, index, tool.Usecases)
 
+
 def header_context_requested(pos: QPoint, orientation: Qt.Orientation):
     core.create_context_menu(pos, orientation, tool.Usecases, tool.Project)

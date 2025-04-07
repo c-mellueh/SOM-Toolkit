@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING,Callable
+from typing import TYPE_CHECKING, Callable
 import logging
 
 import som_gui.core.tool
@@ -14,7 +14,7 @@ from PySide6.QtCore import (
     QSize,
     Qt,
 )
-from PySide6.QtWidgets import QLabel, QApplication,QMenu
+from PySide6.QtWidgets import QLabel, QApplication, QMenu
 from som_gui.module.usecases import ui
 from som_gui.module.usecases import trigger
 import SOMcreator
@@ -32,7 +32,9 @@ class Signaller(QObject):
     add_phase = Signal()
     remove_usecase = Signal(int)
     remove_phase = Signal(int)
-    rename_filter = Signal(Qt.Orientation,int)
+    rename_filter = Signal(Qt.Orientation, int)
+
+
 class Usecases(som_gui.core.tool.Usecases):
     signaller = Signaller()
 
@@ -61,6 +63,7 @@ class Usecases(som_gui.core.tool.Usecases):
         cls.signaller.remove_usecase.connect(trigger.remove_usecase)
         cls.signaller.remove_phase.connect(trigger.remove_phase)
         cls.signaller.rename_filter.connect(trigger.rename_filter)
+
     @classmethod
     def get_window(cls) -> ui.Widget | None:
         return cls.get_properties().window
@@ -122,10 +125,15 @@ class Usecases(som_gui.core.tool.Usecases):
 
         vertical_header = view.verticalHeader()
         vertical_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        vertical_header.customContextMenuRequested.connect(lambda pos: trigger.header_context_requested(pos,Qt.Orientation.Vertical))
+        vertical_header.customContextMenuRequested.connect(
+            lambda pos: trigger.header_context_requested(pos, Qt.Orientation.Vertical)
+        )
         horizontal_header = view.horizontalHeader()
         horizontal_header.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        horizontal_header.customContextMenuRequested.connect(lambda pos: trigger.header_context_requested(pos,Qt.Orientation.Horizontal))
+        horizontal_header.customContextMenuRequested.connect(
+            lambda pos: trigger.header_context_requested(pos, Qt.Orientation.Horizontal)
+        )
+
     @classmethod
     def connect_class_views(cls):
 
@@ -308,7 +316,7 @@ class Usecases(som_gui.core.tool.Usecases):
         header_view_1.setStretchLastSection(True)
         header_view_2.setStretchLastSection(True)
         return header_view_1, header_view_2
-    
+
     @classmethod
     def create_context_menu(cls, menu_list: list[tuple[str, Callable]], pos):
         menu = QMenu()

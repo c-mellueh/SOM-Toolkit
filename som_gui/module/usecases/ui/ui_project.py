@@ -85,7 +85,11 @@ class ProjectModel(QAbstractTableModel):
         # TODO write connector for update class tree and psettable
 
     def headerData(self, section: int, orientation: Qt.Orientation, role=...):
-        if self.header_data_is_editing and section == self.edit_header_index and orientation == self.edit_header_orientation:
+        if (
+            self.header_data_is_editing
+            and section == self.edit_header_index
+            and orientation == self.edit_header_orientation
+        ):
             return None
         if role not in [Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole]:
             return
@@ -98,7 +102,7 @@ class ProjectModel(QAbstractTableModel):
                 return None
             return self.project.get_phases()[section].name
 
-    def setHeaderData(self, section, orientation, value, /, role = ...):
+    def setHeaderData(self, section, orientation, value, /, role=...):
         if not self.header_data_is_editing:
             return False
 

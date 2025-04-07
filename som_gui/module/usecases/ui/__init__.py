@@ -1,9 +1,10 @@
 from PySide6.QtWidgets import QWidget
 import som_gui
-from .ui_project import ProjectView,ProjectModel
-from .ui_class import ClassView,ClassModel,ClassFilterModel
-from .ui_property import PropertyView,PropertyModel
-from .ui_header import CustomHeaderView,CustomHeaderModel,EditableHeader
+from .ui_project import ProjectView, ProjectModel
+from .ui_class import ClassView, ClassModel, ClassFilterModel
+from .ui_property import PropertyView, PropertyModel
+from .ui_header import CustomHeaderView, CustomHeaderModel, EditableHeader
+
 
 class Widget(QWidget):
     def __init__(self, *args, **kwargs):
