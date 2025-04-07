@@ -309,7 +309,7 @@ class Usecases(som_gui.core.tool.Usecases):
         header_view_2 = ui.CustomHeaderView(first_columns)
         baseSectionSize = QSize()
         baseSectionSize.setWidth(header_view_1.defaultSectionSize())
-        baseSectionSize.setHeight(20)
+        baseSectionSize.setHeight(25)
         for row in range(header_model.rowCount()):
             for col in range(header_model.columnCount()):
                 index = header_model.index(row, col)
