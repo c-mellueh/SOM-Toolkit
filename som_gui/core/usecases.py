@@ -69,6 +69,7 @@ def update_project_table_size(usecases: Type[tool.Usecases]):
 
     # Insert Rows (Phases)
     if model.old_row_count < model.rowCount():
+        print("Insert Project Rows")
         model.beginInsertRows(QModelIndex(), model.old_row_count + 1, model.rowCount())
         model.endInsertRows()
 
@@ -153,47 +154,41 @@ def update_property_table_size(usecases: Type[tool.Usecases]):
     old_row_count = model.old_row_count
     old_column_count = model.old_column_count
     new_row_count = model.rowCount()
-    new_column_count = model.columnCount()
+    new_col_count = model.columnCount()
     header_model = usecases.get_property_header_model()
+    model.old_row_count = new_row_count
+    model.old_column_count = new_col_count
     if old_row_count == 0:
         model.beginResetModel()
         model.endResetModel()
         header_model.beginResetModel()
         header_model.endResetModel()
+    
     else:
+        index = QModelIndex()
         # Remove Rows (Phases)
         if old_row_count > new_row_count:
-            model.beginRemoveRows(QModelIndex(), new_row_count, model.old_row_count - 1)
+            model.beginRemoveRows(index, new_row_count, old_row_count - 1)
             model.endRemoveRows()
 
         # Insert Rows (Phases)
         if old_row_count < new_row_count:
-            model.beginInsertRows(QModelIndex(), model.old_row_count, new_row_count - 1)
+            model.beginInsertRows(index, old_row_count, new_row_count - 1)
             model.endInsertRows()
 
         # Remove Colums (UseCases)
-        if old_column_count > new_column_count:
-            model.beginRemoveColumns(
-                QModelIndex(), new_column_count, model.old_column_count - 1
-            )
+        if old_column_count > new_col_count:
+            model.beginRemoveColumns(index, new_col_count, old_column_count - 1)
             model.endRemoveColumns()
-            header_model.beginRemoveColumns(
-                QModelIndex(), new_column_count, model.old_column_count - 1
-            )
+            header_model.beginRemoveColumns(index, new_col_count, old_column_count - 1)
             header_model.endRemoveColumns()
         # Insert Colums (UseCases)
-        if old_column_count < new_column_count:
-            model.beginInsertColumns(
-                QModelIndex(), model.old_column_count + 1, new_column_count
-            )
+        if old_column_count < new_col_count:
+            model.beginInsertColumns(index, old_column_count, new_col_count - 1)
             model.endInsertColumns()
-            header_model.beginInsertColumns(
-                QModelIndex(), model.old_column_count + 1, new_column_count
-            )
+            header_model.beginInsertColumns(index, old_column_count, new_col_count - 1)
             header_model.endInsertColumns()
 
-    model.old_row_count = new_row_count
-    model.old_column_count = new_column_count
     model.dataChanged.emit(
         model.createIndex(0, 0),
         model.createIndex(model.rowCount(), model.columnCount()),
