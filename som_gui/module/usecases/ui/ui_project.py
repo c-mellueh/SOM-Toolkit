@@ -3,7 +3,7 @@ import logging
 
 from PySide6.QtCore import (
     QAbstractTableModel,
-    QCoreApplication,
+    QObject,
     QModelIndex,
     Qt,
     Signal,
@@ -16,6 +16,8 @@ from som_gui import tool
 
 class ProjectView(QTableView):
     update_requested = Signal()
+    mouse_moved = Signal(QMouseEvent,QObject)
+    mouse_released = Signal(QMouseEvent,QObject)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -26,7 +28,13 @@ class ProjectView(QTableView):
         self.update_requested.emit()
         return super().enterEvent(event)
 
+    def mouseMoveEvent(self, event: QMouseEvent):
+        super().mouseMoveEvent(event)
+        self.mouse_moved.emit(event,self)
 
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+        self.mouse_released.emit(event,self)
 class ProjectModel(QAbstractTableModel):
     data_changed_externally = Signal()
     checkstate_changed = Signal()

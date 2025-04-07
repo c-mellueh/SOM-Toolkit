@@ -118,7 +118,7 @@ class Usecases(som_gui.core.tool.Usecases):
         property_model.resize_required.emit()
 
     @classmethod
-    def connect_project_views(cls):
+    def connect_project_view(cls):
         view = cls.get_project_view()
         view.setHorizontalHeader(ui.EditableHeader(Qt.Orientation.Horizontal))
         view.setVerticalHeader(ui.EditableHeader(Qt.Orientation.Vertical))
@@ -133,6 +133,9 @@ class Usecases(som_gui.core.tool.Usecases):
         horizontal_header.customContextMenuRequested.connect(
             lambda pos: trigger.header_context_requested(pos, Qt.Orientation.Horizontal)
         )
+
+        view.mouse_moved.connect(trigger.mouse_move_event)
+        view.mouse_released.connect(trigger.mouse_release_event)
 
     @classmethod
     def connect_class_views(cls):
@@ -340,13 +343,13 @@ class Usecases(som_gui.core.tool.Usecases):
         cls.get_properties().mouse_is_pressed = pressed
 
     @classmethod
-    def set_mouse_press_checkstate(cls,checkstate: bool):
+    def set_mouse_press_checkstate(cls, checkstate: bool):
         cls.get_properties().mouse_press_checkstate = checkstate
-    
+
     @classmethod
     def get_mouse_press_checkstate(cls) -> bool:
         return cls.get_properties().mouse_press_checkstate
-    
+
     @classmethod
     def tree_move_click_drag(cls, index: QModelIndex):
         active_checkstate = cls.get_mouse_press_checkstate()
@@ -356,9 +359,9 @@ class Usecases(som_gui.core.tool.Usecases):
         if not index.isValid():
             return
 
-        if isinstance(model,ui.ClassModel):
+        if isinstance(model, ui.ClassModel):
             fixed_column_count = model.fixed_column_count
-        elif isinstance(model,ui.PropertyModel):
+        elif isinstance(model, ui.PropertyModel):
             fixed_column_count = model.fixed_column_count
         else:
             fixed_column_count = 0

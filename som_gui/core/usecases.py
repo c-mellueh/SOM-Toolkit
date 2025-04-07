@@ -40,7 +40,7 @@ def open_window(
     window = usecases.create_window()
     usecases.add_models_to_window(project.get())
     usecases.connect_models()
-    usecases.connect_project_views()
+    usecases.connect_project_view()
     usecases.connect_class_views()
     usecases.connect_property_views()
     usecases.add_header_view(project.get())
@@ -366,22 +366,23 @@ def rename_filter(
     )
     header.edit_header_text(logical_index)
 
+
 def mouse_move_event(
-    event: QMouseEvent,
-    source,
-    usecases: Type[tool.Usecases],
-    util:Type[tool.Util]
+    event: QMouseEvent, source, usecases: Type[tool.Usecases], util: Type[tool.Util]
 ):
     view = source
-    index:QModelIndex = view.indexAt(event.pos())
+    index: QModelIndex = view.indexAt(event.pos())
     if not usecases.is_mouse_pressed():
         usecases.set_mouse_pressed(True)
-        checkstate = not util.checkstate_to_bool(index.data(Qt.ItemDataRole.CheckStateRole))
+        checkstate = not util.checkstate_to_bool(
+            index.data(Qt.ItemDataRole.CheckStateRole)
+        )
         usecases.set_mouse_press_checkstate(checkstate)
     usecases.tree_move_click_drag(index)
 
 
-def mouse_release_event(view:ui.ClassView|ui.PropertyView|ui.ProjectView,
+def mouse_release_event(
+    view: ui.ClassView | ui.PropertyView | ui.ProjectView,
     usecases: Type[tool.Usecases],
 ):
     usecases.set_mouse_pressed(False)
