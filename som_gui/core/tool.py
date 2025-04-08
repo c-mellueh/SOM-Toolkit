@@ -331,134 +331,7 @@ class ClassInfo:
 
 
 class ClassTree:
-    def add_column_to_tree(self, tree, name_getter, index, getter_func, setter_func):
-        pass
-
-    def add_context_menu_entry(
-        self, tree, name_getter, function, on_selection, single, multi
-    ):
-        pass
-
-    def add_tree(self, tree):
-        pass
-
-    def clear_context_menu_list(self, tree):
-        pass
-
-    def collapse_selection(self, tree):
-        pass
-
-    def create_completer(self, texts, widget):
-        pass
-
-    def create_context_menu(self, tree):
-        pass
-
-    def create_item(self, tree, som_class):
-        pass
-
-    def delete_class(self, som_class, recursive):
-        pass
-
-    def delete_selection(self, tree):
-        pass
-
-    def expand_selection(self, tree):
-        pass
-
-    def expand_to_item(self, item):
-        pass
-
-    def fill_class_tree(self, tree, classes, parent_item):
-        pass
-
-    def get_class_from_item(self, item):
-        pass
-
-    def get_classes_from_mimedata(self, mime_data):
-        pass
-
-    def get_column_list(self, tree):
-        pass
-
-    def get_header_names(self, tree):
-        pass
-
-    def get_item_from_class(self, tree, som_class):
-        pass
-
-    def get_item_from_pos(self, tree, pos):
-        pass
-
-    def get_properties(
-        self,
-    ):
-        pass
-
-    def get_selected(self, tree):
-        pass
-
-    def get_selected_classes(self, tree):
-        pass
-
-    def get_trees(
-        self,
-    ):
-        pass
-
-    def group_classes(self, parent, children):
-        pass
-
-    def group_selection(self, tree):
-        pass
-
-    def handle_class_move(self, tree, dropped_on_item):
-        pass
-
-    def is_drop_indication_pos_on_item(self, tree):
-        pass
-
-    def is_first_paint(self, tree):
-        pass
-
-    def remove_column_from_tree(self, tree, column_name):
-        pass
-
-    def remove_tree(self, tree):
-        pass
-
-    def reset_tree(self, tree):
-        pass
-
-    def resize_tree(self, tree):
-        pass
-
-    def select_class(self, tree, som_class):
-        pass
-
-    def set_class_optional_by_tree_item_state(self, item, column_index):
-        pass
-
-    def set_column_list(self, tree, value):
-        pass
-
-    def set_first_paint(self, tree, value):
-        pass
-
-    def trigger_search(self, tree):
-        pass
-
-    def trigger_tree_init(self, tree):
-        pass
-
-    def update_check_state(self, tree, item):
-        pass
-
-    def update_item(self, tree, item, som_class):
-        pass
-
-    def write_classes_to_mimedata(self, classes, mime_data):
-        pass
+    pass
 
 
 class CompareProjectSelector:
@@ -1071,7 +944,7 @@ class MainWindow:
     ):
         pass
 
-    def get_class_tree_widget(
+    def get_class_tree(
         self,
     ):
         pass

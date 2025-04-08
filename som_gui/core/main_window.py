@@ -25,9 +25,9 @@ def init(main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]):
         "menuEdit", "ToggleConsole", trigger.toggle_console
     )
     main_window.set_action(trigger.TOOGLE_CONSOLE_ACTION, open_window_action)
-    class_tree.trigger_tree_init(main_window.get_class_tree_widget())
+    class_tree.signaller.init_tree.emit(main_window.get_class_tree())
     main_window.get_ui().button_search.pressed.connect(
-        lambda: class_tree.trigger_search(main_window.get_class_tree_widget())
+        lambda: class_tree.signaller.search.emit(main_window.get_class_tree())
     )
 
 
@@ -48,7 +48,7 @@ def retranslate_ui(
         action.setText(QCoreApplication.translate("MainWindow", "Show Console"))
     main_window.get().ui.retranslateUi(main_window.get())
 
-    tree = main_window.get_class_tree_widget()
+    tree = main_window.get_class_tree()
     header = tree.headerItem()
     for column, name in enumerate(class_tree.get_header_names(tree)):
         header.setText(column, name)
@@ -119,14 +119,18 @@ def refresh_main_window(
     main_window_tool.set_window_title(f"SOM-Toolkit v{som_gui.__version__}")
 
 
-def toggle_console_clicked(main_window: Type[tool.MainWindow],class_tree:Type[tool.ClassTree]):
+def toggle_console_clicked(
+    main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]
+):
     """
     TOggles if Console is Shown
     :param main_window:
     :return:
     """
     main_window.toggle_console()
-    retranslate_ui(main_window,class_tree)  # Changes Text from Show to Hide / from Hide to Show
+    retranslate_ui(
+        main_window, class_tree
+    )  # Changes Text from Show to Hide / from Hide to Show
 
 
 def add_class_tree_shortcuts(
@@ -135,7 +139,7 @@ def add_class_tree_shortcuts(
     main_window: Type[tool.MainWindow],
     class_info: Type[tool.ClassInfo],
 ):
-    tree = main_window.get_class_tree_widget()
+    tree = main_window.get_class_tree()
     util.add_shortcut(
         "Ctrl+X", main_window.get(), lambda: class_tree.delete_selection(tree)
     )
@@ -145,7 +149,7 @@ def add_class_tree_shortcuts(
     util.add_shortcut(
         "Ctrl+F",
         main_window.get(),
-        lambda: class_tree.trigger_search(tree),
+        lambda: class_tree.signaller.search.emit(tree),
     )
     util.add_shortcut(
         "Ctrl+C",
@@ -159,14 +163,12 @@ def connect_class_tree(
     class_tree: Type[tool.ClassTree],
     class_info: Type[tool.ClassInfo],
 ):
-    tree = main_window.get_class_tree_widget()
+    tree = main_window.get_class_tree()
     tree.expanded.connect(lambda: class_tree.resize_tree(tree))
-    tree.itemChanged.connect(lambda item: class_tree.update_check_state(tree, item))
-    tree.itemSelectionChanged.connect(main_window.trigger_class_changed)
-
-    tree.itemDoubleClicked.connect(
-        lambda item: class_info.trigger_class_info_widget(
-            1, class_tree.get_class_from_item(item)
+    tree.selectionModel().selectionChanged.connect(main_window.trigger_class_changed)
+    tree.doubleClicked.connect(
+        lambda index: class_info.trigger_class_info_widget(
+            1, class_tree.get_class_from_index(index)
         )
     )
     main_window.get_ui().button_classes_add.clicked.connect(
@@ -179,11 +181,11 @@ def class_selection_changed(
     class_tree: Type[tool.ClassTree],
     property_set_tool: Type[tool.PropertySet],
 ):
-    tree = main_window.get_class_tree_widget()
+    tree = main_window.get_class_tree()
     selected_items = class_tree.get_selected(tree)
     if len(selected_items) == 1:
         selected_pset = property_set_tool.get_active_property_set()
-        som_class = class_tree.get_class_from_item(selected_items[0])
+        som_class = class_tree.get_class_from_index(selected_items[0])
         main_window.set_active_class(som_class)
         property_set_tool.update_completer(som_class)
         property_set_tool.set_enabled(True)
@@ -208,7 +210,7 @@ def define_class_tree_context_menu(
     class_tree: Type[tool.ClassTree],
     class_info: Type[tool.ClassInfo],
 ):
-    tree = main_window.get_class_tree_widget()
+    tree = main_window.get_class_tree()
     class_tree.clear_context_menu_list(tree)
     class_tree.add_context_menu_entry(
         tree,
@@ -264,4 +266,4 @@ def one_new_project(
     main_window: Type[tool.MainWindow],
     class_tree: Type[tool.ClassTree],
 ):
-    class_tree.reset_tree(main_window.get_class_tree_widget())
+    class_tree.reset_tree(main_window.get_class_tree())

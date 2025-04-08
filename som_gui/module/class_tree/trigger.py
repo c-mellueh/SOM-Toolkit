@@ -12,6 +12,7 @@ import SOMcreator
 
 
 def connect():
+    core.connect_signals(tool.ClassTree)
     pass
 
 
@@ -19,7 +20,7 @@ def search_class(tree: ui.ClassTreeWidget):
     core.search_class(tree, tool.Search, tool.ClassTree, tool.Project)
 
 
-def init_tree(tree: ui.ClassTreeWidget):
+def init_tree(tree: ui.ClassView):
     core.init_tree(tree, tool.ClassTree)
 
 

@@ -78,6 +78,7 @@ class ClassModel(QAbstractItemModel):
     def __init__(self, project: SOMcreator.SOMProject, *args, **kwargs):
         self.project = project
         self.root_classes = list()
+        #(name getter, value_getter, value_setter)
         self.columns: list[tuple[callable,callable,callable]] = list()
         self.column_count = len(self.columns)
 
@@ -96,6 +97,12 @@ class ClassModel(QAbstractItemModel):
         self.columns = columns
         self.column_count = len(self.columns) + self.fixed_column_count
         self.root_classes = list(self.project.get_root_classes(filter=False))
+
+
+    def headerData(self, section, orientation, /, role = ...):
+        if role in (Qt.ItemDataRole.DisplayRole,Qt.ItemDataRole.EditRole) and orientation == Qt.Orientation.Horizontal:
+            return self.columns[section][0]()
+        return super().headerData(section, orientation, role)
 
     def flags(self, index: QModelIndex):
         """

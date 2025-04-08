@@ -18,14 +18,17 @@ if TYPE_CHECKING:
     from som_gui.module.class_tree import ui
 
 import uuid
-
+def connect_signals(class_tree: Type[tool.ClassTree]) -> None:
+    class_tree.connect_trigger()
 
 def init_tree(
     tree: ui.ClassTreeWidget,
     class_tree: Type[tool.ClassTree],
+    project:Type[tool.Project],
 ) -> None:
+    tree.setModel(ui.ClassModel(project.get()))
     class_tree.add_tree(tree)
-    tree.setColumnCount(0)
+    class_tree.connect_tree(tree)
     class_tree.add_column_to_tree(
         tree,
         lambda: QCoreApplication.translate("Class", "Class"),
@@ -47,7 +50,7 @@ def init_tree(
         lambda: QCoreApplication.translate("Class", "Optional"),
         2,
         lambda o: o.is_optional(ignore_hirarchy=True),
-        class_tree.set_class_optional_by_tree_item_state,
+        lambda o,v: o.set_optional(v),
     )
 
     tree.customContextMenuRequested.connect(
@@ -62,7 +65,7 @@ def retranslate_ui(class_tree: Type[tool.ClassTree]) -> None:
 def create_mime_data(
     items: QTreeWidgetItem, mime_data: QMimeData, class_tree: Type[tool.ClassTree]
 ):
-    classes = {class_tree.get_class_from_item(i) for i in items}
+    classes = {class_tree.get_class_from_index(i) for i in items}
     class_tree.write_classes_to_mimedata(classes, mime_data)
     return mime_data
 
@@ -75,7 +78,7 @@ def search_class(
 ):
     """Open Search Window and select Class afterwards"""
     som_class = search_tool.search_class(list(project.get().get_classes(filter=True)))
-    class_tree.select_class(tree, som_class)
+    class_tree.expand_to_class(tree, som_class)
 
 
 def create_group(
@@ -111,12 +114,6 @@ def refresh_class_tree(
     project_tool: Type[Project],
 ):
     logging.debug(f"refresh ClassTree {tree}")
-    root_classes = project_tool.get_root_classes(filter_classes=True)
-    if class_tree.is_first_paint(tree):
-        tree.clear()
-        class_tree.set_first_paint(tree, False)
-        retranslate_ui(class_tree)
-    class_tree.fill_class_tree(tree, set(root_classes), tree.invisibleRootItem())
 
 
 def drop_event(
@@ -127,6 +124,8 @@ def drop_event(
 ):
     pos = event.pos()
     source_table = event.source()
+    return 
+    #TodO: Handle Drop Events
     if source_table == target:
         dropped_on_item = class_tree.get_item_from_pos(target, pos)
         class_tree.handle_class_move(target, dropped_on_item)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1512</width>
-    <height>740</height>
+    <width>1510</width>
+    <height>754</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -115,7 +115,7 @@
          </layout>
         </item>
         <item>
-         <widget class="ClassTreeWidget" name="tree_class">
+         <widget class="ClassView" name="tree_class">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -149,14 +149,6 @@
           <property name="expandsOnDoubleClick">
            <bool>false</bool>
           </property>
-          <attribute name="headerShowSortIndicator" stdset="0">
-           <bool>true</bool>
-          </attribute>
-          <column>
-           <property name="text">
-            <string notr="true">1</string>
-           </property>
-          </column>
          </widget>
         </item>
        </layout>
@@ -283,7 +275,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1512</width>
+     <width>1510</width>
      <height>33</height>
     </rect>
    </property>
@@ -327,14 +319,14 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ClassView</class>
+   <extends>QTreeView</extends>
+   <header>som_gui.module.class_tree.ui</header>
+  </customwidget>
+  <customwidget>
    <class>PropertyTable</class>
    <extends>QTableWidget</extends>
    <header>som_gui.module.property_table.ui</header>
-  </customwidget>
-  <customwidget>
-   <class>ClassTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>som_gui.module.class_tree.ui</header>
   </customwidget>
   <customwidget>
    <class>PsetTableWidget</class>

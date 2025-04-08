@@ -165,7 +165,7 @@ class MainWindow(som_gui.core.tool.MainWindow):
         return cls.get_ui().table_property
 
     @classmethod
-    def get_class_tree_widget(cls):
+    def get_class_tree(cls):
         return cls.get_ui().tree_class
 
     @classmethod
@@ -188,7 +188,6 @@ class MainWindow(som_gui.core.tool.MainWindow):
     def get_active_class(cls) -> SOMcreator.SOMClass | None:
         return cls.get_properties().active_class
 
-    
     @classmethod
     def set_active_class(cls, som_class: SOMcreator.SOMClass):
         cls.get_properties().active_class = som_class
