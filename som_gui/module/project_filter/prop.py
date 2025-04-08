@@ -12,10 +12,11 @@ if TYPE_CHECKING:
     from som_gui.module.property_.ui import PropertyWidget
 
 
-class FilterWindowProperties:
+class ProjectFilterProperties:
     settings_widget: ui.SettingsWidget = None
     actions: dict[str, QAction] = dict()
-    
+
+
 class FilterCompareProperties:
     widget: PropertyWidget = None
     usecase_list = list()

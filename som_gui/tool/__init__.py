@@ -10,7 +10,7 @@ from som_gui.tool.bsdd import Bsdd
 from som_gui.tool.compare import CompareProjectSelector, CompareWindow
 from som_gui.tool.console import Console
 from som_gui.tool.exports import Exports
-from som_gui.tool.filter_window import FilterCompare, FilterWindow
+from som_gui.tool.project_filter import FilterCompare, ProjectFilter
 from som_gui.tool.ifc_importer import IfcImporter
 from som_gui.tool.language import Language
 from som_gui.tool.logging import Logging

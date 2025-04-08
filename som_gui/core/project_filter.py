@@ -12,13 +12,10 @@ import SOMcreator
 if TYPE_CHECKING:
     from som_gui import tool
     from som_gui.module.property_ import ui as property_ui
-    from som_gui.module.filter_window import ui
+    from som_gui.module.project_filter import ui
 
 
-
-
-
-def retranslate_ui(filter_window: Type[tool.FilterWindow], util: Type[tool.Util]):
+def retranslate_ui(project_filter: Type[tool.ProjectFilter], util: Type[tool.Util]):
     return
 
 
@@ -132,10 +129,10 @@ def export_filter_differences(
 # Settings WIdget
 def settings_widget_created(
     widget: ui.SettingsWidget,
-    filter_window: Type[tool.FilterWindow],
+    project_filter: Type[tool.ProjectFilter],
     project: Type[tool.Project],
 ):
-    filter_window.set_settings_widget(widget)
+    project_filter.set_settings_widget(widget)
 
     proj = project.get()
     phase_layout = QFormLayout()
@@ -157,12 +154,12 @@ def settings_widget_created(
 
 
 def settings_accepted(
-    filter_window: Type[tool.FilterWindow],
+    project_filter: Type[tool.ProjectFilter],
     project: Type[tool.Project],
     popups: Type[tool.Popups],
 ):
     proj = project.get()
-    widget = filter_window.get_settings_widget()
+    widget = project_filter.get_settings_widget()
     phase_layout: QFormLayout = widget.ui.widget_phase.layout()
     usecase_layout: QFormLayout = widget.ui.widget_usecase.layout()
 
@@ -192,11 +189,11 @@ def settings_accepted(
 
 
 def settings_combobox_changed(
-    filter_window: Type[tool.FilterWindow],
+    project_filter: Type[tool.ProjectFilter],
     project: Type[tool.Project],
     util: Type[tool.Util],
 ):
-    widget = filter_window.get_settings_widget()
+    widget = project_filter.get_settings_widget()
     combobox_usecase = widget.ui.cb_usecase
     combobox_phase = widget.ui.cb_phase
     usecase_name = combobox_usecase.currentText()

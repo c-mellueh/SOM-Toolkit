@@ -30,18 +30,18 @@ from som_gui.module.project.constants import CLASS_REFERENCE
 YELLOW = "#897e00"
 
 if TYPE_CHECKING:
-    from som_gui.module.filter_window.prop import (
-        FilterWindowProperties,
+    from som_gui.module.project_filter.prop import (
+        ProjectFilterProperties,
         FilterCompareProperties,
     )
-from som_gui.module.filter_window import ui, trigger
+from som_gui.module.project_filter import ui, trigger
 from PySide6.QtCore import QCoreApplication
 
 
-class FilterWindow(som_gui.core.tool.FilterWindow):
+class ProjectFilter(som_gui.core.tool.ProjectFilter):
     @classmethod
-    def get_properties(cls) -> FilterWindowProperties:
-        return som_gui.FilterWindowProperties
+    def get_properties(cls) -> ProjectFilterProperties:
+        return som_gui.ProjectFilterProperties
 
     @classmethod
     def set_action(cls, name, action: QAction):
