@@ -14,7 +14,7 @@ def on_new_project():
 
 
 def connect():
-    pass
+    core.init(tool.ClassInfo,tool.MainWindow)
 
 def class_info_paint_event():
     core.class_info_refresh(tool.Class, tool.ClassInfo)

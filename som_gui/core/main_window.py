@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 from PySide6.QtCore import QCoreApplication, Qt, QModelIndex, QItemSelection
 from PySide6.QtGui import QCloseEvent
 import SOMcreator
-
+initial_tree = True
 
 def init(main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]):
     """
@@ -163,23 +163,23 @@ def connect_class_tree(
     class_tree: Type[tool.ClassTree],
     class_info: Type[tool.ClassInfo],
 ):
+    global initial_tree
+    if not initial_tree:
+        return
+    initial_tree = False
     tree = main_window.get_class_tree()
     class_tree.signaller.init_tree.emit(main_window.get_class_tree())
 
-    def trigger_class(selected: QItemSelection, deselected: QItemSelection):
+    def trigger_selection(selected: QItemSelection, deselected: QItemSelection):
         for index in selected.indexes():
             main_window.signaller.active_class_changed.emit(index.internalPointer())
             return
+    def trigger_double(index):
+        main_window.signaller.class_info_requested.emit(index.internalPointer())
+    tree.expanded.connect(lambda: class_tree.resize_tree(tree))
 
-    # tree.expanded.connect(lambda: class_tree.resize_tree(tree))
-
-    tree.selectionModel().selectionChanged.connect(trigger_class)
-
-    tree.doubleClicked.connect(
-        lambda index: class_info.trigger_class_info_widget(
-            1, class_tree.get_class_from_index(index)
-        )
-    )
+    tree.selectionModel().selectionChanged.connect(trigger_selection)
+    tree.doubleClicked.connect(trigger_double)
     main_window.get_ui().button_classes_add.clicked.connect(
         lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
     )
