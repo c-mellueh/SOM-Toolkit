@@ -283,7 +283,6 @@ class CustomHeaderView(QHeaderView):
                 self.sectionPressed.emit(beginSection, endSection)
 
     def onSectionResized(self, logicalIndex: int, oldSize: int, newSize: int):
-        print(newSize)
         tblModel: CustomHeaderModel = self.model()
         level = tblModel.rowCount()
         pos = self.sectionViewportPosition(logicalIndex)
