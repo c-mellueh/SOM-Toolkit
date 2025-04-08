@@ -1,38 +1,6 @@
 from __future__ import annotations
-
-import logging
-from typing import Callable, TYPE_CHECKING
-
-
-from PySide6.QtCore import (
-    QAbstractItemModel,
-    QAbstractTableModel,
-    QCoreApplication,
-    QSortFilterProxyModel,
-    QModelIndex,
-    Qt,
-    Signal,
-    QSize,
-    QRect,
-    QPoint,
-)
-    
-from PySide6.QtGui import QMouseEvent, QColor, QPainter, QPalette, QBrush,QPaintEvent
-from PySide6.QtWidgets import (
-    QTableView,
-    QTreeView,
-    QWidget,
-    QHeaderView,
-    QStyleOptionHeader,
-    QStyle,
-)
-import SOMcreator
-import som_gui
-from som_gui import tool
+from PySide6.QtWidgets import QWidget
 from . import trigger
-
-from .ui_table import ProjectModel,ProjectView
-from .ui_tree import ClassModel,ClassTreeView,PsetTreeView,PsetModel
 
 
 class SettingsWidget(QWidget):
@@ -43,23 +11,3 @@ class SettingsWidget(QWidget):
         self.ui = ui_Settings.Ui_FilterWindow()
         self.ui.setupUi(self)
         trigger.settings_widget_created(self)
-
-
-class FilterWidget(QWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        from .qt import ui_Widget
-
-        self.ui = ui_Widget.Ui_Form()
-        self.ui.setupUi(self)
-        self.setWindowIcon(som_gui.get_icon())
-
-class SortFilterModel(QSortFilterProxyModel):
-    def __init__(self,fixed_column_count:int,*args,**kwargs):
-        super().__init__(*args,**kwargs)
-        self.fixed_column_count = fixed_column_count
-
-    def filterAcceptsColumn(self, source_column, source_parent):
-        if source_column <self.fixed_column_count:
-            return True
-        return False
