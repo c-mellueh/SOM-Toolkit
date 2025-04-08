@@ -9,8 +9,9 @@ import som_gui
 if TYPE_CHECKING:
     from som_gui.tool import MainWindow, Project, Popups
     from som_gui import tool
-from PySide6.QtCore import QCoreApplication, Qt
+from PySide6.QtCore import QCoreApplication, Qt, QModelIndex, QItemSelection
 from PySide6.QtGui import QCloseEvent
+import SOMcreator
 
 
 def init(main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]):
@@ -21,11 +22,12 @@ def init(main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]):
     """
     from som_gui.module.main_window import trigger
 
+    main_window.connect_signals()
     open_window_action = main_window.add_action(
         "menuEdit", "ToggleConsole", trigger.toggle_console
     )
     main_window.set_action(trigger.TOOGLE_CONSOLE_ACTION, open_window_action)
-    
+
     main_window.get_ui().button_search.pressed.connect(
         lambda: class_tree.signaller.search.emit(main_window.get_class_tree())
     )
@@ -49,7 +51,7 @@ def retranslate_ui(
     main_window.get().ui.retranslateUi(main_window.get())
 
     tree = main_window.get_class_tree()
-    #ToDo: rewrite header retranslation
+    # ToDo: rewrite header retranslation
 
 
 def create_main_window(
@@ -164,45 +166,50 @@ def connect_class_tree(
     tree = main_window.get_class_tree()
     class_tree.signaller.init_tree.emit(main_window.get_class_tree())
 
+    def trigger_class(selected: QItemSelection, deselected: QItemSelection):
+        for index in selected.indexes():
+            main_window.signaller.active_class_changed.emit(index.internalPointer())
+            return
+
     # tree.expanded.connect(lambda: class_tree.resize_tree(tree))
-    # tree.selectionModel().selectionChanged.connect(main_window.trigger_class_changed)
-    # tree.doubleClicked.connect(
-    #     lambda index: class_info.trigger_class_info_widget(
-    #         1, class_tree.get_class_from_index(index)
-    #     )
-    # )
-    # main_window.get_ui().button_classes_add.clicked.connect(
-    #     lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
-    # )
+
+    tree.selectionModel().selectionChanged.connect(trigger_class)
+
+    tree.doubleClicked.connect(
+        lambda index: class_info.trigger_class_info_widget(
+            1, class_tree.get_class_from_index(index)
+        )
+    )
+    main_window.get_ui().button_classes_add.clicked.connect(
+        lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
+    )
 
 
-def class_selection_changed(
+def set_active_class(
+    som_class: SOMcreator.SOMClass,
     main_window: Type[tool.MainWindow],
-    class_tree: Type[tool.ClassTree],
     property_set_tool: Type[tool.PropertySet],
 ):
-    tree = main_window.get_class_tree()
-    selected_items = class_tree.get_selected(tree)
-    if len(selected_items) == 1:
-        selected_pset = property_set_tool.get_active_property_set()
-        som_class = class_tree.get_class_from_index(selected_items[0])
-        main_window.set_active_class(som_class)
-        property_set_tool.update_completer(som_class)
-        property_set_tool.set_enabled(True)
-        property_set_tool.trigger_table_repaint()
-
-        # reselect the same pset that is allready selected
-        if not selected_pset:
-            return
-        pset = {
-            p.name: p
-            for p in property_set_tool.get_property_sets(main_window.get_active_class())
-        }.get(selected_pset.name)
-        if pset:
-            property_set_tool.select_property_set(pset)
-    else:
+    if som_class is None:
         property_set_tool.clear_table()
         property_set_tool.set_enabled(False)
+        return
+
+    selected_pset = property_set_tool.get_active_property_set()
+    main_window.set_active_class(som_class)
+    property_set_tool.update_completer(som_class)
+    property_set_tool.set_enabled(True)
+    property_set_tool.trigger_table_repaint()
+
+    # reselect the same pset that is allready selected
+    if not selected_pset:
+        return
+    pset = {
+        p.name: p
+        for p in property_set_tool.get_property_sets(main_window.get_active_class())
+    }.get(selected_pset.name)
+    if pset:
+        property_set_tool.select_property_set(pset)
 
 
 def define_class_tree_context_menu(

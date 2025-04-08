@@ -16,9 +16,14 @@ def init(
     main_window: Type[tool.MainWindow],
 ):
     # Add Class Activate Functions
-    class_tool.add_class_activate_function(
-        lambda o: main_window.get_class_name_label().setText(o.name)
-    )
+    def rewrite_label(som_class:SOMcreator.SOMClass|None):
+        label = main_window.get_class_name_label()
+        if som_class is None:
+            label.setText("")
+        else:
+            label.setText(som_class.name)
+    
+    main_window.signaller.active_class_changed.connect(rewrite_label)
     # Add Creation Checks
     class_tool.add_class_creation_check(
         "ident_property_name", class_info.is_ident_property_valid

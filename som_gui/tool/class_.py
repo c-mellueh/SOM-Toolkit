@@ -153,15 +153,6 @@ class Class(som_gui.core.tool.Class):
         trigger.modify_class_called(som_class, data_dict)
 
     @classmethod
-    def add_class_activate_function(cls, func: Callable):
-        cls.get_properties().class_activate_functions.append(func)
-
-    @classmethod
-    def fill_class_entry(cls, som_class: SOMcreator.SOMClass):
-        for func in cls.get_properties().class_activate_functions:
-            func(som_class)
-
-    @classmethod
     def add_class_creation_check(cls, key, check_function):
         cls.get_properties().class_add_checks.append((key, check_function))
 
