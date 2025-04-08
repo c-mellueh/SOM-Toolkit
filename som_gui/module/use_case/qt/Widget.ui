@@ -122,17 +122,17 @@
   <customwidget>
    <class>ProjectView</class>
    <extends>QTableView</extends>
-   <header>som_gui.module.usecases.ui</header>
+   <header>som_gui.module.use_case.ui</header>
   </customwidget>
   <customwidget>
    <class>ClassView</class>
    <extends>QTreeView</extends>
-   <header>som_gui.module.usecases.ui</header>
+   <header>som_gui.module.use_case.ui</header>
   </customwidget>
   <customwidget>
    <class>PropertyView</class>
    <extends>QTableView</extends>
-   <header>som_gui.module.usecases.ui</header>
+   <header>som_gui.module.use_case.ui</header>
   </customwidget>
  </customwidgets>
  <resources/>
