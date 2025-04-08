@@ -74,6 +74,7 @@ class ClassTree(som_gui.core.tool.ClassTree):
         model = tree.model()
         tree.update_requested.connect(tree.update_view)
         model.updated_required.connect(model.update_data)
+        model.resize_required.connect(lambda index,t=tree:trigger.resize_tree(index,t))
 
     @classmethod
     def remove_tree(cls, tree: ui.ClassView):

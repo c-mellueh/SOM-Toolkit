@@ -75,17 +75,20 @@ class ClassModel(QAbstractItemModel):
     updated_required = Signal()
     resize_required = Signal(QModelIndex)
 
-    def __init__(self, project: SOMcreator.SOMProject, *args, **kwargs):
-        self.project = project
-        self.root_classes = list()
+    def __init__(self,  *args, **kwargs):
+        self.root_classes = list(self.project.get_root_classes(filter=False))
         #(name getter, value_getter, value_setter,role)
         self.columns: list[tuple[callable,callable,callable,Qt.ItemDataRole]] = list()
 
         self.class_index_dict: dict[SOMcreator.SOMClass, QModelIndex] = dict()
-        self.old_column_count = self.column_count
-        self.row_count_dict: dict[QModelIndex, int] = dict()
+        self.old_column_count = len(self.columns)
+        self.row_count_dict: dict[QModelIndex, int] = {QModelIndex():len(self.root_classes)}
         super().__init__(*args, **kwargs)
         self.update_data()
+
+    @property
+    def project(self):
+        return tool.Project.get()
 
     def update_data(self):
         self.root_classes = list(self.project.get_root_classes(filter=False))
@@ -113,7 +116,8 @@ class ClassModel(QAbstractItemModel):
     def columnCount(self, parent=QModelIndex()):
         column_count = len(self.columns)
         if column_count != self.old_column_count:
-            self.resize_required.emit()
+            print(f"Column Count Mismatch {column_count}: {self.old_column_count}")
+            self.resize_required.emit(QModelIndex())
             self.old_column_count = column_count
         return len(self.columns)
 
@@ -129,7 +133,7 @@ class ClassModel(QAbstractItemModel):
         result = self.get_row_count(parent)
         old_result = self.row_count_dict.get(parent)
         if old_result != result and old_result is not None:
-            logging.debug(f"RowCount emits Resize Required")
+            print(f"Resize Row {old_result} to {result}")
             self.resize_required.emit(parent)
         if old_result is None:
             self.row_count_dict[parent] = result

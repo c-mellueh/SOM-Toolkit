@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 
-from PySide6.QtCore import QCoreApplication, QMimeData,Qt
+from PySide6.QtCore import QCoreApplication, QMimeData,Qt,QModelIndex
 from PySide6.QtGui import QDropEvent
 
 import SOMcreator
@@ -26,7 +26,7 @@ def init_tree(
     class_tree: Type[tool.ClassTree],
     project:Type[tool.Project],
 ) -> None:
-    tree.setModel(ui.ClassModel(project.get()))
+    tree.setModel(ui.ClassModel())
     class_tree.add_tree(tree)
     class_tree.connect_tree(tree)
     class_tree.add_column_to_tree(
@@ -136,3 +136,45 @@ def drop_event(
         return
     for som_class in classes:
         project.get().add_item(som_class)
+
+def resize_tree(index:QModelIndex,tree:ui.ClassView,class_tree:Type[tool.ClassTree]):
+    """
+    gets Called if Filters get Added or Removed.
+    :return:
+    """
+    model = tree.model()
+    if model is None:
+        return
+    model.update_data()
+    old_row_count = model.row_count_dict.get(index) or 0
+    old_column_count = model.old_column_count
+    new_row_count = model.get_row_count(index)
+    new_column_count = len(model.columns)
+    model.row_count_dict[index] = new_row_count
+    model.old_column_count = new_column_count
+    logging.info(
+        f"ClassModel Update Size rowCount: {old_row_count} -> {new_row_count} columnCount:{old_column_count} -> {new_column_count} {index}"
+    )
+    if old_row_count == new_row_count and old_column_count == new_column_count:
+        return
+
+    # Remove Rows (Phases)
+    if old_row_count > new_row_count:
+        model.beginRemoveRows(index, new_row_count, old_row_count - 1)
+        model.endRemoveRows()
+
+    # Insert Rows (Phases)
+    if old_row_count < new_row_count:
+        model.beginInsertRows(index, old_row_count, new_row_count - 1)
+        model.endInsertRows()
+
+    # Remove Colums (UseCases)
+    if old_column_count > new_column_count:
+        model.beginRemoveColumns(index, new_column_count, old_column_count - 1)
+        model.endRemoveColumns()
+
+    # Insert Colums (UseCases)
+    if old_column_count < new_column_count:
+        model.beginInsertColumns(index, old_column_count, new_column_count - 1)
+        model.endInsertColumns()
+    #tree.update_requested.emit()

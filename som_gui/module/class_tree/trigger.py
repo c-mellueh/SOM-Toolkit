@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from som_gui.module.class_.prop import ClassDataDict
     from . import ui
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
-
+from PySide6.QtCore import QModelIndex
 from som_gui import tool
 from som_gui.core import class_tree as core
 import SOMcreator
@@ -46,3 +46,6 @@ def create_mime_data(items: list[QTreeWidgetItem], mime_data):
 
 def group_selection(tree: ui.ClassTreeWidget):
     core.create_group(tree, tool.ClassTree, tool.Project)
+
+def resize_tree(index:QModelIndex,tree:ui.ClassView):
+    core.resize_tree(index,tree,tool.ClassTree)
