@@ -22,7 +22,8 @@ def create_main_menu_actions(
 
 def retranslate_ui(usecases: Type[tool.Usecases], util: Type[tool.Util]):
     action = usecases.get_action("open_window")
-    action.setText(QCoreApplication.translate("UsecaseWindow", "Usecases"))
+    text = QCoreApplication.translate("UsecaseWindow", "Usecases")
+    action.setText(text)
 
     window = usecases.get_window()
     if not window:
@@ -253,7 +254,7 @@ def add_usecase(
 
     model = usecases.get_project_model()
     project = model.project
-    text = QCoreApplication.translate("Usecases", "New UseCase")
+    text = QCoreApplication.translate("UsecaseWindow", "New UseCase")
     new_name = util.get_new_name(text, [uc.name for uc in project.get_usecases()])
     logging.debug(f"Add UseCase '{new_name}'")
     usecase = SOMcreator.UseCase(new_name, new_name, new_name)

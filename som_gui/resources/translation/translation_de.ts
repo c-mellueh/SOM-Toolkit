@@ -52,70 +52,70 @@
 <context>
     <name>Class</name>
     <message>
-        <location filename="../../core/class_.py" line="35"/>
+        <location filename="../../core/class_tree.py" line="31"/>
         <source>Class</source>
         <translation>Klasse</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="40"/>
+        <location filename="../../core/class_tree.py" line="37"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="49"/>
+        <location filename="../../core/class_tree.py" line="47"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="126"/>
+        <location filename="../../core/main_window.py" line="215"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="133"/>
+        <location filename="../../core/main_window.py" line="223"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="140"/>
+        <location filename="../../core/main_window.py" line="231"/>
         <source>Extend</source>
         <translation>Ausklappen</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="147"/>
+        <location filename="../../core/main_window.py" line="239"/>
         <source>Collapse</source>
         <translation>Einklappen</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="154"/>
+        <location filename="../../core/main_window.py" line="247"/>
         <source>Group</source>
         <translation>Gruppieren</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="161"/>
+        <location filename="../../core/main_window.py" line="255"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
     <message>
-        <location filename="../../core/class_.py" line="171"/>
+        <location filename="../../core/class_tree.py" line="87"/>
         <source>NewGroup</source>
         <translation>NeueGruppe</translation>
     </message>
     <message>
-        <location filename="../../tool/class_.py" line="221"/>
-        <location filename="../../tool/class_info.py" line="310"/>
+        <location filename="../../tool/class_.py" line="45"/>
+        <location filename="../../tool/class_info.py" line="311"/>
         <source>Name of PropertySet is not allowed</source>
         <translation>Name des PropertySets ist nicht erlaubt</translation>
     </message>
     <message>
-        <location filename="../../tool/class_.py" line="217"/>
-        <location filename="../../tool/class_info.py" line="325"/>
+        <location filename="../../tool/class_.py" line="41"/>
+        <location filename="../../tool/class_info.py" line="326"/>
         <source>Name of Property is not allowed</source>
         <translation>Name des Merkmals ist nicht zugelassen</translation>
     </message>
     <message>
-        <location filename="../../tool/class_.py" line="213"/>
-        <location filename="../../tool/class_info.py" line="339"/>
+        <location filename="../../tool/class_.py" line="37"/>
+        <location filename="../../tool/class_info.py" line="340"/>
         <source>Identifier exists allready or is not allowed</source>
         <translation>Identifier existiert bereits oder ist nicht erlaubt</translation>
     </message>
@@ -123,7 +123,7 @@
 <context>
     <name>Class Info</name>
     <message>
-        <location filename="../../core/class_info.py" line="29"/>
+        <location filename="../../core/class_info.py" line="31"/>
         <source>Class Info</source>
         <translation>Klassen Information</translation>
     </message>
@@ -350,44 +350,42 @@
 <context>
     <name>FilterWindow</name>
     <message>
-        <location filename="../../core/filter_window.py" line="29"/>
-        <location filename="../../core/filter_window.py" line="33"/>
-        <location filename="../../core/filter_window.py" line="217"/>
+        <location filename="../../core/project_filter.py" line="31"/>
         <source>Project Filter</source>
         <translation>Projekt Filter</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="148"/>
+        <location filename="../../core/usecases.py" line="330"/>
         <source>Delete UseCase</source>
         <translation>Anwendungsfall Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="149"/>
+        <location filename="../../core/usecases.py" line="331"/>
         <source>Rename UseCase</source>
         <translation>Anwendungsfall Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="151"/>
+        <location filename="../../core/usecases.py" line="333"/>
         <source>Add UseCase</source>
         <translation>Anwendungsfall hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="163"/>
+        <location filename="../../core/usecases.py" line="351"/>
         <source>Delete Phase</source>
         <translation>Leistungsphase Entfernen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="164"/>
+        <location filename="../../core/usecases.py" line="352"/>
         <source>Rename Phase</source>
         <translation>Leistungsphase Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="166"/>
+        <location filename="../../core/usecases.py" line="354"/>
         <source>Add Phase</source>
         <translation>Leistungsphase hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/filter_window.py" line="308"/>
+        <location filename="../../core/project_filter.py" line="124"/>
         <source>CLASS FILTER</source>
         <translation>KLASSEN FILTER</translation>
     </message>
@@ -396,51 +394,44 @@
         <translation type="vanished">OBJEKT FILTER</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="125"/>
         <source>New UseCase</source>
-        <translation>Neuer Anwendungsfall</translation>
+        <translation type="vanished">Neuer Anwendungsfall</translation>
     </message>
     <message>
-        <location filename="../../module/filter_window/ui.py" line="243"/>
-        <location filename="../../tool/filter_window.py" line="151"/>
+        <location filename="../../core/usecases.py" line="286"/>
         <source>New Phase</source>
         <translation>Neue Leistungsphase</translation>
     </message>
     <message>
-        <location filename="../../module/filter_window/ui.py" line="369"/>
-        <location filename="../../tool/filter_window.py" line="472"/>
+        <location filename="../../tool/project_filter.py" line="289"/>
         <source>Class</source>
         <translation>Klasse</translation>
     </message>
     <message>
-        <location filename="../../module/filter_window/ui.py" line="370"/>
         <source>Identifier</source>
-        <translation>Identifier</translation>
+        <translation type="vanished">Identifier</translation>
     </message>
     <message>
-        <location filename="../../module/filter_window/ui.py" line="444"/>
         <source>PropertySet/Property</source>
-        <translation>PropertySet/Merkmal</translation>
+        <translation type="vanished">PropertySet/Merkmal</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="173"/>
         <source>Edit Header</source>
-        <translation>Header Bearbeiten</translation>
+        <translation type="vanished">Header Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="175"/>
         <source>Enter new header title:</source>
-        <translation>Neuer Titel:</translation>
+        <translation type="vanished">Neuer Titel:</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="451"/>
+        <location filename="../../tool/project_filter.py" line="268"/>
         <source>{}{} [{}][{}] state changed from {} to {}
 </source>
         <translation>{}{} [{}][{}] Status änderte sich von {} zu {}
 </translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="527"/>
+        <location filename="../../tool/project_filter.py" line="344"/>
         <source>Property {0:30} {1:30} state changed from {2:5} to {3:5}
 </source>
         <translation>Merkmal {0:30} {1:30} status ändert sich von {2:5} zu {3:5}
@@ -451,25 +442,32 @@
         <translation type="vanished">Objekt</translation>
     </message>
     <message>
-        <location filename="../../tool/filter_window.py" line="492"/>
+        <location filename="../../tool/project_filter.py" line="309"/>
         <source>PropertySet</source>
         <translation>PropertySet</translation>
     </message>
     <message>
-        <location filename="../../module/filter_window/qt/Settings.ui" line="14"/>
-        <location filename="../../module/filter_window/qt/Widget.ui" line="14"/>
+        <location filename="../../module/project_filter/qt/Settings.ui" line="14"/>
         <source>Form</source>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../module/filter_window/qt/Settings.ui" line="22"/>
+        <location filename="../../module/project_filter/qt/Settings.ui" line="22"/>
         <source>Phase</source>
         <translation>Leistungsphase</translation>
     </message>
     <message>
-        <location filename="../../module/filter_window/qt/Settings.ui" line="43"/>
+        <location filename="../../module/project_filter/qt/Settings.ui" line="43"/>
         <source>Usecase</source>
         <translation>Anwendungsfall</translation>
+    </message>
+</context>
+<context>
+    <name>Form</name>
+    <message>
+        <location filename="../../module/usecases/qt/Widget.ui" line="14"/>
+        <source>Form</source>
+        <translation>Form</translation>
     </message>
 </context>
 <context>
@@ -587,12 +585,12 @@
         <translation>Export</translation>
     </message>
     <message>
-        <location filename="../../core/main_window.py" line="37"/>
+        <location filename="../../core/main_window.py" line="46"/>
         <source>Hide Console</source>
         <translation>Konsole Ausblenden</translation>
     </message>
     <message>
-        <location filename="../../core/main_window.py" line="39"/>
+        <location filename="../../core/main_window.py" line="48"/>
         <source>Show Console</source>
         <translation>Konsole Einblenden</translation>
     </message>
@@ -1127,7 +1125,7 @@ Achtung: Datei wird überschrieben!</translation>
     </message>
     <message>
         <location filename="../../core/predefined_property_set.py" line="66"/>
-        <location filename="../../core/predefined_property_set.py" line="100"/>
+        <location filename="../../core/predefined_property_set.py" line="99"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
@@ -1142,19 +1140,19 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/predefined_property_set.py" line="101"/>
+        <location filename="../../core/predefined_property_set.py" line="100"/>
         <source>Remove Link</source>
         <translation>Verknüpfung entfernen</translation>
     </message>
     <message>
         <location filename="../../core/predefined_property_set.py" line="33"/>
         <location filename="../../core/predefined_property_set.py" line="40"/>
-        <location filename="../../core/predefined_property_set.py" line="211"/>
+        <location filename="../../core/predefined_property_set.py" line="212"/>
         <source>Predefined Pset</source>
         <translation>Vordefiniertes PropertySet</translation>
     </message>
     <message>
-        <location filename="../../core/predefined_property_set.py" line="273"/>
+        <location filename="../../core/predefined_property_set.py" line="274"/>
         <source>PREDEFINED PROPERTYSETS</source>
         <translation>VORDEFINIERTE PROPERTYSETS</translation>
     </message>
@@ -1444,29 +1442,29 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>PropertySet</name>
     <message>
-        <location filename="../../core/property_set.py" line="26"/>
+        <location filename="../../core/property_set.py" line="25"/>
         <source>Add PropertySet</source>
         <translation>PropertySet hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/property_set.py" line="28"/>
+        <location filename="../../core/property_set.py" line="26"/>
         <source>PropertySet name?</source>
         <translation>PropertySet Name?</translation>
     </message>
     <message>
-        <location filename="../../core/property_set.py" line="36"/>
+        <location filename="../../core/property_set.py" line="38"/>
         <location filename="../../tool/property_set.py" line="127"/>
         <source>PropertySet &apos;{}&apos; exists allready</source>
         <translation>PropertySet &apos;{}&apos; existiert bereits</translation>
     </message>
     <message>
-        <location filename="../../core/property_set.py" line="86"/>
-        <location filename="../../core/property_set.py" line="98"/>
+        <location filename="../../core/property_set.py" line="88"/>
+        <location filename="../../core/property_set.py" line="100"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/property_set.py" line="94"/>
+        <location filename="../../core/property_set.py" line="96"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
@@ -1536,6 +1534,16 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Merkmal wurde vererbt -&gt; Änderung der Einheit nicht möglich</translation>
     </message>
     <message>
+        <location filename="../../tool/property_set_window.py" line="497"/>
+        <source>Ignore</source>
+        <translation>Ignorieren</translation>
+    </message>
+    <message>
+        <location filename="../../tool/property_set_window.py" line="511"/>
+        <source>Unignore</source>
+        <translation>Nicht mehr Ignorieren</translation>
+    </message>
+    <message>
         <location filename="../../module/property_set_window/qt/Window.ui" line="29"/>
         <source>Valuetype:</source>
         <translation>Werttyp:</translation>
@@ -1594,32 +1602,32 @@ Achtung: Datei wird überschrieben!</translation>
         <translation>Eindeutig</translation>
     </message>
     <message>
-        <location filename="../../core/property_table.py" line="49"/>
+        <location filename="../../core/property_table.py" line="48"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../core/property_table.py" line="50"/>
+        <location filename="../../core/property_table.py" line="49"/>
         <source>Datatype</source>
         <translation>Datentyp</translation>
     </message>
     <message>
-        <location filename="../../core/property_table.py" line="51"/>
+        <location filename="../../core/property_table.py" line="50"/>
         <source>Valuetype</source>
         <translation>Werttyp</translation>
     </message>
     <message>
-        <location filename="../../core/property_table.py" line="52"/>
+        <location filename="../../core/property_table.py" line="51"/>
         <source>Value</source>
         <translation>Wert</translation>
     </message>
     <message>
-        <location filename="../../core/property_table.py" line="53"/>
+        <location filename="../../core/property_table.py" line="52"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="../../core/property_table.py" line="55"/>
+        <location filename="../../core/property_table.py" line="54"/>
         <source>Unit</source>
         <translation>Einheit</translation>
     </message>
@@ -1852,6 +1860,47 @@ Achtung: Datei wird überschrieben!</translation>
         <location filename="../../module/property_/qt/UnitSettings.ui" line="74"/>
         <source>Unit Prefixes</source>
         <translation>Einheiten Vorzeichen</translation>
+    </message>
+</context>
+<context>
+    <name>UsecaseWindow</name>
+    <message>
+        <location filename="../../core/usecases.py" line="26"/>
+        <location filename="../../core/usecases.py" line="32"/>
+        <source>Usecases</source>
+        <translation>Anwendungsfälle</translation>
+    </message>
+    <message>
+        <location filename="../../core/usecases.py" line="36"/>
+        <source>Class</source>
+        <translation>Klasse</translation>
+    </message>
+    <message>
+        <location filename="../../core/usecases.py" line="37"/>
+        <source>Identifier</source>
+        <translation>Identifier</translation>
+    </message>
+    <message>
+        <location filename="../../core/usecases.py" line="40"/>
+        <source>PropertySet</source>
+        <translation>Merkmalssatz</translation>
+    </message>
+    <message>
+        <location filename="../../core/usecases.py" line="41"/>
+        <source>Property</source>
+        <translation>Merkmal</translation>
+    </message>
+    <message>
+        <location filename="../../core/usecases.py" line="258"/>
+        <source>New UseCase</source>
+        <translation>Neuer Anwendungsfall</translation>
+    </message>
+</context>
+<context>
+    <name>Usecases</name>
+    <message>
+        <source>New UseCase</source>
+        <translation type="vanished">Neuer Anwendungsfall</translation>
     </message>
 </context>
 <context>
