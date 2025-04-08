@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable,TYPE_CHECKING
+from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
-    from . import ui
+    from . import ClassView
 
 from PySide6.QtCore import (
-    QAbstractItemModel,
     QAbstractTableModel,
-    QCoreApplication,
-    QItemSelectionModel,
     QModelIndex,
     Qt,
     Signal,
@@ -17,57 +15,28 @@ from PySide6.QtCore import (
     QRect,
     QPoint,
 )
-from PySide6.QtGui import QMouseEvent, QColor, QPainter, QPalette, QBrush
-from PySide6.QtWidgets import (
-    QTableView,
-    QTreeView,
-    QWidget,
-    QHeaderView,
-    QStyleOptionHeader,
-    QStyle,
-)
+from PySide6.QtGui import QMouseEvent, QColor, QPainter
+from PySide6.QtWidgets import QHeaderView, QStyleOptionHeader, QStyle, QLineEdit
 import SOMcreator
-import som_gui
-from som_gui import tool
-from . import trigger
 
 
 class CustomHeaderView(QHeaderView):
     sectionPressed = Signal(int, int)
 
-    def __init__(
-        self, first_columns: list[str], parent=None
-    ):
+    def __init__(self, fixed_column_texts: list[str], parent=None):
         super().__init__(Qt.Orientation.Horizontal, parent)
-        self.first_columns = first_columns
+        self.fixed_column_text = fixed_column_texts
         self.sectionResized.connect(self.onSectionResized)
 
-
-
     @property
-    def column_overlap(self):
-        return len(self.first_columns)
+    def fixed_column_count(self):
+        return len(self.fixed_column_text)
 
-    def parentWidget(self) ->ui.FilterTreeView:
+    def parentWidget(self) -> ClassView:
         return super().parentWidget()
 
     def setModel(self, model):
         super().setModel(model)
-
-    def setCellLabel(self, row: int, column: int, label: str):
-        self.model().setData(
-            self.model().index(row, column), label, Qt.ItemDataRole.DisplayRole
-        )
-
-    def setCellBackgroundColor(self, row: int, column: int, color: QColor):
-        self.model().setData(
-            self.model().index(row, column), color, Qt.ItemDataRole.BackgroundRole
-        )
-
-    def setCellForegroundColor(self, row: int, column: int, color: QColor):
-        self.model().setData(
-            self.model().index(row, column), color, Qt.ItemDataRole.ForegroundRole
-        )
 
     def indexAt(self, pos: QPoint):
         tblModel = self.model()
@@ -91,7 +60,7 @@ class CustomHeaderView(QHeaderView):
 
     def paintSection(self, painter: QPainter, rect: QRect, logicalIndex: int):
         logging.debug(f"Paint Section {logicalIndex}")
-        tblModel: CustomHeaderModel = self.model() 
+        tblModel: CustomHeaderModel = self.model()
         for i in range(tblModel.rowCount()):
             cellIndex = tblModel.index(i, logicalIndex)
             cellSize: QSize = cellIndex.data(Qt.ItemDataRole.SizeHintRole)
@@ -167,7 +136,7 @@ class CustomHeaderView(QHeaderView):
         for i in range(level):
             cellIndex = tblModel.index(i, logicalIndex)
             colSpanIdx: QModelIndex = self.columnSpanIndex(cellIndex)
-            size: QSize =cellIndex.data(Qt.ItemDataRole.SizeHintRole)
+            size: QSize = cellIndex.data(Qt.ItemDataRole.SizeHintRole)
 
             if colSpanIdx.isValid():
                 colSpanFrom = colSpanIdx.column()
@@ -341,14 +310,16 @@ class CustomHeaderView(QHeaderView):
             rToUpdate.setHeight(self.viewport().height() - sectionRect.top())
             self.viewport().update(rToUpdate.normalized())
 
-    def get_tree_column_width(self,logicalIndex:int):
-        parent:ui.FilterTreeView = self.parent()
+    def get_tree_column_width(self, logicalIndex: int):
+        parent: ClassView = self.parent()
         return parent.columnWidth(logicalIndex)
+
 
 class CustomHeaderModel(QAbstractTableModel):
     ColumnSpanRole = Qt.ItemDataRole.UserRole + 1
     RowSpanRole = Qt.ItemDataRole.UserRole + 2
-
+    base_height = 25
+    base_width = 25
     def __init__(
         self, proj: SOMcreator.SOMProject, first_columns: list[str], parent=None
     ):
@@ -357,7 +328,7 @@ class CustomHeaderModel(QAbstractTableModel):
         self.proj = proj
         self.data_dict = dict()
         self.size_hint_dict = dict()
-
+    
     @property
     def column_overlap(self):
         return len(self.first_columns)
@@ -379,8 +350,9 @@ class CustomHeaderModel(QAbstractTableModel):
         matrix = self.get_usecase_matrix()
         for use_case, phase_list in matrix:
             column -= len(phase_list)
-            if column <0:
+            if column < 0:
                 return use_case
+
     def get_phase_by_column(self, column: int):
         column -= self.column_overlap
         matrix = self.get_usecase_matrix()
@@ -424,8 +396,8 @@ class CustomHeaderModel(QAbstractTableModel):
             sh = self.size_hint_dict.get((index.row(), index.column()))
             if not sh:
                 baseSectionSize = QSize()
-                baseSectionSize.setWidth(50)
-                baseSectionSize.setHeight(20)
+                baseSectionSize.setWidth(self.base_width)
+                baseSectionSize.setHeight(self.base_height)
                 self.setData(index, Qt.ItemDataRole.SizeHintRole, baseSectionSize)
                 return baseSectionSize
             return self.size_hint_dict[(index.row(), index.column())]
@@ -470,3 +442,43 @@ class CustomHeaderModel(QAbstractTableModel):
                 self.data_dict[item][role] = value
             return True
         return False
+
+
+class EditableHeader(QHeaderView):
+    headerDoubleClicked = Signal(int)
+
+    def __init__(self, orientation, parent=None):
+        super().__init__(orientation, parent)
+        self.setSectionsClickable(True)
+        self.sectionDoubleClicked.connect(self.edit_header_text)
+        self.editor = None
+
+    def edit_header_text(self, logicalIndex):
+        if self.editor:
+            self.editor.deleteLater()
+        self.model().header_data_is_editing = True
+        self.model().edit_header_index = logicalIndex
+        self.model().edit_header_orientation = self.orientation()
+        self.editor = QLineEdit(self)
+        self.editor.setText(
+            self.model().headerData(logicalIndex, self.orientation(), Qt.DisplayRole)
+        )
+        self.editor.setGeometry(
+            self.sectionViewportPosition(logicalIndex),
+            0,
+            self.sectionSize(logicalIndex),
+            self.height(),
+        )
+        self.editor.setFocus()
+        self.editor.selectAll()
+        self.editor.show()
+        self.editor.editingFinished.connect(lambda: self.renameHeader(logicalIndex))
+
+    def renameHeader(self, logicalIndex):
+        newText = self.editor.text()
+        self.model().setHeaderData(
+            logicalIndex, self.orientation(), newText, Qt.DisplayRole
+        )
+        self.editor.deleteLater()
+        self.editor = None
+        self.model().header_data_is_editing = False

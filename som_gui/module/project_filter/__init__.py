@@ -3,7 +3,7 @@ from . import prop, qt, trigger, ui
 
 
 def register():
-    som_gui.FilterWindowProperties = prop.FilterWindowProperties()
+    som_gui.ProjectFilterProperties = prop.ProjectFilterProperties()
     som_gui.FilterCompareProperties = prop.FilterCompareProperties()
 
 

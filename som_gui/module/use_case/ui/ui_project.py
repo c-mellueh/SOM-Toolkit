@@ -3,7 +3,7 @@ import logging
 
 from PySide6.QtCore import (
     QAbstractTableModel,
-    QCoreApplication,
+    QObject,
     QModelIndex,
     Qt,
     Signal,
@@ -12,55 +12,63 @@ from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QTableView
 import SOMcreator
 from som_gui import tool
-from . import trigger
 
 
 class ProjectView(QTableView):
-    def __init__(self, parent):
-        super().__init__(parent)
+    update_requested = Signal()
+    mouse_moved = Signal(QMouseEvent,QObject)
+    mouse_released = Signal(QMouseEvent,QObject)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setSelectionMode(QTableView.SelectionMode.SingleSelection)
 
     def enterEvent(self, event):
-        super().enterEvent(event)
-        self.model().update_data()
-
-    def model(self) -> ProjectModel:
-        return super().model()
+        self.update_requested.emit()
+        return super().enterEvent(event)
 
     def mouseMoveEvent(self, event: QMouseEvent):
         super().mouseMoveEvent(event)
-        trigger.tree_mouse_move_event(self.indexAt(event.pos()))
+        self.mouse_moved.emit(event,self)
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
-        index = self.indexAt(event.pos())
-        trigger.tree_mouse_release_event(index)
-
-
+        self.mouse_released.emit(event,self)
+    
+    #for typing purposes
+    def model(self) -> ProjectModel:
+        return super().model()
 class ProjectModel(QAbstractTableModel):
     data_changed_externally = Signal()
+    checkstate_changed = Signal()
 
-    def __init__(self, project: SOMcreator.SOMProject):
-        super().__init__()
+    def __init__(self, project: SOMcreator.SOMProject, *args, **kwargs):
         self.project = project
-        self.check_column_index = 0
-        self.last_col_count = self.columnCount()
-        self.last_row_count = self.rowCount()
+        self.old_column_count = self.columnCount()
+        self.old_row_count = self.rowCount()
+        self.edit_header_index = None
+        self.edit_header_orientation = None
+        self.header_data_is_editing = False
+        super().__init__(*args, **kwargs)
 
-    def update_data(self):
+    def update_view(self):
         self.dataChanged.emit(
             self.createIndex(0, 0),
             self.createIndex(self.rowCount(), self.columnCount()),
         )
-        if (
-            self.last_col_count != self.columnCount()
-            or self.last_row_count != self.rowCount()
-        ):
+        if self.was_data_changed_externally():
             self.data_changed_externally.emit()
 
-        self.last_col_count = self.columnCount()
-        self.last_row_count = self.rowCount()
+    def was_data_changed_externally(self):
+        changed_externally = False
+        if (
+            self.old_column_count != self.columnCount()
+            or self.old_row_count != self.rowCount()
+        ):
+            changed_externally = True
+
+        return changed_externally
 
     def flags(self, index):
         flags = super().flags(index)
@@ -84,11 +92,17 @@ class ProjectModel(QAbstractTableModel):
         phase = self.project.get_phase_by_index(index.row())
         usecase = self.project.get_usecase_by_index(index.column())
         self.project.set_filter_state(phase, usecase, bool(value))
-        trigger.update_class_tree()
-        trigger.update_pset_tree()
+        self.checkstate_changed.emit()
         return True
+        # TODO write connector for update class tree and psettable
 
-    def headerData(self, section, orientation, role=...):
+    def headerData(self, section: int, orientation: Qt.Orientation, role=...):
+        if (
+            self.header_data_is_editing
+            and section == self.edit_header_index
+            and orientation == self.edit_header_orientation
+        ):
+            return None
         if role not in [Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole]:
             return
         if orientation == Qt.Orientation.Horizontal:
@@ -100,13 +114,14 @@ class ProjectModel(QAbstractTableModel):
                 return None
             return self.project.get_phases()[section].name
 
-    def insertRows(self, row, count, parent=None):
-        logging.debug("Insert Rows")
-        text = QCoreApplication.translate("FilterWindow", "New Phase")
-        new_name = tool.Util.get_new_name(
-            text, [ph.name for ph in self.project.get_phases()]
-        )
-        self.beginInsertRows(QModelIndex(), row, row + count - 1)
-        phase = SOMcreator.Phase(new_name, new_name, new_name)
-        self.project.add_phase(phase)
-        self.endInsertRows()
+    def setHeaderData(self, section, orientation, value, /, role=...):
+        if not self.header_data_is_editing:
+            return False
+
+        if role == Qt.ItemDataRole.DisplayRole:
+            if orientation == Qt.Orientation.Horizontal:
+                self.project.get_usecases()[section].name = value
+            else:
+                self.project.get_phases()[section].name = value
+            self.checkstate_changed.emit()
+            return True

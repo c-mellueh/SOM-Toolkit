@@ -7,33 +7,33 @@ class Appdata:
     def _write_config(self, config_parser):
         pass
 
-    def get_bool_setting(self, section, path, default):
+    def get_bool_setting(self, section, option, default):
         pass
 
-    def get_float_setting(self, section, path, default):
+    def get_float_setting(self, section, option, default):
         pass
 
-    def get_int_setting(self, section, path, default):
+    def get_ini_path(
+        self,
+    ):
         pass
 
-    def get_list_setting(self, section, path, default):
+    def get_int_setting(self, section, option, default):
+        pass
+
+    def get_list_setting(self, section, option, default):
         pass
 
     def get_path(self, value):
         pass
 
-    def get_settings_path(
-        self,
-    ):
-        pass
-
-    def get_string_setting(self, section, path, default):
+    def get_string_setting(self, section, option, default):
         pass
 
     def set_path(self, path, value):
         pass
 
-    def set_setting(self, section, path, value):
+    def set_setting(self, section, option, value):
         pass
 
 
@@ -156,92 +156,23 @@ class Bsdd:
         pass
 
 
-class ClassTree:
+class Class:
     def add_class_activate_function(self, func):
         pass
 
     def add_class_creation_check(self, key, check_function):
         pass
 
-    def add_column_to_tree(self, name_getter, index, getter_func, setter_func):
-        pass
-
-    def add_context_menu_entry(
-        self, name_getter, function, on_selection, single, multi
-    ):
-        pass
-
     def check_class_creation_input(self, data_dict):
-        pass
-
-    def clear_context_menu_list(
-        self,
-    ):
-        pass
-
-    def clear_tree(
-        self,
-    ):
-        pass
-
-    def collapse_selection(
-        self,
-    ):
         pass
 
     def create_class(self, data_dict, property_set, identifier_property):
         pass
 
-    def create_completer(self, texts, widget):
-        pass
-
-    def create_context_menu(
-        self,
-    ):
-        pass
-
-    def create_item(self, som_class):
-        pass
-
-    def delete_class(self, som_class, recursive):
-        pass
-
-    def delete_selection(
-        self,
-    ):
-        pass
-
-    def is_drop_indication_pos_on_item(
-        self,
-    ):
-        pass
-
-    def expand_selection(
-        self,
-    ):
-        pass
-
-    def expand_to_item(self, item):
-        pass
-
     def fill_class_entry(self, som_class):
         pass
 
-    def fill_class_tree(self, classes, parent_item):
-        pass
-
     def find_property(self, som_class, pset_name, property_name):
-        pass
-
-    def get_active_class(
-        self,
-    ):
-        pass
-
-    def get_class_from_item(self, item):
-        pass
-
-    def get_classes_from_mimedata(self, mime_data):
         pass
 
     def get_existing_ident_values(
@@ -249,28 +180,7 @@ class ClassTree:
     ):
         pass
 
-    def get_header_names(
-        self,
-    ):
-        pass
-
-    def get_item_from_class(self, som_class):
-        pass
-
-    def get_item_from_pos(self, pos):
-        pass
-
     def get_properties(
-        self,
-    ):
-        pass
-
-    def get_selected_classes(
-        self,
-    ):
-        pass
-
-    def get_selected(
         self,
     ):
         pass
@@ -278,35 +188,13 @@ class ClassTree:
     def group_classes(self, parent, children):
         pass
 
-    def group_selection(
-        self,
-    ):
-        pass
-
-    def handle_class_move(self, dropped_on_item):
-        pass
-
     def handle_property_issue(self, result):
         pass
 
+    def is_identifier_allowed(self, identifier, ignore, is_group):
+        pass
+
     def modify_class(self, som_class, data_dict):
-        pass
-
-    def remove_column_from_tree(self, column_name):
-        pass
-
-    def resize_tree(
-        self,
-    ):
-        pass
-
-    def select_class(self, som_class):
-        pass
-
-    def set_active_class(self, som_class):
-        pass
-
-    def set_class_optional_by_tree_item_state(self, item, column_index):
         pass
 
     def set_ident_value(self, som_class, value):
@@ -319,15 +207,6 @@ class ClassTree:
         pass
 
     def trigger_class_modification(self, som_class, data_dict):
-        pass
-
-    def update_check_state(self, item):
-        pass
-
-    def update_item(self, item, som_class):
-        pass
-
-    def write_classes_to_mimedata(self, classes, mime_data):
         pass
 
 
@@ -441,13 +320,144 @@ class ClassInfo:
     def set_active_class(self, value):
         pass
 
-    def trigger_class_info_widget(self, mode):
+    def trigger_class_info_widget(self, mode, som_class):
         pass
 
     def update_dialog(self, dialog):
         pass
 
     def update_property_combobox(self, predefined_psets):
+        pass
+
+
+class ClassTree:
+    def add_column_to_tree(self, tree, name_getter, index, getter_func, setter_func):
+        pass
+
+    def add_context_menu_entry(
+        self, tree, name_getter, function, on_selection, single, multi
+    ):
+        pass
+
+    def add_tree(self, tree):
+        pass
+
+    def clear_context_menu_list(self, tree):
+        pass
+
+    def collapse_selection(self, tree):
+        pass
+
+    def create_completer(self, texts, widget):
+        pass
+
+    def create_context_menu(self, tree):
+        pass
+
+    def create_item(self, tree, som_class):
+        pass
+
+    def delete_class(self, som_class, recursive):
+        pass
+
+    def delete_selection(self, tree):
+        pass
+
+    def expand_selection(self, tree):
+        pass
+
+    def expand_to_item(self, item):
+        pass
+
+    def fill_class_tree(self, tree, classes, parent_item):
+        pass
+
+    def get_class_from_item(self, item):
+        pass
+
+    def get_classes_from_mimedata(self, mime_data):
+        pass
+
+    def get_column_list(self, tree):
+        pass
+
+    def get_header_names(self, tree):
+        pass
+
+    def get_item_from_class(self, tree, som_class):
+        pass
+
+    def get_item_from_pos(self, tree, pos):
+        pass
+
+    def get_properties(
+        self,
+    ):
+        pass
+
+    def get_selected(self, tree):
+        pass
+
+    def get_selected_classes(self, tree):
+        pass
+
+    def get_trees(
+        self,
+    ):
+        pass
+
+    def group_classes(self, parent, children):
+        pass
+
+    def group_selection(self, tree):
+        pass
+
+    def handle_class_move(self, tree, dropped_on_item):
+        pass
+
+    def is_drop_indication_pos_on_item(self, tree):
+        pass
+
+    def is_first_paint(self, tree):
+        pass
+
+    def remove_column_from_tree(self, tree, column_name):
+        pass
+
+    def remove_tree(self, tree):
+        pass
+
+    def reset_tree(self, tree):
+        pass
+
+    def resize_tree(self, tree):
+        pass
+
+    def select_class(self, tree, som_class):
+        pass
+
+    def set_class_optional_by_tree_item_state(self, item, column_index):
+        pass
+
+    def set_column_list(self, tree, value):
+        pass
+
+    def set_first_paint(self, tree, value):
+        pass
+
+    def trigger_search(self, tree):
+        pass
+
+    def trigger_tree_init(self, tree):
+        pass
+
+    def update_check_state(self, tree, item):
+        pass
+
+    def update_item(self, tree, item, som_class):
+        pass
+
+    def write_classes_to_mimedata(self, classes, mime_data):
         pass
 
 
@@ -737,7 +747,7 @@ class FilterCompare:
         pass
 
 
-class FilterWindow:
+class ProjectFilter:
     def add_phase(self, project):
         pass
 
@@ -750,15 +760,18 @@ class FilterWindow:
     def connect_project_table(self, project):
         pass
 
-    def connect_pset_tree(self, project):
+    def connect_views(
+        self, project, tree_model, splitter, view_1, view_2, first_columns
+    ):
         pass
 
     def create_context_menu(self, menu_list, pos):
         pass
 
-    def create_widget(
-        self,
-    ):
+    def create_header_views(self, project, first_columns):
+        pass
+
+    def create_widget(self, project):
         pass
 
     def get(
@@ -770,6 +783,11 @@ class FilterWindow:
         pass
 
     def get_active_class(
+        self,
+    ):
+        pass
+
+    def get_class_model(
         self,
     ):
         pass
@@ -789,7 +807,12 @@ class FilterWindow:
     ):
         pass
 
-    def get_pset_trees(
+    def get_pset_model(
+        self,
+    ):
+        pass
+
+    def get_pset_tables(
         self,
     ):
         pass
@@ -1033,6 +1056,11 @@ class MainWindow:
     def get_action(self, name):
         pass
 
+    def get_active_class(
+        self,
+    ):
+        pass
+
     def get_app(
         self,
     ):
@@ -1102,6 +1130,9 @@ class MainWindow:
     def set_action(self, name, action):
         pass
 
+    def set_active_class(self, som_class):
+        pass
+
     def set_status_bar_text(self, text):
         pass
 
@@ -1114,6 +1145,11 @@ class MainWindow:
         pass
 
     def toggle_console(
+        self,
+    ):
+        pass
+
+    def trigger_class_changed(
         self,
     ):
         pass
@@ -1821,7 +1857,7 @@ class Popups:
     def _get_path(self, file_format, window, path, save, title):
         pass
 
-    def _request_text_input(self, title, request_text, prefill, parent):
+    def _request_text_input(self, title, request_text, prefill, parent, completer):
         pass
 
     def create_file_dne_warning(self, path):
@@ -2852,9 +2888,7 @@ class PropertySet:
     def get_property_set_from_row(self, row, table):
         pass
 
-    def get_property_sets(
-        self,
-    ):
+    def get_property_sets(self, active_class):
         pass
 
     def get_pset_from_index(self, index):
@@ -2929,6 +2963,9 @@ class PropertySet:
 
 
 class PropertySetWindow:
+    def add_context_menu_builder(self, context_menu_builder):
+        pass
+
     def add_value_line(self, column_count, window):
         pass
 
@@ -2968,6 +3005,11 @@ class PropertySetWindow:
         pass
 
     def get_allowed_value_types(
+        self,
+    ):
+        pass
+
+    def get_context_menu_builders(
         self,
     ):
         pass
@@ -3031,7 +3073,13 @@ class PropertySetWindow:
     def get_values(self, window):
         pass
 
+    def get_window_by_lineedit(self, line_edit):
+        pass
+
     def get_window_by_property_set(self, property_set):
+        pass
+
+    def ignore_builder(self, line_edit):
         pass
 
     def is_name_existing(self, name, window):
@@ -3064,6 +3112,9 @@ class PropertySetWindow:
     def set_property_name(self, name, window):
         pass
 
+    def set_selecteded_values_ignored(self, line_edit, ignore_state):
+        pass
+
     def set_splitter_settings_widget(self, widget):
         pass
 
@@ -3077,6 +3128,15 @@ class PropertySetWindow:
         pass
 
     def set_values(self, som_property, window):
+        pass
+
+    def trigger_property_activation(self, som_property, window):
+        pass
+
+    def trigger_window_open(self, property_set):
+        pass
+
+    def unignore_builder(self, line_edit):
         pass
 
     def update_add_button(self, window):
@@ -3307,6 +3367,10 @@ class Settings:
         pass
 
 
+class UseCase:
+    pass
+
+
 class Util:
     def add_shortcut(self, sequence, window, function):
         pass
@@ -3413,7 +3477,3 @@ class Util:
 
     def transform_guid(self, guid, add_zero_width):
         pass
-
-
-class Class:
-    pass
