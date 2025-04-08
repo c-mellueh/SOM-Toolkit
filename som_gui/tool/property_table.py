@@ -238,7 +238,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         prop = cls.get_properties()
         base_names = [name for (name, getter) in prop.property_table_columns]
         translation = [
-            QCoreApplication.translate("PropertyTyble", name) for name in base_names
+            QCoreApplication.translate("PropertyTable", name) for name in base_names
         ]
         return translation
 
@@ -283,7 +283,7 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         :return:
         """
         if len(cls.get_selected_properties(table)) == 1:
-            return table.tr("Rename"), lambda: cls.edit_selected_property_name(table)
+            return  QCoreApplication.translate("PropertyTable", "Rename"), lambda: cls.edit_selected_property_name(table)
         else:
             return None
 
@@ -314,13 +314,8 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
             and with_child
         ):
             return None
-
-        name = (
-            table.tr("Delete (with subproperties)")
-            if with_child
-            else table.tr("Delete")
-        )
-        return name, lambda: cls.delete_selected_properties(
+        text = QCoreApplication.translate("PropertyTable", "Delete (with subproperties)") if with_child else QCoreApplication.translate("PropertyTable", "Delete")
+        return text, lambda: cls.delete_selected_properties(
             table, with_child=with_child
         )
 
@@ -342,9 +337,9 @@ class PropertyTable(som_gui.core.tool.PropertyTable):
         # don't show if any property is not a child
         if not any(a.is_child for a in selected_properties):
             return None
-        return table.tr(
-            "Remove Connection"
-        ), lambda: cls.remove_parent_of_selected_properties(table)
+        text = QCoreApplication.translate("PropertyTable", "Remove Connection")
+        return text,lambda: cls.remove_parent_of_selected_properties(table) 
+
 
     @classmethod
     def context_menu_builder_add_connection(

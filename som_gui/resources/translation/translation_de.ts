@@ -355,32 +355,32 @@
         <translation>Projekt Filter</translation>
     </message>
     <message>
-        <location filename="../../core/usecases.py" line="330"/>
+        <location filename="../../core/use_case.py" line="338"/>
         <source>Delete UseCase</source>
         <translation>Anwendungsfall Löschen</translation>
     </message>
     <message>
-        <location filename="../../core/usecases.py" line="331"/>
+        <location filename="../../core/use_case.py" line="339"/>
         <source>Rename UseCase</source>
         <translation>Anwendungsfall Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../core/usecases.py" line="333"/>
+        <location filename="../../core/use_case.py" line="341"/>
         <source>Add UseCase</source>
         <translation>Anwendungsfall hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../core/usecases.py" line="351"/>
+        <location filename="../../core/use_case.py" line="359"/>
         <source>Delete Phase</source>
         <translation>Leistungsphase Entfernen</translation>
     </message>
     <message>
-        <location filename="../../core/usecases.py" line="352"/>
+        <location filename="../../core/use_case.py" line="360"/>
         <source>Rename Phase</source>
         <translation>Leistungsphase Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../core/usecases.py" line="354"/>
+        <location filename="../../core/use_case.py" line="362"/>
         <source>Add Phase</source>
         <translation>Leistungsphase hinzufügen</translation>
     </message>
@@ -398,7 +398,7 @@
         <translation type="vanished">Neuer Anwendungsfall</translation>
     </message>
     <message>
-        <location filename="../../core/usecases.py" line="286"/>
+        <location filename="../../core/use_case.py" line="291"/>
         <source>New Phase</source>
         <translation>Neue Leistungsphase</translation>
     </message>
@@ -465,7 +465,7 @@
 <context>
     <name>Form</name>
     <message>
-        <location filename="../../module/usecases/qt/Widget.ui" line="14"/>
+        <location filename="../../module/use_case/qt/Widget.ui" line="14"/>
         <source>Form</source>
         <translation>Form</translation>
     </message>
@@ -1631,6 +1631,26 @@ Achtung: Datei wird überschrieben!</translation>
         <source>Unit</source>
         <translation>Einheit</translation>
     </message>
+    <message>
+        <location filename="../../tool/property_table.py" line="286"/>
+        <source>Rename</source>
+        <translation>Umbenennen</translation>
+    </message>
+    <message>
+        <location filename="../../tool/property_table.py" line="317"/>
+        <source>Delete (with subproperties)</source>
+        <translation>Löschen (mit Kindmerkmalen)</translation>
+    </message>
+    <message>
+        <location filename="../../tool/property_table.py" line="318"/>
+        <source>Delete</source>
+        <translation>Löschen</translation>
+    </message>
+    <message>
+        <location filename="../../tool/property_table.py" line="341"/>
+        <source>Remove Connection</source>
+        <translation>Verbindung entfernen</translation>
+    </message>
 </context>
 <context>
     <name>PsetTree</name>
@@ -1865,33 +1885,33 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>UsecaseWindow</name>
     <message>
-        <location filename="../../core/usecases.py" line="26"/>
-        <location filename="../../core/usecases.py" line="32"/>
+        <location filename="../../core/use_case.py" line="29"/>
+        <location filename="../../core/use_case.py" line="35"/>
         <source>Usecases</source>
         <translation>Anwendungsfälle</translation>
     </message>
     <message>
-        <location filename="../../core/usecases.py" line="36"/>
+        <location filename="../../core/use_case.py" line="39"/>
         <source>Class</source>
         <translation>Klasse</translation>
     </message>
     <message>
-        <location filename="../../core/usecases.py" line="37"/>
+        <location filename="../../core/use_case.py" line="40"/>
         <source>Identifier</source>
         <translation>Identifier</translation>
     </message>
     <message>
-        <location filename="../../core/usecases.py" line="40"/>
+        <location filename="../../core/use_case.py" line="43"/>
         <source>PropertySet</source>
         <translation>Merkmalssatz</translation>
     </message>
     <message>
-        <location filename="../../core/usecases.py" line="41"/>
+        <location filename="../../core/use_case.py" line="44"/>
         <source>Property</source>
         <translation>Merkmal</translation>
     </message>
     <message>
-        <location filename="../../core/usecases.py" line="258"/>
+        <location filename="../../core/use_case.py" line="262"/>
         <source>New UseCase</source>
         <translation>Neuer Anwendungsfall</translation>
     </message>
@@ -1955,27 +1975,23 @@ Achtung: Datei wird überschrieben!</translation>
 <context>
     <name>table</name>
     <message>
-        <location filename="../../tool/property_table.py" line="286"/>
         <source>Rename</source>
-        <translation>Umbenennen</translation>
+        <translation type="vanished">Umbenennen</translation>
     </message>
     <message>
-        <location filename="../../tool/property_table.py" line="320"/>
         <source>Delete (with subproperties)</source>
-        <translation>Löschen (mit Kindmerkmalen)</translation>
+        <translation type="vanished">Löschen (mit Kindmerkmalen)</translation>
     </message>
     <message>
-        <location filename="../../tool/property_table.py" line="322"/>
         <source>Delete</source>
-        <translation>Löschen</translation>
+        <translation type="vanished">Löschen</translation>
     </message>
     <message>
-        <location filename="../../tool/property_table.py" line="347"/>
         <source>Remove Connection</source>
-        <translation>Verbindung entfernen</translation>
+        <translation type="vanished">Verbindung entfernen</translation>
     </message>
     <message>
-        <location filename="../../tool/property_table.py" line="373"/>
+        <location filename="../../tool/property_table.py" line="368"/>
         <source>Connect to Parent</source>
         <translation>Mit Elternelement verbinden</translation>
     </message>
