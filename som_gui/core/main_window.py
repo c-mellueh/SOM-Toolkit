@@ -25,7 +25,7 @@ def init(main_window: Type[tool.MainWindow], class_tree: Type[tool.ClassTree]):
         "menuEdit", "ToggleConsole", trigger.toggle_console
     )
     main_window.set_action(trigger.TOOGLE_CONSOLE_ACTION, open_window_action)
-    class_tree.signaller.init_tree.emit(main_window.get_class_tree())
+    
     main_window.get_ui().button_search.pressed.connect(
         lambda: class_tree.signaller.search.emit(main_window.get_class_tree())
     )
@@ -49,9 +49,7 @@ def retranslate_ui(
     main_window.get().ui.retranslateUi(main_window.get())
 
     tree = main_window.get_class_tree()
-    header = tree.headerItem()
-    for column, name in enumerate(class_tree.get_header_names(tree)):
-        header.setText(column, name)
+    #ToDo: rewrite header retranslation
 
 
 def create_main_window(
@@ -164,16 +162,18 @@ def connect_class_tree(
     class_info: Type[tool.ClassInfo],
 ):
     tree = main_window.get_class_tree()
-    tree.expanded.connect(lambda: class_tree.resize_tree(tree))
-    tree.selectionModel().selectionChanged.connect(main_window.trigger_class_changed)
-    tree.doubleClicked.connect(
-        lambda index: class_info.trigger_class_info_widget(
-            1, class_tree.get_class_from_index(index)
-        )
-    )
-    main_window.get_ui().button_classes_add.clicked.connect(
-        lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
-    )
+    class_tree.signaller.init_tree.emit(main_window.get_class_tree())
+
+    # tree.expanded.connect(lambda: class_tree.resize_tree(tree))
+    # tree.selectionModel().selectionChanged.connect(main_window.trigger_class_changed)
+    # tree.doubleClicked.connect(
+    #     lambda index: class_info.trigger_class_info_widget(
+    #         1, class_tree.get_class_from_index(index)
+    #     )
+    # )
+    # main_window.get_ui().button_classes_add.clicked.connect(
+    #     lambda: class_info.trigger_class_info_widget(0, main_window.get_active_class())
+    # )
 
 
 def class_selection_changed(

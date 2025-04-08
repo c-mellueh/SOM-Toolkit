@@ -78,9 +78,8 @@ class ClassModel(QAbstractItemModel):
     def __init__(self, project: SOMcreator.SOMProject, *args, **kwargs):
         self.project = project
         self.root_classes = list()
-        #(name getter, value_getter, value_setter)
-        self.columns: list[tuple[callable,callable,callable]] = list()
-        self.column_count = len(self.columns)
+        #(name getter, value_getter, value_setter,role)
+        self.columns: list[tuple[callable,callable,callable,Qt.ItemDataRole]] = list()
 
         self.class_index_dict: dict[SOMcreator.SOMClass, QModelIndex] = dict()
         self.old_column_count = self.column_count
@@ -89,13 +88,6 @@ class ClassModel(QAbstractItemModel):
         self.update_data()
 
     def update_data(self):
-        columns = list()
-        for use_case in self.project.get_usecases():
-            for phase in self.project.get_phases():
-                if self.project.get_filter_state(phase, use_case):
-                    columns.append((use_case, phase))
-        self.columns = columns
-        self.column_count = len(self.columns) + self.fixed_column_count
         self.root_classes = list(self.project.get_root_classes(filter=False))
 
 
@@ -110,27 +102,27 @@ class ClassModel(QAbstractItemModel):
         Disable Item if Parent is not checked or parent is disabled
         """
         flags = super().flags(index)
-        parent_index = self.parent(index).siblingAtColumn(index.column())
-        if index.column() >= self.fixed_column_count:
+        column = index.column()
+        role = self.columns[column][3]
+        if role == Qt.ItemDataRole.CheckStateRole:
             flags |= Qt.ItemFlag.ItemIsUserCheckable
-        if not parent_index.isValid():
-            return flags
-        is_parent_enabled = Qt.ItemFlag.ItemIsEnabled in parent_index.flags()
-        parent_cs = parent_index.data(Qt.ItemDataRole.CheckStateRole)
-        is_parent_checked = tool.Util.checkstate_to_bool(parent_cs)
-        if not (is_parent_enabled and is_parent_checked):
-            flags &= ~Qt.ItemFlag.ItemIsEnabled
+        else:
+            flags &= ~Qt.ItemFlag.ItemIsUserCheckable
         return flags
 
     def columnCount(self, parent=QModelIndex()):
-        return self.column_count
+        column_count = len(self.columns)
+        if column_count != self.old_column_count:
+            self.resize_required.emit()
+            self.old_column_count = column_count
+        return len(self.columns)
 
     def get_row_count(self, parent=QModelIndex()):
         if not parent.isValid():
             result = len(self.root_classes)
         else:
             som_class: SOMcreator.SOMClass = parent.internalPointer()
-            result = len(som_class._children)
+            result = len(list(som_class.get_children(filter=True)))
         return result
 
     def rowCount(self, parent=QModelIndex()):
@@ -148,39 +140,38 @@ class ClassModel(QAbstractItemModel):
             return None
 
         som_class: SOMcreator.SOMClass = index.internalPointer()
+        column = index.column()
+        if role != self.columns[column][3]:
+            return
         if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
-            result = self.get_text(index.column(), som_class)
+            result = self.get_text(column, som_class)
             return result
+        
         elif role == Qt.ItemDataRole.CheckStateRole:
-            return self.get_checkstate(index.column(), som_class)
+            return self.get_checkstate(column, som_class)
         return None
 
     def get_checkstate(self, column: int, som_class: SOMcreator.SOMClass):
-        if column < self.fixed_column_count:
-            return None
-        if column - self.fixed_column_count >= len(self.columns):
-            return None
-        usecase, phase = self.columns[column - self.fixed_column_count]
-        return tool.Util.bool_to_checkstate(som_class.get_filter_state(phase, usecase))
+        getter_func = self.columns[column][1]
+        return tool.Util.bool_to_checkstate(getter_func(som_class))
 
     def get_text(self, column: int, som_class: SOMcreator.SOMClass):
-        if column == 0:
-            return som_class.name
-        elif column == 1:
-            return som_class.ident_value if not som_class.is_concept else ""
-        else:
-            return None
+        getter_func = self.columns[column][1]
+        return getter_func(som_class)
 
     def setData(self, index: QModelIndex, value, role: Qt.ItemDataRole):
         if not index.isValid():
             return False
-        if role != Qt.ItemDataRole.CheckStateRole:
+        column = index.column()
+        if role != self.columns[column][3]:
             return False
-        if index.column() < self.fixed_column_count:
-            return False
+        
+        setter_func = self.columns[column][2]
         som_class: SOMcreator.SOMClass = index.internalPointer()
-        usecase, phase = self.columns[index.column() - self.fixed_column_count]
-        som_class.set_filter_state(phase, usecase, bool(value))
+        if role == Qt.ItemDataRole.CheckStateRole:
+            setter_func(som_class,bool(value))
+        else:
+            setter_func(som_class,value)
         return True
 
     def index(self, row: int, column: int, parent: QModelIndex):
@@ -191,22 +182,17 @@ class ClassModel(QAbstractItemModel):
                 return QModelIndex()
             som_class = self.root_classes[row]
             index = self.createIndex(row, column, som_class)
-            logging.debug(f"Index: {row}:{column} -> BASE -> {som_class.name}")
             return index
         else:
             parent = parent.siblingAtColumn(0)
             som_class: SOMcreator.SOMClass = parent.internalPointer()
-            logging.debug(f"Index: {row}:{column} -> {som_class.name}")
-
             children = list(som_class.get_children(filter=False))
             if 0 <= row < len(children):
                 child_class = children[row]
                 index = self.createIndex(row, column, child_class)
                 return index
             else:
-                logging.debug("Index Exmits resize Required")
                 self.resize_required.emit(parent)
-
         return QModelIndex()
 
     def createIndex(self, row, column, pointer=None):
@@ -225,17 +211,4 @@ class ClassModel(QAbstractItemModel):
         parent_index = self.class_index_dict.get(parent_class)
         if parent_index is None or not parent_index.isValid():
             return QModelIndex()
-        if parent_index.column() > self.fixed_column_count:
-            return parent_index.siblingAtColumn(0)
-        return parent_index
-
-
-
-class ClassFilterModel(QSortFilterProxyModel):
-    def __init__(self, fixed_column_count: int, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fixed_column_count = fixed_column_count
-
-    def filterAcceptsColumn(self, source_column, source_parent):
-        res = source_column < self.fixed_column_count
-        return res
+        return parent_index.siblingAtColumn(0)

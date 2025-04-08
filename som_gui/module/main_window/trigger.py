@@ -12,12 +12,11 @@ def connect():
         tool.MainWindow,
         tool.ClassInfo,
     )
-    core.connect_class_tree(tool.MainWindow, tool.ClassTree,tool.ClassInfo)
     core.define_class_tree_context_menu(tool.MainWindow,tool.ClassTree,tool.ClassInfo)
 
 def on_new_project():
     core.one_new_project(tool.MainWindow,tool.ClassTree)
-
+    core.connect_class_tree(tool.MainWindow, tool.ClassTree,tool.ClassInfo)
 
 def retranslate_ui():
     core.retranslate_ui(tool.MainWindow, tool.ClassTree)

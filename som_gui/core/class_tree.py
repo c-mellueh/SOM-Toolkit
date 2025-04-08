@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 
-from PySide6.QtCore import QCoreApplication, QMimeData
+from PySide6.QtCore import QCoreApplication, QMimeData,Qt
 from PySide6.QtGui import QDropEvent
 
 import SOMcreator
@@ -15,14 +15,14 @@ if TYPE_CHECKING:
     from som_gui.tool import Project, Search, PropertySet, MainWindow
     from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
     from PySide6.QtCore import QPoint
-    from som_gui.module.class_tree import ui
+from som_gui.module.class_tree import ui
 
 import uuid
 def connect_signals(class_tree: Type[tool.ClassTree]) -> None:
     class_tree.connect_trigger()
 
 def init_tree(
-    tree: ui.ClassTreeWidget,
+    tree: ui.ClassView,
     class_tree: Type[tool.ClassTree],
     project:Type[tool.Project],
 ) -> None:
@@ -51,6 +51,7 @@ def init_tree(
         2,
         lambda o: o.is_optional(ignore_hirarchy=True),
         lambda o,v: o.set_optional(v),
+        role = Qt.ItemDataRole.CheckStateRole
     )
 
     tree.customContextMenuRequested.connect(

@@ -21,7 +21,7 @@ def search_class(tree: ui.ClassTreeWidget):
 
 
 def init_tree(tree: ui.ClassView):
-    core.init_tree(tree, tool.ClassTree)
+    core.init_tree(tree, tool.ClassTree,tool.Project)
 
 
 def repaint_event(tree: ui.ClassTreeWidget):

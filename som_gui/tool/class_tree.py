@@ -34,7 +34,7 @@ from som_gui.module.class_tree import trigger, constants
 if TYPE_CHECKING:
     from som_gui.module.class_tree.prop import ClassTreeProperties, ContextMenuDict
     from som_gui.module.class_.prop import ClassDataDict
-    from som_gui.module.class_tree import ui
+from som_gui.module.class_tree import ui
 
 
 class Signaller(QObject):
@@ -84,12 +84,12 @@ class ClassTree(som_gui.core.tool.ClassTree):
 
     @classmethod
     def add_column_to_tree(
-        cls, tree: ui.ClassView, name_getter, index, getter_func, setter_func=None
+        cls, tree: ui.ClassView, name_getter, index, getter_func, setter_func=None,role = Qt.ItemDataRole.DisplayRole
     ):
         if tree not in cls.get_trees():
             return
         cl = cls.get_column_list(tree)
-        cl.insert(index, (name_getter, getter_func, setter_func))
+        cl.insert(index, (name_getter, getter_func, setter_func,role))
         cls.set_column_list(tree, cl)
         cls.reset_tree(tree)
 
