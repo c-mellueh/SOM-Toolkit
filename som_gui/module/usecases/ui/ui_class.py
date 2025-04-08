@@ -133,6 +133,8 @@ class ClassModel(QAbstractItemModel):
     def get_checkstate(self, column: int, som_class: SOMcreator.SOMClass):
         if column < self.fixed_column_count:
             return None
+        if column - self.fixed_column_count >= len(self.columns):
+            return None
         usecase, phase = self.columns[column - self.fixed_column_count]
         return tool.Util.bool_to_checkstate(som_class.get_filter_state(phase, usecase))
 
